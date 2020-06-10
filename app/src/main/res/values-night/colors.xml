@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- PRIMARY -->
+
+    <color name="primary">#313235</color>
+    <color name="primaryVariant">#313235</color>
+    <color name="onPrimary">#ddd</color>
+
+    <!-- BACKGROUND -->
+
+    <color name="background">#1e1f22</color>
+    <color name="onBackground">@color/grey200</color>
+    <color name="onBackgroundSecondary">@color/grey600</color>
+    <color name="onBackgroundTertiary">@color/grey800</color>
+
+    <!-- SURFACE -->
+
+    <color name="surface">#303030</color>
+    <color name="on_surface">#fff</color>
+
+    <!-- HIGHLIGHT -->
+
+    <color name="highlight">#11bdbdbd</color>
+
+    <!-- STROKES -->
+
+    <color name="stroke_primary">@color/grey600</color>
+    <color name="stroke_secondary">#3a3b3e</color>
+
+    <!-- ICONS -->
+
+    <color name="icon">@color/grey500</color>
+
+    <color name="mdc_square">@color/white</color>
+    <color name="mdc_circle">#00e676</color>
+    <color name="mdc_overlay">#b2ff59</color>
+
+    <!-- TEXT INPUT LAYOUT -->
+
+    <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">
+        @color/stroke_primary
+    </color>
+
+    <color name="bpm_picker">@color/retro_dirt</color>
+    <color name="bookmark_active">@color/retro_red</color>
+
+    <color name="splash_primary">@color/retro_green</color>
+    <color name="splash_secondary">@color/retro_red</color>
+
+</resources>

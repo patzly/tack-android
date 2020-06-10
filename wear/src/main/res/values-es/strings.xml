@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="title_bpm">LPM</string>
+    <string name="title_settings">Ajustes</string>
+    <string name="title_play_pause">Play/Pause</string>
+    <string name="title_tempo_tap">Toque tempo</string>
+    <string name="title_beat_mode">Modo de latido</string>
+    <string name="title_emphasis">Énfasis</string>
+    <string name="title_bookmark">Marcador</string>
+    <string name="title_changelog">Changelog</string>
+
+    <string name="msg_bookmark">Pulse de nuevo para volver al valor anterior</string>
+    <string name="msg_hide_picker">Esconder selector en los ajustes para controles más grandes</string>
+    <string name="msg_long_press">Presione largo para cambiar rápidamente</string>
+
+    <string name="intro_welcome">Bienvenido!</string>
+    <string name="intro_text">Controla el valor de BPM con los siguientes métodos:</string>
+    <string name="intro_picker">Círculo de puntos</string>
+    <string name="intro_picker_description">Arrastrar para cambiar</string>
+    <string name="intro_wrist_description">Si está activado</string>
+    <string name="intro_rotary">Entrada rotativa</string>
+    <string name="intro_rotary_description">Gire la corona</string>
+    <string name="intro_fsb">Botones laterales</string>
+    <string name="intro_fsb_description">También pulsa largo</string>
+
+    <string name="setting_sound">Sonido de latido</string>
+    <string name="setting_sound_wood">Madera</string>
+    <string name="setting_sound_click">Clic</string>
+    <string name="setting_sound_ding">Ding</string>
+    <string name="setting_sound_beep">Bip</string>
+    <string name="setting_vibrate_always">Siempre vibrar</string>
+    <string name="setting_vibrate_always_description">Incluso con el sonido</string>
+    <string name="setting_wrist_gestures">Gestos de la muñeca</string>
+    <string name="setting_wrist_gestures_description">+/-1 LPM</string>
+    <string name="setting_hide_picker">Esconde recolector</string>
+    <string name="setting_hide_picker_description">Sólo la entrada rotativa</string>
+    <string name="setting_animations">Animaciones</string>
+    <string name="setting_rate">Puntuación en Google Play</string>
+
+</resources>

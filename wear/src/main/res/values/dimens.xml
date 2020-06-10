@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="list_margin_top">20dp</dimen>
+    <dimen name="list_margin_bottom">8dp</dimen>
+
+    <dimen name="control_fab_margin">12dp</dimen>
+    <dimen name="control_horizontal_offset">4dp</dimen>
+
+    <dimen name="icon_size">24dp</dimen>
+    <dimen name="icon_size_no_picker">27dp</dimen>
+    <dimen name="icon_touch_target_size">30dp</dimen>
+    <dimen name="action_button_size">48dp</dimen>
+
+    <dimen name="dotted_ring_dot_size_min">6dp</dimen>
+    <dimen name="dotted_ring_dot_size_max">8dp</dimen>
+    <dimen name="dotted_ring_width">24dp</dimen>
+    <dimen name="edge_width">20dp</dimen>
+
+</resources>

@@ -1,0 +1,43 @@
+<resources>
+
+    <string name="app_name" translatable="false">Tack</string>
+    <string name="app_version" translatable="false">1.4</string>
+
+    <string name="title_bpm">BPM</string>
+    <string name="title_settings">Settings</string>
+    <string name="title_play_pause">Play/Pause</string>
+    <string name="title_tempo_tap">Tap tempo</string>
+    <string name="title_beat_mode">Beat mode</string>
+    <string name="title_emphasis">Emphasis</string>
+    <string name="title_bookmark">Bookmark</string>
+    <string name="title_changelog">Changelog</string>
+
+    <string name="msg_bookmark">Tap again to return to previous value</string>
+    <string name="msg_hide_picker">Hide picker in settings for larger controls</string>
+    <string name="msg_long_press">Press long to change quickly</string>
+
+    <string name="intro_welcome">Welcome!</string>
+    <string name="intro_text">Control the BPM value as follows:</string>
+    <string name="intro_picker">Dotted circle</string>
+    <string name="intro_picker_description">Drag to change</string>
+    <string name="intro_wrist_description">If enabled</string>
+    <string name="intro_rotary">Rotary input</string>
+    <string name="intro_rotary_description">Rotate the crown</string>
+    <string name="intro_fsb">Side buttons</string>
+    <string name="intro_fsb_description">Also long press</string>
+
+    <string name="setting_sound">Beat sound</string>
+    <string name="setting_sound_wood">Wood</string>
+    <string name="setting_sound_click">Click</string>
+    <string name="setting_sound_ding">Ding</string>
+    <string name="setting_sound_beep">Beep</string>
+    <string name="setting_vibrate_always">Vibrate always</string>
+    <string name="setting_vibrate_always_description">Also with sound</string>
+    <string name="setting_wrist_gestures">Wrist gestures</string>
+    <string name="setting_wrist_gestures_description">+/-1 BPM</string>
+    <string name="setting_hide_picker">Hide picker</string>
+    <string name="setting_hide_picker_description">Larger controls</string>
+    <string name="setting_animations">Animations</string>
+    <string name="setting_rate">Rate Tack on Google Play</string>
+
+</resources>

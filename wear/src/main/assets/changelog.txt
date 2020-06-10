@@ -1,0 +1,22 @@
+1.4:
+- New: side button control
+- New: picker animation
+- New: introduction + help
+- New: Spanish translation
+
+1.3:
+- New: big controls when picker is hidden
+- New: changelog and rate
+- Improved: sound synchronicity
+- Improved: tap BPM calculation
+- Improved: square watches
+
+1.2:
+- New: German translation
+- New: bookmarks (switch between two values)
+- Improved: beat emphasis on main screen
+- Improved: settings and launcher icon
+
+1.1:
+- New: beat emphasis
+- Fixed: don't keep screen awake when paused

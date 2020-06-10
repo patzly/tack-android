@@ -1,0 +1,37 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+
+    defaultConfig {
+        applicationId "xyz.zedler.patrick.tack"
+        minSdkVersion 23
+        targetSdkVersion 29
+        versionCode 51 // last number is 1 for wear release
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles {
+                getDefaultProguardFile('proguard-android-optimize.txt')
+                'proguard-rules.pro'
+            }
+        }
+    }
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+    buildToolsVersion '29.0.2'
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.wear:wear:1.0.0'
+    implementation 'androidx.preference:preference:1.1.1'
+
+    compileOnly 'com.google.android.wearable:wearable:2.7.0'
+    implementation "com.google.android.support:wearable:2.7.0"
+}

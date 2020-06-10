@@ -1,0 +1,260 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.Tack" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primaryVariant</item>
+        <item name="colorOnPrimary">@color/onPrimary</item>
+
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorOnSecondary">@color/on_secondary</item>
+
+        <item name="android:colorBackground">@color/background</item>
+        <item name="colorOnBackground">@color/onBackground</item>
+        <item name="android:colorForeground">@color/onBackground</item>
+
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/on_surface</item>
+        <item name="snackbarButtonStyle">@style/Theme.Tack.Button.TextButton.Snackbar</item>
+
+        <item name="android:colorControlNormal">@color/onBackground</item>
+        <item name="android:colorControlActivated">@color/secondary</item>
+        <item name="android:colorControlHighlight">@color/highlight</item>
+        <item name="android:colorEdgeEffect">@color/highlight</item>
+        <item name="android:statusBarColor">@color/grey500</item>
+        <item name="android:navigationBarColor">@color/black</item>
+
+        <item name="android:fontFamily">@font/roboto_mono_regular</item>
+    </style>
+
+    <style name="Theme.Tack.BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primaryVariant</item>
+        <item name="colorOnPrimary">@color/onPrimary</item>
+
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorOnSecondary">@color/on_secondary</item>
+
+        <item name="android:colorBackground">@color/surface</item>
+        <item name="colorOnBackground">@color/on_surface</item>
+        <item name="android:colorForeground">@color/on_surface</item>
+
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/on_surface</item>
+
+        <item name="android:colorEdgeEffect">@color/highlight</item>
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/black</item>
+        <item name="android:windowIsFloating">false</item>
+
+        <item name="bottomSheetStyle">@style/Shape.Tack.BottomSheet</item>
+    </style>
+
+    <style name="Theme.Tack.Button.TextButton.Snackbar" parent="Widget.MaterialComponents.Button.TextButton.Snackbar">
+        <item name="android:fontFamily">@font/roboto_mono_bold</item>
+    </style>
+
+    <!-- Divider -->
+    <style name="Theme.Tack.Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:background">@color/stroke_secondary</item>
+    </style>
+
+    <!-- Category -->
+    <style name="Theme.Tack.Category" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">72dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">3dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.Tack.Category</item>
+    </style>
+
+    <!-- List -->
+    <style name="Theme.Tack.ListItem" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="Theme.Tack.ListItem.Clickable" parent="Theme.Tack.ListItem">
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/bg_list_item_ripple</item>
+    </style>
+
+    <style name="Theme.Tack.ListItem.SingleLine" parent="Theme.Tack.ListItem">
+        <item name="android:minHeight">56dp</item>
+    </style>
+
+    <style name="Theme.Tack.ListItem.SingleLine.Clickable" parent="Theme.Tack.ListItem.SingleLine">
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/bg_list_item_ripple</item>
+    </style>
+
+    <style name="Theme.Tack.ListItem.TwoLine" parent="Theme.Tack.ListItem">
+        <item name="android:minHeight">72dp</item>
+    </style>
+
+    <style name="Theme.Tack.ListItem.TwoLine.Clickable" parent="Theme.Tack.ListItem.TwoLine">
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/bg_list_item_ripple</item>
+    </style>
+
+    <style name="Theme.Tack.ListItem.ThreeLine" parent="Theme.Tack.ListItem">
+        <item name="android:minHeight">88dp</item>
+    </style>
+
+    <style name="Theme.Tack.ListItem.ThreeLine.Clickable" parent="Theme.Tack.ListItem.ThreeLine">
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/bg_list_item_ripple</item>
+    </style>
+
+    <style name="Theme.Tack.ListItem.TextBox" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="Theme.Tack.ListItem.TextBox.Stretch" parent="Theme.Tack.ListItem.TextBox">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+    </style>
+
+    <style name="Theme.Tack.ListItem.Title" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:textAppearance">@style/TextAppearance.Tack.ListItem.Title</item>
+        <item name="android:maxLines">2</item>
+    </style>
+
+    <style name="Theme.Tack.ListItem.Description" parent="Theme.Tack.ListItem.Title">
+        <item name="android:textAppearance">@style/TextAppearance.Tack.ListItem.Description</item>
+        <item name="android:maxLines">10</item>
+    </style>
+
+    <!-- Icon -->
+    <style name="Theme.Tack.ListItem.Icon" parent="">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_gravity">start|center_vertical</item>
+        <item name="android:layout_marginEnd">32dp</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+
+    <style name="Theme.Tack.ListItem.Icon.Top" parent="Theme.Tack.ListItem.Icon">
+        <item name="android:layout_gravity">start|top</item>
+    </style>
+
+    <!-- WIDGETS -->
+
+    <style name="Widget.Tack.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:minHeight">34dp</item>
+    </style>
+
+    <style name="Widget.Tack.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">16dp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+    </style>
+
+    <style name="Widget.Tack.TextInputLayout.FilledBox" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="boxBackgroundColor">@color/onBackgroundTertiary</item>
+        <item name="boxStrokeColor">@color/secondary</item>
+        <item name="hintTextColor">@color/secondary</item>
+        <item name="android:textColorHint">@color/onBackgroundSecondary</item>
+        <item name="errorTextColor">@color/error</item>
+    </style>
+
+    <style name="Widget.Tack.Button.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="rippleColor">@color/secondary_translucent</item>
+        <item name="iconTint">@color/icon</item>
+        <item name="android:textColor">@color/secondary</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/roboto_mono_bold</item>
+        <item name="strokeColor">@color/stroke_secondary</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <!-- SHAPES -->
+
+    <style name="Shape.Tack.BottomSheet" parent="">
+        <item name="android:background">@drawable/shape_bottom_sheet_background</item>
+    </style>
+
+    <!-- TEXT APPEARANCES -->
+
+    <style name="TextAppearance.Tack.Body1" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textColor">@color/onBackground</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:fontFamily">@font/roboto_mono_regular</item>
+    </style>
+
+    <style name="TextAppearance.Tack.Chip" parent="TextAppearance.Tack.Body1">
+        <item name="android:textColor">@color/onBackground</item>
+        <item name="android:textSize">15sp</item>
+        <item name="fontFamily">@font/roboto_mono_medium</item>
+    </style>
+
+    <style name="TextAppearance.Tack.Toolbar" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textColor">@color/onPrimary</item>
+        <item name="android:textSize" tools:ignore="SpUsage">20dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAlignment">viewStart</item>
+        <item name="android:fontFamily">@font/roboto_mono_bold</item>
+    </style>
+
+    <style name="TextAppearance.Tack.Category" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/secondary</item>
+        <item name="android:textAlignment">viewStart</item>
+    </style>
+
+    <style name="TextAppearance.Tack.ListItem.Title" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/onBackground</item>
+        <item name="android:textAlignment">viewStart</item>
+    </style>
+
+    <style name="TextAppearance.Tack.ListItem.Description" parent="TextAppearance.MaterialComponents.Body1">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/onBackgroundSecondary</item>
+        <item name="android:textAlignment">viewStart</item>
+    </style>
+
+    <style name="TextAppearance.Tack.BottomSheet.Title" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/onBackground</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textAlignment">viewStart</item>
+    </style>
+
+    <style name="TextAppearance.Tack.BottomSheet.Text" parent="TextAppearance.MaterialComponents.Body2">
+        <item name="android:textColor">@color/onBackground</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textAlignment">viewStart</item>
+    </style>
+
+    <style name="TextAppearance.Tack.BottomSheet.Text.Small" parent="TextAppearance.Tack.BottomSheet.Text">
+        <item name="android:textSize">13sp</item>
+    </style>
+
+</resources>

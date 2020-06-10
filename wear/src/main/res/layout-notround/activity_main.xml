@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<androidx.wear.widget.SwipeDismissFrameLayout
+    android:id="@+id/swipe_dismiss"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background">
+
+        <xyz.zedler.patrick.tack.view.BpmPickerView
+            android:id="@+id/bpm_picker"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:importantForAccessibility="yes"
+            android:focusableInTouchMode="true"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:gravity="center">
+
+                <FrameLayout
+                    android:id="@+id/frame_settings"
+                    android:layout_width="@dimen/icon_touch_target_size"
+                    android:layout_height="@dimen/icon_touch_target_size"
+                    android:background="?attr/actionBarItemBackground"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:contentDescription="@string/title_settings"
+                    android:focusable="true"
+                    tools:ignore="UselessParent">
+
+                    <ImageView
+                        android:id="@+id/image_settings"
+                        android:layout_width="@dimen/icon_size_no_picker"
+                        android:layout_height="@dimen/icon_size_no_picker"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_round_settings_anim"/>
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <FrameLayout
+                    android:id="@+id/frame_emphasis"
+                    android:layout_width="@dimen/icon_touch_target_size"
+                    android:layout_height="@dimen/icon_touch_target_size"
+                    android:layout_gravity="center_vertical|start"
+                    android:background="?attr/actionBarItemBackground"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:contentDescription="@string/title_emphasis"
+                    android:focusable="true"
+                    android:clipChildren="false">
+
+                    <TextView
+                        android:id="@+id/text_emphasis"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="7dp"
+                        android:layout_marginStart="2dp"
+                        android:fontFamily="@font/material_digits_rounded"
+                        android:letterSpacing="0.12"
+                        android:textColor="@color/on_background_secondary"
+                        android:textSize="12dp"
+                        tools:ignore="SpUsage"/>
+
+                    <ImageView
+                        android:id="@+id/image_emphasis"
+                        android:layout_width="@dimen/icon_size_no_picker"
+                        android:layout_height="@dimen/icon_size_no_picker"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="8dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_round_emphasis_anim" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:ignore="SpUsage"
+                    android:layout_gravity="center">
+
+                    <TextView
+                        android:id="@+id/text_bpm"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/on_background_primary"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="14dp"
+                        android:layout_gravity="center_horizontal|top"
+                        android:textSize="34dp" />
+
+                    <TextView
+                        android:id="@+id/text_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/title_bpm"
+                        android:textColor="@color/on_background_secondary"
+                        android:textStyle="bold"
+                        android:layout_gravity="center_horizontal|bottom"
+                        android:textSize="14dp"/>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/frame_bookmark"
+                    android:layout_width="@dimen/icon_touch_target_size"
+                    android:layout_height="@dimen/icon_touch_target_size"
+                    android:layout_gravity="center_vertical|end"
+                    android:background="?attr/actionBarItemBackground"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:contentDescription="@string/title_bookmark"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/image_bookmark"
+                        android:layout_width="@dimen/icon_size_no_picker"
+                        android:layout_height="@dimen/icon_size_no_picker"
+                        android:src="@drawable/ic_round_bookmark_anim"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"/>
+
+                </FrameLayout>
+
+            </FrameLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1.3">
+
+                <FrameLayout
+                    android:id="@+id/frame_tempo_tap"
+                    android:layout_width="@dimen/icon_touch_target_size"
+                    android:layout_height="@dimen/icon_touch_target_size"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:background="?attr/actionBarItemBackground"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:contentDescription="@string/title_tempo_tap"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/image_tempo_tap"
+                        android:layout_width="@dimen/icon_size_no_picker"
+                        android:layout_height="@dimen/icon_size_no_picker"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_round_touch_app_anim"/>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/frame_play_pause"
+                    android:layout_width="@dimen/action_button_size"
+                    android:layout_height="@dimen/action_button_size"
+                    android:background="@drawable/circle_button"
+                    android:backgroundTint="@color/secondary"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:layout_centerInParent="true"
+                    android:contentDescription="@string/title_play_pause"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/image_play_pause"
+                        android:layout_width="@dimen/icon_size_no_picker"
+                        android:layout_height="@dimen/icon_size_no_picker"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_round_play_to_pause_anim"
+                        android:importantForAccessibility="no"/>
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/frame_beat_mode"
+                    android:layout_width="@dimen/icon_touch_target_size"
+                    android:layout_height="@dimen/icon_touch_target_size"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentTop="true"
+                    android:background="?attr/actionBarItemBackground"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:contentDescription="@string/title_beat_mode"
+                    android:focusable="true">
+
+                    <ImageView
+                        android:id="@+id/image_beat_mode"
+                        android:layout_width="@dimen/icon_size_no_picker"
+                        android:layout_height="@dimen/icon_size_no_picker"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"/>
+
+                </FrameLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</androidx.wear.widget.SwipeDismissFrameLayout>

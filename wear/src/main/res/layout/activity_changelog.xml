@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xyz.zedler.patrick.tack.view.CustomScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/list_margin_top"
+        android:paddingBottom="@dimen/list_margin_bottom">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="12dp"
+            android:textSize="16sp"
+            android:textColor="@color/on_background_primary"
+            android:fontFamily="@font/roboto_mono_medium"
+            android:text="@string/title_changelog"/>
+
+        <TextView
+            android:id="@+id/text_changelog"
+            android:layout_gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:paddingBottom="20dp"
+            android:textSize="12sp"
+            android:textColor="@color/on_background_primary"/>
+
+    </LinearLayout>
+
+</xyz.zedler.patrick.tack.view.CustomScrollView>

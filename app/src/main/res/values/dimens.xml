@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="bpm_picker_size">170dp</dimen>
+    <dimen name="bpm_text_size">30dp</dimen>
+    <dimen name="control_margin_bottom">32dp</dimen>
+
+    <dimen name="dotted_ring_dot_size_min">6dp</dimen>
+    <dimen name="dotted_ring_dot_size_max">8dp</dimen>
+    <dimen name="dotted_ring_width">30dp</dimen>
+
+    <dimen name="chip_stroke_width">1dp</dimen>
+    <dimen name="chip_stroke_width_active">2dp</dimen>
+
+</resources>
