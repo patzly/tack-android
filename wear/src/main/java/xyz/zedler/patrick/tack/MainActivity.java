@@ -39,6 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
 import xyz.zedler.patrick.tack.util.Constants;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
 
@@ -48,6 +49,7 @@ public class MainActivity extends WearableActivity
     private final static String TAG = MainActivity.class.getSimpleName();
     private final static boolean DEBUG = false;
 
+    private ActivityMainBinding binding;
     private SharedPreferences sharedPrefs;
     private Vibrator vibrator;
     private int bpm, emphasis, emphasisIndex, rotaryFactorIndex = 0, rotatedPrev = 0;
@@ -81,6 +83,7 @@ public class MainActivity extends WearableActivity
         interval = sharedPrefs.getLong(Constants.PREF.INTERVAL, 500);
         bpm = toBpm(interval);
 
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(hidePicker ? R.layout.activity_main : R.layout.activity_main_picker);
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);

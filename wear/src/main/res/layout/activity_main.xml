@@ -42,7 +42,8 @@
                     android:clickable="true"
                     android:gravity="center"
                     android:contentDescription="@string/title_settings"
-                    android:focusable="true">
+                    android:focusable="true"
+                    tools:ignore="UselessParent">
 
                     <ImageView
                         android:id="@+id/image_settings"
@@ -151,8 +152,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1.3"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp">
+                android:layout_marginStart="@dimen/round_box_inset"
+                android:layout_marginEnd="@dimen/round_box_inset">
 
                 <FrameLayout
                     android:id="@+id/frame_tempo_tap"
@@ -181,7 +182,7 @@
                     android:layout_width="@dimen/action_button_size"
                     android:layout_height="@dimen/action_button_size"
                     android:background="@drawable/circle_button"
-                    android:backgroundTint="@color/secondary"
+                    android:backgroundTint="@color/retro_green_bg_white"
                     android:clickable="true"
                     android:gravity="center"
                     android:layout_centerInParent="true"

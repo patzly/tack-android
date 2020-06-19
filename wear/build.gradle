@@ -3,6 +3,10 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 29
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId "xyz.zedler.patrick.tack"
         minSdkVersion 23

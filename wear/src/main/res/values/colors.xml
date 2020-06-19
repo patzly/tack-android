@@ -5,10 +5,8 @@
     <color name="black">#000</color>
     <color name="transparent">#00000000</color>
 
-    <color name="retro_red">#e06a4e</color>
-    <color name="retro_yellow">#deb853</color>
-    <color name="retro_dirt">#e2d9a2</color>
     <color name="retro_green">#789f8a</color>
+    <color name="retro_green_bg_white">#689283</color>
     <color name="retro_dark">#0a373a</color>
 
     <color name="grey50">#f8f9fa</color>
