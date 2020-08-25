@@ -11,19 +11,22 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles {
+                getDefaultProguardFile('proguard-android-optimize.txt')
+                'proguard-rules.pro'
+            }
+            debuggable false
         }
     }
     compileOptions {
         targetCompatibility = 1.8
         sourceCompatibility = 1.8
     }
-    buildToolsVersion = '29.0.2'
+    buildToolsVersion = '29.0.3'
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.preference:preference:1.1.0'
-    implementation 'com.google.android.material:material:1.2.0-alpha05'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.preference:preference:1.1.1'
+    implementation 'com.google.android.material:material:1.2.0'
 }
