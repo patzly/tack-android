@@ -172,26 +172,6 @@
         <item name="android:minHeight">0dp</item>
     </style>
 
-    <style name="Widget.Tack.TextInputLayout.FilledBox" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="boxBackgroundColor">@color/onBackgroundTertiary</item>
-        <item name="boxStrokeColor">@color/secondary</item>
-        <item name="hintTextColor">@color/secondary</item>
-        <item name="android:textColorHint">@color/onBackgroundSecondary</item>
-        <item name="errorTextColor">@color/error</item>
-    </style>
-
-    <style name="Widget.Tack.Button.OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="rippleColor">@color/secondary_translucent</item>
-        <item name="iconTint">@color/icon</item>
-        <item name="android:textColor">@color/secondary</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:fontFamily">@font/roboto_mono_bold</item>
-        <item name="strokeColor">@color/stroke_secondary</item>
-        <item name="strokeWidth">1dp</item>
-    </style>
-
     <!-- SHAPES -->
 
     <style name="Shape.Tack.BottomSheet" parent="">

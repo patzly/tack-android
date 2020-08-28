@@ -49,7 +49,7 @@
 
     <!-- SECONDARY -->
 
-    <color name="secondary">@color/retro_green</color>
+    <color name="secondary">@color/retro_green_fg</color>
     <color name="secondary_translucent">#226bad9e</color>
     <color name="on_secondary">@color/white</color>
     <color name="highlight_on_secondary">#22ffffff</color>

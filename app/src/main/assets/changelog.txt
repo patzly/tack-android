@@ -2,6 +2,7 @@
 • New (phone): share Tack
 • Improved (phone): feedback
 • Improved: app icon
+• Improved: splash logo
 • Improved: colors and style
 
 1.4:

@@ -2,7 +2,8 @@
 • Neu (Smartphone): Tack teilen
 • Verbessert (Smartphone): Feedback
 • Verbessert: App-Icon
-• Verbessert: Aussehen
+• Verbessert: Start-Logo
+• Verbessert: Farben und Aussehen
 
 1.4:
 • Neu: BPM-Rad-Animation
