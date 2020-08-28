@@ -1,22 +1,25 @@
+1.5:
+• Verbessert: Aussehen
+
 1.4:
-- Neu: Steuerung mit Seitentasten
-- Neu: BPM-Rad-Animation
-- Neu: Einleitung und Hilfe
-- Neu: Spanische Übersetzung
+• Neu: Steuerung mit Seitentasten
+• Neu: BPM-Rad-Animation
+• Neu: Einleitung und Hilfe
+• Neu: Spanische Übersetzung
 
 1.3:
-- Neu: Große Icons wenn BPM-Rad versteckt
-- Neu: Changelog und Bewerten
-- Verbessert: Sound-Synchronität
-- Verbessert: Kalkulation beim BPM tippen
-- Verbessert: Quadratische Displays
+• Neu: Große Icons wenn BPM-Rad versteckt
+• Neu: Changelog und Bewerten
+• Verbessert: Sound-Synchronität
+• Verbessert: Kalkulation beim BPM tippen
+• Verbessert: Quadratische Displays
 
 1.2:
-- Neu: Deutsche Übersetzung
-- Neu: Lesezeichen (zwischen zwei Werten wechseln)
-- Verbessert: Schlagbetonung auf Startseite
-- Verbessert: Einstellungen und Launcher-Icon
+• Neu: Deutsche Übersetzung
+• Neu: Lesezeichen (zwischen zwei Werten wechseln)
+• Verbessert: Schlagbetonung auf Startseite
+• Verbessert: Einstellungen und Launcher-Icon
 
 1.1:
-- Neu: Schlagbetonung
-- Behoben: Display ausgehen lassen wenn pausiert
+• Neu: Schlagbetonung
+• Behoben: Display ausgehen lassen wenn pausiert

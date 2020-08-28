@@ -1,30 +1,34 @@
+1.5:
+• Neu (Smartphone): Tack teilen
+• Verbessert (Smartphone): Feedback
+• Verbessert: Aussehen
+
 1.4:
-- Neu: BPM-Rad-Animation
-- Neu (Wear OS): Steuerung mit Seitentasten
-- Neu (Wear OS): Einleitung und Hilfe
-- Neu (Wear OS): Spanische Übersetzung
-Korrekturen bitte an patrick@zedler.xyz
+• Neu: BPM-Rad-Animation
+• Neu (Wear OS): Steuerung mit Seitentasten
+• Neu (Wear OS): Einleitung und Hilfe
+• Neu (Wear OS): Spanische Übersetzung
 
 1.3:
-- Neu (Smartphone): Gedrückt halten für schnelle Änderung
-- Neu (Wear OS): Große Icons wenn BPM-Rad versteckt
-- Neu (Wear OS): Changelog und Bewerten
-- Verbessert: Sound-Synchronität
-- Verbessert: Kalkulation beim BPM tippen
-- Verbessert (Wear OS): Quadratische Displays
+• Neu (Smartphone): Gedrückt halten für schnelle Änderung
+• Neu (Wear OS): Große Icons wenn BPM-Rad versteckt
+• Neu (Wear OS): Changelog und Bewerten
+• Verbessert: Sound-Synchronität
+• Verbessert: Kalkulation beim BPM tippen
+• Verbessert (Wear OS): Quadratische Displays
 
 1.2:
-- Neu: Deutsche Übersetzung
-- Neu: Feedback-Pop-Up
-- Neu (Wear OS): Lesezeichen (zwischen zwei Werten wechseln)
-- Verbessert: Lesezeichen und Lizenzen
-- Verbessert (Wear OS): Schlagbetonung auf Hauptbildschirm
-- Verbessert (Wear OS): Einstellungen und Launcher-Icon
-- Behoben: Bug beim Touch auf den BPM-Regler
+• Neu: Deutsche Übersetzung
+• Neu: Feedback-Pop-Up
+• Neu (Wear OS): Lesezeichen (zwischen zwei Werten wechseln)
+• Verbessert: Lesezeichen und Lizenzen
+• Verbessert (Wear OS): Schlagbetonung auf Hauptbildschirm
+• Verbessert (Wear OS): Einstellungen und Launcher-Icon
+• Behoben: Bug beim Touch auf den BPM-Regler
 
 1.1:
-- Neu: Schlagbetonung
-- Neu: toggle "keep screen awake while playing"
-- Verbessert: Lesezeichen, "Über" und Einstellungen, Tempo tippen
-- Behoben: Shortcuts ließen den Launcher abstürzen
-- Behoben: Bildschirm ausgehen lassen wenn Metronom pausiert ist
+• Neu: Schlagbetonung
+• Neu: toggle "keep screen awake while playing"
+• Verbessert: Lesezeichen, "Über" und Einstellungen, Tempo tippen
+• Behoben: Shortcuts ließen den Launcher abstürzen
+• Behoben: Bildschirm ausgehen lassen wenn Metronom pausiert ist
