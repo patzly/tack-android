@@ -1,7 +1,7 @@
 <resources>
 
     <string name="app_name" translatable="false">Tack</string>
-    <string name="app_version" translatable="false">1.4</string>
+    <string name="app_version" translatable="false">1.5</string>
 
     <string name="title_bpm">BPM</string>
     <string name="title_settings">Settings</string>
