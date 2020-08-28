@@ -93,7 +93,7 @@
         @color/stroke_primary
     </color>
 
-    <color name="bpm_picker">@color/retro_red</color>
+    <color name="bpm_picker">@color/retro_red_fg</color>
     <color name="bookmark_active">@color/retro_yellow</color>
 
     <color name="splash_primary">@color/retro_green</color>
