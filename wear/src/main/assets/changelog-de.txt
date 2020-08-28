@@ -1,6 +1,6 @@
 1.5:
 • Verbessert: App-Icon
-• Verbessert: Aussehen
+• Verbessert: Farben und Aussehen
 
 1.4:
 • Neu: Steuerung mit Seitentasten

@@ -1,6 +1,6 @@
 1.5:
 • Improved: app icon
-• Improved: colors and style
+• Improved: colors and appearance
 
 1.4:
 • New: side button control
