@@ -45,7 +45,6 @@
     <color name="bpm_picker">@color/retro_dirt</color>
     <color name="bookmark_active">@color/retro_red</color>
 
-    <color name="splash_primary">@color/retro_green</color>
-    <color name="splash_secondary">@color/retro_red</color>
+    <color name="splash_dark">#ccffffff</color>
 
 </resources>

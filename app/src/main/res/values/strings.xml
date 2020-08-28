@@ -44,8 +44,6 @@
     <string name="setting_keep_awake_description">When metronome is playing</string>
     <string name="setting_dark_mode">Force dark mode</string>
     <string name="setting_dark_mode_description">Off for system dependency</string>
-    <string name="setting_include_info">Include information</string>
-    <string name="setting_include_info_description">For system dependent bugs</string>
 
     <string name="title_feedback">Feedback</string>
     <string name="title_settings">Settings</string>

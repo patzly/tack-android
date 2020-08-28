@@ -4,7 +4,6 @@
     <string name="app_name">Tack</string>
 
     <string name="action_close">Schließen</string>
-    <string name="action_send">Senden</string>
     <string name="action_back">Zurück</string>
     <string name="action_more">Mehr</string>
     <string name="action_less">Weniger</string>
@@ -14,15 +13,19 @@
     <string name="action_bookmark">Lesezeichen</string>
     <string name="action_beat_mode">Modus</string>
     <string name="action_send_feedback">Feedback senden</string>
+    <string name="action_share">Teilen</string>
+    <string name="action_email">Email senden</string>
+    <string name="action_email_description">Entwickler kontaktieren</string>
     <string name="action_rate">Bei Google Play bewerten</string>
-    <string name="action_rate_description">Unterstütze die Entwicklung</string>
+    <string name="action_rate_description">Entwicklung unterstützen</string>
 
     <string name="notification_title">Metronom läuft</string>
     <string name="notification_desc">Tippe, um zu stoppen</string>
     <string name="notification_channel">Metronom</string>
 
     <string name="msg_bookmarks_max">Bookmark-Limit erreicht</string>
-    <string name="msg_feedback">Gefällt dir die App?</string>
+    <string name="msg_feedback">Eine tolle App kostet viel Zeit und lebt von der Rückmeldung ihrer Nutzer.\n\nHaben Sie Wünsche, Anmerkungen oder Fragen? Schreiben Sie mir!\nAnsonsten freue ich mich über eine nette Bewertung im Play Store.</string>
+    <string name="msg_share">Schau mal diese coole Metronom-App: \nhttps://play.google.com/store/apps/details?id=xyz.zedler.patrick.tack</string>
 
     <string name="title_bpm">%1$s BPM</string>
     <string name="title_bpm_label">BPM</string>
@@ -39,8 +42,6 @@
     <string name="setting_keep_awake_description">Wenn Metronom tickt</string>
     <string name="setting_dark_mode">Dunkles Theme erzwingen</string>
     <string name="setting_dark_mode_description">Aus für Systemabhängigkeit</string>
-    <string name="setting_include_info">Informationen anfügen</string>
-    <string name="setting_include_info_description">Für systemabhängige Fehler</string>
 
     <string name="title_feedback">Feedback</string>
     <string name="title_settings">Einstellungen</string>
@@ -54,9 +55,5 @@
     <string name="info_developer">Entwickler</string>
 
     <string name="category_licenses">Open-Source-Lizenzen</string>
-
-    <string name="hint_subject">Betreff</string>
-    <string name="hint_body">Mitteilung</string>
-    <string name="hint_error_empty">Benötigt</string>
 
 </resources>
