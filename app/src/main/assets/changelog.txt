@@ -1,6 +1,7 @@
 1.5:
 • New (phone): share Tack
 • Improved (phone): feedback
+• Improved: app icon
 • Improved: colors and style
 
 1.4:

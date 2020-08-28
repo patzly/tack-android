@@ -1,4 +1,5 @@
 1.5:
+• Improved: app icon
 • Improved: colors and style
 
 1.4:

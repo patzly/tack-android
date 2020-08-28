@@ -3,10 +3,13 @@ package xyz.zedler.patrick.tack.fragment;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +24,8 @@ import xyz.zedler.patrick.tack.util.IconUtil;
 public class FeedbackBottomSheetDialogFragment extends CustomBottomSheetDialogFragment {
 
 	private final static String TAG = "FeedbackBottomSheet";
+
+	private SharedPreferences sharedPrefs;
 
 	@NonNull
 	@Override
@@ -42,6 +47,8 @@ public class FeedbackBottomSheetDialogFragment extends CustomBottomSheetDialogFr
 
 		Activity activity = getActivity();
 		assert activity != null;
+
+		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity);
 
 		view.findViewById(R.id.linear_feedback_rate).setOnClickListener(v -> {
 			IconUtil.start(view, R.id.image_feedback_rate);
@@ -80,6 +87,15 @@ public class FeedbackBottomSheetDialogFragment extends CustomBottomSheetDialogFr
 		});
 
 		return view;
+	}
+
+	@Override
+	public void onDismiss(@NonNull DialogInterface dialog) {
+		super.onDismiss(dialog);
+
+		if(sharedPrefs.getInt("feedback_pop_up", 1) != 0) {
+			sharedPrefs.edit().putInt("feedback_pop_up", 0).apply();
+		}
 	}
 
 	@NonNull

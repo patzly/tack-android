@@ -7,17 +7,14 @@
       android:scaleY="0.75">
     <path
         android:pathData="M0,144h144V0H0z"
-        android:fillColor="#ffffff"
-        android:fillAlpha="1"/>
+        android:fillColor="#ffffff"/>
     <path
-        android:pathData="M71.977,40.479C71.149,40.491 70.488,41.172 70.5,42v4.5H67c-2.028,-0.029 -2.028,3.029 0,3h3.5v10H67c-2.028,-0.029 -2.028,3.029 0,3h3.5v10H67c-2.028,-0.029 -2.028,3.029 0,3h3.5v22.002c-0.029,2.028 3.029,2.028 3,0V75.5H77c2.028,0.029 2.028,-3.029 0,-3h-3.5v-10H77c2.028,0.029 2.028,-3.029 0,-3h-3.5v-10H77c2.028,0.029 2.028,-3.029 0,-3H73.5V42c0.012,-0.846 -0.677,-1.535 -1.523,-1.521z"
-        android:strokeAlpha="1"
+        android:pathData="m72,44.019c-1.105,0 -2,0.895 -2,2v3.334h-2.48c-1.105,0 -2,0.895 -2,2 0,1.105 0.895,2 2,2H70v9.295h-2.48c-1.105,0 -2,0.895 -2,2 0,1.105 0.895,2 2,2H70v9.795h-2.48c-1.105,0 -2,0.895 -2,2 0,1.105 0.896,1.963 2,2H70V144h4V80.443h2.48c1.105,0 2,-0.895 2,-2 0,-1.105 -0.895,-2 -2,-2H74v-9.795h2.48c1.105,0 2,-0.895 2,-2 0,-1.105 -0.895,-2 -2,-2H74V53.353h2.48c1.105,0 2,-0.895 2,-2 0,-1.105 -0.895,-2 -2,-2H74v-3.334c0,-1.105 -0.895,-2 -2,-2z"
         android:strokeLineJoin="miter"
-        android:strokeWidth="3"
-        android:fillColor="#789f8a"
+        android:strokeWidth="4"
+        android:fillColor="#6e927f"
         android:strokeColor="#00000000"
         android:fillType="nonZero"
-        android:fillAlpha="1"
         android:strokeLineCap="round"/>
   </group>
 </vector>

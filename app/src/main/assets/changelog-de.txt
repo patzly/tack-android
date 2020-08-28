@@ -1,6 +1,7 @@
 1.5:
 • Neu (Smartphone): Tack teilen
 • Verbessert (Smartphone): Feedback
+• Verbessert: App-Icon
 • Verbessert: Aussehen
 
 1.4:

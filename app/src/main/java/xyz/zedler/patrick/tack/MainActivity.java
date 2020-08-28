@@ -347,10 +347,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if(feedback < 5) {
                 sharedPrefs.edit().putInt("feedback_pop_up", feedback + 1).apply();
             } else {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .add(new FeedbackBottomSheetDialogFragment(), "bottomSheetDialog")
-                        .commit();
+                new FeedbackBottomSheetDialogFragment().show(
+                        getSupportFragmentManager(),
+                        "feedback"
+                );
             }
         }
     }
