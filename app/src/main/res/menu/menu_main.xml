@@ -14,6 +14,11 @@
         app:showAsAction="never"/>
 
     <item
+        android:id="@+id/action_share"
+        android:title="@string/action_share"
+        app:showAsAction="never"/>
+
+    <item
         android:id="@+id/action_feedback"
         android:title="@string/action_send_feedback"
         app:showAsAction="never"/>

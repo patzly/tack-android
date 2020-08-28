@@ -87,7 +87,7 @@
 
     <style name="Theme.Tack.ListItem.Clickable" parent="Theme.Tack.ListItem">
         <item name="android:clickable">true</item>
-        <item name="android:background">@drawable/bg_list_item_ripple</item>
+        <item name="android:background">@drawable/bg_list_item</item>
     </style>
 
     <style name="Theme.Tack.ListItem.SingleLine" parent="Theme.Tack.ListItem">
@@ -96,7 +96,7 @@
 
     <style name="Theme.Tack.ListItem.SingleLine.Clickable" parent="Theme.Tack.ListItem.SingleLine">
         <item name="android:clickable">true</item>
-        <item name="android:background">@drawable/bg_list_item_ripple</item>
+        <item name="android:background">@drawable/bg_list_item</item>
     </style>
 
     <style name="Theme.Tack.ListItem.TwoLine" parent="Theme.Tack.ListItem">
@@ -105,7 +105,7 @@
 
     <style name="Theme.Tack.ListItem.TwoLine.Clickable" parent="Theme.Tack.ListItem.TwoLine">
         <item name="android:clickable">true</item>
-        <item name="android:background">@drawable/bg_list_item_ripple</item>
+        <item name="android:background">@drawable/bg_list_item</item>
     </style>
 
     <style name="Theme.Tack.ListItem.ThreeLine" parent="Theme.Tack.ListItem">
@@ -114,7 +114,7 @@
 
     <style name="Theme.Tack.ListItem.ThreeLine.Clickable" parent="Theme.Tack.ListItem.ThreeLine">
         <item name="android:clickable">true</item>
-        <item name="android:background">@drawable/bg_list_item_ripple</item>
+        <item name="android:background">@drawable/bg_list_item</item>
     </style>
 
     <style name="Theme.Tack.ListItem.TextBox" parent="">
@@ -216,7 +216,6 @@
     <style name="TextAppearance.Tack.Toolbar" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">@color/onPrimary</item>
         <item name="android:textSize" tools:ignore="SpUsage">20dp</item>
-        <item name="android:textStyle">bold</item>
         <item name="android:textAlignment">viewStart</item>
         <item name="android:fontFamily">@font/roboto_mono_bold</item>
     </style>

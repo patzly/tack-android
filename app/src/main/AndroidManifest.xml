@@ -32,8 +32,6 @@
 
         <activity android:name=".SettingsActivity" />
 
-        <activity android:name=".FeedbackActivity" />
-
         <service android:name=".service.MetronomeService" />
 
     </application>

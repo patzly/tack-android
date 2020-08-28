@@ -114,8 +114,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case R.id.action_about:
                     startActivity(new Intent(this, AboutActivity.class));
                     break;
+                case R.id.action_share:
+                    Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share));
+                    sendIntent.setType("text/plain");
+                    startActivity(Intent.createChooser(sendIntent, null));
+                    break;
                 case R.id.action_feedback:
-                    startActivity(new Intent(this, FeedbackActivity.class));
+                    new FeedbackBottomSheetDialogFragment().show(
+                            getSupportFragmentManager(),
+                            "feedback"
+                    );
                     break;
             }
             return true;

@@ -6,7 +6,6 @@
     <string name="app_mail" translatable="false">patrick@zedler.xyz</string>
 
     <string name="action_close">Close</string>
-    <string name="action_send">Send</string>
     <string name="action_back">Back</string>
     <string name="action_more">More</string>
     <string name="action_less">Less</string>
@@ -16,6 +15,9 @@
     <string name="action_bookmark">Bookmark</string>
     <string name="action_beat_mode">Beat mode</string>
     <string name="action_send_feedback">Send feedback</string>
+    <string name="action_share">Share</string>
+    <string name="action_email">Send email</string>
+    <string name="action_email_description">Contact the developers</string>
     <string name="action_rate">Rate on Google Play</string>
     <string name="action_rate_description">Support the developer</string>
 
@@ -24,7 +26,8 @@
     <string name="notification_channel">Metronome</string>
 
     <string name="msg_bookmarks_max">Bookmark limit reached</string>
-    <string name="msg_feedback">Enjoying this app?</string>
+    <string name="msg_feedback">A great app requires a lot of time and lives from the feedback of its users.\n\nDo you have any wishes, comments or questions? Contact me!\nOtherwise I would be very happy about a nice review in the Play Store.</string>
+    <string name="msg_share">Try this cool metronome app: \nhttps://play.google.com/store/apps/details?id=xyz.zedler.patrick.tack</string>
 
     <string name="title_bpm">%1$s BPM</string>
     <string name="title_bpm_label">BPM</string>
@@ -56,10 +59,6 @@
     <string name="info_developer">Developer</string>
 
     <string name="category_licenses">Open source licenses</string>
-
-    <string name="hint_subject">Subject</string>
-    <string name="hint_body">Content</string>
-    <string name="hint_error_empty">Required</string>
 
     <string name="license_metronome" translatable="false">Metronome Android</string>
     <string name="license_metronome_link" translatable="false">https://github.com/fennifith/Metronome-Android</string>

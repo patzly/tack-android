@@ -22,6 +22,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
+import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
 
 public class SettingsActivity extends AppCompatActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
@@ -60,7 +61,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 					startActivity(new Intent(this, AboutActivity.class));
 					break;
 				case R.id.action_feedback:
-					startActivity(new Intent(this, FeedbackActivity.class));
+					new FeedbackBottomSheetDialogFragment().show(
+							getSupportFragmentManager(),
+							"feedback"
+					);
 					break;
 			}
 			return true;

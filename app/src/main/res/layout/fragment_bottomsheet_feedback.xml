@@ -1,40 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp"
     android:orientation="vertical">
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginBottom="8dp"
-        android:text="@string/title_feedback"
-        android:textAppearance="@style/TextAppearance.Tack.BottomSheet.Title" />
-
-    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:textAlignment="viewStart"
-        android:text="@string/msg_feedback"
-        android:textSize="15sp"
-        android:textAppearance="@style/TextAppearance.Tack.BottomSheet.Text"/>
+        android:padding="16dp"
+        android:text="@string/title_feedback"
+        android:fontFamily="@font/roboto_mono_bold"
+        android:textAppearance="@style/TextAppearance.Tack.BottomSheet.Title"/>
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_feedback_rate"
-        style="@style/Widget.Tack.Button.OutlinedButton"
+    <View
+        style="@style/Theme.Tack.Divider"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp" />
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/action_rate" />
+        android:scrollbars="none">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_feedback_send_feedback"
-        style="@style/Widget.Tack.Button.OutlinedButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/action_send_feedback" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:textAlignment="viewStart"
+                android:text="@string/msg_feedback"
+                android:textSize="15sp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textAppearance="@style/TextAppearance.Tack.BottomSheet.Text"/>
+
+            <LinearLayout
+                android:id="@+id/linear_feedback_rate"
+                style="@style/Theme.Tack.ListItem.TwoLine.Clickable"
+                android:background="@drawable/bg_list_item_surface">
+
+                <ImageView
+                    android:id="@+id/image_feedback_rate"
+                    style="@style/Theme.Tack.ListItem.Icon"
+                    android:src="@drawable/ic_round_star_anim"
+                    tools:ignore="ContentDescription" />
+
+                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox">
+
+                    <TextView
+                        style="@style/Theme.Tack.ListItem.Title"
+                        android:text="@string/action_rate" />
+
+                    <TextView
+                        style="@style/Theme.Tack.ListItem.Description"
+                        android:text="@string/action_rate_description" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_feedback_email"
+                style="@style/Theme.Tack.ListItem.TwoLine.Clickable"
+                android:background="@drawable/bg_list_item_surface">
+
+                <ImageView
+                    android:id="@+id/image_feedback_email"
+                    style="@style/Theme.Tack.ListItem.Icon"
+                    android:src="@drawable/ic_round_email"
+                    tools:ignore="ContentDescription" />
+
+                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox">
+
+                    <TextView
+                        style="@style/Theme.Tack.ListItem.Title"
+                        android:text="@string/action_email" />
+
+                    <TextView
+                        style="@style/Theme.Tack.ListItem.Description"
+                        android:text="@string/action_email_description" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>
