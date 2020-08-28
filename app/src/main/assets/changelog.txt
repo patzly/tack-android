@@ -1,9 +1,10 @@
 1.5:
 • New (phone): share Tack
-• Improved (phone): feedback
-• Improved: app icon
-• Improved: splash logo
 • Improved: colors and style
+• Improved: app icon
+• Improved (phone): feedback
+• Improved (phone): splash logo
+• Improved (phone): landscape mode
 
 1.4:
 • New: picker animation

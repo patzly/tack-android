@@ -118,7 +118,7 @@
                         android:textColor="@color/onBackgroundSecondary"
                         android:textStyle="bold"
                         android:layout_gravity="center_horizontal|bottom"
-                        android:textSize="13dp"/>
+                        android:textSize="15dp"/>
 
                 </LinearLayout>
 

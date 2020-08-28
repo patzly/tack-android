@@ -2,7 +2,7 @@
 <resources>
 
     <dimen name="bpm_picker_size">170dp</dimen>
-    <dimen name="bpm_text_size">30dp</dimen>
+    <dimen name="bpm_text_size">36dp</dimen>
     <dimen name="control_margin_bottom">32dp</dimen>
 
     <dimen name="dotted_ring_dot_size_min">6dp</dimen>
