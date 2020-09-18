@@ -1,7 +1,6 @@
 package xyz.zedler.patrick.tack.fragment;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
@@ -40,6 +39,7 @@ public class EmphasisBottomSheetDialogFragment extends CustomBottomSheetDialogFr
 		);
 
 		activity = (MainActivity) getActivity();
+		assert activity != null;
 
 		binding.sliderEmphasis.setValue(
 				PreferenceManager.getDefaultSharedPreferences(
@@ -47,13 +47,11 @@ public class EmphasisBottomSheetDialogFragment extends CustomBottomSheetDialogFr
 				).getInt("emphasis", 0)
 		);
 
-		return binding.getRoot();
-	}
+		binding.sliderEmphasis.addOnChangeListener(
+				(slider, value, fromUser) -> activity.setEmphasis(Math.round(value))
+		);
 
-	@Override
-	public void onDismiss(@NonNull DialogInterface dialog) {
-		super.onDismiss(dialog);
-		if(activity!= null) activity.setEmphasis(Math.round(binding.sliderEmphasis.getValue()));
+		return binding.getRoot();
 	}
 
 	@Override
