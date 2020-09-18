@@ -1,5 +1,5 @@
 1.6:
-• New (phone): option for slider as emphasis selection
+• New (phone): option for controls to select emphasis
 
 1.5:
 • New (phone): share Tack

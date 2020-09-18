@@ -1,5 +1,5 @@
 1.6:
-• Neu (Smartphone): Option for controls to select emphasis
+• Neu (Smartphone): Option für Regler zur Auswahl der Betonung
 
 1.5:
 • Neu (Smartphone): Tack teilen
