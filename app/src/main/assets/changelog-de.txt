@@ -1,3 +1,6 @@
+1.6:
+• Neu (Smartphone): Option for controls to select emphasis
+
 1.5:
 • Neu (Smartphone): Tack teilen
 • Verbessert: App-Icon

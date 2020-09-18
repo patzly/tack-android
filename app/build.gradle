@@ -11,7 +11,7 @@ android {
         applicationId "xyz.zedler.patrick.tack"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 60 // last number is 0 for app release
+        versionCode 70 // last number is 0 for app release
     }
     buildTypes {
         release {

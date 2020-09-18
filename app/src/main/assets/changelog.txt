@@ -1,3 +1,6 @@
+1.6:
+• New (phone): option for slider as emphasis selection
+
 1.5:
 • New (phone): share Tack
 • Improved: colors and appearance
