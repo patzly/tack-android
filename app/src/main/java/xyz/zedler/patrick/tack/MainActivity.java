@@ -49,6 +49,7 @@ import java.util.List;
 import java.util.Objects;
 
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
+import xyz.zedler.patrick.tack.fragment.EmphasisBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
@@ -371,6 +372,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(isBound) service.updateTick();
     }
 
+    public void setEmphasis(int emphasis) {
+        sharedPrefs.edit().putInt("emphasis", emphasis).apply();
+        textViewEmphasis.setText(String.valueOf(emphasis));
+        if(isBound) service.updateTick();
+    }
+
     private static int toBpm(long interval) {
         return (int) (60000 / interval);
     }
@@ -466,7 +473,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.frame_emphasis:
                 startAnimatedIcon(imageViewEmphasis);
-                setNextEmphasis();
+                if(sharedPrefs.getBoolean("emphasis_slider", false)) {
+                    new EmphasisBottomSheetDialogFragment().show(
+                            getSupportFragmentManager(), "emphasis"
+                    );
+                } else {
+                    setNextEmphasis();
+                }
                 break;
         }
     }

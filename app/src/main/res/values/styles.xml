@@ -91,6 +91,10 @@
         <item name="android:maxLines">10</item>
     </style>
 
+    <style name="Theme.Tack.Tooltip" parent="Widget.MaterialComponents.Tooltip">
+        <item name="android:textAppearance">@style/TextAppearance.Tack.Tooltip</item>
+    </style>
+
     <!-- Icon -->
     <style name="Theme.Tack.ListItem.Icon" parent="">
         <item name="android:layout_width">24dp</item>
@@ -184,6 +188,10 @@
 
     <style name="TextAppearance.Tack.BottomSheet.Text.Small" parent="TextAppearance.Tack.BottomSheet.Text">
         <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="TextAppearance.Tack.Tooltip" parent="TextAppearance.MaterialComponents.Tooltip">
+        <item name="android:textColor">@color/tooltip_text</item>
     </style>
 
 </resources>

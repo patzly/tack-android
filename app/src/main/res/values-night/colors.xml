@@ -49,6 +49,8 @@
         @color/stroke_primary
     </color>
 
+    <color name="tooltip_text">@color/black</color>
+
     <color name="bpm_picker">@color/retro_dirt</color>
     <color name="bookmark_active">@color/retro_red</color>
 

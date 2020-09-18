@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:padding="16dp"
+        android:text="@string/action_emphasis"
+        android:fontFamily="@font/roboto_mono_bold"
+        android:textAppearance="@style/TextAppearance.Tack.BottomSheet.Title"/>
+
+    <View
+        style="@style/Theme.Tack.Divider"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp" />
+
+    <com.google.android.material.slider.Slider
+        android:id="@+id/slider_emphasis"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:valueFrom="0"
+        android:valueTo="15"
+        android:stepSize="1"
+        app:trackColorInactive="@color/secondary_translucent"
+        app:trackColorActive="@color/secondary"
+        app:tickColorInactive="@color/secondary"
+        app:tickColorActive="#97b4ad"
+        app:thumbColor="@color/secondary"
+        app:haloColor="@color/secondary_translucent"
+        app:labelStyle="@style/Theme.Tack.Tooltip" />
+
+</LinearLayout>

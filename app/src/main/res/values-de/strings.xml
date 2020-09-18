@@ -38,6 +38,8 @@
     <string name="setting_sound_beep">Beep</string>
     <string name="setting_vibrate_always">Immer vibrieren</string>
     <string name="setting_vibrate_always_description">Auch mit Ton</string>
+    <string name="setting_slider_emphasis">Regler-Eingabe</string>
+    <string name="setting_slider_emphasis_description">Für Auswahl von betonung</string>
     <string name="setting_keep_awake">Bildschirm anlassen</string>
     <string name="setting_keep_awake_description">Wenn Metronom tickt</string>
     <string name="setting_dark_mode">Dunkles Theme erzwingen</string>

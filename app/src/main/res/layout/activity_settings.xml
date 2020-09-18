@@ -161,6 +161,34 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/linear_slider_emphasis"
+                style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
+
+                <ImageView
+                    android:id="@+id/image_slider_emphasis"
+                    style="@style/Theme.Tack.ListItem.Icon"
+                    android:src="@drawable/ic_round_swap_horiz_anim"
+                    tools:ignore="ContentDescription" />
+
+                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox.Stretch">
+
+                    <TextView
+                        style="@style/Theme.Tack.ListItem.Title"
+                        android:text="@string/setting_slider_emphasis" />
+
+                    <TextView
+                        style="@style/Theme.Tack.ListItem.Description"
+                        android:text="@string/setting_slider_emphasis_description" />
+
+                </LinearLayout>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_slider_emphasis"
+                    style="@style/Widget.Tack.Switch"/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/linear_dark_mode"
                 style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
 

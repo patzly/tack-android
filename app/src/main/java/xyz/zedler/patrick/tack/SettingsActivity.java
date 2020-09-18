@@ -32,7 +32,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 	private long lastClick = 0;
 	private SharedPreferences sharedPrefs;
 	private ImageView imageViewDarkMode;
-	private SwitchMaterial switchDarkMode, switchVibrateAlways, switchKeepAwake;
+	private SwitchMaterial switchDarkMode, switchVibrateAlways, switchSlider, switchKeepAwake;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +108,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 		switchVibrateAlways.setChecked(sharedPrefs.getBoolean("vibrate_always",false));
 		switchVibrateAlways.setOnCheckedChangeListener(this);
 
+		switchSlider = findViewById(R.id.switch_slider_emphasis);
+		switchSlider.setChecked(sharedPrefs.getBoolean("emphasis_slider",false));
+		switchSlider.setOnCheckedChangeListener(this);
+
 		switchKeepAwake = findViewById(R.id.switch_keep_awake);
 		switchKeepAwake.setChecked(sharedPrefs.getBoolean("keep_awake",true));
 		switchKeepAwake.setOnCheckedChangeListener(this);
@@ -122,6 +126,7 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 		setOnClickListeners(
 				R.id.linear_dark_mode,
 				R.id.linear_vibrate_always,
+				R.id.linear_slider_emphasis,
 				R.id.linear_keep_awake
 		);
 	}
@@ -162,6 +167,9 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 			case R.id.linear_vibrate_always:
 				switchVibrateAlways.setChecked(!switchVibrateAlways.isChecked());
 				break;
+			case R.id.linear_slider_emphasis:
+				switchSlider.setChecked(!switchSlider.isChecked());
+				break;
 			case R.id.linear_keep_awake:
 				switchKeepAwake.setChecked(!switchKeepAwake.isChecked());
 				break;
@@ -192,6 +200,10 @@ public class SettingsActivity extends AppCompatActivity implements View.OnClickL
 			case R.id.switch_vibrate_always:
 				//startAnimatedIcon(R.id.image_dark_mode);
 				sharedPrefs.edit().putBoolean("vibrate_always", isChecked).apply();
+				break;
+			case R.id.switch_slider_emphasis:
+				startAnimatedIcon(R.id.image_slider_emphasis);
+				sharedPrefs.edit().putBoolean("emphasis_slider", isChecked).apply();
 				break;
 			case R.id.switch_keep_awake:
 				//startAnimatedIcon(R.id.image_dark_mode);

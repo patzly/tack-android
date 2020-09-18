@@ -50,7 +50,7 @@
     <!-- SECONDARY -->
 
     <color name="secondary">@color/retro_green_fg</color>
-    <color name="secondary_translucent">#226bad9e</color>
+    <color name="secondary_translucent">#666bad9e</color>
     <color name="on_secondary">@color/white</color>
     <color name="highlight_on_secondary">#22ffffff</color>
 
@@ -92,6 +92,8 @@
     <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">
         @color/stroke_primary
     </color>
+
+    <color name="tooltip_text">@color/white</color>
 
     <color name="bpm_picker">@color/retro_red_fg</color>
     <color name="bookmark_active">@color/retro_yellow</color>
