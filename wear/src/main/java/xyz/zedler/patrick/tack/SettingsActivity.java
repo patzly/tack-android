@@ -8,6 +8,7 @@ import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.wearable.activity.WearableActivity;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -86,47 +87,40 @@ public class SettingsActivity extends WearableActivity
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()) {
-            case R.id.linear_setting_sound:
-                startAnimatedIcon(R.id.image_sound);
-                setNextSound();
-                break;
-            case R.id.linear_setting_vibrate_always:
-                switchVibrateAlways.setChecked(!switchVibrateAlways.isChecked());
-                break;
-            case R.id.linear_setting_wrist_gestures:
-                switchWristGestures.setChecked(!switchWristGestures.isChecked());
-                break;
-            case R.id.linear_setting_hide_picker:
-                switchHidePicker.setChecked(!switchHidePicker.isChecked());
-                break;
-            case R.id.linear_setting_animations:
-                switchAnimations.setChecked(!switchAnimations.isChecked());
-                break;
-            case R.id.linear_changelog:
-                startAnimatedIcon(R.id.image_changelog);
-                startActivity(new Intent(this, ChangelogActivity.class));
-                break;
-            case R.id.linear_rate:
-                startAnimatedIcon(R.id.image_rate);
-                Uri uri = Uri.parse(
-                        "market://details?id=" + getApplicationContext().getPackageName()
-                );
-                Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
-                goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
-                        Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
-                        Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-                new Handler().postDelayed(() -> {
-                    try {
-                        startActivity(goToMarket);
-                    } catch (ActivityNotFoundException e) {
-                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
-                                "http://play.google.com/store/apps/details?id="
-                                        + getApplicationContext().getPackageName()
-                        )));
-                    }
-                }, 300);
-                break;
+        int id = v.getId();
+        if (id == R.id.linear_setting_sound) {
+            startAnimatedIcon(R.id.image_sound);
+            setNextSound();
+        } else if (id == R.id.linear_setting_vibrate_always) {
+            switchVibrateAlways.setChecked(!switchVibrateAlways.isChecked());
+        } else if (id == R.id.linear_setting_wrist_gestures) {
+            switchWristGestures.setChecked(!switchWristGestures.isChecked());
+        } else if (id == R.id.linear_setting_hide_picker) {
+            switchHidePicker.setChecked(!switchHidePicker.isChecked());
+        } else if (id == R.id.linear_setting_animations) {
+            switchAnimations.setChecked(!switchAnimations.isChecked());
+        } else if (id == R.id.linear_changelog) {
+            startAnimatedIcon(R.id.image_changelog);
+            startActivity(new Intent(this, ChangelogActivity.class));
+        } else if (id == R.id.linear_rate) {
+            startAnimatedIcon(R.id.image_rate);
+            Uri uri = Uri.parse(
+                    "market://details?id=" + getApplicationContext().getPackageName()
+            );
+            Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+            goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+                    Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+                    Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                try {
+                    startActivity(goToMarket);
+                } catch (ActivityNotFoundException e) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+                            "http://play.google.com/store/apps/details?id="
+                                    + getApplicationContext().getPackageName()
+                    )));
+                }
+            }, 300);
         }
     }
 
@@ -172,20 +166,16 @@ public class SettingsActivity extends WearableActivity
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        switch (buttonView.getId()) {
-            case R.id.switch_setting_vibrate_always:
-                sharedPrefs.edit().putBoolean(Constants.PREF.VIBRATE_ALWAYS, isChecked).apply();
-                break;
-            case R.id.switch_setting_wrist_gestures:
-                sharedPrefs.edit().putBoolean(Constants.PREF.WRIST_GESTURES, isChecked).apply();
-                break;
-            case R.id.switch_setting_hide_picker:
-                sharedPrefs.edit().putBoolean(Constants.PREF.HIDE_PICKER, isChecked).apply();
-                break;
-            case R.id.switch_setting_animations:
-                sharedPrefs.edit().putBoolean(Constants.PREF.ANIMATIONS, isChecked).apply();
-                animations = isChecked;
-                break;
+        int id = buttonView.getId();
+        if (id == R.id.switch_setting_vibrate_always) {
+            sharedPrefs.edit().putBoolean(Constants.PREF.VIBRATE_ALWAYS, isChecked).apply();
+        } else if (id == R.id.switch_setting_wrist_gestures) {
+            sharedPrefs.edit().putBoolean(Constants.PREF.WRIST_GESTURES, isChecked).apply();
+        } else if (id == R.id.switch_setting_hide_picker) {
+            sharedPrefs.edit().putBoolean(Constants.PREF.HIDE_PICKER, isChecked).apply();
+        } else if (id == R.id.switch_setting_animations) {
+            sharedPrefs.edit().putBoolean(Constants.PREF.ANIMATIONS, isChecked).apply();
+            animations = isChecked;
         }
     }
 

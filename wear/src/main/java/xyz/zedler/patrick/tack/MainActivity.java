@@ -13,6 +13,7 @@ import android.media.SoundPool;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
@@ -66,7 +67,7 @@ public class MainActivity extends WearableActivity
     private boolean animations, vibrateAlways, wristGestures, hidePicker, isTouchStartedInRing;
     private boolean isFirstRotation, isFirstButtonPress, isPlaying = false;
     private double currAngle = 0, prevAngle, ringWidth, edgeWidth;
-    private List<Long> intervals = new ArrayList<>();
+    private final List<Long> intervals = new ArrayList<>();
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -93,7 +94,7 @@ public class MainActivity extends WearableActivity
                                 .build())
                 .build();
 
-        handler = new Handler();
+        handler = new Handler(Looper.getMainLooper());
 
         ringWidth = (float) getResources().getDimensionPixelSize(R.dimen.dotted_ring_width);
         edgeWidth = (float) getResources().getDimensionPixelSize(R.dimen.edge_width);
@@ -275,7 +276,7 @@ public class MainActivity extends WearableActivity
         }
         this.emphasis = emphasisNew;
         sharedPrefs.edit().putInt(Constants.PREF.EMPHASIS, emphasisNew).apply();
-        new Handler().postDelayed(
+        new Handler(Looper.getMainLooper()).postDelayed(
                 () -> textViewEmphasis.setText(String.valueOf(emphasisNew)),
                 animations ? 150 : 0
         );
@@ -418,114 +419,108 @@ public class MainActivity extends WearableActivity
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.frame_settings:
-                if (SystemClock.elapsedRealtime() - lastClick < 1000) return;
-                lastClick = SystemClock.elapsedRealtime();
-                if(animations) startAnimatedIcon(imageViewSettings);
+        int id = v.getId();
+        if (id == R.id.frame_settings) {
+            if (SystemClock.elapsedRealtime() - lastClick < 1000) return;
+            lastClick = SystemClock.elapsedRealtime();
+            if (animations) startAnimatedIcon(imageViewSettings);
 
-                if(isPlaying) {
-                    isPlaying = false;
-                    keepScreenOn(false);
-                    imageViewPlayPause.setImageResource(R.drawable.ic_round_play_arrow);
-                }
-                handler.removeCallbacks(this);
+            if (isPlaying) {
+                isPlaying = false;
+                keepScreenOn(false);
+                imageViewPlayPause.setImageResource(R.drawable.ic_round_play_arrow);
+            }
+            handler.removeCallbacks(this);
 
-                startActivity(new Intent(this, SettingsActivity.class));
-                break;
-            case R.id.frame_tempo_tap:
-                if(animations) startAnimatedIcon(imageViewTempoTap);
+            startActivity(new Intent(this, SettingsActivity.class));
+        } else if (id == R.id.frame_tempo_tap) {
+            if (animations) startAnimatedIcon(imageViewTempoTap);
 
-                long interval = System.currentTimeMillis() - prevTouchTime;
-                if(prevTouchTime > 0 && interval <= 6000) {
-                    if(intervals.size() >= 5) {
-                        intervals.remove(0);
-                    }
-                    intervals.add(System.currentTimeMillis() - prevTouchTime);
-                    if(intervals.size() > 1) {
-                        setBpm(toBpm(getIntervalAverage()));
-                    }
+            long interval = System.currentTimeMillis() - prevTouchTime;
+            if (prevTouchTime > 0 && interval <= 6000) {
+                if (intervals.size() >= 5) {
+                    intervals.remove(0);
                 }
-                prevTouchTime = System.currentTimeMillis();
-                break;
-            case R.id.frame_play_pause:
-                emphasisIndex = 0;
-                isPlaying = !isPlaying;
-                if (isPlaying) {
-                    handler.post(MainActivity.this);
-                } else {
-                    handler.removeCallbacks(MainActivity.this);
+                intervals.add(System.currentTimeMillis() - prevTouchTime);
+                if (intervals.size() > 1) {
+                    setBpm(toBpm(getIntervalAverage()));
                 }
-                keepScreenOn(isPlaying);
-                if(animations) {
-                    imageViewPlayPause.setImageResource(
-                            isPlaying
-                                    ? R.drawable.ic_round_play_to_pause_anim
-                                    : R.drawable.ic_round_pause_to_play_anim
-                    );
-                    startAnimatedIcon(imageViewPlayPause);
-                } else {
-                    imageViewPlayPause.setImageResource(
-                            isPlaying
-                                    ? R.drawable.ic_round_pause
-                                    : R.drawable.ic_round_play_arrow
-                    );
-                }
-                break;
-            case R.id.frame_beat_mode:
-                boolean beatModeVibrateNew = !sharedPrefs.getBoolean(
-                        Constants.PREF.BEAT_MODE_VIBRATE, true
+            }
+            prevTouchTime = System.currentTimeMillis();
+        } else if (id == R.id.frame_play_pause) {
+            emphasisIndex = 0;
+            isPlaying = !isPlaying;
+            if (isPlaying) {
+                handler.post(MainActivity.this);
+            } else {
+                handler.removeCallbacks(MainActivity.this);
+            }
+            keepScreenOn(isPlaying);
+            if (animations) {
+                imageViewPlayPause.setImageResource(
+                        isPlaying
+                                ? R.drawable.ic_round_play_to_pause_anim
+                                : R.drawable.ic_round_pause_to_play_anim
                 );
-                sharedPrefs.edit().putBoolean(
-                        Constants.PREF.BEAT_MODE_VIBRATE, beatModeVibrateNew
-                ).apply();
-                if (!beatModeVibrateNew) {
-                    soundId = soundPool.load(this, getSoundId(), 1);
-                } else soundId = -1;
-                if(animations) startAnimatedIcon(imageViewBeatMode);
-                new Handler().postDelayed(() -> {
-                    if(beatModeVibrateNew) {
-                        imageViewBeatMode.setImageResource(
-                                vibrateAlways
-                                        ? R.drawable.ic_round_volume_off_to_volume_on_anim
-                                        : R.drawable.ic_round_vibrate_to_volume_anim
-                        );
-                    } else {
-                        imageViewBeatMode.setImageResource(
-                                vibrateAlways
-                                        ? R.drawable.ic_round_volume_on_to_volume_off_anim
-                                        : R.drawable.ic_round_volume_to_vibrate_anim
-                        );
-                    }
-                }, animations ? 300 : 0);
-                break;
-            case R.id.frame_emphasis:
-                if(animations) startAnimatedIcon(imageViewEmphasis);
-                setNextEmphasis();
-                break;
-            case R.id.frame_bookmark:
-                if(animations) startAnimatedIcon(imageViewBookmark);
-                int bookmark = sharedPrefs.getInt(Constants.PREF.BOOKMARK, -1);
-                if(bookmark == -1) {
-                    Toast.makeText(
-                            this, R.string.msg_bookmark, Toast.LENGTH_LONG
-                    ).show();
-                    bookmark = bpm;
-                }
-                sharedPrefs.edit().putInt(Constants.PREF.BOOKMARK, bpm).apply();
-                int finalBookmark = bookmark;
-                textViewBpm.animate().alpha(0).setDuration(150).start();
-                new Handler().postDelayed(
-                        () -> {
-                            setBpm(finalBookmark);
-                            textViewBpm.animate()
-                                    .alpha(isPlaying ? 0.35f : 1)
-                                    .setDuration(150)
-                                    .start();
-                        },
-                        animations ? 150 : 0
+                startAnimatedIcon(imageViewPlayPause);
+            } else {
+                imageViewPlayPause.setImageResource(
+                        isPlaying
+                                ? R.drawable.ic_round_pause
+                                : R.drawable.ic_round_play_arrow
                 );
-                break;
+            }
+        } else if (id == R.id.frame_beat_mode) {
+            boolean beatModeVibrateNew = !sharedPrefs.getBoolean(
+                    Constants.PREF.BEAT_MODE_VIBRATE, true
+            );
+            sharedPrefs.edit().putBoolean(
+                    Constants.PREF.BEAT_MODE_VIBRATE, beatModeVibrateNew
+            ).apply();
+            if (!beatModeVibrateNew) {
+                soundId = soundPool.load(this, getSoundId(), 1);
+            } else soundId = -1;
+            if (animations) startAnimatedIcon(imageViewBeatMode);
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                if (beatModeVibrateNew) {
+                    imageViewBeatMode.setImageResource(
+                            vibrateAlways
+                                    ? R.drawable.ic_round_volume_off_to_volume_on_anim
+                                    : R.drawable.ic_round_vibrate_to_volume_anim
+                    );
+                } else {
+                    imageViewBeatMode.setImageResource(
+                            vibrateAlways
+                                    ? R.drawable.ic_round_volume_on_to_volume_off_anim
+                                    : R.drawable.ic_round_volume_to_vibrate_anim
+                    );
+                }
+            }, animations ? 300 : 0);
+        } else if (id == R.id.frame_emphasis) {
+            if (animations) startAnimatedIcon(imageViewEmphasis);
+            setNextEmphasis();
+        } else if (id == R.id.frame_bookmark) {
+            if (animations) startAnimatedIcon(imageViewBookmark);
+            int bookmark = sharedPrefs.getInt(Constants.PREF.BOOKMARK, -1);
+            if (bookmark == -1) {
+                Toast.makeText(
+                        this, R.string.msg_bookmark, Toast.LENGTH_LONG
+                ).show();
+                bookmark = bpm;
+            }
+            sharedPrefs.edit().putInt(Constants.PREF.BOOKMARK, bpm).apply();
+            int finalBookmark = bookmark;
+            textViewBpm.animate().alpha(0).setDuration(150).start();
+            new Handler(Looper.getMainLooper()).postDelayed(
+                    () -> {
+                        setBpm(finalBookmark);
+                        textViewBpm.animate()
+                                .alpha(isPlaying ? 0.35f : 1)
+                                .setDuration(150)
+                                .start();
+                    },
+                    animations ? 150 : 0
+            );
         }
     }
 

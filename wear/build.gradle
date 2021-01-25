@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 29
+    compileSdkVersion 30
 
     buildFeatures {
         viewBinding = true
@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId "xyz.zedler.patrick.tack"
         minSdkVersion 23
-        targetSdkVersion 29
+        targetSdkVersion 30
         versionCode 71 // last number is 1 for wear release
     }
 
@@ -27,15 +27,15 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
         sourceCompatibility JavaVersion.VERSION_1_8
     }
-    buildToolsVersion '29.0.3'
+    buildToolsVersion '30.0.3'
 }
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.wear:wear:1.0.0'
+    implementation 'androidx.wear:wear:1.1.0'
     implementation 'androidx.preference:preference:1.1.1'
 
-    compileOnly 'com.google.android.wearable:wearable:2.7.0'
-    implementation "com.google.android.support:wearable:2.7.0"
+    compileOnly 'com.google.android.wearable:wearable:2.8.1'
+    implementation "com.google.android.support:wearable:2.8.1"
 }

@@ -83,7 +83,11 @@ public class BpmPickerView extends View {
     }
 
     @Override
-    public void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
+    public void onFocusChanged(
+            boolean gainFocus,
+            int direction,
+            @Nullable Rect previouslyFocusedRect
+    ) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
         if(gainFocus) {
             requestFocus(direction, previouslyFocusedRect);
