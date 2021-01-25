@@ -17,7 +17,6 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.input.RotaryEncoder;
 import android.support.wearable.input.WearableButtons;
 import android.util.Log;
@@ -33,7 +32,9 @@ import android.widget.Toast;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.IdRes;
+import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
+import androidx.wear.ambient.AmbientModeSupport;
 import androidx.wear.widget.SwipeDismissFrameLayout;
 
 import java.util.ArrayList;
@@ -43,8 +44,9 @@ import java.util.Objects;
 import xyz.zedler.patrick.tack.util.Constants;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
 
-public class MainActivity extends WearableActivity
-        implements View.OnClickListener, Runnable, View.OnTouchListener {
+public class MainActivity extends FragmentActivity
+        implements View.OnClickListener, Runnable, View.OnTouchListener,
+        AmbientModeSupport.AmbientCallbackProvider {
 
     private final static String TAG = MainActivity.class.getSimpleName();
     private final static boolean DEBUG = false;
@@ -101,6 +103,8 @@ public class MainActivity extends WearableActivity
         prevAngle = 0;
 
         initViews();
+
+        AmbientModeSupport.attach(this);
 
         if(sharedPrefs.getBoolean(Constants.PREF.FIRST_START, true)) {
             startActivity(new Intent(this, WelcomeActivity.class));
@@ -221,6 +225,16 @@ public class MainActivity extends WearableActivity
             );
             soundId = soundPool.load(this, getSoundId(), 1);
         }
+    }
+
+    @Override
+    public AmbientModeSupport.AmbientCallback getAmbientCallback() {
+        return new AmbientModeSupport.AmbientCallback() {
+
+            public void onEnterAmbient(Bundle ambientDetails) { }
+
+            public void onExitAmbient(Bundle ambientDetails) { }
+        };
     }
 
     @Override

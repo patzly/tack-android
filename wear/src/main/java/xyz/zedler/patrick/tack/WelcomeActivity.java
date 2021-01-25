@@ -3,13 +3,14 @@ package xyz.zedler.patrick.tack;
 import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.wearable.activity.WearableActivity;
 import android.support.wearable.input.WearableButtons;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 
-public class WelcomeActivity extends WearableActivity {
+import androidx.fragment.app.FragmentActivity;
+
+public class WelcomeActivity extends FragmentActivity {
 
     @SuppressLint("ClickableViewAccessibility")
     @Override

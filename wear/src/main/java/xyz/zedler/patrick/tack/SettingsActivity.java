@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.wearable.activity.WearableActivity;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -17,11 +16,12 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.IdRes;
+import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 
 import xyz.zedler.patrick.tack.util.Constants;
 
-public class SettingsActivity extends WearableActivity
+public class SettingsActivity extends FragmentActivity
         implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     final static String TAG = SettingsActivity.class.getSimpleName();

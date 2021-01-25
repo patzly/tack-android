@@ -95,7 +95,7 @@
                         android:id="@+id/text_bpm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/on_background_primary"
+                        android:textColor="@color/on_background"
                         android:textStyle="bold"
                         android:layout_marginBottom="12dp"
                         android:layout_gravity="center_horizontal|top"

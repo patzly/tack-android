@@ -17,7 +17,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="12dp"
             android:textSize="16sp"
-            android:textColor="@color/on_background_primary"
+            android:textColor="@color/on_background"
             android:fontFamily="@font/roboto_mono_medium"
             android:text="@string/title_changelog"/>
 
@@ -30,7 +30,7 @@
             android:paddingEnd="20dp"
             android:paddingBottom="20dp"
             android:textSize="12sp"
-            android:textColor="@color/on_background_primary"/>
+            android:textColor="@color/on_background"/>
 
     </LinearLayout>
 

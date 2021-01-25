@@ -17,7 +17,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="12dp"
             android:textSize="16sp"
-            android:textColor="@color/on_background_primary"
+            android:textColor="@color/on_background"
             android:fontFamily="@font/roboto_mono_medium"
             android:text="@string/title_settings"/>
 
@@ -64,7 +64,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
                     android:text="@string/setting_sound"
-                    android:textColor="@color/on_background_primary"/>
+                    android:textColor="@color/on_background"/>
 
                 <TextView
                     android:id="@+id/text_setting_sound"
@@ -112,7 +112,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
                     android:text="@string/setting_vibrate_always"
-                    android:textColor="@color/on_background_primary"/>
+                    android:textColor="@color/on_background"/>
 
                 <TextView
                     android:layout_gravity="center_vertical"
@@ -160,7 +160,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
                     android:text="@string/setting_wrist_gestures"
-                    android:textColor="@color/on_background_primary"/>
+                    android:textColor="@color/on_background"/>
 
                 <TextView
                     android:layout_gravity="center_vertical"
@@ -208,7 +208,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
                     android:text="@string/setting_hide_picker"
-                    android:textColor="@color/on_background_primary"/>
+                    android:textColor="@color/on_background"/>
 
                 <TextView
                     android:layout_gravity="center_vertical"
@@ -249,7 +249,7 @@
                 android:layout_marginStart="8dp"
                 android:textSize="14sp"
                 android:text="@string/setting_animations"
-                android:textColor="@color/on_background_primary"/>
+                android:textColor="@color/on_background"/>
 
         </LinearLayout>
 
@@ -296,7 +296,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
                     android:text="@string/title_changelog"
-                    android:textColor="@color/on_background_primary"/>
+                    android:textColor="@color/on_background"/>
 
                 <TextView
                     android:layout_gravity="center_vertical"
@@ -346,7 +346,7 @@
                 android:layout_marginStart="8dp"
                 android:textSize="14sp"
                 android:text="@string/setting_rate"
-                android:textColor="@color/on_background_primary"/>
+                android:textColor="@color/on_background"/>
 
         </LinearLayout>
 

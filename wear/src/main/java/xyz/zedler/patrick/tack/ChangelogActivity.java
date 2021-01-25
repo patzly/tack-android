@@ -1,43 +1,53 @@
 package xyz.zedler.patrick.tack;
 
 import android.os.Bundle;
-import android.support.wearable.activity.WearableActivity;
-import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import androidx.fragment.app.FragmentActivity;
+import androidx.wear.ambient.AmbientModeSupport;
+
 import java.util.Locale;
 
-public class ChangelogActivity extends WearableActivity {
+import xyz.zedler.patrick.tack.databinding.ActivityChangelogBinding;
+import xyz.zedler.patrick.tack.util.ResUtil;
+
+public class ChangelogActivity extends FragmentActivity
+        implements AmbientModeSupport.AmbientCallbackProvider {
+
+    private ActivityChangelogBinding binding;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_changelog);
+        binding = ActivityChangelogBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         String file = "changelog";
         String fileLocalized = file + "-" + Locale.getDefault().getLanguage();
-        if(readFromFile(fileLocalized) != null) file = fileLocalized;
 
-        ((TextView) findViewById(R.id.text_changelog)).setText(readFromFile(file));
+        String localized = ResUtil.readFromFile(this, fileLocalized);
+        binding.textChangelog.setText(
+                localized != null
+                        ? localized
+                        : ResUtil.readFromFile(this, file)
+        );
+
+        AmbientModeSupport.attach(this);
     }
 
-    private String readFromFile(String fileName) {
-        StringBuilder text = new StringBuilder();
-        try {
-            InputStream inputStream = getAssets().open(fileName + ".txt");
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            for(String line; (line = bufferedReader.readLine()) != null;) {
-                text.append(line).append('\n');
-            }
-            text.deleteCharAt(text.length() - 1);
-            inputStream.close();
-        } catch (Exception e) {
-            return null;
-        }
-        return text.toString();
+    @Override
+    public AmbientModeSupport.AmbientCallback getAmbientCallback() {
+        return new AmbientModeSupport.AmbientCallback() {
+
+            public void onEnterAmbient(Bundle ambientDetails) { }
+
+            public void onExitAmbient(Bundle ambientDetails) { }
+        };
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null;
     }
 }
