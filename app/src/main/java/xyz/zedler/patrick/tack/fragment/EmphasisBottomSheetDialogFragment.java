@@ -15,7 +15,7 @@ import xyz.zedler.patrick.tack.MainActivity;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetEmphasisBinding;
 
-public class EmphasisBottomSheetDialogFragment extends CustomBottomSheetDialogFragment {
+public class EmphasisBottomSheetDialogFragment extends BaseBottomSheetDialogFragment {
 
 	private final static String TAG = "EmphasisBottomSheet";
 

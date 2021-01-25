@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.IconUtil;
 
-public class FeedbackBottomSheetDialogFragment extends CustomBottomSheetDialogFragment {
+public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFragment {
 
 	private final static String TAG = "FeedbackBottomSheet";
 
@@ -60,7 +61,7 @@ public class FeedbackBottomSheetDialogFragment extends CustomBottomSheetDialogFr
 					Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
 					Intent.FLAG_ACTIVITY_MULTIPLE_TASK |
 					Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-			new Handler().postDelayed(() -> {
+			new Handler(Looper.getMainLooper()).postDelayed(() -> {
 				try {
 					startActivity(goToMarket);
 				} catch (ActivityNotFoundException e) {

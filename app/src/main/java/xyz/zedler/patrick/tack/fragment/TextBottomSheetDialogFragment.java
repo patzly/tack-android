@@ -7,6 +7,7 @@ import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -67,7 +68,7 @@ public class TextBottomSheetDialogFragment extends BottomSheetDialogFragment {
 		if (link != null) {
 			frameLayoutLink.setOnClickListener(v -> {
 				((Animatable) ((ImageView) view.findViewById(R.id.image_text_open_link)).getDrawable()).start();
-				new Handler().postDelayed(
+				new Handler(Looper.getMainLooper()).postDelayed(
 						() -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link))),
 						500
 				);

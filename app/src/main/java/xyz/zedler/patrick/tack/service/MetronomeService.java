@@ -13,6 +13,7 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -69,7 +70,7 @@ public class MetronomeService extends Service implements Runnable {
         vibrateAlways = sharedPrefs.getBoolean("vibrate_always", false);
         bpm = toBpm(interval);
 
-        handler = new Handler();
+        handler = new Handler(Looper.getMainLooper());
     }
 
     @Override

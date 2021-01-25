@@ -6,6 +6,7 @@ import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -81,56 +82,51 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
 		}
 		mLastClickTime = SystemClock.elapsedRealtime();
 
-		switch(v.getId()) {
-			case R.id.linear_changelog:
-				startAnimatedIcon(R.id.image_changelog);
-				showTextBottomSheet("changelog", R.string.info_changelog, 0);
-				break;
-			case R.id.linear_developer:
-				startAnimatedIcon(R.id.image_developer);
-				new Handler().postDelayed(
-						() -> startActivity(
-								new Intent(
-										Intent.ACTION_VIEW,
-										Uri.parse(
-												"http://play.google.com/store/apps/dev?id=8122479227040208191"
-										)
-								)
-						), 300
-				);
-				break;
-			case R.id.linear_license_metronome:
-				startAnimatedIcon(R.id.image_license_metronome);
-				showTextBottomSheet(
-						"apache",
-						R.string.license_metronome,
-						R.string.license_metronome_link
-				);
-				break;
-			case R.id.linear_license_material_components:
-				startAnimatedIcon(R.id.image_license_material_components);
-				showTextBottomSheet(
-						"apache",
-						R.string.license_material_components,
-						R.string.license_material_components_link
-				);
-				break;
-			case R.id.linear_license_material_icons:
-				startAnimatedIcon(R.id.image_license_material_icons);
-				showTextBottomSheet(
-						"apache",
-						R.string.license_material_icons,
-						R.string.license_material_icons_link
-				);
-				break;
-			case R.id.linear_license_roboto:
-				startAnimatedIcon(R.id.image_license_roboto);
-				showTextBottomSheet(
-						"apache",
-						R.string.license_roboto,
-						R.string.license_roboto_link
-				);
-				break;
+		int id = v.getId();
+		if (id == R.id.linear_changelog) {
+			startAnimatedIcon(R.id.image_changelog);
+			showTextBottomSheet("changelog", R.string.info_changelog, 0);
+		} else if (id == R.id.linear_developer) {
+			startAnimatedIcon(R.id.image_developer);
+			new Handler(Looper.getMainLooper()).postDelayed(
+					() -> startActivity(
+							new Intent(
+									Intent.ACTION_VIEW,
+									Uri.parse(
+											"http://play.google.com/store/apps/dev?id=" +
+													"8122479227040208191"
+									)
+							)
+					), 300
+			);
+		} else if (id == R.id.linear_license_metronome) {
+			startAnimatedIcon(R.id.image_license_metronome);
+			showTextBottomSheet(
+					"apache",
+					R.string.license_metronome,
+					R.string.license_metronome_link
+			);
+		} else if (id == R.id.linear_license_material_components) {
+			startAnimatedIcon(R.id.image_license_material_components);
+			showTextBottomSheet(
+					"apache",
+					R.string.license_material_components,
+					R.string.license_material_components_link
+			);
+		} else if (id == R.id.linear_license_material_icons) {
+			startAnimatedIcon(R.id.image_license_material_icons);
+			showTextBottomSheet(
+					"apache",
+					R.string.license_material_icons,
+					R.string.license_material_icons_link
+			);
+		} else if (id == R.id.linear_license_roboto) {
+			startAnimatedIcon(R.id.image_license_roboto);
+			showTextBottomSheet(
+					"apache",
+					R.string.license_roboto,
+					R.string.license_roboto_link
+			);
 		}
 	}
 

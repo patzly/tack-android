@@ -18,6 +18,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -54,9 +55,10 @@ import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnTouchListener, ServiceConnection, MetronomeService.TickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener,
+        View.OnTouchListener, ServiceConnection, MetronomeService.TickListener {
 
-    private final static String TAG = "MainActivity";
+    private final static String TAG = MainActivity.class.getSimpleName();
     private final static boolean DEBUG = false;
 
     private SharedPreferences sharedPrefs;
@@ -65,13 +67,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ChipGroup chipGroup;
     private BpmPickerView bpmPickerView;
     private FrameLayout frameLayoutLess, frameLayoutMore, frameLayoutBookmark;
-    private ImageView imageViewLess, imageViewMore, imageViewTempoTap, imageViewBeatMode, imageViewEmphasis, imageViewBookmark;
+    private ImageView imageViewLess;
+    private ImageView imageViewMore;
+    private ImageView imageViewTempoTap;
+    private ImageView imageViewBeatMode;
+    private ImageView imageViewEmphasis;
+    private ImageView imageViewBookmark;
     private double currAngle = 0, prevAngle;
     private boolean isTouchStartedInRing;
     private long lastClick = 0, prevTouchTime;
     private float degreeStorage = 0, ringWidth;
     private final static int ROTATE_THRESHOLD = 10;
-    private List<Long> intervals = new ArrayList<>();
+    private final List<Long> intervals = new ArrayList<>();
 
     private boolean isBound;
     private MetronomeService service;
@@ -108,25 +115,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return false;
             }
             lastClick = SystemClock.elapsedRealtime();
-            switch (item.getItemId()) {
-                case R.id.action_settings:
-                    startActivity(new Intent(this, SettingsActivity.class));
-                    break;
-                case R.id.action_about:
-                    startActivity(new Intent(this, AboutActivity.class));
-                    break;
-                case R.id.action_share:
-                    Intent sendIntent = new Intent(Intent.ACTION_SEND);
-                    sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share));
-                    sendIntent.setType("text/plain");
-                    startActivity(Intent.createChooser(sendIntent, null));
-                    break;
-                case R.id.action_feedback:
-                    new FeedbackBottomSheetDialogFragment().show(
-                            getSupportFragmentManager(),
-                            "feedback"
-                    );
-                    break;
+            int itemId = item.getItemId();
+            if (itemId == R.id.action_settings) {
+                startActivity(new Intent(this, SettingsActivity.class));
+            } else if (itemId == R.id.action_about) {
+                startActivity(new Intent(this, AboutActivity.class));
+            } else if (itemId == R.id.action_share) {
+                Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share));
+                sendIntent.setType("text/plain");
+                startActivity(Intent.createChooser(sendIntent, null));
+            } else if (itemId == R.id.action_feedback) {
+                new FeedbackBottomSheetDialogFragment().show(
+                        getSupportFragmentManager(),
+                        "feedback"
+                );
             }
             return true;
         });
@@ -143,11 +146,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             private Handler handler;
             int nextRun = 500;
 
-            @Override public boolean onTouch(View v, MotionEvent event) {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
                 switch(event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         if (handler != null) return true;
-                        handler = new Handler();
+                        handler = new Handler(Looper.getMainLooper());
                         handler.postDelayed(runnable, ViewConfiguration.getLongPressTimeout());
                         break;
                     case MotionEvent.ACTION_CANCEL:
@@ -161,8 +165,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return false;
             }
 
-            Runnable runnable = new Runnable() {
-                @Override public void run() {
+            final Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
                     if(isBound()) {
                         if(service.getBpm() > 1) {
                             changeBpm(-1);
@@ -184,11 +189,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             private Handler handler;
             int nextRun = 500;
 
-            @Override public boolean onTouch(View v, MotionEvent event) {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
                 switch(event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         if (handler != null) return true;
-                        handler = new Handler();
+                        handler = new Handler(Looper.getMainLooper());
                         handler.postDelayed(runnable, ViewConfiguration.getLongPressTimeout());
                         break;
                     case MotionEvent.ACTION_CANCEL:
@@ -202,8 +208,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 return false;
             }
 
-            Runnable runnable = new Runnable() {
-                @Override public void run() {
+            final Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
                     if(isBound()) {
                         if(service.getBpm() < 300) {
                             changeBpm(1);
@@ -365,7 +372,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             emphasisNew = 0;
         }
         sharedPrefs.edit().putInt("emphasis", emphasisNew).apply();
-        new Handler().postDelayed(
+        new Handler(Looper.getMainLooper()).postDelayed(
                 () -> textViewEmphasis.setText(String.valueOf(emphasisNew)),
                 150
         );
@@ -384,12 +391,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.fab:
-                if (isBound()) {
-                    if (service.isPlaying())
-                        service.pause();
-                    else service.play();
+        int id = v.getId();
+        if (id == R.id.fab) {
+            if (isBound()) {
+                if (service.isPlaying())
+                    service.pause();
+                else service.play();
                     /*startAnimatedFabIcon();
                     new Handler().postDelayed(
                             () -> fab.setImageResource(
@@ -397,90 +404,83 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             ? R.drawable.ic_round_pause_to_play_anim
                                             : R.drawable.ic_round_play_to_pause_anim
                             ), 3000);*/
-                }
-                break;
-            case R.id.frame_less:
-                startAnimatedIcon(imageViewLess);
-                changeBpm(-1);
-                break;
-            case R.id.frame_more:
-                startAnimatedIcon(imageViewMore);
-                changeBpm(1);
-                break;
-            case R.id.frame_tempo_tap:
-                startAnimatedIcon(imageViewTempoTap);
+            }
+        } else if (id == R.id.frame_less) {
+            startAnimatedIcon(imageViewLess);
+            changeBpm(-1);
+        } else if (id == R.id.frame_more) {
+            startAnimatedIcon(imageViewMore);
+            changeBpm(1);
+        } else if (id == R.id.frame_tempo_tap) {
+            startAnimatedIcon(imageViewTempoTap);
 
-                long interval = System.currentTimeMillis() - prevTouchTime;
-                if(prevTouchTime > 0 && interval <= 6000) {
-                    if(intervals.size() == 4) {
-                        intervals.remove(0);
-                    }
-                    intervals.add(System.currentTimeMillis() - prevTouchTime);
-                    if(intervals.size() > 1) {
-                        setBpm(toBpm(getIntervalAverage()));
-                    }
+            long interval = System.currentTimeMillis() - prevTouchTime;
+            if (prevTouchTime > 0 && interval <= 6000) {
+                if (intervals.size() == 4) {
+                    intervals.remove(0);
                 }
-                prevTouchTime = System.currentTimeMillis();
-                break;
-            case R.id.frame_beat_mode:
-                boolean beatModeVibrateNew = !sharedPrefs.getBoolean("beat_mode_vibrate", true);
-                boolean vibrateAlways = sharedPrefs.getBoolean("vibrate_always", false);
-                sharedPrefs.edit().putBoolean("beat_mode_vibrate", beatModeVibrateNew).apply();
-                if(isBound()) service.updateTick();
-                startAnimatedIcon(imageViewBeatMode);
-                new Handler().postDelayed(() -> {
-                    if(beatModeVibrateNew) {
-                        imageViewBeatMode.setImageResource(
-                                vibrateAlways
-                                        ? R.drawable.ic_round_volume_off_to_volume_on_anim
-                                        : R.drawable.ic_round_vibrate_to_volume_anim
-                        );
-                    } else {
-                        imageViewBeatMode.setImageResource(
-                                vibrateAlways
-                                        ? R.drawable.ic_round_volume_on_to_volume_off_anim
-                                        : R.drawable.ic_round_volume_to_vibrate_anim
-                        );
-                    }
-                }, 300);
-                break;
-            case R.id.frame_bookmark:
-                startAnimatedIcon(imageViewBookmark);
-                if(isBound()) {
-                    if(bookmarks.size() < 3 && !bookmarks.contains(service.getBpm())) {
-                        chipGroup.addView(newChip(service.getBpm()));
-                        bookmarks.add(service.getBpm());
-                        updateBookmarks();
-                        refreshBookmark(true);
-                    } else if(bookmarks.size() >= 3) {
-                        Snackbar.make(
-                                findViewById(R.id.coordinator_container),
-                                getString(R.string.msg_bookmarks_max),
-                                Snackbar.LENGTH_LONG
-                        ).setAnchorView(fab)
-                                .setActionTextColor(ContextCompat.getColor(this, R.color.secondary))
-                                .setAction(
-                                        getString(R.string.action_clear_all),
-                                        v1 -> {
-                                            chipGroup.removeAllViews();
-                                            bookmarks.clear();
-                                            updateBookmarks();
-                                            refreshBookmark(true);
-                                        }
-                                ).show();
-                    }
+                intervals.add(System.currentTimeMillis() - prevTouchTime);
+                if (intervals.size() > 1) {
+                    setBpm(toBpm(getIntervalAverage()));
                 }
-                break;
-            case R.id.frame_emphasis:
-                startAnimatedIcon(imageViewEmphasis);
-                if(sharedPrefs.getBoolean("emphasis_slider", false)) {
-                    new EmphasisBottomSheetDialogFragment().show(
-                            getSupportFragmentManager(), "emphasis"
+            }
+            prevTouchTime = System.currentTimeMillis();
+        } else if (id == R.id.frame_beat_mode) {
+            boolean beatModeVibrateNew = !sharedPrefs.getBoolean("beat_mode_vibrate", true);
+            boolean vibrateAlways = sharedPrefs.getBoolean("vibrate_always", false);
+            sharedPrefs.edit().putBoolean("beat_mode_vibrate", beatModeVibrateNew).apply();
+            if (isBound()) service.updateTick();
+            startAnimatedIcon(imageViewBeatMode);
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                if (beatModeVibrateNew) {
+                    imageViewBeatMode.setImageResource(
+                            vibrateAlways
+                                    ? R.drawable.ic_round_volume_off_to_volume_on_anim
+                                    : R.drawable.ic_round_vibrate_to_volume_anim
                     );
                 } else {
-                    setNextEmphasis();
+                    imageViewBeatMode.setImageResource(
+                            vibrateAlways
+                                    ? R.drawable.ic_round_volume_on_to_volume_off_anim
+                                    : R.drawable.ic_round_volume_to_vibrate_anim
+                    );
                 }
-                break;
+            }, 300);
+        } else if (id == R.id.frame_bookmark) {
+            startAnimatedIcon(imageViewBookmark);
+            if (isBound()) {
+                if (bookmarks.size() < 3 && !bookmarks.contains(service.getBpm())) {
+                    chipGroup.addView(newChip(service.getBpm()));
+                    bookmarks.add(service.getBpm());
+                    updateBookmarks();
+                    refreshBookmark(true);
+                } else if (bookmarks.size() >= 3) {
+                    Snackbar.make(
+                            findViewById(R.id.coordinator_container),
+                            getString(R.string.msg_bookmarks_max),
+                            Snackbar.LENGTH_LONG
+                    ).setAnchorView(fab)
+                            .setActionTextColor(ContextCompat.getColor(this, R.color.secondary))
+                            .setAction(
+                                    getString(R.string.action_clear_all),
+                                    v1 -> {
+                                        chipGroup.removeAllViews();
+                                        bookmarks.clear();
+                                        updateBookmarks();
+                                        refreshBookmark(true);
+                                    }
+                            ).show();
+                }
+            }
+        } else if (id == R.id.frame_emphasis) {
+            startAnimatedIcon(imageViewEmphasis);
+            if (sharedPrefs.getBoolean("emphasis_slider", false)) {
+                new EmphasisBottomSheetDialogFragment().show(
+                        getSupportFragmentManager(), "emphasis"
+                );
+            } else {
+                setNextEmphasis();
+            }
         }
     }
 

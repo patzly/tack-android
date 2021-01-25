@@ -19,7 +19,7 @@ public class BpmPickerView extends View {
     public final int dots;
     private final Paint paint;
     private final float ringWidth, dotSizeMin, dotSizeMax;
-    private boolean dotsVisible;
+    private final boolean dotsVisible;
 
     public BpmPickerView(@NonNull Context context) {
         this(context, null);
