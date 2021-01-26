@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xyz.zedler.patrick.tack.view.CustomScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<xyz.zedler.patrick.tack.view.CustomScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:orientation="vertical"
@@ -13,7 +14,7 @@
 
         <TextView
             style="@style/Widget.Tack.Title"
-            android:text="@string/intro_welcome"/>
+            android:text="@string/onboarding_welcome"/>
 
         <TextView
             android:id="@+id/text_changelog"
@@ -22,8 +23,8 @@
             android:paddingStart="20dp"
             android:paddingEnd="20dp"
             android:paddingBottom="8dp"
-            android:textSize="13sp"
-            android:text="@string/intro_text"
+            android:textSize="14sp"
+            android:text="@string/onboarding_text"
             android:textColor="@color/on_background"/>
 
         <LinearLayout style="@style/Widget.Tack.ListItem">
@@ -44,11 +45,11 @@
 
                 <TextView
                     style="@style/Widget.Tack.ListItemLabel"
-                    android:text="@string/intro_picker"/>
+                    android:text="@string/onboarding_picker"/>
 
                 <TextView
                     style="@style/Widget.Tack.ListItemDescription"
-                    android:text="@string/intro_picker_description"/>
+                    android:text="@string/onboarding_picker_description"/>
 
             </LinearLayout>
 
@@ -72,11 +73,11 @@
 
                 <TextView
                     style="@style/Widget.Tack.ListItemLabel"
-                    android:text="@string/intro_rotary"/>
+                    android:text="@string/onboarding_rotary"/>
 
                 <TextView
                     style="@style/Widget.Tack.ListItemDescription"
-                    android:text="@string/intro_rotary_description"/>
+                    android:text="@string/onboarding_rotary_description"/>
 
             </LinearLayout>
 
@@ -109,11 +110,11 @@
 
                 <TextView
                     style="@style/Widget.Tack.ListItemLabel"
-                    android:text="@string/intro_fsb"/>
+                    android:text="@string/onboarding_fsb"/>
 
                 <TextView
                     style="@style/Widget.Tack.ListItemDescription"
-                    android:text="@string/intro_fsb_description"/>
+                    android:text="@string/onboarding_fsb_description"/>
 
             </LinearLayout>
 
@@ -141,7 +142,7 @@
 
                 <TextView
                     style="@style/Widget.Tack.ListItemDescription"
-                    android:text="@string/intro_wrist_description"/>
+                    android:text="@string/onboarding_wrist_description"/>
 
             </LinearLayout>
 

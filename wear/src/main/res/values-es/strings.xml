@@ -14,15 +14,15 @@
     <string name="msg_hide_picker">Esconder selector en los ajustes para controles más grandes</string>
     <string name="msg_long_press">Presione largo para cambiar rápidamente</string>
 
-    <string name="intro_welcome">Bienvenido!</string>
-    <string name="intro_text">Controla el valor de BPM con los siguientes métodos:</string>
-    <string name="intro_picker">Círculo de puntos</string>
-    <string name="intro_picker_description">Arrastrar para cambiar</string>
-    <string name="intro_wrist_description">Si está activado</string>
-    <string name="intro_rotary">Entrada rotativa</string>
-    <string name="intro_rotary_description">Gire la corona</string>
-    <string name="intro_fsb">Botones laterales</string>
-    <string name="intro_fsb_description">También pulsa largo</string>
+    <string name="onboarding_welcome">Bienvenido!</string>
+    <string name="onboarding_text">Controla el valor de BPM con los siguientes métodos:</string>
+    <string name="onboarding_picker">Círculo de puntos</string>
+    <string name="onboarding_picker_description">Arrastrar para cambiar</string>
+    <string name="onboarding_wrist_description">Si está activado</string>
+    <string name="onboarding_rotary">Entrada rotativa</string>
+    <string name="onboarding_rotary_description">Gire la corona</string>
+    <string name="onboarding_fsb">Botones laterales</string>
+    <string name="onboarding_fsb_description">También pulsa largo</string>
 
     <string name="setting_sound">Sonido de latido</string>
     <string name="setting_sound_wood">Madera</string>

@@ -14,15 +14,15 @@
     <string name="msg_hide_picker">Für größere Anzeige BPM-Rad in den Einstellungen verstecken</string>
     <string name="msg_long_press">Für größere Änderung gedrückt halten</string>
 
-    <string name="intro_welcome">Wilkommen!</string>
-    <string name="intro_text">Passe den BPM-Wert mit den folgenden Methoden an:</string>
-    <string name="intro_picker">Gepunkteter Kreis</string>
-    <string name="intro_picker_description">Wischen</string>
-    <string name="intro_wrist_description">Wenn aktiviert</string>
-    <string name="intro_rotary">Kronen-Eingabe</string>
-    <string name="intro_rotary_description">Drehe die Krone</string>
-    <string name="intro_fsb">Seitentasten</string>
-    <string name="intro_fsb_description">Auch gedrückt halten</string>
+    <string name="onboarding_welcome">Wilkommen!</string>
+    <string name="onboarding_text">Passe den BPM-Wert mit den folgenden Methoden an:</string>
+    <string name="onboarding_picker">Gepunkteter Kreis</string>
+    <string name="onboarding_picker_description">Wischen</string>
+    <string name="onboarding_wrist_description">Wenn aktiviert</string>
+    <string name="onboarding_rotary">Kronen-Eingabe</string>
+    <string name="onboarding_rotary_description">Drehe die Krone</string>
+    <string name="onboarding_fsb">Seitentasten</string>
+    <string name="onboarding_fsb_description">Auch gedrückt halten</string>
 
     <string name="setting_sound">Beat-Sound</string>
     <string name="setting_sound_wood">Holz</string>
