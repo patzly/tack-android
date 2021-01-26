@@ -1,12 +1,9 @@
 package xyz.zedler.patrick.tack;
 
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
@@ -18,19 +15,13 @@ import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.wearable.input.WearableButtons;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.RotateAnimation;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.ColorRes;
-import androidx.annotation.IdRes;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 import androidx.wear.ambient.AmbientModeSupport;
@@ -40,11 +31,10 @@ import com.google.android.wearable.input.RotaryEncoderHelper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
+import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
 import xyz.zedler.patrick.tack.util.Constants;
 import xyz.zedler.patrick.tack.util.ViewUtil;
-import xyz.zedler.patrick.tack.view.BpmPickerView;
 
 public class MainActivity extends FragmentActivity
         implements View.OnClickListener, Runnable, View.OnTouchListener,
@@ -53,17 +43,12 @@ public class MainActivity extends FragmentActivity
     private final static String TAG = MainActivity.class.getSimpleName();
     private final static boolean DEBUG = false;
 
+    private ActivityMainBinding binding;
     private SharedPreferences sharedPrefs;
     private Vibrator vibrator;
     private int bpm, emphasis, emphasisIndex, rotaryFactorIndex = 0, rotatedPrev = 0;
     private long lastClick = 0, prevTouchTime = 0, interval;
-    private ImageView imageViewSettings, imageViewPlayPause, imageViewTempoTap;
-    private ImageView imageViewBeatMode, imageViewEmphasis, imageViewBookmark;
     private Drawable drawableFabBg;
-    private SwipeDismissFrameLayout swipeDismissFrameLayout;
-    private BpmPickerView bpmPickerView;
-    private TextView textViewBpm, textViewLabel, textViewEmphasis;
-    private FrameLayout frameLayoutPlayPause;
     private SoundPool soundPool;
     private Handler handler;
     private int soundId = -1;
@@ -78,6 +63,9 @@ public class MainActivity extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         hidePicker = sharedPrefs.getBoolean(Constants.PREF.HIDE_PICKER, false);
@@ -86,8 +74,6 @@ public class MainActivity extends FragmentActivity
         interval = sharedPrefs.getLong(Constants.PREF.INTERVAL, 500);
         bpm = toBpm(interval);
 
-        setContentView(hidePicker ? R.layout.activity_main : R.layout.activity_main_picker);
-
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         soundPool = new SoundPool.Builder()
@@ -95,8 +81,8 @@ public class MainActivity extends FragmentActivity
                 .setAudioAttributes(
                         new AudioAttributes.Builder()
                                 .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                                .build())
-                .build();
+                                .build()
+                ).build();
 
         handler = new Handler(Looper.getMainLooper());
 
@@ -106,60 +92,56 @@ public class MainActivity extends FragmentActivity
 
         initViews();
 
-        AmbientModeSupport.attach(this).setAmbientOffloadEnabled(true);
-
         if(sharedPrefs.getBoolean(Constants.PREF.FIRST_START, true)) {
             startActivity(new Intent(this, OnboardingActivity.class));
             sharedPrefs.edit().putBoolean(Constants.PREF.FIRST_START, false).apply();
         }
+
+        AmbientModeSupport.attach(this).setAmbientOffloadEnabled(true);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null;
+        handler.removeCallbacks(this);
     }
 
     @SuppressLint({"RestrictedApi", "ClickableViewAccessibility"})
     private void initViews() {
-        textViewBpm = findViewById(R.id.text_bpm);
-        textViewBpm.setText(String.valueOf(bpm));
-        //textViewBpm.setText(String.format(Locale.getDefault(), "%1$d", bpm));
+        binding.textBpm.setText(String.valueOf(bpm));
+        //binding.textBpm.setText(String.format(Locale.getDefault(), "%1$d", bpm));
 
-        imageViewPlayPause = findViewById(R.id.image_play_pause);
-        imageViewPlayPause.setImageResource(R.drawable.ic_round_play_arrow);
+        binding.imagePlayPause.setImageResource(R.drawable.ic_round_play_arrow);
 
-        textViewLabel = findViewById(R.id.text_label);
-        imageViewSettings = findViewById(R.id.image_settings);
-        imageViewTempoTap = findViewById(R.id.image_tempo_tap);
-        imageViewBookmark = findViewById(R.id.image_bookmark);
-        frameLayoutPlayPause = findViewById(R.id.frame_play_pause);
-        drawableFabBg = frameLayoutPlayPause.getBackground();
-        imageViewEmphasis = findViewById(R.id.image_emphasis);
-        imageViewBeatMode = findViewById(R.id.image_beat_mode); // resource is set in onResume()
+        drawableFabBg = binding.framePlayPause.getBackground();
 
-        textViewEmphasis = findViewById(R.id.text_emphasis);
-        textViewEmphasis.setText(String.valueOf(
+        binding.textEmphasis.setText(String.valueOf(
                 sharedPrefs.getInt(Constants.PREF.EMPHASIS, 0))
         );
 
-        swipeDismissFrameLayout = findViewById(R.id.swipe_dismiss);
-        swipeDismissFrameLayout.addCallback(new SwipeDismissFrameLayout.Callback() {
+        binding.swipeDismiss.addCallback(new SwipeDismissFrameLayout.Callback() {
             @Override
             public void onDismissed(SwipeDismissFrameLayout layout) {
                 layout.setVisibility(View.GONE);
                 finish();
             }
         });
-        swipeDismissFrameLayout.setSwipeable(true);
+        binding.swipeDismiss.setSwipeable(true);
 
-        setOnClickListeners(
-                R.id.frame_settings,
-                R.id.frame_tempo_tap,
-                R.id.frame_play_pause,
-                R.id.frame_beat_mode,
-                R.id.frame_emphasis,
-                R.id.frame_bookmark
+        ViewUtil.setOnClickListeners(
+                this,
+                binding.frameSettings,
+                binding.frameTempoTap,
+                binding.framePlayPause,
+                binding.frameBeatMode,
+                binding.frameEmphasis,
+                binding.frameBookmark
         );
 
-        bpmPickerView = findViewById(R.id.bpm_picker);
-        bpmPickerView.setOnTouchListener(hidePicker ? null : this);
-        bpmPickerView.setDotsVisible(!hidePicker);
-        bpmPickerView.setOnGenericMotionListener((v, ev) -> {
+        binding.bpmPicker.setOnTouchListener(hidePicker ? null : this);
+        binding.bpmPicker.setDotsVisible(!hidePicker);
+        binding.bpmPicker.setOnGenericMotionListener((v, ev) -> {
             if (ev.getAction() == MotionEvent.ACTION_SCROLL
                     && RotaryEncoderHelper.isFromRotaryEncoder(ev)
             ) {
@@ -212,14 +194,14 @@ public class MainActivity extends FragmentActivity
         animations = sharedPrefs.getBoolean(Constants.PREF.ANIMATIONS, true);
 
         if(sharedPrefs.getBoolean(Constants.PREF.BEAT_MODE_VIBRATE, true)) {
-            imageViewBeatMode.setImageResource(
+            binding.imageBeatMode.setImageResource(
                     vibrateAlways
                             ? R.drawable.ic_round_volume_off_to_volume_on_anim
                             : R.drawable.ic_round_vibrate_to_volume_anim
             );
             soundId = -1;
         } else {
-            imageViewBeatMode.setImageResource(
+            binding.imageBeatMode.setImageResource(
                     vibrateAlways
                             ? R.drawable.ic_round_volume_on_to_volume_off_anim
                             : R.drawable.ic_round_volume_to_vibrate_anim
@@ -235,28 +217,28 @@ public class MainActivity extends FragmentActivity
             public void onEnterAmbient(Bundle ambientDetails) {
                 ViewUtil.setVisibility(
                         View.INVISIBLE,
-                        imageViewTempoTap,
-                        imageViewEmphasis,
-                        imageViewSettings,
-                        imageViewBookmark,
-                        imageViewBeatMode,
-                        frameLayoutPlayPause,
-                        textViewEmphasis,
-                        bpmPickerView
+                        binding.imageTempoTap,
+                        binding.imageEmphasis,
+                        binding.imageSettings,
+                        binding.imageBookmark,
+                        binding.imageBeatMode,
+                        binding.framePlayPause,
+                        binding.textEmphasis,
+                        binding.bpmPicker
                 );
             }
 
             public void onExitAmbient() {
                 ViewUtil.setVisibility(
                         View.VISIBLE,
-                        imageViewTempoTap,
-                        imageViewEmphasis,
-                        imageViewSettings,
-                        imageViewBookmark,
-                        imageViewBeatMode,
-                        frameLayoutPlayPause,
-                        textViewEmphasis,
-                        bpmPickerView
+                        binding.imageTempoTap,
+                        binding.imageEmphasis,
+                        binding.imageSettings,
+                        binding.imageBookmark,
+                        binding.imageBeatMode,
+                        binding.framePlayPause,
+                        binding.textEmphasis,
+                        binding.bpmPicker
                 );
             }
         };
@@ -316,7 +298,7 @@ public class MainActivity extends FragmentActivity
         this.emphasis = emphasisNew;
         sharedPrefs.edit().putInt(Constants.PREF.EMPHASIS, emphasisNew).apply();
         new Handler(Looper.getMainLooper()).postDelayed(
-                () -> textViewEmphasis.setText(String.valueOf(emphasisNew)),
+                () -> binding.textEmphasis.setText(String.valueOf(emphasisNew)),
                 animations ? 150 : 0
         );
     }
@@ -325,8 +307,8 @@ public class MainActivity extends FragmentActivity
     @Override
     public boolean onTouch(final View v, MotionEvent event) {
         if(v.getId() == R.id.bpm_picker) {
-            final float xc = (float) bpmPickerView.getWidth() / 2;
-            final float yc = (float) bpmPickerView.getHeight() / 2;
+            final float xc = (float) binding.bpmPicker.getWidth() / 2;
+            final float yc = (float) binding.bpmPicker.getHeight() / 2;
             final float x = event.getX();
             final float y = event.getY();
             boolean isTouchInsideRing = isTouchInsideRing(event.getX(), event.getY());
@@ -334,11 +316,11 @@ public class MainActivity extends FragmentActivity
             double angle = Math.toDegrees(Math.atan2(x - xc, yc - y));
             if(event.getAction() == MotionEvent.ACTION_DOWN) {
                 isTouchStartedInRing = isTouchInsideRing;
-                swipeDismissFrameLayout.setSwipeable(
+                binding.swipeDismiss.setSwipeable(
                         !(isTouchInsideRing && !isTouchEdge(event.getX()))
                 );
                 currAngle = angle;
-                bpmPickerView.setTouched(true, animations);
+                binding.bpmPicker.setTouched(true, animations);
             } else if(event.getAction() == MotionEvent.ACTION_MOVE) {
                 if(isTouchInsideRing || isTouchStartedInRing) {
                     prevAngle = currAngle;
@@ -349,8 +331,8 @@ public class MainActivity extends FragmentActivity
                     || event.getAction() == MotionEvent.ACTION_CANCEL
             ) {
                 prevAngle = currAngle = 0;
-                swipeDismissFrameLayout.setSwipeable(true);
-                bpmPickerView.setTouched(false, animations);
+                binding.swipeDismiss.setSwipeable(true);
+                binding.bpmPicker.setTouched(false, animations);
             }
             return true;
         } return false;
@@ -358,10 +340,10 @@ public class MainActivity extends FragmentActivity
 
     private boolean isTouchInsideRing(float x, float y) {
         float radius = (Math.min(
-                bpmPickerView.getWidth(), bpmPickerView.getHeight()
+                binding.bpmPicker.getWidth(), binding.bpmPicker.getHeight()
         ) / 2f) - (float) ringWidth;
-        double centerX = bpmPickerView.getPivotX();
-        double centerY = bpmPickerView.getPivotY();
+        double centerX = binding.bpmPicker.getPivotX();
+        double centerY = binding.bpmPicker.getPivotY();
         double distanceX = x - centerX;
         double distanceY = y - centerY;
         return !((distanceX * distanceX) + (distanceY * distanceY) <= radius * radius);
@@ -378,7 +360,7 @@ public class MainActivity extends FragmentActivity
         rotate.setDuration(0);
         rotate.setFillEnabled(true);
         rotate.setFillAfter(true);
-        bpmPickerView.startAnimation(rotate);
+        binding.bpmPicker.startAnimation(rotate);
         float degreeDiff = (float) toDegrees - (float) fromDegrees;
         degreeStorage = degreeStorage + degreeDiff;
         if(degreeStorage > 12) {
@@ -450,30 +432,24 @@ public class MainActivity extends FragmentActivity
         }
     }
 
-    private void setOnClickListeners(@IdRes int... viewIds) {
-        for (int viewId : viewIds) {
-            findViewById(viewId).setOnClickListener(this);
-        }
-    }
-
     @Override
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.frame_settings) {
             if (SystemClock.elapsedRealtime() - lastClick < 1000) return;
             lastClick = SystemClock.elapsedRealtime();
-            if (animations) startAnimatedIcon(imageViewSettings);
+            if (animations) ViewUtil.startAnimatedIcon(binding.imageSettings);
 
             if (isPlaying) {
                 isPlaying = false;
                 keepScreenOn(false);
-                imageViewPlayPause.setImageResource(R.drawable.ic_round_play_arrow);
+                binding.imagePlayPause.setImageResource(R.drawable.ic_round_play_arrow);
             }
             handler.removeCallbacks(this);
 
             startActivity(new Intent(this, SettingsActivity.class));
         } else if (id == R.id.frame_tempo_tap) {
-            if (animations) startAnimatedIcon(imageViewTempoTap);
+            if (animations) ViewUtil.startAnimatedIcon(binding.imageTempoTap);
 
             long interval = System.currentTimeMillis() - prevTouchTime;
             if (prevTouchTime > 0 && interval <= 6000) {
@@ -496,14 +472,14 @@ public class MainActivity extends FragmentActivity
             }
             keepScreenOn(isPlaying);
             if (animations) {
-                imageViewPlayPause.setImageResource(
+                binding.imagePlayPause.setImageResource(
                         isPlaying
                                 ? R.drawable.ic_round_play_to_pause_anim
                                 : R.drawable.ic_round_pause_to_play_anim
                 );
-                startAnimatedIcon(imageViewPlayPause);
+                ViewUtil.startAnimatedIcon(binding.imagePlayPause);
             } else {
-                imageViewPlayPause.setImageResource(
+                binding.imagePlayPause.setImageResource(
                         isPlaying
                                 ? R.drawable.ic_round_pause
                                 : R.drawable.ic_round_play_arrow
@@ -519,16 +495,16 @@ public class MainActivity extends FragmentActivity
             if (!beatModeVibrateNew) {
                 soundId = soundPool.load(this, getSoundId(), 1);
             } else soundId = -1;
-            if (animations) startAnimatedIcon(imageViewBeatMode);
+            if (animations) ViewUtil.startAnimatedIcon(binding.imageBeatMode);
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
                 if (beatModeVibrateNew) {
-                    imageViewBeatMode.setImageResource(
+                    binding.imageBeatMode.setImageResource(
                             vibrateAlways
                                     ? R.drawable.ic_round_volume_off_to_volume_on_anim
                                     : R.drawable.ic_round_vibrate_to_volume_anim
                     );
                 } else {
-                    imageViewBeatMode.setImageResource(
+                    binding.imageBeatMode.setImageResource(
                             vibrateAlways
                                     ? R.drawable.ic_round_volume_on_to_volume_off_anim
                                     : R.drawable.ic_round_volume_to_vibrate_anim
@@ -536,10 +512,10 @@ public class MainActivity extends FragmentActivity
                 }
             }, animations ? 300 : 0);
         } else if (id == R.id.frame_emphasis) {
-            if (animations) startAnimatedIcon(imageViewEmphasis);
+            if (animations) ViewUtil.startAnimatedIcon(binding.imageEmphasis);
             setNextEmphasis();
         } else if (id == R.id.frame_bookmark) {
-            if (animations) startAnimatedIcon(imageViewBookmark);
+            if (animations) ViewUtil.startAnimatedIcon(binding.imageBookmark);
             int bookmark = sharedPrefs.getInt(Constants.PREF.BOOKMARK, -1);
             if (bookmark == -1) {
                 Toast.makeText(
@@ -549,11 +525,11 @@ public class MainActivity extends FragmentActivity
             }
             sharedPrefs.edit().putInt(Constants.PREF.BOOKMARK, bpm).apply();
             int finalBookmark = bookmark;
-            textViewBpm.animate().alpha(0).setDuration(150).start();
+            binding.textBpm.animate().alpha(0).setDuration(150).start();
             new Handler(Looper.getMainLooper()).postDelayed(
                     () -> {
                         setBpm(finalBookmark);
-                        textViewBpm.animate()
+                        binding.textBpm.animate()
                                 .alpha(isPlaying ? 0.35f : 1)
                                 .setDuration(150)
                                 .start();
@@ -566,7 +542,7 @@ public class MainActivity extends FragmentActivity
     private void setBpm(int bpm) {
         if(bpm > 0) {
             this.bpm = Math.min(bpm, 300);
-            textViewBpm.setText(String.valueOf(this.bpm));
+            binding.textBpm.setText(String.valueOf(this.bpm));
             interval = toInterval(this.bpm);
             sharedPrefs.edit().putLong(Constants.PREF.INTERVAL, interval).apply();
         }
@@ -588,103 +564,70 @@ public class MainActivity extends FragmentActivity
         if(keepOn) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             if(animations) {
-                animateActionButtonTint(R.color.retro_dark);
-                imageViewPlayPause.animate().alpha(0.5f).setDuration(300).start();
-                textViewBpm.animate().alpha(0.35f).setDuration(300).start();
-                animateViewsAlpha(
+                ViewUtil.animateBackgroundTint(binding.framePlayPause, R.color.retro_dark);
+                binding.imagePlayPause.animate().alpha(0.5f).setDuration(300).start();
+                binding.textBpm.animate().alpha(0.35f).setDuration(300).start();
+                ViewUtil.animateViewsAlpha(
                         iconAlpha,
-                        textViewLabel,
-                        imageViewBeatMode,
-                        imageViewTempoTap,
-                        imageViewSettings,
-                        imageViewEmphasis,
-                        textViewEmphasis,
-                        bpmPickerView,
-                        imageViewBookmark
+                        binding.textLabel,
+                        binding.imageBeatMode,
+                        binding.imageTempoTap,
+                        binding.imageSettings,
+                        binding.imageEmphasis,
+                        binding.textEmphasis,
+                        binding.bpmPicker,
+                        binding.imageBookmark
                 );
             } else {
                 drawableFabBg.setTint(getColor(R.color.retro_dark));
-                imageViewPlayPause.setAlpha(0.5f);
-                textViewBpm.setAlpha(0.35f);
-                setViewsAlpha(
+                binding.imagePlayPause.setAlpha(0.5f);
+                binding.textBpm.setAlpha(0.35f);
+                ViewUtil.setViewsAlpha(
                         iconAlpha,
-                        textViewLabel,
-                        imageViewBeatMode,
-                        imageViewTempoTap,
-                        imageViewSettings,
-                        imageViewEmphasis,
-                        textViewEmphasis,
-                        bpmPickerView,
-                        imageViewBookmark
+                        binding.textLabel,
+                        binding.imageBeatMode,
+                        binding.imageTempoTap,
+                        binding.imageSettings,
+                        binding.imageEmphasis,
+                        binding.textEmphasis,
+                        binding.bpmPicker,
+                        binding.imageBookmark
                 );
             }
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             if(animations) {
-                animateActionButtonTint(R.color.secondary);
-                animateViewsAlpha(
+                ViewUtil.animateBackgroundTint(binding.framePlayPause, R.color.secondary);
+                ViewUtil.animateViewsAlpha(
                         1,
-                        textViewBpm,
-                        textViewLabel,
-                        imageViewPlayPause,
-                        imageViewBeatMode,
-                        imageViewTempoTap,
-                        imageViewSettings,
-                        imageViewEmphasis,
-                        textViewEmphasis,
-                        bpmPickerView,
-                        imageViewBookmark
+                        binding.textBpm,
+                        binding.textLabel,
+                        binding.imagePlayPause,
+                        binding.imageBeatMode,
+                        binding.imageTempoTap,
+                        binding.imageSettings,
+                        binding.imageEmphasis,
+                        binding.textEmphasis,
+                        binding.bpmPicker,
+                        binding.imageBookmark
                 );
             } else {
                 drawableFabBg.setTint(getColor(R.color.secondary));
-                setViewsAlpha(
+                ViewUtil.setViewsAlpha(
                         1,
-                        textViewBpm,
-                        textViewLabel,
-                        imageViewPlayPause,
-                        imageViewBeatMode,
-                        imageViewTempoTap,
-                        imageViewSettings,
-                        imageViewEmphasis,
-                        textViewEmphasis,
-                        bpmPickerView,
-                        imageViewBookmark
+                        binding.textBpm,
+                        binding.textLabel,
+                        binding.imagePlayPause,
+                        binding.imageBeatMode,
+                        binding.imageTempoTap,
+                        binding.imageSettings,
+                        binding.imageEmphasis,
+                        binding.textEmphasis,
+                        binding.bpmPicker,
+                        binding.imageBookmark
                 );
             }
         }
-    }
-
-    private void animateActionButtonTint(@ColorRes int color) {
-        int colorFrom = Objects.requireNonNull(
-                frameLayoutPlayPause.getBackgroundTintList()
-        ).getDefaultColor();
-        int colorTo = getColor(color);
-        ValueAnimator colorAnimation = ValueAnimator.ofObject(
-                new ArgbEvaluator(), colorFrom, colorTo
-        );
-        colorAnimation.setDuration(300);
-        colorAnimation.addUpdateListener(
-                animator -> drawableFabBg.setTint((int) animator.getAnimatedValue())
-        );
-        colorAnimation.start();
-    }
-
-    private void animateViewsAlpha(float alpha, View... views) {
-        for (View view : views) {
-            view.animate().alpha(alpha).setDuration(300).start();
-        }
-    }
-
-    private void setViewsAlpha(float alpha, View... views) {
-        for (View view : views) {
-            view.setAlpha(alpha);
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        handler.removeCallbacks(this);
     }
 
     private static int toBpm(long interval) {
@@ -693,13 +636,5 @@ public class MainActivity extends FragmentActivity
 
     private static long toInterval(int bpm) {
         return (long) 60000 / bpm;
-    }
-
-    private void startAnimatedIcon(View view) {
-        try {
-            ((Animatable) ((ImageView) view).getDrawable()).start();
-        } catch (ClassCastException e) {
-            if(DEBUG) Log.e(TAG, "startAnimatedIcon() requires AVD!");
-        }
     }
 }
