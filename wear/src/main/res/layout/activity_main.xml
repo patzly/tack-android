@@ -88,7 +88,6 @@
                 <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    tools:ignore="SpUsage"
                     android:layout_gravity="center">
 
                     <TextView
@@ -99,7 +98,7 @@
                         android:textStyle="bold"
                         android:layout_marginBottom="12dp"
                         android:layout_gravity="center_horizontal|top"
-                        android:textSize="30dp" />
+                        android:textSize="@dimen/text_size_bpm" />
 
                     <TextView
                         android:id="@+id/text_label"
@@ -109,7 +108,7 @@
                         android:textColor="@color/on_background_secondary"
                         android:textStyle="bold"
                         android:layout_gravity="center_horizontal|bottom"
-                        android:textSize="13dp"/>
+                        android:textSize="@dimen/text_size_label"/>
 
                 </FrameLayout>
 

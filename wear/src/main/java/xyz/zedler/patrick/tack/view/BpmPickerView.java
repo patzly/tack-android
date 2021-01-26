@@ -1,5 +1,7 @@
 package xyz.zedler.patrick.tack.view;
 
+import android.animation.AnimatorSet;
+import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
@@ -13,6 +15,8 @@ import android.view.animation.RotateAnimation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 import com.google.android.wearable.input.RotaryEncoderHelper;
 
@@ -112,6 +116,12 @@ public class BpmPickerView extends View
         }
     }
 
+    @Override
+    public void setVisibility(int visibility) {
+        super.setVisibility(visibility);
+        setDotsVisible(visibility == VISIBLE);
+    }
+
     public void setDotsVisible(boolean visible) {
         dotsVisible = visible;
         invalidate();
@@ -203,17 +213,41 @@ public class BpmPickerView extends View
 
     public void setTouched(boolean touched, boolean animated) {
         if (animated) {
-            ValueAnimator valueAnimator = ValueAnimator.ofFloat(
+            ValueAnimator animatorSize = ValueAnimator.ofFloat(
                     paint.getStrokeWidth(),
                     touched ? dotSizeMax : dotSizeMin
             );
-            valueAnimator.addUpdateListener(animation -> {
-                paint.setStrokeWidth((float) valueAnimator.getAnimatedValue());
+            animatorSize.addUpdateListener(animation -> {
+                paint.setStrokeWidth((float) animatorSize.getAnimatedValue());
                 invalidate();
             });
-            valueAnimator.setDuration(200).start();
+
+            ValueAnimator animatorColor = ValueAnimator.ofObject(
+                    new ArgbEvaluator(),
+                    paint.getColor(),
+                    ContextCompat.getColor(
+                            getContext(),
+                            touched ? R.color.retro_dirt : R.color.on_background_secondary
+                    )
+            );
+            animatorColor.addUpdateListener(animation -> {
+                paint.setColor((int) animatorColor.getAnimatedValue());
+                invalidate();
+            });
+
+            AnimatorSet animatorSet = new AnimatorSet();
+            animatorSet.setInterpolator(new FastOutSlowInInterpolator());
+            animatorSet.setDuration(200);
+            animatorSet.playTogether(animatorSize, animatorColor);
+            animatorSet.start();
         } else {
             paint.setStrokeWidth(touched ? dotSizeMax : dotSizeMin);
+            paint.setColor(
+                    ContextCompat.getColor(
+                            getContext(),
+                            touched ? R.color.retro_dirt : R.color.on_background_secondary
+                    )
+            );
             invalidate();
         }
     }

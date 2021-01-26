@@ -205,7 +205,7 @@ public class MainActivity extends FragmentActivity
 
             public void onEnterAmbient(Bundle ambientDetails) {
                 ViewUtil.setVisibility(
-                        View.INVISIBLE,
+                        View.GONE,
                         binding.imageTempoTap,
                         binding.imageEmphasis,
                         binding.imageSettings,
@@ -215,6 +215,10 @@ public class MainActivity extends FragmentActivity
                         binding.textEmphasis,
                         binding.bpmPicker
                 );
+                binding.textBpm.setTextSize(38);
+                binding.textLabel.setTextSize(15);
+                binding.textBpm.setTextColor(getColor(R.color.on_background_secondary));
+                binding.textLabel.setTextColor(getColor(R.color.on_background_secondary));
             }
 
             public void onExitAmbient() {
@@ -229,6 +233,11 @@ public class MainActivity extends FragmentActivity
                         binding.textEmphasis,
                         binding.bpmPicker
                 );
+                binding.bpmPicker.requestFocus();
+                binding.textBpm.setTextSize(30);
+                binding.textLabel.setTextSize(13);
+                binding.textBpm.setTextColor(getColor(R.color.on_background));
+                binding.textLabel.setTextColor(getColor(R.color.on_background_secondary));
             }
         };
     }
