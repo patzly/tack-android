@@ -3,15 +3,13 @@ package xyz.zedler.patrick.tack;
 import android.os.Bundle;
 
 import androidx.fragment.app.FragmentActivity;
-import androidx.wear.ambient.AmbientModeSupport;
 
 import java.util.Locale;
 
 import xyz.zedler.patrick.tack.databinding.ActivityChangelogBinding;
 import xyz.zedler.patrick.tack.util.ResUtil;
 
-public class ChangelogActivity extends FragmentActivity
-        implements AmbientModeSupport.AmbientCallbackProvider {
+public class ChangelogActivity extends FragmentActivity {
 
     private ActivityChangelogBinding binding;
 
@@ -31,18 +29,6 @@ public class ChangelogActivity extends FragmentActivity
                         ? localized
                         : ResUtil.readFromFile(this, file)
         );
-
-        AmbientModeSupport.attach(this);
-    }
-
-    @Override
-    public AmbientModeSupport.AmbientCallback getAmbientCallback() {
-        return new AmbientModeSupport.AmbientCallback() {
-
-            public void onEnterAmbient(Bundle ambientDetails) { }
-
-            public void onExitAmbient(Bundle ambientDetails) { }
-        };
     }
 
     @Override

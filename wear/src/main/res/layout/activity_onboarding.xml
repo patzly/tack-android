@@ -163,7 +163,6 @@
                     android:layout_width="24dp"
                     android:tint="@color/on_background"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_round_star_anim"
                     android:importantForAccessibility="no" />
 
                 <ImageView
@@ -172,7 +171,6 @@
                     android:layout_width="24dp"
                     android:tint="@color/on_background"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_round_audiotrack_anim"
                     android:importantForAccessibility="no" />
 
             </FrameLayout>

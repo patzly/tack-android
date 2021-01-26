@@ -1,37 +1,45 @@
 package xyz.zedler.patrick.tack;
 
-import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.wearable.input.WearableButtons;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.ImageView;
 
 import androidx.fragment.app.FragmentActivity;
 
-public class WelcomeActivity extends FragmentActivity {
+import xyz.zedler.patrick.tack.databinding.ActivityOnboardingBinding;
 
-    @SuppressLint("ClickableViewAccessibility")
+public class OnboardingActivity extends FragmentActivity {
+
+    private ActivityOnboardingBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_welcome);
+        binding = ActivityOnboardingBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         if(WearableButtons.getButtonCount(this) >= 2
                 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
         ) {
-            ((ImageView) findViewById(R.id.image_feature_fsb1)).setImageDrawable(
+            binding.imageFeatureFsb1.setImageDrawable(
                     WearableButtons.getButtonIcon(this, KeyEvent.KEYCODE_STEM_1)
             );
-            ((ImageView) findViewById(R.id.image_feature_fsb2)).setImageDrawable(
+            binding.imageFeatureFsb2.setImageDrawable(
                     WearableButtons.getButtonIcon(this, KeyEvent.KEYCODE_STEM_2)
             );
         } else {
-            findViewById(R.id.linear_feature_fsb).setVisibility(View.GONE);
+            binding.linearFeatureFsb.setVisibility(View.GONE);
         }
 
-        findViewById(R.id.frame_ok).setOnClickListener(v -> finish());
+        binding.frameOk.setOnClickListener(v -> finish());
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null;
     }
 }

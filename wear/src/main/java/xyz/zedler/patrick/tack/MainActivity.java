@@ -17,7 +17,6 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.support.wearable.input.RotaryEncoder;
 import android.support.wearable.input.WearableButtons;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -37,11 +36,14 @@ import androidx.preference.PreferenceManager;
 import androidx.wear.ambient.AmbientModeSupport;
 import androidx.wear.widget.SwipeDismissFrameLayout;
 
+import com.google.android.wearable.input.RotaryEncoderHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import xyz.zedler.patrick.tack.util.Constants;
+import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
 
 public class MainActivity extends FragmentActivity
@@ -104,10 +106,10 @@ public class MainActivity extends FragmentActivity
 
         initViews();
 
-        AmbientModeSupport.attach(this);
+        AmbientModeSupport.attach(this).setAmbientOffloadEnabled(true);
 
         if(sharedPrefs.getBoolean(Constants.PREF.FIRST_START, true)) {
-            startActivity(new Intent(this, WelcomeActivity.class));
+            startActivity(new Intent(this, OnboardingActivity.class));
             sharedPrefs.edit().putBoolean(Constants.PREF.FIRST_START, false).apply();
         }
     }
@@ -159,13 +161,12 @@ public class MainActivity extends FragmentActivity
         bpmPickerView.setDotsVisible(!hidePicker);
         bpmPickerView.setOnGenericMotionListener((v, ev) -> {
             if (ev.getAction() == MotionEvent.ACTION_SCROLL
-                    && RotaryEncoder.isFromRotaryEncoder(ev)
+                    && RotaryEncoderHelper.isFromRotaryEncoder(ev)
             ) {
-                @SuppressWarnings("deprecation")
-                float delta = -RotaryEncoder.getRotaryAxisValue(ev)
-                        * (RotaryEncoder.getScaledScrollFactor(this) / 5);
+                float delta = -RotaryEncoderHelper.getRotaryAxisValue(ev)
+                        * (RotaryEncoderHelper.getScaledScrollFactor(this) / 5);
                 v.setRotation(v.getRotation() + delta);
-                int rotated = -RotaryEncoder.getRotaryAxisValue(ev) > 0 ? 1 : -1;
+                int rotated = -RotaryEncoderHelper.getRotaryAxisValue(ev) > 0 ? 1 : -1;
 
                 if(rotated != rotatedPrev) {
                     changeBpm(rotated);
@@ -231,9 +232,33 @@ public class MainActivity extends FragmentActivity
     public AmbientModeSupport.AmbientCallback getAmbientCallback() {
         return new AmbientModeSupport.AmbientCallback() {
 
-            public void onEnterAmbient(Bundle ambientDetails) { }
+            public void onEnterAmbient(Bundle ambientDetails) {
+                ViewUtil.setVisibility(
+                        View.INVISIBLE,
+                        imageViewTempoTap,
+                        imageViewEmphasis,
+                        imageViewSettings,
+                        imageViewBookmark,
+                        imageViewBeatMode,
+                        frameLayoutPlayPause,
+                        textViewEmphasis,
+                        bpmPickerView
+                );
+            }
 
-            public void onExitAmbient(Bundle ambientDetails) { }
+            public void onExitAmbient() {
+                ViewUtil.setVisibility(
+                        View.VISIBLE,
+                        imageViewTempoTap,
+                        imageViewEmphasis,
+                        imageViewSettings,
+                        imageViewBookmark,
+                        imageViewBeatMode,
+                        frameLayoutPlayPause,
+                        textViewEmphasis,
+                        bpmPickerView
+                );
+            }
         };
     }
 
