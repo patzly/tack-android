@@ -12,6 +12,11 @@ android {
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 71 // last number is 1 for wear release
+        versionName "1.5"
+    }
+
+    applicationVariants.all { variant ->
+        variant.resValue "string", "versionName", variant.versionName
     }
 
     buildTypes {

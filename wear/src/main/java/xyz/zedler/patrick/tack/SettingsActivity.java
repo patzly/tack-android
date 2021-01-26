@@ -1,109 +1,112 @@
 package xyz.zedler.patrick.tack;
 
-import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
-import android.widget.Switch;
-import android.widget.TextView;
 
-import androidx.annotation.IdRes;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 
+import xyz.zedler.patrick.tack.databinding.ActivitySettingsBinding;
 import xyz.zedler.patrick.tack.util.Constants;
+import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class SettingsActivity extends FragmentActivity
         implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     final static String TAG = SettingsActivity.class.getSimpleName();
 
+    private ActivitySettingsBinding binding;
     private SharedPreferences sharedPrefs;
-    private Switch switchVibrateAlways, switchWristGestures, switchHidePicker, switchAnimations;
-    private TextView textViewSound;
     private boolean animations;
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_settings);
+        binding = ActivitySettingsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         animations = sharedPrefs.getBoolean(Constants.PREF.ANIMATIONS, true);
 
-        textViewSound = findViewById(R.id.text_setting_sound);
-        textViewSound.setText(getSound());
+        binding.textSettingSound.setText(getSound());
 
-        switchVibrateAlways = findViewById(R.id.switch_setting_vibrate_always);
-        switchVibrateAlways.setChecked(
+        binding.switchSettingsVibrateAlways.setChecked(
                 sharedPrefs.getBoolean(Constants.PREF.VIBRATE_ALWAYS, false)
         );
-        switchVibrateAlways.setOnCheckedChangeListener(this);
 
-        switchWristGestures = findViewById(R.id.switch_setting_wrist_gestures);
-        switchWristGestures.setChecked(
+        binding.switchSettingsWristGestures.setChecked(
                 sharedPrefs.getBoolean(Constants.PREF.WRIST_GESTURES, true)
         );
-        switchWristGestures.setOnCheckedChangeListener(this);
 
-        switchHidePicker = findViewById(R.id.switch_setting_hide_picker);
-        switchHidePicker.setChecked(
+        binding.switchSettingsHidePicker.setChecked(
                 sharedPrefs.getBoolean(Constants.PREF.HIDE_PICKER, false)
         );
-        switchHidePicker.setOnCheckedChangeListener(this);
 
-        switchAnimations = findViewById(R.id.switch_setting_animations);
-        switchAnimations.setChecked(
+        binding.switchSettingsAnimations.setChecked(
                 sharedPrefs.getBoolean(Constants.PREF.ANIMATIONS, true)
         );
-        switchAnimations.setOnCheckedChangeListener(this);
 
-        setOnClickListeners(
-                R.id.linear_setting_sound,
-                R.id.linear_setting_vibrate_always,
-                R.id.linear_setting_wrist_gestures,
-                R.id.linear_setting_hide_picker,
-                R.id.linear_setting_animations,
-                R.id.linear_changelog,
-                R.id.linear_rate
+        ViewUtil.setOnClickListeners(
+                this,
+                binding.linearSettingsSound,
+                binding.linearSettingsVibrateAlways,
+                binding.linearSettingsWristGestures,
+                binding.linearSettingsHidePicker,
+                binding.linearSettingsAnimations,
+                binding.linearSettingsChangelog,
+                binding.linearSettingsRate
+        );
+
+        ViewUtil.setOnCheckedChangedListeners(
+                this,
+                binding.switchSettingsVibrateAlways,
+                binding.switchSettingsWristGestures,
+                binding.switchSettingsHidePicker,
+                binding.switchSettingsAnimations
         );
     }
 
-    private void setOnClickListeners(@IdRes int... viewIds) {
-        for (int viewId : viewIds) {
-            findViewById(viewId).setOnClickListener(this);
-        }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null;
     }
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if (id == R.id.linear_setting_sound) {
-            startAnimatedIcon(R.id.image_sound);
+        if (id == R.id.linear_settings_sound) {
+            if (animations) ViewUtil.startAnimatedIcon(binding.imageSound);
             setNextSound();
-        } else if (id == R.id.linear_setting_vibrate_always) {
-            switchVibrateAlways.setChecked(!switchVibrateAlways.isChecked());
-        } else if (id == R.id.linear_setting_wrist_gestures) {
-            switchWristGestures.setChecked(!switchWristGestures.isChecked());
-        } else if (id == R.id.linear_setting_hide_picker) {
-            switchHidePicker.setChecked(!switchHidePicker.isChecked());
-        } else if (id == R.id.linear_setting_animations) {
-            switchAnimations.setChecked(!switchAnimations.isChecked());
-        } else if (id == R.id.linear_changelog) {
-            startAnimatedIcon(R.id.image_changelog);
+        } else if (id == R.id.linear_settings_vibrate_always) {
+            binding.switchSettingsVibrateAlways.setChecked(
+                    !binding.switchSettingsVibrateAlways.isChecked()
+            );
+        } else if (id == R.id.linear_settings_wrist_gestures) {
+            binding.switchSettingsWristGestures.setChecked(
+                    !binding.switchSettingsWristGestures.isChecked()
+            );
+        } else if (id == R.id.linear_settings_hide_picker) {
+            binding.switchSettingsHidePicker.setChecked(
+                    !binding.switchSettingsHidePicker.isChecked()
+            );
+        } else if (id == R.id.linear_settings_animations) {
+            binding.switchSettingsAnimations.setChecked(
+                    !binding.switchSettingsAnimations.isChecked()
+            );
+        } else if (id == R.id.linear_settings_changelog) {
+            if (animations) ViewUtil.startAnimatedIcon(binding.imageChangelog);
             startActivity(new Intent(this, ChangelogActivity.class));
-        } else if (id == R.id.linear_rate) {
-            startAnimatedIcon(R.id.image_rate);
+        } else if (id == R.id.linear_settings_rate) {
+            if (animations) ViewUtil.startAnimatedIcon(binding.imageRate);
             Uri uri = Uri.parse(
                     "market://details?id=" + getApplicationContext().getPackageName()
             );
@@ -140,24 +143,24 @@ public class SettingsActivity extends FragmentActivity
     }
 
     private void setNextSound() {
+        SharedPreferences.Editor editor = sharedPrefs.edit();
         String sound = sharedPrefs.getString(Constants.PREF.SOUND, Constants.SOUND.WOOD);
         assert sound != null;
-        SharedPreferences.Editor editor = sharedPrefs.edit();
         switch (sound) {
             case Constants.SOUND.CLICK:
-                textViewSound.setText(R.string.setting_sound_ding);
+                binding.textSettingSound.setText(R.string.setting_sound_ding);
                 editor.putString(Constants.PREF.SOUND, Constants.SOUND.DING);
                 break;
             case Constants.SOUND.DING:
-                textViewSound.setText(R.string.setting_sound_beep);
+                binding.textSettingSound.setText(R.string.setting_sound_beep);
                 editor.putString(Constants.PREF.SOUND, Constants.SOUND.BEEP);
                 break;
             case Constants.SOUND.BEEP:
-                textViewSound.setText(R.string.setting_sound_wood);
+                binding.textSettingSound.setText(R.string.setting_sound_wood);
                 editor.putString(Constants.PREF.SOUND, Constants.SOUND.WOOD);
                 break;
             default:
-                textViewSound.setText(R.string.setting_sound_click);
+                binding.textSettingSound.setText(R.string.setting_sound_click);
                 editor.putString(Constants.PREF.SOUND, Constants.SOUND.CLICK);
                 break;
         }
@@ -166,24 +169,18 @@ public class SettingsActivity extends FragmentActivity
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        SharedPreferences.Editor editor = sharedPrefs.edit();
         int id = buttonView.getId();
-        if (id == R.id.switch_setting_vibrate_always) {
-            sharedPrefs.edit().putBoolean(Constants.PREF.VIBRATE_ALWAYS, isChecked).apply();
-        } else if (id == R.id.switch_setting_wrist_gestures) {
-            sharedPrefs.edit().putBoolean(Constants.PREF.WRIST_GESTURES, isChecked).apply();
-        } else if (id == R.id.switch_setting_hide_picker) {
-            sharedPrefs.edit().putBoolean(Constants.PREF.HIDE_PICKER, isChecked).apply();
-        } else if (id == R.id.switch_setting_animations) {
-            sharedPrefs.edit().putBoolean(Constants.PREF.ANIMATIONS, isChecked).apply();
+        if (id == R.id.switch_settings_vibrate_always) {
+            editor.putBoolean(Constants.PREF.VIBRATE_ALWAYS, isChecked);
+        } else if (id == R.id.switch_settings_wrist_gestures) {
+            editor.putBoolean(Constants.PREF.WRIST_GESTURES, isChecked);
+        } else if (id == R.id.switch_settings_hide_picker) {
+            editor.putBoolean(Constants.PREF.HIDE_PICKER, isChecked);
+        } else if (id == R.id.switch_settings_animations) {
+            editor.putBoolean(Constants.PREF.ANIMATIONS, isChecked);
             animations = isChecked;
         }
-    }
-
-    private void startAnimatedIcon(@IdRes int viewId) {
-        if(animations) {
-            try {
-                ((Animatable) ((ImageView) findViewById(viewId)).getDrawable()).start();
-            } catch (ClassCastException ignored) { }
-        }
+        editor.apply();
     }
 }

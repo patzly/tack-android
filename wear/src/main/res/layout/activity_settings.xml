@@ -12,341 +12,181 @@
         android:paddingBottom="@dimen/list_margin_bottom">
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="12dp"
-            android:textSize="16sp"
-            android:textColor="@color/on_background"
-            android:fontFamily="@font/roboto_mono_medium"
+            style="@style/Widget.Tack.Title"
             android:text="@string/title_settings"/>
 
         <LinearLayout
-            android:id="@+id/linear_setting_sound"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:orientation="horizontal"
-            android:focusable="true"
-            android:clickable="true"
-            android:background="@drawable/ripple_list_item_pressed">
+            android:id="@+id/linear_settings_sound"
+            style="@style/Widget.Tack.ListItem">
 
             <FrameLayout
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="start"
-                android:layout_marginStart="16dp"
-                android:background="@drawable/shape_circle_button"
-                android:backgroundTint="#333333">
+                android:layout_width="@dimen/circular_touch_target_size"
+                android:layout_height="@dimen/circular_touch_target_size"
+                android:background="@drawable/shape_circular_bg">
 
                 <ImageView
                     android:id="@+id/image_sound"
-                    android:layout_height="24dp"
-                    android:layout_width="24dp"
-                    android:layout_gravity="center"
+                    style="@style/Widget.Tack.Icon"
                     android:src="@drawable/ic_round_audiotrack_anim"
-                    android:importantForAccessibility="no" />
+                    android:importantForAccessibility="no"/>
 
             </FrameLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="8dp"
-                android:gravity="start"
-                android:layout_gravity="center_vertical">
+            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
 
                 <TextView
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:text="@string/setting_sound"
-                    android:textColor="@color/on_background"/>
+                    style="@style/Widget.Tack.ListItemLabel"
+                    android:text="@string/setting_sound"/>
 
                 <TextView
                     android:id="@+id/text_setting_sound"
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="13sp"
-                    android:textColor="@color/on_background_secondary"/>
+                    style="@style/Widget.Tack.ListItemDescription" />
 
             </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linear_setting_vibrate_always"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingStart="16dp"
-            android:clipToPadding="false"
-            android:clipChildren="false"
-            android:paddingEnd="4dp"
-            android:orientation="horizontal"
-            android:focusable="true"
-            android:clickable="true"
-            android:background="@drawable/ripple_list_item_pressed">
+            android:id="@+id/linear_settings_vibrate_always"
+            style="@style/Widget.Tack.ListItem">
 
-            <Switch
-                android:id="@+id/switch_setting_vibrate_always"
-                style="@style/Widget.Tack.Switch"
-                android:layout_gravity="start"/>
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_settings_vibrate_always"
+                style="@style/Widget.Tack.Switch"/>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="8dp"
-                android:gravity="start"
-                android:layout_gravity="center_vertical">
+            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
 
                 <TextView
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:text="@string/setting_vibrate_always"
-                    android:textColor="@color/on_background"/>
+                    style="@style/Widget.Tack.ListItemLabel"
+                    android:text="@string/setting_vibrate_always"/>
 
                 <TextView
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="13sp"
-                    android:text="@string/setting_vibrate_always_description"
-                    android:textColor="@color/on_background_secondary"/>
+                    style="@style/Widget.Tack.ListItemDescription"
+                    android:text="@string/setting_vibrate_always_description"/>
 
             </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linear_setting_wrist_gestures"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingStart="16dp"
-            android:clipToPadding="false"
-            android:clipChildren="false"
-            android:paddingEnd="4dp"
-            android:orientation="horizontal"
-            android:focusable="true"
-            android:clickable="true"
-            android:background="@drawable/ripple_list_item_pressed">
+            android:id="@+id/linear_settings_wrist_gestures"
+            style="@style/Widget.Tack.ListItem">
 
-            <Switch
-                android:id="@+id/switch_setting_wrist_gestures"
-                style="@style/Widget.Tack.Switch"
-                android:layout_gravity="start"/>
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_settings_wrist_gestures"
+                style="@style/Widget.Tack.Switch"/>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="8dp"
-                android:gravity="start"
-                android:layout_gravity="center_vertical">
+            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
 
                 <TextView
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:text="@string/setting_wrist_gestures"
-                    android:textColor="@color/on_background"/>
+                    style="@style/Widget.Tack.ListItemLabel"
+                    android:text="@string/setting_wrist_gestures"/>
 
                 <TextView
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="13sp"
-                    android:text="@string/setting_wrist_gestures_description"
-                    android:textColor="@color/on_background_secondary"/>
+                    style="@style/Widget.Tack.ListItemDescription"
+                    android:text="@string/setting_wrist_gestures_description"/>
 
             </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linear_setting_hide_picker"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingStart="16dp"
-            android:clipToPadding="false"
-            android:clipChildren="false"
-            android:paddingEnd="4dp"
-            android:orientation="horizontal"
-            android:focusable="true"
-            android:clickable="true"
-            android:background="@drawable/ripple_list_item_pressed">
+            android:id="@+id/linear_settings_hide_picker"
+            style="@style/Widget.Tack.ListItem">
 
-            <Switch
-                android:id="@+id/switch_setting_hide_picker"
-                style="@style/Widget.Tack.Switch"
-                android:layout_gravity="start"/>
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_settings_hide_picker"
+                style="@style/Widget.Tack.Switch"/>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="8dp"
-                android:gravity="start"
-                android:layout_gravity="center_vertical">
+            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
 
                 <TextView
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:text="@string/setting_hide_picker"
-                    android:textColor="@color/on_background"/>
+                    style="@style/Widget.Tack.ListItemLabel"
+                    android:text="@string/setting_hide_picker"/>
 
                 <TextView
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="13sp"
-                    android:text="@string/setting_hide_picker_description"
-                    android:textColor="@color/on_background_secondary"/>
+                    style="@style/Widget.Tack.ListItemDescription"
+                    android:text="@string/setting_hide_picker_description"/>
 
             </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linear_setting_animations"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:paddingStart="16dp"
-            android:clipToPadding="false"
-            android:clipChildren="false"
-            android:paddingEnd="4dp"
-            android:orientation="horizontal"
-            android:focusable="true"
-            android:clickable="true"
-            android:background="@drawable/ripple_list_item_pressed">
+            android:id="@+id/linear_settings_animations"
+            style="@style/Widget.Tack.ListItem">
 
-            <Switch
-                android:id="@+id/switch_setting_animations"
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_settings_animations"
                 style="@style/Widget.Tack.Switch"
                 android:layout_gravity="start"/>
 
-            <TextView
-                android:layout_gravity="center_vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:textSize="14sp"
-                android:text="@string/setting_animations"
-                android:textColor="@color/on_background"/>
+            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
+
+                <TextView
+                    style="@style/Widget.Tack.ListItemLabel"
+                    android:text="@string/setting_animations"/>
+
+                <TextView
+                    style="@style/Widget.Tack.ListItemDescription"
+                    android:text="@string/setting_animations_description"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linear_changelog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:orientation="horizontal"
-            android:focusable="true"
-            android:clickable="true"
-            android:background="@drawable/ripple_list_item_pressed">
+            android:id="@+id/linear_settings_changelog"
+            style="@style/Widget.Tack.ListItem">
 
             <FrameLayout
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="start"
-                android:layout_marginStart="16dp"
-                android:background="@drawable/shape_circle_button"
-                android:backgroundTint="#333333">
+                android:layout_width="@dimen/circular_touch_target_size"
+                android:layout_height="@dimen/circular_touch_target_size"
+                android:background="@drawable/shape_circular_bg">
 
                 <ImageView
                     android:id="@+id/image_changelog"
-                    android:layout_height="24dp"
-                    android:layout_width="24dp"
-                    android:layout_gravity="center"
+                    style="@style/Widget.Tack.Icon"
                     android:src="@drawable/ic_round_history_anim"
                     android:importantForAccessibility="no" />
 
             </FrameLayout>
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_marginStart="8dp"
-                android:gravity="start"
-                android:layout_gravity="center_vertical">
+            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
 
                 <TextView
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="14sp"
-                    android:text="@string/title_changelog"
-                    android:textColor="@color/on_background"/>
+                    style="@style/Widget.Tack.ListItemLabel"
+                    android:text="@string/title_changelog"/>
 
                 <TextView
-                    android:layout_gravity="center_vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="13sp"
-                    android:text="@string/app_version"
-                    android:textColor="@color/on_background_secondary"/>
+                    style="@style/Widget.Tack.ListItemDescription"
+                    android:text="@string/versionName"/>
 
             </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/linear_rate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:orientation="horizontal"
-            android:focusable="true"
-            android:clickable="true"
-            android:background="@drawable/ripple_list_item_pressed">
+            android:id="@+id/linear_settings_rate"
+            style="@style/Widget.Tack.ListItem">
 
             <FrameLayout
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_gravity="start"
-                android:layout_marginStart="16dp"
-                android:background="@drawable/shape_circle_button"
-                android:backgroundTint="#333333">
+                android:layout_width="@dimen/circular_touch_target_size"
+                android:layout_height="@dimen/circular_touch_target_size"
+                android:background="@drawable/shape_circular_bg">
 
                 <ImageView
                     android:id="@+id/image_rate"
-                    android:layout_height="24dp"
-                    android:layout_width="24dp"
-                    android:layout_gravity="center"
+                    style="@style/Widget.Tack.Icon"
                     android:src="@drawable/ic_round_star_anim"
                     android:importantForAccessibility="no" />
 
             </FrameLayout>
 
             <TextView
-                android:layout_gravity="center_vertical"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                style="@style/Widget.Tack.ListItemLabel"
                 android:layout_marginStart="8dp"
-                android:textSize="14sp"
-                android:text="@string/setting_rate"
-                android:textColor="@color/on_background"/>
+                android:text="@string/setting_rate"/>
 
         </LinearLayout>
 

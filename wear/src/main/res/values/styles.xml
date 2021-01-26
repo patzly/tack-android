@@ -1,26 +1,64 @@
 <resources>
 
-    <style name="Theme.Tack" parent="Theme.AppCompat">
-        <item name="colorPrimary">@color/black</item>
-        <item name="android:colorBackground">@color/black</item>
-        <item name="android:colorControlActivated">@color/secondary</item>
-        <item name="android:colorControlHighlight">@color/highlight</item>
-        <item name="android:colorEdgeEffect">@color/highlight</item>
-        <item name="android:fontFamily">@font/roboto_mono_regular</item>
+    <style name="Widget.Tack.Title" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_marginBottom">12dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/on_background</item>
+        <item name="android:fontFamily">@font/edwin_bold</item>
     </style>
 
-    <style name="Theme.Tack.CustomSwipeDismiss" parent="Theme.Tack">
-        <item name="android:windowSwipeToDismiss">false</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@color/transparent</item>
+    <style name="Widget.Tack.ListItemLabel" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/on_background</item>
+        <item name="android:fontFamily">@font/edwin_roman</item>
+    </style>
+
+    <style name="Widget.Tack.ListItemDescription" parent="Widget.Tack.ListItemLabel">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/on_background_secondary</item>
     </style>
 
     <style name="Widget.Tack.Switch" parent="Widget.Wear.RoundSwitch">
-        <item name="android:layout_width">40dp</item>
-        <item name="android:layout_height">40dp</item>
-        <item name="android:trackTint">@color/switch_track_tint_selector</item>
-        <item name="android:thumbTint">@color/switch_thumb_tint_selector</item>
-        <item name="android:background">@drawable/shape_switch_background</item>
+        <item name="android:layout_width">@dimen/circular_touch_target_size</item>
+        <item name="android:layout_height">@dimen/circular_touch_target_size</item>
+        <item name="trackTint">@color/transparent</item>
+        <item name="thumbTint">@color/switch_thumb_tint_selector</item>
+        <item name="android:background">@drawable/shape_circular_bg</item>
+    </style>
+
+    <style name="Widget.Tack.Icon" parent="">
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
+    <style name="Widget.Tack.ListItem" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">@drawable/ripple_list_item</item>
+        <item name="android:baselineAligned">false</item>
+    </style>
+
+    <style name="Widget.Tack.ListItemTextBox" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:layout_gravity">center_vertical</item>
     </style>
 
 </resources>

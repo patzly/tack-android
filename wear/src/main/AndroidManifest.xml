@@ -2,8 +2,7 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="xyz.zedler.patrick.tack"
-    android:versionName="@string/app_version">
+    package="xyz.zedler.patrick.tack">
 
     <uses-feature android:name="android.hardware.type.watch" />
 

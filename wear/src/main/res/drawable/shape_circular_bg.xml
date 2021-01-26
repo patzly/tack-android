@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <solid android:color="@color/on_background_tertiary"/>
+
+    <size
+        android:width="@dimen/circular_touch_target_size"
+        android:height="@dimen/circular_touch_target_size"/>
+
+</shape>

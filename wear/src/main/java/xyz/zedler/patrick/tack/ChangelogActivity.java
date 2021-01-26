@@ -1,6 +1,8 @@
 package xyz.zedler.patrick.tack;
 
 import android.os.Bundle;
+import android.text.Html;
+import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
 
@@ -24,10 +26,10 @@ public class ChangelogActivity extends FragmentActivity {
         String fileLocalized = file + "-" + Locale.getDefault().getLanguage();
 
         String localized = ResUtil.readFromFile(this, fileLocalized);
+        localized = localized != null ? localized : ResUtil.readFromFile(this, file);
+
         binding.textChangelog.setText(
-                localized != null
-                        ? localized
-                        : ResUtil.readFromFile(this, file)
+                Html.fromHtml(getAsHtml(localized)), TextView.BufferType.SPANNABLE
         );
     }
 
@@ -35,5 +37,20 @@ public class ChangelogActivity extends FragmentActivity {
     protected void onDestroy() {
         super.onDestroy();
         binding = null;
+    }
+
+    private String getAsHtml(String text) {
+        text = text.replaceAll("\n", "<br/>");
+        String textNew = getString(R.string.changelog_new);
+        text = text.replaceAll(textNew, getBold(textNew));
+        String textImproved = getString(R.string.changelog_improved);
+        text = text.replaceAll(textImproved, getBold(textImproved));
+        String textFixed = getString(R.string.changelog_fixed);
+        text = text.replaceAll(textFixed, getBold(textFixed));
+        return text;
+    }
+
+    private String getBold(String text) {
+        return "<b>" + text + "</b>";
     }
 }

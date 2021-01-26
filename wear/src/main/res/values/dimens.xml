@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <dimen name="circular_touch_target_size">40dp</dimen>
+
     <dimen name="round_box_inset">0dp</dimen>
 
     <dimen name="list_margin_top">20dp</dimen>
