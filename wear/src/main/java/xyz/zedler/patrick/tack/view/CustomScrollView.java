@@ -21,7 +21,7 @@ public class CustomScrollView extends ScrollView {
             @Nullable Rect previouslyFocusedRect
     ) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
-        if(gainFocus) {
+        if (gainFocus) {
             requestFocus(direction, previouslyFocusedRect);
         }
     }

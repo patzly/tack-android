@@ -57,7 +57,7 @@ public class BpmPickerView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if(dotsVisible) {
+        if (dotsVisible) {
             float centerX = getPivotX();
             float centerY = getPivotY();
             float min = Math.min(getWidth(), getHeight());

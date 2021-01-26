@@ -94,7 +94,7 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
 	public void onDismiss(@NonNull DialogInterface dialog) {
 		super.onDismiss(dialog);
 
-		if(sharedPrefs.getInt("feedback_pop_up", 1) != 0) {
+		if (sharedPrefs.getInt("feedback_pop_up", 1) != 0) {
 			sharedPrefs.edit().putInt("feedback_pop_up", 0).apply();
 		}
 	}

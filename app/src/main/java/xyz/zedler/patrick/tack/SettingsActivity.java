@@ -153,7 +153,7 @@ public class SettingsActivity extends AppCompatActivity
 	@Override
 	public void onClick(View v) {
 
-		if(SystemClock.elapsedRealtime() - lastClick < 400){
+		if (SystemClock.elapsedRealtime() - lastClick < 400){
 			return;
 		}
 		lastClick = SystemClock.elapsedRealtime();
@@ -204,7 +204,7 @@ public class SettingsActivity extends AppCompatActivity
 		try {
 			((Animatable) ((ImageView) findViewById(viewId)).getDrawable()).start();
 		} catch (ClassCastException e) {
-			if(DEBUG) Log.e(TAG, "startAnimatedIcon() requires AVD!");
+			if (DEBUG) Log.e(TAG, "startAnimatedIcon() requires AVD!");
 		}
 	}
 }

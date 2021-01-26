@@ -77,7 +77,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
 	@Override
 	public void onClick(View v) {
 
-		if(SystemClock.elapsedRealtime() - mLastClickTime < 600){
+		if (SystemClock.elapsedRealtime() - mLastClickTime < 600){
 			return;
 		}
 		mLastClickTime = SystemClock.elapsedRealtime();
@@ -135,7 +135,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
 		Bundle bundle = new Bundle();
 		bundle.putString("title", getString(title));
 		bundle.putString("file", file);
-		if(link != 0) {
+		if (link != 0) {
 			bundle.putString("link", getString(link));
 		}
 		textBottomSheetDialogFragment.setArguments(bundle);
@@ -148,7 +148,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
 		try {
 			((Animatable) ((ImageView) findViewById(viewId)).getDrawable()).start();
 		} catch (ClassCastException e) {
-			if(DEBUG) Log.e(TAG, "startAnimatedIcon() requires AVD!");
+			if (DEBUG) Log.e(TAG, "startAnimatedIcon() requires AVD!");
 		}
 	}
 }

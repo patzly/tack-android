@@ -16,10 +16,8 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.wearable.input.WearableButtons;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.RotateAnimation;
 import android.widget.Toast;
 
 import androidx.fragment.app.FragmentActivity;
@@ -27,17 +25,16 @@ import androidx.preference.PreferenceManager;
 import androidx.wear.ambient.AmbientModeSupport;
 import androidx.wear.widget.SwipeDismissFrameLayout;
 
-import com.google.android.wearable.input.RotaryEncoderHelper;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
 import xyz.zedler.patrick.tack.util.Constants;
 import xyz.zedler.patrick.tack.util.ViewUtil;
+import xyz.zedler.patrick.tack.view.BpmPickerView;
 
 public class MainActivity extends FragmentActivity
-        implements View.OnClickListener, Runnable, View.OnTouchListener,
+        implements View.OnClickListener, Runnable,
         AmbientModeSupport.AmbientCallbackProvider {
 
     private final static String TAG = MainActivity.class.getSimpleName();
@@ -52,10 +49,8 @@ public class MainActivity extends FragmentActivity
     private SoundPool soundPool;
     private Handler handler;
     private int soundId = -1;
-    private float degreeStorage = 0;
-    private boolean animations, vibrateAlways, wristGestures, hidePicker, isTouchStartedInRing;
+    private boolean animations, vibrateAlways, wristGestures, hidePicker;
     private boolean isFirstRotation, isFirstButtonPress, isPlaying = false;
-    private double currAngle = 0, prevAngle, ringWidth, edgeWidth;
     private final List<Long> intervals = new ArrayList<>();
 
     @SuppressLint("RestrictedApi")
@@ -86,13 +81,9 @@ public class MainActivity extends FragmentActivity
 
         handler = new Handler(Looper.getMainLooper());
 
-        ringWidth = (float) getResources().getDimensionPixelSize(R.dimen.dotted_ring_width);
-        edgeWidth = (float) getResources().getDimensionPixelSize(R.dimen.edge_width);
-        prevAngle = 0;
-
         initViews();
 
-        if(sharedPrefs.getBoolean(Constants.PREF.FIRST_START, true)) {
+        if (sharedPrefs.getBoolean(Constants.PREF.FIRST_START, true)) {
             startActivity(new Intent(this, OnboardingActivity.class));
             sharedPrefs.edit().putBoolean(Constants.PREF.FIRST_START, false).apply();
         }
@@ -139,44 +130,43 @@ public class MainActivity extends FragmentActivity
                 binding.frameBookmark
         );
 
-        binding.bpmPicker.setOnTouchListener(hidePicker ? null : this);
-        binding.bpmPicker.setDotsVisible(!hidePicker);
-        binding.bpmPicker.setOnGenericMotionListener((v, ev) -> {
-            if (ev.getAction() == MotionEvent.ACTION_SCROLL
-                    && RotaryEncoderHelper.isFromRotaryEncoder(ev)
-            ) {
-                float delta = -RotaryEncoderHelper.getRotaryAxisValue(ev)
-                        * (RotaryEncoderHelper.getScaledScrollFactor(this) / 5);
-                v.setRotation(v.getRotation() + delta);
-                int rotated = -RotaryEncoderHelper.getRotaryAxisValue(ev) > 0 ? 1 : -1;
-
-                if(rotated != rotatedPrev) {
-                    changeBpm(rotated);
-                    rotatedPrev = rotated;
-                } else {
-                    if(rotaryFactorIndex == 0) {
-                        changeBpm(rotated);
-                        rotaryFactorIndex++;
-                    } else {
-                        if(rotaryFactorIndex < 5) {
-                            rotaryFactorIndex++;
-                        } else {
-                            rotaryFactorIndex = 0;
-                        }
-                    }
-                }
-                if(isFirstRotation && !hidePicker) {
-                    isFirstRotation = false;
-                    Toast.makeText(
-                            this, R.string.msg_hide_picker, Toast.LENGTH_LONG
-                    ).show();
-                    sharedPrefs.edit().putBoolean(
-                            Constants.PREF.FIRST_ROTATION, isFirstRotation
-                    ).apply();
-                }
-                return true;
+        binding.bpmPicker.setOnRotationListener(this::changeBpm);
+        binding.bpmPicker.setOnPickListener(new BpmPickerView.OnPickListener() {
+            @Override
+            public void onPickDown(boolean canBeDismiss) {
+                binding.swipeDismiss.setSwipeable(canBeDismiss);
+                binding.bpmPicker.setTouched(true, animations);
             }
-            return false;
+
+            @Override
+            public void onPickUpOrCancel() {
+                binding.swipeDismiss.setSwipeable(true);
+                binding.bpmPicker.setTouched(false, animations);
+            }
+        });
+        binding.bpmPicker.setOnRotaryInputListener(change -> {
+            if (change != rotatedPrev) {
+                // change immediately after direction change
+                changeBpm(change);
+                rotatedPrev = change;
+            } else if (rotaryFactorIndex == 0) {
+                // enough rotated for next value change
+                changeBpm(change);
+                rotaryFactorIndex++;
+            } else {
+                // more rotation needed for bpm to change again
+                rotaryFactorIndex = rotaryFactorIndex < 5 ? rotaryFactorIndex + 1 : 0;
+            }
+
+            if (isFirstRotation && !hidePicker) {
+                isFirstRotation = false;
+                Toast.makeText(
+                        this, R.string.msg_hide_picker, Toast.LENGTH_LONG
+                ).show();
+                sharedPrefs.edit().putBoolean(
+                        Constants.PREF.FIRST_ROTATION, isFirstRotation
+                ).apply();
+            }
         });
     }
 
@@ -184,16 +174,16 @@ public class MainActivity extends FragmentActivity
     protected void onResume() {
         super.onResume();
 
-        if(hidePicker != sharedPrefs.getBoolean(Constants.PREF.HIDE_PICKER, false)) {
-            recreate();
-        }
+        binding.bpmPicker.setDotsVisible(
+                !sharedPrefs.getBoolean(Constants.PREF.HIDE_PICKER, false)
+        );
 
         emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, 0);
         vibrateAlways = sharedPrefs.getBoolean(Constants.PREF.VIBRATE_ALWAYS, false);
         wristGestures = sharedPrefs.getBoolean(Constants.PREF.WRIST_GESTURES, true);
         animations = sharedPrefs.getBoolean(Constants.PREF.ANIMATIONS, true);
 
-        if(sharedPrefs.getBoolean(Constants.PREF.BEAT_MODE_VIBRATE, true)) {
+        if (sharedPrefs.getBoolean(Constants.PREF.BEAT_MODE_VIBRATE, true)) {
             binding.imageBeatMode.setImageResource(
                     vibrateAlways
                             ? R.drawable.ic_round_volume_off_to_volume_on_anim
@@ -248,26 +238,26 @@ public class MainActivity extends FragmentActivity
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_NAVIGATE_NEXT:
-                if(wristGestures) {
+                if (wristGestures) {
                     changeBpm(1);
                     return true;
                 }
                 break;
             case KeyEvent.KEYCODE_NAVIGATE_PREVIOUS:
-                if(wristGestures) {
+                if (wristGestures) {
                     changeBpm(-1);
                     return true;
                 }
                 break;
             case KeyEvent.KEYCODE_STEM_1:
-                if(WearableButtons.getButtonCount(this) >= 2) {
+                if (WearableButtons.getButtonCount(this) >= 2) {
                     onButtonPress();
                     changeBpm(1);
                     return true;
                 }
                 break;
             case KeyEvent.KEYCODE_STEM_2:
-                if(WearableButtons.getButtonCount(this) >= 2) {
+                if (WearableButtons.getButtonCount(this) >= 2) {
                     onButtonPress();
                     changeBpm(-1);
                     return true;
@@ -278,7 +268,7 @@ public class MainActivity extends FragmentActivity
     }
 
     private void onButtonPress() {
-        if(isFirstButtonPress) {
+        if (isFirstButtonPress) {
             isFirstButtonPress = false;
             Toast.makeText(this, R.string.msg_long_press, Toast.LENGTH_LONG).show();
             sharedPrefs.edit().putBoolean(
@@ -290,7 +280,7 @@ public class MainActivity extends FragmentActivity
     private void setNextEmphasis() {
         int emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, 0);
         int emphasisNew;
-        if(emphasis < 6) {
+        if (emphasis < 6) {
             emphasisNew = emphasis + 1;
         } else {
             emphasisNew = 0;
@@ -303,83 +293,14 @@ public class MainActivity extends FragmentActivity
         );
     }
 
-    @SuppressLint({"ClickableViewAccessibility", "RestrictedApi"})
-    @Override
-    public boolean onTouch(final View v, MotionEvent event) {
-        if(v.getId() == R.id.bpm_picker) {
-            final float xc = (float) binding.bpmPicker.getWidth() / 2;
-            final float yc = (float) binding.bpmPicker.getHeight() / 2;
-            final float x = event.getX();
-            final float y = event.getY();
-            boolean isTouchInsideRing = isTouchInsideRing(event.getX(), event.getY());
-
-            double angle = Math.toDegrees(Math.atan2(x - xc, yc - y));
-            if(event.getAction() == MotionEvent.ACTION_DOWN) {
-                isTouchStartedInRing = isTouchInsideRing;
-                binding.swipeDismiss.setSwipeable(
-                        !(isTouchInsideRing && !isTouchEdge(event.getX()))
-                );
-                currAngle = angle;
-                binding.bpmPicker.setTouched(true, animations);
-            } else if(event.getAction() == MotionEvent.ACTION_MOVE) {
-                if(isTouchInsideRing || isTouchStartedInRing) {
-                    prevAngle = currAngle;
-                    currAngle = angle;
-                    animate(prevAngle, currAngle);
-                }
-            } else if(event.getAction() == MotionEvent.ACTION_UP
-                    || event.getAction() == MotionEvent.ACTION_CANCEL
-            ) {
-                prevAngle = currAngle = 0;
-                binding.swipeDismiss.setSwipeable(true);
-                binding.bpmPicker.setTouched(false, animations);
-            }
-            return true;
-        } return false;
-    }
-
-    private boolean isTouchInsideRing(float x, float y) {
-        float radius = (Math.min(
-                binding.bpmPicker.getWidth(), binding.bpmPicker.getHeight()
-        ) / 2f) - (float) ringWidth;
-        double centerX = binding.bpmPicker.getPivotX();
-        double centerY = binding.bpmPicker.getPivotY();
-        double distanceX = x - centerX;
-        double distanceY = y - centerY;
-        return !((distanceX * distanceX) + (distanceY * distanceY) <= radius * radius);
-    }
-
-    private boolean isTouchEdge(float x) {
-        return x <= edgeWidth;
-    }
-
-    private void animate(double fromDegrees, double toDegrees) {
-        final RotateAnimation rotate = new RotateAnimation((float) fromDegrees, (float) toDegrees,
-                RotateAnimation.RELATIVE_TO_SELF, 0.5f,
-                RotateAnimation.RELATIVE_TO_SELF, 0.5f);
-        rotate.setDuration(0);
-        rotate.setFillEnabled(true);
-        rotate.setFillAfter(true);
-        binding.bpmPicker.startAnimation(rotate);
-        float degreeDiff = (float) toDegrees - (float) fromDegrees;
-        degreeStorage = degreeStorage + degreeDiff;
-        if(degreeStorage > 12) {
-            changeBpm(1);
-            degreeStorage = 0;
-        } else if(degreeStorage < -12) {
-            changeBpm(-1);
-            degreeStorage = 0;
-        }
-    }
-
     @Override
     public void run() {
         if (isPlaying) {
             handler.postDelayed(this, interval);
 
             boolean isEmphasis = emphasis != 0 && emphasisIndex == 0;
-            if(emphasis != 0) {
-                if(emphasisIndex < emphasis - 1) {
+            if (emphasis != 0) {
+                if (emphasisIndex < emphasis - 1) {
                     emphasisIndex++;
                 } else emphasisIndex = 0;
             }
@@ -389,7 +310,7 @@ public class MainActivity extends FragmentActivity
                         soundId, 1, 1,
                         0, 0, isEmphasis ? 1.5f : 1
                 );
-                if(vibrateAlways) {
+                if (vibrateAlways) {
                     if (Build.VERSION.SDK_INT >= 26) {
                         vibrator.vibrate(VibrationEffect.createOneShot(
                                 isEmphasis ? 50 : 20,
@@ -427,7 +348,7 @@ public class MainActivity extends FragmentActivity
 
     private void changeBpm(int change) {
         int bpmNew = bpm + change;
-        if((change > 0 && bpmNew <= 300) || (change < 0 && bpmNew >= 1)) {
+        if ((change > 0 && bpmNew <= 300) || (change < 0 && bpmNew >= 1)) {
             setBpm(bpmNew);
         }
     }
@@ -526,21 +447,15 @@ public class MainActivity extends FragmentActivity
             sharedPrefs.edit().putInt(Constants.PREF.BOOKMARK, bpm).apply();
             int finalBookmark = bookmark;
             binding.textBpm.animate().alpha(0).setDuration(150).start();
-            new Handler(Looper.getMainLooper()).postDelayed(
-                    () -> {
-                        setBpm(finalBookmark);
-                        binding.textBpm.animate()
-                                .alpha(isPlaying ? 0.35f : 1)
-                                .setDuration(150)
-                                .start();
-                    },
-                    animations ? 150 : 0
-            );
+            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                setBpm(finalBookmark);
+                binding.textBpm.animate().alpha(isPlaying ? 0.35f : 1).setDuration(150).start();
+            }, animations ? 150 : 0);
         }
     }
 
     private void setBpm(int bpm) {
-        if(bpm > 0) {
+        if (bpm > 0) {
             this.bpm = Math.min(bpm, 300);
             binding.textBpm.setText(String.valueOf(this.bpm));
             interval = toInterval(this.bpm);
@@ -550,7 +465,7 @@ public class MainActivity extends FragmentActivity
 
     private long getIntervalAverage() {
         long sum = 0L;
-        if(!intervals.isEmpty()) {
+        if (!intervals.isEmpty()) {
             for (long interval : intervals) {
                 sum += interval;
             }
@@ -561,9 +476,9 @@ public class MainActivity extends FragmentActivity
 
     private void keepScreenOn(boolean keepOn) {
         float iconAlpha = 0.5f;
-        if(keepOn) {
+        if (keepOn) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            if(animations) {
+            if (animations) {
                 ViewUtil.animateBackgroundTint(binding.framePlayPause, R.color.retro_dark);
                 binding.imagePlayPause.animate().alpha(0.5f).setDuration(300).start();
                 binding.textBpm.animate().alpha(0.35f).setDuration(300).start();
@@ -596,7 +511,7 @@ public class MainActivity extends FragmentActivity
             }
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            if(animations) {
+            if (animations) {
                 ViewUtil.animateBackgroundTint(binding.framePlayPause, R.color.secondary);
                 ViewUtil.animateViewsAlpha(
                         1,

@@ -168,8 +168,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             final Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
-                    if(isBound()) {
-                        if(service.getBpm() > 1) {
+                    if (isBound()) {
+                        if (service.getBpm() > 1) {
                             changeBpm(-1);
                             handler.postDelayed(this, nextRun);
                             nextRun = (int) (nextRun * 0.9);
@@ -211,8 +211,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             final Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
-                    if(isBound()) {
-                        if(service.getBpm() < 300) {
+                    if (isBound()) {
+                        if (service.getBpm() < 300) {
                             changeBpm(1);
                             handler.postDelayed(this, nextRun);
                             nextRun = (int) (nextRun * 0.9);
@@ -246,7 +246,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         imageViewBeatMode = findViewById(R.id.image_beat_mode);
         boolean vibrateAlways = sharedPrefs.getBoolean("vibrate_always", false);
-        if(sharedPrefs.getBoolean("beat_mode_vibrate", true)) {
+        if (sharedPrefs.getBoolean("beat_mode_vibrate", true)) {
             imageViewBeatMode.setImageResource(
                     vibrateAlways
                             ? R.drawable.ic_round_volume_off_to_volume_on_anim
@@ -278,14 +278,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         String prefBookmarks = sharedPrefs.getString("bookmarks", null);
         List<String> bookmarksArray;
-        if(prefBookmarks != null) {
+        if (prefBookmarks != null) {
             bookmarksArray = Arrays.asList(prefBookmarks.split(","));
         } else {
             bookmarksArray = new ArrayList<>();
         }
         bookmarks = new ArrayList<>(bookmarksArray.size());
         for(int i = 0; i < bookmarksArray.size(); i++) {
-            if(!bookmarksArray.get(i).equals("")) {
+            if (!bookmarksArray.get(i).equals("")) {
                 bookmarks.add(Integer.parseInt(bookmarksArray.get(i)));
             }
         }
@@ -351,8 +351,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         subscribe();*/
 
         int feedback = sharedPrefs.getInt("feedback_pop_up", 1);
-        if(feedback > 0) {
-            if(feedback < 5) {
+        if (feedback > 0) {
+            if (feedback < 5) {
                 sharedPrefs.edit().putInt("feedback_pop_up", feedback + 1).apply();
             } else {
                 new FeedbackBottomSheetDialogFragment().show(
@@ -366,7 +366,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void setNextEmphasis() {
         int emphasis = sharedPrefs.getInt("emphasis", 0);
         int emphasisNew;
-        if(emphasis < 6) {
+        if (emphasis < 6) {
             emphasisNew = emphasis + 1;
         } else {
             emphasisNew = 0;
@@ -376,13 +376,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 () -> textViewEmphasis.setText(String.valueOf(emphasisNew)),
                 150
         );
-        if(isBound) service.updateTick();
+        if (isBound) service.updateTick();
     }
 
     public void setEmphasis(int emphasis) {
         sharedPrefs.edit().putInt("emphasis", emphasis).apply();
         textViewEmphasis.setText(String.valueOf(emphasis));
-        if(isBound) service.updateTick();
+        if (isBound) service.updateTick();
     }
 
     private static int toBpm(long interval) {
@@ -509,7 +509,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void keepScreenAwake(boolean keepAwake) {
-        if(keepAwake && sharedPrefs.getBoolean("keep_awake", true)) {
+        if (keepAwake && sharedPrefs.getBoolean("keep_awake", true)) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -547,9 +547,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void refreshBookmark(boolean animated) {
         if (isBound()) {
-            if(!bookmarks.contains(service.getBpm())) {
-                if(!frameLayoutBookmark.isEnabled()) {
-                    if(animated) {
+            if (!bookmarks.contains(service.getBpm())) {
+                if (!frameLayoutBookmark.isEnabled()) {
+                    if (animated) {
                         frameLayoutBookmark.animate().alpha(1).setDuration(300).start();
                     } else {
                         frameLayoutBookmark.setAlpha(1);
@@ -557,8 +557,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 frameLayoutBookmark.setEnabled(true);
             } else {
-                if(frameLayoutBookmark.isEnabled()) {
-                    if(animated) {
+                if (frameLayoutBookmark.isEnabled()) {
+                    if (animated) {
                         frameLayoutBookmark.animate().alpha(0.5f).setDuration(300).start();
                     } else {
                         frameLayoutBookmark.setAlpha(0.5f);
@@ -568,12 +568,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             for(int i = 0; i < chipGroup.getChildCount(); i++) {
                 Chip chip = (Chip) chipGroup.getChildAt(i);
-                if(chip != null) {
+                if (chip != null) {
                     boolean active = Integer.parseInt(chip.getText().toString()) == service.getBpm();
-                    if(animated) {
+                    if (animated) {
                         animateChip(chip, active);
                     } else {
-                        if(active) {
+                        if (active) {
                             chip.setChipStrokeColorResource(R.color.bookmark_active);
                             chip.setChipStrokeWidthResource(R.dimen.chip_stroke_width_active);
                         } else {
@@ -623,7 +623,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @SuppressLint({"ClickableViewAccessibility"})
     @Override
     public boolean onTouch(final View v, MotionEvent event) {
-        if(v.getId() == R.id.bpm_picker) {
+        if (v.getId() == R.id.bpm_picker) {
             final float xc = (float) bpmPickerView.getWidth() / 2;
             final float yc = (float) bpmPickerView.getHeight() / 2;
             final float x = event.getX();
@@ -631,17 +631,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             boolean isTouchInsideRing = isTouchInsideRing(event.getX(), event.getY());
 
             double angle = Math.toDegrees(Math.atan2(x - xc, yc - y));
-            if(event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 isTouchStartedInRing = isTouchInsideRing;
                 currAngle = angle;
                 bpmPickerView.setTouched(true);
-            } else if(event.getAction() == MotionEvent.ACTION_MOVE) {
-                if(isTouchInsideRing || isTouchStartedInRing) {
+            } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                if (isTouchInsideRing || isTouchStartedInRing) {
                     prevAngle = currAngle;
                     currAngle = angle;
                     animateRotation(prevAngle, currAngle);
                 }
-            } else if(event.getAction() == MotionEvent.ACTION_UP
+            } else if (event.getAction() == MotionEvent.ACTION_UP
                     || event.getAction() == MotionEvent.ACTION_CANCEL
             ) {
                 prevAngle = currAngle = 0;
@@ -671,44 +671,44 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         float degreeDiff = (float) toDegrees - (float) fromDegrees;
         degreeStorage = degreeStorage + degreeDiff;
         //Log.i(TAG, "animate: difference = " + degreeDiff + ", storage = " + degreeStorage);
-        if(degreeStorage > ROTATE_THRESHOLD) {
+        if (degreeStorage > ROTATE_THRESHOLD) {
             changeBpm(1);
             degreeStorage = 0;
-        } else if(degreeStorage < ROTATE_THRESHOLD * -1) {
+        } else if (degreeStorage < ROTATE_THRESHOLD * -1) {
             changeBpm(-1);
             degreeStorage = 0;
         }
     }
 
     private void changeBpm(int change) {
-        if(isBound()) {
+        if (isBound()) {
             setBpm(service.getBpm() + change);
         }
     }
 
     private void setBpm(int bpm) {
-        if(isBound() && bpm > 0) {
+        if (isBound() && bpm > 0) {
             service.setBpm(Math.min(bpm, 300));
             refreshBookmark(true);
             textViewBpm.setText(String.valueOf(service.getBpm()));
-            if(service.getBpm() > 1) {
-                if(!frameLayoutLess.isEnabled()) {
+            if (service.getBpm() > 1) {
+                if (!frameLayoutLess.isEnabled()) {
                     frameLayoutLess.animate().alpha(1).setDuration(300).start();
                 }
                 frameLayoutLess.setEnabled(true);
             } else {
-                if(frameLayoutLess.isEnabled()) {
+                if (frameLayoutLess.isEnabled()) {
                     frameLayoutLess.animate().alpha(0.5f).setDuration(300).start();
                 }
                 frameLayoutLess.setEnabled(false);
             }
-            if(service.getBpm() < 300) {
-                if(!frameLayoutMore.isEnabled()) {
+            if (service.getBpm() < 300) {
+                if (!frameLayoutMore.isEnabled()) {
                     frameLayoutMore.animate().alpha(1).setDuration(300).start();
                 }
                 frameLayoutMore.setEnabled(true);
             } else {
-                if(frameLayoutMore.isEnabled()) {
+                if (frameLayoutMore.isEnabled()) {
                     frameLayoutMore.animate().alpha(0.5f).setDuration(300).start();
                 }
                 frameLayoutMore.setEnabled(false);
@@ -717,7 +717,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setButtonStates() {
-        if(isBound()) {
+        if (isBound()) {
             int bpm = service.getBpm();
             frameLayoutLess.setEnabled(bpm > 1);
             frameLayoutLess.setAlpha(bpm > 1 ? 1 : 0.5f);
@@ -767,7 +767,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         service.setTickListener(this);
         isBound = true;
 
-        if(sharedPrefs.getBoolean("beat_mode_vibrate", true)) {
+        if (sharedPrefs.getBoolean("beat_mode_vibrate", true)) {
             imageViewBeatMode.setImageResource(
                     sharedPrefs.getBoolean("vibrate_always", false)
                             ? R.drawable.ic_round_volume_off_to_volume_on_anim
@@ -848,7 +848,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private long getIntervalAverage() {
         long sum = 0L;
-        if(!intervals.isEmpty()) {
+        if (!intervals.isEmpty()) {
             for (long interval : intervals) {
                 sum += interval;
             }
@@ -897,7 +897,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         try {
             ((Animatable) ((ImageView) view).getDrawable()).start();
         } catch (ClassCastException e) {
-            if(DEBUG) Log.e(TAG, "startAnimatedIcon() requires AVD!");
+            if (DEBUG) Log.e(TAG, "startAnimatedIcon() requires AVD!");
         }
     }
 
@@ -905,7 +905,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         try {
             ((Animatable) fab.getDrawable()).start();
         } catch (ClassCastException e) {
-            if(DEBUG) Log.e(TAG, "startAnimatedIcon() requires AVD!");
+            if (DEBUG) Log.e(TAG, "startAnimatedIcon() requires AVD!");
         }
     }
 }

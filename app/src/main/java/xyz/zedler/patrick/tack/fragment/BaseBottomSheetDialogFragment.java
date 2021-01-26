@@ -33,13 +33,13 @@ public class BaseBottomSheetDialogFragment extends BottomSheetDialogFragment {
         if (orientation != Configuration.ORIENTATION_LANDSCAPE) return;
         view.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             BottomSheetDialog dialog = (BottomSheetDialog) getDialog();
-            if(dialog == null) return;
+            if (dialog == null) return;
 
             View sheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
-            if(sheet == null) return;
+            if (sheet == null) return;
 
             Activity activity = getActivity();
-            if(activity == null) return;
+            if (activity == null) return;
 
             BottomSheetBehavior.from(sheet).setPeekHeight(getHalfHeight(activity));
         });

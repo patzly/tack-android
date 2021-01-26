@@ -59,7 +59,7 @@ public class TextBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
 		String file = bundle.getString("file") + ".txt";
 		String fileLocalized = bundle.getString("file") + "-" + Locale.getDefault().getLanguage() + ".txt";
-		if(readFromFile(context, fileLocalized) != null) file = fileLocalized;
+		if (readFromFile(context, fileLocalized) != null) file = fileLocalized;
 
 		((TextView) view.findViewById(R.id.text_text_title)).setText(bundle.getString("title"));
 
@@ -78,7 +78,7 @@ public class TextBottomSheetDialogFragment extends BottomSheetDialogFragment {
 		}
 
 		((TextView) view.findViewById(R.id.text_text)).setText(readFromFile(context, file));
-		if(bundle.getBoolean("big", false)) {
+		if (bundle.getBoolean("big", false)) {
 			((TextView) view.findViewById(R.id.text_text)).setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.5f);
 		}
 
@@ -97,10 +97,10 @@ public class TextBottomSheetDialogFragment extends BottomSheetDialogFragment {
 			text.deleteCharAt(text.length() - 1);
 			inputStream.close();
 		} catch (FileNotFoundException e) {
-			if(DEBUG) Log.e(TAG, "readFromFile: \"" + file + "\" not found!");
+			if (DEBUG) Log.e(TAG, "readFromFile: \"" + file + "\" not found!");
 			return null;
 		} catch (Exception e) {
-			if(DEBUG) Log.e(TAG, "readFromFile: " + e.toString());
+			if (DEBUG) Log.e(TAG, "readFromFile: " + e.toString());
 		}
 		return text.toString();
 	}

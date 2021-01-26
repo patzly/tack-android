@@ -21,7 +21,7 @@ public class OnboardingActivity extends FragmentActivity {
         binding = ActivityOnboardingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        if(WearableButtons.getButtonCount(this) >= 2
+        if (WearableButtons.getButtonCount(this) >= 2
                 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.N
         ) {
             binding.imageFeatureFsb1.setImageDrawable(
