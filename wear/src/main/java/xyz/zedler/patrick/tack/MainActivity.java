@@ -38,7 +38,6 @@ public class MainActivity extends FragmentActivity
         AmbientModeSupport.AmbientCallbackProvider {
 
     private final static String TAG = MainActivity.class.getSimpleName();
-    private final static boolean DEBUG = false;
 
     private ActivityMainBinding binding;
     private SharedPreferences sharedPrefs;

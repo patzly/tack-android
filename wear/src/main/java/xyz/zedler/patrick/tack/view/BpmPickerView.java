@@ -21,6 +21,8 @@ import xyz.zedler.patrick.tack.R;
 public class BpmPickerView extends View
         implements View.OnGenericMotionListener, View.OnTouchListener {
 
+    private final static String TAG = BpmPickerView.class.getSimpleName();
+
     private final int dots;
     private final Paint paint;
     private final float ringWidth;
@@ -69,7 +71,7 @@ public class BpmPickerView extends View
         paint.setStrokeWidth(dotSizeMin);
         paint.setAntiAlias(true);
 
-        dots = 15;
+        dots = 16;
         prevAngle = 0;
 
         setOnGenericMotionListener(this);
@@ -99,12 +101,12 @@ public class BpmPickerView extends View
         float centerX = getPivotX();
         float centerY = getPivotY();
         float min = Math.min(getWidth(), getHeight());
-        float f3 = (min / 2f) - ringWidth / 2;
+        float radius = (min / 2) - ringWidth / 2;
         for (int i = 0; i < dots; i++) {
             double d = (((i * 2f) / dots)) * Math.PI;
             canvas.drawPoint(
-                    ((float) Math.cos(d) * f3) + centerX,
-                    ((float) Math.sin(d) * f3) + centerY,
+                    ((float) Math.cos(d) * radius) + centerX,
+                    ((float) Math.sin(d) * radius) + centerY,
                     paint
             );
         }
@@ -148,7 +150,9 @@ public class BpmPickerView extends View
         final float y = event.getY();
         boolean isTouchInsideRing = isTouchInsideRing(event.getX(), event.getY());
 
-        double angle = Math.toDegrees(Math.atan2(x - xc, yc - y));
+        double angleRaw = Math.toDegrees(Math.atan2(x - xc, yc - y));
+        double angle = angleRaw >= 0 ? angleRaw : 180 + (180 - Math.abs(angleRaw));
+
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             isTouchStartedInRing = isTouchInsideRing;
             // on back gesture edge or outside ring
@@ -182,7 +186,11 @@ public class BpmPickerView extends View
         rotate.setFillEnabled(true);
         rotate.setFillAfter(true);
         startAnimation(rotate);
+
         float degreeDiff = (float) toDegrees - (float) fromDegrees;
+        if (degreeDiff > 180) degreeDiff = 360 - degreeDiff;
+        if (degreeDiff < -180) degreeDiff = -360 + Math.abs(degreeDiff);
+
         degreeStorage = degreeStorage + degreeDiff;
         if (degreeStorage > 12) {
             if (onRotationListener != null) onRotationListener.onRotate(1);
