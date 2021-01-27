@@ -1,19 +1,15 @@
 package xyz.zedler.patrick.tack;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.support.wearable.input.WearableButtons;
 import android.view.KeyEvent;
 import android.view.View;
@@ -30,6 +26,7 @@ import java.util.List;
 
 import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
 import xyz.zedler.patrick.tack.util.Constants;
+import xyz.zedler.patrick.tack.util.VibratorUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
 
@@ -41,7 +38,6 @@ public class MainActivity extends FragmentActivity
 
     private ActivityMainBinding binding;
     private SharedPreferences sharedPrefs;
-    private Vibrator vibrator;
     private int bpm, emphasis, emphasisIndex, rotaryFactorIndex = 0, rotatedPrev = 0;
     private long lastClick = 0, prevTouchTime = 0, interval;
     private Drawable drawableFabBg;
@@ -67,8 +63,6 @@ public class MainActivity extends FragmentActivity
         isFirstButtonPress = sharedPrefs.getBoolean(Constants.PREF.FIRST_PRESS, true);
         interval = sharedPrefs.getLong(Constants.PREF.INTERVAL, 500);
         bpm = toBpm(interval);
-
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         soundPool = new SoundPool.Builder()
                 .setMaxStreams(1)
@@ -173,11 +167,8 @@ public class MainActivity extends FragmentActivity
     protected void onResume() {
         super.onResume();
 
-        binding.bpmPicker.setDotsVisible(
-                !sharedPrefs.getBoolean(Constants.PREF.HIDE_PICKER, false)
-        );
-
         emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, 0);
+        hidePicker = sharedPrefs.getBoolean(Constants.PREF.HIDE_PICKER, false);
         vibrateAlways = sharedPrefs.getBoolean(Constants.PREF.VIBRATE_ALWAYS, false);
         wristGestures = sharedPrefs.getBoolean(Constants.PREF.WRIST_GESTURES, true);
         animations = sharedPrefs.getBoolean(Constants.PREF.ANIMATIONS, true);
@@ -197,6 +188,21 @@ public class MainActivity extends FragmentActivity
             );
             soundId = soundPool.load(this, getSoundId(), 1);
         }
+
+        // LAYOUT
+
+        binding.bpmPicker.setDotsVisible(!hidePicker);
+        ViewUtil.setViewsSize(
+                getResources().getDimensionPixelSize(
+                        hidePicker ? R.dimen.icon_size_no_picker : R.dimen.icon_size
+                ),
+                binding.imageTempoTap,
+                binding.imageEmphasis,
+                binding.imageSettings,
+                binding.imageBookmark,
+                binding.imageBeatMode,
+                binding.imagePlayPause
+        );
     }
 
     @Override
@@ -215,7 +221,7 @@ public class MainActivity extends FragmentActivity
                         binding.textEmphasis,
                         binding.bpmPicker
                 );
-                binding.textBpm.setTextSize(38);
+                binding.textBpm.setTextSize(40);
                 binding.textLabel.setTextSize(15);
                 binding.textBpm.setTextColor(getColor(R.color.on_background_secondary));
                 binding.textLabel.setTextColor(getColor(R.color.on_background_secondary));
@@ -276,23 +282,15 @@ public class MainActivity extends FragmentActivity
     }
 
     private void onButtonPress() {
-        if (isFirstButtonPress) {
-            isFirstButtonPress = false;
-            Toast.makeText(this, R.string.msg_long_press, Toast.LENGTH_LONG).show();
-            sharedPrefs.edit().putBoolean(
-                    Constants.PREF.FIRST_PRESS, isFirstButtonPress
-            ).apply();
-        }
+        if (!isFirstButtonPress) return;
+        isFirstButtonPress = false;
+        Toast.makeText(this, R.string.msg_long_press, Toast.LENGTH_LONG).show();
+        sharedPrefs.edit().putBoolean(Constants.PREF.FIRST_PRESS, isFirstButtonPress).apply();
     }
 
     private void setNextEmphasis() {
         int emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, 0);
-        int emphasisNew;
-        if (emphasis < 6) {
-            emphasisNew = emphasis + 1;
-        } else {
-            emphasisNew = 0;
-        }
+        int emphasisNew = emphasis < 6 ? emphasis + 1 : 0;
         this.emphasis = emphasisNew;
         sharedPrefs.edit().putInt(Constants.PREF.EMPHASIS, emphasisNew).apply();
         new Handler(Looper.getMainLooper()).postDelayed(
@@ -307,34 +305,15 @@ public class MainActivity extends FragmentActivity
             handler.postDelayed(this, interval);
 
             boolean isEmphasis = emphasis != 0 && emphasisIndex == 0;
-            if (emphasis != 0) {
-                if (emphasisIndex < emphasis - 1) {
-                    emphasisIndex++;
-                } else emphasisIndex = 0;
-            }
+            if (emphasis != 0) emphasisIndex = emphasisIndex < emphasis - 1 ? emphasisIndex + 1 : 0;
 
             if (soundId != -1) {
                 soundPool.play(
-                        soundId, 1, 1,
-                        0, 0, isEmphasis ? 1.5f : 1
+                        soundId, 1, 1, 0, 0, isEmphasis ? 1.5f : 1
                 );
-                if (vibrateAlways) {
-                    if (Build.VERSION.SDK_INT >= 26) {
-                        vibrator.vibrate(VibrationEffect.createOneShot(
-                                isEmphasis ? 50 : 20,
-                                VibrationEffect.DEFAULT_AMPLITUDE)
-                        );
-                    } else {
-                        vibrator.vibrate(isEmphasis ? 50 : 20);
-                    }
-                }
-            } else if (Build.VERSION.SDK_INT >= 26) {
-                vibrator.vibrate(VibrationEffect.createOneShot(
-                        isEmphasis ? 50 : 20,
-                        VibrationEffect.DEFAULT_AMPLITUDE)
-                );
+                if (vibrateAlways) VibratorUtil.vibrate(this, isEmphasis);
             } else {
-                vibrator.vibrate(isEmphasis ? 50 : 20);
+                VibratorUtil.vibrate(this, isEmphasis);
             }
         }
     }

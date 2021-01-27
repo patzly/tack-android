@@ -46,6 +46,14 @@ public class ViewUtil {
         }
     }
 
+    public static void setViewsSize(float size, View... views) {
+        for (View view : views) {
+            view.getLayoutParams().width = (int) size;
+            view.getLayoutParams().height = (int) size;
+            view.requestLayout();
+        }
+    }
+
     public static void animateViewsAlpha(float alpha, View... views) {
         for (View view : views) {
             view.animate().alpha(alpha).setDuration(300).start();

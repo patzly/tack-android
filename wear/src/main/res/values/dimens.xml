@@ -12,7 +12,7 @@
     <dimen name="control_horizontal_offset">4dp</dimen>
 
     <dimen name="icon_size">24dp</dimen>
-    <dimen name="icon_size_no_picker">27dp</dimen>
+    <dimen name="icon_size_no_picker">28dp</dimen>
     <dimen name="icon_touch_target_size">30dp</dimen>
     <dimen name="action_button_size">48dp</dimen>
 
