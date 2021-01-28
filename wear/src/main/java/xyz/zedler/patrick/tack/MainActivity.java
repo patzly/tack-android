@@ -3,8 +3,6 @@ package xyz.zedler.patrick.tack;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.AudioAttributes;
-import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -24,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
+import xyz.zedler.patrick.tack.util.AudioUtil;
 import xyz.zedler.patrick.tack.util.Constants;
 import xyz.zedler.patrick.tack.util.VibratorUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
@@ -36,7 +35,7 @@ public class MainActivity extends FragmentActivity
 
     private ActivityMainBinding binding;
     private SharedPreferences sharedPrefs;
-    private SoundPool soundPool;
+    private AudioUtil audioUtil;
     private List<Long> intervals;
     private Handler handler;
     private int bpm;
@@ -72,19 +71,13 @@ public class MainActivity extends FragmentActivity
         interval = sharedPrefs.getLong(Constants.PREF.INTERVAL, 500);
         bpm = (int) (60000 / interval);
 
+        audioUtil = new AudioUtil(this);
+
         isBeatModeVibrate = sharedPrefs.getBoolean(Constants.PREF.BEAT_MODE_VIBRATE, true);
         vibrateAlways = sharedPrefs.getBoolean(Constants.PREF.VIBRATE_ALWAYS, false);
         hidePicker = sharedPrefs.getBoolean(Constants.PREF.HIDE_PICKER, false);
         updatePickerVisibility();
         updateBeatMode();
-
-        soundPool = new SoundPool.Builder()
-                .setMaxStreams(1)
-                .setAudioAttributes(
-                        new AudioAttributes.Builder()
-                                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                                .build()
-                ).build();
 
         handler = new Handler(Looper.getMainLooper());
         intervals = new ArrayList<>();
@@ -174,6 +167,7 @@ public class MainActivity extends FragmentActivity
         super.onDestroy();
         binding = null;
         handler.removeCallbacks(this);
+        audioUtil.destroy();
     }
 
     @Override
@@ -218,8 +212,8 @@ public class MainActivity extends FragmentActivity
                 );
                 ViewUtil.setTextSize(binding.textBpm, R.dimen.text_size_bpm_ambient);
                 ViewUtil.setTextSize(binding.textLabel, R.dimen.text_size_label_ambient);
-                binding.textBpm.setTextColor(getColor(R.color.on_background_secondary));
-                binding.textLabel.setTextColor(getColor(R.color.on_background_secondary));
+                ViewUtil.setAlpha(0.5f, binding.textBpm, binding.textLabel);
+                ViewUtil.setMarginBottom(binding.textBpm, R.dimen.text_bpm_margin_bottom_ambient);
             }
 
             public void onExitAmbient() {
@@ -235,13 +229,22 @@ public class MainActivity extends FragmentActivity
                         binding.bpmPicker
                 );
                 binding.bpmPicker.requestFocus();
+                binding.bpmPicker.setDotsVisible(!hidePicker);
                 ViewUtil.setTextSize(
                         binding.textBpm,
                         hidePicker ? R.dimen.text_size_bpm : R.dimen.text_size_bpm_picker
                 );
-                ViewUtil.setTextSize(binding.textLabel, R.dimen.text_size_label);
-                binding.textBpm.setTextColor(getColor(R.color.on_background));
-                binding.textLabel.setTextColor(getColor(R.color.on_background_secondary));
+                ViewUtil.setTextSize(
+                        binding.textLabel,
+                        hidePicker ? R.dimen.text_size_label : R.dimen.text_size_label_picker
+                );
+                ViewUtil.setAlpha(1, binding.textBpm, binding.textLabel);
+                ViewUtil.setMarginBottom(
+                        binding.textBpm,
+                        hidePicker
+                                ? R.dimen.text_bpm_margin_bottom
+                                : R.dimen.text_bpm_margin_bottom_picker
+                );
             }
         };
     }
@@ -289,9 +292,7 @@ public class MainActivity extends FragmentActivity
         if (emphasis != 0) emphasisIndex = emphasisIndex < emphasis - 1 ? emphasisIndex + 1 : 0;
 
         if (soundId != -1) {
-            soundPool.play(
-                    soundId, 1, 1, 0, 0, isEmphasis ? 1.5f : 1
-            );
+            audioUtil.play(soundId, isEmphasis);
             if (vibrateAlways) VibratorUtil.vibrate(this, isEmphasis);
         } else {
             VibratorUtil.vibrate(this, isEmphasis);
@@ -414,16 +415,15 @@ public class MainActivity extends FragmentActivity
                             ? R.drawable.ic_round_volume_on_to_volume_off_anim
                             : R.drawable.ic_round_volume_to_vibrate_anim
             );
-            soundId = soundPool.load(this, getSoundId(), 1);
+            soundId = audioUtil.getCurrentSoundId();
         }
     }
 
     private void updatePickerVisibility() {
         binding.bpmPicker.setDotsVisible(!hidePicker);
-        ViewUtil.setViewsSize(
-                getResources().getDimensionPixelSize(
-                        hidePicker ? R.dimen.icon_size : R.dimen.icon_size_picker
-                ),
+
+        ViewUtil.setSize(
+                hidePicker ? R.dimen.icon_size : R.dimen.icon_size_picker,
                 binding.imageTempoTap,
                 binding.imageEmphasis,
                 binding.imageSettings,
@@ -431,10 +431,8 @@ public class MainActivity extends FragmentActivity
                 binding.imageBeatMode,
                 binding.imagePlayPause
         );
-        ViewUtil.setViewsSize(
-                getResources().getDimensionPixelSize(
-                        hidePicker ? R.dimen.action_button_size : R.dimen.action_button_size_picker
-                ),
+        ViewUtil.setSize(
+                hidePicker ? R.dimen.action_button_size : R.dimen.action_button_size_picker,
                 binding.framePlayPause
         );
 
@@ -449,61 +447,37 @@ public class MainActivity extends FragmentActivity
         );
 
         ViewUtil.setTextSize(
-                binding.textBpm,
-                hidePicker ? R.dimen.text_size_bpm : R.dimen.text_size_bpm_picker
+                binding.textBpm, hidePicker ? R.dimen.text_size_bpm : R.dimen.text_size_bpm_picker
         );
         ViewUtil.setTextSize(
-                binding.textLabel, hidePicker
-                        ? R.dimen.text_size_label
-                        : R.dimen.text_size_label_picker
+                binding.textLabel,
+                hidePicker ? R.dimen.text_size_label : R.dimen.text_size_label_picker
         );
 
-        ViewUtil.setMargins(
+        ViewUtil.setMarginBottom(
                 binding.textBpm,
-                -1, -1, -1,
                 hidePicker ? R.dimen.text_bpm_margin_bottom : R.dimen.text_bpm_margin_bottom_picker
         );
-        ViewUtil.setMargins(
+        ViewUtil.setHorizontalMargins(
                 binding.frameTempoTap,
                 hidePicker
                         ? R.dimen.control_horizontal_offset
                         : R.dimen.control_horizontal_offset_picker,
-                -1,
-                hidePicker ? R.dimen.control_fab_margin : R.dimen.control_fab_margin_picker,
-                -1
+                hidePicker ? R.dimen.control_fab_margin : R.dimen.control_fab_margin_picker
         );
-        ViewUtil.setMargins(
+        ViewUtil.setHorizontalMargins(
                 binding.frameBeatMode,
                 hidePicker ? R.dimen.control_fab_margin : R.dimen.control_fab_margin_picker,
-                -1,
                 hidePicker
                         ? R.dimen.control_horizontal_offset
-                        : R.dimen.control_horizontal_offset_picker,
-                -1
+                        : R.dimen.control_horizontal_offset_picker
         );
-        int verticalOffset = hidePicker
-                ? R.dimen.control_vertical_offset
-                : R.dimen.control_vertical_offset_picker;
-        ViewUtil.setMargins(
+        ViewUtil.setVerticalMargins(
                 binding.frameControlsCenter,
-                -1, verticalOffset,
-                -1, verticalOffset
+                hidePicker
+                        ? R.dimen.control_vertical_offset
+                        : R.dimen.control_vertical_offset_picker
         );
-    }
-
-    private int getSoundId() {
-        String sound = sharedPrefs.getString(Constants.PREF.SOUND, Constants.SOUND.WOOD);
-        assert sound != null;
-        switch (sound) {
-            case Constants.SOUND.CLICK:
-                return R.raw.click;
-            case Constants.SOUND.DING:
-                return R.raw.ding;
-            case Constants.SOUND.BEEP:
-                return R.raw.beep;
-            default:
-                return R.raw.wood;
-        }
     }
 
     private void changeBpm(int change) {
@@ -540,7 +514,7 @@ public class MainActivity extends FragmentActivity
                 ViewUtil.animateBackgroundTint(binding.framePlayPause, R.color.retro_dark);
                 binding.imagePlayPause.animate().alpha(0.5f).setDuration(300).start();
                 binding.textBpm.animate().alpha(0.35f).setDuration(300).start();
-                ViewUtil.animateViewsAlpha(
+                ViewUtil.animateAlpha(
                         iconAlpha,
                         binding.textLabel,
                         binding.imageBeatMode,
@@ -555,7 +529,7 @@ public class MainActivity extends FragmentActivity
                 binding.framePlayPause.getBackground().setTint(getColor(R.color.retro_dark));
                 binding.imagePlayPause.setAlpha(0.5f);
                 binding.textBpm.setAlpha(0.35f);
-                ViewUtil.setViewsAlpha(
+                ViewUtil.setAlpha(
                         iconAlpha,
                         binding.textLabel,
                         binding.imageBeatMode,
@@ -571,7 +545,7 @@ public class MainActivity extends FragmentActivity
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             if (animations) {
                 ViewUtil.animateBackgroundTint(binding.framePlayPause, R.color.secondary);
-                ViewUtil.animateViewsAlpha(
+                ViewUtil.animateAlpha(
                         1,
                         binding.textBpm,
                         binding.textLabel,
@@ -586,7 +560,7 @@ public class MainActivity extends FragmentActivity
                 );
             } else {
                 binding.framePlayPause.getBackground().setTint(getColor(R.color.secondary));
-                ViewUtil.setViewsAlpha(
+                ViewUtil.setAlpha(
                         1,
                         binding.textBpm,
                         binding.textLabel,

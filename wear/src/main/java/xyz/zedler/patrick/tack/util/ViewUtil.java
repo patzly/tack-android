@@ -39,24 +39,18 @@ public class ViewUtil {
         }
     }
 
-    public static void startAnimatedIcon(ImageView imageView) {
-        try {
-            ((Animatable) imageView.getDrawable()).start();
-        } catch (ClassCastException ignored) { }
-    }
-
-    public static void setViewsAlpha(float alpha, View... views) {
+    public static void setAlpha(float alpha, View... views) {
         for (View view : views) {
             view.setAlpha(alpha);
         }
     }
 
-    public static void setViewsSize(float size, View... views) {
+    public static void setSize(@DimenRes int resId, View... views) {
+        int size = views[0].getResources().getDimensionPixelSize(resId);
         for (View view : views) {
-            view.getLayoutParams().width = (int) size;
-            view.getLayoutParams().height = (int) size;
+            view.getLayoutParams().width = size;
+            view.getLayoutParams().height = size;
             view.requestLayout();
-            view.invalidate();
         }
     }
 
@@ -84,7 +78,19 @@ public class ViewUtil {
         view.requestLayout();
     }
 
-    public static void animateViewsAlpha(float alpha, View... views) {
+    public static void setVerticalMargins(View view, @DimenRes int resId) {
+        setMargins(view, -1, resId, -1, resId);
+    }
+
+    public static void setHorizontalMargins(View view, @DimenRes int left, @DimenRes int right) {
+        setMargins(view, left, -1, right, -1);
+    }
+
+    public static void setMarginBottom(View view, @DimenRes int resId) {
+        setMargins(view, -1, -1, -1, resId);
+    }
+
+    public static void animateAlpha(float alpha, View... views) {
         for (View view : views) {
             view.animate().alpha(alpha).setDuration(300).start();
         }
@@ -103,5 +109,11 @@ public class ViewUtil {
                 animator -> view.getBackground().setTint((int) animator.getAnimatedValue())
         );
         colorAnimation.start();
+    }
+
+    public static void startAnimatedIcon(ImageView imageView) {
+        try {
+            ((Animatable) imageView.getDrawable()).start();
+        } catch (ClassCastException ignored) { }
     }
 }

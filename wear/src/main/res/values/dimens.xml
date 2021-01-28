@@ -8,16 +8,17 @@
 
     <dimen name="text_size_bpm">37sp</dimen>
     <dimen name="text_size_bpm_picker">30sp</dimen>
-    <dimen name="text_size_bpm_ambient">40sp</dimen>
+    <dimen name="text_size_bpm_ambient">46sp</dimen>
     <dimen name="text_size_label">14sp</dimen>
     <dimen name="text_size_label_picker">13sp</dimen>
-    <dimen name="text_size_label_ambient">15sp</dimen>
+    <dimen name="text_size_label_ambient">16sp</dimen>
 
-    <dimen name="text_bpm_margin_bottom">14dp</dimen>
+    <dimen name="text_bpm_margin_bottom">13dp</dimen>
     <dimen name="text_bpm_margin_bottom_picker">12dp</dimen>
+    <dimen name="text_bpm_margin_bottom_ambient">14dp</dimen>
     <dimen name="control_fab_margin">24dp</dimen>
     <dimen name="control_fab_margin_picker">12dp</dimen>
-    <dimen name="control_horizontal_offset">10dp</dimen>
+    <dimen name="control_horizontal_offset">0dp</dimen>
     <dimen name="control_horizontal_offset_picker">4dp</dimen>
     <dimen name="control_vertical_offset">8dp</dimen>
     <dimen name="control_vertical_offset_picker">0dp</dimen>
