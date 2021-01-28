@@ -123,7 +123,7 @@ public class SettingsActivity extends FragmentActivity
                                     + getApplicationContext().getPackageName()
                     )));
                 }
-            }, 300);
+            }, 400);
         }
     }
 

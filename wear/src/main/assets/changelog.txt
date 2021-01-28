@@ -1,8 +1,11 @@
 2.0.0:
-• Improved: app icon
+• New: Edwin typeface
+• New: ambient mode
+• Improved: colors, design and onboarding
 • Improved: no restart after layout change
 • Improved: optimized for Android 11
-• Fixed: bpm jump on rotary input
+• Improved: internal cleanup
+• Fixed: bpm jump on rotation and rotary input
 
 1.5.0:
 • Improved: app icon
