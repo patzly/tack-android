@@ -3,7 +3,6 @@ package xyz.zedler.patrick.tack;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -31,22 +30,32 @@ import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
 
 public class MainActivity extends FragmentActivity
-        implements View.OnClickListener, Runnable,
-        AmbientModeSupport.AmbientCallbackProvider {
+        implements View.OnClickListener, Runnable, AmbientModeSupport.AmbientCallbackProvider {
 
     private final static String TAG = MainActivity.class.getSimpleName();
 
     private ActivityMainBinding binding;
     private SharedPreferences sharedPrefs;
-    private int bpm, emphasis, emphasisIndex, rotaryFactorIndex = 0, rotatedPrev = 0;
-    private long lastClick = 0, prevTouchTime = 0, interval;
-    private Drawable drawableFabBg;
     private SoundPool soundPool;
+    private List<Long> intervals;
     private Handler handler;
+    private int bpm;
     private int soundId = -1;
-    private boolean animations, vibrateAlways, wristGestures, hidePicker;
-    private boolean isFirstRotation, isFirstButtonPress, isPlaying = false;
-    private final List<Long> intervals = new ArrayList<>();
+    private int emphasis;
+    private int emphasisIndex;
+    private int rotaryFactorIndex;
+    private int rotatedPrev;
+    private long lastClick;
+    private long prevTouchTime;
+    private long interval;
+    private boolean animations;
+    private boolean isBeatModeVibrate;
+    private boolean vibrateAlways;
+    private boolean wristGestures;
+    private boolean hidePicker;
+    private boolean isFirstRotation;
+    private boolean isFirstButtonPress;
+    private boolean isPlaying = false;
 
     @SuppressLint("RestrictedApi")
     @Override
@@ -58,11 +67,16 @@ public class MainActivity extends FragmentActivity
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        hidePicker = sharedPrefs.getBoolean(Constants.PREF.HIDE_PICKER, false);
         isFirstRotation = sharedPrefs.getBoolean(Constants.PREF.FIRST_ROTATION, true);
         isFirstButtonPress = sharedPrefs.getBoolean(Constants.PREF.FIRST_PRESS, true);
         interval = sharedPrefs.getLong(Constants.PREF.INTERVAL, 500);
-        bpm = toBpm(interval);
+        bpm = (int) (60000 / interval);
+
+        isBeatModeVibrate = sharedPrefs.getBoolean(Constants.PREF.BEAT_MODE_VIBRATE, true);
+        vibrateAlways = sharedPrefs.getBoolean(Constants.PREF.VIBRATE_ALWAYS, false);
+        hidePicker = sharedPrefs.getBoolean(Constants.PREF.HIDE_PICKER, false);
+        updatePickerVisibility();
+        updateBeatMode();
 
         soundPool = new SoundPool.Builder()
                 .setMaxStreams(1)
@@ -73,32 +87,13 @@ public class MainActivity extends FragmentActivity
                 ).build();
 
         handler = new Handler(Looper.getMainLooper());
+        intervals = new ArrayList<>();
 
-        initViews();
+        // VIEWS
 
-        if (sharedPrefs.getBoolean(Constants.PREF.FIRST_START, true)) {
-            startActivity(new Intent(this, OnboardingActivity.class));
-            sharedPrefs.edit().putBoolean(Constants.PREF.FIRST_START, false).apply();
-        }
-
-        AmbientModeSupport.attach(this).setAmbientOffloadEnabled(true);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        binding = null;
-        handler.removeCallbacks(this);
-    }
-
-    @SuppressLint({"RestrictedApi", "ClickableViewAccessibility"})
-    private void initViews() {
         binding.textBpm.setText(String.valueOf(bpm));
-        //binding.textBpm.setText(String.format(Locale.getDefault(), "%1$d", bpm));
 
         binding.imagePlayPause.setImageResource(R.drawable.ic_round_play_arrow);
-
-        drawableFabBg = binding.framePlayPause.getBackground();
 
         binding.textEmphasis.setText(String.valueOf(
                 sharedPrefs.getInt(Constants.PREF.EMPHASIS, 0))
@@ -161,6 +156,24 @@ public class MainActivity extends FragmentActivity
                 ).apply();
             }
         });
+
+        // ONBOARDING
+
+        if (sharedPrefs.getBoolean(Constants.PREF.FIRST_START, true)) {
+            startActivity(new Intent(this, OnboardingActivity.class));
+            sharedPrefs.edit().putBoolean(Constants.PREF.FIRST_START, false).apply();
+        }
+
+        // AMBIENT MODE
+
+        AmbientModeSupport.attach(this).setAmbientOffloadEnabled(true);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null;
+        handler.removeCallbacks(this);
     }
 
     @Override
@@ -168,41 +181,23 @@ public class MainActivity extends FragmentActivity
         super.onResume();
 
         emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, 0);
-        hidePicker = sharedPrefs.getBoolean(Constants.PREF.HIDE_PICKER, false);
-        vibrateAlways = sharedPrefs.getBoolean(Constants.PREF.VIBRATE_ALWAYS, false);
         wristGestures = sharedPrefs.getBoolean(Constants.PREF.WRIST_GESTURES, true);
         animations = sharedPrefs.getBoolean(Constants.PREF.ANIMATIONS, true);
+        vibrateAlways = sharedPrefs.getBoolean(Constants.PREF.VIBRATE_ALWAYS, false);
 
-        if (sharedPrefs.getBoolean(Constants.PREF.BEAT_MODE_VIBRATE, true)) {
-            binding.imageBeatMode.setImageResource(
-                    vibrateAlways
-                            ? R.drawable.ic_round_volume_off_to_volume_on_anim
-                            : R.drawable.ic_round_vibrate_to_volume_anim
-            );
-            soundId = -1;
-        } else {
-            binding.imageBeatMode.setImageResource(
-                    vibrateAlways
-                            ? R.drawable.ic_round_volume_on_to_volume_off_anim
-                            : R.drawable.ic_round_volume_to_vibrate_anim
-            );
-            soundId = soundPool.load(this, getSoundId(), 1);
+        boolean hidePickerNew = sharedPrefs.getBoolean(Constants.PREF.HIDE_PICKER, false);
+        if(hidePicker != hidePickerNew) {
+            hidePicker = hidePickerNew;
+            updatePickerVisibility();
         }
 
-        // LAYOUT
-
-        binding.bpmPicker.setDotsVisible(!hidePicker);
-        ViewUtil.setViewsSize(
-                getResources().getDimensionPixelSize(
-                        hidePicker ? R.dimen.icon_size_no_picker : R.dimen.icon_size
-                ),
-                binding.imageTempoTap,
-                binding.imageEmphasis,
-                binding.imageSettings,
-                binding.imageBookmark,
-                binding.imageBeatMode,
-                binding.imagePlayPause
+        boolean isBeatModeVibrateNew = sharedPrefs.getBoolean(
+                Constants.PREF.BEAT_MODE_VIBRATE, true
         );
+        if(isBeatModeVibrate != isBeatModeVibrateNew) {
+            isBeatModeVibrate = isBeatModeVibrateNew;
+            updateBeatMode();
+        }
     }
 
     @Override
@@ -221,8 +216,8 @@ public class MainActivity extends FragmentActivity
                         binding.textEmphasis,
                         binding.bpmPicker
                 );
-                binding.textBpm.setTextSize(40);
-                binding.textLabel.setTextSize(15);
+                ViewUtil.setTextSize(binding.textBpm, R.dimen.text_size_bpm_ambient);
+                ViewUtil.setTextSize(binding.textLabel, R.dimen.text_size_label_ambient);
                 binding.textBpm.setTextColor(getColor(R.color.on_background_secondary));
                 binding.textLabel.setTextColor(getColor(R.color.on_background_secondary));
             }
@@ -240,8 +235,11 @@ public class MainActivity extends FragmentActivity
                         binding.bpmPicker
                 );
                 binding.bpmPicker.requestFocus();
-                binding.textBpm.setTextSize(30);
-                binding.textLabel.setTextSize(13);
+                ViewUtil.setTextSize(
+                        binding.textBpm,
+                        hidePicker ? R.dimen.text_size_bpm : R.dimen.text_size_bpm_picker
+                );
+                ViewUtil.setTextSize(binding.textLabel, R.dimen.text_size_label);
                 binding.textBpm.setTextColor(getColor(R.color.on_background));
                 binding.textLabel.setTextColor(getColor(R.color.on_background_secondary));
             }
@@ -281,62 +279,22 @@ public class MainActivity extends FragmentActivity
         return super.onKeyDown(keyCode, event);
     }
 
-    private void onButtonPress() {
-        if (!isFirstButtonPress) return;
-        isFirstButtonPress = false;
-        Toast.makeText(this, R.string.msg_long_press, Toast.LENGTH_LONG).show();
-        sharedPrefs.edit().putBoolean(Constants.PREF.FIRST_PRESS, isFirstButtonPress).apply();
-    }
-
-    private void setNextEmphasis() {
-        int emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, 0);
-        int emphasisNew = emphasis < 6 ? emphasis + 1 : 0;
-        this.emphasis = emphasisNew;
-        sharedPrefs.edit().putInt(Constants.PREF.EMPHASIS, emphasisNew).apply();
-        new Handler(Looper.getMainLooper()).postDelayed(
-                () -> binding.textEmphasis.setText(String.valueOf(emphasisNew)),
-                animations ? 150 : 0
-        );
-    }
-
     @Override
     public void run() {
-        if (isPlaying) {
-            handler.postDelayed(this, interval);
+        if (!isPlaying) return;
 
-            boolean isEmphasis = emphasis != 0 && emphasisIndex == 0;
-            if (emphasis != 0) emphasisIndex = emphasisIndex < emphasis - 1 ? emphasisIndex + 1 : 0;
+        handler.postDelayed(this, interval);
 
-            if (soundId != -1) {
-                soundPool.play(
-                        soundId, 1, 1, 0, 0, isEmphasis ? 1.5f : 1
-                );
-                if (vibrateAlways) VibratorUtil.vibrate(this, isEmphasis);
-            } else {
-                VibratorUtil.vibrate(this, isEmphasis);
-            }
-        }
-    }
+        boolean isEmphasis = emphasis != 0 && emphasisIndex == 0;
+        if (emphasis != 0) emphasisIndex = emphasisIndex < emphasis - 1 ? emphasisIndex + 1 : 0;
 
-    private int getSoundId() {
-        String sound = sharedPrefs.getString(Constants.PREF.SOUND, Constants.SOUND.WOOD);
-        assert sound != null;
-        switch (sound) {
-            case Constants.SOUND.CLICK:
-                return R.raw.click;
-            case Constants.SOUND.DING:
-                return R.raw.ding;
-            case Constants.SOUND.BEEP:
-                return R.raw.beep;
-            default:
-                return R.raw.wood;
-        }
-    }
-
-    private void changeBpm(int change) {
-        int bpmNew = bpm + change;
-        if ((change > 0 && bpmNew <= 300) || (change < 0 && bpmNew >= 1)) {
-            setBpm(bpmNew);
+        if (soundId != -1) {
+            soundPool.play(
+                    soundId, 1, 1, 0, 0, isEmphasis ? 1.5f : 1
+            );
+            if (vibrateAlways) VibratorUtil.vibrate(this, isEmphasis);
+        } else {
+            VibratorUtil.vibrate(this, isEmphasis);
         }
     }
 
@@ -366,7 +324,7 @@ public class MainActivity extends FragmentActivity
                 }
                 intervals.add(System.currentTimeMillis() - prevTouchTime);
                 if (intervals.size() > 1) {
-                    setBpm(toBpm(getIntervalAverage()));
+                    setBpm((int) (60000 / getIntervalAverage()));
                 }
             }
             prevTouchTime = System.currentTimeMillis();
@@ -394,31 +352,14 @@ public class MainActivity extends FragmentActivity
                 );
             }
         } else if (id == R.id.frame_beat_mode) {
-            boolean beatModeVibrateNew = !sharedPrefs.getBoolean(
-                    Constants.PREF.BEAT_MODE_VIBRATE, true
-            );
+            isBeatModeVibrate = !isBeatModeVibrate;
             sharedPrefs.edit().putBoolean(
-                    Constants.PREF.BEAT_MODE_VIBRATE, beatModeVibrateNew
+                    Constants.PREF.BEAT_MODE_VIBRATE, isBeatModeVibrate
             ).apply();
-            if (!beatModeVibrateNew) {
-                soundId = soundPool.load(this, getSoundId(), 1);
-            } else soundId = -1;
             if (animations) ViewUtil.startAnimatedIcon(binding.imageBeatMode);
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                if (beatModeVibrateNew) {
-                    binding.imageBeatMode.setImageResource(
-                            vibrateAlways
-                                    ? R.drawable.ic_round_volume_off_to_volume_on_anim
-                                    : R.drawable.ic_round_vibrate_to_volume_anim
-                    );
-                } else {
-                    binding.imageBeatMode.setImageResource(
-                            vibrateAlways
-                                    ? R.drawable.ic_round_volume_on_to_volume_off_anim
-                                    : R.drawable.ic_round_volume_to_vibrate_anim
-                    );
-                }
-            }, animations ? 300 : 0);
+            new Handler(Looper.getMainLooper()).postDelayed(
+                    this::updateBeatMode, animations ? 300 : 0
+            );
         } else if (id == R.id.frame_emphasis) {
             if (animations) ViewUtil.startAnimatedIcon(binding.imageEmphasis);
             setNextEmphasis();
@@ -441,13 +382,143 @@ public class MainActivity extends FragmentActivity
         }
     }
 
-    private void setBpm(int bpm) {
-        if (bpm > 0) {
-            this.bpm = Math.min(bpm, 300);
-            binding.textBpm.setText(String.valueOf(this.bpm));
-            interval = toInterval(this.bpm);
-            sharedPrefs.edit().putLong(Constants.PREF.INTERVAL, interval).apply();
+    private void onButtonPress() {
+        if (!isFirstButtonPress) return;
+        isFirstButtonPress = false;
+        Toast.makeText(this, R.string.msg_long_press, Toast.LENGTH_LONG).show();
+        sharedPrefs.edit().putBoolean(Constants.PREF.FIRST_PRESS, isFirstButtonPress).apply();
+    }
+
+    private void setNextEmphasis() {
+        int emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, 0);
+        int emphasisNew = emphasis < 6 ? emphasis + 1 : 0;
+        this.emphasis = emphasisNew;
+        sharedPrefs.edit().putInt(Constants.PREF.EMPHASIS, emphasisNew).apply();
+        new Handler(Looper.getMainLooper()).postDelayed(
+                () -> binding.textEmphasis.setText(String.valueOf(emphasisNew)),
+                animations ? 150 : 0
+        );
+    }
+
+    private void updateBeatMode() {
+        if (isBeatModeVibrate) {
+            binding.imageBeatMode.setImageResource(
+                    vibrateAlways
+                            ? R.drawable.ic_round_volume_off_to_volume_on_anim
+                            : R.drawable.ic_round_vibrate_to_volume_anim
+            );
+            soundId = -1;
+        } else {
+            binding.imageBeatMode.setImageResource(
+                    vibrateAlways
+                            ? R.drawable.ic_round_volume_on_to_volume_off_anim
+                            : R.drawable.ic_round_volume_to_vibrate_anim
+            );
+            soundId = soundPool.load(this, getSoundId(), 1);
         }
+    }
+
+    private void updatePickerVisibility() {
+        binding.bpmPicker.setDotsVisible(!hidePicker);
+        ViewUtil.setViewsSize(
+                getResources().getDimensionPixelSize(
+                        hidePicker ? R.dimen.icon_size : R.dimen.icon_size_picker
+                ),
+                binding.imageTempoTap,
+                binding.imageEmphasis,
+                binding.imageSettings,
+                binding.imageBookmark,
+                binding.imageBeatMode,
+                binding.imagePlayPause
+        );
+        ViewUtil.setViewsSize(
+                getResources().getDimensionPixelSize(
+                        hidePicker ? R.dimen.action_button_size : R.dimen.action_button_size_picker
+                ),
+                binding.framePlayPause
+        );
+
+        binding.imageTempoTap.setImageResource(R.drawable.ic_round_tempo_tap_anim);
+        binding.imageEmphasis.setImageResource(R.drawable.ic_round_emphasis_anim);
+        binding.imageSettings.setImageResource(R.drawable.ic_round_settings_anim);
+        binding.imageBookmark.setImageResource(R.drawable.ic_round_bookmark_anim);
+        binding.imagePlayPause.setImageResource(
+                isPlaying
+                        ? R.drawable.ic_round_pause
+                        : R.drawable.ic_round_play_arrow
+        );
+
+        ViewUtil.setTextSize(
+                binding.textBpm,
+                hidePicker ? R.dimen.text_size_bpm : R.dimen.text_size_bpm_picker
+        );
+        ViewUtil.setTextSize(
+                binding.textLabel, hidePicker
+                        ? R.dimen.text_size_label
+                        : R.dimen.text_size_label_picker
+        );
+
+        ViewUtil.setMargins(
+                binding.textBpm,
+                -1, -1, -1,
+                hidePicker ? R.dimen.text_bpm_margin_bottom : R.dimen.text_bpm_margin_bottom_picker
+        );
+        ViewUtil.setMargins(
+                binding.frameTempoTap,
+                hidePicker
+                        ? R.dimen.control_horizontal_offset
+                        : R.dimen.control_horizontal_offset_picker,
+                -1,
+                hidePicker ? R.dimen.control_fab_margin : R.dimen.control_fab_margin_picker,
+                -1
+        );
+        ViewUtil.setMargins(
+                binding.frameBeatMode,
+                hidePicker ? R.dimen.control_fab_margin : R.dimen.control_fab_margin_picker,
+                -1,
+                hidePicker
+                        ? R.dimen.control_horizontal_offset
+                        : R.dimen.control_horizontal_offset_picker,
+                -1
+        );
+        int verticalOffset = hidePicker
+                ? R.dimen.control_vertical_offset
+                : R.dimen.control_vertical_offset_picker;
+        ViewUtil.setMargins(
+                binding.frameControlsCenter,
+                -1, verticalOffset,
+                -1, verticalOffset
+        );
+    }
+
+    private int getSoundId() {
+        String sound = sharedPrefs.getString(Constants.PREF.SOUND, Constants.SOUND.WOOD);
+        assert sound != null;
+        switch (sound) {
+            case Constants.SOUND.CLICK:
+                return R.raw.click;
+            case Constants.SOUND.DING:
+                return R.raw.ding;
+            case Constants.SOUND.BEEP:
+                return R.raw.beep;
+            default:
+                return R.raw.wood;
+        }
+    }
+
+    private void changeBpm(int change) {
+        int bpmNew = bpm + change;
+        if ((change > 0 && bpmNew <= 300) || (change < 0 && bpmNew >= 1)) {
+            setBpm(bpmNew);
+        }
+    }
+
+    private void setBpm(int bpm) {
+        if (bpm <= 0) return;
+        this.bpm = Math.min(bpm, 300);
+        binding.textBpm.setText(String.valueOf(this.bpm));
+        interval = 60000 / bpm;
+        sharedPrefs.edit().putLong(Constants.PREF.INTERVAL, interval).apply();
     }
 
     private long getIntervalAverage() {
@@ -481,7 +552,7 @@ public class MainActivity extends FragmentActivity
                         binding.imageBookmark
                 );
             } else {
-                drawableFabBg.setTint(getColor(R.color.retro_dark));
+                binding.framePlayPause.getBackground().setTint(getColor(R.color.retro_dark));
                 binding.imagePlayPause.setAlpha(0.5f);
                 binding.textBpm.setAlpha(0.35f);
                 ViewUtil.setViewsAlpha(
@@ -514,7 +585,7 @@ public class MainActivity extends FragmentActivity
                         binding.imageBookmark
                 );
             } else {
-                drawableFabBg.setTint(getColor(R.color.secondary));
+                binding.framePlayPause.getBackground().setTint(getColor(R.color.secondary));
                 ViewUtil.setViewsAlpha(
                         1,
                         binding.textBpm,
@@ -530,13 +601,5 @@ public class MainActivity extends FragmentActivity
                 );
             }
         }
-    }
-
-    private static int toBpm(long interval) {
-        return (int) (60000 / interval);
-    }
-
-    private static long toInterval(int bpm) {
-        return (long) 60000 / bpm;
     }
 }

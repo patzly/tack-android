@@ -3,12 +3,17 @@ package xyz.zedler.patrick.tack.util;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.graphics.drawable.Animatable;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.ColorRes;
+import androidx.annotation.DimenRes;
 import androidx.core.content.ContextCompat;
 
 public class ViewUtil {
@@ -51,7 +56,32 @@ public class ViewUtil {
             view.getLayoutParams().width = (int) size;
             view.getLayoutParams().height = (int) size;
             view.requestLayout();
+            view.invalidate();
         }
+    }
+
+    public static void setTextSize(TextView textView, @DimenRes int resId) {
+        textView.setTextSize(
+                TypedValue.COMPLEX_UNIT_PX,
+                textView.getResources().getDimension(resId)
+        );
+    }
+
+    public static void setMargins(
+            View view,
+            @DimenRes int left,
+            @DimenRes int top,
+            @DimenRes int right,
+            @DimenRes int bottom
+    ) {
+        Resources resources = view.getResources();
+        ((ViewGroup.MarginLayoutParams) view.getLayoutParams()).setMargins(
+                left == -1 ? 0 : resources.getDimensionPixelSize(left),
+                top == -1 ? 0 : resources.getDimensionPixelSize(top),
+                right == -1 ? 0 : resources.getDimensionPixelSize(right),
+                bottom == -1 ? 0 : resources.getDimensionPixelSize(bottom)
+        );
+        view.requestLayout();
     }
 
     public static void animateViewsAlpha(float alpha, View... views) {

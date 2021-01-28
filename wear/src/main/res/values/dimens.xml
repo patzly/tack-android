@@ -3,18 +3,30 @@
 
     <dimen name="circular_touch_target_size">40dp</dimen>
 
-    <dimen name="round_box_inset">0dp</dimen>
-
     <dimen name="list_margin_top">20dp</dimen>
     <dimen name="list_margin_bottom">8dp</dimen>
 
-    <dimen name="control_fab_margin">12dp</dimen>
-    <dimen name="control_horizontal_offset">4dp</dimen>
+    <dimen name="text_size_bpm">37sp</dimen>
+    <dimen name="text_size_bpm_picker">30sp</dimen>
+    <dimen name="text_size_bpm_ambient">40sp</dimen>
+    <dimen name="text_size_label">14sp</dimen>
+    <dimen name="text_size_label_picker">13sp</dimen>
+    <dimen name="text_size_label_ambient">15sp</dimen>
 
-    <dimen name="icon_size">24dp</dimen>
-    <dimen name="icon_size_no_picker">28dp</dimen>
+    <dimen name="text_bpm_margin_bottom">14dp</dimen>
+    <dimen name="text_bpm_margin_bottom_picker">12dp</dimen>
+    <dimen name="control_fab_margin">24dp</dimen>
+    <dimen name="control_fab_margin_picker">12dp</dimen>
+    <dimen name="control_horizontal_offset">10dp</dimen>
+    <dimen name="control_horizontal_offset_picker">4dp</dimen>
+    <dimen name="control_vertical_offset">8dp</dimen>
+    <dimen name="control_vertical_offset_picker">0dp</dimen>
+
+    <dimen name="icon_size_picker">24dp</dimen>
+    <dimen name="icon_size">28dp</dimen>
     <dimen name="icon_touch_target_size">30dp</dimen>
-    <dimen name="action_button_size">48dp</dimen>
+    <dimen name="action_button_size">54dp</dimen>
+    <dimen name="action_button_size_picker">48dp</dimen>
 
     <dimen name="dotted_ring_dot_size_min">6dp</dimen>
     <dimen name="dotted_ring_dot_size_max">8dp</dimen>
