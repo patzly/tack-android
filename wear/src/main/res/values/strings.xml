@@ -14,6 +14,7 @@
     <string name="msg_bookmark">Tap again to return to previous value</string>
     <string name="msg_hide_picker">Hide picker in settings for larger controls</string>
     <string name="msg_long_press">Press long to change quickly</string>
+    <string name="msg_no_speaker">This watch has no audio output, please use a Bluetooth speaker</string>
 
     <string name="onboarding_welcome">Welcome!</string>
     <string name="onboarding_text">Control the BPM value as follows:</string>

@@ -353,6 +353,12 @@ public class MainActivity extends FragmentActivity
                 );
             }
         } else if (id == R.id.frame_beat_mode) {
+            if (!audioUtil.isSpeakerAvailable()
+                    && !sharedPrefs.getBoolean(Constants.PREF.AUDIO_MSG_SHOWN, false)
+            ) {
+                Toast.makeText(this, R.string.msg_no_speaker, Toast.LENGTH_LONG).show();
+                sharedPrefs.edit().putBoolean(Constants.PREF.AUDIO_MSG_SHOWN, true).apply();
+            }
             isBeatModeVibrate = !isBeatModeVibrate;
             sharedPrefs.edit().putBoolean(
                     Constants.PREF.BEAT_MODE_VIBRATE, isBeatModeVibrate

@@ -55,7 +55,7 @@ public class AudioUtil {
         }
     }
 
-    public boolean isSpeakerAvailable(Context context) {
+    public boolean isSpeakerAvailable() {
         return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_AUDIO_OUTPUT);
     }
 }

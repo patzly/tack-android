@@ -15,6 +15,7 @@ public final class Constants {
         public final static String INTERVAL = "interval";
         public final static String EMPHASIS = "emphasis";
         public final static String BOOKMARK = "bookmark";
+        public final static String AUDIO_MSG_SHOWN = "audio_msg_shown";
     }
 
     public final static class SOUND {

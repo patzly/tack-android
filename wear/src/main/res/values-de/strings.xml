@@ -13,6 +13,7 @@
     <string name="msg_bookmark">Erneut tippen, um zum vorherigen Wert zurückzukehren</string>
     <string name="msg_hide_picker">Für größere Anzeige BPM-Rad in den Einstellungen verstecken</string>
     <string name="msg_long_press">Für größere Änderung gedrückt halten</string>
+    <string name="msg_no_speaker">Keine Audioausgabe verfügbar, bitte Bluetooth-Lautsprecher nutzen</string>
 
     <string name="onboarding_welcome">Wilkommen!</string>
     <string name="onboarding_text">Passe den BPM-Wert mit den folgenden Methoden an:</string>
@@ -36,6 +37,11 @@
     <string name="setting_hide_picker">BPM-Rad verstecken</string>
     <string name="setting_hide_picker_description">Nur Kronen-Eingabe und Drücker</string>
     <string name="setting_animations">Animationen</string>
+    <string name="setting_animations_description">Icons und mehr</string>
     <string name="setting_rate">Bei Google Play bewerten</string>
+
+    <string name="changelog_new">Neu:</string>
+    <string name="changelog_improved">Verbessert:</string>
+    <string name="changelog_fixed">Behoben:</string>
 
 </resources>
