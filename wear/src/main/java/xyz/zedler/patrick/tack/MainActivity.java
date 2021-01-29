@@ -66,16 +66,26 @@ public class MainActivity extends FragmentActivity
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        isFirstRotation = sharedPrefs.getBoolean(Constants.PREF.FIRST_ROTATION, true);
-        isFirstButtonPress = sharedPrefs.getBoolean(Constants.PREF.FIRST_PRESS, true);
-        interval = sharedPrefs.getLong(Constants.PREF.INTERVAL, 500);
+        isFirstRotation = sharedPrefs.getBoolean(
+                Constants.PREF.FIRST_ROTATION, Constants.DEF.FIRST_ROTATION
+        );
+        isFirstButtonPress = sharedPrefs.getBoolean(
+                Constants.PREF.FIRST_PRESS, Constants.DEF.FIRST_PRESS);
+        interval = sharedPrefs.getLong(Constants.PREF.INTERVAL, Constants.DEF.INTERVAL
+        );
         bpm = (int) (60000 / interval);
 
         audioUtil = new AudioUtil(this);
 
-        isBeatModeVibrate = sharedPrefs.getBoolean(Constants.PREF.BEAT_MODE_VIBRATE, true);
-        vibrateAlways = sharedPrefs.getBoolean(Constants.PREF.VIBRATE_ALWAYS, false);
-        hidePicker = sharedPrefs.getBoolean(Constants.PREF.HIDE_PICKER, false);
+        isBeatModeVibrate = sharedPrefs.getBoolean(
+                Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
+        );
+        vibrateAlways = sharedPrefs.getBoolean(
+                Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+        );
+        hidePicker = sharedPrefs.getBoolean(
+                Constants.SETTING.HIDE_PICKER, Constants.DEF.HIDE_PICKER
+        );
         updatePickerVisibility();
         updateBeatMode();
 
@@ -89,7 +99,7 @@ public class MainActivity extends FragmentActivity
         binding.imagePlayPause.setImageResource(R.drawable.ic_round_play_arrow);
 
         binding.textEmphasis.setText(String.valueOf(
-                sharedPrefs.getInt(Constants.PREF.EMPHASIS, 0))
+                sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS))
         );
 
         binding.swipeDismiss.addCallback(new SwipeDismissFrameLayout.Callback() {
@@ -152,7 +162,7 @@ public class MainActivity extends FragmentActivity
 
         // ONBOARDING
 
-        if (sharedPrefs.getBoolean(Constants.PREF.FIRST_START, true)) {
+        if (sharedPrefs.getBoolean(Constants.PREF.FIRST_START, Constants.DEF.FIRST_START)) {
             startActivity(new Intent(this, OnboardingActivity.class));
             sharedPrefs.edit().putBoolean(Constants.PREF.FIRST_START, false).apply();
         }
@@ -174,19 +184,27 @@ public class MainActivity extends FragmentActivity
     protected void onResume() {
         super.onResume();
 
-        emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, 0);
-        wristGestures = sharedPrefs.getBoolean(Constants.PREF.WRIST_GESTURES, true);
-        animations = sharedPrefs.getBoolean(Constants.PREF.ANIMATIONS, true);
-        vibrateAlways = sharedPrefs.getBoolean(Constants.PREF.VIBRATE_ALWAYS, false);
+        emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS);
+        wristGestures = sharedPrefs.getBoolean(
+                Constants.SETTING.WRIST_GESTURES, Constants.DEF.WRIST_GESTURES
+        );
+        animations = sharedPrefs.getBoolean(
+                Constants.SETTING.ANIMATIONS, Constants.DEF.ANIMATIONS
+        );
+        vibrateAlways = sharedPrefs.getBoolean(
+                Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+        );
 
-        boolean hidePickerNew = sharedPrefs.getBoolean(Constants.PREF.HIDE_PICKER, false);
+        boolean hidePickerNew = sharedPrefs.getBoolean(
+                Constants.SETTING.HIDE_PICKER, Constants.DEF.HIDE_PICKER
+        );
         if(hidePicker != hidePickerNew) {
             hidePicker = hidePickerNew;
             updatePickerVisibility();
         }
 
         boolean isBeatModeVibrateNew = sharedPrefs.getBoolean(
-                Constants.PREF.BEAT_MODE_VIBRATE, true
+                Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
         );
         if(isBeatModeVibrate != isBeatModeVibrateNew) {
             isBeatModeVibrate = isBeatModeVibrateNew;
@@ -353,14 +371,15 @@ public class MainActivity extends FragmentActivity
                 );
             }
         } else if (id == R.id.frame_beat_mode) {
-            if (!audioUtil.isSpeakerAvailable()
-                    && !sharedPrefs.getBoolean(Constants.PREF.AUDIO_MSG_SHOWN, false)
-            ) {
+            SharedPreferences.Editor editor = sharedPrefs.edit();
+            if (!audioUtil.isSpeakerAvailable() && sharedPrefs.getBoolean(
+                    Constants.PREF.FIRST_SPEAKER_MODE, Constants.DEF.FIRST_SPEAKER_MODE
+            )) {
                 Toast.makeText(this, R.string.msg_no_speaker, Toast.LENGTH_LONG).show();
-                sharedPrefs.edit().putBoolean(Constants.PREF.AUDIO_MSG_SHOWN, true).apply();
+                editor.putBoolean(Constants.PREF.FIRST_SPEAKER_MODE, false).apply();
             }
             isBeatModeVibrate = !isBeatModeVibrate;
-            sharedPrefs.edit().putBoolean(
+            editor.putBoolean(
                     Constants.PREF.BEAT_MODE_VIBRATE, isBeatModeVibrate
             ).apply();
             if (animations) ViewUtil.startAnimatedIcon(binding.imageBeatMode);
@@ -372,7 +391,7 @@ public class MainActivity extends FragmentActivity
             setNextEmphasis();
         } else if (id == R.id.frame_bookmark) {
             if (animations) ViewUtil.startAnimatedIcon(binding.imageBookmark);
-            int bookmark = sharedPrefs.getInt(Constants.PREF.BOOKMARK, -1);
+            int bookmark = sharedPrefs.getInt(Constants.PREF.BOOKMARK, Constants.DEF.BOOKMARK);
             if (bookmark == -1) {
                 Toast.makeText(
                         this, R.string.msg_bookmark, Toast.LENGTH_LONG
@@ -397,7 +416,7 @@ public class MainActivity extends FragmentActivity
     }
 
     private void setNextEmphasis() {
-        int emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, 0);
+        int emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS);
         int emphasisNew = emphasis < 6 ? emphasis + 1 : 0;
         this.emphasis = emphasisNew;
         sharedPrefs.edit().putInt(Constants.PREF.EMPHASIS, emphasisNew).apply();

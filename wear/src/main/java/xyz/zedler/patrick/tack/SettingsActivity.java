@@ -34,24 +34,28 @@ public class SettingsActivity extends FragmentActivity
         setContentView(binding.getRoot());
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        animations = sharedPrefs.getBoolean(Constants.PREF.ANIMATIONS, true);
+        animations = sharedPrefs.getBoolean(Constants.SETTING.ANIMATIONS, Constants.DEF.ANIMATIONS);
 
         binding.textSettingSound.setText(getSound());
 
         binding.switchSettingsVibrateAlways.setChecked(
-                sharedPrefs.getBoolean(Constants.PREF.VIBRATE_ALWAYS, false)
+                sharedPrefs.getBoolean(
+                        Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+                )
         );
 
         binding.switchSettingsWristGestures.setChecked(
-                sharedPrefs.getBoolean(Constants.PREF.WRIST_GESTURES, true)
+                sharedPrefs.getBoolean(
+                        Constants.SETTING.WRIST_GESTURES, Constants.DEF.WRIST_GESTURES
+                )
         );
 
         binding.switchSettingsHidePicker.setChecked(
-                sharedPrefs.getBoolean(Constants.PREF.HIDE_PICKER, false)
+                sharedPrefs.getBoolean(Constants.SETTING.HIDE_PICKER, Constants.DEF.HIDE_PICKER)
         );
 
         binding.switchSettingsAnimations.setChecked(
-                sharedPrefs.getBoolean(Constants.PREF.ANIMATIONS, true)
+                sharedPrefs.getBoolean(Constants.SETTING.ANIMATIONS, Constants.DEF.ANIMATIONS)
         );
 
         ViewUtil.setOnClickListeners(
@@ -128,7 +132,7 @@ public class SettingsActivity extends FragmentActivity
     }
 
     private String getSound() {
-        String sound = sharedPrefs.getString(Constants.PREF.SOUND, Constants.SOUND.WOOD);
+        String sound = sharedPrefs.getString(Constants.SETTING.SOUND, Constants.DEF.SOUND);
         assert sound != null;
         switch (sound) {
             case Constants.SOUND.CLICK:
@@ -144,24 +148,24 @@ public class SettingsActivity extends FragmentActivity
 
     private void setNextSound() {
         SharedPreferences.Editor editor = sharedPrefs.edit();
-        String sound = sharedPrefs.getString(Constants.PREF.SOUND, Constants.SOUND.WOOD);
+        String sound = sharedPrefs.getString(Constants.SETTING.SOUND, Constants.DEF.SOUND);
         assert sound != null;
         switch (sound) {
             case Constants.SOUND.CLICK:
                 binding.textSettingSound.setText(R.string.setting_sound_ding);
-                editor.putString(Constants.PREF.SOUND, Constants.SOUND.DING);
+                editor.putString(Constants.SETTING.SOUND, Constants.SOUND.DING);
                 break;
             case Constants.SOUND.DING:
                 binding.textSettingSound.setText(R.string.setting_sound_beep);
-                editor.putString(Constants.PREF.SOUND, Constants.SOUND.BEEP);
+                editor.putString(Constants.SETTING.SOUND, Constants.SOUND.BEEP);
                 break;
             case Constants.SOUND.BEEP:
                 binding.textSettingSound.setText(R.string.setting_sound_wood);
-                editor.putString(Constants.PREF.SOUND, Constants.SOUND.WOOD);
+                editor.putString(Constants.SETTING.SOUND, Constants.SOUND.WOOD);
                 break;
             default:
                 binding.textSettingSound.setText(R.string.setting_sound_click);
-                editor.putString(Constants.PREF.SOUND, Constants.SOUND.CLICK);
+                editor.putString(Constants.SETTING.SOUND, Constants.SOUND.CLICK);
                 break;
         }
         editor.apply();
@@ -172,13 +176,13 @@ public class SettingsActivity extends FragmentActivity
         SharedPreferences.Editor editor = sharedPrefs.edit();
         int id = buttonView.getId();
         if (id == R.id.switch_settings_vibrate_always) {
-            editor.putBoolean(Constants.PREF.VIBRATE_ALWAYS, isChecked);
+            editor.putBoolean(Constants.SETTING.VIBRATE_ALWAYS, isChecked);
         } else if (id == R.id.switch_settings_wrist_gestures) {
-            editor.putBoolean(Constants.PREF.WRIST_GESTURES, isChecked);
+            editor.putBoolean(Constants.SETTING.WRIST_GESTURES, isChecked);
         } else if (id == R.id.switch_settings_hide_picker) {
-            editor.putBoolean(Constants.PREF.HIDE_PICKER, isChecked);
+            editor.putBoolean(Constants.SETTING.HIDE_PICKER, isChecked);
         } else if (id == R.id.switch_settings_animations) {
-            editor.putBoolean(Constants.PREF.ANIMATIONS, isChecked);
+            editor.putBoolean(Constants.SETTING.ANIMATIONS, isChecked);
             animations = isChecked;
         }
         editor.apply();

@@ -43,7 +43,7 @@ public class AudioUtil {
     }
 
     private int getResId() {
-        switch (sharedPrefs.getString(Constants.PREF.SOUND, Constants.SOUND.WOOD)) {
+        switch (sharedPrefs.getString(Constants.SETTING.SOUND, Constants.DEF.SOUND)) {
             case Constants.SOUND.CLICK:
                 return R.raw.click;
             case Constants.SOUND.DING:
