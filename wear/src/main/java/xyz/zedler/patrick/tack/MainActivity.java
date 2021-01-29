@@ -400,11 +400,13 @@ public class MainActivity extends FragmentActivity
             }
             sharedPrefs.edit().putInt(Constants.PREF.BOOKMARK, bpm).apply();
             int finalBookmark = bookmark;
-            binding.textBpm.animate().alpha(0).setDuration(150).start();
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            binding.textBpm.animate().alpha(0).withEndAction(() -> {
                 setBpm(finalBookmark);
-                binding.textBpm.animate().alpha(isPlaying ? 0.35f : 1).setDuration(150).start();
-            }, animations ? 150 : 0);
+                binding.textBpm.animate()
+                        .alpha(isPlaying ? 0.35f : 1)
+                        .setDuration(animations ? 150 : 0)
+                        .start();
+            }).setDuration(animations ? 150 : 0).start();
         }
     }
 
