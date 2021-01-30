@@ -1,4 +1,4 @@
-package xyz.zedler.patrick.tack;
+package xyz.zedler.patrick.tack.activity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -21,6 +21,7 @@ import androidx.wear.widget.SwipeDismissFrameLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
 import xyz.zedler.patrick.tack.util.AudioUtil;
 import xyz.zedler.patrick.tack.util.Constants;

@@ -1,10 +1,11 @@
-package xyz.zedler.patrick.tack;
+package xyz.zedler.patrick.tack.activity;
 
 import android.os.Bundle;
 import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
 
+import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivityChangelogBinding;
 import xyz.zedler.patrick.tack.util.BulletUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;

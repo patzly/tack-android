@@ -1,4 +1,4 @@
-package xyz.zedler.patrick.tack;
+package xyz.zedler.patrick.tack.activity;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
@@ -13,6 +13,7 @@ import android.widget.CompoundButton;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 
+import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivitySettingsBinding;
 import xyz.zedler.patrick.tack.util.Constants;
 import xyz.zedler.patrick.tack.util.ViewUtil;

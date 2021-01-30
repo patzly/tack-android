@@ -1,4 +1,4 @@
-package xyz.zedler.patrick.tack;
+package xyz.zedler.patrick.tack.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
