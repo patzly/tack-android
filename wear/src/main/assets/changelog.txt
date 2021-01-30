@@ -1,35 +1,36 @@
 2.0.0:
-• New: Edwin typeface
-• New: ambient mode
-• Improved: colors, design and onboarding
-• Improved: no restart after layout change
-• Improved: optimized for Android 11
-• Improved: internal cleanup
-• Fixed: bpm jump on rotation and rotary input
+- New: Edwin typeface
+- New: ambient mode support
+- New: splash screen
+- Improved: colors, design and onboarding
+- Improved: no restart after layout change
+- Improved: optimized for Android 11 and internal cleanup
+- Improved: warning if watch has no audio output
+- Fixed: bpm jump on rotation and rotary input
 
 1.5.0:
-• Improved: app icon
-• Improved: colors and appearance
+- Improved: app icon
+- Improved: colors and appearance
 
 1.4.0:
-• New: side button control
-• New: picker animation
-• New: introduction + help
-• New: Spanish translation
+- New: side button control
+- New: picker animation
+- New: introduction + help
+- New: Spanish translation
 
 1.3.0:
-• New: big controls when picker is hidden
-• New: changelog and rate
-• Improved: sound synchronicity
-• Improved: tap BPM calculation
-• Improved: square watches
+- New: big controls when picker is hidden
+- New: changelog and rate
+- Improved: sound synchronicity
+- Improved: tap BPM calculation
+- Improved: square watches
 
 1.2.0:
-• New: German translation
-• New: bookmarks (switch between two values)
-• Improved: beat emphasis on main screen
-• Improved: settings and launcher icon
+- New: German translation
+- New: bookmarks (switch between two values)
+- Improved: beat emphasis on main screen
+- Improved: settings and launcher icon
 
 1.1.0:
-• New: beat emphasis
-• Fixed: don't keep screen awake when paused
+- New: beat emphasis
+- Fixed: don't keep screen awake when paused

@@ -2,7 +2,7 @@
 <resources>
 
     <dimen name="list_margin_top">32dp</dimen>
-    <dimen name="list_margin_bottom">60dp</dimen>
+    <dimen name="list_margin_bottom">48dp</dimen>
 
     <dimen name="control_horizontal_offset">10dp</dimen>
 

@@ -1,6 +1,7 @@
 <resources>
 
     <string name="app_name" translatable="false">Tack</string>
+    <string name="app_copyright" translatable="false">© 2020 Patrick Zedler</string>
 
     <string name="title_bpm">BPM</string>
     <string name="title_settings">Settings</string>
@@ -41,8 +42,10 @@
     <string name="setting_animations_description">Icons and more</string>
     <string name="setting_rate">Rate Tack on Google Play</string>
 
-    <string name="changelog_new">New:</string>
-    <string name="changelog_improved">Improved:</string>
-    <string name="changelog_fixed">Fixed:</string>
+    <array name="changelog_highlights">
+        <item>New:</item>
+        <item>Improved:</item>
+        <item>Fixed:</item>
+    </array>
 
 </resources>

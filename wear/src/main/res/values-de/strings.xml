@@ -40,8 +40,10 @@
     <string name="setting_animations_description">Icons und mehr</string>
     <string name="setting_rate">Bei Google Play bewerten</string>
 
-    <string name="changelog_new">Neu:</string>
-    <string name="changelog_improved">Verbessert:</string>
-    <string name="changelog_fixed">Behoben:</string>
+    <array name="changelog_highlights">
+        <item>Neu:</item>
+        <item>Verbessert:</item>
+        <item>Behoben:</item>
+    </array>
 
 </resources>
