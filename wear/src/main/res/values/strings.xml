@@ -1,7 +1,7 @@
 <resources>
 
     <string name="app_name" translatable="false">Tack</string>
-    <string name="app_copyright" translatable="false">© 2020 Patrick Zedler</string>
+    <string name="app_copyright" translatable="false">© 2021 Patrick Zedler</string>
 
     <string name="title_bpm">BPM</string>
     <string name="title_settings">Settings</string>

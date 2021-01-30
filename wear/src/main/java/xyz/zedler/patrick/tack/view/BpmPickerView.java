@@ -134,9 +134,7 @@ public class BpmPickerView extends View
             @Nullable Rect previouslyFocusedRect
     ) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
-        if (gainFocus) {
-            requestFocus(direction, previouslyFocusedRect);
-        }
+        if (!gainFocus) requestFocus(direction, previouslyFocusedRect);
     }
 
     @Override

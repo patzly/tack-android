@@ -7,9 +7,9 @@ import android.widget.ScrollView;
 
 import androidx.annotation.Nullable;
 
-public class CustomScrollView extends ScrollView {
+public class RotaryScrollView extends ScrollView {
 
-    public CustomScrollView(Context context, AttributeSet attrs) {
+    public RotaryScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
         requestFocus();
     }
@@ -21,8 +21,6 @@ public class CustomScrollView extends ScrollView {
             @Nullable Rect previouslyFocusedRect
     ) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
-        if (gainFocus) {
-            requestFocus(direction, previouslyFocusedRect);
-        }
+        if (!gainFocus) requestFocus(direction, previouslyFocusedRect);
     }
 }
