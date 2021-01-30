@@ -62,7 +62,7 @@
                     android:contentDescription="@string/title_emphasis"
                     android:focusable="true">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_emphasis"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center">
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_bpm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -101,7 +101,7 @@
                         android:fontFamily="@font/edwin_bold"
                         android:textSize="30sp" />
 
-                    <TextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/text_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

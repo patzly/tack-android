@@ -11,7 +11,7 @@
         android:paddingTop="@dimen/list_margin_top"
         android:paddingBottom="@dimen/list_margin_bottom">
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/Widget.Tack.Title"
             android:text="@string/title_settings"/>
 
@@ -34,11 +34,11 @@
 
             <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/Widget.Tack.ListItemLabel"
                     android:text="@string/setting_sound"/>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_setting_sound"
                     style="@style/Widget.Tack.ListItemDescription" />
 
@@ -56,11 +56,11 @@
 
             <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/Widget.Tack.ListItemLabel"
                     android:text="@string/setting_vibrate_always"/>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/Widget.Tack.ListItemDescription"
                     android:text="@string/setting_vibrate_always_description"/>
 
@@ -78,11 +78,11 @@
 
             <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/Widget.Tack.ListItemLabel"
                     android:text="@string/setting_wrist_gestures"/>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/Widget.Tack.ListItemDescription"
                     android:text="@string/setting_wrist_gestures_description"/>
 
@@ -100,11 +100,11 @@
 
             <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/Widget.Tack.ListItemLabel"
                     android:text="@string/setting_hide_picker"/>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/Widget.Tack.ListItemDescription"
                     android:text="@string/setting_hide_picker_description"/>
 
@@ -123,11 +123,11 @@
 
             <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/Widget.Tack.ListItemLabel"
                     android:text="@string/setting_animations"/>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/Widget.Tack.ListItemDescription"
                     android:text="@string/setting_animations_description"/>
 
@@ -154,11 +154,11 @@
 
             <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/Widget.Tack.ListItemLabel"
                     android:text="@string/title_changelog"/>
 
-                <TextView
+                <androidx.appcompat.widget.AppCompatTextView
                     style="@style/Widget.Tack.ListItemDescription"
                     android:text="@string/versionName"/>
 
@@ -183,14 +183,14 @@
 
             </FrameLayout>
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 style="@style/Widget.Tack.ListItemLabel"
                 android:layout_marginStart="8dp"
                 android:text="@string/setting_rate"/>
 
         </LinearLayout>
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             style="@style/Widget.Tack.ListItemDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

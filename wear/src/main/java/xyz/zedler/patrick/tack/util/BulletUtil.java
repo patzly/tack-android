@@ -9,6 +9,7 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.BulletSpan;
 
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import xyz.zedler.patrick.tack.R;
@@ -20,9 +21,11 @@ public class BulletUtil {
             float leadingMargin,
             float bulletSize,
             String prefixToReplace,
-            String text,
+            @Nullable String text,
             String... highlights
     ) {
+        if (text == null) return null;
+
         int color = ContextCompat.getColor(context, R.color.on_background);
         int margin = UnitUtil.getSp(context, leadingMargin);
         int size = UnitUtil.getSp(context, bulletSize);
