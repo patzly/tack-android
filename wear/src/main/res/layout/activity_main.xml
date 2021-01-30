@@ -96,9 +96,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/on_background"
-                        android:textStyle="bold"
                         android:layout_marginBottom="@dimen/text_bpm_margin_bottom_picker"
                         android:layout_gravity="center_horizontal|top"
+                        android:fontFamily="@font/edwin_bold"
                         android:textSize="30sp" />
 
                     <TextView
@@ -106,8 +106,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/title_bpm"
+                        android:fontFamily="@font/edwin_bold"
                         android:textColor="@color/on_background_secondary"
-                        android:textStyle="bold"
                         android:layout_gravity="center_horizontal|bottom"
                         android:textSize="13sp"/>
 
@@ -146,7 +146,6 @@
                     android:layout_width="@dimen/icon_touch_target_size"
                     android:layout_height="@dimen/icon_touch_target_size"
                     android:layout_marginStart="@dimen/control_horizontal_offset_picker"
-                    android:layout_marginEnd="@dimen/control_fab_margin_picker"
                     android:layout_gravity="top"
                     android:background="?attr/actionBarItemBackground"
                     android:clickable="true"
@@ -190,7 +189,6 @@
                     android:id="@+id/frame_beat_mode"
                     android:layout_width="@dimen/icon_touch_target_size"
                     android:layout_height="@dimen/icon_touch_target_size"
-                    android:layout_marginStart="@dimen/control_fab_margin_picker"
                     android:layout_marginEnd="@dimen/control_horizontal_offset_picker"
                     android:layout_gravity="top"
                     android:background="?attr/actionBarItemBackground"

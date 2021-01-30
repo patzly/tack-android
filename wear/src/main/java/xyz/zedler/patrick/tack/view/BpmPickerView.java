@@ -63,9 +63,9 @@ public class BpmPickerView extends View
         super(context, attrs, defStyleAttr, defStyleRes);
 
         Resources resources = getResources();
-        ringWidth = resources.getDimensionPixelSize(R.dimen.dotted_ring_width);
-        dotSizeMin = resources.getDimensionPixelSize(R.dimen.dotted_ring_dot_size_min);
-        dotSizeMax = resources.getDimensionPixelSize(R.dimen.dotted_ring_dot_size_max);
+        ringWidth = resources.getDimensionPixelSize(R.dimen.picker_ring_width);
+        dotSizeMin = resources.getDimensionPixelSize(R.dimen.picker_dot_size);
+        dotSizeMax = resources.getDimensionPixelSize(R.dimen.picker_dot_size_dragged);
         edgeWidth = resources.getDimensionPixelSize(R.dimen.edge_width);
 
         paint = new Paint();
@@ -75,7 +75,7 @@ public class BpmPickerView extends View
         paint.setStrokeWidth(dotSizeMin);
         paint.setAntiAlias(true);
 
-        dots = 16;
+        dots = getResources().getInteger(R.integer.picker_dots);
         prevAngle = 0;
 
         setOnGenericMotionListener(this);

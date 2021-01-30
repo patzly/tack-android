@@ -78,12 +78,18 @@ public class ViewUtil {
         view.requestLayout();
     }
 
-    public static void setVerticalMargins(View view, @DimenRes int resId) {
-        setMargins(view, -1, resId, -1, resId);
+    public static void setMargin(View view, int margin) {
+        ((ViewGroup.MarginLayoutParams) view.getLayoutParams()).setMargins(
+                margin, margin, margin, margin
+        );
     }
 
     public static void setHorizontalMargins(View view, @DimenRes int left, @DimenRes int right) {
         setMargins(view, left, -1, right, -1);
+    }
+
+    public static void setMarginTop(View view, @DimenRes int resId) {
+        setMargins(view, -1, resId, -1, -1);
     }
 
     public static void setMarginBottom(View view, @DimenRes int resId) {

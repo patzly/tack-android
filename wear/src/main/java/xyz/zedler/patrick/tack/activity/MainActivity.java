@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.support.wearable.input.WearableButtons;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
+import xyz.zedler.patrick.tack.databinding.ActivityMainNewBinding;
 import xyz.zedler.patrick.tack.util.AudioUtil;
 import xyz.zedler.patrick.tack.util.Constants;
 import xyz.zedler.patrick.tack.util.VibratorUtil;
@@ -34,7 +35,7 @@ public class MainActivity extends FragmentActivity
 
     private final static String TAG = MainActivity.class.getSimpleName();
 
-    private ActivityMainBinding binding;
+    private ActivityMainNewBinding binding;
     private SharedPreferences sharedPrefs;
     private AudioUtil audioUtil;
     private List<Long> intervals;
@@ -62,7 +63,7 @@ public class MainActivity extends FragmentActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityMainNewBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -482,30 +483,37 @@ public class MainActivity extends FragmentActivity
                 hidePicker ? R.dimen.text_size_label : R.dimen.text_size_label_picker
         );
 
+        ViewUtil.setMargin(
+                binding.linearControlsContainer,
+                hidePicker ? 0 : getResources().getDimensionPixelSize(R.dimen.picker_ring_width)
+        );
+        ViewUtil.setMarginTop(
+                binding.frameSettings,
+                hidePicker
+                        ? R.dimen.settings_vertical_offset
+                        : R.dimen.settings_vertical_offset_picker
+        );
         ViewUtil.setMarginBottom(
                 binding.textBpm,
                 hidePicker ? R.dimen.text_bpm_margin_bottom : R.dimen.text_bpm_margin_bottom_picker
         );
+
         ViewUtil.setHorizontalMargins(
                 binding.frameTempoTap,
                 hidePicker
                         ? R.dimen.control_horizontal_offset
                         : R.dimen.control_horizontal_offset_picker,
-                hidePicker ? R.dimen.control_fab_margin : R.dimen.control_fab_margin_picker
+                -1
         );
         ViewUtil.setHorizontalMargins(
                 binding.frameBeatMode,
-                hidePicker ? R.dimen.control_fab_margin : R.dimen.control_fab_margin_picker,
+                -1,
                 hidePicker
                         ? R.dimen.control_horizontal_offset
                         : R.dimen.control_horizontal_offset_picker
         );
-        ViewUtil.setVerticalMargins(
-                binding.frameControlsCenter,
-                hidePicker
-                        ? R.dimen.control_vertical_offset
-                        : R.dimen.control_vertical_offset_picker
-        );
+
+        Log.i(TAG, "updatePickerVisibility: " + getResources().getConfiguration().screenHeightDp);
     }
 
     private void changeBpm(int change) {
