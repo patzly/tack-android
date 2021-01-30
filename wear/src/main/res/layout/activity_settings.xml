@@ -190,6 +190,15 @@
 
         </LinearLayout>
 
+        <TextView
+            style="@style/Widget.Tack.ListItemDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/edwin_italic"
+            android:text="@string/app_copyright"/>
+
     </LinearLayout>
 
 </xyz.zedler.patrick.tack.view.CustomScrollView>
