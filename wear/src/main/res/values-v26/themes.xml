@@ -9,14 +9,7 @@
         <item name="android:colorEdgeEffect">@color/highlight</item>
         <item name="android:fontFamily">@font/edwin_roman</item>
         <item name="android:lineSpacingExtra">5dp</item>
+        <item name="android:windowSplashscreenContent">@drawable/splash</item>
     </style>
-
-    <style name="Theme.Tack.CustomSwipeToDismiss" parent="Base.Tack">
-        <item name="android:windowSwipeToDismiss">false</item>
-        <item name="android:windowIsTranslucent">true</item>
-        <item name="android:windowBackground">@color/transparent</item>
-    </style>
-
-    <style name="Theme.Tack" parent="Base.Tack"/>
 
 </resources>
