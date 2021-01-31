@@ -2,42 +2,42 @@
 <resources>
 
     <string name="title_bpm">BPM</string>
-    <string name="title_settings">Settings</string>
-    <string name="title_play_pause">Play/Pause</string>
-    <string name="title_tempo_tap">Tap tempo</string>
-    <string name="title_beat_mode">Beat mode</string>
-    <string name="title_emphasis">Emphasis</string>
-    <string name="title_bookmark">Bookmark</string>
-    <string name="title_changelog">Changelog</string>
+    <string name="title_settings">Impostazioni</string>
+    <string name="title_play_pause">Riproduci/Pausa</string>
+    <string name="title_tempo_tap">Tocca il tempo</string>
+    <string name="title_beat_mode">Modalità beat</string>
+    <string name="title_emphasis">Enfasi</string>
+    <string name="title_bookmark">Segnalibro</string>
+    <string name="title_changelog">Cronologia</string>
 
-    <string name="msg_bookmark">Tap again to return to previous value</string>
-    <string name="msg_hide_picker">Hide picker in settings for larger controls</string>
-    <string name="msg_long_press">Press long to change quickly</string>
-    <string name="msg_no_speaker">This watch has no audio output, please use a Bluetooth speaker</string>
+    <string name="msg_bookmark">Tocca di nuovo per tornare al valore precedente</string>
+    <string name="msg_hide_picker">Nascondi il selezionatore nelle impostazioni per i controlli più grandi</string>
+    <string name="msg_long_press">Premere a lungo per cambiare rapidamente</string>
+    <string name="msg_no_speaker">L\'orologio non ha un\'uscita audio, si prega di utilizzare un altoparlante Bluetooth</string>
 
-    <string name="onboarding_welcome">Welcome!</string>
-    <string name="onboarding_text">Control the BPM value as follows:</string>
-    <string name="onboarding_picker">Dotted circle</string>
-    <string name="onboarding_picker_description">Drag to change</string>
-    <string name="onboarding_wrist_description">If enabled</string>
-    <string name="onboarding_rotary">Rotary input</string>
-    <string name="onboarding_rotary_description">Rotate the crown</string>
-    <string name="onboarding_fsb">Side buttons</string>
-    <string name="onboarding_fsb_description">Also long press</string>
+    <string name="onboarding_welcome">Benvenuti!</string>
+    <string name="onboarding_text">Per controllare il tempo:</string>
+    <string name="onboarding_picker">Cerchio punteggiato</string>
+    <string name="onboarding_picker_description">Trascinare per cambiare</string>
+    <string name="onboarding_wrist_description">Se abilitato</string>
+    <string name="onboarding_rotary">Ingresso rotativo</string>
+    <string name="onboarding_rotary_description">Se disponibile</string>
+    <string name="onboarding_fsb">Pulsanti laterali</string>
+    <string name="onboarding_fsb_description">Anche la pressione lunga</string>
 
-    <string name="setting_sound">Beat sound</string>
-    <string name="setting_sound_wood">Wood</string>
-    <string name="setting_sound_click">Click</string>
+    <string name="setting_sound">Suono del battito</string>
+    <string name="setting_sound_wood">Legno</string>
+    <string name="setting_sound_click">Clicca</string>
     <string name="setting_sound_ding">Ding</string>
-    <string name="setting_sound_beep">Beep</string>
-    <string name="setting_vibrate_always">Vibrate always</string>
-    <string name="setting_vibrate_always_description">Also with sound</string>
-    <string name="setting_wrist_gestures">Wrist gestures</string>
+    <string name="setting_sound_beep">Bip</string>
+    <string name="setting_vibrate_always">Vibrare sempre</string>
+    <string name="setting_vibrate_always_description">Anche con il suono</string>
+    <string name="setting_wrist_gestures">Gesti del polso</string>
     <string name="setting_wrist_gestures_description">+/-1 BPM</string>
-    <string name="setting_hide_picker">Hide picker</string>
-    <string name="setting_hide_picker_description">Larger controls</string>
-    <string name="setting_animations">Animations</string>
-    <string name="setting_animations_description">Icons and more</string>
-    <string name="setting_rate">Rate Tack on Google Play</string>
+    <string name="setting_hide_picker">Nascondi il selezionatore</string>
+    <string name="setting_hide_picker_description">Controlli più grandi</string>
+    <string name="setting_animations">Animazioni</string>
+    <string name="setting_animations_description">Icone e altro</string>
+    <string name="setting_rate">Vota Tack su Google Play</string>
 
 </resources>

@@ -13,14 +13,15 @@
     <string name="msg_bookmark">Pulse de nuevo para volver al valor anterior</string>
     <string name="msg_hide_picker">Esconder selector en los ajustes para controles más grandes</string>
     <string name="msg_long_press">Presione largo para cambiar rápidamente</string>
+    <string name="msg_no_speaker">El reloj no tiene salida de audio, utilice un altavoz Bluetooth</string>
 
     <string name="onboarding_welcome">Bienvenido!</string>
-    <string name="onboarding_text">Controla el valor de BPM con los siguientes métodos:</string>
+    <string name="onboarding_text">Para controlar el tempo:</string>
     <string name="onboarding_picker">Círculo de puntos</string>
     <string name="onboarding_picker_description">Arrastrar para cambiar</string>
     <string name="onboarding_wrist_description">Si está activado</string>
     <string name="onboarding_rotary">Entrada rotativa</string>
-    <string name="onboarding_rotary_description">Gire la corona</string>
+    <string name="onboarding_rotary_description">Si está disponible</string>
     <string name="onboarding_fsb">Botones laterales</string>
     <string name="onboarding_fsb_description">También pulsa largo</string>
 
@@ -34,8 +35,9 @@
     <string name="setting_wrist_gestures">Gestos de la muñeca</string>
     <string name="setting_wrist_gestures_description">+/-1 LPM</string>
     <string name="setting_hide_picker">Esconde recolector</string>
-    <string name="setting_hide_picker_description">Sólo la entrada rotativa</string>
+    <string name="setting_hide_picker_description">Controles más grandes</string>
     <string name="setting_animations">Animaciones</string>
+    <string name="setting_animations_description">Iconos y más</string>
     <string name="setting_rate">Puntuación en Google Play</string>
 
 </resources>
