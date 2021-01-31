@@ -230,10 +230,21 @@ public class MainActivity extends FragmentActivity
                         binding.textEmphasis,
                         binding.bpmPicker
                 );
+                ViewUtil.setFontFamily(binding.textBpm, R.font.edwin_roman);
                 ViewUtil.setTextSize(binding.textBpm, R.dimen.text_size_bpm_ambient);
                 ViewUtil.setTextSize(binding.textLabel, R.dimen.text_size_label_ambient);
                 ViewUtil.setAlpha(0.5f, binding.textBpm, binding.textLabel);
                 ViewUtil.setMarginBottom(binding.textBpm, R.dimen.text_bpm_margin_bottom_ambient);
+                binding.frameTop.setLayoutParams(
+                        ViewUtil.getParamsWeightHeight(
+                                MainActivity.this, R.integer.layout_weight_top_ambient
+                        )
+                );
+                binding.linearBottom.setLayoutParams(
+                        ViewUtil.getParamsWeightHeight(
+                                MainActivity.this, R.integer.layout_weight_bottom_ambient
+                        )
+                );
             }
 
             public void onExitAmbient() {
@@ -250,6 +261,7 @@ public class MainActivity extends FragmentActivity
                 );
                 binding.bpmPicker.requestFocus();
                 binding.bpmPicker.setDotsVisible(!hidePicker);
+                ViewUtil.setFontFamily(binding.textBpm, R.font.edwin_bold);
                 ViewUtil.setTextSize(
                         binding.textBpm,
                         hidePicker ? R.dimen.text_size_bpm : R.dimen.text_size_bpm_picker
@@ -264,6 +276,16 @@ public class MainActivity extends FragmentActivity
                         hidePicker
                                 ? R.dimen.text_bpm_margin_bottom
                                 : R.dimen.text_bpm_margin_bottom_picker
+                );
+                binding.frameTop.setLayoutParams(
+                        ViewUtil.getParamsWeightHeight(
+                                MainActivity.this, R.integer.layout_weight_top
+                        )
+                );
+                binding.linearBottom.setLayoutParams(
+                        ViewUtil.getParamsWeightHeight(
+                                MainActivity.this, R.integer.layout_weight_bottom
+                        )
                 );
             }
         };

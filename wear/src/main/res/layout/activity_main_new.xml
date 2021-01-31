@@ -28,9 +28,10 @@
             android:layout_margin="@dimen/picker_ring_width">
 
             <FrameLayout
+                android:id="@+id/frame_top"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="0.6">
+                android:layout_weight="@integer/layout_weight_top">
 
                 <FrameLayout
                     android:id="@+id/frame_settings"
@@ -166,10 +167,11 @@
             </FrameLayout>
 
             <LinearLayout
+                android:id="@+id/linear_bottom"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:orientation="horizontal"
-                android:layout_weight="1"
+                android:layout_weight="@integer/layout_weight_bottom"
                 android:minHeight="@dimen/action_button_size">
 
                 <FrameLayout

@@ -2,6 +2,7 @@ package xyz.zedler.patrick.tack.util;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.drawable.Animatable;
@@ -10,11 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.DimenRes;
+import androidx.annotation.FontRes;
+import androidx.annotation.IntegerRes;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 public class ViewUtil {
 
@@ -58,6 +63,23 @@ public class ViewUtil {
         textView.setTextSize(
                 TypedValue.COMPLEX_UNIT_PX,
                 textView.getResources().getDimension(resId)
+        );
+    }
+
+    public static void setFontFamily(TextView textView, @FontRes int resId) {
+        textView.setTypeface(
+                ResourcesCompat.getFont(textView.getContext(), resId)
+        );
+    }
+
+    public static LinearLayout.LayoutParams getParamsWeightHeight(
+            Context context,
+            @IntegerRes int resId
+    ) {
+        return new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                0,
+                context.getResources().getInteger(resId)
         );
     }
 

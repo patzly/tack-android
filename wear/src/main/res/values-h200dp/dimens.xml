@@ -11,10 +11,10 @@
     <dimen name="text_bpm_margin_bottom">10dp</dimen>
     <dimen name="text_bpm_margin_bottom_picker">12dp</dimen>
     <dimen name="text_bpm_margin_bottom_ambient">14dp</dimen>
-    <dimen name="control_horizontal_offset">0dp</dimen>
+    <dimen name="control_horizontal_offset">4dp</dimen>
     <dimen name="control_horizontal_offset_picker">2dp</dimen>
     <dimen name="settings_vertical_offset">6dp</dimen>
-    <dimen name="settings_vertical_offset_picker">0dp</dimen>
+    <dimen name="settings_vertical_offset_picker">2dp</dimen>
 
     <dimen name="icon_size_picker">24dp</dimen>
     <dimen name="icon_size">28dp</dimen>
