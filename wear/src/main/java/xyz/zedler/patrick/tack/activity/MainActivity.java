@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.support.wearable.input.WearableButtons;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -67,6 +66,9 @@ public class MainActivity extends FragmentActivity
         setContentView(binding.getRoot());
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        audioUtil = new AudioUtil(this);
+        handler = new Handler(Looper.getMainLooper());
+        intervals = new ArrayList<>();
 
         isFirstRotation = sharedPrefs.getBoolean(
                 Constants.PREF.FIRST_ROTATION, Constants.DEF.FIRST_ROTATION
@@ -77,22 +79,10 @@ public class MainActivity extends FragmentActivity
         );
         bpm = (int) (60000 / interval);
 
-        audioUtil = new AudioUtil(this);
-
-        isBeatModeVibrate = sharedPrefs.getBoolean(
-                Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
-        );
-        vibrateAlways = sharedPrefs.getBoolean(
-                Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
-        );
         hidePicker = sharedPrefs.getBoolean(
                 Constants.SETTING.HIDE_PICKER, Constants.DEF.HIDE_PICKER
         );
         updatePickerVisibility();
-        updateBeatMode();
-
-        handler = new Handler(Looper.getMainLooper());
-        intervals = new ArrayList<>();
 
         // VIEWS
 
@@ -171,7 +161,7 @@ public class MainActivity extends FragmentActivity
 
         // AMBIENT MODE
 
-        AmbientModeSupport.attach(this).setAmbientOffloadEnabled(true);
+        AmbientModeSupport.attach(this);
     }
 
     @Override
@@ -186,17 +176,6 @@ public class MainActivity extends FragmentActivity
     protected void onResume() {
         super.onResume();
 
-        emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS);
-        wristGestures = sharedPrefs.getBoolean(
-                Constants.SETTING.WRIST_GESTURES, Constants.DEF.WRIST_GESTURES
-        );
-        animations = sharedPrefs.getBoolean(
-                Constants.SETTING.ANIMATIONS, Constants.DEF.ANIMATIONS
-        );
-        vibrateAlways = sharedPrefs.getBoolean(
-                Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
-        );
-
         boolean hidePickerNew = sharedPrefs.getBoolean(
                 Constants.SETTING.HIDE_PICKER, Constants.DEF.HIDE_PICKER
         );
@@ -205,13 +184,18 @@ public class MainActivity extends FragmentActivity
             updatePickerVisibility();
         }
 
-        boolean isBeatModeVibrateNew = sharedPrefs.getBoolean(
+        animations = sharedPrefs.getBoolean(Constants.SETTING.ANIMATIONS, Constants.DEF.ANIMATIONS);
+        emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS);
+        wristGestures = sharedPrefs.getBoolean(
+                Constants.SETTING.WRIST_GESTURES, Constants.DEF.WRIST_GESTURES
+        );
+        vibrateAlways = sharedPrefs.getBoolean(
+                Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+        );
+        isBeatModeVibrate = sharedPrefs.getBoolean(
                 Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
         );
-        if(isBeatModeVibrate != isBeatModeVibrateNew) {
-            isBeatModeVibrate = isBeatModeVibrateNew;
-            updateBeatMode();
-        }
+        updateBeatMode();
     }
 
     @Override
@@ -534,8 +518,6 @@ public class MainActivity extends FragmentActivity
                         ? R.dimen.control_horizontal_offset
                         : R.dimen.control_horizontal_offset_picker
         );
-
-        Log.i(TAG, "updatePickerVisibility: " + getResources().getConfiguration().screenHeightDp);
     }
 
     private void changeBpm(int change) {

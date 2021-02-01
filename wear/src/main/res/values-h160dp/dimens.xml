@@ -10,7 +10,7 @@
 
     <dimen name="text_bpm_margin_bottom">7dp</dimen>
     <dimen name="text_bpm_margin_bottom_picker">7dp</dimen>
-    <dimen name="text_bpm_margin_bottom_ambient">8dp</dimen>
+    <dimen name="text_bpm_margin_bottom_ambient">10dp</dimen>
     <dimen name="control_horizontal_offset">0dp</dimen>
     <dimen name="control_horizontal_offset_picker">2dp</dimen>
     <dimen name="settings_vertical_offset">6dp</dimen>
