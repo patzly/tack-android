@@ -4,8 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/transparent">
+    android:layout_height="match_parent">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -70,7 +69,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_gravity="center_vertical">
+                    android:layout_gravity="center_vertical"
+                    android:baselineAligned="false">
 
                     <FrameLayout
                         android:layout_width="0dp"
@@ -86,7 +86,8 @@
                             android:clickable="true"
                             android:gravity="center"
                             android:contentDescription="@string/title_emphasis"
-                            android:focusable="true">
+                            android:focusable="true"
+                            tools:ignore="UselessParent">
 
                             <androidx.appcompat.widget.AppCompatTextView
                                 android:id="@+id/text_emphasis"
@@ -133,7 +134,8 @@
                             android:clickable="true"
                             android:gravity="center"
                             android:contentDescription="@string/title_bookmark"
-                            android:focusable="true">
+                            android:focusable="true"
+                            tools:ignore="UselessParent">
 
                             <ImageView
                                 android:id="@+id/image_bookmark"
@@ -177,7 +179,8 @@
                 android:layout_height="0dp"
                 android:orientation="horizontal"
                 android:layout_weight="@integer/layout_weight_bottom"
-                android:minHeight="@dimen/action_button_size">
+                android:minHeight="@dimen/action_button_size"
+                android:baselineAligned="false">
 
                 <FrameLayout
                     android:layout_width="0dp"
@@ -194,7 +197,8 @@
                         android:clickable="true"
                         android:gravity="center"
                         android:contentDescription="@string/title_tempo_tap"
-                        android:focusable="true">
+                        android:focusable="true"
+                        tools:ignore="UselessParent">
 
                         <ImageView
                             android:id="@+id/image_tempo_tap"
@@ -214,7 +218,7 @@
                     android:layout_height="@dimen/action_button_size"
                     android:layout_gravity="center"
                     android:background="@drawable/ripple_circular"
-                    android:backgroundTint="@color/secondary"
+                    android:backgroundTint="@color/retro_green_bg_white"
                     android:clickable="true"
                     android:contentDescription="@string/title_play_pause"
                     android:focusable="true"
@@ -245,7 +249,8 @@
                         android:clickable="true"
                         android:gravity="center"
                         android:contentDescription="@string/title_beat_mode"
-                        android:focusable="true">
+                        android:focusable="true"
+                        tools:ignore="UselessParent">
 
                         <ImageView
                             android:id="@+id/image_beat_mode"
