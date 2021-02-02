@@ -29,7 +29,8 @@
 
     <dimen name="picker_dot_size">6dp</dimen>
     <dimen name="picker_dot_size_dragged">8dp</dimen>
-    <dimen name="picker_ring_width">24dp</dimen>
+    <dimen name="picker_ring_width">48dp</dimen>
+    <dimen name="picker_ring_padding">24dp</dimen>
     <dimen name="edge_width">20dp</dimen>
 
 </resources>

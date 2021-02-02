@@ -510,7 +510,7 @@ public class MainActivity extends FragmentActivity
 
         ViewUtil.setMargin(
                 binding.linearControlsContainer,
-                hidePicker ? 0 : getResources().getDimensionPixelSize(R.dimen.picker_ring_width)
+                hidePicker ? 0 : getResources().getDimensionPixelSize(R.dimen.picker_ring_padding)
         );
         ViewUtil.setMarginTop(
                 binding.frameSettings,

@@ -30,7 +30,7 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_gravity="center_horizontal"
-            android:layout_margin="@dimen/picker_ring_width">
+            android:layout_margin="@dimen/picker_ring_padding">
 
             <FrameLayout
                 android:id="@+id/frame_top"

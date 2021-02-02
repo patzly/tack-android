@@ -23,7 +23,7 @@ public class DottedCircleView extends View {
 
     private final int dots;
     private final Paint paint;
-    private final float ringWidth;
+    private final float pickerPadding;
     private final float dotSizeMin;
     private final float dotSizeMax;
     private boolean areDotsVisible = true;
@@ -53,7 +53,7 @@ public class DottedCircleView extends View {
         super(context, attrs, defStyleAttr, defStyleRes);
 
         Resources resources = getResources();
-        ringWidth = resources.getDimensionPixelSize(R.dimen.picker_ring_width);
+        pickerPadding = resources.getDimensionPixelSize(R.dimen.picker_ring_padding);
         dotSizeMin = resources.getDimensionPixelSize(R.dimen.picker_dot_size);
         dotSizeMax = resources.getDimensionPixelSize(R.dimen.picker_dot_size_dragged);
 
@@ -76,7 +76,7 @@ public class DottedCircleView extends View {
         float centerX = getPivotX();
         float centerY = getPivotY();
         float min = Math.min(getWidth(), getHeight());
-        float radius = (min / 2) - ringWidth / 2;
+        float radius = (min / 2) - pickerPadding / 2;
         for (int i = 0; i < dots; i++) {
             double d = (((i * 2f) / dots)) * Math.PI;
             canvas.drawPoint(
