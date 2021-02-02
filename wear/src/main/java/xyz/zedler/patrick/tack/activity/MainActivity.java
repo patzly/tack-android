@@ -334,8 +334,6 @@ public class MainActivity extends FragmentActivity
     public void run() {
         if (!isPlaying) return;
 
-        handler.postDelayed(this, interval);
-
         boolean isEmphasis = emphasis != 0 && emphasisIndex == 0;
         if (emphasis != 0) emphasisIndex = emphasisIndex < emphasis - 1 ? emphasisIndex + 1 : 0;
 
@@ -345,6 +343,8 @@ public class MainActivity extends FragmentActivity
         } else {
             VibratorUtil.vibrate(this, isEmphasis);
         }
+
+        handler.postDelayed(this, interval);
     }
 
     @Override
@@ -381,9 +381,9 @@ public class MainActivity extends FragmentActivity
             emphasisIndex = 0;
             isPlaying = !isPlaying;
             if (isPlaying) {
-                handler.post(MainActivity.this);
+                handler.post(this);
             } else {
-                handler.removeCallbacks(MainActivity.this);
+                handler.removeCallbacks(this);
             }
             keepScreenOn(isPlaying);
             if (animations) {
