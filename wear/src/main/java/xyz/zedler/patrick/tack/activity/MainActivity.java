@@ -231,7 +231,8 @@ public class MainActivity extends FragmentActivity
                         binding.imageBeatMode,
                         binding.framePlayPause,
                         binding.textEmphasis,
-                        binding.bpmPicker
+                        binding.bpmPicker,
+                        binding.dottedCircle
                 );
                 ViewUtil.setFontFamily(binding.textBpm, R.font.edwin_roman);
                 ViewUtil.setTextSize(binding.textBpm, R.dimen.text_size_bpm_ambient);
@@ -260,10 +261,12 @@ public class MainActivity extends FragmentActivity
                         binding.imageBeatMode,
                         binding.framePlayPause,
                         binding.textEmphasis,
-                        binding.bpmPicker
+                        binding.bpmPicker,
+                        binding.dottedCircle
                 );
                 binding.bpmPicker.requestFocus();
                 binding.bpmPicker.setTouchable(!hidePicker);
+                binding.dottedCircle.setDotsVisibility(!hidePicker);
                 ViewUtil.setFontFamily(binding.textBpm, R.font.edwin_bold);
                 ViewUtil.setTextSize(
                         binding.textBpm,
@@ -475,6 +478,7 @@ public class MainActivity extends FragmentActivity
 
     private void updatePickerVisibility() {
         binding.bpmPicker.setTouchable(!hidePicker);
+        binding.dottedCircle.setDotsVisibility(!hidePicker);
 
         ViewUtil.setSize(
                 hidePicker ? R.dimen.icon_size : R.dimen.icon_size_picker,
@@ -581,7 +585,7 @@ public class MainActivity extends FragmentActivity
                         binding.imageSettings,
                         binding.imageEmphasis,
                         binding.textEmphasis,
-                        binding.bpmPicker,
+                        binding.dottedCircle,
                         binding.imageBookmark
                 );
             } else {
@@ -596,7 +600,7 @@ public class MainActivity extends FragmentActivity
                         binding.imageSettings,
                         binding.imageEmphasis,
                         binding.textEmphasis,
-                        binding.bpmPicker,
+                        binding.dottedCircle,
                         binding.imageBookmark
                 );
             }
@@ -614,7 +618,7 @@ public class MainActivity extends FragmentActivity
                         binding.imageSettings,
                         binding.imageEmphasis,
                         binding.textEmphasis,
-                        binding.bpmPicker,
+                        binding.dottedCircle,
                         binding.imageBookmark
                 );
             } else {
@@ -629,7 +633,7 @@ public class MainActivity extends FragmentActivity
                         binding.imageSettings,
                         binding.imageEmphasis,
                         binding.textEmphasis,
-                        binding.bpmPicker,
+                        binding.dottedCircle,
                         binding.imageBookmark
                 );
             }
