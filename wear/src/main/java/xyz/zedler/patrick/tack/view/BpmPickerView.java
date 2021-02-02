@@ -1,12 +1,7 @@
 package xyz.zedler.patrick.tack.view;
 
-import android.animation.AnimatorSet;
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -15,8 +10,6 @@ import android.view.animation.RotateAnimation;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 
 import com.google.android.wearable.input.RotaryEncoderHelper;
 
@@ -27,13 +20,9 @@ public class BpmPickerView extends View
 
     private final static String TAG = BpmPickerView.class.getSimpleName();
 
-    private final int dots;
-    private final Paint paint;
     private final float ringWidth;
     private final float edgeWidth;
-    private final float dotSizeMin;
-    private final float dotSizeMax;
-    private boolean dotsVisible = true;
+    private boolean isTouchable = true;
     private boolean isTouchStartedInRing;
     private double currAngle = 0;
     private double prevAngle;
@@ -64,18 +53,8 @@ public class BpmPickerView extends View
 
         Resources resources = getResources();
         ringWidth = resources.getDimensionPixelSize(R.dimen.picker_ring_width);
-        dotSizeMin = resources.getDimensionPixelSize(R.dimen.picker_dot_size);
-        dotSizeMax = resources.getDimensionPixelSize(R.dimen.picker_dot_size_dragged);
         edgeWidth = resources.getDimensionPixelSize(R.dimen.edge_width);
 
-        paint = new Paint();
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(context.getColor(R.color.on_background_secondary));
-        paint.setStrokeCap(Paint.Cap.ROUND);
-        paint.setStrokeWidth(dotSizeMin);
-        paint.setAntiAlias(true);
-
-        dots = getResources().getInteger(R.integer.picker_dots);
         prevAngle = 0;
 
         setOnGenericMotionListener(this);
@@ -97,34 +76,13 @@ public class BpmPickerView extends View
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
-        if (!dotsVisible) return;
-
-        float centerX = getPivotX();
-        float centerY = getPivotY();
-        float min = Math.min(getWidth(), getHeight());
-        float radius = (min / 2) - ringWidth / 2;
-        for (int i = 0; i < dots; i++) {
-            double d = (((i * 2f) / dots)) * Math.PI;
-            canvas.drawPoint(
-                    ((float) Math.cos(d) * radius) + centerX,
-                    ((float) Math.sin(d) * radius) + centerY,
-                    paint
-            );
-        }
-    }
-
-    @Override
     public void setVisibility(int visibility) {
         super.setVisibility(visibility);
-        setDotsVisible(visibility == VISIBLE);
+        setTouchable(visibility == VISIBLE);
     }
 
-    public void setDotsVisible(boolean visible) {
-        dotsVisible = visible;
-        invalidate();
+    public void setTouchable(boolean touchable) {
+        isTouchable = touchable;
     }
 
     @Override
@@ -144,13 +102,16 @@ public class BpmPickerView extends View
         float factor = RotaryEncoderHelper.getScaledScrollFactor(getContext());
         float delta = -scrolled * (factor / 5);
         setRotation(getRotation() + delta);
-        if (onRotaryInputListener != null) onRotaryInputListener.onRotate(-scrolled > 0 ? 1 : -1);
+        if (onRotaryInputListener != null) {
+            onRotaryInputListener.onRotate(-scrolled > 0 ? 1 : -1);
+            onRotaryInputListener.onRotate(delta);
+        }
         return true;
     }
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        if (!dotsVisible) return false;
+        if (!isTouchable) return false;
 
         final float xc = (float) getWidth() / 2;
         final float yc = (float) getHeight() / 2;
@@ -164,7 +125,10 @@ public class BpmPickerView extends View
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             isTouchStartedInRing = isTouchInsideRing;
             // on back gesture edge or outside ring
-            onPickListener.onPickDown(!isTouchInsideRing || x <= edgeWidth);
+            onPickListener.onPickDown(
+                    isTouchInsideRing,
+                    !isTouchInsideRing || x <= edgeWidth
+            );
             currAngle = angle;
         } else if (event.getAction() == MotionEvent.ACTION_MOVE
                 && (isTouchInsideRing || isTouchStartedInRing)
@@ -199,6 +163,8 @@ public class BpmPickerView extends View
         if (degreeDiff > 180) degreeDiff = 360 - degreeDiff;
         if (degreeDiff < -180) degreeDiff = -360 + Math.abs(degreeDiff);
 
+        if (onRotationListener != null) onRotationListener.onRotate(degreeDiff);
+
         degreeStorage = degreeStorage + degreeDiff;
         if (degreeStorage > 12) {
             if (onRotationListener != null) onRotationListener.onRotate(1);
@@ -206,47 +172,6 @@ public class BpmPickerView extends View
         } else if (degreeStorage < -12) {
             if (onRotationListener != null) onRotationListener.onRotate(-1);
             degreeStorage = 0;
-        }
-    }
-
-    public void setTouched(boolean touched, boolean animated) {
-        if (animated) {
-            ValueAnimator animatorSize = ValueAnimator.ofFloat(
-                    paint.getStrokeWidth(),
-                    touched ? dotSizeMax : dotSizeMin
-            );
-            animatorSize.addUpdateListener(animation -> {
-                paint.setStrokeWidth((float) animatorSize.getAnimatedValue());
-                invalidate();
-            });
-
-            ValueAnimator animatorColor = ValueAnimator.ofObject(
-                    new ArgbEvaluator(),
-                    paint.getColor(),
-                    ContextCompat.getColor(
-                            getContext(),
-                            touched ? R.color.retro_dirt : R.color.on_background_secondary
-                    )
-            );
-            animatorColor.addUpdateListener(animation -> {
-                paint.setColor((int) animatorColor.getAnimatedValue());
-                invalidate();
-            });
-
-            AnimatorSet animatorSet = new AnimatorSet();
-            animatorSet.setInterpolator(new FastOutSlowInInterpolator());
-            animatorSet.setDuration(200);
-            animatorSet.playTogether(animatorSize, animatorColor);
-            animatorSet.start();
-        } else {
-            paint.setStrokeWidth(touched ? dotSizeMax : dotSizeMin);
-            paint.setColor(
-                    ContextCompat.getColor(
-                            getContext(),
-                            touched ? R.color.retro_dirt : R.color.on_background_secondary
-                    )
-            );
-            invalidate();
         }
     }
 
@@ -266,14 +191,16 @@ public class BpmPickerView extends View
 
     public interface OnRotaryInputListener {
         void onRotate(int change);
+        void onRotate(float change);
     }
 
     public interface OnRotationListener {
         void onRotate(int change);
+        void onRotate(float change);
     }
 
     public interface OnPickListener {
-        void onPickDown(boolean canBeDismiss);
+        void onPickDown(boolean isOnRing, boolean canBeDismiss);
         void onPickUpOrCancel();
     }
 }

@@ -9,7 +9,8 @@
 - Improved: optimized for Android 11 and internal cleanup
 - Improved: warning if watch has no audio output
 - Improved: changelog appearance
-- Fixed: small bpm jump during rotation
+- Fixed: jump of bpm picker on touch
+- Fixed: annoying bpm jump during rotation
 
 1.5.0:
 - Improved: app icon

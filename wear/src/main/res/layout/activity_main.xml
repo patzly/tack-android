@@ -19,6 +19,11 @@
             android:importantForAccessibility="yes"
             android:focusableInTouchMode="true" />
 
+        <xyz.zedler.patrick.tack.view.DottedCircleView
+            android:id="@+id/dotted_circle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
         <LinearLayout
             android:id="@+id/linear_controls_container"
             android:layout_width="match_parent"

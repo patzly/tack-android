@@ -113,42 +113,61 @@ public class MainActivity extends FragmentActivity
                 binding.frameBookmark
         );
 
-        binding.bpmPicker.setOnRotationListener(this::changeBpm);
+        binding.bpmPicker.setOnRotationListener(new BpmPickerView.OnRotationListener() {
+            @Override
+            public void onRotate(int change) {
+                changeBpm(change);
+            }
+
+            @Override
+            public void onRotate(float change) {
+                binding.dottedCircle.setRotation(binding.dottedCircle.getRotation() + change);
+            }
+        });
         binding.bpmPicker.setOnPickListener(new BpmPickerView.OnPickListener() {
             @Override
-            public void onPickDown(boolean canBeDismiss) {
+            public void onPickDown(boolean isOnRing, boolean canBeDismiss) {
                 binding.swipeDismiss.setSwipeable(canBeDismiss);
-                binding.bpmPicker.setTouched(true, animations);
+                if (!isOnRing) return;
+                binding.dottedCircle.setHighlighted(true, animations);
             }
 
             @Override
             public void onPickUpOrCancel() {
                 binding.swipeDismiss.setSwipeable(true);
-                binding.bpmPicker.setTouched(false, animations);
+                binding.dottedCircle.setHighlighted(false, animations);
             }
         });
-        binding.bpmPicker.setOnRotaryInputListener(change -> {
-            if (change != rotatedPrev) {
-                // change immediately after direction change
-                changeBpm(change);
-                rotatedPrev = change;
-            } else if (rotaryFactorIndex == 0) {
-                // enough rotated for next value change
-                changeBpm(change);
-                rotaryFactorIndex++;
-            } else {
-                // more rotation needed for bpm to change again
-                rotaryFactorIndex = rotaryFactorIndex < 5 ? rotaryFactorIndex + 1 : 0;
+        binding.bpmPicker.setOnRotaryInputListener(new BpmPickerView.OnRotaryInputListener() {
+            @Override
+            public void onRotate(int change) {
+                if (change != rotatedPrev) {
+                    // change immediately after direction change
+                    changeBpm(change);
+                    rotatedPrev = change;
+                } else if (rotaryFactorIndex == 0) {
+                    // enough rotated for next value change
+                    changeBpm(change);
+                    rotaryFactorIndex++;
+                } else {
+                    // more rotation needed for bpm to change again
+                    rotaryFactorIndex = rotaryFactorIndex < 5 ? rotaryFactorIndex + 1 : 0;
+                }
+
+                if (isFirstRotation && !hidePicker) {
+                    isFirstRotation = false;
+                    Toast.makeText(
+                            MainActivity.this, R.string.msg_hide_picker, Toast.LENGTH_LONG
+                    ).show();
+                    sharedPrefs.edit().putBoolean(
+                            Constants.PREF.FIRST_ROTATION, isFirstRotation
+                    ).apply();
+                }
             }
 
-            if (isFirstRotation && !hidePicker) {
-                isFirstRotation = false;
-                Toast.makeText(
-                        this, R.string.msg_hide_picker, Toast.LENGTH_LONG
-                ).show();
-                sharedPrefs.edit().putBoolean(
-                        Constants.PREF.FIRST_ROTATION, isFirstRotation
-                ).apply();
+            @Override
+            public void onRotate(float change) {
+                binding.dottedCircle.setRotation(binding.dottedCircle.getRotation() + change);
             }
         });
 
@@ -244,7 +263,7 @@ public class MainActivity extends FragmentActivity
                         binding.bpmPicker
                 );
                 binding.bpmPicker.requestFocus();
-                binding.bpmPicker.setDotsVisible(!hidePicker);
+                binding.bpmPicker.setTouchable(!hidePicker);
                 ViewUtil.setFontFamily(binding.textBpm, R.font.edwin_bold);
                 ViewUtil.setTextSize(
                         binding.textBpm,
@@ -455,7 +474,7 @@ public class MainActivity extends FragmentActivity
     }
 
     private void updatePickerVisibility() {
-        binding.bpmPicker.setDotsVisible(!hidePicker);
+        binding.bpmPicker.setTouchable(!hidePicker);
 
         ViewUtil.setSize(
                 hidePicker ? R.dimen.icon_size : R.dimen.icon_size_picker,
