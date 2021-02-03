@@ -38,6 +38,7 @@ public class SettingsActivity extends FragmentActivity
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         animations = sharedPrefs.getBoolean(Constants.SETTING.ANIMATIONS, Constants.DEF.ANIMATIONS);
+        clickUtil = new ClickUtil();
 
         binding.textSettingSound.setText(getSound());
 
