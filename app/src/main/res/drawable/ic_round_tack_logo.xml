@@ -6,9 +6,9 @@
         <rotate
             android:drawable="@drawable/ic_round_tack_logo_pointer"
             android:fromDegrees="-30"
+            android:toDegrees="30"
             android:pivotX="50%"
-            android:pivotY="79.16%"
-            android:toDegrees="30" />
+            android:pivotY="79.16%" />
     </item>
 
     <item android:drawable="@drawable/ic_round_tack_logo_fg" />
