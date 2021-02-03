@@ -11,8 +11,14 @@ android {
         applicationId "xyz.zedler.patrick.tack"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 70 // last number is 0 for app release
+        versionCode 80 // last number is 0 for app release
+        versionName "2.0.0"
     }
+
+    applicationVariants.all { variant ->
+        variant.resValue "string", "versionName", variant.versionName
+    }
+
     buildTypes {
         release {
             minifyEnabled true

@@ -1,40 +1,49 @@
-1.6:
-• New (phone): option for slider to select emphasis
+2.0.0:
+- New: haptic feedback on tempo change
+- New: animated logo
+- New: Edwin typeface
+- Improved: app icon and changelog appearance
+- Improved: optimized for Android 11 and internal cleanup
+- Fixed: jump of bpm picker on touch
+- Fixed: annoying bpm jump during rotation
 
-1.5:
-• New (phone): share Tack
-• Improved: colors and appearance
-• Improved: app icon
-• Improved (phone): feedback
-• Improved (phone): splash logo
-• Improved (phone): landscape mode
+1.6.0:
+- New (phone): option for slider to select emphasis
 
-1.4:
-• New: picker animation
-• New (Wear OS): side button control
-• New (Wear OS): introduction and help
-• New (Wear OS): Spanish translation
+1.5.0:
+- New (phone): share Tack
+- Improved: colors and appearance
+- Improved: app icon
+- Improved (phone): feedback
+- Improved (phone): splash logo
+- Improved (phone): landscape mode
 
-1.3:
-• New (phone): long click to change BPM rapidly
-• New (Wear OS): big controls when picker is hidden
-• New (Wear OS): changelog and rate
-• Improved: sound synchronicity
-• Improved: tap BPM calculation
-• Improved (Wear OS): square watches
+1.4.0:
+- New: picker animation
+- New (Wear OS): side button control
+- New (Wear OS): introduction and help
+- New (Wear OS): Spanish translation
 
-1.2:
-• New: German translation
-• New (phone): feedback pop-up
-• New (Wear OS): bookmarks (switch between two values)
-• Improved (phone): bookmarks and licenses
-• Improved (Wear OS): beat emphasis on main screen
-• Improved (Wear OS): settings, launcher icon and internal stuff
-• Fixed (phone): picker touch bug
+1.3.0:
+- New (phone): long click to change BPM rapidly
+- New (Wear OS): big controls when picker is hidden
+- New (Wear OS): changelog and rate
+- Improved: sound synchronicity
+- Improved: tap BPM calculation
+- Improved (Wear OS): square watches
 
-1.1:
-• New: beat emphasis
-• New (phone): toggle "keep screen awake while playing"
-• Improved (phone): bookmarks, about page, tempo tap, settings page
-• Fixed: don't keep screen awake when paused
-• Fixed (phone): shortcuts crashed launcher
+1.2.0:
+- New: German translation
+- New (phone): feedback pop-up
+- New (Wear OS): bookmarks (switch between two values)
+- Improved (phone): bookmarks and licenses
+- Improved (Wear OS): beat emphasis on main screen
+- Improved (Wear OS): settings, launcher icon and internal stuff
+- Fixed (phone): picker touch bug
+
+1.1.0:
+- New: beat emphasis
+- New (phone): toggle "keep screen awake while playing"
+- Improved (phone): bookmarks, about page, tempo tap, settings page
+- Fixed: don't keep screen awake when paused
+- Fixed (phone): shortcuts crashed launcher
