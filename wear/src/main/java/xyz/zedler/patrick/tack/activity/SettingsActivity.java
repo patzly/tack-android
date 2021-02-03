@@ -15,6 +15,7 @@ import androidx.preference.PreferenceManager;
 
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivitySettingsBinding;
+import xyz.zedler.patrick.tack.util.ClickUtil;
 import xyz.zedler.patrick.tack.util.Constants;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
@@ -25,6 +26,7 @@ public class SettingsActivity extends FragmentActivity
 
     private ActivitySettingsBinding binding;
     private SharedPreferences sharedPrefs;
+    private ClickUtil clickUtil;
     private boolean animations;
 
     @Override
@@ -118,9 +120,11 @@ public class SettingsActivity extends FragmentActivity
                     !binding.switchSettingsAnimations.isChecked()
             );
         } else if (id == R.id.linear_settings_changelog) {
+            if (clickUtil.isDisabled()) return;
             if (animations) ViewUtil.startAnimatedIcon(binding.imageChangelog);
             startActivity(new Intent(this, ChangelogActivity.class));
         } else if (id == R.id.linear_settings_rate) {
+            if (clickUtil.isDisabled()) return;
             if (animations) ViewUtil.startAnimatedIcon(binding.imageRate);
             Uri uri = Uri.parse(
                     "market://details?id=" + getApplicationContext().getPackageName()

@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.SystemClock;
 import android.support.wearable.input.WearableButtons;
 import android.view.KeyEvent;
 import android.view.View;
@@ -24,6 +23,7 @@ import java.util.List;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
 import xyz.zedler.patrick.tack.util.AudioUtil;
+import xyz.zedler.patrick.tack.util.ClickUtil;
 import xyz.zedler.patrick.tack.util.Constants;
 import xyz.zedler.patrick.tack.util.VibratorUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
@@ -38,6 +38,7 @@ public class MainActivity extends FragmentActivity
     private SharedPreferences sharedPrefs;
     private AudioUtil audioUtil;
     private VibratorUtil vibratorUtil;
+    private ClickUtil clickUtil;
     private List<Long> intervals;
     private Handler handler;
     private int bpm;
@@ -70,6 +71,7 @@ public class MainActivity extends FragmentActivity
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         audioUtil = new AudioUtil(this);
         vibratorUtil = new VibratorUtil(this);
+        clickUtil = new ClickUtil();
         handler = new Handler(Looper.getMainLooper());
         intervals = new ArrayList<>();
 
@@ -357,8 +359,7 @@ public class MainActivity extends FragmentActivity
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.frame_settings) {
-            if (SystemClock.elapsedRealtime() - lastClick < 1000) return;
-            lastClick = SystemClock.elapsedRealtime();
+            if (clickUtil.isDisabled()) return;
             if (animations) ViewUtil.startAnimatedIcon(binding.imageSettings);
 
             if (isPlaying) {
