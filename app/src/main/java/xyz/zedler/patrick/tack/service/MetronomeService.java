@@ -237,6 +237,10 @@ public class MetronomeService extends Service implements Runnable {
             } else {
                 vibrator.vibrate(isEmphasis ? 50 : 20);
             }
+
+            if (listener != null) {
+                listener.onTick(interval, isEmphasis, emphasisIndex);
+            }
         }
     }
 
@@ -249,7 +253,7 @@ public class MetronomeService extends Service implements Runnable {
     public interface TickListener {
         void onStartTicks();
 
-        void onTick(boolean isEmphasis, int index);
+        void onTick(long interval, boolean isEmphasis, int index);
 
         void onBpmChanged(int bpm);
 

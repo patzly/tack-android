@@ -25,6 +25,15 @@
                 android:layout_height="match_parent"
                 tools:ignore="UselessParent">
 
+                <ImageView
+                    android:id="@+id/image_main_logo"
+                    android:layout_width="100px"
+                    android:layout_height="100px"
+                    android:layout_marginStart="16dp"
+                    android:layout_gravity="start|center_vertical"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_round_tack_logo" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

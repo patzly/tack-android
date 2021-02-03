@@ -53,6 +53,7 @@ import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.fragment.EmphasisBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.service.MetronomeService;
+import xyz.zedler.patrick.tack.util.LogoUtil;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener,
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private boolean isBound;
     private MetronomeService service;
+    private LogoUtil logoUtil;
 
     //private MetronomeView metronomeView;
     //private TicksView ticksView;
@@ -109,6 +111,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 0,
                 true
         );
+
+        logoUtil = new LogoUtil(findViewById(R.id.image_main_logo));
 
         ((Toolbar) findViewById(R.id.toolbar_main)).setOnMenuItemClickListener((MenuItem item) -> {
             if (SystemClock.elapsedRealtime() - lastClick < 1000){
@@ -830,7 +834,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onTick(boolean isEmphasis, int index) {
+    public void onTick(long interval, boolean isEmphasis, int index) {
+        logoUtil.nextBeat(interval);
         /*metronomeView.onTick(isEmphasis);
 
         for (int i = 0; i < emphasisLayout.getChildCount(); i++) {
