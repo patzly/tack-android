@@ -32,6 +32,8 @@
     <string name="setting_sound_beep">Bip</string>
     <string name="setting_vibrate_always">Siempre vibrar</string>
     <string name="setting_vibrate_always_description">Incluso con el sonido</string>
+    <string name="setting_haptic">Respuesta háptica</string>
+    <string name="setting_haptic_description">Sobre el cambio de tempo</string>
     <string name="setting_wrist_gestures">Gestos de la muñeca</string>
     <string name="setting_wrist_gestures_description">+/-1 LPM</string>
     <string name="setting_hide_picker">Esconde recolector</string>

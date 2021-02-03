@@ -45,6 +45,12 @@ public class SettingsActivity extends FragmentActivity
                 )
         );
 
+        binding.switchSettingsHaptic.setChecked(
+                sharedPrefs.getBoolean(
+                        Constants.SETTING.HAPTIC_FEEDBACK, Constants.DEF.HAPTIC_FEEDBACK
+                )
+        );
+
         binding.switchSettingsWristGestures.setChecked(
                 sharedPrefs.getBoolean(
                         Constants.SETTING.WRIST_GESTURES, Constants.DEF.WRIST_GESTURES
@@ -63,6 +69,7 @@ public class SettingsActivity extends FragmentActivity
                 this,
                 binding.linearSettingsSound,
                 binding.linearSettingsVibrateAlways,
+                binding.linearSettingsHaptic,
                 binding.linearSettingsWristGestures,
                 binding.linearSettingsHidePicker,
                 binding.linearSettingsAnimations,
@@ -73,6 +80,7 @@ public class SettingsActivity extends FragmentActivity
         ViewUtil.setOnCheckedChangedListeners(
                 this,
                 binding.switchSettingsVibrateAlways,
+                binding.switchSettingsHaptic,
                 binding.switchSettingsWristGestures,
                 binding.switchSettingsHidePicker,
                 binding.switchSettingsAnimations
@@ -95,6 +103,8 @@ public class SettingsActivity extends FragmentActivity
             binding.switchSettingsVibrateAlways.setChecked(
                     !binding.switchSettingsVibrateAlways.isChecked()
             );
+        } else if (id == R.id.linear_settings_haptic) {
+            binding.switchSettingsHaptic.setChecked(!binding.switchSettingsHaptic.isChecked());
         } else if (id == R.id.linear_settings_wrist_gestures) {
             binding.switchSettingsWristGestures.setChecked(
                     !binding.switchSettingsWristGestures.isChecked()
@@ -178,6 +188,8 @@ public class SettingsActivity extends FragmentActivity
         int id = buttonView.getId();
         if (id == R.id.switch_settings_vibrate_always) {
             editor.putBoolean(Constants.SETTING.VIBRATE_ALWAYS, isChecked);
+        } else if (id == R.id.switch_settings_haptic) {
+            editor.putBoolean(Constants.SETTING.HAPTIC_FEEDBACK, isChecked);
         } else if (id == R.id.switch_settings_wrist_gestures) {
             editor.putBoolean(Constants.SETTING.WRIST_GESTURES, isChecked);
         } else if (id == R.id.switch_settings_hide_picker) {

@@ -34,6 +34,8 @@
     <string name="setting_sound_beep">Beep</string>
     <string name="setting_vibrate_always">Vibrate always</string>
     <string name="setting_vibrate_always_description">Also with sound</string>
+    <string name="setting_haptic">Haptic feedback</string>
+    <string name="setting_haptic_description">On tempo change</string>
     <string name="setting_wrist_gestures">Wrist gestures</string>
     <string name="setting_wrist_gestures_description">+/-1 BPM</string>
     <string name="setting_hide_picker">Hide picker</string>

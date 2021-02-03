@@ -52,6 +52,7 @@ public class MainActivity extends FragmentActivity
     private boolean animations;
     private boolean isBeatModeVibrate;
     private boolean vibrateAlways;
+    private boolean hapticFeedback;
     private boolean wristGestures;
     private boolean hidePicker;
     private boolean isFirstRotation;
@@ -207,11 +208,14 @@ public class MainActivity extends FragmentActivity
 
         animations = sharedPrefs.getBoolean(Constants.SETTING.ANIMATIONS, Constants.DEF.ANIMATIONS);
         emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS);
-        wristGestures = sharedPrefs.getBoolean(
-                Constants.SETTING.WRIST_GESTURES, Constants.DEF.WRIST_GESTURES
-        );
         vibrateAlways = sharedPrefs.getBoolean(
                 Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+        );
+        hapticFeedback = sharedPrefs.getBoolean(
+                Constants.SETTING.HAPTIC_FEEDBACK, Constants.DEF.HAPTIC_FEEDBACK
+        );
+        wristGestures = sharedPrefs.getBoolean(
+                Constants.SETTING.WRIST_GESTURES, Constants.DEF.WRIST_GESTURES
         );
         isBeatModeVibrate = sharedPrefs.getBoolean(
                 Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
@@ -549,7 +553,9 @@ public class MainActivity extends FragmentActivity
         int bpmNew = bpm + change;
         if ((change > 0 && bpmNew <= 300) || (change < 0 && bpmNew >= 1)) {
             setBpm(bpmNew);
-            if (!isPlaying || !isBeatModeVibrate) vibratorUtil.vibrate(VibratorUtil.TAP);
+            if (hapticFeedback && (!isPlaying || (!isBeatModeVibrate && !vibrateAlways))) {
+                vibratorUtil.vibrate(VibratorUtil.TAP);
+            }
         }
     }
 

@@ -69,6 +69,28 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/linear_settings_haptic"
+            style="@style/Widget.Tack.ListItem">
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_settings_haptic"
+                style="@style/Widget.Tack.Switch"/>
+
+            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/Widget.Tack.ListItemLabel"
+                    android:text="@string/setting_haptic"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/Widget.Tack.ListItemDescription"
+                    android:text="@string/setting_haptic_description"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/linear_settings_wrist_gestures"
             style="@style/Widget.Tack.ListItem">
 

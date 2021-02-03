@@ -32,6 +32,8 @@
     <string name="setting_sound_beep">Biep</string>
     <string name="setting_vibrate_always">Immer vibrieren</string>
     <string name="setting_vibrate_always_description">Auch mit Ton</string>
+    <string name="setting_haptic">Haptisches Feedback</string>
+    <string name="setting_haptic_description">Bei Tempowechsel</string>
     <string name="setting_wrist_gestures">Handgelenk-Gesten</string>
     <string name="setting_wrist_gestures_description">+/-1 BPM</string>
     <string name="setting_hide_picker">BPM-Rad verbergen</string>

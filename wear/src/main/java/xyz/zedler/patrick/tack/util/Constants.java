@@ -16,6 +16,7 @@ public final class Constants {
     public final static class DEF {
         public final static String SOUND = Constants.SOUND.WOOD;
         public final static boolean VIBRATE_ALWAYS = false;
+        public final static boolean HAPTIC_FEEDBACK = true;
         public final static boolean WRIST_GESTURES = true;
         public final static boolean HIDE_PICKER = false;
         public final static boolean ANIMATIONS = true;
@@ -32,6 +33,7 @@ public final class Constants {
     public final static class SETTING {
         public final static String SOUND = "sound";
         public final static String VIBRATE_ALWAYS = "vibrate_always";
+        public final static String HAPTIC_FEEDBACK = "haptic_feedback";
         public final static String WRIST_GESTURES = "wrist_gestures";
         public final static String HIDE_PICKER = "hide_picker";
         public final static String ANIMATIONS = "animations";

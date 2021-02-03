@@ -1,9 +1,11 @@
 2.0.0:
+- New: haptic feedback on tempo change
 - New: Edwin typeface
 - New: ambient mode support
 - New: splash screen
 - New: Italian translation, please mail to patrick@zedler.xyz for corrections!
 - Improved: app icon, colors and onboarding
+- Improved: accuracy of rotary input
 - Improved: support for different screen sizes
 - Improved: much better layout organization and no restart after layout change
 - Improved: optimized for Android 11 and internal cleanup
