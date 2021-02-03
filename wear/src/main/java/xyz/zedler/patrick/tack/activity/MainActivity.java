@@ -47,7 +47,6 @@ public class MainActivity extends FragmentActivity
     private int emphasisIndex;
     private int rotaryFactorIndex;
     private int rotatedPrev;
-    private long lastClick;
     private long prevTouchTime;
     private long interval;
     private boolean animations;
