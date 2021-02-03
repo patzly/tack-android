@@ -236,7 +236,7 @@ public class ScrollBehavior {
 	 * If SDK version is 28 or higher this tints the navBarDivider.
 	 */
 	private void setNavBarDividerColor(@ColorRes int color) {
-		if (activity != null && Build.VERSION.SDK_INT >= 28) {
+		if (activity != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
 			activity.getWindow().setNavigationBarDividerColor(
 					ContextCompat.getColor(activity, color)
 			);

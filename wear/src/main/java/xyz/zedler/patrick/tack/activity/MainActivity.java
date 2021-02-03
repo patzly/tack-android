@@ -37,6 +37,7 @@ public class MainActivity extends FragmentActivity
     private ActivityMainBinding binding;
     private SharedPreferences sharedPrefs;
     private AudioUtil audioUtil;
+    private VibratorUtil vibratorUtil;
     private List<Long> intervals;
     private Handler handler;
     private int bpm;
@@ -67,6 +68,7 @@ public class MainActivity extends FragmentActivity
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         audioUtil = new AudioUtil(this);
+        vibratorUtil = new VibratorUtil(this);
         handler = new Handler(Looper.getMainLooper());
         intervals = new ArrayList<>();
 
@@ -339,9 +341,9 @@ public class MainActivity extends FragmentActivity
 
         if (soundId != -1) {
             audioUtil.play(soundId, isEmphasis);
-            if (vibrateAlways) VibratorUtil.vibrate(this, isEmphasis);
+            if (vibrateAlways) vibratorUtil.vibrate(isEmphasis);
         } else {
-            VibratorUtil.vibrate(this, isEmphasis);
+            vibratorUtil.vibrate(isEmphasis);
         }
 
         handler.postDelayed(this, interval);

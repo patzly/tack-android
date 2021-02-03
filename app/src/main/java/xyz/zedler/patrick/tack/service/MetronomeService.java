@@ -226,13 +226,13 @@ public class MetronomeService extends Service implements Runnable {
             if (soundId != -1) {
                 soundPool.play(soundId, 1, 1, 0, 0, isEmphasis ? 1.5f : 1);
                 if (vibrateAlways) {
-                    if (Build.VERSION.SDK_INT >= 26) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                         vibrator.vibrate(VibrationEffect.createOneShot(isEmphasis ? 50 : 20, VibrationEffect.DEFAULT_AMPLITUDE));
                     } else {
                         vibrator.vibrate(isEmphasis ? 50 : 20);
                     }
                 }
-            } else if (Build.VERSION.SDK_INT >= 26) {
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 vibrator.vibrate(VibrationEffect.createOneShot(isEmphasis ? 50 : 20, VibrationEffect.DEFAULT_AMPLITUDE));
             } else {
                 vibrator.vibrate(isEmphasis ? 50 : 20);
