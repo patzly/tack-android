@@ -9,7 +9,7 @@ public class VibratorUtil {
 
     private final Vibrator vibrator;
 
-    public static final long TAP = 12;
+    public static final long TAP = 13;
     public static final long TICK = 20;
     public static final long TACK = 50;
 

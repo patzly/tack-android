@@ -27,6 +27,7 @@ public class BpmPickerView extends View
     private double currAngle = 0;
     private double prevAngle;
     private float degreeStorage = 0;
+    private float rotaryStorage = 0;
     private OnRotaryInputListener onRotaryInputListener;
     private OnRotationListener onRotationListener;
     private OnPickListener onPickListener;
@@ -98,14 +99,24 @@ public class BpmPickerView extends View
     @Override
     public boolean onGenericMotion(View v, MotionEvent event) {
         if (!isRotaryEvent(event)) return false;
+
         float scrolled = RotaryEncoderHelper.getRotaryAxisValue(event);
         float factor = RotaryEncoderHelper.getScaledScrollFactor(getContext());
         float delta = -scrolled * (factor / 5);
-        setRotation(getRotation() + delta);
-        if (onRotaryInputListener != null) {
-            onRotaryInputListener.onRotate(-scrolled > 0 ? 1 : -1);
-            onRotaryInputListener.onRotate(delta);
+        float rotaryThreshold = 0.065f;
+
+        rotaryStorage = rotaryStorage + -scrolled;
+        if (rotaryStorage > rotaryThreshold) {
+            if (onRotaryInputListener != null) onRotaryInputListener.onRotate(1);
+            rotaryStorage = 0;
+        } else if (rotaryStorage < -rotaryThreshold) {
+            if (onRotaryInputListener != null) onRotaryInputListener.onRotate(-1);
+            rotaryStorage = 0;
         }
+
+        setRotation(getRotation() + delta);
+        if (onRotaryInputListener != null) onRotaryInputListener.onRotate(delta);
+
         return true;
     }
 
