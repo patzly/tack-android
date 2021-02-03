@@ -549,6 +549,7 @@ public class MainActivity extends FragmentActivity
         int bpmNew = bpm + change;
         if ((change > 0 && bpmNew <= 300) || (change < 0 && bpmNew >= 1)) {
             setBpm(bpmNew);
+            vibratorUtil.vibrate(VibratorUtil.TAP);
         }
     }
 

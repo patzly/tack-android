@@ -9,9 +9,9 @@ public class VibratorUtil {
 
     private final Vibrator vibrator;
 
-    private static final long TAP = 15;
-    private static final long TICK = 20;
-    private static final long TACK = 50;
+    public static final long TAP = 12;
+    public static final long TICK = 20;
+    public static final long TACK = 50;
 
     public VibratorUtil(Context context) {
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
