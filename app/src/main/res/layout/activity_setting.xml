@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_settings"
@@ -12,7 +12,7 @@
         android:layout_height="?android:actionBarSize">
 
         <LinearLayout
-            android:id="@+id/linear_app_bar_settings"
+            android:id="@+id/linear_settings_app_bar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
@@ -20,7 +20,7 @@
             android:background="@color/background">
 
             <FrameLayout
-                android:id="@+id/frame_back_settings"
+                android:id="@+id/frame_settings_back"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="4dp"
@@ -83,7 +83,7 @@
                 android:paddingEnd="16dp">
 
                 <ImageView
-                    android:id="@+id/image_sound"
+                    android:id="@+id/image_settings_sound"
                     style="@style/Theme.Tack.ListItem.Icon"
                     android:src="@drawable/ic_round_audiotrack_anim"
                     tools:ignore="ContentDescription"
@@ -104,40 +104,40 @@
             </LinearLayout>
 
             <RadioGroup
-                android:id="@+id/radio_group_sound"
+                android:id="@+id/radio_group_settings_sound"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="72dp"
                 android:layout_marginBottom="8dp">
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:id="@+id/radio_sound_wood"
+                    android:id="@+id/radio_settings_sound_wood"
                     style="@style/Widget.Tack.RadioButton"
                     android:text="@string/setting_sound_wood"/>
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:id="@+id/radio_sound_click"
+                    android:id="@+id/radio_settings_sound_click"
                     style="@style/Widget.Tack.RadioButton"
                     android:text="@string/setting_sound_click"/>
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:id="@+id/radio_sound_ding"
+                    android:id="@+id/radio_settings_sound_ding"
                     style="@style/Widget.Tack.RadioButton"
                     android:text="@string/setting_sound_ding" />
 
                 <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:id="@+id/radio_sound_beep"
+                    android:id="@+id/radio_settings_sound_beep"
                     style="@style/Widget.Tack.RadioButton"
                     android:text="@string/setting_sound_beep"/>
 
             </RadioGroup>
 
             <LinearLayout
-                android:id="@+id/linear_vibrate_always"
+                android:id="@+id/linear_settings_vibrate_always"
                 style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
 
                 <ImageView
-                    android:id="@+id/image_vibrate_always"
+                    android:id="@+id/image_settings_vibrate_always"
                     style="@style/Theme.Tack.ListItem.Icon"
                     android:src="@drawable/ic_round_vibrate_to_volume_anim"
                     tools:ignore="ContentDescription" />
@@ -155,17 +155,17 @@
                 </LinearLayout>
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_vibrate_always"
+                    android:id="@+id/switch_settings_vibrate_always"
                     style="@style/Widget.Tack.Switch"/>
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/linear_slider_emphasis"
+                android:id="@+id/linear_settings_slider_emphasis"
                 style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
 
                 <ImageView
-                    android:id="@+id/image_slider_emphasis"
+                    android:id="@+id/image_settings_slider_emphasis"
                     style="@style/Theme.Tack.ListItem.Icon"
                     android:src="@drawable/ic_round_swap_horiz_anim"
                     tools:ignore="ContentDescription" />
@@ -183,17 +183,17 @@
                 </LinearLayout>
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_slider_emphasis"
+                    android:id="@+id/switch_settings_slider_emphasis"
                     style="@style/Widget.Tack.Switch"/>
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/linear_dark_mode"
+                android:id="@+id/linear_settings_dark_mode"
                 style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
 
                 <ImageView
-                    android:id="@+id/image_dark_mode"
+                    android:id="@+id/image_settings_dark_mode"
                     style="@style/Theme.Tack.ListItem.Icon"
                     tools:ignore="ContentDescription" />
 
@@ -210,17 +210,17 @@
                 </LinearLayout>
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_dark_mode"
+                    android:id="@+id/switch_settings_dark_mode"
                     style="@style/Widget.Tack.Switch"/>
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/linear_keep_awake"
+                android:id="@+id/linear_settings_keep_awake"
                 style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
 
                 <ImageView
-                    android:id="@+id/image_keep_awake"
+                    android:id="@+id/image_settings_keep_awake"
                     style="@style/Theme.Tack.ListItem.Icon"
                     android:src="@drawable/ic_round_visibility"
                     tools:ignore="ContentDescription" />
@@ -238,7 +238,7 @@
                 </LinearLayout>
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_keep_awake"
+                    android:id="@+id/switch_settings_keep_awake"
                     style="@style/Widget.Tack.Switch"/>
 
             </LinearLayout>

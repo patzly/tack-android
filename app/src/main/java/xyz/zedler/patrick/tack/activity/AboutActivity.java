@@ -24,8 +24,6 @@ import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class AboutActivity extends AppCompatActivity implements View.OnClickListener {
 
-	private final static String TAG = AboutActivity.class.getSimpleName();
-
 	private ActivityAboutBinding binding;
 	private final ClickUtil clickUtil = new ClickUtil();
 

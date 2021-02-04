@@ -33,10 +33,9 @@ public final class Constants {
     public final static class SETTING {
         public final static String SOUND = "sound";
         public final static String VIBRATE_ALWAYS = "vibrate_always";
-        public final static String HAPTIC_FEEDBACK = "haptic_feedback";
-        public final static String WRIST_GESTURES = "wrist_gestures";
-        public final static String HIDE_PICKER = "hide_picker";
-        public final static String ANIMATIONS = "animations";
+        public final static String EMPHASIS_SLIDER = "emphasis_slider";
+        public final static String DARK_MODE = "force_dark_mode";
+        public final static String KEEP_AWAKE = "keep_awake";
     }
 
     public final static class SOUND {

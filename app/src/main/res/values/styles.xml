@@ -132,7 +132,7 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">16sp</item>
         <item name="android:paddingStart">16dp</item>
-        <item name="android:minHeight">34dp</item>
+        <item name="android:minHeight">40dp</item>
     </style>
 
     <style name="Widget.Tack.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch">

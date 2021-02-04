@@ -2,48 +2,43 @@ package xyz.zedler.patrick.tack.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Animatable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.ImageView;
 import android.widget.RadioGroup;
 
-import androidx.annotation.IdRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.material.switchmaterial.SwitchMaterial;
-
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
+import xyz.zedler.patrick.tack.databinding.ActivitySettingBinding;
 import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
+import xyz.zedler.patrick.tack.util.AudioUtil;
+import xyz.zedler.patrick.tack.util.ClickUtil;
+import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class SettingsActivity extends AppCompatActivity
-		implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+		implements View.OnClickListener, CompoundButton.OnCheckedChangeListener,
+		RadioGroup.OnCheckedChangeListener {
 
 	private final static String TAG = SettingsActivity.class.getSimpleName();
-	private final static boolean DEBUG = false;
 
-	private long lastClick = 0;
+	private ActivitySettingBinding binding;
 	private SharedPreferences sharedPrefs;
-	private ImageView imageViewDarkMode;
-	private SwitchMaterial switchDarkMode;
-	private SwitchMaterial switchVibrateAlways;
-	private SwitchMaterial switchSlider;
-	private SwitchMaterial switchKeepAwake;
+	private ClickUtil clickUtil;
+	private AudioUtil audioUtil;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		binding = ActivitySettingBinding.inflate(getLayoutInflater());
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 		AppCompatDelegate.setDefaultNightMode(
@@ -51,24 +46,24 @@ public class SettingsActivity extends AppCompatActivity
 						? AppCompatDelegate.MODE_NIGHT_YES
 						: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
 		);
-		setContentView(R.layout.activity_settings);
+		setContentView(binding.getRoot());
 
-		findViewById(R.id.frame_back_settings).setOnClickListener(v -> {
-			if (SystemClock.elapsedRealtime() - lastClick < 1000) return;
-			lastClick = SystemClock.elapsedRealtime();
+		clickUtil = new ClickUtil();
+		audioUtil = new AudioUtil(this);
+
+		binding.frameSettingsBack.setOnClickListener(v -> {
+			if (clickUtil.isDisabled()) return;
 			finish();
 		});
 
-		((Toolbar) findViewById(R.id.toolbar_settings)).setOnMenuItemClickListener((MenuItem item) -> {
-			if (SystemClock.elapsedRealtime() - lastClick < 1000) return false;
-			lastClick = SystemClock.elapsedRealtime();
+		binding.toolbarSettings.setOnMenuItemClickListener((MenuItem item) -> {
+			if (clickUtil.isDisabled()) return false;
 			int itemId = item.getItemId();
 			if (itemId == R.id.action_about) {
 				startActivity(new Intent(this, AboutActivity.class));
 			} else if (itemId == R.id.action_feedback) {
 				new FeedbackBottomSheetDialogFragment().show(
-						getSupportFragmentManager(),
-						"feedback"
+						getSupportFragmentManager(), "feedback"
 				);
 			}
 			return true;
@@ -76,58 +71,58 @@ public class SettingsActivity extends AppCompatActivity
 
 		new ScrollBehavior().setUpScroll(
 				this,
-				R.id.app_bar_settings,
-				R.id.linear_app_bar_settings,
-				R.id.scroll_settings,
+				binding.appBarSettings,
+				binding.linearSettingsAppBar,
+				binding.scrollSettings,
 				true
 		);
 
-		switchDarkMode = findViewById(R.id.switch_dark_mode);
-		switchDarkMode.setChecked(sharedPrefs.getBoolean("force_dark_mode",false));
-		switchDarkMode.setOnCheckedChangeListener(this);
+		binding.radioGroupSettingsSound.check(getCheckedId());
+		binding.radioGroupSettingsSound.setOnCheckedChangeListener(this);
 
-		RadioGroup radioGroupSound = findViewById(R.id.radio_group_sound);
-		radioGroupSound.check(getCheckedId());
-		radioGroupSound.setOnCheckedChangeListener((RadioGroup group, int checkedId) -> {
-			startAnimatedIcon(R.id.image_sound);
-			String sound = "wood";
-			if (checkedId == R.id.radio_sound_wood) {
-				sound = "wood";
-			} else if (checkedId == R.id.radio_sound_click) {
-				sound = "click";
-			} else if (checkedId == R.id.radio_sound_ding) {
-				sound = "ding";
-			} else if (checkedId == R.id.radio_sound_beep) {
-				sound = "beep";
-			}
-			sharedPrefs.edit().putString("sound", sound).apply();
-		});
+		binding.switchSettingsVibrateAlways.setChecked(
+				sharedPrefs.getBoolean("vibrate_always",false)
+		);
 
-		switchVibrateAlways = findViewById(R.id.switch_vibrate_always);
-		switchVibrateAlways.setChecked(sharedPrefs.getBoolean("vibrate_always",false));
-		switchVibrateAlways.setOnCheckedChangeListener(this);
+		binding.switchSettingsSliderEmphasis.setChecked(
+				sharedPrefs.getBoolean("emphasis_slider",false)
+		);
 
-		switchSlider = findViewById(R.id.switch_slider_emphasis);
-		switchSlider.setChecked(sharedPrefs.getBoolean("emphasis_slider",false));
-		switchSlider.setOnCheckedChangeListener(this);
-
-		switchKeepAwake = findViewById(R.id.switch_keep_awake);
-		switchKeepAwake.setChecked(sharedPrefs.getBoolean("keep_awake",true));
-		switchKeepAwake.setOnCheckedChangeListener(this);
-
-		imageViewDarkMode = findViewById(R.id.image_dark_mode);
-		imageViewDarkMode.setImageResource(
+		binding.switchSettingsDarkMode.setChecked(
+				sharedPrefs.getBoolean("force_dark_mode",false)
+		);
+		binding.imageSettingsDarkMode.setImageResource(
 				sharedPrefs.getBoolean("force_dark_mode",false)
 						? R.drawable.ic_round_dark_mode_to_light_mode_anim
 						: R.drawable.ic_round_light_mode_to_dark_mode_anim
 		);
 
-		setOnClickListeners(
-				R.id.linear_dark_mode,
-				R.id.linear_vibrate_always,
-				R.id.linear_slider_emphasis,
-				R.id.linear_keep_awake
+		binding.switchSettingsKeepAwake.setChecked(
+				sharedPrefs.getBoolean("keep_awake",true)
 		);
+
+		ViewUtil.setOnClickListeners(
+				this,
+				binding.linearSettingsDarkMode,
+				binding.linearSettingsVibrateAlways,
+				binding.linearSettingsSliderEmphasis,
+				binding.linearSettingsKeepAwake
+		);
+
+		ViewUtil.setOnCheckedChangedListeners(
+				this,
+				binding.switchSettingsDarkMode,
+				binding.switchSettingsVibrateAlways,
+				binding.switchSettingsSliderEmphasis,
+				binding.switchSettingsKeepAwake
+		);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		binding = null;
+		audioUtil.destroy();
 	}
 
 	private int getCheckedId() {
@@ -135,50 +130,49 @@ public class SettingsActivity extends AppCompatActivity
 		assert sound != null;
 		switch (sound) {
 			case "click":
-				return R.id.radio_sound_click;
+				return R.id.radio_settings_sound_click;
 			case "ding":
-				return R.id.radio_sound_ding;
+				return R.id.radio_settings_sound_ding;
 			case "beep":
-				return R.id.radio_sound_beep;
+				return R.id.radio_settings_sound_beep;
 			default:
-				return R.id.radio_sound_wood;
-		}
-	}
-
-	private void setOnClickListeners(@IdRes int... viewIds) {
-		for (int viewId : viewIds) {
-			findViewById(viewId).setOnClickListener(this);
+				return R.id.radio_settings_sound_wood;
 		}
 	}
 
 	@Override
 	public void onClick(View v) {
-
-		if (SystemClock.elapsedRealtime() - lastClick < 400){
-			return;
-		}
-		lastClick = SystemClock.elapsedRealtime();
+		if (clickUtil.isDisabled()) return;
 
 		int id = v.getId();
-		if (id == R.id.linear_dark_mode) {
-			switchDarkMode.setChecked(!switchDarkMode.isChecked());
-		} else if (id == R.id.linear_vibrate_always) {
-			switchVibrateAlways.setChecked(!switchVibrateAlways.isChecked());
-		} else if (id == R.id.linear_slider_emphasis) {
-			switchSlider.setChecked(!switchSlider.isChecked());
-		} else if (id == R.id.linear_keep_awake) {
-			switchKeepAwake.setChecked(!switchKeepAwake.isChecked());
+		if (id == R.id.linear_settings_dark_mode) {
+			binding.switchSettingsDarkMode.setChecked(
+					!binding.switchSettingsDarkMode.isChecked()
+			);
+		} else if (id == R.id.linear_settings_vibrate_always) {
+			binding.switchSettingsVibrateAlways.setChecked(
+					!binding.switchSettingsVibrateAlways.isChecked()
+			);
+		} else if (id == R.id.linear_settings_slider_emphasis) {
+			binding.switchSettingsSliderEmphasis.setChecked(
+					!binding.switchSettingsSliderEmphasis.isChecked()
+			);
+		} else if (id == R.id.linear_settings_keep_awake) {
+			binding.switchSettingsKeepAwake.setChecked(
+					!binding.switchSettingsKeepAwake.isChecked()
+			);
 		}
 	}
 
 	@Override
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		int id = buttonView.getId();
-		if (id == R.id.switch_dark_mode) {
-			startAnimatedIcon(R.id.image_dark_mode);
-			sharedPrefs.edit().putBoolean("force_dark_mode", isChecked).apply();
+		SharedPreferences.Editor editor = sharedPrefs.edit();
+		if (id == R.id.switch_settings_dark_mode) {
+			ViewUtil.startAnimatedIcon(binding.imageSettingsDarkMode);
+			editor.putBoolean("force_dark_mode", isChecked);
 			new Handler(Looper.getMainLooper()).postDelayed(() -> {
-				imageViewDarkMode.setImageResource(
+				binding.imageSettingsDarkMode.setImageResource(
 						isChecked
 								? R.drawable.ic_round_dark_mode_to_light_mode_anim
 								: R.drawable.ic_round_light_mode_to_dark_mode_anim
@@ -191,21 +185,33 @@ public class SettingsActivity extends AppCompatActivity
 				);
 				onStart();
 			}, 300);
-		} else if (id == R.id.switch_vibrate_always) {//startAnimatedIcon(R.id.image_dark_mode);
-			sharedPrefs.edit().putBoolean("vibrate_always", isChecked).apply();
-		} else if (id == R.id.switch_slider_emphasis) {
-			startAnimatedIcon(R.id.image_slider_emphasis);
-			sharedPrefs.edit().putBoolean("emphasis_slider", isChecked).apply();
-		} else if (id == R.id.switch_keep_awake) {//startAnimatedIcon(R.id.image_dark_mode);
-			sharedPrefs.edit().putBoolean("keep_awake", isChecked).apply();
+		} else if (id == R.id.switch_settings_vibrate_always) {
+			//startAnimatedIcon(R.id.image_dark_mode);
+			editor.putBoolean("vibrate_always", isChecked);
+		} else if (id == R.id.switch_settings_slider_emphasis) {
+			ViewUtil.startAnimatedIcon(binding.imageSettingsSliderEmphasis);
+			editor.putBoolean("emphasis_slider", isChecked);
+		} else if (id == R.id.switch_settings_keep_awake) {
+			//startAnimatedIcon(R.id.image_dark_mode);
+			editor.putBoolean("keep_awake", isChecked);
 		}
+		editor.apply();
 	}
 
-	private void startAnimatedIcon(int viewId) {
-		try {
-			((Animatable) ((ImageView) findViewById(viewId)).getDrawable()).start();
-		} catch (ClassCastException e) {
-			if (DEBUG) Log.e(TAG, "startAnimatedIcon() requires AVD!");
+	@Override
+	public void onCheckedChanged(RadioGroup group, int checkedId) {
+		ViewUtil.startAnimatedIcon(binding.imageSettingsSound);
+		String sound;
+		if (checkedId == R.id.radio_settings_sound_click) {
+			sound = Constants.SOUND.CLICK;
+		} else if (checkedId == R.id.radio_settings_sound_ding) {
+			sound = Constants.SOUND.DING;
+		} else if (checkedId == R.id.radio_settings_sound_beep) {
+			sound = Constants.SOUND.BEEP;
+		} else {
+			sound = Constants.SOUND.WOOD;
 		}
+		sharedPrefs.edit().putString("sound", sound).apply();
+		audioUtil.play(audioUtil.getSoundId(sound));
 	}
 }
