@@ -16,7 +16,7 @@ import androidx.preference.PreferenceManager;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivitySettingsBinding;
 import xyz.zedler.patrick.tack.util.ClickUtil;
-import xyz.zedler.patrick.tack.util.Constants;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class SettingsActivity extends FragmentActivity

@@ -24,7 +24,7 @@ import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
 import xyz.zedler.patrick.tack.util.AudioUtil;
 import xyz.zedler.patrick.tack.util.ClickUtil;
-import xyz.zedler.patrick.tack.util.Constants;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.util.VibratorUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.BpmPickerView;

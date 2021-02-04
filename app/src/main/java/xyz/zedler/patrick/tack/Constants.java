@@ -1,4 +1,4 @@
-package xyz.zedler.patrick.tack.util;
+package xyz.zedler.patrick.tack;
 
 public final class Constants {
 

@@ -2,7 +2,6 @@ package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 
@@ -54,9 +53,5 @@ public class AudioUtil {
             default:
                 return R.raw.wood;
         }
-    }
-
-    public boolean isSpeakerAvailable() {
-        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_AUDIO_OUTPUT);
     }
 }

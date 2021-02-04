@@ -57,9 +57,9 @@
     <!-- BACKGROUND -->
 
     <color name="background">@color/white</color>
-    <color name="onBackground">#dd000000</color>
-    <color name="onBackgroundSecondary">@color/grey600</color>
-    <color name="onBackgroundTertiary">@color/grey100</color>
+    <color name="on_background">#dd000000</color>
+    <color name="on_background_secondary">@color/grey600</color>
+    <color name="on_background_tertiary">@color/grey100</color>
 
     <!-- SURFACE -->
 

@@ -17,9 +17,9 @@
     <!-- BACKGROUND -->
 
     <color name="background">#1e1f22</color>
-    <color name="onBackground">@color/grey200</color>
-    <color name="onBackgroundSecondary">@color/grey600</color>
-    <color name="onBackgroundTertiary">@color/grey800</color>
+    <color name="on_background">@color/grey200</color>
+    <color name="on_background_secondary">@color/grey600</color>
+    <color name="on_background_tertiary">@color/grey800</color>
 
     <!-- SURFACE -->
 

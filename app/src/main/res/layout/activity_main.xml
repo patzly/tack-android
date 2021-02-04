@@ -115,7 +115,7 @@
                         android:id="@+id/text_bpm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/onBackground"
+                        android:textColor="@color/on_background"
                         android:textStyle="bold"
                         android:layout_gravity="center_horizontal|top"
                         android:textSize="@dimen/bpm_text_size" />
@@ -124,7 +124,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/title_bpm_label"
-                        android:textColor="@color/onBackgroundSecondary"
+                        android:textColor="@color/on_background_secondary"
                         android:textStyle="bold"
                         android:layout_gravity="center_horizontal|bottom"
                         android:textSize="15dp"/>
