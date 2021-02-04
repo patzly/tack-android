@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/text_text_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:singleLine="true"
+        android:textAlignment="viewStart"
+        android:fontFamily="@font/text_bold"
+        android:text="@string/info_changelog"
+        android:textAppearance="@style/TextAppearance.Tack.BottomSheet.Title"/>
+
+    <View
+        style="@style/Theme.Tack.Divider"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none">
+
+        <TextView
+            android:id="@+id/text_changelog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:textAlignment="viewStart"
+            android:textAppearance="@style/TextAppearance.Tack.BottomSheet.Text"
+            android:breakStrategy="high_quality"
+            android:hyphenationFrequency="full"
+            android:textColor="@color/on_background"
+            tools:targetApi="o"/>
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

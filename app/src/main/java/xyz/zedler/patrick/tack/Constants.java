@@ -45,4 +45,19 @@ public final class Constants {
         public final static String DING = "ding";
         public final static String BEEP = "beep";
     }
+
+    public final static class EXTRA {
+        public final static String TYPE = "type";
+        public final static String ID = "id";
+        public final static String PAGER_POSITION = "position";
+        public final static String SELECTED_INDEX = "selected_index";
+        public final static String LABELS = "labels";
+        public final static String DRAWABLES = "drawables";
+        public final static String TITLE = "title";
+        public final static String WORD = "word";
+        public final static String FILE = "file";
+        public final static String LINK = "link";
+        public final static String SYMBOLS = "symbols";
+        public final static String SUFFIXES = "suffixes";
+    }
 }

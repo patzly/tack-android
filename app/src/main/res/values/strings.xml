@@ -51,6 +51,12 @@
     <string name="title_settings">Settings</string>
     <string name="title_about">About</string>
 
+    <array name="changelog_highlights" translatable="false">
+        <item>New:</item>
+        <item>Improved:</item>
+        <item>Fixed:</item>
+    </array>
+
     <string name="info_material_components_built_with">Built with</string>
     <string name="info_material_components">Material Components</string>
     <string name="info_version">Version</string>
@@ -68,7 +74,8 @@
     <string name="license_material_icons_link" translatable="false">https://github.com/google/material-design-icons</string>
     <string name="license_material_components" translatable="false">Material Components Android</string>
     <string name="license_material_components_link" translatable="false">https://github.com/material-components/material-components-android</string>
-    <string name="license_roboto" translatable="false">Roboto Typeface</string>
-    <string name="license_roboto_link" translatable="false">https://github.com/google/roboto</string>
+    <string name="license_edwin" translatable="false">Edwin Typeface</string>
+    <string name="license_edwin_author" translatable="false">MuseScore</string>
+    <string name="license_edwin_link" translatable="false">https://github.com/MuseScoreFonts/Edwin</string>
 
 </resources>

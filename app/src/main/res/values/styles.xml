@@ -1,7 +1,14 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.Tack.Button.TextButton.Snackbar" parent="Widget.MaterialComponents.Button.TextButton.Snackbar">
-        <item name="android:fontFamily">@font/roboto_mono_bold</item>
+    <style
+        name="Widget.Tack.Button.TextButton.Snackbar"
+        parent="Widget.MaterialComponents.Button.TextButton.Snackbar">
+        <item name="android:fontFamily">@font/text_bold</item>
+        <item name="cornerRadius">6dp</item>
+    </style>
+
+    <style name="Widget.Tack.OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">@color/icon</item>
     </style>
 
     <!-- Divider -->
@@ -78,6 +85,16 @@
         <item name="android:layout_weight">1</item>
     </style>
 
+    <style name="Theme.Tack.ListItem.OverLine" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">16dp</item>
+        <item name="android:gravity">top|start</item>
+        <item name="android:textAppearance">@style/TextAppearance.Tack.ListItem.OverLine</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textAlignment">viewStart</item>
+    </style>
+
     <style name="Theme.Tack.ListItem.Title" parent="">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -134,56 +151,51 @@
 
     <!-- TEXT APPEARANCES -->
 
-    <style name="TextAppearance.Tack.Body1" parent="TextAppearance.MaterialComponents.Body1">
+    <style name="TextAppearance.Tack.Simple" parent="TextAppearance.MaterialComponents.Body1">
         <item name="android:textColor">@color/on_background</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textAlignment">viewStart</item>
-        <item name="android:fontFamily">@font/roboto_mono_regular</item>
+        <item name="android:fontFamily">@font/text_regular</item>
     </style>
 
-    <style name="TextAppearance.Tack.Chip" parent="TextAppearance.Tack.Body1">
-        <item name="android:textColor">@color/on_background</item>
+    <style name="TextAppearance.Tack.Chip" parent="TextAppearance.Tack.Simple">
         <item name="android:textSize">15sp</item>
-        <item name="fontFamily">@font/roboto_mono_medium</item>
+        <item name="android:lineSpacingMultiplier">2</item>
     </style>
 
-    <style name="TextAppearance.Tack.Toolbar" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:textColor">@color/onPrimary</item>
+    <style name="TextAppearance.Tack.Toolbar" parent="TextAppearance.Tack.Simple">
         <item name="android:textSize" tools:ignore="SpUsage">20dp</item>
-        <item name="android:textAlignment">viewStart</item>
-        <item name="android:fontFamily">@font/roboto_mono_bold</item>
+        <item name="android:fontFamily">@font/text_bold</item>
     </style>
 
-    <style name="TextAppearance.Tack.Category" parent="TextAppearance.MaterialComponents.Body1">
-        <item name="android:textStyle">bold</item>
+    <style name="TextAppearance.Tack.Category" parent="TextAppearance.Tack.Simple">
+        <item name="android:fontFamily">@font/text_bold</item>
         <item name="android:textSize">13sp</item>
         <item name="android:textColor">@color/secondary</item>
-        <item name="android:textAlignment">viewStart</item>
     </style>
 
-    <style name="TextAppearance.Tack.ListItem.Title" parent="TextAppearance.MaterialComponents.Body1">
+    <style name="TextAppearance.Tack.ListItem.Title" parent="TextAppearance.Tack.Simple">
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/on_background</item>
-        <item name="android:textAlignment">viewStart</item>
     </style>
 
-    <style name="TextAppearance.Tack.ListItem.Description" parent="TextAppearance.MaterialComponents.Body1">
+    <style name="TextAppearance.Tack.ListItem.OverLine" parent="TextAppearance.Tack.Simple">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/on_background_secondary</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="TextAppearance.Tack.ListItem.Description" parent="TextAppearance.Tack.Simple">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/on_background_secondary</item>
-        <item name="android:textAlignment">viewStart</item>
     </style>
 
-    <style name="TextAppearance.Tack.BottomSheet.Title" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/on_background</item>
+    <style name="TextAppearance.Tack.BottomSheet.Title" parent="TextAppearance.Tack.Simple">
         <item name="android:textSize">18sp</item>
-        <item name="android:textAlignment">viewStart</item>
     </style>
 
-    <style name="TextAppearance.Tack.BottomSheet.Text" parent="TextAppearance.MaterialComponents.Body2">
-        <item name="android:textColor">@color/on_background</item>
+    <style name="TextAppearance.Tack.BottomSheet.Text" parent="TextAppearance.Tack.Simple">
         <item name="android:textSize">14sp</item>
-        <item name="android:textAlignment">viewStart</item>
     </style>
 
     <style name="TextAppearance.Tack.BottomSheet.Text.Small" parent="TextAppearance.Tack.BottomSheet.Text">

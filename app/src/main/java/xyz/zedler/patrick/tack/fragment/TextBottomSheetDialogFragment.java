@@ -3,37 +3,30 @@ package xyz.zedler.patrick.tack.fragment;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Animatable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Locale;
-
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetTextBinding;
+import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class TextBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
-	private final static boolean DEBUG = false;
 	private final static String TAG = "TextBottomSheetDialog";
+
+	private FragmentBottomsheetTextBinding binding;
 
 	@NonNull
 	@Override
@@ -43,65 +36,51 @@ public class TextBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
 	@Override
 	public View onCreateView(
-			LayoutInflater inflater,
+			@NonNull LayoutInflater inflater,
 			ViewGroup container,
 			Bundle savedInstanceState
 	) {
-		View view = inflater.inflate(
-				R.layout.fragment_bottomsheet_text,
-				container,
-				false
+		binding = FragmentBottomsheetTextBinding.inflate(
+				inflater, container, false
 		);
 
 		Context context = getContext();
 		Bundle bundle = getArguments();
 		assert context != null && bundle != null;
 
-		String file = bundle.getString("file") + ".txt";
-		String fileLocalized = bundle.getString("file") + "-" + Locale.getDefault().getLanguage() + ".txt";
-		if (readFromFile(context, fileLocalized) != null) file = fileLocalized;
+		binding.textTextTitle.setText(
+				bundle.getString(Constants.EXTRA.TITLE)
+		);
 
-		((TextView) view.findViewById(R.id.text_text_title)).setText(bundle.getString("title"));
-
-		FrameLayout frameLayoutLink = view.findViewById(R.id.frame_text_open_link);
-		String link = bundle.getString("link");
+		String link = bundle.getString(Constants.EXTRA.LINK);
 		if (link != null) {
-			frameLayoutLink.setOnClickListener(v -> {
-				((Animatable) ((ImageView) view.findViewById(R.id.image_text_open_link)).getDrawable()).start();
+			binding.frameTextOpenLink.setOnClickListener(v -> {
+				ViewUtil.startAnimatedIcon(binding.imageTextOpenLink);
 				new Handler(Looper.getMainLooper()).postDelayed(
 						() -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link))),
 						500
 				);
 			});
 		} else {
-			frameLayoutLink.setVisibility(View.GONE);
+			binding.frameTextOpenLink.setVisibility(View.GONE);
 		}
 
-		((TextView) view.findViewById(R.id.text_text)).setText(readFromFile(context, file));
-		if (bundle.getBoolean("big", false)) {
-			((TextView) view.findViewById(R.id.text_text)).setTextSize(TypedValue.COMPLEX_UNIT_SP, 14.5f);
-		}
+		binding.textText.setText(
+				ResUtil.readFromFile(context, bundle.getString(Constants.EXTRA.FILE))
+		);
 
-		return view;
+		return binding.getRoot();
 	}
 
-	private String readFromFile(Context context, String file) {
-		StringBuilder text = new StringBuilder();
-		try {
-			InputStream inputStream = context.getAssets().open(file);
-			InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-			BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-			for(String line; (line = bufferedReader.readLine()) != null;) {
-				text.append(line).append('\n');
-			}
-			text.deleteCharAt(text.length() - 1);
-			inputStream.close();
-		} catch (FileNotFoundException e) {
-			if (DEBUG) Log.e(TAG, "readFromFile: \"" + file + "\" not found!");
-			return null;
-		} catch (Exception e) {
-			if (DEBUG) Log.e(TAG, "readFromFile: " + e.toString());
-		}
-		return text.toString();
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		binding = null;
+	}
+
+	@NonNull
+	@Override
+	public String toString() {
+		return TAG;
 	}
 }

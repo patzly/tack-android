@@ -4,17 +4,19 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.LinearLayout;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.IdRes;
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 
@@ -24,8 +26,8 @@ import xyz.zedler.patrick.tack.R;
 
 public class ScrollBehavior {
 
+	private final static String TAG = ScrollBehavior.class.getSimpleName();
 	private final static boolean DEBUG = false;
-	private final static String TAG = "ScrollBehavior";
 
 	private static final int STATE_SCROLLED_DOWN = 1;
 	private static final int STATE_SCROLLED_UP = 2;
@@ -37,62 +39,113 @@ public class ScrollBehavior {
 	private boolean isTopScroll = false;
 	private boolean liftOnScroll = true;
 	private boolean showNavBarDivider = true;
+	private boolean killObserver = true;
+	private boolean noOverScroll = false;
 
 	private Activity activity;
 	private AppBarLayout appBarLayout;
-	private LinearLayout linearAppBar;
-	private NestedScrollView nestedScrollView;
+	private View viewAppBar;
+	private NestedScrollView scrollView;
 
 	/**
-	 * Initializes the scroll view behavior like liftOnScroll etc.
+	 * Initialize scroll behavior
 	 */
 	public void setUpScroll(
-			Activity targetActivity,
-			@IdRes int appBarLayoutId,
-			@IdRes int linearAppBarId,
-			@IdRes int nestedScrollViewId,
-			boolean liftOnScroll
+			@NonNull Activity activity,
+			AppBarLayout appBarLayout,
+			View viewAppBar,
+			NestedScrollView scrollView,
+			boolean liftOnScroll,
+			boolean noOverScroll,
+			boolean killObserver
 	) {
 		this.liftOnScroll = liftOnScroll;
-		activity = targetActivity;
-		appBarLayout = activity.findViewById(appBarLayoutId);
-		linearAppBar = activity.findViewById(linearAppBarId);
-		nestedScrollView = activity.findViewById(nestedScrollViewId);
+		this.activity = activity;
+		this.appBarLayout = appBarLayout;
+		this.viewAppBar = viewAppBar;
+		this.scrollView = scrollView;
+		this.noOverScroll = noOverScroll;
+		this.killObserver = killObserver;
+
 		currentState = STATE_SCROLLED_UP;
+
 		measureScrollView();
 		setLiftOnScroll(liftOnScroll);
-		if (nestedScrollView != null) {
-			nestedScrollView.setOnScrollChangeListener((NestedScrollView v,
-														int scrollX,
-														int scrollY,
-														int oldScrollX,
-														int oldScrollY
-			) -> {
-				if (!isTopScroll && scrollY == 0) { // TOP
-					onTopScroll();
-				} else {
-					if (scrollY < oldScrollY) { // UP
-						if (currentState != STATE_SCROLLED_UP) {
-							onScrollUp();
-						}
-						if (liftOnScroll) {
-							if (scrollY < pufferSize) {
-								new Handler(Looper.getMainLooper()).postDelayed(() -> {
-									if (scrollY > 0) {
-										nestedScrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-									}
-								}, 1);
-							}
-						}
-					} else if (scrollY > oldScrollY) {
-						if (currentState != STATE_SCROLLED_DOWN) { // DOWN
-							onScrollDown();
+
+		if (DEBUG) Log.i(TAG, "setUpScroll: liftOnScroll = " + liftOnScroll);
+
+		if (this.scrollView == null) return;
+		this.scrollView.setOnScrollChangeListener((NestedScrollView v,
+												   int scrollX,
+												   int scrollY,
+												   int oldScrollX,
+												   int oldScrollY
+		) -> {
+			if (!isTopScroll && scrollY == 0) { // TOP
+				onTopScroll();
+			} else {
+				if (scrollY < oldScrollY) { // UP
+					if (currentState != STATE_SCROLLED_UP) {
+						onScrollUp();
+					}
+					if (liftOnScroll) {
+						if (scrollY < pufferSize) {
+							new Handler(Looper.getMainLooper()).postDelayed(() -> {
+								if (scrollY > 0) {
+									this.scrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+								}
+							}, 1);
 						}
 					}
+				} else if (scrollY > oldScrollY) {
+					if (currentState != STATE_SCROLLED_DOWN) { // DOWN
+						onScrollDown();
+					}
 				}
-			});
-		}
-		if (DEBUG) Log.i(TAG, "setUpScroll: liftOnScroll = " + liftOnScroll);
+			}
+		});
+	}
+
+	/**
+	 * Initialize scroll behavior
+	 */
+	public void setUpScroll(
+			@NonNull Activity activity,
+			AppBarLayout appBarLayout,
+			View viewAppBar,
+			NestedScrollView scrollView,
+			boolean liftOnScroll
+	) {
+		setUpScroll(
+				activity,
+				appBarLayout,
+				viewAppBar,
+				scrollView,
+				liftOnScroll,
+				false,
+				true
+		);
+	}
+
+	/**
+	 * Initialize scroll behavior
+	 */
+	public void setUpScroll(
+			@NonNull Activity activity,
+			@IdRes int appBarLayoutId,
+			@IdRes int viewAppBarId,
+			@IdRes int scrollViewId,
+			boolean liftOnScroll
+	) {
+		setUpScroll(
+				activity,
+				activity.findViewById(appBarLayoutId),
+				activity.findViewById(viewAppBarId),
+				activity.findViewById(scrollViewId),
+				liftOnScroll,
+				false,
+				true
+		);
 	}
 
 	/**
@@ -116,11 +169,6 @@ public class ScrollBehavior {
 	 */
 	private void onScrollUp() {
 		currentState = STATE_SCROLLED_UP;
-		/*if (liftOnScroll) {
-			nestedScrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-		} else {
-			nestedScrollView.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
-		}*/
 		if (appBarLayout != null) {
 			appBarLayout.setLifted(true);
 			tintTopBars(R.color.primary);
@@ -136,10 +184,12 @@ public class ScrollBehavior {
 	private void onScrollDown() {
 		isTopScroll = false; // second top scroll is unrealistic before down scroll
 		currentState = STATE_SCROLLED_DOWN;
-		if (appBarLayout != null && nestedScrollView != null) {
+		if (appBarLayout != null && scrollView != null) {
 			appBarLayout.setLifted(true);
 			tintTopBars(R.color.primary);
-			nestedScrollView.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
+			scrollView.setOverScrollMode(
+					noOverScroll ? View.OVER_SCROLL_NEVER : View.OVER_SCROLL_IF_CONTENT_SCROLLS
+			);
 		} else if (DEBUG) {
 			Log.e(TAG, "onScrollDown: appBarLayout or scrollView is null!");
 		}
@@ -156,12 +206,12 @@ public class ScrollBehavior {
 		if (appBarLayout != null) {
 			appBarLayout.setLiftOnScroll(false); // We'll make this manually
 			appBarLayout.setLiftable(true);
-			if (nestedScrollView != null) {
+			if (scrollView != null) {
 				if (lift) {
-					if (nestedScrollView.getScrollY() == 0) {
+					if (scrollView.getScrollY() == 0) {
 						appBarLayout.setLifted(false);
 						tintTopBars(R.color.background);
-						nestedScrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+						scrollView.setOverScrollMode(View.OVER_SCROLL_NEVER);
 					} else {
 						appBarLayout.setLifted(true);
 						tintTopBars(R.color.primary);
@@ -169,12 +219,21 @@ public class ScrollBehavior {
 				} else {
 					appBarLayout.setLifted(true);
 					tintTopBars(R.color.primary);
-					nestedScrollView.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
+					scrollView.setOverScrollMode(
+							noOverScroll
+									? View.OVER_SCROLL_NEVER
+									: View.OVER_SCROLL_IF_CONTENT_SCROLLS
+					);
 				}
 			} else {
-				if (DEBUG) Log.e(TAG, "setLiftOnScroll: scrollView is null!");
-				appBarLayout.setLifted(false);
-				tintTopBars(R.color.background);
+				if (lift) {
+					appBarLayout.setLiftable(true);
+					appBarLayout.setLifted(false);
+					tintTopBars(R.color.background);
+				} else {
+					appBarLayout.setLiftable(false);
+					tintTopBars(R.color.primary);
+				}
 			}
 		} else if (DEBUG) Log.e(TAG, "setLiftOnScroll: appBarLayout is null!");
 		if (DEBUG) Log.i(TAG, "setLiftOnScroll(" + lift + ")");
@@ -184,32 +243,35 @@ public class ScrollBehavior {
 	 * Adds a globalLayoutListener to the scrollView to get its own and the content's height.
 	 */
 	private void measureScrollView() {
-		if (nestedScrollView != null) {
-			nestedScrollView.getViewTreeObserver().addOnGlobalLayoutListener(
-					new ViewTreeObserver.OnGlobalLayoutListener() {
-						@Override
-						public void onGlobalLayout() {
-							int scrollViewHeight = nestedScrollView.getMeasuredHeight();
-							int scrollContentHeight = nestedScrollView.getChildAt(0).getHeight();
-							if (scrollViewHeight - scrollContentHeight > 0 && showNavBarDivider) {
-								showNavBarDivider = false;
-							}
+		if (scrollView == null) return;
+		scrollView.getViewTreeObserver().addOnGlobalLayoutListener(
+				new ViewTreeObserver.OnGlobalLayoutListener() {
+					@Override
+					public void onGlobalLayout() {
+						int scrollViewHeight = scrollView.getMeasuredHeight();
+						if (scrollView.getChildAt(0) != null) {
+							int scrollContentHeight = scrollView.getChildAt(0).getHeight();
+							showNavBarDivider = scrollViewHeight - scrollContentHeight < 0;
 							setNavBarDividerVisibility();
 							pufferSize = (scrollContentHeight - scrollViewHeight) / pufferDivider;
 							if (DEBUG) {
-								Log.i(TAG, "measureScrollView: viewHeight = " + scrollViewHeight +
-										", contentHeight = " + scrollContentHeight
+								Log.i(TAG, "measureScrollView: viewHeight = "
+										+ scrollViewHeight
+										+ ", contentHeight = " + scrollContentHeight
 								);
 							}
-							// Kill ViewTreeObserver
-							if (nestedScrollView.getViewTreeObserver().isAlive()) {
-								nestedScrollView.getViewTreeObserver().removeOnGlobalLayoutListener(
-										this
-								);
-							}
+						} else {
+							if (DEBUG) Log.e(TAG, "measureScrollView: no child!");
 						}
-					});
-		}
+						// Kill ViewTreeObserver
+						if (!killObserver) return;
+						if (scrollView.getViewTreeObserver().isAlive()) {
+							scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(
+									this
+							);
+						}
+					}
+				});
 	}
 
 	/**
@@ -233,6 +295,29 @@ public class ScrollBehavior {
 	}
 
 	/**
+	 * Shows navBarDivider in portrait and/or landscape mode independent of the scrollView
+	 */
+	public void setNavBarDividerVisibility(boolean portrait, boolean landscape) {
+		if (activity != null) {
+			int orientation = activity.getResources().getConfiguration().orientation;
+			if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+				if (portrait) {
+					setNavBarDividerColor(R.color.stroke_secondary);
+				} else {
+					setNavBarDividerColor(R.color.transparent);
+				}
+				if (DEBUG) Log.i(TAG, "setNavBarDividerVisibility(" + showNavBarDivider + ")");
+			} else {
+				if (landscape) {
+					setNavBarDividerColor(R.color.stroke_secondary);
+				} else {
+					setNavBarDividerColor(R.color.transparent);
+				}
+			}
+		} else if (DEBUG) Log.wtf(TAG, "setNavBarDividerVisibility(): activity is null!?");
+	}
+
+	/**
 	 * If SDK version is 28 or higher this tints the navBarDivider.
 	 */
 	private void setNavBarDividerColor(@ColorRes int color) {
@@ -245,37 +330,63 @@ public class ScrollBehavior {
 
 	@SuppressLint("PrivateResource")
 	private void tintTopBars(@ColorRes int target) {
-		if (activity != null && linearAppBar != null) {
-			int appBarColor = ((ColorDrawable) linearAppBar.getBackground()).getColor();
-			int statusBarColor = 0;
-			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-				statusBarColor = activity.getWindow().getStatusBarColor();
-			}
-			int targetColor = ContextCompat.getColor(activity, target);
-			if (appBarColor != targetColor || statusBarColor != targetColor) {
-				ValueAnimator valueAnimator = ValueAnimator.ofArgb(appBarColor, targetColor);
-				valueAnimator.addUpdateListener(animation -> {
-					if (linearAppBar != null) {
-						linearAppBar.setBackgroundColor((int) valueAnimator.getAnimatedValue());
-					}
-					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-						if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M && appBarColor == ContextCompat.getColor(activity, R.color.white)) {
-							activity.getWindow().setStatusBarColor(ContextCompat.getColor(activity, R.color.grey400));
-						} else {
-							activity.getWindow().setStatusBarColor((int) valueAnimator.getAnimatedValue());
-						}
-					}
-				});
-				valueAnimator.setDuration(activity.getResources().getInteger(
-						R.integer.app_bar_elevation_anim_duration
-				)).start();
-				if (DEBUG) Log.i(TAG, "tintTopBars: appBarLinearLayout and status bar tinted");
-			} else {
-				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M && appBarColor == ContextCompat.getColor(activity, R.color.white)) {
-					activity.getWindow().setStatusBarColor(ContextCompat.getColor(activity, R.color.grey400));
+		if (activity == null || viewAppBar == null) {
+			if (DEBUG) Log.e(TAG, "tintTopBars: activity or viewAppBar is null!");
+			return;
+		}
+		int appBarColor = getAppBarColor();
+
+		int targetColor = ContextCompat.getColor(activity, target);
+		if (appBarColor != targetColor) {
+			ValueAnimator valueAnimator = ValueAnimator.ofArgb(appBarColor, targetColor);
+			valueAnimator.addUpdateListener(
+					animation -> viewAppBar.setBackgroundColor(
+							(int) valueAnimator.getAnimatedValue()
+					)
+			);
+			valueAnimator.setDuration(activity.getResources().getInteger(
+					R.integer.app_bar_elevation_anim_duration
+			)).start();
+			if (DEBUG) Log.i(TAG, "tintTopBars: appBarLinearLayout tinted");
+		} else if (DEBUG) Log.i(TAG, "tintTopBars: current and target identical");
+
+		int statusBarColor = activity.getWindow().getStatusBarColor();
+		if (statusBarColor != targetColor) {
+			ValueAnimator valueAnimator = ValueAnimator.ofArgb(statusBarColor, targetColor);
+			valueAnimator.addUpdateListener(animation -> {
+				if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M && appBarColor == Color.WHITE) {
+					setStatusBarColor(
+							ContextCompat.getColor(activity, R.color.status_bar_lollipop)
+					);
+				} else {
+					setStatusBarColor((int) valueAnimator.getAnimatedValue());
 				}
-				if (DEBUG) Log.i(TAG, "tintTopBars: current and target identical");
+			});
+			valueAnimator.setDuration(activity.getResources().getInteger(
+					R.integer.app_bar_elevation_anim_duration
+			)).start();
+			if (DEBUG) Log.i(TAG, "tintTopBars: status bar tinted");
+		} else {
+			if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+					&& appBarColor == ContextCompat.getColor(activity, R.color.white)
+			) {
+				setStatusBarColor(ContextCompat.getColor(activity, R.color.status_bar_lollipop));
 			}
-		} else if (DEBUG) Log.e(TAG, "tintTopBars: activity or appBarLinearLayout is null!");
+			if (DEBUG) Log.i(TAG, "tintTopBars: current and target identical");
+		}
+	}
+
+	private int getAppBarColor() {
+		Drawable background = viewAppBar.getBackground();
+		if (background == null || background.getClass() != ColorDrawable.class) {
+			viewAppBar.setBackgroundColor(
+					ContextCompat.getColor(activity, R.color.background)
+			);
+		}
+		return ((ColorDrawable) viewAppBar.getBackground()).getColor();
+	}
+
+	private void setStatusBarColor(int color) {
+		activity.getWindow().setStatusBarColor(color);
 	}
 }

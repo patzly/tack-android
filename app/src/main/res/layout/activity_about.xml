@@ -11,7 +11,7 @@
         android:layout_height="?android:actionBarSize">
 
         <LinearLayout
-            android:id="@+id/linear_app_bar_about"
+            android:id="@+id/linear_about_app_bar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
@@ -19,7 +19,7 @@
             android:background="@color/background">
 
             <FrameLayout
-                android:id="@+id/frame_back_about"
+                android:id="@+id/frame_about_close"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="4dp"
@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:singleLine="true"
                 android:text="@string/title_about"
-                android:fontFamily="@font/roboto_mono_bold"
+                android:fontFamily="@font/text_bold"
                 android:textAppearance="@style/TextAppearance.Tack.Toolbar" />
 
         </LinearLayout>
@@ -70,7 +70,6 @@
                 style="@style/Theme.Tack.ListItem.TwoLine">
 
                 <ImageView
-                    android:id="@+id/image_version"
                     style="@style/Theme.Tack.ListItem.Icon"
                     android:src="@drawable/ic_round_info_outline_anim"
                     tools:ignore="ContentDescription" />
@@ -78,12 +77,12 @@
                 <LinearLayout style="@style/Theme.Tack.ListItem.TextBox">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Theme.Tack.ListItem.OverLine"
                         android:text="@string/info_version"/>
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
-                        android:text="@string/app_version" />
+                        style="@style/Theme.Tack.ListItem.Title"
+                        android:text="@string/versionName" />
 
                 </LinearLayout>
 
@@ -126,11 +125,11 @@
                 <LinearLayout style="@style/Theme.Tack.ListItem.TextBox">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Theme.Tack.ListItem.OverLine"
                         android:text="@string/info_developer" />
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
+                        style="@style/Theme.Tack.ListItem.Title"
                         android:text="@string/app_developer" />
 
                 </LinearLayout>
@@ -150,7 +149,7 @@
                 <LinearLayout style="@style/Theme.Tack.ListItem.TextBox">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
+                        style="@style/Theme.Tack.ListItem.OverLine"
                         android:text="@string/info_material_components_built_with" />
 
                     <TextView
@@ -163,7 +162,8 @@
 
             <TextView
                 style="@style/Theme.Tack.Category"
-                android:text="@string/category_licenses" />
+                android:text="@string/category_licenses"
+                android:fontFamily="@font/text_bold"/>
 
             <LinearLayout
                 android:id="@+id/linear_license_metronome"
@@ -238,11 +238,11 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/linear_license_roboto"
+                android:id="@+id/linear_license_edwin"
                 style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
 
                 <ImageView
-                    android:id="@+id/image_license_roboto"
+                    android:id="@+id/image_license_edwin"
                     style="@style/Theme.Tack.ListItem.Icon"
                     android:src="@drawable/ic_round_copyright_anim"
                     tools:ignore="ContentDescription" />
@@ -251,11 +251,11 @@
 
                     <TextView
                         style="@style/Theme.Tack.ListItem.Title"
-                        android:text="@string/license_roboto" />
+                        android:text="@string/license_edwin" />
 
                     <TextView
                         style="@style/Theme.Tack.ListItem.Description"
-                        android:text="@string/license_author_google" />
+                        android:text="@string/license_edwin_author" />
 
                 </LinearLayout>
 

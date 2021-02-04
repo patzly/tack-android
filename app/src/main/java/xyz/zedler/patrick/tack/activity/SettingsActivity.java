@@ -118,8 +118,8 @@ public class SettingsActivity extends AppCompatActivity
 		imageViewDarkMode = findViewById(R.id.image_dark_mode);
 		imageViewDarkMode.setImageResource(
 				sharedPrefs.getBoolean("force_dark_mode",false)
-						? R.drawable.ic_round_dark_mode_off_anim
-						: R.drawable.ic_round_dark_mode_on_anim
+						? R.drawable.ic_round_dark_mode_to_light_mode_anim
+						: R.drawable.ic_round_light_mode_to_dark_mode_anim
 		);
 
 		setOnClickListeners(
@@ -180,8 +180,8 @@ public class SettingsActivity extends AppCompatActivity
 			new Handler(Looper.getMainLooper()).postDelayed(() -> {
 				imageViewDarkMode.setImageResource(
 						isChecked
-								? R.drawable.ic_round_dark_mode_off_anim
-								: R.drawable.ic_round_dark_mode_on_anim
+								? R.drawable.ic_round_dark_mode_to_light_mode_anim
+								: R.drawable.ic_round_light_mode_to_dark_mode_anim
 
 				);
 				AppCompatDelegate.setDefaultNightMode(

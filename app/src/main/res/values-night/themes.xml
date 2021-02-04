@@ -1,57 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Tack" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary</item>
-        <item name="colorOnPrimary">@color/onPrimary</item>
-
-        <item name="colorSecondary">@color/secondary</item>
-        <item name="colorOnSecondary">@color/on_secondary</item>
-
-        <item name="android:colorBackground">@color/background</item>
-        <item name="colorOnBackground">@color/on_background</item>
-        <item name="android:colorForeground">@color/on_background</item>
-
-        <item name="colorSurface">@color/surface</item>
-        <item name="colorOnSurface">@color/white</item>
-        <item name="snackbarButtonStyle">@style/Theme.Tack.Button.TextButton.Snackbar</item>
-
-        <item name="colorControlNormal">@color/on_background</item>
-        <item name="android:colorControlActivated">@color/secondary</item>
-        <item name="colorControlHighlight">@color/highlight</item>
-        <item name="android:colorEdgeEffect">@color/highlight</item>
-
+    <style name="Theme.Tack" parent="Base.Tack">
         <item name="android:navigationBarColor">@color/background</item>
         <item name="android:statusBarColor">@color/background</item>
-
-        <item name="android:fontFamily">@font/roboto_mono_regular</item>
-
         <item name="elevationOverlayEnabled">true</item>
     </style>
 
-    <style name="Theme.Tack.BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primaryVariant</item>
-        <item name="colorOnPrimary">@color/onPrimary</item>
-
-        <item name="colorSecondary">@color/secondary</item>
-        <item name="colorOnSecondary">@color/on_secondary</item>
-
-        <item name="android:colorBackground">@color/surface</item>
-        <item name="colorOnBackground">@color/on_surface</item>
-        <item name="android:colorForeground">@color/on_surface</item>
-
-        <item name="colorSurface">@color/surface</item>
-        <item name="colorOnSurface">@color/on_surface</item>
-
-        <item name="android:colorEdgeEffect">@color/highlight</item>
-
-        <item name="android:statusBarColor">@android:color/transparent</item>
+    <style name="Theme.Tack.BottomSheetDialog" parent="Base.Tack.BottomSheetDialog">
         <item name="android:navigationBarColor">@color/surface</item>
-        <item name="android:windowIsFloating">false</item>
-
-        <item name="bottomSheetStyle">@style/Shape.Tack.BottomSheet</item>
     </style>
 
 </resources>

@@ -12,7 +12,7 @@
         android:textAlignment="center"
         android:padding="16dp"
         android:text="@string/action_emphasis"
-        android:fontFamily="@font/roboto_mono_bold"
+        android:fontFamily="@font/text_bold"
         android:textAppearance="@style/TextAppearance.Tack.BottomSheet.Title"/>
 
     <View

@@ -37,6 +37,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
@@ -505,6 +506,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         chip.setChipBackgroundColorResource(R.color.background);
         chip.setText(String.valueOf(bpm));
         chip.setTextAppearance(R.style.TextAppearance_Tack_Chip);
+        chip.setTypeface(ResourcesCompat.getFont(this, R.font.text_bold));
         chip.setChipIconVisible(false);
         chip.setChipStrokeWidth(getResources().getDimension(R.dimen.chip_stroke_width));
         chip.setChipStrokeColorResource(R.color.stroke_primary);

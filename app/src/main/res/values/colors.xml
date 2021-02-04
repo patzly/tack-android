@@ -44,8 +44,6 @@
     <!-- PRIMARY -->
 
     <color name="primary">@color/white</color>
-    <color name="primaryVariant">@color/white</color>
-    <color name="onPrimary">#212121</color>
 
     <!-- SECONDARY -->
 
@@ -87,17 +85,13 @@
     <color name="mdc_circle">#b2ff59</color>
     <color name="mdc_overlay">#00e676</color>
 
-    <!-- TEXT INPUT LAYOUT -->
-
-    <color name="mtrl_textinput_default_box_stroke_color" tools:override="true">
-        @color/stroke_primary
-    </color>
-
     <color name="tooltip_text">@color/white</color>
 
     <color name="bpm_picker">@color/retro_red_fg</color>
     <color name="bookmark_active">@color/retro_yellow</color>
 
     <color name="splash_dark">@color/retro_dark</color>
+
+    <color name="status_bar_lollipop">#999999</color>
 
 </resources>
