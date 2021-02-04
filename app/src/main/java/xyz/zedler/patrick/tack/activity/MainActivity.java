@@ -56,6 +56,7 @@ import xyz.zedler.patrick.tack.fragment.EmphasisBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.util.LogoUtil;
+import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener,
@@ -127,10 +128,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else if (itemId == R.id.action_about) {
                 startActivity(new Intent(this, AboutActivity.class));
             } else if (itemId == R.id.action_share) {
-                Intent sendIntent = new Intent(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.msg_share));
-                sendIntent.setType("text/plain");
-                startActivity(Intent.createChooser(sendIntent, null));
+                ResUtil.share(this, R.string.msg_share);
             } else if (itemId == R.id.action_feedback) {
                 new FeedbackBottomSheetDialogFragment().show(
                         getSupportFragmentManager(),
@@ -752,6 +750,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onStart() {
         Intent intent = new Intent(this, MetronomeService.class);
+
+        // sometimes throws exception because "app is in the background"
         startService(intent);
         bindService(intent, this, Context.BIND_AUTO_CREATE);
 

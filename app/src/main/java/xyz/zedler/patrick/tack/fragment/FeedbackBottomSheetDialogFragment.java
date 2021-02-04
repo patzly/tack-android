@@ -20,12 +20,15 @@ import androidx.annotation.NonNull;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetFeedbackBinding;
 import xyz.zedler.patrick.tack.util.IconUtil;
+import xyz.zedler.patrick.tack.util.ResUtil;
 
 public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFragment {
 
 	private final static String TAG = "FeedbackBottomSheet";
 
+	private FragmentBottomsheetFeedbackBinding binding;
 	private SharedPreferences sharedPrefs;
 
 	@NonNull
@@ -40,10 +43,8 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
 			ViewGroup container,
 			Bundle savedInstanceState
 	) {
-		View view = inflater.inflate(
-				R.layout.fragment_bottomsheet_feedback,
-				container,
-				false
+		binding = FragmentBottomsheetFeedbackBinding.inflate(
+				inflater, container, false
 		);
 
 		Activity activity = getActivity();
@@ -51,8 +52,8 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
 
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity);
 
-		view.findViewById(R.id.linear_feedback_rate).setOnClickListener(v -> {
-			IconUtil.start(view, R.id.image_feedback_rate);
+		binding.linearFeedbackRate.setOnClickListener(v -> {
+			IconUtil.start(binding.imageFeedbackRate);
 			Uri uri = Uri.parse(
 					"market://details?id=" + activity.getApplicationContext().getPackageName()
 			);
@@ -71,10 +72,10 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
 					)));
 				}
 				dismiss();
-			}, 300);
+			}, 400);
 		});
 
-		view.findViewById(R.id.linear_feedback_email).setOnClickListener(v -> {
+		binding.linearFeedbackEmail.setOnClickListener(v -> {
 			Intent intent = new Intent(Intent.ACTION_SENDTO);
 			intent.setData(
 					Uri.parse(
@@ -87,7 +88,18 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
 			dismiss();
 		});
 
-		return view;
+		binding.linearFeedbackShare.setOnClickListener(v -> {
+			ResUtil.share(getContext(), R.string.msg_share);
+			dismiss();
+		});
+
+		return binding.getRoot();
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		binding = null;
 	}
 
 	@Override

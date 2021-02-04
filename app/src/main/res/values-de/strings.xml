@@ -14,6 +14,7 @@
     <string name="action_beat_mode">Modus</string>
     <string name="action_send_feedback">Feedback senden</string>
     <string name="action_share">Teilen</string>
+    <string name="action_share_description">Freunden von Tack erzählen</string>
     <string name="action_email">Email senden</string>
     <string name="action_email_description">Entwickler kontaktieren</string>
     <string name="action_rate">Bei Google Play bewerten</string>
@@ -25,7 +26,7 @@
 
     <string name="msg_bookmarks_max">Bookmark-Limit erreicht</string>
     <string name="msg_feedback">Eine tolle App kostet viel Zeit und lebt von der Rückmeldung ihrer Nutzer.\n\nHaben Sie Wünsche, Anmerkungen oder Fragen? Schreiben Sie mir!\nAnsonsten freue ich mich über eine nette Bewertung im Play Store.</string>
-    <string name="msg_share">Schau mal diese coole Metronom-App: \nhttps://play.google.com/store/apps/details?id=xyz.zedler.patrick.tack</string>
+    <string name="msg_share">Schau dir mal diese coole Metronom-App an: \nhttps://play.google.com/store/apps/details?id=xyz.zedler.patrick.tack</string>
 
     <string name="title_bpm">%1$s BPM</string>
     <string name="title_bpm_label">BPM</string>

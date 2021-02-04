@@ -16,10 +16,11 @@
     <string name="action_beat_mode">Beat mode</string>
     <string name="action_send_feedback">Send feedback</string>
     <string name="action_share">Share</string>
+    <string name="action_share_description">Tell your friends about Tack</string>
     <string name="action_email">Send email</string>
-    <string name="action_email_description">Contact the developers</string>
+    <string name="action_email_description">Contact the developer</string>
     <string name="action_rate">Rate on Google Play</string>
-    <string name="action_rate_description">Support the developer</string>
+    <string name="action_rate_description">Support the development</string>
 
     <string name="notification_title">Metronome is running</string>
     <string name="notification_desc">Tap to stop</string>
