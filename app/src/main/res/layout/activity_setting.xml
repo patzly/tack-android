@@ -77,6 +77,33 @@
             android:orientation="vertical">
 
             <LinearLayout
+                android:id="@+id/linear_settings_dark_mode"
+                style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
+
+                <ImageView
+                    android:id="@+id/image_settings_dark_mode"
+                    style="@style/Theme.Tack.ListItem.Icon"
+                    tools:ignore="ContentDescription" />
+
+                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox.Stretch">
+
+                    <TextView
+                        style="@style/Theme.Tack.ListItem.Title"
+                        android:text="@string/setting_dark_mode" />
+
+                    <TextView
+                        style="@style/Theme.Tack.ListItem.Description"
+                        android:text="@string/setting_dark_mode_description" />
+
+                </LinearLayout>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_settings_dark_mode"
+                    style="@style/Widget.Tack.Switch"/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 style="@style/Theme.Tack.ListItem.SingleLine"
                 android:orientation="horizontal"
                 android:paddingStart="0dp"
@@ -184,33 +211,6 @@
 
                 <com.google.android.material.switchmaterial.SwitchMaterial
                     android:id="@+id/switch_settings_slider_emphasis"
-                    style="@style/Widget.Tack.Switch"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/linear_settings_dark_mode"
-                style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
-
-                <ImageView
-                    android:id="@+id/image_settings_dark_mode"
-                    style="@style/Theme.Tack.ListItem.Icon"
-                    tools:ignore="ContentDescription" />
-
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox.Stretch">
-
-                    <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
-                        android:text="@string/setting_dark_mode" />
-
-                    <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
-                        android:text="@string/setting_dark_mode_description" />
-
-                </LinearLayout>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_settings_dark_mode"
                     style="@style/Widget.Tack.Switch"/>
 
             </LinearLayout>

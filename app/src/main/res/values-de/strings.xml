@@ -31,6 +31,8 @@
     <string name="title_bpm">%1$s BPM</string>
     <string name="title_bpm_label">BPM</string>
 
+    <string name="setting_dark_mode">Dunkles Theme erzwingen</string>
+    <string name="setting_dark_mode_description">Aus für Systemabhängigkeit</string>
     <string name="setting_sound">Schlag-Geräusch</string>
     <string name="setting_sound_description">Vibration kann auf dem Hauptbildschirm festgelegt werden</string>
     <string name="setting_sound_wood">Holz</string>
@@ -43,8 +45,6 @@
     <string name="setting_slider_emphasis_description">Zur Auswahl der Betonung</string>
     <string name="setting_keep_awake">Bildschirm anlassen</string>
     <string name="setting_keep_awake_description">Wenn Metronom tickt</string>
-    <string name="setting_dark_mode">Dunkles Theme erzwingen</string>
-    <string name="setting_dark_mode_description">Aus für Systemabhängigkeit</string>
 
     <string name="title_feedback">Feedback</string>
     <string name="title_settings">Einstellungen</string>

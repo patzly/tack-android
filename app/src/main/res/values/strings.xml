@@ -33,6 +33,8 @@
     <string name="title_bpm">%1$s BPM</string>
     <string name="title_bpm_label">BPM</string>
 
+    <string name="setting_dark_mode">Force dark mode</string>
+    <string name="setting_dark_mode_description">Off for system dependency</string>
     <string name="setting_sound">Beat sound</string>
     <string name="setting_sound_description">Set to vibrate with beat mode control</string>
     <string name="setting_sound_wood">Wood</string>
@@ -45,8 +47,6 @@
     <string name="setting_slider_emphasis_description">For emphasis selection</string>
     <string name="setting_keep_awake">Keep screen awake</string>
     <string name="setting_keep_awake_description">When metronome is playing</string>
-    <string name="setting_dark_mode">Force dark mode</string>
-    <string name="setting_dark_mode_description">Off for system dependency</string>
 
     <string name="title_feedback">Feedback</string>
     <string name="title_settings">Settings</string>

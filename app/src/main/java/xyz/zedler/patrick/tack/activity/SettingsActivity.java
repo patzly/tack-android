@@ -13,6 +13,7 @@ import android.widget.RadioGroup;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.fragment.app.DialogFragment;
 
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
@@ -27,8 +28,6 @@ public class SettingsActivity extends AppCompatActivity
 		implements View.OnClickListener, CompoundButton.OnCheckedChangeListener,
 		RadioGroup.OnCheckedChangeListener {
 
-	private final static String TAG = SettingsActivity.class.getSimpleName();
-
 	private ActivitySettingBinding binding;
 	private SharedPreferences sharedPrefs;
 	private ClickUtil clickUtil;
@@ -41,8 +40,11 @@ public class SettingsActivity extends AppCompatActivity
 		binding = ActivitySettingBinding.inflate(getLayoutInflater());
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
+		boolean forceDarkMode = sharedPrefs.getBoolean(
+				Constants.SETTING.DARK_MODE,Constants.DEF.DARK_MODE
+		);
 		AppCompatDelegate.setDefaultNightMode(
-				sharedPrefs.getBoolean("force_dark_mode",false)
+				forceDarkMode
 						? AppCompatDelegate.MODE_NIGHT_YES
 						: AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
 		);
@@ -62,9 +64,8 @@ public class SettingsActivity extends AppCompatActivity
 			if (itemId == R.id.action_about) {
 				startActivity(new Intent(this, AboutActivity.class));
 			} else if (itemId == R.id.action_feedback) {
-				new FeedbackBottomSheetDialogFragment().show(
-						getSupportFragmentManager(), "feedback"
-				);
+				DialogFragment fragment = new FeedbackBottomSheetDialogFragment();
+				fragment.show(getSupportFragmentManager(), fragment.toString());
 			}
 			return true;
 		});
@@ -77,28 +78,30 @@ public class SettingsActivity extends AppCompatActivity
 				true
 		);
 
-		binding.radioGroupSettingsSound.check(getCheckedId());
-		binding.radioGroupSettingsSound.setOnCheckedChangeListener(this);
-
-		binding.switchSettingsVibrateAlways.setChecked(
-				sharedPrefs.getBoolean("vibrate_always",false)
-		);
-
-		binding.switchSettingsSliderEmphasis.setChecked(
-				sharedPrefs.getBoolean("emphasis_slider",false)
-		);
-
-		binding.switchSettingsDarkMode.setChecked(
-				sharedPrefs.getBoolean("force_dark_mode",false)
-		);
+		binding.switchSettingsDarkMode.setChecked(forceDarkMode);
 		binding.imageSettingsDarkMode.setImageResource(
-				sharedPrefs.getBoolean("force_dark_mode",false)
+				forceDarkMode
 						? R.drawable.ic_round_dark_mode_to_light_mode_anim
 						: R.drawable.ic_round_light_mode_to_dark_mode_anim
 		);
 
+		binding.radioGroupSettingsSound.check(getCheckedId());
+		binding.radioGroupSettingsSound.setOnCheckedChangeListener(this);
+
+		binding.switchSettingsVibrateAlways.setChecked(
+				sharedPrefs.getBoolean(
+						Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+				)
+		);
+
+		binding.switchSettingsSliderEmphasis.setChecked(
+				sharedPrefs.getBoolean(
+						Constants.SETTING.EMPHASIS_SLIDER, Constants.DEF.EMPHASIS_SLIDER
+				)
+		);
+
 		binding.switchSettingsKeepAwake.setChecked(
-				sharedPrefs.getBoolean("keep_awake",true)
+				sharedPrefs.getBoolean(Constants.SETTING.KEEP_AWAKE, Constants.DEF.KEEP_AWAKE)
 		);
 
 		ViewUtil.setOnClickListeners(
@@ -126,14 +129,14 @@ public class SettingsActivity extends AppCompatActivity
 	}
 
 	private int getCheckedId() {
-		String sound = sharedPrefs.getString("sound", "wood");
+		String sound = sharedPrefs.getString(Constants.SETTING.SOUND, Constants.SOUND.WOOD);
 		assert sound != null;
 		switch (sound) {
-			case "click":
+			case Constants.SOUND.CLICK:
 				return R.id.radio_settings_sound_click;
-			case "ding":
+			case Constants.SOUND.DING:
 				return R.id.radio_settings_sound_ding;
-			case "beep":
+			case Constants.SOUND.BEEP:
 				return R.id.radio_settings_sound_beep;
 			default:
 				return R.id.radio_settings_sound_wood;
@@ -146,9 +149,7 @@ public class SettingsActivity extends AppCompatActivity
 
 		int id = v.getId();
 		if (id == R.id.linear_settings_dark_mode) {
-			binding.switchSettingsDarkMode.setChecked(
-					!binding.switchSettingsDarkMode.isChecked()
-			);
+			binding.switchSettingsDarkMode.setChecked(!binding.switchSettingsDarkMode.isChecked());
 		} else if (id == R.id.linear_settings_vibrate_always) {
 			binding.switchSettingsVibrateAlways.setChecked(
 					!binding.switchSettingsVibrateAlways.isChecked()
@@ -170,7 +171,7 @@ public class SettingsActivity extends AppCompatActivity
 		SharedPreferences.Editor editor = sharedPrefs.edit();
 		if (id == R.id.switch_settings_dark_mode) {
 			ViewUtil.startAnimatedIcon(binding.imageSettingsDarkMode);
-			editor.putBoolean("force_dark_mode", isChecked);
+			editor.putBoolean(Constants.SETTING.DARK_MODE, isChecked);
 			new Handler(Looper.getMainLooper()).postDelayed(() -> {
 				binding.imageSettingsDarkMode.setImageResource(
 						isChecked
@@ -187,13 +188,13 @@ public class SettingsActivity extends AppCompatActivity
 			}, 300);
 		} else if (id == R.id.switch_settings_vibrate_always) {
 			//startAnimatedIcon(R.id.image_dark_mode);
-			editor.putBoolean("vibrate_always", isChecked);
+			editor.putBoolean(Constants.SETTING.VIBRATE_ALWAYS, isChecked);
 		} else if (id == R.id.switch_settings_slider_emphasis) {
 			ViewUtil.startAnimatedIcon(binding.imageSettingsSliderEmphasis);
-			editor.putBoolean("emphasis_slider", isChecked);
+			editor.putBoolean(Constants.SETTING.EMPHASIS_SLIDER, isChecked);
 		} else if (id == R.id.switch_settings_keep_awake) {
 			//startAnimatedIcon(R.id.image_dark_mode);
-			editor.putBoolean("keep_awake", isChecked);
+			editor.putBoolean(Constants.SETTING.KEEP_AWAKE, isChecked);
 		}
 		editor.apply();
 	}
@@ -211,7 +212,7 @@ public class SettingsActivity extends AppCompatActivity
 		} else {
 			sound = Constants.SOUND.WOOD;
 		}
-		sharedPrefs.edit().putString("sound", sound).apply();
+		sharedPrefs.edit().putString(Constants.SETTING.SOUND, sound).apply();
 		audioUtil.play(audioUtil.getSoundId(sound));
 	}
 }
