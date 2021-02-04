@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
-import xyz.zedler.patrick.tack.MainActivity;
+import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetEmphasisBinding;
 

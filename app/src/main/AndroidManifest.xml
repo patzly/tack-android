@@ -2,8 +2,7 @@
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="xyz.zedler.patrick.tack"
-    android:versionName="@string/app_version">
+    package="xyz.zedler.patrick.tack">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -15,22 +14,20 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Tack"
-        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        tools:ignore="AllowBackup">
 
-        <activity android:name=".MainActivity">
-
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
-        <activity android:name=".AboutActivity" />
+        <activity android:name=".activity.AboutActivity" />
 
-        <activity android:name=".ShortcutActivity" />
+        <activity android:name=".activity.ShortcutActivity" />
 
-        <activity android:name=".SettingsActivity" />
+        <activity android:name=".activity.SettingsActivity" />
 
         <service android:name=".service.MetronomeService" />
 
