@@ -42,6 +42,9 @@
     <color name="mdc_circle">#00e676</color>
     <color name="mdc_overlay">#b2ff59</color>
 
+    <color name="tooltip_background">#ddffffff</color>
+    <color name="tooltip_text">@color/black</color>
+
     <color name="logo_wood">#ede4ac</color>
 
 </resources>

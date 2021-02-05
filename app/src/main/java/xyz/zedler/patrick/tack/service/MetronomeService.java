@@ -40,7 +40,9 @@ public class MetronomeService extends Service implements Runnable {
 
     private Handler handler;
     private int soundId = -1, emphasis, emphasisIndex;
-    private boolean isPlaying, vibrateAlways;
+    private boolean isPlaying;
+    private boolean vibrateAlways;
+    private boolean isBeatModeVibrate;
 
     private TickListener listener;
 
@@ -52,9 +54,10 @@ public class MetronomeService extends Service implements Runnable {
         vibratorUtil = new VibratorUtil(this);
         audioUtil = new AudioUtil(this);
 
-        if (!sharedPrefs.getBoolean(
+        isBeatModeVibrate = sharedPrefs.getBoolean(
                 Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
-        )) {
+        );
+        if (!isBeatModeVibrate) {
             soundId = audioUtil.getCurrentSoundId();
         } else soundId = -1;
 
@@ -153,9 +156,10 @@ public class MetronomeService extends Service implements Runnable {
     }
 
     public void updateTick() {
-        if (!sharedPrefs.getBoolean(
+        isBeatModeVibrate = sharedPrefs.getBoolean(
                 Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
-        )) {
+        );
+        if (!isBeatModeVibrate) {
             soundId = audioUtil.getCurrentSoundId();
             if (!isPlaying) {
                 audioUtil.play(soundId);
@@ -171,6 +175,14 @@ public class MetronomeService extends Service implements Runnable {
 
     public boolean isPlaying() {
         return isPlaying;
+    }
+
+    public boolean vibrateAlways() {
+        return vibrateAlways;
+    }
+
+    public boolean isBeatModeVibrate() {
+        return isBeatModeVibrate;
     }
 
     public int getBpm() {

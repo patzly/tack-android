@@ -109,6 +109,7 @@
     </style>
 
     <style name="Theme.Tack.Tooltip" parent="Widget.MaterialComponents.Tooltip">
+        <item name="backgroundTint">@color/tooltip_background</item>
         <item name="android:textAppearance">@style/TextAppearance.Tack.Tooltip</item>
     </style>
 
@@ -204,6 +205,8 @@
 
     <style name="TextAppearance.Tack.Tooltip" parent="TextAppearance.MaterialComponents.Tooltip">
         <item name="android:textColor">@color/tooltip_text</item>
+        <item name="android:textSize">16sp</item>
+        <item name="fontFamily">@font/text_regular</item>
     </style>
 
 </resources>

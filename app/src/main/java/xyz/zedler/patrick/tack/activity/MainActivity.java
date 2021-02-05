@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity
         MetronomeService.TickListener {
 
     private final static String TAG = MainActivity.class.getSimpleName();
-    private final static boolean DEBUG = false;
 
     private ActivityMainNewBinding binding;
     private SharedPreferences sharedPrefs;
@@ -95,7 +94,7 @@ public class MainActivity extends AppCompatActivity
                 binding.appBarMain,
                 binding.linearMainAppBar,
                 null,
-                true
+                false
         );
 
         logoUtil = new LogoUtil(binding.imageMainLogo);
@@ -158,7 +157,7 @@ public class MainActivity extends AppCompatActivity
                         if (service.getBpm() > 1) {
                             changeBpm(-1);
                             handler.postDelayed(this, nextRun);
-                            if (nextRun > 50) nextRun = (int) (nextRun * 0.9);
+                            if (nextRun > 60) nextRun = (int) (nextRun * 0.9);
                         } else {
                             handler.removeCallbacks(runnable);
                             handler = null;
@@ -198,7 +197,7 @@ public class MainActivity extends AppCompatActivity
                         if (service.getBpm() < 300) {
                             changeBpm(1);
                             handler.postDelayed(this, nextRun);
-                            if (nextRun > 50) nextRun = (int) (nextRun * 0.9);
+                            if (nextRun > 60) nextRun = (int) (nextRun * 0.9);
                         } else {
                             handler.removeCallbacks(runnable);
                             handler = null;
@@ -657,10 +656,11 @@ public class MainActivity extends AppCompatActivity
     private void changeBpm(int change) {
         if (isBound()) {
             setBpm(service.getBpm() + change);
-            vibratorUtil.vibrate(VibratorUtil.TAP);
-            /*if (hapticFeedback && (!isPlaying || (!isBeatModeVibrate && !vibrateAlways))) {
+            if (!service.isPlaying()
+                    || (!service.isBeatModeVibrate() && !service.vibrateAlways())
+            ) {
                 vibratorUtil.vibrate(VibratorUtil.TAP);
-            }*/
+            }
         }
     }
 
