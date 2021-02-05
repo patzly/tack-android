@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.wearable.input.WearableButtons;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -20,11 +19,12 @@ import androidx.wear.widget.SwipeDismissFrameLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
 import xyz.zedler.patrick.tack.util.AudioUtil;
+import xyz.zedler.patrick.tack.util.ButtonUtil;
 import xyz.zedler.patrick.tack.util.ClickUtil;
-import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.util.VibratorUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
@@ -39,6 +39,8 @@ public class MainActivity extends FragmentActivity
     private AudioUtil audioUtil;
     private VibratorUtil vibratorUtil;
     private ClickUtil clickUtil;
+    private ButtonUtil buttonUtilFaster;
+    private ButtonUtil buttonUtilSlower;
     private List<Long> intervals;
     private Handler handler;
     private int bpm;
@@ -71,6 +73,8 @@ public class MainActivity extends FragmentActivity
         audioUtil = new AudioUtil(this);
         vibratorUtil = new VibratorUtil(this);
         clickUtil = new ClickUtil();
+        buttonUtilFaster = new ButtonUtil(this, () -> changeBpm(1));
+        buttonUtilSlower = new ButtonUtil(this, () -> changeBpm(-1));
         handler = new Handler(Looper.getMainLooper());
         intervals = new ArrayList<>();
 
@@ -306,35 +310,32 @@ public class MainActivity extends FragmentActivity
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_NAVIGATE_NEXT:
-                if (wristGestures) {
-                    changeBpm(1);
-                    return true;
-                }
-                break;
-            case KeyEvent.KEYCODE_NAVIGATE_PREVIOUS:
-                if (wristGestures) {
-                    changeBpm(-1);
-                    return true;
-                }
-                break;
-            case KeyEvent.KEYCODE_STEM_1:
-                if (WearableButtons.getButtonCount(this) >= 2) {
-                    onButtonPress();
-                    changeBpm(1);
-                    return true;
-                }
-                break;
-            case KeyEvent.KEYCODE_STEM_2:
-                if (WearableButtons.getButtonCount(this) >= 2) {
-                    onButtonPress();
-                    changeBpm(-1);
-                    return true;
-                }
-                break;
+        if (keyCode == KeyEvent.KEYCODE_NAVIGATE_NEXT && wristGestures) {
+            changeBpm(1);
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_NAVIGATE_PREVIOUS && wristGestures) {
+            changeBpm(-1);
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_STEM_1) {
+            buttonUtilFaster.onPressDown();
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_STEM_2) {
+            buttonUtilSlower.onPressDown();
+            return true;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_STEM_1) {
+            buttonUtilFaster.onPressUp();
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_STEM_2) {
+            buttonUtilSlower.onPressUp();
+            return true;
+        }
+        return super.onKeyUp(keyCode, event);
     }
 
     @Override
