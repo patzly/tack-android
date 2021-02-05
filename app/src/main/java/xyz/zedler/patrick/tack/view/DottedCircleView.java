@@ -59,7 +59,7 @@ public class DottedCircleView extends View {
 
         paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
-        paint.setColor(ContextCompat.getColor(context, R.color.on_background_secondary));
+        paint.setColor(ContextCompat.getColor(context, R.color.picker));
         paint.setStrokeCap(Paint.Cap.ROUND);
         paint.setStrokeWidth(dotSizeMin);
         paint.setAntiAlias(true);
@@ -113,7 +113,7 @@ public class DottedCircleView extends View {
                 paint.getColor(),
                 ContextCompat.getColor(
                         getContext(),
-                        highlighted ? R.color.retro_dirt : R.color.on_background_secondary
+                        highlighted ? R.color.picker_dragged : R.color.picker
                 )
         );
         animatorColor.addUpdateListener(animation -> {

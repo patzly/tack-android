@@ -187,13 +187,13 @@ public class SettingsActivity extends AppCompatActivity
 				onStart();
 			}, 300);
 		} else if (id == R.id.switch_settings_vibrate_always) {
-			//startAnimatedIcon(R.id.image_dark_mode);
+			ViewUtil.startAnimatedIcon(binding.imageSettingsVibrateAlways);
 			editor.putBoolean(Constants.SETTING.VIBRATE_ALWAYS, isChecked);
 		} else if (id == R.id.switch_settings_slider_emphasis) {
 			ViewUtil.startAnimatedIcon(binding.imageSettingsSliderEmphasis);
 			editor.putBoolean(Constants.SETTING.EMPHASIS_SLIDER, isChecked);
 		} else if (id == R.id.switch_settings_keep_awake) {
-			//startAnimatedIcon(R.id.image_dark_mode);
+			ViewUtil.startAnimatedIcon(binding.imageSettingsKeepAwake);
 			editor.putBoolean(Constants.SETTING.KEEP_AWAKE, isChecked);
 		}
 		editor.apply();

@@ -1,7 +1,6 @@
 package xyz.zedler.patrick.tack.fragment;
 
 import android.app.Activity;
-import android.content.res.Configuration;
 import android.graphics.Insets;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +16,8 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
+import xyz.zedler.patrick.tack.R;
+
 
 /**
  * This is an extended BottomSheetDialogFragment class. The one overridden method fixes the
@@ -29,17 +30,15 @@ public class BaseBottomSheetDialogFragment extends BottomSheetDialogFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        int orientation = getResources().getConfiguration().orientation;
-        if (orientation != Configuration.ORIENTATION_LANDSCAPE) return;
         view.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
             BottomSheetDialog dialog = (BottomSheetDialog) getDialog();
             if (dialog == null) return;
 
-            View sheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+            View sheet = dialog.findViewById(R.id.design_bottom_sheet);
             if (sheet == null) return;
 
             Activity activity = getActivity();
-            if (activity == null) return;
+            if(activity == null) return;
 
             BottomSheetBehavior.from(sheet).setPeekHeight(getHalfHeight(activity));
         });

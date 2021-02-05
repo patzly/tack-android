@@ -97,7 +97,10 @@ public class MetronomeService extends Service implements Runnable {
         intent.setAction(ACTION_PAUSE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(
+            NotificationManager manager = (NotificationManager) getSystemService(
+                    Context.NOTIFICATION_SERVICE
+            );
+            manager.createNotificationChannel(
                     new NotificationChannel(
                             CHANNEL_ID,
                             getString(R.string.notification_channel),
@@ -105,25 +108,26 @@ public class MetronomeService extends Service implements Runnable {
                     )
             );
         }
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(
-                this,
-                CHANNEL_ID
-        );
         startForeground(
                 1,
-                builder.setContentTitle(getString(R.string.notification_title))
+                new NotificationCompat.Builder(this, CHANNEL_ID)
+                        .setContentTitle(getString(R.string.notification_title))
                         .setContentText(getString(R.string.notification_desc))
-                        .setColor(ContextCompat.getColor(this, R.color.secondary))
+                        .setColor(ContextCompat.getColor(this, R.color.retro_green_fg))
                         .setSmallIcon(R.drawable.ic_round_tack_notification)
-                        .setContentIntent(PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_ONE_SHOT))
-                        .setPriority(NotificationCompat.PRIORITY_LOW)
+                        .setContentIntent(
+                                PendingIntent.getService(
+                                        this,
+                                        0,
+                                        intent,
+                                        PendingIntent.FLAG_ONE_SHOT
+                                )
+                        ).setPriority(NotificationCompat.PRIORITY_LOW)
                         .setChannelId(CHANNEL_ID)
                         .build()
         );
 
-        if (listener != null) {
-            listener.onStartTicks();
-        }
+        if (listener != null) listener.onStartTicks();
     }
 
     public void pause() {
@@ -131,9 +135,7 @@ public class MetronomeService extends Service implements Runnable {
         stopForeground(true);
         isPlaying = false;
 
-        if (listener != null) {
-            listener.onStopTicks();
-        }
+        if (listener != null) listener.onStopTicks();
     }
 
     public void setBpm(int bpm) {
@@ -156,21 +158,6 @@ public class MetronomeService extends Service implements Runnable {
         }
         emphasis = sharedPrefs.getInt("emphasis", 0);
         vibrateAlways = sharedPrefs.getBoolean("vibrate_always", false);
-    }
-
-    private int getSoundId() {
-        String sound = sharedPrefs.getString("sound", "wood");
-        assert sound != null;
-        switch (sound) {
-            case "click":
-                return R.raw.click;
-            case "ding":
-                return R.raw.ding;
-            case "beep":
-                return R.raw.beep;
-            default:
-                return R.raw.wood;
-        }
     }
 
     public boolean isPlaying() {

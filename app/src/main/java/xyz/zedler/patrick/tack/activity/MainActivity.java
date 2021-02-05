@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity
 
         binding.frameMainLess.setOnTouchListener(new View.OnTouchListener() {
             private Handler handler;
-            private int nextRun = 500;
+            private int nextRun = 400;
             private final Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
@@ -162,7 +162,7 @@ public class MainActivity extends AppCompatActivity
                         } else {
                             handler.removeCallbacks(runnable);
                             handler = null;
-                            nextRun = 500;
+                            nextRun = 400;
                         }
                     }
                 }
@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity
                         if (handler == null) return true;
                         handler.removeCallbacks(runnable);
                         handler = null;
-                        nextRun = 500;
+                        nextRun = 400;
                         break;
                 }
                 return false;
@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity
 
         binding.frameMainMore.setOnTouchListener(new View.OnTouchListener() {
             private Handler handler;
-            private int nextRun = 500;
+            private int nextRun = 400;
             private final Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity
                         } else {
                             handler.removeCallbacks(runnable);
                             handler = null;
-                            nextRun = 500;
+                            nextRun = 400;
                         }
                     }
                 }
@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity
                         if (handler == null) return true;
                         handler.removeCallbacks(runnable);
                         handler = null;
-                        nextRun = 500;
+                        nextRun = 400;
                         break;
                 }
                 return false;
@@ -344,7 +344,7 @@ public class MainActivity extends AppCompatActivity
                 }
                 intervals.add(System.currentTimeMillis() - prevTouchTime);
                 if (intervals.size() > 1) {
-                    setBpm(toBpm(getIntervalAverage()));
+                    setBpm((int) (60000 / getIntervalAverage()));
                 }
             }
             prevTouchTime = System.currentTimeMillis();
@@ -383,8 +383,11 @@ public class MainActivity extends AppCompatActivity
                             getString(R.string.msg_bookmarks_max),
                             Snackbar.LENGTH_LONG
                     ).setAnchorView(binding.fabMain)
-                            .setActionTextColor(ContextCompat.getColor(this, R.color.secondary))
-                            .setAction(
+                            .setActionTextColor(
+                                    ContextCompat.getColor(
+                                            this, R.color.retro_green_fg_invert
+                                    )
+                            ).setAction(
                                     getString(R.string.action_clear_all),
                                     v1 -> {
                                         binding.chipGroupMain.removeAllViews();
@@ -499,10 +502,6 @@ public class MainActivity extends AppCompatActivity
         if (isBound) service.updateTick();
     }
 
-    private static int toBpm(long interval) {
-        return (int) (60000 / interval);
-    }
-
     private Chip newChip(int bpm) {
         Chip chip = new Chip(this);
         chip.setCheckable(true);
@@ -519,7 +518,7 @@ public class MainActivity extends AppCompatActivity
         chip.setChipBackgroundColorResource(R.color.background);
         chip.setText(String.valueOf(bpm));
         chip.setTextAppearance(R.style.TextAppearance_Tack_Chip);
-        chip.setTypeface(ResourcesCompat.getFont(this, R.font.text_bold));
+        chip.setTypeface(ResourcesCompat.getFont(this, R.font.roboto_mono_bold));
         chip.setChipIconVisible(false);
         chip.setChipStrokeWidth(getResources().getDimension(R.dimen.chip_stroke_width));
         chip.setChipStrokeColorResource(R.color.stroke_primary);
@@ -594,7 +593,7 @@ public class MainActivity extends AppCompatActivity
                         animateChip(chip, active);
                     } else {
                         if (active) {
-                            chip.setChipStrokeColorResource(R.color.bookmark_active);
+                            chip.setChipStrokeColorResource(R.color.retro_blue_fg);
                             chip.setChipStrokeWidthResource(R.dimen.chip_stroke_width_active);
                         } else {
                             chip.setChipStrokeColorResource(R.color.stroke_primary);
@@ -610,7 +609,7 @@ public class MainActivity extends AppCompatActivity
         int colorFrom = Objects.requireNonNull(chip.getChipStrokeColor()).getDefaultColor();
         int colorTo = ContextCompat.getColor(
                 this,
-                active ? R.color.bookmark_active : R.color.stroke_primary
+                active ? R.color.retro_blue_fg : R.color.stroke_primary
         );
         ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
         colorAnimation.setDuration(300);

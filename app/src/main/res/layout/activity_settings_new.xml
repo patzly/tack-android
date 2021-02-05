@@ -166,7 +166,7 @@
                 <ImageView
                     android:id="@+id/image_settings_vibrate_always"
                     style="@style/Theme.Tack.ListItem.Icon"
-                    android:src="@drawable/ic_round_vibrate_to_volume_anim"
+                    android:src="@drawable/ic_round_vibration_anim"
                     tools:ignore="ContentDescription" />
 
                 <LinearLayout style="@style/Theme.Tack.ListItem.TextBox.Stretch">
@@ -222,7 +222,7 @@
                 <ImageView
                     android:id="@+id/image_settings_keep_awake"
                     style="@style/Theme.Tack.ListItem.Icon"
-                    android:src="@drawable/ic_round_visibility"
+                    android:src="@drawable/ic_round_preview_anim"
                     tools:ignore="ContentDescription" />
 
                 <LinearLayout style="@style/Theme.Tack.ListItem.TextBox.Stretch">

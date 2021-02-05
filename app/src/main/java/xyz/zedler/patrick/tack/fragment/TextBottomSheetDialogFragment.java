@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
@@ -22,7 +21,7 @@ import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetTextBinding;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
-public class TextBottomSheetDialogFragment extends BottomSheetDialogFragment {
+public class TextBottomSheetDialogFragment extends BaseBottomSheetDialogFragment {
 
 	private final static String TAG = "TextBottomSheetDialog";
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <color name="white">#fff</color>
     <color name="black">#000</color>
@@ -15,11 +15,12 @@
     <color name="retro_yellow_bg">#E2C269</color>
 
     <color name="retro_dirt">#e2d9a2</color>
-    <color name="retro_dirt_fg">#807128</color>
+    <color name="retro_dirt_fg">#bab27c</color>
     <color name="retro_dirt_bg">@color/retro_dirt</color>
 
     <color name="retro_green">#789f8a</color>
     <color name="retro_green_fg">#60837a</color>
+    <color name="retro_green_fg_invert">@color/retro_green</color>
     <color name="retro_green_bg_black">#789f8a</color>
     <color name="retro_green_bg_white">#689283</color>
 
@@ -87,8 +88,10 @@
 
     <color name="tooltip_text">@color/white</color>
 
-    <color name="bpm_picker">@color/retro_red_fg</color>
-    <color name="bookmark_active">@color/retro_yellow</color>
+    <color name="logo_wood">@color/retro_dirt</color>
+
+    <color name="picker">@color/retro_dirt_fg</color>
+    <color name="picker_dragged">@color/retro_red_fg</color>
 
     <color name="splash_dark">@color/retro_dark</color>
 

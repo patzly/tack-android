@@ -11,14 +11,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetChangelogBinding;
 import xyz.zedler.patrick.tack.util.BulletUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 
-public class ChangelogBottomSheetDialogFragment extends BottomSheetDialogFragment {
+public class ChangelogBottomSheetDialogFragment extends BaseBottomSheetDialogFragment {
 
 	private final static String TAG = "ChangelogBottomSheetDialog";
 

@@ -2,7 +2,7 @@
 - New: Edwin typeface
 - New: haptic feedback on tempo change
 - New: animated logo
-- Improved: app icon and changelog appearance
+- Improved: icons and appearance
 - Improved: optimized for Android 11 and internal cleanup
 - Fixed: jump of bpm picker on touch
 - Fixed: annoying bpm jump during rotation
