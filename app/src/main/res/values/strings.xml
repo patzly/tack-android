@@ -1,14 +1,13 @@
 <resources>
 
     <string name="app_name">Tack</string>
-    <string name="app_version" translatable="false">1.6</string>
     <string name="app_developer" translatable="false">Patrick Zedler</string>
     <string name="app_mail" translatable="false">patrick@zedler.xyz</string>
 
     <string name="action_close">Close</string>
     <string name="action_back">Back</string>
-    <string name="action_more">More</string>
-    <string name="action_less">Less</string>
+    <string name="action_more">Faster</string>
+    <string name="action_less">Slower</string>
     <string name="action_play_pause">Play/Pause</string>
     <string name="action_clear_all">Clear all</string>
     <string name="action_tempo_tap">Tap tempo</string>
@@ -37,17 +36,19 @@
     <string name="setting_dark_mode">Force dark mode</string>
     <string name="setting_dark_mode_description">Off for system dependency</string>
     <string name="setting_sound">Beat sound</string>
-    <string name="setting_sound_description">Set to vibrate with beat mode control</string>
+    <string name="setting_sound_description">Set vibration on the start page</string>
     <string name="setting_sound_wood">Wood</string>
     <string name="setting_sound_click">Click</string>
     <string name="setting_sound_ding">Ding</string>
     <string name="setting_sound_beep">Beep</string>
     <string name="setting_vibrate_always">Always vibrate</string>
     <string name="setting_vibrate_always_description">Even with sound</string>
+    <string name="setting_haptic">Haptic feedback</string>
+    <string name="setting_haptic_description">On tempo change</string>
     <string name="setting_slider_emphasis">Use slider input</string>
     <string name="setting_slider_emphasis_description">For emphasis selection</string>
     <string name="setting_keep_awake">Keep screen awake</string>
-    <string name="setting_keep_awake_description">When metronome is playing</string>
+    <string name="setting_keep_awake_description">While metronome is playing</string>
 
     <string name="title_feedback">Feedback</string>
     <string name="title_settings">Settings</string>

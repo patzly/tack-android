@@ -5,14 +5,14 @@
 
     <string name="action_close">Schließen</string>
     <string name="action_back">Zurück</string>
-    <string name="action_more">Mehr</string>
-    <string name="action_less">Weniger</string>
+    <string name="action_more">Schneller</string>
+    <string name="action_less">Langsamer</string>
     <string name="action_play_pause">Start/Pause</string>
     <string name="action_clear_all">Alle löschen</string>
     <string name="action_tempo_tap">Tempo tippen</string>
     <string name="action_emphasis">Betonung</string>
     <string name="action_bookmark">Lesezeichen</string>
-    <string name="action_beat_mode">Modus</string>
+    <string name="action_beat_mode">Schlagmodus</string>
     <string name="action_send_feedback">Feedback senden</string>
     <string name="action_share">Teilen</string>
     <string name="action_share_description">Freunden von Tack erzählen</string>
@@ -25,29 +25,31 @@
     <string name="notification_desc">Tippe, um zu stoppen</string>
     <string name="notification_channel">Metronom</string>
 
-    <string name="msg_bookmarks_max">Bookmark-Limit erreicht</string>
+    <string name="msg_bookmarks_max">Lesezeichen-Limit erreicht</string>
     <string name="msg_feedback">Eine tolle App kostet viel Zeit und lebt von der Rückmeldung ihrer Nutzer.\n\nHaben Sie Wünsche, Anmerkungen oder Fragen? Schreiben Sie mir!\nAnsonsten freue ich mich über eine nette Bewertung im Play Store.</string>
     <string name="msg_share">Schau dir mal diese coole Metronom-App an: \nhttps://play.google.com/store/apps/details?id=xyz.zedler.patrick.tack</string>
 
     <string name="title_bpm">%1$s BPM</string>
     <string name="title_bpm_label">BPM</string>
 
-    <string name="setting_dark_mode">Dunkles Theme erzwingen</string>
+    <string name="setting_dark_mode">Dunkles Design erzwingen</string>
     <string name="setting_dark_mode_description">Aus für Systemabhängigkeit</string>
-    <string name="setting_sound">Schlag-Geräusch</string>
-    <string name="setting_sound_description">Vibration kann auf dem Hauptbildschirm festgelegt werden</string>
+    <string name="setting_sound">Schlaggeräusch</string>
+    <string name="setting_sound_description">Vibration kann auf der Startseite festgelegt werden</string>
     <string name="setting_sound_wood">Holz</string>
     <string name="setting_sound_click">Klick</string>
     <string name="setting_sound_ding">Ding</string>
-    <string name="setting_sound_beep">Beep</string>
+    <string name="setting_sound_beep">Biep</string>
     <string name="setting_vibrate_always">Immer vibrieren</string>
     <string name="setting_vibrate_always_description">Auch mit Ton</string>
-    <string name="setting_slider_emphasis">Regler-Eingabe nutzen</string>
+    <string name="setting_haptic">Haptisches Feedback</string>
+    <string name="setting_haptic_description">Bei Tempowechsel</string>
+    <string name="setting_slider_emphasis">Reglereingabe nutzen</string>
     <string name="setting_slider_emphasis_description">Zur Auswahl der Betonung</string>
     <string name="setting_keep_awake">Bildschirm anlassen</string>
-    <string name="setting_keep_awake_description">Wenn Metronom tickt</string>
+    <string name="setting_keep_awake_description">Während Metronom tickt</string>
 
-    <string name="title_feedback">Feedback</string>
+    <string name="title_feedback">Rückmeldung</string>
     <string name="title_settings">Einstellungen</string>
     <string name="title_about">Über</string>
 
