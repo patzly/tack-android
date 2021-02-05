@@ -6,8 +6,7 @@
 - New: Italian translation, please mail to patrick@zedler.xyz for corrections!
 - Improved: app icon, colors, changelog and onboarding
 - Improved: accuracy of rotary input
-- Improved: support for different screen sizes
-- Improved: much better layout organization and no restart after layout change
+- Improved: much better layout management and support for different screen sizes
 - Improved: optimized for Android 11 and internal cleanup
 - Improved: warning if watch has no audio output
 - Improved: side button long-press behavior

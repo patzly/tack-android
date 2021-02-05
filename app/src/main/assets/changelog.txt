@@ -1,3 +1,6 @@
+2.0.1:
+- Fixed: beat mode icon
+
 2.0.0:
 - New: Edwin typeface
 - New: haptic feedback on tempo change
