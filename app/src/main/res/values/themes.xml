@@ -33,10 +33,6 @@
         <item name="android:navigationBarColor">@color/black</item>
     </style>
 
-    <style name="Theme.Tack.LandNavBarDivider" parent="Theme.Tack"/>
-
-    <style name="Theme.Tack.NavBarDivider" parent="Theme.Tack"/>
-
     <style name="Base.Tack.BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary</item>

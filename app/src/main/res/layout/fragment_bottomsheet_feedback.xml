@@ -45,6 +45,7 @@
                 android:breakStrategy="high_quality"
                 android:hyphenationFrequency="full"
                 android:justificationMode="inter_word"
+                android:fontFamily="@font/text_italic"
                 android:textAppearance="@style/TextAppearance.Tack.BottomSheet.Text"
                 tools:targetApi="o"/>
 

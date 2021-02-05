@@ -104,7 +104,7 @@
             </LinearLayout>
 
             <LinearLayout
-                style="@style/Theme.Tack.ListItem.SingleLine"
+                style="@style/Theme.Tack.ListItem.TwoLine"
                 android:orientation="horizontal"
                 android:paddingStart="0dp"
                 android:paddingEnd="16dp">

@@ -26,11 +26,12 @@ android {
                 getDefaultProguardFile('proguard-android-optimize.txt')
                 'proguard-rules.pro'
             }
+            debuggable false
         }
     }
     compileOptions {
-        targetCompatibility JavaVersion.VERSION_1_8
-        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility = 1.8
+        sourceCompatibility = 1.8
     }
     buildToolsVersion '30.0.3'
 }

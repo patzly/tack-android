@@ -44,6 +44,7 @@ public class BaseBottomSheetDialogFragment extends BottomSheetDialogFragment {
         });
     }
 
+    @SuppressWarnings("deprecation")
     private static int getHalfHeight(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             WindowMetrics windowMetrics = activity.getWindowManager().getCurrentWindowMetrics();

@@ -4,7 +4,6 @@
     <string name="app_developer" translatable="false">Patrick Zedler</string>
     <string name="app_mail" translatable="false">patrick@zedler.xyz</string>
 
-    <string name="action_close">Close</string>
     <string name="action_back">Back</string>
     <string name="action_more">Faster</string>
     <string name="action_less">Slower</string>

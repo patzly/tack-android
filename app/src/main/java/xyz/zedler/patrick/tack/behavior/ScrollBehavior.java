@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 
 import androidx.annotation.ColorRes;
-import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
@@ -121,27 +120,6 @@ public class ScrollBehavior {
 				appBarLayout,
 				viewAppBar,
 				scrollView,
-				liftOnScroll,
-				false,
-				true
-		);
-	}
-
-	/**
-	 * Initialize scroll behavior
-	 */
-	public void setUpScroll(
-			@NonNull Activity activity,
-			@IdRes int appBarLayoutId,
-			@IdRes int viewAppBarId,
-			@IdRes int scrollViewId,
-			boolean liftOnScroll
-	) {
-		setUpScroll(
-				activity,
-				activity.findViewById(appBarLayoutId),
-				activity.findViewById(viewAppBarId),
-				activity.findViewById(scrollViewId),
 				liftOnScroll,
 				false,
 				true
@@ -292,29 +270,6 @@ public class ScrollBehavior {
 				setNavBarDividerColor(R.color.stroke_secondary);
 			}
 		} else if (DEBUG) Log.wtf(TAG, "setNavBarDividerVisibility: activity is null!?");
-	}
-
-	/**
-	 * Shows navBarDivider in portrait and/or landscape mode independent of the scrollView
-	 */
-	public void setNavBarDividerVisibility(boolean portrait, boolean landscape) {
-		if (activity != null) {
-			int orientation = activity.getResources().getConfiguration().orientation;
-			if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-				if (portrait) {
-					setNavBarDividerColor(R.color.stroke_secondary);
-				} else {
-					setNavBarDividerColor(R.color.transparent);
-				}
-				if (DEBUG) Log.i(TAG, "setNavBarDividerVisibility(" + showNavBarDivider + ")");
-			} else {
-				if (landscape) {
-					setNavBarDividerColor(R.color.stroke_secondary);
-				} else {
-					setNavBarDividerColor(R.color.transparent);
-				}
-			}
-		} else if (DEBUG) Log.wtf(TAG, "setNavBarDividerVisibility(): activity is null!?");
 	}
 
 	/**

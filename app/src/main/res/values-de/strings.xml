@@ -3,7 +3,6 @@
 
     <string name="app_name">Tack</string>
 
-    <string name="action_close">Schließen</string>
     <string name="action_back">Zurück</string>
     <string name="action_more">Schneller</string>
     <string name="action_less">Langsamer</string>
