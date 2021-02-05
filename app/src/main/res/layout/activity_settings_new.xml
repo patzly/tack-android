@@ -188,6 +188,34 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/linear_settings_haptic"
+                style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
+
+                <ImageView
+                    android:id="@+id/image_settings_haptic"
+                    style="@style/Theme.Tack.ListItem.Icon"
+                    android:src="@drawable/ic_round_filter_tilt_shift_anim"
+                    tools:ignore="ContentDescription" />
+
+                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox.Stretch">
+
+                    <TextView
+                        style="@style/Theme.Tack.ListItem.Title"
+                        android:text="@string/setting_haptic" />
+
+                    <TextView
+                        style="@style/Theme.Tack.ListItem.Description"
+                        android:text="@string/setting_haptic_description" />
+
+                </LinearLayout>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_settings_haptic"
+                    style="@style/Widget.Tack.Switch"/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/linear_settings_slider_emphasis"
                 style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
 

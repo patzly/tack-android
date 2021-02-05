@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity
     private final List<Long> intervals = new ArrayList<>();
 
     private boolean isBound;
+    private boolean hapticFeedback;
     private MetronomeService service;
     private LogoUtil logoUtil;
     private ClickUtil clickUtil;
@@ -311,6 +312,15 @@ public class MainActivity extends AppCompatActivity
             isBound = false;
         }
         super.onStop();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        hapticFeedback = sharedPrefs.getBoolean(
+                Constants.SETTING.HAPTIC_FEEDBACK, Constants.DEF.HAPTIC_FEEDBACK
+        );
     }
 
     @Override
@@ -656,8 +666,9 @@ public class MainActivity extends AppCompatActivity
     private void changeBpm(int change) {
         if (isBound()) {
             setBpm(service.getBpm() + change);
-            if (!service.isPlaying()
-                    || (!service.isBeatModeVibrate() && !service.vibrateAlways())
+            if (hapticFeedback
+                    && (!service.isPlaying()
+                    || (!service.isBeatModeVibrate() && !service.vibrateAlways()))
             ) {
                 vibratorUtil.vibrate(VibratorUtil.TAP);
             }

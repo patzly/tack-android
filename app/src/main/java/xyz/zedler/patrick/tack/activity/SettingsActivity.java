@@ -94,6 +94,12 @@ public class SettingsActivity extends AppCompatActivity
 				)
 		);
 
+		binding.switchSettingsHaptic.setChecked(
+				sharedPrefs.getBoolean(
+						Constants.SETTING.HAPTIC_FEEDBACK, Constants.DEF.HAPTIC_FEEDBACK
+				)
+		);
+
 		binding.switchSettingsSliderEmphasis.setChecked(
 				sharedPrefs.getBoolean(
 						Constants.SETTING.EMPHASIS_SLIDER, Constants.DEF.EMPHASIS_SLIDER
@@ -108,6 +114,7 @@ public class SettingsActivity extends AppCompatActivity
 				this,
 				binding.linearSettingsDarkMode,
 				binding.linearSettingsVibrateAlways,
+				binding.linearSettingsHaptic,
 				binding.linearSettingsSliderEmphasis,
 				binding.linearSettingsKeepAwake
 		);
@@ -116,6 +123,7 @@ public class SettingsActivity extends AppCompatActivity
 				this,
 				binding.switchSettingsDarkMode,
 				binding.switchSettingsVibrateAlways,
+				binding.switchSettingsHaptic,
 				binding.switchSettingsSliderEmphasis,
 				binding.switchSettingsKeepAwake
 		);
@@ -154,6 +162,10 @@ public class SettingsActivity extends AppCompatActivity
 			binding.switchSettingsVibrateAlways.setChecked(
 					!binding.switchSettingsVibrateAlways.isChecked()
 			);
+		} else if (id == R.id.linear_settings_haptic) {
+			binding.switchSettingsHaptic.setChecked(
+					!binding.switchSettingsHaptic.isChecked()
+			);
 		} else if (id == R.id.linear_settings_slider_emphasis) {
 			binding.switchSettingsSliderEmphasis.setChecked(
 					!binding.switchSettingsSliderEmphasis.isChecked()
@@ -189,6 +201,9 @@ public class SettingsActivity extends AppCompatActivity
 		} else if (id == R.id.switch_settings_vibrate_always) {
 			ViewUtil.startAnimatedIcon(binding.imageSettingsVibrateAlways);
 			editor.putBoolean(Constants.SETTING.VIBRATE_ALWAYS, isChecked);
+		} else if (id == R.id.switch_settings_haptic) {
+			ViewUtil.startAnimatedIcon(binding.imageSettingsHaptic);
+			editor.putBoolean(Constants.SETTING.HAPTIC_FEEDBACK, isChecked);
 		} else if (id == R.id.switch_settings_slider_emphasis) {
 			ViewUtil.startAnimatedIcon(binding.imageSettingsSliderEmphasis);
 			editor.putBoolean(Constants.SETTING.EMPHASIS_SLIDER, isChecked);
