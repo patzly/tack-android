@@ -9,6 +9,7 @@
     <string name="action_back">Back</string>
     <string name="action_more">More</string>
     <string name="action_less">Less</string>
+    <string name="action_play_pause">Play/Pause</string>
     <string name="action_clear_all">Clear all</string>
     <string name="action_tempo_tap">Tap tempo</string>
     <string name="action_emphasis">Emphasis</string>

@@ -18,7 +18,7 @@ import androidx.fragment.app.DialogFragment;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
-import xyz.zedler.patrick.tack.databinding.ActivitySettingBinding;
+import xyz.zedler.patrick.tack.databinding.ActivitySettingsNewBinding;
 import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.util.AudioUtil;
 import xyz.zedler.patrick.tack.util.ClickUtil;
@@ -28,7 +28,7 @@ public class SettingsActivity extends AppCompatActivity
 		implements View.OnClickListener, CompoundButton.OnCheckedChangeListener,
 		RadioGroup.OnCheckedChangeListener {
 
-	private ActivitySettingBinding binding;
+	private ActivitySettingsNewBinding binding;
 	private SharedPreferences sharedPrefs;
 	private ClickUtil clickUtil;
 	private AudioUtil audioUtil;
@@ -37,7 +37,7 @@ public class SettingsActivity extends AppCompatActivity
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		binding = ActivitySettingBinding.inflate(getLayoutInflater());
+		binding = ActivitySettingsNewBinding.inflate(getLayoutInflater());
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
 		boolean forceDarkMode = sharedPrefs.getBoolean(

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
-    android:id="@+id/coordinator_container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_main"
@@ -13,7 +13,7 @@
         android:layout_height="?android:actionBarSize">
 
         <LinearLayout
-            android:id="@+id/linear_app_bar_main"
+            android:id="@+id/linear_main_app_bar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
@@ -72,7 +72,7 @@
             android:gravity="center_vertical">
 
             <FrameLayout
-                android:id="@+id/frame_less"
+                android:id="@+id/frame_main_less"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginEnd="16dp"
@@ -85,7 +85,7 @@
                 tools:targetApi="o">
 
                 <ImageView
-                    android:id="@+id/image_less"
+                    android:id="@+id/image_main_less"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center"
@@ -99,22 +99,27 @@
                 android:layout_height="wrap_content">
 
                 <xyz.zedler.patrick.tack.view.BpmPickerView
-                    android:id="@+id/bpm_picker"
+                    android:id="@+id/bpm_picker_main"
                     android:layout_width="@dimen/bpm_picker_size"
                     android:layout_height="@dimen/bpm_picker_size"
                     android:importantForAccessibility="yes"/>
 
-                <LinearLayout
+                <xyz.zedler.patrick.tack.view.DottedCircleView
+                    android:id="@+id/dotted_circle_main"
+                    android:layout_width="@dimen/bpm_picker_size"
+                    android:layout_height="@dimen/bpm_picker_size" />
+
+                <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_gravity="center"
                     tools:ignore="SpUsage">
 
                     <TextView
-                        android:id="@+id/text_bpm"
+                        android:id="@+id/text_main_bpm"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
                         android:textColor="@color/on_background"
                         android:layout_gravity="center_horizontal|top"
                         android:fontFamily="@font/text_bold"
@@ -129,12 +134,12 @@
                         android:layout_gravity="center_horizontal|bottom"
                         android:textSize="15dp"/>
 
-                </LinearLayout>
+                </FrameLayout>
 
             </FrameLayout>
 
             <FrameLayout
-                android:id="@+id/frame_more"
+                android:id="@+id/frame_main_more"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_marginStart="16dp"
@@ -147,7 +152,7 @@
                 tools:targetApi="o">
 
                 <ImageView
-                    android:id="@+id/image_more"
+                    android:id="@+id/image_main_more"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_gravity="center"
@@ -159,7 +164,7 @@
         </LinearLayout>
 
         <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chip_group"
+            android:id="@+id/chip_group_main"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
@@ -180,7 +185,7 @@
         android:clipToPadding="false">
 
         <FrameLayout
-            android:id="@+id/frame_emphasis"
+            android:id="@+id/frame_main_emphasis"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginEnd="8dp"
@@ -193,7 +198,7 @@
             tools:targetApi="o">
 
             <ImageView
-                android:id="@+id/image_emphasis"
+                android:id="@+id/image_main_emphasis"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center"
@@ -202,7 +207,7 @@
                 android:src="@drawable/ic_round_emphasis_anim" />
 
             <TextView
-                android:id="@+id/text_emphasis"
+                android:id="@+id/text_main_emphasis"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -217,7 +222,7 @@
         </FrameLayout>
 
         <FrameLayout
-            android:id="@+id/frame_tempo_tap"
+            android:id="@+id/frame_main_tempo_tap"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginEnd="16dp"
@@ -230,7 +235,7 @@
             tools:targetApi="o">
 
             <ImageView
-                android:id="@+id/image_tempo_tap"
+                android:id="@+id/image_main_tempo_tap"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center"
@@ -240,16 +245,19 @@
         </FrameLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
+            android:id="@+id/fab_main"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_round_play_to_pause_anim"
             android:tint="@color/on_secondary"
+            android:contentDescription="@string/action_play_pause"
+            android:tooltipText="@string/action_play_pause"
             app:backgroundTint="@color/retro_green_bg_white"
-            app:rippleColor="@color/highlight_on_secondary" />
+            app:rippleColor="@color/highlight_on_secondary"
+            tools:targetApi="o" />
 
         <FrameLayout
-            android:id="@+id/frame_bookmark"
+            android:id="@+id/frame_main_bookmark"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="16dp"
@@ -262,7 +270,7 @@
             tools:targetApi="o">
 
             <ImageView
-                android:id="@+id/image_bookmark"
+                android:id="@+id/image_main_bookmark"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center"
@@ -272,7 +280,7 @@
         </FrameLayout>
 
         <FrameLayout
-            android:id="@+id/frame_beat_mode"
+            android:id="@+id/frame_main_beat_mode"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_marginStart="8dp"
@@ -285,7 +293,7 @@
             tools:targetApi="o">
 
             <ImageView
-                android:id="@+id/image_beat_mode"
+                android:id="@+id/image_main_beat_mode"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_gravity="center"

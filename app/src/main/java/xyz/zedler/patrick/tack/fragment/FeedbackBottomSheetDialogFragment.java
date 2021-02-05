@@ -21,8 +21,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetFeedbackBinding;
-import xyz.zedler.patrick.tack.util.IconUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFragment {
 
@@ -53,7 +53,7 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
 		sharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity);
 
 		binding.linearFeedbackRate.setOnClickListener(v -> {
-			IconUtil.start(binding.imageFeedbackRate);
+			ViewUtil.startAnimatedIcon(binding.imageFeedbackRate);
 			Uri uri = Uri.parse(
 					"market://details?id=" + activity.getApplicationContext().getPackageName()
 			);

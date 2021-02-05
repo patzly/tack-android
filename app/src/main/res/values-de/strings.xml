@@ -7,6 +7,7 @@
     <string name="action_back">Zurück</string>
     <string name="action_more">Mehr</string>
     <string name="action_less">Weniger</string>
+    <string name="action_play_pause">Start/Pause</string>
     <string name="action_clear_all">Alle löschen</string>
     <string name="action_tempo_tap">Tempo tippen</string>
     <string name="action_emphasis">Betonung</string>

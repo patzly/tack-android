@@ -7,15 +7,11 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.AudioAttributes;
-import android.media.SoundPool;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.preference.PreferenceManager;
 
 import androidx.annotation.Nullable;
@@ -23,6 +19,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
 import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.util.AudioUtil;
+import xyz.zedler.patrick.tack.util.VibratorUtil;
 
 public class MetronomeService extends Service implements Runnable {
 
@@ -34,15 +32,14 @@ public class MetronomeService extends Service implements Runnable {
     private final IBinder binder = new LocalBinder();
 
     private SharedPreferences sharedPrefs;
+    private VibratorUtil vibratorUtil;
+    private AudioUtil audioUtil;
     private int bpm;
     private long interval;
 
-    private SoundPool soundPool;
     private Handler handler;
     private int soundId = -1, emphasis, emphasisIndex;
     private boolean isPlaying, vibrateAlways;
-
-    private Vibrator vibrator;
 
     private TickListener listener;
 
@@ -51,18 +48,11 @@ public class MetronomeService extends Service implements Runnable {
         super.onCreate();
 
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
-        soundPool = new SoundPool.Builder()
-                .setMaxStreams(1)
-                .setAudioAttributes(new AudioAttributes.Builder()
-                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                        .build())
-                .build();
+        vibratorUtil = new VibratorUtil(this);
+        audioUtil = new AudioUtil(this);
 
         if (!sharedPrefs.getBoolean("beat_mode_vibrate", true)) {
-            soundId = soundPool.load(this, getSoundId(), 1);
+            soundId = audioUtil.getCurrentSoundId();
         } else soundId = -1;
 
         interval = sharedPrefs.getLong("interval", 500);
@@ -157,11 +147,13 @@ public class MetronomeService extends Service implements Runnable {
 
     public void updateTick() {
         if (!sharedPrefs.getBoolean("beat_mode_vibrate", true)) {
-            soundId = soundPool.load(this, getSoundId(), 1);
+            soundId = audioUtil.getCurrentSoundId();
             if (!isPlaying) {
-                soundPool.play(soundId, 1, 1, 0, 0, 1);
+                audioUtil.play(soundId);
             }
-        } else soundId = -1;
+        } else {
+            soundId = -1;
+        }
         emphasis = sharedPrefs.getInt("emphasis", 0);
         vibrateAlways = sharedPrefs.getBoolean("vibrate_always", false);
     }
@@ -224,18 +216,10 @@ public class MetronomeService extends Service implements Runnable {
             }
 
             if (soundId != -1) {
-                soundPool.play(soundId, 1, 1, 0, 0, isEmphasis ? 1.5f : 1);
-                if (vibrateAlways) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        vibrator.vibrate(VibrationEffect.createOneShot(isEmphasis ? 50 : 20, VibrationEffect.DEFAULT_AMPLITUDE));
-                    } else {
-                        vibrator.vibrate(isEmphasis ? 50 : 20);
-                    }
-                }
-            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createOneShot(isEmphasis ? 50 : 20, VibrationEffect.DEFAULT_AMPLITUDE));
+                audioUtil.play(soundId, isEmphasis);
+                if (vibrateAlways) vibratorUtil.vibrate(isEmphasis);
             } else {
-                vibrator.vibrate(isEmphasis ? 50 : 20);
+                vibratorUtil.vibrate(isEmphasis);
             }
 
             if (listener != null) {
