@@ -47,6 +47,7 @@ import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.databinding.ActivityMainNewBinding;
 import xyz.zedler.patrick.tack.fragment.EmphasisBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
+import xyz.zedler.patrick.tack.fragment.WearBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.util.ClickUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
@@ -106,7 +107,10 @@ public class MainActivity extends AppCompatActivity
             if (clickUtil.isDisabled()) return false;
 
             int itemId = item.getItemId();
-            if (itemId == R.id.action_settings) {
+            if (itemId == R.id.action_wear) {
+                DialogFragment fragment = new WearBottomSheetDialogFragment();
+                fragment.show(getSupportFragmentManager(), fragment.toString());
+            } else if (itemId == R.id.action_settings) {
                 startActivity(new Intent(this, SettingsActivity.class));
             } else if (itemId == R.id.action_about) {
                 startActivity(new Intent(this, AboutActivity.class));

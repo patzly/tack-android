@@ -27,9 +27,11 @@
     <string name="msg_bookmarks_max">Lesezeichen-Limit erreicht</string>
     <string name="msg_feedback">Eine tolle App kostet viel Zeit und lebt von der Rückmeldung ihrer Nutzer.\n\nHaben Sie Wünsche, Anmerkungen oder Fragen? Schreiben Sie mir!\nAnsonsten freue ich mich über eine nette Bewertung im Play Store.</string>
     <string name="msg_share">Schau dir mal diese coole Metronom-App an: \nhttps://play.google.com/store/apps/details?id=xyz.zedler.patrick.tack</string>
+    <string name="msg_wear">Tack ist auch auf Wear OS Smartwatches erhältlich! Alle Funktionen der Smartphone-App und noch mehr, immer bereit an deinem Handgelenk.</string>
 
     <string name="title_bpm">%1$s BPM</string>
     <string name="title_bpm_label">BPM</string>
+    <string name="title_wear">Tack für Wear OS</string>
 
     <string name="setting_dark_mode">Dunkles Design erzwingen</string>
     <string name="setting_dark_mode_description">Aus für Systemabhängigkeit</string>

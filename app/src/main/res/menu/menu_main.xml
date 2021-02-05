@@ -4,6 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_wear"
+        android:title="@string/title_wear"
+        android:icon="@drawable/ic_round_watch"
+        app:showAsAction="ifRoom"/>
+
+    <item
         android:id="@+id/action_settings"
         android:title="@string/title_settings"
         app:showAsAction="never"/>
