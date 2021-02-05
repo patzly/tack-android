@@ -6,7 +6,8 @@ public final class Constants {
         public final static String BEAT_MODE_VIBRATE = "beat_mode_vibrate";
         public final static String INTERVAL = "interval";
         public final static String EMPHASIS = "emphasis";
-        public final static String BOOKMARK = "bookmark";
+        public final static String BOOKMARKS = "bookmarks";
+        public final static String FEEDBACK_POP_UP = "feedback_pop_up";
     }
 
     public final static class DEF {

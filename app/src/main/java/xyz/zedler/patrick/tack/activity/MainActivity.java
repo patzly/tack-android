@@ -30,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.DialogFragment;
 
 import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
@@ -40,6 +41,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.databinding.ActivityMainNewBinding;
@@ -82,7 +84,7 @@ public class MainActivity extends AppCompatActivity
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         AppCompatDelegate.setDefaultNightMode(
-                sharedPrefs.getBoolean("force_dark_mode",false)
+                sharedPrefs.getBoolean(Constants.SETTING.DARK_MODE,Constants.DEF.DARK_MODE)
                         ? AppCompatDelegate.MODE_NIGHT_YES
                         : AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
         );
@@ -111,16 +113,14 @@ public class MainActivity extends AppCompatActivity
             } else if (itemId == R.id.action_share) {
                 ResUtil.share(this, R.string.msg_share);
             } else if (itemId == R.id.action_feedback) {
-                new FeedbackBottomSheetDialogFragment().show(
-                        getSupportFragmentManager(),
-                        "feedback"
-                );
+                DialogFragment fragment = new FeedbackBottomSheetDialogFragment();
+                fragment.show(getSupportFragmentManager(), fragment.toString());
             }
             return true;
         });
 
         binding.textMainEmphasis.setText(
-                String.valueOf(sharedPrefs.getInt("emphasis", 0))
+                String.valueOf(sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS))
         );
 
         binding.bpmPickerMain.setOnRotationListener(new BpmPickerView.OnRotationListener() {
@@ -239,8 +239,12 @@ public class MainActivity extends AppCompatActivity
                 binding.fabMain
         );
 
-        boolean vibrateAlways = sharedPrefs.getBoolean("vibrate_always", false);
-        if (sharedPrefs.getBoolean("beat_mode_vibrate", true)) {
+        boolean vibrateAlways = sharedPrefs.getBoolean(
+                Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+        );
+        if (sharedPrefs.getBoolean(
+                Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
+        )) {
             binding.imageMainBeatMode.setImageResource(
                     vibrateAlways
                             ? R.drawable.ic_round_volume_off_to_volume_on_anim
@@ -256,7 +260,7 @@ public class MainActivity extends AppCompatActivity
 
         setButtonStates();
 
-        String prefBookmarks = sharedPrefs.getString("bookmarks", null);
+        String prefBookmarks = sharedPrefs.getString(Constants.PREF.BOOKMARKS, null);
         List<String> bookmarksArray;
         if (prefBookmarks != null) {
             bookmarksArray = Arrays.asList(prefBookmarks.split(","));
@@ -273,15 +277,13 @@ public class MainActivity extends AppCompatActivity
             binding.chipGroupMain.addView(newChip(bookmarks.get(i)));
         }
 
-        int feedback = sharedPrefs.getInt("feedback_pop_up", 1);
+        int feedback = sharedPrefs.getInt(Constants.PREF.FEEDBACK_POP_UP, 1);
         if (feedback > 0) {
             if (feedback < 5) {
-                sharedPrefs.edit().putInt("feedback_pop_up", feedback + 1).apply();
+                sharedPrefs.edit().putInt(Constants.PREF.FEEDBACK_POP_UP, feedback + 1).apply();
             } else {
-                new FeedbackBottomSheetDialogFragment().show(
-                        getSupportFragmentManager(),
-                        "feedback"
-                );
+                DialogFragment fragment = new FeedbackBottomSheetDialogFragment();
+                fragment.show(getSupportFragmentManager(), fragment.toString());
             }
         }
     }
@@ -349,9 +351,15 @@ public class MainActivity extends AppCompatActivity
             }
             prevTouchTime = System.currentTimeMillis();
         } else if (id == R.id.frame_main_beat_mode) {
-            boolean beatModeVibrateNew = !sharedPrefs.getBoolean("beat_mode_vibrate", true);
-            boolean vibrateAlways = sharedPrefs.getBoolean("vibrate_always", false);
-            sharedPrefs.edit().putBoolean("beat_mode_vibrate", beatModeVibrateNew).apply();
+            boolean beatModeVibrateNew = !sharedPrefs.getBoolean(
+                    Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
+            );
+            boolean vibrateAlways = sharedPrefs.getBoolean(
+                    Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+            );
+            sharedPrefs.edit()
+                    .putBoolean(Constants.PREF.BEAT_MODE_VIBRATE, beatModeVibrateNew)
+                    .apply();
             if (isBound()) service.updateTick();
             ViewUtil.startAnimatedIcon(binding.imageMainBeatMode);
             new Handler(Looper.getMainLooper()).postDelayed(() -> {
@@ -400,10 +408,11 @@ public class MainActivity extends AppCompatActivity
             }
         } else if (id == R.id.frame_main_emphasis) {
             ViewUtil.startAnimatedIcon(binding.imageMainEmphasis);
-            if (sharedPrefs.getBoolean("emphasis_slider", false)) {
-                new EmphasisBottomSheetDialogFragment().show(
-                        getSupportFragmentManager(), "emphasis"
-                );
+            if (sharedPrefs.getBoolean(
+                    Constants.SETTING.EMPHASIS_SLIDER, Constants.DEF.EMPHASIS_SLIDER
+            )) {
+                DialogFragment fragment = new EmphasisBottomSheetDialogFragment();
+                fragment.show(getSupportFragmentManager(), fragment.toString());
             } else {
                 setNextEmphasis();
             }
@@ -417,15 +426,21 @@ public class MainActivity extends AppCompatActivity
         service.setTickListener(this);
         isBound = true;
 
-        if (sharedPrefs.getBoolean("beat_mode_vibrate", true)) {
+        if (sharedPrefs.getBoolean(
+                Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
+        )) {
             binding.imageMainBeatMode.setImageResource(
-                    sharedPrefs.getBoolean("vibrate_always", false)
+                    sharedPrefs.getBoolean(
+                            Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+                    )
                             ? R.drawable.ic_round_volume_off_to_volume_on_anim
                             : R.drawable.ic_round_vibrate_to_volume_anim
             );
         } else {
             binding.imageMainBeatMode.setImageResource(
-                    sharedPrefs.getBoolean("vibrate_always", false)
+                    sharedPrefs.getBoolean(
+                            Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+                    )
                             ? R.drawable.ic_round_volume_on_to_volume_off_anim
                             : R.drawable.ic_round_volume_to_vibrate_anim
             );
@@ -481,14 +496,14 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setNextEmphasis() {
-        int emphasis = sharedPrefs.getInt("emphasis", 0);
+        int emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS);
         int emphasisNew;
         if (emphasis < 6) {
             emphasisNew = emphasis + 1;
         } else {
             emphasisNew = 0;
         }
-        sharedPrefs.edit().putInt("emphasis", emphasisNew).apply();
+        sharedPrefs.edit().putInt(Constants.PREF.EMPHASIS, emphasisNew).apply();
         new Handler(Looper.getMainLooper()).postDelayed(
                 () -> binding.textMainEmphasis.setText(String.valueOf(emphasisNew)),
                 150
@@ -497,7 +512,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void setEmphasis(int emphasis) {
-        sharedPrefs.edit().putInt("emphasis", emphasis).apply();
+        sharedPrefs.edit().putInt(Constants.PREF.EMPHASIS, emphasis).apply();
         binding.textMainEmphasis.setText(String.valueOf(emphasis));
         if (isBound) service.updateTick();
     }
@@ -528,7 +543,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void keepScreenAwake(boolean keepAwake) {
-        if (keepAwake && sharedPrefs.getBoolean("keep_awake", true)) {
+        if (keepAwake
+                && sharedPrefs.getBoolean(Constants.SETTING.KEEP_AWAKE, Constants.DEF.KEEP_AWAKE
+        )) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         } else {
             getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -540,7 +557,7 @@ public class MainActivity extends AppCompatActivity
         for(Integer bpm : bookmarks) {
             stringBuilder.append(bpm).append(",");
         }
-        sharedPrefs.edit().putString("bookmarks", stringBuilder.toString()).apply();
+        sharedPrefs.edit().putString(Constants.PREF.BOOKMARKS, stringBuilder.toString()).apply();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
             Collections.sort(bookmarks);
             ShortcutManager manager = (ShortcutManager) getSystemService(Context.SHORTCUT_SERVICE);

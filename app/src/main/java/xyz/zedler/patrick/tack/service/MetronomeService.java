@@ -18,6 +18,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.AudioUtil;
 import xyz.zedler.patrick.tack.util.VibratorUtil;
@@ -51,13 +52,17 @@ public class MetronomeService extends Service implements Runnable {
         vibratorUtil = new VibratorUtil(this);
         audioUtil = new AudioUtil(this);
 
-        if (!sharedPrefs.getBoolean("beat_mode_vibrate", true)) {
+        if (!sharedPrefs.getBoolean(
+                Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
+        )) {
             soundId = audioUtil.getCurrentSoundId();
         } else soundId = -1;
 
-        interval = sharedPrefs.getLong("interval", 500);
-        emphasis = sharedPrefs.getInt("emphasis", 0);
-        vibrateAlways = sharedPrefs.getBoolean("vibrate_always", false);
+        interval = sharedPrefs.getLong(Constants.PREF.INTERVAL, Constants.DEF.INTERVAL);
+        emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS);
+        vibrateAlways = sharedPrefs.getBoolean(
+                Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+        );
         bpm = toBpm(interval);
 
         handler = new Handler(Looper.getMainLooper());
@@ -141,14 +146,16 @@ public class MetronomeService extends Service implements Runnable {
     public void setBpm(int bpm) {
         this.bpm = bpm;
         interval = toInterval(bpm);
-        sharedPrefs.edit().putLong("interval", interval).apply();
+        sharedPrefs.edit().putLong(Constants.PREF.INTERVAL, interval).apply();
         if (listener != null) {
             listener.onBpmChanged(bpm);
         }
     }
 
     public void updateTick() {
-        if (!sharedPrefs.getBoolean("beat_mode_vibrate", true)) {
+        if (!sharedPrefs.getBoolean(
+                Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
+        )) {
             soundId = audioUtil.getCurrentSoundId();
             if (!isPlaying) {
                 audioUtil.play(soundId);
@@ -156,8 +163,10 @@ public class MetronomeService extends Service implements Runnable {
         } else {
             soundId = -1;
         }
-        emphasis = sharedPrefs.getInt("emphasis", 0);
-        vibrateAlways = sharedPrefs.getBoolean("vibrate_always", false);
+        emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS);
+        vibrateAlways = sharedPrefs.getBoolean(
+                Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+        );
     }
 
     public boolean isPlaying() {
@@ -223,11 +232,8 @@ public class MetronomeService extends Service implements Runnable {
 
     public interface TickListener {
         void onStartTicks();
-
         void onTick(long interval, boolean isEmphasis, int index);
-
         void onBpmChanged(int bpm);
-
         void onStopTicks();
     }
 }
