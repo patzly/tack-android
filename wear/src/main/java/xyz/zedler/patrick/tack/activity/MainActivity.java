@@ -142,6 +142,7 @@ public class MainActivity extends FragmentActivity
 
             @Override
             public void onPickUpOrCancel() {
+                if (binding == null) return;
                 binding.swipeDismiss.setSwipeable(true);
                 binding.dottedCircle.setHighlighted(false, animations);
             }
