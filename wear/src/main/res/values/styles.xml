@@ -1,6 +1,6 @@
 <resources>
 
-    <style name="Widget.Tack.Title" parent="Widget.AppCompat.TextView">
+    <style name="Widget.Tack.TextView.Title" parent="Widget.AppCompat.TextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center</item>
@@ -10,7 +10,7 @@
         <item name="android:fontFamily">@font/edwin_bold</item>
     </style>
 
-    <style name="Widget.Tack.ListItemLabel" parent="Widget.AppCompat.TextView">
+    <style name="Widget.Tack.LinearLayout.ListItem.Label" parent="Widget.AppCompat.TextView">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_gravity">center_vertical</item>
@@ -19,7 +19,9 @@
         <item name="android:fontFamily">@font/edwin_roman</item>
     </style>
 
-    <style name="Widget.Tack.ListItemDescription" parent="Widget.Tack.ListItemLabel">
+    <style
+        name="Widget.Tack.LinearLayout.ListItem.Description"
+        parent="Widget.Tack.LinearLayout.ListItem.Label">
         <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/on_background_secondary</item>
     </style>
@@ -34,13 +36,13 @@
         <item name="android:background">@drawable/shape_circular_bg</item>
     </style>
 
-    <style name="Widget.Tack.Icon" parent="">
+    <style name="Widget.Tack.Image.Icon" parent="">
         <item name="android:layout_width">24dp</item>
         <item name="android:layout_height">24dp</item>
         <item name="android:layout_gravity">center</item>
     </style>
 
-    <style name="Widget.Tack.ListItem" parent="">
+    <style name="Widget.Tack.LinearLayout.ListItem" parent="">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">horizontal</item>
@@ -56,7 +58,7 @@
         <item name="android:baselineAligned">false</item>
     </style>
 
-    <style name="Widget.Tack.ListItemTextBox" parent="">
+    <style name="Widget.Tack.LinearLayout.ListItem.TextBox" parent="">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_weight">1</item>

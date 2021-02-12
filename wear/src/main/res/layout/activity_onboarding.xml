@@ -13,7 +13,7 @@
         android:paddingBottom="20dp">
 
         <androidx.appcompat.widget.AppCompatTextView
-            style="@style/Widget.Tack.Title"
+            style="@style/Widget.Tack.TextView.Title"
             android:text="@string/onboarding_welcome"/>
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -28,7 +28,7 @@
             android:text="@string/onboarding_text"
             android:textColor="@color/on_background"/>
 
-        <LinearLayout style="@style/Widget.Tack.ListItem">
+        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem">
 
             <FrameLayout
                 android:layout_width="@dimen/circular_touch_target_size"
@@ -36,27 +36,27 @@
                 android:background="@drawable/shape_circular_bg">
 
                 <ImageView
-                    style="@style/Widget.Tack.Icon"
+                    style="@style/Widget.Tack.Image.Icon"
                     android:src="@drawable/ic_round_filter_tilt_shift"
                     android:importantForAccessibility="no" />
 
             </FrameLayout>
 
-            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemLabel"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
                     android:text="@string/onboarding_picker"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemDescription"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
                     android:text="@string/onboarding_picker_description"/>
 
             </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout style="@style/Widget.Tack.ListItem">
+        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem">
 
             <FrameLayout
                 android:layout_width="@dimen/circular_touch_target_size"
@@ -64,20 +64,20 @@
                 android:background="@drawable/shape_circular_bg">
 
                 <ImageView
-                    style="@style/Widget.Tack.Icon"
+                    style="@style/Widget.Tack.Image.Icon"
                     android:src="@drawable/ic_round_rotary_input"
                     android:importantForAccessibility="no" />
 
             </FrameLayout>
 
-            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemLabel"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
                     android:text="@string/onboarding_rotary"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemDescription"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
                     android:text="@string/onboarding_rotary_description"/>
 
             </LinearLayout>
@@ -86,7 +86,7 @@
 
         <LinearLayout
             android:id="@+id/linear_feature_fsb"
-            style="@style/Widget.Tack.ListItem">
+            style="@style/Widget.Tack.LinearLayout.ListItem">
 
             <FrameLayout
                 android:layout_width="@dimen/circular_touch_target_size"
@@ -95,33 +95,33 @@
 
                 <ImageView
                     android:id="@+id/image_feature_fsb1"
-                    style="@style/Widget.Tack.Icon"
+                    style="@style/Widget.Tack.Image.Icon"
                     android:importantForAccessibility="no"
                     app:tint="@color/on_background"/>
 
                 <ImageView
                     android:id="@+id/image_feature_fsb2"
-                    style="@style/Widget.Tack.Icon"
+                    style="@style/Widget.Tack.Image.Icon"
                     android:importantForAccessibility="no"
                     app:tint="@color/on_background"/>
 
             </FrameLayout>
 
-            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemLabel"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
                     android:text="@string/onboarding_fsb"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemDescription"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
                     android:text="@string/onboarding_fsb_description"/>
 
             </LinearLayout>
 
         </LinearLayout>
 
-        <LinearLayout style="@style/Widget.Tack.ListItem">
+        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem">
 
             <FrameLayout
                 android:layout_width="@dimen/circular_touch_target_size"
@@ -129,20 +129,20 @@
                 android:background="@drawable/shape_circular_bg">
 
                 <ImageView
-                    style="@style/Widget.Tack.Icon"
+                    style="@style/Widget.Tack.Image.Icon"
                     android:src="@drawable/ic_round_loop"
                     android:importantForAccessibility="no" />
 
             </FrameLayout>
 
-            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemLabel"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
                     android:text="@string/setting_wrist_gestures"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemDescription"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
                     android:text="@string/onboarding_wrist_description"/>
 
             </LinearLayout>
@@ -160,7 +160,7 @@
             android:background="@drawable/ripple_circular">
 
             <ImageView
-                style="@style/Widget.Tack.Icon"
+                style="@style/Widget.Tack.Image.Icon"
                 android:src="@drawable/ic_round_done"
                 android:importantForAccessibility="no"/>
 

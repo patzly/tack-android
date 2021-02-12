@@ -12,12 +12,12 @@
         android:paddingBottom="@dimen/list_margin_bottom">
 
         <androidx.appcompat.widget.AppCompatTextView
-            style="@style/Widget.Tack.Title"
+            style="@style/Widget.Tack.TextView.Title"
             android:text="@string/title_settings"/>
 
         <LinearLayout
             android:id="@+id/linear_settings_sound"
-            style="@style/Widget.Tack.ListItem">
+            style="@style/Widget.Tack.LinearLayout.ListItem">
 
             <FrameLayout
                 android:layout_width="@dimen/circular_touch_target_size"
@@ -26,21 +26,21 @@
 
                 <ImageView
                     android:id="@+id/image_sound"
-                    style="@style/Widget.Tack.Icon"
+                    style="@style/Widget.Tack.Image.Icon"
                     android:src="@drawable/ic_round_audiotrack_anim"
                     android:importantForAccessibility="no"/>
 
             </FrameLayout>
 
-            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemLabel"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
                     android:text="@string/setting_sound"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/text_setting_sound"
-                    style="@style/Widget.Tack.ListItemDescription" />
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Description" />
 
             </LinearLayout>
 
@@ -48,20 +48,20 @@
 
         <LinearLayout
             android:id="@+id/linear_settings_vibrate_always"
-            style="@style/Widget.Tack.ListItem">
+            style="@style/Widget.Tack.LinearLayout.ListItem">
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switch_settings_vibrate_always"
                 style="@style/Widget.Tack.Switch"/>
 
-            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemLabel"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
                     android:text="@string/setting_vibrate_always"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemDescription"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
                     android:text="@string/setting_vibrate_always_description"/>
 
             </LinearLayout>
@@ -70,20 +70,20 @@
 
         <LinearLayout
             android:id="@+id/linear_settings_haptic"
-            style="@style/Widget.Tack.ListItem">
+            style="@style/Widget.Tack.LinearLayout.ListItem">
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switch_settings_haptic"
                 style="@style/Widget.Tack.Switch"/>
 
-            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemLabel"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
                     android:text="@string/setting_haptic"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemDescription"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
                     android:text="@string/setting_haptic_description"/>
 
             </LinearLayout>
@@ -92,20 +92,20 @@
 
         <LinearLayout
             android:id="@+id/linear_settings_wrist_gestures"
-            style="@style/Widget.Tack.ListItem">
+            style="@style/Widget.Tack.LinearLayout.ListItem">
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switch_settings_wrist_gestures"
                 style="@style/Widget.Tack.Switch"/>
 
-            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemLabel"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
                     android:text="@string/setting_wrist_gestures"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemDescription"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
                     android:text="@string/setting_wrist_gestures_description"/>
 
             </LinearLayout>
@@ -114,20 +114,20 @@
 
         <LinearLayout
             android:id="@+id/linear_settings_hide_picker"
-            style="@style/Widget.Tack.ListItem">
+            style="@style/Widget.Tack.LinearLayout.ListItem">
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switch_settings_hide_picker"
                 style="@style/Widget.Tack.Switch"/>
 
-            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemLabel"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
                     android:text="@string/setting_hide_picker"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemDescription"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
                     android:text="@string/setting_hide_picker_description"/>
 
             </LinearLayout>
@@ -136,21 +136,21 @@
 
         <LinearLayout
             android:id="@+id/linear_settings_animations"
-            style="@style/Widget.Tack.ListItem">
+            style="@style/Widget.Tack.LinearLayout.ListItem">
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switch_settings_animations"
                 style="@style/Widget.Tack.Switch"
                 android:layout_gravity="start"/>
 
-            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemLabel"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
                     android:text="@string/setting_animations"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemDescription"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
                     android:text="@string/setting_animations_description"/>
 
             </LinearLayout>
@@ -159,7 +159,7 @@
 
         <LinearLayout
             android:id="@+id/linear_settings_changelog"
-            style="@style/Widget.Tack.ListItem">
+            style="@style/Widget.Tack.LinearLayout.ListItem">
 
             <FrameLayout
                 android:layout_width="@dimen/circular_touch_target_size"
@@ -168,20 +168,20 @@
 
                 <ImageView
                     android:id="@+id/image_changelog"
-                    style="@style/Widget.Tack.Icon"
+                    style="@style/Widget.Tack.Image.Icon"
                     android:src="@drawable/ic_round_history_anim"
                     android:importantForAccessibility="no" />
 
             </FrameLayout>
 
-            <LinearLayout style="@style/Widget.Tack.ListItemTextBox">
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemLabel"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
                     android:text="@string/title_changelog"/>
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.ListItemDescription"
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
                     android:text="@string/versionName"/>
 
             </LinearLayout>
@@ -190,7 +190,7 @@
 
         <LinearLayout
             android:id="@+id/linear_settings_rate"
-            style="@style/Widget.Tack.ListItem">
+            style="@style/Widget.Tack.LinearLayout.ListItem">
 
             <FrameLayout
                 android:layout_width="@dimen/circular_touch_target_size"
@@ -199,21 +199,21 @@
 
                 <ImageView
                     android:id="@+id/image_rate"
-                    style="@style/Widget.Tack.Icon"
+                    style="@style/Widget.Tack.Image.Icon"
                     android:src="@drawable/ic_round_star_anim"
                     android:importantForAccessibility="no" />
 
             </FrameLayout>
 
             <androidx.appcompat.widget.AppCompatTextView
-                style="@style/Widget.Tack.ListItemLabel"
+                style="@style/Widget.Tack.LinearLayout.ListItem.Label"
                 android:layout_marginStart="8dp"
                 android:text="@string/setting_rate"/>
 
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatTextView
-            style="@style/Widget.Tack.ListItemDescription"
+            style="@style/Widget.Tack.LinearLayout.ListItem.Description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"

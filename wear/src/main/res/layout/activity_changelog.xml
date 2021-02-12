@@ -13,7 +13,7 @@
         android:paddingBottom="@dimen/list_margin_bottom">
 
         <androidx.appcompat.widget.AppCompatTextView
-            style="@style/Widget.Tack.Title"
+            style="@style/Widget.Tack.TextView.Title"
             android:text="@string/title_changelog"/>
 
         <androidx.appcompat.widget.AppCompatTextView
