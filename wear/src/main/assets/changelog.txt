@@ -1,3 +1,7 @@
+2.1.0:
+- New: heavy vibration option
+- Fixed: crash when closing
+
 2.0.0:
 - New: haptic feedback on tempo change
 - New: Edwin typeface
