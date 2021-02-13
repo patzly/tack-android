@@ -59,7 +59,6 @@ public class MainActivity extends FragmentActivity
     private boolean wristGestures;
     private boolean hidePicker;
     private boolean isFirstRotation;
-    private boolean isFirstButtonPress;
     private boolean isPlaying = false;
 
     @SuppressLint("RestrictedApi")
@@ -82,8 +81,6 @@ public class MainActivity extends FragmentActivity
         isFirstRotation = sharedPrefs.getBoolean(
                 Constants.PREF.FIRST_ROTATION, Constants.DEF.FIRST_ROTATION
         );
-        isFirstButtonPress = sharedPrefs.getBoolean(
-                Constants.PREF.FIRST_PRESS, Constants.DEF.FIRST_PRESS);
         interval = sharedPrefs.getLong(Constants.PREF.INTERVAL, Constants.DEF.INTERVAL
         );
         bpm = (int) (60000 / interval);
@@ -450,13 +447,6 @@ public class MainActivity extends FragmentActivity
                         .start();
             }).setDuration(animations ? 150 : 0).start();
         }
-    }
-
-    private void onButtonPress() {
-        if (!isFirstButtonPress) return;
-        isFirstButtonPress = false;
-        Toast.makeText(this, R.string.msg_long_press, Toast.LENGTH_LONG).show();
-        sharedPrefs.edit().putBoolean(Constants.PREF.FIRST_PRESS, isFirstButtonPress).apply();
     }
 
     private void setNextEmphasis() {
