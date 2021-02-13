@@ -69,6 +69,28 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/linear_settings_heavy_vibration"
+            style="@style/Widget.Tack.LinearLayout.ListItem">
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_settings_heavy_vibration"
+                style="@style/Widget.Tack.Switch"/>
+
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
+                    android:text="@string/setting_heavy_vibration"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
+                    android:text="@string/setting_heavy_vibration_description"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
             android:id="@+id/linear_settings_haptic"
             style="@style/Widget.Tack.LinearLayout.ListItem">
 

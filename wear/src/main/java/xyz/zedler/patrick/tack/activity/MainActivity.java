@@ -53,6 +53,7 @@ public class MainActivity extends FragmentActivity
     private long interval;
     private boolean animations;
     private boolean isBeatModeVibrate;
+    private boolean heavyVibration;
     private boolean vibrateAlways;
     private boolean hapticFeedback;
     private boolean wristGestures;
@@ -214,6 +215,9 @@ public class MainActivity extends FragmentActivity
 
         animations = sharedPrefs.getBoolean(Constants.SETTING.ANIMATIONS, Constants.DEF.ANIMATIONS);
         emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS);
+        heavyVibration = sharedPrefs.getBoolean(
+                Constants.SETTING.HEAVY_VIBRATION, Constants.DEF.HEAVY_VIBRATION
+        );
         vibrateAlways = sharedPrefs.getBoolean(
                 Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
         );
@@ -348,9 +352,9 @@ public class MainActivity extends FragmentActivity
 
         if (soundId != -1) {
             audioUtil.play(soundId, isEmphasis);
-            if (vibrateAlways) vibratorUtil.vibrate(isEmphasis);
+            if (vibrateAlways) vibratorUtil.vibrate(isEmphasis, heavyVibration);
         } else {
-            vibratorUtil.vibrate(isEmphasis);
+            vibratorUtil.vibrate(isEmphasis, heavyVibration);
         }
 
         handler.postDelayed(this, interval);

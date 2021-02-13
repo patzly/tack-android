@@ -42,6 +42,12 @@ public class SettingsActivity extends FragmentActivity
 
         binding.textSettingSound.setText(getSound());
 
+        binding.switchSettingsHeavyVibration.setChecked(
+                sharedPrefs.getBoolean(
+                        Constants.SETTING.HEAVY_VIBRATION, Constants.DEF.HEAVY_VIBRATION
+                )
+        );
+
         binding.switchSettingsVibrateAlways.setChecked(
                 sharedPrefs.getBoolean(
                         Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
@@ -71,6 +77,7 @@ public class SettingsActivity extends FragmentActivity
         ViewUtil.setOnClickListeners(
                 this,
                 binding.linearSettingsSound,
+                binding.linearSettingsHeavyVibration,
                 binding.linearSettingsVibrateAlways,
                 binding.linearSettingsHaptic,
                 binding.linearSettingsWristGestures,
@@ -82,6 +89,7 @@ public class SettingsActivity extends FragmentActivity
 
         ViewUtil.setOnCheckedChangedListeners(
                 this,
+                binding.switchSettingsHeavyVibration,
                 binding.switchSettingsVibrateAlways,
                 binding.switchSettingsHaptic,
                 binding.switchSettingsWristGestures,
@@ -102,6 +110,10 @@ public class SettingsActivity extends FragmentActivity
         if (id == R.id.linear_settings_sound) {
             if (animations) ViewUtil.startAnimatedIcon(binding.imageSound);
             setNextSound();
+        } else if (id == R.id.linear_settings_heavy_vibration) {
+            binding.switchSettingsHeavyVibration.setChecked(
+                    !binding.switchSettingsHeavyVibration.isChecked()
+            );
         } else if (id == R.id.linear_settings_vibrate_always) {
             binding.switchSettingsVibrateAlways.setChecked(
                     !binding.switchSettingsVibrateAlways.isChecked()
@@ -191,7 +203,9 @@ public class SettingsActivity extends FragmentActivity
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         SharedPreferences.Editor editor = sharedPrefs.edit();
         int id = buttonView.getId();
-        if (id == R.id.switch_settings_vibrate_always) {
+        if (id == R.id.switch_settings_heavy_vibration) {
+            editor.putBoolean(Constants.SETTING.HEAVY_VIBRATION, isChecked);
+        } else if (id == R.id.switch_settings_vibrate_always) {
             editor.putBoolean(Constants.SETTING.VIBRATE_ALWAYS, isChecked);
         } else if (id == R.id.switch_settings_haptic) {
             editor.putBoolean(Constants.SETTING.HAPTIC_FEEDBACK, isChecked);

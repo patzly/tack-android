@@ -11,7 +11,9 @@ public class VibratorUtil {
 
     public static final long TAP = 13;
     public static final long TICK = 20;
+    public static final long TICK_HEAVY = 50;
     public static final long TACK = 50;
+    public static final long TACK_HEAVY = 80;
 
     public VibratorUtil(Context context) {
         vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -27,15 +29,24 @@ public class VibratorUtil {
         }
     }
 
-    public void vibrate(boolean emphasize) {
+    public void vibrate(boolean emphasize, boolean heavyVibration) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(
                     VibrationEffect.createOneShot(
-                            emphasize ? TACK : TICK, VibrationEffect.DEFAULT_AMPLITUDE
+                            emphasize ? getTack(heavyVibration) : getTick(heavyVibration),
+                            heavyVibration ? 255 : VibrationEffect.DEFAULT_AMPLITUDE
                     )
             );
         } else {
-            vibrator.vibrate(emphasize ? TACK : TICK);
+            vibrator.vibrate(emphasize ? getTack(heavyVibration) : getTick(heavyVibration));
         }
+    }
+
+    private long getTick(boolean heavyVibration) {
+        return heavyVibration ? TICK_HEAVY :TICK;
+    }
+
+    private long getTack(boolean heavyVibration) {
+        return heavyVibration ? TACK_HEAVY :TACK;
     }
 }

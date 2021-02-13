@@ -30,6 +30,8 @@
     <string name="setting_sound_click">Clicca</string>
     <string name="setting_sound_ding">Ding</string>
     <string name="setting_sound_beep">Bip</string>
+    <string name="setting_heavy_vibration">Forte vibrazione</string>
+    <string name="setting_heavy_vibration_description">Se il default non è sufficiente</string>
     <string name="setting_vibrate_always">Vibrare sempre</string>
     <string name="setting_vibrate_always_description">Anche con il suono</string>
     <string name="setting_haptic">Feedback aptico</string>
