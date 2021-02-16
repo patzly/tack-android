@@ -93,6 +93,13 @@ public class SystemBarBehavior {
                             = (ViewGroup.MarginLayoutParams) container.getLayoutParams();
                     params.topMargin = appBarLayout.getMeasuredHeight();
                     container.setLayoutParams(params);
+                } else if (container != null) {
+                    container.setPadding(
+                            container.getPaddingLeft(),
+                            containerPaddingTop + insets.getSystemWindowInsetTop(),
+                            container.getPaddingRight(),
+                            container.getPaddingBottom()
+                    );
                 }
                 return insets;
             });

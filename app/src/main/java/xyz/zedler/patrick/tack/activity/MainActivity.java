@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity
         SystemBarBehavior systemBarBehavior = new SystemBarBehavior(this);
         systemBarBehavior.setAppBar(binding.appBarMain);
         systemBarBehavior.setContainer(binding.frameMainContainer);
-        systemBarBehavior.applyAppBarInsetOnContainer(true);
+        systemBarBehavior.applyAppBarInsetOnContainer(false);
         systemBarBehavior.setUp();
 
         new ScrollBehavior(this).setUpScroll(
