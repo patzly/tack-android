@@ -1,6 +1,7 @@
 package xyz.zedler.patrick.tack.fragment;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.graphics.Insets;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +26,12 @@ import xyz.zedler.patrick.tack.R;
  * extended class to apply the fix.
  */
 public class BaseBottomSheetDialogFragment extends BottomSheetDialogFragment {
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        return new BottomSheetDialog(requireContext(), R.style.Theme_Tack_BottomSheetDialog);
+    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {

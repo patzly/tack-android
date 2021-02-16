@@ -1,6 +1,5 @@
 package xyz.zedler.patrick.tack.fragment;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -13,10 +12,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-
 import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetTextBinding;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
@@ -27,18 +23,10 @@ public class TextBottomSheetDialogFragment extends BaseBottomSheetDialogFragment
 
 	private FragmentBottomsheetTextBinding binding;
 
-	@NonNull
 	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		return new BottomSheetDialog(requireContext(), R.style.Theme_Tack_BottomSheetDialog);
-	}
-
-	@Override
-	public View onCreateView(
-			@NonNull LayoutInflater inflater,
-			ViewGroup container,
-			Bundle savedInstanceState
-	) {
+	public View onCreateView(@NonNull LayoutInflater inflater,
+							 ViewGroup container,
+							 Bundle savedInstanceState) {
 		binding = FragmentBottomsheetTextBinding.inflate(
 				inflater, container, false
 		);

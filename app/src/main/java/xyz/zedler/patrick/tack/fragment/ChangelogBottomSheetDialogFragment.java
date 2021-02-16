@@ -1,6 +1,5 @@
 package xyz.zedler.patrick.tack.fragment;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,8 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetChangelogBinding;
@@ -23,18 +20,10 @@ public class ChangelogBottomSheetDialogFragment extends BaseBottomSheetDialogFra
 
 	private FragmentBottomsheetChangelogBinding binding;
 
-	@NonNull
 	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		return new BottomSheetDialog(requireContext(), R.style.Theme_Tack_BottomSheetDialog);
-	}
-
-	@Override
-	public View onCreateView(
-			@NonNull LayoutInflater inflater,
-			ViewGroup container,
-			Bundle savedInstanceState
-	) {
+	public View onCreateView(@NonNull LayoutInflater inflater,
+							 ViewGroup container,
+							 Bundle savedInstanceState) {
 		binding = FragmentBottomsheetChangelogBinding.inflate(
 				inflater, container, false
 		);

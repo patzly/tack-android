@@ -18,6 +18,7 @@ import androidx.fragment.app.DialogFragment;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
+import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.ActivitySettingsNewBinding;
 import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.util.AudioUtil;
@@ -70,12 +71,13 @@ public class SettingsActivity extends AppCompatActivity
 			return true;
 		});
 
-		new ScrollBehavior().setUpScroll(
-				this,
-				binding.appBarSettings,
-				binding.linearSettingsAppBar,
-				binding.scrollSettings,
-				true
+		SystemBarBehavior systemBarBehavior = new SystemBarBehavior(this);
+		systemBarBehavior.setAppBar(binding.appBarSettings);
+		systemBarBehavior.setScroll(binding.scrollSettings, binding.linearSettingsContainer);
+		systemBarBehavior.setUp();
+
+		new ScrollBehavior(this).setUpScroll(
+				binding.appBarSettings, binding.scrollSettings, true
 		);
 
 		binding.switchSettingsDarkMode.setChecked(forceDarkMode);

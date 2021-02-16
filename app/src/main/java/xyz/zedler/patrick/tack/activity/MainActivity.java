@@ -44,6 +44,7 @@ import java.util.Objects;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
+import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.ActivityMainNewBinding;
 import xyz.zedler.patrick.tack.fragment.EmphasisBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
@@ -91,12 +92,14 @@ public class MainActivity extends AppCompatActivity
         );
         setContentView(binding.getRoot());
 
-        new ScrollBehavior().setUpScroll(
-                this,
-                binding.appBarMain,
-                binding.linearMainAppBar,
-                null,
-                false
+        SystemBarBehavior systemBarBehavior = new SystemBarBehavior(this);
+        systemBarBehavior.setAppBar(binding.appBarMain);
+        systemBarBehavior.setContainer(binding.frameMainContainer);
+        systemBarBehavior.applyAppBarInsetOnContainer(true);
+        systemBarBehavior.setUp();
+
+        new ScrollBehavior(this).setUpScroll(
+                binding.appBarMain, null, false
         );
 
         logoUtil = new LogoUtil(binding.imageMainLogo);
@@ -438,6 +441,8 @@ public class MainActivity extends AppCompatActivity
         service = binder.getService();
         service.setTickListener(this);
         isBound = true;
+
+        if (binding == null) return;
 
         if (sharedPrefs.getBoolean(
                 Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE

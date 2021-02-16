@@ -8,15 +8,13 @@
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_about"
         android:layout_width="match_parent"
-        android:layout_height="?android:actionBarSize">
+        android:layout_height="wrap_content">
 
         <LinearLayout
-            android:id="@+id/linear_about_app_bar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="?android:actionBarSize"
             android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:background="@color/background">
+            android:orientation="horizontal">
 
             <FrameLayout
                 android:id="@+id/frame_about_close"
@@ -60,6 +58,7 @@
         android:layout_marginTop="?android:actionBarSize">
 
         <LinearLayout
+            android:id="@+id/linear_about_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="4dp"

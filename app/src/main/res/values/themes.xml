@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Base.Tack" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.Tack" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary</item>
         <item name="colorOnPrimary">@color/on_background</item>
@@ -17,6 +17,10 @@
         <item name="colorOnSurface">@color/on_surface</item>
         <item name="snackbarButtonStyle">@style/Widget.Tack.Button.TextButton.Snackbar</item>
 
+        <item name="android:windowSplashscreenContent" tools:targetApi="o">
+            @drawable/splash_content
+        </item>
+
         <item name="android:colorControlNormal">@color/on_background</item>
         <item name="android:colorControlActivated">@color/secondary</item>
         <item name="android:colorControlHighlight">@color/highlight</item>
@@ -28,12 +32,7 @@
         <item name="android:lineSpacingExtra">5dp</item>
     </style>
 
-    <style name="Theme.Tack" parent="Base.Tack">
-        <item name="android:statusBarColor">@color/status_bar_lollipop</item>
-        <item name="android:navigationBarColor">@color/black</item>
-    </style>
-
-    <style name="Base.Tack.BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
+    <style name="Theme.Tack.BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary</item>
         <item name="colorOnPrimary">@color/on_background</item>
@@ -61,10 +60,6 @@
         <item name="android:windowIsFloating">false</item>
 
         <item name="bottomSheetStyle">@style/Shape.Tack.BottomSheet</item>
-    </style>
-
-    <style name="Theme.Tack.BottomSheetDialog" parent="Base.Tack.BottomSheetDialog">
-        <item name="android:navigationBarColor">@color/black</item>
     </style>
 
 </resources>

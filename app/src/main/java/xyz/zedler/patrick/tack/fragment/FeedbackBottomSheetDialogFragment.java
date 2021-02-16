@@ -1,7 +1,6 @@
 package xyz.zedler.patrick.tack.fragment;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,8 +16,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetFeedbackBinding;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -31,18 +28,10 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
 	private FragmentBottomsheetFeedbackBinding binding;
 	private SharedPreferences sharedPrefs;
 
-	@NonNull
 	@Override
-	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		return new BottomSheetDialog(requireContext(), R.style.Theme_Tack_BottomSheetDialog);
-	}
-
-	@Override
-	public View onCreateView(
-			@NonNull LayoutInflater inflater,
-			ViewGroup container,
-			Bundle savedInstanceState
-	) {
+	public View onCreateView(@NonNull LayoutInflater inflater,
+							 ViewGroup container,
+							 Bundle savedInstanceState) {
 		binding = FragmentBottomsheetFeedbackBinding.inflate(
 				inflater, container, false
 		);

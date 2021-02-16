@@ -16,6 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
+import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.ActivityAboutBinding;
 import xyz.zedler.patrick.tack.fragment.ChangelogBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.TextBottomSheetDialogFragment;
@@ -39,12 +40,13 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
 			finish();
 		});
 
-		new ScrollBehavior().setUpScroll(
-				this,
-				binding.appBarAbout,
-				binding.linearAboutAppBar,
-				binding.scrollAbout,
-				true
+		SystemBarBehavior systemBarBehavior = new SystemBarBehavior(this);
+		systemBarBehavior.setAppBar(binding.appBarAbout);
+		systemBarBehavior.setScroll(binding.scrollAbout, binding.linearAboutContainer);
+		systemBarBehavior.setUp();
+
+		new ScrollBehavior(this).setUpScroll(
+				binding.appBarAbout, binding.scrollAbout, true
 		);
 
 		ViewUtil.setOnClickListeners(
