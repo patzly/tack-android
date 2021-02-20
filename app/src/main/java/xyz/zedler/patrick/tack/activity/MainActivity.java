@@ -501,8 +501,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onStopTicks() {
-        binding.fabMain.setImageResource(R.drawable.ic_round_pause_to_play_anim);
-        ((Animatable) binding.fabMain.getDrawable()).start();
+        if (binding != null) {
+            binding.fabMain.setImageResource(R.drawable.ic_round_pause_to_play_anim);
+            ((Animatable) binding.fabMain.getDrawable()).start();
+        }
         keepScreenAwake(false);
     }
 
@@ -569,6 +571,7 @@ public class MainActivity extends AppCompatActivity
 
     public void keepScreenAwake(boolean keepAwake) {
         if (keepAwake
+                && sharedPrefs != null
                 && sharedPrefs.getBoolean(Constants.SETTING.KEEP_AWAKE, Constants.DEF.KEEP_AWAKE
         )) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
