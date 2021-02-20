@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -305,9 +306,12 @@ public class MainActivity extends AppCompatActivity
     protected void onStart() {
         Intent intent = new Intent(this, MetronomeService.class);
 
-        // sometimes throws exception because "app is in the background"
-        startService(intent);
-        bindService(intent, this, Context.BIND_AUTO_CREATE);
+        try {
+            startService(intent);
+            bindService(intent, this, Context.BIND_AUTO_CREATE);
+        } catch (IllegalStateException e) {
+            Log.e(TAG, "onStart: cannot start service because app is in background");
+        }
 
         super.onStart();
     }
