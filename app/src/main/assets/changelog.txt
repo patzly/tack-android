@@ -1,4 +1,7 @@
-2.0.1:
+2.1.0:
+- New: animated splash screen
+- New: emphasis slider with haptic feedback
+- New: immersive fullscreen experience
 - Improved: animated logo size
 - Fixed: beat mode icon
 
