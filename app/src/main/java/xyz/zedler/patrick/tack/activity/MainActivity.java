@@ -551,7 +551,7 @@ public class MainActivity extends AppCompatActivity
         });
         chip.setChipBackgroundColorResource(R.color.background);
         chip.setText(String.valueOf(bpm));
-        chip.setTextAppearance(R.style.TextAppearance_Tack_Chip);
+        chip.setTextSize(15);
         chip.setTypeface(ResourcesCompat.getFont(this, R.font.roboto_mono_bold));
         chip.setChipIconVisible(false);
         chip.setChipStrokeWidth(getResources().getDimension(R.dimen.chip_stroke_width));
