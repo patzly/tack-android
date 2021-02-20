@@ -439,10 +439,12 @@ public class MainActivity extends AppCompatActivity
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
         MetronomeService.LocalBinder binder = (MetronomeService.LocalBinder) iBinder;
         service = binder.getService();
+        if (service == null) return;
+
         service.setTickListener(this);
         isBound = true;
 
-        if (binding == null) return;
+        if (binding == null || sharedPrefs == null) return;
 
         if (sharedPrefs.getBoolean(
                 Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
