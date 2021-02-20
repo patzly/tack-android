@@ -53,7 +53,7 @@ public class SystemBarBehavior {
         this.appBarLayout = appBarLayout;
     }
 
-    public void setContainer(@NonNull ViewGroup container) {
+    public void setContainer(ViewGroup container) {
         this.container = container;
         containerPaddingTop = container.getPaddingTop();
         containerPaddingBottom = container.getPaddingBottom();
@@ -66,7 +66,7 @@ public class SystemBarBehavior {
         scrollContentPaddingBottom = scrollContent.getPaddingBottom();
         hasScrollView = true;
 
-        if (container == null) setContainer(scrollView);
+        if (container == null && scrollView != null) setContainer(scrollView);
     }
 
     public void setUp() {
@@ -97,7 +97,7 @@ public class SystemBarBehavior {
                 }
                 return insets;
             });
-        } else {
+        } else if (container != null) {
             // if no app bar exists, status bar inset is applied to container
             ViewCompat.setOnApplyWindowInsetsListener(container, (v, insets) -> {
                 // STATUS BAR INSET
@@ -112,7 +112,7 @@ public class SystemBarBehavior {
         }
 
         // NAV BAR INSET
-        if (SystemUiUtil.isOrientationPortrait(activity)) {
+        if (SystemUiUtil.isOrientationPortrait(activity) && hasContainer()) {
             View container = hasScrollView ? scrollContent : this.container;
             ViewCompat.setOnApplyWindowInsetsListener(container, (v, insets) -> {
                 int paddingBottom = hasScrollView
@@ -127,7 +127,7 @@ public class SystemBarBehavior {
                 return insets;
             });
         } else {
-            if (SystemUiUtil.isNavigationModeGesture(activity)) {
+            if (SystemUiUtil.isNavigationModeGesture(activity) && hasContainer()) {
                 View container = hasScrollView ? scrollContent : this.container;
                 ViewCompat.setOnApplyWindowInsetsListener(container, (v, insets) -> {
                     int paddingBottom = hasScrollView
@@ -287,5 +287,9 @@ public class SystemBarBehavior {
                 window.setNavigationBarColor(Color.BLACK);
             }
         }
+    }
+
+    private boolean hasContainer() {
+        return container != null;
     }
 }

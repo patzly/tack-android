@@ -17,10 +17,6 @@
         <item name="colorOnSurface">@color/on_surface</item>
         <item name="snackbarButtonStyle">@style/Widget.Tack.Button.TextButton.Snackbar</item>
 
-        <item name="android:windowSplashscreenContent" tools:targetApi="o">
-            @drawable/splash_content
-        </item>
-
         <item name="android:colorControlNormal">@color/on_background</item>
         <item name="android:colorControlActivated">@color/secondary</item>
         <item name="android:colorControlHighlight">@color/highlight</item>
