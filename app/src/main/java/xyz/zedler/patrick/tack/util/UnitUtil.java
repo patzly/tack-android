@@ -1,7 +1,13 @@
 package xyz.zedler.patrick.tack.util;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Insets;
+import android.os.Build;
+import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.WindowInsets;
+import android.view.WindowMetrics;
 
 public class UnitUtil {
 
@@ -19,5 +25,19 @@ public class UnitUtil {
                 sp,
                 context.getResources().getDisplayMetrics()
         );
+    }
+
+    public static int getDisplayHeight(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowMetrics windowMetrics = activity.getWindowManager().getCurrentWindowMetrics();
+            Insets insets = windowMetrics.getWindowInsets().getInsetsIgnoringVisibility(
+                    WindowInsets.Type.systemBars()
+            );
+            return windowMetrics.getBounds().height() - insets.top - insets.bottom;
+        } else {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+            return displayMetrics.heightPixels;
+        }
     }
 }

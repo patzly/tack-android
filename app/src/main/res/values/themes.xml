@@ -40,7 +40,7 @@
         <item name="colorSecondary">@color/secondary</item>
         <item name="colorOnSecondary">@color/on_secondary</item>
 
-        <item name="android:colorBackground">@color/background</item>
+        <item name="android:colorBackground">@color/surface</item>
         <item name="colorOnBackground">@color/on_background</item>
         <item name="android:colorForeground">@color/on_background</item>
 
@@ -56,10 +56,7 @@
         <item name="android:fontFamily">@font/text_regular</item>
         <item name="android:lineSpacingExtra">5dp</item>
 
-        <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowIsFloating">false</item>
-
-        <item name="bottomSheetStyle">@style/Shape.Tack.BottomSheet</item>
     </style>
 
 </resources>

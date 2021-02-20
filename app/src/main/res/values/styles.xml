@@ -117,12 +117,6 @@
         <item name="android:minHeight">0dp</item>
     </style>
 
-    <!-- SHAPES -->
-
-    <style name="Shape.Tack.BottomSheet" parent="">
-        <item name="android:background">@drawable/shape_bottom_sheet_background</item>
-    </style>
-
     <!-- TEXT APPEARANCES -->
 
     <style name="TextAppearance.Tack.Simple" parent="TextAppearance.MaterialComponents.Body1">
