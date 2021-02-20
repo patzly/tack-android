@@ -532,6 +532,7 @@ public class MainActivity extends AppCompatActivity
     public void setEmphasis(int emphasis) {
         sharedPrefs.edit().putInt(Constants.PREF.EMPHASIS, emphasis).apply();
         binding.textMainEmphasis.setText(String.valueOf(emphasis));
+        if (hapticFeedback) vibratorUtil.vibrate(VibratorUtil.TAP);
         if (isBound) service.updateTick();
     }
 
