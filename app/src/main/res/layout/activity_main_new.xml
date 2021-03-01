@@ -27,14 +27,12 @@
                 android:src="@drawable/ic_round_tack_logo" />
 
             <TextView
+                style="@style/Widget.Tack.TextView.Toolbar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
                 android:text="@string/app_name"
                 android:layout_gravity="center"
-                android:textAlignment="center"
-                android:fontFamily="@font/edwin_bold"
-                android:textAppearance="@style/TextAppearance.Tack.Toolbar" />
+                android:textAlignment="center" />
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar_main"

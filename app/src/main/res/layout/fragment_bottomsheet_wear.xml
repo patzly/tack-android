@@ -7,16 +7,15 @@
     android:orientation="vertical">
 
     <TextView
+        style="@style/Widget.Tack.TextView.Title.BottomSheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:padding="16dp"
-        android:text="@string/title_wear"
-        android:fontFamily="@font/text_bold"
-        android:textAppearance="@style/TextAppearance.Tack.BottomSheet.Title"/>
+        android:text="@string/title_wear"/>
 
     <View
-        style="@style/Theme.Tack.Divider"
+        style="@style/Widget.Tack.Divider"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="0dp" />
 
@@ -43,18 +42,13 @@
                 tools:ignore="ContentDescription" />
 
             <TextView
+                style="@style/Widget.Tack.TextView.Paragraph"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:textAlignment="viewStart"
                 android:text="@string/msg_wear"
                 android:textSize="15sp"
-                android:breakStrategy="high_quality"
-                android:hyphenationFrequency="full"
-                android:justificationMode="inter_word"
-                android:fontFamily="@font/text_italic"
-                android:textAppearance="@style/TextAppearance.Tack.BottomSheet.Text"
-                tools:targetApi="o"/>
+                android:fontFamily="@font/text_italic"/>
 
         </LinearLayout>
 

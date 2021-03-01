@@ -7,16 +7,15 @@
     android:orientation="vertical">
 
     <TextView
+        style="@style/Widget.Tack.TextView.Title.BottomSheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:padding="16dp"
-        android:text="@string/action_emphasis"
-        android:fontFamily="@font/text_bold"
-        android:textAppearance="@style/TextAppearance.Tack.BottomSheet.Title"/>
+        android:text="@string/action_emphasis"/>
 
     <View
-        style="@style/Theme.Tack.Divider"
+        style="@style/Widget.Tack.Divider"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="0dp" />
 
@@ -34,6 +33,6 @@
         app:tickColorActive="#97b4ad"
         app:thumbColor="@color/secondary"
         app:haloColor="@color/secondary_translucent"
-        app:labelStyle="@style/Theme.Tack.Tooltip" />
+        app:labelStyle="@style/Widget.Tack.Tooltip" />
 
 </LinearLayout>

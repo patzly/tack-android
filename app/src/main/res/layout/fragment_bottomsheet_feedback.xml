@@ -7,16 +7,15 @@
     android:orientation="vertical">
 
     <TextView
+        style="@style/Widget.Tack.TextView.Title.BottomSheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
         android:padding="16dp"
-        android:text="@string/title_feedback"
-        android:fontFamily="@font/text_bold"
-        android:textAppearance="@style/TextAppearance.Tack.BottomSheet.Title"/>
+        android:text="@string/title_feedback"/>
 
     <View
-        style="@style/Theme.Tack.Divider"
+        style="@style/Widget.Tack.Divider"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="0dp" />
 
@@ -34,40 +33,35 @@
             android:gravity="center_horizontal">
 
             <TextView
+                style="@style/Widget.Tack.TextView.Paragraph"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:textAlignment="viewStart"
                 android:text="@string/msg_feedback"
                 android:textSize="15sp"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:breakStrategy="high_quality"
-                android:hyphenationFrequency="full"
-                android:justificationMode="inter_word"
-                android:fontFamily="@font/text_italic"
-                android:textAppearance="@style/TextAppearance.Tack.BottomSheet.Text"
-                tools:targetApi="o"/>
+                android:fontFamily="@font/text_italic"/>
 
             <LinearLayout
                 android:id="@+id/linear_feedback_rate"
-                style="@style/Theme.Tack.ListItem.TwoLine.Clickable"
+                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable"
                 android:background="@drawable/bg_list_item_surface">
 
                 <ImageView
                     android:id="@+id/image_feedback_rate"
-                    style="@style/Theme.Tack.ListItem.Icon"
+                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
                     android:src="@drawable/ic_round_star_anim"
                     tools:ignore="ContentDescription" />
 
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox">
+                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Widget.Tack.TextView.ListItem.Title"
                         android:text="@string/action_rate" />
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
+                        style="@style/Widget.Tack.TextView.ListItem.Description"
                         android:text="@string/action_rate_description" />
 
                 </LinearLayout>
@@ -76,23 +70,23 @@
 
             <LinearLayout
                 android:id="@+id/linear_feedback_email"
-                style="@style/Theme.Tack.ListItem.TwoLine.Clickable"
+                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable"
                 android:background="@drawable/bg_list_item_surface">
 
                 <ImageView
                     android:id="@+id/image_feedback_email"
-                    style="@style/Theme.Tack.ListItem.Icon"
+                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
                     android:src="@drawable/ic_round_email"
                     tools:ignore="ContentDescription" />
 
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox">
+                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Widget.Tack.TextView.ListItem.Title"
                         android:text="@string/action_email" />
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
+                        style="@style/Widget.Tack.TextView.ListItem.Description"
                         android:text="@string/action_email_description" />
 
                 </LinearLayout>
@@ -101,22 +95,22 @@
 
             <LinearLayout
                 android:id="@+id/linear_feedback_share"
-                style="@style/Theme.Tack.ListItem.TwoLine.Clickable"
+                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable"
                 android:background="@drawable/bg_list_item_surface">
 
                 <ImageView
-                    style="@style/Theme.Tack.ListItem.Icon"
+                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
                     android:src="@drawable/ic_round_share"
                     tools:ignore="ContentDescription" />
 
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox">
+                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Widget.Tack.TextView.ListItem.Title"
                         android:text="@string/action_share" />
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
+                        style="@style/Widget.Tack.TextView.ListItem.Description"
                         android:text="@string/action_share_description" />
 
                 </LinearLayout>

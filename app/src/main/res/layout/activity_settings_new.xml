@@ -40,15 +40,11 @@
             </FrameLayout>
 
             <TextView
+                style="@style/Widget.Tack.TextView.Toolbar"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:singleLine="true"
                 android:layout_weight="1"
-                android:text="@string/title_settings"
-                android:textAlignment="viewStart"
-                android:fontFamily="@font/text_bold"
-                android:textAppearance="@style/TextAppearance.Tack.Toolbar" />
+                android:text="@string/title_settings" />
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar_settings"
@@ -75,21 +71,21 @@
 
             <LinearLayout
                 android:id="@+id/linear_settings_dark_mode"
-                style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
+                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
                 <ImageView
                     android:id="@+id/image_settings_dark_mode"
-                    style="@style/Theme.Tack.ListItem.Icon"
+                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
                     tools:ignore="ContentDescription" />
 
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox.Stretch">
+                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Widget.Tack.TextView.ListItem.Title"
                         android:text="@string/setting_dark_mode" />
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
+                        style="@style/Widget.Tack.TextView.ListItem.Description"
                         android:text="@string/setting_dark_mode_description" />
 
                 </LinearLayout>
@@ -101,26 +97,26 @@
             </LinearLayout>
 
             <LinearLayout
-                style="@style/Theme.Tack.ListItem.TwoLine"
+                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine"
                 android:orientation="horizontal"
                 android:paddingStart="0dp"
                 android:paddingEnd="16dp">
 
                 <ImageView
                     android:id="@+id/image_settings_sound"
-                    style="@style/Theme.Tack.ListItem.Icon"
+                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
                     android:src="@drawable/ic_round_audiotrack_anim"
                     tools:ignore="ContentDescription"
                     android:layout_marginStart="16dp"/>
 
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox.Stretch">
+                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Widget.Tack.TextView.ListItem.Title"
                         android:text="@string/setting_sound" />
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
+                        style="@style/Widget.Tack.TextView.ListItem.Description"
                         android:text="@string/setting_sound_description" />
 
                 </LinearLayout>
@@ -158,22 +154,22 @@
 
             <LinearLayout
                 android:id="@+id/linear_settings_vibrate_always"
-                style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
+                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
                 <ImageView
                     android:id="@+id/image_settings_vibrate_always"
-                    style="@style/Theme.Tack.ListItem.Icon"
+                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
                     android:src="@drawable/ic_round_vibration_anim"
                     tools:ignore="ContentDescription" />
 
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox.Stretch">
+                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Widget.Tack.TextView.ListItem.Title"
                         android:text="@string/setting_vibrate_always" />
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
+                        style="@style/Widget.Tack.TextView.ListItem.Description"
                         android:text="@string/setting_vibrate_always_description" />
 
                 </LinearLayout>
@@ -186,22 +182,22 @@
 
             <LinearLayout
                 android:id="@+id/linear_settings_haptic"
-                style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
+                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
                 <ImageView
                     android:id="@+id/image_settings_haptic"
-                    style="@style/Theme.Tack.ListItem.Icon"
+                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
                     android:src="@drawable/ic_round_filter_tilt_shift_anim"
                     tools:ignore="ContentDescription" />
 
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox.Stretch">
+                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Widget.Tack.TextView.ListItem.Title"
                         android:text="@string/setting_haptic" />
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
+                        style="@style/Widget.Tack.TextView.ListItem.Description"
                         android:text="@string/setting_haptic_description" />
 
                 </LinearLayout>
@@ -214,22 +210,22 @@
 
             <LinearLayout
                 android:id="@+id/linear_settings_slider_emphasis"
-                style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
+                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
                 <ImageView
                     android:id="@+id/image_settings_slider_emphasis"
-                    style="@style/Theme.Tack.ListItem.Icon"
+                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
                     android:src="@drawable/ic_round_swap_horiz_anim"
                     tools:ignore="ContentDescription" />
 
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox.Stretch">
+                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Widget.Tack.TextView.ListItem.Title"
                         android:text="@string/setting_slider_emphasis" />
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
+                        style="@style/Widget.Tack.TextView.ListItem.Description"
                         android:text="@string/setting_slider_emphasis_description" />
 
                 </LinearLayout>
@@ -242,22 +238,22 @@
 
             <LinearLayout
                 android:id="@+id/linear_settings_keep_awake"
-                style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
+                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
                 <ImageView
                     android:id="@+id/image_settings_keep_awake"
-                    style="@style/Theme.Tack.ListItem.Icon"
+                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
                     android:src="@drawable/ic_round_preview_anim"
                     tools:ignore="ContentDescription" />
 
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox.Stretch">
+                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Widget.Tack.TextView.ListItem.Title"
                         android:text="@string/setting_keep_awake" />
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
+                        style="@style/Widget.Tack.TextView.ListItem.Description"
                         android:text="@string/setting_keep_awake_description" />
 
                 </LinearLayout>

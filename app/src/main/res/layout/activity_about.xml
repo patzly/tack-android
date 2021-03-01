@@ -40,12 +40,12 @@
             </FrameLayout>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
-                android:text="@string/title_about"
-                android:fontFamily="@font/text_bold"
-                android:textAppearance="@style/TextAppearance.Tack.Toolbar" />
+                style="@style/Widget.Tack.TextView.Toolbar"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="@string/title_about" />
 
         </LinearLayout>
 
@@ -65,22 +65,21 @@
             android:paddingBottom="8dp"
             android:orientation="vertical">
 
-            <LinearLayout
-                style="@style/Theme.Tack.ListItem.TwoLine">
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine">
 
                 <ImageView
-                    style="@style/Theme.Tack.ListItem.Icon"
+                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
                     android:src="@drawable/ic_round_info_outline_anim"
                     tools:ignore="ContentDescription" />
 
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox">
+                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.OverLine"
+                        style="@style/Widget.Tack.TextView.ListItem.OverLine"
                         android:text="@string/info_version"/>
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Widget.Tack.TextView.ListItem.Title"
                         android:text="@string/versionName" />
 
                 </LinearLayout>
@@ -89,22 +88,22 @@
 
             <LinearLayout
                 android:id="@+id/linear_changelog"
-                style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
+                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
                 <ImageView
                     android:id="@+id/image_changelog"
-                    style="@style/Theme.Tack.ListItem.Icon"
+                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
                     android:src="@drawable/ic_round_history_anim"
                     tools:ignore="ContentDescription" />
 
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox">
+                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Widget.Tack.TextView.ListItem.Title"
                         android:text="@string/info_changelog" />
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
+                        style="@style/Widget.Tack.TextView.ListItem.Description"
                         android:text="@string/info_changelog_description" />
 
                 </LinearLayout>
@@ -113,46 +112,46 @@
 
             <LinearLayout
                 android:id="@+id/linear_developer"
-                style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
+                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
                 <ImageView
                     android:id="@+id/image_developer"
-                    style="@style/Theme.Tack.ListItem.Icon"
+                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
                     android:src="@drawable/ic_round_person_anim"
                     tools:ignore="ContentDescription" />
 
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox">
+                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.OverLine"
+                        style="@style/Widget.Tack.TextView.ListItem.OverLine"
                         android:text="@string/info_developer" />
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Widget.Tack.TextView.ListItem.Title"
                         android:text="@string/app_developer" />
 
                 </LinearLayout>
 
             </LinearLayout>
 
-            <LinearLayout style="@style/Theme.Tack.ListItem.TwoLine">
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine">
 
                 <ImageView
-                    style="@style/Theme.Tack.ListItem.Icon"
+                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     android:layout_marginEnd="24dp"
                     android:src="@drawable/ic_round_material_components"
                     tools:ignore="ContentDescription" />
 
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox">
+                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.OverLine"
+                        style="@style/Widget.Tack.TextView.ListItem.OverLine"
                         android:text="@string/info_material_components_built_with" />
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Widget.Tack.TextView.ListItem.Title"
                         android:text="@string/info_material_components" />
 
                 </LinearLayout>
@@ -160,28 +159,28 @@
             </LinearLayout>
 
             <TextView
-                style="@style/Theme.Tack.Category"
+                style="@style/Widget.Tack.Category"
                 android:text="@string/category_licenses"
                 android:fontFamily="@font/text_bold"/>
 
             <LinearLayout
                 android:id="@+id/linear_license_metronome"
-                style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
+                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
                 <ImageView
                     android:id="@+id/image_license_metronome"
-                    style="@style/Theme.Tack.ListItem.Icon"
+                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
                     android:src="@drawable/ic_round_copyright_anim"
                     tools:ignore="ContentDescription" />
 
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox">
+                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Widget.Tack.TextView.ListItem.Title"
                         android:text="@string/license_metronome" />
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
+                        style="@style/Widget.Tack.TextView.ListItem.Description"
                         android:text="@string/license_metronome_author" />
 
                 </LinearLayout>
@@ -190,22 +189,22 @@
 
             <LinearLayout
                 android:id="@+id/linear_license_material_components"
-                style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
+                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
                 <ImageView
                     android:id="@+id/image_license_material_components"
-                    style="@style/Theme.Tack.ListItem.Icon"
+                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
                     android:src="@drawable/ic_round_copyright_anim"
                     tools:ignore="ContentDescription" />
 
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox">
+                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Widget.Tack.TextView.ListItem.Title"
                         android:text="@string/license_material_components" />
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
+                        style="@style/Widget.Tack.TextView.ListItem.Description"
                         android:text="@string/license_author_google" />
 
                 </LinearLayout>
@@ -214,22 +213,22 @@
 
             <LinearLayout
                 android:id="@+id/linear_license_material_icons"
-                style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
+                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
                 <ImageView
                     android:id="@+id/image_license_material_icons"
-                    style="@style/Theme.Tack.ListItem.Icon"
+                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
                     android:src="@drawable/ic_round_copyright_anim"
                     tools:ignore="ContentDescription" />
 
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox">
+                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Widget.Tack.TextView.ListItem.Title"
                         android:text="@string/license_material_icons" />
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
+                        style="@style/Widget.Tack.TextView.ListItem.Description"
                         android:text="@string/license_author_google" />
 
                 </LinearLayout>
@@ -238,22 +237,22 @@
 
             <LinearLayout
                 android:id="@+id/linear_license_edwin"
-                style="@style/Theme.Tack.ListItem.TwoLine.Clickable">
+                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
                 <ImageView
                     android:id="@+id/image_license_edwin"
-                    style="@style/Theme.Tack.ListItem.Icon"
+                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
                     android:src="@drawable/ic_round_copyright_anim"
                     tools:ignore="ContentDescription" />
 
-                <LinearLayout style="@style/Theme.Tack.ListItem.TextBox">
+                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Title"
+                        style="@style/Widget.Tack.TextView.ListItem.Title"
                         android:text="@string/license_edwin" />
 
                     <TextView
-                        style="@style/Theme.Tack.ListItem.Description"
+                        style="@style/Widget.Tack.TextView.ListItem.Description"
                         android:text="@string/license_edwin_author" />
 
                 </LinearLayout>

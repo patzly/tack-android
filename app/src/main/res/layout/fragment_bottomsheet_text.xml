@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <LinearLayout
@@ -12,14 +12,12 @@
 
         <TextView
             android:id="@+id/text_text_title"
+            style="@style/Widget.Tack.TextView.Title.BottomSheet"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:padding="16dp"
             android:layout_weight="1"
-            android:singleLine="true"
-            android:textAlignment="viewStart"
-            android:fontFamily="@font/text_bold"
-            android:textAppearance="@style/TextAppearance.Tack.BottomSheet.Title"/>
+            android:singleLine="true"/>
 
         <FrameLayout
             android:id="@+id/frame_text_open_link"
@@ -43,7 +41,7 @@
     </LinearLayout>
 
     <View
-        style="@style/Theme.Tack.Divider"
+        style="@style/Widget.Tack.Divider"
         android:layout_marginTop="0dp"
         android:layout_marginBottom="0dp" />
 
@@ -54,14 +52,11 @@
 
         <TextView
             android:id="@+id/text_text"
+            style="@style/Widget.Tack.TextView.Paragraph"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:breakStrategy="high_quality"
-            android:hyphenationFrequency="full"
-            android:justificationMode="inter_word"
-            android:textAppearance="@style/TextAppearance.Tack.BottomSheet.Text.Small"
-            tools:targetApi="o"/>
+            android:textSize="13sp"
+            android:padding="16dp"/>
 
     </androidx.core.widget.NestedScrollView>
 
