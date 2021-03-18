@@ -44,9 +44,9 @@ import java.util.Objects;
 
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
-import xyz.zedler.patrick.tack.databinding.ActivityMainNewBinding;
 import xyz.zedler.patrick.tack.fragment.EmphasisBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.WearBottomSheetDialogFragment;
@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity
 
     private final static String TAG = MainActivity.class.getSimpleName();
 
-    private ActivityMainNewBinding binding;
+    private ActivityMainBinding binding;
     private SharedPreferences sharedPrefs;
     private long prevTouchTime;
     private final List<Long> intervals = new ArrayList<>();
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainNewBinding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         AppCompatDelegate.setDefaultNightMode(
