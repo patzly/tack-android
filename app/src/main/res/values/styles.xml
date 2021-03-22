@@ -157,7 +157,7 @@
         <item name="android:singleLine">true</item>
     </style>
 
-    <style name="Widget.Tack.Category" parent="">
+    <style name="Widget.Tack.TextView.Category" parent="Widget.Tack.TextView">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginStart">72dp</item>

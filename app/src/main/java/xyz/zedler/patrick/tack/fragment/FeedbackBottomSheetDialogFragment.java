@@ -13,9 +13,7 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
-
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetFeedbackBinding;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -78,7 +76,7 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
 		});
 
 		binding.linearFeedbackShare.setOnClickListener(v -> {
-			ResUtil.share(getContext(), R.string.msg_share);
+			ResUtil.share(activity, R.string.msg_share);
 			dismiss();
 		});
 

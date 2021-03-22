@@ -159,7 +159,7 @@
             </LinearLayout>
 
             <TextView
-                style="@style/Widget.Tack.Category"
+                style="@style/Widget.Tack.TextView.Category"
                 android:text="@string/category_licenses"
                 android:fontFamily="@font/text_bold"/>
 
