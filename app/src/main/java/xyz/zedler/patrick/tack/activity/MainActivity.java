@@ -13,6 +13,7 @@ import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.Window;
 import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -512,8 +514,13 @@ public class MainActivity extends AppCompatActivity
         /*if (service.isPlaying()) service.pause();
         else service.play();
         */
-    binding.fabMain.setImageResource(R.drawable.ic_round_play_to_pause_anim);
-    ((Animatable) binding.fabMain.getDrawable()).start();
+    if (binding != null) {
+      binding.fabMain.setImageResource(R.drawable.ic_round_play_to_pause_anim);
+      Drawable fabIcon = binding.fabMain.getDrawable();
+      if (fabIcon != null) {
+        ((Animatable) fabIcon).start();
+      }
+    }
     keepScreenAwake(true);
   }
 
@@ -594,13 +601,17 @@ public class MainActivity extends AppCompatActivity
   }
 
   public void keepScreenAwake(boolean keepAwake) {
+    Window window = getWindow();
+    if (window == null) {
+      return;
+    }
     if (keepAwake
         && sharedPrefs != null
         && sharedPrefs.getBoolean(Constants.SETTING.KEEP_AWAKE, Constants.DEF.KEEP_AWAKE
     )) {
-      getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+      window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     } else {
-      getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+      window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
   }
 

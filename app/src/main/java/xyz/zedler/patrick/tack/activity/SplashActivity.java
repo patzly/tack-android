@@ -32,6 +32,7 @@ public class SplashActivity extends AppCompatActivity {
     getWindow().setBackgroundDrawable(splashContent);
 
     try {
+      assert splashContent != null;
       Drawable splashLogo = splashContent.findDrawableByLayerId(R.id.splash_logo);
       AnimatedVectorDrawable logo = (AnimatedVectorDrawable) splashLogo;
       logo.start();
