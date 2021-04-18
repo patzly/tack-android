@@ -1,16 +1,17 @@
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:drawable="@drawable/ic_round_tack_logo_bg" />
+  <item android:drawable="@drawable/ic_round_tack_logo_bg" />
 
-    <item android:id="@+id/logo_pointer">
-        <rotate
-            android:drawable="@drawable/ic_round_tack_logo_pointer"
-            android:fromDegrees="-30"
-            android:toDegrees="30"
-            android:pivotX="50%"
-            android:pivotY="79.16%" />
-    </item>
+  <item android:id="@+id/logo_pointer">
+    <rotate
+      android:drawable="@drawable/ic_round_tack_logo_pointer"
+      android:fromDegrees="-30"
+      android:toDegrees="30"
+      android:pivotX="50%"
+      android:pivotY="79.16%" />
+  </item>
 
-    <item android:drawable="@drawable/ic_round_tack_logo_fg" />
+  <item android:drawable="@drawable/ic_round_tack_logo_fg" />
 
 </layer-list>

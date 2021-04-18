@@ -1,248 +1,248 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xyz.zedler.patrick.tack.view.RotaryScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <LinearLayout
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/list_margin_top"
+    android:paddingBottom="@dimen/list_margin_bottom">
+
+    <androidx.appcompat.widget.AppCompatTextView
+      style="@style/Widget.Tack.TextView.Title"
+      android:text="@string/title_settings" />
 
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/list_margin_top"
-        android:paddingBottom="@dimen/list_margin_bottom">
+      android:id="@+id/linear_settings_sound"
+      style="@style/Widget.Tack.LinearLayout.ListItem">
+
+      <FrameLayout
+        android:layout_width="@dimen/circular_touch_target_size"
+        android:layout_height="@dimen/circular_touch_target_size"
+        android:background="@drawable/shape_circular_bg">
+
+        <ImageView
+          android:id="@+id/image_sound"
+          style="@style/Widget.Tack.Image.Icon"
+          android:src="@drawable/ic_round_audiotrack_anim"
+          android:importantForAccessibility="no" />
+
+      </FrameLayout>
+
+      <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
         <androidx.appcompat.widget.AppCompatTextView
-            style="@style/Widget.Tack.TextView.Title"
-            android:text="@string/title_settings"/>
-
-        <LinearLayout
-            android:id="@+id/linear_settings_sound"
-            style="@style/Widget.Tack.LinearLayout.ListItem">
-
-            <FrameLayout
-                android:layout_width="@dimen/circular_touch_target_size"
-                android:layout_height="@dimen/circular_touch_target_size"
-                android:background="@drawable/shape_circular_bg">
-
-                <ImageView
-                    android:id="@+id/image_sound"
-                    style="@style/Widget.Tack.Image.Icon"
-                    android:src="@drawable/ic_round_audiotrack_anim"
-                    android:importantForAccessibility="no"/>
-
-            </FrameLayout>
-
-            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
-                    android:text="@string/setting_sound"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/text_setting_sound"
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Description" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linear_settings_vibrate_always"
-            style="@style/Widget.Tack.LinearLayout.ListItem">
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switch_settings_vibrate_always"
-                style="@style/Widget.Tack.Switch"/>
-
-            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
-                    android:text="@string/setting_vibrate_always"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
-                    android:text="@string/setting_vibrate_always_description"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linear_settings_heavy_vibration"
-            style="@style/Widget.Tack.LinearLayout.ListItem">
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switch_settings_heavy_vibration"
-                style="@style/Widget.Tack.Switch"/>
-
-            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
-                    android:text="@string/setting_heavy_vibration"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
-                    android:text="@string/setting_heavy_vibration_description"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linear_settings_haptic"
-            style="@style/Widget.Tack.LinearLayout.ListItem">
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switch_settings_haptic"
-                style="@style/Widget.Tack.Switch"/>
-
-            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
-                    android:text="@string/setting_haptic"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
-                    android:text="@string/setting_haptic_description"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linear_settings_wrist_gestures"
-            style="@style/Widget.Tack.LinearLayout.ListItem">
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switch_settings_wrist_gestures"
-                style="@style/Widget.Tack.Switch"/>
-
-            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
-                    android:text="@string/setting_wrist_gestures"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
-                    android:text="@string/setting_wrist_gestures_description"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linear_settings_hide_picker"
-            style="@style/Widget.Tack.LinearLayout.ListItem">
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switch_settings_hide_picker"
-                style="@style/Widget.Tack.Switch"/>
-
-            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
-                    android:text="@string/setting_hide_picker"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
-                    android:text="@string/setting_hide_picker_description"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linear_settings_animations"
-            style="@style/Widget.Tack.LinearLayout.ListItem">
-
-            <androidx.appcompat.widget.SwitchCompat
-                android:id="@+id/switch_settings_animations"
-                style="@style/Widget.Tack.Switch"
-                android:layout_gravity="start"/>
-
-            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
-                    android:text="@string/setting_animations"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
-                    android:text="@string/setting_animations_description"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linear_settings_changelog"
-            style="@style/Widget.Tack.LinearLayout.ListItem">
-
-            <FrameLayout
-                android:layout_width="@dimen/circular_touch_target_size"
-                android:layout_height="@dimen/circular_touch_target_size"
-                android:background="@drawable/shape_circular_bg">
-
-                <ImageView
-                    android:id="@+id/image_changelog"
-                    style="@style/Widget.Tack.Image.Icon"
-                    android:src="@drawable/ic_round_history_anim"
-                    android:importantForAccessibility="no" />
-
-            </FrameLayout>
-
-            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
-                    android:text="@string/title_changelog"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
-                    android:text="@string/versionName"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linear_settings_rate"
-            style="@style/Widget.Tack.LinearLayout.ListItem">
-
-            <FrameLayout
-                android:layout_width="@dimen/circular_touch_target_size"
-                android:layout_height="@dimen/circular_touch_target_size"
-                android:background="@drawable/shape_circular_bg">
-
-                <ImageView
-                    android:id="@+id/image_rate"
-                    style="@style/Widget.Tack.Image.Icon"
-                    android:src="@drawable/ic_round_star_anim"
-                    android:importantForAccessibility="no" />
-
-            </FrameLayout>
-
-            <androidx.appcompat.widget.AppCompatTextView
-                style="@style/Widget.Tack.LinearLayout.ListItem.Label"
-                android:layout_marginStart="8dp"
-                android:text="@string/setting_rate"/>
-
-        </LinearLayout>
+          style="@style/Widget.Tack.LinearLayout.ListItem.Label"
+          android:text="@string/setting_sound" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            style="@style/Widget.Tack.LinearLayout.ListItem.Description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:layout_gravity="center_horizontal"
-            android:fontFamily="@font/edwin_italic"
-            android:text="@string/app_copyright"/>
+          android:id="@+id/text_setting_sound"
+          style="@style/Widget.Tack.LinearLayout.ListItem.Description" />
+
+      </LinearLayout>
 
     </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/linear_settings_vibrate_always"
+      style="@style/Widget.Tack.LinearLayout.ListItem">
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_settings_vibrate_always"
+        style="@style/Widget.Tack.Switch" />
+
+      <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Label"
+          android:text="@string/setting_vibrate_always" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Description"
+          android:text="@string/setting_vibrate_always_description" />
+
+      </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/linear_settings_heavy_vibration"
+      style="@style/Widget.Tack.LinearLayout.ListItem">
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_settings_heavy_vibration"
+        style="@style/Widget.Tack.Switch" />
+
+      <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Label"
+          android:text="@string/setting_heavy_vibration" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Description"
+          android:text="@string/setting_heavy_vibration_description" />
+
+      </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/linear_settings_haptic"
+      style="@style/Widget.Tack.LinearLayout.ListItem">
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_settings_haptic"
+        style="@style/Widget.Tack.Switch" />
+
+      <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Label"
+          android:text="@string/setting_haptic" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Description"
+          android:text="@string/setting_haptic_description" />
+
+      </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/linear_settings_wrist_gestures"
+      style="@style/Widget.Tack.LinearLayout.ListItem">
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_settings_wrist_gestures"
+        style="@style/Widget.Tack.Switch" />
+
+      <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Label"
+          android:text="@string/setting_wrist_gestures" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Description"
+          android:text="@string/setting_wrist_gestures_description" />
+
+      </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/linear_settings_hide_picker"
+      style="@style/Widget.Tack.LinearLayout.ListItem">
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_settings_hide_picker"
+        style="@style/Widget.Tack.Switch" />
+
+      <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Label"
+          android:text="@string/setting_hide_picker" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Description"
+          android:text="@string/setting_hide_picker_description" />
+
+      </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/linear_settings_animations"
+      style="@style/Widget.Tack.LinearLayout.ListItem">
+
+      <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/switch_settings_animations"
+        style="@style/Widget.Tack.Switch"
+        android:layout_gravity="start" />
+
+      <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Label"
+          android:text="@string/setting_animations" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Description"
+          android:text="@string/setting_animations_description" />
+
+      </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/linear_settings_changelog"
+      style="@style/Widget.Tack.LinearLayout.ListItem">
+
+      <FrameLayout
+        android:layout_width="@dimen/circular_touch_target_size"
+        android:layout_height="@dimen/circular_touch_target_size"
+        android:background="@drawable/shape_circular_bg">
+
+        <ImageView
+          android:id="@+id/image_changelog"
+          style="@style/Widget.Tack.Image.Icon"
+          android:src="@drawable/ic_round_history_anim"
+          android:importantForAccessibility="no" />
+
+      </FrameLayout>
+
+      <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Label"
+          android:text="@string/title_changelog" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Description"
+          android:text="@string/versionName" />
+
+      </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/linear_settings_rate"
+      style="@style/Widget.Tack.LinearLayout.ListItem">
+
+      <FrameLayout
+        android:layout_width="@dimen/circular_touch_target_size"
+        android:layout_height="@dimen/circular_touch_target_size"
+        android:background="@drawable/shape_circular_bg">
+
+        <ImageView
+          android:id="@+id/image_rate"
+          style="@style/Widget.Tack.Image.Icon"
+          android:src="@drawable/ic_round_star_anim"
+          android:importantForAccessibility="no" />
+
+      </FrameLayout>
+
+      <androidx.appcompat.widget.AppCompatTextView
+        style="@style/Widget.Tack.LinearLayout.ListItem.Label"
+        android:layout_marginStart="8dp"
+        android:text="@string/setting_rate" />
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatTextView
+      style="@style/Widget.Tack.LinearLayout.ListItem.Description"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="12dp"
+      android:layout_gravity="center_horizontal"
+      android:fontFamily="@font/edwin_italic"
+      android:text="@string/app_copyright" />
+
+  </LinearLayout>
 
 </xyz.zedler.patrick.tack.view.RotaryScrollView>

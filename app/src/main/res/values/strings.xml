@@ -1,85 +1,85 @@
 <resources>
 
-    <string name="app_name">Tack</string>
-    <string name="app_developer" translatable="false">Patrick Zedler</string>
-    <string name="app_mail" translatable="false">patrick@zedler.xyz</string>
+  <string name="app_name">Tack</string>
+  <string name="app_developer" translatable="false">Patrick Zedler</string>
+  <string name="app_mail" translatable="false">patrick@zedler.xyz</string>
 
-    <string name="action_back">Back</string>
-    <string name="action_more">Faster</string>
-    <string name="action_less">Slower</string>
-    <string name="action_play_pause">Play/Pause</string>
-    <string name="action_clear_all">Clear all</string>
-    <string name="action_tempo_tap">Tap tempo</string>
-    <string name="action_emphasis">Emphasis</string>
-    <string name="action_bookmark">Bookmark</string>
-    <string name="action_beat_mode">Beat mode</string>
-    <string name="action_send_feedback">Send feedback</string>
-    <string name="action_share">Share</string>
-    <string name="action_share_description">Tell your friends about Tack</string>
-    <string name="action_email">Send email</string>
-    <string name="action_email_description">Contact the developer</string>
-    <string name="action_rate">Rate on Google Play</string>
-    <string name="action_rate_description">Support the development</string>
+  <string name="action_back">Back</string>
+  <string name="action_more">Faster</string>
+  <string name="action_less">Slower</string>
+  <string name="action_play_pause">Play/Pause</string>
+  <string name="action_clear_all">Clear all</string>
+  <string name="action_tempo_tap">Tap tempo</string>
+  <string name="action_emphasis">Emphasis</string>
+  <string name="action_bookmark">Bookmark</string>
+  <string name="action_beat_mode">Beat mode</string>
+  <string name="action_send_feedback">Send feedback</string>
+  <string name="action_share">Share</string>
+  <string name="action_share_description">Tell your friends about Tack</string>
+  <string name="action_email">Send email</string>
+  <string name="action_email_description">Contact the developer</string>
+  <string name="action_rate">Rate on Google Play</string>
+  <string name="action_rate_description">Support the development</string>
 
-    <string name="notification_title">Metronome is running</string>
-    <string name="notification_desc">Tap to stop</string>
-    <string name="notification_channel">Metronome</string>
+  <string name="notification_title">Metronome is running</string>
+  <string name="notification_desc">Tap to stop</string>
+  <string name="notification_channel">Metronome</string>
 
-    <string name="msg_bookmarks_max">Bookmark limit reached</string>
-    <string name="msg_feedback">A great app requires a lot of time and lives from the feedback of its users.\n\nDo you have any wishes, comments or questions? Contact me!\nOtherwise I would be very happy about a nice review in the Play Store.</string>
-    <string name="msg_share">Check out this cool metronome app: \nhttps://play.google.com/store/apps/details?id=xyz.zedler.patrick.tack</string>
-    <string name="msg_wear">Tack is also available for Wear OS watches! All features of the phone app and much more, always ready on your wrist.</string>
+  <string name="msg_bookmarks_max">Bookmark limit reached</string>
+  <string name="msg_feedback">A great app requires a lot of time and lives from the feedback of its users.\n\nDo you have any wishes, comments or questions? Contact me!\nOtherwise I would be very happy about a nice review in the Play Store.</string>
+  <string name="msg_share">Check out this cool metronome app: \nhttps://play.google.com/store/apps/details?id=xyz.zedler.patrick.tack</string>
+  <string name="msg_wear">Tack is also available for Wear OS watches! All features of the phone app and much more, always ready on your wrist.</string>
 
-    <string name="title_bpm">%1$s BPM</string>
-    <string name="title_bpm_label">BPM</string>
-    <string name="title_wear">Tack for Wear OS</string>
+  <string name="title_bpm">%1$s BPM</string>
+  <string name="title_bpm_label">BPM</string>
+  <string name="title_wear">Tack for Wear OS</string>
 
-    <string name="setting_dark_mode">Force dark mode</string>
-    <string name="setting_dark_mode_description">Off for system dependency</string>
-    <string name="setting_sound">Beat sound</string>
-    <string name="setting_sound_description">Set vibration on the start page</string>
-    <string name="setting_sound_wood">Wood</string>
-    <string name="setting_sound_click">Click</string>
-    <string name="setting_sound_ding">Ding</string>
-    <string name="setting_sound_beep">Beep</string>
-    <string name="setting_vibrate_always">Always vibrate</string>
-    <string name="setting_vibrate_always_description">Even with sound</string>
-    <string name="setting_haptic">Haptic feedback</string>
-    <string name="setting_haptic_description">On tempo change</string>
-    <string name="setting_slider_emphasis">Use slider input</string>
-    <string name="setting_slider_emphasis_description">For emphasis selection</string>
-    <string name="setting_keep_awake">Keep screen awake</string>
-    <string name="setting_keep_awake_description">While metronome is playing</string>
+  <string name="setting_dark_mode">Force dark mode</string>
+  <string name="setting_dark_mode_description">Off for system dependency</string>
+  <string name="setting_sound">Beat sound</string>
+  <string name="setting_sound_description">Set vibration on the start page</string>
+  <string name="setting_sound_wood">Wood</string>
+  <string name="setting_sound_click">Click</string>
+  <string name="setting_sound_ding">Ding</string>
+  <string name="setting_sound_beep">Beep</string>
+  <string name="setting_vibrate_always">Always vibrate</string>
+  <string name="setting_vibrate_always_description">Even with sound</string>
+  <string name="setting_haptic">Haptic feedback</string>
+  <string name="setting_haptic_description">On tempo change</string>
+  <string name="setting_slider_emphasis">Use slider input</string>
+  <string name="setting_slider_emphasis_description">For emphasis selection</string>
+  <string name="setting_keep_awake">Keep screen awake</string>
+  <string name="setting_keep_awake_description">While metronome is playing</string>
 
-    <string name="title_feedback">Feedback</string>
-    <string name="title_settings">Settings</string>
-    <string name="title_about">About</string>
+  <string name="title_feedback">Feedback</string>
+  <string name="title_settings">Settings</string>
+  <string name="title_about">About</string>
 
-    <array name="changelog_highlights" translatable="false">
-        <item>New:</item>
-        <item>Improved:</item>
-        <item>Fixed:</item>
-    </array>
+  <array name="changelog_highlights" translatable="false">
+    <item>New:</item>
+    <item>Improved:</item>
+    <item>Fixed:</item>
+  </array>
 
-    <string name="info_material_components_built_with">Built with</string>
-    <string name="info_material_components">Material Components</string>
-    <string name="info_version">Version</string>
-    <string name="info_changelog">Changelog</string>
-    <string name="info_changelog_description">What\'s new?</string>
-    <string name="info_developer">Developer</string>
+  <string name="info_material_components_built_with">Built with</string>
+  <string name="info_material_components">Material Components</string>
+  <string name="info_version">Version</string>
+  <string name="info_changelog">Changelog</string>
+  <string name="info_changelog_description">What\'s new?</string>
+  <string name="info_developer">Developer</string>
 
-    <string name="category_licenses">Open source licenses</string>
+  <string name="category_licenses">Open source licenses</string>
 
-    <string name="license_metronome" translatable="false">Metronome Android</string>
-    <string name="license_metronome_link" translatable="false">https://github.com/fennifith/Metronome-Android</string>
-    <string name="license_metronome_author" translatable="false">James Fenn</string>
-    <string name="license_author_google" translatable="false">Google</string>
-    <string name="license_material_icons" translatable="false">Material Design Icons</string>
-    <string name="license_material_icons_link" translatable="false">https://github.com/google/material-design-icons</string>
-    <string name="license_material_components" translatable="false">Material Components Android</string>
-    <string name="license_material_components_link" translatable="false">https://github.com/material-components/material-components-android</string>
-    <string name="license_edwin" translatable="false">Edwin Typeface</string>
-    <string name="license_edwin_author" translatable="false">MuseScore</string>
-    <string name="license_edwin_link" translatable="false">https://github.com/MuseScoreFonts/Edwin</string>
+  <string name="license_metronome" translatable="false">Metronome Android</string>
+  <string name="license_metronome_link" translatable="false">https://github.com/fennifith/Metronome-Android</string>
+  <string name="license_metronome_author" translatable="false">James Fenn</string>
+  <string name="license_author_google" translatable="false">Google</string>
+  <string name="license_material_icons" translatable="false">Material Design Icons</string>
+  <string name="license_material_icons_link" translatable="false">https://github.com/google/material-design-icons</string>
+  <string name="license_material_components" translatable="false">Material Components Android</string>
+  <string name="license_material_components_link" translatable="false">https://github.com/material-components/material-components-android</string>
+  <string name="license_edwin" translatable="false">Edwin Typeface</string>
+  <string name="license_edwin_author" translatable="false">MuseScore</string>
+  <string name="license_edwin_link" translatable="false">https://github.com/MuseScoreFonts/Edwin</string>
 
 </resources>

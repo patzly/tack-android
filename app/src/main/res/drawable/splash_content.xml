@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:drawable="@color/background"/>
+  <item android:drawable="@color/background" />
 
-    <item
-        android:id="@+id/splash_logo"
-        android:gravity="center"
-        android:drawable="@drawable/splash_logo_anim"/>
+  <item
+    android:id="@+id/splash_logo"
+    android:gravity="center"
+    android:drawable="@drawable/splash_logo_anim" />
 
 </layer-list>

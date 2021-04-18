@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xyz.zedler.patrick.tack.view.RotaryScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <LinearLayout
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/list_margin_top"
+    android:paddingBottom="@dimen/list_margin_bottom">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/list_margin_top"
-        android:paddingBottom="@dimen/list_margin_bottom">
+    <androidx.appcompat.widget.AppCompatTextView
+      style="@style/Widget.Tack.TextView.Title"
+      android:text="@string/title_changelog" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            style="@style/Widget.Tack.TextView.Title"
-            android:text="@string/title_changelog"/>
+    <androidx.appcompat.widget.AppCompatTextView
+      android:id="@+id/text_changelog"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingStart="20dp"
+      android:paddingEnd="20dp"
+      android:paddingBottom="20dp"
+      android:textSize="13sp"
+      android:breakStrategy="high_quality"
+      android:hyphenationFrequency="full"
+      android:justificationMode="inter_word"
+      android:textColor="@color/on_background"
+      tools:targetApi="o" />
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_changelog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="20dp"
-            android:textSize="13sp"
-            android:breakStrategy="high_quality"
-            android:hyphenationFrequency="full"
-            android:justificationMode="inter_word"
-            android:textColor="@color/on_background"
-            tools:targetApi="o" />
-
-    </LinearLayout>
+  </LinearLayout>
 
 </xyz.zedler.patrick.tack.view.RotaryScrollView>

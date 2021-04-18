@@ -1,171 +1,171 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xyz.zedler.patrick.tack.view.RotaryScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <LinearLayout
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:paddingTop="@dimen/list_margin_top"
+    android:paddingBottom="20dp">
 
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/list_margin_top"
-        android:paddingBottom="20dp">
+    <androidx.appcompat.widget.AppCompatTextView
+      style="@style/Widget.Tack.TextView.Title"
+      android:text="@string/onboarding_welcome" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+      android:id="@+id/text_changelog"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_horizontal"
+      android:paddingStart="20dp"
+      android:paddingEnd="20dp"
+      android:paddingBottom="8dp"
+      android:textSize="14sp"
+      android:text="@string/onboarding_text"
+      android:textColor="@color/on_background" />
+
+    <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem">
+
+      <FrameLayout
+        android:layout_width="@dimen/circular_touch_target_size"
+        android:layout_height="@dimen/circular_touch_target_size"
+        android:background="@drawable/shape_circular_bg">
+
+        <ImageView
+          style="@style/Widget.Tack.Image.Icon"
+          android:src="@drawable/ic_round_filter_tilt_shift"
+          android:importantForAccessibility="no" />
+
+      </FrameLayout>
+
+      <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
         <androidx.appcompat.widget.AppCompatTextView
-            style="@style/Widget.Tack.TextView.Title"
-            android:text="@string/onboarding_welcome"/>
+          style="@style/Widget.Tack.LinearLayout.ListItem.Label"
+          android:text="@string/onboarding_picker" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/text_changelog"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:paddingBottom="8dp"
-            android:textSize="14sp"
-            android:text="@string/onboarding_text"
-            android:textColor="@color/on_background"/>
+          style="@style/Widget.Tack.LinearLayout.ListItem.Description"
+          android:text="@string/onboarding_picker_description" />
 
-        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem">
-
-            <FrameLayout
-                android:layout_width="@dimen/circular_touch_target_size"
-                android:layout_height="@dimen/circular_touch_target_size"
-                android:background="@drawable/shape_circular_bg">
-
-                <ImageView
-                    style="@style/Widget.Tack.Image.Icon"
-                    android:src="@drawable/ic_round_filter_tilt_shift"
-                    android:importantForAccessibility="no" />
-
-            </FrameLayout>
-
-            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
-                    android:text="@string/onboarding_picker"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
-                    android:text="@string/onboarding_picker_description"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem">
-
-            <FrameLayout
-                android:layout_width="@dimen/circular_touch_target_size"
-                android:layout_height="@dimen/circular_touch_target_size"
-                android:background="@drawable/shape_circular_bg">
-
-                <ImageView
-                    style="@style/Widget.Tack.Image.Icon"
-                    android:src="@drawable/ic_round_rotary_input"
-                    android:importantForAccessibility="no" />
-
-            </FrameLayout>
-
-            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
-                    android:text="@string/onboarding_rotary"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
-                    android:text="@string/onboarding_rotary_description"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/linear_feature_fsb"
-            style="@style/Widget.Tack.LinearLayout.ListItem">
-
-            <FrameLayout
-                android:layout_width="@dimen/circular_touch_target_size"
-                android:layout_height="@dimen/circular_touch_target_size"
-                android:background="@drawable/shape_circular_bg">
-
-                <ImageView
-                    android:id="@+id/image_feature_fsb1"
-                    style="@style/Widget.Tack.Image.Icon"
-                    android:importantForAccessibility="no"
-                    app:tint="@color/on_background"/>
-
-                <ImageView
-                    android:id="@+id/image_feature_fsb2"
-                    style="@style/Widget.Tack.Image.Icon"
-                    android:importantForAccessibility="no"
-                    app:tint="@color/on_background"/>
-
-            </FrameLayout>
-
-            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
-                    android:text="@string/onboarding_fsb"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
-                    android:text="@string/onboarding_fsb_description"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem">
-
-            <FrameLayout
-                android:layout_width="@dimen/circular_touch_target_size"
-                android:layout_height="@dimen/circular_touch_target_size"
-                android:background="@drawable/shape_circular_bg">
-
-                <ImageView
-                    style="@style/Widget.Tack.Image.Icon"
-                    android:src="@drawable/ic_round_loop"
-                    android:importantForAccessibility="no" />
-
-            </FrameLayout>
-
-            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Label"
-                    android:text="@string/setting_wrist_gestures"/>
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    style="@style/Widget.Tack.LinearLayout.ListItem.Description"
-                    android:text="@string/onboarding_wrist_description"/>
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <FrameLayout
-            android:id="@+id/frame_ok"
-            android:layout_width="@dimen/circular_touch_target_size"
-            android:layout_height="@dimen/circular_touch_target_size"
-            android:layout_marginTop="8dp"
-            android:clickable="true"
-            android:layout_gravity="center"
-            android:focusable="true"
-            android:background="@drawable/ripple_circular">
-
-            <ImageView
-                style="@style/Widget.Tack.Image.Icon"
-                android:src="@drawable/ic_round_done"
-                android:importantForAccessibility="no"/>
-
-        </FrameLayout>
+      </LinearLayout>
 
     </LinearLayout>
+
+    <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem">
+
+      <FrameLayout
+        android:layout_width="@dimen/circular_touch_target_size"
+        android:layout_height="@dimen/circular_touch_target_size"
+        android:background="@drawable/shape_circular_bg">
+
+        <ImageView
+          style="@style/Widget.Tack.Image.Icon"
+          android:src="@drawable/ic_round_rotary_input"
+          android:importantForAccessibility="no" />
+
+      </FrameLayout>
+
+      <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Label"
+          android:text="@string/onboarding_rotary" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Description"
+          android:text="@string/onboarding_rotary_description" />
+
+      </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:id="@+id/linear_feature_fsb"
+      style="@style/Widget.Tack.LinearLayout.ListItem">
+
+      <FrameLayout
+        android:layout_width="@dimen/circular_touch_target_size"
+        android:layout_height="@dimen/circular_touch_target_size"
+        android:background="@drawable/shape_circular_bg">
+
+        <ImageView
+          android:id="@+id/image_feature_fsb1"
+          style="@style/Widget.Tack.Image.Icon"
+          android:importantForAccessibility="no"
+          app:tint="@color/on_background" />
+
+        <ImageView
+          android:id="@+id/image_feature_fsb2"
+          style="@style/Widget.Tack.Image.Icon"
+          android:importantForAccessibility="no"
+          app:tint="@color/on_background" />
+
+      </FrameLayout>
+
+      <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Label"
+          android:text="@string/onboarding_fsb" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Description"
+          android:text="@string/onboarding_fsb_description" />
+
+      </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem">
+
+      <FrameLayout
+        android:layout_width="@dimen/circular_touch_target_size"
+        android:layout_height="@dimen/circular_touch_target_size"
+        android:background="@drawable/shape_circular_bg">
+
+        <ImageView
+          style="@style/Widget.Tack.Image.Icon"
+          android:src="@drawable/ic_round_loop"
+          android:importantForAccessibility="no" />
+
+      </FrameLayout>
+
+      <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Label"
+          android:text="@string/setting_wrist_gestures" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+          style="@style/Widget.Tack.LinearLayout.ListItem.Description"
+          android:text="@string/onboarding_wrist_description" />
+
+      </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+      android:id="@+id/frame_ok"
+      android:layout_width="@dimen/circular_touch_target_size"
+      android:layout_height="@dimen/circular_touch_target_size"
+      android:layout_marginTop="8dp"
+      android:clickable="true"
+      android:layout_gravity="center"
+      android:focusable="true"
+      android:background="@drawable/ripple_circular">
+
+      <ImageView
+        style="@style/Widget.Tack.Image.Icon"
+        android:src="@drawable/ic_round_done"
+        android:importantForAccessibility="no" />
+
+    </FrameLayout>
+
+  </LinearLayout>
 
 </xyz.zedler.patrick.tack.view.RotaryScrollView>

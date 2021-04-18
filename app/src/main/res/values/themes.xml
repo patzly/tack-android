@@ -1,58 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Tack" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary</item>
-        <item name="colorOnPrimary">@color/on_background</item>
+  <style name="Theme.Tack" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <item name="colorPrimary">@color/primary</item>
+    <item name="colorPrimaryDark">@color/primary</item>
+    <item name="colorOnPrimary">@color/on_background</item>
 
-        <item name="colorSecondary">@color/secondary</item>
-        <item name="colorOnSecondary">@color/on_secondary</item>
+    <item name="colorSecondary">@color/secondary</item>
+    <item name="colorOnSecondary">@color/on_secondary</item>
 
-        <item name="android:colorBackground">@color/background</item>
-        <item name="colorOnBackground">@color/on_background</item>
-        <item name="android:colorForeground">@color/on_background</item>
+    <item name="android:colorBackground">@color/background</item>
+    <item name="colorOnBackground">@color/on_background</item>
+    <item name="android:colorForeground">@color/on_background</item>
 
-        <item name="colorSurface">@color/surface</item>
-        <item name="colorOnSurface">@color/on_surface</item>
-        <item name="snackbarButtonStyle">@style/Widget.Tack.Button.TextButton.Snackbar</item>
+    <item name="colorSurface">@color/surface</item>
+    <item name="colorOnSurface">@color/on_surface</item>
+    <item name="snackbarButtonStyle">@style/Widget.Tack.Button.TextButton.Snackbar</item>
 
-        <item name="android:colorControlNormal">@color/on_background</item>
-        <item name="android:colorControlActivated">@color/secondary</item>
-        <item name="android:colorControlHighlight">@color/highlight</item>
-        <item name="android:colorEdgeEffect">@color/highlight</item>
+    <item name="android:colorControlNormal">@color/on_background</item>
+    <item name="android:colorControlActivated">@color/secondary</item>
+    <item name="android:colorControlHighlight">@color/highlight</item>
+    <item name="android:colorEdgeEffect">@color/highlight</item>
 
-        <item name="actionOverflowButtonStyle">@style/Widget.Tack.OverFlow</item>
+    <item name="actionOverflowButtonStyle">@style/Widget.Tack.OverFlow</item>
 
-        <item name="android:fontFamily">@font/text_regular</item>
-        <item name="android:lineSpacingExtra">5dp</item>
-    </style>
+    <item name="android:fontFamily">@font/text_regular</item>
+    <item name="android:lineSpacingExtra">5dp</item>
+  </style>
 
-    <style name="Theme.Tack.BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primary</item>
-        <item name="colorOnPrimary">@color/on_background</item>
+  <style name="Theme.Tack.BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
+    <item name="colorPrimary">@color/primary</item>
+    <item name="colorPrimaryDark">@color/primary</item>
+    <item name="colorOnPrimary">@color/on_background</item>
 
-        <item name="colorSecondary">@color/secondary</item>
-        <item name="colorOnSecondary">@color/on_secondary</item>
+    <item name="colorSecondary">@color/secondary</item>
+    <item name="colorOnSecondary">@color/on_secondary</item>
 
-        <item name="android:colorBackground">@color/surface</item>
-        <item name="colorOnBackground">@color/on_background</item>
-        <item name="android:colorForeground">@color/on_background</item>
+    <item name="android:colorBackground">@color/surface</item>
+    <item name="colorOnBackground">@color/on_background</item>
+    <item name="android:colorForeground">@color/on_background</item>
 
-        <item name="colorSurface">@color/surface</item>
-        <item name="colorOnSurface">@color/on_surface</item>
-        <item name="snackbarButtonStyle">@style/Widget.Tack.Button.TextButton.Snackbar</item>
+    <item name="colorSurface">@color/surface</item>
+    <item name="colorOnSurface">@color/on_surface</item>
+    <item name="snackbarButtonStyle">@style/Widget.Tack.Button.TextButton.Snackbar</item>
 
-        <item name="android:colorControlNormal">@color/on_background</item>
-        <item name="android:colorControlActivated">@color/secondary</item>
-        <item name="android:colorControlHighlight">@color/highlight</item>
-        <item name="android:colorEdgeEffect">@color/highlight</item>
+    <item name="android:colorControlNormal">@color/on_background</item>
+    <item name="android:colorControlActivated">@color/secondary</item>
+    <item name="android:colorControlHighlight">@color/highlight</item>
+    <item name="android:colorEdgeEffect">@color/highlight</item>
 
-        <item name="android:fontFamily">@font/text_regular</item>
-        <item name="android:lineSpacingExtra">5dp</item>
+    <item name="android:fontFamily">@font/text_regular</item>
+    <item name="android:lineSpacingExtra">5dp</item>
 
-        <item name="android:windowIsFloating">false</item>
-    </style>
+    <item name="android:windowIsFloating">false</item>
+  </style>
 
 </resources>

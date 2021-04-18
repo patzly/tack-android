@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <integer name="picker_dots">16</integer>
+  <integer name="picker_dots">16</integer>
 
-    <integer name="layout_weight_top">37</integer>
-    <integer name="layout_weight_top_ambient">1</integer>
-    <integer name="layout_weight_bottom">63</integer>
-    <integer name="layout_weight_bottom_ambient">1</integer>
+  <integer name="layout_weight_top">37</integer>
+  <integer name="layout_weight_top_ambient">1</integer>
+  <integer name="layout_weight_bottom">63</integer>
+  <integer name="layout_weight_bottom_ambient">1</integer>
 
 </resources>

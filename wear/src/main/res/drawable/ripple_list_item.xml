@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ripple
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:color="@color/highlight_on_background">
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:color="@color/highlight_on_background">
 
-    <item android:drawable="@color/background" />
+  <item android:drawable="@color/background" />
 
 </ripple>

@@ -1,55 +1,55 @@
 <resources>
 
-    <string name="app_name" translatable="false">Tack</string>
-    <string name="app_copyright" translatable="false">© 2021 Patrick Zedler</string>
+  <string name="app_name" translatable="false">Tack</string>
+  <string name="app_copyright" translatable="false">© 2021 Patrick Zedler</string>
 
-    <string name="title_bpm">BPM</string>
-    <string name="title_settings">Settings</string>
-    <string name="title_play_pause">Play/Pause</string>
-    <string name="title_tempo_tap">Tap tempo</string>
-    <string name="title_beat_mode">Beat mode</string>
-    <string name="title_emphasis">Emphasis</string>
-    <string name="title_bookmark">Bookmark</string>
-    <string name="title_changelog">Changelog</string>
+  <string name="title_bpm">BPM</string>
+  <string name="title_settings">Settings</string>
+  <string name="title_play_pause">Play/Pause</string>
+  <string name="title_tempo_tap">Tap tempo</string>
+  <string name="title_beat_mode">Beat mode</string>
+  <string name="title_emphasis">Emphasis</string>
+  <string name="title_bookmark">Bookmark</string>
+  <string name="title_changelog">Changelog</string>
 
-    <string name="msg_bookmark">Tap again to return to previous value</string>
-    <string name="msg_hide_picker">Hide picker in settings for larger controls</string>
-    <string name="msg_long_press">Press long to change quickly</string>
-    <string name="msg_no_speaker">Watch has no audio output, please use a Bluetooth speaker</string>
+  <string name="msg_bookmark">Tap again to return to previous value</string>
+  <string name="msg_hide_picker">Hide picker in settings for larger controls</string>
+  <string name="msg_long_press">Press long to change quickly</string>
+  <string name="msg_no_speaker">Watch has no audio output, please use a Bluetooth speaker</string>
 
-    <string name="onboarding_welcome">Welcome!</string>
-    <string name="onboarding_text">To control the tempo:</string>
-    <string name="onboarding_picker">Dotted circle</string>
-    <string name="onboarding_picker_description">Drag to change</string>
-    <string name="onboarding_wrist_description">If enabled</string>
-    <string name="onboarding_rotary">Rotary input</string>
-    <string name="onboarding_rotary_description">If available</string>
-    <string name="onboarding_fsb">Side buttons</string>
-    <string name="onboarding_fsb_description">Also long press</string>
+  <string name="onboarding_welcome">Welcome!</string>
+  <string name="onboarding_text">To control the tempo:</string>
+  <string name="onboarding_picker">Dotted circle</string>
+  <string name="onboarding_picker_description">Drag to change</string>
+  <string name="onboarding_wrist_description">If enabled</string>
+  <string name="onboarding_rotary">Rotary input</string>
+  <string name="onboarding_rotary_description">If available</string>
+  <string name="onboarding_fsb">Side buttons</string>
+  <string name="onboarding_fsb_description">Also long press</string>
 
-    <string name="setting_sound">Beat sound</string>
-    <string name="setting_sound_wood">Wood</string>
-    <string name="setting_sound_click">Click</string>
-    <string name="setting_sound_ding">Ding</string>
-    <string name="setting_sound_beep">Beep</string>
-    <string name="setting_heavy_vibration">Heavy vibration</string>
-    <string name="setting_heavy_vibration_description">If default is not enough</string>
-    <string name="setting_vibrate_always">Vibrate always</string>
-    <string name="setting_vibrate_always_description">Also with sound</string>
-    <string name="setting_haptic">Haptic feedback</string>
-    <string name="setting_haptic_description">On tempo change</string>
-    <string name="setting_wrist_gestures">Wrist gestures</string>
-    <string name="setting_wrist_gestures_description">+/-1 BPM</string>
-    <string name="setting_hide_picker">Hide picker</string>
-    <string name="setting_hide_picker_description">Larger controls</string>
-    <string name="setting_animations">Animations</string>
-    <string name="setting_animations_description">Icons and more</string>
-    <string name="setting_rate">Rate Tack on Google Play</string>
+  <string name="setting_sound">Beat sound</string>
+  <string name="setting_sound_wood">Wood</string>
+  <string name="setting_sound_click">Click</string>
+  <string name="setting_sound_ding">Ding</string>
+  <string name="setting_sound_beep">Beep</string>
+  <string name="setting_heavy_vibration">Heavy vibration</string>
+  <string name="setting_heavy_vibration_description">If default is not enough</string>
+  <string name="setting_vibrate_always">Vibrate always</string>
+  <string name="setting_vibrate_always_description">Also with sound</string>
+  <string name="setting_haptic">Haptic feedback</string>
+  <string name="setting_haptic_description">On tempo change</string>
+  <string name="setting_wrist_gestures">Wrist gestures</string>
+  <string name="setting_wrist_gestures_description">+/-1 BPM</string>
+  <string name="setting_hide_picker">Hide picker</string>
+  <string name="setting_hide_picker_description">Larger controls</string>
+  <string name="setting_animations">Animations</string>
+  <string name="setting_animations_description">Icons and more</string>
+  <string name="setting_rate">Rate Tack on Google Play</string>
 
-    <array name="changelog_highlights" translatable="false">
-        <item>New:</item>
-        <item>Improved:</item>
-        <item>Fixed:</item>
-    </array>
+  <array name="changelog_highlights" translatable="false">
+    <item>New:</item>
+    <item>Improved:</item>
+    <item>Fixed:</item>
+  </array>
 
 </resources>

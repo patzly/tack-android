@@ -1,301 +1,301 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/coordinator_container"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/coordinator_container"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <com.google.android.material.appbar.AppBarLayout
+    android:id="@+id/app_bar_main"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="?android:actionBarSize"
+      android:orientation="horizontal">
+
+      <ImageView
+        android:id="@+id/image_main_logo"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="16dp"
+        android:layout_gravity="start|center_vertical"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_round_tack_logo" />
+
+      <TextView
+        style="@style/Widget.Tack.TextView.Toolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/app_name"
+        android:layout_gravity="center"
+        android:textAlignment="center" />
+
+      <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_main"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        app:menu="@menu/menu_main" />
+
+    </FrameLayout>
+
+  </com.google.android.material.appbar.AppBarLayout>
+
+  <FrameLayout
+    android:id="@+id/frame_main_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:gravity="center_horizontal"
+      android:layout_gravity="center"
+      android:animateLayoutChanges="true"
+      tools:ignore="UselessParent">
+
+      <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
         <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="?android:actionBarSize"
-            android:orientation="horizontal">
+          android:id="@+id/frame_main_less"
+          android:layout_width="48dp"
+          android:layout_height="48dp"
+          android:layout_marginEnd="16dp"
+          android:background="?attr/actionBarItemBackground"
+          android:clickable="true"
+          android:gravity="center"
+          android:contentDescription="@string/action_less"
+          android:tooltipText="@string/action_less"
+          android:focusable="true"
+          tools:targetApi="o">
 
-            <ImageView
-                android:id="@+id/image_main_logo"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginStart="16dp"
-                android:layout_gravity="start|center_vertical"
-                android:importantForAccessibility="no"
-                android:src="@drawable/ic_round_tack_logo" />
-
-            <TextView
-                style="@style/Widget.Tack.TextView.Toolbar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/app_name"
-                android:layout_gravity="center"
-                android:textAlignment="center" />
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar_main"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                app:menu="@menu/menu_main"/>
+          <ImageView
+            android:id="@+id/image_main_less"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_round_chevron_left_anim" />
 
         </FrameLayout>
 
-    </com.google.android.material.appbar.AppBarLayout>
+        <FrameLayout
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content">
 
-    <FrameLayout
-        android:id="@+id/frame_main_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+          <xyz.zedler.patrick.tack.view.BpmPickerView
+            android:id="@+id/bpm_picker_main"
+            android:layout_width="@dimen/bpm_picker_size"
+            android:layout_height="@dimen/bpm_picker_size"
+            android:importantForAccessibility="yes" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center_horizontal"
-            android:layout_gravity="center"
-            android:animateLayoutChanges="true"
-            tools:ignore="UselessParent">
+          <xyz.zedler.patrick.tack.view.DottedCircleView
+            android:id="@+id/dotted_circle_main"
+            android:layout_width="@dimen/bpm_picker_size"
+            android:layout_height="@dimen/bpm_picker_size" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <FrameLayout
-                    android:id="@+id/frame_main_less"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="?attr/actionBarItemBackground"
-                    android:clickable="true"
-                    android:gravity="center"
-                    android:contentDescription="@string/action_less"
-                    android:tooltipText="@string/action_less"
-                    android:focusable="true"
-                    tools:targetApi="o">
-
-                    <ImageView
-                        android:id="@+id/image_main_less"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:importantForAccessibility="no"
-                        android:src="@drawable/ic_round_chevron_left_anim" />
-
-                </FrameLayout>
-
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <xyz.zedler.patrick.tack.view.BpmPickerView
-                        android:id="@+id/bpm_picker_main"
-                        android:layout_width="@dimen/bpm_picker_size"
-                        android:layout_height="@dimen/bpm_picker_size"
-                        android:importantForAccessibility="yes"/>
-
-                    <xyz.zedler.patrick.tack.view.DottedCircleView
-                        android:id="@+id/dotted_circle_main"
-                        android:layout_width="@dimen/bpm_picker_size"
-                        android:layout_height="@dimen/bpm_picker_size" />
-
-                    <FrameLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        tools:ignore="SpUsage">
-
-                        <TextView
-                            android:id="@+id/text_main_bpm"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="16dp"
-                            android:textColor="@color/on_background"
-                            android:layout_gravity="center_horizontal|top"
-                            android:fontFamily="@font/text_bold"
-                            android:textSize="@dimen/bpm_text_size" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/title_bpm_label"
-                            android:textColor="@color/on_background_secondary"
-                            android:fontFamily="@font/text_bold"
-                            android:layout_gravity="center_horizontal|bottom"
-                            android:textSize="15dp"/>
-
-                    </FrameLayout>
-
-                </FrameLayout>
-
-                <FrameLayout
-                    android:id="@+id/frame_main_more"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="16dp"
-                    android:background="?attr/actionBarItemBackground"
-                    android:clickable="true"
-                    android:gravity="center"
-                    android:contentDescription="@string/action_more"
-                    android:tooltipText="@string/action_more"
-                    android:focusable="true"
-                    tools:targetApi="o">
-
-                    <ImageView
-                        android:id="@+id/image_main_more"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:importantForAccessibility="no"
-                        android:src="@drawable/ic_round_chevron_right_anim" />
-
-                </FrameLayout>
-
-            </LinearLayout>
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chip_group_main"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
-                app:singleSelection="true"
-                app:singleLine="true"/>
-
-        </LinearLayout>
-
-        <LinearLayout
+          <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/control_margin_bottom"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_gravity="bottom|center_horizontal"
-            android:clipToPadding="false">
+            android:layout_gravity="center"
+            tools:ignore="SpUsage">
 
-            <FrameLayout
-                android:id="@+id/frame_main_emphasis"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="8dp"
-                android:background="?attr/actionBarItemBackground"
-                android:clickable="true"
-                android:gravity="center"
-                android:contentDescription="@string/action_emphasis"
-                android:tooltipText="@string/action_emphasis"
-                android:focusable="true"
-                tools:targetApi="o">
+            <TextView
+              android:id="@+id/text_main_bpm"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_marginBottom="16dp"
+              android:textColor="@color/on_background"
+              android:layout_gravity="center_horizontal|top"
+              android:fontFamily="@font/text_bold"
+              android:textSize="@dimen/bpm_text_size" />
 
-                <ImageView
-                    android:id="@+id/image_main_emphasis"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="7dp"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_round_emphasis_anim" />
+            <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/title_bpm_label"
+              android:textColor="@color/on_background_secondary"
+              android:fontFamily="@font/text_bold"
+              android:layout_gravity="center_horizontal|bottom"
+              android:textSize="15dp" />
 
-                <TextView
-                    android:id="@+id/text_main_emphasis"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="6dp"
-                    android:layout_marginStart="1dp"
-                    android:fontFamily="@font/material_digits_rounded"
-                    android:letterSpacing="0.12"
-                    android:textColor="@color/icon"
-                    android:textSize="10dp"
-                    tools:ignore="SpUsage"/>
+          </FrameLayout>
 
-            </FrameLayout>
+        </FrameLayout>
 
-            <FrameLayout
-                android:id="@+id/frame_main_tempo_tap"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="16dp"
-                android:background="?attr/actionBarItemBackground"
-                android:clickable="true"
-                android:gravity="center"
-                android:contentDescription="@string/action_tempo_tap"
-                android:tooltipText="@string/action_tempo_tap"
-                android:focusable="true"
-                tools:targetApi="o">
+        <FrameLayout
+          android:id="@+id/frame_main_more"
+          android:layout_width="48dp"
+          android:layout_height="48dp"
+          android:layout_marginStart="16dp"
+          android:background="?attr/actionBarItemBackground"
+          android:clickable="true"
+          android:gravity="center"
+          android:contentDescription="@string/action_more"
+          android:tooltipText="@string/action_more"
+          android:focusable="true"
+          tools:targetApi="o">
 
-                <ImageView
-                    android:id="@+id/image_main_tempo_tap"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_round_touch_app_anim" />
+          <ImageView
+            android:id="@+id/image_main_more"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_round_chevron_right_anim" />
 
-            </FrameLayout>
+        </FrameLayout>
 
-            <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_main"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_round_play_to_pause_anim"
-                android:tint="@color/on_secondary"
-                android:contentDescription="@string/action_play_pause"
-                android:tooltipText="@string/action_play_pause"
-                app:backgroundTint="@color/retro_green_bg_white"
-                app:rippleColor="@color/highlight_on_secondary"
-                tools:targetApi="o" />
+      </LinearLayout>
 
-            <FrameLayout
-                android:id="@+id/frame_main_bookmark"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="16dp"
-                android:background="?attr/actionBarItemBackground"
-                android:clickable="true"
-                android:gravity="center"
-                android:contentDescription="@string/action_bookmark"
-                android:tooltipText="@string/action_bookmark"
-                android:focusable="true"
-                tools:targetApi="o">
+      <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        app:singleSelection="true"
+        app:singleLine="true" />
 
-                <ImageView
-                    android:id="@+id/image_main_bookmark"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_round_bookmark_anim" />
+    </LinearLayout>
 
-            </FrameLayout>
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:paddingBottom="@dimen/control_margin_bottom"
+      android:orientation="horizontal"
+      android:gravity="center_vertical"
+      android:layout_gravity="bottom|center_horizontal"
+      android:clipToPadding="false">
 
-            <FrameLayout
-                android:id="@+id/frame_main_beat_mode"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="8dp"
-                android:background="?attr/actionBarItemBackground"
-                android:clickable="true"
-                android:gravity="center"
-                android:contentDescription="@string/action_beat_mode"
-                android:tooltipText="@string/action_beat_mode"
-                android:focusable="true"
-                tools:targetApi="o">
+      <FrameLayout
+        android:id="@+id/frame_main_emphasis"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:background="?attr/actionBarItemBackground"
+        android:clickable="true"
+        android:gravity="center"
+        android:contentDescription="@string/action_emphasis"
+        android:tooltipText="@string/action_emphasis"
+        android:focusable="true"
+        tools:targetApi="o">
 
-                <ImageView
-                    android:id="@+id/image_main_beat_mode"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_round_vibrate_to_volume_anim" />
+        <ImageView
+          android:id="@+id/image_main_emphasis"
+          android:layout_width="24dp"
+          android:layout_height="24dp"
+          android:layout_gravity="center"
+          android:layout_marginTop="7dp"
+          android:importantForAccessibility="no"
+          android:src="@drawable/ic_round_emphasis_anim" />
 
-            </FrameLayout>
+        <TextView
+          android:id="@+id/text_main_emphasis"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:layout_marginBottom="6dp"
+          android:layout_marginStart="1dp"
+          android:fontFamily="@font/material_digits_rounded"
+          android:letterSpacing="0.12"
+          android:textColor="@color/icon"
+          android:textSize="10dp"
+          tools:ignore="SpUsage" />
 
-        </LinearLayout>
+      </FrameLayout>
 
-    </FrameLayout>
+      <FrameLayout
+        android:id="@+id/frame_main_tempo_tap"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/actionBarItemBackground"
+        android:clickable="true"
+        android:gravity="center"
+        android:contentDescription="@string/action_tempo_tap"
+        android:tooltipText="@string/action_tempo_tap"
+        android:focusable="true"
+        tools:targetApi="o">
+
+        <ImageView
+          android:id="@+id/image_main_tempo_tap"
+          android:layout_width="24dp"
+          android:layout_height="24dp"
+          android:layout_gravity="center"
+          android:importantForAccessibility="no"
+          android:src="@drawable/ic_round_touch_app_anim" />
+
+      </FrameLayout>
+
+      <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_round_play_to_pause_anim"
+        android:tint="@color/on_secondary"
+        android:contentDescription="@string/action_play_pause"
+        android:tooltipText="@string/action_play_pause"
+        app:backgroundTint="@color/retro_green_bg_white"
+        app:rippleColor="@color/highlight_on_secondary"
+        tools:targetApi="o" />
+
+      <FrameLayout
+        android:id="@+id/frame_main_bookmark"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:background="?attr/actionBarItemBackground"
+        android:clickable="true"
+        android:gravity="center"
+        android:contentDescription="@string/action_bookmark"
+        android:tooltipText="@string/action_bookmark"
+        android:focusable="true"
+        tools:targetApi="o">
+
+        <ImageView
+          android:id="@+id/image_main_bookmark"
+          android:layout_width="24dp"
+          android:layout_height="24dp"
+          android:layout_gravity="center"
+          android:importantForAccessibility="no"
+          android:src="@drawable/ic_round_bookmark_anim" />
+
+      </FrameLayout>
+
+      <FrameLayout
+        android:id="@+id/frame_main_beat_mode"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:background="?attr/actionBarItemBackground"
+        android:clickable="true"
+        android:gravity="center"
+        android:contentDescription="@string/action_beat_mode"
+        android:tooltipText="@string/action_beat_mode"
+        android:focusable="true"
+        tools:targetApi="o">
+
+        <ImageView
+          android:id="@+id/image_main_beat_mode"
+          android:layout_width="24dp"
+          android:layout_height="24dp"
+          android:layout_gravity="center"
+          android:importantForAccessibility="no"
+          android:src="@drawable/ic_round_vibrate_to_volume_anim" />
+
+      </FrameLayout>
+
+    </LinearLayout>
+
+  </FrameLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="bpm_picker_size">170dp</dimen>
-    <dimen name="bpm_text_size">36dp</dimen>
-    <dimen name="control_margin_bottom">24dp</dimen>
+  <dimen name="bpm_picker_size">170dp</dimen>
+  <dimen name="bpm_text_size">36dp</dimen>
+  <dimen name="control_margin_bottom">24dp</dimen>
 
-    <dimen name="picker_dot_size">6dp</dimen>
-    <dimen name="picker_dot_size_dragged">8dp</dimen>
-    <dimen name="picker_ring_width">48dp</dimen>
-    <dimen name="picker_ring_padding">24dp</dimen>
+  <dimen name="picker_dot_size">6dp</dimen>
+  <dimen name="picker_dot_size_dragged">8dp</dimen>
+  <dimen name="picker_ring_width">48dp</dimen>
+  <dimen name="picker_ring_padding">24dp</dimen>
 
-    <dimen name="chip_stroke_width">1dp</dimen>
-    <dimen name="chip_stroke_width_active">2dp</dimen>
+  <dimen name="chip_stroke_width">1dp</dimen>
+  <dimen name="chip_stroke_width_active">2dp</dimen>
 
 </resources>

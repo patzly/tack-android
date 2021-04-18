@@ -1,271 +1,271 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <com.google.android.material.appbar.AppBarLayout
+    android:id="@+id/app_bar_settings"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="?android:actionBarSize"
+      android:gravity="center_vertical"
+      android:orientation="horizontal">
+
+      <FrameLayout
+        android:id="@+id/frame_settings_back"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="20dp"
+        android:background="?attr/actionBarItemBackground"
+        android:clickable="true"
+        android:contentDescription="@string/action_back"
+        android:tooltipText="@string/action_back"
+        android:focusable="true"
+        tools:targetApi="o">
+
+        <ImageView
+          android:layout_width="24dp"
+          android:layout_height="24dp"
+          android:layout_gravity="center"
+          android:importantForAccessibility="no"
+          android:src="@drawable/ic_round_arrow_back" />
+
+      </FrameLayout>
+
+      <TextView
+        style="@style/Widget.Tack.TextView.Toolbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/title_settings" />
+
+      <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        app:menu="@menu/menu_settings" />
+
+    </LinearLayout>
+
+  </com.google.android.material.appbar.AppBarLayout>
+
+  <androidx.core.widget.NestedScrollView
+    android:id="@+id/scroll_settings"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/app_bar_settings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <LinearLayout
+      android:id="@+id/linear_settings_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingTop="8dp"
+      android:paddingBottom="8dp"
+      android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="?android:actionBarSize"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+      <LinearLayout
+        android:id="@+id/linear_settings_dark_mode"
+        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
-            <FrameLayout
-                android:id="@+id/frame_settings_back"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="20dp"
-                android:background="?attr/actionBarItemBackground"
-                android:clickable="true"
-                android:contentDescription="@string/action_back"
-                android:tooltipText="@string/action_back"
-                android:focusable="true"
-                tools:targetApi="o">
+        <ImageView
+          android:id="@+id/image_settings_dark_mode"
+          style="@style/Widget.Tack.ImageView.ListItem.Icon"
+          tools:ignore="ContentDescription" />
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_round_arrow_back" />
+        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
 
-            </FrameLayout>
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Title"
+            android:text="@string/setting_dark_mode" />
 
-            <TextView
-                style="@style/Widget.Tack.TextView.Toolbar"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="@string/title_settings" />
-
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar_settings"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                app:menu="@menu/menu_settings"/>
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Description"
+            android:text="@string/setting_dark_mode_description" />
 
         </LinearLayout>
 
-    </com.google.android.material.appbar.AppBarLayout>
+        <com.google.android.material.switchmaterial.SwitchMaterial
+          android:id="@+id/switch_settings_dark_mode"
+          style="@style/Widget.Tack.Switch" />
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scroll_settings"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+      </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/linear_settings_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
-            android:orientation="vertical">
+      <LinearLayout
+        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine"
+        android:orientation="horizontal"
+        android:paddingStart="0dp"
+        android:paddingEnd="16dp">
 
-            <LinearLayout
-                android:id="@+id/linear_settings_dark_mode"
-                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
+        <ImageView
+          android:id="@+id/image_settings_sound"
+          style="@style/Widget.Tack.ImageView.ListItem.Icon"
+          android:src="@drawable/ic_round_audiotrack_anim"
+          tools:ignore="ContentDescription"
+          android:layout_marginStart="16dp" />
 
-                <ImageView
-                    android:id="@+id/image_settings_dark_mode"
-                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
-                    tools:ignore="ContentDescription" />
+        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
-                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Title"
+            android:text="@string/setting_sound" />
 
-                    <TextView
-                        style="@style/Widget.Tack.TextView.ListItem.Title"
-                        android:text="@string/setting_dark_mode" />
-
-                    <TextView
-                        style="@style/Widget.Tack.TextView.ListItem.Description"
-                        android:text="@string/setting_dark_mode_description" />
-
-                </LinearLayout>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_settings_dark_mode"
-                    style="@style/Widget.Tack.Switch"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine"
-                android:orientation="horizontal"
-                android:paddingStart="0dp"
-                android:paddingEnd="16dp">
-
-                <ImageView
-                    android:id="@+id/image_settings_sound"
-                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
-                    android:src="@drawable/ic_round_audiotrack_anim"
-                    tools:ignore="ContentDescription"
-                    android:layout_marginStart="16dp"/>
-
-                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-                    <TextView
-                        style="@style/Widget.Tack.TextView.ListItem.Title"
-                        android:text="@string/setting_sound" />
-
-                    <TextView
-                        style="@style/Widget.Tack.TextView.ListItem.Description"
-                        android:text="@string/setting_sound_description" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <RadioGroup
-                android:id="@+id/radio_group_settings_sound"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="72dp"
-                android:layout_marginBottom="8dp">
-
-                <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:id="@+id/radio_settings_sound_wood"
-                    style="@style/Widget.Tack.RadioButton"
-                    android:text="@string/setting_sound_wood"/>
-
-                <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:id="@+id/radio_settings_sound_click"
-                    style="@style/Widget.Tack.RadioButton"
-                    android:text="@string/setting_sound_click"/>
-
-                <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:id="@+id/radio_settings_sound_ding"
-                    style="@style/Widget.Tack.RadioButton"
-                    android:text="@string/setting_sound_ding" />
-
-                <com.google.android.material.radiobutton.MaterialRadioButton
-                    android:id="@+id/radio_settings_sound_beep"
-                    style="@style/Widget.Tack.RadioButton"
-                    android:text="@string/setting_sound_beep"/>
-
-            </RadioGroup>
-
-            <LinearLayout
-                android:id="@+id/linear_settings_vibrate_always"
-                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
-
-                <ImageView
-                    android:id="@+id/image_settings_vibrate_always"
-                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
-                    android:src="@drawable/ic_round_vibration_anim"
-                    tools:ignore="ContentDescription" />
-
-                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
-
-                    <TextView
-                        style="@style/Widget.Tack.TextView.ListItem.Title"
-                        android:text="@string/setting_vibrate_always" />
-
-                    <TextView
-                        style="@style/Widget.Tack.TextView.ListItem.Description"
-                        android:text="@string/setting_vibrate_always_description" />
-
-                </LinearLayout>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_settings_vibrate_always"
-                    style="@style/Widget.Tack.Switch"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/linear_settings_haptic"
-                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
-
-                <ImageView
-                    android:id="@+id/image_settings_haptic"
-                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
-                    android:src="@drawable/ic_round_filter_tilt_shift_anim"
-                    tools:ignore="ContentDescription" />
-
-                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
-
-                    <TextView
-                        style="@style/Widget.Tack.TextView.ListItem.Title"
-                        android:text="@string/setting_haptic" />
-
-                    <TextView
-                        style="@style/Widget.Tack.TextView.ListItem.Description"
-                        android:text="@string/setting_haptic_description" />
-
-                </LinearLayout>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_settings_haptic"
-                    style="@style/Widget.Tack.Switch"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/linear_settings_slider_emphasis"
-                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
-
-                <ImageView
-                    android:id="@+id/image_settings_slider_emphasis"
-                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
-                    android:src="@drawable/ic_round_swap_horiz_anim"
-                    tools:ignore="ContentDescription" />
-
-                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
-
-                    <TextView
-                        style="@style/Widget.Tack.TextView.ListItem.Title"
-                        android:text="@string/setting_slider_emphasis" />
-
-                    <TextView
-                        style="@style/Widget.Tack.TextView.ListItem.Description"
-                        android:text="@string/setting_slider_emphasis_description" />
-
-                </LinearLayout>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_settings_slider_emphasis"
-                    style="@style/Widget.Tack.Switch"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/linear_settings_keep_awake"
-                style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
-
-                <ImageView
-                    android:id="@+id/image_settings_keep_awake"
-                    style="@style/Widget.Tack.ImageView.ListItem.Icon"
-                    android:src="@drawable/ic_round_preview_anim"
-                    tools:ignore="ContentDescription" />
-
-                <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
-
-                    <TextView
-                        style="@style/Widget.Tack.TextView.ListItem.Title"
-                        android:text="@string/setting_keep_awake" />
-
-                    <TextView
-                        style="@style/Widget.Tack.TextView.ListItem.Description"
-                        android:text="@string/setting_keep_awake_description" />
-
-                </LinearLayout>
-
-                <com.google.android.material.switchmaterial.SwitchMaterial
-                    android:id="@+id/switch_settings_keep_awake"
-                    style="@style/Widget.Tack.Switch"/>
-
-            </LinearLayout>
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Description"
+            android:text="@string/setting_sound_description" />
 
         </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
+      </LinearLayout>
+
+      <RadioGroup
+        android:id="@+id/radio_group_settings_sound"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="72dp"
+        android:layout_marginBottom="8dp">
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+          android:id="@+id/radio_settings_sound_wood"
+          style="@style/Widget.Tack.RadioButton"
+          android:text="@string/setting_sound_wood" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+          android:id="@+id/radio_settings_sound_click"
+          style="@style/Widget.Tack.RadioButton"
+          android:text="@string/setting_sound_click" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+          android:id="@+id/radio_settings_sound_ding"
+          style="@style/Widget.Tack.RadioButton"
+          android:text="@string/setting_sound_ding" />
+
+        <com.google.android.material.radiobutton.MaterialRadioButton
+          android:id="@+id/radio_settings_sound_beep"
+          style="@style/Widget.Tack.RadioButton"
+          android:text="@string/setting_sound_beep" />
+
+      </RadioGroup>
+
+      <LinearLayout
+        android:id="@+id/linear_settings_vibrate_always"
+        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
+
+        <ImageView
+          android:id="@+id/image_settings_vibrate_always"
+          style="@style/Widget.Tack.ImageView.ListItem.Icon"
+          android:src="@drawable/ic_round_vibration_anim"
+          tools:ignore="ContentDescription" />
+
+        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Title"
+            android:text="@string/setting_vibrate_always" />
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Description"
+            android:text="@string/setting_vibrate_always_description" />
+
+        </LinearLayout>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+          android:id="@+id/switch_settings_vibrate_always"
+          style="@style/Widget.Tack.Switch" />
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/linear_settings_haptic"
+        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
+
+        <ImageView
+          android:id="@+id/image_settings_haptic"
+          style="@style/Widget.Tack.ImageView.ListItem.Icon"
+          android:src="@drawable/ic_round_filter_tilt_shift_anim"
+          tools:ignore="ContentDescription" />
+
+        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Title"
+            android:text="@string/setting_haptic" />
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Description"
+            android:text="@string/setting_haptic_description" />
+
+        </LinearLayout>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+          android:id="@+id/switch_settings_haptic"
+          style="@style/Widget.Tack.Switch" />
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/linear_settings_slider_emphasis"
+        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
+
+        <ImageView
+          android:id="@+id/image_settings_slider_emphasis"
+          style="@style/Widget.Tack.ImageView.ListItem.Icon"
+          android:src="@drawable/ic_round_swap_horiz_anim"
+          tools:ignore="ContentDescription" />
+
+        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Title"
+            android:text="@string/setting_slider_emphasis" />
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Description"
+            android:text="@string/setting_slider_emphasis_description" />
+
+        </LinearLayout>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+          android:id="@+id/switch_settings_slider_emphasis"
+          style="@style/Widget.Tack.Switch" />
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/linear_settings_keep_awake"
+        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
+
+        <ImageView
+          android:id="@+id/image_settings_keep_awake"
+          style="@style/Widget.Tack.ImageView.ListItem.Icon"
+          android:src="@drawable/ic_round_preview_anim"
+          tools:ignore="ContentDescription" />
+
+        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Title"
+            android:text="@string/setting_keep_awake" />
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Description"
+            android:text="@string/setting_keep_awake_description" />
+
+        </LinearLayout>
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+          android:id="@+id/switch_settings_keep_awake"
+          style="@style/Widget.Tack.Switch" />
+
+      </LinearLayout>
+
+    </LinearLayout>
+
+  </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
