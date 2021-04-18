@@ -159,6 +159,7 @@
           android:layout_marginBottom="@dimen/text_bpm_margin_bottom_picker"
           android:layout_gravity="center_horizontal|top"
           android:fontFamily="@font/edwin_bold"
+          android:lineSpacingExtra="5dp"
           android:textSize="30sp" />
 
         <androidx.appcompat.widget.AppCompatTextView
@@ -169,6 +170,7 @@
           android:textColor="@color/on_background_secondary"
           android:layout_gravity="center_horizontal|bottom"
           android:fontFamily="@font/edwin_bold"
+          android:lineSpacingExtra="5dp"
           android:textSize="13sp" />
 
       </FrameLayout>

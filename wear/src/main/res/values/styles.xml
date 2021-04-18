@@ -1,26 +1,38 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-  <style name="Widget.Tack.TextView.Title" parent="Widget.AppCompat.TextView">
+  <style name="Widget.Tack.TextView" parent="Widget.AppCompat.TextView">
+    <item name="android:textSize">15.5sp</item>
+    <item name="android:textColor">@color/on_background</item>
+    <item name="android:fontFamily">@font/jost_book</item>
+    <item name="android:lineSpacingExtra">-1.5sp</item>
+    <item name="android:breakStrategy" tools:targetApi="m">high_quality</item>
+    <item name="android:hyphenationFrequency" tools:targetApi="m">full</item>
+  </style>
+
+  <style name="Widget.Tack.TextView.Paragraph" parent="Widget.Tack.TextView">
+    <item name="android:justificationMode" tools:targetApi="o">inter_word</item>
+  </style>
+
+  <style name="Widget.Tack.TextView.Title" parent="Widget.Tack.TextView">
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:layout_gravity">center</item>
     <item name="android:layout_marginBottom">12dp</item>
-    <item name="android:textSize">18sp</item>
-    <item name="android:textColor">@color/on_background</item>
-    <item name="android:fontFamily">@font/edwin_bold</item>
+    <item name="android:textSize" tools:ignore="SpUsage">21.5dp</item>
+    <item name="android:fontFamily">@font/jost_bold</item>
   </style>
 
-  <style name="Widget.Tack.LinearLayout.ListItem.Label" parent="Widget.AppCompat.TextView">
+  <style name="Widget.Tack.TextView.ListItem.Title" parent="Widget.Tack.TextView">
     <item name="android:layout_width">match_parent</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:layout_gravity">center_vertical</item>
-    <item name="android:textSize">15sp</item>
-    <item name="android:textColor">@color/on_background</item>
-    <item name="android:fontFamily">@font/edwin_roman</item>
+    <item name="android:textSize">16.5sp</item>
   </style>
 
-  <style name="Widget.Tack.LinearLayout.ListItem.Description" parent="Widget.Tack.LinearLayout.ListItem.Label">
-    <item name="android:textSize">14sp</item>
+  <style
+    name="Widget.Tack.TextView.ListItem.Description"
+    parent="Widget.Tack.TextView.ListItem.Title">
+    <item name="android:textSize">15sp</item>
     <item name="android:textColor">@color/on_background_secondary</item>
   </style>
 

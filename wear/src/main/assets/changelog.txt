@@ -1,3 +1,7 @@
+2.2.0:
+- New: Animated splash screen
+- New: Jost* typeface for normal text
+
 2.1.0:
 - New: heavy vibration option
 - Fixed: crash when closing
@@ -7,7 +11,7 @@
 - New: Edwin typeface
 - New: ambient mode support
 - New: splash screen
-- New: Italian translation, please mail to patrick@zedler.xyz for corrections!
+- New: Italian translation
 - Improved: app icon, colors, changelog and onboarding
 - Improved: accuracy of rotary input
 - Improved: much better layout management and support for different screen sizes
