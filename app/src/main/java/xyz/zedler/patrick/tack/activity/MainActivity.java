@@ -356,13 +356,6 @@ public class MainActivity extends AppCompatActivity
           } else {
               service.play();
           }
-                    /*startAnimatedFabIcon();
-                    new Handler().postDelayed(
-                            () -> fab.setImageResource(
-                                    service.isPlaying()
-                                            ? R.drawable.ic_round_pause_to_play_anim
-                                            : R.drawable.ic_round_play_to_pause_anim
-                            ), 3000);*/
       }
     } else if (id == R.id.frame_main_less) {
       ViewUtil.startAnimatedIcon(binding.imageMainLess);

@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "xyz.zedler.patrick.tack"
-        minSdkVersion 23
+        minSdkVersion 25
         targetSdkVersion 30
         versionCode 91 // last number is 1 for wear release
         versionName "2.1.0"
@@ -38,8 +38,9 @@ android {
 
 dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.wear:wear:1.1.0'
     implementation 'androidx.preference:preference:1.1.1'
+    implementation 'androidx.wear:wear:1.1.0'
+    implementation "androidx.wear.tiles:tiles:1.0.0-alpha02"
 
     compileOnly 'com.google.android.wearable:wearable:2.8.1'
     implementation "com.google.android.support:wearable:2.8.1"
