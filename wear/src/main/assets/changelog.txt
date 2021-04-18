@@ -1,6 +1,6 @@
 2.2.0:
-- New: Animated splash screen
 - New: Jost* typeface for normal text
+- New: warning if watch has only one button
 
 2.1.0:
 - New: heavy vibration option

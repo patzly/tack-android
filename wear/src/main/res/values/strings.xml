@@ -16,6 +16,7 @@
   <string name="msg_hide_picker">Hide picker in settings for larger controls</string>
   <string name="msg_long_press">Press long to change quickly</string>
   <string name="msg_no_speaker">Watch has no audio output, please use a Bluetooth speaker</string>
+  <string name="msg_one_button">Watch only has one side button, button control unavailable</string>
 
   <string name="onboarding_welcome">Welcome!</string>
   <string name="onboarding_text">To control the tempo:</string>

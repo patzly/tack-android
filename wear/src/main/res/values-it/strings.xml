@@ -14,6 +14,7 @@
   <string name="msg_hide_picker">Nascondi il selezionatore nelle impostazioni per i controlli più grandi</string>
   <string name="msg_long_press">Premere a lungo per cambiare rapidamente</string>
   <string name="msg_no_speaker">L\'orologio non ha un\'uscita audio, si prega di utilizzare un altoparlante Bluetooth</string>
+  <string name="msg_one_button">L\'orologio ha un solo pulsante, il controllo dei tasti non è disponibile</string>
 
   <string name="onboarding_welcome">Benvenuti!</string>
   <string name="onboarding_text">Per controllare il tempo:</string>
@@ -22,7 +23,7 @@
   <string name="onboarding_wrist_description">Se abilitato</string>
   <string name="onboarding_rotary">Ingresso rotativo</string>
   <string name="onboarding_rotary_description">Se disponibile</string>
-  <string name="onboarding_fsb">Pulsanti laterali</string>
+  <string name="onboarding_fsb">Tasti laterali</string>
   <string name="onboarding_fsb_description">Anche la pressione lunga</string>
 
   <string name="setting_sound">Suono del battito</string>

@@ -14,6 +14,7 @@
   <string name="msg_hide_picker">Für größere Symbole BPM-Rad in den Einstellungen verbergen</string>
   <string name="msg_long_press">Für schnelleres Ändern gedrückt halten</string>
   <string name="msg_no_speaker">Keine Audioausgabe verfügbar, bitte Bluetooth-Lautsprecher nutzen</string>
+  <string name="msg_one_button">Uhr besitzt nur eine Taste, Tastensteuerung nicht verfügbar</string>
 
   <string name="onboarding_welcome">Willkommen!</string>
   <string name="onboarding_text">Zum Anpassen des Tempos:</string>

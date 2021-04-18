@@ -44,14 +44,18 @@ public class ButtonUtil {
   }
 
   public void onPressDown() {
-    if (!hasMinTwoButtons || isDown) {
+    if (isDown || (!hasMinTwoButtons && !isFirstButtonPress)) {
       return;
     }
     isDown = true;
     if (isFirstButtonPress) {
       isFirstButtonPress = false;
-      Toast.makeText(context, R.string.msg_long_press, Toast.LENGTH_LONG).show();
       sharedPrefs.edit().putBoolean(Constants.PREF.FIRST_PRESS, isFirstButtonPress).apply();
+      Toast.makeText(
+          context,
+          hasMinTwoButtons ? R.string.msg_long_press : R.string.msg_one_button,
+          Toast.LENGTH_LONG
+      ).show();
     }
     if (handler != null) {
       handler.removeCallbacks(runnable);

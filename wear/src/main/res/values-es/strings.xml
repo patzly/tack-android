@@ -14,6 +14,7 @@
   <string name="msg_hide_picker">Esconder selector en los ajustes para controles más grandes</string>
   <string name="msg_long_press">Presione largo para cambiar rápidamente</string>
   <string name="msg_no_speaker">El reloj no tiene salida de audio, utilice un altavoz Bluetooth</string>
+  <string name="msg_one_button">El reloj sólo tiene un botón, el control de los botones no está disponible</string>
 
   <string name="onboarding_welcome">Bienvenido!</string>
   <string name="onboarding_text">Para controlar el tempo:</string>
