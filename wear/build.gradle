@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "xyz.zedler.patrick.tack"
-        minSdkVersion 25
+        minSdkVersion 23
         targetSdkVersion 30
         versionCode 91 // last number is 1 for wear release
         versionName "2.1.0"

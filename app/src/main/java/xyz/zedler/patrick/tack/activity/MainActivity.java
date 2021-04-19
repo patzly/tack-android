@@ -44,7 +44,7 @@ import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
-import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
+import xyz.zedler.patrick.tack.databinding.ActivityMainAppBinding;
 import xyz.zedler.patrick.tack.fragment.EmphasisBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.WearBottomSheetDialogFragment;
@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity
 
   private final static String TAG = MainActivity.class.getSimpleName();
 
-  private ActivityMainBinding binding;
+  private ActivityMainAppBinding binding;
   private SharedPreferences sharedPrefs;
   private long prevTouchTime;
   private final List<Long> intervals = new ArrayList<>();
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    binding = ActivityMainBinding.inflate(getLayoutInflater());
+    binding = ActivityMainAppBinding.inflate(getLayoutInflater());
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
     AppCompatDelegate.setDefaultNightMode(
@@ -106,12 +106,8 @@ public class MainActivity extends AppCompatActivity
     vibratorUtil = new VibratorUtil(this);
 
     binding.toolbarMain.setOnMenuItemClickListener((MenuItem item) -> {
-        if (clickUtil.isDisabled()) {
-            return false;
-        }
-
       int itemId = item.getItemId();
-      if (itemId == R.id.action_wear) {
+      if (itemId == R.id.action_wear && clickUtil.isEnabled()) {
         DialogFragment fragment = new WearBottomSheetDialogFragment();
         fragment.show(getSupportFragmentManager(), fragment.toString());
       } else if (itemId == R.id.action_settings) {
@@ -166,9 +162,9 @@ public class MainActivity extends AppCompatActivity
             if (service.getBpm() > 1) {
               changeBpm(-1);
               handler.postDelayed(this, nextRun);
-                if (nextRun > 60) {
-                    nextRun = (int) (nextRun * 0.9);
-                }
+              if (nextRun > 60) {
+                nextRun = (int) (nextRun * 0.9);
+              }
             } else {
               handler.removeCallbacks(runnable);
               handler = null;
@@ -182,17 +178,17 @@ public class MainActivity extends AppCompatActivity
       public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
           case MotionEvent.ACTION_DOWN:
-              if (handler != null) {
-                  return true;
-              }
+            if (handler != null) {
+              return true;
+            }
             handler = new Handler(Looper.getMainLooper());
             handler.postDelayed(runnable, ViewConfiguration.getLongPressTimeout());
             break;
           case MotionEvent.ACTION_CANCEL:
           case MotionEvent.ACTION_UP:
-              if (handler == null) {
-                  return true;
-              }
+            if (handler == null) {
+              return true;
+            }
             handler.removeCallbacks(runnable);
             handler = null;
             nextRun = 400;
@@ -212,9 +208,9 @@ public class MainActivity extends AppCompatActivity
             if (service.getBpm() < 300) {
               changeBpm(1);
               handler.postDelayed(this, nextRun);
-                if (nextRun > 60) {
-                    nextRun = (int) (nextRun * 0.9);
-                }
+              if (nextRun > 60) {
+                nextRun = (int) (nextRun * 0.9);
+              }
             } else {
               handler.removeCallbacks(runnable);
               handler = null;
@@ -228,17 +224,17 @@ public class MainActivity extends AppCompatActivity
       public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
           case MotionEvent.ACTION_DOWN:
-              if (handler != null) {
-                  return true;
-              }
+            if (handler != null) {
+              return true;
+            }
             handler = new Handler(Looper.getMainLooper());
             handler.postDelayed(runnable, ViewConfiguration.getLongPressTimeout());
             break;
           case MotionEvent.ACTION_CANCEL:
           case MotionEvent.ACTION_UP:
-              if (handler == null) {
-                  return true;
-              }
+            if (handler == null) {
+              return true;
+            }
             handler.removeCallbacks(runnable);
             handler = null;
             nextRun = 400;
@@ -351,11 +347,11 @@ public class MainActivity extends AppCompatActivity
     int id = v.getId();
     if (id == R.id.fab_main) {
       if (isBound()) {
-          if (service.isPlaying()) {
-              service.pause();
-          } else {
-              service.play();
-          }
+        if (service.isPlaying()) {
+          service.pause();
+        } else {
+          service.play();
+        }
       }
     } else if (id == R.id.frame_main_less) {
       ViewUtil.startAnimatedIcon(binding.imageMainLess);
@@ -387,9 +383,9 @@ public class MainActivity extends AppCompatActivity
       sharedPrefs.edit()
           .putBoolean(Constants.PREF.BEAT_MODE_VIBRATE, beatModeVibrateNew)
           .apply();
-        if (isBound()) {
-            service.updateTick();
-        }
+      if (isBound()) {
+        service.updateTick();
+      }
       ViewUtil.startAnimatedIcon(binding.imageMainBeatMode);
       new Handler(Looper.getMainLooper()).postDelayed(() -> {
         if (beatModeVibrateNew) {
@@ -452,16 +448,16 @@ public class MainActivity extends AppCompatActivity
   public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
     MetronomeService.LocalBinder binder = (MetronomeService.LocalBinder) iBinder;
     service = binder.getService();
-      if (service == null) {
-          return;
-      }
+    if (service == null) {
+      return;
+    }
 
     service.setTickListener(this);
     isBound = true;
 
-      if (binding == null || sharedPrefs == null) {
-          return;
-      }
+    if (binding == null || sharedPrefs == null) {
+      return;
+    }
 
     if (sharedPrefs.getBoolean(
         Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
@@ -552,20 +548,20 @@ public class MainActivity extends AppCompatActivity
         () -> binding.textMainEmphasis.setText(String.valueOf(emphasisNew)),
         150
     );
-      if (isBound) {
-          service.updateTick();
-      }
+    if (isBound) {
+      service.updateTick();
+    }
   }
 
   public void setEmphasis(int emphasis) {
     sharedPrefs.edit().putInt(Constants.PREF.EMPHASIS, emphasis).apply();
     binding.textMainEmphasis.setText(String.valueOf(emphasis));
-      if (hapticFeedback) {
-          vibratorUtil.vibrate(VibratorUtil.TAP);
-      }
-      if (isBound) {
-          service.updateTick();
-      }
+    if (hapticFeedback) {
+      vibratorUtil.vibrate(VibratorUtil.TAP);
+    }
+    if (isBound) {
+      service.updateTick();
+    }
   }
 
   private Chip newChip(int bpm) {

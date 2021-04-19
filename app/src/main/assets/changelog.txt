@@ -1,3 +1,8 @@
+2.2.0:
+- New: Jost* typeface for normal text TODO
+- Improved: behavior if no vibration available TODO
+- Improved: layout for tablets TODO
+
 2.1.0:
 - New: animated splash screen
 - New: emphasis slider with haptic feedback

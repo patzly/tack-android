@@ -27,4 +27,8 @@ public class ClickUtil {
     update();
     return false;
   }
+
+  public boolean isEnabled() {
+    return !isDisabled();
+  }
 }

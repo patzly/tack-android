@@ -6,17 +6,17 @@ import android.support.wearable.input.WearableButtons;
 import android.view.KeyEvent;
 import android.view.View;
 import androidx.fragment.app.FragmentActivity;
-import xyz.zedler.patrick.tack.databinding.ActivityOnboardingBinding;
+import xyz.zedler.patrick.tack.databinding.ActivityOnboardingWearBinding;
 
 public class OnboardingActivity extends FragmentActivity {
 
-  private ActivityOnboardingBinding binding;
+  private ActivityOnboardingWearBinding binding;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    binding = ActivityOnboardingBinding.inflate(getLayoutInflater());
+    binding = ActivityOnboardingWearBinding.inflate(getLayoutInflater());
     setContentView(binding.getRoot());
 
     if (WearableButtons.getButtonCount(this) >= 2

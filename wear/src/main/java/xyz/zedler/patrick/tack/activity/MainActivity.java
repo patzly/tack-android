@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
+import xyz.zedler.patrick.tack.databinding.ActivityMainWearBinding;
 import xyz.zedler.patrick.tack.util.AudioUtil;
 import xyz.zedler.patrick.tack.util.ButtonUtil;
 import xyz.zedler.patrick.tack.util.ClickUtil;
@@ -31,7 +31,7 @@ public class MainActivity extends FragmentActivity
 
   private final static String TAG = MainActivity.class.getSimpleName();
 
-  private ActivityMainBinding binding;
+  private ActivityMainWearBinding binding;
   private SharedPreferences sharedPrefs;
   private AudioUtil audioUtil;
   private VibratorUtil vibratorUtil;
@@ -63,7 +63,7 @@ public class MainActivity extends FragmentActivity
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    binding = ActivityMainBinding.inflate(getLayoutInflater());
+    binding = ActivityMainWearBinding.inflate(getLayoutInflater());
     setContentView(binding.getRoot());
 
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);

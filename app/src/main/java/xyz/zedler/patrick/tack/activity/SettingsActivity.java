@@ -17,7 +17,7 @@ import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
-import xyz.zedler.patrick.tack.databinding.ActivitySettingsBinding;
+import xyz.zedler.patrick.tack.databinding.ActivitySettingsAppBinding;
 import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.util.AudioUtil;
 import xyz.zedler.patrick.tack.util.ClickUtil;
@@ -27,7 +27,7 @@ public class SettingsActivity extends AppCompatActivity
     implements View.OnClickListener, CompoundButton.OnCheckedChangeListener,
     RadioGroup.OnCheckedChangeListener {
 
-  private ActivitySettingsBinding binding;
+  private ActivitySettingsAppBinding binding;
   private SharedPreferences sharedPrefs;
   private ClickUtil clickUtil;
   private AudioUtil audioUtil;
@@ -36,7 +36,7 @@ public class SettingsActivity extends AppCompatActivity
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    binding = ActivitySettingsBinding.inflate(getLayoutInflater());
+    binding = ActivitySettingsAppBinding.inflate(getLayoutInflater());
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
     boolean forceDarkMode = sharedPrefs.getBoolean(

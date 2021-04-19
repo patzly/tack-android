@@ -14,7 +14,7 @@ import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
-import xyz.zedler.patrick.tack.databinding.ActivityAboutBinding;
+import xyz.zedler.patrick.tack.databinding.ActivityAboutAppBinding;
 import xyz.zedler.patrick.tack.fragment.ChangelogBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.TextBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.util.ClickUtil;
@@ -22,14 +22,14 @@ import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class AboutActivity extends AppCompatActivity implements View.OnClickListener {
 
-  private ActivityAboutBinding binding;
+  private ActivityAboutAppBinding binding;
   private final ClickUtil clickUtil = new ClickUtil();
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    binding = ActivityAboutBinding.inflate(getLayoutInflater());
+    binding = ActivityAboutAppBinding.inflate(getLayoutInflater());
     setContentView(binding.getRoot());
 
     binding.frameAboutClose.setOnClickListener(v -> {

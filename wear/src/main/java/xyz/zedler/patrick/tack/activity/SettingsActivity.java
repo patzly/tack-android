@@ -13,7 +13,7 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.databinding.ActivitySettingsBinding;
+import xyz.zedler.patrick.tack.databinding.ActivitySettingsWearBinding;
 import xyz.zedler.patrick.tack.util.ClickUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
@@ -22,7 +22,7 @@ public class SettingsActivity extends FragmentActivity
 
   final static String TAG = SettingsActivity.class.getSimpleName();
 
-  private ActivitySettingsBinding binding;
+  private ActivitySettingsWearBinding binding;
   private SharedPreferences sharedPrefs;
   private ClickUtil clickUtil;
   private boolean animations;
@@ -31,7 +31,7 @@ public class SettingsActivity extends FragmentActivity
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    binding = ActivitySettingsBinding.inflate(getLayoutInflater());
+    binding = ActivitySettingsWearBinding.inflate(getLayoutInflater());
     setContentView(binding.getRoot());
 
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
