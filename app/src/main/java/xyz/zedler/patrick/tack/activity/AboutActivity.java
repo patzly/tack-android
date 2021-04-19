@@ -52,10 +52,11 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
         this,
         binding.linearChangelog,
         binding.linearDeveloper,
-        binding.linearLicenseMetronome,
+        binding.linearLicenseEdwin,
+        binding.linearLicenseJost,
         binding.linearLicenseMaterialComponents,
         binding.linearLicenseMaterialIcons,
-        binding.linearLicenseEdwin
+        binding.linearLicenseMetronome
     );
   }
 
@@ -86,12 +87,19 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
               )
           )), 300
       );
-    } else if (id == R.id.linear_license_metronome) {
-      ViewUtil.startAnimatedIcon(binding.imageLicenseMetronome);
+    } else if (id == R.id.linear_license_edwin) {
+      ViewUtil.startAnimatedIcon(binding.imageLicenseEdwin);
       showTextBottomSheet(
-          "apache",
-          R.string.license_metronome,
-          R.string.license_metronome_link
+          "ofl",
+          R.string.license_edwin,
+          R.string.license_edwin_link
+      );
+    } else if (id == R.id.linear_license_jost) {
+      ViewUtil.startAnimatedIcon(binding.imageLicenseJost);
+      showTextBottomSheet(
+          "ofl",
+          R.string.license_jost,
+          R.string.license_jost_link
       );
     } else if (id == R.id.linear_license_material_components) {
       ViewUtil.startAnimatedIcon(binding.imageLicenseMaterialComponents);
@@ -107,12 +115,12 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
           R.string.license_material_icons,
           R.string.license_material_icons_link
       );
-    } else if (id == R.id.linear_license_edwin) {
-      ViewUtil.startAnimatedIcon(binding.imageLicenseEdwin);
+    } else if (id == R.id.linear_license_metronome) {
+      ViewUtil.startAnimatedIcon(binding.imageLicenseMetronome);
       showTextBottomSheet(
-          "open_font",
-          R.string.license_edwin,
-          R.string.license_edwin_link
+          "apache",
+          R.string.license_metronome,
+          R.string.license_metronome_link
       );
     }
   }

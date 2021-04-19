@@ -70,16 +70,19 @@
 
   <string name="category_licenses">Open source licenses</string>
 
-  <string name="license_metronome" translatable="false">Metronome Android</string>
-  <string name="license_metronome_link" translatable="false">https://github.com/fennifith/Metronome-Android</string>
-  <string name="license_metronome_author" translatable="false">James Fenn</string>
-  <string name="license_author_google" translatable="false">Google</string>
-  <string name="license_material_icons" translatable="false">Material Design Icons</string>
-  <string name="license_material_icons_link" translatable="false">https://github.com/google/material-design-icons</string>
-  <string name="license_material_components" translatable="false">Material Components Android</string>
-  <string name="license_material_components_link" translatable="false">https://github.com/material-components/material-components-android</string>
   <string name="license_edwin" translatable="false">Edwin Typeface</string>
   <string name="license_edwin_author" translatable="false">MuseScore</string>
   <string name="license_edwin_link" translatable="false">https://github.com/MuseScoreFonts/Edwin</string>
+  <string name="license_jost" translatable="false">Jost* Typeface</string>
+  <string name="license_jost_author" translatable="false">Owen Earl</string>
+  <string name="license_jost_link" translatable="false">https://github.com/indestructible-type/Jost</string>
+  <string name="license_material_components" translatable="false">Material Components Android</string>
+  <string name="license_material_components_link" translatable="false">https://github.com/material-components/material-components-android</string>
+  <string name="license_material_icons" translatable="false">Material Design Icons</string>
+  <string name="license_material_icons_link" translatable="false">https://github.com/google/material-design-icons</string>
+  <string name="license_author_google" translatable="false">Google</string>
+  <string name="license_metronome" translatable="false">Metronome Android</string>
+  <string name="license_metronome_link" translatable="false">https://github.com/fennifith/Metronome-Android</string>
+  <string name="license_metronome_author" translatable="false">James Fenn</string>
 
 </resources>

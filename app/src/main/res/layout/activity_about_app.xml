@@ -160,15 +160,14 @@
 
       <TextView
         style="@style/Widget.Tack.TextView.Category"
-        android:text="@string/category_licenses"
-        android:fontFamily="@font/text_bold" />
+        android:text="@string/category_licenses" />
 
       <LinearLayout
-        android:id="@+id/linear_license_metronome"
+        android:id="@+id/linear_license_edwin"
         style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
         <ImageView
-          android:id="@+id/image_license_metronome"
+          android:id="@+id/image_license_edwin"
           style="@style/Widget.Tack.ImageView.ListItem.Icon"
           android:src="@drawable/ic_round_copyright_anim"
           tools:ignore="ContentDescription" />
@@ -177,11 +176,35 @@
 
           <TextView
             style="@style/Widget.Tack.TextView.ListItem.Title"
-            android:text="@string/license_metronome" />
+            android:text="@string/license_edwin" />
 
           <TextView
             style="@style/Widget.Tack.TextView.ListItem.Description"
-            android:text="@string/license_metronome_author" />
+            android:text="@string/license_edwin_author" />
+
+        </LinearLayout>
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/linear_license_jost"
+        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
+
+        <ImageView
+          android:id="@+id/image_license_jost"
+          style="@style/Widget.Tack.ImageView.ListItem.Icon"
+          android:src="@drawable/ic_round_copyright_anim"
+          tools:ignore="ContentDescription" />
+
+        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Title"
+            android:text="@string/license_jost" />
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Description"
+            android:text="@string/license_jost_author" />
 
         </LinearLayout>
 
@@ -236,11 +259,11 @@
       </LinearLayout>
 
       <LinearLayout
-        android:id="@+id/linear_license_edwin"
+        android:id="@+id/linear_license_metronome"
         style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
         <ImageView
-          android:id="@+id/image_license_edwin"
+          android:id="@+id/image_license_metronome"
           style="@style/Widget.Tack.ImageView.ListItem.Icon"
           android:src="@drawable/ic_round_copyright_anim"
           tools:ignore="ContentDescription" />
@@ -249,11 +272,11 @@
 
           <TextView
             style="@style/Widget.Tack.TextView.ListItem.Title"
-            android:text="@string/license_edwin" />
+            android:text="@string/license_metronome" />
 
           <TextView
             style="@style/Widget.Tack.TextView.ListItem.Description"
-            android:text="@string/license_edwin_author" />
+            android:text="@string/license_metronome_author" />
 
         </LinearLayout>
 

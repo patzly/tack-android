@@ -24,8 +24,9 @@
 
     <item name="actionOverflowButtonStyle">@style/Widget.Tack.OverFlow</item>
 
-    <item name="android:fontFamily">@font/text_regular</item>
-    <item name="android:lineSpacingExtra">5dp</item>
+    <item name="android:fontFamily">@font/jost_book</item>
+    <item name="android:lineSpacingExtra">-1.5sp</item>
+    <item name="android:textSize">15.5sp</item>
   </style>
 
   <style name="Theme.Tack.BottomSheetDialog" parent="Theme.MaterialComponents.BottomSheetDialog">
@@ -49,8 +50,9 @@
     <item name="android:colorControlHighlight">@color/highlight</item>
     <item name="android:colorEdgeEffect">@color/highlight</item>
 
-    <item name="android:fontFamily">@font/text_regular</item>
-    <item name="android:lineSpacingExtra">5dp</item>
+    <item name="android:fontFamily">@font/jost_book</item>
+    <item name="android:lineSpacingExtra">-1.5sp</item>
+    <item name="android:textSize">15.5sp</item>
 
     <item name="android:windowIsFloating">false</item>
   </style>

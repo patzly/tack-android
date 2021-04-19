@@ -55,7 +55,7 @@
       style="@style/Widget.Tack.TextView.Paragraph"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:textSize="13sp"
+      android:textSize="14.5sp"
       android:padding="16dp" />
 
   </androidx.core.widget.NestedScrollView>

@@ -1,7 +1,8 @@
 2.2.0:
-- New: Jost* typeface for normal text TODO
+- New: Jost* typeface for normal text
 - Improved: behavior if no vibration available TODO
 - Improved: layout for tablets TODO
+- Improved: "About" section
 
 2.1.0:
 - New: animated splash screen

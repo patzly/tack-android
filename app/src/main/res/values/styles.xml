@@ -1,7 +1,10 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-  <style name="Widget.Tack.Button.TextButton.Snackbar" parent="Widget.MaterialComponents.Button.TextButton.Snackbar">
-    <item name="android:fontFamily">@font/text_bold</item>
+  <style
+    name="Widget.Tack.Button.TextButton.Snackbar"
+    parent="Widget.MaterialComponents.Button.TextButton.Snackbar">
+    <item name="android:fontFamily">@font/jost_bold</item>
+    <item name="android:textSize">14.5sp</item>
     <item name="cornerRadius">6dp</item>
   </style>
 
@@ -22,7 +25,9 @@
     <item name="android:textAppearance">@style/TextAppearance.Tack.Tooltip</item>
   </style>
 
-  <style name="Widget.Tack.RadioButton" parent="Widget.MaterialComponents.CompoundButton.RadioButton">
+  <style
+    name="Widget.Tack.RadioButton"
+    parent="Widget.MaterialComponents.CompoundButton.RadioButton">
     <item name="android:layout_width">match_parent</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:textSize">16sp</item>
@@ -30,7 +35,9 @@
     <item name="android:minHeight">40dp</item>
   </style>
 
-  <style name="Widget.Tack.Switch" parent="Widget.MaterialComponents.CompoundButton.Switch">
+  <style
+    name="Widget.Tack.Switch"
+    parent="Widget.MaterialComponents.CompoundButton.Switch">
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:layout_marginStart">16dp</item>
@@ -51,43 +58,61 @@
     <item name="android:orientation">horizontal</item>
   </style>
 
-  <style name="Widget.Tack.LinearLayout.ListItem.Clickable" parent="Widget.Tack.LinearLayout.ListItem">
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.Clickable"
+    parent="Widget.Tack.LinearLayout.ListItem">
     <item name="android:clickable">true</item>
     <item name="android:background">@drawable/ripple_bg_list_item</item>
   </style>
 
-  <style name="Widget.Tack.LinearLayout.ListItem.SingleLine" parent="Widget.Tack.LinearLayout.ListItem">
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.SingleLine"
+    parent="Widget.Tack.LinearLayout.ListItem">
     <item name="android:minHeight">48dp</item>
   </style>
 
-  <style name="Widget.Tack.LinearLayout.ListItem.SingleLine.Icon" parent="Widget.Tack.LinearLayout.ListItem.SingleLine">
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.SingleLine.Icon"
+    parent="Widget.Tack.LinearLayout.ListItem.SingleLine">
     <item name="android:minHeight">56dp</item>
   </style>
 
-  <style name="Widget.Tack.LinearLayout.ListItem.SingleLine.Clickable" parent="Widget.Tack.LinearLayout.ListItem.SingleLine">
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.SingleLine.Clickable"
+    parent="Widget.Tack.LinearLayout.ListItem.SingleLine">
     <item name="android:clickable">true</item>
     <item name="android:background">@drawable/ripple_bg_list_item</item>
   </style>
 
-  <style name="Widget.Tack.LinearLayout.ListItem.SingleLine.Icon.Clickable" parent="Widget.Tack.LinearLayout.ListItem.SingleLine.Icon">
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.SingleLine.Icon.Clickable"
+    parent="Widget.Tack.LinearLayout.ListItem.SingleLine.Icon">
     <item name="android:clickable">true</item>
     <item name="android:background">@drawable/ripple_bg_list_item</item>
   </style>
 
-  <style name="Widget.Tack.LinearLayout.ListItem.TwoLine" parent="Widget.Tack.LinearLayout.ListItem">
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.TwoLine"
+    parent="Widget.Tack.LinearLayout.ListItem">
     <item name="android:minHeight">64dp</item>
   </style>
 
-  <style name="Widget.Tack.LinearLayout.ListItem.TwoLine.Icon" parent="Widget.Tack.LinearLayout.ListItem.TwoLine">
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.TwoLine.Icon"
+    parent="Widget.Tack.LinearLayout.ListItem.TwoLine">
     <item name="android:minHeight">72dp</item>
   </style>
 
-  <style name="Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable" parent="Widget.Tack.LinearLayout.ListItem.TwoLine">
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable"
+    parent="Widget.Tack.LinearLayout.ListItem.TwoLine">
     <item name="android:clickable">true</item>
     <item name="android:background">@drawable/ripple_bg_list_item</item>
   </style>
 
-  <style name="Widget.Tack.LinearLayout.ListItem.TwoLine.Icon.Clickable" parent="Widget.Tack.LinearLayout.ListItem.TwoLine.Icon">
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.TwoLine.Icon.Clickable"
+    parent="Widget.Tack.LinearLayout.ListItem.TwoLine.Icon">
     <item name="android:clickable">true</item>
     <item name="android:background">@drawable/ripple_bg_list_item</item>
   </style>
@@ -98,7 +123,9 @@
     <item name="android:orientation">vertical</item>
   </style>
 
-  <style name="Widget.Tack.LinearLayout.ListItem.TextBox.Stretch" parent="Widget.Tack.LinearLayout.ListItem.TextBox">
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.TextBox.Stretch"
+    parent="Widget.Tack.LinearLayout.ListItem.TextBox">
     <item name="android:layout_width">0dp</item>
     <item name="android:layout_weight">1</item>
   </style>
@@ -114,22 +141,22 @@
   <!-- TEXT -->
 
   <style name="Widget.Tack.TextView" parent="Widget.MaterialComponents.TextView">
-    <item name="android:textSize">14sp</item>
+    <item name="android:textSize">15.5sp</item>
+    <item name="android:lineSpacingExtra">-1.5sp</item>
     <item name="android:textColor">@color/on_background</item>
     <item name="android:textAlignment">viewStart</item>
-    <item name="android:fontFamily">@font/text_regular</item>
-  </style>
-
-  <style name="Widget.Tack.TextView.Paragraph" parent="Widget.Tack.TextView">
-    <item name="android:justificationMode" tools:targetApi="o">inter_word</item>
+    <item name="android:fontFamily">@font/jost_book</item>
     <item name="android:breakStrategy" tools:targetApi="m">high_quality</item>
     <item name="android:hyphenationFrequency" tools:targetApi="m">full</item>
   </style>
 
+  <style name="Widget.Tack.TextView.Paragraph" parent="Widget.Tack.TextView">
+    <item name="android:justificationMode" tools:targetApi="o">inter_word</item>
+  </style>
+
   <style name="Widget.Tack.TextView.Toolbar" parent="Widget.Tack.TextView">
-    <item name="android:textColor">@color/on_background</item>
-    <item name="android:textSize" tools:ignore="SpUsage">20dp</item>
-    <item name="android:fontFamily">@font/text_bold</item>
+    <item name="android:textSize" tools:ignore="SpUsage">21.5dp</item>
+    <item name="android:fontFamily">@font/jost_bold</item>
     <item name="android:singleLine">true</item>
   </style>
 
@@ -139,8 +166,8 @@
     <item name="android:layout_marginStart">72dp</item>
     <item name="android:paddingTop">10dp</item>
     <item name="android:paddingBottom">3dp</item>
-    <item name="android:fontFamily">@font/text_bold</item>
-    <item name="android:textSize">13sp</item>
+    <item name="android:fontFamily">@font/jost_bold</item>
+    <item name="android:textSize">14.5sp</item>
     <item name="android:textColor">@color/secondary</item>
   </style>
 
@@ -150,6 +177,7 @@
     <item name="android:maxLines">2</item>
     <item name="android:textSize">12sp</item>
     <item name="android:letterSpacing">0.1</item>
+    <item name="android:textStyle">bold</item>
     <item name="android:textColor">@color/on_background_secondary</item>
     <item name="android:textAllCaps">true</item>
   </style>
@@ -169,14 +197,14 @@
 
   <style name="Widget.Tack.TextView.Title.BottomSheet" parent="Widget.Tack.TextView">
     <item name="android:textSize">19sp</item>
-    <item name="android:fontFamily">@font/text_bold</item>
+    <item name="android:fontFamily">@font/jost_bold</item>
     <item name="singleLine">true</item>
   </style>
 
   <style name="TextAppearance.Tack.Tooltip" parent="TextAppearance.MaterialComponents.Tooltip">
     <item name="android:textColor">@color/tooltip_text</item>
     <item name="android:textSize">16sp</item>
-    <item name="fontFamily">@font/text_regular</item>
+    <item name="fontFamily">@font/jost_book</item>
   </style>
 
 </resources>

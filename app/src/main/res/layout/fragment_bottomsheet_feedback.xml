@@ -38,10 +38,8 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:text="@string/msg_feedback"
-        android:textSize="15sp"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:fontFamily="@font/text_italic" />
+        android:paddingEnd="16dp" />
 
       <LinearLayout
         android:id="@+id/linear_feedback_rate"

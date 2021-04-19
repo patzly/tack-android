@@ -116,7 +116,8 @@
               android:layout_marginBottom="16dp"
               android:textColor="@color/on_background"
               android:layout_gravity="center_horizontal|top"
-              android:fontFamily="@font/text_bold"
+              android:fontFamily="@font/edwin_bold"
+              android:lineSpacingExtra="5dp"
               android:textSize="@dimen/bpm_text_size" />
 
             <TextView
@@ -124,7 +125,8 @@
               android:layout_height="wrap_content"
               android:text="@string/title_bpm_label"
               android:textColor="@color/on_background_secondary"
-              android:fontFamily="@font/text_bold"
+              android:fontFamily="@font/edwin_bold"
+              android:lineSpacingExtra="5dp"
               android:layout_gravity="center_horizontal|bottom"
               android:textSize="15dp" />
 
