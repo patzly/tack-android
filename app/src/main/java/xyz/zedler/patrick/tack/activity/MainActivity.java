@@ -572,8 +572,9 @@ public class MainActivity extends AppCompatActivity
     chip.setCloseIconTintResource(R.color.icon);
     chip.setCloseIconResource(R.drawable.ic_round_cancel);
     chip.setOnCloseIconClickListener(v -> {
+      vibratorUtil.vibrate(VibratorUtil.TAP);
       binding.chipGroupMain.removeView(chip);
-      bookmarks.remove((Integer) bpm);
+      bookmarks.remove((Integer) bpm); // Integer cast required
       updateBookmarks();
       refreshBookmark(true);
     });
