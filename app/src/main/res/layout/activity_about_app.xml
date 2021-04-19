@@ -134,30 +134,6 @@
 
       </LinearLayout>
 
-      <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine">
-
-        <ImageView
-          style="@style/Widget.Tack.ImageView.ListItem.Icon"
-          android:layout_width="32dp"
-          android:layout_height="32dp"
-          android:layout_marginEnd="24dp"
-          android:src="@drawable/ic_round_material_components"
-          tools:ignore="ContentDescription" />
-
-        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-          <TextView
-            style="@style/Widget.Tack.TextView.ListItem.OverLine"
-            android:text="@string/info_material_components_built_with" />
-
-          <TextView
-            style="@style/Widget.Tack.TextView.ListItem.Title"
-            android:text="@string/info_material_components" />
-
-        </LinearLayout>
-
-      </LinearLayout>
-
       <TextView
         style="@style/Widget.Tack.TextView.Category"
         android:text="@string/category_licenses" />

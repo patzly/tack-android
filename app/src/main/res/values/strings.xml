@@ -61,8 +61,6 @@
     <item>Fixed:</item>
   </array>
 
-  <string name="info_material_components_built_with">Built with</string>
-  <string name="info_material_components">Material Components</string>
   <string name="info_version">Version</string>
   <string name="info_changelog">Changelog</string>
   <string name="info_changelog_description">What\'s new?</string>

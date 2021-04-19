@@ -70,10 +70,6 @@
 
   <color name="icon">@color/grey800</color> <!-- dd0a373a -->
 
-  <color name="mdc_square">#212121</color>
-  <color name="mdc_circle">#b2ff59</color>
-  <color name="mdc_overlay">#00e676</color>
-
   <color name="tooltip_background">@color/grey700</color>
   <color name="tooltip_text">@color/white</color>
 

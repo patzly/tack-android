@@ -580,7 +580,7 @@ public class MainActivity extends AppCompatActivity
     chip.setChipBackgroundColorResource(R.color.background);
     chip.setText(String.valueOf(bpm));
     chip.setTextSize(15);
-    chip.setTypeface(ResourcesCompat.getFont(this, R.font.roboto_mono_bold));
+    chip.setTypeface(ResourcesCompat.getFont(this, R.font.jost_bold));
     chip.setChipIconVisible(false);
     chip.setChipStrokeWidth(getResources().getDimension(R.dimen.chip_stroke_width));
     chip.setChipStrokeColorResource(R.color.stroke_primary);

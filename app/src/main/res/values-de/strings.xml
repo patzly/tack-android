@@ -54,8 +54,6 @@
   <string name="title_settings">Einstellungen</string>
   <string name="title_about">Über</string>
 
-  <string name="info_material_components_built_with">Built with</string>
-  <string name="info_material_components">Material Components</string>
   <string name="info_version">Version</string>
   <string name="info_changelog">Änderungen</string>
   <string name="info_changelog_description">Was gibt\'s neues?</string>
