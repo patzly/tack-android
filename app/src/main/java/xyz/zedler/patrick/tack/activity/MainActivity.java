@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity
     binding.toolbarMain.setOnMenuItemClickListener((MenuItem item) -> {
       int itemId = item.getItemId();
       if (itemId == R.id.action_wear && clickUtil.isEnabled()) {
+        vibratorUtil.vibrate(VibratorUtil.TAP);
         DialogFragment fragment = new WearBottomSheetDialogFragment();
         fragment.show(getSupportFragmentManager(), fragment.toString());
       } else if (itemId == R.id.action_settings) {
