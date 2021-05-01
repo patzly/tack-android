@@ -21,6 +21,7 @@ import xyz.zedler.patrick.tack.databinding.ActivitySettingsAppBinding;
 import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.util.AudioUtil;
 import xyz.zedler.patrick.tack.util.ClickUtil;
+import xyz.zedler.patrick.tack.util.VibratorUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class SettingsActivity extends AppCompatActivity
@@ -31,6 +32,7 @@ public class SettingsActivity extends AppCompatActivity
   private SharedPreferences sharedPrefs;
   private ClickUtil clickUtil;
   private AudioUtil audioUtil;
+  private VibratorUtil vibratorUtil;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -51,18 +53,16 @@ public class SettingsActivity extends AppCompatActivity
 
     clickUtil = new ClickUtil();
     audioUtil = new AudioUtil(this);
+    vibratorUtil = new VibratorUtil(this);
 
     binding.frameSettingsBack.setOnClickListener(v -> {
-      if (clickUtil.isDisabled()) {
-        return;
+      if (clickUtil.isEnabled()) {
+        vibratorUtil.click();
+        finish();
       }
-      finish();
     });
 
     binding.toolbarSettings.setOnMenuItemClickListener((MenuItem item) -> {
-      if (clickUtil.isDisabled()) {
-        return false;
-      }
       int itemId = item.getItemId();
       if (itemId == R.id.action_about) {
         startActivity(new Intent(this, AboutActivity.class));
@@ -70,6 +70,7 @@ public class SettingsActivity extends AppCompatActivity
         DialogFragment fragment = new FeedbackBottomSheetDialogFragment();
         fragment.show(getSupportFragmentManager(), fragment.toString());
       }
+      vibratorUtil.click();
       return true;
     });
 
@@ -140,6 +141,12 @@ public class SettingsActivity extends AppCompatActivity
     audioUtil.destroy();
   }
 
+  @Override
+  protected void onResume() {
+    super.onResume();
+    vibratorUtil.onResume();
+  }
+
   private int getCheckedId() {
     String sound = sharedPrefs.getString(Constants.SETTING.SOUND, Constants.SOUND.WOOD);
     assert sound != null;
@@ -157,12 +164,8 @@ public class SettingsActivity extends AppCompatActivity
 
   @Override
   public void onClick(View v) {
-    if (clickUtil.isDisabled()) {
-      return;
-    }
-
     int id = v.getId();
-    if (id == R.id.linear_settings_dark_mode) {
+    if (id == R.id.linear_settings_dark_mode && clickUtil.isEnabled()) {
       binding.switchSettingsDarkMode.setChecked(!binding.switchSettingsDarkMode.isChecked());
     } else if (id == R.id.linear_settings_vibrate_always) {
       binding.switchSettingsVibrateAlways.setChecked(
@@ -185,8 +188,9 @@ public class SettingsActivity extends AppCompatActivity
 
   @Override
   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-    int id = buttonView.getId();
     SharedPreferences.Editor editor = sharedPrefs.edit();
+
+    int id = buttonView.getId();
     if (id == R.id.switch_settings_dark_mode) {
       ViewUtil.startAnimatedIcon(binding.imageSettingsDarkMode);
       editor.putBoolean(Constants.SETTING.DARK_MODE, isChecked);
@@ -209,6 +213,7 @@ public class SettingsActivity extends AppCompatActivity
       editor.putBoolean(Constants.SETTING.VIBRATE_ALWAYS, isChecked);
     } else if (id == R.id.switch_settings_haptic) {
       ViewUtil.startAnimatedIcon(binding.imageSettingsHaptic);
+      vibratorUtil.setEnabled(isChecked);
       editor.putBoolean(Constants.SETTING.HAPTIC_FEEDBACK, isChecked);
     } else if (id == R.id.switch_settings_slider_emphasis) {
       ViewUtil.startAnimatedIcon(binding.imageSettingsSliderEmphasis);
@@ -217,7 +222,9 @@ public class SettingsActivity extends AppCompatActivity
       ViewUtil.startAnimatedIcon(binding.imageSettingsKeepAwake);
       editor.putBoolean(Constants.SETTING.KEEP_AWAKE, isChecked);
     }
+
     editor.apply();
+    vibratorUtil.click();
   }
 
   @Override
