@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity
     binding.toolbarMain.setOnMenuItemClickListener((MenuItem item) -> {
       int itemId = item.getItemId();
       if (itemId == R.id.action_wear && clickUtil.isEnabled()) {
-        vibratorUtil.vibrate(VibratorUtil.TICK);
         DialogFragment fragment = new WearBottomSheetDialogFragment();
         fragment.show(getSupportFragmentManager(), fragment.toString());
       } else if (itemId == R.id.action_settings) {
@@ -121,6 +120,7 @@ public class MainActivity extends AppCompatActivity
         DialogFragment fragment = new FeedbackBottomSheetDialogFragment();
         fragment.show(getSupportFragmentManager(), fragment.toString());
       }
+      vibratorUtil.click();
       return true;
     });
 
@@ -354,6 +354,9 @@ public class MainActivity extends AppCompatActivity
           service.play();
         }
       }
+      if (isBound() && (!service.isBeatModeVibrate() && !service.vibrateAlways())) {
+        vibratorUtil.click();
+      }
     } else if (id == R.id.frame_main_less) {
       ViewUtil.startAnimatedIcon(binding.imageMainLess);
       changeBpm(-1);
@@ -374,6 +377,11 @@ public class MainActivity extends AppCompatActivity
         }
       }
       prevTouchTime = System.currentTimeMillis();
+
+      if (isBound()
+          && ((!service.isBeatModeVibrate() && !service.vibrateAlways()) || !service.isPlaying())) {
+        vibratorUtil.heavyClick();
+      }
     } else if (id == R.id.frame_main_beat_mode) {
       boolean beatModeVibrateNew = !sharedPrefs.getBoolean(
           Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
@@ -405,6 +413,7 @@ public class MainActivity extends AppCompatActivity
       }, 300);
     } else if (id == R.id.frame_main_bookmark) {
       ViewUtil.startAnimatedIcon(binding.imageMainBookmark);
+      vibratorUtil.click();
       if (isBound()) {
         if (bookmarks.size() < 3 && !bookmarks.contains(service.getBpm())) {
           binding.chipGroupMain.addView(newChip(service.getBpm()));
@@ -434,6 +443,7 @@ public class MainActivity extends AppCompatActivity
       }
     } else if (id == R.id.frame_main_emphasis) {
       ViewUtil.startAnimatedIcon(binding.imageMainEmphasis);
+      vibratorUtil.click();
       if (sharedPrefs.getBoolean(
           Constants.SETTING.EMPHASIS_SLIDER, Constants.DEF.EMPHASIS_SLIDER
       )) {
@@ -558,7 +568,7 @@ public class MainActivity extends AppCompatActivity
     sharedPrefs.edit().putInt(Constants.PREF.EMPHASIS, emphasis).apply();
     binding.textMainEmphasis.setText(String.valueOf(emphasis));
     if (hapticFeedback) {
-      vibratorUtil.vibrate(VibratorUtil.TICK);
+      vibratorUtil.tick();
     }
     if (isBound) {
       service.updateTick();
@@ -573,7 +583,7 @@ public class MainActivity extends AppCompatActivity
     chip.setCloseIconTintResource(R.color.icon);
     chip.setCloseIconResource(R.drawable.ic_round_cancel);
     chip.setOnCloseIconClickListener(v -> {
-      vibratorUtil.vibrate(VibratorUtil.TICK);
+      vibratorUtil.click();
       binding.chipGroupMain.removeView(chip);
       bookmarks.remove((Integer) bpm); // Integer cast required
       updateBookmarks();
@@ -716,7 +726,7 @@ public class MainActivity extends AppCompatActivity
           && (!service.isPlaying()
           || (!service.isBeatModeVibrate() && !service.vibrateAlways()))
       ) {
-        vibratorUtil.vibrate(VibratorUtil.TICK);
+        vibratorUtil.tick();
       }
     }
   }
