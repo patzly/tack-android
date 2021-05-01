@@ -1,7 +1,7 @@
 2.2.0:
 - New: Jost* typeface for normal text
 - Improved: haptic feedback
-- Improved: behavior if vibration is unavailable TODO
+- Improved: behavior if vibration is unavailable
 - Improved: layout for tablets TODO
 - Improved: "About" section
 - Fixed: some possible crashes

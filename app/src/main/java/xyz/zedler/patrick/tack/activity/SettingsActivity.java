@@ -105,6 +105,11 @@ public class SettingsActivity extends AppCompatActivity
         )
     );
 
+    if (!vibratorUtil.hasVibrator()) {
+      binding.linearSettingsVibrateAlways.setVisibility(View.GONE);
+      binding.linearSettingsHaptic.setVisibility(View.GONE);
+    }
+
     binding.switchSettingsSliderEmphasis.setChecked(
         sharedPrefs.getBoolean(
             Constants.SETTING.EMPHASIS_SLIDER, Constants.DEF.EMPHASIS_SLIDER

@@ -29,6 +29,7 @@
   <string name="msg_feedback">A great app requires a lot of time and lives from the feedback of its users.\n\nDo you have any wishes, comments or questions? Contact me!\nOtherwise I would be very happy about a nice review in the Play Store.</string>
   <string name="msg_share">Check out this cool metronome app: \nhttps://play.google.com/store/apps/details?id=xyz.zedler.patrick.tack</string>
   <string name="msg_wear">Tack is also available for Wear OS watches! All features of the phone app and much more, always ready on your wrist.</string>
+  <string name="msg_vibration_unavailable">Vibration unavailable on this device</string>
 
   <string name="title_bpm">%1$s BPM</string>
   <string name="title_bpm_label">BPM</string>

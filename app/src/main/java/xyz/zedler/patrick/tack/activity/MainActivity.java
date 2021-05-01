@@ -41,6 +41,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import xyz.zedler.patrick.tack.Constants;
+import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
@@ -104,6 +105,10 @@ public class MainActivity extends AppCompatActivity
     logoUtil = new LogoUtil(binding.imageMainLogo);
     clickUtil = new ClickUtil();
     vibratorUtil = new VibratorUtil(this);
+
+    if (!vibratorUtil.hasVibrator()) {
+      sharedPrefs.edit().putBoolean(PREF.BEAT_MODE_VIBRATE, false).apply();
+    }
 
     binding.toolbarMain.setOnMenuItemClickListener((MenuItem item) -> {
       int itemId = item.getItemId();
@@ -389,6 +394,16 @@ public class MainActivity extends AppCompatActivity
       boolean vibrateAlways = sharedPrefs.getBoolean(
           Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
       );
+
+      if (beatModeVibrateNew && !vibratorUtil.hasVibrator()) {
+        Snackbar.make(
+            binding.coordinatorContainer,
+            getString(R.string.msg_vibration_unavailable),
+            Snackbar.LENGTH_LONG
+        ).setAnchorView(binding.fabMain).show();
+        return;
+      }
+
       sharedPrefs.edit()
           .putBoolean(Constants.PREF.BEAT_MODE_VIBRATE, beatModeVibrateNew)
           .apply();
