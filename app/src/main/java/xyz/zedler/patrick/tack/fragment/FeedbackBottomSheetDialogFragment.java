@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetFeedbackBinding;
 import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.VibratorUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFragment {
@@ -39,8 +40,11 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
 
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity);
 
+    VibratorUtil vibratorUtil = new VibratorUtil(activity);
+
     binding.linearFeedbackRate.setOnClickListener(v -> {
       ViewUtil.startAnimatedIcon(binding.imageFeedbackRate);
+      vibratorUtil.click();
       Uri uri = Uri.parse(
           "market://details?id=" + activity.getApplicationContext().getPackageName()
       );
@@ -63,6 +67,7 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
     });
 
     binding.linearFeedbackEmail.setOnClickListener(v -> {
+      vibratorUtil.click();
       Intent intent = new Intent(Intent.ACTION_SENDTO);
       intent.setData(
           Uri.parse(
@@ -76,6 +81,7 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
     });
 
     binding.linearFeedbackShare.setOnClickListener(v -> {
+      vibratorUtil.click();
       ResUtil.share(activity, R.string.msg_share);
       dismiss();
     });

@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetTextBinding;
 import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.VibratorUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class TextBottomSheetDialogFragment extends BaseBottomSheetDialogFragment {
@@ -33,6 +34,8 @@ public class TextBottomSheetDialogFragment extends BaseBottomSheetDialogFragment
     Bundle bundle = getArguments();
     assert context != null && bundle != null;
 
+    VibratorUtil vibratorUtil = new VibratorUtil(context);
+
     binding.textTextTitle.setText(
         bundle.getString(Constants.EXTRA.TITLE)
     );
@@ -41,6 +44,7 @@ public class TextBottomSheetDialogFragment extends BaseBottomSheetDialogFragment
     if (link != null) {
       binding.frameTextOpenLink.setOnClickListener(v -> {
         ViewUtil.startAnimatedIcon(binding.imageTextOpenLink);
+        vibratorUtil.click();
         new Handler(Looper.getMainLooper()).postDelayed(
             () -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link))),
             500
