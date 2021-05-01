@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity
     binding.toolbarMain.setOnMenuItemClickListener((MenuItem item) -> {
       int itemId = item.getItemId();
       if (itemId == R.id.action_wear && clickUtil.isEnabled()) {
-        vibratorUtil.vibrate(VibratorUtil.TAP);
+        vibratorUtil.vibrate(VibratorUtil.TICK);
         DialogFragment fragment = new WearBottomSheetDialogFragment();
         fragment.show(getSupportFragmentManager(), fragment.toString());
       } else if (itemId == R.id.action_settings) {
@@ -558,7 +558,7 @@ public class MainActivity extends AppCompatActivity
     sharedPrefs.edit().putInt(Constants.PREF.EMPHASIS, emphasis).apply();
     binding.textMainEmphasis.setText(String.valueOf(emphasis));
     if (hapticFeedback) {
-      vibratorUtil.vibrate(VibratorUtil.TAP);
+      vibratorUtil.vibrate(VibratorUtil.TICK);
     }
     if (isBound) {
       service.updateTick();
@@ -573,7 +573,7 @@ public class MainActivity extends AppCompatActivity
     chip.setCloseIconTintResource(R.color.icon);
     chip.setCloseIconResource(R.drawable.ic_round_cancel);
     chip.setOnCloseIconClickListener(v -> {
-      vibratorUtil.vibrate(VibratorUtil.TAP);
+      vibratorUtil.vibrate(VibratorUtil.TICK);
       binding.chipGroupMain.removeView(chip);
       bookmarks.remove((Integer) bpm); // Integer cast required
       updateBookmarks();
@@ -716,7 +716,7 @@ public class MainActivity extends AppCompatActivity
           && (!service.isPlaying()
           || (!service.isBeatModeVibrate() && !service.vibrateAlways()))
       ) {
-        vibratorUtil.vibrate(VibratorUtil.TAP);
+        vibratorUtil.vibrate(VibratorUtil.TICK);
       }
     }
   }

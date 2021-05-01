@@ -18,12 +18,14 @@ import xyz.zedler.patrick.tack.databinding.ActivityAboutAppBinding;
 import xyz.zedler.patrick.tack.fragment.ChangelogBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.TextBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.util.ClickUtil;
+import xyz.zedler.patrick.tack.util.VibratorUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class AboutActivity extends AppCompatActivity implements View.OnClickListener {
 
   private ActivityAboutAppBinding binding;
-  private final ClickUtil clickUtil = new ClickUtil();
+  private ClickUtil clickUtil;
+  private VibratorUtil vibratorUtil;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -32,11 +34,14 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
     binding = ActivityAboutAppBinding.inflate(getLayoutInflater());
     setContentView(binding.getRoot());
 
+    clickUtil = new ClickUtil();
+    vibratorUtil = new VibratorUtil(this);
+
     binding.frameAboutClose.setOnClickListener(v -> {
-      if (clickUtil.isDisabled()) {
-        return;
+      if (clickUtil.isEnabled()) {
+        vibratorUtil.click();
+        finish();
       }
-      finish();
     });
 
     SystemBarBehavior systemBarBehavior = new SystemBarBehavior(this);
@@ -67,18 +72,22 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
   }
 
   @Override
-  public void onClick(View v) {
-    if (clickUtil.isDisabled()) {
-      return;
-    }
+  protected void onResume() {
+    super.onResume();
+    vibratorUtil.onResume();
+  }
 
+  @Override
+  public void onClick(View v) {
     int id = v.getId();
-    if (id == R.id.linear_changelog) {
+    if (id == R.id.linear_changelog && clickUtil.isEnabled()) {
       ViewUtil.startAnimatedIcon(binding.imageChangelog);
+      vibratorUtil.click();
       BottomSheetDialogFragment fragment = new ChangelogBottomSheetDialogFragment();
       fragment.show(getSupportFragmentManager(), fragment.toString());
-    } else if (id == R.id.linear_developer) {
+    } else if (id == R.id.linear_developer && clickUtil.isEnabled()) {
       ViewUtil.startAnimatedIcon(binding.imageDeveloper);
+      vibratorUtil.click();
       new Handler(Looper.getMainLooper()).postDelayed(() -> startActivity(
           new Intent(
               Intent.ACTION_VIEW,
@@ -87,36 +96,41 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
               )
           )), 300
       );
-    } else if (id == R.id.linear_license_edwin) {
+    } else if (id == R.id.linear_license_edwin && clickUtil.isEnabled()) {
       ViewUtil.startAnimatedIcon(binding.imageLicenseEdwin);
+      vibratorUtil.click();
       showTextBottomSheet(
           "ofl",
           R.string.license_edwin,
           R.string.license_edwin_link
       );
-    } else if (id == R.id.linear_license_jost) {
+    } else if (id == R.id.linear_license_jost && clickUtil.isEnabled()) {
       ViewUtil.startAnimatedIcon(binding.imageLicenseJost);
+      vibratorUtil.click();
       showTextBottomSheet(
           "ofl",
           R.string.license_jost,
           R.string.license_jost_link
       );
-    } else if (id == R.id.linear_license_material_components) {
+    } else if (id == R.id.linear_license_material_components && clickUtil.isEnabled()) {
       ViewUtil.startAnimatedIcon(binding.imageLicenseMaterialComponents);
+      vibratorUtil.click();
       showTextBottomSheet(
           "apache",
           R.string.license_material_components,
           R.string.license_material_components_link
       );
-    } else if (id == R.id.linear_license_material_icons) {
+    } else if (id == R.id.linear_license_material_icons && clickUtil.isEnabled()) {
       ViewUtil.startAnimatedIcon(binding.imageLicenseMaterialIcons);
+      vibratorUtil.click();
       showTextBottomSheet(
           "apache",
           R.string.license_material_icons,
           R.string.license_material_icons_link
       );
-    } else if (id == R.id.linear_license_metronome) {
+    } else if (id == R.id.linear_license_metronome && clickUtil.isEnabled()) {
       ViewUtil.startAnimatedIcon(binding.imageLicenseMetronome);
+      vibratorUtil.click();
       showTextBottomSheet(
           "apache",
           R.string.license_metronome,
