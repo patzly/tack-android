@@ -1,5 +1,5 @@
 2.2.0:
-- New: Jost* typeface for normal text
+- New: Jost* typeface
 - New: warning if watch has only one button
 - Fixed: some possible crashes
 

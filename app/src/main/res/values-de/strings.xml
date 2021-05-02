@@ -37,7 +37,7 @@
   <string name="setting_dark_mode">Dunkles Design erzwingen</string>
   <string name="setting_dark_mode_description">Aus für Systemabhängigkeit</string>
   <string name="setting_sound">Schlaggeräusch</string>
-  <string name="setting_sound_description">Vibration kann auf der Startseite festgelegt werden</string>
+  <string name="setting_sound_description">Zwischen Ton und Vibration kann auf der Startseite gewechselt werden</string>
   <string name="setting_sound_wood">Holz</string>
   <string name="setting_sound_click">Klick</string>
   <string name="setting_sound_ding">Ding</string>
@@ -45,7 +45,7 @@
   <string name="setting_vibrate_always">Immer vibrieren</string>
   <string name="setting_vibrate_always_description">Auch mit Ton</string>
   <string name="setting_haptic">Haptisches Feedback</string>
-  <string name="setting_haptic_description">Bei Tempowechsel</string>
+  <string name="setting_haptic_description">Bei Tempowechsel und andere Effekte</string>
   <string name="setting_slider_emphasis">Reglereingabe nutzen</string>
   <string name="setting_slider_emphasis_description">Zur Auswahl der Betonung</string>
   <string name="setting_keep_awake">Bildschirm anlassen</string>

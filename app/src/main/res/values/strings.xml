@@ -38,7 +38,7 @@
   <string name="setting_dark_mode">Force dark mode</string>
   <string name="setting_dark_mode_description">Off for system dependency</string>
   <string name="setting_sound">Beat sound</string>
-  <string name="setting_sound_description">Set vibration on the start page</string>
+  <string name="setting_sound_description">Switch between sound and vibration on the start page</string>
   <string name="setting_sound_wood">Wood</string>
   <string name="setting_sound_click">Click</string>
   <string name="setting_sound_ding">Ding</string>
@@ -46,7 +46,7 @@
   <string name="setting_vibrate_always">Always vibrate</string>
   <string name="setting_vibrate_always_description">Even with sound</string>
   <string name="setting_haptic">Haptic feedback</string>
-  <string name="setting_haptic_description">On tempo change</string>
+  <string name="setting_haptic_description">On tempo change and other effects</string>
   <string name="setting_slider_emphasis">Use slider input</string>
   <string name="setting_slider_emphasis_description">For emphasis selection</string>
   <string name="setting_keep_awake">Keep screen awake</string>
