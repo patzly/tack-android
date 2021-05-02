@@ -2,7 +2,7 @@
 - New: Jost* typeface for normal text
 - Improved: haptic feedback
 - Improved: behavior if vibration is unavailable
-- Improved: layout for tablets TODO
+- Improved: layout for different display sizes
 - Improved: "About" section
 - Fixed: some possible crashes
 

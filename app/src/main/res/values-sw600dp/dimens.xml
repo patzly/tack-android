@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <dimen name="splash_logo_size">100dp</dimen>
+
+  <dimen name="bpm_picker_size">270dp</dimen>
+  <dimen name="bpm_text_size">64dp</dimen>
+  <dimen name="label_text_size">27dp</dimen>
+
+  <dimen name="control_margin_bottom">80dp</dimen>
+  <dimen name="control_spacing">48dp</dimen>
+
+  <dimen name="picker_dot_size">10dp</dimen>
+  <dimen name="picker_dot_size_dragged">13dp</dimen>
+  <dimen name="picker_ring_width">56dp</dimen>
+  <dimen name="picker_ring_padding">28dp</dimen>
+
+  <dimen name="chip_stroke_width">1dp</dimen>
+  <dimen name="chip_stroke_width_active">2dp</dimen>
+
+</resources>

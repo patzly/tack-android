@@ -4,8 +4,8 @@
   <aapt:attr name="android:drawable">
     <vector
       android:name="vector"
-      android:width="64dp"
-      android:height="64dp"
+      android:width="@dimen/splash_logo_size"
+      android:height="@dimen/splash_logo_size"
       android:viewportWidth="24"
       android:viewportHeight="24">
       <path

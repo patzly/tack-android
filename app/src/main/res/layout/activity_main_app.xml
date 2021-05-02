@@ -53,6 +53,7 @@
     <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:layout_marginBottom="@dimen/picker_margin_bottom"
       android:orientation="vertical"
       android:gravity="center_horizontal"
       android:layout_gravity="center"
@@ -113,7 +114,7 @@
               android:id="@+id/text_main_bpm"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_marginBottom="16dp"
+              android:layout_marginBottom="@dimen/label_text_size"
               android:textColor="@color/on_background"
               android:layout_gravity="center_horizontal|top"
               android:fontFamily="@font/edwin_bold"
@@ -128,7 +129,7 @@
               android:fontFamily="@font/edwin_bold"
               android:lineSpacingExtra="5dp"
               android:layout_gravity="center_horizontal|bottom"
-              android:textSize="15dp" />
+              android:textSize="@dimen/label_text_size" />
 
           </FrameLayout>
 
@@ -182,7 +183,7 @@
         android:id="@+id/frame_main_emphasis"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="@dimen/control_spacing"
         android:background="?attr/actionBarItemBackground"
         android:clickable="true"
         android:gravity="center"
@@ -219,7 +220,7 @@
         android:id="@+id/frame_main_tempo_tap"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="@dimen/control_spacing"
         android:background="?attr/actionBarItemBackground"
         android:clickable="true"
         android:gravity="center"
@@ -242,6 +243,8 @@
         android:id="@+id/fab_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:src="@drawable/ic_round_play_to_pause_anim"
         android:tint="@color/on_secondary"
         android:contentDescription="@string/action_play_pause"
@@ -254,7 +257,7 @@
         android:id="@+id/frame_main_bookmark"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="@dimen/control_spacing"
         android:background="?attr/actionBarItemBackground"
         android:clickable="true"
         android:gravity="center"
@@ -277,7 +280,7 @@
         android:id="@+id/frame_main_beat_mode"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="@dimen/control_spacing"
         android:background="?attr/actionBarItemBackground"
         android:clickable="true"
         android:gravity="center"

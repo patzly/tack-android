@@ -16,7 +16,7 @@ public final class Constants {
     public final static String SOUND = Constants.SOUND.WOOD;
     public final static boolean VIBRATE_ALWAYS = false;
     public final static boolean HAPTIC_FEEDBACK = true;
-    public final static boolean EMPHASIS_SLIDER = true;
+    public final static boolean EMPHASIS_SLIDER = false;
     public final static boolean DARK_MODE = false;
     public final static boolean KEEP_AWAKE = true;
     public final static boolean BEAT_MODE_VIBRATE = true;
