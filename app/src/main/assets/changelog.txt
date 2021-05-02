@@ -1,5 +1,5 @@
 2.2.0:
-- New: Jost* typeface
+- Improved: main typeface
 - Improved: haptic feedback
 - Improved: behavior if vibration is unavailable
 - Improved: layout for different screen sizes
