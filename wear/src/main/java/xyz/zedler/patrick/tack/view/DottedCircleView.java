@@ -26,29 +26,8 @@ public class DottedCircleView extends View {
   private final float dotSizeMax;
   private boolean areDotsVisible = true;
 
-  public DottedCircleView(@NonNull Context context) {
-    this(context, null);
-  }
-
   public DottedCircleView(@NonNull Context context, @Nullable AttributeSet attrs) {
-    this(context, attrs, 0, 0);
-  }
-
-  public DottedCircleView(
-      @NonNull Context context,
-      @Nullable AttributeSet attrs,
-      int defStyleAttr
-  ) {
-    this(context, attrs, defStyleAttr, 0);
-  }
-
-  public DottedCircleView(
-      @NonNull Context context,
-      @Nullable AttributeSet attrs,
-      int defStyleAttr,
-      int defStyleRes
-  ) {
-    super(context, attrs, defStyleAttr, defStyleRes);
+    super(context, attrs);
 
     Resources resources = getResources();
     pickerPadding = resources.getDimensionPixelSize(R.dimen.picker_ring_padding);
