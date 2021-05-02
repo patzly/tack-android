@@ -22,25 +22,8 @@ public class BpmPickerView extends View implements View.OnTouchListener {
   private OnRotationListener onRotationListener;
   private OnPickListener onPickListener;
 
-  public BpmPickerView(@NonNull Context context) {
-    this(context, null);
-  }
-
   public BpmPickerView(@NonNull Context context, @Nullable AttributeSet attrs) {
-    this(context, attrs, 0, 0);
-  }
-
-  public BpmPickerView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-    this(context, attrs, defStyleAttr, 0);
-  }
-
-  public BpmPickerView(
-      @NonNull Context context,
-      @Nullable AttributeSet attrs,
-      int defStyleAttr,
-      int defStyleRes
-  ) {
-    super(context, attrs, defStyleAttr, defStyleRes);
+    super(context, attrs);
 
     Resources resources = getResources();
     ringWidth = resources.getDimensionPixelSize(R.dimen.picker_ring_width);
