@@ -541,9 +541,12 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   public void onStopTicks() {
-    if (binding != null) {
+    if (binding != null && binding.fabMain != null) {
       binding.fabMain.setImageResource(R.drawable.ic_round_pause_to_play_anim);
-      ((Animatable) binding.fabMain.getDrawable()).start();
+      Drawable icon = binding.fabMain.getDrawable();
+      if (icon != null) {
+        ((Animatable) icon).start();
+      }
     }
     keepScreenAwake(false);
   }
