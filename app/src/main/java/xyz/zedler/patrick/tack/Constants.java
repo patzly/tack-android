@@ -19,7 +19,7 @@ public final class Constants {
     public final static boolean EMPHASIS_SLIDER = false;
     public final static boolean DARK_MODE = false;
     public final static boolean KEEP_AWAKE = true;
-    public final static boolean BEAT_MODE_VIBRATE = true;
+    public final static boolean BEAT_MODE_VIBRATE = false;
     public final static long INTERVAL = 500;
     public final static int EMPHASIS = 0;
   }
