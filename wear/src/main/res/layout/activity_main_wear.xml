@@ -169,8 +169,7 @@
           android:text="@string/title_bpm"
           android:textColor="@color/on_background_secondary"
           android:layout_gravity="center_horizontal|bottom"
-          android:fontFamily="@font/edwin_bold"
-          android:lineSpacingExtra="5dp"
+          android:fontFamily="@font/jost_bold"
           android:textSize="13sp" />
 
       </FrameLayout>
