@@ -33,7 +33,7 @@ public final class Constants {
     public final static int BOOKMARK = -1;
   }
 
-  public final static class SETTING {
+  public final static class SETTINGS {
 
     public final static String SOUND = "sound";
     public final static String HEAVY_VIBRATION = "heavy_vibration";

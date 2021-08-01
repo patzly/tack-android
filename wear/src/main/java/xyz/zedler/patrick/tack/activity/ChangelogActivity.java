@@ -5,7 +5,6 @@ import android.widget.TextView;
 import androidx.fragment.app.FragmentActivity;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivityChangelogWearBinding;
-import xyz.zedler.patrick.tack.util.BulletUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 
 public class ChangelogActivity extends FragmentActivity {
@@ -20,12 +19,10 @@ public class ChangelogActivity extends FragmentActivity {
     setContentView(binding.getRoot());
 
     binding.textChangelog.setText(
-        BulletUtil.makeBulletList(
+        ResUtil.getBulletList(
             this,
-            6,
-            2,
             "- ",
-            ResUtil.readFromFile(this, "changelog"),
+            ResUtil.getRawText(this, R.raw.changelog),
             getResources().getStringArray(R.array.changelog_highlights)
         ),
         TextView.BufferType.SPANNABLE

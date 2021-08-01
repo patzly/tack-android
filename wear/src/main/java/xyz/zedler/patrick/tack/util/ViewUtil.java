@@ -6,6 +6,9 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.drawable.Animatable;
+import android.graphics.drawable.Drawable;
+import android.os.SystemClock;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +18,44 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DimenRes;
+import androidx.annotation.Dimension;
 import androidx.annotation.FontRes;
 import androidx.annotation.IntegerRes;
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 
 public class ViewUtil {
+
+  private final static String TAG = ViewUtil.class.getSimpleName();
+
+  private long lastClick;
+  private long idle = 500;
+
+  // Prevent multiple clicks
+
+  public ViewUtil() {
+    lastClick = 0;
+  }
+
+  public ViewUtil(long minClickIdle) {
+    lastClick = 0;
+    idle = minClickIdle;
+  }
+
+  public boolean isClickDisabled() {
+    if (SystemClock.elapsedRealtime() - lastClick < idle) {
+      return true;
+    }
+    lastClick = SystemClock.elapsedRealtime();
+    return false;
+  }
+
+  public boolean isClickEnabled() {
+    return !isClickDisabled();
+  }
+
+  // ClickListeners & OnCheckedChangeListeners
 
   public static void setOnClickListeners(View.OnClickListener listener, View... views) {
     for (View view : views) {
@@ -140,10 +175,51 @@ public class ViewUtil {
     colorAnimation.start();
   }
 
-  public static void startAnimatedIcon(ImageView imageView) {
-    try {
-      ((Animatable) imageView.getDrawable()).start();
-    } catch (ClassCastException ignored) {
+  // Animated icons
+
+  public static void startIcon(ImageView imageView) {
+    if (imageView == null) {
+      return;
     }
+    startIcon(imageView.getDrawable());
+  }
+
+  public static void startIcon(Drawable drawable) {
+    if (drawable == null) {
+      return;
+    }
+    try {
+      ((Animatable) drawable).start();
+    } catch (ClassCastException e) {
+      Log.e(TAG, "icon animation requires AnimVectorDrawable");
+    }
+  }
+
+  public static void resetAnimatedIcon(ImageView imageView) {
+    if (imageView == null) {
+      return;
+    }
+    try {
+      Animatable animatable = (Animatable) imageView.getDrawable();
+      if (animatable != null) {
+        animatable.stop();
+      }
+      imageView.setImageDrawable(null);
+      imageView.setImageDrawable((Drawable) animatable);
+    } catch (ClassCastException e) {
+      Log.e(TAG, "resetting animated icon requires AnimVectorDrawable");
+    }
+  }
+
+  // Units
+
+  public static int dpToPx(@NonNull Context context, @Dimension(unit = Dimension.DP) float dp) {
+    Resources r = context.getResources();
+    return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
+  }
+
+  public static int spToPx(@NonNull Context context, @Dimension(unit = Dimension.SP) float sp) {
+    Resources r = context.getResources();
+    return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, r.getDisplayMetrics());
   }
 }

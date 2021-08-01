@@ -17,12 +17,12 @@ import androidx.wear.widget.SwipeDismissFrameLayout;
 import java.util.ArrayList;
 import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
+import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivityMainWearBinding;
 import xyz.zedler.patrick.tack.util.AudioUtil;
 import xyz.zedler.patrick.tack.util.ButtonUtil;
-import xyz.zedler.patrick.tack.util.ClickUtil;
-import xyz.zedler.patrick.tack.util.VibratorUtil;
+import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
 
@@ -34,14 +34,14 @@ public class MainActivity extends FragmentActivity
   private ActivityMainWearBinding binding;
   private SharedPreferences sharedPrefs;
   private AudioUtil audioUtil;
-  private VibratorUtil vibratorUtil;
-  private ClickUtil clickUtil;
+  private HapticUtil hapticUtil;
+  private ViewUtil viewUtil;
   private ButtonUtil buttonUtilFaster;
   private ButtonUtil buttonUtilSlower;
   private List<Long> intervals;
   private Handler handler;
   private int bpm;
-  private int soundId = -1;
+  private String sound = null;
   private int emphasis;
   private int emphasisIndex;
   private int rotaryFactorIndex;
@@ -68,8 +68,8 @@ public class MainActivity extends FragmentActivity
 
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
     audioUtil = new AudioUtil(this);
-    vibratorUtil = new VibratorUtil(this);
-    clickUtil = new ClickUtil();
+    hapticUtil = new HapticUtil(this);
+    viewUtil = new ViewUtil();
     buttonUtilFaster = new ButtonUtil(this, () -> changeBpm(1));
     buttonUtilSlower = new ButtonUtil(this, () -> changeBpm(-1));
     handler = new Handler(Looper.getMainLooper());
@@ -83,7 +83,7 @@ public class MainActivity extends FragmentActivity
     bpm = (int) (60000 / interval);
 
     hidePicker = sharedPrefs.getBoolean(
-        Constants.SETTING.HIDE_PICKER, Constants.DEF.HIDE_PICKER
+        SETTINGS.HIDE_PICKER, Constants.DEF.HIDE_PICKER
     );
     updatePickerVisibility();
 
@@ -204,26 +204,26 @@ public class MainActivity extends FragmentActivity
     super.onResume();
 
     boolean hidePickerNew = sharedPrefs.getBoolean(
-        Constants.SETTING.HIDE_PICKER, Constants.DEF.HIDE_PICKER
+        SETTINGS.HIDE_PICKER, Constants.DEF.HIDE_PICKER
     );
     if (hidePicker != hidePickerNew) {
       hidePicker = hidePickerNew;
       updatePickerVisibility();
     }
 
-    animations = sharedPrefs.getBoolean(Constants.SETTING.ANIMATIONS, Constants.DEF.ANIMATIONS);
+    animations = sharedPrefs.getBoolean(SETTINGS.ANIMATIONS, Constants.DEF.ANIMATIONS);
     emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS);
     heavyVibration = sharedPrefs.getBoolean(
-        Constants.SETTING.HEAVY_VIBRATION, Constants.DEF.HEAVY_VIBRATION
+        SETTINGS.HEAVY_VIBRATION, Constants.DEF.HEAVY_VIBRATION
     );
     vibrateAlways = sharedPrefs.getBoolean(
-        Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+        SETTINGS.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
     );
     hapticFeedback = sharedPrefs.getBoolean(
-        Constants.SETTING.HAPTIC_FEEDBACK, Constants.DEF.HAPTIC_FEEDBACK
+        SETTINGS.HAPTIC_FEEDBACK, Constants.DEF.HAPTIC_FEEDBACK
     );
     wristGestures = sharedPrefs.getBoolean(
-        Constants.SETTING.WRIST_GESTURES, Constants.DEF.WRIST_GESTURES
+        SETTINGS.WRIST_GESTURES, Constants.DEF.WRIST_GESTURES
     );
     isBeatModeVibrate = sharedPrefs.getBoolean(
         Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
@@ -352,13 +352,13 @@ public class MainActivity extends FragmentActivity
       emphasisIndex = emphasisIndex < emphasis - 1 ? emphasisIndex + 1 : 0;
     }
 
-    if (soundId != -1) {
-      audioUtil.play(soundId, isEmphasis);
+    if (sound != null) {
+      audioUtil.play(sound, isEmphasis);
       if (vibrateAlways) {
-        vibratorUtil.vibrate(isEmphasis, heavyVibration);
+        hapticUtil.vibrate(isEmphasis, heavyVibration);
       }
     } else {
-      vibratorUtil.vibrate(isEmphasis, heavyVibration);
+      hapticUtil.vibrate(isEmphasis, heavyVibration);
     }
 
     handler.postDelayed(this, interval);
@@ -367,12 +367,9 @@ public class MainActivity extends FragmentActivity
   @Override
   public void onClick(View v) {
     int id = v.getId();
-    if (id == R.id.frame_settings) {
-      if (clickUtil.isDisabled()) {
-        return;
-      }
+    if (id == R.id.frame_settings && viewUtil.isClickEnabled()) {
       if (animations) {
-        ViewUtil.startAnimatedIcon(binding.imageSettings);
+        ViewUtil.startIcon(binding.imageSettings);
       }
 
       if (isPlaying) {
@@ -385,7 +382,7 @@ public class MainActivity extends FragmentActivity
       startActivity(new Intent(this, SettingsActivity.class));
     } else if (id == R.id.frame_tempo_tap) {
       if (animations) {
-        ViewUtil.startAnimatedIcon(binding.imageTempoTap);
+        ViewUtil.startIcon(binding.imageTempoTap);
       }
 
       long interval = System.currentTimeMillis() - prevTouchTime;
@@ -414,7 +411,7 @@ public class MainActivity extends FragmentActivity
                 ? R.drawable.ic_round_play_to_pause_anim
                 : R.drawable.ic_round_pause_to_play_anim
         );
-        ViewUtil.startAnimatedIcon(binding.imagePlayPause);
+        ViewUtil.startIcon(binding.imagePlayPause);
       } else {
         binding.imagePlayPause.setImageResource(
             isPlaying
@@ -435,19 +432,19 @@ public class MainActivity extends FragmentActivity
           Constants.PREF.BEAT_MODE_VIBRATE, isBeatModeVibrate
       ).apply();
       if (animations) {
-        ViewUtil.startAnimatedIcon(binding.imageBeatMode);
+        ViewUtil.startIcon(binding.imageBeatMode);
       }
       new Handler(Looper.getMainLooper()).postDelayed(
           this::updateBeatMode, animations ? 300 : 0
       );
     } else if (id == R.id.frame_emphasis) {
       if (animations) {
-        ViewUtil.startAnimatedIcon(binding.imageEmphasis);
+        ViewUtil.startIcon(binding.imageEmphasis);
       }
       setNextEmphasis();
     } else if (id == R.id.frame_bookmark) {
       if (animations) {
-        ViewUtil.startAnimatedIcon(binding.imageBookmark);
+        ViewUtil.startIcon(binding.imageBookmark);
       }
       int bookmark = sharedPrefs.getInt(Constants.PREF.BOOKMARK, Constants.DEF.BOOKMARK);
       if (bookmark == -1) {
@@ -486,14 +483,14 @@ public class MainActivity extends FragmentActivity
               ? R.drawable.ic_round_volume_off_to_volume_on_anim
               : R.drawable.ic_round_vibrate_to_volume_anim
       );
-      soundId = -1;
+      sound = null;
     } else {
       binding.imageBeatMode.setImageResource(
           vibrateAlways
               ? R.drawable.ic_round_volume_on_to_volume_off_anim
               : R.drawable.ic_round_volume_to_vibrate_anim
       );
-      soundId = audioUtil.getCurrentSoundId();
+      sound = sharedPrefs.getString(Constants.SETTINGS.SOUND, Constants.DEF.SOUND);
     }
   }
 
@@ -569,7 +566,7 @@ public class MainActivity extends FragmentActivity
     if ((change > 0 && bpmNew <= 300) || (change < 0 && bpmNew >= 1)) {
       setBpm(bpmNew);
       if (hapticFeedback && (!isPlaying || (!isBeatModeVibrate && !vibrateAlways))) {
-        vibratorUtil.vibrate(VibratorUtil.TAP);
+        hapticUtil.vibrate(HapticUtil.TAP);
       }
     }
   }
