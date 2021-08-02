@@ -11,8 +11,8 @@ android {
         applicationId "xyz.zedler.patrick.tack"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 100 // last number is 0 for app release
-        versionName "2.2.0"
+        versionCode 110 // last number is 0 for app release
+        versionName "2.3.0"
     }
 
     applicationVariants.all { variant ->
