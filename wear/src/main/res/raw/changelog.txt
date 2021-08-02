@@ -1,5 +1,7 @@
 2.3.0:
 - New: sound is played when selected in settings
+- New: haptic interface feedback
+- Improved: native haptic effects are used on watches with Android 10 or higher
 - Improved: typeface of BPM label
 
 2.2.0:

@@ -12,10 +12,12 @@ import android.widget.CompoundButton;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 import xyz.zedler.patrick.tack.Constants;
+import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivitySettingsWearBinding;
 import xyz.zedler.patrick.tack.util.AudioUtil;
+import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class SettingsActivity extends FragmentActivity
@@ -26,9 +28,9 @@ public class SettingsActivity extends FragmentActivity
   private ActivitySettingsWearBinding binding;
   private SharedPreferences sharedPrefs;
   private ViewUtil viewUtil;
+  private HapticUtil hapticUtil;
   private AudioUtil audioUtil;
   private boolean animations;
-  private int soundId = -1;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +43,8 @@ public class SettingsActivity extends FragmentActivity
     animations = sharedPrefs.getBoolean(SETTINGS.ANIMATIONS, Constants.DEF.ANIMATIONS);
     viewUtil = new ViewUtil();
     audioUtil = new AudioUtil(this);
+    hapticUtil = new HapticUtil(this);
+    hapticUtil.setEnabled(sharedPrefs.getBoolean(SETTINGS.HAPTIC_FEEDBACK, DEF.HAPTIC_FEEDBACK));
 
     binding.textSettingSound.setText(getSound());
 
@@ -114,6 +118,7 @@ public class SettingsActivity extends FragmentActivity
       if (animations) {
         ViewUtil.startIcon(binding.imageSound);
       }
+      hapticUtil.tick();
       setNextSound();
       audioUtil.play(sharedPrefs.getString(SETTINGS.SOUND, Constants.DEF.SOUND), false);
     } else if (id == R.id.linear_settings_heavy_vibration) {
@@ -142,11 +147,13 @@ public class SettingsActivity extends FragmentActivity
       if (animations) {
         ViewUtil.startIcon(binding.imageChangelog);
       }
+      hapticUtil.tick();
       startActivity(new Intent(this, ChangelogActivity.class));
     } else if (id == R.id.linear_settings_rate && viewUtil.isClickEnabled()) {
       if (animations) {
         ViewUtil.startIcon(binding.imageRate);
       }
+      hapticUtil.tick();
       Uri uri = Uri.parse(
           "market://details?id=" + getApplicationContext().getPackageName()
       );
@@ -217,6 +224,7 @@ public class SettingsActivity extends FragmentActivity
       editor.putBoolean(SETTINGS.VIBRATE_ALWAYS, isChecked);
     } else if (id == R.id.switch_settings_haptic) {
       editor.putBoolean(SETTINGS.HAPTIC_FEEDBACK, isChecked);
+      hapticUtil.setEnabled(isChecked);
     } else if (id == R.id.switch_settings_wrist_gestures) {
       editor.putBoolean(SETTINGS.WRIST_GESTURES, isChecked);
     } else if (id == R.id.switch_settings_hide_picker) {
@@ -226,5 +234,6 @@ public class SettingsActivity extends FragmentActivity
       animations = isChecked;
     }
     editor.apply();
+    hapticUtil.tick();
   }
 }

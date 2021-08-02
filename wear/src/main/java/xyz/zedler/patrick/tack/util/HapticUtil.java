@@ -8,45 +8,71 @@ import android.os.Vibrator;
 public class HapticUtil {
 
   private final Vibrator vibrator;
+  private boolean enabled;
 
-  public static final long TAP = 13;
-  public static final long TICK = 20;
-  public static final long TICK_HEAVY = 50;
-  public static final long TACK = 50;
-  public static final long TACK_HEAVY = 80;
+  public static final long TICK = 13;
+  public static final long CLICK = 20;
+  public static final long HEAVY = 50;
+  public static final long HEAVY_TICK = 50;
+  public static final long HEAVY_TACK = 80;
 
   public HapticUtil(Context context) {
     vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+    enabled = true;
   }
 
   public void vibrate(long duration) {
+    if (!enabled) {
+      return;
+    }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      vibrator.vibrate(
-          VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE)
-      );
+      vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE));
     } else {
       vibrator.vibrate(duration);
     }
   }
 
-  public void vibrate(boolean emphasize, boolean heavyVibration) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      vibrator.vibrate(
-          VibrationEffect.createOneShot(
-              emphasize ? getTack(heavyVibration) : getTick(heavyVibration),
-              heavyVibration ? 255 : VibrationEffect.DEFAULT_AMPLITUDE
-          )
-      );
-    } else {
-      vibrator.vibrate(emphasize ? getTack(heavyVibration) : getTick(heavyVibration));
+  private void vibrate(int effectId) {
+    if (enabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      vibrator.vibrate(VibrationEffect.createPredefined(effectId));
     }
   }
 
-  private long getTick(boolean heavyVibration) {
-    return heavyVibration ? TICK_HEAVY : TICK;
+  public void tick() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      vibrate(VibrationEffect.EFFECT_TICK);
+    } else {
+      vibrate(TICK);
+    }
   }
 
-  private long getTack(boolean heavyVibration) {
-    return heavyVibration ? TACK_HEAVY : TACK;
+  public void click() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      vibrate(VibrationEffect.EFFECT_CLICK);
+    } else {
+      vibrate(CLICK);
+    }
+  }
+
+  public void heavyClick() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      vibrate(VibrationEffect.EFFECT_HEAVY_CLICK);
+    } else {
+      vibrate(HEAVY);
+    }
+  }
+
+  public void metronome(boolean isEmphasis, boolean heavyVibration) {
+    if (heavyVibration) {
+      vibrate(isEmphasis ? HEAVY_TACK : HEAVY_TICK);
+    } else if (isEmphasis) {
+      heavyClick();
+    } else {
+      click();
+    }
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
   }
 }

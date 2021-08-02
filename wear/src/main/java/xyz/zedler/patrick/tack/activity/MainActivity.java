@@ -355,10 +355,10 @@ public class MainActivity extends FragmentActivity
     if (sound != null) {
       audioUtil.play(sound, isEmphasis);
       if (vibrateAlways) {
-        hapticUtil.vibrate(isEmphasis, heavyVibration);
+        hapticUtil.metronome(isEmphasis, heavyVibration);
       }
     } else {
-      hapticUtil.vibrate(isEmphasis, heavyVibration);
+      hapticUtil.metronome(isEmphasis, heavyVibration);
     }
 
     handler.postDelayed(this, interval);
@@ -370,6 +370,9 @@ public class MainActivity extends FragmentActivity
     if (id == R.id.frame_settings && viewUtil.isClickEnabled()) {
       if (animations) {
         ViewUtil.startIcon(binding.imageSettings);
+      }
+      if (canPlayHapticFeedback()) {
+        hapticUtil.tick();
       }
 
       if (isPlaying) {
@@ -384,6 +387,9 @@ public class MainActivity extends FragmentActivity
       if (animations) {
         ViewUtil.startIcon(binding.imageTempoTap);
       }
+      if (canPlayHapticFeedback()) {
+        hapticUtil.tick();
+      }
 
       long interval = System.currentTimeMillis() - prevTouchTime;
       if (prevTouchTime > 0 && interval <= 6000) {
@@ -397,6 +403,9 @@ public class MainActivity extends FragmentActivity
       }
       prevTouchTime = System.currentTimeMillis();
     } else if (id == R.id.frame_play_pause) {
+      if (!isBeatModeVibrate && !vibrateAlways) {
+        hapticUtil.tick();
+      }
       emphasisIndex = 0;
       isPlaying = !isPlaying;
       if (isPlaying) {
@@ -420,6 +429,9 @@ public class MainActivity extends FragmentActivity
         );
       }
     } else if (id == R.id.frame_beat_mode) {
+      if (canPlayHapticFeedback()) {
+        hapticUtil.tick();
+      }
       SharedPreferences.Editor editor = sharedPrefs.edit();
       if (!audioUtil.isSpeakerAvailable() && sharedPrefs.getBoolean(
           Constants.PREF.FIRST_SPEAKER_MODE, Constants.DEF.FIRST_SPEAKER_MODE
@@ -441,10 +453,16 @@ public class MainActivity extends FragmentActivity
       if (animations) {
         ViewUtil.startIcon(binding.imageEmphasis);
       }
+      if (canPlayHapticFeedback()) {
+        hapticUtil.tick();
+      }
       setNextEmphasis();
     } else if (id == R.id.frame_bookmark) {
       if (animations) {
         ViewUtil.startIcon(binding.imageBookmark);
+      }
+      if (canPlayHapticFeedback()) {
+        hapticUtil.tick();
       }
       int bookmark = sharedPrefs.getInt(Constants.PREF.BOOKMARK, Constants.DEF.BOOKMARK);
       if (bookmark == -1) {
@@ -492,6 +510,10 @@ public class MainActivity extends FragmentActivity
       );
       sound = sharedPrefs.getString(Constants.SETTINGS.SOUND, Constants.DEF.SOUND);
     }
+  }
+
+  private boolean canPlayHapticFeedback() {
+    return hapticFeedback && (!isPlaying || (!isBeatModeVibrate && !vibrateAlways));
   }
 
   private void updatePickerVisibility() {
@@ -565,8 +587,8 @@ public class MainActivity extends FragmentActivity
     int bpmNew = bpm + change;
     if ((change > 0 && bpmNew <= 300) || (change < 0 && bpmNew >= 1)) {
       setBpm(bpmNew);
-      if (hapticFeedback && (!isPlaying || (!isBeatModeVibrate && !vibrateAlways))) {
-        hapticUtil.vibrate(HapticUtil.TAP);
+      if (canPlayHapticFeedback()) {
+        hapticUtil.tick();
       }
     }
   }
