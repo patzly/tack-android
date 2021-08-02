@@ -2,7 +2,9 @@
 - New: sound is played when selected in settings
 - New: haptic interface feedback
 - Improved: native haptic effects are used on watches with Android 10 or higher
+- Improved: BPM up to 400 instead of 300
 - Improved: typeface of BPM label
+- Improved: rotary input speed and accuracy
 
 2.2.0:
 - New: Jost* typeface

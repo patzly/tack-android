@@ -159,7 +159,7 @@ public class MainActivity extends FragmentActivity
           rotaryFactorIndex++;
         } else {
           // more rotation needed for bpm to change again
-          rotaryFactorIndex = rotaryFactorIndex < 5 ? rotaryFactorIndex + 1 : 0;
+          rotaryFactorIndex = rotaryFactorIndex < 3 ? rotaryFactorIndex + 1 : 0;
         }
 
         if (isFirstRotation && !hidePicker) {
@@ -585,7 +585,7 @@ public class MainActivity extends FragmentActivity
 
   private void changeBpm(int change) {
     int bpmNew = bpm + change;
-    if ((change > 0 && bpmNew <= 300) || (change < 0 && bpmNew >= 1)) {
+    if ((change > 0 && bpmNew <= 400) || (change < 0 && bpmNew >= 1)) {
       setBpm(bpmNew);
       if (canPlayHapticFeedback()) {
         hapticUtil.tick();
@@ -597,7 +597,7 @@ public class MainActivity extends FragmentActivity
     if (bpm <= 0) {
       return;
     }
-    this.bpm = Math.min(bpm, 300);
+    this.bpm = Math.min(bpm, 400);
     binding.textBpm.setText(String.valueOf(this.bpm));
     interval = 60000 / bpm;
     sharedPrefs.edit().putLong(Constants.PREF.INTERVAL, interval).apply();
