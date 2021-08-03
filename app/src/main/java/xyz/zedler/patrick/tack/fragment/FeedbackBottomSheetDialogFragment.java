@@ -13,6 +13,7 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout.LayoutParams;
 import androidx.annotation.NonNull;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetFeedbackBinding;
@@ -43,7 +44,7 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
     VibratorUtil vibratorUtil = new VibratorUtil(activity);
 
     binding.linearFeedbackRate.setOnClickListener(v -> {
-      ViewUtil.startAnimatedIcon(binding.imageFeedbackRate);
+      ViewUtil.startIcon(binding.imageFeedbackRate);
       vibratorUtil.click();
       Uri uri = Uri.parse(
           "market://details?id=" + activity.getApplicationContext().getPackageName()
@@ -102,6 +103,13 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
     if (sharedPrefs.getInt("feedback_pop_up", 1) != 0) {
       sharedPrefs.edit().putInt("feedback_pop_up", 0).apply();
     }
+  }
+
+  @Override
+  public void applyBottomInset(int bottom) {
+    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+    params.setMargins(0, 0, 0, bottom);
+    binding.linearFeedbackContainer.setLayoutParams(params);
   }
 
   @NonNull

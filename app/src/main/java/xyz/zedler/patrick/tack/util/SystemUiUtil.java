@@ -3,54 +3,76 @@ package xyz.zedler.patrick.tack.util;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.graphics.Insets;
 import android.os.Build;
+import android.os.Build.VERSION_CODES;
+import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowInsets;
+import android.view.WindowInsetsController;
+import android.view.WindowManager;
+import android.view.WindowMetrics;
+import androidx.annotation.Dimension;
+import androidx.annotation.NonNull;
 
 public class SystemUiUtil {
 
-  public final static int COLOR_SCRIM = 0x55000000;
-  public final static int COLOR_SCRIM_OPAQUE = 0xFFAAAAAA;
-  public final static int COLOR_SCRIM_DARK = 0xB31E1F22;
-  public final static int COLOR_SCRIM_LIGHT = 0xB3FFFFFF;
+  public final static int SCRIM = 0x55000000;
+  public final static int SCRIM_OPAQUE = 0xFFAAAAAA;
+  public final static int SCRIM_DARK = 0xB31E1F22;
+  public final static int SCRIM_DARK_DIALOG = 0xFF0c0c0e;
+  public final static int SCRIM_DARK_DIALOG_DIVIDER = 0xFF202020;
+  public final static int SCRIM_DARK_SURFACE = 0xB3303030;
+  public final static int SCRIM_LIGHT = 0xB3FFFFFF;
+  public final static int SCRIM_LIGHT_DIALOG = 0xFF666666;
+  public final static int SCRIM_LIGHT_DIALOG_DIVIDER = 0xFF555555;
 
   public static void layoutEdgeToEdge(Window window) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
       window.setDecorFitsSystemWindows(false);
     } else {
-      final int decorFitsFlags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-          | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-          | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN;
-      final View decorView = window.getDecorView();
-      decorView.setSystemUiVisibility(decorView.getSystemUiVisibility() | decorFitsFlags);
+      int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+      View decorView = window.getDecorView();
+      decorView.setSystemUiVisibility(decorView.getSystemUiVisibility() | flags);
     }
   }
 
   public static void setLightNavigationBar(Window window) {
-    // TODO: SDK 30 method doesn't work
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.getInsetsController().setSystemBarsAppearance(
-                    WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
-                    WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
-            );
-        } else*/
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
-      final View decorView = window.getDecorView();
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      window.getInsetsController().setSystemBarsAppearance(
+          WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
+          WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+      );
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      View decorView = window.getDecorView();
       decorView.setSystemUiVisibility(
           decorView.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
       );
     }
   }
 
+  public static void setLightNavigationBar(Window window, View view) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      window.getInsetsController().setSystemBarsAppearance(
+          WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS,
+          WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS
+      );
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      view.setSystemUiVisibility(
+          view.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+      );
+    }
+  }
+
   public static void setLightStatusBar(Window window) {
-    // TODO: SDK 30 method doesn't work
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.getInsetsController().setSystemBarsAppearance(
-                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
-                    WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-            );
-        } else*/
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      window.getInsetsController().setSystemBarsAppearance(
+          WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+          WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+      );
+    } else if (Build.VERSION.SDK_INT >= VERSION_CODES.M) {
       final View decorView = window.getDecorView();
       decorView.setSystemUiVisibility(
           decorView.getSystemUiVisibility() | View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
@@ -76,5 +98,51 @@ public class SystemUiUtil {
   public static boolean isOrientationPortrait(Context context) {
     int orientation = context.getResources().getConfiguration().orientation;
     return orientation == Configuration.ORIENTATION_PORTRAIT;
+  }
+
+  // Unit conversions
+
+  public static int dpToPx(@NonNull Context context, @Dimension(unit = Dimension.DP) float dp) {
+    Resources r = context.getResources();
+    return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
+  }
+
+  public static int spToPx(@NonNull Context context, @Dimension(unit = Dimension.SP) float sp) {
+    Resources r = context.getResources();
+    return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, r.getDisplayMetrics());
+  }
+
+  // Display width
+
+  public static int getDisplayWidth(Context context) {
+    WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      WindowMetrics windowMetrics = windowManager.getCurrentWindowMetrics();
+      Insets insets = windowMetrics.getWindowInsets().getInsetsIgnoringVisibility(
+          WindowInsets.Type.systemBars()
+      );
+      return windowMetrics.getBounds().width() - insets.left - insets.right;
+    } else {
+      DisplayMetrics displayMetrics = new DisplayMetrics();
+      windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+      return displayMetrics.widthPixels;
+    }
+  }
+
+  // Display height
+
+  public static int getDisplayHeight(Context context) {
+    WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      WindowMetrics windowMetrics = windowManager.getCurrentWindowMetrics();
+      Insets insets = windowMetrics.getWindowInsets().getInsetsIgnoringVisibility(
+          WindowInsets.Type.systemBars()
+      );
+      return windowMetrics.getBounds().height() - insets.top - insets.bottom;
+    } else {
+      DisplayMetrics displayMetrics = new DisplayMetrics();
+      windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+      return displayMetrics.heightPixels;
+    }
   }
 }

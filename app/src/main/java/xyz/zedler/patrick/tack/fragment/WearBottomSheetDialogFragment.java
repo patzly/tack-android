@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout.LayoutParams;
 import androidx.annotation.NonNull;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetWearBinding;
 
@@ -27,6 +28,13 @@ public class WearBottomSheetDialogFragment extends BaseBottomSheetDialogFragment
   public void onDestroy() {
     super.onDestroy();
     binding = null;
+  }
+
+  @Override
+  public void applyBottomInset(int bottom) {
+    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+    params.setMargins(0, 0, 0, bottom);
+    binding.linearWearContainer.setLayoutParams(params);
   }
 
   @NonNull

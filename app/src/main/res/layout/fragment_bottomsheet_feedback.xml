@@ -6,13 +6,15 @@
   android:layout_height="wrap_content"
   android:orientation="vertical">
 
-  <TextView
-    style="@style/Widget.Tack.TextView.Title.BottomSheet"
+  <FrameLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:textAlignment="center"
-    android:padding="16dp"
-    android:text="@string/title_feedback" />
+    android:layout_height="?android:actionBarSize">
+
+    <TextView
+      style="@style/Widget.Tack.TextView.Toolbar.BottomSheet.Center"
+      android:text="@string/title_feedback" />
+
+  </FrameLayout>
 
   <View
     style="@style/Widget.Tack.Divider"
@@ -25,6 +27,7 @@
     android:scrollbars="none">
 
     <LinearLayout
+      android:id="@+id/linear_feedback_container"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="vertical"

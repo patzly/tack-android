@@ -1,197 +1,281 @@
 package xyz.zedler.patrick.tack.fragment;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.PaintDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.Window;
-import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat.Type;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.SystemUiUtil;
-import xyz.zedler.patrick.tack.util.UnitUtil;
+import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class BaseBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
+  private final static String TAG = "BaseBottomSheet";
+
+  private View decorView;
+  private boolean isExpanded;
+  private boolean lightNavBar;
+
   @NonNull
   @Override
-  public Dialog onCreateDialog(Bundle savedInstanceState) {
-    return new BottomSheetDialog(requireContext(), R.style.Theme_Tack_BottomSheetDialog);
-  }
+  public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+    Dialog dialog = new BottomSheetDialog(requireContext());
 
-  @Override
-  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    super.onViewCreated(view, savedInstanceState);
-
-    Activity activity = getActivity();
-    if (activity == null) {
-      return;
+    decorView = dialog.getWindow().getDecorView();
+    if (decorView == null) {
+      return dialog;
     }
 
-    BottomSheetDialog dialog = (BottomSheetDialog) getDialog();
-    if (dialog == null) {
-      return;
-    }
-
-    view.getViewTreeObserver().addOnGlobalLayoutListener(
+    decorView.getViewTreeObserver().addOnGlobalLayoutListener(
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override
           public void onGlobalLayout() {
+            ViewGroup container = dialog.findViewById(R.id.container);
             View sheet = dialog.findViewById(R.id.design_bottom_sheet);
-            if (sheet == null) {
+            if (container == null || sheet == null) {
               return;
             }
 
+            container.setClipChildren(false);
+            container.setClipToPadding(false);
+
+            if (lightNavBar) {
+              // Below API 30 it does not work for non-gesture if we take the normal method
+              SystemUiUtil.setLightNavigationBar(dialog.getWindow(), sheet);
+            }
+
+            boolean isOrientationPortrait = SystemUiUtil.isOrientationPortrait(requireContext());
+
             PaintDrawable background = new PaintDrawable(
-                ContextCompat.getColor(activity, R.color.surface)
+                ContextCompat.getColor(requireContext(), R.color.surface)
             );
-            int radius = UnitUtil.getDp(activity, 16);
-            background.setCornerRadii(
-                new float[]{
-                    radius, radius,
-                    radius, radius,
-                    0, 0,
-                    0, 0
-                }
-            );
+            int radius = SystemUiUtil.dpToPx(requireContext(), 16);
+            setCornerRadius(background, radius);
             sheet.setBackground(background);
 
-            updateSystemBars(activity, dialog.getWindow(), sheet);
+            BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(sheet);
+            behavior.setPeekHeight(SystemUiUtil.getDisplayHeight(requireContext()) / 2);
 
-            BottomSheetBehavior.from(sheet).setPeekHeight(
-                UnitUtil.getDisplayHeight(activity) / 2
-            );
+            boolean keepBelowStatusBar =
+                SystemUiUtil.getDisplayWidth(requireContext()) > behavior.getMaxWidth();
 
-            if (view.getViewTreeObserver().isAlive()) {
-              view.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            ViewCompat.setOnApplyWindowInsetsListener(decorView, (view, insets) -> {
+              int insetTop = insets.getInsets(Type.systemBars()).top;
+              int insetBottom = insets.getInsets(Type.systemBars()).bottom;
+
+              layoutEdgeToEdge(dialog.getWindow(), insetBottom);
+
+              applyBottomInset(insetBottom);
+
+              behavior.addBottomSheetCallback(new BottomSheetCallback() {
+                @Override
+                public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                  isExpanded = newState == BottomSheetBehavior.STATE_EXPANDED;
+
+                  if (bottomSheet.getTop() < insetTop) {
+                    if (!keepBelowStatusBar) {
+                      float fraction = (float) bottomSheet.getTop() / (float) insetTop;
+                      setCornerRadius(background, radius * fraction);
+                    }
+                  } else if (bottomSheet.getTop() != 0) {
+                    if (!keepBelowStatusBar) {
+                      setCornerRadius(background, radius);
+                    }
+                  }
+                  if (keepBelowStatusBar) {
+                    // Undo padding applied by BottomSheetBehavior and add container padding
+                    sheet.setPadding(0, 0, 0, 0);
+                    container.setPadding(
+                        0, insetTop, 0, 0
+                    );
+                  }
+                  removeWeirdBottomPadding(sheet, container);
+                }
+
+                @Override
+                public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                  if (bottomSheet.getTop() < insetTop) {
+                    if (!keepBelowStatusBar) {
+                      float fraction = (float) bottomSheet.getTop() / (float) insetTop;
+                      setCornerRadius(background, radius * fraction);
+                    }
+                  } else if (bottomSheet.getTop() != 0) {
+                    if (!keepBelowStatusBar) {
+                      setCornerRadius(background, radius);
+                    }
+                  }
+                  if (keepBelowStatusBar) {
+                    // Undo padding applied by BottomSheetBehavior and add container padding
+                    sheet.setPadding(0, 0, 0, 0);
+                    container.setPadding(
+                        0, insetTop, 0, 0
+                    );
+                  }
+                  removeWeirdBottomPadding(sheet, container);
+                }
+              });
+              if (isExpanded && !keepBelowStatusBar) {
+                // Layout behind status bar if it was there before screen rotation
+                sheet.setPadding(
+                    sheet.getPaddingLeft(),
+                    insetTop - sheet.getTop(),
+                    sheet.getPaddingRight(),
+                    0
+                );
+              }
+              // Ugly, but we have to remove the padding after it is applied by the behavior
+              new Handler(Looper.getMainLooper()).postDelayed(
+                  () -> removeWeirdBottomPadding(sheet, container),
+                  10
+              );
+              return insets;
+            });
+
+            removeWeirdBottomPadding(sheet, container);
+
+            if (decorView.getViewTreeObserver().isAlive()) {
+              ViewUtil.removeOnGlobalLayoutListener(decorView, this);
             }
           }
         });
+
+    return dialog;
   }
 
-  private void updateSystemBars(Context context, Window window, View sheet) {
-    boolean isOrientationPortrait = SystemUiUtil.isOrientationPortrait(context);
-    boolean isDarkModeActive = SystemUiUtil.isDarkModeActive(context);
+  @Override
+  public void onSaveInstanceState(@NonNull Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putBoolean("expanded", isExpanded);
+  }
+
+  @Override
+  public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+    super.onViewStateRestored(savedInstanceState);
+    if (savedInstanceState != null) {
+      isExpanded = savedInstanceState.getBoolean("expanded", false);
+    }
+  }
+
+  /**
+   * Fix weird behavior of BottomSheetBehavior
+   * Bottom padding is applied although we have turned that off in the theme...
+   * We have to apply it manually to the scroll content container
+   * So we remove it here again
+   */
+  private void removeWeirdBottomPadding(View...views) {
+    for (View view : views) {
+      view.setPadding(0, view.getPaddingTop(), 0, 0);
+    }
+  }
+
+  private void setCornerRadius(PaintDrawable drawable, float radius) {
+    drawable.setCornerRadii(new float[]{radius, radius, radius, radius, 0, 0, 0, 0});
+  }
+
+  private void layoutEdgeToEdge(Window window, int insetBottom) {
+    boolean isOrientationPortraitOrNavAtBottom =
+        SystemUiUtil.isOrientationPortrait(requireContext()) || insetBottom > 0;
+    boolean isDarkModeActive = SystemUiUtil.isDarkModeActive(requireContext());
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { // 29
       window.setStatusBarColor(Color.TRANSPARENT);
-      if (!isDarkModeActive) {
-        SystemUiUtil.setLightStatusBar(window);
-      }
-      if (SystemUiUtil.isNavigationModeGesture(context)) {
-        window.setNavigationBarColor(ContextCompat.getColor(context, R.color.surface));
-        window.setNavigationBarDividerColor(
-            ContextCompat.getColor(context, R.color.stroke_secondary)
-        );
+      if (SystemUiUtil.isNavigationModeGesture(requireContext())) {
+        window.setNavigationBarColor(Color.TRANSPARENT);
         window.setNavigationBarContrastEnforced(true);
       } else {
-        if (!isDarkModeActive) {
-          SystemUiUtil.setLightNavigationBar(window);
-        }
-        if (isOrientationPortrait) {
-          window.setNavigationBarColor(ContextCompat.getColor(context, R.color.surface));
-          window.setNavigationBarDividerColor(
-              ContextCompat.getColor(context, R.color.stroke_secondary)
+        lightNavBar = !isDarkModeActive && isOrientationPortraitOrNavAtBottom;
+        if (isOrientationPortraitOrNavAtBottom) {
+          window.setNavigationBarColor(
+              isDarkModeActive
+                  ? SystemUiUtil.SCRIM_DARK_SURFACE
+                  : SystemUiUtil.SCRIM_LIGHT
           );
         } else {
-          // TODO: NavBar not transparent in button navigation mode in landscape
-          window.setNavigationBarColor(Color.TRANSPARENT);
+          window.setNavigationBarColor(
+              isDarkModeActive ? SystemUiUtil.SCRIM_DARK_DIALOG : SystemUiUtil.SCRIM_LIGHT_DIALOG
+          );
           window.setNavigationBarDividerColor(
-              Color.TRANSPARENT
+              isDarkModeActive
+                  ? SystemUiUtil.SCRIM_DARK_DIALOG_DIVIDER
+                  : SystemUiUtil.SCRIM_LIGHT_DIALOG_DIVIDER
           );
         }
       }
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) { // 28
       window.setStatusBarColor(Color.TRANSPARENT);
-      if (!isDarkModeActive) {
-        SystemUiUtil.setLightStatusBar(window);
-        SystemUiUtil.setLightNavigationBar(window);
-      }
-      if (isOrientationPortrait) {
-        window.setNavigationBarColor(ContextCompat.getColor(context, R.color.surface));
-        window.setNavigationBarDividerColor(
-            ContextCompat.getColor(context, R.color.stroke_secondary)
+      lightNavBar = !isDarkModeActive && isOrientationPortraitOrNavAtBottom;
+      if (isOrientationPortraitOrNavAtBottom) {
+        window.setNavigationBarColor(
+            isDarkModeActive
+                ? SystemUiUtil.SCRIM_DARK_SURFACE
+                : SystemUiUtil.SCRIM_LIGHT
         );
       } else {
-        window.setNavigationBarColor(Color.TRANSPARENT);
+        window.setNavigationBarColor(
+            isDarkModeActive ? SystemUiUtil.SCRIM_DARK_DIALOG : SystemUiUtil.SCRIM_LIGHT_DIALOG
+        );
+        window.setNavigationBarDividerColor(
+            isDarkModeActive
+                ? SystemUiUtil.SCRIM_DARK_DIALOG_DIVIDER
+                : SystemUiUtil.SCRIM_LIGHT_DIALOG_DIVIDER
+        );
       }
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) { // 27
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // 26
       window.setStatusBarColor(Color.TRANSPARENT);
-      if (!isDarkModeActive) {
-        SystemUiUtil.setLightStatusBar(window);
-      }
-      if (isOrientationPortrait) {
-        addCompatNavigationBarDivider(context, sheet);
-        window.setNavigationBarColor(ContextCompat.getColor(context, R.color.surface));
-        if (!isDarkModeActive) {
-          SystemUiUtil.setLightNavigationBar(window);
-        }
+      lightNavBar = !isDarkModeActive && isOrientationPortraitOrNavAtBottom;
+      if (isOrientationPortraitOrNavAtBottom) {
+        window.setNavigationBarColor(
+            isDarkModeActive
+                ? SystemUiUtil.SCRIM_DARK_SURFACE
+                : SystemUiUtil.SCRIM_LIGHT
+        );
       } else {
-        window.setNavigationBarColor(Color.BLACK);
+        window.setNavigationBarColor(
+            isDarkModeActive ? SystemUiUtil.SCRIM_DARK_DIALOG : SystemUiUtil.SCRIM_LIGHT_DIALOG
+        );
       }
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // 23
-      window.setStatusBarColor(Color.TRANSPARENT);
-      if (!isDarkModeActive) {
-        SystemUiUtil.setLightStatusBar(window);
-      }
-      if (isOrientationPortrait) {
-        if (isDarkModeActive) {
-          addCompatNavigationBarDivider(context, sheet);
-          window.setNavigationBarColor(ContextCompat.getColor(context, R.color.surface));
-        } else {
-          window.setNavigationBarColor(SystemUiUtil.COLOR_SCRIM_OPAQUE);
-        }
+      if (isOrientationPortraitOrNavAtBottom) {
+        window.setNavigationBarColor(
+            isDarkModeActive
+                ? SystemUiUtil.SCRIM_DARK_SURFACE
+                : SystemUiUtil.SCRIM
+        );
       } else {
-        window.setNavigationBarColor(Color.BLACK);
+        window.setNavigationBarColor(
+            isDarkModeActive ? SystemUiUtil.SCRIM_DARK_DIALOG : SystemUiUtil.SCRIM_LIGHT_DIALOG
+        );
       }
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // 21
-      window.setStatusBarColor(Color.TRANSPARENT);
-      if (isOrientationPortrait) {
-        if (isDarkModeActive) {
-          addCompatNavigationBarDivider(context, sheet);
-          window.setNavigationBarColor(ContextCompat.getColor(context, R.color.surface));
-        } else {
-          window.setNavigationBarColor(SystemUiUtil.COLOR_SCRIM_OPAQUE);
-        }
+    } else { // 21
+      if (isOrientationPortraitOrNavAtBottom) {
+        window.setNavigationBarColor(
+            isDarkModeActive
+                ? SystemUiUtil.SCRIM_DARK_SURFACE
+                : SystemUiUtil.SCRIM
+        );
       } else {
-        window.setNavigationBarColor(Color.BLACK);
+        window.setNavigationBarColor(
+            isDarkModeActive ? SystemUiUtil.SCRIM_DARK_DIALOG : SystemUiUtil.SCRIM_LIGHT_DIALOG
+        );
       }
     }
   }
 
-  private static void addCompatNavigationBarDivider(Context context, View sheet) {
-    FrameLayout container = new FrameLayout(context);
-    container.setLayoutParams(
-        new FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            FrameLayout.LayoutParams.MATCH_PARENT
-        )
-    );
-
-    View divider = new View(context);
-    divider.setLayoutParams(
-        new FrameLayout.LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT, UnitUtil.getDp(context, 1)
-        )
-    );
-    ((FrameLayout.LayoutParams) divider.getLayoutParams()).gravity = Gravity.BOTTOM;
-    divider.setBackgroundResource(R.color.stroke_secondary);
-
-    container.addView(divider);
-
-    ((ViewGroup) sheet.getParent().getParent()).addView(container);
-    container.bringToFront();
-  }
+  public void applyBottomInset(int bottom) {}
 }

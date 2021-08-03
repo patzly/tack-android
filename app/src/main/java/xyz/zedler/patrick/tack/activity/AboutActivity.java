@@ -17,14 +17,13 @@ import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.ActivityAboutAppBinding;
 import xyz.zedler.patrick.tack.fragment.ChangelogBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.TextBottomSheetDialogFragment;
-import xyz.zedler.patrick.tack.util.ClickUtil;
 import xyz.zedler.patrick.tack.util.VibratorUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class AboutActivity extends AppCompatActivity implements View.OnClickListener {
 
   private ActivityAboutAppBinding binding;
-  private ClickUtil clickUtil;
+  private ViewUtil viewUtil;
   private VibratorUtil vibratorUtil;
 
   @Override
@@ -34,11 +33,11 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
     binding = ActivityAboutAppBinding.inflate(getLayoutInflater());
     setContentView(binding.getRoot());
 
-    clickUtil = new ClickUtil();
+    viewUtil = new ViewUtil();
     vibratorUtil = new VibratorUtil(this);
 
     binding.frameAboutClose.setOnClickListener(v -> {
-      if (clickUtil.isEnabled()) {
+      if (viewUtil.isClickEnabled()) {
         vibratorUtil.click();
         finish();
       }
@@ -80,13 +79,13 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
   @Override
   public void onClick(View v) {
     int id = v.getId();
-    if (id == R.id.linear_changelog && clickUtil.isEnabled()) {
-      ViewUtil.startAnimatedIcon(binding.imageChangelog);
+    if (id == R.id.linear_changelog && viewUtil.isClickEnabled()) {
+      ViewUtil.startIcon(binding.imageChangelog);
       vibratorUtil.click();
       BottomSheetDialogFragment fragment = new ChangelogBottomSheetDialogFragment();
       fragment.show(getSupportFragmentManager(), fragment.toString());
-    } else if (id == R.id.linear_developer && clickUtil.isEnabled()) {
-      ViewUtil.startAnimatedIcon(binding.imageDeveloper);
+    } else if (id == R.id.linear_developer && viewUtil.isClickEnabled()) {
+      ViewUtil.startIcon(binding.imageDeveloper);
       vibratorUtil.click();
       new Handler(Looper.getMainLooper()).postDelayed(() -> startActivity(
           new Intent(
@@ -96,40 +95,40 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
               )
           )), 300
       );
-    } else if (id == R.id.linear_license_edwin && clickUtil.isEnabled()) {
-      ViewUtil.startAnimatedIcon(binding.imageLicenseEdwin);
+    } else if (id == R.id.linear_license_edwin && viewUtil.isClickEnabled()) {
+      ViewUtil.startIcon(binding.imageLicenseEdwin);
       vibratorUtil.click();
       showTextBottomSheet(
           "ofl",
           R.string.license_edwin,
           R.string.license_edwin_link
       );
-    } else if (id == R.id.linear_license_jost && clickUtil.isEnabled()) {
-      ViewUtil.startAnimatedIcon(binding.imageLicenseJost);
+    } else if (id == R.id.linear_license_jost && viewUtil.isClickEnabled()) {
+      ViewUtil.startIcon(binding.imageLicenseJost);
       vibratorUtil.click();
       showTextBottomSheet(
           "ofl",
           R.string.license_jost,
           R.string.license_jost_link
       );
-    } else if (id == R.id.linear_license_material_components && clickUtil.isEnabled()) {
-      ViewUtil.startAnimatedIcon(binding.imageLicenseMaterialComponents);
+    } else if (id == R.id.linear_license_material_components && viewUtil.isClickEnabled()) {
+      ViewUtil.startIcon(binding.imageLicenseMaterialComponents);
       vibratorUtil.click();
       showTextBottomSheet(
           "apache",
           R.string.license_material_components,
           R.string.license_material_components_link
       );
-    } else if (id == R.id.linear_license_material_icons && clickUtil.isEnabled()) {
-      ViewUtil.startAnimatedIcon(binding.imageLicenseMaterialIcons);
+    } else if (id == R.id.linear_license_material_icons && viewUtil.isClickEnabled()) {
+      ViewUtil.startIcon(binding.imageLicenseMaterialIcons);
       vibratorUtil.click();
       showTextBottomSheet(
           "apache",
           R.string.license_material_icons,
           R.string.license_material_icons_link
       );
-    } else if (id == R.id.linear_license_metronome && clickUtil.isEnabled()) {
-      ViewUtil.startAnimatedIcon(binding.imageLicenseMetronome);
+    } else if (id == R.id.linear_license_metronome && viewUtil.isClickEnabled()) {
+      ViewUtil.startIcon(binding.imageLicenseMetronome);
       vibratorUtil.click();
       showTextBottomSheet(
           "apache",

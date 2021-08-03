@@ -50,7 +50,6 @@ import xyz.zedler.patrick.tack.fragment.EmphasisBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.WearBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.service.MetronomeService;
-import xyz.zedler.patrick.tack.util.ClickUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.VibratorUtil;
@@ -72,7 +71,7 @@ public class MainActivity extends AppCompatActivity
   private boolean hapticFeedback;
   private MetronomeService service;
   private LogoUtil logoUtil;
-  private ClickUtil clickUtil;
+  private ViewUtil viewUtil;
   private VibratorUtil vibratorUtil;
 
   private List<Integer> bookmarks;
@@ -103,7 +102,7 @@ public class MainActivity extends AppCompatActivity
     );
 
     logoUtil = new LogoUtil(binding.imageMainLogo);
-    clickUtil = new ClickUtil();
+    viewUtil = new ViewUtil();
     vibratorUtil = new VibratorUtil(this);
 
     if (!vibratorUtil.hasVibrator()) {
@@ -112,7 +111,7 @@ public class MainActivity extends AppCompatActivity
 
     binding.toolbarMain.setOnMenuItemClickListener((MenuItem item) -> {
       int itemId = item.getItemId();
-      if (itemId == R.id.action_wear && clickUtil.isEnabled()) {
+      if (itemId == R.id.action_wear && viewUtil.isClickEnabled()) {
         DialogFragment fragment = new WearBottomSheetDialogFragment();
         fragment.show(getSupportFragmentManager(), fragment.toString());
       } else if (itemId == R.id.action_settings) {
@@ -363,13 +362,13 @@ public class MainActivity extends AppCompatActivity
         vibratorUtil.click();
       }
     } else if (id == R.id.frame_main_less) {
-      ViewUtil.startAnimatedIcon(binding.imageMainLess);
+      ViewUtil.startIcon(binding.imageMainLess);
       changeBpm(-1);
     } else if (id == R.id.frame_main_more) {
-      ViewUtil.startAnimatedIcon(binding.imageMainMore);
+      ViewUtil.startIcon(binding.imageMainMore);
       changeBpm(1);
     } else if (id == R.id.frame_main_tempo_tap) {
-      ViewUtil.startAnimatedIcon(binding.imageMainTempoTap);
+      ViewUtil.startIcon(binding.imageMainTempoTap);
 
       long interval = System.currentTimeMillis() - prevTouchTime;
       if (prevTouchTime > 0 && interval <= 6000) {
@@ -410,7 +409,7 @@ public class MainActivity extends AppCompatActivity
       if (isBound()) {
         service.updateTick();
       }
-      ViewUtil.startAnimatedIcon(binding.imageMainBeatMode);
+      ViewUtil.startIcon(binding.imageMainBeatMode);
       new Handler(Looper.getMainLooper()).postDelayed(() -> {
         if (beatModeVibrateNew) {
           binding.imageMainBeatMode.setImageResource(
@@ -427,7 +426,7 @@ public class MainActivity extends AppCompatActivity
         }
       }, 300);
     } else if (id == R.id.frame_main_bookmark) {
-      ViewUtil.startAnimatedIcon(binding.imageMainBookmark);
+      ViewUtil.startIcon(binding.imageMainBookmark);
       vibratorUtil.click();
       if (isBound()) {
         if (bookmarks.size() < 3 && !bookmarks.contains(service.getBpm())) {
@@ -457,7 +456,7 @@ public class MainActivity extends AppCompatActivity
         }
       }
     } else if (id == R.id.frame_main_emphasis) {
-      ViewUtil.startAnimatedIcon(binding.imageMainEmphasis);
+      ViewUtil.startIcon(binding.imageMainEmphasis);
       vibratorUtil.click();
       if (sharedPrefs.getBoolean(
           Constants.SETTING.EMPHASIS_SLIDER, Constants.DEF.EMPHASIS_SLIDER
@@ -541,7 +540,7 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   public void onStopTicks() {
-    if (binding != null && binding.fabMain != null) {
+    if (binding != null) {
       binding.fabMain.setImageResource(R.drawable.ic_round_pause_to_play_anim);
       Drawable icon = binding.fabMain.getDrawable();
       if (icon != null) {

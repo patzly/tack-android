@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout.LayoutParams;
 import androidx.annotation.NonNull;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetTextBinding;
@@ -43,7 +44,7 @@ public class TextBottomSheetDialogFragment extends BaseBottomSheetDialogFragment
     String link = bundle.getString(Constants.EXTRA.LINK);
     if (link != null) {
       binding.frameTextOpenLink.setOnClickListener(v -> {
-        ViewUtil.startAnimatedIcon(binding.imageTextOpenLink);
+        ViewUtil.startIcon(binding.imageTextOpenLink);
         vibratorUtil.click();
         new Handler(Looper.getMainLooper()).postDelayed(
             () -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link))),
@@ -65,6 +66,13 @@ public class TextBottomSheetDialogFragment extends BaseBottomSheetDialogFragment
   public void onDestroy() {
     super.onDestroy();
     binding = null;
+  }
+
+  @Override
+  public void applyBottomInset(int bottom) {
+    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+    params.setMargins(0, 0, 0, bottom);
+    binding.textText.setLayoutParams(params);
   }
 
   @NonNull

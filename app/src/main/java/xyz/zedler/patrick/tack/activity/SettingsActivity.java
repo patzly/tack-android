@@ -20,7 +20,6 @@ import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.ActivitySettingsAppBinding;
 import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.util.AudioUtil;
-import xyz.zedler.patrick.tack.util.ClickUtil;
 import xyz.zedler.patrick.tack.util.VibratorUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
@@ -30,7 +29,7 @@ public class SettingsActivity extends AppCompatActivity
 
   private ActivitySettingsAppBinding binding;
   private SharedPreferences sharedPrefs;
-  private ClickUtil clickUtil;
+  private ViewUtil viewUtil;
   private AudioUtil audioUtil;
   private VibratorUtil vibratorUtil;
 
@@ -51,12 +50,12 @@ public class SettingsActivity extends AppCompatActivity
     );
     setContentView(binding.getRoot());
 
-    clickUtil = new ClickUtil();
+    viewUtil = new ViewUtil();
     audioUtil = new AudioUtil(this);
     vibratorUtil = new VibratorUtil(this);
 
     binding.frameSettingsBack.setOnClickListener(v -> {
-      if (clickUtil.isEnabled()) {
+      if (viewUtil.isClickEnabled()) {
         vibratorUtil.click();
         finish();
       }
@@ -129,7 +128,7 @@ public class SettingsActivity extends AppCompatActivity
         binding.linearSettingsKeepAwake
     );
 
-    ViewUtil.setOnCheckedChangedListeners(
+    ViewUtil.setOnCheckedChangeListeners(
         this,
         binding.switchSettingsDarkMode,
         binding.switchSettingsVibrateAlways,
@@ -170,7 +169,7 @@ public class SettingsActivity extends AppCompatActivity
   @Override
   public void onClick(View v) {
     int id = v.getId();
-    if (id == R.id.linear_settings_dark_mode && clickUtil.isEnabled()) {
+    if (id == R.id.linear_settings_dark_mode && viewUtil.isClickEnabled()) {
       binding.switchSettingsDarkMode.setChecked(!binding.switchSettingsDarkMode.isChecked());
     } else if (id == R.id.linear_settings_vibrate_always) {
       binding.switchSettingsVibrateAlways.setChecked(
@@ -197,7 +196,7 @@ public class SettingsActivity extends AppCompatActivity
 
     int id = buttonView.getId();
     if (id == R.id.switch_settings_dark_mode) {
-      ViewUtil.startAnimatedIcon(binding.imageSettingsDarkMode);
+      ViewUtil.startIcon(binding.imageSettingsDarkMode);
       editor.putBoolean(Constants.SETTING.DARK_MODE, isChecked);
       new Handler(Looper.getMainLooper()).postDelayed(() -> {
         binding.imageSettingsDarkMode.setImageResource(
@@ -214,17 +213,17 @@ public class SettingsActivity extends AppCompatActivity
         onStart();
       }, 300);
     } else if (id == R.id.switch_settings_vibrate_always) {
-      ViewUtil.startAnimatedIcon(binding.imageSettingsVibrateAlways);
+      ViewUtil.startIcon(binding.imageSettingsVibrateAlways);
       editor.putBoolean(Constants.SETTING.VIBRATE_ALWAYS, isChecked);
     } else if (id == R.id.switch_settings_haptic) {
-      ViewUtil.startAnimatedIcon(binding.imageSettingsHaptic);
+      ViewUtil.startIcon(binding.imageSettingsHaptic);
       vibratorUtil.setEnabled(isChecked);
       editor.putBoolean(Constants.SETTING.HAPTIC_FEEDBACK, isChecked);
     } else if (id == R.id.switch_settings_slider_emphasis) {
-      ViewUtil.startAnimatedIcon(binding.imageSettingsSliderEmphasis);
+      ViewUtil.startIcon(binding.imageSettingsSliderEmphasis);
       editor.putBoolean(Constants.SETTING.EMPHASIS_SLIDER, isChecked);
     } else if (id == R.id.switch_settings_keep_awake) {
-      ViewUtil.startAnimatedIcon(binding.imageSettingsKeepAwake);
+      ViewUtil.startIcon(binding.imageSettingsKeepAwake);
       editor.putBoolean(Constants.SETTING.KEEP_AWAKE, isChecked);
     }
 
@@ -234,7 +233,7 @@ public class SettingsActivity extends AppCompatActivity
 
   @Override
   public void onCheckedChanged(RadioGroup group, int checkedId) {
-    ViewUtil.startAnimatedIcon(binding.imageSettingsSound);
+    ViewUtil.startIcon(binding.imageSettingsSound);
     String sound;
     if (checkedId == R.id.radio_settings_sound_click) {
       sound = Constants.SOUND.CLICK;

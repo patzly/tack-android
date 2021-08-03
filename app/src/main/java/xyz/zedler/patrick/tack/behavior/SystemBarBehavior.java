@@ -10,6 +10,7 @@ import android.view.Window;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat.Type;
 import androidx.core.widget.NestedScrollView;
 import com.google.android.material.appbar.AppBarLayout;
 import xyz.zedler.patrick.tack.R;
@@ -21,15 +22,13 @@ public class SystemBarBehavior {
 
   private final Activity activity;
   private final Window window;
+  int containerPaddingTop;
+  int containerPaddingBottom;
+  int scrollContentPaddingBottom;
   private AppBarLayout appBarLayout;
   private ViewGroup container;
   private NestedScrollView scrollView;
   private ViewGroup scrollContent;
-
-  int containerPaddingTop;
-  int containerPaddingBottom;
-  int scrollContentPaddingBottom;
-
   private boolean applyAppBarInsetOnContainer;
   private boolean hasScrollView;
   private boolean isScrollable;
@@ -56,16 +55,15 @@ public class SystemBarBehavior {
     containerPaddingBottom = container.getPaddingBottom();
   }
 
-  public void setScroll(@NonNull NestedScrollView scrollView,
-      @NonNull ViewGroup scrollContent) {
+  public void setScroll(@NonNull NestedScrollView scrollView, @NonNull ViewGroup scrollContent) {
     this.scrollView = scrollView;
     this.scrollContent = scrollContent;
     scrollContentPaddingBottom = scrollContent.getPaddingBottom();
     hasScrollView = true;
 
-      if (container == null && scrollView != null) {
-          setContainer(scrollView);
-      }
+    if (container == null) {
+      setContainer(scrollView);
+    }
   }
 
   public void setUp() {
@@ -74,11 +72,10 @@ public class SystemBarBehavior {
       ViewCompat.setOnApplyWindowInsetsListener(appBarLayout, (v, insets) -> {
         // STATUS BAR INSET
         appBarLayout.setPadding(
-            0, insets.getSystemWindowInsetTop(), 0,
+            0, insets.getInsets(Type.systemBars()).top, 0,
             appBarLayout.getPaddingBottom()
         );
         appBarLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        // TODO: Marshmallow has weird issue when measured, changes width to wrap_content
 
         // APP BAR INSET
         if (container != null && applyAppBarInsetOnContainer) {
@@ -89,7 +86,7 @@ public class SystemBarBehavior {
         } else if (container != null) {
           container.setPadding(
               container.getPaddingLeft(),
-              containerPaddingTop + insets.getSystemWindowInsetTop(),
+              containerPaddingTop + insets.getInsets(Type.systemBars()).top,
               container.getPaddingRight(),
               container.getPaddingBottom()
           );
@@ -102,7 +99,7 @@ public class SystemBarBehavior {
         // STATUS BAR INSET
         container.setPadding(
             container.getPaddingLeft(),
-            containerPaddingTop + insets.getSystemWindowInsetTop(),
+            containerPaddingTop + insets.getInsets(Type.systemBars()).top,
             container.getPaddingRight(),
             container.getPaddingBottom()
         );
@@ -121,7 +118,7 @@ public class SystemBarBehavior {
             container.getPaddingLeft(),
             container.getPaddingTop(),
             container.getPaddingRight(),
-            paddingBottom + insets.getSystemWindowInsetBottom()
+            paddingBottom + insets.getInsets(Type.systemBars()).bottom
         );
         return insets;
       });
@@ -136,7 +133,7 @@ public class SystemBarBehavior {
               container.getPaddingLeft(),
               container.getPaddingTop(),
               container.getPaddingRight(),
-              paddingBottom + insets.getSystemWindowInsetBottom()
+              paddingBottom + insets.getInsets(Type.systemBars()).bottom
           );
           return insets;
         });
@@ -146,7 +143,7 @@ public class SystemBarBehavior {
           root.setPadding(
               root.getPaddingLeft(),
               root.getPaddingTop(),
-              insets.getSystemWindowInsetRight(),
+              insets.getInsets(Type.systemBars()).right,
               root.getPaddingBottom()
           );
           return insets;
@@ -186,39 +183,29 @@ public class SystemBarBehavior {
     applyAppBarInsetOnContainer = apply;
   }
 
-  public void applyBottomInset(@NonNull View view) {
-    ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-    int marginBottom = params.bottomMargin;
-    ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
-      params.bottomMargin = marginBottom + insets.getSystemWindowInsetBottom();
-      view.setLayoutParams(params);
-      return insets;
-    });
-  }
-
   private void updateSystemBars() {
     boolean isOrientationPortrait = SystemUiUtil.isOrientationPortrait(activity);
     boolean isDarkModeActive = SystemUiUtil.isDarkModeActive(activity);
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { // 29
       window.setStatusBarColor(Color.TRANSPARENT);
-        if (!isDarkModeActive) {
-            SystemUiUtil.setLightStatusBar(window);
-        }
+      if (!isDarkModeActive) {
+        SystemUiUtil.setLightStatusBar(window);
+      }
       if (SystemUiUtil.isNavigationModeGesture(activity)) {
         window.setNavigationBarColor(Color.TRANSPARENT);
         window.setNavigationBarContrastEnforced(true);
       } else {
-          if (!isDarkModeActive) {
-              SystemUiUtil.setLightNavigationBar(window);
-          }
+        if (!isDarkModeActive) {
+          SystemUiUtil.setLightNavigationBar(window);
+        }
         if (isOrientationPortrait) {
           window.setNavigationBarColor(
               isScrollable
                   ? (isDarkModeActive
-                  ? SystemUiUtil.COLOR_SCRIM_DARK
-                  : SystemUiUtil.COLOR_SCRIM_LIGHT)
-                  : Color.TRANSPARENT
+                  ? SystemUiUtil.SCRIM_DARK
+                  : SystemUiUtil.SCRIM_LIGHT)
+                  : Color.parseColor("#01000000")
           );
         } else {
           window.setNavigationBarDividerColor(
@@ -239,8 +226,8 @@ public class SystemBarBehavior {
         window.setNavigationBarColor(
             isScrollable
                 ? (isDarkModeActive
-                ? SystemUiUtil.COLOR_SCRIM_DARK
-                : SystemUiUtil.COLOR_SCRIM_LIGHT)
+                ? SystemUiUtil.SCRIM_DARK
+                : SystemUiUtil.SCRIM_LIGHT)
                 : Color.TRANSPARENT
         );
       } else {
@@ -249,50 +236,46 @@ public class SystemBarBehavior {
         );
         window.setNavigationBarColor(ContextCompat.getColor(activity, R.color.background));
       }
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) { // 27
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // 26
       window.setStatusBarColor(Color.TRANSPARENT);
-        if (!isDarkModeActive) {
-            SystemUiUtil.setLightStatusBar(window);
-        }
+      if (!isDarkModeActive) {
+        SystemUiUtil.setLightStatusBar(window);
+      }
       if (isOrientationPortrait) {
         window.setNavigationBarColor(
             isScrollable
                 ? (isDarkModeActive
-                ? SystemUiUtil.COLOR_SCRIM_DARK
-                : SystemUiUtil.COLOR_SCRIM_LIGHT)
+                ? SystemUiUtil.SCRIM_DARK
+                : SystemUiUtil.SCRIM_LIGHT)
                 : Color.TRANSPARENT
         );
-          if (!isDarkModeActive) {
-              SystemUiUtil.setLightNavigationBar(window);
-          }
+        if (!isDarkModeActive) {
+          SystemUiUtil.setLightNavigationBar(window);
+        }
       } else {
-        window.setNavigationBarColor(Color.BLACK);
+        window.setNavigationBarColor(
+            isDarkModeActive
+                ? SystemUiUtil.SCRIM_DARK
+                : SystemUiUtil.SCRIM
+        );
       }
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // 23
-      window.setStatusBarColor(
-          isDarkModeActive ? Color.TRANSPARENT : SystemUiUtil.COLOR_SCRIM
-      );
-      if (isOrientationPortrait) {
-        window.setNavigationBarColor(
-            isDarkModeActive
-                ? (isScrollable ? SystemUiUtil.COLOR_SCRIM_DARK : Color.TRANSPARENT)
-                : SystemUiUtil.COLOR_SCRIM
-        );
-      } else {
-        window.setNavigationBarColor(Color.BLACK);
+      window.setStatusBarColor(Color.TRANSPARENT);
+      if (!isDarkModeActive) {
+        SystemUiUtil.setLightStatusBar(window);
       }
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { // 21
-      window.setStatusBarColor(
-          isDarkModeActive ? Color.TRANSPARENT : SystemUiUtil.COLOR_SCRIM
-      );
       if (isOrientationPortrait) {
         window.setNavigationBarColor(
             isDarkModeActive
-                ? (isScrollable ? SystemUiUtil.COLOR_SCRIM_DARK : Color.TRANSPARENT)
-                : SystemUiUtil.COLOR_SCRIM
+                ? (isScrollable ? SystemUiUtil.SCRIM_DARK : Color.TRANSPARENT)
+                : SystemUiUtil.SCRIM
         );
       } else {
-        window.setNavigationBarColor(Color.BLACK);
+        window.setNavigationBarColor(
+            isDarkModeActive
+                ? SystemUiUtil.SCRIM_DARK
+                : SystemUiUtil.SCRIM
+        );
       }
     }
   }

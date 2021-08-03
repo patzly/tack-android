@@ -5,6 +5,7 @@ import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout.LayoutParams;
 import androidx.annotation.NonNull;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetEmphasisBinding;
@@ -44,6 +45,14 @@ public class EmphasisBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
   public void onDestroy() {
     super.onDestroy();
     binding = null;
+  }
+
+
+  @Override
+  public void applyBottomInset(int bottom) {
+    LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+    params.setMargins(0, 0, 0, bottom);
+    binding.linearEmphasisContainer.setLayoutParams(params);
   }
 
   @NonNull
