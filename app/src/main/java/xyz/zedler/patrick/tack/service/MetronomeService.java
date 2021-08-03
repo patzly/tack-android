@@ -17,6 +17,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import xyz.zedler.patrick.tack.Constants;
+import xyz.zedler.patrick.tack.Constants.DEF;
+import xyz.zedler.patrick.tack.Constants.SETTING;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.AudioUtil;
 import xyz.zedler.patrick.tack.util.VibratorUtil;
@@ -37,7 +39,8 @@ public class MetronomeService extends Service implements Runnable {
   private long interval;
 
   private Handler handler;
-  private int soundId = -1, emphasis, emphasisIndex;
+  private String sound = null;
+  private int emphasis, emphasisIndex;
   private boolean isPlaying;
   private boolean vibrateAlways;
   private boolean isBeatModeVibrate;
@@ -56,9 +59,9 @@ public class MetronomeService extends Service implements Runnable {
         Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
     );
     if (!isBeatModeVibrate) {
-      soundId = audioUtil.getCurrentSoundId();
+      sound = sharedPrefs.getString(SETTING.SOUND, DEF.SOUND);
     } else {
-      soundId = -1;
+      sound = null;
     }
 
     interval = sharedPrefs.getLong(Constants.PREF.INTERVAL, Constants.DEF.INTERVAL);
@@ -164,12 +167,9 @@ public class MetronomeService extends Service implements Runnable {
         Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
     );
     if (!isBeatModeVibrate) {
-      soundId = audioUtil.getCurrentSoundId();
-      if (!isPlaying) {
-        audioUtil.play(soundId);
-      }
+      sound = sharedPrefs.getString(SETTING.SOUND, DEF.SOUND);
     } else {
-      soundId = -1;
+      sound = null;
     }
     emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS);
     vibrateAlways = sharedPrefs.getBoolean(
@@ -229,8 +229,8 @@ public class MetronomeService extends Service implements Runnable {
         }
       }
 
-      if (soundId != -1) {
-        audioUtil.play(soundId, isEmphasis);
+      if (sound != null) {
+        audioUtil.play(sound, isEmphasis);
         if (vibrateAlways) {
           vibratorUtil.vibrate(isEmphasis);
         }

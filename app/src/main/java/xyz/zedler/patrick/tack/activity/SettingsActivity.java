@@ -246,6 +246,6 @@ public class SettingsActivity extends AppCompatActivity
       sound = Constants.SOUND.WOOD;
     }
     sharedPrefs.edit().putString(Constants.SETTING.SOUND, sound).apply();
-    audioUtil.play(audioUtil.getSoundId(sound));
+    audioUtil.play(sound, false);
   }
 }

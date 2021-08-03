@@ -126,8 +126,7 @@
               android:layout_height="wrap_content"
               android:text="@string/title_bpm_label"
               android:textColor="@color/on_background_secondary"
-              android:fontFamily="@font/edwin_bold"
-              android:lineSpacingExtra="5dp"
+              android:fontFamily="@font/jost_bold"
               android:layout_gravity="center_horizontal|bottom"
               android:textSize="@dimen/label_text_size" />
 

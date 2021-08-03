@@ -1,3 +1,7 @@
+2.3.0:
+- New: sound is played when selected in settings
+- Improved: typeface of BPM label
+
 2.2.0:
 - Improved: main typeface
 - Improved: haptic feedback
