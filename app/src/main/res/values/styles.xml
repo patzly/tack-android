@@ -20,9 +20,32 @@
     <item name="android:background">@color/stroke_secondary</item>
   </style>
 
+  <style name="Widget.Tack.Slider" parent="Widget.MaterialComponents.Slider">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_marginStart">59dp</item>
+    <item name="android:layout_marginEnd">14dp</item>
+    <item name="android:stepSize">1</item>
+    <item name="trackColorInactive">@color/on_background_tertiary</item>
+    <item name="tickColorInactive">@color/on_background_secondary</item>
+    <item name="trackColorActive">@color/secondary</item>
+    <item name="thumbColor">@color/secondary</item>
+    <item name="tickColorActive">@color/transparent</item>
+    <item name="haloColor">@color/highlight</item>
+    <item name="thumbRadius">9.7dp</item>
+    <item name="labelStyle">@style/Widget.Tack.Tooltip</item>
+  </style>
+
   <style name="Widget.Tack.Tooltip" parent="Widget.MaterialComponents.Tooltip">
     <item name="backgroundTint">@color/tooltip_background</item>
     <item name="android:textAppearance">@style/TextAppearance.Tack.Tooltip</item>
+    <item name="android:textColor">@color/background</item>
+    <item name="shapeAppearance">@style/ShapeAppearance.Tack.Tooltip</item>
+  </style>
+
+  <style name="ShapeAppearance.Tack.Tooltip" parent="">
+    <item name="cornerFamily">rounded</item>
+    <item name="cornerSize">6dp</item>
   </style>
 
   <style

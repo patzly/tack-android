@@ -1,7 +1,6 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 import xyz.zedler.patrick.tack.Constants;
@@ -9,12 +8,10 @@ import xyz.zedler.patrick.tack.R;
 
 public class AudioUtil {
 
-  private final Context context;
   private final SoundPool soundPool;
   private final int[] soundIds = new int[4];
 
   public AudioUtil(Context context) {
-    this.context = context;
     soundPool = new SoundPool.Builder()
         .setMaxStreams(1)
         .setAudioAttributes(
@@ -49,12 +46,6 @@ public class AudioUtil {
         soundId = soundIds[0];
         break;
     }
-    soundPool.play(
-        soundId, 1, 1, 1, 0, isEmphasis ? 1.5f : 1
-    );
-  }
-
-  public boolean isSpeakerAvailable() {
-    return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_AUDIO_OUTPUT);
+    soundPool.play(soundId, 1, 1, 1, 0, isEmphasis ? 1.5f : 1);
   }
 }
