@@ -732,10 +732,12 @@ public class MainActivity extends AppCompatActivity
 
   private void changeBpm(int change) {
     if (isBound()) {
-      setBpm(service.getBpm() + change);
+      int bpmNew = service.getBpm() + change;
+      setBpm(bpmNew);
       if (hapticFeedback
           && (!service.isPlaying()
           || (!service.isBeatModeVibrate() && !service.vibrateAlways()))
+          && bpmNew >= 1 && bpmNew <= 400
       ) {
         hapticUtil.tick();
       }

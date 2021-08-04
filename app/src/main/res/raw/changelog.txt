@@ -5,6 +5,7 @@
 - Improved: bottom sheet appearance and behavior
 - Improved: Wear OS promotion illustration
 - Improved: bookmark appearance and animations
+- Fixed: no haptic feedback if bpm limits are reached
 
 2.2.0:
 - Improved: main typeface
