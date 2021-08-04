@@ -1,7 +1,10 @@
-2.3.0:
+3.0.0:
+- New: playful "Material You" look in preparation for Android 12!
 - New: sound is played when selected in settings
 - Improved: typeface of BPM label
 - Improved: bottom sheet appearance and behavior
+- Improved: Wear OS promotion illustration
+- Improved: bookmark appearance and animations
 
 2.2.0:
 - Improved: main typeface

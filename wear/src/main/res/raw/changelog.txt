@@ -1,4 +1,4 @@
-2.3.0:
+3.0.0:
 - New: sound is played when selected in settings
 - New: haptic interface feedback
 - Improved: native haptic effects are used on watches with Android 10 or higher

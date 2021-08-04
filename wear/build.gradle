@@ -12,7 +12,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 30
         versionCode 111 // last number is 1 for wear release
-        versionName "2.3.0"
+        versionName "3.0.0"
     }
 
     applicationVariants.all { variant ->
