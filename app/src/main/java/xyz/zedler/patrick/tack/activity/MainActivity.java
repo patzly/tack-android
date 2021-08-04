@@ -600,8 +600,7 @@ public class MainActivity extends AppCompatActivity
 
   private Chip newChip(int bpm) {
     Chip chip = new Chip(this);
-    chip.setCheckable(true);
-    chip.setCheckedIconVisible(false);
+    chip.setCheckable(false);
     chip.setCloseIconVisible(true);
     chip.setCloseIconTintResource(R.color.icon);
     chip.setCloseIconResource(R.drawable.ic_round_cancel);
@@ -613,6 +612,7 @@ public class MainActivity extends AppCompatActivity
       refreshBookmark(true);
     });
     chip.setChipBackgroundColorResource(R.color.bookmark_inactive);
+    chip.setStateListAnimator(null);
     chip.setText(String.valueOf(bpm));
     chip.setTextSize(18);
     chip.setChipEndPadding(SystemUiUtil.dpToPx(this, 10));
@@ -620,7 +620,7 @@ public class MainActivity extends AppCompatActivity
     chip.setTypeface(ResourcesCompat.getFont(this, R.font.jost_bold));
     chip.setChipIconVisible(false);
     chip.setChipStrokeWidth(0);
-    chip.setRippleColor(null);
+    chip.setRippleColorResource(R.color.highlight);
     chip.setOnClickListener(v -> setBpm(bpm));
     return chip;
   }

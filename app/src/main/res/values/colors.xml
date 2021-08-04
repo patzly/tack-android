@@ -10,6 +10,7 @@
   <color name="retro_red_bg_black">#ee7e62</color>
 
   <color name="retro_yellow">#deb853</color>
+  <color name="retro_yellow_bg_black">#E3C164</color>
 
   <color name="retro_dirt">#e2d9a2</color>
   <color name="retro_dirt_fg">#bab27c</color>
@@ -80,7 +81,7 @@
   <color name="picker">@color/retro_dirt</color>
   <color name="picker_dragged">@color/retro_red</color>
 
-  <color name="bookmark_active">@color/retro_dirt</color>
+  <color name="bookmark_active">@color/retro_yellow_bg_black</color>
   <color name="bookmark_inactive">@color/on_background_tertiary</color>
 
   <color name="status_bar_lollipop">#999999</color>
