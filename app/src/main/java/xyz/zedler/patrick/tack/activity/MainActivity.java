@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void run() {
           if (isBound()) {
-            if (service.getBpm() < 300) {
+            if (service.getBpm() < 400) {
               changeBpm(1);
               handler.postDelayed(this, nextRun);
               if (nextRun > 60) {
@@ -751,7 +751,7 @@ public class MainActivity extends AppCompatActivity
 
   private void setBpm(int bpm) {
     if (isBound() && bpm > 0) {
-      service.setBpm(Math.min(bpm, 300));
+      service.setBpm(Math.min(bpm, 400));
       refreshBookmark(true);
       binding.textMainBpm.setText(String.valueOf(service.getBpm()));
       if (service.getBpm() > 1) {
@@ -765,7 +765,7 @@ public class MainActivity extends AppCompatActivity
         }
         binding.frameMainLess.setEnabled(false);
       }
-      if (service.getBpm() < 300) {
+      if (service.getBpm() < 400) {
         if (!binding.frameMainMore.isEnabled()) {
           binding.frameMainMore.animate().alpha(1).setDuration(300).start();
         }
@@ -784,8 +784,8 @@ public class MainActivity extends AppCompatActivity
       int bpm = service.getBpm();
       binding.frameMainLess.setEnabled(bpm > 1);
       binding.frameMainLess.setAlpha(bpm > 1 ? 1 : 0.5f);
-      binding.frameMainMore.setEnabled(bpm < 300);
-      binding.frameMainMore.setAlpha(bpm < 300 ? 1 : 0.5f);
+      binding.frameMainMore.setEnabled(bpm < 400);
+      binding.frameMainMore.setAlpha(bpm < 400 ? 1 : 0.5f);
     }
   }
 
