@@ -6,7 +6,10 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.NonNull;
@@ -14,17 +17,18 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.util.SystemUiUtil;
 
 public class DottedCircleView extends View {
 
   private final static String TAG = DottedCircleView.class.getSimpleName();
 
-  private final int dots;
+  private final int waves;
   private final Paint paint;
+  private final Path path;
   private final float pickerPadding;
   private final float dotSizeMin;
   private final float dotSizeMax;
-  private boolean areDotsVisible = true;
 
   public DottedCircleView(@NonNull Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
@@ -35,56 +39,59 @@ public class DottedCircleView extends View {
     dotSizeMax = resources.getDimensionPixelSize(R.dimen.picker_dot_size_dragged);
 
     paint = new Paint();
-    paint.setStyle(Paint.Style.STROKE);
+    paint.setStyle(Style.FILL);
     paint.setColor(ContextCompat.getColor(context, R.color.picker));
-    paint.setStrokeCap(Paint.Cap.ROUND);
-    paint.setStrokeWidth(dotSizeMin);
     paint.setAntiAlias(true);
+    paint.setPathEffect(new CornerPathEffect(SystemUiUtil.dpToPx(context, 9)));
 
-    dots = getResources().getInteger(R.integer.picker_dots);
+    path = new Path();
+
+    waves = getResources().getInteger(R.integer.picker_waves);
   }
 
   @Override
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
 
-    if (!areDotsVisible) {
-      return;
-    }
+    drawNewStar(canvas, getPivotY(), getPivotY() - SystemUiUtil.dpToPx(getContext(), 10));
+  }
 
-    float centerX = getPivotX();
-    float centerY = getPivotY();
-    float min = Math.min(getWidth(), getHeight());
-    float radius = (min / 2) - pickerPadding / 2;
-    for (int i = 0; i < dots; i++) {
-      double d = (((i * 2f) / dots)) * Math.PI;
-      canvas.drawPoint(
-          ((float) Math.cos(d) * radius) + centerX,
-          ((float) Math.sin(d) * radius) + centerY,
-          paint
+  public void drawNewStar(Canvas canvas, float radius, float innerRadius) {
+    double section = 2 * Math.PI / waves;
+    float cx = getPivotX();
+    float cy = getPivotY();
+
+    path.reset();
+    path.moveTo((float) (cx + radius * Math.cos(0)), (float) (cy + radius * Math.sin(0)));
+    path.lineTo(
+        (float) (cx + innerRadius * Math.cos(section / 2)),
+        (float) (cy + innerRadius * Math.sin(section / 2))
+    );
+
+    for (int i = 1; i < waves; i++) {
+      path.lineTo(
+          (float) (cx + radius * Math.cos(section * i)),
+          (float) (cy + radius * Math.sin(section * i))
+      );
+      path.lineTo(
+          (float) (cx + innerRadius * Math.cos(section * i + section / 2)),
+          (float) (cy + innerRadius * Math.sin(section * i + section / 2))
       );
     }
+
+    path.close();
+
+    canvas.drawPath(path, paint);
   }
 
-  @Override
-  public void setVisibility(int visibility) {
-    super.setVisibility(visibility);
-    setDotsVisibility(visibility == VISIBLE);
-  }
-
-  public void setDotsVisibility(boolean visible) {
-    areDotsVisible = visible;
-    invalidate();
-  }
-
-  public void setHighlighted(boolean highlighted) {
+  public void setDragged(boolean dragged) {
     ValueAnimator animatorSize = ValueAnimator.ofFloat(
         paint.getStrokeWidth(),
-        highlighted ? dotSizeMax : dotSizeMin
+        dragged ? dotSizeMax : dotSizeMin
     );
     animatorSize.addUpdateListener(animation -> {
-      paint.setStrokeWidth((float) animatorSize.getAnimatedValue());
-      invalidate();
+      /*paint.setStrokeWidth((float) animatorSize.getAnimatedValue());
+      invalidate();*/
     });
 
     ValueAnimator animatorColor = ValueAnimator.ofObject(
@@ -92,7 +99,7 @@ public class DottedCircleView extends View {
         paint.getColor(),
         ContextCompat.getColor(
             getContext(),
-            highlighted ? R.color.picker_dragged : R.color.picker
+            dragged ? R.color.picker_dragged : R.color.picker
         )
     );
     animatorColor.addUpdateListener(animation -> {

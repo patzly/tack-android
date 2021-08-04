@@ -149,12 +149,12 @@ public class MainActivity extends AppCompatActivity
     binding.bpmPickerMain.setOnPickListener(new BpmPickerView.OnPickListener() {
       @Override
       public void onPickDown() {
-        binding.dottedCircleMain.setHighlighted(true);
+        binding.dottedCircleMain.setDragged(true);
       }
 
       @Override
       public void onPickUpOrCancel() {
-        binding.dottedCircleMain.setHighlighted(false);
+        binding.dottedCircleMain.setDragged(false);
       }
     });
 
