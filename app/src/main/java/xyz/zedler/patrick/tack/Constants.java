@@ -24,7 +24,7 @@ public final class Constants {
     public final static int EMPHASIS = 0;
   }
 
-  public final static class SETTING {
+  public final static class SETTINGS {
 
     public final static String SOUND = "sound";
     public final static String VIBRATE_ALWAYS = "vibrate_always";

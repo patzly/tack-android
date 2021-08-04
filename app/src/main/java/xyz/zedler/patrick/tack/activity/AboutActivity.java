@@ -1,30 +1,35 @@
 package xyz.zedler.patrick.tack.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
+import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
+import androidx.preference.PreferenceManager;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
-import xyz.zedler.patrick.tack.Constants;
+import xyz.zedler.patrick.tack.Constants.DEF;
+import xyz.zedler.patrick.tack.Constants.EXTRA;
+import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.ActivityAboutAppBinding;
 import xyz.zedler.patrick.tack.fragment.ChangelogBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.TextBottomSheetDialogFragment;
-import xyz.zedler.patrick.tack.util.VibratorUtil;
+import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class AboutActivity extends AppCompatActivity implements View.OnClickListener {
 
   private ActivityAboutAppBinding binding;
+  private SharedPreferences sharedPrefs;
   private ViewUtil viewUtil;
-  private VibratorUtil vibratorUtil;
+  private HapticUtil hapticUtil;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +38,14 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
     binding = ActivityAboutAppBinding.inflate(getLayoutInflater());
     setContentView(binding.getRoot());
 
+    sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+
     viewUtil = new ViewUtil();
-    vibratorUtil = new VibratorUtil(this);
+    hapticUtil = new HapticUtil(this);
 
     binding.frameAboutClose.setOnClickListener(v -> {
       if (viewUtil.isClickEnabled()) {
-        vibratorUtil.click();
+        hapticUtil.click();
         finish();
       }
     });
@@ -73,7 +80,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
   @Override
   protected void onResume() {
     super.onResume();
-    vibratorUtil.onResume();
+    hapticUtil.setEnabled(sharedPrefs.getBoolean(SETTINGS.HAPTIC_FEEDBACK, DEF.HAPTIC_FEEDBACK));
   }
 
   @Override
@@ -81,12 +88,12 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
     int id = v.getId();
     if (id == R.id.linear_changelog && viewUtil.isClickEnabled()) {
       ViewUtil.startIcon(binding.imageChangelog);
-      vibratorUtil.click();
+      hapticUtil.click();
       BottomSheetDialogFragment fragment = new ChangelogBottomSheetDialogFragment();
       fragment.show(getSupportFragmentManager(), fragment.toString());
     } else if (id == R.id.linear_developer && viewUtil.isClickEnabled()) {
       ViewUtil.startIcon(binding.imageDeveloper);
-      vibratorUtil.click();
+      hapticUtil.click();
       new Handler(Looper.getMainLooper()).postDelayed(() -> startActivity(
           new Intent(
               Intent.ACTION_VIEW,
@@ -97,54 +104,54 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
       );
     } else if (id == R.id.linear_license_edwin && viewUtil.isClickEnabled()) {
       ViewUtil.startIcon(binding.imageLicenseEdwin);
-      vibratorUtil.click();
+      hapticUtil.click();
       showTextBottomSheet(
-          "ofl",
+          R.raw.ofl,
           R.string.license_edwin,
           R.string.license_edwin_link
       );
     } else if (id == R.id.linear_license_jost && viewUtil.isClickEnabled()) {
       ViewUtil.startIcon(binding.imageLicenseJost);
-      vibratorUtil.click();
+      hapticUtil.click();
       showTextBottomSheet(
-          "ofl",
+          R.raw.ofl,
           R.string.license_jost,
           R.string.license_jost_link
       );
     } else if (id == R.id.linear_license_material_components && viewUtil.isClickEnabled()) {
       ViewUtil.startIcon(binding.imageLicenseMaterialComponents);
-      vibratorUtil.click();
+      hapticUtil.click();
       showTextBottomSheet(
-          "apache",
+          R.raw.apache,
           R.string.license_material_components,
           R.string.license_material_components_link
       );
     } else if (id == R.id.linear_license_material_icons && viewUtil.isClickEnabled()) {
       ViewUtil.startIcon(binding.imageLicenseMaterialIcons);
-      vibratorUtil.click();
+      hapticUtil.click();
       showTextBottomSheet(
-          "apache",
+          R.raw.apache,
           R.string.license_material_icons,
           R.string.license_material_icons_link
       );
     } else if (id == R.id.linear_license_metronome && viewUtil.isClickEnabled()) {
       ViewUtil.startIcon(binding.imageLicenseMetronome);
-      vibratorUtil.click();
+      hapticUtil.click();
       showTextBottomSheet(
-          "apache",
+          R.raw.apache,
           R.string.license_metronome,
           R.string.license_metronome_link
       );
     }
   }
 
-  private void showTextBottomSheet(String file, @StringRes int title, @StringRes int link) {
-    DialogFragment fragment = new TextBottomSheetDialogFragment();
+  private void showTextBottomSheet(@RawRes int file, @StringRes int title, @StringRes int link) {
     Bundle bundle = new Bundle();
-    bundle.putString(Constants.EXTRA.TITLE, getString(title));
-    bundle.putString(Constants.EXTRA.FILE, file);
-    bundle.putString(Constants.EXTRA.LINK, getString(link));
-    fragment.setArguments(bundle);
-    fragment.show(getSupportFragmentManager(), fragment.toString());
+    bundle.putString(EXTRA.TITLE, getString(title));
+    bundle.putInt(EXTRA.FILE, file);
+    if (link != -1) {
+      bundle.putString(EXTRA.LINK, getString(link));
+    }
+    ViewUtil.showBottomSheet(this, new TextBottomSheetDialogFragment(), bundle);
   }
 }

@@ -18,10 +18,10 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
-import xyz.zedler.patrick.tack.Constants.SETTING;
+import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.AudioUtil;
-import xyz.zedler.patrick.tack.util.VibratorUtil;
+import xyz.zedler.patrick.tack.util.HapticUtil;
 
 public class MetronomeService extends Service implements Runnable {
 
@@ -33,7 +33,7 @@ public class MetronomeService extends Service implements Runnable {
   private final IBinder binder = new LocalBinder();
 
   private SharedPreferences sharedPrefs;
-  private VibratorUtil vibratorUtil;
+  private HapticUtil hapticUtil;
   private AudioUtil audioUtil;
   private int bpm;
   private long interval;
@@ -52,14 +52,14 @@ public class MetronomeService extends Service implements Runnable {
     super.onCreate();
 
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-    vibratorUtil = new VibratorUtil(this);
+    hapticUtil = new HapticUtil(this);
     audioUtil = new AudioUtil(this);
 
     isBeatModeVibrate = sharedPrefs.getBoolean(
         Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
     );
     if (!isBeatModeVibrate) {
-      sound = sharedPrefs.getString(SETTING.SOUND, DEF.SOUND);
+      sound = sharedPrefs.getString(SETTINGS.SOUND, DEF.SOUND);
     } else {
       sound = null;
     }
@@ -67,7 +67,7 @@ public class MetronomeService extends Service implements Runnable {
     interval = sharedPrefs.getLong(Constants.PREF.INTERVAL, Constants.DEF.INTERVAL);
     emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS);
     vibrateAlways = sharedPrefs.getBoolean(
-        Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+        SETTINGS.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
     );
     bpm = toBpm(interval);
 
@@ -167,13 +167,13 @@ public class MetronomeService extends Service implements Runnable {
         Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
     );
     if (!isBeatModeVibrate) {
-      sound = sharedPrefs.getString(SETTING.SOUND, DEF.SOUND);
+      sound = sharedPrefs.getString(SETTINGS.SOUND, DEF.SOUND);
     } else {
       sound = null;
     }
     emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS);
     vibrateAlways = sharedPrefs.getBoolean(
-        Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+        SETTINGS.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
     );
   }
 
@@ -232,10 +232,10 @@ public class MetronomeService extends Service implements Runnable {
       if (sound != null) {
         audioUtil.play(sound, isEmphasis);
         if (vibrateAlways) {
-          vibratorUtil.vibrate(isEmphasis);
+          hapticUtil.vibrate(isEmphasis);
         }
       } else {
-        vibratorUtil.vibrate(isEmphasis);
+        hapticUtil.vibrate(isEmphasis);
       }
 
       if (listener != null) {

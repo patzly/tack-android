@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Objects;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.PREF;
+import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
@@ -52,7 +53,7 @@ import xyz.zedler.patrick.tack.fragment.WearBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.util.LogoUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.VibratorUtil;
+import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
 
@@ -72,7 +73,7 @@ public class MainActivity extends AppCompatActivity
   private MetronomeService service;
   private LogoUtil logoUtil;
   private ViewUtil viewUtil;
-  private VibratorUtil vibratorUtil;
+  private HapticUtil hapticUtil;
 
   private List<Integer> bookmarks;
 
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
     AppCompatDelegate.setDefaultNightMode(
-        sharedPrefs.getBoolean(Constants.SETTING.DARK_MODE, Constants.DEF.DARK_MODE)
+        sharedPrefs.getBoolean(SETTINGS.DARK_MODE, Constants.DEF.DARK_MODE)
             ? AppCompatDelegate.MODE_NIGHT_YES
             : AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
     );
@@ -103,9 +104,9 @@ public class MainActivity extends AppCompatActivity
 
     logoUtil = new LogoUtil(binding.imageMainLogo);
     viewUtil = new ViewUtil();
-    vibratorUtil = new VibratorUtil(this);
+    hapticUtil = new HapticUtil(this);
 
-    if (!vibratorUtil.hasVibrator()) {
+    if (!hapticUtil.hasVibrator()) {
       sharedPrefs.edit().putBoolean(PREF.BEAT_MODE_VIBRATE, false).apply();
     }
 
@@ -124,7 +125,7 @@ public class MainActivity extends AppCompatActivity
         DialogFragment fragment = new FeedbackBottomSheetDialogFragment();
         fragment.show(getSupportFragmentManager(), fragment.toString());
       }
-      vibratorUtil.click();
+      hapticUtil.click();
       return true;
     });
 
@@ -261,7 +262,7 @@ public class MainActivity extends AppCompatActivity
     );
 
     boolean vibrateAlways = sharedPrefs.getBoolean(
-        Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+        SETTINGS.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
     );
     if (sharedPrefs.getBoolean(
         Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
@@ -343,7 +344,7 @@ public class MainActivity extends AppCompatActivity
     super.onResume();
 
     hapticFeedback = sharedPrefs.getBoolean(
-        Constants.SETTING.HAPTIC_FEEDBACK, Constants.DEF.HAPTIC_FEEDBACK
+        SETTINGS.HAPTIC_FEEDBACK, Constants.DEF.HAPTIC_FEEDBACK
     );
   }
 
@@ -359,7 +360,7 @@ public class MainActivity extends AppCompatActivity
         }
       }
       if (isBound() && (!service.isBeatModeVibrate() && !service.vibrateAlways())) {
-        vibratorUtil.click();
+        hapticUtil.click();
       }
     } else if (id == R.id.frame_main_less) {
       ViewUtil.startIcon(binding.imageMainLess);
@@ -384,17 +385,17 @@ public class MainActivity extends AppCompatActivity
 
       if (isBound()
           && ((!service.isBeatModeVibrate() && !service.vibrateAlways()) || !service.isPlaying())) {
-        vibratorUtil.heavyClick();
+        hapticUtil.heavyClick();
       }
     } else if (id == R.id.frame_main_beat_mode) {
       boolean beatModeVibrateNew = !sharedPrefs.getBoolean(
           Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
       );
       boolean vibrateAlways = sharedPrefs.getBoolean(
-          Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+          SETTINGS.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
       );
 
-      if (beatModeVibrateNew && !vibratorUtil.hasVibrator()) {
+      if (beatModeVibrateNew && !hapticUtil.hasVibrator()) {
         Snackbar.make(
             binding.coordinatorContainer,
             getString(R.string.msg_vibration_unavailable),
@@ -427,7 +428,7 @@ public class MainActivity extends AppCompatActivity
       }, 300);
     } else if (id == R.id.frame_main_bookmark) {
       ViewUtil.startIcon(binding.imageMainBookmark);
-      vibratorUtil.click();
+      hapticUtil.click();
       if (isBound()) {
         if (bookmarks.size() < 3 && !bookmarks.contains(service.getBpm())) {
           binding.chipGroupMain.addView(newChip(service.getBpm()));
@@ -457,9 +458,9 @@ public class MainActivity extends AppCompatActivity
       }
     } else if (id == R.id.frame_main_emphasis) {
       ViewUtil.startIcon(binding.imageMainEmphasis);
-      vibratorUtil.click();
+      hapticUtil.click();
       if (sharedPrefs.getBoolean(
-          Constants.SETTING.EMPHASIS_SLIDER, Constants.DEF.EMPHASIS_SLIDER
+          SETTINGS.EMPHASIS_SLIDER, Constants.DEF.EMPHASIS_SLIDER
       )) {
         DialogFragment fragment = new EmphasisBottomSheetDialogFragment();
         fragment.show(getSupportFragmentManager(), fragment.toString());
@@ -489,7 +490,7 @@ public class MainActivity extends AppCompatActivity
     )) {
       binding.imageMainBeatMode.setImageResource(
           sharedPrefs.getBoolean(
-              Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+              SETTINGS.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
           )
               ? R.drawable.ic_round_volume_off_to_volume_on_anim
               : R.drawable.ic_round_vibrate_to_volume_anim
@@ -497,7 +498,7 @@ public class MainActivity extends AppCompatActivity
     } else {
       binding.imageMainBeatMode.setImageResource(
           sharedPrefs.getBoolean(
-              Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+              SETTINGS.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
           )
               ? R.drawable.ic_round_volume_on_to_volume_off_anim
               : R.drawable.ic_round_volume_to_vibrate_anim
@@ -585,7 +586,7 @@ public class MainActivity extends AppCompatActivity
     sharedPrefs.edit().putInt(Constants.PREF.EMPHASIS, emphasis).apply();
     binding.textMainEmphasis.setText(String.valueOf(emphasis));
     if (hapticFeedback) {
-      vibratorUtil.tick();
+      hapticUtil.tick();
     }
     if (isBound) {
       service.updateTick();
@@ -600,7 +601,7 @@ public class MainActivity extends AppCompatActivity
     chip.setCloseIconTintResource(R.color.icon);
     chip.setCloseIconResource(R.drawable.ic_round_cancel);
     chip.setOnCloseIconClickListener(v -> {
-      vibratorUtil.click();
+      hapticUtil.click();
       binding.chipGroupMain.removeView(chip);
       bookmarks.remove((Integer) bpm); // Integer cast required
       updateBookmarks();
@@ -625,7 +626,7 @@ public class MainActivity extends AppCompatActivity
     }
     if (keepAwake
         && sharedPrefs != null
-        && sharedPrefs.getBoolean(Constants.SETTING.KEEP_AWAKE, Constants.DEF.KEEP_AWAKE
+        && sharedPrefs.getBoolean(SETTINGS.KEEP_AWAKE, Constants.DEF.KEEP_AWAKE
     )) {
       window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     } else {
@@ -743,7 +744,7 @@ public class MainActivity extends AppCompatActivity
           && (!service.isPlaying()
           || (!service.isBeatModeVibrate() && !service.vibrateAlways()))
       ) {
-        vibratorUtil.tick();
+        hapticUtil.tick();
       }
     }
   }

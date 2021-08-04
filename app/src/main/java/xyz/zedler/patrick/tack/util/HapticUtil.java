@@ -1,17 +1,12 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import androidx.preference.PreferenceManager;
-import xyz.zedler.patrick.tack.Constants.DEF;
-import xyz.zedler.patrick.tack.Constants.SETTING;
 
-public class VibratorUtil {
+public class HapticUtil {
 
-  private final SharedPreferences sharedPrefs;
   private final Vibrator vibrator;
   private boolean enabled;
 
@@ -19,9 +14,8 @@ public class VibratorUtil {
   public static final long CLICK = 20;
   public static final long HEAVY = 50;
 
-  public VibratorUtil(Context context) {
+  public HapticUtil(Context context) {
     vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-    sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
     enabled = hasVibrator();
   }
 
@@ -70,24 +64,12 @@ public class VibratorUtil {
     }
   }
 
-  public void doubleClick() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-      vibrate(VibrationEffect.EFFECT_DOUBLE_CLICK);
-    } else {
-      vibrate(CLICK);
-    }
-  }
-
   public void heavyClick() {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
       vibrate(VibrationEffect.EFFECT_HEAVY_CLICK);
     } else {
       vibrate(HEAVY);
     }
-  }
-
-  public void onResume() {
-    enabled = sharedPrefs.getBoolean(SETTING.HAPTIC_FEEDBACK, DEF.HAPTIC_FEEDBACK) && hasVibrator();
   }
 
   public void setEnabled(boolean enabled) {

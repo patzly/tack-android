@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetChangelogBinding;
-import xyz.zedler.patrick.tack.util.BulletUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 
 public class ChangelogBottomSheetDialogFragment extends BaseBottomSheetDialogFragment {
@@ -31,12 +30,10 @@ public class ChangelogBottomSheetDialogFragment extends BaseBottomSheetDialogFra
     assert context != null;
 
     binding.textChangelog.setText(
-        BulletUtil.makeBulletList(
+        ResUtil.getBulletList(
             getContext(),
-            6,
-            2,
             "- ",
-            ResUtil.readFromFile(getContext(), "changelog"),
+            ResUtil.getRawText(getContext(), R.raw.changelog),
             getResources().getStringArray(R.array.changelog_highlights)
         ),
         TextView.BufferType.SPANNABLE

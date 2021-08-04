@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetTextBinding;
 import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.VibratorUtil;
+import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class TextBottomSheetDialogFragment extends BaseBottomSheetDialogFragment {
@@ -35,7 +35,8 @@ public class TextBottomSheetDialogFragment extends BaseBottomSheetDialogFragment
     Bundle bundle = getArguments();
     assert context != null && bundle != null;
 
-    VibratorUtil vibratorUtil = new VibratorUtil(context);
+    HapticUtil hapticUtil = new HapticUtil(context);
+    ViewUtil viewUtil = new ViewUtil();
 
     binding.textTextTitle.setText(
         bundle.getString(Constants.EXTRA.TITLE)
@@ -44,19 +45,23 @@ public class TextBottomSheetDialogFragment extends BaseBottomSheetDialogFragment
     String link = bundle.getString(Constants.EXTRA.LINK);
     if (link != null) {
       binding.frameTextOpenLink.setOnClickListener(v -> {
+        if (viewUtil.isClickDisabled()) {
+          return;
+        }
+        hapticUtil.click();
         ViewUtil.startIcon(binding.imageTextOpenLink);
-        vibratorUtil.click();
         new Handler(Looper.getMainLooper()).postDelayed(
             () -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link))),
             500
         );
       });
     } else {
+      binding.textTextTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
       binding.frameTextOpenLink.setVisibility(View.GONE);
     }
 
     binding.textText.setText(
-        ResUtil.readFromFile(context, bundle.getString(Constants.EXTRA.FILE))
+        ResUtil.getRawText(context, bundle.getInt(Constants.EXTRA.FILE))
     );
 
     return binding.getRoot();

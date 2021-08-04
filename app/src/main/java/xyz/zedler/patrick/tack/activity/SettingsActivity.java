@@ -14,13 +14,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.DialogFragment;
 import xyz.zedler.patrick.tack.Constants;
+import xyz.zedler.patrick.tack.Constants.DEF;
+import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.ActivitySettingsAppBinding;
 import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.util.AudioUtil;
-import xyz.zedler.patrick.tack.util.VibratorUtil;
+import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class SettingsActivity extends AppCompatActivity
@@ -31,7 +33,7 @@ public class SettingsActivity extends AppCompatActivity
   private SharedPreferences sharedPrefs;
   private ViewUtil viewUtil;
   private AudioUtil audioUtil;
-  private VibratorUtil vibratorUtil;
+  private HapticUtil hapticUtil;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +43,7 @@ public class SettingsActivity extends AppCompatActivity
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
     boolean forceDarkMode = sharedPrefs.getBoolean(
-        Constants.SETTING.DARK_MODE, Constants.DEF.DARK_MODE
+        SETTINGS.DARK_MODE, Constants.DEF.DARK_MODE
     );
     AppCompatDelegate.setDefaultNightMode(
         forceDarkMode
@@ -52,11 +54,11 @@ public class SettingsActivity extends AppCompatActivity
 
     viewUtil = new ViewUtil();
     audioUtil = new AudioUtil(this);
-    vibratorUtil = new VibratorUtil(this);
+    hapticUtil = new HapticUtil(this);
 
     binding.frameSettingsBack.setOnClickListener(v -> {
       if (viewUtil.isClickEnabled()) {
-        vibratorUtil.click();
+        hapticUtil.click();
         finish();
       }
     });
@@ -69,7 +71,7 @@ public class SettingsActivity extends AppCompatActivity
         DialogFragment fragment = new FeedbackBottomSheetDialogFragment();
         fragment.show(getSupportFragmentManager(), fragment.toString());
       }
-      vibratorUtil.click();
+      hapticUtil.click();
       return true;
     });
 
@@ -94,29 +96,29 @@ public class SettingsActivity extends AppCompatActivity
 
     binding.switchSettingsVibrateAlways.setChecked(
         sharedPrefs.getBoolean(
-            Constants.SETTING.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+            SETTINGS.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
         )
     );
 
     binding.switchSettingsHaptic.setChecked(
         sharedPrefs.getBoolean(
-            Constants.SETTING.HAPTIC_FEEDBACK, Constants.DEF.HAPTIC_FEEDBACK
+            SETTINGS.HAPTIC_FEEDBACK, Constants.DEF.HAPTIC_FEEDBACK
         )
     );
 
-    if (!vibratorUtil.hasVibrator()) {
+    if (!hapticUtil.hasVibrator()) {
       binding.linearSettingsVibrateAlways.setVisibility(View.GONE);
       binding.linearSettingsHaptic.setVisibility(View.GONE);
     }
 
     binding.switchSettingsSliderEmphasis.setChecked(
         sharedPrefs.getBoolean(
-            Constants.SETTING.EMPHASIS_SLIDER, Constants.DEF.EMPHASIS_SLIDER
+            SETTINGS.EMPHASIS_SLIDER, Constants.DEF.EMPHASIS_SLIDER
         )
     );
 
     binding.switchSettingsKeepAwake.setChecked(
-        sharedPrefs.getBoolean(Constants.SETTING.KEEP_AWAKE, Constants.DEF.KEEP_AWAKE)
+        sharedPrefs.getBoolean(SETTINGS.KEEP_AWAKE, Constants.DEF.KEEP_AWAKE)
     );
 
     ViewUtil.setOnClickListeners(
@@ -148,11 +150,11 @@ public class SettingsActivity extends AppCompatActivity
   @Override
   protected void onResume() {
     super.onResume();
-    vibratorUtil.onResume();
+    hapticUtil.setEnabled(sharedPrefs.getBoolean(SETTINGS.HAPTIC_FEEDBACK, DEF.HAPTIC_FEEDBACK));
   }
 
   private int getCheckedId() {
-    String sound = sharedPrefs.getString(Constants.SETTING.SOUND, Constants.SOUND.WOOD);
+    String sound = sharedPrefs.getString(SETTINGS.SOUND, Constants.SOUND.WOOD);
     assert sound != null;
     switch (sound) {
       case Constants.SOUND.CLICK:
@@ -197,7 +199,7 @@ public class SettingsActivity extends AppCompatActivity
     int id = buttonView.getId();
     if (id == R.id.switch_settings_dark_mode) {
       ViewUtil.startIcon(binding.imageSettingsDarkMode);
-      editor.putBoolean(Constants.SETTING.DARK_MODE, isChecked);
+      editor.putBoolean(SETTINGS.DARK_MODE, isChecked);
       new Handler(Looper.getMainLooper()).postDelayed(() -> {
         binding.imageSettingsDarkMode.setImageResource(
             isChecked
@@ -214,21 +216,21 @@ public class SettingsActivity extends AppCompatActivity
       }, 300);
     } else if (id == R.id.switch_settings_vibrate_always) {
       ViewUtil.startIcon(binding.imageSettingsVibrateAlways);
-      editor.putBoolean(Constants.SETTING.VIBRATE_ALWAYS, isChecked);
+      editor.putBoolean(SETTINGS.VIBRATE_ALWAYS, isChecked);
     } else if (id == R.id.switch_settings_haptic) {
       ViewUtil.startIcon(binding.imageSettingsHaptic);
-      vibratorUtil.setEnabled(isChecked);
-      editor.putBoolean(Constants.SETTING.HAPTIC_FEEDBACK, isChecked);
+      hapticUtil.setEnabled(isChecked);
+      editor.putBoolean(SETTINGS.HAPTIC_FEEDBACK, isChecked);
     } else if (id == R.id.switch_settings_slider_emphasis) {
       ViewUtil.startIcon(binding.imageSettingsSliderEmphasis);
-      editor.putBoolean(Constants.SETTING.EMPHASIS_SLIDER, isChecked);
+      editor.putBoolean(SETTINGS.EMPHASIS_SLIDER, isChecked);
     } else if (id == R.id.switch_settings_keep_awake) {
       ViewUtil.startIcon(binding.imageSettingsKeepAwake);
-      editor.putBoolean(Constants.SETTING.KEEP_AWAKE, isChecked);
+      editor.putBoolean(SETTINGS.KEEP_AWAKE, isChecked);
     }
 
     editor.apply();
-    vibratorUtil.click();
+    hapticUtil.click();
   }
 
   @Override
@@ -244,7 +246,7 @@ public class SettingsActivity extends AppCompatActivity
     } else {
       sound = Constants.SOUND.WOOD;
     }
-    sharedPrefs.edit().putString(Constants.SETTING.SOUND, sound).apply();
+    sharedPrefs.edit().putString(SETTINGS.SOUND, sound).apply();
     audioUtil.play(sound, false);
   }
 }
