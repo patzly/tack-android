@@ -53,6 +53,7 @@
     <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:layout_marginTop="@dimen/bookmarks_margin_top"
       android:layout_marginBottom="@dimen/picker_margin_bottom"
       android:orientation="vertical"
       android:gravity="center_horizontal"
@@ -115,7 +116,7 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_marginBottom="@dimen/label_text_size"
-              android:textColor="@color/on_background"
+              android:textColor="@color/black"
               android:layout_gravity="center_horizontal|top"
               android:fontFamily="@font/edwin_bold"
               android:lineSpacingExtra="5dp"
@@ -125,7 +126,7 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:text="@string/title_bpm_label"
-              android:textColor="@color/on_background_secondary"
+              android:textColor="@color/black"
               android:fontFamily="@font/jost_bold"
               android:layout_gravity="center_horizontal|bottom"
               android:textSize="@dimen/label_text_size" />
@@ -163,6 +164,7 @@
         android:id="@+id/chip_group_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/bookmarks_margin_top"
         android:animateLayoutChanges="true"
         app:singleSelection="true"
         app:singleLine="true" />

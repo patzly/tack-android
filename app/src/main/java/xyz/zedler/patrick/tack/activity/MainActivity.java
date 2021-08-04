@@ -54,6 +54,7 @@ import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.util.LogoUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
+import xyz.zedler.patrick.tack.util.SystemUiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
 
@@ -609,7 +610,9 @@ public class MainActivity extends AppCompatActivity
     });
     chip.setChipBackgroundColorResource(R.color.background);
     chip.setText(String.valueOf(bpm));
-    chip.setTextSize(15);
+    chip.setTextSize(18);
+    chip.setChipEndPadding(SystemUiUtil.dpToPx(this, 10));
+    chip.setHeight(SystemUiUtil.dpToPx(this, 56));
     chip.setTypeface(ResourcesCompat.getFont(this, R.font.jost_bold));
     chip.setChipIconVisible(false);
     chip.setChipStrokeWidth(getResources().getDimension(R.dimen.chip_stroke_width));
@@ -756,23 +759,23 @@ public class MainActivity extends AppCompatActivity
       binding.textMainBpm.setText(String.valueOf(service.getBpm()));
       if (service.getBpm() > 1) {
         if (!binding.frameMainLess.isEnabled()) {
-          binding.frameMainLess.animate().alpha(1).setDuration(300).start();
+          binding.frameMainLess.animate().alpha(1).setDuration(250).start();
         }
         binding.frameMainLess.setEnabled(true);
       } else {
         if (binding.frameMainLess.isEnabled()) {
-          binding.frameMainLess.animate().alpha(0.5f).setDuration(300).start();
+          binding.frameMainLess.animate().alpha(0.5f).setDuration(250).start();
         }
         binding.frameMainLess.setEnabled(false);
       }
       if (service.getBpm() < 400) {
         if (!binding.frameMainMore.isEnabled()) {
-          binding.frameMainMore.animate().alpha(1).setDuration(300).start();
+          binding.frameMainMore.animate().alpha(1).setDuration(250).start();
         }
         binding.frameMainMore.setEnabled(true);
       } else {
         if (binding.frameMainMore.isEnabled()) {
-          binding.frameMainMore.animate().alpha(0.5f).setDuration(300).start();
+          binding.frameMainMore.animate().alpha(0.5f).setDuration(250).start();
         }
         binding.frameMainMore.setEnabled(false);
       }

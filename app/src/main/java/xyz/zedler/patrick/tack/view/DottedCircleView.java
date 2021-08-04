@@ -40,7 +40,7 @@ public class DottedCircleView extends View {
 
     paint = new Paint();
     paint.setStyle(Style.FILL);
-    paint.setColor(ContextCompat.getColor(context, R.color.picker));
+    paint.setColor(ContextCompat.getColor(context, R.color.retro_dirt));
     paint.setAntiAlias(true);
     paint.setPathEffect(new CornerPathEffect(SystemUiUtil.dpToPx(context, 9)));
 
@@ -99,7 +99,7 @@ public class DottedCircleView extends View {
         paint.getColor(),
         ContextCompat.getColor(
             getContext(),
-            dragged ? R.color.picker_dragged : R.color.picker
+            dragged ? R.color.picker_dragged : R.color.retro_dirt
         )
     );
     animatorColor.addUpdateListener(animation -> {
