@@ -77,8 +77,11 @@
 
   <color name="logo_wood">@color/retro_dirt</color>
 
-  <color name="picker">@color/retro_dirt_fg</color>
-  <color name="picker_dragged">@color/retro_red_fg</color>
+  <color name="picker">@color/retro_dirt</color>
+  <color name="picker_dragged">@color/retro_red</color>
+
+  <color name="bookmark_active">@color/retro_dirt</color>
+  <color name="bookmark_inactive">@color/on_background_tertiary</color>
 
   <color name="status_bar_lollipop">#999999</color>
 

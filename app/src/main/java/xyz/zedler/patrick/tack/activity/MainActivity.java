@@ -1,7 +1,6 @@
 package xyz.zedler.patrick.tack.activity;
 
 import android.animation.ArgbEvaluator;
-import android.animation.FloatEvaluator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
@@ -51,9 +50,9 @@ import xyz.zedler.patrick.tack.fragment.EmphasisBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.fragment.WearBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.service.MetronomeService;
+import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.SystemUiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
@@ -613,15 +612,14 @@ public class MainActivity extends AppCompatActivity
       updateBookmarks();
       refreshBookmark(true);
     });
-    chip.setChipBackgroundColorResource(R.color.background);
+    chip.setChipBackgroundColorResource(R.color.bookmark_inactive);
     chip.setText(String.valueOf(bpm));
     chip.setTextSize(18);
     chip.setChipEndPadding(SystemUiUtil.dpToPx(this, 10));
     chip.setHeight(SystemUiUtil.dpToPx(this, 56));
     chip.setTypeface(ResourcesCompat.getFont(this, R.font.jost_bold));
     chip.setChipIconVisible(false);
-    chip.setChipStrokeWidth(getResources().getDimension(R.dimen.chip_stroke_width));
-    chip.setChipStrokeColorResource(R.color.stroke_primary);
+    chip.setChipStrokeWidth(0);
     chip.setRippleColor(null);
     chip.setOnClickListener(v -> setBpm(bpm));
     return chip;
@@ -700,11 +698,9 @@ public class MainActivity extends AppCompatActivity
             animateChip(chip, active);
           } else {
             if (active) {
-              chip.setChipStrokeColorResource(R.color.retro_blue_fg);
-              chip.setChipStrokeWidthResource(R.dimen.chip_stroke_width_active);
+              chip.setChipBackgroundColorResource(R.color.bookmark_active);
             } else {
-              chip.setChipStrokeColorResource(R.color.stroke_primary);
-              chip.setChipStrokeWidthResource(R.dimen.chip_stroke_width);
+              chip.setChipBackgroundColorResource(R.color.bookmark_inactive);
             }
           }
         }
@@ -713,15 +709,15 @@ public class MainActivity extends AppCompatActivity
   }
 
   private void animateChip(Chip chip, boolean active) {
-    int colorFrom = Objects.requireNonNull(chip.getChipStrokeColor()).getDefaultColor();
+    int colorFrom = Objects.requireNonNull(chip.getChipBackgroundColor()).getDefaultColor();
     int colorTo = ContextCompat.getColor(
         this,
-        active ? R.color.retro_blue_fg : R.color.stroke_primary
+        active ? R.color.bookmark_active : R.color.bookmark_inactive
     );
     ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
     colorAnimation.setDuration(250);
     colorAnimation.addUpdateListener(
-        animator -> chip.setChipStrokeColor(
+        animator -> chip.setChipBackgroundColor(
             new ColorStateList(
                 new int[][]{
                     new int[]{android.R.attr.state_enabled}
@@ -732,17 +728,6 @@ public class MainActivity extends AppCompatActivity
             ))
     );
     colorAnimation.start();
-    float widthFrom = chip.getChipStrokeWidth();
-    float widthTo = getResources()
-        .getDimension(active ? R.dimen.chip_stroke_width_active : R.dimen.chip_stroke_width);
-    ValueAnimator widthAnimation = ValueAnimator.ofObject(new FloatEvaluator(), widthFrom, widthTo);
-    widthAnimation.setDuration(250);
-    widthAnimation.addUpdateListener(
-        animator -> chip.setChipStrokeWidth(
-            (float) animator.getAnimatedValue()
-        )
-    );
-    widthAnimation.start();
   }
 
   private void changeBpm(int change) {

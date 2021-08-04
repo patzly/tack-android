@@ -15,7 +15,7 @@ public class BpmPickerView extends View implements View.OnTouchListener {
 
   private final float ringWidth;
   private boolean isTouchable = true;
-  private boolean isTouchStartedInRing;
+  private boolean isTouchStartedInCircle;
   private double currAngle = 0;
   private double prevAngle;
   private float degreeStorage = 0;
@@ -75,20 +75,20 @@ public class BpmPickerView extends View implements View.OnTouchListener {
     final float yc = (float) getHeight() / 2;
     final float x = event.getX();
     final float y = event.getY();
-    boolean isTouchInsideRing = isTouchInsideRing(event.getX(), event.getY());
+    boolean isTouchInsideCircle = isTouchInsideCircle(event.getX(), event.getY());
 
     double angleRaw = Math.toDegrees(Math.atan2(x - xc, yc - y));
     double angle = angleRaw >= 0 ? angleRaw : 180 + (180 - Math.abs(angleRaw));
 
     if (event.getAction() == MotionEvent.ACTION_DOWN) {
-      isTouchStartedInRing = isTouchInsideRing;
+      isTouchStartedInCircle = isTouchInsideCircle;
       // on back gesture edge or outside ring
-      if (isTouchInsideRing) {
+      if (isTouchInsideCircle) {
         onPickListener.onPickDown(x, y);
       }
       currAngle = angle;
     } else if (event.getAction() == MotionEvent.ACTION_MOVE
-        && (isTouchInsideRing || isTouchStartedInRing)
+        && (isTouchInsideCircle || isTouchStartedInCircle)
     ) {
       prevAngle = currAngle;
       currAngle = angle;
@@ -143,13 +143,13 @@ public class BpmPickerView extends View implements View.OnTouchListener {
     }
   }
 
-  private boolean isTouchInsideRing(float x, float y) {
-    float radius = (Math.min(getWidth(), getHeight()) / 2f) - ringWidth;
+  private boolean isTouchInsideCircle(float x, float y) {
+    float radius = Math.min(getWidth(), getHeight()) / 2f;
     double centerX = getPivotX();
     double centerY = getPivotY();
     double distanceX = x - centerX;
     double distanceY = y - centerY;
-    return !((distanceX * distanceX) + (distanceY * distanceY) <= radius * radius);
+    return (distanceX * distanceX) + (distanceY * distanceY) <= radius * radius;
   }
 
   public interface OnRotationListener {
