@@ -3,6 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../layout/custom_preview.xml" value="0.37916666666666665" />
+        <entry key="app/src/main/res/drawable/ic_tack_wear.xml" value="0.30657894736842106" />
+        <entry key="app/src/main/res/drawable/illus_wear.xml" value="0.30657894736842106" />
+        <entry key="app/src/main/res/drawable/illus_wear_new.xml" value="0.30657894736842106" />
         <entry key="app/src/main/res/layout/activity_main_app.xml" value="0.2929824561403509" />
         <entry key="app/src/main/res/layout/activity_settings_app.xml" value="0.2929824561403509" />
         <entry key="app/src/main/res/layout/fragment_bottomsheet_changelog.xml" value="0.29342105263157897" />
