@@ -250,6 +250,7 @@
         android:tooltipText="@string/action_play_pause"
         app:backgroundTint="@color/retro_green_bg_white"
         app:rippleColor="@color/highlight_on_secondary"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.FloatingActionButton"
         tools:targetApi="o" />
 
       <FrameLayout

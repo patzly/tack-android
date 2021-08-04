@@ -48,6 +48,11 @@
     <item name="cornerSize">6dp</item>
   </style>
 
+  <style name="ShapeAppearance.Tack.FloatingActionButton" parent="">
+    <item name="cornerFamily">rounded</item>
+    <item name="cornerSize">16dp</item>
+  </style>
+
   <style
     name="Widget.Tack.RadioButton"
     parent="Widget.MaterialComponents.CompoundButton.RadioButton">
