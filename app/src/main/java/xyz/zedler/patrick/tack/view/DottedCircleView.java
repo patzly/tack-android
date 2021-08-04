@@ -1,8 +1,8 @@
 package xyz.zedler.patrick.tack.view;
 
+import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.CornerPathEffect;
@@ -30,24 +30,17 @@ public class DottedCircleView extends View {
   private final int waves;
   private final Paint paint;
   private final Path path;
-  private final float pickerPadding;
-  private final float dotSizeMin;
-  private final float dotSizeMax;
   private float touchX, touchY;
-  private int colorPicker, colorDrag;
-  private float innerRadius;
+  private final int colorDefault;
   private final float gradientRadius;
   private float gradientBlendRatio = 0;
+  private float amplitude;
+  private final float amplitudeDefault, amplitudeDrag;
   private final int[] colorsDrag;
-  private ValueAnimator alphaAnimator;
+  private AnimatorSet animatorSet;
 
   public DottedCircleView(@NonNull Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
-
-    Resources resources = getResources();
-    pickerPadding = resources.getDimensionPixelSize(R.dimen.picker_ring_padding);
-    dotSizeMin = resources.getDimensionPixelSize(R.dimen.picker_dot_size);
-    dotSizeMax = resources.getDimensionPixelSize(R.dimen.picker_dot_size_dragged);
 
     paint = new Paint();
     paint.setStyle(Style.FILL);
@@ -57,15 +50,18 @@ public class DottedCircleView extends View {
 
     gradientRadius = SystemUiUtil.dpToPx(getContext(), 180);
 
-    colorPicker = ContextCompat.getColor(context, R.color.picker);
-    colorDrag = ContextCompat.getColor(context, R.color.picker_dragged);
+    colorDefault = ContextCompat.getColor(context, R.color.picker);
 
     colorsDrag = new int[]{
-        colorDrag,
+        ContextCompat.getColor(context, R.color.picker_dragged),
         Color.parseColor("#e07b5b"),
         Color.parseColor("#e2c190"),
-        colorPicker
+        colorDefault
     };
+
+    amplitudeDefault = SystemUiUtil.dpToPx(context, 10);
+    amplitudeDrag = SystemUiUtil.dpToPx(context, 13);
+    amplitude = amplitudeDefault;
 
     path = new Path();
 
@@ -73,13 +69,9 @@ public class DottedCircleView extends View {
   }
 
   @Override
-  protected void onSizeChanged(int w, int h, int oldw, int oldh) {
-    innerRadius = getPivotY() - SystemUiUtil.dpToPx(getContext(), 10);
-  }
-
-  @Override
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
+
     drawNewStar(canvas);
   }
 
@@ -88,6 +80,7 @@ public class DottedCircleView extends View {
     float cx = getPivotX();
     float cy = getPivotY();
     float radius = getPivotX();
+    float innerRadius = radius - amplitude;
 
     path.reset();
     path.moveTo((float) (cx + radius * Math.cos(0)), (float) (cy + radius * Math.sin(0)));
@@ -117,35 +110,32 @@ public class DottedCircleView extends View {
       touchX = x;
       touchY = y;
     }
-
-    ValueAnimator animatorSize = ValueAnimator.ofFloat(
-        paint.getStrokeWidth(),
-        dragged ? dotSizeMax : dotSizeMin
-    );
-    animatorSize.addUpdateListener(animation -> {
-      /*paint.setStrokeWidth((float) animatorSize.getAnimatedValue());
-      invalidate();*/
-    });
-
-    if (alphaAnimator != null) {
-      alphaAnimator.pause();
-      alphaAnimator.cancel();
+    if (animatorSet != null) {
+      animatorSet.pause();
+      animatorSet.cancel();
     }
-    alphaAnimator = ValueAnimator.ofFloat(gradientBlendRatio, dragged ? 0.7f : 0);
+
+    ValueAnimator animatorAmplitude = ValueAnimator.ofFloat(
+        amplitude,
+        dragged ? amplitudeDrag : amplitudeDefault
+    );
+    animatorAmplitude.addUpdateListener(
+        animation -> amplitude = (float) animatorAmplitude.getAnimatedValue()
+    );
+    animatorAmplitude.setDuration(300);
+
+    ValueAnimator alphaAnimator = ValueAnimator.ofFloat(gradientBlendRatio, dragged ? 0.7f : 0);
     alphaAnimator.addUpdateListener(animation -> {
       gradientBlendRatio = (float) alphaAnimator.getAnimatedValue();
       paint.setShader(getGradient());
       invalidate();
     });
-    alphaAnimator.setInterpolator(new FastOutSlowInInterpolator());
-    alphaAnimator.setDuration(500).start();
+    alphaAnimator.setDuration(750);
 
-    /*AnimatorSet animatorSet = new AnimatorSet();
+    animatorSet = new AnimatorSet();
     animatorSet.setInterpolator(new FastOutSlowInInterpolator());
-    animatorSet.setDuration(200);
-    animatorSet.playTogether(animatorSize, animatorColor);
-    animatorSet.start();*/
-
+    animatorSet.playTogether(alphaAnimator, animatorAmplitude);
+    animatorSet.start();
 
     paint.setShader(getGradient());
     invalidate();
@@ -165,10 +155,10 @@ public class DottedCircleView extends View {
         pointF.y,
         gradientRadius,
         new int[]{
-            ColorUtils.blendARGB(colorPicker, colorsDrag[0], gradientBlendRatio),
-            ColorUtils.blendARGB(colorPicker, colorsDrag[1], gradientBlendRatio),
-            ColorUtils.blendARGB(colorPicker, colorsDrag[2], gradientBlendRatio),
-            ColorUtils.blendARGB(colorPicker, colorsDrag[3], gradientBlendRatio)
+            ColorUtils.blendARGB(colorDefault, colorsDrag[0], gradientBlendRatio),
+            ColorUtils.blendARGB(colorDefault, colorsDrag[1], gradientBlendRatio),
+            ColorUtils.blendARGB(colorDefault, colorsDrag[2], gradientBlendRatio),
+            ColorUtils.blendARGB(colorDefault, colorsDrag[3], gradientBlendRatio)
         },
         new float[]{0, 0.33f, 0.73f, 1},
         TileMode.CLAMP

@@ -1,7 +1,6 @@
 package xyz.zedler.patrick.tack.view;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -9,11 +8,9 @@ import android.view.View;
 import android.view.animation.RotateAnimation;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import xyz.zedler.patrick.tack.R;
 
 public class BpmPickerView extends View implements View.OnTouchListener {
 
-  private final float ringWidth;
   private boolean isTouchable = true;
   private boolean isTouchStartedInCircle;
   private double currAngle = 0;
@@ -24,9 +21,6 @@ public class BpmPickerView extends View implements View.OnTouchListener {
 
   public BpmPickerView(@NonNull Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
-
-    Resources resources = getResources();
-    ringWidth = resources.getDimensionPixelSize(R.dimen.picker_ring_width);
 
     prevAngle = 0;
 
@@ -85,11 +79,9 @@ public class BpmPickerView extends View implements View.OnTouchListener {
       // on back gesture edge or outside ring
       if (isTouchInsideCircle) {
         onPickListener.onPickDown(x, y);
+        currAngle = angle;
       }
-      currAngle = angle;
-    } else if (event.getAction() == MotionEvent.ACTION_MOVE
-        && (isTouchInsideCircle || isTouchStartedInCircle)
-    ) {
+    } else if (event.getAction() == MotionEvent.ACTION_MOVE && isTouchStartedInCircle) {
       prevAngle = currAngle;
       currAngle = angle;
       animate(prevAngle, currAngle);
@@ -144,7 +136,7 @@ public class BpmPickerView extends View implements View.OnTouchListener {
   }
 
   private boolean isTouchInsideCircle(float x, float y) {
-    float radius = Math.min(getWidth(), getHeight()) / 2f;
+    float radius = Math.min(getPivotX(), getPivotY());
     double centerX = getPivotX();
     double centerY = getPivotY();
     double distanceX = x - centerX;
