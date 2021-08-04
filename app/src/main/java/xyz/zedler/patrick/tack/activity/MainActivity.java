@@ -668,7 +668,7 @@ public class MainActivity extends AppCompatActivity
       if (!bookmarks.contains(service.getBpm())) {
         if (!binding.frameMainBookmark.isEnabled()) {
           if (animated) {
-            binding.frameMainBookmark.animate().alpha(1).setDuration(300).start();
+            binding.frameMainBookmark.animate().alpha(1).setDuration(250).start();
           } else {
             binding.frameMainBookmark.setAlpha(1);
           }
@@ -677,7 +677,7 @@ public class MainActivity extends AppCompatActivity
       } else {
         if (binding.frameMainBookmark.isEnabled()) {
           if (animated) {
-            binding.frameMainBookmark.animate().alpha(0.5f).setDuration(300).start();
+            binding.frameMainBookmark.animate().alpha(0.5f).setDuration(250).start();
           } else {
             binding.frameMainBookmark.setAlpha(0.5f);
           }
@@ -711,7 +711,7 @@ public class MainActivity extends AppCompatActivity
         active ? R.color.retro_blue_fg : R.color.stroke_primary
     );
     ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-    colorAnimation.setDuration(300);
+    colorAnimation.setDuration(250);
     colorAnimation.addUpdateListener(
         animator -> chip.setChipStrokeColor(
             new ColorStateList(
@@ -728,7 +728,7 @@ public class MainActivity extends AppCompatActivity
     float widthTo = getResources()
         .getDimension(active ? R.dimen.chip_stroke_width_active : R.dimen.chip_stroke_width);
     ValueAnimator widthAnimation = ValueAnimator.ofObject(new FloatEvaluator(), widthFrom, widthTo);
-    widthAnimation.setDuration(300);
+    widthAnimation.setDuration(250);
     widthAnimation.addUpdateListener(
         animator -> chip.setChipStrokeWidth(
             (float) animator.getAnimatedValue()
