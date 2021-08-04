@@ -10,6 +10,10 @@ import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
+import android.graphics.PointF;
+import android.graphics.RadialGradient;
+import android.graphics.Shader;
+import android.graphics.Shader.TileMode;
 import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.NonNull;
@@ -29,6 +33,7 @@ public class DottedCircleView extends View {
   private final float pickerPadding;
   private final float dotSizeMin;
   private final float dotSizeMax;
+  private float touchX, touchY;
 
   public DottedCircleView(@NonNull Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
@@ -84,7 +89,12 @@ public class DottedCircleView extends View {
     canvas.drawPath(path, paint);
   }
 
-  public void setDragged(boolean dragged) {
+  public void setDragged(boolean dragged, float x, float y) {
+    if (dragged) {
+      touchX = x;
+      touchY = y;
+    }
+
     ValueAnimator animatorSize = ValueAnimator.ofFloat(
         paint.getStrokeWidth(),
         dragged ? dotSizeMax : dotSizeMin
@@ -112,5 +122,40 @@ public class DottedCircleView extends View {
     animatorSet.setDuration(200);
     animatorSet.playTogether(animatorSize, animatorColor);
     animatorSet.start();
+
+
+    paint.setShader(getGradient());
+    invalidate();
+  }
+
+  public void onDrag(float x, float y) {
+    touchX = x;
+    touchY = y;
+    paint.setShader(getGradient());
+    invalidate();
+  }
+
+  private Shader getGradient() {
+    PointF pointF = getRotatedPoint(touchX, touchY, getPivotX(), getPivotY(), -getRotation());
+    return new RadialGradient(
+        pointF.x,
+        pointF.y,
+        500,
+        ContextCompat.getColor(getContext(), R.color.retro_red),
+        ContextCompat.getColor(getContext(), R.color.retro_dirt),
+        TileMode.CLAMP
+    );
+  }
+
+  private PointF getRotatedPoint(float x, float y, float cx, float cy, float degrees) {
+    double radians = Math.toRadians(degrees);
+
+    float x1 = x - cx;
+    float y1 = y - cy;
+
+    float x2 = (float) (x1 * Math.cos(radians) - y1 * Math.sin(radians));
+    float y2 = (float) (x1 * Math.sin(radians) + y1 * Math.cos(radians));
+
+    return new PointF(x2 + cx, y2 + cy);
   }
 }
