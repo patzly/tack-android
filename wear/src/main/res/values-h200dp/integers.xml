@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <integer name="picker_dots">16</integer>
+  <integer name="picker_dots">15</integer>
 
 </resources>

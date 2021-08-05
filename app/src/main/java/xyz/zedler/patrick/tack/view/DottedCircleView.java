@@ -72,10 +72,10 @@ public class DottedCircleView extends View {
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
 
-    drawNewStar(canvas);
+    drawStar(canvas);
   }
 
-  public void drawNewStar(Canvas canvas) {
+  public void drawStar(Canvas canvas) {
     double section = 2 * Math.PI / waves;
     float cx = getPivotX();
     float cy = getPivotY();

@@ -6,7 +6,9 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
+import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.NonNull;
@@ -14,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class DottedCircleView extends View {
 
@@ -40,6 +43,7 @@ public class DottedCircleView extends View {
     paint.setStrokeCap(Paint.Cap.ROUND);
     paint.setStrokeWidth(dotSizeMin);
     paint.setAntiAlias(true);
+    paint.setPathEffect(new CornerPathEffect(ViewUtil.dpToPx(context, 9)));
 
     dots = getResources().getInteger(R.integer.picker_dots);
   }
@@ -52,7 +56,7 @@ public class DottedCircleView extends View {
       return;
     }
 
-    float centerX = getPivotX();
+    /*float centerX = getPivotX();
     float centerY = getPivotY();
     float min = Math.min(getWidth(), getHeight());
     float radius = (min / 2) - pickerPadding / 2;
@@ -63,7 +67,39 @@ public class DottedCircleView extends View {
           ((float) Math.sin(d) * radius) + centerY,
           paint
       );
+    }*/
+    drawStar(canvas);
+  }
+
+  public void drawStar(Canvas canvas) {
+    double section = 2 * Math.PI / dots;
+    float cx = getPivotX();
+    float cy = getPivotY();
+    float radius = getPivotX() - pickerPadding / 2;
+    float innerRadius = radius - ViewUtil.dpToPx(getContext(), 10);
+
+    Path path = new Path();
+    path.reset();
+    path.moveTo((float) (cx + radius * Math.cos(0)), (float) (cy + radius * Math.sin(0)));
+    path.lineTo(
+        (float) (cx + innerRadius * Math.cos(section / 2)),
+        (float) (cy + innerRadius * Math.sin(section / 2))
+    );
+
+    for (int i = 1; i < dots; i++) {
+      path.lineTo(
+          (float) (cx + radius * Math.cos(section * i)),
+          (float) (cy + radius * Math.sin(section * i))
+      );
+      path.lineTo(
+          (float) (cx + innerRadius * Math.cos(section * i + section / 2)),
+          (float) (cy + innerRadius * Math.sin(section * i + section / 2))
+      );
     }
+
+    path.close();
+
+    canvas.drawPath(path, paint);
   }
 
   @Override
