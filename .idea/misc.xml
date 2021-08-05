@@ -14,7 +14,9 @@
         <entry key="app/src/main/res/layout/fragment_bottomsheet_feedback.xml" value="0.29342105263157897" />
         <entry key="app/src/main/res/layout/fragment_bottomsheet_text.xml" value="0.29342105263157897" />
         <entry key="app/src/main/res/layout/fragment_bottomsheet_wear.xml" value="0.29342105263157897" />
+        <entry key="wear/src/main/res/drawable/ripple_circular.xml" value="0.30657894736842106" />
         <entry key="wear/src/main/res/layout/activity_main_wear.xml" value="0.29342105263157897" />
+        <entry key="wear/src/main/res/layout/activity_onboarding_wear.xml" value="0.29342105263157897" />
       </map>
     </option>
   </component>
