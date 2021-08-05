@@ -16,7 +16,8 @@ import androidx.wear.ambient.AmbientModeSupport;
 import androidx.wear.widget.SwipeDismissFrameLayout;
 import java.util.ArrayList;
 import java.util.List;
-import xyz.zedler.patrick.tack.Constants;
+import xyz.zedler.patrick.tack.Constants.DEF;
+import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivityMainWearBinding;
@@ -75,16 +76,11 @@ public class MainActivity extends FragmentActivity
     handler = new Handler(Looper.getMainLooper());
     intervals = new ArrayList<>();
 
-    isFirstRotation = sharedPrefs.getBoolean(
-        Constants.PREF.FIRST_ROTATION, Constants.DEF.FIRST_ROTATION
-    );
-    interval = sharedPrefs.getLong(Constants.PREF.INTERVAL, Constants.DEF.INTERVAL
-    );
+    isFirstRotation = sharedPrefs.getBoolean(PREF.FIRST_ROTATION, DEF.FIRST_ROTATION);
+    interval = sharedPrefs.getLong(PREF.INTERVAL, DEF.INTERVAL);
     bpm = (int) (60000 / interval);
 
-    hidePicker = sharedPrefs.getBoolean(
-        SETTINGS.HIDE_PICKER, Constants.DEF.HIDE_PICKER
-    );
+    hidePicker = sharedPrefs.getBoolean(SETTINGS.HIDE_PICKER, DEF.HIDE_PICKER);
     updatePickerVisibility();
 
     // VIEWS
@@ -93,9 +89,7 @@ public class MainActivity extends FragmentActivity
 
     binding.imagePlayPause.setImageResource(R.drawable.ic_round_play_arrow);
 
-    binding.textEmphasis.setText(String.valueOf(
-        sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS))
-    );
+    binding.textEmphasis.setText(String.valueOf(sharedPrefs.getInt(PREF.EMPHASIS, DEF.EMPHASIS)));
 
     binding.swipeDismiss.addCallback(new SwipeDismissFrameLayout.Callback() {
       @Override
@@ -172,9 +166,7 @@ public class MainActivity extends FragmentActivity
           Toast.makeText(
               MainActivity.this, R.string.msg_hide_picker, Toast.LENGTH_LONG
           ).show();
-          sharedPrefs.edit().putBoolean(
-              Constants.PREF.FIRST_ROTATION, isFirstRotation
-          ).apply();
+          sharedPrefs.edit().putBoolean(PREF.FIRST_ROTATION, isFirstRotation).apply();
         }
       }
 
@@ -186,9 +178,9 @@ public class MainActivity extends FragmentActivity
 
     // ONBOARDING
 
-    if (sharedPrefs.getBoolean(Constants.PREF.FIRST_START, Constants.DEF.FIRST_START)) {
+    if (sharedPrefs.getBoolean(PREF.FIRST_START, DEF.FIRST_START)) {
       startActivity(new Intent(this, OnboardingActivity.class));
-      sharedPrefs.edit().putBoolean(Constants.PREF.FIRST_START, false).apply();
+      sharedPrefs.edit().putBoolean(PREF.FIRST_START, false).apply();
     }
 
     // AMBIENT MODE
@@ -208,31 +200,19 @@ public class MainActivity extends FragmentActivity
   protected void onResume() {
     super.onResume();
 
-    boolean hidePickerNew = sharedPrefs.getBoolean(
-        SETTINGS.HIDE_PICKER, Constants.DEF.HIDE_PICKER
-    );
+    boolean hidePickerNew = sharedPrefs.getBoolean(SETTINGS.HIDE_PICKER, DEF.HIDE_PICKER);
     if (hidePicker != hidePickerNew) {
       hidePicker = hidePickerNew;
       updatePickerVisibility();
     }
 
-    animations = sharedPrefs.getBoolean(SETTINGS.ANIMATIONS, Constants.DEF.ANIMATIONS);
-    emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS);
-    heavyVibration = sharedPrefs.getBoolean(
-        SETTINGS.HEAVY_VIBRATION, Constants.DEF.HEAVY_VIBRATION
-    );
-    vibrateAlways = sharedPrefs.getBoolean(
-        SETTINGS.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
-    );
-    hapticFeedback = sharedPrefs.getBoolean(
-        SETTINGS.HAPTIC_FEEDBACK, Constants.DEF.HAPTIC_FEEDBACK
-    );
-    wristGestures = sharedPrefs.getBoolean(
-        SETTINGS.WRIST_GESTURES, Constants.DEF.WRIST_GESTURES
-    );
-    isBeatModeVibrate = sharedPrefs.getBoolean(
-        Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
-    );
+    animations = sharedPrefs.getBoolean(SETTINGS.ANIMATIONS, DEF.ANIMATIONS);
+    emphasis = sharedPrefs.getInt(PREF.EMPHASIS, DEF.EMPHASIS);
+    heavyVibration = sharedPrefs.getBoolean(SETTINGS.HEAVY_VIBRATION, DEF.HEAVY_VIBRATION);
+    vibrateAlways = sharedPrefs.getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.VIBRATE_ALWAYS);
+    hapticFeedback = sharedPrefs.getBoolean(SETTINGS.HAPTIC_FEEDBACK, DEF.HAPTIC_FEEDBACK);
+    wristGestures = sharedPrefs.getBoolean(SETTINGS.WRIST_GESTURES, DEF.WRIST_GESTURES);
+    isBeatModeVibrate = sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE);
     updateBeatMode();
   }
 
@@ -441,15 +421,13 @@ public class MainActivity extends FragmentActivity
       }
       SharedPreferences.Editor editor = sharedPrefs.edit();
       if (!audioUtil.isSpeakerAvailable() && sharedPrefs.getBoolean(
-          Constants.PREF.FIRST_SPEAKER_MODE, Constants.DEF.FIRST_SPEAKER_MODE
+          PREF.FIRST_SPEAKER_MODE, DEF.FIRST_SPEAKER_MODE
       )) {
         Toast.makeText(this, R.string.msg_no_speaker, Toast.LENGTH_LONG).show();
-        editor.putBoolean(Constants.PREF.FIRST_SPEAKER_MODE, false).apply();
+        editor.putBoolean(PREF.FIRST_SPEAKER_MODE, false).apply();
       }
       isBeatModeVibrate = !isBeatModeVibrate;
-      editor.putBoolean(
-          Constants.PREF.BEAT_MODE_VIBRATE, isBeatModeVibrate
-      ).apply();
+      editor.putBoolean(PREF.BEAT_MODE_VIBRATE, isBeatModeVibrate).apply();
       if (animations) {
         ViewUtil.startIcon(binding.imageBeatMode);
       }
@@ -471,14 +449,14 @@ public class MainActivity extends FragmentActivity
       if (canPlayHapticFeedback()) {
         hapticUtil.tick();
       }
-      int bookmark = sharedPrefs.getInt(Constants.PREF.BOOKMARK, Constants.DEF.BOOKMARK);
+      int bookmark = sharedPrefs.getInt(PREF.BOOKMARK, DEF.BOOKMARK);
       if (bookmark == -1) {
         Toast.makeText(
             this, R.string.msg_bookmark, Toast.LENGTH_LONG
         ).show();
         bookmark = bpm;
       }
-      sharedPrefs.edit().putInt(Constants.PREF.BOOKMARK, bpm).apply();
+      sharedPrefs.edit().putInt(PREF.BOOKMARK, bpm).apply();
       int finalBookmark = bookmark;
       binding.textBpm.animate().alpha(0).withEndAction(() -> {
         setBpm(finalBookmark);
@@ -491,10 +469,10 @@ public class MainActivity extends FragmentActivity
   }
 
   private void setNextEmphasis() {
-    int emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS);
+    int emphasis = sharedPrefs.getInt(PREF.EMPHASIS, DEF.EMPHASIS);
     int emphasisNew = emphasis < 6 ? emphasis + 1 : 0;
     this.emphasis = emphasisNew;
-    sharedPrefs.edit().putInt(Constants.PREF.EMPHASIS, emphasisNew).apply();
+    sharedPrefs.edit().putInt(PREF.EMPHASIS, emphasisNew).apply();
     new Handler(Looper.getMainLooper()).postDelayed(
         () -> binding.textEmphasis.setText(String.valueOf(emphasisNew)),
         animations ? 150 : 0
@@ -515,7 +493,7 @@ public class MainActivity extends FragmentActivity
               ? R.drawable.ic_round_volume_on_to_volume_off_anim
               : R.drawable.ic_round_volume_to_vibrate_anim
       );
-      sound = sharedPrefs.getString(Constants.SETTINGS.SOUND, Constants.DEF.SOUND);
+      sound = sharedPrefs.getString(SETTINGS.SOUND, DEF.SOUND);
     }
   }
 
@@ -607,7 +585,7 @@ public class MainActivity extends FragmentActivity
     this.bpm = Math.min(bpm, 400);
     binding.textBpm.setText(String.valueOf(this.bpm));
     interval = 60000 / bpm;
-    sharedPrefs.edit().putLong(Constants.PREF.INTERVAL, interval).apply();
+    sharedPrefs.edit().putLong(PREF.INTERVAL, interval).apply();
   }
 
   private long getIntervalAverage() {
