@@ -1,11 +1,11 @@
 3.0.0:
-- New: playful "Material You" look in preparation for Android 12!
+- New: playful "Material You" look in preparation for Android 12
 - New: sound is played when selected in settings
 - New: haptic interface feedback
 - Improved: on watches with Android 10 or higher, native haptic effects will be used
 - Improved: BPM up to 400 instead of 300
-- Improved: typeface of BPM label
 - Improved: rotary input speed and accuracy
+- Fixed: duplicated button long-press hint
 
 2.2.0:
 - New: Jost* typeface

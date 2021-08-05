@@ -77,6 +77,10 @@ public class ButtonUtil {
     nextRun = 400;
   }
 
+  public void otherButtonWasPressed() {
+    isFirstButtonPress = false;
+  }
+
   public interface OnPressListener {
 
     void onPress();

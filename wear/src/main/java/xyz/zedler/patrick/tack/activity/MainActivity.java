@@ -326,9 +326,11 @@ public class MainActivity extends FragmentActivity
       return true;
     } else if (keyCode == KeyEvent.KEYCODE_STEM_1) {
       buttonUtilFaster.onPressDown();
+      buttonUtilSlower.otherButtonWasPressed();
       return true;
     } else if (keyCode == KeyEvent.KEYCODE_STEM_2) {
       buttonUtilSlower.onPressDown();
+      buttonUtilFaster.otherButtonWasPressed();
       return true;
     }
     return super.onKeyDown(keyCode, event);
