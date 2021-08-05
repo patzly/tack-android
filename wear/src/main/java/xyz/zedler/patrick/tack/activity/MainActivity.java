@@ -158,7 +158,7 @@ public class MainActivity extends FragmentActivity
           rotaryFactorIndex++;
         } else {
           // more rotation needed for bpm to change again
-          rotaryFactorIndex = rotaryFactorIndex < 3 ? rotaryFactorIndex + 1 : 0;
+          rotaryFactorIndex = rotaryFactorIndex < 4 ? rotaryFactorIndex + 1 : 0;
         }
 
         if (isFirstRotation && !hidePicker) {

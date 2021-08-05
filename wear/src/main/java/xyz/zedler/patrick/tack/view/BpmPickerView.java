@@ -86,7 +86,7 @@ public class BpmPickerView extends View
 
     float scrolled = RotaryEncoderHelper.getRotaryAxisValue(event);
     float factor = RotaryEncoderHelper.getScaledScrollFactor(getContext());
-    float delta = -scrolled * (factor / 5);
+    float delta = -scrolled * (factor / 4);
     float rotaryThreshold = 0.065f;
 
     rotaryStorage = rotaryStorage + -scrolled;
@@ -160,8 +160,6 @@ public class BpmPickerView extends View
         0.5f
     );
     rotate.setDuration(0);
-    rotate.setFillEnabled(true);
-    rotate.setFillAfter(true);
     startAnimation(rotate);
 
     float degreeDiff = (float) toDegrees - (float) fromDegrees;
