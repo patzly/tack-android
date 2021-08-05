@@ -100,8 +100,8 @@
             android:layout_height="@dimen/bpm_picker_size"
             android:importantForAccessibility="yes" />
 
-          <xyz.zedler.patrick.tack.view.DottedCircleView
-            android:id="@+id/dotted_circle_main"
+          <xyz.zedler.patrick.tack.view.CircleView
+            android:id="@+id/circle_main"
             android:layout_width="@dimen/bpm_picker_size"
             android:layout_height="@dimen/bpm_picker_size" />
 

@@ -118,7 +118,7 @@ public class MainActivity extends FragmentActivity
 
       @Override
       public void onRotate(float change) {
-        binding.dottedCircle.setRotation(binding.dottedCircle.getRotation() + change);
+        binding.circle.setRotation(binding.circle.getRotation() + change);
       }
     });
     binding.bpmPicker.setOnPickListener(new BpmPickerView.OnPickListener() {
@@ -128,12 +128,12 @@ public class MainActivity extends FragmentActivity
         if (!isOnRing) {
           return;
         }
-        binding.dottedCircle.setDragged(true, x, y, animations);
+        binding.circle.setDragged(true, x, y, animations);
       }
 
       @Override
       public void onDrag(float x, float y) {
-        binding.dottedCircle.onDrag(x, y, animations);
+        binding.circle.onDrag(x, y, animations);
       }
 
       @Override
@@ -142,7 +142,7 @@ public class MainActivity extends FragmentActivity
           return;
         }
         binding.swipeDismiss.setSwipeable(true);
-        binding.dottedCircle.setDragged(false, 0, 0, animations);
+        binding.circle.setDragged(false, 0, 0, animations);
       }
     });
     binding.bpmPicker.setOnRotaryInputListener(new BpmPickerView.OnRotaryInputListener() {
@@ -172,7 +172,7 @@ public class MainActivity extends FragmentActivity
 
       @Override
       public void onRotate(float change) {
-        binding.dottedCircle.setRotation(binding.dottedCircle.getRotation() + change);
+        binding.circle.setRotation(binding.circle.getRotation() + change);
       }
     });
 
@@ -231,7 +231,7 @@ public class MainActivity extends FragmentActivity
             binding.framePlayPause,
             binding.textEmphasis,
             binding.bpmPicker,
-            binding.dottedCircle
+            binding.circle
         );
         ViewUtil.setFontFamily(binding.textBpm, R.font.edwin_roman);
         ViewUtil.setTextSize(binding.textBpm, R.dimen.text_size_bpm_ambient);
@@ -261,11 +261,11 @@ public class MainActivity extends FragmentActivity
             binding.framePlayPause,
             binding.textEmphasis,
             binding.bpmPicker,
-            binding.dottedCircle
+            binding.circle
         );
         binding.bpmPicker.requestFocus();
         binding.bpmPicker.setTouchable(!hidePicker);
-        binding.dottedCircle.setDotsVisibility(!hidePicker);
+        binding.circle.setDotsVisibility(!hidePicker);
         ViewUtil.setFontFamily(binding.textBpm, R.font.edwin_bold);
         ViewUtil.setTextSize(
             binding.textBpm,
@@ -503,7 +503,7 @@ public class MainActivity extends FragmentActivity
 
   private void updatePickerVisibility() {
     binding.bpmPicker.setTouchable(!hidePicker);
-    binding.dottedCircle.setDotsVisibility(!hidePicker);
+    binding.circle.setDotsVisibility(!hidePicker);
 
     ViewUtil.setSize(
         hidePicker ? R.dimen.icon_size : R.dimen.icon_size_picker,
@@ -615,7 +615,7 @@ public class MainActivity extends FragmentActivity
             binding.imageSettings,
             binding.imageEmphasis,
             binding.textEmphasis,
-            binding.dottedCircle,
+            binding.circle,
             binding.imageBookmark
         );
       } else {
@@ -630,7 +630,7 @@ public class MainActivity extends FragmentActivity
             binding.imageSettings,
             binding.imageEmphasis,
             binding.textEmphasis,
-            binding.dottedCircle,
+            binding.circle,
             binding.imageBookmark
         );
       }
@@ -648,7 +648,7 @@ public class MainActivity extends FragmentActivity
             binding.imageSettings,
             binding.imageEmphasis,
             binding.textEmphasis,
-            binding.dottedCircle,
+            binding.circle,
             binding.imageBookmark
         );
       } else {
@@ -663,7 +663,7 @@ public class MainActivity extends FragmentActivity
             binding.imageSettings,
             binding.imageEmphasis,
             binding.textEmphasis,
-            binding.dottedCircle,
+            binding.circle,
             binding.imageBookmark
         );
       }

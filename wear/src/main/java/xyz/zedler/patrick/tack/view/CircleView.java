@@ -23,9 +23,9 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
-public class DottedCircleView extends View {
+public class CircleView extends View {
 
-  private final static String TAG = DottedCircleView.class.getSimpleName();
+  private final static String TAG = CircleView.class.getSimpleName();
 
   private final int waves;
   private final Paint paint;
@@ -43,7 +43,7 @@ public class DottedCircleView extends View {
   private final int[] colorsDrag;
   private AnimatorSet animatorSet;
 
-  public DottedCircleView(@NonNull Context context, @Nullable AttributeSet attrs) {
+  public CircleView(@NonNull Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
 
     Resources resources = getResources();
@@ -134,47 +134,6 @@ public class DottedCircleView extends View {
     invalidate();
   }
 
-  public void setHighlighted(boolean highlighted, boolean animated) {
-    if (animated) {
-      ValueAnimator animatorSize = ValueAnimator.ofFloat(
-          paint.getStrokeWidth(),
-          highlighted ? strokeWidthMax : strokeWidthMin
-      );
-      animatorSize.addUpdateListener(animation -> {
-        paint.setStrokeWidth((float) animatorSize.getAnimatedValue());
-        invalidate();
-      });
-
-      ValueAnimator animatorColor = ValueAnimator.ofObject(
-          new ArgbEvaluator(),
-          paint.getColor(),
-          ContextCompat.getColor(
-              getContext(),
-              highlighted ? R.color.retro_dirt : R.color.on_background_secondary
-          )
-      );
-      animatorColor.addUpdateListener(animation -> {
-        paint.setColor((int) animatorColor.getAnimatedValue());
-        invalidate();
-      });
-
-      animatorSet = new AnimatorSet();
-      animatorSet.setInterpolator(new FastOutSlowInInterpolator());
-      animatorSet.setDuration(200);
-      animatorSet.playTogether(animatorSize, animatorColor);
-      animatorSet.start();
-    } else {
-      paint.setStrokeWidth(highlighted ? strokeWidthMax : strokeWidthMin);
-      paint.setColor(
-          ContextCompat.getColor(
-              getContext(),
-              highlighted ? R.color.retro_dirt : R.color.on_background_secondary
-          )
-      );
-      invalidate();
-    }
-  }
-
   public void setDragged(boolean dragged, float x, float y, boolean animated) {
     if (!animated) {
       paint.setStrokeWidth(dragged ? strokeWidthMax : strokeWidthMin);
@@ -202,9 +161,9 @@ public class DottedCircleView extends View {
     ValueAnimator animatorWidth = ValueAnimator.ofFloat(
         paint.getStrokeWidth(), dragged ? strokeWidthMax : strokeWidthMin
     );
-    animatorWidth.addUpdateListener(animation -> {
-      paint.setStrokeWidth((float) animatorWidth.getAnimatedValue());
-    });
+    animatorWidth.addUpdateListener(
+        animation -> paint.setStrokeWidth((float) animatorWidth.getAnimatedValue())
+    );
 
     // STROKE COLOR
 

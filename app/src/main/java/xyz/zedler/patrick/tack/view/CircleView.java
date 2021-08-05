@@ -22,9 +22,9 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.SystemUiUtil;
 
-public class DottedCircleView extends View {
+public class CircleView extends View {
 
-  private final static String TAG = DottedCircleView.class.getSimpleName();
+  private final static String TAG = CircleView.class.getSimpleName();
 
   private final int waves;
   private final Paint paint;
@@ -38,7 +38,7 @@ public class DottedCircleView extends View {
   private final int[] colorsDrag;
   private AnimatorSet animatorSet;
 
-  public DottedCircleView(@NonNull Context context, @Nullable AttributeSet attrs) {
+  public CircleView(@NonNull Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
 
     paint = new Paint();

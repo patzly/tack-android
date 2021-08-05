@@ -143,25 +143,25 @@ public class MainActivity extends AppCompatActivity
 
       @Override
       public void onRotate(float change) {
-        binding.dottedCircleMain.setRotation(
-            binding.dottedCircleMain.getRotation() + change
+        binding.circleMain.setRotation(
+            binding.circleMain.getRotation() + change
         );
       }
     });
     binding.bpmPickerMain.setOnPickListener(new BpmPickerView.OnPickListener() {
       @Override
       public void onPickDown(float x, float y) {
-        binding.dottedCircleMain.setDragged(true, x, y);
+        binding.circleMain.setDragged(true, x, y);
       }
 
       @Override
       public void onDrag(float x, float y) {
-        binding.dottedCircleMain.onDrag(x, y);
+        binding.circleMain.onDrag(x, y);
       }
 
       @Override
       public void onPickUpOrCancel() {
-        binding.dottedCircleMain.setDragged(false, 0, 0);
+        binding.circleMain.setDragged(false, 0, 0);
       }
     });
 
