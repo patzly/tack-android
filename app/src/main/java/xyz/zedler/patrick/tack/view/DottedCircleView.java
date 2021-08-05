@@ -4,7 +4,6 @@ import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
@@ -51,11 +50,12 @@ public class DottedCircleView extends View {
     gradientRadius = SystemUiUtil.dpToPx(getContext(), 180);
 
     colorDefault = ContextCompat.getColor(context, R.color.picker);
+    int colorDrag = ContextCompat.getColor(context, R.color.picker_dragged);
 
     colorsDrag = new int[]{
-        ContextCompat.getColor(context, R.color.picker_dragged),
-        Color.parseColor("#e07b5b"),
-        Color.parseColor("#e2c190"),
+        colorDrag,
+        ColorUtils.blendARGB(colorDrag, colorDefault, 0.4f),
+        ColorUtils.blendARGB(colorDrag, colorDefault, 0.8f),
         colorDefault
     };
 

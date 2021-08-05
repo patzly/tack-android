@@ -2,8 +2,10 @@
 <resources>
 
   <color name="retro_red_fg">@color/retro_red_bg_black</color>
+  <color name="retro_red_bg_black">#df8771</color>
   <color name="retro_yellow_bg_black">#e3c77b</color>
   <color name="retro_dirt_fg">@color/retro_dirt</color>
+  <color name="retro_dirt_bg_black">#cbc49f</color>
   <color name="retro_green_fg">@color/retro_green_bg_black</color>
   <color name="retro_green_fg_invert">#60837a</color>
   <color name="retro_blue_fg">@color/retro_blue_bg</color>
@@ -42,5 +44,7 @@
   <color name="tooltip_text">@color/black</color>
 
   <color name="logo_wood">#dad29e</color>
+
+  <color name="bookmark_active">@color/retro_blue</color>
 
 </resources>

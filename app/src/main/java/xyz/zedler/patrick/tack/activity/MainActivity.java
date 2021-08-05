@@ -1,5 +1,6 @@
 package xyz.zedler.patrick.tack.activity;
 
+import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
@@ -32,6 +33,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.DialogFragment;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
@@ -378,7 +380,7 @@ public class MainActivity extends AppCompatActivity
 
       long interval = System.currentTimeMillis() - prevTouchTime;
       if (prevTouchTime > 0 && interval <= 6000) {
-        if (intervals.size() == 4) {
+        while (intervals.size() >= 10) {
           intervals.remove(0);
         }
         intervals.add(System.currentTimeMillis() - prevTouchTime);
@@ -614,6 +616,7 @@ public class MainActivity extends AppCompatActivity
     chip.setChipBackgroundColorResource(R.color.bookmark_inactive);
     chip.setStateListAnimator(null);
     chip.setText(String.valueOf(bpm));
+    chip.setTextColor(ContextCompat.getColor(this, R.color.on_surface));
     chip.setTextSize(18);
     chip.setChipEndPadding(SystemUiUtil.dpToPx(this, 10));
     chip.setHeight(SystemUiUtil.dpToPx(this, 56));
@@ -711,23 +714,33 @@ public class MainActivity extends AppCompatActivity
   private void animateChip(Chip chip, boolean active) {
     int colorFrom = Objects.requireNonNull(chip.getChipBackgroundColor()).getDefaultColor();
     int colorTo = ContextCompat.getColor(
-        this,
-        active ? R.color.bookmark_active : R.color.bookmark_inactive
+        this, active ? R.color.bookmark_active : R.color.bookmark_inactive
     );
     ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-    colorAnimation.setDuration(250);
     colorAnimation.addUpdateListener(
         animator -> chip.setChipBackgroundColor(
-            new ColorStateList(
-                new int[][]{
-                    new int[]{android.R.attr.state_enabled}
-                },
-                new int[]{
-                    (int) animator.getAnimatedValue()
-                }
-            ))
+            ColorStateList.valueOf((int) animator.getAnimatedValue())
+        )
     );
-    colorAnimation.start();
+
+    int closeColorFrom = Objects.requireNonNull(chip.getCloseIconTint()).getDefaultColor();
+    int closeColorTo = ContextCompat.getColor(
+        this, active ? R.color.on_surface : R.color.icon
+    );
+    ValueAnimator closeColorAnimation = ValueAnimator.ofObject(
+        new ArgbEvaluator(), closeColorFrom, closeColorTo
+    );
+    closeColorAnimation.addUpdateListener(
+        animator -> chip.setCloseIconTint(
+            ColorStateList.valueOf((int) animator.getAnimatedValue())
+        )
+    );
+
+    AnimatorSet animatorSet = new AnimatorSet();
+    animatorSet.playTogether(colorAnimation, closeColorAnimation);
+    animatorSet.setDuration(250);
+    animatorSet.setInterpolator(new FastOutSlowInInterpolator());
+    animatorSet.start();
   }
 
   private void changeBpm(int change) {
