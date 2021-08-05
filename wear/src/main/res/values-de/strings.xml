@@ -18,7 +18,7 @@
 
   <string name="onboarding_welcome">Willkommen!</string>
   <string name="onboarding_text">Zum Anpassen des Tempos:</string>
-  <string name="onboarding_picker">Gepunkteter Kreis</string>
+  <string name="onboarding_picker">Gewellter Kreis</string>
   <string name="onboarding_picker_description">Wischen und drehen</string>
   <string name="onboarding_wrist_description">Wenn aktiviert</string>
   <string name="onboarding_rotary">Kronen-Eingabe</string>

@@ -20,7 +20,7 @@
 
   <string name="onboarding_welcome">Welcome!</string>
   <string name="onboarding_text">To control the tempo:</string>
-  <string name="onboarding_picker">Dotted circle</string>
+  <string name="onboarding_picker">Wavy circle</string>
   <string name="onboarding_picker_description">Drag to change</string>
   <string name="onboarding_wrist_description">If enabled</string>
   <string name="onboarding_rotary">Rotary input</string>

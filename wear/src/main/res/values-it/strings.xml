@@ -18,7 +18,7 @@
 
   <string name="onboarding_welcome">Benvenuti!</string>
   <string name="onboarding_text">Per controllare il tempo:</string>
-  <string name="onboarding_picker">Cerchio punteggiato</string>
+  <string name="onboarding_picker">Cerchio ondulato</string>
   <string name="onboarding_picker_description">Trascinare per cambiare</string>
   <string name="onboarding_wrist_description">Se abilitato</string>
   <string name="onboarding_rotary">Ingresso rotativo</string>

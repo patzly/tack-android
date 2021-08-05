@@ -18,7 +18,7 @@
 
   <string name="onboarding_welcome">Bienvenido!</string>
   <string name="onboarding_text">Para controlar el tempo:</string>
-  <string name="onboarding_picker">Círculo de puntos</string>
+  <string name="onboarding_picker">Círculo ondulado</string>
   <string name="onboarding_picker_description">Arrastrar para cambiar</string>
   <string name="onboarding_wrist_description">Si está activado</string>
   <string name="onboarding_rotary">Entrada rotativa</string>
