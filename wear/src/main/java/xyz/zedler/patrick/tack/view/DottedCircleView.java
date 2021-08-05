@@ -9,11 +9,16 @@ import android.graphics.Canvas;
 import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PointF;
+import android.graphics.RadialGradient;
+import android.graphics.Shader;
+import android.graphics.Shader.TileMode;
 import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ViewUtil;
@@ -22,63 +27,78 @@ public class DottedCircleView extends View {
 
   private final static String TAG = DottedCircleView.class.getSimpleName();
 
-  private final int dots;
+  private final int waves;
   private final Paint paint;
   private final float pickerPadding;
-  private final float dotSizeMin;
-  private final float dotSizeMax;
-  private boolean areDotsVisible = true;
+  private final float strokeWidthMin;
+  private final float strokeWidthMax;
+  private boolean isPickerVisible = true;
+  private final Path path;
+  private float touchX, touchY;
+  private int colorDefault;
+  private final float gradientRadius;
+  private float gradientBlendRatio = 0;
+  private float amplitude;
+  private final float amplitudeDefault, amplitudeDrag;
+  private final int[] colorsDrag;
+  private AnimatorSet animatorSet;
 
   public DottedCircleView(@NonNull Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
 
     Resources resources = getResources();
     pickerPadding = resources.getDimensionPixelSize(R.dimen.picker_ring_padding);
-    dotSizeMin = resources.getDimensionPixelSize(R.dimen.picker_dot_size);
-    dotSizeMax = resources.getDimensionPixelSize(R.dimen.picker_dot_size_dragged);
+    strokeWidthMin = resources.getDimensionPixelSize(R.dimen.picker_width);
+    strokeWidthMax = resources.getDimensionPixelSize(R.dimen.picker_width_dragged);
+
+    gradientRadius = ViewUtil.dpToPx(getContext(), 170);
+
+    colorDefault = ContextCompat.getColor(context, R.color.on_background_secondary);
+    int colorDrag = ContextCompat.getColor(context, R.color.retro_red);
+
+    colorsDrag = new int[]{
+        colorDrag,
+        ColorUtils.blendARGB(colorDrag, colorDefault, 0.4f),
+        ColorUtils.blendARGB(colorDrag, colorDefault, 0.8f),
+        colorDefault
+    };
+
+    amplitudeDefault = ViewUtil.dpToPx(context, 10);
+    amplitudeDrag = ViewUtil.dpToPx(context, 13);
+    amplitude = amplitudeDefault;
 
     paint = new Paint();
     paint.setStyle(Paint.Style.STROKE);
     paint.setColor(context.getColor(R.color.on_background_secondary));
     paint.setStrokeCap(Paint.Cap.ROUND);
-    paint.setStrokeWidth(dotSizeMin);
+    paint.setStrokeWidth(strokeWidthMin);
     paint.setAntiAlias(true);
     paint.setPathEffect(new CornerPathEffect(ViewUtil.dpToPx(context, 9)));
+    paint.setShader(getGradient());
 
-    dots = getResources().getInteger(R.integer.picker_dots);
+    path = new Path();
+
+    waves = getResources().getInteger(R.integer.picker_waves);
   }
 
   @Override
   protected void onDraw(Canvas canvas) {
     super.onDraw(canvas);
 
-    if (!areDotsVisible) {
+    if (!isPickerVisible) {
       return;
     }
 
-    /*float centerX = getPivotX();
-    float centerY = getPivotY();
-    float min = Math.min(getWidth(), getHeight());
-    float radius = (min / 2) - pickerPadding / 2;
-    for (int i = 0; i < dots; i++) {
-      double d = (((i * 2f) / dots)) * Math.PI;
-      canvas.drawPoint(
-          ((float) Math.cos(d) * radius) + centerX,
-          ((float) Math.sin(d) * radius) + centerY,
-          paint
-      );
-    }*/
     drawStar(canvas);
   }
 
   public void drawStar(Canvas canvas) {
-    double section = 2 * Math.PI / dots;
+    double section = 2 * Math.PI / waves;
     float cx = getPivotX();
     float cy = getPivotY();
     float radius = getPivotX() - pickerPadding / 2;
-    float innerRadius = radius - ViewUtil.dpToPx(getContext(), 10);
+    float innerRadius = radius - amplitude;
 
-    Path path = new Path();
     path.reset();
     path.moveTo((float) (cx + radius * Math.cos(0)), (float) (cy + radius * Math.sin(0)));
     path.lineTo(
@@ -86,7 +106,7 @@ public class DottedCircleView extends View {
         (float) (cy + innerRadius * Math.sin(section / 2))
     );
 
-    for (int i = 1; i < dots; i++) {
+    for (int i = 1; i < waves; i++) {
       path.lineTo(
           (float) (cx + radius * Math.cos(section * i)),
           (float) (cy + radius * Math.sin(section * i))
@@ -105,11 +125,12 @@ public class DottedCircleView extends View {
   @Override
   public void setVisibility(int visibility) {
     super.setVisibility(visibility);
+
     setDotsVisibility(visibility == VISIBLE);
   }
 
   public void setDotsVisibility(boolean visible) {
-    areDotsVisible = visible;
+    isPickerVisible = visible;
     invalidate();
   }
 
@@ -117,7 +138,7 @@ public class DottedCircleView extends View {
     if (animated) {
       ValueAnimator animatorSize = ValueAnimator.ofFloat(
           paint.getStrokeWidth(),
-          highlighted ? dotSizeMax : dotSizeMin
+          highlighted ? strokeWidthMax : strokeWidthMin
       );
       animatorSize.addUpdateListener(animation -> {
         paint.setStrokeWidth((float) animatorSize.getAnimatedValue());
@@ -137,13 +158,13 @@ public class DottedCircleView extends View {
         invalidate();
       });
 
-      AnimatorSet animatorSet = new AnimatorSet();
+      animatorSet = new AnimatorSet();
       animatorSet.setInterpolator(new FastOutSlowInInterpolator());
       animatorSet.setDuration(200);
       animatorSet.playTogether(animatorSize, animatorColor);
       animatorSet.start();
     } else {
-      paint.setStrokeWidth(highlighted ? dotSizeMax : dotSizeMin);
+      paint.setStrokeWidth(highlighted ? strokeWidthMax : strokeWidthMin);
       paint.setColor(
           ContextCompat.getColor(
               getContext(),
@@ -152,5 +173,115 @@ public class DottedCircleView extends View {
       );
       invalidate();
     }
+  }
+
+  public void setDragged(boolean dragged, float x, float y, boolean animated) {
+    if (!animated) {
+      paint.setStrokeWidth(dragged ? strokeWidthMax : strokeWidthMin);
+      paint.setColor(
+          ContextCompat.getColor(
+              getContext(), dragged ? R.color.retro_dirt : R.color.on_background_secondary
+          )
+      );
+      paint.setShader(null);
+      invalidate();
+      return;
+    }
+
+    if (dragged) {
+      touchX = x;
+      touchY = y;
+    }
+    if (animatorSet != null) {
+      animatorSet.pause();
+      animatorSet.cancel();
+    }
+
+    // STROKE WIDTH
+
+    ValueAnimator animatorWidth = ValueAnimator.ofFloat(
+        paint.getStrokeWidth(), dragged ? strokeWidthMax : strokeWidthMin
+    );
+    animatorWidth.addUpdateListener(animation -> {
+      paint.setStrokeWidth((float) animatorWidth.getAnimatedValue());
+    });
+
+    // STROKE COLOR
+
+    ValueAnimator animatorColor = ValueAnimator.ofObject(
+        new ArgbEvaluator(),
+        colorDefault,
+        ContextCompat.getColor(
+            getContext(), dragged ? R.color.retro_dirt : R.color.on_background_secondary
+        )
+    );
+    animatorColor.addUpdateListener(
+        animation -> colorDefault = (int) animatorColor.getAnimatedValue()
+    );
+
+    // AMPLITUDE
+
+    ValueAnimator animatorAmplitude = ValueAnimator.ofFloat(
+        amplitude, dragged ? amplitudeDrag : amplitudeDefault
+    );
+    animatorAmplitude.addUpdateListener(
+        animation -> amplitude = (float) animatorAmplitude.getAnimatedValue()
+    );
+
+    // GRADIENT ALPHA
+
+    ValueAnimator animatorAlpha = ValueAnimator.ofFloat(gradientBlendRatio, dragged ? 0.7f : 0);
+    animatorAlpha.addUpdateListener(animation -> {
+      gradientBlendRatio = (float) animatorAlpha.getAnimatedValue();
+      paint.setShader(getGradient());
+      invalidate();
+    });
+
+    animatorSet = new AnimatorSet();
+    animatorSet.setInterpolator(new FastOutSlowInInterpolator());
+    animatorSet.setDuration(300);
+    animatorSet.playTogether(animatorColor, animatorWidth, animatorAlpha, animatorAmplitude);
+    animatorSet.start();
+
+    paint.setShader(getGradient());
+  }
+
+  public void onDrag(float x, float y, boolean animated) {
+    if (!animated) {
+      return;
+    }
+    touchX = x;
+    touchY = y;
+    paint.setShader(getGradient());
+    invalidate();
+  }
+
+  private Shader getGradient() {
+    PointF pointF = getRotatedPoint(touchX, touchY, getPivotX(), getPivotY(), -getRotation());
+    return new RadialGradient(
+        pointF.x,
+        pointF.y,
+        gradientRadius,
+        new int[]{
+            ColorUtils.blendARGB(colorDefault, colorsDrag[0], gradientBlendRatio),
+            ColorUtils.blendARGB(colorDefault, colorsDrag[1], gradientBlendRatio),
+            ColorUtils.blendARGB(colorDefault, colorsDrag[2], gradientBlendRatio),
+            ColorUtils.blendARGB(colorDefault, colorsDrag[3], gradientBlendRatio)
+        },
+        new float[]{0, 0.33f, 0.73f, 1},
+        TileMode.CLAMP
+    );
+  }
+
+  private PointF getRotatedPoint(float x, float y, float cx, float cy, float degrees) {
+    double radians = Math.toRadians(degrees);
+
+    float x1 = x - cx;
+    float y1 = y - cy;
+
+    float x2 = (float) (x1 * Math.cos(radians) - y1 * Math.sin(radians));
+    float y2 = (float) (x1 * Math.sin(radians) + y1 * Math.cos(radians));
+
+    return new PointF(x2 + cx, y2 + cy);
   }
 }

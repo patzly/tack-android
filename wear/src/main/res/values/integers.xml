@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <integer name="picker_dots">15</integer>
+  <integer name="picker_waves">15</integer>
 
   <integer name="layout_weight_top">37</integer>
   <integer name="layout_weight_top_ambient">1</integer>

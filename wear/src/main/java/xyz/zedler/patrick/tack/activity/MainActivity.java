@@ -129,12 +129,17 @@ public class MainActivity extends FragmentActivity
     });
     binding.bpmPicker.setOnPickListener(new BpmPickerView.OnPickListener() {
       @Override
-      public void onPickDown(boolean isOnRing, boolean canBeDismiss) {
+      public void onPickDown(float x, float y, boolean isOnRing, boolean canBeDismiss) {
         binding.swipeDismiss.setSwipeable(canBeDismiss);
         if (!isOnRing) {
           return;
         }
-        binding.dottedCircle.setHighlighted(true, animations);
+        binding.dottedCircle.setDragged(true, x, y, animations);
+      }
+
+      @Override
+      public void onDrag(float x, float y) {
+        binding.dottedCircle.onDrag(x, y, animations);
       }
 
       @Override
@@ -143,7 +148,7 @@ public class MainActivity extends FragmentActivity
           return;
         }
         binding.swipeDismiss.setSwipeable(true);
-        binding.dottedCircle.setHighlighted(false, animations);
+        binding.dottedCircle.setDragged(false, 0, 0, animations);
       }
     });
     binding.bpmPicker.setOnRotaryInputListener(new BpmPickerView.OnRotaryInputListener() {

@@ -129,6 +129,7 @@ public class BpmPickerView extends View
       isTouchStartedInRing = isTouchInsideRing;
       // on back gesture edge or outside ring
       onPickListener.onPickDown(
+          x, y,
           isTouchInsideRing,
           !isTouchInsideRing || x <= edgeWidth
       );
@@ -139,6 +140,7 @@ public class BpmPickerView extends View
       prevAngle = currAngle;
       currAngle = angle;
       animate(prevAngle, currAngle);
+      onPickListener.onDrag(x, y);
     } else if (event.getAction() == MotionEvent.ACTION_UP
         || event.getAction() == MotionEvent.ACTION_CANCEL
     ) {
@@ -218,7 +220,9 @@ public class BpmPickerView extends View
 
   public interface OnPickListener {
 
-    void onPickDown(boolean isOnRing, boolean canBeDismiss);
+    void onPickDown(float x, float y, boolean isOnRing, boolean canBeDismiss);
+
+    void onDrag(float x, float y);
 
     void onPickUpOrCancel();
   }
