@@ -42,6 +42,7 @@ public class CircleView extends View {
   private final float amplitudeDefault, amplitudeDrag;
   private final int[] colorsDrag;
   private AnimatorSet animatorSet;
+  private float rotaryRotation = 0;
 
   public CircleView(@NonNull Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
@@ -134,6 +135,11 @@ public class CircleView extends View {
     invalidate();
   }
 
+  public void changeRotaryRotation(float change) {
+    // Fix for weird rotary rotation, gradient renders at other angle without it
+    rotaryRotation += change;
+  }
+
   public void setDragged(boolean dragged, float x, float y, boolean animated) {
     if (!animated) {
       paint.setStrokeWidth(dragged ? strokeWidthMax : strokeWidthMin);
@@ -216,7 +222,9 @@ public class CircleView extends View {
   }
 
   private Shader getGradient() {
-    PointF pointF = getRotatedPoint(touchX, touchY, getPivotX(), getPivotY(), -getRotation());
+    PointF pointF = getRotatedPoint(
+        touchX, touchY, getPivotX(), getPivotY(), rotaryRotation - getRotation()
+    );
     return new RadialGradient(
         pointF.x,
         pointF.y,

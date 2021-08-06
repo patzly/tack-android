@@ -173,6 +173,7 @@ public class MainActivity extends FragmentActivity
       @Override
       public void onRotate(float change) {
         binding.circle.setRotation(binding.circle.getRotation() + change);
+        binding.circle.changeRotaryRotation(change);
       }
     });
 
