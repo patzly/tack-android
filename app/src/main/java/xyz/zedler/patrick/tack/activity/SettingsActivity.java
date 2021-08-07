@@ -1,11 +1,16 @@
 package xyz.zedler.patrick.tack.activity;
 
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -15,25 +20,31 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.DialogFragment;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
+import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.ActivitySettingsAppBinding;
 import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
+import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.util.AudioUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class SettingsActivity extends AppCompatActivity
     implements View.OnClickListener, CompoundButton.OnCheckedChangeListener,
-    RadioGroup.OnCheckedChangeListener {
+    RadioGroup.OnCheckedChangeListener, ServiceConnection {
+
+  private final static String TAG = SettingsActivity.class.getSimpleName();
 
   private ActivitySettingsAppBinding binding;
   private SharedPreferences sharedPrefs;
   private ViewUtil viewUtil;
   private AudioUtil audioUtil;
   private HapticUtil hapticUtil;
+  private boolean isBound;
+  private MetronomeService service;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -141,6 +152,27 @@ public class SettingsActivity extends AppCompatActivity
   }
 
   @Override
+  protected void onStart() {
+    Intent intent = new Intent(this, MetronomeService.class);
+    try {
+      startService(intent);
+      bindService(intent, this, Context.BIND_AUTO_CREATE);
+    } catch (IllegalStateException e) {
+      Log.e(TAG, "onStart: cannot start service because app is in background");
+    }
+    super.onStart();
+  }
+
+  @Override
+  protected void onStop() {
+    if (isBound) {
+      unbindService(this);
+      isBound = false;
+    }
+    super.onStop();
+  }
+
+  @Override
   protected void onDestroy() {
     super.onDestroy();
     binding = null;
@@ -151,6 +183,28 @@ public class SettingsActivity extends AppCompatActivity
   protected void onResume() {
     super.onResume();
     hapticUtil.setEnabled(sharedPrefs.getBoolean(SETTINGS.HAPTIC_FEEDBACK, DEF.HAPTIC_FEEDBACK));
+  }
+
+  @Override
+  public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+    MetronomeService.LocalBinder binder = (MetronomeService.LocalBinder) iBinder;
+    service = binder.getService();
+    if (service == null) {
+      return;
+    }
+
+    isBound = true;
+
+    if (binding == null || sharedPrefs == null) {
+      return;
+    }
+
+    service.updateTick();
+  }
+
+  @Override
+  public void onServiceDisconnected(ComponentName componentName) {
+    isBound = false;
   }
 
   private int getCheckedId() {
@@ -247,6 +301,16 @@ public class SettingsActivity extends AppCompatActivity
       sound = Constants.SOUND.WOOD;
     }
     sharedPrefs.edit().putString(SETTINGS.SOUND, sound).apply();
-    audioUtil.play(sound, false);
+    if (isBound()) {
+      service.updateTick();
+      if (!service.isPlaying()
+          || sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE)) {
+        audioUtil.play(sound, false);
+      }
+    }
+  }
+
+  private boolean isBound() {
+    return isBound && service != null;
   }
 }

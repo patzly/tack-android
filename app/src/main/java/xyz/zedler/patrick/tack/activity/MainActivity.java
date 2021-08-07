@@ -324,14 +324,12 @@ public class MainActivity extends AppCompatActivity
   @Override
   protected void onStart() {
     Intent intent = new Intent(this, MetronomeService.class);
-
     try {
       startService(intent);
       bindService(intent, this, Context.BIND_AUTO_CREATE);
     } catch (IllegalStateException e) {
       Log.e(TAG, "onStart: cannot start service because app is in background");
     }
-
     super.onStart();
   }
 
@@ -582,7 +580,7 @@ public class MainActivity extends AppCompatActivity
         () -> binding.textMainEmphasis.setText(String.valueOf(emphasisNew)),
         150
     );
-    if (isBound) {
+    if (isBound()) {
       service.updateTick();
     }
   }
@@ -593,7 +591,7 @@ public class MainActivity extends AppCompatActivity
     if (hapticFeedback) {
       hapticUtil.tick();
     }
-    if (isBound) {
+    if (isBound()) {
       service.updateTick();
     }
   }
