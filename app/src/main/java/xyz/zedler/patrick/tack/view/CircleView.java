@@ -31,7 +31,6 @@ public class CircleView extends View {
   private final Path path;
   private float touchX, touchY;
   private final int colorDefault;
-  private final float gradientRadius;
   private float gradientBlendRatio = 0;
   private float amplitude;
   private final float amplitudeDefault, amplitudeDrag;
@@ -46,8 +45,6 @@ public class CircleView extends View {
     paint.setColor(ContextCompat.getColor(context, R.color.picker));
     paint.setAntiAlias(true);
     paint.setPathEffect(new CornerPathEffect(SystemUiUtil.dpToPx(context, 9)));
-
-    gradientRadius = SystemUiUtil.dpToPx(getContext(), 180);
 
     colorDefault = ContextCompat.getColor(context, R.color.picker);
     int colorDrag = ContextCompat.getColor(context, R.color.picker_dragged);
@@ -153,7 +150,7 @@ public class CircleView extends View {
     return new RadialGradient(
         pointF.x,
         pointF.y,
-        gradientRadius,
+        getWidth(),
         new int[]{
             ColorUtils.blendARGB(colorDefault, colorsDrag[0], gradientBlendRatio),
             ColorUtils.blendARGB(colorDefault, colorsDrag[1], gradientBlendRatio),

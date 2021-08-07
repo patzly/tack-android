@@ -36,7 +36,6 @@ public class CircleView extends View {
   private final Path path;
   private float touchX, touchY;
   private int colorDefault;
-  private final float gradientRadius;
   private float gradientBlendRatio = 0;
   private float amplitude;
   private final float amplitudeDefault, amplitudeDrag;
@@ -51,8 +50,6 @@ public class CircleView extends View {
     pickerPadding = resources.getDimensionPixelSize(R.dimen.picker_ring_padding);
     strokeWidthMin = resources.getDimensionPixelSize(R.dimen.picker_width);
     strokeWidthMax = resources.getDimensionPixelSize(R.dimen.picker_width_dragged);
-
-    gradientRadius = ViewUtil.dpToPx(getContext(), 170);
 
     colorDefault = ContextCompat.getColor(context, R.color.on_background_secondary);
     int colorDrag = ContextCompat.getColor(context, R.color.retro_red);
@@ -228,7 +225,7 @@ public class CircleView extends View {
     return new RadialGradient(
         pointF.x,
         pointF.y,
-        gradientRadius,
+        getWidth() != 0 ? getWidth() * 0.8f : 100,
         new int[]{
             ColorUtils.blendARGB(colorDefault, colorsDrag[0], gradientBlendRatio),
             ColorUtils.blendARGB(colorDefault, colorsDrag[1], gradientBlendRatio),
