@@ -189,6 +189,10 @@ public class MetronomeService extends Service implements Runnable {
     return isBeatModeVibrate;
   }
 
+  public boolean areHapticEffectsPossible() {
+    return !isPlaying || (!isBeatModeVibrate && !vibrateAlways);
+  }
+
   public int getBpm() {
     return bpm;
   }

@@ -20,7 +20,6 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.DialogFragment;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
-import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
@@ -284,7 +283,14 @@ public class SettingsActivity extends AppCompatActivity
     }
 
     editor.apply();
-    hapticUtil.click();
+    if (isBound()) {
+      service.updateTick();
+      if (service.areHapticEffectsPossible()) {
+        hapticUtil.click();
+      }
+    } else {
+      hapticUtil.click();
+    }
   }
 
   @Override
@@ -303,10 +309,15 @@ public class SettingsActivity extends AppCompatActivity
     sharedPrefs.edit().putString(SETTINGS.SOUND, sound).apply();
     if (isBound()) {
       service.updateTick();
-      if (!service.isPlaying()
-          || sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE)) {
+      if (!service.isPlaying() || service.isBeatModeVibrate()) {
         audioUtil.play(sound, false);
       }
+      if (service.areHapticEffectsPossible()) {
+        hapticUtil.click();
+      }
+    } else {
+      audioUtil.play(sound, false);
+      hapticUtil.click();
     }
   }
 

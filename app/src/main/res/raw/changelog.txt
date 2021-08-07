@@ -1,9 +1,11 @@
 3.0.0:
 - New: playful "Material You" look in preparation for Android 12
 - New: sound is played when selected in settings
+- New: settings are applied immediately
 - Improved: bottom sheet appearance and behavior
 - Improved: Wear OS promotion illustration
 - Improved: bookmark appearance and animations
+- Improved:
 - Improved: landscape interface
 - Fixed: no haptic feedback if bpm limits are reached
 
