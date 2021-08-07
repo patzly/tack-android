@@ -7,6 +7,7 @@
         <entry key="app/src/main/res/drawable/ic_tack_wear.xml" value="0.30657894736842106" />
         <entry key="app/src/main/res/drawable/illus_wear.xml" value="0.30657894736842106" />
         <entry key="app/src/main/res/drawable/illus_wear_new.xml" value="0.30657894736842106" />
+        <entry key="app/src/main/res/layout-land/activity_main_app.xml" value="0.3171052631578947" />
         <entry key="app/src/main/res/layout/activity_main_app.xml" value="0.2929824561403509" />
         <entry key="app/src/main/res/layout/activity_settings_app.xml" value="0.2929824561403509" />
         <entry key="app/src/main/res/layout/fragment_bottomsheet_changelog.xml" value="0.29342105263157897" />

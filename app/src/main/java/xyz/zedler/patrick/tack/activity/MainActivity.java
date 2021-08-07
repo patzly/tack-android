@@ -100,9 +100,7 @@ public class MainActivity extends AppCompatActivity
     systemBarBehavior.applyAppBarInsetOnContainer(false);
     systemBarBehavior.setUp();
 
-    new ScrollBehavior(this).setUpScroll(
-        binding.appBarMain, null, false
-    );
+    new ScrollBehavior(this).setUpScroll(binding.appBarMain, null, false);
 
     logoUtil = new LogoUtil(binding.imageMainLogo);
     viewUtil = new ViewUtil();
@@ -618,13 +616,15 @@ public class MainActivity extends AppCompatActivity
     chip.setText(String.valueOf(bpm));
     chip.setTextColor(ContextCompat.getColor(this, R.color.on_surface));
     chip.setTextSize(18);
-    chip.setChipEndPadding(SystemUiUtil.dpToPx(this, 10));
-    chip.setHeight(SystemUiUtil.dpToPx(this, 56));
     chip.setTypeface(ResourcesCompat.getFont(this, R.font.jost_bold));
     chip.setChipIconVisible(false);
     chip.setChipStrokeWidth(0);
     chip.setRippleColorResource(R.color.highlight);
     chip.setOnClickListener(v -> setBpm(bpm));
+    if (SystemUiUtil.isOrientationPortrait(this)) {
+      chip.setHeight(SystemUiUtil.dpToPx(this, 56));
+      chip.setChipEndPadding(SystemUiUtil.dpToPx(this, 10));
+    }
     return chip;
   }
 
