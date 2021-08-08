@@ -529,9 +529,6 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   public void onStartTicks() {
-        /*if (service.isPlaying()) service.pause();
-        else service.play();
-        */
     if (binding != null) {
       binding.fabMain.setImageResource(R.drawable.ic_round_play_to_pause_anim);
       Drawable fabIcon = binding.fabMain.getDrawable();

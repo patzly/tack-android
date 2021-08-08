@@ -60,8 +60,6 @@ public class BaseBottomSheetDialogFragment extends BottomSheetDialogFragment {
               SystemUiUtil.setLightNavigationBar(dialog.getWindow(), sheet);
             }
 
-            boolean isOrientationPortrait = SystemUiUtil.isOrientationPortrait(requireContext());
-
             PaintDrawable background = new PaintDrawable(
                 ContextCompat.getColor(requireContext(), R.color.surface)
             );
@@ -250,19 +248,7 @@ public class BaseBottomSheetDialogFragment extends BottomSheetDialogFragment {
             isDarkModeActive ? SystemUiUtil.SCRIM_DARK_DIALOG : SystemUiUtil.SCRIM_LIGHT_DIALOG
         );
       }
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // 23
-      if (isOrientationPortraitOrNavAtBottom) {
-        window.setNavigationBarColor(
-            isDarkModeActive
-                ? SystemUiUtil.SCRIM_DARK_SURFACE
-                : SystemUiUtil.SCRIM
-        );
-      } else {
-        window.setNavigationBarColor(
-            isDarkModeActive ? SystemUiUtil.SCRIM_DARK_DIALOG : SystemUiUtil.SCRIM_LIGHT_DIALOG
-        );
-      }
-    } else { // 21
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // 23 (down to 21)
       if (isOrientationPortraitOrNavAtBottom) {
         window.setNavigationBarColor(
             isDarkModeActive
