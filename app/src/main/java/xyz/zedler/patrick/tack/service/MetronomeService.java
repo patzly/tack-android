@@ -20,6 +20,7 @@ import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.util.AudioUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 
@@ -104,8 +105,21 @@ public class MetronomeService extends Service implements Runnable {
     isPlaying = true;
     emphasisIndex = 0;
 
-    Intent intent = new Intent(this, MetronomeService.class);
-    intent.setAction(ACTION_PAUSE);
+    int immutableFlag = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+        ? PendingIntent.FLAG_IMMUTABLE
+        : PendingIntent.FLAG_UPDATE_CURRENT;
+
+    Intent intentApp = new Intent(this, MainActivity.class);
+    intentApp.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+    PendingIntent pendingIntentApp = PendingIntent.getActivity(
+        this, 0, intentApp, immutableFlag
+    );
+
+    Intent intentStop = new Intent(this, MetronomeService.class);
+    intentStop.setAction(ACTION_PAUSE);
+    PendingIntent pendingIntentStop = PendingIntent.getService(
+        this, 0, intentStop, immutableFlag
+    );
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       NotificationManager manager = (NotificationManager) getSystemService(
@@ -126,14 +140,12 @@ public class MetronomeService extends Service implements Runnable {
             .setContentText(getString(R.string.notification_desc))
             .setColor(ContextCompat.getColor(this, R.color.retro_green_fg))
             .setSmallIcon(R.drawable.ic_round_tack_notification)
-            .setContentIntent(
-                PendingIntent.getService(
-                    this,
-                    0,
-                    intent,
-                    PendingIntent.FLAG_ONE_SHOT
-                )
-            ).setPriority(NotificationCompat.PRIORITY_LOW)
+            .setContentIntent(pendingIntentApp)
+            .addAction(
+                R.drawable.ic_round_pause,
+                getString(R.string.notification_action),
+                pendingIntentStop
+            ).setPriority(NotificationCompat.PRIORITY_HIGH)
             .setChannelId(CHANNEL_ID)
             .build()
     );

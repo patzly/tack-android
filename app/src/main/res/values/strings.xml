@@ -22,8 +22,9 @@
   <string name="action_rate_description">Support the development</string>
 
   <string name="notification_title">Metronome is running</string>
-  <string name="notification_desc">Tap to stop</string>
+  <string name="notification_desc">Tap to return to the app</string>
   <string name="notification_channel">Metronome</string>
+  <string name="notification_action">Stop</string>
 
   <string name="msg_bookmarks_max">Bookmark limit reached</string>
   <string name="msg_feedback">A great app requires a lot of time and lives from the feedback of its users.\n\nDo you have any wishes, comments or questions? Contact me!\nOtherwise I would be very happy about a nice review in the Play Store.</string>

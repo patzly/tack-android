@@ -21,8 +21,9 @@
   <string name="action_rate_description">Entwicklung unterstützen</string>
 
   <string name="notification_title">Metronom läuft</string>
-  <string name="notification_desc">Tippe, um zu stoppen</string>
+  <string name="notification_desc">Tippen, um zur App zurückzukehren</string>
   <string name="notification_channel">Metronom</string>
+  <string name="notification_action">Beenden</string>
 
   <string name="msg_bookmarks_max">Lesezeichen-Limit erreicht</string>
   <string name="msg_feedback">Eine tolle App kostet viel Zeit und lebt von der Rückmeldung ihrer Nutzer.\n\nHaben Sie Wünsche, Anmerkungen oder Fragen? Schreiben Sie mir!\nAnsonsten freue ich mich über eine nette Bewertung im Play Store.</string>

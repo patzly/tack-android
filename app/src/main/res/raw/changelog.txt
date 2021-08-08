@@ -5,8 +5,9 @@
 - Improved: bottom sheet appearance and behavior
 - Improved: Wear OS promotion illustration
 - Improved: bookmark appearance and animations
-- Improved:
+- Improved: BPM up to 400 instead of 300
 - Improved: landscape interface
+- Improved: notification controls
 - Fixed: no haptic feedback if bpm limits are reached
 
 2.2.0:
