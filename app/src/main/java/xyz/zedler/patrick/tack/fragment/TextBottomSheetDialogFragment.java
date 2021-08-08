@@ -6,15 +6,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
 import androidx.annotation.NonNull;
 import xyz.zedler.patrick.tack.Constants;
+import xyz.zedler.patrick.tack.Constants.DEF;
+import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetTextBinding;
-import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
+import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class TextBottomSheetDialogFragment extends BaseBottomSheetDialogFragment {
@@ -36,6 +39,9 @@ public class TextBottomSheetDialogFragment extends BaseBottomSheetDialogFragment
     assert context != null && bundle != null;
 
     HapticUtil hapticUtil = new HapticUtil(context);
+    hapticUtil.setEnabled(PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(
+        SETTINGS.HAPTIC_FEEDBACK, DEF.HAPTIC_FEEDBACK
+    ));
     ViewUtil viewUtil = new ViewUtil();
 
     binding.textTextTitle.setText(

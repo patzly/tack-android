@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
 import androidx.annotation.NonNull;
+import xyz.zedler.patrick.tack.Constants.DEF;
+import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetEmphasisBinding;
 
@@ -21,17 +23,15 @@ public class EmphasisBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
   public View onCreateView(@NonNull LayoutInflater inflater,
       ViewGroup container,
       Bundle savedInstanceState) {
-    binding = FragmentBottomsheetEmphasisBinding.inflate(
-        inflater, container, false
-    );
+    binding = FragmentBottomsheetEmphasisBinding.inflate(inflater, container, false);
 
     activity = (MainActivity) getActivity();
     assert activity != null;
 
     binding.sliderEmphasis.setValue(
-        PreferenceManager.getDefaultSharedPreferences(
-            getContext()
-        ).getInt("emphasis", 0)
+        PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(
+            PREF.EMPHASIS, DEF.EMPHASIS
+        )
     );
 
     binding.sliderEmphasis.addOnChangeListener(
