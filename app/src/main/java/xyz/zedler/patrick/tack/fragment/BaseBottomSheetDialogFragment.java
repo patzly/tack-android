@@ -36,12 +36,11 @@ public class BaseBottomSheetDialogFragment extends BottomSheetDialogFragment {
   @Override
   public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
     Dialog dialog = new BottomSheetDialog(requireContext());
-
-    decorView = dialog.getWindow().getDecorView();
-    if (decorView == null) {
+    if (dialog.getWindow() == null) {
       return dialog;
     }
 
+    decorView = dialog.getWindow().getDecorView();
     decorView.getViewTreeObserver().addOnGlobalLayoutListener(
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override

@@ -15,6 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
 import androidx.annotation.NonNull;
+import xyz.zedler.patrick.tack.Constants.DEF;
+import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetFeedbackBinding;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -42,6 +44,7 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity);
 
     HapticUtil hapticUtil = new HapticUtil(activity);
+    hapticUtil.setEnabled(sharedPrefs.getBoolean(SETTINGS.HAPTIC_FEEDBACK, DEF.HAPTIC_FEEDBACK));
 
     binding.linearFeedbackRate.setOnClickListener(v -> {
       ViewUtil.startIcon(binding.imageFeedbackRate);

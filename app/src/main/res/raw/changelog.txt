@@ -1,3 +1,6 @@
+3.0.1:
+- Fixed: no haptic feedback if it's disabled in settings
+
 3.0.0:
 - New: playful "Material You" look in preparation for Android 12
 - New: sound is played when selected in settings
