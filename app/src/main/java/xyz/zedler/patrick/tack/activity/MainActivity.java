@@ -27,7 +27,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.Window;
-import android.view.WindowManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.ContextCompat;
@@ -623,14 +622,11 @@ public class MainActivity extends AppCompatActivity
     if (window == null) {
       return;
     }
-    if (keepAwake
-        && sharedPrefs != null
-        && sharedPrefs.getBoolean(SETTINGS.KEEP_AWAKE, DEF.KEEP_AWAKE
-    )) {
-      window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    } else {
-      window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
+    window.getDecorView().setKeepScreenOn(
+        keepAwake
+            && sharedPrefs != null
+            && sharedPrefs.getBoolean(SETTINGS.KEEP_AWAKE, DEF.KEEP_AWAKE)
+    );
   }
 
   private void updateBookmarks() {

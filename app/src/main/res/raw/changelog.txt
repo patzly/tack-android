@@ -1,3 +1,6 @@
+3.0.2:
+- Fixed: invisible status bar icons
+
 3.0.1:
 - Fixed: no haptic feedback if it's disabled in settings
 

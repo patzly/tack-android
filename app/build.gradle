@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     buildFeatures {
         viewBinding true
@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId "xyz.zedler.patrick.tack"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 120 // last number is 0 for app release
         versionName "3.0.1"
     }
