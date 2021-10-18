@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <dimen name="splash_logo_size">64dp</dimen>
+  <dimen name="splash_logo_size">180dp</dimen>
 
   <dimen name="bpm_picker_size">170dp</dimen>
   <dimen name="bpm_text_size">47dp</dimen>

@@ -1,6 +1,13 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
 
   <style
+    name="Widget.Tack.Snackbar.TextView"
+    parent="Widget.MaterialComponents.Snackbar.TextView">
+    <item name="android:textSize">14.5sp</item>
+    <item name="android:textColor">@color/background</item>
+  </style>
+
+  <style
     name="Widget.Tack.Button.TextButton.Snackbar"
     parent="Widget.MaterialComponents.Button.TextButton.Snackbar">
     <item name="android:fontFamily">@font/jost_bold</item>
@@ -10,6 +17,12 @@
 
   <style name="Widget.Tack.OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
     <item name="android:tint">@color/icon</item>
+  </style>
+
+  <style
+    name="Widget.Tack.PopupMenu"
+    parent="@style/Widget.MaterialComponents.PopupMenu.Overflow">
+    <item name="android:popupBackground">@drawable/shape_popup_menu</item>
   </style>
 
   <style name="Widget.Tack.Divider" parent="">

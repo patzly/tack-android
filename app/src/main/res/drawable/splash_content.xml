@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list
+  xmlns:tools="http://schemas.android.com/tools"
   xmlns:android="http://schemas.android.com/apk/res/android">
 
   <item android:drawable="@color/background" />
@@ -7,6 +8,9 @@
   <item
     android:id="@+id/splash_logo"
     android:gravity="center"
-    android:drawable="@drawable/splash_logo_anim" />
+    android:width="@dimen/splash_logo_size"
+    android:height="@dimen/splash_logo_size"
+    android:drawable="@drawable/splash_logo_anim"
+    tools:ignore="UnusedAttribute"/>
 
 </layer-list>
