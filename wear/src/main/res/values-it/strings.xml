@@ -25,6 +25,7 @@
   <string name="onboarding_rotary_description">Se disponibile</string>
   <string name="onboarding_fsb">Tasti laterali</string>
   <string name="onboarding_fsb_description">Anche la pressione lunga</string>
+  <string name="onboarding_continue">Continua</string>
 
   <string name="setting_sound">Suono del battito</string>
   <string name="setting_sound_wood">Legno</string>

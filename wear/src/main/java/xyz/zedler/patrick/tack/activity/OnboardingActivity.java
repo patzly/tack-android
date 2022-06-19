@@ -6,6 +6,7 @@ import android.support.wearable.input.WearableButtons;
 import android.view.KeyEvent;
 import android.view.View;
 import androidx.fragment.app.FragmentActivity;
+import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivityOnboardingWearBinding;
 
 public class OnboardingActivity extends FragmentActivity {
@@ -15,6 +16,8 @@ public class OnboardingActivity extends FragmentActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    setTheme(R.style.Theme_Tack_Lime);
 
     binding = ActivityOnboardingWearBinding.inflate(getLayoutInflater());
     setContentView(binding.getRoot());
@@ -32,7 +35,7 @@ public class OnboardingActivity extends FragmentActivity {
       binding.linearFeatureFsb.setVisibility(View.GONE);
     }
 
-    binding.frameOk.setOnClickListener(v -> finish());
+    binding.buttonContinue.setOnClickListener(v -> finish());
   }
 
   @Override

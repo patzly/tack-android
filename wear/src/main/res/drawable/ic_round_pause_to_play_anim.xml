@@ -15,16 +15,16 @@
         <path
           android:name="shape1"
           android:pathData="M 9.018 5.818 L 9.018 5.818 C 8.49 5.809 8 6.228 8 6.82 L 8 12 L 18.145 12 C 18.145 11.676 17.99 11.351 17.68 11.15 L 9.539 5.98 C 9.372 5.873 9.193 5.821 9.018 5.818"
-          android:fillColor="@color/on_secondary" />
+          android:fillColor="#000" />
         <path
           android:name="shape2"
           android:pathData="M 8 12 L 8 17.18 C 8 17.97 8.869 18.45 9.539 18.02 L 17.68 12.84 C 17.989 12.645 18.144 12.323 18.145 12 Z"
-          android:fillColor="@color/on_secondary" />
+          android:fillColor="#000" />
       </group>
       <path
         android:name="path"
         android:pathData="M 8 12 L 18 12"
-        android:strokeColor="@color/on_secondary"
+        android:strokeColor="#000"
         android:strokeAlpha="0"
         android:strokeWidth="0.3" />
     </vector>

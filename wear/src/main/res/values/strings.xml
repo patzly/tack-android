@@ -26,7 +26,8 @@
   <string name="onboarding_rotary">Rotary input</string>
   <string name="onboarding_rotary_description">If available</string>
   <string name="onboarding_fsb">Side buttons</string>
-  <string name="onboarding_fsb_description">Also long press</string>
+  <string name="onboarding_fsb_description">Also long-press</string>
+  <string name="onboarding_continue">Continue</string>
 
   <string name="setting_sound">Beat sound</string>
   <string name="setting_sound_wood">Wood</string>

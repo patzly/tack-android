@@ -25,6 +25,7 @@
   <string name="onboarding_rotary_description">Wenn vorhanden</string>
   <string name="onboarding_fsb">Seitentasten</string>
   <string name="onboarding_fsb_description">Auch gedrückt halten</string>
+  <string name="onboarding_continue">Fortfahren</string>
 
   <string name="setting_sound">Schlaggeräusch</string>
   <string name="setting_sound_wood">Holz</string>

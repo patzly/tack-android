@@ -4,6 +4,37 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.37916666666666665" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/app/src/main/res/drawable/ic_round_tack_logo.xml" value="0.19230769230769232" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/app/src/main/res/drawable/ic_round_tack_logo_fg.xml" value="0.19230769230769232" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/app/src/main/res/drawable/ic_round_tack_logo_pointer.xml" value="0.19230769230769232" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_audiotrack_anim.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_bookmark_anim.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_done.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_emphasis_anim.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_filter_tilt_shift.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_history_anim.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_loop.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_pause.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_pause_to_play_anim.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_play_arrow.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_play_to_pause_anim.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_rotary_input.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_settings_anim.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_star_anim.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_tack.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_tempo_tap_anim.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_vibrate_to_volume_anim.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_volume_off_to_volume_on_anim.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_volume_on_to_volume_off_anim.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ic_round_volume_to_vibrate_anim.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ripple_circular.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/ripple_list_item.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/shape_circular_bg.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/drawable/splash.xml" value="0.336" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/layout/activity_changelog_wear.xml" value="0.7841409691629956" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/layout/activity_main_wear.xml" value="0.7841409691629956" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/layout/activity_onboarding_wear.xml" value="0.7841409691629956" />
+        <entry key="..\:/Users/Patrick/AndroidStudioProjects/tack-android/wear/src/main/res/layout/activity_settings_wear.xml" value="1.3788546255506609" />
         <entry key="app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.30657894736842106" />
         <entry key="app/src/main/res/drawable/ic_tack_wear.xml" value="0.30657894736842106" />
         <entry key="app/src/main/res/drawable/illus_wear.xml" value="0.30657894736842106" />

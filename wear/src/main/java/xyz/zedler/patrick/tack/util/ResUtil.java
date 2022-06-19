@@ -9,11 +9,14 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.BulletSpan;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RawRes;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -58,7 +61,7 @@ public class ResUtil {
       return Html.fromHtml(formatted);
     }
 
-    int color = ContextCompat.getColor(context, R.color.on_background);
+    int color = getColorAttr(context, R.attr.colorOnBackground);
     int margin = ViewUtil.spToPx(context, 6);
 
     String[] lines = text.split("\n");
@@ -88,5 +91,15 @@ public class ResUtil {
       builder.append(spannable);
     }
     return builder;
+  }
+
+  public static int getColorAttr(Context context, @AttrRes int resId) {
+    TypedValue typedValue = new TypedValue();
+    context.getTheme().resolveAttribute(resId, typedValue, true);
+    return typedValue.data;
+  }
+
+  public static int getColorAttr(Context context, @AttrRes int resId, float alpha) {
+    return ColorUtils.setAlphaComponent(getColorAttr(context, resId), (int) (alpha * 255));
   }
 }

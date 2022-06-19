@@ -25,6 +25,7 @@
   <string name="onboarding_rotary_description">Si está disponible</string>
   <string name="onboarding_fsb">Botones laterales</string>
   <string name="onboarding_fsb_description">También pulsa largo</string>
+  <string name="onboarding_continue">Continuar</string>
 
   <string name="setting_sound">Sonido de latido</string>
   <string name="setting_sound_wood">Madera</string>

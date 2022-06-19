@@ -24,6 +24,7 @@ import xyz.zedler.patrick.tack.databinding.ActivityMainWearBinding;
 import xyz.zedler.patrick.tack.util.AudioUtil;
 import xyz.zedler.patrick.tack.util.ButtonUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
+import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
 
@@ -63,6 +64,8 @@ public class MainActivity extends FragmentActivity
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    setTheme(R.style.Theme_Tack_Lime);
 
     binding = ActivityMainWearBinding.inflate(getLayoutInflater());
     setContentView(binding.getRoot());
@@ -605,12 +608,12 @@ public class MainActivity extends FragmentActivity
     if (keepOn) {
       getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
       if (animations) {
-        ViewUtil.animateBackgroundTint(binding.framePlayPause, R.color.retro_dark);
-        binding.imagePlayPause.animate().alpha(0.5f).setDuration(300).start();
-        binding.textBpm.animate().alpha(0.35f).setDuration(300).start();
+        binding.framePlayPause.animate().alpha(0.7f).setDuration(300).start();
+        binding.textBpm.animate().alpha(0.4f).setDuration(300).start();
+        binding.textLabel.animate().alpha(0.3f).setDuration(300).start();
         ViewUtil.animateAlpha(
             iconAlpha,
-            binding.textLabel,
+            binding.imagePlayPause,
             binding.imageBeatMode,
             binding.imageTempoTap,
             binding.imageSettings,
@@ -620,12 +623,12 @@ public class MainActivity extends FragmentActivity
             binding.imageBookmark
         );
       } else {
-        binding.framePlayPause.getBackground().setTint(getColor(R.color.retro_dark));
-        binding.imagePlayPause.setAlpha(0.5f);
-        binding.textBpm.setAlpha(0.35f);
+        binding.framePlayPause.setAlpha(0.7f);
+        binding.textBpm.setAlpha(0.4f);
+        binding.textLabel.setAlpha(0.3f);
         ViewUtil.setAlpha(
             iconAlpha,
-            binding.textLabel,
+            binding.imagePlayPause,
             binding.imageBeatMode,
             binding.imageTempoTap,
             binding.imageSettings,
@@ -638,11 +641,11 @@ public class MainActivity extends FragmentActivity
     } else {
       getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
       if (animations) {
-        ViewUtil.animateBackgroundTint(binding.framePlayPause, R.color.secondary);
+        binding.textLabel.animate().alpha(0.6f).setDuration(300).start();
         ViewUtil.animateAlpha(
             1,
+            binding.framePlayPause,
             binding.textBpm,
-            binding.textLabel,
             binding.imagePlayPause,
             binding.imageBeatMode,
             binding.imageTempoTap,
@@ -653,11 +656,14 @@ public class MainActivity extends FragmentActivity
             binding.imageBookmark
         );
       } else {
-        binding.framePlayPause.getBackground().setTint(getColor(R.color.secondary));
+        binding.framePlayPause.getBackground().setTint(
+            ResUtil.getColorAttr(this, R.attr.colorPrimaryContainer)
+        );
+        binding.textLabel.setAlpha(0.6f);
         ViewUtil.setAlpha(
             1,
+            binding.framePlayPause,
             binding.textBpm,
-            binding.textLabel,
             binding.imagePlayPause,
             binding.imageBeatMode,
             binding.imageTempoTap,

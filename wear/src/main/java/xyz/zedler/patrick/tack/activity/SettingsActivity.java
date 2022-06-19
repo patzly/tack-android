@@ -36,6 +36,8 @@ public class SettingsActivity extends FragmentActivity
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    setTheme(R.style.Theme_Tack_Lime);
+
     binding = ActivitySettingsWearBinding.inflate(getLayoutInflater());
     setContentView(binding.getRoot());
 

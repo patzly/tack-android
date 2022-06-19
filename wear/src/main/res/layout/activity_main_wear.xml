@@ -9,7 +9,7 @@
   <FrameLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="?android:attr/colorBackground">
 
     <xyz.zedler.patrick.tack.view.BpmPickerView
       android:id="@+id/bpm_picker"
@@ -51,9 +51,7 @@
 
           <ImageView
             android:id="@+id/image_settings"
-            android:layout_width="@dimen/icon_size_picker"
-            android:layout_height="@dimen/icon_size_picker"
-            android:layout_gravity="center"
+            style="@style/Widget.Tack.ImageView.Icon.Picker"
             android:importantForAccessibility="no"
             android:src="@drawable/ic_round_settings_anim" />
 
@@ -89,7 +87,7 @@
               android:focusable="true"
               tools:ignore="UselessParent">
 
-              <androidx.appcompat.widget.AppCompatTextView
+              <TextView
                 android:id="@+id/text_emphasis"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -98,15 +96,13 @@
                 android:layout_marginStart="1dp"
                 android:fontFamily="@font/material_digits_rounded"
                 android:letterSpacing="0.12"
-                android:textColor="@color/on_background_secondary"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="10dp"
                 tools:ignore="SpUsage" />
 
               <ImageView
                 android:id="@+id/image_emphasis"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center"
+                style="@style/Widget.Tack.ImageView.Icon.Picker"
                 android:layout_marginTop="7dp"
                 android:importantForAccessibility="no"
                 android:src="@drawable/ic_round_emphasis_anim" />
@@ -139,10 +135,8 @@
 
               <ImageView
                 android:id="@+id/image_bookmark"
-                android:layout_width="@dimen/icon_size_picker"
-                android:layout_height="@dimen/icon_size_picker"
+                style="@style/Widget.Tack.ImageView.Icon.Picker"
                 android:src="@drawable/ic_round_bookmark_anim"
-                android:layout_gravity="center"
                 android:importantForAccessibility="no" />
 
             </FrameLayout>
@@ -151,25 +145,25 @@
 
         </LinearLayout>
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
           android:id="@+id/text_bpm"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:textColor="@color/on_background"
+          android:textColor="?attr/colorOnBackground"
           android:layout_marginBottom="@dimen/text_bpm_margin_bottom_picker"
           android:layout_gravity="center_horizontal|top"
           android:fontFamily="@font/edwin_bold"
           android:lineSpacingExtra="5dp"
           android:textSize="30sp" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
           android:id="@+id/text_label"
+          style="@style/Widget.Tack.TextView.ListItem.Description"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:text="@string/title_bpm"
-          android:textColor="@color/on_background_secondary"
           android:layout_gravity="center_horizontal|bottom"
-          android:fontFamily="@font/jost_bold"
+          android:fontFamily="@font/jost_medium"
           android:textSize="13sp" />
 
       </FrameLayout>
@@ -203,9 +197,7 @@
 
             <ImageView
               android:id="@+id/image_tempo_tap"
-              android:layout_width="@dimen/icon_size_picker"
-              android:layout_height="@dimen/icon_size_picker"
-              android:layout_gravity="center"
+              style="@style/Widget.Tack.ImageView.Icon.Picker"
               android:importantForAccessibility="no"
               android:src="@drawable/ic_round_tempo_tap_anim" />
 
@@ -219,7 +211,7 @@
           android:layout_height="@dimen/action_button_size"
           android:layout_gravity="center"
           android:background="@drawable/ripple_circular"
-          android:backgroundTint="@color/retro_green_bg_white"
+          android:backgroundTint="?attr/colorPrimaryContainer"
           android:clickable="true"
           android:contentDescription="@string/title_play_pause"
           android:focusable="true"
@@ -228,11 +220,11 @@
 
           <ImageView
             android:id="@+id/image_play_pause"
-            android:layout_width="@dimen/icon_size_picker"
-            android:layout_height="@dimen/icon_size_picker"
-            android:layout_gravity="center"
+            style="@style/Widget.Tack.ImageView.Icon.Picker"
             android:importantForAccessibility="no"
-            android:src="@drawable/ic_round_play_to_pause_anim" />
+            android:src="@drawable/ic_round_play_to_pause_anim"
+            android:tint="?attr/colorOnPrimaryContainer"
+            tools:ignore="UseAppTint" />
 
         </FrameLayout>
 
@@ -255,9 +247,7 @@
 
             <ImageView
               android:id="@+id/image_beat_mode"
-              android:layout_width="@dimen/icon_size_picker"
-              android:layout_height="@dimen/icon_size_picker"
-              android:layout_gravity="center"
+              style="@style/Widget.Tack.ImageView.Icon.Picker"
               android:importantForAccessibility="no" />
 
           </FrameLayout>

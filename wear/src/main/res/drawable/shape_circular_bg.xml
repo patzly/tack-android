@@ -3,7 +3,7 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:shape="oval">
 
-  <solid android:color="@color/on_background_tertiary" />
+  <solid android:color="#000" />
 
   <size
     android:width="@dimen/circular_touch_target_size"

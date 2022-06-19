@@ -21,6 +21,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class CircleView extends View {
@@ -36,6 +37,7 @@ public class CircleView extends View {
   private final Path path;
   private float touchX, touchY;
   private int colorDefault;
+  private final int colorOutline, colorTap;
   private float gradientBlendRatio = 0;
   private float amplitude;
   private final float amplitudeDefault, amplitudeDrag;
@@ -51,8 +53,11 @@ public class CircleView extends View {
     strokeWidthMin = resources.getDimensionPixelSize(R.dimen.picker_width);
     strokeWidthMax = resources.getDimensionPixelSize(R.dimen.picker_width_dragged);
 
-    colorDefault = ContextCompat.getColor(context, R.color.on_background_secondary);
-    int colorDrag = ContextCompat.getColor(context, R.color.retro_red);
+    colorOutline = ResUtil.getColorAttr(context, R.attr.colorOutline);
+    colorTap = ResUtil.getColorAttr(context, R.attr.colorPrimary);
+
+    colorDefault = colorOutline;
+    int colorDrag = ResUtil.getColorAttr(context, R.attr.colorTertiary);
 
     colorsDrag = new int[]{
         colorDrag,
@@ -67,7 +72,7 @@ public class CircleView extends View {
 
     paint = new Paint();
     paint.setStyle(Paint.Style.STROKE);
-    paint.setColor(context.getColor(R.color.on_background_secondary));
+    paint.setColor(colorOutline);
     paint.setStrokeCap(Paint.Cap.ROUND);
     paint.setStrokeWidth(strokeWidthMin);
     paint.setAntiAlias(true);
@@ -140,11 +145,7 @@ public class CircleView extends View {
   public void setDragged(boolean dragged, float x, float y, boolean animated) {
     if (!animated) {
       paint.setStrokeWidth(dragged ? strokeWidthMax : strokeWidthMin);
-      paint.setColor(
-          ContextCompat.getColor(
-              getContext(), dragged ? R.color.retro_dirt : R.color.on_background_secondary
-          )
-      );
+      paint.setColor(dragged ? colorTap : colorDefault);
       paint.setShader(null);
       invalidate();
       return;
@@ -173,9 +174,7 @@ public class CircleView extends View {
     ValueAnimator animatorColor = ValueAnimator.ofObject(
         new ArgbEvaluator(),
         colorDefault,
-        ContextCompat.getColor(
-            getContext(), dragged ? R.color.retro_dirt : R.color.on_background_secondary
-        )
+        dragged ? colorTap : colorOutline
     );
     animatorColor.addUpdateListener(
         animation -> colorDefault = (int) animatorColor.getAnimatedValue()

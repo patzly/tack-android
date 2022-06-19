@@ -15,6 +15,8 @@ public class ChangelogActivity extends FragmentActivity {
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
+    setTheme(R.style.Theme_Tack_Lime);
+
     binding = ActivityChangelogWearBinding.inflate(getLayoutInflater());
     setContentView(binding.getRoot());
 
