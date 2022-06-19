@@ -11,11 +11,11 @@
     android:paddingTop="@dimen/list_margin_top"
     android:paddingBottom="@dimen/list_margin_bottom">
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
       style="@style/Widget.Tack.TextView.Title"
       android:text="@string/title_changelog" />
 
-    <androidx.appcompat.widget.AppCompatTextView
+    <TextView
       android:id="@+id/text_changelog"
       style="@style/Widget.Tack.TextView.Paragraph"
       android:layout_width="match_parent"
