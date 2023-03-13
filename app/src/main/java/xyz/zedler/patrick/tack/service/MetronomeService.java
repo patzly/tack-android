@@ -10,9 +10,10 @@ import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
@@ -25,6 +26,8 @@ import xyz.zedler.patrick.tack.util.AudioUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 
 public class MetronomeService extends Service implements Runnable {
+
+  private static final String TAG = MetronomeService.class.getSimpleName();
 
   public static final String ACTION_START = "action_start";
   public static final String ACTION_PAUSE = "action_pause";
@@ -72,7 +75,9 @@ public class MetronomeService extends Service implements Runnable {
     );
     bpm = toBpm(interval);
 
-    handler = new Handler(Looper.getMainLooper());
+    HandlerThread thread = new HandlerThread("MetronomeHandlerThread");
+    thread.start();
+    handler = new Handler(thread.getLooper());
   }
 
   @Override

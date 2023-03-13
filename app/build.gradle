@@ -1,10 +1,12 @@
 plugins {
     id 'com.android.application'
+    id 'androidx.navigation.safeargs'
 }
 
 android {
-    compileSdkVersion 32
-    buildToolsVersion '32.1.0 rc1'
+    namespace 'xyz.zedler.patrick.tack'
+    compileSdkVersion 33
+    buildToolsVersion '33.0.2'
 
     buildFeatures {
         viewBinding true
@@ -13,9 +15,10 @@ android {
     defaultConfig {
         applicationId "xyz.zedler.patrick.tack"
         minSdkVersion 21
-        targetSdkVersion 32
-        versionCode 120 // last number is 0 for app release
-        versionName "3.0.1"
+        targetSdkVersion 33
+        versionCode 130 // last number is 0 for app release
+        versionName "4.0.0"
+        resConfigs 'de', 'en'
     }
 
     applicationVariants.all { variant ->
@@ -38,15 +41,23 @@ android {
         }
     }
 
+    bundle {
+        storeArchive {
+            enable true
+        }
+    }
+
     compileOptions {
-        sourceCompatibility 11
-        targetCompatibility 11
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.preference:preference:1.2.0'
+    implementation 'androidx.navigation:navigation-fragment:2.5.3'
+    implementation 'androidx.navigation:navigation-ui:2.5.3'
 
-    implementation 'com.google.android.material:material:1.7.0-alpha02'
+    implementation 'com.google.android.material:material:1.9.0-alpha02'
 }

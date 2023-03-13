@@ -2,6 +2,8 @@ package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
 import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 
@@ -31,7 +33,13 @@ public class HapticUtil {
   }
 
   public void vibrate(boolean emphasize) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    if (VERSION.SDK_INT >= VERSION_CODES.Q) {
+      vibrator.vibrate(
+          VibrationEffect.createPredefined(
+              emphasize ? VibrationEffect.EFFECT_HEAVY_CLICK : VibrationEffect.EFFECT_CLICK
+          )
+      );
+    } else if (VERSION.SDK_INT >= VERSION_CODES.O) {
       vibrator.vibrate(
           VibrationEffect.createOneShot(
               emphasize ? HEAVY : CLICK, VibrationEffect.DEFAULT_AMPLITUDE
