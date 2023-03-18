@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.SystemUiUtil;
 
 public class CircleView extends View {
@@ -40,19 +41,19 @@ public class CircleView extends View {
   public CircleView(@NonNull Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
 
+    colorDefault = ResUtil.getColorAttr(context, R.attr.colorSecondaryContainer);
+    int colorDrag = ResUtil.getColorAttr(context, R.attr.colorTertiary);
+
     paint = new Paint();
     paint.setStyle(Style.FILL);
-    paint.setColor(ContextCompat.getColor(context, R.color.picker));
+    paint.setColor(colorDefault);
     paint.setAntiAlias(true);
     paint.setPathEffect(new CornerPathEffect(SystemUiUtil.dpToPx(context, 9)));
 
-    colorDefault = ContextCompat.getColor(context, R.color.picker);
-    int colorDrag = ContextCompat.getColor(context, R.color.picker_dragged);
-
     colorsDrag = new int[]{
-        colorDrag,
-        ColorUtils.blendARGB(colorDrag, colorDefault, 0.4f),
-        ColorUtils.blendARGB(colorDrag, colorDefault, 0.8f),
+        ColorUtils.blendARGB(colorDrag, colorDefault, 0.5f),
+        ColorUtils.blendARGB(colorDrag, colorDefault, 0.7f),
+        ColorUtils.blendARGB(colorDrag, colorDefault, 0.9f),
         colorDefault
     };
 

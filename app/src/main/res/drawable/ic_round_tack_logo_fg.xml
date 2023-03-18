@@ -5,8 +5,10 @@
   android:viewportWidth="24"
   android:viewportHeight="24">
   <path
-    android:fillColor="@color/logo_wood"
-    android:pathData="M8.56,14.56a11,11 0,0 0,-4.29 2.63A1.7,1.7 62.85,0 0,5.72 20h12.56a1.7,1.7 117.15,0 0,1.45 -2.81,11 11,0 0,0 -4.29,-2.63 10.98,10.98 0,0 0,-6.88 0z"
-    android:strokeWidth="1"
-    android:strokeColor="@color/on_background" />
+    android:pathData="m8.788,14.951a10.411,10.411 0,0 0,-4.06 2.489,1.609 1.609,0 0,0 1.372,2.659H17.988a1.609,1.609 0,0 0,1.372 -2.659,10.411 10.411,0 0,0 -4.06,-2.489 10.392,10.392 0,0 0,-6.511 0z"
+    android:fillColor="?attr/colorPrimaryContainer" />
+  <path
+    android:pathData="m8.788,14.951a10.411,10.411 0,0 0,-4.06 2.489,1.609 1.609,0 0,0 1.372,2.659H17.988a1.609,1.609 0,0 0,1.372 -2.659,10.411 10.411,0 0,0 -4.06,-2.489 10.392,10.392 0,0 0,-6.511 0z"
+    android:strokeWidth="1.25"
+    android:strokeColor="?attr/colorOnBackground" />
 </vector>

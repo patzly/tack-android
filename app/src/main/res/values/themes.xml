@@ -1,47 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-  <style name="Theme.Tack" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-    <item name="colorPrimary">@color/background</item>
-    <item name="colorPrimaryDark">@color/background</item>
-    <item name="colorOnPrimary">@color/on_background</item>
 
-    <item name="colorSecondary">@color/secondary</item>
-    <item name="colorOnSecondary">@color/on_secondary</item>
-
-    <item name="android:colorBackground">@color/background</item>
-    <item name="colorOnBackground">@color/on_background</item>
-    <item name="android:colorForeground">@color/on_background</item>
-    <item name="android:navigationBarColor">@color/background</item>
-
-    <item name="colorSurface">@color/surface</item>
-    <item name="colorOnSurface">@color/on_surface</item>
-
-    <item name="snackbarTextViewStyle">@style/Widget.Tack.Snackbar.TextView</item>
-    <item name="snackbarButtonStyle">@style/Widget.Tack.Button.TextButton.Snackbar</item>
-
-    <item name="android:colorControlNormal">@color/on_background</item>
-    <item name="android:colorControlActivated">@color/secondary</item>
-    <item name="android:colorControlHighlight">@color/highlight</item>
-    <item name="android:colorEdgeEffect">@color/highlight</item>
-
-    <item name="actionOverflowButtonStyle">@style/Widget.Tack.OverFlow</item>
-    <item name="actionOverflowMenuStyle">@style/Widget.Tack.PopupMenu</item>
-
-    <item name="android:fontFamily">@font/jost_book</item>
-
-    <item name="bottomSheetDialogTheme">@style/Theme.Doodle.BottomSheetDialog</item>
-
-    <item name="android:windowSplashScreenBackground" tools:targetApi="s">@color/background</item>
-    <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="s">@drawable/splash_logo_anim</item>
-    <item name="android:windowSplashScreenAnimationDuration" tools:targetApi="s">1000</item>
-  </style>
-
-  <style
-    name="Theme.Doodle.BottomSheetDialog"
-    parent="ThemeOverlay.MaterialComponents.BottomSheetDialog">
-    <item name="enableEdgeToEdge">true</item>
-    <item name="android:navigationBarColor">@color/transparent</item>
-  </style>
 
 </resources>

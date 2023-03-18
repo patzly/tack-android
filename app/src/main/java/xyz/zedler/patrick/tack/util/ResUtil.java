@@ -2,6 +2,7 @@ package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.Html;
 import android.text.Spannable;
@@ -10,12 +11,17 @@ import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.BulletSpan;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -28,7 +34,7 @@ public class ResUtil {
   @NonNull
   public static String getRawText(Context context, @RawRes int resId) {
     InputStream inputStream = context.getResources().openRawResource(resId);
-    BufferedReader bufferedReader= new BufferedReader(new InputStreamReader(inputStream));
+    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
     StringBuilder text = new StringBuilder();
     try {
       for (String line; (line = bufferedReader.readLine()) != null; ) {
@@ -37,7 +43,7 @@ public class ResUtil {
       text.deleteCharAt(text.length() - 1);
       inputStream.close();
     } catch (Exception e) {
-      Log.e(TAG, "getRawText: ", e);
+      Log.e(TAG, "getRawText", e);
     }
     return text.toString();
   }
@@ -49,53 +55,51 @@ public class ResUtil {
     context.startActivity(Intent.createChooser(intent, null));
   }
 
-  public static CharSequence getBulletList(
-      Context context, String prefixToReplace, @Nullable String text, String... highlights
-  ) {
-    if (context == null || text == null) {
-      return null;
-    }
+  public static int getColorAttr(Context context, @AttrRes int resId) {
+    TypedValue typedValue = new TypedValue();
+    context.getTheme().resolveAttribute(resId, typedValue, true);
+    return typedValue.data;
+  }
 
-    // BulletSpan doesn't support RTL, use original text instead
-    int direction = context.getResources().getConfiguration().getLayoutDirection();
-    if (direction == View.LAYOUT_DIRECTION_RTL) {
-      String formatted = text;
-      for (String highlight : highlights) {
-        formatted = formatted.replaceAll(highlight, "<b>" + highlight + "</b>");
-        formatted = formatted.replaceAll("\n", "<br/>");
-      }
-      return Html.fromHtml(formatted);
-    }
+  public static int getColorAttr(Context context, @AttrRes int resId, float alpha) {
+    return ColorUtils.setAlphaComponent(getColorAttr(context, resId), (int) (alpha * 255));
+  }
 
-    int color = ContextCompat.getColor(context, R.color.on_background);
-    int margin = SystemUiUtil.spToPx(context, 6);
+  public static int getColorBg(Context context) {
+    return getColorAttr(context, android.R.attr.colorBackground);
+  }
 
-    String[] lines = text.split("\n");
-    SpannableStringBuilder builder = new SpannableStringBuilder();
-    for (int i = 0; i < lines.length; i++) {
-      String line = lines[i] + (i < lines.length - 1 ? "\n" : "");
-      if (!line.startsWith(prefixToReplace)) {
-        builder.append(line);
+  public static int getColorOutline(Context context) {
+    return getColorAttr(context, R.attr.colorOutline);
+  }
+
+  public static int getColorOutlineSecondary(Context context) {
+    return getColorAttr(context, R.attr.colorOutline, 0.4f);
+  }
+
+  public static int getColorHighlight(Context context) {
+    return getColorAttr(context, R.attr.colorSecondary, 0.09f);
+  }
+
+  public static void tintMenuItemIcons(Context context, Menu menu) {
+    for (int i = 0; i < menu.size(); i++) {
+      MenuItem item = menu.getItem(i);
+      if (item == null || item.getIcon() == null) {
         continue;
       }
-      line = line.substring(prefixToReplace.length());
-
-      BulletSpan bulletSpan;
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-        bulletSpan = new BulletSpan(margin, color, SystemUiUtil.spToPx(context, 2));
-      } else {
-        bulletSpan = new BulletSpan(margin, color);
-      }
-
-      for (String highlight : highlights) {
-        line = line.replaceAll(highlight, "<b>" + highlight + "</b>");
-        line = line.replaceAll("\n", "<br/>");
-      }
-
-      Spannable spannable = new SpannableString(Html.fromHtml(line));
-      spannable.setSpan(bulletSpan, 0, spannable.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
-      builder.append(spannable);
+      item.getIcon().setTint(ResUtil.getColorAttr(context, R.attr.colorOnSurfaceVariant));
     }
-    return builder;
+  }
+
+  public static void tintMenuItemIcon(Context context, MenuItem item) {
+    if (item != null && item.getIcon() != null) {
+      item.getIcon().setTint(ResUtil.getColorAttr(context, R.attr.colorOnSurfaceVariant));
+    }
+  }
+
+  public static void tintIcon(Context context, Drawable icon) {
+    if (icon != null) {
+      icon.setTint(ResUtil.getColorAttr(context, R.attr.colorOnSurfaceVariant));
+    }
   }
 }

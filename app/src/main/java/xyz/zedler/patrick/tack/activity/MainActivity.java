@@ -1,314 +1,162 @@
 package xyz.zedler.patrick.tack.activity;
 
-import android.animation.AnimatorSet;
-import android.animation.ArgbEvaluator;
-import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-import android.content.pm.ShortcutInfo;
-import android.content.pm.ShortcutManager;
-import android.content.res.ColorStateList;
-import android.graphics.drawable.Animatable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.Icon;
-import android.os.Build;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.PackageManager.PackageInfoFlags;
+import android.content.res.Configuration;
+import android.content.res.Resources;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.view.MenuItem;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewConfiguration;
-import android.view.Window;
+import androidx.annotation.NonNull;
+import androidx.annotation.RawRes;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.fragment.app.DialogFragment;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import com.google.android.material.chip.Chip;
+import androidx.navigation.NavController;
+import androidx.navigation.NavDirections;
+import androidx.navigation.NavOptions;
+import androidx.navigation.fragment.NavHostFragment;
+import com.google.android.material.color.DynamicColors;
+import com.google.android.material.color.DynamicColorsOptions;
+import com.google.android.material.color.HarmonizedColors;
+import com.google.android.material.color.HarmonizedColorsOptions;
 import com.google.android.material.snackbar.Snackbar;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.Locale;
+import xyz.zedler.patrick.tack.BuildConfig;
 import xyz.zedler.patrick.tack.Constants.DEF;
+import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.Constants.SETTINGS;
+import xyz.zedler.patrick.tack.Constants.THEME;
+import xyz.zedler.patrick.tack.NavMainDirections;
 import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
-import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
-import xyz.zedler.patrick.tack.databinding.ActivityMainAppBinding;
-import xyz.zedler.patrick.tack.fragment.EmphasisBottomSheetDialogFragment;
-import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
-import xyz.zedler.patrick.tack.fragment.WearBottomSheetDialogFragment;
-import xyz.zedler.patrick.tack.service.MetronomeService;
+import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
+import xyz.zedler.patrick.tack.fragment.BaseFragment;
 import xyz.zedler.patrick.tack.util.HapticUtil;
-import xyz.zedler.patrick.tack.util.LogoUtil;
-import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.SystemUiUtil;
+import xyz.zedler.patrick.tack.util.LocaleUtil;
+import xyz.zedler.patrick.tack.util.PrefsUtil;
+import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
-import xyz.zedler.patrick.tack.view.BpmPickerView;
 
-public class MainActivity extends AppCompatActivity
-    implements View.OnClickListener, ServiceConnection,
-    MetronomeService.TickListener {
+public class MainActivity extends AppCompatActivity {
 
-  private final static String TAG = MainActivity.class.getSimpleName();
+  private static final String TAG = MainActivity.class.getSimpleName();
 
-  private ActivityMainAppBinding binding;
+  private ActivityMainBinding binding;
+  private NavController navController;
+  private NavHostFragment navHost;
   private SharedPreferences sharedPrefs;
-  private long prevTouchTime;
-  private final List<Long> intervals = new ArrayList<>();
-
-  private boolean isBound;
-  private boolean hapticFeedback;
-  private MetronomeService service;
-  private LogoUtil logoUtil;
-  private ViewUtil viewUtil;
   private HapticUtil hapticUtil;
+  private Locale locale;
+  private boolean runAsSuperClass;
 
-  private List<Integer> bookmarks;
-
-  @SuppressLint("ClickableViewAccessibility")
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    runAsSuperClass = savedInstanceState != null
+        && savedInstanceState.getBoolean(EXTRA.RUN_AS_SUPER_CLASS, false);
 
-    binding = ActivityMainAppBinding.inflate(getLayoutInflater());
-    sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+    if (runAsSuperClass) {
+      super.onCreate(savedInstanceState);
+      return;
+    }
 
-    AppCompatDelegate.setDefaultNightMode(
-        sharedPrefs.getBoolean(SETTINGS.DARK_MODE, DEF.DARK_MODE)
-            ? AppCompatDelegate.MODE_NIGHT_YES
-            : AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
-    );
+    sharedPrefs = new PrefsUtil(this).checkForMigrations().getSharedPrefs();
+
+    // DARK MODE
+
+    int modeNight = sharedPrefs.getInt(PREF.MODE, DEF.MODE);
+    int uiMode = getResources().getConfiguration().uiMode;
+    switch (modeNight) {
+      case AppCompatDelegate.MODE_NIGHT_NO:
+        uiMode = Configuration.UI_MODE_NIGHT_NO;
+        break;
+      case AppCompatDelegate.MODE_NIGHT_YES:
+        uiMode = Configuration.UI_MODE_NIGHT_YES;
+        break;
+    }
+    AppCompatDelegate.setDefaultNightMode(modeNight);
+
+    // APPLY CONFIG TO RESOURCES
+
+    // base
+    Resources resBase = getBaseContext().getResources();
+    Configuration configBase = resBase.getConfiguration();
+    configBase.uiMode = uiMode;
+    resBase.updateConfiguration(configBase, resBase.getDisplayMetrics());
+    // app
+    Resources resApp = getApplicationContext().getResources();
+    Configuration configApp = resApp.getConfiguration();
+    // Don't set uiMode here, won't let FOLLOW_SYSTEM apply correctly
+    resApp.updateConfiguration(configApp, getResources().getDisplayMetrics());
+
+    switch (sharedPrefs.getString(PREF.THEME, DEF.THEME)) {
+      case THEME.RED:
+        setTheme(R.style.Theme_Tack_Red);
+        break;
+      case THEME.YELLOW:
+        setTheme(R.style.Theme_Tack_Yellow);
+        break;
+      case THEME.LIME:
+        setTheme(R.style.Theme_Tack_Lime);
+        break;
+      case THEME.GREEN:
+        setTheme(R.style.Theme_Tack_Green);
+        break;
+      case THEME.TURQUOISE:
+        setTheme(R.style.Theme_Tack_Turquoise);
+        break;
+      case THEME.TEAL:
+        setTheme(R.style.Theme_Tack_Teal);
+        break;
+      case THEME.BLUE:
+        setTheme(R.style.Theme_Tack_Blue);
+        break;
+      case THEME.PURPLE:
+        setTheme(R.style.Theme_Tack_Purple);
+        break;
+      default:
+        if (DynamicColors.isDynamicColorAvailable()) {
+          DynamicColors.applyToActivityIfAvailable(
+              this,
+              new DynamicColorsOptions.Builder().setOnAppliedCallback(
+                  activity -> HarmonizedColors.applyToContextIfAvailable(
+                      this, HarmonizedColorsOptions.createMaterialDefaults()
+                  )
+              ).build()
+          );
+        } else {
+          setTheme(R.style.Theme_Tack_Yellow);
+        }
+        break;
+    }
+
+    Bundle bundleInstanceState = getIntent().getBundleExtra(EXTRA.INSTANCE_STATE);
+    super.onCreate(bundleInstanceState != null ? bundleInstanceState : savedInstanceState);
+
+    binding = ActivityMainBinding.inflate(getLayoutInflater());
     setContentView(binding.getRoot());
 
-    SystemBarBehavior systemBarBehavior = new SystemBarBehavior(this);
-    systemBarBehavior.setAppBar(binding.appBarMain);
-    systemBarBehavior.setContainer(binding.frameMainContainer);
-    systemBarBehavior.applyAppBarInsetOnContainer(false);
-    systemBarBehavior.setUp();
-
-    new ScrollBehavior(this).setUpScroll(binding.appBarMain, null, false);
-
-    logoUtil = new LogoUtil(binding.imageMainLogo);
-    viewUtil = new ViewUtil();
     hapticUtil = new HapticUtil(this);
 
-    if (!hapticUtil.hasVibrator()) {
-      sharedPrefs.edit().putBoolean(PREF.BEAT_MODE_VIBRATE, false).apply();
-    }
+    locale = LocaleUtil.getLocale();
 
-    binding.toolbarMain.setOnMenuItemClickListener((MenuItem item) -> {
-      int itemId = item.getItemId();
-      if (itemId == R.id.action_wear && viewUtil.isClickEnabled()) {
-        DialogFragment fragment = new WearBottomSheetDialogFragment();
-        fragment.show(getSupportFragmentManager(), fragment.toString());
-      } else if (itemId == R.id.action_settings) {
-        startActivity(new Intent(this, SettingsActivity.class));
-      } else if (itemId == R.id.action_about) {
-        startActivity(new Intent(this, AboutActivity.class));
-      } else if (itemId == R.id.action_share) {
-        ResUtil.share(this, R.string.msg_share);
-      } else if (itemId == R.id.action_feedback) {
-        DialogFragment fragment = new FeedbackBottomSheetDialogFragment();
-        fragment.show(getSupportFragmentManager(), fragment.toString());
-      }
-      if (hapticFeedback) {
-        hapticUtil.click();
-      }
-      return true;
-    });
-
-    binding.textMainEmphasis.setText(
-        String.valueOf(sharedPrefs.getInt(PREF.EMPHASIS, DEF.EMPHASIS))
+    navHost = (NavHostFragment) getSupportFragmentManager().findFragmentById(
+        R.id.fragment_main_nav_host
     );
+    assert navHost != null;
+    navController = navHost.getNavController();
 
-    binding.bpmPickerMain.setOnRotationListener(new BpmPickerView.OnRotationListener() {
-      @Override
-      public void onRotate(int change) {
-        changeBpm(change);
-      }
-
-      @Override
-      public void onRotate(float change) {
-        binding.circleMain.setRotation(
-            binding.circleMain.getRotation() + change
-        );
-      }
-    });
-    binding.bpmPickerMain.setOnPickListener(new BpmPickerView.OnPickListener() {
-      @Override
-      public void onPickDown(float x, float y) {
-        binding.circleMain.setDragged(true, x, y);
-      }
-
-      @Override
-      public void onDrag(float x, float y) {
-        binding.circleMain.onDrag(x, y);
-      }
-
-      @Override
-      public void onPickUpOrCancel() {
-        binding.circleMain.setDragged(false, 0, 0);
-      }
-    });
-
-    binding.frameMainLess.setOnTouchListener(new View.OnTouchListener() {
-      private Handler handler;
-      private int nextRun = 400;
-      private final Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-          if (isBound()) {
-            if (service.getBpm() > 1) {
-              changeBpm(-1);
-              handler.postDelayed(this, nextRun);
-              if (nextRun > 60) {
-                nextRun = (int) (nextRun * 0.9);
-              }
-            } else {
-              handler.removeCallbacks(runnable);
-              handler = null;
-              nextRun = 400;
-            }
-          }
-        }
-      };
-
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()) {
-          case MotionEvent.ACTION_DOWN:
-            if (handler != null) {
-              return true;
-            }
-            handler = new Handler(Looper.getMainLooper());
-            handler.postDelayed(runnable, ViewConfiguration.getLongPressTimeout());
-            break;
-          case MotionEvent.ACTION_CANCEL:
-          case MotionEvent.ACTION_UP:
-            if (handler == null) {
-              return true;
-            }
-            handler.removeCallbacks(runnable);
-            handler = null;
-            nextRun = 400;
-            break;
-        }
-        return false;
-      }
-    });
-
-    binding.frameMainMore.setOnTouchListener(new View.OnTouchListener() {
-      private Handler handler;
-      private int nextRun = 400;
-      private final Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-          if (isBound()) {
-            if (service.getBpm() < 400) {
-              changeBpm(1);
-              handler.postDelayed(this, nextRun);
-              if (nextRun > 60) {
-                nextRun = (int) (nextRun * 0.9);
-              }
-            } else {
-              handler.removeCallbacks(runnable);
-              handler = null;
-              nextRun = 400;
-            }
-          }
-        }
-      };
-
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()) {
-          case MotionEvent.ACTION_DOWN:
-            if (handler != null) {
-              return true;
-            }
-            handler = new Handler(Looper.getMainLooper());
-            handler.postDelayed(runnable, ViewConfiguration.getLongPressTimeout());
-            break;
-          case MotionEvent.ACTION_CANCEL:
-          case MotionEvent.ACTION_UP:
-            if (handler == null) {
-              return true;
-            }
-            handler.removeCallbacks(runnable);
-            handler = null;
-            nextRun = 400;
-            break;
-        }
-        return false;
-      }
-    });
-
-    ViewUtil.setOnClickListeners(
-        this,
-        binding.frameMainLess,
-        binding.frameMainMore,
-        binding.frameMainTempoTap,
-        binding.frameMainBeatMode,
-        binding.frameMainBookmark,
-        binding.frameMainEmphasis,
-        binding.fabMain
-    );
-
-    boolean vibrateAlways = sharedPrefs.getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.VIBRATE_ALWAYS);
-    if (sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE)) {
-      binding.imageMainBeatMode.setImageResource(
-          vibrateAlways
-              ? R.drawable.ic_round_volume_off_to_volume_on_anim
-              : R.drawable.ic_round_vibrate_to_volume_anim
+    if (savedInstanceState == null && bundleInstanceState == null) {
+      new Handler(Looper.getMainLooper()).postDelayed(
+          this::showInitialBottomSheets, VERSION.SDK_INT >= 31 ? 950 : 0
       );
-    } else {
-      binding.imageMainBeatMode.setImageResource(
-          vibrateAlways
-              ? R.drawable.ic_round_volume_on_to_volume_off_anim
-              : R.drawable.ic_round_volume_to_vibrate_anim
-      );
-    }
-
-    setButtonStates();
-
-    String prefBookmarks = sharedPrefs.getString(PREF.BOOKMARKS, null);
-    List<String> bookmarksArray;
-    if (prefBookmarks != null) {
-      bookmarksArray = Arrays.asList(prefBookmarks.split(","));
-    } else {
-      bookmarksArray = new ArrayList<>();
-    }
-    bookmarks = new ArrayList<>(bookmarksArray.size());
-    for (int i = 0; i < bookmarksArray.size(); i++) {
-      if (!bookmarksArray.get(i).equals("")) {
-        bookmarks.add(Integer.parseInt(bookmarksArray.get(i)));
-      }
-    }
-    for (int i = 0; i < bookmarks.size(); i++) {
-      binding.chipGroupMain.addView(newChip(bookmarks.get(i)));
-    }
-
-    int feedback = sharedPrefs.getInt(PREF.FEEDBACK_POP_UP, 1);
-    if (feedback > 0) {
-      if (feedback < 5) {
-        sharedPrefs.edit().putInt(PREF.FEEDBACK_POP_UP, feedback + 1).apply();
-      } else {
-        DialogFragment fragment = new FeedbackBottomSheetDialogFragment();
-        fragment.show(getSupportFragmentManager(), fragment.toString());
-      }
     }
   }
 
@@ -319,482 +167,194 @@ public class MainActivity extends AppCompatActivity
   }
 
   @Override
-  protected void onStart() {
-    Intent intent = new Intent(this, MetronomeService.class);
-    try {
-      startService(intent);
-      bindService(intent, this, Context.BIND_AUTO_CREATE);
-    } catch (IllegalStateException e) {
-      Log.e(TAG, "onStart: cannot start service because app is in background");
-    }
-    super.onStart();
-  }
-
-  @Override
-  protected void onStop() {
-    if (isBound) {
-      unbindService(this);
-      isBound = false;
-    }
-    super.onStop();
-  }
-
-  @Override
   protected void onResume() {
     super.onResume();
 
-    hapticFeedback = sharedPrefs.getBoolean(SETTINGS.HAPTIC_FEEDBACK, DEF.HAPTIC_FEEDBACK);
-  }
-
-  @Override
-  public void onClick(View v) {
-    int id = v.getId();
-    if (id == R.id.fab_main) {
-      if (isBound()) {
-        if (service.isPlaying()) {
-          service.pause();
-        } else {
-          service.play();
-        }
-      }
-      if (hapticFeedback
-          && isBound()
-          && (!service.isBeatModeVibrate() && !service.vibrateAlways())
-      ) {
-        hapticUtil.click();
-      }
-    } else if (id == R.id.frame_main_less) {
-      ViewUtil.startIcon(binding.imageMainLess);
-      changeBpm(-1);
-    } else if (id == R.id.frame_main_more) {
-      ViewUtil.startIcon(binding.imageMainMore);
-      changeBpm(1);
-    } else if (id == R.id.frame_main_tempo_tap) {
-      ViewUtil.startIcon(binding.imageMainTempoTap);
-
-      long interval = System.currentTimeMillis() - prevTouchTime;
-      if (prevTouchTime > 0 && interval <= 6000) {
-        while (intervals.size() >= 10) {
-          intervals.remove(0);
-        }
-        intervals.add(System.currentTimeMillis() - prevTouchTime);
-        if (intervals.size() > 1) {
-          setBpm((int) (60000 / getIntervalAverage()));
-        }
-      }
-      prevTouchTime = System.currentTimeMillis();
-
-      if (hapticFeedback
-          && isBound()
-          && ((!service.isBeatModeVibrate() && !service.vibrateAlways()) || !service.isPlaying())
-      ) {
-        hapticUtil.heavyClick();
-      }
-    } else if (id == R.id.frame_main_beat_mode) {
-      boolean beatModeVibrateNew = !sharedPrefs.getBoolean(
-          PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE
-      );
-      boolean vibrateAlways = sharedPrefs.getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.VIBRATE_ALWAYS);
-
-      if (beatModeVibrateNew && !hapticUtil.hasVibrator()) {
-        Snackbar.make(
-            binding.coordinatorContainer,
-            getString(R.string.msg_vibration_unavailable),
-            Snackbar.LENGTH_LONG
-        ).setAnchorView(binding.fabMain).show();
-        return;
-      }
-
-      sharedPrefs.edit().putBoolean(PREF.BEAT_MODE_VIBRATE, beatModeVibrateNew).apply();
-      if (isBound()) {
-        service.updateTick();
-      }
-      ViewUtil.startIcon(binding.imageMainBeatMode);
-      new Handler(Looper.getMainLooper()).postDelayed(() -> {
-        if (beatModeVibrateNew) {
-          binding.imageMainBeatMode.setImageResource(
-              vibrateAlways
-                  ? R.drawable.ic_round_volume_off_to_volume_on_anim
-                  : R.drawable.ic_round_vibrate_to_volume_anim
-          );
-        } else {
-          binding.imageMainBeatMode.setImageResource(
-              vibrateAlways
-                  ? R.drawable.ic_round_volume_on_to_volume_off_anim
-                  : R.drawable.ic_round_volume_to_vibrate_anim
-          );
-        }
-      }, 300);
-    } else if (id == R.id.frame_main_bookmark) {
-      ViewUtil.startIcon(binding.imageMainBookmark);
-      if (hapticFeedback) {
-        hapticUtil.click();
-      }
-      if (isBound()) {
-        if (bookmarks.size() < 3 && !bookmarks.contains(service.getBpm())) {
-          binding.chipGroupMain.addView(newChip(service.getBpm()));
-          bookmarks.add(service.getBpm());
-          updateBookmarks();
-          refreshBookmark(true);
-        } else if (bookmarks.size() >= 3) {
-          Snackbar.make(
-              binding.coordinatorContainer,
-              getString(R.string.msg_bookmarks_max),
-              Snackbar.LENGTH_LONG
-          ).setAnchorView(binding.fabMain)
-              .setActionTextColor(
-                  ContextCompat.getColor(
-                      this, R.color.retro_green_fg_invert
-                  )
-              ).setAction(
-              getString(R.string.action_clear_all),
-              v1 -> {
-                binding.chipGroupMain.removeAllViews();
-                bookmarks.clear();
-                updateBookmarks();
-                refreshBookmark(true);
-              }
-          ).show();
-        }
-      }
-    } else if (id == R.id.frame_main_emphasis) {
-      ViewUtil.startIcon(binding.imageMainEmphasis);
-      if (hapticFeedback) {
-        hapticUtil.click();
-      }
-      if (sharedPrefs.getBoolean(SETTINGS.EMPHASIS_SLIDER, DEF.EMPHASIS_SLIDER)) {
-        DialogFragment fragment = new EmphasisBottomSheetDialogFragment();
-        fragment.show(getSupportFragmentManager(), fragment.toString());
-      } else {
-        setNextEmphasis();
-      }
-    }
-  }
-
-  @Override
-  public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-    MetronomeService.LocalBinder binder = (MetronomeService.LocalBinder) iBinder;
-    service = binder.getService();
-    if (service == null) {
+    if (runAsSuperClass) {
       return;
     }
 
-    service.setTickListener(this);
-    isBound = true;
+    hapticUtil.setEnabled(HapticUtil.areSystemHapticsTurnedOn(this));
+  }
 
-    if (binding == null || sharedPrefs == null) {
-      return;
-    }
-
-    if (sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE)) {
-      binding.imageMainBeatMode.setImageResource(
-          sharedPrefs.getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.VIBRATE_ALWAYS)
-              ? R.drawable.ic_round_volume_off_to_volume_on_anim
-              : R.drawable.ic_round_vibrate_to_volume_anim
-      );
+  @Override
+  protected void attachBaseContext(Context base) {
+    if (runAsSuperClass) {
+      super.attachBaseContext(base);
     } else {
-      binding.imageMainBeatMode.setImageResource(
-          sharedPrefs.getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.VIBRATE_ALWAYS)
-              ? R.drawable.ic_round_volume_on_to_volume_off_anim
-              : R.drawable.ic_round_volume_to_vibrate_anim
-      );
-    }
-
-    service.updateTick();
-    refreshBookmark(false);
-
-    setBpm(service.getBpm());
-
-    binding.fabMain.setImageResource(
-        service.isPlaying()
-            ? R.drawable.ic_round_pause
-            : R.drawable.ic_round_play_arrow
-    );
-
-    keepScreenAwake(service.isPlaying());
-  }
-
-  @Override
-  public void onServiceDisconnected(ComponentName componentName) {
-    isBound = false;
-  }
-
-  @Override
-  public void onStartTicks() {
-    if (binding != null) {
-      binding.fabMain.setImageResource(R.drawable.ic_round_play_to_pause_anim);
-      Drawable fabIcon = binding.fabMain.getDrawable();
-      if (fabIcon != null) {
-        ((Animatable) fabIcon).start();
+      SharedPreferences sharedPrefs = new PrefsUtil(base).checkForMigrations().getSharedPrefs();
+      // Night mode
+      int modeNight = sharedPrefs.getInt(PREF.MODE, DEF.MODE);
+      int uiMode = base.getResources().getConfiguration().uiMode;
+      switch (modeNight) {
+        case AppCompatDelegate.MODE_NIGHT_NO:
+          uiMode = Configuration.UI_MODE_NIGHT_NO;
+          break;
+        case AppCompatDelegate.MODE_NIGHT_YES:
+          uiMode = Configuration.UI_MODE_NIGHT_YES;
+          break;
       }
-    }
-    keepScreenAwake(true);
-  }
-
-  @Override
-  public void onStopTicks() {
-    if (binding != null) {
-      binding.fabMain.setImageResource(R.drawable.ic_round_pause_to_play_anim);
-      Drawable icon = binding.fabMain.getDrawable();
-      if (icon != null) {
-        ((Animatable) icon).start();
-      }
-    }
-    keepScreenAwake(false);
-  }
-
-  @Override
-  public void onTick(long interval, boolean isEmphasis, int index) {
-    logoUtil.nextBeat(interval);
-  }
-
-  @Override
-  public void onBpmChanged(int bpm) {
-    if (isBound()) {
-      binding.textMainBpm.setText(String.valueOf(bpm));
-      refreshBookmark(true);
+      AppCompatDelegate.setDefaultNightMode(modeNight);
+      // Apply config to resources
+      Resources resources = base.getResources();
+      Configuration config = resources.getConfiguration();
+      config.uiMode = uiMode;
+      resources.updateConfiguration(config, resources.getDisplayMetrics());
+      super.attachBaseContext(base.createConfigurationContext(config));
     }
   }
 
-  private void setNextEmphasis() {
-    int emphasis = sharedPrefs.getInt(PREF.EMPHASIS, DEF.EMPHASIS);
-    int emphasisNew;
-    if (emphasis < 6) {
-      emphasisNew = emphasis + 1;
-    } else {
-      emphasisNew = 0;
-    }
-    sharedPrefs.edit().putInt(PREF.EMPHASIS, emphasisNew).apply();
-    new Handler(Looper.getMainLooper()).postDelayed(
-        () -> binding.textMainEmphasis.setText(String.valueOf(emphasisNew)),
-        150
-    );
-    if (isBound()) {
-      service.updateTick();
-    }
+  @NonNull
+  public BaseFragment getCurrentFragment() {
+    return (BaseFragment) navHost.getChildFragmentManager().getFragments().get(0);
   }
 
-  public void setEmphasis(int emphasis) {
-    sharedPrefs.edit().putInt(PREF.EMPHASIS, emphasis).apply();
-    binding.textMainEmphasis.setText(String.valueOf(emphasis));
-    if (hapticFeedback) {
-      hapticUtil.tick();
-    }
-    if (isBound()) {
-      service.updateTick();
-    }
+  public void showSnackbar(@StringRes int resId) {
+    showSnackbar(Snackbar.make(binding.coordinatorMain, getString(resId), Snackbar.LENGTH_LONG));
   }
 
-  private Chip newChip(int bpm) {
-    Chip chip = new Chip(this);
-    chip.setCheckable(false);
-    chip.setCloseIconVisible(true);
-    chip.setCloseIconTintResource(R.color.icon);
-    chip.setCloseIconResource(R.drawable.ic_round_cancel);
-    chip.setOnCloseIconClickListener(v -> {
-      if (hapticFeedback) {
-        hapticUtil.click();
-      }
-      binding.chipGroupMain.removeView(chip);
-      bookmarks.remove((Integer) bpm); // Integer cast required
-      updateBookmarks();
-      refreshBookmark(true);
-    });
-    chip.setChipBackgroundColorResource(R.color.bookmark_inactive);
-    chip.setStateListAnimator(null);
-    chip.setText(String.valueOf(bpm));
-    chip.setTextColor(ContextCompat.getColor(this, R.color.on_surface));
-    chip.setTextSize(18);
-    chip.setTypeface(ResourcesCompat.getFont(this, R.font.jost_bold));
-    chip.setChipIconVisible(false);
-    chip.setChipStrokeWidth(0);
-    chip.setRippleColorResource(R.color.highlight);
-    chip.setOnClickListener(v -> setBpm(bpm));
-    if (SystemUiUtil.isOrientationPortrait(this)) {
-      chip.setHeight(SystemUiUtil.dpToPx(this, 56));
-      chip.setChipEndPadding(SystemUiUtil.dpToPx(this, 10));
-    }
-    return chip;
+  public void showSnackbar(Snackbar snackbar) {
+    snackbar.show();
   }
 
-  public void keepScreenAwake(boolean keepAwake) {
-    Window window = getWindow();
-    if (window == null) {
+  public Snackbar getSnackbar(@StringRes int resId, int duration) {
+    return Snackbar.make(binding.coordinatorMain, getString(resId), duration);
+  }
+
+  public void navigate(NavDirections directions) {
+    if (navController == null || directions == null) {
+      Log.e(TAG, "navigate: controller or direction is null");
       return;
     }
-    window.getDecorView().setKeepScreenOn(
-        keepAwake
-            && sharedPrefs != null
-            && sharedPrefs.getBoolean(SETTINGS.KEEP_AWAKE, DEF.KEEP_AWAKE)
-    );
-  }
-
-  private void updateBookmarks() {
-    StringBuilder stringBuilder = new StringBuilder();
-    for (Integer bpm : bookmarks) {
-      stringBuilder.append(bpm).append(",");
-    }
-    sharedPrefs.edit().putString(PREF.BOOKMARKS, stringBuilder.toString()).apply();
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-      Collections.sort(bookmarks);
-      ShortcutManager manager = (ShortcutManager) getSystemService(Context.SHORTCUT_SERVICE);
-      if (manager != null) {
-        List<ShortcutInfo> shortcuts = new ArrayList<>();
-        for (int bpm : bookmarks) {
-          shortcuts.add(
-              new ShortcutInfo.Builder(this, String.valueOf(bpm))
-                  .setShortLabel(getString(R.string.title_bpm, String.valueOf(bpm)))
-                  .setIcon(Icon.createWithResource(this, R.mipmap.ic_shortcut))
-                  .setIntent(new Intent(this, ShortcutActivity.class)
-                      .setAction(MetronomeService.ACTION_START)
-                      .putExtra(MetronomeService.EXTRA_BPM, bpm)
-                      .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                  .build()
-          );
-        }
-
-        manager.setDynamicShortcuts(shortcuts);
-      }
+    try {
+      navController.navigate(directions);
+    } catch (IllegalArgumentException e) {
+      Log.e(TAG, "navigate: " + directions, e);
     }
   }
 
-  private void refreshBookmark(boolean animated) {
-    if (isBound()) {
-      if (!bookmarks.contains(service.getBpm())) {
-        if (!binding.frameMainBookmark.isEnabled()) {
-          if (animated) {
-            binding.frameMainBookmark.animate().alpha(1).setDuration(250).start();
-          } else {
-            binding.frameMainBookmark.setAlpha(1);
-          }
-        }
-        binding.frameMainBookmark.setEnabled(true);
+  public void navigateToFragment(NavDirections directions) {
+    if (navController == null || directions == null) {
+      Log.e(TAG, "navigate: controller or direction is null");
+      return;
+    }
+    try {
+      NavOptions.Builder builder = new NavOptions.Builder();
+      if (UiUtil.areAnimationsEnabled(this)) {
+        boolean useSliding = getSharedPrefs().getBoolean(PREF.USE_SLIDING, DEF.USE_SLIDING);
+        builder.setEnterAnim(useSliding ? R.anim.enter_end_slide : R.anim.enter_end_fade);
+        builder.setExitAnim(useSliding ? R.anim.exit_start_slide : R.anim.exit_start_fade);
+        builder.setPopEnterAnim(useSliding ? R.anim.enter_start_slide : R.anim.enter_start_fade);
+        builder.setPopExitAnim(useSliding ? R.anim.exit_end_slide : R.anim.exit_end_fade);
       } else {
-        if (binding.frameMainBookmark.isEnabled()) {
-          if (animated) {
-            binding.frameMainBookmark.animate().alpha(0.5f).setDuration(250).start();
-          } else {
-            binding.frameMainBookmark.setAlpha(0.5f);
-          }
-        }
-        binding.frameMainBookmark.setEnabled(false);
+        builder.setEnterAnim(R.anim.fade_in_a11y);
+        builder.setExitAnim(R.anim.fade_out_a11y);
+        builder.setPopEnterAnim(R.anim.fade_in_a11y);
+        builder.setPopExitAnim(R.anim.fade_out_a11y);
       }
-      for (int i = 0; i < binding.chipGroupMain.getChildCount(); i++) {
-        Chip chip = (Chip) binding.chipGroupMain.getChildAt(i);
-        if (chip != null) {
-          boolean active = Integer.parseInt(chip.getText().toString()) == service.getBpm();
-          if (animated) {
-            animateChip(chip, active);
-          } else {
-            if (active) {
-              chip.setChipBackgroundColorResource(R.color.bookmark_active);
-            } else {
-              chip.setChipBackgroundColorResource(R.color.bookmark_inactive);
-            }
-          }
-        }
-      }
+      navController.navigate(directions, builder.build());
+    } catch (IllegalArgumentException e) {
+      Log.e(TAG, "navigate: " + directions, e);
     }
   }
 
-  private void animateChip(Chip chip, boolean active) {
-    int colorFrom = Objects.requireNonNull(chip.getChipBackgroundColor()).getDefaultColor();
-    int colorTo = ContextCompat.getColor(
-        this, active ? R.color.bookmark_active : R.color.bookmark_inactive
-    );
-    ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-    colorAnimation.addUpdateListener(
-        animator -> chip.setChipBackgroundColor(
-            ColorStateList.valueOf((int) animator.getAnimatedValue())
-        )
-    );
-
-    int closeColorFrom = Objects.requireNonNull(chip.getCloseIconTint()).getDefaultColor();
-    int closeColorTo = ContextCompat.getColor(
-        this, active ? R.color.on_surface : R.color.icon
-    );
-    ValueAnimator closeColorAnimation = ValueAnimator.ofObject(
-        new ArgbEvaluator(), closeColorFrom, closeColorTo
-    );
-    closeColorAnimation.addUpdateListener(
-        animator -> chip.setCloseIconTint(
-            ColorStateList.valueOf((int) animator.getAnimatedValue())
-        )
-    );
-
-    AnimatorSet animatorSet = new AnimatorSet();
-    animatorSet.playTogether(colorAnimation, closeColorAnimation);
-    animatorSet.setDuration(250);
-    animatorSet.setInterpolator(new FastOutSlowInInterpolator());
-    animatorSet.start();
-  }
-
-  private void changeBpm(int change) {
-    if (isBound()) {
-      int bpmNew = service.getBpm() + change;
-      setBpm(bpmNew);
-      if (hapticFeedback
-          && (!service.isPlaying()
-          || (!service.isBeatModeVibrate() && !service.vibrateAlways()))
-          && bpmNew >= 1 && bpmNew <= 400
-      ) {
-        hapticUtil.tick();
-      }
+  public void navigateUp() {
+    if (navController != null) {
+      navController.navigateUp();
+    } else {
+      Log.e(TAG, "navigateUp: controller is null");
     }
   }
 
-  private void setBpm(int bpm) {
-    if (isBound() && bpm > 0) {
-      service.setBpm(Math.min(bpm, 400));
-      refreshBookmark(true);
-      binding.textMainBpm.setText(String.valueOf(service.getBpm()));
-      if (service.getBpm() > 1) {
-        if (!binding.frameMainLess.isEnabled()) {
-          binding.frameMainLess.animate().alpha(1).setDuration(250).start();
-        }
-        binding.frameMainLess.setEnabled(true);
+  public SharedPreferences getSharedPrefs() {
+    return sharedPrefs;
+  }
+
+  public Locale getLocale() {
+    return locale;
+  }
+
+  public void restartToApply(
+      long delay, @NonNull Bundle bundle, boolean restoreState
+  ) {
+    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+      if (restoreState) {
+        onSaveInstanceState(bundle);
+      }
+      if (VERSION.SDK_INT < VERSION_CODES.S) {
+        finish();
+      }
+      Intent intent = new Intent(this, MainActivity.class);
+      if (restoreState) {
+        intent.putExtra(EXTRA.INSTANCE_STATE, bundle);
+      }
+      startActivity(intent);
+      if (VERSION.SDK_INT >= VERSION_CODES.S) {
+        finish();
+      }
+      if (UiUtil.areAnimationsEnabled(this)) {
+        overridePendingTransition(R.anim.fade_in_restart, R.anim.fade_out_restart);
       } else {
-        if (binding.frameMainLess.isEnabled()) {
-          binding.frameMainLess.animate().alpha(0.5f).setDuration(250).start();
-        }
-        binding.frameMainLess.setEnabled(false);
+        overridePendingTransition(R.anim.fade_in_a11y, R.anim.fade_out_a11y);
       }
-      if (service.getBpm() < 400) {
-        if (!binding.frameMainMore.isEnabled()) {
-          binding.frameMainMore.animate().alpha(1).setDuration(250).start();
-        }
-        binding.frameMainMore.setEnabled(true);
+    }, delay);
+  }
+
+  private void showInitialBottomSheets() {
+    // Changelog
+    int versionNew = BuildConfig.VERSION_CODE;
+    int versionOld = sharedPrefs.getInt(PREF.LAST_VERSION, 0);
+    if (versionOld == 0) {
+      sharedPrefs.edit().putInt(PREF.LAST_VERSION, versionNew).apply();
+    } else if (versionOld != versionNew) {
+      sharedPrefs.edit().putInt(PREF.LAST_VERSION, versionNew).apply();
+      showChangelogBottomSheet();
+    }
+
+    // Feedback
+    int feedbackCount = sharedPrefs.getInt(PREF.FEEDBACK_POP_UP_COUNT, 1);
+    if (feedbackCount > 0) {
+      if (feedbackCount < 5) {
+        sharedPrefs.edit().putInt(PREF.FEEDBACK_POP_UP_COUNT, feedbackCount + 1).apply();
       } else {
-        if (binding.frameMainMore.isEnabled()) {
-          binding.frameMainMore.animate().alpha(0.5f).setDuration(250).start();
-        }
-        binding.frameMainMore.setEnabled(false);
+        showFeedbackBottomSheet();
       }
     }
   }
 
-  private void setButtonStates() {
-    if (isBound()) {
-      int bpm = service.getBpm();
-      binding.frameMainLess.setEnabled(bpm > 1);
-      binding.frameMainLess.setAlpha(bpm > 1 ? 1 : 0.5f);
-      binding.frameMainMore.setEnabled(bpm < 400);
-      binding.frameMainMore.setAlpha(bpm < 400 ? 1 : 0.5f);
-    }
+  public void showTextBottomSheet(@RawRes int file, @StringRes int title) {
+    showTextBottomSheet(file, title, 0);
   }
 
-  private boolean isBound() {
-    return isBound && service != null;
+  public void showTextBottomSheet(@RawRes int file, @StringRes int title, @StringRes int link) {
+    NavMainDirections.ActionGlobalTextDialog action
+        = NavMainDirections.actionGlobalTextDialog();
+    action.setTitle(title);
+    action.setFile(file);
+    if (link != 0) {
+      action.setLink(link);
+    }
+    navigate(action);
   }
 
-  private long getIntervalAverage() {
-    long sum = 0L;
-    if (!intervals.isEmpty()) {
-      for (long interval : intervals) {
-        sum += interval;
-      }
-      return (long) ((double) sum / intervals.size());
-    }
-    return sum;
+  public void showFeedbackBottomSheet() {
+    navigate(NavMainDirections.actionGlobalFeedbackDialog());
+  }
+
+  public void showChangelogBottomSheet() {
+    NavMainDirections.ActionGlobalTextDialog action
+        = NavMainDirections.actionGlobalTextDialog();
+    action.setTitle(R.string.about_changelog);
+    action.setFile(R.raw.changelog);
+    action.setHighlights(new String[]{"New:", "Improved:", "Fixed:"});
+    navigate(action);
+  }
+
+  public void performHapticClick() {
+    hapticUtil.click();
+  }
+
+  public void performHapticHeavyClick() {
+    hapticUtil.heavyClick();
   }
 }

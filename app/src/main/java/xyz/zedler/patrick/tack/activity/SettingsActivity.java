@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +17,7 @@ import android.widget.RadioGroup;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.fragment.app.DialogFragment;
+import androidx.preference.PreferenceManager;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.SETTINGS;
@@ -25,7 +25,7 @@ import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.ActivitySettingsAppBinding;
-import xyz.zedler.patrick.tack.fragment.FeedbackBottomSheetDialogFragment;
+import xyz.zedler.patrick.tack.fragment.dialog.FeedbackBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.util.AudioUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
@@ -67,7 +67,7 @@ public class SettingsActivity extends AppCompatActivity
     hapticUtil = new HapticUtil(this);
 
     binding.frameSettingsBack.setOnClickListener(v -> {
-      if (viewUtil.isClickEnabled()) {
+      if (viewUtil.isClickEnabled(v.getId())) {
         hapticUtil.click();
         finish();
       }
@@ -76,7 +76,7 @@ public class SettingsActivity extends AppCompatActivity
     binding.toolbarSettings.setOnMenuItemClickListener((MenuItem item) -> {
       int itemId = item.getItemId();
       if (itemId == R.id.action_about) {
-        startActivity(new Intent(this, AboutActivity.class));
+
       } else if (itemId == R.id.action_feedback) {
         DialogFragment fragment = new FeedbackBottomSheetDialogFragment();
         fragment.show(getSupportFragmentManager(), fragment.toString());
@@ -90,7 +90,7 @@ public class SettingsActivity extends AppCompatActivity
     systemBarBehavior.setScroll(binding.scrollSettings, binding.linearSettingsContainer);
     systemBarBehavior.setUp();
 
-    new ScrollBehavior(this).setUpScroll(
+    new ScrollBehavior().setUpScroll(
         binding.appBarSettings, binding.scrollSettings, true
     );
 
@@ -224,7 +224,7 @@ public class SettingsActivity extends AppCompatActivity
   @Override
   public void onClick(View v) {
     int id = v.getId();
-    if (id == R.id.linear_settings_dark_mode && viewUtil.isClickEnabled()) {
+    if (id == R.id.linear_settings_dark_mode && viewUtil.isClickEnabled(id)) {
       binding.switchSettingsDarkMode.setChecked(!binding.switchSettingsDarkMode.isChecked());
     } else if (id == R.id.linear_settings_vibrate_always) {
       binding.switchSettingsVibrateAlways.setChecked(

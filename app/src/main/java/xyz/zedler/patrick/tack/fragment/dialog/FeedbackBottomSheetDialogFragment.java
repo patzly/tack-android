@@ -1,4 +1,4 @@
-package xyz.zedler.patrick.tack.fragment;
+package xyz.zedler.patrick.tack.fragment.dialog;
 
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
@@ -15,7 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
 import androidx.annotation.NonNull;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
+import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetFeedbackBinding;
@@ -103,8 +105,8 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
   public void onDismiss(@NonNull DialogInterface dialog) {
     super.onDismiss(dialog);
 
-    if (sharedPrefs.getInt("feedback_pop_up", 1) != 0) {
-      sharedPrefs.edit().putInt("feedback_pop_up", 0).apply();
+    if (sharedPrefs.getInt(PREF.FEEDBACK_POP_UP_COUNT, 1) != 0) {
+      sharedPrefs.edit().putInt(PREF.FEEDBACK_POP_UP_COUNT, 0).apply();
     }
   }
 

@@ -14,27 +14,36 @@
 
     <FrameLayout
       android:layout_width="match_parent"
-      android:layout_height="?android:actionBarSize"
-      android:orientation="horizontal">
+      android:layout_height="?attr/actionBarSize">
 
-      <ImageView
-        android:id="@+id/image_main_logo"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginStart="16dp"
-        android:layout_gravity="start|center_vertical"
-        android:importantForAccessibility="no"
-        android:src="@drawable/ic_round_tack_logo" />
+      <FrameLayout
+        android:id="@+id/frame_main_logo"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="center"
+        android:layout_gravity="start|center_vertical">
+
+        <ImageView
+          android:id="@+id/image_main_logo"
+          android:layout_width="32dp"
+          android:layout_height="32dp"
+          android:layout_gravity="center"
+          android:importantForAccessibility="no"
+          android:src="@drawable/ic_round_tack_logo" />
+
+      </FrameLayout>
 
       <TextView
         style="@style/Widget.Tack.TextView.Toolbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
+        android:textAlignment="center"
         android:layout_gravity="center"
-        android:textAlignment="center" />
+        android:text="@string/app_name" />
 
-      <androidx.appcompat.widget.Toolbar
+      <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_main"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -67,28 +76,12 @@
         android:orientation="horizontal"
         android:gravity="center_vertical">
 
-        <FrameLayout
-          android:id="@+id/frame_main_less"
-          android:layout_width="48dp"
-          android:layout_height="48dp"
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_less"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
           android:layout_marginEnd="16dp"
-          android:background="?attr/actionBarItemBackground"
-          android:clickable="true"
-          android:gravity="center"
           android:contentDescription="@string/action_less"
-          android:tooltipText="@string/action_less"
-          android:focusable="true"
-          tools:targetApi="o">
-
-          <ImageView
-            android:id="@+id/image_main_less"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center"
-            android:importantForAccessibility="no"
-            android:src="@drawable/ic_round_chevron_left_anim" />
-
-        </FrameLayout>
+          app:icon="@drawable/ic_round_chevron_left_anim" />
 
         <FrameLayout
           android:layout_width="wrap_content"
@@ -116,7 +109,7 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_marginBottom="@dimen/label_text_size"
-              android:textColor="@color/black"
+              android:textColor="?attr/colorOnPrimaryContainer"
               android:layout_gravity="center_horizontal|top"
               android:fontFamily="@font/edwin_bold"
               android:lineSpacingExtra="5dp"
@@ -126,8 +119,8 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:text="@string/title_bpm_label"
-              android:textColor="@color/black"
-              android:fontFamily="@font/jost_bold"
+              android:textColor="?attr/colorOnPrimaryContainer"
+              android:fontFamily="@font/jost_medium"
               android:layout_gravity="center_horizontal|bottom"
               android:textSize="@dimen/label_text_size" />
 
@@ -135,28 +128,12 @@
 
         </FrameLayout>
 
-        <FrameLayout
-          android:id="@+id/frame_main_more"
-          android:layout_width="48dp"
-          android:layout_height="48dp"
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_more"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
           android:layout_marginStart="16dp"
-          android:background="?attr/actionBarItemBackground"
-          android:clickable="true"
-          android:gravity="center"
           android:contentDescription="@string/action_more"
-          android:tooltipText="@string/action_more"
-          android:focusable="true"
-          tools:targetApi="o">
-
-          <ImageView
-            android:id="@+id/image_main_more"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_gravity="center"
-            android:importantForAccessibility="no"
-            android:src="@drawable/ic_round_chevron_right_anim" />
-
-        </FrameLayout>
+          app:icon="@drawable/ic_round_chevron_right_anim" />
 
       </LinearLayout>
 
@@ -176,22 +153,29 @@
       android:layout_height="wrap_content"
       android:paddingBottom="@dimen/control_margin_bottom"
       android:orientation="horizontal"
+      android:layout_gravity="center_horizontal|bottom"
       android:gravity="center_vertical"
-      android:layout_gravity="bottom|center_horizontal"
+      android:animateLayoutChanges="true"
       android:clipToPadding="false">
 
       <FrameLayout
         android:id="@+id/frame_main_emphasis"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginEnd="@dimen/control_spacing"
-        android:background="?attr/actionBarItemBackground"
+        android:layout_marginEnd="4dp"
         android:clickable="true"
         android:gravity="center"
         android:contentDescription="@string/action_emphasis"
         android:tooltipText="@string/action_emphasis"
         android:focusable="true"
         tools:targetApi="o">
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_dictation_start_over"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:contentDescription="@string/action_emphasis" />
 
         <ImageView
           android:id="@+id/image_main_emphasis"
@@ -200,7 +184,8 @@
           android:layout_gravity="center"
           android:layout_marginTop="7dp"
           android:importantForAccessibility="no"
-          android:src="@drawable/ic_round_emphasis_anim" />
+          android:src="@drawable/ic_round_emphasis_anim"
+          app:tint="@color/selector_icon_button_icon_color" />
 
         <TextView
           android:id="@+id/text_main_emphasis"
@@ -211,95 +196,40 @@
           android:layout_marginStart="1dp"
           android:fontFamily="@font/material_digits_rounded"
           android:letterSpacing="0.12"
-          android:textColor="@color/icon"
+          android:textColor="@color/selector_icon_button_icon_color"
           android:textSize="10dp"
           tools:ignore="SpUsage" />
 
       </FrameLayout>
 
-      <FrameLayout
-        android:id="@+id/frame_main_tempo_tap"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="@dimen/control_spacing"
-        android:background="?attr/actionBarItemBackground"
-        android:clickable="true"
-        android:gravity="center"
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_main_tempo_tap"
+        style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+        android:layout_marginEnd="12dp"
         android:contentDescription="@string/action_tempo_tap"
-        android:tooltipText="@string/action_tempo_tap"
-        android:focusable="true"
-        tools:targetApi="o">
-
-        <ImageView
-          android:id="@+id/image_main_tempo_tap"
-          android:layout_width="24dp"
-          android:layout_height="24dp"
-          android:layout_gravity="center"
-          android:importantForAccessibility="no"
-          android:src="@drawable/ic_round_touch_app_anim" />
-
-      </FrameLayout>
+        app:icon="@drawable/ic_round_touch_app_anim" />
 
       <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_main"
+        android:id="@+id/fab_main_play_pause"
+        style="@style/Widget.Material3.FloatingActionButton.Large.Primary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:src="@drawable/ic_round_play_to_pause_anim"
-        android:tint="@color/on_secondary"
+        android:layout_marginEnd="12dp"
         android:contentDescription="@string/action_play_pause"
-        android:tooltipText="@string/action_play_pause"
-        app:backgroundTint="@color/retro_green_bg_white"
-        app:rippleColor="@color/highlight_on_secondary"
-        app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.FloatingActionButton"
-        tools:targetApi="o" />
+        app:srcCompat="@drawable/ic_round_play_to_pause_anim" />
 
-      <FrameLayout
-        android:id="@+id/frame_main_bookmark"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="@dimen/control_spacing"
-        android:background="?attr/actionBarItemBackground"
-        android:clickable="true"
-        android:gravity="center"
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_main_bookmark"
+        style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+        android:layout_marginEnd="4dp"
         android:contentDescription="@string/action_bookmark"
-        android:tooltipText="@string/action_bookmark"
-        android:focusable="true"
-        tools:targetApi="o">
+        app:icon="@drawable/ic_round_bookmark_anim" />
 
-        <ImageView
-          android:id="@+id/image_main_bookmark"
-          android:layout_width="24dp"
-          android:layout_height="24dp"
-          android:layout_gravity="center"
-          android:importantForAccessibility="no"
-          android:src="@drawable/ic_round_bookmark_anim" />
-
-      </FrameLayout>
-
-      <FrameLayout
-        android:id="@+id/frame_main_beat_mode"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="@dimen/control_spacing"
-        android:background="?attr/actionBarItemBackground"
-        android:clickable="true"
-        android:gravity="center"
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_main_beat_mode"
+        style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
         android:contentDescription="@string/action_beat_mode"
-        android:tooltipText="@string/action_beat_mode"
-        android:focusable="true"
-        tools:targetApi="o">
-
-        <ImageView
-          android:id="@+id/image_main_beat_mode"
-          android:layout_width="24dp"
-          android:layout_height="24dp"
-          android:layout_gravity="center"
-          android:importantForAccessibility="no"
-          android:src="@drawable/ic_round_vibrate_to_volume_anim" />
-
-      </FrameLayout>
+        app:icon="@drawable/ic_round_vibrate_to_volume_anim" />
 
     </LinearLayout>
 

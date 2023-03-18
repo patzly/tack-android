@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent">
+
+  <com.google.android.material.appbar.AppBarLayout
+    android:id="@+id/app_bar_about"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.appbar.MaterialToolbar
+      android:id="@+id/toolbar_about"
+      style="@style/Widget.Tack.Toolbar.Back"
+      app:title="@string/title_about"
+      app:menu="@menu/menu_main" />
+
+  </com.google.android.material.appbar.AppBarLayout>
+
+  <androidx.core.widget.NestedScrollView
+    android:id="@+id/scroll_about"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="?attr/actionBarSize">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/constraint_about"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingTop="8dp"
+      android:paddingBottom="8dp">
+
+      <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_max="@dimen/max_content_width"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine">
+
+          <ImageView
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_round_info_outline_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.OverLine"
+              android:text="@string/about_version" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/versionName" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_about_changelog"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
+
+          <ImageView
+            android:id="@+id/image_about_changelog"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_round_history_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.OverLine"
+              android:text="@string/about_changelog" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/about_changelog_description" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_about_developer"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
+
+          <ImageView
+            android:id="@+id/image_about_developer"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_round_person_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.OverLine"
+              android:text="@string/about_developer" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/app_developer" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_about_vending"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
+
+          <ImageView
+            android:id="@+id/image_about_vending"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon.Colored"
+            android:src="@drawable/ic_round_vending_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.OverLine"
+              android:text="@string/about_vending" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/about_vending_description" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_about_github"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable"
+          android:background="@drawable/ripple_list_item_bg">
+
+          <ImageView
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_round_github"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.OverLine"
+              android:text="@string/about_github" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/about_github_description" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_about_translation"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable"
+          android:background="@drawable/ripple_list_item_bg">
+
+          <ImageView
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_round_translate"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.OverLine"
+              android:text="@string/about_translation" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/about_translation_description" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_about_privacy"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable"
+          android:background="@drawable/ripple_list_item_bg">
+
+          <ImageView
+            android:id="@+id/image_about_privacy"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon.Colored"
+            android:src="@drawable/ic_round_policy_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.OverLine"
+              android:text="@string/about_privacy" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/about_privacy_description" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+          style="@style/Widget.Tack.TextView.Category"
+          android:text="@string/title_licenses" />
+
+        <LinearLayout
+          android:id="@+id/linear_about_license_edwin"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
+
+          <ImageView
+            android:id="@+id/image_about_license_edwin"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_round_copyright_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/license_edwin" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/license_edwin_author" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_about_license_jost"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
+
+          <ImageView
+            android:id="@+id/image_about_license_jost"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_round_copyright_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/license_jost" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/license_jost_author" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_about_license_material_components"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
+
+          <ImageView
+            android:id="@+id/image_about_license_material_components"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_round_copyright_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/license_material_components" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/license_author_google" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_about_license_material_icons"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
+
+          <ImageView
+            android:id="@+id/image_about_license_material_icons"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_round_copyright_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/license_material_icons" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/license_author_google" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_about_license_metronome"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
+
+          <ImageView
+            android:id="@+id/image_about_license_metronome"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_round_copyright_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/license_metronome" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/license_metronome_author" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+      </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+  </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

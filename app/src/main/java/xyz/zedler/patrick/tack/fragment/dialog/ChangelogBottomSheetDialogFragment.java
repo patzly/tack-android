@@ -1,4 +1,4 @@
-package xyz.zedler.patrick.tack.fragment;
+package xyz.zedler.patrick.tack.fragment.dialog;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -29,7 +29,7 @@ public class ChangelogBottomSheetDialogFragment extends BaseBottomSheetDialogFra
     Context context = getContext();
     assert context != null;
 
-    binding.textChangelog.setText(
+    /*binding.textChangelog.setText(
         ResUtil.getBulletList(
             getContext(),
             "- ",
@@ -37,7 +37,7 @@ public class ChangelogBottomSheetDialogFragment extends BaseBottomSheetDialogFra
             getResources().getStringArray(R.array.changelog_highlights)
         ),
         TextView.BufferType.SPANNABLE
-    );
+    );*/
 
     return binding.getRoot();
   }

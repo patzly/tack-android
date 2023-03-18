@@ -41,18 +41,18 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility 11
-        targetCompatibility 11
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
     }
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.6.0-rc01'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.preference:preference:1.2.0'
     implementation 'androidx.wear:wear:1.2.0'
 
     compileOnly 'com.google.android.wearable:wearable:2.9.0'
-    implementation "com.google.android.support:wearable:2.9.0"
+    implementation 'com.google.android.support:wearable:2.9.0'
 
-    implementation 'com.google.android.material:material:1.7.0'
+    implementation 'com.google.android.material:material:1.9.0-beta01'
 }

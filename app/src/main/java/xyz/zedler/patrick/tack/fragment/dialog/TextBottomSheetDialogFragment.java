@@ -1,4 +1,4 @@
-package xyz.zedler.patrick.tack.fragment;
+package xyz.zedler.patrick.tack.fragment.dialog;
 
 import android.content.Context;
 import android.content.Intent;
@@ -51,7 +51,7 @@ public class TextBottomSheetDialogFragment extends BaseBottomSheetDialogFragment
     String link = bundle.getString(Constants.EXTRA.LINK);
     if (link != null) {
       binding.frameTextOpenLink.setOnClickListener(v -> {
-        if (viewUtil.isClickDisabled()) {
+        if (viewUtil.isClickDisabled(v.getId())) {
           return;
         }
         hapticUtil.click();

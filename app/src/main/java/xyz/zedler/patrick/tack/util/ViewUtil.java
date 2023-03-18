@@ -1,68 +1,108 @@
 package xyz.zedler.patrick.tack.util;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.RippleDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.TextView;
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat.Type;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.elevation.SurfaceColors;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedList;
+import xyz.zedler.patrick.tack.R;
 
 public class ViewUtil {
 
-  private final static String TAG = ViewUtil.class.getSimpleName();
+  private static final String TAG = ViewUtil.class.getSimpleName();
 
-  private long lastClick;
-  private long idle = 500;
+  private final long idle;
+  private final LinkedList<Timestamp> timestamps;
+
+  private static class Timestamp {
+
+    private final int id;
+    private long time;
+
+    public Timestamp(int id, long time) {
+      this.id = id;
+      this.time = time;
+    }
+  }
 
   // Prevent multiple clicks
 
-  public ViewUtil() {
-    lastClick = 0;
-  }
-
   public ViewUtil(long minClickIdle) {
-    lastClick = 0;
     idle = minClickIdle;
+    timestamps = new LinkedList<>();
   }
 
-  public boolean isClickDisabled() {
-    if (SystemClock.elapsedRealtime() - lastClick < idle) {
-      return true;
+  public ViewUtil() {
+    idle = 500;
+    timestamps = new LinkedList<>();
+  }
+
+  public boolean isClickDisabled(int id) {
+    for (int i = 0; i < timestamps.size(); i++) {
+      if (timestamps.get(i).id == id) {
+        if (SystemClock.elapsedRealtime() - timestamps.get(i).time < idle) {
+          return true;
+        } else {
+          timestamps.get(i).time = SystemClock.elapsedRealtime();
+          return false;
+        }
+      }
     }
-    lastClick = SystemClock.elapsedRealtime();
+    timestamps.add(new Timestamp(id, SystemClock.elapsedRealtime()));
     return false;
   }
 
-  public boolean isClickEnabled() {
-    return !isClickDisabled();
+  public boolean isClickEnabled(int id) {
+    return !isClickDisabled(id);
   }
 
-  // Layout direction
-
-  public static boolean isLayoutRtl(View view) {
-    return ViewCompat.getLayoutDirection(view) == ViewCompat.LAYOUT_DIRECTION_RTL;
+  public void cleanUp() {
+    for (Iterator<Timestamp> iterator = timestamps.iterator(); iterator.hasNext(); ) {
+      Timestamp timestamp = iterator.next();
+      if (SystemClock.elapsedRealtime() - timestamp.time > idle) {
+        iterator.remove();
+      }
+    }
   }
 
   // Show keyboard for EditText
 
-  public static void requestFocusAndShowKeyboard(@NonNull final View view) {
+  public static void requestFocusAndShowKeyboard(@NonNull Window window, @NonNull View view) {
+    WindowCompat.getInsetsController(window, view).show(Type.ime());
     view.requestFocus();
-    view.post(() -> {
-      InputMethodManager inputMethod = (InputMethodManager) view.getContext().getSystemService(
-          Context.INPUT_METHOD_SERVICE
-      );
-      inputMethod.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
-    });
   }
 
   // ClickListeners & OnCheckedChangeListeners
@@ -82,17 +122,28 @@ public class ViewUtil {
     }
   }
 
+  public static void setChecked(boolean checked, MaterialCardView... cardViews) {
+    for (MaterialCardView cardView : cardViews) {
+      if (cardView != null) {
+        cardView.setChecked(checked);
+      }
+    }
+  }
+
+  public static void uncheckAllChildren(ViewGroup... viewGroups) {
+    for (ViewGroup viewGroup : viewGroups) {
+      for (int i = 0; i < viewGroup.getChildCount(); i++) {
+        View child = viewGroup.getChildAt(i);
+        if (child instanceof MaterialCardView) {
+          ((MaterialCardView) child).setChecked(false);
+        }
+      }
+    }
+  }
+
   // BottomSheets
 
   public static void showBottomSheet(AppCompatActivity activity, BottomSheetDialogFragment sheet) {
-    sheet.show(activity.getSupportFragmentManager(), sheet.toString());
-  }
-
-  public static void showBottomSheet(
-      AppCompatActivity activity, BottomSheetDialogFragment sheet, @Nullable Bundle bundle) {
-    if (bundle != null) {
-      sheet.setArguments(bundle);
-    }
     sheet.show(activity.getSupportFragmentManager(), sheet.toString());
   }
 
@@ -129,6 +180,123 @@ public class ViewUtil {
       ((Animatable) drawable).start();
     } catch (ClassCastException e) {
       Log.e(TAG, "icon animation requires AnimVectorDrawable");
+    }
+  }
+
+  public static void resetAnimatedIcon(ImageView imageView) {
+    if (imageView == null) {
+      return;
+    }
+    try {
+      Animatable animatable = (Animatable) imageView.getDrawable();
+      if (animatable != null) {
+        animatable.stop();
+      }
+      imageView.setImageDrawable(null);
+      imageView.setImageDrawable((Drawable) animatable);
+    } catch (ClassCastException e) {
+      Log.e(TAG, "resetting animated icon requires AnimVectorDrawable");
+    }
+  }
+
+  // Blink MaterialCardView
+
+  public static void blinkCard(MaterialCardView cardView, @ColorRes int resId, long duration) {
+    Context context = cardView.getContext();
+    ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1);
+    valueAnimator.addUpdateListener(animation -> {
+      cardView.setStrokeColor(
+          ColorUtils.blendARGB(
+              ResUtil.getColorOutline(context),
+              ContextCompat.getColor(context, resId),
+              (float) valueAnimator.getAnimatedValue()
+          )
+      );
+      cardView.setStrokeWidth(
+          UiUtil.dpToPx(context, (float) valueAnimator.getAnimatedValue() + 1)
+      );
+    });
+    valueAnimator.setRepeatMode(ValueAnimator.REVERSE);
+    valueAnimator.setRepeatCount(1);
+    valueAnimator.setInterpolator(new FastOutSlowInInterpolator());
+    valueAnimator.setDuration(duration).start();
+  }
+
+  // Toolbar
+
+  public static void centerToolbarTitleOnLargeScreens(MaterialToolbar toolbar) {
+    toolbar.setTitleCentered(!UiUtil.isFullWidth(toolbar.getContext()));
+  }
+
+  public static void centerTextOnLargeScreens(TextView textView) {
+    if (UiUtil.isFullWidth(textView.getContext())) {
+      textView.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
+      textView.setGravity(Gravity.START);
+    } else {
+      textView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+      textView.setGravity(Gravity.CENTER_HORIZONTAL);
+    }
+  }
+
+  // Ripple background for surface list items
+
+  public static Drawable getRippleBgListItemSurface(Context context) {
+    float[] radii = new float[8];
+    Arrays.fill(radii, UiUtil.dpToPx(context, 16));
+    RoundRectShape rect = new RoundRectShape(radii, null, null);
+    ShapeDrawable shape = new ShapeDrawable(rect);
+    shape.getPaint().setColor(SurfaceColors.SURFACE_3.getColor(context));
+    LayerDrawable layers = new LayerDrawable(new ShapeDrawable[]{shape});
+    layers.setLayerInset(
+        0,
+        UiUtil.dpToPx(context, 8),
+        UiUtil.dpToPx(context, 2),
+        UiUtil.dpToPx(context, 8),
+        UiUtil.dpToPx(context, 2)
+    );
+    return new RippleDrawable(
+        ColorStateList.valueOf(ResUtil.getColorHighlight(context)), null, layers
+    );
+  }
+
+  public static Drawable getBgListItemSelected(Context context) {
+    return getBgListItemSelected(context, 8, 8);
+  }
+
+  public static Drawable getBgListItemSelected(
+      Context context, float paddingStart, float paddingEnd
+  ) {
+    boolean isRtl = UiUtil.isLayoutRtl(context);
+    float[] radii = new float[8];
+    Arrays.fill(radii, UiUtil.dpToPx(context, 16));
+    RoundRectShape rect = new RoundRectShape(radii, null, null);
+    ShapeDrawable shape = new ShapeDrawable(rect);
+    shape.getPaint().setColor(ResUtil.getColorAttr(context, R.attr.colorSecondaryContainer));
+    LayerDrawable layers = new LayerDrawable(new ShapeDrawable[]{shape});
+    layers.setLayerInset(
+        0,
+        UiUtil.dpToPx(context, isRtl ? paddingEnd : paddingStart),
+        UiUtil.dpToPx(context, 2),
+        UiUtil.dpToPx(context, isRtl ? paddingStart : paddingEnd),
+        UiUtil.dpToPx(context, 2)
+    );
+    return layers;
+  }
+
+  public static void setEnabled(boolean enabled, View... views) {
+    for (View view : views) {
+      view.setEnabled(enabled);
+    }
+  }
+
+  public static void setEnabledAlpha(boolean enabled, boolean animated, View... views) {
+    for (View view : views) {
+      view.setEnabled(enabled);
+      if (animated) {
+        view.animate().alpha(enabled ? 1 : 0.5f).setDuration(200).start();
+      } else {
+        view.setAlpha(enabled ? 1 : 0.5f);
+      }
     }
   }
 }

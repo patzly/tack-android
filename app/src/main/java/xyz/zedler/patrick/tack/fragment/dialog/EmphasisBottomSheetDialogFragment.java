@@ -1,12 +1,12 @@
-package xyz.zedler.patrick.tack.fragment;
+package xyz.zedler.patrick.tack.fragment.dialog;
 
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.activity.MainActivity;
@@ -29,14 +29,14 @@ public class EmphasisBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
     assert activity != null;
 
     binding.sliderEmphasis.setValue(
-        PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(
+        PreferenceManager.getDefaultSharedPreferences(activity).getInt(
             PREF.EMPHASIS, DEF.EMPHASIS
         )
     );
 
-    binding.sliderEmphasis.addOnChangeListener(
+    /*binding.sliderEmphasis.addOnChangeListener(
         (slider, value, fromUser) -> activity.setEmphasis(Math.round(value))
-    );
+    );*/
 
     return binding.getRoot();
   }

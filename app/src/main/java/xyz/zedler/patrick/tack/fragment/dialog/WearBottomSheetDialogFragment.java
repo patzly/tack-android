@@ -1,4 +1,4 @@
-package xyz.zedler.patrick.tack.fragment;
+package xyz.zedler.patrick.tack.fragment.dialog;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
