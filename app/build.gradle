@@ -61,4 +61,5 @@ dependencies {
     implementation libs.navigation.ui
     implementation libs.preference
     implementation libs.material
+    implementation libs.guava
 }

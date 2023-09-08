@@ -7,13 +7,13 @@ import android.media.SoundPool;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 
-public class AudioUtil {
+public class OldAudioUtil {
 
   private final Context context;
   private final SoundPool soundPool;
   private final int[] soundIds = new int[4];
 
-  public AudioUtil(Context context) {
+  public OldAudioUtil(Context context) {
     this.context = context;
     soundPool = new SoundPool.Builder()
         .setMaxStreams(1)

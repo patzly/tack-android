@@ -3,6 +3,7 @@ package xyz.zedler.patrick.tack.fragment;
 import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -94,6 +96,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
     binding = null;
   }
 
+  @SuppressLint("ClickableViewAccessibility")
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     activity = (MainActivity) requireActivity();
@@ -257,6 +260,33 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
       }
     });
 
+    binding.buttonMainTempoTap.setOnTouchListener((v, event) -> {
+      if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        ViewUtil.startIcon(binding.buttonMainTempoTap.getIcon());
+
+        long interval = System.currentTimeMillis() - prevTouchTime;
+        if (prevTouchTime > 0 && interval <= 6000) {
+          while (intervals.size() >= 10) {
+            intervals.remove(0);
+          }
+          intervals.add(System.currentTimeMillis() - prevTouchTime);
+          if (intervals.size() > 1) {
+            setBpm((int) (60000 / getIntervalAverage()));
+          }
+        }
+        prevTouchTime = System.currentTimeMillis();
+
+        if (hapticFeedback
+            && isBound()
+            && ((!service.isBeatModeVibrate() && !service.vibrateAlways())
+            || !service.isPlaying())
+        ) {
+          performHapticHeavyClick();
+        }
+      }
+      return false;
+    });
+
     boolean vibrateAlways = getSharedPrefs().getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.VIBRATE_ALWAYS);
     if (getSharedPrefs().getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE)) {
       binding.buttonMainBeatMode.setIconResource(
@@ -283,7 +313,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
     }
     bookmarks = new ArrayList<>(bookmarksArray.size());
     for (int i = 0; i < bookmarksArray.size(); i++) {
-      if (!bookmarksArray.get(i).equals("")) {
+      if (!bookmarksArray.get(i).isEmpty()) {
         bookmarks.add(Integer.parseInt(bookmarksArray.get(i)));
       }
     }
@@ -295,7 +325,6 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
         this,
         binding.buttonMainLess,
         binding.buttonMainMore,
-        binding.buttonMainTempoTap,
         binding.buttonMainBeatMode,
         binding.buttonMainBookmark,
         binding.frameMainEmphasis,
@@ -349,27 +378,6 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
     } else if (id == R.id.button_main_more) {
       ViewUtil.startIcon(binding.buttonMainMore.getIcon());
       changeBpm(1);
-    } else if (id == R.id.button_main_tempo_tap) {
-      ViewUtil.startIcon(binding.buttonMainTempoTap.getIcon());
-
-      long interval = System.currentTimeMillis() - prevTouchTime;
-      if (prevTouchTime > 0 && interval <= 6000) {
-        while (intervals.size() >= 10) {
-          intervals.remove(0);
-        }
-        intervals.add(System.currentTimeMillis() - prevTouchTime);
-        if (intervals.size() > 1) {
-          setBpm((int) (60000 / getIntervalAverage()));
-        }
-      }
-      prevTouchTime = System.currentTimeMillis();
-
-      if (hapticFeedback
-          && isBound()
-          && ((!service.isBeatModeVibrate() && !service.vibrateAlways()) || !service.isPlaying())
-      ) {
-        //hapticUtil.heavyClick();
-      }
     } else if (id == R.id.button_main_beat_mode) {
       boolean beatModeVibrateNew = !getSharedPrefs().getBoolean(
           PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE

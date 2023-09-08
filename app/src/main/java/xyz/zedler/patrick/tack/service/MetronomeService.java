@@ -21,7 +21,7 @@ import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.util.AudioUtil;
+import xyz.zedler.patrick.tack.util.OldAudioUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 
 public class MetronomeService extends Service implements Runnable {
@@ -37,7 +37,7 @@ public class MetronomeService extends Service implements Runnable {
 
   private SharedPreferences sharedPrefs;
   private HapticUtil hapticUtil;
-  private AudioUtil audioUtil;
+  private OldAudioUtil audioUtil;
   private int bpm;
   private long interval;
 
@@ -56,7 +56,7 @@ public class MetronomeService extends Service implements Runnable {
 
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
     hapticUtil = new HapticUtil(this);
-    audioUtil = new AudioUtil(this);
+    audioUtil = new OldAudioUtil(this);
 
     isBeatModeVibrate = sharedPrefs.getBoolean(
         Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE

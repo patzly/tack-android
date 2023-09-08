@@ -16,7 +16,7 @@ import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivitySettingsWearBinding;
-import xyz.zedler.patrick.tack.util.AudioUtil;
+import xyz.zedler.patrick.tack.util.OldAudioUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
@@ -29,7 +29,7 @@ public class SettingsActivity extends FragmentActivity
   private SharedPreferences sharedPrefs;
   private ViewUtil viewUtil;
   private HapticUtil hapticUtil;
-  private AudioUtil audioUtil;
+  private OldAudioUtil audioUtil;
   private boolean animations;
 
   @Override
@@ -44,7 +44,7 @@ public class SettingsActivity extends FragmentActivity
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
     animations = sharedPrefs.getBoolean(SETTINGS.ANIMATIONS, Constants.DEF.ANIMATIONS);
     viewUtil = new ViewUtil();
-    audioUtil = new AudioUtil(this);
+    audioUtil = new OldAudioUtil(this);
     hapticUtil = new HapticUtil(this);
     hapticUtil.setEnabled(sharedPrefs.getBoolean(SETTINGS.HAPTIC_FEEDBACK, DEF.HAPTIC_FEEDBACK));
 

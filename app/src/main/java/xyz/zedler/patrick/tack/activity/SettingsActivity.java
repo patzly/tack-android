@@ -27,7 +27,7 @@ import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.ActivitySettingsAppBinding;
 import xyz.zedler.patrick.tack.fragment.dialog.FeedbackBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.service.MetronomeService;
-import xyz.zedler.patrick.tack.util.AudioUtil;
+import xyz.zedler.patrick.tack.util.OldAudioUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
@@ -40,7 +40,7 @@ public class SettingsActivity extends AppCompatActivity
   private ActivitySettingsAppBinding binding;
   private SharedPreferences sharedPrefs;
   private ViewUtil viewUtil;
-  private AudioUtil audioUtil;
+  private OldAudioUtil audioUtil;
   private HapticUtil hapticUtil;
   private boolean isBound;
   private MetronomeService service;
@@ -63,7 +63,7 @@ public class SettingsActivity extends AppCompatActivity
     setContentView(binding.getRoot());
 
     viewUtil = new ViewUtil();
-    audioUtil = new AudioUtil(this);
+    audioUtil = new OldAudioUtil(this);
     hapticUtil = new HapticUtil(this);
 
     binding.frameSettingsBack.setOnClickListener(v -> {

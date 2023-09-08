@@ -21,7 +21,7 @@ import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivityMainWearBinding;
-import xyz.zedler.patrick.tack.util.AudioUtil;
+import xyz.zedler.patrick.tack.util.OldAudioUtil;
 import xyz.zedler.patrick.tack.util.ButtonUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -35,7 +35,7 @@ public class MainActivity extends FragmentActivity
 
   private ActivityMainWearBinding binding;
   private SharedPreferences sharedPrefs;
-  private AudioUtil audioUtil;
+  private OldAudioUtil audioUtil;
   private HapticUtil hapticUtil;
   private ViewUtil viewUtil;
   private ButtonUtil buttonUtilFaster;
@@ -71,7 +71,7 @@ public class MainActivity extends FragmentActivity
     setContentView(binding.getRoot());
 
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-    audioUtil = new AudioUtil(this);
+    audioUtil = new OldAudioUtil(this);
     hapticUtil = new HapticUtil(this);
     viewUtil = new ViewUtil();
     buttonUtilFaster = new ButtonUtil(this, () -> changeBpm(1));

@@ -36,6 +36,11 @@ public class SplashActivity extends MainActivity {
     if (Build.VERSION.SDK_INT >= 31) {
       super.onCreate(bundle);
 
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        // SDK 33+ manages splash screen animation duration itself
+        return;
+      }
+
       getSplashScreen().setOnExitAnimationListener(view -> {
         AnimatorSet set = new AnimatorSet();
         set.playTogether(
