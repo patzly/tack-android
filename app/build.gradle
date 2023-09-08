@@ -1,27 +1,23 @@
 plugins {
-    id 'com.android.application'
-    id 'androidx.navigation.safeargs'
+    alias libs.plugins.android.application
+    alias libs.plugins.navigation.safeargs
 }
 
 android {
     namespace 'xyz.zedler.patrick.tack'
-    compileSdkVersion 33
-    buildToolsVersion '33.0.2'
-
-    buildFeatures {
-        viewBinding true
-    }
+    compileSdk 34
+    buildToolsVersion '34.0.0'
 
     defaultConfig {
         applicationId "xyz.zedler.patrick.tack"
-        minSdkVersion 21
-        targetSdkVersion 33
+        minSdk 21
+        targetSdk 34
         versionCode 130 // last number is 0 for app release
         versionName "4.0.0"
         resConfigs 'de', 'en'
     }
 
-    applicationVariants.all { variant ->
+    applicationVariants.configureEach { variant ->
         variant.resValue "string", "versionName", variant.versionName
     }
 
@@ -41,6 +37,11 @@ android {
         }
     }
 
+    buildFeatures {
+        viewBinding true
+        buildConfig true
+    }
+
     bundle {
         storeArchive {
             enable true
@@ -54,10 +55,10 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.preference:preference:1.2.0'
-    implementation 'androidx.navigation:navigation-fragment:2.5.3'
-    implementation 'androidx.navigation:navigation-ui:2.5.3'
-
-    implementation 'com.google.android.material:material:1.9.0-beta01'
+    implementation libs.appcompat
+    implementation libs.fragment
+    implementation libs.navigation.fragment
+    implementation libs.navigation.ui
+    implementation libs.preference
+    implementation libs.material
 }
