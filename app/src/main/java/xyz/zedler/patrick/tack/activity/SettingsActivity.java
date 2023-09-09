@@ -26,7 +26,7 @@ import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.ActivitySettingsAppBinding;
 import xyz.zedler.patrick.tack.fragment.dialog.FeedbackBottomSheetDialogFragment;
-import xyz.zedler.patrick.tack.service.MetronomeService;
+import xyz.zedler.patrick.tack.service.OldMetronomeService;
 import xyz.zedler.patrick.tack.util.OldAudioUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
@@ -43,7 +43,7 @@ public class SettingsActivity extends AppCompatActivity
   private OldAudioUtil audioUtil;
   private HapticUtil hapticUtil;
   private boolean isBound;
-  private MetronomeService service;
+  private OldMetronomeService service;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -106,7 +106,7 @@ public class SettingsActivity extends AppCompatActivity
 
     binding.switchSettingsVibrateAlways.setChecked(
         sharedPrefs.getBoolean(
-            SETTINGS.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
+            SETTINGS.VIBRATE_ALWAYS, Constants.DEF.ALWAYS_VIBRATE
         )
     );
 
@@ -152,7 +152,7 @@ public class SettingsActivity extends AppCompatActivity
 
   @Override
   protected void onStart() {
-    Intent intent = new Intent(this, MetronomeService.class);
+    Intent intent = new Intent(this, OldMetronomeService.class);
     try {
       startService(intent);
       bindService(intent, this, Context.BIND_AUTO_CREATE);
@@ -186,7 +186,7 @@ public class SettingsActivity extends AppCompatActivity
 
   @Override
   public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-    MetronomeService.LocalBinder binder = (MetronomeService.LocalBinder) iBinder;
+    OldMetronomeService.LocalBinder binder = (OldMetronomeService.LocalBinder) iBinder;
     service = binder.getService();
     if (service == null) {
       return;

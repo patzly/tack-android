@@ -12,7 +12,7 @@
 
     <TextView
       style="@style/Widget.Tack.TextView.Toolbar.BottomSheet.Center"
-      android:text="@string/title_wear" />
+      android:text="Hello" />
 
   </FrameLayout>
 

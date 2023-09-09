@@ -118,7 +118,7 @@
             <TextView
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:text="@string/title_bpm_label"
+              android:text="@string/label_bpm"
               android:textColor="?attr/colorOnPrimaryContainer"
               android:fontFamily="@font/jost_medium"
               android:layout_gravity="center_horizontal|bottom"

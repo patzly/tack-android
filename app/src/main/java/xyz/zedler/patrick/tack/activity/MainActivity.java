@@ -3,10 +3,6 @@ package xyz.zedler.patrick.tack.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.content.pm.PackageManager.PackageInfoFlags;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build.VERSION;
@@ -43,7 +39,6 @@ import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 import xyz.zedler.patrick.tack.util.PrefsUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -170,11 +165,9 @@ public class MainActivity extends AppCompatActivity {
   protected void onResume() {
     super.onResume();
 
-    if (runAsSuperClass) {
-      return;
+    if (!runAsSuperClass) {
+      hapticUtil.setEnabled(HapticUtil.areSystemHapticsTurnedOn(this));
     }
-
-    hapticUtil.setEnabled(HapticUtil.areSystemHapticsTurnedOn(this));
   }
 
   @Override

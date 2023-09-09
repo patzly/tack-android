@@ -21,12 +21,12 @@ public class AudioUtil {
 
   private static final String TAG = AudioUtil.class.getSimpleName();
 
-  private static final int SAMPLE_RATE_IN_HZ = 48000;
+  public static final int SAMPLE_RATE_IN_HZ = 48000;
   private static final int SILENCE_CHUNK_SIZE = 8000;
   private static final int DATA_CHUNK_SIZE = 8;
   private static final byte[] DATA_MARKER = "data".getBytes(StandardCharsets.US_ASCII);
 
-  private AudioTrack getNewAudioTrack() {
+  public static AudioTrack getNewAudioTrack() {
     AudioAttributes audioAttributes = new AudioAttributes.Builder()
         .setUsage(AudioAttributes.USAGE_MEDIA)
         .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
@@ -47,22 +47,26 @@ public class AudioUtil {
     );
   }
 
-  private float[] loadAudio(@NonNull Context context, @RawRes int resId) {
+  public static float[] loadAudio(@NonNull Context context, @RawRes int resId) {
     try (InputStream stream = context.getResources().openRawResource(resId)) {
-      return readDataFromWavPcmFloat(stream);
+      return readDataFromWavFloat(stream);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
 
-  private void writeAudio(AudioTrack track, float[] data, int size) {
+  public static float[] getSilence() {
+    return new float[SILENCE_CHUNK_SIZE];
+  }
+
+  public static void writeAudio(AudioTrack track, float[] data, int size) {
     int result = track.write(data, 0, size, AudioTrack.WRITE_BLOCKING);
     if (result < 0) {
       throw new IllegalStateException("Failed to play audio data. Error code: " + result);
     }
   }
 
-  private static float[] readDataFromWavPcmFloat(InputStream input) throws IOException {
+  private static float[] readDataFromWavFloat(InputStream input) throws IOException {
     byte[] content;
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
       content = input.readAllBytes();
@@ -95,9 +99,5 @@ public class AudioUtil {
       buffer.write(data, 0, read);
     }
     return buffer.toByteArray();
-  }
-
-  public AudioUtil() {
-
   }
 }

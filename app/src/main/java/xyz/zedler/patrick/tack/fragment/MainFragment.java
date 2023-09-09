@@ -1,6 +1,5 @@
 package xyz.zedler.patrick.tack.fragment;
 
-import android.animation.AnimatorSet;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
@@ -24,18 +23,15 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.Window;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.fragment.app.DialogFragment;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import androidx.navigation.NavDirections;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
@@ -48,24 +44,22 @@ import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.activity.SettingsActivity;
-import xyz.zedler.patrick.tack.activity.ShortcutActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentMainAppBinding;
 import xyz.zedler.patrick.tack.fragment.dialog.EmphasisBottomSheetDialogFragment;
-import xyz.zedler.patrick.tack.fragment.dialog.FeedbackBottomSheetDialogFragment;
-import xyz.zedler.patrick.tack.fragment.dialog.WearBottomSheetDialogFragment;
 import xyz.zedler.patrick.tack.service.MetronomeService;
+import xyz.zedler.patrick.tack.service.MetronomeService.LocalBinder;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
+import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
+import xyz.zedler.patrick.tack.util.MetronomeUtil.TickListener;
 import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.SystemUiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
 
-public class MainFragment extends BaseFragment implements OnClickListener, ServiceConnection,
-    MetronomeService.TickListener {
+public class MainFragment extends BaseFragment
+    implements OnClickListener, ServiceConnection, TickListener {
 
   private static final String TAG = MainFragment.class.getSimpleName();
 
@@ -77,7 +71,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
 
   private boolean isBound;
   private boolean hapticFeedback;
-  private MetronomeService service;
+  private MetronomeService metronomeService;
   private LogoUtil logoUtil;
 
   private List<Integer> bookmarks;
@@ -174,8 +168,8 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
       private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
-          if (isBound()) {
-            if (service.getBpm() > 1) {
+          if (isBound) {
+            if (metronomeService.getTempo() > 1) {
               changeBpm(-1);
               handler.postDelayed(this, nextRun);
               if (nextRun > 60) {
@@ -220,8 +214,8 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
       private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
-          if (isBound()) {
-            if (service.getBpm() < 400) {
+          if (isBound) {
+            if (metronomeService.getTempo() < 400) {
               changeBpm(1);
               handler.postDelayed(this, nextRun);
               if (nextRun > 60) {
@@ -271,15 +265,15 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
           }
           intervals.add(System.currentTimeMillis() - prevTouchTime);
           if (intervals.size() > 1) {
-            setBpm((int) (60000 / getIntervalAverage()));
+            setTempo((int) (60000 / getIntervalAverage()));
           }
         }
         prevTouchTime = System.currentTimeMillis();
 
         if (hapticFeedback
-            && isBound()
-            && ((!service.isBeatModeVibrate() && !service.vibrateAlways())
-            || !service.isPlaying())
+            && isBound
+            && ((!metronomeService.isBeatModeVibrate() && !metronomeService.isAlwaysVibrate())
+            || !metronomeService.isPlaying())
         ) {
           performHapticHeavyClick();
         }
@@ -287,7 +281,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
       return false;
     });
 
-    boolean vibrateAlways = getSharedPrefs().getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.VIBRATE_ALWAYS);
+    boolean vibrateAlways = getSharedPrefs().getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.ALWAYS_VIBRATE);
     if (getSharedPrefs().getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE)) {
       binding.buttonMainBeatMode.setIconResource(
           vibrateAlways
@@ -359,16 +353,18 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
   public void onClick(View v) {
     int id = v.getId();
     if (id == R.id.fab_main_play_pause) {
-      if (isBound()) {
-        if (service.isPlaying()) {
-          service.pause();
+      if (isBound) {
+        if (metronomeService.isPlaying()) {
+          metronomeService.stop();
         } else {
-          service.play();
+          metronomeService.start();
         }
+      } else {
+        Log.i(TAG, "onClick: hello hä");
       }
       if (hapticFeedback
-          && isBound()
-          && (!service.isBeatModeVibrate() && !service.vibrateAlways())
+          && isBound
+          && (!metronomeService.isBeatModeVibrate() && !metronomeService.isAlwaysVibrate())
       ) {
         //hapticUtil.click();
       }
@@ -382,7 +378,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
       boolean beatModeVibrateNew = !getSharedPrefs().getBoolean(
           PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE
       );
-      boolean vibrateAlways = getSharedPrefs().getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.VIBRATE_ALWAYS);
+      boolean vibrateAlways = getSharedPrefs().getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.ALWAYS_VIBRATE);
 
       if (beatModeVibrateNew && !(new HapticUtil(activity).hasVibrator())) {
         Snackbar.make(
@@ -394,8 +390,8 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
       }
 
       getSharedPrefs().edit().putBoolean(PREF.BEAT_MODE_VIBRATE, beatModeVibrateNew).apply();
-      if (isBound()) {
-        service.updateTick();
+      if (isBound) {
+        //metronomeService.updateTick();
       }
       ViewUtil.startIcon(binding.buttonMainBeatMode.getIcon());
       new Handler(Looper.getMainLooper()).postDelayed(() -> {
@@ -418,10 +414,10 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
       if (hapticFeedback) {
         //hapticUtil.click();
       }
-      if (isBound()) {
-        if (bookmarks.size() < 3 && !bookmarks.contains(service.getBpm())) {
-          binding.chipGroupMain.addView(newChip(service.getBpm()));
-          bookmarks.add(service.getBpm());
+      if (isBound) {
+        if (bookmarks.size() < 3 && !bookmarks.contains(metronomeService.getTempo())) {
+          binding.chipGroupMain.addView(newChip(metronomeService.getTempo()));
+          bookmarks.add(metronomeService.getTempo());
           updateBookmarks();
           refreshBookmark(true);
         } else if (bookmarks.size() >= 3) {
@@ -457,13 +453,13 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
 
   @Override
   public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-    MetronomeService.LocalBinder binder = (MetronomeService.LocalBinder) iBinder;
-    service = binder.getService();
-    if (service == null) {
+    LocalBinder binder = (LocalBinder) iBinder;
+    metronomeService = binder.getService();
+    if (metronomeService == null) {
       return;
     }
 
-    service.setTickListener(this);
+    metronomeService.setTickListener(this);
     isBound = true;
 
     if (binding == null || getSharedPrefs() == null) {
@@ -472,30 +468,30 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
 
     if (getSharedPrefs().getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE)) {
       binding.buttonMainBeatMode.setIconResource(
-          getSharedPrefs().getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.VIBRATE_ALWAYS)
+          getSharedPrefs().getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.ALWAYS_VIBRATE)
               ? R.drawable.ic_round_volume_off_to_volume_on_anim
               : R.drawable.ic_round_vibrate_to_volume_anim
       );
     } else {
       binding.buttonMainBeatMode.setIconResource(
-          getSharedPrefs().getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.VIBRATE_ALWAYS)
+          getSharedPrefs().getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.ALWAYS_VIBRATE)
               ? R.drawable.ic_round_volume_on_to_volume_off_anim
               : R.drawable.ic_round_volume_to_vibrate_anim
       );
     }
 
-    service.updateTick();
+    //metronomeService.updateTick();
     refreshBookmark(false);
 
-    setBpm(service.getBpm());
+    setTempo(metronomeService.getTempo());
 
     binding.fabMainPlayPause.setImageResource(
-        service.isPlaying()
+        metronomeService.isPlaying()
             ? R.drawable.ic_round_pause
             : R.drawable.ic_round_play_arrow
     );
 
-    keepScreenAwake(service.isPlaying());
+    keepScreenAwake(metronomeService.isPlaying());
   }
 
   @Override
@@ -505,36 +501,43 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
 
   @Override
   public void onStartTicks() {
-    if (binding != null) {
-      binding.fabMainPlayPause.setImageResource(R.drawable.ic_round_play_to_pause_anim);
-      Drawable fabIcon = binding.fabMainPlayPause.getDrawable();
-      if (fabIcon != null) {
-        ((Animatable) fabIcon).start();
+    activity.runOnUiThread(() -> {
+      if (binding != null) {
+        binding.fabMainPlayPause.setImageResource(R.drawable.ic_round_play_to_pause_anim);
+        Drawable fabIcon = binding.fabMainPlayPause.getDrawable();
+        if (fabIcon != null) {
+          ((Animatable) fabIcon).start();
+        }
       }
-    }
-    keepScreenAwake(true);
+      keepScreenAwake(true);
+    });
   }
 
   @Override
   public void onStopTicks() {
-    if (binding != null) {
-      binding.fabMainPlayPause.setImageResource(R.drawable.ic_round_pause_to_play_anim);
-      Drawable icon = binding.fabMainPlayPause.getDrawable();
-      if (icon != null) {
-        ((Animatable) icon).start();
+    activity.runOnUiThread(() -> {
+      if (binding != null) {
+        binding.fabMainPlayPause.setImageResource(R.drawable.ic_round_pause_to_play_anim);
+        Drawable icon = binding.fabMainPlayPause.getDrawable();
+        if (icon != null) {
+          ((Animatable) icon).start();
+        }
       }
-    }
-    keepScreenAwake(false);
+      keepScreenAwake(false);
+    });
   }
 
   @Override
-  public void onTick(long interval, boolean isEmphasis, int index) {
-    logoUtil.nextBeat(interval);
+  public void onTick(Tick tick) {
+    activity.runOnUiThread(() -> {
+      if (isBound) {
+        logoUtil.nextBeat(metronomeService.getInterval());
+      }
+    });
   }
 
-  @Override
   public void onBpmChanged(int bpm) {
-    if (isBound()) {
+    if (isBound) {
       binding.textMainBpm.setText(String.valueOf(bpm));
       refreshBookmark(true);
     }
@@ -553,8 +556,8 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
         () -> binding.textMainEmphasis.setText(String.valueOf(emphasisNew)),
         150
     );
-    if (isBound()) {
-      service.updateTick();
+    if (isBound) {
+      //metronomeService.updateTick();
     }
   }
 
@@ -564,8 +567,8 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
     if (hapticFeedback) {
       //hapticUtil.tick();
     }
-    if (isBound()) {
-      service.updateTick();
+    if (isBound) {
+      //metronomeService.updateTick();
     }
   }
 
@@ -587,7 +590,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
     chip.setText(String.valueOf(bpm));
     chip.setTypeface(ResourcesCompat.getFont(activity, R.font.jost_medium));
     chip.setChipIconVisible(false);
-    chip.setOnClickListener(v -> setBpm(bpm));
+    chip.setOnClickListener(v -> setTempo(bpm));
     return chip;
   }
 
@@ -617,12 +620,12 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
         for (int bpm : bookmarks) {
           shortcuts.add(
               new ShortcutInfo.Builder(activity, String.valueOf(bpm))
-                  .setShortLabel(getString(R.string.title_bpm, String.valueOf(bpm)))
+                  .setShortLabel(getString(R.string.label_bpm_number, String.valueOf(bpm)))
                   .setIcon(Icon.createWithResource(activity, R.mipmap.ic_shortcut))
-                  .setIntent(new Intent(activity, ShortcutActivity.class)
-                      .setAction(MetronomeService.ACTION_START)
-                      .putExtra(MetronomeService.EXTRA_BPM, bpm)
-                      .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+//                  .setIntent(new Intent(activity, ShortcutActivity.class)
+//                      .setAction(OldMetronomeService.ACTION_START)
+//                      .putExtra(OldMetronomeService.EXTRA_BPM, bpm)
+//                      .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                   .build()
           );
         }
@@ -633,12 +636,12 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
   }
 
   private void refreshBookmark(boolean animated) {
-    if (isBound()) {
-      binding.buttonMainBookmark.setEnabled(!bookmarks.contains(service.getBpm()));
+    if (isBound) {
+      binding.buttonMainBookmark.setEnabled(!bookmarks.contains(metronomeService.getTempo()));
       for (int i = 0; i < binding.chipGroupMain.getChildCount(); i++) {
         Chip chip = (Chip) binding.chipGroupMain.getChildAt(i);
         if (chip != null) {
-          boolean active = Integer.parseInt(chip.getText().toString()) == service.getBpm();
+          boolean active = Integer.parseInt(chip.getText().toString()) == metronomeService.getTempo();
           if (animated) {
             animateChip(chip, active);
           } else {
@@ -668,12 +671,12 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
   }
 
   private void changeBpm(int change) {
-    if (isBound()) {
-      int bpmNew = service.getBpm() + change;
-      setBpm(bpmNew);
+    if (isBound) {
+      int bpmNew = metronomeService.getTempo() + change;
+      setTempo(bpmNew);
       if (hapticFeedback
-          && (!service.isPlaying()
-          || (!service.isBeatModeVibrate() && !service.vibrateAlways()))
+          && (!metronomeService.isPlaying()
+          || (!metronomeService.isBeatModeVibrate() && !metronomeService.isAlwaysVibrate()))
           && bpmNew >= 1 && bpmNew <= 400
       ) {
         //hapticUtil.tick();
@@ -681,12 +684,12 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
     }
   }
 
-  private void setBpm(int bpm) {
-    if (isBound() && bpm > 0) {
-      service.setBpm(Math.min(bpm, 400));
+  private void setTempo(int bpm) {
+    if (isBound && bpm > 0) {
+      //metronomeService.setTempo(Math.min(bpm, 400));
       refreshBookmark(true);
-      binding.textMainBpm.setText(String.valueOf(service.getBpm()));
-      if (service.getBpm() > 1) {
+      binding.textMainBpm.setText(String.valueOf(metronomeService.getTempo()));
+      if (metronomeService.getTempo() > 1) {
         if (!binding.buttonMainLess.isEnabled()) {
           binding.buttonMainLess.animate().alpha(1).setDuration(250).start();
         }
@@ -697,7 +700,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
         }
         binding.buttonMainLess.setEnabled(false);
       }
-      if (service.getBpm() < 400) {
+      if (metronomeService.getTempo() < 400) {
         if (!binding.buttonMainMore.isEnabled()) {
           binding.buttonMainMore.animate().alpha(1).setDuration(250).start();
         }
@@ -712,17 +715,13 @@ public class MainFragment extends BaseFragment implements OnClickListener, Servi
   }
 
   private void setButtonStates() {
-    if (isBound()) {
-      int bpm = service.getBpm();
+    if (isBound) {
+      int bpm = metronomeService.getTempo();
       binding.buttonMainLess.setEnabled(bpm > 1);
       binding.buttonMainLess.setAlpha(bpm > 1 ? 1 : 0.5f);
       binding.buttonMainMore.setEnabled(bpm < 400);
       binding.buttonMainMore.setAlpha(bpm < 400 ? 1 : 0.5f);
     }
-  }
-
-  private boolean isBound() {
-    return isBound && service != null;
   }
 
   private long getIntervalAverage() {

@@ -1,266 +1,150 @@
 package xyz.zedler.patrick.tack.service;
 
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
+import android.annotation.SuppressLint;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Build;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
+import android.util.Log;
 import androidx.annotation.Nullable;
-import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
-import xyz.zedler.patrick.tack.Constants;
+import androidx.preference.PreferenceManager;
+import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
-import xyz.zedler.patrick.tack.Constants.SETTINGS;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.util.OldAudioUtil;
-import xyz.zedler.patrick.tack.util.HapticUtil;
+import xyz.zedler.patrick.tack.Constants.EXTRA;
+import xyz.zedler.patrick.tack.Constants.PREF;
+import xyz.zedler.patrick.tack.Constants.SOUND;
+import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
+import xyz.zedler.patrick.tack.util.MetronomeUtil;
+import xyz.zedler.patrick.tack.util.MetronomeUtil.TickListener;
+import xyz.zedler.patrick.tack.util.NotificationUtil;
 
-public class MetronomeService extends Service implements Runnable {
+public class MetronomeService extends Service {
 
   private static final String TAG = MetronomeService.class.getSimpleName();
 
-  public static final String ACTION_START = "action_start";
-  public static final String ACTION_PAUSE = "action_pause";
-  public static final String EXTRA_BPM = "extra_bpm";
-  public static final String CHANNEL_ID = "metronome";
-
-  private final IBinder binder = new LocalBinder();
+  private final static int NOTIFICATION_ID = 1;
 
   private SharedPreferences sharedPrefs;
-  private HapticUtil hapticUtil;
-  private OldAudioUtil audioUtil;
-  private int bpm;
-  private long interval;
+  private MetronomeUtil metronomeUtil;
+  private NotificationUtil notificationUtil;
+  private StopReceiver stopReceiver;
+  private boolean beatModeVibrate, alwaysVibrate;
 
-  private Handler handler;
-  private String sound = null;
-  private int emphasis, emphasisIndex;
-  private boolean isPlaying;
-  private boolean vibrateAlways;
-  private boolean isBeatModeVibrate;
-
-  private TickListener listener;
-
+  @SuppressLint("UnspecifiedRegisterReceiverFlag")
   @Override
   public void onCreate() {
     super.onCreate();
 
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-    hapticUtil = new HapticUtil(this);
-    audioUtil = new OldAudioUtil(this);
 
-    isBeatModeVibrate = sharedPrefs.getBoolean(
-        Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
+    notificationUtil = new NotificationUtil(this);
+    notificationUtil.createNotificationChannel();
+
+    metronomeUtil = new MetronomeUtil(this);
+    metronomeUtil.setTempo(sharedPrefs.getInt(PREF.TEMPO, DEF.TEMPO));
+    metronomeUtil.setSound(SOUND.SINE);
+    metronomeUtil.setSubdivisions(new String[]{TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.SUB});
+
+    stopReceiver = new StopReceiver();
+    ContextCompat.registerReceiver(
+        this, stopReceiver, new IntentFilter(ACTION.STOP),
+        ContextCompat.RECEIVER_EXPORTED
     );
-    if (!isBeatModeVibrate) {
-      sound = sharedPrefs.getString(SETTINGS.SOUND, DEF.SOUND);
-    } else {
-      sound = null;
-    }
+    Log.d(TAG, "onCreate: service created");
+  }
 
-    interval = sharedPrefs.getLong(Constants.PREF.INTERVAL, Constants.DEF.INTERVAL);
-    emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS);
-    vibrateAlways = sharedPrefs.getBoolean(
-        SETTINGS.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
-    );
-    bpm = toBpm(interval);
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
 
-    HandlerThread thread = new HandlerThread("MetronomeHandlerThread");
-    thread.start();
-    handler = new Handler(thread.getLooper());
+    unregisterReceiver(stopReceiver);
+    Log.i(TAG, "onDestroy: server destroyed");
+  }
+
+  @Nullable
+  @Override
+  public IBinder onBind(Intent intent) {
+    return new LocalBinder();
   }
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
     if (intent != null && intent.getAction() != null) {
       switch (intent.getAction()) {
-        case ACTION_START:
-          setBpm(intent.getIntExtra(EXTRA_BPM, bpm));
-          pause();
-          play();
+        case ACTION.START:
+          setTempo(intent.getIntExtra(EXTRA.TEMPO, getTempo()));
+          start();
           break;
-        case ACTION_PAUSE:
-          pause();
+        case ACTION.STOP:
+          stop();
           break;
       }
     }
     return START_STICKY;
   }
 
-  private static int toBpm(long interval) {
-    return (int) (60000 / interval);
-  }
-
-  private static long toInterval(int bpm) {
-    return (long) 60000 / bpm;
-  }
-
-  public void play() {
-    handler.post(this);
-    isPlaying = true;
-    emphasisIndex = 0;
-
-    int immutableFlag = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
-        ? PendingIntent.FLAG_IMMUTABLE
-        : PendingIntent.FLAG_UPDATE_CURRENT;
-
-    Intent intentApp = new Intent(this, MainActivity.class);
-    intentApp.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-    PendingIntent pendingIntentApp = PendingIntent.getActivity(
-        this, 0, intentApp, immutableFlag
-    );
-
-    Intent intentStop = new Intent(this, MetronomeService.class);
-    intentStop.setAction(ACTION_PAUSE);
-    PendingIntent pendingIntentStop = PendingIntent.getService(
-        this, 0, intentStop, immutableFlag
-    );
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      NotificationManager manager = (NotificationManager) getSystemService(
-          Context.NOTIFICATION_SERVICE
-      );
-      manager.createNotificationChannel(
-          new NotificationChannel(
-              CHANNEL_ID,
-              getString(R.string.notification_channel),
-              NotificationManager.IMPORTANCE_LOW
-          )
-      );
+  public void start() {
+    if (isPlaying()) {
+      return;
     }
-    startForeground(
-        1,
-        new NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle(getString(R.string.notification_title))
-            .setContentText(getString(R.string.notification_desc))
-            .setColor(ContextCompat.getColor(this, R.color.retro_green_fg))
-            .setSmallIcon(R.drawable.ic_round_tack_notification)
-            .setContentIntent(pendingIntentApp)
-            .addAction(
-                R.drawable.ic_round_pause,
-                getString(R.string.notification_action),
-                pendingIntentStop
-            ).setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setChannelId(CHANNEL_ID)
-            .build()
-    );
-
-    if (listener != null) {
-      listener.onStartTicks();
-    }
+    metronomeUtil.start();
+    startForeground(NOTIFICATION_ID, notificationUtil.getNotification());
+    Log.i(TAG, "start: foreground service started");
   }
 
-  public void pause() {
-    handler.removeCallbacks(this);
-    stopForeground(true);
-    isPlaying = false;
-
-    if (listener != null) {
-      listener.onStopTicks();
+  public void stop() {
+    if (!isPlaying()) {
+      return;
     }
-  }
-
-  public void setBpm(int bpm) {
-    this.bpm = bpm;
-    interval = toInterval(bpm);
-    sharedPrefs.edit().putLong(Constants.PREF.INTERVAL, interval).apply();
-    if (listener != null) {
-      listener.onBpmChanged(bpm);
-    }
-  }
-
-  public void updateTick() {
-    isBeatModeVibrate = sharedPrefs.getBoolean(
-        Constants.PREF.BEAT_MODE_VIBRATE, Constants.DEF.BEAT_MODE_VIBRATE
-    );
-    if (!isBeatModeVibrate) {
-      sound = sharedPrefs.getString(SETTINGS.SOUND, DEF.SOUND);
+    metronomeUtil.stop();
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      stopForeground(STOP_FOREGROUND_REMOVE);
     } else {
-      sound = null;
+      stopForeground(true);
     }
-    emphasis = sharedPrefs.getInt(Constants.PREF.EMPHASIS, Constants.DEF.EMPHASIS);
-    vibrateAlways = sharedPrefs.getBoolean(
-        SETTINGS.VIBRATE_ALWAYS, Constants.DEF.VIBRATE_ALWAYS
-    );
-  }
-
-  public boolean isPlaying() {
-    return isPlaying;
-  }
-
-  public boolean vibrateAlways() {
-    return vibrateAlways;
-  }
-
-  public boolean isBeatModeVibrate() {
-    return isBeatModeVibrate;
-  }
-
-  public boolean areHapticEffectsPossible() {
-    return !isPlaying || (!isBeatModeVibrate && !vibrateAlways);
-  }
-
-  public int getBpm() {
-    return bpm;
+    Log.i(TAG, "stop: foreground service stopped");
   }
 
   public void setTickListener(TickListener listener) {
-    this.listener = listener;
+    metronomeUtil.setTickListener(listener);
   }
 
-  @Nullable
-  @Override
-  public IBinder onBind(Intent intent) {
-    return binder;
+  public boolean isPlaying() {
+    return metronomeUtil != null && metronomeUtil.isPlaying();
   }
 
-  @Override
-  public boolean onUnbind(Intent intent) {
-    listener = null;
-    return super.onUnbind(intent);
+  public boolean isBeatModeVibrate() {
+    return beatModeVibrate;
   }
 
-  @Override
-  public void onDestroy() {
-    handler.removeCallbacks(this);
-    super.onDestroy();
+  public boolean isAlwaysVibrate() {
+    return alwaysVibrate;
   }
 
-  @Override
-  public void run() {
-    if (isPlaying) {
-      handler.postDelayed(this, interval);
+  public void setTempo(int tempo) {
+    metronomeUtil.setTempo(tempo);
+  }
 
-      boolean isEmphasis = emphasis != 0 && emphasisIndex == 0;
-      if (emphasis != 0) {
-        if (emphasisIndex < emphasis - 1) {
-          emphasisIndex++;
-        } else {
-          emphasisIndex = 0;
-        }
-      }
+  public int getTempo() {
+    return metronomeUtil.getTempo();
+  }
 
-      if (sound != null) {
-        audioUtil.play(sound, isEmphasis);
-        if (vibrateAlways) {
-          hapticUtil.vibrate(isEmphasis);
-        }
-      } else {
-        hapticUtil.vibrate(isEmphasis);
-      }
+  public long getInterval() {
+    return 1000 * 60 / getTempo();
+  }
 
-      if (listener != null) {
-        listener.onTick(interval, isEmphasis, emphasisIndex);
-      }
+  public class StopReceiver extends BroadcastReceiver {
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      Log.d(TAG, "onReceive: received stop command");
+      stop();
     }
   }
 
@@ -269,16 +153,5 @@ public class MetronomeService extends Service implements Runnable {
     public MetronomeService getService() {
       return MetronomeService.this;
     }
-  }
-
-  public interface TickListener {
-
-    void onStartTicks();
-
-    void onTick(long interval, boolean isEmphasis, int index);
-
-    void onBpmChanged(int bpm);
-
-    void onStopTicks();
   }
 }

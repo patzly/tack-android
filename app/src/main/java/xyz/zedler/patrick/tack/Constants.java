@@ -5,53 +5,96 @@ import androidx.appcompat.app.AppCompatDelegate;
 public final class Constants {
 
   public final static class PREF {
-
+    // General
     public static final String THEME = "app_theme";
     public static final String MODE = "mode";
     public static final String USE_SLIDING = "use_sliding_transition";
-
-    public final static String BEAT_MODE_VIBRATE = "beat_mode_vibrate";
-    public final static String INTERVAL = "interval";
-    public final static String EMPHASIS = "emphasis";
-    public final static String BOOKMARKS = "bookmarks";
-
+    public static final String HAPTIC_FEEDBACK = "haptic_feedback";
     public static final String LAST_VERSION = "last_version";
     public static final String FEEDBACK_POP_UP_COUNT = "feedback_pop_up_count";
+
+    // Metronome
+    public final static String TEMPO = "tempo";
+    public final static String BEATS = "beats";
+    public final static String SUBDIVISIONS = "subdivisions";
+    public final static String BEAT_MODE_VIBRATE = "beat_mode_vibrate";
+    public final static String ALWAYS_VIBRATE = "always_vibrate";
+    public final static String KEEP_AWAKE = "keep_awake";
+    public final static String SOUND = "sound";
+    public final static String BOOKMARKS = "bookmarks";
+
+    @Deprecated
+    public final static String INTERVAL = "interval";
+    @Deprecated
+    public final static String EMPHASIS = "emphasis";
   }
 
   public final static class DEF {
-
+    // General
     public static final String THEME = "";
     public static final int MODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
     public static final boolean USE_SLIDING = false;
-
-    public final static String SOUND = Constants.SOUND.WOOD;
-    public final static boolean VIBRATE_ALWAYS = false;
     public final static boolean HAPTIC_FEEDBACK = true;
-    public final static boolean EMPHASIS_SLIDER = false;
-    public final static boolean DARK_MODE = false;
-    public final static boolean KEEP_AWAKE = true;
+
+    // Metronome
+    public final static int TEMPO = 120;
+    public final static String BEATS = TICK_TYPE.STRONG + " " + TICK_TYPE.NORMAL
+        + " " + TICK_TYPE.NORMAL + " " + TICK_TYPE.NORMAL;
+    public final static String SUBDIVISIONS = TICK_TYPE.MUTED;
     public final static boolean BEAT_MODE_VIBRATE = false;
+    public final static boolean ALWAYS_VIBRATE = false;
+    public final static boolean KEEP_AWAKE = true;
+    public final static String SOUND = Constants.SOUND.WOOD;
+
+    @Deprecated
+    public final static boolean EMPHASIS_SLIDER = false;
+    @Deprecated
+    public final static boolean DARK_MODE = false;
+    @Deprecated
     public final static long INTERVAL = 500;
+    @Deprecated
     public final static int EMPHASIS = 0;
   }
 
+  @Deprecated
   public final static class SETTINGS {
 
+    @Deprecated
     public final static String SOUND = "sound";
+    @Deprecated
     public final static String VIBRATE_ALWAYS = "vibrate_always";
+    @Deprecated
     public final static String HAPTIC_FEEDBACK = "haptic_feedback";
+    @Deprecated
     public final static String EMPHASIS_SLIDER = "emphasis_slider";
+    @Deprecated
     public final static String DARK_MODE = "force_dark_mode";
+    @Deprecated
     public final static String KEEP_AWAKE = "keep_awake";
   }
 
   public final static class SOUND {
 
     public final static String WOOD = "wood";
+    public final static String SINE = "sine";
     public final static String CLICK = "click";
     public final static String DING = "ding";
     public final static String BEEP = "beep";
+  }
+
+  public final static class TICK_TYPE {
+
+    public final static String NORMAL = "normal";
+    public final static String STRONG = "strong";
+    public final static String SUB = "sub";
+    public final static String MUTED = "muted";
+  }
+
+  public final static class ACTION {
+
+    public final static String START = "xyz.zedler.patrick.tack.intent.action.START";
+    public final static String STOP = "xyz.zedler.patrick.tack.intent.action.STOP";
+    public final static String REFRESH = "xyz.zedler.patrick.tack.intent.action.REFRESH";
   }
 
   public final static class EXTRA {
@@ -59,6 +102,7 @@ public final class Constants {
     public static final String RUN_AS_SUPER_CLASS = "run_as_super_class";
     public static final String INSTANCE_STATE = "instance_state";
     public static final String SCROLL_POSITION = "scroll_position";
+    public static final String TEMPO = "tempo";
 
     public final static String TITLE = "title";
     public final static String FILE = "file";
