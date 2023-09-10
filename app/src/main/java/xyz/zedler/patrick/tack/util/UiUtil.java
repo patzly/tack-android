@@ -1,6 +1,7 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -97,6 +98,14 @@ public class UiUtil {
   public static boolean isFullWidth(Context context) {
     int maxWidth = context.getResources().getDimensionPixelSize(R.dimen.max_content_width);
     return maxWidth >= getDisplayWidth(context);
+  }
+
+  public static void keepScreenAwake(@NonNull Activity activity, boolean keepAwake) {
+    Window window = activity.getWindow();
+    if (window == null) {
+      return;
+    }
+    window.getDecorView().setKeepScreenOn(keepAwake);
   }
 
   // Unit conversions

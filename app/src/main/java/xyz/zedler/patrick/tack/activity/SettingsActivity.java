@@ -26,9 +26,9 @@ import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.ActivitySettingsAppBinding;
 import xyz.zedler.patrick.tack.fragment.dialog.FeedbackBottomSheetDialogFragment;
-import xyz.zedler.patrick.tack.service.OldMetronomeService;
-import xyz.zedler.patrick.tack.util.OldAudioUtil;
+import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.util.HapticUtil;
+import xyz.zedler.patrick.tack.util.OldAudioUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class SettingsActivity extends AppCompatActivity
@@ -43,7 +43,7 @@ public class SettingsActivity extends AppCompatActivity
   private OldAudioUtil audioUtil;
   private HapticUtil hapticUtil;
   private boolean isBound;
-  private OldMetronomeService service;
+  private MetronomeService service;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +152,7 @@ public class SettingsActivity extends AppCompatActivity
 
   @Override
   protected void onStart() {
-    Intent intent = new Intent(this, OldMetronomeService.class);
+    Intent intent = new Intent(this, MetronomeService.class);
     try {
       startService(intent);
       bindService(intent, this, Context.BIND_AUTO_CREATE);
@@ -186,7 +186,7 @@ public class SettingsActivity extends AppCompatActivity
 
   @Override
   public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-    OldMetronomeService.LocalBinder binder = (OldMetronomeService.LocalBinder) iBinder;
+    MetronomeService.LocalBinder binder = (MetronomeService.LocalBinder) iBinder;
     service = binder.getService();
     if (service == null) {
       return;
@@ -198,7 +198,7 @@ public class SettingsActivity extends AppCompatActivity
       return;
     }
 
-    service.updateTick();
+    //service.updateTick();
   }
 
   @Override
@@ -284,7 +284,7 @@ public class SettingsActivity extends AppCompatActivity
 
     editor.apply();
     if (isBound()) {
-      service.updateTick();
+      //service.updateTick();
       if (service.areHapticEffectsPossible()) {
         hapticUtil.click();
       }
@@ -308,7 +308,7 @@ public class SettingsActivity extends AppCompatActivity
     }
     sharedPrefs.edit().putString(SETTINGS.SOUND, sound).apply();
     if (isBound()) {
-      service.updateTick();
+      //service.updateTick();
       if (!service.isPlaying() || service.isBeatModeVibrate()) {
         audioUtil.play(sound, false);
       }

@@ -158,49 +158,12 @@
       android:animateLayoutChanges="true"
       android:clipToPadding="false">
 
-      <FrameLayout
-        android:id="@+id/frame_main_emphasis"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_main_options"
+        style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
         android:layout_marginEnd="4dp"
-        android:clickable="true"
-        android:gravity="center"
-        android:contentDescription="@string/action_emphasis"
-        android:tooltipText="@string/action_emphasis"
-        android:focusable="true"
-        tools:targetApi="o">
-
-        <com.google.android.material.button.MaterialButton
-          android:id="@+id/button_dictation_start_over"
-          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:contentDescription="@string/action_emphasis" />
-
-        <ImageView
-          android:id="@+id/image_main_emphasis"
-          android:layout_width="24dp"
-          android:layout_height="24dp"
-          android:layout_gravity="center"
-          android:layout_marginTop="7dp"
-          android:importantForAccessibility="no"
-          android:src="@drawable/ic_round_emphasis_anim"
-          app:tint="@color/selector_icon_button_icon_color" />
-
-        <TextView
-          android:id="@+id/text_main_emphasis"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:layout_gravity="center"
-          android:layout_marginBottom="6dp"
-          android:layout_marginStart="1dp"
-          android:fontFamily="@font/material_digits_rounded"
-          android:letterSpacing="0.12"
-          android:textColor="@color/selector_icon_button_icon_color"
-          android:textSize="10dp"
-          tools:ignore="SpUsage" />
-
-      </FrameLayout>
+        android:contentDescription="@string/title_options"
+        app:icon="@drawable/ic_round_tune" />
 
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_main_tempo_tap"

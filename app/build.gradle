@@ -14,7 +14,7 @@ android {
         targetSdk 34
         versionCode 130 // last number is 0 for app release
         versionName "4.0.0"
-        resConfigs 'de', 'en'
+        resConfigs 'en'
     }
 
     applicationVariants.configureEach { variant ->

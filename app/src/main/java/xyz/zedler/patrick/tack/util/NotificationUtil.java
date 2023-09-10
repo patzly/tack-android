@@ -110,8 +110,10 @@ public class NotificationUtil {
     }
 
     String text = context.getString(R.string.msg_metronome_playing_return);
-    PendingIntent intentMainActivity = PendingIntent.getActivity(
-        context, REQUEST_CODE, new Intent(context, MainActivity.class), getPendingIntentFlags()
+    Intent intentApp = new Intent(context, MainActivity.class);
+    intentApp.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+    PendingIntent pendingIntentApp = PendingIntent.getActivity(
+        context, REQUEST_CODE, intentApp, getPendingIntentFlags()
     );
     PendingIntent intentStop = PendingIntent.getBroadcast(
         context, REQUEST_CODE, new Intent(ACTION.STOP), getPendingIntentFlags()
@@ -122,7 +124,7 @@ public class NotificationUtil {
     return new NotificationCompat.Builder(context, CHANNEL_ID)
         .setContentTitle(context.getString(R.string.msg_metronome_playing))
         .setContentText(text)
-        .setContentIntent(intentMainActivity)
+        .setContentIntent(pendingIntentApp)
         .addAction(actionStop)
         .setAutoCancel(true)
         .setSilent(true)

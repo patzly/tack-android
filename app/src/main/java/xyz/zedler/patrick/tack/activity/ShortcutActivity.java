@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import xyz.zedler.patrick.tack.service.OldMetronomeService;
+import xyz.zedler.patrick.tack.service.MetronomeService;
 
 public class ShortcutActivity extends AppCompatActivity {
 
@@ -12,7 +12,7 @@ public class ShortcutActivity extends AppCompatActivity {
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     startActivity(new Intent(this, MainActivity.class));
-    startService(getIntent().setClass(this, OldMetronomeService.class));
+    startService(getIntent().setClass(this, MetronomeService.class));
     finish();
   }
 }

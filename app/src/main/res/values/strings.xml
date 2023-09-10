@@ -18,6 +18,7 @@
   <string name="title_licenses">Open source licenses</string>
   <string name="title_settings">Settings</string>
   <string name="title_notification_channel">Playback</string>
+  <string name="title_options">Options</string>
 
   <!-- LABELS -->
 
@@ -50,7 +51,7 @@
   <string name="msg_wear">Tack is also available for Wear OS watches! All features of the phone app and much more, always ready on your wrist.</string>
   <string name="msg_vibration_unavailable">Vibration unavailable on this device</string>
   <string name="msg_metronome_playing">Metronome is playing</string>
-  <string name="msg_metronome_playing_return">Tap to return to the app</string>
+  <string name="msg_metronome_playing_return">Tap to return to Tack</string>
 
   <string name="setting_dark_mode">Force dark mode</string>
   <string name="setting_dark_mode_description">Off for system dependency</string>

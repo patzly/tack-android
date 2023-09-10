@@ -1,6 +1,5 @@
 package xyz.zedler.patrick.tack.service;
 
-import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,13 +17,14 @@ import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.Constants.SOUND;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
+import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil;
+import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.TickListener;
 import xyz.zedler.patrick.tack.util.NotificationUtil;
 
-public class MetronomeService extends Service {
+public class MetronomeService extends Service implements TickListener {
 
   private static final String TAG = MetronomeService.class.getSimpleName();
 
@@ -33,10 +33,11 @@ public class MetronomeService extends Service {
   private SharedPreferences sharedPrefs;
   private MetronomeUtil metronomeUtil;
   private NotificationUtil notificationUtil;
+  private HapticUtil hapticUtil;
   private StopReceiver stopReceiver;
+  private MetronomeListener listener;
   private boolean beatModeVibrate, alwaysVibrate;
 
-  @SuppressLint("UnspecifiedRegisterReceiverFlag")
   @Override
   public void onCreate() {
     super.onCreate();
@@ -46,10 +47,23 @@ public class MetronomeService extends Service {
     notificationUtil = new NotificationUtil(this);
     notificationUtil.createNotificationChannel();
 
-    metronomeUtil = new MetronomeUtil(this);
+    metronomeUtil = new MetronomeUtil(this, this);
     metronomeUtil.setTempo(sharedPrefs.getInt(PREF.TEMPO, DEF.TEMPO));
-    metronomeUtil.setSound(SOUND.SINE);
-    metronomeUtil.setSubdivisions(new String[]{TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.SUB});
+    metronomeUtil.setSound(sharedPrefs.getString(PREF.SOUND, DEF.SOUND));
+    metronomeUtil.setBeats(
+        sharedPrefs.getString(PREF.BEATS, DEF.BEATS).split(" ")
+    );
+    metronomeUtil.setSubdivisions(
+        sharedPrefs.getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(" ")
+    );
+
+    hapticUtil = new HapticUtil(this);
+
+    setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
+    setAlwaysVibrate(sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE));
+
+    setBeatModeVibrate(false);
+    setAlwaysVibrate(true);
 
     stopReceiver = new StopReceiver();
     ContextCompat.registerReceiver(
@@ -89,9 +103,32 @@ public class MetronomeService extends Service {
     return START_STICKY;
   }
 
+  @Override
+  public void onTick(Tick tick) {
+    if (beatModeVibrate || alwaysVibrate) {
+      switch (tick.type) {
+        case TICK_TYPE.STRONG:
+          hapticUtil.heavyClick();
+          break;
+        case TICK_TYPE.SUB:
+          hapticUtil.tick();
+          break;
+        case TICK_TYPE.MUTED:
+          break;
+        default:
+          hapticUtil.click();
+      }
+    }
+    if (listener != null) {
+      listener.onMetronomeTick(tick);
+    }
+  }
+
   public void start() {
     if (isPlaying()) {
       return;
+    } else if (listener != null) {
+      listener.onMetronomeStart();
     }
     metronomeUtil.start();
     startForeground(NOTIFICATION_ID, notificationUtil.getNotification());
@@ -101,6 +138,8 @@ public class MetronomeService extends Service {
   public void stop() {
     if (!isPlaying()) {
       return;
+    } else if (listener != null) {
+      listener.onMetronomeStop();
     }
     metronomeUtil.stop();
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -111,20 +150,35 @@ public class MetronomeService extends Service {
     Log.i(TAG, "stop: foreground service stopped");
   }
 
-  public void setTickListener(TickListener listener) {
-    metronomeUtil.setTickListener(listener);
+  public void setMetronomeListener(MetronomeListener listener) {
+    this.listener = listener;
   }
 
   public boolean isPlaying() {
     return metronomeUtil != null && metronomeUtil.isPlaying();
   }
 
+  public void setBeatModeVibrate(boolean vibrate) {
+    beatModeVibrate = vibrate;
+    metronomeUtil.setBeatModeVibrate(vibrate);
+    hapticUtil.setEnabled(vibrate || alwaysVibrate);
+  }
+
   public boolean isBeatModeVibrate() {
     return beatModeVibrate;
   }
 
+  public void setAlwaysVibrate(boolean always) {
+    alwaysVibrate = always;
+    hapticUtil.setEnabled(always || beatModeVibrate);
+  }
+
   public boolean isAlwaysVibrate() {
     return alwaysVibrate;
+  }
+
+  public boolean areHapticEffectsPossible() {
+    return !metronomeUtil.isPlaying() || (!isBeatModeVibrate() && !alwaysVibrate);
   }
 
   public void setTempo(int tempo) {
@@ -137,6 +191,12 @@ public class MetronomeService extends Service {
 
   public long getInterval() {
     return 1000 * 60 / getTempo();
+  }
+
+  public interface MetronomeListener {
+    void onMetronomeStart();
+    void onMetronomeStop();
+    void onMetronomeTick(Tick tick);
   }
 
   public class StopReceiver extends BroadcastReceiver {

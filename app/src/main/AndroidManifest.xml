@@ -11,20 +11,26 @@
   <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
 
   <application
-    android:allowBackup="true"
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
     android:supportsRtl="true"
     android:theme="@style/Theme.Tack"
-    tools:ignore="AllowBackup">
+    android:enableOnBackInvokedCallback="true"
+    android:localeConfig="@xml/locales_config"
+    android:allowBackup="true"
+    android:fullBackupContent="@xml/backup_rules_full"
+    android:dataExtractionRules="@xml/backup_rules_extract"
+    tools:targetApi="33">
 
     <activity
       android:name=".activity.SplashActivity"
       android:exported="true">
+
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
+
     </activity>
 
     <activity android:name=".activity.ShortcutActivity" />
@@ -32,14 +38,20 @@
     <activity android:name=".activity.SettingsActivity" />
 
     <service
-      android:name=".service.OldMetronomeService"
+      android:name=".service.MetronomeService"
       android:foregroundServiceType="mediaPlayback"
       android:exported="false" />
 
     <service
-      android:name=".service.MetronomeService"
-      android:foregroundServiceType="mediaPlayback"
-      android:exported="false" />
+      android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+      android:enabled="false"
+      android:exported="false">
+
+      <meta-data
+        android:name="autoStoreLocales"
+        android:value="true" />
+
+    </service>
 
   </application>
 

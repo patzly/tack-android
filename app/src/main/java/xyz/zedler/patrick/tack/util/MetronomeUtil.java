@@ -2,6 +2,7 @@ package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
 import android.media.AudioTrack;
+import android.media.audiofx.LoudnessEnhancer;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -18,23 +19,23 @@ public class MetronomeUtil {
 
   private final float[] silence = AudioUtil.getSilence();
   private final Context context;
+  private final TickListener listener;
   private Thread thread;
-  private TickListener listener;
-  private int tempo;
+  private AudioTrack track;
+  private LoudnessEnhancer loudnessEnhancer;
+  private int tempo, volumeBoost;
   private String[] beats, subdivisions;
   private float[] tickStrong, tickNormal, tickSub;
-  private boolean playing;
+  private boolean playing, beatModeVibrate;
 
-  public MetronomeUtil(@NonNull Context context) {
+  public MetronomeUtil(@NonNull Context context, @NonNull TickListener listener) {
     this.context = context;
+    this.listener = listener;
+
     setTempo(DEF.TEMPO);
     setSound(DEF.SOUND);
     setBeats(DEF.BEATS.split(" "));
     setSubdivisions(DEF.SUBDIVISIONS.split(" "));
-  }
-
-  public void setTickListener(TickListener listener) {
-    this.listener = listener;
   }
 
   public void setBeats(String[] beats) {
@@ -47,7 +48,6 @@ public class MetronomeUtil {
 
   public void setTempo(int tempo) {
     this.tempo = tempo;
-    this.tempo = 60;
   }
 
   public int getTempo() {
@@ -76,14 +76,23 @@ public class MetronomeUtil {
     tickSub = AudioUtil.loadAudio(context, resIdSub);
   }
 
+  public void setBeatModeVibrate(boolean vibrate) {
+    beatModeVibrate = vibrate;
+  }
+
+  public void setVolumeBoost(int db) {
+    volumeBoost = db;
+    if (loudnessEnhancer != null) {
+      loudnessEnhancer.setTargetGain(db * 100);
+      loudnessEnhancer.setEnabled(db > 0);
+    }
+  }
+
   public void start() {
     if (isPlaying()) {
       return;
     }
     playing = true;
-    if (listener != null) {
-      listener.onStartTicks();
-    }
     thread = new Thread(this::loop);
     thread.start();
     Log.i(TAG, "start: started metronome thread");
@@ -94,9 +103,6 @@ public class MetronomeUtil {
       return;
     }
     playing = false;
-    if (listener != null) {
-      listener.onStopTicks();
-    }
     if (thread != null) {
       thread.interrupt();
       thread = null;
@@ -105,12 +111,14 @@ public class MetronomeUtil {
   }
 
   private void loop() {
-    AudioTrack track = AudioUtil.getNewAudioTrack();
+    track = AudioUtil.getNewAudioTrack();
+    loudnessEnhancer = new LoudnessEnhancer(track.getAudioSessionId());
+    setVolumeBoost(volumeBoost);
     track.play();
     try {
       int tickCount = 0;
       while (playing) {
-        writeTickPeriod(track, tickCount);
+        writeTickPeriod(tickCount);
         tickCount++;
       }
     } catch (CancellationException e) {
@@ -125,26 +133,24 @@ public class MetronomeUtil {
     return thread != null && thread.isAlive() && playing;
   }
 
-  private void writeTickPeriod(AudioTrack track, long tickCount) {
+  private void writeTickPeriod(long tickCount) {
     Tick tick = getCurrentTick(tickCount);
     float[] tickSound = getTickSound(tick.type);
     int periodSize = calculatePeriodSize();
-    int sizeWritten = writeNextAudioData(track, tickSound, periodSize, 0);
+    int sizeWritten = writeNextAudioData(tickSound, periodSize, 0);
     Log.v(TAG, "writeTickPeriod: wrote tick sound for " + tick);
-    if (listener != null) {
-      listener.onTick(tick);
-    }
-    writeSilenceUntilPeriodFinished(track, sizeWritten);
+    listener.onTick(tick);
+    writeSilenceUntilPeriodFinished(sizeWritten);
   }
 
-  private void writeSilenceUntilPeriodFinished(AudioTrack track, int previousSizeWritten) {
+  private void writeSilenceUntilPeriodFinished(int previousSizeWritten) {
     int sizeWritten = previousSizeWritten;
     while (true) {
       int periodSize = calculatePeriodSize();
       if (sizeWritten >= periodSize) {
         break;
       }
-      sizeWritten += writeNextAudioData(track, silence, periodSize, sizeWritten);
+      sizeWritten += writeNextAudioData(silence, periodSize, sizeWritten);
       Log.v(TAG, "writeSilenceUntilPeriodFinished: wrote silence");
     }
   }
@@ -153,7 +159,7 @@ public class MetronomeUtil {
     return 60 * AudioUtil.SAMPLE_RATE_IN_HZ / tempo / subdivisions.length;
   }
 
-  private int writeNextAudioData(AudioTrack track, float[] data, int periodSize, int sizeWritten) {
+  private int writeNextAudioData(float[] data, int periodSize, int sizeWritten) {
     int size = calculateAudioSizeToWriteNext(data, periodSize, sizeWritten);
     AudioUtil.writeAudio(track, data, size);
     return size;
@@ -181,6 +187,9 @@ public class MetronomeUtil {
   }
 
   private float[] getTickSound(String tickType) {
+    if (beatModeVibrate) {
+      return silence;
+    }
     switch (tickType) {
       case TICK_TYPE.STRONG:
         return tickStrong;
@@ -194,23 +203,22 @@ public class MetronomeUtil {
   }
 
   public interface TickListener {
-    void onStartTicks();
-    void onStopTicks();
     void onTick(Tick tick);
   }
 
   public static class Tick implements Parcelable {
     public final int beat;
-    public final String type;
+    @NonNull public final String type;
 
-    public Tick(int beat, String type) {
+    public Tick(int beat, @NonNull String type) {
       this.beat = beat;
       this.type = type;
     }
 
     protected Tick(Parcel in) {
       beat = in.readInt();
-      type = in.readString();
+      String rawType = in.readString();
+      type = rawType != null ? rawType : TICK_TYPE.NORMAL;
     }
 
     @Override
