@@ -1,25 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
   android:orientation="vertical">
 
-  <FrameLayout
+  <com.google.android.material.appbar.MaterialToolbar
+    style="@style/Widget.Tack.Toolbar"
+    app:title="@string/title_feedback" />
+
+  <com.google.android.material.divider.MaterialDivider
     android:layout_width="match_parent"
-    android:layout_height="?android:actionBarSize">
-
-    <TextView
-      style="@style/Widget.Tack.TextView.Toolbar.BottomSheet.Center"
-      android:text="@string/title_feedback" />
-
-  </FrameLayout>
-
-  <View
-    style="@style/Widget.Tack.Divider"
-    android:layout_marginTop="0dp"
-    android:layout_marginBottom="0dp" />
+    android:layout_height="wrap_content" />
 
   <androidx.core.widget.NestedScrollView
     android:layout_width="match_parent"
@@ -39,15 +33,23 @@
         style="@style/Widget.Tack.TextView.Paragraph"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/msg_feedback"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp" />
+
+      <TextView
+        style="@style/Widget.Tack.TextView.Paragraph"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:text="@string/msg_feedback_contact"
         android:paddingStart="16dp"
         android:paddingEnd="16dp" />
 
       <LinearLayout
         android:id="@+id/linear_feedback_rate"
-        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable"
-        android:background="@drawable/ripple_bg_list_item_surface">
+        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Icon.Clickable">
 
         <ImageView
           android:id="@+id/image_feedback_rate"
@@ -71,8 +73,7 @@
 
       <LinearLayout
         android:id="@+id/linear_feedback_email"
-        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable"
-        android:background="@drawable/ripple_bg_list_item_surface">
+        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Icon.Clickable">
 
         <ImageView
           android:id="@+id/image_feedback_email"
@@ -95,24 +96,23 @@
       </LinearLayout>
 
       <LinearLayout
-        android:id="@+id/linear_feedback_share"
-        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable"
-        android:background="@drawable/ripple_bg_list_item_surface">
+        android:id="@+id/linear_feedback_recommend"
+        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Icon.Clickable">
 
         <ImageView
           style="@style/Widget.Tack.ImageView.ListItem.Icon"
-          android:src="@drawable/ic_round_share"
+          android:src="@drawable/ic_round_recommend"
           tools:ignore="ContentDescription" />
 
         <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
           <TextView
             style="@style/Widget.Tack.TextView.ListItem.Title"
-            android:text="@string/action_share" />
+            android:text="@string/action_recommend" />
 
           <TextView
             style="@style/Widget.Tack.TextView.ListItem.Description"
-            android:text="@string/action_share_description" />
+            android:text="@string/action_recommend_description" />
 
         </LinearLayout>
 

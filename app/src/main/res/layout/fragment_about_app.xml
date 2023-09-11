@@ -15,7 +15,7 @@
       android:id="@+id/toolbar_about"
       style="@style/Widget.Tack.Toolbar.Back"
       app:title="@string/title_about"
-      app:menu="@menu/menu_main" />
+      app:menu="@menu/menu_about" />
 
   </com.google.android.material.appbar.AppBarLayout>
 
@@ -136,8 +136,7 @@
 
         <LinearLayout
           android:id="@+id/linear_about_github"
-          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable"
-          android:background="@drawable/ripple_list_item_bg">
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
           <ImageView
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
@@ -160,8 +159,7 @@
 
         <LinearLayout
           android:id="@+id/linear_about_translation"
-          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable"
-          android:background="@drawable/ripple_list_item_bg">
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
           <ImageView
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
@@ -184,8 +182,7 @@
 
         <LinearLayout
           android:id="@+id/linear_about_privacy"
-          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable"
-          android:background="@drawable/ripple_list_item_bg">
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
           <ImageView
             android:id="@+id/image_about_privacy"

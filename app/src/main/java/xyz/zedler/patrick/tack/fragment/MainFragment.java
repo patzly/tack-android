@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Objects;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
@@ -49,10 +48,8 @@ import xyz.zedler.patrick.tack.databinding.FragmentMainAppBinding;
 import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.service.MetronomeService.LocalBinder;
 import xyz.zedler.patrick.tack.service.MetronomeService.MetronomeListener;
-import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.TickListener;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
@@ -65,17 +62,15 @@ public class MainFragment extends BaseFragment
 
   private FragmentMainAppBinding binding;
   private MainActivity activity;
-
+  private MetronomeService metronomeService;
+  private boolean bound;
   private long prevTouchTime;
   private final List<Long> intervals = new ArrayList<>();
-
-  private boolean isBound;
-  private boolean hapticFeedback;
-  private MetronomeService metronomeService;
+  private boolean flashScreen, keepAwake;
   private LogoUtil logoUtil;
   private ValueAnimator fabAnimator;
   private float cornerSizePause, cornerSizePlay, cornerSizeCurrent;
-
+  private int colorFlashNormal, colorFlashStrong, colorFlashSub, colorFlashMuted;
   private List<Integer> bookmarks;
 
   @Override
@@ -117,35 +112,40 @@ public class MainFragment extends BaseFragment
     });
     binding.toolbarMain.setOnMenuItemClickListener(item -> {
       int id = item.getItemId();
-      if (id == R.id.action_about) {
+      if (id == R.id.action_settings) {
+        activity.navigateToFragment(MainFragmentDirections.actionMainToSettings());
+      } else if (id == R.id.action_about) {
         navigateToFragment(MainFragmentDirections.actionMainToAbout());
       } else if (id == R.id.action_feedback) {
         activity.showFeedbackBottomSheet();
-      } else if (id == R.id.action_share) {
-        ResUtil.share(activity, R.string.msg_share);
+      } else if (id == R.id.action_recommend) {
+        ResUtil.share(activity, R.string.msg_recommend);
       }
       performHapticClick();
       return true;
     });
-    ResUtil.tintMenuItemIcons(activity, binding.toolbarMain.getMenu());
 
     logoUtil = new LogoUtil(binding.imageMainLogo);
-    if (!new HapticUtil(activity).hasVibrator()) {
-      getSharedPrefs().edit().putBoolean(PREF.BEAT_MODE_VIBRATE, false).apply();
-    }
 
-    hapticFeedback = getSharedPrefs().getBoolean(SETTINGS.HAPTIC_FEEDBACK, DEF.HAPTIC_FEEDBACK);
+    flashScreen = getSharedPrefs().getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
+    keepAwake = getSharedPrefs().getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
+    flashScreen = false;
+
+    colorFlashNormal = ResUtil.getColorAttr(activity, R.attr.colorPrimary);
+    colorFlashStrong = ResUtil.getColorAttr(activity, R.attr.colorError);
+    colorFlashSub = ResUtil.getColorAttr(activity, R.attr.colorPrimaryContainer);
+    colorFlashMuted = ResUtil.getColorAttr(activity, android.R.attr.colorBackground);
 
     binding.bpmPickerMain.setOnRotationListener(new BpmPickerView.OnRotationListener() {
       @Override
-      public void onRotate(int change) {
-        changeBpm(change);
+      public void onRotate(int bpm) {
+        changeTempo(bpm);
       }
 
       @Override
-      public void onRotate(float change) {
+      public void onRotate(float degrees) {
         binding.circleMain.setRotation(
-            binding.circleMain.getRotation() + change
+            binding.circleMain.getRotation() + degrees
         );
       }
     });
@@ -172,9 +172,9 @@ public class MainFragment extends BaseFragment
       private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
-          if (isBound) {
+          if (bound) {
             if (metronomeService.getTempo() > 1) {
-              changeBpm(-1);
+              changeTempo(-1);
               handler.postDelayed(this, nextRun);
               if (nextRun > 60) {
                 nextRun = (int) (nextRun * 0.9);
@@ -218,9 +218,9 @@ public class MainFragment extends BaseFragment
       private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
-          if (isBound) {
+          if (bound) {
             if (metronomeService.getTempo() < 400) {
-              changeBpm(1);
+              changeTempo(1);
               handler.postDelayed(this, nextRun);
               if (nextRun > 60) {
                 nextRun = (int) (nextRun * 0.9);
@@ -259,42 +259,47 @@ public class MainFragment extends BaseFragment
     });
 
     binding.buttonMainTempoTap.setOnTouchListener((v, event) -> {
-      if (event.getAction() == MotionEvent.ACTION_DOWN) {
-        ViewUtil.startIcon(binding.buttonMainTempoTap.getIcon());
+      if (event.getAction() != MotionEvent.ACTION_DOWN) {
+        return false;
+      }
+      ViewUtil.startIcon(binding.buttonMainTempoTap.getIcon());
 
-        long interval = System.currentTimeMillis() - prevTouchTime;
-        if (prevTouchTime > 0 && interval <= 6000) {
-          while (intervals.size() >= 10) {
-            intervals.remove(0);
-          }
-          intervals.add(System.currentTimeMillis() - prevTouchTime);
-          if (intervals.size() > 1) {
-            setTempo((int) (60000 / getIntervalAverage()));
-          }
+      long interval = System.currentTimeMillis() - prevTouchTime;
+      if (prevTouchTime > 0 && interval <= 6000) {
+        while (intervals.size() >= 10) {
+          intervals.remove(0);
         }
-        prevTouchTime = System.currentTimeMillis();
-
-        if (hapticFeedback
-            && isBound
-            && ((!metronomeService.isBeatModeVibrate() && !metronomeService.isAlwaysVibrate())
-            || !metronomeService.isPlaying())
-        ) {
-          performHapticHeavyClick();
+        intervals.add(System.currentTimeMillis() - prevTouchTime);
+        if (intervals.size() > 1) {
+          long intervalAverage;
+          long sum = 0L;
+          for (long e : intervals) {
+            sum += e;
+          }
+          intervalAverage = (long) ((double) sum / intervals.size());
+          if (isBound()) {
+            setTempo((int) (60000 / intervalAverage));
+          }
         }
       }
-      return false;
+      prevTouchTime = System.currentTimeMillis();
+
+      if (areHapticsAllowed()) {
+        performHapticHeavyClick();
+      }
+      return true;
     });
 
-    boolean vibrateAlways = getSharedPrefs().getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.ALWAYS_VIBRATE);
+    boolean alwaysVibrate = getSharedPrefs().getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
     if (getSharedPrefs().getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE)) {
       binding.buttonMainBeatMode.setIconResource(
-          vibrateAlways
+          alwaysVibrate
               ? R.drawable.ic_round_volume_off_to_volume_on_anim
               : R.drawable.ic_round_vibrate_to_volume_anim
       );
     } else {
       binding.buttonMainBeatMode.setIconResource(
-          vibrateAlways
+          alwaysVibrate
               ? R.drawable.ic_round_volume_on_to_volume_off_anim
               : R.drawable.ic_round_volume_to_vibrate_anim
       );
@@ -353,111 +358,9 @@ public class MainFragment extends BaseFragment
   public void onStop() {
     super.onStop();
 
-    if (isBound) {
+    if (bound) {
       activity.unbindService(this);
-      isBound = false;
-    }
-  }
-
-  @Override
-  public void onClick(View v) {
-    int id = v.getId();
-    if (id == R.id.fab_main_play_pause) {
-      if (isBound) {
-        if (metronomeService.isPlaying()) {
-          metronomeService.stop();
-        } else {
-          metronomeService.start();
-        }
-      } else {
-        Log.i(TAG, "onClick: hello hä");
-      }
-      if (hapticFeedback
-          && isBound
-          && (!metronomeService.isBeatModeVibrate() && !metronomeService.isAlwaysVibrate())
-      ) {
-        //hapticUtil.click();
-      }
-    } else if (id == R.id.button_main_less) {
-      ViewUtil.startIcon(binding.buttonMainLess.getIcon());
-      changeBpm(-1);
-    } else if (id == R.id.button_main_more) {
-      ViewUtil.startIcon(binding.buttonMainMore.getIcon());
-      changeBpm(1);
-    } else if (id == R.id.button_main_beat_mode) {
-      boolean beatModeVibrateNew = !getSharedPrefs().getBoolean(
-          PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE
-      );
-      boolean vibrateAlways = getSharedPrefs().getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.ALWAYS_VIBRATE);
-
-      if (beatModeVibrateNew && !(new HapticUtil(activity).hasVibrator())) {
-        Snackbar.make(
-            binding.coordinatorContainer,
-            getString(R.string.msg_vibration_unavailable),
-            Snackbar.LENGTH_LONG
-        ).setAnchorView(binding.fabMainPlayPause).show();
-        return;
-      }
-
-      getSharedPrefs().edit().putBoolean(PREF.BEAT_MODE_VIBRATE, beatModeVibrateNew).apply();
-      if (isBound) {
-        //metronomeService.updateTick();
-      }
-      ViewUtil.startIcon(binding.buttonMainBeatMode.getIcon());
-      new Handler(Looper.getMainLooper()).postDelayed(() -> {
-        if (beatModeVibrateNew) {
-          binding.buttonMainBeatMode.setIconResource(
-              vibrateAlways
-                  ? R.drawable.ic_round_volume_off_to_volume_on_anim
-                  : R.drawable.ic_round_vibrate_to_volume_anim
-          );
-        } else {
-          binding.buttonMainBeatMode.setIconResource(
-              vibrateAlways
-                  ? R.drawable.ic_round_volume_on_to_volume_off_anim
-                  : R.drawable.ic_round_volume_to_vibrate_anim
-          );
-        }
-      }, 300);
-    } else if (id == R.id.button_main_bookmark) {
-      ViewUtil.startIcon(binding.buttonMainBookmark.getIcon());
-      if (hapticFeedback) {
-        //hapticUtil.click();
-      }
-      if (isBound) {
-        if (bookmarks.size() < 3 && !bookmarks.contains(metronomeService.getTempo())) {
-          binding.chipGroupMain.addView(newChip(metronomeService.getTempo()));
-          bookmarks.add(metronomeService.getTempo());
-          updateBookmarks();
-          refreshBookmark(true);
-        } else if (bookmarks.size() >= 3) {
-          Snackbar.make(
-                  binding.coordinatorContainer,
-                  getString(R.string.msg_bookmarks_max),
-                  Snackbar.LENGTH_LONG
-              ).setAnchorView(binding.fabMainPlayPause)
-              .setAction(
-                  getString(R.string.action_clear_all),
-                  v1 -> {
-                    binding.chipGroupMain.removeAllViews();
-                    bookmarks.clear();
-                    updateBookmarks();
-                    refreshBookmark(true);
-                  }
-              ).show();
-        }
-      }
-    } else if (id == R.id.button_main_options) {
-      //ViewUtil.startIcon(binding.imageMainEmphasis);
-      if (hapticFeedback) {
-        //hapticUtil.click();
-      }
-      if (getSharedPrefs().getBoolean(SETTINGS.EMPHASIS_SLIDER, DEF.EMPHASIS_SLIDER)) {
-        //DialogFragment fragment = new EmphasisBottomSheetDialogFragment();
-        //fragment.show(getSupportFragmentManager(), fragment.toString());
-      } else {
-        //setNextEmphasis();
-      }
+      bound = false;
     }
   }
 
@@ -465,26 +368,21 @@ public class MainFragment extends BaseFragment
   public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
     LocalBinder binder = (LocalBinder) iBinder;
     metronomeService = binder.getService();
-    if (metronomeService == null) {
+    if (metronomeService == null || binding == null || getSharedPrefs() == null) {
       return;
     }
-
+    bound = true;
     metronomeService.setMetronomeListener(this);
-    isBound = true;
 
-    if (binding == null || getSharedPrefs() == null) {
-      return;
-    }
-
-    if (getSharedPrefs().getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE)) {
+    if (metronomeService.isBeatModeVibrate()) {
       binding.buttonMainBeatMode.setIconResource(
-          getSharedPrefs().getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.ALWAYS_VIBRATE)
+          metronomeService.isAlwaysVibrate()
               ? R.drawable.ic_round_volume_off_to_volume_on_anim
               : R.drawable.ic_round_vibrate_to_volume_anim
       );
     } else {
       binding.buttonMainBeatMode.setIconResource(
-          getSharedPrefs().getBoolean(SETTINGS.VIBRATE_ALWAYS, DEF.ALWAYS_VIBRATE)
+          metronomeService.isAlwaysVibrate()
               ? R.drawable.ic_round_volume_on_to_volume_off_anim
               : R.drawable.ic_round_volume_to_vibrate_anim
       );
@@ -503,14 +401,12 @@ public class MainFragment extends BaseFragment
     );
     updateFabCornerRadius(metronomeService.isPlaying(), false);
 
-    boolean keepScreenAwake = metronomeService.isPlaying()
-        && getSharedPrefs().getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
-    UiUtil.keepScreenAwake(activity, keepScreenAwake);
+    UiUtil.keepScreenAwake(activity, keepAwake && metronomeService.isPlaying());
   }
 
   @Override
   public void onServiceDisconnected(ComponentName componentName) {
-    isBound = false;
+    bound = false;
   }
 
   @Override
@@ -525,9 +421,7 @@ public class MainFragment extends BaseFragment
         updateFabCornerRadius(true, true);
       }
     });
-    UiUtil.keepScreenAwake(
-        activity, getSharedPrefs().getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE)
-    );
+    UiUtil.keepScreenAwake(activity, keepAwake);
   }
 
   @Override
@@ -547,44 +441,129 @@ public class MainFragment extends BaseFragment
 
   @Override
   public void onMetronomeTick(Tick tick) {
-    if (isBound && !Objects.equals(tick.type, TICK_TYPE.SUB)) {
-      activity.runOnUiThread(() -> logoUtil.nextBeat(metronomeService.getInterval()));
+    if (!isBound()) {
+      return;
+    }
+    activity.runOnUiThread(() -> {
+      if (flashScreen) {
+        int color;
+        switch (tick.type) {
+          case TICK_TYPE.STRONG:
+            color = colorFlashStrong;
+            break;
+          case TICK_TYPE.SUB:
+            color = colorFlashSub;
+            break;
+          case TICK_TYPE.MUTED:
+            color = colorFlashMuted;
+            break;
+          default:
+            color = colorFlashNormal;
+            break;
+        }
+        binding.coordinatorContainer.setBackgroundColor(color);
+        binding.coordinatorContainer.postDelayed(
+            () -> binding.coordinatorContainer.setBackgroundColor(colorFlashMuted),
+            100
+        );
+      }
+      if (!tick.type.equals(TICK_TYPE.SUB)) {
+        logoUtil.nextBeat(metronomeService.getInterval());
+      }
+    });
+  }
+
+  @Override
+  public void onClick(View v) {
+    int id = v.getId();
+    if (!isBound()) {
+      return;
+    }
+    if (id == R.id.fab_main_play_pause) {
+      if (metronomeService.isPlaying()) {
+        if (areHapticsAllowed()) {
+          performHapticClick();
+        }
+        metronomeService.stop();
+      } else {
+        metronomeService.start();
+        if (areHapticsAllowed()) {
+          performHapticClick();
+        }
+      }
+    } else if (id == R.id.button_main_less) {
+      ViewUtil.startIcon(binding.buttonMainLess.getIcon());
+      changeTempo(-1);
+    } else if (id == R.id.button_main_more) {
+      ViewUtil.startIcon(binding.buttonMainMore.getIcon());
+      changeTempo(1);
+    } else if (id == R.id.button_main_beat_mode) {
+      boolean beatModeVibrateNew = !metronomeService.isBeatModeVibrate();
+      if (beatModeVibrateNew && !activity.getHapticUtil().hasVibrator()) {
+        showSnackbar(
+            activity.getSnackbar(R.string.msg_vibration_unavailable, Snackbar.LENGTH_SHORT)
+        );
+        return;
+      }
+      if (!beatModeVibrateNew && areHapticsAllowed()) {
+        performHapticClick();
+      }
+      metronomeService.setBeatModeVibrate(beatModeVibrateNew);
+      if (beatModeVibrateNew && areHapticsAllowed()) {
+        performHapticClick();
+      }
+      ViewUtil.startIcon(binding.buttonMainBeatMode.getIcon());
+      new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        if (beatModeVibrateNew) {
+          binding.buttonMainBeatMode.setIconResource(
+              metronomeService.isAlwaysVibrate()
+                  ? R.drawable.ic_round_volume_off_to_volume_on_anim
+                  : R.drawable.ic_round_vibrate_to_volume_anim
+          );
+        } else {
+          binding.buttonMainBeatMode.setIconResource(
+              metronomeService.isAlwaysVibrate()
+                  ? R.drawable.ic_round_volume_on_to_volume_off_anim
+                  : R.drawable.ic_round_volume_to_vibrate_anim
+          );
+        }
+      }, 300);
+    } else if (id == R.id.button_main_bookmark) {
+      ViewUtil.startIcon(binding.buttonMainBookmark.getIcon());
+      if (areHapticsAllowed()) {
+        performHapticClick();
+      }
+      if (bookmarks.size() < 3 && !bookmarks.contains(metronomeService.getTempo())) {
+        binding.chipGroupMain.addView(newChip(metronomeService.getTempo()));
+        bookmarks.add(metronomeService.getTempo());
+        updateBookmarks();
+        refreshBookmark(true);
+      } else if (bookmarks.size() >= 3) {
+        Snackbar snackbar = activity.getSnackbar(
+            R.string.msg_bookmarks_max, Snackbar.LENGTH_SHORT
+        );
+        snackbar.setAction(
+            getString(R.string.action_clear_all),
+            view -> {
+              binding.chipGroupMain.removeAllViews();
+              bookmarks.clear();
+              updateBookmarks();
+              refreshBookmark(true);
+            }
+        );
+        showSnackbar(snackbar);
+      }
+    } else if (id == R.id.button_main_options) {
+      if (areHapticsAllowed()) {
+        performHapticClick();
+      }
     }
   }
 
   public void onBpmChanged(int bpm) {
-    if (isBound) {
+    if (bound) {
       binding.textMainBpm.setText(String.valueOf(bpm));
       refreshBookmark(true);
-    }
-  }
-
-  private void setNextEmphasis() {
-    int emphasis = getSharedPrefs().getInt(PREF.EMPHASIS, DEF.EMPHASIS);
-    int emphasisNew;
-    if (emphasis < 6) {
-      emphasisNew = emphasis + 1;
-    } else {
-      emphasisNew = 0;
-    }
-    getSharedPrefs().edit().putInt(PREF.EMPHASIS, emphasisNew).apply();
-    /*new Handler(Looper.getMainLooper()).postDelayed(
-        () -> binding.textMainEmphasis.setText(String.valueOf(emphasisNew)),
-        150
-    );*/
-    if (isBound) {
-      //metronomeService.updateTick();
-    }
-  }
-
-  public void setEmphasis(int emphasis) {
-    getSharedPrefs().edit().putInt(PREF.EMPHASIS, emphasis).apply();
-    //binding.textMainEmphasis.setText(String.valueOf(emphasis));
-    if (hapticFeedback) {
-      //hapticUtil.tick();
-    }
-    if (isBound) {
-      //metronomeService.updateTick();
     }
   }
 
@@ -594,8 +573,8 @@ public class MainFragment extends BaseFragment
     chip.setCloseIconVisible(true);
     chip.setCloseIconResource(R.drawable.ic_round_cancel);
     chip.setOnCloseIconClickListener(v -> {
-      if (hapticFeedback) {
-        //hapticUtil.click();
+      if (areHapticsAllowed()) {
+        performHapticClick();
       }
       binding.chipGroupMain.removeView(chip);
       bookmarks.remove((Integer) bpm); // Integer cast required
@@ -618,7 +597,8 @@ public class MainFragment extends BaseFragment
     getSharedPrefs().edit().putString(PREF.BOOKMARKS, stringBuilder.toString()).apply();
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
       Collections.sort(bookmarks);
-      ShortcutManager manager = (ShortcutManager) activity.getSystemService(Context.SHORTCUT_SERVICE);
+      ShortcutManager manager = (ShortcutManager) activity.getSystemService(
+          Context.SHORTCUT_SERVICE);
       if (manager != null) {
         List<ShortcutInfo> shortcuts = new ArrayList<>();
         for (int bpm : bookmarks) {
@@ -640,19 +620,22 @@ public class MainFragment extends BaseFragment
   }
 
   private void refreshBookmark(boolean animated) {
-    if (isBound) {
+    if (bound) {
       binding.buttonMainBookmark.setEnabled(!bookmarks.contains(metronomeService.getTempo()));
       for (int i = 0; i < binding.chipGroupMain.getChildCount(); i++) {
         Chip chip = (Chip) binding.chipGroupMain.getChildAt(i);
         if (chip != null) {
-          boolean active = Integer.parseInt(chip.getText().toString()) == metronomeService.getTempo();
+          boolean active =
+              Integer.parseInt(chip.getText().toString()) == metronomeService.getTempo();
           if (animated) {
             animateChip(chip, active);
           } else {
             if (active) {
-              chip.setChipBackgroundColorResource(R.color.bookmark_active);
+              chip.setChipBackgroundColor(
+                  ColorStateList.valueOf(ResUtil.getColorAttr(activity, R.attr.colorTertiary)));
             } else {
-              chip.setChipBackgroundColorResource(R.color.bookmark_inactive);
+              chip.setChipBackgroundColor(
+                  ColorStateList.valueOf(ResUtil.getColorAttr(activity, R.attr.colorOutline)));
             }
           }
         }
@@ -662,7 +645,8 @@ public class MainFragment extends BaseFragment
 
   private void animateChip(Chip chip, boolean active) {
     int colorFrom = Objects.requireNonNull(chip.getChipBackgroundColor()).getDefaultColor();
-    int colorTo = ColorUtils.setAlphaComponent(ResUtil.getColorAttr(activity, R.attr.colorPrimaryContainer), active ? 180 : 0);
+    int colorTo = ColorUtils.setAlphaComponent(
+        ResUtil.getColorAttr(activity, R.attr.colorPrimaryContainer), active ? 180 : 0);
     ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
     colorAnimation.addUpdateListener(
         animator -> chip.setChipBackgroundColor(
@@ -674,23 +658,19 @@ public class MainFragment extends BaseFragment
     colorAnimation.start();
   }
 
-  private void changeBpm(int change) {
-    if (isBound) {
+  private void changeTempo(int change) {
+    if (bound) {
       int bpmNew = metronomeService.getTempo() + change;
       setTempo(bpmNew);
-      if (hapticFeedback
-          && (!metronomeService.isPlaying()
-          || (!metronomeService.isBeatModeVibrate() && !metronomeService.isAlwaysVibrate()))
-          && bpmNew >= 1 && bpmNew <= 400
-      ) {
-        //hapticUtil.tick();
+      if (areHapticsAllowed() && bpmNew >= 1 && bpmNew <= 400) {
+        performHapticTick();
       }
     }
   }
 
   private void setTempo(int bpm) {
-    if (isBound && bpm > 0) {
-      //metronomeService.setTempo(Math.min(bpm, 400));
+    if (bound && bpm > 0) {
+      metronomeService.setTempo(Math.min(bpm, 400));
       refreshBookmark(true);
       binding.textMainBpm.setText(String.valueOf(metronomeService.getTempo()));
       if (metronomeService.getTempo() > 1) {
@@ -719,24 +699,13 @@ public class MainFragment extends BaseFragment
   }
 
   private void setButtonStates() {
-    if (isBound) {
+    if (bound) {
       int bpm = metronomeService.getTempo();
       binding.buttonMainLess.setEnabled(bpm > 1);
       binding.buttonMainLess.setAlpha(bpm > 1 ? 1 : 0.5f);
       binding.buttonMainMore.setEnabled(bpm < 400);
       binding.buttonMainMore.setAlpha(bpm < 400 ? 1 : 0.5f);
     }
-  }
-
-  private long getIntervalAverage() {
-    long sum = 0L;
-    if (!intervals.isEmpty()) {
-      for (long interval : intervals) {
-        sum += interval;
-      }
-      return (long) ((double) sum / intervals.size());
-    }
-    return sum;
   }
 
   private void updateFabCornerRadius(boolean playing, boolean animated) {
@@ -763,5 +732,21 @@ public class MainFragment extends BaseFragment
           binding.fabMainPlayPause.getShapeAppearanceModel().withCornerSize(cornerSizeNew)
       );
     }
+  }
+
+  private boolean areHapticsAllowed() {
+    return bound && metronomeService.areHapticEffectsPossible();
+  }
+
+  private boolean isBound() {
+    if (!bound) {
+      showSnackbar(activity.getSnackbar(R.string.msg_connection_lost, Snackbar.LENGTH_SHORT));
+    }
+    return bound;
+  }
+
+  private void showSnackbar(Snackbar snackbar) {
+    snackbar.setAnchorView(binding.fabMainPlayPause);
+    activity.showSnackbar(snackbar);
   }
 }

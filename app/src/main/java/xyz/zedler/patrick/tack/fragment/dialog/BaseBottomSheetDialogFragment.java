@@ -1,6 +1,7 @@
 package xyz.zedler.patrick.tack.fragment.dialog;
 
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.PaintDrawable;
 import android.os.Build;
@@ -30,11 +31,12 @@ public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragme
   private static final String TAG = "BaseBottomSheet";
 
   private MainActivity activity;
-  private Dialog dialog;
+  private CustomBottomSheetDialog dialog;
   private View decorView;
   private ViewUtil viewUtil;
   private boolean lightNavBar;
   private int backgroundColor;
+  private FullWidthListener fullWidthListener;
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,12 +50,12 @@ public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragme
   @Override
   public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
     dialog = new CustomBottomSheetDialog(requireContext());
+    dialog.setDismissWithAnimation(true);
 
-    decorView = dialog.getWindow().getDecorView();
-    if (decorView == null) {
+    if (dialog.getWindow() == null) {
       return dialog;
     }
-
+    decorView = dialog.getWindow().getDecorView();
     decorView.getViewTreeObserver().addOnGlobalLayoutListener(
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override
@@ -74,8 +76,11 @@ public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragme
             int peekHeightHalf = UiUtil.getDisplayHeight(requireContext()) / 2;
             behavior.setPeekHeight(peekHeightHalf);
 
-            boolean isFullWidth =
-                behavior.getMaxWidth() >= UiUtil.getDisplayWidth(requireContext());
+            boolean isFullWidth
+                = behavior.getMaxWidth() >= UiUtil.getDisplayWidth(requireContext());
+            if (fullWidthListener != null) {
+              fullWidthListener.onKnowIfFullWidth(isFullWidth);
+            }
 
             ViewCompat.setOnApplyWindowInsetsListener(decorView, (view, insets) -> {
               int insetTop = insets.getInsets(Type.systemBars()).top;
@@ -206,7 +211,7 @@ public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragme
     }
   }
 
-  /*public SharedPreferences getSharedPrefs() {
+  public SharedPreferences getSharedPrefs() {
     return activity.getSharedPrefs();
   }
 
@@ -220,8 +225,16 @@ public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragme
 
   public void performHapticHeavyClick() {
     activity.performHapticHeavyClick();
-  }*/
+  }
 
   public void applyBottomInset(int bottom) {
+  }
+
+  public void setFullWidthListener(FullWidthListener listener) {
+    fullWidthListener = listener;
+  }
+
+  public interface FullWidthListener {
+    void onKnowIfFullWidth(boolean isFullWidth);
   }
 }

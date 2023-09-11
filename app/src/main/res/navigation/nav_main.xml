@@ -13,12 +13,24 @@
     tools:layout="@layout/fragment_main_app" >
 
     <action
+      android:id="@+id/action_main_to_settings"
+      app:destination="@id/settingsFragment" />
+
+    <action
       android:id="@+id/action_main_to_about"
-      app:destination="@id/aboutFragment"
-      app:enterAnim="@anim/enter_end_fade"
-      app:exitAnim="@anim/exit_start_fade"
-      app:popEnterAnim="@anim/enter_start_fade"
-      app:popExitAnim="@anim/exit_end_fade" />
+      app:destination="@id/aboutFragment" />
+
+  </fragment>
+
+  <fragment
+    android:id="@+id/settingsFragment"
+    android:name="xyz.zedler.patrick.tack.fragment.SettingsFragment"
+    android:label="fragment_settings"
+    tools:layout="@layout/fragment_settings_app">
+
+    <action
+      android:id="@+id/action_settings_to_about"
+      app:destination="@id/aboutFragment" />
 
   </fragment>
 
@@ -60,11 +72,6 @@
     android:id="@+id/feedbackBottomSheetDialogFragment"
     android:name="xyz.zedler.patrick.tack.fragment.dialog.FeedbackBottomSheetDialogFragment"
     android:label="dialog_feedback" />
-
-  <dialog
-    android:id="@+id/languagesBottomSheetDialogFragment"
-    android:name="xyz.zedler.patrick.tack.fragment.dialog.LanguagesBottomSheetDialogFragment"
-    android:label="dialog_languages" />
 
   <action
     android:id="@+id/action_global_text_dialog"

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+  xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <item
+    android:left="1dp"
+    android:right="1dp"
+    android:top="1dp"
+    android:bottom="1dp">
+    <shape android:shape="oval">
+      <solid android:color="#00000000" /><!-- #66303030 -->
+      <size
+        android:width="48dp"
+        android:height="48dp" />
+    </shape>
+  </item>
+
+  <item
+    android:id="@+id/icon_selection_check"
+    android:gravity="center"
+    android:drawable="@drawable/ic_round_check_anim" />
+
+</layer-list>

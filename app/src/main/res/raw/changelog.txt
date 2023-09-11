@@ -1,11 +1,26 @@
-3.0.2:
+## 4.0.0: Surprise 🎉
+
+? Here is the update you have been waiting for so long! I have implemented countless new features, improved tons of things and fixed many bugs, all while studying. But look for yourself!
+
+- New: complete Material You redesign with dynamic colors and theme selection
+- New: beautiful beat visualization with subdivisions and changeable emphasizes
+- New: options for swing, muted beats and incremental tempo change
+- New: volume boost option
+- New: optional count-in
+- New: latency offset correction
+- Fixed: inconsistent audio beats on many devices
+
+## 3.0.2
+
 - Improved: splash screen on Android 12
 - Fixed: invisible status bar icons
 
-3.0.1:
+## 3.0.1
+
 - Fixed: no haptic feedback if it's disabled in settings
 
-3.0.0:
+## 3.0.0
+
 - New: playful "Material You" look in preparation for Android 12
 - New: sound is played when selected in settings
 - New: settings are applied immediately
@@ -17,7 +32,8 @@
 - Improved: notification controls
 - Fixed: no haptic feedback if bpm limits are reached
 
-2.2.0:
+## 2.2.0
+
 - Improved: main typeface
 - Improved: haptic feedback
 - Improved: behavior if vibration is unavailable
@@ -26,7 +42,8 @@
 - Improved: "About" section
 - Fixed: some possible crashes
 
-2.1.0:
+## 2.1.0
+
 - New: animated splash screen
 - New: emphasis slider with haptic feedback
 - New: immersive fullscreen experience
@@ -34,7 +51,8 @@
 - Improved: animated logo size
 - Fixed: beat mode icon color
 
-2.0.0:
+## 2.0.0
+
 - New: Edwin typeface
 - New: haptic feedback on tempo change
 - New: animated logo
@@ -44,10 +62,12 @@
 - Fixed: jump of bpm picker on touch
 - Fixed: annoying bpm jump during rotation
 
-1.6.0:
+## 1.6.0
+
 - New: option for slider to select emphasis
 
-1.5.0:
+## 1.5.0
+
 - New: share Tack
 - Improved: colors and appearance
 - Improved: app icon
@@ -55,21 +75,25 @@
 - Improved: splash logo
 - Improved: landscape mode
 
-1.4.0:
+## 1.4.0
+
 - New: picker animation
 
-1.3.0:
+## 1.3.0
+
 - New: long click to change BPM rapidly
 - Improved: sound synchronicity
 - Improved: tap BPM calculation
 
-1.2.0:
+## 1.2.0
+
 - New: German translation
 - New: feedback pop-up
 - Improved: bookmarks and licenses
 - Fixed: picker touch bug
 
-1.1.0:
+## 1.1.0
+
 - New: beat emphasis
 - New: toggle "keep screen awake while playing"
 - Improved: bookmarks, about page, tempo tap, settings page

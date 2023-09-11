@@ -19,6 +19,8 @@
   <string name="title_settings">Settings</string>
   <string name="title_notification_channel">Playback</string>
   <string name="title_options">Options</string>
+  <string name="title_general">General</string>
+  <string name="title_metronome">Metronome</string>
 
   <!-- LABELS -->
 
@@ -28,6 +30,8 @@
   <!-- ACTIONS -->
 
   <string name="action_back">Back</string>
+  <string name="action_close">Close</string>
+  <string name="action_cancel">Cancel</string>
   <string name="action_more">Faster</string>
   <string name="action_less">Slower</string>
   <string name="action_play_pause">Play/Pause</string>
@@ -38,45 +42,83 @@
   <string name="action_bookmark">Bookmark</string>
   <string name="action_beat_mode">Beat mode</string>
   <string name="action_send_feedback">Send feedback</string>
-  <string name="action_share">Share</string>
-  <string name="action_share_description">Tell your friends about Tack</string>
+  <string name="action_open_link">Open external website</string>
+  <string name="action_reset">Reset</string>
+  <string name="action_recommend">Recommend</string>
+  <string name="action_recommend_description">Tell your friends about Tack</string>
   <string name="action_email">Send email</string>
   <string name="action_email_description">Contact the developer</string>
   <string name="action_rate">Rate on Google Play</string>
   <string name="action_rate_description">Support the development</string>
 
+  <!-- MESSAGES -->
+
   <string name="msg_bookmarks_max">Bookmark limit reached</string>
-  <string name="msg_feedback">A great app requires a lot of time and lives from the feedback of its users.\n\nDo you have any wishes, comments or questions? Contact me!\nOtherwise I would be very happy about a nice review in the Play Store.</string>
-  <string name="msg_share">Check out this cool metronome app: \nhttps://play.google.com/store/apps/details?id=xyz.zedler.patrick.tack</string>
+  <string name="msg_feedback">A great app requires a lot of time and lives from the feedback of its users.</string>
+  <string name="msg_feedback_contact">Do you have any wishes, comments or questions? Contact me!\nOtherwise I would be very happy about a nice review in the Play Store.</string>
+  <string name="msg_recommend">Check out this cool metronome app: \nhttps://play.google.com/store/apps/details?id=xyz.zedler.patrick.tack</string>
   <string name="msg_wear">Tack is also available for Wear OS watches! All features of the phone app and much more, always ready on your wrist.</string>
   <string name="msg_vibration_unavailable">Vibration unavailable on this device</string>
   <string name="msg_metronome_playing">Metronome is playing</string>
   <string name="msg_metronome_playing_return">Tap to return to Tack</string>
+  <string name="msg_connection_lost">Service connection lost, app restart required</string>
+  <string name="msg_reset">Reset all?</string>
+  <string name="msg_reset_description">Do you really want to reset the entire app including bookmarks and settings? This cannot be undone.</string>
 
-  <string name="setting_dark_mode">Force dark mode</string>
-  <string name="setting_dark_mode_description">Off for system dependency</string>
-  <string name="setting_sound">Beat sound</string>
-  <string name="setting_sound_description">Switch between sound and vibration on the start page</string>
-  <string name="setting_sound_wood">Wood</string>
-  <string name="setting_sound_click">Click</string>
-  <string name="setting_sound_ding">Ding</string>
-  <string name="setting_sound_beep">Beep</string>
-  <string name="setting_vibrate_always">Always vibrate</string>
-  <string name="setting_vibrate_always_description">Even with sound</string>
-  <string name="setting_haptic">Haptic feedback</string>
-  <string name="setting_haptic_description">On tempo change and other effects</string>
-  <string name="setting_slider_emphasis">Use slider input</string>
-  <string name="setting_slider_emphasis_description">For emphasis selection</string>
-  <string name="setting_keep_awake">Keep screen awake</string>
-  <string name="setting_keep_awake_description">While metronome is playing</string>
+  <!-- SETTINGS -->
 
-  <array name="changelog_highlights" translatable="false">
+  <string name="settings_language">Language</string>
+  <string name="settings_language_description">Select language</string>
+  <string name="settings_language_info">Many thanks to all the volunteer translators at Transifex!\nPlease visit Tack on GitHub to learn how you can help make Tack available for your language.</string>
+  <string name="settings_language_system">Follow system</string>
+  <string name="settings_language_not_available">English if translation is not available</string>
+
+  <string name="settings_theme">Theme</string>
+  <string name="settings_theme_description">Try another look</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
+  <string name="settings_theme_auto">Auto</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system theme -->
+  <string name="settings_theme_dark">Dark</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system theme -->
+  <string name="settings_theme_light">Light</string>
+
+  <string name="settings_transition">Use sliding transition between app pages</string>
+  <string name="settings_transition_description">Instead of fading</string>
+
+  <string name="settings_haptic">Haptic effects</string>
+  <string name="settings_haptic_description">In addition to haptic beats when in vibration mode</string>
+
+  <string name="settings_reset">Reset all</string>
+  <string name="settings_reset_description">Cannot be undone</string>
+
+  <string name="settings_sound">Beat sound</string>
+  <string name="settings_sound_description">Sound and vibration can be switched with the controls</string>
+  <string name="settings_sound_wood">Wood</string>
+  <string name="settings_sound_sine">Sine</string>
+  <string name="settings_sound_click">Click</string>
+  <string name="settings_sound_ding">Ding</string>
+  <string name="settings_sound_beep">Beep</string>
+
+  <string name="settings_gain">Volume boost</string>
+  <string name="settings_gain_description">Gain in dB (in addition to system volume)</string>
+  <string name="settings_gain_warning">Use with extreme caution! When gain is over 50dB, a warning will be displayed before each start. The developer of Tack is not responsible for any potential damage.</string>
+
+  <string name="settings_always_vibrate">Always vibrate</string>
+  <string name="settings_always_vibrate_description">Even with sound</string>
+
+  <string name="settings_flash_screen">Flash screen</string>
+  <string name="settings_flash_screen_description">On every beat</string>
+
+  <string name="settings_keep_awake">Keep screen awake</string>
+  <string name="settings_keep_awake_description">While metronome is playing</string>
+
+  <!-- ABOUT -->
+
+  <array name="about_changelog_highlights" translatable="false">
     <item>New:</item>
     <item>Improved:</item>
     <item>Fixed:</item>
   </array>
-
-  <!-- ABOUT -->
 
   <string name="about_description">Developer info &amp; more</string>
   <string name="about_version">Version</string>

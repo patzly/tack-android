@@ -14,8 +14,8 @@
     app:showAsAction="never" />
 
   <item
-    android:id="@+id/action_share"
-    android:title="@string/action_share"
+    android:id="@+id/action_recommend"
+    android:title="@string/action_recommend"
     app:showAsAction="never" />
 
   <item

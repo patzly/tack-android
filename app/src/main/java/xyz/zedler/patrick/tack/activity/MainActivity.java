@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -27,7 +28,6 @@ import com.google.android.material.color.HarmonizedColorsOptions;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.Locale;
 import xyz.zedler.patrick.tack.BuildConfig;
-import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
@@ -159,8 +159,12 @@ public class MainActivity extends AppCompatActivity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    binding = null;
-    sendBroadcast(new Intent(ACTION.STOP));
+
+    if (!runAsSuperClass) {
+      binding = null;
+      // If metronome should be stopped when app is removed from recent apps
+      // sendBroadcast(new Intent(ACTION.STOP));
+    }
   }
 
   @Override
@@ -168,7 +172,9 @@ public class MainActivity extends AppCompatActivity {
     super.onResume();
 
     if (!runAsSuperClass) {
-      hapticUtil.setEnabled(HapticUtil.areSystemHapticsTurnedOn(this));
+      hapticUtil.setEnabled(
+          sharedPrefs.getBoolean(PREF.HAPTIC, HapticUtil.areSystemHapticsTurnedOn(this))
+      );
     }
   }
 
@@ -236,16 +242,19 @@ public class MainActivity extends AppCompatActivity {
     try {
       NavOptions.Builder builder = new NavOptions.Builder();
       if (UiUtil.areAnimationsEnabled(this)) {
+        boolean useAnimator = Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+            && UiUtil.isPredictiveBackEnabled(this);
         boolean useSliding = getSharedPrefs().getBoolean(PREF.USE_SLIDING, DEF.USE_SLIDING);
-        builder.setEnterAnim(useSliding ? R.anim.enter_end_slide : R.anim.enter_end_fade);
-        builder.setExitAnim(useSliding ? R.anim.exit_start_slide : R.anim.exit_start_fade);
-        builder.setPopEnterAnim(useSliding ? R.anim.enter_start_slide : R.anim.enter_start_fade);
-        builder.setPopExitAnim(useSliding ? R.anim.exit_end_slide : R.anim.exit_end_fade);
+        int enterEndFade = useAnimator ? R.animator.open_enter : R.anim.open_enter_fade;
+        builder.setEnterAnim(useSliding ? R.anim.open_enter_slide : enterEndFade);
+        int exitStartFade = useAnimator ? R.animator.open_exit : R.anim.open_exit_fade;
+        builder.setExitAnim(useSliding ? R.anim.open_exit_slide : exitStartFade);
+        int enterStartFade = useAnimator ? R.animator.close_enter : R.anim.close_enter_fade;
+        builder.setPopEnterAnim(useSliding ? R.anim.close_enter_slide : enterStartFade);
+        int exitEndFade = useAnimator ? R.animator.close_exit : R.anim.close_exit_fade;
+        builder.setPopExitAnim(useSliding ? R.anim.close_exit_slide : exitEndFade);
       } else {
-        builder.setEnterAnim(R.anim.fade_in_a11y);
-        builder.setExitAnim(R.anim.fade_out_a11y);
-        builder.setPopEnterAnim(R.anim.fade_in_a11y);
-        builder.setPopExitAnim(R.anim.fade_out_a11y);
+        builder.setEnterAnim(-1).setExitAnim(-1).setPopEnterAnim(-1).setPopExitAnim(-1);
       }
       navController.navigate(directions, builder.build());
     } catch (IllegalArgumentException e) {
@@ -290,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
       if (UiUtil.areAnimationsEnabled(this)) {
         overridePendingTransition(R.anim.fade_in_restart, R.anim.fade_out_restart);
       } else {
-        overridePendingTransition(R.anim.fade_in_a11y, R.anim.fade_out_a11y);
+        overridePendingTransition(0, 0);
       }
     }, delay);
   }
@@ -345,11 +354,19 @@ public class MainActivity extends AppCompatActivity {
     navigate(action);
   }
 
+  public HapticUtil getHapticUtil() {
+    return hapticUtil;
+  }
+
   public void performHapticClick() {
     hapticUtil.click();
   }
 
   public void performHapticHeavyClick() {
     hapticUtil.heavyClick();
+  }
+
+  public void performHapticTick() {
+    hapticUtil.tick();
   }
 }

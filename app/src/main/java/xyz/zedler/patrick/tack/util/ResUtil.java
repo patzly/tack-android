@@ -3,24 +3,14 @@ package xyz.zedler.patrick.tack.util;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.text.Html;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.BulletSpan;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -81,19 +71,14 @@ public class ResUtil {
     return getColorAttr(context, R.attr.colorSecondary, 0.09f);
   }
 
-  public static void tintMenuItemIcons(Context context, Menu menu) {
-    for (int i = 0; i < menu.size(); i++) {
-      MenuItem item = menu.getItem(i);
-      if (item == null || item.getIcon() == null) {
-        continue;
+  public static void tintMenuIcons(Context context, Menu menu) {
+    if (menu != null) {
+      for (int i = 0; i < menu.size(); i++) {
+        MenuItem item = menu.getItem(i);
+        if (item != null) {
+          tintIcon(context, item.getIcon());
+        }
       }
-      item.getIcon().setTint(ResUtil.getColorAttr(context, R.attr.colorOnSurfaceVariant));
-    }
-  }
-
-  public static void tintMenuItemIcon(Context context, MenuItem item) {
-    if (item != null && item.getIcon() != null) {
-      item.getIcon().setTint(ResUtil.getColorAttr(context, R.attr.colorOnSurfaceVariant));
     }
   }
 

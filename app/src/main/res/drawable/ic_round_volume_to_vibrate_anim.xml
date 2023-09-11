@@ -11,33 +11,33 @@
       <path
         android:name="sound_wave_to_line"
         android:pathData="M 14.942 4.538 C 21.353 7.202 22.061 16.354 14.856 19.509"
-        android:strokeColor="@color/icon"
+        android:strokeColor="#000000"
         android:strokeWidth="2"
         android:strokeLineCap="round" />
       <path
         android:name="diaphragm_to_line"
         android:pathData="M 16.5 12.002 L 16.5 12.002 C 16.5 13.772 15.48 15.292 14 16.022 L 14 16.022 C 14 16.022 14 16.022 14 16.022 L 14 7.972 C 14 7.972 14 7.972 14 7.972 C 15.48 8.712 16.5 10.232 16.5 12.002"
-        android:fillColor="@color/icon" />
+        android:fillColor="#000000" />
       <path
         android:name="speaker_to_phone"
         android:pathData="M 7 15.002 C 7.883 15.885 8.766 16.768 9.649 17.651 C 9.863 17.865 10.076 18.078 10.29 18.292 C 10.92 18.922 12 18.472 12 17.582 L 12 13.814 C 12 13.304 12 12.794 12 12.284 L 12 11.41 C 12 10.856 12 10.302 12 9.749 L 12 6.412 C 12 5.529 10.937 5.079 10.305 5.687 C 10.3 5.692 10.295 5.697 10.29 5.702 C 9.654 6.34 9.017 6.978 8.381 7.616 L 7 9.002 C 7 9 7 15.002 7 15.002 L 7 15.002 M 12 12 L 12 12 L 12 12 L 12 12 L 12 12 L 12 12"
-        android:fillColor="@color/icon" />
+        android:fillColor="#000000" />
       <path
         android:name="magnet_to_line_left"
         android:pathData="M 4 10 L 4 14"
-        android:strokeColor="@color/icon"
+        android:strokeColor="#000000"
         android:strokeWidth="2"
         android:strokeLineCap="round" />
       <path
         android:name="magnet_to_line_right"
         android:pathData="M 6 10 L 6 14"
-        android:strokeColor="@color/icon"
+        android:strokeColor="#000000"
         android:strokeWidth="2"
         android:strokeLineCap="round" />
       <path
         android:name="lines_to_magnet"
         android:pathData="M 3 10.002 C 3 10.668 3 11.335 3 12.002 L 3 14.002 C 3 14.185 3.05 14.357 3.137 14.506 C 3.224 14.654 3.348 14.778 3.496 14.865 C 3.644 14.952 3.817 15.002 4 15.002 C 4.204 15.002 4.408 15.002 4.612 15.002 C 4.815 15.002 5.019 15.002 5.223 15.002 C 5.454 15.002 5.685 15.002 5.916 15.002 C 6.115 15.002 6.314 15.002 6.513 15.002 C 6.695 15.002 6.876 15.002 7.4 15.002 C 7.4 15.002 7.4 15.002 7.4 15.002 C 7.4 14.965 7.4 14.929 7.4 14.893 L 7.4 9.518 C 7.4 9.346 7.4 9.174 7.4 9.002 C 6.912 9.002 6.767 9.002 6.621 9.002 C 6.475 9.002 6.33 9.002 6.184 9.002 C 6.039 9.002 5.893 9.002 5.747 9.002 C 5.602 9.002 5.456 9.002 5.31 9.002 C 5.165 9.002 5.019 9.002 4.874 9.002 C 4.728 9.002 4.582 9.002 4.437 9.002 C 4.291 9.002 4.146 9.002 4 9.002 C 3.45 9.002 3 9.452 3 10.002 C 3 10.002 3 10.002 3 10.002"
-        android:fillColor="@color/icon" />
+        android:fillColor="#000000" />
     </vector>
   </aapt:attr>
   <target android:name="sound_wave_to_line">

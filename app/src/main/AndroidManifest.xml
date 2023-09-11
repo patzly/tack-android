@@ -33,9 +33,9 @@
 
     </activity>
 
-    <activity android:name=".activity.ShortcutActivity" />
+    <activity android:name=".activity.MainActivity" />
 
-    <activity android:name=".activity.SettingsActivity" />
+    <activity android:name=".activity.ShortcutActivity" />
 
     <service
       android:name=".service.MetronomeService"

@@ -9,6 +9,11 @@
     app:showAsAction="never" />
 
   <item
+    android:id="@+id/action_recommend"
+    android:title="@string/action_recommend"
+    app:showAsAction="never" />
+
+  <item
     android:id="@+id/action_feedback"
     android:title="@string/action_send_feedback"
     app:showAsAction="never" />

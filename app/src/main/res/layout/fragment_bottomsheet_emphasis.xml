@@ -10,16 +10,11 @@
     android:layout_width="match_parent"
     android:layout_height="?android:actionBarSize">
 
-    <TextView
-      style="@style/Widget.Tack.TextView.Toolbar.BottomSheet.Center"
-      android:text="@string/action_emphasis" />
-
   </FrameLayout>
 
-  <View
-    style="@style/Widget.Tack.Divider"
-    android:layout_marginTop="0dp"
-    android:layout_marginBottom="0dp" />
+  <com.google.android.material.divider.MaterialDivider
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" />
 
   <androidx.core.widget.NestedScrollView
     android:layout_width="match_parent"
@@ -39,8 +34,7 @@
         android:layout_margin="16dp"
         android:valueFrom="0"
         android:valueTo="15"
-        android:stepSize="1"
-        app:trackColorInactive="@color/on_background_tertiary_surface"/>
+        android:stepSize="1"/>
 
     </LinearLayout>
 

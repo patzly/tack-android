@@ -1,56 +1,79 @@
 package xyz.zedler.patrick.tack.fragment.dialog;
 
-import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.FrameLayout.LayoutParams;
 import androidx.annotation.NonNull;
-import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.DEF;
+import androidx.annotation.Nullable;
 import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetFeedbackBinding;
 import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
-public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFragment {
+public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFragment
+    implements OnClickListener {
 
-  private final static String TAG = "FeedbackBottomSheet";
+  private static final String TAG = "FeedbackBottomSheet";
 
   private FragmentBottomsheetFeedbackBinding binding;
-  private SharedPreferences sharedPrefs;
+  private MainActivity activity;
 
   @Override
-  public View onCreateView(@NonNull LayoutInflater inflater,
-      ViewGroup container,
-      Bundle savedInstanceState) {
-    binding = FragmentBottomsheetFeedbackBinding.inflate(
-        inflater, container, false
+  public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle state) {
+    binding = FragmentBottomsheetFeedbackBinding.inflate(inflater, container, false);
+    return binding.getRoot();
+  }
+
+  @Override
+  public void onDestroyView() {
+    super.onDestroyView();
+    binding = null;
+  }
+
+  @Override
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+
+    activity = (MainActivity) requireActivity();
+
+    binding.linearFeedbackRate.setBackground(ViewUtil.getRippleBgListItemSurface(activity));
+    binding.linearFeedbackEmail.setBackground(ViewUtil.getRippleBgListItemSurface(activity));
+    binding.linearFeedbackRecommend.setBackground(ViewUtil.getRippleBgListItemSurface(activity));
+
+    ViewUtil.setOnClickListeners(
+        this,
+        binding.linearFeedbackRate,
+        binding.linearFeedbackEmail,
+        binding.linearFeedbackRecommend
     );
+  }
 
-    Activity activity = getActivity();
-    assert activity != null;
+  @Override
+  public void onDismiss(@NonNull DialogInterface dialog) {
+    super.onDismiss(dialog);
 
-    sharedPrefs = PreferenceManager.getDefaultSharedPreferences(activity);
+    if (getSharedPrefs().getInt(PREF.FEEDBACK_POP_UP_COUNT, 1) != 0) {
+      getSharedPrefs().edit().putInt(PREF.FEEDBACK_POP_UP_COUNT, 0).apply();
+    }
+  }
 
-    HapticUtil hapticUtil = new HapticUtil(activity);
-    hapticUtil.setEnabled(sharedPrefs.getBoolean(SETTINGS.HAPTIC_FEEDBACK, DEF.HAPTIC_FEEDBACK));
-
-    binding.linearFeedbackRate.setOnClickListener(v -> {
+  @Override
+  public void onClick(View v) {
+    int id = v.getId();
+    if (id == R.id.linear_feedback_rate && getViewUtil().isClickEnabled(id)) {
       ViewUtil.startIcon(binding.imageFeedbackRate);
-      hapticUtil.click();
+      performHapticClick();
       Uri uri = Uri.parse(
           "market://details?id=" + activity.getApplicationContext().getPackageName()
       );
@@ -70,10 +93,8 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
         }
         dismiss();
       }, 400);
-    });
-
-    binding.linearFeedbackEmail.setOnClickListener(v -> {
-      hapticUtil.click();
+    } else if (id == R.id.linear_feedback_email && getViewUtil().isClickEnabled(id)) {
+      performHapticClick();
       Intent intent = new Intent(Intent.ACTION_SENDTO);
       intent.setData(
           Uri.parse(
@@ -84,29 +105,10 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
       );
       startActivity(Intent.createChooser(intent, getString(R.string.action_send_feedback)));
       dismiss();
-    });
-
-    binding.linearFeedbackShare.setOnClickListener(v -> {
-      hapticUtil.click();
-      ResUtil.share(activity, R.string.msg_share);
+    } else if (id == R.id.linear_feedback_recommend && getViewUtil().isClickEnabled(id)) {
+      performHapticClick();
+      ResUtil.share(activity, R.string.msg_recommend);
       dismiss();
-    });
-
-    return binding.getRoot();
-  }
-
-  @Override
-  public void onDestroy() {
-    super.onDestroy();
-    binding = null;
-  }
-
-  @Override
-  public void onDismiss(@NonNull DialogInterface dialog) {
-    super.onDismiss(dialog);
-
-    if (sharedPrefs.getInt(PREF.FEEDBACK_POP_UP_COUNT, 1) != 0) {
-      sharedPrefs.edit().putInt(PREF.FEEDBACK_POP_UP_COUNT, 0).apply();
     }
   }
 
@@ -115,11 +117,5 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
     LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
     params.setMargins(0, 0, 0, bottom);
     binding.linearFeedbackContainer.setLayoutParams(params);
-  }
-
-  @NonNull
-  @Override
-  public String toString() {
-    return TAG;
   }
 }

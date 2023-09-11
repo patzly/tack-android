@@ -146,9 +146,9 @@ public class BpmPickerView extends View implements View.OnTouchListener {
 
   public interface OnRotationListener {
 
-    void onRotate(int change);
+    void onRotate(int bpm);
 
-    void onRotate(float change);
+    void onRotate(float degrees);
   }
 
   public interface OnPickListener {

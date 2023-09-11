@@ -9,7 +9,7 @@ public final class Constants {
     public static final String THEME = "app_theme";
     public static final String MODE = "mode";
     public static final String USE_SLIDING = "use_sliding_transition";
-    public static final String HAPTIC_FEEDBACK = "haptic_feedback";
+    public static final String HAPTIC = "haptic_feedback";
     public static final String LAST_VERSION = "last_version";
     public static final String FEEDBACK_POP_UP_COUNT = "feedback_pop_up_count";
 
@@ -19,8 +19,10 @@ public final class Constants {
     public final static String SUBDIVISIONS = "subdivisions";
     public final static String BEAT_MODE_VIBRATE = "beat_mode_vibrate";
     public final static String ALWAYS_VIBRATE = "always_vibrate";
+    public final static String FLASH_SCREEN = "flash_screen";
     public final static String KEEP_AWAKE = "keep_awake";
     public final static String SOUND = "sound";
+    public final static String LATENCY_OFFSET = "latency_offset";
     public final static String BOOKMARKS = "bookmarks";
 
     @Deprecated
@@ -43,8 +45,10 @@ public final class Constants {
     public final static String SUBDIVISIONS = TICK_TYPE.MUTED;
     public final static boolean BEAT_MODE_VIBRATE = false;
     public final static boolean ALWAYS_VIBRATE = false;
+    public final static boolean FLASH_SCREEN = false;
     public final static boolean KEEP_AWAKE = true;
     public final static String SOUND = Constants.SOUND.WOOD;
+    public final static long OFFSET = 150;
 
     @Deprecated
     public final static boolean EMPHASIS_SLIDER = false;

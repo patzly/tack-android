@@ -55,6 +55,10 @@ public class BaseFragment extends Fragment {
     activity.performHapticClick();
   }
 
+  public void performHapticTick() {
+    activity.performHapticTick();
+  }
+
   public void performHapticHeavyClick() {
     activity.performHapticHeavyClick();
   }
@@ -78,10 +82,8 @@ public class BaseFragment extends Fragment {
 
       if (id == R.id.action_feedback) {
         activity.showFeedbackBottomSheet();
-      } /*else if (id == R.id.action_help) {
-        activity.showTextBottomSheet(R.raw.help, R.string.action_help);
-      } */else if (id == R.id.action_share) {
-        ResUtil.share(activity, R.string.msg_share);
+      } else if (id == R.id.action_recommend) {
+        ResUtil.share(activity, R.string.msg_recommend);
       }
       return true;
     };

@@ -59,9 +59,11 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
         binding.linearAboutGithub,
         binding.linearAboutTranslation,
         binding.linearAboutPrivacy,
+        binding.linearAboutLicenseEdwin,
         binding.linearAboutLicenseJost,
         binding.linearAboutLicenseMaterialComponents,
-        binding.linearAboutLicenseMaterialIcons
+        binding.linearAboutLicenseMaterialIcons,
+        binding.linearAboutLicenseMetronome
     );
   }
 
@@ -75,9 +77,8 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     }
 
     if (id == R.id.linear_about_changelog) {
-      performHapticClick();
-      activity.showChangelogBottomSheet();
       ViewUtil.startIcon(binding.imageAboutChangelog);
+      activity.showChangelogBottomSheet();
     } else if (id == R.id.linear_about_developer) {
       ViewUtil.startIcon(binding.imageAboutDeveloper);
       new Handler(Looper.getMainLooper()).postDelayed(
@@ -103,6 +104,11 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
               new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_privacy)))
           ), 300
       );
+    } else if (id == R.id.linear_about_license_edwin) {
+      ViewUtil.startIcon(binding.imageAboutLicenseEdwin);
+      activity.showTextBottomSheet(
+          R.raw.license_ofl, R.string.license_edwin, R.string.license_edwin_link
+      );
     } else if (id == R.id.linear_about_license_jost) {
       ViewUtil.startIcon(binding.imageAboutLicenseJost);
       activity.showTextBottomSheet(
@@ -121,6 +127,13 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
           R.raw.license_apache,
           R.string.license_material_icons,
           R.string.license_material_icons_link
+      );
+    } else if (id == R.id.linear_about_license_metronome) {
+      ViewUtil.startIcon(binding.imageAboutLicenseMetronome);
+      activity.showTextBottomSheet(
+          R.raw.license_apache,
+          R.string.license_metronome,
+          R.string.license_metronome_link
       );
     }
   }
