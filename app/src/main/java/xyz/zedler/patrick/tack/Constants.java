@@ -22,7 +22,7 @@ public final class Constants {
     public final static String FLASH_SCREEN = "flash_screen";
     public final static String KEEP_AWAKE = "keep_awake";
     public final static String SOUND = "sound";
-    public final static String LATENCY_OFFSET = "latency_offset";
+    public final static String LATENCY = "latency_offset";
     public final static String BOOKMARKS = "bookmarks";
 
     @Deprecated
@@ -48,7 +48,7 @@ public final class Constants {
     public final static boolean FLASH_SCREEN = false;
     public final static boolean KEEP_AWAKE = true;
     public final static String SOUND = Constants.SOUND.WOOD;
-    public final static long OFFSET = 150;
+    public final static long LATENCY = 80;
 
     @Deprecated
     public final static boolean EMPHASIS_SLIDER = false;
@@ -57,7 +57,7 @@ public final class Constants {
     @Deprecated
     public final static long INTERVAL = 500;
     @Deprecated
-    public final static int EMPHASIS = 0;
+    public final static int EMPHASIS = 50;
   }
 
   @Deprecated

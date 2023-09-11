@@ -244,39 +244,38 @@
 
         </LinearLayout>
 
-        <RadioGroup
-          android:id="@+id/radio_group_settings_sound"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginStart="56dp"
-          android:layout_marginBottom="8dp">
+        <LinearLayout
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine"
+          android:paddingTop="12dp"
+          android:paddingBottom="0dp"
+          android:minHeight="56dp">
 
-          <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/radio_settings_sound_wood"
-            style="@style/Widget.Tack.RadioButton"
-            android:text="@string/settings_sound_wood" />
+          <ImageView
+            android:id="@+id/image_settings_latency"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_round_volume_to_vibrate_anim"
+            tools:ignore="ContentDescription" />
 
-          <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/radio_settings_sound_sine"
-            style="@style/Widget.Tack.RadioButton"
-            android:text="@string/settings_sound_sine" />
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
-          <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/radio_settings_sound_click"
-            style="@style/Widget.Tack.RadioButton"
-            android:text="@string/settings_sound_click" />
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_latency" />
 
-          <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/radio_settings_sound_ding"
-            style="@style/Widget.Tack.RadioButton"
-            android:text="@string/settings_sound_ding" />
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/settings_latency_description" />
 
-          <com.google.android.material.radiobutton.MaterialRadioButton
-            android:id="@+id/radio_settings_sound_beep"
-            style="@style/Widget.Tack.RadioButton"
-            android:text="@string/settings_sound_beep" />
+          </LinearLayout>
 
-        </RadioGroup>
+        </LinearLayout>
+
+        <com.google.android.material.slider.Slider
+          android:id="@+id/slider_settings_latency"
+          style="@style/Widget.Tack.Slider"
+          android:valueFrom="0"
+          android:valueTo="200"
+          android:stepSize="5" />
 
         <LinearLayout
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine"
@@ -299,6 +298,13 @@
             <TextView
               style="@style/Widget.Tack.TextView.ListItem.Description"
               android:text="@string/settings_gain_description" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/settings_gain_warning"
+              android:textColor="?attr/colorError"
+              android:fontFamily="@font/jost_medium"
+              app:fontFamily="@font/jost_medium" />
 
           </LinearLayout>
 
@@ -325,7 +331,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="?attr/colorOnErrorContainer"
-            android:text="@string/settings_gain_warning" />
+            android:text="@string/settings_gain_disclaimer" />
 
         </com.google.android.material.card.MaterialCardView>
 

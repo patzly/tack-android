@@ -25,7 +25,7 @@
   <!-- LABELS -->
 
   <string name="label_bpm_number">%1$s BPM</string>
-  <string name="label_bpm">BPM</string>
+  <string name="label_bpm">bpm</string>
 
   <!-- ACTIONS -->
 
@@ -99,9 +99,13 @@
   <string name="settings_sound_ding">Ding</string>
   <string name="settings_sound_beep">Beep</string>
 
+  <string name="settings_latency">Latency correction</string>
+  <string name="settings_latency_description">Compensate latency of system audio output</string>
+
   <string name="settings_gain">Volume boost</string>
   <string name="settings_gain_description">Gain in dB (in addition to system volume)</string>
-  <string name="settings_gain_warning">Use with extreme caution! When gain is over 50dB, a warning will be displayed before each start. The developer of Tack is not responsible for any potential damage.</string>
+  <string name="settings_gain_warning">Use with extreme caution!</string>
+  <string name="settings_gain_disclaimer">When gain is over 50dB, a warning will be displayed before each start. The developer takes no responsibility for any potential damage.</string>
 
   <string name="settings_always_vibrate">Always vibrate</string>
   <string name="settings_always_vibrate_description">Even with sound</string>
@@ -136,9 +140,6 @@
 
   <!-- LICENSES -->
 
-  <string name="license_edwin" translatable="false">Edwin Typeface</string>
-  <string name="license_edwin_author" translatable="false">MuseScore</string>
-  <string name="license_edwin_link" translatable="false">https://github.com/MuseScoreFonts/Edwin</string>
   <string name="license_jost" translatable="false">Jost* Typeface</string>
   <string name="license_jost_author" translatable="false">Owen Earl</string>
   <string name="license_jost_link" translatable="false">https://github.com/indestructible-type/Jost</string>

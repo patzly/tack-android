@@ -111,8 +111,8 @@
               android:layout_marginBottom="@dimen/label_text_size"
               android:textColor="?attr/colorOnPrimaryContainer"
               android:layout_gravity="center_horizontal|top"
-              android:fontFamily="@font/edwin_bold"
-              android:lineSpacingExtra="5dp"
+              android:fontFeatureSettings="tnum"
+              android:textAppearance="?attr/textAppearanceDisplayMedium"
               android:textSize="@dimen/bpm_text_size" />
 
             <TextView

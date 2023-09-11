@@ -41,8 +41,7 @@ public class MetronomeService extends Service implements TickListener {
   private MetronomeListener listener;
   private Handler latencyHandler;
   private boolean alwaysVibrate;
-  private long latencyOffset, offset;
-  private long time;
+  private long latency;
 
   @Override
   public void onCreate() {
@@ -64,7 +63,7 @@ public class MetronomeService extends Service implements TickListener {
     );
 
     latencyHandler = new Handler(Looper.getMainLooper());
-    latencyOffset = sharedPrefs.getLong(PREF.LATENCY_OFFSET, DEF.OFFSET);
+    latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY);
 
     hapticUtil = new HapticUtil(this);
     setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
@@ -72,7 +71,7 @@ public class MetronomeService extends Service implements TickListener {
 
     // TODO: remove
     setBeatModeVibrate(false);
-    setAlwaysVibrate(false);
+    setAlwaysVibrate(true);
     setSound(SOUND.SINE);
 
     stopReceiver = new StopReceiver();
@@ -115,9 +114,6 @@ public class MetronomeService extends Service implements TickListener {
 
   @Override
   public void onTick(Tick tick) {
-    long diff = System.currentTimeMillis() - time;
-    Log.i(TAG, "onTick: interval = " + diff);
-    time = System.currentTimeMillis();
     latencyHandler.postDelayed(() -> {
       if (metronomeUtil.isBeatModeVibrate() || alwaysVibrate) {
         switch (tick.type) {
@@ -136,8 +132,7 @@ public class MetronomeService extends Service implements TickListener {
       if (listener != null) {
         listener.onMetronomeTick(tick);
       }
-    }, offset);
-    offset = latencyOffset;
+    }, latency);
   }
 
   public void start() {
@@ -146,7 +141,6 @@ public class MetronomeService extends Service implements TickListener {
     } else if (listener != null) {
       listener.onMetronomeStart();
     }
-    offset = 0;
     metronomeUtil.start();
     startForeground(NOTIFICATION_ID, notificationUtil.getNotification());
     Log.i(TAG, "start: foreground service started");
@@ -220,9 +214,9 @@ public class MetronomeService extends Service implements TickListener {
     sharedPrefs.edit().putString(PREF.SOUND, sound).apply();
   }
 
-  public void setLatencyOffset(long offset) {
-    latencyOffset = offset;
-    sharedPrefs.edit().putLong(PREF.LATENCY_OFFSET, offset).apply();
+  public void setLatency(long offset) {
+    latency = offset;
+    sharedPrefs.edit().putLong(PREF.LATENCY, offset).apply();
   }
 
   public interface MetronomeListener {

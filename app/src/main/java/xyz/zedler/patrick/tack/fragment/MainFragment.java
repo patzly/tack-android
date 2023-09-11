@@ -265,7 +265,7 @@ public class MainFragment extends BaseFragment
       ViewUtil.startIcon(binding.buttonMainTempoTap.getIcon());
 
       long interval = System.currentTimeMillis() - prevTouchTime;
-      if (prevTouchTime > 0 && interval <= 6000) {
+      if (prevTouchTime > 0 && interval <= 5000) {
         while (intervals.size() >= 10) {
           intervals.remove(0);
         }
@@ -441,7 +441,7 @@ public class MainFragment extends BaseFragment
 
   @Override
   public void onMetronomeTick(Tick tick) {
-    if (!isBound()) {
+    if (!bound) {
       return;
     }
     activity.runOnUiThread(() -> {
@@ -662,7 +662,7 @@ public class MainFragment extends BaseFragment
     if (bound) {
       int bpmNew = metronomeService.getTempo() + change;
       setTempo(bpmNew);
-      if (areHapticsAllowed() && bpmNew >= 1 && bpmNew <= 400) {
+      if (areHapticsAllowed() && bpmNew >= 1 && bpmNew <= 500) {
         performHapticTick();
       }
     }
@@ -670,31 +670,10 @@ public class MainFragment extends BaseFragment
 
   private void setTempo(int bpm) {
     if (bound && bpm > 0) {
-      metronomeService.setTempo(Math.min(bpm, 400));
+      metronomeService.setTempo(Math.min(bpm, 500));
       refreshBookmark(true);
       binding.textMainBpm.setText(String.valueOf(metronomeService.getTempo()));
-      if (metronomeService.getTempo() > 1) {
-        if (!binding.buttonMainLess.isEnabled()) {
-          binding.buttonMainLess.animate().alpha(1).setDuration(250).start();
-        }
-        binding.buttonMainLess.setEnabled(true);
-      } else {
-        if (binding.buttonMainLess.isEnabled()) {
-          binding.buttonMainLess.animate().alpha(0.5f).setDuration(250).start();
-        }
-        binding.buttonMainLess.setEnabled(false);
-      }
-      if (metronomeService.getTempo() < 400) {
-        if (!binding.buttonMainMore.isEnabled()) {
-          binding.buttonMainMore.animate().alpha(1).setDuration(250).start();
-        }
-        binding.buttonMainMore.setEnabled(true);
-      } else {
-        if (binding.buttonMainMore.isEnabled()) {
-          binding.buttonMainMore.animate().alpha(0.5f).setDuration(250).start();
-        }
-        binding.buttonMainMore.setEnabled(false);
-      }
+      setButtonStates();
     }
   }
 
@@ -702,9 +681,7 @@ public class MainFragment extends BaseFragment
     if (bound) {
       int bpm = metronomeService.getTempo();
       binding.buttonMainLess.setEnabled(bpm > 1);
-      binding.buttonMainLess.setAlpha(bpm > 1 ? 1 : 0.5f);
-      binding.buttonMainMore.setEnabled(bpm < 400);
-      binding.buttonMainMore.setAlpha(bpm < 400 ? 1 : 0.5f);
+      binding.buttonMainMore.setEnabled(bpm < 500);
     }
   }
 

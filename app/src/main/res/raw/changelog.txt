@@ -6,7 +6,6 @@
 - New: beautiful beat visualization with subdivisions and changeable emphasizes
 - New: options for swing, muted beats and incremental tempo change
 - New: volume boost option
-- New: optional count-in
 - New: latency offset correction
 - Fixed: inconsistent audio beats on many devices
 
