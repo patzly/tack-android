@@ -19,7 +19,6 @@ import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.Constants.SOUND;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil;
@@ -70,9 +69,7 @@ public class MetronomeService extends Service implements TickListener {
     setAlwaysVibrate(sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE));
 
     // TODO: remove
-    setBeatModeVibrate(false);
     setAlwaysVibrate(true);
-    setSound(SOUND.SINE);
 
     stopReceiver = new StopReceiver();
     ContextCompat.registerReceiver(
@@ -217,6 +214,11 @@ public class MetronomeService extends Service implements TickListener {
   public void setLatency(long offset) {
     latency = offset;
     sharedPrefs.edit().putLong(PREF.LATENCY, offset).apply();
+  }
+
+  public void setGain(int gain) {
+    metronomeUtil.setGain(gain);
+    sharedPrefs.edit().putInt(PREF.GAIN, gain).apply();
   }
 
   public interface MetronomeListener {

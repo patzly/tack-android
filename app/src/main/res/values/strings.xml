@@ -26,6 +26,8 @@
 
   <string name="label_bpm_number">%1$s BPM</string>
   <string name="label_bpm">bpm</string>
+  <string name="label_ms">%1$sms</string>
+  <string name="label_db">+%1$sdB</string>
 
   <!-- ACTIONS -->
 
@@ -68,10 +70,10 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">Language</string>
-  <string name="settings_language_description">Select language</string>
+  <string name="settings_language_select">Select language</string>
   <string name="settings_language_info">Many thanks to all the volunteer translators at Transifex!\nPlease visit Tack on GitHub to learn how you can help make Tack available for your language.</string>
   <string name="settings_language_system">Follow system</string>
-  <string name="settings_language_not_available">English if translation is not available</string>
+  <string name="settings_language_system_description">English if translation is not available</string>
 
   <string name="settings_theme">Theme</string>
   <string name="settings_theme_description">Try another look</string>
@@ -92,7 +94,6 @@
   <string name="settings_reset_description">Cannot be undone</string>
 
   <string name="settings_sound">Beat sound</string>
-  <string name="settings_sound_description">Sound and vibration can be switched with the controls</string>
   <string name="settings_sound_wood">Wood</string>
   <string name="settings_sound_sine">Sine</string>
   <string name="settings_sound_click">Click</string>
@@ -105,7 +106,7 @@
   <string name="settings_gain">Volume boost</string>
   <string name="settings_gain_description">Gain in dB (in addition to system volume)</string>
   <string name="settings_gain_warning">Use with extreme caution!</string>
-  <string name="settings_gain_disclaimer">When gain is over 50dB, a warning will be displayed before each start. The developer takes no responsibility for any potential damage.</string>
+  <string name="settings_gain_disclaimer">When boost is enabled, a warning will be displayed before each start. The developer takes no responsibility for any potential damage.</string>
 
   <string name="settings_always_vibrate">Always vibrate</string>
   <string name="settings_always_vibrate_description">Even with sound</string>

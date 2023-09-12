@@ -1,5 +1,6 @@
 package xyz.zedler.patrick.tack.util;
 
+import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.os.Bundle;
 import android.os.Handler;
@@ -158,6 +159,18 @@ public class DialogUtil {
     )
         .setTitle(titleResId)
         .setMultiChoiceItems(choices, initial, listener)
+        .setPositiveButton(R.string.action_close, (dialog, which) -> activity.performHapticClick())
+        .setOnCancelListener(dialog -> activity.performHapticTick())
+        .create();
+  }
+
+  public void createSingleChoice(@StringRes int titleResId, @NonNull String[] choices,
+      int initial, @NonNull OnClickListener listener) {
+    dialog = new MaterialAlertDialogBuilder(
+        activity, R.style.ThemeOverlay_Tack_AlertDialog
+    )
+        .setTitle(titleResId)
+        .setSingleChoiceItems(choices, initial, listener)
         .setPositiveButton(R.string.action_close, (dialog, which) -> activity.performHapticClick())
         .setOnCancelListener(dialog -> activity.performHapticTick())
         .create();

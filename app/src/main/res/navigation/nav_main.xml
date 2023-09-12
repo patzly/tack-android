@@ -32,6 +32,10 @@
       android:id="@+id/action_settings_to_about"
       app:destination="@id/aboutFragment" />
 
+    <action
+      android:id="@+id/action_settings_to_languages_dialog"
+      app:destination="@id/languagesBottomSheetDialogFragment" />
+
   </fragment>
 
   <fragment
@@ -72,6 +76,11 @@
     android:id="@+id/feedbackBottomSheetDialogFragment"
     android:name="xyz.zedler.patrick.tack.fragment.dialog.FeedbackBottomSheetDialogFragment"
     android:label="dialog_feedback" />
+
+  <dialog
+    android:id="@+id/languagesBottomSheetDialogFragment"
+    android:name="xyz.zedler.patrick.tack.fragment.dialog.LanguagesBottomSheetDialogFragment"
+    android:label="dialog_languages" />
 
   <action
     android:id="@+id/action_global_text_dialog"

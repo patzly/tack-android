@@ -129,7 +129,6 @@ public class MainFragment extends BaseFragment
 
     flashScreen = getSharedPrefs().getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
     keepAwake = getSharedPrefs().getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
-    flashScreen = false;
 
     colorFlashNormal = ResUtil.getColorAttr(activity, R.attr.colorPrimary);
     colorFlashStrong = ResUtil.getColorAttr(activity, R.attr.colorError);
@@ -284,9 +283,7 @@ public class MainFragment extends BaseFragment
       }
       prevTouchTime = System.currentTimeMillis();
 
-      if (areHapticsAllowed()) {
-        performHapticHeavyClick();
-      }
+      performHapticHeavyClick();
       return true;
     });
 
@@ -481,15 +478,11 @@ public class MainFragment extends BaseFragment
     }
     if (id == R.id.fab_main_play_pause) {
       if (metronomeService.isPlaying()) {
-        if (areHapticsAllowed()) {
-          performHapticClick();
-        }
+        performHapticClick();
         metronomeService.stop();
       } else {
         metronomeService.start();
-        if (areHapticsAllowed()) {
-          performHapticClick();
-        }
+        performHapticClick();
       }
     } else if (id == R.id.button_main_less) {
       ViewUtil.startIcon(binding.buttonMainLess.getIcon());
@@ -505,11 +498,11 @@ public class MainFragment extends BaseFragment
         );
         return;
       }
-      if (!beatModeVibrateNew && areHapticsAllowed()) {
+      if (!beatModeVibrateNew) {
         performHapticClick();
       }
       metronomeService.setBeatModeVibrate(beatModeVibrateNew);
-      if (beatModeVibrateNew && areHapticsAllowed()) {
+      if (beatModeVibrateNew) {
         performHapticClick();
       }
       ViewUtil.startIcon(binding.buttonMainBeatMode.getIcon());
@@ -530,9 +523,7 @@ public class MainFragment extends BaseFragment
       }, 300);
     } else if (id == R.id.button_main_bookmark) {
       ViewUtil.startIcon(binding.buttonMainBookmark.getIcon());
-      if (areHapticsAllowed()) {
-        performHapticClick();
-      }
+      performHapticClick();
       if (bookmarks.size() < 3 && !bookmarks.contains(metronomeService.getTempo())) {
         binding.chipGroupMain.addView(newChip(metronomeService.getTempo()));
         bookmarks.add(metronomeService.getTempo());
@@ -554,9 +545,7 @@ public class MainFragment extends BaseFragment
         showSnackbar(snackbar);
       }
     } else if (id == R.id.button_main_options) {
-      if (areHapticsAllowed()) {
-        performHapticClick();
-      }
+      performHapticClick();
     }
   }
 
@@ -573,9 +562,7 @@ public class MainFragment extends BaseFragment
     chip.setCloseIconVisible(true);
     chip.setCloseIconResource(R.drawable.ic_round_cancel);
     chip.setOnCloseIconClickListener(v -> {
-      if (areHapticsAllowed()) {
-        performHapticClick();
-      }
+      performHapticClick();
       binding.chipGroupMain.removeView(chip);
       bookmarks.remove((Integer) bpm); // Integer cast required
       updateBookmarks();
@@ -662,7 +649,7 @@ public class MainFragment extends BaseFragment
     if (bound) {
       int bpmNew = metronomeService.getTempo() + change;
       setTempo(bpmNew);
-      if (areHapticsAllowed() && bpmNew >= 1 && bpmNew <= 500) {
+      if (bpmNew >= 1 && bpmNew <= 500) {
         performHapticTick();
       }
     }
@@ -711,8 +698,22 @@ public class MainFragment extends BaseFragment
     }
   }
 
+  @Override
+  public void performHapticClick() {
+    if (areHapticsAllowed()) {
+      super.performHapticClick();
+    }
+  }
+
+  @Override
+  public void performHapticHeavyClick() {
+    if (areHapticsAllowed()) {
+      super.performHapticHeavyClick();
+    }
+  }
+
   private boolean areHapticsAllowed() {
-    return bound && metronomeService.areHapticEffectsPossible();
+    return !bound || metronomeService.areHapticEffectsPossible();
   }
 
   private boolean isBound() {

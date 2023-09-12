@@ -1,9 +1,14 @@
 package xyz.zedler.patrick.tack.fragment;
 
-import android.annotation.SuppressLint;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,30 +24,42 @@ import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.content.ContextCompat;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.divider.MaterialDivider;
+import com.google.android.material.slider.Slider;
+import com.google.android.material.slider.Slider.OnChangeListener;
+import com.google.android.material.snackbar.Snackbar;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
+import xyz.zedler.patrick.tack.Constants.SOUND;
 import xyz.zedler.patrick.tack.Constants.THEME;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentSettingsAppBinding;
+import xyz.zedler.patrick.tack.service.MetronomeService;
+import xyz.zedler.patrick.tack.service.MetronomeService.LocalBinder;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
+import xyz.zedler.patrick.tack.util.LocaleUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.SelectionCardView;
 
 public class SettingsFragment extends BaseFragment
-    implements OnClickListener, OnCheckedChangeListener {
+    implements OnClickListener, OnCheckedChangeListener, OnChangeListener, ServiceConnection {
 
   private static final String TAG = SettingsFragment.class.getSimpleName();
 
   private FragmentSettingsAppBinding binding;
   private MainActivity activity;
-  private DialogUtil dialogUtilReset;
+  private MetronomeService metronomeService;
+  private boolean bound;
+  private DialogUtil dialogUtilReset, dialogUtilSound;
 
   @Override
   public View onCreateView(
@@ -57,6 +74,7 @@ public class SettingsFragment extends BaseFragment
     super.onDestroyView();
     binding = null;
     dialogUtilReset.dismiss();
+    dialogUtilSound.dismiss();
   }
 
   @Override
@@ -82,9 +100,14 @@ public class SettingsFragment extends BaseFragment
       } else if (id == R.id.action_about) {
         activity.navigateToFragment(SettingsFragmentDirections.actionSettingsToAbout());
       }
-      performHapticClick();
       return true;
     });
+
+    binding.textSettingsLanguage.setText(
+        LocaleUtil.followsSystem()
+            ? getString(R.string.settings_language_system)
+            : LocaleUtil.getLocaleName()
+    );
 
     setUpThemeSelection();
 
@@ -142,32 +165,85 @@ public class SettingsFragment extends BaseFragment
         R.string.msg_reset_description,
         R.string.action_reset,
         () -> {
+          if (bound && metronomeService.isPlaying()) {
+            metronomeService.stop();
+          }
           getSharedPrefs().edit().clear().apply();
           activity.restartToApply(100, getInstanceState(), false);
         });
     dialogUtilReset.showIfWasShown(savedInstanceState);
 
-    /*ViewUtil.setOnClickListeners(
-        this,
+    dialogUtilSound = new DialogUtil(activity, "sound");
+    Map<String, String> labels = new LinkedHashMap<>();
+    labels.put(SOUND.WOOD, getString(R.string.settings_sound_wood));
+    labels.put(SOUND.SINE, getString(R.string.settings_sound_sine));
+    labels.put(SOUND.CLICK, getString(R.string.settings_sound_click));
+    labels.put(SOUND.DING, getString(R.string.settings_sound_ding));
+    labels.put(SOUND.BEEP, getString(R.string.settings_sound_beep));
+    ArrayList<String> sounds = new ArrayList<>(labels.keySet());
+    String[] items = labels.values().toArray(new String[]{});
+    int init = sounds.indexOf(getSharedPrefs().getString(PREF.SOUND, DEF.SOUND));
+    binding.textSettingsSound.setText(items[init]);
+    dialogUtilSound.createSingleChoice(
+        R.string.settings_sound, items, init, (dialog, which) -> {
+          performHapticClick();
+          if (isBound()) {
+            metronomeService.setSound(sounds.get(which));
+            binding.textSettingsSound.setText(items[which]);
+          }
+        });
+    dialogUtilSound.showIfWasShown(savedInstanceState);
 
+    binding.sliderSettingsLatency.setValue(getSharedPrefs().getLong(PREF.LATENCY, DEF.LATENCY));
+    binding.sliderSettingsLatency.addOnChangeListener(this);
+    binding.sliderSettingsLatency.setLabelFormatter(
+        value -> getString(
+            R.string.label_ms, String.format(activity.getLocale(), "%.0f", value)
+        )
+    );
+
+    binding.sliderSettingsGain.setValue(getSharedPrefs().getInt(PREF.GAIN, DEF.GAIN));
+    binding.sliderSettingsGain.addOnChangeListener(this);
+    binding.sliderSettingsGain.setLabelFormatter(
+        value -> getString(
+            R.string.label_db, String.format(activity.getLocale(), "%.0f", value)
+        )
+    );
+
+    binding.switchSettingsAlwaysVibrate.setChecked(
+        getSharedPrefs().getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE)
+    );
+    binding.switchSettingsAlwaysVibrate.jumpDrawablesToCurrentState();
+
+    binding.switchSettingsFlashScreen.setChecked(
+        getSharedPrefs().getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN)
+    );
+    binding.switchSettingsFlashScreen.jumpDrawablesToCurrentState();
+
+    binding.switchSettingsKeepAwake.setChecked(
+        getSharedPrefs().getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE)
+    );
+    binding.switchSettingsKeepAwake.jumpDrawablesToCurrentState();
+
+    ViewUtil.setOnClickListeners(
+        this,
+        binding.linearSettingsLanguage,
+        binding.linearSettingsHaptic,
+        binding.linearSettingsReset,
+        binding.linearSettingsSound,
+        binding.linearSettingsAlwaysVibrate,
+        binding.linearSettingsFlashScreen,
+        binding.linearSettingsKeepAwake
     );
 
     ViewUtil.setOnCheckedChangeListeners(
         this,
-        binding.partialOptionGerman.switchOptionGerman,
         binding.partialOptionTransition.switchOptionTransition,
-        binding.switchSettingsShowInfo,
-        binding.switchSettingsShowStreak,
-        binding.partialOptionLeftSteno.switchOptionLeftSteno,
         binding.switchSettingsHaptic,
-        binding.switchSettingsReminder,
-        binding.switchSettingsVoiceOutput,
-        binding.switchSettingsVerticalGuides,
-        binding.switchSettingsShowArrows,
-        binding.switchSettingsUseTflite,
-        binding.switchSettingsAutoEvaluation,
-        binding.switchSettingsAskDotted
-    );*/
+        binding.switchSettingsAlwaysVibrate,
+        binding.switchSettingsFlashScreen,
+        binding.switchSettingsKeepAwake
+    );
   }
 
   @Override
@@ -176,19 +252,128 @@ public class SettingsFragment extends BaseFragment
     if (dialogUtilReset != null) {
       dialogUtilReset.saveState(outState);
     }
+    if (dialogUtilSound != null) {
+      dialogUtilSound.saveState(outState);
+    }
   }
 
-  @SuppressLint("ShowToast")
+  @Override
+  public void onStart() {
+    super.onStart();
+
+    Intent intent = new Intent(activity, MetronomeService.class);
+    try {
+      activity.startService(intent);
+      activity.bindService(intent, this, Context.BIND_AUTO_CREATE);
+    } catch (IllegalStateException e) {
+      Log.e(TAG, "onStart: cannot start service because app is in background");
+    }
+  }
+
+  @Override
+  public void onStop() {
+    super.onStop();
+
+    if (bound) {
+      activity.unbindService(this);
+      bound = false;
+    }
+  }
+
+  @Override
+  public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+    LocalBinder binder = (LocalBinder) iBinder;
+    metronomeService = binder.getService();
+    if (metronomeService == null || binding == null || getSharedPrefs() == null) {
+      return;
+    }
+    bound = true;
+  }
+
+  @Override
+  public void onServiceDisconnected(ComponentName componentName) {
+    bound = false;
+  }
+
   @Override
   public void onClick(View v) {
     int id = v.getId();
-
+    if (id == R.id.linear_settings_language && getViewUtil().isClickEnabled(id)) {
+      performHapticClick();
+      ViewUtil.startIcon(binding.imageSettingsLanguage);
+      navigate(SettingsFragmentDirections.actionSettingsToLanguagesDialog());
+    } else if (id == R.id.linear_settings_haptic) {
+      binding.switchSettingsHaptic.toggle();
+    } else if (id == R.id.linear_settings_reset && getViewUtil().isClickEnabled(id)) {
+      ViewUtil.startIcon(binding.imageSettingsReset);
+      performHapticClick();
+      dialogUtilReset.show();
+    } else if (id == R.id.linear_settings_sound && getViewUtil().isClickEnabled(id)) {
+      ViewUtil.startIcon(binding.imageSettingsSound);
+      performHapticClick();
+      dialogUtilSound.show();
+    } else if (id == R.id.linear_settings_always_vibrate) {
+      binding.switchSettingsAlwaysVibrate.toggle();
+    } else if (id == R.id.linear_settings_flash_screen) {
+      binding.switchSettingsFlashScreen.toggle();
+    } else if (id == R.id.linear_settings_keep_awake) {
+      binding.switchSettingsKeepAwake.toggle();
+    }
   }
 
   @Override
   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
     int id = buttonView.getId();
+    if (id == R.id.switch_option_transition) {
+      performHapticClick();
+      ViewUtil.startIcon(binding.partialOptionTransition.imageOptionTransition);
+      getSharedPrefs().edit().putBoolean(PREF.USE_SLIDING, isChecked).apply();
+    } else if (id == R.id.switch_settings_haptic) {
+      performHapticClick();
+      ViewUtil.startIcon(binding.imageSettingsHaptic);
+      getSharedPrefs().edit().putBoolean(PREF.HAPTIC, isChecked).apply();
+      activity.getHapticUtil().setEnabled(isChecked);
+    } else if (id == R.id.switch_settings_always_vibrate) {
+      ViewUtil.startIcon(binding.imageSettingsAlwaysVibrate);
+      if (isBound()) {
+        metronomeService.setAlwaysVibrate(isChecked);
+        performHapticClick();
+      } else {
+        performHapticClick();
+        binding.switchSettingsAlwaysVibrate.setOnCheckedChangeListener(null);
+        binding.switchSettingsAlwaysVibrate.setChecked(!isChecked);
+        binding.switchSettingsAlwaysVibrate.setOnCheckedChangeListener(this);
+      }
+    } else if (id == R.id.switch_settings_flash_screen) {
+      performHapticClick();
+      //ViewUtil.startIcon(binding.imageSettingsFlashScreen);
+      getSharedPrefs().edit().putBoolean(PREF.FLASH_SCREEN, isChecked).apply();
+    } else if (id == R.id.switch_settings_keep_awake) {
+      performHapticClick();
+      ViewUtil.startIcon(binding.imageSettingsKeepAwake);
+      getSharedPrefs().edit().putBoolean(PREF.KEEP_AWAKE, isChecked).apply();
+    }
+  }
 
+  @Override
+  public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
+    if (!fromUser) {
+      return;
+    }
+    int id = slider.getId();
+    if (id == R.id.slider_settings_latency) {
+      if (isBound()) {
+        metronomeService.setLatency((long) value);
+      }
+      //ViewUtil.startIcon(binding.imageSettingsLatency);
+      performHapticTick();
+    } else if (id == R.id.slider_settings_gain) {
+      if (isBound()) {
+        metronomeService.setGain((int) value);
+      }
+      //ViewUtil.startIcon(binding.imageSettingsLatency);
+      performHapticTick();
+    }
   }
 
   private void setUpThemeSelection() {
@@ -292,6 +477,33 @@ public class SettingsFragment extends BaseFragment
           0
       );
     }
+  }
+
+  @Override
+  public void performHapticClick() {
+    if (areHapticsAllowed()) {
+      super.performHapticClick();
+    }
+  }
+
+  @Override
+  public void performHapticTick() {
+    if (areHapticsAllowed()) {
+      super.performHapticTick();
+    }
+  }
+
+  private boolean areHapticsAllowed() {
+    return !bound || metronomeService.areHapticEffectsPossible();
+  }
+
+  private boolean isBound() {
+    if (!bound) {
+      activity.showSnackbar(
+          activity.getSnackbar(R.string.msg_connection_lost, Snackbar.LENGTH_SHORT)
+      );
+    }
+    return bound;
   }
 
   private Bundle getInstanceState() {

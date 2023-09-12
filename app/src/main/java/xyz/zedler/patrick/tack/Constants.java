@@ -23,6 +23,7 @@ public final class Constants {
     public final static String KEEP_AWAKE = "keep_awake";
     public final static String SOUND = "sound";
     public final static String LATENCY = "latency_offset";
+    public final static String GAIN = "gain";
     public final static String BOOKMARKS = "bookmarks";
 
     @Deprecated
@@ -36,7 +37,6 @@ public final class Constants {
     public static final String THEME = "";
     public static final int MODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
     public static final boolean USE_SLIDING = false;
-    public final static boolean HAPTIC_FEEDBACK = true;
 
     // Metronome
     public final static int TEMPO = 120;
@@ -48,7 +48,8 @@ public final class Constants {
     public final static boolean FLASH_SCREEN = false;
     public final static boolean KEEP_AWAKE = true;
     public final static String SOUND = Constants.SOUND.WOOD;
-    public final static long LATENCY = 80;
+    public final static long LATENCY = 75;
+    public final static int GAIN = 0;
 
     @Deprecated
     public final static boolean EMPHASIS_SLIDER = false;

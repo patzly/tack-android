@@ -23,7 +23,7 @@ public class MetronomeUtil implements Runnable {
   private final Handler handler;
   private AudioTrack track;
   private LoudnessEnhancer loudnessEnhancer;
-  private int tempo, volumeBoost;
+  private int tempo, gain;
   private long tickCount;
   private String[] beats, subdivisions;
   private float[] tickStrong, tickNormal, tickSub;
@@ -41,6 +41,7 @@ public class MetronomeUtil implements Runnable {
     setSound(DEF.SOUND);
     setBeats(DEF.BEATS.split(" "));
     setSubdivisions(DEF.SUBDIVISIONS.split(" "));
+    setGain(DEF.GAIN);
   }
 
   public void setBeats(String[] beats) {
@@ -93,8 +94,8 @@ public class MetronomeUtil implements Runnable {
     return beatModeVibrate;
   }
 
-  public void setVolumeBoost(int db) {
-    volumeBoost = db;
+  public void setGain(int db) {
+    gain = db;
     if (loudnessEnhancer != null) {
       loudnessEnhancer.setTargetGain(db * 100);
       loudnessEnhancer.setEnabled(db > 0);
@@ -108,7 +109,7 @@ public class MetronomeUtil implements Runnable {
     playing = true;
     track = AudioUtil.getNewAudioTrack();
     loudnessEnhancer = new LoudnessEnhancer(track.getAudioSessionId());
-    setVolumeBoost(volumeBoost);
+    setGain(gain);
     track.play();
 
     tickCount = 0;
