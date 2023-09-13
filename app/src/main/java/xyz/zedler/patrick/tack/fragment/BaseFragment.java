@@ -4,15 +4,14 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View.OnClickListener;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavDirections;
-import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class BaseFragment extends Fragment {
+
+  private static final String TAG = BaseFragment.class.getSimpleName();
 
   private MainActivity activity;
   private ViewUtil viewUtil;
@@ -31,20 +30,20 @@ public class BaseFragment extends Fragment {
     viewUtil.cleanUp();
   }
 
+  public MetronomeService getMetronomeService() {
+    return activity.getMetronomeService();
+  }
+
+  public boolean isBound() {
+    return activity.isBound();
+  }
+
   public SharedPreferences getSharedPrefs() {
     return activity.getSharedPrefs();
   }
 
   public ViewUtil getViewUtil() {
     return viewUtil;
-  }
-
-  public void navigate(NavDirections directions) {
-    activity.navigate(directions);
-  }
-
-  public void navigateToFragment(NavDirections directions) {
-    activity.navigateToFragment(directions);
   }
 
   public void navigateUp() {
@@ -69,23 +68,6 @@ public class BaseFragment extends Fragment {
         performHapticClick();
         navigateUp();
       }
-    };
-  }
-
-  public Toolbar.OnMenuItemClickListener getOnMenuItemClickListener() {
-    return item -> {
-      int id = item.getItemId();
-      if (viewUtil.isClickDisabled(id)) {
-        return false;
-      }
-      performHapticClick();
-
-      if (id == R.id.action_feedback) {
-        activity.showFeedbackBottomSheet();
-      } else if (id == R.id.action_recommend) {
-        ResUtil.share(activity, R.string.msg_recommend);
-      }
-      return true;
     };
   }
 }

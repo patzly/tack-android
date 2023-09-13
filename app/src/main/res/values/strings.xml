@@ -36,6 +36,7 @@
   <string name="action_cancel">Cancel</string>
   <string name="action_more">Faster</string>
   <string name="action_less">Slower</string>
+  <string name="action_play">Play</string>
   <string name="action_play_pause">Play/Pause</string>
   <string name="action_stop">Stop</string>
   <string name="action_clear_all">Clear all</string>
@@ -46,6 +47,7 @@
   <string name="action_send_feedback">Send feedback</string>
   <string name="action_open_link">Open external website</string>
   <string name="action_reset">Reset</string>
+  <string name="action_deactivate_gain">Deactivate boost</string>
   <string name="action_recommend">Recommend</string>
   <string name="action_recommend_description">Tell your friends about Tack</string>
   <string name="action_email">Send email</string>
@@ -66,6 +68,8 @@
   <string name="msg_connection_lost">Service connection lost, app restart required</string>
   <string name="msg_reset">Reset all?</string>
   <string name="msg_reset_description">Do you really want to reset the entire app including bookmarks and settings? This cannot be undone.</string>
+  <string name="msg_gain">Play with volume boost?</string>
+  <string name="msg_gain_description">Be careful not to play through headphones as loud sounds can cause ear damage!</string>
 
   <!-- SETTINGS -->
 
@@ -101,11 +105,11 @@
   <string name="settings_sound_beep">Beep</string>
 
   <string name="settings_latency">Latency correction</string>
-  <string name="settings_latency_description">Compensate latency of system audio output</string>
+  <string name="settings_latency_description">Compensate latency of system audio output for vibration and visuals</string>
 
   <string name="settings_gain">Volume boost</string>
   <string name="settings_gain_description">Gain in dB (in addition to system volume)</string>
-  <string name="settings_gain_warning">Use with extreme caution!</string>
+  <string name="settings_gain_warning">Use with caution!</string>
   <string name="settings_gain_disclaimer">When boost is enabled, a warning will be displayed before each start. The developer takes no responsibility for any potential damage.</string>
 
   <string name="settings_always_vibrate">Always vibrate</string>

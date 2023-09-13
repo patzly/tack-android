@@ -1,7 +1,9 @@
 package xyz.zedler.patrick.tack.activity;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -10,6 +12,7 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
 import androidx.annotation.NonNull;
@@ -37,12 +40,15 @@ import xyz.zedler.patrick.tack.NavMainDirections;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
 import xyz.zedler.patrick.tack.fragment.BaseFragment;
+import xyz.zedler.patrick.tack.fragment.MainFragment;
+import xyz.zedler.patrick.tack.service.MetronomeService;
+import xyz.zedler.patrick.tack.service.MetronomeService.LocalBinder;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 import xyz.zedler.patrick.tack.util.PrefsUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ServiceConnection {
 
   private static final String TAG = MainActivity.class.getSimpleName();
 
@@ -52,7 +58,8 @@ public class MainActivity extends AppCompatActivity {
   private SharedPreferences sharedPrefs;
   private HapticUtil hapticUtil;
   private Locale locale;
-  private boolean runAsSuperClass;
+  private MetronomeService metronomeService;
+  private boolean runAsSuperClass, bound;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -164,7 +171,36 @@ public class MainActivity extends AppCompatActivity {
     if (!runAsSuperClass) {
       binding = null;
       // metronome should be stopped when app is removed from recent apps
-      sendBroadcast(new Intent(ACTION.STOP));
+      if (bound) {
+        metronomeService.stop();
+      } else {
+        sendBroadcast(new Intent(ACTION.STOP));
+      }
+    }
+  }
+
+  @Override
+  public void onStart() {
+    super.onStart();
+
+    if (!runAsSuperClass) {
+      Intent intent = new Intent(this, MetronomeService.class);
+      try {
+        startService(intent);
+        bindService(intent, this, Context.BIND_AUTO_CREATE);
+      } catch (IllegalStateException e) {
+        Log.e(TAG, "onStart: cannot start service because app is in background");
+      }
+    }
+  }
+
+  @Override
+  public void onStop() {
+    super.onStop();
+
+    if (!runAsSuperClass && bound) {
+      unbindService(this);
+      bound = false;
     }
   }
 
@@ -204,6 +240,33 @@ public class MainActivity extends AppCompatActivity {
       resources.updateConfiguration(config, resources.getDisplayMetrics());
       super.attachBaseContext(base.createConfigurationContext(config));
     }
+  }
+
+  @Override
+  public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+    LocalBinder binder = (LocalBinder) iBinder;
+    metronomeService = binder.getService();
+    bound = metronomeService != null;
+    if (bound) {
+      BaseFragment current = getCurrentFragment();
+      if (current instanceof MainFragment) {
+        ((MainFragment) current).onMetronomeServiceConnected();
+      }
+    }
+  }
+
+  @Override
+  public void onServiceDisconnected(ComponentName componentName) {
+    metronomeService = null;
+    bound = false;
+  }
+
+  public MetronomeService getMetronomeService() {
+    return metronomeService;
+  }
+
+  public boolean isBound() {
+    return bound;
   }
 
   @NonNull
@@ -360,14 +423,24 @@ public class MainActivity extends AppCompatActivity {
   }
 
   public void performHapticClick() {
-    hapticUtil.click();
+    if (areHapticsAllowed()) {
+      hapticUtil.click();
+    }
   }
 
   public void performHapticHeavyClick() {
-    hapticUtil.heavyClick();
+    if (areHapticsAllowed()) {
+      hapticUtil.heavyClick();
+    }
   }
 
   public void performHapticTick() {
-    hapticUtil.tick();
+    if (areHapticsAllowed()) {
+      hapticUtil.tick();
+    }
+  }
+
+  private boolean areHapticsAllowed() {
+    return !bound || metronomeService.areHapticEffectsPossible();
   }
 }

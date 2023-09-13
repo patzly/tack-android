@@ -102,6 +102,10 @@ public class MetronomeUtil implements Runnable {
     }
   }
 
+  public int getGain() {
+    return gain;
+  }
+
   public void start() {
     if (isPlaying()) {
       return;

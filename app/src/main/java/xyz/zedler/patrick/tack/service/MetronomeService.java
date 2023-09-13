@@ -9,8 +9,8 @@ import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
-import android.os.Looper;
 import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -60,8 +60,11 @@ public class MetronomeService extends Service implements TickListener {
     metronomeUtil.setSubdivisions(
         sharedPrefs.getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(" ")
     );
+    metronomeUtil.setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
 
-    latencyHandler = new Handler(Looper.getMainLooper());
+    HandlerThread thread = new HandlerThread("metronome_feedback");
+    thread.start();
+    latencyHandler = new Handler(thread.getLooper());
     latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY);
 
     hapticUtil = new HapticUtil(this);
@@ -219,6 +222,10 @@ public class MetronomeService extends Service implements TickListener {
   public void setGain(int gain) {
     metronomeUtil.setGain(gain);
     sharedPrefs.edit().putInt(PREF.GAIN, gain).apply();
+  }
+
+  public int getGain() {
+    return metronomeUtil.getGain();
   }
 
   public interface MetronomeListener {

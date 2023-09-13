@@ -29,85 +29,83 @@ public class DialogUtil {
     this.tag = tag;
   }
 
-  public void createActionRaw(@StringRes int titleResId, @RawRes int msgResId,
+  public void createActionRaw(
+      @StringRes int titleResId, @RawRes int msgResId,
       @StringRes int actionResId, @NonNull Runnable task
   ) {
-    createAction(
-        activity.getString(titleResId),
-        ResUtil.getRawText(activity, msgResId),
-        activity.getString(actionResId),
-        task
+    createActions(
+        activity.getString(titleResId), ResUtil.getRawText(activity, msgResId),
+        activity.getString(actionResId), task,
+        null, null
     );
   }
 
-  public void createAction(@StringRes int titleResId, @StringRes int msgResId,
+  public void createAction(
+      @StringRes int titleResId, @StringRes int msgResId,
       @StringRes int actionResId, @NonNull Runnable task
   ) {
-    createAction(
-        activity.getString(titleResId),
-        activity.getString(msgResId),
-        activity.getString(actionResId),
-        task
+    createActions(
+        activity.getString(titleResId), activity.getString(msgResId),
+        activity.getString(actionResId), task,
+        null, null
     );
   }
 
   public void createAction(
       String title, String msg, @StringRes int actionResId, @NonNull Runnable task
   ) {
-    createAction(
-        title,
-        msg,
-        activity.getString(actionResId),
-        task
+    createActions(
+        title, msg,
+        activity.getString(actionResId), task,
+        null, null
     );
   }
 
-  public void createAction(String title, String msg, String action, @NonNull Runnable task) {
-    dialog = new MaterialAlertDialogBuilder(activity, R.style.ThemeOverlay_Tack_AlertDialog)
-        .setTitle(title)
-        .setMessage(msg)
-        .setPositiveButton(action, (dialog, which) -> {
-          activity.performHapticClick();
-          task.run();
-        })
-        .setNegativeButton(R.string.action_cancel, (dialog, which) -> activity.performHapticClick())
-        .setOnCancelListener(dialog -> activity.performHapticTick())
-        .create();
+  public void createAction(
+      String title, String msg, String action, @NonNull Runnable task
+  ) {
+    createActions(title, msg, action, task, null, null);
   }
 
   public void createActions(
       @StringRes int titleResId, @StringRes int msgResId,
       @StringRes int actionPositiveResId, @NonNull Runnable taskPositive,
-      @StringRes int actionNegativeResId, @NonNull Runnable taskNegative
+      @StringRes int actionNegativeResId, @Nullable Runnable taskNegative
   ) {
     createActions(
-        activity.getString(titleResId),
-        activity.getString(msgResId),
-        activity.getString(actionPositiveResId),
-        taskPositive,
-        activity.getString(actionNegativeResId),
-        taskNegative
+        activity.getString(titleResId), activity.getString(msgResId),
+        activity.getString(actionPositiveResId), taskPositive,
+        activity.getString(actionNegativeResId), taskNegative
     );
   }
 
   public void createActions(
       String title, String msg,
       String actionPositive, @NonNull Runnable taskPositive,
-      String actionNegative, @NonNull Runnable taskNegative
+      String actionNegative, @Nullable Runnable taskNegative
   ) {
-    dialog = new MaterialAlertDialogBuilder(activity, R.style.ThemeOverlay_Tack_AlertDialog)
-        .setTitle(title)
-        .setMessage(msg)
-        .setPositiveButton(actionPositive, (dialog, which) -> {
-          activity.performHapticClick();
-          taskPositive.run();
-        })
-        .setNegativeButton(actionNegative, (dialog, which) -> {
-          activity.performHapticClick();
-          taskNegative.run();
-        })
-        .setOnCancelListener(dialog -> activity.performHapticTick())
-        .create();
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
+        activity, R.style.ThemeOverlay_Tack_AlertDialog
+    );
+    builder.setTitle(title);
+    builder.setMessage(msg);
+    builder.setPositiveButton(actionPositive, (dialog, which) -> {
+      activity.performHapticClick();
+      taskPositive.run();
+    });
+    if (taskNegative != null) {
+      builder.setNegativeButton(actionNegative, (dialog, which) -> {
+        activity.performHapticClick();
+        taskNegative.run();
+      });
+    } else {
+      builder.setNegativeButton(
+          R.string.action_cancel,
+          (dialog, which) -> activity.performHapticClick()
+      );
+    }
+    builder.setOnCancelListener(dialog -> activity.performHapticTick());
+    dialog = builder.create();
   }
 
   public void createClose(@StringRes int titleResId, @StringRes int msgResId) {
@@ -119,61 +117,101 @@ public class DialogUtil {
   }
 
   public void createClose(String title, String msg) {
-    dialog = new MaterialAlertDialogBuilder(activity, R.style.ThemeOverlay_Tack_AlertDialog)
-        .setTitle(title)
-        .setMessage(msg)
-        .setPositiveButton(R.string.action_close, (dialog, which) -> activity.performHapticClick())
-        .setOnCancelListener(dialog -> activity.performHapticTick())
-        .create();
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
+        activity, R.style.ThemeOverlay_Tack_AlertDialog
+    );
+    builder.setTitle(title);
+    builder.setMessage(msg);
+    builder.setPositiveButton(
+        R.string.action_close,
+        (dialog, which) -> activity.performHapticClick()
+    );
+    builder.setOnCancelListener(dialog -> activity.performHapticTick());
+    dialog = builder.create();
   }
 
   public void createCloseCustom(@StringRes int titleResId, @NonNull View view) {
-    dialog = new MaterialAlertDialogBuilder(activity, R.style.ThemeOverlay_Tack_AlertDialog)
-        .setTitle(titleResId)
-        .setView(view)
-        .setPositiveButton(R.string.action_close, (dialog, which) -> activity.performHapticClick())
-        .setOnCancelListener(dialog -> activity.performHapticTick())
-        .create();
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
+        activity, R.style.ThemeOverlay_Tack_AlertDialog
+    );
+    builder.setTitle(titleResId);
+    builder.setView(view);
+    builder.setPositiveButton(
+        R.string.action_close,
+        (dialog, which) -> activity.performHapticClick()
+    );
+    builder.setOnCancelListener(dialog -> activity.performHapticTick());
+    dialog = builder.create();
   }
 
-  public void createCaution(@StringRes int titleResId, @StringRes int msgResId,
-      @StringRes int actionResId, Runnable action) {
-    dialog = new MaterialAlertDialogBuilder(
+  public void createCaution(
+      @StringRes int titleResId, @StringRes int msgResId,
+      @StringRes int actionResId, @NonNull Runnable action
+  ) {
+    createCaution(titleResId, msgResId, actionResId, action, -1, null);
+  }
+
+  public void createCaution(
+      @StringRes int titleResId, @StringRes int msgResId,
+      @StringRes int actionPositionResId, @NonNull Runnable taskPositive,
+      @StringRes int actionNegativeResId, @Nullable Runnable taskNegative
+  ) {
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
         activity, R.style.ThemeOverlay_Tack_AlertDialog_Caution
-    )
-        .setTitle(titleResId)
-        .setMessage(msgResId)
-        .setPositiveButton(actionResId, (dialog, which) -> {
-          activity.performHapticHeavyClick();
-          action.run();
-        })
-        .setNegativeButton(R.string.action_cancel, (dialog, which) -> activity.performHapticClick())
-        .setOnCancelListener(dialog -> activity.performHapticTick())
-        .create();
+    );
+    builder.setTitle(titleResId);
+    builder.setMessage(msgResId);
+    builder.setPositiveButton(actionPositionResId, (dialog, which) -> {
+      taskPositive.run();
+      activity.performHapticHeavyClick();
+    });
+    if (taskNegative != null) {
+      builder.setNegativeButton(actionNegativeResId, (dialog, which) -> {
+        taskNegative.run();
+        activity.performHapticClick();
+      });
+    } else {
+      builder.setNegativeButton(
+          R.string.action_cancel,
+          (dialog, which) -> activity.performHapticClick()
+      );
+    }
+    builder.setOnCancelListener(dialog -> activity.performHapticTick());
+    dialog = builder.create();
   }
 
-  public void createMultiChoice(@StringRes int titleResId, @NonNull String[] choices,
-      @NonNull boolean[] initial, @NonNull OnMultiChoiceClickListener listener) {
-    dialog = new MaterialAlertDialogBuilder(
+  public void createMultiChoice(
+      @StringRes int titleResId, @NonNull String[] choices,
+      @NonNull boolean[] initial, @NonNull OnMultiChoiceClickListener listener
+  ) {
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
         activity, R.style.ThemeOverlay_Tack_AlertDialog
-    )
-        .setTitle(titleResId)
-        .setMultiChoiceItems(choices, initial, listener)
-        .setPositiveButton(R.string.action_close, (dialog, which) -> activity.performHapticClick())
-        .setOnCancelListener(dialog -> activity.performHapticTick())
-        .create();
+    );
+    builder.setTitle(titleResId);
+    builder.setMultiChoiceItems(choices, initial, listener);
+    builder.setPositiveButton(
+        R.string.action_close,
+        (dialog, which) -> activity.performHapticClick()
+    );
+    builder.setOnCancelListener(dialog -> activity.performHapticTick());
+    dialog = builder.create();
   }
 
-  public void createSingleChoice(@StringRes int titleResId, @NonNull String[] choices,
-      int initial, @NonNull OnClickListener listener) {
-    dialog = new MaterialAlertDialogBuilder(
+  public void createSingleChoice(
+      @StringRes int titleResId, @NonNull String[] choices,
+      int initial, @NonNull OnClickListener listener
+  ) {
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
         activity, R.style.ThemeOverlay_Tack_AlertDialog
-    )
-        .setTitle(titleResId)
-        .setSingleChoiceItems(choices, initial, listener)
-        .setPositiveButton(R.string.action_close, (dialog, which) -> activity.performHapticClick())
-        .setOnCancelListener(dialog -> activity.performHapticTick())
-        .create();
+    );
+    builder.setTitle(titleResId);
+    builder.setSingleChoiceItems(choices, initial, listener);
+    builder.setPositiveButton(
+        R.string.action_close,
+        (dialog, which) -> activity.performHapticClick()
+    );
+    builder.setOnCancelListener(dialog -> activity.performHapticTick());
+    dialog = builder.create();
   }
 
   public void show() {

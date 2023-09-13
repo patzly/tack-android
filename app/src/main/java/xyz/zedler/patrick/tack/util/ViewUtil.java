@@ -9,7 +9,6 @@ import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.RippleDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
-import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
@@ -17,17 +16,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import androidx.annotation.AttrRes;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
-import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat.Type;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
@@ -266,12 +264,22 @@ public class ViewUtil {
   public static Drawable getBgListItemSelected(
       Context context, float paddingStart, float paddingEnd
   ) {
+    return getBgListItemSelected(context, R.attr.colorSecondaryContainer, paddingStart, paddingEnd);
+  }
+
+  public static Drawable getBgListItemSelected(Context context, @AttrRes int color) {
+    return getBgListItemSelected(context, color, 8, 8);
+  }
+
+  public static Drawable getBgListItemSelected(
+      Context context, @AttrRes int color, float paddingStart, float paddingEnd
+  ) {
     boolean isRtl = UiUtil.isLayoutRtl(context);
     float[] radii = new float[8];
     Arrays.fill(radii, UiUtil.dpToPx(context, 16));
     RoundRectShape rect = new RoundRectShape(radii, null, null);
     ShapeDrawable shape = new ShapeDrawable(rect);
-    shape.getPaint().setColor(ResUtil.getColorAttr(context, R.attr.colorSecondaryContainer));
+    shape.getPaint().setColor(ResUtil.getColorAttr(context, color));
     LayerDrawable layers = new LayerDrawable(new ShapeDrawable[]{shape});
     layers.setLayerInset(
         0,

@@ -3,10 +3,7 @@ package xyz.zedler.patrick.tack.fragment;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.content.res.ColorStateList;
@@ -16,9 +13,7 @@ import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -45,9 +40,8 @@ import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentMainAppBinding;
-import xyz.zedler.patrick.tack.service.MetronomeService;
-import xyz.zedler.patrick.tack.service.MetronomeService.LocalBinder;
 import xyz.zedler.patrick.tack.service.MetronomeService.MetronomeListener;
+import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -56,14 +50,15 @@ import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
 
 public class MainFragment extends BaseFragment
-    implements OnClickListener, ServiceConnection, MetronomeListener {
+    implements OnClickListener, MetronomeListener {
 
   private static final String TAG = MainFragment.class.getSimpleName();
 
+  private static final int TEMPO_MIN = 1;
+  private static final int TEMPO_MAX = 400;
+
   private FragmentMainAppBinding binding;
   private MainActivity activity;
-  private MetronomeService metronomeService;
-  private boolean bound;
   private long prevTouchTime;
   private final List<Long> intervals = new ArrayList<>();
   private boolean flashScreen, keepAwake;
@@ -71,6 +66,7 @@ public class MainFragment extends BaseFragment
   private ValueAnimator fabAnimator;
   private float cornerSizePause, cornerSizePlay, cornerSizeCurrent;
   private int colorFlashNormal, colorFlashStrong, colorFlashSub, colorFlashMuted;
+  private DialogUtil dialogUtilGain;
   private List<Integer> bookmarks;
 
   @Override
@@ -90,6 +86,7 @@ public class MainFragment extends BaseFragment
       fabAnimator.cancel();
     }
     binding = null;
+    dialogUtilGain.dismiss();
   }
 
   @SuppressLint("ClickableViewAccessibility")
@@ -104,24 +101,21 @@ public class MainFragment extends BaseFragment
 
     new ScrollBehavior().setUpScroll(binding.appBarMain, null, false);
 
-    binding.toolbarMain.setNavigationOnClickListener(v -> {
-      if (getViewUtil().isClickEnabled(v.getId())) {
-        performHapticClick();
-        navigateUp();
-      }
-    });
     binding.toolbarMain.setOnMenuItemClickListener(item -> {
       int id = item.getItemId();
+      if (getViewUtil().isClickDisabled(id)) {
+        return false;
+      }
+      performHapticClick();
       if (id == R.id.action_settings) {
         activity.navigateToFragment(MainFragmentDirections.actionMainToSettings());
       } else if (id == R.id.action_about) {
-        navigateToFragment(MainFragmentDirections.actionMainToAbout());
+        activity.navigateToFragment(MainFragmentDirections.actionMainToAbout());
       } else if (id == R.id.action_feedback) {
         activity.showFeedbackBottomSheet();
       } else if (id == R.id.action_recommend) {
         ResUtil.share(activity, R.string.msg_recommend);
       }
-      performHapticClick();
       return true;
     });
 
@@ -171,8 +165,8 @@ public class MainFragment extends BaseFragment
       private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
-          if (bound) {
-            if (metronomeService.getTempo() > 1) {
+          if (isBound()) {
+            if (getMetronomeService().getTempo() > 1) {
               changeTempo(-1);
               handler.postDelayed(this, nextRun);
               if (nextRun > 60) {
@@ -217,8 +211,8 @@ public class MainFragment extends BaseFragment
       private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
-          if (bound) {
-            if (metronomeService.getTempo() < 400) {
+          if (isBound()) {
+            if (getMetronomeService().getTempo() < 400) {
               changeTempo(1);
               handler.postDelayed(this, nextRun);
               if (nextRun > 60) {
@@ -276,7 +270,7 @@ public class MainFragment extends BaseFragment
             sum += e;
           }
           intervalAverage = (long) ((double) sum / intervals.size());
-          if (isBound()) {
+          if (isBoundOrShowWarning()) {
             setTempo((int) (60000 / intervalAverage));
           }
         }
@@ -327,6 +321,31 @@ public class MainFragment extends BaseFragment
     cornerSizePlay = UiUtil.dpToPx(activity, 48);
     cornerSizeCurrent = cornerSizePause;
 
+    dialogUtilGain = new DialogUtil(activity, "gain");
+    dialogUtilGain.createCaution(
+        R.string.msg_gain,
+        R.string.msg_gain_description,
+        R.string.action_play,
+        () -> {
+          if (isBound() && !getMetronomeService().isPlaying()) {
+            getMetronomeService().start();
+          }
+        },
+        R.string.action_deactivate_gain,
+        () -> {
+          if (isBound()) {
+            getMetronomeService().setGain(0);
+            if (!getMetronomeService().isPlaying()) {
+              getMetronomeService().start();
+            }
+          }
+        });
+    dialogUtilGain.showIfWasShown(savedInstanceState);
+
+    if (isBound()) {
+      onMetronomeServiceConnected();
+    }
+
     ViewUtil.setOnClickListeners(
         this,
         binding.buttonMainLess,
@@ -339,47 +358,28 @@ public class MainFragment extends BaseFragment
   }
 
   @Override
-  public void onStart() {
-    super.onStart();
-
-    Intent intent = new Intent(activity, MetronomeService.class);
-    try {
-      activity.startService(intent);
-      activity.bindService(intent, this, Context.BIND_AUTO_CREATE);
-    } catch (IllegalStateException e) {
-      Log.e(TAG, "onStart: cannot start service because app is in background");
+  public void onSaveInstanceState(@NonNull Bundle outState) {
+    super.onSaveInstanceState(outState);
+    if (dialogUtilGain != null) {
+      dialogUtilGain.saveState(outState);
     }
   }
 
-  @Override
-  public void onStop() {
-    super.onStop();
-
-    if (bound) {
-      activity.unbindService(this);
-      bound = false;
-    }
-  }
-
-  @Override
-  public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-    LocalBinder binder = (LocalBinder) iBinder;
-    metronomeService = binder.getService();
-    if (metronomeService == null || binding == null || getSharedPrefs() == null) {
+  public void onMetronomeServiceConnected() {
+    if (binding == null) {
       return;
     }
-    bound = true;
-    metronomeService.setMetronomeListener(this);
+    getMetronomeService().setMetronomeListener(this);
 
-    if (metronomeService.isBeatModeVibrate()) {
+    if (getMetronomeService().isBeatModeVibrate()) {
       binding.buttonMainBeatMode.setIconResource(
-          metronomeService.isAlwaysVibrate()
+          getMetronomeService().isAlwaysVibrate()
               ? R.drawable.ic_round_volume_off_to_volume_on_anim
               : R.drawable.ic_round_vibrate_to_volume_anim
       );
     } else {
       binding.buttonMainBeatMode.setIconResource(
-          metronomeService.isAlwaysVibrate()
+          getMetronomeService().isAlwaysVibrate()
               ? R.drawable.ic_round_volume_on_to_volume_off_anim
               : R.drawable.ic_round_volume_to_vibrate_anim
       );
@@ -388,22 +388,17 @@ public class MainFragment extends BaseFragment
     //metronomeService.updateTick();
     refreshBookmark(false);
 
-    setTempo(metronomeService.getTempo());
+    setTempo(getMetronomeService().getTempo());
 
     ViewUtil.resetAnimatedIcon(binding.fabMainPlayPause);
     binding.fabMainPlayPause.setImageResource(
-        metronomeService.isPlaying()
+        getMetronomeService().isPlaying()
             ? R.drawable.ic_round_pause
             : R.drawable.ic_round_play_arrow
     );
-    updateFabCornerRadius(metronomeService.isPlaying(), false);
+    updateFabCornerRadius(getMetronomeService().isPlaying(), false);
 
-    UiUtil.keepScreenAwake(activity, keepAwake && metronomeService.isPlaying());
-  }
-
-  @Override
-  public void onServiceDisconnected(ComponentName componentName) {
-    bound = false;
+    UiUtil.keepScreenAwake(activity, keepAwake && getMetronomeService().isPlaying());
   }
 
   @Override
@@ -438,10 +433,13 @@ public class MainFragment extends BaseFragment
 
   @Override
   public void onMetronomeTick(Tick tick) {
-    if (!bound) {
+    if (!isBound()) {
       return;
     }
     activity.runOnUiThread(() -> {
+      if (binding == null) {
+        return;
+      }
       if (flashScreen) {
         int color;
         switch (tick.type) {
@@ -459,13 +457,14 @@ public class MainFragment extends BaseFragment
             break;
         }
         binding.coordinatorContainer.setBackgroundColor(color);
-        binding.coordinatorContainer.postDelayed(
-            () -> binding.coordinatorContainer.setBackgroundColor(colorFlashMuted),
-            100
-        );
+        binding.coordinatorContainer.postDelayed(() -> {
+          if (binding != null) {
+            binding.coordinatorContainer.setBackgroundColor(colorFlashMuted);
+          }
+        }, 100);
       }
       if (!tick.type.equals(TICK_TYPE.SUB)) {
-        logoUtil.nextBeat(metronomeService.getInterval());
+        logoUtil.nextBeat(getMetronomeService().getInterval());
       }
     });
   }
@@ -473,15 +472,19 @@ public class MainFragment extends BaseFragment
   @Override
   public void onClick(View v) {
     int id = v.getId();
-    if (!isBound()) {
+    if (!isBoundOrShowWarning()) {
       return;
     }
     if (id == R.id.fab_main_play_pause) {
-      if (metronomeService.isPlaying()) {
+      if (getMetronomeService().isPlaying()) {
         performHapticClick();
-        metronomeService.stop();
+        getMetronomeService().stop();
       } else {
-        metronomeService.start();
+        if (getMetronomeService().getGain() > 0) {
+          dialogUtilGain.show();
+        } else {
+          getMetronomeService().start();
+        }
         performHapticClick();
       }
     } else if (id == R.id.button_main_less) {
@@ -491,7 +494,7 @@ public class MainFragment extends BaseFragment
       ViewUtil.startIcon(binding.buttonMainMore.getIcon());
       changeTempo(1);
     } else if (id == R.id.button_main_beat_mode) {
-      boolean beatModeVibrateNew = !metronomeService.isBeatModeVibrate();
+      boolean beatModeVibrateNew = !getMetronomeService().isBeatModeVibrate();
       if (beatModeVibrateNew && !activity.getHapticUtil().hasVibrator()) {
         showSnackbar(
             activity.getSnackbar(R.string.msg_vibration_unavailable, Snackbar.LENGTH_SHORT)
@@ -501,7 +504,7 @@ public class MainFragment extends BaseFragment
       if (!beatModeVibrateNew) {
         performHapticClick();
       }
-      metronomeService.setBeatModeVibrate(beatModeVibrateNew);
+      getMetronomeService().setBeatModeVibrate(beatModeVibrateNew);
       if (beatModeVibrateNew) {
         performHapticClick();
       }
@@ -509,13 +512,13 @@ public class MainFragment extends BaseFragment
       new Handler(Looper.getMainLooper()).postDelayed(() -> {
         if (beatModeVibrateNew) {
           binding.buttonMainBeatMode.setIconResource(
-              metronomeService.isAlwaysVibrate()
+              getMetronomeService().isAlwaysVibrate()
                   ? R.drawable.ic_round_volume_off_to_volume_on_anim
                   : R.drawable.ic_round_vibrate_to_volume_anim
           );
         } else {
           binding.buttonMainBeatMode.setIconResource(
-              metronomeService.isAlwaysVibrate()
+              getMetronomeService().isAlwaysVibrate()
                   ? R.drawable.ic_round_volume_on_to_volume_off_anim
                   : R.drawable.ic_round_volume_to_vibrate_anim
           );
@@ -524,9 +527,9 @@ public class MainFragment extends BaseFragment
     } else if (id == R.id.button_main_bookmark) {
       ViewUtil.startIcon(binding.buttonMainBookmark.getIcon());
       performHapticClick();
-      if (bookmarks.size() < 3 && !bookmarks.contains(metronomeService.getTempo())) {
-        binding.chipGroupMain.addView(newChip(metronomeService.getTempo()));
-        bookmarks.add(metronomeService.getTempo());
+      if (bookmarks.size() < 3 && !bookmarks.contains(getMetronomeService().getTempo())) {
+        binding.chipGroupMain.addView(newChip(getMetronomeService().getTempo()));
+        bookmarks.add(getMetronomeService().getTempo());
         updateBookmarks();
         refreshBookmark(true);
       } else if (bookmarks.size() >= 3) {
@@ -550,7 +553,7 @@ public class MainFragment extends BaseFragment
   }
 
   public void onBpmChanged(int bpm) {
-    if (bound) {
+    if (isBound()) {
       binding.textMainBpm.setText(String.valueOf(bpm));
       refreshBookmark(true);
     }
@@ -607,13 +610,13 @@ public class MainFragment extends BaseFragment
   }
 
   private void refreshBookmark(boolean animated) {
-    if (bound) {
-      binding.buttonMainBookmark.setEnabled(!bookmarks.contains(metronomeService.getTempo()));
+    if (isBound()) {
+      binding.buttonMainBookmark.setEnabled(!bookmarks.contains(getMetronomeService().getTempo()));
       for (int i = 0; i < binding.chipGroupMain.getChildCount(); i++) {
         Chip chip = (Chip) binding.chipGroupMain.getChildAt(i);
         if (chip != null) {
           boolean active =
-              Integer.parseInt(chip.getText().toString()) == metronomeService.getTempo();
+              Integer.parseInt(chip.getText().toString()) == getMetronomeService().getTempo();
           if (animated) {
             animateChip(chip, active);
           } else {
@@ -646,29 +649,29 @@ public class MainFragment extends BaseFragment
   }
 
   private void changeTempo(int change) {
-    if (bound) {
-      int bpmNew = metronomeService.getTempo() + change;
+    if (isBound()) {
+      int bpmNew = getMetronomeService().getTempo() + change;
       setTempo(bpmNew);
-      if (bpmNew >= 1 && bpmNew <= 500) {
+      if (bpmNew >= TEMPO_MIN && bpmNew <= TEMPO_MAX) {
         performHapticTick();
       }
     }
   }
 
   private void setTempo(int bpm) {
-    if (bound && bpm > 0) {
-      metronomeService.setTempo(Math.min(bpm, 500));
+    if (isBound()) {
+      getMetronomeService().setTempo(Math.min(Math.max(bpm, TEMPO_MIN), TEMPO_MAX));
       refreshBookmark(true);
-      binding.textMainBpm.setText(String.valueOf(metronomeService.getTempo()));
+      binding.textMainBpm.setText(String.valueOf(getMetronomeService().getTempo()));
       setButtonStates();
     }
   }
 
   private void setButtonStates() {
-    if (bound) {
-      int bpm = metronomeService.getTempo();
+    if (isBound()) {
+      int bpm = getMetronomeService().getTempo();
       binding.buttonMainLess.setEnabled(bpm > 1);
-      binding.buttonMainMore.setEnabled(bpm < 500);
+      binding.buttonMainMore.setEnabled(bpm < TEMPO_MAX);
     }
   }
 
@@ -698,29 +701,12 @@ public class MainFragment extends BaseFragment
     }
   }
 
-  @Override
-  public void performHapticClick() {
-    if (areHapticsAllowed()) {
-      super.performHapticClick();
-    }
-  }
-
-  @Override
-  public void performHapticHeavyClick() {
-    if (areHapticsAllowed()) {
-      super.performHapticHeavyClick();
-    }
-  }
-
-  private boolean areHapticsAllowed() {
-    return !bound || metronomeService.areHapticEffectsPossible();
-  }
-
-  private boolean isBound() {
-    if (!bound) {
+  private boolean isBoundOrShowWarning() {
+    boolean isBound = isBound();
+    if (!isBound) {
       showSnackbar(activity.getSnackbar(R.string.msg_connection_lost, Snackbar.LENGTH_SHORT));
     }
-    return bound;
+    return isBound;
   }
 
   private void showSnackbar(Snackbar snackbar) {

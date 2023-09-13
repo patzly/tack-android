@@ -16,6 +16,7 @@ import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentAboutAppBinding;
+import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class AboutFragment extends BaseFragment implements OnClickListener {
@@ -49,7 +50,19 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     new ScrollBehavior().setUpScroll(binding.appBarAbout, binding.scrollAbout, true);
 
     binding.toolbarAbout.setNavigationOnClickListener(getNavigationOnClickListener());
-    binding.toolbarAbout.setOnMenuItemClickListener(getOnMenuItemClickListener());
+    binding.toolbarAbout.setOnMenuItemClickListener(item -> {
+      int id = item.getItemId();
+      if (getViewUtil().isClickDisabled(id)) {
+        return false;
+      }
+      performHapticClick();
+      if (id == R.id.action_feedback) {
+        activity.showFeedbackBottomSheet();
+      } else if (id == R.id.action_recommend) {
+        ResUtil.share(activity, R.string.msg_recommend);
+      }
+      return true;
+    });
 
     ViewUtil.setOnClickListeners(
         this,
