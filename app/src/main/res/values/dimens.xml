@@ -8,8 +8,8 @@
   <dimen name="bpm_picker_size">170dp</dimen>
   <dimen name="bpm_text_size">54sp</dimen>
   <dimen name="label_text_size">16sp</dimen>
-  <fraction name="tempo_term_fading_start">-20%p</fraction>
-  <fraction name="tempo_term_fading_end">20%p</fraction>
+  <fraction name="tempo_term_fading_start">-15%p</fraction>
+  <fraction name="tempo_term_fading_end">15%p</fraction>
 
   <dimen name="picker_margin_bottom">0dp</dimen>
   <dimen name="bookmarks_margin_top">24dp</dimen>

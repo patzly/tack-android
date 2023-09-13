@@ -60,6 +60,7 @@ dependencies {
     implementation libs.navigation.fragment
     implementation libs.navigation.ui
     implementation libs.preference
+    implementation libs.shapes
     implementation libs.material
     implementation libs.guava
 }
