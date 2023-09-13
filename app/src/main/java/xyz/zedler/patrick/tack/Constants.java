@@ -126,4 +126,7 @@ public final class Constants {
     public static final String BLUE = "blue";
     public static final String PURPLE = "purple";
   }
+
+  public final static int ANIM_DURATION_LONG = 400;
+  public final static int ANIM_DURATION_SHORT = 250;
 }

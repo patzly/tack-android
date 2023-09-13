@@ -20,6 +20,7 @@ import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
+import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
@@ -70,9 +71,6 @@ public class MetronomeService extends Service implements TickListener {
     hapticUtil = new HapticUtil(this);
     setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
     setAlwaysVibrate(sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE));
-
-    // TODO: remove
-    setAlwaysVibrate(true);
 
     stopReceiver = new StopReceiver();
     ContextCompat.registerReceiver(
@@ -226,6 +224,28 @@ public class MetronomeService extends Service implements TickListener {
 
   public int getGain() {
     return metronomeUtil.getGain();
+  }
+
+  public String getTempoTerm() {
+    String[] terms = getResources().getStringArray(R.array.label_tempo_terms);
+    int tempo = getTempo();
+    if (tempo < 60) {
+      return terms[0];
+    } else if (tempo < 66) {
+      return terms[1];
+    } else if (tempo < 76) {
+      return terms[2];
+    } else if (tempo < 108) {
+      return terms[3];
+    } else if (tempo < 120) {
+      return terms[4];
+    } else if (tempo < 168) {
+      return terms[5];
+    } else if (tempo < 200) {
+      return terms[6];
+    } else {
+      return terms[7];
+    }
   }
 
   public interface MetronomeListener {

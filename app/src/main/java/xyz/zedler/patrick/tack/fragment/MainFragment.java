@@ -1,12 +1,13 @@
 package xyz.zedler.patrick.tack.fragment;
 
-import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
@@ -14,16 +15,17 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.core.graphics.ColorUtils;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
@@ -31,12 +33,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
+import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
+import xyz.zedler.patrick.tack.activity.ShortcutActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentMainAppBinding;
@@ -96,7 +100,7 @@ public class MainFragment extends BaseFragment
 
     SystemBarBehavior systemBarBehavior = new SystemBarBehavior(activity);
     systemBarBehavior.setAppBar(binding.appBarMain);
-    systemBarBehavior.setContainer(binding.frameMainContainer);
+    systemBarBehavior.setContainer(binding.linearMainContainer);
     systemBarBehavior.setUp();
 
     new ScrollBehavior().setUpScroll(binding.appBarMain, null, false);
@@ -128,6 +132,17 @@ public class MainFragment extends BaseFragment
     colorFlashStrong = ResUtil.getColorAttr(activity, R.attr.colorError);
     colorFlashSub = ResUtil.getColorAttr(activity, R.attr.colorPrimaryContainer);
     colorFlashMuted = ResUtil.getColorAttr(activity, android.R.attr.colorBackground);
+
+    binding.textSwitcherMainTempoTerm.setFactory(() -> {
+      TextView textView = new TextView(activity);
+      textView.setGravity(Gravity.CENTER_HORIZONTAL);
+      textView.setTextSize(
+          TypedValue.COMPLEX_UNIT_PX,
+          getResources().getDimension(R.dimen.label_text_size)
+      );
+      textView.setTextColor(ResUtil.getColorAttr(activity, R.attr.colorOnSecondaryContainer));
+      return textView;
+    });
 
     binding.bpmPickerMain.setOnRotationListener(new BpmPickerView.OnRotationListener() {
       @Override
@@ -312,7 +327,7 @@ public class MainFragment extends BaseFragment
       }
     }
     for (int i = 0; i < bookmarks.size(); i++) {
-      binding.chipGroupMain.addView(newChip(bookmarks.get(i)));
+      binding.chipGroupMainBookmarks.addView(getBookmarkChip(bookmarks.get(i)));
     }
 
     ViewUtil.resetAnimatedIcon(binding.fabMainPlayPause);
@@ -385,10 +400,10 @@ public class MainFragment extends BaseFragment
       );
     }
 
-    //metronomeService.updateTick();
-    refreshBookmark(false);
+    refreshBookmarks();
 
     setTempo(getMetronomeService().getTempo());
+    binding.textSwitcherMainTempoTerm.setCurrentText(getMetronomeService().getTempoTerm());
 
     ViewUtil.resetAnimatedIcon(binding.fabMainPlayPause);
     binding.fabMainPlayPause.setImageResource(
@@ -528,10 +543,10 @@ public class MainFragment extends BaseFragment
       ViewUtil.startIcon(binding.buttonMainBookmark.getIcon());
       performHapticClick();
       if (bookmarks.size() < 3 && !bookmarks.contains(getMetronomeService().getTempo())) {
-        binding.chipGroupMain.addView(newChip(getMetronomeService().getTempo()));
+        binding.chipGroupMainBookmarks.addView(getBookmarkChip(getMetronomeService().getTempo()));
         bookmarks.add(getMetronomeService().getTempo());
         updateBookmarks();
-        refreshBookmark(true);
+        refreshBookmarks();
       } else if (bookmarks.size() >= 3) {
         Snackbar snackbar = activity.getSnackbar(
             R.string.msg_bookmarks_max, Snackbar.LENGTH_SHORT
@@ -539,10 +554,10 @@ public class MainFragment extends BaseFragment
         snackbar.setAction(
             getString(R.string.action_clear_all),
             view -> {
-              binding.chipGroupMain.removeAllViews();
+              binding.chipGroupMainBookmarks.removeAllViews();
               bookmarks.clear();
               updateBookmarks();
-              refreshBookmark(true);
+              refreshBookmarks();
             }
         );
         showSnackbar(snackbar);
@@ -555,27 +570,29 @@ public class MainFragment extends BaseFragment
   public void onBpmChanged(int bpm) {
     if (isBound()) {
       binding.textMainBpm.setText(String.valueOf(bpm));
-      refreshBookmark(true);
+      refreshBookmarks();
     }
   }
 
-  private Chip newChip(int bpm) {
+  private Chip getBookmarkChip(int tempo) {
     Chip chip = new Chip(activity);
     chip.setCheckable(false);
-    chip.setCloseIconVisible(true);
+    chip.setChipIconResource(R.drawable.ic_round_audiotrack_anim);
     chip.setCloseIconResource(R.drawable.ic_round_cancel);
+    chip.setCloseIconVisible(true);
     chip.setOnCloseIconClickListener(v -> {
       performHapticClick();
-      binding.chipGroupMain.removeView(chip);
-      bookmarks.remove((Integer) bpm); // Integer cast required
+      binding.chipGroupMainBookmarks.removeView(chip);
+      bookmarks.remove((Integer) tempo); // Integer cast required
       updateBookmarks();
-      refreshBookmark(true);
+      refreshBookmarks();
     });
     chip.setStateListAnimator(null);
-    chip.setText(String.valueOf(bpm));
-    chip.setTypeface(ResourcesCompat.getFont(activity, R.font.jost_medium));
-    chip.setChipIconVisible(false);
-    chip.setOnClickListener(v -> setTempo(bpm));
+    chip.setText(String.valueOf(tempo));
+    chip.setOnClickListener(v -> {
+      ViewUtil.startIcon(chip.getChipIcon());
+      setTempo(tempo);
+    });
     return chip;
   }
 
@@ -596,10 +613,10 @@ public class MainFragment extends BaseFragment
               new ShortcutInfo.Builder(activity, String.valueOf(bpm))
                   .setShortLabel(getString(R.string.label_bpm_number, String.valueOf(bpm)))
                   .setIcon(Icon.createWithResource(activity, R.mipmap.ic_shortcut))
-//                  .setIntent(new Intent(activity, ShortcutActivity.class)
-//                      .setAction(OldMetronomeService.ACTION_START)
-//                      .putExtra(OldMetronomeService.EXTRA_BPM, bpm)
-//                      .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                  .setIntent(new Intent(activity, ShortcutActivity.class)
+                      .setAction(ACTION.START)
+                      .putExtra(EXTRA.TEMPO, bpm)
+                      .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
                   .build()
           );
         }
@@ -609,43 +626,38 @@ public class MainFragment extends BaseFragment
     }
   }
 
-  private void refreshBookmark(boolean animated) {
-    if (isBound()) {
-      binding.buttonMainBookmark.setEnabled(!bookmarks.contains(getMetronomeService().getTempo()));
-      for (int i = 0; i < binding.chipGroupMain.getChildCount(); i++) {
-        Chip chip = (Chip) binding.chipGroupMain.getChildAt(i);
-        if (chip != null) {
-          boolean active =
-              Integer.parseInt(chip.getText().toString()) == getMetronomeService().getTempo();
-          if (animated) {
-            animateChip(chip, active);
-          } else {
-            if (active) {
-              chip.setChipBackgroundColor(
-                  ColorStateList.valueOf(ResUtil.getColorAttr(activity, R.attr.colorTertiary)));
-            } else {
-              chip.setChipBackgroundColor(
-                  ColorStateList.valueOf(ResUtil.getColorAttr(activity, R.attr.colorOutline)));
-            }
-          }
-        }
-      }
+  private void refreshBookmarks() {
+    if (!isBound()) {
+      return;
     }
-  }
-
-  private void animateChip(Chip chip, boolean active) {
-    int colorFrom = Objects.requireNonNull(chip.getChipBackgroundColor()).getDefaultColor();
-    int colorTo = ColorUtils.setAlphaComponent(
-        ResUtil.getColorAttr(activity, R.attr.colorPrimaryContainer), active ? 180 : 0);
-    ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-    colorAnimation.addUpdateListener(
-        animator -> chip.setChipBackgroundColor(
-            ColorStateList.valueOf((int) animator.getAnimatedValue())
-        )
-    );
-    colorAnimation.setDuration(250);
-    colorAnimation.setInterpolator(new FastOutSlowInInterpolator());
-    colorAnimation.start();
+    binding.buttonMainBookmark.setEnabled(!bookmarks.contains(getMetronomeService().getTempo()));
+    for (int i = 0; i < binding.chipGroupMainBookmarks.getChildCount(); i++) {
+      Chip chip = (Chip) binding.chipGroupMainBookmarks.getChildAt(i);
+      if (chip == null) {
+        continue;
+      }
+      boolean isActive = Integer.parseInt(chip.getText().toString())
+          == getMetronomeService().getTempo();
+      chip.setChipBackgroundColor(
+          ColorStateList.valueOf(
+              isActive
+                  ? ResUtil.getColorAttr(activity, R.attr.colorPrimaryContainer)
+                  : Color.TRANSPARENT
+          )
+      );
+      chip.setChipIconTint(
+          ColorStateList.valueOf(
+              ResUtil.getColorAttr(
+                  activity, isActive ? R.attr.colorOnPrimaryContainer : R.attr.colorOnSurfaceVariant
+              )
+          )
+      );
+      chip.setChipStrokeColor(
+          ColorStateList.valueOf(
+              ResUtil.getColorAttr(activity, isActive ? R.attr.colorPrimary : R.attr.colorOutline)
+          )
+      );
+    }
   }
 
   private void changeTempo(int change) {
@@ -660,9 +672,22 @@ public class MainFragment extends BaseFragment
 
   private void setTempo(int bpm) {
     if (isBound()) {
+      int tempoOld = getMetronomeService().getTempo();
+      String termOld = getMetronomeService().getTempoTerm();
       getMetronomeService().setTempo(Math.min(Math.max(bpm, TEMPO_MIN), TEMPO_MAX));
-      refreshBookmark(true);
       binding.textMainBpm.setText(String.valueOf(getMetronomeService().getTempo()));
+      String termNew = getMetronomeService().getTempoTerm();
+      if (!termNew.equals(termOld)) {
+        boolean isFaster = getMetronomeService().getTempo() > tempoOld;
+        binding.textSwitcherMainTempoTerm.setInAnimation(
+            activity, isFaster ? R.anim.tempo_term_close_enter : R.anim.tempo_term_open_enter
+        );
+        binding.textSwitcherMainTempoTerm.setOutAnimation(
+            activity, isFaster ? R.anim.tempo_term_close_exit : R.anim.tempo_term_open_exit
+        );
+        binding.textSwitcherMainTempoTerm.setText(termNew);
+      }
+      refreshBookmarks();
       setButtonStates();
     }
   }

@@ -28,6 +28,16 @@
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$sms</string>
   <string name="label_db">+%1$sdB</string>
+  <array name="label_tempo_terms" translatable="false">
+    <item>Largo</item>
+    <item>Larghetto</item>
+    <item>Adagio</item>
+    <item>Andante</item>
+    <item>Moderato</item>
+    <item>Allegro</item>
+    <item>Presto</item>
+    <item>Prestissimo</item>
+  </array>
 
   <!-- ACTIONS -->
 

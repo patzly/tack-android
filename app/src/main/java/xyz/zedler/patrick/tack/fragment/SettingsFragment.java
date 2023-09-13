@@ -55,7 +55,7 @@ public class SettingsFragment extends BaseFragment
   private MainActivity activity;
   private DialogUtil dialogUtilReset, dialogUtilSound;
   private boolean flashScreen, wasPlaying, wasBeatModeVibrate, wasAlwaysVibrate;
-  private int wasTempo;
+  private int wasTempo, wasGain;
   private Drawable itemBgFlash;
 
   @Override
@@ -206,10 +206,12 @@ public class SettingsFragment extends BaseFragment
           wasTempo = getMetronomeService().getTempo();
           wasBeatModeVibrate = getMetronomeService().isBeatModeVibrate();
           wasAlwaysVibrate = getMetronomeService().isAlwaysVibrate();
+          wasGain = getMetronomeService().getGain();
           // Turn all visuals and audio on and start playing if not already started
           getMetronomeService().setTempo(80);
           getMetronomeService().setBeatModeVibrate(false);
           getMetronomeService().setAlwaysVibrate(true);
+          getMetronomeService().setGain(0);
           getMetronomeService().setMetronomeListener(SettingsFragment.this);
           if (!getMetronomeService().isPlaying()) {
             getMetronomeService().start();
@@ -227,6 +229,7 @@ public class SettingsFragment extends BaseFragment
           getMetronomeService().setTempo(wasTempo);
           getMetronomeService().setBeatModeVibrate(wasBeatModeVibrate);
           getMetronomeService().setAlwaysVibrate(wasAlwaysVibrate);
+          getMetronomeService().setGain(wasGain);
           getMetronomeService().setMetronomeListener(null);
         }
       }

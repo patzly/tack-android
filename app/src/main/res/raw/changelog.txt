@@ -5,8 +5,10 @@
 - New: complete Material You redesign with dynamic colors and theme selection
 - New: beautiful beat visualization with subdivisions and changeable emphasizes
 - New: options for swing, muted beats and incremental tempo change
+- New: Italian tempo term
+- New: flash screen option
 - New: volume boost option
-- New: latency offset correction
+- New: audio latency correction
 - Fixed: inconsistent audio beats on many devices
 
 ## 3.0.2
@@ -20,7 +22,7 @@
 
 ## 3.0.0
 
-- New: playful "Material You" look in preparation for Android 12
+- New: playful Material You look in preparation for Android 12
 - New: sound is played when selected in settings
 - New: settings are applied immediately
 - Improved: bottom sheet appearance and behavior

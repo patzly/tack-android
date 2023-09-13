@@ -54,99 +54,120 @@
 
   </com.google.android.material.appbar.AppBarLayout>
 
-  <FrameLayout
-    android:id="@+id/frame_main_container"
+  <LinearLayout
+    android:id="@+id/linear_main_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="@dimen/bookmarks_margin_top"
-      android:layout_marginBottom="@dimen/picker_margin_bottom"
-      android:orientation="vertical"
-      android:gravity="center_horizontal"
-      android:layout_gravity="center"
+      android:layout_width="wrap_content"
+      android:layout_height="150dp"
+      android:orientation="horizontal"
+      android:layout_gravity="center_horizontal|top"
+      android:gravity="center_vertical"
       android:animateLayoutChanges="true"
+      android:clipToPadding="false">
+
+    </LinearLayout>
+
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1" />
+
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:gravity="center_vertical"
+      android:layout_gravity="center_horizontal"
       tools:ignore="UselessParent">
 
-      <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical">
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_main_less"
+        style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+        android:layout_marginEnd="16dp"
+        android:contentDescription="@string/action_less"
+        app:icon="@drawable/ic_round_chevron_left_anim" />
 
-        <com.google.android.material.button.MaterialButton
-          android:id="@+id/button_main_less"
-          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
-          android:layout_marginEnd="16dp"
-          android:contentDescription="@string/action_less"
-          app:icon="@drawable/ic_round_chevron_left_anim" />
+      <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <xyz.zedler.patrick.tack.view.BpmPickerView
+          android:id="@+id/bpm_picker_main"
+          android:layout_width="@dimen/bpm_picker_size"
+          android:layout_height="@dimen/bpm_picker_size"
+          android:importantForAccessibility="yes" />
+
+        <xyz.zedler.patrick.tack.view.CircleView
+          android:id="@+id/circle_main"
+          android:layout_width="@dimen/bpm_picker_size"
+          android:layout_height="@dimen/bpm_picker_size" />
 
         <FrameLayout
           android:layout_width="wrap_content"
-          android:layout_height="wrap_content">
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          tools:ignore="SpUsage">
 
-          <xyz.zedler.patrick.tack.view.BpmPickerView
-            android:id="@+id/bpm_picker_main"
+          <TextSwitcher
+            android:id="@+id/text_switcher_main_tempo_term"
             android:layout_width="@dimen/bpm_picker_size"
-            android:layout_height="@dimen/bpm_picker_size"
-            android:importantForAccessibility="yes" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|top" />
 
-          <xyz.zedler.patrick.tack.view.CircleView
-            android:id="@+id/circle_main"
-            android:layout_width="@dimen/bpm_picker_size"
-            android:layout_height="@dimen/bpm_picker_size" />
-
-          <FrameLayout
+          <TextView
+            android:id="@+id/text_main_bpm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            tools:ignore="SpUsage">
+            android:layout_marginTop="@dimen/label_text_size"
+            android:layout_marginBottom="@dimen/label_text_size"
+            android:textColor="?attr/colorOnSecondaryContainer"
+            android:layout_gravity="center_horizontal|top"
+            android:fontFeatureSettings="tnum"
+            android:textAppearance="?attr/textAppearanceDisplayLarge"
+            android:textSize="@dimen/bpm_text_size" />
 
-            <TextView
-              android:id="@+id/text_main_bpm"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginBottom="@dimen/label_text_size"
-              android:textColor="?attr/colorOnPrimaryContainer"
-              android:layout_gravity="center_horizontal|top"
-              android:fontFeatureSettings="tnum"
-              android:textAppearance="?attr/textAppearanceDisplayMedium"
-              android:textSize="@dimen/bpm_text_size" />
-
-            <TextView
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:text="@string/label_bpm"
-              android:textColor="?attr/colorOnPrimaryContainer"
-              android:fontFamily="@font/jost_medium"
-              android:layout_gravity="center_horizontal|bottom"
-              android:textSize="@dimen/label_text_size" />
-
-          </FrameLayout>
+          <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_bpm"
+            android:textColor="?attr/colorOnSecondaryContainer"
+            android:layout_gravity="center_horizontal|bottom"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textSize="@dimen/label_text_size" />
 
         </FrameLayout>
 
-        <com.google.android.material.button.MaterialButton
-          android:id="@+id/button_main_more"
-          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
-          android:layout_marginStart="16dp"
-          android:contentDescription="@string/action_more"
-          app:icon="@drawable/ic_round_chevron_right_anim" />
+      </FrameLayout>
 
-      </LinearLayout>
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_main_more"
+        style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+        android:layout_marginStart="16dp"
+        android:contentDescription="@string/action_more"
+        app:icon="@drawable/ic_round_chevron_right_anim" />
+
+    </LinearLayout>
+
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:layout_weight="1">
 
       <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chip_group_main"
+        android:id="@+id/chip_group_main_bookmarks"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/bookmarks_margin_top"
+        android:layout_gravity="center"
+        android:layout_marginBottom="4dp"
         android:animateLayoutChanges="true"
         app:singleSelection="true"
         app:singleLine="true" />
 
-    </LinearLayout>
+    </FrameLayout>
 
     <LinearLayout
       android:layout_width="wrap_content"
@@ -196,6 +217,6 @@
 
     </LinearLayout>
 
-  </FrameLayout>
+  </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
