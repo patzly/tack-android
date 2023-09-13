@@ -589,6 +589,7 @@ public class MainFragment extends BaseFragment
     });
     chip.setStateListAnimator(null);
     chip.setText(String.valueOf(tempo));
+    chip.setTextAppearance(R.style.TextAppearance_Tack_LabelLarge);
     chip.setOnClickListener(v -> {
       ViewUtil.startIcon(chip.getChipIcon());
       setTempo(tempo);
@@ -638,25 +639,18 @@ public class MainFragment extends BaseFragment
       }
       boolean isActive = Integer.parseInt(chip.getText().toString())
           == getMetronomeService().getTempo();
-      chip.setChipBackgroundColor(
-          ColorStateList.valueOf(
-              isActive
-                  ? ResUtil.getColorAttr(activity, R.attr.colorPrimaryContainer)
-                  : Color.TRANSPARENT
-          )
+      int colorBg = isActive
+          ? ResUtil.getColorAttr(activity, R.attr.colorTertiaryContainer)
+          : Color.TRANSPARENT;
+      int colorIcon = ResUtil.getColorAttr(
+          activity, isActive ? R.attr.colorOnTertiaryContainer : R.attr.colorOnSurfaceVariant
       );
-      chip.setChipIconTint(
-          ColorStateList.valueOf(
-              ResUtil.getColorAttr(
-                  activity, isActive ? R.attr.colorOnPrimaryContainer : R.attr.colorOnSurfaceVariant
-              )
-          )
+      int colorStroke = ResUtil.getColorAttr(
+          activity, isActive ? R.attr.colorTertiary : R.attr.colorOutline
       );
-      chip.setChipStrokeColor(
-          ColorStateList.valueOf(
-              ResUtil.getColorAttr(activity, isActive ? R.attr.colorPrimary : R.attr.colorOutline)
-          )
-      );
+      chip.setChipBackgroundColor(ColorStateList.valueOf(colorBg));
+      chip.setChipIconTint(ColorStateList.valueOf(colorIcon));
+      chip.setChipStrokeColor(ColorStateList.valueOf(colorStroke));
     }
   }
 
@@ -680,10 +674,10 @@ public class MainFragment extends BaseFragment
       if (!termNew.equals(termOld)) {
         boolean isFaster = getMetronomeService().getTempo() > tempoOld;
         binding.textSwitcherMainTempoTerm.setInAnimation(
-            activity, isFaster ? R.anim.tempo_term_close_enter : R.anim.tempo_term_open_enter
+            activity, isFaster ? R.anim.tempo_term_open_enter : R.anim.tempo_term_close_enter
         );
         binding.textSwitcherMainTempoTerm.setOutAnimation(
-            activity, isFaster ? R.anim.tempo_term_close_exit : R.anim.tempo_term_open_exit
+            activity, isFaster ? R.anim.tempo_term_open_exit : R.anim.tempo_term_close_exit
         );
         binding.textSwitcherMainTempoTerm.setText(termNew);
       }
