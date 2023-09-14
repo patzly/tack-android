@@ -4,6 +4,14 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 public final class Constants {
 
+  public final static int ANIM_DURATION_LONG = 400;
+  public final static int ANIM_DURATION_SHORT = 250;
+  public static final int TEMPO_MIN = 1;
+  public static final int TEMPO_MAX = 400;
+  public static final int BEATS_MAX = 20;
+  public static final int SUBS_MAX = 10;
+  public static final int BOOKMARKS_MAX = 6;
+
   public final static class PREF {
     // General
     public static final String THEME = "app_theme";
@@ -97,7 +105,4 @@ public final class Constants {
     public static final String BLUE = "blue";
     public static final String PURPLE = "purple";
   }
-
-  public final static int ANIM_DURATION_LONG = 400;
-  public final static int ANIM_DURATION_SHORT = 250;
 }

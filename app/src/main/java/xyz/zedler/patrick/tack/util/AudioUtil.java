@@ -8,7 +8,6 @@ import android.media.AudioTrack;
 import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
-import com.google.common.primitives.Bytes;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,7 +72,7 @@ public class AudioUtil {
     } else {
       content = readInputStreamToBytes(input);
     }
-    int indexOfDataMarker = Bytes.indexOf(content, DATA_MARKER);
+    int indexOfDataMarker = getIndexOfDataMarker(content);
     if (indexOfDataMarker < 0) {
       throw new RuntimeException("Could not find data marker in the content");
     }
@@ -99,5 +98,21 @@ public class AudioUtil {
       buffer.write(data, 0, read);
     }
     return buffer.toByteArray();
+  }
+
+  private static int getIndexOfDataMarker(byte[] array) {
+    if (DATA_MARKER.length == 0) {
+      return 0;
+    }
+    outer:
+    for (int i = 0; i < array.length - DATA_MARKER.length + 1; i++) {
+      for (int j = 0; j < DATA_MARKER.length; j++) {
+        if (array[i + j] != DATA_MARKER[j]) {
+          continue outer;
+        }
+      }
+      return i;
+    }
+    return -1;
   }
 }

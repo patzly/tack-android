@@ -62,5 +62,4 @@ dependencies {
     implementation libs.preference
     implementation libs.shapes
     implementation libs.material
-    implementation libs.guava
 }

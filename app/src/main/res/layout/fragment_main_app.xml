@@ -262,6 +262,7 @@
         android:layout_gravity="center"
         android:layout_marginBottom="4dp"
         android:animateLayoutChanges="true"
+        app:chipSpacingVertical="0dp"
         app:singleSelection="true"
         app:singleLine="false" />
 

@@ -49,7 +49,6 @@ import xyz.zedler.patrick.tack.databinding.FragmentMainAppBinding;
 import xyz.zedler.patrick.tack.service.MetronomeService.MetronomeListener;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
-import xyz.zedler.patrick.tack.util.MetronomeUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
@@ -635,7 +634,9 @@ public class MainFragment extends BaseFragment
     } else if (id == R.id.button_main_bookmark) {
       ViewUtil.startIcon(binding.buttonMainBookmark.getIcon());
       performHapticClick();
-      if (bookmarks.size() < 3 && !bookmarks.contains(getMetronomeService().getTempo())) {
+      if (bookmarks.size() < Constants.BOOKMARKS_MAX
+          && !bookmarks.contains(getMetronomeService().getTempo())
+      ) {
         binding.chipGroupMainBookmarks.addView(getBookmarkChip(getMetronomeService().getTempo()));
         bookmarks.add(getMetronomeService().getTempo());
         updateBookmarks();
@@ -693,7 +694,7 @@ public class MainFragment extends BaseFragment
   private void updateBeatControls() {
     if (isBound()) {
       int beats = getMetronomeService().getBeatsCount();
-      binding.buttonMainAddBeat.setEnabled(beats < MetronomeUtil.BEATS_MAX);
+      binding.buttonMainAddBeat.setEnabled(beats < Constants.BEATS_MAX);
       binding.buttonMainRemoveBeat.setEnabled(beats > 1);
     }
   }
@@ -723,7 +724,7 @@ public class MainFragment extends BaseFragment
   private void updateSubControls() {
     if (isBound()) {
       int subdivisions = getMetronomeService().getSubsCount();
-      binding.buttonMainAddSubdivision.setEnabled(subdivisions < MetronomeUtil.SUBS_MAX);
+      binding.buttonMainAddSubdivision.setEnabled(subdivisions < Constants.SUBS_MAX);
       binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
     }
   }
@@ -781,9 +782,11 @@ public class MainFragment extends BaseFragment
   }
 
   private void updateBookmarks() {
-    getSharedPrefs().edit()
-        .putString(PREF.BOOKMARKS, String.join(String.valueOf(bookmarks), ","))
-        .apply();
+    StringBuilder stringBuilder = new StringBuilder();
+    for (Integer bpm : bookmarks) {
+      stringBuilder.append(bpm).append(",");
+    }
+    getSharedPrefs().edit().putString(PREF.BOOKMARKS, stringBuilder.toString()).apply();
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N_MR1) {
       return;
     }
@@ -839,7 +842,7 @@ public class MainFragment extends BaseFragment
     if (isBound()) {
       int bpmNew = getMetronomeService().getTempo() + change;
       setTempo(bpmNew);
-      if (bpmNew >= MetronomeUtil.TEMPO_MIN && bpmNew <= MetronomeUtil.TEMPO_MAX) {
+      if (bpmNew >= Constants.TEMPO_MIN && bpmNew <= Constants.TEMPO_MAX) {
         performHapticTick();
       }
     }
@@ -850,7 +853,7 @@ public class MainFragment extends BaseFragment
       int tempoOld = getMetronomeService().getTempo();
       String termOld = getMetronomeService().getTempoTerm();
       getMetronomeService().setTempo(
-          Math.min(Math.max(bpm, MetronomeUtil.TEMPO_MIN), MetronomeUtil.TEMPO_MAX)
+          Math.min(Math.max(bpm, Constants.TEMPO_MIN), Constants.TEMPO_MAX)
       );
       binding.textMainBpm.setText(String.valueOf(getMetronomeService().getTempo()));
       String termNew = getMetronomeService().getTempoTerm();
@@ -873,7 +876,7 @@ public class MainFragment extends BaseFragment
     if (isBound()) {
       int bpm = getMetronomeService().getTempo();
       binding.buttonMainLess.setEnabled(bpm > 1);
-      binding.buttonMainMore.setEnabled(bpm < MetronomeUtil.TEMPO_MAX);
+      binding.buttonMainMore.setEnabled(bpm < Constants.TEMPO_MAX);
     }
   }
 

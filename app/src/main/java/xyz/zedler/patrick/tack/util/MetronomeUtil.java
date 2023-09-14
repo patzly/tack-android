@@ -8,6 +8,7 @@ import android.os.HandlerThread;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import java.util.Arrays;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.SOUND;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
@@ -17,11 +18,6 @@ public class MetronomeUtil implements Runnable {
 
   private static final String TAG = MetronomeUtil.class.getSimpleName();
   private static final boolean DEBUG = false;
-
-  public static final int TEMPO_MIN = 1;
-  public static final int TEMPO_MAX = 400;
-  public static final int BEATS_MAX = 20;
-  public static final int SUBS_MAX = 10;
 
   private final float[] silence = AudioUtil.getSilence();
   private final Context context;
@@ -59,7 +55,7 @@ public class MetronomeUtil implements Runnable {
   }
 
   public boolean addBeat() {
-    if (beats.length >= BEATS_MAX) {
+    if (beats.length >= Constants.BEATS_MAX) {
       return false;
     }
     beats = Arrays.copyOf(beats, beats.length + 1);
@@ -84,7 +80,7 @@ public class MetronomeUtil implements Runnable {
   }
 
   public boolean addSubdivision() {
-    if (subdivisions.length >= SUBS_MAX) {
+    if (subdivisions.length >= Constants.SUBS_MAX) {
       return false;
     }
     subdivisions = Arrays.copyOf(subdivisions, subdivisions.length + 1);
