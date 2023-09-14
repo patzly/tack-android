@@ -85,6 +85,14 @@
   <string name="msg_gain">Play with volume boost?</string>
   <string name="msg_gain_description">Be careful not to play through headphones as loud sounds can cause ear damage!</string>
 
+  <!-- OPTIONS -->
+
+  <string name="options_swing">Swing</string>
+  <string name="options_swing_description">Sets subdivisions to match common swing percentages</string>
+  <string name="options_swing_3">Triplet</string>
+  <string name="options_swing_5">Quintuplet</string>
+  <string name="options_swing_7">Septuplet</string>
+
   <!-- SETTINGS -->
 
   <string name="settings_language">Language</string>

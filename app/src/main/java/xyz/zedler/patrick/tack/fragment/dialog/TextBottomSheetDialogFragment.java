@@ -69,7 +69,6 @@ public class TextBottomSheetDialogFragment extends BaseBottomSheetDialogFragment
       highlights = new String[]{};
     }
     binding.formattedText.setText(ResUtil.getRawText(activity, args.getFile()), highlights);
-    binding.formattedText.setActivity(activity);
   }
 
   @Override

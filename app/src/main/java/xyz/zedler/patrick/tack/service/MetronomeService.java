@@ -56,10 +56,10 @@ public class MetronomeService extends Service implements TickListener {
     metronomeUtil.setTempo(sharedPrefs.getInt(PREF.TEMPO, DEF.TEMPO));
     metronomeUtil.setSound(sharedPrefs.getString(PREF.SOUND, DEF.SOUND));
     metronomeUtil.setBeats(
-        sharedPrefs.getString(PREF.BEATS, DEF.BEATS).split(" ")
+        sharedPrefs.getString(PREF.BEATS, DEF.BEATS).split(",")
     );
     metronomeUtil.setSubdivisions(
-        sharedPrefs.getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(" ")
+        sharedPrefs.getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(",")
     );
     metronomeUtil.setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
 
@@ -209,7 +209,11 @@ public class MetronomeService extends Service implements TickListener {
 
   public void setBeats(String[] beats) {
     metronomeUtil.setBeats(beats);
-    sharedPrefs.edit().putString(PREF.BEATS, String.join(" ", beats)).apply();
+    saveBeats();
+  }
+
+  private void saveBeats() {
+    sharedPrefs.edit().putString(PREF.BEATS, String.join(",", getBeats())).apply();
   }
 
   public String[] getBeats() {
@@ -229,7 +233,7 @@ public class MetronomeService extends Service implements TickListener {
   public boolean addBeat() {
     boolean success = metronomeUtil.addBeat();
     if (success) {
-      sharedPrefs.edit().putString(PREF.BEATS, String.join(" ", getBeats())).apply();
+      saveBeats();
     }
     return success;
   }
@@ -237,14 +241,20 @@ public class MetronomeService extends Service implements TickListener {
   public boolean removeBeat() {
     boolean success = metronomeUtil.removeBeat();
     if (success) {
-      sharedPrefs.edit().putString(PREF.BEATS, String.join(" ", getBeats())).apply();
+      saveBeats();
     }
     return success;
   }
 
   public void setSubdivisions(String[] subdivisions) {
     metronomeUtil.setSubdivisions(subdivisions);
-    sharedPrefs.edit().putString(PREF.SUBDIVISIONS, String.join(" ", subdivisions)).apply();
+    saveSubdivisions();
+  }
+
+  public void saveSubdivisions() {
+    sharedPrefs.edit()
+        .putString(PREF.SUBDIVISIONS, String.join(",", getSubdivisions()))
+        .apply();
   }
 
   public String[] getSubdivisions() {
@@ -264,9 +274,7 @@ public class MetronomeService extends Service implements TickListener {
   public boolean addSubdivision() {
     boolean success = metronomeUtil.addSubdivision();
     if (success) {
-      sharedPrefs.edit()
-          .putString(PREF.SUBDIVISIONS, String.join(" ", getSubdivisions()))
-          .apply();
+      saveSubdivisions();
     }
     return success;
   }
@@ -274,11 +282,73 @@ public class MetronomeService extends Service implements TickListener {
   public boolean removeSubdivision() {
     boolean success = metronomeUtil.removeSubdivision();
     if (success) {
-      sharedPrefs.edit()
-          .putString(PREF.SUBDIVISIONS, String.join(" ", getSubdivisions()))
-          .apply();
+      saveSubdivisions();
     }
     return success;
+  }
+
+  public void setSwing3() {
+    setSubdivisions(
+        String.join(
+            ",", TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL).split(","
+        )
+    );
+  }
+
+  public boolean isSwing3() {
+    String triplet = String.join(",", TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.SUB);
+    String tripletAlt = String.join(
+        ",", TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL
+    );
+    String subdivisions = String.join(",", getSubdivisions());
+    return subdivisions.equals(triplet) || subdivisions.equals(tripletAlt);
+  }
+
+  public void setSwing5() {
+    setSubdivisions(
+        String.join(
+            ",",
+            TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL, TICK_TYPE.MUTED
+        ).split(",")
+    );
+  }
+
+  public boolean isSwing5() {
+    String quintuplet = String.join(
+        ",",
+        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.SUB, TICK_TYPE.MUTED
+    );
+    String quintupletAlt = String.join(
+        ",",
+        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL, TICK_TYPE.MUTED
+    );
+    String subdivisions = String.join(",", getSubdivisions());
+    return subdivisions.equals(quintuplet) || subdivisions.equals(quintupletAlt);
+  }
+
+  public void setSwing7() {
+    setSubdivisions(
+        String.join(
+            ",",
+            TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
+            TICK_TYPE.NORMAL, TICK_TYPE.MUTED, TICK_TYPE.MUTED
+        ).split(",")
+    );
+  }
+
+  public boolean isSwing7() {
+    String septuplet = String.join(
+        ",",
+        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
+        TICK_TYPE.SUB, TICK_TYPE.MUTED, TICK_TYPE.MUTED
+    );
+    String septupletAlt = String.join(
+        ",",
+        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
+        TICK_TYPE.NORMAL, TICK_TYPE.MUTED, TICK_TYPE.MUTED
+    );
+    String subdivisions = String.join(",", getSubdivisions());
+    return subdivisions.equals(septuplet) || subdivisions.equals(septupletAlt);
   }
 
   public void setSound(String sound) {

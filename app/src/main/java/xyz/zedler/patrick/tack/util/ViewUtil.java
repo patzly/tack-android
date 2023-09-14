@@ -323,10 +323,6 @@ public class ViewUtil {
   public static void centerScrollContentIfNotFullWidth(
       HorizontalScrollView scrollView, boolean canCenterEarlier
   ) {
-    if (scrollView.isLaidOut()) {
-      centerScrollContentIfPossible(scrollView, canCenterEarlier);
-      return;
-    }
     scrollView.getViewTreeObserver().addOnGlobalLayoutListener(
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override

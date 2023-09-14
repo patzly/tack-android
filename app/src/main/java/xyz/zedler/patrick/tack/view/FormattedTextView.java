@@ -1,6 +1,5 @@
 package xyz.zedler.patrick.tack.view;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -33,7 +32,6 @@ import xyz.zedler.patrick.tack.util.ViewUtil;
 public class FormattedTextView extends LinearLayout {
 
   private final Context context;
-  private Activity activity;
   private int textColor, textColorVariant;
 
   public FormattedTextView(Context context) {
@@ -89,7 +87,9 @@ public class FormattedTextView extends LinearLayout {
       } else if (part.startsWith("---")) {
         addView(getDivider());
       } else if (part.startsWith("OPTION_USE_SLIDING")) {
-        View optionTransition = inflate(context, R.layout.partial_option_transition, null);
+        View optionTransition = View.inflate(
+            context, R.layout.partial_option_transition, null
+        );
         optionTransition.setBackground(ViewUtil.getRippleBgListItemSurface(context));
         optionTransition.setLayoutParams(getVerticalLayoutParams(0, 16));
         MaterialSwitch toggle = optionTransition.findViewById(R.id.switch_option_transition);
@@ -115,10 +115,6 @@ public class FormattedTextView extends LinearLayout {
    */
   public void setTextColor(@ColorInt int color) {
     textColor = color;
-  }
-
-  public void setActivity(Activity activity) {
-    this.activity = activity;
   }
 
   private MaterialTextView getParagraph(String text, boolean keepDistance) {

@@ -38,8 +38,9 @@ public final class Constants {
 
     // Metronome
     public final static int TEMPO = 120;
-    public final static String BEATS = TICK_TYPE.STRONG + " " + TICK_TYPE.NORMAL
-        + " " + TICK_TYPE.NORMAL + " " + TICK_TYPE.NORMAL;
+    public final static String BEATS = String.join(
+        ",", TICK_TYPE.STRONG, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL
+    );
     public final static String SUBDIVISIONS = TICK_TYPE.MUTED;
     public final static boolean BEAT_MODE_VIBRATE = false;
     public final static boolean ALWAYS_VIBRATE = true;

@@ -27,6 +27,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
@@ -70,7 +71,8 @@ public class MainFragment extends BaseFragment
   private ValueAnimator fabAnimator;
   private float cornerSizePause, cornerSizePlay, cornerSizeCurrent;
   private int colorFlashNormal, colorFlashStrong, colorFlashSub, colorFlashMuted;
-  private DialogUtil dialogUtilGain;
+  private View viewOptions;
+  private DialogUtil dialogUtilGain, dialogUtilOptions;
   private List<Integer> bookmarks;
 
   @Override
@@ -91,6 +93,7 @@ public class MainFragment extends BaseFragment
     }
     binding = null;
     dialogUtilGain.dismiss();
+    dialogUtilOptions.dismiss();
   }
 
   @SuppressLint("ClickableViewAccessibility")
@@ -135,10 +138,37 @@ public class MainFragment extends BaseFragment
 
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
     binding.linearMainBeats.getLayoutTransition().setDuration(Constants.ANIM_DURATION_LONG);
-    updateBeats(getSharedPrefs().getString(PREF.BEATS, DEF.BEATS).split(" "));
+    updateBeats(getSharedPrefs().getString(PREF.BEATS, DEF.BEATS).split(","));
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
     binding.linearMainSubs.getLayoutTransition().setDuration(Constants.ANIM_DURATION_LONG);
-    updateSubs(getSharedPrefs().getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(" "));
+    updateSubs(getSharedPrefs().getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(","));
+
+    dialogUtilGain = new DialogUtil(activity, "gain");
+    dialogUtilGain.createCaution(
+        R.string.msg_gain,
+        R.string.msg_gain_description,
+        R.string.action_play,
+        () -> {
+          if (isBound() && !getMetronomeService().isPlaying()) {
+            getMetronomeService().start();
+          }
+        },
+        R.string.action_deactivate_gain,
+        () -> {
+          if (isBound()) {
+            getMetronomeService().setGain(0);
+            if (!getMetronomeService().isPlaying()) {
+              getMetronomeService().start();
+            }
+          }
+        });
+    dialogUtilGain.showIfWasShown(savedInstanceState);
+
+    dialogUtilOptions = new DialogUtil(activity, "options");
+    viewOptions = View.inflate(activity, R.layout.partial_dialog_options, null);
+    updateOptionsDialog();
+    dialogUtilOptions.createCloseCustom(R.string.title_options, viewOptions);
+    dialogUtilOptions.showIfWasShown(savedInstanceState);
 
     binding.textSwitcherMainTempoTerm.setFactory(() -> {
       TextView textView = new TextView(activity);
@@ -343,27 +373,6 @@ public class MainFragment extends BaseFragment
     cornerSizePlay = UiUtil.dpToPx(activity, 48);
     cornerSizeCurrent = cornerSizePause;
 
-    dialogUtilGain = new DialogUtil(activity, "gain");
-    dialogUtilGain.createCaution(
-        R.string.msg_gain,
-        R.string.msg_gain_description,
-        R.string.action_play,
-        () -> {
-          if (isBound() && !getMetronomeService().isPlaying()) {
-            getMetronomeService().start();
-          }
-        },
-        R.string.action_deactivate_gain,
-        () -> {
-          if (isBound()) {
-            getMetronomeService().setGain(0);
-            if (!getMetronomeService().isPlaying()) {
-              getMetronomeService().start();
-            }
-          }
-        });
-    dialogUtilGain.showIfWasShown(savedInstanceState);
-
     if (isBound()) {
       onMetronomeServiceConnected();
     }
@@ -372,6 +381,7 @@ public class MainFragment extends BaseFragment
     ViewUtil.setTooltipText(binding.buttonMainRemoveBeat, R.string.action_remove_beat);
     ViewUtil.setTooltipText(binding.buttonMainAddSubdivision, R.string.action_add_sub);
     ViewUtil.setTooltipText(binding.buttonMainRemoveSubdivision, R.string.action_remove_sub);
+    ViewUtil.setTooltipText(binding.buttonMainOptions, R.string.title_options);
     ViewUtil.setTooltipText(binding.buttonMainBeatMode, R.string.action_beat_mode);
 
     ViewUtil.setOnClickListeners(
@@ -394,6 +404,9 @@ public class MainFragment extends BaseFragment
     super.onSaveInstanceState(outState);
     if (dialogUtilGain != null) {
       dialogUtilGain.saveState(outState);
+    }
+    if (dialogUtilOptions != null) {
+      dialogUtilOptions.saveState(outState);
     }
   }
 
@@ -644,6 +657,8 @@ public class MainFragment extends BaseFragment
       }
     } else if (id == R.id.button_main_options) {
       performHapticClick();
+      updateOptionsDialog();
+      dialogUtilOptions.show();
     }
   }
 
@@ -683,14 +698,14 @@ public class MainFragment extends BaseFragment
     }
   }
 
-  private void updateSubs(String[] subdivision) {
+  private void updateSubs(String[] subdivisions) {
     if (isBound()
         && binding.linearMainSubs.getChildCount() == getMetronomeService().getSubsCount()) {
       return;
     }
     binding.linearMainSubs.removeAllViews();
-    for (int i = 0; i < subdivision.length; i++) {
-      String tickType = subdivision[i];
+    for (int i = 0; i < subdivisions.length; i++) {
+      String tickType = subdivisions[i];
       BeatView beatView = new BeatView(activity);
       beatView.setIsSubdivision(true);
       beatView.setTickType(i == 0 ? TICK_TYPE.MUTED : tickType);
@@ -713,6 +728,34 @@ public class MainFragment extends BaseFragment
     }
   }
 
+  private void updateOptionsDialog() {
+    if (!isBound()) {
+      return;
+    }
+    MaterialButtonToggleGroup toggle = viewOptions.findViewById(R.id.toggle_options_swing);
+    if (getMetronomeService().isSwing3()) {
+      toggle.check(R.id.button_options_swing_3);
+    } else if (getMetronomeService().isSwing5()) {
+      toggle.check(R.id.button_options_swing_5);
+    } else if (getMetronomeService().isSwing7()) {
+      toggle.check(R.id.button_options_swing_7);
+    }
+    toggle.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+      performHapticClick();
+      if (!isChecked) {
+        return;
+      }
+      if (checkedId == R.id.button_options_swing_3) {
+        getMetronomeService().setSwing3();
+      } else if (checkedId == R.id.button_options_swing_5) {
+        getMetronomeService().setSwing5();
+      } else if (checkedId == R.id.button_options_swing_7) {
+        getMetronomeService().setSwing7();
+      }
+      updateSubs(getMetronomeService().getSubdivisions());
+    });
+  }
+
   private Chip getBookmarkChip(int tempo) {
     Chip chip = new Chip(activity);
     chip.setCheckable(false);
@@ -730,6 +773,7 @@ public class MainFragment extends BaseFragment
     chip.setText(String.valueOf(tempo));
     chip.setTextAppearance(R.style.TextAppearance_Tack_LabelLarge);
     chip.setOnClickListener(v -> {
+      performHapticClick();
       ViewUtil.startIcon(chip.getChipIcon());
       setTempo(tempo);
     });
@@ -737,31 +781,30 @@ public class MainFragment extends BaseFragment
   }
 
   private void updateBookmarks() {
-    StringBuilder stringBuilder = new StringBuilder();
-    for (Integer bpm : bookmarks) {
-      stringBuilder.append(bpm).append(",");
+    getSharedPrefs().edit()
+        .putString(PREF.BOOKMARKS, String.join(String.valueOf(bookmarks), ","))
+        .apply();
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N_MR1) {
+      return;
     }
-    getSharedPrefs().edit().putString(PREF.BOOKMARKS, stringBuilder.toString()).apply();
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-      Collections.sort(bookmarks);
-      ShortcutManager manager = (ShortcutManager) activity.getSystemService(
-          Context.SHORTCUT_SERVICE);
-      if (manager != null) {
-        List<ShortcutInfo> shortcuts = new ArrayList<>();
-        for (int bpm : bookmarks) {
-          shortcuts.add(
-              new ShortcutInfo.Builder(activity, String.valueOf(bpm))
-                  .setShortLabel(getString(R.string.label_bpm_number, String.valueOf(bpm)))
-                  .setIcon(Icon.createWithResource(activity, R.mipmap.ic_shortcut))
-                  .setIntent(new Intent(activity, ShortcutActivity.class)
-                      .setAction(ACTION.START)
-                      .putExtra(EXTRA.TEMPO, bpm)
-                      .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                  .build()
-          );
-        }
-        manager.setDynamicShortcuts(shortcuts);
+    Collections.sort(bookmarks);
+    ShortcutManager manager = (ShortcutManager) activity.getSystemService(
+        Context.SHORTCUT_SERVICE);
+    if (manager != null) {
+      List<ShortcutInfo> shortcuts = new ArrayList<>();
+      for (int bpm : bookmarks) {
+        shortcuts.add(
+            new ShortcutInfo.Builder(activity, String.valueOf(bpm))
+                .setShortLabel(getString(R.string.label_bpm_number, String.valueOf(bpm)))
+                .setIcon(Icon.createWithResource(activity, R.mipmap.ic_shortcut))
+                .setIntent(new Intent(activity, ShortcutActivity.class)
+                    .setAction(ACTION.START)
+                    .putExtra(EXTRA.TEMPO, bpm)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+                .build()
+        );
       }
+      manager.setDynamicShortcuts(shortcuts);
     }
   }
 

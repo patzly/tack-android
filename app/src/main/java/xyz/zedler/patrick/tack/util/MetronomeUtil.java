@@ -45,8 +45,8 @@ public class MetronomeUtil implements Runnable {
 
     setTempo(DEF.TEMPO);
     setSound(DEF.SOUND);
-    setBeats(DEF.BEATS.split(" "));
-    setSubdivisions(DEF.SUBDIVISIONS.split(" "));
+    setBeats(DEF.BEATS.split(","));
+    setSubdivisions(DEF.SUBDIVISIONS.split(","));
     setGain(DEF.GAIN);
   }
 

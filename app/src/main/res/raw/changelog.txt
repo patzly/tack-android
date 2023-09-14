@@ -5,7 +5,7 @@
 - New: complete Material You redesign with dynamic colors and theme selection
 - New: beautiful beat visualization with subdivisions and changeable emphasizes
 - New: options for swing, muted beats and incremental tempo change
-- New: Italian tempo term
+- New: Italian tempo terms
 - New: flash screen option
 - New: volume boost option
 - New: audio latency correction

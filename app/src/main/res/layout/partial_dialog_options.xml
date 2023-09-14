@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:paddingTop="16dp">
+
+  <TextView
+    style="@style/Widget.Tack.TextView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:layout_marginBottom="4dp"
+    android:text="@string/options_swing" />
+
+  <TextView
+    style="@style/Widget.Tack.TextView.BodyMedium"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:layout_marginBottom="8dp"
+    android:textColor="?attr/colorOnSurfaceVariant"
+    android:text="@string/options_swing_description" />
+
+  <HorizontalScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="none"
+    android:overScrollMode="ifContentScrolls">
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+      android:id="@+id/toggle_options_swing"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:paddingStart="24dp"
+      android:paddingEnd="24dp"
+      app:singleSelection="true"
+      app:selectionRequired="false">
+
+      <Button
+        android:id="@+id/button_options_swing_3"
+        style="@style/Widget.Tack.Button.OutlinedButton"
+        android:text="@string/options_swing_3" />
+
+      <Button
+        android:id="@+id/button_options_swing_5"
+        style="@style/Widget.Tack.Button.OutlinedButton"
+        android:text="@string/options_swing_5" />
+
+      <Button
+        android:id="@+id/button_options_swing_7"
+        style="@style/Widget.Tack.Button.OutlinedButton"
+        android:text="@string/options_swing_7" />
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+  </HorizontalScrollView>
+
+</LinearLayout>
