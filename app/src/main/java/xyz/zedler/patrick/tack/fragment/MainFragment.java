@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
@@ -47,19 +48,18 @@ import xyz.zedler.patrick.tack.databinding.FragmentMainAppBinding;
 import xyz.zedler.patrick.tack.service.MetronomeService.MetronomeListener;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
+import xyz.zedler.patrick.tack.util.MetronomeUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
+import xyz.zedler.patrick.tack.view.BeatView;
 import xyz.zedler.patrick.tack.view.BpmPickerView;
 
 public class MainFragment extends BaseFragment
     implements OnClickListener, MetronomeListener {
 
   private static final String TAG = MainFragment.class.getSimpleName();
-
-  private static final int TEMPO_MIN = 1;
-  private static final int TEMPO_MAX = 400;
 
   private FragmentMainAppBinding binding;
   private MainActivity activity;
@@ -103,7 +103,7 @@ public class MainFragment extends BaseFragment
     systemBarBehavior.setContainer(binding.linearMainContainer);
     systemBarBehavior.setUp();
 
-    new ScrollBehavior().setUpScroll(binding.appBarMain, null, false);
+    new ScrollBehavior().setUpScroll(binding.appBarMain, null, true);
 
     binding.toolbarMain.setOnMenuItemClickListener(item -> {
       int id = item.getItemId();
@@ -132,6 +132,11 @@ public class MainFragment extends BaseFragment
     colorFlashStrong = ResUtil.getColorAttr(activity, R.attr.colorError);
     colorFlashSub = ResUtil.getColorAttr(activity, R.attr.colorPrimaryContainer);
     colorFlashMuted = ResUtil.getColorAttr(activity, android.R.attr.colorBackground);
+
+    binding.linearMainBeats.getLayoutTransition().setDuration(Constants.ANIM_DURATION_LONG);
+    updateBeats(getSharedPrefs().getString(PREF.BEATS, DEF.BEATS).split(" "));
+    binding.linearMainSubs.getLayoutTransition().setDuration(Constants.ANIM_DURATION_LONG);
+    updateSubs(getSharedPrefs().getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(" "));
 
     binding.textSwitcherMainTempoTerm.setFactory(() -> {
       TextView textView = new TextView(activity);
@@ -361,8 +366,18 @@ public class MainFragment extends BaseFragment
       onMetronomeServiceConnected();
     }
 
+    ViewUtil.setTooltipText(binding.buttonMainAddBeat, R.string.action_add_beat);
+    ViewUtil.setTooltipText(binding.buttonMainRemoveBeat, R.string.action_remove_beat);
+    ViewUtil.setTooltipText(binding.buttonMainAddSubdivision, R.string.action_add_sub);
+    ViewUtil.setTooltipText(binding.buttonMainRemoveSubdivision, R.string.action_remove_sub);
+    ViewUtil.setTooltipText(binding.buttonMainBeatMode, R.string.action_beat_mode);
+
     ViewUtil.setOnClickListeners(
         this,
+        binding.buttonMainAddBeat,
+        binding.buttonMainRemoveBeat,
+        binding.buttonMainAddSubdivision,
+        binding.buttonMainRemoveSubdivision,
         binding.buttonMainLess,
         binding.buttonMainMore,
         binding.buttonMainBeatMode,
@@ -400,6 +415,8 @@ public class MainFragment extends BaseFragment
       );
     }
 
+    updateBeats(getMetronomeService().getBeats());
+    updateSubs(getMetronomeService().getSubdivisions());
     refreshBookmarks();
 
     setTempo(getMetronomeService().getTempo());
@@ -478,7 +495,17 @@ public class MainFragment extends BaseFragment
           }
         }, 100);
       }
-      if (!tick.type.equals(TICK_TYPE.SUB)) {
+      View beat = binding.linearMainBeats.getChildAt(tick.beat - 1);
+      if (beat instanceof BeatView && tick.subdivision == 1) {
+        ((BeatView) beat).setTickType(tick.type);
+        ((BeatView) beat).beat();
+      }
+      View subdivision = binding.linearMainSubs.getChildAt(tick.subdivision - 1);
+      if (subdivision instanceof BeatView) {
+        ((BeatView) subdivision).setTickType(tick.subdivision == 1 ? TICK_TYPE.MUTED : tick.type);
+        ((BeatView) subdivision).beat();
+      }
+      if (tick.subdivision == 1) {
         logoUtil.nextBeat(getMetronomeService().getInterval());
       }
     });
@@ -490,7 +517,48 @@ public class MainFragment extends BaseFragment
     if (!isBoundOrShowWarning()) {
       return;
     }
-    if (id == R.id.fab_main_play_pause) {
+    if (id == R.id.button_main_add_beat) {
+      performHapticClick();
+      boolean success = getMetronomeService().addBeat();
+      if (success) {
+        BeatView beatView = new BeatView(activity);
+        beatView.setIndex(binding.linearMainBeats.getChildCount());
+        beatView.setOnClickListener(beat -> {
+          performHapticClick();
+          getMetronomeService().setBeat(beatView.getIndex(), beatView.nextTickType());
+        });
+        binding.linearMainBeats.addView(beatView);
+        updateBeatControls();
+      }
+    } else if (id == R.id.button_main_remove_beat) {
+      performHapticClick();
+      boolean success = getMetronomeService().removeBeat();
+      if (success) {
+        binding.linearMainBeats.removeViewAt(binding.linearMainBeats.getChildCount() - 1);
+        updateBeatControls();
+      }
+    } else if (id == R.id.button_main_add_subdivision) {
+      performHapticClick();
+      boolean success = getMetronomeService().addSubdivision();
+      if (success) {
+        BeatView beatView = new BeatView(activity);
+        beatView.setIsSubdivision(true);
+        beatView.setIndex(binding.linearMainSubs.getChildCount());
+        beatView.setOnClickListener(subdivision -> {
+          performHapticClick();
+          getMetronomeService().setSubdivision(beatView.getIndex(), beatView.nextTickType());
+        });
+        binding.linearMainSubs.addView(beatView);
+        updateSubControls();
+      }
+    } else if (id == R.id.button_main_remove_subdivision) {
+      performHapticClick();
+      boolean success = getMetronomeService().removeSubdivision();
+      if (success) {
+        binding.linearMainSubs.removeViewAt(binding.linearMainSubs.getChildCount() - 1);
+        updateSubControls();
+      }
+    } else if (id == R.id.fab_main_play_pause) {
       if (getMetronomeService().isPlaying()) {
         performHapticClick();
         getMetronomeService().stop();
@@ -574,6 +642,63 @@ public class MainFragment extends BaseFragment
     }
   }
 
+  private void updateBeats(String[] beats) {
+    if (isBound()
+        && binding.linearMainBeats.getChildCount() == getMetronomeService().getBeatsCount()) {
+      return;
+    }
+    binding.linearMainBeats.removeAllViews();
+    for (int i = 0; i < beats.length; i++) {
+      String tickType = beats[i];
+      BeatView beatView = new BeatView(activity);
+      beatView.setTickType(tickType);
+      beatView.setIndex(i);
+      beatView.setOnClickListener(beat -> {
+        performHapticClick();
+        getMetronomeService().setBeat(beatView.getIndex(), beatView.nextTickType());
+      });
+      binding.linearMainBeats.addView(beatView);
+    }
+    updateBeatControls();
+  }
+
+  private void updateBeatControls() {
+    if (isBound()) {
+      int beats = getMetronomeService().getBeatsCount();
+      binding.buttonMainAddBeat.setEnabled(beats < MetronomeUtil.BEATS_MAX);
+      binding.buttonMainRemoveBeat.setEnabled(beats > 1);
+    }
+  }
+
+  private void updateSubs(String[] subdivision) {
+    if (isBound()
+        && binding.linearMainSubs.getChildCount() == getMetronomeService().getSubsCount()) {
+      return;
+    }
+    binding.linearMainSubs.removeAllViews();
+    for (int i = 0; i < subdivision.length; i++) {
+      String tickType = subdivision[i];
+      BeatView beatView = new BeatView(activity);
+      beatView.setIsSubdivision(true);
+      beatView.setTickType(i == 0 ? TICK_TYPE.MUTED : tickType);
+      beatView.setIndex(i);
+      beatView.setOnClickListener(beat -> {
+        performHapticClick();
+        getMetronomeService().setSubdivision(beatView.getIndex(), beatView.nextTickType());
+      });
+      binding.linearMainSubs.addView(beatView);
+    }
+    updateSubControls();
+  }
+
+  private void updateSubControls() {
+    if (isBound()) {
+      int subdivisions = getMetronomeService().getSubsCount();
+      binding.buttonMainAddSubdivision.setEnabled(subdivisions < MetronomeUtil.SUBS_MAX);
+      binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
+    }
+  }
+
   private Chip getBookmarkChip(int tempo) {
     Chip chip = new Chip(activity);
     chip.setCheckable(false);
@@ -621,7 +746,6 @@ public class MainFragment extends BaseFragment
                   .build()
           );
         }
-
         manager.setDynamicShortcuts(shortcuts);
       }
     }
@@ -658,7 +782,7 @@ public class MainFragment extends BaseFragment
     if (isBound()) {
       int bpmNew = getMetronomeService().getTempo() + change;
       setTempo(bpmNew);
-      if (bpmNew >= TEMPO_MIN && bpmNew <= TEMPO_MAX) {
+      if (bpmNew >= MetronomeUtil.TEMPO_MIN && bpmNew <= MetronomeUtil.TEMPO_MAX) {
         performHapticTick();
       }
     }
@@ -668,7 +792,9 @@ public class MainFragment extends BaseFragment
     if (isBound()) {
       int tempoOld = getMetronomeService().getTempo();
       String termOld = getMetronomeService().getTempoTerm();
-      getMetronomeService().setTempo(Math.min(Math.max(bpm, TEMPO_MIN), TEMPO_MAX));
+      getMetronomeService().setTempo(
+          Math.min(Math.max(bpm, MetronomeUtil.TEMPO_MIN), MetronomeUtil.TEMPO_MAX)
+      );
       binding.textMainBpm.setText(String.valueOf(getMetronomeService().getTempo()));
       String termNew = getMetronomeService().getTempoTerm();
       if (!termNew.equals(termOld)) {
@@ -690,7 +816,7 @@ public class MainFragment extends BaseFragment
     if (isBound()) {
       int bpm = getMetronomeService().getTempo();
       binding.buttonMainLess.setEnabled(bpm > 1);
-      binding.buttonMainMore.setEnabled(bpm < TEMPO_MAX);
+      binding.buttonMainMore.setEnabled(bpm < MetronomeUtil.TEMPO_MAX);
     }
   }
 

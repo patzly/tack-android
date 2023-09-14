@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 import androidx.annotation.NonNull;
+import java.util.Arrays;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.SOUND;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
@@ -16,6 +17,11 @@ public class MetronomeUtil implements Runnable {
 
   private static final String TAG = MetronomeUtil.class.getSimpleName();
   private static final boolean DEBUG = false;
+
+  public static final int TEMPO_MIN = 1;
+  public static final int TEMPO_MAX = 400;
+  public static final int BEATS_MAX = 20;
+  public static final int SUBS_MAX = 10;
 
   private final float[] silence = AudioUtil.getSilence();
   private final Context context;
@@ -48,8 +54,50 @@ public class MetronomeUtil implements Runnable {
     this.beats = beats;
   }
 
+  public String[] getBeats() {
+    return beats;
+  }
+
+  public boolean addBeat() {
+    if (beats.length >= BEATS_MAX) {
+      return false;
+    }
+    beats = Arrays.copyOf(beats, beats.length + 1);
+    beats[beats.length - 1] = TICK_TYPE.NORMAL;
+    return true;
+  }
+
+  public boolean removeBeat() {
+    if (beats.length <= 1) {
+      return false;
+    }
+    beats = Arrays.copyOf(beats, beats.length - 1);
+    return true;
+  }
+
   public void setSubdivisions(String[] subdivisions) {
     this.subdivisions = subdivisions;
+  }
+
+  public String[] getSubdivisions() {
+    return subdivisions;
+  }
+
+  public boolean addSubdivision() {
+    if (subdivisions.length >= SUBS_MAX) {
+      return false;
+    }
+    subdivisions = Arrays.copyOf(subdivisions, subdivisions.length + 1);
+    subdivisions[subdivisions.length - 1] = TICK_TYPE.SUB;
+    return true;
+  }
+
+  public boolean removeSubdivision() {
+    if (subdivisions.length <= 1) {
+      return false;
+    }
+    subdivisions = Arrays.copyOf(subdivisions, subdivisions.length - 1);
+    return true;
   }
 
   public void setTempo(int tempo) {
@@ -138,7 +186,7 @@ public class MetronomeUtil implements Runnable {
     if (playing) {
       handler.postDelayed(this, getInterval() / subdivisions.length);
 
-      Tick tick = new Tick(getCurrentBeat(), getCurrentTickType());
+      Tick tick = new Tick(getCurrentBeat(), getCurrentSubdivision(), getCurrentTickType());
       if (listener != null) {
         listener.onTick(tick);
       }
@@ -183,9 +231,13 @@ public class MetronomeUtil implements Runnable {
     return (int) ((tickCount / subdivisions.length) % beats.length) + 1;
   }
 
+  private int getCurrentSubdivision() {
+    return (int) (tickCount % subdivisions.length) + 1;
+  }
+
   private String getCurrentTickType() {
-    if (tickCount % subdivisions.length == 0) {
-      return beats[(int) (tickCount % beats.length)];
+    if ((tickCount % subdivisions.length) == 0) {
+      return beats[(int) ((tickCount / subdivisions.length) % beats.length)];
     } else {
       return subdivisions[(int) (tickCount % subdivisions.length)];
     }
@@ -212,18 +264,19 @@ public class MetronomeUtil implements Runnable {
   }
 
   public static class Tick {
-    public final int beat;
+    public final int beat, subdivision;
     @NonNull public final String type;
 
-    public Tick(int beat, @NonNull String type) {
+    public Tick(int beat, int subdivision, @NonNull String type) {
       this.beat = beat;
+      this.subdivision = subdivision;
       this.type = type;
     }
 
     @NonNull
     @Override
     public String toString() {
-      return "Tick{beat=" + beat + ", type=" + type + '}';
+      return "Tick{beat=" + beat + ", sub=" + subdivision + ", type=" + type + '}';
     }
   }
 }

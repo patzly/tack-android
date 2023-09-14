@@ -27,8 +27,6 @@ public final class Constants {
     public final static String BOOKMARKS = "bookmarks";
 
     @Deprecated
-    public final static String INTERVAL = "interval";
-    @Deprecated
     public final static String EMPHASIS = "emphasis";
   }
 
@@ -44,38 +42,15 @@ public final class Constants {
         + " " + TICK_TYPE.NORMAL + " " + TICK_TYPE.NORMAL;
     public final static String SUBDIVISIONS = TICK_TYPE.MUTED;
     public final static boolean BEAT_MODE_VIBRATE = false;
-    public final static boolean ALWAYS_VIBRATE = false;
+    public final static boolean ALWAYS_VIBRATE = true;
     public final static boolean FLASH_SCREEN = false;
     public final static boolean KEEP_AWAKE = true;
     public final static String SOUND = Constants.SOUND.WOOD;
-    public final static long LATENCY = 75;
+    public final static long LATENCY = 100;
     public final static int GAIN = 0;
 
     @Deprecated
-    public final static boolean EMPHASIS_SLIDER = false;
-    @Deprecated
-    public final static boolean DARK_MODE = false;
-    @Deprecated
-    public final static long INTERVAL = 500;
-    @Deprecated
     public final static int EMPHASIS = 50;
-  }
-
-  @Deprecated
-  public final static class SETTINGS {
-
-    @Deprecated
-    public final static String SOUND = "sound";
-    @Deprecated
-    public final static String VIBRATE_ALWAYS = "vibrate_always";
-    @Deprecated
-    public final static String HAPTIC_FEEDBACK = "haptic_feedback";
-    @Deprecated
-    public final static String EMPHASIS_SLIDER = "emphasis_slider";
-    @Deprecated
-    public final static String DARK_MODE = "force_dark_mode";
-    @Deprecated
-    public final static String KEEP_AWAKE = "keep_awake";
   }
 
   public final static class SOUND {
@@ -99,7 +74,6 @@ public final class Constants {
 
     public final static String START = "xyz.zedler.patrick.tack.intent.action.START";
     public final static String STOP = "xyz.zedler.patrick.tack.intent.action.STOP";
-    public final static String REFRESH = "xyz.zedler.patrick.tack.intent.action.REFRESH";
   }
 
   public final static class EXTRA {
@@ -108,10 +82,6 @@ public final class Constants {
     public static final String INSTANCE_STATE = "instance_state";
     public static final String SCROLL_POSITION = "scroll_position";
     public static final String TEMPO = "tempo";
-
-    public final static String TITLE = "title";
-    public final static String FILE = "file";
-    public final static String LINK = "link";
   }
 
   public static final class THEME {

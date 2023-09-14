@@ -41,7 +41,7 @@ public class SelectionCardView extends MaterialCardView {
     setRadius(outerRadius);
     setCardElevation(0);
     setCardForegroundColor(null);
-    super.setCardBackgroundColor(SurfaceColors.SURFACE_1.getColor(context));
+    super.setCardBackgroundColor(SurfaceColors.SURFACE_2.getColor(context));
     setRippleColor(ColorStateList.valueOf(ResUtil.getColorHighlight(context)));
     setStrokeWidth(0);
     setCheckable(true);

@@ -8,6 +8,7 @@ import android.util.TypedValue;
 import android.view.Menu;
 import android.view.MenuItem;
 import androidx.annotation.AttrRes;
+import androidx.annotation.DimenRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
@@ -86,5 +87,9 @@ public class ResUtil {
     if (icon != null) {
       icon.setTint(ResUtil.getColorAttr(context, R.attr.colorOnSurfaceVariant));
     }
+  }
+
+  public static int getDimension(Context context, @DimenRes int resId) {
+    return (int) context.getResources().getDimension(resId);
   }
 }

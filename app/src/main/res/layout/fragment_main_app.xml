@@ -58,18 +58,112 @@
     android:id="@+id/linear_main_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_marginTop="?attr/actionBarSize">
 
-    <LinearLayout
-      android:layout_width="wrap_content"
-      android:layout_height="150dp"
-      android:orientation="horizontal"
-      android:layout_gravity="center_horizontal|top"
-      android:gravity="center_vertical"
-      android:animateLayoutChanges="true"
-      android:clipToPadding="false">
+    <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingTop="16dp"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp">
 
-    </LinearLayout>
+      <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_max="@dimen/max_content_width"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal"
+          android:padding="4dp"
+          android:layout_marginBottom="12dp"
+          android:background="@drawable/shape_beats">
+
+          <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_main_remove_beat"
+            style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+            android:contentDescription="@string/action_remove_beat"
+            app:icon="@drawable/ic_round_remove"
+            app:backgroundTint="@color/transparent" />
+
+          <HorizontalScrollView
+            android:id="@+id/scroll_horiz_main_beats"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:scrollbars="none"
+            android:overScrollMode="ifContentScrolls"
+            android:fadingEdge="horizontal"
+            android:requiresFadingEdge="horizontal">
+
+            <LinearLayout
+              android:id="@+id/linear_main_beats"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:orientation="horizontal"
+              android:layout_gravity="center_horizontal"
+              android:animateLayoutChanges="true" />
+
+          </HorizontalScrollView>
+
+          <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_main_add_beat"
+            style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+            android:contentDescription="@string/action_add_beat"
+            app:icon="@drawable/ic_round_add"
+            app:backgroundTint="@color/transparent" />
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal"
+          android:padding="4dp">
+
+          <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_main_remove_subdivision"
+            style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+            android:contentDescription="@string/action_remove_sub"
+            app:icon="@drawable/ic_round_remove" />
+
+          <HorizontalScrollView
+            android:id="@+id/scroll_horiz_main_subs"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:scrollbars="none"
+            android:overScrollMode="ifContentScrolls"
+            android:fadingEdge="horizontal"
+            android:requiresFadingEdge="horizontal">
+
+            <LinearLayout
+              android:id="@+id/linear_main_subs"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:orientation="horizontal"
+              android:layout_gravity="center_horizontal"
+              android:animateLayoutChanges="true" />
+
+          </HorizontalScrollView>
+
+          <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_main_add_subdivision"
+            style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+            android:contentDescription="@string/action_add_sub"
+            app:icon="@drawable/ic_round_add" />
+
+        </LinearLayout>
+
+      </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <FrameLayout
       android:layout_width="match_parent"

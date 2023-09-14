@@ -207,6 +207,80 @@ public class MetronomeService extends Service implements TickListener {
     return metronomeUtil.getInterval();
   }
 
+  public void setBeats(String[] beats) {
+    metronomeUtil.setBeats(beats);
+    sharedPrefs.edit().putString(PREF.BEATS, String.join(" ", beats)).apply();
+  }
+
+  public String[] getBeats() {
+    return metronomeUtil.getBeats();
+  }
+
+  public int getBeatsCount() {
+    return getBeats().length;
+  }
+
+  public void setBeat(int beat, String tickType) {
+    String[] beats = getBeats();
+    beats[beat] = tickType;
+    setBeats(beats);
+  }
+
+  public boolean addBeat() {
+    boolean success = metronomeUtil.addBeat();
+    if (success) {
+      sharedPrefs.edit().putString(PREF.BEATS, String.join(" ", getBeats())).apply();
+    }
+    return success;
+  }
+
+  public boolean removeBeat() {
+    boolean success = metronomeUtil.removeBeat();
+    if (success) {
+      sharedPrefs.edit().putString(PREF.BEATS, String.join(" ", getBeats())).apply();
+    }
+    return success;
+  }
+
+  public void setSubdivisions(String[] subdivisions) {
+    metronomeUtil.setSubdivisions(subdivisions);
+    sharedPrefs.edit().putString(PREF.SUBDIVISIONS, String.join(" ", subdivisions)).apply();
+  }
+
+  public String[] getSubdivisions() {
+    return metronomeUtil.getSubdivisions();
+  }
+
+  public int getSubsCount() {
+    return getSubdivisions().length;
+  }
+
+  public void setSubdivision(int subdivision, String tickType) {
+    String[] subdivisions = getSubdivisions();
+    subdivisions[subdivision] = tickType;
+    setSubdivisions(subdivisions);
+  }
+
+  public boolean addSubdivision() {
+    boolean success = metronomeUtil.addSubdivision();
+    if (success) {
+      sharedPrefs.edit()
+          .putString(PREF.SUBDIVISIONS, String.join(" ", getSubdivisions()))
+          .apply();
+    }
+    return success;
+  }
+
+  public boolean removeSubdivision() {
+    boolean success = metronomeUtil.removeSubdivision();
+    if (success) {
+      sharedPrefs.edit()
+          .putString(PREF.SUBDIVISIONS, String.join(" ", getSubdivisions()))
+          .apply();
+    }
+    return success;
+  }
+
   public void setSound(String sound) {
     metronomeUtil.setSound(sound);
     sharedPrefs.edit().putString(PREF.SOUND, sound).apply();

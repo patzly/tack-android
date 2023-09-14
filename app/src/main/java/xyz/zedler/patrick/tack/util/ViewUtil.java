@@ -23,9 +23,11 @@ import androidx.annotation.AttrRes;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
+import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat.Type;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
@@ -306,5 +308,9 @@ public class ViewUtil {
         view.setAlpha(enabled ? 1 : 0.5f);
       }
     }
+  }
+
+  public static void setTooltipText(@NonNull View view, @StringRes int resId) {
+    ViewCompat.setTooltipText(view, view.getContext().getString(resId));
   }
 }

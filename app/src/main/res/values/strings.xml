@@ -49,6 +49,10 @@
   <string name="action_play">Play</string>
   <string name="action_play_pause">Play/Pause</string>
   <string name="action_stop">Stop</string>
+  <string name="action_add_beat">Add beat</string>
+  <string name="action_remove_beat">Remove beat</string>
+  <string name="action_add_sub">Add subdivision</string>
+  <string name="action_remove_sub">Remove subdivision</string>
   <string name="action_clear_all">Clear all</string>
   <string name="action_tempo_tap">Tap tempo</string>
   <string name="action_emphasis">Emphasis</string>

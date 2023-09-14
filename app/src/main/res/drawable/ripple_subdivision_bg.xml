@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:color="@color/selector_tonal_button_ripple">
+
+  <item
+    android:left="4dp"
+    android:right="4dp"
+    android:top="4dp"
+    android:bottom="4dp">
+    <shape android:shape="oval">
+      <corners android:radius="16dp" />
+      <solid android:color="?android:attr/colorBackground" />
+    </shape>
+  </item>
+
+</ripple>
