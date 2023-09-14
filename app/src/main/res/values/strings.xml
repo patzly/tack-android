@@ -167,8 +167,5 @@
   <string name="license_material_icons" translatable="false">Material Design Icons</string>
   <string name="license_material_icons_link" translatable="false">https://github.com/google/material-design-icons</string>
   <string name="license_author_google" translatable="false">Google</string>
-  <string name="license_metronome" translatable="false">Metronome Android</string>
-  <string name="license_metronome_link" translatable="false">https://github.com/fennifith/Metronome-Android</string>
-  <string name="license_metronome_author" translatable="false">James Fenn</string>
 
 </resources>

@@ -133,8 +133,10 @@ public class MainFragment extends BaseFragment
     colorFlashSub = ResUtil.getColorAttr(activity, R.attr.colorPrimaryContainer);
     colorFlashMuted = ResUtil.getColorAttr(activity, android.R.attr.colorBackground);
 
+    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
     binding.linearMainBeats.getLayoutTransition().setDuration(Constants.ANIM_DURATION_LONG);
     updateBeats(getSharedPrefs().getString(PREF.BEATS, DEF.BEATS).split(" "));
+    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
     binding.linearMainSubs.getLayoutTransition().setDuration(Constants.ANIM_DURATION_LONG);
     updateSubs(getSharedPrefs().getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(" "));
 
@@ -518,6 +520,7 @@ public class MainFragment extends BaseFragment
       return;
     }
     if (id == R.id.button_main_add_beat) {
+      ViewUtil.startIcon(binding.buttonMainAddBeat.getIcon());
       performHapticClick();
       boolean success = getMetronomeService().addBeat();
       if (success) {
@@ -528,16 +531,22 @@ public class MainFragment extends BaseFragment
           getMetronomeService().setBeat(beatView.getIndex(), beatView.nextTickType());
         });
         binding.linearMainBeats.addView(beatView);
+        ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
         updateBeatControls();
       }
     } else if (id == R.id.button_main_remove_beat) {
+      ViewUtil.startIcon(binding.buttonMainRemoveBeat.getIcon());
       performHapticClick();
       boolean success = getMetronomeService().removeBeat();
       if (success) {
         binding.linearMainBeats.removeViewAt(binding.linearMainBeats.getChildCount() - 1);
+        ViewUtil.centerScrollContentIfNotFullWidth(
+            binding.scrollHorizMainBeats, true
+        );
         updateBeatControls();
       }
     } else if (id == R.id.button_main_add_subdivision) {
+      ViewUtil.startIcon(binding.buttonMainAddSubdivision.getIcon());
       performHapticClick();
       boolean success = getMetronomeService().addSubdivision();
       if (success) {
@@ -549,13 +558,16 @@ public class MainFragment extends BaseFragment
           getMetronomeService().setSubdivision(beatView.getIndex(), beatView.nextTickType());
         });
         binding.linearMainSubs.addView(beatView);
+        ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
         updateSubControls();
       }
     } else if (id == R.id.button_main_remove_subdivision) {
+      ViewUtil.startIcon(binding.buttonMainRemoveSubdivision.getIcon());
       performHapticClick();
       boolean success = getMetronomeService().removeSubdivision();
       if (success) {
         binding.linearMainSubs.removeViewAt(binding.linearMainSubs.getChildCount() - 1);
+        ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs, true);
         updateSubControls();
       }
     } else if (id == R.id.fab_main_play_pause) {
@@ -659,6 +671,7 @@ public class MainFragment extends BaseFragment
       });
       binding.linearMainBeats.addView(beatView);
     }
+    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
     updateBeatControls();
   }
 
@@ -688,6 +701,7 @@ public class MainFragment extends BaseFragment
       });
       binding.linearMainSubs.addView(beatView);
     }
+    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
     updateSubControls();
   }
 

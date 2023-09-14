@@ -132,14 +132,16 @@ public class BeatView extends FrameLayout {
     String next;
     switch (tickType) {
       case TICK_TYPE.NORMAL:
-        next = isSubdivision ? TICK_TYPE.SUB : TICK_TYPE.STRONG;
+        next = isSubdivision ? TICK_TYPE.MUTED : TICK_TYPE.STRONG;
         break;
       case TICK_TYPE.STRONG:
-      case TICK_TYPE.SUB:
         next = TICK_TYPE.MUTED;
         break;
-      default:
+      case TICK_TYPE.SUB:
         next = TICK_TYPE.NORMAL;
+        break;
+      default:
+        next = isSubdivision ? TICK_TYPE.SUB : TICK_TYPE.NORMAL;
     }
     if (isSubdivision && index == 0) {
       return TICK_TYPE.MUTED;

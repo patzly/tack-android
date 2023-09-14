@@ -74,8 +74,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
         binding.linearAboutPrivacy,
         binding.linearAboutLicenseJost,
         binding.linearAboutLicenseMaterialComponents,
-        binding.linearAboutLicenseMaterialIcons,
-        binding.linearAboutLicenseMetronome
+        binding.linearAboutLicenseMaterialIcons
     );
   }
 
@@ -134,13 +133,6 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
           R.raw.license_apache,
           R.string.license_material_icons,
           R.string.license_material_icons_link
-      );
-    } else if (id == R.id.linear_about_license_metronome) {
-      ViewUtil.startIcon(binding.imageAboutLicenseMetronome);
-      activity.showTextBottomSheet(
-          R.raw.license_apache,
-          R.string.license_metronome,
-          R.string.license_metronome_link
       );
     }
   }

@@ -14,9 +14,11 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.view.Window;
 import android.widget.CompoundButton;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.AttrRes;
@@ -312,5 +314,45 @@ public class ViewUtil {
 
   public static void setTooltipText(@NonNull View view, @StringRes int resId) {
     ViewCompat.setTooltipText(view, view.getContext().getString(resId));
+  }
+
+  public static void centerScrollContentIfNotFullWidth(HorizontalScrollView scrollView) {
+    centerScrollContentIfNotFullWidth(scrollView, false);
+  }
+
+  public static void centerScrollContentIfNotFullWidth(
+      HorizontalScrollView scrollView, boolean canCenterEarlier
+  ) {
+    if (scrollView.isLaidOut()) {
+      centerScrollContentIfPossible(scrollView, canCenterEarlier);
+      return;
+    }
+    scrollView.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override
+          public void onGlobalLayout() {
+            centerScrollContentIfPossible(scrollView, canCenterEarlier);
+            if (scrollView.getViewTreeObserver().isAlive()) {
+              scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+          }
+        });
+  }
+
+  private static void centerScrollContentIfPossible(
+      HorizontalScrollView scrollView, boolean canCenterEarlier
+  ) {
+    if (scrollView.getChildCount() == 0) {
+      return;
+    }
+    View content = scrollView.getChildAt(0);
+    int scrollWidth = scrollView.getWidth();
+    int tolerance = UiUtil.dpToPx(scrollView.getContext(), 16) * (canCenterEarlier ? -1 : 1);
+    int contentWidth = content.getWidth() + tolerance;
+    ((HorizontalScrollView.LayoutParams) content.getLayoutParams()).gravity =
+        contentWidth >= scrollWidth
+            ? Gravity.START
+            : Gravity.CENTER_HORIZONTAL;
+    content.requestLayout();
   }
 }

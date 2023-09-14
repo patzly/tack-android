@@ -79,17 +79,17 @@
 
         <LinearLayout
           android:layout_width="match_parent"
-          android:layout_height="wrap_content"
+          android:layout_height="56dp"
           android:orientation="horizontal"
-          android:padding="4dp"
-          android:layout_marginBottom="12dp"
+          android:layout_marginBottom="8dp"
           android:background="@drawable/shape_beats">
 
           <com.google.android.material.button.MaterialButton
             android:id="@+id/button_main_remove_beat"
             style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
             android:contentDescription="@string/action_remove_beat"
-            app:icon="@drawable/ic_round_remove"
+            android:layout_margin="4dp"
+            app:icon="@drawable/ic_round_remove_anim"
             app:backgroundTint="@color/transparent" />
 
           <HorizontalScrollView
@@ -97,17 +97,20 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:scrollbars="none"
-            android:overScrollMode="ifContentScrolls"
+            android:overScrollMode="never"
+            android:scrollbars="horizontal"
+            android:scrollbarThumbHorizontal="@drawable/shape_scrollbar_rounded"
             android:fadingEdge="horizontal"
             android:requiresFadingEdge="horizontal">
 
             <LinearLayout
               android:id="@+id/linear_main_beats"
               android:layout_width="wrap_content"
-              android:layout_height="match_parent"
+              android:layout_height="48dp"
               android:orientation="horizontal"
               android:layout_gravity="center_horizontal"
+              android:layout_marginTop="4dp"
+              android:layout_marginBottom="4dp"
               android:animateLayoutChanges="true" />
 
           </HorizontalScrollView>
@@ -116,7 +119,8 @@
             android:id="@+id/button_main_add_beat"
             style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
             android:contentDescription="@string/action_add_beat"
-            app:icon="@drawable/ic_round_add"
+            android:layout_margin="4dp"
+            app:icon="@drawable/ic_round_add_anim"
             app:backgroundTint="@color/transparent" />
 
         </LinearLayout>
@@ -131,7 +135,7 @@
             android:id="@+id/button_main_remove_subdivision"
             style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
             android:contentDescription="@string/action_remove_sub"
-            app:icon="@drawable/ic_round_remove" />
+            app:icon="@drawable/ic_round_remove_anim" />
 
           <HorizontalScrollView
             android:id="@+id/scroll_horiz_main_subs"
@@ -157,7 +161,7 @@
             android:id="@+id/button_main_add_subdivision"
             style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
             android:contentDescription="@string/action_add_sub"
-            app:icon="@drawable/ic_round_add" />
+            app:icon="@drawable/ic_round_add_anim" />
 
         </LinearLayout>
 
