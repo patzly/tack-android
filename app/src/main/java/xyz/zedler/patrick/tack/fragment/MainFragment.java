@@ -45,7 +45,7 @@ import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.activity.ShortcutActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
-import xyz.zedler.patrick.tack.databinding.FragmentMainAppBinding;
+import xyz.zedler.patrick.tack.databinding.FragmentMainBinding;
 import xyz.zedler.patrick.tack.service.MetronomeService.MetronomeListener;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
@@ -61,7 +61,7 @@ public class MainFragment extends BaseFragment
 
   private static final String TAG = MainFragment.class.getSimpleName();
 
-  private FragmentMainAppBinding binding;
+  private FragmentMainBinding binding;
   private MainActivity activity;
   private long prevTouchTime;
   private final List<Long> intervals = new ArrayList<>();
@@ -69,7 +69,7 @@ public class MainFragment extends BaseFragment
   private LogoUtil logoUtil;
   private ValueAnimator fabAnimator;
   private float cornerSizePause, cornerSizePlay, cornerSizeCurrent;
-  private int colorFlashNormal, colorFlashStrong, colorFlashSub, colorFlashMuted;
+  private int colorFlashNormal, colorFlashStrong, colorFlashMuted;
   private View viewOptions;
   private DialogUtil dialogUtilGain, dialogUtilOptions;
   private List<Integer> bookmarks;
@@ -78,7 +78,7 @@ public class MainFragment extends BaseFragment
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState
   ) {
-    binding = FragmentMainAppBinding.inflate(inflater, container, false);
+    binding = FragmentMainBinding.inflate(inflater, container, false);
     return binding.getRoot();
   }
 
@@ -132,7 +132,6 @@ public class MainFragment extends BaseFragment
 
     colorFlashNormal = ResUtil.getColorAttr(activity, R.attr.colorPrimary);
     colorFlashStrong = ResUtil.getColorAttr(activity, R.attr.colorError);
-    colorFlashSub = ResUtil.getColorAttr(activity, R.attr.colorPrimaryContainer);
     colorFlashMuted = ResUtil.getColorAttr(activity, android.R.attr.colorBackground);
 
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
@@ -478,6 +477,28 @@ public class MainFragment extends BaseFragment
   }
 
   @Override
+  public void onMetronomePreTick(Tick tick) {
+    if (!isBound()) {
+      return;
+    }
+    activity.runOnUiThread(() -> {
+      if (binding == null) {
+        return;
+      }
+      View beat = binding.linearMainBeats.getChildAt(tick.beat - 1);
+      if (beat instanceof BeatView && tick.subdivision == 1) {
+        ((BeatView) beat).setTickType(tick.type);
+        ((BeatView) beat).beat();
+      }
+      View subdivision = binding.linearMainSubs.getChildAt(tick.subdivision - 1);
+      if (subdivision instanceof BeatView) {
+        ((BeatView) subdivision).setTickType(tick.subdivision == 1 ? TICK_TYPE.MUTED : tick.type);
+        ((BeatView) subdivision).beat();
+      }
+    });
+  }
+
+  @Override
   public void onMetronomeTick(Tick tick) {
     if (!isBound()) {
       return;
@@ -493,8 +514,6 @@ public class MainFragment extends BaseFragment
             color = colorFlashStrong;
             break;
           case TICK_TYPE.SUB:
-            color = colorFlashSub;
-            break;
           case TICK_TYPE.MUTED:
             color = colorFlashMuted;
             break;
@@ -508,16 +527,6 @@ public class MainFragment extends BaseFragment
             binding.coordinatorContainer.setBackgroundColor(colorFlashMuted);
           }
         }, 100);
-      }
-      View beat = binding.linearMainBeats.getChildAt(tick.beat - 1);
-      if (beat instanceof BeatView && tick.subdivision == 1) {
-        ((BeatView) beat).setTickType(tick.type);
-        ((BeatView) beat).beat();
-      }
-      View subdivision = binding.linearMainSubs.getChildAt(tick.subdivision - 1);
-      if (subdivision instanceof BeatView) {
-        ((BeatView) subdivision).setTickType(tick.subdivision == 1 ? TICK_TYPE.MUTED : tick.type);
-        ((BeatView) subdivision).beat();
       }
       if (tick.subdivision == 1) {
         logoUtil.nextBeat(getMetronomeService().getInterval());
@@ -771,7 +780,8 @@ public class MainFragment extends BaseFragment
       refreshBookmarks();
     });
     chip.setStateListAnimator(null);
-    chip.setText(String.valueOf(tempo));
+    chip.setText(getString(R.string.label_bpm_number, tempo));
+    chip.setTag(tempo);
     chip.setTextAppearance(R.style.TextAppearance_Tack_LabelLarge);
     chip.setOnClickListener(v -> {
       performHapticClick();
@@ -798,7 +808,7 @@ public class MainFragment extends BaseFragment
       for (int bpm : bookmarks) {
         shortcuts.add(
             new ShortcutInfo.Builder(activity, String.valueOf(bpm))
-                .setShortLabel(getString(R.string.label_bpm_number, String.valueOf(bpm)))
+                .setShortLabel(getString(R.string.label_bpm_number, bpm))
                 .setIcon(Icon.createWithResource(activity, R.mipmap.ic_shortcut))
                 .setIntent(new Intent(activity, ShortcutActivity.class)
                     .setAction(ACTION.START)
@@ -821,8 +831,8 @@ public class MainFragment extends BaseFragment
       if (chip == null) {
         continue;
       }
-      boolean isActive = Integer.parseInt(chip.getText().toString())
-          == getMetronomeService().getTempo();
+      Object tag = chip.getTag();
+      boolean isActive = tag != null && ((int) tag) == getMetronomeService().getTempo();
       int colorBg = isActive
           ? ResUtil.getColorAttr(activity, R.attr.colorTertiaryContainer)
           : Color.TRANSPARENT;

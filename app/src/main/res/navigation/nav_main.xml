@@ -10,7 +10,7 @@
     android:id="@+id/mainFragment"
     android:name="xyz.zedler.patrick.tack.fragment.MainFragment"
     android:label="fragment_main"
-    tools:layout="@layout/fragment_main_app" >
+    tools:layout="@layout/fragment_main" >
 
     <action
       android:id="@+id/action_main_to_settings"
@@ -26,7 +26,7 @@
     android:id="@+id/settingsFragment"
     android:name="xyz.zedler.patrick.tack.fragment.SettingsFragment"
     android:label="fragment_settings"
-    tools:layout="@layout/fragment_settings_app">
+    tools:layout="@layout/fragment_settings">
 
     <action
       android:id="@+id/action_settings_to_about"
@@ -42,7 +42,7 @@
     android:id="@+id/aboutFragment"
     android:name="xyz.zedler.patrick.tack.fragment.AboutFragment"
     android:label="fragment_about"
-    tools:layout="@layout/fragment_about_app" />
+    tools:layout="@layout/fragment_about" />
 
   <dialog
     android:id="@+id/textBottomSheetDialogFragment"

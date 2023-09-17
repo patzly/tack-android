@@ -9,6 +9,7 @@
 - New: flash screen option
 - New: volume boost option
 - New: audio latency correction
+- Improved: bookmark shortcuts
 - Fixed: inconsistent audio beats on many devices
 
 ## 3.0.2

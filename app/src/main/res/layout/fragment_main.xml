@@ -82,7 +82,8 @@
           android:layout_height="56dp"
           android:orientation="horizontal"
           android:layout_marginBottom="8dp"
-          android:background="@drawable/shape_beats">
+          android:background="@drawable/shape_beats"
+          android:backgroundTint="?attr/colorSurfaceContainerHigh">
 
           <com.google.android.material.button.MaterialButton
             android:id="@+id/button_main_remove_beat"

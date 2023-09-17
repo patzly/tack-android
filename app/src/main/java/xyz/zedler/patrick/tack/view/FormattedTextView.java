@@ -49,7 +49,7 @@ public class FormattedTextView extends LinearLayout {
   private void init() {
     setOrientation(VERTICAL);
     setPadding(0, UiUtil.dpToPx(context, 16), 0, 0);
-    textColor = ResUtil.getColorAttr(context, R.attr.colorOnBackground);
+    textColor = ResUtil.getColorAttr(context, R.attr.colorOnSurface);
     textColorVariant = ResUtil.getColorAttr(context, R.attr.colorOnSurfaceVariant);
   }
 

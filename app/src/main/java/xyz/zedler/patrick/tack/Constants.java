@@ -4,13 +4,14 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 public final class Constants {
 
-  public final static int ANIM_DURATION_LONG = 400;
-  public final static int ANIM_DURATION_SHORT = 250;
+  public final static long ANIM_DURATION_LONG = 400;
+  public final static long ANIM_DURATION_SHORT = 250;
+  public static final long BEAT_ANIM_OFFSET = 25;
   public static final int TEMPO_MIN = 1;
   public static final int TEMPO_MAX = 400;
   public static final int BEATS_MAX = 20;
   public static final int SUBS_MAX = 10;
-  public static final int BOOKMARKS_MAX = 6;
+  public static final int BOOKMARKS_MAX = 4;
 
   public final static class PREF {
     // General

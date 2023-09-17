@@ -35,7 +35,7 @@ import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
-import xyz.zedler.patrick.tack.databinding.FragmentSettingsAppBinding;
+import xyz.zedler.patrick.tack.databinding.FragmentSettingsBinding;
 import xyz.zedler.patrick.tack.service.MetronomeService.MetronomeListener;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
@@ -51,18 +51,19 @@ public class SettingsFragment extends BaseFragment
 
   private static final String TAG = SettingsFragment.class.getSimpleName();
 
-  private FragmentSettingsAppBinding binding;
+  private FragmentSettingsBinding binding;
   private MainActivity activity;
   private DialogUtil dialogUtilReset, dialogUtilSound;
   private boolean flashScreen, wasPlaying, wasBeatModeVibrate, wasAlwaysVibrate;
   private int wasTempo, wasGain;
+  String[] wasBeats, wasSubs;
   private Drawable itemBgFlash;
 
   @Override
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState
   ) {
-    binding = FragmentSettingsAppBinding.inflate(inflater, container, false);
+    binding = FragmentSettingsBinding.inflate(inflater, container, false);
     return binding.getRoot();
   }
 
@@ -204,11 +205,15 @@ public class SettingsFragment extends BaseFragment
         if (isBound()) {
           wasPlaying = getMetronomeService().isPlaying();
           wasTempo = getMetronomeService().getTempo();
+          wasBeats = getMetronomeService().getBeats();
+          wasSubs = getMetronomeService().getSubdivisions();
           wasBeatModeVibrate = getMetronomeService().isBeatModeVibrate();
           wasAlwaysVibrate = getMetronomeService().isAlwaysVibrate();
           wasGain = getMetronomeService().getGain();
           // Turn all visuals and audio on and start playing if not already started
           getMetronomeService().setTempo(80);
+          getMetronomeService().setBeats(DEF.BEATS.split(","));
+          getMetronomeService().setSubdivisions(DEF.SUBDIVISIONS.split(","));
           getMetronomeService().setBeatModeVibrate(false);
           getMetronomeService().setAlwaysVibrate(true);
           getMetronomeService().setGain(0);
@@ -227,6 +232,8 @@ public class SettingsFragment extends BaseFragment
             getMetronomeService().stop();
           }
           getMetronomeService().setTempo(wasTempo);
+          getMetronomeService().setBeats(wasBeats);
+          getMetronomeService().setSubdivisions(wasSubs);
           getMetronomeService().setBeatModeVibrate(wasBeatModeVibrate);
           getMetronomeService().setAlwaysVibrate(wasAlwaysVibrate);
           getMetronomeService().setGain(wasGain);
@@ -244,9 +251,7 @@ public class SettingsFragment extends BaseFragment
     binding.sliderSettingsGain.setValue(getSharedPrefs().getInt(PREF.GAIN, DEF.GAIN));
     binding.sliderSettingsGain.addOnChangeListener(this);
     binding.sliderSettingsGain.setLabelFormatter(
-        value -> getString(
-            R.string.label_db, String.format(activity.getLocale(), "%.0f", value)
-        )
+        value -> getString(R.string.label_db, (int) value)
     );
 
     binding.switchSettingsAlwaysVibrate.setChecked(
@@ -301,6 +306,9 @@ public class SettingsFragment extends BaseFragment
 
   @Override
   public void onMetronomeStop() {}
+
+  @Override
+  public void onMetronomePreTick(Tick tick) {}
 
   @Override
   public void onMetronomeTick(Tick tick) {

@@ -15,20 +15,20 @@ import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
-import xyz.zedler.patrick.tack.databinding.FragmentAboutAppBinding;
+import xyz.zedler.patrick.tack.databinding.FragmentAboutBinding;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class AboutFragment extends BaseFragment implements OnClickListener {
 
-  private FragmentAboutAppBinding binding;
+  private FragmentAboutBinding binding;
   private MainActivity activity;
 
   @Override
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState
   ) {
-    binding = FragmentAboutAppBinding.inflate(inflater, container, false);
+    binding = FragmentAboutBinding.inflate(inflater, container, false);
     return binding.getRoot();
   }
 

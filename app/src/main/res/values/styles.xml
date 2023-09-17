@@ -228,6 +228,30 @@
     <item name="rippleColor">@color/selector_highlight</item>
   </style>
 
+  <!-- TextInputLayout -->
+
+  <style
+    name="Widget.Tack.TextInputLayout.FilledBox"
+    parent="Widget.Material3.TextInputLayout.FilledBox">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="errorIconDrawable">@null</item>
+    <item name="boxCornerRadiusTopStart">16dp</item>
+    <item name="boxCornerRadiusTopEnd">16dp</item>
+  </style>
+
+  <style
+    name="Widget.Tack.TextInputLayout.OutlinedBox"
+    parent="Widget.Material3.TextInputLayout.OutlinedBox">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="errorIconDrawable">@null</item>
+    <item name="boxCornerRadiusTopStart">16dp</item>
+    <item name="boxCornerRadiusTopEnd">16dp</item>
+    <item name="boxCornerRadiusBottomStart">16dp</item>
+    <item name="boxCornerRadiusBottomEnd">16dp</item>
+  </style>
+
   <!-- CheckBox -->
 
   <style name="Widget.Tack.CheckBox" parent="Widget.Material3.CompoundButton.CheckBox">
@@ -471,7 +495,7 @@
 
   <style name="Base.Tack.TextView" parent="Widget.MaterialComponents.TextView">
     <item name="android:textAppearance">?attr/textAppearanceBodyLarge</item>
-    <item name="android:textColor">?attr/colorOnBackground</item>
+    <item name="android:textColor">?attr/colorOnSurface</item>
     <item name="android:textAlignment">viewStart</item>
     <item name="android:fontFamily">@font/jost_book</item>
     <item name="fontFamily">@font/jost_book</item>

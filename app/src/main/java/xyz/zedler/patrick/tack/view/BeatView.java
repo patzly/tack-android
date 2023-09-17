@@ -21,6 +21,14 @@ import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class BeatView extends FrameLayout {
 
+  private static final int[] SHAPES = new int[]{
+      R.drawable.ic_beat_star_anim,
+      R.drawable.ic_beat_oval_anim,
+      R.drawable.ic_beat_arrow_anim,
+      R.drawable.ic_beat_clover_anim,
+      R.drawable.ic_beat_pentagon_anim,
+  };
+
   private AnimatorSet animatorSet;
   private int iconSize, iconSizeDefault, iconSizeBeat, iconSizeNoBeat, iconSizeMuted;
   private FastOutSlowInInterpolator interpolator;
@@ -192,12 +200,4 @@ public class BeatView extends FrameLayout {
     imageView.invalidate();
     imageView.requestLayout();
   }
-
-  private static int[] SHAPES = new int[]{
-      R.drawable.ic_beat_star_anim,
-      R.drawable.ic_beat_oval_anim,
-      R.drawable.ic_beat_arrow_anim,
-      R.drawable.ic_beat_clover_anim,
-      R.drawable.ic_beat_pentagon_anim,
-  };
 }

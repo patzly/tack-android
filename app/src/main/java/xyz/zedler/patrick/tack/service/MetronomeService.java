@@ -15,6 +15,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
@@ -112,6 +113,11 @@ public class MetronomeService extends Service implements TickListener {
 
   @Override
   public void onTick(Tick tick) {
+    latencyHandler.postDelayed(() -> {
+      if (listener != null) {
+        listener.onMetronomePreTick(tick);
+      }
+    }, Math.min(0, latency - Constants.BEAT_ANIM_OFFSET));
     latencyHandler.postDelayed(() -> {
       if (metronomeUtil.isBeatModeVibrate() || alwaysVibrate) {
         switch (tick.type) {
@@ -395,6 +401,7 @@ public class MetronomeService extends Service implements TickListener {
   public interface MetronomeListener {
     void onMetronomeStart();
     void onMetronomeStop();
+    void onMetronomePreTick(Tick tick);
     void onMetronomeTick(Tick tick);
   }
 
