@@ -308,6 +308,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
       if (UiUtil.areAnimationsEnabled(this)) {
         boolean useAnimator = Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
             && UiUtil.isPredictiveBackEnabled(this);
+        useAnimator = false; // TODO: remove when animator is working correctly again
         boolean useSliding = getSharedPrefs().getBoolean(PREF.USE_SLIDING, DEF.USE_SLIDING);
         int enterEndFade = useAnimator ? R.animator.open_enter : R.anim.open_enter_fade;
         builder.setEnterAnim(useSliding ? R.anim.open_enter_slide : enterEndFade);

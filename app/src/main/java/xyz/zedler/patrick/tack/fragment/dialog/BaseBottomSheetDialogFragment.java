@@ -19,7 +19,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback;
 import com.google.android.material.bottomsheet.CustomBottomSheetDialog;
 import com.google.android.material.bottomsheet.CustomBottomSheetDialogFragment;
-import com.google.android.material.elevation.SurfaceColors;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -66,7 +65,9 @@ public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragme
               return;
             }
 
-            backgroundColor = SurfaceColors.SURFACE_3.getColor(activity);
+            backgroundColor = ResUtil.getColorAttr(
+                requireContext(), R.attr.colorSurfaceContainerLow
+            );
             PaintDrawable background = new PaintDrawable(backgroundColor);
             int radius = UiUtil.dpToPx(requireContext(), 28);
             setCornerRadius(background, radius);
