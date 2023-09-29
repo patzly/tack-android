@@ -323,16 +323,20 @@ public class ViewUtil {
   public static void centerScrollContentIfNotFullWidth(
       HorizontalScrollView scrollView, boolean canCenterEarlier
   ) {
-    scrollView.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            centerScrollContentIfPossible(scrollView, canCenterEarlier);
-            if (scrollView.getViewTreeObserver().isAlive()) {
-              scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+    if (scrollView.isLaidOut()) {
+      centerScrollContentIfPossible(scrollView, canCenterEarlier);
+    } else {
+      scrollView.getViewTreeObserver().addOnGlobalLayoutListener(
+          new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+              centerScrollContentIfPossible(scrollView, canCenterEarlier);
+              if (scrollView.getViewTreeObserver().isAlive()) {
+                scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+              }
             }
-          }
-        });
+          });
+    }
   }
 
   private static void centerScrollContentIfPossible(

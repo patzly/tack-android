@@ -23,12 +23,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.chip.Chip;
+import com.google.android.material.slider.Slider;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,6 +48,7 @@ import xyz.zedler.patrick.tack.activity.ShortcutActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentMainBinding;
+import xyz.zedler.patrick.tack.drawable.SquigglyProgressDrawable;
 import xyz.zedler.patrick.tack.service.MetronomeService.MetronomeListener;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
@@ -73,6 +76,8 @@ public class MainFragment extends BaseFragment
   private View viewOptions;
   private DialogUtil dialogUtilGain, dialogUtilOptions;
   private List<Integer> bookmarks;
+  private SquigglyProgressDrawable squiggly;
+  private ValueAnimator progressAnimator;
 
   @Override
   public View onCreateView(
@@ -167,6 +172,52 @@ public class MainFragment extends BaseFragment
     updateOptionsDialog();
     dialogUtilOptions.createCloseCustom(R.string.title_options, viewOptions);
     dialogUtilOptions.showIfWasShown(savedInstanceState);
+
+    binding.constraintMainTop.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override
+          public void onGlobalLayout() {
+            int heightTop = binding.constraintMainTop.getMeasuredHeight();
+            int heightBottom = binding.linearMainBottom.getMeasuredHeight();
+            if (heightTop > heightBottom) {
+              binding.linearMainBottom.setPadding(
+                  binding.linearMainBottom.getPaddingLeft(),
+                  heightTop - heightBottom,
+                  binding.linearMainBottom.getPaddingRight(),
+                  binding.linearMainBottom.getPaddingBottom()
+              );
+            } else if (heightTop < heightBottom) {
+              binding.constraintMainTop.setPadding(
+                  binding.constraintMainTop.getPaddingLeft(),
+                  heightBottom - heightTop,
+                  binding.constraintMainTop.getPaddingRight(),
+                  binding.constraintMainTop.getPaddingBottom()
+              );
+            }
+            if (binding.constraintMainTop.getViewTreeObserver().isAlive()) {
+              binding.constraintMainTop.getViewTreeObserver().removeOnGlobalLayoutListener(
+                  this
+              );
+            }
+          }
+        });
+
+    squiggly = new SquigglyProgressDrawable(activity);
+    //binding.seekbarMain.setProgressDrawable(squiggly);
+    binding.seekbarMain.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override
+          public void onGlobalLayout() {
+            int width = binding.seekbarMain.getWidth()
+                - binding.seekbarMain.getPaddingStart()
+                - binding.seekbarMain.getPaddingEnd();
+            binding.seekbarMain.setMax(width);
+            if (binding.seekbarMain.getViewTreeObserver().isAlive()) {
+              binding.seekbarMain.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+          }
+        });
+    binding.seekbarMain.setEnabled(false);
 
     binding.textSwitcherMainTempoTerm.setFactory(() -> {
       TextView textView = new TextView(activity);
@@ -530,6 +581,16 @@ public class MainFragment extends BaseFragment
       }
       if (tick.subdivision == 1) {
         logoUtil.nextBeat(getMetronomeService().getInterval());
+
+        int countIn = getMetronomeService().getCountIn();
+        long beatIndex = tick.index / getMetronomeService().getSubsCount();
+        int beatsCount = getMetronomeService().getBeatsCount() * countIn;
+        long barIndex = beatIndex / getMetronomeService().getBeatsCount();
+        boolean isCountIn = barIndex < getMetronomeService().getCountIn();
+        float fraction = (beatIndex + 1) / (float) beatsCount;
+        if (isCountIn) {
+          updateProgress(fraction, getMetronomeService().getInterval(), true);
+        }
       }
     });
   }
@@ -588,7 +649,9 @@ public class MainFragment extends BaseFragment
       boolean success = getMetronomeService().removeSubdivision();
       if (success) {
         binding.linearMainSubs.removeViewAt(binding.linearMainSubs.getChildCount() - 1);
-        ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs, true);
+        ViewUtil.centerScrollContentIfNotFullWidth(
+            binding.scrollHorizMainSubs, true
+        );
         updateSubControls();
       }
     } else if (id == R.id.fab_main_play_pause) {
@@ -720,10 +783,12 @@ public class MainFragment extends BaseFragment
       beatView.setIsSubdivision(true);
       beatView.setTickType(i == 0 ? TICK_TYPE.MUTED : tickType);
       beatView.setIndex(i);
-      beatView.setOnClickListener(beat -> {
-        performHapticClick();
-        getMetronomeService().setSubdivision(beatView.getIndex(), beatView.nextTickType());
-      });
+      if (i > 0) {
+        beatView.setOnClickListener(beat -> {
+          performHapticClick();
+          getMetronomeService().setSubdivision(beatView.getIndex(), beatView.nextTickType());
+        });
+      }
       binding.linearMainSubs.addView(beatView);
     }
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
@@ -742,19 +807,40 @@ public class MainFragment extends BaseFragment
     if (!isBound()) {
       return;
     }
-    MaterialButtonToggleGroup toggle = viewOptions.findViewById(R.id.toggle_options_swing);
+    // COUNT IN
+    Slider sliderCountIn = viewOptions.findViewById(R.id.slider_options_count_in);
+    TextView textViewCountIn = viewOptions.findViewById(R.id.text_options_count_in);
+    int countIn = getMetronomeService().getCountIn();
+    sliderCountIn.setValue(countIn);
+    sliderCountIn.addOnChangeListener((slider, value, fromUser) -> {
+      int countInNew = (int) value;
+      getMetronomeService().setCountIn(countInNew);
+      String barsQuantity = getResources().getQuantityString(
+          R.plurals.options_unit_bars, countInNew, countInNew
+      );
+      textViewCountIn.setText(getString(R.string.options_count_in_description, barsQuantity));
+    });
+    String barsQuantity = getResources().getQuantityString(
+        R.plurals.options_unit_bars, countIn, countIn
+    );
+    textViewCountIn.setText(getString(R.string.options_count_in_description, barsQuantity));
+
+    // SWING
+    MaterialButtonToggleGroup toggleSwing = viewOptions.findViewById(R.id.toggle_options_swing);
     if (getMetronomeService().isSwing3()) {
-      toggle.check(R.id.button_options_swing_3);
+      toggleSwing.check(R.id.button_options_swing_3);
     } else if (getMetronomeService().isSwing5()) {
-      toggle.check(R.id.button_options_swing_5);
+      toggleSwing.check(R.id.button_options_swing_5);
     } else if (getMetronomeService().isSwing7()) {
-      toggle.check(R.id.button_options_swing_7);
+      toggleSwing.check(R.id.button_options_swing_7);
+    } else {
+      toggleSwing.clearChecked();
     }
-    toggle.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-      performHapticClick();
+    toggleSwing.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
       if (!isChecked) {
         return;
       }
+      performHapticClick();
       if (checkedId == R.id.button_options_swing_3) {
         getMetronomeService().setSwing3();
       } else if (checkedId == R.id.button_options_swing_5) {
@@ -836,15 +922,20 @@ public class MainFragment extends BaseFragment
       int colorBg = isActive
           ? ResUtil.getColorAttr(activity, R.attr.colorTertiaryContainer)
           : Color.TRANSPARENT;
-      int colorIcon = ResUtil.getColorAttr(
-          activity, isActive ? R.attr.colorOnTertiaryContainer : R.attr.colorOnSurfaceVariant
-      );
       int colorStroke = ResUtil.getColorAttr(
           activity, isActive ? R.attr.colorTertiary : R.attr.colorOutline
       );
+      int colorIcon = ResUtil.getColorAttr(
+          activity, isActive ? R.attr.colorOnTertiaryContainer : R.attr.colorOnSurfaceVariant
+      );
+      int colorText = ResUtil.getColorAttr(
+          activity, isActive ? R.attr.colorOnTertiaryContainer : R.attr.colorOnSurface
+      );
       chip.setChipBackgroundColor(ColorStateList.valueOf(colorBg));
-      chip.setChipIconTint(ColorStateList.valueOf(colorIcon));
       chip.setChipStrokeColor(ColorStateList.valueOf(colorStroke));
+      chip.setChipIconTint(ColorStateList.valueOf(colorIcon));
+      chip.setCloseIconTint(ColorStateList.valueOf(colorIcon));
+      chip.setTextColor(colorText);
     }
   }
 
@@ -887,6 +978,38 @@ public class MainFragment extends BaseFragment
       int bpm = getMetronomeService().getTempo();
       binding.buttonMainLess.setEnabled(bpm > 1);
       binding.buttonMainMore.setEnabled(bpm < Constants.TEMPO_MAX);
+    }
+  }
+
+  private void updateProgress(float fraction, boolean animated) {
+    updateProgress(fraction, Constants.ANIM_DURATION_LONG, animated);
+  }
+
+  private void updateProgress(float fraction, long duration, boolean animated) {
+    if (!isBound()) {
+      return;
+    } else if (progressAnimator != null) {
+      progressAnimator.pause();
+      progressAnimator.cancel();
+      progressAnimator = null;
+    }
+    int max = binding.seekbarMain.getMax();
+    if (animated) {
+      int progress = binding.seekbarMain.getProgress();
+      progressAnimator = ValueAnimator.ofFloat(progress / (float) max, fraction);
+      progressAnimator.addUpdateListener(animation -> {
+        if (binding == null) {
+          return;
+        }
+        binding.seekbarMain.setProgress((int) ((float) animation.getAnimatedValue() * max));
+        binding.seekbarMain.invalidate();
+      });
+      progressAnimator.setInterpolator(new FastOutSlowInInterpolator());
+      progressAnimator.setDuration(duration);
+      progressAnimator.start();
+    } else {
+      binding.seekbarMain.setProgress((int) (fraction * max));
+      binding.seekbarMain.invalidate();
     }
   }
 

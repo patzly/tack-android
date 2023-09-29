@@ -26,10 +26,11 @@ public class MetronomeUtil implements Runnable {
   private AudioTrack track;
   private LoudnessEnhancer loudnessEnhancer;
   private int tempo, gain;
-  private long tickCount;
+  private long tickIndex;
   private String[] beats, subdivisions;
   private float[] tickStrong, tickNormal, tickSub;
   private boolean playing, beatModeVibrate;
+  private int countIn;
 
   public MetronomeUtil(@NonNull Context context, @NonNull TickListener listener) {
     this.context = context;
@@ -150,6 +151,14 @@ public class MetronomeUtil implements Runnable {
     return gain;
   }
 
+  public void setCountIn(int bars) {
+    countIn = bars;
+  }
+
+  public int getCountIn() {
+    return countIn;
+  }
+
   public void start() {
     if (isPlaying()) {
       return;
@@ -160,7 +169,7 @@ public class MetronomeUtil implements Runnable {
     setGain(gain);
     track.play();
 
-    tickCount = 0;
+    tickIndex = 0;
     handler.post(this);
     Log.i(TAG, "start: started metronome handler");
   }
@@ -182,12 +191,14 @@ public class MetronomeUtil implements Runnable {
     if (playing) {
       handler.postDelayed(this, getInterval() / subdivisions.length);
 
-      Tick tick = new Tick(getCurrentBeat(), getCurrentSubdivision(), getCurrentTickType());
+      Tick tick = new Tick(
+          tickIndex, getCurrentBeat(), getCurrentSubdivision(), getCurrentTickType()
+      );
       if (listener != null) {
         listener.onTick(tick);
       }
       writeTickPeriod(tick);
-      tickCount++;
+      tickIndex++;
     }
   }
 
@@ -224,18 +235,18 @@ public class MetronomeUtil implements Runnable {
   }
 
   private int getCurrentBeat() {
-    return (int) ((tickCount / subdivisions.length) % beats.length) + 1;
+    return (int) ((tickIndex / subdivisions.length) % beats.length) + 1;
   }
 
   private int getCurrentSubdivision() {
-    return (int) (tickCount % subdivisions.length) + 1;
+    return (int) (tickIndex % subdivisions.length) + 1;
   }
 
   private String getCurrentTickType() {
-    if ((tickCount % subdivisions.length) == 0) {
-      return beats[(int) ((tickCount / subdivisions.length) % beats.length)];
+    if ((tickIndex % subdivisions.length) == 0) {
+      return beats[(int) ((tickIndex / subdivisions.length) % beats.length)];
     } else {
-      return subdivisions[(int) (tickCount % subdivisions.length)];
+      return subdivisions[(int) (tickIndex % subdivisions.length)];
     }
   }
 
@@ -260,10 +271,13 @@ public class MetronomeUtil implements Runnable {
   }
 
   public static class Tick {
+    public final long index;
     public final int beat, subdivision;
-    @NonNull public final String type;
+    @NonNull
+    public final String type;
 
-    public Tick(int beat, int subdivision, @NonNull String type) {
+    public Tick(long index, int beat, int subdivision, @NonNull String type) {
+      this.index = index;
       this.beat = beat;
       this.subdivision = subdivision;
       this.type = type;
@@ -272,7 +286,10 @@ public class MetronomeUtil implements Runnable {
     @NonNull
     @Override
     public String toString() {
-      return "Tick{beat=" + beat + ", sub=" + subdivision + ", type=" + type + '}';
+      return "Tick{index = " + index +
+          ", beat=" + beat +
+          ", sub=" + subdivision +
+          ", type=" + type + '}';
     }
   }
 }

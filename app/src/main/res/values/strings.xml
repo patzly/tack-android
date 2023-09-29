@@ -87,13 +87,34 @@
 
   <!-- OPTIONS -->
 
+  <string name="options_unit_bars">Bars</string>
+  <plurals name="options_unit_bars">
+    <item quantity="one">%1$d bar</item>
+    <item quantity="other">%1$d bars</item>
+  </plurals>
+  <string name="options_unit_beats">Beats</string>
+  <plurals name="options_unit_beats">
+    <item quantity="one">%1$d beat</item>
+    <item quantity="other">%1$d beats</item>
+  </plurals>
+  <string name="options_unit_seconds">Seconds</string>
+  <string name="options_unit_minutes">Minutes</string>
+  <string name="options_count_in">Count in</string>
+  <string name="options_count_in_description">Play %1$s before counting elapsed time or applying modifiers</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Sets subdivisions to match common swing percentages</string>
   <string name="options_swing_3">Triplet</string>
   <string name="options_swing_5">Quintuplet</string>
   <string name="options_swing_7">Septuplet</string>
   <string name="options_tempo">Incremental tempo change</string>
-  <string name="options_tempo_description">Sets subdivisions to match common swing percentages</string>
+  <string name="options_tempo_description_amount">Change tempo by %1$d bpm</string>
+  <string name="options_tempo_description_unit">Every %1$s</string>
+  <string name="options_mute">Muted beats</string>
+  <string name="options_mute_description_play">Play %1$s</string>
+  <string name="options_mute_description_mute">Mute %1$s</string>
+  <string name="options_mute_description_random">Mute up to %1$d% randomly</string>
+  <string name="options_mute_description_increase">Increase every %1$s</string>
+  <string name="options_mute_description_increase_off">Increase never</string>
 
   <!-- SETTINGS -->
 

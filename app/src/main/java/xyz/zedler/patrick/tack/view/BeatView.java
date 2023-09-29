@@ -7,12 +7,17 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import com.google.android.material.button.MaterialButton;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -33,6 +38,7 @@ public class BeatView extends FrameLayout {
   private int iconSize, iconSizeDefault, iconSizeBeat, iconSizeNoBeat, iconSizeMuted;
   private FastOutSlowInInterpolator interpolator;
   private ImageView imageView;
+  private MaterialButton button;
   private String tickType;
   private boolean isSubdivision;
   private int index;
@@ -67,8 +73,45 @@ public class BeatView extends FrameLayout {
     int minSize = UiUtil.dpToPx(context, 48);
     setMinimumWidth(minSize);
     setMinimumHeight(minSize);
-    setClickable(true);
-    setBackgroundResource(R.drawable.ripple_beat_bg);
+
+    button = new MaterialButton(context);
+    int insetHorizontal = UiUtil.dpToPx(context, 4);
+    try {
+      button.setLayoutParams(
+          new FrameLayout.LayoutParams(minSize, minSize)
+      );
+      Field buttonHelperField = MaterialButton.class.getDeclaredField("materialButtonHelper");
+      buttonHelperField.setAccessible(true);
+      Object materialButtonHelper = buttonHelperField.get(button);
+      if (materialButtonHelper != null) {
+        // Change horizontal insets to get icon-only ripple size
+        Field insetLeft = materialButtonHelper.getClass().getDeclaredField("insetLeft");
+        insetLeft.setAccessible(true);
+        insetLeft.set(materialButtonHelper, insetHorizontal);
+        Field insetRight = materialButtonHelper.getClass().getDeclaredField("insetRight");
+        insetRight.setAccessible(true);
+        insetRight.set(materialButtonHelper, insetHorizontal);
+        // Call updatedBackground() in MaterialButtonHelper to apply changed insets
+        Method updateBackground = materialButtonHelper.getClass().getDeclaredMethod(
+            "updateBackground"
+        );
+        updateBackground.setAccessible(true);
+        updateBackground.invoke(materialButtonHelper);
+        button.requestLayout();
+      }
+    } catch (Exception e) {
+      // If not possible, change size of whole button (and touch target, not good)
+      FrameLayout.LayoutParams paramsButton = new FrameLayout.LayoutParams(
+          minSize - insetHorizontal * 2, minSize
+      );
+      paramsButton.gravity = Gravity.CENTER;
+      button.setLayoutParams(paramsButton);
+    }
+    button.setRippleColor(
+        ContextCompat.getColorStateList(context, R.color.selector_tonal_button_ripple)
+    );
+    button.setBackgroundColor(Color.TRANSPARENT);
+    addView(button);
 
     iconSizeDefault = UiUtil.dpToPx(context, 24);
     iconSizeBeat = UiUtil.dpToPx(context, 32);
@@ -82,9 +125,9 @@ public class BeatView extends FrameLayout {
     colorMuted = ResUtil.getColorAttr(context, R.attr.colorOutline);
 
     imageView = new ImageView(context);
-    FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(iconSize, iconSize);
-    params.gravity = Gravity.CENTER;
-    imageView.setLayoutParams(params);
+    FrameLayout.LayoutParams paramsIcon = new FrameLayout.LayoutParams(iconSize, iconSize);
+    paramsIcon.gravity = Gravity.CENTER;
+    imageView.setLayoutParams(paramsIcon);
     imageView.setAdjustViewBounds(false);
     imageView.setImageResource(R.drawable.ic_beat_clover_anim);
     addView(imageView);
@@ -105,9 +148,6 @@ public class BeatView extends FrameLayout {
 
   public void setIsSubdivision(boolean isSubdivision) {
     this.isSubdivision = isSubdivision;
-    setBackgroundResource(
-        isSubdivision ? R.drawable.ripple_subdivision_bg : R.drawable.ripple_beat_bg
-    );
     setTickType(TICK_TYPE.SUB);
   }
 
@@ -199,5 +239,10 @@ public class BeatView extends FrameLayout {
     imageView.getLayoutParams().height = size;
     imageView.invalidate();
     imageView.requestLayout();
+  }
+
+  @Override
+  public void setOnClickListener(@Nullable OnClickListener l) {
+    button.setOnClickListener(l);
   }
 }

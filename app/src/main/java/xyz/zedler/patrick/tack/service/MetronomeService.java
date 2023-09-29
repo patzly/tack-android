@@ -63,6 +63,7 @@ public class MetronomeService extends Service implements TickListener {
         sharedPrefs.getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(",")
     );
     metronomeUtil.setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
+    metronomeUtil.setCountIn(sharedPrefs.getInt(PREF.COUNT_IN, DEF.COUNT_IN));
 
     HandlerThread thread = new HandlerThread("metronome_feedback");
     thread.start();
@@ -374,6 +375,15 @@ public class MetronomeService extends Service implements TickListener {
 
   public int getGain() {
     return metronomeUtil.getGain();
+  }
+
+  public void setCountIn(int bars) {
+    metronomeUtil.setCountIn(bars);
+    sharedPrefs.edit().putInt(PREF.COUNT_IN, bars).apply();
+  }
+
+  public int getCountIn() {
+    return metronomeUtil.getCountIn();
   }
 
   public String getTempoTerm() {

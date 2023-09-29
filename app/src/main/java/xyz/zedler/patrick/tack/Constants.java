@@ -33,10 +33,8 @@ public final class Constants {
     public final static String SOUND = "sound";
     public final static String LATENCY = "latency_offset";
     public final static String GAIN = "gain";
+    public final static String COUNT_IN = "count_in";
     public final static String BOOKMARKS = "bookmarks";
-
-    @Deprecated
-    public final static String EMPHASIS = "emphasis";
   }
 
   public final static class DEF {
@@ -58,9 +56,7 @@ public final class Constants {
     public final static String SOUND = Constants.SOUND.WOOD;
     public final static long LATENCY = 100;
     public final static int GAIN = 0;
-
-    @Deprecated
-    public final static int EMPHASIS = 50;
+    public final static int COUNT_IN = 0;
   }
 
   public final static class SOUND {

@@ -62,6 +62,7 @@
     android:layout_marginTop="?attr/actionBarSize">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/constraint_main_top"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:paddingTop="16dp"
@@ -89,8 +90,12 @@
             android:id="@+id/button_main_remove_beat"
             style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
             android:contentDescription="@string/action_remove_beat"
-            android:layout_margin="4dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             app:icon="@drawable/ic_round_remove_anim"
+            app:iconTint="?attr/colorOnSurface"
+            app:rippleColor="@color/selector_tonal_button_ripple"
             app:backgroundTint="@color/transparent" />
 
           <HorizontalScrollView
@@ -98,7 +103,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:overScrollMode="never"
+            android:overScrollMode="ifContentScrolls"
             android:scrollbars="horizontal"
             android:scrollbarThumbHorizontal="@drawable/shape_scrollbar_rounded"
             android:fadingEdge="horizontal"
@@ -120,8 +125,12 @@
             android:id="@+id/button_main_add_beat"
             style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
             android:contentDescription="@string/action_add_beat"
-            android:layout_margin="4dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             app:icon="@drawable/ic_round_add_anim"
+            app:iconTint="?attr/colorOnSurface"
+            app:rippleColor="@color/selector_tonal_button_ripple"
             app:backgroundTint="@color/transparent" />
 
         </LinearLayout>
@@ -143,8 +152,8 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:scrollbars="none"
             android:overScrollMode="ifContentScrolls"
+            android:scrollbars="none"
             android:fadingEdge="horizontal"
             android:requiresFadingEdge="horizontal">
 
@@ -165,6 +174,11 @@
             app:icon="@drawable/ic_round_add_anim" />
 
         </LinearLayout>
+
+        <SeekBar
+          android:id="@+id/seekbar_main"
+          style="@style/Widget.Tack.SquigglySeekbar"
+          android:visibility="gone" />
 
       </LinearLayout>
 
@@ -260,6 +274,7 @@
         android:id="@+id/chip_group_main_bookmarks"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:minHeight="48dp"
         android:layout_gravity="center"
         android:layout_marginBottom="4dp"
         android:animateLayoutChanges="true"
@@ -270,6 +285,7 @@
     </FrameLayout>
 
     <LinearLayout
+      android:id="@+id/linear_main_bottom"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:paddingBottom="@dimen/control_margin_bottom"
