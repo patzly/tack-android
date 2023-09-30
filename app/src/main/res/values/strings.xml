@@ -24,7 +24,7 @@
 
   <!-- LABELS -->
 
-  <string name="label_bpm_number">%1$d bpm</string>
+  <string name="label_bpm_value">%1$d bpm</string>
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$sms</string>
   <string name="label_db">+%1$ddB</string>
@@ -44,8 +44,8 @@
   <string name="action_back">Back</string>
   <string name="action_close">Close</string>
   <string name="action_cancel">Cancel</string>
-  <string name="action_more">Faster</string>
-  <string name="action_less">Slower</string>
+  <string name="action_increase">Increase</string>
+  <string name="action_decrease">Decrease</string>
   <string name="action_play">Play</string>
   <string name="action_play_pause">Play/Pause</string>
   <string name="action_stop">Stop</string>
@@ -98,23 +98,28 @@
     <item quantity="other">%1$d beats</item>
   </plurals>
   <string name="options_unit_seconds">Seconds</string>
+  <plurals name="options_unit_seconds">
+    <item quantity="one">%1$d second</item>
+    <item quantity="other">%1$d seconds</item>
+  </plurals>
   <string name="options_unit_minutes">Minutes</string>
   <string name="options_count_in">Count in</string>
-  <string name="options_count_in_description">Play %1$s before counting elapsed time or applying modifiers</string>
-  <string name="options_swing">Swing</string>
-  <string name="options_swing_description">Sets subdivisions to match common swing percentages</string>
-  <string name="options_swing_3">Triplet</string>
-  <string name="options_swing_5">Quintuplet</string>
-  <string name="options_swing_7">Septuplet</string>
-  <string name="options_tempo">Incremental tempo change</string>
-  <string name="options_tempo_description_amount">Change tempo by %1$d bpm</string>
-  <string name="options_tempo_description_unit">Every %1$s</string>
+  <string name="options_count_in_description">Play %1$s before counting time or applying modifiers</string>
+  <string name="options_incremental">Incremental tempo change</string>
+  <string name="options_incremental_description_increase">Increase tempo by %1$d bpm</string>
+  <string name="options_incremental_description_decrease">Decrease tempo by %1$d bpm</string>
+  <string name="options_incremental_description_interval">Every %1$s</string>
   <string name="options_mute">Muted beats</string>
   <string name="options_mute_description_play">Play %1$s</string>
   <string name="options_mute_description_mute">Mute %1$s</string>
   <string name="options_mute_description_random">Mute up to %1$d% randomly</string>
   <string name="options_mute_description_increase">Increase every %1$s</string>
   <string name="options_mute_description_increase_off">Increase never</string>
+  <string name="options_swing">Swing</string>
+  <string name="options_swing_description">Sets subdivisions to match common swing percentages</string>
+  <string name="options_swing_3">Triplet</string>
+  <string name="options_swing_5">Quintuplet</string>
+  <string name="options_swing_7">Septuplet</string>
 
   <!-- SETTINGS -->
 

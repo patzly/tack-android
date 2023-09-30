@@ -22,6 +22,7 @@ public class MetronomeUtil implements Runnable {
   private final float[] silence = AudioUtil.getSilence();
   private final Context context;
   private final TickListener listener;
+  private final HandlerThread thread;
   private final Handler handler;
   private AudioTrack track;
   private LoudnessEnhancer loudnessEnhancer;
@@ -36,7 +37,7 @@ public class MetronomeUtil implements Runnable {
     this.context = context;
     this.listener = listener;
 
-    HandlerThread thread = new HandlerThread("metronome");
+    thread = new HandlerThread("metronome");
     thread.start();
     handler = new Handler(thread.getLooper());
 
@@ -45,6 +46,12 @@ public class MetronomeUtil implements Runnable {
     setBeats(DEF.BEATS.split(","));
     setSubdivisions(DEF.SUBDIVISIONS.split(","));
     setGain(DEF.GAIN);
+    setCountIn(DEF.COUNT_IN);
+  }
+
+  public void destroy() {
+    handler.removeCallbacks(this);
+    thread.quit();
   }
 
   public void setBeats(String[] beats) {

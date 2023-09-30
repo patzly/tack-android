@@ -28,9 +28,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.chip.Chip;
-import com.google.android.material.slider.Slider;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,11 +46,13 @@ import xyz.zedler.patrick.tack.activity.ShortcutActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentMainBinding;
+import xyz.zedler.patrick.tack.drawable.BeatsBgDrawable;
 import xyz.zedler.patrick.tack.drawable.SquigglyProgressDrawable;
 import xyz.zedler.patrick.tack.service.MetronomeService.MetronomeListener;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
+import xyz.zedler.patrick.tack.util.OptionsUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
@@ -73,10 +73,11 @@ public class MainFragment extends BaseFragment
   private ValueAnimator fabAnimator;
   private float cornerSizePause, cornerSizePlay, cornerSizeCurrent;
   private int colorFlashNormal, colorFlashStrong, colorFlashMuted;
-  private View viewOptions;
-  private DialogUtil dialogUtilGain, dialogUtilOptions;
+  private DialogUtil dialogUtilGain;
+  private OptionsUtil optionsUtil;
   private List<Integer> bookmarks;
   private SquigglyProgressDrawable squiggly;
+  private BeatsBgDrawable beatsBgDrawable;
   private ValueAnimator progressAnimator;
 
   @Override
@@ -97,7 +98,7 @@ public class MainFragment extends BaseFragment
     }
     binding = null;
     dialogUtilGain.dismiss();
-    dialogUtilOptions.dismiss();
+    optionsUtil.dismiss();
   }
 
   @SuppressLint("ClickableViewAccessibility")
@@ -167,11 +168,8 @@ public class MainFragment extends BaseFragment
         });
     dialogUtilGain.showIfWasShown(savedInstanceState);
 
-    dialogUtilOptions = new DialogUtil(activity, "options");
-    viewOptions = View.inflate(activity, R.layout.partial_dialog_options, null);
-    updateOptionsDialog();
-    dialogUtilOptions.createCloseCustom(R.string.title_options, viewOptions);
-    dialogUtilOptions.showIfWasShown(savedInstanceState);
+    optionsUtil = new OptionsUtil(activity, this);
+    optionsUtil.showIfWasShown(savedInstanceState);
 
     binding.constraintMainTop.getViewTreeObserver().addOnGlobalLayoutListener(
         new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -201,6 +199,9 @@ public class MainFragment extends BaseFragment
             }
           }
         });
+
+    beatsBgDrawable = new BeatsBgDrawable(activity);
+    binding.linearMainBeatsBg.setBackground(beatsBgDrawable);
 
     squiggly = new SquigglyProgressDrawable(activity);
     //binding.seekbarMain.setProgressDrawable(squiggly);
@@ -454,8 +455,8 @@ public class MainFragment extends BaseFragment
     if (dialogUtilGain != null) {
       dialogUtilGain.saveState(outState);
     }
-    if (dialogUtilOptions != null) {
-      dialogUtilOptions.saveState(outState);
+    if (optionsUtil != null) {
+      optionsUtil.saveState(outState);
     }
   }
 
@@ -483,8 +484,9 @@ public class MainFragment extends BaseFragment
     updateSubs(getMetronomeService().getSubdivisions());
     refreshBookmarks();
 
-    setTempo(getMetronomeService().getTempo());
-    binding.textSwitcherMainTempoTerm.setCurrentText(getMetronomeService().getTempoTerm());
+    int tempo = getMetronomeService().getTempo();
+    setTempo(tempo);
+    binding.textSwitcherMainTempoTerm.setCurrentText(getTempoTerm(tempo));
 
     ViewUtil.resetAnimatedIcon(binding.fabMainPlayPause);
     binding.fabMainPlayPause.setImageResource(
@@ -501,6 +503,12 @@ public class MainFragment extends BaseFragment
   public void onMetronomeStart() {
     activity.runOnUiThread(() -> {
       if (binding != null) {
+        beatsBgDrawable.reset();
+        if (getMetronomeService().getCountIn() > 0) {
+          beatsBgDrawable.setProgress(
+              1, getMetronomeService().getCountInInterval(), true
+          );
+        }
         binding.fabMainPlayPause.setImageResource(R.drawable.ic_round_play_to_pause_anim);
         Drawable fabIcon = binding.fabMainPlayPause.getDrawable();
         if (fabIcon != null) {
@@ -516,6 +524,7 @@ public class MainFragment extends BaseFragment
   public void onMetronomeStop() {
     activity.runOnUiThread(() -> {
       if (binding != null) {
+        beatsBgDrawable.setProgressVisible(false, true);
         binding.fabMainPlayPause.setImageResource(R.drawable.ic_round_pause_to_play_anim);
         Drawable icon = binding.fabMainPlayPause.getDrawable();
         if (icon != null) {
@@ -582,7 +591,7 @@ public class MainFragment extends BaseFragment
       if (tick.subdivision == 1) {
         logoUtil.nextBeat(getMetronomeService().getInterval());
 
-        int countIn = getMetronomeService().getCountIn();
+        /*int countIn = getMetronomeService().getCountIn();
         long beatIndex = tick.index / getMetronomeService().getSubsCount();
         int beatsCount = getMetronomeService().getBeatsCount() * countIn;
         long barIndex = beatIndex / getMetronomeService().getBeatsCount();
@@ -590,9 +599,14 @@ public class MainFragment extends BaseFragment
         float fraction = (beatIndex + 1) / (float) beatsCount;
         if (isCountIn) {
           updateProgress(fraction, getMetronomeService().getInterval(), true);
-        }
+        }*/
       }
     });
+  }
+
+  @Override
+  public void onTempoChanged(int bpmOld, int bpmNew) {
+    activity.runOnUiThread(() -> setTempo(bpmOld, bpmNew));
   }
 
   @Override
@@ -729,16 +743,10 @@ public class MainFragment extends BaseFragment
         showSnackbar(snackbar);
       }
     } else if (id == R.id.button_main_options) {
+      ViewUtil.startIcon(binding.buttonMainOptions.getIcon());
       performHapticClick();
-      updateOptionsDialog();
-      dialogUtilOptions.show();
-    }
-  }
-
-  public void onBpmChanged(int bpm) {
-    if (isBound()) {
-      binding.textMainBpm.setText(String.valueOf(bpm));
-      refreshBookmarks();
+      optionsUtil.update();
+      optionsUtil.show();
     }
   }
 
@@ -771,7 +779,7 @@ public class MainFragment extends BaseFragment
     }
   }
 
-  private void updateSubs(String[] subdivisions) {
+  public void updateSubs(String[] subdivisions) {
     if (isBound()
         && binding.linearMainSubs.getChildCount() == getMetronomeService().getSubsCount()) {
       return;
@@ -791,7 +799,7 @@ public class MainFragment extends BaseFragment
       }
       binding.linearMainSubs.addView(beatView);
     }
-    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
+    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs, true);
     updateSubControls();
   }
 
@@ -801,55 +809,6 @@ public class MainFragment extends BaseFragment
       binding.buttonMainAddSubdivision.setEnabled(subdivisions < Constants.SUBS_MAX);
       binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
     }
-  }
-
-  private void updateOptionsDialog() {
-    if (!isBound()) {
-      return;
-    }
-    // COUNT IN
-    Slider sliderCountIn = viewOptions.findViewById(R.id.slider_options_count_in);
-    TextView textViewCountIn = viewOptions.findViewById(R.id.text_options_count_in);
-    int countIn = getMetronomeService().getCountIn();
-    sliderCountIn.setValue(countIn);
-    sliderCountIn.addOnChangeListener((slider, value, fromUser) -> {
-      int countInNew = (int) value;
-      getMetronomeService().setCountIn(countInNew);
-      String barsQuantity = getResources().getQuantityString(
-          R.plurals.options_unit_bars, countInNew, countInNew
-      );
-      textViewCountIn.setText(getString(R.string.options_count_in_description, barsQuantity));
-    });
-    String barsQuantity = getResources().getQuantityString(
-        R.plurals.options_unit_bars, countIn, countIn
-    );
-    textViewCountIn.setText(getString(R.string.options_count_in_description, barsQuantity));
-
-    // SWING
-    MaterialButtonToggleGroup toggleSwing = viewOptions.findViewById(R.id.toggle_options_swing);
-    if (getMetronomeService().isSwing3()) {
-      toggleSwing.check(R.id.button_options_swing_3);
-    } else if (getMetronomeService().isSwing5()) {
-      toggleSwing.check(R.id.button_options_swing_5);
-    } else if (getMetronomeService().isSwing7()) {
-      toggleSwing.check(R.id.button_options_swing_7);
-    } else {
-      toggleSwing.clearChecked();
-    }
-    toggleSwing.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-      if (!isChecked) {
-        return;
-      }
-      performHapticClick();
-      if (checkedId == R.id.button_options_swing_3) {
-        getMetronomeService().setSwing3();
-      } else if (checkedId == R.id.button_options_swing_5) {
-        getMetronomeService().setSwing5();
-      } else if (checkedId == R.id.button_options_swing_7) {
-        getMetronomeService().setSwing7();
-      }
-      updateSubs(getMetronomeService().getSubdivisions());
-    });
   }
 
   private Chip getBookmarkChip(int tempo) {
@@ -866,7 +825,7 @@ public class MainFragment extends BaseFragment
       refreshBookmarks();
     });
     chip.setStateListAnimator(null);
-    chip.setText(getString(R.string.label_bpm_number, tempo));
+    chip.setText(getString(R.string.label_bpm_value, tempo));
     chip.setTag(tempo);
     chip.setTextAppearance(R.style.TextAppearance_Tack_LabelLarge);
     chip.setOnClickListener(v -> {
@@ -894,7 +853,7 @@ public class MainFragment extends BaseFragment
       for (int bpm : bookmarks) {
         shortcuts.add(
             new ShortcutInfo.Builder(activity, String.valueOf(bpm))
-                .setShortLabel(getString(R.string.label_bpm_number, bpm))
+                .setShortLabel(getString(R.string.label_bpm_value, bpm))
                 .setIcon(Icon.createWithResource(activity, R.mipmap.ic_shortcut))
                 .setIntent(new Intent(activity, ShortcutActivity.class)
                     .setAction(ACTION.START)
@@ -940,37 +899,44 @@ public class MainFragment extends BaseFragment
   }
 
   private void changeTempo(int change) {
-    if (isBound()) {
-      int bpmNew = getMetronomeService().getTempo() + change;
-      setTempo(bpmNew);
-      if (bpmNew >= Constants.TEMPO_MIN && bpmNew <= Constants.TEMPO_MAX) {
-        performHapticTick();
-      }
+    if (!isBound()) {
+      return;
+    }
+    int bpmNew = getMetronomeService().getTempo() + change;
+    setTempo(bpmNew);
+    if (bpmNew >= Constants.TEMPO_MIN && bpmNew <= Constants.TEMPO_MAX) {
+      performHapticTick();
     }
   }
 
   private void setTempo(int bpm) {
-    if (isBound()) {
-      int tempoOld = getMetronomeService().getTempo();
-      String termOld = getMetronomeService().getTempoTerm();
-      getMetronomeService().setTempo(
-          Math.min(Math.max(bpm, Constants.TEMPO_MIN), Constants.TEMPO_MAX)
-      );
-      binding.textMainBpm.setText(String.valueOf(getMetronomeService().getTempo()));
-      String termNew = getMetronomeService().getTempoTerm();
-      if (!termNew.equals(termOld)) {
-        boolean isFaster = getMetronomeService().getTempo() > tempoOld;
-        binding.textSwitcherMainTempoTerm.setInAnimation(
-            activity, isFaster ? R.anim.tempo_term_open_enter : R.anim.tempo_term_close_enter
-        );
-        binding.textSwitcherMainTempoTerm.setOutAnimation(
-            activity, isFaster ? R.anim.tempo_term_open_exit : R.anim.tempo_term_close_exit
-        );
-        binding.textSwitcherMainTempoTerm.setText(termNew);
-      }
-      refreshBookmarks();
-      setButtonStates();
+    if (!isBound()) {
+      return;
     }
+    setTempo(getMetronomeService().getTempo(), bpm);
+  }
+
+  private void setTempo(int bpmOld, int bpmNew) {
+    if (!isBound()) {
+      return;
+    }
+    getMetronomeService().setTempo(
+        Math.min(Math.max(bpmNew, Constants.TEMPO_MIN), Constants.TEMPO_MAX)
+    );
+    binding.textMainBpm.setText(String.valueOf(getMetronomeService().getTempo()));
+    String termNew = getTempoTerm(bpmNew);
+    if (!termNew.equals(getTempoTerm(bpmOld))) {
+      boolean isFaster = getMetronomeService().getTempo() > bpmOld;
+      binding.textSwitcherMainTempoTerm.setInAnimation(
+          activity, isFaster ? R.anim.tempo_term_open_enter : R.anim.tempo_term_close_enter
+      );
+      binding.textSwitcherMainTempoTerm.setOutAnimation(
+          activity, isFaster ? R.anim.tempo_term_open_exit : R.anim.tempo_term_close_exit
+      );
+      binding.textSwitcherMainTempoTerm.setText(termNew);
+    }
+    refreshBookmarks();
+    setButtonStates();
   }
 
   private void setButtonStates() {
@@ -1050,5 +1016,26 @@ public class MainFragment extends BaseFragment
   private void showSnackbar(Snackbar snackbar) {
     snackbar.setAnchorView(binding.fabMainPlayPause);
     activity.showSnackbar(snackbar);
+  }
+
+  public String getTempoTerm(int bpm) {
+    String[] terms = getResources().getStringArray(R.array.label_tempo_terms);
+    if (bpm < 60) {
+      return terms[0];
+    } else if (bpm < 66) {
+      return terms[1];
+    } else if (bpm < 76) {
+      return terms[2];
+    } else if (bpm < 108) {
+      return terms[3];
+    } else if (bpm < 120) {
+      return terms[4];
+    } else if (bpm < 168) {
+      return terms[5];
+    } else if (bpm < 200) {
+      return terms[6];
+    } else {
+      return terms[7];
+    }
   }
 }

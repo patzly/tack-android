@@ -111,6 +111,7 @@ public class BeatView extends FrameLayout {
         ContextCompat.getColorStateList(context, R.color.selector_tonal_button_ripple)
     );
     button.setBackgroundColor(Color.TRANSPARENT);
+    setOnClickListener(null);
     addView(button);
 
     iconSizeDefault = UiUtil.dpToPx(context, 24);
@@ -243,6 +244,9 @@ public class BeatView extends FrameLayout {
 
   @Override
   public void setOnClickListener(@Nullable OnClickListener l) {
-    button.setOnClickListener(l);
+    if (l != null) {
+      button.setOnClickListener(l);
+    }
+    button.setEnabled(l != null);
   }
 }

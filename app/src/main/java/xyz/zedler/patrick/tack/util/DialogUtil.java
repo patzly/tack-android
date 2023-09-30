@@ -220,12 +220,9 @@ public class DialogUtil {
     }
   }
 
-  public boolean showIfWasShown(@Nullable Bundle state) {
+  public void showIfWasShown(@Nullable Bundle state) {
     if (state != null && state.getBoolean(IS_SHOWING + tag)) {
       new Handler(Looper.getMainLooper()).postDelayed(this::show, 10);
-      return true;
-    } else {
-      return false;
     }
   }
 

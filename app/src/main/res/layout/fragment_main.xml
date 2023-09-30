@@ -79,12 +79,11 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
+          android:id="@+id/linear_main_beats_bg"
           android:layout_width="match_parent"
           android:layout_height="56dp"
           android:orientation="horizontal"
-          android:layout_marginBottom="8dp"
-          android:background="@drawable/shape_beats"
-          android:backgroundTint="?attr/colorSurfaceContainerHigh">
+          android:layout_marginBottom="8dp">
 
           <com.google.android.material.button.MaterialButton
             android:id="@+id/button_main_remove_beat"
@@ -201,7 +200,7 @@
         android:id="@+id/button_main_less"
         style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
         android:layout_marginEnd="16dp"
-        android:contentDescription="@string/action_less"
+        android:contentDescription="@string/action_decrease"
         app:icon="@drawable/ic_round_chevron_left_anim" />
 
       <FrameLayout
@@ -260,7 +259,7 @@
         android:id="@+id/button_main_more"
         style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
         android:layout_marginStart="16dp"
-        android:contentDescription="@string/action_more"
+        android:contentDescription="@string/action_increase"
         app:icon="@drawable/ic_round_chevron_right_anim" />
 
     </LinearLayout>
@@ -300,7 +299,7 @@
         style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
         android:layout_marginEnd="4dp"
         android:contentDescription="@string/title_options"
-        app:icon="@drawable/ic_round_tune" />
+        app:icon="@drawable/ic_round_tune_anim" />
 
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_main_tempo_tap"

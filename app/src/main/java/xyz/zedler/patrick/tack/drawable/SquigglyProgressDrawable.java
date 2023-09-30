@@ -201,7 +201,6 @@ public class SquigglyProgressDrawable extends Drawable {
     heightAnimator.start();
   }
 
-
   /**
    * Helper function, computes amplitude for wave segment
    */

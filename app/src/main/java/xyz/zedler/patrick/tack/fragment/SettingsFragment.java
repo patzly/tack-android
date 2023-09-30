@@ -331,6 +331,9 @@ public class SettingsFragment extends BaseFragment
   }
 
   @Override
+  public void onTempoChanged(int bpmOld, int bpmNew) {}
+
+  @Override
   public void onClick(View v) {
     int id = v.getId();
     if (id == R.id.linear_settings_language && getViewUtil().isClickEnabled(id)) {

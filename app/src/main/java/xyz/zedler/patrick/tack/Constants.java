@@ -34,6 +34,10 @@ public final class Constants {
     public final static String LATENCY = "latency_offset";
     public final static String GAIN = "gain";
     public final static String COUNT_IN = "count_in";
+    public final static String INCREMENTAL_AMOUNT = "incremental_amount";
+    public final static String INCREMENTAL_INCREASE = "incremental_increase";
+    public final static String INCREMENTAL_INTERVAL = "incremental_interval";
+    public final static String INCREMENTAL_UNIT = "incremental_unit";
     public final static String BOOKMARKS = "bookmarks";
   }
 
@@ -57,6 +61,10 @@ public final class Constants {
     public final static long LATENCY = 100;
     public final static int GAIN = 0;
     public final static int COUNT_IN = 0;
+    public final static int INCREMENTAL_AMOUNT = 0;
+    public final static boolean INCREMENTAL_INCREASE = true;
+    public final static int INCREMENTAL_INTERVAL = 1;
+    public final static String INCREMENTAL_UNIT = UNIT.BARS;
   }
 
   public final static class SOUND {
@@ -74,6 +82,14 @@ public final class Constants {
     public final static String STRONG = "strong";
     public final static String SUB = "sub";
     public final static String MUTED = "muted";
+  }
+
+  public final static class UNIT {
+
+    public final static String BEATS = "beats";
+    public final static String BARS = "bars";
+    public final static String SECONDS = "seconds";
+    public final static String MINUTES = "minutes";
   }
 
   public final static class ACTION {

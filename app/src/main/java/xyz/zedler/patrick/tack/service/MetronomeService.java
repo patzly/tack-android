@@ -21,7 +21,7 @@ import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
-import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
@@ -40,9 +40,12 @@ public class MetronomeService extends Service implements TickListener {
   private HapticUtil hapticUtil;
   private StopReceiver stopReceiver;
   private MetronomeListener listener;
-  private Handler latencyHandler;
-  private boolean alwaysVibrate;
+  private HandlerThread thread;
+  private Handler latencyHandler, countInHandler, incrementalHandler;
+  private boolean alwaysVibrate, incrementalIncrease;
   private long latency;
+  private int incrementalAmount, incrementalInterval;
+  private String incrementalUnit;
 
   @Override
   public void onCreate() {
@@ -64,11 +67,20 @@ public class MetronomeService extends Service implements TickListener {
     );
     metronomeUtil.setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
     metronomeUtil.setCountIn(sharedPrefs.getInt(PREF.COUNT_IN, DEF.COUNT_IN));
+    setIncrementalAmount(sharedPrefs.getInt(PREF.INCREMENTAL_AMOUNT, DEF.INCREMENTAL_AMOUNT));
+    setIncrementalIncrease(
+        sharedPrefs.getBoolean(PREF.INCREMENTAL_INCREASE, DEF.INCREMENTAL_INCREASE)
+    );
+    setIncrementalInterval(sharedPrefs.getInt(PREF.INCREMENTAL_INTERVAL, DEF.INCREMENTAL_INTERVAL));
+    setIncrementalUnit(sharedPrefs.getString(PREF.INCREMENTAL_UNIT, DEF.INCREMENTAL_UNIT));
 
-    HandlerThread thread = new HandlerThread("metronome_feedback");
+    thread = new HandlerThread("metronome_service");
     thread.start();
     latencyHandler = new Handler(thread.getLooper());
     latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY);
+
+    countInHandler = new Handler(thread.getLooper());
+    incrementalHandler = new Handler(thread.getLooper());
 
     hapticUtil = new HapticUtil(this);
     setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
@@ -86,8 +98,13 @@ public class MetronomeService extends Service implements TickListener {
   public void onDestroy() {
     super.onDestroy();
 
+    metronomeUtil.destroy();
+    latencyHandler.removeCallbacksAndMessages(null);
+    countInHandler.removeCallbacksAndMessages(null);
+    incrementalHandler.removeCallbacksAndMessages(null);
+    thread.quit();
     unregisterReceiver(stopReceiver);
-    Log.i(TAG, "onDestroy: server destroyed");
+    Log.i(TAG, "onDestroy: service destroyed");
   }
 
   @Nullable
@@ -118,7 +135,7 @@ public class MetronomeService extends Service implements TickListener {
       if (listener != null) {
         listener.onMetronomePreTick(tick);
       }
-    }, Math.min(0, latency - Constants.BEAT_ANIM_OFFSET));
+    }, Math.max(0, latency - Constants.BEAT_ANIM_OFFSET));
     latencyHandler.postDelayed(() -> {
       if (metronomeUtil.isBeatModeVibrate() || alwaysVibrate) {
         switch (tick.type) {
@@ -138,6 +155,24 @@ public class MetronomeService extends Service implements TickListener {
         listener.onMetronomeTick(tick);
       }
     }, latency);
+
+    boolean isFirstBeat = ((tick.index / getSubsCount()) % getBeatsCount()) == 0;
+    if (isFirstBeat && tick.subdivision == 1) { // next bar
+      long beatIndex = tick.index / getSubsCount();
+      long barIndex = beatIndex / getBeatsCount();
+      boolean isCountIn = barIndex < getCountIn();
+      if (incrementalUnit.equals(UNIT.BARS) && !isCountIn && incrementalAmount > 0) {
+        barIndex = barIndex - getCountIn();
+        if (barIndex >= incrementalInterval && barIndex % incrementalInterval == 0) {
+          changeTempo(incrementalAmount * (incrementalIncrease ? 1 : -1));
+        }
+      }
+    }
+  }
+
+  private void onCountInFinished() {
+    updateIncrementalHandler();
+    // TODO: start muted, timer and elapsed time
   }
 
   public void start() {
@@ -147,6 +182,9 @@ public class MetronomeService extends Service implements TickListener {
       listener.onMetronomeStart();
     }
     metronomeUtil.start();
+    if (getCountIn() > 0) {
+      countInHandler.postDelayed(this::onCountInFinished, getCountInInterval());
+    }
     startForeground(NOTIFICATION_ID, notificationUtil.getNotification());
     Log.i(TAG, "start: foreground service started");
   }
@@ -158,6 +196,10 @@ public class MetronomeService extends Service implements TickListener {
       listener.onMetronomeStop();
     }
     metronomeUtil.stop();
+    latencyHandler.removeCallbacksAndMessages(null);
+    countInHandler.removeCallbacksAndMessages(null);
+    incrementalHandler.removeCallbacksAndMessages(null);
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
       stopForeground(STOP_FOREGROUND_REMOVE);
     } else {
@@ -208,6 +250,15 @@ public class MetronomeService extends Service implements TickListener {
 
   public int getTempo() {
     return metronomeUtil.getTempo();
+  }
+
+  private void changeTempo(int change) {
+    int tempoOld = getTempo();
+    int tempoNew = tempoOld + change;
+    setTempo(tempoNew);
+    if (listener != null) {
+      listener.onTempoChanged(tempoOld, tempoNew);
+    }
   }
 
   public long getInterval() {
@@ -386,25 +437,65 @@ public class MetronomeService extends Service implements TickListener {
     return metronomeUtil.getCountIn();
   }
 
-  public String getTempoTerm() {
-    String[] terms = getResources().getStringArray(R.array.label_tempo_terms);
-    int tempo = getTempo();
-    if (tempo < 60) {
-      return terms[0];
-    } else if (tempo < 66) {
-      return terms[1];
-    } else if (tempo < 76) {
-      return terms[2];
-    } else if (tempo < 108) {
-      return terms[3];
-    } else if (tempo < 120) {
-      return terms[4];
-    } else if (tempo < 168) {
-      return terms[5];
-    } else if (tempo < 200) {
-      return terms[6];
-    } else {
-      return terms[7];
+  public long getCountInInterval() {
+    return getInterval() * getBeatsCount() * getCountIn();
+  }
+
+  public void setIncrementalAmount(int bpm) {
+    incrementalAmount = bpm;
+    sharedPrefs.edit().putInt(PREF.INCREMENTAL_AMOUNT, bpm).apply();
+    updateIncrementalHandler();
+  }
+
+  public int getIncrementalAmount() {
+    return incrementalAmount;
+  }
+
+  public void setIncrementalIncrease(boolean increase) {
+    incrementalIncrease = increase;
+    sharedPrefs.edit().putBoolean(PREF.INCREMENTAL_INCREASE, increase).apply();
+  }
+
+  public boolean getIncrementalIncrease() {
+    return incrementalIncrease;
+  }
+
+  public void setIncrementalInterval(int interval) {
+    incrementalInterval = interval;
+    sharedPrefs.edit().putInt(PREF.INCREMENTAL_INTERVAL, interval).apply();
+    updateIncrementalHandler();
+  }
+
+  public int getIncrementalInterval() {
+    return incrementalInterval;
+  }
+
+  public void setIncrementalUnit(String unit) {
+    if (unit.equals(incrementalUnit)) {
+      return;
+    }
+    incrementalUnit = unit;
+    sharedPrefs.edit().putString(PREF.INCREMENTAL_UNIT, unit).apply();
+    updateIncrementalHandler();
+  }
+
+  public String getIncrementalUnit() {
+    return incrementalUnit;
+  }
+
+  private void updateIncrementalHandler() {
+    if (!isPlaying()) {
+      return;
+    }
+    incrementalHandler.removeCallbacksAndMessages(null);
+    if (incrementalUnit.equals(UNIT.SECONDS) && incrementalAmount > 0) {
+      incrementalHandler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          incrementalHandler.postDelayed(this, 1000L * incrementalInterval);
+          changeTempo(incrementalAmount * (incrementalIncrease ? 1 : -1));
+        }
+      }, 1000L * incrementalInterval);
     }
   }
 
@@ -413,6 +504,7 @@ public class MetronomeService extends Service implements TickListener {
     void onMetronomeStop();
     void onMetronomePreTick(Tick tick);
     void onMetronomeTick(Tick tick);
+    void onTempoChanged(int bpmOld, int bpmNew);
   }
 
   public class StopReceiver extends BroadcastReceiver {
