@@ -7,7 +7,6 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -306,18 +305,11 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     try {
       NavOptions.Builder builder = new NavOptions.Builder();
       if (UiUtil.areAnimationsEnabled(this)) {
-        boolean useAnimator = Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
-            && UiUtil.isPredictiveBackEnabled(this);
-        useAnimator = false; // TODO: remove when animator is working correctly again
         boolean useSliding = getSharedPrefs().getBoolean(PREF.USE_SLIDING, DEF.USE_SLIDING);
-        int enterEndFade = useAnimator ? R.animator.open_enter : R.anim.open_enter_fade;
-        builder.setEnterAnim(useSliding ? R.anim.open_enter_slide : enterEndFade);
-        int exitStartFade = useAnimator ? R.animator.open_exit : R.anim.open_exit_fade;
-        builder.setExitAnim(useSliding ? R.anim.open_exit_slide : exitStartFade);
-        int enterStartFade = useAnimator ? R.animator.close_enter : R.anim.close_enter_fade;
-        builder.setPopEnterAnim(useSliding ? R.anim.close_enter_slide : enterStartFade);
-        int exitEndFade = useAnimator ? R.animator.close_exit : R.anim.close_exit_fade;
-        builder.setPopExitAnim(useSliding ? R.anim.close_exit_slide : exitEndFade);
+        builder.setEnterAnim(useSliding ? R.anim.open_enter_slide : R.animator.open_enter);
+        builder.setExitAnim(useSliding ? R.anim.open_exit_slide : R.animator.open_exit);
+        builder.setPopEnterAnim(useSliding ? R.anim.close_enter_slide : R.animator.close_enter);
+        builder.setPopExitAnim(useSliding ? R.anim.close_exit_slide : R.animator.close_exit);
       } else {
         builder.setEnterAnim(-1).setExitAnim(-1).setPopEnterAnim(-1).setPopExitAnim(-1);
       }

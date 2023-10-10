@@ -26,17 +26,13 @@ public class AudioUtil {
   private static final byte[] DATA_MARKER = "data".getBytes(StandardCharsets.US_ASCII);
 
   public static AudioTrack getNewAudioTrack() {
-    AudioAttributes audioAttributes = new AudioAttributes.Builder()
-        .setUsage(AudioAttributes.USAGE_MEDIA)
-        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-        .build();
     AudioFormat audioFormat = new AudioFormat.Builder()
         .setEncoding(AudioFormat.ENCODING_PCM_FLOAT)
         .setSampleRate(SAMPLE_RATE_IN_HZ)
         .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
         .build();
     return new AudioTrack(
-        audioAttributes,
+        getAudioAttributes(),
         audioFormat,
         AudioTrack.getMinBufferSize(
             audioFormat.getSampleRate(), audioFormat.getChannelMask(), audioFormat.getEncoding()
@@ -114,5 +110,12 @@ public class AudioUtil {
       return i;
     }
     return -1;
+  }
+
+  public static AudioAttributes getAudioAttributes() {
+    return new AudioAttributes.Builder()
+        .setUsage(AudioAttributes.USAGE_MEDIA)
+        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+        .build();
   }
 }
