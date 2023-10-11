@@ -68,6 +68,7 @@
   <string name="action_email_description">Contact the developer</string>
   <string name="action_rate">Rate on Google Play</string>
   <string name="action_rate_description">Support the development</string>
+  <string name="action_retry">Retry</string>
 
   <!-- MESSAGES -->
 
@@ -84,6 +85,7 @@
   <string name="msg_reset_description">Do you really want to reset the entire app including bookmarks and settings? This cannot be undone.</string>
   <string name="msg_gain">Play with volume boost?</string>
   <string name="msg_gain_description">Be careful not to play through headphones as loud sounds can cause ear damage!</string>
+  <string name="msg_notification_permission_denied">The notification permission is required for metronome controls</string>
 
   <!-- OPTIONS -->
 
@@ -191,7 +193,7 @@
   <string name="about_github" translatable="false">GitHub</string>
   <string name="about_github_description">Source code</string>
   <string name="about_translation" translatable="false">Transifex</string>
-  <string name="about_translation_description">Help translate Doodle</string>
+  <string name="about_translation_description">Help translate Tack</string>
   <string name="about_privacy">Privacy policy</string>
   <string name="about_privacy_description">How is your data processed?</string>
 

@@ -6,8 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.media.AudioFocusRequest;
+import android.media.AudioFocusRequest.Builder;
+import android.media.AudioManager;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -22,6 +27,7 @@ import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.Constants.UNIT;
+import xyz.zedler.patrick.tack.util.AudioUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
@@ -34,6 +40,7 @@ public class MetronomeService extends Service implements TickListener {
 
   private final static int NOTIFICATION_ID = 1;
 
+  private AudioManager audioManager;
   private SharedPreferences sharedPrefs;
   private MetronomeUtil metronomeUtil;
   private NotificationUtil notificationUtil;
@@ -91,6 +98,9 @@ public class MetronomeService extends Service implements TickListener {
         this, stopReceiver, new IntentFilter(ACTION.STOP),
         ContextCompat.RECEIVER_EXPORTED
     );
+
+    audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
     Log.d(TAG, "onCreate: service created");
   }
 
@@ -178,14 +188,17 @@ public class MetronomeService extends Service implements TickListener {
   public void start() {
     if (isPlaying()) {
       return;
-    } else if (listener != null) {
-      listener.onMetronomeStart();
     }
     metronomeUtil.start();
+    if (listener != null) {
+      listener.onMetronomeStart();
+    }
     if (getCountIn() > 0) {
       countInHandler.postDelayed(this::onCountInFinished, getCountInInterval());
     }
-    startForeground(NOTIFICATION_ID, notificationUtil.getNotification());
+    if (notificationUtil.hasPermission()) {
+      startForeground(NOTIFICATION_ID, notificationUtil.getNotification());
+    }
     Log.i(TAG, "start: foreground service started");
   }
 

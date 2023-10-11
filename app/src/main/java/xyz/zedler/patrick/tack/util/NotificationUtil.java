@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import androidx.annotation.NonNull;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationCompat.Action;
@@ -42,6 +43,10 @@ public class NotificationUtil {
   }
 
   public boolean hasPermission() {
+    return hasPermission(context);
+  }
+
+  public static boolean hasPermission(@NonNull Context context) {
     if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
       int status = ContextCompat.checkSelfPermission(
           context, Manifest.permission.POST_NOTIFICATIONS

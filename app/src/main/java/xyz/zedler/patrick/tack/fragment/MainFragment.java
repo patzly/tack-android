@@ -502,6 +502,10 @@ public class MainFragment extends BaseFragment
   @Override
   public void onMetronomeStart() {
     activity.runOnUiThread(() -> {
+      if (!activity.hasNotificationPermission()) {
+        getMetronomeService().stop();
+        return;
+      }
       if (binding != null) {
         beatsBgDrawable.reset();
         if (getMetronomeService().getCountIn() > 0) {
@@ -1013,9 +1017,9 @@ public class MainFragment extends BaseFragment
     return isBound;
   }
 
-  private void showSnackbar(Snackbar snackbar) {
+  public void showSnackbar(Snackbar snackbar) {
     snackbar.setAnchorView(binding.fabMainPlayPause);
-    activity.showSnackbar(snackbar);
+    snackbar.show();
   }
 
   public String getTempoTerm(int bpm) {

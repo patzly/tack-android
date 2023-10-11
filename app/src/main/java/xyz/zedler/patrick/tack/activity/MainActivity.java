@@ -1,5 +1,6 @@
 package xyz.zedler.patrick.tack.activity;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -14,6 +15,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
 import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
@@ -44,6 +47,7 @@ import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.service.MetronomeService.LocalBinder;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
+import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.PrefsUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 
@@ -59,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   private Locale locale;
   private MetronomeService metronomeService;
   private boolean runAsSuperClass, bound;
+  private ActivityResultLauncher<String> requestPermissionLauncher;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -155,6 +160,19 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     );
     assert navHost != null;
     navController = navHost.getNavController();
+
+    requestPermissionLauncher = registerForActivityResult(new RequestPermission(), isGranted -> {
+      if (!isGranted && VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
+        Snackbar snackbar = getSnackbar(
+            R.string.msg_notification_permission_denied, Snackbar.LENGTH_LONG
+        );
+        snackbar.setAction(
+            R.string.action_retry,
+            v -> requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        );
+        showSnackbar(snackbar);
+      }
+    });
 
     if (savedInstanceState == null && bundleInstanceState == null) {
       new Handler(Looper.getMainLooper()).postDelayed(
@@ -268,6 +286,14 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     return bound;
   }
 
+  public boolean hasNotificationPermission() {
+    boolean hasPermission = NotificationUtil.hasPermission(this);
+    if (!hasPermission && VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
+      requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+    }
+    return hasPermission;
+  }
+
   @NonNull
   public BaseFragment getCurrentFragment() {
     return (BaseFragment) navHost.getChildFragmentManager().getFragments().get(0);
@@ -278,7 +304,12 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   }
 
   public void showSnackbar(Snackbar snackbar) {
-    snackbar.show();
+    BaseFragment current = getCurrentFragment();
+    if (current instanceof MainFragment) {
+      ((MainFragment) current).showSnackbar(snackbar);
+    } else {
+      snackbar.show();
+    }
   }
 
   public Snackbar getSnackbar(@StringRes int resId, int duration) {

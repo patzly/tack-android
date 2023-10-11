@@ -3,6 +3,7 @@
 ? Here is the update you have been waiting for so long! I have implemented countless new features, improved tons of things and fixed many bugs, all while studying. But look for yourself!
 
 - New: Material You redesign with dynamic colors and theme selection
+- New: support for Android 12-14
 - New: beautiful beat visualization with subdivisions and changeable emphasizes
 - New: options for count in, timer, incremental tempo change, muted beats and swing
 - New: settings for flash screen, volume boost, elapsed time and audio latency correction
