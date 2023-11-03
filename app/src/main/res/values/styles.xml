@@ -38,7 +38,8 @@
     name="Widget.Tack.Toolbar"
     parent="@style/Widget.Material3.Toolbar.OnSurface">
     <item name="android:layout_width">match_parent</item>
-    <item name="android:layout_height">?attr/actionBarSize</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:minHeight">?attr/actionBarSize</item>
     <item name="titleTextAppearance">@style/TextAppearance.Tack.TitleLarge</item>
     <item name="titleMarginStart">0dp</item>
     <item name="titleCentered">true</item>
@@ -295,7 +296,7 @@
     name="Widget.Tack.SquigglySeekbar"
     parent="@android:style/Widget.ProgressBar.Horizontal">
     <item name="android:layout_width">match_parent</item>
-    <item name="android:layout_height">48dp</item>
+    <item name="android:layout_height">40dp</item>
     <item name="android:paddingStart">6dp</item>
     <item name="android:paddingEnd">6dp</item>
     <item name="android:thumb">@drawable/shape_seekbar_thumb</item>

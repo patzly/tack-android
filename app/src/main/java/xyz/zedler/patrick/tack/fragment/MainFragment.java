@@ -755,10 +755,6 @@ public class MainFragment extends BaseFragment
   }
 
   private void updateBeats(String[] beats) {
-    if (isBound()
-        && binding.linearMainBeats.getChildCount() == getMetronomeService().getBeatsCount()) {
-      return;
-    }
     binding.linearMainBeats.removeAllViews();
     for (int i = 0; i < beats.length; i++) {
       String tickType = beats[i];
@@ -784,10 +780,6 @@ public class MainFragment extends BaseFragment
   }
 
   public void updateSubs(String[] subdivisions) {
-    if (isBound()
-        && binding.linearMainSubs.getChildCount() == getMetronomeService().getSubsCount()) {
-      return;
-    }
     binding.linearMainSubs.removeAllViews();
     for (int i = 0; i < subdivisions.length; i++) {
       String tickType = subdivisions[i];
@@ -823,6 +815,7 @@ public class MainFragment extends BaseFragment
     chip.setCloseIconVisible(true);
     chip.setOnCloseIconClickListener(v -> {
       performHapticClick();
+      ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBookmarks);
       binding.chipGroupMainBookmarks.removeView(chip);
       bookmarks.remove((Integer) tempo); // Integer cast required
       updateBookmarks();
@@ -900,6 +893,7 @@ public class MainFragment extends BaseFragment
       chip.setCloseIconTint(ColorStateList.valueOf(colorIcon));
       chip.setTextColor(colorText);
     }
+    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBookmarks);
   }
 
   private void changeTempo(int change) {

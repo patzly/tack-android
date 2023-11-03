@@ -179,6 +179,31 @@
           style="@style/Widget.Tack.SquigglySeekbar"
           android:visibility="gone" />
 
+        <FrameLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:paddingStart="4dp"
+          android:paddingEnd="4dp"
+          android:visibility="gone">
+
+          <TextView
+            style="@style/Widget.Tack.TextView.BodyMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:text="0:00" />
+
+          <TextView
+            style="@style/Widget.Tack.TextView.BodyMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:text="1:12" />
+
+        </FrameLayout>
+
       </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -269,17 +294,27 @@
       android:layout_height="0dp"
       android:layout_weight="1">
 
-      <com.google.android.material.chip.ChipGroup
-        android:id="@+id/chip_group_main_bookmarks"
-        android:layout_width="wrap_content"
+      <HorizontalScrollView
+        android:id="@+id/scroll_horiz_main_bookmarks"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:layout_gravity="center"
-        android:layout_marginBottom="4dp"
-        android:animateLayoutChanges="true"
-        app:chipSpacingVertical="0dp"
-        app:singleSelection="true"
-        app:singleLine="false" />
+        android:layout_gravity="center_vertical"
+        android:overScrollMode="ifContentScrolls"
+        android:scrollbars="none"
+        tools:ignore="UselessParent">
+
+        <com.google.android.material.chip.ChipGroup
+          android:id="@+id/chip_group_main_bookmarks"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:minHeight="48dp"
+          android:paddingStart="16dp"
+          android:paddingEnd="16dp"
+          android:animateLayoutChanges="true"
+          app:singleSelection="true"
+          app:singleLine="true" />
+
+      </HorizontalScrollView>
 
     </FrameLayout>
 
