@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
 import java.util.Objects;
-import xyz.zedler.patrick.tack.Constants.PREF;
 
 public class PrefsUtil {
 

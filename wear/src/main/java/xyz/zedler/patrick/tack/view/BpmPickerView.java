@@ -89,7 +89,7 @@ public class BpmPickerView extends View
     float delta = -scrolled * (factor / 4);
     float rotaryThreshold = 0.065f;
 
-    rotaryStorage = rotaryStorage + -scrolled;
+    rotaryStorage = rotaryStorage - scrolled;
     if (rotaryStorage > rotaryThreshold) {
       if (onRotaryInputListener != null) {
         onRotaryInputListener.onRotate(1);

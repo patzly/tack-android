@@ -15,7 +15,6 @@ import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RawRes;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import java.io.BufferedReader;
 import java.io.InputStream;

@@ -55,7 +55,6 @@
   <string name="action_remove_sub">Remove subdivision</string>
   <string name="action_clear_all">Clear all</string>
   <string name="action_tempo_tap">Tap tempo</string>
-  <string name="action_emphasis">Emphasis</string>
   <string name="action_bookmark">Bookmark</string>
   <string name="action_beat_mode">Beat mode</string>
   <string name="action_send_feedback">Send feedback</string>
@@ -76,7 +75,6 @@
   <string name="msg_feedback">A great app requires a lot of time and lives from the feedback of its users.</string>
   <string name="msg_feedback_contact">Do you have any wishes, comments or questions? Contact me!\nOtherwise I would be very happy about a nice review in the Play Store.</string>
   <string name="msg_recommend">Check out this cool metronome app: \nhttps://play.google.com/store/apps/details?id=xyz.zedler.patrick.tack</string>
-  <string name="msg_wear">Tack is also available for Wear OS watches! All features of the phone app and much more, always ready on your wrist.</string>
   <string name="msg_vibration_unavailable">Vibration unavailable on this device</string>
   <string name="msg_metronome_playing">Metronome is playing</string>
   <string name="msg_metronome_playing_return">Tap to return to Tack</string>
@@ -106,7 +104,7 @@
   </plurals>
   <string name="options_unit_minutes">Minutes</string>
   <string name="options_count_in">Count in</string>
-  <string name="options_count_in_description">Play %1$s before counting time or applying modifiers</string>
+  <string name="options_count_in_description">Play %1$s before applying modifiers</string>
   <string name="options_incremental">Incremental tempo change</string>
   <string name="options_incremental_description_increase">Increase tempo by %1$d bpm</string>
   <string name="options_incremental_description_decrease">Decrease tempo by %1$d bpm</string>
@@ -177,13 +175,6 @@
 
   <!-- ABOUT -->
 
-  <array name="about_changelog_highlights" translatable="false">
-    <item>New:</item>
-    <item>Improved:</item>
-    <item>Fixed:</item>
-  </array>
-
-  <string name="about_description">Developer info &amp; more</string>
   <string name="about_version">Version</string>
   <string name="about_changelog">Changelog</string>
   <string name="about_changelog_description">What\'s new?</string>

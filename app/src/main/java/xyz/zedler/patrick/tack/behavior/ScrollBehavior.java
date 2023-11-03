@@ -1,21 +1,14 @@
 package xyz.zedler.patrick.tack.behavior;
 
-import android.animation.ValueAnimator;
-import android.app.Activity;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import com.google.android.material.appbar.AppBarLayout;
-import xyz.zedler.patrick.tack.R;
 
 public class ScrollBehavior {
 

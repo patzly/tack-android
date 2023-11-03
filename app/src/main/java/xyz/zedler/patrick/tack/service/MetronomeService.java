@@ -200,6 +200,27 @@ public class MetronomeService extends Service implements TickListener {
       startForeground(NOTIFICATION_ID, notificationUtil.getNotification());
     }
     Log.i(TAG, "start: foreground service started");
+
+    // TODO
+    if (VERSION.SDK_INT >= VERSION_CODES.O) {
+      AudioFocusRequest request = new Builder(AudioManager.AUDIOFOCUS_GAIN)
+          .setAudioAttributes(AudioUtil.getAudioAttributes())
+          .setWillPauseWhenDucked(true)
+          .setOnAudioFocusChangeListener(focusChange -> {
+            if (focusChange == AudioManager.AUDIOFOCUS_LOSS
+                || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+
+            }
+          }).build();
+      audioManager.requestAudioFocus(new Builder(AudioManager.AUDIOFOCUS_GAIN).build());
+    } else {
+        /*audioManager.requestAudioFocus(new OnAudioFocusChangeListener() {
+          @Override
+          public void onAudioFocusChange(int focusChange) {
+
+          }
+        }, AudioUtil.getAudioAttributes())*/
+    }
   }
 
   public void stop() {
