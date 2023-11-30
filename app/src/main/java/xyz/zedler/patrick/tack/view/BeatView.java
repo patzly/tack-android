@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
@@ -248,5 +249,11 @@ public class BeatView extends FrameLayout {
       button.setOnClickListener(l);
     }
     button.setEnabled(l != null);
+  }
+
+  @NonNull
+  @Override
+  public String toString() {
+    return tickType;
   }
 }

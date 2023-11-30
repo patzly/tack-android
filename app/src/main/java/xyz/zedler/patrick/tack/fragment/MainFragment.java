@@ -755,6 +755,13 @@ public class MainFragment extends BaseFragment
   }
 
   private void updateBeats(String[] beats) {
+    String[] currentBeats = new String[binding.linearMainBeats.getChildCount()];
+    for (int i = 0; i < binding.linearMainBeats.getChildCount(); i++) {
+      currentBeats[i] = String.valueOf(binding.linearMainBeats.getChildAt(i));
+    }
+    if (Arrays.equals(beats, currentBeats)) {
+      return;
+    }
     binding.linearMainBeats.removeAllViews();
     for (int i = 0; i < beats.length; i++) {
       String tickType = beats[i];
@@ -780,6 +787,13 @@ public class MainFragment extends BaseFragment
   }
 
   public void updateSubs(String[] subdivisions) {
+    String[] currentSubs = new String[binding.linearMainSubs.getChildCount()];
+    for (int i = 0; i < binding.linearMainSubs.getChildCount(); i++) {
+      currentSubs[i] = String.valueOf(binding.linearMainSubs.getChildAt(i));
+    }
+    if (Arrays.equals(subdivisions, currentSubs)) {
+      return;
+    }
     binding.linearMainSubs.removeAllViews();
     for (int i = 0; i < subdivisions.length; i++) {
       String tickType = subdivisions[i];
