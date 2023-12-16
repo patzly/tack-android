@@ -23,6 +23,7 @@ import androidx.core.graphics.ColorUtils;
 import androidx.graphics.shapes.CornerRounding;
 import androidx.graphics.shapes.RoundedPolygon;
 import androidx.graphics.shapes.ShapesKt;
+import androidx.graphics.shapes.Shapes_androidKt;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
@@ -89,7 +90,8 @@ public class CircleView extends View {
   }
 
   private void updateShape() {
-    path.set(ShapesKt.star(companion, waves, 1, innerRadius, cornerRounding).toPath());
+    RoundedPolygon star = ShapesKt.star(companion, waves, 1, innerRadius, cornerRounding);
+    path.set(Shapes_androidKt.toPath(star));
     path.computeBounds(bounds, false);
     float scaleX = getWidth() / (bounds.width()) + .3f;
     float scaleY = getHeight() / bounds.height();
