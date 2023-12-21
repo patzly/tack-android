@@ -80,23 +80,11 @@ public class NotificationUtil {
       case THEME.YELLOW:
         themeResId = R.style.Theme_Tack_Yellow;
         break;
-      case THEME.LIME:
-        themeResId = R.style.Theme_Tack_Lime;
-        break;
       case THEME.GREEN:
         themeResId = R.style.Theme_Tack_Green;
         break;
-      case THEME.TURQUOISE:
-        themeResId = R.style.Theme_Tack_Turquoise;
-        break;
-      case THEME.TEAL:
-        themeResId = R.style.Theme_Tack_Teal;
-        break;
       case THEME.BLUE:
         themeResId = R.style.Theme_Tack_Blue;
-        break;
-      case THEME.PURPLE:
-        themeResId = R.style.Theme_Tack_Purple;
         break;
       default:
         if (DynamicColors.isDynamicColorAvailable()) {

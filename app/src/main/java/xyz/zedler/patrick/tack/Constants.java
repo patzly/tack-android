@@ -16,7 +16,8 @@ public final class Constants {
   public final static class PREF {
     // General
     public static final String THEME = "app_theme";
-    public static final String MODE = "mode";
+    public static final String UI_MODE = "ui_mode";
+    public static final String UI_CONTRAST = "ui_contrast";
     public static final String USE_SLIDING = "use_sliding_transition";
     public static final String HAPTIC = "haptic_feedback";
     public static final String LAST_VERSION = "last_version";
@@ -44,7 +45,8 @@ public final class Constants {
   public final static class DEF {
     // General
     public static final String THEME = "";
-    public static final int MODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+    public static final int UI_MODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+    public static final String UI_CONTRAST = CONTRAST.STANDARD;
     public static final boolean USE_SLIDING = false;
 
     // Metronome
@@ -111,11 +113,14 @@ public final class Constants {
     public static final String DYNAMIC = "dynamic";
     public static final String RED = "red";
     public static final String YELLOW = "yellow";
-    public static final String LIME = "lime";
     public static final String GREEN = "green";
-    public static final String TURQUOISE = "turquoise";
-    public static final String TEAL = "teal";
     public static final String BLUE = "blue";
-    public static final String PURPLE = "purple";
+  }
+
+  public static final class CONTRAST {
+
+    public static final String STANDARD = "standard";
+    public static final String MEDIUM = "medium";
+    public static final String HIGH = "high";
   }
 }

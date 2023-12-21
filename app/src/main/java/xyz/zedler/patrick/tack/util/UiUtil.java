@@ -3,6 +3,7 @@ package xyz.zedler.patrick.tack.util;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
@@ -17,6 +18,15 @@ import android.view.WindowManager;
 import android.view.WindowMetrics;
 import androidx.annotation.Dimension;
 import androidx.annotation.NonNull;
+import androidx.annotation.StyleRes;
+import com.google.android.material.color.DynamicColors;
+import com.google.android.material.color.DynamicColorsOptions;
+import com.google.android.material.color.HarmonizedColors;
+import com.google.android.material.color.HarmonizedColorsOptions;
+import xyz.zedler.patrick.tack.Constants.CONTRAST;
+import xyz.zedler.patrick.tack.Constants.DEF;
+import xyz.zedler.patrick.tack.Constants.PREF;
+import xyz.zedler.patrick.tack.Constants.THEME;
 import xyz.zedler.patrick.tack.R;
 
 public class UiUtil {
@@ -66,6 +76,81 @@ public class UiUtil {
         flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
       }
       view.setSystemUiVisibility(flags);
+    }
+  }
+
+  public static void setTheme(@NonNull Activity activity, @NonNull SharedPreferences sharedPrefs) {
+    switch (sharedPrefs.getString(PREF.THEME, DEF.THEME)) {
+      case THEME.RED:
+        setContrastTheme(
+            activity, sharedPrefs,
+            R.style.Theme_Tack_Red,
+            R.style.ThemeOverlay_Tack_Red_MediumContrast,
+            R.style.ThemeOverlay_Tack_Red_HighContrast
+        );
+        break;
+      case THEME.YELLOW:
+        setContrastTheme(
+            activity, sharedPrefs,
+            R.style.Theme_Tack_Yellow,
+            R.style.ThemeOverlay_Tack_Yellow_MediumContrast,
+            R.style.ThemeOverlay_Tack_Yellow_HighContrast
+        );
+        break;
+      case THEME.GREEN:
+        setContrastTheme(
+            activity, sharedPrefs,
+            R.style.Theme_Tack_Green,
+            R.style.ThemeOverlay_Tack_Green_MediumContrast,
+            R.style.ThemeOverlay_Tack_Green_HighContrast
+        );
+        break;
+      case THEME.BLUE:
+        setContrastTheme(
+            activity, sharedPrefs,
+            R.style.Theme_Tack_Blue,
+            R.style.ThemeOverlay_Tack_Blue_MediumContrast,
+            R.style.ThemeOverlay_Tack_Blue_HighContrast
+        );
+        break;
+      default:
+        if (DynamicColors.isDynamicColorAvailable()) {
+          DynamicColors.applyToActivityIfAvailable(
+              activity,
+              new DynamicColorsOptions.Builder().setOnAppliedCallback(
+                  a -> HarmonizedColors.applyToContextIfAvailable(
+                      a, HarmonizedColorsOptions.createMaterialDefaults()
+                  )
+              ).build()
+          );
+        } else {
+          setContrastTheme(
+              activity, sharedPrefs,
+              R.style.Theme_Tack_Yellow,
+              R.style.ThemeOverlay_Tack_Yellow_MediumContrast,
+              R.style.ThemeOverlay_Tack_Yellow_HighContrast
+          );
+        }
+        break;
+    }
+  }
+
+  private static void setContrastTheme(
+      Activity activity,
+      SharedPreferences sharedPrefs,
+      @StyleRes int resIdStandard,
+      @StyleRes int resIdMedium,
+      @StyleRes int resIdHigh
+  ) {
+    switch (sharedPrefs.getString(PREF.UI_CONTRAST, DEF.UI_CONTRAST)) {
+      case CONTRAST.MEDIUM:
+        activity.setTheme(resIdMedium);
+        break;
+      case CONTRAST.HIGH:
+        activity.setTheme(resIdHigh);
+        break;
+      default:
+        activity.setTheme(resIdStandard);
     }
   }
 
@@ -163,6 +248,6 @@ public class UiUtil {
 
   public static boolean isPredictiveBackEnabled(Context context) {
     final String ENABLE_BACK_ANIMATION = "enable_back_animation";
-    return Global.getInt(context.getContentResolver(), ENABLE_BACK_ANIMATION, 0) == 1;
+    return Global.getInt(context.getContentResolver(), "enable_back_animation", 0) == 1;
   }
 }

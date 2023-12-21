@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.color.ColorRoles;
 import com.google.android.material.color.MaterialColors;
-import com.google.android.material.elevation.SurfaceColors;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
@@ -41,7 +40,7 @@ public class SelectionCardView extends MaterialCardView {
     setRadius(outerRadius);
     setCardElevation(0);
     setCardForegroundColor(null);
-    super.setCardBackgroundColor(SurfaceColors.SURFACE_2.getColor(context));
+    super.setCardBackgroundColor(ResUtil.getColorAttr(context, R.attr.colorSurfaceContainer));
     setRippleColor(ColorStateList.valueOf(ResUtil.getColorHighlight(context)));
     setStrokeWidth(0);
     setCheckable(true);

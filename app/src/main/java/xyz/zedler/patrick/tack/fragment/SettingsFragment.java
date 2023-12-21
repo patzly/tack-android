@@ -14,6 +14,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.core.content.ContextCompat;
@@ -26,6 +27,7 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import xyz.zedler.patrick.tack.Constants.CONTRAST;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
@@ -113,19 +115,19 @@ public class SettingsFragment extends BaseFragment
 
     setUpThemeSelection();
 
-    int id;
-    switch (getSharedPrefs().getInt(PREF.MODE, DEF.MODE)) {
+    int idMode;
+    switch (getSharedPrefs().getInt(PREF.UI_MODE, DEF.UI_MODE)) {
       case AppCompatDelegate.MODE_NIGHT_NO:
-        id = R.id.button_other_theme_light;
+        idMode = R.id.button_other_theme_light;
         break;
       case AppCompatDelegate.MODE_NIGHT_YES:
-        id = R.id.button_other_theme_dark;
+        idMode = R.id.button_other_theme_dark;
         break;
       default:
-        id = R.id.button_other_theme_auto;
+        idMode = R.id.button_other_theme_auto;
         break;
     }
-    binding.toggleOtherTheme.check(id);
+    binding.toggleOtherTheme.check(idMode);
     binding.toggleOtherTheme.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
       if (!isChecked) {
         return;
@@ -138,10 +140,51 @@ public class SettingsFragment extends BaseFragment
       } else {
         pref = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
       }
-      getSharedPrefs().edit().putInt(PREF.MODE, pref).apply();
+      getSharedPrefs().edit().putInt(PREF.UI_MODE, pref).apply();
       performHapticClick();
+      ViewUtil.startIcon(binding.imageSettingsTheme);
       activity.restartToApply(0, getInstanceState(), true);
     });
+
+    int idContrast;
+    switch (getSharedPrefs().getString(PREF.UI_CONTRAST, DEF.UI_CONTRAST)) {
+      case CONTRAST.MEDIUM:
+        idContrast = R.id.button_other_contrast_medium;
+        break;
+      case CONTRAST.HIGH:
+        idContrast = R.id.button_other_contrast_high;
+        break;
+      default:
+        idContrast = R.id.button_other_contrast_standard;
+        break;
+    }
+    binding.toggleOtherContrast.check(idContrast);
+    binding.toggleOtherContrast.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+      if (!isChecked) {
+        return;
+      }
+      String pref;
+      if (checkedId == R.id.button_other_contrast_medium) {
+        pref = CONTRAST.MEDIUM;
+      } else if (checkedId == R.id.button_other_contrast_high) {
+        pref = CONTRAST.HIGH;
+      } else {
+        pref = CONTRAST.STANDARD;
+      }
+      getSharedPrefs().edit().putString(PREF.UI_CONTRAST, pref).apply();
+      performHapticClick();
+      ViewUtil.startIcon(binding.imageSettingsContrast);
+      activity.restartToApply(0, getInstanceState(), true);
+    });
+    boolean enabled = !getSharedPrefs().getString(PREF.THEME, DEF.THEME).equals(THEME.DYNAMIC);
+    binding.toggleOtherContrast.setEnabled(enabled);
+    binding.textSettingsContrastDynamic.setVisibility(enabled ? View.GONE : View.VISIBLE);
+    binding.textSettingsContrastDynamic.setText(
+        VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE
+            ? R.string.settings_contrast_dynamic
+            : R.string.settings_contrast_dynamic_unsupported
+    );
+
 
     binding.partialOptionTransition.linearOptionTransition.setOnClickListener(
         v -> binding.partialOptionTransition.switchOptionTransition.setChecked(
@@ -417,52 +460,66 @@ public class SettingsFragment extends BaseFragment
   private void setUpThemeSelection() {
     boolean hasDynamic = DynamicColors.isDynamicColorAvailable();
     ViewGroup container = binding.linearOtherThemeContainer;
-    for (int i = hasDynamic ? -1 : 0; i < 8; i++) {
+    for (int i = hasDynamic ? -1 : 0; i < 4; i++) {
       String name;
       int resId;
-      if (i == -1) {
-        name = THEME.DYNAMIC;
-        resId = -1;
-      } else if (i == 0) {
-        name = THEME.RED;
-        resId = R.style.Theme_Tack_Red;
-      } else if (i == 1) {
-        name = THEME.YELLOW;
-        resId = R.style.Theme_Tack_Yellow;
-      } else if (i == 2) {
-        name = THEME.LIME;
-        resId = R.style.Theme_Tack_Lime;
-      } else if (i == 3) {
-        name = THEME.GREEN;
-        resId = R.style.Theme_Tack_Green;
-      } else if (i == 4) {
-        name = THEME.TURQUOISE;
-        resId = R.style.Theme_Tack_Turquoise;
-      } else if (i == 5) {
-        name = THEME.TEAL;
-        resId = R.style.Theme_Tack_Teal;
-      } else if (i == 6) {
-        name = THEME.BLUE;
-        resId = R.style.Theme_Tack_Blue;
-      } else if (i == 7) {
-        name = THEME.PURPLE;
-        resId = R.style.Theme_Tack_Purple;
-      } else {
-        name = THEME.YELLOW;
-        resId = R.style.Theme_Tack_Yellow;
+      switch (i) {
+        case -1:
+          name = THEME.DYNAMIC;
+          resId = -1;
+          break;
+        case 0:
+          name = THEME.RED;
+          resId = getContrastThemeResId(
+              R.style.Theme_Tack_Red,
+              R.style.ThemeOverlay_Tack_Red_MediumContrast,
+              R.style.ThemeOverlay_Tack_Red_HighContrast
+          );
+          break;
+        case 2:
+          name = THEME.GREEN;
+          resId = getContrastThemeResId(
+              R.style.Theme_Tack_Green,
+              R.style.ThemeOverlay_Tack_Green_MediumContrast,
+              R.style.ThemeOverlay_Tack_Green_HighContrast
+          );
+          break;
+        case 3:
+          name = THEME.BLUE;
+          resId = getContrastThemeResId(
+              R.style.Theme_Tack_Blue,
+              R.style.ThemeOverlay_Tack_Blue_MediumContrast,
+              R.style.ThemeOverlay_Tack_Blue_HighContrast
+          );
+          break;
+        default:
+          name = THEME.YELLOW;
+          resId = getContrastThemeResId(
+              R.style.Theme_Tack_Yellow,
+              R.style.ThemeOverlay_Tack_Yellow_MediumContrast,
+              R.style.ThemeOverlay_Tack_Yellow_HighContrast
+          );
+          break;
       }
 
       SelectionCardView card = new SelectionCardView(activity);
       card.setEnsureContrast(false);
-      int color = VERSION.SDK_INT >= VERSION_CODES.S && i == -1
-          ? ContextCompat.getColor(
-              activity,
-              UiUtil.isDarkModeActive(activity)
-                  ? android.R.color.system_accent1_700
-                  : android.R.color.system_accent1_100
-      ) : ResUtil.getColorAttr(
-          new ContextThemeWrapper(activity, resId), R.attr.colorPrimaryContainer
-      );
+      int color;
+      if (i == -1 && VERSION.SDK_INT >= VERSION_CODES.S) {
+        int resIdLight = VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE
+            ? android.R.color.system_primary_container_light
+            : android.R.color.system_accent1_100;
+        int resIdDark = VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE
+            ? android.R.color.system_primary_container_dark
+            : android.R.color.system_accent1_700;
+        color = ContextCompat.getColor(
+            activity, UiUtil.isDarkModeActive(activity) ? resIdDark : resIdLight
+        );
+      } else {
+        color = ResUtil.getColorAttr(
+            new ContextThemeWrapper(activity, resId), R.attr.colorPrimaryContainer
+        );
+      }
       card.setCardBackgroundColor(color);
       card.setOnClickListener(v -> {
         if (!card.isChecked()) {
@@ -514,6 +571,21 @@ public class SettingsFragment extends BaseFragment
           bundleInstanceState.getInt(EXTRA.SCROLL_POSITION, 0),
           0
       );
+    }
+  }
+
+  private int getContrastThemeResId(
+      @StyleRes int resIdStandard,
+      @StyleRes int resIdMedium,
+      @StyleRes int resIdHigh
+  ) {
+    switch (getSharedPrefs().getString(PREF.UI_CONTRAST, DEF.UI_CONTRAST)) {
+      case CONTRAST.MEDIUM:
+        return resIdMedium;
+      case CONTRAST.HIGH:
+        return resIdHigh;
+      default:
+        return resIdStandard;
     }
   }
 

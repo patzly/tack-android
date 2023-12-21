@@ -36,7 +36,6 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.card.MaterialCardView;
-import com.google.android.material.elevation.SurfaceColors;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -247,7 +246,7 @@ public class ViewUtil {
     Arrays.fill(radii, UiUtil.dpToPx(context, 16));
     RoundRectShape rect = new RoundRectShape(radii, null, null);
     ShapeDrawable shape = new ShapeDrawable(rect);
-    shape.getPaint().setColor(SurfaceColors.SURFACE_3.getColor(context));
+    shape.getPaint().setColor(ResUtil.getColorAttr(context, R.attr.colorSurfaceContainerHigh));
     LayerDrawable layers = new LayerDrawable(new ShapeDrawable[]{shape});
     layers.setLayerInset(
         0,

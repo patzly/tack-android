@@ -359,25 +359,36 @@ public class MainFragment extends BaseFragment
       }
       ViewUtil.startIcon(binding.buttonMainTempoTap.getIcon());
 
-      long interval = System.currentTimeMillis() - prevTouchTime;
-      if (prevTouchTime > 0 && interval <= 5000) {
-        while (intervals.size() >= 10) {
+      long currentTime = System.currentTimeMillis();
+      long interval = currentTime - prevTouchTime;
+      if (prevTouchTime > 0 && interval <= 3000) {
+        while (intervals.size() >= 20) {
           intervals.remove(0);
         }
         intervals.add(System.currentTimeMillis() - prevTouchTime);
         if (intervals.size() > 1) {
-          long intervalAverage;
           long sum = 0L;
           for (long e : intervals) {
             sum += e;
           }
-          intervalAverage = (long) ((double) sum / intervals.size());
-          if (isBoundOrShowWarning()) {
-            setTempo((int) (60000 / intervalAverage));
+          long intervalAverage = sum / intervals.size();
+          long averageTempo = 60000 / intervalAverage;
+
+          // Überprüfen Sie, ob das Tempo um mehr als 20% geändert wurde
+          if (Math.abs(averageTempo - getMetronomeService().getTempo()) > getMetronomeService().getTempo() * 0.2) {
+            intervals.clear(); // Zurücksetzen, wenn die Tempoänderung zu groß ist
           }
+
+          // Setzen Sie das Tempo und aktualisieren Sie prevTouchTime
+          if (isBoundOrShowWarning()) {
+            setTempo((int) averageTempo);
+          }
+          prevTouchTime = currentTime;
         }
+      } else {
+        intervals.clear();
+        prevTouchTime = currentTime;
       }
-      prevTouchTime = System.currentTimeMillis();
 
       performHapticHeavyClick();
       return true;

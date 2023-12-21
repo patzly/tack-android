@@ -16,23 +16,30 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.NonNull;
+import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.res.ResourcesCompat;
-import com.google.android.material.color.DynamicColors;
+import xyz.zedler.patrick.tack.Constants.CONTRAST;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.Constants.THEME;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.util.PrefsUtil;
+import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends MainActivity {
 
+  private SharedPreferences sharedPrefs;
+
   @Override
   public void onCreate(Bundle bundle) {
+    sharedPrefs = new PrefsUtil(this)
+        .checkForMigrations()
+        .getSharedPrefs();
+
     if (Build.VERSION.SDK_INT >= 31) {
       super.onCreate(bundle);
 
@@ -58,13 +65,9 @@ public class SplashActivity extends MainActivity {
         set.start();
       });
     } else {
-      SharedPreferences sharedPrefs = new PrefsUtil(this)
-          .checkForMigrations()
-          .getSharedPrefs();
-
       // DARK MODE
 
-      int modeNight = sharedPrefs.getInt(PREF.MODE, DEF.MODE);
+      int modeNight = sharedPrefs.getInt(PREF.UI_MODE, DEF.UI_MODE);
       int uiMode = getResources().getConfiguration().uiMode;
       switch (modeNight) {
         case AppCompatDelegate.MODE_NIGHT_NO:
@@ -83,39 +86,7 @@ public class SplashActivity extends MainActivity {
 
       // THEME
 
-      switch (sharedPrefs.getString(PREF.THEME, DEF.THEME)) {
-        case THEME.RED:
-          setTheme(R.style.Theme_Tack_Red);
-          break;
-        case THEME.YELLOW:
-          setTheme(R.style.Theme_Tack_Yellow);
-          break;
-        case THEME.LIME:
-          setTheme(R.style.Theme_Tack_Lime);
-          break;
-        case THEME.GREEN:
-          setTheme(R.style.Theme_Tack_Green);
-          break;
-        case THEME.TURQUOISE:
-          setTheme(R.style.Theme_Tack_Turquoise);
-          break;
-        case THEME.TEAL:
-          setTheme(R.style.Theme_Tack_Teal);
-          break;
-        case THEME.BLUE:
-          setTheme(R.style.Theme_Tack_Blue);
-          break;
-        case THEME.PURPLE:
-          setTheme(R.style.Theme_Tack_Purple);
-          break;
-        default:
-          if (DynamicColors.isDynamicColorAvailable()) {
-            DynamicColors.applyToActivityIfAvailable(this);
-          } else {
-            setTheme(R.style.Theme_Tack_Yellow);
-          }
-          break;
-      }
+      UiUtil.setTheme(this, sharedPrefs);
 
       if (bundle == null) {
         bundle = new Bundle();
@@ -151,7 +122,7 @@ public class SplashActivity extends MainActivity {
     }
     SharedPreferences sharedPrefs = new PrefsUtil(base).checkForMigrations().getSharedPrefs();
     // Night mode
-    int modeNight = sharedPrefs.getInt(PREF.MODE, DEF.MODE);
+    int modeNight = sharedPrefs.getInt(PREF.UI_MODE, DEF.UI_MODE);
     int uiMode = base.getResources().getConfiguration().uiMode;
     switch (modeNight) {
       case AppCompatDelegate.MODE_NIGHT_NO:
@@ -176,5 +147,22 @@ public class SplashActivity extends MainActivity {
     startActivity(intent);
     overridePendingTransition(0, R.anim.fade_out);
     finish();
+  }
+
+  private void setContrastTheme(
+      @StyleRes int resIdStandard,
+      @StyleRes int resIdMedium,
+      @StyleRes int resIdHigh
+  ) {
+    switch (sharedPrefs.getString(PREF.UI_CONTRAST, DEF.UI_CONTRAST)) {
+      case CONTRAST.MEDIUM:
+        setTheme(resIdMedium);
+        break;
+      case CONTRAST.HIGH:
+        setTheme(resIdHigh);
+        break;
+      default:
+        setTheme(resIdStandard);
+    }
   }
 }

@@ -20,24 +20,21 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestPermissi
 import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
+import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
-import com.google.android.material.color.DynamicColors;
-import com.google.android.material.color.DynamicColorsOptions;
-import com.google.android.material.color.HarmonizedColors;
-import com.google.android.material.color.HarmonizedColorsOptions;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.Locale;
 import xyz.zedler.patrick.tack.BuildConfig;
 import xyz.zedler.patrick.tack.Constants.ACTION;
+import xyz.zedler.patrick.tack.Constants.CONTRAST;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.Constants.THEME;
 import xyz.zedler.patrick.tack.NavMainDirections;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
@@ -79,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
     // DARK MODE
 
-    int modeNight = sharedPrefs.getInt(PREF.MODE, DEF.MODE);
+    int modeNight = sharedPrefs.getInt(PREF.UI_MODE, DEF.UI_MODE);
     int uiMode = getResources().getConfiguration().uiMode;
     switch (modeNight) {
       case AppCompatDelegate.MODE_NIGHT_NO:
@@ -104,46 +101,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     // Don't set uiMode here, won't let FOLLOW_SYSTEM apply correctly
     resApp.updateConfiguration(configApp, getResources().getDisplayMetrics());
 
-    switch (sharedPrefs.getString(PREF.THEME, DEF.THEME)) {
-      case THEME.RED:
-        setTheme(R.style.Theme_Tack_Red);
-        break;
-      case THEME.YELLOW:
-        setTheme(R.style.Theme_Tack_Yellow);
-        break;
-      case THEME.LIME:
-        setTheme(R.style.Theme_Tack_Lime);
-        break;
-      case THEME.GREEN:
-        setTheme(R.style.Theme_Tack_Green);
-        break;
-      case THEME.TURQUOISE:
-        setTheme(R.style.Theme_Tack_Turquoise);
-        break;
-      case THEME.TEAL:
-        setTheme(R.style.Theme_Tack_Teal);
-        break;
-      case THEME.BLUE:
-        setTheme(R.style.Theme_Tack_Blue);
-        break;
-      case THEME.PURPLE:
-        setTheme(R.style.Theme_Tack_Purple);
-        break;
-      default:
-        if (DynamicColors.isDynamicColorAvailable()) {
-          DynamicColors.applyToActivityIfAvailable(
-              this,
-              new DynamicColorsOptions.Builder().setOnAppliedCallback(
-                  activity -> HarmonizedColors.applyToContextIfAvailable(
-                      this, HarmonizedColorsOptions.createMaterialDefaults()
-                  )
-              ).build()
-          );
-        } else {
-          setTheme(R.style.Theme_Tack_Yellow);
-        }
-        break;
-    }
+    UiUtil.setTheme(this, sharedPrefs);
 
     Bundle bundleInstanceState = getIntent().getBundleExtra(EXTRA.INSTANCE_STATE);
     super.onCreate(bundleInstanceState != null ? bundleInstanceState : savedInstanceState);
@@ -239,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     } else {
       SharedPreferences sharedPrefs = new PrefsUtil(base).checkForMigrations().getSharedPrefs();
       // Night mode
-      int modeNight = sharedPrefs.getInt(PREF.MODE, DEF.MODE);
+      int modeNight = sharedPrefs.getInt(PREF.UI_MODE, DEF.UI_MODE);
       int uiMode = base.getResources().getConfiguration().uiMode;
       switch (modeNight) {
         case AppCompatDelegate.MODE_NIGHT_NO:
@@ -292,6 +250,23 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
       requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
     }
     return hasPermission;
+  }
+
+  private void setContrastTheme(
+      @StyleRes int resIdStandard,
+      @StyleRes int resIdMedium,
+      @StyleRes int resIdHigh
+  ) {
+    switch (sharedPrefs.getString(PREF.UI_CONTRAST, DEF.UI_CONTRAST)) {
+      case CONTRAST.MEDIUM:
+        setTheme(resIdMedium);
+        break;
+      case CONTRAST.HIGH:
+        setTheme(resIdHigh);
+        break;
+      default:
+        setTheme(resIdStandard);
+    }
   }
 
   @NonNull

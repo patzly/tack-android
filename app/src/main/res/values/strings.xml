@@ -140,6 +140,17 @@
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
   <string name="settings_theme_light">Light</string>
 
+  <string name="settings_contrast">Contrast</string>
+  <string name="settings_contrast_description">Accessibility for your vision</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast. The button width should be as dense as possible. -->
+  <string name="settings_contrast_standard">Standard</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_medium">Medium</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_high">High</string>
+  <string name="settings_contrast_dynamic">Contrast for device theme has to be set in system settings</string>
+  <string name="settings_contrast_dynamic_unsupported">Dynamic contrast for device theme is only available on Android 14+</string>
+
   <string name="settings_transition">Use sliding transition between app pages</string>
   <string name="settings_transition_description">Instead of fading</string>
 
