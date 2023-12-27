@@ -253,7 +253,7 @@ public class FormattedTextView extends LinearLayout {
 
   private MaterialCardView getMessage(String text, boolean useErrorColors) {
     int colorSurface = ResUtil.getColorAttr(
-        context, useErrorColors ? R.attr.colorErrorContainer : R.attr.colorSurfaceVariant
+        context, useErrorColors ? R.attr.colorErrorContainer : R.attr.colorSurfaceContainerHighest
     );
     int colorOnSurface = ResUtil.getColorAttr(
         context, useErrorColors ? R.attr.colorOnErrorContainer : R.attr.colorOnSurfaceVariant

@@ -46,7 +46,7 @@ import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
-import xyz.zedler.patrick.tack.view.SelectionCardView;
+import xyz.zedler.patrick.tack.view.ThemeSelectionCardView;
 
 public class SettingsFragment extends BaseFragment
     implements OnClickListener, OnCheckedChangeListener, OnChangeListener, MetronomeListener {
@@ -502,25 +502,12 @@ public class SettingsFragment extends BaseFragment
           break;
       }
 
-      SelectionCardView card = new SelectionCardView(activity);
-      card.setEnsureContrast(false);
-      int color;
-      if (i == -1 && VERSION.SDK_INT >= VERSION_CODES.S) {
-        int resIdLight = VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE
-            ? android.R.color.system_primary_container_light
-            : android.R.color.system_accent1_100;
-        int resIdDark = VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE
-            ? android.R.color.system_primary_container_dark
-            : android.R.color.system_accent1_700;
-        color = ContextCompat.getColor(
-            activity, UiUtil.isDarkModeActive(activity) ? resIdDark : resIdLight
-        );
-      } else {
-        color = ResUtil.getColorAttr(
-            new ContextThemeWrapper(activity, resId), R.attr.colorPrimaryContainer
-        );
-      }
-      card.setCardBackgroundColor(color);
+      ThemeSelectionCardView card = new ThemeSelectionCardView(activity);
+      card.setNestedContext(
+          i == -1 && VERSION.SDK_INT >= VERSION_CODES.S
+              ? DynamicColors.wrapContextIfAvailable(activity)
+              : new ContextThemeWrapper(activity, resId)
+      );
       card.setOnClickListener(v -> {
         if (!card.isChecked()) {
           card.startCheckedIcon();
