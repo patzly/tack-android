@@ -9,7 +9,7 @@
   <string name="app_vending" translatable="false">http://play.google.com/store/apps/dev?id=5870283381366287608</string>
   <string name="app_github" translatable="false">https://github.com/patzly/tack-android/</string>
   <string name="app_translate" translatable="false">https://app.transifex.com/patzly/tack-android/</string>
-  <string name="app_privacy" translatable="false">https://patrickzedler.com/doodle/privacy-policy-tack/</string>
+  <string name="app_privacy" translatable="false">https://patrickzedler.com/tack/privacy-policy-tack/</string>
 
   <!-- TITLES -->
 

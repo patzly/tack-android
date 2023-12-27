@@ -2,7 +2,7 @@
 
 ? Here is the update you have been waiting for so long! I have implemented many new features, improved tons of things and fixed annoying bugs. But look for yourself!
 
-- New: Material You redesign with dynamic colors and dynamic contrasts
+- New: Material You redesign with dynamic colors and dynamic contrast
 - New: support for Android 12-14
 - New: beautiful beat visualization with subdivisions and changeable emphasizes
 - New: options for count in, incremental tempo change and swing

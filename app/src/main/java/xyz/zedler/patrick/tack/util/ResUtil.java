@@ -2,6 +2,7 @@ package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.util.TypedValue;
@@ -12,6 +13,7 @@ import androidx.annotation.DimenRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
+import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -56,16 +58,42 @@ public class ResUtil {
     return ColorUtils.setAlphaComponent(getColorAttr(context, resId), (int) (alpha * 255));
   }
 
-  public static int getColorBg(Context context) {
-    return getColorAttr(context, android.R.attr.colorBackground);
+  // TODO: replace with attributes when fixed in MDC and remove below methods
+
+  public static ColorStateList getColorSurfaceContainerLowest(Context context) {
+    return ContextCompat.getColorStateList(context, R.color.selector_fix_surface_container_lowest);
   }
 
-  public static int getColorOutline(Context context) {
-    return getColorAttr(context, R.attr.colorOutline);
+  public static int getColorSurfaceContainerLow(Context context) {
+    ColorStateList list = ContextCompat.getColorStateList(
+        context, R.color.selector_fix_surface_container_low
+    );
+    assert list != null;
+    return list.getDefaultColor();
   }
 
-  public static int getColorOutlineSecondary(Context context) {
-    return getColorAttr(context, R.attr.colorOutline, 0.4f);
+  public static int getColorSurfaceContainer(Context context) {
+    ColorStateList list = ContextCompat.getColorStateList(
+        context, R.color.selector_fix_surface_container
+    );
+    assert list != null;
+    return list.getDefaultColor();
+  }
+
+  public static int getColorSurfaceContainerHigh(Context context) {
+    ColorStateList list = ContextCompat.getColorStateList(
+        context, R.color.selector_fix_surface_container_high
+    );
+    assert list != null;
+    return list.getDefaultColor();
+  }
+
+  public static int getColorSurfaceContainerHighest(Context context) {
+    ColorStateList list = ContextCompat.getColorStateList(
+        context, R.color.selector_fix_surface_container_highest
+    );
+    assert list != null;
+    return list.getDefaultColor();
   }
 
   public static int getColorHighlight(Context context) {

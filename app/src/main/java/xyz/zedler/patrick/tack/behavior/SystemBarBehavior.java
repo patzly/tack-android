@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat.Type;
 import androidx.core.widget.NestedScrollView;
 import com.google.android.material.appbar.AppBarLayout;
+import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 
@@ -239,8 +240,12 @@ public class SystemBarBehavior {
               isScrollable ? colorScrim : Color.parseColor("#01000000")
           );
         } else {
-          window.setNavigationBarDividerColor(ResUtil.getColorOutlineSecondary(activity));
-          window.setNavigationBarColor(ResUtil.getColorBg(activity));
+          window.setNavigationBarDividerColor(
+              ResUtil.getColorAttr(activity, R.attr.colorOutlineVariant)
+          );
+          window.setNavigationBarColor(
+              ResUtil.getColorAttr(activity, android.R.attr.colorBackground)
+          );
         }
       }
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) { // 28
@@ -252,8 +257,12 @@ public class SystemBarBehavior {
       if (isOrientationPortrait) {
         window.setNavigationBarColor(isScrollable ? colorScrim : Color.TRANSPARENT);
       } else {
-        window.setNavigationBarDividerColor(ResUtil.getColorOutlineSecondary(activity));
-        window.setNavigationBarColor(ResUtil.getColorBg(activity));
+        window.setNavigationBarDividerColor(
+            ResUtil.getColorAttr(activity, R.attr.colorOutlineVariant)
+        );
+        window.setNavigationBarColor(
+            ResUtil.getColorAttr(activity, android.R.attr.colorBackground)
+        );
       }
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // 26
       window.setStatusBarColor(Color.TRANSPARENT);

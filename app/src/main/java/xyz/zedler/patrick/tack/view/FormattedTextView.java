@@ -255,6 +255,10 @@ public class FormattedTextView extends LinearLayout {
     int colorSurface = ResUtil.getColorAttr(
         context, useErrorColors ? R.attr.colorErrorContainer : R.attr.colorSurfaceContainerHighest
     );
+    // TODO: replace with attribute when fixed in MDC
+    if (!useErrorColors) {
+      colorSurface = ResUtil.getColorSurfaceContainerHighest(context);
+    }
     int colorOnSurface = ResUtil.getColorAttr(
         context, useErrorColors ? R.attr.colorOnErrorContainer : R.attr.colorOnSurfaceVariant
     );

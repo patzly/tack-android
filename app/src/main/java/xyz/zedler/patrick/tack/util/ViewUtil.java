@@ -1,6 +1,5 @@
 package xyz.zedler.patrick.tack.util;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Animatable;
@@ -20,20 +19,14 @@ import android.view.Window;
 import android.widget.CompoundButton;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
-import android.widget.TextView;
 import androidx.annotation.AttrRes;
-import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
-import androidx.core.graphics.ColorUtils;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat.Type;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.card.MaterialCardView;
 import java.util.Arrays;
@@ -200,45 +193,6 @@ public class ViewUtil {
     }
   }
 
-  // Blink MaterialCardView
-
-  public static void blinkCard(MaterialCardView cardView, @ColorRes int resId, long duration) {
-    Context context = cardView.getContext();
-    ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1);
-    valueAnimator.addUpdateListener(animation -> {
-      cardView.setStrokeColor(
-          ColorUtils.blendARGB(
-              ResUtil.getColorOutline(context),
-              ContextCompat.getColor(context, resId),
-              (float) valueAnimator.getAnimatedValue()
-          )
-      );
-      cardView.setStrokeWidth(
-          UiUtil.dpToPx(context, (float) valueAnimator.getAnimatedValue() + 1)
-      );
-    });
-    valueAnimator.setRepeatMode(ValueAnimator.REVERSE);
-    valueAnimator.setRepeatCount(1);
-    valueAnimator.setInterpolator(new FastOutSlowInInterpolator());
-    valueAnimator.setDuration(duration).start();
-  }
-
-  // Toolbar
-
-  public static void centerToolbarTitleOnLargeScreens(MaterialToolbar toolbar) {
-    toolbar.setTitleCentered(!UiUtil.isFullWidth(toolbar.getContext()));
-  }
-
-  public static void centerTextOnLargeScreens(TextView textView) {
-    if (UiUtil.isFullWidth(textView.getContext())) {
-      textView.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
-      textView.setGravity(Gravity.START);
-    } else {
-      textView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-      textView.setGravity(Gravity.CENTER_HORIZONTAL);
-    }
-  }
-
   // Ripple background for surface list items
 
   public static Drawable getRippleBgListItemSurface(Context context) {
@@ -246,7 +200,9 @@ public class ViewUtil {
     Arrays.fill(radii, UiUtil.dpToPx(context, 16));
     RoundRectShape rect = new RoundRectShape(radii, null, null);
     ShapeDrawable shape = new ShapeDrawable(rect);
-    shape.getPaint().setColor(ResUtil.getColorAttr(context, R.attr.colorSurfaceContainerHigh));
+    // TODO: replace with attribute when fixed in MDC
+    //shape.getPaint().setColor(ResUtil.getColorAttr(context, R.attr.colorSurfaceContainerLow));
+    shape.getPaint().setColor(ResUtil.getColorSurfaceContainerLow(context));
     LayerDrawable layers = new LayerDrawable(new ShapeDrawable[]{shape});
     layers.setLayerInset(
         0,

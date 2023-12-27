@@ -5,7 +5,6 @@ import android.content.res.ColorStateList;
 import android.graphics.drawable.LayerDrawable;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import androidx.core.content.ContextCompat;
 import com.google.android.material.card.MaterialCardView;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -40,9 +39,7 @@ public class ThemeSelectionCardView extends MaterialCardView {
     setCardForegroundColor(null);
     // TODO: replace with attribute when fixed in MDC
     //super.setCardBackgroundColor(ResUtil.getColorAttr(context, R.attr.colorSurfaceContainer));
-    super.setCardBackgroundColor(
-        ContextCompat.getColorStateList(context, R.color.selector_fix_surface_container)
-    );
+    super.setCardBackgroundColor(ResUtil.getColorSurfaceContainer(context));
     setRippleColor(ColorStateList.valueOf(ResUtil.getColorHighlight(context)));
     setStrokeWidth(0);
     setCheckable(true);
