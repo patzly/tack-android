@@ -192,6 +192,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:textColor="?attr/colorOnSurfaceVariant"
+            android:fontFeatureSettings="tnum"
             android:text="0:00" />
 
           <TextView
@@ -200,6 +201,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:textColor="?attr/colorOnSurfaceVariant"
+            android:fontFeatureSettings="tnum"
             android:text="1:12" />
 
         </FrameLayout>

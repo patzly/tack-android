@@ -103,6 +103,10 @@
     <item quantity="other">%1$d seconds</item>
   </plurals>
   <string name="options_unit_minutes">Minutes</string>
+  <plurals name="options_unit_minutes">
+    <item quantity="one">%1$d minute</item>
+    <item quantity="other">%1$d minutes</item>
+  </plurals>
   <string name="options_count_in">Count in</string>
   <string name="options_count_in_description">Play %1$s before applying modifiers</string>
   <string name="options_incremental">Incremental tempo change</string>

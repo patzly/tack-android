@@ -89,13 +89,20 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     binding.toggleOptionsIncrementalDirection.addOnButtonCheckedListener(this);
     binding.sliderOptionsIncrementalInterval.addOnChangeListener(this);
     binding.sliderOptionsIncrementalInterval.setLabelFormatter(value -> {
+      int resId;
+      switch (incrementalUnit) {
+        case UNIT.SECONDS:
+          resId = R.plurals.options_unit_seconds;
+          break;
+        case UNIT.MINUTES:
+          resId = R.plurals.options_unit_minutes;
+          break;
+        default:
+          resId = R.plurals.options_unit_bars;
+          break;
+      }
       int interval = (int) value;
-      return activity.getResources().getQuantityString(
-          incrementalUnit.equals(UNIT.BARS)
-              ? R.plurals.options_unit_bars
-              : R.plurals.options_unit_seconds,
-          interval, interval
-      );
+      return activity.getResources().getQuantityString(resId, interval, interval);
     });
     binding.toggleOptionsIncrementalUnit.addOnButtonCheckedListener(this);
   }
@@ -123,22 +130,31 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
 
     int incrementalInterval = getMetronomeService().getIncrementalInterval();
     incrementalUnit = getMetronomeService().getIncrementalUnit();
+    int unitResId, checkedId;
+    switch (incrementalUnit) {
+      case UNIT.SECONDS:
+        unitResId = R.plurals.options_unit_seconds;
+        checkedId = R.id.button_options_incremental_unit_seconds;
+        break;
+      case UNIT.MINUTES:
+        unitResId = R.plurals.options_unit_minutes;
+        checkedId = R.id.button_options_incremental_unit_minutes;
+        break;
+      default:
+        unitResId = R.plurals.options_unit_bars;
+        checkedId = R.id.button_options_incremental_unit_bars;
+        break;
+    }
     String unitQuantity = activity.getResources().getQuantityString(
-        incrementalUnit.equals(UNIT.BARS)
-            ? R.plurals.options_unit_bars
-            : R.plurals.options_unit_seconds,
-        incrementalInterval, incrementalInterval
+        unitResId, incrementalInterval, incrementalInterval
     );
     binding.textOptionsIncrementalInterval.setText(
         activity.getString(R.string.options_incremental_description_interval, unitQuantity)
     );
     binding.sliderOptionsIncrementalInterval.setValue(incrementalInterval);
+
     binding.toggleOptionsIncrementalUnit.removeOnButtonCheckedListener(this);
-    if (getMetronomeService().getIncrementalUnit().equals(UNIT.BARS)) {
-      binding.toggleOptionsIncrementalUnit.check(R.id.button_options_incremental_unit_bars);
-    } else {
-      binding.toggleOptionsIncrementalUnit.check(R.id.button_options_incremental_unit_seconds);
-    }
+    binding.toggleOptionsIncrementalUnit.check(checkedId);
     binding.toggleOptionsIncrementalUnit.addOnButtonCheckedListener(this);
   }
 
@@ -180,6 +196,8 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
         getMetronomeService().setIncrementalUnit(UNIT.BARS);
       } else if (checkedId == R.id.button_options_incremental_unit_seconds) {
         getMetronomeService().setIncrementalUnit(UNIT.SECONDS);
+      } else if (checkedId == R.id.button_options_incremental_unit_minutes) {
+        getMetronomeService().setIncrementalUnit(UNIT.MINUTES);
       }
       incrementalUnit = getMetronomeService().getIncrementalUnit();
       updateIncremental();

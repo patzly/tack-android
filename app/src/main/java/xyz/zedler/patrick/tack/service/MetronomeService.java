@@ -180,7 +180,7 @@ public class MetronomeService extends Service implements TickListener {
     }
   }
 
-  private void onCountInFinished() {
+  private void applyModifiers() {
     updateIncrementalHandler();
     // TODO: start muted, timer and elapsed time
   }
@@ -194,7 +194,9 @@ public class MetronomeService extends Service implements TickListener {
       listener.onMetronomeStart();
     }
     if (getCountIn() > 0) {
-      countInHandler.postDelayed(this::onCountInFinished, getCountInInterval());
+      countInHandler.postDelayed(this::applyModifiers, getCountInInterval());
+    } else {
+      applyModifiers();
     }
     if (notificationUtil.hasPermission()) {
       startForeground(NOTIFICATION_ID, notificationUtil.getNotification());
@@ -522,14 +524,16 @@ public class MetronomeService extends Service implements TickListener {
       return;
     }
     incrementalHandler.removeCallbacksAndMessages(null);
-    if (incrementalUnit.equals(UNIT.SECONDS) && incrementalAmount > 0) {
+    if (!incrementalUnit.equals(UNIT.BARS) && incrementalAmount > 0) {
+      long factor = incrementalUnit.equals(UNIT.SECONDS) ? 1000L : 60000L;
+      long interval = factor * incrementalInterval;
       incrementalHandler.postDelayed(new Runnable() {
         @Override
         public void run() {
-          incrementalHandler.postDelayed(this, 1000L * incrementalInterval);
+          incrementalHandler.postDelayed(this, interval);
           changeTempo(incrementalAmount * (incrementalIncrease ? 1 : -1));
         }
-      }, 1000L * incrementalInterval);
+      }, interval);
     }
   }
 

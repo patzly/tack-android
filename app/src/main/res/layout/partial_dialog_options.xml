@@ -11,10 +11,17 @@
     android:layout_height="wrap_content"
     android:layout_gravity="top" />
 
+  <com.google.android.material.divider.MaterialDivider
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom" />
+
   <androidx.core.widget.NestedScrollView
     android:id="@+id/scroll_options"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="1dp"
+    android:layout_marginBottom="1dp"
     android:scrollbars="vertical"
     android:scrollbarThumbVertical="@drawable/shape_scrollbar_rounded">
 
@@ -85,14 +92,15 @@
         android:layout_height="wrap_content"
         android:scrollbars="none"
         android:overScrollMode="ifContentScrolls"
-        android:layout_marginBottom="8dp">
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="8dp"
+        android:requiresFadingEdge="horizontal">
 
         <com.google.android.material.button.MaterialButtonToggleGroup
           android:id="@+id/toggle_options_incremental_direction"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:paddingStart="24dp"
-          android:paddingEnd="24dp"
           app:singleSelection="true"
           app:selectionRequired="true">
 
@@ -133,16 +141,17 @@
       <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
         android:layout_marginBottom="16dp"
         android:scrollbars="none"
-        android:overScrollMode="ifContentScrolls">
+        android:overScrollMode="ifContentScrolls"
+        android:requiresFadingEdge="horizontal">
 
         <com.google.android.material.button.MaterialButtonToggleGroup
           android:id="@+id/toggle_options_incremental_unit"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:paddingStart="24dp"
-          android:paddingEnd="24dp"
           app:singleSelection="true"
           app:selectionRequired="true">
 
@@ -155,6 +164,11 @@
             android:id="@+id/button_options_incremental_unit_seconds"
             style="@style/Widget.Tack.Button.OutlinedButton"
             android:text="@string/options_unit_seconds" />
+
+          <Button
+            android:id="@+id/button_options_incremental_unit_minutes"
+            style="@style/Widget.Tack.Button.OutlinedButton"
+            android:text="@string/options_unit_minutes" />
 
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -308,14 +322,15 @@
         android:layout_height="wrap_content"
         android:scrollbars="none"
         android:overScrollMode="ifContentScrolls"
-        android:layout_marginBottom="12dp">
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="12dp"
+        android:requiresFadingEdge="horizontal">
 
         <com.google.android.material.button.MaterialButtonToggleGroup
           android:id="@+id/toggle_options_swing"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:paddingStart="24dp"
-          android:paddingEnd="24dp"
           app:singleSelection="true"
           app:selectionRequired="false">
 
@@ -341,10 +356,5 @@
     </LinearLayout>
 
   </androidx.core.widget.NestedScrollView>
-
-  <com.google.android.material.divider.MaterialDivider
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_gravity="bottom" />
 
 </FrameLayout>
