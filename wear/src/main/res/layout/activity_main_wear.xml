@@ -11,7 +11,7 @@
     android:layout_height="match_parent"
     android:background="?android:attr/colorBackground">
 
-    <xyz.zedler.patrick.tack.view.BpmPickerView
+    <xyz.zedler.patrick.tack.view.TempoPickerView
       android:id="@+id/bpm_picker"
       android:layout_width="match_parent"
       android:layout_height="match_parent"

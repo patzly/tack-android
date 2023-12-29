@@ -33,6 +33,7 @@ import xyz.zedler.patrick.tack.util.MetronomeUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.TickListener;
 import xyz.zedler.patrick.tack.util.NotificationUtil;
+import xyz.zedler.patrick.tack.util.ShortcutUtil;
 
 public class MetronomeService extends Service implements TickListener {
 
@@ -45,6 +46,7 @@ public class MetronomeService extends Service implements TickListener {
   private MetronomeUtil metronomeUtil;
   private NotificationUtil notificationUtil;
   private HapticUtil hapticUtil;
+  private ShortcutUtil shortcutUtil;
   private StopReceiver stopReceiver;
   private MetronomeListener listener;
   private HandlerThread thread;
@@ -62,6 +64,8 @@ public class MetronomeService extends Service implements TickListener {
 
     notificationUtil = new NotificationUtil(this);
     notificationUtil.createNotificationChannel();
+
+    shortcutUtil = new ShortcutUtil(this);
 
     metronomeUtil = new MetronomeUtil(this, this);
     metronomeUtil.setTempo(sharedPrefs.getInt(PREF.TEMPO, DEF.TEMPO));
@@ -186,6 +190,7 @@ public class MetronomeService extends Service implements TickListener {
   }
 
   public void start() {
+    shortcutUtil.reportUsage(getTempo()); // notify system for shortcut usage prediction
     if (isPlaying()) {
       return;
     }
@@ -542,7 +547,7 @@ public class MetronomeService extends Service implements TickListener {
     void onMetronomeStop();
     void onMetronomePreTick(Tick tick);
     void onMetronomeTick(Tick tick);
-    void onTempoChanged(int bpmOld, int bpmNew);
+    void onTempoChanged(int tempoOld, int tempoNew);
   }
 
   public class StopReceiver extends BroadcastReceiver {

@@ -17,7 +17,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.core.content.ContextCompat;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.divider.MaterialDivider;
 import com.google.android.material.slider.Slider;
@@ -44,6 +43,7 @@ import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.ShortcutUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.ThemeSelectionCardView;
@@ -214,6 +214,7 @@ public class SettingsFragment extends BaseFragment
             getMetronomeService().stop();
           }
           getSharedPrefs().edit().clear().apply();
+          new ShortcutUtil(activity).removeAllShortcuts();
           activity.restartToApply(100, getInstanceState(), false);
         });
     dialogUtilReset.showIfWasShown(savedInstanceState);

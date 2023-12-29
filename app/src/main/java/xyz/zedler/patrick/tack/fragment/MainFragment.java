@@ -2,19 +2,14 @@ package xyz.zedler.patrick.tack.fragment;
 
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.ShortcutInfo;
-import android.content.pm.ShortcutManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.Icon;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -32,17 +27,15 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
-import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.activity.ShortcutActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentMainBinding;
@@ -54,10 +47,11 @@ import xyz.zedler.patrick.tack.util.LogoUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.OptionsUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.ShortcutUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.BeatView;
-import xyz.zedler.patrick.tack.view.BpmPickerView;
+import xyz.zedler.patrick.tack.view.TempoPickerView;
 
 public class MainFragment extends BaseFragment
     implements OnClickListener, MetronomeListener {
@@ -75,6 +69,7 @@ public class MainFragment extends BaseFragment
   private int colorFlashNormal, colorFlashStrong, colorFlashMuted;
   private DialogUtil dialogUtilGain;
   private OptionsUtil optionsUtil;
+  private ShortcutUtil shortcutUtil;
   private List<Integer> bookmarks;
   private SquigglyProgressDrawable squiggly;
   private BeatsBgDrawable beatsBgDrawable;
@@ -171,6 +166,8 @@ public class MainFragment extends BaseFragment
     optionsUtil = new OptionsUtil(activity, this);
     optionsUtil.showIfWasShown(savedInstanceState);
 
+    shortcutUtil = new ShortcutUtil(activity);
+
     binding.constraintMainTop.getViewTreeObserver().addOnGlobalLayoutListener(
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override
@@ -231,10 +228,10 @@ public class MainFragment extends BaseFragment
       return textView;
     });
 
-    binding.bpmPickerMain.setOnRotationListener(new BpmPickerView.OnRotationListener() {
+    binding.tempoPickerMain.setOnRotationListener(new TempoPickerView.OnRotationListener() {
       @Override
-      public void onRotate(int bpm) {
-        changeTempo(bpm);
+      public void onRotate(int tempo) {
+        changeTempo(tempo);
       }
 
       @Override
@@ -244,7 +241,7 @@ public class MainFragment extends BaseFragment
         );
       }
     });
-    binding.bpmPickerMain.setOnPickListener(new BpmPickerView.OnPickListener() {
+    binding.tempoPickerMain.setOnPickListener(new TempoPickerView.OnPickListener() {
       @Override
       public void onPickDown(float x, float y) {
         binding.circleMain.setDragged(true, x, y);
@@ -411,17 +408,13 @@ public class MainFragment extends BaseFragment
 
     setButtonStates();
 
-    String prefBookmarks = getSharedPrefs().getString(PREF.BOOKMARKS, null);
-    List<String> bookmarksArray;
-    if (prefBookmarks != null) {
-      bookmarksArray = Arrays.asList(prefBookmarks.split(","));
-    } else {
-      bookmarksArray = new ArrayList<>();
-    }
-    bookmarks = new ArrayList<>(bookmarksArray.size());
-    for (int i = 0; i < bookmarksArray.size(); i++) {
-      if (!bookmarksArray.get(i).isEmpty()) {
-        bookmarks.add(Integer.parseInt(bookmarksArray.get(i)));
+    Set<String> bookmarksSet = getSharedPrefs().getStringSet(PREF.BOOKMARKS, Set.of());
+    bookmarks = new ArrayList<>();
+    for (String tempo : bookmarksSet) {
+      try {
+        bookmarks.add(Integer.parseInt(tempo));
+      } catch (NumberFormatException e) {
+        Log.e(TAG, "onViewCreated: get bookmarks: ", e);
       }
     }
     for (int i = 0; i < bookmarks.size(); i++) {
@@ -620,8 +613,8 @@ public class MainFragment extends BaseFragment
   }
 
   @Override
-  public void onTempoChanged(int bpmOld, int bpmNew) {
-    activity.runOnUiThread(() -> setTempo(bpmOld, bpmNew));
+  public void onTempoChanged(int tempoOld, int tempoNew) {
+    activity.runOnUiThread(() -> setTempo(tempoOld, tempoNew));
   }
 
   @Override
@@ -735,22 +728,21 @@ public class MainFragment extends BaseFragment
     } else if (id == R.id.button_main_bookmark) {
       ViewUtil.startIcon(binding.buttonMainBookmark.getIcon());
       performHapticClick();
-      if (bookmarks.size() < Constants.BOOKMARKS_MAX
-          && !bookmarks.contains(getMetronomeService().getTempo())
-      ) {
-        binding.chipGroupMainBookmarks.addView(getBookmarkChip(getMetronomeService().getTempo()));
-        bookmarks.add(getMetronomeService().getTempo());
+      int tempo = getMetronomeService().getTempo();
+      if (bookmarks.size() < Constants.BOOKMARKS_MAX && !bookmarks.contains(tempo)) {
+        binding.chipGroupMainBookmarks.addView(getBookmarkChip(tempo));
+        bookmarks.add(tempo);
+        shortcutUtil.addShortcut(tempo);
         updateBookmarks();
         refreshBookmarks();
-      } else if (bookmarks.size() >= 3) {
-        Snackbar snackbar = activity.getSnackbar(
-            R.string.msg_bookmarks_max, Snackbar.LENGTH_SHORT
-        );
+      } else if (bookmarks.size() >= Constants.BOOKMARKS_MAX) {
+        Snackbar snackbar = activity.getSnackbar(R.string.msg_bookmarks_max, Snackbar.LENGTH_SHORT);
         snackbar.setAction(
             getString(R.string.action_clear_all),
             view -> {
               binding.chipGroupMainBookmarks.removeAllViews();
               bookmarks.clear();
+              shortcutUtil.removeAllShortcuts();
               updateBookmarks();
               refreshBookmarks();
             }
@@ -842,7 +834,8 @@ public class MainFragment extends BaseFragment
       performHapticClick();
       ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBookmarks);
       binding.chipGroupMainBookmarks.removeView(chip);
-      bookmarks.remove((Integer) tempo); // Integer cast required
+      bookmarks.remove((Integer) tempo); // Integer cast required, else it would take int as index
+      shortcutUtil.removeShortcut(tempo);
       updateBookmarks();
       refreshBookmarks();
     });
@@ -859,33 +852,11 @@ public class MainFragment extends BaseFragment
   }
 
   private void updateBookmarks() {
-    StringBuilder stringBuilder = new StringBuilder();
-    for (Integer bpm : bookmarks) {
-      stringBuilder.append(bpm).append(",");
+    Set<String> bookmarksSet = new HashSet<>();
+    for (Integer tempo : bookmarks) {
+      bookmarksSet.add(String.valueOf(tempo));
     }
-    getSharedPrefs().edit().putString(PREF.BOOKMARKS, stringBuilder.toString()).apply();
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N_MR1) {
-      return;
-    }
-    Collections.sort(bookmarks);
-    ShortcutManager manager = (ShortcutManager) activity.getSystemService(
-        Context.SHORTCUT_SERVICE);
-    if (manager != null) {
-      List<ShortcutInfo> shortcuts = new ArrayList<>();
-      for (int bpm : bookmarks) {
-        shortcuts.add(
-            new ShortcutInfo.Builder(activity, String.valueOf(bpm))
-                .setShortLabel(getString(R.string.label_bpm_value, bpm))
-                .setIcon(Icon.createWithResource(activity, R.mipmap.ic_shortcut))
-                .setIntent(new Intent(activity, ShortcutActivity.class)
-                    .setAction(ACTION.START)
-                    .putExtra(EXTRA.TEMPO, bpm)
-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
-                .build()
-        );
-      }
-      manager.setDynamicShortcuts(shortcuts);
-    }
+    getSharedPrefs().edit().putStringSet(PREF.BOOKMARKS, bookmarksSet).apply();
   }
 
   private void refreshBookmarks() {
@@ -921,35 +892,35 @@ public class MainFragment extends BaseFragment
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBookmarks);
   }
 
-  private void changeTempo(int change) {
+  private void changeTempo(int difference) {
     if (!isBound()) {
       return;
     }
-    int bpmNew = getMetronomeService().getTempo() + change;
-    setTempo(bpmNew);
-    if (bpmNew >= Constants.TEMPO_MIN && bpmNew <= Constants.TEMPO_MAX) {
+    int tempoNew = getMetronomeService().getTempo() + difference;
+    setTempo(tempoNew);
+    if (tempoNew >= Constants.TEMPO_MIN && tempoNew <= Constants.TEMPO_MAX) {
       performHapticTick();
     }
   }
 
-  private void setTempo(int bpm) {
+  private void setTempo(int tempo) {
     if (!isBound()) {
       return;
     }
-    setTempo(getMetronomeService().getTempo(), bpm);
+    setTempo(getMetronomeService().getTempo(), tempo);
   }
 
-  private void setTempo(int bpmOld, int bpmNew) {
+  private void setTempo(int tempoOld, int tempoNew) {
     if (!isBound()) {
       return;
     }
     getMetronomeService().setTempo(
-        Math.min(Math.max(bpmNew, Constants.TEMPO_MIN), Constants.TEMPO_MAX)
+        Math.min(Math.max(tempoNew, Constants.TEMPO_MIN), Constants.TEMPO_MAX)
     );
-    binding.textMainBpm.setText(String.valueOf(getMetronomeService().getTempo()));
-    String termNew = getTempoTerm(bpmNew);
-    if (!termNew.equals(getTempoTerm(bpmOld))) {
-      boolean isFaster = getMetronomeService().getTempo() > bpmOld;
+    binding.textMainTempo.setText(String.valueOf(getMetronomeService().getTempo()));
+    String termNew = getTempoTerm(tempoNew);
+    if (!termNew.equals(getTempoTerm(tempoOld))) {
+      boolean isFaster = getMetronomeService().getTempo() > tempoOld;
       binding.textSwitcherMainTempoTerm.setInAnimation(
           activity, isFaster ? R.anim.tempo_term_open_enter : R.anim.tempo_term_close_enter
       );
@@ -964,9 +935,9 @@ public class MainFragment extends BaseFragment
 
   private void setButtonStates() {
     if (isBound()) {
-      int bpm = getMetronomeService().getTempo();
-      binding.buttonMainLess.setEnabled(bpm > 1);
-      binding.buttonMainMore.setEnabled(bpm < Constants.TEMPO_MAX);
+      int tempo = getMetronomeService().getTempo();
+      binding.buttonMainLess.setEnabled(tempo > 1);
+      binding.buttonMainMore.setEnabled(tempo < Constants.TEMPO_MAX);
     }
   }
 
@@ -1041,21 +1012,21 @@ public class MainFragment extends BaseFragment
     snackbar.show();
   }
 
-  public String getTempoTerm(int bpm) {
+  public String getTempoTerm(int tempo) {
     String[] terms = getResources().getStringArray(R.array.label_tempo_terms);
-    if (bpm < 60) {
+    if (tempo < 60) {
       return terms[0];
-    } else if (bpm < 66) {
+    } else if (tempo < 66) {
       return terms[1];
-    } else if (bpm < 76) {
+    } else if (tempo < 76) {
       return terms[2];
-    } else if (bpm < 108) {
+    } else if (tempo < 108) {
       return terms[3];
-    } else if (bpm < 120) {
+    } else if (tempo < 120) {
       return terms[4];
-    } else if (bpm < 168) {
+    } else if (tempo < 168) {
       return terms[5];
-    } else if (bpm < 200) {
+    } else if (tempo < 200) {
       return terms[6];
     } else {
       return terms[7];

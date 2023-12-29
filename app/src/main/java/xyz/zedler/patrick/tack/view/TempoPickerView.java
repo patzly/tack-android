@@ -9,7 +9,7 @@ import android.view.animation.RotateAnimation;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class BpmPickerView extends View implements View.OnTouchListener {
+public class TempoPickerView extends View implements View.OnTouchListener {
 
   private boolean isTouchable = true;
   private boolean isTouchStartedInCircle;
@@ -19,7 +19,7 @@ public class BpmPickerView extends View implements View.OnTouchListener {
   private OnRotationListener onRotationListener;
   private OnPickListener onPickListener;
 
-  public BpmPickerView(@NonNull Context context, @Nullable AttributeSet attrs) {
+  public TempoPickerView(@NonNull Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
 
     prevAngle = 0;
@@ -146,7 +146,7 @@ public class BpmPickerView extends View implements View.OnTouchListener {
 
   public interface OnRotationListener {
 
-    void onRotate(int bpm);
+    void onRotate(int tempo);
 
     void onRotate(float degrees);
   }

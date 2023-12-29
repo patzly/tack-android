@@ -11,8 +11,12 @@ public class ShortcutActivity extends AppCompatActivity {
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
     startActivity(new Intent(this, MainActivity.class));
-    startService(getIntent().setClass(this, MetronomeService.class));
+    Intent intent = getIntent();
+    if (intent != null) {
+      startService(intent.setClass(this, MetronomeService.class));
+    }
     finish();
   }
 }
