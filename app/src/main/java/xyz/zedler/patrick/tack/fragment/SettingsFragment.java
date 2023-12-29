@@ -56,9 +56,7 @@ public class SettingsFragment extends BaseFragment
   private FragmentSettingsBinding binding;
   private MainActivity activity;
   private DialogUtil dialogUtilReset, dialogUtilSound;
-  private boolean flashScreen, wasPlaying, wasBeatModeVibrate, wasAlwaysVibrate;
-  private int wasTempo, wasGain;
-  String[] wasBeats, wasSubs;
+  private boolean flashScreen;
   private Drawable itemBgFlash;
 
   @Override
@@ -247,13 +245,7 @@ public class SettingsFragment extends BaseFragment
       public void onStartTrackingTouch(@NonNull Slider slider) {
         flashScreen = true;
         if (isBound()) {
-          wasPlaying = getMetronomeService().isPlaying();
-          wasTempo = getMetronomeService().getTempo();
-          wasBeats = getMetronomeService().getBeats();
-          wasSubs = getMetronomeService().getSubdivisions();
-          wasBeatModeVibrate = getMetronomeService().isBeatModeVibrate();
-          wasAlwaysVibrate = getMetronomeService().isAlwaysVibrate();
-          wasGain = getMetronomeService().getGain();
+          getMetronomeService().save();
           // Turn all visuals and audio on and start playing if not already started
           getMetronomeService().setTempo(80);
           getMetronomeService().setBeats(DEF.BEATS.split(","));
@@ -261,10 +253,10 @@ public class SettingsFragment extends BaseFragment
           getMetronomeService().setBeatModeVibrate(false);
           getMetronomeService().setAlwaysVibrate(true);
           getMetronomeService().setGain(0);
+          getMetronomeService().setCountIn(0);
+          getMetronomeService().setIncrementalAmount(0);
           getMetronomeService().setMetronomeListener(SettingsFragment.this);
-          if (!getMetronomeService().isPlaying()) {
-            getMetronomeService().start();
-          }
+          getMetronomeService().start(false);
         }
       }
 
@@ -272,15 +264,7 @@ public class SettingsFragment extends BaseFragment
       public void onStopTrackingTouch(@NonNull Slider slider) {
         flashScreen = false;
         if (isBound()) {
-          if (!wasPlaying) {
-            getMetronomeService().stop();
-          }
-          getMetronomeService().setTempo(wasTempo);
-          getMetronomeService().setBeats(wasBeats);
-          getMetronomeService().setSubdivisions(wasSubs);
-          getMetronomeService().setBeatModeVibrate(wasBeatModeVibrate);
-          getMetronomeService().setAlwaysVibrate(wasAlwaysVibrate);
-          getMetronomeService().setGain(wasGain);
+          getMetronomeService().restore();
           getMetronomeService().setMetronomeListener(null);
         }
       }

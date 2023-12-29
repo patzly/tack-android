@@ -55,6 +55,9 @@ public class MetronomeService extends Service implements TickListener {
   private long latency;
   private int incrementalAmount, incrementalInterval;
   private String incrementalUnit;
+  private boolean tempPlaying, tempBeatModeVibrate, tempAlwaysVibrate;
+  private int tempTempo, tempGain, tempCountIn, tempIncrementalAmount;
+  private String[] tempBeats, tempSubs;
 
   @Override
   public void onCreate() {
@@ -190,7 +193,13 @@ public class MetronomeService extends Service implements TickListener {
   }
 
   public void start() {
-    shortcutUtil.reportUsage(getTempo()); // notify system for shortcut usage prediction
+    start(true);
+  }
+
+  public void start(boolean reportTempoUsage) {
+    if (reportTempoUsage) {
+      shortcutUtil.reportUsage(getTempo()); // notify system for shortcut usage prediction
+    }
     if (isPlaying()) {
       return;
     }
@@ -247,6 +256,34 @@ public class MetronomeService extends Service implements TickListener {
       stopForeground(true);
     }
     Log.i(TAG, "stop: foreground service stopped");
+  }
+
+  public void save() {
+    tempPlaying = isPlaying();
+    tempTempo = getTempo();
+    tempBeats = getBeats();
+    tempSubs = getSubdivisions();
+    tempBeatModeVibrate = isBeatModeVibrate();
+    tempAlwaysVibrate = isAlwaysVibrate();
+    tempGain = getGain();
+    tempCountIn = getCountIn();
+    tempIncrementalAmount = getIncrementalAmount();
+  }
+
+  public void restore() {
+    setTempo(tempTempo);
+    setBeats(tempBeats);
+    setSubdivisions(tempSubs);
+    setBeatModeVibrate(tempBeatModeVibrate);
+    setAlwaysVibrate(tempAlwaysVibrate);
+    setGain(tempGain);
+    setCountIn(tempCountIn);
+    setIncrementalAmount(tempIncrementalAmount);
+    if (tempPlaying) {
+      start();
+    } else {
+      stop();
+    }
   }
 
   public void setMetronomeListener(MetronomeListener listener) {
