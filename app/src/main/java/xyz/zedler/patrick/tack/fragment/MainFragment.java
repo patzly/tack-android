@@ -766,7 +766,7 @@ public class MainFragment extends BaseFragment
     for (int i = 0; i < binding.linearMainBeats.getChildCount(); i++) {
       currentBeats[i] = String.valueOf(binding.linearMainBeats.getChildAt(i));
     }
-    if (Arrays.equals(beats, currentBeats)) {
+    if (Arrays.equals(beats, currentBeats) && !forced) {
       return;
     }
     binding.linearMainBeats.removeAllViews();

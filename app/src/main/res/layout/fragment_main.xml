@@ -229,7 +229,7 @@
         style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
         android:layout_marginEnd="16dp"
         android:contentDescription="@string/action_decrease"
-        app:icon="@drawable/ic_round_chevron_left_anim" />
+        app:icon="@drawable/ic_round_navigate_before_anim" />
 
       <FrameLayout
         android:layout_width="wrap_content"
@@ -288,7 +288,7 @@
         style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
         android:layout_marginStart="16dp"
         android:contentDescription="@string/action_increase"
-        app:icon="@drawable/ic_round_chevron_right_anim" />
+        app:icon="@drawable/ic_round_navigate_after_anim" />
 
     </LinearLayout>
 

@@ -209,6 +209,7 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
       } else if (checkedId == R.id.button_options_swing_7) {
         getMetronomeService().setSwing7();
       }
+      getMetronomeService().setSubdivisionsUsed(true);
       fragment.updateSubs(getMetronomeService().getSubdivisions(), true);
     }
   }
