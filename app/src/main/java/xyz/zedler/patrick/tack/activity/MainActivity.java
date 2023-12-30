@@ -20,7 +20,6 @@ import androidx.activity.result.contract.ActivityResultContracts.RequestPermissi
 import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
-import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.navigation.NavController;
@@ -31,7 +30,6 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.Locale;
 import xyz.zedler.patrick.tack.BuildConfig;
 import xyz.zedler.patrick.tack.Constants.ACTION;
-import xyz.zedler.patrick.tack.Constants.CONTRAST;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
@@ -250,23 +248,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
       requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
     }
     return hasPermission;
-  }
-
-  private void setContrastTheme(
-      @StyleRes int resIdStandard,
-      @StyleRes int resIdMedium,
-      @StyleRes int resIdHigh
-  ) {
-    switch (sharedPrefs.getString(PREF.UI_CONTRAST, DEF.UI_CONTRAST)) {
-      case CONTRAST.MEDIUM:
-        setTheme(resIdMedium);
-        break;
-      case CONTRAST.HIGH:
-        setTheme(resIdHigh);
-        break;
-      default:
-        setTheme(resIdStandard);
-    }
   }
 
   @NonNull

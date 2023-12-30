@@ -101,6 +101,8 @@ public class SettingsFragment extends BaseFragment
         ResUtil.share(activity, R.string.msg_recommend);
       } else if (id == R.id.action_about) {
         activity.navigateToFragment(SettingsFragmentDirections.actionSettingsToAbout());
+      } else if (id == R.id.action_log) {
+        activity.navigateToFragment(SettingsFragmentDirections.actionSettingsToLog());
       }
       return true;
     });

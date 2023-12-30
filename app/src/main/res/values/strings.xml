@@ -21,6 +21,7 @@
   <string name="title_options">Options</string>
   <string name="title_general">General</string>
   <string name="title_metronome">Metronome</string>
+  <string name="title_logcat">Logcat</string>
 
   <!-- LABELS -->
 
@@ -68,6 +69,9 @@
   <string name="action_rate">Rate on Google Play</string>
   <string name="action_rate_description">Support the development</string>
   <string name="action_retry">Retry</string>
+  <string name="action_logcat">Show logcat</string>
+  <string name="action_copy_to_clipboard">Copy to clipboard</string>
+  <string name="action_reload">Reload</string>
 
   <!-- MESSAGES -->
 
@@ -84,6 +88,8 @@
   <string name="msg_gain">Play with volume boost?</string>
   <string name="msg_gain_description">Be careful not to play through headphones as loud sounds can cause ear damage!</string>
   <string name="msg_notification_permission_denied">The notification permission is required for metronome controls</string>
+  <string name="msg_report_crash">Please report any crash with the crash log attached so I can try to fix them.</string>
+  <string name="msg_copied_to_clipboard">Copied to clipboard successfully</string>
 
   <!-- OPTIONS -->
 

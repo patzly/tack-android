@@ -12,10 +12,10 @@ import androidx.annotation.Nullable;
 import com.google.android.wearable.input.RotaryEncoderHelper;
 import xyz.zedler.patrick.tack.R;
 
-public class BpmPickerView extends View
+public class TempoPickerView extends View
     implements View.OnGenericMotionListener, View.OnTouchListener {
 
-  private final static String TAG = BpmPickerView.class.getSimpleName();
+  private final static String TAG = TempoPickerView.class.getSimpleName();
 
   private final float ringWidth;
   private final float edgeWidth;
@@ -29,7 +29,7 @@ public class BpmPickerView extends View
   private OnRotationListener onRotationListener;
   private OnPickListener onPickListener;
 
-  public BpmPickerView(@NonNull Context context, @Nullable AttributeSet attrs) {
+  public TempoPickerView(@NonNull Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
 
     Resources resources = getResources();

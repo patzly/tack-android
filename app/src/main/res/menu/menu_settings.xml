@@ -18,4 +18,9 @@
     android:title="@string/action_send_feedback"
     app:showAsAction="never" />
 
+  <item
+    android:id="@+id/action_log"
+    android:title="@string/action_logcat"
+    app:showAsAction="never" />
+
 </menu>

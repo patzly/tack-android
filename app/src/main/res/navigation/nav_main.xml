@@ -33,6 +33,10 @@
       app:destination="@id/aboutFragment" />
 
     <action
+      android:id="@+id/action_settings_to_log"
+      app:destination="@id/logFragment" />
+
+    <action
       android:id="@+id/action_settings_to_languages_dialog"
       app:destination="@id/languagesBottomSheetDialogFragment" />
 
@@ -43,6 +47,12 @@
     android:name="xyz.zedler.patrick.tack.fragment.AboutFragment"
     android:label="fragment_about"
     tools:layout="@layout/fragment_about" />
+
+  <fragment
+    android:id="@+id/logFragment"
+    android:name="xyz.zedler.patrick.tack.fragment.LogFragment"
+    android:label="fragment_log"
+    tools:layout="@layout/fragment_log"/>
 
   <dialog
     android:id="@+id/textBottomSheetDialogFragment"

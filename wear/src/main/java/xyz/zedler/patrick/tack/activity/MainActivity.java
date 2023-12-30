@@ -26,7 +26,7 @@ import xyz.zedler.patrick.tack.util.ButtonUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
-import xyz.zedler.patrick.tack.view.BpmPickerView;
+import xyz.zedler.patrick.tack.view.TempoPickerView;
 
 public class MainActivity extends FragmentActivity
     implements View.OnClickListener, Runnable, AmbientModeSupport.AmbientCallbackProvider {
@@ -113,7 +113,7 @@ public class MainActivity extends FragmentActivity
         binding.frameBookmark
     );
 
-    binding.bpmPicker.setOnRotationListener(new BpmPickerView.OnRotationListener() {
+    binding.tempoPicker.setOnRotationListener(new TempoPickerView.OnRotationListener() {
       @Override
       public void onRotate(int change) {
         changeBpm(change);
@@ -124,7 +124,7 @@ public class MainActivity extends FragmentActivity
         binding.circle.setRotation(binding.circle.getRotation() + change);
       }
     });
-    binding.bpmPicker.setOnPickListener(new BpmPickerView.OnPickListener() {
+    binding.tempoPicker.setOnPickListener(new TempoPickerView.OnPickListener() {
       @Override
       public void onPickDown(float x, float y, boolean isOnRing, boolean canBeDismiss) {
         binding.swipeDismiss.setSwipeable(canBeDismiss);
@@ -148,7 +148,7 @@ public class MainActivity extends FragmentActivity
         binding.circle.setDragged(false, 0, 0, animations);
       }
     });
-    binding.bpmPicker.setOnRotaryInputListener(new BpmPickerView.OnRotaryInputListener() {
+    binding.tempoPicker.setOnRotaryInputListener(new TempoPickerView.OnRotaryInputListener() {
       @Override
       public void onRotate(int change) {
         if (change != rotatedPrev) {
@@ -234,7 +234,7 @@ public class MainActivity extends FragmentActivity
             binding.imageBeatMode,
             binding.framePlayPause,
             binding.textEmphasis,
-            binding.bpmPicker,
+            binding.tempoPicker,
             binding.circle
         );
         ViewUtil.setFontFamily(binding.textBpm, R.font.edwin_roman);
@@ -264,11 +264,11 @@ public class MainActivity extends FragmentActivity
             binding.imageBeatMode,
             binding.framePlayPause,
             binding.textEmphasis,
-            binding.bpmPicker,
+            binding.tempoPicker,
             binding.circle
         );
-        binding.bpmPicker.requestFocus();
-        binding.bpmPicker.setTouchable(!hidePicker);
+        binding.tempoPicker.requestFocus();
+        binding.tempoPicker.setTouchable(!hidePicker);
         binding.circle.setDotsVisibility(!hidePicker);
         ViewUtil.setFontFamily(binding.textBpm, R.font.edwin_bold);
         ViewUtil.setTextSize(
@@ -506,7 +506,7 @@ public class MainActivity extends FragmentActivity
   }
 
   private void updatePickerVisibility() {
-    binding.bpmPicker.setTouchable(!hidePicker);
+    binding.tempoPicker.setTouchable(!hidePicker);
     binding.circle.setDotsVisibility(!hidePicker);
 
     ViewUtil.setSize(
