@@ -30,7 +30,7 @@ public class MetronomeUtil implements Runnable {
   private long tickIndex;
   private String[] beats, subdivisions;
   private float[] tickStrong, tickNormal, tickSub;
-  private boolean playing, beatModeVibrate;
+  private boolean playing, useSubdivisions, beatModeVibrate;
   private int countIn;
 
   public MetronomeUtil(@NonNull Context context, @NonNull TickListener listener) {
@@ -87,6 +87,10 @@ public class MetronomeUtil implements Runnable {
     return subdivisions;
   }
 
+  private int getSubdivisionsCount() {
+    return useSubdivisions ? subdivisions.length : 1;
+  }
+
   public boolean addSubdivision() {
     if (subdivisions.length >= Constants.SUBS_MAX) {
       return false;
@@ -136,6 +140,14 @@ public class MetronomeUtil implements Runnable {
     tickNormal = AudioUtil.loadAudio(context, resIdNormal);
     tickStrong = AudioUtil.loadAudio(context, resIdStrong);
     tickSub = AudioUtil.loadAudio(context, resIdSub);
+  }
+
+  public void setSubdivisionsUsed(boolean useSubdivisions) {
+    this.useSubdivisions = useSubdivisions;
+  }
+
+  public boolean getSubdivisionsUsed() {
+    return useSubdivisions;
   }
 
   public void setBeatModeVibrate(boolean vibrate) {
@@ -196,7 +208,7 @@ public class MetronomeUtil implements Runnable {
   @Override
   public void run() {
     if (playing) {
-      handler.postDelayed(this, getInterval() / subdivisions.length);
+      handler.postDelayed(this, getInterval() / getSubdivisionsCount());
 
       Tick tick = new Tick(
           tickIndex, getCurrentBeat(), getCurrentSubdivision(), getCurrentTickType()
@@ -215,7 +227,7 @@ public class MetronomeUtil implements Runnable {
 
   private void writeTickPeriod(Tick tick) {
     float[] tickSound = getTickSound(tick.type);
-    int periodSize = 60 * AudioUtil.SAMPLE_RATE_IN_HZ / tempo / subdivisions.length;
+    int periodSize = 60 * AudioUtil.SAMPLE_RATE_IN_HZ / tempo / getSubdivisionsCount();
     int sizeWritten = writeNextAudioData(tickSound, periodSize, 0);
     if (DEBUG) {
       Log.v(TAG, "writeTickPeriod: wrote tick sound for " + tick);
@@ -242,18 +254,19 @@ public class MetronomeUtil implements Runnable {
   }
 
   private int getCurrentBeat() {
-    return (int) ((tickIndex / subdivisions.length) % beats.length) + 1;
+    return (int) ((tickIndex / getSubdivisionsCount()) % beats.length) + 1;
   }
 
   private int getCurrentSubdivision() {
-    return (int) (tickIndex % subdivisions.length) + 1;
+    return (int) (tickIndex % getSubdivisionsCount()) + 1;
   }
 
   private String getCurrentTickType() {
-    if ((tickIndex % subdivisions.length) == 0) {
-      return beats[(int) ((tickIndex / subdivisions.length) % beats.length)];
+    int subdivisionsCount = getSubdivisionsCount();
+    if ((tickIndex % subdivisionsCount) == 0) {
+      return beats[(int) ((tickIndex / subdivisionsCount) % beats.length)];
     } else {
-      return subdivisions[(int) (tickIndex % subdivisions.length)];
+      return subdivisions[(int) (tickIndex % subdivisionsCount)];
     }
   }
 

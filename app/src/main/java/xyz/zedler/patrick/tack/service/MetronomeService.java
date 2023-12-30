@@ -79,6 +79,7 @@ public class MetronomeService extends Service implements TickListener {
     metronomeUtil.setSubdivisions(
         sharedPrefs.getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(",")
     );
+    metronomeUtil.setSubdivisionsUsed(sharedPrefs.getBoolean(PREF.USE_SUBS, DEF.USE_SUBS));
     metronomeUtil.setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
     metronomeUtil.setCountIn(sharedPrefs.getInt(PREF.COUNT_IN, DEF.COUNT_IN));
     setIncrementalAmount(sharedPrefs.getInt(PREF.INCREMENTAL_AMOUNT, DEF.INCREMENTAL_AMOUNT));
@@ -292,6 +293,15 @@ public class MetronomeService extends Service implements TickListener {
 
   public boolean isPlaying() {
     return metronomeUtil != null && metronomeUtil.isPlaying();
+  }
+
+  public void setSubdivisionsUsed(boolean useSubdivisions) {
+    metronomeUtil.setSubdivisionsUsed(useSubdivisions);
+    sharedPrefs.edit().putBoolean(PREF.USE_SUBS, useSubdivisions).apply();
+  }
+
+  public boolean getSubdivisionsUsed() {
+    return metronomeUtil.getSubdivisionsUsed();
   }
 
   public void setBeatModeVibrate(boolean vibrate) {

@@ -185,7 +185,6 @@ public class SettingsFragment extends BaseFragment
             : R.string.settings_contrast_dynamic_unsupported
     );
 
-
     binding.partialOptionTransition.linearOptionTransition.setOnClickListener(
         v -> binding.partialOptionTransition.switchOptionTransition.setChecked(
             !binding.partialOptionTransition.switchOptionTransition.isChecked()
@@ -284,6 +283,11 @@ public class SettingsFragment extends BaseFragment
         value -> getString(R.string.label_db, (int) value)
     );
 
+    binding.switchSettingsShowSubs.setChecked(
+        getSharedPrefs().getBoolean(PREF.USE_SUBS, DEF.USE_SUBS)
+    );
+    binding.switchSettingsShowSubs.jumpDrawablesToCurrentState();
+
     binding.switchSettingsAlwaysVibrate.setChecked(
         getSharedPrefs().getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE)
     );
@@ -293,11 +297,6 @@ public class SettingsFragment extends BaseFragment
         getSharedPrefs().getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN)
     );
     binding.switchSettingsFlashScreen.jumpDrawablesToCurrentState();
-
-    binding.switchSettingsHideSubs.setChecked(
-        getSharedPrefs().getBoolean(PREF.HIDE_SUBS, DEF.HIDE_SUBS)
-    );
-    binding.switchSettingsHideSubs.jumpDrawablesToCurrentState();
 
     binding.switchSettingsKeepAwake.setChecked(
         getSharedPrefs().getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE)
@@ -310,9 +309,9 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsHaptic,
         binding.linearSettingsReset,
         binding.linearSettingsSound,
+        binding.linearSettingsShowSubs,
         binding.linearSettingsAlwaysVibrate,
         binding.linearSettingsFlashScreen,
-        binding.linearSettingsHideSubs,
         binding.linearSettingsKeepAwake
     );
 
@@ -320,9 +319,9 @@ public class SettingsFragment extends BaseFragment
         this,
         binding.partialOptionTransition.switchOptionTransition,
         binding.switchSettingsHaptic,
+        binding.switchSettingsShowSubs,
         binding.switchSettingsAlwaysVibrate,
         binding.switchSettingsFlashScreen,
-        binding.switchSettingsHideSubs,
         binding.switchSettingsKeepAwake
     );
   }
@@ -387,12 +386,12 @@ public class SettingsFragment extends BaseFragment
       ViewUtil.startIcon(binding.imageSettingsSound);
       performHapticClick();
       dialogUtilSound.show();
+    } else if (id == R.id.linear_settings_show_subs) {
+      binding.switchSettingsShowSubs.toggle();
     } else if (id == R.id.linear_settings_always_vibrate) {
       binding.switchSettingsAlwaysVibrate.toggle();
     } else if (id == R.id.linear_settings_flash_screen) {
       binding.switchSettingsFlashScreen.toggle();
-    } else if (id == R.id.linear_settings_hide_subs) {
-      binding.switchSettingsHideSubs.toggle();
     } else if (id == R.id.linear_settings_keep_awake) {
       binding.switchSettingsKeepAwake.toggle();
     }
@@ -410,6 +409,12 @@ public class SettingsFragment extends BaseFragment
       ViewUtil.startIcon(binding.imageSettingsHaptic);
       getSharedPrefs().edit().putBoolean(PREF.HAPTIC, isChecked).apply();
       activity.getHapticUtil().setEnabled(isChecked);
+    } else if (id == R.id.switch_settings_show_subs) {
+      performHapticClick();
+      ViewUtil.startIcon(binding.imageSettingsShowSubs);
+      if (isBoundOrShowWarning()) {
+        getMetronomeService().setSubdivisionsUsed(isChecked);
+      }
     } else if (id == R.id.switch_settings_always_vibrate) {
       ViewUtil.startIcon(binding.imageSettingsAlwaysVibrate);
       if (isBoundOrShowWarning()) {
@@ -425,10 +430,6 @@ public class SettingsFragment extends BaseFragment
       performHapticClick();
       //ViewUtil.startIcon(binding.imageSettingsFlashScreen);
       getSharedPrefs().edit().putBoolean(PREF.FLASH_SCREEN, isChecked).apply();
-    } else if (id == R.id.switch_settings_hide_subs) {
-      performHapticClick();
-      ViewUtil.startIcon(binding.imageSettingsHideSubs);
-      getSharedPrefs().edit().putBoolean(PREF.HIDE_SUBS, isChecked).apply();
     } else if (id == R.id.switch_settings_keep_awake) {
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsKeepAwake);

@@ -185,14 +185,14 @@
   <string name="settings_gain_warning">Use with caution!</string>
   <string name="settings_gain_disclaimer">When boost is enabled, a warning will be displayed before each start. The developer takes no responsibility for any potential damage.</string>
 
+  <string name="settings_show_subs">Show subdivision controls</string>
+  <string name="settings_show_subs_description">More possibilities and rhythms</string>
+
   <string name="settings_always_vibrate">Always vibrate</string>
   <string name="settings_always_vibrate_description">Even with sound</string>
 
   <string name="settings_flash_screen">Flash screen</string>
   <string name="settings_flash_screen_description">On every beat</string>
-
-  <string name="settings_hide_subs">Hide subdivision controls</string>
-  <string name="settings_hide_subs_description">Only effective if all subdivisions are removed</string>
 
   <string name="settings_keep_awake">Keep screen awake</string>
   <string name="settings_keep_awake_description">While metronome is playing</string>

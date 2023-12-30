@@ -829,11 +829,9 @@ public class MainFragment extends BaseFragment
       int subdivisions = getMetronomeService().getSubsCount();
       binding.buttonMainAddSubdivision.setEnabled(subdivisions < Constants.SUBS_MAX);
       binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
-      if (subdivisions == 1 && getSharedPrefs().getBoolean(PREF.HIDE_SUBS, DEF.HIDE_SUBS)) {
-        binding.linearMainSubsBg.setVisibility(View.GONE);
-      } else {
-        binding.linearMainSubsBg.setVisibility(View.VISIBLE);
-      }
+      binding.linearMainSubsBg.setVisibility(
+          getMetronomeService().getSubdivisionsUsed() ? View.VISIBLE : View.GONE
+      );
     }
   }
 
