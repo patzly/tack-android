@@ -103,7 +103,7 @@ public class MainFragment extends BaseFragment
 
     SystemBarBehavior systemBarBehavior = new SystemBarBehavior(activity);
     systemBarBehavior.setAppBar(binding.appBarMain);
-    systemBarBehavior.setContainer(binding.linearMainContainer);
+    systemBarBehavior.setContainer(binding.constraintMainContainer);
     systemBarBehavior.setUp();
 
     new ScrollBehavior().setUpScroll(binding.appBarMain, null, true);
@@ -168,40 +168,11 @@ public class MainFragment extends BaseFragment
 
     shortcutUtil = new ShortcutUtil(activity);
 
-    /*binding.constraintMainTop.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            int heightTop = binding.constraintMainTop.getMeasuredHeight();
-            int heightBottom = binding.linearMainBottom.getMeasuredHeight();
-            if (heightTop > heightBottom) {
-              binding.linearMainBottom.setPadding(
-                  binding.linearMainBottom.getPaddingLeft(),
-                  heightTop - heightBottom,
-                  binding.linearMainBottom.getPaddingRight(),
-                  binding.linearMainBottom.getPaddingBottom()
-              );
-            } else if (heightTop < heightBottom) {
-              binding.constraintMainTop.setPadding(
-                  binding.constraintMainTop.getPaddingLeft(),
-                  heightBottom - heightTop,
-                  binding.constraintMainTop.getPaddingRight(),
-                  binding.constraintMainTop.getPaddingBottom()
-              );
-            }
-            if (binding.constraintMainTop.getViewTreeObserver().isAlive()) {
-              binding.constraintMainTop.getViewTreeObserver().removeOnGlobalLayoutListener(
-                  this
-              );
-            }
-          }
-        });*/
-
     beatsBgDrawable = new BeatsBgDrawable(activity);
     binding.linearMainBeatsBg.setBackground(beatsBgDrawable);
 
     squiggly = new SquigglyProgressDrawable(activity);
-    //binding.seekbarMain.setProgressDrawable(squiggly);
+    binding.seekbarMain.setProgressDrawable(squiggly);
     binding.seekbarMain.getViewTreeObserver().addOnGlobalLayoutListener(
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override
