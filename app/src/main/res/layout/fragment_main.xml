@@ -299,7 +299,7 @@
       <HorizontalScrollView
         android:id="@+id/scroll_horiz_main_bookmarks"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_gravity="center_vertical"
         android:overScrollMode="ifContentScrolls"
         android:scrollbars="none"
@@ -308,8 +308,7 @@
         <com.google.android.material.chip.ChipGroup
           android:id="@+id/chip_group_main_bookmarks"
           android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:minHeight="48dp"
+          android:layout_height="match_parent"
           android:paddingStart="16dp"
           android:paddingEnd="16dp"
           android:animateLayoutChanges="true"

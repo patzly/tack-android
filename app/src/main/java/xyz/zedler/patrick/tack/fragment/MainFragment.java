@@ -832,7 +832,6 @@ public class MainFragment extends BaseFragment
     chip.setCloseIconVisible(true);
     chip.setOnCloseIconClickListener(v -> {
       performHapticClick();
-      ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBookmarks);
       binding.chipGroupMainBookmarks.removeView(chip);
       bookmarks.remove((Integer) tempo); // Integer cast required, else it would take int as index
       shortcutUtil.removeShortcut(tempo);
@@ -888,6 +887,21 @@ public class MainFragment extends BaseFragment
       chip.setChipIconTint(ColorStateList.valueOf(colorIcon));
       chip.setCloseIconTint(ColorStateList.valueOf(colorIcon));
       chip.setTextColor(colorText);
+      if (isActive) {
+        boolean isRtl = UiUtil.isLayoutRtl(activity);
+        int scrollX = binding.scrollHorizMainBookmarks.getScrollX();
+        int chipStart = isRtl ? chip.getRight() : chip.getLeft();
+        int chipEnd = isRtl ? chip.getLeft() : chip.getRight();
+        int scrollViewWidth = binding.scrollHorizMainBookmarks.getWidth();
+        int margin = UiUtil.dpToPx(activity, 16);
+        if (chipStart - margin < scrollX) {
+          int scrollTo = chipStart - margin;
+          binding.scrollHorizMainBookmarks.smoothScrollTo(scrollTo, 0);
+        } else if (chipEnd + margin > (scrollX + scrollViewWidth)) {
+          int scrollTo = chipEnd + margin - scrollViewWidth;
+          binding.scrollHorizMainBookmarks.smoothScrollTo(scrollTo, 0);
+        }
+      }
     }
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBookmarks);
   }
