@@ -191,6 +191,9 @@
   <string name="settings_flash_screen">Flash screen</string>
   <string name="settings_flash_screen_description">On every beat</string>
 
+  <string name="settings_hide_subs">Hide subdivision controls</string>
+  <string name="settings_hide_subs_description">Only effective if all subdivisions are removed</string>
+
   <string name="settings_keep_awake">Keep screen awake</string>
   <string name="settings_keep_awake_description">While metronome is playing</string>
 

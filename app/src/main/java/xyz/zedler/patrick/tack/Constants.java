@@ -30,6 +30,7 @@ public final class Constants {
     public final static String BEAT_MODE_VIBRATE = "beat_mode_vibrate";
     public final static String ALWAYS_VIBRATE = "always_vibrate";
     public final static String FLASH_SCREEN = "flash_screen";
+    public final static String HIDE_SUBS = "hide_subdivisions";
     public final static String KEEP_AWAKE = "keep_awake";
     public final static String SOUND = "sound";
     public final static String LATENCY = "latency_offset";
@@ -58,6 +59,7 @@ public final class Constants {
     public final static boolean BEAT_MODE_VIBRATE = false;
     public final static boolean ALWAYS_VIBRATE = true;
     public final static boolean FLASH_SCREEN = false;
+    public final static boolean HIDE_SUBS = false;
     public final static boolean KEEP_AWAKE = true;
     public final static String SOUND = Constants.SOUND.WOOD;
     public final static long LATENCY = 100;

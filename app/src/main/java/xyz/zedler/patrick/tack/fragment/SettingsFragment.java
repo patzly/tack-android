@@ -294,6 +294,11 @@ public class SettingsFragment extends BaseFragment
     );
     binding.switchSettingsFlashScreen.jumpDrawablesToCurrentState();
 
+    binding.switchSettingsHideSubs.setChecked(
+        getSharedPrefs().getBoolean(PREF.HIDE_SUBS, DEF.HIDE_SUBS)
+    );
+    binding.switchSettingsHideSubs.jumpDrawablesToCurrentState();
+
     binding.switchSettingsKeepAwake.setChecked(
         getSharedPrefs().getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE)
     );
@@ -307,6 +312,7 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsSound,
         binding.linearSettingsAlwaysVibrate,
         binding.linearSettingsFlashScreen,
+        binding.linearSettingsHideSubs,
         binding.linearSettingsKeepAwake
     );
 
@@ -316,6 +322,7 @@ public class SettingsFragment extends BaseFragment
         binding.switchSettingsHaptic,
         binding.switchSettingsAlwaysVibrate,
         binding.switchSettingsFlashScreen,
+        binding.switchSettingsHideSubs,
         binding.switchSettingsKeepAwake
     );
   }
@@ -384,6 +391,8 @@ public class SettingsFragment extends BaseFragment
       binding.switchSettingsAlwaysVibrate.toggle();
     } else if (id == R.id.linear_settings_flash_screen) {
       binding.switchSettingsFlashScreen.toggle();
+    } else if (id == R.id.linear_settings_hide_subs) {
+      binding.switchSettingsHideSubs.toggle();
     } else if (id == R.id.linear_settings_keep_awake) {
       binding.switchSettingsKeepAwake.toggle();
     }
@@ -416,6 +425,10 @@ public class SettingsFragment extends BaseFragment
       performHapticClick();
       //ViewUtil.startIcon(binding.imageSettingsFlashScreen);
       getSharedPrefs().edit().putBoolean(PREF.FLASH_SCREEN, isChecked).apply();
+    } else if (id == R.id.switch_settings_hide_subs) {
+      performHapticClick();
+      ViewUtil.startIcon(binding.imageSettingsHideSubs);
+      getSharedPrefs().edit().putBoolean(PREF.HIDE_SUBS, isChecked).apply();
     } else if (id == R.id.switch_settings_keep_awake) {
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsKeepAwake);

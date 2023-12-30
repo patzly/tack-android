@@ -168,7 +168,7 @@ public class MainFragment extends BaseFragment
 
     shortcutUtil = new ShortcutUtil(activity);
 
-    binding.constraintMainTop.getViewTreeObserver().addOnGlobalLayoutListener(
+    /*binding.constraintMainTop.getViewTreeObserver().addOnGlobalLayoutListener(
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override
           public void onGlobalLayout() {
@@ -195,7 +195,7 @@ public class MainFragment extends BaseFragment
               );
             }
           }
-        });
+        });*/
 
     beatsBgDrawable = new BeatsBgDrawable(activity);
     binding.linearMainBeatsBg.setBackground(beatsBgDrawable);
@@ -484,8 +484,8 @@ public class MainFragment extends BaseFragment
       );
     }
 
-    updateBeats(getMetronomeService().getBeats());
-    updateSubs(getMetronomeService().getSubdivisions());
+    updateBeats(getMetronomeService().getBeats(), true);
+    updateSubs(getMetronomeService().getSubdivisions(), true);
     refreshBookmarks();
 
     int tempo = getMetronomeService().getTempo();
@@ -758,6 +758,10 @@ public class MainFragment extends BaseFragment
   }
 
   private void updateBeats(String[] beats) {
+    updateBeats(beats, false);
+  }
+
+  private void updateBeats(String[] beats, boolean forced) {
     String[] currentBeats = new String[binding.linearMainBeats.getChildCount()];
     for (int i = 0; i < binding.linearMainBeats.getChildCount(); i++) {
       currentBeats[i] = String.valueOf(binding.linearMainBeats.getChildAt(i));
@@ -790,11 +794,15 @@ public class MainFragment extends BaseFragment
   }
 
   public void updateSubs(String[] subdivisions) {
+    updateSubs(subdivisions, false);
+  }
+
+  public void updateSubs(String[] subdivisions, boolean forced) {
     String[] currentSubs = new String[binding.linearMainSubs.getChildCount()];
     for (int i = 0; i < binding.linearMainSubs.getChildCount(); i++) {
       currentSubs[i] = String.valueOf(binding.linearMainSubs.getChildAt(i));
     }
-    if (Arrays.equals(subdivisions, currentSubs)) {
+    if (Arrays.equals(subdivisions, currentSubs) && !forced) {
       return;
     }
     binding.linearMainSubs.removeAllViews();
@@ -821,6 +829,11 @@ public class MainFragment extends BaseFragment
       int subdivisions = getMetronomeService().getSubsCount();
       binding.buttonMainAddSubdivision.setEnabled(subdivisions < Constants.SUBS_MAX);
       binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
+      if (subdivisions == 1 && getSharedPrefs().getBoolean(PREF.HIDE_SUBS, DEF.HIDE_SUBS)) {
+        binding.linearMainSubsBg.setVisibility(View.GONE);
+      } else {
+        binding.linearMainSubsBg.setVisibility(View.VISIBLE);
+      }
     }
   }
 
