@@ -337,8 +337,14 @@ public class MetronomeService extends Service implements TickListener {
   }
 
   public void setTempo(int tempo) {
+    if (tempo == getTempo()) {
+      return;
+    }
     metronomeUtil.setTempo(tempo);
     sharedPrefs.edit().putInt(PREF.TEMPO, tempo).apply();
+    if (isTimerActive() && timerUnit.equals(UNIT.BARS)) {
+      updateTimerHandler(0);
+    }
   }
 
   public int getTempo() {
@@ -667,11 +673,15 @@ public class MetronomeService extends Service implements TickListener {
   }
 
   public boolean equalsTimerProgress(float fraction) {
-    BigDecimal bdProgress = BigDecimal.valueOf(getTimerProgress()).setScale(
-        2, RoundingMode.HALF_UP
-    );
-    BigDecimal bdFraction = new BigDecimal(fraction).setScale(2, RoundingMode.HALF_UP);
-    return bdProgress.equals(bdFraction);
+    try {
+      BigDecimal bdProgress = BigDecimal.valueOf(getTimerProgress()).setScale(
+          2, RoundingMode.HALF_UP
+      );
+      BigDecimal bdFraction = new BigDecimal(fraction).setScale(2, RoundingMode.HALF_UP);
+      return bdProgress.equals(bdFraction);
+    } catch (NumberFormatException e) {
+      return false;
+    }
   }
 
   public void updateTimerHandler(float fraction) {
@@ -694,6 +704,7 @@ public class MetronomeService extends Service implements TickListener {
         int progressBarCount = (int) (progressInterval / barInterval);
         long progressIntervalFullBars = progressBarCount * barInterval;
         timerProgress = (float) progressIntervalFullBars / getTimerInterval();
+        Log.i(TAG, "updateTimerHandler: hello " + barInterval);
       }
       listener.onTimerStarted();
       timerHandler.postDelayed(

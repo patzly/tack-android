@@ -349,13 +349,13 @@
         app:icon="@drawable/ic_round_touch_app_anim" />
 
       <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_main_play_pause"
+        android:id="@+id/fab_main_play_stop"
         style="@style/Widget.Material3.FloatingActionButton.Large.Primary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
-        android:contentDescription="@string/action_play_pause"
-        app:srcCompat="@drawable/ic_round_play_to_pause_anim" />
+        android:contentDescription="@string/action_play_stop"
+        app:srcCompat="@drawable/ic_round_play_to_stop_anim" />
 
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_main_bookmark"

@@ -203,6 +203,11 @@ public class SettingsFragment extends BaseFragment
         activity.getHapticUtil().hasVibrator() ? View.VISIBLE : View.GONE
     );
 
+    binding.switchSettingsReduceAnimations.setChecked(
+        getSharedPrefs().getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM)
+    );
+    binding.switchSettingsReduceAnimations.jumpDrawablesToCurrentState();
+
     dialogUtilReset = new DialogUtil(activity, "reset");
     dialogUtilReset.createCaution(
         R.string.msg_reset,
@@ -307,6 +312,7 @@ public class SettingsFragment extends BaseFragment
         this,
         binding.linearSettingsLanguage,
         binding.linearSettingsHaptic,
+        binding.linearSettingsReduceAnimations,
         binding.linearSettingsReset,
         binding.linearSettingsSound,
         binding.linearSettingsShowSubs,
@@ -319,6 +325,7 @@ public class SettingsFragment extends BaseFragment
         this,
         binding.partialOptionTransition.switchOptionTransition,
         binding.switchSettingsHaptic,
+        binding.switchSettingsReduceAnimations,
         binding.switchSettingsShowSubs,
         binding.switchSettingsAlwaysVibrate,
         binding.switchSettingsFlashScreen,
@@ -381,6 +388,8 @@ public class SettingsFragment extends BaseFragment
       activity.navigate(SettingsFragmentDirections.actionSettingsToLanguagesDialog());
     } else if (id == R.id.linear_settings_haptic) {
       binding.switchSettingsHaptic.toggle();
+    } else if (id == R.id.linear_settings_reduce_animations) {
+      binding.switchSettingsReduceAnimations.toggle();
     } else if (id == R.id.linear_settings_reset && getViewUtil().isClickEnabled(id)) {
       ViewUtil.startIcon(binding.imageSettingsReset);
       performHapticClick();
@@ -412,6 +421,10 @@ public class SettingsFragment extends BaseFragment
       ViewUtil.startIcon(binding.imageSettingsHaptic);
       getSharedPrefs().edit().putBoolean(PREF.HAPTIC, isChecked).apply();
       activity.getHapticUtil().setEnabled(isChecked);
+    } else if (id == R.id.switch_settings_reduce_animations) {
+      performHapticClick();
+      ViewUtil.startIcon(binding.imageSettingsReduceAnimations);
+      getSharedPrefs().edit().putBoolean(PREF.REDUCE_ANIM, isChecked).apply();
     } else if (id == R.id.switch_settings_show_subs) {
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsShowSubs);

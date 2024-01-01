@@ -275,6 +275,34 @@
         </LinearLayout>
 
         <LinearLayout
+          android:id="@+id/linear_settings_reduce_animations"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable.More">
+
+          <ImageView
+            android:id="@+id/image_settings_reduce_animations"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_round_animation_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_reduce_animations" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/settings_reduce_animations_description" />
+
+          </LinearLayout>
+
+          <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_settings_reduce_animations"
+            style="@style/Widget.Tack.Switch" />
+
+        </LinearLayout>
+
+        <LinearLayout
           android:id="@+id/linear_settings_reset"
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable.More">
 

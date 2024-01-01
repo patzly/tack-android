@@ -48,7 +48,7 @@
   <string name="action_increase">Increase</string>
   <string name="action_decrease">Decrease</string>
   <string name="action_play">Play</string>
-  <string name="action_play_pause">Play/Pause</string>
+  <string name="action_play_stop">Play/Stop</string>
   <string name="action_stop">Stop</string>
   <string name="action_add_beat">Add beat</string>
   <string name="action_remove_beat">Remove beat</string>
@@ -167,6 +167,9 @@
 
   <string name="settings_haptic">Haptic effects</string>
   <string name="settings_haptic_description">In addition to haptic beats when in vibration mode</string>
+
+  <string name="settings_reduce_animations">Reduce animations</string>
+  <string name="settings_reduce_animations_description">May improve performance</string>
 
   <string name="settings_reset">Reset all</string>
   <string name="settings_reset_description">Cannot be undone</string>

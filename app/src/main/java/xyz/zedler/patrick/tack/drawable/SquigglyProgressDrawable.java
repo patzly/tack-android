@@ -183,7 +183,10 @@ public class SquigglyProgressDrawable extends Drawable {
       lastFrameTime = SystemClock.uptimeMillis();
     }
     if (heightAnimator != null) {
+      heightAnimator.pause();
+      heightAnimator.removeAllUpdateListeners();
       heightAnimator.cancel();
+      heightAnimator = null;
     }
     heightAnimator = ValueAnimator.ofFloat(heightFraction, animate ? 1f : 0f);
     heightAnimator.setDuration(animate ? 800 : 500);

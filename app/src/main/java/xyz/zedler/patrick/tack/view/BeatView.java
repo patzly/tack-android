@@ -41,7 +41,7 @@ public class BeatView extends FrameLayout {
   private ImageView imageView;
   private MaterialButton button;
   private String tickType;
-  private boolean isSubdivision;
+  private boolean isSubdivision, reduceAnimations;
   private int index;
   private int colorNormal, colorStrong, colorSub, colorMuted;
 
@@ -209,7 +209,7 @@ public class BeatView extends FrameLayout {
       animatorSet.cancel();
       animatorSet = null;
     }
-    if (!tickType.equals(TICK_TYPE.MUTED)) {
+    if (!tickType.equals(TICK_TYPE.MUTED) && !reduceAnimations) {
       ViewUtil.startIcon(imageView);
     }
     ValueAnimator animatorSizeIn = ValueAnimator.ofInt(iconSize, iconSizeBeat);
@@ -251,6 +251,11 @@ public class BeatView extends FrameLayout {
       button.setOnClickListener(l);
     }
     button.setEnabled(l != null);
+  }
+
+  public void setReduceAnimations(boolean reduce) {
+    reduceAnimations = reduce;
+    iconSizeBeat = UiUtil.dpToPx(getContext(), reduce ? 40 : 32);
   }
 
   @NonNull

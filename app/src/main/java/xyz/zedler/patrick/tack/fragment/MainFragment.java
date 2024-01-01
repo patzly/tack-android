@@ -67,10 +67,10 @@ public class MainFragment extends BaseFragment
   private MainActivity activity;
   private long prevTouchTime;
   private final List<Long> intervals = new ArrayList<>();
-  private boolean flashScreen, keepAwake;
+  private boolean flashScreen, keepAwake, reduceAnimations;
   private LogoUtil logoUtil;
   private ValueAnimator fabAnimator;
-  private float cornerSizePause, cornerSizePlay, cornerSizeCurrent;
+  private float cornerSizeStop, cornerSizePlay, cornerSizeCurrent;
   private int colorFlashNormal, colorFlashStrong, colorFlashMuted;
   private DialogUtil dialogUtilGain;
   private OptionsUtil optionsUtil;
@@ -135,6 +135,7 @@ public class MainFragment extends BaseFragment
 
     flashScreen = getSharedPrefs().getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
     keepAwake = getSharedPrefs().getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
+    reduceAnimations = getSharedPrefs().getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM);
 
     colorFlashNormal = ResUtil.getColorAttr(activity, R.attr.colorPrimary);
     colorFlashStrong = ResUtil.getColorAttr(activity, R.attr.colorError);
@@ -414,11 +415,11 @@ public class MainFragment extends BaseFragment
       binding.chipGroupMainBookmarks.addView(getBookmarkChip(bookmarks.get(i)));
     }
 
-    ViewUtil.resetAnimatedIcon(binding.fabMainPlayPause);
-    binding.fabMainPlayPause.setImageResource(R.drawable.ic_round_play_to_pause_anim);
-    cornerSizePause = UiUtil.dpToPx(activity, 28);
+    ViewUtil.resetAnimatedIcon(binding.fabMainPlayStop);
+    binding.fabMainPlayStop.setImageResource(R.drawable.ic_round_play_to_stop_anim);
+    cornerSizeStop = UiUtil.dpToPx(activity, 28);
     cornerSizePlay = UiUtil.dpToPx(activity, 48);
-    cornerSizeCurrent = cornerSizePause;
+    cornerSizeCurrent = cornerSizeStop;
 
     if (isBound()) {
       onMetronomeServiceConnected();
@@ -430,6 +431,7 @@ public class MainFragment extends BaseFragment
     ViewUtil.setTooltipText(binding.buttonMainRemoveSubdivision, R.string.action_remove_sub);
     ViewUtil.setTooltipText(binding.buttonMainOptions, R.string.title_options);
     ViewUtil.setTooltipText(binding.buttonMainBeatMode, R.string.action_beat_mode);
+    ViewUtil.setTooltipText(binding.fabMainPlayStop, R.string.action_play_stop);
 
     ViewUtil.setOnClickListeners(
         this,
@@ -442,7 +444,7 @@ public class MainFragment extends BaseFragment
         binding.buttonMainBeatMode,
         binding.buttonMainBookmark,
         binding.buttonMainOptions,
-        binding.fabMainPlayPause
+        binding.fabMainPlayStop
     );
   }
 
@@ -507,10 +509,10 @@ public class MainFragment extends BaseFragment
     setTempo(tempo);
     binding.textSwitcherMainTempoTerm.setCurrentText(getTempoTerm(tempo));
 
-    ViewUtil.resetAnimatedIcon(binding.fabMainPlayPause);
-    binding.fabMainPlayPause.setImageResource(
+    ViewUtil.resetAnimatedIcon(binding.fabMainPlayStop);
+    binding.fabMainPlayStop.setImageResource(
         getMetronomeService().isPlaying()
-            ? R.drawable.ic_round_pause
+            ? R.drawable.ic_round_stop
             : R.drawable.ic_round_play_arrow
     );
     updateFabCornerRadius(getMetronomeService().isPlaying(), false);
@@ -532,36 +534,11 @@ public class MainFragment extends BaseFragment
               1, getMetronomeService().getCountInInterval(), true
           );
         }
-        squiggly.setAnimate(true);
-        /*if (getMetronomeService().getTimerDuration() > 0) {
-          long delay = 0;
-          int progress = binding.seekbarMainTimer.getProgress();
-          int max = binding.seekbarMainTimer.getMax();
-          float hello = progress / (float) max;
-          Log.i(TAG, "onMetronomeStart: hello " + progress + ", " + max + ", " + hello);
-          if (hello == 1) {
-            delay = Constants.ANIM_DURATION_LONG;
-            long timerInterval = getMetronomeService().getTimerInterval();
-            if (getMetronomeService().getCountIn() > 0) {
-              // with count-in enough time to animate to start
-              updateTimerProgress(0, true);
-              delay += getMetronomeService().getCountInInterval();
-            } else {
-              // animate to position where the timer will be at animation end
-              float fraction = (float) Constants.ANIM_DURATION_LONG / timerInterval;
-              updateTimerProgress(fraction, true);
-            }
-          }
-          new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            // start timer progress
-            updateTimerProgress(
-                1, getMetronomeService().getTimerInterval(), true, true
-            );
-          }, delay);
+        if (!reduceAnimations) {
           squiggly.setAnimate(true);
-        }*/
-        binding.fabMainPlayPause.setImageResource(R.drawable.ic_round_play_to_pause_anim);
-        Drawable fabIcon = binding.fabMainPlayPause.getDrawable();
+        }
+        binding.fabMainPlayStop.setImageResource(R.drawable.ic_round_play_to_stop_anim);
+        Drawable fabIcon = binding.fabMainPlayStop.getDrawable();
         if (fabIcon != null) {
           ((Animatable) fabIcon).start();
         }
@@ -576,13 +553,15 @@ public class MainFragment extends BaseFragment
     activity.runOnUiThread(() -> {
       if (binding != null) {
         beatsBgDrawable.setProgressVisible(false, true);
-        binding.fabMainPlayPause.setImageResource(R.drawable.ic_round_pause_to_play_anim);
-        Drawable icon = binding.fabMainPlayPause.getDrawable();
+        binding.fabMainPlayStop.setImageResource(R.drawable.ic_round_stop_to_play_anim);
+        Drawable icon = binding.fabMainPlayStop.getDrawable();
         if (icon != null) {
           ((Animatable) icon).start();
         }
         updateFabCornerRadius(false, true);
-        squiggly.setAnimate(false);
+        if (!reduceAnimations) {
+          squiggly.setAnimate(false);
+        }
       }
       stopTimerTransitionProgress();
       stopTimerProgress();
@@ -677,7 +656,6 @@ public class MainFragment extends BaseFragment
       long animDuration = Constants.ANIM_DURATION_LONG;
       float fraction = (float) animDuration / getMetronomeService().getTimerInterval();
       fraction += getMetronomeService().getTimerProgress();
-      Log.i(TAG, "onTimerStarted: hello " + (fraction));
       progressTransitionAnimator = ValueAnimator.ofFloat(currentFraction, fraction);
       progressTransitionAnimator.addUpdateListener(animation -> {
         if (binding == null) {
@@ -784,7 +762,7 @@ public class MainFragment extends BaseFragment
         );
         updateSubControls();
       }
-    } else if (id == R.id.fab_main_play_pause) {
+    } else if (id == R.id.fab_main_play_stop) {
       if (getMetronomeService().isPlaying()) {
         performHapticClick();
         getMetronomeService().stop();
@@ -886,6 +864,7 @@ public class MainFragment extends BaseFragment
         performHapticClick();
         getMetronomeService().setBeat(beatView.getIndex(), beatView.nextTickType());
       });
+      beatView.setReduceAnimations(reduceAnimations);
       binding.linearMainBeats.addView(beatView);
     }
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
@@ -1130,13 +1109,13 @@ public class MainFragment extends BaseFragment
       fabAnimator.cancel();
       fabAnimator = null;
     }
-    float cornerSizeNew = playing ? cornerSizePlay : cornerSizePause;
+    float cornerSizeNew = playing ? cornerSizePlay : cornerSizeStop;
     if (animated) {
       fabAnimator = ValueAnimator.ofFloat(cornerSizeCurrent, cornerSizeNew);
       fabAnimator.addUpdateListener(animation -> {
         cornerSizeCurrent = (float) animation.getAnimatedValue();
-        binding.fabMainPlayPause.setShapeAppearanceModel(
-            binding.fabMainPlayPause.getShapeAppearanceModel().withCornerSize(cornerSizeCurrent)
+        binding.fabMainPlayStop.setShapeAppearanceModel(
+            binding.fabMainPlayStop.getShapeAppearanceModel().withCornerSize(cornerSizeCurrent)
         );
       });
       fabAnimator.setInterpolator(new FastOutSlowInInterpolator());
@@ -1144,8 +1123,8 @@ public class MainFragment extends BaseFragment
       fabAnimator.start();
     } else {
       cornerSizeCurrent = cornerSizeNew;
-      binding.fabMainPlayPause.setShapeAppearanceModel(
-          binding.fabMainPlayPause.getShapeAppearanceModel().withCornerSize(cornerSizeNew)
+      binding.fabMainPlayStop.setShapeAppearanceModel(
+          binding.fabMainPlayStop.getShapeAppearanceModel().withCornerSize(cornerSizeNew)
       );
     }
   }
@@ -1159,7 +1138,7 @@ public class MainFragment extends BaseFragment
   }
 
   public void showSnackbar(Snackbar snackbar) {
-    snackbar.setAnchorView(binding.fabMainPlayPause);
+    snackbar.setAnchorView(binding.fabMainPlayStop);
     snackbar.show();
   }
 
