@@ -41,6 +41,8 @@ public final class Constants {
     public final static String INCREMENTAL_INTERVAL = "incremental_interval";
     public final static String INCREMENTAL_UNIT = "incremental_unit";
     public final static String BOOKMARKS = "bookmarks";
+    public final static String TIMER_DURATION = "timer_duration";
+    public final static String TIMER_UNIT = "timer_unit";
   }
 
   public final static class DEF {
@@ -69,6 +71,8 @@ public final class Constants {
     public final static boolean INCREMENTAL_INCREASE = true;
     public final static int INCREMENTAL_INTERVAL = 1;
     public final static String INCREMENTAL_UNIT = UNIT.BARS;
+    public final static int TIMER_DURATION = 10; // TODO
+    public final static String TIMER_UNIT = UNIT.SECONDS; // TODO
   }
 
   public final static class SOUND {

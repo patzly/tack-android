@@ -123,6 +123,12 @@
     <item name="fontFamily">@font/jost_medium</item>
   </style>
 
+  <style
+    name="Widget.Tack.Button.OutlinedButton.Elevated"
+    parent="Widget.Tack.Button.OutlinedButton">
+    <item name="strokeColor">@color/selector_button_outline_color_elevated</item>
+  </style>
+
   <!-- Base style -->
   <style
     name="Base.Tack.Button.TextButton"

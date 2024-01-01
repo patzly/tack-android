@@ -1,5 +1,7 @@
 package xyz.zedler.patrick.tack.fragment;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
@@ -19,6 +21,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.LinearInterpolator;
+import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -73,7 +78,7 @@ public class MainFragment extends BaseFragment
   private List<Integer> bookmarks;
   private SquigglyProgressDrawable squiggly;
   private BeatsBgDrawable beatsBgDrawable;
-  private ValueAnimator progressAnimator;
+  private ValueAnimator progressAnimator, progressTransitionAnimator;
 
   @Override
   public View onCreateView(
@@ -172,21 +177,37 @@ public class MainFragment extends BaseFragment
     binding.linearMainBeatsBg.setBackground(beatsBgDrawable);
 
     squiggly = new SquigglyProgressDrawable(activity);
-    binding.seekbarMain.setProgressDrawable(squiggly);
-    binding.seekbarMain.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            int width = binding.seekbarMain.getWidth()
-                - binding.seekbarMain.getPaddingStart()
-                - binding.seekbarMain.getPaddingEnd();
-            binding.seekbarMain.setMax(width);
-            if (binding.seekbarMain.getViewTreeObserver().isAlive()) {
-              binding.seekbarMain.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            }
+    binding.seekbarMainTimer.setProgressDrawable(squiggly);
+    binding.seekbarMainTimer.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+      @Override
+      public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (isBound() && fromUser) {
+          int positions = getMetronomeService().getTimerDuration();
+          int timerPositionCurrent = (int) (getMetronomeService().getTimerProgress() * positions);
+          float fraction = (float) progress / binding.seekbarMainTimer.getMax();
+          int timerPositionNew = (int) (fraction * positions);
+          if (timerPositionCurrent != timerPositionNew) {
+            performHapticTick();
           }
-        });
-    binding.seekbarMain.setEnabled(false);
+          getMetronomeService().updateTimerHandler(fraction);
+        }
+      }
+
+      @Override
+      public void onStartTrackingTouch(SeekBar seekBar) {
+        if (isBound()) {
+          getMetronomeService().saveState();
+          getMetronomeService().stop();
+        }
+      }
+
+      @Override
+      public void onStopTrackingTouch(SeekBar seekBar) {
+        if (isBound()) {
+          getMetronomeService().restoreState();
+        }
+      }
+    });
 
     binding.textSwitcherMainTempoTerm.setFactory(() -> {
       TextView textView = new TextView(activity);
@@ -322,6 +343,7 @@ public class MainFragment extends BaseFragment
     });
 
     binding.buttonMainTempoTap.setOnTouchListener((v, event) -> {
+      // TODO
       if (event.getAction() != MotionEvent.ACTION_DOWN) {
         return false;
       }
@@ -455,9 +477,31 @@ public class MainFragment extends BaseFragment
       );
     }
 
-    updateBeats(getMetronomeService().getBeats(), true);
-    updateSubs(getMetronomeService().getSubdivisions(), true);
+    updateBeats(getMetronomeService().getBeats());
+    updateBeatControls();
+    updateSubs(getMetronomeService().getSubdivisions());
+    updateSubControls();
+    updateTimerControls();
     refreshBookmarks();
+
+    binding.seekbarMainTimer.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override
+          public void onGlobalLayout() {
+            int width = binding.seekbarMainTimer.getWidth()
+                - binding.seekbarMainTimer.getPaddingStart()
+                - binding.seekbarMainTimer.getPaddingEnd();
+            binding.seekbarMainTimer.setMax(width);
+            updateTimerProgress(
+                getMetronomeService().getTimerProgress(), 0, false, false
+            );
+            if (binding.seekbarMainTimer.getViewTreeObserver().isAlive()) {
+              binding.seekbarMainTimer.getViewTreeObserver().removeOnGlobalLayoutListener(
+                  this
+              );
+            }
+          }
+        });
 
     int tempo = getMetronomeService().getTempo();
     setTempo(tempo);
@@ -488,6 +532,34 @@ public class MainFragment extends BaseFragment
               1, getMetronomeService().getCountInInterval(), true
           );
         }
+        squiggly.setAnimate(true);
+        /*if (getMetronomeService().getTimerDuration() > 0) {
+          long delay = 0;
+          int progress = binding.seekbarMainTimer.getProgress();
+          int max = binding.seekbarMainTimer.getMax();
+          float hello = progress / (float) max;
+          Log.i(TAG, "onMetronomeStart: hello " + progress + ", " + max + ", " + hello);
+          if (hello == 1) {
+            delay = Constants.ANIM_DURATION_LONG;
+            long timerInterval = getMetronomeService().getTimerInterval();
+            if (getMetronomeService().getCountIn() > 0) {
+              // with count-in enough time to animate to start
+              updateTimerProgress(0, true);
+              delay += getMetronomeService().getCountInInterval();
+            } else {
+              // animate to position where the timer will be at animation end
+              float fraction = (float) Constants.ANIM_DURATION_LONG / timerInterval;
+              updateTimerProgress(fraction, true);
+            }
+          }
+          new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            // start timer progress
+            updateTimerProgress(
+                1, getMetronomeService().getTimerInterval(), true, true
+            );
+          }, delay);
+          squiggly.setAnimate(true);
+        }*/
         binding.fabMainPlayPause.setImageResource(R.drawable.ic_round_play_to_pause_anim);
         Drawable fabIcon = binding.fabMainPlayPause.getDrawable();
         if (fabIcon != null) {
@@ -495,8 +567,8 @@ public class MainFragment extends BaseFragment
         }
         updateFabCornerRadius(true, true);
       }
+      UiUtil.keepScreenAwake(activity, keepAwake);
     });
-    UiUtil.keepScreenAwake(activity, keepAwake);
   }
 
   @Override
@@ -510,9 +582,12 @@ public class MainFragment extends BaseFragment
           ((Animatable) icon).start();
         }
         updateFabCornerRadius(false, true);
+        squiggly.setAnimate(false);
       }
+      stopTimerTransitionProgress();
+      stopTimerProgress();
+      UiUtil.keepScreenAwake(activity, false);
     });
-    UiUtil.keepScreenAwake(activity, false);
   }
 
   @Override
@@ -586,6 +661,68 @@ public class MainFragment extends BaseFragment
   @Override
   public void onTempoChanged(int tempoOld, int tempoNew) {
     activity.runOnUiThread(() -> setTempo(tempoOld, tempoNew));
+  }
+
+  @Override
+  public void onTimerStarted() {
+    stopTimerTransitionProgress();
+    stopTimerProgress();
+
+    int current = binding.seekbarMainTimer.getProgress();
+    int max = binding.seekbarMainTimer.getMax();
+    float currentFraction = current / (float) max;
+    if (!getMetronomeService().equalsTimerProgress(currentFraction)) {
+      // position where the timer will be at animation end
+      // only if current progress is not equal to timer progress
+      long animDuration = Constants.ANIM_DURATION_LONG;
+      float fraction = (float) animDuration / getMetronomeService().getTimerInterval();
+      fraction += getMetronomeService().getTimerProgress();
+      Log.i(TAG, "onTimerStarted: hello " + (fraction));
+      progressTransitionAnimator = ValueAnimator.ofFloat(currentFraction, fraction);
+      progressTransitionAnimator.addUpdateListener(animation -> {
+        if (binding == null) {
+          return;
+        }
+        binding.seekbarMainTimer.setProgress((int) ((float) animation.getAnimatedValue() * max));
+        binding.seekbarMainTimer.invalidate();
+      });
+      progressTransitionAnimator.addListener(new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationEnd(Animator animation) {
+          stopTimerTransitionProgress();
+        }
+      });
+      progressTransitionAnimator.setInterpolator(new FastOutSlowInInterpolator());
+      progressTransitionAnimator.setDuration(animDuration);
+      progressTransitionAnimator.start();
+    }
+    updateTimerProgress(
+        1, getMetronomeService().getTimerIntervalRemaining(), true, true
+    );
+
+    /*long delay = 0;
+    int progress = binding.seekbarMainTimer.getProgress();
+    int max = binding.seekbarMainTimer.getMax();
+    float hello = progress / (float) max;
+    if (hello == 1) {
+      delay = Constants.ANIM_DURATION_LONG;
+      long timerInterval = getMetronomeService().getTimerInterval();
+      if (getMetronomeService().getCountIn() > 0) {
+        // with count-in enough time to animate to start
+        updateTimerProgress(0, true);
+        delay += getMetronomeService().getCountInInterval();
+      } else {
+        // animate to position where the timer will be at animation end
+        float fraction = (float) Constants.ANIM_DURATION_LONG / timerInterval;
+        updateTimerProgress(fraction, true);
+      }
+    }
+    new Handler(Looper.getMainLooper()).postDelayed(() -> {
+      // start timer progress
+      updateTimerProgress(
+          1, getMetronomeService().getTimerInterval(), true, true
+      );
+    }, delay);*/
   }
 
   @Override
@@ -721,23 +858,22 @@ public class MainFragment extends BaseFragment
         showSnackbar(snackbar);
       }
     } else if (id == R.id.button_main_options) {
-      ViewUtil.startIcon(binding.buttonMainOptions.getIcon());
       performHapticClick();
+      if (getMetronomeService().isPlaying()) {
+        getMetronomeService().stop();
+      }
+      ViewUtil.startIcon(binding.buttonMainOptions.getIcon());
       optionsUtil.update();
       optionsUtil.show();
     }
   }
 
   private void updateBeats(String[] beats) {
-    updateBeats(beats, false);
-  }
-
-  private void updateBeats(String[] beats, boolean forced) {
     String[] currentBeats = new String[binding.linearMainBeats.getChildCount()];
     for (int i = 0; i < binding.linearMainBeats.getChildCount(); i++) {
       currentBeats[i] = String.valueOf(binding.linearMainBeats.getChildAt(i));
     }
-    if (Arrays.equals(beats, currentBeats) && !forced) {
+    if (Arrays.equals(beats, currentBeats)) {
       return;
     }
     binding.linearMainBeats.removeAllViews();
@@ -765,15 +901,11 @@ public class MainFragment extends BaseFragment
   }
 
   public void updateSubs(String[] subdivisions) {
-    updateSubs(subdivisions, false);
-  }
-
-  public void updateSubs(String[] subdivisions, boolean forced) {
     String[] currentSubs = new String[binding.linearMainSubs.getChildCount()];
     for (int i = 0; i < binding.linearMainSubs.getChildCount(); i++) {
       currentSubs[i] = String.valueOf(binding.linearMainSubs.getChildAt(i));
     }
-    if (Arrays.equals(subdivisions, currentSubs) && !forced) {
+    if (Arrays.equals(subdivisions, currentSubs)) {
       return;
     }
     binding.linearMainSubs.removeAllViews();
@@ -795,13 +927,21 @@ public class MainFragment extends BaseFragment
     updateSubControls();
   }
 
-  private void updateSubControls() {
+  public void updateSubControls() {
     if (isBound()) {
       int subdivisions = getMetronomeService().getSubsCount();
       binding.buttonMainAddSubdivision.setEnabled(subdivisions < Constants.SUBS_MAX);
       binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
       binding.linearMainSubsBg.setVisibility(
           getMetronomeService().getSubdivisionsUsed() ? View.VISIBLE : View.GONE
+      );
+    }
+  }
+
+  public void updateTimerControls() {
+    if (isBound()) {
+      binding.seekbarMainTimer.setVisibility(
+          getMetronomeService().isTimerActive() ? View.VISIBLE : View.GONE
       );
     }
   }
@@ -937,35 +1077,50 @@ public class MainFragment extends BaseFragment
     }
   }
 
-  private void updateProgress(float fraction, boolean animated) {
-    updateProgress(fraction, Constants.ANIM_DURATION_LONG, animated);
-  }
-
-  private void updateProgress(float fraction, long duration, boolean animated) {
+  private void updateTimerProgress(
+      float fraction, long duration, boolean animated, boolean linear
+  ) {
+    stopTimerProgress();
     if (!isBound()) {
       return;
-    } else if (progressAnimator != null) {
-      progressAnimator.pause();
-      progressAnimator.cancel();
-      progressAnimator = null;
     }
-    int max = binding.seekbarMain.getMax();
+    int max = binding.seekbarMainTimer.getMax();
     if (animated) {
-      int progress = binding.seekbarMain.getProgress();
-      progressAnimator = ValueAnimator.ofFloat(progress / (float) max, fraction);
+      float progress = getMetronomeService().getTimerProgress();
+      progressAnimator = ValueAnimator.ofFloat(progress, fraction);
       progressAnimator.addUpdateListener(animation -> {
-        if (binding == null) {
+        if (binding == null || progressTransitionAnimator != null) {
           return;
         }
-        binding.seekbarMain.setProgress((int) ((float) animation.getAnimatedValue() * max));
-        binding.seekbarMain.invalidate();
+        binding.seekbarMainTimer.setProgress((int) ((float) animation.getAnimatedValue() * max));
+        binding.seekbarMainTimer.invalidate();
       });
-      progressAnimator.setInterpolator(new FastOutSlowInInterpolator());
+      progressAnimator.setInterpolator(
+          linear ? new LinearInterpolator() : new FastOutSlowInInterpolator()
+      );
       progressAnimator.setDuration(duration);
       progressAnimator.start();
     } else {
-      binding.seekbarMain.setProgress((int) (fraction * max));
-      binding.seekbarMain.invalidate();
+      binding.seekbarMainTimer.setProgress((int) (fraction * max));
+      binding.seekbarMainTimer.invalidate();
+    }
+  }
+
+  private void stopTimerProgress() {
+    if (progressAnimator != null) {
+      progressAnimator.pause();
+      progressAnimator.cancel();
+      progressAnimator.removeAllUpdateListeners();
+      progressAnimator = null;
+    }
+  }
+
+  private void stopTimerTransitionProgress() {
+    if (progressTransitionAnimator != null) {
+      progressTransitionAnimator.pause();
+      progressTransitionAnimator.removeAllUpdateListeners();
+      progressTransitionAnimator.cancel();
+      progressTransitionAnimator = null;
     }
   }
 

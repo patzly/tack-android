@@ -205,7 +205,9 @@ public class BeatView extends FrameLayout {
   public void beat() {
     if (animatorSet != null) {
       animatorSet.pause();
+      animatorSet.removeAllListeners();
       animatorSet.cancel();
+      animatorSet = null;
     }
     if (!tickType.equals(TICK_TYPE.MUTED)) {
       ViewUtil.startIcon(imageView);

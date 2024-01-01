@@ -70,13 +70,14 @@
       app:layout_constraintTop_toTopOf="@+id/constraint_main_container">
 
       <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_max="@dimen/max_content_width"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
+        <!-- not layoutAnim=true, the animation would be visible at app startup -->
 
         <LinearLayout
           android:id="@+id/linear_main_beats_bg"
@@ -176,7 +177,7 @@
         </LinearLayout>
 
         <SeekBar
-          android:id="@+id/seekbar_main"
+          android:id="@+id/seekbar_main_timer"
           style="@style/Widget.Tack.SquigglySeekbar"
           android:visibility="visible" />
 
@@ -185,7 +186,7 @@
           android:layout_height="wrap_content"
           android:paddingStart="4dp"
           android:paddingEnd="4dp"
-          android:visibility="visible">
+          android:visibility="gone">
 
           <TextView
             style="@style/Widget.Tack.TextView.BodyMedium"

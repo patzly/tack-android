@@ -246,7 +246,7 @@ public class SettingsFragment extends BaseFragment
       public void onStartTrackingTouch(@NonNull Slider slider) {
         flashScreen = true;
         if (isBound()) {
-          getMetronomeService().save();
+          getMetronomeService().saveState();
           // Turn all visuals and audio on and start playing if not already started
           getMetronomeService().setTempo(80);
           getMetronomeService().setBeats(DEF.BEATS.split(","));
@@ -265,8 +265,8 @@ public class SettingsFragment extends BaseFragment
       public void onStopTrackingTouch(@NonNull Slider slider) {
         flashScreen = false;
         if (isBound()) {
-          getMetronomeService().restore();
           getMetronomeService().setMetronomeListener(null);
+          getMetronomeService().restoreState();
         }
       }
     });
@@ -368,6 +368,9 @@ public class SettingsFragment extends BaseFragment
 
   @Override
   public void onTempoChanged(int bpmOld, int bpmNew) {}
+
+  @Override
+  public void onTimerStarted() {}
 
   @Override
   public void onClick(View v) {

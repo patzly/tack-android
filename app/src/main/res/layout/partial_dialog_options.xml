@@ -57,7 +57,8 @@
         android:layout_marginBottom="4dp"
         android:valueFrom="0"
         android:valueTo="4"
-        android:stepSize="1" />
+        android:stepSize="1"
+        app:labelBehavior="gone" />
 
       <TextView
         style="@style/Widget.Tack.TextView"
@@ -75,7 +76,7 @@
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
         android:textColor="?attr/colorOnSurfaceVariant"
-        android:text="@string/options_incremental_description_increase" />
+        android:text="@string/options_incremental_amount_increase" />
 
       <com.google.android.material.slider.Slider
         android:id="@+id/slider_options_incremental_amount"
@@ -85,7 +86,8 @@
         android:valueFrom="0"
         android:valueTo="40"
         android:stepSize="1"
-        android:value="0"/>
+        android:value="0"
+        app:labelBehavior="gone" />
 
       <HorizontalScrollView
         android:layout_width="match_parent"
@@ -106,12 +108,12 @@
 
           <Button
             android:id="@+id/button_options_incremental_decrease"
-            style="@style/Widget.Tack.Button.OutlinedButton"
+            style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
             android:text="@string/action_decrease" />
 
           <Button
             android:id="@+id/button_options_incremental_increase"
-            style="@style/Widget.Tack.Button.OutlinedButton"
+            style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
             android:text="@string/action_increase" />
 
         </com.google.android.material.button.MaterialButtonToggleGroup>
@@ -126,7 +128,7 @@
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
         android:textColor="?attr/colorOnSurfaceVariant"
-        android:text="@string/options_incremental_description_interval" />
+        android:text="@string/options_incremental_interval" />
 
       <com.google.android.material.slider.Slider
         android:id="@+id/slider_options_incremental_interval"
@@ -136,7 +138,8 @@
         android:valueFrom="1"
         android:valueTo="60"
         android:stepSize="1"
-        android:value="1"/>
+        android:value="1"
+        app:labelBehavior="gone" />
 
       <HorizontalScrollView
         android:layout_width="match_parent"
@@ -157,17 +160,82 @@
 
           <Button
             android:id="@+id/button_options_incremental_unit_bars"
-            style="@style/Widget.Tack.Button.OutlinedButton"
+            style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
             android:text="@string/options_unit_bars" />
 
           <Button
             android:id="@+id/button_options_incremental_unit_seconds"
-            style="@style/Widget.Tack.Button.OutlinedButton"
+            style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
             android:text="@string/options_unit_seconds" />
 
           <Button
             android:id="@+id/button_options_incremental_unit_minutes"
-            style="@style/Widget.Tack.Button.OutlinedButton"
+            style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
+            android:text="@string/options_unit_minutes" />
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+      </HorizontalScrollView>
+
+      <TextView
+        style="@style/Widget.Tack.TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:text="@string/options_timer" />
+
+      <TextView
+        android:id="@+id/text_options_timer_duration"
+        style="@style/Widget.Tack.TextView.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:text="@string/options_timer_description" />
+
+      <com.google.android.material.slider.Slider
+        android:id="@+id/slider_options_timer_duration"
+        style="@style/Widget.Tack.Slider.Elevated"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:valueFrom="0"
+        android:valueTo="60"
+        android:stepSize="1"
+        android:value="0"
+        app:labelBehavior="gone" />
+
+      <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:scrollbars="none"
+        android:overScrollMode="ifContentScrolls"
+        android:requiresFadingEdge="horizontal">
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+          android:id="@+id/toggle_options_timer_unit"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          app:singleSelection="true"
+          app:selectionRequired="true">
+
+          <Button
+            android:id="@+id/button_options_timer_unit_bars"
+            style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
+            android:text="@string/options_unit_bars" />
+
+          <Button
+            android:id="@+id/button_options_timer_unit_seconds"
+            style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
+            android:text="@string/options_unit_seconds" />
+
+          <Button
+            android:id="@+id/button_options_timer_unit_minutes"
+            style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
             android:text="@string/options_unit_minutes" />
 
         </com.google.android.material.button.MaterialButtonToggleGroup>
@@ -308,6 +376,7 @@
         android:text="@string/options_swing" />
 
       <TextView
+        android:id="@+id/text_options_swing"
         style="@style/Widget.Tack.TextView.BodyMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
