@@ -33,6 +33,7 @@ public class SquigglyProgressDrawable extends Drawable {
   private ValueAnimator heightAnimator = null;
   private float phaseOffset = 0f;
   private long lastFrameTime = -1L;
+  private boolean reduceAnimations = false;
 
   /* distance over which amplitude drops to zero, measured in wavelengths */
   private float transitionPeriods = 1.5f;
@@ -55,6 +56,7 @@ public class SquigglyProgressDrawable extends Drawable {
   private final boolean transitionEnabled = false;
 
   private boolean animate = false;
+  private boolean loopInvalidation = false;
 
   public SquigglyProgressDrawable(@NonNull Context context) {
     linePaint.setStyle(Style.STROKE);
@@ -73,11 +75,13 @@ public class SquigglyProgressDrawable extends Drawable {
   @Override
   public void draw(@NonNull Canvas canvas) {
     if (animate) {
-      invalidateSelf();
       long now = SystemClock.uptimeMillis();
       phaseOffset += (now - lastFrameTime) / 1000f * phaseSpeed;
       phaseOffset %= waveLength;
       lastFrameTime = now;
+    }
+    if (loopInvalidation) {
+      invalidateSelf();
     }
 
     float progress = getLevel() / 10_000f;
@@ -92,61 +96,80 @@ public class SquigglyProgressDrawable extends Drawable {
         )
     );
 
-    // Build Wiggly Path
     float waveStart = -phaseOffset - waveLength / 2f;
     float waveEnd = transitionEnabled ? totalWidth : waveProgressPx;
 
-    // Reset path object to the start
-    path.rewind();
-    path.moveTo(waveStart, 0f);
-
-    // Build the wave, incrementing by half the wavelength each time
-    float currentX = waveStart;
-    float waveSign = 1f;
-    float currentAmp = computeAmplitude(currentX, waveSign, waveProgressPx);
-    float dist = waveLength / 2f;
-    while (currentX < waveEnd) {
-      waveSign = -waveSign;
-      float nextX = currentX + dist;
-      float midX = currentX + dist / 2;
-      float nextAmp = computeAmplitude(nextX, waveSign, waveProgressPx);
-      path.cubicTo(midX, currentAmp, midX, nextAmp, nextX, nextAmp);
-      currentAmp = nextAmp;
-      currentX = nextX;
-    }
-
-    // translate to the start position of the progress bar for all draw commands
-    float clipTop = lineAmplitude + strokeWidth;
-    canvas.save();
-    canvas.translate(getBounds().left, getBounds().centerY());
-
-    // Draw path up to progress position
-    canvas.save();
-    canvas.clipRect(0f, -1f * clipTop, totalProgressPx, clipTop);
-    canvas.drawPath(path, wavePaint);
-    canvas.restore();
-
-    if (transitionEnabled) {
-      // If there's a smooth transition, we draw the rest of the
-      // path in a different color (using different clip params)
+    if (reduceAnimations) {
+      // translate to the start position of the progress bar for all draw commands
+      float clipTop = lineAmplitude + strokeWidth;
       canvas.save();
-      canvas.clipRect(totalProgressPx, -1f * clipTop, totalWidth, clipTop);
-      canvas.drawPath(path, linePaint);
+      canvas.translate(getBounds().left, getBounds().centerY());
+
+      // Draw line up to progress position
+      canvas.save();
+      canvas.clipRect(0f, -1f * clipTop, totalProgressPx, clipTop);
+      canvas.drawLine(waveStart, 0, totalWidth * progress, 0, wavePaint);
       canvas.restore();
-    } else {
-      // No transition, just draw a flat line to the end of the region.
+
+      // Draw a flat line to the end of the region.
       // The discontinuity is hidden by the progress bar thumb shape.
       canvas.drawLine(totalProgressPx, 0f, totalWidth, 0f, linePaint);
+
+      // Draw round line cap at the beginning of the line
+      canvas.drawPoint(0, 0, totalProgressPx > 0 ? wavePaint : linePaint);
+      canvas.restore();
+    } else {
+      // Reset path object to the start
+      path.rewind();
+      path.moveTo(waveStart, 0f);
+
+      // Build the wave, incrementing by half the wavelength each time
+      float currentX = waveStart;
+      float waveSign = 1f;
+      float currentAmp = computeAmplitude(currentX, waveSign, waveProgressPx);
+      float dist = waveLength / 2f;
+      while (currentX < waveEnd) {
+        waveSign = -waveSign;
+        float nextX = currentX + dist;
+        float midX = currentX + dist / 2;
+        float nextAmp = computeAmplitude(nextX, waveSign, waveProgressPx);
+        path.cubicTo(midX, currentAmp, midX, nextAmp, nextX, nextAmp);
+        currentAmp = nextAmp;
+        currentX = nextX;
+      }
+
+      // translate to the start position of the progress bar for all draw commands
+      float clipTop = lineAmplitude + strokeWidth;
+      canvas.save();
+      canvas.translate(getBounds().left, getBounds().centerY());
+
+      // Draw path up to progress position
+      canvas.save();
+      canvas.clipRect(0f, -1f * clipTop, totalProgressPx, clipTop);
+      canvas.drawPath(path, wavePaint);
+      canvas.restore();
+
+      if (transitionEnabled) {
+        // If there's a smooth transition, we draw the rest of the
+        // path in a different color (using different clip params)
+        canvas.save();
+        canvas.clipRect(totalProgressPx, -1f * clipTop, totalWidth, clipTop);
+        canvas.drawPath(path, linePaint);
+        canvas.restore();
+      } else {
+        // No transition, just draw a flat line to the end of the region.
+        // The discontinuity is hidden by the progress bar thumb shape.
+        canvas.drawLine(totalProgressPx, 0f, totalWidth, 0f, linePaint);
+      }
+
+      // Draw round line cap at the beginning of the wave
+      double startAmp = Math.cos(Math.abs(waveStart) / waveLength * TWO_PI);
+      canvas.drawPoint(
+          0f, (float) (startAmp * lineAmplitude * heightFraction),
+          totalProgressPx > 0 ? wavePaint : linePaint
+      );
+      canvas.restore();
     }
-
-    // Draw round line cap at the beginning of the wave
-    double startAmp = Math.cos(Math.abs(waveStart) / waveLength * TWO_PI);
-    canvas.drawPoint(
-        0f, (float) (startAmp * lineAmplitude * heightFraction),
-        totalProgressPx > 0 ? wavePaint : linePaint
-    );
-
-    canvas.restore();
   }
 
   @Override
@@ -174,12 +197,13 @@ public class SquigglyProgressDrawable extends Drawable {
     linePaint.setStrokeWidth(strokeWidth);
   }
 
-  public void setAnimate(boolean animate) {
+  public void setAnimate(boolean animate, boolean animateTransition) {
     if (this.animate == animate) {
       return;
     }
     this.animate = animate;
     if (animate) {
+      loopInvalidation = true;
       lastFrameTime = SystemClock.uptimeMillis();
     }
     if (heightAnimator != null) {
@@ -188,20 +212,42 @@ public class SquigglyProgressDrawable extends Drawable {
       heightAnimator.cancel();
       heightAnimator = null;
     }
-    heightAnimator = ValueAnimator.ofFloat(heightFraction, animate ? 1f : 0f);
-    heightAnimator.setDuration(animate ? 800 : 500);
-    heightAnimator.setInterpolator(new FastOutSlowInInterpolator());
-    heightAnimator.addUpdateListener(animation -> {
-      heightFraction = (float) animation.getAnimatedValue();
-      invalidateSelf();
-    });
-    heightAnimator.addListener(new AnimatorListenerAdapter() {
-      @Override
-      public void onAnimationEnd(Animator animation) {
-        heightAnimator = null;
-      }
-    });
-    heightAnimator.start();
+    if (animateTransition) {
+      heightAnimator = ValueAnimator.ofFloat(heightFraction, animate ? 1 : 0);
+      heightAnimator.setDuration(animate ? 800 : 500);
+      heightAnimator.setInterpolator(new FastOutSlowInInterpolator());
+      heightAnimator.addUpdateListener(
+          animation -> heightFraction = (float) animation.getAnimatedValue()
+      );
+      heightAnimator.addListener(new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationEnd(Animator animation) {
+          heightAnimator = null;
+          if (!animate) {
+            loopInvalidation = false;
+          }
+        }
+      });
+      heightAnimator.start();
+    } else {
+      heightFraction = animate ? 1 : 0;
+      loopInvalidation = false;
+    }
+    invalidateSelf();
+  }
+
+  public void setReduceAnimations(boolean reduce) {
+    this.reduceAnimations = reduce;
+    invalidateSelf();
+  }
+
+  public void pauseAnimation() {
+    loopInvalidation = false;
+  }
+
+  public void resumeAnimation() {
+    loopInvalidation = true;
+    invalidateSelf();
   }
 
   /**

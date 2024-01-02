@@ -178,6 +178,7 @@ public class MainFragment extends BaseFragment
     binding.linearMainBeatsBg.setBackground(beatsBgDrawable);
 
     squiggly = new SquigglyProgressDrawable(activity);
+    squiggly.setReduceAnimations(reduceAnimations);
     binding.seekbarMainTimer.setProgressDrawable(squiggly);
     binding.seekbarMainTimer.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
       @Override
@@ -449,6 +450,20 @@ public class MainFragment extends BaseFragment
   }
 
   @Override
+  public void onPause() {
+    super.onPause();
+    stopTimerProgress();
+    stopTimerTransitionProgress();
+    squiggly.pauseAnimation();
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    updateTimerControls();
+  }
+
+  @Override
   public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
     if (dialogUtilGain != null) {
@@ -483,8 +498,12 @@ public class MainFragment extends BaseFragment
     updateBeatControls();
     updateSubs(getMetronomeService().getSubdivisions());
     updateSubControls();
-    updateTimerControls();
     refreshBookmarks();
+    // updateTimerControls is called below in layoutListener
+
+    int tempo = getMetronomeService().getTempo();
+    setTempo(tempo);
+    binding.textSwitcherMainTempoTerm.setCurrentText(getTempoTerm(tempo));
 
     binding.seekbarMainTimer.getViewTreeObserver().addOnGlobalLayoutListener(
         new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -494,9 +513,7 @@ public class MainFragment extends BaseFragment
                 - binding.seekbarMainTimer.getPaddingStart()
                 - binding.seekbarMainTimer.getPaddingEnd();
             binding.seekbarMainTimer.setMax(width);
-            updateTimerProgress(
-                getMetronomeService().getTimerProgress(), 0, false, false
-            );
+            updateTimerControls();
             if (binding.seekbarMainTimer.getViewTreeObserver().isAlive()) {
               binding.seekbarMainTimer.getViewTreeObserver().removeOnGlobalLayoutListener(
                   this
@@ -504,10 +521,6 @@ public class MainFragment extends BaseFragment
             }
           }
         });
-
-    int tempo = getMetronomeService().getTempo();
-    setTempo(tempo);
-    binding.textSwitcherMainTempoTerm.setCurrentText(getTempoTerm(tempo));
 
     ViewUtil.resetAnimatedIcon(binding.fabMainPlayStop);
     binding.fabMainPlayStop.setImageResource(
@@ -534,8 +547,8 @@ public class MainFragment extends BaseFragment
               1, getMetronomeService().getCountInInterval(), true
           );
         }
-        if (!reduceAnimations) {
-          squiggly.setAnimate(true);
+        if (getMetronomeService().isTimerActive()) {
+          squiggly.setAnimate(true, true);
         }
         binding.fabMainPlayStop.setImageResource(R.drawable.ic_round_play_to_stop_anim);
         Drawable fabIcon = binding.fabMainPlayStop.getDrawable();
@@ -544,8 +557,9 @@ public class MainFragment extends BaseFragment
         }
         updateFabCornerRadius(true, true);
       }
-      UiUtil.keepScreenAwake(activity, keepAwake);
     });
+    // Inside UI thread appears to be often not effective
+    UiUtil.keepScreenAwake(activity, keepAwake);
   }
 
   @Override
@@ -553,20 +567,21 @@ public class MainFragment extends BaseFragment
     activity.runOnUiThread(() -> {
       if (binding != null) {
         beatsBgDrawable.setProgressVisible(false, true);
+        if (getMetronomeService().isTimerActive()) {
+          squiggly.setAnimate(false, true);
+        }
         binding.fabMainPlayStop.setImageResource(R.drawable.ic_round_stop_to_play_anim);
         Drawable icon = binding.fabMainPlayStop.getDrawable();
         if (icon != null) {
           ((Animatable) icon).start();
         }
         updateFabCornerRadius(false, true);
-        if (!reduceAnimations) {
-          squiggly.setAnimate(false);
-        }
       }
       stopTimerTransitionProgress();
       stopTimerProgress();
-      UiUtil.keepScreenAwake(activity, false);
     });
+    // Inside UI thread appears to be often not effective
+    UiUtil.keepScreenAwake(activity, false);
   }
 
   @Override
@@ -584,7 +599,7 @@ public class MainFragment extends BaseFragment
         ((BeatView) beat).beat();
       }
       View subdivision = binding.linearMainSubs.getChildAt(tick.subdivision - 1);
-      if (subdivision instanceof BeatView) {
+      if (getMetronomeService().getSubdivisionsUsed() && subdivision instanceof BeatView) {
         ((BeatView) subdivision).setTickType(tick.subdivision == 1 ? TICK_TYPE.MUTED : tick.type);
         ((BeatView) subdivision).beat();
       }
@@ -677,30 +692,6 @@ public class MainFragment extends BaseFragment
     updateTimerProgress(
         1, getMetronomeService().getTimerIntervalRemaining(), true, true
     );
-
-    /*long delay = 0;
-    int progress = binding.seekbarMainTimer.getProgress();
-    int max = binding.seekbarMainTimer.getMax();
-    float hello = progress / (float) max;
-    if (hello == 1) {
-      delay = Constants.ANIM_DURATION_LONG;
-      long timerInterval = getMetronomeService().getTimerInterval();
-      if (getMetronomeService().getCountIn() > 0) {
-        // with count-in enough time to animate to start
-        updateTimerProgress(0, true);
-        delay += getMetronomeService().getCountInInterval();
-      } else {
-        // animate to position where the timer will be at animation end
-        float fraction = (float) Constants.ANIM_DURATION_LONG / timerInterval;
-        updateTimerProgress(fraction, true);
-      }
-    }
-    new Handler(Looper.getMainLooper()).postDelayed(() -> {
-      // start timer progress
-      updateTimerProgress(
-          1, getMetronomeService().getTimerInterval(), true, true
-      );
-    }, delay);*/
   }
 
   @Override
@@ -918,10 +909,29 @@ public class MainFragment extends BaseFragment
   }
 
   public void updateTimerControls() {
-    if (isBound()) {
-      binding.seekbarMainTimer.setVisibility(
-          getMetronomeService().isTimerActive() ? View.VISIBLE : View.GONE
-      );
+    if (!isBound()) {
+      return;
+    }
+    boolean isPlaying = getMetronomeService().isPlaying();
+    boolean isTimerActive = getMetronomeService().isTimerActive();
+    binding.seekbarMainTimer.setVisibility(isTimerActive ? View.VISIBLE : View.GONE);
+    if (isTimerActive && isPlaying) {
+      squiggly.resumeAnimation();
+    } else {
+      squiggly.pauseAnimation();
+    }
+    if (isTimerActive) {
+      squiggly.setAnimate(isPlaying, true);
+    }
+    // Check if timer is currently running
+    long elapsedTime = getMetronomeService().getElapsedTime();
+    elapsedTime -= getMetronomeService().getCountInInterval();
+    long timerIntervalRemaining = getMetronomeService().getTimerIntervalRemaining();
+    if (isPlaying && isTimerActive && elapsedTime > 0) {
+      updateTimerProgress(1, timerIntervalRemaining, true, true);
+    } else {
+      float timerProgress = getMetronomeService().getTimerProgress();
+      updateTimerProgress(timerProgress, 0, false, false);
     }
   }
 
@@ -1072,7 +1082,6 @@ public class MainFragment extends BaseFragment
           return;
         }
         binding.seekbarMainTimer.setProgress((int) ((float) animation.getAnimatedValue() * max));
-        binding.seekbarMainTimer.invalidate();
       });
       progressAnimator.setInterpolator(
           linear ? new LinearInterpolator() : new FastOutSlowInInterpolator()
@@ -1088,8 +1097,8 @@ public class MainFragment extends BaseFragment
   private void stopTimerProgress() {
     if (progressAnimator != null) {
       progressAnimator.pause();
-      progressAnimator.cancel();
       progressAnimator.removeAllUpdateListeners();
+      progressAnimator.cancel();
       progressAnimator = null;
     }
   }
@@ -1106,8 +1115,15 @@ public class MainFragment extends BaseFragment
   private void updateFabCornerRadius(boolean playing, boolean animated) {
     if (fabAnimator != null) {
       fabAnimator.pause();
+      fabAnimator.removeAllUpdateListeners();
       fabAnimator.cancel();
       fabAnimator = null;
+    }
+    if (reduceAnimations) {
+      binding.fabMainPlayStop.setShapeAppearanceModel(
+          binding.fabMainPlayStop.getShapeAppearanceModel().withCornerSize(cornerSizeStop)
+      );
+      return;
     }
     float cornerSizeNew = playing ? cornerSizePlay : cornerSizeStop;
     if (animated) {

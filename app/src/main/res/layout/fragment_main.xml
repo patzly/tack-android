@@ -61,22 +61,23 @@
     android:layout_marginTop="?attr/actionBarSize">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-      android:id="@+id/constraint_main_top"
-      android:layout_width="match_parent"
+      android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:paddingTop="16dp"
       android:paddingStart="16dp"
       android:paddingEnd="16dp"
-      app:layout_constraintTop_toTopOf="@+id/constraint_main_container">
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent">
 
       <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_max="@dimen/max_content_width"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_max="@dimen/max_content_width">
         <!-- not layoutAnim=true, the animation would be visible at app startup -->
 
         <LinearLayout
@@ -178,33 +179,46 @@
 
         <SeekBar
           android:id="@+id/seekbar_main_timer"
-          style="@style/Widget.Tack.SquigglySeekbar"
-          android:visibility="visible" />
+          android:layout_width="match_parent"
+          android:layout_height="40dp"
+          android:paddingStart="6dp"
+          android:paddingEnd="6dp"
+          android:thumb="@drawable/shape_seekbar_thumb"
+          android:thumbTint="?attr/colorPrimary" />
 
         <FrameLayout
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:paddingStart="4dp"
-          android:paddingEnd="4dp"
-          android:visibility="gone">
+          android:paddingEnd="4dp">
 
           <TextView
+            android:id="@+id/text_main_timer_elapsed"
             style="@style/Widget.Tack.TextView.BodyMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:fontFeatureSettings="tnum"
-            android:text="0:00" />
+            android:fontFeatureSettings="tnum" />
 
           <TextView
+            android:id="@+id/text_main_elapsed_time"
+            style="@style/Widget.Tack.TextView.BodyMedium"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:fontFeatureSettings="tnum"
+            android:visibility="gone" />
+
+          <TextView
+            android:id="@+id/text_main_timer_total"
             style="@style/Widget.Tack.TextView.BodyMedium"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:textColor="?attr/colorOnSurfaceVariant"
-            android:fontFeatureSettings="tnum"
-            android:text="1:12" />
+            android:fontFeatureSettings="tnum" />
 
         </FrameLayout>
 
@@ -218,10 +232,10 @@
       android:layout_height="wrap_content"
       android:orientation="horizontal"
       android:gravity="center_vertical"
-      app:layout_constraintTop_toTopOf="@+id/constraint_main_container"
-      app:layout_constraintBottom_toBottomOf="@+id/constraint_main_container"
-      app:layout_constraintStart_toStartOf="@+id/constraint_main_container"
-      app:layout_constraintEnd_toEndOf="@+id/constraint_main_container">
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent">
 
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_main_less"
@@ -297,10 +311,12 @@
 
     <FrameLayout
       android:id="@+id/frame_main_bookmarks_container"
-      android:layout_width="match_parent"
+      android:layout_width="0dp"
       android:layout_height="0dp"
       app:layout_constraintTop_toBottomOf="@+id/linear_main_center"
-      app:layout_constraintBottom_toTopOf="@+id/linear_main_bottom">
+      app:layout_constraintBottom_toTopOf="@+id/linear_main_bottom"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent">
 
       <HorizontalScrollView
         android:id="@+id/scroll_horiz_main_bookmarks"
@@ -332,11 +348,10 @@
       android:paddingBottom="@dimen/control_margin_bottom"
       android:orientation="horizontal"
       android:gravity="center_vertical"
-      android:animateLayoutChanges="true"
       android:clipToPadding="false"
-      app:layout_constraintBottom_toBottomOf="@+id/constraint_main_container"
-      app:layout_constraintStart_toStartOf="@+id/constraint_main_container"
-      app:layout_constraintEnd_toEndOf="@+id/constraint_main_container">
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent">
 
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_main_options"

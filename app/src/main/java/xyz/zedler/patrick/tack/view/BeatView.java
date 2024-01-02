@@ -255,7 +255,7 @@ public class BeatView extends FrameLayout {
 
   public void setReduceAnimations(boolean reduce) {
     reduceAnimations = reduce;
-    iconSizeBeat = UiUtil.dpToPx(getContext(), reduce ? 40 : 32);
+    iconSizeBeat = UiUtil.dpToPx(getContext(), reduce ? 44 : 32);
   }
 
   @NonNull

@@ -296,19 +296,6 @@
     <item name="trackColorInactive">@color/selector_slider_inactive_track_color_elevated</item>
   </style>
 
-  <!-- Slider -->
-
-  <style
-    name="Widget.Tack.SquigglySeekbar"
-    parent="@android:style/Widget.ProgressBar.Horizontal">
-    <item name="android:layout_width">match_parent</item>
-    <item name="android:layout_height">40dp</item>
-    <item name="android:paddingStart">6dp</item>
-    <item name="android:paddingEnd">6dp</item>
-    <item name="android:thumb">@drawable/shape_seekbar_thumb</item>
-    <item name="android:thumbTint">?attr/colorPrimary</item>
-  </style>
-
   <!-- Tooltip -->
 
   <style name="Widget.Tack.Tooltip" parent="Widget.Material3.Tooltip">

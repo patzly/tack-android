@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Objects;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
@@ -55,7 +56,7 @@ public class MetronomeService extends Service implements TickListener {
   private HandlerThread thread;
   private Handler latencyHandler, countInHandler, incrementalHandler, timerHandler;
   private boolean alwaysVibrate, incrementalIncrease, resetTimer;
-  private long latency, timerStartTime;
+  private long latency, startTime, timerStartTime;
   private int incrementalAmount, incrementalInterval, timerDuration;
   private String incrementalUnit, timerUnit;
   private float timerProgress;
@@ -208,6 +209,7 @@ public class MetronomeService extends Service implements TickListener {
     if (listener != null) {
       listener.onMetronomeStart();
     }
+    startTime = System.currentTimeMillis();
     countInHandler.postDelayed(() -> {
       updateIncrementalHandler();
       timerStartTime = System.currentTimeMillis();
@@ -733,6 +735,10 @@ public class MetronomeService extends Service implements TickListener {
     }
   }
 
+  public long getElapsedTime() {
+    return System.currentTimeMillis() - startTime;
+  }
+
   public interface MetronomeListener {
     void onMetronomeStart();
     void onMetronomeStop();
@@ -746,8 +752,10 @@ public class MetronomeService extends Service implements TickListener {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-      Log.d(TAG, "onReceive: received stop command");
-      stop();
+      if (intent != null && Objects.equals(intent.getAction(), ACTION.STOP)) {
+        Log.d(TAG, "onReceive: received stop command");
+        stop();
+      }
     }
   }
 

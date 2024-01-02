@@ -65,7 +65,7 @@ public class NotificationUtil {
         new NotificationChannel(
             CHANNEL_ID,
             context.getString(R.string.title_notification_channel),
-            NotificationManager.IMPORTANCE_DEFAULT
+            NotificationManager.IMPORTANCE_HIGH
         )
     );
   }
@@ -73,7 +73,7 @@ public class NotificationUtil {
   public Notification getNotification() {
     String text = context.getString(R.string.msg_metronome_playing_return);
     Intent intentApp = new Intent(context, MainActivity.class);
-    intentApp.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+    intentApp.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
     PendingIntent pendingIntentApp = PendingIntent.getActivity(
         context, REQUEST_CODE, intentApp, getPendingIntentFlags()
     );
