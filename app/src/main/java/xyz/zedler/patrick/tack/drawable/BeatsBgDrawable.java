@@ -38,10 +38,8 @@ public class BeatsBgDrawable extends Drawable {
   private ValueAnimator progressAnimator, alphaAnimator;
 
   public BeatsBgDrawable(Context context) {
-    // TODO: replace with attribute when fixed in MDC
-    //paintBg.setColor(ResUtil.getColorAttr(context, R.attr.colorSurfaceContainerHigh));
-    paintBg.setColor(ResUtil.getColorSurfaceContainerHigh(context));
-    paintFg.setColor(ResUtil.getColorAttr(context, R.attr.colorOnSurface));
+    paintBg.setColor(ResUtil.getColor(context, R.attr.colorSurfaceContainerHigh));
+    paintFg.setColor(ResUtil.getColor(context, R.attr.colorOnSurface));
     alphaBase = UiUtil.isDarkModeActive(context) ? ALPHA_FG_BASE_DARK : ALPHA_FG_BASE_LIGHT;
     progressThreshold = 1;
     setProgress(0, false);

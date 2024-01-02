@@ -2,7 +2,7 @@ package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.util.TypedValue;
@@ -13,8 +13,8 @@ import androidx.annotation.DimenRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
-import androidx.core.content.ContextCompat;
 import androidx.core.graphics.ColorUtils;
+import com.google.android.material.color.MaterialColors;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -48,56 +48,22 @@ public class ResUtil {
     context.startActivity(Intent.createChooser(intent, null));
   }
 
-  public static int getColorAttr(Context context, @AttrRes int resId) {
+  public static int getColor(Context context, @AttrRes int resId) {
+    return MaterialColors.getColor(context, resId, Color.BLACK);
+  }
+
+  public static int getColor(Context context, @AttrRes int resId, float alpha) {
+    return ColorUtils.setAlphaComponent(getColor(context, resId), (int) (alpha * 255));
+  }
+
+  public static int getSysColor(Context context, @AttrRes int resId) {
     TypedValue typedValue = new TypedValue();
     context.getTheme().resolveAttribute(resId, typedValue, true);
     return typedValue.data;
   }
 
-  public static int getColorAttr(Context context, @AttrRes int resId, float alpha) {
-    return ColorUtils.setAlphaComponent(getColorAttr(context, resId), (int) (alpha * 255));
-  }
-
-  // TODO: replace with attributes when fixed in MDC and remove below methods
-
-  public static ColorStateList getColorSurfaceContainerLowest(Context context) {
-    return ContextCompat.getColorStateList(context, R.color.selector_fix_surface_container_lowest);
-  }
-
-  public static int getColorSurfaceContainerLow(Context context) {
-    ColorStateList list = ContextCompat.getColorStateList(
-        context, R.color.selector_fix_surface_container_low
-    );
-    assert list != null;
-    return list.getDefaultColor();
-  }
-
-  public static int getColorSurfaceContainer(Context context) {
-    ColorStateList list = ContextCompat.getColorStateList(
-        context, R.color.selector_fix_surface_container
-    );
-    assert list != null;
-    return list.getDefaultColor();
-  }
-
-  public static int getColorSurfaceContainerHigh(Context context) {
-    ColorStateList list = ContextCompat.getColorStateList(
-        context, R.color.selector_fix_surface_container_high
-    );
-    assert list != null;
-    return list.getDefaultColor();
-  }
-
-  public static int getColorSurfaceContainerHighest(Context context) {
-    ColorStateList list = ContextCompat.getColorStateList(
-        context, R.color.selector_fix_surface_container_highest
-    );
-    assert list != null;
-    return list.getDefaultColor();
-  }
-
   public static int getColorHighlight(Context context) {
-    return getColorAttr(context, R.attr.colorSecondary, 0.09f);
+    return getColor(context, R.attr.colorSecondary, 0.09f);
   }
 
   public static void tintMenuIcons(Context context, Menu menu) {
@@ -113,7 +79,7 @@ public class ResUtil {
 
   public static void tintIcon(Context context, Drawable icon) {
     if (icon != null) {
-      icon.setTint(ResUtil.getColorAttr(context, R.attr.colorOnSurfaceVariant));
+      icon.setTint(ResUtil.getColor(context, R.attr.colorOnSurfaceVariant));
     }
   }
 

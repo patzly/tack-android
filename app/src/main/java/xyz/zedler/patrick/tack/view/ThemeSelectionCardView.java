@@ -37,9 +37,7 @@ public class ThemeSelectionCardView extends MaterialCardView {
     setRadius(outerRadius);
     setCardElevation(0);
     setCardForegroundColor(null);
-    // TODO: replace with attribute when fixed in MDC
-    //super.setCardBackgroundColor(ResUtil.getColorAttr(context, R.attr.colorSurfaceContainer));
-    super.setCardBackgroundColor(ResUtil.getColorSurfaceContainer(context));
+    super.setCardBackgroundColor(ResUtil.getColor(context, R.attr.colorSurfaceContainer));
     setRippleColor(ColorStateList.valueOf(ResUtil.getColorHighlight(context)));
     setStrokeWidth(0);
     setCheckable(true);
@@ -59,12 +57,12 @@ public class ThemeSelectionCardView extends MaterialCardView {
     innerCard.setLayoutParams(innerParams);
     innerCard.setRadius(innerSize / 2f);
     innerCard.setStrokeWidth(UiUtil.dpToPx(context, 1));
-    innerCard.setStrokeColor(ResUtil.getColorAttr(context, R.attr.colorOutline));
-    innerCard.setCardBackgroundColor(ResUtil.getColorAttr(context, R.attr.colorPrimaryContainer));
+    innerCard.setStrokeColor(ResUtil.getColor(context, R.attr.colorOutline));
+    innerCard.setCardBackgroundColor(ResUtil.getColor(context, R.attr.colorPrimaryContainer));
     innerCard.setCheckable(false);
     addView(innerCard);
     setCheckedIconTint(
-        ColorStateList.valueOf(ResUtil.getColorAttr(context, R.attr.colorOnPrimaryContainer))
+        ColorStateList.valueOf(ResUtil.getColor(context, R.attr.colorOnPrimaryContainer))
     );
   }
 

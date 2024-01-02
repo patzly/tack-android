@@ -59,10 +59,10 @@ public class SquigglyProgressDrawable extends Drawable {
   public SquigglyProgressDrawable(@NonNull Context context) {
     linePaint.setStyle(Style.STROKE);
     linePaint.setStrokeCap(Cap.ROUND);
-    linePaint.setColor(ResUtil.getColorAttr(context, R.attr.colorSurfaceVariant));
+    linePaint.setColor(ResUtil.getColor(context, R.attr.colorSurfaceVariant));
     wavePaint.setStyle(Style.STROKE);
     wavePaint.setStrokeCap(Cap.ROUND);
-    wavePaint.setColor(ResUtil.getColorAttr(context, R.attr.colorPrimary));
+    wavePaint.setColor(ResUtil.getColor(context, R.attr.colorPrimary));
 
     waveLength = UiUtil.dpToPx(context, 20);
     lineAmplitude = UiUtil.dpToPx(context, 1.5f);

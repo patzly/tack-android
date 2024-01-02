@@ -64,9 +64,7 @@ public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragme
             if (container == null || sheet == null) {
               return;
             }
-            // TODO: replace with attribute when fixed in MDC
-            //backgroundColor = ResUtil.getColorAttr(activity, R.attr.colorSurfaceContainerLow);
-            backgroundColor = ResUtil.getColorSurfaceContainerLow(activity);
+            backgroundColor = ResUtil.getColor(activity, R.attr.colorSurfaceContainerLow);
             PaintDrawable background = new PaintDrawable(backgroundColor);
             int radius = UiUtil.dpToPx(requireContext(), 28);
             setCornerRadius(background, radius);
@@ -177,7 +175,7 @@ public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragme
               isDarkModeActive ? UiUtil.SCRIM_DARK_DIALOG : UiUtil.SCRIM_LIGHT_DIALOG
           );
           window.setNavigationBarDividerColor(
-              ResUtil.getColorAttr(activity, R.attr.colorOutlineVariant)
+              ResUtil.getColor(activity, R.attr.colorOutlineVariant)
           );
         }
       }
@@ -191,7 +189,7 @@ public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragme
             isDarkModeActive ? UiUtil.SCRIM_DARK_DIALOG : UiUtil.SCRIM_LIGHT_DIALOG
         );
         window.setNavigationBarDividerColor(
-            ResUtil.getColorAttr(activity, R.attr.colorOutlineVariant)
+            ResUtil.getColor(activity, R.attr.colorOutlineVariant)
         );
       }
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // 26

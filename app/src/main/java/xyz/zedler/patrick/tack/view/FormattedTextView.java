@@ -49,8 +49,8 @@ public class FormattedTextView extends LinearLayout {
   private void init() {
     setOrientation(VERTICAL);
     setPadding(0, UiUtil.dpToPx(context, 16), 0, 0);
-    textColor = ResUtil.getColorAttr(context, R.attr.colorOnSurface);
-    textColorVariant = ResUtil.getColorAttr(context, R.attr.colorOnSurfaceVariant);
+    textColor = ResUtil.getColor(context, R.attr.colorOnSurface);
+    textColorVariant = ResUtil.getColor(context, R.attr.colorOnSurfaceVariant);
   }
 
   public void setText(String text, String... highlights) {
@@ -177,7 +177,7 @@ public class FormattedTextView extends LinearLayout {
         0
     );
     textView.setLayoutParams(getVerticalLayoutParams(16, 16));
-    textView.setTextColor(ResUtil.getColorAttr(context, R.attr.colorPrimary));
+    textView.setTextColor(ResUtil.getColor(context, R.attr.colorPrimary));
     textView.setText(text);
     textView.setOnClickListener(
         v -> context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link)))
@@ -252,14 +252,10 @@ public class FormattedTextView extends LinearLayout {
   }
 
   private MaterialCardView getMessage(String text, boolean useErrorColors) {
-    int colorSurface = ResUtil.getColorAttr(
+    int colorSurface = ResUtil.getColor(
         context, useErrorColors ? R.attr.colorErrorContainer : R.attr.colorSurfaceContainerHighest
     );
-    // TODO: replace with attribute when fixed in MDC
-    if (!useErrorColors) {
-      colorSurface = ResUtil.getColorSurfaceContainerHighest(context);
-    }
-    int colorOnSurface = ResUtil.getColorAttr(
+    int colorOnSurface = ResUtil.getColor(
         context, useErrorColors ? R.attr.colorOnErrorContainer : R.attr.colorOnSurfaceVariant
     );
     MaterialCardView cardView = new MaterialCardView(context);

@@ -221,7 +221,7 @@ public class SystemBarBehavior {
     boolean isOrientationPortrait = UiUtil.isOrientationPortrait(activity);
     boolean isDarkModeActive = UiUtil.isDarkModeActive(activity);
 
-    int colorScrim = ResUtil.getColorAttr(activity, android.R.attr.colorBackground, 0.7f);
+    int colorScrim = ResUtil.getColor(activity, android.R.attr.colorBackground, 0.7f);
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { // 29
       window.setStatusBarColor(Color.TRANSPARENT);
@@ -241,10 +241,10 @@ public class SystemBarBehavior {
           );
         } else {
           window.setNavigationBarDividerColor(
-              ResUtil.getColorAttr(activity, R.attr.colorOutlineVariant)
+              ResUtil.getColor(activity, R.attr.colorOutlineVariant)
           );
           window.setNavigationBarColor(
-              ResUtil.getColorAttr(activity, android.R.attr.colorBackground)
+              ResUtil.getColor(activity, android.R.attr.colorBackground)
           );
         }
       }
@@ -258,10 +258,10 @@ public class SystemBarBehavior {
         window.setNavigationBarColor(isScrollable ? colorScrim : Color.TRANSPARENT);
       } else {
         window.setNavigationBarDividerColor(
-            ResUtil.getColorAttr(activity, R.attr.colorOutlineVariant)
+            ResUtil.getColor(activity, R.attr.colorOutlineVariant)
         );
         window.setNavigationBarColor(
-            ResUtil.getColorAttr(activity, android.R.attr.colorBackground)
+            ResUtil.getColor(activity, android.R.attr.colorBackground)
         );
       }
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // 26

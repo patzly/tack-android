@@ -137,9 +137,9 @@ public class MainFragment extends BaseFragment
     keepAwake = getSharedPrefs().getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
     reduceAnimations = getSharedPrefs().getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM);
 
-    colorFlashNormal = ResUtil.getColorAttr(activity, R.attr.colorPrimary);
-    colorFlashStrong = ResUtil.getColorAttr(activity, R.attr.colorError);
-    colorFlashMuted = ResUtil.getColorAttr(activity, android.R.attr.colorBackground);
+    colorFlashNormal = ResUtil.getColor(activity, R.attr.colorPrimary);
+    colorFlashStrong = ResUtil.getColor(activity, R.attr.colorError);
+    colorFlashMuted = ResUtil.getColor(activity, android.R.attr.colorBackground);
 
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
     binding.linearMainBeats.getLayoutTransition().setDuration(Constants.ANIM_DURATION_LONG);
@@ -217,7 +217,7 @@ public class MainFragment extends BaseFragment
           TypedValue.COMPLEX_UNIT_PX,
           getResources().getDimension(R.dimen.label_text_size)
       );
-      textView.setTextColor(ResUtil.getColorAttr(activity, R.attr.colorOnSecondaryContainer));
+      textView.setTextColor(ResUtil.getColor(activity, R.attr.colorOnSecondaryContainer));
       return textView;
     });
 
@@ -972,15 +972,15 @@ public class MainFragment extends BaseFragment
       Object tag = chip.getTag();
       boolean isActive = tag != null && ((int) tag) == getMetronomeService().getTempo();
       int colorBg = isActive
-          ? ResUtil.getColorAttr(activity, R.attr.colorTertiaryContainer)
+          ? ResUtil.getColor(activity, R.attr.colorTertiaryContainer)
           : Color.TRANSPARENT;
-      int colorStroke = ResUtil.getColorAttr(
+      int colorStroke = ResUtil.getColor(
           activity, isActive ? R.attr.colorTertiary : R.attr.colorOutline
       );
-      int colorIcon = ResUtil.getColorAttr(
+      int colorIcon = ResUtil.getColor(
           activity, isActive ? R.attr.colorOnTertiaryContainer : R.attr.colorOnSurfaceVariant
       );
-      int colorText = ResUtil.getColorAttr(
+      int colorText = ResUtil.getColor(
           activity, isActive ? R.attr.colorOnTertiaryContainer : R.attr.colorOnSurface
       );
       chip.setChipBackgroundColor(ColorStateList.valueOf(colorBg));

@@ -121,10 +121,10 @@ public class BeatView extends FrameLayout {
     iconSizeMuted = UiUtil.dpToPx(context, 12);
     iconSize = iconSizeDefault;
 
-    colorNormal = ResUtil.getColorAttr(context, R.attr.colorPrimary);
-    colorStrong = ResUtil.getColorAttr(context, R.attr.colorError);
-    colorSub = ResUtil.getColorAttr(context, R.attr.colorOnSurfaceVariant);
-    colorMuted = ResUtil.getColorAttr(context, R.attr.colorOutline);
+    colorNormal = ResUtil.getColor(context, R.attr.colorPrimary);
+    colorStrong = ResUtil.getColor(context, R.attr.colorError);
+    colorSub = ResUtil.getColor(context, R.attr.colorOnSurfaceVariant);
+    colorMuted = ResUtil.getColor(context, R.attr.colorOutline);
 
     imageView = new ImageView(context);
     FrameLayout.LayoutParams paramsIcon = new FrameLayout.LayoutParams(iconSize, iconSize);

@@ -128,6 +128,6 @@ public class NotificationUtil {
       }
       colorContext = new ContextThemeWrapper(context, themeResId);
     }
-    return ResUtil.getColorAttr(colorContext, R.attr.colorPrimary);
+    return ResUtil.getSysColor(colorContext, R.attr.colorPrimary);
   }
 }
