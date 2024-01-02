@@ -261,8 +261,9 @@ public class SettingsFragment extends BaseFragment
           getMetronomeService().setGain(0);
           getMetronomeService().setCountIn(0);
           getMetronomeService().setIncrementalAmount(0);
+          getMetronomeService().setTimerDuration(0);
           getMetronomeService().setMetronomeListener(SettingsFragment.this);
-          getMetronomeService().start(false);
+          getMetronomeService().start(false, false);
         }
       }
 
@@ -298,6 +299,11 @@ public class SettingsFragment extends BaseFragment
     );
     binding.switchSettingsAlwaysVibrate.jumpDrawablesToCurrentState();
 
+    binding.switchSettingsResetTimer.setChecked(
+        getSharedPrefs().getBoolean(PREF.RESET_TIMER, DEF.RESET_TIMER)
+    );
+    binding.switchSettingsResetTimer.jumpDrawablesToCurrentState();
+
     binding.switchSettingsFlashScreen.setChecked(
         getSharedPrefs().getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN)
     );
@@ -317,6 +323,7 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsSound,
         binding.linearSettingsShowSubs,
         binding.linearSettingsAlwaysVibrate,
+        binding.linearSettingsResetTimer,
         binding.linearSettingsFlashScreen,
         binding.linearSettingsKeepAwake
     );
@@ -328,6 +335,7 @@ public class SettingsFragment extends BaseFragment
         binding.switchSettingsReduceAnimations,
         binding.switchSettingsShowSubs,
         binding.switchSettingsAlwaysVibrate,
+        binding.switchSettingsResetTimer,
         binding.switchSettingsFlashScreen,
         binding.switchSettingsKeepAwake
     );
@@ -402,6 +410,8 @@ public class SettingsFragment extends BaseFragment
       binding.switchSettingsShowSubs.toggle();
     } else if (id == R.id.linear_settings_always_vibrate) {
       binding.switchSettingsAlwaysVibrate.toggle();
+    } else if (id == R.id.linear_settings_reset_timer) {
+      binding.switchSettingsResetTimer.toggle();
     } else if (id == R.id.linear_settings_flash_screen) {
       binding.switchSettingsFlashScreen.toggle();
     } else if (id == R.id.linear_settings_keep_awake) {
@@ -439,8 +449,18 @@ public class SettingsFragment extends BaseFragment
       } else {
         performHapticClick();
         binding.switchSettingsAlwaysVibrate.setOnCheckedChangeListener(null);
-        binding.switchSettingsAlwaysVibrate.setChecked(!isChecked);
+        binding.switchSettingsAlwaysVibrate.toggle();
         binding.switchSettingsAlwaysVibrate.setOnCheckedChangeListener(this);
+      }
+    } else if (id == R.id.switch_settings_reset_timer) {
+      ViewUtil.startIcon(binding.imageSettingsResetTimer);
+      performHapticClick();
+      if (isBoundOrShowWarning()) {
+        getMetronomeService().setResetTimer(isChecked);
+      } else {
+        binding.switchSettingsResetTimer.setOnCheckedChangeListener(null);
+        binding.switchSettingsResetTimer.toggle();
+        binding.switchSettingsResetTimer.setOnCheckedChangeListener(this);
       }
     } else if (id == R.id.switch_settings_flash_screen) {
       performHapticClick();

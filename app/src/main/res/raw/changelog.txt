@@ -5,14 +5,12 @@
 - New: Material You redesign with dynamic colors and dynamic contrast
 - New: support for Android 12-14
 - New: beautiful beat visualization with subdivisions and changeable emphasizes
-- New: options for count in, incremental tempo change and swing
+- New: options for count in, incremental tempo change, song duration, elapsed time and swing
 - New: settings for flash screen, volume boost and audio latency correction
 - New: Italian tempo terms
 - Improved: landscape layout
 - Improved: bookmark shortcuts
-- Fixed: inconsistent audio beats on many devices
-
-For the next versions I have planned options for timer, elapsed time and muted beats.
+- Fixed: inconsistent audio beats on Android 12+
 
 ## 3.0.2
 

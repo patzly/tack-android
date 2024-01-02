@@ -29,7 +29,8 @@
       android:orientation="vertical"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:paddingTop="16dp">
+      android:paddingTop="16dp"
+      android:animateLayoutChanges="true">
 
       <TextView
         style="@style/Widget.Tack.TextView"
@@ -194,6 +195,16 @@
         android:paddingEnd="24dp"
         android:textColor="?attr/colorOnSurfaceVariant"
         android:text="@string/options_timer_description" />
+
+      <TextView
+        android:id="@+id/text_options_timer_unsupported"
+        style="@style/Widget.Tack.TextView.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:textColor="?attr/colorError"
+        android:text="@string/options_timer_unsupported" />
 
       <com.google.android.material.slider.Slider
         android:id="@+id/slider_options_timer_duration"

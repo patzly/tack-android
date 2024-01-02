@@ -71,37 +71,6 @@ public class NotificationUtil {
   }
 
   public Notification getNotification() {
-    int themeResId = -1;
-    Context dynamicColorContext = null;
-    switch (sharedPrefs.getString(PREF.THEME, DEF.THEME)) {
-      case THEME.RED:
-        themeResId = R.style.Theme_Tack_Red;
-        break;
-      case THEME.YELLOW:
-        themeResId = R.style.Theme_Tack_Yellow;
-        break;
-      case THEME.GREEN:
-        themeResId = R.style.Theme_Tack_Green;
-        break;
-      case THEME.BLUE:
-        themeResId = R.style.Theme_Tack_Blue;
-        break;
-      default:
-        if (DynamicColors.isDynamicColorAvailable()) {
-          dynamicColorContext = DynamicColors.wrapContextIfAvailable(context);
-        } else {
-          themeResId = R.style.Theme_Tack_Yellow;
-        }
-        break;
-    }
-
-    Context colorContext;
-    if (themeResId != -1) {
-      colorContext = new ContextThemeWrapper(context, themeResId);
-    } else {
-      colorContext = dynamicColorContext;
-    }
-
     String text = context.getString(R.string.msg_metronome_playing_return);
     Intent intentApp = new Intent(context, MainActivity.class);
     intentApp.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -122,7 +91,7 @@ public class NotificationUtil {
         .setAutoCancel(true)
         .setSilent(true)
         .setOngoing(true)
-        .setColor(ResUtil.getColorAttr(colorContext, R.attr.colorPrimary))
+        .setColor(getColor())
         .setSmallIcon(R.drawable.ic_round_tack_notification)
         .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
         .setPriority(NotificationCompat.PRIORITY_MAX)
@@ -135,5 +104,30 @@ public class NotificationUtil {
     return VERSION.SDK_INT >= VERSION_CODES.M
         ? PendingIntent.FLAG_IMMUTABLE
         : PendingIntent.FLAG_UPDATE_CURRENT;
+  }
+
+  private int getColor() {
+    Context colorContext;
+    if (DynamicColors.isDynamicColorAvailable()) {
+      colorContext = DynamicColors.wrapContextIfAvailable(context);
+    } else {
+      int themeResId;
+      switch (sharedPrefs.getString(PREF.THEME, DEF.THEME)) {
+        case THEME.RED:
+          themeResId = R.style.Theme_Tack_Red;
+          break;
+        case THEME.GREEN:
+          themeResId = R.style.Theme_Tack_Green;
+          break;
+        case THEME.BLUE:
+          themeResId = R.style.Theme_Tack_Blue;
+          break;
+        default:
+          themeResId = R.style.Theme_Tack_Yellow;
+          break;
+      }
+      colorContext = new ContextThemeWrapper(context, themeResId);
+    }
+    return ResUtil.getColorAttr(colorContext, R.attr.colorPrimary);
   }
 }

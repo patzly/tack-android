@@ -54,13 +54,13 @@ public class MetronomeService extends Service implements TickListener {
   private MetronomeListener listener;
   private HandlerThread thread;
   private Handler latencyHandler, countInHandler, incrementalHandler, timerHandler;
-  private boolean alwaysVibrate, incrementalIncrease;
+  private boolean alwaysVibrate, incrementalIncrease, resetTimer;
   private long latency, timerStartTime;
   private int incrementalAmount, incrementalInterval, timerDuration;
   private String incrementalUnit, timerUnit;
   private float timerProgress;
   private boolean tempPlaying, tempBeatModeVibrate, tempAlwaysVibrate;
-  private int tempTempo, tempGain, tempCountIn, tempIncrementalAmount;
+  private int tempTempo, tempGain, tempCountIn, tempIncrementalAmount, tempTimerDuration;
   private String[] tempBeats, tempSubs;
 
   @Override
@@ -70,11 +70,10 @@ public class MetronomeService extends Service implements TickListener {
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
     notificationUtil = new NotificationUtil(this);
-    notificationUtil.createNotificationChannel();
-
     shortcutUtil = new ShortcutUtil(this);
-
+    hapticUtil = new HapticUtil(this);
     metronomeUtil = new MetronomeUtil(this, this);
+
     metronomeUtil.setTempo(sharedPrefs.getInt(PREF.TEMPO, DEF.TEMPO));
     metronomeUtil.setSound(sharedPrefs.getString(PREF.SOUND, DEF.SOUND));
     metronomeUtil.setBeats(
@@ -95,6 +94,9 @@ public class MetronomeService extends Service implements TickListener {
     setIncrementalUnit(sharedPrefs.getString(PREF.INCREMENTAL_UNIT, DEF.INCREMENTAL_UNIT));
     setTimerDuration(sharedPrefs.getInt(PREF.TIMER_DURATION, DEF.TIMER_DURATION));
     setTimerUnit(sharedPrefs.getString(PREF.TIMER_UNIT, DEF.TIMER_UNIT));
+    setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
+    setAlwaysVibrate(sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE));
+    setResetTimer(sharedPrefs.getBoolean(PREF.RESET_TIMER, DEF.RESET_TIMER));
 
     thread = new HandlerThread("metronome_service");
     thread.start();
@@ -102,10 +104,6 @@ public class MetronomeService extends Service implements TickListener {
     countInHandler = new Handler(thread.getLooper());
     incrementalHandler = new Handler(thread.getLooper());
     timerHandler = new Handler(thread.getLooper());
-
-    hapticUtil = new HapticUtil(this);
-    setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
-    setAlwaysVibrate(sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE));
 
     stopReceiver = new StopReceiver();
     ContextCompat.registerReceiver(
@@ -196,10 +194,10 @@ public class MetronomeService extends Service implements TickListener {
   }
 
   public void start() {
-    start(true);
+    start(true, true);
   }
 
-  public void start(boolean reportTempoUsage) {
+  public void start(boolean resetTimerIfNecessary, boolean reportTempoUsage) {
     if (reportTempoUsage) {
       shortcutUtil.reportUsage(getTempo()); // notify system for shortcut usage prediction
     }
@@ -212,10 +210,12 @@ public class MetronomeService extends Service implements TickListener {
     }
     countInHandler.postDelayed(() -> {
       updateIncrementalHandler();
-      updateTimerHandler();
+      timerStartTime = System.currentTimeMillis();
+      updateTimerHandler(resetTimer && resetTimerIfNecessary ? 0 : timerProgress);
       // TODO: start muted and elapsed time
     }, getCountInInterval()); // 0 if count-in is disabled
     if (notificationUtil.hasPermission()) {
+      notificationUtil.createNotificationChannel();
       startForeground(NOTIFICATION_ID, notificationUtil.getNotification());
     }
     Log.i(TAG, "start: foreground service started");
@@ -274,6 +274,7 @@ public class MetronomeService extends Service implements TickListener {
     tempGain = getGain();
     tempCountIn = getCountIn();
     tempIncrementalAmount = getIncrementalAmount();
+    tempTimerDuration = getTimerDuration();
   }
 
   public void restoreState() {
@@ -285,8 +286,9 @@ public class MetronomeService extends Service implements TickListener {
     setGain(tempGain);
     setCountIn(tempCountIn);
     setIncrementalAmount(tempIncrementalAmount);
+    setTimerDuration(tempTimerDuration, false);
     if (tempPlaying) {
-      start(false);
+      start(false, false);
     } else {
       stop();
     }
@@ -367,6 +369,9 @@ public class MetronomeService extends Service implements TickListener {
   public void setBeats(String[] beats) {
     metronomeUtil.setBeats(beats);
     saveBeats();
+    if (isTimerActive() && timerUnit.equals(UNIT.BARS)) {
+      updateTimerHandler(0);
+    }
   }
 
   private void saveBeats() {
@@ -391,6 +396,9 @@ public class MetronomeService extends Service implements TickListener {
     boolean success = metronomeUtil.addBeat();
     if (success) {
       saveBeats();
+      if (isTimerActive() && timerUnit.equals(UNIT.BARS)) {
+        updateTimerHandler(0);
+      }
     }
     return success;
   }
@@ -399,6 +407,9 @@ public class MetronomeService extends Service implements TickListener {
     boolean success = metronomeUtil.removeBeat();
     if (success) {
       saveBeats();
+      if (isTimerActive() && timerUnit.equals(UNIT.BARS)) {
+        updateTimerHandler(0);
+      }
     }
     return success;
   }
@@ -613,9 +624,13 @@ public class MetronomeService extends Service implements TickListener {
   }
 
   public void setTimerDuration(int duration) {
+    setTimerDuration(duration, true);
+  }
+
+  private void setTimerDuration(int duration, boolean resetTimer) {
     timerDuration = duration;
     sharedPrefs.edit().putInt(PREF.TIMER_DURATION, duration).apply();
-    updateTimerHandler(0);
+    updateTimerHandler(resetTimer ? 0 : timerProgress);
   }
 
   public int getTimerDuration() {
@@ -659,10 +674,16 @@ public class MetronomeService extends Service implements TickListener {
     return timerUnit;
   }
 
+  public void setResetTimer(boolean reset) {
+    resetTimer = reset;
+    sharedPrefs.edit().putBoolean(PREF.RESET_TIMER, reset).apply();
+  }
+
   public float getTimerProgress() {
     if (!isTimerActive()) {
       return 0;
     } else if (isPlaying()) {
+      // TODO: fix wrong progress when interval-critical stuff changes
       long previousDuration = (long) (timerProgress * getTimerInterval());
       long elapsedTime = System.currentTimeMillis() - timerStartTime + previousDuration;
       float fraction = elapsedTime / (float) getTimerInterval();
@@ -695,7 +716,6 @@ public class MetronomeService extends Service implements TickListener {
     }
     timerHandler.removeCallbacksAndMessages(null);
     if (isTimerActive()) {
-      timerStartTime = System.currentTimeMillis(); // important before calling other methods!
       if (equalsTimerProgress(1)) {
         timerProgress = 0;
       } else {
@@ -704,8 +724,8 @@ public class MetronomeService extends Service implements TickListener {
         int progressBarCount = (int) (progressInterval / barInterval);
         long progressIntervalFullBars = progressBarCount * barInterval;
         timerProgress = (float) progressIntervalFullBars / getTimerInterval();
-        Log.i(TAG, "updateTimerHandler: hello " + barInterval);
       }
+      timerStartTime = System.currentTimeMillis();
       listener.onTimerStarted();
       timerHandler.postDelayed(
           () -> new Handler(Looper.getMainLooper()).post(this::stop), getTimerIntervalRemaining()

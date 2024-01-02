@@ -1,6 +1,7 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.os.Bundle;
+import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.button.MaterialButtonToggleGroup;
@@ -170,6 +171,9 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     binding.toggleOptionsIncrementalUnit.check(checkedId);
     binding.toggleOptionsIncrementalUnit.addOnButtonCheckedListener(this);
     binding.toggleOptionsIncrementalUnit.setEnabled(isIncrementalActive);
+
+    // Update timer unit selection, see below for an explanation
+    updateTimer();
   }
 
   private void setUpTimer() {
@@ -226,10 +230,36 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
       int interval = (int) value;
       return activity.getResources().getQuantityString(resId, interval, interval);
     });
+    // Single-selection mode with auto de-selection only effective if buttons enabled
+    binding.buttonOptionsTimerUnitBars.setEnabled(true);
     binding.toggleOptionsTimerUnit.removeOnButtonCheckedListener(this);
     binding.toggleOptionsTimerUnit.check(checkedId);
     binding.toggleOptionsTimerUnit.addOnButtonCheckedListener(this);
     binding.toggleOptionsTimerUnit.setEnabled(isTimerActive);
+
+    // Bars unit not supported for timer in connection with incremental tempo change!
+    // On tempo changes with units different to bars, beats would not start at bar start
+    // Disable bars unit button for timer
+    boolean isIncrementalActive = getMetronomeService().isIncrementalActive();
+    boolean convertToNonBarUnit = timerUnit.equals(UNIT.BARS) && isIncrementalActive;
+    binding.buttonOptionsTimerUnitBars.setEnabled(
+        isTimerActive && !isIncrementalActive
+    );
+    if (convertToNonBarUnit) {
+      long timerInterval = getMetronomeService().getTimerInterval();
+      int intervalSeconds = (int) (timerInterval / 1000);
+      if (intervalSeconds > binding.sliderOptionsTimerDuration.getValueTo()) {
+        getMetronomeService().setTimerUnit(UNIT.MINUTES);
+        getMetronomeService().setTimerDuration(intervalSeconds / 60);
+      } else {
+        getMetronomeService().setTimerUnit(UNIT.SECONDS);
+        getMetronomeService().setTimerDuration(intervalSeconds);
+      }
+      updateTimer();
+    }
+    binding.textOptionsTimerUnsupported.setVisibility(
+        isIncrementalActive ? View.VISIBLE : View.GONE
+    );
   }
 
   private void setUpSwing() {
