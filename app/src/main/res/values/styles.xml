@@ -538,6 +538,10 @@
 
   <!-- M3 TYPOGRAPHY -->
 
+  <style name="Widget.Tack.TextView.HeadlineMedium" parent="Widget.Tack.TextView">
+    <item name="android:textAppearance">?attr/textAppearanceHeadlineMedium</item>
+  </style>
+
   <style name="Widget.Tack.TextView.HeadlineSmall" parent="Widget.Tack.TextView">
     <item name="android:textAppearance">?attr/textAppearanceHeadlineSmall</item>
   </style>

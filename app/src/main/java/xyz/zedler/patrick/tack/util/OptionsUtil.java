@@ -1,6 +1,7 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -12,6 +13,7 @@ import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.PartialDialogOptionsBinding;
+import xyz.zedler.patrick.tack.databinding.PartialOptionsBinding;
 import xyz.zedler.patrick.tack.fragment.MainFragment;
 import xyz.zedler.patrick.tack.service.MetronomeService;
 
@@ -19,43 +21,63 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
 
   private final MainActivity activity;
   private final MainFragment fragment;
-  private final DialogUtil dialogUtil;
-  private final PartialDialogOptionsBinding binding;
+  private final boolean useDialog;
+  private DialogUtil dialogUtil;
+  private PartialDialogOptionsBinding bindingDialog;
+  private final PartialOptionsBinding binding;
 
   public OptionsUtil(MainActivity activity, MainFragment fragment) {
     this.activity = activity;
     this.fragment = fragment;
-    dialogUtil = new DialogUtil(activity, "options");
-    binding = PartialDialogOptionsBinding.inflate(activity.getLayoutInflater());
+
+    useDialog = !UiUtil.isLandTablet(activity);
+    Log.i("hello", "OptionsUtil: hello " + UiUtil.isLandTablet(activity));
+    if (useDialog) {
+      bindingDialog = PartialDialogOptionsBinding.inflate(activity.getLayoutInflater());
+      dialogUtil = new DialogUtil(activity, "options");
+    }
+    binding = useDialog ? bindingDialog.partialOptions : fragment.getBinding().partialOptions;
+
     setUpCountIn();
     setUpIncremental();
     setUpTimer();
     setUpSwing();
-    dialogUtil.createCloseCustom(R.string.title_options, binding.getRoot());
+
+    if (useDialog) {
+      dialogUtil.createCloseCustom(R.string.title_options, bindingDialog.getRoot());
+    }
   }
 
   public void show() {
     update();
-    dialogUtil.show();
+    if (useDialog) {
+      dialogUtil.show();
+    }
   }
 
   public void showIfWasShown(@Nullable Bundle state) {
     update();
-    dialogUtil.showIfWasShown(state);
+    if (useDialog) {
+      dialogUtil.showIfWasShown(state);
+    }
   }
 
   public void dismiss() {
-    dialogUtil.dismiss();
+    if (useDialog) {
+      dialogUtil.dismiss();
+    }
   }
 
   public void saveState(@NonNull Bundle outState) {
-    if (dialogUtil != null) {
+    if (useDialog && dialogUtil != null) {
       dialogUtil.saveState(outState);
     }
   }
 
   public void update() {
-    binding.scrollOptions.scrollTo(0, 0);
+    if (useDialog) {
+      bindingDialog.scrollOptions.scrollTo(0, 0);
+    }
     updateCountIn();
     updateIncremental();
     updateTimer();
@@ -117,6 +139,12 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
       binding.textOptionsIncrementalAmount.setText(activity.getString(R.string.options_inactive));
     }
     binding.sliderOptionsIncrementalAmount.setValue(incrementalAmount);
+
+    boolean visibleControls = isIncrementalActive || !useDialog;
+    binding.linearMainIncrementalContainer.setVisibility(
+        visibleControls ? View.VISIBLE : View.GONE
+    );
+
     binding.toggleOptionsIncrementalDirection.removeOnButtonCheckedListener(this);
     binding.toggleOptionsIncrementalDirection.check(
         incrementalIncrease
@@ -232,6 +260,10 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
       int interval = (int) value;
       return activity.getResources().getQuantityString(resId, interval, interval);
     });
+
+    boolean visibleControls = isTimerActive || !useDialog;
+    binding.linearMainTimerContainer.setVisibility(visibleControls ? View.VISIBLE : View.GONE);
+
     // Single-selection mode with auto de-selection only effective if buttons enabled
     binding.buttonOptionsTimerUnitBars.setEnabled(true);
     binding.toggleOptionsTimerUnit.removeOnButtonCheckedListener(this);
@@ -244,9 +276,7 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     // Disable bars unit button for timer
     boolean isIncrementalActive = getMetronomeService().isIncrementalActive();
     boolean convertToNonBarUnit = timerUnit.equals(UNIT.BARS) && isIncrementalActive;
-    binding.buttonOptionsTimerUnitBars.setEnabled(
-        isTimerActive && !isIncrementalActive
-    );
+    binding.buttonOptionsTimerUnitBars.setEnabled(isTimerActive && !isIncrementalActive);
     if (convertToNonBarUnit) {
       long timerInterval = getMetronomeService().getTimerInterval();
       int intervalSeconds = (int) (timerInterval / 1000);
@@ -260,7 +290,7 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
       updateTimer();
     }
     binding.textOptionsTimerUnsupported.setVisibility(
-        isIncrementalActive ? View.VISIBLE : View.GONE
+        isTimerActive && isIncrementalActive ? View.VISIBLE : View.GONE
     );
   }
 
@@ -268,7 +298,7 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     binding.toggleOptionsSwing.addOnButtonCheckedListener(this);
   }
 
-  private void updateSwing() {
+  public void updateSwing() {
     if (!isBound()) {
       return;
     }

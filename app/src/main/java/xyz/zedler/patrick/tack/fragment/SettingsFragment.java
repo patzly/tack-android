@@ -298,6 +298,9 @@ public class SettingsFragment extends BaseFragment
         getSharedPrefs().getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE)
     );
     binding.switchSettingsAlwaysVibrate.jumpDrawablesToCurrentState();
+    binding.linearSettingsAlwaysVibrate.setVisibility(
+        activity.getHapticUtil().hasVibrator() ? View.VISIBLE : View.GONE
+    );
 
     binding.switchSettingsResetTimer.setChecked(
         getSharedPrefs().getBoolean(PREF.RESET_TIMER, DEF.RESET_TIMER)

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-  <integer name="picker_waves">12</integer>
+  <integer name="picker_waves">10</integer>
 
 </resources>

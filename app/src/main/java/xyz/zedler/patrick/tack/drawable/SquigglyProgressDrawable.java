@@ -59,9 +59,11 @@ public class SquigglyProgressDrawable extends Drawable {
   private boolean loopInvalidation = false;
 
   public SquigglyProgressDrawable(@NonNull Context context) {
+    linePaint.setAntiAlias(true);
     linePaint.setStyle(Style.STROKE);
     linePaint.setStrokeCap(Cap.ROUND);
     linePaint.setColor(ResUtil.getColor(context, R.attr.colorSurfaceVariant));
+    wavePaint.setAntiAlias(true);
     wavePaint.setStyle(Style.STROKE);
     wavePaint.setStrokeCap(Cap.ROUND);
     wavePaint.setColor(ResUtil.getColor(context, R.attr.colorPrimary));

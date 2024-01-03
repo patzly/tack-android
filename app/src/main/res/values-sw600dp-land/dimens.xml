@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+  <dimen name="seekbar_height">48dp</dimen>
+
+  <dimen name="bpm_picker_size">170dp</dimen>
+  <dimen name="bpm_text_size">54dp</dimen>
+  <dimen name="label_text_size">16sp</dimen>
+
+  <dimen name="control_margin_bottom">40dp</dimen>
+
+</resources>

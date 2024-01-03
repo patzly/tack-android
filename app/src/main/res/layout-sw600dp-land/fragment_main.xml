@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/coordinator_container"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="?attr/colorSurfaceContainer">
+
+  <com.google.android.material.appbar.AppBarLayout
+    android:id="@+id/app_bar_main"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize">
+
+      <FrameLayout
+        android:id="@+id/frame_main_logo"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="20dp"
+        android:gravity="center"
+        android:layout_gravity="start|center_vertical">
+
+        <ImageView
+          android:id="@+id/image_main_logo"
+          android:layout_width="32dp"
+          android:layout_height="32dp"
+          android:layout_gravity="center"
+          android:importantForAccessibility="no"
+          android:src="@drawable/ic_round_tack_logo" />
+
+      </FrameLayout>
+
+      <TextView
+        style="@style/Widget.Tack.TextView.Toolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:layout_gravity="center"
+        android:text="@string/app_name" />
+
+      <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar_main"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        app:menu="@menu/menu_main" />
+
+    </FrameLayout>
+
+  </com.google.android.material.appbar.AppBarLayout>
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/constraint_main_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="?attr/actionBarSize">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/container_main_start"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="8dp"
+      android:background="?attr/colorSurface"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toStartOf="@id/container_main_end">
+
+      <androidx.core.widget.NestedScrollView
+        android:id="@+id/scroll_options"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scrollbars="vertical"
+        android:scrollbarThumbVertical="@drawable/shape_scrollbar_rounded"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical">
+
+          <TextView
+            style="@style/Widget.Tack.TextView.HeadlineMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="24dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textAlignment="center"
+            android:gravity="center_horizontal"
+            android:text="@string/title_options" />
+
+          <include
+            android:id="@+id/partial_options"
+            layout="@layout/partial_options" />
+
+        </LinearLayout>
+
+      </androidx.core.widget.NestedScrollView>
+
+      <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/shape_container_bg"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/container_main_end"
+      android:layout_width="0dp"
+      android:layout_height="match_parent"
+      android:layout_marginStart="8dp"
+      android:layout_marginEnd="16dp"
+      android:background="?attr/colorSurface"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toEndOf="@id/container_main_start"
+      app:layout_constraintEnd_toEndOf="parent">
+
+      <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="16dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintEnd_toEndOf="parent">
+          <!-- not layoutAnim=true, the animation would be visible at app startup -->
+
+          <LinearLayout
+            android:id="@+id/linear_main_beats_bg"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <com.google.android.material.button.MaterialButton
+              android:id="@+id/button_main_remove_beat"
+              style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+              android:contentDescription="@string/action_remove_beat"
+              android:layout_marginStart="4dp"
+              android:layout_marginTop="4dp"
+              android:layout_marginBottom="4dp"
+              app:icon="@drawable/ic_round_remove_anim"
+              app:iconTint="?attr/colorOnSurface"
+              app:rippleColor="@color/selector_tonal_button_ripple"
+              app:backgroundTint="@color/transparent" />
+
+            <HorizontalScrollView
+              android:id="@+id/scroll_horiz_main_beats"
+              android:layout_width="0dp"
+              android:layout_height="match_parent"
+              android:layout_weight="1"
+              android:overScrollMode="ifContentScrolls"
+              android:scrollbars="horizontal"
+              android:scrollbarThumbHorizontal="@drawable/shape_scrollbar_rounded"
+              android:fadingEdge="horizontal"
+              android:requiresFadingEdge="horizontal">
+
+              <LinearLayout
+                android:id="@+id/linear_main_beats"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:animateLayoutChanges="true" />
+
+            </HorizontalScrollView>
+
+            <com.google.android.material.button.MaterialButton
+              android:id="@+id/button_main_add_beat"
+              style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+              android:contentDescription="@string/action_add_beat"
+              android:layout_marginEnd="4dp"
+              android:layout_marginTop="4dp"
+              android:layout_marginBottom="4dp"
+              app:icon="@drawable/ic_round_add_anim"
+              app:iconTint="?attr/colorOnSurface"
+              app:rippleColor="@color/selector_tonal_button_ripple"
+              app:backgroundTint="@color/transparent" />
+
+          </LinearLayout>
+
+          <LinearLayout
+            android:id="@+id/linear_main_subs_bg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="4dp">
+
+            <com.google.android.material.button.MaterialButton
+              android:id="@+id/button_main_remove_subdivision"
+              style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+              android:contentDescription="@string/action_remove_sub"
+              app:icon="@drawable/ic_round_remove_anim" />
+
+            <HorizontalScrollView
+              android:id="@+id/scroll_horiz_main_subs"
+              android:layout_width="0dp"
+              android:layout_height="match_parent"
+              android:layout_weight="1"
+              android:overScrollMode="ifContentScrolls"
+              android:scrollbars="none"
+              android:fadingEdge="horizontal"
+              android:requiresFadingEdge="horizontal">
+
+              <LinearLayout
+                android:id="@+id/linear_main_subs"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal"
+                android:animateLayoutChanges="true" />
+
+            </HorizontalScrollView>
+
+            <com.google.android.material.button.MaterialButton
+              android:id="@+id/button_main_add_subdivision"
+              style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+              android:contentDescription="@string/action_add_sub"
+              app:icon="@drawable/ic_round_add_anim" />
+
+          </LinearLayout>
+
+          <SeekBar
+            android:id="@+id/seekbar_main_timer"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/seekbar_height"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:thumb="@drawable/shape_seekbar_thumb"
+            android:thumbTint="?attr/colorPrimary" />
+
+          <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="2dp"
+            android:paddingEnd="2dp">
+
+            <TextView
+              android:id="@+id/text_main_timer_elapsed"
+              style="@style/Widget.Tack.TextView.BodyMedium"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="start"
+              android:textColor="?attr/colorOnSurfaceVariant"
+              android:fontFeatureSettings="tnum" />
+
+            <TextView
+              android:id="@+id/text_main_elapsed_time"
+              style="@style/Widget.Tack.TextView.BodyMedium"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_horizontal"
+              android:textColor="?attr/colorOnSurfaceVariant"
+              android:fontFeatureSettings="tnum"
+              android:visibility="gone" />
+
+            <TextView
+              android:id="@+id/text_main_timer_total"
+              style="@style/Widget.Tack.TextView.BodyMedium"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="end"
+              android:textColor="?attr/colorOnSurfaceVariant"
+              android:fontFeatureSettings="tnum" />
+
+          </FrameLayout>
+
+        </LinearLayout>
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+
+      <LinearLayout
+        android:id="@+id/linear_main_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_less"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+          android:layout_marginEnd="16dp"
+          android:contentDescription="@string/action_decrease"
+          app:icon="@drawable/ic_round_navigate_before_anim" />
+
+        <FrameLayout
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content">
+
+          <xyz.zedler.patrick.tack.view.TempoPickerView
+            android:id="@+id/tempo_picker_main"
+            android:layout_width="@dimen/bpm_picker_size"
+            android:layout_height="@dimen/bpm_picker_size"
+            android:importantForAccessibility="yes" />
+
+          <xyz.zedler.patrick.tack.view.CircleView
+            android:id="@+id/circle_main"
+            android:layout_width="@dimen/bpm_picker_size"
+            android:layout_height="@dimen/bpm_picker_size" />
+
+          <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            tools:ignore="SpUsage">
+
+            <TextSwitcher
+              android:id="@+id/text_switcher_main_tempo_term"
+              android:layout_width="@dimen/bpm_picker_size"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center_horizontal|top" />
+
+            <TextView
+              android:id="@+id/text_main_tempo"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_marginTop="@dimen/label_text_size"
+              android:layout_marginBottom="@dimen/label_text_size"
+              android:textColor="?attr/colorOnSecondaryContainer"
+              android:layout_gravity="top"
+              android:gravity="center_horizontal"
+              android:textAlignment="center"
+              android:fontFeatureSettings="tnum"
+              android:textAppearance="?attr/textAppearanceDisplayLarge"
+              android:textSize="@dimen/bpm_text_size" />
+
+            <TextView
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:text="@string/label_bpm"
+              android:textColor="?attr/colorOnSecondaryContainer"
+              android:layout_gravity="bottom"
+              android:gravity="center_horizontal"
+              android:textAlignment="center"
+              android:textAppearance="?attr/textAppearanceBodyLarge"
+              android:textSize="@dimen/label_text_size" />
+
+          </FrameLayout>
+
+        </FrameLayout>
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_more"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+          android:layout_marginStart="16dp"
+          android:contentDescription="@string/action_increase"
+          app:icon="@drawable/ic_round_navigate_after_anim" />
+
+      </LinearLayout>
+
+      <FrameLayout
+        android:id="@+id/frame_main_bookmarks_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/linear_main_center"
+        app:layout_constraintBottom_toTopOf="@+id/linear_main_bottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <HorizontalScrollView
+          android:id="@+id/scroll_horiz_main_bookmarks"
+          android:layout_width="match_parent"
+          android:layout_height="48dp"
+          android:layout_gravity="center_vertical"
+          android:overScrollMode="ifContentScrolls"
+          android:scrollbars="none"
+          tools:ignore="UselessParent">
+
+          <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_main_bookmarks"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:animateLayoutChanges="true"
+            app:singleSelection="true"
+            app:singleLine="true" />
+
+        </HorizontalScrollView>
+
+      </FrameLayout>
+
+      <LinearLayout
+        android:id="@+id/linear_main_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:paddingBottom="@dimen/control_margin_bottom"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_options"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+          android:layout_marginEnd="4dp"
+          android:contentDescription="@string/title_options"
+          app:icon="@drawable/ic_round_tune_anim" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_tempo_tap"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+          android:layout_marginEnd="12dp"
+          android:contentDescription="@string/action_tempo_tap"
+          app:icon="@drawable/ic_round_touch_app_anim" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+          android:id="@+id/fab_main_play_stop"
+          style="@style/Widget.Material3.FloatingActionButton.Large.Primary"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginEnd="12dp"
+          android:contentDescription="@string/action_play_stop"
+          app:srcCompat="@drawable/ic_round_play_to_stop_anim" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_bookmark"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+          android:layout_marginEnd="4dp"
+          android:contentDescription="@string/action_bookmark"
+          app:icon="@drawable/ic_round_bookmark_anim" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_beat_mode"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+          android:contentDescription="@string/action_beat_mode"
+          app:icon="@drawable/ic_round_vibrate_to_volume_anim" />
+
+      </LinearLayout>
+
+      <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/shape_container_bg"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

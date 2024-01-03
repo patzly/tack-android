@@ -68,7 +68,7 @@ public class MainFragment extends BaseFragment
   private Bundle savedState;
   private long prevTouchTime;
   private final List<Long> intervals = new ArrayList<>();
-  private boolean flashScreen, keepAwake, reduceAnimations;
+  private boolean flashScreen, keepAwake, reduceAnimations, isPortrait, isLandTablet;
   private LogoUtil logoUtil;
   private ValueAnimator fabAnimator;
   private float cornerSizeStop, cornerSizePlay, cornerSizeCurrent;
@@ -113,7 +113,10 @@ public class MainFragment extends BaseFragment
     systemBarBehavior.setContainer(binding.constraintMainContainer);
     systemBarBehavior.setUp();
 
-    new ScrollBehavior().setUpScroll(binding.appBarMain, null, true);
+    isPortrait = UiUtil.isOrientationPortrait(activity);
+    isLandTablet = UiUtil.isLandTablet(activity);
+
+    new ScrollBehavior().setUpScroll(binding.appBarMain, null, isPortrait);
 
     binding.toolbarMain.setOnMenuItemClickListener(item -> {
       int id = item.getItemId();
@@ -141,7 +144,9 @@ public class MainFragment extends BaseFragment
 
     colorFlashNormal = ResUtil.getColor(activity, R.attr.colorPrimary);
     colorFlashStrong = ResUtil.getColor(activity, R.attr.colorError);
-    colorFlashMuted = ResUtil.getColor(activity, android.R.attr.colorBackground);
+    colorFlashMuted = ResUtil.getColor(
+        activity, isLandTablet ? R.attr.colorSurface : android.R.attr.colorBackground
+    );
 
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
     binding.linearMainBeats.getLayoutTransition().setDuration(Constants.ANIM_DURATION_LONG);
@@ -172,6 +177,11 @@ public class MainFragment extends BaseFragment
     dialogUtilGain.showIfWasShown(savedInstanceState);
 
     optionsUtil = new OptionsUtil(activity, this);
+    binding.buttonMainOptions.setVisibility(isLandTablet ? View.INVISIBLE : View.VISIBLE);
+    // For symmetry
+    binding.buttonMainBeatMode.setVisibility(
+        isLandTablet && !activity.getHapticUtil().hasVibrator() ? View.INVISIBLE : View.VISIBLE
+    );
 
     shortcutUtil = new ShortcutUtil(activity);
 
@@ -420,8 +430,9 @@ public class MainFragment extends BaseFragment
 
     ViewUtil.resetAnimatedIcon(binding.fabMainPlayStop);
     binding.fabMainPlayStop.setImageResource(R.drawable.ic_round_play_to_stop_anim);
-    cornerSizeStop = UiUtil.dpToPx(activity, 28);
-    cornerSizePlay = UiUtil.dpToPx(activity, 48);
+    boolean large = isPortrait || isLandTablet;
+    cornerSizeStop = UiUtil.dpToPx(activity, large ? 28 : 16);
+    cornerSizePlay = UiUtil.dpToPx(activity, large ? 48 : 28);
     cornerSizeCurrent = cornerSizeStop;
 
     if (isBound()) {
@@ -634,12 +645,21 @@ public class MainFragment extends BaseFragment
             color = colorFlashNormal;
             break;
         }
-        binding.coordinatorContainer.setBackgroundColor(color);
-        binding.coordinatorContainer.postDelayed(() -> {
-          if (binding != null) {
-            binding.coordinatorContainer.setBackgroundColor(colorFlashMuted);
-          }
-        }, 100); // flash screen for 100 milliseconds
+        if (isLandTablet && binding.containerMainEnd != null) {
+          binding.containerMainEnd.setBackgroundColor(color);
+          binding.containerMainEnd.postDelayed(() -> {
+            if (binding != null) {
+              binding.containerMainEnd.setBackgroundColor(colorFlashMuted);
+            }
+          }, 100); // flash screen for 100 milliseconds
+        } else {
+          binding.coordinatorContainer.setBackgroundColor(color);
+          binding.coordinatorContainer.postDelayed(() -> {
+            if (binding != null) {
+              binding.coordinatorContainer.setBackgroundColor(colorFlashMuted);
+            }
+          }, 100); // flash screen for 100 milliseconds
+        }
       }
       if (tick.subdivision == 1) {
         logoUtil.nextBeat(getMetronomeService().getInterval());
@@ -657,7 +677,9 @@ public class MainFragment extends BaseFragment
   public void onTimerStarted() {
     stopTimerTransitionProgress();
     stopTimerProgress();
-
+    if (binding == null) {
+      return;
+    }
     int current = binding.seekbarMainTimer.getProgress();
     int max = binding.seekbarMainTimer.getMax();
     float currentFraction = current / (float) max;
@@ -739,6 +761,7 @@ public class MainFragment extends BaseFragment
         binding.linearMainSubs.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
         updateSubControls();
+        optionsUtil.updateSwing();
       }
     } else if (id == R.id.button_main_remove_subdivision) {
       ViewUtil.startIcon(binding.buttonMainRemoveSubdivision.getIcon());
@@ -750,6 +773,7 @@ public class MainFragment extends BaseFragment
             binding.scrollHorizMainSubs, true
         );
         updateSubControls();
+        optionsUtil.updateSwing();
       }
     } else if (id == R.id.fab_main_play_stop) {
       if (getMetronomeService().isPlaying()) {
@@ -889,6 +913,7 @@ public class MainFragment extends BaseFragment
           getMetronomeService().setSubdivision(beatView.getIndex(), beatView.nextTickType());
         });
       }
+      beatView.setReduceAnimations(reduceAnimations);
       binding.linearMainSubs.addView(beatView);
     }
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs, true);
@@ -1183,5 +1208,9 @@ public class MainFragment extends BaseFragment
     } else {
       return terms[7];
     }
+  }
+
+  public FragmentMainBinding getBinding() {
+    return binding;
   }
 }

@@ -18,6 +18,7 @@ import android.util.Log;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
@@ -250,9 +251,12 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     return hasPermission;
   }
 
-  @NonNull
+  @Nullable
   public BaseFragment getCurrentFragment() {
-    return (BaseFragment) navHost.getChildFragmentManager().getFragments().get(0);
+    if (navHost.getHost() != null) {
+      return (BaseFragment) navHost.getChildFragmentManager().getFragments().get(0);
+    }
+    return null;
   }
 
   public void showSnackbar(@StringRes int resId) {
