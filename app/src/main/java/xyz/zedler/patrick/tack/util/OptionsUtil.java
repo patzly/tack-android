@@ -117,62 +117,64 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
       binding.textOptionsIncrementalAmount.setText(activity.getString(R.string.options_inactive));
     }
     binding.sliderOptionsIncrementalAmount.setValue(incrementalAmount);
-    binding.toggleOptionsIncrementalDirection.removeOnButtonCheckedListener(this);
-    binding.toggleOptionsIncrementalDirection.check(
-        incrementalIncrease
-            ? R.id.button_options_incremental_increase
-            : R.id.button_options_incremental_decrease
-    );
-    binding.toggleOptionsIncrementalDirection.addOnButtonCheckedListener(this);
-    binding.toggleOptionsIncrementalDirection.setEnabled(isIncrementalActive);
 
-    int incrementalInterval = getMetronomeService().getIncrementalInterval();
-    String incrementalUnit = getMetronomeService().getIncrementalUnit();
-    int unitResId, checkedId;
-    switch (incrementalUnit) {
-      case UNIT.SECONDS:
-        unitResId = R.plurals.options_unit_seconds;
-        checkedId = R.id.button_options_incremental_unit_seconds;
-        break;
-      case UNIT.MINUTES:
-        unitResId = R.plurals.options_unit_minutes;
-        checkedId = R.id.button_options_incremental_unit_minutes;
-        break;
-      default:
-        unitResId = R.plurals.options_unit_bars;
-        checkedId = R.id.button_options_incremental_unit_bars;
-        break;
-    }
-    String unitQuantity = activity.getResources().getQuantityString(
-        unitResId, incrementalInterval, incrementalInterval
+    binding.linearMainIncrementalContainer.setVisibility(
+        isIncrementalActive ? View.VISIBLE : View.GONE
     );
-    binding.textOptionsIncrementalInterval.setText(
-        activity.getString(R.string.options_incremental_interval, unitQuantity)
-    );
-    binding.textOptionsIncrementalInterval.setAlpha(isIncrementalActive ? 1 : 0.5f);
-    binding.sliderOptionsIncrementalInterval.setValue(incrementalInterval);
-    binding.sliderOptionsIncrementalInterval.setLabelFormatter(value -> {
-      int resId;
+    if (isIncrementalActive) {
+      binding.toggleOptionsIncrementalDirection.removeOnButtonCheckedListener(this);
+      binding.toggleOptionsIncrementalDirection.check(
+          incrementalIncrease
+              ? R.id.button_options_incremental_increase
+              : R.id.button_options_incremental_decrease
+      );
+      binding.toggleOptionsIncrementalDirection.addOnButtonCheckedListener(this);
+
+      int incrementalInterval = getMetronomeService().getIncrementalInterval();
+      String incrementalUnit = getMetronomeService().getIncrementalUnit();
+      int unitResId, checkedId;
       switch (incrementalUnit) {
         case UNIT.SECONDS:
-          resId = R.plurals.options_unit_seconds;
+          unitResId = R.plurals.options_unit_seconds;
+          checkedId = R.id.button_options_incremental_unit_seconds;
           break;
         case UNIT.MINUTES:
-          resId = R.plurals.options_unit_minutes;
+          unitResId = R.plurals.options_unit_minutes;
+          checkedId = R.id.button_options_incremental_unit_minutes;
           break;
         default:
-          resId = R.plurals.options_unit_bars;
+          unitResId = R.plurals.options_unit_bars;
+          checkedId = R.id.button_options_incremental_unit_bars;
           break;
       }
-      int interval = (int) value;
-      return activity.getResources().getQuantityString(resId, interval, interval);
-    });
-    binding.sliderOptionsIncrementalInterval.setEnabled(isIncrementalActive);
+      String unitQuantity = activity.getResources().getQuantityString(
+          unitResId, incrementalInterval, incrementalInterval
+      );
+      binding.textOptionsIncrementalInterval.setText(
+          activity.getString(R.string.options_incremental_interval, unitQuantity)
+      );
+      binding.sliderOptionsIncrementalInterval.setValue(incrementalInterval);
+      binding.sliderOptionsIncrementalInterval.setLabelFormatter(value -> {
+        int resId;
+        switch (incrementalUnit) {
+          case UNIT.SECONDS:
+            resId = R.plurals.options_unit_seconds;
+            break;
+          case UNIT.MINUTES:
+            resId = R.plurals.options_unit_minutes;
+            break;
+          default:
+            resId = R.plurals.options_unit_bars;
+            break;
+        }
+        int interval = (int) value;
+        return activity.getResources().getQuantityString(resId, interval, interval);
+      });
 
-    binding.toggleOptionsIncrementalUnit.removeOnButtonCheckedListener(this);
-    binding.toggleOptionsIncrementalUnit.check(checkedId);
-    binding.toggleOptionsIncrementalUnit.addOnButtonCheckedListener(this);
-    binding.toggleOptionsIncrementalUnit.setEnabled(isIncrementalActive);
+      binding.toggleOptionsIncrementalUnit.removeOnButtonCheckedListener(this);
+      binding.toggleOptionsIncrementalUnit.check(checkedId);
+      binding.toggleOptionsIncrementalUnit.addOnButtonCheckedListener(this);
+    }
 
     // Update timer unit selection, see below for an explanation
     updateTimer();
@@ -232,36 +234,37 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
       int interval = (int) value;
       return activity.getResources().getQuantityString(resId, interval, interval);
     });
-    // Single-selection mode with auto de-selection only effective if buttons enabled
-    binding.buttonOptionsTimerUnitBars.setEnabled(true);
-    binding.toggleOptionsTimerUnit.removeOnButtonCheckedListener(this);
-    binding.toggleOptionsTimerUnit.check(checkedId);
-    binding.toggleOptionsTimerUnit.addOnButtonCheckedListener(this);
-    binding.toggleOptionsTimerUnit.setEnabled(isTimerActive);
 
-    // Bars unit not supported for timer in connection with incremental tempo change!
-    // On tempo changes with units different to bars, beats would not start at bar start
-    // Disable bars unit button for timer
-    boolean isIncrementalActive = getMetronomeService().isIncrementalActive();
-    boolean convertToNonBarUnit = timerUnit.equals(UNIT.BARS) && isIncrementalActive;
-    binding.buttonOptionsTimerUnitBars.setEnabled(
-        isTimerActive && !isIncrementalActive
-    );
-    if (convertToNonBarUnit) {
-      long timerInterval = getMetronomeService().getTimerInterval();
-      int intervalSeconds = (int) (timerInterval / 1000);
-      if (intervalSeconds > binding.sliderOptionsTimerDuration.getValueTo()) {
-        getMetronomeService().setTimerUnit(UNIT.MINUTES);
-        getMetronomeService().setTimerDuration(intervalSeconds / 60);
-      } else {
-        getMetronomeService().setTimerUnit(UNIT.SECONDS);
-        getMetronomeService().setTimerDuration(intervalSeconds);
+    binding.linearMainTimerContainer.setVisibility(isTimerActive ? View.VISIBLE : View.GONE);
+    if (isTimerActive) {
+      // Single-selection mode with auto de-selection only effective if buttons enabled
+      binding.buttonOptionsTimerUnitBars.setEnabled(true);
+      binding.toggleOptionsTimerUnit.removeOnButtonCheckedListener(this);
+      binding.toggleOptionsTimerUnit.check(checkedId);
+      binding.toggleOptionsTimerUnit.addOnButtonCheckedListener(this);
+
+      // Bars unit not supported for timer in connection with incremental tempo change!
+      // On tempo changes with units different to bars, beats would not start at bar start
+      // Disable bars unit button for timer
+      boolean isIncrementalActive = getMetronomeService().isIncrementalActive();
+      boolean convertToNonBarUnit = timerUnit.equals(UNIT.BARS) && isIncrementalActive;
+      binding.buttonOptionsTimerUnitBars.setEnabled(!isIncrementalActive);
+      if (convertToNonBarUnit) {
+        long timerInterval = getMetronomeService().getTimerInterval();
+        int intervalSeconds = (int) (timerInterval / 1000);
+        if (intervalSeconds > binding.sliderOptionsTimerDuration.getValueTo()) {
+          getMetronomeService().setTimerUnit(UNIT.MINUTES);
+          getMetronomeService().setTimerDuration(intervalSeconds / 60);
+        } else {
+          getMetronomeService().setTimerUnit(UNIT.SECONDS);
+          getMetronomeService().setTimerDuration(intervalSeconds);
+        }
+        updateTimer();
       }
-      updateTimer();
+      binding.textOptionsTimerUnsupported.setVisibility(
+          isIncrementalActive ? View.VISIBLE : View.GONE
+      );
     }
-    binding.textOptionsTimerUnsupported.setVisibility(
-        isIncrementalActive ? View.VISIBLE : View.GONE
-    );
   }
 
   private void setUpSwing() {

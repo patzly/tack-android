@@ -90,98 +90,107 @@
         android:value="0"
         app:labelBehavior="gone" />
 
-      <HorizontalScrollView
+      <LinearLayout
+        android:id="@+id/linear_main_incremental_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:overScrollMode="ifContentScrolls"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="8dp"
-        android:requiresFadingEdge="horizontal">
+        android:orientation="vertical">
 
-        <com.google.android.material.button.MaterialButtonToggleGroup
-          android:id="@+id/toggle_options_incremental_direction"
-          android:layout_width="wrap_content"
+        <HorizontalScrollView
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          app:singleSelection="true"
-          app:selectionRequired="true">
+          android:scrollbars="none"
+          android:overScrollMode="ifContentScrolls"
+          android:layout_marginStart="24dp"
+          android:layout_marginEnd="24dp"
+          android:layout_marginBottom="8dp"
+          android:requiresFadingEdge="horizontal">
 
-          <Button
-            android:id="@+id/button_options_incremental_decrease"
-            style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
-            android:text="@string/action_decrease" />
+          <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggle_options_incremental_direction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:selectionRequired="true">
 
-          <Button
-            android:id="@+id/button_options_incremental_increase"
-            style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
-            android:text="@string/action_increase" />
+            <Button
+              android:id="@+id/button_options_incremental_decrease"
+              style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
+              android:text="@string/action_decrease" />
 
-        </com.google.android.material.button.MaterialButtonToggleGroup>
+            <Button
+              android:id="@+id/button_options_incremental_increase"
+              style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
+              android:text="@string/action_increase" />
 
-      </HorizontalScrollView>
+          </com.google.android.material.button.MaterialButtonToggleGroup>
 
-      <TextView
-        android:id="@+id/text_options_incremental_interval"
-        style="@style/Widget.Tack.TextView.BodyMedium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        android:text="@string/options_incremental_interval" />
+        </HorizontalScrollView>
 
-      <com.google.android.material.slider.Slider
-        android:id="@+id/slider_options_incremental_interval"
-        style="@style/Widget.Tack.Slider.Elevated"
-        android:layout_marginStart="10dp"
-        android:layout_marginEnd="10dp"
-        android:valueFrom="1"
-        android:valueTo="60"
-        android:stepSize="1"
-        android:value="1"
-        app:labelBehavior="gone" />
-
-      <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="16dp"
-        android:scrollbars="none"
-        android:overScrollMode="ifContentScrolls"
-        android:requiresFadingEdge="horizontal">
-
-        <com.google.android.material.button.MaterialButtonToggleGroup
-          android:id="@+id/toggle_options_incremental_unit"
-          android:layout_width="wrap_content"
+        <TextView
+          android:id="@+id/text_options_incremental_interval"
+          style="@style/Widget.Tack.TextView.BodyMedium"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          app:singleSelection="true"
-          app:selectionRequired="true">
+          android:paddingStart="24dp"
+          android:paddingEnd="24dp"
+          android:textColor="?attr/colorOnSurfaceVariant"
+          android:text="@string/options_incremental_interval" />
 
-          <Button
-            android:id="@+id/button_options_incremental_unit_bars"
-            style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
-            android:text="@string/options_unit_bars" />
+        <com.google.android.material.slider.Slider
+          android:id="@+id/slider_options_incremental_interval"
+          style="@style/Widget.Tack.Slider.Elevated"
+          android:layout_marginStart="10dp"
+          android:layout_marginEnd="10dp"
+          android:valueFrom="1"
+          android:valueTo="60"
+          android:stepSize="1"
+          android:value="1"
+          app:labelBehavior="gone" />
 
-          <Button
-            android:id="@+id/button_options_incremental_unit_seconds"
-            style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
-            android:text="@string/options_unit_seconds" />
+        <HorizontalScrollView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="24dp"
+          android:layout_marginEnd="24dp"
+          android:layout_marginBottom="12dp"
+          android:scrollbars="none"
+          android:overScrollMode="ifContentScrolls"
+          android:requiresFadingEdge="horizontal">
 
-          <Button
-            android:id="@+id/button_options_incremental_unit_minutes"
-            style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
-            android:text="@string/options_unit_minutes" />
+          <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggle_options_incremental_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:selectionRequired="true">
 
-        </com.google.android.material.button.MaterialButtonToggleGroup>
+            <Button
+              android:id="@+id/button_options_incremental_unit_bars"
+              style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
+              android:text="@string/options_unit_bars" />
 
-      </HorizontalScrollView>
+            <Button
+              android:id="@+id/button_options_incremental_unit_seconds"
+              style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
+              android:text="@string/options_unit_seconds" />
+
+            <Button
+              android:id="@+id/button_options_incremental_unit_minutes"
+              style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
+              android:text="@string/options_unit_minutes" />
+
+          </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        </HorizontalScrollView>
+
+      </LinearLayout>
 
       <TextView
         style="@style/Widget.Tack.TextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:paddingStart="24dp"
         android:paddingEnd="24dp"
         android:text="@string/options_timer" />
@@ -196,16 +205,6 @@
         android:textColor="?attr/colorOnSurfaceVariant"
         android:text="@string/options_timer_description" />
 
-      <TextView
-        android:id="@+id/text_options_timer_unsupported"
-        style="@style/Widget.Tack.TextView.BodyMedium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
-        android:textColor="?attr/colorError"
-        android:text="@string/options_timer_unsupported" />
-
       <com.google.android.material.slider.Slider
         android:id="@+id/slider_options_timer_duration"
         style="@style/Widget.Tack.Slider.Elevated"
@@ -217,41 +216,60 @@
         android:value="0"
         app:labelBehavior="gone" />
 
-      <HorizontalScrollView
+      <LinearLayout
+        android:id="@+id/linear_main_timer_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="16dp"
-        android:scrollbars="none"
-        android:overScrollMode="ifContentScrolls"
-        android:requiresFadingEdge="horizontal">
+        android:orientation="vertical">
 
-        <com.google.android.material.button.MaterialButtonToggleGroup
-          android:id="@+id/toggle_options_timer_unit"
-          android:layout_width="wrap_content"
+        <TextView
+          android:id="@+id/text_options_timer_unsupported"
+          style="@style/Widget.Tack.TextView.BodyMedium"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          app:singleSelection="true"
-          app:selectionRequired="true">
+          android:layout_marginBottom="8dp"
+          android:paddingStart="24dp"
+          android:paddingEnd="24dp"
+          android:textColor="?attr/colorError"
+          android:text="@string/options_timer_unsupported" />
 
-          <Button
-            android:id="@+id/button_options_timer_unit_bars"
-            style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
-            android:text="@string/options_unit_bars" />
+        <HorizontalScrollView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginStart="24dp"
+          android:layout_marginEnd="24dp"
+          android:layout_marginBottom="16dp"
+          android:scrollbars="none"
+          android:overScrollMode="ifContentScrolls"
+          android:requiresFadingEdge="horizontal">
 
-          <Button
-            android:id="@+id/button_options_timer_unit_seconds"
-            style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
-            android:text="@string/options_unit_seconds" />
+          <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggle_options_timer_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
+            app:selectionRequired="true">
 
-          <Button
-            android:id="@+id/button_options_timer_unit_minutes"
-            style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
-            android:text="@string/options_unit_minutes" />
+            <Button
+              android:id="@+id/button_options_timer_unit_bars"
+              style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
+              android:text="@string/options_unit_bars" />
 
-        </com.google.android.material.button.MaterialButtonToggleGroup>
+            <Button
+              android:id="@+id/button_options_timer_unit_seconds"
+              style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
+              android:text="@string/options_unit_seconds" />
 
-      </HorizontalScrollView>
+            <Button
+              android:id="@+id/button_options_timer_unit_minutes"
+              style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
+              android:text="@string/options_unit_minutes" />
+
+          </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        </HorizontalScrollView>
+
+      </LinearLayout>
 
       <!--TextView
         style="@style/Widget.Tack.TextView"
