@@ -65,6 +65,7 @@ public class MainFragment extends BaseFragment
 
   private FragmentMainBinding binding;
   private MainActivity activity;
+  private Bundle savedState;
   private long prevTouchTime;
   private final List<Long> intervals = new ArrayList<>();
   private boolean flashScreen, keepAwake, reduceAnimations;
@@ -104,6 +105,7 @@ public class MainFragment extends BaseFragment
   @SuppressLint("ClickableViewAccessibility")
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    savedState = savedInstanceState;
     activity = (MainActivity) requireActivity();
 
     SystemBarBehavior systemBarBehavior = new SystemBarBehavior(activity);
@@ -170,7 +172,6 @@ public class MainFragment extends BaseFragment
     dialogUtilGain.showIfWasShown(savedInstanceState);
 
     optionsUtil = new OptionsUtil(activity, this);
-    optionsUtil.showIfWasShown(savedInstanceState);
 
     shortcutUtil = new ShortcutUtil(activity);
 
@@ -190,6 +191,7 @@ public class MainFragment extends BaseFragment
           int timerPositionNew = (int) (fraction * positions);
           if (timerPositionCurrent != timerPositionNew) {
             performHapticTick();
+            updateTimerDisplay();
           }
           getMetronomeService().updateTimerHandler(fraction);
         }
@@ -479,6 +481,8 @@ public class MainFragment extends BaseFragment
       return;
     }
     getMetronomeService().setMetronomeListener(this);
+    optionsUtil.showIfWasShown(savedState);
+    savedState = null;
 
     if (getMetronomeService().isBeatModeVibrate()) {
       binding.buttonMainBeatMode.setIconResource(
@@ -570,6 +574,7 @@ public class MainFragment extends BaseFragment
         if (getMetronomeService().isTimerActive()) {
           squiggly.setAnimate(false, true);
         }
+        updateTimerDisplay();
         binding.fabMainPlayStop.setImageResource(R.drawable.ic_round_stop_to_play_anim);
         Drawable icon = binding.fabMainPlayStop.getDrawable();
         if (icon != null) {
@@ -634,20 +639,11 @@ public class MainFragment extends BaseFragment
           if (binding != null) {
             binding.coordinatorContainer.setBackgroundColor(colorFlashMuted);
           }
-        }, 100);
+        }, 100); // flash screen for 100 milliseconds
       }
       if (tick.subdivision == 1) {
         logoUtil.nextBeat(getMetronomeService().getInterval());
-
-        /*int countIn = getMetronomeService().getCountIn();
-        long beatIndex = tick.index / getMetronomeService().getSubsCount();
-        int beatsCount = getMetronomeService().getBeatsCount() * countIn;
-        long barIndex = beatIndex / getMetronomeService().getBeatsCount();
-        boolean isCountIn = barIndex < getMetronomeService().getCountIn();
-        float fraction = (beatIndex + 1) / (float) beatsCount;
-        if (isCountIn) {
-          updateProgress(fraction, getMetronomeService().getInterval(), true);
-        }*/
+        updateTimerDisplay();
       }
     });
   }
@@ -714,6 +710,7 @@ public class MainFragment extends BaseFragment
         binding.linearMainBeats.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
         updateBeatControls();
+        updateTimerDisplay(); // Update decimals for bar unit
       }
     } else if (id == R.id.button_main_remove_beat) {
       ViewUtil.startIcon(binding.buttonMainRemoveBeat.getIcon());
@@ -725,6 +722,7 @@ public class MainFragment extends BaseFragment
             binding.scrollHorizMainBeats, true
         );
         updateBeatControls();
+        updateTimerDisplay(); // Update decimals for bar unit
       }
     } else if (id == R.id.button_main_add_subdivision) {
       ViewUtil.startIcon(binding.buttonMainAddSubdivision.getIcon());
@@ -932,6 +930,14 @@ public class MainFragment extends BaseFragment
     } else {
       float timerProgress = getMetronomeService().getTimerProgress();
       updateTimerProgress(timerProgress, 0, false, false);
+    }
+    updateTimerDisplay();
+  }
+
+  public void updateTimerDisplay() {
+    if (isBound()) {
+      binding.textMainTimerTotal.setText(getMetronomeService().getTotalTimeString());
+      binding.textMainTimerElapsed.setText(getMetronomeService().getElapsedTimeString());
     }
   }
 

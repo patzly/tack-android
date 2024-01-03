@@ -35,10 +35,12 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
   }
 
   public void show() {
+    update();
     dialogUtil.show();
   }
 
   public void showIfWasShown(@Nullable Bundle state) {
+    update();
     dialogUtil.showIfWasShown(state);
   }
 
@@ -318,6 +320,7 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
         getMetronomeService().setTimerUnit(UNIT.MINUTES);
       }
       updateTimer();
+      fragment.updateTimerDisplay();
     } else if (groupId == R.id.toggle_options_swing) {
       if (checkedId == R.id.button_options_swing_3) {
         getMetronomeService().setSwing3();

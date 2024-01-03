@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Locale;
 import java.util.Objects;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.ACTION;
@@ -737,6 +738,44 @@ public class MetronomeService extends Service implements TickListener {
 
   public long getElapsedTime() {
     return System.currentTimeMillis() - startTime;
+  }
+
+  public String getElapsedTimeString() {
+    if (!isTimerActive()) {
+      return "";
+    }
+    long progressInterval = (long) (getTimerProgress() * getTimerInterval());
+    switch (timerUnit) {
+      case UNIT.SECONDS:
+        int seconds = (int) (progressInterval / 1000);
+        return "00:" + String.format(Locale.ENGLISH, "%02d", seconds);
+      case UNIT.MINUTES:
+        return timerDuration + ":00";
+      default:
+        long barInterval = getInterval() * getBeatsCount();
+        int progressBarCount = (int) (progressInterval / barInterval);
+
+        long progressIntervalFullBars = progressBarCount * barInterval;
+        long remaining = progressInterval - progressIntervalFullBars;
+        int beatCount = (int) (remaining / getInterval());
+        
+        String format = getBeatsCount() < 10 ? "%d.%01d" : "%d.%02d";
+        return String.format(Locale.ENGLISH, format, progressBarCount + 1, beatCount + 1);
+    }
+  }
+
+  public String getTotalTimeString() {
+    if (!isTimerActive()) {
+      return "";
+    }
+    switch (timerUnit) {
+      case UNIT.SECONDS:
+        return "00:" + String.format(Locale.ENGLISH, "%02d", timerDuration);
+      case UNIT.MINUTES:
+        return timerDuration + ":00";
+      default:
+        return String.valueOf(timerDuration);
+    }
   }
 
   public interface MetronomeListener {
