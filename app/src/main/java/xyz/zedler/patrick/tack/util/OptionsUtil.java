@@ -1,7 +1,6 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,7 +30,6 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     this.fragment = fragment;
 
     useDialog = !UiUtil.isLandTablet(activity);
-    Log.i("hello", "OptionsUtil: hello " + UiUtil.isLandTablet(activity));
     if (useDialog) {
       bindingDialog = PartialDialogOptionsBinding.inflate(activity.getLayoutInflater());
       dialogUtil = new DialogUtil(activity, "options");

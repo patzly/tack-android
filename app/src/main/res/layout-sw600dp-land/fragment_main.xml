@@ -77,8 +77,6 @@
         android:id="@+id/scroll_options"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:scrollbars="vertical"
-        android:scrollbarThumbVertical="@drawable/shape_scrollbar_rounded"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -145,10 +143,10 @@
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:orientation="vertical"
+          android:animateLayoutChanges="true"
           app:layout_constraintTop_toTopOf="parent"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintEnd_toEndOf="parent">
-          <!-- not layoutAnim=true, the animation would be visible at app startup -->
 
           <LinearLayout
             android:id="@+id/linear_main_beats_bg"
