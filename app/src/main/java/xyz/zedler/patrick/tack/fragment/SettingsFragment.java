@@ -22,7 +22,6 @@ import com.google.android.material.divider.MaterialDivider;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.slider.Slider.OnChangeListener;
 import com.google.android.material.slider.Slider.OnSliderTouchListener;
-import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -37,10 +36,10 @@ import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentSettingsBinding;
-import xyz.zedler.patrick.tack.service.MetronomeService.MetronomeListener;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
+import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.ShortcutUtil;
@@ -55,9 +54,10 @@ public class SettingsFragment extends BaseFragment
 
   private FragmentSettingsBinding binding;
   private MainActivity activity;
+  private Bundle savedState;
   private DialogUtil dialogUtilReset, dialogUtilSound;
-  private boolean flashScreen;
   private Drawable itemBgFlash;
+  private boolean flashScreen;
 
   @Override
   public View onCreateView(
@@ -77,6 +77,7 @@ public class SettingsFragment extends BaseFragment
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    savedState = savedInstanceState;
     activity = (MainActivity) requireActivity();
 
     SystemBarBehavior systemBarBehavior = new SystemBarBehavior(activity);
@@ -214,9 +215,7 @@ public class SettingsFragment extends BaseFragment
         R.string.msg_reset_description,
         R.string.action_reset,
         () -> {
-          if (isBound() && getMetronomeService().isPlaying()) {
-            getMetronomeService().stop();
-          }
+          getMetronomeUtil().stop();
           getSharedPrefs().edit().clear().apply();
           new ShortcutUtil(activity).removeAllShortcuts();
           activity.restartToApply(100, getInstanceState(), false);
@@ -224,56 +223,22 @@ public class SettingsFragment extends BaseFragment
     dialogUtilReset.showIfWasShown(savedInstanceState);
 
     dialogUtilSound = new DialogUtil(activity, "sound");
-    Map<String, String> labels = new LinkedHashMap<>();
-    labels.put(SOUND.WOOD, getString(R.string.settings_sound_wood));
-    labels.put(SOUND.SINE, getString(R.string.settings_sound_sine));
-    labels.put(SOUND.CLICK, getString(R.string.settings_sound_click));
-    labels.put(SOUND.DING, getString(R.string.settings_sound_ding));
-    labels.put(SOUND.BEEP, getString(R.string.settings_sound_beep));
-    ArrayList<String> sounds = new ArrayList<>(labels.keySet());
-    String[] items = labels.values().toArray(new String[]{});
-    int init = sounds.indexOf(getSharedPrefs().getString(PREF.SOUND, DEF.SOUND));
-    binding.textSettingsSound.setText(items[init]);
-    dialogUtilSound.createSingleChoice(
-        R.string.settings_sound, items, init, (dialog, which) -> {
-          performHapticClick();
-          if (isBoundOrShowWarning()) {
-            getMetronomeService().setSound(sounds.get(which));
-            binding.textSettingsSound.setText(items[which]);
-          }
-        });
-    dialogUtilSound.showIfWasShown(savedInstanceState);
 
-    binding.sliderSettingsLatency.setValue(getSharedPrefs().getLong(PREF.LATENCY, DEF.LATENCY));
-    binding.sliderSettingsLatency.addOnChangeListener(this);
     binding.sliderSettingsLatency.addOnSliderTouchListener(new OnSliderTouchListener() {
       @Override
       public void onStartTrackingTouch(@NonNull Slider slider) {
         flashScreen = true;
-        if (isBound()) {
-          getMetronomeService().saveState();
-          // Turn all visuals and audio on and start playing if not already started
-          getMetronomeService().setTempo(80);
-          getMetronomeService().setBeats(DEF.BEATS.split(","));
-          getMetronomeService().setSubdivisions(DEF.SUBDIVISIONS.split(","));
-          getMetronomeService().setBeatModeVibrate(false);
-          getMetronomeService().setAlwaysVibrate(true);
-          getMetronomeService().setGain(0);
-          getMetronomeService().setCountIn(0);
-          getMetronomeService().setIncrementalAmount(0);
-          getMetronomeService().setTimerDuration(0);
-          getMetronomeService().setMetronomeListener(SettingsFragment.this);
-          getMetronomeService().start(false, false);
-        }
+        getMetronomeUtil().savePlayingState();
+        getMetronomeUtil().addListener(SettingsFragment.this);
+        getMetronomeUtil().setUpLatencyCalibration();
       }
 
       @Override
       public void onStopTrackingTouch(@NonNull Slider slider) {
         flashScreen = false;
-        if (isBound()) {
-          getMetronomeService().setMetronomeListener(null);
-          getMetronomeService().restoreState();
-        }
+        getMetronomeUtil().restorePlayingState();
+        getMetronomeUtil().removeListener(SettingsFragment.this);
+        getMetronomeUtil().setToPreferences();
       }
     });
     binding.sliderSettingsLatency.setLabelFormatter(
@@ -283,39 +248,15 @@ public class SettingsFragment extends BaseFragment
     );
     itemBgFlash = ViewUtil.getBgListItemSelected(activity, R.attr.colorPrimaryContainer);
 
-    binding.sliderSettingsGain.setValue(getSharedPrefs().getInt(PREF.GAIN, DEF.GAIN));
-    binding.sliderSettingsGain.addOnChangeListener(this);
     binding.sliderSettingsGain.setLabelFormatter(
         value -> getString(R.string.label_db, (int) value)
     );
 
-    binding.switchSettingsShowSubs.setChecked(
-        getSharedPrefs().getBoolean(PREF.USE_SUBS, DEF.USE_SUBS)
-    );
-    binding.switchSettingsShowSubs.jumpDrawablesToCurrentState();
-
-    binding.switchSettingsAlwaysVibrate.setChecked(
-        getSharedPrefs().getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE)
-    );
-    binding.switchSettingsAlwaysVibrate.jumpDrawablesToCurrentState();
     binding.linearSettingsAlwaysVibrate.setVisibility(
         activity.getHapticUtil().hasVibrator() ? View.VISIBLE : View.GONE
     );
 
-    binding.switchSettingsResetTimer.setChecked(
-        getSharedPrefs().getBoolean(PREF.RESET_TIMER, DEF.RESET_TIMER)
-    );
-    binding.switchSettingsResetTimer.jumpDrawablesToCurrentState();
-
-    binding.switchSettingsFlashScreen.setChecked(
-        getSharedPrefs().getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN)
-    );
-    binding.switchSettingsFlashScreen.jumpDrawablesToCurrentState();
-
-    binding.switchSettingsKeepAwake.setChecked(
-        getSharedPrefs().getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE)
-    );
-    binding.switchSettingsKeepAwake.jumpDrawablesToCurrentState();
+    updateMetronomeSettings();
 
     ViewUtil.setOnClickListeners(
         this,
@@ -355,6 +296,62 @@ public class SettingsFragment extends BaseFragment
     }
   }
 
+  public void updateMetronomeSettings() {
+    Map<String, String> labels = new LinkedHashMap<>();
+    labels.put(SOUND.WOOD, getString(R.string.settings_sound_wood));
+    labels.put(SOUND.SINE, getString(R.string.settings_sound_sine));
+    labels.put(SOUND.CLICK, getString(R.string.settings_sound_click));
+    labels.put(SOUND.DING, getString(R.string.settings_sound_ding));
+    labels.put(SOUND.BEEP, getString(R.string.settings_sound_beep));
+    ArrayList<String> sounds = new ArrayList<>(labels.keySet());
+    String[] items = labels.values().toArray(new String[]{});
+    int init = sounds.indexOf(getMetronomeUtil().getSound());
+    binding.textSettingsSound.setText(items[init]);
+    dialogUtilSound.createSingleChoice(
+        R.string.settings_sound, items, init, (dialog, which) -> {
+          performHapticClick();
+          getMetronomeUtil().setSound(sounds.get(which));
+          binding.textSettingsSound.setText(items[which]);
+        });
+    dialogUtilSound.showIfWasShown(savedState);
+
+    binding.sliderSettingsLatency.removeOnChangeListener(this);
+    binding.sliderSettingsLatency.setValue(getMetronomeUtil().getLatency());
+    binding.sliderSettingsLatency.addOnChangeListener(this);
+
+    binding.sliderSettingsGain.removeOnChangeListener(this);
+    binding.sliderSettingsGain.setValue(getMetronomeUtil().getGain());
+    binding.sliderSettingsGain.addOnChangeListener(this);
+
+    binding.switchSettingsShowSubs.setOnCheckedChangeListener(null);
+    binding.switchSettingsShowSubs.setChecked(getMetronomeUtil().getSubdivisionsUsed());
+    binding.switchSettingsShowSubs.jumpDrawablesToCurrentState();
+    binding.switchSettingsShowSubs.setOnCheckedChangeListener(this);
+
+    binding.switchSettingsAlwaysVibrate.setOnCheckedChangeListener(null);
+    binding.switchSettingsAlwaysVibrate.setChecked(getMetronomeUtil().isAlwaysVibrate());
+    binding.switchSettingsAlwaysVibrate.jumpDrawablesToCurrentState();
+    binding.switchSettingsAlwaysVibrate.setOnCheckedChangeListener(this);
+    binding.linearSettingsAlwaysVibrate.setVisibility(
+        activity.getHapticUtil().hasVibrator() ? View.VISIBLE : View.GONE
+    );
+
+    binding.switchSettingsResetTimer.setOnCheckedChangeListener(null);
+    binding.switchSettingsResetTimer.setChecked(getMetronomeUtil().getResetTimer());
+    binding.switchSettingsResetTimer.jumpDrawablesToCurrentState();
+    binding.switchSettingsResetTimer.setOnCheckedChangeListener(this);
+
+    binding.switchSettingsFlashScreen.setOnCheckedChangeListener(null);
+    binding.switchSettingsFlashScreen.setChecked(getMetronomeUtil().getFlashScreen());
+    binding.switchSettingsFlashScreen.jumpDrawablesToCurrentState();
+    binding.switchSettingsFlashScreen.setOnCheckedChangeListener(this);
+
+    binding.switchSettingsKeepAwake.setOnCheckedChangeListener(null);
+    binding.switchSettingsKeepAwake.setChecked(getMetronomeUtil().getKeepAwake());
+    binding.switchSettingsKeepAwake.jumpDrawablesToCurrentState();
+    binding.switchSettingsKeepAwake.setOnCheckedChangeListener(this);
+  }
+
   @Override
   public void onMetronomeStart() {}
 
@@ -366,14 +363,8 @@ public class SettingsFragment extends BaseFragment
 
   @Override
   public void onMetronomeTick(Tick tick) {
-    if (!isBound()) {
-      return;
-    }
     activity.runOnUiThread(() -> {
-      if (binding == null) {
-        return;
-      }
-      if (flashScreen) {
+      if (binding != null && flashScreen) {
         binding.linearSettingsLatency.setBackground(itemBgFlash);
         binding.linearSettingsLatency.postDelayed(() -> {
           if (binding != null) {
@@ -385,10 +376,15 @@ public class SettingsFragment extends BaseFragment
   }
 
   @Override
-  public void onTempoChanged(int bpmOld, int bpmNew) {}
+  public void onMetronomeTempoChanged(int bpmOld, int bpmNew) {}
 
   @Override
-  public void onTimerStarted() {}
+  public void onMetronomeTimerStarted() {}
+
+  @Override
+  public void onMetronomeConnectionMissing() {
+    activity.showSnackbar(R.string.msg_connection_lost);
+  }
 
   @Override
   public void onClick(View v) {
@@ -441,38 +437,23 @@ public class SettingsFragment extends BaseFragment
     } else if (id == R.id.switch_settings_show_subs) {
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsShowSubs);
-      if (isBoundOrShowWarning()) {
-        getMetronomeService().setSubdivisionsUsed(isChecked);
-      }
+      getMetronomeUtil().setSubdivisionsUsed(isChecked);
     } else if (id == R.id.switch_settings_always_vibrate) {
       ViewUtil.startIcon(binding.imageSettingsAlwaysVibrate);
-      if (isBoundOrShowWarning()) {
-        getMetronomeService().setAlwaysVibrate(isChecked);
-        performHapticClick();
-      } else {
-        performHapticClick();
-        binding.switchSettingsAlwaysVibrate.setOnCheckedChangeListener(null);
-        binding.switchSettingsAlwaysVibrate.toggle();
-        binding.switchSettingsAlwaysVibrate.setOnCheckedChangeListener(this);
-      }
+      getMetronomeUtil().setAlwaysVibrate(isChecked);
+      performHapticClick();
     } else if (id == R.id.switch_settings_reset_timer) {
       ViewUtil.startIcon(binding.imageSettingsResetTimer);
       performHapticClick();
-      if (isBoundOrShowWarning()) {
-        getMetronomeService().setResetTimer(isChecked);
-      } else {
-        binding.switchSettingsResetTimer.setOnCheckedChangeListener(null);
-        binding.switchSettingsResetTimer.toggle();
-        binding.switchSettingsResetTimer.setOnCheckedChangeListener(this);
-      }
+      getMetronomeUtil().setResetTimer(isChecked);
     } else if (id == R.id.switch_settings_flash_screen) {
       performHapticClick();
       //ViewUtil.startIcon(binding.imageSettingsFlashScreen);
-      getSharedPrefs().edit().putBoolean(PREF.FLASH_SCREEN, isChecked).apply();
+      getMetronomeUtil().setFlashScreen(isChecked);
     } else if (id == R.id.switch_settings_keep_awake) {
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsKeepAwake);
-      getSharedPrefs().edit().putBoolean(PREF.KEEP_AWAKE, isChecked).apply();
+      getMetronomeUtil().setKeepAwake(isChecked);
     }
   }
 
@@ -483,15 +464,11 @@ public class SettingsFragment extends BaseFragment
     }
     int id = slider.getId();
     if (id == R.id.slider_settings_latency) {
-      if (isBoundOrShowWarning()) {
-        getMetronomeService().setLatency((long) value);
-      }
+      getMetronomeUtil().setLatency((long) value);
       //ViewUtil.startIcon(binding.imageSettingsLatency);
       performHapticTick();
     } else if (id == R.id.slider_settings_gain) {
-      if (isBoundOrShowWarning()) {
-        getMetronomeService().setGain((int) value);
-      }
+      getMetronomeUtil().setGain((int) value);
       //ViewUtil.startIcon(binding.imageSettingsLatency);
       performHapticTick();
     }
@@ -614,16 +591,6 @@ public class SettingsFragment extends BaseFragment
       default:
         return resIdStandard;
     }
-  }
-
-  private boolean isBoundOrShowWarning() {
-    boolean isBound = isBound();
-    if (!isBound) {
-      activity.showSnackbar(
-          activity.getSnackbar(R.string.msg_connection_lost, Snackbar.LENGTH_SHORT)
-      );
-    }
-    return isBound;
   }
 
   private Bundle getInstanceState() {

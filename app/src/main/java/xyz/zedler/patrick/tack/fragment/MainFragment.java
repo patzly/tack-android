@@ -46,9 +46,9 @@ import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentMainBinding;
 import xyz.zedler.patrick.tack.drawable.BeatsBgDrawable;
 import xyz.zedler.patrick.tack.drawable.SquigglyProgressDrawable;
-import xyz.zedler.patrick.tack.service.MetronomeService.MetronomeListener;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
+import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.OptionsUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -160,19 +160,11 @@ public class MainFragment extends BaseFragment
         R.string.msg_gain,
         R.string.msg_gain_description,
         R.string.action_play,
-        () -> {
-          if (isBound() && !getMetronomeService().isPlaying()) {
-            getMetronomeService().start();
-          }
-        },
+        () -> getMetronomeUtil().start(),
         R.string.action_deactivate_gain,
         () -> {
-          if (isBound()) {
-            getMetronomeService().setGain(0);
-            if (!getMetronomeService().isPlaying()) {
-              getMetronomeService().start();
-            }
-          }
+          getMetronomeUtil().setGain(0);
+          getMetronomeUtil().start();
         });
     dialogUtilGain.showIfWasShown(savedInstanceState);
 
@@ -194,32 +186,29 @@ public class MainFragment extends BaseFragment
     binding.seekbarMainTimer.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
       @Override
       public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (isBound() && fromUser) {
-          int positions = getMetronomeService().getTimerDuration();
-          int timerPositionCurrent = (int) (getMetronomeService().getTimerProgress() * positions);
-          float fraction = (float) progress / binding.seekbarMainTimer.getMax();
-          int timerPositionNew = (int) (fraction * positions);
-          if (timerPositionCurrent != timerPositionNew) {
-            performHapticTick();
-            updateTimerDisplay();
-          }
-          getMetronomeService().updateTimerHandler(fraction);
+        if (!fromUser) {
+          return;
         }
+        int positions = getMetronomeUtil().getTimerDuration();
+        int timerPositionCurrent = (int) (getMetronomeUtil().getTimerProgress() * positions);
+        float fraction = (float) progress / binding.seekbarMainTimer.getMax();
+        int timerPositionNew = (int) (fraction * positions);
+        if (timerPositionCurrent != timerPositionNew) {
+          performHapticTick();
+          updateTimerDisplay();
+        }
+        getMetronomeUtil().updateTimerHandler(fraction);
       }
 
       @Override
       public void onStartTrackingTouch(SeekBar seekBar) {
-        if (isBound()) {
-          getMetronomeService().saveState();
-          getMetronomeService().stop();
-        }
+        getMetronomeUtil().savePlayingState();
+        getMetronomeUtil().stop();
       }
 
       @Override
       public void onStopTrackingTouch(SeekBar seekBar) {
-        if (isBound()) {
-          getMetronomeService().restoreState();
-        }
+        getMetronomeUtil().restorePlayingState();
       }
     });
 
@@ -270,18 +259,16 @@ public class MainFragment extends BaseFragment
       private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
-          if (isBound()) {
-            if (getMetronomeService().getTempo() > 1) {
-              changeTempo(-1);
-              handler.postDelayed(this, nextRun);
-              if (nextRun > 60) {
-                nextRun = (int) (nextRun * 0.9);
-              }
-            } else {
-              handler.removeCallbacks(runnable);
-              handler = null;
-              nextRun = 400;
+          if (getMetronomeUtil().getTempo() > 1) {
+            changeTempo(-1);
+            handler.postDelayed(this, nextRun);
+            if (nextRun > 60) {
+              nextRun = (int) (nextRun * 0.9);
             }
+          } else {
+            handler.removeCallbacks(runnable);
+            handler = null;
+            nextRun = 400;
           }
         }
       };
@@ -316,18 +303,16 @@ public class MainFragment extends BaseFragment
       private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
-          if (isBound()) {
-            if (getMetronomeService().getTempo() < 400) {
-              changeTempo(1);
-              handler.postDelayed(this, nextRun);
-              if (nextRun > 60) {
-                nextRun = (int) (nextRun * 0.9);
-              }
-            } else {
-              handler.removeCallbacks(runnable);
-              handler = null;
-              nextRun = 400;
+          if (getMetronomeUtil().getTempo() < 400) {
+            changeTempo(1);
+            handler.postDelayed(this, nextRun);
+            if (nextRun > 60) {
+              nextRun = (int) (nextRun * 0.9);
             }
+          } else {
+            handler.removeCallbacks(runnable);
+            handler = null;
+            nextRun = 400;
           }
         }
       };
@@ -379,14 +364,12 @@ public class MainFragment extends BaseFragment
           long averageTempo = 60000 / intervalAverage;
 
           // Überprüfen Sie, ob das Tempo um mehr als 20% geändert wurde
-          if (Math.abs(averageTempo - getMetronomeService().getTempo()) > getMetronomeService().getTempo() * 0.2) {
+          if (Math.abs(averageTempo - getMetronomeUtil().getTempo()) > getMetronomeUtil().getTempo() * 0.2) {
             intervals.clear(); // Zurücksetzen, wenn die Tempoänderung zu groß ist
           }
 
           // Setzen Sie das Tempo und aktualisieren Sie prevTouchTime
-          if (isBoundOrShowWarning()) {
-            setTempo((int) averageTempo);
-          }
+          setTempo((int) averageTempo);
           prevTouchTime = currentTime;
         }
       } else {
@@ -435,9 +418,7 @@ public class MainFragment extends BaseFragment
     cornerSizePlay = UiUtil.dpToPx(activity, large ? 48 : 28);
     cornerSizeCurrent = cornerSizeStop;
 
-    if (isBound()) {
-      onMetronomeServiceConnected();
-    }
+    updateMetronomeControls();
 
     ViewUtil.setTooltipText(binding.buttonMainAddBeat, R.string.action_add_beat);
     ViewUtil.setTooltipText(binding.buttonMainRemoveBeat, R.string.action_remove_beat);
@@ -487,36 +468,36 @@ public class MainFragment extends BaseFragment
     }
   }
 
-  public void onMetronomeServiceConnected() {
+  public void updateMetronomeControls() {
     if (binding == null) {
       return;
     }
-    getMetronomeService().setMetronomeListener(this);
+    getMetronomeUtil().addListener(this);
     optionsUtil.showIfWasShown(savedState);
     savedState = null;
 
-    if (getMetronomeService().isBeatModeVibrate()) {
+    if (getMetronomeUtil().isBeatModeVibrate()) {
       binding.buttonMainBeatMode.setIconResource(
-          getMetronomeService().isAlwaysVibrate()
+          getMetronomeUtil().isAlwaysVibrate()
               ? R.drawable.ic_round_volume_off_to_volume_on_anim
               : R.drawable.ic_round_vibrate_to_volume_anim
       );
     } else {
       binding.buttonMainBeatMode.setIconResource(
-          getMetronomeService().isAlwaysVibrate()
+          getMetronomeUtil().isAlwaysVibrate()
               ? R.drawable.ic_round_volume_on_to_volume_off_anim
               : R.drawable.ic_round_volume_to_vibrate_anim
       );
     }
 
-    updateBeats(getMetronomeService().getBeats());
+    updateBeats(getMetronomeUtil().getBeats());
     updateBeatControls();
-    updateSubs(getMetronomeService().getSubdivisions());
+    updateSubs(getMetronomeUtil().getSubdivisions());
     updateSubControls();
     refreshBookmarks();
     // updateTimerControls is called below in layoutListener
 
-    int tempo = getMetronomeService().getTempo();
+    int tempo = getMetronomeUtil().getTempo();
     setTempo(tempo);
     binding.textSwitcherMainTempoTerm.setCurrentText(getTempoTerm(tempo));
 
@@ -539,30 +520,30 @@ public class MainFragment extends BaseFragment
 
     ViewUtil.resetAnimatedIcon(binding.fabMainPlayStop);
     binding.fabMainPlayStop.setImageResource(
-        getMetronomeService().isPlaying()
+        getMetronomeUtil().isPlaying()
             ? R.drawable.ic_round_stop
             : R.drawable.ic_round_play_arrow
     );
-    updateFabCornerRadius(getMetronomeService().isPlaying(), false);
+    updateFabCornerRadius(getMetronomeUtil().isPlaying(), false);
 
-    UiUtil.keepScreenAwake(activity, keepAwake && getMetronomeService().isPlaying());
+    UiUtil.keepScreenAwake(activity, keepAwake && getMetronomeUtil().isPlaying());
   }
 
   @Override
   public void onMetronomeStart() {
     activity.runOnUiThread(() -> {
       if (!activity.hasNotificationPermission()) {
-        getMetronomeService().stop();
+        getMetronomeUtil().stop();
         return;
       }
       if (binding != null) {
         beatsBgDrawable.reset();
-        if (getMetronomeService().getCountIn() > 0) {
+        if (getMetronomeUtil().getCountIn() > 0) {
           beatsBgDrawable.setProgress(
-              1, getMetronomeService().getCountInInterval(), true
+              1, getMetronomeUtil().getCountInInterval(), true
           );
         }
-        if (getMetronomeService().isTimerActive()) {
+        if (getMetronomeUtil().isTimerActive()) {
           squiggly.setAnimate(true, true);
         }
         binding.fabMainPlayStop.setImageResource(R.drawable.ic_round_play_to_stop_anim);
@@ -582,7 +563,7 @@ public class MainFragment extends BaseFragment
     activity.runOnUiThread(() -> {
       if (binding != null) {
         beatsBgDrawable.setProgressVisible(false, true);
-        if (getMetronomeService().isTimerActive()) {
+        if (getMetronomeUtil().isTimerActive()) {
           squiggly.setAnimate(false, true);
         }
         updateTimerDisplay();
@@ -602,9 +583,6 @@ public class MainFragment extends BaseFragment
 
   @Override
   public void onMetronomePreTick(Tick tick) {
-    if (!isBound()) {
-      return;
-    }
     activity.runOnUiThread(() -> {
       if (binding == null) {
         return;
@@ -615,7 +593,7 @@ public class MainFragment extends BaseFragment
         ((BeatView) beat).beat();
       }
       View subdivision = binding.linearMainSubs.getChildAt(tick.subdivision - 1);
-      if (getMetronomeService().getSubdivisionsUsed() && subdivision instanceof BeatView) {
+      if (getMetronomeUtil().getSubdivisionsUsed() && subdivision instanceof BeatView) {
         ((BeatView) subdivision).setTickType(tick.subdivision == 1 ? TICK_TYPE.MUTED : tick.type);
         ((BeatView) subdivision).beat();
       }
@@ -624,9 +602,6 @@ public class MainFragment extends BaseFragment
 
   @Override
   public void onMetronomeTick(Tick tick) {
-    if (!isBound()) {
-      return;
-    }
     activity.runOnUiThread(() -> {
       if (binding == null) {
         return;
@@ -662,19 +637,19 @@ public class MainFragment extends BaseFragment
         }
       }
       if (tick.subdivision == 1) {
-        logoUtil.nextBeat(getMetronomeService().getInterval());
+        logoUtil.nextBeat(getMetronomeUtil().getInterval());
         updateTimerDisplay();
       }
     });
   }
 
   @Override
-  public void onTempoChanged(int tempoOld, int tempoNew) {
+  public void onMetronomeTempoChanged(int tempoOld, int tempoNew) {
     activity.runOnUiThread(() -> setTempo(tempoOld, tempoNew));
   }
 
   @Override
-  public void onTimerStarted() {
+  public void onMetronomeTimerStarted() {
     stopTimerTransitionProgress();
     stopTimerProgress();
     if (binding == null) {
@@ -683,12 +658,12 @@ public class MainFragment extends BaseFragment
     int current = binding.seekbarMainTimer.getProgress();
     int max = binding.seekbarMainTimer.getMax();
     float currentFraction = current / (float) max;
-    if (!getMetronomeService().equalsTimerProgress(currentFraction)) {
+    if (!getMetronomeUtil().equalsTimerProgress(currentFraction)) {
       // position where the timer will be at animation end
       // only if current progress is not equal to timer progress
       long animDuration = Constants.ANIM_DURATION_LONG;
-      float fraction = (float) animDuration / getMetronomeService().getTimerInterval();
-      fraction += getMetronomeService().getTimerProgress();
+      float fraction = (float) animDuration / getMetronomeUtil().getTimerInterval();
+      fraction += getMetronomeUtil().getTimerProgress();
       progressTransitionAnimator = ValueAnimator.ofFloat(currentFraction, fraction);
       progressTransitionAnimator.addUpdateListener(animation -> {
         if (binding == null) {
@@ -708,26 +683,30 @@ public class MainFragment extends BaseFragment
       progressTransitionAnimator.start();
     }
     updateTimerProgress(
-        1, getMetronomeService().getTimerIntervalRemaining(), true, true
+        1, getMetronomeUtil().getTimerIntervalRemaining(), true, true
     );
+  }
+
+  @Override
+  public void onMetronomeConnectionMissing() {
+    activity.runOnUiThread(() -> showSnackbar(
+        activity.getSnackbar(R.string.msg_connection_lost, Snackbar.LENGTH_SHORT)
+    ));
   }
 
   @Override
   public void onClick(View v) {
     int id = v.getId();
-    if (!isBoundOrShowWarning()) {
-      return;
-    }
     if (id == R.id.button_main_add_beat) {
       ViewUtil.startIcon(binding.buttonMainAddBeat.getIcon());
       performHapticClick();
-      boolean success = getMetronomeService().addBeat();
+      boolean success = getMetronomeUtil().addBeat();
       if (success) {
         BeatView beatView = new BeatView(activity);
         beatView.setIndex(binding.linearMainBeats.getChildCount());
         beatView.setOnClickListener(beat -> {
           performHapticClick();
-          getMetronomeService().setBeat(beatView.getIndex(), beatView.nextTickType());
+          getMetronomeUtil().setBeat(beatView.getIndex(), beatView.nextTickType());
         });
         binding.linearMainBeats.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
@@ -737,7 +716,7 @@ public class MainFragment extends BaseFragment
     } else if (id == R.id.button_main_remove_beat) {
       ViewUtil.startIcon(binding.buttonMainRemoveBeat.getIcon());
       performHapticClick();
-      boolean success = getMetronomeService().removeBeat();
+      boolean success = getMetronomeUtil().removeBeat();
       if (success) {
         binding.linearMainBeats.removeViewAt(binding.linearMainBeats.getChildCount() - 1);
         ViewUtil.centerScrollContentIfNotFullWidth(
@@ -749,14 +728,14 @@ public class MainFragment extends BaseFragment
     } else if (id == R.id.button_main_add_subdivision) {
       ViewUtil.startIcon(binding.buttonMainAddSubdivision.getIcon());
       performHapticClick();
-      boolean success = getMetronomeService().addSubdivision();
+      boolean success = getMetronomeUtil().addSubdivision();
       if (success) {
         BeatView beatView = new BeatView(activity);
         beatView.setIsSubdivision(true);
         beatView.setIndex(binding.linearMainSubs.getChildCount());
         beatView.setOnClickListener(subdivision -> {
           performHapticClick();
-          getMetronomeService().setSubdivision(beatView.getIndex(), beatView.nextTickType());
+          getMetronomeUtil().setSubdivision(beatView.getIndex(), beatView.nextTickType());
         });
         binding.linearMainSubs.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
@@ -766,7 +745,7 @@ public class MainFragment extends BaseFragment
     } else if (id == R.id.button_main_remove_subdivision) {
       ViewUtil.startIcon(binding.buttonMainRemoveSubdivision.getIcon());
       performHapticClick();
-      boolean success = getMetronomeService().removeSubdivision();
+      boolean success = getMetronomeUtil().removeSubdivision();
       if (success) {
         binding.linearMainSubs.removeViewAt(binding.linearMainSubs.getChildCount() - 1);
         ViewUtil.centerScrollContentIfNotFullWidth(
@@ -776,14 +755,14 @@ public class MainFragment extends BaseFragment
         optionsUtil.updateSwing();
       }
     } else if (id == R.id.fab_main_play_stop) {
-      if (getMetronomeService().isPlaying()) {
+      if (getMetronomeUtil().isPlaying()) {
         performHapticClick();
-        getMetronomeService().stop();
+        getMetronomeUtil().stop();
       } else {
-        if (getMetronomeService().getGain() > 0) {
+        if (getMetronomeUtil().getGain() > 0) {
           dialogUtilGain.show();
         } else {
-          getMetronomeService().start();
+          getMetronomeUtil().start();
         }
         performHapticClick();
       }
@@ -794,7 +773,7 @@ public class MainFragment extends BaseFragment
       ViewUtil.startIcon(binding.buttonMainMore.getIcon());
       changeTempo(1);
     } else if (id == R.id.button_main_beat_mode) {
-      boolean beatModeVibrateNew = !getMetronomeService().isBeatModeVibrate();
+      boolean beatModeVibrateNew = !getMetronomeUtil().isBeatModeVibrate();
       if (beatModeVibrateNew && !activity.getHapticUtil().hasVibrator()) {
         showSnackbar(
             activity.getSnackbar(R.string.msg_vibration_unavailable, Snackbar.LENGTH_SHORT)
@@ -804,7 +783,7 @@ public class MainFragment extends BaseFragment
       if (!beatModeVibrateNew) {
         performHapticClick();
       }
-      getMetronomeService().setBeatModeVibrate(beatModeVibrateNew);
+      getMetronomeUtil().setBeatModeVibrate(beatModeVibrateNew);
       if (beatModeVibrateNew) {
         performHapticClick();
       }
@@ -812,13 +791,13 @@ public class MainFragment extends BaseFragment
       new Handler(Looper.getMainLooper()).postDelayed(() -> {
         if (beatModeVibrateNew) {
           binding.buttonMainBeatMode.setIconResource(
-              getMetronomeService().isAlwaysVibrate()
+              getMetronomeUtil().isAlwaysVibrate()
                   ? R.drawable.ic_round_volume_off_to_volume_on_anim
                   : R.drawable.ic_round_vibrate_to_volume_anim
           );
         } else {
           binding.buttonMainBeatMode.setIconResource(
-              getMetronomeService().isAlwaysVibrate()
+              getMetronomeUtil().isAlwaysVibrate()
                   ? R.drawable.ic_round_volume_on_to_volume_off_anim
                   : R.drawable.ic_round_volume_to_vibrate_anim
           );
@@ -827,7 +806,7 @@ public class MainFragment extends BaseFragment
     } else if (id == R.id.button_main_bookmark) {
       ViewUtil.startIcon(binding.buttonMainBookmark.getIcon());
       performHapticClick();
-      int tempo = getMetronomeService().getTempo();
+      int tempo = getMetronomeUtil().getTempo();
       if (bookmarks.size() < Constants.BOOKMARKS_MAX && !bookmarks.contains(tempo)) {
         binding.chipGroupMainBookmarks.addView(getBookmarkChip(tempo));
         bookmarks.add(tempo);
@@ -850,8 +829,8 @@ public class MainFragment extends BaseFragment
       }
     } else if (id == R.id.button_main_options) {
       performHapticClick();
-      if (getMetronomeService().isPlaying()) {
-        getMetronomeService().stop();
+      if (getMetronomeUtil().isPlaying()) {
+        getMetronomeUtil().stop();
       }
       ViewUtil.startIcon(binding.buttonMainOptions.getIcon());
       optionsUtil.update();
@@ -875,7 +854,7 @@ public class MainFragment extends BaseFragment
       beatView.setIndex(i);
       beatView.setOnClickListener(beat -> {
         performHapticClick();
-        getMetronomeService().setBeat(beatView.getIndex(), beatView.nextTickType());
+        getMetronomeUtil().setBeat(beatView.getIndex(), beatView.nextTickType());
       });
       beatView.setReduceAnimations(reduceAnimations);
       binding.linearMainBeats.addView(beatView);
@@ -885,11 +864,9 @@ public class MainFragment extends BaseFragment
   }
 
   private void updateBeatControls() {
-    if (isBound()) {
-      int beats = getMetronomeService().getBeatsCount();
-      binding.buttonMainAddBeat.setEnabled(beats < Constants.BEATS_MAX);
-      binding.buttonMainRemoveBeat.setEnabled(beats > 1);
-    }
+    int beats = getMetronomeUtil().getBeatsCount();
+    binding.buttonMainAddBeat.setEnabled(beats < Constants.BEATS_MAX);
+    binding.buttonMainRemoveBeat.setEnabled(beats > 1);
   }
 
   public void updateSubs(String[] subdivisions) {
@@ -910,7 +887,7 @@ public class MainFragment extends BaseFragment
       if (i > 0) {
         beatView.setOnClickListener(beat -> {
           performHapticClick();
-          getMetronomeService().setSubdivision(beatView.getIndex(), beatView.nextTickType());
+          getMetronomeUtil().setSubdivision(beatView.getIndex(), beatView.nextTickType());
         });
       }
       beatView.setReduceAnimations(reduceAnimations);
@@ -921,22 +898,17 @@ public class MainFragment extends BaseFragment
   }
 
   public void updateSubControls() {
-    if (isBound()) {
-      int subdivisions = getMetronomeService().getSubsCount();
-      binding.buttonMainAddSubdivision.setEnabled(subdivisions < Constants.SUBS_MAX);
-      binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
-      binding.linearMainSubsBg.setVisibility(
-          getMetronomeService().getSubdivisionsUsed() ? View.VISIBLE : View.GONE
-      );
-    }
+    int subdivisions = getMetronomeUtil().getSubdivisionsCount();
+    binding.buttonMainAddSubdivision.setEnabled(subdivisions < Constants.SUBS_MAX);
+    binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
+    binding.linearMainSubsBg.setVisibility(
+        getMetronomeUtil().getSubdivisionsUsed() ? View.VISIBLE : View.GONE
+    );
   }
 
   public void updateTimerControls() {
-    if (!isBound()) {
-      return;
-    }
-    boolean isPlaying = getMetronomeService().isPlaying();
-    boolean isTimerActive = getMetronomeService().isTimerActive();
+    boolean isPlaying = getMetronomeUtil().isPlaying();
+    boolean isTimerActive = getMetronomeUtil().isTimerActive();
     binding.seekbarMainTimer.setVisibility(isTimerActive ? View.VISIBLE : View.GONE);
     if (isTimerActive && isPlaying) {
       squiggly.resumeAnimation();
@@ -947,23 +919,21 @@ public class MainFragment extends BaseFragment
       squiggly.setAnimate(isPlaying, true);
     }
     // Check if timer is currently running
-    long elapsedTime = getMetronomeService().getElapsedTime();
-    elapsedTime -= getMetronomeService().getCountInInterval();
-    long timerIntervalRemaining = getMetronomeService().getTimerIntervalRemaining();
+    long elapsedTime = getMetronomeUtil().getElapsedTime();
+    elapsedTime -= getMetronomeUtil().getCountInInterval();
+    long timerIntervalRemaining = getMetronomeUtil().getTimerIntervalRemaining();
     if (isPlaying && isTimerActive && elapsedTime > 0) {
       updateTimerProgress(1, timerIntervalRemaining, true, true);
     } else {
-      float timerProgress = getMetronomeService().getTimerProgress();
+      float timerProgress = getMetronomeUtil().getTimerProgress();
       updateTimerProgress(timerProgress, 0, false, false);
     }
     updateTimerDisplay();
   }
 
   public void updateTimerDisplay() {
-    if (isBound()) {
-      binding.textMainTimerTotal.setText(getMetronomeService().getTotalTimeString());
-      binding.textMainTimerElapsed.setText(getMetronomeService().getElapsedTimeString());
-    }
+    binding.textMainTimerTotal.setText(getMetronomeUtil().getTotalTimeString());
+    binding.textMainTimerElapsed.setText(getMetronomeUtil().getElapsedTimeString());
   }
 
   private Chip getBookmarkChip(int tempo) {
@@ -1001,17 +971,14 @@ public class MainFragment extends BaseFragment
   }
 
   private void refreshBookmarks() {
-    if (!isBound()) {
-      return;
-    }
-    binding.buttonMainBookmark.setEnabled(!bookmarks.contains(getMetronomeService().getTempo()));
+    binding.buttonMainBookmark.setEnabled(!bookmarks.contains(getMetronomeUtil().getTempo()));
     for (int i = 0; i < binding.chipGroupMainBookmarks.getChildCount(); i++) {
       Chip chip = (Chip) binding.chipGroupMainBookmarks.getChildAt(i);
       if (chip == null) {
         continue;
       }
       Object tag = chip.getTag();
-      boolean isActive = tag != null && ((int) tag) == getMetronomeService().getTempo();
+      boolean isActive = tag != null && ((int) tag) == getMetronomeUtil().getTempo();
       int colorBg = isActive
           ? ResUtil.getColor(activity, R.attr.colorTertiaryContainer)
           : Color.TRANSPARENT;
@@ -1049,10 +1016,7 @@ public class MainFragment extends BaseFragment
   }
 
   private void changeTempo(int difference) {
-    if (!isBound()) {
-      return;
-    }
-    int tempoNew = getMetronomeService().getTempo() + difference;
+    int tempoNew = getMetronomeUtil().getTempo() + difference;
     setTempo(tempoNew);
     if (tempoNew >= Constants.TEMPO_MIN && tempoNew <= Constants.TEMPO_MAX) {
       performHapticTick();
@@ -1060,23 +1024,17 @@ public class MainFragment extends BaseFragment
   }
 
   private void setTempo(int tempo) {
-    if (!isBound()) {
-      return;
-    }
-    setTempo(getMetronomeService().getTempo(), tempo);
+    setTempo(getMetronomeUtil().getTempo(), tempo);
   }
 
   private void setTempo(int tempoOld, int tempoNew) {
-    if (!isBound()) {
-      return;
-    }
-    getMetronomeService().setTempo(
+    getMetronomeUtil().setTempo(
         Math.min(Math.max(tempoNew, Constants.TEMPO_MIN), Constants.TEMPO_MAX)
     );
-    binding.textMainTempo.setText(String.valueOf(getMetronomeService().getTempo()));
+    binding.textMainTempo.setText(String.valueOf(getMetronomeUtil().getTempo()));
     String termNew = getTempoTerm(tempoNew);
     if (!termNew.equals(getTempoTerm(tempoOld))) {
-      boolean isFaster = getMetronomeService().getTempo() > tempoOld;
+      boolean isFaster = getMetronomeUtil().getTempo() > tempoOld;
       binding.textSwitcherMainTempoTerm.setInAnimation(
           activity, isFaster ? R.anim.tempo_term_open_enter : R.anim.tempo_term_close_enter
       );
@@ -1090,23 +1048,18 @@ public class MainFragment extends BaseFragment
   }
 
   private void setButtonStates() {
-    if (isBound()) {
-      int tempo = getMetronomeService().getTempo();
-      binding.buttonMainLess.setEnabled(tempo > 1);
-      binding.buttonMainMore.setEnabled(tempo < Constants.TEMPO_MAX);
-    }
+    int tempo = getMetronomeUtil().getTempo();
+    binding.buttonMainLess.setEnabled(tempo > 1);
+    binding.buttonMainMore.setEnabled(tempo < Constants.TEMPO_MAX);
   }
 
   private void updateTimerProgress(
       float fraction, long duration, boolean animated, boolean linear
   ) {
     stopTimerProgress();
-    if (!isBound()) {
-      return;
-    }
     int max = binding.seekbarMainTimer.getMax();
     if (animated) {
-      float progress = getMetronomeService().getTimerProgress();
+      float progress = getMetronomeUtil().getTimerProgress();
       progressAnimator = ValueAnimator.ofFloat(progress, fraction);
       progressAnimator.addUpdateListener(animation -> {
         if (binding == null || progressTransitionAnimator != null) {
@@ -1174,14 +1127,6 @@ public class MainFragment extends BaseFragment
           binding.fabMainPlayStop.getShapeAppearanceModel().withCornerSize(cornerSizeNew)
       );
     }
-  }
-
-  private boolean isBoundOrShowWarning() {
-    boolean isBound = isBound();
-    if (!isBound) {
-      showSnackbar(activity.getSnackbar(R.string.msg_connection_lost, Snackbar.LENGTH_SHORT));
-    }
-    return isBound;
   }
 
   public void showSnackbar(Snackbar snackbar) {

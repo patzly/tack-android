@@ -6,7 +6,7 @@ import android.view.View.OnClickListener;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.service.MetronomeService;
+import xyz.zedler.patrick.tack.util.MetronomeUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class BaseFragment extends Fragment {
@@ -30,12 +30,8 @@ public class BaseFragment extends Fragment {
     viewUtil.cleanUp();
   }
 
-  public MetronomeService getMetronomeService() {
-    return activity.getMetronomeService();
-  }
-
-  public boolean isBound() {
-    return activity.isBound();
+  public MetronomeUtil getMetronomeUtil() {
+    return activity.getMetronomeUtil();
   }
 
   public SharedPreferences getSharedPrefs() {

@@ -14,16 +14,15 @@ import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.PartialDialogOptionsBinding;
 import xyz.zedler.patrick.tack.databinding.PartialOptionsBinding;
 import xyz.zedler.patrick.tack.fragment.MainFragment;
-import xyz.zedler.patrick.tack.service.MetronomeService;
 
 public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
 
   private final MainActivity activity;
   private final MainFragment fragment;
+  private final PartialOptionsBinding binding;
   private final boolean useDialog;
   private DialogUtil dialogUtil;
   private PartialDialogOptionsBinding bindingDialog;
-  private final PartialOptionsBinding binding;
 
   public OptionsUtil(MainActivity activity, MainFragment fragment) {
     this.activity = activity;
@@ -35,11 +34,6 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
       dialogUtil = new DialogUtil(activity, "options");
     }
     binding = useDialog ? bindingDialog.partialOptions : fragment.getBinding().partialOptions;
-
-    setUpCountIn();
-    setUpIncremental();
-    setUpTimer();
-    setUpSwing();
 
     if (useDialog) {
       dialogUtil.createCloseCustom(R.string.title_options, bindingDialog.getRoot());
@@ -82,25 +76,20 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     updateSwing();
   }
 
-  private void setUpCountIn() {
+  private void updateCountIn() {
+    int countIn = getMetronomeUtil().getCountIn();
+    binding.sliderOptionsCountIn.removeOnChangeListener(this);
+    binding.sliderOptionsCountIn.setValue(countIn);
     binding.sliderOptionsCountIn.addOnChangeListener(this);
     binding.sliderOptionsCountIn.setLabelFormatter(
         value -> activity.getResources().getQuantityString(
             R.plurals.options_unit_bars, (int) value, (int) value
         )
     );
-  }
-
-  private void updateCountIn() {
-    if (!isBound()) {
-      return;
-    }
-    int countIn = getMetronomeService().getCountIn();
-    binding.sliderOptionsCountIn.setValue(countIn);
     String barsQuantity = activity.getResources().getQuantityString(
         R.plurals.options_unit_bars, countIn, countIn
     );
-    if (getMetronomeService().isCountInActive()) {
+    if (getMetronomeUtil().isCountInActive()) {
       binding.textOptionsCountIn.setText(
           activity.getString(R.string.options_count_in_description, barsQuantity)
       );
@@ -109,23 +98,10 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     }
   }
 
-  private void setUpIncremental() {
-    binding.sliderOptionsIncrementalAmount.addOnChangeListener(this);
-    binding.sliderOptionsIncrementalAmount.setLabelFormatter(
-        value -> activity.getString(R.string.label_bpm_value, (int) value)
-    );
-    binding.toggleOptionsIncrementalDirection.addOnButtonCheckedListener(this);
-    binding.sliderOptionsIncrementalInterval.addOnChangeListener(this);
-    binding.toggleOptionsIncrementalUnit.addOnButtonCheckedListener(this);
-  }
-
   private void updateIncremental() {
-    if (!isBound()) {
-      return;
-    }
-    int incrementalAmount = getMetronomeService().getIncrementalAmount();
-    boolean incrementalIncrease = getMetronomeService().getIncrementalIncrease();
-    boolean isIncrementalActive = getMetronomeService().isIncrementalActive();
+    int incrementalAmount = getMetronomeUtil().getIncrementalAmount();
+    boolean incrementalIncrease = getMetronomeUtil().getIncrementalIncrease();
+    boolean isIncrementalActive = getMetronomeUtil().isIncrementalActive();
     if (isIncrementalActive) {
       binding.textOptionsIncrementalAmount.setText(activity.getString(
           incrementalIncrease
@@ -136,7 +112,13 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     } else {
       binding.textOptionsIncrementalAmount.setText(activity.getString(R.string.options_inactive));
     }
+
+    binding.sliderOptionsIncrementalAmount.removeOnChangeListener(this);
     binding.sliderOptionsIncrementalAmount.setValue(incrementalAmount);
+    binding.sliderOptionsIncrementalAmount.addOnChangeListener(this);
+    binding.sliderOptionsIncrementalAmount.setLabelFormatter(
+        value -> activity.getString(R.string.label_bpm_value, (int) value)
+    );
 
     boolean visibleControls = isIncrementalActive || !useDialog;
     binding.linearMainIncrementalContainer.setVisibility(
@@ -152,8 +134,8 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     binding.toggleOptionsIncrementalDirection.addOnButtonCheckedListener(this);
     binding.toggleOptionsIncrementalDirection.setEnabled(isIncrementalActive);
 
-    int incrementalInterval = getMetronomeService().getIncrementalInterval();
-    String incrementalUnit = getMetronomeService().getIncrementalUnit();
+    int incrementalInterval = getMetronomeUtil().getIncrementalInterval();
+    String incrementalUnit = getMetronomeUtil().getIncrementalUnit();
     int unitResId, checkedId;
     switch (incrementalUnit) {
       case UNIT.SECONDS:
@@ -176,7 +158,10 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
         activity.getString(R.string.options_incremental_interval, unitQuantity)
     );
     binding.textOptionsIncrementalInterval.setAlpha(isIncrementalActive ? 1 : 0.5f);
+
+    binding.sliderOptionsIncrementalInterval.removeOnChangeListener(this);
     binding.sliderOptionsIncrementalInterval.setValue(incrementalInterval);
+    binding.sliderOptionsIncrementalInterval.addOnChangeListener(this);
     binding.sliderOptionsIncrementalInterval.setLabelFormatter(value -> {
       int resId;
       switch (incrementalUnit) {
@@ -204,18 +189,10 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     updateTimer();
   }
 
-  private void setUpTimer() {
-    binding.sliderOptionsTimerDuration.addOnChangeListener(this);
-    binding.toggleOptionsTimerUnit.addOnButtonCheckedListener(this);
-  }
-
   private void updateTimer() {
-    if (!isBound()) {
-      return;
-    }
-    int timerDuration = getMetronomeService().getTimerDuration();
-    boolean isTimerActive = getMetronomeService().isTimerActive();
-    String timerUnit = getMetronomeService().getTimerUnit();
+    int timerDuration = getMetronomeUtil().getTimerDuration();
+    boolean isTimerActive = getMetronomeUtil().isTimerActive();
+    String timerUnit = getMetronomeUtil().getTimerUnit();
     int unitResId, checkedId;
     switch (timerUnit) {
       case UNIT.SECONDS:
@@ -241,7 +218,10 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     } else {
       binding.textOptionsTimerDuration.setText(activity.getString(R.string.options_inactive));
     }
+
+    binding.sliderOptionsTimerDuration.removeOnChangeListener(this);
     binding.sliderOptionsTimerDuration.setValue(timerDuration);
+    binding.sliderOptionsTimerDuration.addOnChangeListener(this);
     binding.sliderOptionsTimerDuration.setLabelFormatter(value -> {
       int resId;
       switch (timerUnit) {
@@ -272,18 +252,18 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     // Bars unit not supported for timer in connection with incremental tempo change!
     // On tempo changes with units different to bars, beats would not start at bar start
     // Disable bars unit button for timer
-    boolean isIncrementalActive = getMetronomeService().isIncrementalActive();
+    boolean isIncrementalActive = getMetronomeUtil().isIncrementalActive();
     boolean convertToNonBarUnit = timerUnit.equals(UNIT.BARS) && isIncrementalActive;
     binding.buttonOptionsTimerUnitBars.setEnabled(isTimerActive && !isIncrementalActive);
     if (convertToNonBarUnit) {
-      long timerInterval = getMetronomeService().getTimerInterval();
+      long timerInterval = getMetronomeUtil().getTimerInterval();
       int intervalSeconds = (int) (timerInterval / 1000);
       if (intervalSeconds > binding.sliderOptionsTimerDuration.getValueTo()) {
-        getMetronomeService().setTimerUnit(UNIT.MINUTES);
-        getMetronomeService().setTimerDuration(intervalSeconds / 60);
+        getMetronomeUtil().setTimerUnit(UNIT.MINUTES);
+        getMetronomeUtil().setTimerDuration(intervalSeconds / 60);
       } else {
-        getMetronomeService().setTimerUnit(UNIT.SECONDS);
-        getMetronomeService().setTimerDuration(intervalSeconds);
+        getMetronomeUtil().setTimerUnit(UNIT.SECONDS);
+        getMetronomeUtil().setTimerDuration(intervalSeconds);
       }
       updateTimer();
     }
@@ -292,25 +272,18 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     );
   }
 
-  private void setUpSwing() {
-    binding.toggleOptionsSwing.addOnButtonCheckedListener(this);
-  }
-
   public void updateSwing() {
-    if (!isBound()) {
-      return;
-    }
     binding.textOptionsSwing.setText(activity.getString(
-        getMetronomeService().isSwingActive()
+        getMetronomeUtil().isSwingActive()
             ? R.string.options_swing_description
             : R.string.options_inactive
     ));
     binding.toggleOptionsSwing.removeOnButtonCheckedListener(this);
-    if (getMetronomeService().isSwing3()) {
+    if (getMetronomeUtil().isSwing3()) {
       binding.toggleOptionsSwing.check(R.id.button_options_swing_3);
-    } else if (getMetronomeService().isSwing5()) {
+    } else if (getMetronomeUtil().isSwing5()) {
       binding.toggleOptionsSwing.check(R.id.button_options_swing_5);
-    } else if (getMetronomeService().isSwing7()) {
+    } else if (getMetronomeUtil().isSwing7()) {
       binding.toggleOptionsSwing.check(R.id.button_options_swing_7);
     } else {
       binding.toggleOptionsSwing.clearChecked();
@@ -326,72 +299,68 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     activity.performHapticClick();
     int groupId = group.getId();
     if (groupId == R.id.toggle_options_incremental_direction) {
-      getMetronomeService().setIncrementalIncrease(
+      getMetronomeUtil().setIncrementalIncrease(
           checkedId == R.id.button_options_incremental_increase
       );
       updateIncremental();
     } else if (groupId == R.id.toggle_options_incremental_unit) {
       if (checkedId == R.id.button_options_incremental_unit_bars) {
-        getMetronomeService().setIncrementalUnit(UNIT.BARS);
+        getMetronomeUtil().setIncrementalUnit(UNIT.BARS);
       } else if (checkedId == R.id.button_options_incremental_unit_seconds) {
-        getMetronomeService().setIncrementalUnit(UNIT.SECONDS);
+        getMetronomeUtil().setIncrementalUnit(UNIT.SECONDS);
       } else if (checkedId == R.id.button_options_incremental_unit_minutes) {
-        getMetronomeService().setIncrementalUnit(UNIT.MINUTES);
+        getMetronomeUtil().setIncrementalUnit(UNIT.MINUTES);
       }
       updateIncremental();
     } else if (groupId == R.id.toggle_options_timer_unit) {
       if (checkedId == R.id.button_options_timer_unit_bars) {
-        getMetronomeService().setTimerUnit(UNIT.BARS);
+        getMetronomeUtil().setTimerUnit(UNIT.BARS);
       } else if (checkedId == R.id.button_options_timer_unit_seconds) {
-        getMetronomeService().setTimerUnit(UNIT.SECONDS);
+        getMetronomeUtil().setTimerUnit(UNIT.SECONDS);
       } else if (checkedId == R.id.button_options_timer_unit_minutes) {
-        getMetronomeService().setTimerUnit(UNIT.MINUTES);
+        getMetronomeUtil().setTimerUnit(UNIT.MINUTES);
       }
       updateTimer();
       fragment.updateTimerDisplay();
     } else if (groupId == R.id.toggle_options_swing) {
       if (checkedId == R.id.button_options_swing_3) {
-        getMetronomeService().setSwing3();
+        getMetronomeUtil().setSwing3();
       } else if (checkedId == R.id.button_options_swing_5) {
-        getMetronomeService().setSwing5();
+        getMetronomeUtil().setSwing5();
       } else if (checkedId == R.id.button_options_swing_7) {
-        getMetronomeService().setSwing7();
+        getMetronomeUtil().setSwing7();
       }
       updateSwing();
-      getMetronomeService().setSubdivisionsUsed(true);
-      fragment.updateSubs(getMetronomeService().getSubdivisions());
+      getMetronomeUtil().setSubdivisionsUsed(true);
+      fragment.updateSubs(getMetronomeUtil().getSubdivisions());
       fragment.updateSubControls();
     }
   }
 
   @Override
   public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-    if (!fromUser || !isBound()) {
+    if (!fromUser) {
       return;
     }
     activity.performHapticTick();
     int id = slider.getId();
     if (id == R.id.slider_options_count_in) {
-      getMetronomeService().setCountIn((int) value);
+      getMetronomeUtil().setCountIn((int) value);
       updateCountIn();
     } else if (id == R.id.slider_options_incremental_amount) {
-      getMetronomeService().setIncrementalAmount((int) value);
+      getMetronomeUtil().setIncrementalAmount((int) value);
       updateIncremental();
     } else if (id == R.id.slider_options_incremental_interval) {
-      getMetronomeService().setIncrementalInterval((int) value);
+      getMetronomeUtil().setIncrementalInterval((int) value);
       updateIncremental();
     } else if (id == R.id.slider_options_timer_duration) {
-      getMetronomeService().setTimerDuration((int) value);
+      getMetronomeUtil().setTimerDuration((int) value);
       updateTimer();
       fragment.updateTimerControls();
     }
   }
 
-  private MetronomeService getMetronomeService() {
-    return activity.getMetronomeService();
-  }
-
-  private boolean isBound() {
-    return activity.isBound();
+  private MetronomeUtil getMetronomeUtil() {
+    return activity.getMetronomeUtil();
   }
 }

@@ -28,7 +28,9 @@ import androidx.navigation.NavDirections;
 import androidx.navigation.NavOptions;
 import androidx.navigation.fragment.NavHostFragment;
 import com.google.android.material.snackbar.Snackbar;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 import xyz.zedler.patrick.tack.BuildConfig;
 import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
@@ -39,10 +41,13 @@ import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
 import xyz.zedler.patrick.tack.fragment.BaseFragment;
 import xyz.zedler.patrick.tack.fragment.MainFragment;
+import xyz.zedler.patrick.tack.fragment.SettingsFragment;
 import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.service.MetronomeService.LocalBinder;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
+import xyz.zedler.patrick.tack.util.MetronomeUtil;
+import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.PrefsUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
@@ -56,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   private NavHostFragment navHost;
   private SharedPreferences sharedPrefs;
   private HapticUtil hapticUtil;
+  private MetronomeUtil metronomeUtil;
   private Locale locale;
   private MetronomeService metronomeService;
   private boolean runAsSuperClass, bound;
@@ -131,6 +137,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
       }
     });
 
+    updateMetronomeUtil();
+
     if (savedInstanceState == null && bundleInstanceState == null) {
       new Handler(Looper.getMainLooper()).postDelayed(
           this::showInitialBottomSheets, VERSION.SDK_INT >= 31 ? 950 : 0
@@ -145,11 +153,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     if (!runAsSuperClass) {
       binding = null;
       // metronome should be stopped when app is removed from recent apps
-      if (bound) {
-        metronomeService.stop();
-      } else {
-        sendBroadcast(new Intent(ACTION.STOP));
-      }
+      metronomeUtil.stop();
+      sendBroadcast(new Intent(ACTION.STOP));
     }
   }
 
@@ -221,10 +226,13 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     LocalBinder binder = (LocalBinder) iBinder;
     metronomeService = binder.getService();
     bound = metronomeService != null;
+    updateMetronomeUtil();
     if (bound) {
       BaseFragment current = getCurrentFragment();
       if (current instanceof MainFragment) {
-        ((MainFragment) current).onMetronomeServiceConnected();
+        ((MainFragment) current).updateMetronomeControls();
+      } else if (current instanceof SettingsFragment) {
+        ((SettingsFragment) current).updateMetronomeSettings();
       }
     }
   }
@@ -233,14 +241,22 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   public void onServiceDisconnected(ComponentName componentName) {
     metronomeService = null;
     bound = false;
+    updateMetronomeUtil();
   }
 
-  public MetronomeService getMetronomeService() {
-    return metronomeService;
+  public MetronomeUtil getMetronomeUtil() {
+    return metronomeUtil;
   }
 
-  public boolean isBound() {
-    return bound;
+  private void updateMetronomeUtil() {
+    Set<MetronomeListener> listeners = new HashSet<>();
+    if (metronomeUtil != null) {
+      listeners.addAll(metronomeUtil.getListeners());
+      metronomeUtil.destroy();
+      metronomeUtil = null;
+    }
+    metronomeUtil = bound ? metronomeService.getMetronomeUtil() : new MetronomeUtil(this);
+    metronomeUtil.addListeners(listeners);
   }
 
   public boolean hasNotificationPermission() {
@@ -374,10 +390,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     }
   }
 
-  public void showTextBottomSheet(@RawRes int file, @StringRes int title) {
-    showTextBottomSheet(file, title, 0);
-  }
-
   public void showTextBottomSheet(@RawRes int file, @StringRes int title, @StringRes int link) {
     NavMainDirections.ActionGlobalTextDialog action
         = NavMainDirections.actionGlobalTextDialog();
@@ -425,6 +437,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   }
 
   private boolean areHapticsAllowed() {
-    return !bound || metronomeService.areHapticEffectsPossible();
+    return metronomeUtil.areHapticEffectsPossible();
   }
 }
