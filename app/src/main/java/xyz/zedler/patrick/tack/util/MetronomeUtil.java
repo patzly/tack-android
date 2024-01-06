@@ -60,19 +60,7 @@ public class MetronomeUtil {
     hapticUtil = new HapticUtil(context);
     shortcutUtil = new ShortcutUtil(context);
 
-    if (fromService) {
-      audioThread = new HandlerThread("metronome_audio");
-      audioThread.start();
-      callbackThread = new HandlerThread("metronome_callback");
-      callbackThread.start();
-
-      tickHandler = new Handler(audioThread.getLooper());
-      latencyHandler = new Handler(callbackThread.getLooper());
-      countInHandler = new Handler(callbackThread.getLooper());
-      incrementalHandler = new Handler(callbackThread.getLooper());
-      timerHandler = new Handler(callbackThread.getLooper());
-    }
-
+    resetHandlersIfRequired();
     setToPreferences();
   }
 
@@ -97,6 +85,34 @@ public class MetronomeUtil {
 
     setSound(sharedPrefs.getString(PREF.SOUND, DEF.SOUND));
     setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
+  }
+
+  private void resetHandlersIfRequired() {
+    if (!fromService) {
+      return;
+    }
+    if (audioThread == null || !audioThread.isAlive()) {
+      audioThread = new HandlerThread("metronome_audio");
+      audioThread.start();
+      if (tickHandler != null) {
+        tickHandler.removeCallbacksAndMessages(null);
+      }
+      tickHandler = new Handler(audioThread.getLooper());
+    }
+    if (callbackThread == null || !callbackThread.isAlive()) {
+      callbackThread = new HandlerThread("metronome_callback");
+      callbackThread.start();
+      if (latencyHandler != null) {
+        latencyHandler.removeCallbacksAndMessages(null);
+        countInHandler.removeCallbacksAndMessages(null);
+        incrementalHandler.removeCallbacksAndMessages(null);
+        timerHandler.removeCallbacksAndMessages(null);
+      }
+      latencyHandler = new Handler(callbackThread.getLooper());
+      countInHandler = new Handler(callbackThread.getLooper());
+      incrementalHandler = new Handler(callbackThread.getLooper());
+      timerHandler = new Handler(callbackThread.getLooper());
+    }
   }
 
   public void savePlayingState() {
@@ -171,14 +187,7 @@ public class MetronomeUtil {
       }
       return;
     } else {
-      if (!audioThread.isAlive()) {
-        audioThread = new HandlerThread("metronome_audio");
-        audioThread.start();
-      }
-      if (!callbackThread.isAlive()) {
-        callbackThread = new HandlerThread("metronome_callback");
-        callbackThread.start();
-      }
+      resetHandlersIfRequired();
     }
 
     playing = true;
