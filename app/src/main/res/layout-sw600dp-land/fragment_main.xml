@@ -262,7 +262,7 @@
 
             <TextView
               android:id="@+id/text_main_timer_elapsed"
-              style="@style/Widget.Tack.TextView.BodyMedium"
+              style="@style/Widget.Tack.TextView.TitleMedium"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="start"
@@ -271,7 +271,7 @@
 
             <TextView
               android:id="@+id/text_main_elapsed_time"
-              style="@style/Widget.Tack.TextView.BodyMedium"
+              style="@style/Widget.Tack.TextView.TitleMedium"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="center_horizontal"
@@ -281,7 +281,7 @@
 
             <TextView
               android:id="@+id/text_main_timer_total"
-              style="@style/Widget.Tack.TextView.BodyMedium"
+              style="@style/Widget.Tack.TextView.TitleMedium"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="end"

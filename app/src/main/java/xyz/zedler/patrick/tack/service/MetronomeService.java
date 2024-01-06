@@ -35,9 +35,8 @@ public class MetronomeService extends Service implements MetronomeListener {
     super.onCreate();
 
     notificationUtil = new NotificationUtil(this);
-    metronomeUtil = new MetronomeUtil(this);
+    metronomeUtil = new MetronomeUtil(this, true);
     metronomeUtil.addListener(this);
-    metronomeUtil.setFromService(true);
 
     stopReceiver = new StopReceiver();
     ContextCompat.registerReceiver(

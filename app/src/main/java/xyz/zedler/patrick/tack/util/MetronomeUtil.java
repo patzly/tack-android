@@ -40,6 +40,7 @@ public class MetronomeUtil {
   private final Runnable runnableTick;
   private final Set<MetronomeListener> listeners = new HashSet<>();
   private final float[] silence = AudioUtil.getSilence();
+  private final boolean fromService;
   private AudioTrack track;
   private LoudnessEnhancer loudnessEnhancer;
   private String incrementalUnit, timerUnit;
@@ -48,11 +49,12 @@ public class MetronomeUtil {
   private long tickIndex, latency, startTime, timerStartTime;
   private float timerProgress;
   private float[] tickStrong, tickNormal, tickSub;
-  private boolean playing, tempPlaying, fromService, useSubdivisions, beatModeVibrate;
+  private boolean playing, tempPlaying, useSubdivisions, beatModeVibrate;
   private boolean alwaysVibrate, incrementalIncrease, resetTimer, flashScreen, keepAwake;
 
-  public MetronomeUtil(@NonNull Context context) {
+  public MetronomeUtil(@NonNull Context context, boolean fromService) {
     this.context = context;
+    this.fromService = fromService;
 
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
@@ -161,10 +163,6 @@ public class MetronomeUtil {
 
   public Set<MetronomeListener> getListeners() {
     return Collections.unmodifiableSet(listeners);
-  }
-
-  public void setFromService(boolean fromService) {
-    this.fromService = fromService;
   }
 
   public void start() {

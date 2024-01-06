@@ -255,7 +255,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
       metronomeUtil.destroy();
       metronomeUtil = null;
     }
-    metronomeUtil = bound ? metronomeService.getMetronomeUtil() : new MetronomeUtil(this);
+    metronomeUtil = bound
+        ? metronomeService.getMetronomeUtil()
+        : new MetronomeUtil(this, false);
     metronomeUtil.addListeners(listeners);
   }
 
