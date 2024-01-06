@@ -382,6 +382,9 @@ public class SettingsFragment extends BaseFragment
   public void onMetronomeTimerStarted() {}
 
   @Override
+  public void onTimerElapsedTimeSecondsChanged() {}
+
+  @Override
   public void onMetronomeConnectionMissing() {
     activity.showSnackbar(R.string.msg_connection_lost);
   }

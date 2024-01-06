@@ -39,6 +39,7 @@ import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
+import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
@@ -195,9 +196,9 @@ public class MainFragment extends BaseFragment
         int timerPositionNew = (int) (fraction * positions);
         if (timerPositionCurrent != timerPositionNew) {
           performHapticTick();
-          updateTimerDisplay();
         }
         getMetronomeUtil().updateTimerHandler(fraction);
+        updateTimerDisplay();
       }
 
       @Override
@@ -620,25 +621,21 @@ public class MainFragment extends BaseFragment
             color = colorFlashNormal;
             break;
         }
-        if (isLandTablet && binding.containerMainEnd != null) {
-          binding.containerMainEnd.setBackgroundColor(color);
-          binding.containerMainEnd.postDelayed(() -> {
-            if (binding != null) {
-              binding.containerMainEnd.setBackgroundColor(colorFlashMuted);
-            }
-          }, 100); // flash screen for 100 milliseconds
-        } else {
-          binding.coordinatorContainer.setBackgroundColor(color);
-          binding.coordinatorContainer.postDelayed(() -> {
-            if (binding != null) {
-              binding.coordinatorContainer.setBackgroundColor(colorFlashMuted);
-            }
-          }, 100); // flash screen for 100 milliseconds
-        }
+        View flashContainer = isLandTablet && binding.containerMainEnd != null
+            ? binding.containerMainEnd
+            : binding.coordinatorContainer;
+        flashContainer.setBackgroundColor(color);
+        flashContainer.postDelayed(() -> {
+          if (binding != null) {
+            flashContainer.setBackgroundColor(colorFlashMuted);
+          }
+        }, 100); // flash screen for 100 milliseconds
       }
       if (tick.subdivision == 1) {
         logoUtil.nextBeat(getMetronomeUtil().getInterval());
-        updateTimerDisplay();
+        if (getMetronomeUtil().getTimerUnit().equals(UNIT.BARS)) {
+          updateTimerDisplay();
+        }
       }
     });
   }
@@ -685,6 +682,11 @@ public class MainFragment extends BaseFragment
     updateTimerProgress(
         1, getMetronomeUtil().getTimerIntervalRemaining(), true, true
     );
+  }
+
+  @Override
+  public void onTimerElapsedTimeSecondsChanged() {
+    activity.runOnUiThread(this::updateTimerDisplay);
   }
 
   @Override

@@ -34,13 +34,12 @@ public class MetronomeUtil {
   private final SharedPreferences sharedPrefs;
   private final HapticUtil hapticUtil;
   private final ShortcutUtil shortcutUtil;
-  private final HandlerThread audioThread, callbackThread;
-  private final Handler tickHandler, latencyHandler;
-  private final Handler countInHandler, incrementalHandler, timerHandler;
-  private final Runnable runnableTick;
   private final Set<MetronomeListener> listeners = new HashSet<>();
   private final float[] silence = AudioUtil.getSilence();
   private final boolean fromService;
+  private HandlerThread audioThread, callbackThread;
+  private Handler tickHandler, latencyHandler;
+  private Handler countInHandler, incrementalHandler, timerHandler;
   private AudioTrack track;
   private LoudnessEnhancer loudnessEnhancer;
   private String incrementalUnit, timerUnit;
@@ -61,31 +60,18 @@ public class MetronomeUtil {
     hapticUtil = new HapticUtil(context);
     shortcutUtil = new ShortcutUtil(context);
 
-    audioThread = new HandlerThread("metronome_audio");
-    audioThread.start();
-    callbackThread = new HandlerThread("metronome_callback");
-    callbackThread.start();
+    if (fromService) {
+      audioThread = new HandlerThread("metronome_audio");
+      audioThread.start();
+      callbackThread = new HandlerThread("metronome_callback");
+      callbackThread.start();
 
-    tickHandler = new Handler(audioThread.getLooper());
-    latencyHandler = new Handler(callbackThread.getLooper());
-    countInHandler = new Handler(callbackThread.getLooper());
-    incrementalHandler = new Handler(callbackThread.getLooper());
-    timerHandler = new Handler(callbackThread.getLooper());
-
-    runnableTick = new Runnable() {
-      @Override
-      public void run() {
-        if (playing) {
-          tickHandler.postDelayed(this, getInterval() / getSubdivisionsCount());
-          Tick tick = new Tick(
-              tickIndex, getCurrentBeat(), getCurrentSubdivision(), getCurrentTickType()
-          );
-          performTick(tick);
-          writeTickPeriod(tick);
-          tickIndex++;
-        }
-      }
-    };
+      tickHandler = new Handler(audioThread.getLooper());
+      latencyHandler = new Handler(callbackThread.getLooper());
+      countInHandler = new Handler(callbackThread.getLooper());
+      incrementalHandler = new Handler(callbackThread.getLooper());
+      timerHandler = new Handler(callbackThread.getLooper());
+    }
 
     setToPreferences();
   }
@@ -140,13 +126,15 @@ public class MetronomeUtil {
 
   public void destroy() {
     listeners.clear();
-    tickHandler.removeCallbacksAndMessages(null);
-    latencyHandler.removeCallbacksAndMessages(null);
-    countInHandler.removeCallbacksAndMessages(null);
-    incrementalHandler.removeCallbacksAndMessages(null);
-    timerHandler.removeCallbacksAndMessages(null);
-    audioThread.quit();
-    callbackThread.quit();
+    if (fromService) {
+      tickHandler.removeCallbacksAndMessages(null);
+      latencyHandler.removeCallbacksAndMessages(null);
+      countInHandler.removeCallbacksAndMessages(null);
+      incrementalHandler.removeCallbacksAndMessages(null);
+      timerHandler.removeCallbacksAndMessages(null);
+      audioThread.quit();
+      callbackThread.quit();
+    }
   }
 
   public void addListener(MetronomeListener listener) {
@@ -182,14 +170,37 @@ public class MetronomeUtil {
         listener.onMetronomeConnectionMissing();
       }
       return;
+    } else {
+      if (!audioThread.isAlive()) {
+        audioThread = new HandlerThread("metronome_audio");
+        audioThread.start();
+      }
+      if (!callbackThread.isAlive()) {
+        callbackThread = new HandlerThread("metronome_callback");
+        callbackThread.start();
+      }
     }
+
     playing = true;
     track = AudioUtil.getNewAudioTrack();
     loudnessEnhancer = new LoudnessEnhancer(track.getAudioSessionId());
     setGain(gain);
     track.play();
     tickIndex = 0;
-    tickHandler.post(runnableTick);
+    tickHandler.post(new Runnable() {
+      @Override
+      public void run() {
+        if (playing) {
+          tickHandler.postDelayed(this, getInterval() / getSubdivisionsCount());
+          Tick tick = new Tick(
+              tickIndex, getCurrentBeat(), getCurrentSubdivision(), getCurrentTickType()
+          );
+          performTick(tick);
+          writeTickPeriod(tick);
+          tickIndex++;
+        }
+      }
+    });
 
     // Timer
     startTime = System.currentTimeMillis();
@@ -216,11 +227,13 @@ public class MetronomeUtil {
     track.flush();
     track.release();
 
-    tickHandler.removeCallbacksAndMessages(null);
-    latencyHandler.removeCallbacksAndMessages(null);
-    countInHandler.removeCallbacksAndMessages(null);
-    incrementalHandler.removeCallbacksAndMessages(null);
-    timerHandler.removeCallbacksAndMessages(null);
+    if (fromService) {
+      tickHandler.removeCallbacksAndMessages(null);
+      latencyHandler.removeCallbacksAndMessages(null);
+      countInHandler.removeCallbacksAndMessages(null);
+      incrementalHandler.removeCallbacksAndMessages(null);
+      timerHandler.removeCallbacksAndMessages(null);
+    }
 
     for (MetronomeListener listener : listeners) {
       listener.onMetronomeStop();
@@ -568,7 +581,7 @@ public class MetronomeUtil {
   }
 
   private void updateIncrementalHandler() {
-    if (!isPlaying()) {
+    if (!fromService || !isPlaying()) {
       return;
     }
     incrementalHandler.removeCallbacksAndMessages(null);
@@ -677,7 +690,7 @@ public class MetronomeUtil {
   }
 
   public void updateTimerHandler() {
-    if (!isPlaying()) {
+    if (!fromService || !isPlaying()) {
       return;
     }
     timerHandler.removeCallbacksAndMessages(null);
@@ -698,6 +711,19 @@ public class MetronomeUtil {
       timerHandler.postDelayed(
           () -> new Handler(Looper.getMainLooper()).post(this::stop), getTimerIntervalRemaining()
       );
+      if (!timerUnit.equals(UNIT.BARS)) {
+        timerHandler.post(new Runnable() {
+          @Override
+          public void run() {
+            if (playing && !timerUnit.equals(UNIT.BARS)) {
+              timerHandler.postDelayed(this, 1000);
+              for (MetronomeListener listener : listeners) {
+                listener.onTimerElapsedTimeSecondsChanged();
+              }
+            }
+          }
+        });
+      }
     }
   }
 
@@ -712,17 +738,17 @@ public class MetronomeUtil {
     long progressInterval = (long) (getTimerProgress() * getTimerInterval());
     switch (timerUnit) {
       case UNIT.SECONDS:
-        int seconds = (int) (progressInterval / 1000);
-        return "00:" + String.format(Locale.ENGLISH, "%02d", seconds);
       case UNIT.MINUTES:
-        return timerDuration + ":00";
+        int seconds = (int) (progressInterval / 1000);
+        int minutes = seconds / 60;
+        return String.format(Locale.ENGLISH, "%02d:%02d", minutes, seconds % 60);
       default:
         long barInterval = getInterval() * getBeatsCount();
-        int progressBarCount = (int) (progressInterval / barInterval);
+        int progressBarCount = Math.min((int) (progressInterval / barInterval), timerDuration - 1);
 
         long progressIntervalFullBars = progressBarCount * barInterval;
         long remaining = progressInterval - progressIntervalFullBars;
-        int beatCount = (int) (remaining / getInterval());
+        int beatCount = Math.min((int) (remaining / getInterval()), getBeatsCount() - 1);
 
         String format = getBeatsCount() < 10 ? "%d.%01d" : "%d.%02d";
         return String.format(Locale.ENGLISH, format, progressBarCount + 1, beatCount + 1);
@@ -853,6 +879,7 @@ public class MetronomeUtil {
     void onMetronomeTick(Tick tick);
     void onMetronomeTempoChanged(int tempoOld, int tempoNew);
     void onMetronomeTimerStarted();
+    void onTimerElapsedTimeSecondsChanged();
     void onMetronomeConnectionMissing();
   }
 
