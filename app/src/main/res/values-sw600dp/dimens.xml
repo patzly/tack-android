@@ -7,6 +7,7 @@
   <dimen name="bpm_text_size">64dp</dimen>
   <dimen name="label_text_size">27dp</dimen>
 
+  <dimen name="control_spacing">24dp</dimen>
   <dimen name="control_margin_bottom">80dp</dimen>
 
 </resources>

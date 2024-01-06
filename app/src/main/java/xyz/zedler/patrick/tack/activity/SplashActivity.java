@@ -104,7 +104,9 @@ public class SplashActivity extends MainActivity {
         try {
           assert splashContent != null;
           ViewUtil.startIcon(splashContent.findDrawableByLayerId(R.id.splash_logo));
-          new Handler(Looper.getMainLooper()).postDelayed(this::startNewMainActivity, 900);
+          new Handler(Looper.getMainLooper()).postDelayed(
+              this::startNewMainActivity, 900
+          );
         } catch (Exception e) {
           startNewMainActivity();
         }

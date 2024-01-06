@@ -134,7 +134,9 @@ public class SystemBarBehavior {
         return insets;
       });
     } else {
-      if (UiUtil.isNavigationModeGesture(activity) && hasContainer()) {
+      if ((UiUtil.isNavigationModeGesture(activity) || UiUtil.isLandTablet(activity))
+          && hasContainer()
+      ) {
         View container = hasScrollView ? scrollContent : this.container;
         ViewCompat.setOnApplyWindowInsetsListener(container, (v, insets) -> {
           int paddingBottom = hasScrollView
@@ -219,6 +221,7 @@ public class SystemBarBehavior {
 
   private void updateSystemBars() {
     boolean isOrientationPortrait = UiUtil.isOrientationPortrait(activity);
+    boolean isLandTablet = UiUtil.isLandTablet(activity);
     boolean isDarkModeActive = UiUtil.isDarkModeActive(activity);
 
     int colorScrim = ResUtil.getColor(activity, android.R.attr.colorBackground, 0.7f);
@@ -235,7 +238,7 @@ public class SystemBarBehavior {
         if (!isDarkModeActive) {
           UiUtil.setLightNavigationBar(window.getDecorView(), true);
         }
-        if (isOrientationPortrait) {
+        if (isOrientationPortrait || isLandTablet) {
           window.setNavigationBarColor(
               isScrollable ? colorScrim : Color.parseColor("#01000000")
           );
@@ -248,7 +251,7 @@ public class SystemBarBehavior {
           );
         }
       }
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) { // 28
+    } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P) { // 28
       window.setStatusBarColor(Color.TRANSPARENT);
       if (!isDarkModeActive) {
         UiUtil.setLightStatusBar(window.getDecorView(), true);
