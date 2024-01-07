@@ -257,7 +257,7 @@ public class SystemBarBehavior {
         UiUtil.setLightStatusBar(window.getDecorView(), true);
         UiUtil.setLightNavigationBar(window.getDecorView(), true);
       }
-      if (isOrientationPortrait) {
+      if (isOrientationPortrait || isLandTablet) {
         window.setNavigationBarColor(isScrollable ? colorScrim : Color.TRANSPARENT);
       } else {
         window.setNavigationBarDividerColor(
@@ -272,7 +272,7 @@ public class SystemBarBehavior {
       if (!isDarkModeActive) {
         UiUtil.setLightStatusBar(window.getDecorView(), true);
       }
-      if (isOrientationPortrait) {
+      if (isOrientationPortrait || isLandTablet) {
         window.setNavigationBarColor(isScrollable ? colorScrim : Color.TRANSPARENT);
         if (!isDarkModeActive) {
           UiUtil.setLightNavigationBar(window.getDecorView(), true);
@@ -285,7 +285,7 @@ public class SystemBarBehavior {
       if (!isDarkModeActive) {
         UiUtil.setLightStatusBar(window.getDecorView(), true);
       }
-      if (isOrientationPortrait) {
+      if (isOrientationPortrait || isLandTablet) {
         window.setNavigationBarColor(
             isDarkModeActive ? (isScrollable ? colorScrim : Color.TRANSPARENT) : UiUtil.SCRIM
         );
@@ -294,7 +294,7 @@ public class SystemBarBehavior {
       }
     } else { // 21
       window.setStatusBarColor(isDarkModeActive ? Color.TRANSPARENT : UiUtil.SCRIM);
-      if (isOrientationPortrait) {
+      if (isOrientationPortrait || isLandTablet) {
         window.setNavigationBarColor(
             isDarkModeActive ? (isScrollable ? colorScrim : Color.TRANSPARENT) : UiUtil.SCRIM
         );

@@ -64,6 +64,10 @@ public class MetronomeUtil {
     setToPreferences();
   }
 
+  public boolean isFromService() {
+    return fromService;
+  }
+
   public void setToPreferences() {
     tempo = sharedPrefs.getInt(PREF.TEMPO, DEF.TEMPO);
     beats = sharedPrefs.getString(PREF.BEATS, DEF.BEATS).split(",");
@@ -770,11 +774,13 @@ public class MetronomeUtil {
     }
     switch (timerUnit) {
       case UNIT.SECONDS:
-        return "00:" + String.format(Locale.ENGLISH, "%02d", timerDuration);
+        return String.format(Locale.ENGLISH, "00:%02d", timerDuration);
       case UNIT.MINUTES:
-        return timerDuration + ":00";
+        return String.format(Locale.ENGLISH, "%02d:00", timerDuration);
       default:
-        return String.valueOf(timerDuration);
+        return context.getResources().getQuantityString(
+            R.plurals.options_unit_bars, timerDuration, timerDuration
+        );
     }
   }
 
@@ -799,12 +805,10 @@ public class MetronomeUtil {
             hapticUtil.click();
         }
       }
-      Log.i(TAG, "performTick: hellooo " + tick);
       for (MetronomeListener listener : listeners) {
         listener.onMetronomeTick(tick);
       }
     }, latency);
-    Log.i(TAG, "performTick: hello " + tick);
 
     boolean isFirstBeat = ((tick.index / getSubdivisionsCount()) % getBeatsCount()) == 0;
     if (isFirstBeat && tick.subdivision == 1) { // next bar

@@ -200,6 +200,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
+            android:textSize="@dimen/timer_font_size"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:fontFeatureSettings="tnum" />
 
@@ -209,6 +210,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:textSize="@dimen/timer_font_size"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:fontFeatureSettings="tnum"
             android:visibility="gone" />
@@ -219,8 +221,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:fontFeatureSettings="tnum" />
+            android:textSize="@dimen/timer_font_size"
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
         </FrameLayout>
 

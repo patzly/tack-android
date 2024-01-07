@@ -32,17 +32,20 @@ public final class Constants {
     public final static String USE_SUBS = "use_subdivisions";
     public final static String ALWAYS_VIBRATE = "always_vibrate";
     public final static String RESET_TIMER = "reset_timer";
+    public final static String RESET_ELAPSED = "reset_elapsed";
     public final static String FLASH_SCREEN = "flash_screen";
     public final static String KEEP_AWAKE = "keep_awake";
     public final static String SOUND = "sound";
     public final static String LATENCY = "latency_offset";
     public final static String GAIN = "gain";
+    public final static String BOOKMARKS = "bookmarks";
+
+    // Options
     public final static String COUNT_IN = "count_in";
     public final static String INCREMENTAL_AMOUNT = "incremental_amount";
     public final static String INCREMENTAL_INCREASE = "incremental_increase";
     public final static String INCREMENTAL_INTERVAL = "incremental_interval";
     public final static String INCREMENTAL_UNIT = "incremental_unit";
-    public final static String BOOKMARKS = "bookmarks";
     public final static String TIMER_DURATION = "timer_duration";
     public final static String TIMER_UNIT = "timer_unit";
   }
@@ -65,11 +68,14 @@ public final class Constants {
     public final static boolean USE_SUBS = false;
     public final static boolean ALWAYS_VIBRATE = true;
     public final static boolean RESET_TIMER = false;
+    public final static boolean RESET_ELAPSED = false;
     public final static boolean FLASH_SCREEN = false;
     public final static boolean KEEP_AWAKE = true;
     public final static String SOUND = Constants.SOUND.WOOD;
     public final static long LATENCY = 100;
     public final static int GAIN = 0;
+
+    // Options
     public final static int COUNT_IN = 0;
     public final static int INCREMENTAL_AMOUNT = 0;
     public final static boolean INCREMENTAL_INCREASE = true;

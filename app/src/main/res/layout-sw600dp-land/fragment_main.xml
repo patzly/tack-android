@@ -262,31 +262,33 @@
 
             <TextView
               android:id="@+id/text_main_timer_elapsed"
-              style="@style/Widget.Tack.TextView.TitleMedium"
+              style="@style/Widget.Tack.TextView"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="start"
+              android:textSize="@dimen/timer_font_size"
               android:textColor="?attr/colorOnSurfaceVariant"
               android:fontFeatureSettings="tnum" />
 
             <TextView
               android:id="@+id/text_main_elapsed_time"
-              style="@style/Widget.Tack.TextView.TitleMedium"
+              style="@style/Widget.Tack.TextView"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="center_horizontal"
+              android:textSize="@dimen/timer_font_size"
               android:textColor="?attr/colorOnSurfaceVariant"
               android:fontFeatureSettings="tnum"
               android:visibility="gone" />
 
             <TextView
               android:id="@+id/text_main_timer_total"
-              style="@style/Widget.Tack.TextView.TitleMedium"
+              style="@style/Widget.Tack.TextView"
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="end"
-              android:textColor="?attr/colorOnSurfaceVariant"
-              android:fontFeatureSettings="tnum" />
+              android:textSize="@dimen/timer_font_size"
+              android:textColor="?attr/colorOnSurfaceVariant" />
 
           </FrameLayout>
 

@@ -11,6 +11,7 @@
   <dimen name="max_content_width">640dp</dimen>
 
   <dimen name="seekbar_height">40dp</dimen>
+  <dimen name="timer_font_size">16sp</dimen>
 
   <dimen name="bpm_picker_size">170dp</dimen>
   <dimen name="bpm_text_size">54sp</dimen>

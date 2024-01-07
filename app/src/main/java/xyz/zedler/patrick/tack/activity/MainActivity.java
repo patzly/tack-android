@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     setContentView(binding.getRoot());
 
     hapticUtil = new HapticUtil(this);
+    metronomeUtil = new MetronomeUtil(this, false);
 
     locale = LocaleUtil.getLocale();
 
@@ -153,8 +154,11 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     if (!runAsSuperClass) {
       binding = null;
       // metronome should be stopped when app is removed from recent apps
-      metronomeUtil.stop();
-      sendBroadcast(new Intent(ACTION.STOP));
+      if (getMetronomeUtil().isFromService()) {
+        getMetronomeUtil().stop();
+        getMetronomeUtil().destroy();
+        sendBroadcast(new Intent(ACTION.STOP));
+      }
     }
   }
 
@@ -245,20 +249,20 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   }
 
   public MetronomeUtil getMetronomeUtil() {
-    return metronomeUtil;
+    if (bound) {
+      return metronomeService.getMetronomeUtil();
+    } else {
+      return metronomeUtil;
+    }
   }
 
   private void updateMetronomeUtil() {
-    Set<MetronomeListener> listeners = new HashSet<>();
-    if (metronomeUtil != null) {
-      listeners.addAll(metronomeUtil.getListeners());
-      metronomeUtil.destroy();
-      metronomeUtil = null;
+    Set<MetronomeListener> listeners = new HashSet<>(metronomeUtil.getListeners());
+    if (bound) {
+      listeners.addAll(metronomeService.getMetronomeUtil().getListeners());
     }
-    metronomeUtil = bound
-        ? metronomeService.getMetronomeUtil()
-        : new MetronomeUtil(this, false);
-    metronomeUtil.addListeners(listeners);
+    getMetronomeUtil().addListeners(listeners);
+    getMetronomeUtil().setToPreferences();
   }
 
   public boolean hasNotificationPermission() {
@@ -439,6 +443,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   }
 
   private boolean areHapticsAllowed() {
-    return metronomeUtil.areHapticEffectsPossible();
+    return getMetronomeUtil().areHapticEffectsPossible();
   }
 }
