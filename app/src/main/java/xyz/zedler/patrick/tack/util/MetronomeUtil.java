@@ -2,8 +2,6 @@ package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.media.AudioTrack;
-import android.media.audiofx.LoudnessEnhancer;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
@@ -20,7 +18,6 @@ import java.util.Set;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.Constants.SOUND;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
@@ -32,22 +29,19 @@ public class MetronomeUtil {
 
   private final Context context;
   private final SharedPreferences sharedPrefs;
+  private final AudioUtil audioUtil;
   private final HapticUtil hapticUtil;
   private final ShortcutUtil shortcutUtil;
   private final Set<MetronomeListener> listeners = new HashSet<>();
-  private final float[] silence = AudioUtil.getSilence();
   private final boolean fromService;
   private HandlerThread audioThread, callbackThread;
   private Handler tickHandler, latencyHandler;
   private Handler countInHandler, incrementalHandler, timerHandler;
-  private AudioTrack track;
-  private LoudnessEnhancer loudnessEnhancer;
   private String incrementalUnit, timerUnit;
   private String[] beats, subdivisions;
   private int tempo, gain, countIn, incrementalAmount, incrementalInterval, timerDuration;
   private long tickIndex, latency, startTime, timerStartTime;
   private float timerProgress;
-  private float[] tickStrong, tickNormal, tickSub;
   private boolean playing, tempPlaying, useSubdivisions, beatModeVibrate;
   private boolean alwaysVibrate, incrementalIncrease, resetTimer, flashScreen, keepAwake;
 
@@ -57,6 +51,7 @@ public class MetronomeUtil {
 
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
+    audioUtil = new AudioUtil(context);
     hapticUtil = new HapticUtil(context);
     shortcutUtil = new ShortcutUtil(context);
 
@@ -83,12 +78,12 @@ public class MetronomeUtil {
     incrementalUnit = sharedPrefs.getString(PREF.INCREMENTAL_UNIT, DEF.INCREMENTAL_UNIT);
     timerDuration = sharedPrefs.getInt(PREF.TIMER_DURATION, DEF.TIMER_DURATION);
     timerUnit = sharedPrefs.getString(PREF.TIMER_UNIT, DEF.TIMER_UNIT);
-    beatModeVibrate = sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE);
     alwaysVibrate = sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
     resetTimer = sharedPrefs.getBoolean(PREF.RESET_TIMER, DEF.RESET_TIMER);
 
     setSound(sharedPrefs.getString(PREF.SOUND, DEF.SOUND));
     setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
+    setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
   }
 
   private void resetHandlersIfRequired() {
@@ -135,12 +130,12 @@ public class MetronomeUtil {
     tempo = 80;
     beats = DEF.BEATS.split(",");
     subdivisions = DEF.SUBDIVISIONS.split(",");
-    beatModeVibrate = false;
     alwaysVibrate = true;
     countIn = 0;
     incrementalAmount = 0;
     timerDuration = 0;
     setGain(0);
+    setBeatModeVibrate(false);
     start(false, false);
   }
 
@@ -152,7 +147,7 @@ public class MetronomeUtil {
       countInHandler.removeCallbacksAndMessages(null);
       incrementalHandler.removeCallbacksAndMessages(null);
       timerHandler.removeCallbacksAndMessages(null);
-      audioThread.quit();
+      audioThread.quitSafely();
       callbackThread.quit();
     }
   }
@@ -195,10 +190,7 @@ public class MetronomeUtil {
     }
 
     playing = true;
-    track = AudioUtil.getNewAudioTrack();
-    loudnessEnhancer = new LoudnessEnhancer(track.getAudioSessionId());
-    setGain(gain);
-    track.play();
+    audioUtil.play();
     tickIndex = 0;
     tickHandler.post(new Runnable() {
       @Override
@@ -209,7 +201,7 @@ public class MetronomeUtil {
               tickIndex, getCurrentBeat(), getCurrentSubdivision(), getCurrentTickType()
           );
           performTick(tick);
-          writeTickPeriod(tick);
+          audioUtil.tick(tick, tempo, getSubdivisionsCount());
           tickIndex++;
         }
       }
@@ -237,8 +229,7 @@ public class MetronomeUtil {
     timerProgress = getTimerProgress(); // must be called before playing is set to false
 
     playing = false;
-    track.flush();
-    track.release();
+    audioUtil.stop();
 
     if (fromService) {
       tickHandler.removeCallbacksAndMessages(null);
@@ -437,25 +428,7 @@ public class MetronomeUtil {
   }
 
   public void setSound(String sound) {
-    int resIdNormal, resIdStrong, resIdSub;
-    switch (sound) {
-      case SOUND.SINE:
-        resIdNormal = R.raw.sine_normal;
-        resIdStrong = R.raw.sine_strong;
-        resIdSub = R.raw.sine_sub;
-        break;
-      case SOUND.CLICK:
-      case SOUND.DING:
-      case SOUND.BEEP:
-      default:
-        resIdNormal = R.raw.wood_normal;
-        resIdStrong = R.raw.wood_strong;
-        resIdSub = R.raw.wood_normal;
-        break;
-    }
-    tickNormal = AudioUtil.loadAudio(context, resIdNormal);
-    tickStrong = AudioUtil.loadAudio(context, resIdStrong);
-    tickSub = AudioUtil.loadAudio(context, resIdSub);
+    audioUtil.setSound(sound);
     sharedPrefs.edit().putString(PREF.SOUND, sound).apply();
   }
 
@@ -468,6 +441,7 @@ public class MetronomeUtil {
       vibrate = false;
     }
     beatModeVibrate = vibrate;
+    audioUtil.setMuted(vibrate);
     hapticUtil.setEnabled(vibrate || alwaysVibrate);
     sharedPrefs.edit().putBoolean(PREF.BEAT_MODE_VIBRATE, vibrate).apply();
   }
@@ -499,12 +473,9 @@ public class MetronomeUtil {
     return latency;
   }
 
-  public void setGain(int db) {
-    gain = db;
-    if (loudnessEnhancer != null) {
-      loudnessEnhancer.setTargetGain(db * 100);
-      loudnessEnhancer.setEnabled(db > 0);
-    }
+  public void setGain(int gain) {
+    this.gain = gain;
+    audioUtil.setGain(gain);
     sharedPrefs.edit().putInt(PREF.GAIN, gain).apply();
   }
 
@@ -824,34 +795,6 @@ public class MetronomeUtil {
     }
   }
 
-  private void writeTickPeriod(Tick tick) {
-    float[] tickSound = getTickSound(tick.type);
-    int periodSize = 60 * AudioUtil.SAMPLE_RATE_IN_HZ / tempo / getSubdivisionsCount();
-    int sizeWritten = writeNextAudioData(tickSound, periodSize, 0);
-    if (DEBUG) {
-      Log.v(TAG, "writeTickPeriod: wrote tick sound for " + tick);
-    }
-    writeSilenceUntilPeriodFinished(sizeWritten, periodSize);
-  }
-
-  private void writeSilenceUntilPeriodFinished(int previousSizeWritten, int periodSize) {
-    int sizeWritten = previousSizeWritten;
-    while (sizeWritten < periodSize) {
-      sizeWritten += writeNextAudioData(silence, periodSize, sizeWritten);
-      if (DEBUG) {
-        Log.v(TAG, "writeSilenceUntilPeriodFinished: wrote silence");
-      }
-    }
-  }
-
-  private int writeNextAudioData(float[] data, int periodSize, int sizeWritten) {
-    int size = Math.min(data.length, periodSize - sizeWritten);
-    if (playing) {
-      AudioUtil.writeAudio(track, data, size);
-    }
-    return size;
-  }
-
   private int getCurrentBeat() {
     return (int) ((tickIndex / getSubdivisionsCount()) % beats.length) + 1;
   }
@@ -866,22 +809,6 @@ public class MetronomeUtil {
       return beats[(int) ((tickIndex / subdivisionsCount) % beats.length)];
     } else {
       return subdivisions[(int) (tickIndex % subdivisionsCount)];
-    }
-  }
-
-  private float[] getTickSound(String tickType) {
-    if (beatModeVibrate) {
-      return silence;
-    }
-    switch (tickType) {
-      case TICK_TYPE.STRONG:
-        return tickStrong;
-      case TICK_TYPE.SUB:
-        return tickSub;
-      case TICK_TYPE.MUTED:
-        return silence;
-      default:
-        return tickNormal;
     }
   }
 
