@@ -58,7 +58,7 @@ public class MetronomeService extends Service implements MetronomeListener {
   @Nullable
   @Override
   public IBinder onBind(Intent intent) {
-    return new LocalBinder();
+    return new MetronomeBinder();
   }
 
   @Override
@@ -127,7 +127,7 @@ public class MetronomeService extends Service implements MetronomeListener {
     }
   }
 
-  public class LocalBinder extends Binder {
+  public class MetronomeBinder extends Binder {
 
     public MetronomeService getService() {
       return MetronomeService.this;

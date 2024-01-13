@@ -42,7 +42,7 @@ public class MetronomeUtil {
   private int tempo, gain, countIn, incrementalAmount, incrementalInterval, timerDuration;
   private long tickIndex, latency, startTime, timerStartTime;
   private float timerProgress;
-  private boolean playing, tempPlaying, useSubdivisions, beatModeVibrate;
+  private boolean playing, tempPlaying, useSubdivisions, beatModeVibrate, isCountingIn;
   private boolean alwaysVibrate, incrementalIncrease, resetTimer, flashScreen, keepAwake;
 
   public MetronomeUtil(@NonNull Context context, boolean fromService) {
@@ -207,9 +207,11 @@ public class MetronomeUtil {
       }
     });
 
-    // Timer
+    // Elapsed time
     startTime = System.currentTimeMillis();
+    isCountingIn = isCountInActive();
     countInHandler.postDelayed(() -> {
+      isCountingIn = false;
       updateIncrementalHandler();
       timerStartTime = System.currentTimeMillis();
       updateTimerHandler(resetTimer && resetTimerIfNecessary ? 0 : timerProgress);
@@ -230,6 +232,7 @@ public class MetronomeUtil {
 
     playing = false;
     audioUtil.stop();
+    isCountingIn = false;
 
     if (fromService) {
       tickHandler.removeCallbacksAndMessages(null);
@@ -645,7 +648,7 @@ public class MetronomeUtil {
   public float getTimerProgress() {
     if (!isTimerActive()) {
       return 0;
-    } else if (isPlaying()) {
+    } else if (isPlaying() && !isCountingIn) {
       // TODO: fix wrong progress when interval-critical stuff changes
       long previousDuration = (long) (timerProgress * getTimerInterval());
       long elapsedTime = System.currentTimeMillis() - timerStartTime + previousDuration;

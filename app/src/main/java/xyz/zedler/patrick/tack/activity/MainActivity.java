@@ -43,7 +43,7 @@ import xyz.zedler.patrick.tack.fragment.BaseFragment;
 import xyz.zedler.patrick.tack.fragment.MainFragment;
 import xyz.zedler.patrick.tack.fragment.SettingsFragment;
 import xyz.zedler.patrick.tack.service.MetronomeService;
-import xyz.zedler.patrick.tack.service.MetronomeService.LocalBinder;
+import xyz.zedler.patrick.tack.service.MetronomeService.MetronomeBinder;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil;
@@ -167,12 +167,12 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     super.onStart();
 
     if (!runAsSuperClass) {
-      Intent intent = new Intent(this, MetronomeService.class);
       try {
+        Intent intent = new Intent(this, MetronomeService.class);
         startService(intent);
         bindService(intent, this, Context.BIND_AUTO_CREATE);
       } catch (IllegalStateException e) {
-        Log.e(TAG, "onStart: cannot start service because app is in background");
+        Log.e(TAG, "onStart: cannot start MetronomeService because app is in background");
       }
     }
   }
@@ -227,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
   @Override
   public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-    LocalBinder binder = (LocalBinder) iBinder;
+    MetronomeBinder binder = (MetronomeBinder) iBinder;
     metronomeService = binder.getService();
     bound = metronomeService != null;
     updateMetronomeUtil();
