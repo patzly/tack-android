@@ -4,7 +4,9 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)  [![Release](https://img.shields.io/github/v/release/patzly/tack-android?label=Release)](https://github.com/patzly/tacky-android/releases)  [![APK Downloads](https://img.shields.io/github/downloads/patzly/tack-android/total.svg?label=APK%20Downloads)](https://github.com/patzly/tack-android/releases)
 
-TODO
+Tack is a modern metronome app for Android with a beautifully designed interface that has all the features you need for practicing a music piece accurate to the beat.
+
+There also is a separate Wear OS app available with haptic beats and many options directly on your wrist.
 
 ## Downloads
 
@@ -16,8 +18,13 @@ TODO
 
 ## Features
 
-TODO
+* Beautiful beat visualization with subdivisions and changeable emphasizes
+* BPM bookmarks as app shortcuts
+* Options for count in, incremental tempo change, song duration and swing
+* Settings for flash screen, volume boost, audio latenc corretion and elapsed time
 * Dynamic color and dynamic contrast support
+* Large screen support
+* Separate Wear OS app with many options directly on your wrist
 * No ads or analytics
 
 ## Compatibility
@@ -31,7 +38,7 @@ If you run into a bug or miss a feature, please [open an issue](https://github.c
 Tack can be translated! The main language is English, but I also maintain the German translation.
 You can help translate this project at [Transifex](https://app.transifex.com/patzly/tack-android), if your language is incomplete, contains typos or is not available yet. Translations which reached a completion level of 80% will be included in releases.  
 
-Translated languages (0): TODO
+Translated languages: TODO
 
 Thanks for your contributions!
 
