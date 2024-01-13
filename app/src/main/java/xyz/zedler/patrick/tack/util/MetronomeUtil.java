@@ -25,7 +25,6 @@ import xyz.zedler.patrick.tack.R;
 public class MetronomeUtil {
 
   private static final String TAG = MetronomeUtil.class.getSimpleName();
-  private static final boolean DEBUG = false;
 
   private final Context context;
   private final SharedPreferences sharedPrefs;
@@ -51,7 +50,7 @@ public class MetronomeUtil {
 
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-    audioUtil = new AudioUtil(context);
+    audioUtil = new AudioUtil(context, this::stop);
     hapticUtil = new HapticUtil(context);
     shortcutUtil = new ShortcutUtil(context);
 
@@ -82,6 +81,7 @@ public class MetronomeUtil {
     resetTimer = sharedPrefs.getBoolean(PREF.RESET_TIMER, DEF.RESET_TIMER);
 
     setSound(sharedPrefs.getString(PREF.SOUND, DEF.SOUND));
+    setIgnoreFocus(sharedPrefs.getBoolean(PREF.IGNORE_FOCUS, DEF.IGNORE_FOCUS));
     setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
     setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
   }
@@ -474,6 +474,15 @@ public class MetronomeUtil {
 
   public long getLatency() {
     return latency;
+  }
+
+  public void setIgnoreFocus(boolean ignore) {
+    audioUtil.setIgnoreFocus(ignore);
+    sharedPrefs.edit().putBoolean(PREF.IGNORE_FOCUS, ignore).apply();
+  }
+
+  public boolean getIgnoreAudioFocus() {
+    return audioUtil.getIgnoreFocus();
   }
 
   public void setGain(int gain) {

@@ -37,6 +37,7 @@ public final class Constants {
     public final static String KEEP_AWAKE = "keep_awake";
     public final static String SOUND = "sound";
     public final static String LATENCY = "latency_offset";
+    public final static String IGNORE_FOCUS = "ignore_focus";
     public final static String GAIN = "gain";
     public final static String BOOKMARKS = "bookmarks";
 
@@ -73,6 +74,7 @@ public final class Constants {
     public final static boolean KEEP_AWAKE = true;
     public final static String SOUND = Constants.SOUND.WOOD;
     public final static long LATENCY = 100;
+    public final static boolean IGNORE_FOCUS = false;
     public final static int GAIN = 0;
 
     // Options

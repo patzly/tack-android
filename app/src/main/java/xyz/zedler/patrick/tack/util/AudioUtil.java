@@ -2,11 +2,15 @@ package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
 import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
 import android.media.AudioFormat;
 import android.media.AudioManager;
+import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.AudioTrack;
 import android.media.audiofx.LoudnessEnhancer;
 import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
@@ -22,7 +26,7 @@ import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 
-public class AudioUtil {
+public class AudioUtil implements OnAudioFocusChangeListener {
 
   private static final String TAG = AudioUtil.class.getSimpleName();
   private static final boolean DEBUG = false;
@@ -32,16 +36,20 @@ public class AudioUtil {
   private static final int DATA_CHUNK_SIZE = 8;
   private static final byte[] DATA_MARKER = "data".getBytes(StandardCharsets.US_ASCII);
 
+  private final Context context;
+  private final AudioManager audioManager;
+  private final AudioListener listener;
   private AudioTrack track;
   private LoudnessEnhancer loudnessEnhancer;
-  private final Context context;
   private float[] tickStrong, tickNormal, tickSub;
   private int gain;
-  private boolean playing, muted;
+  private boolean playing, muted, ignoreFocus;
   private final float[] silence = new float[SILENCE_CHUNK_SIZE];
 
-  public AudioUtil(@NonNull Context context) {
+  public AudioUtil(@NonNull Context context, @NonNull AudioListener listener) {
     this.context = context;
+    this.listener = listener;
+    audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
   }
 
   public void play() {
@@ -51,13 +59,46 @@ public class AudioUtil {
     loudnessEnhancer.setTargetGain(gain * 100);
     loudnessEnhancer.setEnabled(gain > 0);
     track.play();
+
+    if (ignoreFocus) {
+      return;
+    }
+    if (VERSION.SDK_INT >= VERSION_CODES.O) {
+      AudioFocusRequest request = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+          .setAudioAttributes(getAttributes())
+          .setWillPauseWhenDucked(true)
+          .setOnAudioFocusChangeListener(this)
+          .build();
+      audioManager.requestAudioFocus(request);
+    } else {
+      audioManager.requestAudioFocus(
+          this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN
+      );
+    }
   }
 
   public void stop() {
     playing = false;
     if (track != null) {
+      if (track.getState() == AudioTrack.STATE_INITIALIZED) {
+        track.stop();
+      }
       track.flush();
       track.release();
+    }
+    if (!ignoreFocus) {
+      audioManager.abandonAudioFocus(this);
+    }
+  }
+
+  @Override
+  public void onAudioFocusChange(int focusChange) {
+    if (focusChange == AudioManager.AUDIOFOCUS_LOSS
+        || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
+        || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
+    ) {
+      stop();
+      listener.onAudioStop();
     }
   }
 
@@ -97,6 +138,14 @@ public class AudioUtil {
 
   public void setMuted(boolean muted) {
     this.muted = muted;
+  }
+
+  public void setIgnoreFocus(boolean ignore) {
+    ignoreFocus = ignore;
+  }
+
+  public boolean getIgnoreFocus() {
+    return ignoreFocus;
   }
 
   private void writeTickPeriod(Tick tick, int tempo, int subdivisionCount) {
@@ -141,17 +190,13 @@ public class AudioUtil {
   }
 
   private static AudioTrack getTrack() {
-    AudioAttributes audioAttributes = new AudioAttributes.Builder()
-        .setUsage(AudioAttributes.USAGE_MEDIA)
-        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-        .build();
     AudioFormat audioFormat = new AudioFormat.Builder()
         .setEncoding(AudioFormat.ENCODING_PCM_FLOAT)
         .setSampleRate(SAMPLE_RATE_IN_HZ)
         .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
         .build();
     return new AudioTrack(
-        audioAttributes,
+        getAttributes(),
         audioFormat,
         AudioTrack.getMinBufferSize(
             audioFormat.getSampleRate(), audioFormat.getChannelMask(), audioFormat.getEncoding()
@@ -159,6 +204,13 @@ public class AudioUtil {
         AudioTrack.MODE_STREAM,
         AudioManager.AUDIO_SESSION_ID_GENERATE
     );
+  }
+
+  private static AudioAttributes getAttributes() {
+    return new AudioAttributes.Builder()
+        .setUsage(AudioAttributes.USAGE_MEDIA)
+        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+        .build();
   }
 
   private float[] loadAudio(@RawRes int resId) {
@@ -225,5 +277,9 @@ public class AudioUtil {
       return i;
     }
     return -1;
+  }
+
+  public interface AudioListener {
+    void onAudioStop();
   }
 }

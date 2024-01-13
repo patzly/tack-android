@@ -185,6 +185,9 @@
   <string name="settings_latency">Latency correction</string>
   <string name="settings_latency_description">Compensate latency of system audio output for vibration and visuals</string>
 
+  <string name="settings_ignore_focus">Ignore audio focus</string>
+  <string name="settings_ignore_focus_description">Keep playing if other apps make sound</string>
+
   <string name="settings_gain">Volume boost</string>
   <string name="settings_gain_description">Gain in dB (in addition to system volume)</string>
   <string name="settings_gain_warning">Use with caution!</string>

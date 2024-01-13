@@ -265,6 +265,7 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsReduceAnimations,
         binding.linearSettingsReset,
         binding.linearSettingsSound,
+        binding.linearSettingsIgnoreFocus,
         binding.linearSettingsShowSubs,
         binding.linearSettingsAlwaysVibrate,
         binding.linearSettingsResetTimer,
@@ -277,6 +278,7 @@ public class SettingsFragment extends BaseFragment
         binding.partialOptionTransition.switchOptionTransition,
         binding.switchSettingsHaptic,
         binding.switchSettingsReduceAnimations,
+        binding.switchSettingsIgnoreFocus,
         binding.switchSettingsShowSubs,
         binding.switchSettingsAlwaysVibrate,
         binding.switchSettingsResetTimer,
@@ -318,6 +320,11 @@ public class SettingsFragment extends BaseFragment
     binding.sliderSettingsLatency.removeOnChangeListener(this);
     binding.sliderSettingsLatency.setValue(getMetronomeUtil().getLatency());
     binding.sliderSettingsLatency.addOnChangeListener(this);
+
+    binding.switchSettingsIgnoreFocus.setOnCheckedChangeListener(null);
+    binding.switchSettingsIgnoreFocus.setChecked(getMetronomeUtil().getIgnoreAudioFocus());
+    binding.switchSettingsIgnoreFocus.jumpDrawablesToCurrentState();
+    binding.switchSettingsIgnoreFocus.setOnCheckedChangeListener(this);
 
     binding.sliderSettingsGain.removeOnChangeListener(this);
     binding.sliderSettingsGain.setValue(getMetronomeUtil().getGain());
@@ -408,6 +415,8 @@ public class SettingsFragment extends BaseFragment
       ViewUtil.startIcon(binding.imageSettingsSound);
       performHapticClick();
       dialogUtilSound.show();
+    } else if (id == R.id.linear_settings_ignore_focus) {
+      binding.switchSettingsIgnoreFocus.toggle();
     } else if (id == R.id.linear_settings_show_subs) {
       binding.switchSettingsShowSubs.toggle();
     } else if (id == R.id.linear_settings_always_vibrate) {
@@ -437,6 +446,10 @@ public class SettingsFragment extends BaseFragment
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsReduceAnimations);
       getSharedPrefs().edit().putBoolean(PREF.REDUCE_ANIM, isChecked).apply();
+    } else if (id == R.id.switch_settings_ignore_focus) {
+      performHapticClick();
+      ViewUtil.startIcon(binding.imageSettingsIgnoreFocus);
+      getMetronomeUtil().setIgnoreFocus(isChecked);
     } else if (id == R.id.switch_settings_show_subs) {
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsShowSubs);
