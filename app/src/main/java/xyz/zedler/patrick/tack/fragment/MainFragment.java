@@ -446,7 +446,6 @@ public class MainFragment extends BaseFragment
     ViewUtil.setTooltipText(binding.buttonMainRemoveSubdivision, R.string.action_remove_sub);
     ViewUtil.setTooltipText(binding.buttonMainOptions, R.string.title_options);
     ViewUtil.setTooltipText(binding.buttonMainBeatMode, R.string.action_beat_mode);
-    ViewUtil.setTooltipText(binding.fabMainPlayStop, R.string.action_play_stop);
 
     ViewUtil.setOnClickListeners(
         this,
