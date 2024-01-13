@@ -136,6 +136,10 @@ public class AudioUtil implements OnAudioFocusChangeListener {
     }
   }
 
+  public int getGain() {
+    return gain;
+  }
+
   public void setMuted(boolean muted) {
     this.muted = muted;
   }

@@ -38,7 +38,7 @@ public class MetronomeUtil {
   private Handler countInHandler, incrementalHandler, timerHandler;
   private String incrementalUnit, timerUnit;
   private String[] beats, subdivisions;
-  private int tempo, gain, countIn, incrementalAmount, incrementalInterval, timerDuration;
+  private int tempo, countIn, incrementalAmount, incrementalInterval, timerDuration;
   private long tickIndex, latency, startTime, timerStartTime;
   private float timerProgress;
   private boolean playing, tempPlaying, useSubdivisions, beatModeVibrate, isCountingIn;
@@ -486,13 +486,12 @@ public class MetronomeUtil {
   }
 
   public void setGain(int gain) {
-    this.gain = gain;
     audioUtil.setGain(gain);
     sharedPrefs.edit().putInt(PREF.GAIN, gain).apply();
   }
 
   public int getGain() {
-    return gain;
+    return audioUtil.getGain();
   }
 
   public void setFlashScreen(boolean flash) {
