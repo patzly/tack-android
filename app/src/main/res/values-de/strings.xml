@@ -1,0 +1,197 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="title_feedback">Rückmeldung</string>
+  <string name="title_about">Über</string>
+  <string name="title_licenses">Open-Source-Lizenzen</string>
+  <string name="title_settings">Einstellungen</string>
+  <string name="title_notification_channel">Wiedergabe</string>
+  <string name="title_options">Optionen</string>
+  <string name="title_general">Allgemein</string>
+  <string name="title_metronome">Metronom</string>
+  <string name="title_logcat">Fehlerprotokoll</string>
+
+  <!-- LABELS -->
+
+  <string name="label_bpm_value">%1$d bpm</string>
+  <string name="label_bpm">bpm</string>
+  <string name="label_ms">%1$s ms</string>
+  <string name="label_db">+%1$d dB</string>
+  <array name="label_tempo_terms" translatable="false">
+    <item>Largo</item>
+    <item>Larghetto</item>
+    <item>Adagio</item>
+    <item>Andante</item>
+    <item>Moderato</item>
+    <item>Allegro</item>
+    <item>Presto</item>
+    <item>Prestissimo</item>
+  </array>
+
+  <!-- ACTIONS -->
+
+  <string name="action_back">Zurück</string>
+  <string name="action_close">Schließen</string>
+  <string name="action_cancel">Abbrechen</string>
+  <string name="action_increase">Erhöhen</string>
+  <string name="action_decrease">Vermindern</string>
+  <string name="action_play">Starten</string>
+  <string name="action_play_stop">Starten/Beenden</string>
+  <string name="action_stop">Beenden</string>
+  <string name="action_add_beat">Schlag hinzufügen</string>
+  <string name="action_remove_beat">Schlag entfernen</string>
+  <string name="action_add_sub">Aufteilung hinzufügen</string>
+  <string name="action_remove_sub">Aufteilung entfernen</string>
+  <string name="action_clear_all">Alle entfernen</string>
+  <string name="action_tempo_tap">Tempo tippen</string>
+  <string name="action_bookmark">Lesezeichen hinzufügen</string>
+  <string name="action_beat_mode">Schlagmodus</string>
+  <string name="action_send_feedback">Rückmeldung senden</string>
+  <string name="action_open_link">Externe Internetseite öffnen</string>
+  <string name="action_reset">Zurücksetzen</string>
+  <string name="action_deactivate_gain">Verstärkung deaktivieren</string>
+  <string name="action_recommend">Weiterempfehlen</string>
+  <string name="action_recommend_description">Erzähle deinen Freunden von Tack</string>
+  <string name="action_email">E-Mail senden</string>
+  <string name="action_email_description">Entwickler kontaktieren</string>
+  <string name="action_rate">Auf Google Play bewerten</string>
+  <string name="action_rate_description">Entwicklung unterstützen</string>
+  <string name="action_retry">Erneut versuchen</string>
+  <string name="action_logcat">Fehlerprotokoll anzeigen</string>
+  <string name="action_copy_to_clipboard">In Zwischenablage kopieren</string>
+  <string name="action_reload">Neu laden</string>
+
+  <!-- MESSAGES -->
+
+  <string name="msg_bookmarks_max">Lesezeichen-Limit erreicht</string>
+  <string name="msg_feedback">Eine großartige App benötigt viel Zeit und lebt von der Rückmeldungen ihrer Nutzer.</string>
+  <string name="msg_feedback_contact">Hast du Wünsche, Anmerkungen oder Fragen? Kontaktiere mich!\nAnsonsten würde ich mich sehr über eine nette Bewertung im Play Store freuen.</string>
+  <string name="msg_recommend">Schau dir mal diese coole Metronom-App an: \n%1$s</string>
+  <string name="msg_vibration_unavailable">Vibration auf diesem Gerät nicht verfügbar</string>
+  <string name="msg_metronome_playing">Metronom schlägt</string>
+  <string name="msg_metronome_playing_return">Tippen, um zu Tack zurückzukehren</string>
+  <string name="msg_connection_lost">Service-Verbindung verloren, App-Neustart erforderlich</string>
+  <string name="msg_reset">Alles zurücksetzen?</string>
+  <string name="msg_gain">Mit Verstärkung wiedergeben?</string>
+  <string name="msg_gain_description">Achte darauf, nicht über Ohrhöhrer wiederzugeben, da durch laute Geräusche Gehörschäden entstehen können!</string>
+  <string name="msg_copied_to_clipboard">Erfolgreich in Zwischenablage kopiert</string>
+
+  <!-- OPTIONS -->
+
+  <string name="options_unit_bars">Takte</string>
+  <plurals name="options_unit_bars">
+    <item quantity="one">%1$d Takt</item>
+    <item quantity="other">%1$d Takte</item>
+  </plurals>
+  <string name="options_unit_beats">Schläge</string>
+  <plurals name="options_unit_beats">
+    <item quantity="one">%1$d Schlag</item>
+    <item quantity="other">%1$d Schläge</item>
+  </plurals>
+  <string name="options_unit_seconds">Sekunden</string>
+  <plurals name="options_unit_seconds">
+    <item quantity="one">%1$d Sekunde</item>
+    <item quantity="other">%1$d Sekunden</item>
+  </plurals>
+  <string name="options_unit_minutes">Minuten</string>
+  <plurals name="options_unit_minutes">
+    <item quantity="one">%1$d Minute</item>
+    <item quantity="other">%1$d Minuten</item>
+  </plurals>
+  <string name="options_inactive">Inaktiv</string>
+  <string name="options_count_in">Einzählen</string>
+  <string name="options_count_in_description">%1$s warten, bevor Modifikationen angewendet werden</string>
+  <string name="options_incremental">Schrittweiser Tempowechsel</string>
+  <string name="options_incremental_interval">Alle %1$s</string>
+  <string name="options_swing">Swing</string>
+  <string name="options_swing_3">Triole</string>
+  <string name="options_swing_5">Quintole</string>
+  <string name="options_swing_7">Septole</string>
+
+  <!-- SETTINGS -->
+
+  <string name="settings_language">Sprache</string>
+  <string name="settings_language_system">System folgen</string>
+  <string name="settings_language_system_description">Englisch bei unverfügbarer Übersetzung</string>
+
+  <string name="settings_theme">Farbschema</string>
+  <string name="settings_theme_description">Probiere ein anderes Design aus</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
+  <string name="settings_theme_auto">Auto</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_dark">Dunkel</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_light">Hell</string>
+
+  <string name="settings_contrast">Kontrast</string>
+  <string name="settings_contrast_description">Barrierefreiheit für dein Sehvermögen</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast. The button width should be as dense as possible. -->
+  <string name="settings_contrast_standard">Standard</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_medium">Mittel</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_high">Hoch</string>
+  <string name="settings_contrast_dynamic">Kontrast für Systemfarben muss in den Systemeinstellungen festgelegt werden</string>
+  <string name="settings_contrast_dynamic_unsupported">Dynamischer Kontrast bei Systemfarben ist nur für Android 14+ verfügbar</string>
+
+  <string name="settings_transition">Schieben als Seitenübergang verwenden</string>
+  <string name="settings_transition_description">Anstatt auszublenden</string>
+
+  <string name="settings_haptic">Haptische Effekte</string>
+  <string name="settings_reduce_animations">Animationen reduzieren</string>
+  <string name="settings_reduce_animations_description">Könnte die Leistung verbessern</string>
+
+  <string name="settings_reset">Alles zurücksetzen</string>
+  <string name="settings_reset_description">Kann nicht rückgängig gemacht werden</string>
+
+  <string name="settings_latency">Korrektur der Latenzzeit</string>
+  <string name="settings_latency_description">Kompensiere die Latenzzeit der Audioausgabe für haptische und visuelle Signale</string>
+
+  <string name="settings_ignore_focus">Audiofokus ignorieren</string>
+  <string name="settings_ignore_focus_description">Wiedergabe fortsetzen, wenn andere Anwendungen Geräusche machen</string>
+
+  <string name="settings_gain">Verstärkung</string>
+  <string name="settings_gain_description">Verstärkung in dB (zusätzlich zur Systemlautstärke)</string>
+  <string name="settings_gain_warning">Mit Vorsicht verwenden!</string>
+  <string name="settings_gain_disclaimer">Wenn Verstärkung aktiviert ist, wird vor jeder Wiedergabe eine Warnung angezeigt. Der Entwickler übernimmt keine Verantwortung für etwaige Schäden.</string>
+
+  <string name="settings_always_vibrate">Immer vibrieren</string>
+  <string name="settings_reset_timer">Timer bei stop zurücksetzen</string>
+  <string name="settings_flash_screen">Bildschirm aufblitzen lassen</string>
+  <string name="settings_flash_screen_description">Bei jedem Schlag</string>
+
+  <string name="settings_keep_awake">Bildschirm wach halten</string>
+  <string name="settings_keep_awake_description">Während der Wiedergabe</string>
+
+  <!-- ABOUT -->
+
+  <string name="about_version">Version</string>
+  <string name="about_changelog">Änderungsprotokoll</string>
+  <string name="about_developer">Entwickler</string>
+  <string name="about_vending_description">Mehr Apps des Entwicklers</string>
+  <string name="about_github_description">Quellcode</string>
+  <string name="about_translation_description">Hilf mit, Tack zu übersetzen</string>
+  <string name="about_privacy">Informationen zum Datenschutz</string>
+  <string name="about_privacy_description">Wie deine Daten verarbeitet werden</string>
+
+  </resources>
