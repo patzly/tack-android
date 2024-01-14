@@ -136,7 +136,6 @@
   <string name="settings_language_system_description">Englisch, wenn Übersetzung nicht verfügbar</string>
 
   <string name="settings_theme">Farbschema</string>
-  <string name="settings_theme_description">Probiere ein anderes Design aus</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
   <string name="settings_theme_auto">Auto</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
