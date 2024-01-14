@@ -128,6 +128,7 @@
   <string name="options_incremental_amount_increase">Tempo um %1$d bpm erhöhen</string>
   <string name="options_incremental_amount_decrease">Tempo um %1$d verringern</string>
   <string name="options_incremental_interval">Alle %1$s</string>
+  <string name="options_incremental_max">Bis zu %1$d bpm</string>
   <string name="options_timer">Dauer des Stücks</string>
   <string name="options_timer_description">Nach %1$s beenden</string>
   <string name="options_swing">Swing</string>
