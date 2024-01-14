@@ -7,6 +7,7 @@
 - New: beautiful beat visualization with subdivisions and changeable emphasizes
 - New: options for count in, incremental tempo change, song duration and swing
 - New: settings for flash screen, volume boost, audio latency correction and elapsed time
+- New: support for audio focus when other apps make sound during playback
 - New: Italian tempo terms
 - Improved: landscape layout
 - Improved: bookmark shortcuts

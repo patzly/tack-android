@@ -342,6 +342,7 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
       updateTimer();
       fragment.updateTimerDisplay();
     } else if (groupId == R.id.toggle_options_swing) {
+      getMetronomeUtil().setSubdivisionsUsed(true);
       if (checkedId == R.id.button_options_swing_3) {
         getMetronomeUtil().setSwing3();
       } else if (checkedId == R.id.button_options_swing_5) {
@@ -350,7 +351,6 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
         getMetronomeUtil().setSwing7();
       }
       updateSwing();
-      getMetronomeUtil().setSubdivisionsUsed(true);
       fragment.updateSubs(getMetronomeUtil().getSubdivisions());
       fragment.updateSubControls();
     }
