@@ -123,7 +123,7 @@
   </plurals>
   <string name="options_inactive">Inaktiv</string>
   <string name="options_count_in">Einzählen</string>
-  <string name="options_count_in_description">%1$s warten, bevor Modifikationen angewendet werden</string>
+  <string name="options_count_in_description">%1$s vor Modifikationen warten</string>
   <string name="options_incremental">Schrittweiser Tempowechsel</string>
   <string name="options_incremental_amount_increase">Tempo um %1$d bpm erhöhen</string>
   <string name="options_incremental_amount_decrease">Tempo um %1$d verringern</string>
