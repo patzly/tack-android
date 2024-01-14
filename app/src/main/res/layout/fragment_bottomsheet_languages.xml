@@ -35,7 +35,7 @@
       style="@style/Widget.Tack.TextView.Toolbar"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:text="@string/settings_language_select"
+      android:text="@string/settings_language"
       android:textAlignment="center"
       android:gravity="center_horizontal"
       android:singleLine="true" />

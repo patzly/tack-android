@@ -61,8 +61,12 @@ public class ResUtil {
   }
 
   public static void share(Context context, @StringRes int resId) {
+    share(context, context.getString(resId));
+  }
+
+  public static void share(Context context, String text) {
     Intent intent = new Intent(Intent.ACTION_SEND);
-    intent.putExtra(Intent.EXTRA_TEXT, context.getString(resId));
+    intent.putExtra(Intent.EXTRA_TEXT, text);
     intent.setType("text/plain");
     context.startActivity(Intent.createChooser(intent, null));
   }

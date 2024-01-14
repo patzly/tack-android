@@ -78,7 +78,8 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
       if (id == R.id.action_feedback) {
         activity.showFeedbackBottomSheet();
       } else if (id == R.id.action_recommend) {
-        ResUtil.share(activity, R.string.msg_recommend);
+        String text = getString(R.string.msg_recommend, getString(R.string.app_vending_app));
+        ResUtil.share(activity, text);
       }
       return true;
     });
@@ -120,7 +121,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
       ViewUtil.startIcon(binding.imageAboutVending);
       new Handler(Looper.getMainLooper()).postDelayed(
           () -> startActivity(
-              new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_vending)))
+              new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_vending_dev)))
           ), 300
       );
     } else if (id == R.id.linear_about_github) {

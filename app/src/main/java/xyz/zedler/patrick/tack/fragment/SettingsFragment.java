@@ -118,7 +118,8 @@ public class SettingsFragment extends BaseFragment
       if (id == R.id.action_feedback) {
         activity.showFeedbackBottomSheet();
       } else if (id == R.id.action_recommend) {
-        ResUtil.share(activity, R.string.msg_recommend);
+        String text = getString(R.string.msg_recommend, getString(R.string.app_vending_app));
+        ResUtil.share(activity, text);
       } else if (id == R.id.action_about) {
         activity.navigateToFragment(SettingsFragmentDirections.actionSettingsToAbout());
       } else if (id == R.id.action_log) {

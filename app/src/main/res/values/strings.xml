@@ -25,7 +25,8 @@
   <string name="app_developer" translatable="false">Patrick Zedler</string>
   <string name="app_mail" translatable="false">dev@patrickzedler.com</string>
   <string name="app_website" translatable="false">https://patrickzedler.com</string>
-  <string name="app_vending" translatable="false">http://play.google.com/store/apps/dev?id=5870283381366287608</string>
+  <string name="app_vending_dev" translatable="false">https://play.google.com/store/apps/dev?id=5870283381366287608</string>
+  <string name="app_vending_app" translatable="false">https://play.google.com/store/apps/details?id=xyz.zedler.patrick.tack</string>
   <string name="app_github" translatable="false">https://github.com/patzly/tack-android/</string>
   <string name="app_translate" translatable="false">https://app.transifex.com/patzly/tack-android/</string>
   <string name="app_privacy" translatable="false">https://patrickzedler.com/tack/privacy-policy-tack/</string>
@@ -97,7 +98,7 @@
   <string name="msg_bookmarks_max">Bookmark limit reached</string>
   <string name="msg_feedback">A great app requires a lot of time and lives from the feedback of its users.</string>
   <string name="msg_feedback_contact">Do you have any wishes, comments or questions? Contact me!\nOtherwise I would be very happy about a nice review in the Play Store.</string>
-  <string name="msg_recommend">Check out this cool metronome app: \nhttps://play.google.com/store/apps/details?id=xyz.zedler.patrick.tack</string>
+  <string name="msg_recommend">Check out this cool metronome app: \n%1$s</string>
   <string name="msg_vibration_unavailable">Vibration unavailable on this device</string>
   <string name="msg_metronome_playing">Metronome is playing</string>
   <string name="msg_metronome_playing_return">Tap to return to Tack</string>
@@ -106,7 +107,7 @@
   <string name="msg_reset_description">Do you really want to reset the entire app including bookmarks and settings? This cannot be undone.</string>
   <string name="msg_gain">Play with volume boost?</string>
   <string name="msg_gain_description">Be careful not to play through headphones as loud sounds can cause ear damage!</string>
-  <string name="msg_notification_permission_denied">The notification permission is required for metronome controls</string>
+  <string name="msg_notification_permission_denied">Notification permission is required for metronome controls</string>
   <string name="msg_report_crash">Please report any crash with the crash log attached so I can try to fix them.</string>
   <string name="msg_copied_to_clipboard">Copied to clipboard successfully</string>
 
@@ -134,7 +135,7 @@
   </plurals>
   <string name="options_inactive">Inactive</string>
   <string name="options_count_in">Count in</string>
-  <string name="options_count_in_description">Play %1$s before applying modifiers</string>
+  <string name="options_count_in_description">Wait %1$s before applying modifiers</string>
   <string name="options_incremental">Incremental tempo change</string>
   <string name="options_incremental_amount_increase">Increase tempo by %1$d bpm</string>
   <string name="options_incremental_amount_decrease">Decrease tempo by %1$d bpm</string>
@@ -157,7 +158,6 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">Language</string>
-  <string name="settings_language_select">Select language</string>
   <string name="settings_language_info">Many thanks to all the volunteer translators at Transifex!\nPlease visit Tack on GitHub to learn how you can help make Tack available for your language.</string>
   <string name="settings_language_system">Follow system</string>
   <string name="settings_language_system_description">English if translation is not available</string>
@@ -240,7 +240,7 @@
   <string name="about_translation" translatable="false">Transifex</string>
   <string name="about_translation_description">Help translate Tack</string>
   <string name="about_privacy">Privacy policy</string>
-  <string name="about_privacy_description">How is your data processed?</string>
+  <string name="about_privacy_description">How your data is being processed</string>
 
   <!-- LICENSES -->
 

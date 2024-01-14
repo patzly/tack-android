@@ -126,7 +126,8 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
       dismiss();
     } else if (id == R.id.linear_feedback_recommend && getViewUtil().isClickEnabled(id)) {
       performHapticClick();
-      ResUtil.share(activity, R.string.msg_recommend);
+      String text = getString(R.string.msg_recommend, getString(R.string.app_vending_app));
+      ResUtil.share(activity, text);
       dismiss();
     }
   }
