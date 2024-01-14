@@ -95,6 +95,7 @@
   <string name="msg_reset_description">Willst du wirklich die gesamte App einschließlich Lesezeichen und Einstellungen zurücksetzen? Dies kann nicht rückgängig gemacht werden.</string>
   <string name="msg_gain">Mit Verstärkung wiedergeben?</string>
   <string name="msg_gain_description">Achte darauf, nicht über Ohrhöhrer wiederzugeben, da durch laute Geräusche Gehörschäden entstehen können!</string>
+  <string name="msg_notification_permission_denied">Berechtigung für Benachrichtigungen ist für die Steuerung des Metronoms erforderlich</string>
   <string name="msg_copied_to_clipboard">Erfolgreich in Zwischenablage kopiert</string>
 
   <!-- OPTIONS -->
