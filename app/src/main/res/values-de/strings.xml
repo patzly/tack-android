@@ -132,7 +132,7 @@
 
   <string name="settings_language">Sprache</string>
   <string name="settings_language_system">System folgen</string>
-  <string name="settings_language_system_description">Englisch bei unverfügbarer Übersetzung</string>
+  <string name="settings_language_system_description">Englisch, wenn Übersetzung nicht verfügbar</string>
 
   <string name="settings_theme">Farbschema</string>
   <string name="settings_theme_description">Probiere ein anderes Design aus</string>
