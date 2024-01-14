@@ -144,7 +144,7 @@
   <string name="options_incremental_min">Down to %1$d bpm</string>
   <string name="options_timer">Song duration</string>
   <string name="options_timer_description">Stop after %1$s</string>
-  <string name="options_timer_unsupported">Measuring in bars not supported when incremental tempo change is active</string>
+  <string name="options_timer_unsupported">Duration in bars not supported when incremental tempo change is active</string>
   <string name="options_mute">Muted beats</string>
   <string name="options_mute_play">Play %1$s</string>
   <string name="options_mute_mute">Mute %1$s</string>
