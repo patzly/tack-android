@@ -173,6 +173,8 @@
   <string name="settings_transition_description">Anstatt auszublenden</string>
 
   <string name="settings_haptic">Haptische Effekte</string>
+  <string name="settings_haptic_description">Zusätzlich zu haptischen Schlägen im Vibrationsmodus</string>
+
   <string name="settings_reduce_animations">Animationen reduzieren</string>
   <string name="settings_reduce_animations_description">Kann die Leistung verbessern</string>
 
