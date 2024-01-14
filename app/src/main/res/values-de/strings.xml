@@ -132,6 +132,7 @@
   <string name="options_incremental_min">Bis zu %1$d bpm</string>
   <string name="options_timer">Dauer des Stücks</string>
   <string name="options_timer_description">Nach %1$s beenden</string>
+  <string name="options_timer_unsupported">Dauer in Takten bei schrittweiser Tempoänderung nicht unterstützt</string>
   <string name="options_mute">Stumm geschaltete Takte</string>
   <string name="options_mute_play">%1$s wiedergeben</string>
   <string name="options_mute_mute">%1$s stumm schalten</string>
