@@ -172,7 +172,7 @@
   <string name="settings_reset_description">Kann nicht rückgängig gemacht werden</string>
 
   <string name="settings_latency">Korrektur der Latenzzeit</string>
-  <string name="settings_latency_description">Kompensiere die Latenzzeit der Audioausgabe für haptische und visuelle Signale</string>
+  <string name="settings_latency_description">Kompensierung die Audio-Latenzzeit für haptische und visuelle Signale</string>
 
   <string name="settings_ignore_focus">Audiofokus ignorieren</string>
   <string name="settings_ignore_focus_description">Wiedergabe fortsetzen, wenn andere Anwendungen etwas wiedergeben</string>
