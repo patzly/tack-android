@@ -179,7 +179,7 @@
   <string name="settings_gain">Verstärkung</string>
   <string name="settings_gain_description">Verstärkung in dB (zusätzlich zur Systemlautstärke)</string>
   <string name="settings_gain_warning">Mit Vorsicht verwenden!</string>
-  <string name="settings_gain_disclaimer">Wenn Verstärkung aktiviert ist, wird vor jeder Wiedergabe eine Warnung angezeigt. Der Entwickler übernimmt keine Verantwortung für etwaige Schäden.</string>
+  <string name="settings_gain_disclaimer">Bei aktiver Verstärkung wird vor jeder Wiedergabe eine Warnung angezeigt. Der Entwickler übernimmt keine Verantwortung für etwaige Schäden.</string>
 
   <string name="settings_always_vibrate">Immer vibrieren</string>
   <string name="settings_reset_timer">Timer nach Beenden der Wiedergabe zurücksetzen</string>
