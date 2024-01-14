@@ -46,7 +46,6 @@
   <color name="red_theme_onSurfaceVariant">#D7C1C1</color>
   <color name="red_theme_outline">#A08C8C</color>
   <color name="red_theme_outlineVariant">#524343</color>
-  <color name="red_theme_scrim">#000000</color>
   <color name="red_theme_inverseSurface">#F0DEDE</color>
   <color name="red_theme_inverseOnSurface">#382E2E</color>
   <color name="red_theme_inversePrimary">#8F4A4C</color>
@@ -93,7 +92,6 @@
   <color name="red_theme_onSurfaceVariant_mediumContrast">#DCC6C5</color>
   <color name="red_theme_outline_mediumContrast">#B29E9E</color>
   <color name="red_theme_outlineVariant_mediumContrast">#917F7E</color>
-  <color name="red_theme_scrim_mediumContrast">#000000</color>
   <color name="red_theme_inverseSurface_mediumContrast">#F0DEDE</color>
   <color name="red_theme_inverseOnSurface_mediumContrast">#322827</color>
   <color name="red_theme_inversePrimary_mediumContrast">#743437</color>
@@ -140,7 +138,6 @@
   <color name="red_theme_onSurfaceVariant_highContrast">#FFF9F9</color>
   <color name="red_theme_outline_highContrast">#DCC6C5</color>
   <color name="red_theme_outlineVariant_highContrast">#DCC6C5</color>
-  <color name="red_theme_scrim_highContrast">#000000</color>
   <color name="red_theme_inverseSurface_highContrast">#F0DEDE</color>
   <color name="red_theme_inverseOnSurface_highContrast">#000000</color>
   <color name="red_theme_inversePrimary_highContrast">#4E171B</color>
@@ -190,7 +187,6 @@
   <color name="yellow_theme_onSurfaceVariant">#CDC6B4</color>
   <color name="yellow_theme_outline">#969080</color>
   <color name="yellow_theme_outlineVariant">#4B4739</color>
-  <color name="yellow_theme_scrim">#000000</color>
   <color name="yellow_theme_inverseSurface">#E8E2D4</color>
   <color name="yellow_theme_inverseOnSurface">#333027</color>
   <color name="yellow_theme_inversePrimary">#6D5E0F</color>
@@ -237,7 +233,6 @@
   <color name="yellow_theme_onSurfaceVariant_mediumContrast">#D1CAB8</color>
   <color name="yellow_theme_outline_mediumContrast">#A9A392</color>
   <color name="yellow_theme_outlineVariant_mediumContrast">#888373</color>
-  <color name="yellow_theme_scrim_mediumContrast">#000000</color>
   <color name="yellow_theme_inverseSurface_mediumContrast">#E8E2D4</color>
   <color name="yellow_theme_inverseOnSurface_mediumContrast">#2D2A21</color>
   <color name="yellow_theme_inversePrimary_mediumContrast">#544700</color>
@@ -284,7 +279,6 @@
   <color name="yellow_theme_onSurfaceVariant_highContrast">#FFFAF5</color>
   <color name="yellow_theme_outline_highContrast">#D1CAB8</color>
   <color name="yellow_theme_outlineVariant_highContrast">#D1CAB8</color>
-  <color name="yellow_theme_scrim_highContrast">#000000</color>
   <color name="yellow_theme_inverseSurface_highContrast">#E8E2D4</color>
   <color name="yellow_theme_inverseOnSurface_highContrast">#000000</color>
   <color name="yellow_theme_inversePrimary_highContrast">#322A00</color>
@@ -334,7 +328,6 @@
   <color name="green_theme_onSurfaceVariant">#C3C8BB</color>
   <color name="green_theme_outline">#8D9286</color>
   <color name="green_theme_outlineVariant">#43483E</color>
-  <color name="green_theme_scrim">#000000</color>
   <color name="green_theme_inverseSurface">#E1E4D9</color>
   <color name="green_theme_inverseOnSurface">#2E312B</color>
   <color name="green_theme_inversePrimary">#446732</color>
@@ -381,7 +374,6 @@
   <color name="green_theme_onSurfaceVariant_mediumContrast">#C8CDBF</color>
   <color name="green_theme_outline_mediumContrast">#A0A598</color>
   <color name="green_theme_outlineVariant_mediumContrast">#808579</color>
-  <color name="green_theme_scrim_mediumContrast">#000000</color>
   <color name="green_theme_inverseSurface_mediumContrast">#E1E4D9</color>
   <color name="green_theme_inverseOnSurface_mediumContrast">#282B24</color>
   <color name="green_theme_inversePrimary_mediumContrast">#2E501E</color>
@@ -428,7 +420,6 @@
   <color name="green_theme_onSurfaceVariant_highContrast">#F8FDEE</color>
   <color name="green_theme_outline_highContrast">#C8CDBF</color>
   <color name="green_theme_outlineVariant_highContrast">#C8CDBF</color>
-  <color name="green_theme_scrim_highContrast">#000000</color>
   <color name="green_theme_inverseSurface_highContrast">#E1E4D9</color>
   <color name="green_theme_inverseOnSurface_highContrast">#000000</color>
   <color name="green_theme_inversePrimary_highContrast">#103102</color>
@@ -478,7 +469,6 @@
   <color name="blue_theme_onSurfaceVariant">#C1C7CE</color>
   <color name="blue_theme_outline">#8B9198</color>
   <color name="blue_theme_outlineVariant">#41484D</color>
-  <color name="blue_theme_scrim">#000000</color>
   <color name="blue_theme_inverseSurface">#DFE3E7</color>
   <color name="blue_theme_inverseOnSurface">#2D3135</color>
   <color name="blue_theme_inversePrimary">#236488</color>
@@ -525,7 +515,6 @@
   <color name="blue_theme_onSurfaceVariant_mediumContrast">#C5CBD2</color>
   <color name="blue_theme_outline_mediumContrast">#9DA4AA</color>
   <color name="blue_theme_outlineVariant_mediumContrast">#7D848A</color>
-  <color name="blue_theme_scrim_mediumContrast">#000000</color>
   <color name="blue_theme_inverseSurface_mediumContrast">#DFE3E7</color>
   <color name="blue_theme_inverseOnSurface_mediumContrast">#262B2E</color>
   <color name="blue_theme_inversePrimary_mediumContrast">#004D6E</color>
@@ -572,7 +561,6 @@
   <color name="blue_theme_onSurfaceVariant_highContrast">#F8FBFF</color>
   <color name="blue_theme_outline_highContrast">#C5CBD2</color>
   <color name="blue_theme_outlineVariant_highContrast">#C5CBD2</color>
-  <color name="blue_theme_scrim_highContrast">#000000</color>
   <color name="blue_theme_inverseSurface_highContrast">#DFE3E7</color>
   <color name="blue_theme_inverseOnSurface_highContrast">#000000</color>
   <color name="blue_theme_inversePrimary_highContrast">#002D43</color>

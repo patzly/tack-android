@@ -46,8 +46,6 @@ import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragment {
 
-  private static final String TAG = "BaseBottomSheet";
-
   private MainActivity activity;
   private CustomBottomSheetDialog dialog;
   private View decorView;
@@ -198,7 +196,7 @@ public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragme
           );
         }
       }
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) { // 28
+    } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.P) { // 28
       window.setStatusBarColor(Color.TRANSPARENT);
       lightNavBar = !isDarkModeActive && isOrientationPortraitOrNavAtBottom;
       if (isOrientationPortraitOrNavAtBottom) {

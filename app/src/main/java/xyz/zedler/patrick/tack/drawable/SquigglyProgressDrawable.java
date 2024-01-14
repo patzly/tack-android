@@ -41,9 +41,13 @@ import xyz.zedler.patrick.tack.util.UiUtil;
 
 public class SquigglyProgressDrawable extends Drawable {
 
-  private static final String TAG = "Squiggly";
-
   private static final float TWO_PI = (float) (Math.PI * 2f);
+  /* distance over which amplitude drops to zero, measured in wavelengths */
+  private static final float TRANSITION_PERIODS = 1.5f;
+  /* wave endpoint as percentage of bar when play position is zero */
+  private static final float MIN_WAVE_ENDPOINT = 0.1f;
+  /* wave endpoint as percentage of bar when play position matches wave endpoint */
+  private static final float MATCHED_WAVE_ENDPOINT = 0.6f;
 
   private final Paint wavePaint = new Paint();
   private final Paint linePaint = new Paint();
@@ -53,13 +57,6 @@ public class SquigglyProgressDrawable extends Drawable {
   private float phaseOffset = 0f;
   private long lastFrameTime = -1L;
   private boolean reduceAnimations = false;
-
-  /* distance over which amplitude drops to zero, measured in wavelengths */
-  private float transitionPeriods = 1.5f;
-  /* wave endpoint as percentage of bar when play position is zero */
-  private float minWaveEndpoint = 0.1f;
-  /* wave endpoint as percentage of bar when play position matches wave endpoint */
-  private float matchedWaveEndpoint = 0.6f;
 
   // Horizontal length of the sine wave
   private final float waveLength;
@@ -108,12 +105,12 @@ public class SquigglyProgressDrawable extends Drawable {
     float progress = getLevel() / 10_000f;
     float totalWidth = getBounds().width();
     float totalProgressPx = totalWidth * progress;
-    float waveProgressPx = totalWidth * ((!transitionEnabled || progress > matchedWaveEndpoint)
+    float waveProgressPx = totalWidth * ((!transitionEnabled || progress > MATCHED_WAVE_ENDPOINT)
         ? progress
         : lerp(
-            minWaveEndpoint,
-            matchedWaveEndpoint,
-            lerpInv(0f, matchedWaveEndpoint, progress)
+            MIN_WAVE_ENDPOINT,
+            MATCHED_WAVE_ENDPOINT,
+            lerpInv(0f, MATCHED_WAVE_ENDPOINT, progress)
         )
     );
 
@@ -276,7 +273,7 @@ public class SquigglyProgressDrawable extends Drawable {
    */
   private float computeAmplitude(float x, float sign, float waveProgressPx) {
     if (transitionEnabled) {
-      float length = transitionPeriods * waveLength;
+      float length = TRANSITION_PERIODS * waveLength;
       float coeff = lerpInvSat(waveProgressPx + length / 2f, waveProgressPx - length / 2f, x);
       return sign * heightFraction * lineAmplitude * coeff;
     } else {

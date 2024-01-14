@@ -88,7 +88,7 @@ public class MainFragment extends BaseFragment
   private Bundle savedState;
   private long prevTouchTime;
   private final List<Long> intervals = new ArrayList<>();
-  private boolean flashScreen, keepAwake, reduceAnimations, isPortrait, isLandTablet;
+  private boolean flashScreen, keepAwake, reduceAnimations, isLandTablet;
   private LogoUtil logoUtil;
   private ValueAnimator fabAnimator;
   private float cornerSizeStop, cornerSizePlay, cornerSizeCurrent;
@@ -133,7 +133,7 @@ public class MainFragment extends BaseFragment
     systemBarBehavior.setContainer(binding.constraintMainContainer);
     systemBarBehavior.setUp();
 
-    isPortrait = UiUtil.isOrientationPortrait(activity);
+    boolean isPortrait = UiUtil.isOrientationPortrait(activity);
     isLandTablet = UiUtil.isLandTablet(activity);
 
     new ScrollBehavior().setUpScroll(binding.appBarMain, null, isPortrait);

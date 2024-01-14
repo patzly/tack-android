@@ -68,6 +68,7 @@ import xyz.zedler.patrick.tack.util.UiUtil;
  * `paddingBottomSystemWindowInsets`, `paddingLeftSystemWindowInsets`, or
  * `paddingRightSystemWindowInsets` are set to true in the style.
  */
+@SuppressLint("RestrictedApi")
 public class CustomBottomSheetDialog extends AppCompatDialog {
 
   private BottomSheetBehavior<FrameLayout> behavior;
@@ -471,7 +472,7 @@ public class CustomBottomSheetDialog extends AppCompatDialog {
   }
 
   public static void setLightStatusBar(@NonNull View view, boolean isLight) {
-    if (VERSION.SDK_INT >= VERSION_CODES.R) {
+    if (VERSION.SDK_INT >= VERSION_CODES.R && view.getWindowInsetsController() != null) {
       view.getWindowInsetsController().setSystemBarsAppearance(
           isLight ? WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS : 0,
           WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
