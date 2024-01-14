@@ -128,7 +128,6 @@
   <string name="options_incremental_interval">Alle %1$s</string>
   <string name="options_timer">Dauer des Stücks</string>
   <string name="options_timer_description">Nach %1$s beenden</string>
-  <string name="options_timer_unsupported">Messung in Takten bei aktiver schrittweiser Tempoänderung nicht unterstützt</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_3">Triole</string>
   <string name="options_swing_5">Quintole</string>
