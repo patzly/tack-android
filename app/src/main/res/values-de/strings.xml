@@ -182,6 +182,8 @@
   <string name="settings_gain_disclaimer">Bei aktiver Verstärkung wird vor jeder Wiedergabe eine Warnung angezeigt. Der Entwickler übernimmt keine Verantwortung für etwaige Schäden.</string>
 
   <string name="settings_show_subs">Steuerung für Schlag-Unterteilung</string>
+  <string name="settings_show_subs_description">Vielfältigere Rhythmen</string>
+
   <string name="settings_always_vibrate">Immer vibrieren</string>
   <string name="settings_reset_timer">Timer nach Beenden der Wiedergabe zurücksetzen</string>
   <string name="settings_reset_timer_description">Anstatt fortzusetzen</string>
