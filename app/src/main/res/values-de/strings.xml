@@ -133,6 +133,7 @@
   <string name="options_timer">Dauer des Stücks</string>
   <string name="options_timer_description">Nach %1$s beenden</string>
   <string name="options_mute">Stumm geschaltete Takte</string>
+  <string name="options_mute_play">%1$s wiedergeben</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_3">Triole</string>
   <string name="options_swing_5">Quintole</string>
