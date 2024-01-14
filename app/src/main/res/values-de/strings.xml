@@ -177,7 +177,7 @@
   <string name="settings_gain_disclaimer">Wenn Verstärkung aktiviert ist, wird vor jeder Wiedergabe eine Warnung angezeigt. Der Entwickler übernimmt keine Verantwortung für etwaige Schäden.</string>
 
   <string name="settings_always_vibrate">Immer vibrieren</string>
-  <string name="settings_reset_timer">Timer bei stop zurücksetzen</string>
+  <string name="settings_reset_timer">Timer nach Beenden der Wiedergabe zurücksetzen</string>
   <string name="settings_flash_screen">Bildschirm aufblitzen lassen</string>
   <string name="settings_flash_screen_description">Bei jedem Schlag</string>
 
