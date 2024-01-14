@@ -60,7 +60,7 @@
   <string name="action_stop">Beenden</string>
   <string name="action_add_beat">Schlag hinzufügen</string>
   <string name="action_remove_beat">Schlag entfernen</string>
-  <string name="action_add_sub">Aufteilung hinzufügen</string>
+  <string name="action_add_sub">Unterteilung hinzufügen</string>
   <string name="action_remove_sub">Aufteilung entfernen</string>
   <string name="action_clear_all">Alle entfernen</string>
   <string name="action_tempo_tap">Tempo tippen</string>
