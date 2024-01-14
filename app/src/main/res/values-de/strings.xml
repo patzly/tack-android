@@ -126,6 +126,7 @@
   <string name="options_count_in_description">%1$s warten, bevor Modifikationen angewendet werden</string>
   <string name="options_incremental">Schrittweiser Tempowechsel</string>
   <string name="options_incremental_amount_increase">Tempo um %1$d bpm erhöhen</string>
+  <string name="options_incremental_amount_decrease">Tempo um %1$d verringern</string>
   <string name="options_incremental_interval">Alle %1$s</string>
   <string name="options_timer">Dauer des Stücks</string>
   <string name="options_timer_description">Nach %1$s beenden</string>
