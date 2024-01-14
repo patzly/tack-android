@@ -169,7 +169,7 @@
   <string name="settings_latency_description">Kompensiere die Latenzzeit der Audioausgabe für haptische und visuelle Signale</string>
 
   <string name="settings_ignore_focus">Audiofokus ignorieren</string>
-  <string name="settings_ignore_focus_description">Wiedergabe fortsetzen, wenn andere Anwendungen Geräusche machen</string>
+  <string name="settings_ignore_focus_description">Wiedergabe fortsetzen, wenn andere Anwendungen etwas wiedergeben</string>
 
   <string name="settings_gain">Verstärkung</string>
   <string name="settings_gain_description">Verstärkung in dB (zusätzlich zur Systemlautstärke)</string>
