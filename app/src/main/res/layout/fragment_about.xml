@@ -82,30 +82,6 @@
         </LinearLayout>
 
         <LinearLayout
-          android:id="@+id/linear_about_changelog"
-          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
-
-          <ImageView
-            android:id="@+id/image_about_changelog"
-            style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_history_anim"
-            tools:ignore="ContentDescription" />
-
-          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-            <TextView
-              style="@style/Widget.Tack.TextView.ListItem.OverLine"
-              android:text="@string/about_changelog" />
-
-            <TextView
-              style="@style/Widget.Tack.TextView.ListItem.Title"
-              android:text="@string/about_changelog_description" />
-
-          </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
           android:id="@+id/linear_about_developer"
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
@@ -130,6 +106,30 @@
         </LinearLayout>
 
         <LinearLayout
+          android:id="@+id/linear_about_changelog"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
+
+          <ImageView
+            android:id="@+id/image_about_changelog"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_round_history_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/about_changelog" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/about_changelog_description" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
           android:id="@+id/linear_about_vending"
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
@@ -142,11 +142,11 @@
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
             <TextView
-              style="@style/Widget.Tack.TextView.ListItem.OverLine"
+              style="@style/Widget.Tack.TextView.ListItem.Title"
               android:text="@string/about_vending" />
 
             <TextView
-              style="@style/Widget.Tack.TextView.ListItem.Title"
+              style="@style/Widget.Tack.TextView.ListItem.Description"
               android:text="@string/about_vending_description" />
 
           </LinearLayout>
@@ -165,11 +165,11 @@
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
             <TextView
-              style="@style/Widget.Tack.TextView.ListItem.OverLine"
+              style="@style/Widget.Tack.TextView.ListItem.Title"
               android:text="@string/about_github" />
 
             <TextView
-              style="@style/Widget.Tack.TextView.ListItem.Title"
+              style="@style/Widget.Tack.TextView.ListItem.Description"
               android:text="@string/about_github_description" />
 
           </LinearLayout>
@@ -188,11 +188,11 @@
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
             <TextView
-              style="@style/Widget.Tack.TextView.ListItem.OverLine"
+              style="@style/Widget.Tack.TextView.ListItem.Title"
               android:text="@string/about_translation" />
 
             <TextView
-              style="@style/Widget.Tack.TextView.ListItem.Title"
+              style="@style/Widget.Tack.TextView.ListItem.Description"
               android:text="@string/about_translation_description" />
 
           </LinearLayout>
@@ -212,11 +212,11 @@
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
             <TextView
-              style="@style/Widget.Tack.TextView.ListItem.OverLine"
+              style="@style/Widget.Tack.TextView.ListItem.Title"
               android:text="@string/about_privacy" />
 
             <TextView
-              style="@style/Widget.Tack.TextView.ListItem.Title"
+              style="@style/Widget.Tack.TextView.ListItem.Description"
               android:text="@string/about_privacy_description" />
 
           </LinearLayout>

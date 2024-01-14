@@ -231,7 +231,7 @@
 
   <string name="about_version">Version</string>
   <string name="about_changelog">Changelog</string>
-  <string name="about_changelog_description">What\'s new?</string>
+  <string name="about_changelog_description">New in this version</string>
   <string name="about_developer">Developer</string>
   <string name="about_vending" translatable="false">Google Play</string>
   <string name="about_vending_description">More apps by the developer</string>
