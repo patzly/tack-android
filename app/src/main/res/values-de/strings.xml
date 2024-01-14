@@ -181,6 +181,7 @@
 
   <string name="settings_sound_wood">Holz</string>
   <string name="settings_sound_sine">Sinus</string>
+  <string name="settings_sound_click">Klick</string>
   <string name="settings_latency">Korrektur der Latenzzeit</string>
   <string name="settings_latency_description">Kompensierung die Audio-Latenzzeit für haptische und visuelle Signale</string>
 
