@@ -136,6 +136,7 @@
   <string name="options_mute">Stumm geschaltete Takte</string>
   <string name="options_mute_play">%1$s wiedergeben</string>
   <string name="options_mute_mute">%1$s stumm schalten</string>
+  <string name="options_mute_random">Bis zu %1$d zufällig stummschalten</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Unterteilungen auf den ausgewählten Swing-Anteil gesetzt</string>
   <string name="options_swing_3">Triole</string>
