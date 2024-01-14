@@ -1,0 +1,91 @@
+Index: app/src/main/res/raw/locales.txt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>en\nPatrick Zedler
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/raw/locales.txt b/app/src/main/res/raw/locales.txt
+--- a/app/src/main/res/raw/locales.txt	(revision 7e8ccfddaf1cf23d6263cf7561f9962377e85d90)
++++ b/app/src/main/res/raw/locales.txt	(date 1705201483611)
+@@ -1,2 +1,5 @@
+ en
++Patrick Zedler
++
++de
+ Patrick Zedler
+\ No newline at end of file
+Index: app/src/main/res/layout/fragment_bottomsheet_languages.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  ~ This file is part of Tack Android.\n  ~\n  ~ Tack Android is free software: you can redistribute it and/or modify\n  ~ it under the terms of the GNU General Public License as published by\n  ~ the Free Software Foundation, either version 3 of the License, or\n  ~ (at your option) any later version.\n  ~\n  ~ Tack Android is distributed in the hope that it will be useful,\n  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of\n  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n  ~ GNU General Public License for more details.\n  ~\n  ~ You should have received a copy of the GNU General Public License\n  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.\n  ~\n  ~ Copyright (c) 2020-2024 by Patrick Zedler\n  -->\n\n<LinearLayout\n  xmlns:android=\"http://schemas.android.com/apk/res/android\"\n  android:id=\"@+id/linear_languages_container\"\n  android:layout_width=\"match_parent\"\n  android:layout_height=\"wrap_content\"\n  android:orientation=\"vertical\">\n\n  <LinearLayout\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"wrap_content\"\n    android:orientation=\"vertical\"\n    android:padding=\"16dp\">\n\n    <TextView\n      style=\"@style/Widget.Tack.TextView.Toolbar\"\n      android:layout_width=\"match_parent\"\n      android:layout_height=\"wrap_content\"\n      android:text=\"@string/settings_language\"\n      android:textAlignment=\"center\"\n      android:gravity=\"center_horizontal\"\n      android:singleLine=\"true\" />\n\n    <TextView\n      style=\"@style/Widget.Tack.TextView.Paragraph.BodyMedium\"\n      android:layout_width=\"match_parent\"\n      android:layout_height=\"wrap_content\"\n      android:text=\"@string/settings_language_info\"\n      android:textColor=\"?attr/colorOnSurfaceVariant\"\n      android:paddingTop=\"4dp\" />\n\n  </LinearLayout>\n\n  <com.google.android.material.divider.MaterialDivider\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"wrap_content\" />\n\n  <androidx.recyclerview.widget.RecyclerView\n    android:id=\"@+id/recycler_languages\"\n    android:layout_width=\"match_parent\"\n    android:layout_height=\"wrap_content\"\n    android:paddingTop=\"8dp\"\n    android:paddingBottom=\"8dp\"\n    android:clipToPadding=\"false\"\n    android:overScrollMode=\"ifContentScrolls\"\n    android:scrollbars=\"none\" />\n\n</LinearLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/layout/fragment_bottomsheet_languages.xml b/app/src/main/res/layout/fragment_bottomsheet_languages.xml
+--- a/app/src/main/res/layout/fragment_bottomsheet_languages.xml	(revision 7e8ccfddaf1cf23d6263cf7561f9962377e85d90)
++++ b/app/src/main/res/layout/fragment_bottomsheet_languages.xml	(date 1705201699012)
+@@ -41,7 +41,7 @@
+       android:singleLine="true" />
+ 
+     <TextView
+-      style="@style/Widget.Tack.TextView.Paragraph.BodyMedium"
++      style="@style/Widget.Tack.TextView.BodyMedium"
+       android:layout_width="match_parent"
+       android:layout_height="wrap_content"
+       android:text="@string/settings_language_info"
+Index: app/build.gradle
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>plugins {\n    alias libs.plugins.android.application\n    alias libs.plugins.navigation.safeargs\n}\n\nandroid {\n    namespace 'xyz.zedler.patrick.tack'\n    compileSdk 34\n    buildToolsVersion '34.0.0'\n\n    defaultConfig {\n        applicationId \"xyz.zedler.patrick.tack\"\n        minSdk 21\n        targetSdk 34\n        versionCode 130 // last number is 0 for app release\n        versionName \"4.0.0\"\n        resConfigs 'en'\n    }\n\n    applicationVariants.configureEach { variant ->\n        variant.resValue \"string\", \"versionName\", variant.versionName\n    }\n\n    buildTypes {\n        release {\n            postprocessing {\n                removeUnusedCode true\n                removeUnusedResources true\n                obfuscate false\n                optimizeCode true\n                proguardFiles {\n                    getDefaultProguardFile('proguard-android-optimize.txt')\n                    'proguard-rules.pro'\n                }\n            }\n            debuggable false\n        }\n    }\n\n    buildFeatures {\n        viewBinding true\n        buildConfig true\n    }\n\n    bundle {\n        storeArchive {\n            enable true\n        }\n    }\n\n    compileOptions {\n        sourceCompatibility JavaVersion.VERSION_11\n        targetCompatibility JavaVersion.VERSION_11\n    }\n}\n\ndependencies {\n    implementation libs.appcompat\n    implementation libs.fragment\n    implementation libs.navigation.fragment\n    implementation libs.navigation.ui\n    implementation libs.preference\n    implementation libs.shapes\n    implementation libs.material\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/build.gradle b/app/build.gradle
+--- a/app/build.gradle	(revision 7e8ccfddaf1cf23d6263cf7561f9962377e85d90)
++++ b/app/build.gradle	(date 1705201483612)
+@@ -14,7 +14,7 @@
+         targetSdk 34
+         versionCode 130 // last number is 0 for app release
+         versionName "4.0.0"
+-        resConfigs 'en'
++        resConfigs 'en', 'de'
+     }
+ 
+     applicationVariants.configureEach { variant ->
+Index: app/src/main/res/xml/locales_config.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!--\n  ~ This file is part of Tack Android.\n  ~\n  ~ Tack Android is free software: you can redistribute it and/or modify\n  ~ it under the terms of the GNU General Public License as published by\n  ~ the Free Software Foundation, either version 3 of the License, or\n  ~ (at your option) any later version.\n  ~\n  ~ Tack Android is distributed in the hope that it will be useful,\n  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of\n  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n  ~ GNU General Public License for more details.\n  ~\n  ~ You should have received a copy of the GNU General Public License\n  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.\n  ~\n  ~ Copyright (c) 2020-2024 by Patrick Zedler\n  -->\n\n<locale-config xmlns:android=\"http://schemas.android.com/apk/res/android\">\n  <locale android:name=\"en\"/>\n</locale-config>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/xml/locales_config.xml b/app/src/main/res/xml/locales_config.xml
+--- a/app/src/main/res/xml/locales_config.xml	(revision 7e8ccfddaf1cf23d6263cf7561f9962377e85d90)
++++ b/app/src/main/res/xml/locales_config.xml	(date 1705201483613)
+@@ -20,4 +20,5 @@
+ 
+ <locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+   <locale android:name="en"/>
++  <locale android:name="de"/>
+ </locale-config>
+\ No newline at end of file
+Index: .idea/inspectionProfiles/Project_Default.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/inspectionProfiles/Project_Default.xml b/.idea/inspectionProfiles/Project_Default.xml
+new file mode 100644
+--- /dev/null	(date 1705201483615)
++++ b/.idea/inspectionProfiles/Project_Default.xml	(date 1705201483615)
+@@ -0,0 +1,8 @@
++<component name="InspectionProjectProfileManager">
++  <profile version="1.0">
++    <option name="myName" value="Project Default" />
++    <inspection_tool class="AutoCloseableResource" enabled="true" level="WARNING" enabled_by_default="true">
++      <option name="METHOD_MATCHER_CONFIG" value="java.util.Formatter,format,java.io.Writer,append,com.google.common.base.Preconditions,checkNotNull,org.hibernate.Session,close,java.io.PrintWriter,printf,java.io.PrintStream,printf,android.content.Context,obtainStyledAttributes" />
++    </inspection_tool>
++  </profile>
++</component>
+\ No newline at end of file
