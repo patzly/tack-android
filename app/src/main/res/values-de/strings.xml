@@ -138,7 +138,7 @@
   <string name="options_mute_mute">%1$s stumm schalten</string>
   <string name="options_mute_random">Bis zu %1$d zufällig stummschalten</string>
   <string name="options_swing">Swing</string>
-  <string name="options_swing_description">Unterteilungen auf den ausgewählten Swing-Anteil gesetzt</string>
+  <string name="options_swing_description">Unterteilungen auf ausgewählten Swing-Anteil gesetzt</string>
   <string name="options_swing_3">Triole</string>
   <string name="options_swing_5">Quintole</string>
   <string name="options_swing_7">Septole</string>
