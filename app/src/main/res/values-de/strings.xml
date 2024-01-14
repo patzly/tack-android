@@ -178,6 +178,8 @@
 
   <string name="settings_always_vibrate">Immer vibrieren</string>
   <string name="settings_reset_timer">Timer nach Beenden der Wiedergabe zurücksetzen</string>
+  <string name="settings_reset_timer_description">Anstatt fortzusetzen</string>
+
   <string name="settings_flash_screen">Bildschirm aufblitzen lassen</string>
   <string name="settings_flash_screen_description">Bei jedem Schlag</string>
 
