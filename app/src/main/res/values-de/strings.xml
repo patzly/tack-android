@@ -54,7 +54,7 @@
   <string name="action_close">Schließen</string>
   <string name="action_cancel">Abbrechen</string>
   <string name="action_increase">Erhöhen</string>
-  <string name="action_decrease">Vermindern</string>
+  <string name="action_decrease">Verringern</string>
   <string name="action_play">Starten</string>
   <string name="action_play_stop">Starten/Beenden</string>
   <string name="action_stop">Beenden</string>
