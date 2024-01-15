@@ -102,8 +102,8 @@ public final class Constants {
     public final static boolean INCREMENTAL_INCREASE = true;
     public final static int INCREMENTAL_INTERVAL = 1;
     public final static String INCREMENTAL_UNIT = UNIT.BARS;
-    public final static int TIMER_DURATION = 10; // TODO
-    public final static String TIMER_UNIT = UNIT.SECONDS; // TODO
+    public final static int TIMER_DURATION = 0;
+    public final static String TIMER_UNIT = UNIT.BARS;
   }
 
   public final static class SOUND {

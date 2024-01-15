@@ -188,7 +188,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     if (!runAsSuperClass) {
       try {
         Intent intent = new Intent(this, MetronomeService.class);
-        startService(intent);
         bindService(intent, this, Context.BIND_AUTO_CREATE);
       } catch (IllegalStateException e) {
         Log.e(TAG, "onStart: cannot start MetronomeService because app is in background");
@@ -203,6 +202,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     if (!runAsSuperClass && bound) {
       unbindService(this);
       bound = false;
+      updateMetronomeUtil();
     }
   }
 
@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
     MetronomeBinder binder = (MetronomeBinder) iBinder;
     metronomeService = binder.getService();
-    bound = metronomeService != null;
+    bound = true;
     updateMetronomeUtil();
     if (bound) {
       BaseFragment current = getCurrentFragment();
@@ -262,9 +262,20 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
   @Override
   public void onServiceDisconnected(ComponentName componentName) {
-    metronomeService = null;
     bound = false;
     updateMetronomeUtil();
+  }
+
+  @Override
+  public void onBindingDied(ComponentName name) {
+    bound = false;
+    unbindService(this);
+    try {
+      Intent intent = new Intent(this, MetronomeService.class);
+      bindService(intent, this, Context.BIND_AUTO_CREATE);
+    } catch (IllegalStateException e) {
+      Log.e(TAG, "onBindingDied: cannot start MetronomeService because app is in background");
+    }
   }
 
   public MetronomeUtil getMetronomeUtil() {

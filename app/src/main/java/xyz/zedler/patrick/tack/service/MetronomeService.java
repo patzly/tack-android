@@ -45,6 +45,7 @@ public class MetronomeService extends Service implements MetronomeListener {
 
   private final static int NOTIFICATION_ID = 1;
 
+  private final IBinder binder = new MetronomeBinder();
   private MetronomeUtil metronomeUtil;
   private NotificationUtil notificationUtil;
   private StopReceiver stopReceiver;
@@ -77,7 +78,7 @@ public class MetronomeService extends Service implements MetronomeListener {
   @Nullable
   @Override
   public IBinder onBind(Intent intent) {
-    return new MetronomeBinder();
+    return binder;
   }
 
   @Override

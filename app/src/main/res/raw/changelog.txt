@@ -9,7 +9,7 @@
 - New: settings for flash screen, volume boost, audio latency correction and elapsed time
 - New: support for audio focus when other apps make sound during playback
 - New: Italian tempo terms
-- New: translation management on Transifex
+- New: language selection and translation management on Transifex
 - Improved: landscape layout
 - Improved: bookmark shortcuts
 - Fixed: inconsistent audio beats on Android 12+
