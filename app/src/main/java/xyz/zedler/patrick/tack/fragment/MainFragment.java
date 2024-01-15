@@ -190,10 +190,15 @@ public class MainFragment extends BaseFragment
     dialogUtilGain.showIfWasShown(savedInstanceState);
 
     optionsUtil = new OptionsUtil(activity, this);
-    binding.buttonMainOptions.setVisibility(isLandTablet ? View.INVISIBLE : View.VISIBLE);
+    boolean hideOptions = isLandTablet;
+    boolean hideBeatMode = !activity.getHapticUtil().hasVibrator();
+    binding.buttonMainOptions.setVisibility(
+        hideOptions && hideBeatMode ? View.GONE : View.VISIBLE
+    );
+    binding.buttonMainOptions.setEnabled(!hideOptions);
     // For symmetry
     binding.buttonMainBeatMode.setVisibility(
-        isLandTablet && !activity.getHapticUtil().hasVibrator() ? View.INVISIBLE : View.VISIBLE
+        hideBeatMode && hideOptions ? View.GONE : View.VISIBLE
     );
 
     shortcutUtil = new ShortcutUtil(activity);
