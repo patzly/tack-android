@@ -18,6 +18,7 @@ There also is a separate Wear OS app available with haptic beats and many option
 <a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen2.png"><img src="assets/screen2.png" width="150px"/></a>
 <a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen3.png"><img src="assets/screen3.png" width="150px"/></a>
 <a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen4.png"><img src="assets/screen4.png" width="150px"/></a>
+<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen_tablet.png"><img src="assets/screen_tablet.png" width="300px"/></a>
 
 ## Features
 
