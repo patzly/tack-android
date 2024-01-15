@@ -91,6 +91,30 @@
       </LinearLayout>
 
       <LinearLayout
+        android:id="@+id/linear_feedback_issue"
+        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Icon.Clickable">
+
+        <ImageView
+          android:id="@+id/image_feedback_github"
+          style="@style/Widget.Tack.ImageView.ListItem.Icon"
+          android:src="@drawable/ic_round_github"
+          tools:ignore="ContentDescription" />
+
+        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Title"
+            android:text="@string/action_issue" />
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Description"
+            android:text="@string/action_issue_description" />
+
+        </LinearLayout>
+
+      </LinearLayout>
+
+      <LinearLayout
         android:id="@+id/linear_feedback_email"
         style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Icon.Clickable">
 

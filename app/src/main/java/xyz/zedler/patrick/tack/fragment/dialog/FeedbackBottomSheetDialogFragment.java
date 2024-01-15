@@ -67,12 +67,14 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
     activity = (MainActivity) requireActivity();
 
     binding.linearFeedbackRate.setBackground(ViewUtil.getRippleBgListItemSurface(activity));
+    binding.linearFeedbackIssue.setBackground(ViewUtil.getRippleBgListItemSurface(activity));
     binding.linearFeedbackEmail.setBackground(ViewUtil.getRippleBgListItemSurface(activity));
     binding.linearFeedbackRecommend.setBackground(ViewUtil.getRippleBgListItemSurface(activity));
 
     ViewUtil.setOnClickListeners(
         this,
         binding.linearFeedbackRate,
+        binding.linearFeedbackIssue,
         binding.linearFeedbackEmail,
         binding.linearFeedbackRecommend
     );
@@ -112,6 +114,10 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
         }
         dismiss();
       }, 400);
+    } else if (id == R.id.linear_feedback_issue && getViewUtil().isClickEnabled(id)) {
+      performHapticClick();
+      String issues = getString(R.string.app_github) + "/issues";
+      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(issues)));
     } else if (id == R.id.linear_feedback_email && getViewUtil().isClickEnabled(id)) {
       performHapticClick();
       Intent intent = new Intent(Intent.ACTION_SENDTO);
