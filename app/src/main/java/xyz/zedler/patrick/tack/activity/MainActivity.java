@@ -51,7 +51,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import xyz.zedler.patrick.tack.BuildConfig;
-import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
@@ -82,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   private HapticUtil hapticUtil;
   private MetronomeUtil metronomeUtil;
   private Locale locale;
+  private Intent metronomeIntent;
   private MetronomeService metronomeService;
   private boolean runAsSuperClass, bound;
   private ActivityResultLauncher<String> requestPermissionLauncher;
@@ -157,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
       }
     });
 
+    metronomeIntent = new Intent(this, MetronomeService.class);
     updateMetronomeUtil();
 
     if (savedInstanceState == null && bundleInstanceState == null) {
@@ -172,12 +173,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
     if (!runAsSuperClass) {
       binding = null;
+      metronomeUtil.destroy();
       // metronome should be stopped when app is removed from recent apps
-      if (getMetronomeUtil().isFromService()) {
-        getMetronomeUtil().stop();
-        getMetronomeUtil().destroy();
-        sendBroadcast(new Intent(ACTION.STOP));
-      }
+      stopService(metronomeIntent);
     }
   }
 
@@ -187,10 +185,14 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
     if (!runAsSuperClass) {
       try {
-        Intent intent = new Intent(this, MetronomeService.class);
-        bindService(intent, this, Context.BIND_AUTO_CREATE);
-      } catch (IllegalStateException e) {
-        Log.e(TAG, "onStart: cannot start MetronomeService because app is in background");
+        if (VERSION.SDK_INT >= VERSION_CODES.O) {
+          startForegroundService(metronomeIntent);
+        } else {
+          startService(metronomeIntent);
+        }
+        bindService(metronomeIntent, this, Context.BIND_IMPORTANT);
+      } catch (Exception e) {
+        Log.e(TAG, "onStart: could not bind metronome service", e);
       }
     }
   }
@@ -271,8 +273,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     bound = false;
     unbindService(this);
     try {
-      Intent intent = new Intent(this, MetronomeService.class);
-      bindService(intent, this, Context.BIND_AUTO_CREATE);
+      bindService(metronomeIntent, this, Context.BIND_AUTO_CREATE);
     } catch (IllegalStateException e) {
       Log.e(TAG, "onBindingDied: cannot start MetronomeService because app is in background");
     }

@@ -19,12 +19,15 @@
 
 package xyz.zedler.patrick.tack.service;
 
+import android.app.Notification;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ServiceInfo;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.IBinder;
@@ -99,9 +102,20 @@ public class MetronomeService extends Service implements MetronomeListener {
 
   @Override
   public void onMetronomeStart() {
-    if (notificationUtil.hasPermission()) {
-      notificationUtil.createNotificationChannel();
-      startForeground(NOTIFICATION_ID, notificationUtil.getNotification());
+    if (!notificationUtil.hasPermission()) {
+      return;
+    }
+    notificationUtil.createNotificationChannel();
+    Notification notification = notificationUtil.getNotification();
+    try {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        int type = ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK;
+        startForeground(NOTIFICATION_ID, notification, type);
+      } else {
+        startForeground(NOTIFICATION_ID, notification);
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "onMetronomeStart: could not start in foreground", e);
     }
   }
 
@@ -141,8 +155,8 @@ public class MetronomeService extends Service implements MetronomeListener {
     @Override
     public void onReceive(Context context, Intent intent) {
       if (intent != null && Objects.equals(intent.getAction(), ACTION.STOP)) {
-        Log.d(TAG, "onReceive: received stop command");
         metronomeUtil.stop();
+        Log.d(TAG, "onReceive: received stop command");
       }
     }
   }

@@ -57,6 +57,7 @@
 
     <service
       android:name=".service.MetronomeService"
+      android:description="@string/msg_service_description"
       android:foregroundServiceType="mediaPlayback"
       android:exported="false" />
 
