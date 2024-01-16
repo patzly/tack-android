@@ -812,8 +812,9 @@ public class MetronomeUtil {
       }
     }, latency);
 
+    boolean isBeat = tick.subdivision == 1;
     boolean isFirstBeat = ((tick.index / getSubdivisionsCount()) % getBeatsCount()) == 0;
-    if (isFirstBeat && tick.subdivision == 1) { // next bar
+    if (isBeat && isFirstBeat) {
       long beatIndex = tick.index / getSubdivisionsCount();
       long barIndex = beatIndex / getBeatsCount();
       boolean isCountIn = barIndex < getCountIn();

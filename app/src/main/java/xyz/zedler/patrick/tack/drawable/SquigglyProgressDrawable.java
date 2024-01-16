@@ -49,7 +49,7 @@ public class SquigglyProgressDrawable extends Drawable {
   /* wave endpoint as percentage of bar when play position matches wave endpoint */
   private static final float MATCHED_WAVE_ENDPOINT = 0.6f;
   /* Enables a transition region where the amplitude of the wave is reduced linearly across it */
-  private static final boolean ENABLE_TRANSITION = true;
+  private static final boolean ENABLE_TRANSITION = false;
 
   private final Paint wavePaint = new Paint();
   private final Paint linePaint = new Paint();
