@@ -48,6 +48,8 @@ public class SquigglyProgressDrawable extends Drawable {
   private static final float MIN_WAVE_ENDPOINT = 0.1f;
   /* wave endpoint as percentage of bar when play position matches wave endpoint */
   private static final float MATCHED_WAVE_ENDPOINT = 0.6f;
+  /* Enables a transition region where the amplitude of the wave is reduced linearly across it */
+  private static final boolean ENABLE_TRANSITION = true;
 
   private final Paint wavePaint = new Paint();
   private final Paint linePaint = new Paint();
@@ -66,10 +68,6 @@ public class SquigglyProgressDrawable extends Drawable {
   private final float phaseSpeed;
   // Progress stroke width, both for wave and solid line
   private float strokeWidth;
-
-  // Enables a transition region where the amplitude
-  // of the wave is reduced linearly across it.
-  private final boolean transitionEnabled = false;
 
   private boolean animate = false;
   private boolean loopInvalidation = false;
@@ -105,7 +103,7 @@ public class SquigglyProgressDrawable extends Drawable {
     float progress = getLevel() / 10_000f;
     float totalWidth = getBounds().width();
     float totalProgressPx = totalWidth * progress;
-    float waveProgressPx = totalWidth * ((!transitionEnabled || progress > MATCHED_WAVE_ENDPOINT)
+    float waveProgressPx = totalWidth * ((!ENABLE_TRANSITION || progress > MATCHED_WAVE_ENDPOINT)
         ? progress
         : lerp(
             MIN_WAVE_ENDPOINT,
@@ -115,7 +113,7 @@ public class SquigglyProgressDrawable extends Drawable {
     );
 
     float waveStart = -phaseOffset - waveLength / 2f;
-    float waveEnd = transitionEnabled ? totalWidth : waveProgressPx;
+    float waveEnd = ENABLE_TRANSITION ? totalWidth : waveProgressPx;
 
     if (reduceAnimations) {
       // translate to the start position of the progress bar for all draw commands
@@ -167,7 +165,7 @@ public class SquigglyProgressDrawable extends Drawable {
       canvas.drawPath(path, wavePaint);
       canvas.restore();
 
-      if (transitionEnabled) {
+      if (ENABLE_TRANSITION) {
         // If there's a smooth transition, we draw the rest of the
         // path in a different color (using different clip params)
         canvas.save();
@@ -272,7 +270,7 @@ public class SquigglyProgressDrawable extends Drawable {
    * Helper function, computes amplitude for wave segment
    */
   private float computeAmplitude(float x, float sign, float waveProgressPx) {
-    if (transitionEnabled) {
+    if (ENABLE_TRANSITION) {
       float length = TRANSITION_PERIODS * waveLength;
       float coeff = lerpInvSat(waveProgressPx + length / 2f, waveProgressPx - length / 2f, x);
       return sign * heightFraction * lineAmplitude * coeff;

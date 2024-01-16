@@ -520,28 +520,11 @@ public class MainFragment extends BaseFragment
     updateSubs(getMetronomeUtil().getSubdivisions());
     updateSubControls();
     refreshBookmarks();
-    // updateTimerControls is called below in layoutListener
+    measureTimerControls(true); // calls updateTimerControls when measured
 
     int tempo = getMetronomeUtil().getTempo();
     setTempo(tempo);
     binding.textSwitcherMainTempoTerm.setCurrentText(getTempoTerm(tempo));
-
-    binding.seekbarMainTimer.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            int width = binding.seekbarMainTimer.getWidth()
-                - binding.seekbarMainTimer.getPaddingStart()
-                - binding.seekbarMainTimer.getPaddingEnd();
-            binding.seekbarMainTimer.setMax(width);
-            updateTimerControls();
-            if (binding.seekbarMainTimer.getViewTreeObserver().isAlive()) {
-              binding.seekbarMainTimer.getViewTreeObserver().removeOnGlobalLayoutListener(
-                  this
-              );
-            }
-          }
-        });
 
     ViewUtil.resetAnimatedIcon(binding.fabMainPlayStop);
     binding.fabMainPlayStop.setImageResource(
@@ -936,6 +919,7 @@ public class MainFragment extends BaseFragment
     boolean isPlaying = getMetronomeUtil().isPlaying();
     boolean isTimerActive = getMetronomeUtil().isTimerActive();
     binding.seekbarMainTimer.setVisibility(isTimerActive ? View.VISIBLE : View.GONE);
+    measureTimerControls(false);
     if (isTimerActive && isPlaying) {
       squiggly.resumeAnimation();
     } else {
@@ -955,6 +939,27 @@ public class MainFragment extends BaseFragment
       updateTimerProgress(timerProgress, 0, false, false);
     }
     updateTimerDisplay();
+  }
+
+  private void measureTimerControls(boolean updateControls) {
+    binding.seekbarMainTimer.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override
+          public void onGlobalLayout() {
+            int width = binding.seekbarMainTimer.getWidth()
+                - binding.seekbarMainTimer.getPaddingStart()
+                - binding.seekbarMainTimer.getPaddingEnd();
+            binding.seekbarMainTimer.setMax(width);
+            if (updateControls) {
+              updateTimerControls();
+            }
+            if (binding.seekbarMainTimer.getViewTreeObserver().isAlive()) {
+              binding.seekbarMainTimer.getViewTreeObserver().removeOnGlobalLayoutListener(
+                  this
+              );
+            }
+          }
+        });
   }
 
   public void updateTimerDisplay() {
