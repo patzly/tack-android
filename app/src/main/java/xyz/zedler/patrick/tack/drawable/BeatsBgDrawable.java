@@ -116,6 +116,8 @@ public class BeatsBgDrawable extends Drawable {
   public void setProgress(float fraction, long duration, boolean animated) {
     if (progressAnimator != null) {
       progressAnimator.pause();
+      progressAnimator.removeAllUpdateListeners();
+      progressAnimator.removeAllListeners();
       progressAnimator.cancel();
       progressAnimator = null;
     }
@@ -147,6 +149,8 @@ public class BeatsBgDrawable extends Drawable {
   public void setProgressVisible(boolean visible, long duration, boolean animated) {
     if (alphaAnimator != null) {
       alphaAnimator.pause();
+      alphaAnimator.removeAllUpdateListeners();
+      alphaAnimator.removeAllListeners();
       alphaAnimator.cancel();
       alphaAnimator = null;
     }

@@ -115,6 +115,7 @@ public class MainFragment extends BaseFragment
 
     if (fabAnimator != null) {
       fabAnimator.pause();
+      fabAnimator.removeAllUpdateListeners();
       fabAnimator.cancel();
     }
     binding = null;
@@ -222,7 +223,7 @@ public class MainFragment extends BaseFragment
         if (timerPositionCurrent != timerPositionNew) {
           performHapticTick();
         }
-        getMetronomeUtil().updateTimerHandler(fraction);
+        getMetronomeUtil().updateTimerHandler(fraction, true);
         updateTimerDisplay();
       }
 
@@ -838,9 +839,6 @@ public class MainFragment extends BaseFragment
       }
     } else if (id == R.id.button_main_options) {
       performHapticClick();
-      if (getMetronomeUtil().isPlaying()) {
-        getMetronomeUtil().stop();
-      }
       ViewUtil.startIcon(binding.buttonMainOptions.getIcon());
       optionsUtil.update();
       optionsUtil.show();
@@ -1113,6 +1111,7 @@ public class MainFragment extends BaseFragment
     if (progressAnimator != null) {
       progressAnimator.pause();
       progressAnimator.removeAllUpdateListeners();
+      progressAnimator.removeAllListeners();
       progressAnimator.cancel();
       progressAnimator = null;
     }
@@ -1122,6 +1121,7 @@ public class MainFragment extends BaseFragment
     if (progressTransitionAnimator != null) {
       progressTransitionAnimator.pause();
       progressTransitionAnimator.removeAllUpdateListeners();
+      progressTransitionAnimator.removeAllListeners();
       progressTransitionAnimator.cancel();
       progressTransitionAnimator = null;
     }

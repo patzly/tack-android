@@ -82,6 +82,7 @@ public class BeatView extends FrameLayout {
 
     if (animatorSet != null) {
       animatorSet.pause();
+      animatorSet.removeAllListeners();
       animatorSet.cancel();
     }
   }

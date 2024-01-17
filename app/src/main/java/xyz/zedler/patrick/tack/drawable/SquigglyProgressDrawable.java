@@ -224,6 +224,7 @@ public class SquigglyProgressDrawable extends Drawable {
     }
     if (heightAnimator != null) {
       heightAnimator.pause();
+      heightAnimator.removeAllListeners();
       heightAnimator.removeAllUpdateListeners();
       heightAnimator.cancel();
       heightAnimator = null;
