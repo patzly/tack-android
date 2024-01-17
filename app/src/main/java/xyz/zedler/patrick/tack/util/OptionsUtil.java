@@ -261,34 +261,10 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     boolean visibleControls = isTimerActive || !useDialog;
     binding.linearMainTimerContainer.setVisibility(visibleControls ? View.VISIBLE : View.GONE);
 
-    // Single-selection mode with auto de-selection only effective if buttons enabled
-    binding.buttonOptionsTimerUnitBars.setEnabled(true);
     binding.toggleOptionsTimerUnit.removeOnButtonCheckedListener(this);
     binding.toggleOptionsTimerUnit.check(checkedId);
     binding.toggleOptionsTimerUnit.addOnButtonCheckedListener(this);
     binding.toggleOptionsTimerUnit.setEnabled(isTimerActive);
-
-    // Bars unit not supported for timer in connection with incremental tempo change!
-    // On tempo changes with units different to bars, beats would not start at bar start
-    // Disable bars unit button for timer
-    boolean isIncrementalActive = getMetronomeUtil().isIncrementalActive();
-    boolean convertToNonBarUnit = timerUnit.equals(UNIT.BARS) && isIncrementalActive;
-    binding.buttonOptionsTimerUnitBars.setEnabled(isTimerActive && !isIncrementalActive);
-    if (convertToNonBarUnit) {
-      long timerInterval = getMetronomeUtil().getTimerInterval();
-      int intervalSeconds = (int) (timerInterval / 1000);
-      if (intervalSeconds > binding.sliderOptionsTimerDuration.getValueTo()) {
-        getMetronomeUtil().setTimerUnit(UNIT.MINUTES);
-        getMetronomeUtil().setTimerDuration(intervalSeconds / 60);
-      } else {
-        getMetronomeUtil().setTimerUnit(UNIT.SECONDS);
-        getMetronomeUtil().setTimerDuration(intervalSeconds);
-      }
-      updateTimer();
-    }
-    binding.textOptionsTimerUnsupported.setVisibility(
-        isTimerActive && isIncrementalActive ? View.VISIBLE : View.GONE
-    );
   }
 
   public void updateSwing() {

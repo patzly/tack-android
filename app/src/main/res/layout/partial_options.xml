@@ -21,6 +21,7 @@
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
   android:orientation="vertical"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
@@ -219,17 +220,6 @@
     android:orientation="vertical"
     android:animateLayoutChanges="true">
 
-    <TextView
-      android:id="@+id/text_options_timer_unsupported"
-      style="@style/Widget.Tack.TextView.BodyMedium"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginBottom="8dp"
-      android:paddingStart="16dp"
-      android:paddingEnd="16dp"
-      android:textColor="?attr/colorError"
-      android:text="@string/options_timer_unsupported" />
-
     <HorizontalScrollView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -238,7 +228,8 @@
       android:layout_marginBottom="16dp"
       android:scrollbars="none"
       android:overScrollMode="ifContentScrolls"
-      android:requiresFadingEdge="horizontal">
+      android:requiresFadingEdge="horizontal"
+      tools:ignore="UselessParent">
 
       <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/toggle_options_timer_unit"
