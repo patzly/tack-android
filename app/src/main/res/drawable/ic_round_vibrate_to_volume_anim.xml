@@ -26,7 +26,8 @@
       android:width="24dp"
       android:height="24dp"
       android:viewportWidth="24"
-      android:viewportHeight="24">
+      android:viewportHeight="24"
+      android:autoMirrored="true">
       <path
         android:name="line_to_sound_wave"
         android:pathData="M 23 10 C 23 11.333 23 12.667 23 14"

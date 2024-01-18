@@ -53,10 +53,12 @@ public class BeatsBgDrawable extends Drawable {
   private final Path pathFg = new Path();
   private final Path pathBg = new Path();
   private final float alphaBase, progressThreshold;
+  private final boolean rtl;
   private float fraction, alpha;
   private ValueAnimator progressAnimator, alphaAnimator;
 
   public BeatsBgDrawable(Context context) {
+    rtl = UiUtil.isLayoutRtl(context);
     paintBg.setColor(ResUtil.getColor(context, R.attr.colorSurfaceContainerHigh));
     paintFg.setColor(ResUtil.getColor(context, R.attr.colorOnSurface));
     alphaBase = UiUtil.isDarkModeActive(context) ? ALPHA_FG_BASE_DARK : ALPHA_FG_BASE_LIGHT;
@@ -73,7 +75,11 @@ public class BeatsBgDrawable extends Drawable {
     canvas.drawPath(pathBg, paintBg);
 
     rectFg.set(rectBg);
-    rectFg.right = getBounds().width() * fraction;
+    if (rtl) {
+      rectFg.left = getBounds().width() * (1 - fraction);
+    } else {
+      rectFg.right = getBounds().width() * fraction;
+    }
     pathFg.reset();
     pathFg.addRect(rectFg, Direction.CW);
     pathFg.op(pathBg, Op.INTERSECT);

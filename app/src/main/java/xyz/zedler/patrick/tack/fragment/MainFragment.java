@@ -1007,11 +1007,12 @@ public class MainFragment extends BaseFragment
         int chipEnd = isRtl ? chip.getLeft() : chip.getRight();
         int scrollViewWidth = binding.scrollHorizMainBookmarks.getWidth();
         int margin = UiUtil.dpToPx(activity, 16);
-        if (chipStart - margin < scrollX) {
-          int scrollTo = chipStart - margin;
-          binding.scrollHorizMainBookmarks.smoothScrollTo(scrollTo, 0);
-        } else if (chipEnd + margin > (scrollX + scrollViewWidth)) {
-          int scrollTo = chipEnd + margin - scrollViewWidth;
+        int start = chipStart + margin * (isRtl ? 1 : -1);
+        int end = chipEnd + margin * (isRtl ? -1 : 1);
+        if (start < scrollX) {
+          binding.scrollHorizMainBookmarks.smoothScrollTo(start, 0);
+        } else if (end > (scrollX + scrollViewWidth)) {
+          int scrollTo = end + scrollViewWidth * (isRtl ? 1 : -1);
           binding.scrollHorizMainBookmarks.smoothScrollTo(scrollTo, 0);
         }
       }
