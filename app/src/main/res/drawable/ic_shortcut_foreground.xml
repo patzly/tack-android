@@ -17,18 +17,20 @@
   ~ Copyright (c) 2020-2024 by Patrick Zedler
   -->
 
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="144"
-    android:viewportHeight="144">
-  <group android:scaleX="0.8"
-      android:scaleY="0.8"
-      android:translateX="14.4"
-      android:translateY="14.4">
+<vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:width="108dp"
+  android:height="108dp"
+  android:viewportWidth="144"
+  android:viewportHeight="144">
+  <group
+    android:scaleX="0.8"
+    android:scaleY="0.8"
+    android:translateX="14.4"
+    android:translateY="14.4">
     <path
-        android:pathData="M72,53.33L72,76.13c-2.51,-1.44 -5.6,-2 -8.88,-0.85 -3.57,1.28 -6.32,4.45 -6.96,8.19 -1.23,7.31 4.96,13.55 12.24,12.4 5.23,-0.83 8.93,-5.63 8.93,-10.93L77.33,58.67l5.33,0c2.93,0 5.33,-2.4 5.33,-5.33C88,50.4 85.6,48 82.66,48L77.33,48C74.4,48 72,50.4 72,53.33Z"
-        android:strokeWidth="2.67"
-        android:fillColor="#6e5e00"/>
+      android:pathData="M72,53.33L72,76.13c-2.51,-1.44 -5.6,-2 -8.88,-0.85 -3.57,1.28 -6.32,4.45 -6.96,8.19 -1.23,7.31 4.96,13.55 12.24,12.4 5.23,-0.83 8.93,-5.63 8.93,-10.93L77.33,58.67l5.33,0c2.93,0 5.33,-2.4 5.33,-5.33C88,50.4 85.6,48 82.66,48L77.33,48C74.4,48 72,50.4 72,53.33Z"
+      android:strokeWidth="2.67"
+      android:fillColor="#6e5e00" />
   </group>
 </vector>
