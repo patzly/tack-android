@@ -73,6 +73,7 @@ import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.OptionsUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.ShortcutUtil;
+import xyz.zedler.patrick.tack.util.TempoTapUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.BeatView;
@@ -96,6 +97,7 @@ public class MainFragment extends BaseFragment
   private DialogUtil dialogUtilGain;
   private OptionsUtil optionsUtil;
   private ShortcutUtil shortcutUtil;
+  private TempoTapUtil tempoTapUtil;
   private List<Integer> bookmarks;
   private SquigglyProgressDrawable squiggly;
   private BeatsBgDrawable beatsBgDrawable;
@@ -158,8 +160,6 @@ public class MainFragment extends BaseFragment
       return true;
     });
 
-    logoUtil = new LogoUtil(binding.imageMainLogo);
-
     flashScreen = getSharedPrefs().getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
     keepAwake = getSharedPrefs().getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
     reduceAnimations = getSharedPrefs().getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM);
@@ -202,7 +202,9 @@ public class MainFragment extends BaseFragment
         hideBeatMode && hideOptions ? View.GONE : View.VISIBLE
     );
 
+    logoUtil = new LogoUtil(binding.imageMainLogo);
     shortcutUtil = new ShortcutUtil(activity);
+    tempoTapUtil = new TempoTapUtil();
 
     beatsBgDrawable = new BeatsBgDrawable(activity);
     binding.linearMainBeatsBg.setBackground(beatsBgDrawable);
@@ -369,43 +371,16 @@ public class MainFragment extends BaseFragment
     });
 
     binding.buttonMainTempoTap.setOnTouchListener((v, event) -> {
-      // TODO
-      if (event.getAction() != MotionEvent.ACTION_DOWN) {
-        return false;
-      }
-      ViewUtil.startIcon(binding.buttonMainTempoTap.getIcon());
-
-      long currentTime = System.currentTimeMillis();
-      long interval = currentTime - prevTouchTime;
-      if (prevTouchTime > 0 && interval <= 3000) {
-        while (intervals.size() >= 20) {
-          intervals.remove(0);
+      if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        boolean enoughData = tempoTapUtil.tap();
+        if (enoughData) {
+          setTempo(tempoTapUtil.getTempo());
         }
-        intervals.add(System.currentTimeMillis() - prevTouchTime);
-        if (intervals.size() > 1) {
-          long sum = 0L;
-          for (long e : intervals) {
-            sum += e;
-          }
-          long intervalAverage = sum / intervals.size();
-          long averageTempo = 60000 / intervalAverage;
-
-          // Überprüfen Sie, ob das Tempo um mehr als 20% geändert wurde
-          if (Math.abs(averageTempo - getMetronomeUtil().getTempo()) > getMetronomeUtil().getTempo() * 0.2) {
-            intervals.clear(); // Zurücksetzen, wenn die Tempoänderung zu groß ist
-          }
-
-          // Setzen Sie das Tempo und aktualisieren Sie prevTouchTime
-          setTempo((int) averageTempo);
-          prevTouchTime = currentTime;
-        }
-      } else {
-        intervals.clear();
-        prevTouchTime = currentTime;
+        ViewUtil.startIcon(binding.buttonMainTempoTap.getIcon());
+        performHapticHeavyClick();
+        return true;
       }
-
-      performHapticHeavyClick();
-      return true;
+      return false;
     });
 
     boolean alwaysVibrate = getSharedPrefs().getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
