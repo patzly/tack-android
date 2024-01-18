@@ -441,7 +441,7 @@ public class MetronomeUtil {
   private void changeTempo(int change) {
     int tempoOld = getTempo();
     int tempoNew = tempoOld + change;
-    setTempo(tempoNew);
+    // setTempo will only be called by callback below, else we would break timer animation
     for (MetronomeListener listener : listeners) {
       listener.onMetronomeTempoChanged(tempoOld, tempoNew);
     }
