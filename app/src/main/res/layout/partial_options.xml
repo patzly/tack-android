@@ -46,9 +46,10 @@
     android:textColor="?attr/colorOnSurfaceVariant"
     android:text="@string/options_count_in_description" />
 
-  <com.google.android.material.slider.Slider
+  <com.google.android.material.slider.CustomSlider
     android:id="@+id/slider_options_count_in"
-    style="@style/Widget.Tack.Slider.Elevated"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginStart="2dp"
     android:layout_marginEnd="2dp"
     android:layout_marginBottom="4dp"
@@ -75,9 +76,10 @@
     android:textColor="?attr/colorOnSurfaceVariant"
     android:text="@string/options_incremental_amount_increase" />
 
-  <com.google.android.material.slider.Slider
+  <com.google.android.material.slider.CustomSlider
     android:id="@+id/slider_options_incremental_amount"
-    style="@style/Widget.Tack.Slider.Elevated"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginStart="2dp"
     android:layout_marginEnd="2dp"
     android:valueFrom="0"
@@ -134,9 +136,10 @@
       android:textColor="?attr/colorOnSurfaceVariant"
       android:text="@string/options_incremental_interval" />
 
-    <com.google.android.material.slider.Slider
+    <com.google.android.material.slider.CustomSlider
       android:id="@+id/slider_options_incremental_interval"
-      style="@style/Widget.Tack.Slider.Elevated"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
       android:layout_marginStart="2dp"
       android:layout_marginEnd="2dp"
       android:valueFrom="1"
@@ -202,9 +205,10 @@
     android:textColor="?attr/colorOnSurfaceVariant"
     android:text="@string/options_timer_description" />
 
-  <com.google.android.material.slider.Slider
+  <com.google.android.material.slider.CustomSlider
     android:id="@+id/slider_options_timer_duration"
-    style="@style/Widget.Tack.Slider.Elevated"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginStart="2dp"
     android:layout_marginEnd="2dp"
     android:valueFrom="0"

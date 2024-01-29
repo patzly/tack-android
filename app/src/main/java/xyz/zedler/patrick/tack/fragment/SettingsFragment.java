@@ -266,7 +266,7 @@ public class SettingsFragment extends BaseFragment
             R.string.label_ms, String.format(activity.getLocale(), "%.0f", value)
         )
     );
-    itemBgFlash = ViewUtil.getBgListItemSelected(activity, R.attr.colorPrimaryContainer);
+    itemBgFlash = ViewUtil.getBgListItemSelected(activity, R.attr.colorTertiaryContainer);
 
     binding.sliderSettingsGain.setLabelFormatter(
         value -> getString(R.string.label_db, (int) value)

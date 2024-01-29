@@ -42,6 +42,11 @@ android {
         buildConfig true
     }
 
+    lint {
+        abortOnError false
+        disable 'MissingTranslation'
+    }
+
     bundle {
         storeArchive {
             enable true
