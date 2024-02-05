@@ -1,0 +1,114 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="title_feedback">Zpětná vazba</string>
+  <string name="title_about">O aplikaci</string>
+  <string name="title_licenses">Open source licence</string>
+  <string name="title_settings">Nastavení</string>
+  <string name="title_notification_channel">Metronom</string>
+  <string name="title_options">Předvolby</string>
+  <string name="title_general">Obecné</string>
+  <string name="title_metronome">Metronom</string>
+  <string name="title_logcat">Logcat</string>
+
+  <!-- LABELS -->
+
+  <string name="label_bpm_value">%1$d bpm</string>
+  <string name="label_bpm">bpm</string>
+  <string name="label_ms">%1$s ms</string>
+  <string name="label_db">+%1$d dB</string>
+  <array name="label_tempo_terms" translatable="false">
+    <item>Largo</item>
+    <item>Larghetto</item>
+    <item>Adagio</item>
+    <item>Andante</item>
+    <item>Moderato</item>
+    <item>Allegro</item>
+    <item>Presto</item>
+    <item>Prestissimo</item>
+  </array>
+
+  <!-- ACTIONS -->
+
+  <string name="action_back">Zpět</string>
+  <string name="action_close">Zavřít</string>
+  <string name="action_cancel">Zrušit</string>
+  <string name="action_increase">Zvýšit</string>
+  <string name="action_decrease">Snížit</string>
+  <string name="action_play">Spustit</string>
+  <string name="action_play_stop">Spustit/Zastavit</string>
+  <string name="action_stop">Zastavit</string>
+  <string name="action_tempo_tap">Naklikat tempo</string>
+  <string name="action_bookmark">Záložka</string>
+  <string name="action_send_feedback">Poslat zpětnou vazbu</string>
+  <string name="action_open_link">Otevřít externí webovou stránku</string>
+  <string name="action_reset">Vynulovat</string>
+  <string name="action_recommend">Doporučit</string>
+  <string name="action_recommend_description">Řekni o apce svým kámošům</string>
+  <string name="action_email">Poslat vývojáři e-mail</string>
+  <string name="action_email_description">Kontaktovat vývojáře</string>
+  <string name="action_rate">Ohodnotit na Google Play</string>
+  <string name="action_rate_description">Podpořit vývoj</string>
+  <string name="action_issue_description">Nahlásit chyby nebo navrhnout funkce</string>
+  <string name="action_logcat">Zobrazit logcat</string>
+  <string name="action_copy_to_clipboard">Zkopírovat do schránky</string>
+  <string name="options_swing">Swing</string>
+  <string name="options_swing_3">Trioly</string>
+  <string name="options_swing_5">Kvintoly</string>
+  <string name="options_swing_7">Septoly</string>
+
+  <!-- SETTINGS -->
+
+  <string name="settings_language">Jazyk</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
+  <string name="settings_theme_auto">Automaticky</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_dark">Tmavý</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_light">Světlý</string>
+
+  <string name="settings_contrast">Kontrast</string>
+  <string name="settings_sound">Zvuk metronomu</string>
+  <string name="settings_sound_wood">Dřívka</string>
+  <string name="settings_sound_sine">Sinusoida</string>
+  <string name="settings_sound_click">Ráfek</string>
+  <string name="settings_sound_ding">Xylofon</string>
+  <string name="settings_sound_beep">Pípání</string>
+
+  <string name="settings_latency">Korekce latence</string>
+  <string name="settings_keep_awake">Nezhasínat obrazovku</string>
+  <string name="settings_keep_awake_description">Když metronom hraje</string>
+
+  <!-- ABOUT -->
+
+  <string name="about_version">Verze</string>
+  <string name="about_changelog">Changelog</string>
+  <string name="about_changelog_description">Novinky v této verzi</string>
+  <string name="about_developer">Vývojář</string>
+  <string name="about_vending_description">Další aplikace od vývojáře</string>
+  <string name="about_github_description">Zdrojový kód</string>
+  <string name="about_translation_description">Pomoz nám přeložit Tack</string>
+  <string name="about_privacy">Zásady ochrany soukromí</string>
+  <string name="about_privacy_description">Jak zpracováváme tvoje údaje</string>
+
+  </resources>
