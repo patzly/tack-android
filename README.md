@@ -24,7 +24,7 @@ There also is a separate Wear OS app available with haptic beats and many option
 * Beautiful beat visualization with subdivisions and changeable emphasizes
 * BPM bookmarks as app shortcuts
 * Options for count in, incremental tempo change, song duration and swing
-* Settings for flash screen, volume boost, audio latenc corretion and elapsed time
+* Settings for flash screen, volume boost, audio latency corretion and elapsed time
 * Dynamic color and dynamic contrast support
 * Large screen support
 * Separate Wear OS app with many options directly on your wrist
@@ -41,7 +41,7 @@ If you run into a bug or miss a feature, please [open an issue](https://github.c
 Tack can be translated! The main language is English, but I also maintain the German translation.
 You can help translate this project at [Transifex](https://app.transifex.com/patzly/tack-android), if your language is incomplete, contains typos or is not available yet. Translations which reached a completion level of 80% will be included in releases.  
 
-Translated languages (1): German
+Translated languages (2): Czech, German
 
 Thanks for your contributions!
 
