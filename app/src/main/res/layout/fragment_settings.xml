@@ -401,10 +401,7 @@
 
           <com.google.android.material.slider.CustomSlider
             android:id="@+id/slider_settings_latency"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="14dp"
-            android:layout_marginStart="43dp"
+            style="@style/Widget.Tack.Slider"
             android:valueFrom="0"
             android:valueTo="200"
             android:stepSize="5" />
@@ -474,10 +471,7 @@
 
         <com.google.android.material.slider.CustomSlider
           android:id="@+id/slider_settings_gain"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginEnd="14dp"
-          android:layout_marginStart="43dp"
+          style="@style/Widget.Tack.Slider"
           android:valueFrom="0"
           android:valueTo="20"
           android:stepSize="5" />

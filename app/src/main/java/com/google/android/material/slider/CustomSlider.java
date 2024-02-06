@@ -19,26 +19,48 @@
 
 package com.google.android.material.slider;
 
+import static com.google.android.material.slider.LabelFormatter.LABEL_GONE;
+import static com.google.android.material.slider.LabelFormatter.LABEL_VISIBLE;
+
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Path.Direction;
+import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewOverlay;
+import android.view.ViewParent;
 import android.view.ViewTreeObserver;
+import android.view.animation.DecelerateInterpolator;
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.Px;
+import androidx.core.view.ViewCompat;
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
 import com.google.android.material.shape.MaterialShapeDrawable;
+import com.google.android.material.tooltip.TooltipDrawable;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -60,12 +82,17 @@ public class CustomSlider extends Slider {
   private final Paint inactiveTicksPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
   private final Paint activeTicksPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
   private final Paint stopIndicatorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+  private final List<TooltipDrawable> labels = new ArrayList<>();
   private ValueAnimator thumbWidthAnimator, thumbPositionAnimator;
+  private ValueAnimator labelsInAnimator, labelsOutAnimator;
   private MaterialShapeDrawable thumbDrawable;
+  private LabelFormatter formatter;
   private int thumbWidth, thumbWidthAnim, minTickSpacing;
   private float normalizedValueAnim;
   private float[] ticksCoordinates;
   private boolean dirtyConfig;
+  // Whether the labels are showing or in the process of animating in.
+  private boolean labelsAreAnimatedIn = false;
 
   public CustomSlider(@NonNull Context context) {
     super(context);
@@ -136,6 +163,12 @@ public class CustomSlider extends Slider {
   }
 
   @Override
+  protected void onRestoreInstanceState(Parcelable state) {
+    super.onRestoreInstanceState(state);
+    createLabelPool();
+  }
+
+  @Override
   protected void onDraw(@NonNull Canvas canvas) {
     if (dirtyConfig) {
       validateConfigurationIfDirty();
@@ -149,7 +182,60 @@ public class CustomSlider extends Slider {
     maybeDrawTicks(canvas);
     maybeDrawStopIndicator(canvas, yCenter);
 
+    // Draw labels if there is an active thumb or the labels are always visible.
+    if ((getActiveThumbIndex() != -1 || shouldAlwaysShowLabel()) && isEnabled()) {
+      ensureLabelsAdded();
+    } else {
+      ensureLabelsRemoved();
+    }
+
     drawThumb(canvas, yCenter);
+  }
+
+  @Override
+  protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+    super.onVisibilityChanged(changedView, visibility);
+    // When the visibility is set to VISIBLE, onDraw() is called again which adds or removes labels
+    // according to the setting.
+    if (visibility != VISIBLE) {
+      ViewOverlay contentViewOverlay = getContentViewOverlay();
+      if (contentViewOverlay == null) {
+        return;
+      }
+      for (TooltipDrawable label : labels) {
+        contentViewOverlay.remove(label);
+      }
+    }
+  }
+
+  @Override
+  protected void onAttachedToWindow() {
+    super.onAttachedToWindow();
+    // The label is attached on the Overlay relative to the content.
+    for (TooltipDrawable label : labels) {
+      attachLabelToContentView(label);
+    }
+  }
+
+  @Override
+  protected void onDetachedFromWindow() {
+    labelsAreAnimatedIn = false;
+    for (TooltipDrawable label : labels) {
+      detachLabelFromContentView(label);
+    }
+    super.onDetachedFromWindow();
+  }
+
+  @Override
+  void setValues(@NonNull Float... values) {
+    super.setValues(values);
+    createLabelPool();
+  }
+
+  @Override
+  void setValues(@NonNull List<Float> values) {
+    super.setValues(values);
+    createLabelPool();
   }
 
   @Override
@@ -433,54 +519,6 @@ public class CustomSlider extends Slider {
     }
   }
 
-  public void setTrackActiveTintList(@NonNull ColorStateList trackColor) {
-    if (activeTrackPaint != null) {
-      activeTrackPaint.setColor(getColorForState(trackColor));
-    }
-    if (stopIndicatorPaint != null) {
-      stopIndicatorPaint.setColor(getColorForState(trackColor));
-    }
-    super.setTrackActiveTintList(trackColor);
-  }
-
-  @NonNull
-  @Override
-  public ColorStateList getTrackActiveTintList() {
-    return new ColorStateList(
-        new int[][] {
-            new int[] {android.R.attr.state_enabled},
-            new int[] {},
-        },
-        new int[] {
-            ResUtil.getColor(getContext(), R.attr.colorPrimary),
-            ResUtil.getColor(getContext(), R.attr.colorOnSurface, 0.38f)
-        }
-    );
-  }
-
-  @Override
-  public void setTrackInactiveTintList(@NonNull ColorStateList trackColor) {
-    if (inactiveTrackPaint != null) {
-      inactiveTrackPaint.setColor(getColorForState(trackColor));
-    }
-    super.setTrackInactiveTintList(trackColor);
-  }
-
-  @NonNull
-  @Override
-  public ColorStateList getTrackInactiveTintList() {
-    return new ColorStateList(
-        new int[][] {
-            new int[] {android.R.attr.state_enabled},
-            new int[] {},
-        },
-        new int[] {
-            ResUtil.getColor(getContext(), R.attr.colorPrimaryContainer),
-            ResUtil.getColor(getContext(), R.attr.colorOnSurfaceVariant, 0.12f)
-        }
-    );
-  }
-
   private void updateThumbWidth(boolean dragged, boolean animate) {
     if (thumbWidthAnimator != null) {
       thumbWidthAnimator.cancel();
@@ -565,6 +603,18 @@ public class CustomSlider extends Slider {
     }
   }
 
+  private int getFocusedThumbIdx() {
+    try {
+      Field field = BaseSlider.class.getDeclaredField("focusedThumbIdx");
+      field.setAccessible(true);
+      Integer result = (Integer) field.get(this);
+      return Objects.requireNonNullElse(result, -1);
+    } catch (Exception e) {
+      Log.e(TAG, "getFocusedThumbIdx: ", e);
+      return -1;
+    }
+  }
+
   private void maybeCalculateTicksCoordinates() {
     if (getStepSize() <= 0.0f) {
       return;
@@ -606,6 +656,11 @@ public class CustomSlider extends Slider {
     stopIndicatorPaint.setColor(getColorForState(getTrackActiveTintList()));
     activeTrackPaint.setColor(getColorForState(getTrackActiveTintList()));
     inactiveTrackPaint.setColor(getColorForState(getTrackInactiveTintList()));
+    for (TooltipDrawable label : labels) {
+      if (label.isStateful()) {
+        label.setState(getDrawableState());
+      }
+    }
   }
 
   @Override
@@ -623,6 +678,21 @@ public class CustomSlider extends Slider {
     super.setTickActiveTintList(tickColor);
   }
 
+  @NonNull
+  @Override
+  public ColorStateList getTickActiveTintList() {
+    return new ColorStateList(
+        new int[][] {
+            new int[] {android.R.attr.state_enabled},
+            new int[] {},
+        },
+        new int[] {
+            ResUtil.getColor(getContext(), R.attr.colorOnPrimary),
+            ResUtil.getColor(getContext(), R.attr.colorSurfaceVariant)
+        }
+    );
+  }
+
   @Override
   public void setTickInactiveRadius(@IntRange(from = 0) @Px int tickInactiveRadius) {
     if (inactiveTicksPaint != null) {
@@ -638,11 +708,74 @@ public class CustomSlider extends Slider {
     super.setTickInactiveTintList(tickColor);
   }
 
+  @NonNull
+  @Override
+  public ColorStateList getTickInactiveTintList() {
+    return new ColorStateList(
+        new int[][] {
+            new int[] {android.R.attr.state_enabled},
+            new int[] {},
+        },
+        new int[] {
+            ResUtil.getColor(getContext(), R.attr.colorOnPrimaryContainer),
+            ResUtil.getColor(getContext(), R.attr.colorOnSurfaceVariant, 0.38f)
+        }
+    );
+  }
+
   public void setTrackStopIndicatorSize(@Px int trackStopIndicatorSize) {
     if (stopIndicatorPaint != null) {
       stopIndicatorPaint.setStrokeWidth(trackStopIndicatorSize);
     }
     super.setTrackStopIndicatorSize(trackStopIndicatorSize);
+  }
+
+  public void setTrackActiveTintList(@NonNull ColorStateList trackColor) {
+    if (activeTrackPaint != null) {
+      activeTrackPaint.setColor(getColorForState(trackColor));
+    }
+    if (stopIndicatorPaint != null) {
+      stopIndicatorPaint.setColor(getColorForState(trackColor));
+    }
+    super.setTrackActiveTintList(trackColor);
+  }
+
+  @NonNull
+  @Override
+  public ColorStateList getTrackActiveTintList() {
+    return new ColorStateList(
+        new int[][] {
+            new int[] {android.R.attr.state_enabled},
+            new int[] {},
+        },
+        new int[] {
+            ResUtil.getColor(getContext(), R.attr.colorPrimary),
+            ResUtil.getColor(getContext(), R.attr.colorOnSurface, 0.38f)
+        }
+    );
+  }
+
+  @Override
+  public void setTrackInactiveTintList(@NonNull ColorStateList trackColor) {
+    if (inactiveTrackPaint != null) {
+      inactiveTrackPaint.setColor(getColorForState(trackColor));
+    }
+    super.setTrackInactiveTintList(trackColor);
+  }
+
+  @NonNull
+  @Override
+  public ColorStateList getTrackInactiveTintList() {
+    return new ColorStateList(
+        new int[][] {
+            new int[] {android.R.attr.state_enabled},
+            new int[] {},
+        },
+        new int[] {
+            ResUtil.getColor(getContext(), R.attr.colorPrimaryContainer),
+            ResUtil.getColor(getContext(), R.attr.colorOnSurfaceVariant, 0.12f)
+        }
+    );
   }
 
   @ColorInt
@@ -657,10 +790,284 @@ public class CustomSlider extends Slider {
     return isRtl() ? new float[] {right, left} : new float[] {left, right};
   }
 
+  private void ensureLabelsAdded() {
+    if (getLabelBehavior() == LABEL_GONE) {
+      // If the label shouldn't be drawn we can skip this.
+      return;
+    }
+
+    // If the labels are not animating in, start an animator to show them. ensureLabelsAdded will
+    // be called multiple times by BaseSlider's draw method, making this check necessary to avoid
+    // creating and starting an animator for each draw call.
+    if (!labelsAreAnimatedIn) {
+      labelsAreAnimatedIn = true;
+      labelsInAnimator = createLabelAnimator(true);
+      labelsOutAnimator = null;
+      labelsInAnimator.start();
+    }
+
+    Iterator<TooltipDrawable> labelItr = labels.iterator();
+
+    for (int i = 0; i < getValues().size() && labelItr.hasNext(); i++) {
+      if (i == getFocusedThumbIdx()) {
+        // We position the focused thumb last so it's displayed on top, so skip it for now.
+        continue;
+      }
+
+      setValueForLabel(labelItr.next(), getValues().get(i));
+    }
+
+    if (!labelItr.hasNext()) {
+      throw new IllegalStateException(
+          String.format(
+              "Not enough labels(%d) to display all the values(%d)",
+              labels.size(), getValues().size())
+      );
+    }
+
+    // Now set the label for the focused thumb so it's on top.
+    setValueForLabel(labelItr.next(), getValues().get(getFocusedThumbIdx()));
+  }
+
+  private ValueAnimator createLabelAnimator(boolean enter) {
+    float startFraction = enter ? 0F : 1F;
+    // Update the start fraction to the current animated value of the label, if any.
+    startFraction = getAnimatorCurrentValueOrDefault(
+        enter ? labelsOutAnimator : labelsInAnimator, startFraction
+    );
+    float endFraction = enter ? 1F : 0F;
+    ValueAnimator animator = ValueAnimator.ofFloat(startFraction, endFraction);
+    int duration;
+    TimeInterpolator interpolator;
+    if (enter) {
+      duration = 250;
+      interpolator = new DecelerateInterpolator();
+    } else {
+      duration = 200;
+      interpolator = new FastOutLinearInInterpolator();
+    }
+    animator.setDuration(duration);
+    animator.setInterpolator(interpolator);
+    animator.addUpdateListener(animation -> {
+      float fraction = (float) animation.getAnimatedValue();
+      for (TooltipDrawable label : labels) {
+        label.setRevealFraction(fraction);
+      }
+      // Ensure the labels are redrawn even if the slider has stopped moving
+      ViewCompat.postInvalidateOnAnimation(this);
+    });
+    return animator;
+  }
+
+  /**
+   * A helper method to get the current animated value of a {@link ValueAnimator}. If the target
+   * animator is null or not running, return the default value provided.
+   */
+  private static float getAnimatorCurrentValueOrDefault(
+      ValueAnimator animator, float defaultValue) {
+    // If the in animation is interrupting the out animation, attempt to smoothly interrupt by
+    // getting the current value of the out animator.
+    if (animator != null && animator.isRunning()) {
+      float value = (float) animator.getAnimatedValue();
+      animator.cancel();
+      return value;
+    }
+
+    return defaultValue;
+  }
+
+  private void ensureLabelsRemoved() {
+    // If the labels are animated in or in the process of animating in, create and start a new
+    // animator to animate out the labels and remove them once the animation ends.
+    if (labelsAreAnimatedIn) {
+      labelsAreAnimatedIn = false;
+      labelsOutAnimator = createLabelAnimator(false);
+      labelsInAnimator = null;
+      labelsOutAnimator.addListener(
+          new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+              super.onAnimationEnd(animation);
+              ViewOverlay contentViewOverlay = getContentViewOverlay();
+              for (TooltipDrawable label : labels) {
+                contentViewOverlay.remove(label);
+              }
+            }
+          });
+      labelsOutAnimator.start();
+    }
+  }
+
+  private boolean shouldAlwaysShowLabel() {
+    return getLabelBehavior() == LABEL_VISIBLE;
+  }
+
+  private void createLabelPool() {
+    if (labels == null) {
+      return;
+    }
+    // If there's not enough labels, add more.
+    while (labels.size() < getValues().size()) {
+      // Because there's currently no way to copy the TooltipDrawable we use this to make more
+      // if more thumbs are added.
+      TooltipDrawable tooltipDrawable = //TooltipDrawable.create(getContext());
+          TooltipDrawable.createFromAttributes(getContext(), null, 0, getLabelStyle());
+      labels.add(tooltipDrawable);
+      if (ViewCompat.isAttachedToWindow(this)) {
+        attachLabelToContentView(tooltipDrawable);
+      }
+    }
+  }
+
   private enum FullCornerDirection {
     BOTH,
     LEFT,
     RIGHT,
     NONE
+  }
+
+  private void setValueForLabel(TooltipDrawable label, float value) {
+    label.setText(formatValue(value));
+    positionLabel(label);
+    getContentViewOverlay().add(label);
+  }
+
+  private void positionLabel(Drawable label) {
+    int left =
+        getTrackSidePadding()
+            + (int) (normalizedValueAnim * getTrackWidth())
+            - label.getIntrinsicWidth() / 2;
+    int top = calculateTrackCenter() - (getLabelPadding() + getThumbHeight() / 2);
+    label.setBounds(left, top - label.getIntrinsicHeight(), left + label.getIntrinsicWidth(), top);
+
+    // Calculate the difference between the bounds of this view and the bounds of the root view to
+    // correctly position this view in the overlay layer.
+    Rect rect = new Rect(label.getBounds());
+    DescendantOffsetUtils.offsetDescendantRect(getContentView(), this, rect);
+    label.setBounds(rect);
+  }
+
+  private void attachLabelToContentView(TooltipDrawable label) {
+    label.setRelativeToView(getContentView());
+  }
+
+  private void detachLabelFromContentView(TooltipDrawable label) {
+    ViewOverlay contentViewOverlay = getContentViewOverlay();
+    if (contentViewOverlay != null) {
+      contentViewOverlay.remove(label);
+      label.detachView(getContentView());
+    }
+  }
+
+  private String formatValue(float value) {
+    if (hasLabelFormatter()) {
+      return formatter.getFormattedValue(value);
+    }
+    return String.format((int) value == value ? "%.0f" : "%.2f", value);
+  }
+
+  @Override
+  public void setLabelFormatter(@Nullable LabelFormatter formatter) {
+    this.formatter = formatter;
+    super.setLabelFormatter(formatter);
+  }
+
+  /** Returns the content view that is the parent of the provided view. */
+  @Nullable
+  public ViewGroup getContentView() {
+    View rootView = getRootView();
+    ViewGroup contentView = rootView.findViewById(android.R.id.content);
+    if (contentView != null) {
+      return contentView;
+    }
+    // Account for edge cases: Parent's parent can be null without ever having found
+    // android.R.id.content (e.g. if view is in an overlay during a transition).
+    // Additionally, sometimes parent's parent is neither a ViewGroup nor a View (e.g. if view
+    // is in a PopupWindow).
+    if (rootView instanceof ViewGroup) {
+      return (ViewGroup) rootView;
+    }
+    return null;
+  }
+
+  private int getLabelPadding() {
+    try {
+      Field someIntField = BaseSlider.class.getDeclaredField("labelPadding");
+      someIntField.setAccessible(true);
+      Object result = someIntField.getInt(this);
+      return (int) result;
+    } catch (Exception e) {
+      return 0;
+    }
+  }
+
+  private int getLabelStyle() {
+    try {
+      Field someIntField = BaseSlider.class.getDeclaredField("labelStyle");
+      someIntField.setAccessible(true);
+      Object result = someIntField.getInt(this);
+      return (int) result;
+    } catch (Exception e) {
+      return -1;
+    }
+  }
+
+  private ViewOverlay getContentViewOverlay() {
+    return getContentView().getOverlay();
+  }
+
+  public static class DescendantOffsetUtils {
+    private static final ThreadLocal<Matrix> matrix = new ThreadLocal<>();
+    private static final ThreadLocal<RectF> rectF = new ThreadLocal<>();
+
+    /**
+     * This is a port of the common {@link ViewGroup#offsetDescendantRectToMyCoords(View, Rect)} from
+     * the framework, but adapted to take transformations into account. The result will be the
+     * bounding rect of the real transformed rect.
+     *
+     * @param descendant view defining the original coordinate system of rect
+     * @param rect (in/out) the rect to offset from descendant to this view's coordinate system
+     */
+    public static void offsetDescendantRect(
+        @NonNull ViewGroup parent, @NonNull View descendant, @NonNull Rect rect) {
+      Matrix m = matrix.get();
+      if (m == null) {
+        m = new Matrix();
+        matrix.set(m);
+      } else {
+        m.reset();
+      }
+
+      offsetDescendantMatrix(parent, descendant, m);
+
+      RectF rectF = DescendantOffsetUtils.rectF.get();
+      if (rectF == null) {
+        rectF = new RectF();
+        DescendantOffsetUtils.rectF.set(rectF);
+      }
+      rectF.set(rect);
+      m.mapRect(rectF);
+      rect.set(
+          (int) (rectF.left + 0.5f),
+          (int) (rectF.top + 0.5f),
+          (int) (rectF.right + 0.5f),
+          (int) (rectF.bottom + 0.5f));
+    }
+
+    private static void offsetDescendantMatrix(
+        ViewParent target, @NonNull View view, @NonNull Matrix m) {
+      final ViewParent parent = view.getParent();
+      if (parent instanceof View && parent != target) {
+        final View vp = (View) parent;
+        offsetDescendantMatrix(target, vp, m);
+        m.preTranslate(-vp.getScrollX(), -vp.getScrollY());
+      }
+
+      m.preTranslate(view.getLeft(), view.getTop());
+
+      if (!view.getMatrix().isIdentity()) {
+        m.preConcat(view.getMatrix());
+      }
+    }
   }
 }
