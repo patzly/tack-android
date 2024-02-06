@@ -309,6 +309,7 @@
     <item name="labelStyle">@style/Widget.Tack.Tooltip</item>
     <item name="trackColorInactive">@color/selector_slider_inactive_track_color</item>
     <item name="tickColorActive">?attr/colorSurfaceVariant</item>
+    <item name="trackStopIndicatorSize">0dp</item>
   </style>
 
   <!-- Tooltip -->

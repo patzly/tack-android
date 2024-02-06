@@ -56,7 +56,8 @@
     android:valueFrom="0"
     android:valueTo="4"
     android:stepSize="1"
-    app:labelBehavior="gone" />
+    app:labelBehavior="gone"
+    app:trackStopIndicatorSize="0dp" />
 
   <TextView
     style="@style/Widget.Tack.TextView"
@@ -86,7 +87,8 @@
     android:valueTo="40"
     android:stepSize="1"
     android:value="0"
-    app:labelBehavior="gone" />
+    app:labelBehavior="gone"
+    app:trackStopIndicatorSize="0dp" />
 
   <LinearLayout
     android:id="@+id/linear_main_incremental_container"
@@ -146,7 +148,8 @@
       android:valueTo="60"
       android:stepSize="1"
       android:value="1"
-      app:labelBehavior="gone" />
+      app:labelBehavior="gone"
+      app:trackStopIndicatorSize="0dp" />
 
     <HorizontalScrollView
       android:layout_width="match_parent"
@@ -215,7 +218,8 @@
     android:valueTo="60"
     android:stepSize="1"
     android:value="0"
-    app:labelBehavior="gone" />
+    app:labelBehavior="gone"
+    app:trackStopIndicatorSize="0dp" />
 
   <LinearLayout
     android:id="@+id/linear_main_timer_container"

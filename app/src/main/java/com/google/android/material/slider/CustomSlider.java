@@ -26,10 +26,10 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.TimeInterpolator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Style;
@@ -44,7 +44,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOverlay;
-import android.view.ViewParent;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
 import androidx.annotation.ColorInt;
@@ -69,8 +68,12 @@ import xyz.zedler.patrick.tack.util.UiUtil;
 public class CustomSlider extends Slider {
 
   private static final String TAG = "CustomSlider";
+
   private static final float THUMB_WIDTH_PRESSED_RATIO = .5f;
   private static final long THUMB_WIDTH_ANIM_DURATION = 200;
+  private enum FullCornerDirection {
+    BOTH, LEFT, RIGHT, NONE
+  }
 
   private final RectF clipRect = new RectF();
   private final RectF trackRect = new RectF();
@@ -86,7 +89,6 @@ public class CustomSlider extends Slider {
   private ValueAnimator thumbWidthAnimator, thumbPositionAnimator;
   private ValueAnimator labelsInAnimator, labelsOutAnimator;
   private MaterialShapeDrawable thumbDrawable;
-  private LabelFormatter formatter;
   private int thumbWidth, thumbWidthAnim, minTickSpacing;
   private float normalizedValueAnim;
   private float[] ticksCoordinates;
@@ -829,6 +831,7 @@ public class CustomSlider extends Slider {
     setValueForLabel(labelItr.next(), getValues().get(getFocusedThumbIdx()));
   }
 
+  @SuppressLint("RestrictedApi")
   private ValueAnimator createLabelAnimator(boolean enter) {
     float startFraction = enter ? 0F : 1F;
     // Update the start fraction to the current animated value of the label, if any.
@@ -902,6 +905,7 @@ public class CustomSlider extends Slider {
     return getLabelBehavior() == LABEL_VISIBLE;
   }
 
+  @SuppressLint("RestrictedApi")
   private void createLabelPool() {
     if (labels == null) {
       return;
@@ -919,13 +923,7 @@ public class CustomSlider extends Slider {
     }
   }
 
-  private enum FullCornerDirection {
-    BOTH,
-    LEFT,
-    RIGHT,
-    NONE
-  }
-
+  @SuppressLint("RestrictedApi")
   private void setValueForLabel(TooltipDrawable label, float value) {
     label.setText(formatValue(value));
     positionLabel(label);
@@ -933,24 +931,26 @@ public class CustomSlider extends Slider {
   }
 
   private void positionLabel(Drawable label) {
-    int left =
-        getTrackSidePadding()
-            + (int) (normalizedValueAnim * getTrackWidth())
-            - label.getIntrinsicWidth() / 2;
+    int left = getTrackSidePadding()
+        + (int) (normalizedValueAnim * getTrackWidth()) - label.getIntrinsicWidth() / 2;
     int top = calculateTrackCenter() - (getLabelPadding() + getThumbHeight() / 2);
-    label.setBounds(left, top - label.getIntrinsicHeight(), left + label.getIntrinsicWidth(), top);
-
+    label.setBounds(
+        left, top - label.getIntrinsicHeight(), left + label.getIntrinsicWidth(), top
+    );
     // Calculate the difference between the bounds of this view and the bounds of the root view to
     // correctly position this view in the overlay layer.
     Rect rect = new Rect(label.getBounds());
-    DescendantOffsetUtils.offsetDescendantRect(getContentView(), this, rect);
+    getContentView().offsetDescendantRectToMyCoords(this, rect);
+    //DescendantOffsetUtils.offsetDescendantRect(getContentView(), this, rect);
     label.setBounds(rect);
   }
 
+  @SuppressLint("RestrictedApi")
   private void attachLabelToContentView(TooltipDrawable label) {
     label.setRelativeToView(getContentView());
   }
 
+  @SuppressLint("RestrictedApi")
   private void detachLabelFromContentView(TooltipDrawable label) {
     ViewOverlay contentViewOverlay = getContentViewOverlay();
     if (contentViewOverlay != null) {
@@ -961,19 +961,19 @@ public class CustomSlider extends Slider {
 
   private String formatValue(float value) {
     if (hasLabelFormatter()) {
-      return formatter.getFormattedValue(value);
+      try {
+        Field formatterField = BaseSlider.class.getDeclaredField("formatter");
+        formatterField.setAccessible(true);
+        Object result = formatterField.get(this);
+        if (result instanceof LabelFormatter) {
+          return ((LabelFormatter) result).getFormattedValue(value);
+        }
+      } catch (Exception ignore) {}
     }
     return String.format((int) value == value ? "%.0f" : "%.2f", value);
   }
 
-  @Override
-  public void setLabelFormatter(@Nullable LabelFormatter formatter) {
-    this.formatter = formatter;
-    super.setLabelFormatter(formatter);
-  }
-
   /** Returns the content view that is the parent of the provided view. */
-  @Nullable
   public ViewGroup getContentView() {
     View rootView = getRootView();
     ViewGroup contentView = rootView.findViewById(android.R.id.content);
@@ -988,6 +988,10 @@ public class CustomSlider extends Slider {
       return (ViewGroup) rootView;
     }
     return null;
+  }
+
+  private ViewOverlay getContentViewOverlay() {
+    return getContentView().getOverlay();
   }
 
   private int getLabelPadding() {
@@ -1009,65 +1013,6 @@ public class CustomSlider extends Slider {
       return (int) result;
     } catch (Exception e) {
       return -1;
-    }
-  }
-
-  private ViewOverlay getContentViewOverlay() {
-    return getContentView().getOverlay();
-  }
-
-  public static class DescendantOffsetUtils {
-    private static final ThreadLocal<Matrix> matrix = new ThreadLocal<>();
-    private static final ThreadLocal<RectF> rectF = new ThreadLocal<>();
-
-    /**
-     * This is a port of the common {@link ViewGroup#offsetDescendantRectToMyCoords(View, Rect)} from
-     * the framework, but adapted to take transformations into account. The result will be the
-     * bounding rect of the real transformed rect.
-     *
-     * @param descendant view defining the original coordinate system of rect
-     * @param rect (in/out) the rect to offset from descendant to this view's coordinate system
-     */
-    public static void offsetDescendantRect(
-        @NonNull ViewGroup parent, @NonNull View descendant, @NonNull Rect rect) {
-      Matrix m = matrix.get();
-      if (m == null) {
-        m = new Matrix();
-        matrix.set(m);
-      } else {
-        m.reset();
-      }
-
-      offsetDescendantMatrix(parent, descendant, m);
-
-      RectF rectF = DescendantOffsetUtils.rectF.get();
-      if (rectF == null) {
-        rectF = new RectF();
-        DescendantOffsetUtils.rectF.set(rectF);
-      }
-      rectF.set(rect);
-      m.mapRect(rectF);
-      rect.set(
-          (int) (rectF.left + 0.5f),
-          (int) (rectF.top + 0.5f),
-          (int) (rectF.right + 0.5f),
-          (int) (rectF.bottom + 0.5f));
-    }
-
-    private static void offsetDescendantMatrix(
-        ViewParent target, @NonNull View view, @NonNull Matrix m) {
-      final ViewParent parent = view.getParent();
-      if (parent instanceof View && parent != target) {
-        final View vp = (View) parent;
-        offsetDescendantMatrix(target, vp, m);
-        m.preTranslate(-vp.getScrollX(), -vp.getScrollY());
-      }
-
-      m.preTranslate(view.getLeft(), view.getTop());
-
-      if (!view.getMatrix().isIdentity()) {
-        m.preConcat(view.getMatrix());
-      }
     }
   }
 }
