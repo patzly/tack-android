@@ -936,6 +936,9 @@ public class MainFragment extends BaseFragment
   }
 
   public void updateTimerDisplay() {
+    if (binding == null) {
+      return;
+    }
     binding.textMainTimerTotal.setText(getMetronomeUtil().getTotalTimeString());
     binding.textMainTimerElapsed.setText(getMetronomeUtil().getElapsedTimeString());
   }
