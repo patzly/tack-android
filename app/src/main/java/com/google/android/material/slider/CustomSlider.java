@@ -119,7 +119,7 @@ public class CustomSlider extends Slider {
     );
     thumbDrawable.setFillColor(getTrackActiveTintList());
     thumbWidth = UiUtil.dpToPx(context, 4);
-    minTickSpacing = UiUtil.dpToPx(context, 4);
+    minTickSpacing = UiUtil.dpToPx(context, 12);
     setTrackActiveTintList(getTrackActiveTintList());
     setTrackInactiveTintList(getTrackInactiveTintList());
     setTickInactiveRadius(getTickInactiveRadius());
@@ -560,14 +560,14 @@ public class CustomSlider extends Slider {
       thumbPositionAnimator.removeAllListeners();
     }
     float thumbPositionNew = normalizeValue(value);
-    if (animate) {
+    long stepSizeDp = UiUtil.dpFromPx(getContext(), getTickInterval(getRealTickCount()));
+    if (animate && stepSizeDp > 8) {
       thumbPositionAnimator = ValueAnimator.ofFloat(normalizedValueAnim, thumbPositionNew);
       thumbPositionAnimator.addUpdateListener(animation -> {
         normalizedValueAnim = (float) animation.getAnimatedValue();
         invalidate();
       });
-      long duration = 4L * UiUtil.dpFromPx(getContext(), getTickInterval(getTickCount()));
-      thumbPositionAnimator.setDuration(Math.max(50, Math.min(duration, 200)));
+      thumbPositionAnimator.setDuration(Math.min(stepSizeDp * 4L, 200));
       thumbPositionAnimator.start();
     } else {
       normalizedValueAnim = thumbPositionNew;
@@ -635,12 +635,19 @@ public class CustomSlider extends Slider {
   }
 
   private int getTickCount() {
-    int tickCount = (int) ((getValueTo() - getValueFrom()) / getStepSize() + 1);
+    int tickCount = getRealTickCount();
     // Limit the tickCount if they will be too dense.
-    if (getTickInterval(tickCount) < minTickSpacing) {
+    while (getTickInterval(tickCount) < minTickSpacing) {
+      if (tickCount == tickCount / 2 + 1) {
+        break;
+      }
       tickCount = tickCount / 2 + 1;
     }
     return tickCount;
+  }
+
+  private int getRealTickCount() {
+    return (int) ((getValueTo() - getValueFrom()) / getStepSize() + 1);
   }
 
   private float getTickInterval(int tickCount) {
@@ -689,7 +696,7 @@ public class CustomSlider extends Slider {
             new int[] {},
         },
         new int[] {
-            ResUtil.getColor(getContext(), R.attr.colorOnPrimary),
+            ResUtil.getColor(getContext(), R.attr.colorPrimaryContainer), // onPrimary?
             ResUtil.getColor(getContext(), R.attr.colorSurfaceVariant)
         }
     );
@@ -719,7 +726,7 @@ public class CustomSlider extends Slider {
             new int[] {},
         },
         new int[] {
-            ResUtil.getColor(getContext(), R.attr.colorOnPrimaryContainer),
+            ResUtil.getColor(getContext(), R.attr.colorPrimary), // onPrimaryContainer?
             ResUtil.getColor(getContext(), R.attr.colorOnSurfaceVariant, 0.38f)
         }
     );
