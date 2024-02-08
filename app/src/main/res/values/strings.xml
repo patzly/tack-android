@@ -220,6 +220,12 @@
   <string name="settings_always_vibrate">Always vibrate</string>
   <string name="settings_always_vibrate_description">Even with sound</string>
 
+  <string name="settings_elapsed">Show elapsed time</string>
+  <string name="settings_elapsed_description">See how long you practice</string>
+
+  <string name="settings_reset_elapsed">Reset elapsed time when stopped</string>
+  <string name="settings_reset_elapsed_description">Instead of resuming until Tack is closed</string>
+
   <string name="settings_reset_timer">Reset timer when stopped</string>
   <string name="settings_reset_timer_description">Instead of resuming</string>
 

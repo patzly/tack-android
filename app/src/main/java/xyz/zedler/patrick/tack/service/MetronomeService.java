@@ -141,7 +141,10 @@ public class MetronomeService extends Service implements MetronomeListener {
   public void onMetronomeTimerStarted() {}
 
   @Override
-  public void onTimerElapsedTimeSecondsChanged() {}
+  public void onElapsedTimeSecondsChanged() {}
+
+  @Override
+  public void onTimerSecondsChanged() {}
 
   @Override
   public void onMetronomeConnectionMissing() {}

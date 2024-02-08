@@ -288,6 +288,8 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsIgnoreFocus,
         binding.linearSettingsShowSubs,
         binding.linearSettingsAlwaysVibrate,
+        binding.linearSettingsElapsed,
+        binding.linearSettingsResetElapsed,
         binding.linearSettingsResetTimer,
         binding.linearSettingsFlashScreen,
         binding.linearSettingsKeepAwake
@@ -301,6 +303,8 @@ public class SettingsFragment extends BaseFragment
         binding.switchSettingsIgnoreFocus,
         binding.switchSettingsShowSubs,
         binding.switchSettingsAlwaysVibrate,
+        binding.switchSettingsElapsed,
+        binding.switchSettingsResetElapsed,
         binding.switchSettingsResetTimer,
         binding.switchSettingsFlashScreen,
         binding.switchSettingsKeepAwake
@@ -363,6 +367,16 @@ public class SettingsFragment extends BaseFragment
         activity.getHapticUtil().hasVibrator() ? View.VISIBLE : View.GONE
     );
 
+    binding.switchSettingsElapsed.setOnCheckedChangeListener(null);
+    binding.switchSettingsElapsed.setChecked(getMetronomeUtil().getShowElapsed());
+    binding.switchSettingsElapsed.jumpDrawablesToCurrentState();
+    binding.switchSettingsElapsed.setOnCheckedChangeListener(this);
+
+    binding.switchSettingsResetElapsed.setOnCheckedChangeListener(null);
+    binding.switchSettingsResetElapsed.setChecked(getMetronomeUtil().getResetElapsed());
+    binding.switchSettingsResetElapsed.jumpDrawablesToCurrentState();
+    binding.switchSettingsResetElapsed.setOnCheckedChangeListener(this);
+
     binding.switchSettingsResetTimer.setOnCheckedChangeListener(null);
     binding.switchSettingsResetTimer.setChecked(getMetronomeUtil().getResetTimer());
     binding.switchSettingsResetTimer.jumpDrawablesToCurrentState();
@@ -409,7 +423,10 @@ public class SettingsFragment extends BaseFragment
   public void onMetronomeTimerStarted() {}
 
   @Override
-  public void onTimerElapsedTimeSecondsChanged() {}
+  public void onElapsedTimeSecondsChanged() {}
+
+  @Override
+  public void onTimerSecondsChanged() {}
 
   @Override
   public void onMetronomeConnectionMissing() {
@@ -441,6 +458,10 @@ public class SettingsFragment extends BaseFragment
       binding.switchSettingsShowSubs.toggle();
     } else if (id == R.id.linear_settings_always_vibrate) {
       binding.switchSettingsAlwaysVibrate.toggle();
+    } else if (id == R.id.linear_settings_elapsed) {
+      binding.switchSettingsElapsed.toggle();
+    } else if (id == R.id.linear_settings_reset_elapsed) {
+      binding.switchSettingsResetElapsed.toggle();
     } else if (id == R.id.linear_settings_reset_timer) {
       binding.switchSettingsResetTimer.toggle();
     } else if (id == R.id.linear_settings_flash_screen) {
@@ -478,6 +499,14 @@ public class SettingsFragment extends BaseFragment
       ViewUtil.startIcon(binding.imageSettingsAlwaysVibrate);
       getMetronomeUtil().setAlwaysVibrate(isChecked);
       performHapticClick();
+    } else if (id == R.id.switch_settings_elapsed) {
+      ViewUtil.startIcon(binding.imageSettingsElapsed);
+      performHapticClick();
+      getMetronomeUtil().setShowElapsed(isChecked);
+    } else if (id == R.id.switch_settings_reset_elapsed) {
+      ViewUtil.startIcon(binding.imageSettingsResetElapsed);
+      performHapticClick();
+      getMetronomeUtil().setResetElapsed(isChecked);
     } else if (id == R.id.switch_settings_reset_timer) {
       ViewUtil.startIcon(binding.imageSettingsResetTimer);
       performHapticClick();

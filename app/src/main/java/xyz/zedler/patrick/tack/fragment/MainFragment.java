@@ -87,8 +87,6 @@ public class MainFragment extends BaseFragment
   private FragmentMainBinding binding;
   private MainActivity activity;
   private Bundle savedState;
-  private long prevTouchTime;
-  private final List<Long> intervals = new ArrayList<>();
   private boolean flashScreen, keepAwake, reduceAnimations, isLandTablet;
   private LogoUtil logoUtil;
   private ValueAnimator fabAnimator;
@@ -456,6 +454,7 @@ public class MainFragment extends BaseFragment
   public void onResume() {
     super.onResume();
     updateTimerControls();
+    updateElapsedDisplay();
   }
 
   @Override
@@ -497,6 +496,7 @@ public class MainFragment extends BaseFragment
     updateSubControls();
     refreshBookmarks();
     measureTimerControls(true); // calls updateTimerControls when measured
+    updateElapsedDisplay();
 
     int tempo = getMetronomeUtil().getTempo();
     setTempo(tempo);
@@ -551,6 +551,7 @@ public class MainFragment extends BaseFragment
           squiggly.setAnimate(false, true);
         }
         updateTimerDisplay();
+        updateElapsedDisplay();
         binding.fabMainPlayStop.setImageResource(R.drawable.ic_round_stop_to_play_anim);
         Drawable icon = binding.fabMainPlayStop.getDrawable();
         if (icon != null) {
@@ -668,7 +669,12 @@ public class MainFragment extends BaseFragment
   }
 
   @Override
-  public void onTimerElapsedTimeSecondsChanged() {
+  public void onElapsedTimeSecondsChanged() {
+    activity.runOnUiThread(this::updateElapsedDisplay);
+  }
+
+  @Override
+  public void onTimerSecondsChanged() {
     activity.runOnUiThread(this::updateTimerDisplay);
   }
 
@@ -902,11 +908,10 @@ public class MainFragment extends BaseFragment
       squiggly.setAnimate(isPlaying, true);
     }
     // Check if timer is currently running
-    long elapsedTime = getMetronomeUtil().getElapsedTime();
-    elapsedTime -= getMetronomeUtil().getCountInInterval();
-    long timerIntervalRemaining = getMetronomeUtil().getTimerIntervalRemaining();
-    if (isPlaying && isTimerActive && elapsedTime > 0) {
-      updateTimerProgress(1, timerIntervalRemaining, true, true);
+    if (isPlaying && isTimerActive && !getMetronomeUtil().isCountingIn()) {
+      updateTimerProgress(
+          1, getMetronomeUtil().getTimerIntervalRemaining(), true, true
+      );
     } else {
       float timerProgress = getMetronomeUtil().getTimerProgress();
       updateTimerProgress(timerProgress, 0, false, false);
@@ -940,7 +945,14 @@ public class MainFragment extends BaseFragment
       return;
     }
     binding.textMainTimerTotal.setText(getMetronomeUtil().getTotalTimeString());
-    binding.textMainTimerElapsed.setText(getMetronomeUtil().getElapsedTimeString());
+    binding.textMainTimerCurrent.setText(getMetronomeUtil().getCurrentTimerString());
+  }
+
+  public void updateElapsedDisplay() {
+    if (binding == null) {
+      return;
+    }
+    binding.textMainElapsedTime.setText(getMetronomeUtil().getElapsedTimeString());
   }
 
   private Chip getBookmarkChip(int tempo) {

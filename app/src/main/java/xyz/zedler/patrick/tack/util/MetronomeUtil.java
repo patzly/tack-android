@@ -58,15 +58,16 @@ public class MetronomeUtil {
   private final boolean fromService;
   private HandlerThread audioThread, callbackThread;
   private Handler tickHandler, latencyHandler;
-  private Handler countInHandler, incrementalHandler, timerHandler;
+  private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler;
   private String incrementalUnit, timerUnit;
   private String[] beats, subdivisions;
   private ValueAnimator timerAnimator;
   private int tempo, countIn, incrementalAmount, incrementalInterval, timerDuration;
-  private long tickIndex, latency, startTime, timerStartTime;
+  private long tickIndex, latency, elapsedStartTime, elapsedTime, elapsedPrevious, timerStartTime;
   private float timerProgress;
   private boolean playing, tempPlaying, useSubdivisions, beatModeVibrate, isCountingIn;
-  private boolean alwaysVibrate, incrementalIncrease, resetTimer, flashScreen, keepAwake;
+  private boolean showElapsed, resetElapsed, resetTimer;
+  private boolean alwaysVibrate, incrementalIncrease, flashScreen, keepAwake;
 
   public MetronomeUtil(@NonNull Context context, boolean fromService) {
     this.context = context;
@@ -98,6 +99,8 @@ public class MetronomeUtil {
     timerDuration = sharedPrefs.getInt(PREF.TIMER_DURATION, DEF.TIMER_DURATION);
     timerUnit = sharedPrefs.getString(PREF.TIMER_UNIT, DEF.TIMER_UNIT);
     alwaysVibrate = sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
+    showElapsed = sharedPrefs.getBoolean(PREF.SHOW_ELAPSED, DEF.SHOW_ELAPSED);
+    resetElapsed = sharedPrefs.getBoolean(PREF.RESET_ELAPSED, DEF.RESET_ELAPSED);
     resetTimer = sharedPrefs.getBoolean(PREF.RESET_TIMER, DEF.RESET_TIMER);
     keepAwake = sharedPrefs.getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
 
@@ -124,6 +127,7 @@ public class MetronomeUtil {
       latencyHandler = new Handler(callbackThread.getLooper());
       countInHandler = new Handler(callbackThread.getLooper());
       incrementalHandler = new Handler(callbackThread.getLooper());
+      elapsedHandler = new Handler(callbackThread.getLooper());
       timerHandler = new Handler(callbackThread.getLooper());
     }
   }
@@ -136,6 +140,7 @@ public class MetronomeUtil {
       latencyHandler.removeCallbacksAndMessages(null);
       countInHandler.removeCallbacksAndMessages(null);
       incrementalHandler.removeCallbacksAndMessages(null);
+      elapsedHandler.removeCallbacksAndMessages(null);
       timerHandler.removeCallbacksAndMessages(null);
     }
   }
@@ -146,7 +151,7 @@ public class MetronomeUtil {
 
   public void restorePlayingState() {
     if (tempPlaying) {
-      start(false, false);
+      start(false);
     } else {
       stop();
     }
@@ -162,7 +167,7 @@ public class MetronomeUtil {
     timerDuration = 0;
     setGain(0);
     setBeatModeVibrate(false);
-    start(false, false);
+    start(false);
   }
 
   public void destroy() {
@@ -191,11 +196,11 @@ public class MetronomeUtil {
   }
 
   public void start() {
-    start(true, true);
+    start(true);
   }
 
-  public void start(boolean resetTimerIfNecessary, boolean reportTempoUsage) {
-    if (reportTempoUsage) {
+  public void start(boolean resetElapsedAndTimerIfNecessary) {
+    if (resetElapsedAndTimerIfNecessary) {
       // notify system for shortcut usage prediction
       shortcutUtil.reportUsage(getTempo());
     }
@@ -229,18 +234,17 @@ public class MetronomeUtil {
       }
     });
 
-    // Elapsed time
-    startTime = System.currentTimeMillis();
     isCountingIn = isCountInActive();
     countInHandler.postDelayed(() -> {
       isCountingIn = false;
       updateIncrementalHandler();
+      elapsedStartTime = System.currentTimeMillis();
+      updateElapsedHandler(resetElapsed && resetElapsedAndTimerIfNecessary);
       timerStartTime = System.currentTimeMillis();
       updateTimerHandler(
-          resetTimer && resetTimerIfNecessary ? 0 : timerProgress,
+          resetTimer && resetElapsedAndTimerIfNecessary ? 0 : timerProgress,
           true
       );
-      // TODO: start muted and elapsed time
     }, getCountInInterval()); // 0 if count-in is disabled
 
     for (MetronomeListener listener : listeners) {
@@ -254,6 +258,7 @@ public class MetronomeUtil {
       return;
     }
     timerProgress = getTimerProgress(); // must be called before playing is set to false
+    elapsedPrevious = elapsedTime;
 
     playing = false;
     audioUtil.stop();
@@ -546,6 +551,10 @@ public class MetronomeUtil {
     return countIn > 0;
   }
 
+  public boolean isCountingIn() {
+    return isCountingIn;
+  }
+
   public long getCountInInterval() {
     return getInterval() * getBeatsCount() * countIn;
   }
@@ -611,6 +620,69 @@ public class MetronomeUtil {
           changeTempo(incrementalAmount * (incrementalIncrease ? 1 : -1));
         }
       }, interval);
+    }
+  }
+
+  public void setShowElapsed(boolean show) {
+    showElapsed = show;
+    sharedPrefs.edit().putBoolean(PREF.SHOW_ELAPSED, show).apply();
+  }
+
+  public boolean getShowElapsed() {
+    return showElapsed;
+  }
+
+  public boolean isElapsedActive() {
+    return showElapsed;
+  }
+
+  public void setResetElapsed(boolean reset) {
+    resetElapsed = reset;
+    sharedPrefs.edit().putBoolean(PREF.RESET_ELAPSED, reset).apply();
+  }
+
+  public boolean getResetElapsed() {
+    return resetElapsed;
+  }
+
+  public void updateElapsedHandler(boolean reset) {
+    if (!fromService || !isPlaying()) {
+      return;
+    }
+    elapsedHandler.removeCallbacksAndMessages(null);
+    if (!isElapsedActive()) {
+      return;
+    }
+    if (reset) {
+      elapsedPrevious = 0;
+    }
+    elapsedHandler.post(new Runnable() {
+      @Override
+      public void run() {
+        if (isPlaying()) {
+          elapsedTime = System.currentTimeMillis() - elapsedStartTime + elapsedPrevious;
+          elapsedHandler.postDelayed(this, 1000);
+          for (MetronomeListener listener : listeners) {
+            listener.onElapsedTimeSecondsChanged();
+          }
+        }
+      }
+    });
+  }
+
+  public String getElapsedTimeString() {
+    if (!isElapsedActive()) {
+      return "";
+    }
+    int seconds = (int) (elapsedTime / 1000);
+    int minutes = seconds / 60;
+    int hours = minutes / 60;
+    if (hours > 0) {
+      return String.format(
+          Locale.ENGLISH, "%02d:%02d:%02d", hours, minutes % 60, seconds % 60
+      );
+    } else {
+      return String.format(Locale.ENGLISH, "%02d:%02d", minutes, seconds % 60);
     }
   }
 
@@ -752,7 +824,7 @@ public class MetronomeUtil {
           if (isPlaying() && !timerUnit.equals(UNIT.BARS)) {
             timerHandler.postDelayed(this, 1000);
             for (MetronomeListener listener : listeners) {
-              listener.onTimerElapsedTimeSecondsChanged();
+              listener.onTimerSecondsChanged();
             }
           }
         }
@@ -774,11 +846,7 @@ public class MetronomeUtil {
     }
   }
 
-  public long getElapsedTime() {
-    return System.currentTimeMillis() - startTime;
-  }
-
-  public String getElapsedTimeString() {
+  public String getCurrentTimerString() {
     if (!isTimerActive()) {
       return "";
     }
@@ -882,8 +950,9 @@ public class MetronomeUtil {
     void onMetronomePreTick(Tick tick);
     void onMetronomeTick(Tick tick);
     void onMetronomeTempoChanged(int tempoOld, int tempoNew);
+    void onElapsedTimeSecondsChanged();
     void onMetronomeTimerStarted();
-    void onTimerElapsedTimeSecondsChanged();
+    void onTimerSecondsChanged();
     void onMetronomeConnectionMissing();
   }
 

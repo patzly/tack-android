@@ -50,8 +50,9 @@ public final class Constants {
     public final static String BEAT_MODE_VIBRATE = "beat_mode_vibrate";
     public final static String USE_SUBS = "use_subdivisions";
     public final static String ALWAYS_VIBRATE = "always_vibrate";
-    public final static String RESET_TIMER = "reset_timer";
+    public final static String SHOW_ELAPSED = "show_elapsed";
     public final static String RESET_ELAPSED = "reset_elapsed";
+    public final static String RESET_TIMER = "reset_timer";
     public final static String FLASH_SCREEN = "flash_screen";
     public final static String KEEP_AWAKE = "keep_awake";
     public final static String SOUND = "sound";
@@ -87,8 +88,9 @@ public final class Constants {
     public final static boolean BEAT_MODE_VIBRATE = false;
     public final static boolean USE_SUBS = false;
     public final static boolean ALWAYS_VIBRATE = true;
-    public final static boolean RESET_TIMER = false;
+    public final static boolean SHOW_ELAPSED = false;
     public final static boolean RESET_ELAPSED = false;
+    public final static boolean RESET_TIMER = false;
     public final static boolean FLASH_SCREEN = false;
     public final static boolean KEEP_AWAKE = true;
     public final static String SOUND = Constants.SOUND.WOOD;
