@@ -32,7 +32,6 @@ import android.widget.Toast;
 import androidx.fragment.app.FragmentActivity;
 import androidx.preference.PreferenceManager;
 import androidx.wear.ambient.AmbientModeSupport;
-import androidx.wear.widget.SwipeDismissFrameLayout;
 import java.util.ArrayList;
 import java.util.List;
 import xyz.zedler.patrick.tack.Constants.DEF;
@@ -40,9 +39,9 @@ import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SETTINGS;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivityMainWearBinding;
-import xyz.zedler.patrick.tack.util.OldAudioUtil;
 import xyz.zedler.patrick.tack.util.ButtonUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
+import xyz.zedler.patrick.tack.util.OldAudioUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.TempoPickerView;
@@ -75,8 +74,6 @@ public class MainActivity extends FragmentActivity
   private boolean vibrateAlways;
   private boolean hapticFeedback;
   private boolean wristGestures;
-  private boolean hidePicker;
-  private boolean isFirstRotation;
   private boolean isPlaying = false;
 
   @SuppressLint("RestrictedApi")
@@ -98,11 +95,9 @@ public class MainActivity extends FragmentActivity
     handler = new Handler(Looper.getMainLooper());
     intervals = new ArrayList<>();
 
-    isFirstRotation = sharedPrefs.getBoolean(PREF.FIRST_ROTATION, DEF.FIRST_ROTATION);
     interval = sharedPrefs.getLong(PREF.INTERVAL, DEF.INTERVAL);
     bpm = (int) (60000 / interval);
 
-    hidePicker = sharedPrefs.getBoolean(SETTINGS.HIDE_PICKER, DEF.HIDE_PICKER);
     updatePickerVisibility();
 
     // VIEWS
@@ -113,14 +108,14 @@ public class MainActivity extends FragmentActivity
 
     binding.textEmphasis.setText(String.valueOf(sharedPrefs.getInt(PREF.EMPHASIS, DEF.EMPHASIS)));
 
-    binding.swipeDismiss.addCallback(new SwipeDismissFrameLayout.Callback() {
+    /*binding.swipeDismiss.addCallback(new SwipeDismissFrameLayout.Callback() {
       @Override
       public void onDismissed(SwipeDismissFrameLayout layout) {
         layout.setVisibility(View.GONE);
         finish();
       }
     });
-    binding.swipeDismiss.setSwipeable(true);
+    binding.swipeDismiss.setSwipeable(true);*/
 
     ViewUtil.setOnClickListeners(
         this,
@@ -139,23 +134,18 @@ public class MainActivity extends FragmentActivity
       }
 
       @Override
-      public void onRotate(float change) {
-        binding.circle.setRotation(binding.circle.getRotation() + change);
-      }
+      public void onRotate(float change) {}
     });
     binding.tempoPicker.setOnPickListener(new TempoPickerView.OnPickListener() {
       @Override
       public void onPickDown(float x, float y, boolean isOnRing, boolean canBeDismiss) {
-        binding.swipeDismiss.setSwipeable(canBeDismiss);
         if (!isOnRing) {
           return;
         }
-        binding.circle.setDragged(true, x, y, animations);
       }
 
       @Override
       public void onDrag(float x, float y) {
-        binding.circle.onDrag(x, y, animations);
       }
 
       @Override
@@ -163,8 +153,6 @@ public class MainActivity extends FragmentActivity
         if (binding == null) {
           return;
         }
-        binding.swipeDismiss.setSwipeable(true);
-        binding.circle.setDragged(false, 0, 0, animations);
       }
     });
     binding.tempoPicker.setOnRotaryInputListener(new TempoPickerView.OnRotaryInputListener() {
@@ -182,20 +170,10 @@ public class MainActivity extends FragmentActivity
           // more rotation needed for bpm to change again
           rotaryFactorIndex = rotaryFactorIndex < 4 ? rotaryFactorIndex + 1 : 0;
         }
-
-        if (isFirstRotation && !hidePicker) {
-          isFirstRotation = false;
-          Toast.makeText(
-              MainActivity.this, R.string.msg_hide_picker, Toast.LENGTH_LONG
-          ).show();
-          sharedPrefs.edit().putBoolean(PREF.FIRST_ROTATION, isFirstRotation).apply();
-        }
       }
 
       @Override
       public void onRotate(float change) {
-        binding.circle.setRotation(binding.circle.getRotation() + change);
-        binding.circle.changeRotaryRotation(change);
       }
     });
 
@@ -223,12 +201,6 @@ public class MainActivity extends FragmentActivity
   protected void onResume() {
     super.onResume();
 
-    boolean hidePickerNew = sharedPrefs.getBoolean(SETTINGS.HIDE_PICKER, DEF.HIDE_PICKER);
-    if (hidePicker != hidePickerNew) {
-      hidePicker = hidePickerNew;
-      updatePickerVisibility();
-    }
-
     animations = sharedPrefs.getBoolean(SETTINGS.ANIMATIONS, DEF.ANIMATIONS);
     emphasis = sharedPrefs.getInt(PREF.EMPHASIS, DEF.EMPHASIS);
     heavyVibration = sharedPrefs.getBoolean(SETTINGS.HEAVY_VIBRATION, DEF.HEAVY_VIBRATION);
@@ -253,8 +225,7 @@ public class MainActivity extends FragmentActivity
             binding.imageBeatMode,
             binding.framePlayPause,
             binding.textEmphasis,
-            binding.tempoPicker,
-            binding.circle
+            binding.tempoPicker
         );
         ViewUtil.setFontFamily(binding.textBpm, R.font.edwin_roman);
         ViewUtil.setTextSize(binding.textBpm, R.dimen.text_size_bpm_ambient);
@@ -283,27 +254,22 @@ public class MainActivity extends FragmentActivity
             binding.imageBeatMode,
             binding.framePlayPause,
             binding.textEmphasis,
-            binding.tempoPicker,
-            binding.circle
+            binding.tempoPicker
         );
         binding.tempoPicker.requestFocus();
-        binding.tempoPicker.setTouchable(!hidePicker);
-        binding.circle.setDotsVisibility(!hidePicker);
         ViewUtil.setFontFamily(binding.textBpm, R.font.edwin_bold);
         ViewUtil.setTextSize(
             binding.textBpm,
-            hidePicker ? R.dimen.text_size_bpm : R.dimen.text_size_bpm_picker
+            R.dimen.text_size_bpm
         );
         ViewUtil.setTextSize(
             binding.textLabel,
-            hidePicker ? R.dimen.text_size_label : R.dimen.text_size_label_picker
+            R.dimen.text_size_label
         );
         ViewUtil.setAlpha(1, binding.textBpm, binding.textLabel);
         ViewUtil.setMarginBottom(
             binding.textBpm,
-            hidePicker
-                ? R.dimen.text_bpm_margin_bottom
-                : R.dimen.text_bpm_margin_bottom_picker
+            R.dimen.text_bpm_margin_bottom
         );
         binding.frameTop.setLayoutParams(
             ViewUtil.getParamsWeightHeight(
@@ -525,11 +491,8 @@ public class MainActivity extends FragmentActivity
   }
 
   private void updatePickerVisibility() {
-    binding.tempoPicker.setTouchable(!hidePicker);
-    binding.circle.setDotsVisibility(!hidePicker);
-
     ViewUtil.setSize(
-        hidePicker ? R.dimen.icon_size : R.dimen.icon_size_picker,
+        R.dimen.icon_size,
         binding.imageTempoTap,
         binding.imageEmphasis,
         binding.imageSettings,
@@ -538,7 +501,7 @@ public class MainActivity extends FragmentActivity
         binding.imagePlayPause
     );
     ViewUtil.setSize(
-        hidePicker ? R.dimen.action_button_size : R.dimen.action_button_size_picker,
+        R.dimen.action_button_size,
         binding.framePlayPause
     );
 
@@ -552,42 +515,28 @@ public class MainActivity extends FragmentActivity
             : R.drawable.ic_round_play_arrow
     );
 
-    ViewUtil.setTextSize(
-        binding.textBpm, hidePicker ? R.dimen.text_size_bpm : R.dimen.text_size_bpm_picker
-    );
-    ViewUtil.setTextSize(
-        binding.textLabel,
-        hidePicker ? R.dimen.text_size_label : R.dimen.text_size_label_picker
-    );
+    ViewUtil.setTextSize(binding.textBpm, R.dimen.text_size_bpm);
+    ViewUtil.setTextSize(binding.textLabel, R.dimen.text_size_label);
 
-    ViewUtil.setMargin(
-        binding.linearControlsContainer,
-        hidePicker ? 0 : getResources().getDimensionPixelSize(R.dimen.picker_ring_padding)
-    );
+    ViewUtil.setMargin(binding.linearControlsContainer, 0);
     ViewUtil.setMarginTop(
         binding.frameSettings,
-        hidePicker
-            ? R.dimen.settings_vertical_offset
-            : R.dimen.settings_vertical_offset_picker
+        R.dimen.settings_vertical_offset
     );
     ViewUtil.setMarginBottom(
         binding.textBpm,
-        hidePicker ? R.dimen.text_bpm_margin_bottom : R.dimen.text_bpm_margin_bottom_picker
+        R.dimen.text_bpm_margin_bottom
     );
 
     ViewUtil.setHorizontalMargins(
         binding.frameTempoTap,
-        hidePicker
-            ? R.dimen.control_horizontal_offset
-            : R.dimen.control_horizontal_offset_picker,
+        R.dimen.control_horizontal_offset,
         -1
     );
     ViewUtil.setHorizontalMargins(
         binding.frameBeatMode,
         -1,
-        hidePicker
-            ? R.dimen.control_horizontal_offset
-            : R.dimen.control_horizontal_offset_picker
+        R.dimen.control_horizontal_offset
     );
   }
 
@@ -638,7 +587,6 @@ public class MainActivity extends FragmentActivity
             binding.imageSettings,
             binding.imageEmphasis,
             binding.textEmphasis,
-            binding.circle,
             binding.imageBookmark
         );
       } else {
@@ -653,7 +601,6 @@ public class MainActivity extends FragmentActivity
             binding.imageSettings,
             binding.imageEmphasis,
             binding.textEmphasis,
-            binding.circle,
             binding.imageBookmark
         );
       }
@@ -671,12 +618,11 @@ public class MainActivity extends FragmentActivity
             binding.imageSettings,
             binding.imageEmphasis,
             binding.textEmphasis,
-            binding.circle,
             binding.imageBookmark
         );
       } else {
         binding.framePlayPause.getBackground().setTint(
-            ResUtil.getColorAttr(this, R.attr.colorPrimaryContainer)
+            ResUtil.getColor(this, R.attr.colorPrimaryContainer)
         );
         binding.textLabel.setAlpha(0.6f);
         ViewUtil.setAlpha(
@@ -689,7 +635,6 @@ public class MainActivity extends FragmentActivity
             binding.imageSettings,
             binding.imageEmphasis,
             binding.textEmphasis,
-            binding.circle,
             binding.imageBookmark
         );
       }

@@ -18,10 +18,10 @@
   ~ Copyright (c) 2020-2024 by Patrick Zedler
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
   <style name="Theme.Tack" parent="Theme.Material3.Dark.NoActionBar">
-    <item name="android:colorBackground">@color/black</item>
+    <item name="android:colorBackground">@color/simple_black</item>
 
     <item name="android:colorControlNormal">?attr/colorOnBackground</item>
     <item name="android:colorControlActivated">?attr/colorSecondary</item>
@@ -33,7 +33,7 @@
   </style>
 
   <style name="Theme.Tack.CustomSwipe" parent="Theme.Tack">
-    <item name="android:windowSwipeToDismiss">false</item>
+    <item name="android:windowSwipeToDismiss" tools:ignore="WearBackNavigation">false</item>
     <item name="android:windowIsTranslucent">true</item>
     <item name="android:windowBackground">@color/transparent</item>
   </style>

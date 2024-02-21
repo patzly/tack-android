@@ -93,10 +93,6 @@ public class SettingsActivity extends FragmentActivity
         )
     );
 
-    binding.switchSettingsHidePicker.setChecked(
-        sharedPrefs.getBoolean(SETTINGS.HIDE_PICKER, Constants.DEF.HIDE_PICKER)
-    );
-
     binding.switchSettingsAnimations.setChecked(
         sharedPrefs.getBoolean(SETTINGS.ANIMATIONS, Constants.DEF.ANIMATIONS)
     );
@@ -108,7 +104,6 @@ public class SettingsActivity extends FragmentActivity
         binding.linearSettingsVibrateAlways,
         binding.linearSettingsHaptic,
         binding.linearSettingsWristGestures,
-        binding.linearSettingsHidePicker,
         binding.linearSettingsAnimations,
         binding.linearSettingsChangelog,
         binding.linearSettingsRate
@@ -120,7 +115,6 @@ public class SettingsActivity extends FragmentActivity
         binding.switchSettingsVibrateAlways,
         binding.switchSettingsHaptic,
         binding.switchSettingsWristGestures,
-        binding.switchSettingsHidePicker,
         binding.switchSettingsAnimations
     );
   }
@@ -155,10 +149,6 @@ public class SettingsActivity extends FragmentActivity
     } else if (id == R.id.linear_settings_wrist_gestures) {
       binding.switchSettingsWristGestures.setChecked(
           !binding.switchSettingsWristGestures.isChecked()
-      );
-    } else if (id == R.id.linear_settings_hide_picker) {
-      binding.switchSettingsHidePicker.setChecked(
-          !binding.switchSettingsHidePicker.isChecked()
       );
     } else if (id == R.id.linear_settings_animations) {
       binding.switchSettingsAnimations.setChecked(
@@ -248,8 +238,6 @@ public class SettingsActivity extends FragmentActivity
       hapticUtil.setEnabled(isChecked);
     } else if (id == R.id.switch_settings_wrist_gestures) {
       editor.putBoolean(SETTINGS.WRIST_GESTURES, isChecked);
-    } else if (id == R.id.switch_settings_hide_picker) {
-      editor.putBoolean(SETTINGS.HIDE_PICKER, isChecked);
     } else if (id == R.id.switch_settings_animations) {
       editor.putBoolean(SETTINGS.ANIMATIONS, isChecked);
       animations = isChecked;

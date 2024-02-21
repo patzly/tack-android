@@ -20,8 +20,8 @@
 
 <resources>
 
-  <color name="white">#fff</color>
-  <color name="black">#000</color>
+  <color name="simple_white">#fff</color>
+  <color name="simple_black">#000</color>
   <color name="transparent">#00000000</color>
 
   <color name="highlight">#44bdbdbd</color>

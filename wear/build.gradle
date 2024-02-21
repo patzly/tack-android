@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "xyz.zedler.patrick.tack"
-        minSdk 23
+        minSdk 26
         targetSdk 34
         versionCode 111 // last number is 1 for wear release
         versionName "3.0.0"
@@ -60,7 +60,7 @@ dependencies {
     implementation libs.navigation.ui
     implementation libs.preference
     implementation libs.material
-    implementation libs.wear
-    compileOnly libs.wearable.core
-    implementation libs.wearable.support
+    implementation libs.shapes
+    implementation libs.wear.core
+    implementation libs.wear.input
 }

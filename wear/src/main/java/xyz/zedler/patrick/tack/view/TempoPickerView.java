@@ -25,10 +25,14 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.animation.RotateAnimation;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.google.android.wearable.input.RotaryEncoderHelper;
+import androidx.core.view.InputDeviceCompat;
+import androidx.core.view.MotionEventCompat;
+import androidx.core.view.ViewConfigurationCompat;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 
 public class TempoPickerView extends View
@@ -99,13 +103,17 @@ public class TempoPickerView extends View
 
   @Override
   public boolean onGenericMotion(View v, MotionEvent event) {
-    if (!isRotaryEvent(event)) {
+    if (event.getAction() != MotionEvent.ACTION_SCROLL ||
+        !event.isFromSource(InputDeviceCompat.SOURCE_ROTARY_ENCODER)
+    ) {
       return false;
     }
 
-    float scrolled = RotaryEncoderHelper.getRotaryAxisValue(event);
-    float factor = RotaryEncoderHelper.getScaledScrollFactor(getContext());
-    float delta = -scrolled * (factor / 4);
+    float scrolled = event.getAxisValue(MotionEventCompat.AXIS_SCROLL);
+    float factor = ViewConfigurationCompat.getScaledVerticalScrollFactor(
+        ViewConfiguration.get(getContext()), getContext()
+    );
+    float delta = -scrolled * (factor / Constants.ROTARY_SCROLL_DIVIDER);
     float rotaryThreshold = 0.065f;
 
     rotaryStorage = rotaryStorage - scrolled;
@@ -214,11 +222,6 @@ public class TempoPickerView extends View
     double distanceX = x - centerX;
     double distanceY = y - centerY;
     return !((distanceX * distanceX) + (distanceY * distanceY) <= radius * radius);
-  }
-
-  private boolean isRotaryEvent(MotionEvent event) {
-    return event.getAction() == MotionEvent.ACTION_SCROLL
-        && RotaryEncoderHelper.isFromRotaryEncoder(event);
   }
 
   public interface OnRotaryInputListener {

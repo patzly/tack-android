@@ -20,6 +20,7 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.text.Html;
 import android.text.Spannable;
@@ -35,6 +36,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RawRes;
 import androidx.core.graphics.ColorUtils;
+import com.google.android.material.color.MaterialColors;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -79,7 +81,7 @@ public class ResUtil {
       return Html.fromHtml(formatted);
     }
 
-    int color = getColorAttr(context, R.attr.colorOnBackground);
+    int color = getColor(context, R.attr.colorOnBackground);
     int margin = ViewUtil.spToPx(context, 6);
 
     String[] lines = text.split("\n");
@@ -111,13 +113,17 @@ public class ResUtil {
     return builder;
   }
 
-  public static int getColorAttr(Context context, @AttrRes int resId) {
+  public static int getColor(Context context, @AttrRes int resId) {
+    return MaterialColors.getColor(context, resId, Color.BLACK);
+  }
+
+  public static int getColor(Context context, @AttrRes int resId, float alpha) {
+    return ColorUtils.setAlphaComponent(getColor(context, resId), (int) (alpha * 255));
+  }
+
+  public static int getSysColor(Context context, @AttrRes int resId) {
     TypedValue typedValue = new TypedValue();
     context.getTheme().resolveAttribute(resId, typedValue, true);
     return typedValue.data;
-  }
-
-  public static int getColorAttr(Context context, @AttrRes int resId, float alpha) {
-    return ColorUtils.setAlphaComponent(getColorAttr(context, resId), (int) (alpha * 255));
   }
 }

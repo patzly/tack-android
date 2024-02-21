@@ -32,7 +32,6 @@
   <string name="title_changelog">Changelog</string>
 
   <string name="msg_bookmark">Tap again to return to previous value</string>
-  <string name="msg_hide_picker">Hide picker in settings for larger controls</string>
   <string name="msg_long_press">Press long to change quickly</string>
   <string name="msg_no_speaker">Watch has no audio output, please use a Bluetooth speaker</string>
   <string name="msg_one_button">Watch only has one side button, button control unavailable</string>
@@ -61,8 +60,6 @@
   <string name="setting_haptic_description">On tempo change</string>
   <string name="setting_wrist_gestures">Wrist gestures</string>
   <string name="setting_wrist_gestures_description">+/-1 BPM</string>
-  <string name="setting_hide_picker">Hide picker</string>
-  <string name="setting_hide_picker_description">Larger controls</string>
   <string name="setting_animations">Animations</string>
   <string name="setting_animations_description">Icons and more</string>
   <string name="setting_rate">Rate Tack on Google Play</string>

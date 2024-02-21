@@ -151,28 +151,6 @@
     </LinearLayout>
 
     <LinearLayout
-      android:id="@+id/linear_settings_hide_picker"
-      style="@style/Widget.Tack.LinearLayout.ListItem">
-
-      <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/switch_settings_hide_picker"
-        style="@style/Widget.Tack.Switch" />
-
-      <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-        <TextView
-          style="@style/Widget.Tack.TextView.ListItem.Title"
-          android:text="@string/setting_hide_picker" />
-
-        <TextView
-          style="@style/Widget.Tack.TextView.ListItem.Description"
-          android:text="@string/setting_hide_picker_description" />
-
-      </LinearLayout>
-
-    </LinearLayout>
-
-    <LinearLayout
       android:id="@+id/linear_settings_animations"
       style="@style/Widget.Tack.LinearLayout.ListItem">
 
