@@ -93,7 +93,7 @@ public final class Constants {
     public final static boolean RESET_TIMER = false;
     public final static boolean FLASH_SCREEN = false;
     public final static boolean KEEP_AWAKE = true;
-    public final static String SOUND = Constants.SOUND.WOOD;
+    public final static String SOUND = Constants.SOUND.SINE;
     public final static long LATENCY = 100;
     public final static boolean IGNORE_FOCUS = false;
     public final static int GAIN = 0;
@@ -112,9 +112,6 @@ public final class Constants {
 
     public final static String WOOD = "wood";
     public final static String SINE = "sine";
-    public final static String CLICK = "click";
-    public final static String DING = "ding";
-    public final static String BEEP = "beep";
   }
 
   public final static class TICK_TYPE {

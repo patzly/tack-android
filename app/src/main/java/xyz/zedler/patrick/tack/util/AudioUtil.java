@@ -73,7 +73,7 @@ public class AudioUtil implements OnAudioFocusChangeListener {
 
   public void play() {
     playing = true;
-    track = AudioUtil.getTrack();
+    track = getTrack();
     loudnessEnhancer = new LoudnessEnhancer(track.getAudioSessionId());
     loudnessEnhancer.setTargetGain(gain * 100);
     loudnessEnhancer.setEnabled(gain > 0);
@@ -126,25 +126,15 @@ public class AudioUtil implements OnAudioFocusChangeListener {
   }
 
   public void setSound(String sound) {
-    int resIdNormal, resIdStrong, resIdSub;
-    switch (sound) {
-      case SOUND.SINE:
-        resIdNormal = R.raw.sine_normal;
-        resIdStrong = R.raw.sine_strong;
-        resIdSub = R.raw.sine_sub;
-        break;
-      case SOUND.CLICK:
-      case SOUND.DING:
-      case SOUND.BEEP:
-      default:
-        resIdNormal = R.raw.wood_normal;
-        resIdStrong = R.raw.wood_strong;
-        resIdSub = R.raw.wood_normal;
-        break;
+    int resId;
+    if (sound.equals(SOUND.WOOD)) {
+      resId = R.raw.wood;
+    } else {
+      resId = R.raw.sine;
     }
-    tickNormal = loadAudio(resIdNormal);
-    tickStrong = loadAudio(resIdStrong);
-    tickSub = loadAudio(resIdSub);
+    tickNormal = loadAudio(resId, Pitch.NORMAL);
+    tickStrong = loadAudio(resId, Pitch.HIGH);
+    tickSub = loadAudio(resId, Pitch.LOW);
   }
 
   public void setGain(int gain) {
@@ -194,7 +184,7 @@ public class AudioUtil implements OnAudioFocusChangeListener {
   private int writeNextAudioData(float[] data, int periodSize, int sizeWritten) {
     int size = Math.min(data.length, periodSize - sizeWritten);
     if (playing) {
-      AudioUtil.writeAudio(track, data, size);
+      writeAudio(track, data, size);
     }
     return size;
   }
@@ -236,11 +226,30 @@ public class AudioUtil implements OnAudioFocusChangeListener {
         .build();
   }
 
-  private float[] loadAudio(@RawRes int resId) {
+  private float[] loadAudio(@RawRes int resId, Pitch pitch) {
     try (InputStream stream = context.getResources().openRawResource(resId)) {
-      return readDataFromWavFloat(stream);
+      return adjustPitch(readDataFromWavFloat(stream), pitch);
     } catch (IOException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  private float[] adjustPitch(float[] originalData, Pitch pitch) {
+    if (pitch == Pitch.HIGH) {
+      float[] newData = new float[originalData.length / 2];
+      for (int i = 0; i < newData.length; i++) {
+        newData[i] = originalData[i * 2];
+      }
+      return newData;
+    } else if (pitch == Pitch.LOW) {
+      float[] newData = new float[originalData.length * 2];
+      for (int i = 0, j = 0; i < originalData.length; i++, j += 2) {
+        newData[j] = originalData[i];
+        newData[j + 1] = originalData[i];
+      }
+      return newData;
+    } else {
+      return originalData;
     }
   }
 
@@ -300,6 +309,10 @@ public class AudioUtil implements OnAudioFocusChangeListener {
       return i;
     }
     return -1;
+  }
+
+  private enum Pitch {
+    NORMAL, HIGH, LOW
   }
 
   public interface AudioListener {

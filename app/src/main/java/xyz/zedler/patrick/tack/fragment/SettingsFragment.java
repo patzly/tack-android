@@ -324,11 +324,8 @@ public class SettingsFragment extends BaseFragment
 
   public void updateMetronomeSettings() {
     Map<String, String> labels = new LinkedHashMap<>();
-    labels.put(SOUND.WOOD, getString(R.string.settings_sound_wood));
     labels.put(SOUND.SINE, getString(R.string.settings_sound_sine));
-    labels.put(SOUND.CLICK, getString(R.string.settings_sound_click));
-    labels.put(SOUND.DING, getString(R.string.settings_sound_ding));
-    labels.put(SOUND.BEEP, getString(R.string.settings_sound_beep));
+    labels.put(SOUND.WOOD, getString(R.string.settings_sound_wood));
     ArrayList<String> sounds = new ArrayList<>(labels.keySet());
     String[] items = labels.values().toArray(new String[]{});
     int init = sounds.indexOf(getMetronomeUtil().getSound());
