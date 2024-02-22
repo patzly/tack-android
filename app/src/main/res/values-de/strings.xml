@@ -187,9 +187,6 @@
   <string name="settings_sound">Schlaggeräusch</string>
   <string name="settings_sound_wood">Holz</string>
   <string name="settings_sound_sine">Sinus</string>
-  <string name="settings_sound_click">Klick</string>
-  <string name="settings_sound_ding">Ding</string>
-  <string name="settings_sound_beep">Piep</string>
 
   <string name="settings_latency">Korrektur der Latenzzeit</string>
   <string name="settings_latency_description">Kompensierung die Audio-Latenzzeit für haptische und visuelle Signale</string>
@@ -207,6 +204,12 @@
 
   <string name="settings_always_vibrate">Immer vibrieren</string>
   <string name="settings_always_vibrate_description">Auch im Audiomodus</string>
+
+  <string name="settings_elapsed">Vergangene Zeit anzeigen</string>
+  <string name="settings_elapsed_description">Sieh, wie lange du übst</string>
+
+  <string name="settings_reset_elapsed">Vergangene Zeit beim Stoppen zurücksetzen</string>
+  <string name="settings_reset_elapsed_description">Statt bis zum Schließen fortzusetzen</string>
 
   <string name="settings_reset_timer">Timer nach Beenden der Wiedergabe zurücksetzen</string>
   <string name="settings_reset_timer_description">Anstatt fortzusetzen</string>
