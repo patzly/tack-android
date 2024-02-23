@@ -425,6 +425,10 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     }
   }
 
+  public void showTextBottomSheet(@RawRes int file, @StringRes int title) {
+    showTextBottomSheet(file, title, 0);
+  }
+
   public void showTextBottomSheet(@RawRes int file, @StringRes int title, @StringRes int link) {
     NavMainDirections.ActionGlobalTextDialog action
         = NavMainDirections.actionGlobalTextDialog();

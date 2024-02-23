@@ -77,6 +77,8 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
       performHapticClick();
       if (id == R.id.action_feedback) {
         activity.showFeedbackBottomSheet();
+      } else if (id == R.id.action_help) {
+        activity.showTextBottomSheet(R.raw.help, R.string.title_help);
       } else if (id == R.id.action_recommend) {
         String text = getString(R.string.msg_recommend, getString(R.string.app_vending_app));
         ResUtil.share(activity, text);

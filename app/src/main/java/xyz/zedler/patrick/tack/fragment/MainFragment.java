@@ -149,11 +149,10 @@ public class MainFragment extends BaseFragment
         activity.navigateToFragment(MainFragmentDirections.actionMainToSettings());
       } else if (id == R.id.action_about) {
         activity.navigateToFragment(MainFragmentDirections.actionMainToAbout());
+      } else if (id == R.id.action_help) {
+        activity.showTextBottomSheet(R.raw.help, R.string.title_help);
       } else if (id == R.id.action_feedback) {
         activity.showFeedbackBottomSheet();
-      } else if (id == R.id.action_recommend) {
-        String text = getString(R.string.msg_recommend, getString(R.string.app_vending_app));
-        ResUtil.share(activity, text);
       }
       return true;
     });

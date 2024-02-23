@@ -23,6 +23,11 @@
   xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <item
+    android:id="@+id/action_help"
+    android:title="@string/title_help"
+    app:showAsAction="never" />
+
+  <item
     android:id="@+id/action_recommend"
     android:title="@string/action_recommend"
     app:showAsAction="never" />
