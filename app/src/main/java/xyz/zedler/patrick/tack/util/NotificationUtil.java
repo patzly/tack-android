@@ -90,7 +90,6 @@ public class NotificationUtil {
   }
 
   public Notification getNotification() {
-    String text = context.getString(R.string.msg_metronome_playing_return);
     Intent intentApp = new Intent(context, MainActivity.class);
     intentApp.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
     PendingIntent pendingIntentApp = PendingIntent.getActivity(
@@ -102,8 +101,9 @@ public class NotificationUtil {
     Action actionStop = new Action(
         R.drawable.ic_round_stop, context.getString(R.string.action_stop), intentStop
     );
+    String text = context.getString(R.string.msg_service_running_return);
     return new NotificationCompat.Builder(context, CHANNEL_ID)
-        .setContentTitle(context.getString(R.string.msg_metronome_playing))
+        .setContentTitle(context.getString(R.string.msg_service_running))
         .setContentText(text)
         .setContentIntent(pendingIntentApp)
         .addAction(actionStop)
@@ -113,7 +113,7 @@ public class NotificationUtil {
         .setColor(getColor())
         .setSmallIcon(R.drawable.ic_round_tack_notification)
         .setStyle(new NotificationCompat.BigTextStyle().bigText(text))
-        .setPriority(NotificationCompat.PRIORITY_MAX)
+        .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
         .build();

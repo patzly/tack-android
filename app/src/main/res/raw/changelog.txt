@@ -13,6 +13,7 @@
 - Improved: landscape layout
 - Improved: bookmark shortcuts
 - Improved: tempo tap algorithm
+- Improved: metronome service for background playback
 - Fixed: inconsistent audio beats on Android 12+
 
 ## 3.0.2

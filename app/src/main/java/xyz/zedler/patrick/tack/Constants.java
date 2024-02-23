@@ -86,7 +86,7 @@ public final class Constants {
     );
     public final static String SUBDIVISIONS = TICK_TYPE.MUTED;
     public final static boolean BEAT_MODE_VIBRATE = false;
-    public final static boolean USE_SUBS = false;
+    public final static boolean USE_SUBS = true;
     public final static boolean ALWAYS_VIBRATE = true;
     public final static boolean SHOW_ELAPSED = false;
     public final static boolean RESET_ELAPSED = false;

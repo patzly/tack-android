@@ -73,6 +73,7 @@ public class MetronomeService extends Service implements MetronomeListener {
   public void onDestroy() {
     super.onDestroy();
 
+    stopForeground();
     metronomeUtil.destroy();
     unregisterReceiver(stopReceiver);
     Log.d(TAG, "onDestroy: service destroyed");
@@ -87,14 +88,9 @@ public class MetronomeService extends Service implements MetronomeListener {
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
     if (intent != null && intent.getAction() != null) {
-      switch (intent.getAction()) {
-        case ACTION.START:
-          metronomeUtil.setTempo(intent.getIntExtra(EXTRA.TEMPO, metronomeUtil.getTempo()));
-          metronomeUtil.start();
-          break;
-        case ACTION.STOP:
-          metronomeUtil.stop();
-          break;
+      if (intent.getAction().equals(ACTION.START)) {
+        metronomeUtil.setTempo(intent.getIntExtra(EXTRA.TEMPO, metronomeUtil.getTempo()));
+        metronomeUtil.start();
       }
     }
     return START_STICKY;
@@ -102,31 +98,13 @@ public class MetronomeService extends Service implements MetronomeListener {
 
   @Override
   public void onMetronomeStart() {
-    if (!notificationUtil.hasPermission()) {
-      return;
-    }
-    notificationUtil.createNotificationChannel();
-    Notification notification = notificationUtil.getNotification();
-    try {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        int type = ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK;
-        startForeground(NOTIFICATION_ID, notification, type);
-      } else {
-        startForeground(NOTIFICATION_ID, notification);
-      }
-    } catch (Exception e) {
-      Log.e(TAG, "onMetronomeStart: could not start in foreground", e);
+    if (notificationUtil.hasPermission()) {
+      startForeground();
     }
   }
 
   @Override
-  public void onMetronomeStop() {
-    if (VERSION.SDK_INT >= VERSION_CODES.N) {
-      stopForeground(STOP_FOREGROUND_REMOVE);
-    } else {
-      stopForeground(true);
-    }
-  }
+  public void onMetronomeStop() {}
 
   @Override
   public void onMetronomePreTick(Tick tick) {}
@@ -149,6 +127,29 @@ public class MetronomeService extends Service implements MetronomeListener {
   @Override
   public void onMetronomeConnectionMissing() {}
 
+  public void startForeground() {
+    notificationUtil.createNotificationChannel();
+    Notification notification = notificationUtil.getNotification();
+    try {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        int type = ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK;
+        startForeground(NOTIFICATION_ID, notification, type);
+      } else {
+        startForeground(NOTIFICATION_ID, notification);
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "startForeground: could not start foreground", e);
+    }
+  }
+
+  private void stopForeground() {
+    if (VERSION.SDK_INT >= VERSION_CODES.N) {
+      stopForeground(STOP_FOREGROUND_REMOVE);
+    } else {
+      stopForeground(true);
+    }
+  }
+
   public MetronomeUtil getMetronomeUtil() {
     return metronomeUtil;
   }
@@ -159,7 +160,8 @@ public class MetronomeService extends Service implements MetronomeListener {
     public void onReceive(Context context, Intent intent) {
       if (intent != null && Objects.equals(intent.getAction(), ACTION.STOP)) {
         metronomeUtil.stop();
-        Log.d(TAG, "onReceive: received stop command");
+        stopForeground();
+        Log.d(TAG, "onReceive: stopped foreground");
       }
     }
   }

@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
       try {
         startService(metronomeIntent);
         // cannot use startForegroundService
-        // would cause crash as notification is only displayed when metronome playback is started
+        // would cause crash as notification is only displayed when app has notification permission
         bindService(metronomeIntent, this, Context.BIND_IMPORTANT);
       } catch (Exception e) {
         Log.e(TAG, "onStart: could not bind metronome service", e);
