@@ -589,7 +589,7 @@
           <ImageView
             android:id="@+id/image_settings_reset_elapsed"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_timer_anim"
+            android:src="@drawable/ic_round_history_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
@@ -617,7 +617,7 @@
           <ImageView
             android:id="@+id/image_settings_reset_timer"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_timer_anim"
+            android:src="@drawable/ic_round_history_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
