@@ -1,16 +1,15 @@
-#### Why is the playback notification displayed when Tack is not playing?
+#### Why is the metronome service notification displayed when Tack is not playing?
 
 The notification is necessary for the metronome service to stay alive when the app is in background.
-The service keeps track of real-time data like timer and elapsed time to separate metronome playback from the app interface.
-You can dismiss the notification by tapping "Stop", but this no longer guarantees that the service is not killed by the system.
-This may result in resets of timer and elapsed time until the service is in foreground again.
+The service manages playback and keeps track of real-time data like timer or elapsed time to separate playback from the app interface.
+You can move the service to the background by tapping "Stop", but this no longer guarantees that it isn't killed by the system. This may result in resets of timer and elapsed time until the service is in foreground again.
 
 #### How can I change the tempo?
 
 To change the tempo, you can rotate the circle in the center or tap on the buttons on the left and the right of the circle.
 By long-pressing the buttons, you can change the tempo even faster.
 
-#### All pages are just blank?
+#### Why are all pages just blank?
 
 That's a bug on a few devices out there, mostly with Android 8.1 and 9. For a workaround please activate the following option:
 
