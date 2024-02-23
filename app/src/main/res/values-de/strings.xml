@@ -23,9 +23,10 @@
 
   <string name="title_feedback">Rückmeldung</string>
   <string name="title_about">Über</string>
+  <string name="title_help">Hilfe</string>
   <string name="title_licenses">Open-Source-Lizenzen</string>
   <string name="title_settings">Einstellungen</string>
-  <string name="title_notification_channel">Metronom</string>
+  <string name="title_notification_channel">Metronom-Service</string>
   <string name="title_options">Optionen</string>
   <string name="title_general">Allgemein</string>
   <string name="title_metronome">Metronom</string>
@@ -90,17 +91,17 @@
   <string name="msg_feedback_contact">Hast du Wünsche, Anmerkungen oder Fragen? Kontaktiere mich!\nAnsonsten würde ich mich sehr über eine nette Bewertung im Play Store freuen.</string>
   <string name="msg_recommend">Schau dir mal diese coole Metronom-App an: \n%1$s</string>
   <string name="msg_vibration_unavailable">Vibration auf diesem Gerät nicht verfügbar</string>
-  <string name="msg_metronome_playing">Metronom schlägt</string>
-  <string name="msg_metronome_playing_return">Tippen, um zu Tack zurückzukehren</string>
+  <string name="msg_service_running">Metronom-Service läuft</string>
+  <string name="msg_service_running_return">Tippen, um zu Tack zurückzukehren</string>
+  <string name="msg_service_description">Service für die Konfiguration und Wiedergabe des Metronoms</string>
   <string name="msg_connection_lost">Service-Verbindung verloren, App-Neustart erforderlich</string>
   <string name="msg_reset">Alles zurücksetzen?</string>
   <string name="msg_reset_description">Willst du wirklich die gesamte App einschließlich Lesezeichen und Einstellungen zurücksetzen? Dies kann nicht rückgängig gemacht werden.</string>
   <string name="msg_gain">Mit Verstärkung wiedergeben?</string>
   <string name="msg_gain_description">Achte darauf, keine Ohrhöhrer zu verwenden, da durch laute Geräusche Gehörschäden entstehen können!</string>
-  <string name="msg_notification_permission_denied">Berechtigung für Benachrichtigungen ist für die Steuerung des Metronoms erforderlich</string>
+  <string name="msg_notification_permission_denied">Berechtigung für Benachrichtigungen ist für die Steuerung der Wiedergabe erforderlich</string>
   <string name="msg_report_crash">Bitte melden Sie jeden Absturz mit dem angehängten Fehlerprotokoll, damit ich versuchen kann, ihn zu beheben.</string>
   <string name="msg_copied_to_clipboard">Erfolgreich in Zwischenablage kopiert</string>
-  <string name="msg_service_description">Service für die Konfiguration und Wiedergabe des Metronoms</string>
 
   <!-- OPTIONS -->
 
