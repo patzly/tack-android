@@ -60,7 +60,6 @@ import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
-import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.ShortcutUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
@@ -328,6 +327,10 @@ public class SettingsFragment extends BaseFragment
     ArrayList<String> sounds = new ArrayList<>(labels.keySet());
     String[] items = labels.values().toArray(new String[]{});
     int init = sounds.indexOf(getMetronomeUtil().getSound());
+    if (init == -1) {
+      init = 0;
+      getSharedPrefs().edit().remove(PREF.SOUND).apply();
+    }
     binding.textSettingsSound.setText(items[init]);
     dialogUtilSound.createSingleChoice(
         R.string.settings_sound, items, init, (dialog, which) -> {
