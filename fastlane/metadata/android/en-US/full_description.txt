@@ -1,0 +1,15 @@
+<p>Tack is a modern metronome app for Android with a beautifully designed interface that has all the features you need for practicing a music piece accurate to the beat.</p>
+
+<p><b>Features:</b></p><ul>
+   <li>Beautiful beat visualization with subdivisions and changeable emphasizes</li>
+   <li>BPM bookmarks as app shortcuts</li>
+   <li>Options for count in, incremental tempo change, song duration and swing</li>
+   <li>Settings for flash screen, volume boost, audio latency correction and elapsed time</li>
+   <li>Dynamic color and dynamic contrast support</li>
+   <li>Large screen support</li>
+   <li>No ads or analytics</li>
+</ul>
+
+<p><b>Contribution:</b></p>
+<p>If you run into a bug or miss a feature, please open an issue in the project's <a href="https://github.com/patzly/tack-android/">GitHub repository</a>.
+You can also help translate this project at <a href="https://app.transifex.com/patzly/tack-android">Transifex</a>, if your language is incomplete, contains typos or is not available yet. Thanks for your contributions!</p>

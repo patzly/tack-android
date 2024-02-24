@@ -1,4 +1,4 @@
-## 4.0.0: Surprise 🎉
+## 4.0: Surprise 🎉
 
 ? Here is the update you have been waiting for so long! I have implemented many new features, improved tons of things and fixed annoying bugs. But look for yourself!
 
@@ -15,6 +15,10 @@
 - Improved: tempo tap algorithm
 - Improved: metronome service for background playback
 - Fixed: inconsistent audio beats on Android 12+
+
+## 4.0.1
+
+- Fixed: crash in settings caused by invalid sound selection
 
 ## 3.0.2
 
