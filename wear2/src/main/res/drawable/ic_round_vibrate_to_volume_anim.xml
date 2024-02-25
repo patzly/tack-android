@@ -1,0 +1,142 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+
+<animated-vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:aapt="http://schemas.android.com/aapt">
+  <aapt:attr name="android:drawable">
+    <vector
+      android:name="vector"
+      android:width="24dp"
+      android:height="24dp"
+      android:viewportWidth="24"
+      android:viewportHeight="24"
+      android:autoMirrored="true">
+      <path
+        android:name="line_to_sound_wave"
+        android:pathData="M 23 10 C 23 11.333 23 12.667 23 14"
+        android:strokeColor="#000000"
+        android:strokeWidth="2"
+        android:strokeLineCap="round" />
+      <path
+        android:name="line_to_diaphragm"
+        android:pathData="M 20 17 C 20.55 17 21 16.55 21 16 L 21 8 C 21 7.45 20.55 7 20 7 C 19.45 7 19 7.45 19 8 L 19 16 C 19 16.55 19.45 17 20 17 Z"
+        android:fillColor="#000000" />
+      <path
+        android:name="phone_to_speaker"
+        android:pathData="M 7.5 3 C 6.67 3 6 3.67 6 4.5 L 6 19.5 C 6 20.33 6.67 21 7.5 21 L 16.5 21 C 17.33 21 18 20.33 18 19.5 L 18 4.5 C 18 3.67 17.33 3 16.5 3 L 7.5 3 Z M 8 5 L 16 5 L 16 19 L 8 19 L 8 5 Z"
+        android:fillColor="#000000" />
+      <path
+        android:name="line_to_magnet_left"
+        android:pathData="M 1 10 L 1 14"
+        android:strokeColor="#000000"
+        android:strokeWidth="2"
+        android:strokeLineCap="round" />
+      <path
+        android:name="line_to_magnet_right"
+        android:pathData="M 4 8 L 4 16"
+        android:strokeColor="#000000"
+        android:strokeWidth="2"
+        android:strokeLineCap="round" />
+      <path
+        android:name="lines_to_magnet"
+        android:pathData="M 3.984 8.986 C 3.72 8.99 3.467 9.1 3.283 9.29 C 3.098 9.48 2.996 9.735 3 10 L 3 14 C 2.997 14.213 3.062 14.422 3.186 14.595 C 3.31 14.769 3.486 14.898 3.688 14.964 C 3.891 15.031 4.109 15.031 4.312 14.964 C 4.514 14.898 4.69 14.769 4.814 14.595 C 4.938 14.422 5.003 14.213 5 14 C 4.997 14.213 5.062 14.422 5.186 14.595 C 5.31 14.769 5.486 14.898 5.688 14.964 C 5.891 15.031 6.109 15.031 6.312 14.964 C 6.514 14.898 6.69 14.769 6.814 14.595 C 6.938 14.422 7.003 14.213 7 14 L 7 10 C 7.002 9.821 6.957 9.645 6.868 9.49 C 6.779 9.334 6.65 9.206 6.495 9.117 C 6.34 9.029 6.163 8.984 5.984 8.986 C 5.72 8.99 5.467 9.1 5.283 9.29 C 5.098 9.48 4.996 9.735 5 10 C 5.002 9.821 4.957 9.645 4.868 9.49 C 4.779 9.334 4.65 9.206 4.495 9.117 C 4.34 9.029 4.163 8.984 3.984 8.986 Z"
+        android:fillColor="#000000"
+        android:fillAlpha="0" />
+    </vector>
+  </aapt:attr>
+  <target android:name="line_to_sound_wave">
+    <aapt:attr name="android:animation">
+      <objectAnimator
+        android:propertyName="pathData"
+        android:startOffset="20"
+        android:duration="280"
+        android:valueFrom="M 23 10 C 23 11.333 23 12.667 23 14"
+        android:valueTo="M 14.942 4.538 C 21.353 7.202 22.061 16.354 14.856 19.509"
+        android:valueType="pathType"
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
+    </aapt:attr>
+  </target>
+  <target android:name="line_to_diaphragm">
+    <aapt:attr name="android:animation">
+      <objectAnimator
+        android:propertyName="pathData"
+        android:duration="300"
+        android:valueFrom="M 21 8 L 21 16 C 21 16.55 20.55 17 20 17 L 20 17 C 19.45 17 19 16.55 19 16 L 19 8 C 19 7.45 19.45 7 20 7 C 20.55 7 21 7.45 21 8"
+        android:valueTo="M 16.5 12.002 L 16.5 12.002 C 16.5 13.772 15.48 15.292 14 16.022 L 14 16.022 C 14 16.022 14 16.022 14 16.022 L 14 7.972 C 14 7.972 14 7.972 14 7.972 C 15.48 8.712 16.5 10.232 16.5 12.002"
+        android:valueType="pathType"
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
+    </aapt:attr>
+  </target>
+  <target android:name="phone_to_speaker">
+    <aapt:attr name="android:animation">
+      <objectAnimator
+        android:propertyName="pathData"
+        android:duration="300"
+        android:valueFrom="M 6 19.5 C 6 19.84 6.112 20.152 6.301 20.403 C 6.575 20.766 7.01 21 7.5 21 C 8.694 21 9.888 21 11.082 21 L 16.5 21 C 17.33 21 18 20.33 18 19.5 L 18 4.5 C 18 3.67 17.33 3 16.5 3 L 10.557 3 C 9.538 3 8.519 3 7.5 3 C 7.5 3 7.5 3 7.5 3 C 6.67 3 6 3.67 6 4.5 L 6 5.639 C 6 9.909 6 14.179 6 18.448 L 6 19.5 M 16 19 L 8 19 L 8 5 L 8 5 L 16 5 L 16 19"
+        android:valueTo="M 7 15.002 C 7.883 15.885 8.766 16.768 9.649 17.651 C 9.863 17.865 10.076 18.078 10.29 18.292 C 10.92 18.922 12 18.472 12 17.582 L 12 13.814 C 12 13.304 12 12.794 12 12.284 L 12 11.41 C 12 10.856 12 10.302 12 9.749 L 12 6.412 C 12 5.529 10.937 5.079 10.305 5.687 C 10.3 5.692 10.295 5.697 10.29 5.702 C 9.654 6.34 9.017 6.978 8.381 7.616 L 7 9.002 C 7 9 7 15.002 7 15.002 L 7 15.002 M 12 12 L 12 12 L 12 12 L 12 12 L 12 12 L 12 12"
+        android:valueType="pathType"
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
+    </aapt:attr>
+  </target>
+  <target android:name="line_to_magnet_left">
+    <aapt:attr name="android:animation">
+      <objectAnimator
+        android:propertyName="pathData"
+        android:duration="240"
+        android:valueFrom="M 1 10 L 1 14"
+        android:valueTo="M 4 10 L 4 14"
+        android:valueType="pathType"
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
+    </aapt:attr>
+  </target>
+  <target android:name="line_to_magnet_right">
+    <aapt:attr name="android:animation">
+      <objectAnimator
+        android:propertyName="pathData"
+        android:duration="240"
+        android:valueFrom="M 4 8 L 4 16"
+        android:valueTo="M 6 10 L 6 14"
+        android:valueType="pathType"
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
+    </aapt:attr>
+  </target>
+  <target android:name="lines_to_magnet">
+    <aapt:attr name="android:animation">
+      <set>
+        <objectAnimator
+          android:propertyName="pathData"
+          android:startOffset="170"
+          android:duration="130"
+          android:valueFrom="M 3.283 9.29 C 3.098 9.48 2.996 9.735 3 10 L 3 14 C 2.997 14.213 3.062 14.422 3.186 14.595 C 3.31 14.769 3.486 14.898 3.688 14.964 C 3.891 15.031 4.109 15.031 4.312 14.964 C 4.514 14.898 4.69 14.769 4.814 14.595 C 4.938 14.422 5.003 14.213 5 14 C 4.997 14.213 5.062 14.422 5.186 14.595 C 5.31 14.769 5.486 14.898 5.688 14.964 C 5.891 15.031 6.109 15.031 6.312 14.964 C 6.514 14.898 6.69 14.769 6.814 14.595 C 6.938 14.422 7.003 14.213 7 14 L 7 10 C 7.002 9.821 6.957 9.645 6.868 9.49 C 6.779 9.334 6.65 9.206 6.495 9.117 C 6.34 9.029 6.163 8.984 5.984 8.986 C 5.72 8.99 5.467 9.1 5.283 9.29 C 5.098 9.48 4.996 9.735 5 10 C 5.002 9.821 4.957 9.645 4.868 9.49 C 4.779 9.334 4.65 9.206 4.495 9.117 C 4.34 9.029 4.163 8.984 3.984 8.986 C 3.984 8.986 3.984 8.986 3.984 8.986 C 3.72 8.99 3.467 9.1 3.283 9.29"
+          android:valueTo="M 3 10.002 C 3 10.668 3 11.335 3 12.002 L 3 14.002 C 3 14.185 3.05 14.357 3.137 14.506 C 3.224 14.654 3.348 14.778 3.496 14.865 C 3.644 14.952 3.817 15.002 4 15.002 C 4.204 15.002 4.408 15.002 4.612 15.002 C 4.815 15.002 5.019 15.002 5.223 15.002 C 5.454 15.002 5.685 15.002 5.916 15.002 C 6.115 15.002 6.314 15.002 6.513 15.002 C 6.695 15.002 6.876 15.002 7.4 15.002 C 7.4 15.002 7.4 15.002 7.4 15.002 C 7.4 14.965 7.4 14.929 7.4 14.893 L 7.4 9.518 C 7.4 9.346 7.4 9.174 7.4 9.002 C 6.912 9.002 6.767 9.002 6.621 9.002 C 6.475 9.002 6.33 9.002 6.184 9.002 C 6.039 9.002 5.893 9.002 5.747 9.002 C 5.602 9.002 5.456 9.002 5.31 9.002 C 5.165 9.002 5.019 9.002 4.874 9.002 C 4.728 9.002 4.582 9.002 4.437 9.002 C 4.291 9.002 4.146 9.002 4 9.002 C 3.45 9.002 3 9.452 3 10.002 C 3 10.002 3 10.002 3 10.002"
+          android:valueType="pathType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+        <objectAnimator
+          android:propertyName="fillAlpha"
+          android:startOffset="160"
+          android:duration="40"
+          android:valueFrom="0"
+          android:valueTo="1"
+          android:valueType="floatType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+      </set>
+    </aapt:attr>
+  </target>
+</animated-vector>

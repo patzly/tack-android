@@ -75,11 +75,8 @@ dependencies {
   implementation(libs.compose.material.icons)
   implementation(libs.compose.foundation)
   implementation(libs.compose.runtime)
+  implementation(libs.compose.animation.graphics)
   implementation(libs.constraintlayout.compose)
   implementation(libs.activity.compose)
   implementation(libs.core.splashscreen)
-  androidTestImplementation(platform(libs.compose.bom))
-  androidTestImplementation(libs.ui.test.junit4)
-  debugImplementation(libs.ui.tooling)
-  debugImplementation(libs.ui.test.manifest)
 }

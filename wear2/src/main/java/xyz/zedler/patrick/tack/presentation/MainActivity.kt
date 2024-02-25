@@ -20,12 +20,20 @@
 package xyz.zedler.patrick.tack.presentation
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.AnimatedImageDrawable
 import android.os.Bundle
 import android.util.Log
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.DrawableRes
+import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
+import androidx.compose.animation.graphics.res.animatedVectorResource
+import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
+import androidx.compose.animation.graphics.vector.AnimatedImageVector
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -37,6 +45,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.VolumeOff
 import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.rounded.Bookmark
 import androidx.compose.material.icons.rounded.HdrStrong
@@ -45,16 +54,21 @@ import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Stop
 import androidx.compose.material.icons.rounded.TouchApp
 import androidx.compose.material.icons.rounded.Vibration
+import androidx.compose.material.icons.rounded.VolumeOff
 import androidx.compose.material.icons.rounded.VolumeUp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -69,6 +83,7 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.wear.compose.material.Button
 import androidx.wear.compose.material.ButtonDefaults
 import androidx.wear.compose.material.CompactButton
@@ -83,18 +98,17 @@ import xyz.zedler.patrick.tack.Constants.DEF
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.components.WrapContentCard
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
+import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.util.MetronomeUtil
 import xyz.zedler.patrick.tack.util.TempoTapUtil
 import xyz.zedler.patrick.tack.util.spToDp
+import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 class MainActivity : ComponentActivity() {
 
   private lateinit var metronomeUtil: MetronomeUtil
   private lateinit var tempoTapUtil: TempoTapUtil
-  private val tempo = MutableLiveData(DEF.TEMPO)
-  private val isPlaying = MutableLiveData(false)
-  private val beatModeVibrate = MutableLiveData(DEF.BEAT_MODE_VIBRATE)
-  private val alwaysVibrate = MutableLiveData(DEF.ALWAYS_VIBRATE)
+  private lateinit var viewModel: MainViewModel
 
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
@@ -103,10 +117,10 @@ class MainActivity : ComponentActivity() {
     metronomeUtil = MetronomeUtil(this)
     metronomeUtil.addListener(object : MetronomeUtil.MetronomeListener {
       override fun onMetronomeStart() {
-        isPlaying.postValue(true)
+        viewModel.onPlayingChange(true)
       }
       override fun onMetronomeStop() {
-        isPlaying.postValue(false)
+        viewModel.onPlayingChange(false)
       }
       override fun onMetronomePreTick(tick: MetronomeUtil.Tick?) {}
       override fun onMetronomeTick(tick: MetronomeUtil.Tick?) {}
@@ -115,11 +129,11 @@ class MainActivity : ComponentActivity() {
 
     tempoTapUtil = TempoTapUtil()
 
+    viewModel = MainViewModel(metronomeUtil)
+
     setContent {
       MainScreen(
-        tempoLive = tempo,
-        isPlayingLive = isPlaying,
-        beatModeVibrateLive = beatModeVibrate,
+        viewModel = viewModel,
         onTempoCardSwipe = {
           metronomeUtil.tempo = it
         },
@@ -132,36 +146,32 @@ class MainActivity : ComponentActivity() {
         },
         onTempoTapButtonClick = {
           if (tempoTapUtil.tap()) {
-            tempo.postValue(tempoTapUtil.tempo)
             metronomeUtil.tempo = tempoTapUtil.tempo
+            viewModel.onTempoChange(tempoTapUtil.tempo)
           }
         },
         onBeatModeButtonClick = {
           metronomeUtil.isBeatModeVibrate = !metronomeUtil.isBeatModeVibrate
-          beatModeVibrate.postValue(metronomeUtil.isBeatModeVibrate)
+          viewModel.onBeatModeVibrateChange(metronomeUtil.isBeatModeVibrate)
         }
       )
     }
   }
 }
 
-private val jostBookFont = FontFamily(Font(R.font.jost_book))
-private val jostMediumFont = FontFamily(Font(R.font.jost_medium))
-
 @Composable
 fun MainScreen(
-  tempoLive: LiveData<Int> = MutableLiveData(DEF.TEMPO),
-  isPlayingLive: LiveData<Boolean> = MutableLiveData(false),
-  beatModeVibrateLive: LiveData<Boolean> = MutableLiveData(DEF.BEAT_MODE_VIBRATE),
+  viewModel: MainViewModel = MainViewModel(),
   onTempoCardClick: () -> Unit = {},
   onTempoCardSwipe: (Int) -> Unit = {},
   onPlayButtonClick: () -> Unit = {},
   onTempoTapButtonClick: () -> Unit = {},
   onBeatModeButtonClick: () -> Unit = {}
 ) {
-  val tempo by tempoLive.observeAsState(initial = DEF.TEMPO)
-  val isPlaying by isPlayingLive.observeAsState(initial = false)
-  val beatModeVibrate by beatModeVibrateLive.observeAsState(initial = DEF.BEAT_MODE_VIBRATE)
+  val tempo by viewModel.tempo.observeAsState(DEF.TEMPO)
+  val isPlaying by viewModel.isPlaying.observeAsState(false)
+  val beatModeVibrate by viewModel.beatModeVibrate.observeAsState(DEF.BEAT_MODE_VIBRATE)
+  val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(DEF.ALWAYS_VIBRATE)
   TackTheme {
     Box(
       modifier = Modifier
@@ -171,7 +181,7 @@ fun MainScreen(
     ) {
       TimeText(
         timeTextStyle = TextStyle(
-          fontFamily = jostMediumFont
+          fontFamily = remember { FontFamily(Font(R.font.jost_medium)) }
         )
       )
       ConstraintLayout(
@@ -180,18 +190,27 @@ fun MainScreen(
         val (settingsButton, tempoCard, playButton) = createRefs()
         val (beatsButton, tempoTapButton) = createRefs()
         val (bookmarkButton, beatModeButton) = createRefs()
+
         // Main column
-        IconButton(
-          onClick = {},
-          imageVector = Icons.Rounded.Settings,
-          contentDescription = "TODO",
+        val settingsAnimTrigger = remember { mutableStateOf(false) }
+        CompactButton(
+          onClick = {
+            settingsAnimTrigger.value = !settingsAnimTrigger.value
+          },
+          colors = ButtonDefaults.iconButtonColors(),
           modifier = Modifier.constrainAs(settingsButton) {
             top.linkTo(parent.top, margin = 16.dp)
             bottom.linkTo(tempoCard.top)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
           }
-        )
+        ) {
+          AnimatedVectorDrawable(
+            resId = R.drawable.ic_round_settings_anim,
+            description = stringResource(id = R.string.wear_title_settings),
+            trigger = settingsAnimTrigger
+          )
+        }
         TempoCard(
           tempo = tempo,
           onClick = onTempoCardClick,
@@ -213,6 +232,7 @@ fun MainScreen(
             end.linkTo(parent.end)
           }
         )
+
         // Left column
         IconButton(
           onClick = {},
@@ -225,17 +245,27 @@ fun MainScreen(
             end.linkTo(playButton.start)
           }
         )
-        IconButton(
-          onClick = onTempoTapButtonClick,
-          imageVector = Icons.Rounded.TouchApp,
-          contentDescription = "TODO",
+        val tempoTapAnimTrigger = remember { mutableStateOf(false) }
+        CompactButton(
+          onClick = {
+            onTempoTapButtonClick()
+            tempoTapAnimTrigger.value = !tempoTapAnimTrigger.value
+          },
+          colors = ButtonDefaults.iconButtonColors(),
           modifier = Modifier.constrainAs(tempoTapButton) {
             top.linkTo(beatsButton.bottom)
             bottom.linkTo(parent.bottom, margin = 40.dp)
             start.linkTo(parent.start)
             end.linkTo(playButton.start)
           }
-        )
+        ) {
+          AnimatedVectorDrawable(
+            resId = R.drawable.ic_round_touch_app_anim,
+            description = stringResource(id = R.string.action_tempo_tap),
+            trigger = tempoTapAnimTrigger
+          )
+        }
+
         // Right column
         IconButton(
           onClick = {},
@@ -248,17 +278,47 @@ fun MainScreen(
             end.linkTo(parent.end)
           }
         )
-        IconButton(
-          onClick = onBeatModeButtonClick,
-          imageVector = if (beatModeVibrate) Icons.Rounded.Vibration else Icons.AutoMirrored.Rounded.VolumeUp,
-          contentDescription = "TODO",
+        val beatModeIcon: ImageVector = if (beatModeVibrate) {
+          if (alwaysVibrate) {
+            Icons.AutoMirrored.Rounded.VolumeOff
+          } else {
+            Icons.Rounded.Vibration
+          }
+        } else {
+          Icons.AutoMirrored.Rounded.VolumeUp
+        }
+
+        val beatModeAnimTrigger = remember { mutableStateOf(beatModeVibrate) }
+        CompactButton(
+          onClick = {
+            onBeatModeButtonClick()
+            beatModeAnimTrigger.value = !beatModeAnimTrigger.value
+          },
+          colors = ButtonDefaults.iconButtonColors(),
           modifier = Modifier.constrainAs(beatModeButton) {
             top.linkTo(bookmarkButton.bottom)
             bottom.linkTo(parent.bottom, margin = 40.dp)
             start.linkTo(playButton.end)
             end.linkTo(parent.end)
           }
-        )
+        ) {
+          val resId1 = if (alwaysVibrate) {
+            R.drawable.ic_round_volume_off_to_volume_on_anim
+          } else {
+            R.drawable.ic_round_vibrate_to_volume_anim
+          }
+          val resId2 = if (alwaysVibrate) {
+            R.drawable.ic_round_volume_on_to_volume_off_anim
+          } else {
+            R.drawable.ic_round_volume_to_vibrate_anim
+          }
+          AnimatedVectorDrawable(
+            resId1 = resId2,
+            resId2 = resId1,
+            description = stringResource(id = R.string.action_beat_mode),
+            trigger = beatModeAnimTrigger
+          )
+        }
       }
     }
   }
@@ -303,6 +363,7 @@ fun TempoCard(
       repeatItems = false
     )
     val contentDescription by remember { derivedStateOf { "${state.selectedOption + 1}" } }
+    val itemFont = remember { FontFamily(Font(R.font.jost_book)) }
     LaunchedEffect(state.selectedOption) {
       onTempoCardSwipe(state.selectedOption + 1)
     }
@@ -317,7 +378,7 @@ fun TempoCard(
         textAlign = TextAlign.Center,
         color = MaterialTheme.colors.primary,
         style = MaterialTheme.typography.display2,
-        fontFamily = jostBookFont,
+        fontFamily = itemFont,
         text = buildAnnotatedString {
           withStyle(style = SpanStyle(fontFeatureSettings = "tnum")) {
             append(items[it].toString())
@@ -325,20 +386,6 @@ fun TempoCard(
         }
       )
     }
-    /*Text(
-      modifier = Modifier
-        .fillMaxWidth()
-        .wrapContentHeight(),
-      textAlign = TextAlign.Center,
-      color = MaterialTheme.colors.primary,
-      style = MaterialTheme.typography.display2,
-      fontFamily = jostBookFont,
-      text = buildAnnotatedString {
-        withStyle(style = SpanStyle(fontFeatureSettings = "tnum")) {
-          append(tempo.toString())
-        }
-      }
-    )*/
   }
 }
 
@@ -348,13 +395,19 @@ fun PlayButton(
   onClick: () -> Unit,
   modifier: Modifier = Modifier
 ) {
+  val animTrigger = remember { mutableStateOf(isPlaying) }
   Button(
-    onClick = onClick,
+    onClick = {
+      onClick()
+      animTrigger.value = !animTrigger.value
+    },
     modifier = modifier
   ) {
-    Icon(
-      if (isPlaying) Icons.Rounded.Stop else Icons.Rounded.PlayArrow,
-      "contentDescription",
+    AnimatedVectorDrawable(
+      resId1 = R.drawable.ic_round_play_to_stop_anim,
+      resId2 = R.drawable.ic_round_stop_to_play_anim,
+      description = stringResource(id = R.string.action_play_stop),
+      trigger = animTrigger,
       modifier = Modifier.size(32.dp)
     )
   }
