@@ -80,7 +80,7 @@ dependencies {
   implementation(libs.constraintlayout.compose)
   implementation(libs.activity.compose)
   implementation(libs.core.splashscreen)
-  androidTestImplementation(platform(libs.compose.bom))
   debugImplementation(libs.ui.tooling.preview)
   debugImplementation(libs.ui.test.manifest)
+  debugImplementation(libs.ui.tooling)
 }

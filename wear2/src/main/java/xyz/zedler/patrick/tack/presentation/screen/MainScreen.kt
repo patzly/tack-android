@@ -64,6 +64,7 @@ import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.util.spToDp
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
+@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
 @Composable
 fun MainScreen(
   viewModel: MainViewModel = MainViewModel(),
@@ -361,10 +362,4 @@ fun BeatModeButton(
       trigger = animTrigger
     )
   }
-}
-
-@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
-@Composable
-fun MainPreview() {
-  MainScreen()
 }

@@ -35,6 +35,7 @@ play-services-wearable = { group = "com.google.android.gms", name = "play-servic
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 compose-runtime = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "compose-runtime" }
 ui = { group = "androidx.compose.ui", name = "ui" }
+ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 compose-material = { group = "androidx.wear.compose", name = "compose-material", version.ref = "compose-material" }
