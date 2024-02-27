@@ -14,10 +14,10 @@ There also is a separate Wear OS app available with haptic beats and many option
 
 ## Screenshots
 
-<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen1.png"><img src="assets/screen1.png" width="150px"/></a>
-<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen2.png"><img src="assets/screen2.png" width="150px"/></a>
-<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen3.png"><img src="assets/screen3.png" width="150px"/></a>
-<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen4.png"><img src="assets/screen4.png" width="150px"/></a>
+<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen1.png"><img src="assets/screen1.png" height="300px"/></a>
+<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen2.png"><img src="assets/screen2.png" height="300px"/></a>
+<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen3.png"><img src="assets/screen3.png" height="300px"/></a>
+<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen4.png"><img src="assets/screen4.png" height="300px"/></a>
 
 ## Features
 
