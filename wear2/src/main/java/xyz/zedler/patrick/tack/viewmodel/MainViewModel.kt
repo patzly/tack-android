@@ -19,14 +19,17 @@
 
 package xyz.zedler.patrick.tack.viewmodel
 
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import xyz.zedler.patrick.tack.Constants.DEF
 import xyz.zedler.patrick.tack.util.MetronomeUtil
+import xyz.zedler.patrick.tack.util.TempoTapUtil
 
-class MainViewModel(metronomeUtil: MetronomeUtil? = null) : ViewModel() {
+class MainViewModel(private val metronomeUtil: MetronomeUtil? = null) : ViewModel() {
 
+  private val tempoTapUtil = TempoTapUtil()
   private val _tempo = MutableLiveData(metronomeUtil?.tempo ?: DEF.TEMPO)
   private val _isPlaying = MutableLiveData(metronomeUtil?.isPlaying ?: false)
   private val _beatModeVibrate = MutableLiveData(
@@ -41,15 +44,40 @@ class MainViewModel(metronomeUtil: MetronomeUtil? = null) : ViewModel() {
   val beatModeVibrate: LiveData<Boolean> = _beatModeVibrate
   val alwaysVibrate: LiveData<Boolean> = _alwaysVibrate
 
-  fun onTempoChange(tempo: Int) {
+  fun changeTempo(tempo: Int) {
+    metronomeUtil?.tempo = tempo
     _tempo.value = tempo
   }
 
+  fun onTempoTap() {
+    if (tempoTapUtil.tap()) {
+      changeTempo(tempoTapUtil.tempo)
+    }
+  }
+
+  fun onTempoCardSwipe(tempo: Int) {
+    metronomeUtil?.tempo = tempo
+  }
+
   fun onPlayingChange(playing: Boolean) {
+    metronomeUtil?.isPlaying = playing
     _isPlaying.value = playing
   }
 
-  fun onBeatModeVibrateChange(vibrate: Boolean) {
-    _beatModeVibrate.value = vibrate
+  fun togglePlaying() {
+    val playing = metronomeUtil?.isPlaying ?: true
+    metronomeUtil?.isPlaying = !playing
+    _isPlaying.value = !playing
+  }
+
+  fun toggleBeatModeVibrate() {
+    val beatModeVibrate = metronomeUtil?.isBeatModeVibrate ?: DEF.BEAT_MODE_VIBRATE
+    metronomeUtil?.isBeatModeVibrate = !beatModeVibrate
+    _beatModeVibrate.value = !beatModeVibrate
+  }
+
+  fun changeAlwaysVibrate(alwaysVibrate: Boolean) {
+    metronomeUtil?.isAlwaysVibrate = alwaysVibrate
+    _alwaysVibrate.value = alwaysVibrate
   }
 }

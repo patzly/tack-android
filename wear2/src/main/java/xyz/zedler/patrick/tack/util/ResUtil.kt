@@ -27,6 +27,7 @@ import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.wear.compose.material.Icon
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
@@ -34,6 +35,7 @@ import androidx.wear.compose.material.Icon
 fun AnimatedVectorDrawable(
   @DrawableRes resId: Int,
   description: String,
+  color: Color,
   trigger: MutableState<Boolean>,
   modifier: Modifier = Modifier
 ) {
@@ -49,6 +51,7 @@ fun AnimatedVectorDrawable(
   Icon(
     painter = if (trigger.value) painterForward else painterBackward,
     contentDescription = description,
+    tint = color,
     modifier = modifier
   )
 }
@@ -59,6 +62,7 @@ fun AnimatedVectorDrawable(
   @DrawableRes resId1: Int,
   @DrawableRes resId2: Int,
   description: String,
+  color: Color,
   trigger: MutableState<Boolean>,
   modifier: Modifier = Modifier
 ) {
@@ -75,6 +79,7 @@ fun AnimatedVectorDrawable(
   Icon(
     painter = if (trigger.value) painterForward else painterBackward,
     contentDescription = description,
+    tint = color,
     modifier = modifier
   )
 }

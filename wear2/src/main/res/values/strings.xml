@@ -38,7 +38,6 @@
 
   <!-- ACTIONS -->
 
-  <string name="action_back">Back</string>
   <string name="action_close">Close</string>
   <string name="action_cancel">Cancel</string>
   <string name="action_increase">Increase</string>
@@ -50,45 +49,20 @@
   <string name="action_remove_beat">Remove beat</string>
   <string name="action_add_sub">Add subdivision</string>
   <string name="action_remove_sub">Remove subdivision</string>
-  <string name="action_clear_all">Clear all</string>
   <string name="action_tempo_tap">Tap tempo</string>
   <string name="action_bookmark">Bookmark</string>
   <string name="action_beat_mode">Beat mode</string>
-  <string name="action_send_feedback">Send feedback</string>
-  <string name="action_open_link">Open external website</string>
-  <string name="action_reset">Reset</string>
   <string name="action_deactivate_gain">Deactivate boost</string>
-  <string name="action_recommend">Recommend</string>
-  <string name="action_recommend_description">Tell your friends about Tack</string>
-  <string name="action_email">Send email</string>
-  <string name="action_email_description">Contact the developer</string>
-  <string name="action_rate">Rate on Google Play</string>
-  <string name="action_rate_description">Support the development</string>
-  <string name="action_issue">Open new issue on GitHub</string>
-  <string name="action_issue_description">Report bugs or suggest features</string>
   <string name="action_retry">Retry</string>
-  <string name="action_logcat">Show logcat</string>
-  <string name="action_copy_to_clipboard">Copy to clipboard</string>
-  <string name="action_reload">Reload</string>
 
   <!-- MESSAGES -->
 
-  <string name="msg_bookmarks_max">Bookmark limit reached</string>
-  <string name="msg_feedback">A great app requires a lot of time and lives from the feedback of its users.</string>
-  <string name="msg_feedback_contact">Do you have any wishes, comments or questions? Contact me!\nOtherwise I would be very happy about a nice review in the Play Store.</string>
-  <string name="msg_recommend">Check out this cool metronome app: \n%1$s</string>
   <string name="msg_vibration_unavailable">Vibration unavailable on this device</string>
   <string name="msg_service_running">Metronome service is running</string>
   <string name="msg_service_running_return">Tap to return to Tack</string>
-  <string name="msg_service_description">Service for metronome configuration and playback</string>
-  <string name="msg_connection_lost">Service connection lost, app restart required</string>
-  <string name="msg_reset">Reset all?</string>
-  <string name="msg_reset_description">Do you really want to reset the entire app including bookmarks and settings? This cannot be undone.</string>
   <string name="msg_gain">Play with volume boost?</string>
   <string name="msg_gain_description">Be careful not to play through headphones as loud sounds can cause ear damage!</string>
   <string name="msg_notification_permission_denied">Notification permission is required for playback controls</string>
-  <string name="msg_report_crash">Please report any crash with the crash log attached so I can try to fix them.</string>
-  <string name="msg_copied_to_clipboard">Copied to clipboard successfully</string>
 
   <!-- OPTIONS -->
 
@@ -101,12 +75,8 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">Language</string>
-  <string name="settings_language_info">Many thanks to all the volunteer translators at Transifex!\nPlease visit Tack on GitHub to learn how you can help make Tack available for your language.</string>
   <string name="settings_language_system">Follow system</string>
-  <string name="settings_language_system_description">English if translation is not available</string>
-
-  <string name="settings_reset">Reset all</string>
-  <string name="settings_reset_description">Cannot be undone</string>
+  <string name="settings_language_system_description">English if translation unavailable</string>
 
   <string name="settings_sound">Beat sound</string>
   <string name="settings_sound_wood">Wood</string>
@@ -119,24 +89,12 @@
   <string name="settings_ignore_focus_description">Keep playing if other apps make sound</string>
 
   <string name="settings_gain">Volume boost</string>
-  <string name="settings_gain_description">Gain in dB (in addition to system volume)</string>
+  <string name="settings_gain_description">Gain in dB</string>
   <string name="settings_gain_warning">Use with caution!</string>
   <string name="settings_gain_disclaimer">When boost is enabled, a warning will be displayed before each start. The developer takes no responsibility for any potential damage.</string>
 
-  <string name="settings_show_subs">Show subdivision controls</string>
-  <string name="settings_show_subs_description">More diverse rhythms</string>
-
   <string name="settings_always_vibrate">Always vibrate</string>
   <string name="settings_always_vibrate_description">Even with sound</string>
-
-  <string name="settings_elapsed">Show elapsed time</string>
-  <string name="settings_elapsed_description">See how long you practice</string>
-
-  <string name="settings_reset_elapsed">Reset elapsed time when stopped</string>
-  <string name="settings_reset_elapsed_description">Instead of resuming until closed</string>
-
-  <string name="settings_reset_timer">Reset timer when stopped</string>
-  <string name="settings_reset_timer_description">Instead of resuming</string>
 
   <string name="settings_flash_screen">Flash screen</string>
   <string name="settings_flash_screen_description">On every beat</string>
@@ -144,19 +102,7 @@
   <string name="settings_keep_awake">Keep screen awake</string>
   <string name="settings_keep_awake_description">While metronome is playing</string>
 
-  <!-- ABOUT -->
-
-  <string name="about_version">Version</string>
-  <string name="about_changelog">Changelog</string>
-  <string name="about_changelog_description">New in this version</string>
-  <string name="about_developer">Developer</string>
-  <string name="about_vending" translatable="false">Google Play</string>
-  <string name="about_vending_description">More apps by the developer</string>
-  <string name="about_github" translatable="false">GitHub</string>
-  <string name="about_github_description">Source code</string>
-  <string name="about_translation" translatable="false">Transifex</string>
-  <string name="about_translation_description">Help translate Tack</string>
-  <string name="about_privacy">Privacy policy</string>
-  <string name="about_privacy_description">How your data is being processed</string>
+  <string name="settings_rate">Rate Tack on Google Play</string>
+  <string name="settings_rate_description">Support development</string>
 
 </resources>

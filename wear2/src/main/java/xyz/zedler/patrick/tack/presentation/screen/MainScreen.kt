@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.presentation.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -26,7 +27,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -36,29 +36,31 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.wear.compose.material.Button
-import androidx.wear.compose.material.ButtonDefaults
-import androidx.wear.compose.material.CompactButton
-import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Picker
-import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.rememberPickerState
+import androidx.wear.compose.material3.FilledIconButton
+import androidx.wear.compose.material3.IconButton
+import androidx.wear.compose.material3.IconButtonDefaults
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
+import androidx.wear.compose.material3.touchTargetAwareSize
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
-import xyz.zedler.patrick.tack.components.WrapContentCard
+import xyz.zedler.patrick.tack.presentation.components.WrapContentCard
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.util.spToDp
@@ -69,25 +71,26 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 fun MainScreen(
   viewModel: MainViewModel = MainViewModel(),
   onTempoCardClick: () -> Unit = {},
-  onTempoCardSwipe: (Int) -> Unit = {},
-  onPlayButtonClick: () -> Unit = {},
   onSettingsButtonClick: () -> Unit = {},
   onBeatsButtonClick: () -> Unit = {},
-  onTempoTapButtonClick: () -> Unit = {},
-  onBookmarkButtonClick: () -> Unit = {},
-  onBeatModeButtonClick: () -> Unit = {}
+  onBookmarkButtonClick: () -> Unit = {}
 ) {
+  val tempo by viewModel.tempo.observeAsState(Constants.DEF.TEMPO)
+  val isPlaying by viewModel.isPlaying.observeAsState(false)
+  val beatModeVibrate by viewModel.beatModeVibrate.observeAsState(
+    Constants.DEF.BEAT_MODE_VIBRATE
+  )
+  val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.DEF.ALWAYS_VIBRATE)
+
   TackTheme {
     Box(
       modifier = Modifier
         .fillMaxSize()
-        .background(color = MaterialTheme.colors.background),
+        .background(color = MaterialTheme.colorScheme.background),
       contentAlignment = Alignment.Center,
     ) {
       TimeText(
-        timeTextStyle = TextStyle(
-          fontFamily = remember { FontFamily(Font(R.font.jost_medium)) }
-        )
+        timeTextStyle = MaterialTheme.typography.labelMedium
       )
       ConstraintLayout(
         modifier = Modifier.fillMaxSize()
@@ -106,9 +109,11 @@ fun MainScreen(
           }
         )
         TempoCard(
-          viewModel = viewModel,
+          tempo = tempo,
           onClick = onTempoCardClick,
-          onTempoCardSwipe = onTempoCardSwipe,
+          onTempoCardSwipe = {
+            viewModel.onTempoCardSwipe(it)
+          },
           modifier = Modifier.constrainAs(tempoCard) {
             top.linkTo(parent.top)
             bottom.linkTo(parent.bottom)
@@ -117,8 +122,10 @@ fun MainScreen(
           }
         )
         PlayButton(
-          viewModel = viewModel,
-          onClick = onPlayButtonClick,
+          isPlaying = isPlaying,
+          onClick = {
+            viewModel.togglePlaying()
+          },
           modifier = Modifier.constrainAs(playButton) {
             top.linkTo(tempoCard.bottom)
             bottom.linkTo(parent.bottom)
@@ -136,7 +143,9 @@ fun MainScreen(
           }
         )
         TempoTapButton(
-          onClick = onTempoTapButtonClick,
+          onClick = {
+            viewModel.onTempoTap()
+          },
           modifier = Modifier.constrainAs(tempoTapButton) {
             top.linkTo(beatsButton.bottom)
             bottom.linkTo(parent.bottom, margin = 40.dp)
@@ -154,8 +163,11 @@ fun MainScreen(
           }
         )
         BeatModeButton(
-          viewModel = viewModel,
-          onClick = onBeatModeButtonClick,
+          beatModeVibrate = beatModeVibrate,
+          alwaysVibrate = alwaysVibrate,
+          onClick = {
+            viewModel.toggleBeatModeVibrate()
+          },
           modifier = Modifier.constrainAs(beatModeButton) {
             top.linkTo(bookmarkButton.bottom)
             bottom.linkTo(parent.bottom, margin = 40.dp)
@@ -170,16 +182,16 @@ fun MainScreen(
 
 @Composable
 fun TempoCard(
-  viewModel: MainViewModel,
+  tempo: Int,
   onClick: () -> Unit,
   onTempoCardSwipe: (Int) -> Unit,
   modifier: Modifier
 ) {
-  val tempo by viewModel.tempo.observeAsState(Constants.DEF.TEMPO)
   WrapContentCard(
     onClick = onClick,
     modifier = modifier.wrapContentWidth(),
-    shape = RoundedCornerShape(32.dp),
+    border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
+    shape = MaterialTheme.shapes.extraLarge,
     contentPadding = PaddingValues(0.dp)
   ) {
     val items = (1..400).toList()
@@ -189,7 +201,6 @@ fun TempoCard(
       repeatItems = false
     )
     val contentDescription by remember { derivedStateOf { "${state.selectedOption + 1}" } }
-    val itemFont = remember { FontFamily(Font(R.font.jost_book)) }
     LaunchedEffect(state.selectedOption) {
       onTempoCardSwipe(state.selectedOption + 1)
     }
@@ -202,9 +213,10 @@ fun TempoCard(
       Text(
         modifier = Modifier.wrapContentSize(),
         textAlign = TextAlign.Center,
-        color = MaterialTheme.colors.primary,
-        style = MaterialTheme.typography.display2,
-        fontFamily = itemFont,
+        color = MaterialTheme.colorScheme.onSurface,
+        style = MaterialTheme.typography.displayMedium.copy(
+          fontSize = 36.sp
+        ),
         text = buildAnnotatedString {
           withStyle(style = SpanStyle(fontFeatureSettings = "tnum")) {
             append(items[it].toString())
@@ -217,25 +229,25 @@ fun TempoCard(
 
 @Composable
 fun PlayButton(
-  viewModel: MainViewModel,
+  isPlaying: Boolean,
   onClick: () -> Unit,
   modifier: Modifier
 ) {
-  val isPlaying by viewModel.isPlaying.observeAsState(false)
   val animTrigger = remember { mutableStateOf(isPlaying) }
-  Button(
+  FilledIconButton(
     onClick = {
       onClick()
       animTrigger.value = !animTrigger.value
     },
-    modifier = modifier
+    modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
   ) {
     AnimatedVectorDrawable(
       resId1 = R.drawable.ic_round_play_to_stop_anim,
       resId2 = R.drawable.ic_round_stop_to_play_anim,
       description = stringResource(id = R.string.action_play_stop),
+      color = IconButtonDefaults.filledIconButtonColors().contentColor,
       trigger = animTrigger,
-      modifier = Modifier.size(32.dp)
+      modifier = Modifier.size(IconButtonDefaults.LargeIconSize)
     )
   }
 }
@@ -245,19 +257,14 @@ fun SettingsButton(
   onClick: () -> Unit,
   modifier: Modifier
 ) {
-  val animTrigger = remember { mutableStateOf(false) }
-  CompactButton(
-    onClick = {
-      onClick()
-      animTrigger.value = !animTrigger.value
-    },
-    colors = ButtonDefaults.iconButtonColors(),
-    modifier = modifier
+  IconButton(
+    onClick = onClick,
+    modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
   ) {
-    AnimatedVectorDrawable(
-      resId = R.drawable.ic_round_settings_anim,
-      description = stringResource(id = R.string.wear_title_settings),
-      trigger = animTrigger
+    Icon(
+      painter = painterResource(id = R.drawable.ic_round_settings),
+      contentDescription = stringResource(id = R.string.wear_title_settings),
+      tint = IconButtonDefaults.iconButtonColors().contentColor
     )
   }
 }
@@ -267,19 +274,14 @@ fun BeatsButton(
   onClick: () -> Unit,
   modifier: Modifier
 ) {
-  val animTrigger = remember { mutableStateOf(false) }
-  CompactButton(
-    onClick = {
-      onClick()
-      animTrigger.value = !animTrigger.value
-    },
-    colors = ButtonDefaults.iconButtonColors(),
-    modifier = modifier
+  IconButton(
+    onClick = onClick,
+    modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
   ) {
-    AnimatedVectorDrawable(
-      resId = R.drawable.ic_round_hdr_strong_anim,
-      description = stringResource(id = R.string.action_add_beat),
-      trigger = animTrigger
+    Icon(
+      painter = painterResource(id = R.drawable.ic_round_hdr_strong),
+      contentDescription = stringResource(id = R.string.action_add_beat),
+      tint = IconButtonDefaults.iconButtonColors().contentColor
     )
   }
 }
@@ -290,17 +292,17 @@ fun TempoTapButton(
   modifier: Modifier
 ) {
   val animTrigger = remember { mutableStateOf(false) }
-  CompactButton(
+  IconButton(
     onClick = {
       onClick()
       animTrigger.value = !animTrigger.value
     },
-    colors = ButtonDefaults.iconButtonColors(),
-    modifier = modifier
+    modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
   ) {
     AnimatedVectorDrawable(
       resId = R.drawable.ic_round_touch_app_anim,
       description = stringResource(id = R.string.action_tempo_tap),
+      color = IconButtonDefaults.iconButtonColors().contentColor,
       trigger = animTrigger
     )
   }
@@ -312,17 +314,17 @@ fun BookmarkButton(
   modifier: Modifier
 ) {
   val animTrigger = remember { mutableStateOf(false) }
-  CompactButton(
+  IconButton(
     onClick = {
       onClick()
       animTrigger.value = !animTrigger.value
     },
-    colors = ButtonDefaults.iconButtonColors(),
-    modifier = modifier
+    modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
   ) {
     AnimatedVectorDrawable(
       resId = R.drawable.ic_round_bookmark_anim,
       description = stringResource(id = R.string.action_bookmark),
+      color = IconButtonDefaults.iconButtonColors().contentColor,
       trigger = animTrigger
     )
   }
@@ -330,20 +332,18 @@ fun BookmarkButton(
 
 @Composable
 fun BeatModeButton(
-  viewModel: MainViewModel,
+  beatModeVibrate: Boolean,
+  alwaysVibrate: Boolean,
   onClick: () -> Unit,
   modifier: Modifier
 ) {
-  val beatModeVibrate by viewModel.beatModeVibrate.observeAsState(Constants.DEF.BEAT_MODE_VIBRATE)
-  val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.DEF.ALWAYS_VIBRATE)
   val animTrigger = remember { mutableStateOf(beatModeVibrate) }
-  CompactButton(
+  IconButton(
     onClick = {
       onClick()
       animTrigger.value = !animTrigger.value
     },
-    colors = ButtonDefaults.iconButtonColors(),
-    modifier = modifier
+    modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
   ) {
     val resId1 = if (alwaysVibrate) {
       R.drawable.ic_round_volume_off_to_volume_on_anim
@@ -359,6 +359,7 @@ fun BeatModeButton(
       resId1 = resId2,
       resId2 = resId1,
       description = stringResource(id = R.string.action_beat_mode),
+      color = IconButtonDefaults.iconButtonColors().contentColor,
       trigger = animTrigger
     )
   }

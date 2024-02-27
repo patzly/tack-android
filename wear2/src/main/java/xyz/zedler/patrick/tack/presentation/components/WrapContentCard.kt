@@ -17,24 +17,21 @@
  * Copyright (c) 2020-2024 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.components
+package xyz.zedler.patrick.tack.presentation.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Indication
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.indication
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -43,20 +40,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.Role
-import androidx.wear.compose.material.CardDefaults
-import androidx.wear.compose.material.LocalContentColor
-import androidx.wear.compose.material.LocalTextStyle
-import androidx.wear.compose.material.MaterialTheme
+import androidx.wear.compose.material3.CardDefaults
+import androidx.wear.compose.material3.LocalContentColor
+import androidx.wear.compose.material3.LocalTextStyle
+import androidx.wear.compose.material3.MaterialTheme
 
 @Composable
 fun WrapContentCard(
   onClick: () -> Unit,
   modifier: Modifier = Modifier,
-  backgroundPainter: Painter = CardDefaults.cardBackgroundPainter(),
-  contentColor: Color = MaterialTheme.colors.onSurfaceVariant,
+  backgroundPainter: Painter = ColorPainter(MaterialTheme.colorScheme.surface),
+  contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
   border: BorderStroke? = null,
   enabled: Boolean = true,
   contentPadding: PaddingValues = CardDefaults.ContentPadding,
@@ -79,7 +77,7 @@ fun WrapContentCard(
   ) {
     CompositionLocalProvider(
       LocalContentColor provides contentColor,
-      LocalTextStyle provides MaterialTheme.typography.button,
+      LocalTextStyle provides MaterialTheme.typography.displayMedium,
     ) {
       content()
     }

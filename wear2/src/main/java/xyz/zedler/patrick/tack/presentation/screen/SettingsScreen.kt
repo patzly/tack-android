@@ -20,82 +20,87 @@
 package xyz.zedler.patrick.tack.presentation.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.wear.compose.foundation.lazy.AutoCenteringParams
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
-import androidx.wear.compose.foundation.lazy.ScalingLazyListAnchorType
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
-import androidx.wear.compose.material.ListHeader
-import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.Scaffold
-import androidx.wear.compose.material.Switch
-import androidx.wear.compose.material.Text
 import androidx.wear.compose.material.TimeText
-import androidx.wear.compose.material.ToggleChip
-import androidx.wear.compose.material.ToggleChipDefaults
 import androidx.wear.compose.material.scrollAway
+import androidx.wear.compose.material3.ListHeader
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Switch
+import androidx.wear.compose.material3.SwitchDefaults
+import androidx.wear.compose.material3.Text
+import androidx.wear.compose.material3.ToggleButton
+import androidx.wear.compose.material3.ToggleButtonDefaults
 import androidx.wear.tooling.preview.devices.WearDevices
+import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
+import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
 @Composable
 fun SettingsScreen(
+  viewModel: MainViewModel = MainViewModel()
 ) {
+  val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.DEF.ALWAYS_VIBRATE)
+
   TackTheme {
     val scrollableState = rememberScalingLazyListState()
     Scaffold(
       timeText = {
         TimeText(
-          timeTextStyle = TextStyle(
-            fontFamily = remember { FontFamily(Font(R.font.jost_medium)) }
-          ),
+          timeTextStyle = MaterialTheme.typography.labelMedium,
           modifier = Modifier.scrollAway(scrollableState)
         )
       }
     ) {
-      val jostBookFont = remember { FontFamily(Font(R.font.jost_book)) }
       ScalingLazyColumn(
         state = scrollableState,
         modifier = Modifier
           .fillMaxSize()
-          .background(color = MaterialTheme.colors.background)
+          .background(color = MaterialTheme.colorScheme.background)
       ) {
         item {
           ListHeader {
             Text(
               text = stringResource(id = R.string.wear_title_settings),
-              color = MaterialTheme.colors.onSurface,
-              style = MaterialTheme.typography.title2,
-              fontFamily = jostBookFont
+              style = MaterialTheme.typography.titleMedium
             )
           }
         }
         item {
-          ToggleChip(
+          ToggleButton(
+            checked = alwaysVibrate,
+            onCheckedChange = { viewModel.changeAlwaysVibrate(it) },
+            toggleControl = {
+              Switch(
+                colors = SwitchDefaults.colors()
+              )
+            },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = true,
+            colors = ToggleButtonDefaults.toggleButtonColors(),
+            interactionSource = null,
+            icon = null,
             label = {
               Text(
                 text = stringResource(id = R.string.settings_always_vibrate),
-                fontFamily = jostBookFont,
+                style = MaterialTheme.typography.bodyLarge,
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis
               )
@@ -103,30 +108,38 @@ fun SettingsScreen(
             secondaryLabel = {
               Text(
                 text = stringResource(id = R.string.settings_always_vibrate_description),
-                fontFamily = jostBookFont,
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+              )
+            }
+          )
+        }
+        item {
+          Chip(
+            onClick = {},
+            label = {
+              Text(
+                text = stringResource(id = R.string.settings_rate),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis
+              )
+            },
+            secondaryLabel = {
+              Text(
+                text = stringResource(id = R.string.settings_rate_description),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
               )
             },
-            checked = true,
-            colors = ToggleChipDefaults.toggleChipColors(
-              uncheckedToggleControlColor = ToggleChipDefaults.SwitchUncheckedIconColor
+            colors = ChipDefaults.secondaryChipColors(
+              backgroundColor = MaterialTheme.colorScheme.surface
             ),
-            toggleControl = {
-              Switch(
-                checked = true,
-                enabled = true,
-              )
-            },
-            onCheckedChange = {},
             modifier = Modifier.fillMaxWidth()
-          )
-        }
-        items(20) {
-          Chip(
-            onClick = { },
-            label = { Text("List item $it") },
-            colors = ChipDefaults.secondaryChipColors()
           )
         }
       }

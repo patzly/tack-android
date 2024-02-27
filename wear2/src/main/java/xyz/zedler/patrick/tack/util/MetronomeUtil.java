@@ -190,6 +190,14 @@ public class MetronomeUtil {
     Log.i(TAG, "stop: stopped metronome handler");
   }
 
+  public void setPlaying(boolean playing) {
+    if (playing) {
+      start();
+    } else {
+      stop();
+    }
+  }
+
   public boolean isPlaying() {
     return playing;
   }

@@ -72,7 +72,6 @@ dependencies {
   implementation(libs.ui.tooling.preview)
   implementation(libs.wear.tooling)
   implementation(libs.compose.material)
-  implementation(libs.compose.material.icons)
   implementation(libs.compose.foundation)
   implementation(libs.compose.runtime)
   implementation(libs.compose.animation.graphics)

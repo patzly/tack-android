@@ -25,7 +25,6 @@ import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavHostController
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
-import xyz.zedler.patrick.tack.presentation.screen.MainScreen
 import xyz.zedler.patrick.tack.util.MetronomeUtil
 import xyz.zedler.patrick.tack.util.TempoTapUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -63,8 +62,6 @@ class MainActivity : ComponentActivity() {
     setContent {
       navController = rememberSwipeDismissableNavController()
       TackApp(
-        metronomeUtil = metronomeUtil,
-        tempoTapUtil = tempoTapUtil,
         viewModel = viewModel,
         navController = navController
       )

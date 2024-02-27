@@ -20,33 +20,72 @@
 package xyz.zedler.patrick.tack.presentation.theme
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
-import androidx.wear.compose.material.Colors
-import androidx.wear.compose.material.MaterialTheme
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.wear.compose.material3.ColorScheme
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Typography
+import xyz.zedler.patrick.tack.R
 
 @Composable
 fun TackTheme(
-    content: @Composable () -> Unit
+  content: @Composable () -> Unit
 ) {
-    /**
-     * Empty theme to customize for your app.
-     * See: https://developer.android.com/jetpack/compose/designsystems/custom
-     */
-    MaterialTheme(
-        content = content,
-        colors = TackColors
-    )
+  MaterialTheme(
+    content = content,
+    colorScheme = tackColorScheme(),
+    typography = tackTypography()
+  )
 }
 
-private val TackColors = Colors(
+@Composable
+private fun tackColorScheme(): ColorScheme {
+  return ColorScheme(
     primary = Color(0xFFDAC66F),
-    primaryVariant = Color(0xFF8AB4F8),
-    secondary = Color(0xFFA9D0B3),
-    secondaryVariant = Color(0xFF594F33),
-    surface = Color(0xFF303133),
-    error = Color(0xFFEE675C),
+    primaryDim = Color(0xFFDAC66F),
+    primaryContainer = Color(0xFF534600),
     onPrimary = Color(0xFF393000),
-    onSecondary = Color(0xFF143723),
-    onSurfaceVariant = Color(0xFFDADCE0),
-    onError = Color(0xFF000000)
-)
+    onPrimaryContainer = Color(0xFFF8E288),
+    secondary = Color(0xFFD1C6A2),
+    secondaryDim = Color(0xFFD1C6A2),
+    secondaryContainer = Color(0xFF4D472A),
+    onSecondary = Color(0xFF363016),
+    onSecondaryContainer = Color(0xFFEEE2BC),
+    tertiary = Color(0xFFA9D0B3),
+    tertiaryDim = Color(0xFFA9D0B3),
+    tertiaryContainer = Color(0xFF2B4E38),
+    onTertiary = Color(0xFF143723),
+    onTertiaryContainer = Color(0xFFC4ECCF),
+    surfaceDim = Color(0xFF15130B),
+    surface = Color(0xFF15130B),
+    surfaceBright = Color(0xFF3C3930),
+    onSurface = Color(0xFFE8E2D4),
+    onSurfaceVariant = Color(0xFFCDC6B4),
+    outline = Color(0xFF969080),
+    outlineVariant = Color(0xFF4B4739)
+  )
+}
+
+@Composable
+private fun tackTypography(): Typography {
+  val jostBook = remember { FontFamily(Font(R.font.jost_book)) }
+  val jostMedium = remember { FontFamily(Font(R.font.jost_medium)) }
+  return Typography(
+    defaultFontFamily = jostBook,
+    displayLarge = MaterialTheme.typography.displayLarge.copy(fontFamily = jostBook),
+    displayMedium = MaterialTheme.typography.displayMedium.copy(fontFamily = jostBook),
+    displaySmall = MaterialTheme.typography.displaySmall.copy(fontFamily = jostMedium),
+    titleLarge = MaterialTheme.typography.titleLarge.copy(fontFamily = jostMedium),
+    titleMedium = MaterialTheme.typography.titleMedium.copy(fontFamily = jostMedium),
+    titleSmall = MaterialTheme.typography.titleSmall.copy(fontFamily = jostMedium),
+    labelLarge = MaterialTheme.typography.labelLarge.copy(fontFamily = jostMedium),
+    labelMedium = MaterialTheme.typography.labelMedium.copy(fontFamily = jostMedium),
+    labelSmall = MaterialTheme.typography.labelSmall.copy(fontFamily = jostMedium),
+    bodyLarge = MaterialTheme.typography.bodyLarge.copy(fontFamily = jostBook),
+    bodyMedium = MaterialTheme.typography.bodyMedium.copy(fontFamily = jostBook),
+    bodySmall = MaterialTheme.typography.bodySmall.copy(fontFamily = jostMedium),
+    bodyExtraSmall = MaterialTheme.typography.bodyExtraSmall.copy(fontFamily = jostBook)
+  )
+}

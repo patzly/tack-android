@@ -22,22 +22,15 @@ package xyz.zedler.patrick.tack.presentation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import androidx.navigation.NavOptionsBuilder
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
-import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.navigation.Screen
 import xyz.zedler.patrick.tack.presentation.screen.MainScreen
 import xyz.zedler.patrick.tack.presentation.screen.SettingsScreen
-import xyz.zedler.patrick.tack.presentation.theme.TackTheme
-import xyz.zedler.patrick.tack.util.MetronomeUtil
-import xyz.zedler.patrick.tack.util.TempoTapUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Composable
 fun TackApp(
-  metronomeUtil: MetronomeUtil,
-  tempoTapUtil: TempoTapUtil,
   viewModel: MainViewModel,
   navController: NavHostController
 ) {
@@ -50,8 +43,6 @@ fun TackApp(
       route = Screen.Main.route
     ) {
       Main(
-        metronomeUtil = metronomeUtil,
-        tempoTapUtil = tempoTapUtil,
         viewModel = viewModel,
         navController = navController
       )
@@ -68,35 +59,13 @@ fun TackApp(
 
 @Composable
 fun Main(
-  metronomeUtil: MetronomeUtil,
-  tempoTapUtil: TempoTapUtil,
   viewModel: MainViewModel,
   navController: NavHostController
 ) {
   MainScreen(
     viewModel = viewModel,
-    onTempoCardSwipe = {
-      metronomeUtil.tempo = it
-    },
-    onPlayButtonClick = {
-      if (metronomeUtil.isPlaying) {
-        metronomeUtil.stop()
-      } else {
-        metronomeUtil.start()
-      }
-    },
     onSettingsButtonClick = {
       navController.navigate(Screen.Settings.route)
-    },
-    onTempoTapButtonClick = {
-      if (tempoTapUtil.tap()) {
-        metronomeUtil.tempo = tempoTapUtil.tempo
-        viewModel.onTempoChange(tempoTapUtil.tempo)
-      }
-    },
-    onBeatModeButtonClick = {
-      metronomeUtil.isBeatModeVibrate = !metronomeUtil.isBeatModeVibrate
-      viewModel.onBeatModeVibrateChange(metronomeUtil.isBeatModeVibrate)
     }
   )
 }
@@ -106,6 +75,6 @@ fun Settings(
   viewModel: MainViewModel
 ) {
   SettingsScreen(
-    //viewModel = viewModel
+    viewModel = viewModel
   )
 }
