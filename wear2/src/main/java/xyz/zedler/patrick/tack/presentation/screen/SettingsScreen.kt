@@ -25,9 +25,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -55,10 +52,10 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 @Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
 @Composable
 fun SettingsScreen(
-  viewModel: MainViewModel = MainViewModel()
+  viewModel: MainViewModel = MainViewModel(),
+  onGainClick: () -> Unit = {},
+  onRateClick: () -> Unit = {}
 ) {
-  val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.DEF.ALWAYS_VIBRATE)
-
   TackTheme {
     val scrollableState = rememberScalingLazyListState()
     Scaffold(
@@ -84,65 +81,116 @@ fun SettingsScreen(
           }
         }
         item {
-          ToggleButton(
-            checked = alwaysVibrate,
-            onCheckedChange = { viewModel.changeAlwaysVibrate(it) },
-            toggleControl = {
-              Switch(
-                colors = SwitchDefaults.colors()
-              )
-            },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = true,
-            colors = ToggleButtonDefaults.toggleButtonColors(),
-            interactionSource = null,
-            icon = null,
-            label = {
-              Text(
-                text = stringResource(id = R.string.settings_always_vibrate),
-                style = MaterialTheme.typography.bodyLarge,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis
-              )
-            },
-            secondaryLabel = {
-              Text(
-                text = stringResource(id = R.string.settings_always_vibrate_description),
-                style = MaterialTheme.typography.bodyMedium,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-              )
+          GainChip(onClick = onGainClick)
+        }
+        item {
+          val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.DEF.ALWAYS_VIBRATE)
+          AlwaysVibrateToggleButton(
+            alwaysVibrate = alwaysVibrate,
+            onCheckedChange = {
+              viewModel.changeAlwaysVibrate(it)
             }
           )
         }
         item {
-          Chip(
-            onClick = {},
-            label = {
-              Text(
-                text = stringResource(id = R.string.settings_rate),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis
-              )
-            },
-            secondaryLabel = {
-              Text(
-                text = stringResource(id = R.string.settings_rate_description),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-              )
-            },
-            colors = ChipDefaults.secondaryChipColors(
-              backgroundColor = MaterialTheme.colorScheme.surface
-            ),
-            modifier = Modifier.fillMaxWidth()
-          )
+          RateChip(onClick = onRateClick)
         }
       }
     }
   }
+}
+
+@Composable
+fun GainChip(onClick: () -> Unit = {}) {
+  Chip(
+    onClick = onClick,
+    label = {
+      Text(
+        text = stringResource(id = R.string.settings_gain),
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onSurface,
+        maxLines = 3,
+        overflow = TextOverflow.Ellipsis
+      )
+    },
+    secondaryLabel = {
+      Text(
+        text = stringResource(id = R.string.settings_gain_description),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis
+      )
+    },
+    colors = ChipDefaults.secondaryChipColors(
+      backgroundColor = MaterialTheme.colorScheme.surface
+    ),
+    modifier = Modifier.fillMaxWidth()
+  )
+}
+
+@Composable
+fun AlwaysVibrateToggleButton(
+  alwaysVibrate: Boolean,
+  onCheckedChange: (Boolean) -> Unit = {},
+) {
+  ToggleButton(
+    checked = alwaysVibrate,
+    onCheckedChange = onCheckedChange,
+    toggleControl = {
+      Switch(
+        colors = SwitchDefaults.colors()
+      )
+    },
+    modifier = Modifier.fillMaxWidth(),
+    enabled = true,
+    colors = ToggleButtonDefaults.toggleButtonColors(),
+    interactionSource = null,
+    icon = null,
+    label = {
+      Text(
+        text = stringResource(id = R.string.settings_always_vibrate),
+        style = MaterialTheme.typography.bodyLarge,
+        maxLines = 3,
+        overflow = TextOverflow.Ellipsis
+      )
+    },
+    secondaryLabel = {
+      Text(
+        text = stringResource(id = R.string.settings_always_vibrate_description),
+        style = MaterialTheme.typography.bodyMedium,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis
+      )
+    }
+  )
+}
+
+@Composable
+fun RateChip(onClick: () -> Unit = {}) {
+  Chip(
+    onClick = onClick,
+    label = {
+      Text(
+        text = stringResource(id = R.string.settings_rate),
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.onSurface,
+        maxLines = 3,
+        overflow = TextOverflow.Ellipsis
+      )
+    },
+    secondaryLabel = {
+      Text(
+        text = stringResource(id = R.string.settings_rate_description),
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis
+      )
+    },
+    colors = ChipDefaults.secondaryChipColors(
+      backgroundColor = MaterialTheme.colorScheme.surface
+    ),
+    modifier = Modifier.fillMaxWidth()
+  )
 }

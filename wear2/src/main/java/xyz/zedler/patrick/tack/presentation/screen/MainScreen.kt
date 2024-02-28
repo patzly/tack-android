@@ -36,7 +36,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -75,13 +74,6 @@ fun MainScreen(
   onBeatsButtonClick: () -> Unit = {},
   onBookmarkButtonClick: () -> Unit = {}
 ) {
-  val tempo by viewModel.tempo.observeAsState(Constants.DEF.TEMPO)
-  val isPlaying by viewModel.isPlaying.observeAsState(false)
-  val beatModeVibrate by viewModel.beatModeVibrate.observeAsState(
-    Constants.DEF.BEAT_MODE_VIBRATE
-  )
-  val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.DEF.ALWAYS_VIBRATE)
-
   TackTheme {
     Box(
       modifier = Modifier
@@ -99,6 +91,13 @@ fun MainScreen(
         val (beatsButton, tempoTapButton) = createRefs()
         val (bookmarkButton, beatModeButton) = createRefs()
 
+        val tempo by viewModel.tempo.observeAsState(Constants.DEF.TEMPO)
+        val isPlaying by viewModel.isPlaying.observeAsState(false)
+        val beatModeVibrate by viewModel.beatModeVibrate.observeAsState(
+          Constants.DEF.BEAT_MODE_VIBRATE
+        )
+        val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.DEF.ALWAYS_VIBRATE)
+
         SettingsButton(
           onClick = onSettingsButtonClick,
           modifier = Modifier.constrainAs(settingsButton) {
@@ -111,7 +110,7 @@ fun MainScreen(
         TempoCard(
           tempo = tempo,
           onClick = onTempoCardClick,
-          onTempoCardSwipe = {
+          onSwipe = {
             viewModel.onTempoCardSwipe(it)
           },
           modifier = Modifier.constrainAs(tempoCard) {
@@ -184,7 +183,7 @@ fun MainScreen(
 fun TempoCard(
   tempo: Int,
   onClick: () -> Unit,
-  onTempoCardSwipe: (Int) -> Unit,
+  onSwipe: (Int) -> Unit,
   modifier: Modifier
 ) {
   WrapContentCard(
@@ -202,7 +201,7 @@ fun TempoCard(
     )
     val contentDescription by remember { derivedStateOf { "${state.selectedOption + 1}" } }
     LaunchedEffect(state.selectedOption) {
-      onTempoCardSwipe(state.selectedOption + 1)
+      onSwipe(state.selectedOption + 1)
     }
     Picker(
       gradientRatio = 0f,

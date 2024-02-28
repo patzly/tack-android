@@ -52,7 +52,6 @@
   <string name="action_tempo_tap">Tap tempo</string>
   <string name="action_bookmark">Bookmark</string>
   <string name="action_beat_mode">Beat mode</string>
-  <string name="action_deactivate_gain">Deactivate boost</string>
   <string name="action_retry">Retry</string>
 
   <!-- MESSAGES -->
@@ -60,8 +59,6 @@
   <string name="msg_vibration_unavailable">Vibration unavailable on this device</string>
   <string name="msg_service_running">Metronome service is running</string>
   <string name="msg_service_running_return">Tap to return to Tack</string>
-  <string name="msg_gain">Play with volume boost?</string>
-  <string name="msg_gain_description">Be careful not to play through headphones as loud sounds can cause ear damage!</string>
   <string name="msg_notification_permission_denied">Notification permission is required for playback controls</string>
 
   <!-- OPTIONS -->
@@ -73,10 +70,6 @@
   <string name="options_swing_7">Septuplet</string>
 
   <!-- SETTINGS -->
-
-  <string name="settings_language">Language</string>
-  <string name="settings_language_system">Follow system</string>
-  <string name="settings_language_system_description">English if translation unavailable</string>
 
   <string name="settings_sound">Beat sound</string>
   <string name="settings_sound_wood">Wood</string>
@@ -90,14 +83,10 @@
 
   <string name="settings_gain">Volume boost</string>
   <string name="settings_gain_description">Gain in dB</string>
-  <string name="settings_gain_warning">Use with caution!</string>
-  <string name="settings_gain_disclaimer">When boost is enabled, a warning will be displayed before each start. The developer takes no responsibility for any potential damage.</string>
+  <string name="settings_gain_disclaimer">Be careful not to play through headphones as loud sounds can cause ear damage! The developer takes no responsibility for any potential damage.</string>
 
   <string name="settings_always_vibrate">Always vibrate</string>
   <string name="settings_always_vibrate_description">Even with sound</string>
-
-  <string name="settings_flash_screen">Flash screen</string>
-  <string name="settings_flash_screen_description">On every beat</string>
 
   <string name="settings_keep_awake">Keep screen awake</string>
   <string name="settings_keep_awake_description">While metronome is playing</string>

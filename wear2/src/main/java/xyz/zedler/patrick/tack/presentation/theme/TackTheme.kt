@@ -59,7 +59,7 @@ private fun tackColorScheme(): ColorScheme {
     onTertiary = Color(0xFF143723),
     onTertiaryContainer = Color(0xFFC4ECCF),
     surfaceDim = Color(0xFF15130B),
-    surface = Color(0xFF15130B),
+    surface = Color(0xFF222017),
     surfaceBright = Color(0xFF3C3930),
     onSurface = Color(0xFFE8E2D4),
     onSurfaceVariant = Color(0xFFCDC6B4),

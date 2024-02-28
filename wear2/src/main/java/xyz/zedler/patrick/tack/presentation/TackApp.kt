@@ -25,6 +25,7 @@ import androidx.navigation.NavHostController
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import xyz.zedler.patrick.tack.presentation.navigation.Screen
+import xyz.zedler.patrick.tack.presentation.screen.GainScreen
 import xyz.zedler.patrick.tack.presentation.screen.MainScreen
 import xyz.zedler.patrick.tack.presentation.screen.SettingsScreen
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -39,42 +40,26 @@ fun TackApp(
     navController = navController,
     startDestination = Screen.Main.route
   ) {
-    composable(
-      route = Screen.Main.route
-    ) {
-      Main(
+    composable(route = Screen.Main.route) {
+      MainScreen(
         viewModel = viewModel,
-        navController = navController
+        onSettingsButtonClick = {
+          navController.navigate(Screen.Settings.route)
+        }
       )
     }
-    composable(
-      route = Screen.Settings.route
-    ) {
-      Settings(
+    composable(route = Screen.Settings.route) {
+      SettingsScreen(
+        viewModel = viewModel,
+        onGainClick = {
+          navController.navigate(Screen.Gain.route)
+        }
+      )
+    }
+    composable(route = Screen.Gain.route) {
+      GainScreen(
         viewModel = viewModel
       )
     }
   }
-}
-
-@Composable
-fun Main(
-  viewModel: MainViewModel,
-  navController: NavHostController
-) {
-  MainScreen(
-    viewModel = viewModel,
-    onSettingsButtonClick = {
-      navController.navigate(Screen.Settings.route)
-    }
-  )
-}
-
-@Composable
-fun Settings(
-  viewModel: MainViewModel
-) {
-  SettingsScreen(
-    viewModel = viewModel
-  )
 }

@@ -19,7 +19,6 @@
 
 package xyz.zedler.patrick.tack.viewmodel
 
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -38,11 +37,15 @@ class MainViewModel(private val metronomeUtil: MetronomeUtil? = null) : ViewMode
   private val _alwaysVibrate = MutableLiveData(
     metronomeUtil?.isAlwaysVibrate ?: DEF.ALWAYS_VIBRATE
   )
+  private val _gain = MutableLiveData(
+    metronomeUtil?.gain ?: DEF.GAIN
+  )
 
   val tempo: LiveData<Int> = _tempo
   val isPlaying: LiveData<Boolean> = _isPlaying
   val beatModeVibrate: LiveData<Boolean> = _beatModeVibrate
   val alwaysVibrate: LiveData<Boolean> = _alwaysVibrate
+  val gain: LiveData<Int> = _gain
 
   fun changeTempo(tempo: Int) {
     metronomeUtil?.tempo = tempo
@@ -79,5 +82,10 @@ class MainViewModel(private val metronomeUtil: MetronomeUtil? = null) : ViewMode
   fun changeAlwaysVibrate(alwaysVibrate: Boolean) {
     metronomeUtil?.isAlwaysVibrate = alwaysVibrate
     _alwaysVibrate.value = alwaysVibrate
+  }
+
+  fun changeGain(gain: Int) {
+    metronomeUtil?.gain = gain
+    _gain.value = gain
   }
 }
