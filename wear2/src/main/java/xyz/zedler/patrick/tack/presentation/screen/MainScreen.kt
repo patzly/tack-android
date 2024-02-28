@@ -29,11 +29,13 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -60,6 +62,7 @@ import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.components.WrapContentCard
+import xyz.zedler.patrick.tack.presentation.dialog.VolumeDialog
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.util.spToDp
@@ -81,6 +84,10 @@ fun MainScreen(
         .background(color = MaterialTheme.colorScheme.background),
       contentAlignment = Alignment.Center,
     ) {
+      val isPlaying by viewModel.isPlaying.observeAsState(false)
+      val playAnimTrigger = remember { mutableStateOf(isPlaying) }
+      var showVolumeDialog by remember { mutableStateOf(false) }
+
       TimeText(
         timeTextStyle = MaterialTheme.typography.labelMedium
       )
@@ -92,11 +99,11 @@ fun MainScreen(
         val (bookmarkButton, beatModeButton) = createRefs()
 
         val tempo by viewModel.tempo.observeAsState(Constants.DEF.TEMPO)
-        val isPlaying by viewModel.isPlaying.observeAsState(false)
         val beatModeVibrate by viewModel.beatModeVibrate.observeAsState(
           Constants.DEF.BEAT_MODE_VIBRATE
         )
         val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.DEF.ALWAYS_VIBRATE)
+        val gain by viewModel.gain.observeAsState(Constants.DEF.GAIN)
 
         SettingsButton(
           onClick = onSettingsButtonClick,
@@ -121,9 +128,14 @@ fun MainScreen(
           }
         )
         PlayButton(
-          isPlaying = isPlaying,
+          animTrigger = playAnimTrigger,
           onClick = {
-            viewModel.togglePlaying()
+            if (isPlaying || gain == 0) {
+              viewModel.togglePlaying()
+              playAnimTrigger.value = !playAnimTrigger.value
+            } else {
+              showVolumeDialog = true
+            }
           },
           modifier = Modifier.constrainAs(playButton) {
             top.linkTo(tempoCard.bottom)
@@ -175,6 +187,23 @@ fun MainScreen(
           }
         )
       }
+      VolumeDialog(
+        showDialog = showVolumeDialog,
+        onDismissRequest = {
+          showVolumeDialog = false
+        },
+        onPositiveClick = {
+          viewModel.togglePlaying()
+          playAnimTrigger.value = !playAnimTrigger.value
+          showVolumeDialog = false
+        },
+        onNegativeClick = {
+          viewModel.changeGain(0)
+          viewModel.togglePlaying()
+          playAnimTrigger.value = !playAnimTrigger.value
+          showVolumeDialog = false
+        }
+      )
     }
   }
 }
@@ -228,16 +257,12 @@ fun TempoCard(
 
 @Composable
 fun PlayButton(
-  isPlaying: Boolean,
+  animTrigger: MutableState<Boolean>,
   onClick: () -> Unit,
   modifier: Modifier
 ) {
-  val animTrigger = remember { mutableStateOf(isPlaying) }
   FilledIconButton(
-    onClick = {
-      onClick()
-      animTrigger.value = !animTrigger.value
-    },
+    onClick = onClick,
     modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
   ) {
     AnimatedVectorDrawable(
