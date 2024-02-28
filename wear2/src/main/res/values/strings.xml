@@ -84,7 +84,6 @@
   <string name="settings_ignore_focus_description">Keep playing if other apps make sound</string>
 
   <string name="settings_gain">Volume boost</string>
-  <string name="settings_gain_description">Gain in dB</string>
   <string name="settings_gain_disclaimer">When boost is enabled, a warning will be displayed before each start. The developer takes no responsibility for any potential damage.</string>
 
   <string name="settings_always_vibrate">Always vibrate</string>

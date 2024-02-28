@@ -95,9 +95,10 @@ fun SettingsScreen(
           )
         }
         item {
+          val gain by viewModel.gain.observeAsState(Constants.DEF.GAIN)
           ClickChip(
             label = stringResource(R.string.settings_gain),
-            secondaryLabel = stringResource(R.string.settings_gain_description),
+            secondaryLabel = stringResource(R.string.wear_label_db, gain),
             onClick = onGainClick
           )
         }
