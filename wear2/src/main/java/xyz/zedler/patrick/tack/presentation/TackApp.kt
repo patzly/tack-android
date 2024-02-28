@@ -28,6 +28,7 @@ import xyz.zedler.patrick.tack.presentation.navigation.Screen
 import xyz.zedler.patrick.tack.presentation.screen.GainScreen
 import xyz.zedler.patrick.tack.presentation.screen.MainScreen
 import xyz.zedler.patrick.tack.presentation.screen.SettingsScreen
+import xyz.zedler.patrick.tack.presentation.screen.SoundScreen
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Composable
@@ -51,6 +52,9 @@ fun TackApp(
     composable(route = Screen.Settings.route) {
       SettingsScreen(
         viewModel = viewModel,
+        onSoundClick = {
+          navController.navigate(Screen.Sound.route)
+        },
         onGainClick = {
           navController.navigate(Screen.Gain.route)
         }
@@ -58,6 +62,11 @@ fun TackApp(
     }
     composable(route = Screen.Gain.route) {
       GainScreen(
+        viewModel = viewModel
+      )
+    }
+    composable(route = Screen.Sound.route) {
+      SoundScreen(
         viewModel = viewModel
       )
     }

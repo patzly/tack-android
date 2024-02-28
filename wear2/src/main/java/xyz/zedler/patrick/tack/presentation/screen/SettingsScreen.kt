@@ -45,6 +45,7 @@ import androidx.wear.compose.material3.ToggleButton
 import androidx.wear.compose.material3.ToggleButtonDefaults
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.Constants
+import xyz.zedler.patrick.tack.Constants.SOUND
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -53,6 +54,7 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 @Composable
 fun SettingsScreen(
   viewModel: MainViewModel = MainViewModel(),
+  onSoundClick: () -> Unit = {},
   onGainClick: () -> Unit = {},
   onRateClick: () -> Unit = {}
 ) {
@@ -81,7 +83,23 @@ fun SettingsScreen(
           }
         }
         item {
-          GainChip(onClick = onGainClick)
+          val sound by viewModel.sound.observeAsState(Constants.DEF.SOUND)
+          var name = stringResource(id = R.string.settings_sound_sine)
+          if (sound == SOUND.WOOD) {
+            name = stringResource(id = R.string.settings_sound_wood)
+          }
+          ClickChip(
+            label = stringResource(R.string.settings_sound),
+            secondaryLabel = name,
+            onClick = onSoundClick
+          )
+        }
+        item {
+          ClickChip(
+            label = stringResource(R.string.settings_gain),
+            secondaryLabel = stringResource(R.string.settings_gain_description),
+            onClick = onGainClick
+          )
         }
         item {
           val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.DEF.ALWAYS_VIBRATE)
@@ -93,7 +111,11 @@ fun SettingsScreen(
           )
         }
         item {
-          RateChip(onClick = onRateClick)
+          ClickChip(
+            label = stringResource(R.string.settings_rate),
+            secondaryLabel = stringResource(R.string.settings_rate_description),
+            onClick = onRateClick
+          )
         }
       }
     }
@@ -101,38 +123,9 @@ fun SettingsScreen(
 }
 
 @Composable
-fun GainChip(onClick: () -> Unit = {}) {
-  Chip(
-    onClick = onClick,
-    label = {
-      Text(
-        text = stringResource(id = R.string.settings_gain),
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.onSurface,
-        maxLines = 3,
-        overflow = TextOverflow.Ellipsis
-      )
-    },
-    secondaryLabel = {
-      Text(
-        text = stringResource(id = R.string.settings_gain_description),
-        style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        maxLines = 2,
-        overflow = TextOverflow.Ellipsis
-      )
-    },
-    colors = ChipDefaults.secondaryChipColors(
-      backgroundColor = MaterialTheme.colorScheme.surface
-    ),
-    modifier = Modifier.fillMaxWidth()
-  )
-}
-
-@Composable
 fun AlwaysVibrateToggleButton(
   alwaysVibrate: Boolean,
-  onCheckedChange: (Boolean) -> Unit = {},
+  onCheckedChange: (Boolean) -> Unit = {}
 ) {
   ToggleButton(
     checked = alwaysVibrate,
@@ -167,12 +160,16 @@ fun AlwaysVibrateToggleButton(
 }
 
 @Composable
-fun RateChip(onClick: () -> Unit = {}) {
+fun ClickChip(
+  label: String,
+  secondaryLabel: String,
+  onClick: () -> Unit
+) {
   Chip(
     onClick = onClick,
     label = {
       Text(
-        text = stringResource(id = R.string.settings_rate),
+        text = label,
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onSurface,
         maxLines = 3,
@@ -181,7 +178,7 @@ fun RateChip(onClick: () -> Unit = {}) {
     },
     secondaryLabel = {
       Text(
-        text = stringResource(id = R.string.settings_rate_description),
+        text = secondaryLabel,
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         maxLines = 2,
