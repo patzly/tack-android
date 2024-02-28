@@ -34,7 +34,7 @@ There also is a separate Wear OS app available with haptic beats and many option
 
 ## Compatibility
 
-Tack Android requires at least Android 5.0 Lollipop and works properly on devices without any Google service installed.
+Tack for phones and tablets requires at least Android 5.0 Lollipop and works properly on devices without any Google service installed. The separate app for smartwatches requires at least Wear OS 1.0.
 
 ## Contribution
 
