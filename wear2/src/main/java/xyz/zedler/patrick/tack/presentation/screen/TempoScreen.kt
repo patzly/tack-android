@@ -46,9 +46,9 @@ import androidx.wear.compose.material.Picker
 import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.rememberPickerState
 import androidx.wear.compose.material3.FilledTonalIconButton
+import androidx.wear.compose.material3.IconButton
 import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
-import androidx.wear.compose.material3.OutlinedIconButton
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.touchTargetAwareSize
 import androidx.wear.tooling.preview.devices.WearDevices
@@ -86,7 +86,7 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
             viewModel.onTempoCardSwipe(it)
           },
           modifier = Modifier.constrainAs(tempoPicker) {
-            top.linkTo(parent.top, margin = 16.dp)
+            top.linkTo(parent.top, margin = 32.dp)
             bottom.linkTo(tapButton.top)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
@@ -173,7 +173,7 @@ fun TempoPicker(
     onSwipe(state.selectedOption + 1)
   }
   Picker(
-    modifier = modifier.size(spToDp(spValue = 88), spToDp(spValue = 96)),
+    modifier = modifier.size(spToDp(spValue = 88), spToDp(spValue = 104)),
     state = state,
     contentDescription = contentDescription
   ) {
@@ -197,7 +197,7 @@ fun TapButton(
   modifier: Modifier
 ) {
   val animTrigger = remember { mutableStateOf(false) }
-  FilledTonalIconButton(
+  IconButton(
     onClick = {
       onClick()
       animTrigger.value = !animTrigger.value
@@ -207,7 +207,7 @@ fun TapButton(
     AnimatedVectorDrawable(
       resId = R.drawable.ic_round_touch_app_anim,
       description = stringResource(id = R.string.action_tempo_tap),
-      color = IconButtonDefaults.filledTonalIconButtonColors().contentColor,
+      color = IconButtonDefaults.iconButtonColors().contentColor,
       trigger = animTrigger
     )
   }
@@ -219,14 +219,14 @@ fun TextIconButton(
   onClick: () -> Unit,
   modifier: Modifier
 ) {
-  OutlinedIconButton(
+  FilledTonalIconButton(
     onClick = onClick,
     modifier = modifier.touchTargetAwareSize(IconButtonDefaults.SmallButtonSize)
   ) {
     Text(
       modifier = Modifier.wrapContentSize(Alignment.Center),
       textAlign = TextAlign.Center,
-      color = IconButtonDefaults.outlinedIconButtonColors().contentColor,
+      color = IconButtonDefaults.filledTonalIconButtonColors().contentColor,
       style = MaterialTheme.typography.titleLarge,
       text = label
     )
