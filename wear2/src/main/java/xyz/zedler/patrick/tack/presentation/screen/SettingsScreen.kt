@@ -39,7 +39,6 @@ import androidx.wear.compose.material.scrollAway
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Switch
-import androidx.wear.compose.material3.SwitchDefaults
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.ToggleButton
 import androidx.wear.compose.material3.ToggleButtonDefaults
@@ -103,12 +102,25 @@ fun SettingsScreen(
           )
         }
         item {
+          val ignoreFocus by viewModel.ignoreFocus.observeAsState(Constants.DEF.IGNORE_FOCUS)
+          ToggleChip(
+            checked = ignoreFocus,
+            onCheckedChange = {
+              viewModel.changeIgnoreFocus(it)
+            },
+            label = stringResource(id = R.string.settings_ignore_focus),
+            secondaryLabel = stringResource(id = R.string.settings_ignore_focus_description)
+          )
+        }
+        item {
           val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.DEF.ALWAYS_VIBRATE)
-          AlwaysVibrateToggleButton(
-            alwaysVibrate = alwaysVibrate,
+          ToggleChip(
+            checked = alwaysVibrate,
             onCheckedChange = {
               viewModel.changeAlwaysVibrate(it)
-            }
+            },
+            label = stringResource(id = R.string.settings_always_vibrate),
+            secondaryLabel = stringResource(id = R.string.settings_always_vibrate_description)
           )
         }
         item {
@@ -121,43 +133,6 @@ fun SettingsScreen(
       }
     }
   }
-}
-
-@Composable
-fun AlwaysVibrateToggleButton(
-  alwaysVibrate: Boolean,
-  onCheckedChange: (Boolean) -> Unit = {}
-) {
-  ToggleButton(
-    checked = alwaysVibrate,
-    onCheckedChange = onCheckedChange,
-    toggleControl = {
-      Switch(
-        colors = SwitchDefaults.colors()
-      )
-    },
-    modifier = Modifier.fillMaxWidth(),
-    enabled = true,
-    colors = ToggleButtonDefaults.toggleButtonColors(),
-    interactionSource = null,
-    icon = null,
-    label = {
-      Text(
-        text = stringResource(id = R.string.settings_always_vibrate),
-        style = MaterialTheme.typography.bodyLarge,
-        maxLines = 3,
-        overflow = TextOverflow.Ellipsis
-      )
-    },
-    secondaryLabel = {
-      Text(
-        text = stringResource(id = R.string.settings_always_vibrate_description),
-        style = MaterialTheme.typography.bodyMedium,
-        maxLines = 2,
-        overflow = TextOverflow.Ellipsis
-      )
-    }
-  )
 }
 
 @Composable
@@ -190,5 +165,42 @@ fun ClickChip(
       backgroundColor = MaterialTheme.colorScheme.surface
     ),
     modifier = Modifier.fillMaxWidth()
+  )
+}
+
+@Composable
+fun ToggleChip(
+  checked: Boolean,
+  onCheckedChange: (Boolean) -> Unit,
+  label: String,
+  secondaryLabel: String
+) {
+  ToggleButton(
+    checked = checked,
+    onCheckedChange = onCheckedChange,
+    toggleControl = {
+      Switch()
+    },
+    modifier = Modifier.fillMaxWidth(),
+    enabled = true,
+    colors = ToggleButtonDefaults.toggleButtonColors(),
+    interactionSource = null,
+    icon = null,
+    label = {
+      Text(
+        text = label,
+        style = MaterialTheme.typography.bodyLarge,
+        maxLines = 3,
+        overflow = TextOverflow.Ellipsis
+      )
+    },
+    secondaryLabel = {
+      Text(
+        text = secondaryLabel,
+        style = MaterialTheme.typography.bodyMedium,
+        maxLines = 2,
+        overflow = TextOverflow.Ellipsis
+      )
+    }
   )
 }

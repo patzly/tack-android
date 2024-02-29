@@ -425,7 +425,7 @@ public class MetronomeUtil {
     sharedPrefs.edit().putBoolean(PREF.IGNORE_FOCUS, ignore).apply();
   }
 
-  public boolean getIgnoreAudioFocus() {
+  public boolean getIgnoreFocus() {
     return audioUtil.getIgnoreFocus();
   }
 

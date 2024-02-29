@@ -39,6 +39,9 @@ class MainViewModel(private val metronomeUtil: MetronomeUtil? = null) : ViewMode
   )
   private val _gain = MutableLiveData(metronomeUtil?.gain ?: DEF.GAIN)
   private val _sound = MutableLiveData(metronomeUtil?.sound ?: DEF.SOUND)
+  private val _ignoreFocus = MutableLiveData(
+    metronomeUtil?.ignoreFocus ?: DEF.IGNORE_FOCUS
+  )
 
   val tempo: LiveData<Int> = _tempo
   val isPlaying: LiveData<Boolean> = _isPlaying
@@ -46,6 +49,7 @@ class MainViewModel(private val metronomeUtil: MetronomeUtil? = null) : ViewMode
   val alwaysVibrate: LiveData<Boolean> = _alwaysVibrate
   val gain: LiveData<Int> = _gain
   val sound: LiveData<String> = _sound
+  val ignoreFocus: LiveData<Boolean> = _ignoreFocus
 
   fun changeTempo(tempo: Int) {
     metronomeUtil?.tempo = tempo
@@ -92,5 +96,10 @@ class MainViewModel(private val metronomeUtil: MetronomeUtil? = null) : ViewMode
   fun changeSound(sound: String) {
     metronomeUtil?.sound = sound
     _sound.value = sound
+  }
+
+  fun changeIgnoreFocus(ignore: Boolean) {
+    metronomeUtil?.ignoreFocus = ignore
+    _ignoreFocus.value = ignore
   }
 }
