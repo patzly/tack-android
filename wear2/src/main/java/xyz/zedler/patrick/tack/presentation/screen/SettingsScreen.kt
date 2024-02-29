@@ -55,6 +55,7 @@ fun SettingsScreen(
   viewModel: MainViewModel = MainViewModel(),
   onSoundClick: () -> Unit = {},
   onGainClick: () -> Unit = {},
+  onLatencyClick: () -> Unit = {},
   onRateClick: () -> Unit = {}
 ) {
   TackTheme {
@@ -99,6 +100,14 @@ fun SettingsScreen(
             label = stringResource(R.string.settings_gain),
             secondaryLabel = stringResource(R.string.wear_label_db, gain),
             onClick = onGainClick
+          )
+        }
+        item {
+          val latency by viewModel.latency.observeAsState(Constants.DEF.LATENCY)
+          ClickChip(
+            label = stringResource(R.string.settings_latency),
+            secondaryLabel = stringResource(R.string.wear_label_ms, latency),
+            onClick = onLatencyClick
           )
         }
         item {

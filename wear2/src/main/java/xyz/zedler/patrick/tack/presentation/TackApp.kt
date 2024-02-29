@@ -26,6 +26,7 @@ import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import xyz.zedler.patrick.tack.presentation.navigation.Screen
 import xyz.zedler.patrick.tack.presentation.screen.GainScreen
+import xyz.zedler.patrick.tack.presentation.screen.LatencyScreen
 import xyz.zedler.patrick.tack.presentation.screen.MainScreen
 import xyz.zedler.patrick.tack.presentation.screen.SettingsScreen
 import xyz.zedler.patrick.tack.presentation.screen.SoundScreen
@@ -57,18 +58,20 @@ fun TackApp(
         },
         onGainClick = {
           navController.navigate(Screen.Gain.route)
+        },
+        onLatencyClick = {
+          navController.navigate(Screen.Latency.route)
         }
       )
     }
     composable(route = Screen.Gain.route) {
-      GainScreen(
-        viewModel = viewModel
-      )
+      GainScreen(viewModel = viewModel)
     }
     composable(route = Screen.Sound.route) {
-      SoundScreen(
-        viewModel = viewModel
-      )
+      SoundScreen(viewModel = viewModel)
+    }
+    composable(route = Screen.Latency.route) {
+      LatencyScreen(viewModel = viewModel)
     }
   }
 }

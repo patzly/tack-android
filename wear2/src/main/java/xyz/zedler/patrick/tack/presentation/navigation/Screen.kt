@@ -24,4 +24,5 @@ sealed class Screen(val route: String) {
   data object Settings : Screen("settings")
   data object Gain : Screen("gain")
   data object Sound : Screen("sound")
+  data object Latency : Screen("latency")
 }

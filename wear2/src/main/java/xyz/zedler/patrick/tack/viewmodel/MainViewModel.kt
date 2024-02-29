@@ -42,6 +42,7 @@ class MainViewModel(private val metronomeUtil: MetronomeUtil? = null) : ViewMode
   private val _ignoreFocus = MutableLiveData(
     metronomeUtil?.ignoreFocus ?: DEF.IGNORE_FOCUS
   )
+  private val _latency = MutableLiveData(metronomeUtil?.latency ?: DEF.LATENCY)
 
   val tempo: LiveData<Int> = _tempo
   val isPlaying: LiveData<Boolean> = _isPlaying
@@ -50,6 +51,7 @@ class MainViewModel(private val metronomeUtil: MetronomeUtil? = null) : ViewMode
   val gain: LiveData<Int> = _gain
   val sound: LiveData<String> = _sound
   val ignoreFocus: LiveData<Boolean> = _ignoreFocus
+  val latency: LiveData<Long> = _latency
 
   fun changeTempo(tempo: Int) {
     metronomeUtil?.tempo = tempo
@@ -101,5 +103,10 @@ class MainViewModel(private val metronomeUtil: MetronomeUtil? = null) : ViewMode
   fun changeIgnoreFocus(ignore: Boolean) {
     metronomeUtil?.ignoreFocus = ignore
     _ignoreFocus.value = ignore
+  }
+
+  fun changeLatency(latency: Long) {
+    metronomeUtil?.latency = latency
+    _latency.value = latency
   }
 }
