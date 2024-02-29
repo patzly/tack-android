@@ -16,6 +16,10 @@
 - Improved: metronome service for background playback
 - Fixed: inconsistent audio beats on Android 12+
 
+## 4.0.2
+
+- Improved: audio focus of app notifications no longer stops playback, lowers volume instead
+
 ## 4.0.1
 
 - Fixed: crash in settings caused by invalid sound selection

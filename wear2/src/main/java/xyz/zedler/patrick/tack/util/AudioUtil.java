@@ -100,12 +100,18 @@ public class AudioUtil implements OnAudioFocusChangeListener {
 
   @Override
   public void onAudioFocusChange(int focusChange) {
-    if (focusChange == AudioManager.AUDIOFOCUS_LOSS
-        || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
-        || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
-    ) {
+    if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+      if (track != null) {
+        track.setVolume(1);
+      }
+    } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
       stop();
       listener.onAudioStop();
+    } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
+        || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+      if (track != null) {
+        track.setVolume(0.25f);
+      }
     }
   }
 
