@@ -30,6 +30,7 @@ import xyz.zedler.patrick.tack.presentation.screen.LatencyScreen
 import xyz.zedler.patrick.tack.presentation.screen.MainScreen
 import xyz.zedler.patrick.tack.presentation.screen.SettingsScreen
 import xyz.zedler.patrick.tack.presentation.screen.SoundScreen
+import xyz.zedler.patrick.tack.presentation.screen.TempoScreen
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Composable
@@ -47,6 +48,9 @@ fun TackApp(
         viewModel = viewModel,
         onSettingsButtonClick = {
           navController.navigate(Screen.Settings.route)
+        },
+        onTempoCardClick = {
+          navController.navigate(Screen.Tempo.route)
         }
       )
     }
@@ -63,6 +67,9 @@ fun TackApp(
           navController.navigate(Screen.Latency.route)
         }
       )
+    }
+    composable(route = Screen.Tempo.route) {
+      TempoScreen(viewModel = viewModel)
     }
     composable(route = Screen.Gain.route) {
       GainScreen(viewModel = viewModel)

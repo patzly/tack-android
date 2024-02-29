@@ -361,15 +361,6 @@ public class MetronomeUtil {
     return tempo;
   }
 
-  private void changeTempo(int change) {
-    int tempoOld = getTempo();
-    int tempoNew = tempoOld + change;
-    // setTempo will only be called by callback below, else we would break timer animation
-    for (MetronomeListener listener : listeners) {
-      listener.onMetronomeTempoChanged(tempoOld, tempoNew);
-    }
-  }
-
   public long getInterval() {
     return 1000 * 60 / tempo;
   }
@@ -458,11 +449,6 @@ public class MetronomeUtil {
 
   private void performTick(Tick tick) {
     latencyHandler.postDelayed(() -> {
-      for (MetronomeListener listener : listeners) {
-        listener.onMetronomePreTick(tick);
-      }
-    }, Math.max(0, latency - Constants.BEAT_ANIM_OFFSET));
-    latencyHandler.postDelayed(() -> {
       if (beatModeVibrate || alwaysVibrate) {
         switch (tick.type) {
           case TICK_TYPE.STRONG:
@@ -503,9 +489,7 @@ public class MetronomeUtil {
   public interface MetronomeListener {
     void onMetronomeStart();
     void onMetronomeStop();
-    void onMetronomePreTick(Tick tick);
     void onMetronomeTick(Tick tick);
-    void onMetronomeTempoChanged(int tempoOld, int tempoNew);
   }
 
   public static class Tick {

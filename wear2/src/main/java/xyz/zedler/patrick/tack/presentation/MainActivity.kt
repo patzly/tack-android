@@ -52,9 +52,7 @@ class MainActivity : ComponentActivity() {
       override fun onMetronomeStop() {
         viewModel.onPlayingChange(false)
       }
-      override fun onMetronomePreTick(tick: MetronomeUtil.Tick?) {}
       override fun onMetronomeTick(tick: MetronomeUtil.Tick?) {}
-      override fun onMetronomeTempoChanged(tempoOld: Int, tempoNew: Int) {}
     })
 
     viewModel = MainViewModel(metronomeUtil)
