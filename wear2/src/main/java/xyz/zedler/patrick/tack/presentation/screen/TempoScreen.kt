@@ -29,9 +29,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -43,6 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.wear.compose.material.Picker
+import androidx.wear.compose.material.PickerState
 import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.rememberPickerState
 import androidx.wear.compose.material3.FilledTonalIconButton
@@ -52,6 +53,7 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.touchTargetAwareSize
 import androidx.wear.tooling.preview.devices.WearDevices
+import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
@@ -67,7 +69,7 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
       modifier = Modifier
         .fillMaxSize()
         .background(color = MaterialTheme.colorScheme.background),
-      contentAlignment = Alignment.Center,
+      contentAlignment = Alignment.Center
     ) {
       TimeText(
         timeTextStyle = MaterialTheme.typography.labelMedium
@@ -78,12 +80,19 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         val (tempoPicker, tapButton) = createRefs()
         val (plus5Button, minus5Button, plus10Button, minus10Button) = createRefs()
 
-        val tempo by viewModel.tempo.observeAsState(Constants.DEF.TEMPO)
+        var pickerOption = viewModel.tempo.value?.minus(1) ?: Constants.DEF.TEMPO
+        val pickerCoroutineScope = rememberCoroutineScope()
+        val pickerState = rememberPickerState(
+          initialNumberOfOptions = 400,
+          initiallySelectedOption = pickerOption,
+          repeatItems = false
+        )
 
         TempoPicker(
-          tempo = tempo,
-          onSwipe = {
-            viewModel.onTempoCardSwipe(it)
+          state = pickerState,
+          onOptionChange = {
+            pickerOption = it
+            viewModel.changeTempo(it + 1)
           },
           modifier = Modifier.constrainAs(tempoPicker) {
             top.linkTo(parent.top, margin = 32.dp)
@@ -94,7 +103,10 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         )
         TapButton(
           onClick = {
-            viewModel.onTempoTap()
+            val tempo = viewModel.onTempoTap()
+            pickerCoroutineScope.launch {
+              pickerState.animateScrollToOption(tempo - 1)
+            }
           },
           modifier = Modifier.constrainAs(tapButton) {
             top.linkTo(tempoPicker.bottom)
@@ -106,7 +118,9 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         TextIconButton(
           label = "-5",
           onClick = {
-            viewModel.changeTempo(tempo - 5)
+            pickerCoroutineScope.launch {
+              pickerState.animateScrollToOption(pickerOption - 5)
+            }
           },
           modifier = Modifier.constrainAs(minus5Button) {
             top.linkTo(parent.top, margin = 40.dp)
@@ -118,7 +132,9 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         TextIconButton(
           label = "-10",
           onClick = {
-            viewModel.changeTempo(tempo - 10)
+            pickerCoroutineScope.launch {
+              pickerState.animateScrollToOption(pickerOption - 10)
+            }
           },
           modifier = Modifier.constrainAs(minus10Button) {
             top.linkTo(minus5Button.bottom)
@@ -130,7 +146,9 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         TextIconButton(
           label = "+5",
           onClick = {
-            viewModel.changeTempo(tempo + 5)
+            pickerCoroutineScope.launch {
+              pickerState.animateScrollToOption(pickerOption + 5)
+            }
           },
           modifier = Modifier.constrainAs(plus5Button) {
             top.linkTo(parent.top, margin = 40.dp)
@@ -142,7 +160,9 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         TextIconButton(
           label = "+10",
           onClick = {
-            viewModel.changeTempo(tempo + 10)
+            pickerCoroutineScope.launch {
+              pickerState.animateScrollToOption(pickerOption + 10)
+            }
           },
           modifier = Modifier.constrainAs(plus10Button) {
             top.linkTo(minus5Button.bottom)
@@ -158,19 +178,14 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
 
 @Composable
 fun TempoPicker(
-  tempo: Int,
-  onSwipe: (Int) -> Unit,
+  state: PickerState,
+  onOptionChange: (Int) -> Unit,
   modifier: Modifier
 ) {
   val items = (1..400).toList()
-  val state = rememberPickerState(
-    initialNumberOfOptions = items.size,
-    initiallySelectedOption = tempo - 1,
-    repeatItems = false
-  )
   val contentDescription by remember { derivedStateOf { "${state.selectedOption + 1}" } }
   LaunchedEffect(state.selectedOption) {
-    onSwipe(state.selectedOption + 1)
+    onOptionChange(state.selectedOption)
   }
   Picker(
     modifier = modifier.size(spToDp(spValue = 88), spToDp(spValue = 104)),

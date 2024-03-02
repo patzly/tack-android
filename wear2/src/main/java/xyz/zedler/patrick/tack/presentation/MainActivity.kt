@@ -23,8 +23,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.navigation.NavHostController
-import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import xyz.zedler.patrick.tack.util.MetronomeUtil
 import xyz.zedler.patrick.tack.util.TempoTapUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -34,7 +32,6 @@ class MainActivity : ComponentActivity() {
   private lateinit var metronomeUtil: MetronomeUtil
   private lateinit var tempoTapUtil: TempoTapUtil
   private lateinit var viewModel: MainViewModel
-  private lateinit var navController: NavHostController
 
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
@@ -58,11 +55,7 @@ class MainActivity : ComponentActivity() {
     viewModel = MainViewModel(metronomeUtil)
 
     setContent {
-      navController = rememberSwipeDismissableNavController()
-      TackApp(
-        viewModel = viewModel,
-        navController = navController
-      )
+      TackApp(viewModel = viewModel)
     }
   }
 }

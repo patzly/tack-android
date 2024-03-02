@@ -35,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,8 +49,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavBackStackEntry
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Picker
+import androidx.wear.compose.material.PickerState
 import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.rememberPickerState
 import androidx.wear.compose.material3.FilledIconButton
@@ -59,6 +62,7 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.touchTargetAwareSize
 import androidx.wear.tooling.preview.devices.WearDevices
+import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.components.WrapContentCard
@@ -72,6 +76,7 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 @Composable
 fun MainScreen(
   viewModel: MainViewModel = MainViewModel(),
+  backStackEntry: NavBackStackEntry? = null,
   onTempoCardClick: () -> Unit = {},
   onSettingsButtonClick: () -> Unit = {},
   onBeatsButtonClick: () -> Unit = {},
@@ -98,7 +103,19 @@ fun MainScreen(
         val (beatsButton, tempoTapButton) = createRefs()
         val (bookmarkButton, beatModeButton) = createRefs()
 
-        val tempo by viewModel.tempo.observeAsState(Constants.DEF.TEMPO)
+        val tempo by viewModel.tempo.observeAsState(initial = Constants.DEF.TEMPO)
+        val pickerOption = remember { tempo - 1 }
+        val pickerCoroutineScope = rememberCoroutineScope()
+        val pickerState = rememberPickerState(
+          initialNumberOfOptions = 400,
+          initiallySelectedOption = pickerOption,
+          repeatItems = false
+        )
+        LaunchedEffect(tempo) {
+          pickerCoroutineScope.launch {
+            pickerState.animateScrollToOption(tempo - 1)
+          }
+        }
         val beatModeVibrate by viewModel.beatModeVibrate.observeAsState(
           Constants.DEF.BEAT_MODE_VIBRATE
         )
@@ -115,10 +132,10 @@ fun MainScreen(
           }
         )
         TempoCard(
-          tempo = tempo,
+          state = pickerState,
           onClick = onTempoCardClick,
-          onSwipe = {
-            viewModel.onTempoCardSwipe(it)
+          onOptionChange = {
+            viewModel.changeTempo(it + 1)
           },
           modifier = Modifier.constrainAs(tempoCard) {
             top.linkTo(parent.top)
@@ -210,9 +227,9 @@ fun MainScreen(
 
 @Composable
 fun TempoCard(
-  tempo: Int,
+  state: PickerState,
   onClick: () -> Unit,
-  onSwipe: (Int) -> Unit,
+  onOptionChange: (Int) -> Unit,
   modifier: Modifier
 ) {
   WrapContentCard(
@@ -223,14 +240,9 @@ fun TempoCard(
     contentPadding = PaddingValues(0.dp)
   ) {
     val items = (1..400).toList()
-    val state = rememberPickerState(
-      initialNumberOfOptions = items.size,
-      initiallySelectedOption = tempo - 1,
-      repeatItems = false
-    )
     val contentDescription by remember { derivedStateOf { "${state.selectedOption + 1}" } }
     LaunchedEffect(state.selectedOption) {
-      onSwipe(state.selectedOption + 1)
+      onOptionChange(state.selectedOption)
     }
     Picker(
       gradientRatio = 0f,

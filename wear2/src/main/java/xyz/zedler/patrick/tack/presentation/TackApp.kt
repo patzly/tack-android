@@ -21,9 +21,9 @@ package xyz.zedler.patrick.tack.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
+import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import xyz.zedler.patrick.tack.presentation.navigation.Screen
 import xyz.zedler.patrick.tack.presentation.screen.GainScreen
 import xyz.zedler.patrick.tack.presentation.screen.LatencyScreen
@@ -34,10 +34,8 @@ import xyz.zedler.patrick.tack.presentation.screen.TempoScreen
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Composable
-fun TackApp(
-  viewModel: MainViewModel,
-  navController: NavHostController
-) {
+fun TackApp(viewModel: MainViewModel) {
+  val navController = rememberSwipeDismissableNavController()
   SwipeDismissableNavHost(
     modifier = Modifier,
     navController = navController,

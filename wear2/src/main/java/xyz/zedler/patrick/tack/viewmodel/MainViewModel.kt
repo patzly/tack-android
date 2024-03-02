@@ -58,13 +58,16 @@ class MainViewModel(private val metronomeUtil: MetronomeUtil? = null) : ViewMode
     _tempo.value = tempo
   }
 
-  fun onTempoTap() {
+  fun onTempoTap(): Int {
     if (tempoTapUtil.tap()) {
-      changeTempo(tempoTapUtil.tempo)
+      val tempo = tempoTapUtil.tempo
+      changeTempo(tempo)
+      return tempo
     }
+    return tempo.value ?: DEF.TEMPO
   }
 
-  fun onTempoCardSwipe(tempo: Int) {
+  fun onTempoChange(tempo: Int) {
     metronomeUtil?.tempo = tempo
   }
 
