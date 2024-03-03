@@ -66,6 +66,7 @@ import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.components.WrapContentCard
+import xyz.zedler.patrick.tack.presentation.dialog.PermissionDialog
 import xyz.zedler.patrick.tack.presentation.dialog.VolumeDialog
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
@@ -80,7 +81,8 @@ fun MainScreen(
   onTempoCardClick: () -> Unit = {},
   onSettingsButtonClick: () -> Unit = {},
   onBeatsButtonClick: () -> Unit = {},
-  onBookmarkButtonClick: () -> Unit = {}
+  onBookmarkButtonClick: () -> Unit = {},
+  onPermissionRequestClick: () -> Unit = {}
 ) {
   TackTheme {
     Box(
@@ -92,6 +94,7 @@ fun MainScreen(
       val isPlaying by viewModel.isPlaying.observeAsState(false)
       val playAnimTrigger = remember { mutableStateOf(isPlaying) }
       var showVolumeDialog by remember { mutableStateOf(false) }
+      val showPermissionDialog by viewModel.showPermissionDialog.observeAsState(false)
 
       TimeText(
         timeTextStyle = MaterialTheme.typography.labelMedium
@@ -219,6 +222,19 @@ fun MainScreen(
           viewModel.togglePlaying()
           playAnimTrigger.value = !playAnimTrigger.value
           showVolumeDialog = false
+        }
+      )
+      PermissionDialog(
+        showDialog = showPermissionDialog,
+        onDismissRequest = {
+          viewModel.changeShowPermissionDialog(false)
+        },
+        onPositiveClick = {
+          viewModel.changeShowPermissionDialog(false)
+          onPermissionRequestClick()
+        },
+        onNegativeClick = {
+          viewModel.changeShowPermissionDialog(false)
         }
       )
     }

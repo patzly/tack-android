@@ -61,7 +61,8 @@
   <string name="msg_service_running">Metronome playing</string>
   <string name="msg_service_running_return">Tap for more</string>
   <string name="msg_service_description">Service for metronome playback</string>
-  <string name="msg_notification_permission_denied">Notification permission is required for playback controls</string>
+  <string name="msg_notification_permission_denied">Permission required</string>
+  <string name="msg_notification_permission_denied_description">Notification permission is required for playback</string>
   <string name="msg_gain">Play with volume boost?</string>
   <string name="msg_gain_description">Be careful not to play through headphones!</string>
 

@@ -61,9 +61,8 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     metronomeUtil = MetronomeUtil(this, false)
     metronomeUtil.addListener(object : MetronomeUtil.MetronomeListener {
       override fun onMetronomeStart() {
-        //viewModel.onPlayingChange(true)
         if (!NotificationUtil.hasPermission(this@MainActivity)) {
-          //getMetronomeUtil().stop()
+          viewModel.onPlayingChange(false)
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
           }
@@ -75,15 +74,8 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
     requestPermissionLauncher =
       registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-        if (isGranted) {
-          viewModel.onPlayingChange(true)
-        } else {
-          // TODO:
-          // Explain to the user that the feature is unavailable because the
-          // feature requires a permission that the user has denied. At the
-          // same time, respect the user's decision. Don't link to system
-          // settings in an effort to convince the user to change their
-          // decision.
+        if (!isGranted) {
+          viewModel.changeShowPermissionDialog(true)
         }
       }
 
@@ -91,7 +83,14 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     updateMetronomeUtil()
 
     setContent {
-      TackApp(viewModel = viewModel)
+      TackApp(
+        viewModel = viewModel,
+        onPermissionRequestClick = {
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+          }
+        }
+      )
     }
   }
 
@@ -156,6 +155,6 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     getMetronomeUtil().addListeners(listeners)
     getMetronomeUtil().setToPreferences()
     viewModel.metronomeUtil = getMetronomeUtil()
-    viewModel._isPlaying.value = getMetronomeUtil().isPlaying
+    viewModel.mutableIsPlaying.value = getMetronomeUtil().isPlaying
   }
 }

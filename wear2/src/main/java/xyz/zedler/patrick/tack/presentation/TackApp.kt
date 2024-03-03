@@ -34,7 +34,10 @@ import xyz.zedler.patrick.tack.presentation.screen.TempoScreen
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Composable
-fun TackApp(viewModel: MainViewModel) {
+fun TackApp(
+  viewModel: MainViewModel,
+  onPermissionRequestClick: () -> Unit
+) {
   val navController = rememberSwipeDismissableNavController()
   SwipeDismissableNavHost(
     modifier = Modifier,
@@ -49,7 +52,8 @@ fun TackApp(viewModel: MainViewModel) {
         },
         onTempoCardClick = {
           navController.navigate(Screen.Tempo.route)
-        }
+        },
+        onPermissionRequestClick = onPermissionRequestClick
       )
     }
     composable(route = Screen.Settings.route) {

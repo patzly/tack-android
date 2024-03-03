@@ -28,7 +28,7 @@ import xyz.zedler.patrick.tack.util.TempoTapUtil
 
 class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
 
-  val _isPlaying = MutableLiveData(metronomeUtil?.isPlaying ?: false)
+  val mutableIsPlaying = MutableLiveData(metronomeUtil?.isPlaying ?: false)
   private val tempoTapUtil = TempoTapUtil()
   private val _tempo = MutableLiveData(metronomeUtil?.tempo ?: DEF.TEMPO)
   private val _beatModeVibrate = MutableLiveData(
@@ -43,15 +43,17 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
     metronomeUtil?.ignoreFocus ?: DEF.IGNORE_FOCUS
   )
   private val _latency = MutableLiveData(metronomeUtil?.latency ?: DEF.LATENCY)
+  private val _showPermissionDialog = MutableLiveData(false)
 
   val tempo: LiveData<Int> = _tempo
-  val isPlaying: LiveData<Boolean> = _isPlaying
+  val isPlaying: LiveData<Boolean> = mutableIsPlaying
   val beatModeVibrate: LiveData<Boolean> = _beatModeVibrate
   val alwaysVibrate: LiveData<Boolean> = _alwaysVibrate
   val gain: LiveData<Int> = _gain
   val sound: LiveData<String> = _sound
   val ignoreFocus: LiveData<Boolean> = _ignoreFocus
   val latency: LiveData<Long> = _latency
+  val showPermissionDialog: LiveData<Boolean> = _showPermissionDialog
 
   fun changeTempo(tempo: Int) {
     metronomeUtil?.tempo = tempo
@@ -73,13 +75,13 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
 
   fun onPlayingChange(playing: Boolean) {
     metronomeUtil?.isPlaying = playing
-    _isPlaying.value = playing
+    mutableIsPlaying.value = playing
   }
 
   fun togglePlaying() {
     val playing = metronomeUtil?.isPlaying ?: true
     metronomeUtil?.isPlaying = !playing
-    _isPlaying.value = !playing
+    mutableIsPlaying.value = !playing
   }
 
   fun toggleBeatModeVibrate() {
@@ -111,5 +113,9 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
   fun changeLatency(latency: Long) {
     metronomeUtil?.latency = latency
     _latency.value = latency
+  }
+
+  fun changeShowPermissionDialog(show: Boolean) {
+    _showPermissionDialog.value = show
   }
 }
