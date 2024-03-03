@@ -1,0 +1,232 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="title_feedback">反饋</string>
+  <string name="title_about">關於</string>
+  <string name="title_help">幫助</string>
+  <string name="title_licenses">開源協議</string>
+  <string name="title_settings">設置</string>
+  <string name="title_notification_channel">節拍器服務</string>
+  <string name="title_options">選項</string>
+  <string name="title_general">通用</string>
+  <string name="title_metronome">節拍器</string>
+  <string name="title_logcat">日誌</string>
+
+  <!-- LABELS -->
+
+  <string name="label_bpm_value">%1$d bpm</string>
+  <string name="label_bpm">bpm</string>
+  <string name="label_ms">%1$s 毫秒</string>
+  <string name="label_db">+%1$d 分貝</string>
+  <array name="label_tempo_terms" translatable="false">
+    <item>Largo</item>
+    <item>Larghetto</item>
+    <item>Adagio</item>
+    <item>Andante</item>
+    <item>Moderato</item>
+    <item>Allegro</item>
+    <item>Presto</item>
+    <item>Prestissimo</item>
+  </array>
+
+  <!-- ACTIONS -->
+
+  <string name="action_back">返回</string>
+  <string name="action_close">關閉</string>
+  <string name="action_cancel">取消</string>
+  <string name="action_increase">增加</string>
+  <string name="action_decrease">減少</string>
+  <string name="action_play">播放</string>
+  <string name="action_play_stop">播放 / 停止</string>
+  <string name="action_stop">停止</string>
+  <string name="action_add_beat">增加節拍</string>
+  <string name="action_remove_beat">減少節拍</string>
+  <string name="action_add_sub">增添分區</string>
+  <string name="action_remove_sub">移除分區</string>
+  <string name="action_clear_all">全部清除</string>
+  <string name="action_tempo_tap">輕拍速度</string>
+  <string name="action_bookmark">書籤</string>
+  <string name="action_beat_mode">節拍模式</string>
+  <string name="action_send_feedback">反饋</string>
+  <string name="action_open_link">打開外部網站</string>
+  <string name="action_reset">重置</string>
+  <string name="action_deactivate_gain">停用放大</string>
+  <string name="action_recommend">推薦</string>
+  <string name="action_recommend_description">向朋友介紹 Tack</string>
+  <string name="action_email">發送郵件</string>
+  <string name="action_email_description">聯繫開發者</string>
+  <string name="action_rate">在 Google Play 上評分</string>
+  <string name="action_rate_description">支持開發</string>
+  <string name="action_issue">在 GitHub 上提問</string>
+  <string name="action_issue_description">報告錯誤或建議功能</string>
+  <string name="action_retry">重試</string>
+  <string name="action_logcat">日誌</string>
+  <string name="action_copy_to_clipboard">複製剪貼板</string>
+  <string name="action_reload">刷新</string>
+
+  <!-- MESSAGES -->
+
+  <string name="msg_bookmarks_max">達到書籤上限</string>
+  <string name="msg_feedback">一款優秀的應用程序需要花費大量時間和獲取用户反饋。</string>
+  <string name="msg_feedback_contact">您有任何願望、評論或問題嗎？聯繫我！\n否則，我會非常高興在 Play 商店得到一個好評。</string>
+  <string name="msg_recommend">檢查一下這個很酷的節拍器應用：\n%1$s</string>
+  <string name="msg_vibration_unavailable">該設備無法使用振動功能</string>
+  <string name="msg_service_running">節拍器服務正在運行</string>
+  <string name="msg_service_running_return">輕觸返回 Tack</string>
+  <string name="msg_service_description">節拍器配置和播放服務</string>
+  <string name="msg_connection_lost">服務連接丟失，需重啓應用程序</string>
+  <string name="msg_reset">全部重置？</string>
+  <string name="msg_reset_description">你真的想要重置包括書籤和設置在內整個應用程序嗎？這是無法撤銷的。</string>
+  <string name="msg_gain">音量增強下播放？</string>
+  <string name="msg_gain_description">小心不要戴耳機聽音樂，因為高音量會損傷耳朵！</string>
+  <string name="msg_notification_permission_denied">播放控制需要通知權限</string>
+  <string name="msg_report_crash">請報告任何崩潰情況，並附上崩潰日誌，以便我嘗試修復它們。</string>
+  <string name="msg_copied_to_clipboard">已成功複製到剪貼板</string>
+
+  <!-- OPTIONS -->
+
+  <string name="options_unit_bars">小節</string>
+  <plurals name="options_unit_bars">
+    <item quantity="other">%1$d 小節</item>
+  </plurals>
+  <string name="options_unit_beats">拍數</string>
+  <plurals name="options_unit_beats">
+    <item quantity="other">%1$d 拍</item>
+  </plurals>
+  <string name="options_unit_seconds">秒</string>
+  <plurals name="options_unit_seconds">
+    <item quantity="other">%1$d 秒</item>
+  </plurals>
+  <string name="options_unit_minutes">分鐘</string>
+  <plurals name="options_unit_minutes">
+    <item quantity="other">%1$d 分</item>
+  </plurals>
+  <string name="options_inactive">禁用</string>
+  <string name="options_count_in">計數</string>
+  <string name="options_count_in_description">在應用修飾符之前等待 %1$s</string>
+  <string name="options_incremental">增量速度變化</string>
+  <string name="options_incremental_amount_increase">增速 %1$d bpm</string>
+  <string name="options_incremental_amount_decrease">減速 %1$d bpm</string>
+  <string name="options_incremental_interval">每 %1$s</string>
+  <string name="options_incremental_max">提高 %1$d bpm</string>
+  <string name="options_incremental_min">降低 %1$d bpm</string>
+  <string name="options_timer">歌曲時長</string>
+  <string name="options_timer_description">停在 %1$s 之後</string>
+  <string name="options_mute">靜音節拍</string>
+  <string name="options_mute_play">播放 %1$s</string>
+  <string name="options_mute_mute">靜音 %1$s</string>
+  <string name="options_mute_random">隨機靜音最多 %1$d%</string>
+  <string name="options_swing">搖擺</string>
+  <string name="options_swing_description">將分區設置為與所選搖擺百分比相匹配</string>
+  <string name="options_swing_3">三連音</string>
+  <string name="options_swing_5">五連音</string>
+  <string name="options_swing_7">七連音</string>
+
+  <!-- SETTINGS -->
+
+  <string name="settings_language">語言</string>
+  <string name="settings_language_info">非常感謝 Transifex 的所有翻譯志願者！\n請訪問 GitHub 上的 Tack，瞭解如何為 Tack 提供您的語言。</string>
+  <string name="settings_language_system">跟隨系統</string>
+  <string name="settings_language_system_description">若無對應翻譯，默認英語</string>
+
+  <string name="settings_theme">主題</string>
+  <string name="settings_theme_description">風格多樣</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
+  <string name="settings_theme_auto">自動</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_dark">暗</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_light">亮</string>
+
+  <string name="settings_contrast">對比度</string>
+  <string name="settings_contrast_description">無障礙視覺</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast. The button width should be as dense as possible. -->
+  <string name="settings_contrast_standard">標準</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_medium">中等</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_high">高</string>
+  <string name="settings_contrast_dynamic">必須在系統設置中設置設備主題的對比度</string>
+  <string name="settings_contrast_dynamic_unsupported">設備主題的動態對比度僅適用於 Android 14+ 系統</string>
+
+  <string name="settings_transition">在應用頁面間滑動過渡</string>
+  <string name="settings_transition_description">代替減弱</string>
+
+  <string name="settings_haptic">觸覺效果</string>
+  <string name="settings_haptic_description">除了振動模式下的觸覺節拍外</string>
+
+  <string name="settings_reduce_animations">減少動畫</string>
+  <string name="settings_reduce_animations_description">可提高性能</string>
+
+  <string name="settings_reset">全部重置</string>
+  <string name="settings_reset_description">無法撤銷</string>
+
+  <string name="settings_sound">節拍聲音</string>
+  <string name="settings_sound_wood">木材聲</string>
+  <string name="settings_sound_sine">正弦波</string>
+
+  <string name="settings_latency">延遲校正</string>
+  <string name="settings_latency_description">系統音頻輸出的延遲進行振動和視覺補償</string>
+
+  <string name="settings_ignore_focus">忽略音頻焦點</string>
+  <string name="settings_ignore_focus_description">在其他應用程序發出聲音時保持播放</string>
+
+  <string name="settings_gain">音量增強</string>
+  <string name="settings_gain_description">增益分貝（除系統音量外）</string>
+  <string name="settings_gain_warning">小心使用！</string>
+  <string name="settings_gain_disclaimer">當啓用增強功能時，每次啓動前都會顯示警告。開發者對任何潛在損害不承擔責任。</string>
+
+  <string name="settings_show_subs">顯示分區控件</string>
+  <string name="settings_show_subs_description">節奏更加多樣</string>
+
+  <string name="settings_always_vibrate">始終保持振動</string>
+  <string name="settings_always_vibrate_description">即使有聲音</string>
+
+  <string name="settings_elapsed">顯示已用時間</string>
+  <string name="settings_elapsed_description">看到你練習了多久</string>
+
+  <string name="settings_reset_elapsed">停止時重置已用時間</string>
+  <string name="settings_reset_elapsed_description">直到關閉為止，代替恢復。</string>
+
+  <string name="settings_reset_timer">停止時重置計時器</string>
+  <string name="settings_reset_timer_description">代替恢復</string>
+
+  <string name="settings_flash_screen">屏幕閃爍</string>
+  <string name="settings_flash_screen_description">每個節拍</string>
+
+  <string name="settings_keep_awake">保持屏幕喚醒</string>
+  <string name="settings_keep_awake_description">節拍器播放時</string>
+
+  <!-- ABOUT -->
+
+  <string name="about_version">版本</string>
+  <string name="about_changelog">更新日誌</string>
+  <string name="about_changelog_description">此版本新增功能</string>
+  <string name="about_developer">開發者</string>
+  <string name="about_vending_description">開發者的更多應用程序</string>
+  <string name="about_github_description">源碼</string>
+  <string name="about_translation_description">幫助翻譯 Tack</string>
+  <string name="about_privacy">隱私政策</string>
+  <string name="about_privacy_description">如何處理您的數據</string>
+
+  </resources>
