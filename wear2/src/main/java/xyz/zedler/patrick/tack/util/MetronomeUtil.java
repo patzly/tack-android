@@ -43,6 +43,7 @@ public class MetronomeUtil {
   private final AudioUtil audioUtil;
   private final HapticUtil hapticUtil;
   private final Set<MetronomeListener> listeners = new HashSet<>();
+  public final boolean fromService;
   private HandlerThread audioThread, callbackThread;
   private Handler tickHandler, latencyHandler;
   private String[] beats, subdivisions;
@@ -51,7 +52,9 @@ public class MetronomeUtil {
   private boolean playing, tempPlaying, useSubdivisions, beatModeVibrate;
   private boolean alwaysVibrate, flashScreen, keepAwake;
 
-  public MetronomeUtil(@NonNull Context context) {
+  public MetronomeUtil(@NonNull Context context, boolean fromService) {
+    this.fromService = fromService;
+
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
     audioUtil = new AudioUtil(context, this::stop);
@@ -77,6 +80,9 @@ public class MetronomeUtil {
   }
 
   private void resetHandlersIfRequired() {
+    if (!fromService) {
+      return;
+    }
     if (audioThread == null || !audioThread.isAlive()) {
       audioThread = new HandlerThread("metronome_audio");
       audioThread.start();
@@ -124,9 +130,11 @@ public class MetronomeUtil {
 
   public void destroy() {
     listeners.clear();
-    removeHandlerCallbacks();
-    audioThread.quitSafely();
-    callbackThread.quit();
+    if (fromService) {
+      removeHandlerCallbacks();
+      audioThread.quitSafely();
+      callbackThread.quit();
+    }
   }
 
   public void addListener(MetronomeListener listener) {
@@ -149,7 +157,11 @@ public class MetronomeUtil {
     if (isPlaying()) {
       return;
     }
-    resetHandlersIfRequired();
+    if (!fromService) {
+      return;
+    } else {
+      resetHandlersIfRequired();
+    }
 
     playing = true;
     audioUtil.play();
@@ -182,7 +194,9 @@ public class MetronomeUtil {
     playing = false;
     audioUtil.stop();
 
-    removeHandlerCallbacks();
+    if (fromService) {
+      removeHandlerCallbacks();
+    }
 
     for (MetronomeListener listener : listeners) {
       listener.onMetronomeStop();

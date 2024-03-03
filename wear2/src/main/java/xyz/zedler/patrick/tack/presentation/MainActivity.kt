@@ -19,19 +19,36 @@
 
 package xyz.zedler.patrick.tack.presentation
 
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
+import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.util.MetronomeUtil
+import xyz.zedler.patrick.tack.util.NotificationUtil
 import xyz.zedler.patrick.tack.util.TempoTapUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), ServiceConnection {
 
+  companion object {
+    private const val TAG = "MainActivity"
+  }
+
+  private lateinit var metronomeService: MetronomeService
   private lateinit var metronomeUtil: MetronomeUtil
   private lateinit var tempoTapUtil: TempoTapUtil
   private lateinit var viewModel: MainViewModel
+  private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+  private var bound: Boolean = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
@@ -41,21 +58,104 @@ class MainActivity : ComponentActivity() {
     setTheme(android.R.style.Theme_DeviceDefault)
 
     tempoTapUtil = TempoTapUtil()
-    metronomeUtil = MetronomeUtil(this)
+    metronomeUtil = MetronomeUtil(this, false)
     metronomeUtil.addListener(object : MetronomeUtil.MetronomeListener {
       override fun onMetronomeStart() {
-        viewModel.onPlayingChange(true)
+        //viewModel.onPlayingChange(true)
+        if (!NotificationUtil.hasPermission(this@MainActivity)) {
+          //getMetronomeUtil().stop()
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+          }
+        }
       }
-      override fun onMetronomeStop() {
-        viewModel.onPlayingChange(false)
-      }
+      override fun onMetronomeStop() {}
       override fun onMetronomeTick(tick: MetronomeUtil.Tick?) {}
     })
 
+    requestPermissionLauncher =
+      registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+        if (isGranted) {
+          viewModel.onPlayingChange(true)
+        } else {
+          // TODO:
+          // Explain to the user that the feature is unavailable because the
+          // feature requires a permission that the user has denied. At the
+          // same time, respect the user's decision. Don't link to system
+          // settings in an effort to convince the user to change their
+          // decision.
+        }
+      }
+
     viewModel = MainViewModel(metronomeUtil)
+    updateMetronomeUtil()
 
     setContent {
       TackApp(viewModel = viewModel)
     }
+  }
+
+  override fun onStart() {
+    super.onStart()
+    try {
+      val intent = Intent(this, MetronomeService::class.java)
+      startService(intent)
+      // cannot use startForegroundService
+      // would cause crash as notification is only displayed when metronome is playing
+      bindService(intent, this, BIND_IMPORTANT)
+    } catch (e: Exception) {
+      Log.e(TAG, "onStart: could not bind metronome service", e)
+    }
+  }
+
+  override fun onStop() {
+    super.onStop()
+    if (bound) {
+      unbindService(this)
+      bound = false
+      updateMetronomeUtil()
+    }
+  }
+
+  override fun onServiceConnected(name: ComponentName?, iBinder: IBinder?) {
+    val binder: MetronomeService.MetronomeBinder = iBinder as MetronomeService.MetronomeBinder
+    metronomeService = binder.service
+    bound = true
+    updateMetronomeUtil()
+  }
+
+  override fun onServiceDisconnected(name: ComponentName?) {
+    bound = false
+    updateMetronomeUtil()
+  }
+
+  override fun onBindingDied(name: ComponentName?) {
+    bound = false
+    unbindService(this)
+    try {
+      val intent = Intent(this, MetronomeService::class.java)
+      bindService(intent, this, BIND_AUTO_CREATE)
+    } catch (e: IllegalStateException) {
+      Log.e(TAG, "onBindingDied: cannot start MetronomeService because app is in background")
+    }
+  }
+
+  private fun getMetronomeUtil(): MetronomeUtil {
+    return if (bound) {
+      metronomeService.getMetronomeUtil()
+    } else {
+      metronomeUtil
+    }
+  }
+
+  private fun updateMetronomeUtil() {
+    val listeners: MutableSet<MetronomeUtil.MetronomeListener> = HashSet(metronomeUtil.listeners)
+    if (bound) {
+      listeners.addAll(metronomeService.getMetronomeUtil().listeners)
+    }
+    getMetronomeUtil().addListeners(listeners)
+    getMetronomeUtil().setToPreferences()
+    viewModel.metronomeUtil = getMetronomeUtil()
+    viewModel._isPlaying.value = getMetronomeUtil().isPlaying
   }
 }

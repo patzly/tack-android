@@ -26,11 +26,11 @@ import xyz.zedler.patrick.tack.Constants.DEF
 import xyz.zedler.patrick.tack.util.MetronomeUtil
 import xyz.zedler.patrick.tack.util.TempoTapUtil
 
-class MainViewModel(private val metronomeUtil: MetronomeUtil? = null) : ViewModel() {
+class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
 
+  val _isPlaying = MutableLiveData(metronomeUtil?.isPlaying ?: false)
   private val tempoTapUtil = TempoTapUtil()
   private val _tempo = MutableLiveData(metronomeUtil?.tempo ?: DEF.TEMPO)
-  private val _isPlaying = MutableLiveData(metronomeUtil?.isPlaying ?: false)
   private val _beatModeVibrate = MutableLiveData(
     metronomeUtil?.isBeatModeVibrate ?: DEF.BEAT_MODE_VIBRATE
   )

@@ -28,6 +28,7 @@
   <!-- TITLES -->
 
   <string name="wear_title_settings">Settings</string>
+  <string name="wear_title_notification_channel">Metronome service</string>
 
   <!-- LABELS -->
 
@@ -57,8 +58,9 @@
   <!-- MESSAGES -->
 
   <string name="msg_vibration_unavailable">Vibration unavailable on this device</string>
-  <string name="msg_service_running">Metronome service is running</string>
-  <string name="msg_service_running_return">Tap to return to Tack</string>
+  <string name="msg_service_running">Metronome playing</string>
+  <string name="msg_service_running_return">Tap for more</string>
+  <string name="msg_service_description">Service for metronome playback</string>
   <string name="msg_notification_permission_denied">Notification permission is required for playback controls</string>
   <string name="msg_gain">Play with volume boost?</string>
   <string name="msg_gain_description">Be careful not to play through headphones!</string>
