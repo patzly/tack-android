@@ -1156,24 +1156,25 @@ public class MainFragment extends BaseFragment
   }
 
   public String getTempoTerm(int tempo) {
-    String[] terms = getResources().getStringArray(R.array.label_tempo_terms);
+    int resId;
     if (tempo < 60) {
-      return terms[0];
+      resId = R.string.label_tempo_largo;
     } else if (tempo < 66) {
-      return terms[1];
+      resId = R.string.label_tempo_larghetto;
     } else if (tempo < 76) {
-      return terms[2];
+      resId = R.string.label_tempo_adagio;
     } else if (tempo < 108) {
-      return terms[3];
+      resId = R.string.label_tempo_andante;
     } else if (tempo < 120) {
-      return terms[4];
+      resId = R.string.label_tempo_moderato;
     } else if (tempo < 168) {
-      return terms[5];
+      resId = R.string.label_tempo_allegro;
     } else if (tempo < 200) {
-      return terms[6];
+      resId = R.string.label_tempo_presto;
     } else {
-      return terms[7];
+      resId = R.string.label_tempo_prestissimo;
     }
+    return getString(resId);
   }
 
   public FragmentMainBinding getBinding() {
