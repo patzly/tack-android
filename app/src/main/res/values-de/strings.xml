@@ -38,16 +38,14 @@
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$s ms</string>
   <string name="label_db">+%1$d dB</string>
-  <array name="label_tempo_terms" translatable="false">
-    <item>Largo</item>
-    <item>Larghetto</item>
-    <item>Adagio</item>
-    <item>Andante</item>
-    <item>Moderato</item>
-    <item>Allegro</item>
-    <item>Presto</item>
-    <item>Prestissimo</item>
-  </array>
+  <string name="label_tempo_largo">Largo</string>
+  <string name="label_tempo_larghetto">Larghetto</string>
+  <string name="label_tempo_adagio">Adagio</string>
+  <string name="label_tempo_andante">Andante</string>
+  <string name="label_tempo_moderato">Moderato</string>
+  <string name="label_tempo_allegro">Allegro</string>
+  <string name="label_tempo_presto">Presto</string>
+  <string name="label_tempo_prestissimo">Prestissimo</string>
 
   <!-- ACTIONS -->
 
