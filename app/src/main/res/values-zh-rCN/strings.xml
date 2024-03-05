@@ -38,16 +38,14 @@
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$s 毫秒</string>
   <string name="label_db">+%1$d 分贝</string>
-  <array name="label_tempo_terms" translatable="false">
-    <item>Largo</item>
-    <item>Larghetto</item>
-    <item>Adagio</item>
-    <item>Andante</item>
-    <item>Moderato</item>
-    <item>Allegro</item>
-    <item>Presto</item>
-    <item>Prestissimo</item>
-  </array>
+  <string name="label_tempo_largo">广板</string>
+  <string name="label_tempo_larghetto">小广板</string>
+  <string name="label_tempo_adagio">柔板</string>
+  <string name="label_tempo_andante">行板</string>
+  <string name="label_tempo_moderato">中板</string>
+  <string name="label_tempo_allegro">快板</string>
+  <string name="label_tempo_presto">急板</string>
+  <string name="label_tempo_prestissimo">最急板</string>
 
   <!-- ACTIONS -->
 
