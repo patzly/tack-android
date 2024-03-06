@@ -6,3 +6,12 @@ Patrick Zedler
 
 en
 Patrick Zedler
+
+zh-CN
+James Yang
+
+zh-HK
+James Yang
+
+zh-TW
+James Yang
