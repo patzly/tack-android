@@ -43,6 +43,7 @@ import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.THEME;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
+import xyz.zedler.patrick.tack.service.MetronomeService;
 
 public class NotificationUtil {
 
@@ -50,6 +51,7 @@ public class NotificationUtil {
 
   private final static String CHANNEL_ID = "metronome";
   private final static int REQUEST_CODE = 0;
+  public final static int NOTIFICATION_ID = 1;
 
   private final Context context;
   private final SharedPreferences sharedPrefs;
@@ -90,24 +92,28 @@ public class NotificationUtil {
   }
 
   public Notification getNotification() {
-    Intent intentApp = new Intent(context, MainActivity.class);
-    intentApp.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-    PendingIntent pendingIntentApp = PendingIntent.getActivity(
-        context, REQUEST_CODE, intentApp, getPendingIntentFlags()
+    Intent openIntent = new Intent(context, MainActivity.class);
+    openIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+    PendingIntent activityPendingIntent = PendingIntent.getActivity(
+        context, REQUEST_CODE, openIntent, getPendingIntentFlags()
     );
-    PendingIntent intentStop = PendingIntent.getBroadcast(
-        context, REQUEST_CODE, new Intent(ACTION.STOP), getPendingIntentFlags()
+
+    Intent stopIntent = new Intent(context, MetronomeService.class);
+    stopIntent.setAction(ACTION.STOP);
+    PendingIntent servicePendingIntent = PendingIntent.getService(
+        context, REQUEST_CODE, stopIntent, getPendingIntentFlags()
     );
     Action actionStop = new Action(
-        R.drawable.ic_round_stop, context.getString(R.string.action_stop), intentStop
+        R.drawable.ic_round_stop, context.getString(R.string.action_stop), servicePendingIntent
     );
+
     String title = context.getString(R.string.msg_service_running);
     String text = context.getString(R.string.msg_service_running_return);
     return new NotificationCompat.Builder(context, CHANNEL_ID)
         .setContentTitle(title)
         .setContentText(text)
         .setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(title).bigText(text))
-        .setContentIntent(pendingIntentApp)
+        .setContentIntent(activityPendingIntent)
         .addAction(actionStop)
         .setAutoCancel(true)
         .setSilent(true)

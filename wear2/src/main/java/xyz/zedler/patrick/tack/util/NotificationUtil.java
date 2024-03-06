@@ -36,6 +36,7 @@ import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.wear.ongoing.OngoingActivity;
 import androidx.wear.ongoing.Status;
+import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.presentation.MainActivity;
 import xyz.zedler.patrick.tack.service.MetronomeService;
@@ -45,7 +46,6 @@ public class NotificationUtil {
   private final static String CHANNEL_ID = "metronome";
   private final static int REQUEST_CODE = 0;
   public final static int NOTIFICATION_ID = 1;
-  public final static String EXTRA_STOP = "xyz.zedler.patrick.tack.STOP";
 
   private final Context context;
   private final NotificationManagerCompat notificationManager;
@@ -88,7 +88,7 @@ public class NotificationUtil {
     );
 
     Intent stopIntent = new Intent(context, MetronomeService.class);
-    stopIntent.putExtra(EXTRA_STOP, true);
+    stopIntent.setAction(ACTION.STOP);
     PendingIntent servicePendingIntent = PendingIntent.getService(
         context, REQUEST_CODE, stopIntent,
         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE

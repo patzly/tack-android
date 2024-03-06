@@ -27,6 +27,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.lifecycle.LifecycleService
+import xyz.zedler.patrick.tack.Constants.ACTION
 import xyz.zedler.patrick.tack.util.MetronomeUtil
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener
 import xyz.zedler.patrick.tack.util.NotificationUtil
@@ -40,8 +41,7 @@ class MetronomeService : LifecycleService(), MetronomeListener {
   private lateinit var metronomeUtil: MetronomeUtil
   private lateinit var notificationUtil: NotificationUtil
 
-  private var configurationChange = false
-  private var inForeground = false
+  private var configChange = false
   private val binder = MetronomeBinder()
 
   override fun onCreate() {
@@ -56,15 +56,15 @@ class MetronomeService : LifecycleService(), MetronomeListener {
   override fun onDestroy() {
     super.onDestroy()
 
-    notForegroundService()
+    stopForeground()
     metronomeUtil.destroy()
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
     super.onStartCommand(intent, flags, startId)
 
-    val stop = intent?.getBooleanExtra(NotificationUtil.EXTRA_STOP, false) ?: false
-    if (stop) {
+    val action = intent?.action ?: ""
+    if (action == ACTION.STOP) {
       metronomeUtil.stop()
     }
     return START_NOT_STICKY
@@ -73,19 +73,30 @@ class MetronomeService : LifecycleService(), MetronomeListener {
   override fun onBind(intent: Intent): IBinder {
     super.onBind(intent)
 
-    notForegroundService()
+    stopForeground()
     return binder
   }
 
   override fun onRebind(intent: Intent) {
     super.onRebind(intent)
 
-    notForegroundService()
+    stopForeground()
   }
 
   override fun onUnbind(intent: Intent): Boolean {
-    val hasPermission = NotificationUtil.hasPermission(this)
-    if (hasPermission && !configurationChange && metronomeUtil.isPlaying) {
+    startForeground()
+    return true
+  }
+
+  override fun onConfigurationChanged(newConfig: Configuration) {
+    super.onConfigurationChanged(newConfig)
+
+    configChange = true
+  }
+
+  private fun startForeground() {
+    val hasPermission = notificationUtil.hasPermission()
+    if (hasPermission && !configChange && metronomeUtil.isPlaying) {
       notificationUtil.createNotificationChannel()
       val notification = notificationUtil.notification
       try {
@@ -95,31 +106,22 @@ class MetronomeService : LifecycleService(), MetronomeListener {
         } else {
           startForeground(NotificationUtil.NOTIFICATION_ID, notification)
         }
-        inForeground = true
-        Log.d(TAG, "onUnbind: started foreground service")
+        Log.d(TAG, "startForeground: started foreground service")
       } catch (e: Exception) {
         Log.e(TAG, "startForeground: could not start foreground", e)
       }
     }
-    return true
   }
 
-  override fun onConfigurationChanged(newConfig: Configuration) {
-    super.onConfigurationChanged(newConfig)
-
-    configurationChange = true
-  }
-
-  private fun notForegroundService() {
+  private fun stopForeground() {
     stopForeground(STOP_FOREGROUND_REMOVE)
-    inForeground = false
-    configurationChange = false
+    configChange = false
   }
 
   override fun onMetronomeStart() {}
 
   override fun onMetronomeStop() {
-    notForegroundService()
+    stopForeground()
   }
 
   override fun onMetronomeTick(tick: MetronomeUtil.Tick?) {}

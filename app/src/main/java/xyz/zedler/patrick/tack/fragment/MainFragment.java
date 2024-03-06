@@ -536,6 +536,7 @@ public class MainFragment extends BaseFragment
         }
         updateFabCornerRadius(true, true);
       }
+      UiUtil.keepScreenAwake(activity, keepAwake);
     });
     // Inside UI thread appears to be often not effective
     UiUtil.keepScreenAwake(activity, keepAwake);
@@ -560,6 +561,7 @@ public class MainFragment extends BaseFragment
       }
       stopTimerTransitionProgress();
       stopTimerProgress();
+      UiUtil.keepScreenAwake(activity, false);
     });
     // Inside UI thread appears to be often not effective
     UiUtil.keepScreenAwake(activity, false);

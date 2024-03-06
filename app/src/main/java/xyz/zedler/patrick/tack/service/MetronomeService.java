@@ -21,11 +21,9 @@ package xyz.zedler.patrick.tack.service;
 
 import android.app.Notification;
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ServiceInfo;
+import android.content.res.Configuration;
 import android.os.Binder;
 import android.os.Build;
 import android.os.Build.VERSION;
@@ -33,25 +31,19 @@ import android.os.Build.VERSION_CODES;
 import android.os.IBinder;
 import android.util.Log;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import java.util.Objects;
 import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.util.MetronomeUtil;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.NotificationUtil;
 
-public class MetronomeService extends Service implements MetronomeListener {
+public class MetronomeService extends Service {
 
   private static final String TAG = MetronomeService.class.getSimpleName();
-
-  private final static int NOTIFICATION_ID = 1;
 
   private final IBinder binder = new MetronomeBinder();
   private MetronomeUtil metronomeUtil;
   private NotificationUtil notificationUtil;
-  private StopReceiver stopReceiver;
+  private boolean configChange;
 
   @Override
   public void onCreate() {
@@ -59,13 +51,6 @@ public class MetronomeService extends Service implements MetronomeListener {
 
     notificationUtil = new NotificationUtil(this);
     metronomeUtil = new MetronomeUtil(this, true);
-    metronomeUtil.addListener(this);
-
-    stopReceiver = new StopReceiver();
-    ContextCompat.registerReceiver(
-        this, stopReceiver, new IntentFilter(ACTION.STOP),
-        ContextCompat.RECEIVER_EXPORTED
-    );
     Log.d(TAG, "onCreate: service created");
   }
 
@@ -75,14 +60,7 @@ public class MetronomeService extends Service implements MetronomeListener {
 
     stopForeground();
     metronomeUtil.destroy();
-    unregisterReceiver(stopReceiver);
     Log.d(TAG, "onDestroy: service destroyed");
-  }
-
-  @Nullable
-  @Override
-  public IBinder onBind(Intent intent) {
-    return binder;
   }
 
   @Override
@@ -91,55 +69,58 @@ public class MetronomeService extends Service implements MetronomeListener {
       if (intent.getAction().equals(ACTION.START)) {
         metronomeUtil.setTempo(intent.getIntExtra(EXTRA.TEMPO, metronomeUtil.getTempo()));
         metronomeUtil.start();
+      } else if (intent.getAction().equals(ACTION.STOP)) {
+        metronomeUtil.stop();
+        stopForeground();
       }
     }
-    return START_STICKY;
+    return START_NOT_STICKY;
+  }
+
+  @Nullable
+  @Override
+  public IBinder onBind(Intent intent) {
+    stopForeground();
+    return binder;
   }
 
   @Override
-  public void onMetronomeStart() {
-    if (notificationUtil.hasPermission()) {
-      startForeground();
-    }
+  public void onRebind(Intent intent) {
+    super.onRebind(intent);
+
+    stopForeground();
   }
 
   @Override
-  public void onMetronomeStop() {}
+  public boolean onUnbind(Intent intent) {
+    startForeground();
+    return true;
+  }
 
   @Override
-  public void onMetronomePreTick(Tick tick) {}
+  public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
 
-  @Override
-  public void onMetronomeTick(Tick tick) {}
-
-  @Override
-  public void onMetronomeTempoChanged(int tempoOld, int tempoNew) {}
-
-  @Override
-  public void onMetronomeTimerStarted() {}
-
-  @Override
-  public void onElapsedTimeSecondsChanged() {}
-
-  @Override
-  public void onTimerSecondsChanged() {}
-
-  @Override
-  public void onMetronomeConnectionMissing() {}
+    configChange = true;
+  }
 
   public void startForeground() {
-    notificationUtil.createNotificationChannel();
-    Notification notification = notificationUtil.getNotification();
-    try {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        int type = ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK;
-        startForeground(NOTIFICATION_ID, notification, type);
-      } else {
-        startForeground(NOTIFICATION_ID, notification);
+    boolean hasPermission = notificationUtil.hasPermission();
+    if (hasPermission && !configChange) {
+      notificationUtil.createNotificationChannel();
+      Notification notification = notificationUtil.getNotification();
+      try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+          int type = ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK;
+          startForeground(NotificationUtil.NOTIFICATION_ID, notification, type);
+        } else {
+          startForeground(NotificationUtil.NOTIFICATION_ID, notification);
+        }
+      } catch (Exception e) {
+        Log.e(TAG, "startForeground: could not start foreground", e);
       }
-    } catch (Exception e) {
-      Log.e(TAG, "startForeground: could not start foreground", e);
     }
+
   }
 
   private void stopForeground() {
@@ -148,22 +129,11 @@ public class MetronomeService extends Service implements MetronomeListener {
     } else {
       stopForeground(true);
     }
+    configChange = false;
   }
 
   public MetronomeUtil getMetronomeUtil() {
     return metronomeUtil;
-  }
-
-  public class StopReceiver extends BroadcastReceiver {
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-      if (intent != null && Objects.equals(intent.getAction(), ACTION.STOP)) {
-        metronomeUtil.stop();
-        stopForeground();
-        Log.d(TAG, "onReceive: stopped foreground");
-      }
-    }
   }
 
   public class MetronomeBinder extends Binder {

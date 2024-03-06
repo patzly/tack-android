@@ -113,28 +113,4 @@ public final class Constants {
     public final static String START = "xyz.zedler.patrick.tack.intent.action.START";
     public final static String STOP = "xyz.zedler.patrick.tack.intent.action.STOP";
   }
-
-  public final static class EXTRA {
-
-    public static final String RUN_AS_SUPER_CLASS = "run_as_super_class";
-    public static final String INSTANCE_STATE = "instance_state";
-    public static final String SCROLL_POSITION = "scroll_position";
-    public static final String TEMPO = "tempo";
-  }
-
-  public static final class THEME {
-
-    public static final String DYNAMIC = "dynamic";
-    public static final String RED = "red";
-    public static final String YELLOW = "yellow";
-    public static final String GREEN = "green";
-    public static final String BLUE = "blue";
-  }
-
-  public static final class CONTRAST {
-
-    public static final String STANDARD = "standard";
-    public static final String MEDIUM = "medium";
-    public static final String HIGH = "high";
-  }
 }

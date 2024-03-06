@@ -18,7 +18,9 @@
 
 ## 4.0.2
 
+- New: Chinese translation
 - Improved: audio focus of app notifications no longer stops playback, lowers volume instead
+- Fixed: background notification was also shown when Tack was in foreground
 
 ## 4.0.1
 

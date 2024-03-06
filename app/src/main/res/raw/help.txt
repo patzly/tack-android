@@ -1,8 +1,9 @@
-#### Why is the metronome service notification displayed when Tack is not playing?
+#### Why is the metronome service notification displayed when I leave the app and Tack is not playing?
 
 The notification is necessary for the metronome service to stay alive when the app is in background.
 The service manages playback and keeps track of real-time data like timer or elapsed time to separate playback from the app interface.
 You can move the service to the background by tapping "Stop", but this no longer guarantees that it isn't killed by the system. This may result in resets of timer and elapsed time until the service is in foreground again.
+If you don't need the timer progress or elapsed time anymore, you can either tap on stop in the notification or close the app from recent apps for the notification to disappear.
 
 #### How can I change the tempo?
 
