@@ -93,7 +93,10 @@ public class MetronomeService extends Service {
 
   @Override
   public boolean onUnbind(Intent intent) {
-    startForeground();
+    boolean realTimeActive = metronomeUtil.isTimerActive() || metronomeUtil.isElapsedActive();
+    if (metronomeUtil.isPlaying() || realTimeActive) {
+      startForeground();
+    }
     return true;
   }
 
