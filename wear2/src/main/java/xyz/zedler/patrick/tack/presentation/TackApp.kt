@@ -25,6 +25,7 @@ import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import xyz.zedler.patrick.tack.presentation.navigation.Screen
+import xyz.zedler.patrick.tack.presentation.screen.BeatsScreen
 import xyz.zedler.patrick.tack.presentation.screen.GainScreen
 import xyz.zedler.patrick.tack.presentation.screen.LatencyScreen
 import xyz.zedler.patrick.tack.presentation.screen.MainScreen
@@ -53,6 +54,9 @@ fun TackApp(
         onTempoCardClick = {
           navController.navigate(Screen.Tempo.route)
         },
+        onBeatsButtonClick = {
+          navController.navigate(Screen.Beats.route)
+        },
         onPermissionRequestClick = onPermissionRequestClick
       )
     }
@@ -72,6 +76,9 @@ fun TackApp(
     }
     composable(route = Screen.Tempo.route) {
       TempoScreen(viewModel = viewModel)
+    }
+    composable(route = Screen.Beats.route) {
+      BeatsScreen(viewModel = viewModel)
     }
     composable(route = Screen.Gain.route) {
       GainScreen(viewModel = viewModel)

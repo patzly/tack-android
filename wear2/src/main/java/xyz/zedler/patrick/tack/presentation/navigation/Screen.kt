@@ -23,6 +23,7 @@ sealed class Screen(val route: String) {
   data object Main : Screen("main")
   data object Settings : Screen("settings")
   data object Tempo : Screen("tempo")
+  data object Beats : Screen("beats")
   data object Gain : Screen("gain")
   data object Sound : Screen("sound")
   data object Latency : Screen("latency")
