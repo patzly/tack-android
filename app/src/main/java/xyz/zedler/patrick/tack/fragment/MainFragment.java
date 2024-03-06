@@ -749,7 +749,7 @@ public class MainFragment extends BaseFragment
         performHapticClick();
         getMetronomeUtil().stop();
       } else {
-        if (getMetronomeUtil().getGain() > 0) {
+        if (getMetronomeUtil().getGain() > 0 && getMetronomeUtil().neverStartedWithGainBefore()) {
           dialogUtilGain.show();
         } else {
           getMetronomeUtil().start();

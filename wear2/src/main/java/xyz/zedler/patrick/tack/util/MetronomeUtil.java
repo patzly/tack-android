@@ -51,6 +51,7 @@ public class MetronomeUtil {
   private long tickIndex, latency;
   private boolean playing, tempPlaying, useSubdivisions, beatModeVibrate;
   private boolean alwaysVibrate, flashScreen, keepAwake;
+  private boolean neverStartedWithGain = true;
 
   public MetronomeUtil(@NonNull Context context, boolean fromService) {
     this.fromService = fromService;
@@ -180,6 +181,10 @@ public class MetronomeUtil {
         }
       }
     });
+
+    if (getGain() > 0) {
+      neverStartedWithGain = false;
+    }
 
     for (MetronomeListener listener : listeners) {
       listener.onMetronomeStart();
@@ -441,6 +446,10 @@ public class MetronomeUtil {
 
   public int getGain() {
     return audioUtil.getGain();
+  }
+
+  public boolean neverStartedWithGainBefore() {
+    return neverStartedWithGain;
   }
 
   public void setFlashScreen(boolean flash) {

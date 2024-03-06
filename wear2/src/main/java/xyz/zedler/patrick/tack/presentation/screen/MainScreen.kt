@@ -150,7 +150,8 @@ fun MainScreen(
         PlayButton(
           animTrigger = playAnimTrigger,
           onClick = {
-            if (isPlaying || gain == 0) {
+            val startedWithGain = viewModel.metronomeUtil?.neverStartedWithGainBefore() == false
+            if (isPlaying || (gain == 0 || startedWithGain)) {
               viewModel.togglePlaying()
               playAnimTrigger.value = !playAnimTrigger.value
             } else {

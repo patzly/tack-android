@@ -20,6 +20,7 @@
 
 - New: Chinese translation
 - Improved: audio focus of app notifications no longer stops playback, lowers volume instead
+- Improved: volume boost warning now only is shown before first start with gain
 - Fixed: background notification was also shown when Tack was in foreground
 
 ## 4.0.1
