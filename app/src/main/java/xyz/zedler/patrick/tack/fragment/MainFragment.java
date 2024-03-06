@@ -87,7 +87,7 @@ public class MainFragment extends BaseFragment
   private FragmentMainBinding binding;
   private MainActivity activity;
   private Bundle savedState;
-  private boolean flashScreen, keepAwake, reduceAnimations, isLandTablet;
+  private boolean flashScreen, reduceAnimations, isLandTablet;
   private LogoUtil logoUtil;
   private ValueAnimator fabAnimator;
   private float cornerSizeStop, cornerSizePlay, cornerSizeCurrent;
@@ -158,7 +158,6 @@ public class MainFragment extends BaseFragment
     });
 
     flashScreen = getSharedPrefs().getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
-    keepAwake = getSharedPrefs().getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
     reduceAnimations = getSharedPrefs().getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM);
 
     colorFlashNormal = ResUtil.getColor(activity, R.attr.colorPrimary);
@@ -509,7 +508,9 @@ public class MainFragment extends BaseFragment
     );
     updateFabCornerRadius(getMetronomeUtil().isPlaying(), false);
 
-    UiUtil.keepScreenAwake(activity, keepAwake && getMetronomeUtil().isPlaying());
+    UiUtil.keepScreenAwake(
+        activity, getMetronomeUtil().getKeepAwake() && getMetronomeUtil().isPlaying()
+    );
   }
 
   @Override
@@ -538,7 +539,7 @@ public class MainFragment extends BaseFragment
       }
     });
     // Inside UI thread appears to be often not effective
-    UiUtil.keepScreenAwake(activity, keepAwake);
+    UiUtil.keepScreenAwake(activity, getMetronomeUtil().getKeepAwake());
   }
 
   @Override

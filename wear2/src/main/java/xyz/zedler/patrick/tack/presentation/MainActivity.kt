@@ -35,6 +35,7 @@ import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.util.MetronomeUtil
 import xyz.zedler.patrick.tack.util.NotificationUtil
 import xyz.zedler.patrick.tack.util.TempoTapUtil
+import xyz.zedler.patrick.tack.util.keepScreenAwake
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 class MainActivity : ComponentActivity(), ServiceConnection {
@@ -61,14 +62,18 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     metronomeUtil = MetronomeUtil(this, false)
     metronomeUtil.addListener(object : MetronomeUtil.MetronomeListener {
       override fun onMetronomeStart() {
-        if (!NotificationUtil.hasPermission(this@MainActivity)) {
+        if (NotificationUtil.hasPermission(this@MainActivity)) {
+          keepScreenAwake(this@MainActivity, getMetronomeUtil().keepAwake)
+        } else {
           viewModel.onPlayingChange(false)
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
           }
         }
       }
-      override fun onMetronomeStop() {}
+      override fun onMetronomeStop() {
+        keepScreenAwake(this@MainActivity, false)
+      }
       override fun onMetronomeTick(tick: MetronomeUtil.Tick?) {}
     })
 

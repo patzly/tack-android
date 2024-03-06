@@ -133,6 +133,17 @@ fun SettingsScreen(
           )
         }
         item {
+          val keepAwake by viewModel.keepAwake.observeAsState(Constants.DEF.KEEP_AWAKE)
+          ToggleChip(
+            checked = keepAwake,
+            onCheckedChange = {
+              viewModel.changeKeepAwake(it)
+            },
+            label = stringResource(id = R.string.settings_keep_awake),
+            secondaryLabel = stringResource(id = R.string.settings_keep_awake_description)
+          )
+        }
+        item {
           ClickChip(
             label = stringResource(R.string.settings_rate),
             secondaryLabel = stringResource(R.string.settings_rate_description),

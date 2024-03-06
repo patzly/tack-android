@@ -19,6 +19,8 @@
 
 package xyz.zedler.patrick.tack.util
 
+import android.app.Activity
+import android.view.WindowManager
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
@@ -28,4 +30,13 @@ import androidx.compose.ui.unit.sp
 fun spToDp(spValue: Int): Dp {
   val density = LocalDensity.current
   return with(density) { spValue.sp.toDp() }
+}
+
+fun keepScreenAwake(activity: Activity, keepAwake: Boolean) {
+  val window = activity.window ?: return
+  if (keepAwake) {
+    window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+  } else {
+    window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+  }
 }

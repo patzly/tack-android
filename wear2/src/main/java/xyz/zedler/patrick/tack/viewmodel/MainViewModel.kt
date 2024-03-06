@@ -43,6 +43,7 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
     metronomeUtil?.ignoreFocus ?: DEF.IGNORE_FOCUS
   )
   private val _latency = MutableLiveData(metronomeUtil?.latency ?: DEF.LATENCY)
+  private val _keepAwake = MutableLiveData(metronomeUtil?.keepAwake ?: DEF.KEEP_AWAKE)
   private val _showPermissionDialog = MutableLiveData(false)
 
   val tempo: LiveData<Int> = _tempo
@@ -53,6 +54,7 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
   val sound: LiveData<String> = _sound
   val ignoreFocus: LiveData<Boolean> = _ignoreFocus
   val latency: LiveData<Long> = _latency
+  val keepAwake: LiveData<Boolean> = _keepAwake
   val showPermissionDialog: LiveData<Boolean> = _showPermissionDialog
 
   fun changeTempo(tempo: Int) {
@@ -113,6 +115,11 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
   fun changeLatency(latency: Long) {
     metronomeUtil?.latency = latency
     _latency.value = latency
+  }
+
+  fun changeKeepAwake(awake: Boolean) {
+    metronomeUtil?.keepAwake = awake
+    _keepAwake.value = awake;
   }
 
   fun changeShowPermissionDialog(show: Boolean) {

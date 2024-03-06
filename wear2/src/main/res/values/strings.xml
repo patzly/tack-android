@@ -94,7 +94,7 @@
   <string name="settings_always_vibrate_description">Even with sound</string>
 
   <string name="settings_keep_awake">Keep screen awake</string>
-  <string name="settings_keep_awake_description">While metronome is playing</string>
+  <string name="settings_keep_awake_description">While Tack is playing</string>
 
   <string name="settings_rate">Rate Tack on Google Play</string>
   <string name="settings_rate_description">Support development</string>
