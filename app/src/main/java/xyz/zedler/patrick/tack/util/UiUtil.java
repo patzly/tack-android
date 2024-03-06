@@ -215,7 +215,11 @@ public class UiUtil {
     if (window == null) {
       return;
     }
-    window.getDecorView().setKeepScreenOn(keepAwake);
+    if (keepAwake) {
+      window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    } else {
+      window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
   }
 
   // Unit conversions
