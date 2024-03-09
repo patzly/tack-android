@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -54,6 +55,7 @@ import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.components.BeatIconButton
 import xyz.zedler.patrick.tack.presentation.components.FadingEdgeRow
+import xyz.zedler.patrick.tack.presentation.components.TextIconButton
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
@@ -153,6 +155,31 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
                 }
               )
             }
+          }
+        }
+        item {
+          Row (
+            modifier = Modifier.padding(top = 8.dp)
+          ) {
+            TextIconButton(
+              label = "3",
+              onClick = {
+                viewModel.setSwing(3)
+              }
+            )
+            TextIconButton(
+              label = "5",
+              onClick = {
+                viewModel.setSwing(5)
+              },
+              modifier = Modifier.padding(horizontal = 8.dp)
+            )
+            TextIconButton(
+              label = "7",
+              onClick = {
+                viewModel.setSwing(7)
+              }
+            )
           }
         }
       }

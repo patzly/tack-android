@@ -172,4 +172,13 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
     metronomeUtil?.setSubdivision(subdivision, tickType)
     _subdivisions.value = metronomeUtil?.subdivisions?.toList()
   }
+
+  fun setSwing(swing: Int) {
+    when (swing) {
+      3 -> metronomeUtil?.setSwing3()
+      5 -> metronomeUtil?.setSwing5()
+      7 -> metronomeUtil?.setSwing7()
+    }
+    _subdivisions.value = metronomeUtil?.subdivisions?.toList()
+  }
 }

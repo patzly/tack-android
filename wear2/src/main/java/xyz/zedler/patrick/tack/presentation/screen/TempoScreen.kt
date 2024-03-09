@@ -23,7 +23,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,7 +45,6 @@ import androidx.wear.compose.material.Picker
 import androidx.wear.compose.material.PickerState
 import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.rememberPickerState
-import androidx.wear.compose.material3.FilledTonalIconButton
 import androidx.wear.compose.material3.IconButton
 import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
@@ -56,6 +54,7 @@ import androidx.wear.tooling.preview.devices.WearDevices
 import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.presentation.components.TextIconButton
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.util.spToDp
@@ -224,26 +223,6 @@ fun TapButton(
       description = stringResource(id = R.string.action_tempo_tap),
       color = IconButtonDefaults.iconButtonColors().contentColor,
       trigger = animTrigger
-    )
-  }
-}
-
-@Composable
-fun TextIconButton(
-  label: String,
-  onClick: () -> Unit,
-  modifier: Modifier
-) {
-  FilledTonalIconButton(
-    onClick = onClick,
-    modifier = modifier.touchTargetAwareSize(IconButtonDefaults.SmallButtonSize)
-  ) {
-    Text(
-      modifier = Modifier.wrapContentSize(Alignment.Center),
-      textAlign = TextAlign.Center,
-      color = IconButtonDefaults.filledTonalIconButtonColors().contentColor,
-      style = MaterialTheme.typography.titleLarge,
-      text = label
     )
   }
 }

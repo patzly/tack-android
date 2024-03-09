@@ -319,7 +319,10 @@ public class MetronomeUtil {
   }
 
   public void setSwing3() {
-    setSubdivisions(List.of(TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL));
+    List<String> subdivisions = new ArrayList<>(
+        List.of(TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL)
+    );
+    setSubdivisions(subdivisions);
   }
 
   public boolean isSwing3() {
@@ -332,9 +335,10 @@ public class MetronomeUtil {
   }
 
   public void setSwing5() {
-    setSubdivisions(List.of(
+    List<String> subdivisions = new ArrayList<>(List.of(
         TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL, TICK_TYPE.MUTED
     ));
+    setSubdivisions(subdivisions);
   }
 
   public boolean isSwing5() {
@@ -351,10 +355,11 @@ public class MetronomeUtil {
   }
 
   public void setSwing7() {
-    setSubdivisions(List.of(
+    List<String> subdivisions = new ArrayList<>(List.of(
         TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
         TICK_TYPE.NORMAL, TICK_TYPE.MUTED, TICK_TYPE.MUTED
     ));
+    setSubdivisions(subdivisions);
   }
 
   public boolean isSwing7() {
