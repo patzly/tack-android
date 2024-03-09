@@ -124,7 +124,7 @@ class MetronomeService : LifecycleService(), MetronomeListener {
     stopForeground()
   }
 
-  override fun onMetronomeTick(tick: MetronomeUtil.Tick?) {}
+  override fun onMetronomeTick(tick: MetronomeUtil.Tick) {}
 
   fun getMetronomeUtil(): MetronomeUtil {
     return metronomeUtil

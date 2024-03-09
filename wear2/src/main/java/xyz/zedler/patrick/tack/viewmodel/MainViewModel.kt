@@ -31,6 +31,12 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
   val mutableIsPlaying = MutableLiveData(metronomeUtil?.isPlaying ?: false)
   private val tempoTapUtil = TempoTapUtil()
   private val _tempo = MutableLiveData(metronomeUtil?.tempo ?: DEF.TEMPO)
+  private val _beats = MutableLiveData(
+    metronomeUtil?.beats ?: DEF.BEATS.split(",")
+  )
+  private val _subdivisions = MutableLiveData(
+    metronomeUtil?.subdivisions ?: DEF.SUBDIVISIONS.split(",")
+  )
   private val _beatModeVibrate = MutableLiveData(
     metronomeUtil?.isBeatModeVibrate ?: DEF.BEAT_MODE_VIBRATE
   )
@@ -48,6 +54,8 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
 
   val tempo: LiveData<Int> = _tempo
   val isPlaying: LiveData<Boolean> = mutableIsPlaying
+  val beats: LiveData<List<String>> = _beats
+  val subdivisions: LiveData<List<String>> = _subdivisions
   val beatModeVibrate: LiveData<Boolean> = _beatModeVibrate
   val alwaysVibrate: LiveData<Boolean> = _alwaysVibrate
   val gain: LiveData<Int> = _gain
@@ -75,7 +83,7 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
     metronomeUtil?.tempo = tempo
   }
 
-  fun onPlayingChange(playing: Boolean) {
+  fun changePlaying(playing: Boolean) {
     metronomeUtil?.isPlaying = playing
     mutableIsPlaying.value = playing
   }
@@ -124,5 +132,44 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
 
   fun changeShowPermissionDialog(show: Boolean) {
     _showPermissionDialog.value = show
+  }
+
+  fun addBeat() {
+    val success = metronomeUtil?.addBeat()
+    if (success == true) {
+      _beats.value = metronomeUtil?.beats?.toList()
+      // toList required for a new list instead of the old mutated, would not be handled as changed
+    }
+  }
+
+  fun removeBeat() {
+    val success = metronomeUtil?.removeBeat()
+    if (success == true) {
+      _beats.value = metronomeUtil?.beats?.toList()
+    }
+  }
+
+  fun changeBeat(beat: Int, tickType: String) {
+    metronomeUtil?.setBeat(beat, tickType)
+    _beats.value = metronomeUtil?.beats?.toList()
+  }
+
+  fun addSubdivision() {
+    val success = metronomeUtil?.addSubdivision()
+    if (success == true) {
+      _subdivisions.value = metronomeUtil?.subdivisions?.toList()
+    }
+  }
+
+  fun removeSubdivision() {
+    val success = metronomeUtil?.removeSubdivision()
+    if (success == true) {
+      _subdivisions.value = metronomeUtil?.subdivisions?.toList()
+    }
+  }
+
+  fun changeSubdivision(subdivision: Int, tickType: String) {
+    metronomeUtil?.setSubdivision(subdivision, tickType)
+    _subdivisions.value = metronomeUtil?.subdivisions?.toList()
   }
 }

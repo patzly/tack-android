@@ -26,9 +26,11 @@ import android.os.HandlerThread;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
@@ -46,7 +48,7 @@ public class MetronomeUtil {
   public final boolean fromService;
   private HandlerThread audioThread, callbackThread;
   private Handler tickHandler, latencyHandler;
-  private String[] beats, subdivisions;
+  private List<String> beats, subdivisions;
   private int tempo;
   private long tickIndex, latency;
   private boolean playing, tempPlaying, useSubdivisions, beatModeVibrate;
@@ -67,8 +69,10 @@ public class MetronomeUtil {
 
   public void setToPreferences() {
     tempo = sharedPrefs.getInt(PREF.TEMPO, DEF.TEMPO);
-    beats = sharedPrefs.getString(PREF.BEATS, DEF.BEATS).split(",");
-    subdivisions = sharedPrefs.getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(",");
+    beats = arrayAsList(sharedPrefs.getString(PREF.BEATS, DEF.BEATS).split(","));
+    subdivisions = arrayAsList(
+        sharedPrefs.getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(",")
+    );
     useSubdivisions = sharedPrefs.getBoolean(PREF.USE_SUBS, DEF.USE_SUBS);
     latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY);
     alwaysVibrate = sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
@@ -78,6 +82,10 @@ public class MetronomeUtil {
     setIgnoreFocus(sharedPrefs.getBoolean(PREF.IGNORE_FOCUS, DEF.IGNORE_FOCUS));
     setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
     setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
+  }
+
+  private static List<String> arrayAsList(String[] array) {
+    return new ArrayList<>(Arrays.asList(array));
   }
 
   private void resetHandlersIfRequired() {
@@ -121,8 +129,8 @@ public class MetronomeUtil {
 
   public void setUpLatencyCalibration() {
     tempo = 80;
-    beats = DEF.BEATS.split(",");
-    subdivisions = DEF.SUBDIVISIONS.split(",");
+    beats = arrayAsList(DEF.BEATS.split(","));
+    subdivisions = arrayAsList(DEF.SUBDIVISIONS.split(","));
     alwaysVibrate = true;
     setGain(0);
     setBeatModeVibrate(false);
@@ -221,81 +229,83 @@ public class MetronomeUtil {
     return playing;
   }
 
-  public void setBeats(String[] beats) {
+  public void setBeats(List<String> beats) {
     this.beats = beats;
     sharedPrefs.edit().putString(PREF.BEATS, String.join(",", beats)).apply();
   }
 
-  public String[] getBeats() {
+  public List<String> getBeats() {
     return beats;
   }
 
   public int getBeatsCount() {
-    return beats.length;
+    return beats.size();
   }
 
   public void setBeat(int beat, String tickType) {
-    String[] beats = getBeats();
-    beats[beat] = tickType;
+    List<String> beats = getBeats();
+    beats.set(beat, tickType);
     setBeats(beats);
   }
 
   public boolean addBeat() {
-    if (beats.length >= Constants.BEATS_MAX) {
+    if (beats.size() >= Constants.BEATS_MAX) {
       return false;
     }
-    String[] beats = Arrays.copyOf(this.beats, this.beats.length + 1);
-    beats[beats.length - 1] = TICK_TYPE.NORMAL;
+    List<String> beats = getBeats();
+    beats.add(TICK_TYPE.NORMAL);
     setBeats(beats);
     return true;
   }
 
   public boolean removeBeat() {
-    if (beats.length <= 1) {
+    if (beats.size() <= 1) {
       return false;
     }
-    setBeats(Arrays.copyOf(beats, beats.length - 1));
+    List<String> beats = getBeats();
+    beats.remove(beats.size() - 1);
+    setBeats(beats);
     return true;
   }
 
-  public void setSubdivisions(String[] subdivisions) {
+  public void setSubdivisions(List<String> subdivisions) {
     this.subdivisions = subdivisions;
     sharedPrefs.edit()
         .putString(PREF.SUBDIVISIONS, String.join(",", getSubdivisions()))
         .apply();
   }
 
-  public String[] getSubdivisions() {
-    return useSubdivisions ? subdivisions : DEF.SUBDIVISIONS.split(",");
+  public List<String> getSubdivisions() {
+    return useSubdivisions ? subdivisions : arrayAsList(DEF.SUBDIVISIONS.split(","));
   }
 
   public int getSubdivisionsCount() {
-    return useSubdivisions ? subdivisions.length : 1;
+    return useSubdivisions ? subdivisions.size() : 1;
   }
 
   public void setSubdivision(int subdivision, String tickType) {
-    String[] subdivisions = getSubdivisions();
-    subdivisions[subdivision] = tickType;
+    List<String> subdivisions = getSubdivisions();
+    subdivisions.set(subdivision, tickType);
     setSubdivisions(subdivisions);
   }
 
   public boolean addSubdivision() {
-    if (subdivisions.length >= Constants.SUBS_MAX) {
+    if (subdivisions.size() >= Constants.SUBS_MAX) {
       return false;
     }
-    String[] subdivisions = Arrays.copyOf(
-        this.subdivisions, this.subdivisions.length + 1
-    );
-    subdivisions[subdivisions.length - 1] = TICK_TYPE.SUB;
+    List<String> subdivisions = getSubdivisions();
+    subdivisions.add(TICK_TYPE.SUB);
     setSubdivisions(subdivisions);
     return true;
   }
 
   public boolean removeSubdivision() {
-    if (subdivisions.length <= 1) {
+    if (subdivisions.size() <= 1) {
       return false;
     }
-    setSubdivisions(Arrays.copyOf(subdivisions, subdivisions.length - 1));
+    List<String> subdivisions = getSubdivisions();
+    subdivisions.remove(subdivisions.size() - 1);
+    setSubdivisions(subdivisions);
     return true;
   }
 
@@ -309,8 +319,7 @@ public class MetronomeUtil {
   }
 
   public void setSwing3() {
-    setSubdivisions(String.join(
-        ",", TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL).split(","));
+    setSubdivisions(List.of(TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL));
   }
 
   public boolean isSwing3() {
@@ -323,10 +332,9 @@ public class MetronomeUtil {
   }
 
   public void setSwing5() {
-    setSubdivisions(String.join(
-        ",",
+    setSubdivisions(List.of(
         TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL, TICK_TYPE.MUTED
-    ).split(","));
+    ));
   }
 
   public boolean isSwing5() {
@@ -343,11 +351,10 @@ public class MetronomeUtil {
   }
 
   public void setSwing7() {
-    setSubdivisions(String.join(
-        ",",
+    setSubdivisions(List.of(
         TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
         TICK_TYPE.NORMAL, TICK_TYPE.MUTED, TICK_TYPE.MUTED
-    ).split(","));
+    ));
   }
 
   public boolean isSwing7() {
@@ -493,7 +500,7 @@ public class MetronomeUtil {
   }
 
   private int getCurrentBeat() {
-    return (int) ((tickIndex / getSubdivisionsCount()) % beats.length) + 1;
+    return (int) ((tickIndex / getSubdivisionsCount()) % beats.size()) + 1;
   }
 
   private int getCurrentSubdivision() {
@@ -503,16 +510,16 @@ public class MetronomeUtil {
   private String getCurrentTickType() {
     int subdivisionsCount = getSubdivisionsCount();
     if ((tickIndex % subdivisionsCount) == 0) {
-      return beats[(int) ((tickIndex / subdivisionsCount) % beats.length)];
+      return beats.get((int) ((tickIndex / subdivisionsCount) % beats.size()));
     } else {
-      return subdivisions[(int) (tickIndex % subdivisionsCount)];
+      return subdivisions.get((int) (tickIndex % subdivisionsCount));
     }
   }
 
   public interface MetronomeListener {
     void onMetronomeStart();
     void onMetronomeStop();
-    void onMetronomeTick(Tick tick);
+    void onMetronomeTick(@NonNull Tick tick);
   }
 
   public static class Tick {

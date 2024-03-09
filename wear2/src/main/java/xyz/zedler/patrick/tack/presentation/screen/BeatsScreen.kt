@@ -20,14 +20,17 @@
 package xyz.zedler.patrick.tack.presentation.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -49,6 +52,8 @@ import androidx.wear.compose.material3.touchTargetAwareSize
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.presentation.components.BeatIconButton
+import xyz.zedler.patrick.tack.presentation.components.FadingEdgeRow
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
@@ -65,7 +70,6 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
         )
       }
     ) {
-      val gain by viewModel.gain.observeAsState(Constants.DEF.GAIN)
       ScalingLazyColumn(
         state = scrollableState,
         modifier = Modifier
@@ -81,37 +85,32 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
           }
         }
         item {
-          Card(
-            onClick = {},
-            contentPadding = PaddingValues(0.dp),
-            modifier = Modifier.fillMaxWidth()
+          val beats by viewModel.beats.observeAsState(Constants.DEF.BEATS.split(","))
+          ControlCard(
+            labelAdd = stringResource(id = R.string.action_add_beat),
+            labelRemove = stringResource(id = R.string.action_remove_beat),
+            onClickAdd = {
+              viewModel.addBeat()
+            },
+            onClickRemove = {
+              viewModel.removeBeat()
+            },
+            addEnabled = beats.size < Constants.BEATS_MAX,
+            removeEnabled = beats.size > 1
           ) {
-            Row {
-              IconButton(
-                onClick = {},
-                modifier = Modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
-              ) {
-                Icon(
-                  painter = painterResource(id = R.drawable.ic_round_remove),
-                  contentDescription = stringResource(id = R.string.action_remove_beat),
-                  tint = IconButtonDefaults.filledTonalIconButtonColors().contentColor
-                )
-              }
-              Row(
-                modifier = Modifier.fillMaxHeight().weight(1f)
-              ) {
-
-              }
-              IconButton(
-                onClick = {},
-                modifier = Modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
-              ) {
-                Icon(
-                  painter = painterResource(id = R.drawable.ic_round_add),
-                  contentDescription = stringResource(id = R.string.action_add_beat),
-                  tint = IconButtonDefaults.filledTonalIconButtonColors().contentColor
-                )
-              }
+            beats.forEachIndexed { index, beat ->
+              BeatIconButton(
+                tickType = beat,
+                index = index,
+                onClick = {
+                  val next = when (beat) {
+                    Constants.TICK_TYPE.NORMAL -> Constants.TICK_TYPE.STRONG
+                    Constants.TICK_TYPE.STRONG -> Constants.TICK_TYPE.MUTED
+                    else -> Constants.TICK_TYPE.NORMAL
+                  }
+                  viewModel.changeBeat(index, next)
+                }
+              )
             }
           }
         }
@@ -124,40 +123,100 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
           }
         }
         item {
-          Card(
-            onClick = {},
-            contentPadding = PaddingValues(0.dp),
-            modifier = Modifier.fillMaxWidth()
+          val subdivisions by viewModel.subdivisions.observeAsState(
+            Constants.DEF.SUBDIVISIONS.split(",")
+          )
+          ControlCard(
+            labelAdd = stringResource(id = R.string.action_add_sub),
+            labelRemove = stringResource(id = R.string.action_remove_sub),
+            onClickAdd = {
+              viewModel.addSubdivision()
+            },
+            onClickRemove = {
+              viewModel.removeSubdivision()
+            },
+            addEnabled = subdivisions.size < Constants.SUBS_MAX,
+            removeEnabled = subdivisions.size > 1
           ) {
-            Row {
-              IconButton(
-                onClick = {},
-                modifier = Modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
-              ) {
-                Icon(
-                  painter = painterResource(id = R.drawable.ic_round_remove),
-                  contentDescription = stringResource(id = R.string.action_remove_beat),
-                  tint = IconButtonDefaults.filledTonalIconButtonColors().contentColor
-                )
-              }
-              Row(
-                modifier = Modifier.fillMaxHeight().weight(1f)
-              ) {
-
-              }
-              IconButton(
-                onClick = {},
-                modifier = Modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
-              ) {
-                Icon(
-                  painter = painterResource(id = R.drawable.ic_round_add),
-                  contentDescription = stringResource(id = R.string.action_add_beat),
-                  tint = IconButtonDefaults.filledTonalIconButtonColors().contentColor
-                )
-              }
+            subdivisions.forEachIndexed { index, subdivision ->
+              BeatIconButton(
+                tickType = subdivision,
+                index = index,
+                enabled = index != 0,
+                onClick = {
+                  val next = when (subdivision) {
+                    Constants.TICK_TYPE.NORMAL -> Constants.TICK_TYPE.MUTED
+                    Constants.TICK_TYPE.SUB -> Constants.TICK_TYPE.NORMAL
+                    else -> Constants.TICK_TYPE.SUB
+                  }
+                  viewModel.changeSubdivision(index, next)
+                }
+              )
             }
           }
         }
+      }
+    }
+  }
+}
+
+@Composable
+fun ControlCard(
+  labelAdd: String,
+  labelRemove: String,
+  onClickAdd: () -> Unit,
+  onClickRemove: () -> Unit,
+  addEnabled: Boolean,
+  removeEnabled: Boolean,
+  content: @Composable RowScope.() -> Unit
+) {
+  Card(
+    onClick = {},
+    enabled = false,
+    contentPadding = PaddingValues(0.dp),
+    modifier = Modifier.fillMaxWidth()
+  ) {
+    Row {
+      IconButton(
+        enabled = removeEnabled,
+        onClick = onClickRemove,
+        modifier = Modifier.touchTargetAwareSize(IconButtonDefaults.SmallButtonSize)
+      ) {
+        val tint = if (removeEnabled) {
+          IconButtonDefaults.filledTonalIconButtonColors().contentColor
+        } else {
+          IconButtonDefaults.filledTonalIconButtonColors().disabledContentColor
+        }
+        Icon(
+          painter = painterResource(id = R.drawable.ic_round_remove),
+          contentDescription = labelRemove,
+          tint = tint
+        )
+      }
+      FadingEdgeRow(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier
+          .fillMaxHeight()
+          .weight(1f)
+      ) {
+        content()
+      }
+      IconButton(
+        enabled = addEnabled,
+        onClick = onClickAdd,
+        modifier = Modifier.touchTargetAwareSize(IconButtonDefaults.SmallButtonSize)
+      ) {
+        val tint = if (addEnabled) {
+          IconButtonDefaults.filledTonalIconButtonColors().contentColor
+        } else {
+          IconButtonDefaults.filledTonalIconButtonColors().disabledContentColor
+        }
+        Icon(
+          painter = painterResource(id = R.drawable.ic_round_add),
+          contentDescription = labelAdd,
+          tint = tint
+        )
       }
     }
   }

@@ -65,7 +65,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
         if (NotificationUtil.hasPermission(this@MainActivity)) {
           keepScreenAwake(this@MainActivity, getMetronomeUtil().keepAwake)
         } else {
-          viewModel.onPlayingChange(false)
+          viewModel.changePlaying(false)
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
           }
@@ -74,7 +74,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
       override fun onMetronomeStop() {
         keepScreenAwake(this@MainActivity, false)
       }
-      override fun onMetronomeTick(tick: MetronomeUtil.Tick?) {}
+      override fun onMetronomeTick(tick: MetronomeUtil.Tick) {}
     })
 
     requestPermissionLauncher =
