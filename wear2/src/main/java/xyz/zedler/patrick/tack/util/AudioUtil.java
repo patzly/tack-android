@@ -59,7 +59,7 @@ public class AudioUtil implements OnAudioFocusChangeListener {
   private final AudioListener listener;
   private AudioTrack track;
   private LoudnessEnhancer loudnessEnhancer;
-  private float[] tickStrong, tickNormal, tickSub;
+  private float[] tickNormal, tickStrong, tickSub;
   private int gain;
   private boolean playing, muted, ignoreFocus;
   private final float[] silence = new float[SILENCE_CHUNK_SIZE];
@@ -120,15 +120,27 @@ public class AudioUtil implements OnAudioFocusChangeListener {
   }
 
   public void setSound(String sound) {
-    int resId;
-    if (sound.equals(SOUND.WOOD)) {
-      resId = R.raw.wood;
+    int resIdNormal, resIdStrong, resIdSub;
+    Pitch pitchNormal = Pitch.NORMAL;
+    Pitch pitchStrong = Pitch.HIGH;
+    Pitch pitchSub = Pitch.LOW;
+    if (sound.equals(SOUND.MECHANICAL)) {
+      resIdNormal = R.raw.mechanical;
+      resIdStrong = R.raw.ding;
+      resIdSub = R.raw.mechanical;
+      pitchStrong = Pitch.NORMAL;
+    } else if (sound.equals(SOUND.WOOD)) {
+      resIdNormal = R.raw.wood;
+      resIdStrong = R.raw.wood;
+      resIdSub = R.raw.wood;
     } else {
-      resId = R.raw.sine;
+      resIdNormal = R.raw.sine;
+      resIdStrong = R.raw.sine;
+      resIdSub = R.raw.sine;
     }
-    tickNormal = loadAudio(resId, Pitch.NORMAL);
-    tickStrong = loadAudio(resId, Pitch.HIGH);
-    tickSub = loadAudio(resId, Pitch.LOW);
+    tickNormal = loadAudio(resIdNormal, pitchNormal);
+    tickStrong = loadAudio(resIdStrong, pitchStrong);
+    tickSub = loadAudio(resIdSub, pitchSub);
   }
 
   public void setGain(int gain) {

@@ -167,7 +167,7 @@ public class MetronomeUtil {
     playing = true;
     audioUtil.play();
     tickIndex = 0;
-    tickHandler.post(new Runnable() {
+    tickHandler.postDelayed(new Runnable() {
       @Override
       public void run() {
         if (isPlaying()) {
@@ -180,7 +180,7 @@ public class MetronomeUtil {
           tickIndex++;
         }
       }
-    });
+    }, 100); // Fix distorted first sound caused by AudioTrack setup
 
     if (getGain() > 0) {
       neverStartedWithGain = false;

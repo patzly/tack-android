@@ -90,6 +90,7 @@ public final class Constants {
 
     public final static String WOOD = "wood";
     public final static String SINE = "sine";
+    public final static String MECHANICAL = "mechanical";
   }
 
   public final static class TICK_TYPE {

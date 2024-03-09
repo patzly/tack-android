@@ -85,7 +85,9 @@ fun SettingsScreen(
         item {
           val sound by viewModel.sound.observeAsState(Constants.DEF.SOUND)
           var name = stringResource(id = R.string.settings_sound_sine)
-          if (sound == SOUND.WOOD) {
+          if (sound == SOUND.MECHANICAL) {
+            name = stringResource(id = R.string.settings_sound_mechanical)
+          } else if (sound == SOUND.WOOD) {
             name = stringResource(id = R.string.settings_sound_wood)
           }
           ClickChip(
