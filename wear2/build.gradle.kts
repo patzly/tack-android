@@ -81,6 +81,7 @@ dependencies {
   implementation(libs.constraintlayout.compose)
   implementation(libs.activity.compose)
   implementation(libs.core.splashscreen)
+  implementation(libs.horologist)
   debugImplementation(libs.ui.tooling.preview)
   debugImplementation(libs.ui.test.manifest)
   debugImplementation(libs.ui.tooling)
