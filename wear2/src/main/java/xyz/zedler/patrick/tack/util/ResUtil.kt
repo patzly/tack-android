@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.wear.compose.material.Icon
 
-@OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
 fun AnimatedVectorDrawable(
   @DrawableRes resId: Int,
@@ -39,17 +38,35 @@ fun AnimatedVectorDrawable(
   trigger: MutableState<Boolean>,
   modifier: Modifier = Modifier
 ) {
+  AnimatedVectorDrawable(
+    resId = resId,
+    description = description,
+    color = color,
+    trigger = trigger.value,
+    modifier = modifier
+  )
+}
+
+@OptIn(ExperimentalAnimationGraphicsApi::class)
+@Composable
+fun AnimatedVectorDrawable(
+  @DrawableRes resId: Int,
+  description: String,
+  color: Color,
+  trigger: Boolean,
+  modifier: Modifier = Modifier
+) {
   val image = AnimatedImageVector.animatedVectorResource(resId)
   val painterForward = rememberAnimatedVectorPainter(
     animatedImageVector = image,
-    atEnd = trigger.value
+    atEnd = trigger
   )
   val painterBackward = rememberAnimatedVectorPainter(
     animatedImageVector = image,
-    atEnd = !trigger.value
+    atEnd = !trigger
   )
   Icon(
-    painter = if (trigger.value) painterForward else painterBackward,
+    painter = if (trigger) painterForward else painterBackward,
     contentDescription = description,
     tint = color,
     modifier = modifier

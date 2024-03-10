@@ -175,7 +175,7 @@ public class MetronomeUtil {
     playing = true;
     audioUtil.play();
     tickIndex = 0;
-    tickHandler.postDelayed(new Runnable() {
+    tickHandler.post(new Runnable() {
       @Override
       public void run() {
         if (isPlaying()) {
@@ -188,7 +188,7 @@ public class MetronomeUtil {
           tickIndex++;
         }
       }
-    }, 100); // Fix distorted first sound caused by AudioTrack setup
+    });
 
     if (getGain() > 0) {
       neverStartedWithGain = false;
@@ -484,6 +484,11 @@ public class MetronomeUtil {
 
   private void performTick(Tick tick) {
     latencyHandler.postDelayed(() -> {
+      for (MetronomeListener listener : listeners) {
+        listener.onMetronomePreTick(tick);
+      }
+    }, Math.max(0, latency - Constants.BEAT_ANIM_OFFSET));
+    latencyHandler.postDelayed(() -> {
       if (beatModeVibrate || alwaysVibrate) {
         switch (tick.type) {
           case TICK_TYPE.STRONG:
@@ -524,6 +529,7 @@ public class MetronomeUtil {
   public interface MetronomeListener {
     void onMetronomeStart();
     void onMetronomeStop();
+    void onMetronomePreTick(@NonNull Tick tick);
     void onMetronomeTick(@NonNull Tick tick);
   }
 

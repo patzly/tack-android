@@ -21,8 +21,6 @@ package xyz.zedler.patrick.tack.presentation.components
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -38,7 +36,8 @@ fun BeatIconButton(
   tickType: String,
   index: Int,
   enabled: Boolean = true,
-  onClick: () -> Unit
+  onClick: () -> Unit,
+  animTrigger: Boolean
 ) {
   val shapes = listOf(
     R.drawable.ic_beat_star_anim,
@@ -48,13 +47,9 @@ fun BeatIconButton(
     R.drawable.ic_beat_pentagon_anim,
   )
   val imageResource = shapes[index % shapes.size]
-  val animTrigger = remember { mutableStateOf(false) }
   IconButton(
     enabled = enabled,
-    onClick = {
-      onClick()
-      animTrigger.value = !animTrigger.value
-    },
+    onClick = onClick,
     modifier = Modifier.size(IconButtonDefaults.ExtraSmallButtonSize)
   ) {
     val color = when (tickType) {

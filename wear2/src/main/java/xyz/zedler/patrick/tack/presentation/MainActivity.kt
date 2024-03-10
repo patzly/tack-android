@@ -74,6 +74,12 @@ class MainActivity : ComponentActivity(), ServiceConnection {
       override fun onMetronomeStop() {
         keepScreenAwake(this@MainActivity, false)
       }
+
+      override fun onMetronomePreTick(tick: MetronomeUtil.Tick) {
+        runOnUiThread {
+          viewModel.onTick(tick)
+        }
+      }
       override fun onMetronomeTick(tick: MetronomeUtil.Tick) {}
     })
 

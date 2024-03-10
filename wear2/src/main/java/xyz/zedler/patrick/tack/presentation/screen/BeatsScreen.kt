@@ -111,9 +111,16 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
             removeEnabled = beats.size > 1
           ) {
             beats.forEachIndexed { index, beat ->
+              val triggerIndex = if (index < viewModel.beatTriggers.size) {
+                index
+              } else {
+                viewModel.beatTriggers.size - 1
+              }
+              val trigger by viewModel.beatTriggers[triggerIndex].observeAsState(false)
               BeatIconButton(
                 tickType = beat,
                 index = index,
+                animTrigger = trigger,
                 onClick = {
                   val next = when (beat) {
                     Constants.TICK_TYPE.NORMAL -> Constants.TICK_TYPE.STRONG
@@ -151,10 +158,17 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
             removeEnabled = subdivisions.size > 1
           ) {
             subdivisions.forEachIndexed { index, subdivision ->
+              val triggerIndex = if (index < viewModel.subdivisionTriggers.size) {
+                index
+              } else {
+                viewModel.subdivisionTriggers.size - 1
+              }
+              val trigger by viewModel.subdivisionTriggers[triggerIndex].observeAsState(false)
               BeatIconButton(
                 tickType = subdivision,
                 index = index,
                 enabled = index != 0,
+                animTrigger = trigger,
                 onClick = {
                   val next = when (subdivision) {
                     Constants.TICK_TYPE.NORMAL -> Constants.TICK_TYPE.MUTED

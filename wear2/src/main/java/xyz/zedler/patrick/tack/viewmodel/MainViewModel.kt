@@ -24,6 +24,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import xyz.zedler.patrick.tack.Constants.DEF
 import xyz.zedler.patrick.tack.util.MetronomeUtil
+import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick
 import xyz.zedler.patrick.tack.util.TempoTapUtil
 
 class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
@@ -34,9 +35,17 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
   private val _beats = MutableLiveData(
     metronomeUtil?.beats ?: DEF.BEATS.split(",")
   )
+  private val _beatTriggers: MutableList<MutableLiveData<Boolean>> =
+    MutableList((metronomeUtil?.beats ?: DEF.BEATS.split(",")).size) {
+      MutableLiveData(false)
+    }
   private val _subdivisions = MutableLiveData(
     metronomeUtil?.subdivisions ?: DEF.SUBDIVISIONS.split(",")
   )
+  private val _subdivisionTriggers: MutableList<MutableLiveData<Boolean>> =
+    MutableList((metronomeUtil?.subdivisions ?: DEF.SUBDIVISIONS.split(",")).size) {
+      MutableLiveData(false)
+    }
   private val _beatModeVibrate = MutableLiveData(
     metronomeUtil?.isBeatModeVibrate ?: DEF.BEAT_MODE_VIBRATE
   )
@@ -55,7 +64,9 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
   val tempo: LiveData<Int> = _tempo
   val isPlaying: LiveData<Boolean> = mutableIsPlaying
   val beats: LiveData<List<String>> = _beats
+  val beatTriggers: List<LiveData<Boolean>> = _beatTriggers
   val subdivisions: LiveData<List<String>> = _subdivisions
+  val subdivisionTriggers: List<LiveData<Boolean>> = _subdivisionTriggers
   val beatModeVibrate: LiveData<Boolean> = _beatModeVibrate
   val alwaysVibrate: LiveData<Boolean> = _alwaysVibrate
   val gain: LiveData<Int> = _gain
@@ -81,6 +92,27 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
 
   fun onTempoChange(tempo: Int) {
     metronomeUtil?.tempo = tempo
+  }
+
+  fun onTick(tick: Tick) {
+    if (tick.subdivision == 1) {
+      onBeat(tick.beat - 1)
+    }
+    onSubdivision(tick.subdivision - 1)
+  }
+
+  private fun onBeat(index: Int) {
+    if (index < _beatTriggers.size) {
+      val current = _beatTriggers[index].value ?: false
+      _beatTriggers[index].value = !current
+    }
+  }
+
+  private fun onSubdivision(index: Int) {
+    if (index < _subdivisionTriggers.size) {
+      val current = _subdivisionTriggers[index].value ?: false
+      _subdivisionTriggers[index].value = !current
+    }
   }
 
   fun changePlaying(playing: Boolean) {
@@ -137,40 +169,70 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
   fun addBeat() {
     val success = metronomeUtil?.addBeat()
     if (success == true) {
-      _beats.value = metronomeUtil?.beats?.toList()
+      val updated = metronomeUtil?.beats?.toList()
       // toList required for a new list instead of the old mutated, would not be handled as changed
+      updateBeatTriggers(updated?.size ?: DEF.BEATS.split(",").size)
+      _beats.value = updated
     }
   }
 
   fun removeBeat() {
     val success = metronomeUtil?.removeBeat()
     if (success == true) {
-      _beats.value = metronomeUtil?.beats?.toList()
+      val updated = metronomeUtil?.beats?.toList()
+      updateBeatTriggers(updated?.size ?: DEF.BEATS.split(",").size)
+      _beats.value = updated
     }
   }
 
   fun changeBeat(beat: Int, tickType: String) {
     metronomeUtil?.setBeat(beat, tickType)
-    _beats.value = metronomeUtil?.beats?.toList()
+    val updated = metronomeUtil?.beats?.toList()
+    updateBeatTriggers(updated?.size ?: DEF.BEATS.split(",").size)
+    _beats.value = updated
+  }
+
+  private fun updateBeatTriggers(count: Int) {
+    while (_beatTriggers.size < count) {
+      _beatTriggers.add(MutableLiveData(false))
+    }
+    while (_beatTriggers.size > count) {
+      _beatTriggers.removeLast()
+    }
   }
 
   fun addSubdivision() {
     val success = metronomeUtil?.addSubdivision()
     if (success == true) {
-      _subdivisions.value = metronomeUtil?.subdivisions?.toList()
+      val updated = metronomeUtil?.subdivisions?.toList()
+      updateSubdivisionTriggers(updated?.size ?: DEF.SUBDIVISIONS.split(",").size)
+      _subdivisions.value = updated
     }
   }
 
   fun removeSubdivision() {
     val success = metronomeUtil?.removeSubdivision()
     if (success == true) {
-      _subdivisions.value = metronomeUtil?.subdivisions?.toList()
+      val updated = metronomeUtil?.subdivisions?.toList()
+      updateSubdivisionTriggers(updated?.size ?: DEF.SUBDIVISIONS.split(",").size)
+      _subdivisions.value = updated
     }
   }
 
   fun changeSubdivision(subdivision: Int, tickType: String) {
     metronomeUtil?.setSubdivision(subdivision, tickType)
-    _subdivisions.value = metronomeUtil?.subdivisions?.toList()
+    val updated = metronomeUtil?.subdivisions?.toList()
+    updateSubdivisionTriggers(updated?.size ?: DEF.SUBDIVISIONS.split(",").size)
+    _subdivisions.value = updated
+  }
+
+  private fun updateSubdivisionTriggers(count: Int) {
+    while (_subdivisionTriggers.size < count) {
+      _subdivisionTriggers.add(MutableLiveData(false))
+    }
+    while (_subdivisionTriggers.size > count) {
+      _subdivisionTriggers.removeLast()
+    }
   }
 
   fun setSwing(swing: Int) {
