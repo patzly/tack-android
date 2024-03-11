@@ -241,6 +241,8 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
       5 -> metronomeUtil?.setSwing5()
       7 -> metronomeUtil?.setSwing7()
     }
-    _subdivisions.value = metronomeUtil?.subdivisions?.toList()
+    val updated = metronomeUtil?.subdivisions?.toList()
+    updateSubdivisionTriggers(updated?.size ?: DEF.SUBDIVISIONS.split(",").size)
+    _subdivisions.value = updated
   }
 }

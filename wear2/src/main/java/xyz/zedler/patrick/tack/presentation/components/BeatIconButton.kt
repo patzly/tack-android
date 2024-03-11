@@ -19,8 +19,16 @@
 
 package xyz.zedler.patrick.tack.presentation.components
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -46,24 +54,48 @@ fun BeatIconButton(
     R.drawable.ic_beat_clover_anim,
     R.drawable.ic_beat_pentagon_anim,
   )
-  val imageResource = shapes[index % shapes.size]
+  val sizeDefault = if (tickType != TICK_TYPE.MUTED) 24 else 12
+  val sizeBeat = if (tickType != TICK_TYPE.MUTED) 32 else 24
+  val animatedSize = remember { Animatable(sizeDefault.toFloat()) }
+
+  val isFirstExecution = remember { mutableStateOf(true) }
+  LaunchedEffect(animTrigger, tickType) {
+    if (!isFirstExecution.value) {
+      animatedSize.animateTo(
+        targetValue = sizeBeat.toFloat(),
+        animationSpec = tween(durationMillis = 25)
+      )
+      animatedSize.animateTo(
+        targetValue = sizeDefault.toFloat(),
+        animationSpec = tween(durationMillis = 375)
+      )
+    } else {
+      isFirstExecution.value = false
+    }
+  }
+
   IconButton(
     enabled = enabled,
     onClick = onClick,
     modifier = Modifier.size(IconButtonDefaults.ExtraSmallButtonSize)
   ) {
-    val color = when (tickType) {
+    val targetColor = when (tickType) {
       TICK_TYPE.STRONG -> MaterialTheme.colorScheme.error
       TICK_TYPE.SUB -> MaterialTheme.colorScheme.onSurfaceVariant
       TICK_TYPE.MUTED -> MaterialTheme.colorScheme.outline
       else -> MaterialTheme.colorScheme.primary
     }
+    val color by animateColorAsState(
+      targetValue = targetColor,
+      label = "colorAnimation",
+      animationSpec = TweenSpec(durationMillis = 400)
+    )
     AnimatedVectorDrawable(
-      resId = imageResource,
+      resId = shapes[index % shapes.size],
       description = stringResource(id = R.string.action_tempo_tap),
       color = color,
-      trigger = animTrigger,
-      modifier = Modifier.size(if (tickType == TICK_TYPE.MUTED) 12.dp else 24.dp)
+      trigger = if (tickType != TICK_TYPE.MUTED) animTrigger else false,
+      modifier = Modifier.size(animatedSize.value.dp)
     )
   }
 }
