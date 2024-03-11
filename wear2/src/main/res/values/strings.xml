@@ -23,7 +23,6 @@
 
   <string name="wear_app_name" translatable="false">Tack</string>
   <string name="wear_app_developer" translatable="false">Patrick Zedler</string>
-  <string name="wear_app_vending_app" translatable="false">https://play.google.com/store/apps/details?id=xyz.zedler.patrick.tack</string>
 
   <!-- TITLES -->
 

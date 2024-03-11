@@ -37,7 +37,8 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 @Composable
 fun TackApp(
   viewModel: MainViewModel,
-  onPermissionRequestClick: () -> Unit
+  onPermissionRequestClick: () -> Unit,
+  onRateClick: () -> Unit
 ) {
   val navController = rememberSwipeDismissableNavController()
   SwipeDismissableNavHost(
@@ -71,7 +72,8 @@ fun TackApp(
         },
         onLatencyClick = {
           navController.navigate(Screen.Latency.route)
-        }
+        },
+        onRateClick = onRateClick
       )
     }
     composable(route = Screen.Tempo.route) {

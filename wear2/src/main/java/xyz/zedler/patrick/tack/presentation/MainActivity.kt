@@ -19,9 +19,11 @@
 
 package xyz.zedler.patrick.tack.presentation
 
+import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -99,6 +101,28 @@ class MainActivity : ComponentActivity(), ServiceConnection {
         onPermissionRequestClick = {
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+          }
+        },
+        onRateClick = {
+          val packageName = applicationContext.packageName
+          val goToMarket = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse("market://details?id=$packageName")
+          )
+          goToMarket.addFlags(
+            Intent.FLAG_ACTIVITY_NO_HISTORY or
+                Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
+                Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+          )
+          try {
+            startActivity(goToMarket)
+          } catch (e: ActivityNotFoundException) {
+            startActivity(
+              Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("http://play.google.com/store/apps/details?id=$packageName")
+              )
+            )
           }
         }
       )

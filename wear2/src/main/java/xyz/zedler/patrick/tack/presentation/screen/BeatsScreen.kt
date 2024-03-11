@@ -19,6 +19,8 @@
 
 package xyz.zedler.patrick.tack.presentation.screen
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -233,11 +235,16 @@ fun ControlCard(
         onClick = onClickRemove,
         modifier = Modifier.touchTargetAwareSize(IconButtonDefaults.SmallButtonSize)
       ) {
-        val tint = if (removeEnabled) {
+        val targetTint = if (removeEnabled) {
           IconButtonDefaults.filledTonalIconButtonColors().contentColor
         } else {
           IconButtonDefaults.filledTonalIconButtonColors().disabledContentColor
         }
+        val tint by animateColorAsState(
+          targetValue = targetTint,
+          label = "remove",
+          animationSpec = TweenSpec(durationMillis = 200)
+        )
         Icon(
           painter = painterResource(id = R.drawable.ic_round_remove),
           contentDescription = labelRemove,
@@ -258,11 +265,16 @@ fun ControlCard(
         onClick = onClickAdd,
         modifier = Modifier.touchTargetAwareSize(IconButtonDefaults.SmallButtonSize)
       ) {
-        val tint = if (addEnabled) {
+        val targetTint = if (addEnabled) {
           IconButtonDefaults.filledTonalIconButtonColors().contentColor
         } else {
           IconButtonDefaults.filledTonalIconButtonColors().disabledContentColor
         }
+        val tint by animateColorAsState(
+          targetValue = targetTint,
+          label = "add",
+          animationSpec = TweenSpec(durationMillis = 200)
+        )
         Icon(
           painter = painterResource(id = R.drawable.ic_round_add),
           contentDescription = labelAdd,

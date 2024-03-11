@@ -19,6 +19,8 @@
 
 package xyz.zedler.patrick.tack.presentation.screen
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -132,17 +134,37 @@ fun GainSlider(
     valueProgression = IntProgression.fromClosedRange(0, 20, 5),
     segmented = true,
     decreaseIcon = {
+      val targetTint = if (gain > 0) {
+        InlineSliderDefaults.colors().buttonIconColor
+      } else {
+        InlineSliderDefaults.colors().disabledButtonIconColor
+      }
+      val tint by animateColorAsState(
+        targetValue = targetTint,
+        label = "decreaseGain",
+        animationSpec = TweenSpec(durationMillis = 200)
+      )
       Icon(
         painter = painterResource(id = R.drawable.ic_round_volume_down),
         contentDescription = stringResource(id = R.string.action_decrease),
-        tint = InlineSliderDefaults.colors().buttonIconColor
+        tint = tint
       )
     },
     increaseIcon = {
+      val targetTint = if (gain < 20) {
+        InlineSliderDefaults.colors().buttonIconColor
+      } else {
+        InlineSliderDefaults.colors().disabledButtonIconColor
+      }
+      val tint by animateColorAsState(
+        targetValue = targetTint,
+        label = "increaseGain",
+        animationSpec = TweenSpec(durationMillis = 200)
+      )
       Icon(
         painter = painterResource(id = R.drawable.ic_round_volume_up),
         contentDescription = stringResource(id = R.string.action_increase),
-        tint = InlineSliderDefaults.colors().buttonIconColor
+        tint = tint
       )
     }
   )

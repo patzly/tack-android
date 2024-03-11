@@ -19,6 +19,8 @@
 
 package xyz.zedler.patrick.tack.presentation.screen
 
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -39,6 +41,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -125,14 +128,22 @@ fun MainScreen(
         val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.DEF.ALWAYS_VIBRATE)
         val gain by viewModel.gain.observeAsState(Constants.DEF.GAIN)
 
+        val iconAlpha by animateFloatAsState(
+          targetValue = if (isPlaying) 0.6f else 1f,
+          label = "iconAlpha",
+          animationSpec = TweenSpec(durationMillis = 300)
+        )
+
         SettingsButton(
           onClick = onSettingsButtonClick,
-          modifier = Modifier.constrainAs(settingsButton) {
-            top.linkTo(parent.top, margin = 16.dp)
-            bottom.linkTo(tempoCard.top)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-          }
+          modifier = Modifier
+            .graphicsLayer(alpha = iconAlpha)
+            .constrainAs(settingsButton) {
+              top.linkTo(parent.top, margin = 16.dp)
+              bottom.linkTo(tempoCard.top)
+              start.linkTo(parent.start)
+              end.linkTo(parent.end)
+            }
         )
         TempoCard(
           state = pickerState,
@@ -167,32 +178,38 @@ fun MainScreen(
         )
         BeatsButton(
           onClick = onBeatsButtonClick,
-          modifier = Modifier.constrainAs(beatsButton) {
-            top.linkTo(parent.top, margin = 40.dp)
-            bottom.linkTo(tempoTapButton.top)
-            start.linkTo(parent.start)
-            end.linkTo(playButton.start)
-          }
+          modifier = Modifier
+            .graphicsLayer(alpha = iconAlpha)
+            .constrainAs(beatsButton) {
+              top.linkTo(parent.top, margin = 40.dp)
+              bottom.linkTo(tempoTapButton.top)
+              start.linkTo(parent.start)
+              end.linkTo(playButton.start)
+            }
         )
         TempoTapButton(
           onClick = {
             viewModel.onTempoTap()
           },
-          modifier = Modifier.constrainAs(tempoTapButton) {
-            top.linkTo(beatsButton.bottom)
-            bottom.linkTo(parent.bottom, margin = 40.dp)
-            start.linkTo(parent.start)
-            end.linkTo(playButton.start)
-          }
+          modifier = Modifier
+            .graphicsLayer(alpha = iconAlpha)
+            .constrainAs(tempoTapButton) {
+              top.linkTo(beatsButton.bottom)
+              bottom.linkTo(parent.bottom, margin = 40.dp)
+              start.linkTo(parent.start)
+              end.linkTo(playButton.start)
+            }
         )
         BookmarkButton(
           onClick = onBookmarkButtonClick,
-          modifier = Modifier.constrainAs(bookmarkButton) {
-            top.linkTo(parent.top, margin = 40.dp)
-            bottom.linkTo(beatModeButton.top)
-            start.linkTo(playButton.end)
-            end.linkTo(parent.end)
-          }
+          modifier = Modifier
+            .graphicsLayer(alpha = iconAlpha)
+            .constrainAs(bookmarkButton) {
+              top.linkTo(parent.top, margin = 40.dp)
+              bottom.linkTo(beatModeButton.top)
+              start.linkTo(playButton.end)
+              end.linkTo(parent.end)
+            }
         )
         BeatModeButton(
           beatModeVibrate = beatModeVibrate,
@@ -200,12 +217,14 @@ fun MainScreen(
           onClick = {
             viewModel.toggleBeatModeVibrate()
           },
-          modifier = Modifier.constrainAs(beatModeButton) {
-            top.linkTo(bookmarkButton.bottom)
-            bottom.linkTo(parent.bottom, margin = 40.dp)
-            start.linkTo(playButton.end)
-            end.linkTo(parent.end)
-          }
+          modifier = Modifier
+            .graphicsLayer(alpha = iconAlpha)
+            .constrainAs(beatModeButton) {
+              top.linkTo(bookmarkButton.bottom)
+              bottom.linkTo(parent.bottom, margin = 40.dp)
+              start.linkTo(playButton.end)
+              end.linkTo(parent.end)
+            }
         )
       }
       VolumeDialog(

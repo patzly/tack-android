@@ -19,6 +19,8 @@
 
 package xyz.zedler.patrick.tack.presentation.screen
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -113,17 +115,37 @@ fun LatencySlider(
     valueProgression = IntProgression.fromClosedRange(0, 200, 5),
     segmented = false,
     decreaseIcon = {
+      val targetTint = if (latency > 0) {
+        InlineSliderDefaults.colors().buttonIconColor
+      } else {
+        InlineSliderDefaults.colors().disabledButtonIconColor
+      }
+      val tint by animateColorAsState(
+        targetValue = targetTint,
+        label = "decreaseLatency",
+        animationSpec = TweenSpec(durationMillis = 200)
+      )
       Icon(
         painter = painterResource(id = R.drawable.ic_round_remove),
         contentDescription = stringResource(id = R.string.action_decrease),
-        tint = InlineSliderDefaults.colors().buttonIconColor
+        tint = tint
       )
     },
     increaseIcon = {
+      val targetTint = if (latency < 200) {
+        InlineSliderDefaults.colors().buttonIconColor
+      } else {
+        InlineSliderDefaults.colors().disabledButtonIconColor
+      }
+      val tint by animateColorAsState(
+        targetValue = targetTint,
+        label = "increaseLatency",
+        animationSpec = TweenSpec(durationMillis = 200)
+      )
       Icon(
         painter = painterResource(id = R.drawable.ic_round_add),
         contentDescription = stringResource(id = R.string.action_increase),
-        tint = InlineSliderDefaults.colors().buttonIconColor
+        tint = tint
       )
     }
   )

@@ -44,7 +44,7 @@ fun TackTheme(
 private fun tackColorScheme(): ColorScheme {
   return ColorScheme(
     primary = Color(0xFFDAC66F),
-    primaryDim = Color(0xFFDAC66F),
+    primaryDim = Color(0xFFBEAB57),
     primaryContainer = Color(0xFF534600),
     onPrimary = Color(0xFF393000),
     onPrimaryContainer = Color(0xFFF8E288),

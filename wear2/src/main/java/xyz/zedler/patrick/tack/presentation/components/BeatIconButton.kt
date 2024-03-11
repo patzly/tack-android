@@ -87,7 +87,7 @@ fun BeatIconButton(
     }
     val color by animateColorAsState(
       targetValue = targetColor,
-      label = "colorAnimation",
+      label = "beatColor",
       animationSpec = TweenSpec(durationMillis = 400)
     )
     AnimatedVectorDrawable(
