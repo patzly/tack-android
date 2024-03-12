@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.Icon
+import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.scrollAway
@@ -47,11 +48,14 @@ import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
+import com.google.android.horologist.annotations.ExperimentalHorologistApi
+import com.google.android.horologist.compose.rotaryinput.rotaryWithScroll
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
+@OptIn(ExperimentalHorologistApi::class)
 @Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
 @Composable
 fun LatencyScreen(viewModel: MainViewModel = MainViewModel()) {
@@ -63,6 +67,11 @@ fun LatencyScreen(viewModel: MainViewModel = MainViewModel()) {
           timeTextStyle = MaterialTheme.typography.labelMedium,
           modifier = Modifier.scrollAway(scrollableState)
         )
+      },
+      positionIndicator = {
+        PositionIndicator(
+          scalingLazyListState = scrollableState
+        )
       }
     ) {
       val latency by viewModel.latency.observeAsState(Constants.DEF.LATENCY)
@@ -71,6 +80,7 @@ fun LatencyScreen(viewModel: MainViewModel = MainViewModel()) {
         modifier = Modifier
           .fillMaxSize()
           .background(color = MaterialTheme.colorScheme.background)
+          .rotaryWithScroll(scrollableState = scrollableState)
       ) {
         item {
           ListHeader {

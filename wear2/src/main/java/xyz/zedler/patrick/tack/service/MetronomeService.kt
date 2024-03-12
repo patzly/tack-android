@@ -128,6 +128,8 @@ class MetronomeService : LifecycleService(), MetronomeListener {
 
   override fun onMetronomeTick(tick: MetronomeUtil.Tick) {}
 
+  override fun onFlashScreenEnd() {}
+
   fun getMetronomeUtil(): MetronomeUtil {
     return metronomeUtil
   }

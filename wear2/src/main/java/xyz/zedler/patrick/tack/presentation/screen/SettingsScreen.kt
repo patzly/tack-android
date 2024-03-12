@@ -145,6 +145,17 @@ fun SettingsScreen(
           )
         }
         item {
+          val flashScreen by viewModel.flashScreen.observeAsState(Constants.DEF.FLASH_SCREEN)
+          ToggleChip(
+            checked = flashScreen,
+            onCheckedChange = {
+              viewModel.changeFlashScreen(it)
+            },
+            label = stringResource(id = R.string.settings_flash_screen),
+            secondaryLabel = stringResource(id = R.string.settings_flash_screen_description)
+          )
+        }
+        item {
           val keepAwake by viewModel.keepAwake.observeAsState(Constants.DEF.KEEP_AWAKE)
           ToggleChip(
             checked = keepAwake,

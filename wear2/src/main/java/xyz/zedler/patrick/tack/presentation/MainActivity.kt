@@ -83,6 +83,11 @@ class MainActivity : ComponentActivity(), ServiceConnection {
         }
       }
       override fun onMetronomeTick(tick: MetronomeUtil.Tick) {}
+      override fun onFlashScreenEnd() {
+        runOnUiThread {
+          viewModel.onFlashScreenEnd()
+        }
+      }
     })
 
     requestPermissionLauncher =

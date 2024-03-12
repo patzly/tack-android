@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Looper;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.preference.PreferenceManager;
@@ -47,7 +48,7 @@ public class MetronomeUtil {
   private final Set<MetronomeListener> listeners = new HashSet<>();
   public final boolean fromService;
   private HandlerThread audioThread, callbackThread;
-  private Handler tickHandler, latencyHandler;
+  private Handler tickHandler, latencyHandler, flashHandler;
   private List<String> beats, subdivisions;
   private int tempo;
   private long tickIndex, latency;
@@ -76,6 +77,7 @@ public class MetronomeUtil {
     useSubdivisions = sharedPrefs.getBoolean(PREF.USE_SUBS, DEF.USE_SUBS);
     latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY);
     alwaysVibrate = sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
+    flashScreen = sharedPrefs.getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
     keepAwake = sharedPrefs.getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
 
     setSound(sharedPrefs.getString(PREF.SOUND, DEF.SOUND));
@@ -104,6 +106,7 @@ public class MetronomeUtil {
       removeHandlerCallbacks();
       latencyHandler = new Handler(callbackThread.getLooper());
     }
+    flashHandler = new Handler(Looper.getMainLooper());
   }
 
   private void removeHandlerCallbacks() {
@@ -507,6 +510,13 @@ public class MetronomeUtil {
         listener.onMetronomeTick(tick);
       }
     }, latency);
+    if (flashScreen) {
+      flashHandler.postDelayed(() -> {
+        for (MetronomeListener listener : listeners) {
+          listener.onFlashScreenEnd();
+        }
+      }, latency + Constants.FLASH_SCREEN_DURATION);
+    }
   }
 
   private int getCurrentBeat() {
@@ -531,6 +541,7 @@ public class MetronomeUtil {
     void onMetronomeStop();
     void onMetronomePreTick(@NonNull Tick tick);
     void onMetronomeTick(@NonNull Tick tick);
+    void onFlashScreenEnd();
   }
 
   public static class Tick {

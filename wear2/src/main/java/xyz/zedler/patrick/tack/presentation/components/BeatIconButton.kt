@@ -56,8 +56,8 @@ fun BeatIconButton(
   )
   val sizeDefault = if (tickType != TICK_TYPE.MUTED) 24 else 12
   val sizeBeat = if (tickType != TICK_TYPE.MUTED) 32 else 24
-  val animatedSize = remember { Animatable(sizeDefault.toFloat()) }
 
+  val animatedSize = remember { Animatable(sizeDefault.toFloat()) }
   val isFirstExecution = remember { mutableStateOf(true) }
   LaunchedEffect(animTrigger, tickType) {
     if (!isFirstExecution.value) {

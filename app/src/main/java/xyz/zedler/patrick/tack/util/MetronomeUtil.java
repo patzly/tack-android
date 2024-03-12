@@ -103,6 +103,7 @@ public class MetronomeUtil {
     showElapsed = sharedPrefs.getBoolean(PREF.SHOW_ELAPSED, DEF.SHOW_ELAPSED);
     resetElapsed = sharedPrefs.getBoolean(PREF.RESET_ELAPSED, DEF.RESET_ELAPSED);
     resetTimer = sharedPrefs.getBoolean(PREF.RESET_TIMER, DEF.RESET_TIMER);
+    flashScreen = sharedPrefs.getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
     keepAwake = sharedPrefs.getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
 
     setSound(sharedPrefs.getString(PREF.SOUND, DEF.SOUND));

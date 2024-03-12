@@ -23,6 +23,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import xyz.zedler.patrick.tack.Constants.DEF
+import xyz.zedler.patrick.tack.Constants.TICK_TYPE
 import xyz.zedler.patrick.tack.util.MetronomeUtil
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick
 import xyz.zedler.patrick.tack.util.TempoTapUtil
@@ -59,6 +60,9 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
   )
   private val _latency = MutableLiveData(metronomeUtil?.latency ?: DEF.LATENCY)
   private val _keepAwake = MutableLiveData(metronomeUtil?.keepAwake ?: DEF.KEEP_AWAKE)
+  private val _flashScreen = MutableLiveData(metronomeUtil?.flashScreen ?: DEF.FLASH_SCREEN)
+  private val _flashTrigger = MutableLiveData(false)
+  private val _flashStrongTrigger = MutableLiveData(false)
   private val _showPermissionDialog = MutableLiveData(false)
 
   val tempo: LiveData<Int> = _tempo
@@ -74,6 +78,9 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
   val ignoreFocus: LiveData<Boolean> = _ignoreFocus
   val latency: LiveData<Long> = _latency
   val keepAwake: LiveData<Boolean> = _keepAwake
+  val flashScreen: LiveData<Boolean> = _flashScreen
+  val flashTrigger: LiveData<Boolean> = _flashTrigger
+  val flashStrongTrigger: LiveData<Boolean> = _flashStrongTrigger
   val showPermissionDialog: LiveData<Boolean> = _showPermissionDialog
 
   fun changeTempo(tempo: Int) {
@@ -96,15 +103,21 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
 
   fun onTick(tick: Tick) {
     if (tick.subdivision == 1) {
-      onBeat(tick.beat - 1)
+      onBeat(tick)
     }
     onSubdivision(tick.subdivision - 1)
   }
 
-  private fun onBeat(index: Int) {
+  private fun onBeat(tick: Tick) {
+    val index = tick.beat - 1
     if (index < _beatTriggers.size) {
       val current = _beatTriggers[index].value ?: false
       _beatTriggers[index].value = !current
+    }
+    if (metronomeUtil?.flashScreen == true && tick.type == TICK_TYPE.STRONG) {
+      _flashStrongTrigger.value = true
+    } else if (metronomeUtil?.flashScreen == true && tick.type == TICK_TYPE.NORMAL) {
+      _flashTrigger.value = true
     }
   }
 
@@ -113,6 +126,11 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
       val current = _subdivisionTriggers[index].value ?: false
       _subdivisionTriggers[index].value = !current
     }
+  }
+
+  fun onFlashScreenEnd() {
+    _flashTrigger.value = false
+    _flashStrongTrigger.value = false
   }
 
   fun changePlaying(playing: Boolean) {
@@ -157,9 +175,14 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
     _latency.value = latency
   }
 
+  fun changeFlashScreen(flash: Boolean) {
+    metronomeUtil?.flashScreen = flash
+    _flashScreen.value = flash
+  }
+
   fun changeKeepAwake(awake: Boolean) {
     metronomeUtil?.keepAwake = awake
-    _keepAwake.value = awake;
+    _keepAwake.value = awake
   }
 
   fun changeShowPermissionDialog(show: Boolean) {

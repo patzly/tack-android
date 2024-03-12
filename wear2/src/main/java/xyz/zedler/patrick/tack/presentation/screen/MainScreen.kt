@@ -88,10 +88,20 @@ fun MainScreen(
   onPermissionRequestClick: () -> Unit = {}
 ) {
   TackTheme {
+    val flashTrigger by viewModel.flashTrigger.observeAsState(false)
+    val flashStrongTrigger by viewModel.flashStrongTrigger.observeAsState(false)
+    val background = if (flashStrongTrigger) {
+      MaterialTheme.colorScheme.error
+    } else if (flashTrigger) {
+      MaterialTheme.colorScheme.tertiary
+    } else {
+      MaterialTheme.colorScheme.background
+    }
+
     Box(
       modifier = Modifier
         .fillMaxSize()
-        .background(color = MaterialTheme.colorScheme.background),
+        .background(color = background),
       contentAlignment = Alignment.Center,
     ) {
       val isPlaying by viewModel.isPlaying.observeAsState(false)
