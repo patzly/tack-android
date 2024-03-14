@@ -84,7 +84,6 @@ fun MainScreen(
   onTempoCardClick: () -> Unit = {},
   onSettingsButtonClick: () -> Unit = {},
   onBeatsButtonClick: () -> Unit = {},
-  onBookmarkButtonClick: () -> Unit = {},
   onPermissionRequestClick: () -> Unit = {}
 ) {
   TackTheme {
@@ -128,10 +127,17 @@ fun MainScreen(
           repeatItems = false
         )
         LaunchedEffect(tempo) {
-          pickerCoroutineScope.launch {
-            pickerState.animateScrollToOption(tempo - 1)
+          if (!viewModel.wasTempoChangedByPicker) {
+            pickerCoroutineScope.launch {
+              pickerState.animateScrollToOption(tempo - 1)
+            }
           }
+          viewModel.wasTempoChangedByPicker = false
         }
+        LaunchedEffect(pickerState.selectedOption) {
+          viewModel.changeTempo(pickerState.selectedOption + 1, picker = true)
+        }
+
         val beatModeVibrate by viewModel.beatModeVibrate.observeAsState(
           Constants.DEF.BEAT_MODE_VIBRATE
         )
@@ -158,9 +164,6 @@ fun MainScreen(
         TempoCard(
           state = pickerState,
           onClick = onTempoCardClick,
-          onOptionChange = {
-            viewModel.changeTempo(it + 1)
-          },
           modifier = Modifier.constrainAs(tempoCard) {
             top.linkTo(parent.top)
             bottom.linkTo(parent.bottom)
@@ -199,7 +202,7 @@ fun MainScreen(
         )
         TempoTapButton(
           onClick = {
-            viewModel.onTempoTap()
+            viewModel.tempoTap()
           },
           modifier = Modifier
             .graphicsLayer(alpha = iconAlpha)
@@ -211,7 +214,9 @@ fun MainScreen(
             }
         )
         BookmarkButton(
-          onClick = onBookmarkButtonClick,
+          onClick = {
+            viewModel.toggleBookmark()
+          },
           modifier = Modifier
             .graphicsLayer(alpha = iconAlpha)
             .constrainAs(bookmarkButton) {
@@ -275,7 +280,6 @@ fun MainScreen(
 fun TempoCard(
   state: PickerState,
   onClick: () -> Unit,
-  onOptionChange: (Int) -> Unit,
   modifier: Modifier
 ) {
   WrapContentCard(
@@ -287,9 +291,6 @@ fun TempoCard(
   ) {
     val items = (1..400).toList()
     val contentDescription by remember { derivedStateOf { "${state.selectedOption + 1}" } }
-    LaunchedEffect(state.selectedOption) {
-      onOptionChange(state.selectedOption)
-    }
     Picker(
       gradientRatio = 0f,
       modifier = Modifier.size(spToDp(spValue = 88), spToDp(spValue = 56)),

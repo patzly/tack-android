@@ -82,23 +82,21 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
   val flashTrigger: LiveData<Boolean> = _flashTrigger
   val flashStrongTrigger: LiveData<Boolean> = _flashStrongTrigger
   val showPermissionDialog: LiveData<Boolean> = _showPermissionDialog
+  var wasTempoChangedByPicker: Boolean = false
 
-  fun changeTempo(tempo: Int) {
+  fun changeTempo(tempo: Int, picker: Boolean = false) {
     metronomeUtil?.tempo = tempo
     _tempo.value = tempo
+    wasTempoChangedByPicker = picker
   }
 
-  fun onTempoTap(): Int {
+  fun tempoTap(): Int {
     if (tempoTapUtil.tap()) {
       val tempo = tempoTapUtil.tempo
       changeTempo(tempo)
       return tempo
     }
     return tempo.value ?: DEF.TEMPO
-  }
-
-  fun onTempoChange(tempo: Int) {
-    metronomeUtil?.tempo = tempo
   }
 
   fun onTick(tick: Tick) {
@@ -153,6 +151,10 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
   fun changeAlwaysVibrate(alwaysVibrate: Boolean) {
     metronomeUtil?.isAlwaysVibrate = alwaysVibrate
     _alwaysVibrate.value = alwaysVibrate
+  }
+
+  fun toggleBookmark() {
+    changeTempo(metronomeUtil?.toggleBookmark() ?: DEF.TEMPO)
   }
 
   fun changeGain(gain: Int) {

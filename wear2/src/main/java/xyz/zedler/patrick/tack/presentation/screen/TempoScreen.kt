@@ -102,7 +102,7 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         )
         TapButton(
           onClick = {
-            val tempo = viewModel.onTempoTap()
+            val tempo = viewModel.tempoTap()
             pickerCoroutineScope.launch {
               pickerState.animateScrollToOption(tempo - 1)
             }

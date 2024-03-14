@@ -45,6 +45,7 @@ public class MetronomeUtil {
   private final SharedPreferences sharedPrefs;
   private final AudioUtil audioUtil;
   private final HapticUtil hapticUtil;
+  private final BookmarkUtil bookmarkUtil;
   private final Set<MetronomeListener> listeners = new HashSet<>();
   public final boolean fromService;
   private HandlerThread audioThread, callbackThread;
@@ -63,6 +64,7 @@ public class MetronomeUtil {
 
     audioUtil = new AudioUtil(context, this::stop);
     hapticUtil = new HapticUtil(context);
+    bookmarkUtil = new BookmarkUtil(context);
 
     resetHandlersIfRequired();
     setToPreferences();
@@ -166,6 +168,7 @@ public class MetronomeUtil {
   }
 
   public void start() {
+    bookmarkUtil.reportUsage(tempo);
     if (isPlaying()) {
       return;
     }
@@ -393,6 +396,12 @@ public class MetronomeUtil {
 
   public int getTempo() {
     return tempo;
+  }
+
+  public int toggleBookmark() {
+    int tempoNew = bookmarkUtil.toggleBookmark(tempo);
+    setTempo(tempoNew);
+    return tempoNew;
   }
 
   public long getInterval() {
