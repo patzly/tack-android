@@ -34,17 +34,15 @@
   <!-- LABELS -->
 
   <string name="wear_label_bpm_value">%1$d bpm</string>
-  <string name="wear_label_bpm">bpm</string>
   <string name="wear_label_ms">%1$s ms</string>
   <string name="wear_label_db">+%1$d dB</string>
+  <string name="wear_label_developer">Developed by</string>
 
   <!-- ACTIONS -->
 
-  <string name="action_close">Close</string>
   <string name="action_cancel">Cancel</string>
   <string name="action_increase">Increase</string>
   <string name="action_decrease">Decrease</string>
-  <string name="action_play">Play</string>
   <string name="action_play_stop">Play/Stop</string>
   <string name="action_stop">Stop</string>
   <string name="action_add_beat">Add beat</string>
@@ -58,7 +56,6 @@
 
   <!-- MESSAGES -->
 
-  <string name="msg_vibration_unavailable">Vibration unavailable on this device</string>
   <string name="msg_service_running">Metronome playing</string>
   <string name="msg_service_running_return">Tap for more</string>
   <string name="msg_service_description">Service for metronome playback</string>
@@ -66,14 +63,6 @@
   <string name="msg_notification_permission_denied_description">Notification permission is required for playback</string>
   <string name="msg_gain">Play with volume boost?</string>
   <string name="msg_gain_description">Be careful not to play through headphones!</string>
-
-  <!-- OPTIONS -->
-
-  <string name="options_swing">Swing</string>
-  <string name="options_swing_description">Subdivisions set to match selected swing percentage</string>
-  <string name="options_swing_3">Triplet</string>
-  <string name="options_swing_5">Quintuplet</string>
-  <string name="options_swing_7">Septuplet</string>
 
   <!-- SETTINGS -->
 

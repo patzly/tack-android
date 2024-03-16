@@ -20,15 +20,19 @@
 package xyz.zedler.patrick.tack.presentation.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.material.Chip
@@ -172,6 +176,24 @@ fun SettingsScreen(
             secondaryLabel = stringResource(R.string.settings_rate_description),
             onClick = onRateClick
           )
+        }
+        item {
+          Column(
+            modifier = Modifier.padding(top = 8.dp).fillMaxWidth()
+          ) {
+            Text(
+              text = stringResource(id = R.string.wear_label_developer),
+              style = MaterialTheme.typography.bodyMedium,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+              modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+            Text(
+              text = stringResource(id = R.string.wear_app_developer),
+              style = MaterialTheme.typography.bodyMedium,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+              modifier = Modifier.align(Alignment.CenterHorizontally)
+            )
+          }
         }
       }
     }

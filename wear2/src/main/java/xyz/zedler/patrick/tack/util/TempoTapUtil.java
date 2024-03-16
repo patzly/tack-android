@@ -67,8 +67,8 @@ public class TempoTapUtil {
     for (long interval : intervals) {
       sum += interval;
     }
-    if (intervals.size() > 0) {
-      return (long) sum / intervals.size();
+    if (!intervals.isEmpty()) {
+      return sum / intervals.size();
     } else {
       return 0;
     }

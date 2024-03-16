@@ -298,7 +298,11 @@ fun TempoCard(
     contentPadding = PaddingValues(0.dp)
   ) {
     val items = (1..400).toList()
-    val contentDescription by remember { derivedStateOf { "${state.selectedOption + 1}" } }
+    val bpm = stringResource(
+      id = R.string.wear_label_bpm_value,
+      state.selectedOption + 1
+    )
+    val contentDescription by remember { derivedStateOf { bpm } }
     val coroutineScope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
     val focusRequester = remember { FocusRequester() }
