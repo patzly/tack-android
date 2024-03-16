@@ -20,6 +20,8 @@
 package xyz.zedler.patrick.tack.presentation.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -33,6 +35,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -41,6 +47,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.wear.compose.material.Picker
 import androidx.wear.compose.material.PickerState
 import androidx.wear.compose.material.TimeText
@@ -183,11 +191,29 @@ fun TempoPicker(
 ) {
   val items = (1..400).toList()
   val contentDescription by remember { derivedStateOf { "${state.selectedOption + 1}" } }
+  val pickerCoroutineScope = rememberCoroutineScope()
+  val lifecycleOwner = LocalLifecycleOwner.current
+  val focusRequester = remember { FocusRequester() }
+  LaunchedEffect(Unit) {
+    focusRequester.requestFocus()
+    lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
+      focusRequester.requestFocus()
+    }
+  }
   LaunchedEffect(state.selectedOption) {
     onOptionChange(state.selectedOption)
   }
   Picker(
-    modifier = modifier.size(spToDp(spValue = 88), spToDp(spValue = 104)),
+    modifier = modifier
+      .size(spToDp(spValue = 88), spToDp(spValue = 104))
+      .onRotaryScrollEvent {
+        pickerCoroutineScope.launch {
+          state.scrollBy(it.verticalScrollPixels)
+        }
+        true
+      }
+      .focusRequester(focusRequester)
+      .focusable(),
     state = state,
     contentDescription = contentDescription
   ) {

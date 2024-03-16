@@ -20,7 +20,6 @@
 package xyz.zedler.patrick.tack.presentation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
@@ -42,7 +41,6 @@ fun TackApp(
 ) {
   val navController = rememberSwipeDismissableNavController()
   SwipeDismissableNavHost(
-    modifier = Modifier,
     navController = navController,
     startDestination = Screen.Main.route
   ) {

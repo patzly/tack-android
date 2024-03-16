@@ -11,7 +11,6 @@ wear-input = "1.1.0"
 wear-tooling = "1.0.0"
 wear-ongoing = "1.0.0"
 kotlin = "1.9.0"
-play-services-wearable = "18.1.0"
 compose-bom = "2024.02.02"
 compose-runtime = "1.6.3"
 compose-material = "1.0.0-alpha19"
@@ -35,7 +34,6 @@ wear-input = { group = "androidx.wear", name = "wear-input", version.ref = "wear
 # wear
 wear-tooling = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wear-tooling" }
 wear-ongoing = { group = "androidx.wear", name = "wear-ongoing", version.ref = "wear-ongoing" }
-play-services-wearable = { group = "com.google.android.gms", name = "play-services-wearable", version.ref = "play-services-wearable" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 compose-runtime = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "compose-runtime" }
 lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycle" }

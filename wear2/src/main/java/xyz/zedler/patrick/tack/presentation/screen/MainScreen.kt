@@ -23,6 +23,8 @@ import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,7 +43,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.rotary.onRotaryScrollEvent
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -52,6 +58,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Picker
@@ -291,11 +299,29 @@ fun TempoCard(
   ) {
     val items = (1..400).toList()
     val contentDescription by remember { derivedStateOf { "${state.selectedOption + 1}" } }
+    val coroutineScope = rememberCoroutineScope()
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val focusRequester = remember { FocusRequester() }
+    LaunchedEffect(Unit) {
+      focusRequester.requestFocus()
+      lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
+        focusRequester.requestFocus()
+      }
+    }
     Picker(
       gradientRatio = 0f,
-      modifier = Modifier.size(spToDp(spValue = 88), spToDp(spValue = 56)),
       state = state,
-      contentDescription = contentDescription
+      contentDescription = contentDescription,
+      modifier = Modifier
+        .size(spToDp(spValue = 88), spToDp(spValue = 56))
+        .onRotaryScrollEvent {
+          coroutineScope.launch {
+            state.scrollBy(it.verticalScrollPixels)
+          }
+          true
+        }
+        .focusRequester(focusRequester)
+        .focusable()
     ) {
       Text(
         modifier = Modifier.wrapContentSize(),
