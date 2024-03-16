@@ -79,10 +79,14 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
       override fun onMetronomePreTick(tick: MetronomeUtil.Tick) {
         runOnUiThread {
+          viewModel.onPreTick(tick)
+        }
+      }
+      override fun onMetronomeTick(tick: MetronomeUtil.Tick) {
+        runOnUiThread {
           viewModel.onTick(tick)
         }
       }
-      override fun onMetronomeTick(tick: MetronomeUtil.Tick) {}
       override fun onFlashScreenEnd() {
         runOnUiThread {
           viewModel.onFlashScreenEnd()

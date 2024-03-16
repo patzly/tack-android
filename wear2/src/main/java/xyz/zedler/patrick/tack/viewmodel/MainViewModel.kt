@@ -99,11 +99,21 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
     return tempo.value ?: DEF.TEMPO
   }
 
-  fun onTick(tick: Tick) {
+  fun onPreTick(tick: Tick) {
     if (tick.subdivision == 1) {
       onBeat(tick)
     }
     onSubdivision(tick.subdivision - 1)
+  }
+
+  fun onTick(tick: Tick) {
+    if (tick.subdivision == 1) {
+      if (metronomeUtil?.flashScreen == true && tick.type == TICK_TYPE.STRONG) {
+        _flashStrongTrigger.value = true
+      } else if (metronomeUtil?.flashScreen == true && tick.type == TICK_TYPE.NORMAL) {
+        _flashTrigger.value = true
+      }
+    }
   }
 
   private fun onBeat(tick: Tick) {
@@ -111,11 +121,6 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
     if (index < _beatTriggers.size) {
       val current = _beatTriggers[index].value ?: false
       _beatTriggers[index].value = !current
-    }
-    if (metronomeUtil?.flashScreen == true && tick.type == TICK_TYPE.STRONG) {
-      _flashStrongTrigger.value = true
-    } else if (metronomeUtil?.flashScreen == true && tick.type == TICK_TYPE.NORMAL) {
-      _flashTrigger.value = true
     }
   }
 
