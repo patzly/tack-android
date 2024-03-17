@@ -30,10 +30,10 @@ preference = { group = "androidx.preference", name = "preference", version.ref =
 shapes = { group = "androidx.graphics", name = "graphics-shapes-android", version.ref = "shapes" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 wear-core = { group = "androidx.wear", name = "wear", version.ref = "wear-core" }
-wear-input = { group = "androidx.wear", name = "wear-input", version.ref = "wear-input" }
 # wear
 wear-tooling = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wear-tooling" }
 wear-ongoing = { group = "androidx.wear", name = "wear-ongoing", version.ref = "wear-ongoing" }
+wear-input = { group = "androidx.wear", name = "wear-input", version.ref = "wear-input" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 compose-runtime = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "compose-runtime" }
 lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycle" }

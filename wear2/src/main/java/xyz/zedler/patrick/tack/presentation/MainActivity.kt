@@ -23,17 +23,22 @@ import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.view.KeyEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.preference.PreferenceManager
+import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.service.MetronomeService
+import xyz.zedler.patrick.tack.util.ButtonUtil
 import xyz.zedler.patrick.tack.util.MetronomeUtil
 import xyz.zedler.patrick.tack.util.NotificationUtil
 import xyz.zedler.patrick.tack.util.TempoTapUtil
@@ -50,7 +55,11 @@ class MainActivity : ComponentActivity(), ServiceConnection {
   private lateinit var metronomeUtil: MetronomeUtil
   private lateinit var tempoTapUtil: TempoTapUtil
   private lateinit var viewModel: MainViewModel
+  private lateinit var sharedPrefs: SharedPreferences
+  private lateinit var buttonUtilFaster: ButtonUtil
+  private lateinit var buttonUtilSlower: ButtonUtil
   private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+  private var wristGestures: Boolean = Constants.DEF.WRIST_GESTURES
   private var bound: Boolean = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,6 +68,8 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     super.onCreate(savedInstanceState)
 
     setTheme(android.R.style.Theme_DeviceDefault)
+
+    sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
 
     tempoTapUtil = TempoTapUtil()
     metronomeUtil = MetronomeUtil(this, false)
@@ -103,6 +114,16 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
     viewModel = MainViewModel(metronomeUtil)
     updateMetronomeUtil()
+
+    wristGestures = sharedPrefs.getBoolean(
+      Constants.PREF.WRIST_GESTURES, Constants.DEF.WRIST_GESTURES
+    )
+    buttonUtilFaster = ButtonUtil(this) {
+      viewModel.changeTempo(metronomeUtil.tempo + 1)
+    }
+    buttonUtilSlower = ButtonUtil(this) {
+      viewModel.changeTempo(metronomeUtil.tempo - 1)
+    }
 
     setContent {
       TackApp(
@@ -181,6 +202,34 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     } catch (e: IllegalStateException) {
       Log.e(TAG, "onBindingDied: cannot start MetronomeService because app is in background")
     }
+  }
+
+  override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+    if (keyCode == KeyEvent.KEYCODE_NAVIGATE_NEXT && wristGestures) {
+      viewModel.changeTempo(metronomeUtil.tempo + 1)
+      return true
+    } else if (keyCode == KeyEvent.KEYCODE_NAVIGATE_PREVIOUS && wristGestures) {
+      viewModel.changeTempo(metronomeUtil.tempo - 1)
+      return true
+    } else if (keyCode == KeyEvent.KEYCODE_STEM_1) {
+      buttonUtilFaster.onPressDown()
+      return true
+    } else if (keyCode == KeyEvent.KEYCODE_STEM_2) {
+      buttonUtilSlower.onPressDown()
+      return true
+    }
+    return super.onKeyDown(keyCode, event)
+  }
+
+  override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+    if (keyCode == KeyEvent.KEYCODE_STEM_1) {
+      buttonUtilFaster.onPressUp()
+      return true
+    } else if (keyCode == KeyEvent.KEYCODE_STEM_2) {
+      buttonUtilSlower.onPressUp()
+      return true
+    }
+    return super.onKeyUp(keyCode, event)
   }
 
   private fun getMetronomeUtil(): MetronomeUtil {

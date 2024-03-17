@@ -29,29 +29,14 @@ public final class Constants {
   public static final int TEMPO_MAX = 400;
   public static final int BEATS_MAX = 20;
   public static final int SUBS_MAX = 10;
-  public static final int BOOKMARKS_MAX = 4;
 
   public final static class PREF {
-    // General
-    public static final String THEME = "app_theme";
-    public static final String UI_MODE = "ui_mode";
-    public static final String UI_CONTRAST = "ui_contrast";
-    public static final String USE_SLIDING = "use_sliding_transition";
-    public static final String HAPTIC = "haptic_feedback";
-    public static final String REDUCE_ANIM = "reduce_animations";
-    public static final String LAST_VERSION = "last_version";
-    public static final String FEEDBACK_POP_UP_COUNT = "feedback_pop_up_count";
-
-    // Metronome
     public final static String TEMPO = "tempo";
     public final static String BEATS = "beats";
     public final static String SUBDIVISIONS = "subdivisions";
     public final static String BEAT_MODE_VIBRATE = "beat_mode_vibrate";
     public final static String USE_SUBS = "use_subdivisions";
     public final static String ALWAYS_VIBRATE = "always_vibrate";
-    public final static String SHOW_ELAPSED = "show_elapsed";
-    public final static String RESET_ELAPSED = "reset_elapsed";
-    public final static String RESET_TIMER = "reset_timer";
     public final static String FLASH_SCREEN = "flash_screen";
     public final static String KEEP_AWAKE = "keep_awake";
     public final static String SOUND = "sound";
@@ -59,15 +44,7 @@ public final class Constants {
     public final static String IGNORE_FOCUS = "ignore_focus";
     public final static String GAIN = "gain";
     public final static String BOOKMARK = "bookmark";
-
-    // Options
-    public final static String COUNT_IN = "count_in";
-    public final static String INCREMENTAL_AMOUNT = "incremental_amount";
-    public final static String INCREMENTAL_INCREASE = "incremental_increase";
-    public final static String INCREMENTAL_INTERVAL = "incremental_interval";
-    public final static String INCREMENTAL_UNIT = "incremental_unit";
-    public final static String TIMER_DURATION = "timer_duration";
-    public final static String TIMER_UNIT = "timer_unit";
+    public final static String WRIST_GESTURES = "wrist_gestures";
   }
 
   public final static class DEF {
@@ -85,6 +62,7 @@ public final class Constants {
     public final static long LATENCY = 100;
     public final static boolean IGNORE_FOCUS = false;
     public final static int GAIN = 0;
+    public final static boolean WRIST_GESTURES = true;
   }
 
   public final static class SOUND {
@@ -100,14 +78,6 @@ public final class Constants {
     public final static String STRONG = "strong";
     public final static String SUB = "sub";
     public final static String MUTED = "muted";
-  }
-
-  public final static class UNIT {
-
-    public final static String BEATS = "beats";
-    public final static String BARS = "bars";
-    public final static String SECONDS = "seconds";
-    public final static String MINUTES = "minutes";
   }
 
   public final static class ACTION {
