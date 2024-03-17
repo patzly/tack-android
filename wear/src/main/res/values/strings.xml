@@ -86,7 +86,7 @@
   <string name="wear_settings_flash_screen_description">On every beat</string>
 
   <string name="wear_settings_keep_awake">Keep screen awake</string>
-  <string name="wear_settings_keep_awake_description">While Tack is playing</string>
+  <string name="wear_settings_keep_awake_description">While metronome is playing</string>
 
   <string name="wear_settings_wrist_gestures">Wrist gestures</string>
   <string name="wear_settings_wrist_gestures_description">If supported</string>
