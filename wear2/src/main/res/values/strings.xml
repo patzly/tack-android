@@ -88,6 +88,9 @@
   <string name="settings_keep_awake">Keep screen awake</string>
   <string name="settings_keep_awake_description">While Tack is playing</string>
 
+  <string name="settings_wrist_gestures">Wrist gestures</string>
+  <string name="settings_wrist_gestures_description">If supported</string>
+
   <string name="settings_rate">Rate Tack on Google Play</string>
   <string name="settings_rate_description">Support development</string>
 

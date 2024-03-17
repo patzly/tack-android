@@ -23,7 +23,6 @@ import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -35,8 +34,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.preference.PreferenceManager
-import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.util.ButtonUtil
 import xyz.zedler.patrick.tack.util.ButtonUtil.OnPressListener
@@ -56,11 +53,9 @@ class MainActivity : ComponentActivity(), ServiceConnection {
   private lateinit var metronomeUtil: MetronomeUtil
   private lateinit var tempoTapUtil: TempoTapUtil
   private lateinit var viewModel: MainViewModel
-  private lateinit var sharedPrefs: SharedPreferences
   private lateinit var buttonUtilFaster: ButtonUtil
   private lateinit var buttonUtilSlower: ButtonUtil
   private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
-  private var wristGestures: Boolean = Constants.DEF.WRIST_GESTURES
   private var bound: Boolean = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,8 +64,6 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     super.onCreate(savedInstanceState)
 
     setTheme(android.R.style.Theme_DeviceDefault)
-
-    sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
 
     tempoTapUtil = TempoTapUtil()
     metronomeUtil = MetronomeUtil(this, false)
@@ -116,9 +109,6 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     viewModel = MainViewModel(metronomeUtil)
     updateMetronomeUtil()
 
-    wristGestures = sharedPrefs.getBoolean(
-      Constants.PREF.WRIST_GESTURES, Constants.DEF.WRIST_GESTURES
-    )
     buttonUtilFaster = ButtonUtil(this, object : OnPressListener {
       override fun onPress() {
         viewModel.changeTempo(metronomeUtil.tempo + 1, animate = true)
@@ -216,10 +206,10 @@ class MainActivity : ComponentActivity(), ServiceConnection {
   }
 
   override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-    if (keyCode == KeyEvent.KEYCODE_NAVIGATE_NEXT && wristGestures) {
+    if (keyCode == KeyEvent.KEYCODE_NAVIGATE_NEXT && metronomeUtil.wristGestures) {
       viewModel.changeTempo(metronomeUtil.tempo + 1)
       return true
-    } else if (keyCode == KeyEvent.KEYCODE_NAVIGATE_PREVIOUS && wristGestures) {
+    } else if (keyCode == KeyEvent.KEYCODE_NAVIGATE_PREVIOUS && metronomeUtil.wristGestures) {
       viewModel.changeTempo(metronomeUtil.tempo - 1)
       return true
     } else if (keyCode == KeyEvent.KEYCODE_STEM_1) {

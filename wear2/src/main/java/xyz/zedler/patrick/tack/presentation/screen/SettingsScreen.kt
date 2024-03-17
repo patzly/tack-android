@@ -171,6 +171,17 @@ fun SettingsScreen(
           )
         }
         item {
+          val wristGestures by viewModel.wristGestures.observeAsState(Constants.DEF.WRIST_GESTURES)
+          ToggleChip(
+            checked = wristGestures,
+            onCheckedChange = {
+              viewModel.changeWristGestures(it)
+            },
+            label = stringResource(id = R.string.settings_wrist_gestures),
+            secondaryLabel = stringResource(id = R.string.settings_wrist_gestures_description)
+          )
+        }
+        item {
           ClickChip(
             label = stringResource(R.string.settings_rate),
             secondaryLabel = stringResource(R.string.settings_rate_description),
