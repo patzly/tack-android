@@ -16,4 +16,3 @@ dependencyResolutionManagement {
 rootProject.name='Tack Android'
 include ':app'
 include ':wear'
-include ':wear2'

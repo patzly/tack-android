@@ -26,37 +26,38 @@
       android:width="24dp"
       android:height="24dp"
       android:viewportWidth="24"
-      android:viewportHeight="24">
+      android:viewportHeight="24"
+      android:autoMirrored="true">
       <path
         android:name="line_to_sound_wave"
         android:pathData="M 23 10 C 23 11.333 23 12.667 23 14"
-        android:strokeColor="#000"
+        android:strokeColor="#000000"
         android:strokeWidth="2"
         android:strokeLineCap="round" />
       <path
         android:name="line_to_diaphragm"
         android:pathData="M 20 17 C 20.55 17 21 16.55 21 16 L 21 8 C 21 7.45 20.55 7 20 7 C 19.45 7 19 7.45 19 8 L 19 16 C 19 16.55 19.45 17 20 17 Z"
-        android:fillColor="#000" />
+        android:fillColor="#000000" />
       <path
         android:name="phone_to_speaker"
         android:pathData="M 7.5 3 C 6.67 3 6 3.67 6 4.5 L 6 19.5 C 6 20.33 6.67 21 7.5 21 L 16.5 21 C 17.33 21 18 20.33 18 19.5 L 18 4.5 C 18 3.67 17.33 3 16.5 3 L 7.5 3 Z M 8 5 L 16 5 L 16 19 L 8 19 L 8 5 Z"
-        android:fillColor="#000" />
+        android:fillColor="#000000" />
       <path
         android:name="line_to_magnet_left"
         android:pathData="M 1 10 L 1 14"
-        android:strokeColor="#000"
+        android:strokeColor="#000000"
         android:strokeWidth="2"
         android:strokeLineCap="round" />
       <path
         android:name="line_to_magnet_right"
         android:pathData="M 4 8 L 4 16"
-        android:strokeColor="#000"
+        android:strokeColor="#000000"
         android:strokeWidth="2"
         android:strokeLineCap="round" />
       <path
         android:name="lines_to_magnet"
         android:pathData="M 3.984 8.986 C 3.72 8.99 3.467 9.1 3.283 9.29 C 3.098 9.48 2.996 9.735 3 10 L 3 14 C 2.997 14.213 3.062 14.422 3.186 14.595 C 3.31 14.769 3.486 14.898 3.688 14.964 C 3.891 15.031 4.109 15.031 4.312 14.964 C 4.514 14.898 4.69 14.769 4.814 14.595 C 4.938 14.422 5.003 14.213 5 14 C 4.997 14.213 5.062 14.422 5.186 14.595 C 5.31 14.769 5.486 14.898 5.688 14.964 C 5.891 15.031 6.109 15.031 6.312 14.964 C 6.514 14.898 6.69 14.769 6.814 14.595 C 6.938 14.422 7.003 14.213 7 14 L 7 10 C 7.002 9.821 6.957 9.645 6.868 9.49 C 6.779 9.334 6.65 9.206 6.495 9.117 C 6.34 9.029 6.163 8.984 5.984 8.986 C 5.72 8.99 5.467 9.1 5.283 9.29 C 5.098 9.48 4.996 9.735 5 10 C 5.002 9.821 4.957 9.645 4.868 9.49 C 4.779 9.334 4.65 9.206 4.495 9.117 C 4.34 9.029 4.163 8.984 3.984 8.986 Z"
-        android:fillColor="#000"
+        android:fillColor="#000000"
         android:fillAlpha="0" />
     </vector>
   </aapt:attr>

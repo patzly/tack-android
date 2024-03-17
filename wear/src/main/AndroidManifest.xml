@@ -18,51 +18,47 @@
   ~ Copyright (c) 2020-2024 by Patrick Zedler
   -->
 
-<manifest
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools"
-  package="xyz.zedler.patrick.tack">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
   <uses-feature android:name="android.hardware.type.watch" />
 
   <uses-permission android:name="android.permission.VIBRATE" />
   <uses-permission android:name="android.permission.WAKE_LOCK" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
   <application
-    android:allowBackup="true"
     android:icon="@mipmap/ic_launcher"
-    android:label="@string/app_name"
+    android:label="@string/wear_app_name"
     android:supportsRtl="true"
-    android:theme="@style/Theme.Tack"
-    tools:ignore="AllowBackup">
-
-    <uses-library
-      android:name="com.google.android.wearable"
-      android:required="true" />
+    android:theme="@android:style/Theme.DeviceDefault"
+    android:allowBackup="true">
 
     <meta-data
       android:name="com.google.android.wearable.standalone"
       android:value="true" />
 
+    <uses-library
+      android:name="com.google.android.wearable"
+      android:required="true" />
+
     <activity
-      android:name=".activity.SplashActivity"
-      android:theme="@style/Theme.Tack.Splash"
-      android:exported="true">
+      android:exported="true"
+      android:name=".presentation.MainActivity"
+      android:taskAffinity=""
+      android:theme="@style/Theme.Tack.Splash">
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
 
-    <activity
-      android:name=".activity.MainActivity"
-      android:theme="@style/Theme.Tack.CustomSwipe" />
-
-    <activity android:name=".activity.SettingsActivity" />
-
-    <activity android:name=".activity.ChangelogActivity" />
-
-    <activity android:name=".activity.OnboardingActivity" />
+    <service
+      android:name=".service.MetronomeService"
+      android:description="@string/wear_msg_service_description"
+      android:foregroundServiceType="mediaPlayback"
+      android:exported="false" />
 
   </application>
 

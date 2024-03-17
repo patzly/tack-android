@@ -20,9 +20,11 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
-import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.provider.Settings;
 
 public class HapticUtil {
 
@@ -32,33 +34,43 @@ public class HapticUtil {
   public static final long TICK = 13;
   public static final long CLICK = 20;
   public static final long HEAVY = 50;
-  public static final long HEAVY_TICK = 50;
-  public static final long HEAVY_TACK = 80;
 
   public HapticUtil(Context context) {
     vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-    enabled = true;
+    enabled = hasVibrator();
   }
 
   public void vibrate(long duration) {
     if (!enabled) {
       return;
     }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE));
+    vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE));
+  }
+
+  public void vibrate(boolean emphasize) {
+    if (VERSION.SDK_INT >= VERSION_CODES.Q) {
+      vibrator.vibrate(
+          VibrationEffect.createPredefined(
+              emphasize ? VibrationEffect.EFFECT_HEAVY_CLICK : VibrationEffect.EFFECT_CLICK
+          )
+      );
     } else {
-      vibrator.vibrate(duration);
+      vibrator.vibrate(
+          VibrationEffect.createOneShot(
+              emphasize ? HEAVY : CLICK, VibrationEffect.DEFAULT_AMPLITUDE
+          )
+      );
     }
   }
 
   private void vibrate(int effectId) {
-    if (enabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+    if (enabled && VERSION.SDK_INT >= VERSION_CODES.Q) {
       vibrator.vibrate(VibrationEffect.createPredefined(effectId));
     }
   }
 
   public void tick() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+    if (VERSION.SDK_INT >= VERSION_CODES.Q) {
       vibrate(VibrationEffect.EFFECT_TICK);
     } else {
       vibrate(TICK);
@@ -66,7 +78,7 @@ public class HapticUtil {
   }
 
   public void click() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+    if (VERSION.SDK_INT >= VERSION_CODES.Q) {
       vibrate(VibrationEffect.EFFECT_CLICK);
     } else {
       vibrate(CLICK);
@@ -74,24 +86,25 @@ public class HapticUtil {
   }
 
   public void heavyClick() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+    if (VERSION.SDK_INT >= VERSION_CODES.Q) {
       vibrate(VibrationEffect.EFFECT_HEAVY_CLICK);
     } else {
       vibrate(HEAVY);
     }
   }
 
-  public void metronome(boolean isEmphasis, boolean heavyVibration) {
-    if (heavyVibration) {
-      vibrate(isEmphasis ? HEAVY_TACK : HEAVY_TICK);
-    } else if (isEmphasis) {
-      heavyClick();
-    } else {
-      click();
-    }
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled && hasVibrator();
   }
 
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
+  public boolean hasVibrator() {
+    return vibrator.hasVibrator();
+  }
+
+  public static boolean areSystemHapticsTurnedOn(Context context) {
+    int hapticFeedbackEnabled = Settings.System.getInt(
+        context.getContentResolver(), Settings.System.HAPTIC_FEEDBACK_ENABLED, 0
+    );
+    return hapticFeedbackEnabled != 0;
   }
 }

@@ -23,52 +23,66 @@ public final class Constants {
 
   public final static long ANIM_DURATION_LONG = 400;
   public final static long ANIM_DURATION_SHORT = 250;
-
-  public final static int ROTARY_SCROLL_DIVIDER = 4;
+  public static final long BEAT_ANIM_OFFSET = 25;
+  public static final long FLASH_SCREEN_DURATION = 100;
+  public static final int TEMPO_MIN = 1;
+  public static final int TEMPO_MAX = 400;
+  public static final int BEATS_MAX = 20;
+  public static final int SUBS_MAX = 10;
 
   public final static class PREF {
-
+    public final static String TEMPO = "tempo";
+    public final static String BEATS = "beats";
+    public final static String SUBDIVISIONS = "subdivisions";
     public final static String BEAT_MODE_VIBRATE = "beat_mode_vibrate";
-    public final static String FIRST_START = "first_start";
-    public final static String FIRST_PRESS = "first_button_press";
-    public final static String FIRST_SPEAKER_MODE = "first_speaker_mode";
-    public final static String INTERVAL = "interval";
-    public final static String EMPHASIS = "emphasis";
+    public final static String USE_SUBS = "use_subdivisions";
+    public final static String ALWAYS_VIBRATE = "always_vibrate";
+    public final static String FLASH_SCREEN = "flash_screen";
+    public final static String KEEP_AWAKE = "keep_awake";
+    public final static String SOUND = "sound";
+    public final static String LATENCY = "latency_offset";
+    public final static String IGNORE_FOCUS = "ignore_focus";
+    public final static String GAIN = "gain";
     public final static String BOOKMARK = "bookmark";
+    public final static String WRIST_GESTURES = "wrist_gestures";
   }
 
   public final static class DEF {
-
-    public final static String SOUND = Constants.SOUND.WOOD;
-    public final static boolean HEAVY_VIBRATION = false;
-    public final static boolean VIBRATE_ALWAYS = false;
-    public final static boolean HAPTIC_FEEDBACK = true;
+    public final static int TEMPO = 120;
+    public final static String BEATS = String.join(
+        ",", TICK_TYPE.STRONG, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL
+    );
+    public final static String SUBDIVISIONS = TICK_TYPE.MUTED;
+    public final static boolean BEAT_MODE_VIBRATE = false;
+    public final static boolean USE_SUBS = true;
+    public final static boolean ALWAYS_VIBRATE = true;
+    public final static boolean FLASH_SCREEN = false;
+    public final static boolean KEEP_AWAKE = true;
+    public final static String SOUND = Constants.SOUND.SINE;
+    public final static long LATENCY = 100;
+    public final static boolean IGNORE_FOCUS = false;
+    public final static int GAIN = 0;
     public final static boolean WRIST_GESTURES = true;
-    public final static boolean ANIMATIONS = true;
-    public final static boolean BEAT_MODE_VIBRATE = true;
-    public final static boolean FIRST_START = true;
-    public final static boolean FIRST_PRESS = true;
-    public final static boolean FIRST_SPEAKER_MODE = true;
-    public final static long INTERVAL = 500;
-    public final static int EMPHASIS = 0;
-    public final static int BOOKMARK = -1;
-  }
-
-  public final static class SETTINGS {
-
-    public final static String SOUND = "sound";
-    public final static String HEAVY_VIBRATION = "heavy_vibration";
-    public final static String VIBRATE_ALWAYS = "vibrate_always";
-    public final static String HAPTIC_FEEDBACK = "haptic_feedback";
-    public final static String WRIST_GESTURES = "wrist_gestures";
-    public final static String ANIMATIONS = "animations";
   }
 
   public final static class SOUND {
 
     public final static String WOOD = "wood";
-    public final static String CLICK = "click";
-    public final static String DING = "ding";
-    public final static String BEEP = "beep";
+    public final static String SINE = "sine";
+    public final static String MECHANICAL = "mechanical";
+  }
+
+  public final static class TICK_TYPE {
+
+    public final static String NORMAL = "normal";
+    public final static String STRONG = "strong";
+    public final static String SUB = "sub";
+    public final static String MUTED = "muted";
+  }
+
+  public final static class ACTION {
+
+    public final static String START = "xyz.zedler.patrick.tack.intent.action.START";
+    public final static String STOP = "xyz.zedler.patrick.tack.intent.action.STOP";
   }
 }
