@@ -94,19 +94,19 @@ fun SoundScreen(viewModel: MainViewModel = MainViewModel()) {
         }
         item {
           RadioChip(
-            label = stringResource(id = R.string.settings_sound_mechanical),
-            selected = sound == SOUND.MECHANICAL,
+            label = stringResource(id = R.string.settings_sound_wood),
+            selected = sound == SOUND.WOOD,
             onSelected = {
-              viewModel.changeSound(SOUND.MECHANICAL)
+              viewModel.changeSound(SOUND.WOOD)
             }
           )
         }
         item {
           RadioChip(
-            label = stringResource(id = R.string.settings_sound_wood),
-            selected = sound == SOUND.WOOD,
+            label = stringResource(id = R.string.settings_sound_mechanical),
+            selected = sound == SOUND.MECHANICAL,
             onSelected = {
-              viewModel.changeSound(SOUND.WOOD)
+              viewModel.changeSound(SOUND.MECHANICAL)
             }
           )
         }

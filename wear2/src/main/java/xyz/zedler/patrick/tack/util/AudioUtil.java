@@ -125,9 +125,9 @@ public class AudioUtil implements OnAudioFocusChangeListener {
     Pitch pitchStrong = Pitch.HIGH;
     Pitch pitchSub = Pitch.LOW;
     if (sound.equals(SOUND.MECHANICAL)) {
-      resIdNormal = R.raw.mechanical;
-      resIdStrong = R.raw.ding;
-      resIdSub = R.raw.mechanical;
+      resIdNormal = R.raw.mechanical_tick;
+      resIdStrong = R.raw.mechanical_ding;
+      resIdSub = R.raw.mechanical_tick;
       pitchStrong = Pitch.NORMAL;
     } else if (sound.equals(SOUND.WOOD)) {
       resIdNormal = R.raw.wood;
