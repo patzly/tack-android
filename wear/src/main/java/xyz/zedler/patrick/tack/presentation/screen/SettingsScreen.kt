@@ -194,13 +194,13 @@ fun SettingsScreen(
           ) {
             Text(
               text = stringResource(id = R.string.wear_label_developer),
-              style = MaterialTheme.typography.bodyMedium,
+              style = MaterialTheme.typography.bodySmall,
               color = MaterialTheme.colorScheme.onSurfaceVariant,
               modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             Text(
               text = stringResource(id = R.string.wear_app_developer),
-              style = MaterialTheme.typography.bodyMedium,
+              style = MaterialTheme.typography.bodySmall,
               color = MaterialTheme.colorScheme.onSurfaceVariant,
               modifier = Modifier.align(Alignment.CenterHorizontally)
             )
