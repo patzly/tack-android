@@ -39,6 +39,7 @@ import androidx.preference.PreferenceManager
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.util.ButtonUtil
+import xyz.zedler.patrick.tack.util.ButtonUtil.OnPressListener
 import xyz.zedler.patrick.tack.util.MetronomeUtil
 import xyz.zedler.patrick.tack.util.NotificationUtil
 import xyz.zedler.patrick.tack.util.TempoTapUtil
@@ -118,12 +119,22 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     wristGestures = sharedPrefs.getBoolean(
       Constants.PREF.WRIST_GESTURES, Constants.DEF.WRIST_GESTURES
     )
-    buttonUtilFaster = ButtonUtil(this) {
-      viewModel.changeTempo(metronomeUtil.tempo + 1)
-    }
-    buttonUtilSlower = ButtonUtil(this) {
-      viewModel.changeTempo(metronomeUtil.tempo - 1)
-    }
+    buttonUtilFaster = ButtonUtil(this, object : OnPressListener {
+      override fun onPress() {
+        viewModel.changeTempo(metronomeUtil.tempo + 1, animate = true)
+      }
+      override fun onFastPress() {
+        viewModel.changeTempo(metronomeUtil.tempo + 1, animate = false)
+      }
+    })
+    buttonUtilSlower = ButtonUtil(this, object : OnPressListener {
+      override fun onPress() {
+        viewModel.changeTempo(metronomeUtil.tempo - 1, animate = true)
+      }
+      override fun onFastPress() {
+        viewModel.changeTempo(metronomeUtil.tempo - 1, animate = false)
+      }
+    })
 
     setContent {
       TackApp(

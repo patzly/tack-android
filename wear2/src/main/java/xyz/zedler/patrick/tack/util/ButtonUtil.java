@@ -35,7 +35,7 @@ public class ButtonUtil {
   private final Runnable runnable = new Runnable() {
     @Override
     public void run() {
-      listener.onPress();
+      listener.onFastPress();
       handler.postDelayed(this, nextRun);
       if (nextRun > 60) {
         nextRun = (int) (nextRun * 0.9);
@@ -77,5 +77,6 @@ public class ButtonUtil {
   public interface OnPressListener {
 
     void onPress();
+    void onFastPress();
   }
 }

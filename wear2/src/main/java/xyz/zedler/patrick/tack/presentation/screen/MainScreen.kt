@@ -135,12 +135,15 @@ fun MainScreen(
           repeatItems = false
         )
         LaunchedEffect(tempo) {
-          if (!viewModel.wasTempoChangedByPicker) {
+          if (!viewModel.tempoChangedByPicker) {
             pickerCoroutineScope.launch {
-              pickerState.animateScrollToOption(tempo - 1)
+              if (viewModel.animateTempoChange) {
+                pickerState.animateScrollToOption(tempo - 1)
+              } else {
+                pickerState.scrollToOption(tempo - 1)
+              }
             }
           }
-          viewModel.wasTempoChangedByPicker = false
         }
         LaunchedEffect(pickerState.selectedOption) {
           viewModel.changeTempo(pickerState.selectedOption + 1, picker = true)

@@ -23,6 +23,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import xyz.zedler.patrick.tack.Constants.DEF
+import xyz.zedler.patrick.tack.Constants.TEMPO_MAX
+import xyz.zedler.patrick.tack.Constants.TEMPO_MIN
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE
 import xyz.zedler.patrick.tack.util.MetronomeUtil
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick
@@ -82,12 +84,16 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
   val flashTrigger: LiveData<Boolean> = _flashTrigger
   val flashStrongTrigger: LiveData<Boolean> = _flashStrongTrigger
   val showPermissionDialog: LiveData<Boolean> = _showPermissionDialog
-  var wasTempoChangedByPicker: Boolean = false
+  var tempoChangedByPicker: Boolean = false
+  var animateTempoChange: Boolean = true
 
-  fun changeTempo(tempo: Int, picker: Boolean = false) {
-    metronomeUtil?.tempo = tempo
-    _tempo.value = tempo
-    wasTempoChangedByPicker = picker
+  fun changeTempo(tempo: Int, picker: Boolean = false, animate: Boolean = true) {
+    if (tempo in TEMPO_MIN..TEMPO_MAX) {
+      metronomeUtil?.tempo = tempo
+      tempoChangedByPicker = picker
+      animateTempoChange = animate
+      _tempo.value = tempo
+    }
   }
 
   fun tempoTap(): Int {
