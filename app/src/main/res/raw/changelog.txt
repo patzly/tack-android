@@ -1,4 +1,18 @@
-## 4.0: Surprise 🎉
+## 4.1.0
+
+- New: completely rewritten app for Wear OS with redesigned interface and advanced emphasis selection
+- New: Chinese translation
+- Improved: more metronome sounds available
+- Improved: audio focus of app notifications no longer stops playback, lowers volume instead
+- Improved: volume boost warning now only is shown before first start with gain
+- Fixed: background notification was also shown when Tack was in foreground
+- Fixed: flash screen setting was not properly initialized on app startup
+
+## 4.0.1
+
+- Fixed: crash in settings caused by invalid sound selection
+
+## 4.0.0
 
 ? Here is the update you have been waiting for so long! I have implemented many new features, improved tons of things and fixed annoying bugs. But look for yourself!
 
@@ -15,18 +29,6 @@
 - Improved: tempo tap algorithm
 - Improved: metronome service for background playback
 - Fixed: inconsistent audio beats on Android 12+
-
-## 4.0.2
-
-- New: Chinese translation
-- Improved: audio focus of app notifications no longer stops playback, lowers volume instead
-- Improved: volume boost warning now only is shown before first start with gain
-- Fixed: background notification was also shown when Tack was in foreground
-- Fixed: flash screen setting was not properly initialized on app startup
-
-## 4.0.1
-
-- Fixed: crash in settings caused by invalid sound selection
 
 ## 3.0.2
 
