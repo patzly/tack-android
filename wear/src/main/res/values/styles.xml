@@ -17,11 +17,12 @@
   ~ Copyright (c) 2020-2024 by Patrick Zedler
   -->
 
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
   <style name="Theme.Tack.Splash" parent="Theme.SplashScreen">
     <item name="windowSplashScreenBackground">@android:color/black</item>
     <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo_anim</item>
+    <item name="windowSplashScreenAnimationDuration" tools:targetApi="s">1000</item>
     <item name="postSplashScreenTheme">@android:style/Theme.DeviceDefault</item>
   </style>
 
