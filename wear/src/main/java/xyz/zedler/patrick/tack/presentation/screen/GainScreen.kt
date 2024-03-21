@@ -122,7 +122,7 @@ fun GainScreen(viewModel: MainViewModel = MainViewModel()) {
           ) {
             Text(
               text = stringResource(id = R.string.wear_settings_gain_disclaimer),
-              style = MaterialTheme.typography.bodySmall,
+              style = MaterialTheme.typography.bodyMedium,
               modifier = Modifier.fillMaxWidth()
             )
           }

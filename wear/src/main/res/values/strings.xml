@@ -77,7 +77,7 @@
   <string name="wear_settings_ignore_focus_description">Keep playing if other apps make sound</string>
 
   <string name="wear_settings_gain">Volume boost</string>
-  <string name="wear_settings_gain_disclaimer">The developer takes no responsibility for any potential damage.</string>
+  <string name="wear_settings_gain_disclaimer">Be careful! The developer takes no responsibility for any potential damage.</string>
 
   <string name="wear_settings_always_vibrate">Always vibrate</string>
   <string name="wear_settings_always_vibrate_description">Even with sound</string>
