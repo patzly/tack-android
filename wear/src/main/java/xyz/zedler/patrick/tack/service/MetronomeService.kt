@@ -130,6 +130,8 @@ class MetronomeService : LifecycleService(), MetronomeListener {
 
   override fun onFlashScreenEnd() {}
 
+  override fun onPermissionMissing() {}
+
   fun getMetronomeUtil(): MetronomeUtil {
     return metronomeUtil
   }

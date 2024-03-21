@@ -46,6 +46,7 @@ public class MetronomeUtil {
   private final AudioUtil audioUtil;
   private final HapticUtil hapticUtil;
   private final BookmarkUtil bookmarkUtil;
+  private final NotificationUtil notificationUtil;
   private final Set<MetronomeListener> listeners = new HashSet<>();
   public final boolean fromService;
   private HandlerThread audioThread, callbackThread;
@@ -65,6 +66,7 @@ public class MetronomeUtil {
     audioUtil = new AudioUtil(context, this::stop);
     hapticUtil = new HapticUtil(context);
     bookmarkUtil = new BookmarkUtil(context);
+    notificationUtil = new NotificationUtil(context);
 
     resetHandlersIfRequired();
     setToPreferences();
@@ -224,11 +226,20 @@ public class MetronomeUtil {
     Log.i(TAG, "stop: stopped metronome handler");
   }
 
-  public void setPlaying(boolean playing) {
+  public boolean setPlaying(boolean playing) {
     if (playing) {
-      start();
+      boolean hasPermission = notificationUtil.hasPermission();
+      if (hasPermission) {
+        start();
+      } else {
+        for (MetronomeListener listener : listeners) {
+          listener.onPermissionMissing();
+        }
+      }
+      return hasPermission;
     } else {
       stop();
+      return true;
     }
   }
 
@@ -561,6 +572,7 @@ public class MetronomeUtil {
     void onMetronomePreTick(@NonNull Tick tick);
     void onMetronomeTick(@NonNull Tick tick);
     void onFlashScreenEnd();
+    void onPermissionMissing();
   }
 
   public static class Tick {

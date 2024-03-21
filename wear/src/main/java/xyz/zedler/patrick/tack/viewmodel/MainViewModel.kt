@@ -146,15 +146,13 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
     _flashStrongTrigger.value = false
   }
 
-  fun changePlaying(playing: Boolean) {
-    metronomeUtil?.isPlaying = playing
-    mutableIsPlaying.value = playing
-  }
-
-  fun togglePlaying() {
+  fun togglePlaying(): Boolean {
     val playing = metronomeUtil?.isPlaying ?: true
-    metronomeUtil?.isPlaying = !playing
-    mutableIsPlaying.value = !playing
+    if (metronomeUtil?.setPlaying(!playing) == true) {
+      mutableIsPlaying.value = !playing
+      return true
+    }
+    return false
   }
 
   fun toggleBeatModeVibrate() {

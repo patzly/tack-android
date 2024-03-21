@@ -187,8 +187,9 @@ fun MainScreen(
           onClick = {
             val startedWithGain = viewModel.metronomeUtil?.neverStartedWithGainBefore() == false
             if (isPlaying || (gain == 0 || startedWithGain)) {
-              viewModel.togglePlaying()
-              playAnimTrigger.value = !playAnimTrigger.value
+              if (viewModel.togglePlaying()) {
+                playAnimTrigger.value = !playAnimTrigger.value
+              }
             } else {
               showVolumeDialog = true
             }
