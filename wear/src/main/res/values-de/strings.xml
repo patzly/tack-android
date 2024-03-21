@@ -72,7 +72,7 @@
   <string name="wear_settings_ignore_focus_description">Wiedergabe fortsetzen, wenn andere Anwendungen etwas wiedergeben</string>
 
   <string name="wear_settings_gain">Verstärkung</string>
-  <string name="wear_settings_gain_disclaimer">Bei aktiver Verstärkung wird vor jeder Wiedergabe eine Warnung angezeigt. Der Entwickler übernimmt keine Verantwortung für etwaige Schäden.</string>
+  <string name="wear_settings_gain_disclaimer">Achtung! Der Entwickler übernimmt keine Verantwortung für etwaige Schäden.</string>
 
   <string name="wear_settings_always_vibrate">Immer vibrieren</string>
   <string name="wear_settings_always_vibrate_description">Auch im Audiomodus</string>
