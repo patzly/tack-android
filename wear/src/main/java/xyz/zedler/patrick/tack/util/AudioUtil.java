@@ -124,19 +124,31 @@ public class AudioUtil implements OnAudioFocusChangeListener {
     Pitch pitchNormal = Pitch.NORMAL;
     Pitch pitchStrong = Pitch.HIGH;
     Pitch pitchSub = Pitch.LOW;
-    if (sound.equals(SOUND.MECHANICAL)) {
-      resIdNormal = R.raw.mechanical_tick;
-      resIdStrong = R.raw.mechanical_ding;
-      resIdSub = R.raw.mechanical_tick;
-      pitchStrong = Pitch.NORMAL;
-    } else if (sound.equals(SOUND.WOOD)) {
-      resIdNormal = R.raw.wood;
-      resIdStrong = R.raw.wood;
-      resIdSub = R.raw.wood;
-    } else {
-      resIdNormal = R.raw.sine;
-      resIdStrong = R.raw.sine;
-      resIdSub = R.raw.sine;
+    switch (sound) {
+      case SOUND.WOOD:
+        resIdNormal = R.raw.wood;
+        resIdStrong = R.raw.wood;
+        resIdSub = R.raw.wood;
+        break;
+      case SOUND.MECHANICAL:
+        resIdNormal = R.raw.mechanical_tick;
+        resIdStrong = R.raw.mechanical_ding;
+        resIdSub = R.raw.mechanical_knock;
+        pitchStrong = Pitch.NORMAL;
+        pitchSub = Pitch.NORMAL;
+        break;
+      case SOUND.FOLDING:
+        resIdNormal = R.raw.folding_knock;
+        resIdStrong = R.raw.folding_fold;
+        resIdSub = R.raw.folding_tap;
+        pitchStrong = Pitch.NORMAL;
+        pitchSub = Pitch.NORMAL;
+        break;
+      default:
+        resIdNormal = R.raw.sine;
+        resIdStrong = R.raw.sine;
+        resIdSub = R.raw.sine;
+        break;
     }
     tickNormal = loadAudio(resIdNormal, pitchNormal);
     tickStrong = loadAudio(resIdStrong, pitchStrong);

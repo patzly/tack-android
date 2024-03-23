@@ -99,10 +99,12 @@ fun SettingsScreen(
         item {
           val sound by viewModel.sound.observeAsState(Constants.DEF.SOUND)
           var name = stringResource(id = R.string.wear_settings_sound_sine)
-          if (sound == SOUND.MECHANICAL) {
-            name = stringResource(id = R.string.wear_settings_sound_mechanical)
-          } else if (sound == SOUND.WOOD) {
+          if (sound == SOUND.WOOD) {
             name = stringResource(id = R.string.wear_settings_sound_wood)
+          } else if (sound == SOUND.MECHANICAL) {
+            name = stringResource(id = R.string.wear_settings_sound_mechanical)
+          } else if (sound == SOUND.FOLDING) {
+            name = stringResource(id = R.string.wear_settings_sound_folding)
           }
           ClickChip(
             label = stringResource(R.string.wear_settings_sound),
