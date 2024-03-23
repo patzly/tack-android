@@ -93,6 +93,9 @@ class MainActivity : ComponentActivity(), ServiceConnection {
           requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }
       }
+      override fun onKeepScreenAwakeChanged(keepAwake: Boolean) {
+        keepScreenAwake(this@MainActivity, metronomeUtil.isPlaying && keepAwake)
+      }
     })
 
     requestPermissionLauncher =

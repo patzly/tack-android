@@ -132,6 +132,8 @@ class MetronomeService : LifecycleService(), MetronomeListener {
 
   override fun onPermissionMissing() {}
 
+  override fun onKeepScreenAwakeChanged(keepAwake: Boolean) {}
+
   fun getMetronomeUtil(): MetronomeUtil {
     return metronomeUtil
   }
