@@ -63,8 +63,9 @@
 
   <string name="wear_settings_sound">Schlaggeräusch</string>
   <string name="wear_settings_sound_sine">Sinus</string>
-  <string name="wear_settings_sound_mechanical">Mechanisch</string>
   <string name="wear_settings_sound_wood">Holz</string>
+  <string name="wear_settings_sound_mechanical">Mechanisch</string>
+  <string name="wear_settings_sound_folding">Zollstock</string>
 
   <string name="wear_settings_latency">Korrektur der Latenzzeit</string>
 
