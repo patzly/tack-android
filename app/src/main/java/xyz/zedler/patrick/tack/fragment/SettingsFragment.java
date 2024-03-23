@@ -325,6 +325,7 @@ public class SettingsFragment extends BaseFragment
     labels.put(SOUND.SINE, getString(R.string.settings_sound_sine));
     labels.put(SOUND.WOOD, getString(R.string.settings_sound_wood));
     labels.put(SOUND.MECHANICAL, getString(R.string.settings_sound_mechanical));
+    labels.put(SOUND.FOLDING, getString(R.string.wear_settings_sound_folding));
     ArrayList<String> sounds = new ArrayList<>(labels.keySet());
     String[] items = labels.values().toArray(new String[]{});
     int init = sounds.indexOf(getMetronomeUtil().getSound());
