@@ -202,6 +202,12 @@ public class MetronomeUtil {
   }
 
   public void start(boolean resetElapsedAndTimerIfNecessary) {
+    if (!NotificationUtil.hasPermission(context)) {
+      for (MetronomeListener listener : listeners) {
+        listener.onPermissionMissing();
+      }
+      return;
+    }
     if (resetElapsedAndTimerIfNecessary) {
       // notify system for shortcut usage prediction
       shortcutUtil.reportUsage(getTempo());
@@ -539,9 +545,9 @@ public class MetronomeUtil {
     return flashScreen;
   }
 
-  public void setKeepAwake(boolean keep) {
-    keepAwake = keep;
-    sharedPrefs.edit().putBoolean(PREF.KEEP_AWAKE, keep).apply();
+  public void setKeepAwake(boolean keepAwake) {
+    this.keepAwake = keepAwake;
+    sharedPrefs.edit().putBoolean(PREF.KEEP_AWAKE, keepAwake).apply();
   }
 
   public boolean getKeepAwake() {
@@ -964,6 +970,20 @@ public class MetronomeUtil {
     void onMetronomeTimerStarted();
     void onTimerSecondsChanged();
     void onMetronomeConnectionMissing();
+    void onPermissionMissing();
+  }
+
+  public static class MetronomeListenerAdapter implements MetronomeListener {
+    public void onMetronomeStart() {}
+    public void onMetronomeStop() {}
+    public void onMetronomePreTick(Tick tick) {}
+    public void onMetronomeTick(Tick tick) {}
+    public void onMetronomeTempoChanged(int tempoOld, int tempoNew) {}
+    public void onElapsedTimeSecondsChanged() {}
+    public void onMetronomeTimerStarted() {}
+    public void onTimerSecondsChanged() {}
+    public void onMetronomeConnectionMissing() {}
+    public void onPermissionMissing() {}
   }
 
   public static class Tick {

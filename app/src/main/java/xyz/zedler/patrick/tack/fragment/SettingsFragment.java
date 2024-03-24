@@ -59,6 +59,7 @@ import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
+import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.ShortcutUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
@@ -66,7 +67,7 @@ import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.ThemeSelectionCardView;
 
 public class SettingsFragment extends BaseFragment
-    implements OnClickListener, OnCheckedChangeListener, OnChangeListener, MetronomeListener {
+    implements OnClickListener, OnCheckedChangeListener, OnChangeListener {
 
   private static final String TAG = SettingsFragment.class.getSimpleName();
 
@@ -242,12 +243,33 @@ public class SettingsFragment extends BaseFragment
 
     dialogUtilSound = new DialogUtil(activity, "sound");
 
+    MetronomeListener latencyListener = new MetronomeListenerAdapter() {
+      @Override
+      public void onMetronomeTick(Tick tick) {
+        activity.runOnUiThread(() -> {
+          if (binding != null && flashScreen) {
+            binding.linearSettingsLatency.setBackground(itemBgFlash);
+            binding.linearSettingsLatency.postDelayed(() -> {
+              if (binding != null) {
+                binding.linearSettingsLatency.setBackground(null);
+              }
+            }, 100);
+          }
+        });
+      }
+
+      @Override
+      public void onMetronomeConnectionMissing() {
+        activity.showSnackbar(R.string.msg_connection_lost);
+      }
+    };
+
     binding.sliderSettingsLatency.addOnSliderTouchListener(new OnSliderTouchListener() {
       @Override
       public void onStartTrackingTouch(@NonNull Slider slider) {
         flashScreen = true;
         getMetronomeUtil().savePlayingState();
-        getMetronomeUtil().addListener(SettingsFragment.this);
+        getMetronomeUtil().addListener(latencyListener);
         getMetronomeUtil().setUpLatencyCalibration();
       }
 
@@ -255,7 +277,7 @@ public class SettingsFragment extends BaseFragment
       public void onStopTrackingTouch(@NonNull Slider slider) {
         flashScreen = false;
         getMetronomeUtil().restorePlayingState();
-        getMetronomeUtil().removeListener(SettingsFragment.this);
+        getMetronomeUtil().removeListener(latencyListener);
         getMetronomeUtil().setToPreferences();
       }
     });
@@ -395,46 +417,6 @@ public class SettingsFragment extends BaseFragment
   }
 
   @Override
-  public void onMetronomeStart() {}
-
-  @Override
-  public void onMetronomeStop() {}
-
-  @Override
-  public void onMetronomePreTick(Tick tick) {}
-
-  @Override
-  public void onMetronomeTick(Tick tick) {
-    activity.runOnUiThread(() -> {
-      if (binding != null && flashScreen) {
-        binding.linearSettingsLatency.setBackground(itemBgFlash);
-        binding.linearSettingsLatency.postDelayed(() -> {
-          if (binding != null) {
-            binding.linearSettingsLatency.setBackground(null);
-          }
-        }, 100);
-      }
-    });
-  }
-
-  @Override
-  public void onMetronomeTempoChanged(int bpmOld, int bpmNew) {}
-
-  @Override
-  public void onMetronomeTimerStarted() {}
-
-  @Override
-  public void onElapsedTimeSecondsChanged() {}
-
-  @Override
-  public void onTimerSecondsChanged() {}
-
-  @Override
-  public void onMetronomeConnectionMissing() {
-    activity.showSnackbar(R.string.msg_connection_lost);
-  }
-
-  @Override
   public void onClick(View v) {
     int id = v.getId();
     if (id == R.id.linear_settings_language && getViewUtil().isClickEnabled(id)) {
@@ -520,6 +502,7 @@ public class SettingsFragment extends BaseFragment
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsKeepAwake);
       getMetronomeUtil().setKeepAwake(isChecked);
+      UiUtil.keepScreenAwake(activity, getMetronomeUtil().isPlaying() && isChecked);
     }
   }
 

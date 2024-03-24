@@ -501,7 +501,7 @@ public class MetronomeUtil {
     this.keepAwake = keepAwake;
     sharedPrefs.edit().putBoolean(PREF.KEEP_AWAKE, keepAwake).apply();
     for (MetronomeListener listener : listeners) {
-      listener.onKeepScreenAwakeChanged(this.keepAwake);
+      listener.onKeepScreenAwakeChanged(keepAwake);
     }
   }
 
@@ -577,6 +577,16 @@ public class MetronomeUtil {
     void onFlashScreenEnd();
     void onPermissionMissing();
     void onKeepScreenAwakeChanged(boolean keepAwake);
+  }
+
+  public static class MetronomeListenerAdapter implements MetronomeListener {
+    public void onMetronomeStart() {}
+    public void onMetronomeStop() {}
+    public void onMetronomePreTick(@NonNull Tick tick) {}
+    public void onMetronomeTick(@NonNull Tick tick) {}
+    public void onFlashScreenEnd() {}
+    public void onPermissionMissing() {}
+    public void onKeepScreenAwakeChanged(boolean keepAwake) {}
   }
 
   public static class Tick {

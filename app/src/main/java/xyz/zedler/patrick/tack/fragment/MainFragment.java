@@ -516,10 +516,6 @@ public class MainFragment extends BaseFragment
   @Override
   public void onMetronomeStart() {
     activity.runOnUiThread(() -> {
-      if (!activity.hasNotificationPermission()) {
-        getMetronomeUtil().stop();
-        return;
-      }
       if (binding != null) {
         beatsBgDrawable.reset();
         if (getMetronomeUtil().getCountIn() > 0) {
@@ -683,6 +679,11 @@ public class MainFragment extends BaseFragment
     activity.runOnUiThread(() -> showSnackbar(
         activity.getSnackbar(R.string.msg_connection_lost, Snackbar.LENGTH_SHORT)
     ));
+  }
+
+  @Override
+  public void onPermissionMissing() {
+    activity.requestNotificationPermission();
   }
 
   @Override

@@ -154,6 +154,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
             v -> requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         );
         showSnackbar(snackbar);
+      } else {
+        getMetronomeUtil().start();
       }
     });
 
@@ -294,12 +296,11 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     getMetronomeUtil().setToPreferences();
   }
 
-  public boolean hasNotificationPermission() {
+  public void requestNotificationPermission() {
     boolean hasPermission = NotificationUtil.hasPermission(this);
     if (!hasPermission && VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
       requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
     }
-    return hasPermission;
   }
 
   @Nullable

@@ -29,10 +29,10 @@ import android.util.Log
 import androidx.lifecycle.LifecycleService
 import xyz.zedler.patrick.tack.Constants.ACTION
 import xyz.zedler.patrick.tack.util.MetronomeUtil
-import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener
+import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter
 import xyz.zedler.patrick.tack.util.NotificationUtil
 
-class MetronomeService : LifecycleService(), MetronomeListener {
+class MetronomeService : LifecycleService() {
 
   companion object {
     private const val TAG = "MetronomeService"
@@ -48,7 +48,11 @@ class MetronomeService : LifecycleService(), MetronomeListener {
     super.onCreate()
 
     metronomeUtil = MetronomeUtil(this, true)
-    metronomeUtil.addListener(this)
+    metronomeUtil.addListener(object : MetronomeListenerAdapter() {
+      override fun onMetronomeStop() {
+        stopForeground()
+      }
+    })
 
     notificationUtil = NotificationUtil(this)
   }
@@ -117,22 +121,6 @@ class MetronomeService : LifecycleService(), MetronomeListener {
     stopForeground(STOP_FOREGROUND_REMOVE)
     configChange = false
   }
-
-  override fun onMetronomeStart() {}
-
-  override fun onMetronomeStop() {
-    stopForeground()
-  }
-
-  override fun onMetronomePreTick(tick: MetronomeUtil.Tick) {}
-
-  override fun onMetronomeTick(tick: MetronomeUtil.Tick) {}
-
-  override fun onFlashScreenEnd() {}
-
-  override fun onPermissionMissing() {}
-
-  override fun onKeepScreenAwakeChanged(keepAwake: Boolean) {}
 
   fun getMetronomeUtil(): MetronomeUtil {
     return metronomeUtil
