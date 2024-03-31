@@ -24,7 +24,6 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
-import android.provider.Settings;
 
 public class HapticUtil {
 
@@ -48,22 +47,6 @@ public class HapticUtil {
       return;
     }
     vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE));
-  }
-
-  public void vibrate(boolean emphasize) {
-    if (VERSION.SDK_INT >= VERSION_CODES.Q) {
-      vibrator.vibrate(
-          VibrationEffect.createPredefined(
-              emphasize ? VibrationEffect.EFFECT_HEAVY_CLICK : VibrationEffect.EFFECT_CLICK
-          )
-      );
-    } else {
-      vibrator.vibrate(
-          VibrationEffect.createOneShot(
-              emphasize ? HEAVY : CLICK, VibrationEffect.DEFAULT_AMPLITUDE
-          )
-      );
-    }
   }
 
   private void vibrate(int effectId) {
@@ -106,12 +89,5 @@ public class HapticUtil {
 
   public boolean hasVibrator() {
     return vibrator.hasVibrator();
-  }
-
-  public static boolean areSystemHapticsTurnedOn(Context context) {
-    int hapticFeedbackEnabled = Settings.System.getInt(
-        context.getContentResolver(), Settings.System.HAPTIC_FEEDBACK_ENABLED, 0
-    );
-    return hapticFeedbackEnabled != 0;
   }
 }

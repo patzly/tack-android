@@ -54,7 +54,7 @@ public class MetronomeUtil {
   private List<String> beats, subdivisions;
   private int tempo;
   private long tickIndex, latency;
-  private boolean playing, tempPlaying, useSubdivisions, beatModeVibrate;
+  private boolean playing, useSubdivisions, beatModeVibrate;
   private boolean alwaysVibrate, strongVibration, flashScreen, keepAwake, wristGestures;
   private boolean neverStartedWithGain = true;
 
@@ -122,29 +122,6 @@ public class MetronomeUtil {
     if (latencyHandler != null) {
       latencyHandler.removeCallbacksAndMessages(null);
     }
-  }
-
-  public void savePlayingState() {
-    tempPlaying = isPlaying();
-  }
-
-  public void restorePlayingState() {
-    if (tempPlaying) {
-      start();
-    } else {
-      stop();
-    }
-  }
-
-  public void setUpLatencyCalibration() {
-    tempo = 80;
-    beats = arrayAsList(DEF.BEATS.split(","));
-    subdivisions = arrayAsList(DEF.SUBDIVISIONS.split(","));
-    alwaysVibrate = true;
-    strongVibration = false;
-    setGain(0);
-    setBeatModeVibrate(false);
-    start();
   }
 
   public void destroy() {
@@ -329,29 +306,11 @@ public class MetronomeUtil {
     return true;
   }
 
-  public void setSubdivisionsUsed(boolean used) {
-    useSubdivisions = used;
-    sharedPrefs.edit().putBoolean(PREF.USE_SUBS, used).apply();
-  }
-
-  public boolean getSubdivisionsUsed() {
-    return useSubdivisions;
-  }
-
   public void setSwing3() {
     List<String> subdivisions = new ArrayList<>(
         List.of(TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL)
     );
     setSubdivisions(subdivisions);
-  }
-
-  public boolean isSwing3() {
-    String triplet = String.join(",", TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.SUB);
-    String tripletAlt = String.join(
-        ",", TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL
-    );
-    String subdivisions = String.join(",", getSubdivisions());
-    return subdivisions.equals(triplet) || subdivisions.equals(tripletAlt);
   }
 
   public void setSwing5() {
@@ -361,44 +320,12 @@ public class MetronomeUtil {
     setSubdivisions(subdivisions);
   }
 
-  public boolean isSwing5() {
-    String quintuplet = String.join(
-        ",",
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.SUB, TICK_TYPE.MUTED
-    );
-    String quintupletAlt = String.join(
-        ",",
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL, TICK_TYPE.MUTED
-    );
-    String subdivisions = String.join(",", getSubdivisions());
-    return subdivisions.equals(quintuplet) || subdivisions.equals(quintupletAlt);
-  }
-
   public void setSwing7() {
     List<String> subdivisions = new ArrayList<>(List.of(
         TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
         TICK_TYPE.NORMAL, TICK_TYPE.MUTED, TICK_TYPE.MUTED
     ));
     setSubdivisions(subdivisions);
-  }
-
-  public boolean isSwing7() {
-    String septuplet = String.join(
-        ",",
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
-        TICK_TYPE.SUB, TICK_TYPE.MUTED, TICK_TYPE.MUTED
-    );
-    String septupletAlt = String.join(
-        ",",
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
-        TICK_TYPE.NORMAL, TICK_TYPE.MUTED, TICK_TYPE.MUTED
-    );
-    String subdivisions = String.join(",", getSubdivisions());
-    return subdivisions.equals(septuplet) || subdivisions.equals(septupletAlt);
-  }
-
-  public boolean isSwingActive() {
-    return isSwing3() || isSwing5() || isSwing7();
   }
 
   public void setTempo(int tempo) {
@@ -512,9 +439,6 @@ public class MetronomeUtil {
   public void setKeepAwake(boolean keepAwake) {
     this.keepAwake = keepAwake;
     sharedPrefs.edit().putBoolean(PREF.KEEP_AWAKE, keepAwake).apply();
-    for (MetronomeListener listener : listeners) {
-      listener.onKeepScreenAwakeChanged(keepAwake);
-    }
   }
 
   public boolean getKeepAwake() {
@@ -588,17 +512,21 @@ public class MetronomeUtil {
     void onMetronomeTick(@NonNull Tick tick);
     void onFlashScreenEnd();
     void onPermissionMissing();
-    void onKeepScreenAwakeChanged(boolean keepAwake);
   }
 
   public static class MetronomeListenerAdapter implements MetronomeListener {
+    @Override
     public void onMetronomeStart() {}
+    @Override
     public void onMetronomeStop() {}
+    @Override
     public void onMetronomePreTick(@NonNull Tick tick) {}
+    @Override
     public void onMetronomeTick(@NonNull Tick tick) {}
+    @Override
     public void onFlashScreenEnd() {}
+    @Override
     public void onPermissionMissing() {}
-    public void onKeepScreenAwakeChanged(boolean keepAwake) {}
   }
 
   public static class Tick {

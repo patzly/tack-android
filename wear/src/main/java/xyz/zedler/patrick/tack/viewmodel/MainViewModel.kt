@@ -34,7 +34,7 @@ import xyz.zedler.patrick.tack.util.TempoTapUtil
 
 class MainViewModel(
   var metronomeUtil: MetronomeUtil? = null,
-  val keepAwakeListener: KeepAwakeListener? = null
+  private val keepAwakeListener: KeepAwakeListener? = null
 ) : ViewModel() {
   val mutableIsPlaying = MutableLiveData(metronomeUtil?.isPlaying ?: false)
   private val tempoTapUtil = TempoTapUtil()

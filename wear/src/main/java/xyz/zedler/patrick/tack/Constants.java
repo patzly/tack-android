@@ -85,7 +85,6 @@ public final class Constants {
 
   public final static class ACTION {
 
-    public final static String START = "xyz.zedler.patrick.tack.intent.action.START";
     public final static String STOP = "xyz.zedler.patrick.tack.intent.action.STOP";
   }
 }
