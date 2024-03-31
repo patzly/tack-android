@@ -66,13 +66,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
     tempoTapUtil = TempoTapUtil()
     metronomeUtil = MetronomeUtil(this, false)
-    metronomeUtil.addListener(object : MetronomeUtil.MetronomeListener {
-      override fun onMetronomeStart() {
-        keepScreenAwake(this@MainActivity, getMetronomeUtil().keepAwake)
-      }
-      override fun onMetronomeStop() {
-        keepScreenAwake(this@MainActivity, false)
-      }
+    metronomeUtil.addListener(object : MetronomeUtil.MetronomeListenerAdapter() {
       override fun onMetronomePreTick(tick: MetronomeUtil.Tick) {
         runOnUiThread {
           viewModel.onPreTick(tick)
@@ -93,20 +87,25 @@ class MainActivity : ComponentActivity(), ServiceConnection {
           requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }
       }
-      override fun onKeepScreenAwakeChanged(keepAwake: Boolean) {
-        keepScreenAwake(this@MainActivity, metronomeUtil.isPlaying && keepAwake)
-      }
     })
 
-    requestPermissionLauncher =
-      registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
-        if (!isGranted) {
-          viewModel.changeShowPermissionDialog(true)
+    viewModel = MainViewModel(
+      metronomeUtil,
+      object : MainViewModel.KeepAwakeListener {
+        override fun onKeepAwakeChanged(keepAwake: Boolean) {
+          keepScreenAwake(this@MainActivity, keepAwake)
         }
       }
-
-    viewModel = MainViewModel(metronomeUtil)
+    )
     updateMetronomeUtil()
+
+    requestPermissionLauncher = registerForActivityResult(
+      ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+      if (!isGranted) {
+        viewModel.changeShowPermissionDialog(true)
+      }
+    }
 
     buttonUtilFaster = ButtonUtil(this, object : OnPressListener {
       override fun onPress() {

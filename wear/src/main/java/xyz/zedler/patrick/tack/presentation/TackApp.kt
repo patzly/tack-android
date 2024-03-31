@@ -20,6 +20,8 @@
 package xyz.zedler.patrick.tack.presentation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.navigation.NavController
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
@@ -40,6 +42,16 @@ fun TackApp(
   onRateClick: () -> Unit
 ) {
   val navController = rememberSwipeDismissableNavController()
+  val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
+    viewModel.onDestinationChanged(destination)
+  }
+  DisposableEffect(navController) {
+    navController.addOnDestinationChangedListener(listener)
+    onDispose {
+      navController.removeOnDestinationChangedListener(listener)
+    }
+  }
+
   SwipeDismissableNavHost(
     navController = navController,
     startDestination = Screen.Main.route

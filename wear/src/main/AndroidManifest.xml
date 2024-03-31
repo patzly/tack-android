@@ -34,7 +34,6 @@
     android:icon="@mipmap/ic_launcher"
     android:label="@string/wear_app_name"
     android:supportsRtl="true"
-    android:theme="@android:style/Theme.DeviceDefault"
     android:localeConfig="@xml/locales_config"
     android:allowBackup="true"
     android:fullBackupContent="@xml/backup_rules_full"

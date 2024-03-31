@@ -22,18 +22,23 @@ package xyz.zedler.patrick.tack.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.navigation.NavDestination
 import xyz.zedler.patrick.tack.Constants.DEF
 import xyz.zedler.patrick.tack.Constants.TEMPO_MAX
 import xyz.zedler.patrick.tack.Constants.TEMPO_MIN
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE
+import xyz.zedler.patrick.tack.presentation.navigation.Screen
 import xyz.zedler.patrick.tack.util.MetronomeUtil
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick
 import xyz.zedler.patrick.tack.util.TempoTapUtil
 
-class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
-
+class MainViewModel(
+  var metronomeUtil: MetronomeUtil? = null,
+  val keepAwakeListener: KeepAwakeListener? = null
+) : ViewModel() {
   val mutableIsPlaying = MutableLiveData(metronomeUtil?.isPlaying ?: false)
   private val tempoTapUtil = TempoTapUtil()
+  private var currentRoute = Screen.Main.route
   private val _tempo = MutableLiveData(metronomeUtil?.tempo ?: DEF.TEMPO)
   private val _beats = MutableLiveData(
     metronomeUtil?.beats ?: DEF.BEATS.split(",")
@@ -150,6 +155,7 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
     val playing = metronomeUtil?.isPlaying ?: true
     if (metronomeUtil?.setPlaying(!playing) == true) {
       mutableIsPlaying.value = !playing
+      keepAwakeListener?.onKeepAwakeChanged(keepAwake())
       return true
     }
     return false
@@ -198,6 +204,18 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
   fun changeKeepAwake(awake: Boolean) {
     metronomeUtil?.keepAwake = awake
     _keepAwake.value = awake
+    keepAwakeListener?.onKeepAwakeChanged(keepAwake())
+  }
+
+  fun onDestinationChanged(destination: NavDestination) {
+    currentRoute = destination.route.toString()
+    keepAwakeListener?.onKeepAwakeChanged(keepAwake())
+  }
+
+  private fun keepAwake(): Boolean {
+    return _keepAwake.value == true
+        && mutableIsPlaying.value == true
+        && currentRoute == Screen.Main.route
   }
 
   fun changeWristGestures(gestures: Boolean) {
@@ -287,5 +305,9 @@ class MainViewModel(var metronomeUtil: MetronomeUtil? = null) : ViewModel() {
     val updated = metronomeUtil?.subdivisions?.toList()
     updateSubdivisionTriggers(updated?.size ?: DEF.SUBDIVISIONS.split(",").size)
     _subdivisions.value = updated
+  }
+
+  interface KeepAwakeListener {
+    fun onKeepAwakeChanged(keepAwake: Boolean)
   }
 }

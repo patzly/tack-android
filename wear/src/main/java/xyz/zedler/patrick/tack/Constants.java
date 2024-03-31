@@ -57,7 +57,7 @@ public final class Constants {
     public final static boolean USE_SUBS = true;
     public final static boolean ALWAYS_VIBRATE = true;
     public final static boolean FLASH_SCREEN = false;
-    public final static boolean KEEP_AWAKE = true;
+    public final static boolean KEEP_AWAKE = false;
     public final static String SOUND = Constants.SOUND.SINE;
     public final static long LATENCY = 100;
     public final static boolean IGNORE_FOCUS = false;
