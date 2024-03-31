@@ -32,8 +32,11 @@ public class HapticUtil {
   private boolean enabled;
 
   public static final long TICK = 13;
+  public static final long TICK_STRONG = 20;
   public static final long CLICK = 20;
+  public static final long CLICK_STRONG = 50;
   public static final long HEAVY = 50;
+  public static final long HEAVY_STRONG = 80;
 
   public HapticUtil(Context context) {
     vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -69,31 +72,35 @@ public class HapticUtil {
     }
   }
 
-  public void tick() {
-    if (VERSION.SDK_INT >= VERSION_CODES.Q) {
+  public void tick(boolean strong) {
+    if (VERSION.SDK_INT >= VERSION_CODES.Q && !strong) {
       vibrate(VibrationEffect.EFFECT_TICK);
     } else {
-      vibrate(TICK);
+      vibrate(strong ? TICK_STRONG : TICK);
     }
   }
 
-  public void click() {
-    if (VERSION.SDK_INT >= VERSION_CODES.Q) {
+  public void click(boolean strong) {
+    if (VERSION.SDK_INT >= VERSION_CODES.Q && !strong) {
       vibrate(VibrationEffect.EFFECT_CLICK);
     } else {
-      vibrate(CLICK);
+      vibrate(strong ? CLICK_STRONG : CLICK);
     }
   }
 
-  public void heavyClick() {
-    if (VERSION.SDK_INT >= VERSION_CODES.Q) {
+  public void heavyClick(boolean strong) {
+    if (VERSION.SDK_INT >= VERSION_CODES.Q && !strong) {
       vibrate(VibrationEffect.EFFECT_HEAVY_CLICK);
     } else {
-      vibrate(HEAVY);
+      vibrate(strong ? HEAVY_STRONG : HEAVY);
     }
   }
 
   public void setEnabled(boolean enabled) {
+    this.enabled = enabled && hasVibrator();
+  }
+
+  public void setStrongVibration(boolean enabled) {
     this.enabled = enabled && hasVibrator();
   }
 

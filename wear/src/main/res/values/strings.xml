@@ -83,6 +83,9 @@
   <string name="wear_settings_always_vibrate">Always vibrate</string>
   <string name="wear_settings_always_vibrate_description">Even with sound</string>
 
+  <string name="wear_settings_strong_vibration">Strong vibration</string>
+  <string name="wear_settings_strong_vibration_description">If haptics are weak</string>
+
   <string name="wear_settings_flash_screen">Flash screen</string>
   <string name="wear_settings_flash_screen_description">On every beat</string>
 

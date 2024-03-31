@@ -55,7 +55,7 @@ public class MetronomeUtil {
   private int tempo;
   private long tickIndex, latency;
   private boolean playing, tempPlaying, useSubdivisions, beatModeVibrate;
-  private boolean alwaysVibrate, flashScreen, keepAwake, wristGestures;
+  private boolean alwaysVibrate, strongVibration, flashScreen, keepAwake, wristGestures;
   private boolean neverStartedWithGain = true;
 
   public MetronomeUtil(@NonNull Context context, boolean fromService) {
@@ -81,6 +81,7 @@ public class MetronomeUtil {
     useSubdivisions = sharedPrefs.getBoolean(PREF.USE_SUBS, DEF.USE_SUBS);
     latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY);
     alwaysVibrate = sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
+    strongVibration = sharedPrefs.getBoolean(PREF.STRONG_VIBRATION, DEF.STRONG_VIBRATION);
     flashScreen = sharedPrefs.getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
     keepAwake = sharedPrefs.getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
     wristGestures = sharedPrefs.getBoolean(PREF.WRIST_GESTURES, DEF.WRIST_GESTURES);
@@ -140,6 +141,7 @@ public class MetronomeUtil {
     beats = arrayAsList(DEF.BEATS.split(","));
     subdivisions = arrayAsList(DEF.SUBDIVISIONS.split(","));
     alwaysVibrate = true;
+    strongVibration = false;
     setGain(0);
     setBeatModeVibrate(false);
     start();
@@ -453,6 +455,16 @@ public class MetronomeUtil {
     return alwaysVibrate;
   }
 
+  public void setStrongVibration(boolean strong) {
+    strongVibration = strong;
+    hapticUtil.setStrongVibration(strong);
+    sharedPrefs.edit().putBoolean(PREF.STRONG_VIBRATION, strong).apply();
+  }
+
+  public boolean isStrongVibration() {
+    return strongVibration;
+  }
+
   public boolean areHapticEffectsPossible() {
     return !isPlaying() || (!beatModeVibrate && !alwaysVibrate);
   }
@@ -528,15 +540,15 @@ public class MetronomeUtil {
       if (beatModeVibrate || alwaysVibrate) {
         switch (tick.type) {
           case TICK_TYPE.STRONG:
-            hapticUtil.heavyClick();
+            hapticUtil.heavyClick(strongVibration);
             break;
           case TICK_TYPE.SUB:
-            hapticUtil.tick();
+            hapticUtil.tick(strongVibration);
             break;
           case TICK_TYPE.MUTED:
             break;
           default:
-            hapticUtil.click();
+            hapticUtil.click(strongVibration);
         }
       }
       for (MetronomeListener listener : listeners) {

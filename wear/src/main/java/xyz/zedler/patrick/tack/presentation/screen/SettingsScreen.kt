@@ -151,6 +151,19 @@ fun SettingsScreen(
           )
         }
         item {
+          val strongVibration by viewModel.strongVibration.observeAsState(
+            Constants.DEF.STRONG_VIBRATION
+          )
+          ToggleChip(
+            checked = strongVibration,
+            onCheckedChange = {
+              viewModel.changeStrongVibration(it)
+            },
+            label = stringResource(id = R.string.wear_settings_strong_vibration),
+            secondaryLabel = stringResource(id = R.string.wear_settings_strong_vibration_description)
+          )
+        }
+        item {
           val flashScreen by viewModel.flashScreen.observeAsState(Constants.DEF.FLASH_SCREEN)
           ToggleChip(
             checked = flashScreen,

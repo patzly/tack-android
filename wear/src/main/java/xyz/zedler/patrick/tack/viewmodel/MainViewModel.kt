@@ -60,6 +60,9 @@ class MainViewModel(
   private val _alwaysVibrate = MutableLiveData(
     metronomeUtil?.isAlwaysVibrate ?: DEF.ALWAYS_VIBRATE
   )
+  private val _strongVibration = MutableLiveData(
+    metronomeUtil?.isStrongVibration ?: DEF.STRONG_VIBRATION
+  )
   private val _gain = MutableLiveData(metronomeUtil?.gain ?: DEF.GAIN)
   private val _sound = MutableLiveData(metronomeUtil?.sound ?: DEF.SOUND)
   private val _ignoreFocus = MutableLiveData(
@@ -83,6 +86,7 @@ class MainViewModel(
   val subdivisionTriggers: List<LiveData<Boolean>> = _subdivisionTriggers
   val beatModeVibrate: LiveData<Boolean> = _beatModeVibrate
   val alwaysVibrate: LiveData<Boolean> = _alwaysVibrate
+  val strongVibration: LiveData<Boolean> = _strongVibration
   val gain: LiveData<Int> = _gain
   val sound: LiveData<String> = _sound
   val ignoreFocus: LiveData<Boolean> = _ignoreFocus
@@ -170,6 +174,11 @@ class MainViewModel(
   fun changeAlwaysVibrate(alwaysVibrate: Boolean) {
     metronomeUtil?.isAlwaysVibrate = alwaysVibrate
     _alwaysVibrate.value = alwaysVibrate
+  }
+
+  fun changeStrongVibration(strong: Boolean) {
+    metronomeUtil?.isStrongVibration = strong
+    _strongVibration.value = strong
   }
 
   fun toggleBookmark() {
