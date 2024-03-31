@@ -78,6 +78,9 @@
   <string name="wear_settings_always_vibrate">Immer vibrieren</string>
   <string name="wear_settings_always_vibrate_description">Auch im Audiomodus</string>
 
+  <string name="wear_settings_strong_vibration">Starke Vibration</string>
+  <string name="wear_settings_strong_vibration_description">Falls zu schwach</string>
+
   <string name="wear_settings_flash_screen">Bildschirm aufblitzen lassen</string>
   <string name="wear_settings_flash_screen_description">Bei jedem Schlag</string>
 
