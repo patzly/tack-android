@@ -87,9 +87,6 @@
   <string name="wear_settings_keep_awake">Bildschirm wach halten</string>
   <string name="wear_settings_keep_awake_description">Während der Wiedergabe</string>
 
-  <string name="wear_settings_wrist_gestures">Handgelenk-Gesten</string>
-  <string name="wear_settings_wrist_gestures_description">Falls unterstützt</string>
-
   <string name="wear_settings_rate">Tack auf Google Play bewerten</string>
   <string name="wear_settings_rate_description">Entwicklung unterstützen</string>
 
