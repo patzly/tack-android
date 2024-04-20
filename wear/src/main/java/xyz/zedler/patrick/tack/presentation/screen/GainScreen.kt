@@ -34,8 +34,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.foundation.rememberActiveFocusRequester
+import androidx.wear.compose.foundation.rotary.RotaryDefaults.scrollBehavior
+import androidx.wear.compose.foundation.rotary.rotary
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
@@ -50,14 +54,12 @@ import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
-import com.google.android.horologist.annotations.ExperimentalHorologistApi
-import com.google.android.horologist.compose.rotaryinput.rotaryWithScroll
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
-@OptIn(ExperimentalHorologistApi::class)
+@OptIn(ExperimentalWearFoundationApi::class)
 @Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
 @Composable
 fun GainScreen(viewModel: MainViewModel = MainViewModel()) {
@@ -82,7 +84,10 @@ fun GainScreen(viewModel: MainViewModel = MainViewModel()) {
         modifier = Modifier
           .fillMaxSize()
           .background(color = MaterialTheme.colorScheme.background)
-          .rotaryWithScroll(scrollableState = scrollableState)
+          .rotary(
+            scrollBehavior(scrollableState = scrollableState),
+            focusRequester = rememberActiveFocusRequester()
+          )
       ) {
         item {
           ListHeader {

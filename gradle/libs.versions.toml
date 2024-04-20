@@ -10,14 +10,13 @@ wear-input = "1.1.0"
 wear-tooling = "1.0.0"
 wear-ongoing = "1.0.0"
 kotlin = "1.9.0"
-compose-bom = "2024.04.00"
+compose-bom = "2024.04.01"
 compose-material = "1.0.0-alpha21"
 compose-navigation = "1.3.1"
 activity-compose = "1.8.2"
 core-splashscreen = "1.1.0-rc01"
 constraintlayout-compose = "1.0.1"
 lifecycle = "2.7.0"
-horologist = "0.6.9"
 
 [libraries]
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -45,7 +44,6 @@ compose-navigation = { group = "androidx.wear.compose", name = "compose-navigati
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
 core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "core-splashscreen" }
 constraintlayout-compose = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "constraintlayout-compose" }
-horologist-layout = { group = "com.google.android.horologist", name = "horologist-compose-layout", version.ref = "horologist" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
