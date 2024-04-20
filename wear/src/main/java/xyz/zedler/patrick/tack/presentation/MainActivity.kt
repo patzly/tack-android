@@ -109,18 +109,18 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
     buttonUtilFaster = ButtonUtil(this, object : OnPressListener {
       override fun onPress() {
-        viewModel.changeTempo(metronomeUtil.tempo + 1, animate = true)
+        viewModel.changeTempo(getMetronomeUtil().tempo + 1, animate = true)
       }
       override fun onFastPress() {
-        viewModel.changeTempo(metronomeUtil.tempo + 1, animate = false)
+        viewModel.changeTempo(getMetronomeUtil().tempo + 1, animate = false)
       }
     })
     buttonUtilSlower = ButtonUtil(this, object : OnPressListener {
       override fun onPress() {
-        viewModel.changeTempo(metronomeUtil.tempo - 1, animate = true)
+        viewModel.changeTempo(getMetronomeUtil().tempo - 1, animate = true)
       }
       override fun onFastPress() {
-        viewModel.changeTempo(metronomeUtil.tempo - 1, animate = false)
+        viewModel.changeTempo(getMetronomeUtil().tempo - 1, animate = false)
       }
     })
 
@@ -204,18 +204,23 @@ class MainActivity : ComponentActivity(), ServiceConnection {
   }
 
   override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-    if (keyCode == KeyEvent.KEYCODE_NAVIGATE_NEXT && metronomeUtil.wristGestures) {
-      viewModel.changeTempo(metronomeUtil.tempo + 1)
-      return true
-    } else if (keyCode == KeyEvent.KEYCODE_NAVIGATE_PREVIOUS && metronomeUtil.wristGestures) {
-      viewModel.changeTempo(metronomeUtil.tempo - 1)
-      return true
-    } else if (keyCode == KeyEvent.KEYCODE_STEM_1) {
-      buttonUtilFaster.onPressDown()
-      return true
-    } else if (keyCode == KeyEvent.KEYCODE_STEM_2) {
-      buttonUtilSlower.onPressDown()
-      return true
+    when (keyCode) {
+      KeyEvent.KEYCODE_NAVIGATE_NEXT -> {
+        viewModel.changeTempo(getMetronomeUtil().tempo + 1)
+        return true
+      }
+      KeyEvent.KEYCODE_NAVIGATE_PREVIOUS -> {
+        viewModel.changeTempo(getMetronomeUtil().tempo - 1)
+        return true
+      }
+      KeyEvent.KEYCODE_STEM_1 -> {
+        buttonUtilFaster.onPressDown()
+        return true
+      }
+      KeyEvent.KEYCODE_STEM_2 -> {
+        buttonUtilSlower.onPressDown()
+        return true
+      }
     }
     return super.onKeyDown(keyCode, event)
   }

@@ -45,7 +45,6 @@ public final class Constants {
     public final static String IGNORE_FOCUS = "ignore_focus";
     public final static String GAIN = "gain";
     public final static String BOOKMARK = "bookmark";
-    public final static String WRIST_GESTURES = "wrist_gestures";
   }
 
   public final static class DEF {
@@ -64,7 +63,6 @@ public final class Constants {
     public final static long LATENCY = 100;
     public final static boolean IGNORE_FOCUS = false;
     public final static int GAIN = 0;
-    public final static boolean WRIST_GESTURES = true;
   }
 
   public final static class SOUND {

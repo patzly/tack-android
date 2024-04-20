@@ -70,9 +70,6 @@ class MainViewModel(
   )
   private val _latency = MutableLiveData(metronomeUtil?.latency ?: DEF.LATENCY)
   private val _keepAwake = MutableLiveData(metronomeUtil?.keepAwake ?: DEF.KEEP_AWAKE)
-  private val _wristGestures = MutableLiveData(
-    metronomeUtil?.wristGestures ?: DEF.WRIST_GESTURES
-  )
   private val _flashScreen = MutableLiveData(metronomeUtil?.flashScreen ?: DEF.FLASH_SCREEN)
   private val _flashTrigger = MutableLiveData(false)
   private val _flashStrongTrigger = MutableLiveData(false)
@@ -92,7 +89,6 @@ class MainViewModel(
   val ignoreFocus: LiveData<Boolean> = _ignoreFocus
   val latency: LiveData<Long> = _latency
   val keepAwake: LiveData<Boolean> = _keepAwake
-  val wristGestures: LiveData<Boolean> = _wristGestures
   val flashScreen: LiveData<Boolean> = _flashScreen
   val flashTrigger: LiveData<Boolean> = _flashTrigger
   val flashStrongTrigger: LiveData<Boolean> = _flashStrongTrigger
@@ -225,11 +221,6 @@ class MainViewModel(
     return _keepAwake.value == true
         && mutableIsPlaying.value == true
         && currentRoute == Screen.Main.route
-  }
-
-  fun changeWristGestures(gestures: Boolean) {
-    metronomeUtil?.wristGestures = gestures
-    _wristGestures.value = gestures
   }
 
   fun changeShowPermissionDialog(show: Boolean) {
