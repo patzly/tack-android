@@ -20,8 +20,6 @@
 package xyz.zedler.patrick.tack.presentation.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.focusable
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -30,14 +28,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.input.rotary.onRotaryScrollEvent
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -46,9 +42,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
+import androidx.wear.compose.foundation.rememberActiveFocusRequester
+import androidx.wear.compose.foundation.rotary.RotaryDefaults
+import androidx.wear.compose.foundation.rotary.rotary
 import androidx.wear.compose.material.Picker
 import androidx.wear.compose.material.PickerState
 import androidx.wear.compose.material.TimeText
@@ -65,6 +62,7 @@ import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.components.TextIconButton
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
+import xyz.zedler.patrick.tack.util.accessScalingLazyListState
 import xyz.zedler.patrick.tack.util.spToDp
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
@@ -96,6 +94,7 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         )
 
         TempoPicker(
+          viewModel = viewModel,
           state = pickerState,
           onOptionChange = {
             pickerOption = it
@@ -183,43 +182,42 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
   }
 }
 
+@OptIn(ExperimentalWearFoundationApi::class)
 @Composable
 fun TempoPicker(
+  viewModel: MainViewModel,
   state: PickerState,
   onOptionChange: (Int) -> Unit,
   modifier: Modifier
 ) {
+  val isPlaying by viewModel.isPlaying.observeAsState(false)
+  val beatModeVibrate by viewModel.beatModeVibrate.observeAsState(
+    Constants.DEF.BEAT_MODE_VIBRATE
+  )
+  val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.DEF.ALWAYS_VIBRATE)
+
   val items = (1..400).toList()
   val bpm = stringResource(
     id = R.string.wear_label_bpm_value,
     state.selectedOption + 1
   )
   val contentDescription by remember { derivedStateOf { bpm } }
-  val pickerCoroutineScope = rememberCoroutineScope()
-  val lifecycleOwner = LocalLifecycleOwner.current
-  val focusRequester = remember { FocusRequester() }
-  LaunchedEffect(Unit) {
-    focusRequester.requestFocus()
-    lifecycleOwner.repeatOnLifecycle(state = Lifecycle.State.RESUMED) {
-      focusRequester.requestFocus()
-    }
-  }
+
   LaunchedEffect(state.selectedOption) {
     onOptionChange(state.selectedOption)
   }
   Picker(
+    state = state,
+    contentDescription = contentDescription,
     modifier = modifier
       .size(spToDp(spValue = 88), spToDp(spValue = 104))
-      .onRotaryScrollEvent {
-        pickerCoroutineScope.launch {
-          state.scrollBy(it.verticalScrollPixels)
-        }
-        true
-      }
-      .focusRequester(focusRequester)
-      .focusable(),
-    state = state,
-    contentDescription = contentDescription
+      .rotary(
+        rotaryBehavior = RotaryDefaults.snapBehavior(
+          state = accessScalingLazyListState(state)!!,
+          hapticFeedbackEnabled = !isPlaying || (!beatModeVibrate && !alwaysVibrate)
+        ),
+        focusRequester = rememberActiveFocusRequester()
+      )
   ) {
     Text(
       modifier = Modifier.wrapContentWidth(),

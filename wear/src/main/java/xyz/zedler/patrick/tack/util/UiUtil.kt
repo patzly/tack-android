@@ -25,6 +25,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
+import androidx.wear.compose.foundation.lazy.ScalingLazyListState
+import androidx.wear.compose.material.PickerState
+import java.lang.reflect.Field
 
 @Composable
 fun spToDp(spValue: Int): Dp {
@@ -38,5 +41,16 @@ fun keepScreenAwake(activity: Activity, keepAwake: Boolean) {
     window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
   } else {
     window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+  }
+}
+
+fun accessScalingLazyListState(pickerState: PickerState): ScalingLazyListState? {
+  return try {
+    val field: Field = PickerState::class.java.getDeclaredField("scalingLazyListState")
+    field.isAccessible = true
+    field.get(pickerState) as? ScalingLazyListState
+  } catch (e: Exception) {
+    e.printStackTrace()
+    null
   }
 }
