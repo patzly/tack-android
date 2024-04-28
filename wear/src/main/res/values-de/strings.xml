@@ -23,7 +23,8 @@
 
   <string name="wear_title_settings">Einstellungen</string>
   <string name="wear_title_beats">Schläge</string>
-  <string name="wear_title_subdivisions">Unterteilungen</string>
+  <string name="wear_title_beats_count">Schläge (%1$d)</string>
+  <string name="wear_title_subdivisions_count">Unterteilungen (%1$d)</string>
   <string name="wear_title_notification_channel">Metronom-Service</string>
 
   <!-- LABELS -->
