@@ -475,7 +475,7 @@ fun BeatsButton(
   ) {
     Icon(
       painter = painterResource(id = R.drawable.ic_round_hdr_strong),
-      contentDescription = stringResource(id = R.string.wear_action_add_beat),
+      contentDescription = stringResource(id = R.string.wear_title_beats),
       tint = IconButtonDefaults.iconButtonColors().contentColor
     )
   }

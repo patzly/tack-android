@@ -85,6 +85,10 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
         )
       }
     ) {
+      val beats by viewModel.beats.observeAsState(Constants.DEF.BEATS.split(","))
+      val subdivisions by viewModel.subdivisions.observeAsState(
+        Constants.DEF.SUBDIVISIONS.split(",")
+      )
       ScalingLazyColumn(
         state = scrollableState,
         modifier = Modifier
@@ -98,13 +102,12 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
         item {
           ListHeader {
             Text(
-              text = stringResource(id = R.string.wear_title_beats),
+              text = stringResource(id = R.string.wear_title_beats_count, beats.size),
               style = MaterialTheme.typography.titleMedium
             )
           }
         }
         item {
-          val beats by viewModel.beats.observeAsState(Constants.DEF.BEATS.split(","))
           ControlCard(
             labelAdd = stringResource(id = R.string.wear_action_add_beat),
             labelRemove = stringResource(id = R.string.wear_action_remove_beat),
@@ -143,15 +146,12 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
         item {
           ListHeader {
             Text(
-              text = stringResource(id = R.string.wear_title_subdivisions),
+              text = stringResource(id = R.string.wear_title_subdivisions_count, subdivisions.size),
               style = MaterialTheme.typography.titleMedium
             )
           }
         }
         item {
-          val subdivisions by viewModel.subdivisions.observeAsState(
-            Constants.DEF.SUBDIVISIONS.split(",")
-          )
           ControlCard(
             labelAdd = stringResource(id = R.string.wear_action_add_sub),
             labelRemove = stringResource(id = R.string.wear_action_remove_sub),
