@@ -122,11 +122,6 @@ fun MainScreen(
         label = "controlsAlpha",
         animationSpec = TweenSpec(durationMillis = 300)
       )
-      val pickerAlpha by animateFloatAsState(
-        targetValue = if (isPlaying && keepAwake) .75f else 1f,
-        label = "pickerAlpha",
-        animationSpec = TweenSpec(durationMillis = 300)
-      )
 
       TimeText(
         timeTextStyle = MaterialTheme.typography.labelMedium,
@@ -184,7 +179,7 @@ fun MainScreen(
           state = pickerState,
           onClick = onTempoCardClick,
           modifier = Modifier
-            .graphicsLayer(alpha = pickerAlpha)
+            .graphicsLayer(alpha = controlsAlpha)
             .constrainAs(tempoCard) {
               top.linkTo(parent.top)
               bottom.linkTo(parent.bottom)
@@ -422,11 +417,23 @@ fun PlayButton(
     animationSpec = TweenSpec(durationMillis = 300)
   )
 
+  val borderColorTarget = if (isPlaying && keepAwake) {
+    MaterialTheme.colorScheme.outlineVariant
+  } else {
+    MaterialTheme.colorScheme.primary
+  }
+  val borderColor by animateColorAsState(
+    targetValue = borderColorTarget,
+    label = "borderColor",
+    animationSpec = TweenSpec(durationMillis = 300)
+  )
+
   FilledIconButton(
     onClick = onClick,
     colors = IconButtonDefaults.filledIconButtonColors(
       containerColor = containerColor
     ),
+    border = BorderStroke(2.dp, borderColor),
     modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
   ) {
     AnimatedVectorDrawable(
