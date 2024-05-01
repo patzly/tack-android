@@ -92,6 +92,12 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
           initiallySelectedOption = pickerOption,
           repeatItems = false
         )
+        fun safelyAnimateToOption(index: Int) {
+          val safeIndex = index.coerceIn(0, 399)
+          pickerCoroutineScope.launch {
+            pickerState.animateScrollToOption(safeIndex)
+          }
+        }
 
         TempoPicker(
           viewModel = viewModel,
@@ -110,9 +116,7 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         TapButton(
           onClick = {
             val tempo = viewModel.tempoTap()
-            pickerCoroutineScope.launch {
-              pickerState.animateScrollToOption(tempo - 1)
-            }
+            safelyAnimateToOption(tempo -1)
           },
           modifier = Modifier.constrainAs(tapButton) {
             top.linkTo(tempoPicker.bottom)
@@ -124,9 +128,7 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         TextIconButton(
           label = "-5",
           onClick = {
-            pickerCoroutineScope.launch {
-              pickerState.animateScrollToOption(pickerOption - 5)
-            }
+            safelyAnimateToOption(pickerOption - 5)
           },
           modifier = Modifier.constrainAs(minus5Button) {
             top.linkTo(parent.top, margin = 40.dp)
@@ -138,9 +140,7 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         TextIconButton(
           label = "-10",
           onClick = {
-            pickerCoroutineScope.launch {
-              pickerState.animateScrollToOption(pickerOption - 10)
-            }
+            safelyAnimateToOption(pickerOption - 10)
           },
           modifier = Modifier.constrainAs(minus10Button) {
             top.linkTo(minus5Button.bottom)
@@ -152,9 +152,7 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         TextIconButton(
           label = "+5",
           onClick = {
-            pickerCoroutineScope.launch {
-              pickerState.animateScrollToOption(pickerOption + 5)
-            }
+            safelyAnimateToOption(pickerOption + 5)
           },
           modifier = Modifier.constrainAs(plus5Button) {
             top.linkTo(parent.top, margin = 40.dp)
@@ -166,9 +164,7 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         TextIconButton(
           label = "+10",
           onClick = {
-            pickerCoroutineScope.launch {
-              pickerState.animateScrollToOption(pickerOption + 10)
-            }
+            safelyAnimateToOption(pickerOption + 10)
           },
           modifier = Modifier.constrainAs(plus10Button) {
             top.linkTo(minus5Button.bottom)
