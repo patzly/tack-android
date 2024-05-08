@@ -44,8 +44,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
-import androidx.wear.compose.foundation.rotary.RotaryDefaults
-import androidx.wear.compose.foundation.rotary.rotary
+import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
+import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.material.Picker
 import androidx.wear.compose.material.PickerState
 import androidx.wear.compose.material.TimeText
@@ -207,9 +207,9 @@ fun TempoPicker(
     contentDescription = contentDescription,
     modifier = modifier
       .size(spToDp(spValue = 88), spToDp(spValue = 104))
-      .rotary(
-        rotaryBehavior = RotaryDefaults.snapBehavior(
-          state = accessScalingLazyListState(state)!!,
+      .rotaryScrollable(
+        behavior = RotaryScrollableDefaults.snapBehavior(
+          scrollableState = accessScalingLazyListState(state)!!,
           hapticFeedbackEnabled = !isPlaying || (!beatModeVibrate && !alwaysVibrate)
         ),
         focusRequester = rememberActiveFocusRequester()

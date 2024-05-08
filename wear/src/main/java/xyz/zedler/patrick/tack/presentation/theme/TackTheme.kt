@@ -58,15 +58,17 @@ private fun tackColorScheme(): ColorScheme {
     tertiaryContainer = Color(0xFF2B4E38),
     onTertiary = Color(0xFF143723),
     onTertiaryContainer = Color(0xFFC4ECCF),
-    surfaceDim = Color(0xFF15130B),
-    surface = Color(0xFF37352B),
-    surfaceBright = Color(0xFF3C3930),
+    surfaceContainerLow = Color(0xFF1E1C13),
+    surfaceContainer = Color(0xFF222017),
+    surfaceContainerHigh = Color(0xFF2C2A21),
     onSurface = Color(0xFFE8E2D4),
     onSurfaceVariant = Color(0xFFCDC6B4),
     outline = Color(0xFF969080),
     outlineVariant = Color(0xFF4B4739),
     error = Color(0xFFa63b00),
-    onError = Color(0xFFffffff)
+    onError = Color(0xFFffffff),
+    errorContainer = Color(0xFF73342B),
+    onErrorContainer = Color(0xFFFFDAD5)
   )
 }
 

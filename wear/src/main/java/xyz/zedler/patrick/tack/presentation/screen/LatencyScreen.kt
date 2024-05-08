@@ -38,8 +38,8 @@ import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
-import androidx.wear.compose.foundation.rotary.RotaryDefaults.scrollBehavior
-import androidx.wear.compose.foundation.rotary.rotary
+import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
+import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
@@ -82,8 +82,8 @@ fun LatencyScreen(viewModel: MainViewModel = MainViewModel()) {
         modifier = Modifier
           .fillMaxSize()
           .background(color = MaterialTheme.colorScheme.background)
-          .rotary(
-            scrollBehavior(scrollableState = scrollableState),
+          .rotaryScrollable(
+            RotaryScrollableDefaults.behavior(scrollableState = scrollableState),
             focusRequester = rememberActiveFocusRequester()
           )
       ) {

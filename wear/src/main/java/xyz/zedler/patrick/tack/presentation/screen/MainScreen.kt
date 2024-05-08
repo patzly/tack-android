@@ -57,8 +57,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavBackStackEntry
 import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
-import androidx.wear.compose.foundation.rotary.RotaryDefaults
-import androidx.wear.compose.foundation.rotary.rotary
+import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
+import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Picker
 import androidx.wear.compose.material.PickerState
@@ -319,7 +319,7 @@ fun TempoCard(
   val backgroundColorTarget = if (isPlaying && keepAwake) {
     MaterialTheme.colorScheme.background
   } else {
-    MaterialTheme.colorScheme.surface
+    MaterialTheme.colorScheme.surfaceContainer
   }
   val backgroundColor by animateColorAsState(
     targetValue = backgroundColorTarget,
@@ -360,9 +360,9 @@ fun TempoCard(
       contentDescription = contentDescription,
       modifier = Modifier
         .size(spToDp(spValue = 88), spToDp(spValue = 56))
-        .rotary(
-          rotaryBehavior = RotaryDefaults.snapBehavior(
-            state = accessScalingLazyListState(state)!!,
+        .rotaryScrollable(
+          behavior = RotaryScrollableDefaults.snapBehavior(
+            scrollableState = accessScalingLazyListState(state)!!,
             hapticFeedbackEnabled = !isPlaying || (!beatModeVibrate && !alwaysVibrate)
           ),
           focusRequester = rememberActiveFocusRequester()

@@ -39,6 +39,7 @@ import androidx.wear.compose.material3.MaterialTheme
 fun FadingEdgeRow(
   verticalAlignment: Alignment.Vertical,
   horizontalArrangement: Arrangement.HorizontalOrVertical,
+  color: Color = MaterialTheme.colorScheme.surfaceContainer,
   modifier: Modifier,
   content: @Composable RowScope.() -> Unit
 ) {
@@ -56,21 +57,20 @@ fun FadingEdgeRow(
 
     val gradientWidth = 8.dp.value
     val gradientColor = Color.Transparent
-    val contentColor = MaterialTheme.colorScheme.surface
     Box(
       Modifier
         .matchParentSize()
         .drawBehind {
           drawRect(
             brush = Brush.horizontalGradient(
-              colors = listOf(contentColor, gradientColor),
+              colors = listOf(color, gradientColor),
               startX = 0f,
               endX = gradientWidth
             )
           )
           drawRect(
             brush = Brush.horizontalGradient(
-              colors = listOf(gradientColor, contentColor),
+              colors = listOf(gradientColor, color),
               startX = size.width - gradientWidth,
               endX = size.width
             )
