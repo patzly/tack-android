@@ -71,6 +71,7 @@
   <string name="wear_settings_sound_sine">Sine</string>
   <string name="wear_settings_sound_wood">Wood</string>
   <string name="wear_settings_sound_mechanical">Mechanical</string>
+  <string name="wear_settings_sound_beatboxing_1">Beatboxing 1</string>
   <string name="wear_settings_sound_folding">Folding rule</string>
 
   <string name="wear_settings_latency">Latency correction</string>

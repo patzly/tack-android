@@ -319,7 +319,7 @@ fun TempoCard(
   val backgroundColorTarget = if (isPlaying && keepAwake) {
     MaterialTheme.colorScheme.background
   } else {
-    MaterialTheme.colorScheme.surfaceContainer
+    MaterialTheme.colorScheme.surfaceContainerHigh
   }
   val backgroundColor by animateColorAsState(
     targetValue = backgroundColorTarget,

@@ -128,12 +128,20 @@ public class AudioUtil implements OnAudioFocusChangeListener {
       case SOUND.WOOD:
         resIdNormal = R.raw.wood;
         resIdStrong = R.raw.wood;
-        resIdSub = R.raw.wood;
+        resIdSub = R.raw.mechanical_knock;
+        pitchSub = Pitch.NORMAL;
         break;
       case SOUND.MECHANICAL:
         resIdNormal = R.raw.mechanical_tick;
         resIdStrong = R.raw.mechanical_ding;
         resIdSub = R.raw.mechanical_knock;
+        pitchStrong = Pitch.NORMAL;
+        pitchSub = Pitch.NORMAL;
+        break;
+      case SOUND.BEATBOXING_1:
+        resIdNormal = R.raw.beatbox_snare;
+        resIdStrong = R.raw.beatbox_kick;
+        resIdSub = R.raw.beatbox_hihat;
         pitchStrong = Pitch.NORMAL;
         pitchSub = Pitch.NORMAL;
         break;

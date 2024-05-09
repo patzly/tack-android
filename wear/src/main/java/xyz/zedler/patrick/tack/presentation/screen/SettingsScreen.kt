@@ -111,6 +111,9 @@ fun SettingsScreen(
             SOUND.MECHANICAL -> {
               name = stringResource(id = R.string.wear_settings_sound_mechanical)
             }
+            SOUND.BEATBOXING_1 -> {
+              name = stringResource(id = R.string.wear_settings_sound_beatboxing_1)
+            }
             SOUND.FOLDING -> {
               name = stringResource(id = R.string.wear_settings_sound_folding)
             }
@@ -251,7 +254,7 @@ fun ClickChip(
       )
     },
     colors = ChipDefaults.secondaryChipColors(
-      backgroundColor = MaterialTheme.colorScheme.surfaceContainer
+      backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh
     ),
     modifier = Modifier.fillMaxWidth()
   )
@@ -272,7 +275,9 @@ fun ToggleChip(
     },
     modifier = Modifier.fillMaxWidth(),
     enabled = true,
-    colors = ToggleButtonDefaults.toggleButtonColors(),
+    colors = ToggleButtonDefaults.toggleButtonColors(
+      uncheckedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+    ),
     interactionSource = null,
     icon = null,
     label = {
