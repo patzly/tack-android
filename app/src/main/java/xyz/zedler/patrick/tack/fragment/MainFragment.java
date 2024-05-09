@@ -700,6 +700,7 @@ public class MainFragment extends BaseFragment
           performHapticClick();
           getMetronomeUtil().setBeat(beatView.getIndex(), beatView.nextTickType());
         });
+        beatView.setReduceAnimations(reduceAnimations);
         binding.linearMainBeats.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
         updateBeatControls();
