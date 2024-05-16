@@ -187,10 +187,11 @@
   <string name="settings_sound_wood">Holz</string>
   <string name="settings_sound_sine">Sinus</string>
   <string name="settings_sound_mechanical">Mechanisch</string>
-  <string name="wear_settings_sound_folding">Zollstock</string>
+  <string name="settings_sound_beatboxing_1">Beatboxing 1</string>
+  <string name="settings_sound_folding">Zollstock</string>
 
   <string name="settings_latency">Korrektur der Latenzzeit</string>
-  <string name="settings_latency_description">Kompensierung die Audio-Latenzzeit für haptische und visuelle Signale</string>
+  <string name="settings_latency_description">Kompensierung der Audio-Latenzzeit für haptische und visuelle Signale</string>
 
   <string name="settings_ignore_focus">Audiofokus ignorieren</string>
   <string name="settings_ignore_focus_description">Wiedergabe fortsetzen, wenn andere Anwendungen etwas wiedergeben</string>
