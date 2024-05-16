@@ -45,14 +45,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOverlay;
 import android.view.ViewTreeObserver;
+import android.view.ViewTreeObserver.OnScrollChangedListener;
 import android.view.animation.DecelerateInterpolator;
 import androidx.annotation.ColorInt;
 import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.Px;
-import androidx.core.view.ViewCompat;
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
+import com.google.android.material.internal.ViewOverlayImpl;
+import com.google.android.material.internal.ViewUtils;
 import com.google.android.material.shape.MaterialShapeDrawable;
 import com.google.android.material.tooltip.TooltipDrawable;
 import java.lang.reflect.Field;
@@ -65,6 +67,7 @@ import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 
+@SuppressLint("RestrictedApi")
 public class CustomSlider extends Slider {
 
   private static final String TAG = "CustomSlider";
@@ -79,7 +82,6 @@ public class CustomSlider extends Slider {
   private final RectF trackRect = new RectF();
   private final RectF cornerRect = new RectF();
   private final Path trackPath = new Path();
-  private final Path cornerPath = new Path();
   private final Paint inactiveTrackPaint = new Paint();
   private final Paint activeTrackPaint = new Paint();
   private final Paint inactiveTicksPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -95,6 +97,34 @@ public class CustomSlider extends Slider {
   private boolean dirtyConfig;
   // Whether the labels are showing or in the process of animating in.
   private boolean labelsAreAnimatedIn = false;
+  @NonNull
+  private final OnScrollChangedListener onScrollChangedListener = () -> {
+    if (shouldAlwaysShowLabel() && isEnabled()) {
+      Rect contentViewBounds = new Rect();
+      ViewGroup contentView = ViewUtils.getContentView(this);
+      if (contentView == null) {
+        return;
+      }
+      contentView.getHitRect(contentViewBounds);
+      boolean isSliderVisibleOnScreen = getLocalVisibleRect(contentViewBounds);
+      ViewOverlayImpl contentViewOverlay = ViewUtils.getContentViewOverlay(this);
+      if (contentViewOverlay == null) {
+        return;
+      }
+      for (int i = 0; i < labels.size(); i++) {
+        TooltipDrawable label = labels.get(i);
+        // Get associated value for label
+        if (i < getValues().size()) {
+          positionLabel(label);
+        }
+        if (isSliderVisibleOnScreen) {
+          contentViewOverlay.add(label);
+        } else {
+          contentViewOverlay.remove(label);
+        }
+      }
+    }
+  };
 
   public CustomSlider(@NonNull Context context) {
     super(context);
@@ -213,6 +243,7 @@ public class CustomSlider extends Slider {
   @Override
   protected void onAttachedToWindow() {
     super.onAttachedToWindow();
+    getViewTreeObserver().addOnScrollChangedListener(onScrollChangedListener);
     // The label is attached on the Overlay relative to the content.
     for (TooltipDrawable label : labels) {
       attachLabelToContentView(label);
@@ -225,6 +256,7 @@ public class CustomSlider extends Slider {
     for (TooltipDrawable label : labels) {
       detachLabelFromContentView(label);
     }
+    getViewTreeObserver().removeOnScrollChangedListener(onScrollChangedListener);
     super.onDetachedFromWindow();
   }
 
@@ -293,16 +325,12 @@ public class CustomSlider extends Slider {
 
     if (thumbTrackGapSize > 0) {
       left += thumbTrackGapSize;
-      float right = trackSidePadding + trackWidth + trackHeight / 2f;
-      left = Math.min(
-          left, right - trackHeight / 2f - thumbTrackGapSize - getTrackInsideCornerSize()
-      );
       trackRect.set(
           left,
           yCenter - trackHeight / 2f,
           trackSidePadding + trackWidth + trackHeight / 2f,
-          yCenter + trackHeight / 2f);
-
+          yCenter + trackHeight / 2f
+      );
       float thumbPosition = trackSidePadding + activeRange[1] * trackWidth;
       clipRect.set(
           thumbPosition + thumbTrackGapSize + thumbWidthAnim / 2f,
@@ -310,7 +338,6 @@ public class CustomSlider extends Slider {
           getTrackSidePadding() + getTrackWidth() + trackHeight / 2f,
           yCenter + trackHeight / 2f
       );
-
       boolean isThumbAtEnd = activeRange[1] * trackWidth == trackWidth;
       if (!isThumbAtEnd) {
         updateTrack(canvas, inactiveTrackPaint, FullCornerDirection.RIGHT);
@@ -344,18 +371,13 @@ public class CustomSlider extends Slider {
         right = temp;
       }
 
-      int trackInsideCornerSize = getTrackInsideCornerSize();
       switch (direction) {
         case LEFT:
           left -= trackHeight / 2f;
           right -= thumbTrackGapSize;
-          right = Math.max(
-              right, left + trackHeight / 2f + thumbTrackGapSize + trackInsideCornerSize
-          );
           break;
         case RIGHT:
           left += thumbTrackGapSize;
-          left = Math.max(left, trackHeight / 2f + thumbTrackGapSize);
           right += trackHeight / 2f;
           break;
         default:
@@ -405,48 +427,52 @@ public class CustomSlider extends Slider {
         rightCornerSize = trackInsideCornerSize;
         break;
     }
-    trackRect.left += leftCornerSize;
-    trackRect.right -= rightCornerSize;
-
-    // Build track path with rounded corners
-    trackPath.reset();
-    trackPath.addRect(trackRect, Direction.CW);
-    addRoundedCorners(trackPath, trackRect, leftCornerSize, rightCornerSize);
-
-    // Mask the track
-    canvas.save();
-    canvas.clipRect(clipRect);
 
     // Draw the track
     paint.setStyle(Style.FILL);
     paint.setStrokeCap(Cap.BUTT);
     paint.setAntiAlias(true);
-    canvas.drawPath(trackPath, paint);
 
-    canvas.restore();
+    trackPath.reset();
+    if (trackRect.width() >= leftCornerSize + rightCornerSize) {
+      // Fills one rounded rectangle.
+      trackPath.addRoundRect(trackRect, getCornerRadii(leftCornerSize, rightCornerSize), Direction.CW);
+      canvas.drawPath(trackPath, paint);
+    } else {
+      // Clips the canvas and draws the fully rounded track.
+      float minCornerSize = Math.min(leftCornerSize, rightCornerSize);
+      float maxCornerSize = Math.max(leftCornerSize, rightCornerSize);
+      canvas.save();
+      // Clips the canvas using the current bounds with the smaller corner size.
+      trackPath.addRoundRect(trackRect, minCornerSize, minCornerSize, Direction.CW);
+      canvas.clipPath(trackPath);
+      // Then draws a rectangle with the minimum width for full corners.
+      switch (direction) {
+        case LEFT:
+          cornerRect.set(trackRect.left, trackRect.top, trackRect.left + 2 * maxCornerSize, trackRect.bottom);
+          break;
+        case RIGHT:
+          cornerRect.set(trackRect.right - 2 * maxCornerSize, trackRect.top, trackRect.right, trackRect.bottom);
+          break;
+        default:
+          cornerRect.set(
+              trackRect.centerX() - maxCornerSize,
+              trackRect.top,
+              trackRect.centerX() + maxCornerSize,
+              trackRect.bottom);
+      }
+      canvas.drawRoundRect(cornerRect, maxCornerSize, maxCornerSize, paint);
+      canvas.restore();
+    }
   }
 
-  private void addRoundedCorners(
-      Path path, RectF bounds, float leftCornerSize, float rightCornerSize
-  ) {
-    cornerRect.set(
-        bounds.left - leftCornerSize,
-        bounds.top,
-        bounds.left + leftCornerSize,
-        bounds.bottom
-    );
-    cornerPath.reset();
-    cornerPath.addRoundRect(cornerRect, leftCornerSize, leftCornerSize, Direction.CW);
-    path.op(cornerPath, Path.Op.UNION);
-    cornerRect.set(
-        bounds.right - rightCornerSize,
-        bounds.top,
-        bounds.right + rightCornerSize,
-        bounds.bottom
-    );
-    cornerPath.reset();
-    cornerPath.addRoundRect(cornerRect, rightCornerSize, rightCornerSize, Direction.CW);
-    path.op(cornerPath, Path.Op.UNION);
+  private float[] getCornerRadii(float leftSide, float rightSide) {
+    return new float[] {
+        leftSide, leftSide,
+        rightSide, rightSide,
+        rightSide, rightSide,
+        leftSide, leftSide
+    };
   }
 
   private void maybeDrawTicks(@NonNull Canvas canvas) {
@@ -506,7 +532,7 @@ public class CustomSlider extends Slider {
   }
 
   private static int pivotIndex(float[] coordinates, float position) {
-    return Math.round(position * (coordinates.length / 2f - 1));
+    return (int) Math.ceil((position * (coordinates.length / 2f - 1)));
   }
 
   private boolean shouldDrawStopIndicator() {
@@ -816,13 +842,11 @@ public class CustomSlider extends Slider {
     }
 
     Iterator<TooltipDrawable> labelItr = labels.iterator();
-
     for (int i = 0; i < getValues().size() && labelItr.hasNext(); i++) {
       if (i == getFocusedThumbIdx()) {
         // We position the focused thumb last so it's displayed on top, so skip it for now.
         continue;
       }
-
       setValueForLabel(labelItr.next(), getValues().get(i));
     }
 
@@ -833,12 +857,10 @@ public class CustomSlider extends Slider {
               labels.size(), getValues().size())
       );
     }
-
     // Now set the label for the focused thumb so it's on top.
     setValueForLabel(labelItr.next(), getValues().get(getFocusedThumbIdx()));
   }
 
-  @SuppressLint("RestrictedApi")
   private ValueAnimator createLabelAnimator(boolean enter) {
     float startFraction = enter ? 0F : 1F;
     // Update the start fraction to the current animated value of the label, if any.
@@ -864,7 +886,7 @@ public class CustomSlider extends Slider {
         label.setRevealFraction(fraction);
       }
       // Ensure the labels are redrawn even if the slider has stopped moving
-      ViewCompat.postInvalidateOnAnimation(this);
+      postInvalidateOnAnimation();
     });
     return animator;
   }
@@ -874,7 +896,8 @@ public class CustomSlider extends Slider {
    * animator is null or not running, return the default value provided.
    */
   private static float getAnimatorCurrentValueOrDefault(
-      ValueAnimator animator, float defaultValue) {
+      ValueAnimator animator, float defaultValue
+  ) {
     // If the in animation is interrupting the out animation, attempt to smoothly interrupt by
     // getting the current value of the out animator.
     if (animator != null && animator.isRunning()) {
@@ -912,7 +935,6 @@ public class CustomSlider extends Slider {
     return getLabelBehavior() == LABEL_VISIBLE;
   }
 
-  @SuppressLint("RestrictedApi")
   private void createLabelPool() {
     if (labels == null) {
       return;
@@ -921,16 +943,16 @@ public class CustomSlider extends Slider {
     while (labels.size() < getValues().size()) {
       // Because there's currently no way to copy the TooltipDrawable we use this to make more
       // if more thumbs are added.
-      TooltipDrawable tooltipDrawable = //TooltipDrawable.create(getContext());
-          TooltipDrawable.createFromAttributes(getContext(), null, 0, getLabelStyle());
+      TooltipDrawable tooltipDrawable = TooltipDrawable.createFromAttributes(
+          getContext(), null, 0, getLabelStyle()
+      );
       labels.add(tooltipDrawable);
-      if (ViewCompat.isAttachedToWindow(this)) {
+      if (isAttachedToWindow()) {
         attachLabelToContentView(tooltipDrawable);
       }
     }
   }
 
-  @SuppressLint("RestrictedApi")
   private void setValueForLabel(TooltipDrawable label, float value) {
     label.setText(formatValue(value));
     positionLabel(label);
@@ -948,16 +970,13 @@ public class CustomSlider extends Slider {
     // correctly position this view in the overlay layer.
     Rect rect = new Rect(label.getBounds());
     getContentView().offsetDescendantRectToMyCoords(this, rect);
-    //DescendantOffsetUtils.offsetDescendantRect(getContentView(), this, rect);
     label.setBounds(rect);
   }
 
-  @SuppressLint("RestrictedApi")
   private void attachLabelToContentView(TooltipDrawable label) {
     label.setRelativeToView(getContentView());
   }
 
-  @SuppressLint("RestrictedApi")
   private void detachLabelFromContentView(TooltipDrawable label) {
     ViewOverlay contentViewOverlay = getContentViewOverlay();
     if (contentViewOverlay != null) {

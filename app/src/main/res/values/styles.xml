@@ -306,8 +306,8 @@
     <item name="thumbElevation">0dp</item>
     <item name="labelStyle">@style/Widget.Tack.Tooltip</item>
     <item name="trackColorInactive">@color/selector_slider_inactive_track_color</item>
-    <item name="tickRadiusActive">1.5dp</item>
-    <item name="tickRadiusInactive">1.5dp</item>
+    <item name="tickRadiusActive">2dp</item>
+    <item name="tickRadiusInactive">2dp</item>
     <item name="trackStopIndicatorSize">0dp</item>
   </style>
 
