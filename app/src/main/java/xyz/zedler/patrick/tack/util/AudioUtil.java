@@ -149,6 +149,13 @@ public class AudioUtil implements OnAudioFocusChangeListener {
         pitchStrong = Pitch.NORMAL;
         pitchSub = Pitch.NORMAL;
         break;
+      case SOUND.BEATBOXING_1:
+        resIdNormal = R.raw.beatbox_snare;
+        resIdStrong = R.raw.beatbox_kick;
+        resIdSub = R.raw.beatbox_hihat;
+        pitchStrong = Pitch.NORMAL;
+        pitchSub = Pitch.NORMAL;
+        break;
       case SOUND.FOLDING:
         resIdNormal = R.raw.folding_knock;
         resIdStrong = R.raw.folding_fold;
