@@ -926,6 +926,9 @@ public class MainFragment extends BaseFragment
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override
           public void onGlobalLayout() {
+            if (binding == null) {
+              return;
+            }
             int width = binding.seekbarMainTimer.getWidth()
                 - binding.seekbarMainTimer.getPaddingStart()
                 - binding.seekbarMainTimer.getPaddingEnd();
