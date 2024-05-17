@@ -21,7 +21,7 @@
 
   <!-- TITLES -->
 
-  <string name="title_feedback">反饋</string>
+  <string name="title_feedback">意見反映</string>
   <string name="title_about">關於</string>
   <string name="title_help">幫助</string>
   <string name="title_licenses">開源協議</string>
@@ -34,8 +34,8 @@
 
   <!-- LABELS -->
 
-  <string name="label_bpm_value">%1$d bpm</string>
-  <string name="label_bpm">bpm</string>
+  <string name="label_bpm_value">%1$d 節拍／分鐘</string>
+  <string name="label_bpm">節拍／分鐘</string>
   <string name="label_ms">%1$s 毫秒</string>
   <string name="label_db">+%1$d 分貝</string>
   <string name="label_tempo_largo">廣板</string>
@@ -55,51 +55,51 @@
   <string name="action_increase">增加</string>
   <string name="action_decrease">減少</string>
   <string name="action_play">播放</string>
-  <string name="action_play_stop">播放 / 停止</string>
+  <string name="action_play_stop">播放／停止</string>
   <string name="action_stop">停止</string>
   <string name="action_add_beat">增加節拍</string>
   <string name="action_remove_beat">減少節拍</string>
-  <string name="action_add_sub">增添分割槽</string>
+  <string name="action_add_sub">新增分割槽</string>
   <string name="action_remove_sub">移除分割槽</string>
   <string name="action_clear_all">全部清除</string>
   <string name="action_tempo_tap">輕拍速度</string>
   <string name="action_bookmark">書籤</string>
   <string name="action_beat_mode">節拍模式</string>
-  <string name="action_send_feedback">反饋</string>
+  <string name="action_send_feedback">傳送意見反映</string>
   <string name="action_open_link">開啟外部網站</string>
   <string name="action_reset">重置</string>
-  <string name="action_deactivate_gain">停用放大</string>
+  <string name="action_deactivate_gain">停用增強</string>
   <string name="action_recommend">推薦</string>
   <string name="action_recommend_description">向朋友介紹 Tack</string>
-  <string name="action_email">傳送郵件</string>
+  <string name="action_email">傳送電子郵件</string>
   <string name="action_email_description">聯絡開發者</string>
   <string name="action_rate">在 Google Play 上評分</string>
   <string name="action_rate_description">支援開發</string>
   <string name="action_issue">在 GitHub 上提問</string>
   <string name="action_issue_description">報告錯誤或建議功能</string>
   <string name="action_retry">重試</string>
-  <string name="action_logcat">日誌</string>
-  <string name="action_copy_to_clipboard">複製剪貼簿</string>
+  <string name="action_logcat">顯示日誌</string>
+  <string name="action_copy_to_clipboard">複製至剪貼簿</string>
   <string name="action_reload">重新整理</string>
 
   <!-- MESSAGES -->
 
-  <string name="msg_bookmarks_max">達到書籤上限</string>
-  <string name="msg_feedback">一款優秀的應用程式需要花費大量時間和獲取使用者反饋。</string>
-  <string name="msg_feedback_contact">您有任何願望、評論或問題嗎？聯絡我！\n否則，我會非常高興在 Play 商店得到一個好評。</string>
-  <string name="msg_recommend">檢查一下這個很酷的節拍器應用：\n%1$s</string>
-  <string name="msg_vibration_unavailable">該裝置無法使用振動功能</string>
+  <string name="msg_bookmarks_max">已達到書籤上限</string>
+  <string name="msg_feedback">一款優秀的應用程式需要花費大量的時間和獲取使用者的意見反映。</string>
+  <string name="msg_feedback_contact">你有任何願望、評論或問題嗎？聯絡我！\n否則，我會非常高興在 Play 商店得到一個好評。</string>
+  <string name="msg_recommend">看看這個很酷的節拍器應用程式：\n%1$s</string>
+  <string name="msg_vibration_unavailable">此裝置無法使用震動功能</string>
   <string name="msg_service_running">節拍器服務正在執行</string>
-  <string name="msg_service_running_return">輕觸返回 Tack</string>
+  <string name="msg_service_running_return">點擊以返回 Tack</string>
   <string name="msg_service_description">節拍器配置和播放服務</string>
-  <string name="msg_connection_lost">服務連線丟失，需重啟應用程式</string>
+  <string name="msg_connection_lost">服務連線丟失，需要重新啟動應用程式</string>
   <string name="msg_reset">全部重置？</string>
   <string name="msg_reset_description">你真的想要重置包括書籤和設定在內整個應用程式嗎？這是無法撤銷的。</string>
   <string name="msg_gain">音量增強下播放？</string>
-  <string name="msg_gain_description">小心不要戴耳機聽音樂，因為高音量會損傷耳朵！</string>
-  <string name="msg_notification_permission_denied">播放控制需要通知許可權</string>
+  <string name="msg_gain_description">小心不要透過耳機播放，因為太大的音量可以引致耳朵損傷！</string>
+  <string name="msg_notification_permission_denied">播放控制需要通知權限</string>
   <string name="msg_report_crash">請報告任何崩潰情況，並附上崩潰日誌，以便我嘗試修復它們。</string>
-  <string name="msg_copied_to_clipboard">已成功複製到剪貼簿</string>
+  <string name="msg_copied_to_clipboard">已成功複製至剪貼簿</string>
 
   <!-- OPTIONS -->
 
@@ -117,20 +117,20 @@
   </plurals>
   <string name="options_unit_minutes">分鐘</string>
   <plurals name="options_unit_minutes">
-    <item quantity="other">%1$d 分</item>
+    <item quantity="other">%1$d 分鐘</item>
   </plurals>
-  <string name="options_inactive">禁用</string>
+  <string name="options_inactive">停用</string>
   <string name="options_count_in">計數</string>
-  <string name="options_count_in_description">在應用修飾符之前等待 %1$s</string>
-  <string name="options_incremental">增量速度變化</string>
+  <string name="options_count_in_description">在套用修飾符之前等待 %1$s</string>
+  <string name="options_incremental">增量節奏變化</string>
   <string name="options_incremental_amount_increase">增速 %1$d bpm</string>
   <string name="options_incremental_amount_decrease">減速 %1$d bpm</string>
   <string name="options_incremental_interval">每 %1$s</string>
-  <string name="options_incremental_max">提高 %1$d bpm</string>
-  <string name="options_incremental_min">降低 %1$d bpm</string>
+  <string name="options_incremental_max">提高至 %1$d 節拍／分鐘</string>
+  <string name="options_incremental_min">降低至 %1$d 節拍／分鐘</string>
   <string name="options_timer">歌曲時長</string>
-  <string name="options_timer_description">停在 %1$s 之後</string>
-  <string name="options_mute">靜音節拍</string>
+  <string name="options_timer_description">%1$s 之後停止</string>
+  <string name="options_mute">已靜音節拍</string>
   <string name="options_mute_play">播放 %1$s</string>
   <string name="options_mute_mute">靜音 %1$s</string>
   <string name="options_mute_random">隨機靜音最多 %1$d%</string>
@@ -143,18 +143,18 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">語言</string>
-  <string name="settings_language_info">非常感謝 Transifex 的所有翻譯志願者！\n請訪問 GitHub 上的 Tack，瞭解如何為 Tack 提供您的語言。</string>
+  <string name="settings_language_info">非常感謝 Transifex 的所有翻譯志願者！\n請瀏覽 GitHub 上的 Tack 以瞭解如何為 Tack 提供你的語言。</string>
   <string name="settings_language_system">跟隨系統</string>
-  <string name="settings_language_system_description">若無對應翻譯，預設英語</string>
+  <string name="settings_language_system_description">如果沒有對應的翻譯則為英語</string>
 
   <string name="settings_theme">主題</string>
   <string name="settings_theme_description">風格多樣</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
   <string name="settings_theme_auto">自動</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
-  <string name="settings_theme_dark">暗</string>
+  <string name="settings_theme_dark">深色</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
-  <string name="settings_theme_light">亮</string>
+  <string name="settings_theme_light">淺色</string>
 
   <string name="settings_contrast">對比度</string>
   <string name="settings_contrast_description">無障礙視覺</string>
@@ -165,23 +165,26 @@
   <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
   <string name="settings_contrast_high">高</string>
   <string name="settings_contrast_dynamic">必須在系統設定中設定裝置主題的對比度</string>
-  <string name="settings_contrast_dynamic_unsupported">裝置主題的動態對比度僅適用於 Android 14+ 系統</string>
+  <string name="settings_contrast_dynamic_unsupported">裝置主題的動態對比度僅適用於 Android 14 或更新</string>
 
-  <string name="settings_transition">在應用頁面間滑動過渡</string>
-  <string name="settings_transition_description">代替減弱</string>
+  <string name="settings_transition">在應用程式頁面之間使用滑動過渡</string>
+  <string name="settings_transition_description">而不是淡入淡出</string>
 
   <string name="settings_haptic">觸覺效果</string>
-  <string name="settings_haptic_description">除了振動模式下的觸覺節拍外</string>
+  <string name="settings_haptic_description">除了震動模式下的觸覺節拍外</string>
 
   <string name="settings_reduce_animations">減少動畫</string>
-  <string name="settings_reduce_animations_description">可提高效能</string>
+  <string name="settings_reduce_animations_description">可能會提高性能</string>
 
   <string name="settings_reset">全部重置</string>
   <string name="settings_reset_description">無法撤銷</string>
 
   <string name="settings_sound">節拍聲音</string>
-  <string name="settings_sound_wood">木材聲</string>
+  <string name="settings_sound_wood">木材</string>
   <string name="settings_sound_sine">正弦波</string>
+  <string name="settings_sound_mechanical">機械</string>
+  <string name="settings_sound_beatboxing_1">節奏口技 1</string>
+  <string name="settings_sound_folding">折疊規則</string>
 
   <string name="settings_latency">延遲校正</string>
   <string name="settings_latency_description">系統音訊輸出的延遲進行振動和視覺補償</string>
@@ -197,7 +200,7 @@
   <string name="settings_show_subs">顯示分割槽控制元件</string>
   <string name="settings_show_subs_description">節奏更加多樣</string>
 
-  <string name="settings_always_vibrate">始終保持振動</string>
+  <string name="settings_always_vibrate">始終保持震動</string>
   <string name="settings_always_vibrate_description">即使有聲音</string>
 
   <string name="settings_elapsed">顯示已用時間</string>
