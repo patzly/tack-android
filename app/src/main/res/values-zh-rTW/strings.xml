@@ -216,7 +216,7 @@
   <string name="settings_flash_screen_description">在每個節拍</string>
 
   <string name="settings_keep_awake">保持螢幕喚醒</string>
-  <string name="settings_keep_awake_description">節拍器播放時</string>
+  <string name="settings_keep_awake_description">當節拍器播放時</string>
 
   <!-- ABOUT -->
 
