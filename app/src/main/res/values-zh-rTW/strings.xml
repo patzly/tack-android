@@ -221,7 +221,7 @@
   <!-- ABOUT -->
 
   <string name="about_version">版本</string>
-  <string name="about_changelog">更新日誌</string>
+  <string name="about_changelog">變更記錄</string>
   <string name="about_changelog_description">此版本新增功能</string>
   <string name="about_developer">開發者</string>
   <string name="about_vending_description">開發者的更多應用程式</string>
