@@ -207,7 +207,7 @@
   <string name="settings_elapsed_description">看你練習了多久</string>
 
   <string name="settings_reset_elapsed">停止時重置已使用的時間</string>
-  <string name="settings_reset_elapsed_description">直到關閉為止，代替恢復。</string>
+  <string name="settings_reset_elapsed_description">而不是恢復直至關閉</string>
 
   <string name="settings_reset_timer">停止時重置計時器</string>
   <string name="settings_reset_timer_description">代替恢復</string>
