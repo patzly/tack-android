@@ -204,7 +204,7 @@
   <string name="settings_always_vibrate_description">即使有聲音</string>
 
   <string name="settings_elapsed">顯示已使用的時間</string>
-  <string name="settings_elapsed_description">看到你練習了多久</string>
+  <string name="settings_elapsed_description">看你練習了多久</string>
 
   <string name="settings_reset_elapsed">停止時重置已用時間</string>
   <string name="settings_reset_elapsed_description">直到關閉為止，代替恢復。</string>
