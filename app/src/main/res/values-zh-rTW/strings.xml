@@ -210,7 +210,7 @@
   <string name="settings_reset_elapsed_description">而不是恢復直至關閉</string>
 
   <string name="settings_reset_timer">停止時重置計時器</string>
-  <string name="settings_reset_timer_description">代替恢復</string>
+  <string name="settings_reset_timer_description">而不是恢復</string>
 
   <string name="settings_flash_screen">螢幕閃爍</string>
   <string name="settings_flash_screen_description">每個節拍</string>
