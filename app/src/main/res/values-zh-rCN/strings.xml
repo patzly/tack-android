@@ -71,7 +71,7 @@
   <string name="action_deactivate_gain">停用放大</string>
   <string name="action_recommend">推荐</string>
   <string name="action_recommend_description">向朋友介绍 Tack</string>
-  <string name="action_email">发送邮件</string>
+  <string name="action_email">发送电子邮件</string>
   <string name="action_email_description">联系开发者</string>
   <string name="action_rate">在 Google Play 上评分</string>
   <string name="action_rate_description">支持开发</string>
