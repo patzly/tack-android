@@ -154,7 +154,7 @@
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
   <string name="settings_theme_dark">暗</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
-  <string name="settings_theme_light">亮</string>
+  <string name="settings_theme_light">淺色</string>
 
   <string name="settings_contrast">對比度</string>
   <string name="settings_contrast_description">無障礙視覺</string>
