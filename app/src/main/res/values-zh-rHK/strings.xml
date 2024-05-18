@@ -145,7 +145,7 @@
   <string name="settings_language">語言</string>
   <string name="settings_language_info">非常感謝 Transifex 的所有翻譯志願者！\n請訪問 GitHub 上的 Tack，瞭解如何為 Tack 提供您的語言。</string>
   <string name="settings_language_system">跟隨系統</string>
-  <string name="settings_language_system_description">若無對應翻譯，默認英語</string>
+  <string name="settings_language_system_description">如果沒有對應的翻譯則為英語</string>
 
   <string name="settings_theme">主題</string>
   <string name="settings_theme_description">風格多樣</string>
