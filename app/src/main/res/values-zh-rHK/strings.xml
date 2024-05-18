@@ -168,7 +168,7 @@
   <string name="settings_contrast_dynamic_unsupported">設備主題的動態對比度僅適用於 Android 14+ 系統</string>
 
   <string name="settings_transition">在應用頁面間滑動過渡</string>
-  <string name="settings_transition_description">代替減弱</string>
+  <string name="settings_transition_description">而不是淡入淡出</string>
 
   <string name="settings_haptic">觸覺效果</string>
   <string name="settings_haptic_description">除了振動模式下的觸覺節拍外</string>
