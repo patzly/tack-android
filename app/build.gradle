@@ -6,7 +6,6 @@ plugins {
 android {
     namespace 'xyz.zedler.patrick.tack'
     compileSdk 34
-    buildToolsVersion '34.0.0'
 
     defaultConfig {
         applicationId "xyz.zedler.patrick.tack"

@@ -8,10 +8,10 @@ en
 Patrick Zedler
 
 zh-CN
-James Yang
+llxlr
 
 zh-HK
-James Yang
+llxlr
 
 zh-TW
-James Yang
+llxlr, hugoalh
