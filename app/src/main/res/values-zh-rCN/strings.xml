@@ -119,7 +119,7 @@
   <plurals name="options_unit_minutes">
     <item quantity="other">%1$d 分钟</item>
   </plurals>
-  <string name="options_inactive">禁用</string>
+  <string name="options_inactive">停用</string>
   <string name="options_count_in">计数</string>
   <string name="options_count_in_description">在应用修饰符之前等待 %1$s</string>
   <string name="options_incremental">增量速度变化</string>
