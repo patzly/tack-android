@@ -130,7 +130,7 @@
   <string name="options_incremental_min">降低 %1$d bpm</string>
   <string name="options_timer">歌曲时长</string>
   <string name="options_timer_description">停在 %1$s 之后</string>
-  <string name="options_mute">静音节拍</string>
+  <string name="options_mute">已静音节拍</string>
   <string name="options_mute_play">播放 %1$s</string>
   <string name="options_mute_mute">静音 %1$s</string>
   <string name="options_mute_random">随机静音最多 %1$d%</string>
