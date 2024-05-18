@@ -84,7 +84,7 @@
 
   <!-- MESSAGES -->
 
-  <string name="msg_bookmarks_max">达到书签上限</string>
+  <string name="msg_bookmarks_max">已达到书签上限</string>
   <string name="msg_feedback">一款优秀的应用程序需要花费大量的时间和获取用户的反馈。</string>
   <string name="msg_feedback_contact">您有任何愿望、评论或问题吗？联系我！\n否则，我会非常高兴在 Play 商店得到一个好评。</string>
   <string name="msg_recommend">看看这个很酷的节拍器应用程序：\n%1$s</string>
