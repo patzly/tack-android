@@ -127,7 +127,7 @@
   <string name="options_incremental_amount_decrease">減速 %1$d bpm</string>
   <string name="options_incremental_interval">每 %1$s</string>
   <string name="options_incremental_max">提高至 %1$d bpm</string>
-  <string name="options_incremental_min">降低 %1$d bpm</string>
+  <string name="options_incremental_min">降低至 %1$d bpm</string>
   <string name="options_timer">歌曲時長</string>
   <string name="options_timer_description">%1$s 之後停止</string>
   <string name="options_mute">已靜音節拍</string>
