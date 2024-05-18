@@ -21,11 +21,11 @@
 
   <!-- TITLES -->
 
-  <string name="title_feedback">反饋</string>
+  <string name="title_feedback">意見反映</string>
   <string name="title_about">關於</string>
   <string name="title_help">幫助</string>
   <string name="title_licenses">開源協議</string>
-  <string name="title_settings">設置</string>
+  <string name="title_settings">設定</string>
   <string name="title_notification_channel">節拍器服務</string>
   <string name="title_options">選項</string>
   <string name="title_general">通用</string>
@@ -34,8 +34,8 @@
 
   <!-- LABELS -->
 
-  <string name="label_bpm_value">%1$d bpm</string>
-  <string name="label_bpm">bpm</string>
+  <string name="label_bpm_value">%1$d 節拍／分鐘</string>
+  <string name="label_bpm">節拍／分鐘</string>
   <string name="label_ms">%1$s 毫秒</string>
   <string name="label_db">+%1$d 分貝</string>
   <string name="label_tempo_largo">廣板</string>
@@ -55,32 +55,32 @@
   <string name="action_increase">增加</string>
   <string name="action_decrease">減少</string>
   <string name="action_play">播放</string>
-  <string name="action_play_stop">播放 / 停止</string>
+  <string name="action_play_stop">播放／停止</string>
   <string name="action_stop">停止</string>
   <string name="action_add_beat">增加節拍</string>
   <string name="action_remove_beat">減少節拍</string>
-  <string name="action_add_sub">增添分區</string>
+  <string name="action_add_sub">新增分區</string>
   <string name="action_remove_sub">移除分區</string>
   <string name="action_clear_all">全部清除</string>
   <string name="action_tempo_tap">輕拍速度</string>
   <string name="action_bookmark">書籤</string>
   <string name="action_beat_mode">節拍模式</string>
-  <string name="action_send_feedback">反饋</string>
+  <string name="action_send_feedback">傳送意見反映</string>
   <string name="action_open_link">打開外部網站</string>
   <string name="action_reset">重置</string>
-  <string name="action_deactivate_gain">停用放大</string>
+  <string name="action_deactivate_gain">停用增強</string>
   <string name="action_recommend">推薦</string>
   <string name="action_recommend_description">向朋友介紹 Tack</string>
-  <string name="action_email">發送郵件</string>
-  <string name="action_email_description">聯繫開發者</string>
+  <string name="action_email">傳送電子郵件</string>
+  <string name="action_email_description">聯絡開發者</string>
   <string name="action_rate">在 Google Play 上評分</string>
-  <string name="action_rate_description">支持開發</string>
+  <string name="action_rate_description">支援開發</string>
   <string name="action_issue">在 GitHub 上提問</string>
   <string name="action_issue_description">報告錯誤或建議功能</string>
   <string name="action_retry">重試</string>
-  <string name="action_logcat">日誌</string>
-  <string name="action_copy_to_clipboard">複製剪貼板</string>
-  <string name="action_reload">刷新</string>
+  <string name="action_logcat">顯示日誌</string>
+  <string name="action_copy_to_clipboard">複製到剪貼簿</string>
+  <string name="action_reload">重新整理</string>
 
   <!-- MESSAGES -->
 
@@ -99,7 +99,7 @@
   <string name="msg_gain_description">小心不要戴耳機聽音樂，因為高音量會損傷耳朵！</string>
   <string name="msg_notification_permission_denied">播放控制需要通知權限</string>
   <string name="msg_report_crash">請報告任何崩潰情況，並附上崩潰日誌，以便我嘗試修復它們。</string>
-  <string name="msg_copied_to_clipboard">已成功複製到剪貼板</string>
+  <string name="msg_copied_to_clipboard">已成功複製到剪貼簿</string>
 
   <!-- OPTIONS -->
 
@@ -117,9 +117,9 @@
   </plurals>
   <string name="options_unit_minutes">分鐘</string>
   <plurals name="options_unit_minutes">
-    <item quantity="other">%1$d 分</item>
+    <item quantity="other">%1$d 分鐘</item>
   </plurals>
-  <string name="options_inactive">禁用</string>
+  <string name="options_inactive">停用</string>
   <string name="options_count_in">計數</string>
   <string name="options_count_in_description">在應用修飾符之前等待 %1$s</string>
   <string name="options_incremental">增量速度變化</string>
@@ -180,11 +180,14 @@
   <string name="settings_reset_description">無法撤銷</string>
 
   <string name="settings_sound">節拍聲音</string>
-  <string name="settings_sound_wood">木材聲</string>
+  <string name="settings_sound_wood">木材</string>
   <string name="settings_sound_sine">正弦波</string>
+  <string name="settings_sound_mechanical">機械</string>
+  <string name="settings_sound_beatboxing_1">節奏口技 1</string>
+  <string name="settings_sound_folding">折疊規則</string>
 
   <string name="settings_latency">延遲校正</string>
-  <string name="settings_latency_description">系統音頻輸出的延遲進行振動和視覺補償</string>
+  <string name="settings_latency_description">補償系統音訊輸出的震動和視覺延遲</string>
 
   <string name="settings_ignore_focus">忽略音頻焦點</string>
   <string name="settings_ignore_focus_description">在其他應用程序發出聲音時保持播放</string>
@@ -195,25 +198,25 @@
   <string name="settings_gain_disclaimer">當啓用增強功能時，每次啓動前都會顯示警告。開發者對任何潛在損害不承擔責任。</string>
 
   <string name="settings_show_subs">顯示分區控件</string>
-  <string name="settings_show_subs_description">節奏更加多樣</string>
+  <string name="settings_show_subs_description">節奏更加多樣化</string>
 
-  <string name="settings_always_vibrate">始終保持振動</string>
+  <string name="settings_always_vibrate">總是振動</string>
   <string name="settings_always_vibrate_description">即使有聲音</string>
 
   <string name="settings_elapsed">顯示已用時間</string>
-  <string name="settings_elapsed_description">看到你練習了多久</string>
+  <string name="settings_elapsed_description">看你練習了多久</string>
 
   <string name="settings_reset_elapsed">停止時重置已用時間</string>
-  <string name="settings_reset_elapsed_description">直到關閉為止，代替恢復。</string>
+  <string name="settings_reset_elapsed_description">而不是恢復直至關閉</string>
 
   <string name="settings_reset_timer">停止時重置計時器</string>
-  <string name="settings_reset_timer_description">代替恢復</string>
+  <string name="settings_reset_timer_description">而不是恢復</string>
 
   <string name="settings_flash_screen">屏幕閃爍</string>
-  <string name="settings_flash_screen_description">每個節拍</string>
+  <string name="settings_flash_screen_description">在每個節拍</string>
 
   <string name="settings_keep_awake">保持屏幕喚醒</string>
-  <string name="settings_keep_awake_description">節拍器播放時</string>
+  <string name="settings_keep_awake_description">當節拍器播放時</string>
 
   <!-- ABOUT -->
 
