@@ -187,7 +187,7 @@
   <string name="settings_sound_folding">折尺声</string>
 
   <string name="settings_latency">延迟校正</string>
-  <string name="settings_latency_description">系统音频输出的延迟进行振动和视觉补偿</string>
+  <string name="settings_latency_description">补偿系统音频输出的振动和视觉延迟</string>
 
   <string name="settings_ignore_focus">忽略音频焦点</string>
   <string name="settings_ignore_focus_description">在其他应用程序发出声音时保持播放</string>
