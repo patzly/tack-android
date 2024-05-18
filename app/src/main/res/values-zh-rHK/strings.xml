@@ -87,7 +87,7 @@
   <string name="msg_bookmarks_max">達到書籤上限</string>
   <string name="msg_feedback">一款優秀的應用程序需要花費大量時間和獲取用户反饋。</string>
   <string name="msg_feedback_contact">您有任何願望、評論或問題嗎？聯繫我！\n否則，我會非常高興在 Play 商店得到一個好評。</string>
-  <string name="msg_recommend">檢查一下這個很酷的節拍器應用：\n%1$s</string>
+  <string name="msg_recommend">看看這個很酷的節拍器應用：\n%1$s</string>
   <string name="msg_vibration_unavailable">該設備無法使用振動功能</string>
   <string name="msg_service_running">節拍器服務正在運行</string>
   <string name="msg_service_running_return">輕觸返回 Tack</string>
