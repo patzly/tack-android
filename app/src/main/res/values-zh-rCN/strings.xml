@@ -183,7 +183,8 @@
   <string name="settings_sound_wood">木材声</string>
   <string name="settings_sound_sine">正弦波</string>
   <string name="settings_sound_mechanical">机械声</string>
-  <string name="wear_settings_sound_folding">折尺声</string>
+  <string name="settings_sound_beatboxing_1">节奏口技 1</string>
+  <string name="settings_sound_folding">折尺声</string>
 
   <string name="settings_latency">延迟校正</string>
   <string name="settings_latency_description">系统音频输出的延迟进行振动和视觉补偿</string>
