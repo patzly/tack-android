@@ -96,7 +96,7 @@
   <string name="msg_reset">全部重置？</string>
   <string name="msg_reset_description">你真的想要重置包括书签和设置在内整个应用程序吗？这是无法撤销的。</string>
   <string name="msg_gain">音量增强下播放？</string>
-  <string name="msg_gain_description">小心不要戴耳机听音乐，因为高音量会损伤耳朵！</string>
+  <string name="msg_gain_description">注意不要通过耳机播放，因为高音量会对耳朵造成伤害！</string>
   <string name="msg_notification_permission_denied">播放控制需要通知权限</string>
   <string name="msg_report_crash">请报告任何崩溃情况，并附上崩溃日志，以便我尝试修复它们。</string>
   <string name="msg_copied_to_clipboard">已成功复制到剪贴板</string>
