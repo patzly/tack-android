@@ -195,7 +195,7 @@
   <string name="settings_gain">音量增强</string>
   <string name="settings_gain_description">增益分贝（除系统音量外）</string>
   <string name="settings_gain_warning">谨慎使用！</string>
-  <string name="settings_gain_disclaimer">当启用增强功能时，每次启动前都会显示警告。开发者对任何潜在损害不承担责任。</string>
+  <string name="settings_gain_disclaimer">当启用增强功能时，每次启动前都会显示警告。开发者对任何潜在的损害不承担责任。</string>
 
   <string name="settings_show_subs">显示分区控件</string>
   <string name="settings_show_subs_description">节奏更加多样化</string>
