@@ -198,7 +198,7 @@
   <string name="settings_gain_disclaimer">当启用增强功能时，每次启动前都会显示警告。开发者对任何潜在损害不承担责任。</string>
 
   <string name="settings_show_subs">显示分区控件</string>
-  <string name="settings_show_subs_description">节奏更加多样</string>
+  <string name="settings_show_subs_description">节奏更加多样化</string>
 
   <string name="settings_always_vibrate">总是振动</string>
   <string name="settings_always_vibrate_description">即使有声音</string>
