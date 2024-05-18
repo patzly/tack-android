@@ -55,7 +55,7 @@
   <string name="action_increase">增加</string>
   <string name="action_decrease">减少</string>
   <string name="action_play">播放</string>
-  <string name="action_play_stop">播放 / 停止</string>
+  <string name="action_play_stop">播放／停止</string>
   <string name="action_stop">停止</string>
   <string name="action_add_beat">增加节拍</string>
   <string name="action_remove_beat">减少节拍</string>
