@@ -213,7 +213,7 @@
   <string name="settings_reset_timer_description">代替恢复</string>
 
   <string name="settings_flash_screen">屏幕闪烁</string>
-  <string name="settings_flash_screen_description">每个节拍</string>
+  <string name="settings_flash_screen_description">在每个节拍</string>
 
   <string name="settings_keep_awake">保持屏幕唤醒</string>
   <string name="settings_keep_awake_description">当节拍器播放时</string>
