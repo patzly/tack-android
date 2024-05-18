@@ -167,7 +167,7 @@
   <string name="settings_contrast_dynamic">必须在系统设置中设置设备主题的对比度</string>
   <string name="settings_contrast_dynamic_unsupported">设备主题的动态对比度仅适用于 Android 14+ 系统</string>
 
-  <string name="settings_transition">在应用程序页面之间使用滑动过渡</string>
+  <string name="settings_transition">在應用程式頁面之間使用滑動過渡</string>
   <string name="settings_transition_description">而不是淡入淡出</string>
 
   <string name="settings_haptic">触觉效果</string>
