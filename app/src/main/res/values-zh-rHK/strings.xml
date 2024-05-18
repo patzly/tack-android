@@ -96,7 +96,7 @@
   <string name="msg_reset">全部重置？</string>
   <string name="msg_reset_description">你真的想要重置包括書籤和設置在內整個應用程序嗎？這是無法撤銷的。</string>
   <string name="msg_gain">音量增強下播放？</string>
-  <string name="msg_gain_description">小心不要戴耳機聽音樂，因為高音量會損傷耳朵！</string>
+  <string name="msg_gain_description">小心不要透過耳機播放，因為高音量會損傷耳朵！</string>
   <string name="msg_notification_permission_denied">播放控制需要通知權限</string>
   <string name="msg_report_crash">請報告任何崩潰情況，並附上崩潰日誌，以便我嘗試修復它們。</string>
   <string name="msg_copied_to_clipboard">已成功複製到剪貼簿</string>
