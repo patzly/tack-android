@@ -68,7 +68,7 @@
   <string name="action_send_feedback">反馈</string>
   <string name="action_open_link">打开外部网站</string>
   <string name="action_reset">重置</string>
-  <string name="action_deactivate_gain">停用放大</string>
+  <string name="action_deactivate_gain">停用增强</string>
   <string name="action_recommend">推荐</string>
   <string name="action_recommend_description">向朋友介绍 Tack</string>
   <string name="action_email">发送电子邮件</string>
