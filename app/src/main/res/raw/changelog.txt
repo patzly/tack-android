@@ -4,6 +4,7 @@
 - New: Chinese translation
 - Improved: more metronome sounds available
 - Improved: audio focus of app notifications no longer stops playback, lowers volume instead
+- Improved: beat and subdivision count is shown if there are more than 4 beats/subdivisions to display
 - Improved: volume boost warning now only is shown before first start with gain
 - Fixed: background notification was also shown when Tack was in foreground
 - Fixed: flash screen setting was not properly initialized on app startup
