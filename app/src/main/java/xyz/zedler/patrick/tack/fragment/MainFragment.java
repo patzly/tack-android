@@ -46,7 +46,12 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
+import androidx.core.graphics.ColorUtils;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.badge.BadgeUtils;
+import com.google.android.material.badge.ExperimentalBadgeUtils;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
@@ -99,7 +104,9 @@ public class MainFragment extends BaseFragment
   private List<Integer> bookmarks;
   private SquigglyProgressDrawable squiggly;
   private BeatsBgDrawable beatsBgDrawable;
+  private BadgeDrawable beatsCountBadge, subsCountBadge;
   private ValueAnimator progressAnimator, progressTransitionAnimator;
+  private ValueAnimator beatsCountBadgeAnimator, subsCountBadgeAnimator;
 
   @Override
   public View onCreateView(
@@ -168,9 +175,11 @@ public class MainFragment extends BaseFragment
 
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
     binding.linearMainBeats.getLayoutTransition().setDuration(Constants.ANIM_DURATION_LONG);
+    beatsCountBadge = BadgeDrawable.create(activity);
     updateBeats(getSharedPrefs().getString(PREF.BEATS, DEF.BEATS).split(","));
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
     binding.linearMainSubs.getLayoutTransition().setDuration(Constants.ANIM_DURATION_LONG);
+    subsCountBadge = BadgeDrawable.create(activity);
     updateSubs(getSharedPrefs().getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(","));
 
     dialogUtilGain = new DialogUtil(activity, "gain");
@@ -489,9 +498,9 @@ public class MainFragment extends BaseFragment
     }
 
     updateBeats(getMetronomeUtil().getBeats());
-    updateBeatControls();
+    updateBeatControls(false);
     updateSubs(getMetronomeUtil().getSubdivisions());
-    updateSubControls();
+    updateSubControls(false);
     refreshBookmarks();
     measureTimerControls(true); // calls updateTimerControls when measured
     updateElapsedDisplay();
@@ -703,7 +712,7 @@ public class MainFragment extends BaseFragment
         beatView.setReduceAnimations(reduceAnimations);
         binding.linearMainBeats.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
-        updateBeatControls();
+        updateBeatControls(true);
         updateTimerDisplay(); // Update decimals for bar unit
       }
     } else if (id == R.id.button_main_remove_beat) {
@@ -715,7 +724,7 @@ public class MainFragment extends BaseFragment
         ViewUtil.centerScrollContentIfNotFullWidth(
             binding.scrollHorizMainBeats, true
         );
-        updateBeatControls();
+        updateBeatControls(true);
         updateTimerDisplay(); // Update decimals for bar unit
       }
     } else if (id == R.id.button_main_add_subdivision) {
@@ -733,7 +742,7 @@ public class MainFragment extends BaseFragment
         beatView.setReduceAnimations(reduceAnimations);
         binding.linearMainSubs.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
-        updateSubControls();
+        updateSubControls(true);
         optionsUtil.updateSwing();
       }
     } else if (id == R.id.button_main_remove_subdivision) {
@@ -745,7 +754,7 @@ public class MainFragment extends BaseFragment
         ViewUtil.centerScrollContentIfNotFullWidth(
             binding.scrollHorizMainSubs, true
         );
-        updateSubControls();
+        updateSubControls(true);
         optionsUtil.updateSwing();
       }
     } else if (id == R.id.fab_main_play_stop) {
@@ -851,13 +860,62 @@ public class MainFragment extends BaseFragment
       binding.linearMainBeats.addView(beatView);
     }
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
-    updateBeatControls();
+
+    updateBeatControls(true);
   }
 
-  private void updateBeatControls() {
+  @OptIn(markerClass = ExperimentalBadgeUtils.class)
+  private void updateBeatControls(boolean animated) {
     int beats = getMetronomeUtil().getBeatsCount();
     binding.buttonMainAddBeat.setEnabled(beats < Constants.BEATS_MAX);
     binding.buttonMainRemoveBeat.setEnabled(beats > 1);
+
+    if (beatsCountBadgeAnimator != null) {
+      beatsCountBadgeAnimator.pause();
+      beatsCountBadgeAnimator.removeAllUpdateListeners();
+      beatsCountBadgeAnimator.removeAllListeners();
+      beatsCountBadgeAnimator.cancel();
+      beatsCountBadgeAnimator = null;
+    }
+    beatsCountBadge.setNumber(beats);
+    boolean show = beats > 4;
+    if (animated) {
+      beatsCountBadgeAnimator = ValueAnimator.ofInt(beatsCountBadge.getAlpha(), show ? 255 : 0);
+      beatsCountBadgeAnimator.addUpdateListener(animation -> {
+        if (binding == null) {
+          return;
+        }
+        beatsCountBadge.setAlpha((int) animation.getAnimatedValue());
+        float fraction = (float) ((int) animation.getAnimatedValue()) / 255;
+        int colorBg = ResUtil.getColor(activity, R.attr.colorError);
+        int color = ColorUtils.blendARGB(Color.TRANSPARENT, colorBg, fraction);
+        beatsCountBadge.setBackgroundColor(color);
+      });
+      beatsCountBadgeAnimator.addListener(new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationEnd(Animator animation) {
+          if (!show) {
+            BadgeUtils.detachBadgeDrawable(beatsCountBadge, binding.linearMainBeatsBg);
+          }
+        }
+      });
+      beatsCountBadgeAnimator.setInterpolator(new FastOutSlowInInterpolator());
+      beatsCountBadgeAnimator.setDuration(Constants.ANIM_DURATION_LONG);
+      beatsCountBadgeAnimator.start();
+      if (show) {
+        BadgeUtils.attachBadgeDrawable(beatsCountBadge, binding.linearMainBeatsBg);
+      }
+    } else {
+      beatsCountBadge.setAlpha(255);
+      beatsCountBadge.setBackgroundColor(ResUtil.getColor(activity, R.attr.colorError));
+      new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        if (beats > 4) {
+          BadgeUtils.attachBadgeDrawable(beatsCountBadge, binding.linearMainBeatsBg);
+        } else {
+          BadgeUtils.detachBadgeDrawable(beatsCountBadge, binding.linearMainBeatsBg);
+        }
+      }, 1);
+    }
   }
 
   public void updateSubs(String[] subdivisions) {
@@ -885,16 +943,65 @@ public class MainFragment extends BaseFragment
       binding.linearMainSubs.addView(beatView);
     }
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs, true);
-    updateSubControls();
+
+    updateSubControls(true);
   }
 
-  public void updateSubControls() {
+  @OptIn(markerClass = ExperimentalBadgeUtils.class)
+  public void updateSubControls(boolean animated) {
     int subdivisions = getMetronomeUtil().getSubdivisionsCount();
     binding.buttonMainAddSubdivision.setEnabled(subdivisions < Constants.SUBS_MAX);
     binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
     binding.linearMainSubsBg.setVisibility(
         getMetronomeUtil().getSubdivisionsUsed() ? View.VISIBLE : View.GONE
     );
+
+    if (subsCountBadgeAnimator != null) {
+      subsCountBadgeAnimator.pause();
+      subsCountBadgeAnimator.removeAllUpdateListeners();
+      subsCountBadgeAnimator.removeAllListeners();
+      subsCountBadgeAnimator.cancel();
+      subsCountBadgeAnimator = null;
+    }
+    subsCountBadge.setNumber(subdivisions);
+    boolean show = subdivisions > 4;
+    if (animated) {
+      subsCountBadgeAnimator = ValueAnimator.ofInt(subsCountBadge.getAlpha(), show ? 255 : 0);
+      subsCountBadgeAnimator.addUpdateListener(animation -> {
+        if (binding == null) {
+          return;
+        }
+        subsCountBadge.setAlpha((int) animation.getAnimatedValue());
+        float fraction = (float) ((int) animation.getAnimatedValue()) / 255;
+        int colorBg = ResUtil.getColor(activity, R.attr.colorError);
+        int color = ColorUtils.blendARGB(Color.TRANSPARENT, colorBg, fraction);
+        subsCountBadge.setBackgroundColor(color);
+      });
+      subsCountBadgeAnimator.addListener(new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationEnd(Animator animation) {
+          if (!show) {
+            BadgeUtils.detachBadgeDrawable(beatsCountBadge, binding.linearMainSubsBg);
+          }
+        }
+      });
+      subsCountBadgeAnimator.setInterpolator(new FastOutSlowInInterpolator());
+      subsCountBadgeAnimator.setDuration(Constants.ANIM_DURATION_LONG);
+      subsCountBadgeAnimator.start();
+      if (show) {
+        BadgeUtils.attachBadgeDrawable(subsCountBadge, binding.linearMainSubsBg);
+      }
+    } else {
+      subsCountBadge.setAlpha(255);
+      subsCountBadge.setBackgroundColor(ResUtil.getColor(activity, R.attr.colorError));
+      new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        if (subdivisions > 4) {
+          BadgeUtils.attachBadgeDrawable(subsCountBadge, binding.linearMainSubsBg);
+        } else {
+          BadgeUtils.detachBadgeDrawable(subsCountBadge, binding.linearMainSubsBg);
+        }
+      }, 1);
+    }
   }
 
   public void updateTimerControls() {

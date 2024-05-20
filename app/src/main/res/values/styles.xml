@@ -311,6 +311,12 @@
     <item name="trackStopIndicatorSize">0dp</item>
   </style>
 
+  <!-- Badge -->
+
+  <style name="Widget.Tack.Badge" parent="Widget.Material3.Badge">
+    <item name="badgeTextAppearance">@style/TextAppearance.Tack.LabelSmall</item>
+  </style>
+
   <!-- Tooltip -->
 
   <style name="Widget.Tack.Tooltip" parent="Widget.Material3.Tooltip">
@@ -591,6 +597,12 @@
 
   <!-- Localized style, no empty base style needed -->
   <style name="TextAppearance.Tack.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+    <item name="android:fontFamily">@font/jost_medium</item>
+    <item name="fontFamily">@font/jost_medium</item>
+  </style>
+
+  <!-- Localized style, no empty base style needed -->
+  <style name="TextAppearance.Tack.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
     <item name="android:fontFamily">@font/jost_medium</item>
     <item name="fontFamily">@font/jost_medium</item>
   </style>

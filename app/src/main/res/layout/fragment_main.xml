@@ -128,7 +128,9 @@
             android:scrollbars="horizontal"
             android:scrollbarThumbHorizontal="@drawable/shape_scrollbar_rounded"
             android:fadingEdge="horizontal"
-            android:requiresFadingEdge="horizontal">
+            android:requiresFadingEdge="horizontal"
+            android:clipToPadding="true"
+            android:clipChildren="true">
 
             <LinearLayout
               android:id="@+id/linear_main_beats"

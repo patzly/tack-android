@@ -328,7 +328,7 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
       }
       updateSwing();
       fragment.updateSubs(getMetronomeUtil().getSubdivisions());
-      fragment.updateSubControls();
+      fragment.updateSubControls(true);
     }
   }
 

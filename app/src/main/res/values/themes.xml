@@ -34,6 +34,7 @@
     <item name="snackbarStyle">@style/Widget.Tack.Snackbar</item>
     <item name="snackbarTextViewStyle">@style/Widget.Tack.Snackbar.TextView</item>
     <item name="snackbarButtonStyle">@style/Widget.Tack.Button.TextButton.Snackbar</item>
+    <item name="badgeStyle">@style/Widget.Tack.Badge</item>
 
     <!-- Popup Menu styles -->
     <item name="popupMenuBackground">@drawable/shape_popup_menu</item>
