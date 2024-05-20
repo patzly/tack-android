@@ -115,7 +115,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
             app:icon="@drawable/ic_round_remove_anim"
-            app:iconTint="?attr/colorOnSurface"
+            app:iconTint="@color/selector_tonal_button_icon_tint"
             app:rippleColor="@color/selector_tonal_button_ripple"
             app:backgroundTint="@color/transparent" />
 
@@ -152,7 +152,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
             app:icon="@drawable/ic_round_add_anim"
-            app:iconTint="?attr/colorOnSurface"
+            app:iconTint="@color/selector_tonal_button_icon_tint"
             app:rippleColor="@color/selector_tonal_button_ripple"
             app:backgroundTint="@color/transparent" />
 
