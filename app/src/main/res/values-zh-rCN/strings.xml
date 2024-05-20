@@ -55,11 +55,11 @@
   <string name="action_increase">增加</string>
   <string name="action_decrease">减少</string>
   <string name="action_play">播放</string>
-  <string name="action_play_stop">播放 / 停止</string>
+  <string name="action_play_stop">播放／停止</string>
   <string name="action_stop">停止</string>
   <string name="action_add_beat">增加节拍</string>
   <string name="action_remove_beat">减少节拍</string>
-  <string name="action_add_sub">增添分区</string>
+  <string name="action_add_sub">新增分区</string>
   <string name="action_remove_sub">移除分区</string>
   <string name="action_clear_all">全部清除</string>
   <string name="action_tempo_tap">轻拍速度</string>
@@ -68,10 +68,10 @@
   <string name="action_send_feedback">反馈</string>
   <string name="action_open_link">打开外部网站</string>
   <string name="action_reset">重置</string>
-  <string name="action_deactivate_gain">停用放大</string>
+  <string name="action_deactivate_gain">停用增强</string>
   <string name="action_recommend">推荐</string>
   <string name="action_recommend_description">向朋友介绍 Tack</string>
-  <string name="action_email">发送邮件</string>
+  <string name="action_email">发送电子邮件</string>
   <string name="action_email_description">联系开发者</string>
   <string name="action_rate">在 Google Play 上评分</string>
   <string name="action_rate_description">支持开发</string>
@@ -79,15 +79,15 @@
   <string name="action_issue_description">报告错误或建议功能</string>
   <string name="action_retry">重试</string>
   <string name="action_logcat">日志</string>
-  <string name="action_copy_to_clipboard">复制剪贴板</string>
+  <string name="action_copy_to_clipboard">复制到剪贴板</string>
   <string name="action_reload">刷新</string>
 
   <!-- MESSAGES -->
 
-  <string name="msg_bookmarks_max">达到书签上限</string>
-  <string name="msg_feedback">一款优秀的应用程序需要花费大量时间和获取用户反馈。</string>
+  <string name="msg_bookmarks_max">已达到书签上限</string>
+  <string name="msg_feedback">一款优秀的应用程序需要花费大量的时间和获取用户的反馈。</string>
   <string name="msg_feedback_contact">您有任何愿望、评论或问题吗？联系我！\n否则，我会非常高兴在 Play 商店得到一个好评。</string>
-  <string name="msg_recommend">检查一下这个很酷的节拍器应用：\n%1$s</string>
+  <string name="msg_recommend">看看这个很酷的节拍器应用程序：\n%1$s</string>
   <string name="msg_vibration_unavailable">该设备无法使用振动功能</string>
   <string name="msg_service_running">节拍器服务正在运行</string>
   <string name="msg_service_running_return">轻触返回 Tack</string>
@@ -119,7 +119,7 @@
   <plurals name="options_unit_minutes">
     <item quantity="other">%1$d 分钟</item>
   </plurals>
-  <string name="options_inactive">禁用</string>
+  <string name="options_inactive">停用</string>
   <string name="options_count_in">计数</string>
   <string name="options_count_in_description">在应用修饰符之前等待 %1$s</string>
   <string name="options_incremental">增量速度变化</string>
@@ -168,7 +168,7 @@
   <string name="settings_contrast_dynamic_unsupported">设备主题的动态对比度仅适用于 Android 14+ 系统</string>
 
   <string name="settings_transition">在应用程序页面之间使用滑动过渡</string>
-  <string name="settings_transition_description">而不是减弱</string>
+  <string name="settings_transition_description">而不是淡入淡出</string>
 
   <string name="settings_haptic">触觉效果</string>
   <string name="settings_haptic_description">除了振动模式下的触觉节拍外</string>

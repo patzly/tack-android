@@ -1,0 +1,95 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="wear_title_settings">设置</string>
+  <string name="wear_title_beats">拍数</string>
+  <string name="wear_title_beats_count">节拍（%1$d）</string>
+  <string name="wear_title_subdivisions_count">分区（%1$d）</string>
+  <string name="wear_title_notification_channel">节拍器服务</string>
+
+  <!-- LABELS -->
+
+  <string name="wear_label_bpm_value">%1$d bpm</string>
+  <string name="wear_label_ms">%1$s 毫秒</string>
+  <string name="wear_label_db">+%1$d 分贝</string>
+  <string name="wear_label_developer">开发者</string>
+
+  <!-- ACTIONS -->
+
+  <string name="wear_action_cancel">取消</string>
+  <string name="wear_action_increase">增加</string>
+  <string name="wear_action_decrease">减少</string>
+  <string name="wear_action_play_stop">播放／停止</string>
+  <string name="wear_action_stop">停止</string>
+  <string name="wear_action_add_beat">增加节拍</string>
+  <string name="wear_action_remove_beat">减少节拍</string>
+  <string name="wear_action_add_sub">新增分区</string>
+  <string name="wear_action_remove_sub">移除分区</string>
+  <string name="wear_action_tempo_tap">轻拍速度</string>
+  <string name="wear_action_bookmark">书签</string>
+  <string name="wear_action_beat_mode">节拍模式</string>
+  <string name="wear_action_retry">重试</string>
+
+  <!-- MESSAGES -->
+
+  <string name="wear_msg_service_running">节拍器播放中</string>
+  <string name="wear_msg_service_running_return">轻触获取更多</string>
+  <string name="wear_msg_service_description">节拍器播放服务</string>
+  <string name="wear_msg_notification_permission_denied">需要权限</string>
+  <string name="wear_msg_notification_permission_denied_description">播放需要通知权限</string>
+  <string name="wear_msg_gain">音量增强下播放？</string>
+  <string name="wear_msg_gain_description">小心不要通过耳机播放！</string>
+
+  <!-- SETTINGS -->
+
+  <string name="wear_settings_sound">节拍声音</string>
+  <string name="wear_settings_sound_sine">正弦波</string>
+  <string name="wear_settings_sound_wood">木材</string>
+  <string name="wear_settings_sound_mechanical">机械</string>
+  <string name="wear_settings_sound_beatboxing_1">节奏口技 1</string>
+  <string name="wear_settings_sound_folding">折叠规则</string>
+
+  <string name="wear_settings_latency">延迟校正</string>
+
+  <string name="wear_settings_ignore_focus">忽略音频焦点</string>
+  <string name="wear_settings_ignore_focus_description">在其他应用程序发出声音时保持播放</string>
+
+  <string name="wear_settings_gain">音量增强</string>
+  <string name="wear_settings_gain_disclaimer">小心！开发者对任何潜在的损害不承担责任。</string>
+
+  <string name="wear_settings_always_vibrate">总是振动</string>
+  <string name="wear_settings_always_vibrate_description">即使有声音</string>
+
+  <string name="wear_settings_strong_vibration">强烈振动</string>
+  <string name="wear_settings_strong_vibration_description">如果触觉很弱</string>
+
+  <string name="wear_settings_flash_screen">屏幕闪烁</string>
+  <string name="wear_settings_flash_screen_description">在每个节拍</string>
+
+  <string name="wear_settings_keep_awake">保持屏幕唤醒</string>
+  <string name="wear_settings_keep_awake_description">当节拍器播放时</string>
+
+  <string name="wear_settings_rate">在 Google Play 上为 Tack 评分</string>
+  <string name="wear_settings_rate_description">支持开发</string>
+
+</resources>
