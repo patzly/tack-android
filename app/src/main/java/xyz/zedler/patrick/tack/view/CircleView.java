@@ -66,6 +66,7 @@ public class CircleView extends View {
   private float gradientBlendRatio = 0;
   private float innerRadius;
   private AnimatorSet animatorSet;
+  private boolean reduceAnimations;
 
   public CircleView(@NonNull Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
@@ -141,13 +142,15 @@ public class CircleView extends View {
     ValueAnimator alphaAnimator = ValueAnimator.ofFloat(gradientBlendRatio, dragged ? 0.8f : 0);
     alphaAnimator.addUpdateListener(animation -> {
       gradientBlendRatio = (float) alphaAnimator.getAnimatedValue();
-      paint.setShader(getGradient());
+      if (!reduceAnimations) {
+        paint.setShader(getGradient());
+      }
       invalidate();
     });
     animatorSet = new AnimatorSet();
     animatorSet.playTogether(alphaAnimator, animatorAmplitude);
     animatorSet.setInterpolator(new FastOutSlowInInterpolator());
-    animatorSet.setDuration(Constants.ANIM_DURATION_LONG);
+    animatorSet.setDuration(reduceAnimations ? Constants.ANIM_DURATION_SHORT : Constants.ANIM_DURATION_LONG);
     animatorSet.addListener(new AnimatorListenerAdapter() {
       @Override
       public void onAnimationEnd(Animator animation) {
@@ -160,7 +163,9 @@ public class CircleView extends View {
   public void onDrag(float x, float y) {
     touchX = x;
     touchY = y;
-    paint.setShader(getGradient());
+    if (!reduceAnimations) {
+      paint.setShader(getGradient());
+    }
     invalidate();
   }
 
@@ -188,5 +193,9 @@ public class CircleView extends View {
     float x2 = (float) (x1 * Math.cos(radians) - y1 * Math.sin(radians));
     float y2 = (float) (x1 * Math.sin(radians) + y1 * Math.cos(radians));
     return new PointF(x2 + cx, y2 + cy);
+  }
+
+  public void setReduceAnimations(boolean reduce) {
+    reduceAnimations = reduce;
   }
 }

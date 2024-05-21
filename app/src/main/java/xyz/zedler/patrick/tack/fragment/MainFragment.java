@@ -257,6 +257,7 @@ public class MainFragment extends BaseFragment
       return textView;
     });
 
+    binding.circleMain.setReduceAnimations(reduceAnimations);
     binding.tempoPickerMain.setOnRotationListener(new TempoPickerView.OnRotationListener() {
       @Override
       public void onRotate(int tempo) {
@@ -906,10 +907,12 @@ public class MainFragment extends BaseFragment
         BadgeUtils.attachBadgeDrawable(beatsCountBadge, binding.linearMainBeatsBg);
       }
     } else {
-      beatsCountBadge.setAlpha(255);
-      beatsCountBadge.setBackgroundColor(ResUtil.getColor(activity, R.attr.colorError));
+      beatsCountBadge.setAlpha(show ? 255 : 0);
+      beatsCountBadge.setBackgroundColor(
+          show ? ResUtil.getColor(activity, R.attr.colorError) : Color.TRANSPARENT
+      );
       new Handler(Looper.getMainLooper()).postDelayed(() -> {
-        if (beats > 4) {
+        if (show) {
           BadgeUtils.attachBadgeDrawable(beatsCountBadge, binding.linearMainBeatsBg);
         } else {
           BadgeUtils.detachBadgeDrawable(beatsCountBadge, binding.linearMainBeatsBg);
@@ -992,10 +995,12 @@ public class MainFragment extends BaseFragment
         BadgeUtils.attachBadgeDrawable(subsCountBadge, binding.linearMainSubsBg);
       }
     } else {
-      subsCountBadge.setAlpha(255);
-      subsCountBadge.setBackgroundColor(ResUtil.getColor(activity, R.attr.colorError));
+      subsCountBadge.setAlpha(show ? 255 : 0);
+      subsCountBadge.setBackgroundColor(
+          show ? ResUtil.getColor(activity, R.attr.colorError) : Color.TRANSPARENT
+      );
       new Handler(Looper.getMainLooper()).postDelayed(() -> {
-        if (subdivisions > 4) {
+        if (show) {
           BadgeUtils.attachBadgeDrawable(subsCountBadge, binding.linearMainSubsBg);
         } else {
           BadgeUtils.detachBadgeDrawable(subsCountBadge, binding.linearMainSubsBg);
