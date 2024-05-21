@@ -801,13 +801,15 @@ public class CustomSlider extends Slider {
   @NonNull
   @Override
   public ColorStateList getTrackInactiveTintList() {
+    boolean elevated = getElevation() > 0;
+    int trackColorAttr = elevated ? R.attr.colorPrimaryInverse : R.attr.colorPrimaryContainer;
     return new ColorStateList(
         new int[][] {
             new int[] {android.R.attr.state_enabled},
             new int[] {},
         },
         new int[] {
-            ResUtil.getColor(getContext(), R.attr.colorPrimaryContainer),
+            ResUtil.getColor(getContext(), trackColorAttr),
             ResUtil.getColor(getContext(), R.attr.colorOnSurfaceVariant, 0.12f)
         }
     );
