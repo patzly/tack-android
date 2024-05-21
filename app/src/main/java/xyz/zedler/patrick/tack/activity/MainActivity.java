@@ -175,9 +175,11 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
     if (!runAsSuperClass) {
       binding = null;
-      metronomeUtil.destroy();
-      // metronome should be stopped when app is removed from recent apps
-      stopService(metronomeIntent);
+      if (isFinishing()) {
+        metronomeUtil.destroy();
+        // metronome should be stopped when app is removed from recent apps
+        stopService(metronomeIntent);
+      }
     }
   }
 
