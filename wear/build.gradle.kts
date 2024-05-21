@@ -32,7 +32,7 @@ android {
     targetSdk = 33
     versionCode = 161 // last number is 1 for wear release
     versionName = "4.1.1"
-    resourceConfigurations += listOf("de", "en", "zh-rTW")
+    resourceConfigurations += listOf("de", "en", "zh-rCN", "zh-rHK", "zh-rTW")
   }
 
   buildTypes {

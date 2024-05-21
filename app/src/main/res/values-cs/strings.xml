@@ -37,16 +37,6 @@
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$s ms</string>
   <string name="label_db">+%1$d dB</string>
-  <array name="label_tempo_terms" translatable="false">
-    <item>Largo</item>
-    <item>Larghetto</item>
-    <item>Adagio</item>
-    <item>Andante</item>
-    <item>Moderato</item>
-    <item>Allegro</item>
-    <item>Presto</item>
-    <item>Prestissimo</item>
-  </array>
 
   <!-- ACTIONS -->
 
@@ -91,9 +81,6 @@
   <string name="settings_sound">Zvuk metronomu</string>
   <string name="settings_sound_wood">Dřívka</string>
   <string name="settings_sound_sine">Sinusoida</string>
-  <string name="settings_sound_click">Ráfek</string>
-  <string name="settings_sound_ding">Xylofon</string>
-  <string name="settings_sound_beep">Pípání</string>
 
   <string name="settings_latency">Korekce latence</string>
   <string name="settings_keep_awake">Nezhasínat obrazovku</string>
