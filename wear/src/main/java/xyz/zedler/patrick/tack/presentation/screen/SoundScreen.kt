@@ -126,6 +126,15 @@ fun SoundScreen(viewModel: MainViewModel = MainViewModel()) {
         }
         item {
           RadioChip(
+            label = stringResource(id = R.string.wear_settings_sound_beatboxing_2),
+            selected = sound == SOUND.BEATBOXING_2,
+            onSelected = {
+              viewModel.changeSound(SOUND.BEATBOXING_2)
+            }
+          )
+        }
+        item {
+          RadioChip(
             label = stringResource(id = R.string.wear_settings_sound_folding),
             selected = sound == SOUND.FOLDING,
             onSelected = {

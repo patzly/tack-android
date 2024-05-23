@@ -200,6 +200,7 @@
   <string name="settings_sound_sine">Sine</string>
   <string name="settings_sound_mechanical">Mechanical</string>
   <string name="settings_sound_beatboxing_1">Beatboxing 1</string>
+  <string name="settings_sound_beatboxing_2">Beatboxing 2</string>
   <string name="settings_sound_folding">Folding rule</string>
 
   <string name="settings_latency">Latency correction</string>

@@ -114,6 +114,9 @@ fun SettingsScreen(
             SOUND.BEATBOXING_1 -> {
               name = stringResource(id = R.string.wear_settings_sound_beatboxing_1)
             }
+            SOUND.BEATBOXING_2 -> {
+              name = stringResource(id = R.string.wear_settings_sound_beatboxing_2)
+            }
             SOUND.FOLDING -> {
               name = stringResource(id = R.string.wear_settings_sound_folding)
             }

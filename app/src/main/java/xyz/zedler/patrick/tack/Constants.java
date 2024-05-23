@@ -114,6 +114,7 @@ public final class Constants {
     public final static String WOOD = "wood";
     public final static String MECHANICAL = "mechanical";
     public final static String BEATBOXING_1 = "beatboxing_1";
+    public final static String BEATBOXING_2 = "beatboxing_2";
     public final static String FOLDING = "folding";
   }
 

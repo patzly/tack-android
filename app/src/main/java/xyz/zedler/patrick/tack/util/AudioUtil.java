@@ -150,9 +150,16 @@ public class AudioUtil implements OnAudioFocusChangeListener {
         pitchSub = Pitch.NORMAL;
         break;
       case SOUND.BEATBOXING_1:
-        resIdNormal = R.raw.beatbox_snare;
-        resIdStrong = R.raw.beatbox_kick;
-        resIdSub = R.raw.beatbox_hihat;
+        resIdNormal = R.raw.beatbox_snare1;
+        resIdStrong = R.raw.beatbox_kick1;
+        resIdSub = R.raw.beatbox_hihat1;
+        pitchStrong = Pitch.NORMAL;
+        pitchSub = Pitch.NORMAL;
+        break;
+      case SOUND.BEATBOXING_2:
+        resIdNormal = R.raw.beatbox_snare2;
+        resIdStrong = R.raw.beatbox_kick2;
+        resIdSub = R.raw.beatbox_hihat2;
         pitchStrong = Pitch.NORMAL;
         pitchSub = Pitch.NORMAL;
         break;
