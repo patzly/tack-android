@@ -68,6 +68,7 @@
   <string name="wear_settings_sound_mechanical">Mechanisch</string>
   <string name="wear_settings_sound_beatboxing_1">Beatboxing 1</string>
   <string name="wear_settings_sound_beatboxing_2">Beatboxing 2</string>
+  <string name="wear_settings_sound_hands">Hände</string>
   <string name="wear_settings_sound_folding">Zollstock</string>
 
   <string name="wear_settings_latency">Korrektur der Latenzzeit</string>
