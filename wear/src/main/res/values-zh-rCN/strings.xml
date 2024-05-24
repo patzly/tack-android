@@ -67,6 +67,8 @@
   <string name="wear_settings_sound_wood">木材</string>
   <string name="wear_settings_sound_mechanical">机械</string>
   <string name="wear_settings_sound_beatboxing_1">节奏口技 1</string>
+  <string name="wear_settings_sound_beatboxing_2">节奏口技 2</string>
+  <string name="wear_settings_sound_hands">手</string>
   <string name="wear_settings_sound_folding">折叠规则</string>
 
   <string name="wear_settings_latency">延迟校正</string>
