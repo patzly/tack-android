@@ -10,7 +10,7 @@ There also is a separate Wear OS app available with haptic beats and many option
 
 ## Downloads
 
-<a href='https://play.google.com/store/apps/details?id=xyz.zedler.patrick.tack'><img alt='Get it on Google Play' height="80" src='assets/badge_playstore.png'/></a><a href='https://github.com/patzly/tack-android/releases'><img alt='Get it on GitHub' height="80" src='assets/badge_github.png'/></a>
+<a href='https://play.google.com/store/apps/details?id=xyz.zedler.patrick.tack'><img alt='Get it on Google Play' height="80" src='assets/badge_playstore.png'/></a><a href='https://apt.izzysoft.de/fdroid/index/apk/xyz.zedler.patrick.tack'><img alt='Get it on IzzyOnDroid' height="80" src='assets/badge_izzyondroid.png'/></a><a href='https://github.com/patzly/tack-android/releases'><img alt='Get it on GitHub' height="80" src='assets/badge_github.png'/></a>
 
 ## Screenshots
 
