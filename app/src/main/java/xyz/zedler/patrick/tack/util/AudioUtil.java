@@ -163,6 +163,13 @@ public class AudioUtil implements OnAudioFocusChangeListener {
         pitchStrong = Pitch.NORMAL;
         pitchSub = Pitch.NORMAL;
         break;
+      case SOUND.HANDS:
+        resIdNormal = R.raw.hands_hit;
+        resIdStrong = R.raw.hands_clap;
+        resIdSub = R.raw.hands_snap;
+        pitchStrong = Pitch.NORMAL;
+        pitchSub = Pitch.NORMAL;
+        break;
       case SOUND.FOLDING:
         resIdNormal = R.raw.folding_knock;
         resIdStrong = R.raw.folding_fold;

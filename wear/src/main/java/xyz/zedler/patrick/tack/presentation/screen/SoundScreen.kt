@@ -135,6 +135,15 @@ fun SoundScreen(viewModel: MainViewModel = MainViewModel()) {
         }
         item {
           RadioChip(
+            label = stringResource(id = R.string.wear_settings_sound_hands),
+            selected = sound == SOUND.HANDS,
+            onSelected = {
+              viewModel.changeSound(SOUND.HANDS)
+            }
+          )
+        }
+        item {
+          RadioChip(
             label = stringResource(id = R.string.wear_settings_sound_folding),
             selected = sound == SOUND.FOLDING,
             onSelected = {

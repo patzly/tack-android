@@ -349,6 +349,7 @@ public class SettingsFragment extends BaseFragment
     labels.put(SOUND.MECHANICAL, getString(R.string.settings_sound_mechanical));
     labels.put(SOUND.BEATBOXING_1, getString(R.string.settings_sound_beatboxing_1));
     labels.put(SOUND.BEATBOXING_2, getString(R.string.settings_sound_beatboxing_2));
+    labels.put(SOUND.HANDS, getString(R.string.settings_sound_hands));
     labels.put(SOUND.FOLDING, getString(R.string.settings_sound_folding));
     ArrayList<String> sounds = new ArrayList<>(labels.keySet());
     String[] items = labels.values().toArray(new String[]{});
