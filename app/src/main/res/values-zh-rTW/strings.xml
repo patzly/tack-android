@@ -184,6 +184,8 @@
   <string name="settings_sound_sine">正弦波</string>
   <string name="settings_sound_mechanical">機械</string>
   <string name="settings_sound_beatboxing_1">節奏口技 1</string>
+  <string name="settings_sound_beatboxing_2">節奏口技 2</string>
+  <string name="settings_sound_hands">手</string>
   <string name="settings_sound_folding">折疊規則</string>
 
   <string name="settings_latency">延遲校正</string>
