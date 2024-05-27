@@ -1,0 +1,10 @@
+• New: completely rewritten app for Wear OS with redesigned interface and advanced emphasis selection
+• New: more metronome sounds
+• New: Chinese translation
+• Improved: audio focus of app notifications no longer stops playback, lowers volume instead
+• Improved: beat/subdivision count is shown if there are more than 4 dots to display
+• Improved: volume boost warning now only is shown before first start with gain
+• Fixed: background notification also was shown when Tack was in foreground
+• Fixed: flash screen setting was not properly initialized on app startup
+• Fixed: appearance of disabled buttons for adding/removing beats when limits are reached
+• Fixed: metronome stopped when device orientation changed
