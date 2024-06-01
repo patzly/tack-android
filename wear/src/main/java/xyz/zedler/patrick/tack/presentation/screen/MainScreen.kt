@@ -359,7 +359,7 @@ fun TempoCard(
       state = state,
       contentDescription = contentDescription,
       modifier = Modifier
-        .size(spToDp(spValue = 88), spToDp(spValue = 56))
+        .size(spToDp(spValue = 94), spToDp(spValue = 56))
         .rotaryScrollable(
           behavior = RotaryScrollableDefaults.snapBehavior(
             scrollableState = accessScalingLazyListState(state)!!,
