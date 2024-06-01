@@ -80,7 +80,6 @@ import xyz.zedler.patrick.tack.presentation.dialog.VolumeDialog
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.util.accessScalingLazyListState
-import xyz.zedler.patrick.tack.util.spToDp
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 
@@ -359,7 +358,7 @@ fun TempoCard(
       state = state,
       contentDescription = contentDescription,
       modifier = Modifier
-        .size(spToDp(spValue = 94), spToDp(spValue = 56))
+        .size(90.dp, 56.dp)
         .rotaryScrollable(
           behavior = RotaryScrollableDefaults.snapBehavior(
             scrollableState = accessScalingLazyListState(state)!!,
