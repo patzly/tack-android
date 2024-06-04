@@ -1,3 +1,7 @@
+## 4.1.1
+
+- New: badge on options button to indicate active modifiers
+
 ## 4.1.0
 
 - New: completely rewritten app for Wear OS with redesigned interface and advanced emphasis selection

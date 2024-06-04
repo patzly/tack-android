@@ -104,9 +104,9 @@ public class MainFragment extends BaseFragment
   private List<Integer> bookmarks;
   private SquigglyProgressDrawable squiggly;
   private BeatsBgDrawable beatsBgDrawable;
-  private BadgeDrawable beatsCountBadge, subsCountBadge;
+  private BadgeDrawable beatsCountBadge, subsCountBadge, optionsBadge;
   private ValueAnimator progressAnimator, progressTransitionAnimator;
-  private ValueAnimator beatsCountBadgeAnimator, subsCountBadgeAnimator;
+  private ValueAnimator beatsCountBadgeAnimator, subsCountBadgeAnimator, optionsBadgeAnimator;
 
   @Override
   public View onCreateView(
@@ -173,13 +173,18 @@ public class MainFragment extends BaseFragment
         activity, isLandTablet ? R.attr.colorSurface : android.R.attr.colorBackground
     );
 
+    beatsCountBadge = BadgeDrawable.create(activity);
+    subsCountBadge = BadgeDrawable.create(activity);
+    optionsBadge = BadgeDrawable.create(activity);
+    optionsBadge.setVerticalOffset(UiUtil.dpToPx(activity, 16));
+    optionsBadge.setHorizontalOffset(UiUtil.dpToPx(activity, 16));
+
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
     binding.linearMainBeats.getLayoutTransition().setDuration(Constants.ANIM_DURATION_LONG);
-    beatsCountBadge = BadgeDrawable.create(activity);
     updateBeats(getSharedPrefs().getString(PREF.BEATS, DEF.BEATS).split(","));
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
     binding.linearMainSubs.getLayoutTransition().setDuration(Constants.ANIM_DURATION_LONG);
-    subsCountBadge = BadgeDrawable.create(activity);
+
     updateSubs(getSharedPrefs().getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(","));
 
     dialogUtilGain = new DialogUtil(activity, "gain");
@@ -195,7 +200,7 @@ public class MainFragment extends BaseFragment
         });
     dialogUtilGain.showIfWasShown(savedInstanceState);
 
-    optionsUtil = new OptionsUtil(activity, this);
+    optionsUtil = new OptionsUtil(activity, this, () -> updateOptions(true));
     boolean hideOptions = isLandTablet;
     boolean hideBeatMode = !activity.getHapticUtil().hasVibrator();
     binding.buttonMainOptions.setVisibility(
@@ -505,6 +510,7 @@ public class MainFragment extends BaseFragment
     refreshBookmarks();
     measureTimerControls(true); // calls updateTimerControls when measured
     updateElapsedDisplay();
+    updateOptions(false);
 
     int tempo = getMetronomeUtil().getTempo();
     setTempo(tempo);
@@ -867,10 +873,6 @@ public class MainFragment extends BaseFragment
 
   @OptIn(markerClass = ExperimentalBadgeUtils.class)
   private void updateBeatControls(boolean animated) {
-    int beats = getMetronomeUtil().getBeatsCount();
-    binding.buttonMainAddBeat.setEnabled(beats < Constants.BEATS_MAX);
-    binding.buttonMainRemoveBeat.setEnabled(beats > 1);
-
     if (beatsCountBadgeAnimator != null) {
       beatsCountBadgeAnimator.pause();
       beatsCountBadgeAnimator.removeAllUpdateListeners();
@@ -878,6 +880,9 @@ public class MainFragment extends BaseFragment
       beatsCountBadgeAnimator.cancel();
       beatsCountBadgeAnimator = null;
     }
+    int beats = getMetronomeUtil().getBeatsCount();
+    binding.buttonMainAddBeat.setEnabled(beats < Constants.BEATS_MAX);
+    binding.buttonMainRemoveBeat.setEnabled(beats > 1);
     beatsCountBadge.setNumber(beats);
     boolean show = beats > 4;
     if (animated) {
@@ -952,13 +957,6 @@ public class MainFragment extends BaseFragment
 
   @OptIn(markerClass = ExperimentalBadgeUtils.class)
   public void updateSubControls(boolean animated) {
-    int subdivisions = getMetronomeUtil().getSubdivisionsCount();
-    binding.buttonMainAddSubdivision.setEnabled(subdivisions < Constants.SUBS_MAX);
-    binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
-    binding.linearMainSubsBg.setVisibility(
-        getMetronomeUtil().getSubdivisionsUsed() ? View.VISIBLE : View.GONE
-    );
-
     if (subsCountBadgeAnimator != null) {
       subsCountBadgeAnimator.pause();
       subsCountBadgeAnimator.removeAllUpdateListeners();
@@ -966,6 +964,12 @@ public class MainFragment extends BaseFragment
       subsCountBadgeAnimator.cancel();
       subsCountBadgeAnimator = null;
     }
+    int subdivisions = getMetronomeUtil().getSubdivisionsCount();
+    binding.buttonMainAddSubdivision.setEnabled(subdivisions < Constants.SUBS_MAX);
+    binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
+    binding.linearMainSubsBg.setVisibility(
+        getMetronomeUtil().getSubdivisionsUsed() ? View.VISIBLE : View.GONE
+    );
     subsCountBadge.setNumber(subdivisions);
     boolean show = subdivisions > 4;
     if (animated) {
@@ -1071,6 +1075,67 @@ public class MainFragment extends BaseFragment
       return;
     }
     binding.textMainElapsedTime.setText(getMetronomeUtil().getElapsedTimeString());
+  }
+
+  @OptIn(markerClass = ExperimentalBadgeUtils.class)
+  public void updateOptions(boolean animated) {
+    if (optionsBadgeAnimator != null) {
+      optionsBadgeAnimator.pause();
+      optionsBadgeAnimator.removeAllUpdateListeners();
+      optionsBadgeAnimator.removeAllListeners();
+      optionsBadgeAnimator.cancel();
+      optionsBadgeAnimator = null;
+    }
+    boolean isIncremental = getMetronomeUtil().getIncrementalAmount() > 0;
+    boolean isTimerActive = getMetronomeUtil().isTimerActive();
+    int modifierCount = 0;
+    if (isIncremental) {
+      modifierCount += 1;
+    }
+    if (isTimerActive) {
+      modifierCount += 1;
+    }
+    boolean show = modifierCount > 0;
+    optionsBadge.setNumber(modifierCount);
+    if (animated) {
+      optionsBadgeAnimator = ValueAnimator.ofInt(optionsBadge.getAlpha(), show ? 255 : 0);
+      optionsBadgeAnimator.addUpdateListener(animation -> {
+        if (binding == null) {
+          return;
+        }
+        optionsBadge.setAlpha((int) animation.getAnimatedValue());
+        float fraction = (float) ((int) animation.getAnimatedValue()) / 255;
+        int colorBg = ResUtil.getColor(activity, R.attr.colorError);
+        int color = ColorUtils.blendARGB(Color.TRANSPARENT, colorBg, fraction);
+        optionsBadge.setBackgroundColor(color);
+      });
+      optionsBadgeAnimator.addListener(new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationEnd(Animator animation) {
+          if (!show) {
+            BadgeUtils.detachBadgeDrawable(optionsBadge, binding.buttonMainOptions);
+          }
+        }
+      });
+      optionsBadgeAnimator.setInterpolator(new FastOutSlowInInterpolator());
+      optionsBadgeAnimator.setDuration(Constants.ANIM_DURATION_LONG);
+      optionsBadgeAnimator.start();
+      if (show) {
+        BadgeUtils.attachBadgeDrawable(optionsBadge, binding.buttonMainOptions);
+      }
+    } else {
+      optionsBadge.setAlpha(show ? 255 : 0);
+      optionsBadge.setBackgroundColor(
+          show ? ResUtil.getColor(activity, R.attr.colorError) : Color.TRANSPARENT
+      );
+      new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        if (show) {
+          BadgeUtils.attachBadgeDrawable(optionsBadge, binding.buttonMainOptions);
+        } else {
+          BadgeUtils.detachBadgeDrawable(optionsBadge, binding.buttonMainOptions);
+        }
+      }, 1);
+    }
   }
 
   private Chip getBookmarkChip(int tempo) {

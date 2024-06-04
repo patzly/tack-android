@@ -40,12 +40,17 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
   private final MainFragment fragment;
   private final PartialOptionsBinding binding;
   private final boolean useDialog;
+  private final Runnable onModifiersCountChanged;
+  private boolean isIncrementalActive, isTimerActive;
   private DialogUtil dialogUtil;
   private PartialDialogOptionsBinding bindingDialog;
 
-  public OptionsUtil(MainActivity activity, MainFragment fragment) {
+  public OptionsUtil(
+      MainActivity activity, MainFragment fragment, Runnable onModifiersCountChanged
+  ) {
     this.activity = activity;
     this.fragment = fragment;
+    this.onModifiersCountChanged = onModifiersCountChanged;
 
     useDialog = !UiUtil.isLandTablet(activity);
     if (useDialog) {
@@ -53,6 +58,9 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
       dialogUtil = new DialogUtil(activity, "options");
     }
     binding = useDialog ? bindingDialog.partialOptions : fragment.getBinding().partialOptions;
+
+    isIncrementalActive = getMetronomeUtil().isIncrementalActive();
+    isTimerActive = getMetronomeUtil().isTimerActive();
 
     if (useDialog) {
       dialogUtil.createCloseCustom(R.string.title_options, bindingDialog.getRoot());
@@ -121,6 +129,10 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     int incrementalAmount = getMetronomeUtil().getIncrementalAmount();
     boolean incrementalIncrease = getMetronomeUtil().getIncrementalIncrease();
     boolean isIncrementalActive = getMetronomeUtil().isIncrementalActive();
+    if (this.isIncrementalActive != isIncrementalActive) {
+      this.isIncrementalActive = isIncrementalActive;
+      onModifiersCountChanged.run();
+    }
     if (isIncrementalActive) {
       binding.textOptionsIncrementalAmount.setText(activity.getString(
           incrementalIncrease
@@ -211,6 +223,10 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
   private void updateTimer() {
     int timerDuration = getMetronomeUtil().getTimerDuration();
     boolean isTimerActive = getMetronomeUtil().isTimerActive();
+    if (this.isTimerActive != isTimerActive) {
+      this.isTimerActive = isTimerActive;
+      onModifiersCountChanged.run();
+    }
     String timerUnit = getMetronomeUtil().getTimerUnit();
     int unitResId, checkedId;
     switch (timerUnit) {
