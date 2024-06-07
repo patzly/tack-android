@@ -27,6 +27,8 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -37,6 +39,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -56,6 +59,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -82,7 +86,8 @@ import xyz.zedler.patrick.tack.util.TempoTapUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.BeatView;
-import xyz.zedler.patrick.tack.view.TempoPickerView;
+import xyz.zedler.patrick.tack.view.TempoPickerView.OnPickListener;
+import xyz.zedler.patrick.tack.view.TempoPickerView.OnRotationListener;
 
 public class MainFragment extends BaseFragment
     implements OnClickListener, MetronomeListener {
@@ -263,7 +268,7 @@ public class MainFragment extends BaseFragment
     });
 
     binding.circleMain.setReduceAnimations(reduceAnimations);
-    binding.tempoPickerMain.setOnRotationListener(new TempoPickerView.OnRotationListener() {
+    binding.tempoPickerMain.setOnRotationListener(new OnRotationListener() {
       @Override
       public void onRotate(int tempo) {
         changeTempo(tempo);
@@ -276,7 +281,7 @@ public class MainFragment extends BaseFragment
         );
       }
     });
-    binding.tempoPickerMain.setOnPickListener(new TempoPickerView.OnPickListener() {
+    binding.tempoPickerMain.setOnPickListener(new OnPickListener() {
       @Override
       public void onPickDown(float x, float y) {
         binding.circleMain.setDragged(true, x, y);
@@ -293,7 +298,7 @@ public class MainFragment extends BaseFragment
       }
     });
 
-    binding.buttonMainLess.setOnTouchListener(new View.OnTouchListener() {
+    binding.buttonMainLess.setOnTouchListener(new OnTouchListener() {
       private Handler handler;
       private int nextRun = 400;
       private final Runnable runnable = new Runnable() {
@@ -337,7 +342,7 @@ public class MainFragment extends BaseFragment
       }
     });
 
-    binding.buttonMainMore.setOnTouchListener(new View.OnTouchListener() {
+    binding.buttonMainMore.setOnTouchListener(new OnTouchListener() {
       private Handler handler;
       private int nextRun = 400;
       private final Runnable runnable = new Runnable() {
@@ -419,6 +424,12 @@ public class MainFragment extends BaseFragment
       } catch (NumberFormatException e) {
         Log.e(TAG, "onViewCreated: get bookmarks: ", e);
       }
+    }
+    if (VERSION.SDK_INT >= VERSION_CODES.N) {
+      bookmarks.sort((o1, o2) -> Integer.compare(o2, o1)
+      );
+    } else {
+      Collections.reverse(bookmarks);
     }
     for (int i = 0; i < bookmarks.size(); i++) {
       binding.chipGroupMainBookmarks.addView(getBookmarkChip(bookmarks.get(i)));

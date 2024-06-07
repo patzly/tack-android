@@ -34,6 +34,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
+import android.view.View;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
 import androidx.annotation.NonNull;
@@ -475,6 +476,12 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   public void performHapticTick() {
     if (areHapticsAllowed()) {
       hapticUtil.tick();
+    }
+  }
+
+  public void performHapticSegmentTick(View view, boolean frequent) {
+    if (areHapticsAllowed()) {
+      hapticUtil.hapticSegmentTick(view, frequent);
     }
   }
 

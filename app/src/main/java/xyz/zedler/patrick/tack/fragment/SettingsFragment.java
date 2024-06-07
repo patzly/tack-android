@@ -518,11 +518,10 @@ public class SettingsFragment extends BaseFragment
     if (id == R.id.slider_settings_latency) {
       getMetronomeUtil().setLatency((long) value);
       //ViewUtil.startIcon(binding.imageSettingsLatency);
-      performHapticTick();
     } else if (id == R.id.slider_settings_gain) {
       getMetronomeUtil().setGain((int) value);
       //ViewUtil.startIcon(binding.imageSettingsLatency);
-      performHapticTick();
+      performHapticSegmentTick(slider, false);
     }
   }
 

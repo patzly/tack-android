@@ -26,6 +26,8 @@ import android.os.Build.VERSION_CODES;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.Settings;
+import android.view.HapticFeedbackConstants;
+import android.view.View;
 
 public class HapticUtil {
 
@@ -81,6 +83,18 @@ public class HapticUtil {
       vibrate(VibrationEffect.EFFECT_TICK);
     } else {
       vibrate(TICK);
+    }
+  }
+
+  public void hapticSegmentTick(View view, boolean frequent) {
+    if (VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE) {
+      view.performHapticFeedback(
+          frequent
+              ? HapticFeedbackConstants.SEGMENT_FREQUENT_TICK
+              : HapticFeedbackConstants.SEGMENT_TICK
+      );
+    } else {
+      tick();
     }
   }
 

@@ -21,6 +21,7 @@ package xyz.zedler.patrick.tack.fragment;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.View;
 import android.view.View.OnClickListener;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -71,6 +72,10 @@ public class BaseFragment extends Fragment {
 
   public void performHapticTick() {
     activity.performHapticTick();
+  }
+
+  public void performHapticSegmentTick(View view, boolean frequent) {
+    activity.performHapticSegmentTick(view, frequent);
   }
 
   public void performHapticHeavyClick() {

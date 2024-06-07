@@ -353,18 +353,21 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     if (!fromUser) {
       return;
     }
-    activity.performHapticTick();
     int id = slider.getId();
     if (id == R.id.slider_options_count_in) {
+      activity.performHapticSegmentTick(slider, false);
       getMetronomeUtil().setCountIn((int) value);
       updateCountIn();
     } else if (id == R.id.slider_options_incremental_amount) {
+      activity.performHapticSegmentTick(slider, true);
       getMetronomeUtil().setIncrementalAmount((int) value);
       updateIncremental();
     } else if (id == R.id.slider_options_incremental_interval) {
+      activity.performHapticSegmentTick(slider, true);
       getMetronomeUtil().setIncrementalInterval((int) value);
       updateIncremental();
     } else if (id == R.id.slider_options_timer_duration) {
+      activity.performHapticSegmentTick(slider, true);
       getMetronomeUtil().setTimerDuration((int) value);
       updateTimer();
       fragment.updateTimerControls();
