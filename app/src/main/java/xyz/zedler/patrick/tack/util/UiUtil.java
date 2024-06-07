@@ -279,8 +279,4 @@ public class UiUtil {
     ) != 0;
     return duration && transition && window;
   }
-
-  public static boolean isPredictiveBackEnabled(Context context) {
-    return Global.getInt(context.getContentResolver(), "enable_back_animation", 0) == 1;
-  }
 }

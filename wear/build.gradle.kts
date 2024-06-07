@@ -20,6 +20,7 @@
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.android)
+  alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -55,7 +56,6 @@ android {
     compose = true
   }
   composeOptions {
-    kotlinCompilerExtensionVersion = "1.5.14"
   }
   packaging {
     resources {
@@ -68,6 +68,7 @@ dependencies {
   implementation(platform(libs.compose.bom))
   implementation(libs.preference)
   implementation(libs.lifecycle.service)
+  implementation(libs.splashscreen)
   implementation(libs.ui)
   implementation(libs.ui.tooling.preview)
   implementation(libs.wear.tooling)
@@ -78,9 +79,8 @@ dependencies {
   implementation(libs.compose.runtime)
   implementation(libs.compose.animation.graphics)
   implementation(libs.compose.navigation)
-  implementation(libs.constraintlayout.compose)
-  implementation(libs.activity.compose)
-  implementation(libs.core.splashscreen)
+  implementation(libs.compose.constraintlayout)
+  implementation(libs.compose.activity)
   debugImplementation(libs.ui.tooling.preview)
   debugImplementation(libs.ui.test.manifest)
   debugImplementation(libs.ui.tooling)
