@@ -88,6 +88,9 @@
   <string name="wear_settings_flash_screen">屏幕閃爍</string>
   <string name="wear_settings_flash_screen_description">在每個節拍</string>
 
+  <string name="wear_settings_reduce_animations">減少動畫</string>
+  <string name="wear_settings_reduce_animations_description">可能會提高性能</string>
+
   <string name="wear_settings_keep_awake">保持屏幕喚醒</string>
   <string name="wear_settings_keep_awake_description">當節拍器播放時</string>
 
