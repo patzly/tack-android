@@ -88,6 +88,9 @@
   <string name="wear_settings_flash_screen">Bildschirm aufblitzen lassen</string>
   <string name="wear_settings_flash_screen_description">Bei jedem Schlag</string>
 
+  <string name="wear_settings_reduce_animations">Animationen reduzieren</string>
+  <string name="wear_settings_reduce_animations_description">Kann die Leistung verbessern</string>
+
   <string name="wear_settings_keep_awake">Bildschirm wach halten</string>
   <string name="wear_settings_keep_awake_description">Während der Wiedergabe</string>
 
