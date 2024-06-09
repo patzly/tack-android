@@ -93,6 +93,9 @@
   <string name="wear_settings_flash_screen">Flash screen</string>
   <string name="wear_settings_flash_screen_description">On every beat</string>
 
+  <string name="wear_settings_reduce_animations">Reduce animations</string>
+  <string name="wear_settings_reduce_animations_description">May improve performance</string>
+
   <string name="wear_settings_keep_awake">Keep screen awake</string>
   <string name="wear_settings_keep_awake_description">While metronome is playing</string>
 

@@ -30,23 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.wear.compose.material.Icon
 
-@Composable
-fun AnimatedVectorDrawable(
-  @DrawableRes resId: Int,
-  description: String,
-  color: Color,
-  trigger: MutableState<Boolean>,
-  modifier: Modifier = Modifier
-) {
-  AnimatedVectorDrawable(
-    resId = resId,
-    description = description,
-    color = color,
-    trigger = trigger.value,
-    modifier = modifier
-  )
-}
-
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
 fun AnimatedVectorDrawable(
@@ -54,19 +37,20 @@ fun AnimatedVectorDrawable(
   description: String,
   color: Color,
   trigger: Boolean,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  animated: Boolean = true
 ) {
   val image = AnimatedImageVector.animatedVectorResource(resId)
   val painterForward = rememberAnimatedVectorPainter(
     animatedImageVector = image,
-    atEnd = trigger
+    atEnd = if (animated) trigger else false
   )
   val painterBackward = rememberAnimatedVectorPainter(
     animatedImageVector = image,
     atEnd = !trigger
   )
   Icon(
-    painter = if (trigger) painterForward else painterBackward,
+    painter = if (trigger || !animated) painterForward else painterBackward,
     contentDescription = description,
     tint = color,
     modifier = modifier
@@ -81,17 +65,18 @@ fun AnimatedVectorDrawable(
   description: String,
   color: Color,
   trigger: MutableState<Boolean>,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  animated: Boolean = true
 ) {
   val image1 = AnimatedImageVector.animatedVectorResource(resId1)
   val image2 = AnimatedImageVector.animatedVectorResource(resId2)
   val painterForward = rememberAnimatedVectorPainter(
     animatedImageVector = image1,
-    atEnd = trigger.value
+    atEnd = if (animated) trigger.value else true
   )
   val painterBackward = rememberAnimatedVectorPainter(
     animatedImageVector = image2,
-    atEnd = !trigger.value
+    atEnd = if (animated) !trigger.value else true
   )
   Icon(
     painter = if (trigger.value) painterForward else painterBackward,

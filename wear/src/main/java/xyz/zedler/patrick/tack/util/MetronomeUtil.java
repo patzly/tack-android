@@ -55,7 +55,7 @@ public class MetronomeUtil {
   private int tempo;
   private long tickIndex, latency;
   private boolean playing, useSubdivisions, beatModeVibrate;
-  private boolean alwaysVibrate, strongVibration, flashScreen, keepAwake;
+  private boolean alwaysVibrate, strongVibration, flashScreen, keepAwake, reduceAnim;
   private boolean neverStartedWithGain = true;
 
   public MetronomeUtil(@NonNull Context context, boolean fromService) {
@@ -84,6 +84,7 @@ public class MetronomeUtil {
     strongVibration = sharedPrefs.getBoolean(PREF.STRONG_VIBRATION, DEF.STRONG_VIBRATION);
     flashScreen = sharedPrefs.getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
     keepAwake = sharedPrefs.getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
+    reduceAnim = sharedPrefs.getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM);
 
     setSound(sharedPrefs.getString(PREF.SOUND, DEF.SOUND));
     setIgnoreFocus(sharedPrefs.getBoolean(PREF.IGNORE_FOCUS, DEF.IGNORE_FOCUS));
@@ -442,6 +443,15 @@ public class MetronomeUtil {
 
   public boolean getKeepAwake() {
     return keepAwake;
+  }
+
+  public void setReduceAnim(boolean reduceAnim) {
+    this.reduceAnim = reduceAnim;
+    sharedPrefs.edit().putBoolean(PREF.REDUCE_ANIM, reduceAnim).apply();
+  }
+
+  public boolean getReduceAnim() {
+    return reduceAnim;
   }
 
   private void performTick(Tick tick) {

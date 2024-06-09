@@ -40,6 +40,7 @@ public final class Constants {
     public final static String STRONG_VIBRATION = "strong_vibration";
     public final static String FLASH_SCREEN = "flash_screen";
     public final static String KEEP_AWAKE = "keep_awake";
+    public static final String REDUCE_ANIM = "reduce_animations";
     public final static String SOUND = "sound";
     public final static String LATENCY = "latency_offset";
     public final static String IGNORE_FOCUS = "ignore_focus";
@@ -59,6 +60,7 @@ public final class Constants {
     public final static boolean STRONG_VIBRATION = false;
     public final static boolean FLASH_SCREEN = false;
     public final static boolean KEEP_AWAKE = true;
+    public static final boolean REDUCE_ANIM = false;
     public final static String SOUND = Constants.SOUND.SINE;
     public final static long LATENCY = 100;
     public final static boolean IGNORE_FOCUS = false;

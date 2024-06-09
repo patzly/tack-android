@@ -99,6 +99,7 @@ fun GainScreen(viewModel: MainViewModel = MainViewModel()) {
         }
         item {
           GainSlider(
+            viewModel = viewModel,
             gain = gain,
             onValueChange = {
               viewModel.changeGain(it)
@@ -140,9 +141,11 @@ fun GainScreen(viewModel: MainViewModel = MainViewModel()) {
 @OptIn(ExperimentalWearMaterial3Api::class)
 @Composable
 fun GainSlider(
+  viewModel: MainViewModel,
   gain: Int,
   onValueChange: (Int) -> Unit = {}
 ) {
+  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
   InlineSlider(
     value = gain,
     onValueChange = onValueChange,
@@ -157,7 +160,7 @@ fun GainSlider(
       val tint by animateColorAsState(
         targetValue = targetTint,
         label = "decreaseGain",
-        animationSpec = TweenSpec(durationMillis = 200)
+        animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 200)
       )
       Icon(
         painter = painterResource(id = R.drawable.ic_round_volume_down),
@@ -174,7 +177,7 @@ fun GainSlider(
       val tint by animateColorAsState(
         targetValue = targetTint,
         label = "increaseGain",
-        animationSpec = TweenSpec(durationMillis = 200)
+        animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 200)
       )
       Icon(
         painter = painterResource(id = R.drawable.ic_round_volume_up),

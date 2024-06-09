@@ -85,7 +85,9 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         val (tempoPicker, tapButton) = createRefs()
         val (plus5Button, minus5Button, plus10Button, minus10Button) = createRefs()
 
-        var pickerOption = viewModel.tempo.value?.minus(1) ?: Constants.DEF.TEMPO
+        val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
+        val tempo by viewModel.tempo.observeAsState(initial = Constants.DEF.TEMPO)
+        var pickerOption = remember { tempo - 1 }
         val pickerCoroutineScope = rememberCoroutineScope()
         val pickerState = rememberPickerState(
           initialNumberOfOptions = 400,
@@ -95,7 +97,11 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         fun safelyAnimateToOption(index: Int) {
           val safeIndex = index.coerceIn(0, 399)
           pickerCoroutineScope.launch {
-            pickerState.animateScrollToOption(safeIndex)
+            if (reduceAnim) {
+              pickerState.scrollToOption(safeIndex)
+            } else {
+              pickerState.animateScrollToOption(safeIndex)
+            }
           }
         }
 
@@ -114,9 +120,9 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
           }
         )
         TapButton(
+          viewModel = viewModel,
           onClick = {
-            val tempo = viewModel.tempoTap()
-            safelyAnimateToOption(tempo -1)
+            safelyAnimateToOption(viewModel.tempoTap() - 1)
           },
           modifier = Modifier.constrainAs(tapButton) {
             top.linkTo(tempoPicker.bottom)
@@ -231,10 +237,12 @@ fun TempoPicker(
 
 @Composable
 fun TapButton(
+  viewModel: MainViewModel,
   onClick: () -> Unit,
   modifier: Modifier
 ) {
   val animTrigger = remember { mutableStateOf(false) }
+  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
   IconButton(
     onClick = {
       onClick()
@@ -246,7 +254,8 @@ fun TapButton(
       resId = R.drawable.ic_round_touch_app_anim,
       description = stringResource(id = R.string.wear_action_tempo_tap),
       color = IconButtonDefaults.iconButtonColors().contentColor,
-      trigger = animTrigger
+      trigger = animTrigger.value,
+      animated = !reduceAnim
     )
   }
 }

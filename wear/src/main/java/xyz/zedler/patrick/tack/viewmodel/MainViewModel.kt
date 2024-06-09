@@ -70,6 +70,7 @@ class MainViewModel(
   )
   private val _latency = MutableLiveData(metronomeUtil?.latency ?: DEF.LATENCY)
   private val _keepAwake = MutableLiveData(metronomeUtil?.keepAwake ?: DEF.KEEP_AWAKE)
+  private val _reduceAnim = MutableLiveData(metronomeUtil?.reduceAnim ?: DEF.REDUCE_ANIM)
   private val _flashScreen = MutableLiveData(metronomeUtil?.flashScreen ?: DEF.FLASH_SCREEN)
   private val _flashTrigger = MutableLiveData(false)
   private val _flashStrongTrigger = MutableLiveData(false)
@@ -89,6 +90,7 @@ class MainViewModel(
   val ignoreFocus: LiveData<Boolean> = _ignoreFocus
   val latency: LiveData<Long> = _latency
   val keepAwake: LiveData<Boolean> = _keepAwake
+  val reduceAnim: LiveData<Boolean> = _reduceAnim
   val flashScreen: LiveData<Boolean> = _flashScreen
   val flashTrigger: LiveData<Boolean> = _flashTrigger
   val flashStrongTrigger: LiveData<Boolean> = _flashStrongTrigger
@@ -212,15 +214,20 @@ class MainViewModel(
     keepAwakeListener?.onKeepAwakeChanged(keepAwake())
   }
 
-  fun onDestinationChanged(destination: NavDestination) {
-    currentRoute = destination.route.toString()
-    keepAwakeListener?.onKeepAwakeChanged(keepAwake())
-  }
-
   private fun keepAwake(): Boolean {
     return _keepAwake.value == true
         && mutableIsPlaying.value == true
         && currentRoute == Screen.Main.route
+  }
+
+  fun changeReduceAnim(reduce: Boolean) {
+    metronomeUtil?.reduceAnim = reduce
+    _reduceAnim.value = reduce
+  }
+
+  fun onDestinationChanged(destination: NavDestination) {
+    currentRoute = destination.route.toString()
+    keepAwakeListener?.onKeepAwakeChanged(keepAwake())
   }
 
   fun changeShowPermissionDialog(show: Boolean) {

@@ -97,6 +97,7 @@ fun LatencyScreen(viewModel: MainViewModel = MainViewModel()) {
         }
         item {
           LatencySlider(
+            viewModel = viewModel,
             latency = latency,
             onValueChange = {
               viewModel.changeLatency(it.toLong())
@@ -121,9 +122,11 @@ fun LatencyScreen(viewModel: MainViewModel = MainViewModel()) {
 @OptIn(ExperimentalWearMaterial3Api::class)
 @Composable
 fun LatencySlider(
+  viewModel: MainViewModel,
   latency: Long,
   onValueChange: (Int) -> Unit = {}
 ) {
+  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
   InlineSlider(
     value = latency.toInt(),
     onValueChange = onValueChange,
@@ -138,7 +141,7 @@ fun LatencySlider(
       val tint by animateColorAsState(
         targetValue = targetTint,
         label = "decreaseLatency",
-        animationSpec = TweenSpec(durationMillis = 200)
+        animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 200)
       )
       Icon(
         painter = painterResource(id = R.drawable.ic_round_remove),
@@ -155,7 +158,7 @@ fun LatencySlider(
       val tint by animateColorAsState(
         targetValue = targetTint,
         label = "increaseLatency",
-        animationSpec = TweenSpec(durationMillis = 200)
+        animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 200)
       )
       Icon(
         painter = painterResource(id = R.drawable.ic_round_add),

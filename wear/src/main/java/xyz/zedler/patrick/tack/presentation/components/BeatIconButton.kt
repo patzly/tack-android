@@ -23,6 +23,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,7 +46,8 @@ fun BeatIconButton(
   index: Int,
   enabled: Boolean = true,
   onClick: () -> Unit,
-  animTrigger: Boolean
+  animTrigger: Boolean,
+  reduceAnim: Boolean
 ) {
   val shapes = listOf(
     R.drawable.ic_beat_star_anim,
@@ -55,7 +57,8 @@ fun BeatIconButton(
     R.drawable.ic_beat_pentagon_anim,
   )
   val sizeDefault = if (tickType != TICK_TYPE.MUTED) 24 else 12
-  val sizeBeat = if (tickType != TICK_TYPE.MUTED) 32 else 24
+  val sizeBeatReduceAnim = if (reduceAnim) 40 else 32
+  val sizeBeat = if (tickType != TICK_TYPE.MUTED) sizeBeatReduceAnim else 24
 
   val animatedSize = remember { Animatable(sizeDefault.toFloat()) }
   val isFirstExecution = remember { mutableStateOf(true) }
@@ -94,8 +97,9 @@ fun BeatIconButton(
       resId = shapes[index % shapes.size],
       description = stringResource(id = R.string.wear_action_tempo_tap),
       color = color,
-      trigger = if (tickType != TICK_TYPE.MUTED) animTrigger else false,
-      modifier = Modifier.size(animatedSize.value.dp)
+      trigger = animTrigger,
+      modifier = Modifier.requiredSize(animatedSize.value.dp),
+      animated = tickType != TICK_TYPE.MUTED && !reduceAnim
     )
   }
 }

@@ -89,6 +89,7 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
       val subdivisions by viewModel.subdivisions.observeAsState(
         Constants.DEF.SUBDIVISIONS.split(",")
       )
+      val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
       ScalingLazyColumn(
         state = scrollableState,
         modifier = Modifier
@@ -131,6 +132,7 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
                 tickType = beat,
                 index = index,
                 animTrigger = trigger,
+                reduceAnim = reduceAnim,
                 onClick = {
                   val next = when (beat) {
                     Constants.TICK_TYPE.NORMAL -> Constants.TICK_TYPE.STRONG
@@ -176,6 +178,7 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
                 index = index,
                 enabled = index != 0,
                 animTrigger = trigger,
+                reduceAnim = reduceAnim,
                 onClick = {
                   val next = when (subdivision) {
                     Constants.TICK_TYPE.NORMAL -> Constants.TICK_TYPE.MUTED

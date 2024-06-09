@@ -204,6 +204,19 @@ fun SettingsScreen(
           )
         }
         item {
+          val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
+          ToggleChip(
+            checked = reduceAnim,
+            onCheckedChange = {
+              viewModel.changeReduceAnim(it)
+            },
+            label = stringResource(id = R.string.wear_settings_reduce_animations),
+            secondaryLabel = stringResource(
+              id = R.string.wear_settings_reduce_animations_description
+            )
+          )
+        }
+        item {
           ClickChip(
             label = stringResource(R.string.wear_settings_rate),
             secondaryLabel = stringResource(R.string.wear_settings_rate_description),
