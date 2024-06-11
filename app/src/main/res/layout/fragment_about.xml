@@ -205,7 +205,7 @@
 
           <ImageView
             android:id="@+id/image_about_privacy"
-            style="@style/Widget.Tack.ImageView.ListItem.Icon.Colored"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
             android:src="@drawable/ic_round_policy_anim"
             tools:ignore="ContentDescription" />
 
