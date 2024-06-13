@@ -16,78 +16,84 @@
  *
  * Copyright (c) 2020-2024 by Patrick Zedler
  */
+package xyz.zedler.patrick.tack.util
 
-package xyz.zedler.patrick.tack.util;
+import android.content.Context
+import android.os.Build
+import android.os.Build.VERSION_CODES
+import android.os.VibrationEffect
+import android.os.Vibrator
+import android.os.VibratorManager
 
-import android.content.Context;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
+class HapticUtil(context: Context) {
 
-public class HapticUtil {
+  private val vibrator: Vibrator = if (Build.VERSION.SDK_INT >= VERSION_CODES.S) {
+    val manager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+    manager.defaultVibrator
+  } else {
+    context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+  }
+  private var enabled: Boolean
 
-  private final Vibrator vibrator;
-  private boolean enabled;
-
-  public static final long TICK = 13;
-  public static final long TICK_STRONG = 20;
-  public static final long CLICK = 20;
-  public static final long CLICK_STRONG = 50;
-  public static final long HEAVY = 50;
-  public static final long HEAVY_STRONG = 80;
-
-  public HapticUtil(Context context) {
-    vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-    enabled = hasVibrator();
+  init {
+    enabled = hasVibrator()
   }
 
-  public void vibrate(long duration) {
+  private fun vibrate(duration: Long) {
     if (!enabled) {
-      return;
+      return
     }
-    vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE));
+    vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
   }
 
-  private void vibrate(int effectId) {
-    if (enabled && VERSION.SDK_INT >= VERSION_CODES.Q) {
-      vibrator.vibrate(VibrationEffect.createPredefined(effectId));
+  private fun vibrate(effectId: Int) {
+    if (enabled && Build.VERSION.SDK_INT >= VERSION_CODES.Q) {
+      vibrator.vibrate(VibrationEffect.createPredefined(effectId))
     }
   }
 
-  public void tick(boolean strong) {
-    if (VERSION.SDK_INT >= VERSION_CODES.Q && !strong) {
-      vibrate(VibrationEffect.EFFECT_TICK);
+  fun tick(strong: Boolean) {
+    if (Build.VERSION.SDK_INT >= VERSION_CODES.Q && !strong) {
+      vibrate(VibrationEffect.EFFECT_TICK)
     } else {
-      vibrate(strong ? TICK_STRONG : TICK);
+      vibrate(if (strong) TICK_STRONG else TICK)
     }
   }
 
-  public void click(boolean strong) {
-    if (VERSION.SDK_INT >= VERSION_CODES.Q && !strong) {
-      vibrate(VibrationEffect.EFFECT_CLICK);
+  fun click(strong: Boolean) {
+    if (Build.VERSION.SDK_INT >= VERSION_CODES.Q && !strong) {
+      vibrate(VibrationEffect.EFFECT_CLICK)
     } else {
-      vibrate(strong ? CLICK_STRONG : CLICK);
+      vibrate(if (strong) CLICK_STRONG else CLICK)
     }
   }
 
-  public void heavyClick(boolean strong) {
-    if (VERSION.SDK_INT >= VERSION_CODES.Q && !strong) {
-      vibrate(VibrationEffect.EFFECT_HEAVY_CLICK);
+  fun heavyClick(strong: Boolean) {
+    if (Build.VERSION.SDK_INT >= VERSION_CODES.Q && !strong) {
+      vibrate(VibrationEffect.EFFECT_HEAVY_CLICK)
     } else {
-      vibrate(strong ? HEAVY_STRONG : HEAVY);
+      vibrate(if (strong) HEAVY_STRONG else HEAVY)
     }
   }
 
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled && hasVibrator();
+  fun setEnabled(enabled: Boolean) {
+    this.enabled = enabled && hasVibrator()
   }
 
-  public void setStrongVibration(boolean enabled) {
-    this.enabled = enabled && hasVibrator();
+  fun setStrongVibration(enabled: Boolean) {
+    this.enabled = enabled && hasVibrator()
   }
 
-  public boolean hasVibrator() {
-    return vibrator.hasVibrator();
+  fun hasVibrator(): Boolean {
+    return vibrator.hasVibrator()
+  }
+
+  companion object {
+    const val TICK: Long = 13
+    const val TICK_STRONG: Long = 20
+    const val CLICK: Long = 20
+    const val CLICK_STRONG: Long = 50
+    const val HEAVY: Long = 50
+    const val HEAVY_STRONG: Long = 80
   }
 }

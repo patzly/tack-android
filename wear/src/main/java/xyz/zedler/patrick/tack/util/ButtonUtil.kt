@@ -16,67 +16,56 @@
  *
  * Copyright (c) 2020-2024 by Patrick Zedler
  */
+package xyz.zedler.patrick.tack.util
 
-package xyz.zedler.patrick.tack.util;
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import androidx.wear.input.WearableButtons
 
-import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
-import androidx.annotation.NonNull;
-import androidx.wear.input.WearableButtons;
+class ButtonUtil(context: Context?, private val listener: OnPressListener) {
 
-public class ButtonUtil {
-
-  private final OnPressListener listener;
-  private final boolean hasMinTwoButtons;
-  private boolean isDown;
-  private int nextRun = 400;
-  private Handler handler;
-  private final Runnable runnable = new Runnable() {
-    @Override
-    public void run() {
-      listener.onFastPress();
-      handler.postDelayed(this, nextRun);
+  private val hasMinTwoButtons = WearableButtons.getButtonCount(context!!) >= 2
+  private var isDown = false
+  private var nextRun = 400
+  private var handler: Handler? = null
+  private val runnable: Runnable = object : Runnable {
+    override fun run() {
+      listener.onFastPress()
+      handler!!.postDelayed(this, nextRun.toLong())
       if (nextRun > 60) {
-        nextRun = (int) (nextRun * 0.9);
+        nextRun = (nextRun * 0.9).toInt()
       }
     }
-  };
-
-  public ButtonUtil(Context context, @NonNull OnPressListener listener) {
-    this.listener = listener;
-    hasMinTwoButtons = WearableButtons.getButtonCount(context) >= 2;
-    isDown = false;
   }
 
-  public void onPressDown() {
+  fun onPressDown() {
     if (isDown || !hasMinTwoButtons) {
-      return;
+      return
     }
-    isDown = true;
+    isDown = true
     if (handler != null) {
-      handler.removeCallbacks(runnable);
+      handler!!.removeCallbacks(runnable)
     }
-    listener.onPress();
-    handler = new Handler(Looper.getMainLooper());
-    handler.postDelayed(runnable, 800);
+    listener.onPress()
+    handler = Handler(Looper.getMainLooper())
+    handler!!.postDelayed(runnable, 800)
   }
 
-  public void onPressUp() {
+  fun onPressUp() {
     if (!hasMinTwoButtons || !isDown) {
-      return;
+      return
     }
-    isDown = false;
+    isDown = false
     if (handler != null) {
-      handler.removeCallbacks(runnable);
+      handler!!.removeCallbacks(runnable)
     }
-    handler = null;
-    nextRun = 400;
+    handler = null
+    nextRun = 400
   }
 
-  public interface OnPressListener {
-
-    void onPress();
-    void onFastPress();
+  interface OnPressListener {
+    fun onPress()
+    fun onFastPress()
   }
 }

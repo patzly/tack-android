@@ -48,10 +48,7 @@ object Constants {
 
   object Def {
     const val TEMPO: Int = 120
-    @JvmField
-    val BEATS: String = java.lang.String.join(
-      ",", TickType.STRONG, TickType.NORMAL, TickType.NORMAL, TickType.NORMAL
-    )
+    const val BEATS: String = "${TickType.STRONG},${TickType.NORMAL},${TickType.NORMAL},${TickType.NORMAL}"
     const val SUBDIVISIONS: String = TickType.MUTED
     const val BEAT_MODE_VIBRATE: Boolean = false
     const val USE_SUBS: Boolean = true
