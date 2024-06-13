@@ -76,7 +76,7 @@ fun LatencyScreen(viewModel: MainViewModel = MainViewModel()) {
         )
       }
     ) {
-      val latency by viewModel.latency.observeAsState(Constants.DEF.LATENCY)
+      val latency by viewModel.latency.observeAsState(Constants.Def.LATENCY)
       ScalingLazyColumn(
         state = scrollableState,
         modifier = Modifier
@@ -126,7 +126,7 @@ fun LatencySlider(
   latency: Long,
   onValueChange: (Int) -> Unit = {}
 ) {
-  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
+  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
   InlineSlider(
     value = latency.toInt(),
     onValueChange = onValueChange,

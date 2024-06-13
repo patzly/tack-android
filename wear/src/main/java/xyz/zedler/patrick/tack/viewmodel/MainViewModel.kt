@@ -23,10 +23,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavDestination
-import xyz.zedler.patrick.tack.Constants.DEF
+import xyz.zedler.patrick.tack.Constants.Def
 import xyz.zedler.patrick.tack.Constants.TEMPO_MAX
 import xyz.zedler.patrick.tack.Constants.TEMPO_MIN
-import xyz.zedler.patrick.tack.Constants.TICK_TYPE
+import xyz.zedler.patrick.tack.Constants.TickType
 import xyz.zedler.patrick.tack.presentation.navigation.Screen
 import xyz.zedler.patrick.tack.util.MetronomeUtil
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick
@@ -39,39 +39,39 @@ class MainViewModel(
   val mutableIsPlaying = MutableLiveData(metronomeUtil?.isPlaying ?: false)
   private val tempoTapUtil = TempoTapUtil()
   private var currentRoute = Screen.Main.route
-  private val _tempo = MutableLiveData(metronomeUtil?.tempo ?: DEF.TEMPO)
+  private val _tempo = MutableLiveData(metronomeUtil?.tempo ?: Def.TEMPO)
   private val _beats = MutableLiveData(
-    metronomeUtil?.beats ?: DEF.BEATS.split(",")
+    metronomeUtil?.beats ?: Def.BEATS.split(",")
   )
   private val _beatTriggers: MutableList<MutableLiveData<Boolean>> =
-    MutableList((metronomeUtil?.beats ?: DEF.BEATS.split(",")).size) {
+    MutableList((metronomeUtil?.beats ?: Def.BEATS.split(",")).size) {
       MutableLiveData(false)
     }
   private val _subdivisions = MutableLiveData(
-    metronomeUtil?.subdivisions ?: DEF.SUBDIVISIONS.split(",")
+    metronomeUtil?.subdivisions ?: Def.SUBDIVISIONS.split(",")
   )
   private val _subdivisionTriggers: MutableList<MutableLiveData<Boolean>> =
-    MutableList((metronomeUtil?.subdivisions ?: DEF.SUBDIVISIONS.split(",")).size) {
+    MutableList((metronomeUtil?.subdivisions ?: Def.SUBDIVISIONS.split(",")).size) {
       MutableLiveData(false)
     }
   private val _beatModeVibrate = MutableLiveData(
-    metronomeUtil?.isBeatModeVibrate ?: DEF.BEAT_MODE_VIBRATE
+    metronomeUtil?.isBeatModeVibrate ?: Def.BEAT_MODE_VIBRATE
   )
   private val _alwaysVibrate = MutableLiveData(
-    metronomeUtil?.isAlwaysVibrate ?: DEF.ALWAYS_VIBRATE
+    metronomeUtil?.isAlwaysVibrate ?: Def.ALWAYS_VIBRATE
   )
   private val _strongVibration = MutableLiveData(
-    metronomeUtil?.isStrongVibration ?: DEF.STRONG_VIBRATION
+    metronomeUtil?.isStrongVibration ?: Def.STRONG_VIBRATION
   )
-  private val _gain = MutableLiveData(metronomeUtil?.gain ?: DEF.GAIN)
-  private val _sound = MutableLiveData(metronomeUtil?.sound ?: DEF.SOUND)
+  private val _gain = MutableLiveData(metronomeUtil?.gain ?: Def.GAIN)
+  private val _sound = MutableLiveData(metronomeUtil?.sound ?: Def.SOUND)
   private val _ignoreFocus = MutableLiveData(
-    metronomeUtil?.ignoreFocus ?: DEF.IGNORE_FOCUS
+    metronomeUtil?.ignoreFocus ?: Def.IGNORE_FOCUS
   )
-  private val _latency = MutableLiveData(metronomeUtil?.latency ?: DEF.LATENCY)
-  private val _keepAwake = MutableLiveData(metronomeUtil?.keepAwake ?: DEF.KEEP_AWAKE)
-  private val _reduceAnim = MutableLiveData(metronomeUtil?.reduceAnim ?: DEF.REDUCE_ANIM)
-  private val _flashScreen = MutableLiveData(metronomeUtil?.flashScreen ?: DEF.FLASH_SCREEN)
+  private val _latency = MutableLiveData(metronomeUtil?.latency ?: Def.LATENCY)
+  private val _keepAwake = MutableLiveData(metronomeUtil?.keepAwake ?: Def.KEEP_AWAKE)
+  private val _reduceAnim = MutableLiveData(metronomeUtil?.reduceAnim ?: Def.REDUCE_ANIM)
+  private val _flashScreen = MutableLiveData(metronomeUtil?.flashScreen ?: Def.FLASH_SCREEN)
   private val _flashTrigger = MutableLiveData(false)
   private val _flashStrongTrigger = MutableLiveData(false)
   private val _showPermissionDialog = MutableLiveData(false)
@@ -113,7 +113,7 @@ class MainViewModel(
       changeTempo(tempo)
       return tempo
     }
-    return tempo.value ?: DEF.TEMPO
+    return tempo.value ?: Def.TEMPO
   }
 
   fun onPreTick(tick: Tick) {
@@ -125,9 +125,9 @@ class MainViewModel(
 
   fun onTick(tick: Tick) {
     if (tick.subdivision == 1) {
-      if (metronomeUtil?.flashScreen == true && tick.type == TICK_TYPE.STRONG) {
+      if (metronomeUtil?.flashScreen == true && tick.type == TickType.STRONG) {
         _flashStrongTrigger.value = true
-      } else if (metronomeUtil?.flashScreen == true && tick.type == TICK_TYPE.NORMAL) {
+      } else if (metronomeUtil?.flashScreen == true && tick.type == TickType.NORMAL) {
         _flashTrigger.value = true
       }
     }
@@ -164,7 +164,7 @@ class MainViewModel(
   }
 
   fun toggleBeatModeVibrate() {
-    val beatModeVibrate = metronomeUtil?.isBeatModeVibrate ?: DEF.BEAT_MODE_VIBRATE
+    val beatModeVibrate = metronomeUtil?.isBeatModeVibrate ?: Def.BEAT_MODE_VIBRATE
     metronomeUtil?.isBeatModeVibrate = !beatModeVibrate
     _beatModeVibrate.value = !beatModeVibrate
   }
@@ -180,7 +180,7 @@ class MainViewModel(
   }
 
   fun toggleBookmark() {
-    changeTempo(metronomeUtil?.toggleBookmark() ?: DEF.TEMPO)
+    changeTempo(metronomeUtil?.toggleBookmark() ?: Def.TEMPO)
   }
 
   fun changeGain(gain: Int) {
@@ -239,7 +239,7 @@ class MainViewModel(
     if (success == true) {
       val updated = metronomeUtil?.beats?.toList()
       // toList required for a new list instead of the old mutated, would not be handled as changed
-      updateBeatTriggers(updated?.size ?: DEF.BEATS.split(",").size)
+      updateBeatTriggers(updated?.size ?: Def.BEATS.split(",").size)
       _beats.value = updated
     }
   }
@@ -248,7 +248,7 @@ class MainViewModel(
     val success = metronomeUtil?.removeBeat()
     if (success == true) {
       val updated = metronomeUtil?.beats?.toList()
-      updateBeatTriggers(updated?.size ?: DEF.BEATS.split(",").size)
+      updateBeatTriggers(updated?.size ?: Def.BEATS.split(",").size)
       _beats.value = updated
     }
   }
@@ -256,7 +256,7 @@ class MainViewModel(
   fun changeBeat(beat: Int, tickType: String) {
     metronomeUtil?.setBeat(beat, tickType)
     val updated = metronomeUtil?.beats?.toList()
-    updateBeatTriggers(updated?.size ?: DEF.BEATS.split(",").size)
+    updateBeatTriggers(updated?.size ?: Def.BEATS.split(",").size)
     _beats.value = updated
   }
 
@@ -273,7 +273,7 @@ class MainViewModel(
     val success = metronomeUtil?.addSubdivision()
     if (success == true) {
       val updated = metronomeUtil?.subdivisions?.toList()
-      updateSubdivisionTriggers(updated?.size ?: DEF.SUBDIVISIONS.split(",").size)
+      updateSubdivisionTriggers(updated?.size ?: Def.SUBDIVISIONS.split(",").size)
       _subdivisions.value = updated
     }
   }
@@ -282,7 +282,7 @@ class MainViewModel(
     val success = metronomeUtil?.removeSubdivision()
     if (success == true) {
       val updated = metronomeUtil?.subdivisions?.toList()
-      updateSubdivisionTriggers(updated?.size ?: DEF.SUBDIVISIONS.split(",").size)
+      updateSubdivisionTriggers(updated?.size ?: Def.SUBDIVISIONS.split(",").size)
       _subdivisions.value = updated
     }
   }
@@ -290,7 +290,7 @@ class MainViewModel(
   fun changeSubdivision(subdivision: Int, tickType: String) {
     metronomeUtil?.setSubdivision(subdivision, tickType)
     val updated = metronomeUtil?.subdivisions?.toList()
-    updateSubdivisionTriggers(updated?.size ?: DEF.SUBDIVISIONS.split(",").size)
+    updateSubdivisionTriggers(updated?.size ?: Def.SUBDIVISIONS.split(",").size)
     _subdivisions.value = updated
   }
 
@@ -310,7 +310,7 @@ class MainViewModel(
       7 -> metronomeUtil?.setSwing7()
     }
     val updated = metronomeUtil?.subdivisions?.toList()
-    updateSubdivisionTriggers(updated?.size ?: DEF.SUBDIVISIONS.split(",").size)
+    updateSubdivisionTriggers(updated?.size ?: Def.SUBDIVISIONS.split(",").size)
     _subdivisions.value = updated
   }
 

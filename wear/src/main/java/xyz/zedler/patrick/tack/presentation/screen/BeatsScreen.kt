@@ -85,11 +85,11 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
         )
       }
     ) {
-      val beats by viewModel.beats.observeAsState(Constants.DEF.BEATS.split(","))
+      val beats by viewModel.beats.observeAsState(Constants.Def.BEATS.split(","))
       val subdivisions by viewModel.subdivisions.observeAsState(
-        Constants.DEF.SUBDIVISIONS.split(",")
+        Constants.Def.SUBDIVISIONS.split(",")
       )
-      val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
+      val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
       ScalingLazyColumn(
         state = scrollableState,
         modifier = Modifier
@@ -135,9 +135,9 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
                 reduceAnim = reduceAnim,
                 onClick = {
                   val next = when (beat) {
-                    Constants.TICK_TYPE.NORMAL -> Constants.TICK_TYPE.STRONG
-                    Constants.TICK_TYPE.STRONG -> Constants.TICK_TYPE.MUTED
-                    else -> Constants.TICK_TYPE.NORMAL
+                    Constants.TickType.NORMAL -> Constants.TickType.STRONG
+                    Constants.TickType.STRONG -> Constants.TickType.MUTED
+                    else -> Constants.TickType.NORMAL
                   }
                   viewModel.changeBeat(index, next)
                 }
@@ -181,9 +181,9 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
                 reduceAnim = reduceAnim,
                 onClick = {
                   val next = when (subdivision) {
-                    Constants.TICK_TYPE.NORMAL -> Constants.TICK_TYPE.MUTED
-                    Constants.TICK_TYPE.SUB -> Constants.TICK_TYPE.NORMAL
-                    else -> Constants.TICK_TYPE.SUB
+                    Constants.TickType.NORMAL -> Constants.TickType.MUTED
+                    Constants.TickType.SUB -> Constants.TickType.NORMAL
+                    else -> Constants.TickType.SUB
                   }
                   viewModel.changeSubdivision(index, next)
                 }

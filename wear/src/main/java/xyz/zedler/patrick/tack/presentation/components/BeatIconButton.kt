@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.IconButton
 import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
-import xyz.zedler.patrick.tack.Constants.TICK_TYPE
+import xyz.zedler.patrick.tack.Constants.TickType
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 
@@ -56,9 +56,9 @@ fun BeatIconButton(
     R.drawable.ic_beat_clover_anim,
     R.drawable.ic_beat_pentagon_anim,
   )
-  val sizeDefault = if (tickType != TICK_TYPE.MUTED) 24 else 12
+  val sizeDefault = if (tickType != TickType.MUTED) 24 else 12
   val sizeBeatReduceAnim = if (reduceAnim) 40 else 32
-  val sizeBeat = if (tickType != TICK_TYPE.MUTED) sizeBeatReduceAnim else 24
+  val sizeBeat = if (tickType != TickType.MUTED) sizeBeatReduceAnim else 24
 
   val animatedSize = remember { Animatable(sizeDefault.toFloat()) }
   val isFirstExecution = remember { mutableStateOf(true) }
@@ -83,9 +83,9 @@ fun BeatIconButton(
     modifier = Modifier.size(IconButtonDefaults.ExtraSmallButtonSize)
   ) {
     val targetColor = when (tickType) {
-      TICK_TYPE.STRONG -> MaterialTheme.colorScheme.error
-      TICK_TYPE.SUB -> MaterialTheme.colorScheme.onSurfaceVariant
-      TICK_TYPE.MUTED -> MaterialTheme.colorScheme.outline
+      TickType.STRONG -> MaterialTheme.colorScheme.error
+      TickType.SUB -> MaterialTheme.colorScheme.onSurfaceVariant
+      TickType.MUTED -> MaterialTheme.colorScheme.outline
       else -> MaterialTheme.colorScheme.primary
     }
     val color by animateColorAsState(
@@ -99,7 +99,7 @@ fun BeatIconButton(
       color = color,
       trigger = animTrigger,
       modifier = Modifier.requiredSize(animatedSize.value.dp),
-      animated = tickType != TICK_TYPE.MUTED && !reduceAnim
+      animated = tickType != TickType.MUTED && !reduceAnim
     )
   }
 }

@@ -34,9 +34,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.DEF;
-import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
+import xyz.zedler.patrick.tack.Constants.Def;
+import xyz.zedler.patrick.tack.Constants.Pref;
+import xyz.zedler.patrick.tack.Constants.TickType;
 
 public class MetronomeUtil {
 
@@ -73,23 +73,23 @@ public class MetronomeUtil {
   }
 
   public void setToPreferences() {
-    tempo = sharedPrefs.getInt(PREF.TEMPO, DEF.TEMPO);
-    beats = arrayAsList(sharedPrefs.getString(PREF.BEATS, DEF.BEATS).split(","));
+    tempo = sharedPrefs.getInt(Pref.TEMPO, Def.TEMPO);
+    beats = arrayAsList(sharedPrefs.getString(Pref.BEATS, Def.BEATS).split(","));
     subdivisions = arrayAsList(
-        sharedPrefs.getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(",")
+        sharedPrefs.getString(Pref.SUBDIVISIONS, Def.SUBDIVISIONS).split(",")
     );
-    useSubdivisions = sharedPrefs.getBoolean(PREF.USE_SUBS, DEF.USE_SUBS);
-    latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY);
-    alwaysVibrate = sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
-    strongVibration = sharedPrefs.getBoolean(PREF.STRONG_VIBRATION, DEF.STRONG_VIBRATION);
-    flashScreen = sharedPrefs.getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
-    keepAwake = sharedPrefs.getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
-    reduceAnim = sharedPrefs.getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM);
+    useSubdivisions = sharedPrefs.getBoolean(Pref.USE_SUBS, Def.USE_SUBS);
+    latency = sharedPrefs.getLong(Pref.LATENCY, Def.LATENCY);
+    alwaysVibrate = sharedPrefs.getBoolean(Pref.ALWAYS_VIBRATE, Def.ALWAYS_VIBRATE);
+    strongVibration = sharedPrefs.getBoolean(Pref.STRONG_VIBRATION, Def.STRONG_VIBRATION);
+    flashScreen = sharedPrefs.getBoolean(Pref.FLASH_SCREEN, Def.FLASH_SCREEN);
+    keepAwake = sharedPrefs.getBoolean(Pref.KEEP_AWAKE, Def.KEEP_AWAKE);
+    reduceAnim = sharedPrefs.getBoolean(Pref.REDUCE_ANIM, Def.REDUCE_ANIM);
 
-    setSound(sharedPrefs.getString(PREF.SOUND, DEF.SOUND));
-    setIgnoreFocus(sharedPrefs.getBoolean(PREF.IGNORE_FOCUS, DEF.IGNORE_FOCUS));
-    setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
-    setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
+    setSound(sharedPrefs.getString(Pref.SOUND, Def.SOUND));
+    setIgnoreFocus(sharedPrefs.getBoolean(Pref.IGNORE_FOCUS, Def.IGNORE_FOCUS));
+    setGain(sharedPrefs.getInt(Pref.GAIN, Def.GAIN));
+    setBeatModeVibrate(sharedPrefs.getBoolean(Pref.BEAT_MODE_VIBRATE, Def.BEAT_MODE_VIBRATE));
   }
 
   private static List<String> arrayAsList(String[] array) {
@@ -228,7 +228,7 @@ public class MetronomeUtil {
 
   public void setBeats(List<String> beats) {
     this.beats = beats;
-    sharedPrefs.edit().putString(PREF.BEATS, String.join(",", beats)).apply();
+    sharedPrefs.edit().putString(Pref.BEATS, String.join(",", beats)).apply();
   }
 
   public List<String> getBeats() {
@@ -250,7 +250,7 @@ public class MetronomeUtil {
       return false;
     }
     List<String> beats = getBeats();
-    beats.add(TICK_TYPE.NORMAL);
+    beats.add(TickType.NORMAL);
     setBeats(beats);
     return true;
   }
@@ -268,12 +268,12 @@ public class MetronomeUtil {
   public void setSubdivisions(List<String> subdivisions) {
     this.subdivisions = subdivisions;
     sharedPrefs.edit()
-        .putString(PREF.SUBDIVISIONS, String.join(",", getSubdivisions()))
+        .putString(Pref.SUBDIVISIONS, String.join(",", getSubdivisions()))
         .apply();
   }
 
   public List<String> getSubdivisions() {
-    return useSubdivisions ? subdivisions : arrayAsList(DEF.SUBDIVISIONS.split(","));
+    return useSubdivisions ? subdivisions : arrayAsList(Def.SUBDIVISIONS.split(","));
   }
 
   public int getSubdivisionsCount() {
@@ -291,7 +291,7 @@ public class MetronomeUtil {
       return false;
     }
     List<String> subdivisions = getSubdivisions();
-    subdivisions.add(TICK_TYPE.SUB);
+    subdivisions.add(TickType.SUB);
     setSubdivisions(subdivisions);
     return true;
   }
@@ -308,22 +308,22 @@ public class MetronomeUtil {
 
   public void setSwing3() {
     List<String> subdivisions = new ArrayList<>(
-        List.of(TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL)
+        List.of(TickType.MUTED, TickType.MUTED, TickType.NORMAL)
     );
     setSubdivisions(subdivisions);
   }
 
   public void setSwing5() {
     List<String> subdivisions = new ArrayList<>(List.of(
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL, TICK_TYPE.MUTED
+        TickType.MUTED, TickType.MUTED, TickType.MUTED, TickType.NORMAL, TickType.MUTED
     ));
     setSubdivisions(subdivisions);
   }
 
   public void setSwing7() {
     List<String> subdivisions = new ArrayList<>(List.of(
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
-        TICK_TYPE.NORMAL, TICK_TYPE.MUTED, TICK_TYPE.MUTED
+        TickType.MUTED, TickType.MUTED, TickType.MUTED, TickType.MUTED,
+        TickType.NORMAL, TickType.MUTED, TickType.MUTED
     ));
     setSubdivisions(subdivisions);
   }
@@ -331,7 +331,7 @@ public class MetronomeUtil {
   public void setTempo(int tempo) {
     if (this.tempo != tempo) {
       this.tempo = tempo;
-      sharedPrefs.edit().putInt(PREF.TEMPO, tempo).apply();
+      sharedPrefs.edit().putInt(Pref.TEMPO, tempo).apply();
     }
   }
 
@@ -351,11 +351,11 @@ public class MetronomeUtil {
 
   public void setSound(String sound) {
     audioUtil.setSound(sound);
-    sharedPrefs.edit().putString(PREF.SOUND, sound).apply();
+    sharedPrefs.edit().putString(Pref.SOUND, sound).apply();
   }
 
   public String getSound() {
-    return sharedPrefs.getString(PREF.SOUND, DEF.SOUND);
+    return sharedPrefs.getString(Pref.SOUND, Def.SOUND);
   }
 
   public void setBeatModeVibrate(boolean vibrate) {
@@ -365,7 +365,7 @@ public class MetronomeUtil {
     beatModeVibrate = vibrate;
     audioUtil.setMuted(vibrate);
     hapticUtil.setEnabled(vibrate || alwaysVibrate);
-    sharedPrefs.edit().putBoolean(PREF.BEAT_MODE_VIBRATE, vibrate).apply();
+    sharedPrefs.edit().putBoolean(Pref.BEAT_MODE_VIBRATE, vibrate).apply();
   }
 
   public boolean isBeatModeVibrate() {
@@ -375,7 +375,7 @@ public class MetronomeUtil {
   public void setAlwaysVibrate(boolean always) {
     alwaysVibrate = always;
     hapticUtil.setEnabled(always || beatModeVibrate);
-    sharedPrefs.edit().putBoolean(PREF.ALWAYS_VIBRATE, always).apply();
+    sharedPrefs.edit().putBoolean(Pref.ALWAYS_VIBRATE, always).apply();
   }
 
   public boolean isAlwaysVibrate() {
@@ -385,7 +385,7 @@ public class MetronomeUtil {
   public void setStrongVibration(boolean strong) {
     strongVibration = strong;
     hapticUtil.setStrongVibration(strong);
-    sharedPrefs.edit().putBoolean(PREF.STRONG_VIBRATION, strong).apply();
+    sharedPrefs.edit().putBoolean(Pref.STRONG_VIBRATION, strong).apply();
   }
 
   public boolean isStrongVibration() {
@@ -398,7 +398,7 @@ public class MetronomeUtil {
 
   public void setLatency(long offset) {
     latency = offset;
-    sharedPrefs.edit().putLong(PREF.LATENCY, offset).apply();
+    sharedPrefs.edit().putLong(Pref.LATENCY, offset).apply();
   }
 
   public long getLatency() {
@@ -407,7 +407,7 @@ public class MetronomeUtil {
 
   public void setIgnoreFocus(boolean ignore) {
     audioUtil.setIgnoreFocus(ignore);
-    sharedPrefs.edit().putBoolean(PREF.IGNORE_FOCUS, ignore).apply();
+    sharedPrefs.edit().putBoolean(Pref.IGNORE_FOCUS, ignore).apply();
   }
 
   public boolean getIgnoreFocus() {
@@ -416,7 +416,7 @@ public class MetronomeUtil {
 
   public void setGain(int gain) {
     audioUtil.setGain(gain);
-    sharedPrefs.edit().putInt(PREF.GAIN, gain).apply();
+    sharedPrefs.edit().putInt(Pref.GAIN, gain).apply();
   }
 
   public int getGain() {
@@ -429,7 +429,7 @@ public class MetronomeUtil {
 
   public void setFlashScreen(boolean flash) {
     flashScreen = flash;
-    sharedPrefs.edit().putBoolean(PREF.FLASH_SCREEN, flash).apply();
+    sharedPrefs.edit().putBoolean(Pref.FLASH_SCREEN, flash).apply();
   }
 
   public boolean getFlashScreen() {
@@ -438,7 +438,7 @@ public class MetronomeUtil {
 
   public void setKeepAwake(boolean keepAwake) {
     this.keepAwake = keepAwake;
-    sharedPrefs.edit().putBoolean(PREF.KEEP_AWAKE, keepAwake).apply();
+    sharedPrefs.edit().putBoolean(Pref.KEEP_AWAKE, keepAwake).apply();
   }
 
   public boolean getKeepAwake() {
@@ -447,7 +447,7 @@ public class MetronomeUtil {
 
   public void setReduceAnim(boolean reduceAnim) {
     this.reduceAnim = reduceAnim;
-    sharedPrefs.edit().putBoolean(PREF.REDUCE_ANIM, reduceAnim).apply();
+    sharedPrefs.edit().putBoolean(Pref.REDUCE_ANIM, reduceAnim).apply();
   }
 
   public boolean getReduceAnim() {
@@ -463,13 +463,13 @@ public class MetronomeUtil {
     latencyHandler.postDelayed(() -> {
       if (beatModeVibrate || alwaysVibrate) {
         switch (tick.type) {
-          case TICK_TYPE.STRONG:
+          case TickType.STRONG:
             hapticUtil.heavyClick(strongVibration);
             break;
-          case TICK_TYPE.SUB:
+          case TickType.SUB:
             hapticUtil.tick(strongVibration);
             break;
-          case TICK_TYPE.MUTED:
+          case TickType.MUTED:
             break;
           default:
             hapticUtil.click(strongVibration);

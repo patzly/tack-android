@@ -53,7 +53,7 @@ import androidx.wear.compose.material3.ToggleButton
 import androidx.wear.compose.material3.ToggleButtonDefaults
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.Constants
-import xyz.zedler.patrick.tack.Constants.SOUND
+import xyz.zedler.patrick.tack.Constants.Sound
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -102,25 +102,25 @@ fun SettingsScreen(
           }
         }
         item {
-          val sound by viewModel.sound.observeAsState(Constants.DEF.SOUND)
+          val sound by viewModel.sound.observeAsState(Constants.Def.SOUND)
           var name = stringResource(id = R.string.wear_settings_sound_sine)
           when (sound) {
-            SOUND.WOOD -> {
+            Sound.WOOD -> {
               name = stringResource(id = R.string.wear_settings_sound_wood)
             }
-            SOUND.MECHANICAL -> {
+            Sound.MECHANICAL -> {
               name = stringResource(id = R.string.wear_settings_sound_mechanical)
             }
-            SOUND.BEATBOXING_1 -> {
+            Sound.BEATBOXING_1 -> {
               name = stringResource(id = R.string.wear_settings_sound_beatboxing_1)
             }
-            SOUND.BEATBOXING_2 -> {
+            Sound.BEATBOXING_2 -> {
               name = stringResource(id = R.string.wear_settings_sound_beatboxing_2)
             }
-            SOUND.HANDS -> {
+            Sound.HANDS -> {
               name = stringResource(id = R.string.wear_settings_sound_hands)
             }
-            SOUND.FOLDING -> {
+            Sound.FOLDING -> {
               name = stringResource(id = R.string.wear_settings_sound_folding)
             }
           }
@@ -131,7 +131,7 @@ fun SettingsScreen(
           )
         }
         item {
-          val gain by viewModel.gain.observeAsState(Constants.DEF.GAIN)
+          val gain by viewModel.gain.observeAsState(Constants.Def.GAIN)
           ClickChip(
             label = stringResource(R.string.wear_settings_gain),
             secondaryLabel = stringResource(R.string.wear_label_db, gain),
@@ -139,7 +139,7 @@ fun SettingsScreen(
           )
         }
         item {
-          val latency by viewModel.latency.observeAsState(Constants.DEF.LATENCY)
+          val latency by viewModel.latency.observeAsState(Constants.Def.LATENCY)
           ClickChip(
             label = stringResource(R.string.wear_settings_latency),
             secondaryLabel = stringResource(R.string.wear_label_ms, latency),
@@ -147,7 +147,7 @@ fun SettingsScreen(
           )
         }
         item {
-          val ignoreFocus by viewModel.ignoreFocus.observeAsState(Constants.DEF.IGNORE_FOCUS)
+          val ignoreFocus by viewModel.ignoreFocus.observeAsState(Constants.Def.IGNORE_FOCUS)
           ToggleChip(
             checked = ignoreFocus,
             onCheckedChange = {
@@ -158,7 +158,7 @@ fun SettingsScreen(
           )
         }
         item {
-          val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.DEF.ALWAYS_VIBRATE)
+          val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.Def.ALWAYS_VIBRATE)
           ToggleChip(
             checked = alwaysVibrate,
             onCheckedChange = {
@@ -170,7 +170,7 @@ fun SettingsScreen(
         }
         item {
           val strongVibration by viewModel.strongVibration.observeAsState(
-            Constants.DEF.STRONG_VIBRATION
+            Constants.Def.STRONG_VIBRATION
           )
           ToggleChip(
             checked = strongVibration,
@@ -182,7 +182,7 @@ fun SettingsScreen(
           )
         }
         item {
-          val flashScreen by viewModel.flashScreen.observeAsState(Constants.DEF.FLASH_SCREEN)
+          val flashScreen by viewModel.flashScreen.observeAsState(Constants.Def.FLASH_SCREEN)
           ToggleChip(
             checked = flashScreen,
             onCheckedChange = {
@@ -193,7 +193,7 @@ fun SettingsScreen(
           )
         }
         item {
-          val keepAwake by viewModel.keepAwake.observeAsState(Constants.DEF.KEEP_AWAKE)
+          val keepAwake by viewModel.keepAwake.observeAsState(Constants.Def.KEEP_AWAKE)
           ToggleChip(
             checked = keepAwake,
             onCheckedChange = {
@@ -204,7 +204,7 @@ fun SettingsScreen(
           )
         }
         item {
-          val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
+          val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
           ToggleChip(
             checked = reduceAnim,
             onCheckedChange = {

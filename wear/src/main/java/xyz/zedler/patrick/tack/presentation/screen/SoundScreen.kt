@@ -45,7 +45,7 @@ import androidx.wear.compose.material3.RadioButton
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.Constants
-import xyz.zedler.patrick.tack.Constants.SOUND
+import xyz.zedler.patrick.tack.Constants.Sound
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -69,7 +69,7 @@ fun SoundScreen(viewModel: MainViewModel = MainViewModel()) {
         )
       }
     ) {
-      val sound by viewModel.sound.observeAsState(Constants.DEF.SOUND)
+      val sound by viewModel.sound.observeAsState(Constants.Def.SOUND)
       ScalingLazyColumn(
         state = scrollableState,
         modifier = Modifier
@@ -91,63 +91,63 @@ fun SoundScreen(viewModel: MainViewModel = MainViewModel()) {
         item {
           RadioChip(
             label = stringResource(id = R.string.wear_settings_sound_sine),
-            selected = sound == SOUND.SINE,
+            selected = sound == Sound.SINE,
             onSelected = {
-              viewModel.changeSound(SOUND.SINE)
+              viewModel.changeSound(Sound.SINE)
             }
           )
         }
         item {
           RadioChip(
             label = stringResource(id = R.string.wear_settings_sound_wood),
-            selected = sound == SOUND.WOOD,
+            selected = sound == Sound.WOOD,
             onSelected = {
-              viewModel.changeSound(SOUND.WOOD)
+              viewModel.changeSound(Sound.WOOD)
             }
           )
         }
         item {
           RadioChip(
             label = stringResource(id = R.string.wear_settings_sound_mechanical),
-            selected = sound == SOUND.MECHANICAL,
+            selected = sound == Sound.MECHANICAL,
             onSelected = {
-              viewModel.changeSound(SOUND.MECHANICAL)
+              viewModel.changeSound(Sound.MECHANICAL)
             }
           )
         }
         item {
           RadioChip(
             label = stringResource(id = R.string.wear_settings_sound_beatboxing_1),
-            selected = sound == SOUND.BEATBOXING_1,
+            selected = sound == Sound.BEATBOXING_1,
             onSelected = {
-              viewModel.changeSound(SOUND.BEATBOXING_1)
+              viewModel.changeSound(Sound.BEATBOXING_1)
             }
           )
         }
         item {
           RadioChip(
             label = stringResource(id = R.string.wear_settings_sound_beatboxing_2),
-            selected = sound == SOUND.BEATBOXING_2,
+            selected = sound == Sound.BEATBOXING_2,
             onSelected = {
-              viewModel.changeSound(SOUND.BEATBOXING_2)
+              viewModel.changeSound(Sound.BEATBOXING_2)
             }
           )
         }
         item {
           RadioChip(
             label = stringResource(id = R.string.wear_settings_sound_hands),
-            selected = sound == SOUND.HANDS,
+            selected = sound == Sound.HANDS,
             onSelected = {
-              viewModel.changeSound(SOUND.HANDS)
+              viewModel.changeSound(Sound.HANDS)
             }
           )
         }
         item {
           RadioChip(
             label = stringResource(id = R.string.wear_settings_sound_folding),
-            selected = sound == SOUND.FOLDING,
+            selected = sound == Sound.FOLDING,
             onSelected = {
-              viewModel.changeSound(SOUND.FOLDING)
+              viewModel.changeSound(Sound.FOLDING)
             }
           )
         }

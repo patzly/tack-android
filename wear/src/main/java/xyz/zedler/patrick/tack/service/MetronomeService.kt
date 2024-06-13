@@ -27,7 +27,7 @@ import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.lifecycle.LifecycleService
-import xyz.zedler.patrick.tack.Constants.ACTION
+import xyz.zedler.patrick.tack.Constants.Action
 import xyz.zedler.patrick.tack.util.MetronomeUtil
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter
 import xyz.zedler.patrick.tack.util.NotificationUtil
@@ -68,7 +68,7 @@ class MetronomeService : LifecycleService() {
     super.onStartCommand(intent, flags, startId)
 
     val action = intent?.action ?: ""
-    if (action == ACTION.STOP) {
+    if (action == Action.STOP) {
       metronomeUtil.stop()
     }
     return START_NOT_STICKY

@@ -78,7 +78,7 @@ fun GainScreen(viewModel: MainViewModel = MainViewModel()) {
         )
       }
     ) {
-      val gain by viewModel.gain.observeAsState(Constants.DEF.GAIN)
+      val gain by viewModel.gain.observeAsState(Constants.Def.GAIN)
       ScalingLazyColumn(
         state = scrollableState,
         modifier = Modifier
@@ -145,7 +145,7 @@ fun GainSlider(
   gain: Int,
   onValueChange: (Int) -> Unit = {}
 ) {
-  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
+  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
   InlineSlider(
     value = gain,
     onValueChange = onValueChange,

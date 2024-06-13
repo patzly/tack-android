@@ -85,8 +85,8 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         val (tempoPicker, tapButton) = createRefs()
         val (plus5Button, minus5Button, plus10Button, minus10Button) = createRefs()
 
-        val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
-        val tempo by viewModel.tempo.observeAsState(initial = Constants.DEF.TEMPO)
+        val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
+        val tempo by viewModel.tempo.observeAsState(initial = Constants.Def.TEMPO)
         var pickerOption = remember { tempo - 1 }
         val pickerCoroutineScope = rememberCoroutineScope()
         val pickerState = rememberPickerState(
@@ -194,9 +194,9 @@ fun TempoPicker(
 ) {
   val isPlaying by viewModel.isPlaying.observeAsState(false)
   val beatModeVibrate by viewModel.beatModeVibrate.observeAsState(
-    Constants.DEF.BEAT_MODE_VIBRATE
+    Constants.Def.BEAT_MODE_VIBRATE
   )
-  val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.DEF.ALWAYS_VIBRATE)
+  val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.Def.ALWAYS_VIBRATE)
 
   val items = (1..400).toList()
   val bpm = stringResource(
@@ -242,7 +242,7 @@ fun TapButton(
   modifier: Modifier
 ) {
   val animTrigger = remember { mutableStateOf(false) }
-  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
+  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
   IconButton(
     onClick = {
       onClick()

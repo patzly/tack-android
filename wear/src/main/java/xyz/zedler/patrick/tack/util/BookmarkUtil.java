@@ -22,7 +22,7 @@ package xyz.zedler.patrick.tack.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import androidx.preference.PreferenceManager;
-import xyz.zedler.patrick.tack.Constants.PREF;
+import xyz.zedler.patrick.tack.Constants.Pref;
 
 public class BookmarkUtil {
 
@@ -33,12 +33,12 @@ public class BookmarkUtil {
   }
 
   public int toggleBookmark(int tempo) {
-    int bookmark = sharedPrefs.getInt(PREF.BOOKMARK, -1);
+    int bookmark = sharedPrefs.getInt(Pref.BOOKMARK, -1);
     if (bookmark == -1) {
       // Never used before
       bookmark = tempo;
     }
-    sharedPrefs.edit().putInt(PREF.BOOKMARK, tempo).apply();
+    sharedPrefs.edit().putInt(Pref.BOOKMARK, tempo).apply();
     return bookmark;
   }
 

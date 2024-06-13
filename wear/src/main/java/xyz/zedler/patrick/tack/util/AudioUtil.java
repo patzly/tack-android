@@ -39,8 +39,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.charset.StandardCharsets;
-import xyz.zedler.patrick.tack.Constants.SOUND;
-import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
+import xyz.zedler.patrick.tack.Constants.Sound;
+import xyz.zedler.patrick.tack.Constants.TickType;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 
@@ -125,41 +125,41 @@ public class AudioUtil implements OnAudioFocusChangeListener {
     Pitch pitchStrong = Pitch.HIGH;
     Pitch pitchSub = Pitch.LOW;
     switch (sound) {
-      case SOUND.WOOD:
+      case Sound.WOOD:
         resIdNormal = R.raw.wood;
         resIdStrong = R.raw.wood;
         resIdSub = R.raw.mechanical_knock;
         pitchSub = Pitch.NORMAL;
         break;
-      case SOUND.MECHANICAL:
+      case Sound.MECHANICAL:
         resIdNormal = R.raw.mechanical_tick;
         resIdStrong = R.raw.mechanical_ding;
         resIdSub = R.raw.mechanical_knock;
         pitchStrong = Pitch.NORMAL;
         pitchSub = Pitch.NORMAL;
         break;
-      case SOUND.BEATBOXING_1:
+      case Sound.BEATBOXING_1:
         resIdNormal = R.raw.beatbox_snare1;
         resIdStrong = R.raw.beatbox_kick1;
         resIdSub = R.raw.beatbox_hihat1;
         pitchStrong = Pitch.NORMAL;
         pitchSub = Pitch.NORMAL;
         break;
-      case SOUND.BEATBOXING_2:
+      case Sound.BEATBOXING_2:
         resIdNormal = R.raw.beatbox_snare2;
         resIdStrong = R.raw.beatbox_kick2;
         resIdSub = R.raw.beatbox_hihat2;
         pitchStrong = Pitch.NORMAL;
         pitchSub = Pitch.NORMAL;
         break;
-      case SOUND.HANDS:
+      case Sound.HANDS:
         resIdNormal = R.raw.hands_hit;
         resIdStrong = R.raw.hands_clap;
         resIdSub = R.raw.hands_snap;
         pitchStrong = Pitch.NORMAL;
         pitchSub = Pitch.NORMAL;
         break;
-      case SOUND.FOLDING:
+      case Sound.FOLDING:
         resIdNormal = R.raw.folding_knock;
         resIdStrong = R.raw.folding_fold;
         resIdSub = R.raw.folding_tap;
@@ -231,11 +231,11 @@ public class AudioUtil implements OnAudioFocusChangeListener {
 
   private float[] getTickSound(String tickType) {
     switch (tickType) {
-      case TICK_TYPE.STRONG:
+      case TickType.STRONG:
         return tickStrong;
-      case TICK_TYPE.SUB:
+      case TickType.SUB:
         return tickSub;
-      case TICK_TYPE.MUTED:
+      case TickType.MUTED:
         return silence;
       default:
         return tickNormal;

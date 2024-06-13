@@ -16,78 +16,74 @@
  *
  * Copyright (c) 2020-2024 by Patrick Zedler
  */
+package xyz.zedler.patrick.tack
 
-package xyz.zedler.patrick.tack;
+object Constants {
+  const val ANIM_DURATION_LONG: Long = 400
+  const val ANIM_DURATION_SHORT: Long = 250
+  const val BEAT_ANIM_OFFSET: Long = 25
+  const val FLASH_SCREEN_DURATION: Long = 100
+  const val TEMPO_MIN: Int = 1
+  const val TEMPO_MAX: Int = 400
+  const val BEATS_MAX: Int = 20
+  const val SUBS_MAX: Int = 10
 
-public final class Constants {
-
-  public final static long ANIM_DURATION_LONG = 400;
-  public final static long ANIM_DURATION_SHORT = 250;
-  public static final long BEAT_ANIM_OFFSET = 25;
-  public static final long FLASH_SCREEN_DURATION = 100;
-  public static final int TEMPO_MIN = 1;
-  public static final int TEMPO_MAX = 400;
-  public static final int BEATS_MAX = 20;
-  public static final int SUBS_MAX = 10;
-
-  public final static class PREF {
-    public final static String TEMPO = "tempo";
-    public final static String BEATS = "beats";
-    public final static String SUBDIVISIONS = "subdivisions";
-    public final static String BEAT_MODE_VIBRATE = "beat_mode_vibrate";
-    public final static String USE_SUBS = "use_subdivisions";
-    public final static String ALWAYS_VIBRATE = "always_vibrate";
-    public final static String STRONG_VIBRATION = "strong_vibration";
-    public final static String FLASH_SCREEN = "flash_screen";
-    public final static String KEEP_AWAKE = "keep_awake";
-    public static final String REDUCE_ANIM = "reduce_animations";
-    public final static String SOUND = "sound";
-    public final static String LATENCY = "latency_offset";
-    public final static String IGNORE_FOCUS = "ignore_focus";
-    public final static String GAIN = "gain";
-    public final static String BOOKMARK = "bookmark";
+  object Pref {
+    const val TEMPO: String = "tempo"
+    const val BEATS: String = "beats"
+    const val SUBDIVISIONS: String = "subdivisions"
+    const val BEAT_MODE_VIBRATE: String = "beat_mode_vibrate"
+    const val USE_SUBS: String = "use_subdivisions"
+    const val ALWAYS_VIBRATE: String = "always_vibrate"
+    const val STRONG_VIBRATION: String = "strong_vibration"
+    const val FLASH_SCREEN: String = "flash_screen"
+    const val KEEP_AWAKE: String = "keep_awake"
+    const val REDUCE_ANIM: String = "reduce_animations"
+    const val SOUND: String = "sound"
+    const val LATENCY: String = "latency_offset"
+    const val IGNORE_FOCUS: String = "ignore_focus"
+    const val GAIN: String = "gain"
+    const val BOOKMARK: String = "bookmark"
   }
 
-  public final static class DEF {
-    public final static int TEMPO = 120;
-    public final static String BEATS = String.join(
-        ",", TICK_TYPE.STRONG, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL
-    );
-    public final static String SUBDIVISIONS = TICK_TYPE.MUTED;
-    public final static boolean BEAT_MODE_VIBRATE = false;
-    public final static boolean USE_SUBS = true;
-    public final static boolean ALWAYS_VIBRATE = true;
-    public final static boolean STRONG_VIBRATION = false;
-    public final static boolean FLASH_SCREEN = false;
-    public final static boolean KEEP_AWAKE = true;
-    public static final boolean REDUCE_ANIM = false;
-    public final static String SOUND = Constants.SOUND.SINE;
-    public final static long LATENCY = 100;
-    public final static boolean IGNORE_FOCUS = false;
-    public final static int GAIN = 0;
+  object Def {
+    const val TEMPO: Int = 120
+    @JvmField
+    val BEATS: String = java.lang.String.join(
+      ",", TickType.STRONG, TickType.NORMAL, TickType.NORMAL, TickType.NORMAL
+    )
+    const val SUBDIVISIONS: String = TickType.MUTED
+    const val BEAT_MODE_VIBRATE: Boolean = false
+    const val USE_SUBS: Boolean = true
+    const val ALWAYS_VIBRATE: Boolean = true
+    const val STRONG_VIBRATION: Boolean = false
+    const val FLASH_SCREEN: Boolean = false
+    const val KEEP_AWAKE: Boolean = true
+    const val REDUCE_ANIM: Boolean = false
+    const val SOUND: String = Sound.SINE
+    const val LATENCY: Long = 100
+    const val IGNORE_FOCUS: Boolean = false
+    const val GAIN: Int = 0
   }
 
-  public final static class SOUND {
-
-    public final static String SINE = "sine";
-    public final static String WOOD = "wood";
-    public final static String MECHANICAL = "mechanical";
-    public final static String BEATBOXING_1 = "beatboxing_1";
-    public final static String BEATBOXING_2 = "beatboxing_2";
-    public final static String HANDS = "hands";
-    public final static String FOLDING = "folding";
+  object Sound {
+    const val SINE: String = "sine"
+    const val WOOD: String = "wood"
+    const val MECHANICAL: String = "mechanical"
+    const val BEATBOXING_1: String = "beatboxing_1"
+    const val BEATBOXING_2: String = "beatboxing_2"
+    const val HANDS: String = "hands"
+    const val FOLDING: String = "folding"
   }
 
-  public final static class TICK_TYPE {
-
-    public final static String NORMAL = "normal";
-    public final static String STRONG = "strong";
-    public final static String SUB = "sub";
-    public final static String MUTED = "muted";
+  object TickType {
+    const val NORMAL: String = "normal"
+    const val STRONG: String = "strong"
+    const val SUB: String = "sub"
+    const val MUTED: String = "muted"
   }
 
-  public final static class ACTION {
-
-    public final static String STOP = "xyz.zedler.patrick.tack.intent.action.STOP";
+  object Action {
+    const val STOP: String = "xyz.zedler.patrick.tack.intent.action.STOP"
   }
 }

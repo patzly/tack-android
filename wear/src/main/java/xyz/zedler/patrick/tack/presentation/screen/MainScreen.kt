@@ -111,12 +111,12 @@ fun MainScreen(
         .background(color = background),
       contentAlignment = Alignment.Center,
     ) {
-      val keepAwake by viewModel.keepAwake.observeAsState(Constants.DEF.KEEP_AWAKE)
+      val keepAwake by viewModel.keepAwake.observeAsState(Constants.Def.KEEP_AWAKE)
       val isPlaying by viewModel.isPlaying.observeAsState(false)
       val playAnimTrigger = remember { mutableStateOf(isPlaying) }
       var showVolumeDialog by remember { mutableStateOf(false) }
       val showPermissionDialog by viewModel.showPermissionDialog.observeAsState(false)
-      val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
+      val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
 
       val controlsAlpha by animateFloatAsState(
         targetValue = if (isPlaying && keepAwake) .5f else 1f,
@@ -135,7 +135,7 @@ fun MainScreen(
         val (beatsButton, tempoTapButton) = createRefs()
         val (bookmarkButton, beatModeButton) = createRefs()
 
-        val tempo by viewModel.tempo.observeAsState(initial = Constants.DEF.TEMPO)
+        val tempo by viewModel.tempo.observeAsState(initial = Constants.Def.TEMPO)
         val pickerOption = remember { tempo - 1 }
         val pickerCoroutineScope = rememberCoroutineScope()
         val pickerState = rememberPickerState(
@@ -159,10 +159,10 @@ fun MainScreen(
         }
 
         val beatModeVibrate by viewModel.beatModeVibrate.observeAsState(
-          Constants.DEF.BEAT_MODE_VIBRATE
+          Constants.Def.BEAT_MODE_VIBRATE
         )
-        val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.DEF.ALWAYS_VIBRATE)
-        val gain by viewModel.gain.observeAsState(Constants.DEF.GAIN)
+        val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.Def.ALWAYS_VIBRATE)
+        val gain by viewModel.gain.observeAsState(Constants.Def.GAIN)
 
         SettingsButton(
           onClick = onSettingsButtonClick,
@@ -305,8 +305,8 @@ fun TempoCard(
   modifier: Modifier
 ) {
   val isPlaying by viewModel.isPlaying.observeAsState(false)
-  val keepAwake by viewModel.keepAwake.observeAsState(Constants.DEF.KEEP_AWAKE)
-  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
+  val keepAwake by viewModel.keepAwake.observeAsState(Constants.Def.KEEP_AWAKE)
+  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
 
   val borderColorTarget = if (isPlaying && keepAwake) {
     MaterialTheme.colorScheme.background
@@ -339,9 +339,9 @@ fun TempoCard(
     contentPadding = PaddingValues(0.dp)
   ) {
     val beatModeVibrate by viewModel.beatModeVibrate.observeAsState(
-      Constants.DEF.BEAT_MODE_VIBRATE
+      Constants.Def.BEAT_MODE_VIBRATE
     )
-    val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.DEF.ALWAYS_VIBRATE)
+    val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.Def.ALWAYS_VIBRATE)
 
     val items = (1..400).toList()
     val bpm = stringResource(
@@ -402,8 +402,8 @@ fun PlayButton(
   modifier: Modifier
 ) {
   val isPlaying by viewModel.isPlaying.observeAsState(false)
-  val keepAwake by viewModel.keepAwake.observeAsState(Constants.DEF.KEEP_AWAKE)
-  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
+  val keepAwake by viewModel.keepAwake.observeAsState(Constants.Def.KEEP_AWAKE)
+  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
 
   val containerColorTarget = if (isPlaying && keepAwake) {
     MaterialTheme.colorScheme.background
@@ -499,7 +499,7 @@ fun TempoTapButton(
   modifier: Modifier
 ) {
   val animTrigger = remember { mutableStateOf(false) }
-  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
+  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
   IconButton(
     onClick = {
       onClick()
@@ -524,7 +524,7 @@ fun BookmarkButton(
   modifier: Modifier
 ) {
   val animTrigger = remember { mutableStateOf(false) }
-  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
+  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
   IconButton(
     onClick = {
       onClick()
@@ -551,7 +551,7 @@ fun BeatModeButton(
   modifier: Modifier
 ) {
   val animTrigger = remember { mutableStateOf(beatModeVibrate) }
-  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.DEF.REDUCE_ANIM)
+  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
   IconButton(
     onClick = {
       onClick()

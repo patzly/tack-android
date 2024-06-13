@@ -16,67 +16,66 @@
  *
  * Copyright (c) 2020-2024 by Patrick Zedler
  */
+package xyz.zedler.patrick.tack.util
 
-package xyz.zedler.patrick.tack.util;
+import java.util.*
 
-import java.util.LinkedList;
-import java.util.Queue;
+class TempoTapUtil {
 
-public class TempoTapUtil {
+  private val intervals: Queue<Long> = LinkedList()
+  private var previous: Long = 0
 
-  private static final String TAG = TempoTapUtil.class.getSimpleName();
-  private static final int MAX_TAPS = 20;
-  private static final double TEMPO_FACTOR = 0.5;
-  private static final int INTERVAL_FACTOR = 3;
-
-  private final Queue<Long> intervals = new LinkedList<>();
-  private long previous;
-
-  public boolean tap() {
-    boolean enoughData = false;
-    long current = System.currentTimeMillis();
+  fun tap(): Boolean {
+    var enoughData = false
+    val current = System.currentTimeMillis()
     if (previous > 0) {
-      enoughData = true;
-      long interval = current - previous;
+      enoughData = true
+      val interval = current - previous
       if (!intervals.isEmpty() && shouldReset(interval)) {
-        intervals.clear();
-        enoughData = false;
-      } else if (intervals.size() >= MAX_TAPS) {
-        intervals.poll();
+        intervals.clear()
+        enoughData = false
+      } else if (intervals.size >= MAX_TAPS) {
+        intervals.poll()
       }
-      intervals.offer(interval);
+      intervals.offer(interval)
     }
-    previous = current;
-    return enoughData;
+    previous = current
+    return enoughData
   }
 
-  public int getTempo() {
-    return getTempo(getAverage());
-  }
+  val tempo: Int
+    get() = getTempo(average)
 
-  private int getTempo(long interval) {
-    if (interval > 0) {
-      return (int) (60000 / interval);
+  private fun getTempo(interval: Long): Int {
+    return if (interval > 0) {
+      (60000 / interval).toInt()
     } else {
-      return 0;
+      0
     }
   }
 
-  private long getAverage() {
-    long sum = 0;
-    for (long interval : intervals) {
-      sum += interval;
+  private val average: Long
+    get() {
+      var sum: Long = 0
+      for (interval in intervals) {
+        sum += interval
+      }
+      return if (!intervals.isEmpty()) {
+        sum / intervals.size
+      } else {
+        0
+      }
     }
-    if (!intervals.isEmpty()) {
-      return sum / intervals.size();
-    } else {
-      return 0;
-    }
+
+  private fun shouldReset(interval: Long): Boolean {
+    return getTempo(interval) >= tempo * (1 + TEMPO_FACTOR) || getTempo(
+      interval
+    ) <= tempo * (1 - TEMPO_FACTOR) || interval > average * INTERVAL_FACTOR
   }
 
-  private boolean shouldReset(long interval) {
-    return getTempo(interval) >= getTempo() * (1 + TEMPO_FACTOR)
-        || getTempo(interval) <= getTempo() * (1 - TEMPO_FACTOR)
-        || interval > getAverage() * INTERVAL_FACTOR;
+  companion object {
+    private const val MAX_TAPS = 20
+    private const val TEMPO_FACTOR = 0.5
+    private const val INTERVAL_FACTOR = 3
   }
 }
