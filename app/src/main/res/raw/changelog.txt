@@ -1,6 +1,6 @@
 ## 4.1.1
 
-- New: tap on logo to switch between tempo picker and centered metronome animation
+- New: setting to replace tempo picker with big logo animation while playing
 - New: badge on options button to indicate active modifiers
 
 ## 4.1.0

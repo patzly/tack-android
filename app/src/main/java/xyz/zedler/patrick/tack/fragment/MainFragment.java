@@ -94,12 +94,10 @@ public class MainFragment extends BaseFragment
 
   private static final String TAG = MainFragment.class.getSimpleName();
 
-  private static final String SHOW_PICKER_NOT_LOGO = "show_picker_not_logo";
-
   private FragmentMainBinding binding;
   private MainActivity activity;
   private Bundle savedState;
-  private boolean flashScreen, reduceAnimations, isLandTablet, showPickerNotLogo;
+  private boolean flashScreen, reduceAnimations, isLandTablet, bigLogo, showPickerNotLogo;
   private LogoUtil logoUtil, logoCenterUtil;
   private ValueAnimator fabAnimator;
   private float cornerSizeStop, cornerSizePlay, cornerSizeCurrent;
@@ -222,11 +220,7 @@ public class MainFragment extends BaseFragment
 
     logoUtil = new LogoUtil(binding.imageMainLogo);
     logoCenterUtil = new LogoUtil(binding.imageMainLogoCenter);
-    showPickerNotLogo = true;
-    if (savedInstanceState != null) {
-      showPickerNotLogo = savedInstanceState.getBoolean(SHOW_PICKER_NOT_LOGO);
-    }
-    updatePickerAndLogo(showPickerNotLogo, false);
+    bigLogo = getSharedPrefs().getBoolean(PREF.BIG_LOGO, DEF.BIG_LOGO);
 
     shortcutUtil = new ShortcutUtil(activity);
     tempoTapUtil = new TempoTapUtil();
@@ -295,7 +289,9 @@ public class MainFragment extends BaseFragment
       @Override
       public void onPickDown(float x, float y) {
         binding.circleMain.setDragged(true, x, y);
-        updatePickerAndLogo(true, true);
+        if (bigLogo && getMetronomeUtil().isPlaying()) {
+          updatePickerAndLogo(true, true);
+        }
       }
 
       @Override
@@ -306,6 +302,9 @@ public class MainFragment extends BaseFragment
       @Override
       public void onPickUpOrCancel() {
         binding.circleMain.setDragged(false, 0, 0);
+        if (bigLogo && getMetronomeUtil().isPlaying()) {
+          updatePickerAndLogo(false, true);
+        }
       }
     });
 
@@ -464,7 +463,6 @@ public class MainFragment extends BaseFragment
 
     ViewUtil.setOnClickListeners(
         this,
-        binding.frameMainLogo,
         binding.buttonMainAddBeat,
         binding.buttonMainRemoveBeat,
         binding.buttonMainAddSubdivision,
@@ -502,7 +500,6 @@ public class MainFragment extends BaseFragment
     if (optionsUtil != null) {
       optionsUtil.saveState(outState);
     }
-    outState.putBoolean(SHOW_PICKER_NOT_LOGO, showPickerNotLogo);
   }
 
   public void updateMetronomeControls() {
@@ -540,6 +537,9 @@ public class MainFragment extends BaseFragment
     setTempo(tempo);
     binding.textSwitcherMainTempoTerm.setCurrentText(getTempoTerm(tempo));
 
+    boolean showLogo = bigLogo && getMetronomeUtil().isPlaying();
+    updatePickerAndLogo(!showLogo, false);
+
     ViewUtil.resetAnimatedIcon(binding.fabMainPlayStop);
     binding.fabMainPlayStop.setImageResource(
         getMetronomeUtil().isPlaying()
@@ -572,6 +572,9 @@ public class MainFragment extends BaseFragment
           ((Animatable) fabIcon).start();
         }
         updateFabCornerRadius(true, true);
+        if (bigLogo) {
+          updatePickerAndLogo(false, true);
+        }
       }
     });
     // Inside UI thread appears to be often not effective
@@ -594,6 +597,9 @@ public class MainFragment extends BaseFragment
           ((Animatable) icon).start();
         }
         updateFabCornerRadius(false, true);
+        if (bigLogo) {
+          updatePickerAndLogo(true, true);
+        }
       }
       stopTimerTransitionProgress();
       stopTimerProgress();
@@ -652,7 +658,9 @@ public class MainFragment extends BaseFragment
         }, 100); // flash screen for 100 milliseconds
       }
       if (tick.subdivision == 1) {
-        logoUtil.nextBeat(getMetronomeUtil().getInterval());
+        if (!bigLogo) {
+          logoUtil.nextBeat(getMetronomeUtil().getInterval());
+        }
         logoCenterUtil.nextBeat(getMetronomeUtil().getInterval());
         if (getMetronomeUtil().getTimerUnit().equals(UNIT.BARS)) {
           updateTimerDisplay();
@@ -730,10 +738,7 @@ public class MainFragment extends BaseFragment
   @Override
   public void onClick(View v) {
     int id = v.getId();
-    if (id == R.id.frame_main_logo) {
-      performHapticClick();
-      updatePickerAndLogo(!showPickerNotLogo, true);
-    } else if (id == R.id.button_main_add_beat) {
+    if (id == R.id.button_main_add_beat) {
       ViewUtil.startIcon(binding.buttonMainAddBeat.getIcon());
       performHapticClick();
       boolean success = getMetronomeUtil().addBeat();
@@ -1374,6 +1379,7 @@ public class MainFragment extends BaseFragment
     float pickerAlpha = showPickerNotLogo ? 1f : 0f;
     if (animated) {
       binding.imageMainLogoCenter.setVisibility(View.VISIBLE);
+      binding.imageMainLogo.setVisibility(View.VISIBLE);
       pickerLogoAnimator = ValueAnimator.ofFloat(binding.linearMainCenter.getAlpha(), pickerAlpha);
       pickerLogoAnimator.addUpdateListener(animation -> {
         float alpha = (float) animation.getAnimatedValue();
@@ -1386,15 +1392,17 @@ public class MainFragment extends BaseFragment
         @Override
         public void onAnimationEnd(Animator animation) {
           binding.imageMainLogoCenter.setVisibility(showPickerNotLogo ? View.GONE : View.VISIBLE);
+          binding.imageMainLogo.setVisibility(showPickerNotLogo ? View.VISIBLE : View.GONE);
         }
       });
       pickerLogoAnimator.setInterpolator(new FastOutSlowInInterpolator());
-      pickerLogoAnimator.setDuration(Constants.ANIM_DURATION_LONG);
+      pickerLogoAnimator.setDuration(300);
       pickerLogoAnimator.start();
     } else {
       binding.linearMainCenter.setAlpha(showPickerNotLogo ? 1f : 0f);
       binding.imageMainLogoCenter.setVisibility(showPickerNotLogo ? View.GONE : View.VISIBLE);
       binding.imageMainLogoCenter.setAlpha(showPickerNotLogo ? 0f : 1f);
+      binding.imageMainLogo.setVisibility(showPickerNotLogo ? View.VISIBLE : View.GONE);
       binding.imageMainLogo.setAlpha(showPickerNotLogo ? 1f : 0f);
       binding.imageMainLogoPlaceholder.setAlpha(showPickerNotLogo ? 0f : 1f);
     }

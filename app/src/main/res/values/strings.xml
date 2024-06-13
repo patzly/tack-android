@@ -236,6 +236,9 @@
   <string name="settings_keep_awake">Keep screen awake</string>
   <string name="settings_keep_awake_description">While metronome is playing</string>
 
+  <string name="settings_big_logo">Show big logo animation</string>
+  <string name="settings_big_logo_description">Instead of tempo picker while playing</string>
+
   <!-- ABOUT -->
 
   <string name="about_version">Version</string>

@@ -299,6 +299,17 @@
       app:layout_constraintStart_toEndOf="@id/container_main_start"
       app:layout_constraintEnd_toEndOf="parent">
 
+      <ImageView
+        android:id="@+id/image_main_logo_center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:src="@drawable/center_tack_logo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/linear_main_bottom"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
       <LinearLayout
         android:id="@+id/linear_main_center"
         android:layout_width="wrap_content"
@@ -382,17 +393,6 @@
           app:icon="@drawable/ic_round_navigate_after_anim" />
 
       </LinearLayout>
-
-      <ImageView
-        android:id="@+id/image_main_logo_center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:importantForAccessibility="no"
-        android:src="@drawable/center_tack_logo"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/linear_main_bottom"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
       <LinearLayout
         android:id="@+id/linear_main_bottom"

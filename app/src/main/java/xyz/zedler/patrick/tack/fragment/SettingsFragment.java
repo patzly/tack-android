@@ -228,6 +228,11 @@ public class SettingsFragment extends BaseFragment
     );
     binding.switchSettingsReduceAnimations.jumpDrawablesToCurrentState();
 
+    binding.switchSettingsBigLogo.setChecked(
+        getSharedPrefs().getBoolean(PREF.BIG_LOGO, DEF.BIG_LOGO)
+    );
+    binding.switchSettingsBigLogo.jumpDrawablesToCurrentState();
+
     dialogUtilReset = new DialogUtil(activity, "reset");
     dialogUtilReset.createCaution(
         R.string.msg_reset,
@@ -312,7 +317,8 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsResetElapsed,
         binding.linearSettingsResetTimer,
         binding.linearSettingsFlashScreen,
-        binding.linearSettingsKeepAwake
+        binding.linearSettingsKeepAwake,
+        binding.linearSettingsBigLogo
     );
 
     ViewUtil.setOnCheckedChangeListeners(
@@ -327,7 +333,8 @@ public class SettingsFragment extends BaseFragment
         binding.switchSettingsResetElapsed,
         binding.switchSettingsResetTimer,
         binding.switchSettingsFlashScreen,
-        binding.switchSettingsKeepAwake
+        binding.switchSettingsKeepAwake,
+        binding.switchSettingsBigLogo
     );
   }
 
@@ -454,6 +461,8 @@ public class SettingsFragment extends BaseFragment
       binding.switchSettingsFlashScreen.toggle();
     } else if (id == R.id.linear_settings_keep_awake) {
       binding.switchSettingsKeepAwake.toggle();
+    } else if (id == R.id.linear_settings_big_logo) {
+      binding.switchSettingsBigLogo.toggle();
     }
   }
 
@@ -506,6 +515,10 @@ public class SettingsFragment extends BaseFragment
       ViewUtil.startIcon(binding.imageSettingsKeepAwake);
       getMetronomeUtil().setKeepAwake(isChecked);
       UiUtil.keepScreenAwake(activity, getMetronomeUtil().isPlaying() && isChecked);
+    } else if (id == R.id.switch_settings_big_logo) {
+      performHapticClick();
+      ViewUtil.startIcon(binding.imageSettingsBigLogo);
+      getSharedPrefs().edit().putBoolean(PREF.BIG_LOGO, isChecked).apply();
     }
   }
 
