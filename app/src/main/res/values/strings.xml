@@ -109,6 +109,8 @@
   <string name="msg_reset_description">Do you really want to reset the entire app including bookmarks and settings? This cannot be undone.</string>
   <string name="msg_gain">Play with volume boost?</string>
   <string name="msg_gain_description">Be careful not to play through headphones as loud sounds can cause ear damage!</string>
+  <string name="msg_split_screen">Window too small</string>
+  <string name="msg_split_screen_description">Tack may have problems to position metronome controls in split-screen mode. Please use a larger window if possible.</string>
   <string name="msg_notification_permission_denied">Notification permission is required for playback controls</string>
   <string name="msg_report_crash">Please report any crash with the crash log attached so I can try to fix them.</string>
   <string name="msg_copied_to_clipboard">Copied to clipboard successfully</string>

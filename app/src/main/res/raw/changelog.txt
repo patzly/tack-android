@@ -2,6 +2,7 @@
 
 - New: setting to replace tempo picker with big logo animation while playing
 - New: badge on options button to indicate active modifiers
+- Improved: warning shown if window is too small in split-screen mode
 
 ## 4.1.0
 

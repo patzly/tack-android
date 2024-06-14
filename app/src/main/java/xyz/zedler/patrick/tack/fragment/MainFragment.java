@@ -102,7 +102,7 @@ public class MainFragment extends BaseFragment
   private ValueAnimator fabAnimator;
   private float cornerSizeStop, cornerSizePlay, cornerSizeCurrent;
   private int colorFlashNormal, colorFlashStrong, colorFlashMuted;
-  private DialogUtil dialogUtilGain;
+  private DialogUtil dialogUtilGain, dialogUtilSplitScreen;
   private OptionsUtil optionsUtil;
   private ShortcutUtil shortcutUtil;
   private TempoTapUtil tempoTapUtil;
@@ -133,6 +133,7 @@ public class MainFragment extends BaseFragment
     }
     binding = null;
     dialogUtilGain.dismiss();
+    dialogUtilSplitScreen.dismiss();
     optionsUtil.dismiss();
   }
 
@@ -205,6 +206,16 @@ public class MainFragment extends BaseFragment
           getMetronomeUtil().start();
         });
     dialogUtilGain.showIfWasShown(savedInstanceState);
+
+    dialogUtilSplitScreen = new DialogUtil(activity, "split_screen");
+    dialogUtilSplitScreen.createClose(
+        R.string.msg_split_screen, R.string.msg_split_screen_description
+    );
+    int screenHeightDp = UiUtil.dpFromPx(activity, UiUtil.getDisplayHeight(activity));
+    int screenWidthDp = UiUtil.dpFromPx(activity, UiUtil.getDisplayWidth(activity));
+    if ((isPortrait && screenHeightDp < 700) || (!isPortrait && screenWidthDp < 600)) {
+      dialogUtilSplitScreen.show();
+    }
 
     optionsUtil = new OptionsUtil(activity, this, () -> updateOptions(true));
     boolean hideOptions = isLandTablet;
@@ -950,6 +961,9 @@ public class MainFragment extends BaseFragment
           show ? ResUtil.getColor(activity, R.attr.colorError) : Color.TRANSPARENT
       );
       new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        if (binding == null) {
+          return;
+        }
         if (show) {
           BadgeUtils.attachBadgeDrawable(beatsCountBadge, binding.linearMainBeatsBg);
         } else {
@@ -1037,6 +1051,9 @@ public class MainFragment extends BaseFragment
           show ? ResUtil.getColor(activity, R.attr.colorError) : Color.TRANSPARENT
       );
       new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        if (binding == null) {
+          return;
+        }
         if (show) {
           BadgeUtils.attachBadgeDrawable(subsCountBadge, binding.linearMainSubsBg);
         } else {
@@ -1162,6 +1179,9 @@ public class MainFragment extends BaseFragment
           show ? ResUtil.getColor(activity, R.attr.colorError) : Color.TRANSPARENT
       );
       new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        if (binding == null) {
+          return;
+        }
         if (show) {
           BadgeUtils.attachBadgeDrawable(optionsBadge, binding.buttonMainOptions);
         } else {
