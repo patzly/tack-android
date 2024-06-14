@@ -1384,9 +1384,11 @@ public class MainFragment extends BaseFragment
       pickerLogoAnimator.addUpdateListener(animation -> {
         float alpha = (float) animation.getAnimatedValue();
         binding.linearMainCenter.setAlpha(alpha);
-        binding.imageMainLogoCenter.setAlpha(1 - alpha);
-        binding.imageMainLogo.setAlpha(alpha);
+        binding.imageMainLogo.setScaleX(alpha);
+        binding.imageMainLogo.setScaleY(alpha);
         binding.imageMainLogoPlaceholder.setAlpha(1 - alpha);
+        binding.imageMainLogoPlaceholder.setScaleX(1 - alpha);
+        binding.imageMainLogoPlaceholder.setScaleY(1 - alpha);
       });
       pickerLogoAnimator.addListener(new AnimatorListenerAdapter() {
         @Override
@@ -1401,10 +1403,12 @@ public class MainFragment extends BaseFragment
     } else {
       binding.linearMainCenter.setAlpha(showPickerNotLogo ? 1f : 0f);
       binding.imageMainLogoCenter.setVisibility(showPickerNotLogo ? View.GONE : View.VISIBLE);
-      binding.imageMainLogoCenter.setAlpha(showPickerNotLogo ? 0f : 1f);
       binding.imageMainLogo.setVisibility(showPickerNotLogo ? View.VISIBLE : View.GONE);
-      binding.imageMainLogo.setAlpha(showPickerNotLogo ? 1f : 0f);
+      binding.imageMainLogo.setScaleX(showPickerNotLogo ? 1f : 0f);
+      binding.imageMainLogo.setScaleY(showPickerNotLogo ? 1f : 0f);
       binding.imageMainLogoPlaceholder.setAlpha(showPickerNotLogo ? 0f : 1f);
+      binding.imageMainLogoPlaceholder.setScaleX(showPickerNotLogo ? 0f : 1f);
+      binding.imageMainLogoPlaceholder.setScaleY(showPickerNotLogo ? 0f : 1f);
     }
   }
 

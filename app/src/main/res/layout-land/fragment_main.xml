@@ -54,12 +54,12 @@
 
         <ImageView
           android:id="@+id/image_main_logo_placeholder"
-          android:layout_width="12dp"
-          android:layout_height="12dp"
+          android:layout_width="16dp"
+          android:layout_height="16dp"
           android:layout_gravity="center"
           android:importantForAccessibility="no"
           android:src="@drawable/ic_beat_oval_anim"
-          app:tint="?attr/colorOnSurfaceVariant" />
+          app:tint="?attr/colorOutlineVariant" />
 
       </FrameLayout>
 
@@ -104,11 +104,11 @@
         android:paddingStart="16dp"
         android:paddingEnd="0dp"
         android:paddingTop="16dp"
+        android:animateLayoutChanges="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_max="@dimen/max_content_width">
-        <!-- not layoutAnim=true, the animation would be visible at app startup -->
 
         <LinearLayout
           android:id="@+id/linear_main_beats_bg"
@@ -308,7 +308,9 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/linear_main_bottom"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_max="@dimen/bpm_picker_size"
+        app:layout_constraintWidth_max="@dimen/bpm_picker_size" />
 
       <LinearLayout
         android:id="@+id/linear_main_center"
