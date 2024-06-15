@@ -34,6 +34,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -244,11 +246,20 @@ fun TapButton(
   val animTrigger = remember { mutableStateOf(false) }
   val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
   IconButton(
-    onClick = {
-      onClick()
-      animTrigger.value = !animTrigger.value
-    },
-    modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
+    onClick = {},
+    modifier = modifier
+      .touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
+      .pointerInput(Unit) {
+        awaitPointerEventScope {
+          while (true) {
+            val event = awaitPointerEvent()
+            if (event.type == PointerEventType.Press) {
+              onClick()
+              animTrigger.value = !animTrigger.value
+            }
+          }
+        }
+      }
   ) {
     AnimatedVectorDrawable(
       resId = R.drawable.ic_round_touch_app_anim,

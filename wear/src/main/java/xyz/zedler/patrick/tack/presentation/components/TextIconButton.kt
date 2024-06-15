@@ -38,9 +38,6 @@ fun TextIconButton(
 ) {
   FilledTonalIconButton(
     onClick = onClick,
-    colors = IconButtonDefaults.filledTonalIconButtonColors(
-      containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-    ),
     modifier = modifier.touchTargetAwareSize(IconButtonDefaults.SmallButtonSize)
   ) {
     Text(
