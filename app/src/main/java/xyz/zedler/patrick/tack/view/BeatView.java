@@ -54,6 +54,14 @@ public class BeatView extends FrameLayout {
       R.drawable.ic_beat_pentagon_anim,
   };
 
+  private static boolean isColorRed(int color) {
+    int tolerance = 30;
+    int red = Color.red(color);
+    int green = Color.green(color);
+    int blue = Color.blue(color);
+    return red > green + tolerance && red > blue + tolerance;
+  }
+
   private AnimatorSet animatorSet;
   private int iconSize, iconSizeDefault, iconSizeBeat, iconSizeNoBeat, iconSizeMuted;
   private FastOutSlowInInterpolator interpolator;
@@ -142,6 +150,9 @@ public class BeatView extends FrameLayout {
     iconSize = iconSizeDefault;
 
     colorNormal = ResUtil.getColor(context, R.attr.colorPrimary);
+    if (isColorRed(colorNormal)) {
+      colorNormal = ResUtil.getColor(context, R.attr.colorTertiary);
+    }
     colorStrong = ResUtil.getColor(context, R.attr.colorError);
     colorSub = ResUtil.getColor(context, R.attr.colorOnSurfaceVariant);
     colorMuted = ResUtil.getColor(context, R.attr.colorOutline);
