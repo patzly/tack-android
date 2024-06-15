@@ -302,7 +302,11 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   public void requestNotificationPermission() {
     boolean hasPermission = NotificationUtil.hasPermission(this);
     if (!hasPermission && VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
-      requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
+      try {
+        requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
+      } catch (IllegalStateException e) {
+        Log.e(TAG, "requestNotificationPermission: ", e);
+      }
     }
   }
 

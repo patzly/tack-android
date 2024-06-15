@@ -1287,6 +1287,9 @@ public class MainFragment extends BaseFragment
     getMetronomeUtil().setTempo(
         Math.min(Math.max(tempoNew, Constants.TEMPO_MIN), Constants.TEMPO_MAX)
     );
+    if (binding == null) {
+      return;
+    }
     binding.textMainTempo.setText(String.valueOf(getMetronomeUtil().getTempo()));
     String termNew = getTempoTerm(tempoNew);
     if (!termNew.equals(getTempoTerm(tempoOld))) {

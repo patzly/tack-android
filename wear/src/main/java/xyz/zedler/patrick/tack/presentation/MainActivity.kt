@@ -102,7 +102,11 @@ class MainActivity : ComponentActivity(), ServiceConnection {
       }
       override fun onPermissionMissing() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-          requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+          try {
+            requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+          } catch (e: IllegalStateException) {
+            Log.e(TAG, "onPermissionMissing: ", e)
+          }
         }
       }
     })
@@ -129,7 +133,11 @@ class MainActivity : ComponentActivity(), ServiceConnection {
         viewModel = viewModel,
         onPermissionRequestClick = {
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            try {
+              requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            } catch (e: IllegalStateException) {
+              Log.e(TAG, "onPermissionMissing: ", e)
+            }
           }
         },
         onRateClick = {

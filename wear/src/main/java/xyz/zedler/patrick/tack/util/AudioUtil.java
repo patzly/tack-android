@@ -184,8 +184,12 @@ public class AudioUtil implements OnAudioFocusChangeListener {
   public void setGain(int gain) {
     this.gain = gain;
     if (loudnessEnhancer != null) {
-      loudnessEnhancer.setTargetGain(gain * 100);
-      loudnessEnhancer.setEnabled(gain > 0);
+      try {
+        loudnessEnhancer.setTargetGain(gain * 100);
+        loudnessEnhancer.setEnabled(gain > 0);
+      } catch (RuntimeException e) {
+        Log.e(TAG, "Failed to set target gain: ", e);
+      }
     }
   }
 
