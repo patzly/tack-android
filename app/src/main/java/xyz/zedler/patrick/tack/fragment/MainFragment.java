@@ -27,8 +27,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -446,12 +444,7 @@ public class MainFragment extends BaseFragment
         Log.e(TAG, "onViewCreated: get bookmarks: ", e);
       }
     }
-    if (VERSION.SDK_INT >= VERSION_CODES.N) {
-      bookmarks.sort((o1, o2) -> Integer.compare(o2, o1)
-      );
-    } else {
-      Collections.reverse(bookmarks);
-    }
+    Collections.sort(bookmarks);
     for (int i = 0; i < bookmarks.size(); i++) {
       binding.chipGroupMainBookmarks.addView(getBookmarkChip(bookmarks.get(i)));
     }
@@ -539,7 +532,20 @@ public class MainFragment extends BaseFragment
     updateBeatControls(false);
     updateSubs(getMetronomeUtil().getSubdivisions());
     updateSubControls(false);
-    refreshBookmarks();
+
+    binding.scrollHorizMainBookmarks.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override
+          public void onGlobalLayout() {
+            refreshBookmarks(true, false);
+            // Kill ViewTreeObserver
+            if (binding.scrollHorizMainBookmarks.getViewTreeObserver().isAlive()) {
+              binding.scrollHorizMainBookmarks.getViewTreeObserver().removeOnGlobalLayoutListener(
+                  this
+              );
+            }
+          }
+        });
     measureTimerControls(true); // calls updateTimerControls when measured
     updateElapsedDisplay();
     updateOptions(false);
@@ -669,10 +675,10 @@ public class MainFragment extends BaseFragment
         }, 100); // flash screen for 100 milliseconds
       }
       if (tick.subdivision == 1) {
-        if (!bigLogo) {
-          logoUtil.nextBeat(getMetronomeUtil().getInterval());
+        logoUtil.nextBeat(getMetronomeUtil().getInterval());
+        if (bigLogo) {
+          logoCenterUtil.nextBeat(getMetronomeUtil().getInterval());
         }
-        logoCenterUtil.nextBeat(getMetronomeUtil().getInterval());
         if (getMetronomeUtil().getTimerUnit().equals(UNIT.BARS)) {
           updateTimerDisplay();
         }
@@ -862,11 +868,20 @@ public class MainFragment extends BaseFragment
       performHapticClick();
       int tempo = getMetronomeUtil().getTempo();
       if (bookmarks.size() < Constants.BOOKMARKS_MAX && !bookmarks.contains(tempo)) {
-        binding.chipGroupMainBookmarks.addView(getBookmarkChip(tempo));
-        bookmarks.add(tempo);
+        int position = 0;
+        while (position < bookmarks.size() && bookmarks.get(position) < tempo) {
+          position++;
+        }
+        binding.chipGroupMainBookmarks.addView(getBookmarkChip(tempo), position);
+        bookmarks.add(position, tempo);
         shortcutUtil.addShortcut(tempo);
         updateBookmarks();
-        refreshBookmarks();
+        refreshBookmarks(false, true);
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+          if (binding != null) {
+            refreshBookmarks(true, true);
+          }
+        }, 300);
       } else if (bookmarks.size() >= Constants.BOOKMARKS_MAX) {
         Snackbar snackbar = activity.getSnackbar(R.string.msg_bookmarks_max, Snackbar.LENGTH_SHORT);
         snackbar.setAction(
@@ -876,7 +891,7 @@ public class MainFragment extends BaseFragment
               bookmarks.clear();
               shortcutUtil.removeAllShortcuts();
               updateBookmarks();
-              refreshBookmarks();
+              refreshBookmarks(true, true);
             }
         );
         showSnackbar(snackbar);
@@ -1203,7 +1218,12 @@ public class MainFragment extends BaseFragment
       bookmarks.remove((Integer) tempo); // Integer cast required, else it would take int as index
       shortcutUtil.removeShortcut(tempo);
       updateBookmarks();
-      refreshBookmarks();
+      refreshBookmarks(false, true);
+      new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        if (binding != null) {
+          refreshBookmarks(true, true);
+        }
+      }, 300);
     });
     chip.setStateListAnimator(null);
     chip.setText(getString(R.string.label_bpm_value, tempo));
@@ -1225,7 +1245,7 @@ public class MainFragment extends BaseFragment
     getSharedPrefs().edit().putStringSet(PREF.BOOKMARKS, bookmarksSet).apply();
   }
 
-  private void refreshBookmarks() {
+  private void refreshBookmarks(boolean alignActiveOrCenter, boolean animated) {
     binding.buttonMainBookmark.setEnabled(!bookmarks.contains(getMetronomeUtil().getTempo()));
     for (int i = 0; i < binding.chipGroupMainBookmarks.getChildCount(); i++) {
       Chip chip = (Chip) binding.chipGroupMainBookmarks.getChildAt(i);
@@ -1251,7 +1271,7 @@ public class MainFragment extends BaseFragment
       chip.setChipIconTint(ColorStateList.valueOf(colorIcon));
       chip.setCloseIconTint(ColorStateList.valueOf(colorIcon));
       chip.setTextColor(colorText);
-      if (isActive) {
+      if (isActive && alignActiveOrCenter) {
         boolean isRtl = UiUtil.isLayoutRtl(activity);
         int scrollX = binding.scrollHorizMainBookmarks.getScrollX();
         int chipStart = isRtl ? chip.getRight() : chip.getLeft();
@@ -1261,14 +1281,24 @@ public class MainFragment extends BaseFragment
         int start = chipStart + margin * (isRtl ? 1 : -1);
         int end = chipEnd + margin * (isRtl ? -1 : 1);
         if (start < scrollX) {
-          binding.scrollHorizMainBookmarks.smoothScrollTo(start, 0);
+          if (animated) {
+            binding.scrollHorizMainBookmarks.smoothScrollTo(start, 0);
+          } else {
+            binding.scrollHorizMainBookmarks.scrollTo(start, 0);
+          }
         } else if (end > (scrollX + scrollViewWidth)) {
           int scrollTo = end + scrollViewWidth * (isRtl ? 1 : -1);
-          binding.scrollHorizMainBookmarks.smoothScrollTo(scrollTo, 0);
+          if (animated) {
+            binding.scrollHorizMainBookmarks.smoothScrollTo(scrollTo, 0);
+          } else {
+            binding.scrollHorizMainBookmarks.scrollTo(scrollTo, 0);
+          }
         }
       }
     }
-    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBookmarks);
+    if (alignActiveOrCenter) {
+      ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBookmarks);
+    }
   }
 
   private void changeTempo(int difference) {
@@ -1302,7 +1332,7 @@ public class MainFragment extends BaseFragment
       );
       binding.textSwitcherMainTempoTerm.setText(termNew);
     }
-    refreshBookmarks();
+    refreshBookmarks(true, true);
     setButtonStates();
   }
 
@@ -1421,7 +1451,7 @@ public class MainFragment extends BaseFragment
         }
       });
       pickerLogoAnimator.setInterpolator(new FastOutSlowInInterpolator());
-      pickerLogoAnimator.setDuration(300);
+      pickerLogoAnimator.setDuration(reduceAnimations ? 150 : 300);
       pickerLogoAnimator.start();
     } else {
       binding.linearMainCenter.setAlpha(showPickerNotLogo ? 1f : 0f);
