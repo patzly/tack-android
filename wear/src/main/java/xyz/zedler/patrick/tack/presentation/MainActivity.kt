@@ -64,24 +64,6 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
     setTheme(android.R.style.Theme_DeviceDefault)
 
-    viewModel = MainViewModel(
-      metronomeUtil,
-      object : MainViewModel.KeepAwakeListener {
-        override fun onKeepAwakeChanged(keepAwake: Boolean) {
-          keepScreenAwake(this@MainActivity, keepAwake)
-        }
-      }
-    )
-    updateMetronomeUtil()
-
-    requestPermissionLauncher = registerForActivityResult(
-      ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-      if (!isGranted) {
-        viewModel.changeShowPermissionDialog(true)
-      }
-    }
-
     tempoTapUtil = TempoTapUtil()
     metronomeUtil = MetronomeUtil(this, false)
     metronomeUtil.addListener(object : MetronomeUtil.MetronomeListenerAdapter() {
@@ -110,6 +92,24 @@ class MainActivity : ComponentActivity(), ServiceConnection {
         }
       }
     })
+
+    viewModel = MainViewModel(
+      metronomeUtil,
+      object : MainViewModel.KeepAwakeListener {
+        override fun onKeepAwakeChanged(keepAwake: Boolean) {
+          keepScreenAwake(this@MainActivity, keepAwake)
+        }
+      }
+    )
+    updateMetronomeUtil()
+
+    requestPermissionLauncher = registerForActivityResult(
+      ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+      if (!isGranted) {
+        viewModel.changeShowPermissionDialog(true)
+      }
+    }
 
     buttonUtilFaster = ButtonUtil(this, object : OnPressListener {
       override fun onPress() {
