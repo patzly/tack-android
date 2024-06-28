@@ -463,15 +463,15 @@ public class MetronomeUtil {
       if (beatModeVibrate || alwaysVibrate) {
         switch (tick.type) {
           case TickType.STRONG:
-            hapticUtil.heavyClick(strongVibration);
+            hapticUtil.heavyClick();
             break;
           case TickType.SUB:
-            hapticUtil.tick(strongVibration);
+            hapticUtil.tick();
             break;
           case TickType.MUTED:
             break;
           default:
-            hapticUtil.click(strongVibration);
+            hapticUtil.click();
         }
       }
       for (MetronomeListener listener : listeners) {
