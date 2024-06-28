@@ -55,7 +55,7 @@ public class MetronomeUtil {
   private int tempo;
   private long tickIndex, latency;
   private boolean playing, useSubdivisions, beatModeVibrate;
-  private boolean alwaysVibrate, strongVibration, flashScreen, keepAwake, reduceAnim;
+  private boolean alwaysVibrate, flashScreen, keepAwake, reduceAnim;
   private boolean neverStartedWithGain = true;
 
   public MetronomeUtil(@NonNull Context context, boolean fromService) {
@@ -81,7 +81,6 @@ public class MetronomeUtil {
     useSubdivisions = sharedPrefs.getBoolean(Pref.USE_SUBS, Def.USE_SUBS);
     latency = sharedPrefs.getLong(Pref.LATENCY, Def.LATENCY);
     alwaysVibrate = sharedPrefs.getBoolean(Pref.ALWAYS_VIBRATE, Def.ALWAYS_VIBRATE);
-    strongVibration = sharedPrefs.getBoolean(Pref.STRONG_VIBRATION, Def.STRONG_VIBRATION);
     flashScreen = sharedPrefs.getBoolean(Pref.FLASH_SCREEN, Def.FLASH_SCREEN);
     keepAwake = sharedPrefs.getBoolean(Pref.KEEP_AWAKE, Def.KEEP_AWAKE);
     reduceAnim = sharedPrefs.getBoolean(Pref.REDUCE_ANIM, Def.REDUCE_ANIM);
@@ -90,6 +89,7 @@ public class MetronomeUtil {
     setIgnoreFocus(sharedPrefs.getBoolean(Pref.IGNORE_FOCUS, Def.IGNORE_FOCUS));
     setGain(sharedPrefs.getInt(Pref.GAIN, Def.GAIN));
     setBeatModeVibrate(sharedPrefs.getBoolean(Pref.BEAT_MODE_VIBRATE, Def.BEAT_MODE_VIBRATE));
+    setStrongVibration(sharedPrefs.getBoolean(Pref.STRONG_VIBRATION, Def.STRONG_VIBRATION));
   }
 
   private static List<String> arrayAsList(String[] array) {
@@ -383,13 +383,12 @@ public class MetronomeUtil {
   }
 
   public void setStrongVibration(boolean strong) {
-    strongVibration = strong;
-    hapticUtil.setStrongVibration(strong);
+    hapticUtil.setStrong(strong);
     sharedPrefs.edit().putBoolean(Pref.STRONG_VIBRATION, strong).apply();
   }
 
   public boolean isStrongVibration() {
-    return strongVibration;
+    return hapticUtil.isStrong();
   }
 
   public boolean areHapticEffectsPossible() {

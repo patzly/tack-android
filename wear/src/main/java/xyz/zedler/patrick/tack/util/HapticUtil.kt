@@ -33,17 +33,13 @@ class HapticUtil(context: Context) {
   } else {
     context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
   }
-  private var enabled: Boolean
-
-  init {
-    enabled = hasVibrator()
-  }
+  private var enabled: Boolean = hasVibrator()
+  private var strong: Boolean = false
 
   private fun vibrate(duration: Long) {
-    if (!enabled) {
-      return
+    if (enabled) {
+      vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
     }
-    vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
   }
 
   private fun vibrate(effectId: Int) {
@@ -52,7 +48,7 @@ class HapticUtil(context: Context) {
     }
   }
 
-  fun tick(strong: Boolean) {
+  fun tick() {
     if (Build.VERSION.SDK_INT >= VERSION_CODES.Q && !strong) {
       vibrate(VibrationEffect.EFFECT_TICK)
     } else {
@@ -60,7 +56,7 @@ class HapticUtil(context: Context) {
     }
   }
 
-  fun click(strong: Boolean) {
+  fun click() {
     if (Build.VERSION.SDK_INT >= VERSION_CODES.Q && !strong) {
       vibrate(VibrationEffect.EFFECT_CLICK)
     } else {
@@ -68,7 +64,7 @@ class HapticUtil(context: Context) {
     }
   }
 
-  fun heavyClick(strong: Boolean) {
+  fun heavyClick() {
     if (Build.VERSION.SDK_INT >= VERSION_CODES.Q && !strong) {
       vibrate(VibrationEffect.EFFECT_HEAVY_CLICK)
     } else {
@@ -76,24 +72,28 @@ class HapticUtil(context: Context) {
     }
   }
 
-  fun setEnabled(enabled: Boolean) {
-    this.enabled = enabled && hasVibrator()
-  }
+  var isEnabled: Boolean
+    get() = enabled
+    set(value) {
+      enabled = value && vibrator.hasVibrator()
+    }
 
-  fun setStrongVibration(enabled: Boolean) {
-    this.enabled = enabled && hasVibrator()
-  }
+  var isStrong: Boolean
+    get() = strong
+    set(value) {
+      strong = value
+    }
 
   fun hasVibrator(): Boolean {
     return vibrator.hasVibrator()
   }
 
   companion object {
-    const val TICK: Long = 13
-    const val TICK_STRONG: Long = 20
-    const val CLICK: Long = 20
-    const val CLICK_STRONG: Long = 50
-    const val HEAVY: Long = 50
-    const val HEAVY_STRONG: Long = 80
+    private const val TICK: Long = 13
+    private const val TICK_STRONG: Long = 20
+    private const val CLICK: Long = 20
+    private const val CLICK_STRONG: Long = 50
+    private const val HEAVY: Long = 50
+    private const val HEAVY_STRONG: Long = 80
   }
 }
