@@ -310,9 +310,13 @@ public class AudioUtil implements OnAudioFocusChangeListener {
   }
 
   private static void writeAudio(AudioTrack track, float[] data, int size) {
-    int result = track.write(data, 0, size, AudioTrack.WRITE_BLOCKING);
-    if (result < 0) {
-      throw new IllegalStateException("Failed to play audio data. Error code: " + result);
+    try {
+      int result = track.write(data, 0, size, AudioTrack.WRITE_BLOCKING);
+      if (result < 0) {
+        throw new IllegalStateException("Error code: " + result);
+      }
+    } catch (Exception e) {
+      Log.e(TAG, "writeAudio: failed to play audion data", e);
     }
   }
 
