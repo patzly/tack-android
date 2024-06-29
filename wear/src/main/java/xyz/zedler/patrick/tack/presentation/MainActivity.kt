@@ -140,28 +140,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
             }
           }
         },
-        onRateClick = {
-          val packageName = applicationContext.packageName
-          val goToMarket = Intent(
-            Intent.ACTION_VIEW,
-            Uri.parse("market://details?id=$packageName")
-          )
-          goToMarket.addFlags(
-            Intent.FLAG_ACTIVITY_NO_HISTORY or
-                Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
-                Intent.FLAG_ACTIVITY_MULTIPLE_TASK
-          )
-          try {
-            startActivity(goToMarket)
-          } catch (e: ActivityNotFoundException) {
-            startActivity(
-              Intent(
-                Intent.ACTION_VIEW,
-                Uri.parse("http://play.google.com/store/apps/details?id=$packageName")
-              )
-            )
-          }
-        }
+        onRateClick = { onRateClick() }
       )
     }
   }
@@ -261,5 +240,28 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     getMetronomeUtil().setToPreferences()
     viewModel.metronomeUtil = getMetronomeUtil()
     viewModel.mutableIsPlaying.value = getMetronomeUtil().isPlaying
+  }
+
+  private fun onRateClick() {
+    val packageName = applicationContext.packageName
+    val goToMarket = Intent(
+      Intent.ACTION_VIEW,
+      Uri.parse("market://details?id=$packageName")
+    )
+    goToMarket.addFlags(
+      Intent.FLAG_ACTIVITY_NO_HISTORY or
+          Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
+          Intent.FLAG_ACTIVITY_MULTIPLE_TASK
+    )
+    try {
+      startActivity(goToMarket)
+    } catch (e: ActivityNotFoundException) {
+      startActivity(
+        Intent(
+          Intent.ACTION_VIEW,
+          Uri.parse("http://play.google.com/store/apps/details?id=$packageName")
+        )
+      )
+    }
   }
 }

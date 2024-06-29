@@ -217,7 +217,9 @@ class MainViewModel(
   private fun keepAwake(): Boolean {
     return _keepAwake.value == true
         && mutableIsPlaying.value == true
-        && currentRoute == Screen.Main.route
+        && (currentRoute == Screen.Main.route
+        || currentRoute == Screen.Tempo.route
+        || currentRoute == Screen.Beats.route)
   }
 
   fun changeReduceAnim(reduce: Boolean) {
