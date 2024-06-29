@@ -388,7 +388,7 @@ public class MetronomeUtil {
   }
 
   public boolean isStrongVibration() {
-    return hapticUtil.isStrong();
+    return hapticUtil.getStrong();
   }
 
   public boolean areHapticEffectsPossible() {

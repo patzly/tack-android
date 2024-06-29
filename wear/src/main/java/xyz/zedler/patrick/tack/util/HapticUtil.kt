@@ -33,8 +33,11 @@ class HapticUtil(context: Context) {
   } else {
     context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
   }
-  private var enabled: Boolean = hasVibrator()
-  private var strong: Boolean = false
+  var enabled: Boolean = hasVibrator()
+    set(value) {
+      field = value && vibrator.hasVibrator()
+    }
+  var strong: Boolean = false
 
   private fun vibrate(duration: Long) {
     if (enabled) {
@@ -71,18 +74,6 @@ class HapticUtil(context: Context) {
       vibrate(if (strong) HEAVY_STRONG else HEAVY)
     }
   }
-
-  var isEnabled: Boolean
-    get() = enabled
-    set(value) {
-      enabled = value && vibrator.hasVibrator()
-    }
-
-  var isStrong: Boolean
-    get() = strong
-    set(value) {
-      strong = value
-    }
 
   fun hasVibrator(): Boolean {
     return vibrator.hasVibrator()
