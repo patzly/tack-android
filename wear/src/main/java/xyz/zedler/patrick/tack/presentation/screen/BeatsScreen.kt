@@ -237,7 +237,7 @@ fun ControlCard(
     enabled = false,
     contentPadding = PaddingValues(0.dp),
     colors = CardDefaults.cardColors(
-      contentColor = MaterialTheme.colorScheme.surfaceContainerHigh
+      containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
     ),
     modifier = Modifier.fillMaxWidth()
   ) {
@@ -266,6 +266,7 @@ fun ControlCard(
       FadingEdgeRow(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
+        color = MaterialTheme.colorScheme.surfaceContainerHigh,
         modifier = Modifier
           .fillMaxHeight()
           .weight(1f)
