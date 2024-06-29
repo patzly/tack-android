@@ -6,6 +6,7 @@
 - Improved: warning shown if window is too small in split-screen mode
 - Improved: order, limit and animation of bookmarks
 - Improved: tempo tap now measures time of touch instead of time of lift (Wear OS)
+- Improved: screen keep-awake behavior (Wear OS)
 - Fixed: conflicting colors of beats in red color themes
 - Fixed: crash when moving Tack to background during playback (Wear OS)
 - Fixed: various other crash causes
