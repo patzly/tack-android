@@ -67,7 +67,7 @@ public class SquigglyProgressDrawable extends Drawable {
   // Line speed in px per second
   private final float phaseSpeed;
   // Progress stroke width, both for wave and solid line
-  private float strokeWidth;
+  private float strokeWidth, gapWidth;
 
   private boolean animate = false;
   private boolean loopInvalidation = false;
@@ -76,7 +76,7 @@ public class SquigglyProgressDrawable extends Drawable {
     linePaint.setAntiAlias(true);
     linePaint.setStyle(Style.STROKE);
     linePaint.setStrokeCap(Cap.ROUND);
-    linePaint.setColor(ResUtil.getColor(context, R.attr.colorOutlineVariant));
+    linePaint.setColor(ResUtil.getColor(context, R.attr.colorSecondaryContainer));
     wavePaint.setAntiAlias(true);
     wavePaint.setStyle(Style.STROKE);
     wavePaint.setStrokeCap(Cap.ROUND);
@@ -85,6 +85,7 @@ public class SquigglyProgressDrawable extends Drawable {
     waveLength = UiUtil.dpToPx(context, 20);
     lineAmplitude = UiUtil.dpToPx(context, 1.5f);
     phaseSpeed = UiUtil.dpToPx(context, 8);
+    gapWidth = UiUtil.dpToPx(context, 4);
     setStrokeWidth(UiUtil.dpToPx(context, 4));
   }
 
@@ -129,7 +130,13 @@ public class SquigglyProgressDrawable extends Drawable {
 
       // Draw a flat line to the end of the region.
       // The discontinuity is hidden by the progress bar thumb shape.
-      canvas.drawLine(totalProgressPx, 0f, totalWidth, 0f, linePaint);
+      canvas.drawLine(
+          Math.min(totalProgressPx + linePaint.getStrokeWidth() + gapWidth, totalWidth),
+          0f, totalWidth, 0f,
+          linePaint
+      );
+      // Draw stop indicator
+      canvas.drawPoint(totalWidth, 0, wavePaint);
 
       // Draw round line cap at the beginning of the line
       canvas.drawPoint(0, 0, totalProgressPx > 0 ? wavePaint : linePaint);
@@ -175,8 +182,15 @@ public class SquigglyProgressDrawable extends Drawable {
       } else {
         // No transition, just draw a flat line to the end of the region.
         // The discontinuity is hidden by the progress bar thumb shape.
-        canvas.drawLine(totalProgressPx, 0f, totalWidth, 0f, linePaint);
+        canvas.drawLine(
+            Math.min(totalProgressPx + linePaint.getStrokeWidth() + gapWidth, totalWidth),
+            0f, totalWidth, 0f,
+            linePaint
+        );
       }
+
+      // Draw stop indicator
+      canvas.drawPoint(totalWidth, 0, wavePaint);
 
       // Draw round line cap at the beginning of the wave
       double startAmp = Math.cos(Math.abs(waveStart) / waveLength * TWO_PI);

@@ -5,6 +5,7 @@
 - New: strong vibration option (Wear OS)
 - Improved: warning shown if window is too small in split-screen mode
 - Improved: order, limit and animation of bookmarks
+- Improved: style of song duration progress slider
 - Improved: tempo tap now measures time of touch instead of time of lift (Wear OS)
 - Improved: screen keep-awake behavior (Wear OS)
 - Fixed: conflicting colors of beats in red color themes
