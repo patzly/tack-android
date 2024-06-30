@@ -175,7 +175,7 @@ public class MainFragment extends BaseFragment
     colorFlashNormal = ResUtil.getColor(activity, R.attr.colorPrimary);
     colorFlashStrong = ResUtil.getColor(activity, R.attr.colorError);
     colorFlashMuted = ResUtil.getColor(
-        activity, isLandTablet ? R.attr.colorSurface : android.R.attr.colorBackground
+        activity, isLandTablet ? R.attr.colorSurface : R.attr.colorSurface
     );
 
     beatsCountBadge = BadgeDrawable.create(activity);

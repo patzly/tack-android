@@ -76,7 +76,7 @@ public class SquigglyProgressDrawable extends Drawable {
     linePaint.setAntiAlias(true);
     linePaint.setStyle(Style.STROKE);
     linePaint.setStrokeCap(Cap.ROUND);
-    linePaint.setColor(ResUtil.getColor(context, R.attr.colorSurfaceVariant));
+    linePaint.setColor(ResUtil.getColor(context, R.attr.colorOutlineVariant));
     wavePaint.setAntiAlias(true);
     wavePaint.setStyle(Style.STROKE);
     wavePaint.setStrokeCap(Cap.ROUND);

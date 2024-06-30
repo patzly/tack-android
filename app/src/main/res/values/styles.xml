@@ -80,10 +80,6 @@
     <item name="shapeAppearance">?attr/shapeAppearanceCornerMedium</item>
   </style>
 
-  <style name="Widget.Tack.Snackbar.TextView" parent="Widget.Material3.Snackbar.TextView">
-    <item name="android:textColor">?attr/colorSurfaceVariant</item>
-  </style>
-
   <!-- Localized style, no empty base style needed -->
   <style
     name="Widget.Tack.Button.TextButton.Snackbar"

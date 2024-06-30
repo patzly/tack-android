@@ -723,7 +723,7 @@ public class CustomSlider extends Slider {
         },
         new int[] {
             ResUtil.getColor(getContext(), R.attr.colorPrimaryContainer), // onPrimary?
-            ResUtil.getColor(getContext(), R.attr.colorSurfaceVariant)
+            ResUtil.getColor(getContext(), R.attr.colorSurfaceContainerHighest)
         }
     );
   }

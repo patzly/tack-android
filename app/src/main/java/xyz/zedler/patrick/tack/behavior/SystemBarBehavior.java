@@ -243,7 +243,7 @@ public class SystemBarBehavior {
     boolean isLandTablet = UiUtil.isLandTablet(activity);
     boolean isDarkModeActive = UiUtil.isDarkModeActive(activity);
 
-    int colorScrim = ResUtil.getColor(activity, android.R.attr.colorBackground, 0.7f);
+    int colorScrim = ResUtil.getColor(activity, R.attr.colorSurface, 0.7f);
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { // 29
       window.setStatusBarColor(Color.TRANSPARENT);
@@ -266,7 +266,7 @@ public class SystemBarBehavior {
               ResUtil.getColor(activity, R.attr.colorOutlineVariant)
           );
           window.setNavigationBarColor(
-              ResUtil.getColor(activity, android.R.attr.colorBackground)
+              ResUtil.getColor(activity, R.attr.colorSurface)
           );
         }
       }
@@ -283,7 +283,7 @@ public class SystemBarBehavior {
             ResUtil.getColor(activity, R.attr.colorOutlineVariant)
         );
         window.setNavigationBarColor(
-            ResUtil.getColor(activity, android.R.attr.colorBackground)
+            ResUtil.getColor(activity, R.attr.colorSurface)
         );
       }
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) { // 26
