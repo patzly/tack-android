@@ -67,7 +67,8 @@ public class SquigglyProgressDrawable extends Drawable {
   // Line speed in px per second
   private final float phaseSpeed;
   // Progress stroke width, both for wave and solid line
-  private float strokeWidth, gapWidth;
+  private float strokeWidth;
+  private final float gapWidth;
 
   private boolean animate = false;
   private boolean loopInvalidation = false;
