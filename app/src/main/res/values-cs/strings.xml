@@ -23,9 +23,10 @@
 
   <string name="title_feedback">Zpětná vazba</string>
   <string name="title_about">O aplikaci</string>
-  <string name="title_licenses">Open source licence</string>
+  <string name="title_help">Nápověda</string>
+  <string name="title_licenses">Licence open source</string>
   <string name="title_settings">Nastavení</string>
-  <string name="title_notification_channel">Metronom</string>
+  <string name="title_notification_channel">Služba metronomu</string>
   <string name="title_options">Předvolby</string>
   <string name="title_general">Obecné</string>
   <string name="title_metronome">Metronom</string>
@@ -33,10 +34,18 @@
 
   <!-- LABELS -->
 
-  <string name="label_bpm_value">%1$d bpm</string>
-  <string name="label_bpm">bpm</string>
+  <string name="label_bpm_value">%1$d dob/min</string>
+  <string name="label_bpm">dob/min</string>
   <string name="label_ms">%1$s ms</string>
   <string name="label_db">+%1$d dB</string>
+  <string name="label_tempo_largo">Largo</string>
+  <string name="label_tempo_larghetto">Larghetto</string>
+  <string name="label_tempo_adagio">Adagio</string>
+  <string name="label_tempo_andante">Andante</string>
+  <string name="label_tempo_moderato">Moderato</string>
+  <string name="label_tempo_allegro">Allegro</string>
+  <string name="label_tempo_presto">Presto</string>
+  <string name="label_tempo_prestissimo">Prestissimo</string>
 
   <!-- ACTIONS -->
 
@@ -48,21 +57,99 @@
   <string name="action_play">Spustit</string>
   <string name="action_play_stop">Spustit/Zastavit</string>
   <string name="action_stop">Zastavit</string>
+  <string name="action_add_beat">Přidat dobu</string>
+  <string name="action_remove_beat">Odstranit dobu</string>
+  <string name="action_add_sub">Přidat subdivizi</string>
+  <string name="action_remove_sub">Odstranit subdivizi</string>
+  <string name="action_clear_all">Vymazat vše</string>
   <string name="action_tempo_tap">Naklikat tempo</string>
   <string name="action_bookmark">Záložka</string>
+  <string name="action_beat_mode">Režim metronomu</string>
   <string name="action_send_feedback">Poslat zpětnou vazbu</string>
   <string name="action_open_link">Otevřít externí webovou stránku</string>
-  <string name="action_reset">Vynulovat</string>
+  <string name="action_reset">Resetovat</string>
+  <string name="action_deactivate_gain">Deaktivovat zesílení</string>
   <string name="action_recommend">Doporučit</string>
   <string name="action_recommend_description">Řekni o apce svým kámošům</string>
   <string name="action_email">Poslat vývojáři e-mail</string>
   <string name="action_email_description">Kontaktovat vývojáře</string>
   <string name="action_rate">Ohodnotit na Google Play</string>
   <string name="action_rate_description">Podpořit vývoj</string>
+  <string name="action_issue">Otevřít nový problém na GitHubu</string>
   <string name="action_issue_description">Nahlásit chyby nebo navrhnout funkce</string>
+  <string name="action_retry">Zkusit znovu</string>
   <string name="action_logcat">Zobrazit logcat</string>
   <string name="action_copy_to_clipboard">Zkopírovat do schránky</string>
+  <string name="action_reload">Načíst znovu</string>
+
+  <!-- MESSAGES -->
+
+  <string name="msg_bookmarks_max">Dosažen limit záložek</string>
+  <string name="msg_feedback">Dobrá aplikace vyžaduje spoustu času a existuje díky zpětné vazbě od uživatelů.</string>
+  <string name="msg_feedback_contact">Máte nějaká přání, komentáře nebo dotazy? Kontaktujte mě!\nBudu také velmi rád, pokud zanecháte pěkné hodnocení v Obchodě Play.</string>
+  <string name="msg_recommend">Používám tuhle skvělou aplikaci metronomu: \n%1$s</string>
+  <string name="msg_vibration_unavailable">Vibrace není na tomto zařízení dostupná</string>
+  <string name="msg_service_running">Služba metronomu běží</string>
+  <string name="msg_service_running_return">Klepněte pro návrat do aplikace Tack</string>
+  <string name="msg_service_description">Služba pro nastavení a přehrávání metronomu</string>
+  <string name="msg_connection_lost">Ztraceno spojení se službou, vyžadován restart aplikace</string>
+  <string name="msg_reset">Resetovat vše?</string>
+  <string name="msg_reset_description">Opravdu chcete resetovat celou aplikaci včetně záložek a nastavení? Tato akce je nevratná.</string>
+  <string name="msg_gain">Přehrát se zesílenou hlasitostí?</string>
+  <string name="msg_gain_description">Dejte si pozor, abyste zvuk nepřehrávali ve sluchátkách, jelikož hlasité zvuky mohou způsobit poškození sluchu!</string>
+  <string name="msg_split_screen">Okno příliš malé</string>
+  <string name="msg_split_screen_description">V režimu rozdělené aplikace může mít Tack problém s pozicí ovládacích prvků metronomu. Pokud je to možné, použijte prosím větší okno.</string>
+  <string name="msg_notification_permission_denied">Pro ovládání přehrávání je vyžadováno oprávnění k oznámením.</string>
+  <string name="msg_report_crash">Nahlaste prosím jakýkoli pád a přidejte záznam z protokolu, abych mohl chybu opravit.</string>
+  <string name="msg_copied_to_clipboard">Úspěšně zkopírováno do schránky</string>
+
+  <!-- OPTIONS -->
+
+  <string name="options_unit_bars">Takty</string>
+  <plurals name="options_unit_bars">
+    <item quantity="one">%1$d takt</item>
+    <item quantity="few">%1$d takty</item>
+    <item quantity="many">%1$d taktů</item>
+    <item quantity="other">%1$d taktů</item>
+  </plurals>
+  <string name="options_unit_beats">Doby</string>
+  <plurals name="options_unit_beats">
+    <item quantity="one">%1$d doba</item>
+    <item quantity="few">%1$d doby</item>
+    <item quantity="many">%1$d dob</item>
+    <item quantity="other">%1$d dob</item>
+  </plurals>
+  <string name="options_unit_seconds">Sekundy</string>
+  <plurals name="options_unit_seconds">
+    <item quantity="one">%1$d sekunda</item>
+    <item quantity="few">%1$d sekundy</item>
+    <item quantity="many">%1$d sekund</item>
+    <item quantity="other">%1$d sekund</item>
+  </plurals>
+  <string name="options_unit_minutes">Minuty</string>
+  <plurals name="options_unit_minutes">
+    <item quantity="one">%1$d minuta</item>
+    <item quantity="few">%1$d minuty</item>
+    <item quantity="many">%1$d minut</item>
+    <item quantity="other">%1$d minut</item>
+  </plurals>
+  <string name="options_inactive">Neaktivní</string>
+  <string name="options_count_in">Počítat do</string>
+  <string name="options_count_in_description">Počkat %1$s před použitím úprav</string>
+  <string name="options_incremental">Postupná změna tempa</string>
+  <string name="options_incremental_amount_increase">Zvýšit tempo o %1$d dob/min</string>
+  <string name="options_incremental_amount_decrease">Snížit tempo o %1$d dob/min</string>
+  <string name="options_incremental_interval">Každých %1$s</string>
+  <string name="options_incremental_max">Až na %1$d dob/min</string>
+  <string name="options_incremental_min">Až na %1$d dob/min</string>
+  <string name="options_timer">Trvání skladby</string>
+  <string name="options_timer_description">Zastavit po %1$s</string>
+  <string name="options_mute">Ztlumené doby</string>
+  <string name="options_mute_play">Přehrát %1$s</string>
+  <string name="options_mute_mute">Ztlumit %1$s</string>
+  <string name="options_mute_random">Ztlumovat náhodně do %1$d %</string>
   <string name="options_swing">Swing</string>
+  <string name="options_swing_description">Subdivize nastavené pro shodu s vybraným procentem swingu</string>
   <string name="options_swing_3">Trioly</string>
   <string name="options_swing_5">Kvintoly</string>
   <string name="options_swing_7">Septoly</string>
@@ -70,6 +157,12 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">Jazyk</string>
+  <string name="settings_language_info">Mockrát děkuji všem překladatelům na Transifexu!\nPokud chcete pomoci s přeložením aplikace do vašeho jazyka, navštivte prosím GitHub aplikace Tack.</string>
+  <string name="settings_language_system">Podle systému</string>
+  <string name="settings_language_system_description">Angličtina, pokud není dostupný překlad</string>
+
+  <string name="settings_theme">Motiv</string>
+  <string name="settings_theme_description">Rozmanitost pro váš styl</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
   <string name="settings_theme_auto">Automaticky</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
@@ -78,13 +171,71 @@
   <string name="settings_theme_light">Světlý</string>
 
   <string name="settings_contrast">Kontrast</string>
+  <string name="settings_contrast_description">Přístupnost pro vaše vidění</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast. The button width should be as dense as possible. -->
+  <string name="settings_contrast_standard">Běžný</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_medium">Střední</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_high">Vysoký</string>
+  <string name="settings_contrast_dynamic">Kontrast pro motiv zařízení musíte nastavit v nastavení systému.</string>
+  <string name="settings_contrast_dynamic_unsupported">Dynamický kontrast pro motiv zařízení je dostupný pouze na systému Android 14+</string>
+
+  <string name="settings_transition">Použít efekt posunutí při přechodu mezi stránkami aplikace</string>
+  <string name="settings_transition_description">Namísto vyblednutí</string>
+
+  <string name="settings_haptic">Haptická odezva</string>
+  <string name="settings_haptic_description">Navíc k haptickým dobám v režimu vibrací</string>
+
+  <string name="settings_reduce_animations">Omezit animace</string>
+  <string name="settings_reduce_animations_description">Může zvýšit výkon</string>
+
+  <string name="settings_reset">Resetovat vše</string>
+  <string name="settings_reset_description">Tato akce je nevratná</string>
+
   <string name="settings_sound">Zvuk metronomu</string>
   <string name="settings_sound_wood">Dřívka</string>
   <string name="settings_sound_sine">Sinusoida</string>
+  <string name="settings_sound_mechanical">Mechanický</string>
+  <string name="settings_sound_beatboxing_1">Beatbox 1</string>
+  <string name="settings_sound_beatboxing_2">Beatbox 2</string>
+  <string name="settings_sound_hands">Ruce</string>
+  <string name="settings_sound_folding">Pravidlo skládání</string>
 
-  <string name="settings_latency">Korekce latence</string>
+  <string name="settings_latency">Oprava zpoždění</string>
+  <string name="settings_latency_description">Kompenzace zpoždění zvukového výstupu systému pro vibrace a vizualizace</string>
+
+  <string name="settings_ignore_focus">Ignorovat zaměření zvuku</string>
+  <string name="settings_ignore_focus_description">Pokračovat v přehrávání, i když jiná aplikace začne přehrávat zvuk</string>
+
+  <string name="settings_gain">Zesílení hlasitosti</string>
+  <string name="settings_gain_description">Zesílení v dB (navíc k systémové hlasitosti)</string>
+  <string name="settings_gain_warning">Používejte s opatrností!</string>
+  <string name="settings_gain_disclaimer">Při povolení zesílení bude před každým spuštěním zobrazeno varování. Vývojář nenese žádnou zodpovědnost za jakékoli potenciální škody.</string>
+
+  <string name="settings_show_subs">Zobrazit ovládání subdivizí</string>
+  <string name="settings_show_subs_description">Rozmanitější rytmy</string>
+
+  <string name="settings_always_vibrate">Vždy vibrovat</string>
+  <string name="settings_always_vibrate_description">I se zvukem</string>
+
+  <string name="settings_elapsed">Zobrazit uplynulý čas</string>
+  <string name="settings_elapsed_description">Uvidíte, jak dlouho cvičíte</string>
+
+  <string name="settings_reset_elapsed">Resetovat uplynulý čas po zastavení</string>
+  <string name="settings_reset_elapsed_description">Namísto pozastavení do zavření aplikace</string>
+
+  <string name="settings_reset_timer">Resetovat časovač po zastavení</string>
+  <string name="settings_reset_timer_description">Namísto pozastavení</string>
+
+  <string name="settings_flash_screen">Blikání obrazovky</string>
+  <string name="settings_flash_screen_description">Při každé době</string>
+
   <string name="settings_keep_awake">Nezhasínat obrazovku</string>
   <string name="settings_keep_awake_description">Když metronom hraje</string>
+
+  <string name="settings_big_logo">Zobrazit velkou animaci loga</string>
+  <string name="settings_big_logo_description">Namísto výběru tempa při přehrávání</string>
 
   <!-- ABOUT -->
 
