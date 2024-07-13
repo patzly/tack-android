@@ -97,6 +97,8 @@
   <string name="msg_reset_description">你真的想要重置包括書籤和設置在內整個應用程序嗎？這是無法撤銷的。</string>
   <string name="msg_gain">音量增強下播放？</string>
   <string name="msg_gain_description">小心不要透過耳機播放，因為高音量會損傷耳朵！</string>
+  <string name="msg_split_screen">視窗太小</string>
+  <string name="msg_split_screen_description">Tack 可能會在分割畫面模式下定位節拍器控制時遇到問題。如果可以，請使用更大的視窗。</string>
   <string name="msg_notification_permission_denied">播放控制需要通知權限</string>
   <string name="msg_report_crash">請報告任何崩潰情況，並附上崩潰日誌，以便我嘗試修復它們。</string>
   <string name="msg_copied_to_clipboard">已成功複製到剪貼簿</string>
@@ -219,6 +221,9 @@
 
   <string name="settings_keep_awake">保持屏幕喚醒</string>
   <string name="settings_keep_awake_description">當節拍器播放時</string>
+
+  <string name="settings_big_logo">顯示大型標識動畫</string>
+  <string name="settings_big_logo_description">而不是在播放時顯示節奏選擇器</string>
 
   <!-- ABOUT -->
 
