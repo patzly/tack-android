@@ -49,21 +49,21 @@ fun BeatIconButton(
   animTrigger: Boolean,
   reduceAnim: Boolean
 ) {
-  val shapes_filled = listOf(
+  val shapesFilled = listOf(
     R.drawable.ic_beat_star_filled_anim,
     R.drawable.ic_beat_oval_filled_anim,
     R.drawable.ic_beat_arrow_filled_anim,
     R.drawable.ic_beat_clover_filled_anim,
     R.drawable.ic_beat_pentagon_filled_anim,
   )
-  val shapes_two_tone = listOf(
+  val shapesTwoTone = listOf(
     R.drawable.ic_beat_star_two_tone_anim,
     R.drawable.ic_beat_oval_two_tone_anim,
     R.drawable.ic_beat_arrow_two_tone_anim,
     R.drawable.ic_beat_clover_two_tone_anim,
     R.drawable.ic_beat_pentagon_two_tone_anim,
   )
-  val shapes_outlined = listOf(
+  val shapesOutlined = listOf(
     R.drawable.ic_beat_star_outlined_anim,
     R.drawable.ic_beat_oval_outlined_anim,
     R.drawable.ic_beat_arrow_outlined_anim,
@@ -109,10 +109,10 @@ fun BeatIconButton(
       animationSpec = TweenSpec(durationMillis = 400)
     )
     val resId = when (tickType) {
-      TickType.STRONG -> shapes_filled[index % shapes_filled.size]
-      TickType.SUB -> shapes_outlined[index % shapes_outlined.size]
-      TickType.MUTED -> shapes_filled[index % shapes_filled.size]
-      else -> shapes_two_tone[index % shapes_two_tone.size]
+      TickType.STRONG -> shapesFilled[index % shapesFilled.size]
+      TickType.SUB -> shapesOutlined[index % shapesOutlined.size]
+      TickType.MUTED -> shapesFilled[index % shapesFilled.size]
+      else -> shapesTwoTone[index % shapesTwoTone.size]
     }
     AnimatedVectorDrawable(
       resId = resId,
