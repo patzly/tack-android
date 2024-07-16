@@ -49,16 +49,31 @@ fun BeatIconButton(
   animTrigger: Boolean,
   reduceAnim: Boolean
 ) {
-  val shapes = listOf(
-    R.drawable.ic_beat_star_anim,
-    R.drawable.ic_beat_oval_anim,
-    R.drawable.ic_beat_arrow_anim,
-    R.drawable.ic_beat_clover_anim,
-    R.drawable.ic_beat_pentagon_anim,
+  val shapes_filled = listOf(
+    R.drawable.ic_beat_star_filled_anim,
+    R.drawable.ic_beat_oval_filled_anim,
+    R.drawable.ic_beat_arrow_filled_anim,
+    R.drawable.ic_beat_clover_filled_anim,
+    R.drawable.ic_beat_pentagon_filled_anim,
   )
-  val sizeDefault = if (tickType != TickType.MUTED) 24 else 12
-  val sizeBeatReduceAnim = if (reduceAnim) 40 else 32
-  val sizeBeat = if (tickType != TickType.MUTED) sizeBeatReduceAnim else 24
+  val shapes_two_tone = listOf(
+    R.drawable.ic_beat_star_two_tone_anim,
+    R.drawable.ic_beat_oval_two_tone_anim,
+    R.drawable.ic_beat_arrow_two_tone_anim,
+    R.drawable.ic_beat_clover_two_tone_anim,
+    R.drawable.ic_beat_pentagon_two_tone_anim,
+  )
+  val shapes_outlined = listOf(
+    R.drawable.ic_beat_star_outlined_anim,
+    R.drawable.ic_beat_oval_outlined_anim,
+    R.drawable.ic_beat_arrow_outlined_anim,
+    R.drawable.ic_beat_clover_outlined_anim,
+    R.drawable.ic_beat_pentagon_outlined_anim,
+  )
+
+  val sizeDefault = if (tickType != TickType.MUTED) 22 else 10
+  val sizeBeatReduceAnim = if (reduceAnim) 38 else 30
+  val sizeBeat = if (tickType != TickType.MUTED) sizeBeatReduceAnim else 22
 
   val animatedSize = remember { Animatable(sizeDefault.toFloat()) }
   val isFirstExecution = remember { mutableStateOf(true) }
@@ -93,8 +108,14 @@ fun BeatIconButton(
       label = "beatColor",
       animationSpec = TweenSpec(durationMillis = 400)
     )
+    val resId = when (tickType) {
+      TickType.STRONG -> shapes_filled[index % shapes_filled.size]
+      TickType.SUB -> shapes_outlined[index % shapes_outlined.size]
+      TickType.MUTED -> shapes_filled[index % shapes_filled.size]
+      else -> shapes_two_tone[index % shapes_two_tone.size]
+    }
     AnimatedVectorDrawable(
-      resId = shapes[index % shapes.size],
+      resId = resId,
       description = stringResource(id = R.string.wear_action_tempo_tap),
       color = color,
       trigger = animTrigger,
