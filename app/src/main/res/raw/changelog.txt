@@ -1,4 +1,4 @@
-## 4.1.1
+## 4.2.0
 
 - New: setting to replace tempo picker with big logo animation while playing
 - New: badge on options button to indicate active modifiers
