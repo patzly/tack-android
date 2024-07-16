@@ -31,9 +31,9 @@ android {
     applicationId = "xyz.zedler.patrick.tack"
     minSdk = 26
     targetSdk = 33
-    versionCode = 211 // last number is 1 for wear release
-    versionName = "4.1.4"
-    resourceConfigurations += listOf("de", "en", "zh-rCN", "zh-rHK", "zh-rTW")
+    versionCode = 221 // last number is 1 for wear release
+    versionName = "4.2.0"
+    resourceConfigurations += listOf("de", "cs", "en", "zh-rCN", "zh-rHK", "zh-rTW")
   }
 
   buildTypes {

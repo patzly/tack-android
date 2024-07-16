@@ -1,11 +1,11 @@
 [versions]
-agp = "8.5.0"
+agp = "8.5.1"
 appcompat = "1.7.0"
 fragment = "1.8.1"
 navigation = "2.7.7"
 preference = "1.2.1"
 shapes = "1.0.0-beta01"
-material = "1.13.0-alpha03"
+material = "1.13.0-alpha04"
 kotlin = "2.0.0"
 splashscreen = "1.1.0-rc01"
 wear-input = "1.1.0"
@@ -15,7 +15,8 @@ compose-bom = "2024.06.00"
 compose-material = "1.0.0-alpha23"
 compose-navigation = "1.4.0-beta03"
 compose-foundation = "1.4.0-beta03"
-compose-runtime = "1.7.0-beta04"
+compose-ui = "1.7.0-beta05"
+compose-runtime = "1.7.0-beta05"
 compose-activity = "1.9.0"
 compose-constraintlayout = "1.0.1"
 lifecycle = "2.8.3"
@@ -34,10 +35,10 @@ wear-ongoing = { group = "androidx.wear", name = "wear-ongoing", version.ref = "
 wear-input = { group = "androidx.wear", name = "wear-input", version.ref = "wear-input" }
 lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycle" }
 splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
-ui = { group = "androidx.compose.ui", name = "ui" }
-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose-ui" }
+ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose-ui" }
+ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "compose-ui" }
+ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "compose-ui" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 compose-runtime = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "compose-runtime" }
 compose-material = { group = "androidx.wear.compose", name = "compose-material3", version.ref = "compose-material" }
