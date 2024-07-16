@@ -1,0 +1,100 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="wear_title_settings">Nastavení</string>
+  <string name="wear_title_beats">Doby</string>
+  <string name="wear_title_beats_count">Doby (%1$d)</string>
+  <string name="wear_title_subdivisions_count">Subdivize (%1$d)</string>
+  <string name="wear_title_notification_channel">Služba metronomu</string>
+
+  <!-- LABELS -->
+
+  <string name="wear_label_bpm_value">%1$d bpm</string>
+  <string name="wear_label_ms">%1$s ms</string>
+  <string name="wear_label_db">+%1$d dB</string>
+  <string name="wear_label_developer">Vytvořil</string>
+
+  <!-- ACTIONS -->
+
+  <string name="wear_action_cancel">Zrušit</string>
+  <string name="wear_action_increase">Zvýšit</string>
+  <string name="wear_action_decrease">Snížit</string>
+  <string name="wear_action_play_stop">Spustit/Zastavit</string>
+  <string name="wear_action_stop">Zastavit</string>
+  <string name="wear_action_add_beat">Přidat dobu</string>
+  <string name="wear_action_remove_beat">Odstranit dobu</string>
+  <string name="wear_action_add_sub">Přidat subdivizi</string>
+  <string name="wear_action_remove_sub">Odstranit subdivizi</string>
+  <string name="wear_action_tempo_tap">Naklikat tempo</string>
+  <string name="wear_action_bookmark">Záložka</string>
+  <string name="wear_action_beat_mode">Režim metronomu</string>
+  <string name="wear_action_retry">Zkusit znovu</string>
+
+  <!-- MESSAGES -->
+
+  <string name="wear_msg_service_running">Přehrávání metronomu</string>
+  <string name="wear_msg_service_running_return">Klepněte pro více</string>
+  <string name="wear_msg_service_description">Služba přehrávání metronomu</string>
+  <string name="wear_msg_notification_permission_denied">Vyžadováno oprávnění</string>
+  <string name="wear_msg_notification_permission_denied_description">Pro přehrávání je vyžadováno oprávnění k oznámením</string>
+  <string name="wear_msg_gain">Přehrát se zesílenou hlasitostí?</string>
+  <string name="wear_msg_gain_description">Dejte si pozor, abyste zvuk nepřehrávali ve sluchátkách!</string>
+
+  <!-- SETTINGS -->
+
+  <string name="wear_settings_sound">Zvuk metronomu</string>
+  <string name="wear_settings_sound_sine">Sinusoida</string>
+  <string name="wear_settings_sound_wood">Dřívka</string>
+  <string name="wear_settings_sound_mechanical">Mechanický</string>
+  <string name="wear_settings_sound_beatboxing_1">Beatbox 1</string>
+  <string name="wear_settings_sound_beatboxing_2">Beatbox 2</string>
+  <string name="wear_settings_sound_hands">Ruce</string>
+  <string name="wear_settings_sound_folding">Pravidlo skládání</string>
+
+  <string name="wear_settings_latency">Korekce latence</string>
+
+  <string name="wear_settings_ignore_focus">Ignorovat zaměření zvuku</string>
+  <string name="wear_settings_ignore_focus_description">Pokračovat v přehrávání, i když jiná aplikace začne přehrávat zvuk</string>
+
+  <string name="wear_settings_gain">Zesílení hlasitosti</string>
+  <string name="wear_settings_gain_disclaimer">Opatrně! Vývojář nenese žádnou zodpovědnost za jakékoli potenciální škody.</string>
+
+  <string name="wear_settings_always_vibrate">Vždy vibrovat</string>
+  <string name="wear_settings_always_vibrate_description">I se zvukem</string>
+
+  <string name="wear_settings_strong_vibration">Silné vibrace</string>
+  <string name="wear_settings_strong_vibration_description">Pokud je haptická odezva slabá</string>
+
+  <string name="wear_settings_flash_screen">Blikání obrazovky</string>
+  <string name="wear_settings_flash_screen_description">Při každé době</string>
+
+  <string name="wear_settings_reduce_animations">Omezit animace</string>
+  <string name="wear_settings_reduce_animations_description">Může zvýšit výkon</string>
+
+  <string name="wear_settings_keep_awake">Nezhasínat obrazovku</string>
+  <string name="wear_settings_keep_awake_description">Když metronom hraje</string>
+
+  <string name="wear_settings_rate">Ohodnoťte Tack na Google Play</string>
+  <string name="wear_settings_rate_description">Podpořit vývoj</string>
+
+</resources>
