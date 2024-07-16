@@ -59,7 +59,7 @@
           android:layout_height="16dp"
           android:layout_gravity="center"
           android:importantForAccessibility="no"
-          android:src="@drawable/ic_beat_oval_anim"
+          android:src="@drawable/ic_beat_oval_filled_anim"
           app:tint="?attr/colorOutlineVariant" />
 
       </FrameLayout>

@@ -46,12 +46,26 @@ import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class BeatView extends FrameLayout {
 
-  private static final int[] SHAPES = new int[]{
-      R.drawable.ic_beat_star_anim,
-      R.drawable.ic_beat_oval_anim,
-      R.drawable.ic_beat_arrow_anim,
-      R.drawable.ic_beat_clover_anim,
-      R.drawable.ic_beat_pentagon_anim,
+  private static final int[] SHAPES_FILLED = new int[]{
+      R.drawable.ic_beat_star_filled_anim,
+      R.drawable.ic_beat_oval_filled_anim,
+      R.drawable.ic_beat_arrow_filled_anim,
+      R.drawable.ic_beat_clover_filled_anim,
+      R.drawable.ic_beat_pentagon_filled_anim,
+  };
+  private static final int[] SHAPES_TWO_TONE = new int[]{
+      R.drawable.ic_beat_star_two_tone_anim,
+      R.drawable.ic_beat_oval_two_tone_anim,
+      R.drawable.ic_beat_arrow_two_tone_anim,
+      R.drawable.ic_beat_clover_two_tone_anim,
+      R.drawable.ic_beat_pentagon_two_tone_anim,
+  };
+  private static final int[] SHAPES_OUTLINED = new int[]{
+      R.drawable.ic_beat_star_outlined_anim,
+      R.drawable.ic_beat_oval_outlined_anim,
+      R.drawable.ic_beat_arrow_outlined_anim,
+      R.drawable.ic_beat_clover_outlined_anim,
+      R.drawable.ic_beat_pentagon_outlined_anim,
   };
 
   private static boolean isColorRed(int color) {
@@ -143,10 +157,10 @@ public class BeatView extends FrameLayout {
     setOnClickListener(null);
     addView(button);
 
-    iconSizeDefault = UiUtil.dpToPx(context, 24);
-    iconSizeBeat = UiUtil.dpToPx(context, 32);
+    iconSizeDefault = UiUtil.dpToPx(context, 22);
+    iconSizeBeat = UiUtil.dpToPx(context, 30);
     iconSizeNoBeat = iconSizeDefault;
-    iconSizeMuted = UiUtil.dpToPx(context, 12);
+    iconSizeMuted = UiUtil.dpToPx(context, 10);
     iconSize = iconSizeDefault;
 
     colorNormal = ResUtil.getColor(context, R.attr.colorPrimary);
@@ -162,7 +176,7 @@ public class BeatView extends FrameLayout {
     paramsIcon.gravity = Gravity.CENTER;
     imageView.setLayoutParams(paramsIcon);
     imageView.setAdjustViewBounds(false);
-    imageView.setImageResource(R.drawable.ic_beat_clover_anim);
+    imageView.setImageResource(R.drawable.ic_beat_clover_filled_anim);
     addView(imageView);
 
     interpolator = new FastOutSlowInInterpolator();
@@ -172,7 +186,7 @@ public class BeatView extends FrameLayout {
 
   public void setIndex(int index) {
     this.index = index;
-    imageView.setImageResource(SHAPES[index % SHAPES.length]);
+    setTickType(tickType);
   }
 
   public int getIndex() {
@@ -187,22 +201,27 @@ public class BeatView extends FrameLayout {
   public void setTickType(String tickType) {
     this.tickType = tickType;
     int color, iconSize;
+    int index = this.index % SHAPES_FILLED.length;
     switch (tickType) {
       case TICK_TYPE.STRONG:
         color = colorStrong;
         iconSize = iconSizeNoBeat;
+        imageView.setImageResource(SHAPES_FILLED[index]);
         break;
       case TICK_TYPE.MUTED:
         color = colorMuted;
         iconSize = iconSizeMuted;
+        imageView.setImageResource(SHAPES_FILLED[index]);
         break;
       case TICK_TYPE.SUB:
         color = colorSub;
         iconSize = iconSizeNoBeat;
+        imageView.setImageResource(SHAPES_OUTLINED[index]);
         break;
       default:
         color = colorNormal;
         iconSize = iconSizeNoBeat;
+        imageView.setImageResource(SHAPES_TWO_TONE[index]);
     }
     imageView.setImageTintList(ColorStateList.valueOf(color));
     iconSizeDefault = iconSize;
