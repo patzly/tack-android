@@ -43,7 +43,7 @@ If you run into a bug or miss a feature, please [open an issue](https://github.c
 Tack can be translated! The main language is English, but I also maintain the German translation.
 You can help translate this project at [Transifex](https://app.transifex.com/patzly/tack-android), if your language is incomplete, contains typos or is not available yet. Translations which reached a completion level of 80% will be included in releases.  
 
-Translated languages (2): Chinese (China), Chinese (Hong Kong), Chinese (Taiwan), Czech, German
+Translated languages (5): Chinese (China), Chinese (Hong Kong), Chinese (Taiwan), Czech, German
 
 Thanks for your contributions!
 
