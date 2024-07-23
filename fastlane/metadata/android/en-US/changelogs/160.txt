@@ -1,0 +1,8 @@
+• New: setting to replace tempo picker with big logo animation while playing
+• New: badge on options button to indicate active modifiers
+• Improved: beat appearance for different beat and subdivision types
+• Improved: warning shown if window is too small in split-screen mode
+• Improved: order, limit and animation of bookmarks
+• Improved: style of song duration progress slider
+• Fixed: conflicting colors of beats in red color themes
+• Fixed: various crash causes
