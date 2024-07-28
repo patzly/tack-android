@@ -1,10 +1,10 @@
 [versions]
 agp = "8.5.1"
 appcompat = "1.7.0"
-fragment = "1.8.1"
+fragment = "1.8.2"
 navigation = "2.7.7"
 preference = "1.2.1"
-shapes = "1.0.0-beta01"
+shapes = "1.0.0-rc01"
 material = "1.13.0-alpha04"
 kotlin = "2.0.0"
 splashscreen = "1.1.0-rc01"
@@ -15,11 +15,11 @@ compose-bom = "2024.06.00"
 compose-material = "1.0.0-alpha23"
 compose-navigation = "1.4.0-beta03"
 compose-foundation = "1.4.0-beta03"
-compose-ui = "1.7.0-beta05"
-compose-runtime = "1.7.0-beta05"
-compose-activity = "1.9.0"
+compose-ui = "1.7.0-beta06"
+compose-runtime = "1.7.0-beta06"
+compose-activity = "1.9.1"
 compose-constraintlayout = "1.0.1"
-lifecycle = "2.8.3"
+lifecycle = "2.8.4"
 
 [libraries]
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }

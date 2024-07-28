@@ -722,8 +722,8 @@ public class CustomSlider extends Slider {
             new int[] {},
         },
         new int[] {
-            ResUtil.getColor(getContext(), R.attr.colorPrimaryContainer), // onPrimary?
-            ResUtil.getColor(getContext(), R.attr.colorSurfaceContainerHighest)
+            ResUtil.getColor(getContext(), R.attr.colorOnPrimary, 0.8f),
+            ResUtil.getColor(getContext(), R.attr.colorSurface, 0.7f)
         }
     );
   }
@@ -752,8 +752,8 @@ public class CustomSlider extends Slider {
             new int[] {},
         },
         new int[] {
-            ResUtil.getColor(getContext(), R.attr.colorPrimary), // onPrimaryContainer?
-            ResUtil.getColor(getContext(), R.attr.colorOnSurfaceVariant, 0.38f)
+            ResUtil.getColor(getContext(), R.attr.colorOnPrimaryContainer, 0.8f),
+            ResUtil.getColor(getContext(), R.attr.colorOnSurface, 0.38f)
         }
     );
   }
