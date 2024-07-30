@@ -1246,6 +1246,9 @@ public class MainFragment extends BaseFragment
   }
 
   private void refreshBookmarks(boolean alignActiveOrCenter, boolean animated) {
+    if (binding == null) {
+      return;
+    }
     binding.buttonMainBookmark.setEnabled(!bookmarks.contains(getMetronomeUtil().getTempo()));
     for (int i = 0; i < binding.chipGroupMainBookmarks.getChildCount(); i++) {
       Chip chip = (Chip) binding.chipGroupMainBookmarks.getChildAt(i);

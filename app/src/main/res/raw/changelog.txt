@@ -1,3 +1,7 @@
+## 4.2.1
+
+- Fixed: some incorrect app colors
+
 ## 4.2.0
 
 - New: setting to replace tempo picker with big logo animation while playing

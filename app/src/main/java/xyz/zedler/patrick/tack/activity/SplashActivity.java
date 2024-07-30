@@ -35,10 +35,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.NonNull;
-import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.res.ResourcesCompat;
-import xyz.zedler.patrick.tack.Constants.CONTRAST;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
@@ -51,11 +49,9 @@ import xyz.zedler.patrick.tack.util.ViewUtil;
 @SuppressLint("CustomSplashScreen")
 public class SplashActivity extends MainActivity {
 
-  private SharedPreferences sharedPrefs;
-
   @Override
   public void onCreate(Bundle bundle) {
-    sharedPrefs = new PrefsUtil(this)
+    SharedPreferences sharedPrefs = new PrefsUtil(this)
         .checkForMigrations()
         .getSharedPrefs();
 
@@ -168,22 +164,5 @@ public class SplashActivity extends MainActivity {
     startActivity(intent);
     overridePendingTransition(0, R.anim.fade_out);
     finish();
-  }
-
-  private void setContrastTheme(
-      @StyleRes int resIdStandard,
-      @StyleRes int resIdMedium,
-      @StyleRes int resIdHigh
-  ) {
-    switch (sharedPrefs.getString(PREF.UI_CONTRAST, DEF.UI_CONTRAST)) {
-      case CONTRAST.MEDIUM:
-        setTheme(resIdMedium);
-        break;
-      case CONTRAST.HIGH:
-        setTheme(resIdHigh);
-        break;
-      default:
-        setTheme(resIdStandard);
-    }
   }
 }
