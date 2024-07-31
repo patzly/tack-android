@@ -47,13 +47,14 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.UiUtil;
 
 public class CircleView extends View {
 
   private final static String TAG = CircleView.class.getSimpleName();
 
   private final int waves;
-  private final Paint paint;
+  private final Paint paintFill, paintStroke;
   private final Path path;
   private final RectF bounds;
   private final Matrix matrix;
@@ -74,9 +75,13 @@ public class CircleView extends View {
     colorDefault = ResUtil.getColor(context, R.attr.colorSecondaryContainer);
     int colorDrag = ResUtil.getColor(context, R.attr.colorTertiary);
 
-    paint = new Paint();
-    paint.setStyle(Style.FILL);
-    paint.setColor(colorDefault);
+    paintFill = new Paint();
+    paintFill.setStyle(Style.FILL);
+    paintFill.setColor(colorDefault);
+    paintStroke = new Paint();
+    paintStroke.setStyle(Style.STROKE);
+    paintStroke.setStrokeWidth(UiUtil.dpToPx(context, 1));
+    paintStroke.setColor(ResUtil.getColor(context, R.attr.colorPrimary));
 
     colorsDrag = new int[]{
         ColorUtils.blendARGB(colorDrag, colorDefault, 0.5f),
@@ -101,7 +106,8 @@ public class CircleView extends View {
   @Override
   protected void onDraw(@NonNull Canvas canvas) {
     super.onDraw(canvas);
-    canvas.drawPath(path, paint);
+    canvas.drawPath(path, paintFill);
+    canvas.drawPath(path, paintStroke);
   }
 
   @Override
@@ -113,9 +119,10 @@ public class CircleView extends View {
     RoundedPolygon star = ShapesKt.star(companion, waves, 1, innerRadius, cornerRounding);
     path.set(Shapes_androidKt.toPath(star));
     path.computeBounds(bounds, false);
-    float scaleX = getWidth() / (bounds.width()) + .3f;
+    float scaleX = getWidth() / bounds.width() - 3;
     float scaleY = getHeight() / bounds.height();
     matrix.reset();
+    matrix.preScale(0.99f, 0.99f);
     matrix.postScale(scaleX, scaleY);
     matrix.postTranslate(-bounds.left * scaleX, -bounds.top * scaleY);
     path.transform(matrix);
@@ -139,11 +146,11 @@ public class CircleView extends View {
       updateShape();
     });
     // shader color
-    ValueAnimator alphaAnimator = ValueAnimator.ofFloat(gradientBlendRatio, dragged ? 0.8f : 0);
+    ValueAnimator alphaAnimator = ValueAnimator.ofFloat(gradientBlendRatio, dragged ? 0.7f : 0);
     alphaAnimator.addUpdateListener(animation -> {
       gradientBlendRatio = (float) alphaAnimator.getAnimatedValue();
       if (!reduceAnimations) {
-        paint.setShader(getGradient());
+        paintFill.setShader(getGradient());
       }
       invalidate();
     });
@@ -164,7 +171,7 @@ public class CircleView extends View {
     touchX = x;
     touchY = y;
     if (!reduceAnimations) {
-      paint.setShader(getGradient());
+      paintFill.setShader(getGradient());
     }
     invalidate();
   }

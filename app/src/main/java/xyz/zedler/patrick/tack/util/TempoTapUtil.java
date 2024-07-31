@@ -19,8 +19,21 @@
 
 package xyz.zedler.patrick.tack.util;
 
+import android.annotation.SuppressLint;
+import android.os.Bundle;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.MotionEvent;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.Queue;
+import xyz.zedler.patrick.tack.Constants;
+import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.activity.MainActivity;
+import xyz.zedler.patrick.tack.databinding.PartialDialogTempoTapBinding;
+import xyz.zedler.patrick.tack.fragment.MainFragment;
 
 public class TempoTapUtil {
 
@@ -30,7 +43,77 @@ public class TempoTapUtil {
   private static final int INTERVAL_FACTOR = 3;
 
   private final Queue<Long> intervals = new LinkedList<>();
+  private final MainActivity activity;
+  private final MainFragment fragment;
+  private final PartialDialogTempoTapBinding binding;
+  private DialogUtil dialogUtil;
   private long previous;
+
+  @SuppressLint("ClickableViewAccessibility")
+  public TempoTapUtil(
+      MainActivity activity, MainFragment fragment
+  ) {
+    this.activity = activity;
+    this.fragment = fragment;
+
+    binding = PartialDialogTempoTapBinding.inflate(activity.getLayoutInflater());
+    dialogUtil = new DialogUtil(activity, "tempo_tap");
+
+    binding.textSwitcherTempoTapTempoTerm.setFactory(() -> {
+      TextView textView = new TextView(activity);
+      textView.setGravity(Gravity.CENTER_HORIZONTAL);
+      textView.setTextSize(
+          TypedValue.COMPLEX_UNIT_PX,
+          activity.getResources().getDimension(R.dimen.label_text_size)
+      );
+      textView.setTextColor(ResUtil.getColor(activity, R.attr.colorOnTertiaryContainer));
+      return textView;
+    });
+
+    binding.getRoot().setOnTouchListener((v, event) -> {
+      if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        binding.cloverTempoTap.setDragged(true, event.getX(), event.getY());
+        boolean enoughData = tap();
+        if (enoughData) {
+          setTempo(getMetronomeUtil().getTempo(), getTempo());
+        }
+        activity.performHapticHeavyClick();
+        return true;
+      } else if (event.getAction() == MotionEvent.ACTION_UP
+          || event.getAction() == MotionEvent.ACTION_CANCEL) {
+        binding.cloverTempoTap.setDragged(false, event.getX(), event.getY());
+      }
+      return false;
+    });
+
+    dialogUtil.createCloseCustom(R.string.action_tempo_tap, binding.getRoot());
+  }
+
+  public void show() {
+    update();
+    dialogUtil.show();
+  }
+
+  public void showIfWasShown(@Nullable Bundle state) {
+    update();
+    dialogUtil.showIfWasShown(state);
+  }
+
+  public void dismiss() {
+    dialogUtil.dismiss();
+  }
+
+  public void saveState(@NonNull Bundle outState) {
+    if (dialogUtil != null) {
+      dialogUtil.saveState(outState);
+    }
+  }
+
+  public void update() {
+    int tempo = getMetronomeUtil().getTempo();
+    setTempo(tempo, tempo);
+    binding.textSwitcherTempoTapTempoTerm.setCurrentText(fragment.getTempoTerm(tempo));
+  }
 
   public boolean tap() {
     boolean enoughData = false;
@@ -48,6 +131,28 @@ public class TempoTapUtil {
     }
     previous = current;
     return enoughData;
+  }
+
+  private void setTempo(int tempoOld, int tempoNew) {
+    getMetronomeUtil().setTempo(
+        Math.min(Math.max(tempoNew, Constants.TEMPO_MIN), Constants.TEMPO_MAX)
+    );
+    if (binding == null) {
+      return;
+    }
+    binding.textTempoTapTempo.setText(String.valueOf(tempoNew));
+    String termNew = fragment.getTempoTerm(tempoNew);
+    if (!termNew.equals(fragment.getTempoTerm(tempoOld))) {
+      boolean isFaster = tempoNew > tempoOld;
+      binding.textSwitcherTempoTapTempoTerm.setInAnimation(
+          activity, isFaster ? R.anim.tempo_term_open_enter : R.anim.tempo_term_close_enter
+      );
+      binding.textSwitcherTempoTapTempoTerm.setOutAnimation(
+          activity, isFaster ? R.anim.tempo_term_open_exit : R.anim.tempo_term_close_exit
+      );
+      binding.textSwitcherTempoTapTempoTerm.setText(termNew);
+    }
+    fragment.setTempo(tempoNew);
   }
 
   public int getTempo() {
@@ -78,5 +183,9 @@ public class TempoTapUtil {
     return getTempo(interval) >= getTempo() * (1 + TEMPO_FACTOR)
         || getTempo(interval) <= getTempo() * (1 - TEMPO_FACTOR)
         || interval > getAverage() * INTERVAL_FACTOR;
+  }
+
+  private MetronomeUtil getMetronomeUtil() {
+    return activity.getMetronomeUtil();
   }
 }

@@ -1,6 +1,8 @@
 ## 4.2.1
 
-- Fixed: some incorrect app colors
+- New: playful dialog for tempo tap instead of button
+- Improved: app colors and appearance
+- Fixed: incorrect tempo limit
 
 ## 4.2.0
 

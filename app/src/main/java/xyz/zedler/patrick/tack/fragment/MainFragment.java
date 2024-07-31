@@ -133,6 +133,7 @@ public class MainFragment extends BaseFragment
     dialogUtilGain.dismiss();
     dialogUtilSplitScreen.dismiss();
     optionsUtil.dismiss();
+    tempoTapUtil.dismiss();
   }
 
   @SuppressLint("ClickableViewAccessibility")
@@ -232,7 +233,7 @@ public class MainFragment extends BaseFragment
     bigLogo = getSharedPrefs().getBoolean(PREF.BIG_LOGO, DEF.BIG_LOGO);
 
     shortcutUtil = new ShortcutUtil(activity);
-    tempoTapUtil = new TempoTapUtil();
+    tempoTapUtil = new TempoTapUtil(activity, this);
 
     beatsBgDrawable = new BeatsBgDrawable(activity);
     binding.linearMainBeatsBg.setBackground(beatsBgDrawable);
@@ -405,19 +406,6 @@ public class MainFragment extends BaseFragment
       }
     });
 
-    binding.buttonMainTempoTap.setOnTouchListener((v, event) -> {
-      if (event.getAction() == MotionEvent.ACTION_DOWN) {
-        boolean enoughData = tempoTapUtil.tap();
-        if (enoughData) {
-          setTempo(tempoTapUtil.getTempo());
-        }
-        ViewUtil.startIcon(binding.buttonMainTempoTap.getIcon());
-        performHapticHeavyClick();
-        return true;
-      }
-      return false;
-    });
-
     boolean alwaysVibrate = getSharedPrefs().getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
     if (getSharedPrefs().getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE)) {
       binding.buttonMainBeatMode.setIconResource(
@@ -476,6 +464,7 @@ public class MainFragment extends BaseFragment
         binding.buttonMainBeatMode,
         binding.buttonMainBookmark,
         binding.buttonMainOptions,
+        binding.buttonMainTempoTap,
         binding.fabMainPlayStop
     );
   }
@@ -504,6 +493,9 @@ public class MainFragment extends BaseFragment
     if (optionsUtil != null) {
       optionsUtil.saveState(outState);
     }
+    if (tempoTapUtil != null) {
+      tempoTapUtil.saveState(outState);
+    }
   }
 
   public void updateMetronomeControls() {
@@ -512,6 +504,7 @@ public class MainFragment extends BaseFragment
     }
     getMetronomeUtil().addListener(this);
     optionsUtil.showIfWasShown(savedState);
+    tempoTapUtil.showIfWasShown(savedState);
     savedState = null;
 
     if (getMetronomeUtil().isBeatModeVibrate()) {
@@ -901,6 +894,11 @@ public class MainFragment extends BaseFragment
       ViewUtil.startIcon(binding.buttonMainOptions.getIcon());
       optionsUtil.update();
       optionsUtil.show();
+    } else if (id == R.id.button_main_tempo_tap) {
+      performHapticClick();
+      ViewUtil.startIcon(binding.buttonMainTempoTap.getIcon());
+      tempoTapUtil.update();
+      tempoTapUtil.show();
     }
   }
 
@@ -1312,21 +1310,20 @@ public class MainFragment extends BaseFragment
     }
   }
 
-  private void setTempo(int tempo) {
+  public void setTempo(int tempo) {
     setTempo(getMetronomeUtil().getTempo(), tempo);
   }
 
   private void setTempo(int tempoOld, int tempoNew) {
-    getMetronomeUtil().setTempo(
-        Math.min(Math.max(tempoNew, Constants.TEMPO_MIN), Constants.TEMPO_MAX)
-    );
+    tempoNew = Math.min(Math.max(tempoNew, Constants.TEMPO_MIN), Constants.TEMPO_MAX);
+    getMetronomeUtil().setTempo(tempoNew);
     if (binding == null) {
       return;
     }
-    binding.textMainTempo.setText(String.valueOf(getMetronomeUtil().getTempo()));
+    binding.textMainTempo.setText(String.valueOf(tempoNew));
     String termNew = getTempoTerm(tempoNew);
     if (!termNew.equals(getTempoTerm(tempoOld))) {
-      boolean isFaster = getMetronomeUtil().getTempo() > tempoOld;
+      boolean isFaster = tempoNew > tempoOld;
       binding.textSwitcherMainTempoTerm.setInAnimation(
           activity, isFaster ? R.anim.tempo_term_open_enter : R.anim.tempo_term_close_enter
       );

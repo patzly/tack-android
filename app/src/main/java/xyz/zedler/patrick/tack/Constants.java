@@ -27,7 +27,7 @@ public final class Constants {
   public final static long ANIM_DURATION_SHORT = 250;
   public static final long BEAT_ANIM_OFFSET = 25;
   public static final int TEMPO_MIN = 1;
-  public static final int TEMPO_MAX = 400;
+  public static final int TEMPO_MAX = 500;
   public static final int BEATS_MAX = 20;
   public static final int SUBS_MAX = 10;
   public static final int BOOKMARKS_MAX = 10;
