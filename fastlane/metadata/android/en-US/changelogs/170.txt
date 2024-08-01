@@ -1,0 +1,3 @@
+• New: playful dialog for tempo tap instead of button
+• Improved: app colors and appearance
+• Improved: maximum tempo limit lifted to 500
