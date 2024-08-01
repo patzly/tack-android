@@ -192,7 +192,7 @@ public class ViewUtil {
     try {
       ((Animatable) drawable).start();
     } catch (ClassCastException e) {
-      Log.e(TAG, "icon animation requires AnimVectorDrawable");
+      Log.v(TAG, "icon animation requires AnimVectorDrawable");
     }
   }
 
@@ -208,7 +208,7 @@ public class ViewUtil {
       imageView.setImageDrawable(null);
       imageView.setImageDrawable((Drawable) animatable);
     } catch (ClassCastException e) {
-      Log.e(TAG, "resetting animated icon requires AnimVectorDrawable");
+      Log.v(TAG, "resetting animated icon requires AnimVectorDrawable");
     }
   }
 

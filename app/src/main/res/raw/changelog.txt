@@ -2,7 +2,7 @@
 
 - New: playful dialog for tempo tap instead of button
 - Improved: app colors and appearance
-- Fixed: incorrect tempo limit
+- Improved: maximum tempo limit lifted to 500
 
 ## 4.2.0
 

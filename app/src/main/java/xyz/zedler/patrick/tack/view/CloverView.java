@@ -108,10 +108,15 @@ public class CloverView extends View {
     invalidate();
   }
 
-  public void setDragged(boolean dragged, float x, float y) {
+  public void setTapped(boolean dragged) {
     if (animator != null) {
       animator.pause();
       animator.cancel();
+    }
+    if (reduceAnimations) {
+      innerRadius = innerRadiusDefault;
+      updateShape();
+      return;
     }
     animator = ValueAnimator.ofFloat(
         innerRadius, dragged ? innerRadiusTap : innerRadiusDefault

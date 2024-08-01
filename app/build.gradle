@@ -11,8 +11,8 @@ android {
         applicationId "xyz.zedler.patrick.tack"
         minSdk 21
         targetSdk 34
-        versionCode 160 // last number is 0 for app release
-        versionName "4.2.0"
+        versionCode 170 // last number is 0 for app release
+        versionName "4.2.1"
         resourceConfigurations += ["cs", "de", "en", "zh-rCN", "zh-rHK", "zh-rTW"]
     }
 

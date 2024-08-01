@@ -24,7 +24,7 @@ object Constants {
   const val BEAT_ANIM_OFFSET: Long = 25
   const val FLASH_SCREEN_DURATION: Long = 100
   const val TEMPO_MIN: Int = 1
-  const val TEMPO_MAX: Int = 400
+  const val TEMPO_MAX: Int = 500
   const val BEATS_MAX: Int = 20
   const val SUBS_MAX: Int = 10
 

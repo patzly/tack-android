@@ -46,7 +46,7 @@ public class TempoTapUtil {
   private final MainActivity activity;
   private final MainFragment fragment;
   private final PartialDialogTempoTapBinding binding;
-  private DialogUtil dialogUtil;
+  private final DialogUtil dialogUtil;
   private long previous;
 
   @SuppressLint("ClickableViewAccessibility")
@@ -72,7 +72,7 @@ public class TempoTapUtil {
 
     binding.getRoot().setOnTouchListener((v, event) -> {
       if (event.getAction() == MotionEvent.ACTION_DOWN) {
-        binding.cloverTempoTap.setDragged(true, event.getX(), event.getY());
+        binding.cloverTempoTap.setTapped(true);
         boolean enoughData = tap();
         if (enoughData) {
           setTempo(getMetronomeUtil().getTempo(), getTempo());
@@ -81,7 +81,7 @@ public class TempoTapUtil {
         return true;
       } else if (event.getAction() == MotionEvent.ACTION_UP
           || event.getAction() == MotionEvent.ACTION_CANCEL) {
-        binding.cloverTempoTap.setDragged(false, event.getX(), event.getY());
+        binding.cloverTempoTap.setTapped(false);
       }
       return false;
     });
@@ -113,6 +113,7 @@ public class TempoTapUtil {
     int tempo = getMetronomeUtil().getTempo();
     setTempo(tempo, tempo);
     binding.textSwitcherTempoTapTempoTerm.setCurrentText(fragment.getTempoTerm(tempo));
+    binding.cloverTempoTap.setReduceAnimations(fragment.isReduceAnimations());
   }
 
   public boolean tap() {

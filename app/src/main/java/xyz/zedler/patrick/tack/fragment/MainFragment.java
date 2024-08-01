@@ -1492,6 +1492,10 @@ public class MainFragment extends BaseFragment
     return getString(resId);
   }
 
+  public boolean isReduceAnimations() {
+    return reduceAnimations;
+  }
+
   public FragmentMainBinding getBinding() {
     return binding;
   }
