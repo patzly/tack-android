@@ -324,7 +324,7 @@ public class MainFragment extends BaseFragment
       private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
-          if (getMetronomeUtil().getTempo() > 1) {
+          if (getMetronomeUtil().getTempo() > Constants.TEMPO_MIN) {
             changeTempo(-1);
             handler.postDelayed(this, nextRun);
             if (nextRun > 60) {
@@ -368,7 +368,7 @@ public class MainFragment extends BaseFragment
       private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
-          if (getMetronomeUtil().getTempo() < 400) {
+          if (getMetronomeUtil().getTempo() < Constants.TEMPO_MAX) {
             changeTempo(1);
             handler.postDelayed(this, nextRun);
             if (nextRun > 60) {

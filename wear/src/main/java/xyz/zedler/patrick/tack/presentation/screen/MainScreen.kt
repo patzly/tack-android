@@ -141,7 +141,7 @@ fun MainScreen(
         val pickerOption = remember { tempo - 1 }
         val pickerCoroutineScope = rememberCoroutineScope()
         val pickerState = rememberPickerState(
-          initialNumberOfOptions = 400,
+          initialNumberOfOptions = Constants.TEMPO_MAX,
           initiallySelectedOption = pickerOption,
           repeatItems = false
         )
@@ -345,7 +345,7 @@ fun TempoCard(
     )
     val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.Def.ALWAYS_VIBRATE)
 
-    val items = (1..400).toList()
+    val items = (Constants.TEMPO_MIN..Constants.TEMPO_MAX).toList()
     val bpm = stringResource(
       id = R.string.wear_label_bpm_value,
       state.selectedOption + 1

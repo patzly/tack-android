@@ -92,12 +92,12 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         var pickerOption = remember { tempo - 1 }
         val pickerCoroutineScope = rememberCoroutineScope()
         val pickerState = rememberPickerState(
-          initialNumberOfOptions = 400,
+          initialNumberOfOptions = Constants.TEMPO_MAX,
           initiallySelectedOption = pickerOption,
           repeatItems = false
         )
         fun safelyAnimateToOption(index: Int) {
-          val safeIndex = index.coerceIn(0, 399)
+          val safeIndex = index.coerceIn(Constants.TEMPO_MIN - 1, Constants.TEMPO_MAX - 1)
           pickerCoroutineScope.launch {
             if (reduceAnim) {
               pickerState.scrollToOption(safeIndex)
@@ -200,7 +200,7 @@ fun TempoPicker(
   )
   val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.Def.ALWAYS_VIBRATE)
 
-  val items = (1..400).toList()
+  val items = (Constants.TEMPO_MIN..Constants.TEMPO_MAX).toList()
   val bpm = stringResource(
     id = R.string.wear_label_bpm_value,
     state.selectedOption + 1
