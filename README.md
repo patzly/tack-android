@@ -14,12 +14,14 @@ There also is a separate Wear OS app available with haptic beats and many option
 
 ## Screenshots
 
-<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen1.png"><img src="assets/screen1.png" height="240px"/></a>
-<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen2.png"><img src="assets/screen2.png" height="240px"/></a>
-<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen3.png"><img src="assets/screen3.png" height="240px"/></a>
-<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen4.png"><img src="assets/screen4.png" height="240px"/></a>
+<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen1.png"><img src="assets/phone1.png" height="240px"/></a>
+<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen2.png"><img src="assets/phone2.png" height="240px"/></a>
+<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen3.png"><img src="assets/phone3.png" height="240px"/></a>
+<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen4.png"><img src="assets/phone4.png" height="240px"/></a>
 <a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/tablet1.png"><img src="assets/tablet1.png" height="240px"/></a>
 <a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/tablet2.png"><img src="assets/tablet2.png" height="240px"/></a>
+<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen1.png"><img src="assets/watch1.png" height="240px"/></a>
+<a href="https://raw.githubusercontent.com/patzly/tack-android/main/assets/screen1.png"><img src="assets/watch2.png" height="240px"/></a>
 
 ## Features
 
