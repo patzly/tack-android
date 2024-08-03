@@ -27,6 +27,7 @@ import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.button.MaterialButtonToggleGroup.OnButtonCheckedListener;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.slider.Slider.OnChangeListener;
+import com.google.android.material.slider.Slider.OnSliderTouchListener;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
@@ -34,7 +35,8 @@ import xyz.zedler.patrick.tack.databinding.PartialDialogOptionsBinding;
 import xyz.zedler.patrick.tack.databinding.PartialOptionsBinding;
 import xyz.zedler.patrick.tack.fragment.MainFragment;
 
-public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
+public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener,
+    OnSliderTouchListener {
 
   private final MainActivity activity;
   private final MainFragment fragment;
@@ -61,6 +63,12 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
 
     isIncrementalActive = getMetronomeUtil().isIncrementalActive();
     isTimerActive = getMetronomeUtil().isTimerActive();
+
+    if (binding != null) {
+      binding.sliderOptionsIncrementalAmount.addOnSliderTouchListener(this);
+      binding.sliderOptionsIncrementalInterval.addOnSliderTouchListener(this);
+      binding.sliderOptionsTimerDuration.addOnSliderTouchListener(this);
+    }
 
     if (useDialog) {
       dialogUtil.createCloseCustom(R.string.title_options, bindingDialog.getRoot());
@@ -215,9 +223,6 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
     binding.toggleOptionsIncrementalUnit.check(checkedId);
     binding.toggleOptionsIncrementalUnit.addOnButtonCheckedListener(this);
     binding.toggleOptionsIncrementalUnit.setEnabled(isIncrementalActive);
-
-    // Update timer unit selection, see below for an explanation
-    updateTimer();
   }
 
   private void updateTimer() {
@@ -372,6 +377,17 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener {
       updateTimer();
       fragment.updateTimerControls();
     }
+  }
+
+  @Override
+  public void onStartTrackingTouch(@NonNull Slider slider) {
+    getMetronomeUtil().savePlayingState();
+    getMetronomeUtil().stop();
+  }
+
+  @Override
+  public void onStopTrackingTouch(@NonNull Slider slider) {
+    getMetronomeUtil().restorePlayingState();
   }
 
   private MetronomeUtil getMetronomeUtil() {
