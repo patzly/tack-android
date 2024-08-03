@@ -1,3 +1,8 @@
+## 4.2.2
+
+- Fixed: tempo buttons not respecting changed tempo limits
+- Fixed: split-screen warning shown in fullscreen mode on some devices
+
 ## 4.2.1
 
 - New: playful dialog for tempo tap instead of button

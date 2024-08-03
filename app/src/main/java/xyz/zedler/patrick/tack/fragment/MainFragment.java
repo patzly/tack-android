@@ -210,10 +210,15 @@ public class MainFragment extends BaseFragment
     dialogUtilSplitScreen.createClose(
         R.string.msg_split_screen, R.string.msg_split_screen_description
     );
-    int screenHeightDp = UiUtil.dpFromPx(activity, UiUtil.getDisplayHeight(activity));
-    int screenWidthDp = UiUtil.dpFromPx(activity, UiUtil.getDisplayWidth(activity));
-    if ((isPortrait && screenHeightDp < 700) || (!isPortrait && screenWidthDp < 600)) {
-      dialogUtilSplitScreen.show();
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+      boolean isMultiWindow = activity.isInMultiWindowMode();
+      int screenHeightDp = UiUtil.dpFromPx(activity, UiUtil.getDisplayHeight(activity));
+      int screenWidthDp = UiUtil.dpFromPx(activity, UiUtil.getDisplayWidth(activity));
+      boolean isHeightTooSmall = isPortrait && screenHeightDp < 700;
+      boolean isWidthTooSmall = !isPortrait && screenWidthDp < 600;
+      if (isMultiWindow && (isHeightTooSmall || isWidthTooSmall)) {
+        dialogUtilSplitScreen.show();
+      }
     }
 
     optionsUtil = new OptionsUtil(activity, this, () -> updateOptions(true));
