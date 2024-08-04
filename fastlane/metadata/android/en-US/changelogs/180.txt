@@ -1,0 +1,3 @@
+• Improved: pausing and resuming metronome when certain options are adjusted
+• Fixed: tempo buttons not respecting new tempo limits
+• Fixed: split-screen warning shown in fullscreen mode on some devices
