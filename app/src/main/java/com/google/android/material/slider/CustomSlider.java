@@ -38,6 +38,7 @@ import android.graphics.Path.Direction;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -88,13 +89,15 @@ public class CustomSlider extends Slider {
   private final Paint activeTicksPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
   private final Paint stopIndicatorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
   private final List<TooltipDrawable> labels = new ArrayList<>();
+  private final Rect exclusionRect = new Rect();
+  private final List<Rect> gestureExclusionRects = new ArrayList<>();
   private ValueAnimator thumbWidthAnimator, thumbPositionAnimator;
   private ValueAnimator labelsInAnimator, labelsOutAnimator;
   private MaterialShapeDrawable thumbDrawable;
-  private int thumbWidth, thumbWidthAnim, minTickSpacing;
+  private int thumbWidth, thumbWidthAnim, minTickSpacing, continuousTicksCount;
   private float normalizedValueAnim;
   private float[] ticksCoordinates;
-  private boolean dirtyConfig;
+  private boolean dirtyConfig, touchTrackingJustStarted;
   // Whether the labels are showing or in the process of animating in.
   private boolean labelsAreAnimatedIn = false;
   @NonNull
@@ -171,17 +174,17 @@ public class CustomSlider extends Slider {
     addOnSliderTouchListener(new OnSliderTouchListener() {
       @Override
       public void onStartTrackingTouch(@NonNull Slider slider) {
+        touchTrackingJustStarted = true;
         updateThumbWidth(true, true);
       }
 
       @Override
       public void onStopTrackingTouch(@NonNull Slider slider) {
+        touchTrackingJustStarted = false;
         updateThumbWidth(false, true);
       }
     });
-    addOnChangeListener((slider, value, fromUser) -> updateThumbPosition(
-        value, fromUser && getStepSize() > 0
-    ));
+    addOnChangeListener((slider, value, fromUser) -> updateThumbPosition(value, fromUser));
     getViewTreeObserver().addOnGlobalLayoutListener(
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override
@@ -222,6 +225,18 @@ public class CustomSlider extends Slider {
     }
 
     drawThumb(canvas, yCenter);
+  }
+
+  @Override
+  protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+    super.onLayout(changed, left, top, right, bottom);
+    if (Build.VERSION.SDK_INT < 29) {
+      return;
+    }
+    exclusionRect.set(left, top, right, bottom);
+    gestureExclusionRects.clear();
+    gestureExclusionRects.add(exclusionRect);
+    setSystemGestureExclusionRects(gestureExclusionRects);
   }
 
   @Override
@@ -288,6 +303,14 @@ public class CustomSlider extends Slider {
   public void setStepSize(float stepSize) {
     dirtyConfig = true;
     super.setStepSize(stepSize);
+  }
+
+  public void setContinuousTicksCount(int continuousTicksCount) {
+    if (continuousTicksCount != this.continuousTicksCount) {
+      dirtyConfig = true;
+      invalidate();
+    }
+    this.continuousTicksCount = continuousTicksCount;
   }
 
   @Override
@@ -476,7 +499,7 @@ public class CustomSlider extends Slider {
   }
 
   private void maybeDrawTicks(@NonNull Canvas canvas) {
-    if (!isTickVisible() || getStepSize() <= 0.0f) {
+    if (!isTickVisible() || (getStepSize() <= 0.0f && continuousTicksCount == 0)) {
       return;
     }
 
@@ -586,19 +609,23 @@ public class CustomSlider extends Slider {
       thumbPositionAnimator.removeAllListeners();
     }
     float thumbPositionNew = normalizeValue(value);
-    long stepSizeDp = UiUtil.dpFromPx(getContext(), getTickInterval(getRealTickCount()));
-    if (animate && stepSizeDp > 8) {
+    long stepSizeDp = UiUtil.dpFromPx(
+        getContext(), getTickInterval(getRealTickCount(false))
+    );
+    if (animate && (stepSizeDp > 8 || (touchTrackingJustStarted && getStepSize() == 0))) {
       thumbPositionAnimator = ValueAnimator.ofFloat(normalizedValueAnim, thumbPositionNew);
       thumbPositionAnimator.addUpdateListener(animation -> {
         normalizedValueAnim = (float) animation.getAnimatedValue();
         invalidate();
       });
-      thumbPositionAnimator.setDuration(Math.min(stepSizeDp * 4L, 200));
+      long duration = getStepSize() == 0 ? 200 : Math.min(stepSizeDp * 4L, 200);
+      thumbPositionAnimator.setDuration(duration);
       thumbPositionAnimator.start();
     } else {
       normalizedValueAnim = thumbPositionNew;
-      invalidate();
+      // Don't call invalidate() as it's already called by BaseSlider and would cause overdraw!
     }
+    touchTrackingJustStarted = false;
   }
 
   private float normalizeValue(float value) {
@@ -644,7 +671,7 @@ public class CustomSlider extends Slider {
   }
 
   private void maybeCalculateTicksCoordinates() {
-    if (getStepSize() <= 0.0f) {
+    if (getStepSize() <= 0.0f && continuousTicksCount == 0) {
       return;
     }
     validateConfigurationIfDirty();
@@ -661,8 +688,8 @@ public class CustomSlider extends Slider {
   }
 
   private int getTickCount() {
-    int tickCount = getRealTickCount();
-    // Limit the tickCount if they will be too dense.
+    int tickCount = getRealTickCount(true);
+    // Limit the tickCount if the ticks will be too dense.
     while (getTickInterval(tickCount) < minTickSpacing) {
       if (tickCount == tickCount / 2 + 1) {
         break;
@@ -672,7 +699,10 @@ public class CustomSlider extends Slider {
     return tickCount;
   }
 
-  private int getRealTickCount() {
+  private int getRealTickCount(boolean canTakeContinuousTicksCount) {
+    if (canTakeContinuousTicksCount && continuousTicksCount > 0) {
+      return continuousTicksCount;
+    }
     return (int) ((getValueTo() - getValueFrom()) / getStepSize() + 1);
   }
 

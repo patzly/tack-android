@@ -228,6 +228,11 @@ public class SettingsFragment extends BaseFragment
     );
     binding.switchSettingsReduceAnimations.jumpDrawablesToCurrentState();
 
+    binding.switchSettingsBigTimer.setChecked(
+        getSharedPrefs().getBoolean(PREF.BIG_TIMER, DEF.BIG_TIMER)
+    );
+    binding.switchSettingsBigTimer.jumpDrawablesToCurrentState();
+
     binding.switchSettingsBigLogo.setChecked(
         getSharedPrefs().getBoolean(PREF.BIG_LOGO, DEF.BIG_LOGO)
     );
@@ -316,6 +321,7 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsElapsed,
         binding.linearSettingsResetElapsed,
         binding.linearSettingsResetTimer,
+        binding.linearSettingsBigTimer,
         binding.linearSettingsFlashScreen,
         binding.linearSettingsKeepAwake,
         binding.linearSettingsBigLogo
@@ -332,6 +338,7 @@ public class SettingsFragment extends BaseFragment
         binding.switchSettingsElapsed,
         binding.switchSettingsResetElapsed,
         binding.switchSettingsResetTimer,
+        binding.switchSettingsBigTimer,
         binding.switchSettingsFlashScreen,
         binding.switchSettingsKeepAwake,
         binding.switchSettingsBigLogo
@@ -457,6 +464,8 @@ public class SettingsFragment extends BaseFragment
       binding.switchSettingsResetElapsed.toggle();
     } else if (id == R.id.linear_settings_reset_timer) {
       binding.switchSettingsResetTimer.toggle();
+    } else if (id == R.id.linear_settings_big_timer) {
+      binding.switchSettingsBigTimer.toggle();
     } else if (id == R.id.linear_settings_flash_screen) {
       binding.switchSettingsFlashScreen.toggle();
     } else if (id == R.id.linear_settings_keep_awake) {
@@ -506,6 +515,10 @@ public class SettingsFragment extends BaseFragment
       ViewUtil.startIcon(binding.imageSettingsResetTimer);
       performHapticClick();
       getMetronomeUtil().setResetTimer(isChecked);
+    } else if (id == R.id.switch_settings_big_timer) {
+      //ViewUtil.startIcon(binding.imageSettingsBigTimer);
+      performHapticClick();
+      getSharedPrefs().edit().putBoolean(PREF.BIG_TIMER, isChecked).apply();
     } else if (id == R.id.switch_settings_flash_screen) {
       performHapticClick();
       //ViewUtil.startIcon(binding.imageSettingsFlashScreen);

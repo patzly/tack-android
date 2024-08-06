@@ -232,6 +232,9 @@
   <string name="settings_reset_timer">Reset timer when stopped</string>
   <string name="settings_reset_timer_description">Instead of resuming</string>
 
+  <string name="settings_big_timer">Show big timer slider</string>
+  <string name="settings_big_timer_description">Instead of animated seekbar</string>
+
   <string name="settings_flash_screen">Flash screen</string>
   <string name="settings_flash_screen_description">On every beat</string>
 

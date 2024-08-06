@@ -1,5 +1,6 @@
-## 4.2.2
+## 4.3.0
 
+- New: setting to replace animated timer seekbar with big slider
 - Improved: handling of display cutouts in landscape mode
 - Improved: pausing and resuming metronome when certain options are adjusted
 - Fixed: tempo buttons not respecting new tempo limits

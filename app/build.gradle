@@ -12,7 +12,7 @@ android {
         minSdk 21
         targetSdk 34
         versionCode 180 // last number is 0 for app release
-        versionName "4.2.2"
+        versionName "4.3.0"
         resourceConfigurations += ["cs", "de", "en", "zh-rCN", "zh-rHK", "zh-rTW"]
     }
 
