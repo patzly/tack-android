@@ -27,8 +27,8 @@
 
   <xyz.zedler.patrick.tack.view.CloverView
     android:id="@+id/clover_tempo_tap"
-    android:layout_width="@dimen/bpm_picker_size"
-    android:layout_height="@dimen/bpm_picker_size"
+    android:layout_width="@dimen/tempo_tap_size"
+    android:layout_height="@dimen/tempo_tap_size"
     android:layout_gravity="center" />
 
   <FrameLayout
@@ -39,7 +39,7 @@
 
     <TextSwitcher
       android:id="@+id/text_switcher_tempo_tap_tempo_term"
-      android:layout_width="@dimen/bpm_picker_size"
+      android:layout_width="@dimen/tempo_tap_size"
       android:layout_height="wrap_content"
       android:layout_gravity="center_horizontal|top" />
 
