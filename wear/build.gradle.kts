@@ -25,7 +25,7 @@ plugins {
 
 android {
   namespace = "xyz.zedler.patrick.tack"
-  compileSdk = 34
+  compileSdk = 35
 
   defaultConfig {
     applicationId = "xyz.zedler.patrick.tack"
