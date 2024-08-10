@@ -163,7 +163,7 @@ public class SettingsFragment extends BaseFragment
       getSharedPrefs().edit().putInt(PREF.UI_MODE, pref).apply();
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsTheme);
-      activity.restartToApply(0, getInstanceState(), true);
+      activity.restartToApply(0, getInstanceState(), true, false);
     });
 
     int idContrast;
@@ -194,7 +194,7 @@ public class SettingsFragment extends BaseFragment
       getSharedPrefs().edit().putString(PREF.UI_CONTRAST, pref).apply();
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsContrast);
-      activity.restartToApply(0, getInstanceState(), true);
+      activity.restartToApply(0, getInstanceState(), true, false);
     });
     boolean enabled = !getSharedPrefs().getString(PREF.THEME, DEF.THEME).equals(THEME.DYNAMIC);
     binding.toggleOtherContrast.setEnabled(enabled);
@@ -247,7 +247,7 @@ public class SettingsFragment extends BaseFragment
           getMetronomeUtil().stop();
           getSharedPrefs().edit().clear().apply();
           new ShortcutUtil(activity).removeAllShortcuts();
-          activity.restartToApply(100, getInstanceState(), false);
+          activity.restartToApply(100, getInstanceState(), false, true);
         });
     dialogUtilReset.showIfWasShown(savedInstanceState);
 
@@ -611,7 +611,7 @@ public class SettingsFragment extends BaseFragment
           card.setChecked(true);
           getSharedPrefs().edit().putString(PREF.THEME, name).apply();
           activity.restartToApply(
-              100, getInstanceState(), true
+              100, getInstanceState(), true, false
           );
         }
       });

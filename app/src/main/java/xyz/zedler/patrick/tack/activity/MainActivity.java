@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   private Locale locale;
   private Intent metronomeIntent;
   private MetronomeService metronomeService;
-  private boolean runAsSuperClass, bound;
+  private boolean runAsSuperClass, bound, stopServiceWithActivity;
   private ActivityResultLauncher<String> requestPermissionLauncher;
 
   @Override
@@ -162,6 +162,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
     metronomeIntent = new Intent(this, MetronomeService.class);
     updateMetronomeUtil();
+    stopServiceWithActivity = true;
 
     if (savedInstanceState == null && bundleInstanceState == null) {
       new Handler(Looper.getMainLooper()).postDelayed(
@@ -179,7 +180,10 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
       if (isFinishing()) {
         metronomeUtil.destroy();
         // metronome should be stopped when app is removed from recent apps
-        stopService(metronomeIntent);
+        // stopServiceWithActivity is false when it's e. g. only a theme change
+        if (stopServiceWithActivity) {
+          stopService(metronomeIntent);
+        }
       }
     }
   }
@@ -386,12 +390,13 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   }
 
   public void restartToApply(
-      long delay, @NonNull Bundle bundle, boolean restoreState
+      long delay, @NonNull Bundle bundle, boolean restoreState, boolean stopService
   ) {
     new Handler(Looper.getMainLooper()).postDelayed(() -> {
       if (restoreState) {
         onSaveInstanceState(bundle);
       }
+      stopServiceWithActivity = stopService;
       if (VERSION.SDK_INT < VERSION_CODES.S) {
         finish();
       }
