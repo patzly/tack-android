@@ -445,7 +445,6 @@ public class SettingsFragment extends BaseFragment
     } else if (id == R.id.linear_settings_reduce_animations) {
       binding.switchSettingsReduceAnimations.toggle();
     } else if (id == R.id.linear_settings_reset && getViewUtil().isClickEnabled(id)) {
-      ViewUtil.startIcon(binding.imageSettingsReset);
       performHapticClick();
       dialogUtilReset.show();
     } else if (id == R.id.linear_settings_sound && getViewUtil().isClickEnabled(id)) {
@@ -480,7 +479,6 @@ public class SettingsFragment extends BaseFragment
     int id = buttonView.getId();
     if (id == R.id.switch_option_transition) {
       performHapticClick();
-      ViewUtil.startIcon(binding.partialOptionTransition.imageOptionTransition);
       getSharedPrefs().edit().putBoolean(PREF.USE_SLIDING, isChecked).apply();
     } else if (id == R.id.switch_settings_haptic) {
       performHapticClick();
@@ -516,16 +514,13 @@ public class SettingsFragment extends BaseFragment
       performHapticClick();
       getMetronomeUtil().setResetTimer(isChecked);
     } else if (id == R.id.switch_settings_big_timer) {
-      //ViewUtil.startIcon(binding.imageSettingsBigTimer);
       performHapticClick();
       getSharedPrefs().edit().putBoolean(PREF.BIG_TIMER, isChecked).apply();
     } else if (id == R.id.switch_settings_flash_screen) {
       performHapticClick();
-      //ViewUtil.startIcon(binding.imageSettingsFlashScreen);
       getMetronomeUtil().setFlashScreen(isChecked);
     } else if (id == R.id.switch_settings_keep_awake) {
       performHapticClick();
-      ViewUtil.startIcon(binding.imageSettingsKeepAwake);
       getMetronomeUtil().setKeepAwake(isChecked);
       UiUtil.keepScreenAwake(activity, getMetronomeUtil().isPlaying() && isChecked);
     } else if (id == R.id.switch_settings_big_logo) {
@@ -546,7 +541,7 @@ public class SettingsFragment extends BaseFragment
       //ViewUtil.startIcon(binding.imageSettingsLatency);
     } else if (id == R.id.slider_settings_gain) {
       getMetronomeUtil().setGain((int) value);
-      //ViewUtil.startIcon(binding.imageSettingsLatency);
+      ViewUtil.startIcon(binding.imageSettingsGain);
       performHapticSegmentTick(slider, false);
     }
   }

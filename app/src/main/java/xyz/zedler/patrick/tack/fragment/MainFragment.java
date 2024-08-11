@@ -493,6 +493,7 @@ public class MainFragment extends BaseFragment
     ViewUtil.setTooltipText(binding.buttonMainAddSubdivision, R.string.action_add_sub);
     ViewUtil.setTooltipText(binding.buttonMainRemoveSubdivision, R.string.action_remove_sub);
     ViewUtil.setTooltipText(binding.buttonMainOptions, R.string.title_options);
+    ViewUtil.setTooltipText(binding.buttonMainTempoTap, R.string.action_tempo_tap);
     ViewUtil.setTooltipText(binding.buttonMainBeatMode, R.string.action_beat_mode);
 
     ViewUtil.setOnClickListeners(
@@ -1288,8 +1289,8 @@ public class MainFragment extends BaseFragment
   private Chip getBookmarkChip(int tempo) {
     Chip chip = new Chip(activity);
     chip.setCheckable(false);
-    chip.setChipIconResource(R.drawable.ic_round_audiotrack_anim);
-    chip.setCloseIconResource(R.drawable.ic_round_cancel);
+    chip.setChipIconResource(R.drawable.ic_rounded_music_note_anim);
+    chip.setCloseIconResource(R.drawable.ic_rounded_close);
     chip.setCloseIconVisible(true);
     chip.setOnCloseIconClickListener(v -> {
       performHapticClick();

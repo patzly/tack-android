@@ -119,7 +119,7 @@ public class NotificationUtil {
         .setSilent(true)
         .setOngoing(true)
         .setColor(getColor())
-        .setSmallIcon(R.drawable.ic_round_tack_notification)
+        .setSmallIcon(R.drawable.ic_logo_notification)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)

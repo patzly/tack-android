@@ -73,7 +73,7 @@
           <ImageView
             android:id="@+id/image_settings_language"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_language_anim"
+            android:src="@drawable/ic_rounded_language_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
@@ -102,7 +102,7 @@
           <ImageView
             android:id="@+id/image_settings_theme"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_palette_anim"
+            android:src="@drawable/ic_rounded_palette_anim"
             android:layout_gravity="center"
             tools:ignore="ContentDescription" />
 
@@ -190,7 +190,7 @@
           <ImageView
             android:id="@+id/image_settings_contrast"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_contrast_anim"
+            android:src="@drawable/ic_rounded_contrast_anim"
             android:layout_gravity="center"
             tools:ignore="ContentDescription" />
 
@@ -267,7 +267,7 @@
           <ImageView
             android:id="@+id/image_settings_haptic"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_vibration_anim"
+            android:src="@drawable/ic_rounded_vibration_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
@@ -295,7 +295,7 @@
           <ImageView
             android:id="@+id/image_settings_reduce_animations"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_animation_anim"
+            android:src="@drawable/ic_rounded_animation_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
@@ -321,9 +321,8 @@
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable.More">
 
           <ImageView
-            android:id="@+id/image_settings_reset"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_restart_alt"
+            android:src="@drawable/ic_rounded_reset_settings"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
@@ -351,7 +350,7 @@
           <ImageView
             android:id="@+id/image_settings_sound"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_audiotrack_anim"
+            android:src="@drawable/ic_rounded_music_note_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
@@ -381,9 +380,8 @@
             android:minHeight="56dp">
 
             <ImageView
-              android:id="@+id/image_settings_latency"
               style="@style/Widget.Tack.ImageView.ListItem.Icon"
-              android:src="@drawable/ic_round_volume_to_vibrate_anim"
+              android:src="@drawable/ic_rounded_media_output"
               tools:ignore="ContentDescription" />
 
             <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
@@ -418,7 +416,7 @@
           <ImageView
             android:id="@+id/image_settings_ignore_focus"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_pause_circle_outline_anim"
+            android:src="@drawable/ic_rounded_resume"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
@@ -448,7 +446,7 @@
           <ImageView
             android:id="@+id/image_settings_gain"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_speaker"
+            android:src="@drawable/ic_rounded_speaker_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
@@ -506,7 +504,7 @@
           <ImageView
             android:id="@+id/image_settings_show_subs"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_emphasis_anim"
+            android:src="@drawable/ic_rounded_steppers"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
@@ -534,7 +532,7 @@
           <ImageView
             android:id="@+id/image_settings_always_vibrate"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_vibration_anim"
+            android:src="@drawable/ic_rounded_vibration_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
@@ -562,7 +560,7 @@
           <ImageView
             android:id="@+id/image_settings_elapsed"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_timer_anim"
+            android:src="@drawable/ic_rounded_timer_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
@@ -590,7 +588,7 @@
           <ImageView
             android:id="@+id/image_settings_reset_elapsed"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_history_anim"
+            android:src="@drawable/ic_rounded_autopause_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
@@ -618,7 +616,7 @@
           <ImageView
             android:id="@+id/image_settings_reset_timer"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_history_anim"
+            android:src="@drawable/ic_rounded_autopause_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
@@ -644,9 +642,8 @@
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable.More">
 
           <ImageView
-            android:id="@+id/image_settings_big_timer"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_sliders"
+            android:src="@drawable/ic_rounded_sliders"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
@@ -672,9 +669,8 @@
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable.More">
 
           <ImageView
-            android:id="@+id/image_settings_flash_screen"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_bolt"
+            android:src="@drawable/ic_rounded_bolt"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
@@ -700,9 +696,8 @@
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable.More">
 
           <ImageView
-            android:id="@+id/image_settings_keep_awake"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_preview_anim"
+            android:src="@drawable/ic_rounded_preview"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
@@ -731,11 +726,11 @@
 
           <ImageView
             android:id="@+id/image_settings_big_logo"
-            style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginEnd="14dp"
-            android:src="@drawable/ic_round_logo_anim"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon.Colored"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginEnd="15dp"
+            android:src="@drawable/ic_logo_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">

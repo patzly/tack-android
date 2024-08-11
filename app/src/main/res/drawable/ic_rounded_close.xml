@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ This file is part of Tack Android.
   ~
@@ -18,25 +17,13 @@
   ~ Copyright (c) 2020-2024 by Patrick Zedler
   -->
 
-<layer-list
-  xmlns:android="http://schemas.android.com/apk/res/android">
-
-  <item
-    android:left="1dp"
-    android:right="1dp"
-    android:top="1dp"
-    android:bottom="1dp">
-    <shape android:shape="oval">
-      <solid android:color="#00000000" /><!-- #66303030 -->
-      <size
-        android:width="48dp"
-        android:height="48dp" />
-    </shape>
-  </item>
-
-  <item
-    android:id="@+id/icon_selection_check"
-    android:gravity="center"
-    android:drawable="@drawable/ic_rounded_check_anim" />
-
-</layer-list>
+<vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:width="24dp"
+  android:height="24dp"
+  android:viewportWidth="960"
+  android:viewportHeight="960">
+  <path
+    android:pathData="M480,536 L284,732q-11,11 -28,11t-28,-11q-11,-11 -11,-28t11,-28l196,-196 -196,-196q-11,-11 -11,-28t11,-28q11,-11 28,-11t28,11l196,196 196,-196q11,-11 28,-11t28,11q11,11 11,28t-11,28L536,480l196,196q11,11 11,28t-11,28q-11,11 -28,11t-28,-11L480,536Z"
+    android:fillColor="#000000" />
+</vector>

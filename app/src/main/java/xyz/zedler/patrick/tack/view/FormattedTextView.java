@@ -29,7 +29,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
@@ -114,11 +113,11 @@ public class FormattedTextView extends LinearLayout {
         MaterialSwitch toggle = optionTransition.findViewById(R.id.switch_option_transition);
         optionTransition.setOnClickListener(v -> toggle.setChecked(!toggle.isChecked()));
         SharedPreferences sharedPrefs = new PrefsUtil(context).getSharedPrefs();
-        toggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
-          ImageView imageView = optionTransition.findViewById(R.id.image_option_transition);
-          ViewUtil.startIcon(imageView);
-          sharedPrefs.edit().putBoolean(PREF.USE_SLIDING, isChecked).apply();
-        });
+        toggle.setOnCheckedChangeListener(
+            (buttonView, isChecked) -> sharedPrefs.edit().putBoolean(
+                PREF.USE_SLIDING, isChecked
+            ).apply()
+        );
         toggle.setChecked(sharedPrefs.getBoolean(PREF.USE_SLIDING, DEF.USE_SLIDING));
         addView(optionTransition);
       } else {

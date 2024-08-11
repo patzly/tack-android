@@ -24,8 +24,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -93,7 +91,6 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
   public void onClick(View v) {
     int id = v.getId();
     if (id == R.id.linear_feedback_rate && getViewUtil().isClickEnabled(id)) {
-      ViewUtil.startIcon(binding.imageFeedbackRate);
       performHapticClick();
       Uri uri = Uri.parse(
           "market://details?id=" + activity.getApplicationContext().getPackageName()
@@ -103,17 +100,15 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
           Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
           Intent.FLAG_ACTIVITY_MULTIPLE_TASK |
           Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-      new Handler(Looper.getMainLooper()).postDelayed(() -> {
-        try {
-          startActivity(goToMarket);
-        } catch (ActivityNotFoundException e) {
-          startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
-              "http://play.google.com/store/apps/details?id="
-                  + activity.getApplicationContext().getPackageName()
-          )));
-        }
-        dismiss();
-      }, 400);
+      try {
+        startActivity(goToMarket);
+      } catch (ActivityNotFoundException e) {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+            "http://play.google.com/store/apps/details?id="
+                + activity.getApplicationContext().getPackageName()
+        )));
+      }
+      dismiss();
     } else if (id == R.id.linear_feedback_issue && getViewUtil().isClickEnabled(id)) {
       performHapticClick();
       String issues = getString(R.string.app_github) + "/issues";

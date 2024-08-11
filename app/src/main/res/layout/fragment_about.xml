@@ -65,7 +65,7 @@
 
           <ImageView
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_info_outline_anim"
+            android:src="@drawable/ic_rounded_info"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
@@ -87,9 +87,8 @@
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
           <ImageView
-            android:id="@+id/image_about_developer"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_person_anim"
+            android:src="@drawable/ic_rounded_person"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
@@ -113,7 +112,7 @@
           <ImageView
             android:id="@+id/image_about_changelog"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_history_anim"
+            android:src="@drawable/ic_rounded_history_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
@@ -135,9 +134,8 @@
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
           <ImageView
-            android:id="@+id/image_about_vending"
-            style="@style/Widget.Tack.ImageView.ListItem.Icon.Colored"
-            android:src="@drawable/ic_round_vending_anim"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_shop"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
@@ -160,7 +158,7 @@
 
           <ImageView
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_github"
+            android:src="@drawable/ic_rounded_code"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
@@ -183,7 +181,7 @@
 
           <ImageView
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_translate"
+            android:src="@drawable/ic_rounded_translate"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
@@ -205,9 +203,8 @@
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
           <ImageView
-            android:id="@+id/image_about_privacy"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_policy_anim"
+            android:src="@drawable/ic_rounded_policy"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
@@ -235,7 +232,7 @@
           <ImageView
             android:id="@+id/image_about_license_jost"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_copyright_anim"
+            android:src="@drawable/ic_rounded_copyright_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
@@ -259,7 +256,7 @@
           <ImageView
             android:id="@+id/image_about_license_material_components"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_copyright_anim"
+            android:src="@drawable/ic_rounded_copyright_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
@@ -283,7 +280,7 @@
           <ImageView
             android:id="@+id/image_about_license_material_icons"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_round_copyright_anim"
+            android:src="@drawable/ic_rounded_copyright_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">

@@ -51,7 +51,7 @@
           android:layout_height="32dp"
           android:layout_gravity="center"
           android:importantForAccessibility="no"
-          android:src="@drawable/ic_round_tack_logo" />
+          android:src="@drawable/ic_logo_parts" />
 
         <ImageView
           android:id="@+id/image_main_logo_placeholder"
@@ -123,7 +123,7 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            app:icon="@drawable/ic_round_remove_anim"
+            app:icon="@drawable/ic_rounded_remove_anim"
             app:iconTint="@color/selector_tonal_button_icon_tint"
             app:rippleColor="@color/selector_tonal_button_ripple"
             app:backgroundTint="@color/transparent" />
@@ -160,7 +160,7 @@
             android:layout_marginEnd="4dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            app:icon="@drawable/ic_round_add_anim"
+            app:icon="@drawable/ic_rounded_add_anim"
             app:iconTint="@color/selector_tonal_button_icon_tint"
             app:rippleColor="@color/selector_tonal_button_ripple"
             app:backgroundTint="@color/transparent" />
@@ -180,7 +180,7 @@
             android:id="@+id/button_main_remove_subdivision"
             style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
             android:contentDescription="@string/action_remove_sub"
-            app:icon="@drawable/ic_round_remove_anim" />
+            app:icon="@drawable/ic_rounded_remove_anim" />
 
           <HorizontalScrollView
             android:id="@+id/scroll_horiz_main_subs"
@@ -206,7 +206,7 @@
             android:id="@+id/button_main_add_subdivision"
             style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
             android:contentDescription="@string/action_add_sub"
-            app:icon="@drawable/ic_round_add_anim" />
+            app:icon="@drawable/ic_rounded_add_anim" />
 
         </LinearLayout>
 
@@ -299,7 +299,7 @@
         style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
         android:layout_marginEnd="16dp"
         android:contentDescription="@string/action_decrease"
-        app:icon="@drawable/ic_round_navigate_before_anim" />
+        app:icon="@drawable/ic_rounded_navigate_before_anim" />
 
       <FrameLayout
         android:layout_width="wrap_content"
@@ -362,7 +362,7 @@
         style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
         android:layout_marginStart="16dp"
         android:contentDescription="@string/action_increase"
-        app:icon="@drawable/ic_round_navigate_after_anim" />
+        app:icon="@drawable/ic_rounded_navigate_after_anim" />
 
     </LinearLayout>
 
@@ -416,14 +416,14 @@
         style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
         android:layout_marginEnd="4dp"
         android:contentDescription="@string/title_options"
-        app:icon="@drawable/ic_round_tune_anim" />
+        app:icon="@drawable/ic_rounded_tune_anim" />
 
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_main_tempo_tap"
         style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
         android:layout_marginEnd="@dimen/control_spacing"
         android:contentDescription="@string/action_tempo_tap"
-        app:icon="@drawable/ic_round_touch_app_anim" />
+        app:icon="@drawable/ic_rounded_touch_app_anim" />
 
       <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_main_play_stop"
@@ -439,7 +439,7 @@
         style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
         android:layout_marginEnd="4dp"
         android:contentDescription="@string/action_bookmark"
-        app:icon="@drawable/ic_round_bookmark_anim" />
+        app:icon="@drawable/ic_rounded_bookmark_add_anim" />
 
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_main_beat_mode"

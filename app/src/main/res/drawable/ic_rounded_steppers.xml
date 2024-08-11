@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ This file is part of Tack Android.
   ~
@@ -18,25 +17,16 @@
   ~ Copyright (c) 2020-2024 by Patrick Zedler
   -->
 
-<layer-list
-  xmlns:android="http://schemas.android.com/apk/res/android">
+<vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:autoMirrored="true"
+  android:height="24dp"
+  android:viewportHeight="960"
+  android:viewportWidth="960"
+  android:width="24dp">
 
-  <item
-    android:left="1dp"
-    android:right="1dp"
-    android:top="1dp"
-    android:bottom="1dp">
-    <shape android:shape="oval">
-      <solid android:color="#00000000" /><!-- #66303030 -->
-      <size
-        android:width="48dp"
-        android:height="48dp" />
-    </shape>
-  </item>
+  <path
+    android:fillColor="#000000"
+    android:pathData="M200,600q-50,0 -85,-35t-35,-85q0,-50 35,-85t85,-35q50,0 85,35t35,85q0,50 -35,85t-85,35ZM200,520q17,0 28.5,-11.5T240,480q0,-17 -11.5,-28.5T200,440q-17,0 -28.5,11.5T160,480q0,17 11.5,28.5T200,520ZM480,600q-50,0 -85,-35t-35,-85q0,-50 35,-85t85,-35q50,0 85,35t35,85q0,50 -35,85t-85,35ZM480,520q17,0 28.5,-11.5T520,480q0,-17 -11.5,-28.5T480,440q-17,0 -28.5,11.5T440,480q0,17 11.5,28.5T480,520ZM760,600q-50,0 -85,-35t-35,-85q0,-50 35,-85t85,-35q50,0 85,35t35,85q0,50 -35,85t-85,35Z" />
 
-  <item
-    android:id="@+id/icon_selection_check"
-    android:gravity="center"
-    android:drawable="@drawable/ic_rounded_check_anim" />
-
-</layer-list>
+</vector>

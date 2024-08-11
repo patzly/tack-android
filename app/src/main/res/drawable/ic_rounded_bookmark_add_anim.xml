@@ -29,27 +29,17 @@
       android:viewportHeight="24">
       <group
         android:name="group"
-        android:pivotX="12"
-        android:pivotY="12">
+        android:pivotX="18"
+        android:pivotY="6">
         <path
-          android:name="path"
-          android:pathData="M 8 6.82 L 8 17.18 C 8 17.97 8.87 18.45 9.54 18.02 L 17.68 12.84 C 18.3 12.45 18.3 11.55 17.68 11.15 L 9.54 5.98 C 8.87 5.55 8 6.03 8 6.82 Z"
-          android:fillColor="#000"
-          android:strokeWidth="1" />
+          android:fillColor="#000000"
+          android:pathData="M17,7h-1q-0.43,0 -0.71,-0.29Q15,6.42 15,6t0.29,-0.71Q15.58,5 16,5h1V4q0,-0.42 0.29,-0.71T18,3q0.43,0 0.71,0.29 0.29,0.29 0.29,0.71v1h1q0.43,0 0.71,0.29 0.29,0.29 0.29,0.71t-0.29,0.71Q20.42,7 20,7h-1v1q0,0.43 -0.29,0.71Q18.42,9 18,9q-0.43,0 -0.71,-0.29Q17,8.42 17,8Z" />
       </group>
+      <path
+        android:fillColor="#000000"
+        android:pathData="M12,5L7,5h6ZM12,18 L7.8,19.8q-1,0.43 -1.9,-0.16 -0.9,-0.59 -0.9,-1.66L5,5q0,-0.83 0.59,-1.41Q6.17,3 7,3h5q0.43,0 0.71,0.29 0.29,0.29 0.29,0.71t-0.29,0.71Q12.42,5 12,5L7,5v12.95l5,-2.15 5,2.15L17,12q0,-0.43 0.29,-0.71 0.29,-0.29 0.71,-0.29 0.43,0 0.71,0.29 0.29,0.29 0.29,0.71v5.97q0,1.08 -0.9,1.67 -0.9,0.59 -1.9,0.16z" />
     </vector>
   </aapt:attr>
-  <target android:name="path">
-    <aapt:attr name="android:animation">
-      <objectAnimator
-        android:propertyName="pathData"
-        android:duration="300"
-        android:valueFrom="M 8 6.82 L 8 16.776 C 8 16.911 8 17.045 8 17.18 C 8 17.97 8.87 18.45 9.54 18.02 L 16.563 13.551 C 16.936 13.314 17.308 13.077 17.68 12.84 C 18.3 12.45 18.3 11.55 17.68 11.15 C 17.259 10.882 16.838 10.615 16.416 10.347 L 9.54 5.98 C 9.487 5.946 9.433 5.918 9.378 5.895 C 8.738 5.628 8 6.092 8 6.82 C 8 6.82 8 6.82 8 6.82"
-        android:valueTo="M 6 8 L 6 16 C 6 16.061 6.003 16.122 6.008 16.181 C 6.101 17.197 6.961 18 8 18 L 16 18 C 17.1 18 18 17.1 18 16 C 18 13.333 18 10.667 18 8 C 18 6.9 17.1 6 16 6 L 8 6 C 8 6 8 6 8 6 C 7.038 6 6.229 6.689 6.041 7.597 C 6.014 7.728 6 7.862 6 8"
-        android:valueType="pathType"
-        android:interpolator="@android:interpolator/fast_out_slow_in" />
-    </aapt:attr>
-  </target>
   <target android:name="group">
     <aapt:attr name="android:animation">
       <objectAnimator
