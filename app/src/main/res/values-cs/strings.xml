@@ -228,6 +228,9 @@
   <string name="settings_reset_timer">Resetovat časovač po zastavení</string>
   <string name="settings_reset_timer_description">Namísto pozastavení</string>
 
+  <string name="settings_big_timer">Zobrazit velký posuvník časovače</string>
+  <string name="settings_big_timer_description">Namísto animované lišty</string>
+
   <string name="settings_flash_screen">Blikání obrazovky</string>
   <string name="settings_flash_screen_description">Při každé době</string>
 
