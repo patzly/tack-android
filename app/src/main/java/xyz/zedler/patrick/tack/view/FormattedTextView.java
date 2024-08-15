@@ -29,6 +29,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
@@ -42,6 +43,7 @@ import com.google.android.material.textview.MaterialTextView;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.PrefsUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
@@ -50,6 +52,7 @@ import xyz.zedler.patrick.tack.util.ViewUtil;
 public class FormattedTextView extends LinearLayout {
 
   private final Context context;
+  private HapticUtil hapticUtil;
   private int textColor, textColorVariant;
 
   public FormattedTextView(Context context) {
@@ -65,6 +68,7 @@ public class FormattedTextView extends LinearLayout {
   }
 
   private void init() {
+    hapticUtil = new HapticUtil(context);
     setOrientation(VERTICAL);
     setPadding(0, UiUtil.dpToPx(context, 16), 0, 0);
     textColor = ResUtil.getColor(context, R.attr.colorOnSurface);
@@ -110,8 +114,13 @@ public class FormattedTextView extends LinearLayout {
         );
         optionTransition.setBackground(ViewUtil.getRippleBgListItemSurface(context));
         optionTransition.setLayoutParams(getVerticalLayoutParams(0, 16));
+        ImageView image = optionTransition.findViewById(R.id.image_option_transition);
         MaterialSwitch toggle = optionTransition.findViewById(R.id.switch_option_transition);
-        optionTransition.setOnClickListener(v -> toggle.setChecked(!toggle.isChecked()));
+        optionTransition.setOnClickListener(v -> {
+          ViewUtil.startIcon(image);
+          hapticUtil.click();
+          toggle.setChecked(!toggle.isChecked());
+        });
         SharedPreferences sharedPrefs = new PrefsUtil(context).getSharedPrefs();
         toggle.setOnCheckedChangeListener(
             (buttonView, isChecked) -> sharedPrefs.edit().putBoolean(

@@ -205,11 +205,12 @@ public class SettingsFragment extends BaseFragment
             : R.string.settings_contrast_dynamic_unsupported
     );
 
-    binding.partialOptionTransition.linearOptionTransition.setOnClickListener(
-        v -> binding.partialOptionTransition.switchOptionTransition.setChecked(
-            !binding.partialOptionTransition.switchOptionTransition.isChecked()
-        )
-    );
+    binding.partialOptionTransition.linearOptionTransition.setOnClickListener(v -> {
+      ViewUtil.startIcon(binding.partialOptionTransition.imageOptionTransition);
+      binding.partialOptionTransition.switchOptionTransition.setChecked(
+          !binding.partialOptionTransition.switchOptionTransition.isChecked()
+      );
+    });
     binding.partialOptionTransition.switchOptionTransition.setChecked(
         getSharedPrefs().getBoolean(PREF.USE_SLIDING, DEF.USE_SLIDING)
     );
