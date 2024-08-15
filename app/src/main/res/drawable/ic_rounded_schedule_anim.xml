@@ -1,0 +1,87 @@
+<animated-vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:aapt="http://schemas.android.com/aapt">
+  <aapt:attr name="android:drawable">
+    <vector
+      android:name="vector"
+      android:width="24dp"
+      android:height="24dp"
+      android:viewportWidth="24"
+      android:viewportHeight="24">
+      <path
+        android:name="path_1"
+        android:pathData="M 12 22 C 10.039 21.988 8.122 21.404 6.487 20.321 C 4.852 19.238 3.567 17.701 2.79 15.9 C 2.261 14.668 1.992 13.34 2 12 C 2.012 10.039 2.596 8.122 3.679 6.487 C 4.762 4.852 6.299 3.567 8.1 2.79 C 9.332 2.261 10.66 1.992 12 2 C 13.961 2.012 15.878 2.596 17.513 3.679 C 19.148 4.762 20.433 6.299 21.21 8.1 C 21.74 9.32 22 10.62 22 12 C 22 13.38 21.74 14.68 21.21 15.9 C 20.189 18.286 18.286 20.189 15.9 21.21 C 14.668 21.739 13.34 22.008 12 22 Z M 12 20 C 13.053 20.018 14.099 19.819 15.073 19.417 C 16.046 19.014 16.927 18.416 17.66 17.66 C 18.416 16.926 19.014 16.046 19.416 15.072 C 19.819 14.099 20.017 13.053 20 12 C 20.018 10.947 19.819 9.901 19.417 8.927 C 19.014 7.954 18.416 7.073 17.66 6.34 C 16.926 5.584 16.046 4.986 15.072 4.584 C 14.099 4.181 13.053 3.983 12 4 C 10.947 3.982 9.901 4.181 8.927 4.583 C 7.954 4.986 7.073 5.584 6.34 6.34 C 5.584 7.074 4.986 7.954 4.584 8.928 C 4.181 9.901 3.983 10.947 4 12 C 4 14.22 4.78 16.1 6.34 17.66 C 7.074 18.416 7.954 19.014 8.928 19.416 C 9.901 19.819 10.947 20.017 12 20 Z"
+        android:fillColor="#000"
+        android:strokeWidth="1" />
+      <group
+        android:name="group_hour"
+        android:pivotX="12"
+        android:pivotY="12">
+        <path
+          android:name="hour"
+          android:pathData="M 12 8 L 12 12"
+          android:strokeColor="#000000"
+          android:strokeWidth="2"
+          android:strokeLineCap="round"
+          android:strokeLineJoin="round" />
+      </group>
+      <group
+        android:name="group_minute"
+        android:pivotX="12"
+        android:pivotY="12"
+        android:rotation="135">
+        <path
+          android:name="minute"
+          android:pathData="M 12 7.33 L 12 12"
+          android:strokeColor="#000000"
+          android:strokeWidth="2"
+          android:strokeLineCap="round"
+          android:strokeLineJoin="round" />
+      </group>
+    </vector>
+  </aapt:attr>
+  <target android:name="group_hour">
+    <aapt:attr name="android:animation">
+      <objectAnimator
+        android:propertyName="rotation"
+        android:duration="300"
+        android:valueFrom="0"
+        android:valueTo="135"
+        android:valueType="floatType"
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
+    </aapt:attr>
+  </target>
+  <target android:name="hour">
+    <aapt:attr name="android:animation">
+      <objectAnimator
+        android:propertyName="pathData"
+        android:duration="300"
+        android:valueFrom="M 12 8 L 12 12"
+        android:valueTo="M 12 7.33 L 12 12"
+        android:valueType="pathType"
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
+    </aapt:attr>
+  </target>
+  <target android:name="minute">
+    <aapt:attr name="android:animation">
+      <objectAnimator
+        android:propertyName="pathData"
+        android:duration="300"
+        android:valueFrom="M 12 7.33 L 12 12"
+        android:valueTo="M 12 8 L 12 12"
+        android:valueType="pathType"
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
+    </aapt:attr>
+  </target>
+  <target android:name="group_minute">
+    <aapt:attr name="android:animation">
+      <objectAnimator
+        android:propertyName="rotation"
+        android:duration="300"
+        android:valueFrom="135"
+        android:valueTo="360"
+        android:valueType="floatType"
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
+    </aapt:attr>
+  </target>
+</animated-vector>

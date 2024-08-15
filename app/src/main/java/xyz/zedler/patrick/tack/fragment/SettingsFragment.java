@@ -233,6 +233,11 @@ public class SettingsFragment extends BaseFragment
     );
     binding.switchSettingsBigTimer.jumpDrawablesToCurrentState();
 
+    binding.switchSettingsBigTimeText.setChecked(
+        getSharedPrefs().getBoolean(PREF.BIG_TIME_TEXT, DEF.BIG_TIME_TEXT)
+    );
+    binding.switchSettingsBigTimeText.jumpDrawablesToCurrentState();
+
     binding.switchSettingsBigLogo.setChecked(
         getSharedPrefs().getBoolean(PREF.BIG_LOGO, DEF.BIG_LOGO)
     );
@@ -322,6 +327,7 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsResetElapsed,
         binding.linearSettingsResetTimer,
         binding.linearSettingsBigTimer,
+        binding.linearSettingsBigTimeText,
         binding.linearSettingsFlashScreen,
         binding.linearSettingsKeepAwake,
         binding.linearSettingsBigLogo
@@ -339,6 +345,7 @@ public class SettingsFragment extends BaseFragment
         binding.switchSettingsResetElapsed,
         binding.switchSettingsResetTimer,
         binding.switchSettingsBigTimer,
+        binding.switchSettingsBigTimeText,
         binding.switchSettingsFlashScreen,
         binding.switchSettingsKeepAwake,
         binding.switchSettingsBigLogo
@@ -465,6 +472,8 @@ public class SettingsFragment extends BaseFragment
       binding.switchSettingsResetTimer.toggle();
     } else if (id == R.id.linear_settings_big_timer) {
       binding.switchSettingsBigTimer.toggle();
+    } else if (id == R.id.linear_settings_big_time_text) {
+      binding.switchSettingsBigTimeText.toggle();
     } else if (id == R.id.linear_settings_flash_screen) {
       binding.switchSettingsFlashScreen.toggle();
     } else if (id == R.id.linear_settings_keep_awake) {
@@ -516,6 +525,10 @@ public class SettingsFragment extends BaseFragment
     } else if (id == R.id.switch_settings_big_timer) {
       performHapticClick();
       getSharedPrefs().edit().putBoolean(PREF.BIG_TIMER, isChecked).apply();
+    } else if (id == R.id.switch_settings_big_time_text) {
+      ViewUtil.startIcon(binding.imageSettingsBigTimeText);
+      performHapticClick();
+      getSharedPrefs().edit().putBoolean(PREF.BIG_TIME_TEXT, isChecked).apply();
     } else if (id == R.id.switch_settings_flash_screen) {
       performHapticClick();
       getMetronomeUtil().setFlashScreen(isChecked);

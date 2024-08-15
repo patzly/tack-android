@@ -54,6 +54,7 @@ public final class Constants {
     public final static String RESET_ELAPSED = "reset_elapsed";
     public final static String RESET_TIMER = "reset_timer";
     public final static String BIG_TIMER = "big_timer";
+    public final static String BIG_TIME_TEXT = "big_time_text";
     public final static String FLASH_SCREEN = "flash_screen";
     public final static String KEEP_AWAKE = "keep_awake";
     public final static String SOUND = "sound";
@@ -94,6 +95,7 @@ public final class Constants {
     public final static boolean RESET_ELAPSED = false;
     public final static boolean RESET_TIMER = false;
     public final static boolean BIG_TIMER = false;
+    public final static boolean BIG_TIME_TEXT = false;
     public final static boolean FLASH_SCREEN = false;
     public final static boolean KEEP_AWAKE = true;
     public final static String SOUND = Constants.SOUND.SINE;

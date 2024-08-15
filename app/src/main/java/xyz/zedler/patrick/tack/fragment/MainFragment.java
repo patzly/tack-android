@@ -178,6 +178,12 @@ public class MainFragment extends BaseFragment
     reduceAnimations = getSharedPrefs().getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM);
     bigTimerSlider = getSharedPrefs().getBoolean(PREF.BIG_TIMER, DEF.BIG_TIMER);
 
+    if (getSharedPrefs().getBoolean(PREF.BIG_TIME_TEXT, DEF.BIG_TIME_TEXT)) {
+      binding.textMainTimerCurrent.setTextSize(32);
+      binding.textMainTimerTotal.setTextSize(32);
+      binding.textMainElapsedTime.setTextSize(32);
+    }
+
     colorFlashNormal = ResUtil.getColor(activity, R.attr.colorPrimary);
     colorFlashStrong = ResUtil.getColor(activity, R.attr.colorError);
     colorFlashMuted = ResUtil.getColor(

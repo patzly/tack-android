@@ -42,6 +42,7 @@
   <string name="title_options">Options</string>
   <string name="title_general">General</string>
   <string name="title_metronome">Metronome</string>
+  <string name="title_controls">Controls</string>
   <string name="title_logcat">Logcat</string>
 
   <!-- LABELS -->
@@ -234,6 +235,9 @@
 
   <string name="settings_big_timer">Show big timer slider</string>
   <string name="settings_big_timer_description">Instead of animated seekbar</string>
+
+  <string name="settings_big_time_text">Use big text for time</string>
+  <string name="settings_big_time_text_description">Useful if the default size is not enough</string>
 
   <string name="settings_flash_screen">Flash screen</string>
   <string name="settings_flash_screen_description">On every beat</string>
