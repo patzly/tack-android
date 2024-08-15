@@ -416,7 +416,7 @@
           <ImageView
             android:id="@+id/image_settings_ignore_focus"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_rounded_resume"
+            android:src="@drawable/ic_rounded_select_to_speak"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
