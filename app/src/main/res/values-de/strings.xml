@@ -30,6 +30,7 @@
   <string name="title_options">Optionen</string>
   <string name="title_general">Allgemein</string>
   <string name="title_metronome">Metronom</string>
+  <string name="title_controls">Bedienelemente</string>
   <string name="title_logcat">Fehlerprotokoll</string>
 
   <!-- LABELS -->
@@ -222,6 +223,9 @@
 
   <string name="settings_big_timer">Großen Schieberegler für Timer anzeigen</string>
   <string name="settings_big_timer_description">Statt animiertem Fortschrittsbalken</string>
+
+  <string name="settings_big_time_text">Großen Text für Zeit nutzen</string>
+  <string name="settings_big_time_text_description">Nützlich, wenn die Standardgröße nicht ausreicht</string>
 
   <string name="settings_flash_screen">Bildschirm aufblitzen lassen</string>
   <string name="settings_flash_screen_description">Bei jedem Schlag</string>
