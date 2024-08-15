@@ -232,8 +232,8 @@
         <FrameLayout
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:paddingStart="2dp"
-          android:paddingEnd="2dp">
+          android:paddingStart="18dp"
+          android:paddingEnd="18dp">
 
           <TextView
             android:id="@+id/text_main_timer_current"

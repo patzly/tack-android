@@ -97,7 +97,7 @@ public class MainFragment extends BaseFragment
   private FragmentMainBinding binding;
   private MainActivity activity;
   private Bundle savedState;
-  private boolean flashScreen, reduceAnimations, isLandTablet, bigLogo, showPickerNotLogo;
+  private boolean flashScreen, reduceAnimations, isRtl, isLandTablet, bigLogo, showPickerNotLogo;
   private boolean bigTimerSlider;
   private LogoUtil logoUtil, logoCenterUtil;
   private ValueAnimator fabAnimator;
@@ -152,6 +152,7 @@ public class MainFragment extends BaseFragment
 
     boolean isPortrait = UiUtil.isOrientationPortrait(activity);
     isLandTablet = UiUtil.isLandTablet(activity);
+    isRtl = UiUtil.isLayoutRtl(activity);
 
     new ScrollBehavior().setUpScroll(binding.appBarMain, null, isPortrait);
 
@@ -327,7 +328,7 @@ public class MainFragment extends BaseFragment
     binding.tempoPickerMain.setOnRotationListener(new OnRotationListener() {
       @Override
       public void onRotate(int tempo) {
-        changeTempo(tempo);
+        changeTempo(isRtl ? -tempo : tempo);
       }
 
       @Override
@@ -1355,7 +1356,6 @@ public class MainFragment extends BaseFragment
       chip.setCloseIconTint(ColorStateList.valueOf(colorIcon));
       chip.setTextColor(colorText);
       if (isActive && alignActiveOrCenter) {
-        boolean isRtl = UiUtil.isLayoutRtl(activity);
         int scrollX = binding.scrollHorizMainBookmarks.getScrollX();
         int chipStart = isRtl ? chip.getRight() : chip.getLeft();
         int chipEnd = isRtl ? chip.getLeft() : chip.getRight();
