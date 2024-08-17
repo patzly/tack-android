@@ -30,6 +30,7 @@
   <string name="title_options">Předvolby</string>
   <string name="title_general">Obecné</string>
   <string name="title_metronome">Metronom</string>
+  <string name="title_controls">Ovládání</string>
   <string name="title_logcat">Logcat</string>
 
   <!-- LABELS -->
@@ -230,6 +231,9 @@
 
   <string name="settings_big_timer">Zobrazit velký posuvník časovače</string>
   <string name="settings_big_timer_description">Namísto animované lišty</string>
+
+  <string name="settings_big_time_text">Použít velký text pro čas</string>
+  <string name="settings_big_time_text_description">Užitečné, pokud nestačí výchozí velikost</string>
 
   <string name="settings_flash_screen">Blikání obrazovky</string>
   <string name="settings_flash_screen_description">Při každé době</string>
