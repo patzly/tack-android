@@ -104,7 +104,7 @@ public class NotificationUtil {
         context, REQUEST_CODE, stopIntent, getPendingIntentFlags()
     );
     Action actionStop = new Action(
-        R.drawable.ic_round_stop, context.getString(R.string.action_stop), servicePendingIntent
+        R.drawable.ic_rounded_stop_fill, context.getString(R.string.action_stop), servicePendingIntent
     );
 
     String title = context.getString(R.string.msg_service_running);

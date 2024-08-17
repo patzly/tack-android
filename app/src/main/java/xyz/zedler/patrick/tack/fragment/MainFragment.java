@@ -459,14 +459,14 @@ public class MainFragment extends BaseFragment
     if (getSharedPrefs().getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE)) {
       binding.buttonMainBeatMode.setIconResource(
           alwaysVibrate
-              ? R.drawable.ic_round_volume_off_to_volume_on_anim
-              : R.drawable.ic_round_vibrate_to_volume_anim
+              ? R.drawable.ic_rounded_volume_off_to_volume_up_anim
+              : R.drawable.ic_rounded_vibration_to_volume_up_anim
       );
     } else {
       binding.buttonMainBeatMode.setIconResource(
           alwaysVibrate
-              ? R.drawable.ic_round_volume_on_to_volume_off_anim
-              : R.drawable.ic_round_volume_to_vibrate_anim
+              ? R.drawable.ic_rounded_volume_up_to_volume_off_anim
+              : R.drawable.ic_rounded_volume_up_to_vibration_anim
       );
     }
 
@@ -487,7 +487,7 @@ public class MainFragment extends BaseFragment
     }
 
     ViewUtil.resetAnimatedIcon(binding.fabMainPlayStop);
-    binding.fabMainPlayStop.setImageResource(R.drawable.ic_round_play_to_stop_anim);
+    binding.fabMainPlayStop.setImageResource(R.drawable.ic_rounded_play_to_stop_fill_anim);
     boolean large = isPortrait || isLandTablet;
     cornerSizeStop = UiUtil.dpToPx(activity, large ? 28 : 16);
     cornerSizePlay = UiUtil.dpToPx(activity, large ? 48 : 28);
@@ -560,14 +560,14 @@ public class MainFragment extends BaseFragment
     if (getMetronomeUtil().isBeatModeVibrate()) {
       binding.buttonMainBeatMode.setIconResource(
           getMetronomeUtil().isAlwaysVibrate()
-              ? R.drawable.ic_round_volume_off_to_volume_on_anim
-              : R.drawable.ic_round_vibrate_to_volume_anim
+              ? R.drawable.ic_rounded_volume_off_to_volume_up_anim
+              : R.drawable.ic_rounded_vibration_to_volume_up_anim
       );
     } else {
       binding.buttonMainBeatMode.setIconResource(
           getMetronomeUtil().isAlwaysVibrate()
-              ? R.drawable.ic_round_volume_on_to_volume_off_anim
-              : R.drawable.ic_round_volume_to_vibrate_anim
+              ? R.drawable.ic_rounded_volume_up_to_volume_off_anim
+              : R.drawable.ic_rounded_volume_up_to_vibration_anim
       );
     }
 
@@ -603,8 +603,8 @@ public class MainFragment extends BaseFragment
     ViewUtil.resetAnimatedIcon(binding.fabMainPlayStop);
     binding.fabMainPlayStop.setImageResource(
         getMetronomeUtil().isPlaying()
-            ? R.drawable.ic_round_stop
-            : R.drawable.ic_round_play_arrow
+            ? R.drawable.ic_rounded_stop_fill
+            : R.drawable.ic_rounded_play_arrow_fill
     );
     updateFabCornerRadius(getMetronomeUtil().isPlaying(), false);
 
@@ -626,7 +626,7 @@ public class MainFragment extends BaseFragment
         if (getMetronomeUtil().isTimerActive()) {
           squiggly.setAnimate(true, true);
         }
-        binding.fabMainPlayStop.setImageResource(R.drawable.ic_round_play_to_stop_anim);
+        binding.fabMainPlayStop.setImageResource(R.drawable.ic_rounded_play_to_stop_fill_anim);
         Drawable fabIcon = binding.fabMainPlayStop.getDrawable();
         if (fabIcon != null) {
           ((Animatable) fabIcon).start();
@@ -651,7 +651,7 @@ public class MainFragment extends BaseFragment
         }
         updateTimerDisplay();
         updateElapsedDisplay();
-        binding.fabMainPlayStop.setImageResource(R.drawable.ic_round_stop_to_play_anim);
+        binding.fabMainPlayStop.setImageResource(R.drawable.ic_rounded_stop_to_play_fill_anim);
         Drawable icon = binding.fabMainPlayStop.getDrawable();
         if (icon != null) {
           ((Animatable) icon).start();
@@ -903,14 +903,14 @@ public class MainFragment extends BaseFragment
         if (beatModeVibrateNew) {
           binding.buttonMainBeatMode.setIconResource(
               getMetronomeUtil().isAlwaysVibrate()
-                  ? R.drawable.ic_round_volume_off_to_volume_on_anim
-                  : R.drawable.ic_round_vibrate_to_volume_anim
+                  ? R.drawable.ic_rounded_volume_off_to_volume_up_anim
+                  : R.drawable.ic_rounded_vibration_to_volume_up_anim
           );
         } else {
           binding.buttonMainBeatMode.setIconResource(
               getMetronomeUtil().isAlwaysVibrate()
-                  ? R.drawable.ic_round_volume_on_to_volume_off_anim
-                  : R.drawable.ic_round_volume_to_vibrate_anim
+                  ? R.drawable.ic_rounded_volume_up_to_volume_off_anim
+                  : R.drawable.ic_rounded_volume_up_to_vibration_anim
           );
         }
       }, 300);

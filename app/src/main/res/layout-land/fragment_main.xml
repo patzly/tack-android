@@ -443,7 +443,7 @@
           android:layout_height="wrap_content"
           android:layout_marginEnd="@dimen/control_spacing"
           android:contentDescription="@string/action_play_stop"
-          app:srcCompat="@drawable/ic_round_play_to_stop_anim" />
+          app:srcCompat="@drawable/ic_rounded_play_to_stop_fill_anim" />
 
         <com.google.android.material.button.MaterialButton
           android:id="@+id/button_main_bookmark"
@@ -456,7 +456,7 @@
           android:id="@+id/button_main_beat_mode"
           style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
           android:contentDescription="@string/action_beat_mode"
-          app:icon="@drawable/ic_round_vibrate_to_volume_anim" />
+          app:icon="@drawable/ic_rounded_vibration_to_volume_up_anim" />
 
       </LinearLayout>
 

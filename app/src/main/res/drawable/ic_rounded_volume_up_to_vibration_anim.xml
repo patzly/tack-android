@@ -1,0 +1,138 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+<animated-vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:aapt="http://schemas.android.com/aapt">
+  <aapt:attr name="android:drawable">
+    <vector
+      android:name="vector"
+      android:width="24dp"
+      android:height="24dp"
+      android:viewportWidth="24"
+      android:viewportHeight="24">
+      <path
+        android:name="speaker"
+        android:pathData="M 10.95 5.4 C 10.827 5.403 10.706 5.431 10.594 5.483 C 10.482 5.534 10.382 5.608 10.3 5.7 L 7 9 L 4 9 C 3.72 9 3.48 9.1 3.29 9.29 C 3.194 9.381 3.119 9.492 3.069 9.614 C 3.019 9.736 2.996 9.868 3 10 L 3 14 C 3 14.28 3.1 14.52 3.29 14.71 C 3.48 14.91 3.72 15 4 15 L 7 15 L 10.3 18.3 C 10.432 18.452 10.611 18.555 10.809 18.593 C 11.006 18.631 11.211 18.602 11.39 18.51 C 11.79 18.34 12 18.02 12 17.57 L 12 6.43 C 12 5.98 11.8 5.66 11.39 5.49 C 11.23 5.42 11.09 5.39 10.95 5.39 Z M 10 8.84 L 10 15.14 L 7.85 13 L 5 13 L 5 11 L 7.85 11 L 10 8.85 Z"
+        android:fillColor="#000000"
+        android:strokeWidth="1" />
+      <path
+        android:name="membrane"
+        android:pathData="M 16.5 12 Q 16.5 13.05 16.03 13.99 Q 15.55 14.93 14.77 15.53 Q 14.52 15.68 14.27 15.53 Q 14 15.4 14 15.1 L 14 8.85 Q 14 8.55 14.26 8.41 Q 14.53 8.28 14.78 8.43 Q 15.55 9.05 16.02 10 Q 16.5 10.95 16.5 12 Z"
+        android:fillColor="#000000"
+        android:strokeWidth="1" />
+      <path
+        android:name="wave"
+        android:pathData="M 15.29 4.69 C 15.29 4.69 19.99 6.64 19.99 11.99 C 19.99 17.36 15.29 19.26 15.29 19.26"
+        android:strokeColor="#000000"
+        android:strokeWidth="2"
+        android:strokeLineCap="round" />
+      <path
+        android:name="stroke_1"
+        android:pathData="M 1 11.9 L 1 12.1"
+        android:strokeColor="#000000"
+        android:strokeAlpha="0"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+      <path
+        android:name="stroke_2"
+        android:pathData="M 4 11.9 L 4 12.1"
+        android:strokeColor="#000000"
+        android:strokeAlpha="0"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+    </vector>
+  </aapt:attr>
+  <target android:name="speaker">
+    <aapt:attr name="android:animation">
+      <objectAnimator
+        android:propertyName="pathData"
+        android:duration="300"
+        android:valueFrom="M 10.594 5.483 C 10.593 5.483 10.591 5.484 10.59 5.484 C 10.575 5.491 10.561 5.499 10.546 5.506 C 10.454 5.556 10.37 5.621 10.3 5.7 L 7 9 L 4 9 C 3.72 9 3.48 9.1 3.29 9.29 C 3.194 9.381 3.119 9.492 3.069 9.614 C 3.019 9.736 2.996 9.868 3 10 L 3 14 C 3 14.28 3.1 14.52 3.29 14.71 C 3.48 14.91 3.72 15 4 15 L 7 15 L 10.3 18.3 C 10.432 18.452 10.611 18.555 10.809 18.593 C 11.006 18.631 11.211 18.602 11.39 18.51 C 11.79 18.34 12 18.02 12 17.57 L 12 6.43 C 12 6.389 11.998 6.349 11.995 6.311 C 11.962 5.923 11.763 5.645 11.39 5.49 C 11.23 5.42 11.09 5.39 10.95 5.39 C 10.95 5.393 10.95 5.397 10.95 5.4 C 10.827 5.403 10.706 5.431 10.594 5.483 M 5 11 L 7.85 11 L 10 8.85 L 10 8.84 L 10 8.84 L 10 15.14 L 7.85 13 L 5 13 L 5 12.966 L 5 11"
+        android:valueTo="M 16.981 3.252 C 16.952 3.235 16.923 3.22 16.894 3.205 C 16.894 3.205 16.894 3.205 16.894 3.205 C 16.624 3.067 16.326 3 16 3 L 8 3 L 8 3 C 7.45 3 6.98 3.2 6.59 3.59 C 6.211 3.96 6.021 4.401 6.002 4.914 C 6.001 4.942 6 4.971 6 5 L 6 19 C 6 19.55 6.2 20.02 6.59 20.41 C 6.98 20.81 7.45 21 8 21 L 8.138 21 L 16 21 C 16.297 21 16.571 20.942 16.822 20.826 C 17.035 20.728 17.231 20.589 17.41 20.41 C 17.81 20.02 18 19.55 18 19 L 18 5.118 C 18 5.079 18 5.039 18 5 C 18 4.504 17.837 4.073 17.519 3.707 C 17.485 3.667 17.448 3.628 17.41 3.59 C 17.388 3.568 17.366 3.546 17.344 3.525 C 17.23 3.417 17.109 3.326 16.981 3.252 M 8 5 L 8.069 5 L 16 5 L 16 5.379 L 16 18.897 L 16 19 L 8.069 19 L 8 19 L 8 5 L 8 5"
+        android:valueType="pathType"
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
+    </aapt:attr>
+  </target>
+  <target android:name="membrane">
+    <aapt:attr name="android:animation">
+      <objectAnimator
+        android:propertyName="pathData"
+        android:duration="300"
+        android:valueFrom="M 16.5 12 L 16.5 12 Q 16.5 13.05 16.03 13.99 Q 15.55 14.93 14.77 15.53 Q 14.52 15.68 14.27 15.53 Q 14 15.4 14 15.1 L 14 8.85 Q 14 8.55 14.26 8.41 Q 14.487 8.301 14.699 8.389 Q 14.74 8.406 14.78 8.43 Q 15.55 9.05 16.02 10 Q 16.5 10.95 16.5 12"
+        android:valueTo="M 21 8 L 21 16 Q 21 16.42 20.71 16.71 Q 20.42 17 20 17 Q 19.57 17 19.29 16.71 Q 19 16.42 19 16 L 19 8 Q 19 7.58 19.29 7.29 Q 19.58 7 20 7 Q 20 7 20 7 Q 20.43 7 20.71 7.29 Q 21 7.58 21 8"
+        android:valueType="pathType"
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
+    </aapt:attr>
+  </target>
+  <target android:name="wave">
+    <aapt:attr name="android:animation">
+      <objectAnimator
+        android:propertyName="pathData"
+        android:duration="300"
+        android:valueFrom="M 15.29 4.69 C 15.29 4.69 15.704 4.862 16.287 5.244 C 16.85 5.613 17.57 6.178 18.226 6.973 C 18.689 7.535 19.12 8.213 19.441 9.019 C 19.777 9.864 19.99 10.85 19.99 11.99 C 19.99 13.091 19.792 14.046 19.478 14.869 C 19.153 15.72 18.703 16.43 18.219 17.013 C 17.505 17.871 16.716 18.454 16.137 18.811 C 15.634 19.121 15.29 19.26 15.29 19.26"
+        android:valueTo="M 23 10 C 23 10.079 23 10.158 23 10.237 C 23 10.464 23 10.692 23 10.919 C 23 11.081 23 11.242 23 11.403 C 23 11.611 23 11.82 23 12.028 C 23 12.227 23 12.427 23 12.626 C 23 12.844 23 13.062 23 13.28 C 23 13.45 23 13.621 23 13.791 C 23 13.861 23 13.93 23 14"
+        android:valueType="pathType"
+        android:interpolator="@android:interpolator/fast_out_slow_in" />
+    </aapt:attr>
+  </target>
+  <target android:name="stroke_1">
+    <aapt:attr name="android:animation">
+      <set>
+        <objectAnimator
+          android:propertyName="pathData"
+          android:duration="300"
+          android:valueFrom="M 1 11.9 L 1 12.1"
+          android:valueTo="M 1 10 L 1 14"
+          android:valueType="pathType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+        <objectAnimator
+          android:propertyName="strokeAlpha"
+          android:duration="150"
+          android:valueFrom="0"
+          android:valueTo="1"
+          android:valueType="floatType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+      </set>
+    </aapt:attr>
+  </target>
+  <target android:name="stroke_2">
+    <aapt:attr name="android:animation">
+      <set>
+        <objectAnimator
+          android:propertyName="pathData"
+          android:startOffset="50"
+          android:duration="250"
+          android:valueFrom="M 4 11.9 L 4 12.1"
+          android:valueTo="M 4 8 L 4 16"
+          android:valueType="pathType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+        <objectAnimator
+          android:propertyName="strokeAlpha"
+          android:startOffset="50"
+          android:duration="100"
+          android:valueFrom="0"
+          android:valueTo="1"
+          android:valueType="floatType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+      </set>
+    </aapt:attr>
+  </target>
+</animated-vector>
