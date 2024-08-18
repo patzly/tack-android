@@ -72,7 +72,7 @@ private fun VolumeAlert(
     Alert(
       icon = {
         Icon(
-          painter = painterResource(id = R.drawable.ic_round_speaker),
+          painter = painterResource(id = R.drawable.ic_rounded_speaker),
           contentDescription = null,
           tint = MaterialTheme.colorScheme.onBackground
         )
@@ -91,7 +91,7 @@ private fun VolumeAlert(
           modifier = Modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
         ) {
           Icon(
-            painter = painterResource(id = R.drawable.ic_round_check),
+            painter = painterResource(id = R.drawable.ic_rounded_check),
             contentDescription = stringResource(id = R.string.wear_title_settings),
             tint = IconButtonDefaults.filledIconButtonColors().contentColor
           )
@@ -103,7 +103,7 @@ private fun VolumeAlert(
           modifier = Modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
         ) {
           Icon(
-            painter = painterResource(id = R.drawable.ic_round_close),
+            painter = painterResource(id = R.drawable.ic_rounded_close),
             contentDescription = stringResource(id = R.string.wear_title_settings),
             tint = IconButtonDefaults.filledTonalIconButtonColors().contentColor
           )

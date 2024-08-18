@@ -33,9 +33,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -45,7 +46,6 @@ import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
-import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.TimeText
@@ -65,6 +65,7 @@ import xyz.zedler.patrick.tack.presentation.components.BeatIconButton
 import xyz.zedler.patrick.tack.presentation.components.FadingEdgeRow
 import xyz.zedler.patrick.tack.presentation.components.TextIconButton
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
+import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @OptIn(ExperimentalWearFoundationApi::class)
@@ -111,6 +112,7 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
         }
         item {
           ControlCard(
+            viewModel = viewModel,
             labelAdd = stringResource(id = R.string.wear_action_add_beat),
             labelRemove = stringResource(id = R.string.wear_action_remove_beat),
             onClickAdd = {
@@ -156,6 +158,7 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
         }
         item {
           ControlCard(
+            viewModel = viewModel,
             labelAdd = stringResource(id = R.string.wear_action_add_sub),
             labelRemove = stringResource(id = R.string.wear_action_remove_sub),
             onClickAdd = {
@@ -224,6 +227,7 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
 
 @Composable
 fun ControlCard(
+  viewModel: MainViewModel,
   labelAdd: String,
   labelRemove: String,
   onClickAdd: () -> Unit,
@@ -242,9 +246,15 @@ fun ControlCard(
     modifier = Modifier.fillMaxWidth()
   ) {
     Row {
+      val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
+      val animTriggerAdd = remember { mutableStateOf(false) }
+      val animTriggerRemove = remember { mutableStateOf(false) }
       IconButton(
         enabled = removeEnabled,
-        onClick = onClickRemove,
+        onClick = {
+          animTriggerRemove.value = !animTriggerRemove.value
+          onClickRemove()
+        },
         modifier = Modifier.touchTargetAwareSize(IconButtonDefaults.SmallButtonSize)
       ) {
         val targetTint = if (removeEnabled) {
@@ -257,10 +267,12 @@ fun ControlCard(
           label = "remove",
           animationSpec = TweenSpec(durationMillis = 200)
         )
-        Icon(
-          painter = painterResource(id = R.drawable.ic_round_remove),
-          contentDescription = labelRemove,
-          tint = tint
+        AnimatedVectorDrawable(
+          resId = R.drawable.ic_rounded_remove_anim,
+          description = labelRemove,
+          color = tint,
+          trigger = animTriggerRemove.value,
+          animated = !reduceAnim
         )
       }
       FadingEdgeRow(
@@ -275,7 +287,10 @@ fun ControlCard(
       }
       IconButton(
         enabled = addEnabled,
-        onClick = onClickAdd,
+        onClick = {
+          animTriggerAdd.value = !animTriggerAdd.value
+          onClickAdd()
+        },
         modifier = Modifier.touchTargetAwareSize(IconButtonDefaults.SmallButtonSize)
       ) {
         val targetTint = if (addEnabled) {
@@ -288,10 +303,12 @@ fun ControlCard(
           label = "add",
           animationSpec = TweenSpec(durationMillis = 200)
         )
-        Icon(
-          painter = painterResource(id = R.drawable.ic_round_add),
-          contentDescription = labelAdd,
-          tint = tint
+        AnimatedVectorDrawable(
+          resId = R.drawable.ic_rounded_add_anim,
+          description = labelAdd,
+          color = tint,
+          trigger = animTriggerAdd.value,
+          animated = !reduceAnim
         )
       }
     }

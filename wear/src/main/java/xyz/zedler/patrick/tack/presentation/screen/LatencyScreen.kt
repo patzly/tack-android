@@ -28,8 +28,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,7 +41,6 @@ import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
-import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.TimeText
@@ -55,6 +55,7 @@ import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
+import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @OptIn(ExperimentalWearFoundationApi::class)
@@ -127,9 +128,18 @@ fun LatencySlider(
   onValueChange: (Int) -> Unit = {}
 ) {
   val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
+  val animTriggerIncrease = remember { mutableStateOf(false) }
+  val animTriggerDecrease = remember { mutableStateOf(false) }
   InlineSlider(
     value = latency.toInt(),
-    onValueChange = onValueChange,
+    onValueChange = {
+      if (it > latency) {
+        animTriggerIncrease.value = !animTriggerIncrease.value
+      } else {
+        animTriggerDecrease.value = !animTriggerDecrease.value
+      }
+      onValueChange(it)
+    },
     valueProgression = IntProgression.fromClosedRange(0, 200, 5),
     segmented = false,
     decreaseIcon = {
@@ -143,10 +153,12 @@ fun LatencySlider(
         label = "decreaseLatency",
         animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 200)
       )
-      Icon(
-        painter = painterResource(id = R.drawable.ic_round_remove),
-        contentDescription = stringResource(id = R.string.wear_action_decrease),
-        tint = tint
+      AnimatedVectorDrawable(
+        resId = R.drawable.ic_rounded_remove_anim,
+        description = stringResource(id = R.string.wear_action_decrease),
+        color = tint,
+        trigger = animTriggerDecrease.value,
+        animated = !reduceAnim
       )
     },
     increaseIcon = {
@@ -160,10 +172,12 @@ fun LatencySlider(
         label = "increaseLatency",
         animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 200)
       )
-      Icon(
-        painter = painterResource(id = R.drawable.ic_round_add),
-        contentDescription = stringResource(id = R.string.wear_action_increase),
-        tint = tint
+      AnimatedVectorDrawable(
+        resId = R.drawable.ic_rounded_add_anim,
+        description = stringResource(id = R.string.wear_action_increase),
+        color = tint,
+        trigger = animTriggerIncrease.value,
+        animated = !reduceAnim
       )
     }
   )

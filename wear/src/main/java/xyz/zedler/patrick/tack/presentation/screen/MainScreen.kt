@@ -449,8 +449,8 @@ fun PlayButton(
     modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
   ) {
     AnimatedVectorDrawable(
-      resId1 = R.drawable.ic_round_play_to_stop_anim,
-      resId2 = R.drawable.ic_round_stop_to_play_anim,
+      resId1 = R.drawable.ic_rounded_play_to_stop_anim,
+      resId2 = R.drawable.ic_rounded_stop_to_play_anim,
       description = stringResource(id = R.string.wear_action_play_stop),
       color = contentColor,
       trigger = animTrigger,
@@ -470,7 +470,7 @@ fun SettingsButton(
     modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
   ) {
     Icon(
-      painter = painterResource(id = R.drawable.ic_round_settings),
+      painter = painterResource(id = R.drawable.ic_rounded_settings),
       contentDescription = stringResource(id = R.string.wear_title_settings),
       tint = IconButtonDefaults.iconButtonColors().contentColor
     )
@@ -487,7 +487,7 @@ fun BeatsButton(
     modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
   ) {
     Icon(
-      painter = painterResource(id = R.drawable.ic_round_hdr_strong),
+      painter = painterResource(id = R.drawable.ic_rounded_steppers),
       contentDescription = stringResource(id = R.string.wear_title_beats),
       tint = IconButtonDefaults.iconButtonColors().contentColor
     )
@@ -519,7 +519,7 @@ fun TempoTapButton(
       }
   ) {
     AnimatedVectorDrawable(
-      resId = R.drawable.ic_round_touch_app_anim,
+      resId = R.drawable.ic_rounded_touch_app_anim,
       description = stringResource(id = R.string.wear_action_tempo_tap),
       color = IconButtonDefaults.iconButtonColors().contentColor,
       trigger = animTrigger.value,
@@ -544,7 +544,7 @@ fun BookmarkButton(
     modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
   ) {
     AnimatedVectorDrawable(
-      resId = R.drawable.ic_round_bookmark_anim,
+      resId = R.drawable.ic_rounded_bookmark_anim,
       description = stringResource(id = R.string.wear_action_bookmark),
       color = IconButtonDefaults.iconButtonColors().contentColor,
       trigger = animTrigger.value,
@@ -571,14 +571,14 @@ fun BeatModeButton(
     modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
   ) {
     val resId1 = if (alwaysVibrate) {
-      R.drawable.ic_round_volume_off_to_volume_on_anim
+      R.drawable.ic_rounded_volume_off_to_volume_up_anim
     } else {
-      R.drawable.ic_round_vibrate_to_volume_anim
+      R.drawable.ic_rounded_vibration_to_volume_up_anim
     }
     val resId2 = if (alwaysVibrate) {
-      R.drawable.ic_round_volume_on_to_volume_off_anim
+      R.drawable.ic_rounded_volume_up_to_volume_off_anim
     } else {
-      R.drawable.ic_round_volume_to_vibrate_anim
+      R.drawable.ic_rounded_volume_up_to_vibration_anim
     }
     AnimatedVectorDrawable(
       resId1 = resId2,

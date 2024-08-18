@@ -163,7 +163,7 @@ fun GainSlider(
         animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 200)
       )
       Icon(
-        painter = painterResource(id = R.drawable.ic_round_volume_down),
+        painter = painterResource(id = R.drawable.ic_rounded_volume_down),
         contentDescription = stringResource(id = R.string.wear_action_decrease),
         tint = tint
       )
@@ -180,7 +180,7 @@ fun GainSlider(
         animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 200)
       )
       Icon(
-        painter = painterResource(id = R.drawable.ic_round_volume_up),
+        painter = painterResource(id = R.drawable.ic_rounded_volume_up),
         contentDescription = stringResource(id = R.string.wear_action_increase),
         tint = tint
       )

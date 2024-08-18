@@ -262,7 +262,7 @@ fun TapButton(
       }
   ) {
     AnimatedVectorDrawable(
-      resId = R.drawable.ic_round_touch_app_anim,
+      resId = R.drawable.ic_rounded_touch_app_anim,
       description = stringResource(id = R.string.wear_action_tempo_tap),
       color = IconButtonDefaults.iconButtonColors().contentColor,
       trigger = animTrigger.value,

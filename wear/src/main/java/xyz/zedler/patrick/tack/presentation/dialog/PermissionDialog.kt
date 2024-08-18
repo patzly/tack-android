@@ -72,7 +72,7 @@ private fun PermissionAlert(
     Alert(
       icon = {
         Icon(
-          painter = painterResource(id = R.drawable.ic_round_error_outline),
+          painter = painterResource(id = R.drawable.ic_rounded_error),
           contentDescription = null,
           tint = MaterialTheme.colorScheme.onBackground
         )
@@ -91,7 +91,7 @@ private fun PermissionAlert(
           modifier = Modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
         ) {
           Icon(
-            painter = painterResource(id = R.drawable.ic_round_repeat),
+            painter = painterResource(id = R.drawable.ic_rounded_repeat),
             contentDescription = stringResource(id = R.string.wear_action_retry),
             tint = IconButtonDefaults.filledIconButtonColors().contentColor
           )
@@ -103,7 +103,7 @@ private fun PermissionAlert(
           modifier = Modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
         ) {
           Icon(
-            painter = painterResource(id = R.drawable.ic_round_close),
+            painter = painterResource(id = R.drawable.ic_rounded_close),
             contentDescription = stringResource(id = R.string.wear_action_cancel),
             tint = IconButtonDefaults.filledTonalIconButtonColors().contentColor
           )

@@ -94,7 +94,7 @@ public class NotificationUtil {
         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
     );
     Action actionStop = new Action(
-        R.drawable.ic_round_stop, context.getString(R.string.wear_action_stop), servicePendingIntent
+        R.drawable.ic_rounded_stop, context.getString(R.string.wear_action_stop), servicePendingIntent
     );
 
     String title = context.getString(R.string.wear_msg_service_running);
@@ -111,7 +111,7 @@ public class NotificationUtil {
         .setOngoing(true)
         .setCategory(NotificationCompat.CATEGORY_SERVICE)
         .setColor(0xFFDAC66F)
-        .setSmallIcon(R.drawable.ic_round_tack_notification)
+        .setSmallIcon(R.drawable.ic_logo_notification)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE);
@@ -119,8 +119,8 @@ public class NotificationUtil {
         .addTemplate(context.getString(R.string.wear_msg_service_running))
         .build();
     OngoingActivity ongoingActivity = new OngoingActivity.Builder(context, NOTIFICATION_ID, builder)
-        .setAnimatedIcon(R.drawable.ic_round_tack_ongoing)
-        .setStaticIcon(R.drawable.ic_round_tack_notification)
+        .setAnimatedIcon(R.drawable.ic_logo_ongoing)
+        .setStaticIcon(R.drawable.ic_logo_notification)
         .setTouchIntent(activityPendingIntent)
         .setStatus(ongoingStatus)
         .build();
