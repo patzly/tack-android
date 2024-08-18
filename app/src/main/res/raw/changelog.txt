@@ -1,6 +1,6 @@
 ## 4.3.0
 
-- New: compatibility with Android 15
+- New: support for Android 15
 - New: setting to replace animated timer seekbar with big slider
 - New: setting to increase text size of time display
 - Improved: icons replaced with new Material 3 symbols
