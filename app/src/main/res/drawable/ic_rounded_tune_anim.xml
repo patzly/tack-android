@@ -26,7 +26,8 @@
       android:width="24dp"
       android:height="24dp"
       android:viewportWidth="24"
-      android:viewportHeight="24">
+      android:viewportHeight="24"
+      android:autoMirrored="true">
       <clip-path
         android:name="mask"
         android:pathData="M 0 0 L 0 24 L 24 24 L 24 0 Z M 13 4 L 15 4 L 15 8 L 13 8 Z M 9 10 L 11 10 L 11 14 L 9 14 Z M 9 16 L 11 16 L 11 20 L 9 20 Z" />
