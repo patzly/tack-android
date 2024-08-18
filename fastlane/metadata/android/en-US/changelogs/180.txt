@@ -5,5 +5,6 @@
 • Improved: handling of display cutouts in landscape mode
 • Improved: pausing and resuming metronome when certain options are adjusted
 • Improved: metronome service not stopped when theme or contrast is changed in settings
+• Improved: reorganized settings for controls
 • Fixed: tempo buttons not respecting new tempo limits
 • Fixed: split-screen warning shown in fullscreen mode on some devices
