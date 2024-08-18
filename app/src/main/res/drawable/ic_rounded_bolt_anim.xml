@@ -1,0 +1,89 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+<animated-vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:aapt="http://schemas.android.com/aapt">
+  <aapt:attr name="android:drawable">
+    <vector
+      android:name="vector"
+      android:width="24dp"
+      android:height="24dp"
+      android:viewportWidth="24"
+      android:viewportHeight="24">
+      <path
+        android:name="path"
+        android:pathData="M 10.55 18.2 L 15.725 12 L 11.725 12 L 12.45 6.325 L 7.825 13 L 11.3 13 Z M 9 15 L 5.9 15 Q 5.3 15 5.013 14.463 Q 4.725 13.925 5.075 13.425 L 12.55 2.675 Q 12.8 2.325 13.2 2.188 Q 13.6 2.05 14.025 2.2 Q 14.45 2.35 14.65 2.725 Q 14.85 3.1 14.8 3.525 L 14 10 L 17.875 10 Q 18.525 10 18.788 10.575 Q 19.05 11.15 18.625 11.65 L 10.4 21.5 Q 10.125 21.825 9.725 21.925 Q 9.325 22.025 8.95 21.85 Q 8.575 21.675 8.363 21.313 Q 8.15 20.95 8.2 20.525 Z M 11.775 12.25 Z"
+        android:fillColor="#000"
+        android:strokeWidth="1" />
+    </vector>
+  </aapt:attr>
+  <target android:name="path">
+    <aapt:attr name="android:animation">
+      <set>
+        <objectAnimator
+          android:propertyName="fillAlpha"
+          android:duration="10"
+          android:valueFrom="1"
+          android:valueTo="0"
+          android:valueType="floatType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+        <objectAnimator
+          android:propertyName="fillAlpha"
+          android:startOffset="50"
+          android:duration="10"
+          android:valueFrom="1"
+          android:valueTo="1"
+          android:valueType="floatType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+        <objectAnimator
+          android:propertyName="fillAlpha"
+          android:startOffset="100"
+          android:duration="10"
+          android:valueFrom="0"
+          android:valueTo="0"
+          android:valueType="floatType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+        <objectAnimator
+          android:propertyName="fillAlpha"
+          android:startOffset="150"
+          android:duration="10"
+          android:valueFrom="1"
+          android:valueTo="1"
+          android:valueType="floatType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+        <objectAnimator
+          android:propertyName="fillAlpha"
+          android:startOffset="200"
+          android:duration="10"
+          android:valueFrom="0"
+          android:valueTo="0"
+          android:valueType="floatType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+        <objectAnimator
+          android:propertyName="fillAlpha"
+          android:startOffset="250"
+          android:duration="10"
+          android:valueFrom="1"
+          android:valueTo="1"
+          android:valueType="floatType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+      </set>
+    </aapt:attr>
+  </target>
+</animated-vector>

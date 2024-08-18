@@ -524,6 +524,7 @@ public class SettingsFragment extends BaseFragment
       performHapticClick();
       getMetronomeUtil().setResetTimer(isChecked);
     } else if (id == R.id.switch_settings_big_timer) {
+      ViewUtil.startIcon(binding.imageSettingsBigTimer);
       performHapticClick();
       getSharedPrefs().edit().putBoolean(PREF.BIG_TIMER, isChecked).apply();
     } else if (id == R.id.switch_settings_big_time_text) {
@@ -531,9 +532,11 @@ public class SettingsFragment extends BaseFragment
       performHapticClick();
       getSharedPrefs().edit().putBoolean(PREF.BIG_TIME_TEXT, isChecked).apply();
     } else if (id == R.id.switch_settings_flash_screen) {
+      ViewUtil.startIcon(binding.imageSettingsFlashScreen);
       performHapticClick();
       getMetronomeUtil().setFlashScreen(isChecked);
     } else if (id == R.id.switch_settings_keep_awake) {
+      ViewUtil.startIcon(binding.imageSettingsKeepAwake);
       performHapticClick();
       getMetronomeUtil().setKeepAwake(isChecked);
       UiUtil.keepScreenAwake(activity, getMetronomeUtil().isPlaying() && isChecked);

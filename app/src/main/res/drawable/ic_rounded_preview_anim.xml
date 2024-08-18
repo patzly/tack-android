@@ -1,0 +1,62 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+<animated-vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:aapt="http://schemas.android.com/aapt">
+  <aapt:attr name="android:drawable">
+    <vector
+      android:name="vector"
+      android:width="24dp"
+      android:height="24dp"
+      android:viewportWidth="24"
+      android:viewportHeight="24">
+      <path
+        android:name="preview"
+        android:pathData="M 5 21 Q 4.17 21 3.59 20.41 Q 3 19.82 3 19 L 3 5 Q 3 4.17 3.59 3.59 Q 4.17 3 5 3 L 19 3 Q 19.82 3 20.41 3.59 Q 21 4.17 21 5 L 21 19 Q 21 19.82 20.41 20.41 Q 19.82 21 19 21 Z M 5 19 L 19 19 L 19 7 L 5 7 Z M 12 17 Q 9.95 17 8.34 15.89 Q 6.72 14.77 6 13 Q 6.72 11.22 8.34 10.11 Q 9.95 9 12 9 Q 14.05 9 15.66 10.11 Q 17.27 11.23 18 13 Q 17.27 14.78 15.66 15.89 Q 14.05 17 12 17 Z M 12 15.5 Q 13.4 15.5 14.55 14.84 Q 15.7 14.18 16.35 13 Q 15.7 11.82 14.55 11.16 Q 13.4 10.5 12 10.5 Q 10.6 10.5 9.45 11.16 Q 8.3 11.82 7.65 13 Q 8.3 14.18 9.45 14.84 Q 10.6 15.5 12 15.5 Z M 12 13 Z M 12 14.5 Q 12.63 14.5 13.06 14.06 Q 13.5 13.62 13.5 13 Q 13.5 12.37 13.06 11.94 Q 12.62 11.5 12 11.5 Q 11.37 11.5 10.94 11.94 Q 10.5 12.38 10.5 13 Q 10.5 13.63 10.94 14.06 Q 11.38 14.5 12 14.5 Z"
+        android:fillColor="#000000"
+        android:strokeWidth="1" />
+      <path
+        android:name="lid"
+        android:pathData="M 12 10.5 C 15.29 10.53 16.35 13 16.35 13 C 16.35 13 16 10 12 10 C 8 10 7.65 13 7.65 13 C 7.65 13 8.71 10.47 12 10.5 Z"
+        android:fillColor="#000000"
+        android:strokeWidth="1" />
+    </vector>
+  </aapt:attr>
+  <target android:name="lid">
+    <aapt:attr name="android:animation">
+      <set>
+        <objectAnimator
+          android:propertyName="pathData"
+          android:duration="100"
+          android:valueFrom="M 12 10.5 C 15.29 10.53 16.35 13 16.35 13 C 16.35 13 16 10 12 10 C 8 10 7.65 13 7.65 13 C 7.65 13 8.71 10.47 12 10.5 Z"
+          android:valueTo="M 12 16 C 15 16 16.35 13 16.35 13 C 16.35 13 16 10 12 10 C 8 10 7.65 13 7.65 13 C 7.65 13 9 16 12 16 Z"
+          android:valueType="pathType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+        <objectAnimator
+          android:propertyName="pathData"
+          android:startOffset="100"
+          android:duration="200"
+          android:valueFrom="M 12 16 C 15 16 16.35 13 16.35 13 C 16.35 13 16 10 12 10 C 8 10 7.65 13 7.65 13 C 7.65 13 9 16 12 16 Z"
+          android:valueTo="M 12 10.5 C 15.29 10.53 16.35 13 16.35 13 C 16.35 13 16 10 12 10 C 8 10 7.65 13 7.65 13 C 7.65 13 8.71 10.47 12 10.5 Z"
+          android:valueType="pathType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+      </set>
+    </aapt:attr>
+  </target>
+</animated-vector>

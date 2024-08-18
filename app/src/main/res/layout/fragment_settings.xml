@@ -416,7 +416,7 @@
           <ImageView
             android:id="@+id/image_settings_ignore_focus"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_rounded_select_to_speak"
+            android:src="@drawable/ic_rounded_select_to_speak_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
@@ -614,8 +614,9 @@
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable.More">
 
           <ImageView
+            android:id="@+id/image_settings_flash_screen"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_rounded_bolt"
+            android:src="@drawable/ic_rounded_bolt_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
@@ -641,8 +642,9 @@
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable.More">
 
           <ImageView
+            android:id="@+id/image_settings_keep_awake"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_rounded_preview"
+            android:src="@drawable/ic_rounded_preview_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
@@ -674,7 +676,7 @@
           <ImageView
             android:id="@+id/image_settings_show_subs"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_rounded_steppers"
+            android:src="@drawable/ic_rounded_steppers_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
@@ -700,8 +702,9 @@
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable.More">
 
           <ImageView
+            android:id="@+id/image_settings_big_timer"
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_rounded_sliders"
+            android:src="@drawable/ic_rounded_sliders_anim"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
