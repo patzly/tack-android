@@ -94,7 +94,7 @@ public class CustomSlider extends Slider {
   private ValueAnimator thumbWidthAnimator, thumbPositionAnimator;
   private ValueAnimator labelsInAnimator, labelsOutAnimator;
   private MaterialShapeDrawable thumbDrawable;
-  private int thumbWidth, thumbWidthAnim, minTickSpacing, continuousTicksCount;
+  private int thumbWidth, thumbWidthAnim, thumbTrackGapSize, minTickSpacing, continuousTicksCount;
   private float normalizedValueAnim;
   private float[] ticksCoordinates;
   private boolean dirtyConfig, touchTrackingJustStarted;
@@ -153,6 +153,7 @@ public class CustomSlider extends Slider {
     thumbDrawable.setFillColor(getTrackActiveTintList());
     thumbWidth = UiUtil.dpToPx(context, 4);
     minTickSpacing = UiUtil.dpToPx(context, 12);
+    thumbTrackGapSize = UiUtil.dpToPx(context, 6);
     setTrackActiveTintList(getTrackActiveTintList());
     setTrackInactiveTintList(getTrackInactiveTintList());
     setTickInactiveRadius(getTickInactiveRadius());
@@ -341,36 +342,27 @@ public class CustomSlider extends Slider {
     int trackWidth = getTrackWidth();
     int trackHeight = getTrackHeight();
     int trackSidePadding = getTrackSidePadding();
-    int thumbTrackGapSize = getThumbTrackGapSize();
 
     float[] activeRange = getActiveRange();
-    float left = trackSidePadding + activeRange[1] * trackWidth + thumbWidthAnim / 2f;
-
-    if (thumbTrackGapSize > 0) {
-      left += thumbTrackGapSize;
+    float right = trackSidePadding + activeRange[1] * trackWidth;
+    if (right < trackSidePadding + trackWidth) {
       trackRect.set(
-          left,
+          right + thumbTrackGapSize + thumbWidthAnim / 2f,
           yCenter - trackHeight / 2f,
           trackSidePadding + trackWidth + trackHeight / 2f,
-          yCenter + trackHeight / 2f
-      );
-      float thumbPosition = trackSidePadding + activeRange[1] * trackWidth;
-      clipRect.set(
-          thumbPosition + thumbTrackGapSize + thumbWidthAnim / 2f,
+          yCenter + trackHeight / 2f);
+      updateTrack(canvas, inactiveTrackPaint, FullCornerDirection.RIGHT);
+    }
+
+    // Also draw inactive track to the left if there is any
+    float left = trackSidePadding + activeRange[0] * trackWidth;
+    if (left > trackSidePadding) {
+      trackRect.set(
+          trackSidePadding - trackHeight / 2f,
           yCenter - trackHeight / 2f,
-          getTrackSidePadding() + getTrackWidth() + trackHeight / 2f,
-          yCenter + trackHeight / 2f
-      );
-      boolean isThumbAtEnd = activeRange[1] * trackWidth == trackWidth;
-      if (!isThumbAtEnd) {
-        updateTrack(canvas, inactiveTrackPaint, FullCornerDirection.RIGHT);
-      }
-    } else {
-      inactiveTrackPaint.setStyle(Style.STROKE);
-      inactiveTrackPaint.setStrokeCap(Cap.ROUND);
-      canvas.drawLine(
-          left, yCenter, trackSidePadding + trackWidth, yCenter, inactiveTrackPaint
-      );
+          left - thumbTrackGapSize - thumbWidthAnim / 2f,
+          yCenter + trackHeight / 2f);
+      updateTrack(canvas, inactiveTrackPaint, FullCornerDirection.LEFT);
     }
   }
 
@@ -378,56 +370,38 @@ public class CustomSlider extends Slider {
     int trackWidth = getTrackWidth();
     int trackHeight = getTrackHeight();
     int trackSidePadding = getTrackSidePadding();
-    int thumbTrackGapSize = getThumbTrackGapSize();
 
     float[] activeRange = getActiveRange();
     float left = trackSidePadding + activeRange[0] * trackWidth;
-    float right = trackSidePadding + activeRange[1] * trackWidth - thumbWidthAnim / 2f;
+    float right = trackSidePadding + activeRange[1] * trackWidth;
 
-    if (thumbTrackGapSize > 0) {
-      FullCornerDirection direction;
-      direction = isRtl() ? FullCornerDirection.RIGHT : FullCornerDirection.LEFT;
+    FullCornerDirection direction;
+    direction = isRtl() ? FullCornerDirection.RIGHT : FullCornerDirection.LEFT;
+    switch (direction) {
+      case LEFT:
+        left -= trackHeight / 2f;
+        right -= thumbTrackGapSize;
+        right -= thumbWidthAnim / 2f;
+        break;
+      case RIGHT:
+        left += thumbTrackGapSize;
+        left += thumbWidthAnim / 2f;
+        right += trackHeight / 2f;
+        break;
+      default:
+        // fall through
+    }
+    float top = yCenter - trackHeight / 2f;
+    float bottom = yCenter + trackHeight / 2f;
+    trackRect.set(left, top, right, bottom);
 
-      if (isRtl()) { // Swap left right
-        float temp = left;
-        left = right;
-        right = temp;
-      }
-
-      switch (direction) {
-        case LEFT:
-          left -= trackHeight / 2f;
-          right -= thumbTrackGapSize;
-          break;
-        case RIGHT:
-          left += thumbTrackGapSize;
-          right += trackHeight / 2f;
-          break;
-        default:
-          // fall through
-      }
-      float top = yCenter - trackHeight / 2f;
-      float bottom = yCenter + trackHeight / 2f;
-      trackRect.set(left, top, right, bottom);
-
-      float thumbPosition = trackSidePadding + activeRange[1] * trackWidth;
-      clipRect.set(
-          left,
-          yCenter - trackHeight / 2f,
-          thumbPosition - thumbWidthAnim / 2f - thumbTrackGapSize,
-          yCenter + trackHeight / 2f
-      );
-
-      boolean isThumbAtStart = activeRange[1] * trackWidth == 0;
-      if (!isThumbAtStart) {
-        // Only draw active track if thumb is not at start
-        // Else the thumb and gaps won't cover the track entirely
-        updateTrack(canvas, activeTrackPaint, direction);
-      }
-    } else {
-      activeTrackPaint.setStyle(Style.STROKE);
-      activeTrackPaint.setStrokeCap(Cap.ROUND);
-      canvas.drawLine(left, yCenter, right, yCenter, activeTrackPaint);
+    boolean isThumbAtStart = isRtl()
+        ? activeRange[0] * trackWidth == trackWidth
+        : activeRange[1] * trackWidth == 0;
+    if (!isThumbAtStart) {
+      // Only draw active track if thumb is not at start
+      // Else the thumb and gaps won't cover the track entirely
+      updateTrack(canvas, activeTrackPaint, direction);
     }
   }
 
@@ -502,64 +476,103 @@ public class CustomSlider extends Slider {
     if (!isTickVisible() || (getStepSize() <= 0.0f && continuousTicksCount == 0)) {
       return;
     }
-
     float[] activeRange = getActiveRange();
-    int leftPivotIndex = pivotIndex(ticksCoordinates, activeRange[0]);
-    int rightPivotIndex = pivotIndex(ticksCoordinates, activeRange[1]);
-
-    canvas.save();
     int trackHeight = getTrackHeight();
     int trackCenter = calculateTrackCenter();
-    int gapSize = getThumbTrackGapSize();
-    float thumbPosition = getTrackSidePadding() + activeRange[1] * getTrackWidth();
-    clipRect.set(
-        getTrackSidePadding() - trackHeight / 2f,
-        trackCenter - trackHeight / 2f,
-        thumbPosition - thumbWidthAnim / 2f - gapSize,
-        trackCenter + trackHeight / 2f
-    );
-    canvas.clipRect(clipRect);
 
-    // Draw active ticks.
-    canvas.drawPoints(
-        ticksCoordinates,
-        leftPivotIndex * 2,
-        rightPivotIndex * 2 - leftPivotIndex * 2,
-        activeTicksPaint
-    );
-    canvas.restore();
+    // Calculate the index of the left tick of the active track.
+    final int leftActiveTickIndex =
+        (int) Math.ceil(activeRange[0] * (ticksCoordinates.length / 2f - 1));
 
-    int length = ticksCoordinates.length - rightPivotIndex * 2;
-    if (shouldDrawStopIndicator() && length > 0) {
-      length -= 2; // reduce length so that the last tick is not drawn
+    // Calculate the index of the right tick of the active track.
+    final int rightActiveTickIndex =
+        (int) Math.floor(activeRange[1] * (ticksCoordinates.length / 2f - 1));
+
+    // Draw ticks on the left inactive track (if any).
+    if (leftActiveTickIndex > 0) {
+      canvas.save();
+      float left = getTrackSidePadding() - trackHeight / 2f;
+      float right = getTrackSidePadding() + activeRange[0] * getTrackWidth();
+      if (isRtl()) {
+        right -= thumbWidthAnim / 2f + thumbTrackGapSize;
+      }
+      clipRect.set(
+          left,
+          trackCenter - trackHeight / 2f,
+          right,
+          trackCenter + trackHeight / 2f
+      );
+      canvas.clipRect(clipRect);
+      canvas.drawPoints(
+          ticksCoordinates,
+          0,
+          leftActiveTickIndex * 2,
+          inactiveTicksPaint
+      );
+      canvas.restore();
     }
 
-    canvas.save();
-    clipRect.set(
-        thumbPosition + gapSize + thumbWidthAnim / 2f,
-        trackCenter - trackHeight / 2f,
-        getTrackSidePadding() + getTrackWidth() + trackHeight / 2f,
-        trackCenter + trackHeight / 2f
-    );
-    canvas.clipRect(clipRect);
+    // Draw ticks on the active track (if any).
+    if (leftActiveTickIndex <= rightActiveTickIndex) {
+      canvas.save();
+      float left = getTrackSidePadding() + activeRange[0] * getTrackWidth();
+      if (isRtl()) {
+        left += thumbWidthAnim / 2f + thumbTrackGapSize;
+      } else {
+        left -= trackHeight / 2f;
+      }
+      float right = getTrackSidePadding() + activeRange[1] * getTrackWidth();
+      if (isRtl()) {
+        right += trackHeight / 2f;
+      } else {
+        right -= thumbWidthAnim / 2f + thumbTrackGapSize;
+      }
+      clipRect.set(
+          left,
+          trackCenter - trackHeight / 2f,
+          right,
+          trackCenter + trackHeight / 2f
+      );
+      canvas.clipRect(clipRect);
+      canvas.drawPoints(
+          ticksCoordinates,
+          leftActiveTickIndex * 2,
+          (rightActiveTickIndex - leftActiveTickIndex + 1) * 2,
+          activeTicksPaint
+      );
+      canvas.restore();
+    }
 
-    // Draw inactive ticks to the right of the thumb.
-    canvas.drawPoints(
-        ticksCoordinates,
-        rightPivotIndex * 2,
-        length,
-        inactiveTicksPaint
-    );
-
-    canvas.restore();
-  }
-
-  private static int pivotIndex(float[] coordinates, float position) {
-    return (int) Math.ceil((position * (coordinates.length / 2f - 1)));
+    // Draw ticks on the right inactive track (if any).
+    if ((rightActiveTickIndex + 1) * 2 < ticksCoordinates.length) {
+      canvas.save();
+      float left = getTrackSidePadding() + activeRange[1] * getTrackWidth();
+      if (!isRtl()) {
+        left += thumbWidthAnim / 2f + thumbTrackGapSize;
+      }
+      float right = getTrackSidePadding() + getTrackWidth();
+      if (!isRtl()) {
+        right += trackHeight / 2f;
+      }
+      clipRect.set(
+          left,
+          trackCenter - trackHeight / 2f,
+          right,
+          trackCenter + trackHeight / 2f
+      );
+      canvas.clipRect(clipRect);
+      canvas.drawPoints(
+          ticksCoordinates,
+          (rightActiveTickIndex + 1) * 2,
+          ticksCoordinates.length - (rightActiveTickIndex + 1) * 2,
+          inactiveTicksPaint
+      );
+      canvas.restore();
+    }
   }
 
   private boolean shouldDrawStopIndicator() {
-    return getTrackStopIndicatorSize() > 0 && normalizedValueAnim < normalizeValue(getValueTo());
+    return getTrackStopIndicatorSize() > 0 && normalizedValueAnim < 1;
   }
 
   private void maybeDrawStopIndicator(@NonNull Canvas canvas, int yCenter) {
