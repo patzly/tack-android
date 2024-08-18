@@ -267,7 +267,7 @@ class MainViewModel(
       _beatTriggers.add(MutableLiveData(false))
     }
     while (_beatTriggers.size > count) {
-      _beatTriggers.removeLast()
+      _beatTriggers.removeAt(_beatTriggers.size - 1)
     }
   }
 
@@ -301,7 +301,7 @@ class MainViewModel(
       _subdivisionTriggers.add(MutableLiveData(false))
     }
     while (_subdivisionTriggers.size > count) {
-      _subdivisionTriggers.removeLast()
+      _subdivisionTriggers.removeAt(_subdivisionTriggers.size - 1)
     }
   }
 
