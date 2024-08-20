@@ -30,7 +30,7 @@ android {
   defaultConfig {
     applicationId = "xyz.zedler.patrick.tack"
     minSdk = 26
-    targetSdk = 35
+    targetSdk = 34
     versionCode = 231 // last number is 1 for wear release
     versionName = "4.3.0"
     resourceConfigurations += listOf("de", "cs", "en", "zh-rCN", "zh-rHK", "zh-rTW")

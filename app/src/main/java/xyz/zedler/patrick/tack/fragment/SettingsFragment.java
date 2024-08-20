@@ -565,7 +565,7 @@ public class SettingsFragment extends BaseFragment
 
   private void setUpThemeSelection() {
     boolean hasDynamic = DynamicColors.isDynamicColorAvailable();
-    ViewGroup container = binding.linearOtherThemeContainer;
+    ViewGroup container = binding.linearSettingsThemeContainer;
     for (int i = hasDynamic ? -1 : 0; i < 4; i++) {
       String name;
       int resId;
