@@ -225,13 +225,13 @@ public class UiUtil {
   // Unit conversions
 
   public static int dpToPx(@NonNull Context context, @Dimension(unit = Dimension.DP) float dp) {
-    Resources resources = context.getResources();
-    return Math.round(dp * resources.getDisplayMetrics().density);
+    Resources r = context.getResources();
+    return Math.round(dp * r.getDisplayMetrics().density);
   }
 
   public static int dpFromPx(@NonNull Context context, @Dimension float px) {
-    Resources resources = context.getResources();
-    return (int) (px / resources.getDisplayMetrics().density);
+    Resources r = context.getResources();
+    return (int) (px / r.getDisplayMetrics().density);
   }
 
   public static int spToPx(@NonNull Context context, @Dimension(unit = Dimension.SP) float sp) {

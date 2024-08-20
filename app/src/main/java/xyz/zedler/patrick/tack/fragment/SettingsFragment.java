@@ -138,24 +138,24 @@ public class SettingsFragment extends BaseFragment
     int idMode;
     switch (getSharedPrefs().getInt(PREF.UI_MODE, DEF.UI_MODE)) {
       case AppCompatDelegate.MODE_NIGHT_NO:
-        idMode = R.id.button_other_theme_light;
+        idMode = R.id.button_settings_theme_light;
         break;
       case AppCompatDelegate.MODE_NIGHT_YES:
-        idMode = R.id.button_other_theme_dark;
+        idMode = R.id.button_settings_theme_dark;
         break;
       default:
-        idMode = R.id.button_other_theme_auto;
+        idMode = R.id.button_settings_theme_auto;
         break;
     }
-    binding.toggleOtherTheme.check(idMode);
-    binding.toggleOtherTheme.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+    binding.toggleSettingsTheme.check(idMode);
+    binding.toggleSettingsTheme.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
       if (!isChecked) {
         return;
       }
       int pref;
-      if (checkedId == R.id.button_other_theme_light) {
+      if (checkedId == R.id.button_settings_theme_light) {
         pref = AppCompatDelegate.MODE_NIGHT_NO;
-      } else if (checkedId == R.id.button_other_theme_dark) {
+      } else if (checkedId == R.id.button_settings_theme_dark) {
         pref = AppCompatDelegate.MODE_NIGHT_YES;
       } else {
         pref = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
@@ -660,7 +660,7 @@ public class SettingsFragment extends BaseFragment
 
     Bundle bundleInstanceState = activity.getIntent().getBundleExtra(EXTRA.INSTANCE_STATE);
     if (bundleInstanceState != null) {
-      binding.scrollHorizOtherTheme.scrollTo(
+      binding.scrollHorizSettingsTheme.scrollTo(
           bundleInstanceState.getInt(EXTRA.SCROLL_POSITION, 0),
           0
       );
@@ -685,7 +685,7 @@ public class SettingsFragment extends BaseFragment
   private Bundle getInstanceState() {
     Bundle bundle = new Bundle();
     if (binding != null) {
-      bundle.putInt(EXTRA.SCROLL_POSITION, binding.scrollHorizOtherTheme.getScrollX());
+      bundle.putInt(EXTRA.SCROLL_POSITION, binding.scrollHorizSettingsTheme.getScrollX());
     }
     return bundle;
   }

@@ -55,7 +55,7 @@ public class SplashActivity extends MainActivity {
         .checkForMigrations()
         .getSharedPrefs();
 
-    if (Build.VERSION.SDK_INT >= 31) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       super.onCreate(bundle);
 
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -133,7 +133,7 @@ public class SplashActivity extends MainActivity {
 
   @Override
   protected void attachBaseContext(Context base) {
-    if (Build.VERSION.SDK_INT >= 31) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       super.attachBaseContext(base);
       return;
     }
