@@ -30,6 +30,7 @@
   <string name="title_options">选项</string>
   <string name="title_general">通用</string>
   <string name="title_metronome">节拍器</string>
+  <string name="title_controls">控制</string>
   <string name="title_logcat">日志</string>
 
   <!-- LABELS -->
@@ -218,6 +219,9 @@
 
   <string name="settings_big_timer">显示大计时器滑杆</string>
   <string name="settings_big_timer_description">而不是动画搜索栏</string>
+
+  <string name="settings_big_time_text">使用大字号显示时间</string>
+  <string name="settings_big_time_text_description">如果默认字体大小不够大的话会很有用</string>
 
   <string name="settings_flash_screen">屏幕闪烁</string>
   <string name="settings_flash_screen_description">在每个节拍</string>
