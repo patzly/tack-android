@@ -1,0 +1,247 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="title_feedback">Umpan balik</string>
+  <string name="title_about">Mengenai</string>
+  <string name="title_help">Bantuan</string>
+  <string name="title_licenses">Lisensi sumber terbuka</string>
+  <string name="title_settings">Setelan</string>
+  <string name="title_notification_channel">Layanan metronom</string>
+  <string name="title_options">Opsi</string>
+  <string name="title_general">Umum</string>
+  <string name="title_metronome">Metronom</string>
+  <string name="title_controls">Kontrol</string>
+  <string name="title_logcat">Logcat</string>
+
+  <!-- LABELS -->
+
+  <string name="label_bpm_value">%1$d bpm</string>
+  <string name="label_bpm">bpm</string>
+  <string name="label_ms">%1$s md</string>
+  <string name="label_db">+%1$d dB</string>
+  <string name="label_tempo_largo">Largo</string>
+  <string name="label_tempo_larghetto">Larghetto</string>
+  <string name="label_tempo_adagio">Adagio</string>
+  <string name="label_tempo_andante">Andante</string>
+  <string name="label_tempo_moderato">Moderato</string>
+  <string name="label_tempo_allegro">Allegro</string>
+  <string name="label_tempo_presto">Presto</string>
+  <string name="label_tempo_prestissimo">Prestissimo</string>
+
+  <!-- ACTIONS -->
+
+  <string name="action_back">Kembali</string>
+  <string name="action_close">Tutup</string>
+  <string name="action_cancel">Batal</string>
+  <string name="action_increase">Naikkan</string>
+  <string name="action_decrease">Turunkan</string>
+  <string name="action_play">Main</string>
+  <string name="action_play_stop">Main/Berhenti</string>
+  <string name="action_stop">Berhenti</string>
+  <string name="action_add_beat">Tambah ketukan</string>
+  <string name="action_remove_beat">Hapus ketukan</string>
+  <string name="action_add_sub">Tambah subdivisi</string>
+  <string name="action_remove_sub">Hapus subdivisi</string>
+  <string name="action_clear_all">Bersihkan semua</string>
+  <string name="action_tempo_tap">Tempo ketuk</string>
+  <string name="action_bookmark">Penanda</string>
+  <string name="action_beat_mode">Mode ketukan</string>
+  <string name="action_send_feedback">Kirim umpan balik</string>
+  <string name="action_open_link">Buka website eksternal</string>
+  <string name="action_reset">Atur ulang</string>
+  <string name="action_deactivate_gain">Nonaktifkan peningkat</string>
+  <string name="action_recommend">Rekomendasi</string>
+  <string name="action_recommend_description">Beri tahu teman Anda tentang Tack</string>
+  <string name="action_email">Kirim email</string>
+  <string name="action_email_description">Hubungi pengembang</string>
+  <string name="action_rate">Nilai di Google Play</string>
+  <string name="action_rate_description">Dukung pengembangan</string>
+  <string name="action_issue">Buka isu baru di GitHub</string>
+  <string name="action_issue_description">Laporkan bug atau sarankan fitur</string>
+  <string name="action_retry">Ulangi</string>
+  <string name="action_logcat">Tampilkan logcat</string>
+  <string name="action_copy_to_clipboard">Salin ke papan klip</string>
+  <string name="action_reload">Muat ulang</string>
+
+  <!-- MESSAGES -->
+
+  <string name="msg_bookmarks_max">Penanda mencapai batas</string>
+  <string name="msg_feedback">Aplikasi yang hebat membutuhkan banyak waktu dan hidup dari umpan balik penggunanya.</string>
+  <string name="msg_feedback_contact">Apakah Anda memiliki saran, komentar, atau pertanyaan? Hubungi saya!\nAtau saya akan sangat senang dengan ulasan yang bagus di Play Store.</string>
+  <string name="msg_recommend">Lihatlah aplikasi metronom yang keren ini: \n%1$s</string>
+  <string name="msg_vibration_unavailable">Getaran tidak tersedia pada perangkat ini</string>
+  <string name="msg_service_running">Layanan metronom berjalan</string>
+  <string name="msg_service_running_return">Ketuk untuk kembali ke Tack</string>
+  <string name="msg_service_description">Layanan untuk konfigurasi dan pemutaran metronom</string>
+  <string name="msg_connection_lost">Koneksi layanan terputus, perlu memulai ulang aplikasi</string>
+  <string name="msg_reset">Atur ulang semua?</string>
+  <string name="msg_reset_description">Apakah Anda benar ingin mengatur ulang keseluruhan dari aplikasi, termasuk penanda dan pengaturan? Ini tidak dapat diurungkan.</string>
+  <string name="msg_gain">Memainkan dengan peningkatan volume?</string>
+  <string name="msg_gain_description">Berhati-hatilah untuk tidak memutar melalui headphone karena suara yang keras dapat menyebabkan kerusakan telinga!</string>
+  <string name="msg_split_screen">Jendela terlalu kecil</string>
+  <string name="msg_split_screen_description">Tack mungkin mengalami masalah dalam memposisikan kontrol metronom dalam mode layar terbagi. Silakan gunakan jendela yang lebih besar jika memungkinkan.</string>
+  <string name="msg_notification_permission_denied">Diperlukan izin pemberitahuan untuk kontrol pemutaran</string>
+  <string name="msg_report_crash">Mohon laporkan setiap crash dengan melampirkan log crash agar saya dapat mencoba memperbaikinya.</string>
+  <string name="msg_copied_to_clipboard">Berhasil disalin ke papan klip</string>
+
+  <!-- OPTIONS -->
+
+  <string name="options_unit_bars">Bar</string>
+  <plurals name="options_unit_bars">
+    <item quantity="other">%1$dbar</item>
+  </plurals>
+  <string name="options_unit_beats">Ketukan</string>
+  <plurals name="options_unit_beats">
+    <item quantity="other">%1$dketukan</item>
+  </plurals>
+  <string name="options_unit_seconds">Detik</string>
+  <plurals name="options_unit_seconds">
+    <item quantity="other">%1$ddetik</item>
+  </plurals>
+  <string name="options_unit_minutes">Menit</string>
+  <plurals name="options_unit_minutes">
+    <item quantity="other">%1$dmenit</item>
+  </plurals>
+  <string name="options_inactive">Nonaktif</string>
+  <string name="options_count_in">Hitung dalam</string>
+  <string name="options_count_in_description">Tunggu %1$ssebelum menerapkan pengubah</string>
+  <string name="options_incremental">Perubahan tempo bertahap</string>
+  <string name="options_incremental_amount_increase">Menaikkan tempo sebanyak %1$d bpm</string>
+  <string name="options_incremental_amount_decrease">Menurunkan tempo sebanyak %1$d bpm</string>
+  <string name="options_incremental_interval">Setiap %1$s</string>
+  <string name="options_incremental_max">Naik hingga %1$d bpm</string>
+  <string name="options_incremental_min">Turun hingga %1$d bpm</string>
+  <string name="options_timer">Durasi nada</string>
+  <string name="options_timer_description">Berhenti setelah %1$s</string>
+  <string name="options_mute">Ketukan dibisukan</string>
+  <string name="options_mute_play">Mainkan %1$s</string>
+  <string name="options_mute_mute">Bisukan %1$s</string>
+  <string name="options_mute_random">Membisukan hingga %1$d% secara acak</string>
+  <string name="options_swing">Ayunan</string>
+  <string name="options_swing_description">Subdivisi diatur untuk mencocokkan persentase ayunan yang dipilih</string>
+  <string name="options_swing_3">Triplet</string>
+  <string name="options_swing_5">Quintuplet</string>
+  <string name="options_swing_7">Septuplet</string>
+
+  <!-- SETTINGS -->
+
+  <string name="settings_language">Bahasa</string>
+  <string name="settings_language_info">Terima kasih banyak kepada semua penerjemah sukarelawan di Transifex!\nSilakan kunjungi Tack di GitHub untuk mempelajari bagaimana Anda dapat membantu membuat Tack tersedia untuk bahasa Anda.</string>
+  <string name="settings_language_system">Ikut sistem</string>
+  <string name="settings_language_system_description">Bahasa Inggris jika terjemahan tidak tersedia</string>
+
+  <string name="settings_theme">Tema</string>
+  <string name="settings_theme_description">Variasi sesuai gaya Anda</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
+  <string name="settings_theme_auto">Otomatis</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_dark">Gelap</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_light">Terang</string>
+
+  <string name="settings_contrast">Kontras</string>
+  <string name="settings_contrast_description">Aksesibilitas untuk penglihatan Anda</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast. The button width should be as dense as possible. -->
+  <string name="settings_contrast_standard">Standar</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_medium">Sedang</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_high">Tinggi</string>
+  <string name="settings_contrast_dynamic">Kontras pada tema perangkat harus ditetapkan dalam pengaturan sistem</string>
+  <string name="settings_contrast_dynamic_unsupported">Kontras dinamis untuk tema perangkat hanya tersedia pada Android 14+</string>
+
+  <string name="settings_transition">Menggunakan transisi geser antar halaman aplikasi</string>
+  <string name="settings_transition_description">Dibandingkan memudar</string>
+
+  <string name="settings_haptic">Efek haptik</string>
+  <string name="settings_haptic_description">Sebagai opsi tambahan untuk ketukan haptik ketika dalam mode getar</string>
+
+  <string name="settings_reduce_animations">Kurangi animasi</string>
+  <string name="settings_reduce_animations_description">Dapat meningkatkan kinerja</string>
+
+  <string name="settings_reset">Atur ulang semua</string>
+  <string name="settings_reset_description">Tidak bisa diurungkan</string>
+
+  <string name="settings_sound">Suara ketukan</string>
+  <string name="settings_sound_wood">Kayu</string>
+  <string name="settings_sound_sine">Sinus</string>
+  <string name="settings_sound_mechanical">Mekanis</string>
+  <string name="settings_sound_beatboxing_1">Beatbox 1</string>
+  <string name="settings_sound_beatboxing_2">Beatbox 2</string>
+  <string name="settings_sound_hands">Tangan</string>
+  <string name="settings_sound_folding">Alat pelipat</string>
+
+  <string name="settings_latency">Koreksi latensi</string>
+  <string name="settings_latency_description">Mengimbangi latensi keluaran audio sistem terhadap getaran dan visual</string>
+
+  <string name="settings_ignore_focus">Abaikan fokus audio</string>
+  <string name="settings_ignore_focus_description">Tetap bermain meski aplikasi lain berbunyi</string>
+
+  <string name="settings_gain"> Peningkat volume</string>
+  <string name="settings_gain_description">Penguatan dalam dB (tambahan untuk volume sistem)</string>
+  <string name="settings_gain_warning">Gunakan dengan hati-hati!</string>
+  <string name="settings_gain_disclaimer">Ketika peningkat diaktifkan, peringatan akan ditampilkan sebelum memulai. Pengembang tidak bertanggung jawab atas potensi kerusakan.</string>
+
+  <string name="settings_show_subs">Tampilkan kontrol subdivisi</string>
+  <string name="settings_show_subs_description">Irama yang lebih beragam</string>
+
+  <string name="settings_always_vibrate">Selalu getar</string>
+  <string name="settings_always_vibrate_description">Bahkan dengan suara</string>
+
+  <string name="settings_elapsed">Tampilkan lama durasi pemutaran</string>
+  <string name="settings_elapsed_description">Lihat berapa lama Anda berlatih</string>
+
+  <string name="settings_reset_elapsed">Mengatur ulang durasi apabila dihentikan</string>
+  <string name="settings_reset_elapsed_description">Alih-alih melanjutkan hingga ditutup</string>
+
+  <string name="settings_reset_timer">Setel ulang pengatur waktu saat dihentikan</string>
+  <string name="settings_reset_timer_description">Daripada melanjutkan</string>
+
+  <string name="settings_big_timer">Tampilkan panel geser penunjuk waktu yang lebih besar</string>
+  <string name="settings_big_timer_description">Alih-alih bilah geser beranimasi</string>
+
+  <string name="settings_big_time_text">Gunakan teks besar untuk waktu</string>
+  <string name="settings_big_time_text_description">Berguna jika ukuran bawaan kurang</string>
+
+  <string name="settings_flash_screen">Layar kilat</string>
+  <string name="settings_flash_screen_description">Pada setiap ketukan</string>
+
+  <string name="settings_keep_awake">Layar tetap terjaga</string>
+  <string name="settings_keep_awake_description">Saat metronom dimainkan</string>
+
+  <string name="settings_big_logo">Tampilkan logo animasi besar</string>
+  <string name="settings_big_logo_description">Daripada pemilih tempo saat bermain</string>
+
+  <!-- ABOUT -->
+
+  <string name="about_version">Versi</string>
+  <string name="about_changelog">Daftar perubahan</string>
+  <string name="about_changelog_description">Yang baru pada versi ini</string>
+  <string name="about_developer">Pengembang</string>
+  <string name="about_vending_description">Aplikasi lainnya dari pengembang</string>
+  <string name="about_github_description">Sumber kode</string>
+  <string name="about_translation_description">Bantu terjemahkan Tack</string>
+  <string name="about_privacy">Kebijakan privasi</string>
+  <string name="about_privacy_description">Bagaimana data Anda diproses</string>
+
+  </resources>

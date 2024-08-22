@@ -1,0 +1,100 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="wear_title_settings">Setelan</string>
+  <string name="wear_title_beats">Ketukan</string>
+  <string name="wear_title_beats_count">Ketukan (%1$d)</string>
+  <string name="wear_title_subdivisions_count">Subdivisi (%1$d)</string>
+  <string name="wear_title_notification_channel">Layanan metronom</string>
+
+  <!-- LABELS -->
+
+  <string name="wear_label_bpm_value">%1$d bpm</string>
+  <string name="wear_label_ms">%1$s md</string>
+  <string name="wear_label_db">+%1$d dB</string>
+  <string name="wear_label_developer">Dikembangkan oleh</string>
+
+  <!-- ACTIONS -->
+
+  <string name="wear_action_cancel">Batal</string>
+  <string name="wear_action_increase">Naikkan</string>
+  <string name="wear_action_decrease">Turunkan</string>
+  <string name="wear_action_play_stop">Putar/Berhenti</string>
+  <string name="wear_action_stop">Berhenti</string>
+  <string name="wear_action_add_beat">Tambah ketukan</string>
+  <string name="wear_action_remove_beat">Hapus ketukan</string>
+  <string name="wear_action_add_sub">Tambah subdivisi</string>
+  <string name="wear_action_remove_sub">Hapus subdivisi</string>
+  <string name="wear_action_tempo_tap">Tempo ketuk</string>
+  <string name="wear_action_bookmark">Penanda</string>
+  <string name="wear_action_beat_mode">Mode ketukan</string>
+  <string name="wear_action_retry">Ulangi</string>
+
+  <!-- MESSAGES -->
+
+  <string name="wear_msg_service_running">Memainkan metronom</string>
+  <string name="wear_msg_service_running_return">Ketuk untuk lainnya</string>
+  <string name="wear_msg_service_description">Layanan untuk pemutaran metronom</string>
+  <string name="wear_msg_notification_permission_denied">Izin diperlukan</string>
+  <string name="wear_msg_notification_permission_denied_description">Diperlukan izin pemberitahuan untuk pemutaran</string>
+  <string name="wear_msg_gain">Memainkan dengan peningkatan volume?</string>
+  <string name="wear_msg_gain_description">Berhati-hatilah untuk tidak bermain melalui headphone!</string>
+
+  <!-- SETTINGS -->
+
+  <string name="wear_settings_sound">Suara ketukan</string>
+  <string name="wear_settings_sound_sine">Sinus</string>
+  <string name="wear_settings_sound_wood">Kayu</string>
+  <string name="wear_settings_sound_mechanical">Mekanis</string>
+  <string name="wear_settings_sound_beatboxing_1">Beatbox 1</string>
+  <string name="wear_settings_sound_beatboxing_2">Beatbox 2</string>
+  <string name="wear_settings_sound_hands">Tangan</string>
+  <string name="wear_settings_sound_folding">Alat pelipat</string>
+
+  <string name="wear_settings_latency">Koreksi latensi</string>
+
+  <string name="wear_settings_ignore_focus">Abaikan fokus audio</string>
+  <string name="wear_settings_ignore_focus_description">Tetap bermain meski aplikasi lain berbunyi</string>
+
+  <string name="wear_settings_gain"> Peningkat volume</string>
+  <string name="wear_settings_gain_disclaimer">Hati-hati! Pengembang tidak bertanggung jawab atas potensi kerusakan.</string>
+
+  <string name="wear_settings_always_vibrate">Selalu getar</string>
+  <string name="wear_settings_always_vibrate_description">Bahkan dengan suara</string>
+
+  <string name="wear_settings_strong_vibration">Getaran kuat</string>
+  <string name="wear_settings_strong_vibration_description">Jika haptik lemah</string>
+
+  <string name="wear_settings_flash_screen">Layar kilat</string>
+  <string name="wear_settings_flash_screen_description">Pada setiap ketukan</string>
+
+  <string name="wear_settings_reduce_animations">Kurangi animasi</string>
+  <string name="wear_settings_reduce_animations_description">Dapat meningkatkan kinerja</string>
+
+  <string name="wear_settings_keep_awake">Layar tetap terjaga</string>
+  <string name="wear_settings_keep_awake_description">Saat metronom dimainkan</string>
+
+  <string name="wear_settings_rate">Beri peringkat Tack di Google Play</string>
+  <string name="wear_settings_rate_description">Dukung pengembangan</string>
+
+</resources>
