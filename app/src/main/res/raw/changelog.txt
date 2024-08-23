@@ -1,3 +1,8 @@
+## 4.3.1
+
+- New: Indonesian translation
+- Improved: performance improvements (Wear OS)
+
 ## 4.3.0
 
 - New: support for Android 15
