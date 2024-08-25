@@ -67,9 +67,9 @@
   <string name="action_recommend_description">Tack uygulamasını arkadaşlarına anlat</string>
   <string name="action_email">E-posta gönder</string>
   <string name="action_email_description">Geliştirici ile iletişime geç</string>
-  <string name="action_rate">Google Play'de oyla</string>
+  <string name="action_rate">Google Play\'de oyla</string>
   <string name="action_rate_description">Geliştirmeyi destekle</string>
-  <string name="action_issue">GitHub'da yeni hata bildirimi oluştur</string>
+  <string name="action_issue">GitHub\'da yeni hata bildirimi oluştur</string>
   <string name="action_issue_description">Hataları bildir ya da özellik öner</string>
   <string name="action_retry">Tekrar dene</string>
   <string name="action_logcat">Logcat göster</string>
@@ -80,11 +80,11 @@
 
   <string name="msg_bookmarks_max">Yer imi sınırına ulaşıldı</string>
   <string name="msg_feedback">Harika bir uygulama, çok zaman alır ve kullanıcılarının geri bildirimleri ile gelişir.</string>
-  <string name="msg_feedback_contact">Bir isteğiniz, yorumunuz veya sorunuz mu var? Benimle iletişime geçin!\nAksi takdirde Play Store'da güzel bir inceleme yapmanızdan çok memnun olurum.</string>
+  <string name="msg_feedback_contact">Bir isteğiniz, yorumunuz veya sorunuz mu var? Benimle iletişime geçin!\nAksi takdirde Play Store\'da güzel bir inceleme yapmanızdan çok memnun olurum.</string>
   <string name="msg_recommend">Bu harika metronom uygulamasına bir göz atın: \n%1$s</string>
   <string name="msg_vibration_unavailable">Bu cihazda titreşim kullanılamıyor</string>
   <string name="msg_service_running">Metronom servisi çalışıyor</string>
-  <string name="msg_service_running_return">Tack'a dönmek için dokunun</string>
+  <string name="msg_service_running_return">Tack\'a dönmek için dokunun</string>
   <string name="msg_service_description">Metronom yapılandırması ve oynatma için servis</string>
   <string name="msg_connection_lost">Servis bağlantısı kesildi, uygulama yeniden başlatılmalı</string>
   <string name="msg_reset">Her şeyi sıfırlansın mı?</string>
@@ -126,8 +126,8 @@
   <string name="options_incremental_amount_increase">Tempoyu %1$d bpm arttır</string>
   <string name="options_incremental_amount_decrease">Tempoyu %1$d bpm azalt</string>
   <string name="options_incremental_interval">Her %1$s</string>
-  <string name="options_incremental_max">%1$d bpm'ye kadar</string>
-  <string name="options_incremental_min">%1$d bpm'ye kadar düşür</string>
+  <string name="options_incremental_max">%1$d bpm\'ye kadar</string>
+  <string name="options_incremental_min">%1$d bpm\'ye kadar düşür</string>
   <string name="options_timer">Şarkı süresi</string>
   <string name="options_timer_description">%1$s sonra durdur</string>
   <string name="options_mute">Sessiz vuruşlar</string>
@@ -143,7 +143,7 @@
   <!-- AYARLAR -->
 
   <string name="settings_language">Dil</string>
-  <string name="settings_language_info">Transifex'teki tüm gönüllü çevirmenlere çok teşekkürler!\nTack'i kendi dilinizde erişilebilir hale getirmeye nasıl yardımcı olabileceğinizi öğrenmek için GitHub'da Tack'i ziyaret edin.</string>
+  <string name="settings_language_info">Transifex\'teki tüm gönüllü çevirmenlere çok teşekkürler!\nTack\'i kendi dilinizde erişilebilir hale getirmeye nasıl yardımcı olabileceğinizi öğrenmek için GitHub\'da Tack\'i ziyaret edin.</string>
   <string name="settings_language_system">Sistemi takip et</string>
   <string name="settings_language_system_description">Çeviri mevcut değilse İngilizce</string>
 
@@ -234,7 +234,7 @@
   <string name="about_github" translatable="false">GitHub</string>
   <string name="about_github_description">Kaynak kodu</string>
   <string name="about_translation" translatable="false">Transifex</string>
-  <string name="about_translation_description">Tack'i çevirmeye yardım et</string>
+  <string name="about_translation_description">Tack\'i çevirmeye yardım et</string>
   <string name="about_privacy">Gizlilik politikası</string>
   <string name="about_privacy_description">Verilerinizin nasıl işlendiği</string>
 
