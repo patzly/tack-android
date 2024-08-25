@@ -1,0 +1,251 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="title_feedback">Geri Bildirim</string>
+  <string name="title_about">Hakkında</string>
+  <string name="title_help">Yardım</string>
+  <string name="title_licenses">Açık kaynak lisansları</string>
+  <string name="title_settings">Ayarlar</string>
+  <string name="title_notification_channel">Metronom servisi</string>
+  <string name="title_options">Seçenekler</string>
+  <string name="title_general">Genel</string>
+  <string name="title_metronome">Metronom</string>
+  <string name="title_controls">Kontroller</string>
+  <string name="title_logcat">Logcat</string>
+
+  <!-- LABELS -->
+
+  <string name="label_bpm_value">%1$d bpm</string>
+  <string name="label_bpm">bpm</string>
+  <string name="label_ms">%1$s ms</string>
+  <string name="label_db">+%1$d dB</string>
+  <string name="label_tempo_largo">Largo</string>
+  <string name="label_tempo_larghetto">Larghetto</string>
+  <string name="label_tempo_adagio">Adagio</string>
+  <string name="label_tempo_andante">Andante</string>
+  <string name="label_tempo_moderato">Moderato</string>
+  <string name="label_tempo_allegro">Allegro</string>
+  <string name="label_tempo_presto">Presto</string>
+  <string name="label_tempo_prestissimo">Prestissimo</string>
+
+  <!-- ACTIONS -->
+
+  <string name="action_back">Geri</string>
+  <string name="action_close">Kapat</string>
+  <string name="action_cancel">İptal</string>
+  <string name="action_increase">Arttır</string>
+  <string name="action_decrease">Azalt</string>
+  <string name="action_play">Oynat</string>
+  <string name="action_play_stop">Oynat/Durdur</string>
+  <string name="action_stop">Durdur</string>
+  <string name="action_add_beat">Vuruş ekle</string>
+  <string name="action_remove_beat">Vuruş çıkar</string>
+  <string name="action_add_sub">Alt bölüm ekle</string>
+  <string name="action_remove_sub">Alt bölüm çıkar</string>
+  <string name="action_clear_all">Tümünü temizle</string>
+  <string name="action_tempo_tap">Tempo tıkla</string>
+  <string name="action_bookmark">Yer imi</string>
+  <string name="action_beat_mode">Vuruş modu</string>
+  <string name="action_send_feedback">Geri bildirim gönder</string>
+  <string name="action_open_link">Harici web sitesini aç</string>
+  <string name="action_reset">Sıfırla</string>
+  <string name="action_deactivate_gain">Artışı devre dışı bırak</string>
+  <string name="action_recommend">Öner</string>
+  <string name="action_recommend_description">Tack uygulamasını arkadaşlarına anlat</string>
+  <string name="action_email">E-posta gönder</string>
+  <string name="action_email_description">Geliştirici ile iletişime geç</string>
+  <string name="action_rate">Google Play\'de oyla</string>
+  <string name="action_rate_description">Geliştirmeyi destekle</string>
+  <string name="action_issue">GitHub\'da yeni hata bildirimi oluştur</string>
+  <string name="action_issue_description">Hataları bildir ya da özellik öner</string>
+  <string name="action_retry">Tekrar dene</string>
+  <string name="action_logcat">Logcat göster</string>
+  <string name="action_copy_to_clipboard">Panoya kopyala</string>
+  <string name="action_reload">Yeniden yükle</string>
+
+  <!-- MESSAGES -->
+
+  <string name="msg_bookmarks_max">Yer imi sınırına ulaşıldı</string>
+  <string name="msg_feedback">Harika bir uygulama, çok zaman alır ve kullanıcılarının geri bildirimleri ile gelişir.</string>
+  <string name="msg_feedback_contact">Bir isteğiniz, yorumunuz veya sorunuz mu var? Benimle iletişime geçin!\nAksi takdirde Play Store\'da güzel bir inceleme yapmanızdan çok memnun olurum.</string>
+  <string name="msg_recommend">Bu harika metronom uygulamasına bir göz atın: \n%1$s</string>
+  <string name="msg_vibration_unavailable">Bu cihazda titreşim kullanılamıyor</string>
+  <string name="msg_service_running">Metronom servisi çalışıyor</string>
+  <string name="msg_service_running_return">Tack\'a dönmek için dokunun</string>
+  <string name="msg_service_description">Metronom yapılandırması ve oynatma için servis</string>
+  <string name="msg_connection_lost">Servis bağlantısı kesildi, uygulama yeniden başlatılmalı</string>
+  <string name="msg_reset">Her şeyi sıfırlansın mı?</string>
+  <string name="msg_reset_description">Yer imleri ve ayarlar dahil tüm uygulamayı sıfırlamak istediğinizden emin misiniz? Bu işlem geri alınamaz.</string>
+  <string name="msg_gain">Ses artışıyla oynat?</string>
+  <string name="msg_gain_description">Kulaklıkla yüksek sesle oynatmamaya dikkat edin, yüksek sesler işitme kaybına neden olabilir!</string>
+  <string name="msg_split_screen">Pencere çok küçük</string>
+  <string name="msg_split_screen_description">Tack, bölünmüş ekran modunda metronom kontrollerini yerleştirmede sorun yaşayabilir. Lütfen mümkünse daha büyük bir pencere kullanın.</string>
+  <string name="msg_notification_permission_denied">Oynatma kontrolleri için bildirim izni gereklidir</string>
+  <string name="msg_report_crash">Lütfen herhangi bir çökme durumunu çökme günlüğü ile birlikte bildirin, böylece onları düzeltmeye çalışabilirim.</string>
+  <string name="msg_copied_to_clipboard">Başarıyla panoya kopyalandı</string>
+
+  <!-- OPTIONS -->
+
+  <string name="options_unit_bars">Ölçüler</string>
+  <plurals name="options_unit_bars">
+    <item quantity="one">%1$d ölçü</item>
+    <item quantity="other">%1$d ölçü</item>
+  </plurals>
+  <string name="options_unit_beats">Vuruşlar</string>
+  <plurals name="options_unit_beats">
+    <item quantity="one">%1$d vuruş</item>
+    <item quantity="other">%1$d vuruş</item>
+  </plurals>
+  <string name="options_unit_seconds">Saniyeler</string>
+  <plurals name="options_unit_seconds">
+    <item quantity="one">%1$d saniye</item>
+    <item quantity="other">%1$d saniye</item>
+  </plurals>
+  <string name="options_unit_minutes">Dakikalar</string>
+  <plurals name="options_unit_minutes">
+    <item quantity="one">%1$d dakika</item>
+    <item quantity="other">%1$d dakika</item>
+  </plurals>
+  <string name="options_inactive">Pasif</string>
+  <string name="options_count_in">Giriş sayımı</string>
+  <string name="options_count_in_description">Modifikasyonları uygulamadan önce %1$s bekle</string>
+  <string name="options_incremental">Kademeli tempo değişikliği</string>
+  <string name="options_incremental_amount_increase">Tempoyu %1$d bpm arttır</string>
+  <string name="options_incremental_amount_decrease">Tempoyu %1$d bpm azalt</string>
+  <string name="options_incremental_interval">Her %1$s</string>
+  <string name="options_incremental_max">%1$d bpm\'ye kadar</string>
+  <string name="options_incremental_min">%1$d bpm\'ye kadar düşür</string>
+  <string name="options_timer">Şarkı süresi</string>
+  <string name="options_timer_description">%1$s sonra durdur</string>
+  <string name="options_mute">Sessiz vuruşlar</string>
+  <string name="options_mute_play">%1$s çal</string>
+  <string name="options_mute_mute">%1$s sessize al</string>
+  <string name="options_mute_random">%1$d%% kadar rastgele sessize al</string>
+  <string name="options_swing">Swing</string>
+  <string name="options_swing_description">Alt bölümler seçilen swing yüzdesine göre ayarlanır</string>
+  <string name="options_swing_3">Üçlem</string>
+  <string name="options_swing_5">Beşlem</string>
+  <string name="options_swing_7">Yedilem</string>
+
+  <!-- SETTINGS -->
+
+  <string name="settings_language">Dil</string>
+  <string name="settings_language_info">Transifex\'teki tüm gönüllü çevirmenlere çok teşekkürler!\nTack\'i kendi dilinizde erişilebilir hale getirmeye nasıl yardımcı olabileceğinizi öğrenmek için GitHub\'da Tack\'i ziyaret edin.</string>
+  <string name="settings_language_system">Sistemi takip et</string>
+  <string name="settings_language_system_description">Çeviri mevcut değilse İngilizce</string>
+
+  <string name="settings_theme">Tema</string>
+  <string name="settings_theme_description">Tarzınız için çeşitlilik</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
+  <string name="settings_theme_auto">Otomatik</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_dark">Karanlık</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_light">Aydınlık</string>
+
+  <string name="settings_contrast">Kontrast</string>
+  <string name="settings_contrast_description">Görüş erişilebilirliği</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast. The button width should be as dense as possible. -->
+  <string name="settings_contrast_standard">Standart</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_medium">Orta</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_high">Yüksek</string>
+  <string name="settings_contrast_dynamic">Cihaz teması için kontrast ayarı sistem ayarlarında yapılmalı</string>
+  <string name="settings_contrast_dynamic_unsupported">Dinamik kontrast sadece Android 14+ cihazlarda kullanılabilir</string>
+
+  <string name="settings_transition">Uygulama sayfaları arasında kaydırma geçişini kullan</string>
+  <string name="settings_transition_description">Solma yerine</string>
+
+  <string name="settings_haptic">Haptik efektler</string>
+  <string name="settings_haptic_description">Titreşim modunda haptik vuruşlara ek olarak</string>
+
+  <string name="settings_reduce_animations">Animasyonları azalt</string>
+  <string name="settings_reduce_animations_description">Performansı artırabilir</string>
+
+  <string name="settings_reset">Hepsini sıfırla</string>
+  <string name="settings_reset_description">Geri alınamaz</string>
+
+  <string name="settings_sound">Vuruş sesi</string>
+  <string name="settings_sound_wood">Ahşap</string>
+  <string name="settings_sound_sine">Sinüs</string>
+  <string name="settings_sound_mechanical">Mekanik</string>
+  <string name="settings_sound_beatboxing_1">Beatboxing 1</string>
+  <string name="settings_sound_beatboxing_2">Beatboxing 2</string>
+  <string name="settings_sound_hands">Eller</string>
+  <string name="settings_sound_folding">Metre</string>
+
+  <string name="settings_latency">Gecikme düzeltmesi</string>
+  <string name="settings_latency_description">Titreşim ve görseller için sistem ses çıkışının gecikmesini telafi et</string>
+
+  <string name="settings_ignore_focus">Ses odağını görmezden gel</string>
+  <string name="settings_ignore_focus_description">Diğer uygulamalar ses çıkarsa bile çalmaya devam et</string>
+
+  <string name="settings_gain">Ses artırma</string>
+  <string name="settings_gain_description">dB cinsinden kazanç (sistem sesine ek olarak)</string>
+  <string name="settings_gain_warning">Dikkatli kullanın!</string>
+  <string name="settings_gain_disclaimer">Ses artırma etkinleştirildiğinde, her başlangıçta bir uyarı gösterilecektir. Geliştirici herhangi bir olası hasar için sorumluluk kabul etmez.</string>
+
+  <string name="settings_show_subs">Alt bölüm kontrollerini göster</string>
+  <string name="settings_show_subs_description">Daha çeşitli ritimler</string>
+
+  <string name="settings_always_vibrate">Her zaman titreşim</string>
+  <string name="settings_always_vibrate_description">Ses açık olsa bile</string>
+
+  <string name="settings_elapsed">Geçen süreyi göster</string>
+  <string name="settings_elapsed_description">Ne kadar süre pratik yaptığınızı görün</string>
+
+  <string name="settings_reset_elapsed">Durdurulduğunda geçen süreyi sıfırla</string>
+  <string name="settings_reset_elapsed_description">Uygulama kapatılana kadar devam etmek yerine</string>
+
+  <string name="settings_reset_timer">Durdurulduğunda zamanlayıcıyı sıfırla</string>
+  <string name="settings_reset_timer_description">Devam etmek yerine</string>
+
+  <string name="settings_big_timer">Büyük zamanlayıcı kaydırıcısını göster</string>
+  <string name="settings_big_timer_description">Animasyonlu arama çubuğu yerine</string>
+
+  <string name="settings_big_time_text">Zaman için büyük metin kullan</string>
+  <string name="settings_big_time_text_description">Varsayılan boyut yeterli değilse faydalıdır</string>
+
+  <string name="settings_flash_screen">Ekranı flaş ettir</string>
+  <string name="settings_flash_screen_description">Her vuruşta</string>
+
+  <string name="settings_keep_awake">Ekranı açık tut</string>
+  <string name="settings_keep_awake_description">Metronom çalarken</string>
+
+  <string name="settings_big_logo">Büyük logo animasyonunu göster</string>
+  <string name="settings_big_logo_description">Çalma sırasında tempo seçici yerine</string>
+
+  <!-- ABOUT -->
+
+  <string name="about_version">Sürüm</string>
+  <string name="about_changelog">Değişiklik günlüğü</string>
+  <string name="about_changelog_description">Bu sürümdeki yenilikler</string>
+  <string name="about_developer">Geliştirici</string>
+  <string name="about_vending_description">Geliştiricinin diğer uygulamaları</string>
+  <string name="about_github_description">Kaynak kodu</string>
+  <string name="about_translation_description">Tack\'i çevirmeye yardım et</string>
+  <string name="about_privacy">Gizlilik politikası</string>
+  <string name="about_privacy_description">Verilerinizin nasıl işlendiği</string>
+
+  </resources>
