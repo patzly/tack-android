@@ -10,11 +10,14 @@ Patrick Zedler
 in
 ianz132, rafiebagas1506, obedhanzah, officialputuid, Kizui.Tagahara, MDP43140
 
+tr
+mikropsoft
+
 zh-CN
-llxlr
+llxlr, 29887687jw, EricLeeLWT, xzx482
 
 zh-HK
-llxlr
+hugoalh, llxlr
 
 zh-TW
-llxlr, hugoalh
+hugoalh, llxlr

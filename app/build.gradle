@@ -13,7 +13,7 @@ android {
         targetSdk 35
         versionCode 180 // last number is 0 for app release
         versionName "4.3.0"
-        resourceConfigurations += ["cs", "de", "en", "in", "zh-rCN", "zh-rHK", "zh-rTW"]
+        resourceConfigurations += ["cs", "de", "en", "in", "tr", "zh-rCN", "zh-rHK", "zh-rTW"]
     }
 
     applicationVariants.configureEach { variant ->
