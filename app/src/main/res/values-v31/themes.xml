@@ -22,7 +22,6 @@
   <style name="Theme.Tack" parent="Base.Tack">
     <item name="android:windowSplashScreenBackground" tools:ignore="PrivateResource">@color/m3_sys_color_dynamic_light_surface</item>
     <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_logo_anim</item>
-    <item name="android:windowSplashScreenAnimationDuration">970</item>
   </style>
 
 </resources>

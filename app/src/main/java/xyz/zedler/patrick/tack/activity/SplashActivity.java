@@ -21,7 +21,6 @@ package xyz.zedler.patrick.tack.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -58,26 +57,17 @@ public class SplashActivity extends MainActivity {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
       super.onCreate(bundle);
 
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        // SDK 33+ manages splash screen animation duration itself
-        return;
-      }
-
       getSplashScreen().setOnExitAnimationListener(view -> {
-        AnimatorSet set = new AnimatorSet();
-        set.playTogether(
-            ObjectAnimator.ofFloat(view, "alpha", 0),
-            ObjectAnimator.ofFloat(view.getIconView(), "alpha", 0)
-        );
-        set.setDuration(400);
-        set.setStartDelay(600);
-        set.addListener(new AnimatorListenerAdapter() {
+        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 0);
+        animator.setDuration(250);
+        animator.setStartDelay(100);
+        animator.addListener(new AnimatorListenerAdapter() {
           @Override
           public void onAnimationEnd(@NonNull Animator animation, boolean isReverse) {
             view.remove();
           }
         });
-        set.start();
+        animator.start();
       });
     } else {
       // DARK MODE
