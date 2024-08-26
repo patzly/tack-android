@@ -1,0 +1,79 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="wear_title_settings">Ayarlar</string>
+  <string name="wear_title_beats">Vuruşlar</string>
+  <string name="wear_title_notification_channel">Metronom servisi</string>
+
+  <!-- LABELS -->
+
+  <string name="wear_label_bpm_value">%1$d bpm</string>
+  <string name="wear_label_ms">%1$s ms</string>
+  <string name="wear_label_db">+%1$d dB</string>
+  <!-- ACTIONS -->
+
+  <string name="wear_action_cancel">İptal</string>
+  <string name="wear_action_increase">Arttır</string>
+  <string name="wear_action_decrease">Azalt</string>
+  <string name="wear_action_play_stop">Oynat/Durdur</string>
+  <string name="wear_action_stop">Durdur</string>
+  <string name="wear_action_add_beat">Vuruş ekle</string>
+  <string name="wear_action_remove_beat">Vuruş çıkar</string>
+  <string name="wear_action_add_sub">Alt bölüm ekle</string>
+  <string name="wear_action_remove_sub">Alt bölüm çıkar</string>
+  <string name="wear_action_tempo_tap">Tempo tıkla</string>
+  <string name="wear_action_bookmark">Yer imi</string>
+  <string name="wear_action_beat_mode">Vuruş modu</string>
+  <string name="wear_action_retry">Tekrar dene</string>
+
+  <string name="wear_msg_gain">Ses artışıyla oynat?</string>
+  <!-- SETTINGS -->
+
+  <string name="wear_settings_sound">Vuruş sesi</string>
+  <string name="wear_settings_sound_sine">Sinüs</string>
+  <string name="wear_settings_sound_wood">Ahşap</string>
+  <string name="wear_settings_sound_mechanical">Mekanik</string>
+  <string name="wear_settings_sound_beatboxing_1">Beatboxing 1</string>
+  <string name="wear_settings_sound_beatboxing_2">Beatboxing 2</string>
+  <string name="wear_settings_sound_hands">Eller</string>
+  <string name="wear_settings_sound_folding">Metre</string>
+
+  <string name="wear_settings_latency">Gecikme düzeltmesi</string>
+
+  <string name="wear_settings_ignore_focus">Ses odağını görmezden gel</string>
+  <string name="wear_settings_ignore_focus_description">Diğer uygulamalar ses çıkarsa bile çalmaya devam et</string>
+
+  <string name="wear_settings_gain">Ses artırma</string>
+  <string name="wear_settings_always_vibrate">Her zaman titreşim</string>
+  <string name="wear_settings_always_vibrate_description">Ses açık olsa bile</string>
+
+  <string name="wear_settings_flash_screen">Ekranı flaş ettir</string>
+  <string name="wear_settings_flash_screen_description">Her vuruşta</string>
+
+  <string name="wear_settings_reduce_animations">Animasyonları azalt</string>
+  <string name="wear_settings_reduce_animations_description">Performansı artırabilir</string>
+
+  <string name="wear_settings_keep_awake">Ekranı açık tut</string>
+  <string name="wear_settings_keep_awake_description">Metronom çalarken</string>
+
+  </resources>
