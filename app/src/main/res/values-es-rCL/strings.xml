@@ -62,6 +62,7 @@
   <string name="action_remove_beat">Quitar pulso</string>
   <string name="action_add_sub">Agregar subdivisión</string>
   <string name="action_remove_sub">Quitar subdivisión</string>
+  <string name="action_clear_all">Limpiar todo</string>
   <string name="action_tempo_tap">Dar tempo</string>
   <string name="action_bookmark">Guardar en marcadores</string>
   <string name="action_beat_mode">Modo</string>
