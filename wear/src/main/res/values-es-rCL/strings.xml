@@ -82,6 +82,7 @@
   <string name="wear_settings_always_vibrate">Siempre vibrar</string>
   <string name="wear_settings_always_vibrate_description">Incluso con sonido</string>
 
+  <string name="wear_settings_strong_vibration">Vibración fuerte</string>
   <string name="wear_settings_flash_screen">Iluminar pantalla</string>
   <string name="wear_settings_flash_screen_description">En cada pulso</string>
 
