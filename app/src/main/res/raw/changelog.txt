@@ -1,6 +1,6 @@
 ## 4.3.1
 
-- New: Indonesian and Turkish translations
+- New: Indonesian, Spanish and Turkish translations (big thanks to the translators!)
 - Improved: splash screen on Android 12+
 - Improved: performance improvements (Wear OS)
 

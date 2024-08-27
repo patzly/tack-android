@@ -22,6 +22,8 @@
   <locale android:name="cs"/>
   <locale android:name="de"/>
   <locale android:name="en"/>
+  <locale android:name="es"/>
+  <locale android:name="es-CL"/>
   <locale android:name="in"/>
   <locale android:name="tr"/>
   <locale android:name="zh-CN"/>
