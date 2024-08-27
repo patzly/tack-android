@@ -195,6 +195,8 @@
   <string name="settings_sound_folding">Regla plegable</string>
 
   <string name="settings_latency">Corrección de latencia</string>
+  <string name="settings_latency_description">Compensar latencia de audio del sistema para vibración y visuales</string>
+
   <string name="settings_ignore_focus">Ignorar atención de audio</string>
   <string name="settings_ignore_focus_description">Seguir sonando cuando otras aplicaciones emiten sonido</string>
 
