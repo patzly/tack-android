@@ -168,7 +168,7 @@
   <string name="settings_contrast_medium">Medio</string>
   <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
   <string name="settings_contrast_high">Alto</string>
-  <string name="settings_transition_description">En vez de desvanecerse</string>
+  <string name="settings_transition_description">En vez de desvanecimiento</string>
 
   <string name="settings_haptic">Efectos hápticos</string>
   <string name="settings_reduce_animations">Reducir animaciones</string>
