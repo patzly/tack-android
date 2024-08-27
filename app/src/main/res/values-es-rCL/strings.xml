@@ -189,7 +189,14 @@
   <string name="settings_latency">Corrección de latencia</string>
   <string name="settings_gain">Aumento de volumen (Boost)</string>
   <string name="settings_gain_warning">¡Use con cuidado!</string>
+  <string name="settings_show_subs">Mostrar controles de subdivisión</string>
+  <string name="settings_show_subs_description">Ritmos más diversos</string>
+
   <string name="settings_always_vibrate">Siempre vibrar</string>
+  <string name="settings_always_vibrate_description">Incluso con sonido</string>
+
+  <string name="settings_reset_timer_description">En vez de continuar</string>
+
   <string name="settings_flash_screen">Iluminar pantalla</string>
   <string name="settings_keep_awake">Mantener la pantalla encendida</string>
   <string name="settings_keep_awake_description">Mientras el metrónomo está funcionando</string>
