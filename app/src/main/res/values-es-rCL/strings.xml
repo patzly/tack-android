@@ -201,7 +201,7 @@
   <string name="settings_reset_timer">Reiniciar tiempo transcurrido al detener</string>
   <string name="settings_reset_timer_description">En vez de continuar</string>
 
-  <string name="settings_big_timer">Mostrar deslizador grande</string>
+  <string name="settings_big_timer">Mostrar temporizador deslizante grande</string>
   <string name="settings_flash_screen">Iluminar pantalla</string>
   <string name="settings_flash_screen_description">En cada pulso</string>
 
