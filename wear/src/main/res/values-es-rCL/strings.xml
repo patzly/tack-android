@@ -23,6 +23,7 @@
 
   <string name="wear_title_settings">Configuración</string>
   <string name="wear_title_beats">Pulsos</string>
+  <string name="wear_title_beats_count">Pulsos (%1$d)</string>
   <string name="wear_title_notification_channel">Servicio de metrónomo</string>
 
   <!-- LABELS -->
