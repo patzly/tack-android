@@ -177,6 +177,8 @@
   <string name="settings_transition_description">En vez de desvanecimiento</string>
 
   <string name="settings_haptic">Efectos hápticos</string>
+  <string name="settings_haptic_description">Junto con las pulsaciones hápticas en modo vibración</string>
+
   <string name="settings_reduce_animations">Reducir animaciones</string>
   <string name="settings_reduce_animations_description">Puede mejorar el rendimiento</string>
 
