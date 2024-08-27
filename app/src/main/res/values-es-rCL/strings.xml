@@ -228,7 +228,7 @@
   <string name="settings_big_timer_description">En vez de la delgada barra  animada</string>
 
   <string name="settings_big_time_text">Usar texto grande para el tiempo</string>
-  <string name="settings_big_time_text_description">Útil si es que el tamaño por defecto no es suficiente</string>
+  <string name="settings_big_time_text_description">Útil si es que el tamaño predeterminado no es suficiente</string>
 
   <string name="settings_flash_screen">Iluminar pantalla</string>
   <string name="settings_flash_screen_description">En cada pulso</string>
