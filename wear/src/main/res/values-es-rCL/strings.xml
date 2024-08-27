@@ -94,4 +94,5 @@
   <string name="wear_settings_keep_awake">Mantener la pantalla encendida</string>
   <string name="wear_settings_keep_awake_description">Mientras el metrónomo está funcionando</string>
 
+  <string name="wear_settings_rate">Califica Tack en Google Play</string>
   </resources>
