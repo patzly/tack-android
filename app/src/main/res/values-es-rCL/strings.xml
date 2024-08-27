@@ -194,6 +194,8 @@
 
   <string name="settings_latency">Corrección de latencia</string>
   <string name="settings_ignore_focus">Ignorar atención de audio</string>
+  <string name="settings_ignore_focus_description">Seguirá sonando si otras aplicaciones emiten sonido</string>
+
   <string name="settings_gain">Aumento de volumen (Boost)</string>
   <string name="settings_gain_warning">¡Use con cuidado!</string>
   <string name="settings_show_subs">Mostrar controles de subdivisión</string>
