@@ -221,6 +221,8 @@
   <string name="settings_keep_awake_description">Mientras el metrónomo está funcionando</string>
 
   <string name="settings_big_logo">Mostrar animación de logo grande</string>
+  <string name="settings_big_logo_description">Mientras suena. En vez de la rueda de tempo</string>
+
   <!-- ABOUT -->
 
   <string name="about_version">Versión</string>
