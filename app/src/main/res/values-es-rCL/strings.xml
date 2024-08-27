@@ -197,6 +197,7 @@
   <string name="settings_ignore_focus_description">Seguir sonando cuando otras aplicaciones emiten sonido</string>
 
   <string name="settings_gain">Aumento de volumen (Boost)</string>
+  <string name="settings_gain_description">Ganancia en dB (adicional al volumen del sistema)</string>
   <string name="settings_gain_warning">¡Use con cuidado!</string>
   <string name="settings_show_subs">Mostrar controles de subdivisión</string>
   <string name="settings_show_subs_description">Ritmos más diversos</string>
