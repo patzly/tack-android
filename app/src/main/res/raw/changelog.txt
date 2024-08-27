@@ -3,6 +3,7 @@
 - New: Indonesian, Spanish and Turkish translations (big thanks to the translators!)
 - Improved: splash screen on Android 12+
 - Improved: performance improvements (Wear OS)
+- Fixed: invisible status bar icons on some devices with Android 11
 
 ## 4.3.0
 
