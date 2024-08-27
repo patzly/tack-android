@@ -172,6 +172,8 @@
 
   <string name="settings_haptic">Efectos hápticos</string>
   <string name="settings_reduce_animations">Reducir animaciones</string>
+  <string name="settings_reduce_animations_description">Puede mejorar el rendimiento</string>
+
   <string name="settings_reset">Inicializar todo</string>
   <string name="settings_reset_description">No se puede deshacer</string>
 
