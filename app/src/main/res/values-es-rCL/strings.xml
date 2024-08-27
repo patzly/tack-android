@@ -175,7 +175,7 @@
   <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
   <string name="settings_contrast_high">Alto</string>
   <string name="settings_contrast_dynamic">El contraste para el tema del dispositivo debe ser elegido en configuración del sistema</string>
-  <string name="settings_contrast_dynamic_unsupported">El contraste dinámico para tema del sistema está disponible solo en Android 14+</string>
+  <string name="settings_contrast_dynamic_unsupported">El contraste dinámico para temas del sistema está disponible solo en Android 14+</string>
 
   <string name="settings_transition">Usar transición entre páginas de la app</string>
   <string name="settings_transition_description">En vez de desvanecimiento</string>
