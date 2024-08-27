@@ -207,7 +207,7 @@
   <string name="settings_keep_awake">Mantener la pantalla encendida</string>
   <string name="settings_keep_awake_description">Mientras el metrónomo está funcionando</string>
 
-  <string name="settings_big_logo">Mostrar animación del logo en grande</string>
+  <string name="settings_big_logo">Mostrar animación de logo grande</string>
   <!-- ABOUT -->
 
   <string name="about_version">Versión</string>
