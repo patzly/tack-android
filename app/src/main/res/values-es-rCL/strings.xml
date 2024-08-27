@@ -210,6 +210,7 @@
   <string name="settings_big_timer">Mostrar temporizador deslizante grande</string>
   <string name="settings_big_timer_description">En vez de la delgada barra  animada</string>
 
+  <string name="settings_big_time_text">Usar texto grande para el tiempo</string>
   <string name="settings_flash_screen">Iluminar pantalla</string>
   <string name="settings_flash_screen_description">En cada pulso</string>
 
