@@ -198,6 +198,7 @@
   <string name="settings_always_vibrate_description">Incluso con sonido</string>
 
   <string name="settings_elapsed">Mostrar tiempo transcurrido</string>
+  <string name="settings_reset_timer">Reiniciar tiempo transcurrido al detener</string>
   <string name="settings_reset_timer_description">En vez de continuar</string>
 
   <string name="settings_flash_screen">Iluminar pantalla</string>
