@@ -198,6 +198,8 @@
   <string name="settings_reset_timer_description">En vez de continuar</string>
 
   <string name="settings_flash_screen">Iluminar pantalla</string>
+  <string name="settings_flash_screen_description">En cada pulso</string>
+
   <string name="settings_keep_awake">Mantener la pantalla encendida</string>
   <string name="settings_keep_awake_description">Mientras el metrónomo está funcionando</string>
 
