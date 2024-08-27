@@ -172,6 +172,7 @@
   <string name="settings_contrast_medium">Medio</string>
   <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
   <string name="settings_contrast_high">Alto</string>
+  <string name="settings_transition">Usar transición entre páginas de la app</string>
   <string name="settings_transition_description">En vez de desvanecimiento</string>
 
   <string name="settings_haptic">Efectos hápticos</string>
