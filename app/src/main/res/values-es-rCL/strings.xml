@@ -110,7 +110,7 @@
   <plurals name="options_unit_bars">
     <item quantity="one">%1$dcompás</item>
     <item quantity="many">%1$dcompases</item>
-    <item quantity="other">%1$dcompases</item>
+    <item quantity="other">%1$d compases</item>
   </plurals>
   <string name="options_unit_beats">Pulsos</string>
   <plurals name="options_unit_beats">
