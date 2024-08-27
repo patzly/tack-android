@@ -145,6 +145,7 @@
   <string name="options_mute_mute">Silenciar %1$s</string>
   <string name="options_mute_random">Silenciar hasta %1$d% aleatoriamente</string>
   <string name="options_swing">Swing</string>
+  <string name="options_swing_description">Subdivisiones puestas para coincidir con porcentaje de swing elegido</string>
   <string name="options_swing_3">Tresillo</string>
   <string name="options_swing_5">Quintillo</string>
   <string name="options_swing_7">Septillo (7)</string>
