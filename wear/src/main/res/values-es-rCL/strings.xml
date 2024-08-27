@@ -1,0 +1,85 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="wear_title_settings">Configuración</string>
+  <string name="wear_title_beats">Pulsos</string>
+  <string name="wear_title_notification_channel">Servicio de metrónomo</string>
+
+  <!-- LABELS -->
+
+  <string name="wear_label_bpm_value">%1$d bpm</string>
+  <string name="wear_label_ms">%1$s ms</string>
+  <string name="wear_label_db">+%1$d dB</string>
+  <!-- ACTIONS -->
+
+  <string name="wear_action_cancel">Cancelar</string>
+  <string name="wear_action_increase">Aumentar</string>
+  <string name="wear_action_decrease">Disminuír</string>
+  <string name="wear_action_play_stop">Iniciar/Detener</string>
+  <string name="wear_action_stop">Detener</string>
+  <string name="wear_action_add_beat">Agregar pulso</string>
+  <string name="wear_action_remove_beat">Quitar pulso</string>
+  <string name="wear_action_add_sub">Agregar subdivisión</string>
+  <string name="wear_action_remove_sub">Quitar subdivisión</string>
+  <string name="wear_action_tempo_tap">Dar tempo</string>
+  <string name="wear_action_bookmark">Guardar en marcadores</string>
+  <string name="wear_action_beat_mode">Modo de pulso</string>
+  <string name="wear_action_retry">Reintentar</string>
+
+  <!-- MESSAGES -->
+
+  <string name="wear_msg_service_running">Metrónomo sonando</string>
+  <string name="wear_msg_service_running_return">Tocar para saber más</string>
+  <string name="wear_msg_service_description">Servicio para reproducción de metrónomo</string>
+  <string name="wear_msg_notification_permission_denied">Permiso requerido</string>
+  <string name="wear_msg_gain">¿Reproducir con aumento de volumen?</string>
+  <!-- SETTINGS -->
+
+  <string name="wear_settings_sound">Sonido de pulso</string>
+  <string name="wear_settings_sound_sine">Senoidal</string>
+  <string name="wear_settings_sound_wood">Madera</string>
+  <string name="wear_settings_sound_mechanical">Mecánico</string>
+  <string name="wear_settings_sound_beatboxing_1">Beatboxing 1</string>
+  <string name="wear_settings_sound_beatboxing_2">Beatboxing 2</string>
+  <string name="wear_settings_sound_hands">Manos</string>
+  <string name="wear_settings_sound_folding">Regla plegable</string>
+
+  <string name="wear_settings_latency">Corrección de latencia</string>
+
+  <string name="wear_settings_ignore_focus">Ignorar atención de audio</string>
+  <string name="wear_settings_ignore_focus_description">Seguirá sonando si otras aplicaciones emiten sonido</string>
+
+  <string name="wear_settings_gain">Aumento de volumen (Boost)</string>
+  <string name="wear_settings_always_vibrate">Siempre vibrar</string>
+  <string name="wear_settings_always_vibrate_description">Incluso con sonido</string>
+
+  <string name="wear_settings_flash_screen">Iluminar pantalla</string>
+  <string name="wear_settings_flash_screen_description">En cada pulso</string>
+
+  <string name="wear_settings_reduce_animations">Reducir animaciones</string>
+  <string name="wear_settings_reduce_animations_description">Puede mejorar el rendimiento</string>
+
+  <string name="wear_settings_keep_awake">Mantener la pantalla encendida</string>
+  <string name="wear_settings_keep_awake_description">Mientras el metrónomo está funcionando</string>
+
+  </resources>
