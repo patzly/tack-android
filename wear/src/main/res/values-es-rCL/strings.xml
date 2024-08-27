@@ -54,6 +54,8 @@
   <string name="wear_msg_notification_permission_denied">Permiso requerido</string>
   <string name="wear_msg_notification_permission_denied_description">Permiso de notificación requerido para reproducción</string>
   <string name="wear_msg_gain">¿Reproducir con aumento de volumen?</string>
+  <string name="wear_msg_gain_description">Ten cuidado de no escuchar con audífonos</string>
+
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">Sonido de pulso</string>
