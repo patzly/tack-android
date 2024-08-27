@@ -153,6 +153,7 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">Idioma</string>
+  <string name="settings_language_info">¡Muchas gracias a todos los traductores en Transifex!\nPor favor visita Tack en GitHub para aprender cómo puedes hacer que Tack esté disponible en tu idioma. </string>
   <string name="settings_language_system">Obedecer sistema</string>
   <string name="settings_language_system_description">Inglés, si es que no hay traducción disponible</string>
 
