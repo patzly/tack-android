@@ -128,7 +128,7 @@
   <plurals name="options_unit_minutes">
     <item quantity="one">%1$dminuto</item>
     <item quantity="many">%1$dminutos</item>
-    <item quantity="other">%1$dminutos</item>
+    <item quantity="other">%1$d minutos</item>
   </plurals>
   <string name="options_inactive">Inactivo</string>
   <string name="options_count_in">Conteo de entrada</string>
