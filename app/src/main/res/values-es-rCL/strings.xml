@@ -88,7 +88,7 @@
   <string name="msg_bookmarks_max">Ha alcanzado el límite de marcadores</string>
   <string name="msg_feedback">Una gran aplicación requiere mucho tiempo y vive de la retroalimentación de sus usuarios.</string>
   <string name="msg_feedback_contact">¿Tienes algún deseo, comentario o pregunta? Contáctame!\nPor otro lado, estaría muy feliz con una reseña positiva en la Play Store.</string>
-  <string name="msg_recommend">Mira esta genial aplicación de metrónomo: \n%1$s</string>
+  <string name="msg_recommend">Mira esta aplicación de metrónomo bacán: \n%1$s</string>
   <string name="msg_vibration_unavailable">La vibración no está disponible en este aparato</string>
   <string name="msg_service_running">El servicio del metrónomo está funcionando</string>
   <string name="msg_service_running_return">Toca para regresar a Tack</string>
