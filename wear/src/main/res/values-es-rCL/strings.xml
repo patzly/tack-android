@@ -77,6 +77,8 @@
   <string name="wear_settings_ignore_focus_description">Seguirá sonando si otras aplicaciones emiten sonido</string>
 
   <string name="wear_settings_gain">Aumento de volumen (Boost)</string>
+  <string name="wear_settings_gain_disclaimer">¡Sé cuidadoso! El desarrollador no se hace responsable por cualquier potencial daño.</string>
+
   <string name="wear_settings_always_vibrate">Siempre vibrar</string>
   <string name="wear_settings_always_vibrate_description">Incluso con sonido</string>
 
