@@ -53,7 +53,7 @@
   <!-- MESSAGES -->
 
   <string name="wear_msg_service_running">Metrónomo sonando</string>
-  <string name="wear_msg_service_running_return">Tocar para saber más</string>
+  <string name="wear_msg_service_running_return">Toca para más información</string>
   <string name="wear_msg_service_description">Servicio para reproducción de metrónomo</string>
   <string name="wear_msg_notification_permission_denied">Permiso requerido</string>
   <string name="wear_msg_notification_permission_denied_description">Permiso de notificación requerido para reproducción</string>
