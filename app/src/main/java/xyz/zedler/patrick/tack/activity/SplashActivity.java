@@ -30,12 +30,15 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.content.res.ResourcesCompat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
@@ -54,13 +57,17 @@ public class SplashActivity extends MainActivity {
         .checkForMigrations()
         .getSharedPrefs();
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    if (Build.VERSION.SDK_INT >= VERSION_CODES.S_V2) {
       super.onCreate(bundle);
 
       getSplashScreen().setOnExitAnimationListener(view -> {
+        Instant startTime = view.getIconAnimationStart();
+        assert startTime != null;
+        Instant now = Instant.now();
+        long animRuntime = startTime.until(now, ChronoUnit.MILLIS);
         ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 0);
         animator.setDuration(250);
-        animator.setStartDelay(100);
+        animator.setStartDelay(950 - animRuntime);
         animator.addListener(new AnimatorListenerAdapter() {
           @Override
           public void onAnimationEnd(@NonNull Animator animation, boolean isReverse) {
@@ -110,7 +117,7 @@ public class SplashActivity extends MainActivity {
           assert splashContent != null;
           ViewUtil.startIcon(splashContent.findDrawableByLayerId(R.id.splash_logo));
           new Handler(Looper.getMainLooper()).postDelayed(
-              this::startNewMainActivity, 900
+              this::startNewMainActivity, 600
           );
         } catch (Exception e) {
           startNewMainActivity();

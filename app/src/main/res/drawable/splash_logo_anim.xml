@@ -86,16 +86,4 @@
       </set>
     </aapt:attr>
   </target>
-  <target android:name="vector">
-    <aapt:attr name="android:animation">
-      <objectAnimator
-        android:propertyName="alpha"
-        android:startOffset="900"
-        android:duration="300"
-        android:valueFrom="1"
-        android:valueTo="0"
-        android:valueType="floatType"
-        android:interpolator="@android:interpolator/fast_out_slow_in" />
-    </aapt:attr>
-  </target>
 </animated-vector>
