@@ -34,13 +34,13 @@ import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
-import androidx.wear.compose.material.PositionIndicator
-import androidx.wear.compose.material.Scaffold
 import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.scrollAway
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.RadioButton
+import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.ScrollIndicator
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.Constants
@@ -54,16 +54,16 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 fun SoundScreen(viewModel: MainViewModel = MainViewModel()) {
   TackTheme {
     val scrollableState = rememberScalingLazyListState()
-    Scaffold(
+    ScreenScaffold(
       timeText = {
         TimeText(
           timeTextStyle = MaterialTheme.typography.labelMedium,
           modifier = Modifier.scrollAway(scrollableState)
         )
       },
-      positionIndicator = {
-        PositionIndicator(
-          scalingLazyListState = scrollableState
+      scrollIndicator = {
+        ScrollIndicator(
+          state = scrollableState
         )
       }
     ) {

@@ -57,7 +57,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavBackStackEntry
-import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
@@ -70,6 +69,7 @@ import androidx.wear.compose.material3.FilledIconButton
 import androidx.wear.compose.material3.IconButton
 import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.touchTargetAwareSize
 import androidx.wear.tooling.preview.devices.WearDevices
@@ -126,179 +126,183 @@ fun MainScreen(
         animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 300)
       )
 
-      TimeText(
-        timeTextStyle = MaterialTheme.typography.labelMedium,
-        modifier = Modifier.graphicsLayer(alpha = controlsAlpha)
-      )
-      ConstraintLayout(
-        modifier = Modifier.fillMaxSize()
+      ScreenScaffold(
+        timeText = {
+          TimeText(
+            timeTextStyle = MaterialTheme.typography.labelMedium,
+            modifier = Modifier.graphicsLayer(alpha = controlsAlpha)
+          )
+        }
       ) {
-        val (settingsButton, tempoCard, playButton) = createRefs()
-        val (beatsButton, tempoTapButton) = createRefs()
-        val (bookmarkButton, beatModeButton) = createRefs()
+        ConstraintLayout(
+          modifier = Modifier.fillMaxSize()
+        ) {
+          val (settingsButton, tempoCard, playButton) = createRefs()
+          val (beatsButton, tempoTapButton) = createRefs()
+          val (bookmarkButton, beatModeButton) = createRefs()
 
-        val tempo by viewModel.tempo.observeAsState(initial = Constants.Def.TEMPO)
-        val pickerOption = remember { tempo - 1 }
-        val pickerCoroutineScope = rememberCoroutineScope()
-        val pickerState = rememberPickerState(
-          initialNumberOfOptions = Constants.TEMPO_MAX,
-          initiallySelectedOption = pickerOption,
-          repeatItems = false
-        )
-        LaunchedEffect(tempo) {
-          if (!viewModel.tempoChangedByPicker) {
-            pickerCoroutineScope.launch {
-              if (viewModel.animateTempoChange  && !reduceAnim) {
-                pickerState.animateScrollToOption(tempo - 1)
+          val tempo by viewModel.tempo.observeAsState(initial = Constants.Def.TEMPO)
+          val pickerOption = remember { tempo - 1 }
+          val pickerCoroutineScope = rememberCoroutineScope()
+          val pickerState = rememberPickerState(
+            initialNumberOfOptions = Constants.TEMPO_MAX,
+            initiallySelectedOption = pickerOption,
+            repeatItems = false
+          )
+          LaunchedEffect(tempo) {
+            if (!viewModel.tempoChangedByPicker) {
+              pickerCoroutineScope.launch {
+                if (viewModel.animateTempoChange && !reduceAnim) {
+                  pickerState.animateScrollToOption(tempo - 1)
+                } else {
+                  pickerState.scrollToOption(tempo - 1)
+                }
+              }
+            }
+          }
+          LaunchedEffect(pickerState.selectedOption) {
+            viewModel.changeTempo(pickerState.selectedOption + 1, picker = true)
+          }
+
+          val beatModeVibrate by viewModel.beatModeVibrate.observeAsState(
+            Constants.Def.BEAT_MODE_VIBRATE
+          )
+          val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.Def.ALWAYS_VIBRATE)
+          val gain by viewModel.gain.observeAsState(Constants.Def.GAIN)
+
+          SettingsButton(
+            onClick = onSettingsButtonClick,
+            modifier = Modifier
+              .graphicsLayer(alpha = controlsAlpha)
+              .constrainAs(settingsButton) {
+                top.linkTo(parent.top, margin = 16.dp)
+                bottom.linkTo(tempoCard.top)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+              }
+          )
+          TempoCard(
+            viewModel = viewModel,
+            state = pickerState,
+            onClick = onTempoCardClick,
+            modifier = Modifier.constrainAs(tempoCard) {
+              top.linkTo(parent.top)
+              bottom.linkTo(parent.bottom)
+              start.linkTo(parent.start)
+              end.linkTo(parent.end)
+            }
+          )
+          PlayButton(
+            viewModel = viewModel,
+            animTrigger = playAnimTrigger,
+            onClick = {
+              val startedWithGain = viewModel.metronomeUtil?.neverStartedWithGainBefore() == false
+              if (isPlaying || (gain == 0 || startedWithGain)) {
+                if (viewModel.togglePlaying()) {
+                  playAnimTrigger.value = !playAnimTrigger.value
+                }
               } else {
-                pickerState.scrollToOption(tempo - 1)
+                showVolumeDialog = true
               }
-            }
-          }
-        }
-        LaunchedEffect(pickerState.selectedOption) {
-          viewModel.changeTempo(pickerState.selectedOption + 1, picker = true)
-        }
-
-        val beatModeVibrate by viewModel.beatModeVibrate.observeAsState(
-          Constants.Def.BEAT_MODE_VIBRATE
-        )
-        val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.Def.ALWAYS_VIBRATE)
-        val gain by viewModel.gain.observeAsState(Constants.Def.GAIN)
-
-        SettingsButton(
-          onClick = onSettingsButtonClick,
-          modifier = Modifier
-            .graphicsLayer(alpha = controlsAlpha)
-            .constrainAs(settingsButton) {
-              top.linkTo(parent.top, margin = 16.dp)
-              bottom.linkTo(tempoCard.top)
+            },
+            modifier = Modifier.constrainAs(playButton) {
+              top.linkTo(tempoCard.bottom)
+              bottom.linkTo(parent.bottom)
               start.linkTo(parent.start)
               end.linkTo(parent.end)
             }
-        )
-        TempoCard(
-          viewModel = viewModel,
-          state = pickerState,
-          onClick = onTempoCardClick,
-          modifier = Modifier.constrainAs(tempoCard) {
-            top.linkTo(parent.top)
-            bottom.linkTo(parent.bottom)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-          }
-        )
-        PlayButton(
-          viewModel = viewModel,
-          animTrigger = playAnimTrigger,
-          onClick = {
-            val startedWithGain = viewModel.metronomeUtil?.neverStartedWithGainBefore() == false
-            if (isPlaying || (gain == 0 || startedWithGain)) {
-              if (viewModel.togglePlaying()) {
-                playAnimTrigger.value = !playAnimTrigger.value
+          )
+          BeatsButton(
+            onClick = onBeatsButtonClick,
+            modifier = Modifier
+              .graphicsLayer(alpha = controlsAlpha)
+              .constrainAs(beatsButton) {
+                top.linkTo(parent.top, margin = 40.dp)
+                bottom.linkTo(tempoTapButton.top)
+                start.linkTo(parent.start)
+                end.linkTo(playButton.start)
               }
-            } else {
-              showVolumeDialog = true
-            }
+          )
+          TempoTapButton(
+            viewModel = viewModel,
+            onClick = {
+              viewModel.tempoTap()
+            },
+            modifier = Modifier
+              .graphicsLayer(alpha = controlsAlpha)
+              .constrainAs(tempoTapButton) {
+                top.linkTo(beatsButton.bottom)
+                bottom.linkTo(parent.bottom, margin = 40.dp)
+                start.linkTo(parent.start)
+                end.linkTo(playButton.start)
+              }
+          )
+          BookmarkButton(
+            viewModel = viewModel,
+            onClick = {
+              viewModel.toggleBookmark()
+            },
+            modifier = Modifier
+              .graphicsLayer(alpha = controlsAlpha)
+              .constrainAs(bookmarkButton) {
+                top.linkTo(parent.top, margin = 40.dp)
+                bottom.linkTo(beatModeButton.top)
+                start.linkTo(playButton.end)
+                end.linkTo(parent.end)
+              }
+          )
+          BeatModeButton(
+            viewModel = viewModel,
+            beatModeVibrate = beatModeVibrate,
+            alwaysVibrate = alwaysVibrate,
+            onClick = {
+              viewModel.toggleBeatModeVibrate()
+            },
+            modifier = Modifier
+              .graphicsLayer(alpha = controlsAlpha)
+              .constrainAs(beatModeButton) {
+                top.linkTo(bookmarkButton.bottom)
+                bottom.linkTo(parent.bottom, margin = 40.dp)
+                start.linkTo(playButton.end)
+                end.linkTo(parent.end)
+              }
+          )
+        }
+        VolumeDialog(
+          showDialog = showVolumeDialog,
+          onDismissRequest = {
+            showVolumeDialog = false
           },
-          modifier = Modifier.constrainAs(playButton) {
-            top.linkTo(tempoCard.bottom)
-            bottom.linkTo(parent.bottom)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
+          onPositiveClick = {
+            viewModel.togglePlaying()
+            playAnimTrigger.value = !playAnimTrigger.value
+            showVolumeDialog = false
+          },
+          onNegativeClick = {
+            viewModel.changeGain(0)
+            viewModel.togglePlaying()
+            playAnimTrigger.value = !playAnimTrigger.value
+            showVolumeDialog = false
           }
         )
-        BeatsButton(
-          onClick = onBeatsButtonClick,
-          modifier = Modifier
-            .graphicsLayer(alpha = controlsAlpha)
-            .constrainAs(beatsButton) {
-              top.linkTo(parent.top, margin = 40.dp)
-              bottom.linkTo(tempoTapButton.top)
-              start.linkTo(parent.start)
-              end.linkTo(playButton.start)
-            }
-        )
-        TempoTapButton(
-          viewModel = viewModel,
-          onClick = {
-            viewModel.tempoTap()
+        PermissionDialog(
+          showDialog = showPermissionDialog,
+          onDismissRequest = {
+            viewModel.changeShowPermissionDialog(false)
           },
-          modifier = Modifier
-            .graphicsLayer(alpha = controlsAlpha)
-            .constrainAs(tempoTapButton) {
-              top.linkTo(beatsButton.bottom)
-              bottom.linkTo(parent.bottom, margin = 40.dp)
-              start.linkTo(parent.start)
-              end.linkTo(playButton.start)
-            }
-        )
-        BookmarkButton(
-          viewModel = viewModel,
-          onClick = {
-            viewModel.toggleBookmark()
+          onPositiveClick = {
+            viewModel.changeShowPermissionDialog(false)
+            onPermissionRequestClick()
           },
-          modifier = Modifier
-            .graphicsLayer(alpha = controlsAlpha)
-            .constrainAs(bookmarkButton) {
-              top.linkTo(parent.top, margin = 40.dp)
-              bottom.linkTo(beatModeButton.top)
-              start.linkTo(playButton.end)
-              end.linkTo(parent.end)
-            }
-        )
-        BeatModeButton(
-          viewModel = viewModel,
-          beatModeVibrate = beatModeVibrate,
-          alwaysVibrate = alwaysVibrate,
-          onClick = {
-            viewModel.toggleBeatModeVibrate()
-          },
-          modifier = Modifier
-            .graphicsLayer(alpha = controlsAlpha)
-            .constrainAs(beatModeButton) {
-              top.linkTo(bookmarkButton.bottom)
-              bottom.linkTo(parent.bottom, margin = 40.dp)
-              start.linkTo(playButton.end)
-              end.linkTo(parent.end)
-            }
+          onNegativeClick = {
+            viewModel.changeShowPermissionDialog(false)
+          }
         )
       }
-      VolumeDialog(
-        showDialog = showVolumeDialog,
-        onDismissRequest = {
-          showVolumeDialog = false
-        },
-        onPositiveClick = {
-          viewModel.togglePlaying()
-          playAnimTrigger.value = !playAnimTrigger.value
-          showVolumeDialog = false
-        },
-        onNegativeClick = {
-          viewModel.changeGain(0)
-          viewModel.togglePlaying()
-          playAnimTrigger.value = !playAnimTrigger.value
-          showVolumeDialog = false
-        }
-      )
-      PermissionDialog(
-        showDialog = showPermissionDialog,
-        onDismissRequest = {
-          viewModel.changeShowPermissionDialog(false)
-        },
-        onPositiveClick = {
-          viewModel.changeShowPermissionDialog(false)
-          onPermissionRequestClick()
-        },
-        onNegativeClick = {
-          viewModel.changeShowPermissionDialog(false)
-        }
-      )
     }
   }
 }
 
-@OptIn(ExperimentalWearFoundationApi::class)
 @Composable
 fun TempoCard(
   viewModel: MainViewModel,
@@ -410,7 +414,7 @@ fun PlayButton(
   val containerColorTarget = if (isPlaying && keepAwake) {
     MaterialTheme.colorScheme.background
   } else {
-    MaterialTheme.colorScheme.primary
+    IconButtonDefaults.filledIconButtonColors().containerColor
   }
   val containerColor by animateColorAsState(
     targetValue = containerColorTarget,
@@ -421,7 +425,7 @@ fun PlayButton(
   val contentColorTarget = if (isPlaying && keepAwake) {
     MaterialTheme.colorScheme.primaryDim
   } else {
-    MaterialTheme.colorScheme.onPrimary
+    IconButtonDefaults.filledIconButtonColors().contentColor
   }
   val contentColor by animateColorAsState(
     targetValue = contentColorTarget,
@@ -432,7 +436,7 @@ fun PlayButton(
   val borderColorTarget = if (isPlaying && keepAwake) {
     MaterialTheme.colorScheme.outlineVariant
   } else {
-    MaterialTheme.colorScheme.primary
+    IconButtonDefaults.filledIconButtonColors().containerColor
   }
   val borderColor by animateColorAsState(
     targetValue = borderColorTarget,
