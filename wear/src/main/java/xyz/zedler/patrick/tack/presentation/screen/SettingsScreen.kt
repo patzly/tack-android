@@ -47,10 +47,9 @@ import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.scrollAway
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
-import androidx.wear.compose.material3.Switch
+import androidx.wear.compose.material3.SwitchButton
+import androidx.wear.compose.material3.SwitchButtonDefaults
 import androidx.wear.compose.material3.Text
-import androidx.wear.compose.material3.ToggleButton
-import androidx.wear.compose.material3.ToggleButtonDefaults
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.Constants.Sound
@@ -58,7 +57,6 @@ import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
-@OptIn(ExperimentalWearFoundationApi::class)
 @Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
 @Composable
 fun SettingsScreen(
@@ -286,15 +284,12 @@ fun ToggleChip(
   label: String,
   secondaryLabel: String
 ) {
-  ToggleButton(
+  SwitchButton (
     checked = checked,
     onCheckedChange = onCheckedChange,
-    toggleControl = {
-      Switch()
-    },
     modifier = Modifier.fillMaxWidth(),
     enabled = true,
-    colors = ToggleButtonDefaults.toggleButtonColors(
+    colors = SwitchButtonDefaults.switchButtonColors(
       uncheckedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
     ),
     interactionSource = null,

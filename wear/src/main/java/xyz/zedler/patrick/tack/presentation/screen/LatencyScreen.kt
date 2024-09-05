@@ -58,7 +58,6 @@ import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
-@OptIn(ExperimentalWearFoundationApi::class)
 @Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
 @Composable
 fun LatencyScreen(viewModel: MainViewModel = MainViewModel()) {
