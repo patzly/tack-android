@@ -83,6 +83,7 @@ import xyz.zedler.patrick.tack.presentation.dialog.VolumeDialog
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.util.accessScalingLazyListState
+import xyz.zedler.patrick.tack.util.isSmallScreen
 import xyz.zedler.patrick.tack.util.spToDp
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
@@ -91,7 +92,6 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 @Composable
 fun MainScreen(
   viewModel: MainViewModel = MainViewModel(),
-  small: Boolean = false,
   backStackEntry: NavBackStackEntry? = null,
   onTempoCardClick: () -> Unit = {},
   onSettingsButtonClick: () -> Unit = {},
@@ -186,7 +186,6 @@ fun MainScreen(
           TempoCard(
             viewModel = viewModel,
             state = pickerState,
-            small = small,
             onClick = onTempoCardClick,
             modifier = Modifier.constrainAs(tempoCard) {
               top.linkTo(parent.top)
@@ -272,16 +271,16 @@ fun MainScreen(
           )
         }
         VolumeDialog(
-          showDialog = showVolumeDialog,
+          show = showVolumeDialog,
           onDismissRequest = {
             showVolumeDialog = false
           },
-          onPositiveClick = {
+          onConfirm = {
             viewModel.togglePlaying()
             playAnimTrigger.value = !playAnimTrigger.value
             showVolumeDialog = false
           },
-          onNegativeClick = {
+          onDismiss = {
             viewModel.changeGain(0)
             viewModel.togglePlaying()
             playAnimTrigger.value = !playAnimTrigger.value
@@ -289,15 +288,15 @@ fun MainScreen(
           }
         )
         PermissionDialog(
-          showDialog = showPermissionDialog,
+          show = showPermissionDialog,
           onDismissRequest = {
             viewModel.changeShowPermissionDialog(false)
           },
-          onPositiveClick = {
+          onRetry = {
             viewModel.changeShowPermissionDialog(false)
             onPermissionRequestClick()
           },
-          onNegativeClick = {
+          onDismiss = {
             viewModel.changeShowPermissionDialog(false)
           }
         )
@@ -306,17 +305,10 @@ fun MainScreen(
   }
 }
 
-@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
-@Composable
-fun MainScreenSmall() {
-  MainScreen(small = true)
-}
-
 @Composable
 fun TempoCard(
   viewModel: MainViewModel,
   state: PickerState,
-  small: Boolean,
   onClick: () -> Unit,
   modifier: Modifier
 ) {
@@ -385,8 +377,8 @@ fun TempoCard(
       modifier = Modifier
         .graphicsLayer(alpha = pickerAlpha)
         .size(
-          spToDp(spValue = if (small) 80 else 94),
-          spToDp(spValue = if (small) 48 else 56)
+          spToDp(spValue = if (isSmallScreen()) 80 else 94),
+          spToDp(spValue = if (isSmallScreen()) 48 else 56)
         )
         .rotaryScrollable(
           behavior = RotaryScrollableDefaults.snapBehavior(
@@ -401,7 +393,7 @@ fun TempoCard(
         textAlign = TextAlign.Center,
         color = MaterialTheme.colorScheme.onSurface,
         style = MaterialTheme.typography.displayMedium.copy(
-          fontSize = if (small) 30.sp else 36.sp
+          fontSize = if (isSmallScreen()) 30.sp else 36.sp
         ),
         text = buildAnnotatedString {
           withStyle(style = SpanStyle(fontFeatureSettings = "tnum")) {

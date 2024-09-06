@@ -32,11 +32,11 @@ import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.touchTargetAwareSize
+import xyz.zedler.patrick.tack.util.isSmallScreen
 
 @Composable
 fun TextIconButton(
   label: String,
-  small: Boolean,
   reduceAnim: Boolean,
   onClick: () -> Unit,
   modifier: Modifier = Modifier
@@ -54,7 +54,7 @@ fun TextIconButton(
       )
     },
     modifier = modifier.touchTargetAwareSize(
-      if (small) 42.dp else IconButtonDefaults.SmallButtonSize
+      if (isSmallScreen()) 42.dp else IconButtonDefaults.SmallButtonSize
     )
   ) {
     Text(

@@ -2,6 +2,7 @@
 
 - New: Indonesian, Spanish and Turkish translations (big thanks to the translators!)
 - Improved: splash screen on Android 12+
+- Improved: playful button shapes for tempo tap and confirmation dialogs (Wear OS)
 - Improved: time indicator remains in place while swiping between screens (Wear OS)
 - Improved: layout on small watches (Wear OS)
 - Improved: performance improvements (Wear OS)

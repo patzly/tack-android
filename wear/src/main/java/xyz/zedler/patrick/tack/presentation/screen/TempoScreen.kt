@@ -63,15 +63,13 @@ import xyz.zedler.patrick.tack.presentation.components.TextIconButton
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.util.accessScalingLazyListState
+import xyz.zedler.patrick.tack.util.isSmallScreen
 import xyz.zedler.patrick.tack.util.spToDp
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true)
 @Composable
-fun TempoScreen(
-  viewModel: MainViewModel = MainViewModel(),
-  small: Boolean = false
-) {
+fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
   TackTheme {
     val tempo by viewModel.tempo.observeAsState(initial = Constants.Def.TEMPO)
     val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
@@ -118,7 +116,6 @@ fun TempoScreen(
         )
         TextIconButton(
           label = "-5",
-          small = small,
           reduceAnim = reduceAnim,
           onClick = {
             safelyAnimateToOption(pickerOption - 5)
@@ -132,7 +129,6 @@ fun TempoScreen(
         )
         TextIconButton(
           label = "-10",
-          small = small,
           reduceAnim = reduceAnim,
           onClick = {
             safelyAnimateToOption(pickerOption - 10)
@@ -146,7 +142,6 @@ fun TempoScreen(
         )
         TextIconButton(
           label = "+5",
-          small = small,
           reduceAnim = reduceAnim,
           onClick = {
             safelyAnimateToOption(pickerOption + 5)
@@ -160,7 +155,6 @@ fun TempoScreen(
         )
         TextIconButton(
           label = "+10",
-          small = small,
           reduceAnim = reduceAnim,
           onClick = {
             safelyAnimateToOption(pickerOption + 10)
@@ -175,7 +169,6 @@ fun TempoScreen(
       }
       TapButton(
         viewModel = viewModel,
-        small = small,
         onClick = {
           safelyAnimateToOption(viewModel.tempoTap() - 1)
         },
@@ -183,12 +176,6 @@ fun TempoScreen(
       )
     }
   }
-}
-
-@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
-@Composable
-fun TempoScreenSmall() {
-  TempoScreen(small = true)
 }
 
 @Composable
@@ -244,7 +231,6 @@ fun TempoPicker(
 @Composable
 fun TapButton(
   viewModel: MainViewModel,
-  small: Boolean,
   onClick: () -> Unit,
   modifier: Modifier
 ) {
@@ -254,7 +240,7 @@ fun TapButton(
     colors = ButtonDefaults.buttonColors(
       containerColor = MaterialTheme.colorScheme.tertiary
     ),
-    buttonHeight = if (small) {
+    buttonHeight = if (isSmallScreen()) {
       ButtonDefaults.EdgeButtonHeightExtraSmall
     } else {
       ButtonDefaults.EdgeButtonHeightSmall

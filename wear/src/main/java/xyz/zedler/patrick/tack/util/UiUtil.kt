@@ -22,6 +22,7 @@ package xyz.zedler.patrick.tack.util
 import android.app.Activity
 import android.view.WindowManager
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
@@ -34,6 +35,10 @@ fun spToDp(spValue: Int): Dp {
   val density = LocalDensity.current
   return with(density) { spValue.sp.toDp() }
 }
+
+
+@Composable
+fun isSmallScreen() = LocalContext.current.resources.configuration.screenWidthDp <= 225
 
 fun keepScreenAwake(activity: Activity, keepAwake: Boolean) {
   val window = activity.window ?: return

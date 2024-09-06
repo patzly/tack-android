@@ -66,14 +66,12 @@ import xyz.zedler.patrick.tack.presentation.components.FadingEdgeRow
 import xyz.zedler.patrick.tack.presentation.components.TextIconButton
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
+import xyz.zedler.patrick.tack.util.isSmallScreen
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true)
 @Composable
-fun BeatsScreen(
-  viewModel: MainViewModel = MainViewModel(),
-  small: Boolean = false
-) {
+fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
   TackTheme {
     val scrollableState = rememberScalingLazyListState()
     ScreenScaffold (
@@ -124,8 +122,7 @@ fun BeatsScreen(
               viewModel.removeBeat()
             },
             addEnabled = beats.size < Constants.BEATS_MAX,
-            removeEnabled = beats.size > 1,
-            small = small
+            removeEnabled = beats.size > 1
           ) {
             beats.forEachIndexed { index, beat ->
               val triggerIndex = if (index < viewModel.beatTriggers.size) {
@@ -171,8 +168,7 @@ fun BeatsScreen(
               viewModel.removeSubdivision()
             },
             addEnabled = subdivisions.size < Constants.SUBS_MAX,
-            removeEnabled = subdivisions.size > 1,
-            small = small
+            removeEnabled = subdivisions.size > 1
           ) {
             subdivisions.forEachIndexed { index, subdivision ->
               val triggerIndex = if (index < viewModel.subdivisionTriggers.size) {
@@ -205,7 +201,6 @@ fun BeatsScreen(
           ) {
             TextIconButton(
               label = "3",
-              small = small,
               reduceAnim = reduceAnim,
               onClick = {
                 viewModel.setSwing(3)
@@ -213,7 +208,6 @@ fun BeatsScreen(
             )
             TextIconButton(
               label = "5",
-              small = small,
               reduceAnim = reduceAnim,
               onClick = {
                 viewModel.setSwing(5)
@@ -222,7 +216,6 @@ fun BeatsScreen(
             )
             TextIconButton(
               label = "7",
-              small = small,
               reduceAnim = reduceAnim,
               onClick = {
                 viewModel.setSwing(7)
@@ -235,12 +228,6 @@ fun BeatsScreen(
   }
 }
 
-@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
-@Composable
-fun BeatsScreenSmall() {
-  BeatsScreen(small = true)
-}
-
 @Composable
 fun ControlCard(
   viewModel: MainViewModel,
@@ -250,10 +237,9 @@ fun ControlCard(
   onClickRemove: () -> Unit,
   addEnabled: Boolean,
   removeEnabled: Boolean,
-  small: Boolean,
   content: @Composable RowScope.() -> Unit
 ) {
-  val size = if (small) 42.dp else IconButtonDefaults.SmallButtonSize
+  val size = if (isSmallScreen()) 42.dp else IconButtonDefaults.SmallButtonSize
   Card(
     onClick = {},
     enabled = false,
