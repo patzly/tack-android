@@ -54,6 +54,7 @@ fun TackDialog(
   icon: Int = R.drawable.ic_rounded_error,
   title: Int = R.string.wear_msg_notification_permission_denied,
   text: Int = R.string.wear_msg_notification_permission_denied_description,
+  caution: Boolean = false,
   confirmIcon: Int = R.drawable.ic_rounded_repeat,
   confirmString: Int = R.string.wear_action_retry,
   dismissIcon: Int = R.drawable.ic_rounded_close,
@@ -99,7 +100,11 @@ fun TackDialog(
         Text(
           text = stringResource(id = text),
           style = MaterialTheme.typography.bodySmall,
-          color = MaterialTheme.colorScheme.onSurface,
+          color = if (caution) {
+            MaterialTheme.colorScheme.error
+          } else {
+            MaterialTheme.colorScheme.onSurface
+          },
           textAlign = TextAlign.Center,
           modifier = Modifier.fillMaxWidth()
         )

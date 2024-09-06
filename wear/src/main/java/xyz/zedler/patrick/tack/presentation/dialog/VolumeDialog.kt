@@ -37,6 +37,7 @@ fun VolumeDialog(
     icon = R.drawable.ic_rounded_speaker,
     title = R.string.wear_msg_gain,
     text = R.string.wear_msg_gain_description,
+    caution = true,
     confirmIcon = R.drawable.ic_rounded_check,
     confirmString = R.string.wear_action_play_stop,
     dismissIcon = R.drawable.ic_rounded_close,
