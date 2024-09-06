@@ -119,6 +119,7 @@ fun TempoScreen(
         TextIconButton(
           label = "-5",
           small = small,
+          reduceAnim = reduceAnim,
           onClick = {
             safelyAnimateToOption(pickerOption - 5)
           },
@@ -132,6 +133,7 @@ fun TempoScreen(
         TextIconButton(
           label = "-10",
           small = small,
+          reduceAnim = reduceAnim,
           onClick = {
             safelyAnimateToOption(pickerOption - 10)
           },
@@ -145,6 +147,7 @@ fun TempoScreen(
         TextIconButton(
           label = "+5",
           small = small,
+          reduceAnim = reduceAnim,
           onClick = {
             safelyAnimateToOption(pickerOption + 5)
           },
@@ -158,6 +161,7 @@ fun TempoScreen(
         TextIconButton(
           label = "+10",
           small = small,
+          reduceAnim = reduceAnim,
           onClick = {
             safelyAnimateToOption(pickerOption + 10)
           },

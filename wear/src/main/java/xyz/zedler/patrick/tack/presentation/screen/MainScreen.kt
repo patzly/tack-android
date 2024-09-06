@@ -24,6 +24,7 @@ import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -456,13 +457,23 @@ fun PlayButton(
     animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 300)
   )
 
+  val interactionSource = remember { MutableInteractionSource() }
   FilledIconButton(
     onClick = onClick,
     colors = IconButtonDefaults.filledIconButtonColors(
       containerColor = containerColor
     ),
+    shape = if (reduceAnim) {
+      IconButtonDefaults.shape
+    } else {
+      IconButtonDefaults.animatedShape(
+        interactionSource = interactionSource,
+        pressedShape = MaterialTheme.shapes.medium
+      )
+    },
     border = BorderStroke(2.dp, borderColor),
-    modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
+    interactionSource = interactionSource,
+    modifier = modifier
   ) {
     AnimatedVectorDrawable(
       resId1 = R.drawable.ic_rounded_play_to_stop_anim,

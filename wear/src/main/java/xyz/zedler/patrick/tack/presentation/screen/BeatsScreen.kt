@@ -206,6 +206,7 @@ fun BeatsScreen(
             TextIconButton(
               label = "3",
               small = small,
+              reduceAnim = reduceAnim,
               onClick = {
                 viewModel.setSwing(3)
               }
@@ -213,6 +214,7 @@ fun BeatsScreen(
             TextIconButton(
               label = "5",
               small = small,
+              reduceAnim = reduceAnim,
               onClick = {
                 viewModel.setSwing(5)
               },
@@ -221,6 +223,7 @@ fun BeatsScreen(
             TextIconButton(
               label = "7",
               small = small,
+              reduceAnim = reduceAnim,
               onClick = {
                 viewModel.setSwing(7)
               }

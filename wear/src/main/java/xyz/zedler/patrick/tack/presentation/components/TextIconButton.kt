@@ -19,8 +19,10 @@
 
 package xyz.zedler.patrick.tack.presentation.components
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -34,12 +36,23 @@ import androidx.wear.compose.material3.touchTargetAwareSize
 @Composable
 fun TextIconButton(
   label: String,
-  small: Boolean = false,
+  small: Boolean,
+  reduceAnim: Boolean,
   onClick: () -> Unit,
   modifier: Modifier = Modifier
 ) {
+  val interactionSource = remember { MutableInteractionSource() }
   FilledTonalIconButton(
     onClick = onClick,
+    interactionSource = interactionSource,
+    shape = if (reduceAnim) {
+      IconButtonDefaults.shape
+    } else {
+      IconButtonDefaults.animatedShape(
+        interactionSource = interactionSource,
+        pressedShape = MaterialTheme.shapes.medium
+      )
+    },
     modifier = modifier.touchTargetAwareSize(
       if (small) 42.dp else IconButtonDefaults.SmallButtonSize
     )
