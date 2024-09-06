@@ -64,7 +64,6 @@ import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Picker
 import androidx.wear.compose.material.PickerState
-import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.rememberPickerState
 import androidx.wear.compose.material3.FilledIconButton
 import androidx.wear.compose.material3.IconButton
@@ -72,6 +71,7 @@ import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
+import androidx.wear.compose.material3.TimeText
 import androidx.wear.compose.material3.touchTargetAwareSize
 import androidx.wear.tooling.preview.devices.WearDevices
 import kotlinx.coroutines.launch
@@ -120,9 +120,11 @@ fun MainScreen(
     ScreenScaffold(
       timeText = {
         TimeText(
-          timeTextStyle = MaterialTheme.typography.labelMedium,
-          modifier = Modifier.graphicsLayer(alpha = controlsAlpha)
-        )
+          modifier = Modifier.graphicsLayer(alpha = controlsAlpha),
+          timeTextStyle = MaterialTheme.typography.labelMedium
+        ) {
+          time()
+        }
       },
       modifier = Modifier.background(color = background)
     ) {

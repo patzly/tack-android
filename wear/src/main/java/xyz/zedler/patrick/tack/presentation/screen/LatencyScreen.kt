@@ -62,12 +62,6 @@ fun LatencyScreen(viewModel: MainViewModel = MainViewModel()) {
   TackTheme {
     val scrollableState = rememberScalingLazyListState()
     ScreenScaffold(
-      timeText = {
-        TimeText(
-          timeTextStyle = MaterialTheme.typography.labelMedium,
-          modifier = Modifier.scrollAway(scrollableState)
-        )
-      },
       scrollState = scrollableState,
       modifier = Modifier.background(color = MaterialTheme.colorScheme.background)
     ) {

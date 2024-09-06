@@ -40,8 +40,6 @@ import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.material.Icon
-import androidx.wear.compose.material.TimeText
-import androidx.wear.compose.material.scrollAway
 import androidx.wear.compose.material3.Card
 import androidx.wear.compose.material3.CardDefaults
 import androidx.wear.compose.material3.ExperimentalWearMaterial3Api
@@ -63,12 +61,6 @@ fun GainScreen(viewModel: MainViewModel = MainViewModel()) {
   TackTheme {
     val scrollableState = rememberScalingLazyListState()
     ScreenScaffold(
-      timeText = {
-        TimeText(
-          timeTextStyle = MaterialTheme.typography.labelMedium,
-          modifier = Modifier.scrollAway(scrollableState)
-        )
-      },
       scrollState = scrollableState,
       modifier = Modifier.background(color = MaterialTheme.colorScheme.background)
     ) {

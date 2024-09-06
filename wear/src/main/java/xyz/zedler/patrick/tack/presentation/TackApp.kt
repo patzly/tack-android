@@ -22,9 +22,9 @@ package xyz.zedler.patrick.tack.presentation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.navigation.NavController
-import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.TimeText
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
@@ -59,7 +59,11 @@ fun TackApp(
   TackTheme {
     AppScaffold(
       timeText = {
-        TimeText(timeTextStyle = MaterialTheme.typography.labelMedium)
+        TimeText(
+          timeTextStyle = MaterialTheme.typography.labelMedium,
+        ) {
+          time()
+        }
       }
     ) {
       SwipeDismissableNavHost(

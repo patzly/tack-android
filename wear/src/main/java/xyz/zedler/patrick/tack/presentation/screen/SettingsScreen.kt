@@ -40,8 +40,6 @@ import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.material.Chip
 import androidx.wear.compose.material.ChipDefaults
-import androidx.wear.compose.material.TimeText
-import androidx.wear.compose.material.scrollAway
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
@@ -67,12 +65,6 @@ fun SettingsScreen(
   TackTheme {
     val scrollableState = rememberScalingLazyListState()
     ScreenScaffold(
-      timeText = {
-        TimeText(
-          timeTextStyle = MaterialTheme.typography.labelMedium,
-          modifier = Modifier.scrollAway(scrollableState)
-        )
-      },
       scrollState = scrollableState,
       modifier = Modifier.background(MaterialTheme.colorScheme.background)
     ) {
