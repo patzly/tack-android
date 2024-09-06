@@ -21,6 +21,14 @@ package xyz.zedler.patrick.tack.presentation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material3.AppScaffold
@@ -64,13 +72,23 @@ fun TackApp(
         )
       }
     ) {
+      var small by remember { mutableStateOf(false) }
+      val threshold = LocalDensity.current.run { 200.dp.toPx() }
+      var measured by remember { mutableStateOf(false) }
       SwipeDismissableNavHost(
         navController = navController,
-        startDestination = Screen.Main.route
+        startDestination = Screen.Main.route,
+        modifier = Modifier.onGloballyPositioned { layoutCoordinates ->
+          if (measured) return@onGloballyPositioned
+          val width = layoutCoordinates.size.width.toFloat()
+          small = width < threshold
+          measured = true
+        }
       ) {
         composable(route = Screen.Main.route) {
           MainScreen(
             viewModel = viewModel,
+            small = small,
             onSettingsButtonClick = {
               navController.navigate(Screen.Settings.route)
             },
@@ -99,10 +117,16 @@ fun TackApp(
           )
         }
         composable(route = Screen.Tempo.route) {
-          TempoScreen(viewModel = viewModel)
+          TempoScreen(
+            viewModel = viewModel,
+            small = small
+          )
         }
         composable(route = Screen.Beats.route) {
-          BeatsScreen(viewModel = viewModel)
+          BeatsScreen(
+            viewModel = viewModel,
+            small = small
+          )
         }
         composable(route = Screen.Gain.route) {
           GainScreen(viewModel = viewModel)

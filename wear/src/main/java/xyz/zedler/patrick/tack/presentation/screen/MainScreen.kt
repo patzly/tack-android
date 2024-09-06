@@ -86,10 +86,11 @@ import xyz.zedler.patrick.tack.util.spToDp
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 
-@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
+@Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true)
 @Composable
 fun MainScreen(
   viewModel: MainViewModel = MainViewModel(),
+  small: Boolean = false,
   backStackEntry: NavBackStackEntry? = null,
   onTempoCardClick: () -> Unit = {},
   onSettingsButtonClick: () -> Unit = {},
@@ -184,6 +185,7 @@ fun MainScreen(
           TempoCard(
             viewModel = viewModel,
             state = pickerState,
+            small = small,
             onClick = onTempoCardClick,
             modifier = Modifier.constrainAs(tempoCard) {
               top.linkTo(parent.top)
@@ -303,10 +305,17 @@ fun MainScreen(
   }
 }
 
+@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
+@Composable
+fun MainScreenSmall() {
+  MainScreen(small = true)
+}
+
 @Composable
 fun TempoCard(
   viewModel: MainViewModel,
   state: PickerState,
+  small: Boolean,
   onClick: () -> Unit,
   modifier: Modifier
 ) {
@@ -374,7 +383,10 @@ fun TempoCard(
       contentDescription = contentDescription,
       modifier = Modifier
         .graphicsLayer(alpha = pickerAlpha)
-        .size(spToDp(spValue = 94), spToDp(spValue = 56))
+        .size(
+          spToDp(spValue = if (small) 80 else 94),
+          spToDp(spValue = if (small) 48 else 56)
+        )
         .rotaryScrollable(
           behavior = RotaryScrollableDefaults.snapBehavior(
             scrollableState = accessScalingLazyListState(state)!!,
@@ -388,7 +400,7 @@ fun TempoCard(
         textAlign = TextAlign.Center,
         color = MaterialTheme.colorScheme.onSurface,
         style = MaterialTheme.typography.displayMedium.copy(
-          fontSize = 36.sp
+          fontSize = if (small) 30.sp else 36.sp
         ),
         text = buildAnnotatedString {
           withStyle(style = SpanStyle(fontFeatureSettings = "tnum")) {

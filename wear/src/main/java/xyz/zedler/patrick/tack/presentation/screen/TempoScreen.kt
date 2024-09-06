@@ -20,8 +20,10 @@
 package xyz.zedler.patrick.tack.presentation.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
@@ -32,7 +34,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -44,19 +45,16 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.wear.compose.foundation.ExperimentalWearFoundationApi
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.material.Picker
 import androidx.wear.compose.material.PickerState
-import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.rememberPickerState
-import androidx.wear.compose.material3.IconButton
-import androidx.wear.compose.material3.IconButtonDefaults
+import androidx.wear.compose.material3.ButtonDefaults
+import androidx.wear.compose.material3.EdgeButton
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
-import androidx.wear.compose.material3.touchTargetAwareSize
 import androidx.wear.tooling.preview.devices.WearDevices
 import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.Constants
@@ -68,45 +66,42 @@ import xyz.zedler.patrick.tack.util.accessScalingLazyListState
 import xyz.zedler.patrick.tack.util.spToDp
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
-@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
+@Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true)
 @Composable
-fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
+fun TempoScreen(
+  viewModel: MainViewModel = MainViewModel(),
+  small: Boolean = false
+) {
   TackTheme {
-    Box(
+    val tempo by viewModel.tempo.observeAsState(initial = Constants.Def.TEMPO)
+    val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
+    val pickerCoroutineScope = rememberCoroutineScope()
+    var pickerOption = remember { tempo - 1 }
+    val pickerState = rememberPickerState(
+      initialNumberOfOptions = Constants.TEMPO_MAX,
+      initiallySelectedOption = pickerOption,
+      repeatItems = false
+    )
+    fun safelyAnimateToOption(index: Int) {
+      val safeIndex = index.coerceIn(Constants.TEMPO_MIN - 1, Constants.TEMPO_MAX - 1)
+      pickerCoroutineScope.launch {
+        if (reduceAnim) {
+          pickerState.scrollToOption(safeIndex)
+        } else {
+          pickerState.animateScrollToOption(safeIndex)
+        }
+      }
+    }
+    Column(
       modifier = Modifier
         .fillMaxSize()
-        .background(color = MaterialTheme.colorScheme.background),
-      contentAlignment = Alignment.Center
+        .background(color = MaterialTheme.colorScheme.background)
     ) {
-      TimeText(
-        timeTextStyle = MaterialTheme.typography.labelMedium
-      )
       ConstraintLayout(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxWidth().weight(1f)
       ) {
-        val (tempoPicker, tapButton) = createRefs()
+        val (tempoPicker) = createRefs()
         val (plus5Button, minus5Button, plus10Button, minus10Button) = createRefs()
-
-        val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
-        val tempo by viewModel.tempo.observeAsState(initial = Constants.Def.TEMPO)
-        var pickerOption = remember { tempo - 1 }
-        val pickerCoroutineScope = rememberCoroutineScope()
-        val pickerState = rememberPickerState(
-          initialNumberOfOptions = Constants.TEMPO_MAX,
-          initiallySelectedOption = pickerOption,
-          repeatItems = false
-        )
-        fun safelyAnimateToOption(index: Int) {
-          val safeIndex = index.coerceIn(Constants.TEMPO_MIN - 1, Constants.TEMPO_MAX - 1)
-          pickerCoroutineScope.launch {
-            if (reduceAnim) {
-              pickerState.scrollToOption(safeIndex)
-            } else {
-              pickerState.animateScrollToOption(safeIndex)
-            }
-          }
-        }
-
         TempoPicker(
           viewModel = viewModel,
           state = pickerState,
@@ -115,19 +110,7 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
             viewModel.changeTempo(it + 1)
           },
           modifier = Modifier.constrainAs(tempoPicker) {
-            top.linkTo(parent.top, margin = 32.dp)
-            bottom.linkTo(tapButton.top)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-          }
-        )
-        TapButton(
-          viewModel = viewModel,
-          onClick = {
-            safelyAnimateToOption(viewModel.tempoTap() - 1)
-          },
-          modifier = Modifier.constrainAs(tapButton) {
-            top.linkTo(tempoPicker.bottom)
+            top.linkTo(parent.top, margin = 24.dp)
             bottom.linkTo(parent.bottom)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
@@ -135,58 +118,75 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         )
         TextIconButton(
           label = "-5",
+          small = small,
           onClick = {
             safelyAnimateToOption(pickerOption - 5)
           },
           modifier = Modifier.constrainAs(minus5Button) {
             top.linkTo(parent.top, margin = 40.dp)
             bottom.linkTo(minus10Button.top)
-            start.linkTo(parent.start)
-            end.linkTo(tapButton.start)
+            start.linkTo(parent.start, margin = 12.dp)
+            end.linkTo(tempoPicker.start)
           }
         )
         TextIconButton(
           label = "-10",
+          small = small,
           onClick = {
             safelyAnimateToOption(pickerOption - 10)
           },
           modifier = Modifier.constrainAs(minus10Button) {
             top.linkTo(minus5Button.bottom)
-            bottom.linkTo(parent.bottom, margin = 40.dp)
-            start.linkTo(parent.start)
-            end.linkTo(tapButton.start)
+            bottom.linkTo(parent.bottom, margin = 0.dp)
+            start.linkTo(parent.start, margin = 12.dp)
+            end.linkTo(tempoPicker.start)
           }
         )
         TextIconButton(
           label = "+5",
+          small = small,
           onClick = {
             safelyAnimateToOption(pickerOption + 5)
           },
           modifier = Modifier.constrainAs(plus5Button) {
             top.linkTo(parent.top, margin = 40.dp)
-            bottom.linkTo(minus10Button.top)
-            start.linkTo(tapButton.end)
-            end.linkTo(parent.end)
+            bottom.linkTo(plus10Button.top)
+            start.linkTo(tempoPicker.end)
+            end.linkTo(parent.end, margin = 12.dp)
           }
         )
         TextIconButton(
           label = "+10",
+          small = small,
           onClick = {
             safelyAnimateToOption(pickerOption + 10)
           },
           modifier = Modifier.constrainAs(plus10Button) {
-            top.linkTo(minus5Button.bottom)
-            bottom.linkTo(parent.bottom, margin = 40.dp)
-            start.linkTo(tapButton.end)
-            end.linkTo(parent.end)
+            top.linkTo(plus5Button.bottom)
+            bottom.linkTo(parent.bottom, margin = 0.dp)
+            start.linkTo(tempoPicker.end)
+            end.linkTo(parent.end, margin = 12.dp)
           }
         )
       }
+      TapButton(
+        viewModel = viewModel,
+        small = small,
+        onClick = {
+          safelyAnimateToOption(viewModel.tempoTap() - 1)
+        },
+        modifier = Modifier.fillMaxWidth().padding(bottom = 4.dp)
+      )
     }
   }
 }
 
-@OptIn(ExperimentalWearFoundationApi::class)
+@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
+@Composable
+fun TempoScreenSmall() {
+  TempoScreen(small = true)
+}
+
 @Composable
 fun TempoPicker(
   viewModel: MainViewModel,
@@ -214,7 +214,7 @@ fun TempoPicker(
     state = state,
     contentDescription = contentDescription,
     modifier = modifier
-      .size(spToDp(spValue = 88), spToDp(spValue = 104))
+      .size(spToDp(spValue = 64), spToDp(spValue = 104))
       .rotaryScrollable(
         behavior = RotaryScrollableDefaults.snapBehavior(
           scrollableState = accessScalingLazyListState(state)!!,
@@ -240,16 +240,23 @@ fun TempoPicker(
 @Composable
 fun TapButton(
   viewModel: MainViewModel,
+  small: Boolean,
   onClick: () -> Unit,
   modifier: Modifier
 ) {
   val animTrigger = remember { mutableStateOf(false) }
   val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
-  IconButton(
+  EdgeButton(
+    colors = ButtonDefaults.buttonColors(
+      containerColor = MaterialTheme.colorScheme.tertiary
+    ),
+    buttonHeight = if (small) {
+      ButtonDefaults.EdgeButtonHeightExtraSmall
+    } else {
+      ButtonDefaults.EdgeButtonHeightSmall
+    },
     onClick = {},
-    modifier = modifier
-      .touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
-      .pointerInput(Unit) {
+    modifier = modifier.pointerInput(Unit) {
         awaitPointerEventScope {
           while (true) {
             val event = awaitPointerEvent()
@@ -264,7 +271,7 @@ fun TapButton(
     AnimatedVectorDrawable(
       resId = R.drawable.ic_rounded_touch_app_anim,
       description = stringResource(id = R.string.wear_action_tempo_tap),
-      color = IconButtonDefaults.iconButtonColors().contentColor,
+      color = MaterialTheme.colorScheme.onTertiary,
       trigger = animTrigger.value,
       animated = !reduceAnim
     )

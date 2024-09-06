@@ -305,7 +305,7 @@ fun ToggleChip(
       Text(
         text = secondaryLabel,
         style = MaterialTheme.typography.bodyMedium,
-        maxLines = 2,
+        maxLines = 4,
         overflow = TextOverflow.Ellipsis
       )
     }

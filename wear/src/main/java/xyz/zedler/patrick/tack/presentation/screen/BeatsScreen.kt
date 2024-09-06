@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -57,7 +58,6 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.ScrollIndicator
 import androidx.wear.compose.material3.Text
-import androidx.wear.compose.material3.touchTargetAwareSize
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
@@ -68,9 +68,12 @@ import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
-@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
+@Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true)
 @Composable
-fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
+fun BeatsScreen(
+  viewModel: MainViewModel = MainViewModel(),
+  small: Boolean = false
+) {
   TackTheme {
     val scrollableState = rememberScalingLazyListState()
     ScreenScaffold (
@@ -121,7 +124,8 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
               viewModel.removeBeat()
             },
             addEnabled = beats.size < Constants.BEATS_MAX,
-            removeEnabled = beats.size > 1
+            removeEnabled = beats.size > 1,
+            small = small
           ) {
             beats.forEachIndexed { index, beat ->
               val triggerIndex = if (index < viewModel.beatTriggers.size) {
@@ -167,7 +171,8 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
               viewModel.removeSubdivision()
             },
             addEnabled = subdivisions.size < Constants.SUBS_MAX,
-            removeEnabled = subdivisions.size > 1
+            removeEnabled = subdivisions.size > 1,
+            small = small
           ) {
             subdivisions.forEachIndexed { index, subdivision ->
               val triggerIndex = if (index < viewModel.subdivisionTriggers.size) {
@@ -200,12 +205,14 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
           ) {
             TextIconButton(
               label = "3",
+              small = small,
               onClick = {
                 viewModel.setSwing(3)
               }
             )
             TextIconButton(
               label = "5",
+              small = small,
               onClick = {
                 viewModel.setSwing(5)
               },
@@ -213,6 +220,7 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
             )
             TextIconButton(
               label = "7",
+              small = small,
               onClick = {
                 viewModel.setSwing(7)
               }
@@ -224,6 +232,12 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
   }
 }
 
+@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
+@Composable
+fun BeatsScreenSmall() {
+  BeatsScreen(small = true)
+}
+
 @Composable
 fun ControlCard(
   viewModel: MainViewModel,
@@ -233,8 +247,10 @@ fun ControlCard(
   onClickRemove: () -> Unit,
   addEnabled: Boolean,
   removeEnabled: Boolean,
+  small: Boolean,
   content: @Composable RowScope.() -> Unit
 ) {
+  val size = if (small) 42.dp else IconButtonDefaults.SmallButtonSize
   Card(
     onClick = {},
     enabled = false,
@@ -242,7 +258,9 @@ fun ControlCard(
     colors = CardDefaults.cardColors(
       containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
     ),
-    modifier = Modifier.height(IconButtonDefaults.SmallButtonSize).fillMaxWidth()
+    modifier = Modifier
+      .height(size)
+      .fillMaxWidth()
   ) {
     Row {
       val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
@@ -254,7 +272,7 @@ fun ControlCard(
           animTriggerRemove.value = !animTriggerRemove.value
           onClickRemove()
         },
-        modifier = Modifier.touchTargetAwareSize(IconButtonDefaults.SmallButtonSize)
+        modifier = Modifier.size(size)
       ) {
         val targetTint = if (removeEnabled) {
           IconButtonDefaults.filledTonalIconButtonColors().contentColor
@@ -278,7 +296,9 @@ fun ControlCard(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
         color = MaterialTheme.colorScheme.surfaceContainerHigh,
-        modifier = Modifier.fillMaxHeight().weight(1f)
+        modifier = Modifier
+          .fillMaxHeight()
+          .weight(1f)
       ) {
         content()
       }
@@ -288,7 +308,7 @@ fun ControlCard(
           animTriggerAdd.value = !animTriggerAdd.value
           onClickAdd()
         },
-        modifier = Modifier.touchTargetAwareSize(IconButtonDefaults.SmallButtonSize)
+        modifier = Modifier.size(size)
       ) {
         val targetTint = if (addEnabled) {
           IconButtonDefaults.filledTonalIconButtonColors().contentColor
