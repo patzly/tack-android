@@ -53,7 +53,7 @@ import androidx.wear.compose.material3.MaterialTheme
 fun WrapContentCard(
   onClick: () -> Unit,
   modifier: Modifier = Modifier,
-  backgroundPainter: Painter = ColorPainter(MaterialTheme.colorScheme.surfaceContainer),
+  backgroundPainter: Painter = ColorPainter(MaterialTheme.colorScheme.background),
   contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
   border: BorderStroke? = null,
   enabled: Boolean = true,

@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -38,31 +37,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.wear.compose.foundation.rememberActiveFocusRequester
-import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
-import androidx.wear.compose.foundation.rotary.rotaryScrollable
-import androidx.wear.compose.material.Picker
-import androidx.wear.compose.material.PickerState
-import androidx.wear.compose.material.rememberPickerState
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.EdgeButton
 import androidx.wear.compose.material3.MaterialTheme
-import androidx.wear.compose.material3.Text
+import androidx.wear.compose.material3.rememberPickerState
 import androidx.wear.tooling.preview.devices.WearDevices
 import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.presentation.components.TempoPicker
 import xyz.zedler.patrick.tack.presentation.components.TextIconButton
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
-import xyz.zedler.patrick.tack.util.accessScalingLazyListState
 import xyz.zedler.patrick.tack.util.isSmallScreen
 import xyz.zedler.patrick.tack.util.spToDp
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -98,7 +88,7 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
       ConstraintLayout(modifier = Modifier.fillMaxWidth().weight(1f)) {
         val (tempoPicker) = createRefs()
         val (plus5Button, minus5Button, plus10Button, minus10Button) = createRefs()
-        TempoPicker(
+        CenterPicker(
           viewModel = viewModel,
           state = pickerState,
           onOptionChange = {
@@ -183,9 +173,9 @@ fun TempoScreenSmall() {
 }
 
 @Composable
-fun TempoPicker(
+fun CenterPicker(
   viewModel: MainViewModel,
-  state: PickerState,
+  state: androidx.wear.compose.material3.PickerState,
   onOptionChange: (Int) -> Unit,
   modifier: Modifier
 ) {
@@ -195,7 +185,6 @@ fun TempoPicker(
   )
   val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.Def.ALWAYS_VIBRATE)
 
-  val items = (Constants.TEMPO_MIN..Constants.TEMPO_MAX).toList()
   val bpm = stringResource(
     id = R.string.wear_label_bpm_value,
     state.selectedOption + 1
@@ -205,31 +194,19 @@ fun TempoPicker(
   LaunchedEffect(state.selectedOption) {
     onOptionChange(state.selectedOption)
   }
-  Picker(
+  TempoPicker(
     state = state,
+    modifier = modifier.size(
+      spToDp(spValue = if (isSmallScreen()) 64 else 72),
+      spToDp(spValue = if (isSmallScreen()) 104 else 140)
+    ),
+    spacing = if (isSmallScreen()) (-4).dp else (-6).dp,
+    textStyle = MaterialTheme.typography.displayMedium.copy(
+      fontSize = if (isSmallScreen()) 24.sp else 32.sp
+    ),
+    hapticFeedbackEnabled = !isPlaying || (!beatModeVibrate && !alwaysVibrate),
     contentDescription = contentDescription,
-    modifier = modifier
-      .size(spToDp(spValue = 64), spToDp(spValue = 104))
-      .rotaryScrollable(
-        behavior = RotaryScrollableDefaults.snapBehavior(
-          scrollableState = accessScalingLazyListState(state)!!,
-          hapticFeedbackEnabled = !isPlaying || (!beatModeVibrate && !alwaysVibrate)
-        ),
-        focusRequester = rememberActiveFocusRequester()
-      )
-  ) {
-    Text(
-      modifier = Modifier.wrapContentWidth(),
-      textAlign = TextAlign.Center,
-      color = MaterialTheme.colorScheme.onBackground,
-      style = MaterialTheme.typography.displayMedium,
-      text = buildAnnotatedString {
-        withStyle(style = SpanStyle(fontFeatureSettings = "tnum")) {
-          append(items[it].toString())
-        }
-      }
-    )
-  }
+  )
 }
 
 @Composable

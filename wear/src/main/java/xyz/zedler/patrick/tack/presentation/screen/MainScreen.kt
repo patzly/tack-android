@@ -29,7 +29,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -44,45 +43,36 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavBackStackEntry
-import androidx.wear.compose.foundation.rememberActiveFocusRequester
-import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
-import androidx.wear.compose.foundation.rotary.rotaryScrollable
-import androidx.wear.compose.material.Picker
-import androidx.wear.compose.material.PickerState
-import androidx.wear.compose.material.rememberPickerState
 import androidx.wear.compose.material3.FilledIconButton
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.IconButton
 import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.PickerState
 import androidx.wear.compose.material3.ScreenScaffold
-import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.TimeText
+import androidx.wear.compose.material3.TimeTextDefaults
+import androidx.wear.compose.material3.rememberPickerState
 import androidx.wear.compose.material3.touchTargetAwareSize
 import androidx.wear.tooling.preview.devices.WearDevices
 import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.presentation.components.TempoPicker
 import xyz.zedler.patrick.tack.presentation.components.WrapContentCard
 import xyz.zedler.patrick.tack.presentation.dialog.PermissionDialog
 import xyz.zedler.patrick.tack.presentation.dialog.VolumeDialog
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
-import xyz.zedler.patrick.tack.util.accessScalingLazyListState
 import xyz.zedler.patrick.tack.util.isSmallScreen
 import xyz.zedler.patrick.tack.util.spToDp
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -121,7 +111,10 @@ fun MainScreen(
       timeText = {
         TimeText(
           modifier = Modifier.graphicsLayer(alpha = controlsAlpha),
-          timeTextStyle = MaterialTheme.typography.labelMedium
+          timeTextStyle = TimeTextDefaults.timeTextStyle().copy(
+            fontFamily = MaterialTheme.typography.labelMedium.fontFamily,
+            color = MaterialTheme.colorScheme.onSurface
+          )
         ) {
           time()
         }
@@ -228,6 +221,7 @@ fun MainScreen(
                 end.linkTo(playButton.start)
               }
           ) {
+            IconButtonDefaults.iconButtonColors()
             Icon(
               painter = painterResource(id = R.drawable.ic_rounded_steppers),
               contentDescription = stringResource(id = R.string.wear_title_beats)
@@ -341,22 +335,10 @@ fun TempoCard(
     animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 250)
   )
 
-  val backgroundColorTarget = if (isPlaying && keepAwake) {
-    MaterialTheme.colorScheme.background
-  } else {
-    MaterialTheme.colorScheme.surfaceContainerHigh
-  }
-  val backgroundColor by animateColorAsState(
-    targetValue = backgroundColorTarget,
-    label = "backgroundColor",
-    animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 250)
-  )
-
   WrapContentCard(
     onClick = onClick,
     modifier = modifier.wrapContentWidth(),
     border = BorderStroke(2.dp, borderColor),
-    backgroundPainter = ColorPainter(backgroundColor),
     shape = MaterialTheme.shapes.extraLarge,
     contentPadding = PaddingValues(0.dp)
   ) {
@@ -365,7 +347,6 @@ fun TempoCard(
     )
     val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.Def.ALWAYS_VIBRATE)
 
-    val items = (Constants.TEMPO_MIN..Constants.TEMPO_MAX).toList()
     val bpm = stringResource(
       id = R.string.wear_label_bpm_value,
       state.selectedOption + 1
@@ -384,38 +365,23 @@ fun TempoCard(
       animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 300)
     )
 
-    Picker(
-      gradientRatio = if (gradientRatio > minRatio) gradientRatio else minRatio,
+    TempoPicker(
       state = state,
-      contentDescription = contentDescription,
       modifier = Modifier
         .graphicsLayer(alpha = pickerAlpha)
         .size(
-          spToDp(spValue = if (isSmallScreen()) 80 else 94),
-          spToDp(spValue = if (isSmallScreen()) 48 else 56)
-        )
-        .rotaryScrollable(
-          behavior = RotaryScrollableDefaults.snapBehavior(
-            scrollableState = accessScalingLazyListState(state)!!,
-            hapticFeedbackEnabled = !isPlaying || (!beatModeVibrate && !alwaysVibrate)
-          ),
-          focusRequester = rememberActiveFocusRequester()
-        )
-    ) {
-      Text(
-        modifier = Modifier.wrapContentSize(),
-        textAlign = TextAlign.Center,
-        color = MaterialTheme.colorScheme.onSurface,
-        style = MaterialTheme.typography.displayMedium.copy(
-          fontSize = if (isSmallScreen()) 30.sp else 36.sp
+          spToDp(spValue = if (isSmallScreen()) 78 else 100),
+          spToDp(spValue = if (isSmallScreen()) 44 else 56)
         ),
-        text = buildAnnotatedString {
-          withStyle(style = SpanStyle(fontFeatureSettings = "tnum")) {
-            append(items[it].toString())
-          }
-        }
-      )
-    }
+      spacing = if (isSmallScreen()) (-8).dp else (-6).dp,
+      textColor = MaterialTheme.colorScheme.onSurface,
+      textStyle = MaterialTheme.typography.displayMedium.copy(
+        fontSize = if (isSmallScreen()) 30.sp else 40.sp
+      ),
+      gradientRatio = if (gradientRatio > minRatio) gradientRatio else minRatio,
+      hapticFeedbackEnabled = !isPlaying || (!beatModeVibrate && !alwaysVibrate),
+      contentDescription = contentDescription
+    )
   }
 }
 
