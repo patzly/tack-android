@@ -110,10 +110,9 @@ fun MainScreen(
     ScreenScaffold(
       timeText = {
         TimeText(
-          modifier = Modifier.graphicsLayer(alpha = controlsAlpha),
           timeTextStyle = TimeTextDefaults.timeTextStyle().copy(
             fontFamily = MaterialTheme.typography.labelMedium.fontFamily,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = controlsAlpha)
           )
         ) {
           time()
