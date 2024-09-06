@@ -45,7 +45,6 @@ import androidx.wear.compose.material.scrollAway
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
-import androidx.wear.compose.material3.ScrollIndicator
 import androidx.wear.compose.material3.SwitchButton
 import androidx.wear.compose.material3.SwitchButtonDefaults
 import androidx.wear.compose.material3.Text
@@ -56,7 +55,7 @@ import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
-@Preview(device = WearDevices.SMALL_ROUND, showSystemUi = true)
+@Preview(device = WearDevices.LARGE_ROUND)
 @Composable
 fun SettingsScreen(
   viewModel: MainViewModel = MainViewModel(),
@@ -74,17 +73,13 @@ fun SettingsScreen(
           modifier = Modifier.scrollAway(scrollableState)
         )
       },
-      scrollIndicator = {
-        ScrollIndicator(
-          state = scrollableState
-        )
-      }
+      scrollState = scrollableState,
+      modifier = Modifier.background(MaterialTheme.colorScheme.background)
     ) {
       ScalingLazyColumn(
         state = scrollableState,
         modifier = Modifier
           .fillMaxSize()
-          .background(color = MaterialTheme.colorScheme.background)
           .rotaryScrollable(
             RotaryScrollableDefaults.behavior(scrollableState = scrollableState),
             focusRequester = rememberActiveFocusRequester()

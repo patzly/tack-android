@@ -87,8 +87,7 @@ import xyz.zedler.patrick.tack.util.isSmallScreen
 import xyz.zedler.patrick.tack.util.spToDp
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
-
-@Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true)
+@Preview(device = WearDevices.LARGE_ROUND)
 @Composable
 fun MainScreen(
   viewModel: MainViewModel = MainViewModel(),
@@ -109,36 +108,33 @@ fun MainScreen(
       MaterialTheme.colorScheme.background
     }
 
-    Box(
-      modifier = Modifier
-        .fillMaxSize()
-        .background(color = background),
-      contentAlignment = Alignment.Center,
+    val keepAwake by viewModel.keepAwake.observeAsState(Constants.Def.KEEP_AWAKE)
+    val isPlaying by viewModel.isPlaying.observeAsState(false)
+    val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
+    val controlsAlpha by animateFloatAsState(
+      targetValue = if (isPlaying && keepAwake) .5f else 1f,
+      label = "controlsAlpha",
+      animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 300)
+    )
+
+    ScreenScaffold(
+      timeText = {
+        TimeText(
+          timeTextStyle = MaterialTheme.typography.labelMedium,
+          modifier = Modifier.graphicsLayer(alpha = controlsAlpha)
+        )
+      },
+      modifier = Modifier.background(color = background)
     ) {
-      val keepAwake by viewModel.keepAwake.observeAsState(Constants.Def.KEEP_AWAKE)
-      val isPlaying by viewModel.isPlaying.observeAsState(false)
-      val playAnimTrigger = remember { mutableStateOf(isPlaying) }
-      var showVolumeDialog by remember { mutableStateOf(false) }
-      val showPermissionDialog by viewModel.showPermissionDialog.observeAsState(false)
-      val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
-
-      val controlsAlpha by animateFloatAsState(
-        targetValue = if (isPlaying && keepAwake) .5f else 1f,
-        label = "controlsAlpha",
-        animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 300)
-      )
-
-      ScreenScaffold(
-        timeText = {
-          TimeText(
-            timeTextStyle = MaterialTheme.typography.labelMedium,
-            modifier = Modifier.graphicsLayer(alpha = controlsAlpha)
-          )
-        }
+      Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
       ) {
-        ConstraintLayout(
-          modifier = Modifier.fillMaxSize()
-        ) {
+        val playAnimTrigger = remember { mutableStateOf(isPlaying) }
+        var showVolumeDialog by remember { mutableStateOf(false) }
+        val showPermissionDialog by viewModel.showPermissionDialog.observeAsState(false)
+
+        ConstraintLayout(modifier = Modifier.fillMaxSize()) {
           val (settingsButton, tempoCard, playButton) = createRefs()
           val (beatsButton, tempoTapButton) = createRefs()
           val (bookmarkButton, beatModeButton) = createRefs()
@@ -303,6 +299,12 @@ fun MainScreen(
       }
     }
   }
+}
+
+@Preview(device = WearDevices.SMALL_ROUND)
+@Composable
+fun MainScreenSmall() {
+  MainScreen()
 }
 
 @Composable

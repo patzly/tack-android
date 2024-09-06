@@ -59,9 +59,7 @@ fun TackApp(
   TackTheme {
     AppScaffold(
       timeText = {
-        TimeText(
-          timeTextStyle = MaterialTheme.typography.labelMedium
-        )
+        TimeText(timeTextStyle = MaterialTheme.typography.labelMedium)
       }
     ) {
       SwipeDismissableNavHost(

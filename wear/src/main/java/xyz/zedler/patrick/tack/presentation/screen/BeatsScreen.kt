@@ -56,7 +56,6 @@ import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
-import androidx.wear.compose.material3.ScrollIndicator
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.Constants
@@ -69,7 +68,7 @@ import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.util.isSmallScreen
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
-@Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true)
+@Preview(device = WearDevices.LARGE_ROUND)
 @Composable
 fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
   TackTheme {
@@ -81,11 +80,8 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
           modifier = Modifier.scrollAway(scrollableState)
         )
       },
-      scrollIndicator = {
-        ScrollIndicator(
-          state = scrollableState
-        )
-      }
+      scrollState = scrollableState,
+      modifier = Modifier.background(color = MaterialTheme.colorScheme.background)
     ) {
       val beats by viewModel.beats.observeAsState(Constants.Def.BEATS.split(","))
       val subdivisions by viewModel.subdivisions.observeAsState(
@@ -96,7 +92,6 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
         state = scrollableState,
         modifier = Modifier
           .fillMaxSize()
-          .background(color = MaterialTheme.colorScheme.background)
           .rotaryScrollable(
             RotaryScrollableDefaults.behavior(scrollableState = scrollableState),
             focusRequester = rememberActiveFocusRequester()
@@ -226,6 +221,12 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
       }
     }
   }
+}
+
+@Preview(device = WearDevices.SMALL_ROUND)
+@Composable
+fun BeatsScreenSmall() {
+  BeatsScreen()
 }
 
 @Composable

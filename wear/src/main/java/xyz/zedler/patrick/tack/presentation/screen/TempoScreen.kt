@@ -67,7 +67,7 @@ import xyz.zedler.patrick.tack.util.isSmallScreen
 import xyz.zedler.patrick.tack.util.spToDp
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
-@Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true)
+@Preview(device = WearDevices.LARGE_ROUND)
 @Composable
 fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
   TackTheme {
@@ -95,9 +95,7 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         .fillMaxSize()
         .background(color = MaterialTheme.colorScheme.background)
     ) {
-      ConstraintLayout(
-        modifier = Modifier.fillMaxWidth().weight(1f)
-      ) {
+      ConstraintLayout(modifier = Modifier.fillMaxWidth().weight(1f)) {
         val (tempoPicker) = createRefs()
         val (plus5Button, minus5Button, plus10Button, minus10Button) = createRefs()
         TempoPicker(
@@ -176,6 +174,12 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
       )
     }
   }
+}
+
+@Preview(device = WearDevices.SMALL_ROUND)
+@Composable
+fun TempoScreenSmall() {
+  TempoScreen()
 }
 
 @Composable
