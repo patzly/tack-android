@@ -242,7 +242,8 @@ fun TapButton(
   val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
   EdgeButton(
     colors = ButtonDefaults.buttonColors(
-      containerColor = MaterialTheme.colorScheme.tertiary
+      containerColor = MaterialTheme.colorScheme.tertiary,
+      contentColor = MaterialTheme.colorScheme.onTertiary
     ),
     buttonHeight = if (isSmallScreen()) {
       ButtonDefaults.EdgeButtonHeightExtraSmall
@@ -265,7 +266,6 @@ fun TapButton(
     AnimatedVectorDrawable(
       resId = R.drawable.ic_rounded_touch_app_anim,
       description = stringResource(id = R.string.wear_action_tempo_tap),
-      color = MaterialTheme.colorScheme.onTertiary,
       trigger = animTrigger.value,
       animated = !reduceAnim
     )

@@ -39,7 +39,6 @@ import androidx.wear.compose.material3.AlertDialog
 import androidx.wear.compose.material3.FilledIconButton
 import androidx.wear.compose.material3.FilledTonalIconButton
 import androidx.wear.compose.material3.Icon
-import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
@@ -138,8 +137,7 @@ fun ConfirmButton(
     Row(modifier = Modifier.align(Alignment.Center).graphicsLayer { rotationZ = 45f }) {
       Icon(
         painter = painterResource(id = iconResId),
-        contentDescription = stringResource(id = stringResId),
-        tint = IconButtonDefaults.filledIconButtonColors().contentColor
+        contentDescription = stringResource(id = stringResId)
       )
     }
   }
@@ -162,8 +160,7 @@ fun DismissButton(
     ) {
       Icon(
         painter = painterResource(id = iconResId),
-        contentDescription = stringResource(id = stringResId),
-        tint = IconButtonDefaults.filledTonalIconButtonColors().contentColor
+        contentDescription = stringResource(id = stringResId)
       )
     }
   }

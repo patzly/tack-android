@@ -19,8 +19,6 @@
 
 package xyz.zedler.patrick.tack.presentation.screen
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -240,9 +238,7 @@ fun ControlCard(
     colors = CardDefaults.cardColors(
       containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
     ),
-    modifier = Modifier
-      .height(size)
-      .fillMaxWidth()
+    modifier = Modifier.height(size).fillMaxWidth()
   ) {
     Row {
       val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
@@ -250,26 +246,18 @@ fun ControlCard(
       val animTriggerRemove = remember { mutableStateOf(false) }
       IconButton(
         enabled = removeEnabled,
+        colors = IconButtonDefaults.iconButtonColors(
+          contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        ),
         onClick = {
           animTriggerRemove.value = !animTriggerRemove.value
           onClickRemove()
         },
         modifier = Modifier.size(size)
       ) {
-        val targetTint = if (removeEnabled) {
-          IconButtonDefaults.filledTonalIconButtonColors().contentColor
-        } else {
-          IconButtonDefaults.filledTonalIconButtonColors().disabledContentColor
-        }
-        val tint by animateColorAsState(
-          targetValue = targetTint,
-          label = "remove",
-          animationSpec = TweenSpec(durationMillis = 200)
-        )
         AnimatedVectorDrawable(
           resId = R.drawable.ic_rounded_remove_anim,
           description = labelRemove,
-          color = tint,
           trigger = animTriggerRemove.value,
           animated = !reduceAnim
         )
@@ -286,26 +274,18 @@ fun ControlCard(
       }
       IconButton(
         enabled = addEnabled,
+        colors = IconButtonDefaults.iconButtonColors(
+          contentColor = MaterialTheme.colorScheme.onSurfaceVariant
+        ),
         onClick = {
           animTriggerAdd.value = !animTriggerAdd.value
           onClickAdd()
         },
         modifier = Modifier.size(size)
       ) {
-        val targetTint = if (addEnabled) {
-          IconButtonDefaults.filledTonalIconButtonColors().contentColor
-        } else {
-          IconButtonDefaults.filledTonalIconButtonColors().disabledContentColor
-        }
-        val tint by animateColorAsState(
-          targetValue = targetTint,
-          label = "add",
-          animationSpec = TweenSpec(durationMillis = 200)
-        )
         AnimatedVectorDrawable(
           resId = R.drawable.ic_rounded_add_anim,
           description = labelAdd,
-          color = tint,
           trigger = animTriggerAdd.value,
           animated = !reduceAnim
         )

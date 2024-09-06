@@ -35,8 +35,7 @@
         <path
           android:name="path"
           android:pathData="M18,13H6c-0.55,0 -1,-0.45 -1,-1s0.45,-1 1,-1h12c0.55,0 1,0.45 1,1s-0.45,1 -1,1z"
-          android:fillColor="#000000"
-          android:strokeWidth="1" />
+          android:fillColor="#000000" />
       </group>
     </vector>
   </aapt:attr>

@@ -61,11 +61,11 @@ import androidx.navigation.NavBackStackEntry
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
-import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.Picker
 import androidx.wear.compose.material.PickerState
 import androidx.wear.compose.material.rememberPickerState
 import androidx.wear.compose.material3.FilledIconButton
+import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.IconButton
 import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
@@ -170,7 +170,7 @@ fun MainScreen(
           val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.Def.ALWAYS_VIBRATE)
           val gain by viewModel.gain.observeAsState(Constants.Def.GAIN)
 
-          SettingsButton(
+          IconButton(
             onClick = onSettingsButtonClick,
             modifier = Modifier
               .graphicsLayer(alpha = controlsAlpha)
@@ -180,7 +180,12 @@ fun MainScreen(
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
               }
-          )
+          ) {
+            Icon(
+              painter = painterResource(id = R.drawable.ic_rounded_settings),
+              contentDescription = stringResource(id = R.string.wear_title_settings)
+            )
+          }
           TempoCard(
             viewModel = viewModel,
             state = pickerState,
@@ -212,7 +217,7 @@ fun MainScreen(
               end.linkTo(parent.end)
             }
           )
-          BeatsButton(
+          IconButton(
             onClick = onBeatsButtonClick,
             modifier = Modifier
               .graphicsLayer(alpha = controlsAlpha)
@@ -222,7 +227,12 @@ fun MainScreen(
                 start.linkTo(parent.start)
                 end.linkTo(playButton.start)
               }
-          )
+          ) {
+            Icon(
+              painter = painterResource(id = R.drawable.ic_rounded_steppers),
+              contentDescription = stringResource(id = R.string.wear_title_beats)
+            )
+          }
           TempoTapButton(
             viewModel = viewModel,
             onClick = {
@@ -457,7 +467,8 @@ fun PlayButton(
   FilledIconButton(
     onClick = onClick,
     colors = IconButtonDefaults.filledIconButtonColors(
-      containerColor = containerColor
+      containerColor = containerColor,
+      contentColor = contentColor
     ),
     shape = if (reduceAnim) {
       IconButtonDefaults.shape
@@ -475,44 +486,9 @@ fun PlayButton(
       resId1 = R.drawable.ic_rounded_play_to_stop_anim,
       resId2 = R.drawable.ic_rounded_stop_to_play_anim,
       description = stringResource(id = R.string.wear_action_play_stop),
-      color = contentColor,
       trigger = animTrigger,
       modifier = Modifier.size(IconButtonDefaults.LargeIconSize),
       animated = !reduceAnim
-    )
-  }
-}
-
-@Composable
-fun SettingsButton(
-  onClick: () -> Unit,
-  modifier: Modifier
-) {
-  IconButton(
-    onClick = onClick,
-    modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
-  ) {
-    Icon(
-      painter = painterResource(id = R.drawable.ic_rounded_settings),
-      contentDescription = stringResource(id = R.string.wear_title_settings),
-      tint = IconButtonDefaults.iconButtonColors().contentColor
-    )
-  }
-}
-
-@Composable
-fun BeatsButton(
-  onClick: () -> Unit,
-  modifier: Modifier
-) {
-  IconButton(
-    onClick = onClick,
-    modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
-  ) {
-    Icon(
-      painter = painterResource(id = R.drawable.ic_rounded_steppers),
-      contentDescription = stringResource(id = R.string.wear_title_beats),
-      tint = IconButtonDefaults.iconButtonColors().contentColor
     )
   }
 }
@@ -544,7 +520,6 @@ fun TempoTapButton(
     AnimatedVectorDrawable(
       resId = R.drawable.ic_rounded_touch_app_anim,
       description = stringResource(id = R.string.wear_action_tempo_tap),
-      color = IconButtonDefaults.iconButtonColors().contentColor,
       trigger = animTrigger.value,
       animated = !reduceAnim
     )
@@ -569,7 +544,6 @@ fun BookmarkButton(
     AnimatedVectorDrawable(
       resId = R.drawable.ic_rounded_bookmark_anim,
       description = stringResource(id = R.string.wear_action_bookmark),
-      color = IconButtonDefaults.iconButtonColors().contentColor,
       trigger = animTrigger.value,
       animated = !reduceAnim
     )
@@ -607,7 +581,6 @@ fun BeatModeButton(
       resId1 = resId2,
       resId2 = resId1,
       description = stringResource(id = R.string.wear_action_beat_mode),
-      color = IconButtonDefaults.iconButtonColors().contentColor,
       trigger = animTrigger,
       animated = !reduceAnim
     )

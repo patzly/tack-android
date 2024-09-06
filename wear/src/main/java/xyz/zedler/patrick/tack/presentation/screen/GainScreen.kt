@@ -19,8 +19,6 @@
 
 package xyz.zedler.patrick.tack.presentation.screen
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,12 +37,11 @@ import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
-import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material3.Card
 import androidx.wear.compose.material3.CardDefaults
 import androidx.wear.compose.material3.ExperimentalWearMaterial3Api
+import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.InlineSlider
-import androidx.wear.compose.material3.InlineSliderDefaults
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
@@ -84,7 +81,6 @@ fun GainScreen(viewModel: MainViewModel = MainViewModel()) {
         }
         item {
           GainSlider(
-            viewModel = viewModel,
             gain = gain,
             onValueChange = {
               viewModel.changeGain(it)
@@ -126,48 +122,24 @@ fun GainScreen(viewModel: MainViewModel = MainViewModel()) {
 @OptIn(ExperimentalWearMaterial3Api::class)
 @Composable
 fun GainSlider(
-  viewModel: MainViewModel,
   gain: Int,
   onValueChange: (Int) -> Unit = {}
 ) {
-  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
   InlineSlider(
     value = gain,
     onValueChange = onValueChange,
     valueProgression = IntProgression.fromClosedRange(0, 20, 5),
     segmented = true,
     decreaseIcon = {
-      val targetTint = if (gain > 0) {
-        InlineSliderDefaults.colors().buttonIconColor
-      } else {
-        InlineSliderDefaults.colors().disabledButtonIconColor
-      }
-      val tint by animateColorAsState(
-        targetValue = targetTint,
-        label = "decreaseGain",
-        animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 200)
-      )
       Icon(
         painter = painterResource(id = R.drawable.ic_rounded_volume_down),
-        contentDescription = stringResource(id = R.string.wear_action_decrease),
-        tint = tint
+        contentDescription = stringResource(id = R.string.wear_action_decrease)
       )
     },
     increaseIcon = {
-      val targetTint = if (gain < 20) {
-        InlineSliderDefaults.colors().buttonIconColor
-      } else {
-        InlineSliderDefaults.colors().disabledButtonIconColor
-      }
-      val tint by animateColorAsState(
-        targetValue = targetTint,
-        label = "increaseGain",
-        animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 200)
-      )
       Icon(
         painter = painterResource(id = R.drawable.ic_rounded_volume_up),
-        contentDescription = stringResource(id = R.string.wear_action_increase),
-        tint = tint
+        contentDescription = stringResource(id = R.string.wear_action_increase)
       )
     }
   )

@@ -19,8 +19,6 @@
 
 package xyz.zedler.patrick.tack.presentation.screen
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,9 +26,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,11 +37,9 @@ import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
-import androidx.wear.compose.material.TimeText
-import androidx.wear.compose.material.scrollAway
 import androidx.wear.compose.material3.ExperimentalWearMaterial3Api
+import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.InlineSlider
-import androidx.wear.compose.material3.InlineSliderDefaults
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
@@ -53,7 +48,6 @@ import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
-import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Preview(device = WearDevices.LARGE_ROUND)
@@ -85,7 +79,6 @@ fun LatencyScreen(viewModel: MainViewModel = MainViewModel()) {
         }
         item {
           LatencySlider(
-            viewModel = viewModel,
             latency = latency,
             onValueChange = {
               viewModel.changeLatency(it.toLong())
@@ -110,61 +103,24 @@ fun LatencyScreen(viewModel: MainViewModel = MainViewModel()) {
 @OptIn(ExperimentalWearMaterial3Api::class)
 @Composable
 fun LatencySlider(
-  viewModel: MainViewModel,
   latency: Long,
   onValueChange: (Int) -> Unit = {}
 ) {
-  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
-  val animTriggerIncrease = remember { mutableStateOf(false) }
-  val animTriggerDecrease = remember { mutableStateOf(false) }
   InlineSlider(
     value = latency.toInt(),
-    onValueChange = {
-      if (it > latency) {
-        animTriggerIncrease.value = !animTriggerIncrease.value
-      } else {
-        animTriggerDecrease.value = !animTriggerDecrease.value
-      }
-      onValueChange(it)
-    },
+    onValueChange = { onValueChange(it) },
     valueProgression = IntProgression.fromClosedRange(0, 200, 5),
     segmented = false,
     decreaseIcon = {
-      val targetTint = if (latency > 0) {
-        InlineSliderDefaults.colors().buttonIconColor
-      } else {
-        InlineSliderDefaults.colors().disabledButtonIconColor
-      }
-      val tint by animateColorAsState(
-        targetValue = targetTint,
-        label = "decreaseLatency",
-        animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 200)
-      )
-      AnimatedVectorDrawable(
-        resId = R.drawable.ic_rounded_remove_anim,
-        description = stringResource(id = R.string.wear_action_decrease),
-        color = tint,
-        trigger = animTriggerDecrease.value,
-        animated = !reduceAnim
+      Icon(
+        painter = painterResource(id = R.drawable.ic_rounded_remove),
+        contentDescription = stringResource(id = R.string.wear_action_decrease)
       )
     },
     increaseIcon = {
-      val targetTint = if (latency < 200) {
-        InlineSliderDefaults.colors().buttonIconColor
-      } else {
-        InlineSliderDefaults.colors().disabledButtonIconColor
-      }
-      val tint by animateColorAsState(
-        targetValue = targetTint,
-        label = "increaseLatency",
-        animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 200)
-      )
-      AnimatedVectorDrawable(
-        resId = R.drawable.ic_rounded_add_anim,
-        description = stringResource(id = R.string.wear_action_increase),
-        color = tint,
-        trigger = animTriggerIncrease.value,
-        animated = !reduceAnim
+      Icon(
+        painter = painterResource(id = R.drawable.ic_rounded_add),
+        contentDescription = stringResource(id = R.string.wear_action_increase)
       )
     }
   )
