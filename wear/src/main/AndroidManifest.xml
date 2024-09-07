@@ -50,7 +50,7 @@
 
     <activity
       android:exported="true"
-      android:name=".presentation.MainActivity"
+      android:name=".activity.MainActivity"
       android:taskAffinity=""
       android:theme="@style/Theme.Tack.Splash">
       <intent-filter>

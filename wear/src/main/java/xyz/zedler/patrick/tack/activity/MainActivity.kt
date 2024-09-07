@@ -17,8 +17,9 @@
  * Copyright (c) 2020-2024 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.presentation
+package xyz.zedler.patrick.tack.activity
 
+import android.Manifest
 import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Intent
@@ -34,6 +35,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import xyz.zedler.patrick.tack.presentation.TackApp
 import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.util.ButtonUtil
 import xyz.zedler.patrick.tack.util.ButtonUtil.OnPressListener
@@ -134,7 +136,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
         onPermissionRequestClick = {
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             try {
-              requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+              requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             } catch (e: IllegalStateException) {
               Log.e(TAG, "onPermissionMissing: ", e)
             }
@@ -224,11 +226,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
   }
 
   private fun getMetronomeUtil(): MetronomeUtil {
-    return if (bound) {
-      metronomeService.getMetronomeUtil()
-    } else {
-      metronomeUtil
-    }
+    return if (bound) metronomeService.getMetronomeUtil() else metronomeUtil
   }
 
   private fun updateMetronomeUtil() {
