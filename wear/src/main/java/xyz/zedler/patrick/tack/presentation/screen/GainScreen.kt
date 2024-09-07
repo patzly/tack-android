@@ -42,6 +42,7 @@ import androidx.wear.compose.material3.CardDefaults
 import androidx.wear.compose.material3.ExperimentalWearMaterial3Api
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.InlineSlider
+import androidx.wear.compose.material3.InlineSliderDefaults
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
@@ -129,7 +130,7 @@ fun GainSlider(
     value = gain,
     onValueChange = onValueChange,
     valueProgression = IntProgression.fromClosedRange(0, 20, 5),
-    segmented = true,
+    segmented = false,
     decreaseIcon = {
       Icon(
         painter = painterResource(id = R.drawable.ic_rounded_volume_down),
@@ -141,6 +142,9 @@ fun GainSlider(
         painter = painterResource(id = R.drawable.ic_rounded_volume_up),
         contentDescription = stringResource(id = R.string.wear_action_increase)
       )
-    }
+    },
+    colors = InlineSliderDefaults.colors(
+      containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+    )
   )
 }

@@ -85,29 +85,32 @@ fun BeatIconButton(
       )
       animatedSize.animateTo(
         targetValue = sizeDefault.toFloat(),
-        animationSpec = tween(durationMillis = 375)
+        animationSpec = tween(durationMillis = 325)
       )
     } else {
       isFirstExecution.value = false
     }
   }
 
+  val targetColor = when (tickType) {
+    TickType.STRONG -> MaterialTheme.colorScheme.error
+    TickType.SUB -> MaterialTheme.colorScheme.onSurfaceVariant
+    TickType.MUTED -> MaterialTheme.colorScheme.outline
+    else -> MaterialTheme.colorScheme.primary
+  }
+  val color by animateColorAsState(
+    targetValue = targetColor,
+    label = "beatColor",
+    animationSpec = TweenSpec(durationMillis = 300)
+  )
   IconButton(
     enabled = enabled,
     onClick = onClick,
+    colors = IconButtonDefaults.iconButtonColors(
+      contentColor = color,
+    ),
     modifier = Modifier.size(IconButtonDefaults.ExtraSmallButtonSize)
   ) {
-    val targetColor = when (tickType) {
-      TickType.STRONG -> MaterialTheme.colorScheme.error
-      TickType.SUB -> MaterialTheme.colorScheme.onSurfaceVariant
-      TickType.MUTED -> MaterialTheme.colorScheme.outline
-      else -> MaterialTheme.colorScheme.primary
-    }
-    val color by animateColorAsState(
-      targetValue = targetColor,
-      label = "beatColor",
-      animationSpec = TweenSpec(durationMillis = 400)
-    )
     val resId = when (tickType) {
       TickType.STRONG -> shapesFilled[index % shapesFilled.size]
       TickType.SUB -> shapesOutlined[index % shapesOutlined.size]
@@ -117,7 +120,6 @@ fun BeatIconButton(
     AnimatedVectorDrawable(
       resId = resId,
       description = stringResource(id = R.string.wear_action_tempo_tap),
-      color = color,
       trigger = animTrigger,
       modifier = Modifier.requiredSize(animatedSize.value.dp),
       animated = tickType != TickType.MUTED && !reduceAnim

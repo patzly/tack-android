@@ -37,6 +37,7 @@ import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.RadioButton
+import androidx.wear.compose.material3.RadioButtonDefaults
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
@@ -74,7 +75,7 @@ fun SoundScreen(viewModel: MainViewModel = MainViewModel()) {
           }
         }
         item {
-          RadioChip(
+          SoundOption(
             label = stringResource(id = R.string.wear_settings_sound_sine),
             selected = sound == Sound.SINE,
             onSelected = {
@@ -83,7 +84,7 @@ fun SoundScreen(viewModel: MainViewModel = MainViewModel()) {
           )
         }
         item {
-          RadioChip(
+          SoundOption(
             label = stringResource(id = R.string.wear_settings_sound_wood),
             selected = sound == Sound.WOOD,
             onSelected = {
@@ -92,7 +93,7 @@ fun SoundScreen(viewModel: MainViewModel = MainViewModel()) {
           )
         }
         item {
-          RadioChip(
+          SoundOption(
             label = stringResource(id = R.string.wear_settings_sound_mechanical),
             selected = sound == Sound.MECHANICAL,
             onSelected = {
@@ -101,7 +102,7 @@ fun SoundScreen(viewModel: MainViewModel = MainViewModel()) {
           )
         }
         item {
-          RadioChip(
+          SoundOption(
             label = stringResource(id = R.string.wear_settings_sound_beatboxing_1),
             selected = sound == Sound.BEATBOXING_1,
             onSelected = {
@@ -110,7 +111,7 @@ fun SoundScreen(viewModel: MainViewModel = MainViewModel()) {
           )
         }
         item {
-          RadioChip(
+          SoundOption(
             label = stringResource(id = R.string.wear_settings_sound_beatboxing_2),
             selected = sound == Sound.BEATBOXING_2,
             onSelected = {
@@ -119,7 +120,7 @@ fun SoundScreen(viewModel: MainViewModel = MainViewModel()) {
           )
         }
         item {
-          RadioChip(
+          SoundOption(
             label = stringResource(id = R.string.wear_settings_sound_hands),
             selected = sound == Sound.HANDS,
             onSelected = {
@@ -128,7 +129,7 @@ fun SoundScreen(viewModel: MainViewModel = MainViewModel()) {
           )
         }
         item {
-          RadioChip(
+          SoundOption(
             label = stringResource(id = R.string.wear_settings_sound_folding),
             selected = sound == Sound.FOLDING,
             onSelected = {
@@ -142,7 +143,7 @@ fun SoundScreen(viewModel: MainViewModel = MainViewModel()) {
 }
 
 @Composable
-fun RadioChip(
+fun SoundOption(
   label: String,
   selected: Boolean,
   onSelected: () -> Unit,
@@ -158,6 +159,9 @@ fun RadioChip(
     },
     selected = selected,
     onSelect = onSelected,
+    colors = RadioButtonDefaults.radioButtonColors(
+      unselectedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+    ),
     modifier = Modifier.fillMaxWidth()
   )
 }

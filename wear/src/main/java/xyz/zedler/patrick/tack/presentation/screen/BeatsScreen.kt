@@ -189,7 +189,7 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
               reduceAnim = reduceAnim,
               onClick = {
                 viewModel.setSwing(3)
-              }
+              },
             )
             TextIconButton(
               label = "5",

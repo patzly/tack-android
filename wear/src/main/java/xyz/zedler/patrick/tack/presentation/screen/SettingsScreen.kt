@@ -38,14 +38,14 @@ import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
-import androidx.wear.compose.material.Chip
-import androidx.wear.compose.material.ChipDefaults
+import androidx.wear.compose.material3.CardDefaults
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.SwitchButton
 import androidx.wear.compose.material3.SwitchButtonDefaults
 import androidx.wear.compose.material3.Text
+import androidx.wear.compose.material3.TitleCard
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.Constants.Sound
@@ -108,31 +108,31 @@ fun SettingsScreen(
               name = stringResource(id = R.string.wear_settings_sound_folding)
             }
           }
-          ClickChip(
-            label = stringResource(R.string.wear_settings_sound),
-            secondaryLabel = name,
+          ClickCard(
+            title = stringResource(R.string.wear_settings_sound),
+            subtitle = name,
             onClick = onSoundClick
           )
         }
         item {
           val gain by viewModel.gain.observeAsState(Constants.Def.GAIN)
-          ClickChip(
-            label = stringResource(R.string.wear_settings_gain),
-            secondaryLabel = stringResource(R.string.wear_label_db, gain),
+          ClickCard(
+            title = stringResource(R.string.wear_settings_gain),
+            subtitle = stringResource(R.string.wear_label_db, gain),
             onClick = onGainClick
           )
         }
         item {
           val latency by viewModel.latency.observeAsState(Constants.Def.LATENCY)
-          ClickChip(
-            label = stringResource(R.string.wear_settings_latency),
-            secondaryLabel = stringResource(R.string.wear_label_ms, latency),
+          ClickCard(
+            title = stringResource(R.string.wear_settings_latency),
+            subtitle = stringResource(R.string.wear_label_ms, latency),
             onClick = onLatencyClick
           )
         }
         item {
           val ignoreFocus by viewModel.ignoreFocus.observeAsState(Constants.Def.IGNORE_FOCUS)
-          ToggleChip(
+          SwitchCard(
             checked = ignoreFocus,
             onCheckedChange = {
               viewModel.changeIgnoreFocus(it)
@@ -143,7 +143,7 @@ fun SettingsScreen(
         }
         item {
           val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.Def.ALWAYS_VIBRATE)
-          ToggleChip(
+          SwitchCard(
             checked = alwaysVibrate,
             onCheckedChange = {
               viewModel.changeAlwaysVibrate(it)
@@ -156,7 +156,7 @@ fun SettingsScreen(
           val strongVibration by viewModel.strongVibration.observeAsState(
             Constants.Def.STRONG_VIBRATION
           )
-          ToggleChip(
+          SwitchCard(
             checked = strongVibration,
             onCheckedChange = {
               viewModel.changeStrongVibration(it)
@@ -167,7 +167,7 @@ fun SettingsScreen(
         }
         item {
           val flashScreen by viewModel.flashScreen.observeAsState(Constants.Def.FLASH_SCREEN)
-          ToggleChip(
+          SwitchCard(
             checked = flashScreen,
             onCheckedChange = {
               viewModel.changeFlashScreen(it)
@@ -178,7 +178,7 @@ fun SettingsScreen(
         }
         item {
           val keepAwake by viewModel.keepAwake.observeAsState(Constants.Def.KEEP_AWAKE)
-          ToggleChip(
+          SwitchCard(
             checked = keepAwake,
             onCheckedChange = {
               viewModel.changeKeepAwake(it)
@@ -189,7 +189,7 @@ fun SettingsScreen(
         }
         item {
           val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
-          ToggleChip(
+          SwitchCard(
             checked = reduceAnim,
             onCheckedChange = {
               viewModel.changeReduceAnim(it)
@@ -201,9 +201,9 @@ fun SettingsScreen(
           )
         }
         item {
-          ClickChip(
-            label = stringResource(R.string.wear_settings_rate),
-            secondaryLabel = stringResource(R.string.wear_settings_rate_description),
+          ClickCard(
+            title = stringResource(R.string.wear_settings_rate),
+            subtitle = stringResource(R.string.wear_settings_rate_description),
             onClick = onRateClick
           )
         }
@@ -231,40 +231,40 @@ fun SettingsScreen(
 }
 
 @Composable
-fun ClickChip(
-  label: String,
-  secondaryLabel: String,
+fun ClickCard(
+  title: String,
+  subtitle: String,
   onClick: () -> Unit
 ) {
-  Chip(
+  TitleCard(
     onClick = onClick,
-    label = {
+    title = {
       Text(
-        text = label,
+        text = title,
         style = MaterialTheme.typography.bodyLarge,
         color = MaterialTheme.colorScheme.onSurface,
         maxLines = 3,
         overflow = TextOverflow.Ellipsis
       )
     },
-    secondaryLabel = {
+    subtitle = {
       Text(
-        text = secondaryLabel,
+        text = subtitle,
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         maxLines = 2,
         overflow = TextOverflow.Ellipsis
       )
     },
-    colors = ChipDefaults.secondaryChipColors(
-      backgroundColor = MaterialTheme.colorScheme.surfaceContainerHigh
+    colors = CardDefaults.cardColors(
+      containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
     ),
     modifier = Modifier.fillMaxWidth()
   )
 }
 
 @Composable
-fun ToggleChip(
+fun SwitchCard(
   checked: Boolean,
   onCheckedChange: (Boolean) -> Unit,
   label: String,
@@ -292,7 +292,7 @@ fun ToggleChip(
       Text(
         text = secondaryLabel,
         style = MaterialTheme.typography.bodyMedium,
-        maxLines = 4,
+        maxLines = 2,
         overflow = TextOverflow.Ellipsis
       )
     }

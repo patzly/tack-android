@@ -53,6 +53,9 @@ fun TextIconButton(
         pressedShape = MaterialTheme.shapes.medium
       )
     },
+    colors = IconButtonDefaults.filledTonalIconButtonColors(
+      containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+    ),
     modifier = modifier.touchTargetAwareSize(
       if (isSmallScreen()) 42.dp else IconButtonDefaults.SmallButtonSize
     )
@@ -60,7 +63,6 @@ fun TextIconButton(
     Text(
       modifier = Modifier.wrapContentSize(Alignment.Center),
       textAlign = TextAlign.Center,
-      color = IconButtonDefaults.filledTonalIconButtonColors().contentColor,
       style = MaterialTheme.typography.titleLarge,
       text = label
     )
