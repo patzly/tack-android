@@ -273,9 +273,6 @@ fun MainScreen(
         }
         VolumeDialog(
           show = showVolumeDialog,
-          onDismissRequest = {
-            showVolumeDialog = false
-          },
           onConfirm = {
             viewModel.togglePlaying()
             playAnimTrigger.value = !playAnimTrigger.value
@@ -286,13 +283,13 @@ fun MainScreen(
             viewModel.togglePlaying()
             playAnimTrigger.value = !playAnimTrigger.value
             showVolumeDialog = false
+          },
+          onSwipeDismiss = {
+            showVolumeDialog = false
           }
         )
         PermissionDialog(
           show = showPermissionDialog,
-          onDismissRequest = {
-            viewModel.changeShowPermissionDialog(false)
-          },
           onRetry = {
             viewModel.changeShowPermissionDialog(false)
             onPermissionRequestClick()
@@ -369,7 +366,7 @@ fun TempoCard(
       modifier = Modifier
         .graphicsLayer(alpha = pickerAlpha)
         .size(
-          spToDp(spValue = if (isSmallScreen()) 78 else 100),
+          spToDp(spValue = if (isSmallScreen()) 76 else 100),
           spToDp(spValue = if (isSmallScreen()) 44 else 56)
         ),
       spacing = if (isSmallScreen()) (-8).dp else (-6).dp,

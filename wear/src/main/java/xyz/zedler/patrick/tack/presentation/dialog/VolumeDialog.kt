@@ -28,11 +28,11 @@ import xyz.zedler.patrick.tack.R
 @Composable
 fun VolumeDialog(
   show: Boolean = true,
-  onDismissRequest: () -> Unit = {},
   onConfirm: () -> Unit = {},
-  onDismiss: () -> Unit = {}
+  onDismiss: () -> Unit = {},
+  onSwipeDismiss: () -> Unit = {},
 ) {
-  TackDialog(
+  BaseDialog(
     show = show,
     icon = R.drawable.ic_rounded_speaker,
     title = R.string.wear_msg_gain,
@@ -42,7 +42,7 @@ fun VolumeDialog(
     confirmString = R.string.wear_action_play_stop,
     dismissIcon = R.drawable.ic_rounded_close,
     dismissString = R.string.wear_action_cancel,
-    onDismissRequest = onDismissRequest,
+    onSwipeDismiss = onSwipeDismiss,
     onConfirm = onConfirm,
     onDismiss = onDismiss
   )

@@ -39,6 +39,7 @@ import androidx.wear.compose.material3.AlertDialog
 import androidx.wear.compose.material3.FilledIconButton
 import androidx.wear.compose.material3.FilledTonalIconButton
 import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
@@ -48,7 +49,7 @@ import xyz.zedler.patrick.tack.util.isSmallScreen
 
 @Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true)
 @Composable
-fun TackDialog(
+fun BaseDialog(
   show: Boolean = true,
   icon: Int = R.drawable.ic_rounded_error,
   title: Int = R.string.wear_msg_notification_permission_denied,
@@ -58,7 +59,7 @@ fun TackDialog(
   confirmString: Int = R.string.wear_action_retry,
   dismissIcon: Int = R.drawable.ic_rounded_close,
   dismissString: Int = R.string.wear_action_cancel,
-  onDismissRequest: () -> Unit = {},
+  onSwipeDismiss: (() -> Unit)? = null,
   onConfirm: () -> Unit = {},
   onDismiss: () -> Unit = {}
 ) {
@@ -79,7 +80,7 @@ fun TackDialog(
           onClick = onDismiss
         )
       },
-      onDismissRequest = onDismiss,
+      onDismissRequest = onSwipeDismiss ?: onDismiss,
       icon = {
         Icon(
           painter = painterResource(id = icon),
@@ -126,13 +127,10 @@ fun ConfirmButton(
 ) {
   val confirmWidth = if (isSmallScreen()) 56.dp else 64.dp
   val confirmHeight = if (isSmallScreen()) 48.dp else 56.dp
-
-  val confirmShape = CircleShape
-
   FilledIconButton(
     onClick = onClick,
     modifier = Modifier.rotate(-45f).size(confirmWidth, confirmHeight),
-    shape = confirmShape
+    shape = CircleShape
   ) {
     Row(modifier = Modifier.align(Alignment.Center).graphicsLayer { rotationZ = 45f }) {
       Icon(
@@ -150,13 +148,14 @@ fun DismissButton(
   onClick: () -> Unit
 ) {
   val dismissSize = if (isSmallScreen()) 56.dp else 64.dp
-  val dismissShape = MaterialTheme.shapes.medium
-
   Box(modifier = Modifier.size(dismissSize)) {
     FilledTonalIconButton(
       onClick = onClick,
       modifier = Modifier.size(dismissSize).align(Alignment.BottomEnd),
-      shape = dismissShape,
+      shape = MaterialTheme.shapes.medium,
+      colors = IconButtonDefaults.filledTonalIconButtonColors(
+        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+      )
     ) {
       Icon(
         painter = painterResource(id = iconResId),

@@ -28,11 +28,10 @@ import xyz.zedler.patrick.tack.R
 @Composable
 fun PermissionDialog(
   show: Boolean = true,
-  onDismissRequest: () -> Unit = {},
   onRetry: () -> Unit = {},
   onDismiss: () -> Unit = {}
 ) {
-  TackDialog(
+  BaseDialog(
     show = show,
     icon = R.drawable.ic_rounded_error,
     title = R.string.wear_msg_notification_permission_denied,
@@ -41,7 +40,6 @@ fun PermissionDialog(
     confirmString = R.string.wear_action_retry,
     dismissIcon = R.drawable.ic_rounded_close,
     dismissString = R.string.wear_action_cancel,
-    onDismissRequest = onDismissRequest,
     onConfirm = onRetry,
     onDismiss = onDismiss
   )
