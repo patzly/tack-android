@@ -19,11 +19,9 @@
 
 package xyz.zedler.patrick.tack.presentation.components
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,18 +46,14 @@ fun DialogDismissButton(
   }
 ) {
   val dismissSize = if (isSmallScreen()) 56.dp else 64.dp
-  Box(modifier = modifier.size(dismissSize)) { // TODO: remove box?
-    FilledTonalIconButton(
-      onClick = onClick,
-      modifier = Modifier
-        .size(dismissSize)
-        .align(Alignment.BottomEnd),
-      shape = MaterialTheme.shapes.medium,
-      colors = IconButtonDefaults.filledTonalIconButtonColors(
-        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-      )
-    ) {
-      icon()
-    }
+  FilledTonalIconButton(
+    onClick = onClick,
+    modifier = modifier.size(dismissSize),
+    shape = MaterialTheme.shapes.medium,
+    colors = IconButtonDefaults.filledTonalIconButtonColors(
+      containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+    )
+  ) {
+    icon()
   }
 }
