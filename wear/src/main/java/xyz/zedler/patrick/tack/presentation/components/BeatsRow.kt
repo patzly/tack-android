@@ -36,18 +36,16 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.MaterialTheme
 
 @Composable
-fun FadingEdgeRow(
-  verticalAlignment: Alignment.Vertical,
-  horizontalArrangement: Arrangement.HorizontalOrVertical,
+fun BeatsRow(
   modifier: Modifier = Modifier,
-  color: Color = MaterialTheme.colorScheme.surfaceContainer,
+  color: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
   content: @Composable RowScope.() -> Unit
 ) {
   Box(modifier = modifier) {
     val scrollState = rememberScrollState()
     Row(
-      verticalAlignment = verticalAlignment,
-      horizontalArrangement = horizontalArrangement,
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.Center,
       modifier = Modifier
         .fillMaxSize()
         .horizontalScroll(scrollState)

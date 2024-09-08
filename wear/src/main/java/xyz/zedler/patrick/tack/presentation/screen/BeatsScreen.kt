@@ -20,7 +20,6 @@
 package xyz.zedler.patrick.tack.presentation.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -35,7 +34,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,7 +55,7 @@ import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.components.BeatIconButton
-import xyz.zedler.patrick.tack.presentation.components.FadingEdgeRow
+import xyz.zedler.patrick.tack.presentation.components.BeatsRow
 import xyz.zedler.patrick.tack.presentation.components.TextIconButton
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
@@ -262,10 +260,7 @@ fun ControlCard(
           animated = !reduceAnim
         )
       }
-      FadingEdgeRow(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
-        color = MaterialTheme.colorScheme.surfaceContainerHigh,
+      BeatsRow(
         modifier = Modifier
           .fillMaxHeight()
           .weight(1f)
