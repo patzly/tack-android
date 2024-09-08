@@ -43,11 +43,13 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.wear.compose.material3.CardDefaults
 import androidx.wear.compose.material3.LocalContentColor
 import androidx.wear.compose.material3.LocalTextStyle
 import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
+import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 
 @Composable
 fun WrapContentCard(
@@ -56,11 +58,10 @@ fun WrapContentCard(
   backgroundPainter: Painter = ColorPainter(MaterialTheme.colorScheme.background),
   contentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
   border: BorderStroke? = null,
-  enabled: Boolean = true,
   contentPadding: PaddingValues = CardDefaults.ContentPadding,
   shape: Shape = MaterialTheme.shapes.large,
   interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-  role: Role? = null,
+  enabled: Boolean = true,
   content: @Composable ColumnScope.() -> Unit,
 ) {
   BasicCard(
@@ -72,7 +73,6 @@ fun WrapContentCard(
     contentPadding = contentPadding,
     shape = shape,
     interactionSource = interactionSource,
-    role = role,
     ripple = LocalIndication.current
   ) {
     CompositionLocalProvider(
@@ -80,6 +80,18 @@ fun WrapContentCard(
       LocalTextStyle provides MaterialTheme.typography.displayMedium,
     ) {
       content()
+    }
+  }
+}
+
+@Preview
+@Composable
+fun WrapContentCardPreview() {
+  TackTheme {
+    WrapContentCard(onClick = {}) {
+      Column {
+        Text("Preview")
+      }
     }
   }
 }
@@ -94,7 +106,6 @@ private fun BasicCard(
   contentPadding: PaddingValues,
   shape: Shape,
   interactionSource: MutableInteractionSource,
-  role: Role?,
   ripple: Indication,
   content: @Composable ColumnScope.() -> Unit,
 ) {
@@ -110,7 +121,6 @@ private fun BasicCard(
       .clickable(
         enabled = enabled,
         onClick = onClick,
-        role = role,
         indication = ripple,
         interactionSource = interactionSource,
       )

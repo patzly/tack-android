@@ -39,6 +39,7 @@ import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import xyz.zedler.patrick.tack.Constants.TickType
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 
 @Composable
@@ -129,11 +130,48 @@ fun BeatIconButton(
 
 @Preview
 @Composable
-fun BeatIconButtonPreview() {
-  BeatIconButton(
-    index = 0,
-    tickType = TickType.STRONG,
-    animTrigger = false,
-    modifier = Modifier.size(IconButtonDefaults.ExtraSmallButtonSize)
-  )
+fun BeatIconButtonPreviewNormal() {
+  TackTheme {
+    BeatIconButton(
+      index = 0,
+      tickType = TickType.NORMAL,
+      animTrigger = false
+    )
+  }
+}
+
+@Preview
+@Composable
+fun BeatIconButtonPreviewStrong() {
+  TackTheme {
+    BeatIconButton(
+      index = 0,
+      tickType = TickType.STRONG,
+      animTrigger = false
+    )
+  }
+}
+
+@Preview
+@Composable
+fun BeatIconButtonPreviewSub() {
+  TackTheme {
+    BeatIconButton(
+      index = 0,
+      tickType = TickType.SUB,
+      animTrigger = false
+    )
+  }
+}
+
+@Preview
+@Composable
+fun BeatIconButtonPreviewMuted() {
+  TackTheme {
+    BeatIconButton(
+      index = 0,
+      tickType = TickType.MUTED,
+      animTrigger = false
+    )
+  }
 }

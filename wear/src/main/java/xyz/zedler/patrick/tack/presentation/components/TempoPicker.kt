@@ -20,6 +20,7 @@
 package xyz.zedler.patrick.tack.presentation.components
 
 import androidx.annotation.FloatRange
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
@@ -40,7 +42,9 @@ import androidx.wear.compose.material3.Picker
 import androidx.wear.compose.material3.PickerDefaults
 import androidx.wear.compose.material3.PickerState
 import androidx.wear.compose.material3.Text
+import androidx.wear.compose.material3.rememberPickerState
 import xyz.zedler.patrick.tack.Constants
+import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import java.lang.reflect.Field
 
 @Composable
@@ -77,6 +81,22 @@ fun TempoPicker(
           append(items[it].toString())
         }
       }
+    )
+  }
+}
+
+@Preview
+@Composable
+fun TempoPickerPreview() {
+  TackTheme {
+    val state = rememberPickerState(
+      initialNumberOfOptions = 10,
+      repeatItems = false
+    )
+    TempoPicker(
+      state = state,
+      modifier = Modifier.size(100.dp, 100.dp),
+      contentDescription = null
     )
   }
 }

@@ -26,20 +26,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.FilledTonalIconButton
 import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.touchTargetAwareSize
+import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.isSmallScreen
 
 @Composable
 fun TextIconButton(
   label: String,
-  reduceAnim: Boolean,
   onClick: () -> Unit,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
+  reduceAnim: Boolean = false,
 ) {
   val interactionSource = remember { MutableInteractionSource() }
   FilledTonalIconButton(
@@ -65,6 +67,17 @@ fun TextIconButton(
       textAlign = TextAlign.Center,
       style = MaterialTheme.typography.titleLarge,
       text = label
+    )
+  }
+}
+
+@Preview
+@Composable
+fun TextIconButtonPreview() {
+  TackTheme {
+    TextIconButton(
+      label = "+1",
+      onClick = {},
     )
   }
 }

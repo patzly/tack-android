@@ -28,8 +28,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.FilledIconButton
+import androidx.wear.compose.material3.Icon
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.isSmallScreen
 
 @Composable
@@ -54,5 +59,21 @@ fun DialogConfirmButton(
     ) {
       icon()
     }
+  }
+}
+
+@Preview
+@Composable
+fun DialogConfirmButtonPreview() {
+  TackTheme {
+    DialogConfirmButton(
+      onClick = {},
+      icon = {
+        Icon(
+          painter = painterResource(id = R.drawable.ic_rounded_check),
+          contentDescription = null
+        )
+      }
+    )
   }
 }
