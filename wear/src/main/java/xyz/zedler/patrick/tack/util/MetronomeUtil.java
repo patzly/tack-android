@@ -416,6 +416,9 @@ public class MetronomeUtil {
   public void setGain(int gain) {
     audioUtil.setGain(gain);
     sharedPrefs.edit().putInt(Pref.GAIN, gain).apply();
+    if (gain > 0) {
+      neverStartedWithGain = true;
+    }
   }
 
   public int getGain() {

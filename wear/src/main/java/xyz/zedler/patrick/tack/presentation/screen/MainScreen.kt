@@ -290,7 +290,7 @@ fun MainScreen(
         )
         PermissionDialog(
           show = showPermissionDialog,
-          onRetry = {
+          onConfirm = {
             viewModel.changeShowPermissionDialog(false)
             onPermissionRequestClick()
           },

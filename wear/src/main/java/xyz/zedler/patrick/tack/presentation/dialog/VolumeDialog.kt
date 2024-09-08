@@ -19,31 +19,91 @@
 
 package xyz.zedler.patrick.tack.presentation.dialog
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.wear.compose.material3.AlertDialog
+import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.presentation.components.DialogConfirmButton
+import xyz.zedler.patrick.tack.presentation.components.DialogDismissButton
+import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 
-@Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true)
 @Composable
 fun VolumeDialog(
-  show: Boolean = true,
-  onConfirm: () -> Unit = {},
-  onDismiss: () -> Unit = {},
+  show: Boolean,
+  onConfirm: () -> Unit,
+  onDismiss: () -> Unit,
   onSwipeDismiss: () -> Unit = {},
 ) {
-  BaseDialog(
-    show = show,
-    icon = R.drawable.ic_rounded_speaker,
-    title = R.string.wear_msg_gain,
-    text = R.string.wear_msg_gain_description,
-    caution = true,
-    confirmIcon = R.drawable.ic_rounded_check,
-    confirmString = R.string.wear_action_play_stop,
-    dismissIcon = R.drawable.ic_rounded_close,
-    dismissString = R.string.wear_action_cancel,
-    onSwipeDismiss = onSwipeDismiss,
-    onConfirm = onConfirm,
-    onDismiss = onDismiss
+  TackTheme {
+    AlertDialog(
+      show = show,
+      confirmButton = {
+        DialogConfirmButton(
+          onClick = onConfirm,
+          icon = {
+            Icon(
+              painter = painterResource(id = R.drawable.ic_rounded_check),
+              contentDescription = stringResource(id = R.string.wear_action_play_stop)
+            )
+          }
+        )
+      },
+      dismissButton = {
+        DialogDismissButton(onClick = onDismiss)
+      },
+      onDismissRequest = onSwipeDismiss,
+      icon = {
+        Icon(
+          painter = painterResource(id = R.drawable.ic_rounded_speaker),
+          contentDescription = null,
+          tint = MaterialTheme.colorScheme.onBackground
+        )
+      },
+      title = {
+        Text(
+          text = stringResource(id = R.string.wear_msg_gain),
+          style = MaterialTheme.typography.titleMedium,
+          textAlign = TextAlign.Center,
+          modifier = Modifier.fillMaxWidth()
+        )
+      },
+      text = {
+        Text(
+          text = stringResource(id = R.string.wear_msg_gain_description),
+          style = MaterialTheme.typography.bodySmall,
+          color = MaterialTheme.colorScheme.error,
+          textAlign = TextAlign.Center,
+          modifier = Modifier.fillMaxWidth()
+        )
+      },
+      contentPadding = PaddingValues(
+        start = 8.dp,
+        end = 8.dp,
+        top = 24.dp,
+        bottom = 32.dp
+      )
+    )
+  }
+}
+
+@Preview(device = WearDevices.LARGE_ROUND)
+@Composable
+fun VolumeDialogPreview() {
+  VolumeDialog(
+    show = true,
+    onConfirm = {},
+    onDismiss = {},
+    onSwipeDismiss = {}
   )
 }

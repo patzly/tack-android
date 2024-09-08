@@ -39,8 +39,8 @@ import androidx.wear.compose.material3.MaterialTheme
 fun FadingEdgeRow(
   verticalAlignment: Alignment.Vertical,
   horizontalArrangement: Arrangement.HorizontalOrVertical,
+  modifier: Modifier = Modifier,
   color: Color = MaterialTheme.colorScheme.surfaceContainer,
-  modifier: Modifier,
   content: @Composable RowScope.() -> Unit
 ) {
   Box(modifier = modifier) {

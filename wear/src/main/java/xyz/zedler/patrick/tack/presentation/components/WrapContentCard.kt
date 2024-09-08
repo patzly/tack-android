@@ -63,7 +63,7 @@ fun WrapContentCard(
   role: Role? = null,
   content: @Composable ColumnScope.() -> Unit,
 ) {
-  BaseCard(
+  BasicCard(
     onClick = onClick,
     modifier = modifier,
     border = border,
@@ -85,7 +85,7 @@ fun WrapContentCard(
 }
 
 @Composable
-private fun BaseCard(
+private fun BasicCard(
   onClick: () -> Unit,
   modifier: Modifier,
   border: BorderStroke?,

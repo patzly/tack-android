@@ -32,6 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.IconButton
 import androidx.wear.compose.material3.IconButtonDefaults
@@ -42,12 +43,13 @@ import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 
 @Composable
 fun BeatIconButton(
-  tickType: String,
   index: Int,
-  enabled: Boolean = true,
-  onClick: () -> Unit,
+  tickType: String,
   animTrigger: Boolean,
-  reduceAnim: Boolean
+  modifier: Modifier = Modifier,
+  onClick: () -> Unit = {},
+  reduceAnim: Boolean = false,
+  enabled: Boolean = true
 ) {
   val shapesFilled = listOf(
     R.drawable.ic_beat_star_filled_anim,
@@ -106,10 +108,8 @@ fun BeatIconButton(
   IconButton(
     enabled = enabled,
     onClick = onClick,
-    colors = IconButtonDefaults.iconButtonColors(
-      contentColor = color,
-    ),
-    modifier = Modifier.size(IconButtonDefaults.ExtraSmallButtonSize)
+    colors = IconButtonDefaults.iconButtonColors(contentColor = color),
+    modifier = modifier.size(IconButtonDefaults.ExtraSmallButtonSize)
   ) {
     val resId = when (tickType) {
       TickType.STRONG -> shapesFilled[index % shapesFilled.size]
@@ -125,4 +125,15 @@ fun BeatIconButton(
       animated = tickType != TickType.MUTED && !reduceAnim
     )
   }
+}
+
+@Preview
+@Composable
+fun BeatIconButtonPreview() {
+  BeatIconButton(
+    index = 0,
+    tickType = TickType.STRONG,
+    animTrigger = false,
+    modifier = Modifier.size(IconButtonDefaults.ExtraSmallButtonSize)
+  )
 }

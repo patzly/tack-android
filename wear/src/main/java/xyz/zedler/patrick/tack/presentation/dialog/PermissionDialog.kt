@@ -19,28 +19,88 @@
 
 package xyz.zedler.patrick.tack.presentation.dialog
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.wear.compose.material3.AlertDialog
+import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.presentation.components.DialogConfirmButton
+import xyz.zedler.patrick.tack.presentation.components.DialogDismissButton
+import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 
-@Preview(device = WearDevices.LARGE_ROUND, showSystemUi = true)
 @Composable
 fun PermissionDialog(
-  show: Boolean = true,
-  onRetry: () -> Unit = {},
-  onDismiss: () -> Unit = {}
+  show: Boolean,
+  onConfirm: () -> Unit,
+  onDismiss: () -> Unit
 ) {
-  BaseDialog(
-    show = show,
-    icon = R.drawable.ic_rounded_error,
-    title = R.string.wear_msg_notification_permission_denied,
-    text = R.string.wear_msg_notification_permission_denied_description,
-    confirmIcon = R.drawable.ic_rounded_repeat,
-    confirmString = R.string.wear_action_retry,
-    dismissIcon = R.drawable.ic_rounded_close,
-    dismissString = R.string.wear_action_cancel,
-    onConfirm = onRetry,
-    onDismiss = onDismiss
+  TackTheme {
+    AlertDialog(
+      show = show,
+      confirmButton = {
+        DialogConfirmButton(
+          onClick = onConfirm,
+          icon = {
+            Icon(
+              painter = painterResource(id = R.drawable.ic_rounded_repeat),
+              contentDescription = stringResource(id = R.string.wear_action_retry)
+            )
+          }
+        )
+      },
+      dismissButton = {
+        DialogDismissButton(onClick = onDismiss)
+      },
+      onDismissRequest = onDismiss,
+      icon = {
+        Icon(
+          painter = painterResource(id = R.drawable.ic_rounded_error),
+          contentDescription = null,
+          tint = MaterialTheme.colorScheme.onBackground
+        )
+      },
+      title = {
+        Text(
+          text = stringResource(id = R.string.wear_msg_notification_permission_denied),
+          style = MaterialTheme.typography.titleMedium,
+          textAlign = TextAlign.Center,
+          modifier = Modifier.fillMaxWidth()
+        )
+      },
+      text = {
+        Text(
+          text = stringResource(id = R.string.wear_msg_notification_permission_denied_description),
+          style = MaterialTheme.typography.bodySmall,
+          textAlign = TextAlign.Center,
+          modifier = Modifier.fillMaxWidth()
+        )
+      },
+      contentPadding = PaddingValues(
+        start = 8.dp,
+        end = 8.dp,
+        top = 24.dp,
+        bottom = 32.dp
+      )
+    )
+  }
+}
+
+@Preview(device = WearDevices.LARGE_ROUND)
+@Composable
+fun PermissionDialogPreview() {
+  PermissionDialog(
+    show = true,
+    onConfirm = {},
+    onDismiss = {}
   )
 }

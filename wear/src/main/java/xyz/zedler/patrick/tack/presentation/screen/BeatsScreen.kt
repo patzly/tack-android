@@ -117,10 +117,9 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
               }
               val trigger by viewModel.beatTriggers[triggerIndex].observeAsState(false)
               BeatIconButton(
-                tickType = beat,
                 index = index,
+                tickType = beat,
                 animTrigger = trigger,
-                reduceAnim = reduceAnim,
                 onClick = {
                   val next = when (beat) {
                     Constants.TickType.NORMAL -> Constants.TickType.STRONG
@@ -128,7 +127,8 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
                     else -> Constants.TickType.NORMAL
                   }
                   viewModel.changeBeat(index, next)
-                }
+                },
+                reduceAnim = reduceAnim
               )
             }
           }
@@ -163,11 +163,9 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
               }
               val trigger by viewModel.subdivisionTriggers[triggerIndex].observeAsState(false)
               BeatIconButton(
-                tickType = subdivision,
                 index = index,
-                enabled = index != 0,
+                tickType = subdivision,
                 animTrigger = trigger,
-                reduceAnim = reduceAnim,
                 onClick = {
                   val next = when (subdivision) {
                     Constants.TickType.NORMAL -> Constants.TickType.MUTED
@@ -175,7 +173,9 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
                     else -> Constants.TickType.SUB
                   }
                   viewModel.changeSubdivision(index, next)
-                }
+                },
+                reduceAnim = reduceAnim,
+                enabled = index != 0
               )
             }
           }
