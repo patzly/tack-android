@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.presentation.components
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -44,6 +46,7 @@ import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 fun BeatsRow(
   modifier: Modifier = Modifier,
   color: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
+  animated: Boolean = true,
   content: @Composable RowScope.() -> Unit
 ) {
   Box(modifier = modifier) {
@@ -55,7 +58,13 @@ fun BeatsRow(
         .fillMaxSize()
         .horizontalScroll(scrollState)
     ) {
-      content()
+      Row(
+        modifier = Modifier
+          .wrapContentSize()
+          .let { if (animated) it.animateContentSize() else it },
+      ) {
+        content()
+      }
     }
 
     val gradientWidth = 8.dp.value

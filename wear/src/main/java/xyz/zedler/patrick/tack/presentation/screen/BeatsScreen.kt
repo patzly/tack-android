@@ -105,7 +105,8 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
               viewModel.removeBeat()
             },
             addEnabled = beats.size < Constants.BEATS_MAX,
-            removeEnabled = beats.size > 1
+            removeEnabled = beats.size > 1,
+            animated = !reduceAnim
           ) {
             beats.forEachIndexed { index, beat ->
               val triggerIndex = if (index < viewModel.beatTriggers.size) {
@@ -151,7 +152,8 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
               viewModel.removeSubdivision()
             },
             addEnabled = subdivisions.size < Constants.SUBS_MAX,
-            removeEnabled = subdivisions.size > 1
+            removeEnabled = subdivisions.size > 1,
+            animated = !reduceAnim
           ) {
             subdivisions.forEachIndexed { index, subdivision ->
               val triggerIndex = if (index < viewModel.subdivisionTriggers.size) {
@@ -226,6 +228,7 @@ fun ControlCard(
   onClickRemove: () -> Unit,
   addEnabled: Boolean,
   removeEnabled: Boolean,
+  animated: Boolean = true,
   content: @Composable RowScope.() -> Unit
 ) {
   val size = if (isSmallScreen()) 42.dp else IconButtonDefaults.SmallButtonSize
@@ -261,9 +264,8 @@ fun ControlCard(
         )
       }
       BeatsRow(
-        modifier = Modifier
-          .fillMaxHeight()
-          .weight(1f)
+        animated = animated,
+        modifier = Modifier.fillMaxHeight().weight(1f)
       ) {
         content()
       }
