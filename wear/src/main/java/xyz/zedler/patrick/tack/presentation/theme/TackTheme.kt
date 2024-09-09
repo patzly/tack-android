@@ -65,10 +65,10 @@ private fun tackColorScheme(): ColorScheme {
     onSurfaceVariant = Color(0xFFCDC6B4),
     outline = Color(0xFF969080),
     outlineVariant = Color(0xFF4B4739),
-    error = Color(0xFFFFB4A8),
-    onError = Color(0xFF561E17),
-    errorContainer = Color(0xFF73342B),
-    onErrorContainer = Color(0xFFFFDAD5)
+    error = Color(0xFFffb595),
+    onError = Color(0xFF542105),
+    errorContainer = Color(0xFF713619),
+    onErrorContainer = Color(0xFFffdbcd)
   )
 }
 
