@@ -99,7 +99,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
         keepScreenAwake(this@MainActivity, keepAwake)
       }
       override fun onPlayingToggleRequest() {
-        getMetronomeUtil().isPlaying = !getMetronomeUtil().isPlaying
+        getMetronomeUtil().setPlayback(!getMetronomeUtil().isPlaying)
         viewModel.updatePlaying(getMetronomeUtil().isPlaying)
       }
       override fun onBookmarkToggleRequest() {

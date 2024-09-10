@@ -182,7 +182,6 @@ fun MainScreen(
             state = state,
             animTrigger = state.isPlaying,
             onClick = {
-              // TODO: startedWithGain behavior
               if (state.isPlaying || (state.gain == 0 || state.startedWithGain)) {
                 viewModel.togglePlaying()
               } else {

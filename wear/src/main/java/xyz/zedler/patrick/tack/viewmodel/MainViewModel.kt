@@ -74,9 +74,10 @@ class MainViewModel(
 
   fun updatePlaying(playing: Boolean) {
     if (_state.value.isPlaying != playing) {
+
       _state.update { it.copy(
         isPlaying = playing,
-        startedWithGain = playing && _state.value.gain > 0 // TODO: other logic needed?
+        startedWithGain = if (playing) _state.value.gain > 0 else _state.value.startedWithGain
       ) }
     }
   }
@@ -193,7 +194,7 @@ class MainViewModel(
   fun updateGain(gain: Int) {
     _state.update { it.copy(
       gain = gain,
-      startedWithGain = gain == 0
+      startedWithGain = gain == 0 || _state.value.startedWithGain
     ) }
     listener?.onMetronomeConfigChanged(_state.value)
     sharedPrefs?.edit()?.putInt(Pref.GAIN, gain)?.apply()

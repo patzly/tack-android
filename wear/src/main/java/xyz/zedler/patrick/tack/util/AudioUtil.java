@@ -210,7 +210,7 @@ public class AudioUtil implements OnAudioFocusChangeListener {
   }
 
   private void writeTickPeriod(Tick tick, int tempo, int subdivisionCount) {
-    float[] tickSound = muted ? silence : getTickSound(tick.type);
+    float[] tickSound = muted ? silence : getTickSound(tick.getType());
     int periodSize = 60 * SAMPLE_RATE_IN_HZ / tempo / subdivisionCount;
     int sizeWritten = writeNextAudioData(tickSound, periodSize, 0);
     if (DEBUG) {

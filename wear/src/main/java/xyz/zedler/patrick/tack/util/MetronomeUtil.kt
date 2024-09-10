@@ -17,477 +17,309 @@
  * Copyright (c) 2020-2024 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+package xyz.zedler.patrick.tack.util
 
-import android.content.Context;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.os.Looper;
-import android.util.Log;
-import androidx.annotation.NonNull;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.TickType;
-import xyz.zedler.patrick.tack.presentation.state.MainState;
+import android.content.Context
+import android.os.Handler
+import android.os.HandlerThread
+import android.os.Looper
+import android.util.Log
+import xyz.zedler.patrick.tack.Constants
+import xyz.zedler.patrick.tack.Constants.TickType
+import xyz.zedler.patrick.tack.presentation.state.MainState
 
-public class MetronomeUtil {
+class MetronomeUtil(
+  context: Context,
+  private val fromService: Boolean
+) {
+  private val audioUtil = AudioUtil(context) { stop() }
+  private val hapticUtil = HapticUtil(context)
+  private val bookmarkUtil = BookmarkUtil(context)
+  private val notificationUtil = NotificationUtil(context)
 
-  private static final String TAG = MetronomeUtil.class.getSimpleName();
+  private var audioThread: HandlerThread? = null
+  private var callbackThread: HandlerThread? = null
+  private var tickHandler: Handler? = null
+  private var latencyHandler: Handler? = null
+  private var flashHandler: Handler? = null
 
-  private final AudioUtil audioUtil;
-  private final HapticUtil hapticUtil;
-  private final BookmarkUtil bookmarkUtil;
-  private final NotificationUtil notificationUtil;
-  private final Set<MetronomeListener> listeners = new HashSet<>();
-  public final boolean fromService;
-  private HandlerThread audioThread, callbackThread;
-  private Handler tickHandler, latencyHandler, flashHandler;
-  private List<String> beats, subdivisions;
-  private int tempo;
-  private long tickIndex, latency;
-  private boolean playing, beatModeVibrate;
-  private boolean alwaysVibrate, flashScreen;
-  private boolean neverStartedWithGain = true;
+  private var tickIndex: Long = 0
+  private var latency: Long = 0
+  private var beatModeVibrate: Boolean = false
+  private var alwaysVibrate: Boolean = false
+  private var flashScreen: Boolean = false
 
-  public MetronomeUtil(@NonNull Context context, boolean fromService) {
-    this.fromService = fromService;
+  val listeners: MutableSet<MetronomeListener> = mutableSetOf()
+  var beats: MutableList<String> = mutableListOf()
+    set(value) {
+      field = value.toMutableList()
+    }
+  var subdivisions: MutableList<String> = mutableListOf()
+    set(value) {
+      field = value.toMutableList()
+    }
+  var tempo: Int = 0
+  var isPlaying: Boolean = false
+    private set
 
-    audioUtil = new AudioUtil(context, this::stop);
-    hapticUtil = new HapticUtil(context);
-    bookmarkUtil = new BookmarkUtil(context);
-    notificationUtil = new NotificationUtil(context);
-
-    resetHandlersIfRequired();
+  init {
+    resetHandlersIfRequired()
   }
 
-  public void updateFromState(MainState state) {
-    tempo = state.getTempo();
-    beats = new ArrayList<>(state.getBeats());
-    subdivisions = new ArrayList<>(state.getSubdivisions());
-    latency = state.getLatency();
-    flashScreen = state.getFlashScreen();
-
-    setSound(state.getSound());
-    setIgnoreFocus(state.getIgnoreFocus());
-    setGain(state.getGain());
-    setBeatModeVibrate(state.getBeatModeVibrate());
-    setAlwaysVibrate(state.getAlwaysVibrate());
-    setStrongVibration(state.getStrongVibration());
+  fun updateFromState(state: MainState) {
+    tempo = state.tempo
+    beats = state.beats.toMutableList()
+    subdivisions = state.subdivisions.toMutableList()
+    latency = state.latency
+    flashScreen = state.flashScreen
+    setSound(state.sound)
+    setIgnoreFocus(state.ignoreFocus)
+    setGain(state.gain)
+    setBeatModeVibrate(state.beatModeVibrate)
+    setAlwaysVibrate(state.alwaysVibrate)
+    setStrongVibration(state.strongVibration)
   }
 
-  private void resetHandlersIfRequired() {
-    if (!fromService) {
-      return;
+  private fun resetHandlersIfRequired() {
+    if (!fromService) return
+
+    if (audioThread == null || audioThread?.isAlive == false) {
+      audioThread = HandlerThread("metronome_audio").apply { start() }
+      removeHandlerCallbacks()
+      tickHandler = Handler(audioThread!!.looper)
     }
-    if (audioThread == null || !audioThread.isAlive()) {
-      audioThread = new HandlerThread("metronome_audio");
-      audioThread.start();
-      removeHandlerCallbacks();
-      tickHandler = new Handler(audioThread.getLooper());
+    if (callbackThread == null || callbackThread?.isAlive == false) {
+      callbackThread = HandlerThread("metronome_callback").apply { start() }
+      removeHandlerCallbacks()
+      latencyHandler = Handler(callbackThread!!.looper)
     }
-    if (callbackThread == null || !callbackThread.isAlive()) {
-      callbackThread = new HandlerThread("metronome_callback");
-      callbackThread.start();
-      removeHandlerCallbacks();
-      latencyHandler = new Handler(callbackThread.getLooper());
-    }
-    flashHandler = new Handler(Looper.getMainLooper());
+    flashHandler = Handler(Looper.getMainLooper())
   }
 
-  private void removeHandlerCallbacks() {
-    if (tickHandler != null) {
-      tickHandler.removeCallbacksAndMessages(null);
-    }
-    if (latencyHandler != null) {
-      latencyHandler.removeCallbacksAndMessages(null);
-    }
+  private fun removeHandlerCallbacks() {
+    tickHandler?.removeCallbacksAndMessages(null)
+    latencyHandler?.removeCallbacksAndMessages(null)
   }
 
-  public void destroy() {
-    listeners.clear();
+  fun destroy() {
+    listeners.clear()
     if (fromService) {
-      removeHandlerCallbacks();
-      audioThread.quitSafely();
-      callbackThread.quit();
+      removeHandlerCallbacks()
+      audioThread?.quitSafely()
+      callbackThread?.quit()
     }
   }
 
-  public void addListener(MetronomeListener listener) {
-    listeners.add(listener);
+  fun addListener(listener: MetronomeListener) {
+    listeners.add(listener)
   }
 
-  public void addListeners(Set<MetronomeListener> listeners) {
-    this.listeners.addAll(listeners);
+  fun addListeners(newListeners: Set<MetronomeListener>) {
+    listeners.addAll(newListeners)
   }
 
-  public Set<MetronomeListener> getListeners() {
-    return Collections.unmodifiableSet(listeners);
-  }
+  fun start() {
+    bookmarkUtil.reportUsage(tempo)
+    if (isPlaying) return
+    if (!fromService) return
 
-  public void start() {
-    bookmarkUtil.reportUsage(tempo);
-    if (isPlaying()) {
-      return;
-    }
-    if (!fromService) {
-      return;
-    } else {
-      resetHandlersIfRequired();
-    }
-
-    playing = true;
-    audioUtil.play();
-    tickIndex = 0;
-    tickHandler.post(new Runnable() {
-      @Override
-      public void run() {
-        if (isPlaying()) {
-          tickHandler.postDelayed(this, getInterval() / getSubdivisionsCount());
-          Tick tick = new Tick(
-              tickIndex, getCurrentBeat(), getCurrentSubdivision(), getCurrentTickType()
-          );
-          performTick(tick);
-          audioUtil.tick(tick, tempo, getSubdivisionsCount());
-          tickIndex++;
+    resetHandlersIfRequired()
+    isPlaying = true
+    audioUtil.play()
+    tickIndex = 0
+    tickHandler?.post(object : Runnable {
+      override fun run() {
+        if (isPlaying) {
+          tickHandler?.postDelayed(this, getInterval() / getSubdivisionsCount())
+          val tick = Tick(tickIndex, getCurrentBeat(), getCurrentSubdivision(), getCurrentTickType())
+          performTick(tick)
+          audioUtil.tick(tick, tempo, getSubdivisionsCount())
+          tickIndex++
         }
       }
-    });
+    })
 
-    if (getGain() > 0) {
-      neverStartedWithGain = false;
-    }
-
-    for (MetronomeListener listener : listeners) {
-      listener.onMetronomeStart();
-    }
-    Log.i(TAG, "start: started metronome handler");
+    listeners.forEach { it.onMetronomeStart() }
+    Log.i(TAG, "start: started metronome handler")
   }
 
-  public void stop() {
-    if (!isPlaying()) {
-      return;
-    }
-    playing = false;
-    audioUtil.stop();
+  fun stop() {
+    if (!isPlaying) return
+    isPlaying = false
+    audioUtil.stop()
 
     if (fromService) {
-      removeHandlerCallbacks();
+      removeHandlerCallbacks()
     }
 
-    for (MetronomeListener listener : listeners) {
-      listener.onMetronomeStop();
-    }
-    Log.i(TAG, "stop: stopped metronome handler");
+    listeners.forEach { it.onMetronomeStop() }
+    Log.i(TAG, "stop: stopped metronome handler")
   }
 
-  public void setPlaying(boolean playing) {
+  fun setPlayback(playing: Boolean) {
     if (playing) {
       if (notificationUtil.hasPermission()) {
-        start();
+        start()
       } else {
-        for (MetronomeListener listener : listeners) {
-          listener.onPermissionMissing();
-        }
+        listeners.forEach { it.onPermissionMissing() }
       }
     } else {
-      stop();
+      stop()
     }
   }
 
-  public boolean isPlaying() {
-    return playing;
+  fun changeBeat(beat: Int, tickType: String) {
+    beats[beat] = tickType
   }
 
-  public void setBeats(List<String> beats) {
-    this.beats = beats;
-  }
-
-  public List<String> getBeats() {
-    return beats;
-  }
-
-  public int getBeatsCount() {
-    return beats.size();
-  }
-
-  public void changeBeat(int beat, String tickType) {
-    List<String> beats = getBeats();
-    beats.set(beat, tickType);
-    setBeats(beats);
-  }
-
-  public void addBeat() {
-    if (beats.size() < Constants.BEATS_MAX) {
-      List<String> beats = getBeats();
-      beats.add(TickType.NORMAL);
-      setBeats(beats);
+  fun addBeat() {
+    if (beats.size < Constants.BEATS_MAX) {
+      beats.add(TickType.NORMAL)
     }
   }
 
-  public void removeBeat() {
-    if (beats.size() > 1) {
-      List<String> beats = getBeats();
-      beats.remove(beats.size() - 1);
-      setBeats(beats);
+  fun removeBeat() {
+    if (beats.size > 1) {
+      beats.removeAt(beats.size - 1)
     }
   }
 
-  public void setSubdivisions(List<String> subdivisions) {
-    this.subdivisions = subdivisions;
+  fun getSubdivisionsCount(): Int = subdivisions.size
+
+  fun changeSubdivision(subdivision: Int, tickType: String) {
+    subdivisions[subdivision] = tickType
   }
 
-  public List<String> getSubdivisions() {
-    return subdivisions;
-  }
-
-  public int getSubdivisionsCount() {
-    return subdivisions.size();
-  }
-
-  public void changeSubdivision(int subdivision, String tickType) {
-    List<String> subdivisions = getSubdivisions();
-    subdivisions.set(subdivision, tickType);
-    setSubdivisions(subdivisions);
-  }
-
-  public void addSubdivision() {
-    if (subdivisions.size() < Constants.SUBS_MAX) {
-      List<String> subdivisions = getSubdivisions();
-      subdivisions.add(TickType.SUB);
-      setSubdivisions(subdivisions);
+  fun addSubdivision() {
+    if (subdivisions.size < Constants.SUBS_MAX) {
+      subdivisions.add(TickType.SUB)
     }
   }
 
-  public void removeSubdivision() {
-    if (subdivisions.size() > 1) {
-      List<String> subdivisions = getSubdivisions();
-      subdivisions.remove(subdivisions.size() - 1);
-      setSubdivisions(subdivisions);
+  fun removeSubdivision() {
+    if (subdivisions.size > 1) {
+      subdivisions.removeAt(subdivisions.size - 1)
     }
   }
 
-  public void setSwing3() {
-    List<String> subdivisions = new ArrayList<>(
-        List.of(TickType.MUTED, TickType.MUTED, TickType.NORMAL)
-    );
-    setSubdivisions(subdivisions);
+  fun setSwing3() {
+    subdivisions = mutableListOf(TickType.MUTED, TickType.MUTED, TickType.NORMAL)
   }
 
-  public void setSwing5() {
-    List<String> subdivisions = new ArrayList<>(List.of(
-        TickType.MUTED, TickType.MUTED, TickType.MUTED, TickType.NORMAL, TickType.MUTED
-    ));
-    setSubdivisions(subdivisions);
+  fun setSwing5() {
+    subdivisions = mutableListOf(
+      TickType.MUTED, TickType.MUTED, TickType.MUTED, TickType.NORMAL, TickType.MUTED
+    )
   }
 
-  public void setSwing7() {
-    List<String> subdivisions = new ArrayList<>(List.of(
-        TickType.MUTED, TickType.MUTED, TickType.MUTED, TickType.MUTED,
-        TickType.NORMAL, TickType.MUTED, TickType.MUTED
-    ));
-    setSubdivisions(subdivisions);
+  fun setSwing7() {
+    subdivisions = mutableListOf(
+      TickType.MUTED, TickType.MUTED, TickType.MUTED, TickType.MUTED,
+      TickType.NORMAL, TickType.MUTED, TickType.MUTED
+    )
   }
 
-  public void setTempo(int tempo) {
-    if (this.tempo != tempo) {
-      this.tempo = tempo;
-    }
+  fun toggleBookmark() {
+    tempo = bookmarkUtil.toggleBookmark(tempo)
   }
 
-  public int getTempo() {
-    return tempo;
+  fun getInterval(): Long = (1000 * 60 / tempo).toLong()
+
+  private fun setSound(sound: String) {
+    audioUtil.setSound(sound)
   }
 
-  public void toggleBookmark() {
-    int tempoNew = bookmarkUtil.toggleBookmark(tempo);
-    setTempo(tempoNew);
+  private fun setBeatModeVibrate(vibrate: Boolean) {
+    beatModeVibrate = vibrate && hapticUtil.hasVibrator()
+    audioUtil.setMuted(beatModeVibrate)
+    hapticUtil.enabled = beatModeVibrate || alwaysVibrate
   }
 
-  public long getInterval() {
-    return 1000 * 60 / tempo;
+  private fun setAlwaysVibrate(always: Boolean) {
+    alwaysVibrate = always
+    hapticUtil.enabled = always || beatModeVibrate
   }
 
-  public void setSound(String sound) {
-    audioUtil.setSound(sound);
+  private fun setStrongVibration(strong: Boolean) {
+    hapticUtil.strong = strong
   }
 
-  public void setBeatModeVibrate(boolean vibrate) {
-    if (!hapticUtil.hasVibrator()) {
-      vibrate = false;
-    }
-    beatModeVibrate = vibrate;
-    audioUtil.setMuted(vibrate);
-    hapticUtil.setEnabled(vibrate || alwaysVibrate);
+  private fun setIgnoreFocus(ignore: Boolean) {
+    audioUtil.ignoreFocus = ignore
   }
 
-  public boolean getBeatModeVibrate() {
-    return beatModeVibrate;
+  private fun setGain(gain: Int) {
+    audioUtil.setGain(gain)
   }
 
-  public void setAlwaysVibrate(boolean always) {
-    alwaysVibrate = always;
-    hapticUtil.setEnabled(always || beatModeVibrate);
-  }
+  private fun performTick(tick: Tick) {
+    latencyHandler?.postDelayed({
+      listeners.forEach { it.onMetronomePreTick(tick) }
+    }, maxOf(0, latency - Constants.BEAT_ANIM_OFFSET))
 
-  public boolean getAlwaysVibrate() {
-    return alwaysVibrate;
-  }
-
-  public void setStrongVibration(boolean strong) {
-    hapticUtil.setStrong(strong);
-  }
-
-  public boolean getStrongVibration() {
-    return hapticUtil.getStrong();
-  }
-
-  public boolean areHapticEffectsPossible() {
-    return !isPlaying() || (!beatModeVibrate && !alwaysVibrate);
-  }
-
-  public void setLatency(long latency) {
-    this.latency = latency;
-  }
-
-  public long getLatency() {
-    return latency;
-  }
-
-  public void setIgnoreFocus(boolean ignore) {
-    audioUtil.setIgnoreFocus(ignore);
-  }
-
-  public boolean getIgnoreFocus() {
-    return audioUtil.getIgnoreFocus();
-  }
-
-  public void setGain(int gain) {
-    audioUtil.setGain(gain);
-    if (gain > 0) {
-      neverStartedWithGain = true;
-    }
-  }
-
-  public int getGain() {
-    return audioUtil.getGain();
-  }
-
-  public boolean neverStartedWithGainBefore() {
-    return neverStartedWithGain;
-  }
-
-  public void setFlashScreen(boolean flash) {
-    flashScreen = flash;
-  }
-
-  public boolean getFlashScreen() {
-    return flashScreen;
-  }
-
-  private void performTick(Tick tick) {
-    latencyHandler.postDelayed(() -> {
-      for (MetronomeListener listener : listeners) {
-        listener.onMetronomePreTick(tick);
-      }
-    }, Math.max(0, latency - Constants.BEAT_ANIM_OFFSET));
-    latencyHandler.postDelayed(() -> {
+    latencyHandler?.postDelayed({
       if (beatModeVibrate || alwaysVibrate) {
-        switch (tick.type) {
-          case TickType.STRONG:
-            hapticUtil.heavyClick();
-            break;
-          case TickType.SUB:
-            hapticUtil.tick();
-            break;
-          case TickType.MUTED:
-            break;
-          default:
-            hapticUtil.click();
+        when (tick.type) {
+          TickType.STRONG -> hapticUtil.heavyClick()
+          TickType.SUB -> hapticUtil.tick()
+          TickType.MUTED -> {}
+          else -> hapticUtil.click()
         }
       }
-      for (MetronomeListener listener : listeners) {
-        listener.onMetronomeTick(tick);
-      }
-    }, latency);
+      listeners.forEach { it.onMetronomeTick(tick) }
+    }, latency)
+
     if (flashScreen) {
-      flashHandler.postDelayed(() -> {
-        for (MetronomeListener listener : listeners) {
-          listener.onFlashScreenEnd();
-        }
-      }, latency + Constants.FLASH_SCREEN_DURATION);
+      flashHandler?.postDelayed({
+        listeners.forEach { it.onFlashScreenEnd() }
+      }, latency + Constants.FLASH_SCREEN_DURATION)
     }
   }
 
-  private int getCurrentBeat() {
-    return (int) ((tickIndex / getSubdivisionsCount()) % beats.size()) + 1;
-  }
+  private fun getCurrentBeat(): Int =
+    ((tickIndex / getSubdivisionsCount()) % beats.size + 1).toInt()
 
-  private int getCurrentSubdivision() {
-    return (int) (tickIndex % getSubdivisionsCount()) + 1;
-  }
+  private fun getCurrentSubdivision(): Int = (tickIndex % getSubdivisionsCount() + 1).toInt()
 
-  private String getCurrentTickType() {
-    int subdivisionsCount = getSubdivisionsCount();
-    if ((tickIndex % subdivisionsCount) == 0) {
-      return beats.get((int) ((tickIndex / subdivisionsCount) % beats.size()));
+  private fun getCurrentTickType(): String {
+    val subdivisionsCount = getSubdivisionsCount()
+    return if ((tickIndex % subdivisionsCount) == 0L) {
+      beats[((tickIndex / subdivisionsCount) % beats.size).toInt()]
     } else {
-      return subdivisions.get((int) (tickIndex % subdivisionsCount));
+      subdivisions[(tickIndex % subdivisionsCount).toInt()]
     }
   }
 
-  public interface MetronomeListener {
-    void onMetronomeStart();
-    void onMetronomeStop();
-    void onMetronomePreTick(@NonNull Tick tick);
-    void onMetronomeTick(@NonNull Tick tick);
-    void onFlashScreenEnd();
-    void onPermissionMissing();
+  interface MetronomeListener {
+    fun onMetronomeStart()
+    fun onMetronomeStop()
+    fun onMetronomePreTick(tick: Tick)
+    fun onMetronomeTick(tick: Tick)
+    fun onFlashScreenEnd()
+    fun onPermissionMissing()
   }
 
-  private static List<String> arrayAsList(String[] array) {
-    return new ArrayList<>(Arrays.asList(array));
+  open class MetronomeListenerAdapter : MetronomeListener {
+    override fun onMetronomeStart() {}
+    override fun onMetronomeStop() {}
+    override fun onMetronomePreTick(tick: Tick) {}
+    override fun onMetronomeTick(tick: Tick) {}
+    override fun onFlashScreenEnd() {}
+    override fun onPermissionMissing() {}
   }
 
-  public static class MetronomeListenerAdapter implements MetronomeListener {
-    @Override
-    public void onMetronomeStart() {}
-    @Override
-    public void onMetronomeStop() {}
-    @Override
-    public void onMetronomePreTick(@NonNull Tick tick) {}
-    @Override
-    public void onMetronomeTick(@NonNull Tick tick) {}
-    @Override
-    public void onFlashScreenEnd() {}
-    @Override
-    public void onPermissionMissing() {}
-  }
-
-  public static class Tick {
-    public final long index;
-    public final int beat, subdivision;
-    @NonNull
-    public final String type;
-
-    public Tick(long index, int beat, int subdivision, @NonNull String type) {
-      this.index = index;
-      this.beat = beat;
-      this.subdivision = subdivision;
-      this.type = type;
+  data class Tick(
+    val index: Long,
+    val beat: Int,
+    val subdivision: Int,
+    val type: String
+  ) {
+    override fun toString(): String {
+      return "Tick{index=$index, beat=$beat, sub=$subdivision, type=$type}"
     }
+  }
 
-    @NonNull
-    @Override
-    public String toString() {
-      return "Tick{index = " + index +
-          ", beat=" + beat +
-          ", sub=" + subdivision +
-          ", type=" + type + '}';
-    }
+  companion object {
+    private const val TAG = "MetronomeUtil"
   }
 }
