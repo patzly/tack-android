@@ -32,10 +32,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -71,6 +70,7 @@ import xyz.zedler.patrick.tack.presentation.components.TempoPicker
 import xyz.zedler.patrick.tack.presentation.components.WrapContentCard
 import xyz.zedler.patrick.tack.presentation.dialog.PermissionDialog
 import xyz.zedler.patrick.tack.presentation.dialog.VolumeDialog
+import xyz.zedler.patrick.tack.presentation.state.MainState
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.util.isSmallScreen
@@ -88,23 +88,21 @@ fun MainScreen(
   onPermissionRequestClick: () -> Unit = {}
 ) {
   TackTheme {
-    val flashTrigger by viewModel.flashTrigger.observeAsState(false)
-    val flashStrongTrigger by viewModel.flashStrongTrigger.observeAsState(false)
-    val background = if (flashStrongTrigger) {
+    val state by viewModel.state.collectAsState()
+
+    val background = if (state.flashStrong) {
       MaterialTheme.colorScheme.error
-    } else if (flashTrigger) {
-      MaterialTheme.colorScheme.tertiary
+    } else if (state.flash) {
+      MaterialTheme.colorScheme.primary
     } else {
       MaterialTheme.colorScheme.background
     }
 
-    val keepAwake by viewModel.keepAwake.observeAsState(Constants.Def.KEEP_AWAKE)
-    val isPlaying by viewModel.isPlaying.observeAsState(false)
-    val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
+    val ambient = state.isPlaying && state.keepAwake
     val controlsAlpha by animateFloatAsState(
-      targetValue = if (isPlaying && keepAwake) .5f else 1f,
+      targetValue = if (ambient) .5f else 1f,
       label = "controlsAlpha",
-      animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 300)
+      animationSpec = TweenSpec(durationMillis = if (state.reduceAnim) 0 else 300)
     )
 
     ScreenScaffold(
@@ -124,43 +122,34 @@ fun MainScreen(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
       ) {
-        val playAnimTrigger = remember { mutableStateOf(isPlaying) }
         var showVolumeDialog by remember { mutableStateOf(false) }
-        val showPermissionDialog by viewModel.showPermissionDialog.observeAsState(false)
 
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
           val (settingsButton, tempoCard, playButton) = createRefs()
           val (beatsButton, tempoTapButton) = createRefs()
           val (bookmarkButton, beatModeButton) = createRefs()
 
-          val tempo by viewModel.tempo.observeAsState(initial = Constants.Def.TEMPO)
-          val pickerOption = remember { tempo - 1 }
+          val pickerOption = remember { state.tempo - 1 }
           val pickerCoroutineScope = rememberCoroutineScope()
           val pickerState = rememberPickerState(
             initialNumberOfOptions = Constants.TEMPO_MAX,
             initiallySelectedOption = pickerOption,
             repeatItems = false
           )
-          LaunchedEffect(tempo) {
-            if (!viewModel.tempoChangedByPicker) {
+          LaunchedEffect(state.tempo) {
+            if (!state.tempoChangedByPicker) {
               pickerCoroutineScope.launch {
-                if (viewModel.animateTempoChange && !reduceAnim) {
-                  pickerState.animateScrollToOption(tempo - 1)
+                if (state.animateTempoChange && !state.reduceAnim) {
+                  pickerState.animateScrollToOption(state.tempo - 1)
                 } else {
-                  pickerState.scrollToOption(tempo - 1)
+                  pickerState.scrollToOption(state.tempo - 1)
                 }
               }
             }
           }
           LaunchedEffect(pickerState.selectedOption) {
-            viewModel.changeTempo(pickerState.selectedOption + 1, picker = true)
+            viewModel.updateTempo(pickerState.selectedOption + 1, picker = true)
           }
-
-          val beatModeVibrate by viewModel.beatModeVibrate.observeAsState(
-            Constants.Def.BEAT_MODE_VIBRATE
-          )
-          val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.Def.ALWAYS_VIBRATE)
-          val gain by viewModel.gain.observeAsState(Constants.Def.GAIN)
 
           IconButton(
             onClick = onSettingsButtonClick,
@@ -179,8 +168,8 @@ fun MainScreen(
             )
           }
           TempoCard(
-            viewModel = viewModel,
-            state = pickerState,
+            mainState = state,
+            pickerState = pickerState,
             onClick = onTempoCardClick,
             modifier = Modifier.constrainAs(tempoCard) {
               top.linkTo(parent.top)
@@ -190,14 +179,12 @@ fun MainScreen(
             }
           )
           PlayButton(
-            viewModel = viewModel,
-            animTrigger = playAnimTrigger,
+            state = state,
+            animTrigger = state.isPlaying,
             onClick = {
-              val startedWithGain = viewModel.metronomeUtil?.neverStartedWithGainBefore() == false
-              if (isPlaying || (gain == 0 || startedWithGain)) {
-                if (viewModel.togglePlaying()) {
-                  playAnimTrigger.value = !playAnimTrigger.value
-                }
+              // TODO: startedWithGain behavior
+              if (state.isPlaying || (state.gain == 0 || state.startedWithGain)) {
+                viewModel.togglePlaying()
               } else {
                 showVolumeDialog = true
               }
@@ -227,7 +214,7 @@ fun MainScreen(
             )
           }
           TempoTapButton(
-            viewModel = viewModel,
+            state = state,
             onClick = {
               viewModel.tempoTap()
             },
@@ -241,7 +228,7 @@ fun MainScreen(
               }
           )
           BookmarkButton(
-            viewModel = viewModel,
+            state = state,
             onClick = {
               viewModel.toggleBookmark()
             },
@@ -255,11 +242,11 @@ fun MainScreen(
               }
           )
           BeatModeButton(
-            viewModel = viewModel,
-            beatModeVibrate = beatModeVibrate,
-            alwaysVibrate = alwaysVibrate,
+            state = state,
+            beatModeVibrate = state.beatModeVibrate,
+            alwaysVibrate = state.alwaysVibrate,
             onClick = {
-              viewModel.toggleBeatModeVibrate()
+              viewModel.updateBeatModeVibrate(!state.beatModeVibrate)
             },
             modifier = Modifier
               .graphicsLayer(alpha = controlsAlpha)
@@ -275,13 +262,11 @@ fun MainScreen(
           show = showVolumeDialog,
           onConfirm = {
             viewModel.togglePlaying()
-            playAnimTrigger.value = !playAnimTrigger.value
             showVolumeDialog = false
           },
           onDismiss = {
-            viewModel.changeGain(0)
+            viewModel.updateGain(0)
             viewModel.togglePlaying()
-            playAnimTrigger.value = !playAnimTrigger.value
             showVolumeDialog = false
           },
           onSwipeDismiss = {
@@ -289,13 +274,13 @@ fun MainScreen(
           }
         )
         PermissionDialog(
-          show = showPermissionDialog,
+          show = state.showPermissionDialog,
           onConfirm = {
-            viewModel.changeShowPermissionDialog(false)
+            viewModel.updateShowPermissionDialog(false)
             onPermissionRequestClick()
           },
           onDismiss = {
-            viewModel.changeShowPermissionDialog(false)
+            viewModel.updateShowPermissionDialog(false)
           }
         )
       }
@@ -311,16 +296,13 @@ fun MainScreenSmall() {
 
 @Composable
 fun TempoCard(
-  viewModel: MainViewModel,
-  state: PickerState,
+  mainState: MainState,
+  pickerState: PickerState,
   onClick: () -> Unit,
   modifier: Modifier
 ) {
-  val isPlaying by viewModel.isPlaying.observeAsState(false)
-  val keepAwake by viewModel.keepAwake.observeAsState(Constants.Def.KEEP_AWAKE)
-  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
-
-  val borderColorTarget = if (isPlaying && keepAwake) {
+  val ambient = mainState.isPlaying && mainState.keepAwake
+  val borderColorTarget = if (ambient) {
     MaterialTheme.colorScheme.background
   } else {
     MaterialTheme.colorScheme.outline
@@ -328,7 +310,7 @@ fun TempoCard(
   val borderColor by animateColorAsState(
     targetValue = borderColorTarget,
     label = "borderColor",
-    animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 250)
+    animationSpec = TweenSpec(durationMillis = if (mainState.reduceAnim) 0 else 250)
   )
 
   WrapContentCard(
@@ -338,31 +320,26 @@ fun TempoCard(
     shape = MaterialTheme.shapes.extraLarge,
     contentPadding = PaddingValues(0.dp)
   ) {
-    val beatModeVibrate by viewModel.beatModeVibrate.observeAsState(
-      Constants.Def.BEAT_MODE_VIBRATE
-    )
-    val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.Def.ALWAYS_VIBRATE)
-
     val bpm = stringResource(
       id = R.string.wear_label_bpm_value,
-      state.selectedOption + 1
+      pickerState.selectedOption + 1
     )
     val contentDescription by remember { derivedStateOf { bpm } }
 
     val minRatio = 0.001f // 0 would cause a small y-offset
     val gradientRatio by animateFloatAsState(
-      targetValue = if (isPlaying && keepAwake) 0.2f else minRatio,
+      targetValue = if (ambient) 0.2f else minRatio,
       label = "gradientRatio",
-      animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 250)
+      animationSpec = TweenSpec(durationMillis = if (mainState.reduceAnim) 0 else 250)
     )
     val pickerAlpha by animateFloatAsState(
-      targetValue = if (isPlaying && keepAwake) .5f else 1f,
+      targetValue = if (ambient) .5f else 1f,
       label = "pickerAlpha",
-      animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 300)
+      animationSpec = TweenSpec(durationMillis = if (mainState.reduceAnim) 0 else 300)
     )
 
     TempoPicker(
-      state = state,
+      state = pickerState,
       modifier = Modifier
         .graphicsLayer(alpha = pickerAlpha)
         .size(
@@ -375,7 +352,8 @@ fun TempoCard(
         fontSize = if (isSmallScreen()) 30.sp else 40.sp
       ),
       gradientRatio = if (gradientRatio > minRatio) gradientRatio else minRatio,
-      hapticFeedbackEnabled = !isPlaying || (!beatModeVibrate && !alwaysVibrate),
+      hapticFeedbackEnabled = !mainState.isPlaying ||
+          (!mainState.beatModeVibrate && !mainState.alwaysVibrate),
       contentDescription = contentDescription
     )
   }
@@ -383,16 +361,13 @@ fun TempoCard(
 
 @Composable
 fun PlayButton(
-  viewModel: MainViewModel,
-  animTrigger: MutableState<Boolean>,
+  state: MainState,
+  animTrigger: Boolean,
   onClick: () -> Unit,
   modifier: Modifier
 ) {
-  val isPlaying by viewModel.isPlaying.observeAsState(false)
-  val keepAwake by viewModel.keepAwake.observeAsState(Constants.Def.KEEP_AWAKE)
-  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
-
-  val containerColorTarget = if (isPlaying && keepAwake) {
+  val ambient = state.isPlaying && state.keepAwake
+  val containerColorTarget = if (ambient) {
     MaterialTheme.colorScheme.background
   } else {
     IconButtonDefaults.filledIconButtonColors().containerColor
@@ -400,10 +375,10 @@ fun PlayButton(
   val containerColor by animateColorAsState(
     targetValue = containerColorTarget,
     label = "containerColor",
-    animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 300)
+    animationSpec = TweenSpec(durationMillis = if (state.reduceAnim) 0 else 300)
   )
 
-  val contentColorTarget = if (isPlaying && keepAwake) {
+  val contentColorTarget = if (ambient) {
     MaterialTheme.colorScheme.primaryDim
   } else {
     IconButtonDefaults.filledIconButtonColors().contentColor
@@ -411,10 +386,10 @@ fun PlayButton(
   val contentColor by animateColorAsState(
     targetValue = contentColorTarget,
     label = "contentColor",
-    animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 300)
+    animationSpec = TweenSpec(durationMillis = if (state.reduceAnim) 0 else 300)
   )
 
-  val borderColorTarget = if (isPlaying && keepAwake) {
+  val borderColorTarget = if (ambient) {
     MaterialTheme.colorScheme.outlineVariant
   } else {
     IconButtonDefaults.filledIconButtonColors().containerColor
@@ -422,7 +397,7 @@ fun PlayButton(
   val borderColor by animateColorAsState(
     targetValue = borderColorTarget,
     label = "borderColor",
-    animationSpec = TweenSpec(durationMillis = if (reduceAnim) 0 else 300)
+    animationSpec = TweenSpec(durationMillis = if (state.reduceAnim) 0 else 300)
   )
 
   val interactionSource = remember { MutableInteractionSource() }
@@ -432,7 +407,7 @@ fun PlayButton(
       containerColor = containerColor,
       contentColor = contentColor
     ),
-    shape = if (reduceAnim) {
+    shape = if (state.reduceAnim) {
       IconButtonDefaults.shape
     } else {
       IconButtonDefaults.animatedShape(
@@ -450,19 +425,18 @@ fun PlayButton(
       description = stringResource(id = R.string.wear_action_play_stop),
       trigger = animTrigger,
       modifier = Modifier.size(IconButtonDefaults.LargeIconSize),
-      animated = !reduceAnim
+      animated = !state.reduceAnim
     )
   }
 }
 
 @Composable
 fun TempoTapButton(
-  viewModel: MainViewModel,
+  state: MainState,
   onClick: () -> Unit,
   modifier: Modifier
 ) {
   val animTrigger = remember { mutableStateOf(false) }
-  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
   IconButton(
     onClick = {},
     modifier = modifier
@@ -483,19 +457,18 @@ fun TempoTapButton(
       resId = R.drawable.ic_rounded_touch_app_anim,
       description = stringResource(id = R.string.wear_action_tempo_tap),
       trigger = animTrigger.value,
-      animated = !reduceAnim
+      animated = !state.reduceAnim
     )
   }
 }
 
 @Composable
 fun BookmarkButton(
-  viewModel: MainViewModel,
+  state: MainState,
   onClick: () -> Unit,
   modifier: Modifier
 ) {
   val animTrigger = remember { mutableStateOf(false) }
-  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
   IconButton(
     onClick = {
       onClick()
@@ -507,26 +480,21 @@ fun BookmarkButton(
       resId = R.drawable.ic_rounded_bookmark_anim,
       description = stringResource(id = R.string.wear_action_bookmark),
       trigger = animTrigger.value,
-      animated = !reduceAnim
+      animated = !state.reduceAnim
     )
   }
 }
 
 @Composable
 fun BeatModeButton(
-  viewModel: MainViewModel,
+  state: MainState,
   beatModeVibrate: Boolean,
   alwaysVibrate: Boolean,
   onClick: () -> Unit,
   modifier: Modifier
 ) {
-  val animTrigger = remember { mutableStateOf(beatModeVibrate) }
-  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
   IconButton(
-    onClick = {
-      onClick()
-      animTrigger.value = !animTrigger.value
-    },
+    onClick = onClick,
     modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
   ) {
     val resId1 = if (alwaysVibrate) {
@@ -543,8 +511,8 @@ fun BeatModeButton(
       resId1 = resId2,
       resId2 = resId1,
       description = stringResource(id = R.string.wear_action_beat_mode),
-      trigger = animTrigger,
-      animated = !reduceAnim
+      trigger = beatModeVibrate,
+      animated = !state.reduceAnim
     )
   }
 }

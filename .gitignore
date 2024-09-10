@@ -16,6 +16,7 @@
 /.idea/studiobot.xml
 /.idea/other.xml
 /.idea/misc.xml
+/.idea/deviceManager.xml
 .DS_Store
 /build
 /captures

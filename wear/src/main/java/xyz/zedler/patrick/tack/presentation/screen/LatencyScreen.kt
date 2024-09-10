@@ -24,8 +24,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,7 +46,6 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
-import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -60,7 +59,7 @@ fun LatencyScreen(viewModel: MainViewModel = MainViewModel()) {
       scrollState = scrollableState,
       modifier = Modifier.background(color = MaterialTheme.colorScheme.background)
     ) {
-      val latency by viewModel.latency.observeAsState(Constants.Def.LATENCY)
+      val state by viewModel.state.collectAsState()
       ScalingLazyColumn(
         state = scrollableState,
         modifier = Modifier
@@ -80,15 +79,15 @@ fun LatencyScreen(viewModel: MainViewModel = MainViewModel()) {
         }
         item {
           LatencySlider(
-            latency = latency,
+            latency = state.latency,
             onValueChange = {
-              viewModel.changeLatency(it.toLong())
+              viewModel.updateLatency(it.toLong())
             }
           )
         }
         item {
           Text(
-            text = stringResource(id = R.string.wear_label_ms, latency),
+            text = stringResource(id = R.string.wear_label_ms, state.latency),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             modifier = Modifier

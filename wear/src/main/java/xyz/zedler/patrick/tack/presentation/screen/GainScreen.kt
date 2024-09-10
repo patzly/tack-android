@@ -24,8 +24,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,7 +48,6 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
-import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -62,7 +61,7 @@ fun GainScreen(viewModel: MainViewModel = MainViewModel()) {
       scrollState = scrollableState,
       modifier = Modifier.background(color = MaterialTheme.colorScheme.background)
     ) {
-      val gain by viewModel.gain.observeAsState(Constants.Def.GAIN)
+      val state by viewModel.state.collectAsState()
       ScalingLazyColumn(
         state = scrollableState,
         modifier = Modifier
@@ -82,15 +81,15 @@ fun GainScreen(viewModel: MainViewModel = MainViewModel()) {
         }
         item {
           GainSlider(
-            gain = gain,
+            gain = state.gain,
             onValueChange = {
-              viewModel.changeGain(it)
+              viewModel.updateGain(it)
             }
           )
         }
         item {
           Text(
-            text = stringResource(id = R.string.wear_label_db, gain),
+            text = stringResource(id = R.string.wear_label_db, state.gain),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             modifier = Modifier

@@ -40,14 +40,14 @@
           android:propertyName="rotation"
           android:duration="500"
           android:valueFrom="0"
-          android:valueTo="52"
+          android:valueTo="55"
           android:valueType="floatType"
           android:interpolator="@android:anim/accelerate_decelerate_interpolator" />
         <objectAnimator
           android:propertyName="rotation"
           android:startOffset="500"
           android:duration="500"
-          android:valueFrom="52"
+          android:valueFrom="55"
           android:valueTo="0"
           android:valueType="floatType"
           android:interpolator="@android:anim/accelerate_decelerate_interpolator" />
@@ -56,14 +56,14 @@
           android:startOffset="1000"
           android:duration="500"
           android:valueFrom="0"
-          android:valueTo="52"
+          android:valueTo="55"
           android:valueType="floatType"
           android:interpolator="@android:anim/accelerate_decelerate_interpolator" />
         <objectAnimator
           android:propertyName="rotation"
           android:startOffset="1500"
           android:duration="500"
-          android:valueFrom="52"
+          android:valueFrom="55"
           android:valueTo="0"
           android:valueType="floatType"
           android:interpolator="@android:anim/accelerate_decelerate_interpolator" />
@@ -72,14 +72,14 @@
           android:startOffset="2000"
           android:duration="500"
           android:valueFrom="0"
-          android:valueTo="52"
+          android:valueTo="55"
           android:valueType="floatType"
           android:interpolator="@android:anim/accelerate_decelerate_interpolator" />
         <objectAnimator
           android:propertyName="rotation"
           android:startOffset="2500"
           android:duration="500"
-          android:valueFrom="52"
+          android:valueFrom="55"
           android:valueTo="0"
           android:valueType="floatType"
           android:interpolator="@android:anim/accelerate_decelerate_interpolator" />

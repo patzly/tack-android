@@ -25,7 +25,6 @@ import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.wear.compose.material3.Icon
 
@@ -60,7 +59,7 @@ fun AnimatedVectorDrawable(
   @DrawableRes resId1: Int,
   @DrawableRes resId2: Int,
   description: String,
-  trigger: MutableState<Boolean>,
+  trigger: Boolean,
   modifier: Modifier = Modifier,
   animated: Boolean = true
 ) {
@@ -68,15 +67,15 @@ fun AnimatedVectorDrawable(
   val image2 = AnimatedImageVector.animatedVectorResource(resId2)
   val painterForward = rememberAnimatedVectorPainter(
     animatedImageVector = image1,
-    atEnd = if (animated) trigger.value else true
+    atEnd = if (animated) trigger else true
   )
   val painterBackward = rememberAnimatedVectorPainter(
     animatedImageVector = image2,
-    atEnd = if (animated) !trigger.value else true
+    atEnd = if (animated) !trigger else true
   )
   Icon(
     modifier = modifier,
-    painter = if (trigger.value) painterForward else painterBackward,
+    painter = if (trigger) painterForward else painterBackward,
     contentDescription = description
   )
 }

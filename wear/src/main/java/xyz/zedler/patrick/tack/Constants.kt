@@ -33,7 +33,6 @@ object Constants {
     const val BEATS: String = "beats"
     const val SUBDIVISIONS: String = "subdivisions"
     const val BEAT_MODE_VIBRATE: String = "beat_mode_vibrate"
-    const val USE_SUBS: String = "use_subdivisions"
     const val ALWAYS_VIBRATE: String = "always_vibrate"
     const val STRONG_VIBRATION: String = "strong_vibration"
     const val FLASH_SCREEN: String = "flash_screen"
@@ -51,7 +50,6 @@ object Constants {
     const val BEATS: String = "${TickType.STRONG},${TickType.NORMAL},${TickType.NORMAL},${TickType.NORMAL}"
     const val SUBDIVISIONS: String = TickType.MUTED
     const val BEAT_MODE_VIBRATE: Boolean = false
-    const val USE_SUBS: Boolean = true
     const val ALWAYS_VIBRATE: Boolean = true
     const val STRONG_VIBRATION: Boolean = false
     const val FLASH_SCREEN: Boolean = false

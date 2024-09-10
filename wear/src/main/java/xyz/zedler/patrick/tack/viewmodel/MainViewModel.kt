@@ -19,304 +19,293 @@
 
 package xyz.zedler.patrick.tack.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
-import androidx.navigation.NavDestination
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import xyz.zedler.patrick.tack.Constants.Def
+import xyz.zedler.patrick.tack.Constants.Pref
 import xyz.zedler.patrick.tack.Constants.TEMPO_MAX
 import xyz.zedler.patrick.tack.Constants.TEMPO_MIN
 import xyz.zedler.patrick.tack.Constants.TickType
 import xyz.zedler.patrick.tack.presentation.navigation.Screen
-import xyz.zedler.patrick.tack.util.MetronomeUtil
+import xyz.zedler.patrick.tack.presentation.state.MainState
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick
 import xyz.zedler.patrick.tack.util.TempoTapUtil
 
 class MainViewModel(
-  var metronomeUtil: MetronomeUtil? = null,
-  private val keepAwakeListener: KeepAwakeListener? = null
+  private val sharedPrefs: SharedPreferences? = null,
+  private val listener: StateListener? = null
 ) : ViewModel() {
-  val mutableIsPlaying = MutableLiveData(metronomeUtil?.isPlaying ?: false)
   private val tempoTapUtil = TempoTapUtil()
-  private var currentRoute = Screen.Main.route
-  private val _tempo = MutableLiveData(metronomeUtil?.tempo ?: Def.TEMPO)
-  private val _beats = MutableLiveData(
-    metronomeUtil?.beats ?: Def.BEATS.split(",")
-  )
-  private val _beatTriggers: MutableList<MutableLiveData<Boolean>> =
-    MutableList((metronomeUtil?.beats ?: Def.BEATS.split(",")).size) {
-      MutableLiveData(false)
-    }
-  private val _subdivisions = MutableLiveData(
-    metronomeUtil?.subdivisions ?: Def.SUBDIVISIONS.split(",")
-  )
-  private val _subdivisionTriggers: MutableList<MutableLiveData<Boolean>> =
-    MutableList((metronomeUtil?.subdivisions ?: Def.SUBDIVISIONS.split(",")).size) {
-      MutableLiveData(false)
-    }
-  private val _beatModeVibrate = MutableLiveData(
-    metronomeUtil?.isBeatModeVibrate ?: Def.BEAT_MODE_VIBRATE
-  )
-  private val _alwaysVibrate = MutableLiveData(
-    metronomeUtil?.isAlwaysVibrate ?: Def.ALWAYS_VIBRATE
-  )
-  private val _strongVibration = MutableLiveData(
-    metronomeUtil?.isStrongVibration ?: Def.STRONG_VIBRATION
-  )
-  private val _gain = MutableLiveData(metronomeUtil?.gain ?: Def.GAIN)
-  private val _sound = MutableLiveData(metronomeUtil?.sound ?: Def.SOUND)
-  private val _ignoreFocus = MutableLiveData(
-    metronomeUtil?.ignoreFocus ?: Def.IGNORE_FOCUS
-  )
-  private val _latency = MutableLiveData(metronomeUtil?.latency ?: Def.LATENCY)
-  private val _keepAwake = MutableLiveData(metronomeUtil?.keepAwake ?: Def.KEEP_AWAKE)
-  private val _reduceAnim = MutableLiveData(metronomeUtil?.reduceAnim ?: Def.REDUCE_ANIM)
-  private val _flashScreen = MutableLiveData(metronomeUtil?.flashScreen ?: Def.FLASH_SCREEN)
-  private val _flashTrigger = MutableLiveData(false)
-  private val _flashStrongTrigger = MutableLiveData(false)
-  private val _showPermissionDialog = MutableLiveData(false)
+  private val _state = MutableStateFlow(MainState())
+  val state: StateFlow<MainState> = _state.asStateFlow()
 
-  val tempo: LiveData<Int> = _tempo
-  val isPlaying: LiveData<Boolean> = mutableIsPlaying
-  val beats: LiveData<List<String>> = _beats
-  val beatTriggers: List<LiveData<Boolean>> = _beatTriggers
-  val subdivisions: LiveData<List<String>> = _subdivisions
-  val subdivisionTriggers: List<LiveData<Boolean>> = _subdivisionTriggers
-  val beatModeVibrate: LiveData<Boolean> = _beatModeVibrate
-  val alwaysVibrate: LiveData<Boolean> = _alwaysVibrate
-  val strongVibration: LiveData<Boolean> = _strongVibration
-  val gain: LiveData<Int> = _gain
-  val sound: LiveData<String> = _sound
-  val ignoreFocus: LiveData<Boolean> = _ignoreFocus
-  val latency: LiveData<Long> = _latency
-  val keepAwake: LiveData<Boolean> = _keepAwake
-  val reduceAnim: LiveData<Boolean> = _reduceAnim
-  val flashScreen: LiveData<Boolean> = _flashScreen
-  val flashTrigger: LiveData<Boolean> = _flashTrigger
-  val flashStrongTrigger: LiveData<Boolean> = _flashStrongTrigger
-  val showPermissionDialog: LiveData<Boolean> = _showPermissionDialog
-  var tempoChangedByPicker: Boolean = false
-  var animateTempoChange: Boolean = true
+  init {
+    if (sharedPrefs != null) {
+      _state.update { it.copy(
+        tempo = sharedPrefs.getInt(Pref.TEMPO, Def.TEMPO),
+        beats = sharedPrefs.getString(Pref.BEATS, Def.BEATS)!!.split(",".toRegex()),
+        subdivisions = sharedPrefs
+          .getString(Pref.SUBDIVISIONS, Def.SUBDIVISIONS)!!.split(",".toRegex()),
+        beatModeVibrate = sharedPrefs
+          .getBoolean(Pref.BEAT_MODE_VIBRATE, Def.BEAT_MODE_VIBRATE),
+        alwaysVibrate = sharedPrefs
+          .getBoolean(Pref.ALWAYS_VIBRATE, Def.ALWAYS_VIBRATE),
+        strongVibration = sharedPrefs
+          .getBoolean(Pref.STRONG_VIBRATION, Def.STRONG_VIBRATION),
+        gain = sharedPrefs.getInt(Pref.GAIN, Def.GAIN),
+        sound = sharedPrefs.getString(Pref.SOUND, Def.SOUND)!!,
+        ignoreFocus = sharedPrefs.getBoolean(Pref.IGNORE_FOCUS, Def.IGNORE_FOCUS),
+        latency = sharedPrefs.getLong(Pref.LATENCY, Def.LATENCY),
+        keepAwake = sharedPrefs.getBoolean(Pref.KEEP_AWAKE, Def.KEEP_AWAKE),
+        reduceAnim = sharedPrefs.getBoolean(Pref.REDUCE_ANIM, Def.REDUCE_ANIM),
+        flashScreen = sharedPrefs.getBoolean(Pref.FLASH_SCREEN, Def.FLASH_SCREEN),
+      ) }
+    }
+  }
 
-  fun changeTempo(tempo: Int, picker: Boolean = false, animate: Boolean = true) {
-    if (tempo in TEMPO_MIN..TEMPO_MAX) {
-      metronomeUtil?.tempo = tempo
-      tempoChangedByPicker = picker
-      animateTempoChange = animate
-      _tempo.value = tempo
+  fun updateCurrentRoute(route: String) {
+    _state.update { it.copy(currentRoute = route) }
+    listener?.onKeepAwakeChanged(keepAwake())
+  }
+
+  fun updatePlaying(playing: Boolean) {
+    if (_state.value.isPlaying != playing) {
+      _state.update { it.copy(
+        isPlaying = playing,
+        startedWithGain = playing && _state.value.gain > 0 // TODO: other logic needed?
+      ) }
+    }
+  }
+
+  fun togglePlaying() {
+    listener?.onPlayingToggleRequest()
+  }
+
+  fun updateTempo(tempo: Int, picker: Boolean = false, animate: Boolean = true) {
+    if (tempo in TEMPO_MIN..TEMPO_MAX && _state.value.tempo != tempo) {
+      _state.update { it.copy(
+        tempo = tempo,
+        tempoChangedByPicker = picker,
+        animateTempoChange = animate
+      ) }
+      listener?.onMetronomeConfigChanged(_state.value)
+      sharedPrefs?.edit()?.putInt(Pref.TEMPO, tempo)?.apply()
     }
   }
 
   fun tempoTap(): Int {
     if (tempoTapUtil.tap()) {
       val tempo = tempoTapUtil.tempo
-      changeTempo(tempo)
+      updateTempo(tempo)
       return tempo
     }
-    return tempo.value ?: Def.TEMPO
+    return _state.value.tempo
+  }
+
+  fun toggleBookmark() {
+    listener?.onBookmarkToggleRequest()
+  }
+
+  fun updateBeats(beats: List<String>) {
+    val triggers = _state.value.beatTriggers
+    val count = beats.count()
+    val updatedTriggers = when {
+      triggers.size < count -> triggers + List(count - triggers.size) { false }
+      triggers.size > count -> triggers.take(count)
+      else -> triggers
+    }
+    _state.update { it.copy(
+      beats = beats,
+      beatTriggers = updatedTriggers
+    ) }
+    listener?.onMetronomeConfigChanged(_state.value)
+    sharedPrefs?.edit()?.putString(Pref.BEATS, beats.joinToString(","))?.apply()
+  }
+
+  fun addBeat() {
+    listener?.onAddBeatRequest()
+  }
+
+  fun removeBeat() {
+    listener?.onRemoveBeatRequest()
+  }
+
+  fun changeBeat(beat: Int, tickType: String) {
+    listener?.onChangeBeatRequest(beat, tickType)
+  }
+
+  fun updateSubdivisions(subdivisions: List<String>) {
+    val triggers = _state.value.subdivisionTriggers
+    val count = subdivisions.count()
+    val updatedTriggers = when {
+      triggers.size < count -> triggers + List(count - triggers.size) { false }
+      triggers.size > count -> triggers.take(count)
+      else -> triggers
+    }
+    _state.update { it.copy(
+      subdivisions = subdivisions,
+      subdivisionTriggers = updatedTriggers
+    ) }
+    listener?.onMetronomeConfigChanged(_state.value)
+    sharedPrefs?.edit()?.putString(
+      Pref.SUBDIVISIONS, subdivisions.joinToString(",")
+    )?.apply()
+  }
+
+  fun addSubdivision() {
+    listener?.onAddSubdivisionRequest()
+  }
+
+  fun removeSubdivision() {
+    listener?.onRemoveSubdivisionRequest()
+  }
+
+  fun changeSubdivision(subdivision: Int, tickType: String) {
+    listener?.onChangeSubdivisionRequest(subdivision, tickType)
+  }
+
+  fun updateSwing(swing: Int) {
+    listener?.onSwingChangeRequest(swing)
+  }
+
+  fun updateBeatModeVibrate(vibrate: Boolean) {
+    _state.update { it.copy(beatModeVibrate = vibrate) }
+    listener?.onMetronomeConfigChanged(_state.value)
+    sharedPrefs?.edit()?.putBoolean(Pref.BEAT_MODE_VIBRATE, vibrate)?.apply()
+  }
+
+  fun updateAlwaysVibrate(alwaysVibrate: Boolean) {
+    _state.update { it.copy(alwaysVibrate = alwaysVibrate) }
+    listener?.onMetronomeConfigChanged(_state.value)
+    sharedPrefs?.edit()?.putBoolean(Pref.ALWAYS_VIBRATE, alwaysVibrate)?.apply()
+  }
+
+  fun updateStrongVibration(strongVibration: Boolean) {
+    _state.update { it.copy(strongVibration = strongVibration) }
+    listener?.onMetronomeConfigChanged(_state.value)
+    sharedPrefs?.edit()?.putBoolean(Pref.STRONG_VIBRATION, strongVibration)?.apply()
+  }
+
+  fun updateGain(gain: Int) {
+    _state.update { it.copy(
+      gain = gain,
+      startedWithGain = gain == 0
+    ) }
+    listener?.onMetronomeConfigChanged(_state.value)
+    sharedPrefs?.edit()?.putInt(Pref.GAIN, gain)?.apply()
+  }
+
+  fun updateSound(sound: String) {
+    _state.update { it.copy(sound = sound) }
+    listener?.onMetronomeConfigChanged(_state.value)
+    sharedPrefs?.edit()?.putString(Pref.SOUND, sound)?.apply()
+  }
+
+  fun updateIgnoreFocus(ignoreFocus: Boolean) {
+    _state.update { it.copy(ignoreFocus = ignoreFocus) }
+    listener?.onMetronomeConfigChanged(_state.value)
+    sharedPrefs?.edit()?.putBoolean(Pref.IGNORE_FOCUS, ignoreFocus)?.apply()
+  }
+
+  fun updateLatency(latency: Long) {
+    _state.update { it.copy(latency = latency) }
+    listener?.onMetronomeConfigChanged(_state.value)
+    sharedPrefs?.edit()?.putLong(Pref.LATENCY, latency)?.apply()
+  }
+
+  fun updateKeepAwake(awake: Boolean) {
+    _state.update { it.copy(keepAwake = awake) }
+    listener?.onKeepAwakeChanged(keepAwake())
+    sharedPrefs?.edit()?.putBoolean(Pref.KEEP_AWAKE, awake)?.apply()
+  }
+
+  private fun keepAwake(): Boolean {
+    val currentRoute = _state.value.currentRoute
+    return _state.value.keepAwake
+        && _state.value.isPlaying
+        && (currentRoute == Screen.Main.route
+        || currentRoute == Screen.Tempo.route
+        || currentRoute == Screen.Beats.route)
+  }
+
+  fun updateReduceAnim(reduceAnim: Boolean) {
+    _state.update { it.copy(reduceAnim = reduceAnim) }
+    sharedPrefs?.edit()?.putBoolean(Pref.REDUCE_ANIM, reduceAnim)?.apply()
+  }
+
+  fun updateFlashScreen(flashScreen: Boolean) {
+    _state.update { it.copy(flashScreen = flashScreen) }
+    listener?.onMetronomeConfigChanged(_state.value)
+    sharedPrefs?.edit()?.putBoolean(Pref.FLASH_SCREEN, flashScreen)?.apply()
   }
 
   fun onPreTick(tick: Tick) {
     if (tick.subdivision == 1) {
-      onBeat(tick)
+      onBeat(tick.beat - 1)
     }
     onSubdivision(tick.subdivision - 1)
   }
 
   fun onTick(tick: Tick) {
     if (tick.subdivision == 1) {
-      if (metronomeUtil?.flashScreen == true && tick.type == TickType.STRONG) {
-        _flashStrongTrigger.value = true
-      } else if (metronomeUtil?.flashScreen == true && tick.type == TickType.NORMAL) {
-        _flashTrigger.value = true
+      if (_state.value.flashScreen && tick.type == TickType.STRONG) {
+        _state.update { it.copy(flashStrong = true) }
+      } else if (_state.value.flashScreen && tick.type == TickType.NORMAL) {
+        _state.update { it.copy(flash = true) }
       }
     }
   }
 
-  private fun onBeat(tick: Tick) {
-    val index = tick.beat - 1
-    if (index < _beatTriggers.size) {
-      val current = _beatTriggers[index].value ?: false
-      _beatTriggers[index].value = !current
+  private fun onBeat(index: Int) {
+    if (index < _state.value.beatTriggers.size) {
+      _state.update { it.copy(
+        beatTriggers = _state.value.beatTriggers.mapIndexed { i, value ->
+          if (i == index) !value else value
+        }
+      ) }
     }
   }
 
   private fun onSubdivision(index: Int) {
-    if (index < _subdivisionTriggers.size) {
-      val current = _subdivisionTriggers[index].value ?: false
-      _subdivisionTriggers[index].value = !current
+    if (index < _state.value.subdivisionTriggers.size) {
+      _state.update { it.copy(
+        subdivisionTriggers = _state.value.subdivisionTriggers.mapIndexed { i, value ->
+          if (i == index) !value else value
+        }
+      ) }
     }
   }
 
   fun onFlashScreenEnd() {
-    _flashTrigger.value = false
-    _flashStrongTrigger.value = false
+    _state.update { it.copy(
+      flash = false,
+      flashStrong = false
+    ) }
   }
 
-  fun togglePlaying(): Boolean {
-    val playing = metronomeUtil?.isPlaying ?: true
-    if (metronomeUtil?.setPlaying(!playing) == true) {
-      mutableIsPlaying.value = !playing
-      keepAwakeListener?.onKeepAwakeChanged(keepAwake())
-      return true
-    }
-    return false
+  fun updateShowPermissionDialog(show: Boolean) {
+    _state.update { it.copy(showPermissionDialog = show) }
   }
 
-  fun toggleBeatModeVibrate() {
-    val beatModeVibrate = metronomeUtil?.isBeatModeVibrate ?: Def.BEAT_MODE_VIBRATE
-    metronomeUtil?.isBeatModeVibrate = !beatModeVibrate
-    _beatModeVibrate.value = !beatModeVibrate
-  }
-
-  fun changeAlwaysVibrate(alwaysVibrate: Boolean) {
-    metronomeUtil?.isAlwaysVibrate = alwaysVibrate
-    _alwaysVibrate.value = alwaysVibrate
-  }
-
-  fun changeStrongVibration(strong: Boolean) {
-    metronomeUtil?.isStrongVibration = strong
-    _strongVibration.value = strong
-  }
-
-  fun toggleBookmark() {
-    changeTempo(metronomeUtil?.toggleBookmark() ?: Def.TEMPO)
-  }
-
-  fun changeGain(gain: Int) {
-    metronomeUtil?.gain = gain
-    _gain.value = gain
-  }
-
-  fun changeSound(sound: String) {
-    metronomeUtil?.sound = sound
-    _sound.value = sound
-  }
-
-  fun changeIgnoreFocus(ignore: Boolean) {
-    metronomeUtil?.ignoreFocus = ignore
-    _ignoreFocus.value = ignore
-  }
-
-  fun changeLatency(latency: Long) {
-    metronomeUtil?.latency = latency
-    _latency.value = latency
-  }
-
-  fun changeFlashScreen(flash: Boolean) {
-    metronomeUtil?.flashScreen = flash
-    _flashScreen.value = flash
-  }
-
-  fun changeKeepAwake(awake: Boolean) {
-    metronomeUtil?.keepAwake = awake
-    _keepAwake.value = awake
-    keepAwakeListener?.onKeepAwakeChanged(keepAwake())
-  }
-
-  private fun keepAwake(): Boolean {
-    return _keepAwake.value == true
-        && mutableIsPlaying.value == true
-        && (currentRoute == Screen.Main.route
-        || currentRoute == Screen.Tempo.route
-        || currentRoute == Screen.Beats.route)
-  }
-
-  fun changeReduceAnim(reduce: Boolean) {
-    metronomeUtil?.reduceAnim = reduce
-    _reduceAnim.value = reduce
-  }
-
-  fun onDestinationChanged(destination: NavDestination) {
-    currentRoute = destination.route.toString()
-    keepAwakeListener?.onKeepAwakeChanged(keepAwake())
-  }
-
-  fun changeShowPermissionDialog(show: Boolean) {
-    _showPermissionDialog.value = show
-  }
-
-  fun addBeat() {
-    val success = metronomeUtil?.addBeat()
-    if (success == true) {
-      val updated = metronomeUtil?.beats?.toList()
-      // toList required for a new list instead of the old mutated, would not be handled as changed
-      updateBeatTriggers(updated?.size ?: Def.BEATS.split(",").size)
-      _beats.value = updated
-    }
-  }
-
-  fun removeBeat() {
-    val success = metronomeUtil?.removeBeat()
-    if (success == true) {
-      val updated = metronomeUtil?.beats?.toList()
-      updateBeatTriggers(updated?.size ?: Def.BEATS.split(",").size)
-      _beats.value = updated
-    }
-  }
-
-  fun changeBeat(beat: Int, tickType: String) {
-    metronomeUtil?.setBeat(beat, tickType)
-    val updated = metronomeUtil?.beats?.toList()
-    updateBeatTriggers(updated?.size ?: Def.BEATS.split(",").size)
-    _beats.value = updated
-  }
-
-  private fun updateBeatTriggers(count: Int) {
-    while (_beatTriggers.size < count) {
-      _beatTriggers.add(MutableLiveData(false))
-    }
-    while (_beatTriggers.size > count) {
-      _beatTriggers.removeAt(_beatTriggers.size - 1)
-    }
-  }
-
-  fun addSubdivision() {
-    val success = metronomeUtil?.addSubdivision()
-    if (success == true) {
-      val updated = metronomeUtil?.subdivisions?.toList()
-      updateSubdivisionTriggers(updated?.size ?: Def.SUBDIVISIONS.split(",").size)
-      _subdivisions.value = updated
-    }
-  }
-
-  fun removeSubdivision() {
-    val success = metronomeUtil?.removeSubdivision()
-    if (success == true) {
-      val updated = metronomeUtil?.subdivisions?.toList()
-      updateSubdivisionTriggers(updated?.size ?: Def.SUBDIVISIONS.split(",").size)
-      _subdivisions.value = updated
-    }
-  }
-
-  fun changeSubdivision(subdivision: Int, tickType: String) {
-    metronomeUtil?.setSubdivision(subdivision, tickType)
-    val updated = metronomeUtil?.subdivisions?.toList()
-    updateSubdivisionTriggers(updated?.size ?: Def.SUBDIVISIONS.split(",").size)
-    _subdivisions.value = updated
-  }
-
-  private fun updateSubdivisionTriggers(count: Int) {
-    while (_subdivisionTriggers.size < count) {
-      _subdivisionTriggers.add(MutableLiveData(false))
-    }
-    while (_subdivisionTriggers.size > count) {
-      _subdivisionTriggers.removeAt(_subdivisionTriggers.size - 1)
-    }
-  }
-
-  fun setSwing(swing: Int) {
-    when (swing) {
-      3 -> metronomeUtil?.setSwing3()
-      5 -> metronomeUtil?.setSwing5()
-      7 -> metronomeUtil?.setSwing7()
-    }
-    val updated = metronomeUtil?.subdivisions?.toList()
-    updateSubdivisionTriggers(updated?.size ?: Def.SUBDIVISIONS.split(",").size)
-    _subdivisions.value = updated
-  }
-
-  interface KeepAwakeListener {
+  interface StateListener {
+    fun onMetronomeConfigChanged(state: MainState)
     fun onKeepAwakeChanged(keepAwake: Boolean)
+    fun onPlayingToggleRequest()
+    fun onBookmarkToggleRequest()
+    fun onAddBeatRequest()
+    fun onRemoveBeatRequest()
+    fun onChangeBeatRequest(beat: Int, tickType: String)
+    fun onAddSubdivisionRequest()
+    fun onRemoveSubdivisionRequest()
+    fun onChangeSubdivisionRequest(subdivision: Int, tickType: String)
+    fun onSwingChangeRequest(swing: Int)
+  }
+
+  companion object {
+    private const val TAG = "MainViewModel"
   }
 }

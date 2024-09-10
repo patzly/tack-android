@@ -23,8 +23,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -41,7 +41,6 @@ import androidx.wear.compose.material3.RadioButtonDefaults
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
-import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.Constants.Sound
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
@@ -56,7 +55,7 @@ fun SoundScreen(viewModel: MainViewModel = MainViewModel()) {
       scrollState = scrollableState,
       modifier = Modifier.background(color = MaterialTheme.colorScheme.background)
     ) {
-      val sound by viewModel.sound.observeAsState(Constants.Def.SOUND)
+      val state by viewModel.state.collectAsState()
       ScalingLazyColumn(
         state = scrollableState,
         modifier = Modifier
@@ -77,63 +76,63 @@ fun SoundScreen(viewModel: MainViewModel = MainViewModel()) {
         item {
           SoundOption(
             label = stringResource(id = R.string.wear_settings_sound_sine),
-            selected = sound == Sound.SINE,
+            selected = state.sound == Sound.SINE,
             onSelected = {
-              viewModel.changeSound(Sound.SINE)
+              viewModel.updateSound(Sound.SINE)
             }
           )
         }
         item {
           SoundOption(
             label = stringResource(id = R.string.wear_settings_sound_wood),
-            selected = sound == Sound.WOOD,
+            selected = state.sound == Sound.WOOD,
             onSelected = {
-              viewModel.changeSound(Sound.WOOD)
+              viewModel.updateSound(Sound.WOOD)
             }
           )
         }
         item {
           SoundOption(
             label = stringResource(id = R.string.wear_settings_sound_mechanical),
-            selected = sound == Sound.MECHANICAL,
+            selected = state.sound == Sound.MECHANICAL,
             onSelected = {
-              viewModel.changeSound(Sound.MECHANICAL)
+              viewModel.updateSound(Sound.MECHANICAL)
             }
           )
         }
         item {
           SoundOption(
             label = stringResource(id = R.string.wear_settings_sound_beatboxing_1),
-            selected = sound == Sound.BEATBOXING_1,
+            selected = state.sound == Sound.BEATBOXING_1,
             onSelected = {
-              viewModel.changeSound(Sound.BEATBOXING_1)
+              viewModel.updateSound(Sound.BEATBOXING_1)
             }
           )
         }
         item {
           SoundOption(
             label = stringResource(id = R.string.wear_settings_sound_beatboxing_2),
-            selected = sound == Sound.BEATBOXING_2,
+            selected = state.sound == Sound.BEATBOXING_2,
             onSelected = {
-              viewModel.changeSound(Sound.BEATBOXING_2)
+              viewModel.updateSound(Sound.BEATBOXING_2)
             }
           )
         }
         item {
           SoundOption(
             label = stringResource(id = R.string.wear_settings_sound_hands),
-            selected = sound == Sound.HANDS,
+            selected = state.sound == Sound.HANDS,
             onSelected = {
-              viewModel.changeSound(Sound.HANDS)
+              viewModel.updateSound(Sound.HANDS)
             }
           )
         }
         item {
           SoundOption(
             label = stringResource(id = R.string.wear_settings_sound_folding),
-            selected = sound == Sound.FOLDING,
+            selected = state.sound == Sound.FOLDING,
             onSelected = {
-              viewModel.changeSound(Sound.FOLDING)
+              viewModel.updateSound(Sound.FOLDING)
             }
           )
         }

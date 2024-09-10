@@ -23,10 +23,10 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import xyz.zedler.patrick.tack.Constants.Pref
 
-class BookmarkUtil(context: Context?) {
+class BookmarkUtil(context: Context) {
 
   private val sharedPrefs: SharedPreferences =
-    PreferenceManager.getDefaultSharedPreferences(context!!)
+    PreferenceManager.getDefaultSharedPreferences(context)
 
   fun toggleBookmark(tempo: Int): Int {
     var bookmark = sharedPrefs.getInt(Pref.BOOKMARK, -1)

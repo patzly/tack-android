@@ -30,8 +30,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -57,6 +57,7 @@ import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.components.BeatIconButton
 import xyz.zedler.patrick.tack.presentation.components.BeatsRow
 import xyz.zedler.patrick.tack.presentation.components.TextIconButton
+import xyz.zedler.patrick.tack.presentation.state.MainState
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.util.isSmallScreen
@@ -71,11 +72,7 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
       scrollState = scrollableState,
       modifier = Modifier.background(color = MaterialTheme.colorScheme.background)
     ) {
-      val beats by viewModel.beats.observeAsState(Constants.Def.BEATS.split(","))
-      val subdivisions by viewModel.subdivisions.observeAsState(
-        Constants.Def.SUBDIVISIONS.split(",")
-      )
-      val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
+      val state by viewModel.state.collectAsState()
       ScalingLazyColumn(
         state = scrollableState,
         modifier = Modifier
@@ -88,14 +85,14 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
         item {
           ListHeader {
             Text(
-              text = stringResource(id = R.string.wear_title_beats_count, beats.size),
+              text = stringResource(id = R.string.wear_title_beats_count, state.beats.size),
               style = MaterialTheme.typography.titleMedium
             )
           }
         }
         item {
           ControlCard(
-            viewModel = viewModel,
+            state = state,
             labelAdd = stringResource(id = R.string.wear_action_add_beat),
             labelRemove = stringResource(id = R.string.wear_action_remove_beat),
             onClickAdd = {
@@ -104,17 +101,17 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
             onClickRemove = {
               viewModel.removeBeat()
             },
-            addEnabled = beats.size < Constants.BEATS_MAX,
-            removeEnabled = beats.size > 1,
-            animated = !reduceAnim
+            addEnabled = state.beats.size < Constants.BEATS_MAX,
+            removeEnabled = state.beats.size > 1,
+            animated = !state.reduceAnim
           ) {
-            beats.forEachIndexed { index, beat ->
-              val triggerIndex = if (index < viewModel.beatTriggers.size) {
+            state.beats.forEachIndexed { index, beat ->
+              val triggerIndex = if (index < state.beatTriggers.size) {
                 index
               } else {
-                viewModel.beatTriggers.size - 1
+                state.beatTriggers.size - 1
               }
-              val trigger by viewModel.beatTriggers[triggerIndex].observeAsState(false)
+              val trigger = state.beatTriggers[triggerIndex]
               BeatIconButton(
                 index = index,
                 tickType = beat,
@@ -127,7 +124,7 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
                   }
                   viewModel.changeBeat(index, next)
                 },
-                reduceAnim = reduceAnim
+                reduceAnim = state.reduceAnim
               )
             }
           }
@@ -135,14 +132,14 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
         item {
           ListHeader {
             Text(
-              text = stringResource(id = R.string.wear_title_subdivisions_count, subdivisions.size),
+              text = stringResource(id = R.string.wear_title_subdivisions_count, state.subdivisions.size),
               style = MaterialTheme.typography.titleMedium
             )
           }
         }
         item {
           ControlCard(
-            viewModel = viewModel,
+            state = state,
             labelAdd = stringResource(id = R.string.wear_action_add_sub),
             labelRemove = stringResource(id = R.string.wear_action_remove_sub),
             onClickAdd = {
@@ -151,17 +148,17 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
             onClickRemove = {
               viewModel.removeSubdivision()
             },
-            addEnabled = subdivisions.size < Constants.SUBS_MAX,
-            removeEnabled = subdivisions.size > 1,
-            animated = !reduceAnim
+            addEnabled = state.subdivisions.size < Constants.SUBS_MAX,
+            removeEnabled = state.subdivisions.size > 1,
+            animated = !state.reduceAnim
           ) {
-            subdivisions.forEachIndexed { index, subdivision ->
-              val triggerIndex = if (index < viewModel.subdivisionTriggers.size) {
+            state.subdivisions.forEachIndexed { index, subdivision ->
+              val triggerIndex = if (index < state.subdivisionTriggers.size) {
                 index
               } else {
-                viewModel.subdivisionTriggers.size - 1
+                state.subdivisionTriggers.size - 1
               }
-              val trigger by viewModel.subdivisionTriggers[triggerIndex].observeAsState(false)
+              val trigger = state.subdivisionTriggers[triggerIndex]
               BeatIconButton(
                 index = index,
                 tickType = subdivision,
@@ -174,7 +171,7 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
                   }
                   viewModel.changeSubdivision(index, next)
                 },
-                reduceAnim = reduceAnim,
+                reduceAnim = state.reduceAnim,
                 enabled = index != 0
               )
             }
@@ -186,24 +183,24 @@ fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
           ) {
             TextIconButton(
               label = "3",
-              reduceAnim = reduceAnim,
+              reduceAnim = state.reduceAnim,
               onClick = {
-                viewModel.setSwing(3)
+                viewModel.updateSwing(3)
               },
             )
             TextIconButton(
               label = "5",
-              reduceAnim = reduceAnim,
+              reduceAnim = state.reduceAnim,
               onClick = {
-                viewModel.setSwing(5)
+                viewModel.updateSwing(5)
               },
               modifier = Modifier.padding(horizontal = 8.dp)
             )
             TextIconButton(
               label = "7",
-              reduceAnim = reduceAnim,
+              reduceAnim = state.reduceAnim,
               onClick = {
-                viewModel.setSwing(7)
+                viewModel.updateSwing(7)
               }
             )
           }
@@ -221,7 +218,7 @@ fun BeatsScreenSmall() {
 
 @Composable
 fun ControlCard(
-  viewModel: MainViewModel,
+  state: MainState,
   labelAdd: String,
   labelRemove: String,
   onClickAdd: () -> Unit,
@@ -242,7 +239,6 @@ fun ControlCard(
     modifier = Modifier.height(size).fillMaxWidth()
   ) {
     Row {
-      val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
       val animTriggerAdd = remember { mutableStateOf(false) }
       val animTriggerRemove = remember { mutableStateOf(false) }
       IconButton(
@@ -260,7 +256,7 @@ fun ControlCard(
           resId = R.drawable.ic_rounded_remove_anim,
           description = labelRemove,
           trigger = animTriggerRemove.value,
-          animated = !reduceAnim
+          animated = !state.reduceAnim
         )
       }
       BeatsRow(
@@ -284,7 +280,7 @@ fun ControlCard(
           resId = R.drawable.ic_rounded_add_anim,
           description = labelAdd,
           trigger = animTriggerAdd.value,
-          animated = !reduceAnim
+          animated = !state.reduceAnim
         )
       }
     }

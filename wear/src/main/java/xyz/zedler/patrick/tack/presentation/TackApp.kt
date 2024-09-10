@@ -48,7 +48,7 @@ fun TackApp(
 ) {
   val navController = rememberSwipeDismissableNavController()
   val listener = NavController.OnDestinationChangedListener { _, destination, _ ->
-    viewModel.onDestinationChanged(destination)
+    viewModel.updateCurrentRoute(destination.route.toString())
   }
   DisposableEffect(navController) {
     navController.addOnDestinationChangedListener(listener)
@@ -105,14 +105,10 @@ fun TackApp(
           )
         }
         composable(route = Screen.Tempo.route) {
-          TempoScreen(
-            viewModel = viewModel
-          )
+          TempoScreen(viewModel = viewModel)
         }
         composable(route = Screen.Beats.route) {
-          BeatsScreen(
-            viewModel = viewModel
-          )
+          BeatsScreen(viewModel = viewModel)
         }
         composable(route = Screen.Gain.route) {
           GainScreen(viewModel = viewModel)

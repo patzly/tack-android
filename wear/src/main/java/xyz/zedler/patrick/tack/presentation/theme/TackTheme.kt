@@ -30,13 +30,11 @@ import androidx.wear.compose.material3.Typography
 import xyz.zedler.patrick.tack.R
 
 @Composable
-fun TackTheme(
-  content: @Composable () -> Unit
-) {
+fun TackTheme(content: @Composable () -> Unit) {
   MaterialTheme(
-    content = content,
     colorScheme = tackColorScheme(),
-    typography = tackTypography()
+    typography = tackTypography(),
+    content = content
   )
 }
 

@@ -20,13 +20,11 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
 import androidx.annotation.NonNull;
-import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -34,15 +32,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.Def;
-import xyz.zedler.patrick.tack.Constants.Pref;
 import xyz.zedler.patrick.tack.Constants.TickType;
+import xyz.zedler.patrick.tack.presentation.state.MainState;
 
 public class MetronomeUtil {
 
   private static final String TAG = MetronomeUtil.class.getSimpleName();
 
-  private final SharedPreferences sharedPrefs;
   private final AudioUtil audioUtil;
   private final HapticUtil hapticUtil;
   private final BookmarkUtil bookmarkUtil;
@@ -54,14 +50,12 @@ public class MetronomeUtil {
   private List<String> beats, subdivisions;
   private int tempo;
   private long tickIndex, latency;
-  private boolean playing, useSubdivisions, beatModeVibrate;
-  private boolean alwaysVibrate, flashScreen, keepAwake, reduceAnim;
+  private boolean playing, beatModeVibrate;
+  private boolean alwaysVibrate, flashScreen;
   private boolean neverStartedWithGain = true;
 
   public MetronomeUtil(@NonNull Context context, boolean fromService) {
     this.fromService = fromService;
-
-    sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
     audioUtil = new AudioUtil(context, this::stop);
     hapticUtil = new HapticUtil(context);
@@ -69,31 +63,21 @@ public class MetronomeUtil {
     notificationUtil = new NotificationUtil(context);
 
     resetHandlersIfRequired();
-    setToPreferences();
   }
 
-  public void setToPreferences() {
-    tempo = sharedPrefs.getInt(Pref.TEMPO, Def.TEMPO);
-    beats = arrayAsList(sharedPrefs.getString(Pref.BEATS, Def.BEATS).split(","));
-    subdivisions = arrayAsList(
-        sharedPrefs.getString(Pref.SUBDIVISIONS, Def.SUBDIVISIONS).split(",")
-    );
-    useSubdivisions = sharedPrefs.getBoolean(Pref.USE_SUBS, Def.USE_SUBS);
-    latency = sharedPrefs.getLong(Pref.LATENCY, Def.LATENCY);
-    alwaysVibrate = sharedPrefs.getBoolean(Pref.ALWAYS_VIBRATE, Def.ALWAYS_VIBRATE);
-    flashScreen = sharedPrefs.getBoolean(Pref.FLASH_SCREEN, Def.FLASH_SCREEN);
-    keepAwake = sharedPrefs.getBoolean(Pref.KEEP_AWAKE, Def.KEEP_AWAKE);
-    reduceAnim = sharedPrefs.getBoolean(Pref.REDUCE_ANIM, Def.REDUCE_ANIM);
+  public void updateFromState(MainState state) {
+    tempo = state.getTempo();
+    beats = new ArrayList<>(state.getBeats());
+    subdivisions = new ArrayList<>(state.getSubdivisions());
+    latency = state.getLatency();
+    flashScreen = state.getFlashScreen();
 
-    setSound(sharedPrefs.getString(Pref.SOUND, Def.SOUND));
-    setIgnoreFocus(sharedPrefs.getBoolean(Pref.IGNORE_FOCUS, Def.IGNORE_FOCUS));
-    setGain(sharedPrefs.getInt(Pref.GAIN, Def.GAIN));
-    setBeatModeVibrate(sharedPrefs.getBoolean(Pref.BEAT_MODE_VIBRATE, Def.BEAT_MODE_VIBRATE));
-    setStrongVibration(sharedPrefs.getBoolean(Pref.STRONG_VIBRATION, Def.STRONG_VIBRATION));
-  }
-
-  private static List<String> arrayAsList(String[] array) {
-    return new ArrayList<>(Arrays.asList(array));
+    setSound(state.getSound());
+    setIgnoreFocus(state.getIgnoreFocus());
+    setGain(state.getGain());
+    setBeatModeVibrate(state.getBeatModeVibrate());
+    setAlwaysVibrate(state.getAlwaysVibrate());
+    setStrongVibration(state.getStrongVibration());
   }
 
   private void resetHandlersIfRequired() {
@@ -139,10 +123,6 @@ public class MetronomeUtil {
 
   public void addListeners(Set<MetronomeListener> listeners) {
     this.listeners.addAll(listeners);
-  }
-
-  public void removeListener(MetronomeListener listener) {
-    listeners.remove(listener);
   }
 
   public Set<MetronomeListener> getListeners() {
@@ -205,20 +185,17 @@ public class MetronomeUtil {
     Log.i(TAG, "stop: stopped metronome handler");
   }
 
-  public boolean setPlaying(boolean playing) {
+  public void setPlaying(boolean playing) {
     if (playing) {
-      boolean hasPermission = notificationUtil.hasPermission();
-      if (hasPermission) {
+      if (notificationUtil.hasPermission()) {
         start();
       } else {
         for (MetronomeListener listener : listeners) {
           listener.onPermissionMissing();
         }
       }
-      return hasPermission;
     } else {
       stop();
-      return true;
     }
   }
 
@@ -228,7 +205,6 @@ public class MetronomeUtil {
 
   public void setBeats(List<String> beats) {
     this.beats = beats;
-    sharedPrefs.edit().putString(Pref.BEATS, String.join(",", beats)).apply();
   }
 
   public List<String> getBeats() {
@@ -239,71 +215,60 @@ public class MetronomeUtil {
     return beats.size();
   }
 
-  public void setBeat(int beat, String tickType) {
+  public void changeBeat(int beat, String tickType) {
     List<String> beats = getBeats();
     beats.set(beat, tickType);
     setBeats(beats);
   }
 
-  public boolean addBeat() {
-    if (beats.size() >= Constants.BEATS_MAX) {
-      return false;
+  public void addBeat() {
+    if (beats.size() < Constants.BEATS_MAX) {
+      List<String> beats = getBeats();
+      beats.add(TickType.NORMAL);
+      setBeats(beats);
     }
-    List<String> beats = getBeats();
-    beats.add(TickType.NORMAL);
-    setBeats(beats);
-    return true;
   }
 
-  public boolean removeBeat() {
-    if (beats.size() <= 1) {
-      return false;
+  public void removeBeat() {
+    if (beats.size() > 1) {
+      List<String> beats = getBeats();
+      beats.remove(beats.size() - 1);
+      setBeats(beats);
     }
-    List<String> beats = getBeats();
-    beats.remove(beats.size() - 1);
-    setBeats(beats);
-    return true;
   }
 
   public void setSubdivisions(List<String> subdivisions) {
     this.subdivisions = subdivisions;
-    sharedPrefs.edit()
-        .putString(Pref.SUBDIVISIONS, String.join(",", getSubdivisions()))
-        .apply();
   }
 
   public List<String> getSubdivisions() {
-    return useSubdivisions ? subdivisions : arrayAsList(Def.SUBDIVISIONS.split(","));
+    return subdivisions;
   }
 
   public int getSubdivisionsCount() {
-    return useSubdivisions ? subdivisions.size() : 1;
+    return subdivisions.size();
   }
 
-  public void setSubdivision(int subdivision, String tickType) {
+  public void changeSubdivision(int subdivision, String tickType) {
     List<String> subdivisions = getSubdivisions();
     subdivisions.set(subdivision, tickType);
     setSubdivisions(subdivisions);
   }
 
-  public boolean addSubdivision() {
-    if (subdivisions.size() >= Constants.SUBS_MAX) {
-      return false;
+  public void addSubdivision() {
+    if (subdivisions.size() < Constants.SUBS_MAX) {
+      List<String> subdivisions = getSubdivisions();
+      subdivisions.add(TickType.SUB);
+      setSubdivisions(subdivisions);
     }
-    List<String> subdivisions = getSubdivisions();
-    subdivisions.add(TickType.SUB);
-    setSubdivisions(subdivisions);
-    return true;
   }
 
-  public boolean removeSubdivision() {
-    if (subdivisions.size() <= 1) {
-      return false;
+  public void removeSubdivision() {
+    if (subdivisions.size() > 1) {
+      List<String> subdivisions = getSubdivisions();
+      subdivisions.remove(subdivisions.size() - 1);
+      setSubdivisions(subdivisions);
     }
-    List<String> subdivisions = getSubdivisions();
-    subdivisions.remove(subdivisions.size() - 1);
-    setSubdivisions(subdivisions);
-    return true;
   }
 
   public void setSwing3() {
@@ -331,7 +296,6 @@ public class MetronomeUtil {
   public void setTempo(int tempo) {
     if (this.tempo != tempo) {
       this.tempo = tempo;
-      sharedPrefs.edit().putInt(Pref.TEMPO, tempo).apply();
     }
   }
 
@@ -339,10 +303,9 @@ public class MetronomeUtil {
     return tempo;
   }
 
-  public int toggleBookmark() {
+  public void toggleBookmark() {
     int tempoNew = bookmarkUtil.toggleBookmark(tempo);
     setTempo(tempoNew);
-    return tempoNew;
   }
 
   public long getInterval() {
@@ -351,11 +314,6 @@ public class MetronomeUtil {
 
   public void setSound(String sound) {
     audioUtil.setSound(sound);
-    sharedPrefs.edit().putString(Pref.SOUND, sound).apply();
-  }
-
-  public String getSound() {
-    return sharedPrefs.getString(Pref.SOUND, Def.SOUND);
   }
 
   public void setBeatModeVibrate(boolean vibrate) {
@@ -365,29 +323,26 @@ public class MetronomeUtil {
     beatModeVibrate = vibrate;
     audioUtil.setMuted(vibrate);
     hapticUtil.setEnabled(vibrate || alwaysVibrate);
-    sharedPrefs.edit().putBoolean(Pref.BEAT_MODE_VIBRATE, vibrate).apply();
   }
 
-  public boolean isBeatModeVibrate() {
+  public boolean getBeatModeVibrate() {
     return beatModeVibrate;
   }
 
   public void setAlwaysVibrate(boolean always) {
     alwaysVibrate = always;
     hapticUtil.setEnabled(always || beatModeVibrate);
-    sharedPrefs.edit().putBoolean(Pref.ALWAYS_VIBRATE, always).apply();
   }
 
-  public boolean isAlwaysVibrate() {
+  public boolean getAlwaysVibrate() {
     return alwaysVibrate;
   }
 
   public void setStrongVibration(boolean strong) {
     hapticUtil.setStrong(strong);
-    sharedPrefs.edit().putBoolean(Pref.STRONG_VIBRATION, strong).apply();
   }
 
-  public boolean isStrongVibration() {
+  public boolean getStrongVibration() {
     return hapticUtil.getStrong();
   }
 
@@ -395,9 +350,8 @@ public class MetronomeUtil {
     return !isPlaying() || (!beatModeVibrate && !alwaysVibrate);
   }
 
-  public void setLatency(long offset) {
-    latency = offset;
-    sharedPrefs.edit().putLong(Pref.LATENCY, offset).apply();
+  public void setLatency(long latency) {
+    this.latency = latency;
   }
 
   public long getLatency() {
@@ -406,7 +360,6 @@ public class MetronomeUtil {
 
   public void setIgnoreFocus(boolean ignore) {
     audioUtil.setIgnoreFocus(ignore);
-    sharedPrefs.edit().putBoolean(Pref.IGNORE_FOCUS, ignore).apply();
   }
 
   public boolean getIgnoreFocus() {
@@ -415,7 +368,6 @@ public class MetronomeUtil {
 
   public void setGain(int gain) {
     audioUtil.setGain(gain);
-    sharedPrefs.edit().putInt(Pref.GAIN, gain).apply();
     if (gain > 0) {
       neverStartedWithGain = true;
     }
@@ -431,29 +383,10 @@ public class MetronomeUtil {
 
   public void setFlashScreen(boolean flash) {
     flashScreen = flash;
-    sharedPrefs.edit().putBoolean(Pref.FLASH_SCREEN, flash).apply();
   }
 
   public boolean getFlashScreen() {
     return flashScreen;
-  }
-
-  public void setKeepAwake(boolean keepAwake) {
-    this.keepAwake = keepAwake;
-    sharedPrefs.edit().putBoolean(Pref.KEEP_AWAKE, keepAwake).apply();
-  }
-
-  public boolean getKeepAwake() {
-    return keepAwake;
-  }
-
-  public void setReduceAnim(boolean reduceAnim) {
-    this.reduceAnim = reduceAnim;
-    sharedPrefs.edit().putBoolean(Pref.REDUCE_ANIM, reduceAnim).apply();
-  }
-
-  public boolean getReduceAnim() {
-    return reduceAnim;
   }
 
   private void performTick(Tick tick) {
@@ -514,6 +447,10 @@ public class MetronomeUtil {
     void onMetronomeTick(@NonNull Tick tick);
     void onFlashScreenEnd();
     void onPermissionMissing();
+  }
+
+  private static List<String> arrayAsList(String[] array) {
+    return new ArrayList<>(Arrays.asList(array));
   }
 
   public static class MetronomeListenerAdapter implements MetronomeListener {

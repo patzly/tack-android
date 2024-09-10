@@ -27,9 +27,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,6 +44,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.EdgeButton
 import androidx.wear.compose.material3.MaterialTheme
+import androidx.wear.compose.material3.PickerState
 import androidx.wear.compose.material3.rememberPickerState
 import androidx.wear.tooling.preview.devices.WearDevices
 import kotlinx.coroutines.launch
@@ -51,6 +52,7 @@ import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.components.TempoPicker
 import xyz.zedler.patrick.tack.presentation.components.TextIconButton
+import xyz.zedler.patrick.tack.presentation.state.MainState
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.util.isSmallScreen
@@ -61,10 +63,9 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 @Composable
 fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
   TackTheme {
-    val tempo by viewModel.tempo.observeAsState(initial = Constants.Def.TEMPO)
-    val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
+    val state by viewModel.state.collectAsState()
     val pickerCoroutineScope = rememberCoroutineScope()
-    var pickerOption = remember { tempo - 1 }
+    var pickerOption = remember { state.tempo - 1 }
     val pickerState = rememberPickerState(
       initialNumberOfOptions = Constants.TEMPO_MAX,
       initiallySelectedOption = pickerOption,
@@ -73,7 +74,7 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
     fun safelyAnimateToOption(index: Int) {
       val safeIndex = index.coerceIn(Constants.TEMPO_MIN - 1, Constants.TEMPO_MAX - 1)
       pickerCoroutineScope.launch {
-        if (reduceAnim) {
+        if (state.reduceAnim) {
           pickerState.scrollToOption(safeIndex)
         } else {
           pickerState.animateScrollToOption(safeIndex)
@@ -89,11 +90,11 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         val (tempoPicker) = createRefs()
         val (plus5Button, minus5Button, plus10Button, minus10Button) = createRefs()
         CenterPicker(
-          viewModel = viewModel,
-          state = pickerState,
+          mainState = state,
+          pickerState = pickerState,
           onOptionChange = {
             pickerOption = it
-            viewModel.changeTempo(it + 1)
+            viewModel.updateTempo(it + 1)
           },
           modifier = Modifier.constrainAs(tempoPicker) {
             top.linkTo(parent.top, margin = 24.dp)
@@ -104,9 +105,9 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         )
         TextIconButton(
           label = "-5",
-          reduceAnim = reduceAnim,
+          reduceAnim = state.reduceAnim,
           onClick = {
-            safelyAnimateToOption(pickerOption - 5)
+            safelyAnimateToOption(state.tempo - 6)
           },
           modifier = Modifier.constrainAs(minus5Button) {
             top.linkTo(parent.top, margin = 40.dp)
@@ -117,9 +118,9 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         )
         TextIconButton(
           label = "-10",
-          reduceAnim = reduceAnim,
+          reduceAnim = state.reduceAnim,
           onClick = {
-            safelyAnimateToOption(pickerOption - 10)
+            safelyAnimateToOption(state.tempo - 11)
           },
           modifier = Modifier.constrainAs(minus10Button) {
             top.linkTo(minus5Button.bottom)
@@ -130,9 +131,9 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         )
         TextIconButton(
           label = "+5",
-          reduceAnim = reduceAnim,
+          reduceAnim = state.reduceAnim,
           onClick = {
-            safelyAnimateToOption(pickerOption + 5)
+            safelyAnimateToOption(state.tempo + 4)
           },
           modifier = Modifier.constrainAs(plus5Button) {
             top.linkTo(parent.top, margin = 40.dp)
@@ -143,9 +144,9 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         )
         TextIconButton(
           label = "+10",
-          reduceAnim = reduceAnim,
+          reduceAnim = state.reduceAnim,
           onClick = {
-            safelyAnimateToOption(pickerOption + 10)
+            safelyAnimateToOption(state.tempo + 9)
           },
           modifier = Modifier.constrainAs(plus10Button) {
             top.linkTo(plus5Button.bottom)
@@ -156,7 +157,7 @@ fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
         )
       }
       TapButton(
-        viewModel = viewModel,
+        state = state,
         onClick = {
           safelyAnimateToOption(viewModel.tempoTap() - 1)
         },
@@ -174,28 +175,22 @@ fun TempoScreenSmall() {
 
 @Composable
 fun CenterPicker(
-  viewModel: MainViewModel,
-  state: androidx.wear.compose.material3.PickerState,
+  mainState: MainState,
+  pickerState: PickerState,
   onOptionChange: (Int) -> Unit,
   modifier: Modifier
 ) {
-  val isPlaying by viewModel.isPlaying.observeAsState(false)
-  val beatModeVibrate by viewModel.beatModeVibrate.observeAsState(
-    Constants.Def.BEAT_MODE_VIBRATE
-  )
-  val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.Def.ALWAYS_VIBRATE)
-
   val bpm = stringResource(
     id = R.string.wear_label_bpm_value,
-    state.selectedOption + 1
+    pickerState.selectedOption + 1
   )
   val contentDescription by remember { derivedStateOf { bpm } }
 
-  LaunchedEffect(state.selectedOption) {
-    onOptionChange(state.selectedOption)
+  LaunchedEffect(pickerState.selectedOption) {
+    onOptionChange(pickerState.selectedOption)
   }
   TempoPicker(
-    state = state,
+    state = pickerState,
     modifier = modifier.size(
       spToDp(spValue = if (isSmallScreen()) 64 else 72),
       spToDp(spValue = if (isSmallScreen()) 104 else 140)
@@ -204,19 +199,19 @@ fun CenterPicker(
     textStyle = MaterialTheme.typography.displayMedium.copy(
       fontSize = if (isSmallScreen()) 24.sp else 32.sp
     ),
-    hapticFeedbackEnabled = !isPlaying || (!beatModeVibrate && !alwaysVibrate),
+    hapticFeedbackEnabled = !mainState.isPlaying ||
+        (!mainState.beatModeVibrate && !mainState.alwaysVibrate),
     contentDescription = contentDescription,
   )
 }
 
 @Composable
 fun TapButton(
-  viewModel: MainViewModel,
+  state: MainState,
   onClick: () -> Unit,
   modifier: Modifier
 ) {
   val animTrigger = remember { mutableStateOf(false) }
-  val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
   EdgeButton(
     colors = ButtonDefaults.buttonColors(
       containerColor = MaterialTheme.colorScheme.tertiary,
@@ -244,7 +239,7 @@ fun TapButton(
       resId = R.drawable.ic_rounded_touch_app_anim,
       description = stringResource(id = R.string.wear_action_tempo_tap),
       trigger = animTrigger.value,
-      animated = !reduceAnim
+      animated = !state.reduceAnim
     )
   }
 }

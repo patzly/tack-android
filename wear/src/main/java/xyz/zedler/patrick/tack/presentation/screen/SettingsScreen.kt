@@ -25,8 +25,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -47,7 +47,6 @@ import androidx.wear.compose.material3.SwitchButtonDefaults
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.TitleCard
 import androidx.wear.tooling.preview.devices.WearDevices
-import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.Constants.Sound
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
@@ -68,6 +67,7 @@ fun SettingsScreen(
       scrollState = scrollableState,
       modifier = Modifier.background(MaterialTheme.colorScheme.background)
     ) {
+      val state by viewModel.state.collectAsState()
       ScalingLazyColumn(
         state = scrollableState,
         modifier = Modifier
@@ -86,9 +86,8 @@ fun SettingsScreen(
           }
         }
         item {
-          val sound by viewModel.sound.observeAsState(Constants.Def.SOUND)
           var name = stringResource(id = R.string.wear_settings_sound_sine)
-          when (sound) {
+          when (state.sound) {
             Sound.WOOD -> {
               name = stringResource(id = R.string.wear_settings_sound_wood)
             }
@@ -115,85 +114,63 @@ fun SettingsScreen(
           )
         }
         item {
-          val gain by viewModel.gain.observeAsState(Constants.Def.GAIN)
           ClickCard(
             title = stringResource(R.string.wear_settings_gain),
-            subtitle = stringResource(R.string.wear_label_db, gain),
+            subtitle = stringResource(R.string.wear_label_db, state.gain),
             onClick = onGainClick
           )
         }
         item {
-          val latency by viewModel.latency.observeAsState(Constants.Def.LATENCY)
           ClickCard(
             title = stringResource(R.string.wear_settings_latency),
-            subtitle = stringResource(R.string.wear_label_ms, latency),
+            subtitle = stringResource(R.string.wear_label_ms, state.latency),
             onClick = onLatencyClick
           )
         }
         item {
-          val ignoreFocus by viewModel.ignoreFocus.observeAsState(Constants.Def.IGNORE_FOCUS)
           SwitchCard(
-            checked = ignoreFocus,
-            onCheckedChange = {
-              viewModel.changeIgnoreFocus(it)
-            },
+            checked = state.ignoreFocus,
+            onCheckedChange = { viewModel.updateIgnoreFocus(it) },
             label = stringResource(id = R.string.wear_settings_ignore_focus),
             secondaryLabel = stringResource(id = R.string.wear_settings_ignore_focus_description)
           )
         }
         item {
-          val alwaysVibrate by viewModel.alwaysVibrate.observeAsState(Constants.Def.ALWAYS_VIBRATE)
           SwitchCard(
-            checked = alwaysVibrate,
-            onCheckedChange = {
-              viewModel.changeAlwaysVibrate(it)
-            },
+            checked = state.alwaysVibrate,
+            onCheckedChange = { viewModel.updateAlwaysVibrate(it) },
             label = stringResource(id = R.string.wear_settings_always_vibrate),
             secondaryLabel = stringResource(id = R.string.wear_settings_always_vibrate_description)
           )
         }
         item {
-          val strongVibration by viewModel.strongVibration.observeAsState(
-            Constants.Def.STRONG_VIBRATION
-          )
           SwitchCard(
-            checked = strongVibration,
-            onCheckedChange = {
-              viewModel.changeStrongVibration(it)
-            },
+            checked = state.strongVibration,
+            onCheckedChange = { viewModel.updateStrongVibration(it) },
             label = stringResource(id = R.string.wear_settings_strong_vibration),
             secondaryLabel = stringResource(id = R.string.wear_settings_strong_vibration_description)
           )
         }
         item {
-          val flashScreen by viewModel.flashScreen.observeAsState(Constants.Def.FLASH_SCREEN)
           SwitchCard(
-            checked = flashScreen,
-            onCheckedChange = {
-              viewModel.changeFlashScreen(it)
-            },
+            checked = state.flashScreen,
+            onCheckedChange = { viewModel.updateFlashScreen(it) },
             label = stringResource(id = R.string.wear_settings_flash_screen),
             secondaryLabel = stringResource(id = R.string.wear_settings_flash_screen_description)
           )
         }
         item {
-          val keepAwake by viewModel.keepAwake.observeAsState(Constants.Def.KEEP_AWAKE)
           SwitchCard(
-            checked = keepAwake,
-            onCheckedChange = {
-              viewModel.changeKeepAwake(it)
-            },
+            checked = state.keepAwake,
+            onCheckedChange = { viewModel.updateKeepAwake(it) },
             label = stringResource(id = R.string.wear_settings_keep_awake),
             secondaryLabel = stringResource(id = R.string.wear_settings_keep_awake_description)
           )
         }
         item {
-          val reduceAnim by viewModel.reduceAnim.observeAsState(Constants.Def.REDUCE_ANIM)
           SwitchCard(
-            checked = reduceAnim,
-            onCheckedChange = {
-              viewModel.changeReduceAnim(it)
-            },
+            checked = state.reduceAnim,
+            onCheckedChange = { viewModel.updateReduceAnim(it) },
             label = stringResource(id = R.string.wear_settings_reduce_animations),
             secondaryLabel = stringResource(
               id = R.string.wear_settings_reduce_animations_description

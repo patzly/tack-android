@@ -88,7 +88,7 @@ fun BeatIconButton(
       )
       animatedSize.animateTo(
         targetValue = sizeDefault.toFloat(),
-        animationSpec = tween(durationMillis = 325)
+        animationSpec = tween(durationMillis = 300)
       )
     } else {
       isFirstExecution.value = false
