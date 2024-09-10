@@ -38,12 +38,10 @@ import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
-import androidx.wear.compose.material3.CardDefaults
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.SwitchButton
-import androidx.wear.compose.material3.SwitchButtonDefaults
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.TitleCard
 import androidx.wear.tooling.preview.devices.WearDevices
@@ -233,9 +231,6 @@ fun ClickCard(
         overflow = TextOverflow.Ellipsis
       )
     },
-    colors = CardDefaults.cardColors(
-      containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-    ),
     modifier = Modifier.fillMaxWidth()
   )
 }
@@ -251,12 +246,6 @@ fun SwitchCard(
     checked = checked,
     onCheckedChange = onCheckedChange,
     modifier = Modifier.fillMaxWidth(),
-    enabled = true,
-    colors = SwitchButtonDefaults.switchButtonColors(
-      uncheckedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-    ),
-    interactionSource = null,
-    icon = null,
     label = {
       Text(
         text = label,

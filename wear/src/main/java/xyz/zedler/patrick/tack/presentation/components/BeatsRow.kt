@@ -45,7 +45,7 @@ import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 @Composable
 fun BeatsRow(
   modifier: Modifier = Modifier,
-  color: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
+  color: Color = MaterialTheme.colorScheme.surfaceContainer,
   animated: Boolean = true,
   content: @Composable RowScope.() -> Unit
 ) {

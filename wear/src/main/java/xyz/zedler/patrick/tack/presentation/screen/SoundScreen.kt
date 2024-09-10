@@ -158,9 +158,6 @@ fun SoundOption(
     },
     selected = selected,
     onSelect = onSelected,
-    colors = RadioButtonDefaults.radioButtonColors(
-      unselectedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-    ),
     modifier = Modifier.fillMaxWidth()
   )
 }

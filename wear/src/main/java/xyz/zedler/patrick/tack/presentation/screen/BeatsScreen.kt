@@ -44,7 +44,6 @@ import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.material3.Card
-import androidx.wear.compose.material3.CardDefaults
 import androidx.wear.compose.material3.IconButton
 import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.ListHeader
@@ -233,9 +232,6 @@ fun ControlCard(
     onClick = {},
     enabled = false,
     contentPadding = PaddingValues(0.dp),
-    colors = CardDefaults.cardColors(
-      containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-    ),
     modifier = Modifier.height(size).fillMaxWidth()
   ) {
     Row {
