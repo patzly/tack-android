@@ -99,7 +99,7 @@ class MetronomeService : LifecycleService() {
   }
 
   private fun startForeground() {
-    val hasPermission = notificationUtil.hasPermission()
+    val hasPermission = NotificationUtil.hasPermission(this)
     if (hasPermission && !configChange && metronomeUtil.isPlaying) {
       notificationUtil.createNotificationChannel()
       val notification = notificationUtil.notification

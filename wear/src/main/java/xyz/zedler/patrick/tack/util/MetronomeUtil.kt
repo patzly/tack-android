@@ -29,13 +29,12 @@ import xyz.zedler.patrick.tack.Constants.TickType
 import xyz.zedler.patrick.tack.presentation.state.MainState
 
 class MetronomeUtil(
-  context: Context,
+  private val context: Context,
   private val fromService: Boolean
 ) {
   private val audioUtil = AudioUtil(context) { stop() }
   private val hapticUtil = HapticUtil(context)
   private val bookmarkUtil = BookmarkUtil(context)
-  private val notificationUtil = NotificationUtil(context)
 
   private var audioThread: HandlerThread? = null
   private var callbackThread: HandlerThread? = null
@@ -158,7 +157,7 @@ class MetronomeUtil(
 
   fun setPlayback(playing: Boolean) {
     if (playing) {
-      if (notificationUtil.hasPermission()) {
+      if (NotificationUtil.hasPermission(context)) {
         start()
       } else {
         listeners.forEach { it.onPermissionMissing() }
