@@ -19,8 +19,12 @@
 
 package xyz.zedler.patrick.tack.presentation
 
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
 import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.material3.MaterialTheme
@@ -58,12 +62,20 @@ fun TackApp(
   }
 
   TackTheme {
+    val state by viewModel.state.collectAsState()
+    val mainScreen = state.currentRoute == Screen.Main.route
+    val timeAlpha by animateFloatAsState(
+      targetValue = if (state.isPlaying && state.keepAwake && mainScreen) .5f else 1f,
+      label = "timeAlpha",
+      animationSpec = TweenSpec(durationMillis = if (state.reduceAnim) 0 else 300)
+    )
+
     AppScaffold(
       timeText = {
         TimeText(
           timeTextStyle = TimeTextDefaults.timeTextStyle().copy(
             fontFamily = MaterialTheme.typography.labelMedium.fontFamily,
-            color = MaterialTheme.colorScheme.onSurface
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = timeAlpha)
           )
         ) {
           time()

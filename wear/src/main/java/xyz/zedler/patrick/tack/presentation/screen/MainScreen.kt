@@ -58,8 +58,6 @@ import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.PickerState
 import androidx.wear.compose.material3.ScreenScaffold
-import androidx.wear.compose.material3.TimeText
-import androidx.wear.compose.material3.TimeTextDefaults
 import androidx.wear.compose.material3.rememberPickerState
 import androidx.wear.compose.material3.touchTargetAwareSize
 import androidx.wear.tooling.preview.devices.WearDevices
@@ -98,24 +96,13 @@ fun MainScreen(
       MaterialTheme.colorScheme.background
     }
 
-    val ambient = state.isPlaying && state.keepAwake
     val controlsAlpha by animateFloatAsState(
-      targetValue = if (ambient) .5f else 1f,
+      targetValue = if (state.isPlaying && state.keepAwake) .5f else 1f,
       label = "controlsAlpha",
       animationSpec = TweenSpec(durationMillis = if (state.reduceAnim) 0 else 300)
     )
 
     ScreenScaffold(
-      timeText = {
-        TimeText(
-          timeTextStyle = TimeTextDefaults.timeTextStyle().copy(
-            fontFamily = MaterialTheme.typography.labelMedium.fontFamily,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = controlsAlpha)
-          )
-        ) {
-          time()
-        }
-      },
       modifier = Modifier.background(color = background)
     ) {
       Box(
