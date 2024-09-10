@@ -32,7 +32,7 @@ android {
     minSdk = 26
     targetSdk = 34
     versionCode = 241 // last number is 1 for wear release
-    versionName = "4.3.1"
+    versionName = "4.4.0"
     resourceConfigurations += listOf("de", "cs", "en", "es", "es-rCL", "in", "tr", "zh-rCN", "zh-rHK", "zh-rTW")
   }
 
