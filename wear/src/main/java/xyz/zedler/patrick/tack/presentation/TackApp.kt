@@ -35,6 +35,7 @@ import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import xyz.zedler.patrick.tack.presentation.navigation.Screen
 import xyz.zedler.patrick.tack.presentation.screen.BeatsScreen
+import xyz.zedler.patrick.tack.presentation.screen.BookmarksScreen
 import xyz.zedler.patrick.tack.presentation.screen.GainScreen
 import xyz.zedler.patrick.tack.presentation.screen.LatencyScreen
 import xyz.zedler.patrick.tack.presentation.screen.MainScreen
@@ -98,6 +99,9 @@ fun TackApp(
             onBeatsButtonClick = {
               navController.navigate(Screen.Beats.route)
             },
+            onBookmarksButtonClick = {
+              navController.navigate(Screen.Bookmarks.route)
+            },
             onPermissionRequestClick = onPermissionRequestClick
           )
         }
@@ -121,6 +125,9 @@ fun TackApp(
         }
         composable(route = Screen.Beats.route) {
           BeatsScreen(viewModel = viewModel)
+        }
+        composable(route = Screen.Bookmarks.route) {
+          BookmarksScreen(viewModel = viewModel)
         }
         composable(route = Screen.Gain.route) {
           GainScreen(viewModel = viewModel)

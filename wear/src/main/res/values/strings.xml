@@ -31,6 +31,7 @@
   <string name="wear_title_beats_count">Beats (%1$d)</string>
   <string name="wear_title_subdivisions_count">Subdivisions (%1$d)</string>
   <string name="wear_title_notification_channel">Metronome service</string>
+  <string name="wear_title_bookmarks">Bookmarks</string>
 
   <!-- LABELS -->
 

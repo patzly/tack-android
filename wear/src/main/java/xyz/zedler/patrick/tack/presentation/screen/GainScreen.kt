@@ -53,7 +53,9 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Preview(device = WearDevices.LARGE_ROUND)
 @Composable
-fun GainScreen(viewModel: MainViewModel = MainViewModel()) {
+fun GainScreen(
+  viewModel: MainViewModel = MainViewModel()
+) {
   TackTheme {
     val scrollableState = rememberScalingLazyListState()
     ScreenScaffold(

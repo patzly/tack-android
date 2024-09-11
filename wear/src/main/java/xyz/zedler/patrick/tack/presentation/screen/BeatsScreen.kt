@@ -64,7 +64,9 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Preview(device = WearDevices.LARGE_ROUND)
 @Composable
-fun BeatsScreen(viewModel: MainViewModel = MainViewModel()) {
+fun BeatsScreen(
+  viewModel: MainViewModel = MainViewModel()
+) {
   TackTheme {
     val scrollableState = rememberScalingLazyListState()
     ScreenScaffold (

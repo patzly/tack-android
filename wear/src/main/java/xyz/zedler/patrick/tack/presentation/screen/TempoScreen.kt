@@ -61,7 +61,9 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Preview(device = WearDevices.LARGE_ROUND)
 @Composable
-fun TempoScreen(viewModel: MainViewModel = MainViewModel()) {
+fun TempoScreen(
+  viewModel: MainViewModel = MainViewModel()
+) {
   TackTheme {
     val state by viewModel.state.collectAsState()
     val pickerCoroutineScope = rememberCoroutineScope()

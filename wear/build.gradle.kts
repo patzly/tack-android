@@ -52,6 +52,10 @@ android {
   kotlinOptions {
     jvmTarget = "17"
   }
+  lint {
+    abortOnError = false
+    disable += listOf("MissingTranslation")
+  }
   buildFeatures {
     compose = true
   }

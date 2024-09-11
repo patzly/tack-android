@@ -51,7 +51,9 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Preview(device = WearDevices.LARGE_ROUND)
 @Composable
-fun LatencyScreen(viewModel: MainViewModel = MainViewModel()) {
+fun LatencyScreen(
+  viewModel: MainViewModel = MainViewModel()
+) {
   TackTheme {
     val scrollableState = rememberScalingLazyListState()
     ScreenScaffold(

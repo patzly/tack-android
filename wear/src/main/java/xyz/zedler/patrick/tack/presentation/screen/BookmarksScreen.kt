@@ -43,7 +43,7 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Preview(device = WearDevices.LARGE_ROUND)
 @Composable
-fun SoundScreen(
+fun BookmarksScreen(
   viewModel: MainViewModel = MainViewModel()
 ) {
   TackTheme {
@@ -59,13 +59,13 @@ fun SoundScreen(
         item {
           ListHeader {
             Text(
-              text = stringResource(id = R.string.wear_settings_sound),
+              text = stringResource(id = R.string.wear_title_bookmarks),
               style = MaterialTheme.typography.titleMedium
             )
           }
         }
         item {
-          SoundOption(
+          BookmarkOption(
             label = stringResource(id = R.string.wear_settings_sound_sine),
             selected = state.sound == Sound.SINE,
             onSelected = {
@@ -74,7 +74,7 @@ fun SoundScreen(
           )
         }
         item {
-          SoundOption(
+          BookmarkOption(
             label = stringResource(id = R.string.wear_settings_sound_wood),
             selected = state.sound == Sound.WOOD,
             onSelected = {
@@ -83,7 +83,7 @@ fun SoundScreen(
           )
         }
         item {
-          SoundOption(
+          BookmarkOption(
             label = stringResource(id = R.string.wear_settings_sound_mechanical),
             selected = state.sound == Sound.MECHANICAL,
             onSelected = {
@@ -92,38 +92,11 @@ fun SoundScreen(
           )
         }
         item {
-          SoundOption(
+          BookmarkOption(
             label = stringResource(id = R.string.wear_settings_sound_beatboxing_1),
             selected = state.sound == Sound.BEATBOXING_1,
             onSelected = {
               viewModel.updateSound(Sound.BEATBOXING_1)
-            }
-          )
-        }
-        item {
-          SoundOption(
-            label = stringResource(id = R.string.wear_settings_sound_beatboxing_2),
-            selected = state.sound == Sound.BEATBOXING_2,
-            onSelected = {
-              viewModel.updateSound(Sound.BEATBOXING_2)
-            }
-          )
-        }
-        item {
-          SoundOption(
-            label = stringResource(id = R.string.wear_settings_sound_hands),
-            selected = state.sound == Sound.HANDS,
-            onSelected = {
-              viewModel.updateSound(Sound.HANDS)
-            }
-          )
-        }
-        item {
-          SoundOption(
-            label = stringResource(id = R.string.wear_settings_sound_folding),
-            selected = state.sound == Sound.FOLDING,
-            onSelected = {
-              viewModel.updateSound(Sound.FOLDING)
             }
           )
         }
@@ -133,7 +106,7 @@ fun SoundScreen(
 }
 
 @Composable
-fun SoundOption(
+fun BookmarkOption(
   label: String,
   selected: Boolean,
   onSelected: () -> Unit,

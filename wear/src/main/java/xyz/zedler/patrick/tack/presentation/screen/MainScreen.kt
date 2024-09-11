@@ -83,6 +83,7 @@ fun MainScreen(
   onTempoCardClick: () -> Unit = {},
   onSettingsButtonClick: () -> Unit = {},
   onBeatsButtonClick: () -> Unit = {},
+  onBookmarksButtonClick: () -> Unit = {},
   onPermissionRequestClick: () -> Unit = {}
 ) {
   TackTheme {
@@ -215,9 +216,7 @@ fun MainScreen(
           )
           BookmarkButton(
             state = state,
-            onClick = {
-              viewModel.toggleBookmark()
-            },
+            onClick = onBookmarksButtonClick,
             modifier = Modifier
               .graphicsLayer(alpha = controlsAlpha)
               .constrainAs(bookmarkButton) {
