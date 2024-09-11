@@ -26,7 +26,6 @@
   <string name="wear_title_beats_count">Pulsos (%1$d)</string>
   <string name="wear_title_subdivisions_count">Subdivisiones (%1$d)</string>
   <string name="wear_title_notification_channel">Servicio de metrónomo</string>
-
   <!-- LABELS -->
 
   <string name="wear_label_bpm_value">%1$d bpm</string>
