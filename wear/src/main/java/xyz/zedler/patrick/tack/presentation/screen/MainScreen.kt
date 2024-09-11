@@ -314,7 +314,7 @@ fun TempoCard(
 
     val minRatio = 0.001f // 0 would cause a small y-offset
     val gradientRatio by animateFloatAsState(
-      targetValue = if (ambient) 0.2f else minRatio,
+      targetValue = if (ambient) 0.2f else 0f,
       label = "gradientRatio",
       animationSpec = TweenSpec(durationMillis = if (mainState.reduceAnim) 0 else 250)
     )
@@ -332,7 +332,7 @@ fun TempoCard(
           spToDp(spValue = if (isSmallScreen()) 76 else 100),
           spToDp(spValue = if (isSmallScreen()) 44 else 56)
         ),
-      spacing = if (isSmallScreen()) (-8).dp else (-6).dp,
+      spacing = if (isSmallScreen()) (-8).dp else (-7).dp,
       textColor = MaterialTheme.colorScheme.onSurface,
       textStyle = MaterialTheme.typography.displayMedium.copy(
         fontSize = if (isSmallScreen()) 30.sp else 40.sp
