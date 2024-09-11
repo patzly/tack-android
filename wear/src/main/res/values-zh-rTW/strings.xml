@@ -26,7 +26,6 @@
   <string name="wear_title_beats_count">節拍（%1$d）</string>
   <string name="wear_title_subdivisions_count">分割槽（%1$d）</string>
   <string name="wear_title_notification_channel">節拍器服務</string>
-
   <!-- LABELS -->
 
   <string name="wear_label_bpm_value">%1$d 節拍／分鐘</string>
