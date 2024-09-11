@@ -26,7 +26,6 @@
   <string name="wear_title_beats_count">Schläge (%1$d)</string>
   <string name="wear_title_subdivisions_count">Unterteilungen (%1$d)</string>
   <string name="wear_title_notification_channel">Metronom-Service</string>
-
   <!-- LABELS -->
 
   <string name="wear_label_bpm_value">%1$d bpm</string>
