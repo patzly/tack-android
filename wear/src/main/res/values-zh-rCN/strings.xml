@@ -32,7 +32,6 @@
   <string name="wear_label_ms">%1$s 毫秒</string>
   <string name="wear_label_db">+%1$d 分贝</string>
   <string name="wear_label_developer">开发者</string>
-
   <!-- ACTIONS -->
 
   <string name="wear_action_cancel">取消</string>
@@ -48,7 +47,6 @@
   <string name="wear_action_bookmark">书签</string>
   <string name="wear_action_beat_mode">节拍模式</string>
   <string name="wear_action_retry">重试</string>
-
   <!-- MESSAGES -->
 
   <string name="wear_msg_service_running">节拍器播放中</string>
@@ -58,7 +56,6 @@
   <string name="wear_msg_notification_permission_denied_description">播放需要通知权限</string>
   <string name="wear_msg_gain">音量增强下播放？</string>
   <string name="wear_msg_gain_description">小心不要通过耳机播放！</string>
-
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">节拍声音</string>

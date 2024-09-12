@@ -32,7 +32,6 @@
   <string name="wear_label_ms">%1$s md</string>
   <string name="wear_label_db">+%1$d dB</string>
   <string name="wear_label_developer">Dikembangkan oleh</string>
-
   <!-- ACTIONS -->
 
   <string name="wear_action_cancel">Batal</string>
@@ -48,7 +47,6 @@
   <string name="wear_action_bookmark">Penanda</string>
   <string name="wear_action_beat_mode">Mode ketukan</string>
   <string name="wear_action_retry">Ulangi</string>
-
   <!-- MESSAGES -->
 
   <string name="wear_msg_service_running">Memainkan metronom</string>
@@ -58,7 +56,6 @@
   <string name="wear_msg_notification_permission_denied_description">Diperlukan izin pemberitahuan untuk pemutaran</string>
   <string name="wear_msg_gain">Memainkan dengan peningkatan volume?</string>
   <string name="wear_msg_gain_description">Berhati-hatilah untuk tidak bermain melalui headphone!</string>
-
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">Suara ketukan</string>

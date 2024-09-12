@@ -26,12 +26,22 @@
   <string name="wear_title_beats_count">Schläge (%1$d)</string>
   <string name="wear_title_subdivisions_count">Unterteilungen (%1$d)</string>
   <string name="wear_title_notification_channel">Metronom-Service</string>
+  <string name="wear_title_bookmarks">Lesezeichen</string>
+
   <!-- LABELS -->
 
   <string name="wear_label_bpm_value">%1$d bpm</string>
   <string name="wear_label_ms">%1$s ms</string>
   <string name="wear_label_db">+%1$d dB</string>
   <string name="wear_label_developer">Entwickelt von</string>
+  <plurals name="wear_label_beats">
+    <item quantity="one">%1$d Schlag</item>
+    <item quantity="other">%1$d Schläge</item>
+  </plurals>
+  <plurals name="wear_label_subs">
+    <item quantity="one">%1$d Unterteilung</item>
+    <item quantity="other">%1$d Unterteilungen</item>
+  </plurals>
 
   <!-- ACTIONS -->
 
@@ -48,6 +58,7 @@
   <string name="wear_action_bookmark">Lesezeichen hinzufügen</string>
   <string name="wear_action_beat_mode">Schlagmodus</string>
   <string name="wear_action_retry">Erneut versuchen</string>
+  <string name="wear_action_delete">Löschen</string>
 
   <!-- MESSAGES -->
 
@@ -58,6 +69,9 @@
   <string name="wear_msg_notification_permission_denied_description">Berechtigung für Benachrichtigungen ist für die Wiedergabe erforderlich</string>
   <string name="wear_msg_gain">Mit Verstärkung wiedergeben?</string>
   <string name="wear_msg_gain_description">Achte darauf, keine Ohrhöhrer zu verwenden!</string>
+  <string name="wear_msg_empty_bookmarks">Noch nichts hinzugefügt</string>
+  <string name="wear_msg_delete_bookmark">Lesezeichen löschen?</string>
+  <string name="wear_msg_delete_bookmark_description">%1$s, %2$s, %3$s</string>
 
   <!-- SETTINGS -->
 
