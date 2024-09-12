@@ -46,11 +46,10 @@ class MainViewModel(
   init {
     if (sharedPrefs != null) {
       val bookmarksString = sharedPrefs.getString(Pref.BOOKMARKS, Def.BOOKMARKS)!!
-      val bookmarksRaw = bookmarksString.split("|")
       val bookmarks = if (bookmarksString.isEmpty()) {
         listOf()
       } else {
-        bookmarksRaw.map { item ->
+        bookmarksString.split("|").map { item ->
           val parts = item.split("&")
           Bookmark(parts[0].toInt(), parts[1].split(","), parts[2].split(","))
         }.sorted()
