@@ -33,6 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.FilledIconButton
 import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.IconButtonColors
+import androidx.wear.compose.material3.IconButtonDefaults
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.isSmallScreen
@@ -40,13 +42,15 @@ import xyz.zedler.patrick.tack.util.isSmallScreen
 @Composable
 fun DialogConfirmButton(
   onClick: () -> Unit,
+  icon: @Composable RowScope.() -> Unit,
   modifier: Modifier = Modifier,
-  icon: @Composable RowScope.() -> Unit
+  colors: IconButtonColors = IconButtonDefaults.filledIconButtonColors()
 ) {
   val confirmWidth = if (isSmallScreen()) 56.dp else 64.dp
   val confirmHeight = if (isSmallScreen()) 48.dp else 56.dp
   FilledIconButton(
     onClick = onClick,
+    colors = colors,
     modifier = modifier
       .rotate(-45f)
       .size(confirmWidth, confirmHeight),

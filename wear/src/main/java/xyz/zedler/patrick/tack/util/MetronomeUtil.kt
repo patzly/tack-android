@@ -34,7 +34,6 @@ class MetronomeUtil(
 ) {
   private val audioUtil = AudioUtil(context) { stop() }
   private val hapticUtil = HapticUtil(context)
-  private val bookmarkUtil = BookmarkUtil(context)
 
   private var audioThread: HandlerThread? = null
   private var callbackThread: HandlerThread? = null
@@ -118,7 +117,6 @@ class MetronomeUtil(
   }
 
   fun start() {
-    bookmarkUtil.reportUsage(tempo)
     if (isPlaying) return
     if (!fromService) return
 
@@ -216,10 +214,6 @@ class MetronomeUtil(
       TickType.MUTED, TickType.MUTED, TickType.MUTED, TickType.MUTED,
       TickType.NORMAL, TickType.MUTED, TickType.MUTED
     )
-  }
-
-  fun toggleBookmark() {
-    tempo = bookmarkUtil.toggleBookmark(tempo)
   }
 
   fun getInterval(): Long = (1000 * 60 / tempo).toLong()

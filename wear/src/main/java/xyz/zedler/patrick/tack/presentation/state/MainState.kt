@@ -33,6 +33,7 @@ data class MainState(
   val subdivisions: List<String> = Def.SUBDIVISIONS.split(","),
   val subdivisionTriggers: List<Boolean> =
     List((Def.SUBDIVISIONS.split(",")).size) { false },
+  val bookmarks: List<Bookmark> = listOf(),
   val beatModeVibrate: Boolean = Def.BEAT_MODE_VIBRATE,
   val alwaysVibrate: Boolean = Def.ALWAYS_VIBRATE,
   val strongVibration: Boolean = Def.STRONG_VIBRATION,

@@ -64,13 +64,13 @@ import androidx.wear.tooling.preview.devices.WearDevices
 import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.presentation.components.AnimatedIcon
 import xyz.zedler.patrick.tack.presentation.components.TempoPicker
 import xyz.zedler.patrick.tack.presentation.components.WrapContentCard
 import xyz.zedler.patrick.tack.presentation.dialog.PermissionDialog
 import xyz.zedler.patrick.tack.presentation.dialog.VolumeDialog
 import xyz.zedler.patrick.tack.presentation.state.MainState
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
-import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.util.isSmallScreen
 import xyz.zedler.patrick.tack.util.spToDp
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -115,7 +115,7 @@ fun MainScreen(
         ConstraintLayout(modifier = Modifier.fillMaxSize()) {
           val (settingsButton, tempoCard, playButton) = createRefs()
           val (beatsButton, tempoTapButton) = createRefs()
-          val (bookmarkButton, beatModeButton) = createRefs()
+          val (bookmarksButton, beatModeButton) = createRefs()
 
           val pickerOption = remember { state.tempo - 1 }
           val pickerCoroutineScope = rememberCoroutineScope()
@@ -194,7 +194,6 @@ fun MainScreen(
                 end.linkTo(playButton.start)
               }
           ) {
-            IconButtonDefaults.iconButtonColors()
             Icon(
               painter = painterResource(id = R.drawable.ic_rounded_steppers),
               contentDescription = stringResource(id = R.string.wear_title_beats)
@@ -214,18 +213,25 @@ fun MainScreen(
                 end.linkTo(playButton.start)
               }
           )
-          BookmarkButton(
-            state = state,
+          IconButton(
             onClick = onBookmarksButtonClick,
+            onLongClick = {
+              viewModel.cycleBookmarks()
+            },
             modifier = Modifier
               .graphicsLayer(alpha = controlsAlpha)
-              .constrainAs(bookmarkButton) {
+              .constrainAs(bookmarksButton) {
                 top.linkTo(parent.top, margin = 40.dp)
                 bottom.linkTo(beatModeButton.top)
                 start.linkTo(playButton.end)
                 end.linkTo(parent.end)
               }
-          )
+          ) {
+            Icon(
+              painter = painterResource(id = R.drawable.ic_rounded_bookmarks),
+              contentDescription = stringResource(id = R.string.wear_title_bookmarks)
+            )
+          }
           BeatModeButton(
             state = state,
             beatModeVibrate = state.beatModeVibrate,
@@ -236,7 +242,7 @@ fun MainScreen(
             modifier = Modifier
               .graphicsLayer(alpha = controlsAlpha)
               .constrainAs(beatModeButton) {
-                top.linkTo(bookmarkButton.bottom)
+                top.linkTo(bookmarksButton.bottom)
                 bottom.linkTo(parent.bottom, margin = 40.dp)
                 start.linkTo(playButton.end)
                 end.linkTo(parent.end)
@@ -404,7 +410,7 @@ fun PlayButton(
     interactionSource = interactionSource,
     modifier = modifier
   ) {
-    AnimatedVectorDrawable(
+    AnimatedIcon(
       resId1 = R.drawable.ic_rounded_play_to_stop_anim,
       resId2 = R.drawable.ic_rounded_stop_to_play_anim,
       description = stringResource(id = R.string.wear_action_play_stop),
@@ -438,32 +444,9 @@ fun TempoTapButton(
         }
       }
   ) {
-    AnimatedVectorDrawable(
+    AnimatedIcon(
       resId = R.drawable.ic_rounded_touch_app_anim,
       description = stringResource(id = R.string.wear_action_tempo_tap),
-      trigger = animTrigger.value,
-      animated = !state.reduceAnim
-    )
-  }
-}
-
-@Composable
-fun BookmarkButton(
-  state: MainState,
-  onClick: () -> Unit,
-  modifier: Modifier
-) {
-  val animTrigger = remember { mutableStateOf(false) }
-  IconButton(
-    onClick = {
-      onClick()
-      animTrigger.value = !animTrigger.value
-    },
-    modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
-  ) {
-    AnimatedVectorDrawable(
-      resId = R.drawable.ic_rounded_bookmark_anim,
-      description = stringResource(id = R.string.wear_action_bookmark),
       trigger = animTrigger.value,
       animated = !state.reduceAnim
     )
@@ -492,7 +475,7 @@ fun BeatModeButton(
     } else {
       R.drawable.ic_rounded_volume_up_to_vibration_anim
     }
-    AnimatedVectorDrawable(
+    AnimatedIcon(
       resId1 = resId2,
       resId2 = resId1,
       description = stringResource(id = R.string.wear_action_beat_mode),

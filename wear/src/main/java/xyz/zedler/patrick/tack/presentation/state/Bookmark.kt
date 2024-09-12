@@ -16,29 +16,19 @@
  *
  * Copyright (c) 2020-2024 by Patrick Zedler
  */
-package xyz.zedler.patrick.tack.util
 
-import android.content.Context
-import android.content.SharedPreferences
-import androidx.preference.PreferenceManager
-import xyz.zedler.patrick.tack.Constants.Pref
+package xyz.zedler.patrick.tack.presentation.state
 
-class BookmarkUtil(context: Context) {
-
-  private val sharedPrefs: SharedPreferences =
-    PreferenceManager.getDefaultSharedPreferences(context)
-
-  fun toggleBookmark(tempo: Int): Int {
-    var bookmark = sharedPrefs.getInt(Pref.BOOKMARK, -1)
-    if (bookmark == -1) {
-      // Never used before
-      bookmark = tempo
-    }
-    sharedPrefs.edit().putInt(Pref.BOOKMARK, tempo).apply()
-    return bookmark
-  }
-
-  fun reportUsage(tempo: Int) {
-    // TODO: implement bookmark algorithm with queue and least-frequently-used deletion method
+data class Bookmark(
+  val tempo: Int,
+  val beats: List<String>,
+  val subdivisions: List<String>
+) : Comparable<Bookmark> {
+  override fun compareTo(other: Bookmark): Int {
+    return compareValuesBy(this, other,
+      { it.tempo },
+      { it.beats.size },
+      { it.subdivisions.size }
+    )
   }
 }

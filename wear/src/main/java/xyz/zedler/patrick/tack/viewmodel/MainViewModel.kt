@@ -25,12 +25,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.Constants.Def
 import xyz.zedler.patrick.tack.Constants.Pref
-import xyz.zedler.patrick.tack.Constants.TEMPO_MAX
-import xyz.zedler.patrick.tack.Constants.TEMPO_MIN
 import xyz.zedler.patrick.tack.Constants.TickType
 import xyz.zedler.patrick.tack.presentation.navigation.Screen
+import xyz.zedler.patrick.tack.presentation.state.Bookmark
 import xyz.zedler.patrick.tack.presentation.state.MainState
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick
 import xyz.zedler.patrick.tack.util.TempoTapUtil
@@ -45,11 +45,22 @@ class MainViewModel(
 
   init {
     if (sharedPrefs != null) {
+      val bookmarksString = sharedPrefs.getString(Pref.BOOKMARKS, Def.BOOKMARKS)!!
+      val bookmarksRaw = bookmarksString.split("|")
+      val bookmarks = if (bookmarksString.isEmpty()) {
+        listOf()
+      } else {
+        bookmarksRaw.map { item ->
+          val parts = item.split("&")
+          Bookmark(parts[0].toInt(), parts[1].split(","), parts[2].split(","))
+        }.sorted()
+      }
       _state.update { it.copy(
         tempo = sharedPrefs.getInt(Pref.TEMPO, Def.TEMPO),
-        beats = sharedPrefs.getString(Pref.BEATS, Def.BEATS)!!.split(",".toRegex()),
+        beats = sharedPrefs.getString(Pref.BEATS, Def.BEATS)!!.split(","),
         subdivisions = sharedPrefs
-          .getString(Pref.SUBDIVISIONS, Def.SUBDIVISIONS)!!.split(",".toRegex()),
+          .getString(Pref.SUBDIVISIONS, Def.SUBDIVISIONS)!!.split(","),
+        bookmarks = bookmarks,
         beatModeVibrate = sharedPrefs
           .getBoolean(Pref.BEAT_MODE_VIBRATE, Def.BEAT_MODE_VIBRATE),
         alwaysVibrate = sharedPrefs
@@ -87,7 +98,7 @@ class MainViewModel(
   }
 
   fun updateTempo(tempo: Int, picker: Boolean = false, animate: Boolean = true) {
-    if (tempo in TEMPO_MIN..TEMPO_MAX && _state.value.tempo != tempo) {
+    if (tempo in Constants.TEMPO_MIN..Constants.TEMPO_MAX && _state.value.tempo != tempo) {
       _state.update { it.copy(
         tempo = tempo,
         tempoChangedByPicker = picker,
@@ -105,10 +116,6 @@ class MainViewModel(
       return tempo
     }
     return _state.value.tempo
-  }
-
-  fun toggleBookmark() {
-    listener?.onBookmarkToggleRequest()
   }
 
   fun updateBeats(beats: List<String>) {
@@ -171,6 +178,61 @@ class MainViewModel(
 
   fun updateSwing(swing: Int) {
     listener?.onSwingChangeRequest(swing)
+  }
+
+  fun addBookmark() {
+    val existing = _state.value.bookmarks.find {
+      it.tempo == _state.value.tempo
+          && it.beats == _state.value.beats
+          && it.subdivisions == _state.value.subdivisions
+    }
+    if (existing == null && _state.value.bookmarks.size < Constants.BOOKMARKS_MAX) {
+      val bookmarks = _state.value.bookmarks.toMutableList()
+      bookmarks.add(Bookmark(_state.value.tempo, _state.value.beats, _state.value.subdivisions))
+      updateBookmarks(bookmarks)
+    }
+  }
+
+  fun deleteBookmark(bookmark: Bookmark) {
+    val bookmarks = _state.value.bookmarks.toMutableList()
+    if (bookmarks.remove(bookmark)) {
+      updateBookmarks(bookmarks)
+    }
+  }
+
+  fun updateFromBookmark(bookmark: Bookmark) {
+    updateTempo(bookmark.tempo)
+    updateBeats(bookmark.beats)
+    updateSubdivisions(bookmark.subdivisions)
+  }
+
+  fun cycleBookmarks() {
+    val bookmarks = _state.value.bookmarks
+    if (bookmarks.isNotEmpty()) {
+      val index = bookmarks.indexOfFirst {
+        it.tempo == _state.value.tempo
+            && it.beats == _state.value.beats
+            && it.subdivisions == _state.value.subdivisions
+      }
+      if (index == -1) {
+        updateFromBookmark(bookmarks[0])
+      } else {
+        val nextIndex = (index + 1) % bookmarks.size
+        updateFromBookmark(bookmarks[nextIndex])
+      }
+    }
+  }
+
+  private fun updateBookmarks(bookmarks: List<Bookmark>) {
+    _state.update { it.copy(bookmarks = bookmarks.sorted().toList()) }
+    sharedPrefs?.edit()?.putString(
+      Pref.BOOKMARKS,
+      bookmarks.joinToString("|") {
+        "${it.tempo}" +
+            "&${it.beats.joinToString(",")}" +
+            "&${it.subdivisions.joinToString(",")}"
+      }
+    )?.apply()
   }
 
   fun updateBeatModeVibrate(vibrate: Boolean) {
@@ -296,7 +358,6 @@ class MainViewModel(
     fun onMetronomeConfigChanged(state: MainState)
     fun onKeepAwakeChanged(keepAwake: Boolean)
     fun onPlayingToggleRequest()
-    fun onBookmarkToggleRequest()
     fun onAddBeatRequest()
     fun onRemoveBeatRequest()
     fun onChangeBeatRequest(beat: Int, tickType: String)

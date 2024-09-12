@@ -20,24 +20,41 @@
 package xyz.zedler.patrick.tack.presentation.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
+import androidx.wear.compose.foundation.lazy.items
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.material3.ButtonDefaults
+import androidx.wear.compose.material3.EdgeButton
+import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
-import androidx.wear.compose.material3.RadioButton
 import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.SplitRadioButton
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
-import xyz.zedler.patrick.tack.Constants.Sound
+import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.presentation.dialog.DeletionDialog
+import xyz.zedler.patrick.tack.presentation.state.Bookmark
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
@@ -47,81 +64,154 @@ fun BookmarksScreen(
   viewModel: MainViewModel = MainViewModel()
 ) {
   TackTheme {
+    val state by viewModel.state.collectAsState()
+    val allowAdding = remember(state.bookmarks, state.tempo, state.beats, state.subdivisions) {
+      state.bookmarks.none {
+        it.tempo == state.tempo
+            && it.beats == state.beats
+            && it.subdivisions == state.subdivisions
+      } && state.bookmarks.size < Constants.BOOKMARKS_MAX
+    }
     val scrollableState = rememberScalingLazyListState()
     ScreenScaffold(
       scrollState = scrollableState,
+      bottomButton = {
+        BottomButton(
+          onClick = {
+            viewModel.addBookmark()
+          },
+          enabled = allowAdding
+        )
+      },
       modifier = Modifier.background(color = MaterialTheme.colorScheme.background)
     ) {
-      val state by viewModel.state.collectAsState()
-      ScalingLazyColumn(
-        state = scrollableState
+      Box(
+        modifier = Modifier.fillMaxSize()
       ) {
-        item {
-          ListHeader {
-            Text(
-              text = stringResource(id = R.string.wear_title_bookmarks),
-              style = MaterialTheme.typography.titleMedium
-            )
+        var showDeletionDialog by remember { mutableStateOf(false) }
+        var deletionBookmark by remember { mutableStateOf<Bookmark?>(null) }
+        ScalingLazyColumn(
+          state = scrollableState
+        ) {
+          item {
+            ListHeader {
+              Text(
+                text = stringResource(id = R.string.wear_title_bookmarks),
+                style = MaterialTheme.typography.titleMedium
+              )
+            }
+          }
+          if (state.bookmarks.isNotEmpty()) {
+            items(state.bookmarks) { bookmark ->
+              val selected = remember(
+                state.bookmarks, state.tempo, state.beats, state.subdivisions
+              ) {
+                state.tempo == bookmark.tempo
+                    && state.beats == bookmark.beats
+                    && state.subdivisions == bookmark.subdivisions
+              }
+              BookmarkOption(
+                bookmark = bookmark,
+                selected = selected,
+                onSelectionClick = {
+                  viewModel.updateFromBookmark(bookmark)
+                },
+                onContainerClick = {
+                  deletionBookmark = bookmark
+                  showDeletionDialog = true
+                }
+              )
+            }
+          } else {
+            item {
+              Text(
+                text = stringResource(id = R.string.wear_msg_empty_bookmarks),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp).fillMaxWidth()
+              )
+            }
           }
         }
-        item {
-          BookmarkOption(
-            label = stringResource(id = R.string.wear_settings_sound_sine),
-            selected = state.sound == Sound.SINE,
-            onSelected = {
-              viewModel.updateSound(Sound.SINE)
-            }
-          )
-        }
-        item {
-          BookmarkOption(
-            label = stringResource(id = R.string.wear_settings_sound_wood),
-            selected = state.sound == Sound.WOOD,
-            onSelected = {
-              viewModel.updateSound(Sound.WOOD)
-            }
-          )
-        }
-        item {
-          BookmarkOption(
-            label = stringResource(id = R.string.wear_settings_sound_mechanical),
-            selected = state.sound == Sound.MECHANICAL,
-            onSelected = {
-              viewModel.updateSound(Sound.MECHANICAL)
-            }
-          )
-        }
-        item {
-          BookmarkOption(
-            label = stringResource(id = R.string.wear_settings_sound_beatboxing_1),
-            selected = state.sound == Sound.BEATBOXING_1,
-            onSelected = {
-              viewModel.updateSound(Sound.BEATBOXING_1)
-            }
-          )
-        }
+        DeletionDialog(
+          show = showDeletionDialog,
+          bookmark = deletionBookmark,
+          onConfirm = {
+            viewModel.deleteBookmark(it)
+            showDeletionDialog = false
+          },
+          onDismiss = {
+            showDeletionDialog = false
+          }
+        )
       }
     }
   }
 }
 
 @Composable
-fun BookmarkOption(
-  label: String,
-  selected: Boolean,
-  onSelected: () -> Unit,
+fun BottomButton(
+  onClick: () -> Unit,
+  enabled: Boolean = true
 ) {
-  RadioButton(
+  EdgeButton(
+    onClick = onClick,
+    colors = ButtonDefaults.buttonColors(
+      containerColor = MaterialTheme.colorScheme.tertiary,
+      contentColor = MaterialTheme.colorScheme.onTertiary
+    ),
+    modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
+    enabled = enabled
+  ) {
+    Icon(
+      painter = painterResource(id = R.drawable.ic_rounded_bookmark_add),
+      contentDescription = stringResource(id = R.string.wear_action_bookmark)
+    )
+  }
+}
+
+@Composable
+fun BookmarkOption(
+  bookmark: Bookmark,
+  selected: Boolean,
+  onSelectionClick: () -> Unit,
+  onContainerClick: () -> Unit
+) {
+  SplitRadioButton(
+    selected = selected,
+    onSelectionClick = onSelectionClick,
+    selectionContentDescription = null,
+    onContainerClick = onContainerClick,
     label = {
       Text(
-        text = label,
+        text = stringResource(id = R.string.wear_label_bpm_value, bookmark.tempo),
         style = MaterialTheme.typography.bodyLarge,
-        maxLines = 3,
+        maxLines = 1,
         overflow = TextOverflow.Ellipsis
       )
     },
-    selected = selected,
-    onSelect = onSelected,
+    secondaryLabel = {
+      Column(
+        modifier = Modifier.fillMaxWidth()
+      ) {
+        Text(
+          text = pluralStringResource(
+            id = R.plurals.wear_label_beats, bookmark.beats.size, bookmark.beats.size
+          ),
+          style = MaterialTheme.typography.bodySmall,
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis
+        )
+        Text(
+          text = pluralStringResource(
+            id = R.plurals.wear_label_subs, bookmark.subdivisions.size, bookmark.subdivisions.size
+          ),
+          style = MaterialTheme.typography.bodySmall,
+          maxLines = 1,
+          overflow = TextOverflow.Ellipsis
+        )
+      }
+    },
     modifier = Modifier.fillMaxWidth()
   )
 }

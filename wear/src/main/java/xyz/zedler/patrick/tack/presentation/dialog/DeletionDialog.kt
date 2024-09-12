@@ -24,38 +24,48 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.AlertDialog
 import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.components.DialogConfirmButton
 import xyz.zedler.patrick.tack.presentation.components.DialogDismissButton
+import xyz.zedler.patrick.tack.presentation.state.Bookmark
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 
 @Composable
-fun PermissionDialog(
+fun DeletionDialog(
   show: Boolean,
-  onConfirm: () -> Unit,
-  onDismiss: () -> Unit
+  bookmark: Bookmark?,
+  onConfirm: (bookmark: Bookmark) -> Unit,
+  onDismiss: () -> Unit,
 ) {
   TackTheme {
     AlertDialog(
       show = show,
       confirmButton = {
         DialogConfirmButton(
-          onClick = onConfirm,
+          onClick = {
+            bookmark?.let { bookmark -> onConfirm(bookmark) }
+          },
           icon = {
             Icon(
-              painter = painterResource(id = R.drawable.ic_rounded_repeat),
-              contentDescription = stringResource(id = R.string.wear_action_retry)
+              painter = painterResource(id = R.drawable.ic_rounded_delete),
+              contentDescription = stringResource(id = R.string.wear_action_delete)
             )
-          }
+          },
+          colors = IconButtonDefaults.filledIconButtonColors(
+            contentColor = MaterialTheme.colorScheme.onError,
+            containerColor = MaterialTheme.colorScheme.error
+          )
         )
       },
       dismissButton = {
@@ -64,22 +74,30 @@ fun PermissionDialog(
       onDismissRequest = onDismiss,
       icon = {
         Icon(
-          painter = painterResource(id = R.drawable.ic_rounded_error),
+          painter = painterResource(id = R.drawable.ic_rounded_bookmark_remove),
           contentDescription = null,
           tint = MaterialTheme.colorScheme.onBackground
         )
       },
       title = {
         Text(
-          text = stringResource(id = R.string.wear_msg_notification_permission_denied),
+          text = stringResource(id = R.string.wear_msg_delete_bookmark),
           style = MaterialTheme.typography.titleMedium,
           textAlign = TextAlign.Center,
           modifier = Modifier.fillMaxWidth()
         )
       },
       text = {
+        if (bookmark == null) return@AlertDialog
+        val tempo = stringResource(id = R.string.wear_label_bpm_value, bookmark.tempo)
+        val beats = pluralStringResource(
+          id = R.plurals.wear_label_beats, bookmark.beats.size, bookmark.beats.size
+        )
+        val subs = pluralStringResource(
+          id = R.plurals.wear_label_subs, bookmark.subdivisions.size, bookmark.subdivisions.size
+        )
         Text(
-          text = stringResource(id = R.string.wear_msg_notification_permission_denied_description),
+          text = stringResource(R.string.wear_msg_delete_bookmark_description, tempo, beats, subs),
           style = MaterialTheme.typography.bodySmall,
           color = MaterialTheme.colorScheme.onSurface,
           textAlign = TextAlign.Center,
@@ -98,9 +116,10 @@ fun PermissionDialog(
 
 @Preview(device = WearDevices.LARGE_ROUND)
 @Composable
-fun PermissionDialogPreview() {
-  PermissionDialog(
+fun DeletionDialogPreview() {
+  DeletionDialog(
     show = true,
+    bookmark = Bookmark(120, listOf("strong", "normal"), listOf("muted", "sub")),
     onConfirm = {},
     onDismiss = {}
   )

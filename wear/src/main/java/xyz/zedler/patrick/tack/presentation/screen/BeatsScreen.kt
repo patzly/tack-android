@@ -53,12 +53,12 @@ import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.presentation.components.AnimatedIcon
 import xyz.zedler.patrick.tack.presentation.components.BeatIconButton
 import xyz.zedler.patrick.tack.presentation.components.BeatsRow
 import xyz.zedler.patrick.tack.presentation.components.TextIconButton
 import xyz.zedler.patrick.tack.presentation.state.MainState
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
-import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 import xyz.zedler.patrick.tack.util.isSmallScreen
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
@@ -250,7 +250,7 @@ fun ControlCard(
         },
         modifier = Modifier.size(size)
       ) {
-        AnimatedVectorDrawable(
+        AnimatedIcon(
           resId = R.drawable.ic_rounded_remove_anim,
           description = labelRemove,
           trigger = animTriggerRemove.value,
@@ -274,7 +274,7 @@ fun ControlCard(
         },
         modifier = Modifier.size(size)
       ) {
-        AnimatedVectorDrawable(
+        AnimatedIcon(
           resId = R.drawable.ic_rounded_add_anim,
           description = labelAdd,
           trigger = animTriggerAdd.value,

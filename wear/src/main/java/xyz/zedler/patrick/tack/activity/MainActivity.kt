@@ -102,10 +102,6 @@ class MainActivity : ComponentActivity(), ServiceConnection {
         getMetronomeUtil().setPlayback(!getMetronomeUtil().isPlaying)
         viewModel.updatePlaying(getMetronomeUtil().isPlaying)
       }
-      override fun onBookmarkToggleRequest() {
-        getMetronomeUtil().toggleBookmark()
-        viewModel.updateTempo(getMetronomeUtil().tempo)
-      }
       override fun onAddBeatRequest() {
         getMetronomeUtil().addBeat()
         viewModel.updateBeats(getMetronomeUtil().beats)

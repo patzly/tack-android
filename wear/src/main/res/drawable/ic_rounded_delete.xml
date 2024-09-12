@@ -1,0 +1,29 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+
+<vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:width="24dp"
+  android:height="24dp"
+  android:viewportWidth="24"
+  android:viewportHeight="24">
+  <path
+    android:fillColor="#FF000000"
+    android:pathData="M7,21q-0.83,0 -1.41,-0.59Q5,19.82 5,19L5,6q-0.43,0 -0.71,-0.29Q4,5.43 4,5q0,-0.42 0.29,-0.71Q4.57,4 5,4h4q0,-0.42 0.29,-0.71Q9.57,3 10,3h4q0.42,0 0.71,0.29T15,4h4q0.42,0 0.71,0.29T20,5q0,0.43 -0.29,0.71Q19.42,6 19,6v13q0,0.82 -0.59,1.41T17,21ZM17,6L7,6v13h10ZM10,17q0.42,0 0.71,-0.29T11,16L11,9q0,-0.42 -0.29,-0.71T10,8q-0.43,0 -0.71,0.29Q9,8.58 9,9v7q0,0.42 0.29,0.71 0.28,0.29 0.71,0.29ZM14,17q0.42,0 0.71,-0.29T15,16L15,9q0,-0.42 -0.29,-0.71T14,8q-0.43,0 -0.71,0.29Q13,8.58 13,9v7q0,0.42 0.29,0.71 0.28,0.29 0.71,0.29ZM7,6v13Z" />
+</vector>

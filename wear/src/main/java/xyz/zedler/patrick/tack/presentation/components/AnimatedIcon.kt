@@ -17,7 +17,7 @@
  * Copyright (c) 2020-2024 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util
+package xyz.zedler.patrick.tack.presentation.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
@@ -30,7 +30,7 @@ import androidx.wear.compose.material3.Icon
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
-fun AnimatedVectorDrawable(
+fun AnimatedIcon(
   @DrawableRes resId: Int,
   description: String,
   trigger: Boolean,
@@ -55,7 +55,7 @@ fun AnimatedVectorDrawable(
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
-fun AnimatedVectorDrawable(
+fun AnimatedIcon(
   @DrawableRes resId1: Int,
   @DrawableRes resId2: Int,
   description: String,

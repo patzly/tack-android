@@ -27,6 +27,7 @@ object Constants {
   const val TEMPO_MAX: Int = 500
   const val BEATS_MAX: Int = 20
   const val SUBS_MAX: Int = 10
+  const val BOOKMARKS_MAX: Int = 10
 
   object Pref {
     const val TEMPO: String = "tempo"
@@ -42,7 +43,7 @@ object Constants {
     const val LATENCY: String = "latency_offset"
     const val IGNORE_FOCUS: String = "ignore_focus"
     const val GAIN: String = "gain"
-    const val BOOKMARK: String = "bookmark"
+    const val BOOKMARKS: String = "bookmarks"
   }
 
   object Def {
@@ -59,6 +60,7 @@ object Constants {
     const val LATENCY: Long = 100
     const val IGNORE_FOCUS: Boolean = false
     const val GAIN: Int = 0
+    const val BOOKMARKS: String = ""
   }
 
   object Sound {

@@ -1,6 +1,7 @@
 ## 4.4.0
 
 - New: support for Wear OS 5
+- New: bookmarks for tempo, beats and subdivisions (Wear OS)
 - New: Indonesian, Spanish and Turkish translations (big thanks to the translators!)
 - Improved: splash screen on Android 12+
 - Improved: playful button shapes for tempo tap and confirmation dialogs (Wear OS)

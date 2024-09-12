@@ -39,6 +39,14 @@
   <string name="wear_label_ms">%1$s ms</string>
   <string name="wear_label_db">+%1$d dB</string>
   <string name="wear_label_developer">Developed by</string>
+  <plurals name="wear_label_beats">
+    <item quantity="one">%1$d beat</item>
+    <item quantity="other">%1$d beats</item>
+  </plurals>
+  <plurals name="wear_label_subs">
+    <item quantity="one">%1$d subdivision</item>
+    <item quantity="other">%1$d subdivisions</item>
+  </plurals>
 
   <!-- ACTIONS -->
 
@@ -55,6 +63,7 @@
   <string name="wear_action_bookmark">Bookmark</string>
   <string name="wear_action_beat_mode">Beat mode</string>
   <string name="wear_action_retry">Retry</string>
+  <string name="wear_action_delete">Delete</string>
 
   <!-- MESSAGES -->
 
@@ -65,6 +74,9 @@
   <string name="wear_msg_notification_permission_denied_description">Notification permission is required for playback</string>
   <string name="wear_msg_gain">Play with volume boost?</string>
   <string name="wear_msg_gain_description">Be careful not to play through headphones!</string>
+  <string name="wear_msg_empty_bookmarks">Nothing added yet</string>
+  <string name="wear_msg_delete_bookmark">Delete bookmark?</string>
+  <string name="wear_msg_delete_bookmark_description">%1$s, %2$s, %3$s</string>
 
   <!-- SETTINGS -->
 

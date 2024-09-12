@@ -40,7 +40,6 @@ import androidx.wear.compose.material3.MaterialTheme
 import xyz.zedler.patrick.tack.Constants.TickType
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
-import xyz.zedler.patrick.tack.util.AnimatedVectorDrawable
 
 @Composable
 fun BeatIconButton(
@@ -118,7 +117,7 @@ fun BeatIconButton(
       TickType.MUTED -> shapesFilled[index % shapesFilled.size]
       else -> shapesTwoTone[index % shapesTwoTone.size]
     }
-    AnimatedVectorDrawable(
+    AnimatedIcon(
       resId = resId,
       description = stringResource(id = R.string.wear_action_tempo_tap),
       trigger = animTrigger,
