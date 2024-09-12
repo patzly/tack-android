@@ -66,6 +66,8 @@
   <string name="wear_msg_gain_description">Achte darauf, keine Ohrhöhrer zu verwenden!</string>
   <string name="wear_msg_empty_bookmarks">Noch nichts hinzugefügt</string>
   <string name="wear_msg_delete_bookmark">Lesezeichen löschen?</string>
+  <string name="wear_msg_delete_bookmark_description">%1$s, %2$s, %3$s</string>
+
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">Schlaggeräusch</string>
