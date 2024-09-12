@@ -65,6 +65,7 @@
   <string name="wear_msg_gain">Mit Verstärkung wiedergeben?</string>
   <string name="wear_msg_gain_description">Achte darauf, keine Ohrhöhrer zu verwenden!</string>
   <string name="wear_msg_empty_bookmarks">Noch nichts hinzugefügt</string>
+  <string name="wear_msg_delete_bookmark">Lesezeichen löschen?</string>
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">Schlaggeräusch</string>
