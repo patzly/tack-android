@@ -32,7 +32,6 @@
   <string name="wear_label_ms">%1$s ms</string>
   <string name="wear_label_db">+%1$d dB</string>
   <string name="wear_label_developer">Entwickelt von</string>
-
   <!-- ACTIONS -->
 
   <string name="wear_action_cancel">Abbrechen</string>
@@ -48,7 +47,6 @@
   <string name="wear_action_bookmark">Lesezeichen hinzufügen</string>
   <string name="wear_action_beat_mode">Schlagmodus</string>
   <string name="wear_action_retry">Erneut versuchen</string>
-
   <!-- MESSAGES -->
 
   <string name="wear_msg_service_running">Metronom läuft</string>
@@ -58,7 +56,6 @@
   <string name="wear_msg_notification_permission_denied_description">Berechtigung für Benachrichtigungen ist für die Wiedergabe erforderlich</string>
   <string name="wear_msg_gain">Mit Verstärkung wiedergeben?</string>
   <string name="wear_msg_gain_description">Achte darauf, keine Ohrhöhrer zu verwenden!</string>
-
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">Schlaggeräusch</string>
