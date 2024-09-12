@@ -74,7 +74,7 @@ fun DeletionDialog(
       onDismissRequest = onDismiss,
       icon = {
         Icon(
-          painter = painterResource(id = R.drawable.ic_rounded_bookmark_remove),
+          painter = painterResource(id = R.drawable.ic_rounded_bookmark),
           contentDescription = null,
           tint = MaterialTheme.colorScheme.onBackground
         )

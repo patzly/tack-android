@@ -55,11 +55,14 @@ class MainViewModel(
           Bookmark(parts[0].toInt(), parts[1].split(","), parts[2].split(","))
         }.sorted()
       }
+      val beats = sharedPrefs.getString(Pref.BEATS, Def.BEATS)!!.split(",")
+      val subs = sharedPrefs.getString(Pref.SUBDIVISIONS, Def.SUBDIVISIONS)!!.split(",")
       _state.update { it.copy(
         tempo = sharedPrefs.getInt(Pref.TEMPO, Def.TEMPO),
-        beats = sharedPrefs.getString(Pref.BEATS, Def.BEATS)!!.split(","),
-        subdivisions = sharedPrefs
-          .getString(Pref.SUBDIVISIONS, Def.SUBDIVISIONS)!!.split(","),
+        beats = beats,
+        beatTriggers = beatTriggers(beats.size),
+        subdivisions = subs,
+        subdivisionTriggers = subdivisionTriggers(subs.size),
         bookmarks = bookmarks,
         beatModeVibrate = sharedPrefs
           .getBoolean(Pref.BEAT_MODE_VIBRATE, Def.BEAT_MODE_VIBRATE),
@@ -75,6 +78,9 @@ class MainViewModel(
         reduceAnim = sharedPrefs.getBoolean(Pref.REDUCE_ANIM, Def.REDUCE_ANIM),
         flashScreen = sharedPrefs.getBoolean(Pref.FLASH_SCREEN, Def.FLASH_SCREEN),
       ) }
+      val subdivisions = sharedPrefs
+        .getString(Pref.SUBDIVISIONS, Def.SUBDIVISIONS)!!.split(",")
+      updateSubdivisions(subdivisions)
     }
   }
 
@@ -119,19 +125,21 @@ class MainViewModel(
   }
 
   fun updateBeats(beats: List<String>) {
+    _state.update { it.copy(
+      beats = beats,
+      beatTriggers = beatTriggers(beats.size)
+    ) }
+    listener?.onMetronomeConfigChanged(_state.value)
+    sharedPrefs?.edit()?.putString(Pref.BEATS, beats.joinToString(","))?.apply()
+  }
+
+  private fun beatTriggers(count: Int): List<Boolean> {
     val triggers = _state.value.beatTriggers
-    val count = beats.count()
-    val updatedTriggers = when {
+    return when {
       triggers.size < count -> triggers + List(count - triggers.size) { false }
       triggers.size > count -> triggers.take(count)
       else -> triggers
     }
-    _state.update { it.copy(
-      beats = beats,
-      beatTriggers = updatedTriggers
-    ) }
-    listener?.onMetronomeConfigChanged(_state.value)
-    sharedPrefs?.edit()?.putString(Pref.BEATS, beats.joinToString(","))?.apply()
   }
 
   fun addBeat() {
@@ -147,21 +155,23 @@ class MainViewModel(
   }
 
   fun updateSubdivisions(subdivisions: List<String>) {
-    val triggers = _state.value.subdivisionTriggers
-    val count = subdivisions.count()
-    val updatedTriggers = when {
-      triggers.size < count -> triggers + List(count - triggers.size) { false }
-      triggers.size > count -> triggers.take(count)
-      else -> triggers
-    }
     _state.update { it.copy(
       subdivisions = subdivisions,
-      subdivisionTriggers = updatedTriggers
+      subdivisionTriggers = subdivisionTriggers(subdivisions.size)
     ) }
     listener?.onMetronomeConfigChanged(_state.value)
     sharedPrefs?.edit()?.putString(
       Pref.SUBDIVISIONS, subdivisions.joinToString(",")
     )?.apply()
+  }
+
+  private fun subdivisionTriggers(count: Int): List<Boolean> {
+    val triggers = _state.value.subdivisionTriggers
+    return when {
+      triggers.size < count -> triggers + List(count - triggers.size) { false }
+      triggers.size > count -> triggers.take(count)
+      else -> triggers
+    }
   }
 
   fun addSubdivision() {
