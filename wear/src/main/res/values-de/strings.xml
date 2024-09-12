@@ -64,6 +64,7 @@
   <string name="wear_msg_notification_permission_denied_description">Berechtigung für Benachrichtigungen ist für die Wiedergabe erforderlich</string>
   <string name="wear_msg_gain">Mit Verstärkung wiedergeben?</string>
   <string name="wear_msg_gain_description">Achte darauf, keine Ohrhöhrer zu verwenden!</string>
+  <string name="wear_msg_empty_bookmarks">Noch nichts hinzugefügt</string>
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">Schlaggeräusch</string>
