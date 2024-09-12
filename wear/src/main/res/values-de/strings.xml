@@ -53,6 +53,8 @@
   <string name="wear_action_bookmark">Lesezeichen hinzufügen</string>
   <string name="wear_action_beat_mode">Schlagmodus</string>
   <string name="wear_action_retry">Erneut versuchen</string>
+  <string name="wear_action_delete">Löschen</string>
+
   <!-- MESSAGES -->
 
   <string name="wear_msg_service_running">Metronom läuft</string>
