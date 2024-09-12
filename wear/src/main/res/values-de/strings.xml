@@ -34,6 +34,10 @@
   <string name="wear_label_ms">%1$s ms</string>
   <string name="wear_label_db">+%1$d dB</string>
   <string name="wear_label_developer">Entwickelt von</string>
+  <plurals name="wear_label_beats">
+    <item quantity="one">%1$d Schlag</item>
+    <item quantity="other">%1$d Schläge</item>
+  </plurals>
   <!-- ACTIONS -->
 
   <string name="wear_action_cancel">Abbrechen</string>
