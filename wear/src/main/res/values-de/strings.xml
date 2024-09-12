@@ -38,6 +38,11 @@
     <item quantity="one">%1$d Schlag</item>
     <item quantity="other">%1$d Schläge</item>
   </plurals>
+  <plurals name="wear_label_subs">
+    <item quantity="one">%1$d Unterteilung</item>
+    <item quantity="other">%1$d Unterteilungen</item>
+  </plurals>
+
   <!-- ACTIONS -->
 
   <string name="wear_action_cancel">Abbrechen</string>
