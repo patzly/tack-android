@@ -146,7 +146,7 @@ public class CircleView extends View {
       updateShape();
     });
     // shader color
-    ValueAnimator alphaAnimator = ValueAnimator.ofFloat(gradientBlendRatio, dragged ? 0.7f : 0);
+    ValueAnimator alphaAnimator = ValueAnimator.ofFloat(gradientBlendRatio, dragged ? 0.5f : 0);
     alphaAnimator.addUpdateListener(animation -> {
       gradientBlendRatio = (float) alphaAnimator.getAnimatedValue();
       if (!reduceAnimations) {
