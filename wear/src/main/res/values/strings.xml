@@ -76,6 +76,7 @@
   <string name="wear_msg_gain_description">Be careful not to play through headphones!</string>
   <string name="wear_msg_empty_bookmarks">Nothing added yet</string>
   <string name="wear_msg_delete_bookmark">Delete bookmark?</string>
+  <!-- Content of a bookmark, e. g. 120 bpm, 4 beats, 1 subdivision -->
   <string name="wear_msg_delete_bookmark_description">%1$s, %2$s, %3$s</string>
 
   <!-- SETTINGS -->
