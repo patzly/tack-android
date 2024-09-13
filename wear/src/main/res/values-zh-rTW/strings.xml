@@ -47,6 +47,8 @@
   <string name="wear_action_bookmark">書籤</string>
   <string name="wear_action_beat_mode">節拍模式</string>
   <string name="wear_action_retry">重試</string>
+  <string name="wear_action_delete">刪除</string>
+
   <!-- MESSAGES -->
 
   <string name="wear_msg_service_running">節拍器正在播放</string>
