@@ -40,6 +40,13 @@
     <item quantity="many">%1$d dob</item>
     <item quantity="other">%1$d dob</item>
   </plurals>
+  <plurals name="wear_label_subs">
+    <item quantity="one">%1$d subdivize</item>
+    <item quantity="few">%1$d subdivize</item>
+    <item quantity="many">%1$d subdivizí</item>
+    <item quantity="other">%1$d subdivizí</item>
+  </plurals>
+
   <!-- ACTIONS -->
 
   <string name="wear_action_cancel">Zrušit</string>
