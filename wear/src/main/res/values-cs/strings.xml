@@ -34,6 +34,12 @@
   <string name="wear_label_ms">%1$s ms</string>
   <string name="wear_label_db">+%1$d dB</string>
   <string name="wear_label_developer">Vytvořil</string>
+  <plurals name="wear_label_beats">
+    <item quantity="one">%1$d doba</item>
+    <item quantity="few">%1$d doby</item>
+    <item quantity="many">%1$d dob</item>
+    <item quantity="other">%1$d dob</item>
+  </plurals>
   <!-- ACTIONS -->
 
   <string name="wear_action_cancel">Zrušit</string>
