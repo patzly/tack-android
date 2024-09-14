@@ -26,6 +26,8 @@
   <string name="wear_title_beats_count">Doby (%1$d)</string>
   <string name="wear_title_subdivisions_count">Subdivize (%1$d)</string>
   <string name="wear_title_notification_channel">Služba metronomu</string>
+  <string name="wear_title_bookmarks">Záložky</string>
+
   <!-- LABELS -->
 
   <string name="wear_label_bpm_value">%1$d bpm</string>
