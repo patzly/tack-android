@@ -62,6 +62,8 @@
   <string name="wear_action_bookmark">Záložka</string>
   <string name="wear_action_beat_mode">Režim metronomu</string>
   <string name="wear_action_retry">Zkusit znovu</string>
+  <string name="wear_action_delete">Odstranit</string>
+
   <!-- MESSAGES -->
 
   <string name="wear_msg_service_running">Přehrávání metronomu</string>
@@ -71,6 +73,7 @@
   <string name="wear_msg_notification_permission_denied_description">Pro přehrávání je vyžadováno oprávnění k oznámením</string>
   <string name="wear_msg_gain">Přehrát se zesílenou hlasitostí?</string>
   <string name="wear_msg_gain_description">Dejte si pozor, abyste zvuk nepřehrávali ve sluchátkách!</string>
+  <string name="wear_msg_empty_bookmarks">Zatím nebylo nic přidáno</string>
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">Zvuk metronomu</string>
