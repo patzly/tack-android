@@ -1,9 +1,10 @@
 ## 4.4.0
 
 - New: support for Wear OS 5
-- New: bookmarks for tempo, beats and subdivisions (Wear OS)
+- New: bookmarks for tempo, beats and subdivisions! (Wear OS)
 - New: Indonesian, Spanish and Turkish translations (big thanks to the translators!)
 - Improved: splash screen on Android 12+
+- Improved: colors in app-provided light themes
 - Improved: playful button shapes for tempo tap and confirmation dialogs (Wear OS)
 - Improved: time indicator remains in place while swiping between screens (Wear OS)
 - Improved: layout on small watches (Wear OS)
