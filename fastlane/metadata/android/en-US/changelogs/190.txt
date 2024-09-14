@@ -1,0 +1,4 @@
+• New: Indonesian, Spanish and Turkish translations
+• Improved: splash screen on Android 12+
+• Improved: colors in app-provided light themes
+• Fixed: invisible status bar icons on some devices with Android 11
