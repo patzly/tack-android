@@ -75,6 +75,9 @@
   <string name="wear_msg_gain_description">Dejte si pozor, abyste zvuk nepřehrávali ve sluchátkách!</string>
   <string name="wear_msg_empty_bookmarks">Zatím nebylo nic přidáno</string>
   <string name="wear_msg_delete_bookmark">Odstranit záložku?</string>
+  <!-- Content of a bookmark, e. g. 120 bpm, 4 beats, 1 subdivision -->
+  <string name="wear_msg_delete_bookmark_description">%1$s, %2$s, %3$s</string>
+
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">Zvuk metronomu</string>
