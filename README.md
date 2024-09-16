@@ -26,14 +26,22 @@ There also is a separate Wear OS app available with haptic beats and many option
 
 ## Features
 
+### Phone/Tablet
+
 * Beautiful beat visualization with subdivisions and changeable emphasizes
 * BPM bookmarks as app shortcuts
 * Options for count in, incremental tempo change, song duration and swing
 * Settings for flash screen, volume boost, audio latency correction and elapsed time
 * Dynamic color and dynamic contrast support
 * Large screen support
-* Separate Wear OS app with many options directly on your wrist
 * No ads or analytics
+ 
+### Wear OS
+
+* Convenient tempo picker and tempo tap
+* Advanced beat options with changeable emphasizes and subdivisions
+* Bookmarks for tempo, beats and subdivisions
+* Settings for flash screen, volume boost and audio latency correction
 
 ## Compatibility
 

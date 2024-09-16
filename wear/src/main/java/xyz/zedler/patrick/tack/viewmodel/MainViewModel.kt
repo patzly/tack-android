@@ -215,7 +215,7 @@ class MainViewModel(
     updateSubdivisions(bookmark.subdivisions)
   }
 
-  fun cycleBookmarks() {
+  fun circulateThroughBookmarks() {
     val bookmarks = _state.value.bookmarks
     if (bookmarks.isNotEmpty()) {
       val index = bookmarks.indexOfFirst {
@@ -263,9 +263,16 @@ class MainViewModel(
   }
 
   fun updateGain(gain: Int) {
+    val startedWithGain = if (gain == 0) {
+      true
+    } else if (gain > 0) {
+      false
+    } else {
+      _state.value.startedWithGain
+    }
     _state.update { it.copy(
       gain = gain,
-      startedWithGain = gain == 0 || _state.value.startedWithGain
+      startedWithGain = startedWithGain
     ) }
     listener?.onMetronomeConfigChanged(_state.value)
     sharedPrefs?.edit()?.putInt(Pref.GAIN, gain)?.apply()

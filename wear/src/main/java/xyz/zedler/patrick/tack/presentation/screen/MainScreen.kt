@@ -216,7 +216,7 @@ fun MainScreen(
           IconButton(
             onClick = onBookmarksButtonClick,
             onLongClick = {
-              viewModel.cycleBookmarks()
+              viewModel.circulateThroughBookmarks()
             },
             modifier = Modifier
               .graphicsLayer(alpha = controlsAlpha)
