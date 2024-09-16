@@ -581,6 +581,9 @@ public class MainFragment extends BaseFragment
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override
           public void onGlobalLayout() {
+            if (binding == null) {
+              return;
+            }
             refreshBookmarks(true, false);
             // Kill ViewTreeObserver
             if (binding.scrollHorizMainBookmarks.getViewTreeObserver().isAlive()) {
@@ -1334,9 +1337,6 @@ public class MainFragment extends BaseFragment
   }
 
   private void refreshBookmarks(boolean alignActiveOrCenter, boolean animated) {
-    if (binding == null) {
-      return;
-    }
     binding.buttonMainBookmark.setEnabled(!bookmarks.contains(getMetronomeUtil().getTempo()));
     for (int i = 0; i < binding.chipGroupMainBookmarks.getChildCount(); i++) {
       Chip chip = (Chip) binding.chipGroupMainBookmarks.getChildAt(i);
