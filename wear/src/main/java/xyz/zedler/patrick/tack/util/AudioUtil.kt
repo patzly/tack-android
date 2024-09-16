@@ -17,362 +17,269 @@
  * Copyright (c) 2020-2024 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+package xyz.zedler.patrick.tack.util
 
-import android.content.Context;
-import android.media.AudioAttributes;
-import android.media.AudioFocusRequest;
-import android.media.AudioFormat;
-import android.media.AudioManager;
-import android.media.AudioManager.OnAudioFocusChangeListener;
-import android.media.AudioTrack;
-import android.media.audiofx.LoudnessEnhancer;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
-import android.util.Log;
-import androidx.annotation.NonNull;
-import androidx.annotation.RawRes;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.FloatBuffer;
-import java.nio.charset.StandardCharsets;
-import xyz.zedler.patrick.tack.Constants.Sound;
-import xyz.zedler.patrick.tack.Constants.TickType;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
+import android.content.Context
+import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioFormat
+import android.media.AudioManager
+import android.media.AudioTrack
+import android.media.audiofx.LoudnessEnhancer
+import android.os.Build
+import android.util.Log
+import androidx.annotation.RawRes
+import xyz.zedler.patrick.tack.Constants.Sound
+import xyz.zedler.patrick.tack.Constants.TickType
+import xyz.zedler.patrick.tack.R
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.nio.charset.StandardCharsets
 
-public class AudioUtil implements OnAudioFocusChangeListener {
+class AudioUtil(
+  private val context: Context,
+  private val onAudioStop: () -> Unit
+) : AudioManager.OnAudioFocusChangeListener {
 
-  private static final String TAG = AudioUtil.class.getSimpleName();
-  private static final boolean DEBUG = false;
-
-  public static final int SAMPLE_RATE_IN_HZ = 48000;
-  private static final int SILENCE_CHUNK_SIZE = 8000;
-  private static final int DATA_CHUNK_SIZE = 8;
-  private static final byte[] DATA_MARKER = "data".getBytes(StandardCharsets.US_ASCII);
-
-  private final Context context;
-  private final AudioManager audioManager;
-  private final AudioListener listener;
-  private AudioTrack track;
-  private LoudnessEnhancer loudnessEnhancer;
-  private float[] tickNormal, tickStrong, tickSub;
-  private int gain;
-  private boolean playing, muted, ignoreFocus;
-  private final float[] silence = new float[SILENCE_CHUNK_SIZE];
-
-  public AudioUtil(@NonNull Context context, @NonNull AudioListener listener) {
-    this.context = context;
-    this.listener = listener;
-    audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+  companion object {
+    private const val TAG = "AudioUtil"
+    private const val SAMPLE_RATE_IN_HZ = 48000
+    private const val SILENCE_CHUNK_SIZE = 8000
+    private const val DATA_CHUNK_SIZE = 8
   }
 
-  public void play() {
-    playing = true;
-    track = getTrack();
-    try {
-      loudnessEnhancer = new LoudnessEnhancer(track.getAudioSessionId());
-      loudnessEnhancer.setTargetGain(gain * 100);
-      loudnessEnhancer.setEnabled(gain > 0);
-    } catch (RuntimeException e) {
-      Log.e(TAG, "Failed to initialize LoudnessEnhancer", e);
-    }
-    track.play();
-
-    if (ignoreFocus) {
-      return;
-    }
-    audioManager.requestAudioFocus(getAudioFocusRequest(this));
-  }
-
-  public void stop() {
-    playing = false;
-    if (track != null) {
-      if (track.getState() == AudioTrack.STATE_INITIALIZED) {
-        track.stop();
-      }
-      track.flush();
-      track.release();
-    }
-    if (!ignoreFocus) {
-      audioManager.abandonAudioFocusRequest(getAudioFocusRequest(this));
-    }
-    listener.onAudioStop();
-  }
-
-  @Override
-  public void onAudioFocusChange(int focusChange) {
-    if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-      if (track != null) {
-        track.setVolume(1);
-      }
-    } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-      stop();
-    } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
-        || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
-      if (track != null) {
-        track.setVolume(0.25f);
-      }
-    }
-  }
-
-  public void tick(Tick tick, int tempo, int subdivisionCount) {
-    writeTickPeriod(tick, tempo, subdivisionCount);
-  }
-
-  public void setSound(String sound) {
-    int resIdNormal, resIdStrong, resIdSub;
-    Pitch pitchNormal = Pitch.NORMAL;
-    Pitch pitchStrong = Pitch.HIGH;
-    Pitch pitchSub = Pitch.LOW;
-    switch (sound) {
-      case Sound.WOOD:
-        resIdNormal = R.raw.wood;
-        resIdStrong = R.raw.wood;
-        resIdSub = R.raw.mechanical_knock;
-        pitchSub = Pitch.NORMAL;
-        break;
-      case Sound.MECHANICAL:
-        resIdNormal = R.raw.mechanical_tick;
-        resIdStrong = R.raw.mechanical_ding;
-        resIdSub = R.raw.mechanical_knock;
-        pitchStrong = Pitch.NORMAL;
-        pitchSub = Pitch.NORMAL;
-        break;
-      case Sound.BEATBOXING_1:
-        resIdNormal = R.raw.beatbox_snare1;
-        resIdStrong = R.raw.beatbox_kick1;
-        resIdSub = R.raw.beatbox_hihat1;
-        pitchStrong = Pitch.NORMAL;
-        pitchSub = Pitch.NORMAL;
-        break;
-      case Sound.BEATBOXING_2:
-        resIdNormal = R.raw.beatbox_snare2;
-        resIdStrong = R.raw.beatbox_kick2;
-        resIdSub = R.raw.beatbox_hihat2;
-        pitchStrong = Pitch.NORMAL;
-        pitchSub = Pitch.NORMAL;
-        break;
-      case Sound.HANDS:
-        resIdNormal = R.raw.hands_hit;
-        resIdStrong = R.raw.hands_clap;
-        resIdSub = R.raw.hands_snap;
-        pitchStrong = Pitch.NORMAL;
-        pitchSub = Pitch.NORMAL;
-        break;
-      case Sound.FOLDING:
-        resIdNormal = R.raw.folding_knock;
-        resIdStrong = R.raw.folding_fold;
-        resIdSub = R.raw.folding_tap;
-        pitchStrong = Pitch.NORMAL;
-        pitchSub = Pitch.NORMAL;
-        break;
-      default:
-        resIdNormal = R.raw.sine;
-        resIdStrong = R.raw.sine;
-        resIdSub = R.raw.sine;
-        break;
-    }
-    tickNormal = loadAudio(resIdNormal, pitchNormal);
-    tickStrong = loadAudio(resIdStrong, pitchStrong);
-    tickSub = loadAudio(resIdSub, pitchSub);
-  }
-
-  public void setGain(int gain) {
-    this.gain = gain;
-    if (loudnessEnhancer != null) {
-      try {
-        loudnessEnhancer.setTargetGain(gain * 100);
-        loudnessEnhancer.setEnabled(gain > 0);
-      } catch (RuntimeException e) {
-        Log.e(TAG, "Failed to set target gain: ", e);
-      }
-    }
-  }
-
-  public void setMuted(boolean muted) {
-    this.muted = muted;
-  }
-
-  public void setIgnoreFocus(boolean ignore) {
-    ignoreFocus = ignore;
-  }
-
-  public boolean getIgnoreFocus() {
-    return ignoreFocus;
-  }
-
-  private void writeTickPeriod(Tick tick, int tempo, int subdivisionCount) {
-    float[] tickSound = muted ? silence : getTickSound(tick.getType());
-    int periodSize = 60 * SAMPLE_RATE_IN_HZ / tempo / subdivisionCount;
-    int sizeWritten = writeNextAudioData(tickSound, periodSize, 0);
-    if (DEBUG) {
-      Log.v(TAG, "writeTickPeriod: wrote tick sound for " + tick);
-    }
-    writeSilenceUntilPeriodFinished(sizeWritten, periodSize);
-  }
-
-  private void writeSilenceUntilPeriodFinished(int previousSizeWritten, int periodSize) {
-    int sizeWritten = previousSizeWritten;
-    while (sizeWritten < periodSize) {
-      sizeWritten += writeNextAudioData(silence, periodSize, sizeWritten);
-      if (DEBUG) {
-        Log.v(TAG, "writeSilenceUntilPeriodFinished: wrote silence");
-      }
-    }
-  }
-
-  private int writeNextAudioData(float[] data, int periodSize, int sizeWritten) {
-    int size = Math.min(data.length, periodSize - sizeWritten);
-    if (playing) {
-      writeAudio(track, data, size);
-    }
-    return size;
-  }
-
-  private float[] getTickSound(String tickType) {
-    switch (tickType) {
-      case TickType.STRONG:
-        return tickStrong;
-      case TickType.SUB:
-        return tickSub;
-      case TickType.MUTED:
-        return silence;
-      default:
-        return tickNormal;
-    }
-  }
-
-  private static AudioTrack getTrack() {
-    AudioFormat audioFormat = new AudioFormat.Builder()
-        .setEncoding(AudioFormat.ENCODING_PCM_FLOAT)
-        .setSampleRate(SAMPLE_RATE_IN_HZ)
-        .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
-        .build();
-    return new AudioTrack(
-        getAttributes(),
-        audioFormat,
-        AudioTrack.getMinBufferSize(
-            audioFormat.getSampleRate(), audioFormat.getChannelMask(), audioFormat.getEncoding()
-        ),
-        AudioTrack.MODE_STREAM,
-        AudioManager.AUDIO_SESSION_ID_GENERATE
-    );
-  }
-
-  private static AudioAttributes getAttributes() {
-    return new AudioAttributes.Builder()
-        .setUsage(AudioAttributes.USAGE_MEDIA)
-        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-        .build();
-  }
-
-  private static AudioFocusRequest getAudioFocusRequest(OnAudioFocusChangeListener listener) {
-    return new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-        .setAudioAttributes(getAttributes())
-        .setWillPauseWhenDucked(true)
-        .setOnAudioFocusChangeListener(listener)
-        .build();
-  }
-
-  private float[] loadAudio(@RawRes int resId, Pitch pitch) {
-    try (InputStream stream = context.getResources().openRawResource(resId)) {
-      return adjustPitch(readDataFromWavFloat(stream), pitch);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  private float[] adjustPitch(float[] originalData, Pitch pitch) {
-    if (pitch == Pitch.HIGH) {
-      float[] newData = new float[originalData.length / 2];
-      for (int i = 0; i < newData.length; i++) {
-        newData[i] = originalData[i * 2];
-      }
-      return newData;
-    } else if (pitch == Pitch.LOW) {
-      float[] newData = new float[originalData.length * 2];
-      for (int i = 0, j = 0; i < originalData.length; i++, j += 2) {
-        newData[j] = originalData[i];
-        newData[j + 1] = originalData[i];
-      }
-      return newData;
-    } else {
-      return originalData;
-    }
-  }
-
-  private void writeAudio(AudioTrack track, float[] data, int size) {
-    try {
-      int result = track.write(data, 0, size, AudioTrack.WRITE_BLOCKING);
-      if (result < 0) {
-        stop();
-        throw new IllegalStateException("Error code: " + result);
-      }
-    } catch (Exception e) {
-      Log.e(TAG, "writeAudio: failed to play audion data", e);
-    }
-  }
-
-  private static float[] readDataFromWavFloat(InputStream input) throws IOException {
-    byte[] content;
-    if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
-      content = input.readAllBytes();
-    } else {
-      content = readInputStreamToBytes(input);
-    }
-    int indexOfDataMarker = getIndexOfDataMarker(content);
-    if (indexOfDataMarker < 0) {
-      throw new RuntimeException("Could not find data marker in the content");
-    }
-    int startOfSound = indexOfDataMarker + DATA_CHUNK_SIZE;
-    if (startOfSound > content.length) {
-      throw new RuntimeException("Too short data chunk");
-    }
-    ByteBuffer byteBuffer = ByteBuffer.wrap(
-        content, startOfSound, content.length - startOfSound
-    );
-    byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-    FloatBuffer floatBuffer = byteBuffer.asFloatBuffer();
-    float[] data = new float[floatBuffer.remaining()];
-    floatBuffer.get(data);
-    return data;
-  }
-
-  private static byte[] readInputStreamToBytes(InputStream input) throws IOException {
-    ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-    int read;
-    byte[] data = new byte[4096];
-    while ((read = input.read(data, 0, data.length)) != -1) {
-      buffer.write(data, 0, read);
-    }
-    return buffer.toByteArray();
-  }
-
-  private static int getIndexOfDataMarker(byte[] array) {
-    if (DATA_MARKER.length == 0) {
-      return 0;
-    }
-    outer:
-    for (int i = 0; i < array.length - DATA_MARKER.length + 1; i++) {
-      for (int j = 0; j < DATA_MARKER.length; j++) {
-        if (array[i + j] != DATA_MARKER[j]) {
-          continue outer;
+  private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+  private val silence = FloatArray(SILENCE_CHUNK_SIZE)
+  private val dataMarker = "data".toByteArray(StandardCharsets.US_ASCII)
+  private var track: AudioTrack? = null
+  private var loudnessEnhancer: LoudnessEnhancer? = null
+  private var tickNormal: FloatArray? = null
+  private var tickStrong: FloatArray? = null
+  private var tickSub: FloatArray? = null
+  private var playing = false
+  var gain = 0
+    set(value) {
+      field = value
+      loudnessEnhancer?.let {
+        try {
+          it.setTargetGain(field * 100)
+          it.setEnabled(field > 0)
+        } catch (e: RuntimeException) {
+          Log.e(TAG, "Failed to set target gain: ", e)
         }
       }
-      return i;
     }
-    return -1;
+  var muted = false
+  var ignoreFocus = false
+
+  fun play() {
+    playing = true
+    track = getTrack().apply {
+      try {
+        loudnessEnhancer = LoudnessEnhancer(audioSessionId).apply {
+          setTargetGain(gain * 100)
+          setEnabled(gain > 0)
+        }
+      } catch (e: RuntimeException) {
+        Log.e(TAG, "Failed to initialize LoudnessEnhancer", e)
+      }
+      play()
+    }
+
+    if (!ignoreFocus) {
+      audioManager.requestAudioFocus(getAudioFocusRequest())
+    }
   }
 
-  private enum Pitch {
+  fun stop() {
+    playing = false
+    track?.apply {
+      if (state == AudioTrack.STATE_INITIALIZED) stop()
+      flush()
+      release()
+    }
+    if (!ignoreFocus) {
+      audioManager.abandonAudioFocusRequest(getAudioFocusRequest())
+    }
+    onAudioStop()
+  }
+
+  override fun onAudioFocusChange(focusChange: Int) {
+    when (focusChange) {
+      AudioManager.AUDIOFOCUS_GAIN -> track?.setVolume(1f)
+      AudioManager.AUDIOFOCUS_LOSS -> stop()
+      AudioManager.AUDIOFOCUS_LOSS_TRANSIENT, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> track?.setVolume(0.25f)
+    }
+  }
+
+  fun tick(tick: MetronomeUtil.Tick, tempo: Int, subdivisionCount: Int) {
+    writeTickPeriod(tick, tempo, subdivisionCount)
+  }
+
+  fun setSound(sound: String) {
+    var pitchStrong = Pitch.HIGH
+    var pitchSub = Pitch.LOW
+    val (resIdNormal, resIdStrong, resIdSub) = when (sound) {
+      Sound.WOOD -> Triple(R.raw.wood, R.raw.wood, R.raw.mechanical_knock).also {
+        pitchSub = Pitch.NORMAL
+      }
+      Sound.MECHANICAL -> Triple(
+        R.raw.mechanical_tick, R.raw.mechanical_ding, R.raw.mechanical_knock
+      ).also {
+        pitchStrong = Pitch.NORMAL
+        pitchSub = Pitch.NORMAL
+      }
+      Sound.BEATBOXING_1 -> Triple(
+        R.raw.beatbox_snare1, R.raw.beatbox_kick1, R.raw.beatbox_hihat1
+      ).also {
+        pitchStrong = Pitch.NORMAL
+        pitchSub = Pitch.NORMAL
+      }
+      Sound.BEATBOXING_2 -> Triple(
+        R.raw.beatbox_snare2, R.raw.beatbox_kick2, R.raw.beatbox_hihat2
+      ).also {
+        pitchStrong = Pitch.NORMAL
+        pitchSub = Pitch.NORMAL
+      }
+      Sound.HANDS -> Triple(R.raw.hands_hit, R.raw.hands_clap, R.raw.hands_snap).also {
+        pitchStrong = Pitch.NORMAL
+        pitchSub = Pitch.NORMAL
+      }
+      Sound.FOLDING -> Triple(R.raw.folding_knock, R.raw.folding_fold, R.raw.folding_tap).also {
+        pitchStrong = Pitch.NORMAL
+        pitchSub = Pitch.NORMAL
+      }
+      else -> Triple(R.raw.sine, R.raw.sine, R.raw.sine)
+    }
+    tickNormal = loadAudio(resIdNormal)
+    tickStrong = loadAudio(resIdStrong, pitchStrong)
+    tickSub = loadAudio(resIdSub, pitchSub)
+  }
+
+  private fun writeTickPeriod(tick: MetronomeUtil.Tick, tempo: Int, subdivisionCount: Int) {
+    val tickSound = if (muted) silence else getTickSound(tick.type) ?: return
+    val periodSize = 60 * SAMPLE_RATE_IN_HZ / tempo / subdivisionCount
+    val sizeWritten = writeNextAudioData(tickSound, periodSize, 0)
+    writeSilenceUntilPeriodFinished(sizeWritten, periodSize)
+  }
+
+  private fun writeSilenceUntilPeriodFinished(previousSizeWritten: Int, periodSize: Int) {
+    var sizeWritten = previousSizeWritten
+    while (sizeWritten < periodSize) {
+      sizeWritten += writeNextAudioData(silence, periodSize, sizeWritten)
+    }
+  }
+
+  private fun writeNextAudioData(data: FloatArray, periodSize: Int, sizeWritten: Int): Int {
+    val size = minOf(data.size, periodSize - sizeWritten)
+    if (playing) writeAudio(track, data, size)
+    return size
+  }
+
+  private fun getTickSound(tickType: String): FloatArray? {
+    return when (tickType) {
+      TickType.STRONG -> tickStrong
+      TickType.SUB -> tickSub
+      TickType.MUTED -> silence
+      else -> tickNormal
+    }
+  }
+
+  private fun loadAudio(@RawRes resId: Int, pitch: Pitch = Pitch.NORMAL): FloatArray {
+    return context.resources.openRawResource(resId).use {
+      adjustPitch(readDataFromWavFloat(it), pitch)
+    }
+  }
+
+  private fun adjustPitch(originalData: FloatArray, pitch: Pitch): FloatArray {
+    return when (pitch) {
+      Pitch.HIGH -> originalData.filterIndexed { index, _ -> index % 2 == 0 }.toFloatArray()
+      Pitch.LOW -> originalData.flatMap { listOf(it, it) }.toFloatArray()
+      else -> originalData
+    }
+  }
+
+  private fun writeAudio(track: AudioTrack?, data: FloatArray, size: Int) {
+    track?.write(data, 0, size, AudioTrack.WRITE_BLOCKING)?.takeIf { it < 0 }?.let {
+      stop()
+      throw IllegalStateException("Error code: $it")
+    }
+  }
+
+  private fun readDataFromWavFloat(input: InputStream): FloatArray {
+    val content = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      input.readBytes()
+    } else {
+      readInputStreamToBytes(input)
+    }
+    val indexOfDataMarker = getIndexOfDataMarker(content)
+    val startOfSound = indexOfDataMarker + DATA_CHUNK_SIZE
+    return ByteBuffer.wrap(content, startOfSound, content.size - startOfSound).apply {
+      order(ByteOrder.LITTLE_ENDIAN)
+    }.asFloatBuffer().let {
+      FloatArray(it.remaining()).also { data -> it.get(data) }
+    }
+  }
+
+  private fun readInputStreamToBytes(input: InputStream): ByteArray {
+    return ByteArrayOutputStream().use { buffer ->
+      val data = ByteArray(4096)
+      var read: Int
+      while (input.read(data).also { read = it } != -1) {
+        buffer.write(data, 0, read)
+      }
+      buffer.toByteArray()
+    }
+  }
+
+  private fun getIndexOfDataMarker(array: ByteArray): Int {
+    if (dataMarker.isEmpty()) {
+      return 0
+    }
+    outer@ for (i in 0..array.size - dataMarker.size) {
+      for (j in dataMarker.indices) {
+        if (array[i + j] != dataMarker[j]) {
+          continue@outer
+        }
+      }
+      return i
+    }
+    return -1
+  }
+
+  private fun getTrack(): AudioTrack {
+    val audioFormat = AudioFormat.Builder()
+      .setEncoding(AudioFormat.ENCODING_PCM_FLOAT)
+      .setSampleRate(SAMPLE_RATE_IN_HZ)
+      .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+      .build()
+    return AudioTrack(
+      getAttributes(),
+      audioFormat,
+      AudioTrack.getMinBufferSize(audioFormat.sampleRate, audioFormat.channelMask, audioFormat.encoding),
+      AudioTrack.MODE_STREAM,
+      AudioManager.AUDIO_SESSION_ID_GENERATE
+    )
+  }
+
+  private fun getAttributes(): AudioAttributes {
+    return AudioAttributes.Builder()
+      .setUsage(AudioAttributes.USAGE_MEDIA)
+      .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+      .build()
+  }
+
+  private fun getAudioFocusRequest(): AudioFocusRequest {
+    return AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+      .setAudioAttributes(getAttributes())
+      .setWillPauseWhenDucked(true)
+      .setOnAudioFocusChangeListener(this)
+      .build()
+  }
+
+  private enum class Pitch {
     NORMAL, HIGH, LOW
-  }
-
-  public interface AudioListener {
-    void onAudioStop();
   }
 }

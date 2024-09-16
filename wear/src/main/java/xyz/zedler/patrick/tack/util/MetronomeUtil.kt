@@ -32,7 +32,12 @@ class MetronomeUtil(
   private val context: Context,
   private val fromService: Boolean
 ) {
-  private val audioUtil = AudioUtil(context) { stop() }
+
+  companion object {
+    private const val TAG = "MetronomeUtil"
+  }
+
+  private val audioUtil = AudioUtil(context, ::stop)
   private val hapticUtil = HapticUtil(context)
 
   private var audioThread: HandlerThread? = null
@@ -224,7 +229,7 @@ class MetronomeUtil(
 
   private fun setBeatModeVibrate(vibrate: Boolean) {
     beatModeVibrate = vibrate && hapticUtil.hasVibrator()
-    audioUtil.setMuted(beatModeVibrate)
+    audioUtil.muted = beatModeVibrate
     hapticUtil.enabled = beatModeVibrate || alwaysVibrate
   }
 
@@ -242,7 +247,7 @@ class MetronomeUtil(
   }
 
   private fun setGain(gain: Int) {
-    audioUtil.setGain(gain)
+    audioUtil.gain = gain
   }
 
   private fun performTick(tick: Tick) {
@@ -310,9 +315,5 @@ class MetronomeUtil(
     override fun toString(): String {
       return "Tick{index=$index, beat=$beat, sub=$subdivision, type=$type}"
     }
-  }
-
-  companion object {
-    private const val TAG = "MetronomeUtil"
   }
 }
