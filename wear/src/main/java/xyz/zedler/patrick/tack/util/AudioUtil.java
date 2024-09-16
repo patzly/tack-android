@@ -100,6 +100,7 @@ public class AudioUtil implements OnAudioFocusChangeListener {
     if (!ignoreFocus) {
       audioManager.abandonAudioFocusRequest(getAudioFocusRequest(this));
     }
+    listener.onAudioStop();
   }
 
   @Override
@@ -110,7 +111,6 @@ public class AudioUtil implements OnAudioFocusChangeListener {
       }
     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
       stop();
-      listener.onAudioStop();
     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
         || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
       if (track != null) {
@@ -191,10 +191,6 @@ public class AudioUtil implements OnAudioFocusChangeListener {
         Log.e(TAG, "Failed to set target gain: ", e);
       }
     }
-  }
-
-  public int getGain() {
-    return gain;
   }
 
   public void setMuted(boolean muted) {
@@ -309,10 +305,11 @@ public class AudioUtil implements OnAudioFocusChangeListener {
     }
   }
 
-  private static void writeAudio(AudioTrack track, float[] data, int size) {
+  private void writeAudio(AudioTrack track, float[] data, int size) {
     try {
       int result = track.write(data, 0, size, AudioTrack.WRITE_BLOCKING);
       if (result < 0) {
+        stop();
         throw new IllegalStateException("Error code: " + result);
       }
     } catch (Exception e) {
