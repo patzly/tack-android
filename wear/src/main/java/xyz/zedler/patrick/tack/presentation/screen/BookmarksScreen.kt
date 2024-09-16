@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,13 +66,13 @@ fun BookmarksScreen(
 ) {
   TackTheme {
     val state by viewModel.state.collectAsState()
-    val allowAdding = remember(state.bookmarks, state.tempo, state.beats, state.subdivisions) {
+    val allowAdding = remember { derivedStateOf {
       state.bookmarks.none {
         it.tempo == state.tempo
             && it.beats == state.beats
             && it.subdivisions == state.subdivisions
       } && state.bookmarks.size < Constants.BOOKMARKS_MAX
-    }
+    } }
     val scrollableState = rememberScalingLazyListState()
     ScreenScaffold(
       scrollState = scrollableState,
@@ -80,7 +81,7 @@ fun BookmarksScreen(
           onClick = {
             viewModel.addBookmark()
           },
-          enabled = allowAdding
+          enabled = allowAdding.value
         )
       },
       modifier = Modifier.background(color = MaterialTheme.colorScheme.background)
@@ -103,16 +104,14 @@ fun BookmarksScreen(
           }
           if (state.bookmarks.isNotEmpty()) {
             items(state.bookmarks) { bookmark ->
-              val selected = remember(
-                state.bookmarks, state.tempo, state.beats, state.subdivisions
-              ) {
+              val selected = remember { derivedStateOf {
                 state.tempo == bookmark.tempo
                     && state.beats == bookmark.beats
                     && state.subdivisions == bookmark.subdivisions
-              }
+              } }
               BookmarkOption(
                 bookmark = bookmark,
-                selected = selected,
+                selected = selected.value,
                 onSelectionClick = {
                   viewModel.updateFromBookmark(bookmark)
                 },
@@ -128,7 +127,9 @@ fun BookmarksScreen(
                 text = stringResource(id = R.string.wear_msg_empty_bookmarks),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(16.dp).fillMaxWidth()
+                modifier = Modifier
+                  .padding(16.dp)
+                  .fillMaxWidth()
               )
             }
           }
