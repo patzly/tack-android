@@ -176,7 +176,7 @@
   <string name="settings_sound_folding">폴딩 룰</string>
 
   <string name="settings_latency">지연 보정</string>
-  <string name="settings_latency_description">소리 출력과 진동및 시각의 지연을 보정하세요</string>
+  <string name="settings_latency_description">소리와 진동 및 시각의 지연을 보정하세요</string>
 
   <string name="settings_gain">볼륨 증폭</string>
   <string name="settings_gain_warning">주의하세요!</string>
