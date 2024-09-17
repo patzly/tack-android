@@ -48,6 +48,9 @@
   <string name="label_tempo_presto">Presto</string>
   <string name="label_tempo_prestissimo">Prestissimo</string>
 
+  <!-- ACTIONS -->
+
+  <string name="action_back">이전</string>
   <string name="action_close">닫기</string>
   <string name="action_cancel">취소</string>
   <string name="action_increase">증가</string>
@@ -107,6 +110,7 @@
   <plurals name="options_unit_bars">
     <item quantity="other">%1$d 마디</item>
   </plurals>
+  <string name="options_unit_beats">박자</string>
   <string name="options_unit_seconds">초</string>
   <plurals name="options_unit_seconds">
     <item quantity="other">%1$d 초</item>
