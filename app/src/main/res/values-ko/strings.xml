@@ -111,6 +111,9 @@
     <item quantity="other">%1$d 마디</item>
   </plurals>
   <string name="options_unit_beats">박자</string>
+  <plurals name="options_unit_beats">
+    <item quantity="other">%1$d 박자</item>
+  </plurals>
   <string name="options_unit_seconds">초</string>
   <plurals name="options_unit_seconds">
     <item quantity="other">%1$d 초</item>
