@@ -167,6 +167,7 @@
   <string name="settings_reset_description">되돌릴 수 없습니다</string>
 
   <string name="settings_sound">박자 소리</string>
+  <string name="settings_sound_wood">나무</string>
   <string name="settings_gain">볼륨 증폭</string>
   <string name="settings_gain_warning">주의하세요!</string>
   <string name="settings_gain_disclaimer">볼륨 증폭이 활성화되면, 매 시작시에 경고가 표시됩니다. 발생할 수 있는 어떠한 손해도 개발자는 책임을 지지 않습니다.</string>
