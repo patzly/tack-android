@@ -30,6 +30,7 @@
   <string name="title_options">옵션</string>
   <string name="title_general">일반</string>
   <string name="title_metronome">메트로놈</string>
+  <string name="title_controls">조작</string>
   <string name="title_logcat">Logcat</string>
 
   <!-- LABELS -->
