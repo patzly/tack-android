@@ -104,14 +104,11 @@ fun BookmarksScreen(
           }
           if (state.bookmarks.isNotEmpty()) {
             items(state.bookmarks) { bookmark ->
-              val selected = remember { derivedStateOf {
-                state.tempo == bookmark.tempo
-                    && state.beats == bookmark.beats
-                    && state.subdivisions == bookmark.subdivisions
-              } }
               BookmarkOption(
                 bookmark = bookmark,
-                selected = selected.value,
+                selected = state.tempo == bookmark.tempo
+                    && state.beats == bookmark.beats
+                    && state.subdivisions == bookmark.subdivisions,
                 onSelectionClick = {
                   viewModel.updateFromBookmark(bookmark)
                 },
