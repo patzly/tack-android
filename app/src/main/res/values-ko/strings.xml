@@ -123,6 +123,7 @@
     <item quantity="other">%1$d 분</item>
   </plurals>
   <string name="options_inactive">비활성화</string>
+  <string name="options_count_in">프리카운트</string>
   <string name="options_count_in_description">변화를 주기 전 %1$s만큼 기다리기</string>
   <string name="options_incremental">점진적 템포 변화</string>
   <string name="options_incremental_amount_increase">%1$d bpm 만큼 템포 증가</string>
