@@ -133,6 +133,7 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">언어</string>
+  <string name="settings_language_info">모든 Transifex의 번역 자원봉사자들에게 감사드립니다\nTack을 여러분의 언어로 제공하기 위해 지원을 하는 방법을 알고 싶다면, GitHub의 Tack프로젝트에 방문해주세요.</string>
   <string name="settings_language_system">시스템 언어</string>
   <string name="settings_language_system_description">번역이 없다면 영어로 표시됩니다</string>
 
