@@ -227,7 +227,7 @@ fun ClickCard(
         text = subtitle,
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        maxLines = 2,
+        maxLines = 3,
         overflow = TextOverflow.Ellipsis
       )
     },
