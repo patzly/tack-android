@@ -169,6 +169,7 @@
   <string name="settings_sound">박자 소리</string>
   <string name="settings_sound_wood">나무</string>
   <string name="settings_sound_sine">사인(Sine)</string>
+  <string name="settings_sound_mechanical">기계식</string>
   <string name="settings_sound_beatboxing_1">비트박스 1</string>
   <string name="settings_sound_beatboxing_2">비트박스 2</string>
   <string name="settings_sound_hands">손뼉</string>
