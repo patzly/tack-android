@@ -154,6 +154,8 @@
   <string name="settings_contrast_medium">중간</string>
   <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
   <string name="settings_contrast_high">높음</string>
+  <string name="settings_contrast_dynamic_unsupported">기기 테마의 동적 대비는 Android 14 이상에서만 가능합니다.</string>
+
   <string name="settings_haptic">진동 효과</string>
   <string name="settings_reduce_animations">애니메이션 줄이기</string>
   <string name="settings_reduce_animations_description">성능에 영향을 줄 수 있습니다</string>
