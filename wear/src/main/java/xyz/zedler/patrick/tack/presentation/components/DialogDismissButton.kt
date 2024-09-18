@@ -29,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.FilledTonalIconButton
 import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
@@ -49,6 +50,9 @@ fun DialogDismissButton(
   val dismissSize = if (isSmallScreen()) 56.dp else 64.dp
   FilledTonalIconButton(
     onClick = onClick,
+    colors = IconButtonDefaults.filledTonalIconButtonColors(
+      contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+    ),
     modifier = modifier.size(dismissSize),
     shape = MaterialTheme.shapes.medium
   ) {

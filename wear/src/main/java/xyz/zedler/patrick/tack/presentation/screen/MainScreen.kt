@@ -141,6 +141,9 @@ fun MainScreen(
 
           IconButton(
             onClick = onSettingsButtonClick,
+            colors = IconButtonDefaults.iconButtonColors(
+              contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
             modifier = Modifier
               .graphicsLayer(alpha = controlsAlpha)
               .constrainAs(settingsButton) {
@@ -185,6 +188,9 @@ fun MainScreen(
           )
           IconButton(
             onClick = onBeatsButtonClick,
+            colors = IconButtonDefaults.iconButtonColors(
+              contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
             modifier = Modifier
               .graphicsLayer(alpha = controlsAlpha)
               .constrainAs(beatsButton) {
@@ -218,6 +224,9 @@ fun MainScreen(
             onLongClick = {
               viewModel.circulateThroughBookmarks()
             },
+            colors = IconButtonDefaults.iconButtonColors(
+              contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
             modifier = Modifier
               .graphicsLayer(alpha = controlsAlpha)
               .constrainAs(bookmarksButton) {
@@ -430,6 +439,9 @@ fun TempoTapButton(
   val animTrigger = remember { mutableStateOf(false) }
   IconButton(
     onClick = {},
+    colors = IconButtonDefaults.iconButtonColors(
+      contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    ),
     modifier = modifier
       .touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
       .pointerInput(Unit) {
@@ -463,6 +475,9 @@ fun BeatModeButton(
 ) {
   IconButton(
     onClick = onClick,
+    colors = IconButtonDefaults.iconButtonColors(
+      contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+    ),
     modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
   ) {
     val resId1 = if (alwaysVibrate) {
