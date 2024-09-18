@@ -1,25 +1,23 @@
 [versions]
-agp = "8.6.0"
+agp = "8.6.1"
 appcompat = "1.7.0"
 fragment = "1.8.3"
-navigation = "2.8.0"
+navigation = "2.8.1"
 preference = "1.2.1"
 shapes = "1.0.1"
 material = "1.13.0-alpha06"
 kotlin = "2.0.20"
+lifecycle = "2.8.6"
 splashscreen = "1.1.0-rc01"
 wear-input = "1.1.0"
 wear-tooling = "1.0.0"
 wear-ongoing = "1.0.0"
-compose-bom = "2024.09.01"
-compose-material = "1.0.0-alpha24"
+compose-bom = "2024.09.02"
+compose-material = "1.0.0-alpha25"
 compose-navigation = "1.4.0"
 compose-foundation = "1.4.0"
-compose-ui = "1.7.1"
-compose-runtime = "1.7.1"
 compose-activity = "1.9.2"
 compose-constraintlayout = "1.0.1"
-lifecycle = "2.8.5"
 
 [libraries]
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -35,12 +33,12 @@ wear-ongoing = { group = "androidx.wear", name = "wear-ongoing", version.ref = "
 wear-input = { group = "androidx.wear", name = "wear-input", version.ref = "wear-input" }
 lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycle" }
 splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
-ui = { group = "androidx.compose.ui", name = "ui", version.ref = "compose-ui" }
-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose-ui" }
-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview", version.ref = "compose-ui" }
-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest", version.ref = "compose-ui" }
+ui = { group = "androidx.compose.ui", name = "ui" }
+ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
-compose-runtime = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "compose-runtime" }
+compose-runtime = { group = "androidx.compose.runtime", name = "runtime-livedata" }
 compose-material = { group = "androidx.wear.compose", name = "compose-material3", version.ref = "compose-material" }
 compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "compose-foundation" }
 compose-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics" }
