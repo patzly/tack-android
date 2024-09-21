@@ -134,6 +134,9 @@
   <string name="options_timer">음악 길이</string>
   <string name="options_timer_description">%1$s후 정지</string>
   <string name="options_mute">무음 비트</string>
+  <string name="options_mute_play">재생 %1$s</string>
+  <string name="options_mute_mute">음소거 %1$s</string>
+  <string name="options_mute_random">최대 %1$d% 까지 무작위로 음소거</string>
   <string name="options_swing">스윙(Swing)</string>
   <string name="options_swing_description">세분음이 선택된 스윙 비율에 맞춰 설정됩니다</string>
   <string name="options_swing_3">셋잇단음표(triplet)</string>
@@ -170,7 +173,9 @@
   <string name="settings_transition">앱 페이지 전환시 슬라이딩 전환효과를 사용합니다</string>
   <string name="settings_transition_description">페이드 전환 효과 대신</string>
 
-  <string name="settings_haptic">진동 효과</string>
+  <string name="settings_haptic">햅틱 효과</string>
+  <string name="settings_haptic_description">진동 모드에서 햅틱 비트 외에도 추가적으로</string>
+
   <string name="settings_reduce_animations">애니메이션 줄이기</string>
   <string name="settings_reduce_animations_description">성능에 영향을 줄 수 있습니다</string>
 
@@ -206,10 +211,15 @@
   <string name="settings_elapsed">진행시간 표시</string>
   <string name="settings_elapsed_description">연습을 얼마나 하였는지 확인해보세요</string>
 
+  <string name="settings_reset_elapsed">정지 시 경과시간 초기화</string>
+  <string name="settings_reset_elapsed_description">닫힐 때까지 재시작 하는 대신</string>
+
   <string name="settings_reset_timer">중단시 타이머 초기화</string>
   <string name="settings_reset_timer_description">다시 시작하는 대신</string>
 
   <string name="settings_big_timer">큰 타이머 슬라이더 표시</string>
+  <string name="settings_big_timer_description">애니메이션 탐색바 대신</string>
+
   <string name="settings_big_time_text">시간을 큰 글자로</string>
   <string name="settings_big_time_text_description">기본 크기가 충분하지 않다면 유용합니다</string>
 
