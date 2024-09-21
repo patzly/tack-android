@@ -1,5 +1,6 @@
 ## 4.4.1
 
+- New: Korean translation (big thanks to the translators!)
 - Fixed: crash when Tack is launched from app info page on Android 12+
 
 ## 4.4.0

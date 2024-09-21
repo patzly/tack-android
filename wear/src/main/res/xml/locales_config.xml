@@ -22,7 +22,10 @@
   <locale android:name="de"/>
   <locale android:name="cs"/>
   <locale android:name="en"/>
+  <locale android:name="es"/>
+  <locale android:name="es-CL"/>
   <locale android:name="in"/>
+  <locale android:name="ko"/>
   <locale android:name="tr"/>
   <locale android:name="zh-CN"/>
   <locale android:name="zh-HK"/>
