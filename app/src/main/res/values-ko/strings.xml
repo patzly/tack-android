@@ -208,6 +208,7 @@
   <string name="settings_elapsed">진행시간 표시</string>
   <string name="settings_elapsed_description">연습을 얼마나 하였는지 확인해보세요</string>
 
+  <string name="settings_reset_elapsed">정지 시 경과시간 초기화</string>
   <string name="settings_reset_timer">중단시 타이머 초기화</string>
   <string name="settings_reset_timer_description">다시 시작하는 대신</string>
 
