@@ -170,7 +170,7 @@
   <string name="settings_transition">앱 페이지 전환시 슬라이딩 전환효과를 사용합니다</string>
   <string name="settings_transition_description">페이드 전환 효과 대신</string>
 
-  <string name="settings_haptic">진동 효과</string>
+  <string name="settings_haptic">햅틱 효과</string>
   <string name="settings_reduce_animations">애니메이션 줄이기</string>
   <string name="settings_reduce_animations_description">성능에 영향을 줄 수 있습니다</string>
 
