@@ -1,0 +1,85 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="wear_title_settings">설정</string>
+  <string name="wear_title_beats">박자</string>
+  <string name="wear_title_notification_channel">메트로놈 서비스</string>
+  <string name="wear_title_bookmarks">북마크</string>
+
+  <!-- LABELS -->
+
+  <string name="wear_label_bpm_value">%1$d bpm</string>
+  <string name="wear_label_ms">%1$s ms</string>
+  <string name="wear_label_db">+%1$d dB</string>
+  <!-- ACTIONS -->
+
+  <string name="wear_action_cancel">취소</string>
+  <string name="wear_action_increase">증가</string>
+  <string name="wear_action_decrease">감소</string>
+  <string name="wear_action_play_stop">시작/정지</string>
+  <string name="wear_action_stop">정지</string>
+  <string name="wear_action_add_beat">박자 추가</string>
+  <string name="wear_action_remove_beat">박자 제거</string>
+  <string name="wear_action_add_sub">리듬 분할(subdivision) 추가</string>
+  <string name="wear_action_remove_sub">리듬 분할(subdivision) 삭제</string>
+  <string name="wear_action_tempo_tap">탭 탬포</string>
+  <string name="wear_action_bookmark">북마크</string>
+  <string name="wear_action_beat_mode">박자 모드</string>
+  <string name="wear_action_retry">재시작</string>
+  <string name="wear_action_delete">삭제</string>
+
+  <string name="wear_msg_gain">볼륨을 증폭한 상태로 재생 하시겠습니까?</string>
+  <string name="wear_msg_empty_bookmarks">북마크가 없습니다</string>
+  <string name="wear_msg_delete_bookmark">북마크를 삭제하시겠습니까?</string>
+  <!-- SETTINGS -->
+
+  <string name="wear_settings_sound">박자 사운드</string>
+  <string name="wear_settings_sound_sine">사인(Sine)</string>
+  <string name="wear_settings_sound_wood">나무</string>
+  <string name="wear_settings_sound_mechanical">기계식</string>
+  <string name="wear_settings_sound_beatboxing_1">비트박스 1</string>
+  <string name="wear_settings_sound_beatboxing_2">비트박스 2</string>
+  <string name="wear_settings_sound_hands">손뼉</string>
+  <string name="wear_settings_sound_folding">폴딩 룰</string>
+
+  <string name="wear_settings_latency">지연 보정</string>
+
+  <string name="wear_settings_ignore_focus">오디오 포커스 무시</string>
+  <string name="wear_settings_ignore_focus_description">다른앱이 소리를 출력해도 계속 재생합니다</string>
+
+  <string name="wear_settings_gain">볼륨 증폭</string>
+  <string name="wear_settings_always_vibrate">항상 진동</string>
+  <string name="wear_settings_always_vibrate_description">소리와 함께</string>
+
+  <string name="wear_settings_strong_vibration">강한 진동</string>
+  <string name="wear_settings_flash_screen">화면 번쩍이기</string>
+  <string name="wear_settings_flash_screen_description">매 박자마다</string>
+
+  <string name="wear_settings_reduce_animations">애니메이션 줄이기</string>
+  <string name="wear_settings_reduce_animations_description">성능에 영향을 줄 수 있습니다</string>
+
+  <string name="wear_settings_keep_awake">화면 켜짐 유지</string>
+  <string name="wear_settings_keep_awake_description">메트로놈이 재생되는 동안</string>
+
+  <string name="wear_settings_rate">Google Play에서 Tack 평가하기</string>
+  </resources>
