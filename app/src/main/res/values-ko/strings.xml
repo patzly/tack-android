@@ -215,7 +215,7 @@
   <string name="settings_reset_timer_description">다시 시작하는 대신</string>
 
   <string name="settings_big_timer">큰 타이머 슬라이더 표시</string>
-  <string name="settings_big_timer_description">Instead of animated seekbar</string>
+  <string name="settings_big_timer_description">애니메이션 탐색바 대신</string>
 
   <string name="settings_big_time_text">시간을 큰 글자로</string>
   <string name="settings_big_time_text_description">기본 크기가 충분하지 않다면 유용합니다</string>
