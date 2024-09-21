@@ -134,6 +134,7 @@
   <string name="options_timer">음악 길이</string>
   <string name="options_timer_description">%1$s후 정지</string>
   <string name="options_mute">무음 비트</string>
+  <string name="options_mute_mute">음소거 %1$s</string>
   <string name="options_mute_random">최대 %1$d% 까지 무작위로 음소거</string>
   <string name="options_swing">스윙(Swing)</string>
   <string name="options_swing_description">세분음이 선택된 스윙 비율에 맞춰 설정됩니다</string>
