@@ -62,12 +62,11 @@ public class SplashActivity extends MainActivity {
 
       getSplashScreen().setOnExitAnimationListener(view -> {
         Instant startTime = view.getIconAnimationStart();
-        assert startTime != null;
-        Instant now = Instant.now();
-        long animRuntime = startTime.until(now, ChronoUnit.MILLIS);
         ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 0);
         animator.setDuration(250);
-        animator.setStartDelay(900 - animRuntime);
+        animator.setStartDelay(
+            startTime != null ? 900 - startTime.until(Instant.now(), ChronoUnit.MILLIS) : 0
+        );
         animator.addListener(new AnimatorListenerAdapter() {
           @Override
           public void onAnimationEnd(@NonNull Animator animation, boolean isReverse) {
