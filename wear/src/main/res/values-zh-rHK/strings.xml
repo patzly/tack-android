@@ -37,6 +37,10 @@
   <plurals name="wear_label_beats">
     <item quantity="other">%1$d 節拍</item>
   </plurals>
+  <plurals name="wear_label_subs">
+    <item quantity="other">%1$d 分隔槽</item>
+  </plurals>
+
   <!-- ACTIONS -->
 
   <string name="wear_action_cancel">取消</string>
