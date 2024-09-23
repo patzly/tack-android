@@ -67,6 +67,7 @@
   <string name="wear_msg_notification_permission_denied_description">播放需要通知权限</string>
   <string name="wear_msg_gain">音量增强下播放？</string>
   <string name="wear_msg_gain_description">小心不要通过耳机播放！</string>
+  <string name="wear_msg_empty_bookmarks">尚未添加任何内容</string>
   <string name="wear_msg_delete_bookmark">删除书签？</string>
   <!-- Content of a bookmark, e. g. 120 bpm, 4 beats, 1 subdivision -->
   <string name="wear_msg_delete_bookmark_description">%1$s，%2$s，%3$s</string>
