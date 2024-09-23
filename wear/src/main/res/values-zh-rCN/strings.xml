@@ -67,6 +67,7 @@
   <string name="wear_msg_notification_permission_denied_description">播放需要通知权限</string>
   <string name="wear_msg_gain">音量增强下播放？</string>
   <string name="wear_msg_gain_description">小心不要通过耳机播放！</string>
+  <string name="wear_msg_delete_bookmark">删除书签？</string>
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">节拍声音</string>
