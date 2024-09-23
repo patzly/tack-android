@@ -68,6 +68,9 @@
   <string name="wear_msg_gain">音量增强下播放？</string>
   <string name="wear_msg_gain_description">小心不要通过耳机播放！</string>
   <string name="wear_msg_delete_bookmark">删除书签？</string>
+  <!-- Content of a bookmark, e. g. 120 bpm, 4 beats, 1 subdivision -->
+  <string name="wear_msg_delete_bookmark_description">%1$s，%2$s，%3$s</string>
+
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">节拍声音</string>
