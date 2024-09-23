@@ -58,6 +58,7 @@
   <string name="wear_msg_notification_permission_denied_description">播放需要通知權限</string>
   <string name="wear_msg_gain">音量增強下播放？</string>
   <string name="wear_msg_gain_description">小心不要透過耳機播放！</string>
+  <string name="wear_msg_empty_bookmarks">尚未添加任何内容</string>
   <string name="wear_msg_delete_bookmark">刪除書籤？</string>
   <!-- SETTINGS -->
 
