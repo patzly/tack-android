@@ -174,9 +174,6 @@
   <string name="settings_contrast_dynamic">Cihaz teması için kontrast ayarı sistem ayarlarında yapılmalı</string>
   <string name="settings_contrast_dynamic_unsupported">Dinamik kontrast sadece Android 14+ cihazlarda kullanılabilir</string>
 
-  <string name="settings_transition">Uygulama sayfaları arasında kaydırma geçişini kullan</string>
-  <string name="settings_transition_description">Solma yerine</string>
-
   <string name="settings_haptic">Haptik efektler</string>
   <string name="settings_haptic_description">Titreşim modunda haptik vuruşlara ek olarak</string>
 
