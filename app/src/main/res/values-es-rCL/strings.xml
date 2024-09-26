@@ -178,9 +178,6 @@
   <string name="settings_contrast_dynamic">El contraste para el tema del dispositivo debe ser elegido en configuración del sistema</string>
   <string name="settings_contrast_dynamic_unsupported">El contraste dinámico para temas del sistema está disponible solo en Android 14+</string>
 
-  <string name="settings_transition">Usar transición entre páginas de la app</string>
-  <string name="settings_transition_description">En vez de desvanecimiento</string>
-
   <string name="settings_haptic">Efectos hápticos</string>
   <string name="settings_haptic_description">Junto con las pulsaciones hápticas en modo vibración</string>
 
