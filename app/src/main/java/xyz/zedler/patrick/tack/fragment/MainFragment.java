@@ -21,6 +21,7 @@ package xyz.zedler.patrick.tack.fragment;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
@@ -196,11 +197,25 @@ public class MainFragment extends BaseFragment
     optionsBadge.setVerticalOffset(UiUtil.dpToPx(activity, 16));
     optionsBadge.setHorizontalOffset(UiUtil.dpToPx(activity, 16));
 
+    binding.linearMainTop.post(() -> {
+      LayoutTransition transition = new LayoutTransition();
+      transition.setDuration(Constants.ANIM_DURATION_LONG);
+      binding.linearMainTop.setLayoutTransition(transition);
+    });
+
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
-    binding.linearMainBeats.getLayoutTransition().setDuration(Constants.ANIM_DURATION_LONG);
+    binding.linearMainBeats.post(() -> {
+      LayoutTransition transition = new LayoutTransition();
+      transition.setDuration(Constants.ANIM_DURATION_LONG);
+      binding.linearMainBeats.setLayoutTransition(transition);
+    });
     updateBeats(getSharedPrefs().getString(PREF.BEATS, DEF.BEATS).split(","));
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
-    binding.linearMainSubs.getLayoutTransition().setDuration(Constants.ANIM_DURATION_LONG);
+    binding.linearMainSubs.post(() -> {
+      LayoutTransition transition = new LayoutTransition();
+      transition.setDuration(Constants.ANIM_DURATION_LONG);
+      binding.linearMainSubs.setLayoutTransition(transition);
+    });
 
     updateSubs(getSharedPrefs().getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(","));
 

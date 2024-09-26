@@ -98,10 +98,10 @@
       app:layout_constraintEnd_toEndOf="parent">
 
       <LinearLayout
+        android:id="@+id/linear_main_top"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:animateLayoutChanges="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -148,8 +148,7 @@
               android:orientation="horizontal"
               android:layout_gravity="center_horizontal"
               android:layout_marginTop="4dp"
-              android:layout_marginBottom="4dp"
-              android:animateLayoutChanges="true" />
+              android:layout_marginBottom="4dp" />
 
           </HorizontalScrollView>
 
@@ -197,8 +196,7 @@
               android:layout_width="wrap_content"
               android:layout_height="match_parent"
               android:orientation="horizontal"
-              android:layout_gravity="center_horizontal"
-              android:animateLayoutChanges="true" />
+              android:layout_gravity="center_horizontal" />
 
           </HorizontalScrollView>
 
