@@ -182,9 +182,6 @@
   <string name="settings_contrast_dynamic">Kontrast pro motiv zařízení musíte nastavit v nastavení systému.</string>
   <string name="settings_contrast_dynamic_unsupported">Dynamický kontrast pro motiv zařízení je dostupný pouze na systému Android 14+</string>
 
-  <string name="settings_transition">Použít efekt posunutí při přechodu mezi stránkami aplikace</string>
-  <string name="settings_transition_description">Namísto vyblednutí</string>
-
   <string name="settings_haptic">Haptická odezva</string>
   <string name="settings_haptic_description">Navíc k haptickým dobám v režimu vibrací</string>
 
