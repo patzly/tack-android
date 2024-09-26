@@ -174,9 +174,6 @@
   <string name="settings_contrast_dynamic">Kontrast für Systemfarben muss in den Systemeinstellungen festgelegt werden</string>
   <string name="settings_contrast_dynamic_unsupported">Dynamischer Kontrast bei Systemfarben ist nur für Android 14+ verfügbar</string>
 
-  <string name="settings_transition">Schieben als Seitenübergang verwenden</string>
-  <string name="settings_transition_description">Anstatt auszublenden</string>
-
   <string name="settings_haptic">Haptische Effekte</string>
   <string name="settings_haptic_description">Zusätzlich zu haptischen Schlägen im Vibrationsmodus</string>
 
