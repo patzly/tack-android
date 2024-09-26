@@ -385,11 +385,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
       if (VERSION.SDK_INT >= VERSION_CODES.S) {
         finish();
       }
-      if (UiUtil.areAnimationsEnabled(this)) {
-        overridePendingTransition(R.anim.fade_in_restart, R.anim.fade_out_restart);
-      } else {
-        overridePendingTransition(0, 0);
-      }
+      overridePendingTransition(R.anim.fade_in_restart, R.anim.fade_out_restart);
     }, delay);
   }
 

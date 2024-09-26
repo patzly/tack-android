@@ -28,7 +28,6 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.transition.MaterialSharedAxis;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.util.MetronomeUtil;
-import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class BaseFragment extends Fragment {
@@ -45,12 +44,10 @@ public class BaseFragment extends Fragment {
     activity = (MainActivity) requireActivity();
     viewUtil = new ViewUtil();
 
-    if (UiUtil.areAnimationsEnabled(activity)) {
-      setEnterTransition(new MaterialSharedAxis(MaterialSharedAxis.Z, true));
-      setReenterTransition(new MaterialSharedAxis(MaterialSharedAxis.Z, false));
-      setReturnTransition(new MaterialSharedAxis(MaterialSharedAxis.Z, false));
-      setExitTransition(new MaterialSharedAxis(MaterialSharedAxis.Z, true));
-    }
+    setEnterTransition(new MaterialSharedAxis(MaterialSharedAxis.Z, true));
+    setReenterTransition(new MaterialSharedAxis(MaterialSharedAxis.Z, false));
+    setReturnTransition(new MaterialSharedAxis(MaterialSharedAxis.Z, false));
+    setExitTransition(new MaterialSharedAxis(MaterialSharedAxis.Z, true));
   }
 
   @Override

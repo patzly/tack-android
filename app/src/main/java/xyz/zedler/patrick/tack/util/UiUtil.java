@@ -27,7 +27,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
-import android.provider.Settings.Global;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
@@ -265,20 +264,5 @@ public class UiUtil {
       windowManager.getDefaultDisplay().getMetrics(displayMetrics);
       return useWidth ? displayMetrics.widthPixels : displayMetrics.heightPixels;
     }
-  }
-
-  // A11y animation reduction
-
-  public static boolean areAnimationsEnabled(Context context) {
-    boolean duration = Global.getFloat(
-        context.getContentResolver(), Global.ANIMATOR_DURATION_SCALE, 0
-    ) != 0;
-    boolean transition = Global.getFloat(
-        context.getContentResolver(), Global.TRANSITION_ANIMATION_SCALE, 0
-    ) != 0;
-    boolean window = Global.getFloat(
-        context.getContentResolver(), Global.WINDOW_ANIMATION_SCALE, 0
-    ) != 0;
-    return duration && transition && window;
   }
 }
