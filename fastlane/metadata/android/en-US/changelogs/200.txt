@@ -1,0 +1,2 @@
+• New: Korean translation
+• Fixed: crash when Tack is launched from app info page on Android 12+

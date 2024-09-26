@@ -1,0 +1,4 @@
+• Improved: refined and unified navigation transitions
+• Fixed: missing navigation transitions on some devices
+• Fixed: crash when app shortcut limit is reached
+• Fixed: incorrect paragraph text alignment

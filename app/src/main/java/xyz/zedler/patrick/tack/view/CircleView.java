@@ -149,22 +149,29 @@ public class CircleView extends View {
     ValueAnimator alphaAnimator = ValueAnimator.ofFloat(gradientBlendRatio, dragged ? 0.5f : 0);
     alphaAnimator.addUpdateListener(animation -> {
       gradientBlendRatio = (float) alphaAnimator.getAnimatedValue();
-      if (!reduceAnimations) {
-        paintFill.setShader(getGradient());
-      }
+      paintFill.setShader(getGradient());
       invalidate();
     });
-    animatorSet = new AnimatorSet();
-    animatorSet.playTogether(alphaAnimator, animatorAmplitude);
-    animatorSet.setInterpolator(new FastOutSlowInInterpolator());
-    animatorSet.setDuration(reduceAnimations ? Constants.ANIM_DURATION_SHORT : Constants.ANIM_DURATION_LONG);
-    animatorSet.addListener(new AnimatorListenerAdapter() {
-      @Override
-      public void onAnimationEnd(Animator animation) {
-        animatorSet = null;
-      }
-    });
-    animatorSet.start();
+
+    if (!reduceAnimations) {
+      animatorSet = new AnimatorSet();
+      animatorSet.playTogether(alphaAnimator, animatorAmplitude);
+      animatorSet.setInterpolator(new FastOutSlowInInterpolator());
+      animatorSet.setDuration(Constants.ANIM_DURATION_LONG);
+      animatorSet.addListener(new AnimatorListenerAdapter() {
+        @Override
+        public void onAnimationEnd(Animator animation) {
+          animatorSet = null;
+        }
+      });
+      animatorSet.start();
+    } else {
+      innerRadius = innerRadiusDefault;
+      updateShape();
+      gradientBlendRatio = 0;
+      paintFill.setShader(getGradient());
+      invalidate();
+    }
   }
 
   public void onDrag(float x, float y) {
