@@ -474,9 +474,7 @@
     <item name="fontFamily">@font/jost_medium</item>
   </style>
 
-  <style name="Widget.Tack.TextView.Paragraph" parent="Widget.Tack.TextView">
-    <item name="android:justificationMode" tools:targetApi="o">inter_word</item>
-  </style>
+  <style name="Widget.Tack.TextView.Paragraph" parent="Widget.Tack.TextView" />
 
   <style
     name="Widget.Tack.TextView.Paragraph.BodyMedium"

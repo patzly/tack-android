@@ -1,6 +1,7 @@
 ## 4.4.2
 
 - Improved: unified navigation transitions
+- Fixed: paragraph text alignment
 
 ## 4.4.1
 
