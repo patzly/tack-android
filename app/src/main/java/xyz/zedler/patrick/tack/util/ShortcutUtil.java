@@ -47,7 +47,9 @@ public class ShortcutUtil {
 
   public void addShortcut(int tempo) {
     if (isSupported() && !hasShortcut(tempo)) {
-      manager.addDynamicShortcuts(Collections.singletonList(getShortcutInfo(tempo)));
+      if (manager.getDynamicShortcuts().size() < manager.getMaxShortcutCountPerActivity()) {
+        manager.addDynamicShortcuts(Collections.singletonList(getShortcutInfo(tempo)));
+      }
     }
   }
 

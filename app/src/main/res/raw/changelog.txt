@@ -1,13 +1,15 @@
 ## 4.4.2
 
-- Improved: unified navigation transitions
+- Improved: refined and unified navigation transitions
 - Fixed: missing navigation transitions on some devices
-- Fixed: paragraph text alignment
+- Fixed: crash when app shortcut limit is reached
+- Fixed: incorrect paragraph text alignment
 
 ## 4.4.1
 
 - New: Korean translation (big thanks to the translators!)
 - Fixed: crash when Tack is launched from app info page on Android 12+
+- Fixed: incorrect selection after adding or removing bookmarks (Wear OS)
 
 ## 4.4.0
 
