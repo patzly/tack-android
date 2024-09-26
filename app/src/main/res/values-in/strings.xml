@@ -170,9 +170,6 @@
   <string name="settings_contrast_dynamic">Kontras pada tema perangkat harus ditetapkan dalam pengaturan sistem</string>
   <string name="settings_contrast_dynamic_unsupported">Kontras dinamis untuk tema perangkat hanya tersedia pada Android 14+</string>
 
-  <string name="settings_transition">Menggunakan transisi geser antar halaman aplikasi</string>
-  <string name="settings_transition_description">Dibandingkan memudar</string>
-
   <string name="settings_haptic">Efek haptik</string>
   <string name="settings_haptic_description">Sebagai opsi tambahan untuk ketukan haptik ketika dalam mode getar</string>
 
