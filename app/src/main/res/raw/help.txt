@@ -15,12 +15,6 @@ By long-pressing the buttons, you can change the tempo even faster.
 Simply look at the first number of your time signature and set the beats in Tack accordingly. That means 4 beats for 4/4, 2 for 2/2 and so on. 6/8 is a bit special, here you need 2 beats with optionally 3 subdivisions because only the 1st and the 4th eights are downbeats.
 Additionally you can change the emphasis of beats by tapping on them. In options you also can select a swing percentage, which automatically sets the subdivisions for you.
 
-#### Why are all pages just blank?
-
-That's a bug on a few devices out there, mostly with Android 8.1 and 9. For a workaround please activate the following option:
-
-OPTION_USE_SLIDING
-
 #### How can I get Tack for my language?
 
 Translations for Tack are managed on Transifex, where users like you can translate it!

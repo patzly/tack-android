@@ -118,11 +118,11 @@ public class SettingsFragment extends BaseFragment
       if (id == R.id.action_feedback) {
         activity.showFeedbackBottomSheet();
       } else if (id == R.id.action_about) {
-        activity.navigateToFragment(SettingsFragmentDirections.actionSettingsToAbout());
+        activity.navigate(SettingsFragmentDirections.actionSettingsToAbout());
       } else if (id == R.id.action_help) {
         activity.showTextBottomSheet(R.raw.help, R.string.title_help);
       } else if (id == R.id.action_log) {
-        activity.navigateToFragment(SettingsFragmentDirections.actionSettingsToLog());
+        activity.navigate(SettingsFragmentDirections.actionSettingsToLog());
       }
       return true;
     });
@@ -204,17 +204,6 @@ public class SettingsFragment extends BaseFragment
             ? R.string.settings_contrast_dynamic
             : R.string.settings_contrast_dynamic_unsupported
     );
-
-    binding.partialOptionTransition.linearOptionTransition.setOnClickListener(v -> {
-      ViewUtil.startIcon(binding.partialOptionTransition.imageOptionTransition);
-      binding.partialOptionTransition.switchOptionTransition.setChecked(
-          !binding.partialOptionTransition.switchOptionTransition.isChecked()
-      );
-    });
-    binding.partialOptionTransition.switchOptionTransition.setChecked(
-        getSharedPrefs().getBoolean(PREF.USE_SLIDING, DEF.USE_SLIDING)
-    );
-    binding.partialOptionTransition.switchOptionTransition.jumpDrawablesToCurrentState();
 
     binding.switchSettingsHaptic.setChecked(
         getSharedPrefs().getBoolean(PREF.HAPTIC, HapticUtil.areSystemHapticsTurnedOn(activity))
@@ -336,7 +325,6 @@ public class SettingsFragment extends BaseFragment
 
     ViewUtil.setOnCheckedChangeListeners(
         this,
-        binding.partialOptionTransition.switchOptionTransition,
         binding.switchSettingsHaptic,
         binding.switchSettingsReduceAnimations,
         binding.switchSettingsIgnoreFocus,
@@ -487,10 +475,7 @@ public class SettingsFragment extends BaseFragment
   @Override
   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
     int id = buttonView.getId();
-    if (id == R.id.switch_option_transition) {
-      performHapticClick();
-      getSharedPrefs().edit().putBoolean(PREF.USE_SLIDING, isChecked).apply();
-    } else if (id == R.id.switch_settings_haptic) {
+    if (id == R.id.switch_settings_haptic) {
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsHaptic);
       getSharedPrefs().edit().putBoolean(PREF.HAPTIC, isChecked).apply();

@@ -25,7 +25,8 @@
   android:id="@+id/coordinator_container"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="?attr/colorSurfaceContainer">
+  android:background="?attr/colorSurfaceContainer"
+  android:transitionGroup="true">
 
   <com.google.android.material.appbar.AppBarLayout
     android:id="@+id/app_bar_main"

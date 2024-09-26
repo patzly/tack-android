@@ -163,9 +163,9 @@ public class MainFragment extends BaseFragment
       }
       performHapticClick();
       if (id == R.id.action_settings) {
-        activity.navigateToFragment(MainFragmentDirections.actionMainToSettings());
+        activity.navigate(MainFragmentDirections.actionMainToSettings());
       } else if (id == R.id.action_about) {
-        activity.navigateToFragment(MainFragmentDirections.actionMainToAbout());
+        activity.navigate(MainFragmentDirections.actionMainToAbout());
       } else if (id == R.id.action_help) {
         activity.showTextBottomSheet(R.raw.help, R.string.title_help);
       } else if (id == R.id.action_feedback) {

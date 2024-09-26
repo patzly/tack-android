@@ -21,7 +21,6 @@ package xyz.zedler.patrick.tack.view;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.util.AttributeSet;
@@ -29,7 +28,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
@@ -38,16 +36,11 @@ import androidx.core.text.HtmlCompat;
 import androidx.core.widget.TextViewCompat;
 import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.divider.MaterialDivider;
-import com.google.android.material.materialswitch.MaterialSwitch;
 import com.google.android.material.textview.MaterialTextView;
-import xyz.zedler.patrick.tack.Constants.DEF;
-import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.HapticUtil;
-import xyz.zedler.patrick.tack.util.PrefsUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class FormattedTextView extends LinearLayout {
 
@@ -108,27 +101,6 @@ public class FormattedTextView extends LinearLayout {
         addView(getMessage(part.substring(2), true));
       } else if (part.startsWith("---")) {
         addView(getDivider());
-      } else if (part.startsWith("OPTION_USE_SLIDING")) {
-        View optionTransition = View.inflate(
-            context, R.layout.partial_option_transition, null
-        );
-        optionTransition.setBackground(ViewUtil.getRippleBgListItemSurface(context));
-        optionTransition.setLayoutParams(getVerticalLayoutParams(0, 16));
-        ImageView image = optionTransition.findViewById(R.id.image_option_transition);
-        MaterialSwitch toggle = optionTransition.findViewById(R.id.switch_option_transition);
-        optionTransition.setOnClickListener(v -> {
-          ViewUtil.startIcon(image);
-          hapticUtil.click();
-          toggle.setChecked(!toggle.isChecked());
-        });
-        SharedPreferences sharedPrefs = new PrefsUtil(context).getSharedPrefs();
-        toggle.setOnCheckedChangeListener(
-            (buttonView, isChecked) -> sharedPrefs.edit().putBoolean(
-                PREF.USE_SLIDING, isChecked
-            ).apply()
-        );
-        toggle.setChecked(sharedPrefs.getBoolean(PREF.USE_SLIDING, DEF.USE_SLIDING));
-        addView(optionTransition);
       } else {
         boolean keepDistance = !partNext.startsWith("=> ") && !partNext.startsWith("__ ");
         addView(getParagraph(part, keepDistance));

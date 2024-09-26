@@ -24,7 +24,7 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:background="?attr/colorSurface">
+  android:transitionGroup="true">
 
   <com.google.android.material.appbar.AppBarLayout
     android:id="@+id/app_bar_settings"
@@ -255,10 +255,6 @@
           </com.google.android.material.button.MaterialButtonToggleGroup>
 
         </HorizontalScrollView>
-
-        <include
-          android:id="@+id/partial_option_transition"
-          layout="@layout/partial_option_transition" />
 
         <LinearLayout
           android:id="@+id/linear_settings_haptic"

@@ -186,9 +186,6 @@
   <string name="settings_contrast_dynamic">Contrast for device theme has to be set in system settings</string>
   <string name="settings_contrast_dynamic_unsupported">Dynamic contrast for device theme is only available on Android 14+</string>
 
-  <string name="settings_transition">Use sliding transition between app pages</string>
-  <string name="settings_transition_description">Instead of fading</string>
-
   <string name="settings_haptic">Haptic effects</string>
   <string name="settings_haptic_description">In addition to haptic beats when in vibration mode</string>
 

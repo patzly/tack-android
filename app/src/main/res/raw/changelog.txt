@@ -1,3 +1,7 @@
+## 4.4.2
+
+- Improved: unified navigation transitions
+
 ## 4.4.1
 
 - New: Korean translation (big thanks to the translators!)
