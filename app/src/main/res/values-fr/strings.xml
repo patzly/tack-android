@@ -206,6 +206,7 @@
   <string name="settings_keep_awake">Maintenir l\'écran allumé</string>
   <string name="settings_keep_awake_description">Quand le métronome fonctionne</string>
 
+  <string name="settings_big_logo">Montrer le grand logo avec animation</string>
   <!-- ABOUT -->
 
   <string name="about_version">Version</string>
