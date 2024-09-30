@@ -198,6 +198,8 @@
   <string name="settings_flash_screen_description">À chaque battement</string>
 
   <string name="settings_keep_awake">Maintenir l\'écran allumé</string>
+  <string name="settings_keep_awake_description">Quand le métronome fonctionne</string>
+
   <!-- ABOUT -->
 
   <string name="about_version">Version</string>
