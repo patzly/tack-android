@@ -140,6 +140,7 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">Langue</string>
+  <string name="settings_language_info">Merci beaucoup à tous les traducteurs bénévoles via Transiflex !\nVeuillez consulter Tack sur GitHub pour savoir comment contribuer à rendre Tack disponible pour votre langue.</string>
   <string name="settings_language_system">Réglage système</string>
   <string name="settings_language_system_description">Anglais si la traduction n\'est pas disponible</string>
 
