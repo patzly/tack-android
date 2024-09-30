@@ -1,6 +1,7 @@
 ## 4.4.3
 
 - Fixed: crash when trying to start metronome on some devices
+- Fixed: crash when audio cannot be played due to internal error (Wear OS)
 
 ## 4.4.2
 

@@ -83,7 +83,7 @@ class AudioUtil(
           setEnabled(gain > 0)
         }
       } catch (e: RuntimeException) {
-        Log.e(TAG, "Failed to initialize LoudnessEnhancer", e)
+        Log.e(TAG, "Failed to initialize LoudnessEnhancer: ", e)
       }
       play()
     }
@@ -174,7 +174,9 @@ class AudioUtil(
 
   private fun writeNextAudioData(data: FloatArray, periodSize: Int, sizeWritten: Int): Int {
     val size = minOf(data.size, periodSize - sizeWritten)
-    if (playing) writeAudio(track, data, size)
+    if (playing) {
+      writeAudio(track, data, size)
+    }
     return size
   }
 
@@ -204,7 +206,7 @@ class AudioUtil(
   private fun writeAudio(track: AudioTrack?, data: FloatArray, size: Int) {
     track?.write(data, 0, size, AudioTrack.WRITE_BLOCKING)?.takeIf { it < 0 }?.let {
       stop()
-      throw IllegalStateException("Error code: $it")
+      Log.e(TAG, "writeAudio: failed to play audio data with error code $it")
     }
   }
 
