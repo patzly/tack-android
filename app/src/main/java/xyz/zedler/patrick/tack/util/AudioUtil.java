@@ -75,8 +75,12 @@ public class AudioUtil implements OnAudioFocusChangeListener {
     playing = true;
     track = getTrack();
     loudnessEnhancer = new LoudnessEnhancer(track.getAudioSessionId());
-    loudnessEnhancer.setTargetGain(gain * 100);
-    loudnessEnhancer.setEnabled(gain > 0);
+    try {
+      loudnessEnhancer.setTargetGain(gain * 100);
+      loudnessEnhancer.setEnabled(gain > 0);
+    } catch (Exception e) {
+      Log.e(TAG, "play: initializing LoudnessEnhancer failed", e);
+    }
     track.play();
 
     if (ignoreFocus) {
@@ -191,8 +195,12 @@ public class AudioUtil implements OnAudioFocusChangeListener {
   public void setGain(int gain) {
     this.gain = gain;
     if (loudnessEnhancer != null) {
-      loudnessEnhancer.setTargetGain(gain * 100);
-      loudnessEnhancer.setEnabled(gain > 0);
+      try {
+        loudnessEnhancer.setTargetGain(gain * 100);
+        loudnessEnhancer.setEnabled(gain > 0);
+      } catch (Exception e) {
+        Log.e(TAG, "setGain: adjusting LoudnessEnhancer failed", e);
+      }
     }
   }
 
