@@ -71,6 +71,7 @@
   <string name="action_reset">Réinitialiser</string>
   <string name="action_deactivate_gain">Désactiver le boost</string>
   <string name="action_recommend">Recommander</string>
+  <string name="action_recommend_description">Faites connaître Tack à vos amis</string>
   <string name="action_email">Envoyer un email</string>
   <string name="action_email_description">Contacter le développeur</string>
   <string name="action_rate">Noter dans Google Play</string>
@@ -86,6 +87,7 @@
 
   <string name="msg_bookmarks_max">Nombre de marque-pages maximum atteint</string>
   <string name="msg_feedback_contact">Vous avez des souhaits, des commentaires ou des questions ? Contactez-moi !\nSinon, je serais très heureux d\'avoir une bonne critique dans le Play Store.</string>
+  <string name="msg_recommend">Jetez un coup d\'œil à cette application sympa de métronome : \n%1$s</string>
   <string name="msg_vibration_unavailable">Le vibreur n\'est pas disponible sur cet appareil</string>
   <string name="msg_service_running">Le service métronome est en cours d\'utilisation</string>
   <string name="msg_connection_lost">Connexion au service perdue, redémarrage de l\'application nécessaire</string>
@@ -165,6 +167,8 @@
   <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
   <string name="settings_contrast_high">Élevé</string>
   <string name="settings_haptic">Effets haptiques</string>
+  <string name="settings_haptic_description">En plus des battements haptiques en mode vibreur</string>
+
   <string name="settings_reduce_animations">Réduire les animations</string>
   <string name="settings_reduce_animations_description">Peut améliorer la fluidité</string>
 
@@ -182,7 +186,10 @@
 
   <string name="settings_latency">Correction de latence</string>
   <string name="settings_ignore_focus">Ignorer le focus audio</string>
+  <string name="settings_ignore_focus_description">Continuer à jouer si d\'autres applications diffusent du son</string>
+
   <string name="settings_gain">Boost de volume</string>
+  <string name="settings_gain_description">Gain en dB (en plus du volume système)</string>
   <string name="settings_gain_warning">À utiliser avec prudence !</string>
   <string name="settings_gain_disclaimer">Lorsque l\'option « boost » est activée, un avertissement s\'affiche avant chaque démarrage. Le développeur n\'est pas tenu responsable des éventuels dommages.</string>
 
@@ -199,14 +206,19 @@
   <string name="settings_reset_timer">RAZ chronomètre quand arrêté</string>
   <string name="settings_reset_timer_description">Plutôt que reprendre</string>
 
+  <string name="settings_big_timer">Afficher le grand curseur glissant de minuterie</string>
+  <string name="settings_big_timer_description">Plutôt qu\'une barre de recherche animée</string>
+
   <string name="settings_big_time_text">Grosse police pour le temps</string>
+  <string name="settings_big_time_text_description">Utile si la taille par défaut n\'est pas suffisante</string>
+
   <string name="settings_flash_screen">Flash d\'écran</string>
   <string name="settings_flash_screen_description">À chaque battement</string>
 
   <string name="settings_keep_awake">Maintenir l\'écran allumé</string>
   <string name="settings_keep_awake_description">Quand le métronome fonctionne</string>
 
-  <string name="settings_big_logo">Montrer le grand logo avec animation</string>
+  <string name="settings_big_logo">Afficher le grand logo avec animation</string>
   <!-- ABOUT -->
 
   <string name="about_version">Version</string>
