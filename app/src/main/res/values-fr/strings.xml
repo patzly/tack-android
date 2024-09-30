@@ -182,6 +182,8 @@
   <string name="settings_ignore_focus">Ignorer le focus audio</string>
   <string name="settings_gain">Boost de volume</string>
   <string name="settings_gain_warning">À utiliser avec prudence !</string>
+  <string name="settings_gain_disclaimer">Lorsque l\'option « boost » est activée, un avertissement s\'affiche avant chaque démarrage. Le développeur n\'est pas tenu responsable des éventuels dommages.</string>
+
   <string name="settings_show_subs">Afficher les commandes de subdivision</string>
   <string name="settings_show_subs_description">Plus de rythmes variés</string>
 
