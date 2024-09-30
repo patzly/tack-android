@@ -186,6 +186,7 @@
   <string name="settings_latency">Correction de latence</string>
   <string name="settings_ignore_focus">Ignorer le focus audio</string>
   <string name="settings_gain">Boost de volume</string>
+  <string name="settings_gain_description">Gain en dB (en plus du volume système)</string>
   <string name="settings_gain_warning">À utiliser avec prudence !</string>
   <string name="settings_gain_disclaimer">Lorsque l\'option « boost » est activée, un avertissement s\'affiche avant chaque démarrage. Le développeur n\'est pas tenu responsable des éventuels dommages.</string>
 
