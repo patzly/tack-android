@@ -1,0 +1,77 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="wear_title_settings">Paramètres</string>
+  <string name="wear_title_beats">Battements</string>
+  <string name="wear_title_notification_channel">Service de métronome</string>
+  <!-- LABELS -->
+
+  <string name="wear_label_bpm_value">%1$d bpm</string>
+  <string name="wear_label_ms">%1$s ms</string>
+  <string name="wear_label_db">+%1$d dB</string>
+  <!-- ACTIONS -->
+
+  <string name="wear_action_cancel">Annuler</string>
+  <string name="wear_action_increase">Augmenter</string>
+  <string name="wear_action_decrease">Diminuer</string>
+  <string name="wear_action_play_stop">Jouer/Arrêter</string>
+  <string name="wear_action_stop">Arrêter</string>
+  <string name="wear_action_add_beat">Ajouter un battement</string>
+  <string name="wear_action_remove_beat">Supprimer un battement</string>
+  <string name="wear_action_add_sub">Ajouter une subdivision</string>
+  <string name="wear_action_remove_sub">Retirer une subdivision</string>
+  <string name="wear_action_tempo_tap">Battez la mesure</string>
+  <string name="wear_action_bookmark">Marque-page</string>
+  <string name="wear_action_beat_mode">Mode de battement</string>
+  <string name="wear_action_retry">Réessayer</string>
+  <string name="wear_msg_gain">Jouer avec le boost de volume ?</string>
+  <!-- SETTINGS -->
+
+  <string name="wear_settings_sound">Son du battement</string>
+  <string name="wear_settings_sound_sine">Sinus</string>
+  <string name="wear_settings_sound_wood">Bois</string>
+  <string name="wear_settings_sound_mechanical">Mécanique</string>
+  <string name="wear_settings_sound_beatboxing_1">Beatboxing 1</string>
+  <string name="wear_settings_sound_beatboxing_2">Beatboxing 2</string>
+  <string name="wear_settings_sound_hands">Mains</string>
+  <string name="wear_settings_sound_folding">Règle de repliage</string>
+
+  <string name="wear_settings_latency">Correction de latence</string>
+
+  <string name="wear_settings_ignore_focus">Ignorer le focus audio</string>
+  <string name="wear_settings_ignore_focus_description">Continuer à jouer si d\'autres applications diffusent du son</string>
+
+  <string name="wear_settings_gain">Boost de volume</string>
+  <string name="wear_settings_always_vibrate">Toujours vibrer</string>
+  <string name="wear_settings_always_vibrate_description">En suivant le son</string>
+
+  <string name="wear_settings_flash_screen">Flash d\'écran</string>
+  <string name="wear_settings_flash_screen_description">À chaque battement</string>
+
+  <string name="wear_settings_reduce_animations">Réduire les animations</string>
+  <string name="wear_settings_reduce_animations_description">Peut améliorer la fluidité</string>
+
+  <string name="wear_settings_keep_awake">Maintenir l\'écran allumé</string>
+  <string name="wear_settings_keep_awake_description">Quand le métronome fonctionne</string>
+
+  </resources>
