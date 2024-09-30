@@ -1,0 +1,222 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2024 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="title_feedback">Commentaires</string>
+  <string name="title_about">À propos</string>
+  <string name="title_help">Aide</string>
+  <string name="title_licenses">Licences open source</string>
+  <string name="title_settings">Paramètres</string>
+  <string name="title_notification_channel">Service métronome</string>
+  <string name="title_options">Options</string>
+  <string name="title_general">Général</string>
+  <string name="title_metronome">Métronome</string>
+  <string name="title_controls">Commandes</string>
+  <string name="title_logcat">Logcat</string>
+
+  <!-- LABELS -->
+
+  <string name="label_bpm_value">%1$d bpm</string>
+  <string name="label_bpm">bpm</string>
+  <string name="label_ms">%1$s ms</string>
+  <string name="label_db">+%1$d dB</string>
+  <string name="label_tempo_largo">Largo</string>
+  <string name="label_tempo_larghetto">Larghetto</string>
+  <string name="label_tempo_adagio">Adagio</string>
+  <string name="label_tempo_andante">Andante</string>
+  <string name="label_tempo_moderato">Moderato</string>
+  <string name="label_tempo_allegro">Allegro</string>
+  <string name="label_tempo_presto">Presto</string>
+  <string name="label_tempo_prestissimo">Prestissimo</string>
+
+  <!-- ACTIONS -->
+
+  <string name="action_back">Retour</string>
+  <string name="action_close">Fermer</string>
+  <string name="action_cancel">Annuler</string>
+  <string name="action_increase">Augmenter</string>
+  <string name="action_decrease">Diminuer</string>
+  <string name="action_play">Jouer</string>
+  <string name="action_play_stop">Jouer/Arrêter</string>
+  <string name="action_stop">Arrêter</string>
+  <string name="action_add_beat">Ajouter un battement</string>
+  <string name="action_remove_beat">Supprimer un battement</string>
+  <string name="action_add_sub">Ajouter une subdivision</string>
+  <string name="action_remove_sub">Retirer une subdivision</string>
+  <string name="action_clear_all">Effacer tout</string>
+  <string name="action_tempo_tap">Battez la mesure</string>
+  <string name="action_bookmark">Marque-page</string>
+  <string name="action_beat_mode">Mode de battement</string>
+  <string name="action_send_feedback">Envoyer un commentaire</string>
+  <string name="action_open_link">Ouvrir un site web extérieur</string>
+  <string name="action_reset">Réinitialiser</string>
+  <string name="action_deactivate_gain">Désactiver le boost</string>
+  <string name="action_recommend">Recommander</string>
+  <string name="action_email">Envoyer un email</string>
+  <string name="action_email_description">Contacter le développeur</string>
+  <string name="action_rate">Noter dans Google Play</string>
+  <string name="action_rate_description">Soutenir le développement</string>
+  <string name="action_issue">Ouvrir un ticket sur Github</string>
+  <string name="action_issue_description">Signaler un bug ou proposer une fonctionnalité</string>
+  <string name="action_retry">Réessayer</string>
+  <string name="action_logcat">Consulter logcat</string>
+  <string name="action_copy_to_clipboard">Copier dans le presse-papiers</string>
+  <string name="action_reload">Recharger</string>
+
+  <!-- MESSAGES -->
+
+  <string name="msg_bookmarks_max">Nombre de marque-pages maximum atteint</string>
+  <string name="msg_feedback_contact">Vous avez des souhaits, des commentaires ou des questions ? Contactez-moi !\nSinon, je serais très heureux d\'avoir une bonne critique dans le Play Store.</string>
+  <string name="msg_vibration_unavailable">Le vibreur n\'est pas disponible sur cet appareil</string>
+  <string name="msg_service_running">Le service métronome est en cours d\'utilisation</string>
+  <string name="msg_connection_lost">Connexion au service perdue, redémarrage de l\'application nécessaire</string>
+  <string name="msg_reset">Tout réinitialiser ?</string>
+  <string name="msg_reset_description">Voulez-vous réellement réinitialiser l\'application, favoris et paramètres inclus ? Cette action ne peut pas être annulée.</string>
+  <string name="msg_gain">Jouer avec le boost de volume ?</string>
+  <string name="msg_split_screen">Fenêtre trop petite</string>
+  <string name="msg_split_screen_description">Tack peut rencontrer des problèmes à positionner les contrôles du métronome en mode écran partagé. Veuillez utiliser une fenêtre plus grande si possible.</string>
+  <string name="msg_copied_to_clipboard">Copié dans le presse-papier avec succès</string>
+
+  <!-- OPTIONS -->
+
+  <string name="options_unit_bars">Mesures</string>
+  <plurals name="options_unit_bars">
+    <item quantity="one">%1$d mesure</item>
+    <item quantity="many">%1$d mesures</item>
+    <item quantity="other">%1$d mesures</item>
+  </plurals>
+  <string name="options_unit_beats">Battements</string>
+  <plurals name="options_unit_beats">
+    <item quantity="one">%1$d battement</item>
+    <item quantity="many">%1$d battements</item>
+    <item quantity="other">%1$d battements</item>
+  </plurals>
+  <string name="options_unit_seconds">Secondes</string>
+  <plurals name="options_unit_seconds">
+    <item quantity="one">%1$d seconde</item>
+    <item quantity="many">%1$d secondes</item>
+    <item quantity="other">%1$d secondes</item>
+  </plurals>
+  <string name="options_unit_minutes">Minutes</string>
+  <plurals name="options_unit_minutes">
+    <item quantity="one">%1$d minute</item>
+    <item quantity="many">%1$d minutes</item>
+    <item quantity="other">%1$d minutes</item>
+  </plurals>
+  <string name="options_inactive">Inactif</string>
+  <string name="options_count_in">Prise en compte</string>
+  <string name="options_incremental">Changement incrémental de tempo</string>
+  <string name="options_incremental_amount_increase">Augmenter le tempo de %1$d bpm</string>
+  <string name="options_incremental_amount_decrease">Réduire le tempo de %1$d bpm</string>
+  <string name="options_incremental_interval">Chaque %1$s</string>
+  <string name="options_incremental_max">Monter jusqu\'à %1$d bpm</string>
+  <string name="options_incremental_min">Descendre jusqu\'à %1$d bpm</string>
+  <string name="options_timer">Durée du morceau</string>
+  <string name="options_timer_description">Arrêter après %1$s</string>
+  <string name="options_mute">Battements muets</string>
+  <string name="options_mute_play">Jouer %1$s</string>
+  <string name="options_mute_mute">Rendre muet %1$s</string>
+  <string name="options_swing">Swing</string>
+  <string name="options_swing_3">Triolet</string>
+  <string name="options_swing_5">Quintuplé</string>
+  <string name="options_swing_7">Septuplé</string>
+
+  <!-- SETTINGS -->
+
+  <string name="settings_language">Langue</string>
+  <string name="settings_language_info">Merci beaucoup à tous les traducteurs bénévoles via Transiflex !\nVeuillez consulter Tack sur GitHub pour savoir comment contribuer à rendre Tack disponible pour votre langue.</string>
+  <string name="settings_language_system">Réglage système</string>
+  <string name="settings_language_system_description">Anglais si la traduction n\'est pas disponible</string>
+
+  <string name="settings_theme">Thème</string>
+  <string name="settings_theme_description">Adaptez à votre goût</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
+  <string name="settings_theme_auto">Automatique</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_dark">Sombre</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_light">Clair</string>
+
+  <string name="settings_contrast">Contraste</string>
+  <string name="settings_contrast_description">Adaptez à votre vision</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast. The button width should be as dense as possible. -->
+  <string name="settings_contrast_standard">Standard</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_medium">Moyen</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_high">Élevé</string>
+  <string name="settings_haptic">Effets haptiques</string>
+  <string name="settings_reduce_animations">Réduire les animations</string>
+  <string name="settings_reduce_animations_description">Peut améliorer la fluidité</string>
+
+  <string name="settings_reset">Tout réinitialiser</string>
+  <string name="settings_reset_description">Ne peut être annulé</string>
+
+  <string name="settings_sound">Son du battement</string>
+  <string name="settings_sound_wood">Bois</string>
+  <string name="settings_sound_sine">Sinus</string>
+  <string name="settings_sound_mechanical">Mécanique</string>
+  <string name="settings_sound_beatboxing_1">Beatboxing 1</string>
+  <string name="settings_sound_beatboxing_2">Beatboxing 2</string>
+  <string name="settings_sound_hands">Mains</string>
+  <string name="settings_sound_folding">Règle de repliage</string>
+
+  <string name="settings_latency">Correction de latence</string>
+  <string name="settings_ignore_focus">Ignorer le focus audio</string>
+  <string name="settings_gain">Boost de volume</string>
+  <string name="settings_gain_warning">À utiliser avec prudence !</string>
+  <string name="settings_gain_disclaimer">Lorsque l\'option « boost » est activée, un avertissement s\'affiche avant chaque démarrage. Le développeur n\'est pas tenu responsable des éventuels dommages.</string>
+
+  <string name="settings_show_subs">Afficher les commandes de subdivision</string>
+  <string name="settings_show_subs_description">Plus de rythmes variés</string>
+
+  <string name="settings_always_vibrate">Toujours vibrer</string>
+  <string name="settings_always_vibrate_description">En suivant le son</string>
+
+  <string name="settings_elapsed">Afficher le temps écoulé</string>
+  <string name="settings_elapsed_description">Voir votre temps de répétition</string>
+
+  <string name="settings_reset_elapsed">Remise à zéro du temps écoulé si arrêté</string>
+  <string name="settings_reset_timer">RAZ chronomètre quand arrêté</string>
+  <string name="settings_reset_timer_description">Plutôt que reprendre</string>
+
+  <string name="settings_big_time_text">Grosse police pour le temps</string>
+  <string name="settings_flash_screen">Flash d\'écran</string>
+  <string name="settings_flash_screen_description">À chaque battement</string>
+
+  <string name="settings_keep_awake">Maintenir l\'écran allumé</string>
+  <string name="settings_keep_awake_description">Quand le métronome fonctionne</string>
+
+  <string name="settings_big_logo">Montrer le grand logo avec animation</string>
+  <!-- ABOUT -->
+
+  <string name="about_version">Version</string>
+  <string name="about_changelog">Journal des modifications</string>
+  <string name="about_changelog_description">Nouveautés dans cette version</string>
+  <string name="about_developer">Développeur</string>
+  <string name="about_vending_description">Plus d\'applications du développeur</string>
+  <string name="about_github_description">Code source</string>
+  <string name="about_translation_description">Aider à traduire Tack</string>
+  <string name="about_privacy">Politique de confidentialité</string>
+  <string name="about_privacy_description">Comment vos données sont-elles utilisées</string>
+
+  </resources>
