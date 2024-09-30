@@ -206,6 +206,8 @@
   <string name="settings_big_timer_description">Plutôt qu\'une barre de recherche animée</string>
 
   <string name="settings_big_time_text">Grosse police pour le temps</string>
+  <string name="settings_big_time_text_description">Utile si la taille par défaut n\'est pas suffisante</string>
+
   <string name="settings_flash_screen">Flash d\'écran</string>
   <string name="settings_flash_screen_description">À chaque battement</string>
 
