@@ -34,7 +34,7 @@ android {
     versionCode = 251 // last number is 1 for wear release
     versionName = "4.4.1"
     resourceConfigurations += listOf(
-      "de", "cs", "en", "es", "es-rCL", "in", "ko", "tr", "zh-rCN","zh-rHK", "zh-rTW"
+      "de", "cs", "en", "es", "es-rCL", "fr", "in", "ko", "tr", "zh-rCN","zh-rHK", "zh-rTW"
     )
   }
 
