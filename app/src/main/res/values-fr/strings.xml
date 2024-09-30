@@ -185,6 +185,8 @@
 
   <string name="settings_latency">Correction de latence</string>
   <string name="settings_ignore_focus">Ignorer le focus audio</string>
+  <string name="settings_ignore_focus_description">Continuer à jouer si d\'autres applications diffusent du son</string>
+
   <string name="settings_gain">Boost de volume</string>
   <string name="settings_gain_description">Gain en dB (en plus du volume système)</string>
   <string name="settings_gain_warning">À utiliser avec prudence !</string>
