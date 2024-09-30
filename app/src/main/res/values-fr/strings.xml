@@ -89,6 +89,7 @@
   <string name="msg_connection_lost">Connexion au service perdue, redémarrage de l\'application nécessaire</string>
   <string name="msg_reset">Tout réinitialiser ?</string>
   <string name="msg_reset_description">Voulez-vous réellement réinitialiser l\'application, favoris et paramètres inclus ? Cette action ne peut pas être annulée.</string>
+  <string name="msg_gain">Jouer avec le boost de volume ?</string>
   <string name="msg_split_screen">Fenêtre trop petite</string>
   <string name="msg_copied_to_clipboard">Copié dans le presse-papier avec succès</string>
 
