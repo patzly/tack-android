@@ -190,6 +190,7 @@
   <string name="settings_elapsed_description">Voir votre temps de répétition</string>
 
   <string name="settings_reset_elapsed">Remise à zéro du temps écoulé si arrêté</string>
+  <string name="settings_reset_timer">RAZ chronomètre quand arrêté</string>
   <string name="settings_reset_timer_description">Plutôt que reprendre</string>
 
   <string name="settings_big_time_text">Grosse police pour le temps</string>
