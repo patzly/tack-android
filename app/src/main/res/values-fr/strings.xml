@@ -71,6 +71,7 @@
   <string name="action_reset">Réinitialiser</string>
   <string name="action_deactivate_gain">Désactiver le boost</string>
   <string name="action_recommend">Recommander</string>
+  <string name="action_recommend_description">Faites connaître Tack à vos amis</string>
   <string name="action_email">Envoyer un email</string>
   <string name="action_email_description">Contacter le développeur</string>
   <string name="action_rate">Noter dans Google Play</string>
