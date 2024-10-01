@@ -267,7 +267,9 @@ class AudioUtil(
     return AudioTrack(
       getAttributes(),
       audioFormat,
-      AudioTrack.getMinBufferSize(audioFormat.sampleRate, audioFormat.channelMask, audioFormat.encoding),
+      AudioTrack.getMinBufferSize(
+        audioFormat.sampleRate, audioFormat.channelMask, audioFormat.encoding
+      ),
       AudioTrack.MODE_STREAM,
       AudioManager.AUDIO_SESSION_ID_GENERATE
     )

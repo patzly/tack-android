@@ -476,7 +476,6 @@
           android:stepSize="5" />
 
         <com.google.android.material.card.MaterialCardView
-          android:id="@+id/card_about_acknowledgement"
           style="@style/Widget.Tack.Card.Text"
           android:layout_marginStart="16dp"
           android:layout_marginEnd="16dp"
