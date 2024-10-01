@@ -97,6 +97,7 @@
   <string name="msg_split_screen">Fenêtre trop petite</string>
   <string name="msg_split_screen_description">Tack peut rencontrer des problèmes à positionner les contrôles du métronome en mode écran partagé. Veuillez utiliser une fenêtre plus grande si possible.</string>
   <string name="msg_notification_permission_denied">L\'autorisation de notification est requise pour les contrôles de lecture</string>
+  <string name="msg_report_crash">Merci de reporter tout problème avec le journal des accidents en pièce jointe afin que je puisse essayer de le corriger.</string>
   <string name="msg_copied_to_clipboard">Copié dans le presse-papier avec succès</string>
 
   <!-- OPTIONS -->
