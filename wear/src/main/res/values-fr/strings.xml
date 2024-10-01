@@ -70,6 +70,7 @@
   <string name="wear_msg_notification_permission_denied">Permission requise</string>
   <string name="wear_msg_notification_permission_denied_description">L\'autorisation de notification est requise pour la lecture</string>
   <string name="wear_msg_gain">Jouer avec le boost de volume ?</string>
+  <string name="wear_msg_gain_description">Veillez à ne pas jouer avec des écouteurs !</string>
   <string name="wear_msg_empty_bookmarks">Rien n\'a été ajouté pour l\'instant</string>
   <string name="wear_msg_delete_bookmark">Supprimer le marque-page ?</string>
   <!-- Content of a bookmark, e. g. 120 bpm, 4 beats, 1 subdivision -->
