@@ -91,6 +91,7 @@
   <string name="msg_recommend">Jetez un coup d\'œil à cette application sympa de métronome : \n%1$s</string>
   <string name="msg_vibration_unavailable">Le vibreur n\'est pas disponible sur cet appareil</string>
   <string name="msg_service_running">Le service métronome est en cours d\'utilisation</string>
+  <string name="msg_service_running_return">Tapez pour revenir à Tack</string>
   <string name="msg_connection_lost">Connexion au service perdue, redémarrage de l\'application nécessaire</string>
   <string name="msg_reset">Tout réinitialiser ?</string>
   <string name="msg_reset_description">Voulez-vous réellement réinitialiser l\'application, favoris et paramètres inclus ? Cette action ne peut pas être annulée.</string>
