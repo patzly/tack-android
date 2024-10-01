@@ -86,16 +86,22 @@
   <!-- MESSAGES -->
 
   <string name="msg_bookmarks_max">Nombre de marque-pages maximum atteint</string>
+  <string name="msg_feedback">Une bonne application demande beaucoup de temps et vit des commentaires de ses utilisateurs.</string>
   <string name="msg_feedback_contact">Vous avez des souhaits, des commentaires ou des questions ? Contactez-moi !\nSinon, je serais très heureux d\'avoir une bonne critique dans le Play Store.</string>
   <string name="msg_recommend">Jetez un coup d\'œil à cette application sympa de métronome : \n%1$s</string>
   <string name="msg_vibration_unavailable">Le vibreur n\'est pas disponible sur cet appareil</string>
   <string name="msg_service_running">Le service métronome est en cours d\'utilisation</string>
+  <string name="msg_service_running_return">Tapez pour revenir à Tack</string>
+  <string name="msg_service_description">Service pour la configuration du métronome et la lecture</string>
   <string name="msg_connection_lost">Connexion au service perdue, redémarrage de l\'application nécessaire</string>
   <string name="msg_reset">Tout réinitialiser ?</string>
   <string name="msg_reset_description">Voulez-vous réellement réinitialiser l\'application, favoris et paramètres inclus ? Cette action ne peut pas être annulée.</string>
   <string name="msg_gain">Jouer avec le boost de volume ?</string>
+  <string name="msg_gain_description">Essayez de ne pas jouer avec des écouteurs, les sons forts peuvent endommager les oreilles !</string>
   <string name="msg_split_screen">Fenêtre trop petite</string>
   <string name="msg_split_screen_description">Tack peut rencontrer des problèmes à positionner les contrôles du métronome en mode écran partagé. Veuillez utiliser une fenêtre plus grande si possible.</string>
+  <string name="msg_notification_permission_denied">L\'autorisation de notification est requise pour les contrôles de lecture</string>
+  <string name="msg_report_crash">Merci de reporter tout problème avec le journal des accidents en pièce jointe afin que je puisse essayer de le corriger.</string>
   <string name="msg_copied_to_clipboard">Copié dans le presse-papier avec succès</string>
 
   <!-- OPTIONS -->
@@ -126,6 +132,7 @@
   </plurals>
   <string name="options_inactive">Inactif</string>
   <string name="options_count_in">Prise en compte</string>
+  <string name="options_count_in_description">Attendez %1$s pour que les modifications soient appliquées</string>
   <string name="options_incremental">Changement incrémental de tempo</string>
   <string name="options_incremental_amount_increase">Augmenter le tempo de %1$d bpm</string>
   <string name="options_incremental_amount_decrease">Réduire le tempo de %1$d bpm</string>
@@ -137,7 +144,9 @@
   <string name="options_mute">Battements muets</string>
   <string name="options_mute_play">Jouer %1$s</string>
   <string name="options_mute_mute">Rendre muet %1$s</string>
+  <string name="options_mute_random">Rendre muet jusqu\'à %1$d% aléatoirement</string>
   <string name="options_swing">Swing</string>
+  <string name="options_swing_description">Les subdivisions sont définies pour correspondre au paramètre de swing sélectionné</string>
   <string name="options_swing_3">Triolet</string>
   <string name="options_swing_5">Quintuplé</string>
   <string name="options_swing_7">Septuplé</string>
@@ -166,6 +175,9 @@
   <string name="settings_contrast_medium">Moyen</string>
   <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
   <string name="settings_contrast_high">Élevé</string>
+  <string name="settings_contrast_dynamic">Le contraste du thème système doit être réglé dans les paramètres du système.</string>
+  <string name="settings_contrast_dynamic_unsupported">Le contraste dynamique pour le thème système n\'est disponible qu\'à partir d\'Android 14.</string>
+
   <string name="settings_haptic">Effets haptiques</string>
   <string name="settings_haptic_description">En plus des battements haptiques en mode vibreur</string>
 
@@ -185,6 +197,8 @@
   <string name="settings_sound_folding">Règle de repliage</string>
 
   <string name="settings_latency">Correction de latence</string>
+  <string name="settings_latency_description">Compenser la latence de la sortie audio système pour les vibrations et les visuels</string>
+
   <string name="settings_ignore_focus">Ignorer le focus audio</string>
   <string name="settings_ignore_focus_description">Continuer à jouer si d\'autres applications diffusent du son</string>
 
@@ -203,6 +217,8 @@
   <string name="settings_elapsed_description">Voir votre temps de répétition</string>
 
   <string name="settings_reset_elapsed">Remise à zéro du temps écoulé si arrêté</string>
+  <string name="settings_reset_elapsed_description">Au lieu de reprendre jusqu\'à la fermeture</string>
+
   <string name="settings_reset_timer">RAZ chronomètre quand arrêté</string>
   <string name="settings_reset_timer_description">Plutôt que reprendre</string>
 
@@ -219,6 +235,8 @@
   <string name="settings_keep_awake_description">Quand le métronome fonctionne</string>
 
   <string name="settings_big_logo">Afficher le grand logo avec animation</string>
+  <string name="settings_big_logo_description">Au lieu du sélecteur de tempo pendant la lecture</string>
+
   <!-- ABOUT -->
 
   <string name="about_version">Version</string>

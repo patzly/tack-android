@@ -23,12 +23,28 @@
 
   <string name="wear_title_settings">Paramètres</string>
   <string name="wear_title_beats">Battements</string>
+  <string name="wear_title_beats_count">Battements (%1$d)</string>
+  <string name="wear_title_subdivisions_count">Subdivisions (%1$d)</string>
   <string name="wear_title_notification_channel">Service de métronome</string>
+  <string name="wear_title_bookmarks">Marque-pages</string>
+
   <!-- LABELS -->
 
   <string name="wear_label_bpm_value">%1$d bpm</string>
   <string name="wear_label_ms">%1$s ms</string>
   <string name="wear_label_db">+%1$d dB</string>
+  <string name="wear_label_developer">Développé par</string>
+  <plurals name="wear_label_beats">
+    <item quantity="one">%1$d battement</item>
+    <item quantity="many">%1$d battements</item>
+    <item quantity="other">%1$d battements</item>
+  </plurals>
+  <plurals name="wear_label_subs">
+    <item quantity="one">%1$d subdivision</item>
+    <item quantity="many">%1$d subdivisions</item>
+    <item quantity="other">%1$d subdivisions</item>
+  </plurals>
+
   <!-- ACTIONS -->
 
   <string name="wear_action_cancel">Annuler</string>
@@ -44,7 +60,22 @@
   <string name="wear_action_bookmark">Marque-page</string>
   <string name="wear_action_beat_mode">Mode de battement</string>
   <string name="wear_action_retry">Réessayer</string>
+  <string name="wear_action_delete">Supprimer</string>
+
+  <!-- MESSAGES -->
+
+  <string name="wear_msg_service_running">Lancer le métronome</string>
+  <string name="wear_msg_service_running_return">Tapez pour en savoir plus</string>
+  <string name="wear_msg_service_description">Service pour la lecture de métronome</string>
+  <string name="wear_msg_notification_permission_denied">Permission requise</string>
+  <string name="wear_msg_notification_permission_denied_description">L\'autorisation de notification est requise pour la lecture</string>
   <string name="wear_msg_gain">Jouer avec le boost de volume ?</string>
+  <string name="wear_msg_gain_description">Veillez à ne pas jouer avec des écouteurs !</string>
+  <string name="wear_msg_empty_bookmarks">Rien n\'a été ajouté pour l\'instant</string>
+  <string name="wear_msg_delete_bookmark">Supprimer le marque-page ?</string>
+  <!-- Content of a bookmark, e. g. 120 bpm, 4 beats, 1 subdivision -->
+  <string name="wear_msg_delete_bookmark_description">%1$s, %2$s, %3$s</string>
+
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">Son du battement</string>
@@ -62,8 +93,13 @@
   <string name="wear_settings_ignore_focus_description">Continuer à jouer si d\'autres applications diffusent du son</string>
 
   <string name="wear_settings_gain">Boost de volume</string>
+  <string name="wear_settings_gain_disclaimer">Soyez vigilant ! Le développeur n\'est pas responsable des dommages éventuels.</string>
+
   <string name="wear_settings_always_vibrate">Toujours vibrer</string>
   <string name="wear_settings_always_vibrate_description">En suivant le son</string>
+
+  <string name="wear_settings_strong_vibration">Vibration forte</string>
+  <string name="wear_settings_strong_vibration_description">Si les fonctions haptiques sont faibles</string>
 
   <string name="wear_settings_flash_screen">Flash d\'écran</string>
   <string name="wear_settings_flash_screen_description">À chaque battement</string>
@@ -74,4 +110,7 @@
   <string name="wear_settings_keep_awake">Maintenir l\'écran allumé</string>
   <string name="wear_settings_keep_awake_description">Quand le métronome fonctionne</string>
 
-  </resources>
+  <string name="wear_settings_rate">Notez Tack dans Google Play</string>
+  <string name="wear_settings_rate_description">Soutenir le développement</string>
+
+</resources>
