@@ -235,6 +235,8 @@
   <string name="settings_keep_awake_description">Quand le métronome fonctionne</string>
 
   <string name="settings_big_logo">Afficher le grand logo avec animation</string>
+  <string name="settings_big_logo_description">Au lieu du sélecteur de tempo pendant la lecture</string>
+
   <!-- ABOUT -->
 
   <string name="about_version">Version</string>
