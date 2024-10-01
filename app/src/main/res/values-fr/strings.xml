@@ -86,6 +86,7 @@
   <!-- MESSAGES -->
 
   <string name="msg_bookmarks_max">Nombre de marque-pages maximum atteint</string>
+  <string name="msg_feedback">Une bonne application demande beaucoup de temps et vit des commentaires de ses utilisateurs.</string>
   <string name="msg_feedback_contact">Vous avez des souhaits, des commentaires ou des questions ? Contactez-moi !\nSinon, je serais très heureux d\'avoir une bonne critique dans le Play Store.</string>
   <string name="msg_recommend">Jetez un coup d\'œil à cette application sympa de métronome : \n%1$s</string>
   <string name="msg_vibration_unavailable">Le vibreur n\'est pas disponible sur cet appareil</string>
