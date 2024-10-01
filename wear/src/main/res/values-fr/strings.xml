@@ -67,6 +67,7 @@
   <string name="wear_msg_service_running">Lancer le métronome</string>
   <string name="wear_msg_notification_permission_denied">Permission requise</string>
   <string name="wear_msg_gain">Jouer avec le boost de volume ?</string>
+  <string name="wear_msg_delete_bookmark">Supprimer le marque-page ?</string>
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">Son du battement</string>
