@@ -130,6 +130,7 @@
   </plurals>
   <string name="options_inactive">Inactif</string>
   <string name="options_count_in">Prise en compte</string>
+  <string name="options_count_in_description">Attendez %1$s pour que les modifications soient appliquées</string>
   <string name="options_incremental">Changement incrémental de tempo</string>
   <string name="options_incremental_amount_increase">Augmenter le tempo de %1$d bpm</string>
   <string name="options_incremental_amount_decrease">Réduire le tempo de %1$d bpm</string>
