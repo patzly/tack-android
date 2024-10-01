@@ -93,6 +93,8 @@
   <string name="wear_settings_ignore_focus_description">Continuer à jouer si d\'autres applications diffusent du son</string>
 
   <string name="wear_settings_gain">Boost de volume</string>
+  <string name="wear_settings_gain_disclaimer">Soyez vigilant ! Le développeur n\'est pas responsable des dommages éventuels.</string>
+
   <string name="wear_settings_always_vibrate">Toujours vibrer</string>
   <string name="wear_settings_always_vibrate_description">En suivant le son</string>
 
