@@ -39,6 +39,12 @@
     <item quantity="many">%1$d battements</item>
     <item quantity="other">%1$d battements</item>
   </plurals>
+  <plurals name="wear_label_subs">
+    <item quantity="one">%1$d subdivision</item>
+    <item quantity="many">%1$d subdivisions</item>
+    <item quantity="other">%1$d subdivisions</item>
+  </plurals>
+
   <!-- ACTIONS -->
 
   <string name="wear_action_cancel">Annuler</string>
