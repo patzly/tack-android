@@ -106,6 +106,7 @@
   <string name="wear_settings_keep_awake">Maintenir l\'écran allumé</string>
   <string name="wear_settings_keep_awake_description">Quand le métronome fonctionne</string>
 
+  <string name="wear_settings_rate">Notez Tack dans Google Play</string>
   <string name="wear_settings_rate_description">Soutenir le développement</string>
 
 </resources>
