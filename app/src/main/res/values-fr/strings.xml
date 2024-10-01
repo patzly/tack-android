@@ -142,6 +142,7 @@
   <string name="options_mute">Battements muets</string>
   <string name="options_mute_play">Jouer %1$s</string>
   <string name="options_mute_mute">Rendre muet %1$s</string>
+  <string name="options_mute_random">Rendre muet jusqu\'à %1$d% aléatoirement</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Les subdivisions sont définies pour correspondre au paramètre de swing sélectionné</string>
   <string name="options_swing_3">Triolet</string>
