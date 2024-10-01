@@ -100,6 +100,13 @@ class AudioUtil(
       flush()
       release()
     }
+    loudnessEnhancer?.apply {
+      try {
+        release()
+      } catch (e: RuntimeException) {
+        Log.e(TAG, "stop: failed to release LoudnessEnhancer resources: ", e)
+      }
+    }
     if (!ignoreFocus) {
       audioManager.abandonAudioFocusRequest(getAudioFocusRequest())
     }

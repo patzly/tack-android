@@ -109,6 +109,13 @@ public class AudioUtil implements OnAudioFocusChangeListener {
       track.flush();
       track.release();
     }
+    if (loudnessEnhancer != null) {
+      try {
+        loudnessEnhancer.release();
+      } catch (RuntimeException e) {
+        Log.e(TAG, "stop: failed to release LoudnessEnhancer resources: ", e);
+      }
+    }
     if (!ignoreFocus) {
       audioManager.abandonAudioFocus(this);
     }
