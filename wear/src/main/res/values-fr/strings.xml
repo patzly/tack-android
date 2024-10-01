@@ -68,6 +68,7 @@
   <string name="wear_msg_service_running_return">Tapez pour en savoir plus</string>
   <string name="wear_msg_notification_permission_denied">Permission requise</string>
   <string name="wear_msg_gain">Jouer avec le boost de volume ?</string>
+  <string name="wear_msg_empty_bookmarks">Rien n\'a été ajouté pour l\'instant</string>
   <string name="wear_msg_delete_bookmark">Supprimer le marque-page ?</string>
   <!-- SETTINGS -->
 
