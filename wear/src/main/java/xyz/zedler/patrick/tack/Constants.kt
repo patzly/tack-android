@@ -19,8 +19,7 @@
 package xyz.zedler.patrick.tack
 
 object Constants {
-  const val ANIM_DURATION_LONG: Long = 400
-  const val ANIM_DURATION_SHORT: Long = 250
+  const val ANIM_DURATION: Long = 250
   const val BEAT_ANIM_OFFSET: Long = 25
   const val FLASH_SCREEN_DURATION: Long = 100
   const val TEMPO_MIN: Int = 1
@@ -48,7 +47,8 @@ object Constants {
 
   object Def {
     const val TEMPO: Int = 120
-    const val BEATS: String = "${TickType.STRONG},${TickType.NORMAL},${TickType.NORMAL},${TickType.NORMAL}"
+    const val BEATS: String =
+      "${TickType.STRONG},${TickType.NORMAL},${TickType.NORMAL},${TickType.NORMAL}"
     const val SUBDIVISIONS: String = TickType.MUTED
     const val BEAT_MODE_VIBRATE: Boolean = false
     const val ALWAYS_VIBRATE: Boolean = true
