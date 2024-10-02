@@ -23,12 +23,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -234,7 +236,10 @@ fun ControlCard(
     onClick = {},
     enabled = false,
     contentPadding = PaddingValues(0.dp),
-    modifier = Modifier.height(size).fillMaxWidth()
+    modifier = Modifier
+      .wrapContentHeight()
+      .fillMaxWidth()
+      .defaultMinSize(minHeight = 40.dp)
   ) {
     Row {
       val animTriggerAdd = remember { mutableStateOf(false) }
@@ -259,7 +264,7 @@ fun ControlCard(
       }
       BeatsRow(
         animated = animated,
-        modifier = Modifier.fillMaxHeight().weight(1f)
+        modifier = Modifier.wrapContentHeight().weight(1f)
       ) {
         content()
       }
