@@ -91,7 +91,7 @@ fun TempoPickerPreview() {
   TackTheme {
     val state = rememberPickerState(
       initialNumberOfOptions = 10,
-      repeatItems = false
+      shouldRepeatOptions = false
     )
     TempoPicker(
       state = state,

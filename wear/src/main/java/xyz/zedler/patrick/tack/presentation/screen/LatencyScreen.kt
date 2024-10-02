@@ -39,10 +39,10 @@ import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.material3.ExperimentalWearMaterial3Api
 import androidx.wear.compose.material3.Icon
-import androidx.wear.compose.material3.InlineSlider
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.Slider
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.R
@@ -107,7 +107,7 @@ fun LatencySlider(
   latency: Long,
   onValueChange: (Int) -> Unit = {}
 ) {
-  InlineSlider(
+  Slider(
     value = latency.toInt(),
     onValueChange = { onValueChange(it) },
     valueProgression = IntProgression.fromClosedRange(0, 200, 5),

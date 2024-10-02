@@ -41,10 +41,10 @@ import androidx.wear.compose.material3.Card
 import androidx.wear.compose.material3.CardDefaults
 import androidx.wear.compose.material3.ExperimentalWearMaterial3Api
 import androidx.wear.compose.material3.Icon
-import androidx.wear.compose.material3.InlineSlider
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.Slider
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.R
@@ -126,11 +126,11 @@ fun GainSlider(
   gain: Int,
   onValueChange: (Int) -> Unit = {}
 ) {
-  InlineSlider(
+  Slider(
     value = gain,
     onValueChange = onValueChange,
     valueProgression = IntProgression.fromClosedRange(0, 20, 5),
-    segmented = false,
+    segmented = true,
     decreaseIcon = {
       Icon(
         painter = painterResource(id = R.drawable.ic_rounded_volume_down),

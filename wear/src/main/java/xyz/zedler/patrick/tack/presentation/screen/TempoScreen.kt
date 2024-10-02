@@ -70,8 +70,8 @@ fun TempoScreen(
     var pickerOption = remember { state.tempo - 1 }
     val pickerState = rememberPickerState(
       initialNumberOfOptions = Constants.TEMPO_MAX,
-      initiallySelectedOption = pickerOption,
-      repeatItems = false
+      initiallySelectedIndex = pickerOption,
+      shouldRepeatOptions = false
     )
     fun safelyAnimateToOption(index: Int) {
       val safeIndex = index.coerceIn(Constants.TEMPO_MIN - 1, Constants.TEMPO_MAX - 1)
@@ -184,12 +184,12 @@ fun CenterPicker(
 ) {
   val bpm = stringResource(
     id = R.string.wear_label_bpm_value,
-    pickerState.selectedOption + 1
+    pickerState.selectedOptionIndex + 1
   )
   val contentDescription by remember { derivedStateOf { bpm } }
 
-  LaunchedEffect(pickerState.selectedOption) {
-    onOptionChange(pickerState.selectedOption)
+  LaunchedEffect(pickerState.selectedOptionIndex) {
+    onOptionChange(pickerState.selectedOptionIndex)
   }
   TempoPicker(
     state = pickerState,
@@ -219,7 +219,7 @@ fun TapButton(
       containerColor = MaterialTheme.colorScheme.tertiary,
       contentColor = MaterialTheme.colorScheme.onTertiary
     ),
-    buttonHeight = if (isSmallScreen()) {
+    preferredHeight = if (isSmallScreen()) {
       ButtonDefaults.EdgeButtonHeightExtraSmall
     } else {
       ButtonDefaults.EdgeButtonHeightSmall

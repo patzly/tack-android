@@ -1,6 +1,7 @@
 ## 4.4.3
 
 - New: French translation (big thanks to the translators!)
+- Improved: volume boost slider appearance (Wear OS)
 - Fixed: crash when trying to start metronome on some devices
 - Fixed: crash when audio cannot be played due to internal error (Wear OS)
 

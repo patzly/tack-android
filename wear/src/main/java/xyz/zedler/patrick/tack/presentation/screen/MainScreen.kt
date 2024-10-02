@@ -121,8 +121,8 @@ fun MainScreen(
           val pickerCoroutineScope = rememberCoroutineScope()
           val pickerState = rememberPickerState(
             initialNumberOfOptions = Constants.TEMPO_MAX,
-            initiallySelectedOption = pickerOption,
-            repeatItems = false
+            initiallySelectedIndex = pickerOption,
+            shouldRepeatOptions = false
           )
           LaunchedEffect(state.tempo) {
             if (!state.tempoChangedByPicker) {
@@ -135,8 +135,8 @@ fun MainScreen(
               }
             }
           }
-          LaunchedEffect(pickerState.selectedOption) {
-            viewModel.updateTempo(pickerState.selectedOption + 1, picker = true)
+          LaunchedEffect(pickerState.selectedOptionIndex) {
+            viewModel.updateTempo(pickerState.selectedOptionIndex + 1, picker = true)
           }
 
           IconButton(
@@ -322,7 +322,7 @@ fun TempoCard(
   ) {
     val bpm = stringResource(
       id = R.string.wear_label_bpm_value,
-      pickerState.selectedOption + 1
+      pickerState.selectedOptionIndex + 1
     )
     val contentDescription by remember { derivedStateOf { bpm } }
 
