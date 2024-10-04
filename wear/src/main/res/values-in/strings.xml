@@ -26,6 +26,8 @@
   <string name="wear_title_beats_count">Ketukan (%1$d)</string>
   <string name="wear_title_subdivisions_count">Subdivisi (%1$d)</string>
   <string name="wear_title_notification_channel">Layanan metronom</string>
+  <string name="wear_title_bookmarks">Penanda</string>
+
   <!-- LABELS -->
 
   <string name="wear_label_bpm_value">%1$d bpm</string>
