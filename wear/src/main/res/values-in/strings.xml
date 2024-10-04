@@ -34,6 +34,10 @@
   <string name="wear_label_ms">%1$s md</string>
   <string name="wear_label_db">+%1$d dB</string>
   <string name="wear_label_developer">Dikembangkan oleh</string>
+  <plurals name="wear_label_subs">
+    <item quantity="other">%1$dsubdivisi</item>
+  </plurals>
+
   <!-- ACTIONS -->
 
   <string name="wear_action_cancel">Batal</string>
