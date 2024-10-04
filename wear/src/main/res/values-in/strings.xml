@@ -69,6 +69,9 @@
   <string name="wear_msg_gain_description">Berhati-hatilah untuk tidak bermain melalui headphone!</string>
   <string name="wear_msg_empty_bookmarks">Belum ada yang ditambahkan</string>
   <string name="wear_msg_delete_bookmark">Hapus penanda?</string>
+  <!-- Content of a bookmark, e. g. 120 bpm, 4 beats, 1 subdivision -->
+  <string name="wear_msg_delete_bookmark_description">%1$s, %2$s, %3$s</string>
+
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">Suara ketukan</string>
