@@ -68,6 +68,7 @@
   <string name="wear_msg_gain">Memainkan dengan peningkatan volume?</string>
   <string name="wear_msg_gain_description">Berhati-hatilah untuk tidak bermain melalui headphone!</string>
   <string name="wear_msg_empty_bookmarks">Belum ada yang ditambahkan</string>
+  <string name="wear_msg_delete_bookmark">Hapus penanda?</string>
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">Suara ketukan</string>
