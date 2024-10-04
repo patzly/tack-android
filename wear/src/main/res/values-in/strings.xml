@@ -53,6 +53,8 @@
   <string name="wear_action_bookmark">Penanda</string>
   <string name="wear_action_beat_mode">Mode ketukan</string>
   <string name="wear_action_retry">Ulangi</string>
+  <string name="wear_action_delete">Hapus</string>
+
   <!-- MESSAGES -->
 
   <string name="wear_msg_service_running">Memainkan metronom</string>
