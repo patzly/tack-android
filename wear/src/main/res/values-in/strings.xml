@@ -26,12 +26,21 @@
   <string name="wear_title_beats_count">Ketukan (%1$d)</string>
   <string name="wear_title_subdivisions_count">Subdivisi (%1$d)</string>
   <string name="wear_title_notification_channel">Layanan metronom</string>
+  <string name="wear_title_bookmarks">Penanda</string>
+
   <!-- LABELS -->
 
   <string name="wear_label_bpm_value">%1$d bpm</string>
   <string name="wear_label_ms">%1$s md</string>
   <string name="wear_label_db">+%1$d dB</string>
   <string name="wear_label_developer">Dikembangkan oleh</string>
+  <plurals name="wear_label_beats">
+    <item quantity="other">%1$dketukan</item>
+  </plurals>
+  <plurals name="wear_label_subs">
+    <item quantity="other">%1$dsubdivisi</item>
+  </plurals>
+
   <!-- ACTIONS -->
 
   <string name="wear_action_cancel">Batal</string>
@@ -47,6 +56,8 @@
   <string name="wear_action_bookmark">Penanda</string>
   <string name="wear_action_beat_mode">Mode ketukan</string>
   <string name="wear_action_retry">Ulangi</string>
+  <string name="wear_action_delete">Hapus</string>
+
   <!-- MESSAGES -->
 
   <string name="wear_msg_service_running">Memainkan metronom</string>
@@ -56,6 +67,11 @@
   <string name="wear_msg_notification_permission_denied_description">Diperlukan izin pemberitahuan untuk pemutaran</string>
   <string name="wear_msg_gain">Memainkan dengan peningkatan volume?</string>
   <string name="wear_msg_gain_description">Berhati-hatilah untuk tidak bermain melalui headphone!</string>
+  <string name="wear_msg_empty_bookmarks">Belum ada yang ditambahkan</string>
+  <string name="wear_msg_delete_bookmark">Hapus penanda?</string>
+  <!-- Content of a bookmark, e. g. 120 bpm, 4 beats, 1 subdivision -->
+  <string name="wear_msg_delete_bookmark_description">%1$s, %2$s, %3$s</string>
+
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">Suara ketukan</string>
