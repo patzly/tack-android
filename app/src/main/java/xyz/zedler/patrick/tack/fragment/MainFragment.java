@@ -98,7 +98,7 @@ public class MainFragment extends BaseFragment
   private FragmentMainBinding binding;
   private MainActivity activity;
   private Bundle savedState;
-  private boolean flashScreen, reduceAnimations, isRtl, isLandTablet, bigLogo, showPickerNotLogo;
+  private boolean flashScreen, reduceAnimations, isRtl, isLandTablet, bigLogo, showPickerNotLogo, highlightActiveBeat;
   private boolean bigTimerSlider;
   private LogoUtil logoUtil, logoCenterUtil;
   private ValueAnimator fabAnimator;
@@ -178,6 +178,7 @@ public class MainFragment extends BaseFragment
     flashScreen = getSharedPrefs().getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
     reduceAnimations = getSharedPrefs().getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM);
     bigTimerSlider = getSharedPrefs().getBoolean(PREF.BIG_TIMER, DEF.BIG_TIMER);
+    highlightActiveBeat = getSharedPrefs().getBoolean(PREF.HIGHLIGHT_ACTIVE_BEAT, DEF.HIGHLIGHT_ACTIVE_BEAT);
 
     if (getSharedPrefs().getBoolean(PREF.BIG_TIME_TEXT, DEF.BIG_TIME_TEXT)) {
       binding.textMainTimerCurrent.setTextSize(32);
@@ -695,8 +696,10 @@ public class MainFragment extends BaseFragment
       }
       View beat = binding.linearMainBeats.getChildAt(tick.beat - 1);
       if (beat instanceof BeatView && tick.subdivision == 1) {
+        // Whenever switching to new beat reset the last highlighted beat color
+        this.resetBeatsColor();
         ((BeatView) beat).setTickType(tick.type);
-        ((BeatView) beat).beat();
+        ((BeatView) beat).beat(highlightActiveBeat && getMetronomeUtil().getBeatsCount() > 1);
       }
       View subdivision = binding.linearMainSubs.getChildAt(tick.subdivision - 1);
       if (getMetronomeUtil().getSubdivisionsUsed() && subdivision instanceof BeatView) {
@@ -1003,6 +1006,15 @@ public class MainFragment extends BaseFragment
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
 
     updateBeatControls(true);
+  }
+
+  private void resetBeatsColor() {
+    for (int i = 0; i < binding.linearMainBeats.getChildCount(); ++i) {
+      View b = binding.linearMainBeats.getChildAt(i);
+      if (b instanceof BeatView) {
+        ((BeatView) b).resetBeatColors();
+      }
+    }
   }
 
   @OptIn(markerClass = ExperimentalBadgeUtils.class)

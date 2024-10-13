@@ -319,6 +319,7 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsBigTimer,
         binding.linearSettingsBigTimeText,
         binding.linearSettingsFlashScreen,
+        binding.linearSettingsHighlightActiveBeat,
         binding.linearSettingsKeepAwake,
         binding.linearSettingsBigLogo
     );
@@ -336,6 +337,7 @@ public class SettingsFragment extends BaseFragment
         binding.switchSettingsBigTimer,
         binding.switchSettingsBigTimeText,
         binding.switchSettingsFlashScreen,
+        binding.switchSettingsHighlightActiveBeat,
         binding.switchSettingsKeepAwake,
         binding.switchSettingsBigLogo
     );
@@ -423,6 +425,11 @@ public class SettingsFragment extends BaseFragment
     binding.switchSettingsFlashScreen.jumpDrawablesToCurrentState();
     binding.switchSettingsFlashScreen.setOnCheckedChangeListener(this);
 
+    binding.switchSettingsHighlightActiveBeat.setOnCheckedChangeListener(null);
+    binding.switchSettingsHighlightActiveBeat.setChecked(getMetronomeUtil().getHighlightActiveBeat());
+    binding.switchSettingsHighlightActiveBeat.jumpDrawablesToCurrentState();
+    binding.switchSettingsHighlightActiveBeat.setOnCheckedChangeListener(this);
+
     binding.switchSettingsKeepAwake.setOnCheckedChangeListener(null);
     binding.switchSettingsKeepAwake.setChecked(getMetronomeUtil().getKeepAwake());
     binding.switchSettingsKeepAwake.jumpDrawablesToCurrentState();
@@ -465,6 +472,8 @@ public class SettingsFragment extends BaseFragment
       binding.switchSettingsBigTimeText.toggle();
     } else if (id == R.id.linear_settings_flash_screen) {
       binding.switchSettingsFlashScreen.toggle();
+    } else if (id == R.id.linear_settings_highlight_active_beat) {
+      binding.switchSettingsHighlightActiveBeat.toggle();
     } else if (id == R.id.linear_settings_keep_awake) {
       binding.switchSettingsKeepAwake.toggle();
     } else if (id == R.id.linear_settings_big_logo) {
@@ -520,6 +529,10 @@ public class SettingsFragment extends BaseFragment
       ViewUtil.startIcon(binding.imageSettingsFlashScreen);
       performHapticClick();
       getMetronomeUtil().setFlashScreen(isChecked);
+    } else if (id == R.id.switch_settings_highlight_active_beat) {
+      ViewUtil.startIcon(binding.imageSettingsHighlightActiveBeat);
+      performHapticClick();
+      getMetronomeUtil().setHighlightActiveBeat(isChecked);
     } else if (id == R.id.switch_settings_keep_awake) {
       ViewUtil.startIcon(binding.imageSettingsKeepAwake);
       performHapticClick();
