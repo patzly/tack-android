@@ -33,7 +33,6 @@ fun spToDp(spValue: Int): Dp {
   return with(density) { spValue.sp.toDp() }
 }
 
-
 @Composable
 fun isSmallScreen() = LocalContext.current.resources.configuration.screenWidthDp <= 225
 

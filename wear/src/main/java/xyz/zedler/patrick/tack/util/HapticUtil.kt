@@ -31,6 +31,7 @@ class HapticUtil(context: Context) {
     val manager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
     manager.defaultVibrator
   } else {
+    @Suppress("deprecation")
     context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
   }
   var enabled: Boolean = hasVibrator()
