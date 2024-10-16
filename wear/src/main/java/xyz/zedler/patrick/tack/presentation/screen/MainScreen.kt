@@ -407,12 +407,11 @@ fun PlayButton(
       containerColor = containerColor,
       contentColor = contentColor
     ),
-    shape = if (state.reduceAnim) {
-      IconButtonDefaults.shape
+    shapes = if (state.reduceAnim) {
+      IconButtonDefaults.shapes()
     } else {
-      IconButtonDefaults.animatedShape(
-        interactionSource = interactionSource,
-        pressedShape = MaterialTheme.shapes.medium
+      IconButtonDefaults.animatedShapes(
+        pressedShape = MaterialTheme.shapes.small
       )
     },
     border = BorderStroke(2.dp, borderColor),

@@ -21,6 +21,7 @@ package xyz.zedler.patrick.tack.presentation.components
 
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.FilledTonalIconButton
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.IconButtonDefaults
+import androidx.wear.compose.material3.IconButtonShapes
 import androidx.wear.compose.material3.MaterialTheme
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
@@ -54,7 +56,7 @@ fun DialogDismissButton(
       contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
     ),
     modifier = modifier.size(dismissSize),
-    shape = MaterialTheme.shapes.medium
+    shapes = IconButtonShapes(MaterialTheme.shapes.medium)
   ) {
     icon()
   }

@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.presentation.components
 
+import android.R.attr.label
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
@@ -30,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.FilledTonalIconButton
 import androidx.wear.compose.material3.IconButtonDefaults
+import androidx.wear.compose.material3.IconButtonShapes
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.touchTargetAwareSize
@@ -43,16 +45,13 @@ fun TextIconButton(
   modifier: Modifier = Modifier,
   reduceAnim: Boolean = false,
 ) {
-  val interactionSource = remember { MutableInteractionSource() }
   FilledTonalIconButton(
     onClick = onClick,
-    interactionSource = interactionSource,
-    shape = if (reduceAnim) {
-      IconButtonDefaults.shape
+    shapes = if (reduceAnim) {
+      IconButtonDefaults.shapes()
     } else {
-      IconButtonDefaults.animatedShape(
-        interactionSource = interactionSource,
-        pressedShape = MaterialTheme.shapes.medium
+      IconButtonDefaults.animatedShapes(
+        pressedShape = MaterialTheme.shapes.small
       )
     },
     colors = IconButtonDefaults.filledTonalIconButtonColors(

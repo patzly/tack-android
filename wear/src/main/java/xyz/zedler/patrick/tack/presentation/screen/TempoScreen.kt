@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.presentation.screen
 
+import android.R.attr.onClick
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.EdgeButton
+import androidx.wear.compose.material3.EdgeButtonSize
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.PickerState
 import androidx.wear.compose.material3.rememberPickerState
@@ -219,11 +221,7 @@ fun TapButton(
       containerColor = MaterialTheme.colorScheme.tertiary,
       contentColor = MaterialTheme.colorScheme.onTertiary
     ),
-    preferredHeight = if (isSmallScreen()) {
-      ButtonDefaults.EdgeButtonHeightExtraSmall
-    } else {
-      ButtonDefaults.EdgeButtonHeightSmall
-    },
+    buttonSize = if (isSmallScreen()) EdgeButtonSize.ExtraSmall else EdgeButtonSize.Small,
     onClick = {},
     modifier = modifier.pointerInput(Unit) {
         awaitPointerEventScope {

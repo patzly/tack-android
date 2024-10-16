@@ -35,6 +35,7 @@ import androidx.wear.compose.material3.FilledIconButton
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.IconButtonColors
 import androidx.wear.compose.material3.IconButtonDefaults
+import androidx.wear.compose.material3.IconButtonShapes
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.isSmallScreen
@@ -54,7 +55,7 @@ fun DialogConfirmButton(
     modifier = modifier
       .rotate(-45f)
       .size(confirmWidth, confirmHeight),
-    shape = CircleShape
+    shapes = IconButtonShapes(CircleShape)
   ) {
     Row(
       modifier = Modifier
