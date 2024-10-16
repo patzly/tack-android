@@ -1,6 +1,7 @@
 ## 4.4.5
 
 - Fixed: vibration not working on some devices
+- Fixed: various crashes and bugs on lower Android versions
 
 ## 4.4.4
 

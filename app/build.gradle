@@ -15,6 +15,7 @@ android {
         versionName "4.4.4"
         resourceConfigurations += ["cs", "de", "en", "es", "es-rCL", "fr", "in", "ko", "tr", "zh-rCN",
                                    "zh-rHK", "zh-rTW"]
+        vectorDrawables.generatedDensities = []
     }
 
     applicationVariants.configureEach { variant ->

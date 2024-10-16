@@ -28,6 +28,8 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -198,6 +200,9 @@ public class MainFragment extends BaseFragment
     optionsBadge.setHorizontalOffset(UiUtil.dpToPx(activity, 16));
 
     binding.linearMainTop.post(() -> {
+      if (binding == null) {
+        return;
+      }
       LayoutTransition transition = new LayoutTransition();
       transition.setDuration(Constants.ANIM_DURATION_LONG);
       binding.linearMainTop.setLayoutTransition(transition);
@@ -205,6 +210,9 @@ public class MainFragment extends BaseFragment
 
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
     binding.linearMainBeats.post(() -> {
+      if (binding == null) {
+        return;
+      }
       LayoutTransition transition = new LayoutTransition();
       transition.setDuration(Constants.ANIM_DURATION_LONG);
       binding.linearMainBeats.setLayoutTransition(transition);
@@ -212,6 +220,9 @@ public class MainFragment extends BaseFragment
     updateBeats(getSharedPrefs().getString(PREF.BEATS, DEF.BEATS).split(","));
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
     binding.linearMainSubs.post(() -> {
+      if (binding == null) {
+        return;
+      }
       LayoutTransition transition = new LayoutTransition();
       transition.setDuration(Constants.ANIM_DURATION_LONG);
       binding.linearMainSubs.setLayoutTransition(transition);
@@ -919,6 +930,9 @@ public class MainFragment extends BaseFragment
       }
       ViewUtil.startIcon(binding.buttonMainBeatMode.getIcon());
       new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        if (binding == null) {
+          return;
+        }
         if (beatModeVibrateNew) {
           binding.buttonMainBeatMode.setIconResource(
               getMetronomeUtil().isAlwaysVibrate()
@@ -1334,7 +1348,10 @@ public class MainFragment extends BaseFragment
     chip.setStateListAnimator(null);
     chip.setText(getString(R.string.label_bpm_value, tempo));
     chip.setTag(tempo);
-    chip.setTextAppearance(R.style.TextAppearance_Tack_LabelLarge);
+    if (Build.VERSION.SDK_INT >= VERSION_CODES.M) {
+      // Crashes on API 21
+      chip.setTextAppearance(R.style.TextAppearance_Tack_LabelLarge);
+    }
     chip.setOnClickListener(v -> {
       performHapticClick();
       ViewUtil.startIcon(chip.getChipIcon());
