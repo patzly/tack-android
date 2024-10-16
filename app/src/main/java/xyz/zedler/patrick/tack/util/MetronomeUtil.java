@@ -67,7 +67,7 @@ public class MetronomeUtil {
   private float timerProgress;
   private boolean playing, tempPlaying, useSubdivisions, beatModeVibrate, isCountingIn;
   private boolean showElapsed, resetElapsed, resetTimer;
-  private boolean alwaysVibrate, incrementalIncrease, flashScreen, keepAwake;
+  private boolean alwaysVibrate, incrementalIncrease, flashScreen, keepAwake, highlightActiveBeat;
   private boolean neverStartedWithGain = true;
 
   public MetronomeUtil(@NonNull Context context, boolean fromService) {
@@ -104,6 +104,7 @@ public class MetronomeUtil {
     resetElapsed = sharedPrefs.getBoolean(PREF.RESET_ELAPSED, DEF.RESET_ELAPSED);
     resetTimer = sharedPrefs.getBoolean(PREF.RESET_TIMER, DEF.RESET_TIMER);
     flashScreen = sharedPrefs.getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
+    highlightActiveBeat = sharedPrefs.getBoolean(PREF.HIGHLIGHT_ACTIVE_BEAT, DEF.HIGHLIGHT_ACTIVE_BEAT);
     keepAwake = sharedPrefs.getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
 
     setSound(sharedPrefs.getString(PREF.SOUND, DEF.SOUND));
@@ -543,6 +544,15 @@ public class MetronomeUtil {
 
   public boolean getFlashScreen() {
     return flashScreen;
+  }
+
+  public void setHighlightActiveBeat(boolean highlight) {
+    highlightActiveBeat = highlight;
+    sharedPrefs.edit().putBoolean(PREF.HIGHLIGHT_ACTIVE_BEAT, highlight).apply();
+  }
+
+  public boolean getHighlightActiveBeat() {
+    return highlightActiveBeat;
   }
 
   public void setKeepAwake(boolean keepAwake) {
