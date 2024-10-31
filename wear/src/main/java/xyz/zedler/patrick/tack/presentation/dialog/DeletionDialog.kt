@@ -30,13 +30,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.AlertDialog
+import androidx.wear.compose.material3.AlertDialogDefaults
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.R
-import xyz.zedler.patrick.tack.presentation.components.DialogConfirmButton
 import xyz.zedler.patrick.tack.presentation.components.DialogDismissButton
 import xyz.zedler.patrick.tack.presentation.state.Bookmark
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
@@ -52,24 +52,33 @@ fun DeletionDialog(
     AlertDialog(
       show = show,
       confirmButton = {
-        DialogConfirmButton(
+        AlertDialogDefaults.ConfirmButton(
           onClick = {
             bookmark?.let { bookmark -> onConfirm(bookmark) }
-          },
-          icon = {
-            Icon(
-              painter = painterResource(id = R.drawable.ic_rounded_delete),
-              contentDescription = stringResource(id = R.string.wear_action_delete)
-            )
           },
           colors = IconButtonDefaults.filledIconButtonColors(
             contentColor = MaterialTheme.colorScheme.onError,
             containerColor = MaterialTheme.colorScheme.error
           )
-        )
+        ) {
+          Icon(
+            painter = painterResource(id = R.drawable.ic_rounded_delete),
+            contentDescription = stringResource(id = R.string.wear_action_delete)
+          )
+        }
       },
       dismissButton = {
-        DialogDismissButton(onClick = onDismiss)
+        AlertDialogDefaults.DismissButton(
+          onClick = onDismiss,
+          colors = IconButtonDefaults.filledTonalIconButtonColors(
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+          )
+        ) {
+          Icon(
+            painter = painterResource(id = R.drawable.ic_rounded_close),
+            contentDescription = stringResource(id = R.string.wear_action_cancel)
+          )
+        }
       },
       onDismissRequest = onDismiss,
       icon = {

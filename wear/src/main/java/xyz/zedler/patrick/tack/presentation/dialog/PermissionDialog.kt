@@ -29,13 +29,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material3.AlertDialog
+import androidx.wear.compose.material3.AlertDialogDefaults
 import androidx.wear.compose.material3.Icon
+import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.R
-import xyz.zedler.patrick.tack.presentation.components.DialogConfirmButton
-import xyz.zedler.patrick.tack.presentation.components.DialogDismissButton
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 
 @Composable
@@ -48,18 +48,27 @@ fun PermissionDialog(
     AlertDialog(
       show = show,
       confirmButton = {
-        DialogConfirmButton(
-          onClick = onConfirm,
-          icon = {
-            Icon(
-              painter = painterResource(id = R.drawable.ic_rounded_repeat),
-              contentDescription = stringResource(id = R.string.wear_action_retry)
-            )
-          }
-        )
+        AlertDialogDefaults.ConfirmButton(
+          onClick = onConfirm
+        ) {
+          Icon(
+            painter = painterResource(id = R.drawable.ic_rounded_repeat),
+            contentDescription = stringResource(id = R.string.wear_action_retry)
+          )
+        }
       },
       dismissButton = {
-        DialogDismissButton(onClick = onDismiss)
+        AlertDialogDefaults.DismissButton(
+          onClick = onDismiss,
+          colors = IconButtonDefaults.filledTonalIconButtonColors(
+            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+          )
+        ) {
+          Icon(
+            painter = painterResource(id = R.drawable.ic_rounded_close),
+            contentDescription = stringResource(id = R.string.wear_action_cancel)
+          )
+        }
       },
       onDismissRequest = onDismiss,
       icon = {
