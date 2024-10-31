@@ -76,7 +76,7 @@ fun BookmarksScreen(
     val scrollableState = rememberScalingLazyListState()
     ScreenScaffold(
       scrollState = scrollableState,
-      bottomButton = {
+      edgeButton = {
         BottomButton(
           onClick = {
             viewModel.addBookmark()

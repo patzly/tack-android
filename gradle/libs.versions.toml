@@ -1,23 +1,23 @@
 [versions]
 agp = "8.7.1"
 appcompat = "1.7.0"
-fragment = "1.8.4"
+fragment = "1.8.5"
 navigation = "2.8.3"
 preference = "1.2.1"
 shapes = "1.0.1"
 material = "1.13.0-alpha07"
 kotlin = "2.0.21"
-lifecycle = "2.8.6"
+lifecycle = "2.8.7"
 splashscreen = "1.1.0-rc01"
 wear-input = "1.1.0"
 wear-tooling = "1.0.0"
 wear-ongoing = "1.0.0"
-compose-bom = "2024.10.00"
-compose-material = "1.0.0-alpha27"
+compose-bom = "2024.10.01"
+compose-material = "1.0.0-alpha28"
 compose-navigation = "1.4.0"
 compose-foundation = "1.4.0"
 compose-activity = "1.9.3"
-compose-constraintlayout = "1.0.1"
+compose-constraintlayout = "1.1.0"
 
 [libraries]
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
