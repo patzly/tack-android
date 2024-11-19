@@ -219,7 +219,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     try {
       val intent = Intent(this, MetronomeService::class.java)
       bindService(intent, this, BIND_AUTO_CREATE)
-    } catch (e: IllegalStateException) {
+    } catch (_: IllegalStateException) {
       Log.e(TAG, "onBindingDied: cannot start MetronomeService because app is in background")
     }
   }
@@ -284,7 +284,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     )
     try {
       startActivity(goToMarket)
-    } catch (e: ActivityNotFoundException) {
+    } catch (_: ActivityNotFoundException) {
       startActivity(
         Intent(
           Intent.ACTION_VIEW,

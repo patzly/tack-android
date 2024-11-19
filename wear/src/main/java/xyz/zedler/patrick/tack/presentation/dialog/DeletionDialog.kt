@@ -37,7 +37,6 @@ import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.R
-import xyz.zedler.patrick.tack.presentation.components.DialogDismissButton
 import xyz.zedler.patrick.tack.presentation.state.Bookmark
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 
