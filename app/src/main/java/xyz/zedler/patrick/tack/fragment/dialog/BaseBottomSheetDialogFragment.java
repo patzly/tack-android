@@ -53,7 +53,6 @@ public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragme
   private ViewUtil viewUtil;
   private boolean lightNavBar;
   private int backgroundColor;
-  private FullWidthListener fullWidthListener;
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -97,9 +96,6 @@ public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragme
 
             boolean isFullWidth
                 = behavior.getMaxWidth() >= UiUtil.getDisplayWidth(requireContext());
-            if (fullWidthListener != null) {
-              fullWidthListener.onKnowIfFullWidth(isFullWidth);
-            }
 
             ViewCompat.setOnApplyWindowInsetsListener(decorView, (view, insets) -> {
               int insetTop = insets.getInsets(Type.systemBars()).top;
@@ -251,13 +247,5 @@ public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragme
   }
 
   public void applyBottomInset(int bottom) {
-  }
-
-  public void setFullWidthListener(FullWidthListener listener) {
-    fullWidthListener = listener;
-  }
-
-  public interface FullWidthListener {
-    void onKnowIfFullWidth(boolean isFullWidth);
   }
 }
