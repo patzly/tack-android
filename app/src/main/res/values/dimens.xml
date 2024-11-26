@@ -20,11 +20,6 @@
 
 <resources>
 
-  <fraction name="sliding_start_fraction">-100%p</fraction>
-  <fraction name="sliding_end_fraction">100%p</fraction>
-  <dimen name="fading_start">-32dp</dimen>
-  <dimen name="fading_end">32dp</dimen>
-
   <dimen name="max_content_width">640dp</dimen>
 
   <dimen name="seekbar_height">40dp</dimen>
@@ -39,6 +34,5 @@
   <dimen name="tempo_tap_size">170dp</dimen>
 
   <dimen name="control_margin_bottom">32dp</dimen>
-  <dimen name="control_spacing">12dp</dimen>
 
 </resources>

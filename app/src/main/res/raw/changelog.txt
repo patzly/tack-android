@@ -1,5 +1,6 @@
 ## 4.4.5
 
+- Improved: control design on main screen
 - Fixed: vibration not working on some devices
 - Fixed: various crashes and bugs on lower Android versions
 

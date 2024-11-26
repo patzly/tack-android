@@ -20,11 +20,6 @@
 
 <resources>
 
-  <fraction name="sliding_start_fraction">100%p</fraction>
-  <fraction name="sliding_end_fraction">-100%p</fraction>
-  <dimen name="fading_start">32dp</dimen>
-  <dimen name="fading_end">-32dp</dimen>
-
   <fraction name="tempo_term_fading_start">15%p</fraction>
   <fraction name="tempo_term_fading_end">-15%p</fraction>
 
