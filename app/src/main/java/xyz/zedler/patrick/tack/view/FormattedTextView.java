@@ -45,7 +45,6 @@ import xyz.zedler.patrick.tack.util.UiUtil;
 public class FormattedTextView extends LinearLayout {
 
   private final Context context;
-  private HapticUtil hapticUtil;
   private int textColor, textColorVariant;
 
   public FormattedTextView(Context context) {
@@ -61,7 +60,6 @@ public class FormattedTextView extends LinearLayout {
   }
 
   private void init() {
-    hapticUtil = new HapticUtil(context);
     setOrientation(VERTICAL);
     setPadding(0, UiUtil.dpToPx(context, 16), 0, 0);
     textColor = ResUtil.getColor(context, R.attr.colorOnSurface);
