@@ -34,6 +34,7 @@ public class HapticUtil {
 
   private final Vibrator vibrator;
   private boolean enabled;
+  private final boolean hasAmplitudeControl;
 
   public static final long TICK = 13;
   public static final long CLICK = 20;
@@ -48,30 +49,31 @@ public class HapticUtil {
       vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
     enabled = hasVibrator();
-  }
-
-  public void vibrate(long duration) {
-    if (!enabled) {
-      return;
-    }
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE));
-    } else {
-      vibrator.vibrate(duration);
-    }
-  }
-
-  private void vibrate(int effectId) {
-    if (enabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-      vibrator.vibrate(VibrationEffect.createPredefined(effectId));
-    }
+    hasAmplitudeControl =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && vibrator.hasAmplitudeControl();
   }
 
   public void tick() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && hasAmplitudeControl) {
       vibrate(VibrationEffect.EFFECT_TICK);
     } else {
       vibrate(TICK);
+    }
+  }
+
+  public void click() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && hasAmplitudeControl) {
+      vibrate(VibrationEffect.EFFECT_CLICK);
+    } else {
+      vibrate(CLICK);
+    }
+  }
+
+  public void heavyClick() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && hasAmplitudeControl) {
+      vibrate(VibrationEffect.EFFECT_HEAVY_CLICK);
+    } else {
+      vibrate(HEAVY);
     }
   }
 
@@ -84,22 +86,6 @@ public class HapticUtil {
       );
     } else {
       tick();
-    }
-  }
-
-  public void click() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-      vibrate(VibrationEffect.EFFECT_CLICK);
-    } else {
-      vibrate(CLICK);
-    }
-  }
-
-  public void heavyClick() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-      vibrate(VibrationEffect.EFFECT_HEAVY_CLICK);
-    } else {
-      vibrate(HEAVY);
     }
   }
 
@@ -116,5 +102,23 @@ public class HapticUtil {
         context.getContentResolver(), Settings.System.HAPTIC_FEEDBACK_ENABLED, 0
     );
     return hapticFeedbackEnabled != 0;
+  }
+
+  public void vibrate(long duration) {
+    if (enabled) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        vibrator.vibrate(
+            VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE)
+        );
+      } else {
+        vibrator.vibrate(duration);
+      }
+    }
+  }
+
+  private void vibrate(int effectId) {
+    if (enabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      vibrator.vibrate(VibrationEffect.createPredefined(effectId));
+    }
   }
 }
