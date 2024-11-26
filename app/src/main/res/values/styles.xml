@@ -226,6 +226,16 @@
     <item name="android:paddingBottom">6dp</item>
   </style>
 
+  <style name="ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Left" parent="">
+    <item name="cornerSizeTopRight">8dp</item>
+    <item name="cornerSizeBottomRight">8dp</item>
+  </style>
+
+  <style name="ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Right" parent="">
+    <item name="cornerSizeTopLeft">8dp</item>
+    <item name="cornerSizeBottomLeft">8dp</item>
+  </style>
+
   <!-- RadioButton -->
 
   <style

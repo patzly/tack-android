@@ -361,8 +361,9 @@
         <com.google.android.material.button.MaterialButton
           android:id="@+id/button_main_less"
           style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
-          android:layout_marginEnd="16dp"
+          android:layout_marginEnd="@dimen/controls_center_spacing"
           android:contentDescription="@string/action_decrease"
+          app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Left"
           app:icon="@drawable/ic_rounded_navigate_before_anim" />
 
         <FrameLayout
@@ -424,8 +425,9 @@
         <com.google.android.material.button.MaterialButton
           android:id="@+id/button_main_more"
           style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
-          android:layout_marginStart="16dp"
+          android:layout_marginStart="@dimen/controls_center_spacing"
           android:contentDescription="@string/action_increase"
+          app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Right"
           app:icon="@drawable/ic_rounded_navigate_after_anim" />
 
       </LinearLayout>
@@ -468,7 +470,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        android:paddingBottom="@dimen/control_margin_bottom"
+        android:paddingBottom="@dimen/controls_bottom_margin_bottom"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:clipToPadding="false"
@@ -481,13 +483,12 @@
           android:layout_height="wrap_content"
           android:orientation="horizontal"
           android:padding="8dp"
-          android:layout_marginEnd="16dp"
+          android:layout_marginEnd="@dimen/controls_bottom_spacing"
           android:background="@drawable/shape_bottom_controls_bg_left">
 
           <com.google.android.material.button.MaterialButton
             android:id="@+id/button_main_options"
             style="@style/Widget.Tack.Button.IconButton"
-            android:layout_marginEnd="4dp"
             android:contentDescription="@string/title_options"
             app:icon="@drawable/ic_rounded_tune_anim" />
 
@@ -512,13 +513,12 @@
           android:layout_height="wrap_content"
           android:orientation="horizontal"
           android:padding="8dp"
-          android:layout_marginStart="16dp"
+          android:layout_marginStart="@dimen/controls_bottom_spacing"
           android:background="@drawable/shape_bottom_controls_bg_right">
 
           <com.google.android.material.button.MaterialButton
             android:id="@+id/button_main_bookmark"
             style="@style/Widget.Tack.Button.IconButton"
-            android:layout_marginEnd="4dp"
             android:contentDescription="@string/action_bookmark"
             app:icon="@drawable/ic_rounded_bookmark_add_anim" />
 

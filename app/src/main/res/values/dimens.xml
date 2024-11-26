@@ -33,6 +33,8 @@
 
   <dimen name="tempo_tap_size">170dp</dimen>
 
-  <dimen name="control_margin_bottom">32dp</dimen>
+  <dimen name="controls_center_spacing">8dp</dimen>
+  <dimen name="controls_bottom_margin_bottom">32dp</dimen>
+  <dimen name="controls_bottom_spacing">12dp</dimen>
 
 </resources>
