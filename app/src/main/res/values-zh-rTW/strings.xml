@@ -203,6 +203,8 @@
   <string name="settings_show_subs_description">節奏更加多樣化</string>
 
   <string name="settings_active_beat">突出顯示目前節拍</string>
+  <string name="settings_active_beat_description">對較慢的節奏有幫助</string>
+
   <string name="settings_always_vibrate">總是震動</string>
   <string name="settings_always_vibrate_description">即使有聲音</string>
 
