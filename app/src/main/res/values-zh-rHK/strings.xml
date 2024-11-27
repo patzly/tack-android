@@ -205,7 +205,7 @@
   <string name="settings_active_beat">突出顯示目前節拍</string>
   <string name="settings_active_beat_description">對較慢嘅節奏有幫助</string>
 
-  <string name="settings_always_vibrate">總是振動</string>
+  <string name="settings_always_vibrate">總是震動</string>
   <string name="settings_always_vibrate_description">即使有聲音</string>
 
   <string name="settings_elapsed">顯示已用時間</string>
