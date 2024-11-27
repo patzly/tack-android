@@ -226,7 +226,7 @@
   <string name="settings_flash_screen">螢幕閃爍</string>
   <string name="settings_flash_screen_description">在每個節拍</string>
 
-  <string name="settings_keep_awake">保持屏幕喚醒</string>
+  <string name="settings_keep_awake">保持螢幕喚醒</string>
   <string name="settings_keep_awake_description">當節拍器播放時</string>
 
   <string name="settings_big_logo">顯示大型標識動畫</string>
