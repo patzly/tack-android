@@ -60,7 +60,7 @@
   <string name="action_stop">停止</string>
   <string name="action_add_beat">增加節拍</string>
   <string name="action_remove_beat">減少節拍</string>
-  <string name="action_add_sub">新增細分</string>
+  <string name="action_add_sub">新增分割槽</string>
   <string name="action_remove_sub">移除分割槽</string>
   <string name="action_clear_all">全部清除</string>
   <string name="action_tempo_tap">輕拍速度</string>
