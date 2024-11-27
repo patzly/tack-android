@@ -36,9 +36,9 @@ public class HapticUtil {
   private boolean enabled;
   private final boolean hasAmplitudeControl;
 
-  public static final long TICK = 13;
-  public static final long CLICK = 20;
-  public static final long HEAVY = 50;
+  public static final long TICK = 20;
+  public static final long CLICK = 50;
+  public static final long HEAVY = 80;
 
   public HapticUtil(Context context) {
     if (Build.VERSION.SDK_INT >= VERSION_CODES.S) {
