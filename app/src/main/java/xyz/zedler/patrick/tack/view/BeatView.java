@@ -119,7 +119,8 @@ public class BeatView extends FrameLayout {
     setMinimumHeight(minSize);
 
     button = new MaterialButton(context);
-    int insetHorizontal = UiUtil.dpToPx(context, 4);
+    // With 4 the buttons would be a tiny bit oval
+    int insetHorizontal = UiUtil.dpToPx(context, 3.9f);
     try {
       button.setLayoutParams(
           new FrameLayout.LayoutParams(minSize, minSize)
