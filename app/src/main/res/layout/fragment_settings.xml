@@ -694,6 +694,33 @@
         </LinearLayout>
 
         <LinearLayout
+          android:id="@+id/linear_settings_active_beat"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable.More">
+
+          <ImageView
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_ink_highlighter"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_active_beat" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/settings_active_beat_description" />
+
+          </LinearLayout>
+
+          <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_settings_active_beat"
+            style="@style/Widget.Tack.Switch" />
+
+        </LinearLayout>
+
+        <LinearLayout
           android:id="@+id/linear_settings_big_timer"
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable.More">
 

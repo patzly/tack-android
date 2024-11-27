@@ -101,7 +101,7 @@ public class MainFragment extends BaseFragment
   private MainActivity activity;
   private Bundle savedState;
   private boolean flashScreen, reduceAnimations, isRtl, isLandTablet, bigLogo, showPickerNotLogo;
-  private boolean bigTimerSlider;
+  private boolean activeBeat, bigTimerSlider;
   private LogoUtil logoUtil, logoCenterUtil;
   private ValueAnimator fabAnimator;
   private float cornerSizeStop, cornerSizePlay, cornerSizeCurrent;
@@ -179,6 +179,7 @@ public class MainFragment extends BaseFragment
 
     flashScreen = getSharedPrefs().getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
     reduceAnimations = getSharedPrefs().getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM);
+    activeBeat = getSharedPrefs().getBoolean(PREF.ACTIVE_BEAT, DEF.ACTIVE_BEAT);
     bigTimerSlider = getSharedPrefs().getBoolean(PREF.BIG_TIMER, DEF.BIG_TIMER);
 
     if (getSharedPrefs().getBoolean(PREF.BIG_TIME_TEXT, DEF.BIG_TIME_TEXT)) {
@@ -675,6 +676,7 @@ public class MainFragment extends BaseFragment
   public void onMetronomeStop() {
     activity.runOnUiThread(() -> {
       if (binding != null) {
+        resetActiveBeats();
         beatsBgDrawable.setProgressVisible(false, true);
         if (getMetronomeUtil().isTimerActive()) {
           squiggly.setAnimate(false, true);
@@ -706,7 +708,11 @@ public class MainFragment extends BaseFragment
       }
       View beat = binding.linearMainBeats.getChildAt(tick.beat - 1);
       if (beat instanceof BeatView && tick.subdivision == 1) {
+        resetActiveBeats();
         ((BeatView) beat).setTickType(tick.type);
+        if (activeBeat) {
+          ((BeatView) beat).setActive(true);
+        }
         ((BeatView) beat).beat();
       }
       View subdivision = binding.linearMainSubs.getChildAt(tick.subdivision - 1);
@@ -1017,6 +1023,15 @@ public class MainFragment extends BaseFragment
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
 
     updateBeatControls(true);
+  }
+
+  private void resetActiveBeats() {
+    for (int i = 0; i < binding.linearMainBeats.getChildCount(); i++) {
+      View beat = binding.linearMainBeats.getChildAt(i);
+      if (beat instanceof BeatView) {
+        ((BeatView) beat).setActive(false);
+      }
+    }
   }
 
   @OptIn(markerClass = ExperimentalBadgeUtils.class)

@@ -77,14 +77,15 @@ public class BeatView extends FrameLayout {
   }
 
   private AnimatorSet animatorSet;
+  private ValueAnimator strokeAnimator;
   private int iconSize, iconSizeDefault, iconSizeBeat, iconSizeNoBeat, iconSizeMuted;
   private FastOutSlowInInterpolator interpolator;
   private ImageView imageView;
   private MaterialButton button;
   private String tickType;
-  private boolean isSubdivision, reduceAnimations;
+  private boolean isSubdivision, reduceAnimations, isActive;
   private int index;
-  private int colorNormal, colorStrong, colorSub, colorMuted;
+  private int colorNormal, colorStrong, colorSub, colorMuted, colorActive;
 
   public BeatView(Context context) {
     super(context);
@@ -154,6 +155,8 @@ public class BeatView extends FrameLayout {
         ContextCompat.getColorStateList(context, R.color.selector_tonal_button_ripple)
     );
     button.setBackgroundColor(Color.TRANSPARENT);
+    button.setStrokeWidth(UiUtil.dpToPx(context, 1));
+    button.setStrokeColor(ColorStateList.valueOf(Color.TRANSPARENT));
     setOnClickListener(null);
     addView(button);
 
@@ -170,6 +173,7 @@ public class BeatView extends FrameLayout {
     colorStrong = ResUtil.getColor(context, R.attr.colorError);
     colorSub = ResUtil.getColor(context, R.attr.colorOnSurfaceVariant);
     colorMuted = ResUtil.getColor(context, R.attr.colorOutline);
+    colorActive = ResUtil.getColor(context, R.attr.colorOutline);
 
     imageView = new ImageView(context);
     FrameLayout.LayoutParams paramsIcon = new FrameLayout.LayoutParams(iconSize, iconSize);
@@ -306,6 +310,30 @@ public class BeatView extends FrameLayout {
   public void setReduceAnimations(boolean reduce) {
     reduceAnimations = reduce;
     iconSizeBeat = UiUtil.dpToPx(getContext(), reduce ? 44 : 32);
+  }
+
+  public void setActive(boolean active) {
+    if (isActive == active) {
+      return;
+    }
+    isActive = active;
+    if (strokeAnimator != null) {
+      strokeAnimator.pause();
+      strokeAnimator.removeAllListeners();
+      strokeAnimator.cancel();
+      strokeAnimator = null;
+    }
+    strokeAnimator = ValueAnimator.ofArgb(
+        button.getStrokeColor().getDefaultColor(),
+        active ? colorActive : Color.TRANSPARENT
+    );
+    strokeAnimator.addUpdateListener(animation -> {
+      int color = (int) animation.getAnimatedValue();
+      button.setStrokeColor(ColorStateList.valueOf(color));
+    });
+    strokeAnimator.setInterpolator(interpolator);
+    strokeAnimator.setDuration(active ? 25 : 300);
+    strokeAnimator.start();
   }
 
   @NonNull

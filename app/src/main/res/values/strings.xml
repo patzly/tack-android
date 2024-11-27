@@ -218,6 +218,9 @@
   <string name="settings_show_subs">Show subdivision controls</string>
   <string name="settings_show_subs_description">More diverse rhythms</string>
 
+  <string name="settings_active_beat">Highlight current beat</string>
+  <string name="settings_active_beat_description">Helpful for slower tempos</string>
+
   <string name="settings_always_vibrate">Always vibrate</string>
   <string name="settings_always_vibrate_description">Even with sound</string>
 

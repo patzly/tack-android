@@ -218,6 +218,11 @@ public class SettingsFragment extends BaseFragment
     );
     binding.switchSettingsReduceAnimations.jumpDrawablesToCurrentState();
 
+    binding.switchSettingsActiveBeat.setChecked(
+        getSharedPrefs().getBoolean(PREF.ACTIVE_BEAT, DEF.ACTIVE_BEAT)
+    );
+    binding.switchSettingsActiveBeat.jumpDrawablesToCurrentState();
+
     binding.switchSettingsBigTimer.setChecked(
         getSharedPrefs().getBoolean(PREF.BIG_TIMER, DEF.BIG_TIMER)
     );
@@ -312,6 +317,7 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsSound,
         binding.linearSettingsIgnoreFocus,
         binding.linearSettingsShowSubs,
+        binding.linearSettingsActiveBeat,
         binding.linearSettingsAlwaysVibrate,
         binding.linearSettingsElapsed,
         binding.linearSettingsResetElapsed,
@@ -329,6 +335,7 @@ public class SettingsFragment extends BaseFragment
         binding.switchSettingsReduceAnimations,
         binding.switchSettingsIgnoreFocus,
         binding.switchSettingsShowSubs,
+        binding.switchSettingsActiveBeat,
         binding.switchSettingsAlwaysVibrate,
         binding.switchSettingsElapsed,
         binding.switchSettingsResetElapsed,
@@ -451,6 +458,8 @@ public class SettingsFragment extends BaseFragment
       binding.switchSettingsIgnoreFocus.toggle();
     } else if (id == R.id.linear_settings_show_subs) {
       binding.switchSettingsShowSubs.toggle();
+    } else if (id == R.id.linear_settings_active_beat) {
+      binding.switchSettingsActiveBeat.toggle();
     } else if (id == R.id.linear_settings_always_vibrate) {
       binding.switchSettingsAlwaysVibrate.toggle();
     } else if (id == R.id.linear_settings_elapsed) {
@@ -492,6 +501,9 @@ public class SettingsFragment extends BaseFragment
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsShowSubs);
       getMetronomeUtil().setSubdivisionsUsed(isChecked);
+    } else if (id == R.id.switch_settings_active_beat) {
+      performHapticClick();
+      getSharedPrefs().edit().putBoolean(PREF.ACTIVE_BEAT, isChecked).apply();
     } else if (id == R.id.switch_settings_always_vibrate) {
       ViewUtil.startIcon(binding.imageSettingsAlwaysVibrate);
       getMetronomeUtil().setAlwaysVibrate(isChecked);
