@@ -38,6 +38,7 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import com.google.android.material.button.MaterialButton;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -228,6 +229,10 @@ public class BeatView extends FrameLayout {
     updateIconSize(iconSizeDefault);
   }
 
+  public void resetBeatColors() {
+    setTickType(this.tickType);
+  }
+
   public String nextTickType() {
     String next;
     switch (tickType) {
@@ -253,6 +258,14 @@ public class BeatView extends FrameLayout {
   }
 
   public void beat() {
+    beat(false);
+  }
+
+  public void beat(boolean highlightBeat) {
+    if (highlightBeat && tickType.equals(TICK_TYPE.NORMAL)) {
+      imageView.setImageTintList(ColorStateList.valueOf(colorStrong));
+    }
+
     if (animatorSet != null) {
       animatorSet.pause();
       animatorSet.removeAllListeners();
