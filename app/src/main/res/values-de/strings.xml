@@ -206,6 +206,9 @@
   <string name="settings_show_subs">Schlag-Unterteilungen</string>
   <string name="settings_show_subs_description">Vielfältigere Rhythmen</string>
 
+  <string name="settings_active_beat">Aktuellen Schlag hervorheben</string>
+  <string name="settings_active_beat_description">Hilfreich für langsame Tempos</string>
+
   <string name="settings_always_vibrate">Immer vibrieren</string>
   <string name="settings_always_vibrate_description">Auch im Audiomodus</string>
 
