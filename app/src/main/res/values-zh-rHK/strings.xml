@@ -223,7 +223,7 @@
   <string name="settings_big_time_text">使用大字型顯示時間</string>
   <string name="settings_big_time_text_description">如果預設字型大小不夠大的話很有用</string>
 
-  <string name="settings_flash_screen">屏幕閃爍</string>
+  <string name="settings_flash_screen">螢幕閃爍</string>
   <string name="settings_flash_screen_description">在每個節拍</string>
 
   <string name="settings_keep_awake">保持屏幕喚醒</string>
