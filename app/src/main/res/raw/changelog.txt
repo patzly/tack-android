@@ -1,4 +1,4 @@
-## 4.4.5
+## 4.5.0
 
 - New: option to highlight current beat
 - Improved: controls appearance on main screen
