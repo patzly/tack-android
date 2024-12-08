@@ -177,7 +177,7 @@
   <string name="settings_reduce_animations_description">可能會提高性能</string>
 
   <string name="settings_reset">全部重置</string>
-  <string name="settings_reset_description">無法撤銷</string>
+  <string name="settings_reset_description">此動作無法復原</string>
 
   <string name="settings_sound">節拍聲音</string>
   <string name="settings_sound_wood">木材</string>
