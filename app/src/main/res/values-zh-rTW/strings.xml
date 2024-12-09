@@ -66,7 +66,7 @@
   <string name="action_tempo_tap">輕拍速度</string>
   <string name="action_bookmark">書籤</string>
   <string name="action_beat_mode">節拍模式</string>
-  <string name="action_send_feedback">傳送意見反映</string>
+  <string name="action_send_feedback">傳送意見回饋</string>
   <string name="action_open_link">開啟外部網站</string>
   <string name="action_reset">重置</string>
   <string name="action_deactivate_gain">停用增強</string>
