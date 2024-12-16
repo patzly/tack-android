@@ -19,7 +19,6 @@
 
 package xyz.zedler.patrick.tack.presentation.screen
 
-import android.R.attr.onClick
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

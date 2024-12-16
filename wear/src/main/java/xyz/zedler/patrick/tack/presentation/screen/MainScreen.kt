@@ -50,7 +50,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.navigation.NavBackStackEntry
 import androidx.wear.compose.material3.FilledIconButton
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.IconButton
@@ -79,7 +78,6 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 @Composable
 fun MainScreen(
   viewModel: MainViewModel = MainViewModel(),
-  backStackEntry: NavBackStackEntry? = null,
   onTempoCardClick: () -> Unit = {},
   onSettingsButtonClick: () -> Unit = {},
   onBeatsButtonClick: () -> Unit = {},
