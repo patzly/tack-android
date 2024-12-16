@@ -214,6 +214,9 @@
   <string name="settings_show_subs">Zobrazit ovládání subdivizí</string>
   <string name="settings_show_subs_description">Rozmanitější rytmy</string>
 
+  <string name="settings_active_beat">Zvýraznit aktuální rytmus</string>
+  <string name="settings_active_beat_description">Užitečné pro pomalejší tempa</string>
+
   <string name="settings_always_vibrate">Vždy vibrovat</string>
   <string name="settings_always_vibrate_description">I se zvukem</string>
 

@@ -21,14 +21,14 @@
 
   <!-- TITLES -->
 
-  <string name="title_feedback">意見反映</string>
+  <string name="title_feedback">意見回饋</string>
   <string name="title_about">關於</string>
   <string name="title_help">幫助</string>
-  <string name="title_licenses">開源協議</string>
+  <string name="title_licenses">授權</string>
   <string name="title_settings">設定</string>
   <string name="title_notification_channel">節拍器服務</string>
   <string name="title_options">選項</string>
-  <string name="title_general">通用</string>
+  <string name="title_general">一般</string>
   <string name="title_metronome">節拍器</string>
   <string name="title_controls">控制</string>
   <string name="title_logcat">日誌</string>
@@ -66,7 +66,7 @@
   <string name="action_tempo_tap">輕拍速度</string>
   <string name="action_bookmark">書籤</string>
   <string name="action_beat_mode">節拍模式</string>
-  <string name="action_send_feedback">傳送意見反映</string>
+  <string name="action_send_feedback">傳送意見回饋</string>
   <string name="action_open_link">開啟外部網站</string>
   <string name="action_reset">重置</string>
   <string name="action_deactivate_gain">停用增強</string>
@@ -85,7 +85,7 @@
 
   <!-- MESSAGES -->
 
-  <string name="msg_bookmarks_max">已達到書籤上限</string>
+  <string name="msg_bookmarks_max">書籤數量已滿</string>
   <string name="msg_feedback">一款優秀的應用程式需要花費大量的時間和獲取使用者的意見反映。</string>
   <string name="msg_feedback_contact">你有任何願望、評論或問題嗎？聯絡我！\n否則，我會非常高興在 Play 商店得到一個好評。</string>
   <string name="msg_recommend">看看這個很酷的節拍器應用程式：\n%1$s</string>
@@ -101,8 +101,8 @@
   <string name="msg_split_screen">視窗太小</string>
   <string name="msg_split_screen_description">Tack 可能會在分割畫面模式下定位節拍器控制時遇到問題。如果可以，請使用更大的視窗。</string>
   <string name="msg_notification_permission_denied">播放控制需要通知權限</string>
-  <string name="msg_report_crash">請報告任何崩潰情況，並附上崩潰日誌，以便我嘗試修復它們。</string>
-  <string name="msg_copied_to_clipboard">已成功複製至剪貼簿</string>
+  <string name="msg_report_crash">請不吝回報任何當機情形，並附上當機紀錄，使開發者能順利修復問題。</string>
+  <string name="msg_copied_to_clipboard">已複製至剪貼簿</string>
 
   <!-- OPTIONS -->
 
@@ -147,11 +147,11 @@
 
   <string name="settings_language">語言</string>
   <string name="settings_language_info">非常感謝 Transifex 的所有翻譯志願者！\n請瀏覽 GitHub 上的 Tack 以瞭解如何為 Tack 提供你的語言。</string>
-  <string name="settings_language_system">跟隨系統</string>
+  <string name="settings_language_system">系統預設</string>
   <string name="settings_language_system_description">如果沒有對應的翻譯則為英語</string>
 
   <string name="settings_theme">主題</string>
-  <string name="settings_theme_description">風格多樣</string>
+  <string name="settings_theme_description">多種樣式</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
   <string name="settings_theme_auto">自動</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
@@ -177,7 +177,7 @@
   <string name="settings_reduce_animations_description">可能會提高性能</string>
 
   <string name="settings_reset">全部重置</string>
-  <string name="settings_reset_description">無法撤銷</string>
+  <string name="settings_reset_description">此動作無法復原</string>
 
   <string name="settings_sound">節拍聲音</string>
   <string name="settings_sound_wood">木材</string>

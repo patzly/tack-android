@@ -202,6 +202,9 @@
   <string name="settings_show_subs">显示分区控件</string>
   <string name="settings_show_subs_description">节奏更加多样化</string>
 
+  <string name="settings_active_beat">高亮当前节拍</string>
+  <string name="settings_active_beat_description">对慢速节拍更有帮助</string>
+
   <string name="settings_always_vibrate">总是振动</string>
   <string name="settings_always_vibrate_description">即使有声音</string>
 
