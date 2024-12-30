@@ -20,14 +20,18 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.button.MaterialButtonToggleGroup.OnButtonCheckedListener;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.slider.Slider.OnChangeListener;
 import com.google.android.material.slider.Slider.OnSliderTouchListener;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
@@ -35,8 +39,10 @@ import xyz.zedler.patrick.tack.databinding.PartialDialogOptionsBinding;
 import xyz.zedler.patrick.tack.databinding.PartialOptionsBinding;
 import xyz.zedler.patrick.tack.fragment.MainFragment;
 
-public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener,
-    OnSliderTouchListener {
+public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
+    OnChangeListener, OnSliderTouchListener {
+
+  private static final String TAG = OptionsUtil.class.getSimpleName();
 
   private final MainActivity activity;
   private final MainFragment fragment;
@@ -259,7 +265,30 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener,
       binding.textOptionsTimerDuration.setText(activity.getString(R.string.options_inactive));
     }
 
+    int valueFrom = (int) binding.sliderOptionsTimerDuration.getValueFrom();
+    int valueTo = (int) binding.sliderOptionsTimerDuration.getValueTo();
+    int range = valueTo - valueFrom;
+
+    binding.buttonOptionsTimerDecrease.setEnabled(timerDuration >= range);
+    binding.buttonOptionsTimerDecrease.setOnClickListener(this);
+    ViewCompat.setTooltipText(
+        binding.buttonOptionsTimerDecrease,
+        activity.getString(R.string.action_decrease)
+    );
+
+    binding.buttonOptionsTimerIncrease.setEnabled(timerDuration < Constants.TIMER_MAX);
+    binding.buttonOptionsTimerIncrease.setOnClickListener(this);
+    ViewCompat.setTooltipText(
+        binding.buttonOptionsTimerIncrease,
+        activity.getString(R.string.action_increase)
+    );
+
+    // Calculate current range
+    int factor = timerDuration / (range + 1);
+    int valueFromNew = factor * (range + 1);
     binding.sliderOptionsTimerDuration.removeOnChangeListener(this);
+    binding.sliderOptionsTimerDuration.setValueFrom(valueFromNew);
+    binding.sliderOptionsTimerDuration.setValueTo(valueFromNew + range);
     binding.sliderOptionsTimerDuration.setValue(timerDuration);
     binding.sliderOptionsTimerDuration.addOnChangeListener(this);
     binding.sliderOptionsTimerDuration.setLabelFormatter(value -> {
@@ -305,6 +334,29 @@ public class OptionsUtil implements OnButtonCheckedListener, OnChangeListener,
       binding.toggleOptionsSwing.clearChecked();
     }
     binding.toggleOptionsSwing.addOnButtonCheckedListener(this);
+  }
+
+  @Override
+  public void onClick(View v) {
+    activity.performHapticClick();
+    int id = v.getId();
+    if (id == R.id.button_options_timer_decrease) {
+      int valueFrom = (int) binding.sliderOptionsTimerDuration.getValueFrom();
+      int valueTo = (int) binding.sliderOptionsTimerDuration.getValueTo();
+      int range = valueTo - valueFrom;
+      getMetronomeUtil().setTimerDuration(getMetronomeUtil().getTimerDuration() - range - 1);
+      updateTimer();
+      fragment.updateTimerControls();
+      ViewUtil.startIcon(binding.buttonOptionsTimerDecrease.getIcon());
+    } else if (id == R.id.button_options_timer_increase) {
+      int valueFrom = (int) binding.sliderOptionsTimerDuration.getValueFrom();
+      int valueTo = (int) binding.sliderOptionsTimerDuration.getValueTo();
+      int range = valueTo - valueFrom;
+      getMetronomeUtil().setTimerDuration(getMetronomeUtil().getTimerDuration() + range + 1);
+      updateTimer();
+      fragment.updateTimerControls();
+      ViewUtil.startIcon(binding.buttonOptionsTimerIncrease.getIcon());
+    }
   }
 
   @Override
