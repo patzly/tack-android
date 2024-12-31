@@ -269,26 +269,28 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     int valueTo = (int) binding.sliderOptionsTimerDuration.getValueTo();
     int range = valueTo - valueFrom;
 
-    binding.buttonOptionsTimerDecrease.setEnabled(timerDuration >= range);
+    // Calculate current range
+    int factor = timerDuration / (range + 1);
+    int valueFromNew = factor * (range + 1);
+    int valueToNew = valueFromNew + range;
+
+    binding.buttonOptionsTimerDecrease.setEnabled(valueFromNew > 0);
     binding.buttonOptionsTimerDecrease.setOnClickListener(this);
     ViewCompat.setTooltipText(
         binding.buttonOptionsTimerDecrease,
         activity.getString(R.string.action_decrease)
     );
 
-    binding.buttonOptionsTimerIncrease.setEnabled(timerDuration < Constants.TIMER_MAX);
+    binding.buttonOptionsTimerIncrease.setEnabled(valueToNew < Constants.TIMER_MAX);
     binding.buttonOptionsTimerIncrease.setOnClickListener(this);
     ViewCompat.setTooltipText(
         binding.buttonOptionsTimerIncrease,
         activity.getString(R.string.action_increase)
     );
 
-    // Calculate current range
-    int factor = timerDuration / (range + 1);
-    int valueFromNew = factor * (range + 1);
     binding.sliderOptionsTimerDuration.removeOnChangeListener(this);
     binding.sliderOptionsTimerDuration.setValueFrom(valueFromNew);
-    binding.sliderOptionsTimerDuration.setValueTo(valueFromNew + range);
+    binding.sliderOptionsTimerDuration.setValueTo(valueToNew);
     binding.sliderOptionsTimerDuration.setValue(timerDuration);
     binding.sliderOptionsTimerDuration.addOnChangeListener(this);
     binding.sliderOptionsTimerDuration.setLabelFormatter(value -> {
