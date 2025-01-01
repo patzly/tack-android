@@ -190,20 +190,20 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingStart="0dp"
-    android:paddingEnd="12dp">
+    android:paddingEnd="12dp"
+    android:layout_marginTop="4dp"
+    android:gravity="center_vertical">
 
     <LinearLayout
       android:layout_width="0dp"
-      android:layout_height="match_parent"
+      android:layout_height="wrap_content"
       android:orientation="vertical"
-      android:layout_weight="1"
-      android:gravity="center_vertical">
+      android:layout_weight="1">
 
       <TextView
         style="@style/Widget.Tack.TextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:paddingStart="16dp"
         android:paddingEnd="8dp"
         android:text="@string/options_timer" />
