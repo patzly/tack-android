@@ -180,8 +180,8 @@
   <style
     name="Widget.Tack.Button.IconButton"
     parent="Widget.Material3.Button.IconButton">
-    <item name="android:layout_width">wrap_content</item>
-    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_width">48dp</item>
+    <item name="android:layout_height">48dp</item>
     <item name="iconTint">@color/selector_icon_button_icon_color</item>
     <item name="iconSize">24dp</item>
     <item name="android:paddingLeft">8dp</item>
@@ -193,8 +193,8 @@
   <style
     name="Widget.Tack.Button.IconButton.Filled"
     parent="Widget.Material3.Button.IconButton.Filled">
-    <item name="android:layout_width">wrap_content</item>
-    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_width">48dp</item>
+    <item name="android:layout_height">48dp</item>
     <item name="iconSize">24dp</item>
     <item name="android:paddingLeft">8dp</item>
     <item name="android:paddingRight">8dp</item>
@@ -205,8 +205,8 @@
   <style
     name="Widget.Tack.Button.IconButton.Filled.Tonal"
     parent="Widget.Material3.Button.IconButton.Filled.Tonal">
-    <item name="android:layout_width">wrap_content</item>
-    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_width">48dp</item>
+    <item name="android:layout_height">48dp</item>
     <item name="iconSize">24dp</item>
     <item name="android:paddingLeft">8dp</item>
     <item name="android:paddingRight">8dp</item>
@@ -217,8 +217,8 @@
   <style
     name="Widget.Tack.Button.IconButton.Outlined"
     parent="Widget.Material3.Button.IconButton.Outlined">
-    <item name="android:layout_width">wrap_content</item>
-    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_width">48dp</item>
+    <item name="android:layout_height">48dp</item>
     <item name="iconSize">24dp</item>
     <item name="android:paddingLeft">8dp</item>
     <item name="android:paddingRight">8dp</item>
