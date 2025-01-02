@@ -480,6 +480,7 @@
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
+          android:id="@+id/linear_main_bottom_controls_start"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:orientation="horizontal"
@@ -510,6 +511,7 @@
           app:srcCompat="@drawable/ic_rounded_play_to_stop_fill_anim" />
 
         <LinearLayout
+          android:id="@+id/linear_main_bottom_controls_end"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:orientation="horizontal"

@@ -248,10 +248,10 @@ public class MainFragment extends BaseFragment
     dialogUtilSplitScreen.createClose(
         R.string.msg_split_screen, R.string.msg_split_screen_description
     );
+    int screenWidthDp = UiUtil.dpFromPx(activity, UiUtil.getDisplayWidth(activity));
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
       boolean isMultiWindow = activity.isInMultiWindowMode();
       int screenHeightDp = UiUtil.dpFromPx(activity, UiUtil.getDisplayHeight(activity));
-      int screenWidthDp = UiUtil.dpFromPx(activity, UiUtil.getDisplayWidth(activity));
       boolean isHeightTooSmall = isPortrait && screenHeightDp < 700;
       boolean isWidthTooSmall = !isPortrait && screenWidthDp < 600;
       if (isMultiWindow && (isHeightTooSmall || isWidthTooSmall)) {
@@ -513,12 +513,21 @@ public class MainFragment extends BaseFragment
       binding.chipGroupMainBookmarks.addView(getBookmarkChip(bookmarks.get(i)));
     }
 
-    ViewUtil.resetAnimatedIcon(binding.fabMainPlayStop);
-    binding.fabMainPlayStop.setImageResource(R.drawable.ic_rounded_play_to_stop_fill_anim);
-    boolean large = isPortrait || isLandTablet;
+    boolean isWidthLargeEnough = screenWidthDp - 16 >= 344;
+    boolean large = (isPortrait && isWidthLargeEnough) || isLandTablet;
     cornerSizeStop = UiUtil.dpToPx(activity, large ? 28 : 16);
     cornerSizePlay = UiUtil.dpToPx(activity, large ? 48 : 28);
     cornerSizeCurrent = cornerSizeStop;
+    ViewUtil.resetAnimatedIcon(binding.fabMainPlayStop);
+    binding.fabMainPlayStop.setImageResource(R.drawable.ic_rounded_play_to_stop_fill_anim);
+    binding.fabMainPlayStop.setMaxImageSize(UiUtil.dpToPx(activity, large ? 36 : 24));
+    binding.fabMainPlayStop.setCustomSize(UiUtil.dpToPx(activity, large ? 96 : 56));
+    if (!isWidthLargeEnough) {
+      // Reduce bottom controls padding for small screens or large scaling
+      int padding = UiUtil.dpToPx(activity, 4);
+      binding.linearMainBottomControlsStart.setPadding(padding, padding, padding, padding);
+      binding.linearMainBottomControlsEnd.setPadding(padding, padding, padding, padding);
+    }
 
     updateMetronomeControls();
 
