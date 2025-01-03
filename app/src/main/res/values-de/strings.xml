@@ -233,6 +233,7 @@
   <string name="settings_keep_awake">Bildschirm wach halten</string>
   <string name="settings_keep_awake_description">Während der Wiedergabe</string>
 
+  <string name="settings_perm_notification">Dauerhafte Benachrichtigung</string>
   <string name="settings_big_logo">Große Logo-Animation anzeigen</string>
   <string name="settings_big_logo_description">Statt Tempo-Wähler während Wiedergabe</string>
 
