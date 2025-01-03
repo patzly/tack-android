@@ -234,7 +234,7 @@
   <string name="settings_keep_awake_description">Während der Wiedergabe</string>
 
   <string name="settings_perm_notification">Dauerhafte Benachrichtigung</string>
-  <string name="settings_perm_notification_description">Jederzeit Zugriff auf die Wiedergabesteuerung</string>
+  <string name="settings_perm_notification_description">Jederzeit Zugriff auf Starten/Beenden</string>
 
   <string name="settings_big_logo">Große Logo-Animation anzeigen</string>
   <string name="settings_big_logo_description">Statt Tempo-Wähler während Wiedergabe</string>
