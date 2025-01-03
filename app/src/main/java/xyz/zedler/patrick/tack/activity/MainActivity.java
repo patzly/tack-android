@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   private Locale locale;
   private Intent metronomeIntent;
   private MetronomeService metronomeService;
-  private boolean runAsSuperClass, bound, stopServiceWithActivity;
+  private boolean runAsSuperClass, bound, stopServiceWithActivity, startMetronomeAfterPermission;
   private ActivityResultLauncher<String> requestPermissionLauncher;
 
   @Override
@@ -154,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
             v -> requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         );
         showSnackbar(snackbar);
-      } else {
+      } else if (startMetronomeAfterPermission) {
         getMetronomeUtil().start();
       }
     });
@@ -285,6 +285,11 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     }
   }
 
+  @Nullable
+  public MetronomeService getMetronomeService() {
+    return metronomeService;
+  }
+
   public MetronomeUtil getMetronomeUtil() {
     if (bound) {
       return metronomeService.getMetronomeUtil();
@@ -302,7 +307,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     getMetronomeUtil().setToPreferences();
   }
 
-  public void requestNotificationPermission() {
+  public void requestNotificationPermission(boolean startMetronome) {
+    startMetronomeAfterPermission = startMetronome;
     boolean hasPermission = NotificationUtil.hasPermission(this);
     if (!hasPermission && VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
       try {

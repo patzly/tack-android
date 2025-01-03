@@ -88,7 +88,7 @@ public class ShortcutUtil {
     builder.setShortLabel(context.getString(R.string.label_bpm_value, tempo));
     builder.setIcon(Icon.createWithResource(context, R.mipmap.ic_shortcut));
     builder.setIntent(new Intent(context, ShortcutActivity.class)
-        .setAction(ACTION.START)
+        .setAction(ACTION.START_TEMPO)
         .putExtra(EXTRA.TEMPO, tempo)
         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     );

@@ -245,6 +245,9 @@
   <string name="settings_keep_awake">Keep screen awake</string>
   <string name="settings_keep_awake_description">While metronome is playing</string>
 
+  <string name="settings_perm_notification">Permanent notification</string>
+  <string name="settings_perm_notification_description">Always access to play/stop control</string>
+
   <string name="settings_big_logo">Show big logo animation</string>
   <string name="settings_big_logo_description">Instead of tempo picker while playing</string>
 

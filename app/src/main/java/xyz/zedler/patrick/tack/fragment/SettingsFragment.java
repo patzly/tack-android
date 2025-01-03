@@ -23,6 +23,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,6 +56,7 @@ import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentSettingsBinding;
+import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
@@ -318,6 +320,7 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsIgnoreFocus,
         binding.linearSettingsShowSubs,
         binding.linearSettingsActiveBeat,
+        binding.linearSettingsPermNotification,
         binding.linearSettingsAlwaysVibrate,
         binding.linearSettingsElapsed,
         binding.linearSettingsResetElapsed,
@@ -336,6 +339,7 @@ public class SettingsFragment extends BaseFragment
         binding.switchSettingsIgnoreFocus,
         binding.switchSettingsShowSubs,
         binding.switchSettingsActiveBeat,
+        binding.switchSettingsPermNotification,
         binding.switchSettingsAlwaysVibrate,
         binding.switchSettingsElapsed,
         binding.switchSettingsResetElapsed,
@@ -434,6 +438,13 @@ public class SettingsFragment extends BaseFragment
     binding.switchSettingsKeepAwake.setChecked(getMetronomeUtil().getKeepAwake());
     binding.switchSettingsKeepAwake.jumpDrawablesToCurrentState();
     binding.switchSettingsKeepAwake.setOnCheckedChangeListener(this);
+
+    MetronomeService service = activity.getMetronomeService();
+    boolean permNotification = service != null && service.getPermNotification();
+    binding.switchSettingsPermNotification.setOnCheckedChangeListener(null);
+    binding.switchSettingsPermNotification.setChecked(permNotification);
+    binding.switchSettingsPermNotification.jumpDrawablesToCurrentState();
+    binding.switchSettingsPermNotification.setOnCheckedChangeListener(this);
   }
 
   @Override
@@ -460,6 +471,8 @@ public class SettingsFragment extends BaseFragment
       binding.switchSettingsShowSubs.toggle();
     } else if (id == R.id.linear_settings_active_beat) {
       binding.switchSettingsActiveBeat.toggle();
+    } else if (id == R.id.linear_settings_perm_notification) {
+      binding.switchSettingsPermNotification.toggle();
     } else if (id == R.id.linear_settings_always_vibrate) {
       binding.switchSettingsAlwaysVibrate.toggle();
     } else if (id == R.id.linear_settings_elapsed) {
@@ -504,6 +517,20 @@ public class SettingsFragment extends BaseFragment
     } else if (id == R.id.switch_settings_active_beat) {
       performHapticClick();
       getSharedPrefs().edit().putBoolean(PREF.ACTIVE_BEAT, isChecked).apply();
+    } else if (id == R.id.switch_settings_perm_notification) {
+      performHapticClick();
+      MetronomeService service = activity.getMetronomeService();
+      if (service != null) {
+        try {
+          boolean permNotification = service.setPermNotification(isChecked);
+          binding.switchSettingsPermNotification.setChecked(permNotification);
+        } catch (IllegalStateException e) {
+          binding.switchSettingsPermNotification.setChecked(false);
+          activity.requestNotificationPermission(false);
+        }
+      } else {
+        activity.showSnackbar(R.string.msg_connection_lost);
+      }
     } else if (id == R.id.switch_settings_always_vibrate) {
       ViewUtil.startIcon(binding.imageSettingsAlwaysVibrate);
       getMetronomeUtil().setAlwaysVibrate(isChecked);

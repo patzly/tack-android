@@ -846,7 +846,7 @@ public class MainFragment extends BaseFragment
 
   @Override
   public void onPermissionMissing() {
-    activity.requestNotificationPermission();
+    activity.requestNotificationPermission(true);
   }
 
   @Override

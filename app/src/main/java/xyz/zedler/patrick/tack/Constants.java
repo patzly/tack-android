@@ -56,6 +56,7 @@ public final class Constants {
     public final static String RESET_TIMER = "reset_timer";
     public final static String BIG_TIMER = "big_timer";
     public final static String BIG_TIME_TEXT = "big_time_text";
+    public final static String PERM_NOTIFICATION = "permanent_notification";
     public final static String FLASH_SCREEN = "flash_screen";
     public final static String KEEP_AWAKE = "keep_awake";
     public final static String SOUND = "sound";
@@ -97,6 +98,7 @@ public final class Constants {
     public final static boolean RESET_TIMER = false;
     public final static boolean BIG_TIMER = false;
     public final static boolean BIG_TIME_TEXT = false;
+    public final static boolean PERM_NOTIFICATION = true;
     public final static boolean FLASH_SCREEN = false;
     public final static boolean KEEP_AWAKE = true;
     public final static String SOUND = Constants.SOUND.SINE;
@@ -145,6 +147,7 @@ public final class Constants {
   public final static class ACTION {
 
     public final static String START = "xyz.zedler.patrick.tack.intent.action.START";
+    public final static String START_TEMPO = "xyz.zedler.patrick.tack.intent.action.START_TEMPO";
     public final static String STOP = "xyz.zedler.patrick.tack.intent.action.STOP";
   }
 

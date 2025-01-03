@@ -20,6 +20,8 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.Manifest;
+import android.Manifest.permission;
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -28,10 +30,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.ServiceInfo;
+import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import androidx.annotation.NonNull;
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationCompat.Action;
 import androidx.core.app.NotificationManagerCompat;
@@ -91,20 +96,40 @@ public class NotificationUtil {
     );
   }
 
-  public Notification getNotification() {
+  @SuppressLint("MissingPermission")
+  public void updateNotification(Notification notification) {
+    if (hasPermission()) {
+      notificationManager.notify(NOTIFICATION_ID, notification);
+    }
+  }
+
+  public Notification getNotification(boolean playButton) {
     Intent openIntent = new Intent(context, MainActivity.class);
     openIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
     PendingIntent activityPendingIntent = PendingIntent.getActivity(
         context, REQUEST_CODE, openIntent, getPendingIntentFlags()
     );
 
+    Intent startIntent = new Intent(context, MetronomeService.class);
+    startIntent.setAction(ACTION.START);
+    PendingIntent startServicePendingIntent = PendingIntent.getService(
+        context, REQUEST_CODE, startIntent, getPendingIntentFlags()
+    );
+    Action actionStart = new Action(
+        R.drawable.ic_rounded_play_arrow_fill,
+        context.getString(R.string.action_play),
+        startServicePendingIntent
+    );
+
     Intent stopIntent = new Intent(context, MetronomeService.class);
     stopIntent.setAction(ACTION.STOP);
-    PendingIntent servicePendingIntent = PendingIntent.getService(
+    PendingIntent stopServicePendingIntent = PendingIntent.getService(
         context, REQUEST_CODE, stopIntent, getPendingIntentFlags()
     );
     Action actionStop = new Action(
-        R.drawable.ic_rounded_stop_fill, context.getString(R.string.action_stop), servicePendingIntent
+        R.drawable.ic_rounded_stop_fill,
+        context.getString(R.string.action_stop),
+        stopServicePendingIntent
     );
 
     String title = context.getString(R.string.msg_service_running);
@@ -114,7 +139,7 @@ public class NotificationUtil {
         .setContentText(text)
         .setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(title).bigText(text))
         .setContentIntent(activityPendingIntent)
-        .addAction(actionStop)
+        .addAction(playButton ? actionStart : actionStop)
         .setAutoCancel(true)
         .setSilent(true)
         .setOngoing(true)

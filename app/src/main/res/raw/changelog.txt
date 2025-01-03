@@ -1,6 +1,7 @@
 ## 4.5.0
 
-- New: option to highlight current beat
+- New: setting to permanently show notification for start/stop access
+- New: setting to highlight current beat
 - Improved: controls appearance on main screen
 - Improved: timer duration now up to 399 units with new increase/decrease buttons
 - Fixed: vibration not working on some devices
