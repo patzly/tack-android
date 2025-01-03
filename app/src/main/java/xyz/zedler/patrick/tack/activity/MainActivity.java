@@ -328,7 +328,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   }
 
   public void showSnackbar(@StringRes int resId) {
-    showSnackbar(Snackbar.make(binding.coordinatorMain, getString(resId), Snackbar.LENGTH_LONG));
+    if (binding != null) {
+      showSnackbar(Snackbar.make(binding.coordinatorMain, resId, Snackbar.LENGTH_LONG));
+    }
   }
 
   public void showSnackbar(Snackbar snackbar) {

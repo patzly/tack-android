@@ -272,7 +272,11 @@ public class SettingsFragment extends BaseFragment
 
       @Override
       public void onMetronomeConnectionMissing() {
-        activity.showSnackbar(R.string.msg_connection_lost);
+        activity.runOnUiThread(() -> {
+          if (binding != null) {
+            activity.showSnackbar(R.string.msg_connection_lost);
+          }
+        });
       }
     };
 
@@ -280,17 +284,21 @@ public class SettingsFragment extends BaseFragment
       @Override
       public void onStartTrackingTouch(@NonNull Slider slider) {
         flashScreen = true;
-        getMetronomeUtil().savePlayingState();
-        getMetronomeUtil().addListener(latencyListener);
-        getMetronomeUtil().setUpLatencyCalibration();
+        new Thread(() -> {
+          getMetronomeUtil().savePlayingState();
+          getMetronomeUtil().addListener(latencyListener);
+          getMetronomeUtil().setUpLatencyCalibration();
+        }).start();
       }
 
       @Override
       public void onStopTrackingTouch(@NonNull Slider slider) {
         flashScreen = false;
-        getMetronomeUtil().restorePlayingState();
-        getMetronomeUtil().removeListener(latencyListener);
-        getMetronomeUtil().setToPreferences();
+        new Thread(() -> {
+          getMetronomeUtil().restorePlayingState();
+          getMetronomeUtil().removeListener(latencyListener);
+          getMetronomeUtil().setToPreferences();
+        }).start();
       }
     });
     binding.sliderSettingsLatency.setLabelFormatter(

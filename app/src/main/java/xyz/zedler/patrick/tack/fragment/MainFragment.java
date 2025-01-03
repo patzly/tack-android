@@ -678,8 +678,12 @@ public class MainFragment extends BaseFragment
         }
       }
     });
-    // Inside UI thread appears to be often not effective
-    UiUtil.keepScreenAwake(activity, getMetronomeUtil().getKeepAwake());
+    try {
+      // Inside UI thread appears to be often not effective
+      UiUtil.keepScreenAwake(activity, getMetronomeUtil().getKeepAwake());
+    } catch (RuntimeException e) {
+      Log.w(TAG, "onMetronomeStart: keepScreenAwake(true)", e);
+    }
   }
 
   @Override
@@ -706,8 +710,12 @@ public class MainFragment extends BaseFragment
       stopTimerTransitionProgress();
       stopTimerProgress();
     });
-    // Inside UI thread appears to be often not effective
-    UiUtil.keepScreenAwake(activity, false);
+    try {
+      // Inside UI thread appears to be often not effective
+      UiUtil.keepScreenAwake(activity, false);
+    } catch (RuntimeException e) {
+      Log.w(TAG, "onMetronomeStart: keepScreenAwake(false)", e);
+    }
   }
 
   @Override
