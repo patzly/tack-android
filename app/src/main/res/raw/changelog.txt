@@ -1,3 +1,7 @@
+## 4.5.1
+
+- Fixed: wrong default value for permanent notification setting
+
 ## 4.5.0
 
 - New: setting to permanently show notification for start/stop access

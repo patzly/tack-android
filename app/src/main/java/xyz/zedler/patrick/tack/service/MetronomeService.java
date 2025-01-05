@@ -60,14 +60,14 @@ public class MetronomeService extends Service {
     metronomeUtil.addListener(new MetronomeListenerAdapter() {
       @Override
       public void onMetronomeStart() {
-        if (permNotification) {
+        if (permNotification && hasPermission()) {
           notificationUtil.updateNotification(notificationUtil.getNotification(false));
         }
       }
 
       @Override
       public void onMetronomeStop() {
-        if (permNotification) {
+        if (permNotification && hasPermission()) {
           notificationUtil.updateNotification(notificationUtil.getNotification(true));
         }
       }
@@ -76,10 +76,7 @@ public class MetronomeService extends Service {
     sharedPrefs = new PrefsUtil(this).getSharedPrefs();
 
     permNotification = sharedPrefs.getBoolean(PREF.PERM_NOTIFICATION, DEF.PERM_NOTIFICATION);
-    if (!notificationUtil.hasPermission()) {
-      permNotification = false;
-    }
-    if (permNotification) {
+    if (permNotification && hasPermission()) {
       startForeground(true);
     }
     Log.d(TAG, "onCreate: service created");
@@ -104,7 +101,7 @@ public class MetronomeService extends Service {
         metronomeUtil.start();
       } else if (intent.getAction().equals(ACTION.STOP)) {
         metronomeUtil.stop();
-        if (!permNotification) {
+        if (!permNotification && hasPermission()) {
           stopForeground();
         }
       }
@@ -115,7 +112,7 @@ public class MetronomeService extends Service {
   @Nullable
   @Override
   public IBinder onBind(Intent intent) {
-    if (!permNotification) {
+    if (!permNotification && hasPermission()) {
       stopForeground();
     }
     isBound = true;
@@ -126,7 +123,7 @@ public class MetronomeService extends Service {
   public void onRebind(Intent intent) {
     super.onRebind(intent);
 
-    if (!permNotification) {
+    if (!permNotification && hasPermission()) {
       stopForeground();
     }
     isBound = true;
@@ -134,7 +131,7 @@ public class MetronomeService extends Service {
 
   @Override
   public boolean onUnbind(Intent intent) {
-    if (canShowNonPermNotification() && !permNotification) {
+    if (canShowNonPermNotification() && !permNotification && hasPermission()) {
       startForeground(false);
     }
     isBound = false;
@@ -149,8 +146,7 @@ public class MetronomeService extends Service {
   }
 
   private void startForeground(boolean playButton) {
-    boolean hasPermission = notificationUtil.hasPermission();
-    if (hasPermission && !configChange) {
+    if (hasPermission() && !configChange) {
       notificationUtil.createNotificationChannel();
       Notification notification = notificationUtil.getNotification(playButton);
       try {
@@ -186,14 +182,14 @@ public class MetronomeService extends Service {
   public boolean setPermNotification(boolean permanent) {
     if (permNotification != permanent) {
       if (permanent) {
-        if (notificationUtil.hasPermission()) {
+        if (hasPermission()) {
           startForeground(!metronomeUtil.isPlaying());
         } else {
           throw new IllegalStateException("Notification permission missing");
         }
       } else {
         if (!isBound && canShowNonPermNotification()) {
-          if (notificationUtil.hasPermission()) {
+          if (hasPermission()) {
             // Only provide stop action in non-permanent notification
             startForeground(false);
           } else {
@@ -212,6 +208,10 @@ public class MetronomeService extends Service {
   private boolean canShowNonPermNotification() {
     boolean realTimeActive = metronomeUtil.isTimerActive() || metronomeUtil.isElapsedActive();
     return metronomeUtil.isPlaying() || realTimeActive;
+  }
+
+  private boolean hasPermission() {
+    return notificationUtil.hasPermission();
   }
 
   public class MetronomeBinder extends Binder {

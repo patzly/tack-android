@@ -98,7 +98,7 @@ public final class Constants {
     public final static boolean RESET_TIMER = false;
     public final static boolean BIG_TIMER = false;
     public final static boolean BIG_TIME_TEXT = false;
-    public final static boolean PERM_NOTIFICATION = true;
+    public final static boolean PERM_NOTIFICATION = false;
     public final static boolean FLASH_SCREEN = false;
     public final static boolean KEEP_AWAKE = true;
     public final static String SOUND = Constants.SOUND.SINE;
