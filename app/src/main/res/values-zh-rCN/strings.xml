@@ -229,7 +229,7 @@
   <string name="settings_keep_awake">保持屏幕唤醒</string>
   <string name="settings_keep_awake_description">当节拍器播放时</string>
 
-  <string name="settings_perm_notification">保持通知</string>
+  <string name="settings_perm_notification">永远通知</string>
   <string name="settings_perm_notification_description">始终访问播放/停止控制</string>
 
   <string name="settings_big_logo">显示大型 Logo 动画</string>
