@@ -34,6 +34,7 @@ class HapticUtil(context: Context) {
     @Suppress("deprecation")
     context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
   }
+  private val hasAmplitudeControl: Boolean = vibrator.hasAmplitudeControl()
   var enabled: Boolean = hasVibrator()
     set(value) {
       field = value && vibrator.hasVibrator()
@@ -53,7 +54,7 @@ class HapticUtil(context: Context) {
   }
 
   fun tick() {
-    if (Build.VERSION.SDK_INT >= VERSION_CODES.Q && !strong) {
+    if (Build.VERSION.SDK_INT >= VERSION_CODES.Q && hasAmplitudeControl && !strong) {
       vibrate(VibrationEffect.EFFECT_TICK)
     } else {
       vibrate(if (strong) TICK_STRONG else TICK)
@@ -61,7 +62,7 @@ class HapticUtil(context: Context) {
   }
 
   fun click() {
-    if (Build.VERSION.SDK_INT >= VERSION_CODES.Q && !strong) {
+    if (Build.VERSION.SDK_INT >= VERSION_CODES.Q && hasAmplitudeControl && !strong) {
       vibrate(VibrationEffect.EFFECT_CLICK)
     } else {
       vibrate(if (strong) CLICK_STRONG else CLICK)
@@ -69,7 +70,7 @@ class HapticUtil(context: Context) {
   }
 
   fun heavyClick() {
-    if (Build.VERSION.SDK_INT >= VERSION_CODES.Q && !strong) {
+    if (Build.VERSION.SDK_INT >= VERSION_CODES.Q && hasAmplitudeControl && !strong) {
       vibrate(VibrationEffect.EFFECT_HEAVY_CLICK)
     } else {
       vibrate(if (strong) HEAVY_STRONG else HEAVY)
