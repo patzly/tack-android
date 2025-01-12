@@ -175,6 +175,10 @@
     <item quantity="one">%1$d Takt stummschalten</item>
     <item quantity="other">%1$d Takte stummschalten</item>
   </plurals>
+  <plurals name="options_mute_mute_seconds">
+    <item quantity="one">%1$d Sekunde stummschalten</item>
+    <item quantity="other">%1$d Sekunden stummschalten</item>
+  </plurals>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Unterteilungen auf ausgewählten Swing-Anteil gesetzt</string>
   <string name="options_swing_3">Triole</string>
