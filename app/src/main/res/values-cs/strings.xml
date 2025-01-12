@@ -136,19 +136,13 @@
   </plurals>
   <string name="options_inactive">Neaktivní</string>
   <string name="options_count_in">Počítat do</string>
-  <string name="options_count_in_description">Počkat %1$s před použitím úprav</string>
   <string name="options_incremental">Postupná změna tempa</string>
   <string name="options_incremental_amount_increase">Zvýšit tempo o %1$d dob/min</string>
   <string name="options_incremental_amount_decrease">Snížit tempo o %1$d dob/min</string>
-  <string name="options_incremental_interval">Každých %1$s</string>
   <string name="options_incremental_max">Až na %1$d dob/min</string>
   <string name="options_incremental_min">Až na %1$d dob/min</string>
   <string name="options_timer">Trvání skladby</string>
-  <string name="options_timer_description">Zastavit po %1$s</string>
   <string name="options_mute">Ztlumené doby</string>
-  <string name="options_mute_play">Přehrát %1$s</string>
-  <string name="options_mute_mute">Ztlumit %1$s</string>
-  <string name="options_mute_random">Ztlumovat náhodně do %1$d %</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Subdivize nastavené pro shodu s vybraným procentem swingu</string>
   <string name="options_swing_3">Trioly</string>
