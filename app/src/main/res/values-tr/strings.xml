@@ -128,19 +128,13 @@
   </plurals>
   <string name="options_inactive">Pasif</string>
   <string name="options_count_in">Giriş sayımı</string>
-  <string name="options_count_in_description">Modifikasyonları uygulamadan önce %1$s bekle</string>
   <string name="options_incremental">Kademeli tempo değişikliği</string>
   <string name="options_incremental_amount_increase">Tempoyu %1$d bpm arttır</string>
   <string name="options_incremental_amount_decrease">Tempoyu %1$d bpm azalt</string>
-  <string name="options_incremental_interval">Her %1$s</string>
   <string name="options_incremental_max">%1$d bpm\'ye kadar</string>
   <string name="options_incremental_min">%1$d bpm\'ye kadar düşür</string>
   <string name="options_timer">Şarkı süresi</string>
-  <string name="options_timer_description">%1$s sonra durdur</string>
   <string name="options_mute">Sessiz vuruşlar</string>
-  <string name="options_mute_play">%1$s çal</string>
-  <string name="options_mute_mute">%1$s sessize al</string>
-  <string name="options_mute_random">%1$d%% kadar rastgele sessize al</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Alt bölümler seçilen swing yüzdesine göre ayarlanır</string>
   <string name="options_swing_3">Üçlem</string>
