@@ -132,19 +132,13 @@
   </plurals>
   <string name="options_inactive">Inactivo</string>
   <string name="options_count_in">Conteo de entrada</string>
-  <string name="options_count_in_description">Espera %1$s antes de aplicar modificadores </string>
   <string name="options_incremental">Cambio incremental de tempo</string>
   <string name="options_incremental_amount_increase">Aumentar tempo %1$d  bpm</string>
   <string name="options_incremental_amount_decrease">Disminuir tempo %1$d bpm</string>
-  <string name="options_incremental_interval">Cada %1$s</string>
   <string name="options_incremental_max">Hasta %1$d bpm</string>
   <string name="options_incremental_min">Hasta %1$d bpm</string>
   <string name="options_timer">Duración de la canción</string>
-  <string name="options_timer_description">Detener tras %1$s</string>
   <string name="options_mute">Pulsos silenciados</string>
-  <string name="options_mute_play">Iniciar %1$s</string>
-  <string name="options_mute_mute">Silenciar %1$s</string>
-  <string name="options_mute_random">Silenciar hasta %1$d% aleatoriamente</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Subdivisiones puestas para coincidir con el porcentaje de swing elegido</string>
   <string name="options_swing_3">Tresillo</string>
