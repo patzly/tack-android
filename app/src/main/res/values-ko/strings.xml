@@ -124,19 +124,13 @@
   </plurals>
   <string name="options_inactive">비활성화</string>
   <string name="options_count_in">카운트</string>
-  <string name="options_count_in_description">변화를 주기 전 %1$s만큼 기다리기</string>
   <string name="options_incremental">점진적 템포 변화</string>
   <string name="options_incremental_amount_increase">%1$d bpm 만큼 템포 증가</string>
   <string name="options_incremental_amount_decrease">%1$d bpm 만큼 템포 감소</string>
-  <string name="options_incremental_interval">매 %1$s</string>
   <string name="options_incremental_max">%1$d bpm까지 </string>
   <string name="options_incremental_min">%1$d bpm까지 </string>
   <string name="options_timer">음악 길이</string>
-  <string name="options_timer_description">%1$s후 정지</string>
   <string name="options_mute">무음 비트</string>
-  <string name="options_mute_play">재생 %1$s</string>
-  <string name="options_mute_mute">음소거 %1$s</string>
-  <string name="options_mute_random">최대 %1$d% 까지 무작위로 음소거</string>
   <string name="options_swing">스윙(Swing)</string>
   <string name="options_swing_description">세분음이 선택된 스윙 비율에 맞춰 설정됩니다</string>
   <string name="options_swing_3">셋잇단음표(triplet)</string>
