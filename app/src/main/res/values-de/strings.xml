@@ -128,6 +128,10 @@
   </plurals>
   <string name="options_inactive">Inaktiv</string>
   <string name="options_count_in">Einzählen</string>
+  <plurals name="options_count_in_description">
+    <item quantity="one">%1$d Takt vor Modifikationen warten</item>
+    <item quantity="other">%1$d Takte vor Modifikationen warten</item>
+  </plurals>
   <string name="options_incremental">Schrittweiser Tempowechsel</string>
   <string name="options_incremental_amount_increase">Tempo um %1$d bpm erhöhen</string>
   <string name="options_incremental_amount_decrease">Tempo um %1$d verringern</string>
