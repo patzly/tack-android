@@ -154,6 +154,10 @@
     <item quantity="one">Nach %1$d Takt beenden</item>
     <item quantity="other">Nach %1$d Takten beenden</item>
   </plurals>
+  <plurals name="options_timer_description_seconds">
+    <item quantity="one">Nach %1$d Sekunde beenden</item>
+    <item quantity="other">Nach %1$d Sekunden beenden</item>
+  </plurals>
   <string name="options_mute">Stumm geschaltete Takte</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Unterteilungen auf ausgewählten Swing-Anteil gesetzt</string>
