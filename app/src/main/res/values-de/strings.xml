@@ -143,6 +143,10 @@
     <item quantity="one">Jede %1$d Sekunde</item>
     <item quantity="other">Alle %1$d Sekunden</item>
   </plurals>
+  <plurals name="options_incremental_interval_minutes">
+    <item quantity="one">Jede %1$d Minute</item>
+    <item quantity="other">Alle %1$d Minuten</item>
+  </plurals>
   <string name="options_incremental_max">Bis zu %1$d bpm</string>
   <string name="options_incremental_min">Bis zu %1$d bpm</string>
   <string name="options_timer">Dauer des Stücks</string>
