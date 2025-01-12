@@ -128,19 +128,13 @@
   </plurals>
   <string name="options_inactive">Inaktiv</string>
   <string name="options_count_in">Einzählen</string>
-  <string name="options_count_in_description">%1$s vor Modifikationen warten</string>
   <string name="options_incremental">Schrittweiser Tempowechsel</string>
   <string name="options_incremental_amount_increase">Tempo um %1$d bpm erhöhen</string>
   <string name="options_incremental_amount_decrease">Tempo um %1$d verringern</string>
-  <string name="options_incremental_interval">Alle %1$s</string>
   <string name="options_incremental_max">Bis zu %1$d bpm</string>
   <string name="options_incremental_min">Bis zu %1$d bpm</string>
   <string name="options_timer">Dauer des Stücks</string>
-  <string name="options_timer_description">Nach %1$s beenden</string>
   <string name="options_mute">Stumm geschaltete Takte</string>
-  <string name="options_mute_play">%1$s wiedergeben</string>
-  <string name="options_mute_mute">%1$s stumm schalten</string>
-  <string name="options_mute_random">Bis zu %1$d zufällig stummschalten</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Unterteilungen auf ausgewählten Swing-Anteil gesetzt</string>
   <string name="options_swing_3">Triole</string>
