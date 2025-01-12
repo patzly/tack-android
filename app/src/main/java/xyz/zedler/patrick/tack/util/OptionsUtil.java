@@ -127,12 +127,11 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
             R.plurals.options_unit_bars, (int) value, (int) value
         )
     );
-    String barsQuantity = activity.getResources().getQuantityString(
-        R.plurals.options_unit_bars, countIn, countIn
-    );
     if (getMetronomeUtil().isCountInActive()) {
       binding.textOptionsCountIn.setText(
-          activity.getString(R.string.options_count_in_description, barsQuantity)
+          activity.getResources().getQuantityString(
+              R.plurals.options_count_in_description, countIn, countIn
+          )
       );
     } else {
       binding.textOptionsCountIn.setText(activity.getString(R.string.options_inactive));
@@ -181,26 +180,25 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
 
     int incrementalInterval = getMetronomeUtil().getIncrementalInterval();
     String incrementalUnit = getMetronomeUtil().getIncrementalUnit();
-    int unitResId, checkedId;
+    int intervalResId, checkedId;
     switch (incrementalUnit) {
       case UNIT.SECONDS:
-        unitResId = R.plurals.options_unit_seconds;
+        intervalResId = R.plurals.options_incremental_interval_seconds;
         checkedId = R.id.button_options_incremental_unit_seconds;
         break;
       case UNIT.MINUTES:
-        unitResId = R.plurals.options_unit_minutes;
+        intervalResId = R.plurals.options_incremental_interval_minutes;
         checkedId = R.id.button_options_incremental_unit_minutes;
         break;
       default:
-        unitResId = R.plurals.options_unit_bars;
+        intervalResId = R.plurals.options_incremental_interval_bars;
         checkedId = R.id.button_options_incremental_unit_bars;
         break;
     }
-    String unitQuantity = activity.getResources().getQuantityString(
-        unitResId, incrementalInterval, incrementalInterval
-    );
     binding.textOptionsIncrementalInterval.setText(
-        activity.getString(R.string.options_incremental_interval, unitQuantity)
+        activity.getResources().getQuantityString(
+            intervalResId, incrementalInterval, incrementalInterval
+        )
     );
     binding.textOptionsIncrementalInterval.setAlpha(isIncrementalActive ? 1 : 0.5f);
 
@@ -239,27 +237,24 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       onModifiersCountChanged.run();
     }
     String timerUnit = getMetronomeUtil().getTimerUnit();
-    int unitResId, checkedId;
+    int durationResId, checkedId;
     switch (timerUnit) {
       case UNIT.SECONDS:
-        unitResId = R.plurals.options_unit_seconds;
+        durationResId = R.plurals.options_timer_description_seconds;
         checkedId = R.id.button_options_timer_unit_seconds;
         break;
       case UNIT.MINUTES:
-        unitResId = R.plurals.options_unit_minutes;
+        durationResId = R.plurals.options_timer_description_minutes;
         checkedId = R.id.button_options_timer_unit_minutes;
         break;
       default:
-        unitResId = R.plurals.options_unit_bars;
+        durationResId = R.plurals.options_timer_description_bars;
         checkedId = R.id.button_options_timer_unit_bars;
         break;
     }
-    String unitQuantity = activity.getResources().getQuantityString(
-        unitResId, timerDuration, timerDuration
-    );
     if (isTimerActive) {
       binding.textOptionsTimerDuration.setText(
-          activity.getString(R.string.options_timer_description, unitQuantity)
+          activity.getResources().getQuantityString(durationResId, timerDuration, timerDuration)
       );
     } else {
       binding.textOptionsTimerDuration.setText(activity.getString(R.string.options_inactive));

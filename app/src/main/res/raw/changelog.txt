@@ -1,6 +1,7 @@
 ## 4.5.1
 
 - Fixed: wrong default value for permanent notification setting
+- Fixed: incorrect grammar in some translations with quantities
 - Fixed: vibration not working on some devices (Wear OS)
 
 ## 4.5.0
