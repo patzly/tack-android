@@ -148,6 +148,9 @@
   <plurals name="options_timer_description_minutes">
     <item quantity="other">%1$d 分鐘後停止</item>
   </plurals>
+  <plurals name="options_mute_play_bars">
+    <item quantity="other">播放 %1$d 小節</item>
+  </plurals>
   <plurals name="options_mute_play_seconds">
     <item quantity="other">播放 %1$d 秒</item>
   </plurals>
