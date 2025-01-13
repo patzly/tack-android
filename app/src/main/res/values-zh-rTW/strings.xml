@@ -148,6 +148,7 @@
   <plurals name="options_mute_mute_seconds">
     <item quantity="other">靜音 %1$d 秒</item>
   </plurals>
+  <string name="options_mute_random">隨機化較小的值</string>
   <string name="options_swing">搖擺</string>
   <string name="options_swing_description">將分割槽設定為與所選搖擺百分比相匹配</string>
   <string name="options_swing_3">三連音</string>
