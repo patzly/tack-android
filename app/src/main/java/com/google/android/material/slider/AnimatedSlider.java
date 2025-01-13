@@ -25,7 +25,6 @@ import static com.google.android.material.slider.LabelFormatter.LABEL_FLOATING;
 import static com.google.android.material.slider.LabelFormatter.LABEL_GONE;
 import static com.google.android.material.slider.LabelFormatter.LABEL_VISIBLE;
 import static com.google.android.material.slider.LabelFormatter.LABEL_WITHIN_BOUNDS;
-import static com.google.android.material.theme.overlay.MaterialThemeOverlay.wrap;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

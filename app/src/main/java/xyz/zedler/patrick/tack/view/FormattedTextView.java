@@ -38,7 +38,6 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.divider.MaterialDivider;
 import com.google.android.material.textview.MaterialTextView;
 import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 
