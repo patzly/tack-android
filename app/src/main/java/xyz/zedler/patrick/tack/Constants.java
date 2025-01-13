@@ -72,6 +72,7 @@ public final class Constants {
     public final static String INCREMENTAL_INCREASE = "incremental_increase";
     public final static String INCREMENTAL_INTERVAL = "incremental_interval";
     public final static String INCREMENTAL_UNIT = "incremental_unit";
+    public final static String INCREMENTAL_LIMIT = "incremental_limit";
     public final static String TIMER_DURATION = "timer_duration";
     public final static String TIMER_UNIT = "timer_unit";
   }

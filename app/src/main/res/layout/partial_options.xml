@@ -50,7 +50,6 @@
     style="@style/Widget.Tack.Slider"
     android:layout_marginStart="2dp"
     android:layout_marginEnd="2dp"
-    android:layout_marginBottom="4dp"
     android:valueFrom="0"
     android:valueTo="4"
     android:stepSize="1"
@@ -60,6 +59,7 @@
     style="@style/Widget.Tack.TextView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:text="@string/options_incremental" />
@@ -150,7 +150,6 @@
       android:layout_height="wrap_content"
       android:layout_marginStart="16dp"
       android:layout_marginEnd="16dp"
-      android:layout_marginBottom="12dp"
       android:scrollbars="none"
       android:overScrollMode="ifContentScrolls"
       android:requiresFadingEdge="horizontal">
@@ -181,6 +180,52 @@
 
     </HorizontalScrollView>
 
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:paddingStart="0dp"
+      android:paddingEnd="12dp"
+      android:gravity="center_vertical">
+
+      <TextView
+        android:id="@+id/text_options_incremental_limit"
+        style="@style/Widget.Tack.TextView.BodyMedium"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:text="@string/options_incremental_max" />
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_options_incremental_limit_decrease"
+        style="@style/Widget.Tack.Button.IconButton"
+        android:contentDescription="@string/action_decrease"
+        app:icon="@drawable/ic_rounded_first_page" />
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_options_incremental_limit_increase"
+        style="@style/Widget.Tack.Button.IconButton"
+        android:contentDescription="@string/action_increase"
+        app:icon="@drawable/ic_rounded_last_page" />
+
+    </LinearLayout>
+
+    <com.google.android.material.slider.CustomSlider
+      android:id="@+id/slider_options_incremental_limit"
+      style="@style/Widget.Tack.Slider"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="2dp"
+      android:layout_marginEnd="2dp"
+      android:valueFrom="1"
+      android:valueTo="50"
+      android:stepSize="1"
+      android:value="1"
+      app:labelBehavior="gone" />
+
   </LinearLayout>
 
   <LinearLayout
@@ -189,7 +234,7 @@
     android:orientation="horizontal"
     android:paddingStart="0dp"
     android:paddingEnd="12dp"
-    android:layout_marginTop="4dp"
+    android:layout_marginTop="8dp"
     android:gravity="center_vertical">
 
     <LinearLayout
@@ -256,7 +301,6 @@
       android:layout_height="wrap_content"
       android:layout_marginStart="16dp"
       android:layout_marginEnd="16dp"
-      android:layout_marginBottom="16dp"
       android:scrollbars="none"
       android:overScrollMode="ifContentScrolls"
       android:requiresFadingEdge="horizontal"
@@ -419,6 +463,7 @@
     style="@style/Widget.Tack.TextView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:text="@string/options_swing" />

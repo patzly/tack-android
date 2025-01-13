@@ -62,7 +62,8 @@ public class MetronomeUtil {
   private String incrementalUnit, timerUnit;
   private String[] beats, subdivisions;
   private ValueAnimator timerAnimator;
-  private int tempo, countIn, incrementalAmount, incrementalInterval, timerDuration;
+  private int tempo, countIn, timerDuration;
+  private int incrementalAmount, incrementalInterval, incrementalLimit;
   private long tickIndex, latency, elapsedStartTime, elapsedTime, elapsedPrevious, timerStartTime;
   private float timerProgress;
   private boolean playing, tempPlaying, useSubdivisions, beatModeVibrate, isCountingIn;
@@ -97,6 +98,7 @@ public class MetronomeUtil {
     );
     incrementalInterval = sharedPrefs.getInt(PREF.INCREMENTAL_INTERVAL, DEF.INCREMENTAL_INTERVAL);
     incrementalUnit = sharedPrefs.getString(PREF.INCREMENTAL_UNIT, DEF.INCREMENTAL_UNIT);
+    incrementalLimit = sharedPrefs.getInt(PREF.INCREMENTAL_LIMIT, 0);
     timerDuration = sharedPrefs.getInt(PREF.TIMER_DURATION, DEF.TIMER_DURATION);
     timerUnit = sharedPrefs.getString(PREF.TIMER_UNIT, DEF.TIMER_UNIT);
     alwaysVibrate = sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
@@ -621,6 +623,15 @@ public class MetronomeUtil {
     return incrementalUnit;
   }
 
+  public void setIncrementalLimit(int limit) {
+    incrementalLimit = limit;
+    sharedPrefs.edit().putInt(PREF.INCREMENTAL_LIMIT, limit).apply();
+  }
+
+  public int getIncrementalLimit() {
+    return incrementalLimit;
+  }
+
   private void updateIncrementalHandler() {
     if (!fromService || !isPlaying()) {
       return;
@@ -633,7 +644,11 @@ public class MetronomeUtil {
         @Override
         public void run() {
           incrementalHandler.postDelayed(this, interval);
-          changeTempo(incrementalAmount * (incrementalIncrease ? 1 : -1));
+          if (incrementalIncrease && tempo + incrementalAmount <= incrementalLimit) {
+            changeTempo(incrementalAmount);
+          } else if (!incrementalIncrease && tempo - incrementalAmount >= incrementalLimit) {
+            changeTempo(-incrementalAmount);
+          }
         }
       }, interval);
     }
@@ -937,7 +952,11 @@ public class MetronomeUtil {
       if (isIncrementalActive() && incrementalUnit.equals(UNIT.BARS) && !isCountIn) {
         barIndex = barIndex - getCountIn();
         if (barIndex >= incrementalInterval && barIndex % incrementalInterval == 0) {
-          changeTempo(incrementalAmount * (incrementalIncrease ? 1 : -1));
+          if (incrementalIncrease && tempo + incrementalAmount <= incrementalLimit) {
+            changeTempo(incrementalAmount);
+          } else if (!incrementalIncrease && tempo - incrementalAmount >= incrementalLimit) {
+            changeTempo(-incrementalAmount);
+          }
         }
       }
     }
