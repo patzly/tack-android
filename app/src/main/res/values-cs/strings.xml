@@ -141,7 +141,6 @@
   <string name="options_incremental_amount_decrease">Snížit tempo o %1$d dob/min</string>
   <string name="options_incremental_max">Až na %1$d dob/min</string>
   <string name="options_incremental_min">Až na %1$d dob/min</string>
-  <string name="options_timer">Trvání skladby</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Subdivize nastavené pro shodu s vybraným procentem swingu</string>
   <string name="options_swing_3">Trioly</string>
