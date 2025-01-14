@@ -129,7 +129,6 @@
   <string name="options_incremental_amount_decrease">Menurunkan tempo sebanyak %1$d bpm</string>
   <string name="options_incremental_max">Naik hingga %1$d bpm</string>
   <string name="options_incremental_min">Turun hingga %1$d bpm</string>
-  <string name="options_timer">Durasi nada</string>
   <string name="options_swing">Ayunan</string>
   <string name="options_swing_description">Subdivisi diatur untuk mencocokkan persentase ayunan yang dipilih</string>
   <string name="options_swing_3">Triplet</string>
