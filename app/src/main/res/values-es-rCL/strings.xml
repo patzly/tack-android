@@ -137,7 +137,6 @@
   <string name="options_incremental_amount_decrease">Disminuir tempo %1$d bpm</string>
   <string name="options_incremental_max">Hasta %1$d bpm</string>
   <string name="options_incremental_min">Hasta %1$d bpm</string>
-  <string name="options_timer">Duración de la canción</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Subdivisiones puestas para coincidir con el porcentaje de swing elegido</string>
   <string name="options_swing_3">Tresillo</string>
