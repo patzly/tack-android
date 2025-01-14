@@ -75,6 +75,10 @@ public final class Constants {
     public final static String INCREMENTAL_LIMIT = "incremental_limit";
     public final static String TIMER_DURATION = "timer_duration";
     public final static String TIMER_UNIT = "timer_unit";
+    public final static String MUTE_PLAY = "mute_play";
+    public final static String MUTE_MUTE = "mute_mute";
+    public final static String MUTE_UNIT = "mute_unit";
+    public final static String MUTE_RANDOM = "mute_random";
   }
 
   public final static class DEF {
@@ -114,8 +118,13 @@ public final class Constants {
     public final static boolean INCREMENTAL_INCREASE = true;
     public final static int INCREMENTAL_INTERVAL = 1;
     public final static String INCREMENTAL_UNIT = UNIT.BARS;
+    public final static int INCREMENTAL_LIMIT = 1;
     public final static int TIMER_DURATION = 0;
     public final static String TIMER_UNIT = UNIT.BARS;
+    public final static int MUTE_PLAY = 0;
+    public final static int MUTE_MUTE = 1;
+    public final static String MUTE_UNIT = UNIT.BARS;
+    public final static boolean MUTE_RANDOM = false;
   }
 
   public final static class SOUND {

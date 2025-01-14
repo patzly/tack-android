@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Random;
 import java.util.Set;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
@@ -55,18 +56,20 @@ public class MetronomeUtil {
   private final HapticUtil hapticUtil;
   private final ShortcutUtil shortcutUtil;
   private final Set<MetronomeListener> listeners = new HashSet<>();
+  private final Random random = new Random();
   private final boolean fromService;
   private HandlerThread audioThread, callbackThread;
   private Handler tickHandler, latencyHandler;
-  private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler;
-  private String incrementalUnit, timerUnit;
+  private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
+  private String incrementalUnit, timerUnit, muteUnit;
   private String[] beats, subdivisions;
   private ValueAnimator timerAnimator;
-  private int tempo, countIn, timerDuration;
+  private int tempo, countIn, timerDuration, mutePlay, muteMute, muteCountDown;
   private int incrementalAmount, incrementalInterval, incrementalLimit;
   private long tickIndex, latency, elapsedStartTime, elapsedTime, elapsedPrevious, timerStartTime;
   private float timerProgress;
-  private boolean playing, tempPlaying, useSubdivisions, beatModeVibrate, isCountingIn;
+  private boolean playing, tempPlaying, useSubdivisions, beatModeVibrate;
+  private boolean isCountingIn, muteRandom, isMuted;
   private boolean showElapsed, resetElapsed, resetTimer;
   private boolean alwaysVibrate, incrementalIncrease, flashScreen, keepAwake;
   private boolean neverStartedWithGain = true;
@@ -98,9 +101,13 @@ public class MetronomeUtil {
     );
     incrementalInterval = sharedPrefs.getInt(PREF.INCREMENTAL_INTERVAL, DEF.INCREMENTAL_INTERVAL);
     incrementalUnit = sharedPrefs.getString(PREF.INCREMENTAL_UNIT, DEF.INCREMENTAL_UNIT);
-    incrementalLimit = sharedPrefs.getInt(PREF.INCREMENTAL_LIMIT, 0);
+    incrementalLimit = sharedPrefs.getInt(PREF.INCREMENTAL_LIMIT, DEF.INCREMENTAL_LIMIT);
     timerDuration = sharedPrefs.getInt(PREF.TIMER_DURATION, DEF.TIMER_DURATION);
     timerUnit = sharedPrefs.getString(PREF.TIMER_UNIT, DEF.TIMER_UNIT);
+    mutePlay = sharedPrefs.getInt(PREF.MUTE_PLAY, DEF.MUTE_PLAY);
+    muteMute = sharedPrefs.getInt(PREF.MUTE_MUTE, DEF.MUTE_MUTE);
+    muteUnit = sharedPrefs.getString(PREF.MUTE_UNIT, DEF.MUTE_UNIT);
+    muteRandom = sharedPrefs.getBoolean(PREF.MUTE_RANDOM, DEF.MUTE_RANDOM);
     alwaysVibrate = sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
     showElapsed = sharedPrefs.getBoolean(PREF.SHOW_ELAPSED, DEF.SHOW_ELAPSED);
     resetElapsed = sharedPrefs.getBoolean(PREF.RESET_ELAPSED, DEF.RESET_ELAPSED);
@@ -133,6 +140,7 @@ public class MetronomeUtil {
       incrementalHandler = new Handler(callbackThread.getLooper());
       elapsedHandler = new Handler(callbackThread.getLooper());
       timerHandler = new Handler(callbackThread.getLooper());
+      muteHandler = new Handler(callbackThread.getLooper());
     }
   }
 
@@ -146,6 +154,7 @@ public class MetronomeUtil {
       incrementalHandler.removeCallbacksAndMessages(null);
       elapsedHandler.removeCallbacksAndMessages(null);
       timerHandler.removeCallbacksAndMessages(null);
+      muteHandler.removeCallbacksAndMessages(null);
     }
   }
 
@@ -169,6 +178,7 @@ public class MetronomeUtil {
     countIn = 0;
     incrementalAmount = 0;
     timerDuration = 0;
+    mutePlay = 0;
     setGain(0);
     setBeatModeVibrate(false);
     start(false);
@@ -229,15 +239,17 @@ public class MetronomeUtil {
     playing = true;
     audioUtil.play();
     tickIndex = 0;
+    isMuted = false;
+    if (isMuteActive()) {
+      // updateMuteHandler would be too late
+      muteCountDown = calculateMuteCount(false);
+    }
     tickHandler.post(new Runnable() {
       @Override
       public void run() {
         if (isPlaying()) {
           tickHandler.postDelayed(this, getInterval() / getSubdivisionsCount());
-          Tick tick = new Tick(
-              tickIndex, getCurrentBeat(), getCurrentSubdivision(), getCurrentTickType()
-          );
-          performTick(tick);
+          Tick tick = performTick();
           audioUtil.tick(tick, tempo, getSubdivisionsCount());
           tickIndex++;
         }
@@ -255,7 +267,8 @@ public class MetronomeUtil {
           resetTimer && resetElapsedAndTimerIfNecessary ? 0 : timerProgress,
           true
       );
-    }, getCountInInterval()); // 0 if count-in is disabled
+      updateMuteHandler();
+    }, getCountInInterval()); // already 0 if count-in is disabled
 
     if (getGain() > 0) {
       neverStartedWithGain = false;
@@ -917,14 +930,120 @@ public class MetronomeUtil {
     }
   }
 
-  private void performTick(Tick tick) {
+  public void setMutePlay(int play) {
+    this.mutePlay = play;
+    sharedPrefs.edit().putInt(PREF.MUTE_PLAY, play).apply();
+    updateMuteHandler();
+  }
+
+  public int getMutePlay() {
+    return mutePlay;
+  }
+
+  public boolean isMuteActive() {
+    return mutePlay > 0;
+  }
+
+  public void setMuteMute(int mute) {
+    this.muteMute = mute;
+    sharedPrefs.edit().putInt(PREF.MUTE_MUTE, mute).apply();
+    updateMuteHandler();
+  }
+
+  public int getMuteMute() {
+    return muteMute;
+  }
+
+  public void setMuteUnit(String unit) {
+    if (unit.equals(muteUnit)) {
+      return;
+    }
+    muteUnit = unit;
+    sharedPrefs.edit().putString(PREF.MUTE_UNIT, unit).apply();
+    updateMuteHandler();
+  }
+
+  public String getMuteUnit() {
+    return muteUnit;
+  }
+
+  public void setMuteRandom(boolean random) {
+    this.muteRandom = random;
+    sharedPrefs.edit().putBoolean(PREF.MUTE_RANDOM, random).apply();
+    updateMuteHandler();
+  }
+
+  public boolean isMuteRandom() {
+    return muteRandom;
+  }
+
+  private void updateMuteHandler() {
+    if (!fromService || !isPlaying()) {
+      return;
+    }
+    muteHandler.removeCallbacksAndMessages(null);
+    isMuted = false;
+    if (!muteUnit.equals(UNIT.BARS) && isMuteActive()) {
+      muteHandler.postDelayed(new Runnable() {
+        @Override
+        public void run() {
+          isMuted = !isMuted;
+          muteHandler.postDelayed(this, calculateMuteCount(isMuted) * 1000L);
+        }
+      }, calculateMuteCount(isMuted) * 1000L);
+    }
+  }
+
+  private int calculateMuteCount(boolean mute) {
+    int count = mute ? muteMute : mutePlay;
+    if (muteRandom) {
+      return random.nextInt(count + 1);
+    } else {
+      return count;
+    }
+  }
+
+  private Tick performTick() {
+    int beat = getCurrentBeat();
+    int subdivision = getCurrentSubdivision();
+    String tickType = getCurrentTickType();
+
+    boolean isBeat = subdivision == 1;
+    boolean isFirstBeat = ((tickIndex / getSubdivisionsCount()) % getBeatsCount()) == 0;
+    if (isBeat && isFirstBeat) {
+      long beatIndex = tickIndex / getSubdivisionsCount();
+      long barIndex = beatIndex / getBeatsCount();
+      boolean isCountIn = barIndex < getCountIn();
+      if (isIncrementalActive() && incrementalUnit.equals(UNIT.BARS) && !isCountIn) {
+        barIndex = barIndex - getCountIn();
+        if (barIndex >= incrementalInterval && barIndex % incrementalInterval == 0) {
+          if (incrementalIncrease && tempo + incrementalAmount <= incrementalLimit) {
+            changeTempo(incrementalAmount);
+          } else if (!incrementalIncrease && tempo - incrementalAmount >= incrementalLimit) {
+            changeTempo(-incrementalAmount);
+          }
+        }
+      }
+      if (isMuteActive() && muteUnit.equals(UNIT.BARS) && !isCountIn) {
+        if (muteCountDown > 0) {
+          muteCountDown--;
+        } else {
+          isMuted = !isMuted;
+          // Minus 1 because it's already the next bar
+          muteCountDown = Math.max(calculateMuteCount(isMuted) - 1, 0);
+        }
+      }
+    }
+
+    Tick tick = new Tick(tickIndex, beat, subdivision, tickType, isMuted);
+
     latencyHandler.postDelayed(() -> {
       for (MetronomeListener listener : listeners) {
         listener.onMetronomePreTick(tick);
       }
     }, Math.max(0, latency - Constants.BEAT_ANIM_OFFSET));
     latencyHandler.postDelayed(() -> {
-      if (beatModeVibrate || alwaysVibrate) {
+      if ((beatModeVibrate || alwaysVibrate) && !isMuted) {
         switch (tick.type) {
           case TICK_TYPE.STRONG:
             hapticUtil.heavyClick();
@@ -943,23 +1062,7 @@ public class MetronomeUtil {
       }
     }, latency);
 
-    boolean isBeat = tick.subdivision == 1;
-    boolean isFirstBeat = ((tick.index / getSubdivisionsCount()) % getBeatsCount()) == 0;
-    if (isBeat && isFirstBeat) {
-      long beatIndex = tick.index / getSubdivisionsCount();
-      long barIndex = beatIndex / getBeatsCount();
-      boolean isCountIn = barIndex < getCountIn();
-      if (isIncrementalActive() && incrementalUnit.equals(UNIT.BARS) && !isCountIn) {
-        barIndex = barIndex - getCountIn();
-        if (barIndex >= incrementalInterval && barIndex % incrementalInterval == 0) {
-          if (incrementalIncrease && tempo + incrementalAmount <= incrementalLimit) {
-            changeTempo(incrementalAmount);
-          } else if (!incrementalIncrease && tempo - incrementalAmount >= incrementalLimit) {
-            changeTempo(-incrementalAmount);
-          }
-        }
-      }
-    }
+    return tick;
   }
 
   private int getCurrentBeat() {
@@ -1010,12 +1113,14 @@ public class MetronomeUtil {
     public final int beat, subdivision;
     @NonNull
     public final String type;
+    public final boolean isMuted;
 
-    public Tick(long index, int beat, int subdivision, @NonNull String type) {
+    public Tick(long index, int beat, int subdivision, @NonNull String type, boolean isMuted) {
       this.index = index;
       this.beat = beat;
       this.subdivision = subdivision;
       this.type = type;
+      this.isMuted = isMuted;
     }
 
     @NonNull
@@ -1024,7 +1129,8 @@ public class MetronomeUtil {
       return "Tick{index = " + index +
           ", beat=" + beat +
           ", sub=" + subdivision +
-          ", type=" + type + '}';
+          ", type=" + type +
+          ", sMuted=" + isMuted + '}';
     }
   }
 }

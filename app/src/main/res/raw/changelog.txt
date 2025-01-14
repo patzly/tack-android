@@ -1,5 +1,6 @@
-## 4.5.1
+## 4.6.0
 
+- New: option for muted bars
 - New: adjustable tempo limit for incremental tempo change
 - Fixed: wrong default value for permanent notification setting
 - Fixed: incorrect grammar in some translations with quantities

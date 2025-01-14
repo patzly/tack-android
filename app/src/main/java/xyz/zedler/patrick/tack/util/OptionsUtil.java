@@ -49,7 +49,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   private final PartialOptionsBinding binding;
   private final boolean useDialog;
   private final Runnable onModifiersCountChanged;
-  private boolean isIncrementalActive, isTimerActive;
+  private boolean isIncrementalActive, isTimerActive, isMuteActive;
   private DialogUtil dialogUtil;
   private PartialDialogOptionsBinding bindingDialog;
 
@@ -69,11 +69,14 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
 
     isIncrementalActive = getMetronomeUtil().isIncrementalActive();
     isTimerActive = getMetronomeUtil().isTimerActive();
+    isMuteActive = getMetronomeUtil().isMuteActive();
 
     if (binding != null) {
       binding.sliderOptionsIncrementalAmount.addOnSliderTouchListener(this);
       binding.sliderOptionsIncrementalInterval.addOnSliderTouchListener(this);
       binding.sliderOptionsTimerDuration.addOnSliderTouchListener(this);
+      binding.sliderOptionsMutePlay.addOnSliderTouchListener(this);
+      binding.sliderOptionsMuteMute.addOnSliderTouchListener(this);
     }
 
     if (useDialog) {
@@ -114,6 +117,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     updateCountIn();
     updateIncremental();
     updateTimer();
+    updateMute();
     updateSwing();
   }
 
@@ -229,13 +233,14 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding.toggleOptionsIncrementalUnit.setEnabled(isIncrementalActive);
 
     int incrementalLimit = getMetronomeUtil().getIncrementalLimit();
+    /* When slider should be automatically adjusted to tempo
     int tempo = getMetronomeUtil().getTempo();
     if ((incrementalIncrease && incrementalLimit < tempo)
         || (!incrementalIncrease && incrementalLimit > tempo)
     ) {
-      getMetronomeUtil().setIncrementalLimit(tempo);
-      incrementalLimit = tempo;
-    }
+      //getMetronomeUtil().setIncrementalLimit(tempo);
+      //incrementalLimit = tempo;
+    } */
     binding.textOptionsIncrementalLimit.setText(
         activity.getResources().getString(
             incrementalIncrease
@@ -244,6 +249,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
             incrementalLimit
         )
     );
+    binding.textOptionsIncrementalLimit.setAlpha(isIncrementalActive ? 1 : 0.5f);
 
     int valueFrom = (int) binding.sliderOptionsIncrementalLimit.getValueFrom();
     int valueTo = (int) binding.sliderOptionsIncrementalLimit.getValueTo();
@@ -255,8 +261,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     int valueToNew = valueFromNew + range;
 
     binding.buttonOptionsIncrementalLimitDecrease.setEnabled(
-        (incrementalIncrease && incrementalLimit - 1 >= tempo)
-            || (!incrementalIncrease && incrementalLimit - range - 1 >= 1)
+        isIncrementalActive && incrementalLimit - range - 1 >= 1
     );
     binding.buttonOptionsIncrementalLimitDecrease.setOnClickListener(this);
     ViewCompat.setTooltipText(
@@ -265,8 +270,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     );
 
     binding.buttonOptionsIncrementalLimitIncrease.setEnabled(
-        (!incrementalIncrease && incrementalLimit + 1 <= tempo)
-            || (incrementalIncrease && incrementalLimit + range + 1 <= Constants.TEMPO_MAX)
+        isIncrementalActive && incrementalLimit + range + 1 <= Constants.TEMPO_MAX
     );
     binding.buttonOptionsIncrementalLimitIncrease.setOnClickListener(this);
     ViewCompat.setTooltipText(
@@ -282,6 +286,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding.sliderOptionsIncrementalLimit.setLabelFormatter(
         value -> activity.getString(R.string.label_bpm_value, (int) value)
     );
+    binding.sliderOptionsIncrementalLimit.setEnabled(isIncrementalActive);
   }
 
   private void updateTimer() {
@@ -361,12 +366,89 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     });
 
     boolean visibleControls = isTimerActive || !useDialog;
-    binding.linearMainTimerContainer.setVisibility(visibleControls ? View.VISIBLE : View.GONE);
+    binding.linearOptionsTimerContainer.setVisibility(visibleControls ? View.VISIBLE : View.GONE);
 
     binding.toggleOptionsTimerUnit.removeOnButtonCheckedListener(this);
     binding.toggleOptionsTimerUnit.check(checkedId);
     binding.toggleOptionsTimerUnit.addOnButtonCheckedListener(this);
     binding.toggleOptionsTimerUnit.setEnabled(isTimerActive);
+  }
+
+  public void updateMute() {
+    int mutePlay = getMetronomeUtil().getMutePlay();
+    int muteMute = getMetronomeUtil().getMuteMute();
+    String muteUnit = getMetronomeUtil().getMuteUnit();
+    boolean muteRandom = getMetronomeUtil().isMuteRandom();
+    boolean isMuteActive = getMetronomeUtil().isMuteActive();
+    if (this.isMuteActive != isMuteActive) {
+      this.isMuteActive = isMuteActive;
+      onModifiersCountChanged.run();
+    }
+    int resIdPlay, resIdMute, resIdLabel, checkedId;
+    if (muteUnit.equals(UNIT.SECONDS)) {
+      resIdPlay = R.plurals.options_mute_play_seconds;
+      resIdMute = R.plurals.options_mute_mute_seconds;
+      resIdLabel = R.plurals.options_unit_seconds;
+      checkedId = R.id.button_options_mute_unit_seconds;
+    } else {
+      resIdPlay = R.plurals.options_mute_play_bars;
+      resIdMute = R.plurals.options_mute_mute_bars;
+      resIdLabel = R.plurals.options_unit_bars;
+      checkedId = R.id.button_options_mute_unit_bars;
+    }
+    if (isMuteActive) {
+      binding.textOptionsMutePlay.setText(
+          activity.getResources().getQuantityString(resIdPlay, mutePlay, mutePlay)
+      );
+    } else {
+      binding.textOptionsMutePlay.setText(activity.getString(R.string.options_inactive));
+    }
+
+    binding.sliderOptionsMutePlay.removeOnChangeListener(this);
+    binding.sliderOptionsMutePlay.setValue(mutePlay);
+    binding.sliderOptionsMutePlay.addOnChangeListener(this);
+    binding.sliderOptionsMutePlay.setLabelFormatter(value -> {
+      int play = (int) value;
+      return activity.getResources().getQuantityString(resIdLabel, play, play);
+    });
+
+    binding.textOptionsMuteMute.setText(
+        activity.getResources().getQuantityString(resIdMute, muteMute, muteMute)
+    );
+    binding.textOptionsMuteMute.setAlpha(isMuteActive ? 1 : 0.5f);
+
+    binding.sliderOptionsMuteMute.removeOnChangeListener(this);
+    binding.sliderOptionsMuteMute.setValue(muteMute);
+    binding.sliderOptionsMuteMute.addOnChangeListener(this);
+    binding.sliderOptionsMuteMute.setLabelFormatter(value -> {
+      int mute = (int) value;
+      return activity.getResources().getQuantityString(resIdLabel, mute, mute);
+    });
+    binding.sliderOptionsMuteMute.setEnabled(isMuteActive);
+
+    binding.toggleOptionsMuteUnit.removeOnButtonCheckedListener(this);
+    binding.toggleOptionsMuteUnit.check(checkedId);
+    binding.toggleOptionsMuteUnit.addOnButtonCheckedListener(this);
+    binding.toggleOptionsMuteUnit.setEnabled(isMuteActive);
+
+    binding.linearOptionsMuteRandom.setOnClickListener(this);
+    binding.linearOptionsMuteRandom.setEnabled(isMuteActive);
+    binding.linearOptionsMuteRandom.setBackgroundResource(
+        useDialog
+            ? R.drawable.ripple_list_item_surface_container_high
+            : R.drawable.ripple_list_item_bg
+    );
+    binding.textOptionsMuteRandom.setAlpha(isMuteActive ? 1 : 0.5f);
+    binding.checkboxOptionsMuteRandom.setOnCheckedChangeListener(null);
+    binding.checkboxOptionsMuteRandom.setChecked(muteRandom);
+    binding.checkboxOptionsMuteRandom.setOnCheckedChangeListener((buttonView, isChecked) -> {
+      getMetronomeUtil().setMuteRandom(isChecked);
+      updateMute();
+    });
+    binding.checkboxOptionsMuteRandom.setEnabled(isMuteActive);
+
+    boolean visibleControls = isMuteActive || !useDialog;
+    binding.linearOptionsMuteContainer.setVisibility(visibleControls ? View.VISIBLE : View.GONE);
   }
 
   public void updateSwing() {
@@ -422,6 +504,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       updateTimer();
       fragment.updateTimerControls();
       ViewUtil.startIcon(binding.buttonOptionsTimerIncrease.getIcon());
+    } else if (id == R.id.linear_options_mute_random) {
+      binding.checkboxOptionsMuteRandom.toggle();
     }
   }
 
@@ -456,6 +540,13 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       }
       updateTimer();
       fragment.updateTimerDisplay();
+    } else if (groupId == R.id.toggle_options_mute_unit) {
+      if (checkedId == R.id.button_options_mute_unit_seconds) {
+        getMetronomeUtil().setMuteUnit(UNIT.SECONDS);
+      } else if (checkedId == R.id.button_options_mute_unit_bars) {
+        getMetronomeUtil().setMuteUnit(UNIT.BARS);
+      }
+      updateMute();
     } else if (groupId == R.id.toggle_options_swing) {
       getMetronomeUtil().setSubdivisionsUsed(true);
       if (checkedId == R.id.button_options_swing_3) {
@@ -498,6 +589,14 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       getMetronomeUtil().setTimerDuration((int) value);
       updateTimer();
       fragment.updateTimerControls();
+    } else if (id == R.id.slider_options_mute_play) {
+      activity.performHapticSegmentTick(slider, true);
+      getMetronomeUtil().setMutePlay((int) value);
+      updateMute();
+    } else if (id == R.id.slider_options_mute_mute) {
+      activity.performHapticSegmentTick(slider, true);
+      getMetronomeUtil().setMuteMute((int) value);
+      updateMute();
     }
   }
 

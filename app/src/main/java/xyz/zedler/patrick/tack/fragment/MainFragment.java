@@ -190,9 +190,7 @@ public class MainFragment extends BaseFragment
 
     colorFlashNormal = ResUtil.getColor(activity, R.attr.colorPrimary);
     colorFlashStrong = ResUtil.getColor(activity, R.attr.colorError);
-    colorFlashMuted = ResUtil.getColor(
-        activity, isLandTablet ? R.attr.colorSurface : R.attr.colorSurface
-    );
+    colorFlashMuted = ResUtil.getColor(activity, R.attr.colorSurface);
 
     beatsCountBadge = BadgeDrawable.create(activity);
     subsCountBadge = BadgeDrawable.create(activity);
@@ -760,6 +758,9 @@ public class MainFragment extends BaseFragment
           default:
             color = colorFlashNormal;
             break;
+        }
+        if (tick.isMuted) {
+          color = colorFlashMuted;
         }
         View flashContainer = isLandTablet && binding.containerMainEnd != null
             ? binding.containerMainEnd
