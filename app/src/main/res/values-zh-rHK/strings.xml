@@ -129,7 +129,6 @@
   <string name="options_incremental_amount_decrease">減速 %1$d bpm</string>
   <string name="options_incremental_max">提高至 %1$d bpm</string>
   <string name="options_incremental_min">降低至 %1$d bpm</string>
-  <string name="options_timer">歌曲時長</string>
   <string name="options_swing">搖擺</string>
   <string name="options_swing_description">將分區設置為與所選搖擺百分比相匹配</string>
   <string name="options_swing_3">三連音</string>
