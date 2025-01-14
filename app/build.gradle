@@ -30,8 +30,8 @@ android {
         applicationId "xyz.zedler.patrick.tack"
         minSdk 21
         targetSdk 35
-        versionCode 240 // last number is 0 for app release
-        versionName "4.5.0"
+        versionCode 250 // last number is 0 for app release
+        versionName "4.6.0"
         resourceConfigurations += ["cs", "de", "en", "es", "es-rCL", "fr", "in", "ko", "tr",
                                    "zh-rCN", "zh-rHK", "zh-rTW"]
         vectorDrawables.generatedDensities = []
