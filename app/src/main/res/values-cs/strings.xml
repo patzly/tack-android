@@ -136,11 +136,80 @@
   </plurals>
   <string name="options_inactive">Neaktivní</string>
   <string name="options_count_in">Počítat do</string>
+  <plurals name="options_count_in_description">
+    <item quantity="one">Počkejte %1$d takt před použitím úprav</item>
+    <item quantity="few">Počkejte %1$d takty před použitím úprav</item>
+    <item quantity="many">Počkejte %1$d taktů před použitím úprav</item>
+    <item quantity="other">Počkejte %1$d taktů před použitím úprav</item>
+  </plurals>
   <string name="options_incremental">Postupná změna tempa</string>
   <string name="options_incremental_amount_increase">Zvýšit tempo o %1$d dob/min</string>
   <string name="options_incremental_amount_decrease">Snížit tempo o %1$d dob/min</string>
+  <plurals name="options_incremental_interval_bars">
+    <item quantity="one">Každý %1$d takt</item>
+    <item quantity="few">Každé %1$d takty</item>
+    <item quantity="many">Každých %1$d taktů</item>
+    <item quantity="other">Každých %1$d taktů</item>
+  </plurals>
+  <plurals name="options_incremental_interval_seconds">
+    <item quantity="one">Každou %1$d sekundu</item>
+    <item quantity="few">Každé %1$d sekundy</item>
+    <item quantity="many">Každých %1$d sekund</item>
+    <item quantity="other">Každých %1$d sekund</item>
+  </plurals>
+  <plurals name="options_incremental_interval_minutes">
+    <item quantity="one">Každou %1$d minutu</item>
+    <item quantity="few">Každé %1$d minuty</item>
+    <item quantity="many">Každých %1$d minut</item>
+    <item quantity="other">Každých %1$d minut</item>
+  </plurals>
   <string name="options_incremental_max">Až na %1$d dob/min</string>
   <string name="options_incremental_min">Až na %1$d dob/min</string>
+  <string name="options_timer">Trvání</string>
+  <plurals name="options_timer_description_bars">
+    <item quantity="one">Zastavit po %1$d taktu</item>
+    <item quantity="few">Zastavit po %1$d taktech</item>
+    <item quantity="many">Zastavit po %1$d taktech</item>
+    <item quantity="other">Zastavit po %1$d taktech</item>
+  </plurals>
+  <plurals name="options_timer_description_seconds">
+    <item quantity="one">Zastavit po %1$d sekundě</item>
+    <item quantity="few">Zastavit po %1$d sekundách</item>
+    <item quantity="many">Zastavit po %1$d sekundách</item>
+    <item quantity="other">Zastavit po %1$d sekundách</item>
+  </plurals>
+  <plurals name="options_timer_description_minutes">
+    <item quantity="one">Zastavit po %1$d minutě</item>
+    <item quantity="few">Zastavit po %1$d minutách</item>
+    <item quantity="many">Zastavit po %1$d minutách</item>
+    <item quantity="other">Zastavit po %1$d minutách</item>
+  </plurals>
+  <string name="options_mute">Ztlumené takty</string>
+  <plurals name="options_mute_play_bars">
+    <item quantity="one">Přehrát %1$d takt</item>
+    <item quantity="few">Přehrát %1$d takty</item>
+    <item quantity="many">Přehrát %1$d taktů</item>
+    <item quantity="other">Přehrát %1$d taktů</item>
+  </plurals>
+  <plurals name="options_mute_play_seconds">
+    <item quantity="one">Přehrát %1$d sekundu</item>
+    <item quantity="few">Přehrát %1$d sekundy</item>
+    <item quantity="many">Přehrát %1$d sekund</item>
+    <item quantity="other">Přehrát %1$d sekund</item>
+  </plurals>
+  <plurals name="options_mute_mute_bars">
+    <item quantity="one">Ztlumit %1$d takt</item>
+    <item quantity="few">Ztlumit %1$d takty</item>
+    <item quantity="many">Ztlumit %1$d taktů</item>
+    <item quantity="other">Ztlumit %1$d taktů</item>
+  </plurals>
+  <plurals name="options_mute_mute_seconds">
+    <item quantity="one">Ztlumit %1$d sekundu</item>
+    <item quantity="few">Ztlumit %1$d sekundy</item>
+    <item quantity="many">Ztlumit %1$d sekund</item>
+    <item quantity="other">Ztlumit %1$d sekund</item>
+  </plurals>
+  <string name="options_mute_random">Náhodný výběr menších hodnot</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Subdivize nastavené pro shodu s vybraným procentem swingu</string>
   <string name="options_swing_3">Trioly</string>
@@ -232,6 +301,9 @@
 
   <string name="settings_keep_awake">Nezhasínat obrazovku</string>
   <string name="settings_keep_awake_description">Když metronom hraje</string>
+
+  <string name="settings_perm_notification">Trvalé oznámení</string>
+  <string name="settings_perm_notification_description">Okamžitý přístup k ovládání přehrání/zastavení</string>
 
   <string name="settings_big_logo">Zobrazit velkou animaci loga</string>
   <string name="settings_big_logo_description">Namísto výběru tempa při přehrávání</string>
