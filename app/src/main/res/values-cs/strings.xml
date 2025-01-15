@@ -290,9 +290,6 @@
   <string name="settings_reset_timer">Resetovat časovač po zastavení</string>
   <string name="settings_reset_timer_description">Namísto pozastavení</string>
 
-  <string name="settings_big_timer">Zobrazit velký posuvník časovače</string>
-  <string name="settings_big_timer_description">Namísto animované lišty</string>
-
   <string name="settings_big_time_text">Použít velký text pro čas</string>
   <string name="settings_big_time_text_description">Užitečné, pokud nestačí výchozí velikost</string>
 

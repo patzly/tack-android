@@ -210,9 +210,6 @@
   <string name="settings_reset_timer">Durdurulduğunda zamanlayıcıyı sıfırla</string>
   <string name="settings_reset_timer_description">Devam etmek yerine</string>
 
-  <string name="settings_big_timer">Büyük zamanlayıcı kaydırıcısını göster</string>
-  <string name="settings_big_timer_description">Animasyonlu arama çubuğu yerine</string>
-
   <string name="settings_big_time_text">Zaman için büyük metin kullan</string>
   <string name="settings_big_time_text_description">Varsayılan boyut yeterli değilse faydalıdır</string>
 

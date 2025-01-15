@@ -206,9 +206,6 @@
   <string name="settings_reset_timer">Setel ulang pengatur waktu saat dihentikan</string>
   <string name="settings_reset_timer_description">Daripada melanjutkan</string>
 
-  <string name="settings_big_timer">Tampilkan panel geser penunjuk waktu yang lebih besar</string>
-  <string name="settings_big_timer_description">Alih-alih bilah geser beranimasi</string>
-
   <string name="settings_big_time_text">Gunakan teks besar untuk waktu</string>
   <string name="settings_big_time_text_description">Berguna jika ukuran bawaan kurang</string>
 
