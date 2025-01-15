@@ -155,7 +155,7 @@
     <item quantity="one">Každou %1$d sekundu</item>
     <item quantity="few">Každé %1$d sekundy</item>
     <item quantity="many">Každých %1$d sekund</item>
-    <item quantity="other">Každých %1$d vteřin</item>
+    <item quantity="other">Každých %1$d sekund</item>
   </plurals>
   <string name="options_incremental_max">Až na %1$d dob/min</string>
   <string name="options_incremental_min">Až na %1$d dob/min</string>
