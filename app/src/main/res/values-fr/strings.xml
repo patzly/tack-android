@@ -214,9 +214,6 @@
   <string name="settings_reset_timer">RAZ chronomètre quand arrêté</string>
   <string name="settings_reset_timer_description">Plutôt que reprendre</string>
 
-  <string name="settings_big_timer">Afficher le grand curseur glissant de minuterie</string>
-  <string name="settings_big_timer_description">Plutôt qu\'une barre de recherche animée</string>
-
   <string name="settings_big_time_text">Grosse police pour le temps</string>
   <string name="settings_big_time_text_description">Utile si la taille par défaut n\'est pas suffisante</string>
 
