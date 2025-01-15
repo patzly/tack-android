@@ -275,15 +275,6 @@
 
           </LinearLayout>
 
-          <SeekBar
-            android:id="@+id/seekbar_main_timer"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/seekbar_height"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:thumb="@drawable/shape_seekbar_thumb"
-            android:thumbTint="?attr/colorPrimary" />
-
           <com.google.android.material.slider.CustomSlider
             android:id="@+id/slider_main_timer"
             style="@style/Widget.Tack.Slider"

@@ -20,7 +20,6 @@
 
 <resources>
 
-  <dimen name="seekbar_height">48dp</dimen>
   <dimen name="timer_font_size">20sp</dimen>
 
   <dimen name="bpm_picker_size">220dp</dimen>
