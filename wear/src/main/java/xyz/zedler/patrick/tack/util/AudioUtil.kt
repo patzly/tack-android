@@ -211,9 +211,13 @@ class AudioUtil(
   }
 
   private fun writeAudio(track: AudioTrack?, data: FloatArray, size: Int) {
-    track?.write(data, 0, size, AudioTrack.WRITE_BLOCKING)?.takeIf { it < 0 }?.let {
-      stop()
-      Log.e(TAG, "writeAudio: failed to play audio data with error code $it")
+    try {
+      track?.write(data, 0, size, AudioTrack.WRITE_BLOCKING)?.takeIf { it < 0 }?.let {
+        stop()
+        throw RuntimeException("Error code: $it")
+      }
+    } catch (e: RuntimeException) {
+      Log.e(TAG, "writeAudio: failed to play audion data", e);
     }
   }
 

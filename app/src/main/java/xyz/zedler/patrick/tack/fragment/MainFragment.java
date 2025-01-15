@@ -1383,7 +1383,7 @@ public class MainFragment extends BaseFragment
     chip.setText(getString(R.string.label_bpm_value, tempo));
     chip.setTag(tempo);
     if (Build.VERSION.SDK_INT >= VERSION_CODES.M) {
-      // Crashes on API 21
+      // Crashes on API 21-22
       chip.setTextAppearance(R.style.TextAppearance_Tack_LabelLarge);
     }
     chip.setOnClickListener(v -> {

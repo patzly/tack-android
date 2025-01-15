@@ -5,6 +5,7 @@
 - Fixed: incorrect default value for permanent notification setting
 - Fixed: incorrect grammar in some translations with quantities
 - Fixed: vibration not working on some devices (Wear OS)
+- Fixed: crashes caused by audio on some devices (Wear OS)
 
 ## 4.5.0
 
