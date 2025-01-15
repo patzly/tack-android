@@ -241,14 +241,22 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       //getMetronomeUtil().setIncrementalLimit(tempo);
       //incrementalLimit = tempo;
     } */
-    binding.textOptionsIncrementalLimit.setText(
-        activity.getResources().getString(
-            incrementalIncrease
-                ? R.string.options_incremental_max
-                : R.string.options_incremental_min,
-            incrementalLimit
-        )
-    );
+    if (incrementalLimit > 0) {
+      binding.textOptionsIncrementalLimit.setText(
+          activity.getResources().getString(
+              incrementalIncrease
+                  ? R.string.options_incremental_max
+                  : R.string.options_incremental_min,
+              incrementalLimit
+          )
+      );
+    } else {
+      binding.textOptionsIncrementalLimit.setText(
+          incrementalIncrease
+              ? R.string.options_incremental_no_max
+              : R.string.options_incremental_no_min
+      );
+    }
     binding.textOptionsIncrementalLimit.setAlpha(isIncrementalActive ? 1 : 0.5f);
 
     int valueFrom = (int) binding.sliderOptionsIncrementalLimit.getValueFrom();
@@ -256,12 +264,12 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     int range = valueTo - valueFrom;
 
     // Calculate current range
-    int factor = (incrementalLimit - 1) / (range + 1);
-    int valueFromNew = factor * (range + 1) + 1;
+    int factor = incrementalLimit / (range + 1);
+    int valueFromNew = factor * (range + 1);
     int valueToNew = valueFromNew + range;
 
     binding.buttonOptionsIncrementalLimitDecrease.setEnabled(
-        isIncrementalActive && incrementalLimit - range - 1 >= 1
+        isIncrementalActive && valueFromNew > 0
     );
     binding.buttonOptionsIncrementalLimitDecrease.setOnClickListener(this);
     ViewCompat.setTooltipText(
@@ -270,7 +278,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     );
 
     binding.buttonOptionsIncrementalLimitIncrease.setEnabled(
-        isIncrementalActive && incrementalLimit + range + 1 <= Constants.TEMPO_MAX
+        isIncrementalActive && valueToNew < Constants.TEMPO_MAX - 1
     );
     binding.buttonOptionsIncrementalLimitIncrease.setOnClickListener(this);
     ViewCompat.setTooltipText(

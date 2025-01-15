@@ -161,6 +161,8 @@
   </plurals>
   <string name="options_incremental_max">Up to %1$d bpm</string>
   <string name="options_incremental_min">Down to %1$d bpm</string>
+  <string name="options_incremental_no_max">No upper limit</string>
+  <string name="options_incremental_no_min">No lower limit</string>
   <string name="options_timer">Duration</string>
   <plurals name="options_timer_description_bars">
     <item quantity="one">Stop after %1$d bar</item>

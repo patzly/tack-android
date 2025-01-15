@@ -118,7 +118,7 @@ public final class Constants {
     public final static boolean INCREMENTAL_INCREASE = true;
     public final static int INCREMENTAL_INTERVAL = 1;
     public final static String INCREMENTAL_UNIT = UNIT.BARS;
-    public final static int INCREMENTAL_LIMIT = 1;
+    public final static int INCREMENTAL_LIMIT = 0;
     public final static int TIMER_DURATION = 0;
     public final static String TIMER_UNIT = UNIT.BARS;
     public final static int MUTE_PLAY = 0;
