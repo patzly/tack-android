@@ -289,7 +289,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding.sliderOptionsIncrementalLimit.removeOnChangeListener(this);
     binding.sliderOptionsIncrementalLimit.setValueFrom(valueFromNew);
     binding.sliderOptionsIncrementalLimit.setValueTo(valueToNew);
-    binding.sliderOptionsIncrementalLimit.setValue(incrementalLimit);
+    int incrementalLimitSafe = Math.max(valueFromNew, Math.min(incrementalLimit, valueToNew));
+    binding.sliderOptionsIncrementalLimit.setValue(incrementalLimitSafe);
     binding.sliderOptionsIncrementalLimit.addOnChangeListener(this);
     binding.sliderOptionsIncrementalLimit.setLabelFormatter(
         value -> activity.getString(R.string.label_bpm_value, (int) value)
@@ -354,7 +355,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding.sliderOptionsTimerDuration.removeOnChangeListener(this);
     binding.sliderOptionsTimerDuration.setValueFrom(valueFromNew);
     binding.sliderOptionsTimerDuration.setValueTo(valueToNew);
-    binding.sliderOptionsTimerDuration.setValue(timerDuration);
+    int timerDurationSafe = Math.max(valueFromNew, Math.min(timerDuration, valueToNew));
+    binding.sliderOptionsTimerDuration.setValue(timerDurationSafe);
     binding.sliderOptionsTimerDuration.addOnChangeListener(this);
     binding.sliderOptionsTimerDuration.setLabelFormatter(value -> {
       int resId;

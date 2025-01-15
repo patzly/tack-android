@@ -197,7 +197,8 @@
         android:paddingStart="16dp"
         android:paddingEnd="8dp"
         android:textColor="?attr/colorOnSurfaceVariant"
-        android:text="@string/options_incremental_max" />
+        android:text="@string/options_incremental_max"
+        android:singleLine="true" />
 
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_options_incremental_limit_decrease"
@@ -258,7 +259,8 @@
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
         android:paddingEnd="8dp"
-        android:textColor="?attr/colorOnSurfaceVariant" />
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:singleLine="true" />
 
     </LinearLayout>
 
