@@ -172,6 +172,12 @@
     <item quantity="many">Zastavit po %1$d taktech</item>
     <item quantity="other">Zastavit po %1$d taktech</item>
   </plurals>
+  <plurals name="options_timer_description_seconds">
+    <item quantity="one">Zastavit po %1$d sekundě</item>
+    <item quantity="few">Zastavit po %1$d sekundách</item>
+    <item quantity="many">Zastavit po %1$d sekundách</item>
+    <item quantity="other">Zastavit po %1$d sekundách</item>
+  </plurals>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Subdivize nastavené pro shodu s vybraným procentem swingu</string>
   <string name="options_swing_3">Trioly</string>
