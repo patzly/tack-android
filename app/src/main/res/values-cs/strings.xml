@@ -302,6 +302,7 @@
   <string name="settings_keep_awake">Nezhasínat obrazovku</string>
   <string name="settings_keep_awake_description">Když metronom hraje</string>
 
+  <string name="settings_perm_notification">Trvalé oznámení</string>
   <string name="settings_big_logo">Zobrazit velkou animaci loga</string>
   <string name="settings_big_logo_description">Namísto výběru tempa při přehrávání</string>
 
