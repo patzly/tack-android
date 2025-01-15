@@ -191,6 +191,12 @@
     <item quantity="many">Přehrát %1$d taktů</item>
     <item quantity="other">Přehrát %1$d taktů</item>
   </plurals>
+  <plurals name="options_mute_play_seconds">
+    <item quantity="one">Přehrát %1$d sekundu</item>
+    <item quantity="few">Přehrát %1$d sekundy</item>
+    <item quantity="many">Přehrát %1$d sekund</item>
+    <item quantity="other">Přehrát %1$d sekund</item>
+  </plurals>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Subdivize nastavené pro shodu s vybraným procentem swingu</string>
   <string name="options_swing_3">Trioly</string>
