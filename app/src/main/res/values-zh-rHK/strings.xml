@@ -209,9 +209,6 @@
   <string name="settings_reset_timer">停止時重置計時器</string>
   <string name="settings_reset_timer_description">而不是恢復</string>
 
-  <string name="settings_big_timer">顯示大計時器滑桿</string>
-  <string name="settings_big_timer_description">而不是動畫滑動桿</string>
-
   <string name="settings_big_time_text">使用大字型顯示時間</string>
   <string name="settings_big_time_text_description">如果預設字型大小不夠大的話很有用</string>
 
