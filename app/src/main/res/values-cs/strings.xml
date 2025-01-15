@@ -209,6 +209,7 @@
     <item quantity="many">Ztlumit %1$d sekund</item>
     <item quantity="other">Ztlumit %1$d sekund</item>
   </plurals>
+  <string name="options_mute_random">Náhodný výběr menších hodnot</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Subdivize nastavené pro shodu s vybraným procentem swingu</string>
   <string name="options_swing_3">Trioly</string>
