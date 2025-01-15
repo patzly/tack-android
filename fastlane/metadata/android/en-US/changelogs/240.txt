@@ -1,0 +1,6 @@
+• New: setting to permanently show notification for start/stop access
+• New: setting to highlight current beat
+• Improved: controls appearance on main screen
+• Improved: timer duration now up to 399 units with new increase/decrease buttons
+• Fixed: vibration not working on some devices
+• Fixed: various crashes and bugs on lower Android versions
