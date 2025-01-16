@@ -40,14 +40,14 @@ import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 
 @Composable
 fun VolumeDialog(
-  show: Boolean,
+  visible: Boolean,
   onConfirm: () -> Unit,
   onDismiss: () -> Unit,
   onSwipeDismiss: () -> Unit = {},
 ) {
   TackTheme {
     AlertDialog(
-      show = show,
+      visible = visible,
       confirmButton = {
         AlertDialogDefaults.ConfirmButton(
           onClick = onConfirm
@@ -110,7 +110,7 @@ fun VolumeDialog(
 @Composable
 fun VolumeDialogPreview() {
   VolumeDialog(
-    show = true,
+    visible = true,
     onConfirm = {},
     onDismiss = {},
     onSwipeDismiss = {}

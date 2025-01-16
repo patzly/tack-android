@@ -132,7 +132,7 @@ fun BookmarksScreen(
           }
         }
         DeletionDialog(
-          show = showDeletionDialog,
+          visible = showDeletionDialog,
           bookmark = deletionBookmark,
           onConfirm = {
             viewModel.deleteBookmark(it)

@@ -257,7 +257,7 @@ fun MainScreen(
           )
         }
         VolumeDialog(
-          show = showVolumeDialog,
+          visible = showVolumeDialog,
           onConfirm = {
             viewModel.togglePlaying()
             showVolumeDialog = false
@@ -272,7 +272,7 @@ fun MainScreen(
           }
         )
         PermissionDialog(
-          show = state.showPermissionDialog,
+          visible = state.showPermissionDialog,
           onConfirm = {
             viewModel.updateShowPermissionDialog(false)
             onPermissionRequestClick()

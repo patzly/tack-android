@@ -42,14 +42,14 @@ import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 
 @Composable
 fun DeletionDialog(
-  show: Boolean,
+  visible: Boolean,
   bookmark: Bookmark?,
   onConfirm: (bookmark: Bookmark) -> Unit,
   onDismiss: () -> Unit,
 ) {
   TackTheme {
     AlertDialog(
-      show = show,
+      visible = visible,
       confirmButton = {
         AlertDialogDefaults.ConfirmButton(
           onClick = {
@@ -126,7 +126,7 @@ fun DeletionDialog(
 @Composable
 fun DeletionDialogPreview() {
   DeletionDialog(
-    show = true,
+    visible = true,
     bookmark = Bookmark(120, listOf("strong", "normal"), listOf("muted", "sub")),
     onConfirm = {},
     onDismiss = {}

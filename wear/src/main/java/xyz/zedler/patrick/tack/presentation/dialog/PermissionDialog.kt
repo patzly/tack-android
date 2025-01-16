@@ -40,13 +40,13 @@ import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 
 @Composable
 fun PermissionDialog(
-  show: Boolean,
+  visible: Boolean,
   onConfirm: () -> Unit,
   onDismiss: () -> Unit
 ) {
   TackTheme {
     AlertDialog(
-      show = show,
+      visible = visible,
       confirmButton = {
         AlertDialogDefaults.ConfirmButton(
           onClick = onConfirm
@@ -109,7 +109,7 @@ fun PermissionDialog(
 @Composable
 fun PermissionDialogPreview() {
   PermissionDialog(
-    show = true,
+    visible = true,
     onConfirm = {},
     onDismiss = {}
   )
