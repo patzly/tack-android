@@ -165,6 +165,8 @@
   </plurals>
   <string name="options_incremental_max">Až na %1$d dob/min</string>
   <string name="options_incremental_min">Až na %1$d dob/min</string>
+  <string name="options_incremental_no_max">Žádný horní limit</string>
+  <string name="options_incremental_no_min">Žádný spodní limit</string>
   <string name="options_timer">Trvání</string>
   <plurals name="options_timer_description_bars">
     <item quantity="one">Zastavit po %1$d taktu</item>
