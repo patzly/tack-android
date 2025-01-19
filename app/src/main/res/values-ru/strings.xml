@@ -1,0 +1,268 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="title_feedback">Обратная связь</string>
+  <string name="title_about">О нас</string>
+  <string name="title_help">Поддержка</string>
+  <string name="title_licenses">Лицензия исходного кода</string>
+  <string name="title_settings">Настройки</string>
+  <string name="title_notification_channel">Сервис метронома</string>
+  <string name="title_options">Опции</string>
+  <string name="title_general">Общие настройки</string>
+  <string name="title_metronome">Метроном</string>
+  <string name="title_controls">Управление</string>
+  <string name="title_logcat">Logcat</string>
+
+  <!-- LABELS -->
+
+  <string name="label_bpm_value">%1$d bpm</string>
+  <string name="label_bpm">bpm</string>
+  <string name="label_ms">%1$s мс</string>
+  <string name="label_db">+%1$d дБ</string>
+  <string name="label_tempo_largo">Широко</string>
+  <string name="label_tempo_larghetto">Медленнее</string>
+  <string name="label_tempo_adagio">Медленно</string>
+  <string name="label_tempo_andante">Спокойно</string>
+  <string name="label_tempo_moderato">Умеренно</string>
+  <string name="label_tempo_allegro">Быстро</string>
+  <string name="label_tempo_presto">Очень быстро</string>
+  <string name="label_tempo_prestissimo">Предельно быстро</string>
+
+  <!-- ACTIONS -->
+
+  <string name="action_back">Назад</string>
+  <string name="action_close">Закрыть</string>
+  <string name="action_cancel">Отмена</string>
+  <string name="action_increase">Увеличить</string>
+  <string name="action_decrease">Уменьшить</string>
+  <string name="action_play">Старт</string>
+  <string name="action_play_stop">Старт/Пауза</string>
+  <string name="action_stop">Пауза</string>
+  <string name="action_add_beat">Добавить долю</string>
+  <string name="action_remove_beat">Убрать долю</string>
+  <string name="action_clear_all">Удалить все</string>
+  <string name="action_tempo_tap">Настучать ритм</string>
+  <string name="action_bookmark">Добавить в закладки</string>
+  <string name="action_beat_mode">Режим ударов</string>
+  <string name="action_send_feedback">Написать отзыв</string>
+  <string name="action_open_link">Открыть сторонний сайт</string>
+  <string name="action_reset">Сбросить</string>
+  <string name="action_deactivate_gain">Выключить усиление</string>
+  <string name="action_recommend">Рекомендовать</string>
+  <string name="action_recommend_description">Рассказать друзьям о Tack</string>
+  <string name="action_email">Отправить письмо на эл. почту</string>
+  <string name="action_email_description">Написать разработчику</string>
+  <string name="action_rate">Оценить на Google Play</string>
+  <string name="action_rate_description">Поддержать разработку</string>
+  <string name="action_issue">Открыть задачу на Github</string>
+  <string name="action_issue_description">Оповестить о баге или предложить функцию</string>
+  <string name="action_logcat">Показать logcat</string>
+  <string name="action_copy_to_clipboard">Скопировать в буфер обмена</string>
+  <string name="action_reload">Перезагрузить</string>
+
+  <!-- MESSAGES -->
+
+  <string name="msg_bookmarks_max">Достигнут лимит закладок</string>
+  <string name="msg_feedback">Разработка хорошего приложения занимает много времени и зависит от обратной связи пользователей</string>
+  <string name="msg_feedback_contact">У вас есть пожелания, комментарии или вопросы? Напишите мне!\nЕсли нет, буду рад хорошему отзыву в Play Store.</string>
+  <string name="msg_vibration_unavailable">Вибрация недоступна на этом устройстве</string>
+  <string name="msg_service_running">Сервис метронома запущен</string>
+  <string name="msg_service_running_return">Нажмите, чтобы вернуться в Tack</string>
+  <string name="msg_service_description">Сервис для настройки и проигрывания метронома</string>
+  <string name="msg_connection_lost">Потеряно соединение с сервисом, требуется перезапуск приложения</string>
+  <string name="msg_reset">Сбросить всё?</string>
+  <string name="msg_reset_description">Вы уверены, что хотите сбросить все настройки приложения, в том числе закладки? Это действие нельзя обратить.</string>
+  <string name="msg_gain">Включить усиление громкости?</string>
+  <string name="msg_gain_description">Будьте осторожны и не слушайте метроном в наушниках, так как громкие звуки могут вызвать потерю слуха!</string>
+  <string name="msg_split_screen">Окно слишком маленькое</string>
+  <string name="msg_copied_to_clipboard">Успешно скопировано в буфер обмена</string>
+
+  <!-- OPTIONS -->
+
+  <string name="options_unit_bars">Такты</string>
+  <plurals name="options_unit_bars">
+    <item quantity="one">%1$d такт</item>
+    <item quantity="few">%1$d такта</item>
+    <item quantity="many">%1$d тактов</item>
+    <item quantity="other">%1$d тактов</item>
+  </plurals>
+  <string name="options_unit_beats">Удары</string>
+  <plurals name="options_unit_beats">
+    <item quantity="one">%1$d удар</item>
+    <item quantity="few">%1$d удара</item>
+    <item quantity="many">%1$d ударов</item>
+    <item quantity="other">%1$d ударов</item>
+  </plurals>
+  <string name="options_inactive">Неактивно</string>
+  <string name="options_count_in">Вступление</string>
+  <plurals name="options_count_in_description">
+    <item quantity="one">Применять модификаторы после %1$d такта</item>
+    <item quantity="few">Применять модификаторы после %1$d тактов</item>
+    <item quantity="many">Применять модификаторы после %1$d тактов</item>
+    <item quantity="other">Применять модификаторы после %1$d тактов</item>
+  </plurals>
+  <string name="options_incremental">Постепенное изменение темпа</string>
+  <string name="options_incremental_amount_increase">Увеличивать темп на %1$d bpm</string>
+  <string name="options_incremental_amount_decrease">Уменьшать темп на %1$d bpm</string>
+  <plurals name="options_incremental_interval_bars">
+    <item quantity="one">Каждый %1$d такт</item>
+    <item quantity="few">Каждые %1$d такта</item>
+    <item quantity="many">Каждые %1$d тактов</item>
+    <item quantity="other">Каждые %1$d тактов</item>
+  </plurals>
+  <plurals name="options_incremental_interval_seconds">
+    <item quantity="one">Каждую %1$d секунду</item>
+    <item quantity="few">Каждые %1$d секунды</item>
+    <item quantity="many">Каждые %1$d секунд</item>
+    <item quantity="other">Каждые %1$d секунд</item>
+  </plurals>
+  <plurals name="options_incremental_interval_minutes">
+    <item quantity="one">Каждую %1$d минуту</item>
+    <item quantity="few">Каждые %1$d минуты</item>
+    <item quantity="many">Каждые %1$d минут</item>
+    <item quantity="other">Каждые %1$d минут</item>
+  </plurals>
+  <string name="options_incremental_max">До %1$d bpm</string>
+  <string name="options_incremental_min">До %1$d bpm</string>
+  <string name="options_incremental_no_max">Без ограничения сверху</string>
+  <string name="options_incremental_no_min">Без ограничения снизу</string>
+  <string name="options_timer">Длительность</string>
+  <plurals name="options_timer_description_bars">
+    <item quantity="one">Остановиться после %1$d такта</item>
+    <item quantity="few">Остановиться после %1$d тактов</item>
+    <item quantity="many">Остановиться после %1$d тактов</item>
+    <item quantity="other">Остановиться после %1$d тактов</item>
+  </plurals>
+  <plurals name="options_timer_description_seconds">
+    <item quantity="one">Остановиться через %1$d секунду</item>
+    <item quantity="few">Остановиться через %1$d секунды</item>
+    <item quantity="many">Остановиться через %1$d секунд</item>
+    <item quantity="other">Остановиться через %1$d секунд</item>
+  </plurals>
+  <plurals name="options_timer_description_minutes">
+    <item quantity="one">Остановиться через %1$d минуту</item>
+    <item quantity="few">Остановиться через %1$d минуты</item>
+    <item quantity="many">Остановиться через %1$d минут</item>
+    <item quantity="other">Остановиться через %1$d минут</item>
+  </plurals>
+  <string name="options_mute">Беззвучные такты</string>
+  <plurals name="options_mute_play_bars">
+    <item quantity="one">Играть %1$d такт</item>
+    <item quantity="few">Играть %1$d такта</item>
+    <item quantity="many">Играть %1$d тактов</item>
+    <item quantity="other">Играть %1$d тактов</item>
+  </plurals>
+  <plurals name="options_mute_play_seconds">
+    <item quantity="one">Играть %1$d секунду</item>
+    <item quantity="few">Играть %1$d секунды</item>
+    <item quantity="many">Играть %1$d секунд</item>
+    <item quantity="other">Играть %1$d секунд</item>
+  </plurals>
+  <plurals name="options_mute_mute_bars">
+    <item quantity="one">Заглушить %1$d такт</item>
+    <item quantity="few">Заглушить %1$d такта</item>
+    <item quantity="many">Заглушить %1$d тактов</item>
+    <item quantity="other">Заглушить %1$d тактов</item>
+  </plurals>
+  <plurals name="options_mute_mute_seconds">
+    <item quantity="one">Заглушить на %1$d секунду</item>
+    <item quantity="few">Заглушить на %1$d секунды</item>
+    <item quantity="many">Заглушить на %1$d секунд</item>
+    <item quantity="other">Заглушить на %1$d секунд</item>
+  </plurals>
+  <string name="options_swing">Свинг</string>
+  <string name="options_swing_3">Триоль</string>
+  <string name="options_swing_5">Квинтоль</string>
+  <string name="options_swing_7">Септоль</string>
+
+  <!-- SETTINGS -->
+
+  <string name="settings_language">Язык</string>
+  <string name="settings_language_system">Язык системы</string>
+  <string name="settings_language_system_description">Английский, если перевод недоступен</string>
+
+  <string name="settings_theme">Тема</string>
+  <string name="settings_theme_description">Настройте под себя</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
+  <string name="settings_theme_auto">Авто</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_dark">Тёмная</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_light">Светлая</string>
+
+  <string name="settings_contrast">Контраст</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast. The button width should be as dense as possible. -->
+  <string name="settings_contrast_standard">Обычный</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_medium">Средний</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_high">Высокий</string>
+  <string name="settings_haptic">Эффекты вибрации</string>
+  <string name="settings_haptic_description">В дополнение к вибрирующим ударам метронома</string>
+
+  <string name="settings_reduce_animations">Уменьшить анимации</string>
+  <string name="settings_reduce_animations_description">Может улучшить производительность</string>
+
+  <string name="settings_reset">Сбросить всё</string>
+  <string name="settings_reset_description">Нельзя обратить</string>
+
+  <string name="settings_sound">Звук удара</string>
+  <string name="settings_sound_wood">Дерево</string>
+  <string name="settings_sound_sine">Синусоида</string>
+  <string name="settings_sound_mechanical">Механический</string>
+  <string name="settings_sound_beatboxing_1">Битбокс 1</string>
+  <string name="settings_sound_beatboxing_2">Битбокс 2</string>
+  <string name="settings_sound_hands">Ладоши</string>
+  <string name="settings_sound_folding">Линейка</string>
+
+  <string name="settings_gain">Усиление громкости</string>
+  <string name="settings_gain_description">Усиление в дБ (в дополнение к системной громкости)</string>
+  <string name="settings_gain_warning">Используйте с осторожностью!</string>
+  <string name="settings_gain_disclaimer">Перед каждым использованием усиления будет показываться предупреждение. Разработчик не несёт ответственности за потенциальные травмы.</string>
+
+  <string name="settings_show_subs_description">Более разнообразные ритмы</string>
+
+  <string name="settings_active_beat_description">Полезно при медленном темпе</string>
+
+  <string name="settings_always_vibrate">Всегда вибрировать</string>
+  <string name="settings_always_vibrate_description">Даже когда звук включен</string>
+
+  <string name="settings_big_time_text">Показывать время большим шрифтом</string>
+  <string name="settings_big_time_text_description">Если обычного размера недостаточно</string>
+
+  <string name="settings_big_logo">Показывать большой анимированный логотип</string>
+  <string name="settings_big_logo_description">Во время проигрывания вместо колеса выбора темпа</string>
+
+  <!-- ABOUT -->
+
+  <string name="about_version">Версия</string>
+  <string name="about_changelog">Список изменений</string>
+  <string name="about_changelog_description">Что нового в этой версии</string>
+  <string name="about_developer">Разработчик</string>
+  <string name="about_vending_description">Больше приложений от разработчика</string>
+  <string name="about_github_description">Исходный код</string>
+  <string name="about_translation_description">Помогите перевести Tack</string>
+  <string name="about_privacy">Политика конфиденциальности</string>
+  <string name="about_privacy_description">Как обрабатываются ваши данные</string>
+
+  </resources>
