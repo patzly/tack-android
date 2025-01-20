@@ -260,28 +260,28 @@ public class SystemBarBehavior {
 
     int colorScrim = ResUtil.getColor(activity, R.attr.colorSurface, 0.7f);
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { // 29
+    if (Build.VERSION.SDK_INT >= VERSION_CODES.VANILLA_ICE_CREAM) { // 35
+      if (!isDarkModeActive) {
+        UiUtil.setLightStatusBar(window.getDecorView(), true);
+        if (!UiUtil.isNavigationModeGesture(activity)) {
+          UiUtil.setLightNavigationBar(window.getDecorView(), true);
+        }
+      }
+      window.setNavigationBarContrastEnforced(true);
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { // 29
       window.setStatusBarColor(Color.TRANSPARENT);
       if (!isDarkModeActive) {
         UiUtil.setLightStatusBar(window.getDecorView(), true);
       }
-      if (UiUtil.isNavigationModeGesture(activity)) {
-        window.setNavigationBarColor(Color.TRANSPARENT);
-        window.setNavigationBarContrastEnforced(true);
-      } else {
+      window.setNavigationBarColor(Color.TRANSPARENT);
+      window.setNavigationBarContrastEnforced(true);
+      if (!UiUtil.isNavigationModeGesture(activity)) {
         if (!isDarkModeActive) {
           UiUtil.setLightNavigationBar(window.getDecorView(), true);
         }
-        if (isOrientationPortrait || isLandTablet) {
-          window.setNavigationBarColor(
-              isScrollable ? colorScrim : Color.parseColor("#01000000")
-          );
-        } else {
+        if (!isOrientationPortrait && !isLandTablet) {
           window.setNavigationBarDividerColor(
               ResUtil.getColor(activity, R.attr.colorOutlineVariant)
-          );
-          window.setNavigationBarColor(
-              ResUtil.getColor(activity, R.attr.colorSurface)
           );
         }
       }
