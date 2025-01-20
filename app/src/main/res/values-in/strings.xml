@@ -125,8 +125,6 @@
   <string name="options_inactive">Nonaktif</string>
   <string name="options_count_in">Hitung dalam</string>
   <string name="options_incremental">Perubahan tempo bertahap</string>
-  <string name="options_incremental_amount_increase">Menaikkan tempo sebanyak %1$d bpm</string>
-  <string name="options_incremental_amount_decrease">Menurunkan tempo sebanyak %1$d bpm</string>
   <string name="options_incremental_max">Naik hingga %1$d bpm</string>
   <string name="options_incremental_min">Turun hingga %1$d bpm</string>
   <string name="options_swing">Ayunan</string>
