@@ -125,8 +125,6 @@
   <string name="options_inactive">비활성화</string>
   <string name="options_count_in">카운트</string>
   <string name="options_incremental">점진적 템포 변화</string>
-  <string name="options_incremental_amount_increase">%1$d bpm 만큼 템포 증가</string>
-  <string name="options_incremental_amount_decrease">%1$d bpm 만큼 템포 감소</string>
   <string name="options_incremental_max">%1$d bpm까지 </string>
   <string name="options_incremental_min">%1$d bpm까지 </string>
   <string name="options_swing">스윙(Swing)</string>
