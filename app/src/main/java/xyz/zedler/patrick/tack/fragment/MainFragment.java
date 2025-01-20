@@ -37,11 +37,8 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.LinearInterpolator;
@@ -351,94 +348,6 @@ public class MainFragment extends BaseFragment
       }
     });
 
-    binding.buttonMainLess.setOnTouchListener(new OnTouchListener() {
-      private Handler handler;
-      private int nextRun = 400;
-      private final Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-          if (getMetronomeUtil().getTempo() > Constants.TEMPO_MIN) {
-            changeTempo(-1);
-            handler.postDelayed(this, nextRun);
-            if (nextRun > 60) {
-              nextRun = (int) (nextRun * 0.9);
-            }
-          } else {
-            handler.removeCallbacks(runnable);
-            handler = null;
-            nextRun = 400;
-          }
-        }
-      };
-
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()) {
-          case MotionEvent.ACTION_DOWN:
-            if (handler != null) {
-              return true;
-            }
-            handler = new Handler(Looper.getMainLooper());
-            handler.postDelayed(runnable, ViewConfiguration.getLongPressTimeout());
-            break;
-          case MotionEvent.ACTION_CANCEL:
-          case MotionEvent.ACTION_UP:
-            if (handler == null) {
-              return true;
-            }
-            handler.removeCallbacks(runnable);
-            handler = null;
-            nextRun = 400;
-            break;
-        }
-        return false;
-      }
-    });
-
-    binding.buttonMainMore.setOnTouchListener(new OnTouchListener() {
-      private Handler handler;
-      private int nextRun = 400;
-      private final Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-          if (getMetronomeUtil().getTempo() < Constants.TEMPO_MAX) {
-            changeTempo(1);
-            handler.postDelayed(this, nextRun);
-            if (nextRun > 60) {
-              nextRun = (int) (nextRun * 0.9);
-            }
-          } else {
-            handler.removeCallbacks(runnable);
-            handler = null;
-            nextRun = 400;
-          }
-        }
-      };
-
-      @Override
-      public boolean onTouch(View v, MotionEvent event) {
-        switch (event.getAction()) {
-          case MotionEvent.ACTION_DOWN:
-            if (handler != null) {
-              return true;
-            }
-            handler = new Handler(Looper.getMainLooper());
-            handler.postDelayed(runnable, ViewConfiguration.getLongPressTimeout());
-            break;
-          case MotionEvent.ACTION_CANCEL:
-          case MotionEvent.ACTION_UP:
-            if (handler == null) {
-              return true;
-            }
-            handler.removeCallbacks(runnable);
-            handler = null;
-            nextRun = 400;
-            break;
-        }
-        return false;
-      }
-    });
-
     boolean alwaysVibrate = getSharedPrefs().getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
     if (getSharedPrefs().getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE)) {
       binding.buttonMainBeatMode.setIconResource(
@@ -498,14 +407,39 @@ public class MainFragment extends BaseFragment
     ViewUtil.setTooltipText(binding.buttonMainBookmark, R.string.action_bookmark);
     ViewUtil.setTooltipText(binding.buttonMainBeatMode, R.string.action_beat_mode);
 
+    ViewUtil.setTooltipTextAndContentDescription(
+        binding.buttonMainLess1,
+        getString(R.string.options_incremental_amount_decrease, 1)
+    );
+    ViewUtil.setTooltipTextAndContentDescription(
+        binding.buttonMainLess5,
+        getString(R.string.options_incremental_amount_decrease, 5)
+    );
+    ViewUtil.setTooltipTextAndContentDescription(
+        binding.buttonMainLess10,
+        getString(R.string.options_incremental_amount_decrease, 10)
+    );
+    ViewUtil.setTooltipTextAndContentDescription(
+        binding.buttonMainMore1,
+        getString(R.string.options_incremental_amount_increase, 1)
+    );
+    ViewUtil.setTooltipTextAndContentDescription(
+        binding.buttonMainMore5,
+        getString(R.string.options_incremental_amount_increase, 5)
+    );
+    ViewUtil.setTooltipTextAndContentDescription(
+        binding.buttonMainMore10,
+        getString(R.string.options_incremental_amount_increase, 10)
+    );
+
     ViewUtil.setOnClickListeners(
         this,
         binding.buttonMainAddBeat,
         binding.buttonMainRemoveBeat,
         binding.buttonMainAddSubdivision,
         binding.buttonMainRemoveSubdivision,
-        binding.buttonMainLess,
-        binding.buttonMainMore,
+        binding.buttonMainLess1, binding.buttonMainLess5, binding.buttonMainLess10,
+        binding.buttonMainMore1, binding.buttonMainMore5, binding.buttonMainMore10,
         binding.buttonMainBeatMode,
         binding.buttonMainBookmark,
         binding.buttonMainOptions,
@@ -875,12 +809,24 @@ public class MainFragment extends BaseFragment
         }
         performHapticClick();
       }
-    } else if (id == R.id.button_main_less) {
-      ViewUtil.startIcon(binding.buttonMainLess.getIcon());
+    } else if (id == R.id.button_main_less_1) {
+      ViewUtil.startIcon(binding.buttonMainLess1.getIcon());
       changeTempo(-1);
-    } else if (id == R.id.button_main_more) {
-      ViewUtil.startIcon(binding.buttonMainMore.getIcon());
+    } else if (id == R.id.button_main_less_5) {
+      ViewUtil.startIcon(binding.buttonMainLess5.getIcon());
+      changeTempo(-5);
+    } else if (id == R.id.button_main_less_10) {
+      ViewUtil.startIcon(binding.buttonMainLess10.getIcon());
+      changeTempo(-10);
+    } else if (id == R.id.button_main_more_1) {
+      ViewUtil.startIcon(binding.buttonMainMore1.getIcon());
       changeTempo(1);
+    } else if (id == R.id.button_main_more_5) {
+      ViewUtil.startIcon(binding.buttonMainMore5.getIcon());
+      changeTempo(5);
+    } else if (id == R.id.button_main_more_10) {
+      ViewUtil.startIcon(binding.buttonMainMore10.getIcon());
+      changeTempo(10);
     } else if (id == R.id.button_main_beat_mode) {
       boolean beatModeVibrateNew = !getMetronomeUtil().isBeatModeVibrate();
       if (beatModeVibrateNew && !activity.getHapticUtil().hasVibrator()) {
@@ -1397,8 +1343,12 @@ public class MainFragment extends BaseFragment
 
   private void setButtonStates() {
     int tempo = getMetronomeUtil().getTempo();
-    binding.buttonMainLess.setEnabled(tempo > 1);
-    binding.buttonMainMore.setEnabled(tempo < Constants.TEMPO_MAX);
+    binding.buttonMainLess1.setEnabled(tempo > 1);
+    binding.buttonMainLess5.setEnabled(tempo > 5);
+    binding.buttonMainLess10.setEnabled(tempo > 10);
+    binding.buttonMainMore1.setEnabled(tempo < Constants.TEMPO_MAX);
+    binding.buttonMainMore5.setEnabled(tempo <= Constants.TEMPO_MAX - 5);
+    binding.buttonMainMore10.setEnabled(tempo <= Constants.TEMPO_MAX - 10);
   }
 
   private void updateTimerProgress(
@@ -1491,10 +1441,10 @@ public class MainFragment extends BaseFragment
     if (animated) {
       binding.imageMainLogoCenter.setVisibility(View.VISIBLE);
       binding.imageMainLogo.setVisibility(View.VISIBLE);
-      pickerLogoAnimator = ValueAnimator.ofFloat(binding.linearMainCenter.getAlpha(), pickerAlpha);
+      pickerLogoAnimator = ValueAnimator.ofFloat(binding.frameMainCenter.getAlpha(), pickerAlpha);
       pickerLogoAnimator.addUpdateListener(animation -> {
         float alpha = (float) animation.getAnimatedValue();
-        binding.linearMainCenter.setAlpha(alpha);
+        binding.frameMainCenter.setAlpha(alpha);
         binding.imageMainLogo.setScaleX(alpha);
         binding.imageMainLogo.setScaleY(alpha);
         binding.imageMainLogoPlaceholder.setAlpha(1 - alpha);
@@ -1512,7 +1462,7 @@ public class MainFragment extends BaseFragment
       pickerLogoAnimator.setDuration(reduceAnimations ? 150 : 300);
       pickerLogoAnimator.start();
     } else {
-      binding.linearMainCenter.setAlpha(showPickerNotLogo ? 1f : 0f);
+      binding.frameMainCenter.setAlpha(showPickerNotLogo ? 1f : 0f);
       binding.imageMainLogoCenter.setVisibility(showPickerNotLogo ? View.GONE : View.VISIBLE);
       binding.imageMainLogo.setVisibility(showPickerNotLogo ? View.VISIBLE : View.GONE);
       binding.imageMainLogo.setScaleX(showPickerNotLogo ? 1f : 0f);

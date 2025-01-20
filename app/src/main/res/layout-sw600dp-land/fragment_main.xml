@@ -339,88 +339,130 @@
         app:layout_constraintHeight_max="@dimen/bpm_picker_size"
         app:layout_constraintWidth_max="@dimen/bpm_picker_size" />
 
-      <LinearLayout
-        android:id="@+id/linear_main_center"
+      <FrameLayout
+        android:id="@+id/frame_main_center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <com.google.android.material.button.MaterialButton
-          android:id="@+id/button_main_less"
-          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
-          android:layout_marginEnd="@dimen/controls_center_spacing"
-          android:contentDescription="@string/action_decrease"
-          app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Left"
-          app:icon="@drawable/ic_rounded_navigate_before_anim" />
+        <xyz.zedler.patrick.tack.view.TempoPickerView
+          android:id="@+id/tempo_picker_main"
+          android:layout_width="@dimen/bpm_picker_size"
+          android:layout_height="@dimen/bpm_picker_size"
+          android:importantForAccessibility="yes" />
+
+        <xyz.zedler.patrick.tack.view.CircleView
+          android:id="@+id/circle_main"
+          android:layout_width="@dimen/bpm_picker_size"
+          android:layout_height="@dimen/bpm_picker_size" />
 
         <FrameLayout
           android:layout_width="wrap_content"
-          android:layout_height="wrap_content">
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          tools:ignore="SpUsage">
 
-          <xyz.zedler.patrick.tack.view.TempoPickerView
-            android:id="@+id/tempo_picker_main"
+          <TextSwitcher
+            android:id="@+id/text_switcher_main_tempo_term"
             android:layout_width="@dimen/bpm_picker_size"
-            android:layout_height="@dimen/bpm_picker_size"
-            android:importantForAccessibility="yes" />
-
-          <xyz.zedler.patrick.tack.view.CircleView
-            android:id="@+id/circle_main"
-            android:layout_width="@dimen/bpm_picker_size"
-            android:layout_height="@dimen/bpm_picker_size" />
-
-          <FrameLayout
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            tools:ignore="SpUsage">
+            android:layout_gravity="center_horizontal|top" />
 
-            <TextSwitcher
-              android:id="@+id/text_switcher_main_tempo_term"
-              android:layout_width="@dimen/bpm_picker_size"
-              android:layout_height="wrap_content"
-              android:layout_gravity="center_horizontal|top" />
+          <TextView
+            android:id="@+id/text_main_tempo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/label_text_size"
+            android:layout_marginBottom="@dimen/label_text_size"
+            android:textColor="?attr/colorOnSecondaryContainer"
+            android:layout_gravity="top"
+            android:gravity="center_horizontal"
+            android:textAlignment="center"
+            android:fontFeatureSettings="tnum"
+            android:textAppearance="?attr/textAppearanceDisplayLarge"
+            android:textSize="@dimen/bpm_text_size" />
 
-            <TextView
-              android:id="@+id/text_main_tempo"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:layout_marginTop="@dimen/label_text_size"
-              android:layout_marginBottom="@dimen/label_text_size"
-              android:textColor="?attr/colorOnSecondaryContainer"
-              android:layout_gravity="top"
-              android:gravity="center_horizontal"
-              android:textAlignment="center"
-              android:fontFeatureSettings="tnum"
-              android:textAppearance="?attr/textAppearanceDisplayLarge"
-              android:textSize="@dimen/bpm_text_size" />
-
-            <TextView
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:text="@string/label_bpm"
-              android:textColor="?attr/colorOnSecondaryContainer"
-              android:layout_gravity="bottom"
-              android:gravity="center_horizontal"
-              android:textAlignment="center"
-              android:textAppearance="?attr/textAppearanceBodyLarge"
-              android:textSize="@dimen/label_text_size" />
-
-          </FrameLayout>
+          <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/label_bpm"
+            android:textColor="?attr/colorOnSecondaryContainer"
+            android:layout_gravity="bottom"
+            android:gravity="center_horizontal"
+            android:textAlignment="center"
+            android:textAppearance="?attr/textAppearanceBodyLarge"
+            android:textSize="@dimen/label_text_size" />
 
         </FrameLayout>
 
+      </FrameLayout>
+
+      <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="@dimen/controls_center_spacing"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/frame_main_center">
+
         <com.google.android.material.button.MaterialButton
-          android:id="@+id/button_main_more"
+          android:id="@+id/button_main_less_1"
           style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
-          android:layout_marginStart="@dimen/controls_center_spacing"
+          android:contentDescription="@string/action_decrease"
+          app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Top"
+          app:icon="@drawable/ic_rounded_navigate_before_anim" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_less_5"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+          android:contentDescription="@string/action_decrease"
+          app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner"
+          app:icon="@drawable/ic_rounded_keyboard_double_arrow_left_anim" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_less_10"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+          android:contentDescription="@string/action_decrease"
+          app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Bottom"
+          app:icon="@drawable/ic_round_triple_arrow_left_anim" />
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginEnd="@dimen/controls_center_spacing"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/frame_main_center"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_more_1"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
           android:contentDescription="@string/action_increase"
-          app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Right"
+          app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Top"
           app:icon="@drawable/ic_rounded_navigate_after_anim" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_more_5"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+          android:contentDescription="@string/action_increase"
+          app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner"
+          app:icon="@drawable/ic_rounded_keyboard_double_arrow_right_anim" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_more_10"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+          android:contentDescription="@string/action_increase"
+          app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Bottom"
+          app:icon="@drawable/ic_round_triple_arrow_right_anim" />
 
       </LinearLayout>
 
@@ -429,7 +471,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@+id/linear_main_center"
+        app:layout_constraintTop_toBottomOf="@+id/frame_main_center"
         app:layout_constraintBottom_toTopOf="@+id/linear_main_bottom"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">

@@ -1,0 +1,113 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<animated-vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:aapt="http://schemas.android.com/aapt">
+  <aapt:attr name="android:drawable">
+    <vector
+      android:name="vector"
+      android:width="24dp"
+      android:height="24dp"
+      android:viewportWidth="24"
+      android:viewportHeight="24"
+      android:autoMirrored="true">
+      <group
+        android:name="group_1"
+        android:translateX="-3.38">
+        <path
+          android:name="arrow_1"
+          android:pathData="M 9.78 7.411 L 14.381 12 L 9.791 16.593"
+          android:strokeColor="#000000"
+          android:strokeWidth="2"
+          android:strokeLineCap="round"
+          android:strokeLineJoin="round" />
+      </group>
+      <group
+        android:name="group_2"
+        android:translateX="3.3">
+        <path
+          android:name="path_2"
+          android:pathData="M 9.78 7.411 L 14.381 12 L 9.791 16.593"
+          android:strokeColor="#000000"
+          android:strokeWidth="2"
+          android:strokeLineCap="round"
+          android:strokeLineJoin="round" />
+      </group>
+    </vector>
+  </aapt:attr>
+  <target android:name="arrow_1">
+    <aapt:attr name="android:animation">
+      <set>
+        <objectAnimator
+          android:propertyName="pathData"
+          android:duration="125"
+          android:valueFrom="M 9.78 7.411 L 14.381 12 L 9.791 16.593"
+          android:valueTo="M 9.78 8.97 L 15.922 12 L 9.791 14.977"
+          android:valueType="pathType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+        <objectAnimator
+          android:propertyName="pathData"
+          android:startOffset="125"
+          android:duration="100"
+          android:valueFrom="M 9.78 8.97 L 15.922 12 L 9.791 14.977"
+          android:valueTo="M 9.78 6.545 L 12.072 12 L 9.791 17.517"
+          android:valueType="pathType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+        <objectAnimator
+          android:propertyName="pathData"
+          android:startOffset="225"
+          android:duration="75"
+          android:valueFrom="M 9.78 6.545 L 12.072 12 L 9.791 17.517"
+          android:valueTo="M 9.78 7.411 L 14.381 12 L 9.791 16.593"
+          android:valueType="pathType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+      </set>
+    </aapt:attr>
+  </target>
+  <target android:name="path_2">
+    <aapt:attr name="android:animation">
+      <set>
+        <objectAnimator
+          android:propertyName="pathData"
+          android:duration="125"
+          android:valueFrom="M 9.78 7.411 L 14.381 12 L 9.791 16.593"
+          android:valueTo="M 9.78 8.97 L 16.922 12 L 9.791 14.977"
+          android:valueType="pathType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+        <objectAnimator
+          android:propertyName="pathData"
+          android:startOffset="125"
+          android:duration="100"
+          android:valueFrom="M 9.78 8.97 L 16.922 12 L 9.791 14.977"
+          android:valueTo="M 9.78 6.545 L 12.072 12 L 9.791 17.517"
+          android:valueType="pathType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+        <objectAnimator
+          android:propertyName="pathData"
+          android:startOffset="225"
+          android:duration="75"
+          android:valueFrom="M 9.78 6.545 L 12.072 12 L 9.791 17.517"
+          android:valueTo="M 9.78 7.411 L 14.381 12 L 9.791 16.593"
+          android:valueType="pathType"
+          android:interpolator="@android:interpolator/fast_out_slow_in" />
+      </set>
+    </aapt:attr>
+  </target>
+</animated-vector>

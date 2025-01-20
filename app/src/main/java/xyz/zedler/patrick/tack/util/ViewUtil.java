@@ -288,6 +288,11 @@ public class ViewUtil {
     ViewCompat.setTooltipText(view, view.getContext().getString(resId));
   }
 
+  public static void setTooltipTextAndContentDescription(@NonNull View view, String text) {
+    ViewCompat.setTooltipText(view, text);
+    view.setContentDescription(text);
+  }
+
   public static void centerScrollContentIfNotFullWidth(HorizontalScrollView scrollView) {
     centerScrollContentIfNotFullWidth(scrollView, false);
   }
