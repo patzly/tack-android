@@ -129,8 +129,6 @@
   <string name="options_inactive">Pasif</string>
   <string name="options_count_in">Giriş sayımı</string>
   <string name="options_incremental">Kademeli tempo değişikliği</string>
-  <string name="options_incremental_amount_increase">Tempoyu %1$d bpm arttır</string>
-  <string name="options_incremental_amount_decrease">Tempoyu %1$d bpm azalt</string>
   <string name="options_incremental_max">%1$d bpm\'ye kadar</string>
   <string name="options_incremental_min">%1$d bpm\'ye kadar düşür</string>
   <string name="options_swing">Swing</string>
