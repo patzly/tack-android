@@ -125,8 +125,6 @@
   <string name="options_inactive">停用</string>
   <string name="options_count_in">计数</string>
   <string name="options_incremental">增量速度变化</string>
-  <string name="options_incremental_amount_increase">增速 %1$d bpm</string>
-  <string name="options_incremental_amount_decrease">减速 %1$d bpm</string>
   <string name="options_incremental_max">提高到 %1$d bpm</string>
   <string name="options_incremental_min">降低到 %1$d bpm</string>
   <string name="options_swing">摇摆</string>
