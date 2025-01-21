@@ -105,7 +105,7 @@
   <string name="msg_notification_permission_denied">Berechtigung für Benachrichtigungen ist für die Steuerung der Wiedergabe erforderlich</string>
   <string name="msg_report_crash">Bitte melden Sie jeden Absturz mit dem angehängten Fehlerprotokoll, damit ich versuchen kann, ihn zu beheben.</string>
   <string name="msg_copied_to_clipboard">Erfolgreich in Zwischenablage kopiert</string>
-  <string name="msg_invalid_input">Ungültige EIngabe</string>
+  <string name="msg_invalid_input">Ungültige Eingabe</string>
 
   <!-- OPTIONS -->
 
