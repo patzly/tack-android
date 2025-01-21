@@ -82,7 +82,6 @@
   <string name="action_logcat">Fehlerprotokoll anzeigen</string>
   <string name="action_copy_to_clipboard">Kopieren</string>
   <string name="action_reload">Neu laden</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_bookmarks_max">Lesezeichen-Limit erreicht</string>
@@ -103,7 +102,6 @@
   <string name="msg_notification_permission_denied">Berechtigung für Benachrichtigungen ist für die Steuerung der Wiedergabe erforderlich</string>
   <string name="msg_report_crash">Bitte melden Sie jeden Absturz mit dem angehängten Fehlerprotokoll, damit ich versuchen kann, ihn zu beheben.</string>
   <string name="msg_copied_to_clipboard">Erfolgreich in Zwischenablage kopiert</string>
-
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Takte</string>
