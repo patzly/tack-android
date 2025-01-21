@@ -82,7 +82,6 @@
   <string name="action_logcat">Tampilkan logcat</string>
   <string name="action_copy_to_clipboard">Salin ke papan klip</string>
   <string name="action_reload">Muat ulang</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_bookmarks_max">Penanda mencapai batas</string>
@@ -103,7 +102,6 @@
   <string name="msg_notification_permission_denied">Diperlukan izin pemberitahuan untuk kontrol pemutaran</string>
   <string name="msg_report_crash">Mohon laporkan setiap crash dengan melampirkan log crash agar saya dapat mencoba memperbaikinya.</string>
   <string name="msg_copied_to_clipboard">Berhasil disalin ke papan klip</string>
-
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Bar</string>

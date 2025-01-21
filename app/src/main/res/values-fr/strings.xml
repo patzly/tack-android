@@ -82,7 +82,6 @@
   <string name="action_logcat">Consulter logcat</string>
   <string name="action_copy_to_clipboard">Copier dans le presse-papiers</string>
   <string name="action_reload">Recharger</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_bookmarks_max">Nombre de marque-pages maximum atteint</string>
@@ -103,7 +102,6 @@
   <string name="msg_notification_permission_denied">L\'autorisation de notification est requise pour les contrôles de lecture</string>
   <string name="msg_report_crash">Merci de reporter tout problème avec le journal des accidents en pièce jointe afin que je puisse essayer de le corriger.</string>
   <string name="msg_copied_to_clipboard">Copié dans le presse-papier avec succès</string>
-
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Mesures</string>

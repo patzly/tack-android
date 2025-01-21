@@ -82,7 +82,6 @@
   <string name="action_logcat">로그캣 보기</string>
   <string name="action_copy_to_clipboard">클립보드에 복사</string>
   <string name="action_reload">새로 고침</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_bookmarks_max">북마크 한도에 도달 하였습니다.</string>
@@ -103,7 +102,6 @@
   <string name="msg_notification_permission_denied">재생 컨트롤을 위하여 알림 권한이 필요합니다</string>
   <string name="msg_report_crash">제가 고칠 수 있도록, 크래시가 발생하면 크래시 로그와 함께 보내주세요.</string>
   <string name="msg_copied_to_clipboard">클립보드에 복사되었습니다</string>
-
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">마디</string>

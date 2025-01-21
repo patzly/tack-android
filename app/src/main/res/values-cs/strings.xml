@@ -82,7 +82,6 @@
   <string name="action_logcat">Zobrazit logcat</string>
   <string name="action_copy_to_clipboard">Zkopírovat do schránky</string>
   <string name="action_reload">Načíst znovu</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_bookmarks_max">Dosažen limit záložek</string>
@@ -103,7 +102,6 @@
   <string name="msg_notification_permission_denied">Pro ovládání přehrávání je vyžadováno oprávnění k oznámením.</string>
   <string name="msg_report_crash">Nahlaste prosím jakýkoli pád a přidejte záznam z protokolu, abych mohl chybu opravit.</string>
   <string name="msg_copied_to_clipboard">Úspěšně zkopírováno do schránky</string>
-
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Takty</string>
