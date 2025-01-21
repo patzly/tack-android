@@ -52,6 +52,7 @@
 
   <string name="action_back">Zurück</string>
   <string name="action_close">Schließen</string>
+  <string name="action_apply">Anwenden</string>
   <string name="action_cancel">Abbrechen</string>
   <string name="action_increase">Erhöhen</string>
   <string name="action_decrease">Verringern</string>
