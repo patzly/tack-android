@@ -47,7 +47,6 @@
   <string name="label_tempo_allegro">Allegro</string>
   <string name="label_tempo_presto">Presto</string>
   <string name="label_tempo_prestissimo">Prestissimo</string>
-
   <!-- ACTIONS -->
 
   <string name="action_back">Volver</string>
