@@ -143,6 +143,7 @@
     <item quantity="other">Počkejte %1$d taktů před použitím úprav</item>
   </plurals>
   <string name="options_incremental">Postupná změna tempa</string>
+  <string name="options_incremental_amount_increase">Zvýšit tempo o %1$d dob/min</string>
   <plurals name="options_incremental_interval_bars">
     <item quantity="one">Každý %1$d takt</item>
     <item quantity="few">Každé %1$d takty</item>
