@@ -82,7 +82,6 @@
   <string name="action_logcat">顯示日誌</string>
   <string name="action_copy_to_clipboard">複製到剪貼簿</string>
   <string name="action_reload">重新整理</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_bookmarks_max">已達到書籤上限</string>
@@ -103,7 +102,6 @@
   <string name="msg_notification_permission_denied">播放控制需要通知權限</string>
   <string name="msg_report_crash">請報告任何崩潰情況，並附上崩潰日誌，以便我嘗試修復它們。</string>
   <string name="msg_copied_to_clipboard">已成功複製到剪貼簿</string>
-
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">小節</string>
