@@ -82,7 +82,6 @@
   <string name="action_logcat">Mostrar logcat</string>
   <string name="action_copy_to_clipboard">Copiar a portapapeles</string>
   <string name="action_reload">Cargar de nuevo</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_bookmarks_max">Ha alcanzado el límite de marcadores</string>
@@ -103,7 +102,6 @@
   <string name="msg_notification_permission_denied">Permiso de notificación requerido para controles de reproduccíon</string>
   <string name="msg_report_crash">Por favor reportar cualquier cuelgue de la aplicación con el \"crash log\" anexo. De tal manera que yo pueda tratar de arreglarlos. </string>
   <string name="msg_copied_to_clipboard">Copiado a portapapeles exitosamente</string>
-
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Compases</string>
