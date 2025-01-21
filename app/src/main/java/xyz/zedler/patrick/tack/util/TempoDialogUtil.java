@@ -21,18 +21,11 @@ package xyz.zedler.patrick.tack.util;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.Editable;
-import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
-import androidx.appcompat.app.AlertDialog;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
@@ -65,6 +58,11 @@ public class TempoDialogUtil {
       }
       return false;
     });
+    binding.textInputTempo.setHelperText(
+        activity.getString(
+            R.string.label_tempo_input_help, Constants.TEMPO_MIN, Constants.TEMPO_MAX
+        )
+    );
 
     dialogUtil = new DialogUtil(activity, "tempo");
     dialogUtil.createApplyCustom(
