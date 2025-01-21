@@ -23,6 +23,7 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -53,7 +54,7 @@ public class SystemBarBehavior {
   private boolean applyStatusBarInsetOnContainer;
   private boolean applyCutoutInsetOnContainer;
   private boolean isScrollable;
-  private int addBottomInset;
+  private int addBottomInset, cutoutInsetLeft, cutoutInsetRight;
 
   public SystemBarBehavior(@NonNull Activity activity) {
     this.activity = activity;
@@ -132,8 +133,10 @@ public class SystemBarBehavior {
 
       // CUTOUT INSET
       if (hasContainer() && applyCutoutInsetOnContainer) {
-        containerPaddingLeftExtra += insets.getInsets(Type.displayCutout()).left;
-        containerPaddingRightExtra += insets.getInsets(Type.displayCutout()).right;
+        cutoutInsetLeft = insets.getInsets(Type.displayCutout()).left;
+        cutoutInsetRight = insets.getInsets(Type.displayCutout()).right;
+        containerPaddingLeftExtra += cutoutInsetLeft;
+        containerPaddingRightExtra += cutoutInsetRight;
       }
 
       // NAV BAR INSET
@@ -197,7 +200,20 @@ public class SystemBarBehavior {
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override
           public void onGlobalLayout() {
-            int scrollViewHeight = scrollView.getMeasuredHeight();
+            int scrollViewWidth = scrollView.getWidth();
+            scrollViewWidth -= scrollView.getPaddingLeft() + scrollView.getPaddingRight();
+            int scrollContentWidth = scrollContent.getWidth() + UiUtil.dpToPx(activity, 16);
+            if (applyCutoutInsetOnContainer && scrollContentWidth < scrollViewWidth) {
+              // cutout insets not needed, remove them
+              scrollView.setPadding(
+                  scrollView.getPaddingLeft() - cutoutInsetLeft,
+                  scrollView.getPaddingTop(),
+                  scrollView.getPaddingRight() - cutoutInsetRight,
+                  scrollView.getPaddingBottom()
+              );
+            }
+
+            int scrollViewHeight = scrollView.getHeight();
             int scrollContentHeight = scrollContent.getHeight();
             isScrollable = scrollViewHeight - scrollContentHeight < 0;
             updateSystemBars();
