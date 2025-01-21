@@ -273,15 +273,23 @@ public class SystemBarBehavior {
       if (!isDarkModeActive) {
         UiUtil.setLightStatusBar(window.getDecorView(), true);
       }
-      window.setNavigationBarColor(Color.TRANSPARENT);
-      window.setNavigationBarContrastEnforced(true);
-      if (!UiUtil.isNavigationModeGesture(activity)) {
+      if (UiUtil.isNavigationModeGesture(activity)) {
+        window.setNavigationBarColor(Color.TRANSPARENT);
+        window.setNavigationBarContrastEnforced(true);
+      } else {
         if (!isDarkModeActive) {
           UiUtil.setLightNavigationBar(window.getDecorView(), true);
         }
-        if (!isOrientationPortrait && !isLandTablet) {
+        if (isOrientationPortrait || isLandTablet) {
+          window.setNavigationBarColor(
+              isScrollable ? colorScrim : Color.parseColor("#01000000")
+          );
+        } else {
           window.setNavigationBarDividerColor(
               ResUtil.getColor(activity, R.attr.colorOutlineVariant)
+          );
+          window.setNavigationBarColor(
+              ResUtil.getColor(activity, R.attr.colorSurface)
           );
         }
       }

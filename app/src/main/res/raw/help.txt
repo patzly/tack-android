@@ -14,7 +14,7 @@ If you want to permanently keep the notification for start/stop access, you can 
 #### How can I change the tempo?
 
 To change the tempo, you can rotate the circle in the center or tap on the buttons on the left and the right of the circle.
-By long-pressing the buttons, you can change the tempo even faster.
+By clicking on the circle, you also can enter the tempo manually.
 
 #### How do I set the time signature?
 

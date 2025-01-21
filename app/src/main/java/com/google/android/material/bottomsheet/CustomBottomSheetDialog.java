@@ -124,6 +124,9 @@ public class CustomBottomSheetDialog extends AppCompatDialog {
         // translucent status bar.
         window.addFlags(LayoutParams.FLAG_TRANSLUCENT_STATUS);
       }
+      if (!UiUtil.isDarkModeActive(getContext()) && !UiUtil.isNavigationModeGesture(getContext())) {
+        UiUtil.setLightNavigationBar(window.getDecorView(), true);
+      }
       window.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
     }
   }
