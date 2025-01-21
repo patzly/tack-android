@@ -82,7 +82,6 @@
   <string name="action_logcat">Logcat göster</string>
   <string name="action_copy_to_clipboard">Panoya kopyala</string>
   <string name="action_reload">Yeniden yükle</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_bookmarks_max">Yer imi sınırına ulaşıldı</string>
@@ -103,7 +102,6 @@
   <string name="msg_notification_permission_denied">Oynatma kontrolleri için bildirim izni gereklidir</string>
   <string name="msg_report_crash">Lütfen herhangi bir çökme durumunu çökme günlüğü ile birlikte bildirin, böylece onları düzeltmeye çalışabilirim.</string>
   <string name="msg_copied_to_clipboard">Başarıyla panoya kopyalandı</string>
-
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Ölçüler</string>
