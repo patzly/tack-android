@@ -47,6 +47,7 @@
   <string name="label_tempo_allegro">Allegro</string>
   <string name="label_tempo_presto">Presto</string>
   <string name="label_tempo_prestissimo">Prestissimo</string>
+  <string name="label_tempo_input_help">Werte von %1$d bis %2$d</string>
 
   <!-- ACTIONS -->
 
