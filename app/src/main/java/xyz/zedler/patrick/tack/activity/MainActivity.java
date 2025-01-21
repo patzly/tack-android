@@ -463,6 +463,12 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     }
   }
 
+  public void performHapticDoubleClick() {
+    if (areHapticsAllowed()) {
+      hapticUtil.doubleClick();
+    }
+  }
+
   public void performHapticTick() {
     if (areHapticsAllowed()) {
       hapticUtil.tick();

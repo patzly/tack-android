@@ -22,26 +22,43 @@ package xyz.zedler.patrick.tack.view;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.RotateAnimation;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import xyz.zedler.patrick.tack.util.UiUtil;
 
 public class TempoPickerView extends View implements View.OnTouchListener {
 
   private boolean isTouchable = true;
-  private boolean isTouchStartedInCircle;
+  private boolean isTouchStartedInCircle, isTouchStartedInCenter;
   private double currAngle = 0;
   private double prevAngle;
   private float degreeStorage = 0;
   private OnRotationListener onRotationListener;
   private OnPickListener onPickListener;
+  private OnClickListener onClickListener;
+  private final float ignoredCenterSize;
+  private final GestureDetector gestureDetector;
 
   public TempoPickerView(@NonNull Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
 
     prevAngle = 0;
+    ignoredCenterSize = UiUtil.dpToPx(context, 40);
+    gestureDetector = new GestureDetector(getContext(), new SimpleOnGestureListener() {
+      @Override
+      public boolean onSingleTapUp(@NonNull MotionEvent event) {
+        if (onClickListener != null) {
+          onClickListener.onClick(TempoPickerView.this);
+        }
+        return true;
+      }
+    });
 
     setOnTouchListener(this);
 
@@ -54,6 +71,11 @@ public class TempoPickerView extends View implements View.OnTouchListener {
 
   public void setOnPickListener(OnPickListener listener) {
     this.onPickListener = listener;
+  }
+
+  @Override
+  public void setOnClickListener(OnClickListener listener) {
+    this.onClickListener = listener;
   }
 
   @Override
@@ -89,21 +111,38 @@ public class TempoPickerView extends View implements View.OnTouchListener {
     final float x = event.getX();
     final float y = event.getY();
     boolean isTouchInsideCircle = isTouchInsideCircle(event.getX(), event.getY());
+    boolean isTouchOutsideCenter = isTouchOutsideCenter(event.getX(), event.getY());
 
     double angleRaw = Math.toDegrees(Math.atan2(x - xc, yc - y));
     double angle = angleRaw >= 0 ? angleRaw : 180 + (180 - Math.abs(angleRaw));
+
+    if (isTouchInsideCircle) {
+      gestureDetector.onTouchEvent(event);
+    }
 
     if (event.getAction() == MotionEvent.ACTION_DOWN) {
       isTouchStartedInCircle = isTouchInsideCircle;
       // on back gesture edge or outside ring
       if (isTouchInsideCircle) {
         onPickListener.onPickDown(x, y);
-        currAngle = angle;
+        if (isTouchOutsideCenter) {
+          isTouchStartedInCenter = false;
+          currAngle = angle;
+        } else {
+          // Only follow touch if it's not directly in center
+          isTouchStartedInCenter = true;
+        }
       }
     } else if (event.getAction() == MotionEvent.ACTION_MOVE && isTouchStartedInCircle) {
-      prevAngle = currAngle;
-      currAngle = angle;
-      animate(prevAngle, currAngle);
+      if (isTouchStartedInCenter && isTouchOutsideCenter) {
+        isTouchStartedInCenter = false;
+        currAngle = angle;
+      }
+      if (isTouchOutsideCenter) {
+        prevAngle = currAngle;
+        currAngle = angle;
+        animate(prevAngle, currAngle);
+      }
       onPickListener.onDrag(x, y);
     } else if (event.getAction() == MotionEvent.ACTION_UP
         || event.getAction() == MotionEvent.ACTION_CANCEL
@@ -161,6 +200,14 @@ public class TempoPickerView extends View implements View.OnTouchListener {
     double distanceX = x - centerX;
     double distanceY = y - centerY;
     return (distanceX * distanceX) + (distanceY * distanceY) <= radius * radius;
+  }
+
+  private boolean isTouchOutsideCenter(float x, float y) {
+    double centerX = getPivotX();
+    double centerY = getPivotY();
+    double radius = ignoredCenterSize / 2;
+    double distanceSquared = (x - centerX) * (x - centerX) + (y - centerY) * (y - centerY);
+    return distanceSquared > (radius * radius);
   }
 
   public interface OnRotationListener {

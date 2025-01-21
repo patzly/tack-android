@@ -41,7 +41,6 @@ public class DialogUtil {
   private final MainActivity activity;
   private final String tag;
   private AlertDialog dialog;
-  private Bundle savedInstanceState;
 
   public DialogUtil(@NonNull MainActivity activity, @NonNull String tag) {
     this.activity = activity;
@@ -163,6 +162,31 @@ public class DialogUtil {
     dialog = builder.create();
   }
 
+  public void createApplyCustom(
+      @StringRes int titleResId, @NonNull View view, @Nullable Runnable taskApply
+  ) {
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
+        activity, R.style.ThemeOverlay_Tack_AlertDialog
+    );
+    builder.setTitle(titleResId);
+    builder.setView(view);
+    builder.setPositiveButton(
+        R.string.action_apply,
+        (dialog, which) -> {
+          activity.performHapticClick();
+          if (taskApply != null) {
+            taskApply.run();
+          }
+        }
+    );
+    builder.setNegativeButton(
+        R.string.action_cancel,
+        (dialog, which) -> activity.performHapticClick()
+    );
+    builder.setOnCancelListener(dialog -> activity.performHapticTick());
+    dialog = builder.create();
+  }
+
   public void createCaution(
       @StringRes int titleResId, @StringRes int msgResId,
       @StringRes int actionResId, @NonNull Runnable action
@@ -239,20 +263,12 @@ public class DialogUtil {
     }
   }
 
-  public void showIfWasShown(@Nullable Bundle state) {
-    if (state != null && state.getBoolean(IS_SHOWING + tag)) {
+  public boolean showIfWasShown(@Nullable Bundle state) {
+    boolean wasShowing = state != null && state.getBoolean(IS_SHOWING + tag);
+    if (wasShowing) {
       new Handler(Looper.getMainLooper()).postDelayed(this::show, 10);
     }
-  }
-
-  public void showIfWasShown() {
-    if (savedInstanceState != null && savedInstanceState.getBoolean(IS_SHOWING + tag)) {
-      new Handler(Looper.getMainLooper()).postDelayed(this::show, 10);
-    }
-  }
-
-  public void setSavedInstanceState(@Nullable Bundle state) {
-    savedInstanceState = state;
+    return wasShowing;
   }
 
   public void saveState(@NonNull Bundle outState) {
@@ -273,5 +289,9 @@ public class DialogUtil {
       dialog.setCancelable(cancelable);
       dialog.setCanceledOnTouchOutside(cancelable);
     }
+  }
+
+  public AlertDialog getDialog() {
+    return dialog;
   }
 }

@@ -79,7 +79,8 @@ import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.OptionsUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.ShortcutUtil;
-import xyz.zedler.patrick.tack.util.TempoTapUtil;
+import xyz.zedler.patrick.tack.util.TempoDialogUtil;
+import xyz.zedler.patrick.tack.util.TempoTapDialogUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.BeatView;
@@ -103,7 +104,8 @@ public class MainFragment extends BaseFragment
   private DialogUtil dialogUtilGain, dialogUtilSplitScreen;
   private OptionsUtil optionsUtil;
   private ShortcutUtil shortcutUtil;
-  private TempoTapUtil tempoTapUtil;
+  private TempoTapDialogUtil tempoTapDialogUtil;
+  private TempoDialogUtil tempoDialogUtil;
   private List<Integer> bookmarks;
   private BeatsBgDrawable beatsBgDrawable;
   private BadgeDrawable beatsCountBadge, subsCountBadge, optionsBadge;
@@ -131,8 +133,9 @@ public class MainFragment extends BaseFragment
     binding = null;
     dialogUtilGain.dismiss();
     dialogUtilSplitScreen.dismiss();
+    tempoDialogUtil.dismiss();
     optionsUtil.dismiss();
-    tempoTapUtil.dismiss();
+    tempoTapDialogUtil.dismiss();
   }
 
   @SuppressLint("ClickableViewAccessibility")
@@ -249,6 +252,9 @@ public class MainFragment extends BaseFragment
       }
     }
 
+    tempoDialogUtil = new TempoDialogUtil(activity, this);
+    tempoDialogUtil.showIfWasShown(savedInstanceState);
+
     optionsUtil = new OptionsUtil(activity, this, () -> updateOptions(true));
     boolean hideOptions = isLandTablet;
     boolean hideBeatMode = !activity.getHapticUtil().hasVibrator();
@@ -266,7 +272,7 @@ public class MainFragment extends BaseFragment
     bigLogo = getSharedPrefs().getBoolean(PREF.BIG_LOGO, DEF.BIG_LOGO);
 
     shortcutUtil = new ShortcutUtil(activity);
-    tempoTapUtil = new TempoTapUtil(activity, this);
+    tempoTapDialogUtil = new TempoTapDialogUtil(activity, this);
 
     beatsBgDrawable = new BeatsBgDrawable(activity);
     binding.linearMainBeatsBg.setBackground(beatsBgDrawable);
@@ -346,6 +352,10 @@ public class MainFragment extends BaseFragment
           updatePickerAndLogo(false, true);
         }
       }
+    });
+    binding.tempoPickerMain.setOnClickListener(v -> {
+      tempoDialogUtil.show();
+      performHapticClick();
     });
 
     boolean alwaysVibrate = getSharedPrefs().getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
@@ -471,8 +481,11 @@ public class MainFragment extends BaseFragment
     if (optionsUtil != null) {
       optionsUtil.saveState(outState);
     }
-    if (tempoTapUtil != null) {
-      tempoTapUtil.saveState(outState);
+    if (tempoDialogUtil != null) {
+      tempoDialogUtil.saveState(outState);
+    }
+    if (tempoTapDialogUtil != null) {
+      tempoTapDialogUtil.saveState(outState);
     }
   }
 
@@ -482,7 +495,7 @@ public class MainFragment extends BaseFragment
     }
     getMetronomeUtil().addListener(this);
     optionsUtil.showIfWasShown(savedState);
-    tempoTapUtil.showIfWasShown(savedState);
+    tempoTapDialogUtil.showIfWasShown(savedState);
     savedState = null;
 
     if (getMetronomeUtil().isBeatModeVibrate()) {
@@ -902,8 +915,8 @@ public class MainFragment extends BaseFragment
     } else if (id == R.id.button_main_tempo_tap) {
       performHapticClick();
       ViewUtil.startIcon(binding.buttonMainTempoTap.getIcon());
-      tempoTapUtil.update();
-      tempoTapUtil.show();
+      tempoTapDialogUtil.update();
+      tempoTapDialogUtil.show();
     }
   }
 

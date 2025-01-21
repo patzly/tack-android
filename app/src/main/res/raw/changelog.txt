@@ -1,6 +1,8 @@
 ## 4.7.0
 
 - New: buttons to increase and decrease tempo by 1, 5 and 10 bpm
+- New: tap on tempo picker for keyboard input
+- Improved: system bar behavior and and handling of cutouts
 - Fixed: black navigation bar in some cases on Android 15
 
 ## 4.6.0

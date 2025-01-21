@@ -77,6 +77,14 @@ public class HapticUtil {
     }
   }
 
+  public void doubleClick() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && hasAmplitudeControl) {
+      vibrate(VibrationEffect.EFFECT_DOUBLE_CLICK);
+    } else {
+      vibrate(CLICK);
+    }
+  }
+
   public void hapticSegmentTick(View view, boolean frequent) {
     if (VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE) {
       view.performHapticFeedback(

@@ -64,6 +64,7 @@
 
   <string name="action_back">Back</string>
   <string name="action_close">Close</string>
+  <string name="action_apply">Apply</string>
   <string name="action_cancel">Cancel</string>
   <string name="action_increase">Increase</string>
   <string name="action_decrease">Decrease</string>
@@ -94,6 +95,7 @@
   <string name="action_logcat">Show logcat</string>
   <string name="action_copy_to_clipboard">Copy to clipboard</string>
   <string name="action_reload">Reload</string>
+  <string name="action_change_tempo">Change tempo</string>
 
   <!-- MESSAGES -->
 
@@ -115,6 +117,7 @@
   <string name="msg_notification_permission_denied">Notification permission is required for playback controls</string>
   <string name="msg_report_crash">Please report any crash with the crash log attached so I can try to fix them.</string>
   <string name="msg_copied_to_clipboard">Copied to clipboard successfully</string>
+  <string name="msg_invalid_input">Invalid input</string>
 
   <!-- OPTIONS -->
 

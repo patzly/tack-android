@@ -35,9 +35,9 @@ import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.PartialDialogTempoTapBinding;
 import xyz.zedler.patrick.tack.fragment.MainFragment;
 
-public class TempoTapUtil {
+public class TempoTapDialogUtil {
 
-  private static final String TAG = TempoTapUtil.class.getSimpleName();
+  private static final String TAG = TempoTapDialogUtil.class.getSimpleName();
   private static final int MAX_TAPS = 20;
   private static final double TEMPO_FACTOR = 0.5;
   private static final int INTERVAL_FACTOR = 3;
@@ -50,9 +50,7 @@ public class TempoTapUtil {
   private long previous;
 
   @SuppressLint("ClickableViewAccessibility")
-  public TempoTapUtil(
-      MainActivity activity, MainFragment fragment
-  ) {
+  public TempoTapDialogUtil(MainActivity activity, MainFragment fragment) {
     this.activity = activity;
     this.fragment = fragment;
 
