@@ -20,6 +20,6 @@
 
 <resources>
 
-  <integer name="picker_waves">10</integer>
+  <integer name="picker_waves">12</integer>
 
 </resources>
