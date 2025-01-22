@@ -47,7 +47,6 @@
   <string name="label_tempo_allegro">Быстро</string>
   <string name="label_tempo_presto">Очень быстро</string>
   <string name="label_tempo_prestissimo">Предельно быстро</string>
-
   <!-- ACTIONS -->
 
   <string name="action_back">Назад</string>
@@ -79,7 +78,6 @@
   <string name="action_logcat">Показать logcat</string>
   <string name="action_copy_to_clipboard">Скопировать в буфер обмена</string>
   <string name="action_reload">Перезагрузить</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_bookmarks_max">Достигнут лимит закладок</string>
@@ -96,6 +94,7 @@
   <string name="msg_gain_description">Будьте осторожны и не слушайте метроном в наушниках, так как громкие звуки могут вызвать потерю слуха!</string>
   <string name="msg_split_screen">Окно слишком маленькое</string>
   <string name="msg_copied_to_clipboard">Успешно скопировано в буфер обмена</string>
+  <string name="msg_invalid_input">Неправильный ввод</string>
 
   <!-- OPTIONS -->
 
@@ -113,6 +112,20 @@
     <item quantity="many">%1$d ударов</item>
     <item quantity="other">%1$d ударов</item>
   </plurals>
+  <string name="options_unit_seconds">Секунды</string>
+  <plurals name="options_unit_seconds">
+    <item quantity="one">%1$d секунда</item>
+    <item quantity="few">%1$d секунды</item>
+    <item quantity="many">%1$d секунд</item>
+    <item quantity="other">%1$d секунд</item>
+  </plurals>
+  <string name="options_unit_minutes">Минуты</string>
+  <plurals name="options_unit_minutes">
+    <item quantity="one">%1$d минута</item>
+    <item quantity="few">%1$d минуты</item>
+    <item quantity="many">%1$d минут</item>
+    <item quantity="other">%1$d минут</item>
+  </plurals>
   <string name="options_inactive">Неактивно</string>
   <string name="options_count_in">Вступление</string>
   <plurals name="options_count_in_description">
@@ -122,8 +135,8 @@
     <item quantity="other">Применять модификаторы после %1$d тактов</item>
   </plurals>
   <string name="options_incremental">Постепенное изменение темпа</string>
-  <string name="options_incremental_amount_increase">Увеличивать темп на %1$d bpm</string>
-  <string name="options_incremental_amount_decrease">Уменьшать темп на %1$d bpm</string>
+  <string name="options_incremental_amount_increase">Увеличить на %1$d bpm</string>
+  <string name="options_incremental_amount_decrease">Уменьшить на %1$d bpm</string>
   <plurals name="options_incremental_interval_bars">
     <item quantity="one">Каждый %1$d такт</item>
     <item quantity="few">Каждые %1$d такта</item>
