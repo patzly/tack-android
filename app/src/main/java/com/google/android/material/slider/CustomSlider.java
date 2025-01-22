@@ -497,6 +497,11 @@ public class CustomSlider extends Slider {
     final int rightActiveTickIndex =
         (int) Math.floor(activeRange[1] * (ticksCoordinates.length / 2f - 1));
 
+    if (ticksCoordinates == null || ticksCoordinates.length == 0) {
+      Log.e(TAG, "maybeDrawTicks: ticksCoordinates array is null or empty");
+      return;
+    }
+
     // Draw ticks on the left inactive track (if any).
     if (leftActiveTickIndex > 0) {
       canvas.save();

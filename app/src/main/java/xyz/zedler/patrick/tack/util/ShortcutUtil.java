@@ -26,8 +26,13 @@ import android.content.pm.ShortcutManager;
 import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import androidx.annotation.RequiresApi;
 import java.util.Collections;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.R;
@@ -35,8 +40,12 @@ import xyz.zedler.patrick.tack.activity.ShortcutActivity;
 
 public class ShortcutUtil {
 
+  private static final String TAG = ShortcutUtil.class.getSimpleName();
+
   private final Context context;
   private ShortcutManager manager;
+  private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+  private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
   public ShortcutUtil(Context context) {
     this.context = context;
@@ -46,17 +55,21 @@ public class ShortcutUtil {
   }
 
   public void addShortcut(int tempo) {
-    if (isSupported() && !hasShortcut(tempo)) {
-      if (manager.getDynamicShortcuts().size() < manager.getMaxShortcutCountPerActivity()) {
-        manager.addDynamicShortcuts(Collections.singletonList(getShortcutInfo(tempo)));
+    hasShortcutAsync(tempo, hasShortcut -> {
+      if (isSupported() && !hasShortcut) {
+        if (manager.getDynamicShortcuts().size() < manager.getMaxShortcutCountPerActivity()) {
+          manager.addDynamicShortcuts(Collections.singletonList(getShortcutInfo(tempo)));
+        }
       }
-    }
+    });
   }
 
   public void removeShortcut(int tempo) {
-    if (isSupported() && hasShortcut(tempo)) {
-      manager.removeDynamicShortcuts(Collections.singletonList(String.valueOf(tempo)));
-    }
+    hasShortcutAsync(tempo, hasShortcut -> {
+      if (isSupported() && hasShortcut) {
+        manager.removeDynamicShortcuts(Collections.singletonList(String.valueOf(tempo)));
+      }
+    });
   }
 
   public void removeAllShortcuts() {
@@ -66,20 +79,36 @@ public class ShortcutUtil {
   }
 
   public void reportUsage(int tempo) {
-    if (isSupported() && hasShortcut(tempo)) {
-      manager.reportShortcutUsed(String.valueOf(tempo));
-    }
+    hasShortcutAsync(tempo, hasShortcut -> {
+      if (isSupported() && hasShortcut) {
+        manager.reportShortcutUsed(String.valueOf(tempo));
+      }
+    });
   }
 
-  private boolean hasShortcut(int tempo) {
+  /**
+   * Asynchronous because there was an ANR reported caused by manager.getDynamicShortcuts()
+   */
+  private void hasShortcutAsync(int tempo, ShortcutCallback callback) {
     if (isSupported()) {
-      for (ShortcutInfo info : manager.getDynamicShortcuts()) {
-        if (String.valueOf(tempo).equals(info.getId())) {
-          return true;
+      executorService.execute(() -> {
+        boolean result = false;
+        try {
+          for (ShortcutInfo info : manager.getDynamicShortcuts()) {
+            if (String.valueOf(tempo).equals(info.getId())) {
+              result = true;
+              break;
+            }
+          }
+        } catch (Exception e) {
+          Log.e(TAG, "hasShortcutAsync: ", e);
         }
-      }
+        final boolean finalResult = result;
+        mainHandler.post(() -> callback.onResult(finalResult));
+      });
+    } else {
+      mainHandler.post(() -> callback.onResult(false));
     }
-    return false;
   }
 
   @RequiresApi(api = VERSION_CODES.N_MR1)
@@ -97,5 +126,9 @@ public class ShortcutUtil {
 
   private static boolean isSupported() {
     return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1;
+  }
+
+  private interface ShortcutCallback {
+    void onResult(boolean hasShortcut);
   }
 }
