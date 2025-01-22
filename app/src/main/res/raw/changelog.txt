@@ -2,8 +2,11 @@
 
 - New: buttons to increase and decrease tempo by 1, 5 and 10 bpm
 - New: tap on tempo picker for keyboard input
+- New: separate tempo tap screen (Wear OS)
 - Improved: system bar behavior and display cutout handling
 - Fixed: black navigation bar in some cases on Android 15
+- Fixed: vibration not working on some devices (Wear OS)
+- Fixed: crashes caused by audio on some devices (Wear OS)
 
 ## 4.6.0
 
@@ -12,8 +15,6 @@
 - Improved: removed squiggly timer slider in favor of big slider for better accessibility
 - Fixed: incorrect default value for permanent notification setting
 - Fixed: incorrect grammar in some translations with quantities
-- Fixed: vibration not working on some devices (Wear OS)
-- Fixed: crashes caused by audio on some devices (Wear OS)
 
 ## 4.5.0
 
