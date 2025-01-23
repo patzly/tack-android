@@ -1,3 +1,8 @@
+## 4.7.1
+
+- New: Russian translation
+- Fixed: incremental tempo limit not ignored when set to inactive
+
 ## 4.7.0
 
 - New: buttons to increase and decrease tempo by 1, 5 and 10 bpm

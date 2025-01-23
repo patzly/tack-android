@@ -34,8 +34,15 @@ android {
     versionCode = 261 // last number is 1 for wear release
     versionName = "4.4.4"
     resourceConfigurations += listOf(
-      "de", "cs", "en", "es", "es-rCL", "fr", "in", "ko", "tr", "zh-rCN","zh-rHK", "zh-rTW"
+      "de", "cs", "en", "es", "es-rCL", "fr", "in", "ko", "ru", "tr", "zh-rCN","zh-rHK", "zh-rTW"
     )
+  }
+
+  androidResources {
+    // Use this when the new API is stable
+    /*localeFilters += listOf(
+      "de", "cs", "en", "es", "es-rCL", "fr", "in", "ko", "ru", "tr", "zh-rCN","zh-rHK", "zh-rTW"
+    )*/
   }
 
   buildTypes {

@@ -32,7 +32,7 @@ android {
         targetSdk 35
         versionCode 260 // last number is 0 for app release
         versionName "4.7.0"
-        resourceConfigurations += ["cs", "de", "en", "es", "es-rCL", "fr", "in", "ko", "tr",
+        resourceConfigurations += ["cs", "de", "en", "es", "es-rCL", "fr", "in", "ko", "ru", "tr",
                                    "zh-rCN", "zh-rHK", "zh-rTW"]
         vectorDrawables.generatedDensities = []
     }
