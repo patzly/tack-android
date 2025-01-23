@@ -1,0 +1,37 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:width="24dp"
+  android:height="24dp"
+  android:viewportWidth="24"
+  android:viewportHeight="24"
+  android:autoMirrored="true">
+  <path
+    android:name="path_1"
+    android:pathData="M 11.975 9 Q 11.55 9 11.262 8.713 Q 10.975 8.425 10.975 8 Q 10.975 7.95 11.1 7.5 Q 11.3 7.15 11.4 6.787 Q 11.5 6.425 11.5 6 Q 11.5 4.75 10.625 3.875 Q 9.75 3 8.5 3 Q 7.25 3 6.375 3.875 Q 5.5 4.75 5.5 6 Q 5.5 6.425 5.6 6.787 Q 5.7 7.15 5.9 7.5 Q 5.975 7.625 6 7.75 Q 6.025 7.875 6.025 8 Q 6.025 8.425 5.75 8.713 Q 5.475 9 5.05 9 Q 4.775 9 4.537 8.85 Q 4.3 8.7 4.175 8.475 Q 3.85 7.925 3.675 7.3 Q 3.5 6.675 3.5 6 Q 3.5 3.925 4.963 2.462 Q 6.425 1 8.5 1 Q 10.575 1 12.037 2.462 Q 13.5 3.925 13.5 6 Q 13.5 6.675 13.325 7.3 Q 13.15 7.925 12.825 8.475 Q 12.7 8.7 12.475 8.85 Q 12.25 9 11.975 9 Z"
+    android:fillColor="#000000"
+    android:strokeWidth="1" />
+  <path
+    android:name="path_3"
+    android:pathData="M 10.475 22 Q 9.775 22 9.162 21.7 Q 8.55 21.4 8.125 20.85 L 3.1 14.475 Q 2.9 14.25 2.925 13.938 Q 2.95 13.625 3.15 13.425 Q 3.65 12.9 4.35 12.8 Q 5.05 12.7 5.65 13.075 L 7.5 14.2 L 7.5 6 Q 7.5 5.575 7.787 5.287 Q 8.075 5 8.5 5 Q 8.925 5 9.225 5.287 Q 9.525 5.575 9.525 6 L 9.525 16 Q 9.525 16.575 9.012 16.863 Q 8.5 17.15 8 16.85 L 7.1 16.3 L 9.7 19.625 Q 9.85 19.8 10.05 19.9 Q 10.25 20 10.475 20 L 16 20 Q 16.825 20 17.413 19.413 Q 18 18.825 18 18 L 18 14 Q 18 13.575 17.712 13.287 Q 17.425 13 17 13 L 12.525 13 Q 12.1 13 11.813 12.713 Q 11.525 12.425 11.525 12 Q 11.525 11.575 11.813 11.287 Q 12.1 11 12.525 11 L 17 11 Q 18.25 11 19.125 11.875 Q 20 12.75 20 14 L 20 18 Q 20 19.65 18.825 20.825 Q 17.65 22 16 22 Z"
+    android:fillColor="#000"
+    android:strokeWidth="1" />
+</vector>

@@ -23,6 +23,7 @@ sealed class Screen(val route: String) {
   data object Main : Screen("main")
   data object Settings : Screen("settings")
   data object Tempo : Screen("tempo")
+  data object Tap : Screen("tap")
   data object Beats : Screen("beats")
   data object Bookmarks : Screen("bookmarks")
   data object Gain : Screen("gain")

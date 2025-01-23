@@ -41,6 +41,7 @@ import xyz.zedler.patrick.tack.presentation.screen.LatencyScreen
 import xyz.zedler.patrick.tack.presentation.screen.MainScreen
 import xyz.zedler.patrick.tack.presentation.screen.SettingsScreen
 import xyz.zedler.patrick.tack.presentation.screen.SoundScreen
+import xyz.zedler.patrick.tack.presentation.screen.TapScreen
 import xyz.zedler.patrick.tack.presentation.screen.TempoScreen
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -99,6 +100,9 @@ fun TackApp(
             onBeatsButtonClick = {
               navController.navigate(Screen.Beats.route)
             },
+            onTempoTapButtonClick = {
+              navController.navigate(Screen.Tap.route)
+            },
             onBookmarksButtonClick = {
               navController.navigate(Screen.Bookmarks.route)
             },
@@ -125,6 +129,9 @@ fun TackApp(
         }
         composable(route = Screen.Beats.route) {
           BeatsScreen(viewModel = viewModel)
+        }
+        composable(route = Screen.Tap.route) {
+          TapScreen(viewModel = viewModel)
         }
         composable(route = Screen.Bookmarks.route) {
           BookmarksScreen(viewModel = viewModel)

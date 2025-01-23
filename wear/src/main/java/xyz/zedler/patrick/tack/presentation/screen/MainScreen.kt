@@ -42,8 +42,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -81,6 +79,7 @@ fun MainScreen(
   onTempoCardClick: () -> Unit = {},
   onSettingsButtonClick: () -> Unit = {},
   onBeatsButtonClick: () -> Unit = {},
+  onTempoTapButtonClick: () -> Unit = {},
   onBookmarksButtonClick: () -> Unit = {},
   onPermissionRequestClick: () -> Unit = {}
 ) {
@@ -203,11 +202,11 @@ fun MainScreen(
               contentDescription = stringResource(id = R.string.wear_title_beats)
             )
           }
-          TempoTapButton(
-            state = state,
-            onClick = {
-              viewModel.tempoTap()
-            },
+          IconButton(
+            onClick = onTempoTapButtonClick,
+            colors = IconButtonDefaults.iconButtonColors(
+              contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            ),
             modifier = Modifier
               .graphicsLayer(alpha = controlsAlpha)
               .constrainAs(tempoTapButton) {
@@ -216,7 +215,12 @@ fun MainScreen(
                 start.linkTo(parent.start)
                 end.linkTo(playButton.start)
               }
-          )
+          ) {
+            Icon(
+              painter = painterResource(id = R.drawable.ic_rounded_touch_app),
+              contentDescription = stringResource(id = R.string.wear_action_tempo_tap)
+            )
+          }
           IconButton(
             onClick = onBookmarksButtonClick,
             onLongClick = {
@@ -422,41 +426,6 @@ fun PlayButton(
       description = stringResource(id = R.string.wear_action_play_stop),
       trigger = animTrigger,
       modifier = Modifier.size(IconButtonDefaults.LargeIconSize),
-      animated = !state.reduceAnim
-    )
-  }
-}
-
-@Composable
-fun TempoTapButton(
-  state: MainState,
-  onClick: () -> Unit,
-  modifier: Modifier
-) {
-  val animTrigger = remember { mutableStateOf(false) }
-  IconButton(
-    onClick = {},
-    colors = IconButtonDefaults.iconButtonColors(
-      contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-    ),
-    modifier = modifier
-      .touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
-      .pointerInput(Unit) {
-        awaitPointerEventScope {
-          while (true) {
-            val event = awaitPointerEvent()
-            if (event.type == PointerEventType.Press) {
-              onClick()
-              animTrigger.value = !animTrigger.value
-            }
-          }
-        }
-      }
-  ) {
-    AnimatedIcon(
-      resId = R.drawable.ic_rounded_touch_app_anim,
-      description = stringResource(id = R.string.wear_action_tempo_tap),
-      trigger = animTrigger.value,
       animated = !state.reduceAnim
     )
   }
