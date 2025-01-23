@@ -1,0 +1,2 @@
+• New: Russian translation
+• Fixed: incremental tempo limit not ignored when set to inactive
