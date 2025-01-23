@@ -657,9 +657,11 @@ public class MetronomeUtil {
         @Override
         public void run() {
           incrementalHandler.postDelayed(this, interval);
-          if (incrementalIncrease && tempo + incrementalAmount <= incrementalLimit) {
+          int upperLimit = incrementalLimit != 0 ? incrementalLimit : Constants.TEMPO_MAX;
+          int lowerLimit = incrementalLimit != 0 ? incrementalLimit : Constants.TEMPO_MIN;
+          if (incrementalIncrease && tempo + incrementalAmount <= upperLimit) {
             changeTempo(incrementalAmount);
-          } else if (!incrementalIncrease && tempo - incrementalAmount >= incrementalLimit) {
+          } else if (!incrementalIncrease && tempo - incrementalAmount >= lowerLimit) {
             changeTempo(-incrementalAmount);
           }
         }
@@ -1017,9 +1019,11 @@ public class MetronomeUtil {
       if (isIncrementalActive() && incrementalUnit.equals(UNIT.BARS) && !isCountIn) {
         barIndex = barIndex - getCountIn();
         if (barIndex >= incrementalInterval && barIndex % incrementalInterval == 0) {
-          if (incrementalIncrease && tempo + incrementalAmount <= incrementalLimit) {
+          int upperLimit = incrementalLimit != 0 ? incrementalLimit : Constants.TEMPO_MAX;
+          int lowerLimit = incrementalLimit != 0 ? incrementalLimit : Constants.TEMPO_MIN;
+          if (incrementalIncrease && tempo + incrementalAmount <= upperLimit) {
             changeTempo(incrementalAmount);
-          } else if (!incrementalIncrease && tempo - incrementalAmount >= incrementalLimit) {
+          } else if (!incrementalIncrease && tempo - incrementalAmount >= lowerLimit) {
             changeTempo(-incrementalAmount);
           }
         }
