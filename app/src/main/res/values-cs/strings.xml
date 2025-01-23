@@ -106,6 +106,8 @@
   <string name="msg_notification_permission_denied">Pro ovládání přehrávání je vyžadováno oprávnění k oznámením.</string>
   <string name="msg_report_crash">Nahlaste prosím jakýkoli pád a přidejte záznam z protokolu, abych mohl chybu opravit.</string>
   <string name="msg_copied_to_clipboard">Úspěšně zkopírováno do schránky</string>
+  <string name="msg_invalid_input">Neplatný vstup</string>
+
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Takty</string>
