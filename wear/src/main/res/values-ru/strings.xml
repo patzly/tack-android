@@ -1,0 +1,78 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="wear_title_settings">Настройки</string>
+  <string name="wear_title_beats">Удары</string>
+  <string name="wear_title_beats_count">Удары (%1$d)</string>
+  <string name="wear_title_notification_channel">Обслуживание метронома</string>
+  <string name="wear_title_bookmarks">Закладки</string>
+
+  <!-- LABELS -->
+
+  <string name="wear_label_bpm_value">%1$d bpm</string>
+  <string name="wear_label_ms">%1$s мс</string>
+  <string name="wear_label_db">+%1$d дБ</string>
+  <plurals name="wear_label_beats">
+    <item quantity="one">%1$d удар</item>
+    <item quantity="few">%1$d удара</item>
+    <item quantity="many">%1$d ударов</item>
+    <item quantity="other">%1$d ударов</item>
+  </plurals>
+  <!-- ACTIONS -->
+
+  <string name="wear_action_cancel">Отменить</string>
+  <string name="wear_action_increase">Увеличить</string>
+  <string name="wear_action_decrease">Уменьшить</string>
+  <string name="wear_action_play_stop">Старт/Пауза</string>
+  <string name="wear_action_stop">Пауза</string>
+  <string name="wear_action_add_beat">Добавить долю</string>
+  <string name="wear_action_remove_beat">Убрать долю</string>
+  <string name="wear_action_tempo_tap">Настучать ритм</string>
+  <string name="wear_action_bookmark">Добавить в закладки</string>
+  <string name="wear_action_beat_mode">Режим ударов</string>
+  <string name="wear_action_delete">Удалить</string>
+
+  <!-- MESSAGES -->
+
+  <string name="wear_msg_service_running">Метроном играет</string>
+  <string name="wear_msg_gain">Включить усиление громкости?</string>
+  <string name="wear_msg_delete_bookmark">Удалить закладку?</string>
+  <!-- SETTINGS -->
+
+  <string name="wear_settings_sound">Звук удара</string>
+  <string name="wear_settings_sound_sine">Синусоида</string>
+  <string name="wear_settings_sound_wood">Дерево</string>
+  <string name="wear_settings_sound_mechanical">Механический</string>
+  <string name="wear_settings_sound_beatboxing_1">Битбокс 1</string>
+  <string name="wear_settings_sound_beatboxing_2">Битбокс 2</string>
+  <string name="wear_settings_sound_hands">Ладоши</string>
+  <string name="wear_settings_sound_folding">Линейка</string>
+
+  <string name="wear_settings_gain">Усиление громкости</string>
+  <string name="wear_settings_always_vibrate">Всегда вибрировать</string>
+  <string name="wear_settings_always_vibrate_description">Даже когда звук включен</string>
+
+  <string name="wear_settings_reduce_animations">Уменьшить анимации</string>
+  <string name="wear_settings_reduce_animations_description">Может улучшить производительность</string>
+
+  </resources>
