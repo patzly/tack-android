@@ -47,10 +47,13 @@
   <string name="label_tempo_allegro">Allegro</string>
   <string name="label_tempo_presto">Presto</string>
   <string name="label_tempo_prestissimo">Prestissimo</string>
+  <string name="label_tempo_input_help">Hodnoty od %1$d do %2$d</string>
+
   <!-- ACTIONS -->
 
   <string name="action_back">Zpět</string>
   <string name="action_close">Zavřít</string>
+  <string name="action_apply">Použít</string>
   <string name="action_cancel">Zrušit</string>
   <string name="action_increase">Zvýšit</string>
   <string name="action_decrease">Snížit</string>
@@ -81,6 +84,8 @@
   <string name="action_logcat">Zobrazit logcat</string>
   <string name="action_copy_to_clipboard">Zkopírovat do schránky</string>
   <string name="action_reload">Načíst znovu</string>
+  <string name="action_change_tempo">Změnit tempo</string>
+
   <!-- MESSAGES -->
 
   <string name="msg_bookmarks_max">Dosažen limit záložek</string>
