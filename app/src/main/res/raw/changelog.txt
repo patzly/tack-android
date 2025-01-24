@@ -1,3 +1,7 @@
+## 4.7.12
+
+- Improved: color contrast of app color themes
+
 ## 4.7.1
 
 - New: Russian translation
