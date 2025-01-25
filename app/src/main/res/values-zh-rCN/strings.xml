@@ -124,6 +124,7 @@
   <string name="options_incremental">增量速度变化</string>
   <string name="options_incremental_max">提高到 %1$d bpm</string>
   <string name="options_incremental_min">降低到 %1$d bpm</string>
+  <string name="options_mute">已静音节拍</string>
   <string name="options_swing">摇摆</string>
   <string name="options_swing_description">将分区设置为与所选摇摆百分比相匹配</string>
   <string name="options_swing_3">三连音</string>
