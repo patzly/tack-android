@@ -168,7 +168,7 @@
     <item quantity="one">Nach %1$d Minute beenden</item>
     <item quantity="other">Nach %1$d Minuten beenden</item>
   </plurals>
-  <string name="options_mute">Stumm geschaltete Takte</string>
+  <string name="options_mute">Stumm geschaltete Schläge</string>
   <plurals name="options_mute_play_bars">
     <item quantity="one">%1$d Takt schlagen</item>
     <item quantity="other">%1$d Takte schlagen</item>
