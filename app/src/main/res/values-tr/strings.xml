@@ -128,6 +128,7 @@
   <string name="options_incremental">Kademeli tempo değişikliği</string>
   <string name="options_incremental_max">%1$d bpm\'ye kadar</string>
   <string name="options_incremental_min">%1$d bpm\'ye kadar düşür</string>
+  <string name="options_mute">Sessiz vuruşlar</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Alt bölümler seçilen swing yüzdesine göre ayarlanır</string>
   <string name="options_swing_3">Üçlem</string>
