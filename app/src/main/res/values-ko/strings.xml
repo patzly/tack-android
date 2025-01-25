@@ -124,6 +124,7 @@
   <string name="options_incremental">점진적 템포 변화</string>
   <string name="options_incremental_max">%1$d bpm까지 </string>
   <string name="options_incremental_min">%1$d bpm까지 </string>
+  <string name="options_mute">무음 비트</string>
   <string name="options_swing">스윙(Swing)</string>
   <string name="options_swing_description">세분음이 선택된 스윙 비율에 맞춰 설정됩니다</string>
   <string name="options_swing_3">셋잇단음표(triplet)</string>
