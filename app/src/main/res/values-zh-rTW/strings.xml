@@ -145,7 +145,7 @@
   <plurals name="options_timer_description_minutes">
     <item quantity="other">%1$d 分鐘後停止</item>
   </plurals>
-  <string name="options_mute">已靜音小節</string>
+  <string name="options_mute">已靜音節拍</string>
   <plurals name="options_mute_play_bars">
     <item quantity="other">播放 %1$d 小節</item>
   </plurals>
