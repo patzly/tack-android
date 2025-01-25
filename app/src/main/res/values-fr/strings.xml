@@ -132,6 +132,7 @@
   <string name="options_incremental">Changement incrémental de tempo</string>
   <string name="options_incremental_max">Monter jusqu\'à %1$d bpm</string>
   <string name="options_incremental_min">Descendre jusqu\'à %1$d bpm</string>
+  <string name="options_mute">Battements muets</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Les subdivisions sont définies pour correspondre au paramètre de swing sélectionné</string>
   <string name="options_swing_3">Triolet</string>
