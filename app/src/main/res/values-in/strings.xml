@@ -124,6 +124,7 @@
   <string name="options_incremental">Perubahan tempo bertahap</string>
   <string name="options_incremental_max">Naik hingga %1$d bpm</string>
   <string name="options_incremental_min">Turun hingga %1$d bpm</string>
+  <string name="options_mute">Ketukan dibisukan</string>
   <string name="options_swing">Ayunan</string>
   <string name="options_swing_description">Subdivisi diatur untuk mencocokkan persentase ayunan yang dipilih</string>
   <string name="options_swing_3">Triplet</string>
