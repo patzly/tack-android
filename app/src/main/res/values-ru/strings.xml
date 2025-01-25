@@ -51,6 +51,7 @@
 
   <string name="action_back">Назад</string>
   <string name="action_close">Закрыть</string>
+  <string name="action_apply">Применить</string>
   <string name="action_cancel">Отмена</string>
   <string name="action_increase">Увеличить</string>
   <string name="action_decrease">Уменьшить</string>
