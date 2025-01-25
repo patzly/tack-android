@@ -178,7 +178,6 @@
     <item quantity="many">Остановиться через %1$d минут</item>
     <item quantity="other">Остановиться через %1$d минут</item>
   </plurals>
-  <string name="options_mute">Беззвучные такты</string>
   <plurals name="options_mute_play_bars">
     <item quantity="one">Играть %1$d такт</item>
     <item quantity="few">Играть %1$d такта</item>
