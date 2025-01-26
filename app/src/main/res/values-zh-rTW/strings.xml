@@ -143,6 +143,7 @@
   </plurals>
   <string name="options_incremental_max">提高至 %1$d 節拍／分鐘</string>
   <string name="options_incremental_min">降低至 %1$d 節拍／分鐘</string>
+  <string name="options_timer">持續時間</string>
   <plurals name="options_timer_description_bars">
     <item quantity="other">%1$d 小節後停止</item>
   </plurals>
