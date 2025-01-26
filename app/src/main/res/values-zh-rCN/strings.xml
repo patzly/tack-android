@@ -104,6 +104,8 @@
   <string name="msg_notification_permission_denied">播放控制需要通知权限</string>
   <string name="msg_report_crash">请报告任何崩溃情况，并附上崩溃日志，以便我尝试修复它们。</string>
   <string name="msg_copied_to_clipboard">已成功复制到剪贴板</string>
+  <string name="msg_invalid_input">无效输入</string>
+
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">小节</string>
