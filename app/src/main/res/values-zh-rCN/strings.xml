@@ -148,6 +148,9 @@
   <plurals name="options_mute_play_bars">
     <item quantity="other">播放 %1$d 条</item>
   </plurals>
+  <plurals name="options_mute_play_seconds">
+    <item quantity="other">播放 %1$d 秒</item>
+  </plurals>
   <plurals name="options_mute_mute_bars">
     <item quantity="other">静音 %1$d 条</item>
   </plurals>
