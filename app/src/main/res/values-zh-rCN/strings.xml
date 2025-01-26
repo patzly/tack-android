@@ -145,6 +145,9 @@
   <string name="options_incremental_no_min">没有下限</string>
   <string name="options_timer">持续时间</string>
   <string name="options_mute">已静音节拍</string>
+  <plurals name="options_mute_play_bars">
+    <item quantity="other">播放 %1$d 条</item>
+  </plurals>
   <plurals name="options_mute_mute_bars">
     <item quantity="other">静音 %1$d 条</item>
   </plurals>
