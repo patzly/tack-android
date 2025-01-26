@@ -51,6 +51,7 @@
 
   <string name="action_back">返回</string>
   <string name="action_close">关闭</string>
+  <string name="action_apply">应用</string>
   <string name="action_cancel">取消</string>
   <string name="action_increase">增加</string>
   <string name="action_decrease">减少</string>
