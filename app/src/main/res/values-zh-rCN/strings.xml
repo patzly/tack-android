@@ -128,6 +128,9 @@
   <plurals name="options_mute_mute_bars">
     <item quantity="other">静音 %1$d 条</item>
   </plurals>
+  <plurals name="options_mute_mute_seconds">
+    <item quantity="other">静音 %1$d 秒</item>
+  </plurals>
   <string name="options_swing">摇摆</string>
   <string name="options_swing_description">将分区设置为与所选摇摆百分比相匹配</string>
   <string name="options_swing_3">三连音</string>
