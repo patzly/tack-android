@@ -144,6 +144,9 @@
   <string name="options_incremental_no_max">没有上限</string>
   <string name="options_incremental_no_min">没有下限</string>
   <string name="options_timer">持续时间</string>
+  <plurals name="options_timer_description_bars">
+    <item quantity="other">%1$d 条后停止</item>
+  </plurals>
   <plurals name="options_timer_description_seconds">
     <item quantity="other">%1$d 秒后停止</item>
   </plurals>
