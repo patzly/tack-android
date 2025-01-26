@@ -133,6 +133,9 @@
   <plurals name="options_incremental_interval_bars">
     <item quantity="other">每 %1$d 条</item>
   </plurals>
+  <plurals name="options_incremental_interval_seconds">
+    <item quantity="other">每 %1$d 秒</item>
+  </plurals>
   <string name="options_incremental_max">提高到 %1$d bpm</string>
   <string name="options_incremental_min">降低到 %1$d bpm</string>
   <string name="options_incremental_no_max">没有上限</string>
