@@ -81,6 +81,8 @@
   <string name="action_logcat">顯示日誌</string>
   <string name="action_copy_to_clipboard">複製至剪貼簿</string>
   <string name="action_reload">重新整理</string>
+  <string name="action_change_tempo">改變速度</string>
+
   <!-- MESSAGES -->
 
   <string name="msg_bookmarks_max">書籤數量已滿</string>
