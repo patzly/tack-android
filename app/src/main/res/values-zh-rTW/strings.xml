@@ -47,6 +47,8 @@
   <string name="label_tempo_allegro">快板</string>
   <string name="label_tempo_presto">急板</string>
   <string name="label_tempo_prestissimo">最急板</string>
+  <string name="label_tempo_input_help">值從 %1$d 到 %2$d</string>
+
   <!-- ACTIONS -->
 
   <string name="action_back">返回</string>
