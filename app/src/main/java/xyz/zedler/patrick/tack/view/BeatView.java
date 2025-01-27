@@ -264,9 +264,15 @@ public class BeatView extends FrameLayout {
       animatorSet.cancel();
       animatorSet = null;
     }
-    if (!tickType.equals(TICK_TYPE.MUTED) && !reduceAnimations) {
+
+    if (reduceAnimations) {
+      return;
+    }
+
+    if (!tickType.equals(TICK_TYPE.MUTED)) {
       ViewUtil.startIcon(imageView);
     }
+
     ValueAnimator animatorSizeIn = ValueAnimator.ofInt(iconSize, iconSizeBeat);
     animatorSizeIn.addUpdateListener(
         animation -> updateIconSize((Integer) animation.getAnimatedValue())

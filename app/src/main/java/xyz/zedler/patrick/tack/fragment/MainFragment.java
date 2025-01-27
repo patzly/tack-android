@@ -672,7 +672,9 @@ public class MainFragment extends BaseFragment
         }, 100); // flash screen for 100 milliseconds
       }
       if (tick.subdivision == 1) {
-        logoUtil.nextBeat(getMetronomeUtil().getInterval());
+        if (!reduceAnimations) {
+          logoUtil.nextBeat(getMetronomeUtil().getInterval());
+        }
         if (bigLogo) {
           logoCenterUtil.nextBeat(getMetronomeUtil().getInterval());
         }

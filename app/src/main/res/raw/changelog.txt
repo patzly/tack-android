@@ -1,5 +1,6 @@
-## 4.7.12
+## 4.7.2
 
+- Improved: behavior of reduced animations setting
 - Improved: color contrast of app color themes
 
 ## 4.7.1
