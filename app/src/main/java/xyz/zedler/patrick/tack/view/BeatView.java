@@ -28,6 +28,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -252,12 +253,16 @@ public class BeatView extends FrameLayout {
       return TICK_TYPE.MUTED;
     } else {
       setTickType(next);
-      beat();
+      beat(true);
       return next;
     }
   }
 
   public void beat() {
+    beat(false);
+  }
+
+  public void beat(boolean forceAnimation) {
     if (animatorSet != null) {
       animatorSet.pause();
       animatorSet.removeAllListeners();
@@ -265,7 +270,7 @@ public class BeatView extends FrameLayout {
       animatorSet = null;
     }
 
-    if (reduceAnimations) {
+    if (reduceAnimations && !forceAnimation) {
       return;
     }
 
@@ -316,7 +321,6 @@ public class BeatView extends FrameLayout {
 
   public void setReduceAnimations(boolean reduce) {
     reduceAnimations = reduce;
-    iconSizeBeat = UiUtil.dpToPx(getContext(), reduce ? 44 : 32);
   }
 
   public void setActive(boolean active) {
