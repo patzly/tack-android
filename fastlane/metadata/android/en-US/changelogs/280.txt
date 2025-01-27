@@ -1,0 +1,4 @@
+• Improved: behavior of reduced animations setting
+• Improved: color contrast of app color themes
+• Fixed: color contrast setting not disabled in certain situations with dynamic theme enabled
+• Fixed: crashes caused by incorrect slider values on some devices
