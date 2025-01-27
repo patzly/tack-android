@@ -55,6 +55,7 @@ import androidx.annotation.IntRange;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.Px;
+import androidx.annotation.Size;
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
 import com.google.android.material.internal.ViewOverlayImpl;
 import com.google.android.material.internal.ViewUtils;
@@ -63,6 +64,7 @@ import com.google.android.material.tooltip.TooltipDrawable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -517,7 +519,8 @@ public class CustomSlider extends Slider {
           trackCenter + trackHeight / 2f
       );
       canvas.clipRect(clipRect);
-      canvas.drawPoints(
+      drawPointsSafe(
+          canvas,
           ticksCoordinates,
           0,
           leftActiveTickIndex * 2,
@@ -548,7 +551,8 @@ public class CustomSlider extends Slider {
           trackCenter + trackHeight / 2f
       );
       canvas.clipRect(clipRect);
-      canvas.drawPoints(
+      drawPointsSafe(
+          canvas,
           ticksCoordinates,
           leftActiveTickIndex * 2,
           (rightActiveTickIndex - leftActiveTickIndex + 1) * 2,
@@ -575,13 +579,36 @@ public class CustomSlider extends Slider {
           trackCenter + trackHeight / 2f
       );
       canvas.clipRect(clipRect);
-      canvas.drawPoints(
+      drawPointsSafe(
+          canvas,
           ticksCoordinates,
           (rightActiveTickIndex + 1) * 2,
           ticksCoordinates.length - (rightActiveTickIndex + 1) * 2,
           inactiveTicksPaint
       );
       canvas.restore();
+    }
+  }
+
+  private void drawPointsSafe(
+      Canvas canvas, @Size(multiple = 2) float[] pts, int offset, int count, @NonNull Paint paint
+  ) {
+    if (pts == null) {
+      return;
+    }
+    if (offset < 0 || count < 0 || offset + count > pts.length) {
+      return;
+    }
+    if (count % 2 != 0) {
+      count = count - (count % 2);
+    }
+    if (count <= 0) {
+      return;
+    }
+    try {
+      canvas.drawPoints(pts, offset, count, paint);
+    } catch (IndexOutOfBoundsException e) {
+      Log.e(TAG, "drawPointsSafe: " + Arrays.toString(pts) + ", " + offset + ", " + count, e);
     }
   }
 
