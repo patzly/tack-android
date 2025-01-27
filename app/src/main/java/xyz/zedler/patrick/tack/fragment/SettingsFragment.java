@@ -197,9 +197,16 @@ public class SettingsFragment extends BaseFragment
       ViewUtil.startIcon(binding.imageSettingsContrast);
       activity.restartToApply(0, getInstanceState(), true, false);
     });
-    boolean enabled = !getSharedPrefs().getString(PREF.THEME, DEF.THEME).equals(THEME.DYNAMIC);
-    binding.toggleOtherContrast.setEnabled(enabled);
-    binding.textSettingsContrastDynamic.setVisibility(enabled ? View.GONE : View.VISIBLE);
+    String currentTheme = getSharedPrefs().getString(PREF.THEME, DEF.THEME);
+    boolean isDynamic;
+    boolean hasDynamic = DynamicColors.isDynamicColorAvailable();
+    if (currentTheme.isEmpty()) {
+      isDynamic = hasDynamic;
+    } else {
+      isDynamic = currentTheme.equals(THEME.DYNAMIC);
+    }
+    binding.toggleOtherContrast.setEnabled(!isDynamic);
+    binding.textSettingsContrastDynamic.setVisibility(isDynamic ? View.VISIBLE : View.GONE);
     binding.textSettingsContrastDynamic.setText(
         VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE
             ? R.string.settings_contrast_dynamic
