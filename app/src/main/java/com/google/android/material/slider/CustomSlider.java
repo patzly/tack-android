@@ -657,10 +657,10 @@ public class CustomSlider extends Slider {
   }
 
   private void updateThumbPosition(float value, boolean animate) {
-    if (thumbPositionAnimator != null) {
-      thumbPositionAnimator.cancel();
-      thumbPositionAnimator.removeAllUpdateListeners();
-      thumbPositionAnimator.removeAllListeners();
+    if (thumbPositionAnimator != null && thumbPositionAnimator.isRunning()) {
+      // dynamic update of target value
+      thumbPositionAnimator.setFloatValues(normalizedValueAnim, normalizeValue(value));
+      return;
     }
     float thumbPositionNew = normalizeValue(value);
     long stepSizeDp = UiUtil.dpFromPx(
