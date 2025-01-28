@@ -110,7 +110,7 @@
         <LinearLayout
           android:id="@+id/linear_main_beats_bg"
           android:layout_width="match_parent"
-          android:layout_height="56dp"
+          android:layout_height="wrap_content"
           android:orientation="horizontal"
           android:layout_marginStart="16dp"
           android:layout_marginEnd="16dp"
@@ -174,13 +174,15 @@
           android:layout_marginStart="16dp"
           android:layout_marginEnd="16dp"
           android:layout_marginBottom="4dp"
-          android:padding="4dp"
           android:background="@drawable/shape_subdivisions_bg">
 
           <com.google.android.material.button.MaterialButton
             android:id="@+id/button_main_remove_subdivision"
             style="@style/Widget.Tack.Button.IconButton"
             android:contentDescription="@string/action_remove_sub"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             app:icon="@drawable/ic_rounded_remove_anim" />
 
           <HorizontalScrollView
@@ -189,16 +191,21 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:overScrollMode="ifContentScrolls"
-            android:scrollbars="none"
+            android:scrollbars="horizontal"
+            android:scrollbarThumbHorizontal="@drawable/shape_scrollbar_rounded"
             android:fadingEdge="horizontal"
-            android:requiresFadingEdge="horizontal">
+            android:requiresFadingEdge="horizontal"
+            android:clipToPadding="true"
+            android:clipChildren="true">
 
             <LinearLayout
               android:id="@+id/linear_main_subs"
               android:layout_width="wrap_content"
-              android:layout_height="match_parent"
+              android:layout_height="48dp"
               android:orientation="horizontal"
-              android:layout_gravity="center_horizontal" />
+              android:layout_gravity="center_horizontal"
+              android:layout_marginTop="4dp"
+              android:layout_marginBottom="4dp" />
 
           </HorizontalScrollView>
 
@@ -206,6 +213,9 @@
             android:id="@+id/button_main_add_subdivision"
             style="@style/Widget.Tack.Button.IconButton"
             android:contentDescription="@string/action_add_sub"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             app:icon="@drawable/ic_rounded_add_anim" />
 
         </LinearLayout>
