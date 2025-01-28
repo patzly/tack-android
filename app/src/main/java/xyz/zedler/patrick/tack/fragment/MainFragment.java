@@ -1172,11 +1172,15 @@ public class MainFragment extends BaseFragment
     }
     boolean isIncremental = getMetronomeUtil().getIncrementalAmount() > 0;
     boolean isTimerActive = getMetronomeUtil().isTimerActive();
+    boolean isMuteActive = getMetronomeUtil().isMuteActive();
     int modifierCount = 0;
     if (isIncremental) {
       modifierCount += 1;
     }
     if (isTimerActive) {
+      modifierCount += 1;
+    }
+    if (isMuteActive) {
       modifierCount += 1;
     }
     boolean show = modifierCount > 0;
