@@ -729,13 +729,35 @@ public class MainFragment extends BaseFragment
   }
 
   @Override
-  public void onElapsedTimeSecondsChanged() {
+  public void onMetronomeElapsedTimeSecondsChanged() {
     activity.runOnUiThread(this::updateElapsedDisplay);
   }
 
   @Override
-  public void onTimerSecondsChanged() {
+  public void onMetronomeTimerSecondsChanged() {
     activity.runOnUiThread(this::updateTimerDisplay);
+  }
+
+  @Override
+  public void onMetronomeConfigChanged() {
+    Runnable runnable = () -> {
+      if (binding == null) {
+        return;
+      }
+      // tempo is updated in onMetronomeTempoChanged
+      updateBeats(getMetronomeUtil().getBeats());
+      updateBeatControls(true);
+      updateSubs(getMetronomeUtil().getSubdivisions());
+      updateSubControls(true);
+
+      // TODO: replace with songs
+      refreshBookmarks(true, false);
+
+      updateTimerControls();
+      updateElapsedDisplay();
+      updateOptions(true);
+    };
+    activity.runOnUiThread(runnable);
   }
 
   @Override
@@ -746,7 +768,7 @@ public class MainFragment extends BaseFragment
   }
 
   @Override
-  public void onPermissionMissing() {
+  public void onMetronomePermissionMissing() {
     activity.requestNotificationPermission(true);
   }
 

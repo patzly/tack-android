@@ -36,6 +36,8 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
@@ -45,6 +47,9 @@ import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.model.Config;
+import xyz.zedler.patrick.tack.model.Part;
+import xyz.zedler.patrick.tack.model.Song;
 
 public class MetronomeUtil {
 
@@ -58,6 +63,7 @@ public class MetronomeUtil {
   private final Set<MetronomeListener> listeners = new HashSet<>();
   private final Random random = new Random();
   private final boolean fromService;
+  private final List<Song> songs = new LinkedList<>();
   private HandlerThread audioThread, callbackThread;
   private Handler tickHandler, latencyHandler;
   private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
@@ -83,6 +89,29 @@ public class MetronomeUtil {
     audioUtil = new AudioUtil(context, this::stop);
     hapticUtil = new HapticUtil(context);
     shortcutUtil = new ShortcutUtil(context);
+
+    Part part1 = new Part(null, new Config(
+        120,
+        new String[] {TICK_TYPE.STRONG, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL},
+        new String[] {TICK_TYPE.MUTED}
+    ));
+    Song song1 = new Song("120 bpm", new Part[]{part1});
+    songs.add(song1);
+
+    Part part2 = new Part(null, new Config(
+        80,
+        new String[] {TICK_TYPE.STRONG, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL},
+        new String[] {TICK_TYPE.MUTED},
+        4, UNIT.BARS
+    ));
+    Part part3 = new Part(null, new Config(
+        80,
+        new String[] {TICK_TYPE.STRONG, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL},
+        new String[] {TICK_TYPE.MUTED, TICK_TYPE.SUB},
+        2, UNIT.BARS
+    ));
+    Song song2 = new Song("Melody", new Part[]{part2, part3});
+    songs.add(song2);
 
     resetHandlersIfRequired();
     setToPreferences();
@@ -119,6 +148,43 @@ public class MetronomeUtil {
     setIgnoreFocus(sharedPrefs.getBoolean(PREF.IGNORE_FOCUS, DEF.IGNORE_FOCUS));
     setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
     setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
+  }
+
+  public void setToConfig(Config config) {
+    int tempoDiff = config.getTempo() - getTempo();
+    changeTempo(tempoDiff);
+
+    setBeats(config.getBeats());
+    setSubdivisions(config.getSubdivisions());
+
+    setIncrementalAmount(config.getIncrementalAmount());
+    setIncrementalInterval(config.getIncrementalInterval());
+    setIncrementalLimit(config.getIncrementalLimit());
+    setIncrementalUnit(config.getIncrementalUnit());
+    setIncrementalIncrease(config.isIncrementalIncrease());
+
+    setTimerDuration(config.getTimerDuration());
+    setTimerUnit(config.getTimerUnit());
+
+    setMutePlay(config.getMutePlay());
+    setMuteMute(config.getMuteMute());
+    setMuteUnit(config.getMuteUnit());
+    setMuteRandom(config.isMuteRandom());
+
+    for (MetronomeListener listener : listeners) {
+      listener.onMetronomeConfigChanged();
+    }
+  }
+
+  public Config getConfig() {
+    return new Config(
+        tempo,
+        beats, subdivisions,
+        incrementalAmount, incrementalInterval, incrementalLimit,
+        incrementalUnit, incrementalIncrease,
+        timerDuration, timerUnit,
+        mutePlay, muteMute, muteUnit, muteRandom
+    );
   }
 
   private void resetHandlersIfRequired() {
@@ -216,7 +282,7 @@ public class MetronomeUtil {
   public void start(boolean resetElapsedAndTimerIfNecessary) {
     if (!NotificationUtil.hasPermission(context)) {
       for (MetronomeListener listener : listeners) {
-        listener.onPermissionMissing();
+        listener.onMetronomePermissionMissing();
       }
       return;
     }
@@ -709,7 +775,7 @@ public class MetronomeUtil {
           elapsedTime = System.currentTimeMillis() - elapsedStartTime + elapsedPrevious;
           elapsedHandler.postDelayed(this, 1000);
           for (MetronomeListener listener : listeners) {
-            listener.onElapsedTimeSecondsChanged();
+            listener.onMetronomeElapsedTimeSecondsChanged();
           }
         }
       }
@@ -870,7 +936,7 @@ public class MetronomeUtil {
           if (isPlaying() && !timerUnit.equals(UNIT.BARS)) {
             timerHandler.postDelayed(this, 1000);
             for (MetronomeListener listener : listeners) {
-              listener.onTimerSecondsChanged();
+              listener.onMetronomeTimerSecondsChanged();
             }
           }
         }
@@ -1092,11 +1158,12 @@ public class MetronomeUtil {
     void onMetronomePreTick(Tick tick);
     void onMetronomeTick(Tick tick);
     void onMetronomeTempoChanged(int tempoOld, int tempoNew);
-    void onElapsedTimeSecondsChanged();
+    void onMetronomeElapsedTimeSecondsChanged();
     void onMetronomeTimerStarted();
-    void onTimerSecondsChanged();
+    void onMetronomeTimerSecondsChanged();
+    void onMetronomeConfigChanged();
     void onMetronomeConnectionMissing();
-    void onPermissionMissing();
+    void onMetronomePermissionMissing();
   }
 
   public static class MetronomeListenerAdapter implements MetronomeListener {
@@ -1105,11 +1172,12 @@ public class MetronomeUtil {
     public void onMetronomePreTick(Tick tick) {}
     public void onMetronomeTick(Tick tick) {}
     public void onMetronomeTempoChanged(int tempoOld, int tempoNew) {}
-    public void onElapsedTimeSecondsChanged() {}
+    public void onMetronomeElapsedTimeSecondsChanged() {}
     public void onMetronomeTimerStarted() {}
-    public void onTimerSecondsChanged() {}
+    public void onMetronomeTimerSecondsChanged() {}
+    public void onMetronomeConfigChanged() {}
     public void onMetronomeConnectionMissing() {}
-    public void onPermissionMissing() {}
+    public void onMetronomePermissionMissing() {}
   }
 
   public static class Tick {
