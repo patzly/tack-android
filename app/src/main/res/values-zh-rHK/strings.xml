@@ -111,6 +111,9 @@
   <plurals name="options_unit_beats">
     <item quantity="other">%1$d 拍</item>
   </plurals>
+  <plurals name="options_unit_subdivisions">
+    <item quantity="other">%1$d 分隔槽</item>
+  </plurals>
   <string name="options_unit_seconds">秒</string>
   <plurals name="options_unit_seconds">
     <item quantity="other">%1$d 秒</item>
@@ -126,7 +129,6 @@
   <string name="options_incremental_min">降低至 %1$d bpm</string>
   <string name="options_mute">已靜音節拍</string>
   <string name="options_swing">搖擺</string>
-  <string name="options_swing_description">將分區設置為與所選搖擺百分比相匹配</string>
   <string name="options_swing_3">三連音</string>
   <string name="options_swing_5">五連音</string>
   <string name="options_swing_7">七連音</string>
@@ -186,9 +188,6 @@
   <string name="settings_gain_description">增益分貝（除系統音量外）</string>
   <string name="settings_gain_warning">小心使用！</string>
   <string name="settings_gain_disclaimer">當啓用增強功能時，每次啓動前都會顯示警告。開發者對任何潛在損害不承擔責任。</string>
-
-  <string name="settings_show_subs">顯示分區控件</string>
-  <string name="settings_show_subs_description">節奏更加多樣化</string>
 
   <string name="settings_active_beat">突出顯示目前節拍</string>
   <string name="settings_active_beat_description">對較慢嘅節奏有幫助</string>
