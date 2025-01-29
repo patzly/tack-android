@@ -115,6 +115,11 @@
     <item quantity="many">%1$d battements</item>
     <item quantity="other">%1$d battements</item>
   </plurals>
+  <plurals name="options_unit_subdivisions">
+    <item quantity="one">%1$d subdivision</item>
+    <item quantity="many">%1$d subdivisions</item>
+    <item quantity="other">%1$d subdivisions</item>
+  </plurals>
   <string name="options_unit_seconds">Secondes</string>
   <plurals name="options_unit_seconds">
     <item quantity="one">%1$d seconde</item>
@@ -134,7 +139,6 @@
   <string name="options_incremental_min">Descendre jusqu\'à %1$d bpm</string>
   <string name="options_mute">Battements muets</string>
   <string name="options_swing">Swing</string>
-  <string name="options_swing_description">Les subdivisions sont définies pour correspondre au paramètre de swing sélectionné</string>
   <string name="options_swing_3">Triolet</string>
   <string name="options_swing_5">Quintuplé</string>
   <string name="options_swing_7">Septuplé</string>
@@ -194,9 +198,6 @@
   <string name="settings_gain_description">Gain en dB (en plus du volume système)</string>
   <string name="settings_gain_warning">À utiliser avec prudence !</string>
   <string name="settings_gain_disclaimer">Lorsque l\'option « boost » est activée, un avertissement s\'affiche avant chaque démarrage. Le développeur n\'est pas tenu responsable des éventuels dommages.</string>
-
-  <string name="settings_show_subs">Afficher les commandes de subdivision</string>
-  <string name="settings_show_subs_description">Plus de rythmes variés</string>
 
   <string name="settings_always_vibrate">Toujours vibrer</string>
   <string name="settings_always_vibrate_description">En suivant le son</string>
