@@ -111,6 +111,9 @@
   <plurals name="options_unit_beats">
     <item quantity="other">%1$dketukan</item>
   </plurals>
+  <plurals name="options_unit_subdivisions">
+    <item quantity="other">%1$dsubdivisi</item>
+  </plurals>
   <string name="options_unit_seconds">Detik</string>
   <plurals name="options_unit_seconds">
     <item quantity="other">%1$ddetik</item>
@@ -126,7 +129,6 @@
   <string name="options_incremental_min">Turun hingga %1$d bpm</string>
   <string name="options_mute">Ketukan dibisukan</string>
   <string name="options_swing">Ayunan</string>
-  <string name="options_swing_description">Subdivisi diatur untuk mencocokkan persentase ayunan yang dipilih</string>
   <string name="options_swing_3">Triplet</string>
   <string name="options_swing_5">Quintuplet</string>
   <string name="options_swing_7">Septuplet</string>
@@ -186,9 +188,6 @@
   <string name="settings_gain_description">Penguatan dalam dB (tambahan untuk volume sistem)</string>
   <string name="settings_gain_warning">Gunakan dengan hati-hati!</string>
   <string name="settings_gain_disclaimer">Ketika peningkat diaktifkan, peringatan akan ditampilkan sebelum memulai. Pengembang tidak bertanggung jawab atas potensi kerusakan.</string>
-
-  <string name="settings_show_subs">Tampilkan kontrol subdivisi</string>
-  <string name="settings_show_subs_description">Irama yang lebih beragam</string>
 
   <string name="settings_always_vibrate">Selalu getar</string>
   <string name="settings_always_vibrate_description">Bahkan dengan suara</string>
