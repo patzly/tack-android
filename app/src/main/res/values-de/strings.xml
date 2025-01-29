@@ -186,8 +186,8 @@
     <item quantity="other">%1$d Sekunden stummschalten</item>
   </plurals>
   <string name="options_mute_random">Zufall mit kleineren Werten</string>
+  <string name="options_subdivisions">Unterteilungen</string>
   <string name="options_swing">Swing</string>
-  <string name="options_swing_description">Unterteilungen auf ausgewählten Swing-Anteil gesetzt</string>
   <string name="options_swing_3">Triole</string>
   <string name="options_swing_5">Quintole</string>
   <string name="options_swing_7">Septole</string>
@@ -247,9 +247,6 @@
   <string name="settings_gain_description">Verstärkung in dB (zusätzlich zur Systemlautstärke)</string>
   <string name="settings_gain_warning">Mit Vorsicht verwenden!</string>
   <string name="settings_gain_disclaimer">Bei aktiver Verstärkung wird vor jeder Wiedergabe eine Warnung angezeigt. Der Entwickler übernimmt keine Verantwortung für etwaige Schäden.</string>
-
-  <string name="settings_show_subs">Schlag-Unterteilungen</string>
-  <string name="settings_show_subs_description">Vielfältigere Rhythmen</string>
 
   <string name="settings_active_beat">Aktuellen Schlag hervorheben</string>
   <string name="settings_active_beat_description">Hilfreich für langsame Tempos</string>
