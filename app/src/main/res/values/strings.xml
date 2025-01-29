@@ -132,6 +132,10 @@
     <item quantity="one">%1$d beat</item>
     <item quantity="other">%1$d beats</item>
   </plurals>
+  <plurals name="options_unit_subdivisions">
+    <item quantity="one">%1$d subdivision</item>
+    <item quantity="other">%1$d subdivisions</item>
+  </plurals>
   <string name="options_unit_seconds">Seconds</string>
   <plurals name="options_unit_seconds">
     <item quantity="one">%1$d second</item>
@@ -198,8 +202,13 @@
     <item quantity="other">Mute %1$d seconds</item>
   </plurals>
   <string name="options_mute_random">Randomize smaller values</string>
+  <string name="options_subdivisions">Subdivisions</string>
+  <plurals name="options_subdivisions_description">
+    <item quantity="one">%1$d subdivision per beat</item>
+    <item quantity="other">%1$d subdivisions per beat</item>
+  </plurals>
   <string name="options_swing">Swing</string>
-  <string name="options_swing_description">Subdivisions set to match selected swing percentage</string>
+  <string name="options_swing_description">Subdivisions set to match swing ratio</string>
   <string name="options_swing_3">Triplet</string>
   <string name="options_swing_5">Quintuplet</string>
   <string name="options_swing_7">Septuplet</string>
@@ -259,9 +268,6 @@
   <string name="settings_gain_description">Gain in dB (in addition to system volume)</string>
   <string name="settings_gain_warning">Use with caution!</string>
   <string name="settings_gain_disclaimer">When boost is enabled, a warning will be displayed before each start. The developer takes no responsibility for any potential damage.</string>
-
-  <string name="settings_show_subs">Show subdivision controls</string>
-  <string name="settings_show_subs_description">More diverse rhythms</string>
 
   <string name="settings_active_beat">Highlight current beat</string>
   <string name="settings_active_beat_description">Helpful for slower tempos</string>

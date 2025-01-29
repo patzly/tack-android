@@ -1,5 +1,7 @@
 ## 4.7.3
 
+- Improved: removed "use subdivisions" setting in favor of new subdivisions option
+- Improved: beats audio not cut off by subdivisions audio anymore
 - Fixed: modifier count not increased with muted beats enabled
 
 ## 4.7.2

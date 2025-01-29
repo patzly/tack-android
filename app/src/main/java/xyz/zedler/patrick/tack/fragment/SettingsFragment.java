@@ -327,7 +327,6 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsReset,
         binding.linearSettingsSound,
         binding.linearSettingsIgnoreFocus,
-        binding.linearSettingsShowSubs,
         binding.linearSettingsActiveBeat,
         binding.linearSettingsPermNotification,
         binding.linearSettingsAlwaysVibrate,
@@ -345,7 +344,6 @@ public class SettingsFragment extends BaseFragment
         binding.switchSettingsHaptic,
         binding.switchSettingsReduceAnimations,
         binding.switchSettingsIgnoreFocus,
-        binding.switchSettingsShowSubs,
         binding.switchSettingsActiveBeat,
         binding.switchSettingsPermNotification,
         binding.switchSettingsAlwaysVibrate,
@@ -408,11 +406,6 @@ public class SettingsFragment extends BaseFragment
     binding.sliderSettingsGain.setValue(getMetronomeUtil().getGain());
     binding.sliderSettingsGain.addOnChangeListener(this);
 
-    binding.switchSettingsShowSubs.setOnCheckedChangeListener(null);
-    binding.switchSettingsShowSubs.setChecked(getMetronomeUtil().getSubdivisionsUsed());
-    binding.switchSettingsShowSubs.jumpDrawablesToCurrentState();
-    binding.switchSettingsShowSubs.setOnCheckedChangeListener(this);
-
     binding.switchSettingsAlwaysVibrate.setOnCheckedChangeListener(null);
     binding.switchSettingsAlwaysVibrate.setChecked(getMetronomeUtil().isAlwaysVibrate());
     binding.switchSettingsAlwaysVibrate.jumpDrawablesToCurrentState();
@@ -474,8 +467,6 @@ public class SettingsFragment extends BaseFragment
       dialogUtilSound.show();
     } else if (id == R.id.linear_settings_ignore_focus) {
       binding.switchSettingsIgnoreFocus.toggle();
-    } else if (id == R.id.linear_settings_show_subs) {
-      binding.switchSettingsShowSubs.toggle();
     } else if (id == R.id.linear_settings_active_beat) {
       binding.switchSettingsActiveBeat.toggle();
     } else if (id == R.id.linear_settings_perm_notification) {
@@ -515,10 +506,6 @@ public class SettingsFragment extends BaseFragment
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsIgnoreFocus);
       getMetronomeUtil().setIgnoreFocus(isChecked);
-    } else if (id == R.id.switch_settings_show_subs) {
-      performHapticClick();
-      ViewUtil.startIcon(binding.imageSettingsShowSubs);
-      getMetronomeUtil().setSubdivisionsUsed(isChecked);
     } else if (id == R.id.switch_settings_active_beat) {
       performHapticClick();
       getSharedPrefs().edit().putBoolean(PREF.ACTIVE_BEAT, isChecked).apply();

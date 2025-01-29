@@ -102,6 +102,7 @@ public class CustomSlider extends Slider {
   private float normalizedValueAnim;
   private float[] ticksCoordinates;
   private boolean dirtyConfig, touchTrackingJustStarted, thisAndAncestorsVisible;
+  private boolean animateNonUserValueChange = false;
   // Whether the labels are showing or in the process of animating in.
   private boolean labelsAreAnimatedIn = false;
   @NonNull
@@ -192,7 +193,11 @@ public class CustomSlider extends Slider {
         updateThumbWidth(false, true);
       }
     });
-    addOnChangeListener((slider, value, fromUser) -> updateThumbPosition(value, fromUser));
+    addOnChangeListener(
+        (slider, value, fromUser) -> updateThumbPosition(
+            value, fromUser || animateNonUserValueChange
+        )
+    );
     getViewTreeObserver().addOnGlobalLayoutListener(
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override
@@ -895,6 +900,10 @@ public class CustomSlider extends Slider {
             ResUtil.getColor(getContext(), R.attr.colorOnSurfaceVariant, 0.12f)
         }
     );
+  }
+
+  public void setAnimateNonUserValueChange(boolean animate) {
+    this.animateNonUserValueChange = animate;
   }
 
   @ColorInt

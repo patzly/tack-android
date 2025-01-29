@@ -631,7 +631,7 @@ public class MainFragment extends BaseFragment
         ((BeatView) beat).beat();
       }
       View subdivision = binding.linearMainSubs.getChildAt(tick.subdivision - 1);
-      if (getMetronomeUtil().getSubdivisionsUsed() && subdivision instanceof BeatView) {
+      if (getMetronomeUtil().isSubdivisionActive() && subdivision instanceof BeatView) {
         ((BeatView) subdivision).setTickType(tick.subdivision == 1 ? TICK_TYPE.MUTED : tick.type);
         ((BeatView) subdivision).beat();
       }
@@ -798,6 +798,7 @@ public class MainFragment extends BaseFragment
         binding.linearMainSubs.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
         updateSubControls(true);
+        optionsUtil.updateSubdivisions();
         optionsUtil.updateSwing();
       }
     } else if (id == R.id.button_main_remove_subdivision) {
@@ -810,6 +811,7 @@ public class MainFragment extends BaseFragment
             binding.scrollHorizMainSubs, true
         );
         updateSubControls(true);
+        optionsUtil.updateSubdivisions();
         optionsUtil.updateSwing();
       }
     } else if (id == R.id.fab_main_play_stop) {
@@ -1057,7 +1059,7 @@ public class MainFragment extends BaseFragment
     binding.buttonMainAddSubdivision.setEnabled(subdivisions < Constants.SUBS_MAX);
     binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
     binding.linearMainSubsBg.setVisibility(
-        getMetronomeUtil().getSubdivisionsUsed() ? View.VISIBLE : View.GONE
+        getMetronomeUtil().isSubdivisionActive() ? View.VISIBLE : View.GONE
     );
     subsCountBadge.setNumber(subdivisions);
     boolean show = subdivisions > 4;
@@ -1170,19 +1172,7 @@ public class MainFragment extends BaseFragment
       optionsBadgeAnimator.cancel();
       optionsBadgeAnimator = null;
     }
-    boolean isIncremental = getMetronomeUtil().getIncrementalAmount() > 0;
-    boolean isTimerActive = getMetronomeUtil().isTimerActive();
-    boolean isMuteActive = getMetronomeUtil().isMuteActive();
-    int modifierCount = 0;
-    if (isIncremental) {
-      modifierCount += 1;
-    }
-    if (isTimerActive) {
-      modifierCount += 1;
-    }
-    if (isMuteActive) {
-      modifierCount += 1;
-    }
+    int modifierCount = getModifierCount();
     boolean show = modifierCount > 0;
     optionsBadge.setNumber(modifierCount);
     if (animated) {
@@ -1227,6 +1217,27 @@ public class MainFragment extends BaseFragment
         }
       }, 1);
     }
+  }
+
+  private int getModifierCount() {
+    boolean isIncremental = getMetronomeUtil().getIncrementalAmount() > 0;
+    boolean isTimerActive = getMetronomeUtil().isTimerActive();
+    boolean isMuteActive = getMetronomeUtil().isMuteActive();
+    boolean isSubdivisionActive = getMetronomeUtil().isSubdivisionActive();
+    int modifierCount = 0;
+    if (isIncremental) {
+      modifierCount += 1;
+    }
+    if (isTimerActive) {
+      modifierCount += 1;
+    }
+    if (isMuteActive) {
+      modifierCount += 1;
+    }
+    if (isSubdivisionActive) {
+      modifierCount += 1;
+    }
+    return modifierCount;
   }
 
   private Chip getBookmarkChip(int tempo) {
