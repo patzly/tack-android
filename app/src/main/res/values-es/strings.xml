@@ -134,7 +134,6 @@
   <string name="options_incremental_min">Hasta %1$d bpm</string>
   <string name="options_mute">Pulsos silenciados</string>
   <string name="options_swing">Swing</string>
-  <string name="options_swing_description">Subdivisiones puestas para coincidir con el porcentaje de swing elegido</string>
   <string name="options_swing_3">Tresillo</string>
   <string name="options_swing_5">Quintillo</string>
   <string name="options_swing_7">Septillo (7)</string>
@@ -194,9 +193,6 @@
   <string name="settings_gain_description">Ganancia en dB (adicional al volumen del sistema)</string>
   <string name="settings_gain_warning">¡Use con cuidado!</string>
   <string name="settings_gain_disclaimer">Cuando el aumento de volúmen está activado, se mostrará una precaución antes de cada inicio. El desarrollador no se hace responsable por cualquier potencial daño.</string>
-
-  <string name="settings_show_subs">Mostrar controles de subdivisión</string>
-  <string name="settings_show_subs_description">Ritmos más diversos</string>
 
   <string name="settings_always_vibrate">Siempre vibrar</string>
   <string name="settings_always_vibrate_description">Incluso con sonido</string>
