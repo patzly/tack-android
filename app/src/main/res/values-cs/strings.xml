@@ -230,6 +230,7 @@
     <item quantity="other">%1$d subdivizí na dobu</item>
   </plurals>
   <string name="options_swing">Swing</string>
+  <string name="options_swing_description">Subdivize nastavené pro shodu s poměrem swingu</string>
   <string name="options_swing_3">Trioly</string>
   <string name="options_swing_5">Kvintoly</string>
   <string name="options_swing_7">Septoly</string>
