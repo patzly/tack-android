@@ -222,6 +222,7 @@
     <item quantity="other">Ztlumit %1$d sekund</item>
   </plurals>
   <string name="options_mute_random">Náhodný výběr menších hodnot</string>
+  <string name="options_subdivisions">Subdivize</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_3">Trioly</string>
   <string name="options_swing_5">Kvintoly</string>
