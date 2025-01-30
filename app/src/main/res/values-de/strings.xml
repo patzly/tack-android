@@ -196,6 +196,7 @@
     <item quantity="other">%1$d Unterteilungen pro Schlag</item>
   </plurals>
   <string name="options_swing">Swing</string>
+  <string name="options_swing_description">Unterteilungen an Swing-Verhältnis angepasst</string>
   <string name="options_swing_3">Triole</string>
   <string name="options_swing_5">Quintole</string>
   <string name="options_swing_7">Septole</string>
