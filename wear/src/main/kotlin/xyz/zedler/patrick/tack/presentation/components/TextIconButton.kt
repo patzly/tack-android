@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.presentation.components
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -40,6 +41,7 @@ fun TextIconButton(
   onClick: () -> Unit,
   modifier: Modifier = Modifier,
   reduceAnim: Boolean = false,
+  interactionSource: MutableInteractionSource? = null
 ) {
   FilledTonalIconButton(
     onClick = onClick,
@@ -53,6 +55,7 @@ fun TextIconButton(
     colors = IconButtonDefaults.filledTonalIconButtonColors(
       contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
     ),
+    interactionSource = interactionSource,
     modifier = modifier.touchTargetAwareSize(
       if (isSmallScreen()) 42.dp else IconButtonDefaults.SmallButtonSize
     )
