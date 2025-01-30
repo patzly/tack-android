@@ -30,6 +30,7 @@ import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.TimeText
 import androidx.wear.compose.material3.TimeTextDefaults
+import androidx.wear.compose.material3.timeTextCurvedText
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
@@ -74,13 +75,12 @@ fun TackApp(
 
     AppScaffold(
       timeText = {
-        TimeText(
-          timeTextStyle = TimeTextDefaults.timeTextStyle().copy(
-            fontFamily = MaterialTheme.typography.labelMedium.fontFamily,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = timeAlpha)
-          )
-        ) {
-          time()
+        val style = TimeTextDefaults.timeTextStyle().copy(
+          fontFamily = MaterialTheme.typography.labelMedium.fontFamily,
+          color = MaterialTheme.colorScheme.onSurface.copy(alpha = timeAlpha)
+        )
+        TimeText { time ->
+          timeTextCurvedText(time, style)
         }
       }
     ) {
