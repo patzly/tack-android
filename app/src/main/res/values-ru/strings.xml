@@ -62,8 +62,8 @@
   <string name="action_stop">Пауза</string>
   <string name="action_add_beat">Добавить долю</string>
   <string name="action_remove_beat">Убрать долю</string>
-  <string name="action_add_sub">Добавить разделение</string>
-  <string name="action_remove_sub">Убрать разделение</string>
+  <string name="action_add_sub">Добавить дробление</string>
+  <string name="action_remove_sub">Убрать дробление</string>
   <string name="action_clear_all">Удалить все</string>
   <string name="action_tempo_tap">Настучать ритм</string>
   <string name="action_bookmark">Добавить в закладки</string>
