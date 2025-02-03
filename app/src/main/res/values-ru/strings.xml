@@ -122,10 +122,10 @@
     <item quantity="other">%1$d ударов</item>
   </plurals>
   <plurals name="options_unit_subdivisions">
-    <item quantity="one">%1$d разделение</item>
-    <item quantity="few">%1$d разделения</item>
-    <item quantity="many">%1$d разделений</item>
-    <item quantity="other">%1$d разделений</item>
+    <item quantity="one">%1$d часть</item>
+    <item quantity="few">%1$d части</item>
+    <item quantity="many">%1$d частей</item>
+    <item quantity="other">%1$d частей</item>
   </plurals>
   <string name="options_unit_seconds">Секунды</string>
   <plurals name="options_unit_seconds">
