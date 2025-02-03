@@ -24,6 +24,7 @@
   <string name="wear_title_settings">Настройки</string>
   <string name="wear_title_beats">Удары</string>
   <string name="wear_title_beats_count">Удары (%1$d)</string>
+  <string name="wear_title_subdivisions_count">Части (%1$d)</string>
   <string name="wear_title_notification_channel">Обслуживание метронома</string>
   <string name="wear_title_bookmarks">Закладки</string>
 
@@ -32,12 +33,20 @@
   <string name="wear_label_bpm_value">%1$d bpm</string>
   <string name="wear_label_ms">%1$s мс</string>
   <string name="wear_label_db">+%1$d дБ</string>
+  <string name="wear_label_developer">Разработано</string>
   <plurals name="wear_label_beats">
     <item quantity="one">%1$d удар</item>
     <item quantity="few">%1$d удара</item>
     <item quantity="many">%1$d ударов</item>
     <item quantity="other">%1$d ударов</item>
   </plurals>
+  <plurals name="wear_label_subs">
+    <item quantity="one">%1$d разделение</item>
+    <item quantity="few">%1$d разделения</item>
+    <item quantity="many">%1$d разделений</item>
+    <item quantity="other">%1$d разделений</item>
+  </plurals>
+
   <!-- ACTIONS -->
 
   <string name="wear_action_cancel">Отменить</string>
@@ -47,9 +56,12 @@
   <string name="wear_action_stop">Пауза</string>
   <string name="wear_action_add_beat">Добавить долю</string>
   <string name="wear_action_remove_beat">Убрать долю</string>
+  <string name="wear_action_add_sub">Добавить разделение</string>
+  <string name="wear_action_remove_sub">Убрать разделение</string>
   <string name="wear_action_tempo_tap">Настучать ритм</string>
   <string name="wear_action_bookmark">Добавить в закладки</string>
   <string name="wear_action_beat_mode">Режим ударов</string>
+  <string name="wear_action_retry">Повторить</string>
   <string name="wear_action_delete">Удалить</string>
 
   <!-- MESSAGES -->
@@ -68,11 +80,22 @@
   <string name="wear_settings_sound_hands">Ладоши</string>
   <string name="wear_settings_sound_folding">Линейка</string>
 
+  <string name="wear_settings_latency">Корректировка задержки</string>
+
+  <string name="wear_settings_ignore_focus">Игнорировать аудиофокус</string>
+  <string name="wear_settings_ignore_focus_description">Продолжать воспроизведение даже если другие приложения воспроизводят звук</string>
+
   <string name="wear_settings_gain">Усиление громкости</string>
   <string name="wear_settings_always_vibrate">Всегда вибрировать</string>
   <string name="wear_settings_always_vibrate_description">Даже когда звук включен</string>
 
+  <string name="wear_settings_flash_screen">Моргать экраном</string>
+  <string name="wear_settings_flash_screen_description">На каждый такт</string>
+
   <string name="wear_settings_reduce_animations">Уменьшить анимации</string>
   <string name="wear_settings_reduce_animations_description">Может улучшить производительность</string>
+
+  <string name="wear_settings_keep_awake">Не гасить экран</string>
+  <string name="wear_settings_keep_awake_description">Пока метроном включён</string>
 
   </resources>
