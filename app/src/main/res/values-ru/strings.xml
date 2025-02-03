@@ -40,19 +40,21 @@
   <string name="label_ms">%1$s мс</string>
   <string name="label_db">+%1$d дБ</string>
   <string name="label_tempo_largo">Широко</string>
-  <string name="label_tempo_larghetto">Медленнее</string>
+  <string name="label_tempo_larghetto">Умеренно широко</string>
   <string name="label_tempo_adagio">Медленно</string>
-  <string name="label_tempo_andante">Спокойно</string>
+  <string name="label_tempo_andante">Умеренно медленно</string>
   <string name="label_tempo_moderato">Умеренно</string>
-  <string name="label_tempo_allegro">Быстро</string>
-  <string name="label_tempo_presto">Очень быстро</string>
-  <string name="label_tempo_prestissimo">Предельно быстро</string>
+  <string name="label_tempo_allegro">Оживлённо</string>
+  <string name="label_tempo_presto">Быстро</string>
+  <string name="label_tempo_prestissimo">Очень быстро</string>
+  <string name="label_tempo_input_help">Значения от %1$d до %2$d</string>
+
   <!-- ACTIONS -->
 
   <string name="action_back">Назад</string>
   <string name="action_close">Закрыть</string>
   <string name="action_apply">Применить</string>
-  <string name="action_cancel">Отмена</string>
+  <string name="action_cancel">Отменить</string>
   <string name="action_increase">Увеличить</string>
   <string name="action_decrease">Уменьшить</string>
   <string name="action_play">Старт</string>
@@ -60,6 +62,8 @@
   <string name="action_stop">Пауза</string>
   <string name="action_add_beat">Добавить долю</string>
   <string name="action_remove_beat">Убрать долю</string>
+  <string name="action_add_sub">Добавить разделение</string>
+  <string name="action_remove_sub">Убрать разделение</string>
   <string name="action_clear_all">Удалить все</string>
   <string name="action_tempo_tap">Настучать ритм</string>
   <string name="action_bookmark">Добавить в закладки</string>
@@ -74,7 +78,7 @@
   <string name="action_email_description">Написать разработчику</string>
   <string name="action_rate">Оценить на Google Play</string>
   <string name="action_rate_description">Поддержать разработку</string>
-  <string name="action_issue">Открыть задачу на Github</string>
+  <string name="action_issue">Открыть задачу на GitHub</string>
   <string name="action_issue_description">Оповестить о баге или предложить функцию</string>
   <string name="action_logcat">Показать logcat</string>
   <string name="action_copy_to_clipboard">Скопировать в буфер обмена</string>
@@ -84,6 +88,7 @@
   <string name="msg_bookmarks_max">Достигнут лимит закладок</string>
   <string name="msg_feedback">Разработка хорошего приложения занимает много времени и зависит от обратной связи пользователей</string>
   <string name="msg_feedback_contact">У вас есть пожелания, комментарии или вопросы? Напишите мне!\nЕсли нет, буду рад хорошему отзыву в Play Store.</string>
+  <string name="msg_recommend">Зацени классный метроном: \n%1$s</string>
   <string name="msg_vibration_unavailable">Вибрация недоступна на этом устройстве</string>
   <string name="msg_service_running">Сервис метронома запущен</string>
   <string name="msg_service_running_return">Нажмите, чтобы вернуться в Tack</string>
