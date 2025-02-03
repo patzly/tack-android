@@ -101,6 +101,8 @@
   <string name="wear_settings_always_vibrate_description">Даже когда звук включен</string>
 
   <string name="wear_settings_strong_vibration">Сильная вибрация</string>
+  <string name="wear_settings_strong_vibration_description">Если отклик слабый</string>
+
   <string name="wear_settings_flash_screen">Моргать экраном</string>
   <string name="wear_settings_flash_screen_description">На каждый такт</string>
 
