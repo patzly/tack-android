@@ -298,6 +298,8 @@
   <string name="settings_elapsed_description">Следите за тем, как долго вы занимаетесь</string>
 
   <string name="settings_reset_elapsed">Сбрасывать затраченное время при остановке</string>
+  <string name="settings_reset_elapsed_description">Вместо того, чтобы продолжать отсчёт до закрытия</string>
+
   <string name="settings_big_time_text">Показывать время большим шрифтом</string>
   <string name="settings_big_time_text_description">Если обычного размера недостаточно</string>
 
