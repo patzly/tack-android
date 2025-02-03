@@ -68,6 +68,7 @@
 
   <string name="wear_msg_service_running">Метроном играет</string>
   <string name="wear_msg_service_running_return">Подробнее</string>
+  <string name="wear_msg_service_description">Сервис метронома</string>
   <string name="wear_msg_gain">Включить усиление громкости?</string>
   <string name="wear_msg_delete_bookmark">Удалить закладку?</string>
   <!-- SETTINGS -->
