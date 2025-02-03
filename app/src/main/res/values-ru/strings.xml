@@ -80,6 +80,7 @@
   <string name="action_rate_description">Поддержать разработку</string>
   <string name="action_issue">Открыть задачу на GitHub</string>
   <string name="action_issue_description">Оповестить о баге или предложить функцию</string>
+  <string name="action_retry">Повторить</string>
   <string name="action_logcat">Показать logcat</string>
   <string name="action_copy_to_clipboard">Скопировать в буфер обмена</string>
   <string name="action_reload">Перезагрузить</string>
