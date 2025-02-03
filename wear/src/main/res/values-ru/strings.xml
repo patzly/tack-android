@@ -70,6 +70,7 @@
   <string name="wear_msg_service_running_return">Подробнее</string>
   <string name="wear_msg_service_description">Сервис метронома</string>
   <string name="wear_msg_notification_permission_denied">Требуется разрешение</string>
+  <string name="wear_msg_notification_permission_denied_description">Для воспроизведения требуется разрешение на показ уведомлений</string>
   <string name="wear_msg_gain">Включить усиление громкости?</string>
   <string name="wear_msg_delete_bookmark">Удалить закладку?</string>
   <!-- SETTINGS -->
