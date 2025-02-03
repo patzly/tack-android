@@ -307,6 +307,8 @@
   <string name="settings_big_time_text_description">Если обычного размера недостаточно</string>
 
   <string name="settings_flash_screen">Моргать экраном</string>
+  <string name="settings_flash_screen_description">На каждый такт</string>
+
   <string name="settings_big_logo">Показывать большой анимированный логотип</string>
   <string name="settings_big_logo_description">Во время проигрывания вместо колеса выбора темпа</string>
 
