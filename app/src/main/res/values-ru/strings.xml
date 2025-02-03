@@ -217,6 +217,7 @@
     <item quantity="many">Заглушить на %1$d секунд</item>
     <item quantity="other">Заглушить на %1$d секунд</item>
   </plurals>
+  <string name="options_mute_random">Рандомизировать меньшие значения</string>
   <string name="options_swing">Свинг</string>
   <string name="options_swing_3">Триоль</string>
   <string name="options_swing_5">Квинтоль</string>
