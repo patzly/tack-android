@@ -84,6 +84,8 @@
   <string name="action_logcat">Показать logcat</string>
   <string name="action_copy_to_clipboard">Скопировать в буфер обмена</string>
   <string name="action_reload">Перезагрузить</string>
+  <string name="action_change_tempo">Изменить темп</string>
+
   <!-- MESSAGES -->
 
   <string name="msg_bookmarks_max">Достигнут лимит закладок</string>
