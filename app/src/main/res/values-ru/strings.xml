@@ -218,7 +218,7 @@
     <item quantity="other">Заглушить на %1$d секунд</item>
   </plurals>
   <string name="options_mute_random">Рандомизировать меньшие значения</string>
-  <string name="options_subdivisions">Разделения</string>
+  <string name="options_subdivisions">Дробления</string>
   <plurals name="options_subdivisions_description">
     <item quantity="one">%1$d разделение на такт</item>
     <item quantity="few">%1$d разделения на такт</item>
