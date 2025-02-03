@@ -310,6 +310,9 @@
   <string name="settings_flash_screen_description">На каждый такт</string>
 
   <string name="settings_keep_awake">Не гасить экран</string>
+  <string name="settings_keep_awake_description">Пока метроном включён</string>
+
+  <string name="settings_perm_notification">Постоянное уведомление</string>
   <string name="settings_big_logo">Показывать большой анимированный логотип</string>
   <string name="settings_big_logo_description">Во время проигрывания вместо колеса выбора темпа</string>
 
