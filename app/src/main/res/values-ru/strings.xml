@@ -294,6 +294,7 @@
   <string name="settings_always_vibrate">Всегда вибрировать</string>
   <string name="settings_always_vibrate_description">Даже когда звук включен</string>
 
+  <string name="settings_elapsed">Показать затраченное время</string>
   <string name="settings_big_time_text">Показывать время большим шрифтом</string>
   <string name="settings_big_time_text_description">Если обычного размера недостаточно</string>
 
