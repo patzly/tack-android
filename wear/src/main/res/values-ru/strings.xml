@@ -112,4 +112,5 @@
   <string name="wear_settings_keep_awake">Не гасить экран</string>
   <string name="wear_settings_keep_awake_description">Пока метроном включён</string>
 
+  <string name="wear_settings_rate">Оцените Tack в Google Play</string>
   </resources>
