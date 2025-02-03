@@ -95,6 +95,8 @@
   <string name="wear_settings_ignore_focus_description">Продолжать воспроизведение даже если другие приложения воспроизводят звук</string>
 
   <string name="wear_settings_gain">Усиление громкости</string>
+  <string name="wear_settings_gain_disclaimer">Обратите внимание, что разработчик не несёт ответственности за возможный ущерб.</string>
+
   <string name="wear_settings_always_vibrate">Всегда вибрировать</string>
   <string name="wear_settings_always_vibrate_description">Даже когда звук включен</string>
 
