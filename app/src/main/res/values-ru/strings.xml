@@ -277,6 +277,7 @@
   <string name="settings_sound_hands">Ладоши</string>
   <string name="settings_sound_folding">Линейка</string>
 
+  <string name="settings_latency">Корректировка задержки</string>
   <string name="settings_gain">Усиление громкости</string>
   <string name="settings_gain_description">Усиление в дБ (в дополнение к системной громкости)</string>
   <string name="settings_gain_warning">Используйте с осторожностью!</string>
