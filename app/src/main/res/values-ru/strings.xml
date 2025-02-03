@@ -257,6 +257,8 @@
   <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
   <string name="settings_contrast_high">Высокий</string>
   <string name="settings_contrast_dynamic">Контраст темы можно изменить только в настройках устройства</string>
+  <string name="settings_contrast_dynamic_unsupported">Динамический контраст темы доступен только в Android 14+</string>
+
   <string name="settings_haptic">Эффекты вибрации</string>
   <string name="settings_haptic_description">В дополнение к вибрирующим ударам метронома</string>
 
