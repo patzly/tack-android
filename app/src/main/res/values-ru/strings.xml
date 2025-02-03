@@ -223,7 +223,7 @@
     <item quantity="one">%1$d разделение на такт</item>
     <item quantity="few">%1$d разделения на такт</item>
     <item quantity="many">%1$d разделений на такт</item>
-    <item quantity="other">%1$d разделений на такт</item>
+    <item quantity="other">%1$d част на такт</item>
   </plurals>
   <string name="options_swing">Свинг</string>
   <string name="options_swing_3">Триоль</string>
