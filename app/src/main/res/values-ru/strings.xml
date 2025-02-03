@@ -226,6 +226,7 @@
     <item quantity="other">%1$d частей на такт</item>
   </plurals>
   <string name="options_swing">Свинг</string>
+  <string name="options_swing_description">Дробление настроено в соответствии с типом свинга</string>
   <string name="options_swing_3">Триоль</string>
   <string name="options_swing_5">Квинтоль</string>
   <string name="options_swing_7">Септоль</string>
