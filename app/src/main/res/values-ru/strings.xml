@@ -280,6 +280,7 @@
   <string name="settings_latency">Корректировка задержки</string>
   <string name="settings_latency_description">Компенсировать задержку звука для вибрации и отображения</string>
 
+  <string name="settings_ignore_focus">Игнорировать аудиофокус</string>
   <string name="settings_gain">Усиление громкости</string>
   <string name="settings_gain_description">Усиление в дБ (в дополнение к системной громкости)</string>
   <string name="settings_gain_warning">Используйте с осторожностью!</string>
