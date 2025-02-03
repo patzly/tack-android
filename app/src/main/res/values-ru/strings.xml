@@ -99,6 +99,7 @@
   <string name="msg_gain">Включить усиление громкости?</string>
   <string name="msg_gain_description">Будьте осторожны и не слушайте метроном в наушниках, так как громкие звуки могут вызвать потерю слуха!</string>
   <string name="msg_split_screen">Окно слишком маленькое</string>
+  <string name="msg_split_screen_description">В режиме разделённого экрана, некоторые элементы управления Tack могут отображаться некорректно. Если это возможно, увеличьте размер окна.</string>
   <string name="msg_copied_to_clipboard">Успешно скопировано в буфер обмена</string>
   <string name="msg_invalid_input">Неправильный ввод</string>
 
