@@ -53,7 +53,7 @@
 
   <string name="action_back">返回</string>
   <string name="action_close">關閉</string>
-  <string name="action_apply">應用</string>
+  <string name="action_apply">套用</string>
   <string name="action_cancel">取消</string>
   <string name="action_increase">增加</string>
   <string name="action_decrease">減少</string>
@@ -62,8 +62,8 @@
   <string name="action_stop">停止</string>
   <string name="action_add_beat">增加節拍</string>
   <string name="action_remove_beat">減少節拍</string>
-  <string name="action_add_sub">新增分割槽</string>
-  <string name="action_remove_sub">移除分割槽</string>
+  <string name="action_add_sub">新增子節拍</string>
+  <string name="action_remove_sub">移除子節拍</string>
   <string name="action_clear_all">全部清除</string>
   <string name="action_tempo_tap">輕拍速度</string>
   <string name="action_bookmark">書籤</string>
@@ -84,7 +84,7 @@
   <string name="action_logcat">顯示日誌</string>
   <string name="action_copy_to_clipboard">複製至剪貼簿</string>
   <string name="action_reload">重新整理</string>
-  <string name="action_change_tempo">改變速度</string>
+  <string name="action_change_tempo">改變節奏</string>
 
   <!-- MESSAGES -->
 
@@ -119,7 +119,7 @@
     <item quantity="other">%1$d 拍</item>
   </plurals>
   <plurals name="options_unit_subdivisions">
-    <item quantity="other">%1$d 個分割槽</item>
+    <item quantity="other">%1$d 個子節拍</item>
   </plurals>
   <string name="options_unit_seconds">秒</string>
   <plurals name="options_unit_seconds">
@@ -174,7 +174,12 @@
     <item quantity="other">靜音 %1$d 秒</item>
   </plurals>
   <string name="options_mute_random">隨機化較小的值</string>
+  <string name="options_subdivisions">子節拍</string>
+  <plurals name="options_subdivisions_description">
+    <item quantity="other">%1$d 子節拍／拍</item>
+  </plurals>
   <string name="options_swing">搖擺</string>
+  <string name="options_swing_description">設定子節拍匹配搖擺比率</string>
   <string name="options_swing_3">三連音</string>
   <string name="options_swing_5">五連音</string>
   <string name="options_swing_7">七連音</string>
