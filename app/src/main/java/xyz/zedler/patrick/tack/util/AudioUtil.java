@@ -122,8 +122,16 @@ public class AudioUtil implements OnAudioFocusChangeListener {
     } catch (RuntimeException e) {
       Log.e(TAG, "play: failed to initialize LoudnessEnhancer: ", e);
     }
-    beatsTrack.play();
-    subsTrack.play();
+    if (beatsTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+      beatsTrack.play();
+    } else {
+      Log.e(TAG, "play: failed to start beatsTrack");
+    }
+    if (subsTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+      subsTrack.play();
+    } else {
+      Log.e(TAG, "play: failed to start subsTrack");
+    }
 
     if (ignoreFocus) {
       return;

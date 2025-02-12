@@ -7,6 +7,7 @@
 - Improved: beats audio not cut off by subdivisions audio anymore
 - Improved: more tick marks on sliders with larger range
 - Fixed: modifier count not increased with muted beats enabled
+- Fixed: some crashes
 
 ## 4.7.2
 
