@@ -1,4 +1,4 @@
-## 4.7.3
+## 4.8.0
 
 - Improved: removed "use subdivisions" setting in favor of new subdivisions option
 - Improved: duration/elapsed time text design
