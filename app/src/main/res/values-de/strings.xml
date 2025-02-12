@@ -99,6 +99,7 @@
   <string name="msg_connection_lost">Service-Verbindung verloren, App-Neustart erforderlich</string>
   <string name="msg_reset">Alles zurücksetzen?</string>
   <string name="msg_reset_description">Willst du wirklich die gesamte App einschließlich Lesezeichen und Einstellungen zurücksetzen? Dies kann nicht rückgängig gemacht werden.</string>
+  <string name="msg_reset_elapsed">Vergangene Zeit zurücksetzen?</string>
   <string name="msg_gain">Mit Verstärkung wiedergeben?</string>
   <string name="msg_gain_description">Achte darauf, keine Ohrhöhrer zu verwenden, da durch laute Geräusche Gehörschäden entstehen können!</string>
   <string name="msg_split_screen">Fenster zu klein</string>
