@@ -71,7 +71,7 @@ public class MetronomeUtil {
   private float timerProgress;
   private boolean playing, tempPlaying, beatModeVibrate;
   private boolean isCountingIn, muteRandom, isMuted;
-  private boolean showElapsed, resetElapsed, resetTimer;
+  private boolean showElapsed, resetTimer;
   private boolean alwaysVibrate, incrementalIncrease, flashScreen, keepAwake;
   private boolean neverStartedWithGain = true;
 
@@ -110,7 +110,6 @@ public class MetronomeUtil {
     muteRandom = sharedPrefs.getBoolean(PREF.MUTE_RANDOM, DEF.MUTE_RANDOM);
     alwaysVibrate = sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
     showElapsed = sharedPrefs.getBoolean(PREF.SHOW_ELAPSED, DEF.SHOW_ELAPSED);
-    resetElapsed = sharedPrefs.getBoolean(PREF.RESET_ELAPSED, DEF.RESET_ELAPSED);
     resetTimer = sharedPrefs.getBoolean(PREF.RESET_TIMER, DEF.RESET_TIMER);
     flashScreen = sharedPrefs.getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
     keepAwake = sharedPrefs.getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
@@ -214,14 +213,14 @@ public class MetronomeUtil {
     start(true);
   }
 
-  public void start(boolean resetElapsedAndTimerIfNecessary) {
+  public void start(boolean resetTimerIfNecessary) {
     if (!NotificationUtil.hasPermission(context)) {
       for (MetronomeListener listener : listeners) {
         listener.onPermissionMissing();
       }
       return;
     }
-    if (resetElapsedAndTimerIfNecessary) {
+    if (resetTimerIfNecessary) {
       // notify system for shortcut usage prediction
       shortcutUtil.reportUsage(getTempo());
     }
@@ -262,10 +261,10 @@ public class MetronomeUtil {
       isCountingIn = false;
       updateIncrementalHandler();
       elapsedStartTime = System.currentTimeMillis();
-      updateElapsedHandler(resetElapsed && resetElapsedAndTimerIfNecessary);
+      updateElapsedHandler(false);
       timerStartTime = System.currentTimeMillis();
       updateTimerHandler(
-          resetTimer && resetElapsedAndTimerIfNecessary ? 0 : timerProgress,
+          resetTimer && resetTimerIfNecessary ? 0 : timerProgress,
           true
       );
       updateMuteHandler();
@@ -678,13 +677,14 @@ public class MetronomeUtil {
     return showElapsed;
   }
 
-  public void setResetElapsed(boolean reset) {
-    resetElapsed = reset;
-    sharedPrefs.edit().putBoolean(PREF.RESET_ELAPSED, reset).apply();
-  }
-
-  public boolean getResetElapsed() {
-    return resetElapsed;
+  public void resetElapsed() {
+    elapsedPrevious = 0;
+    elapsedStartTime = System.currentTimeMillis();
+    elapsedTime = 0;
+    for (MetronomeListener listener : listeners) {
+      listener.onElapsedTimeSecondsChanged();
+    }
+    updateElapsedHandler(true);
   }
 
   public void updateElapsedHandler(boolean reset) {

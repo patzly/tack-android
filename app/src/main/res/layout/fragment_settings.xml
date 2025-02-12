@@ -550,34 +550,6 @@
         </LinearLayout>
 
         <LinearLayout
-          android:id="@+id/linear_settings_reset_elapsed"
-          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable.More">
-
-          <ImageView
-            android:id="@+id/image_settings_reset_elapsed"
-            style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_rounded_autopause_anim"
-            tools:ignore="ContentDescription" />
-
-          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
-
-            <TextView
-              style="@style/Widget.Tack.TextView.ListItem.Title"
-              android:text="@string/settings_reset_elapsed" />
-
-            <TextView
-              style="@style/Widget.Tack.TextView.ListItem.Description"
-              android:text="@string/settings_reset_elapsed_description" />
-
-          </LinearLayout>
-
-          <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/switch_settings_reset_elapsed"
-            style="@style/Widget.Tack.Switch" />
-
-        </LinearLayout>
-
-        <LinearLayout
           android:id="@+id/linear_settings_reset_timer"
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable.More">
 

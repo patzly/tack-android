@@ -103,7 +103,7 @@ public class MainFragment extends BaseFragment
   private ValueAnimator fabAnimator;
   private float cornerSizeStop, cornerSizePlay, cornerSizeCurrent;
   private int colorFlashNormal, colorFlashStrong, colorFlashMuted;
-  private DialogUtil dialogUtilGain, dialogUtilSplitScreen;
+  private DialogUtil dialogUtilGain, dialogUtilSplitScreen, dialogUtilElapsed;
   private OptionsUtil optionsUtil;
   private ShortcutUtil shortcutUtil;
   private TempoTapDialogUtil tempoTapDialogUtil;
@@ -135,6 +135,7 @@ public class MainFragment extends BaseFragment
     binding = null;
     dialogUtilGain.dismiss();
     dialogUtilSplitScreen.dismiss();
+    dialogUtilElapsed.dismiss();
     tempoDialogUtil.dismiss();
     optionsUtil.dismiss();
     tempoTapDialogUtil.dismiss();
@@ -267,6 +268,15 @@ public class MainFragment extends BaseFragment
       }
     }
 
+    dialogUtilElapsed = new DialogUtil(activity, "elapsed");
+    dialogUtilElapsed.createAction(
+        R.string.msg_reset_elapsed,
+        R.string.msg_reset_elapsed_description,
+        R.string.action_reset,
+        () -> getMetronomeUtil().resetElapsed()
+    );
+    dialogUtilElapsed.showIfWasShown(savedInstanceState);
+
     tempoDialogUtil = new TempoDialogUtil(activity, this);
     tempoDialogUtil.showIfWasShown(savedInstanceState);
 
@@ -319,6 +329,14 @@ public class MainFragment extends BaseFragment
       public void onStopTrackingTouch(@NonNull Slider slider) {
         getMetronomeUtil().restorePlayingState();
       }
+    });
+    binding.chipMainElapsedTime.frameChipNumbersContainer.setOnClickListener(v -> {
+      dialogUtilElapsed.show();
+      performHapticClick();
+    });
+    binding.chipMainElapsedTime.linearChipNumbers.setOnClickListener(v -> {
+      dialogUtilElapsed.show();
+      performHapticClick();
     });
 
     binding.textSwitcherMainTempoTerm.setFactory(() -> {
@@ -1182,7 +1200,7 @@ public class MainFragment extends BaseFragment
       return;
     }
     boolean isElapsedActive = getMetronomeUtil().isElapsedActive();
-    binding.chipMainElapsedTime.textChipNumbers.setVisibility(
+    binding.chipMainElapsedTime.frameChipNumbersContainer.setVisibility(
         isElapsedActive ? View.VISIBLE : View.GONE
     );
     binding.chipMainElapsedTime.textChipNumbers.setText(getMetronomeUtil().getElapsedTimeString());

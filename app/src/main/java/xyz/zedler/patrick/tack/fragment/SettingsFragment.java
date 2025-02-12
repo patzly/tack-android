@@ -331,7 +331,6 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsPermNotification,
         binding.linearSettingsAlwaysVibrate,
         binding.linearSettingsElapsed,
-        binding.linearSettingsResetElapsed,
         binding.linearSettingsResetTimer,
         binding.linearSettingsBigTimeText,
         binding.linearSettingsFlashScreen,
@@ -348,7 +347,6 @@ public class SettingsFragment extends BaseFragment
         binding.switchSettingsPermNotification,
         binding.switchSettingsAlwaysVibrate,
         binding.switchSettingsElapsed,
-        binding.switchSettingsResetElapsed,
         binding.switchSettingsResetTimer,
         binding.switchSettingsBigTimeText,
         binding.switchSettingsFlashScreen,
@@ -419,11 +417,6 @@ public class SettingsFragment extends BaseFragment
     binding.switchSettingsElapsed.jumpDrawablesToCurrentState();
     binding.switchSettingsElapsed.setOnCheckedChangeListener(this);
 
-    binding.switchSettingsResetElapsed.setOnCheckedChangeListener(null);
-    binding.switchSettingsResetElapsed.setChecked(getMetronomeUtil().getResetElapsed());
-    binding.switchSettingsResetElapsed.jumpDrawablesToCurrentState();
-    binding.switchSettingsResetElapsed.setOnCheckedChangeListener(this);
-
     binding.switchSettingsResetTimer.setOnCheckedChangeListener(null);
     binding.switchSettingsResetTimer.setChecked(getMetronomeUtil().getResetTimer());
     binding.switchSettingsResetTimer.jumpDrawablesToCurrentState();
@@ -475,8 +468,6 @@ public class SettingsFragment extends BaseFragment
       binding.switchSettingsAlwaysVibrate.toggle();
     } else if (id == R.id.linear_settings_elapsed) {
       binding.switchSettingsElapsed.toggle();
-    } else if (id == R.id.linear_settings_reset_elapsed) {
-      binding.switchSettingsResetElapsed.toggle();
     } else if (id == R.id.linear_settings_reset_timer) {
       binding.switchSettingsResetTimer.toggle();
     } else if (id == R.id.linear_settings_big_time_text) {
@@ -531,10 +522,6 @@ public class SettingsFragment extends BaseFragment
       ViewUtil.startIcon(binding.imageSettingsElapsed);
       performHapticClick();
       getMetronomeUtil().setShowElapsed(isChecked);
-    } else if (id == R.id.switch_settings_reset_elapsed) {
-      ViewUtil.startIcon(binding.imageSettingsResetElapsed);
-      performHapticClick();
-      getMetronomeUtil().setResetElapsed(isChecked);
     } else if (id == R.id.switch_settings_reset_timer) {
       ViewUtil.startIcon(binding.imageSettingsResetTimer);
       performHapticClick();

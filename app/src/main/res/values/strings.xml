@@ -111,6 +111,8 @@
   <string name="msg_connection_lost">Service connection lost, app restart required</string>
   <string name="msg_reset">Reset all?</string>
   <string name="msg_reset_description">Do you really want to reset the entire app including bookmarks and settings? This cannot be undone.</string>
+  <string name="msg_reset_elapsed">Reset elapsed time?</string>
+  <string name="msg_reset_elapsed_description">Do you really want to reset the current elapsed time? This cannot be undone.</string>
   <string name="msg_gain">Play with volume boost?</string>
   <string name="msg_gain_description">Be careful not to play through headphones as loud sounds can cause ear damage!</string>
   <string name="msg_split_screen">Window too small</string>
@@ -277,9 +279,6 @@
 
   <string name="settings_elapsed">Show elapsed time</string>
   <string name="settings_elapsed_description">See how long you practice</string>
-
-  <string name="settings_reset_elapsed">Reset elapsed time when stopped</string>
-  <string name="settings_reset_elapsed_description">Instead of resuming until closed</string>
 
   <string name="settings_reset_timer">Reset timer when stopped</string>
   <string name="settings_reset_timer_description">Instead of resuming</string>
