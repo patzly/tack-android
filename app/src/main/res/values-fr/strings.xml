@@ -205,9 +205,6 @@
   <string name="settings_elapsed">Afficher le temps écoulé</string>
   <string name="settings_elapsed_description">Voir votre temps de répétition</string>
 
-  <string name="settings_reset_elapsed">Remise à zéro du temps écoulé si arrêté</string>
-  <string name="settings_reset_elapsed_description">Au lieu de reprendre jusqu\'à la fermeture</string>
-
   <string name="settings_reset_timer">RAZ chronomètre quand arrêté</string>
   <string name="settings_reset_timer_description">Plutôt que reprendre</string>
 
