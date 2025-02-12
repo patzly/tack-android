@@ -43,7 +43,8 @@
     android:layout_height="wrap_content"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:textColor="?attr/colorOnSurfaceVariant" />
+    android:textColor="?attr/colorOnSurfaceVariant"
+    android:fontFeatureSettings="tnum" />
 
   <com.google.android.material.slider.CustomSlider
     android:id="@+id/slider_options_count_in"
@@ -72,7 +73,8 @@
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:textColor="?attr/colorOnSurfaceVariant"
-    android:text="@string/options_incremental_amount_increase" />
+    android:text="@string/options_incremental_amount_increase"
+    android:fontFeatureSettings="tnum" />
 
   <com.google.android.material.slider.CustomSlider
     android:id="@+id/slider_options_incremental_amount"
@@ -130,7 +132,8 @@
       android:layout_height="wrap_content"
       android:paddingStart="16dp"
       android:paddingEnd="16dp"
-      android:textColor="?attr/colorOnSurfaceVariant" />
+      android:textColor="?attr/colorOnSurfaceVariant"
+      android:fontFeatureSettings="tnum" />
 
     <com.google.android.material.slider.CustomSlider
       android:id="@+id/slider_options_incremental_interval"
@@ -198,7 +201,8 @@
         android:paddingEnd="8dp"
         android:textColor="?attr/colorOnSurfaceVariant"
         android:text="@string/options_incremental_max"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:fontFeatureSettings="tnum" />
 
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_options_incremental_limit_decrease"
@@ -260,7 +264,8 @@
         android:paddingStart="16dp"
         android:paddingEnd="8dp"
         android:textColor="?attr/colorOnSurfaceVariant"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:fontFeatureSettings="tnum" />
 
     </LinearLayout>
 
@@ -352,7 +357,8 @@
     android:layout_height="wrap_content"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:textColor="?attr/colorOnSurfaceVariant" />
+    android:textColor="?attr/colorOnSurfaceVariant"
+    android:fontFeatureSettings="tnum" />
 
   <com.google.android.material.slider.CustomSlider
     android:id="@+id/slider_options_mute_play"
@@ -380,7 +386,8 @@
       android:layout_height="wrap_content"
       android:paddingStart="16dp"
       android:paddingEnd="16dp"
-      android:textColor="?attr/colorOnSurfaceVariant" />
+      android:textColor="?attr/colorOnSurfaceVariant"
+      android:fontFeatureSettings="tnum" />
 
     <com.google.android.material.slider.CustomSlider
       android:id="@+id/slider_options_mute_mute"
@@ -473,7 +480,8 @@
     android:layout_height="wrap_content"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:textColor="?attr/colorOnSurfaceVariant" />
+    android:textColor="?attr/colorOnSurfaceVariant"
+    android:fontFeatureSettings="tnum" />
 
   <com.google.android.material.slider.CustomSlider
     android:id="@+id/slider_options_subdivisions"
