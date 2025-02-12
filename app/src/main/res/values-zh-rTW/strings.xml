@@ -99,6 +99,7 @@
   <string name="msg_connection_lost">服務連線丟失，需要重新啟動應用程式</string>
   <string name="msg_reset">全部重置？</string>
   <string name="msg_reset_description">你真的想要重置包括書籤和設定在內整個應用程式嗎？這是無法撤銷的。</string>
+  <string name="msg_reset_elapsed">重置經過時間？</string>
   <string name="msg_gain">音量增強下播放？</string>
   <string name="msg_gain_description">小心不要透過耳機播放，因為太大的音量可以引致耳朵損傷！</string>
   <string name="msg_split_screen">視窗太小</string>
