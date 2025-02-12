@@ -55,7 +55,7 @@ public class MetronomeUtil {
   private final AudioUtil audioUtil;
   private final HapticUtil hapticUtil;
   private final ShortcutUtil shortcutUtil;
-  private final Set<MetronomeListener> listeners = new HashSet<>();
+  private final Set<MetronomeListener> listeners = Collections.synchronizedSet(new HashSet<>());
   private final Random random = new Random();
   private final boolean fromService;
   private HandlerThread tickThread, callbackThread;
@@ -215,8 +215,10 @@ public class MetronomeUtil {
 
   public void start(boolean resetTimerIfNecessary) {
     if (!NotificationUtil.hasPermission(context)) {
-      for (MetronomeListener listener : listeners) {
-        listener.onPermissionMissing();
+      synchronized (listeners) {
+        for (MetronomeListener listener : listeners) {
+          listener.onPermissionMissing();
+        }
       }
       return;
     }
@@ -228,8 +230,10 @@ public class MetronomeUtil {
       return;
     }
     if (!fromService) {
-      for (MetronomeListener listener : listeners) {
-        listener.onMetronomeConnectionMissing();
+      synchronized (listeners) {
+        for (MetronomeListener listener : listeners) {
+          listener.onMetronomeConnectionMissing();
+        }
       }
       return;
     } else {
@@ -274,8 +278,10 @@ public class MetronomeUtil {
       neverStartedWithGain = false;
     }
 
-    for (MetronomeListener listener : listeners) {
-      listener.onMetronomeStart();
+    synchronized (listeners) {
+      for (MetronomeListener listener : listeners) {
+        listener.onMetronomeStart();
+      }
     }
     Log.i(TAG, "start: started metronome handler");
   }
@@ -295,8 +301,10 @@ public class MetronomeUtil {
       removeHandlerCallbacks();
     }
 
-    for (MetronomeListener listener : listeners) {
-      listener.onMetronomeStop();
+    synchronized (listeners) {
+      for (MetronomeListener listener : listeners) {
+        listener.onMetronomeStop();
+      }
     }
     Log.i(TAG, "stop: stopped metronome handler");
   }
@@ -469,8 +477,10 @@ public class MetronomeUtil {
     int tempoOld = getTempo();
     int tempoNew = tempoOld + change;
     // setTempo will only be called by callback below, else we would break timer animation
-    for (MetronomeListener listener : listeners) {
-      listener.onMetronomeTempoChanged(tempoOld, tempoNew);
+    synchronized (listeners) {
+      for (MetronomeListener listener : listeners) {
+        listener.onMetronomeTempoChanged(tempoOld, tempoNew);
+      }
     }
   }
 
@@ -681,8 +691,10 @@ public class MetronomeUtil {
     elapsedPrevious = 0;
     elapsedStartTime = System.currentTimeMillis();
     elapsedTime = 0;
-    for (MetronomeListener listener : listeners) {
-      listener.onElapsedTimeSecondsChanged();
+    synchronized (listeners) {
+      for (MetronomeListener listener : listeners) {
+        listener.onElapsedTimeSecondsChanged();
+      }
     }
     updateElapsedHandler(true);
   }
@@ -704,8 +716,10 @@ public class MetronomeUtil {
         if (isPlaying()) {
           elapsedTime = System.currentTimeMillis() - elapsedStartTime + elapsedPrevious;
           elapsedHandler.postDelayed(this, 1000);
-          for (MetronomeListener listener : listeners) {
-            listener.onElapsedTimeSecondsChanged();
+          synchronized (listeners) {
+            for (MetronomeListener listener : listeners) {
+              listener.onElapsedTimeSecondsChanged();
+            }
           }
         }
       }
@@ -865,16 +879,20 @@ public class MetronomeUtil {
         public void run() {
           if (isPlaying() && !timerUnit.equals(UNIT.BARS)) {
             timerHandler.postDelayed(this, 1000);
-            for (MetronomeListener listener : listeners) {
-              listener.onTimerSecondsChanged();
+            synchronized (listeners) {
+              for (MetronomeListener listener : listeners) {
+                listener.onTimerSecondsChanged();
+              }
             }
           }
         }
       });
     }
 
-    for (MetronomeListener listener : listeners) {
-      listener.onMetronomeTimerStarted();
+    synchronized (listeners) {
+      for (MetronomeListener listener : listeners) {
+        listener.onMetronomeTimerStarted();
+      }
     }
   }
 
@@ -1038,8 +1056,10 @@ public class MetronomeUtil {
     Tick tick = new Tick(tickIndex, beat, subdivision, tickType, isMuted);
 
     latencyHandler.postDelayed(() -> {
-      for (MetronomeListener listener : listeners) {
-        listener.onMetronomePreTick(tick);
+      synchronized (listeners) {
+        for (MetronomeListener listener : listeners) {
+          listener.onMetronomePreTick(tick);
+        }
       }
     }, Math.max(0, latency - Constants.BEAT_ANIM_OFFSET));
     latencyHandler.postDelayed(() -> {
@@ -1057,8 +1077,10 @@ public class MetronomeUtil {
             hapticUtil.click();
         }
       }
-      for (MetronomeListener listener : listeners) {
-        listener.onMetronomeTick(tick);
+      synchronized (listeners) {
+        for (MetronomeListener listener : listeners) {
+          listener.onMetronomeTick(tick);
+        }
       }
     }, latency);
 
