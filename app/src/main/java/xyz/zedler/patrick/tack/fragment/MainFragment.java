@@ -25,7 +25,9 @@ import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -46,6 +48,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import com.google.android.material.badge.BadgeDrawable;
@@ -178,9 +181,22 @@ public class MainFragment extends BaseFragment
     activeBeat = getSharedPrefs().getBoolean(PREF.ACTIVE_BEAT, DEF.ACTIVE_BEAT);
 
     if (getSharedPrefs().getBoolean(PREF.BIG_TIME_TEXT, DEF.BIG_TIME_TEXT)) {
-      binding.textMainTimerCurrent.setTextSize(32);
-      binding.textMainTimerTotal.setTextSize(32);
-      binding.textMainElapsedTime.setTextSize(32);
+      Typeface typeface = ResourcesCompat.getFont(activity, R.font.jost_book);
+      binding.chipMainTimerCurrent.textChipNumbers.setTextSize(28);
+      binding.chipMainTimerCurrent.textChipNumbers.setTypeface(typeface);
+      binding.chipMainElapsedTime.textChipNumbers.setTextSize(28);
+      binding.chipMainElapsedTime.textChipNumbers.setTypeface(typeface);
+      binding.chipMainTimerTotal.textChipNumbers.setTextSize(28);
+      binding.chipMainTimerTotal.textChipNumbers.setTypeface(typeface);
+    } else {
+      binding.chipMainTimerCurrent.imageChipNumbers.setImageResource(
+          R.drawable.ic_rounded_timer_anim
+      );
+      binding.chipMainTimerCurrent.imageChipNumbers.setVisibility(View.VISIBLE);
+      binding.chipMainElapsedTime.imageChipNumbers.setImageResource(
+          R.drawable.ic_rounded_schedule_anim
+      );
+      binding.chipMainElapsedTime.imageChipNumbers.setVisibility(View.VISIBLE);
     }
 
     colorFlashNormal = ResUtil.getColor(activity, R.attr.colorPrimary);
@@ -1110,7 +1126,10 @@ public class MainFragment extends BaseFragment
   public void updateTimerControls() {
     boolean isPlaying = getMetronomeUtil().isPlaying();
     boolean isTimerActive = getMetronomeUtil().isTimerActive();
-    binding.sliderMainTimer.setVisibility(isTimerActive ? View.VISIBLE : View.GONE);
+    int visibility = isTimerActive ? View.VISIBLE : View.GONE;
+    binding.chipMainTimerCurrent.frameChipNumbersContainer.setVisibility(visibility);
+    binding.chipMainTimerTotal.frameChipNumbersContainer.setVisibility(visibility);
+    binding.sliderMainTimer.setVisibility(visibility);
     binding.sliderMainTimer.setContinuousTicksCount(getMetronomeUtil().getTimerDuration() + 1);
     measureTimerControls(false);
     // Check if timer is currently running
@@ -1152,15 +1171,21 @@ public class MainFragment extends BaseFragment
     if (binding == null) {
       return;
     }
-    binding.textMainTimerTotal.setText(getMetronomeUtil().getTotalTimeString());
-    binding.textMainTimerCurrent.setText(getMetronomeUtil().getCurrentTimerString());
+    binding.chipMainTimerTotal.textChipNumbers.setText(getMetronomeUtil().getTotalTimeString());
+    binding.chipMainTimerCurrent.textChipNumbers.setText(
+        getMetronomeUtil().getCurrentTimerString()
+    );
   }
 
   public void updateElapsedDisplay() {
     if (binding == null) {
       return;
     }
-    binding.textMainElapsedTime.setText(getMetronomeUtil().getElapsedTimeString());
+    boolean isElapsedActive = getMetronomeUtil().isElapsedActive();
+    binding.chipMainElapsedTime.textChipNumbers.setVisibility(
+        isElapsedActive ? View.VISIBLE : View.GONE
+    );
+    binding.chipMainElapsedTime.textChipNumbers.setText(getMetronomeUtil().getElapsedTimeString());
   }
 
   @OptIn(markerClass = ExperimentalBadgeUtils.class)
