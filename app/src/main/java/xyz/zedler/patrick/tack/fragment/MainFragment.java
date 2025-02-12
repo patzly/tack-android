@@ -25,7 +25,6 @@ import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Animatable;
@@ -899,6 +898,7 @@ public class MainFragment extends BaseFragment
       performHapticClick();
       int tempo = getMetronomeUtil().getTempo();
       if (bookmarks.size() < Constants.BOOKMARKS_MAX && !bookmarks.contains(tempo)) {
+        binding.frameMainBookmarksContainer.setVisibility(View.VISIBLE);
         int position = 0;
         while (position < bookmarks.size() && bookmarks.get(position) < tempo) {
           position++;
@@ -1309,6 +1309,11 @@ public class MainFragment extends BaseFragment
 
   private void refreshBookmarks(boolean alignActiveOrCenter, boolean animated) {
     binding.buttonMainBookmark.setEnabled(!bookmarks.contains(getMetronomeUtil().getTempo()));
+    boolean isPortrait = UiUtil.isOrientationPortrait(activity);
+    // make more place for top controls in landscape if no bookmarks
+    boolean hideBookmarks = !isPortrait && !isLandTablet
+        && binding.chipGroupMainBookmarks.getChildCount() == 0;
+    binding.frameMainBookmarksContainer.setVisibility(hideBookmarks ? View.GONE : View.VISIBLE);
     for (int i = 0; i < binding.chipGroupMainBookmarks.getChildCount(); i++) {
       Chip chip = (Chip) binding.chipGroupMainBookmarks.getChildAt(i);
       if (chip == null) {
