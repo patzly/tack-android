@@ -200,9 +200,6 @@
   <string name="settings_elapsed">Mostrar tiempo transcurrido</string>
   <string name="settings_elapsed_description">Ve cuanto tiempo practicas</string>
 
-  <string name="settings_reset_elapsed">Reiniciar tiempo transcurrido al pausar</string>
-  <string name="settings_reset_elapsed_description">En vez de retomar hasta el cierre</string>
-
   <string name="settings_reset_timer">Reiniciar tiempo transcurrido al detener</string>
   <string name="settings_reset_timer_description">En vez de continuar</string>
 

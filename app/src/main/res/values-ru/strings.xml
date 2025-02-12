@@ -300,9 +300,6 @@
   <string name="settings_elapsed">Показать затраченное время</string>
   <string name="settings_elapsed_description">Следите за тем, как долго вы занимаетесь</string>
 
-  <string name="settings_reset_elapsed">Сбрасывать затраченное время при остановке</string>
-  <string name="settings_reset_elapsed_description">Вместо того, чтобы продолжать отсчёт до закрытия</string>
-
   <string name="settings_reset_timer">Сбрасывать таймер при остановках</string>
   <string name="settings_reset_timer_description">Вместо продолжения отсчёта</string>
 

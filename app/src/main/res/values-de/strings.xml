@@ -98,7 +98,9 @@
   <string name="msg_service_description">Service für die Konfiguration und Wiedergabe des Metronoms</string>
   <string name="msg_connection_lost">Service-Verbindung verloren, App-Neustart erforderlich</string>
   <string name="msg_reset">Alles zurücksetzen?</string>
-  <string name="msg_reset_description">Willst du wirklich die gesamte App einschließlich Lesezeichen und Einstellungen zurücksetzen? Dies kann nicht rückgängig gemacht werden.</string>
+  <string name="msg_reset_description">Möchtest du wirklich die gesamte App einschließlich Lesezeichen und Einstellungen zurücksetzen? Dies kann nicht rückgängig gemacht werden.</string>
+  <string name="msg_reset_elapsed">Vergangene Zeit zurücksetzen?</string>
+  <string name="msg_reset_elapsed_description">Möchtest du wirklich die aktuell abgelaufene Zeit zurücksetzen? Dies kann nicht rückgängig gemacht werden.</string>
   <string name="msg_gain">Mit Verstärkung wiedergeben?</string>
   <string name="msg_gain_description">Achte darauf, keine Ohrhöhrer zu verwenden, da durch laute Geräusche Gehörschäden entstehen können!</string>
   <string name="msg_split_screen">Fenster zu klein</string>
@@ -265,9 +267,6 @@
 
   <string name="settings_elapsed">Vergangene Zeit anzeigen</string>
   <string name="settings_elapsed_description">Sieh, wie lange du übst</string>
-
-  <string name="settings_reset_elapsed">Vergangene Zeit nach Beenden der Wiedergabe zurücksetzen</string>
-  <string name="settings_reset_elapsed_description">Anstatt bis zum Schließen fortzusetzen</string>
 
   <string name="settings_reset_timer">Timer nach Beenden der Wiedergabe zurücksetzen</string>
   <string name="settings_reset_timer_description">Anstatt fortzusetzen</string>

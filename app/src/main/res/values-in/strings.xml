@@ -195,9 +195,6 @@
   <string name="settings_elapsed">Tampilkan lama durasi pemutaran</string>
   <string name="settings_elapsed_description">Lihat berapa lama Anda berlatih</string>
 
-  <string name="settings_reset_elapsed">Mengatur ulang durasi apabila dihentikan</string>
-  <string name="settings_reset_elapsed_description">Alih-alih melanjutkan hingga ditutup</string>
-
   <string name="settings_reset_timer">Setel ulang pengatur waktu saat dihentikan</string>
   <string name="settings_reset_timer_description">Daripada melanjutkan</string>
 

@@ -196,9 +196,6 @@
   <string name="settings_elapsed">Geçen süreyi göster</string>
   <string name="settings_elapsed_description">Ne kadar süre pratik yaptığınızı görün</string>
 
-  <string name="settings_reset_elapsed">Durdurulduğunda geçen süreyi sıfırla</string>
-  <string name="settings_reset_elapsed_description">Uygulama kapatılana kadar devam etmek yerine</string>
-
   <string name="settings_reset_timer">Durdurulduğunda zamanlayıcıyı sıfırla</string>
   <string name="settings_reset_timer_description">Devam etmek yerine</string>
 
