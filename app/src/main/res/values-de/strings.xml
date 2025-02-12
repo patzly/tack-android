@@ -266,9 +266,6 @@
   <string name="settings_elapsed">Vergangene Zeit anzeigen</string>
   <string name="settings_elapsed_description">Sieh, wie lange du übst</string>
 
-  <string name="settings_reset_elapsed">Vergangene Zeit nach Beenden der Wiedergabe zurücksetzen</string>
-  <string name="settings_reset_elapsed_description">Anstatt bis zum Schließen fortzusetzen</string>
-
   <string name="settings_reset_timer">Timer nach Beenden der Wiedergabe zurücksetzen</string>
   <string name="settings_reset_timer_description">Anstatt fortzusetzen</string>
 
