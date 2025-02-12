@@ -157,7 +157,7 @@ public class CustomSlider extends Slider {
     );
     thumbDrawable.setFillColor(getTrackActiveTintList());
     thumbWidth = UiUtil.dpToPx(context, 4);
-    minTickSpacing = UiUtil.dpToPx(context, 12);
+    minTickSpacing = UiUtil.dpToPx(context, 8);
     thumbTrackGapSize = UiUtil.dpToPx(context, 6);
     setTrackActiveTintList(getTrackActiveTintList());
     setTrackInactiveTintList(getTrackInactiveTintList());
