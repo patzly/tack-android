@@ -300,9 +300,6 @@
   <string name="settings_elapsed">Zobrazit uplynulý čas</string>
   <string name="settings_elapsed_description">Uvidíte, jak dlouho cvičíte</string>
 
-  <string name="settings_reset_elapsed">Resetovat uplynulý čas po zastavení</string>
-  <string name="settings_reset_elapsed_description">Namísto pozastavení do zavření aplikace</string>
-
   <string name="settings_reset_timer">Resetovat časovač po zastavení</string>
   <string name="settings_reset_timer_description">Namísto pozastavení</string>
 
