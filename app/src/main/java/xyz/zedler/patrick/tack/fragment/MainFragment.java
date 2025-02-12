@@ -1022,7 +1022,7 @@ public class MainFragment extends BaseFragment
       beatsCountBadgeAnimator.addListener(new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
-          if (!show) {
+          if (!show && binding != null) {
             BadgeUtils.detachBadgeDrawable(beatsCountBadge, binding.linearMainBeatsBg);
           }
         }
@@ -1112,7 +1112,7 @@ public class MainFragment extends BaseFragment
       subsCountBadgeAnimator.addListener(new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
-          if (!show) {
+          if (!show && binding != null) {
             BadgeUtils.detachBadgeDrawable(beatsCountBadge, binding.linearMainSubsBg);
           }
         }
@@ -1233,7 +1233,7 @@ public class MainFragment extends BaseFragment
       optionsBadgeAnimator.addListener(new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
-          if (!show) {
+          if (!show && binding != null) {
             BadgeUtils.detachBadgeDrawable(optionsBadge, binding.buttonMainOptions);
           }
         }
@@ -1532,8 +1532,10 @@ public class MainFragment extends BaseFragment
       pickerLogoAnimator.addListener(new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
-          binding.imageMainLogoCenter.setVisibility(showPickerNotLogo ? View.GONE : View.VISIBLE);
-          binding.imageMainLogo.setVisibility(showPickerNotLogo ? View.VISIBLE : View.GONE);
+          if (binding != null) {
+            binding.imageMainLogoCenter.setVisibility(showPickerNotLogo ? View.GONE : View.VISIBLE);
+            binding.imageMainLogo.setVisibility(showPickerNotLogo ? View.VISIBLE : View.GONE);
+          }
         }
       });
       pickerLogoAnimator.setInterpolator(new FastOutSlowInInterpolator());
