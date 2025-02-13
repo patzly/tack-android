@@ -198,7 +198,7 @@ fun CenterPicker(
       spToDp(spValue = if (isSmallScreen()) 64 else 72),
       spToDp(spValue = if (isSmallScreen()) 104 else 140)
     ),
-    spacing = if (isSmallScreen()) (-4).dp else (-6).dp,
+    verticalSpacing = if (isSmallScreen()) (-4).dp else (-6).dp,
     textStyle = MaterialTheme.typography.displayMedium.copy(
       fontSize = if (isSmallScreen()) 24.sp else 32.sp
     ),

@@ -60,11 +60,11 @@ public class MetronomeUtil {
   private final AudioUtil audioUtil;
   private final HapticUtil hapticUtil;
   private final ShortcutUtil shortcutUtil;
-  private final Set<MetronomeListener> listeners = new HashSet<>();
+  private final Set<MetronomeListener> listeners = Collections.synchronizedSet(new HashSet<>());
   private final Random random = new Random();
   private final boolean fromService;
+  private HandlerThread tickThread, callbackThread;
   private final List<Song> songs = new LinkedList<>();
-  private HandlerThread audioThread, callbackThread;
   private Handler tickHandler, latencyHandler;
   private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
   private String incrementalUnit, timerUnit, muteUnit;
@@ -72,11 +72,12 @@ public class MetronomeUtil {
   private ValueAnimator timerAnimator;
   private int tempo, countIn, timerDuration, mutePlay, muteMute, muteCountDown;
   private int incrementalAmount, incrementalInterval, incrementalLimit;
-  private long tickIndex, latency, elapsedStartTime, elapsedTime, elapsedPrevious, timerStartTime;
+  private long tickIndex, latency;
+  private long elapsedStartTime, elapsedTime, elapsedPrevious, timerStartTime;
   private float timerProgress;
-  private boolean playing, tempPlaying, useSubdivisions, beatModeVibrate;
+  private boolean playing, tempPlaying, beatModeVibrate;
   private boolean isCountingIn, muteRandom, isMuted;
-  private boolean showElapsed, resetElapsed, resetTimer;
+  private boolean showElapsed, resetTimer;
   private boolean alwaysVibrate, incrementalIncrease, flashScreen, keepAwake;
   private boolean neverStartedWithGain = true;
 
@@ -121,7 +122,6 @@ public class MetronomeUtil {
     tempo = sharedPrefs.getInt(PREF.TEMPO, DEF.TEMPO);
     beats = sharedPrefs.getString(PREF.BEATS, DEF.BEATS).split(",");
     subdivisions = sharedPrefs.getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(",");
-    useSubdivisions = sharedPrefs.getBoolean(PREF.USE_SUBS, DEF.USE_SUBS);
     countIn = sharedPrefs.getInt(PREF.COUNT_IN, DEF.COUNT_IN);
     latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY);
     incrementalAmount = sharedPrefs.getInt(PREF.INCREMENTAL_AMOUNT, DEF.INCREMENTAL_AMOUNT);
@@ -139,7 +139,6 @@ public class MetronomeUtil {
     muteRandom = sharedPrefs.getBoolean(PREF.MUTE_RANDOM, DEF.MUTE_RANDOM);
     alwaysVibrate = sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
     showElapsed = sharedPrefs.getBoolean(PREF.SHOW_ELAPSED, DEF.SHOW_ELAPSED);
-    resetElapsed = sharedPrefs.getBoolean(PREF.RESET_ELAPSED, DEF.RESET_ELAPSED);
     resetTimer = sharedPrefs.getBoolean(PREF.RESET_TIMER, DEF.RESET_TIMER);
     flashScreen = sharedPrefs.getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
     keepAwake = sharedPrefs.getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
@@ -191,11 +190,11 @@ public class MetronomeUtil {
     if (!fromService) {
       return;
     }
-    if (audioThread == null || !audioThread.isAlive()) {
-      audioThread = new HandlerThread("metronome_audio");
-      audioThread.start();
+    if (tickThread == null || !tickThread.isAlive()) {
+      tickThread = new HandlerThread("metronome_ticks");
+      tickThread.start();
       removeHandlerCallbacks();
-      tickHandler = new Handler(audioThread.getLooper());
+      tickHandler = new Handler(tickThread.getLooper());
     }
     if (callbackThread == null || !callbackThread.isAlive()) {
       callbackThread = new HandlerThread("metronome_callback");
@@ -254,8 +253,9 @@ public class MetronomeUtil {
     listeners.clear();
     if (fromService) {
       removeHandlerCallbacks();
-      audioThread.quitSafely();
+      tickThread.quit();
       callbackThread.quit();
+      audioUtil.destroy();
     }
   }
 
@@ -279,14 +279,16 @@ public class MetronomeUtil {
     start(true);
   }
 
-  public void start(boolean resetElapsedAndTimerIfNecessary) {
+  public void start(boolean resetTimerIfNecessary) {
     if (!NotificationUtil.hasPermission(context)) {
-      for (MetronomeListener listener : listeners) {
-        listener.onMetronomePermissionMissing();
+      synchronized (listeners) {
+        for (MetronomeListener listener : listeners) {
+          listener.onMetronomePermissionMissing();
+        }
       }
       return;
     }
-    if (resetElapsedAndTimerIfNecessary) {
+    if (resetTimerIfNecessary) {
       // notify system for shortcut usage prediction
       shortcutUtil.reportUsage(getTempo());
     }
@@ -294,8 +296,10 @@ public class MetronomeUtil {
       return;
     }
     if (!fromService) {
-      for (MetronomeListener listener : listeners) {
-        listener.onMetronomeConnectionMissing();
+      synchronized (listeners) {
+        for (MetronomeListener listener : listeners) {
+          listener.onMetronomeConnectionMissing();
+        }
       }
       return;
     } else {
@@ -316,7 +320,7 @@ public class MetronomeUtil {
         if (isPlaying()) {
           tickHandler.postDelayed(this, getInterval() / getSubdivisionsCount());
           Tick tick = performTick();
-          audioUtil.tick(tick, tempo, getSubdivisionsCount());
+          audioUtil.writeTickPeriod(tick, tempo, getSubdivisionsCount());
           tickIndex++;
         }
       }
@@ -327,10 +331,10 @@ public class MetronomeUtil {
       isCountingIn = false;
       updateIncrementalHandler();
       elapsedStartTime = System.currentTimeMillis();
-      updateElapsedHandler(resetElapsed && resetElapsedAndTimerIfNecessary);
+      updateElapsedHandler(false);
       timerStartTime = System.currentTimeMillis();
       updateTimerHandler(
-          resetTimer && resetElapsedAndTimerIfNecessary ? 0 : timerProgress,
+          resetTimer && resetTimerIfNecessary ? 0 : timerProgress,
           true
       );
       updateMuteHandler();
@@ -340,8 +344,10 @@ public class MetronomeUtil {
       neverStartedWithGain = false;
     }
 
-    for (MetronomeListener listener : listeners) {
-      listener.onMetronomeStart();
+    synchronized (listeners) {
+      for (MetronomeListener listener : listeners) {
+        listener.onMetronomeStart();
+      }
     }
     Log.i(TAG, "start: started metronome handler");
   }
@@ -361,8 +367,10 @@ public class MetronomeUtil {
       removeHandlerCallbacks();
     }
 
-    for (MetronomeListener listener : listeners) {
-      listener.onMetronomeStop();
+    synchronized (listeners) {
+      for (MetronomeListener listener : listeners) {
+        listener.onMetronomeStop();
+      }
     }
     Log.i(TAG, "stop: stopped metronome handler");
   }
@@ -394,20 +402,20 @@ public class MetronomeUtil {
   }
 
   public boolean addBeat() {
-    if (beats.length >= Constants.BEATS_MAX) {
+    if (getBeatsCount() >= Constants.BEATS_MAX) {
       return false;
     }
-    String[] beats = Arrays.copyOf(this.beats, this.beats.length + 1);
+    String[] beats = Arrays.copyOf(this.beats, getBeatsCount() + 1);
     beats[beats.length - 1] = TICK_TYPE.NORMAL;
     setBeats(beats);
     return true;
   }
 
   public boolean removeBeat() {
-    if (beats.length <= 1) {
+    if (getBeatsCount() <= 1) {
       return false;
     }
-    setBeats(Arrays.copyOf(beats, beats.length - 1));
+    setBeats(Arrays.copyOf(beats, getBeatsCount() - 1));
     return true;
   }
 
@@ -419,11 +427,15 @@ public class MetronomeUtil {
   }
 
   public String[] getSubdivisions() {
-    return useSubdivisions ? subdivisions : DEF.SUBDIVISIONS.split(",");
+    return subdivisions;
   }
 
   public int getSubdivisionsCount() {
-    return useSubdivisions ? subdivisions.length : 1;
+    return subdivisions.length;
+  }
+
+  public boolean isSubdivisionActive() {
+    return getSubdivisionsCount() > 1;
   }
 
   public void setSubdivision(int subdivision, String tickType) {
@@ -433,7 +445,7 @@ public class MetronomeUtil {
   }
 
   public boolean addSubdivision() {
-    if (subdivisions.length >= Constants.SUBS_MAX) {
+    if (getSubdivisionsCount() >= Constants.SUBS_MAX) {
       return false;
     }
     String[] subdivisions = Arrays.copyOf(
@@ -445,20 +457,11 @@ public class MetronomeUtil {
   }
 
   public boolean removeSubdivision() {
-    if (subdivisions.length <= 1) {
+    if (getSubdivisionsCount() <= 1) {
       return false;
     }
-    setSubdivisions(Arrays.copyOf(subdivisions, subdivisions.length - 1));
+    setSubdivisions(Arrays.copyOf(subdivisions, getSubdivisionsCount() - 1));
     return true;
-  }
-
-  public void setSubdivisionsUsed(boolean used) {
-    useSubdivisions = used;
-    sharedPrefs.edit().putBoolean(PREF.USE_SUBS, used).apply();
-  }
-
-  public boolean getSubdivisionsUsed() {
-    return useSubdivisions;
   }
 
   public void setSwing3() {
@@ -540,8 +543,10 @@ public class MetronomeUtil {
     int tempoOld = getTempo();
     int tempoNew = tempoOld + change;
     // setTempo will only be called by callback below, else we would break timer animation
-    for (MetronomeListener listener : listeners) {
-      listener.onMetronomeTempoChanged(tempoOld, tempoNew);
+    synchronized (listeners) {
+      for (MetronomeListener listener : listeners) {
+        listener.onMetronomeTempoChanged(tempoOld, tempoNew);
+      }
     }
   }
 
@@ -748,13 +753,16 @@ public class MetronomeUtil {
     return showElapsed;
   }
 
-  public void setResetElapsed(boolean reset) {
-    resetElapsed = reset;
-    sharedPrefs.edit().putBoolean(PREF.RESET_ELAPSED, reset).apply();
-  }
-
-  public boolean getResetElapsed() {
-    return resetElapsed;
+  public void resetElapsed() {
+    elapsedPrevious = 0;
+    elapsedStartTime = System.currentTimeMillis();
+    elapsedTime = 0;
+    synchronized (listeners) {
+      for (MetronomeListener listener : listeners) {
+        listener.onMetronomeElapsedTimeSecondsChanged();
+      }
+    }
+    updateElapsedHandler(true);
   }
 
   public void updateElapsedHandler(boolean reset) {
@@ -774,8 +782,10 @@ public class MetronomeUtil {
         if (isPlaying()) {
           elapsedTime = System.currentTimeMillis() - elapsedStartTime + elapsedPrevious;
           elapsedHandler.postDelayed(this, 1000);
-          for (MetronomeListener listener : listeners) {
-            listener.onMetronomeElapsedTimeSecondsChanged();
+          synchronized (listeners) {
+            for (MetronomeListener listener : listeners) {
+              listener.onMetronomeElapsedTimeSecondsChanged();
+            }
           }
         }
       }
@@ -935,16 +945,20 @@ public class MetronomeUtil {
         public void run() {
           if (isPlaying() && !timerUnit.equals(UNIT.BARS)) {
             timerHandler.postDelayed(this, 1000);
-            for (MetronomeListener listener : listeners) {
-              listener.onMetronomeTimerSecondsChanged();
+            synchronized (listeners) {
+              for (MetronomeListener listener : listeners) {
+                listener.onMetronomeTimerSecondsChanged();
+              }
             }
           }
         }
       });
     }
 
-    for (MetronomeListener listener : listeners) {
-      listener.onMetronomeTimerStarted();
+    synchronized (listeners) {
+      for (MetronomeListener listener : listeners) {
+        listener.onMetronomeTimerStarted();
+      }
     }
   }
 
@@ -1108,8 +1122,10 @@ public class MetronomeUtil {
     Tick tick = new Tick(tickIndex, beat, subdivision, tickType, isMuted);
 
     latencyHandler.postDelayed(() -> {
-      for (MetronomeListener listener : listeners) {
-        listener.onMetronomePreTick(tick);
+      synchronized (listeners) {
+        for (MetronomeListener listener : listeners) {
+          listener.onMetronomePreTick(tick);
+        }
       }
     }, Math.max(0, latency - Constants.BEAT_ANIM_OFFSET));
     latencyHandler.postDelayed(() -> {
@@ -1127,8 +1143,10 @@ public class MetronomeUtil {
             hapticUtil.click();
         }
       }
-      for (MetronomeListener listener : listeners) {
-        listener.onMetronomeTick(tick);
+      synchronized (listeners) {
+        for (MetronomeListener listener : listeners) {
+          listener.onMetronomeTick(tick);
+        }
       }
     }, latency);
 

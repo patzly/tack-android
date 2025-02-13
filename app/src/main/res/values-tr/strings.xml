@@ -130,7 +130,6 @@
   <string name="options_incremental_min">%1$d bpm\'ye kadar düşür</string>
   <string name="options_mute">Sessiz vuruşlar</string>
   <string name="options_swing">Swing</string>
-  <string name="options_swing_description">Alt bölümler seçilen swing yüzdesine göre ayarlanır</string>
   <string name="options_swing_3">Üçlem</string>
   <string name="options_swing_5">Beşlem</string>
   <string name="options_swing_7">Yedilem</string>
@@ -191,17 +190,11 @@
   <string name="settings_gain_warning">Dikkatli kullanın!</string>
   <string name="settings_gain_disclaimer">Ses artırma etkinleştirildiğinde, her başlangıçta bir uyarı gösterilecektir. Geliştirici herhangi bir olası hasar için sorumluluk kabul etmez.</string>
 
-  <string name="settings_show_subs">Alt bölüm kontrollerini göster</string>
-  <string name="settings_show_subs_description">Daha çeşitli ritimler</string>
-
   <string name="settings_always_vibrate">Her zaman titreşim</string>
   <string name="settings_always_vibrate_description">Ses açık olsa bile</string>
 
   <string name="settings_elapsed">Geçen süreyi göster</string>
   <string name="settings_elapsed_description">Ne kadar süre pratik yaptığınızı görün</string>
-
-  <string name="settings_reset_elapsed">Durdurulduğunda geçen süreyi sıfırla</string>
-  <string name="settings_reset_elapsed_description">Uygulama kapatılana kadar devam etmek yerine</string>
 
   <string name="settings_reset_timer">Durdurulduğunda zamanlayıcıyı sıfırla</string>
   <string name="settings_reset_timer_description">Devam etmek yerine</string>

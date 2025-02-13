@@ -26,6 +26,7 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -46,6 +47,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import com.google.android.material.badge.BadgeDrawable;
@@ -101,7 +103,7 @@ public class MainFragment extends BaseFragment
   private ValueAnimator fabAnimator;
   private float cornerSizeStop, cornerSizePlay, cornerSizeCurrent;
   private int colorFlashNormal, colorFlashStrong, colorFlashMuted;
-  private DialogUtil dialogUtilGain, dialogUtilSplitScreen;
+  private DialogUtil dialogUtilGain, dialogUtilSplitScreen, dialogUtilElapsed;
   private OptionsUtil optionsUtil;
   private ShortcutUtil shortcutUtil;
   private TempoTapDialogUtil tempoTapDialogUtil;
@@ -133,6 +135,7 @@ public class MainFragment extends BaseFragment
     binding = null;
     dialogUtilGain.dismiss();
     dialogUtilSplitScreen.dismiss();
+    dialogUtilElapsed.dismiss();
     tempoDialogUtil.dismiss();
     optionsUtil.dismiss();
     tempoTapDialogUtil.dismiss();
@@ -178,9 +181,22 @@ public class MainFragment extends BaseFragment
     activeBeat = getSharedPrefs().getBoolean(PREF.ACTIVE_BEAT, DEF.ACTIVE_BEAT);
 
     if (getSharedPrefs().getBoolean(PREF.BIG_TIME_TEXT, DEF.BIG_TIME_TEXT)) {
-      binding.textMainTimerCurrent.setTextSize(32);
-      binding.textMainTimerTotal.setTextSize(32);
-      binding.textMainElapsedTime.setTextSize(32);
+      Typeface typeface = ResourcesCompat.getFont(activity, R.font.jost_book);
+      binding.chipMainTimerCurrent.textChipNumbers.setTextSize(28);
+      binding.chipMainTimerCurrent.textChipNumbers.setTypeface(typeface);
+      binding.chipMainElapsedTime.textChipNumbers.setTextSize(28);
+      binding.chipMainElapsedTime.textChipNumbers.setTypeface(typeface);
+      binding.chipMainTimerTotal.textChipNumbers.setTextSize(28);
+      binding.chipMainTimerTotal.textChipNumbers.setTypeface(typeface);
+    } else {
+      binding.chipMainTimerCurrent.imageChipNumbers.setImageResource(
+          R.drawable.ic_rounded_timer_anim
+      );
+      binding.chipMainTimerCurrent.imageChipNumbers.setVisibility(View.VISIBLE);
+      binding.chipMainElapsedTime.imageChipNumbers.setImageResource(
+          R.drawable.ic_rounded_schedule_anim
+      );
+      binding.chipMainElapsedTime.imageChipNumbers.setVisibility(View.VISIBLE);
     }
 
     colorFlashNormal = ResUtil.getColor(activity, R.attr.colorPrimary);
@@ -252,6 +268,15 @@ public class MainFragment extends BaseFragment
       }
     }
 
+    dialogUtilElapsed = new DialogUtil(activity, "elapsed");
+    dialogUtilElapsed.createAction(
+        R.string.msg_reset_elapsed,
+        R.string.msg_reset_elapsed_description,
+        R.string.action_reset,
+        () -> getMetronomeUtil().resetElapsed()
+    );
+    dialogUtilElapsed.showIfWasShown(savedInstanceState);
+
     tempoDialogUtil = new TempoDialogUtil(activity, this);
     tempoDialogUtil.showIfWasShown(savedInstanceState);
 
@@ -304,6 +329,14 @@ public class MainFragment extends BaseFragment
       public void onStopTrackingTouch(@NonNull Slider slider) {
         getMetronomeUtil().restorePlayingState();
       }
+    });
+    binding.chipMainElapsedTime.frameChipNumbersContainer.setOnClickListener(v -> {
+      dialogUtilElapsed.show();
+      performHapticClick();
+    });
+    binding.chipMainElapsedTime.linearChipNumbers.setOnClickListener(v -> {
+      dialogUtilElapsed.show();
+      performHapticClick();
     });
 
     binding.textSwitcherMainTempoTerm.setFactory(() -> {
@@ -631,7 +664,7 @@ public class MainFragment extends BaseFragment
         ((BeatView) beat).beat();
       }
       View subdivision = binding.linearMainSubs.getChildAt(tick.subdivision - 1);
-      if (getMetronomeUtil().getSubdivisionsUsed() && subdivision instanceof BeatView) {
+      if (getMetronomeUtil().isSubdivisionActive() && subdivision instanceof BeatView) {
         ((BeatView) subdivision).setTickType(tick.subdivision == 1 ? TICK_TYPE.MUTED : tick.type);
         ((BeatView) subdivision).beat();
       }
@@ -820,6 +853,7 @@ public class MainFragment extends BaseFragment
         binding.linearMainSubs.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
         updateSubControls(true);
+        optionsUtil.updateSubdivisions();
         optionsUtil.updateSwing();
       }
     } else if (id == R.id.button_main_remove_subdivision) {
@@ -832,6 +866,7 @@ public class MainFragment extends BaseFragment
             binding.scrollHorizMainSubs, true
         );
         updateSubControls(true);
+        optionsUtil.updateSubdivisions();
         optionsUtil.updateSwing();
       }
     } else if (id == R.id.fab_main_play_stop) {
@@ -903,6 +938,7 @@ public class MainFragment extends BaseFragment
       performHapticClick();
       int tempo = getMetronomeUtil().getTempo();
       if (bookmarks.size() < Constants.BOOKMARKS_MAX && !bookmarks.contains(tempo)) {
+        binding.frameMainBookmarksContainer.setVisibility(View.VISIBLE);
         int position = 0;
         while (position < bookmarks.size() && bookmarks.get(position) < tempo) {
           position++;
@@ -1008,7 +1044,7 @@ public class MainFragment extends BaseFragment
       beatsCountBadgeAnimator.addListener(new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
-          if (!show) {
+          if (!show && binding != null) {
             BadgeUtils.detachBadgeDrawable(beatsCountBadge, binding.linearMainBeatsBg);
           }
         }
@@ -1079,7 +1115,7 @@ public class MainFragment extends BaseFragment
     binding.buttonMainAddSubdivision.setEnabled(subdivisions < Constants.SUBS_MAX);
     binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
     binding.linearMainSubsBg.setVisibility(
-        getMetronomeUtil().getSubdivisionsUsed() ? View.VISIBLE : View.GONE
+        getMetronomeUtil().isSubdivisionActive() ? View.VISIBLE : View.GONE
     );
     subsCountBadge.setNumber(subdivisions);
     boolean show = subdivisions > 4;
@@ -1098,7 +1134,7 @@ public class MainFragment extends BaseFragment
       subsCountBadgeAnimator.addListener(new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
-          if (!show) {
+          if (!show && binding != null) {
             BadgeUtils.detachBadgeDrawable(beatsCountBadge, binding.linearMainSubsBg);
           }
         }
@@ -1130,7 +1166,10 @@ public class MainFragment extends BaseFragment
   public void updateTimerControls() {
     boolean isPlaying = getMetronomeUtil().isPlaying();
     boolean isTimerActive = getMetronomeUtil().isTimerActive();
-    binding.sliderMainTimer.setVisibility(isTimerActive ? View.VISIBLE : View.GONE);
+    int visibility = isTimerActive ? View.VISIBLE : View.GONE;
+    binding.chipMainTimerCurrent.frameChipNumbersContainer.setVisibility(visibility);
+    binding.chipMainTimerTotal.frameChipNumbersContainer.setVisibility(visibility);
+    binding.sliderMainTimer.setVisibility(visibility);
     binding.sliderMainTimer.setContinuousTicksCount(getMetronomeUtil().getTimerDuration() + 1);
     measureTimerControls(false);
     // Check if timer is currently running
@@ -1172,15 +1211,21 @@ public class MainFragment extends BaseFragment
     if (binding == null) {
       return;
     }
-    binding.textMainTimerTotal.setText(getMetronomeUtil().getTotalTimeString());
-    binding.textMainTimerCurrent.setText(getMetronomeUtil().getCurrentTimerString());
+    binding.chipMainTimerTotal.textChipNumbers.setText(getMetronomeUtil().getTotalTimeString());
+    binding.chipMainTimerCurrent.textChipNumbers.setText(
+        getMetronomeUtil().getCurrentTimerString()
+    );
   }
 
   public void updateElapsedDisplay() {
     if (binding == null) {
       return;
     }
-    binding.textMainElapsedTime.setText(getMetronomeUtil().getElapsedTimeString());
+    boolean isElapsedActive = getMetronomeUtil().isElapsedActive();
+    binding.chipMainElapsedTime.frameChipNumbersContainer.setVisibility(
+        isElapsedActive ? View.VISIBLE : View.GONE
+    );
+    binding.chipMainElapsedTime.textChipNumbers.setText(getMetronomeUtil().getElapsedTimeString());
   }
 
   @OptIn(markerClass = ExperimentalBadgeUtils.class)
@@ -1192,15 +1237,7 @@ public class MainFragment extends BaseFragment
       optionsBadgeAnimator.cancel();
       optionsBadgeAnimator = null;
     }
-    boolean isIncremental = getMetronomeUtil().getIncrementalAmount() > 0;
-    boolean isTimerActive = getMetronomeUtil().isTimerActive();
-    int modifierCount = 0;
-    if (isIncremental) {
-      modifierCount += 1;
-    }
-    if (isTimerActive) {
-      modifierCount += 1;
-    }
+    int modifierCount = getModifierCount();
     boolean show = modifierCount > 0;
     optionsBadge.setNumber(modifierCount);
     if (animated) {
@@ -1218,7 +1255,7 @@ public class MainFragment extends BaseFragment
       optionsBadgeAnimator.addListener(new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
-          if (!show) {
+          if (!show && binding != null) {
             BadgeUtils.detachBadgeDrawable(optionsBadge, binding.buttonMainOptions);
           }
         }
@@ -1245,6 +1282,27 @@ public class MainFragment extends BaseFragment
         }
       }, 1);
     }
+  }
+
+  private int getModifierCount() {
+    boolean isIncremental = getMetronomeUtil().getIncrementalAmount() > 0;
+    boolean isTimerActive = getMetronomeUtil().isTimerActive();
+    boolean isMuteActive = getMetronomeUtil().isMuteActive();
+    boolean isSubdivisionActive = getMetronomeUtil().isSubdivisionActive();
+    int modifierCount = 0;
+    if (isIncremental) {
+      modifierCount += 1;
+    }
+    if (isTimerActive) {
+      modifierCount += 1;
+    }
+    if (isMuteActive) {
+      modifierCount += 1;
+    }
+    if (isSubdivisionActive) {
+      modifierCount += 1;
+    }
+    return modifierCount;
   }
 
   private Chip getBookmarkChip(int tempo) {
@@ -1291,6 +1349,11 @@ public class MainFragment extends BaseFragment
 
   private void refreshBookmarks(boolean alignActiveOrCenter, boolean animated) {
     binding.buttonMainBookmark.setEnabled(!bookmarks.contains(getMetronomeUtil().getTempo()));
+    boolean isPortrait = UiUtil.isOrientationPortrait(activity);
+    // make more place for top controls in landscape if no bookmarks
+    boolean hideBookmarks = !isPortrait && !isLandTablet
+        && binding.chipGroupMainBookmarks.getChildCount() == 0;
+    binding.frameMainBookmarksContainer.setVisibility(hideBookmarks ? View.GONE : View.VISIBLE);
     for (int i = 0; i < binding.chipGroupMainBookmarks.getChildCount(); i++) {
       Chip chip = (Chip) binding.chipGroupMainBookmarks.getChildAt(i);
       if (chip == null) {
@@ -1491,8 +1554,10 @@ public class MainFragment extends BaseFragment
       pickerLogoAnimator.addListener(new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
-          binding.imageMainLogoCenter.setVisibility(showPickerNotLogo ? View.GONE : View.VISIBLE);
-          binding.imageMainLogo.setVisibility(showPickerNotLogo ? View.VISIBLE : View.GONE);
+          if (binding != null) {
+            binding.imageMainLogoCenter.setVisibility(showPickerNotLogo ? View.GONE : View.VISIBLE);
+            binding.imageMainLogo.setVisibility(showPickerNotLogo ? View.VISIBLE : View.GONE);
+          }
         }
       });
       pickerLogoAnimator.setInterpolator(new FastOutSlowInInterpolator());

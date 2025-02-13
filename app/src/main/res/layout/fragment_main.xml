@@ -110,11 +110,10 @@
         <LinearLayout
           android:id="@+id/linear_main_beats_bg"
           android:layout_width="match_parent"
-          android:layout_height="56dp"
+          android:layout_height="wrap_content"
           android:orientation="horizontal"
           android:layout_marginStart="16dp"
-          android:layout_marginEnd="16dp"
-          android:layout_marginBottom="8dp">
+          android:layout_marginEnd="16dp">
 
           <com.google.android.material.button.MaterialButton
             android:id="@+id/button_main_remove_beat"
@@ -173,14 +172,16 @@
           android:orientation="horizontal"
           android:layout_marginStart="16dp"
           android:layout_marginEnd="16dp"
-          android:layout_marginBottom="4dp"
-          android:padding="4dp"
+          android:layout_marginTop="8dp"
           android:background="@drawable/shape_subdivisions_bg">
 
           <com.google.android.material.button.MaterialButton
             android:id="@+id/button_main_remove_subdivision"
             style="@style/Widget.Tack.Button.IconButton"
             android:contentDescription="@string/action_remove_sub"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             app:icon="@drawable/ic_rounded_remove_anim" />
 
           <HorizontalScrollView
@@ -189,16 +190,21 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:overScrollMode="ifContentScrolls"
-            android:scrollbars="none"
+            android:scrollbars="horizontal"
+            android:scrollbarThumbHorizontal="@drawable/shape_scrollbar_rounded"
             android:fadingEdge="horizontal"
-            android:requiresFadingEdge="horizontal">
+            android:requiresFadingEdge="horizontal"
+            android:clipToPadding="true"
+            android:clipChildren="true">
 
             <LinearLayout
               android:id="@+id/linear_main_subs"
               android:layout_width="wrap_content"
-              android:layout_height="match_parent"
+              android:layout_height="48dp"
               android:orientation="horizontal"
-              android:layout_gravity="center_horizontal" />
+              android:layout_gravity="center_horizontal"
+              android:layout_marginTop="4dp"
+              android:layout_marginBottom="4dp" />
 
           </HorizontalScrollView>
 
@@ -206,6 +212,9 @@
             android:id="@+id/button_main_add_subdivision"
             style="@style/Widget.Tack.Button.IconButton"
             android:contentDescription="@string/action_add_sub"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             app:icon="@drawable/ic_rounded_add_anim" />
 
         </LinearLayout>
@@ -215,6 +224,7 @@
           style="@style/Widget.Tack.Slider"
           android:layout_marginStart="4dp"
           android:layout_marginEnd="4dp"
+          android:layout_marginTop="4dp"
           android:valueFrom="0"
           android:valueTo="4"
           android:stepSize="0"
@@ -223,37 +233,29 @@
         <FrameLayout
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:paddingStart="18dp"
-          android:paddingEnd="18dp">
+          android:paddingStart="16dp"
+          android:paddingEnd="16dp">
 
-          <TextView
-            android:id="@+id/text_main_timer_current"
-            style="@style/Widget.Tack.TextView"
+          <include
+            android:id="@+id/chip_main_timer_current"
+            layout="@layout/partial_chip_numbers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:textSize="@dimen/timer_font_size"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:fontFeatureSettings="tnum" />
+            android:layout_gravity="start" />
 
-          <TextView
-            android:id="@+id/text_main_elapsed_time"
-            style="@style/Widget.Tack.TextView"
+          <include
+            android:id="@+id/chip_main_elapsed_time"
+            layout="@layout/partial_chip_numbers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:textSize="@dimen/timer_font_size"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:fontFeatureSettings="tnum" />
+            android:layout_gravity="center_horizontal" />
 
-          <TextView
-            android:id="@+id/text_main_timer_total"
-            style="@style/Widget.Tack.TextView"
+          <include
+            android:id="@+id/chip_main_timer_total"
+            layout="@layout/partial_chip_numbers"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:textSize="@dimen/timer_font_size"
-            android:textColor="?attr/colorOnSurfaceVariant" />
+            android:layout_gravity="end" />
 
         </FrameLayout>
 
@@ -364,7 +366,7 @@
         style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
         android:contentDescription="@string/action_decrease"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Bottom"
-        app:icon="@drawable/ic_round_triple_arrow_left_anim" />
+        app:icon="@drawable/ic_rounded_triple_arrow_left_anim" />
 
     </LinearLayout>
 
@@ -397,7 +399,7 @@
         style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
         android:contentDescription="@string/action_increase"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Bottom"
-        app:icon="@drawable/ic_round_triple_arrow_right_anim" />
+        app:icon="@drawable/ic_rounded_triple_arrow_right_anim" />
 
     </LinearLayout>
 

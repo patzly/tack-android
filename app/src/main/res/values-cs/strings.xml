@@ -124,6 +124,12 @@
     <item quantity="many">%1$d dob</item>
     <item quantity="other">%1$d dob</item>
   </plurals>
+  <plurals name="options_unit_subdivisions">
+    <item quantity="one">%1$d subdivize</item>
+    <item quantity="few">%1$d subdivize</item>
+    <item quantity="many">%1$d subdivizí</item>
+    <item quantity="other">%1$d subdivizí</item>
+  </plurals>
   <string name="options_unit_seconds">Sekundy</string>
   <plurals name="options_unit_seconds">
     <item quantity="one">%1$d sekunda</item>
@@ -216,8 +222,15 @@
     <item quantity="other">Ztlumit %1$d sekund</item>
   </plurals>
   <string name="options_mute_random">Náhodný výběr menších hodnot</string>
+  <string name="options_subdivisions">Subdivize</string>
+  <plurals name="options_subdivisions_description">
+    <item quantity="one">%1$d subdivize na dobu</item>
+    <item quantity="few">%1$d subdivize na dobu</item>
+    <item quantity="many">%1$d subdivizí na dobu</item>
+    <item quantity="other">%1$d subdivizí na dobu</item>
+  </plurals>
   <string name="options_swing">Swing</string>
-  <string name="options_swing_description">Subdivize nastavené pro shodu s vybraným procentem swingu</string>
+  <string name="options_swing_description">Subdivize nastavené pro shodu s poměrem swingu</string>
   <string name="options_swing_3">Trioly</string>
   <string name="options_swing_5">Kvintoly</string>
   <string name="options_swing_7">Septoly</string>
@@ -278,9 +291,6 @@
   <string name="settings_gain_warning">Používejte s opatrností!</string>
   <string name="settings_gain_disclaimer">Při povolení zesílení bude před každým spuštěním zobrazeno varování. Vývojář nenese žádnou zodpovědnost za jakékoli potenciální škody.</string>
 
-  <string name="settings_show_subs">Zobrazit ovládání subdivizí</string>
-  <string name="settings_show_subs_description">Rozmanitější rytmy</string>
-
   <string name="settings_active_beat">Zvýraznit aktuální rytmus</string>
   <string name="settings_active_beat_description">Užitečné pro pomalejší tempa</string>
 
@@ -289,9 +299,6 @@
 
   <string name="settings_elapsed">Zobrazit uplynulý čas</string>
   <string name="settings_elapsed_description">Uvidíte, jak dlouho cvičíte</string>
-
-  <string name="settings_reset_elapsed">Resetovat uplynulý čas po zastavení</string>
-  <string name="settings_reset_elapsed_description">Namísto pozastavení do zavření aplikace</string>
 
   <string name="settings_reset_timer">Resetovat časovač po zastavení</string>
   <string name="settings_reset_timer_description">Namísto pozastavení</string>

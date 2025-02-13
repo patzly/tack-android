@@ -348,7 +348,7 @@ fun TempoCard(
           spToDp(spValue = if (isSmallScreen()) 76 else 100),
           spToDp(spValue = if (isSmallScreen()) 44 else 56)
         ),
-      spacing = if (isSmallScreen()) (-8).dp else (-7).dp,
+      verticalSpacing = if (isSmallScreen()) (-8).dp else (-7).dp,
       textColor = MaterialTheme.colorScheme.onSurface,
       textStyle = MaterialTheme.typography.displayMedium.copy(
         fontSize = if (isSmallScreen()) 30.sp else 40.sp

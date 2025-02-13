@@ -43,7 +43,8 @@
     android:layout_height="wrap_content"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:textColor="?attr/colorOnSurfaceVariant" />
+    android:textColor="?attr/colorOnSurfaceVariant"
+    android:fontFeatureSettings="tnum" />
 
   <com.google.android.material.slider.CustomSlider
     android:id="@+id/slider_options_count_in"
@@ -72,7 +73,8 @@
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:textColor="?attr/colorOnSurfaceVariant"
-    android:text="@string/options_incremental_amount_increase" />
+    android:text="@string/options_incremental_amount_increase"
+    android:fontFeatureSettings="tnum" />
 
   <com.google.android.material.slider.CustomSlider
     android:id="@+id/slider_options_incremental_amount"
@@ -130,7 +132,8 @@
       android:layout_height="wrap_content"
       android:paddingStart="16dp"
       android:paddingEnd="16dp"
-      android:textColor="?attr/colorOnSurfaceVariant" />
+      android:textColor="?attr/colorOnSurfaceVariant"
+      android:fontFeatureSettings="tnum" />
 
     <com.google.android.material.slider.CustomSlider
       android:id="@+id/slider_options_incremental_interval"
@@ -198,7 +201,8 @@
         android:paddingEnd="8dp"
         android:textColor="?attr/colorOnSurfaceVariant"
         android:text="@string/options_incremental_max"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:fontFeatureSettings="tnum" />
 
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_options_incremental_limit_decrease"
@@ -260,7 +264,8 @@
         android:paddingStart="16dp"
         android:paddingEnd="8dp"
         android:textColor="?attr/colorOnSurfaceVariant"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:fontFeatureSettings="tnum" />
 
     </LinearLayout>
 
@@ -352,7 +357,8 @@
     android:layout_height="wrap_content"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:textColor="?attr/colorOnSurfaceVariant" />
+    android:textColor="?attr/colorOnSurfaceVariant"
+    android:fontFeatureSettings="tnum" />
 
   <com.google.android.material.slider.CustomSlider
     android:id="@+id/slider_options_mute_play"
@@ -380,7 +386,8 @@
       android:layout_height="wrap_content"
       android:paddingStart="16dp"
       android:paddingEnd="16dp"
-      android:textColor="?attr/colorOnSurfaceVariant" />
+      android:textColor="?attr/colorOnSurfaceVariant"
+      android:fontFeatureSettings="tnum" />
 
     <com.google.android.material.slider.CustomSlider
       android:id="@+id/slider_options_mute_mute"
@@ -461,7 +468,37 @@
     style="@style/Widget.Tack.TextView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="4dp"
+    android:layout_marginTop="8dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:text="@string/options_subdivisions" />
+
+  <TextView
+    android:id="@+id/text_options_subdivisions"
+    style="@style/Widget.Tack.TextView.BodyMedium"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:textColor="?attr/colorOnSurfaceVariant"
+    android:fontFeatureSettings="tnum" />
+
+  <com.google.android.material.slider.CustomSlider
+    android:id="@+id/slider_options_subdivisions"
+    style="@style/Widget.Tack.Slider"
+    android:layout_marginStart="2dp"
+    android:layout_marginEnd="2dp"
+    android:valueFrom="1"
+    android:valueTo="10"
+    android:stepSize="1"
+    android:value="1"
+    app:labelBehavior="gone" />
+
+  <TextView
+    style="@style/Widget.Tack.TextView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:text="@string/options_swing" />
@@ -473,9 +510,8 @@
     android:layout_height="wrap_content"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:layout_marginBottom="8dp"
-    android:textColor="?attr/colorOnSurfaceVariant"
-    android:text="@string/options_swing_description" />
+    android:layout_marginBottom="4dp"
+    android:textColor="?attr/colorOnSurfaceVariant" />
 
   <HorizontalScrollView
     android:layout_width="match_parent"

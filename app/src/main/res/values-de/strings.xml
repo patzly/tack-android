@@ -98,7 +98,9 @@
   <string name="msg_service_description">Service für die Konfiguration und Wiedergabe des Metronoms</string>
   <string name="msg_connection_lost">Service-Verbindung verloren, App-Neustart erforderlich</string>
   <string name="msg_reset">Alles zurücksetzen?</string>
-  <string name="msg_reset_description">Willst du wirklich die gesamte App einschließlich Lesezeichen und Einstellungen zurücksetzen? Dies kann nicht rückgängig gemacht werden.</string>
+  <string name="msg_reset_description">Möchtest du wirklich die gesamte App einschließlich Lesezeichen und Einstellungen zurücksetzen? Dies kann nicht rückgängig gemacht werden.</string>
+  <string name="msg_reset_elapsed">Vergangene Zeit zurücksetzen?</string>
+  <string name="msg_reset_elapsed_description">Möchtest du wirklich die abgelaufene Zeit zurücksetzen? Dies kann nicht rückgängig gemacht werden.</string>
   <string name="msg_gain">Mit Verstärkung wiedergeben?</string>
   <string name="msg_gain_description">Achte darauf, keine Ohrhöhrer zu verwenden, da durch laute Geräusche Gehörschäden entstehen können!</string>
   <string name="msg_split_screen">Fenster zu klein</string>
@@ -119,6 +121,10 @@
   <plurals name="options_unit_beats">
     <item quantity="one">%1$d Schlag</item>
     <item quantity="other">%1$d Schläge</item>
+  </plurals>
+  <plurals name="options_unit_subdivisions">
+    <item quantity="one">%1$d Unterteilung</item>
+    <item quantity="other">%1$d Unterteilungen</item>
   </plurals>
   <string name="options_unit_seconds">Sekunden</string>
   <plurals name="options_unit_seconds">
@@ -186,8 +192,13 @@
     <item quantity="other">%1$d Sekunden stummschalten</item>
   </plurals>
   <string name="options_mute_random">Zufall mit kleineren Werten</string>
+  <string name="options_subdivisions">Unterteilungen</string>
+  <plurals name="options_subdivisions_description">
+    <item quantity="one">%1$d Unterteilung pro Schlag</item>
+    <item quantity="other">%1$d Unterteilungen pro Schlag</item>
+  </plurals>
   <string name="options_swing">Swing</string>
-  <string name="options_swing_description">Unterteilungen auf ausgewählten Swing-Anteil gesetzt</string>
+  <string name="options_swing_description">Unterteilungen an Swing-Verhältnis angepasst</string>
   <string name="options_swing_3">Triole</string>
   <string name="options_swing_5">Quintole</string>
   <string name="options_swing_7">Septole</string>
@@ -248,9 +259,6 @@
   <string name="settings_gain_warning">Mit Vorsicht verwenden!</string>
   <string name="settings_gain_disclaimer">Bei aktiver Verstärkung wird vor jeder Wiedergabe eine Warnung angezeigt. Der Entwickler übernimmt keine Verantwortung für etwaige Schäden.</string>
 
-  <string name="settings_show_subs">Schlag-Unterteilungen</string>
-  <string name="settings_show_subs_description">Vielfältigere Rhythmen</string>
-
   <string name="settings_active_beat">Aktuellen Schlag hervorheben</string>
   <string name="settings_active_beat_description">Hilfreich für langsame Tempos</string>
 
@@ -259,9 +267,6 @@
 
   <string name="settings_elapsed">Vergangene Zeit anzeigen</string>
   <string name="settings_elapsed_description">Sieh, wie lange du übst</string>
-
-  <string name="settings_reset_elapsed">Vergangene Zeit nach Beenden der Wiedergabe zurücksetzen</string>
-  <string name="settings_reset_elapsed_description">Anstatt bis zum Schließen fortzusetzen</string>
 
   <string name="settings_reset_timer">Timer nach Beenden der Wiedergabe zurücksetzen</string>
   <string name="settings_reset_timer_description">Anstatt fortzusetzen</string>

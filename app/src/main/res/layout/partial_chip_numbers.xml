@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<FrameLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/frame_chip_numbers_container"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:minHeight="48dp">
+
+  <LinearLayout
+    android:id="@+id/linear_chip_numbers"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minHeight="32dp"
+    android:paddingStart="8dp"
+    android:paddingEnd="16dp"
+    android:layout_gravity="center_vertical"
+    android:gravity="center_vertical"
+    android:background="@drawable/shape_chip_bg"
+    tools:ignore="UseCompoundDrawables,UselessParent">
+
+    <ImageView
+      android:id="@+id/image_chip_numbers"
+      android:layout_width="18dp"
+      android:layout_height="18dp"
+      android:visibility="gone"
+      app:tint="?attr/colorOnSurfaceVariant"
+      tools:ignore="ContentDescription" />
+
+    <TextView
+      android:id="@+id/text_chip_numbers"
+      android:layout_width="wrap_content"
+      android:layout_height="match_parent"
+      android:layout_marginStart="8dp"
+      android:gravity="center_vertical"
+      android:textAppearance="@style/TextAppearance.Tack.LabelLarge"
+      android:fontFamily="@font/jost_medium"
+      android:fontFeatureSettings="tnum"/>
+
+  </LinearLayout>
+
+</FrameLayout>

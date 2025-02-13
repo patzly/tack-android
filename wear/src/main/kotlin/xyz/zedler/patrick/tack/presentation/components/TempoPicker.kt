@@ -52,7 +52,7 @@ fun TempoPicker(
   state: PickerState,
   contentDescription: String?,
   modifier: Modifier = Modifier,
-  spacing: Dp = 0.dp,
+  verticalSpacing: Dp = 0.dp,
   textColor: Color = MaterialTheme.colorScheme.onSurface,
   textStyle: TextStyle = MaterialTheme.typography.displayMedium,
   @FloatRange(from = 0.0, to = 0.5) gradientRatio: Float = PickerDefaults.GradientRatio,
@@ -63,7 +63,7 @@ fun TempoPicker(
     state = state,
     contentDescription = contentDescription,
     modifier = modifier,
-    spacing = spacing,
+    verticalSpacing = verticalSpacing,
     gradientRatio = gradientRatio,
     rotaryScrollableBehavior = RotaryScrollableDefaults.snapBehavior(
       scrollableState = state,

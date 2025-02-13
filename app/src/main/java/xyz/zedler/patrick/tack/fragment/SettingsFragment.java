@@ -327,12 +327,10 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsReset,
         binding.linearSettingsSound,
         binding.linearSettingsIgnoreFocus,
-        binding.linearSettingsShowSubs,
         binding.linearSettingsActiveBeat,
         binding.linearSettingsPermNotification,
         binding.linearSettingsAlwaysVibrate,
         binding.linearSettingsElapsed,
-        binding.linearSettingsResetElapsed,
         binding.linearSettingsResetTimer,
         binding.linearSettingsBigTimeText,
         binding.linearSettingsFlashScreen,
@@ -345,12 +343,10 @@ public class SettingsFragment extends BaseFragment
         binding.switchSettingsHaptic,
         binding.switchSettingsReduceAnimations,
         binding.switchSettingsIgnoreFocus,
-        binding.switchSettingsShowSubs,
         binding.switchSettingsActiveBeat,
         binding.switchSettingsPermNotification,
         binding.switchSettingsAlwaysVibrate,
         binding.switchSettingsElapsed,
-        binding.switchSettingsResetElapsed,
         binding.switchSettingsResetTimer,
         binding.switchSettingsBigTimeText,
         binding.switchSettingsFlashScreen,
@@ -408,11 +404,6 @@ public class SettingsFragment extends BaseFragment
     binding.sliderSettingsGain.setValue(getMetronomeUtil().getGain());
     binding.sliderSettingsGain.addOnChangeListener(this);
 
-    binding.switchSettingsShowSubs.setOnCheckedChangeListener(null);
-    binding.switchSettingsShowSubs.setChecked(getMetronomeUtil().getSubdivisionsUsed());
-    binding.switchSettingsShowSubs.jumpDrawablesToCurrentState();
-    binding.switchSettingsShowSubs.setOnCheckedChangeListener(this);
-
     binding.switchSettingsAlwaysVibrate.setOnCheckedChangeListener(null);
     binding.switchSettingsAlwaysVibrate.setChecked(getMetronomeUtil().isAlwaysVibrate());
     binding.switchSettingsAlwaysVibrate.jumpDrawablesToCurrentState();
@@ -425,11 +416,6 @@ public class SettingsFragment extends BaseFragment
     binding.switchSettingsElapsed.setChecked(getMetronomeUtil().getShowElapsed());
     binding.switchSettingsElapsed.jumpDrawablesToCurrentState();
     binding.switchSettingsElapsed.setOnCheckedChangeListener(this);
-
-    binding.switchSettingsResetElapsed.setOnCheckedChangeListener(null);
-    binding.switchSettingsResetElapsed.setChecked(getMetronomeUtil().getResetElapsed());
-    binding.switchSettingsResetElapsed.jumpDrawablesToCurrentState();
-    binding.switchSettingsResetElapsed.setOnCheckedChangeListener(this);
 
     binding.switchSettingsResetTimer.setOnCheckedChangeListener(null);
     binding.switchSettingsResetTimer.setChecked(getMetronomeUtil().getResetTimer());
@@ -474,8 +460,6 @@ public class SettingsFragment extends BaseFragment
       dialogUtilSound.show();
     } else if (id == R.id.linear_settings_ignore_focus) {
       binding.switchSettingsIgnoreFocus.toggle();
-    } else if (id == R.id.linear_settings_show_subs) {
-      binding.switchSettingsShowSubs.toggle();
     } else if (id == R.id.linear_settings_active_beat) {
       binding.switchSettingsActiveBeat.toggle();
     } else if (id == R.id.linear_settings_perm_notification) {
@@ -484,8 +468,6 @@ public class SettingsFragment extends BaseFragment
       binding.switchSettingsAlwaysVibrate.toggle();
     } else if (id == R.id.linear_settings_elapsed) {
       binding.switchSettingsElapsed.toggle();
-    } else if (id == R.id.linear_settings_reset_elapsed) {
-      binding.switchSettingsResetElapsed.toggle();
     } else if (id == R.id.linear_settings_reset_timer) {
       binding.switchSettingsResetTimer.toggle();
     } else if (id == R.id.linear_settings_big_time_text) {
@@ -515,10 +497,6 @@ public class SettingsFragment extends BaseFragment
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsIgnoreFocus);
       getMetronomeUtil().setIgnoreFocus(isChecked);
-    } else if (id == R.id.switch_settings_show_subs) {
-      performHapticClick();
-      ViewUtil.startIcon(binding.imageSettingsShowSubs);
-      getMetronomeUtil().setSubdivisionsUsed(isChecked);
     } else if (id == R.id.switch_settings_active_beat) {
       performHapticClick();
       getSharedPrefs().edit().putBoolean(PREF.ACTIVE_BEAT, isChecked).apply();
@@ -544,10 +522,6 @@ public class SettingsFragment extends BaseFragment
       ViewUtil.startIcon(binding.imageSettingsElapsed);
       performHapticClick();
       getMetronomeUtil().setShowElapsed(isChecked);
-    } else if (id == R.id.switch_settings_reset_elapsed) {
-      ViewUtil.startIcon(binding.imageSettingsResetElapsed);
-      performHapticClick();
-      getMetronomeUtil().setResetElapsed(isChecked);
     } else if (id == R.id.switch_settings_reset_timer) {
       ViewUtil.startIcon(binding.imageSettingsResetTimer);
       performHapticClick();

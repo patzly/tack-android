@@ -40,19 +40,21 @@
   <string name="label_ms">%1$s мс</string>
   <string name="label_db">+%1$d дБ</string>
   <string name="label_tempo_largo">Широко</string>
-  <string name="label_tempo_larghetto">Медленнее</string>
+  <string name="label_tempo_larghetto">Умеренно широко</string>
   <string name="label_tempo_adagio">Медленно</string>
-  <string name="label_tempo_andante">Спокойно</string>
+  <string name="label_tempo_andante">Умеренно медленно</string>
   <string name="label_tempo_moderato">Умеренно</string>
-  <string name="label_tempo_allegro">Быстро</string>
-  <string name="label_tempo_presto">Очень быстро</string>
-  <string name="label_tempo_prestissimo">Предельно быстро</string>
+  <string name="label_tempo_allegro">Оживлённо</string>
+  <string name="label_tempo_presto">Быстро</string>
+  <string name="label_tempo_prestissimo">Очень быстро</string>
+  <string name="label_tempo_input_help">Значения от %1$d до %2$d</string>
+
   <!-- ACTIONS -->
 
   <string name="action_back">Назад</string>
   <string name="action_close">Закрыть</string>
   <string name="action_apply">Применить</string>
-  <string name="action_cancel">Отмена</string>
+  <string name="action_cancel">Отменить</string>
   <string name="action_increase">Увеличить</string>
   <string name="action_decrease">Уменьшить</string>
   <string name="action_play">Старт</string>
@@ -60,8 +62,10 @@
   <string name="action_stop">Пауза</string>
   <string name="action_add_beat">Добавить долю</string>
   <string name="action_remove_beat">Убрать долю</string>
+  <string name="action_add_sub">Добавить дробление</string>
+  <string name="action_remove_sub">Убрать дробление</string>
   <string name="action_clear_all">Удалить все</string>
-  <string name="action_tempo_tap">Настучать ритм</string>
+  <string name="action_tempo_tap">Tap tempo</string>
   <string name="action_bookmark">Добавить в закладки</string>
   <string name="action_beat_mode">Режим ударов</string>
   <string name="action_send_feedback">Написать отзыв</string>
@@ -74,16 +78,20 @@
   <string name="action_email_description">Написать разработчику</string>
   <string name="action_rate">Оценить на Google Play</string>
   <string name="action_rate_description">Поддержать разработку</string>
-  <string name="action_issue">Открыть задачу на Github</string>
+  <string name="action_issue">Открыть задачу на GitHub</string>
   <string name="action_issue_description">Оповестить о баге или предложить функцию</string>
+  <string name="action_retry">Повторить</string>
   <string name="action_logcat">Показать logcat</string>
   <string name="action_copy_to_clipboard">Скопировать в буфер обмена</string>
   <string name="action_reload">Перезагрузить</string>
+  <string name="action_change_tempo">Изменить темп</string>
+
   <!-- MESSAGES -->
 
   <string name="msg_bookmarks_max">Достигнут лимит закладок</string>
   <string name="msg_feedback">Разработка хорошего приложения занимает много времени и зависит от обратной связи пользователей</string>
   <string name="msg_feedback_contact">У вас есть пожелания, комментарии или вопросы? Напишите мне!\nЕсли нет, буду рад хорошему отзыву в Play Store.</string>
+  <string name="msg_recommend">Зацени классный метроном: \n%1$s</string>
   <string name="msg_vibration_unavailable">Вибрация недоступна на этом устройстве</string>
   <string name="msg_service_running">Сервис метронома запущен</string>
   <string name="msg_service_running_return">Нажмите, чтобы вернуться в Tack</string>
@@ -94,6 +102,9 @@
   <string name="msg_gain">Включить усиление громкости?</string>
   <string name="msg_gain_description">Будьте осторожны и не слушайте метроном в наушниках, так как громкие звуки могут вызвать потерю слуха!</string>
   <string name="msg_split_screen">Окно слишком маленькое</string>
+  <string name="msg_split_screen_description">В режиме разделённого экрана, некоторые элементы управления Tack могут отображаться некорректно. Если это возможно, увеличьте размер окна.</string>
+  <string name="msg_notification_permission_denied">Требуется разрешение на показ уведомлений для отображения элементов управления воспроизведением.</string>
+  <string name="msg_report_crash">Пожалуйста сообщайте о каждом вылете, прикрепляя логи. Так я смогу это исправить.</string>
   <string name="msg_copied_to_clipboard">Успешно скопировано в буфер обмена</string>
   <string name="msg_invalid_input">Неправильный ввод</string>
 
@@ -112,6 +123,12 @@
     <item quantity="few">%1$d удара</item>
     <item quantity="many">%1$d ударов</item>
     <item quantity="other">%1$d ударов</item>
+  </plurals>
+  <plurals name="options_unit_subdivisions">
+    <item quantity="one">%1$d часть</item>
+    <item quantity="few">%1$d части</item>
+    <item quantity="many">%1$d частей</item>
+    <item quantity="other">%1$d частей</item>
   </plurals>
   <string name="options_unit_seconds">Секунды</string>
   <plurals name="options_unit_seconds">
@@ -179,6 +196,7 @@
     <item quantity="many">Остановиться через %1$d минут</item>
     <item quantity="other">Остановиться через %1$d минут</item>
   </plurals>
+  <string name="options_mute">Беззвучные удары</string>
   <plurals name="options_mute_play_bars">
     <item quantity="one">Играть %1$d такт</item>
     <item quantity="few">Играть %1$d такта</item>
@@ -203,7 +221,16 @@
     <item quantity="many">Заглушить на %1$d секунд</item>
     <item quantity="other">Заглушить на %1$d секунд</item>
   </plurals>
+  <string name="options_mute_random">Рандомизировать меньшие значения</string>
+  <string name="options_subdivisions">Дробления</string>
+  <plurals name="options_subdivisions_description">
+    <item quantity="one">%1$d часть на такт</item>
+    <item quantity="few">%1$d части на такт</item>
+    <item quantity="many">%1$d частей на такт</item>
+    <item quantity="other">%1$d частей на такт</item>
+  </plurals>
   <string name="options_swing">Свинг</string>
+  <string name="options_swing_description">Дробление настроено в соответствии с типом свинга</string>
   <string name="options_swing_3">Триоль</string>
   <string name="options_swing_5">Квинтоль</string>
   <string name="options_swing_7">Септоль</string>
@@ -211,6 +238,7 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">Язык</string>
+  <string name="settings_language_info">Огромное спасибо всем переводчикам с Transifex!\nПожалуйста, посетите репозиторий Tack на GitHub, чтобы узнать, как вы можете помочь сделать Tack доступным на вашем языке.</string>
   <string name="settings_language_system">Язык системы</string>
   <string name="settings_language_system_description">Английский, если перевод недоступен</string>
 
@@ -224,12 +252,16 @@
   <string name="settings_theme_light">Светлая</string>
 
   <string name="settings_contrast">Контраст</string>
+  <string name="settings_contrast_description">Доступность для вашего зрения</string>
   <!-- This is a contrast option name: User can choose between standard, medium and high contrast. The button width should be as dense as possible. -->
   <string name="settings_contrast_standard">Обычный</string>
   <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
   <string name="settings_contrast_medium">Средний</string>
   <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
   <string name="settings_contrast_high">Высокий</string>
+  <string name="settings_contrast_dynamic">Контраст темы можно изменить только в настройках устройства</string>
+  <string name="settings_contrast_dynamic_unsupported">Динамический контраст темы доступен только в Android 14+</string>
+
   <string name="settings_haptic">Эффекты вибрации</string>
   <string name="settings_haptic_description">В дополнение к вибрирующим ударам метронома</string>
 
@@ -248,20 +280,40 @@
   <string name="settings_sound_hands">Ладоши</string>
   <string name="settings_sound_folding">Линейка</string>
 
+  <string name="settings_latency">Корректировка задержки</string>
+  <string name="settings_latency_description">Компенсировать задержку звука для вибрации и отображения</string>
+
+  <string name="settings_ignore_focus">Игнорировать аудиофокус</string>
+  <string name="settings_ignore_focus_description">Продолжать воспроизведение даже если другие приложения воспроизводят звук</string>
+
   <string name="settings_gain">Усиление громкости</string>
   <string name="settings_gain_description">Усиление в дБ (в дополнение к системной громкости)</string>
   <string name="settings_gain_warning">Используйте с осторожностью!</string>
   <string name="settings_gain_disclaimer">Перед каждым использованием усиления будет показываться предупреждение. Разработчик не несёт ответственности за потенциальные травмы.</string>
 
-  <string name="settings_show_subs_description">Более разнообразные ритмы</string>
-
+  <string name="settings_active_beat">Выделять текущий удар</string>
   <string name="settings_active_beat_description">Полезно при медленном темпе</string>
 
   <string name="settings_always_vibrate">Всегда вибрировать</string>
   <string name="settings_always_vibrate_description">Даже когда звук включен</string>
 
+  <string name="settings_elapsed">Показать затраченное время</string>
+  <string name="settings_elapsed_description">Следите за тем, как долго вы занимаетесь</string>
+
+  <string name="settings_reset_timer">Сбрасывать таймер при остановках</string>
+  <string name="settings_reset_timer_description">Вместо продолжения отсчёта</string>
+
   <string name="settings_big_time_text">Показывать время большим шрифтом</string>
   <string name="settings_big_time_text_description">Если обычного размера недостаточно</string>
+
+  <string name="settings_flash_screen">Моргать экраном</string>
+  <string name="settings_flash_screen_description">На каждый такт</string>
+
+  <string name="settings_keep_awake">Не гасить экран</string>
+  <string name="settings_keep_awake_description">Пока метроном включён</string>
+
+  <string name="settings_perm_notification">Постоянное уведомление</string>
+  <string name="settings_perm_notification_description">Быстрый доступ к кнопке старт/стоп</string>
 
   <string name="settings_big_logo">Показывать большой анимированный логотип</string>
   <string name="settings_big_logo_description">Во время проигрывания вместо колеса выбора темпа</string>

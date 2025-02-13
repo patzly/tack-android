@@ -111,6 +111,8 @@
   <string name="msg_connection_lost">Service connection lost, app restart required</string>
   <string name="msg_reset">Reset all?</string>
   <string name="msg_reset_description">Do you really want to reset the entire app including bookmarks and settings? This cannot be undone.</string>
+  <string name="msg_reset_elapsed">Reset elapsed time?</string>
+  <string name="msg_reset_elapsed_description">Do you really want to reset elapsed time? This cannot be undone.</string>
   <string name="msg_gain">Play with volume boost?</string>
   <string name="msg_gain_description">Be careful not to play through headphones as loud sounds can cause ear damage!</string>
   <string name="msg_split_screen">Window too small</string>
@@ -131,6 +133,10 @@
   <plurals name="options_unit_beats">
     <item quantity="one">%1$d beat</item>
     <item quantity="other">%1$d beats</item>
+  </plurals>
+  <plurals name="options_unit_subdivisions">
+    <item quantity="one">%1$d subdivision</item>
+    <item quantity="other">%1$d subdivisions</item>
   </plurals>
   <string name="options_unit_seconds">Seconds</string>
   <plurals name="options_unit_seconds">
@@ -198,8 +204,13 @@
     <item quantity="other">Mute %1$d seconds</item>
   </plurals>
   <string name="options_mute_random">Randomize smaller values</string>
+  <string name="options_subdivisions">Subdivisions</string>
+  <plurals name="options_subdivisions_description">
+    <item quantity="one">%1$d subdivision per beat</item>
+    <item quantity="other">%1$d subdivisions per beat</item>
+  </plurals>
   <string name="options_swing">Swing</string>
-  <string name="options_swing_description">Subdivisions set to match selected swing percentage</string>
+  <string name="options_swing_description">Subdivisions set to match swing ratio</string>
   <string name="options_swing_3">Triplet</string>
   <string name="options_swing_5">Quintuplet</string>
   <string name="options_swing_7">Septuplet</string>
@@ -260,9 +271,6 @@
   <string name="settings_gain_warning">Use with caution!</string>
   <string name="settings_gain_disclaimer">When boost is enabled, a warning will be displayed before each start. The developer takes no responsibility for any potential damage.</string>
 
-  <string name="settings_show_subs">Show subdivision controls</string>
-  <string name="settings_show_subs_description">More diverse rhythms</string>
-
   <string name="settings_active_beat">Highlight current beat</string>
   <string name="settings_active_beat_description">Helpful for slower tempos</string>
 
@@ -271,9 +279,6 @@
 
   <string name="settings_elapsed">Show elapsed time</string>
   <string name="settings_elapsed_description">See how long you practice</string>
-
-  <string name="settings_reset_elapsed">Reset elapsed time when stopped</string>
-  <string name="settings_reset_elapsed_description">Instead of resuming until closed</string>
 
   <string name="settings_reset_timer">Reset timer when stopped</string>
   <string name="settings_reset_timer_description">Instead of resuming</string>

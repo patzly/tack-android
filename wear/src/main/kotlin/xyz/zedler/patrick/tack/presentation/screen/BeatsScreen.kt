@@ -20,6 +20,7 @@
 package xyz.zedler.patrick.tack.presentation.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -43,6 +44,7 @@ import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
 import androidx.wear.compose.foundation.rememberActiveFocusRequester
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
+import androidx.wear.compose.material3.ButtonGroup
 import androidx.wear.compose.material3.Card
 import androidx.wear.compose.material3.IconButton
 import androidx.wear.compose.material3.IconButtonDefaults
@@ -179,10 +181,16 @@ fun BeatsScreen(
           }
         }
         item {
-          Row (
+          val interactionSource1 = remember { MutableInteractionSource() }
+          val interactionSource2 = remember { MutableInteractionSource() }
+          val interactionSource3 = remember { MutableInteractionSource() }
+          ButtonGroup(
+            spacing = 8.dp,
             modifier = Modifier.padding(top = 8.dp)
           ) {
             TextIconButton(
+              interactionSource = interactionSource1,
+              modifier = Modifier.animateWidth(interactionSource1),
               label = "3",
               reduceAnim = state.reduceAnim,
               onClick = {
@@ -190,14 +198,17 @@ fun BeatsScreen(
               },
             )
             TextIconButton(
+              interactionSource = interactionSource2,
+              modifier = Modifier.animateWidth(interactionSource2),
               label = "5",
               reduceAnim = state.reduceAnim,
               onClick = {
                 viewModel.updateSwing(5)
               },
-              modifier = Modifier.padding(horizontal = 8.dp)
             )
             TextIconButton(
+              interactionSource = interactionSource3,
+              modifier = Modifier.animateWidth(interactionSource3),
               label = "7",
               reduceAnim = state.reduceAnim,
               onClick = {

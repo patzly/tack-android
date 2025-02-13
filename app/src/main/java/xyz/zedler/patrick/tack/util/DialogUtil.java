@@ -122,7 +122,6 @@ public class DialogUtil {
           (dialog, which) -> activity.performHapticClick()
       );
     }
-    builder.setOnCancelListener(dialog -> activity.performHapticTick());
     dialog = builder.create();
   }
 
@@ -144,7 +143,6 @@ public class DialogUtil {
         R.string.action_close,
         (dialog, which) -> activity.performHapticClick()
     );
-    builder.setOnCancelListener(dialog -> activity.performHapticTick());
     dialog = builder.create();
   }
 
@@ -158,7 +156,6 @@ public class DialogUtil {
         R.string.action_close,
         (dialog, which) -> activity.performHapticClick()
     );
-    builder.setOnCancelListener(dialog -> activity.performHapticTick());
     dialog = builder.create();
   }
 
@@ -183,7 +180,6 @@ public class DialogUtil {
         R.string.action_cancel,
         (dialog, which) -> activity.performHapticClick()
     );
-    builder.setOnCancelListener(dialog -> activity.performHapticTick());
     dialog = builder.create();
   }
 
@@ -219,7 +215,6 @@ public class DialogUtil {
           (dialog, which) -> activity.performHapticClick()
       );
     }
-    builder.setOnCancelListener(dialog -> activity.performHapticTick());
     dialog = builder.create();
   }
 
@@ -236,7 +231,6 @@ public class DialogUtil {
         R.string.action_close,
         (dialog, which) -> activity.performHapticClick()
     );
-    builder.setOnCancelListener(dialog -> activity.performHapticTick());
     dialog = builder.create();
   }
 
@@ -253,7 +247,6 @@ public class DialogUtil {
         R.string.action_close,
         (dialog, which) -> activity.performHapticClick()
     );
-    builder.setOnCancelListener(dialog -> activity.performHapticTick());
     dialog = builder.create();
   }
 

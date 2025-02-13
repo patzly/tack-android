@@ -53,7 +53,7 @@
 
   <string name="action_back">返回</string>
   <string name="action_close">關閉</string>
-  <string name="action_apply">應用</string>
+  <string name="action_apply">套用</string>
   <string name="action_cancel">取消</string>
   <string name="action_increase">增加</string>
   <string name="action_decrease">減少</string>
@@ -62,8 +62,8 @@
   <string name="action_stop">停止</string>
   <string name="action_add_beat">增加節拍</string>
   <string name="action_remove_beat">減少節拍</string>
-  <string name="action_add_sub">新增分割槽</string>
-  <string name="action_remove_sub">移除分割槽</string>
+  <string name="action_add_sub">新增子節拍</string>
+  <string name="action_remove_sub">移除子節拍</string>
   <string name="action_clear_all">全部清除</string>
   <string name="action_tempo_tap">輕拍速度</string>
   <string name="action_bookmark">書籤</string>
@@ -84,7 +84,7 @@
   <string name="action_logcat">顯示日誌</string>
   <string name="action_copy_to_clipboard">複製至剪貼簿</string>
   <string name="action_reload">重新整理</string>
-  <string name="action_change_tempo">改變速度</string>
+  <string name="action_change_tempo">改變節奏</string>
 
   <!-- MESSAGES -->
 
@@ -99,6 +99,7 @@
   <string name="msg_connection_lost">服務連線丟失，需要重新啟動應用程式</string>
   <string name="msg_reset">全部重置？</string>
   <string name="msg_reset_description">你真的想要重置包括書籤和設定在內整個應用程式嗎？這是無法撤銷的。</string>
+  <string name="msg_reset_elapsed">重置已使用時間？</string>
   <string name="msg_gain">音量增強下播放？</string>
   <string name="msg_gain_description">小心不要透過耳機播放，因為太大的音量可以引致耳朵損傷！</string>
   <string name="msg_split_screen">視窗太小</string>
@@ -117,6 +118,9 @@
   <string name="options_unit_beats">拍數</string>
   <plurals name="options_unit_beats">
     <item quantity="other">%1$d 拍</item>
+  </plurals>
+  <plurals name="options_unit_subdivisions">
+    <item quantity="other">%1$d 個子節拍</item>
   </plurals>
   <string name="options_unit_seconds">秒</string>
   <plurals name="options_unit_seconds">
@@ -171,8 +175,12 @@
     <item quantity="other">靜音 %1$d 秒</item>
   </plurals>
   <string name="options_mute_random">隨機化較小的值</string>
+  <string name="options_subdivisions">子節拍</string>
+  <plurals name="options_subdivisions_description">
+    <item quantity="other">%1$d 子節拍／拍</item>
+  </plurals>
   <string name="options_swing">搖擺</string>
-  <string name="options_swing_description">將分割槽設定為與所選搖擺百分比相匹配</string>
+  <string name="options_swing_description">設定子節拍匹配搖擺比率</string>
   <string name="options_swing_3">三連音</string>
   <string name="options_swing_5">五連音</string>
   <string name="options_swing_7">七連音</string>
@@ -233,9 +241,6 @@
   <string name="settings_gain_warning">謹慎使用！</string>
   <string name="settings_gain_disclaimer">當啟用增強功能時，每次啟動前都會顯示警告。開發者對任何潛在的損害不承擔責任。</string>
 
-  <string name="settings_show_subs">顯示分割槽控制元件</string>
-  <string name="settings_show_subs_description">節奏更加多樣化</string>
-
   <string name="settings_active_beat">突出顯示目前節拍</string>
   <string name="settings_active_beat_description">對較慢的節奏有幫助</string>
 
@@ -244,9 +249,6 @@
 
   <string name="settings_elapsed">顯示已使用的時間</string>
   <string name="settings_elapsed_description">看你練習了多久</string>
-
-  <string name="settings_reset_elapsed">停止時重置已使用的時間</string>
-  <string name="settings_reset_elapsed_description">而不是恢復直至關閉</string>
 
   <string name="settings_reset_timer">停止時重置計時器</string>
   <string name="settings_reset_timer_description">而不是恢復</string>

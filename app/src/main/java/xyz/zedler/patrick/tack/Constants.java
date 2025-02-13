@@ -48,11 +48,9 @@ public final class Constants {
     public final static String BEATS = "beats";
     public final static String SUBDIVISIONS = "subdivisions";
     public final static String BEAT_MODE_VIBRATE = "beat_mode_vibrate";
-    public final static String USE_SUBS = "use_subdivisions";
     public final static String ACTIVE_BEAT = "highlight_active_beat";
     public final static String ALWAYS_VIBRATE = "always_vibrate";
     public final static String SHOW_ELAPSED = "show_elapsed";
-    public final static String RESET_ELAPSED = "reset_elapsed";
     public final static String RESET_TIMER = "reset_timer";
     public final static String BIG_TIME_TEXT = "big_time_text";
     public final static String PERM_NOTIFICATION = "permanent_notification";
@@ -94,11 +92,9 @@ public final class Constants {
     );
     public final static String SUBDIVISIONS = TICK_TYPE.MUTED;
     public final static boolean BEAT_MODE_VIBRATE = false;
-    public final static boolean USE_SUBS = true;
     public final static boolean ACTIVE_BEAT = false;
     public final static boolean ALWAYS_VIBRATE = true;
     public final static boolean SHOW_ELAPSED = false;
-    public final static boolean RESET_ELAPSED = false;
     public final static boolean RESET_TIMER = false;
     public final static boolean BIG_TIME_TEXT = false;
     public final static boolean PERM_NOTIFICATION = false;

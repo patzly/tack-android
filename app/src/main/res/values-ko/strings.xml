@@ -126,7 +126,6 @@
   <string name="options_incremental_min">%1$d bpm까지 </string>
   <string name="options_mute">무음 비트</string>
   <string name="options_swing">스윙(Swing)</string>
-  <string name="options_swing_description">세분음이 선택된 스윙 비율에 맞춰 설정됩니다</string>
   <string name="options_swing_3">셋잇단음표(triplet)</string>
   <string name="options_swing_5">넷잇단음표(quadruplet)</string>
   <string name="options_swing_7">다섯잇단음표(quintuplet)</string>
@@ -187,17 +186,11 @@
   <string name="settings_gain_warning">주의하세요!</string>
   <string name="settings_gain_disclaimer">볼륨 증폭이 활성화되면, 매 시작시에 경고가 표시됩니다. 발생할 수 있는 어떠한 손해도 개발자는 책임을 지지 않습니다.</string>
 
-  <string name="settings_show_subs">세분음(subdivision) 조작 표시</string>
-  <string name="settings_show_subs_description">더 다양한 리듬</string>
-
   <string name="settings_always_vibrate">항상 진동</string>
   <string name="settings_always_vibrate_description">소리와 함께</string>
 
   <string name="settings_elapsed">진행시간 표시</string>
   <string name="settings_elapsed_description">연습을 얼마나 하였는지 확인해보세요</string>
-
-  <string name="settings_reset_elapsed">정지 시 경과시간 초기화</string>
-  <string name="settings_reset_elapsed_description">닫힐 때까지 재시작 하는 대신</string>
 
   <string name="settings_reset_timer">중단시 타이머 초기화</string>
   <string name="settings_reset_timer_description">다시 시작하는 대신</string>
