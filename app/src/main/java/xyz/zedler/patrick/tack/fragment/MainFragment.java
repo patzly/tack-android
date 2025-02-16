@@ -438,6 +438,10 @@ public class MainFragment extends BaseFragment
       binding.linearMainBottomControlsEnd.setPadding(padding, padding, padding, padding);
     }
 
+    activity.getSongViewModel().getAllSongsWithParts().observe(getViewLifecycleOwner(), songs -> {
+      Log.i(TAG, "onViewCreated: hello songs: " + songs);
+    });
+
     updateMetronomeControls();
 
     ViewUtil.setTooltipText(binding.buttonMainAddBeat, R.string.action_add_beat);

@@ -145,7 +145,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
 
   private void updateIncremental() {
     int incrementalAmount = getMetronomeUtil().getIncrementalAmount();
-    boolean incrementalIncrease = getMetronomeUtil().getIncrementalIncrease();
+    boolean incrementalIncrease = getMetronomeUtil().isIncrementalIncrease();
     boolean isIncrementalActive = getMetronomeUtil().isIncrementalActive();
     if (this.isIncrementalActive != isIncrementalActive) {
       this.isIncrementalActive = isIncrementalActive;

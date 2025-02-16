@@ -17,32 +17,48 @@
  * Copyright (c) 2020-2025 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.model;
+package xyz.zedler.patrick.tack.database.relations;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.room.Embedded;
+import androidx.room.Relation;
+import java.util.List;
+import xyz.zedler.patrick.tack.database.entity.Part;
+import xyz.zedler.patrick.tack.database.entity.Song;
 
-public class Part {
+public class SongWithParts {
 
-  @Nullable
-  String name;
-  Config config;
+  @Embedded
+  private Song song;
 
-  public Part(@Nullable String name, Config config) {
-    this.name = name;
-    this.config = config;
+  @Relation(
+      parentColumn = "name",
+      entityColumn = "song_name"
+  )
+  private List<Part> parts;
+
+  public Song getSong() {
+    return song;
   }
 
-  public Config getConfig() {
-    return config;
+  public void setSong(Song song) {
+    this.song = song;
+  }
+
+  public List<Part> getParts() {
+    return parts;
+  }
+
+  public void setParts(List<Part> parts) {
+    this.parts = parts;
   }
 
   @NonNull
   @Override
   public String toString() {
-    return "Part{" +
-        "name='" + name + '\'' +
-        ", config=" + config +
+    return "SongWithParts{" +
+        "song=" + song +
+        ", parts=" + parts +
         '}';
   }
 }

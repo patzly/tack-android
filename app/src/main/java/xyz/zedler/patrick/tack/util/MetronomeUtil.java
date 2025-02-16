@@ -36,8 +36,6 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
@@ -47,9 +45,7 @@ import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.model.Config;
-import xyz.zedler.patrick.tack.model.Part;
-import xyz.zedler.patrick.tack.model.Song;
+import xyz.zedler.patrick.tack.model.MetronomeConfig;
 
 public class MetronomeUtil {
 
@@ -62,23 +58,17 @@ public class MetronomeUtil {
   private final ShortcutUtil shortcutUtil;
   private final Set<MetronomeListener> listeners = Collections.synchronizedSet(new HashSet<>());
   private final Random random = new Random();
+  private final MetronomeConfig config = new MetronomeConfig();
   private final boolean fromService;
   private HandlerThread tickThread, callbackThread;
-  private final List<Song> songs = new LinkedList<>();
   private Handler tickHandler, latencyHandler;
   private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
-  private String incrementalUnit, timerUnit, muteUnit;
-  private String[] beats, subdivisions;
   private ValueAnimator timerAnimator;
-  private int tempo, countIn, timerDuration, mutePlay, muteMute, muteCountDown;
-  private int incrementalAmount, incrementalInterval, incrementalLimit;
-  private long tickIndex, latency;
-  private long elapsedStartTime, elapsedTime, elapsedPrevious, timerStartTime;
+  private int muteCountDown;
+  private long tickIndex, latency, elapsedStartTime, elapsedTime, elapsedPrevious, timerStartTime;
   private float timerProgress;
-  private boolean playing, tempPlaying, beatModeVibrate;
-  private boolean isCountingIn, muteRandom, isMuted;
-  private boolean showElapsed, resetTimer;
-  private boolean alwaysVibrate, incrementalIncrease, flashScreen, keepAwake;
+  private boolean playing, tempPlaying, beatModeVibrate, isCountingIn, isMuted;
+  private boolean showElapsed, resetTimer, alwaysVibrate, flashScreen, keepAwake;
   private boolean neverStartedWithGain = true;
 
   public MetronomeUtil(@NonNull Context context, boolean fromService) {
@@ -91,52 +81,14 @@ public class MetronomeUtil {
     hapticUtil = new HapticUtil(context);
     shortcutUtil = new ShortcutUtil(context);
 
-    Part part1 = new Part(null, new Config(
-        120,
-        new String[] {TICK_TYPE.STRONG, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL},
-        new String[] {TICK_TYPE.MUTED}
-    ));
-    Song song1 = new Song("120 bpm", new Part[]{part1});
-    songs.add(song1);
-
-    Part part2 = new Part(null, new Config(
-        80,
-        new String[] {TICK_TYPE.STRONG, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL},
-        new String[] {TICK_TYPE.MUTED},
-        4, UNIT.BARS
-    ));
-    Part part3 = new Part(null, new Config(
-        80,
-        new String[] {TICK_TYPE.STRONG, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL},
-        new String[] {TICK_TYPE.MUTED, TICK_TYPE.SUB},
-        2, UNIT.BARS
-    ));
-    Song song2 = new Song("Melody", new Part[]{part2, part3});
-    songs.add(song2);
-
     resetHandlersIfRequired();
     setToPreferences();
   }
 
   public void setToPreferences() {
-    tempo = sharedPrefs.getInt(PREF.TEMPO, DEF.TEMPO);
-    beats = sharedPrefs.getString(PREF.BEATS, DEF.BEATS).split(",");
-    subdivisions = sharedPrefs.getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(",");
-    countIn = sharedPrefs.getInt(PREF.COUNT_IN, DEF.COUNT_IN);
+    config.setToPreferences(sharedPrefs);
+
     latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY);
-    incrementalAmount = sharedPrefs.getInt(PREF.INCREMENTAL_AMOUNT, DEF.INCREMENTAL_AMOUNT);
-    incrementalIncrease = sharedPrefs.getBoolean(
-        PREF.INCREMENTAL_INCREASE, DEF.INCREMENTAL_INCREASE
-    );
-    incrementalInterval = sharedPrefs.getInt(PREF.INCREMENTAL_INTERVAL, DEF.INCREMENTAL_INTERVAL);
-    incrementalUnit = sharedPrefs.getString(PREF.INCREMENTAL_UNIT, DEF.INCREMENTAL_UNIT);
-    incrementalLimit = sharedPrefs.getInt(PREF.INCREMENTAL_LIMIT, DEF.INCREMENTAL_LIMIT);
-    timerDuration = sharedPrefs.getInt(PREF.TIMER_DURATION, DEF.TIMER_DURATION);
-    timerUnit = sharedPrefs.getString(PREF.TIMER_UNIT, DEF.TIMER_UNIT);
-    mutePlay = sharedPrefs.getInt(PREF.MUTE_PLAY, DEF.MUTE_PLAY);
-    muteMute = sharedPrefs.getInt(PREF.MUTE_MUTE, DEF.MUTE_MUTE);
-    muteUnit = sharedPrefs.getString(PREF.MUTE_UNIT, DEF.MUTE_UNIT);
-    muteRandom = sharedPrefs.getBoolean(PREF.MUTE_RANDOM, DEF.MUTE_RANDOM);
     alwaysVibrate = sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
     showElapsed = sharedPrefs.getBoolean(PREF.SHOW_ELAPSED, DEF.SHOW_ELAPSED);
     resetTimer = sharedPrefs.getBoolean(PREF.RESET_TIMER, DEF.RESET_TIMER);
@@ -149,7 +101,9 @@ public class MetronomeUtil {
     setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
   }
 
-  public void setToConfig(Config config) {
+  public void setConfig(MetronomeConfig config) {
+    setCountIn(config.getCountIn());
+
     int tempoDiff = config.getTempo() - getTempo();
     changeTempo(tempoDiff);
 
@@ -175,15 +129,8 @@ public class MetronomeUtil {
     }
   }
 
-  public Config getConfig() {
-    return new Config(
-        tempo,
-        beats, subdivisions,
-        incrementalAmount, incrementalInterval, incrementalLimit,
-        incrementalUnit, incrementalIncrease,
-        timerDuration, timerUnit,
-        mutePlay, muteMute, muteUnit, muteRandom
-    );
+  public MetronomeConfig getConfig() {
+    return config;
   }
 
   private void resetHandlersIfRequired() {
@@ -236,14 +183,15 @@ public class MetronomeUtil {
   }
 
   public void setUpLatencyCalibration() {
-    tempo = 80;
-    beats = DEF.BEATS.split(",");
-    subdivisions = DEF.SUBDIVISIONS.split(",");
+    config.setTempo(80);
+    config.setBeats(DEF.BEATS);
+    config.setSubdivisions(DEF.SUBDIVISIONS);
+    config.setCountIn(0);
+    config.setIncrementalAmount(0);
+    config.setTimerDuration(0);
+    config.setMutePlay(0);
+
     alwaysVibrate = true;
-    countIn = 0;
-    incrementalAmount = 0;
-    timerDuration = 0;
-    mutePlay = 0;
     setGain(0);
     setBeatModeVibrate(false);
     start(false);
@@ -320,7 +268,7 @@ public class MetronomeUtil {
         if (isPlaying()) {
           tickHandler.postDelayed(this, getInterval() / getSubdivisionsCount());
           Tick tick = performTick();
-          audioUtil.writeTickPeriod(tick, tempo, getSubdivisionsCount());
+          audioUtil.writeTickPeriod(tick, config.getTempo(), getSubdivisionsCount());
           tickIndex++;
         }
       }
@@ -380,19 +328,19 @@ public class MetronomeUtil {
   }
 
   public void setBeats(String[] beats) {
-    this.beats = beats;
+    config.setBeats(beats);
     sharedPrefs.edit().putString(PREF.BEATS, String.join(",", beats)).apply();
-    if (isTimerActive() && timerUnit.equals(UNIT.BARS)) {
+    if (isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
       updateTimerHandler(isPlaying() ? 0 : timerProgress, true);
     }
   }
 
   public String[] getBeats() {
-    return beats;
+    return config.getBeats();
   }
 
   public int getBeatsCount() {
-    return beats.length;
+    return config.getBeats().length;
   }
 
   public void setBeat(int beat, String tickType) {
@@ -405,7 +353,7 @@ public class MetronomeUtil {
     if (getBeatsCount() >= Constants.BEATS_MAX) {
       return false;
     }
-    String[] beats = Arrays.copyOf(this.beats, getBeatsCount() + 1);
+    String[] beats = Arrays.copyOf(config.getBeats(), getBeatsCount() + 1);
     beats[beats.length - 1] = TICK_TYPE.NORMAL;
     setBeats(beats);
     return true;
@@ -415,23 +363,23 @@ public class MetronomeUtil {
     if (getBeatsCount() <= 1) {
       return false;
     }
-    setBeats(Arrays.copyOf(beats, getBeatsCount() - 1));
+    setBeats(Arrays.copyOf(config.getBeats(), getBeatsCount() - 1));
     return true;
   }
 
   public void setSubdivisions(String[] subdivisions) {
-    this.subdivisions = subdivisions;
+    config.setSubdivisions(subdivisions);
     sharedPrefs.edit()
         .putString(PREF.SUBDIVISIONS, String.join(",", getSubdivisions()))
         .apply();
   }
 
   public String[] getSubdivisions() {
-    return subdivisions;
+    return config.getSubdivisions();
   }
 
   public int getSubdivisionsCount() {
-    return subdivisions.length;
+    return config.getSubdivisions().length;
   }
 
   public boolean isSubdivisionActive() {
@@ -449,7 +397,7 @@ public class MetronomeUtil {
       return false;
     }
     String[] subdivisions = Arrays.copyOf(
-        this.subdivisions, this.subdivisions.length + 1
+        config.getSubdivisions(), getSubdivisionsCount() + 1
     );
     subdivisions[subdivisions.length - 1] = TICK_TYPE.SUB;
     setSubdivisions(subdivisions);
@@ -460,7 +408,7 @@ public class MetronomeUtil {
     if (getSubdivisionsCount() <= 1) {
       return false;
     }
-    setSubdivisions(Arrays.copyOf(subdivisions, getSubdivisionsCount() - 1));
+    setSubdivisions(Arrays.copyOf(config.getSubdivisions(), getSubdivisionsCount() - 1));
     return true;
   }
 
@@ -526,17 +474,17 @@ public class MetronomeUtil {
   }
 
   public void setTempo(int tempo) {
-    if (this.tempo != tempo) {
-      this.tempo = tempo;
+    if (config.getTempo() != tempo) {
+      config.setTempo(tempo);
       sharedPrefs.edit().putInt(PREF.TEMPO, tempo).apply();
-      if (isTimerActive() && timerUnit.equals(UNIT.BARS)) {
+      if (isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
         updateTimerHandler(false);
       }
     }
   }
 
   public int getTempo() {
-    return tempo;
+    return config.getTempo();
   }
 
   private void changeTempo(int change) {
@@ -551,7 +499,7 @@ public class MetronomeUtil {
   }
 
   public long getInterval() {
-    return 1000 * 60 / tempo;
+    return 1000 * 60 / config.getTempo();
   }
 
   public void setSound(String sound) {
@@ -641,16 +589,16 @@ public class MetronomeUtil {
   }
 
   public void setCountIn(int bars) {
-    countIn = bars;
+    config.setCountIn(bars);
     sharedPrefs.edit().putInt(PREF.COUNT_IN, bars).apply();
   }
 
   public int getCountIn() {
-    return countIn;
+    return config.getCountIn();
   }
 
   public boolean isCountInActive() {
-    return countIn > 0;
+    return config.getCountIn() > 0;
   }
 
   public boolean isCountingIn() {
@@ -658,62 +606,62 @@ public class MetronomeUtil {
   }
 
   public long getCountInInterval() {
-    return getInterval() * getBeatsCount() * countIn;
+    return getInterval() * getBeatsCount() * config.getCountIn();
   }
 
   public void setIncrementalAmount(int bpm) {
-    incrementalAmount = bpm;
+    config.setIncrementalAmount(bpm);
     sharedPrefs.edit().putInt(PREF.INCREMENTAL_AMOUNT, bpm).apply();
     updateIncrementalHandler();
   }
 
   public int getIncrementalAmount() {
-    return incrementalAmount;
+    return config.getIncrementalAmount();
   }
 
   public boolean isIncrementalActive() {
-    return incrementalAmount > 0;
+    return config.getIncrementalAmount() > 0;
   }
 
   public void setIncrementalIncrease(boolean increase) {
-    incrementalIncrease = increase;
+    config.setIncrementalIncrease(increase);
     sharedPrefs.edit().putBoolean(PREF.INCREMENTAL_INCREASE, increase).apply();
   }
 
-  public boolean getIncrementalIncrease() {
-    return incrementalIncrease;
+  public boolean isIncrementalIncrease() {
+    return config.isIncrementalIncrease();
   }
 
   public void setIncrementalInterval(int interval) {
-    incrementalInterval = interval;
+    config.setIncrementalInterval(interval);
     sharedPrefs.edit().putInt(PREF.INCREMENTAL_INTERVAL, interval).apply();
     updateIncrementalHandler();
   }
 
   public int getIncrementalInterval() {
-    return incrementalInterval;
+    return config.getIncrementalInterval();
   }
 
   public void setIncrementalUnit(String unit) {
-    if (unit.equals(incrementalUnit)) {
+    if (unit.equals(config.getIncrementalUnit())) {
       return;
     }
-    incrementalUnit = unit;
+    config.setIncrementalUnit(unit);
     sharedPrefs.edit().putString(PREF.INCREMENTAL_UNIT, unit).apply();
     updateIncrementalHandler();
   }
 
   public String getIncrementalUnit() {
-    return incrementalUnit;
+    return config.getIncrementalUnit();
   }
 
   public void setIncrementalLimit(int limit) {
-    incrementalLimit = limit;
+    config.setIncrementalLimit(limit);
     sharedPrefs.edit().putInt(PREF.INCREMENTAL_LIMIT, limit).apply();
   }
 
   public int getIncrementalLimit() {
-    return incrementalLimit;
+    return config.getIncrementalLimit();
   }
 
   private void updateIncrementalHandler() {
@@ -721,19 +669,23 @@ public class MetronomeUtil {
       return;
     }
     incrementalHandler.removeCallbacksAndMessages(null);
-    if (!incrementalUnit.equals(UNIT.BARS) && isIncrementalActive()) {
-      long factor = incrementalUnit.equals(UNIT.SECONDS) ? 1000L : 60000L;
-      long interval = factor * incrementalInterval;
+    String unit = config.getIncrementalUnit();
+    int amount = config.getIncrementalAmount();
+    int limit = config.getIncrementalLimit();
+    boolean increase = config.isIncrementalIncrease();
+    if (!unit.equals(UNIT.BARS) && isIncrementalActive()) {
+      long factor = unit.equals(UNIT.SECONDS) ? 1000L : 60000L;
+      long interval = factor * config.getIncrementalInterval();
       incrementalHandler.postDelayed(new Runnable() {
         @Override
         public void run() {
           incrementalHandler.postDelayed(this, interval);
-          int upperLimit = incrementalLimit != 0 ? incrementalLimit : Constants.TEMPO_MAX;
-          int lowerLimit = incrementalLimit != 0 ? incrementalLimit : Constants.TEMPO_MIN;
-          if (incrementalIncrease && tempo + incrementalAmount <= upperLimit) {
-            changeTempo(incrementalAmount);
-          } else if (!incrementalIncrease && tempo - incrementalAmount >= lowerLimit) {
-            changeTempo(-incrementalAmount);
+          int upperLimit = limit != 0 ? limit : Constants.TEMPO_MAX;
+          int lowerLimit = limit != 0 ? limit : Constants.TEMPO_MIN;
+          if (increase && config.getTempo() + amount <= upperLimit) {
+            changeTempo(amount);
+          } else if (!increase && config.getTempo() - amount >= lowerLimit) {
+            changeTempo(-amount);
           }
         }
       }, interval);
@@ -809,22 +761,22 @@ public class MetronomeUtil {
   }
 
   public void setTimerDuration(int duration) {
-    timerDuration = duration;
+    config.setTimerDuration(duration);
     sharedPrefs.edit().putInt(PREF.TIMER_DURATION, duration).apply();
     updateTimerHandler(0, false);
   }
 
   public int getTimerDuration() {
-    return timerDuration;
+    return config.getTimerDuration();
   }
 
   public boolean isTimerActive() {
-    return timerDuration > 0;
+    return config.getTimerDuration() > 0;
   }
 
   public long getTimerInterval() {
     long factor;
-    switch (timerUnit) {
+    switch (config.getTimerUnit()) {
       case UNIT.SECONDS:
         factor = 1000L;
         break;
@@ -835,7 +787,7 @@ public class MetronomeUtil {
         factor = getInterval() * getBeatsCount();
         break;
     }
-    return factor * timerDuration;
+    return factor * config.getTimerDuration();
   }
 
   public long getTimerIntervalRemaining() {
@@ -843,16 +795,16 @@ public class MetronomeUtil {
   }
 
   public void setTimerUnit(String unit) {
-    if (unit.equals(timerUnit)) {
+    if (unit.equals(config.getTimerUnit())) {
       return;
     }
-    timerUnit = unit;
+    config.setTimerUnit(unit);
     sharedPrefs.edit().putString(PREF.TIMER_UNIT, unit).apply();
     updateTimerHandler(0, false);
   }
 
   public String getTimerUnit() {
-    return timerUnit;
+    return config.getTimerUnit();
   }
 
   public void setResetTimer(boolean reset) {
@@ -866,7 +818,7 @@ public class MetronomeUtil {
 
   public float getTimerProgress() {
     if (isTimerActive()) {
-      if (!timerUnit.equals(UNIT.BARS) && isPlaying() && !isCountingIn) {
+      if (!config.getTimerUnit().equals(UNIT.BARS) && isPlaying() && !isCountingIn) {
         long previousDuration = (long) (timerProgress * getTimerInterval());
         long elapsedTime = System.currentTimeMillis() - timerStartTime + previousDuration;
         float fraction = elapsedTime / (float) getTimerInterval();
@@ -917,7 +869,7 @@ public class MetronomeUtil {
       timerProgress = (float) progressIntervalFullBars / getTimerInterval();
     }
 
-    if (timerUnit.equals(UNIT.BARS)) {
+    if (config.getTimerUnit().equals(UNIT.BARS)) {
       timerAnimator = ValueAnimator.ofFloat(timerProgress, 1);
       timerAnimator.addUpdateListener(animation -> {
         if (isPlaying()) {
@@ -943,7 +895,7 @@ public class MetronomeUtil {
       timerHandler.post(new Runnable() {
         @Override
         public void run() {
-          if (isPlaying() && !timerUnit.equals(UNIT.BARS)) {
+          if (isPlaying() && !config.getTimerUnit().equals(UNIT.BARS)) {
             timerHandler.postDelayed(this, 1000);
             synchronized (listeners) {
               for (MetronomeListener listener : listeners) {
@@ -977,7 +929,7 @@ public class MetronomeUtil {
       return "";
     }
     long elapsedTime = (long) (getTimerProgress() * getTimerInterval());
-    switch (timerUnit) {
+    switch (config.getTimerUnit()) {
       case UNIT.SECONDS:
       case UNIT.MINUTES:
         int seconds = (int) (elapsedTime / 1000);
@@ -985,6 +937,7 @@ public class MetronomeUtil {
         return String.format(Locale.ENGLISH, "%02d:%02d", minutes, seconds % 60);
       default:
         long barInterval = getInterval() * getBeatsCount();
+        int timerDuration = config.getTimerDuration();
         int progressBarCount = Math.min((int) (elapsedTime / barInterval), timerDuration - 1);
 
         long elapsedTimeFullBars = progressBarCount * barInterval;
@@ -1000,7 +953,8 @@ public class MetronomeUtil {
     if (!isTimerActive()) {
       return "";
     }
-    switch (timerUnit) {
+    int timerDuration = config.getTimerDuration();
+    switch (config.getTimerUnit()) {
       case UNIT.SECONDS:
         return String.format(Locale.ENGLISH, "00:%02d", timerDuration);
       case UNIT.MINUTES:
@@ -1013,50 +967,50 @@ public class MetronomeUtil {
   }
 
   public void setMutePlay(int play) {
-    this.mutePlay = play;
+    config.setMutePlay(play);
     sharedPrefs.edit().putInt(PREF.MUTE_PLAY, play).apply();
     updateMuteHandler();
   }
 
   public int getMutePlay() {
-    return mutePlay;
+    return config.getMutePlay();
   }
 
   public boolean isMuteActive() {
-    return mutePlay > 0;
+    return config.getMutePlay() > 0;
   }
 
   public void setMuteMute(int mute) {
-    this.muteMute = mute;
+    config.setMuteMute(mute);
     sharedPrefs.edit().putInt(PREF.MUTE_MUTE, mute).apply();
     updateMuteHandler();
   }
 
   public int getMuteMute() {
-    return muteMute;
+    return config.getMuteMute();
   }
 
   public void setMuteUnit(String unit) {
-    if (unit.equals(muteUnit)) {
+    if (unit.equals(config.getMuteUnit())) {
       return;
     }
-    muteUnit = unit;
+    config.setMuteUnit(unit);
     sharedPrefs.edit().putString(PREF.MUTE_UNIT, unit).apply();
     updateMuteHandler();
   }
 
   public String getMuteUnit() {
-    return muteUnit;
+    return config.getMuteUnit();
   }
 
   public void setMuteRandom(boolean random) {
-    this.muteRandom = random;
+    config.setMuteRandom(random);
     sharedPrefs.edit().putBoolean(PREF.MUTE_RANDOM, random).apply();
     updateMuteHandler();
   }
 
   public boolean isMuteRandom() {
-    return muteRandom;
+    return config.isMuteRandom();
   }
 
   private void updateMuteHandler() {
@@ -1065,7 +1019,7 @@ public class MetronomeUtil {
     }
     muteHandler.removeCallbacksAndMessages(null);
     isMuted = false;
-    if (!muteUnit.equals(UNIT.BARS) && isMuteActive()) {
+    if (!config.getMuteUnit().equals(UNIT.BARS) && isMuteActive()) {
       muteHandler.postDelayed(new Runnable() {
         @Override
         public void run() {
@@ -1077,8 +1031,8 @@ public class MetronomeUtil {
   }
 
   private int calculateMuteCount(boolean mute) {
-    int count = mute ? muteMute : mutePlay;
-    if (muteRandom) {
+    int count = mute ? config.getMuteMute() : config.getMutePlay();
+    if (config.isMuteRandom()) {
       return random.nextInt(count + 1);
     } else {
       return count;
@@ -1096,19 +1050,24 @@ public class MetronomeUtil {
       long beatIndex = tickIndex / getSubdivisionsCount();
       long barIndex = beatIndex / getBeatsCount();
       boolean isCountIn = barIndex < getCountIn();
-      if (isIncrementalActive() && incrementalUnit.equals(UNIT.BARS) && !isCountIn) {
+      String unit = config.getIncrementalUnit();
+      int amount = config.getIncrementalAmount();
+      int interval = config.getIncrementalInterval();
+      int limit = config.getIncrementalLimit();
+      boolean increase = config.isIncrementalIncrease();
+      if (isIncrementalActive() && unit.equals(UNIT.BARS) && !isCountIn) {
         barIndex = barIndex - getCountIn();
-        if (barIndex >= incrementalInterval && barIndex % incrementalInterval == 0) {
-          int upperLimit = incrementalLimit != 0 ? incrementalLimit : Constants.TEMPO_MAX;
-          int lowerLimit = incrementalLimit != 0 ? incrementalLimit : Constants.TEMPO_MIN;
-          if (incrementalIncrease && tempo + incrementalAmount <= upperLimit) {
-            changeTempo(incrementalAmount);
-          } else if (!incrementalIncrease && tempo - incrementalAmount >= lowerLimit) {
-            changeTempo(-incrementalAmount);
+        if (barIndex >= interval && barIndex % interval == 0) {
+          int upperLimit = limit != 0 ? limit : Constants.TEMPO_MAX;
+          int lowerLimit = limit != 0 ? limit : Constants.TEMPO_MIN;
+          if (increase && config.getTempo() + amount <= upperLimit) {
+            changeTempo(amount);
+          } else if (!increase && config.getTempo() - amount >= lowerLimit) {
+            changeTempo(-amount);
           }
         }
       }
-      if (isMuteActive() && muteUnit.equals(UNIT.BARS) && !isCountIn) {
+      if (isMuteActive() && config.getMuteUnit().equals(UNIT.BARS) && !isCountIn) {
         if (muteCountDown > 0) {
           muteCountDown--;
         } else {
@@ -1154,7 +1113,7 @@ public class MetronomeUtil {
   }
 
   private int getCurrentBeat() {
-    return (int) ((tickIndex / getSubdivisionsCount()) % beats.length) + 1;
+    return (int) ((tickIndex / getSubdivisionsCount()) % config.getBeats().length) + 1;
   }
 
   private int getCurrentSubdivision() {
@@ -1164,8 +1123,10 @@ public class MetronomeUtil {
   private String getCurrentTickType() {
     int subdivisionsCount = getSubdivisionsCount();
     if ((tickIndex % subdivisionsCount) == 0) {
+      String[] beats = config.getBeats();
       return beats[(int) ((tickIndex / subdivisionsCount) % beats.length)];
     } else {
+      String[] subdivisions = config.getSubdivisions();
       return subdivisions[(int) (tickIndex % subdivisionsCount)];
     }
   }
