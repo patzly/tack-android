@@ -48,7 +48,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   private final PartialOptionsBinding binding;
   private final boolean useDialog;
   private final Runnable onModifiersCountChanged;
-  private boolean isIncrementalActive, isTimerActive, isMuteActive, isSubdivisionActive;
+  private boolean isCountInActive, isIncrementalActive, isTimerActive;
+  private boolean isMuteActive, isSubdivisionActive;
   private DialogUtil dialogUtil;
   private PartialDialogOptionsBinding bindingDialog;
 
@@ -66,6 +67,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     }
     binding = useDialog ? bindingDialog.partialOptions : fragment.getBinding().partialOptions;
 
+    isCountInActive = getMetronomeUtil().isCountInActive();
     isIncrementalActive = getMetronomeUtil().isIncrementalActive();
     isTimerActive = getMetronomeUtil().isTimerActive();
     isMuteActive = getMetronomeUtil().isMuteActive();
@@ -123,6 +125,11 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   }
 
   private void updateCountIn() {
+    boolean isCountInActive = getMetronomeUtil().isCountInActive();
+    if (this.isCountInActive != isCountInActive) {
+      this.isCountInActive = isCountInActive;
+      onModifiersCountChanged.run();
+    }
     int countIn = getMetronomeUtil().getCountIn();
     binding.sliderOptionsCountIn.removeOnChangeListener(this);
     binding.sliderOptionsCountIn.setValue(countIn);
