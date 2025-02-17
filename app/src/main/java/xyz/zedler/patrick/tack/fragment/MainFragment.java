@@ -1279,7 +1279,7 @@ public class MainFragment extends BaseFragment
   private void layoutSongChips() {
     int outerClosePadding = UiUtil.dpToPx(activity, 8);
     int innerClosePadding = UiUtil.dpToPx(activity, 0);
-    int outerPadding = UiUtil.dpToPx(activity, 0);
+    int outerPadding = UiUtil.dpToPx(activity, 16);
     int innerPadding = UiUtil.dpToPx(activity, 4);
     SongChipItemDecoration decoration = new SongChipItemDecoration(
         outerClosePadding, innerClosePadding,

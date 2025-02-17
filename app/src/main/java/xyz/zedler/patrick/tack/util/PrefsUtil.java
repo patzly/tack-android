@@ -98,7 +98,7 @@ public class PrefsUtil {
         Executors.newSingleThreadExecutor().execute(() -> {
           SongDatabase db = SongDatabase.getInstance(context.getApplicationContext());
           LiveData<List<Song>> liveSongs = db.songDao().getAllSongs();
-          liveSongs.observeForever(new Observer<>() {
+          new Handler(Looper.getMainLooper()).post(() -> liveSongs.observeForever(new Observer<>() {
             @Override
             public void onChanged(List<Song> songs) {
               for (String bookmark : bookmarks) {
@@ -114,19 +114,22 @@ public class PrefsUtil {
                     }
                   }
                   if (!alreadyExists) {
-                    db.songDao().insertSong(song);
-                    MetronomeConfig config = new MetronomeConfig();
-                    config.setTempo(tempo);
-                    Part part = new Part(null, songName, config);
-                    db.songDao().insertPart(part);
+                    Executors.newSingleThreadExecutor().execute(() -> {
+                      db.songDao().insertSong(song);
+                      MetronomeConfig config = new MetronomeConfig();
+                      config.setTempo(tempo);
+                      Part part = new Part(null, songName, config);
+                      db.songDao().insertPart(part);
+                    });
                   }
                 } catch (NumberFormatException e) {
                   Log.e(TAG, "migrateBookmarks: bookmark to tempo: ", e);
                 }
               }
+              sharedPrefs.edit().remove(BOOKMARKS).apply();
               liveSongs.removeObserver(this);
             }
-          });
+          }));
         });
       }
     }
