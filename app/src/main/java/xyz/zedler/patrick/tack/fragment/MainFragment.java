@@ -76,6 +76,7 @@ import xyz.zedler.patrick.tack.databinding.FragmentMainBinding;
 import xyz.zedler.patrick.tack.drawable.BeatsBgDrawable;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
+import xyz.zedler.patrick.tack.util.MetronomeUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.OptionsUtil;
@@ -1263,24 +1264,12 @@ public class MainFragment extends BaseFragment
   }
 
   private int getModifierCount() {
-    boolean isIncremental = getMetronomeUtil().getIncrementalAmount() > 0;
-    boolean isTimerActive = getMetronomeUtil().isTimerActive();
-    boolean isMuteActive = getMetronomeUtil().isMuteActive();
-    boolean isSubdivisionActive = getMetronomeUtil().isSubdivisionActive();
-    int modifierCount = 0;
-    if (isIncremental) {
-      modifierCount += 1;
-    }
-    if (isTimerActive) {
-      modifierCount += 1;
-    }
-    if (isMuteActive) {
-      modifierCount += 1;
-    }
-    if (isSubdivisionActive) {
-      modifierCount += 1;
-    }
-    return modifierCount;
+    MetronomeUtil metronome = getMetronomeUtil();
+    return (metronome.isCountInActive() ? 1 : 0) +
+        (metronome.isIncrementalActive() ? 1 : 0) +
+        (metronome.isTimerActive() ? 1 : 0) +
+        (metronome.isMuteActive() ? 1 : 0) +
+        (metronome.isSubdivisionActive() ? 1 : 0);
   }
 
   private Chip getBookmarkChip(int tempo) {

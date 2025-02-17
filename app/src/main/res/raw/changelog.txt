@@ -8,7 +8,7 @@
 - Improved: more tick marks on sliders with big range
 - Improved: fixed-width numbers in option descriptions for smoother value adjustments
 - Improved: increased maximum tempo limit to 600
-- Fixed: modifier count not increased with muted beats enabled
+- Fixed: modifier count not increased with count-in and muted beats enabled
 - Fixed: multiple crash causes
 
 ## 4.7.2
