@@ -24,7 +24,6 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Animatable;
@@ -50,6 +49,8 @@ import androidx.annotation.OptIn;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.badge.ExperimentalBadgeUtils;
@@ -57,12 +58,7 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.slider.Slider.OnSliderTouchListener;
 import com.google.android.material.snackbar.Snackbar;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
@@ -70,10 +66,14 @@ import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
+import xyz.zedler.patrick.tack.database.relations.SongWithParts;
+import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipsAdapter;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentMainBinding;
 import xyz.zedler.patrick.tack.drawable.BeatsBgDrawable;
+import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipsAdapter.OnSongClickListener;
+import xyz.zedler.patrick.tack.recyclerview.decoration.SongChipItemDecoration;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
@@ -108,7 +108,6 @@ public class MainFragment extends BaseFragment
   private ShortcutUtil shortcutUtil;
   private TempoTapDialogUtil tempoTapDialogUtil;
   private TempoDialogUtil tempoDialogUtil;
-  private List<Integer> bookmarks;
   private BeatsBgDrawable beatsBgDrawable;
   private BadgeDrawable beatsCountBadge, subsCountBadge, optionsBadge;
   private ValueAnimator progressAnimator, progressTransitionAnimator;
@@ -408,19 +407,38 @@ public class MainFragment extends BaseFragment
 
     setButtonStates();
 
-    Set<String> bookmarksSet = getSharedPrefs().getStringSet(PREF.BOOKMARKS, Set.of());
-    bookmarks = new ArrayList<>();
-    for (String tempo : bookmarksSet) {
-      try {
-        bookmarks.add(Integer.parseInt(tempo));
-      } catch (NumberFormatException e) {
-        Log.e(TAG, "onViewCreated: get bookmarks: ", e);
+    OnSongClickListener onSongClickListener = new OnSongClickListener() {
+      @Override
+      public void onCloseClick(Drawable icon) {
+        ViewUtil.startIcon(icon);
+        getMetronomeUtil().setCurrentSong(null);
+        performHapticClick();
       }
-    }
-    Collections.sort(bookmarks);
-    for (int i = 0; i < bookmarks.size(); i++) {
-      binding.chipGroupMainBookmarks.addView(getBookmarkChip(bookmarks.get(i)));
-    }
+
+      @Override
+      public void onSongClick(Drawable icon, SongWithParts song) {
+        ViewUtil.startIcon(icon);
+        getMetronomeUtil().setCurrentSong(song.getSong().getName());
+        performHapticClick();
+      }
+    };
+    SongChipsAdapter adapter = new SongChipsAdapter(
+        onSongClickListener,
+        getMetronomeUtil().getCurrentSong()
+    );
+    // TODO: sorting
+    binding.recyclerMainSongs.setAdapter(adapter);
+    LinearLayoutManager layoutManager = new LinearLayoutManager(
+        activity, LinearLayoutManager.HORIZONTAL, false
+    );
+    binding.recyclerMainSongs.setLayoutManager(layoutManager);
+    activity.getSongViewModel().getAllSongsWithParts().observe(
+        getViewLifecycleOwner(), newSongs -> {
+          adapter.setSongs(newSongs);
+          layoutSongChips();
+        }
+    );
+    layoutSongChips();
 
     boolean isWidthLargeEnough = screenWidthDp - 16 >= 344;
     boolean large = (isPortrait && isWidthLargeEnough) || isLandTablet;
@@ -438,10 +456,6 @@ public class MainFragment extends BaseFragment
       binding.linearMainBottomControlsEnd.setPadding(padding, padding, padding, padding);
     }
 
-    activity.getSongViewModel().getAllSongsWithParts().observe(getViewLifecycleOwner(), songs -> {
-      Log.i(TAG, "onViewCreated: hello songs: " + songs);
-    });
-
     updateMetronomeControls();
 
     ViewUtil.setTooltipText(binding.buttonMainAddBeat, R.string.action_add_beat);
@@ -451,7 +465,7 @@ public class MainFragment extends BaseFragment
     ViewUtil.setTooltipText(binding.buttonMainOptions, R.string.title_options);
     ViewUtil.setTooltipText(binding.buttonMainTempoTap, R.string.action_tempo_tap);
     ViewUtil.setTooltipText(binding.fabMainPlayStop, R.string.action_play_stop);
-    ViewUtil.setTooltipText(binding.buttonMainBookmark, R.string.action_bookmark);
+    ViewUtil.setTooltipText(binding.buttonMainSongs, R.string.action_bookmark);
     ViewUtil.setTooltipText(binding.buttonMainBeatMode, R.string.action_beat_mode);
 
     ViewUtil.setTooltipTextAndContentDescription(
@@ -488,7 +502,7 @@ public class MainFragment extends BaseFragment
         binding.buttonMainLess1, binding.buttonMainLess5, binding.buttonMainLess10,
         binding.buttonMainMore1, binding.buttonMainMore5, binding.buttonMainMore10,
         binding.buttonMainBeatMode,
-        binding.buttonMainBookmark,
+        binding.buttonMainSongs,
         binding.buttonMainOptions,
         binding.buttonMainTempoTap,
         binding.fabMainPlayStop
@@ -554,22 +568,6 @@ public class MainFragment extends BaseFragment
     updateSubs(getMetronomeUtil().getSubdivisions());
     updateSubControls(false);
 
-    binding.scrollHorizMainBookmarks.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            if (binding == null) {
-              return;
-            }
-            refreshBookmarks(true, false);
-            // Kill ViewTreeObserver
-            if (binding.scrollHorizMainBookmarks.getViewTreeObserver().isAlive()) {
-              binding.scrollHorizMainBookmarks.getViewTreeObserver().removeOnGlobalLayoutListener(
-                  this
-              );
-            }
-          }
-        });
     measureTimerControls(true); // calls updateTimerControls when measured
     updateElapsedDisplay();
     updateOptions(false);
@@ -787,8 +785,7 @@ public class MainFragment extends BaseFragment
       updateSubs(getMetronomeUtil().getSubdivisions());
       updateSubControls(true);
 
-      // TODO: replace with songs
-      refreshBookmarks(true, false);
+      // TODO: change song part index?
 
       updateTimerControls();
       updateElapsedDisplay();
@@ -937,40 +934,10 @@ public class MainFragment extends BaseFragment
           );
         }
       }, 300);
-    } else if (id == R.id.button_main_bookmark) {
-      ViewUtil.startIcon(binding.buttonMainBookmark.getIcon());
+    } else if (id == R.id.button_main_songs) {
+      ViewUtil.startIcon(binding.buttonMainSongs.getIcon());
       performHapticClick();
-      int tempo = getMetronomeUtil().getTempo();
-      if (bookmarks.size() < Constants.BOOKMARKS_MAX && !bookmarks.contains(tempo)) {
-        binding.frameMainBookmarksContainer.setVisibility(View.VISIBLE);
-        int position = 0;
-        while (position < bookmarks.size() && bookmarks.get(position) < tempo) {
-          position++;
-        }
-        binding.chipGroupMainBookmarks.addView(getBookmarkChip(tempo), position);
-        bookmarks.add(position, tempo);
-        shortcutUtil.addShortcut(tempo);
-        updateBookmarks();
-        refreshBookmarks(false, true);
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-          if (binding != null) {
-            refreshBookmarks(true, true);
-          }
-        }, 300);
-      } else if (bookmarks.size() >= Constants.BOOKMARKS_MAX) {
-        Snackbar snackbar = activity.getSnackbar(R.string.msg_bookmarks_max, Snackbar.LENGTH_SHORT);
-        snackbar.setAction(
-            getString(R.string.action_clear_all),
-            view -> {
-              binding.chipGroupMainBookmarks.removeAllViews();
-              bookmarks.clear();
-              shortcutUtil.removeAllShortcuts();
-              updateBookmarks();
-              refreshBookmarks(true, true);
-            }
-        );
-        showSnackbar(snackbar);
-      }
+      // TODO: implement songs
     } else if (id == R.id.button_main_options) {
       performHapticClick();
       ViewUtil.startIcon(binding.buttonMainOptions.getIcon());
@@ -1309,106 +1276,86 @@ public class MainFragment extends BaseFragment
     return modifierCount;
   }
 
-  private Chip getBookmarkChip(int tempo) {
-    Chip chip = new Chip(activity);
-    chip.setCheckable(false);
-    chip.setChipIconResource(R.drawable.ic_rounded_music_note_anim);
-    chip.setCloseIconResource(R.drawable.ic_rounded_close);
-    chip.setCloseIconVisible(true);
-    chip.setOnCloseIconClickListener(v -> {
-      performHapticClick();
-      binding.chipGroupMainBookmarks.removeView(chip);
-      bookmarks.remove((Integer) tempo); // Integer cast required, else it would take int as index
-      shortcutUtil.removeShortcut(tempo);
-      updateBookmarks();
-      refreshBookmarks(false, true);
-      new Handler(Looper.getMainLooper()).postDelayed(() -> {
-        if (binding != null) {
-          refreshBookmarks(true, true);
+  private void layoutSongChips() {
+    int outerClosePadding = UiUtil.dpToPx(activity, 8);
+    int innerClosePadding = UiUtil.dpToPx(activity, 0);
+    int outerPadding = UiUtil.dpToPx(activity, 0);
+    int innerPadding = UiUtil.dpToPx(activity, 4);
+    SongChipItemDecoration decoration = new SongChipItemDecoration(
+        outerClosePadding, innerClosePadding,
+        outerPadding, innerPadding,
+        isRtl
+    );
+    if (binding.recyclerMainSongs.getItemDecorationCount() > 0) {
+      binding.recyclerMainSongs.removeItemDecorationAt(0);
+    }
+    binding.recyclerMainSongs.addItemDecoration(decoration);
+    binding.recyclerMainSongs.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override
+          public void onGlobalLayout() {
+            if (binding == null) {
+              return;
+            }
+            RecyclerView recyclerView = binding.recyclerMainSongs;
+            if (recyclerView.getAdapter() != null
+                && recyclerView.getChildCount() == recyclerView.getAdapter().getItemCount()
+                && recyclerView.getChildCount() > 0
+            ) {
+              int totalWidth = 0;
+              for (int i = 0; i < recyclerView.getChildCount(); i++) {
+                View child = recyclerView.getChildAt(i);
+                totalWidth += child.getWidth();
+              }
+              if (recyclerView.getChildCount() > 0) {
+                totalWidth += outerClosePadding;
+                totalWidth += innerClosePadding;
+                totalWidth += innerPadding * 2 * (recyclerView.getChildCount() - 2);
+                totalWidth += outerPadding;
+              }
+              int containerWidth = recyclerView.getWidth();
+              boolean shouldCenter = totalWidth < containerWidth;
+              Log.i(TAG, "onGlobalLayout: hello totalWidth: " + totalWidth + " containerWidth: " + containerWidth);
+              if (shouldCenter) {
+                int padding = (containerWidth - totalWidth) / 2;
+                padding -= UiUtil.dpToPx(activity, 8); // Remove close chip outer inset
+                recyclerView.setPadding(
+                    isRtl ? 0 : padding, 0,
+                    isRtl ? padding : 0, 0
+                );
+                recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+              } else {
+                recyclerView.setPadding(0, 0, 0, 0);
+                recyclerView.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
+              }
+            }
+            recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+          }
+        });
+    // TODO: align active song chip
+    /*if (isActive && alignActiveOrCenter) {
+      int scrollX = binding.scrollHorizMainBookmarks.getScrollX();
+      int chipStart = isRtl ? chip.getRight() : chip.getLeft();
+      int chipEnd = isRtl ? chip.getLeft() : chip.getRight();
+      int scrollViewWidth = binding.scrollHorizMainBookmarks.getWidth();
+      int margin = UiUtil.dpToPx(activity, 16);
+      int start = chipStart + margin * (isRtl ? 1 : -1);
+      int end = chipEnd + margin * (isRtl ? -1 : 1);
+      if (start < scrollX) {
+        if (animated) {
+          binding.scrollHorizMainBookmarks.smoothScrollTo(start, 0);
+        } else {
+          binding.scrollHorizMainBookmarks.scrollTo(start, 0);
         }
-      }, 300);
-    });
-    chip.setStateListAnimator(null);
-    chip.setText(getString(R.string.label_bpm_value, tempo));
-    chip.setTag(tempo);
-    if (Build.VERSION.SDK_INT >= VERSION_CODES.M) {
-      // Crashes on API 21-22
-      chip.setTextAppearance(R.style.TextAppearance_Tack_LabelLarge);
-    }
-    chip.setOnClickListener(v -> {
-      performHapticClick();
-      ViewUtil.startIcon(chip.getChipIcon());
-      setTempo(tempo);
-    });
-    return chip;
-  }
-
-  private void updateBookmarks() {
-    Set<String> bookmarksSet = new HashSet<>();
-    for (Integer tempo : bookmarks) {
-      bookmarksSet.add(String.valueOf(tempo));
-    }
-    getSharedPrefs().edit().putStringSet(PREF.BOOKMARKS, bookmarksSet).apply();
-  }
-
-  private void refreshBookmarks(boolean alignActiveOrCenter, boolean animated) {
-    binding.buttonMainBookmark.setEnabled(!bookmarks.contains(getMetronomeUtil().getTempo()));
-    boolean isPortrait = UiUtil.isOrientationPortrait(activity);
-    // make more place for top controls in landscape if no bookmarks
-    boolean hideBookmarks = !isPortrait && !isLandTablet
-        && binding.chipGroupMainBookmarks.getChildCount() == 0;
-    binding.frameMainBookmarksContainer.setVisibility(hideBookmarks ? View.GONE : View.VISIBLE);
-    for (int i = 0; i < binding.chipGroupMainBookmarks.getChildCount(); i++) {
-      Chip chip = (Chip) binding.chipGroupMainBookmarks.getChildAt(i);
-      if (chip == null) {
-        continue;
-      }
-      Object tag = chip.getTag();
-      boolean isActive = tag != null && ((int) tag) == getMetronomeUtil().getTempo();
-      int colorBg = isActive
-          ? ResUtil.getColor(activity, R.attr.colorTertiaryContainer)
-          : Color.TRANSPARENT;
-      int colorStroke = ResUtil.getColor(
-          activity, isActive ? R.attr.colorTertiary : R.attr.colorOutline
-      );
-      int colorIcon = ResUtil.getColor(
-          activity, isActive ? R.attr.colorOnTertiaryContainer : R.attr.colorOnSurfaceVariant
-      );
-      int colorText = ResUtil.getColor(
-          activity, isActive ? R.attr.colorOnTertiaryContainer : R.attr.colorOnSurface
-      );
-      chip.setChipBackgroundColor(ColorStateList.valueOf(colorBg));
-      chip.setChipStrokeColor(ColorStateList.valueOf(colorStroke));
-      chip.setChipIconTint(ColorStateList.valueOf(colorIcon));
-      chip.setCloseIconTint(ColorStateList.valueOf(colorIcon));
-      chip.setTextColor(colorText);
-      if (isActive && alignActiveOrCenter) {
-        int scrollX = binding.scrollHorizMainBookmarks.getScrollX();
-        int chipStart = isRtl ? chip.getRight() : chip.getLeft();
-        int chipEnd = isRtl ? chip.getLeft() : chip.getRight();
-        int scrollViewWidth = binding.scrollHorizMainBookmarks.getWidth();
-        int margin = UiUtil.dpToPx(activity, 16);
-        int start = chipStart + margin * (isRtl ? 1 : -1);
-        int end = chipEnd + margin * (isRtl ? -1 : 1);
-        if (start < scrollX) {
-          if (animated) {
-            binding.scrollHorizMainBookmarks.smoothScrollTo(start, 0);
-          } else {
-            binding.scrollHorizMainBookmarks.scrollTo(start, 0);
-          }
-        } else if (end > (scrollX + scrollViewWidth)) {
-          int scrollTo = end + scrollViewWidth * (isRtl ? 1 : -1);
-          if (animated) {
-            binding.scrollHorizMainBookmarks.smoothScrollTo(scrollTo, 0);
-          } else {
-            binding.scrollHorizMainBookmarks.scrollTo(scrollTo, 0);
-          }
+      } else if (end > (scrollX + scrollViewWidth)) {
+        int scrollTo = end + scrollViewWidth * (isRtl ? 1 : -1);
+        if (animated) {
+          binding.scrollHorizMainBookmarks.smoothScrollTo(scrollTo, 0);
+        } else {
+          binding.scrollHorizMainBookmarks.scrollTo(scrollTo, 0);
         }
       }
-    }
-    if (alignActiveOrCenter) {
-      ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBookmarks);
-    }
+    }*/
   }
 
   private void changeTempo(int difference) {
@@ -1441,7 +1388,6 @@ public class MainFragment extends BaseFragment
       );
       binding.textSwitcherMainTempoTerm.setText(termNew);
     }
-    refreshBookmarks(true, true);
     setButtonStates();
   }
 

@@ -47,13 +47,7 @@ public class Song {
 
   @Ignore
   public Song(@NonNull String name) {
-    this(name, Calendar.getInstance().getTimeInMillis());
-  }
-
-  @Ignore
-  public Song(@NonNull String name, long lastPlayed) {
-    this.name = name;
-    this.lastPlayed = lastPlayed;
+    this(name, Calendar.getInstance().getTimeInMillis(), false);
   }
 
   @NonNull

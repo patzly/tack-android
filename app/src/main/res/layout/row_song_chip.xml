@@ -1,4 +1,4 @@
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ This file is part of Tack Android.
   ~
   ~ Tack Android is free software: you can redistribute it and/or modify
@@ -17,13 +17,14 @@
   ~ Copyright (c) 2020-2025 by Patrick Zedler
   -->
 
-<vector
+<com.google.android.material.chip.Chip
   xmlns:android="http://schemas.android.com/apk/res/android"
-  android:width="24dp"
-  android:height="24dp"
-  android:viewportWidth="960"
-  android:viewportHeight="960">
-  <path
-    android:pathData="M480,536 L284,732q-11,11 -28,11t-28,-11q-11,-11 -11,-28t11,-28l196,-196 -196,-196q-11,-11 -11,-28t11,-28q11,-11 28,-11t28,11l196,196 196,-196q11,-11 28,-11t28,11q11,11 11,28t-11,28L536,480l196,196q11,11 11,28t-11,28q-11,11 -28,11t-28,-11L480,536Z"
-    android:fillColor="#000000" />
-</vector>
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/chip_row_song"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:stateListAnimator="@null"
+  android:checkable="false"
+  app:chipIcon="@drawable/ic_rounded_music_note_anim"
+  app:closeIconVisible="false"
+  android:textAppearance="@style/TextAppearance.Tack.LabelLarge" />

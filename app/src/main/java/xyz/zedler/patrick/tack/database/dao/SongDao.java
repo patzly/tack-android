@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.database.dao;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -54,6 +55,9 @@ public interface SongDao {
   @Transaction
   @Query("SELECT * FROM songs")
   LiveData<List<SongWithParts>> getAllSongsWithParts();
+
+  @Query("SELECT * FROM songs")
+  LiveData<List<Song>> getAllSongs();
 
   @Update
   void updateSong(Song song);

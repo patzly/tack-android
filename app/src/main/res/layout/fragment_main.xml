@@ -404,7 +404,7 @@
     </LinearLayout>
 
     <FrameLayout
-      android:id="@+id/frame_main_bookmarks_container"
+      android:id="@+id/frame_main_songs_container"
       android:layout_width="0dp"
       android:layout_height="0dp"
       app:layout_constraintTop_toBottomOf="@+id/frame_main_center"
@@ -412,26 +412,14 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintEnd_toEndOf="parent">
 
-      <HorizontalScrollView
-        android:id="@+id/scroll_horiz_main_bookmarks"
+      <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_main_songs"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_gravity="center_vertical"
         android:overScrollMode="ifContentScrolls"
         android:scrollbars="none"
-        tools:ignore="UselessParent">
-
-        <com.google.android.material.chip.ChipGroup
-          android:id="@+id/chip_group_main_bookmarks"
-          android:layout_width="wrap_content"
-          android:layout_height="match_parent"
-          android:paddingStart="16dp"
-          android:paddingEnd="16dp"
-          android:animateLayoutChanges="true"
-          app:singleSelection="true"
-          app:singleLine="true" />
-
-      </HorizontalScrollView>
+        tools:ignore="UselessParent" />
 
     </FrameLayout>
 
@@ -489,7 +477,7 @@
         android:background="@drawable/shape_bottom_controls_bg_right">
 
         <com.google.android.material.button.MaterialButton
-          android:id="@+id/button_main_bookmark"
+          android:id="@+id/button_main_songs"
           style="@style/Widget.Tack.Button.IconButton"
           android:contentDescription="@string/action_bookmark"
           app:icon="@drawable/ic_rounded_bookmark_add_anim" />

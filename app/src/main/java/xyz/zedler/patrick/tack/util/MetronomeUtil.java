@@ -30,6 +30,7 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.animation.LinearInterpolator;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -39,12 +40,17 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.Executors;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.database.SongDatabase;
+import xyz.zedler.patrick.tack.database.entity.Part;
+import xyz.zedler.patrick.tack.database.entity.Song;
+import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.model.MetronomeConfig;
 
 public class MetronomeUtil {
@@ -64,7 +70,9 @@ public class MetronomeUtil {
   private Handler tickHandler, latencyHandler;
   private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
   private ValueAnimator timerAnimator;
-  private int muteCountDown;
+  private SongDatabase db;
+  private SongWithParts currentSongWithParts;
+  private int partIndex, muteCountDown;
   private long tickIndex, latency, elapsedStartTime, elapsedTime, elapsedPrevious, timerStartTime;
   private float timerProgress;
   private boolean playing, tempPlaying, beatModeVibrate, isCountingIn, isMuted;
@@ -80,6 +88,8 @@ public class MetronomeUtil {
     audioUtil = new AudioUtil(context, this::stop);
     hapticUtil = new HapticUtil(context);
     shortcutUtil = new ShortcutUtil(context);
+
+    db = SongDatabase.getInstance(context.getApplicationContext());
 
     resetHandlersIfRequired();
     setToPreferences();
@@ -99,6 +109,11 @@ public class MetronomeUtil {
     setIgnoreFocus(sharedPrefs.getBoolean(PREF.IGNORE_FOCUS, DEF.IGNORE_FOCUS));
     setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
     setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
+    setCurrentSong(sharedPrefs.getString(PREF.CURRENT_SONG, DEF.CURRENT_SONG));
+  }
+
+  public MetronomeConfig getConfig() {
+    return config;
   }
 
   public void setConfig(MetronomeConfig config) {
@@ -129,8 +144,38 @@ public class MetronomeUtil {
     }
   }
 
-  public MetronomeConfig getConfig() {
-    return config;
+  @Nullable
+  public SongWithParts getCurrentSongWithParts() {
+    return currentSongWithParts;
+  }
+
+  @Nullable
+  public String getCurrentSong() {
+    if (currentSongWithParts != null) {
+      return currentSongWithParts.getSong().getName();
+    } else {
+      return null;
+    }
+  }
+
+  public void setCurrentSong(@Nullable String songName) {
+    if (songName != null) {
+      Executors.newSingleThreadExecutor().execute(() -> {
+        currentSongWithParts = db.songDao().getSongWithPartsByName(songName);
+        partIndex = 0;
+        new Handler(Looper.getMainLooper()).post(
+            () -> setConfig(currentSongWithParts.getParts().get(partIndex).toConfig())
+        );
+      });
+    } else {
+      currentSongWithParts = null;
+      partIndex = 0;
+    }
+    sharedPrefs.edit().putString(PREF.CURRENT_SONG, songName).apply();
+  }
+
+  public int getCurrentPartIndex() {
+    return partIndex;
   }
 
   private void resetHandlersIfRequired() {

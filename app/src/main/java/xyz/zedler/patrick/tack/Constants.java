@@ -60,8 +60,8 @@ public final class Constants {
     public final static String LATENCY = "latency_offset";
     public final static String IGNORE_FOCUS = "ignore_focus";
     public final static String GAIN = "gain";
-    public final static String BOOKMARKS = "bookmarks";
     public final static String BIG_LOGO = "big_logo";
+    public final static String CURRENT_SONG = "current_song";
 
     // Options
     public final static String COUNT_IN = "count_in";
@@ -105,6 +105,7 @@ public final class Constants {
     public final static boolean IGNORE_FOCUS = false;
     public final static int GAIN = 0;
     public final static boolean BIG_LOGO = false;
+    public final static String CURRENT_SONG = null;
 
     // Options
     public final static int COUNT_IN = 0;

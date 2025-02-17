@@ -48,6 +48,15 @@ public class SongViewModel extends AndroidViewModel {
       config1.setTempo(120);
       Part part1 = new Part(null, "120 bpm", config1);
       db.songDao().insertPart(part1);
+
+      Song song2 = new Song("80 bpm");
+      db.songDao().insertSong(song2);
+
+      MetronomeConfig config2 = new MetronomeConfig();
+      config2.setTempo(80);
+      config2.setTimerDuration(4);
+      Part part2 = new Part("Adagio", "80 bpm", config2);
+      db.songDao().insertPart(part2);
     });
 
     allSongsWithParts = db.songDao().getAllSongsWithParts();

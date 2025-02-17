@@ -29,7 +29,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.os.LocaleListCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.adapter.LanguageAdapter;
+import xyz.zedler.patrick.tack.recyclerview.adapter.LanguageAdapter;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetLanguagesBinding;
 import xyz.zedler.patrick.tack.model.Language;
 import xyz.zedler.patrick.tack.util.LocaleUtil;

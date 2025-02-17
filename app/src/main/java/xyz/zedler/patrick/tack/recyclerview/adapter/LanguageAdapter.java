@@ -17,7 +17,7 @@
  * Copyright (c) 2020-2025 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.adapter;
+package xyz.zedler.patrick.tack.recyclerview.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -31,11 +31,12 @@ import java.util.List;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.RowLanguageBinding;
 import xyz.zedler.patrick.tack.model.Language;
+import xyz.zedler.patrick.tack.recyclerview.adapter.LanguageAdapter.LanguageViewHolder;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
-public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHolder> {
+public class LanguageAdapter extends RecyclerView.Adapter<LanguageViewHolder> {
 
   private static final String TAG = LanguageAdapter.class.getSimpleName();
 
@@ -56,11 +57,11 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHo
     }
   }
 
-  public static class ViewHolder extends RecyclerView.ViewHolder {
+  public static class LanguageViewHolder extends RecyclerView.ViewHolder {
 
     private final RowLanguageBinding binding;
 
-    public ViewHolder(RowLanguageBinding binding) {
+    public LanguageViewHolder(RowLanguageBinding binding) {
       super(binding.getRoot());
       this.binding = binding;
     }
@@ -68,8 +69,8 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHo
 
   @NonNull
   @Override
-  public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-    return new ViewHolder(
+  public LanguageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    return new LanguageViewHolder(
         RowLanguageBinding.inflate(
             LayoutInflater.from(parent.getContext()), parent, false
         )
@@ -77,7 +78,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHo
   }
 
   @Override
-  public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+  public void onBindViewHolder(@NonNull final LanguageViewHolder holder, int position) {
     if (position == 0) {
       holder.binding.textLanguageName.setText(R.string.settings_language_system);
       holder.binding.textLanguageTranslators.setText(R.string.settings_language_system_description);
@@ -111,7 +112,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHo
     return languages.size() + 1;
   }
 
-  private void setSelected(ViewHolder holder, boolean selected) {
+  private void setSelected(LanguageViewHolder holder, boolean selected) {
     Context context = holder.binding.getRoot().getContext();
     int colorSelected = ResUtil.getColor(context, R.attr.colorOnSecondaryContainer);
     holder.binding.imageLanguageSelected.setColorFilter(colorSelected);

@@ -21,6 +21,11 @@ package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,15 +33,24 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.PREF;
+import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.database.SongDatabase;
+import xyz.zedler.patrick.tack.database.entity.Part;
+import xyz.zedler.patrick.tack.database.entity.Song;
+import xyz.zedler.patrick.tack.model.MetronomeConfig;
 
 public class PrefsUtil {
 
   private final static String TAG = PrefsUtil.class.getSimpleName();
 
+  private final Context context;
   private final SharedPreferences sharedPrefs;
 
   public PrefsUtil(Context context) {
+    this.context = context;
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
   }
 
@@ -50,13 +64,15 @@ public class PrefsUtil {
   }
 
   private void migrateBookmarks() {
-    if (sharedPrefs.contains(PREF.BOOKMARKS)) {
+    String BOOKMARKS = "bookmarks";
+    if (sharedPrefs.contains(BOOKMARKS)) {
+      // from String to Set<String>
       try {
-        Set<String> bookmarks = sharedPrefs.getStringSet(PREF.BOOKMARKS, Set.of());
+        Set<String> bookmarks = sharedPrefs.getStringSet(BOOKMARKS, Set.of());
       } catch (Exception ignored) {
         SharedPreferences.Editor editor = sharedPrefs.edit();
         try {
-          String prefBookmarks = getSharedPrefs().getString(PREF.BOOKMARKS, "");
+          String prefBookmarks = getSharedPrefs().getString(BOOKMARKS, "");
           List<String> bookmarksArray = Arrays.asList(prefBookmarks.split(","));
           List<Integer> bookmarks = new ArrayList<>(bookmarksArray.size());
           for (String bookmark : bookmarksArray) {
@@ -64,16 +80,54 @@ public class PrefsUtil {
               bookmarks.add(Integer.parseInt(bookmark));
             }
           }
-          editor.remove(PREF.BOOKMARKS);
+          editor.remove(BOOKMARKS);
           Set<String> bookmarksSet = new HashSet<>();
           for (Integer tempo : bookmarks) {
             bookmarksSet.add(String.valueOf(tempo));
           }
-          editor.putStringSet(PREF.BOOKMARKS, bookmarksSet);
+          editor.putStringSet(BOOKMARKS, bookmarksSet);
         } catch (Exception ignore) {
-          editor.remove(PREF.BOOKMARKS);
+          editor.remove(BOOKMARKS);
         }
         editor.apply();
+      }
+
+      // from bookmarks to songs
+      Set<String> bookmarks = sharedPrefs.getStringSet(BOOKMARKS, Set.of());
+      if (!bookmarks.isEmpty()) {
+        Executors.newSingleThreadExecutor().execute(() -> {
+          SongDatabase db = SongDatabase.getInstance(context.getApplicationContext());
+          LiveData<List<Song>> liveSongs = db.songDao().getAllSongs();
+          liveSongs.observeForever(new Observer<>() {
+            @Override
+            public void onChanged(List<Song> songs) {
+              for (String bookmark : bookmarks) {
+                try {
+                  int tempo = Integer.parseInt(bookmark);
+                  String songName = context.getString(R.string.label_bpm_value, tempo);
+                  Song song = new Song(songName);
+                  boolean alreadyExists = false;
+                  for (Song songCompare : songs) {
+                    if (songCompare.getName().equals(songName)) {
+                      alreadyExists = true;
+                      break;
+                    }
+                  }
+                  if (!alreadyExists) {
+                    db.songDao().insertSong(song);
+                    MetronomeConfig config = new MetronomeConfig();
+                    config.setTempo(tempo);
+                    Part part = new Part(null, songName, config);
+                    db.songDao().insertPart(part);
+                  }
+                } catch (NumberFormatException e) {
+                  Log.e(TAG, "migrateBookmarks: bookmark to tempo: ", e);
+                }
+              }
+              liveSongs.removeObserver(this);
+            }
+          });
+        });
       }
     }
   }
