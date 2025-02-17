@@ -25,7 +25,7 @@ fragment = { group = "androidx.fragment", name = "fragment", version.ref = "frag
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigation" }
 navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigation" }
 preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
-shapes = { group = "androidx.graphics", name = "graphics-shapes-android", version.ref = "shapes" }
+shapes = { group = "androidx.graphics", name = "graphics-shapes", version.ref = "shapes" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 # wear
 wear-tooling = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wear-tooling" }
