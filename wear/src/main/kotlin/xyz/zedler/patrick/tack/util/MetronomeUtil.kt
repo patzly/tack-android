@@ -40,7 +40,7 @@ class MetronomeUtil(
   private val audioUtil = AudioUtil(context, ::stop)
   private val hapticUtil = HapticUtil(context)
 
-  private var audioThread: HandlerThread? = null
+  private var tickThread: HandlerThread? = null
   private var callbackThread: HandlerThread? = null
   private var tickHandler: Handler? = null
   private var latencyHandler: Handler? = null
@@ -86,10 +86,10 @@ class MetronomeUtil(
   private fun resetHandlersIfRequired() {
     if (!fromService) return
 
-    if (audioThread == null || audioThread?.isAlive == false) {
-      audioThread = HandlerThread("metronome_audio").apply { start() }
+    if (tickThread == null || tickThread?.isAlive == false) {
+      tickThread = HandlerThread("metronome_ticks").apply { start() }
       removeHandlerCallbacks()
-      tickHandler = Handler(audioThread!!.looper)
+      tickHandler = Handler(tickThread!!.looper)
     }
     if (callbackThread == null || callbackThread?.isAlive == false) {
       callbackThread = HandlerThread("metronome_callback").apply { start() }
@@ -108,8 +108,9 @@ class MetronomeUtil(
     listeners.clear()
     if (fromService) {
       removeHandlerCallbacks()
-      audioThread?.quitSafely()
+      tickThread?.quitSafely()
       callbackThread?.quit()
+      audioUtil.destroy()
     }
   }
 
@@ -133,9 +134,8 @@ class MetronomeUtil(
       override fun run() {
         if (isPlaying) {
           tickHandler?.postDelayed(this, getInterval() / getSubdivisionsCount())
-          val tick = Tick(tickIndex, getCurrentBeat(), getCurrentSubdivision(), getCurrentTickType())
-          performTick(tick)
-          audioUtil.tick(tick, tempo, getSubdivisionsCount())
+          val tick = performTick()
+          audioUtil.writeTickPeriod(tick, tempo, getSubdivisionsCount())
           tickIndex++
         }
       }
@@ -250,7 +250,9 @@ class MetronomeUtil(
     audioUtil.gain = gain
   }
 
-  private fun performTick(tick: Tick) {
+  private fun performTick(): Tick {
+    val tick = Tick(tickIndex, getCurrentBeat(), getCurrentSubdivision(), getCurrentTickType())
+
     latencyHandler?.postDelayed({
       listeners.forEach { it.onMetronomePreTick(tick) }
     }, maxOf(0, latency - Constants.BEAT_ANIM_OFFSET))
@@ -272,6 +274,7 @@ class MetronomeUtil(
         listeners.forEach { it.onFlashScreenEnd() }
       }, latency + Constants.FLASH_SCREEN_DURATION)
     }
+    return tick
   }
 
   private fun getCurrentBeat(): Int =
