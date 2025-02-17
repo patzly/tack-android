@@ -1,0 +1,10 @@
+• New: removed "use subdivisions" setting in favor of new subdivisions option in options dialog
+• Improved: duration/elapsed time text design
+• Improved: removed "reset elapsed time when stopped" setting in favor of new reset dialog on tap
+• Improved: left-hand controls scrollable for more room in landscape mode on phones
+• Improved: beats audio not cut off by subdivisions audio anymore
+• Improved: more tick marks on sliders with big range
+• Improved: fixed-width numbers in option descriptions for smoother value adjustments
+• Improved: increased maximum tempo limit to 600
+• Fixed: modifier count not increased with count-in and muted beats enabled
+• Fixed: multiple crash causes
