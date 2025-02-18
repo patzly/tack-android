@@ -65,12 +65,12 @@ public class MetronomeUtil {
   private final Set<MetronomeListener> listeners = Collections.synchronizedSet(new HashSet<>());
   private final Random random = new Random();
   private final MetronomeConfig config = new MetronomeConfig();
+  private final SongDatabase db;
   private final boolean fromService;
   private HandlerThread tickThread, callbackThread;
   private Handler tickHandler, latencyHandler;
   private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
   private ValueAnimator timerAnimator;
-  private SongDatabase db;
   private SongWithParts currentSongWithParts;
   private int partIndex, muteCountDown;
   private long tickIndex, latency, elapsedStartTime, elapsedTime, elapsedPrevious, timerStartTime;
@@ -163,9 +163,10 @@ public class MetronomeUtil {
       Executors.newSingleThreadExecutor().execute(() -> {
         currentSongWithParts = db.songDao().getSongWithPartsByName(songName);
         partIndex = 0;
-        new Handler(Looper.getMainLooper()).post(
-            () -> setConfig(currentSongWithParts.getParts().get(partIndex).toConfig())
-        );
+        new Handler(Looper.getMainLooper()).post(() -> {
+          setConfig(currentSongWithParts.getParts().get(partIndex).toConfig());
+          restartIfPlaying(true);
+        });
       });
     } else {
       currentSongWithParts = null;
@@ -221,7 +222,7 @@ public class MetronomeUtil {
 
   public void restorePlayingState() {
     if (tempPlaying) {
-      start(false);
+      start(false, false);
     } else {
       stop();
     }
@@ -239,7 +240,7 @@ public class MetronomeUtil {
     alwaysVibrate = true;
     setGain(0);
     setBeatModeVibrate(false);
-    start(false);
+    start(false, false);
   }
 
   public void destroy() {
@@ -269,10 +270,10 @@ public class MetronomeUtil {
   }
 
   public void start() {
-    start(true);
+    start(true, false);
   }
 
-  public void start(boolean resetTimerIfNecessary) {
+  public void start(boolean resetTimerIfNecessary, boolean isRestarted) {
     if (!NotificationUtil.hasPermission(context)) {
       synchronized (listeners) {
         for (MetronomeListener listener : listeners) {
@@ -285,7 +286,7 @@ public class MetronomeUtil {
       // notify system for shortcut usage prediction
       shortcutUtil.reportUsage(getTempo());
     }
-    if (isPlaying()) {
+    if (isPlaying() && !isRestarted) {
       return;
     }
     if (!fromService) {
@@ -337,15 +338,22 @@ public class MetronomeUtil {
       neverStartedWithGain = false;
     }
 
-    synchronized (listeners) {
-      for (MetronomeListener listener : listeners) {
-        listener.onMetronomeStart();
+    if (!isRestarted) {
+      synchronized (listeners) {
+        for (MetronomeListener listener : listeners) {
+          listener.onMetronomeStart();
+        }
       }
     }
     Log.i(TAG, "start: started metronome handler");
   }
 
   public void stop() {
+    stop(false);
+    Log.i(TAG, "stop: helloooo");
+  }
+
+  public void stop(boolean isRestarted) {
     if (!isPlaying()) {
       return;
     }
@@ -360,12 +368,21 @@ public class MetronomeUtil {
       removeHandlerCallbacks();
     }
 
-    synchronized (listeners) {
-      for (MetronomeListener listener : listeners) {
-        listener.onMetronomeStop();
+    if (!isRestarted) {
+      synchronized (listeners) {
+        for (MetronomeListener listener : listeners) {
+          listener.onMetronomeStop();
+        }
       }
     }
     Log.i(TAG, "stop: stopped metronome handler");
+  }
+
+  public void restartIfPlaying(boolean resetTimer) {
+    if (isPlaying()) {
+      stop(true);
+      start(resetTimer, true);
+    }
   }
 
   public boolean isPlaying() {
@@ -376,7 +393,7 @@ public class MetronomeUtil {
     config.setBeats(beats);
     sharedPrefs.edit().putString(PREF.BEATS, String.join(",", beats)).apply();
     if (isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
-      updateTimerHandler(isPlaying() ? 0 : timerProgress, true);
+      restartIfPlaying(false);
     }
   }
 

@@ -214,7 +214,7 @@ public class MainFragment extends BaseFragment
         return;
       }
       LayoutTransition transition = new LayoutTransition();
-      transition.setDuration(Constants.ANIM_DURATION_LONG);
+      transition.setDuration(Constants.ANIM_DURATION_SHORT);
       binding.linearMainTop.setLayoutTransition(transition);
     });
 
@@ -420,6 +420,12 @@ public class MainFragment extends BaseFragment
       public void onSongClick(Drawable icon, SongWithParts song) {
         ViewUtil.startIcon(icon);
         getMetronomeUtil().setCurrentSong(song.getSong().getName());
+        performHapticClick();
+      }
+
+      @Override
+      public void onSelectedSongClick(Drawable icon) {
+        ViewUtil.startIcon(icon);
         performHapticClick();
       }
     };
@@ -1304,7 +1310,6 @@ public class MainFragment extends BaseFragment
               }
               int containerWidth = recyclerView.getWidth();
               boolean shouldCenter = totalWidth < containerWidth;
-              Log.i(TAG, "onGlobalLayout: hello totalWidth: " + totalWidth + " containerWidth: " + containerWidth);
               if (shouldCenter) {
                 int padding = (containerWidth - totalWidth) / 2;
                 padding -= UiUtil.dpToPx(activity, 8); // Remove close chip outer inset
@@ -1316,6 +1321,7 @@ public class MainFragment extends BaseFragment
               } else {
                 recyclerView.setPadding(0, 0, 0, 0);
                 recyclerView.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
+                ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(5, 0);
               }
             }
             recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);

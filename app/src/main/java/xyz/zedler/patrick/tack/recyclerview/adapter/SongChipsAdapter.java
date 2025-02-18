@@ -82,11 +82,15 @@ public class SongChipsAdapter extends Adapter<RecyclerView.ViewHolder> {
       SongChipViewHolder songViewHolder = (SongChipViewHolder) holder;
       songViewHolder.binding.chipRowSong.setText(songWithParts.getSong().getName());
       songViewHolder.binding.chipRowSong.setOnClickListener(v -> {
-        listener.onSongClick(
-            songViewHolder.binding.chipRowSong.getChipIcon(),
-            songWithParts
-        );
-        setCurrentSongName(songWithParts.getSong().getName());
+        if (songWithParts.getSong().getName().equals(currentSongName)) {
+          listener.onSelectedSongClick(songViewHolder.binding.chipRowSong.getChipIcon());
+        } else {
+          listener.onSongClick(
+              songViewHolder.binding.chipRowSong.getChipIcon(),
+              songWithParts
+          );
+          setCurrentSongName(songWithParts.getSong().getName());
+        }
       });
       boolean isSelected = songWithParts.getSong().getName().equals(currentSongName);
       Context context = songViewHolder.binding.getRoot().getContext();
@@ -148,10 +152,12 @@ public class SongChipsAdapter extends Adapter<RecyclerView.ViewHolder> {
   @SuppressLint("NotifyDataSetChanged")
   private void setCurrentSongName(String currentSongName) {
     if (currentSongName == null && this.currentSongName != null) {
+      // Click on Clear button
       this.currentSongName = null;
       notifyItemRangeChanged(1, getItemCount() - 1);
     }
     if (!Objects.equals(this.currentSongName, currentSongName)) {
+      // Click on song chip
       this.currentSongName = currentSongName;
       notifyDataSetChanged();
     }
@@ -181,5 +187,6 @@ public class SongChipsAdapter extends Adapter<RecyclerView.ViewHolder> {
 
     void onCloseClick(Drawable icon);
     void onSongClick(Drawable icon, SongWithParts song);
+    void onSelectedSongClick(Drawable icon);
   }
 }

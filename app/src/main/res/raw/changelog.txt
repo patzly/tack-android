@@ -1,3 +1,7 @@
+## 5.0.0
+
+- New: bookmarks replaced by new song library for configuration combinations
+
 ## 4.8.0
 
 - New: removed "use subdivisions" setting in favor of new subdivisions option in options dialog
