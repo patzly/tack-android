@@ -21,6 +21,7 @@ package xyz.zedler.patrick.tack.presentation.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -76,7 +77,10 @@ fun SettingsScreen(
           )
       ) {
         item {
-          ListHeader {
+          ListHeader(
+            // Necessary padding to prevent cut-off by time text
+            contentPadding = PaddingValues(top = 24.dp)
+          ) {
             Text(
               text = stringResource(id = R.string.wear_title_settings),
               style = MaterialTheme.typography.titleMedium

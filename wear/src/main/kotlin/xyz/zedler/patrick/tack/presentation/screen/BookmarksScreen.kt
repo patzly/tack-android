@@ -22,6 +22,7 @@ package xyz.zedler.patrick.tack.presentation.screen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -95,7 +96,10 @@ fun BookmarksScreen(
           state = scrollableState
         ) {
           item {
-            ListHeader {
+            ListHeader(
+              // Necessary padding to prevent cut-off by time text
+              contentPadding = PaddingValues(top = 24.dp, bottom = 8.dp)
+            ) {
               Text(
                 text = stringResource(id = R.string.wear_title_bookmarks),
                 style = MaterialTheme.typography.titleMedium
@@ -158,7 +162,7 @@ fun BottomButton(
       containerColor = MaterialTheme.colorScheme.tertiary,
       contentColor = MaterialTheme.colorScheme.onTertiary
     ),
-    modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
+    modifier = Modifier.padding(bottom = 4.dp),
     enabled = enabled
   ) {
     Icon(
