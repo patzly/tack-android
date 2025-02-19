@@ -6,7 +6,7 @@
 
 Tack is a modern metronome app for Android with a beautifully designed interface that has all the features you need for practicing a music piece accurate to the beat.
 
-There also is a separate Wear OS app available with haptic beats and many options directly on your wrist.
+There also is a standalone Wear OS app available with haptic beats and many options directly on your wrist.
 
 ## Downloads
 
@@ -30,16 +30,15 @@ There also is a separate Wear OS app available with haptic beats and many option
 
 * Beautiful beat visualization with subdivisions and changeable emphasizes
 * BPM bookmarks as app shortcuts
-* Options for count in, incremental tempo change, song duration and swing
+* Options for count in, incremental tempo change, duration, muted beats and swing
 * Settings for flash screen, volume boost, audio latency correction and elapsed time
-* Dynamic color and dynamic contrast support
-* Large screen support
+* Support for dynamic color, dynamic contrast and large screens
 * No ads or analytics
  
 ### Wear OS
 
-* Convenient tempo picker and tempo tap
-* Advanced beat options with changeable emphasizes and subdivisions
+* Convenient tempo picker with separate tempo tap screen
+* Advanced beat customization with changeable emphasizes and subdivisions
 * Bookmarks for tempo, beats and subdivisions
 * Settings for flash screen, volume boost and audio latency correction
 
@@ -52,7 +51,7 @@ Tack for phones and tablets requires at least Android 5.0 Lollipop and works pro
 If you run into a bug or miss a feature, please [open an issue](https://github.com/patzly/tack-android/issues) in this repository.
 
 Tack can be translated! The main language is English, but I also maintain the German translation.
-You can help translate this project at [Transifex](https://app.transifex.com/patzly/tack-android), if your language is incomplete, contains typos or is not available yet. Translations which reached a completion level of 80% will be included in releases.  
+You can help translate this project at [Transifex](https://app.transifex.com/patzly/tack-android) if your language is incomplete, contains typos or is not available yet. Translations which reached a completion level of 80% will be included in releases.  
 
 Thanks for your contributions!
 
