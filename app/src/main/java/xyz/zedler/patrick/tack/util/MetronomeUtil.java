@@ -37,6 +37,7 @@ import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
@@ -49,7 +50,6 @@ import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.database.SongDatabase;
 import xyz.zedler.patrick.tack.database.entity.Part;
-import xyz.zedler.patrick.tack.database.entity.Song;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.model.MetronomeConfig;
 
@@ -164,8 +164,13 @@ public class MetronomeUtil {
         currentSongWithParts = db.songDao().getSongWithPartsByName(songName);
         partIndex = 0;
         new Handler(Looper.getMainLooper()).post(() -> {
-          setConfig(currentSongWithParts.getParts().get(partIndex).toConfig());
-          restartIfPlaying(true);
+          List<Part> parts = currentSongWithParts.getParts();
+          if (!parts.isEmpty()) {
+            setConfig(parts.get(partIndex).toConfig());
+            restartIfPlaying(true);
+          } else {
+            Log.e(TAG, "setCurrentSong: parts cannot be empty");
+          }
         });
       });
     } else {

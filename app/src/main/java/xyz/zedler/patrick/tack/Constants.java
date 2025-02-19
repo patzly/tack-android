@@ -30,7 +30,6 @@ public final class Constants {
   public static final int TEMPO_MAX = 600;
   public static final int BEATS_MAX = 20;
   public static final int SUBS_MAX = 10;
-  public static final int BOOKMARKS_MAX = 10;
   public static final int TIMER_MAX = 399;
 
   public final static class PREF {

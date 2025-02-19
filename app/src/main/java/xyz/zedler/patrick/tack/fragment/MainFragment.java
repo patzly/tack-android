@@ -58,7 +58,11 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.slider.Slider.OnSliderTouchListener;
 import com.google.android.material.snackbar.Snackbar;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
@@ -433,19 +437,35 @@ public class MainFragment extends BaseFragment
         onSongClickListener,
         getMetronomeUtil().getCurrentSong()
     );
-    // TODO: sorting
     binding.recyclerMainSongs.setAdapter(adapter);
     LinearLayoutManager layoutManager = new LinearLayoutManager(
         activity, LinearLayoutManager.HORIZONTAL, false
     );
     binding.recyclerMainSongs.setLayoutManager(layoutManager);
-    activity.getSongViewModel().getAllSongsWithParts().observe(
-        getViewLifecycleOwner(), newSongs -> {
-          adapter.setSongs(newSongs);
-          layoutSongChips();
+    activity.getSongViewModel().getAllSongsWithParts().observe(getViewLifecycleOwner(), songs -> {
+      // Sort by last played
+      // TODO: name, last played, ASC / DESC
+      Collections.sort(
+          songs,
+          (s1, s2) -> Long.compare(s2.getSong().getLastPlayed(), s1.getSong().getLastPlayed())
+      );
+      Collections.reverse(songs);
+
+      adapter.setSongs(songs);
+
+      int scrollToPosition = -1;
+      String currentSongName = getMetronomeUtil().getCurrentSong();
+      if (currentSongName != null) {
+        for (int i = 0; i < songs.size(); i++) {
+          if (songs.get(i).getSong().getName().equals(currentSongName)) {
+            scrollToPosition = i;
+            break;
+          }
         }
-    );
-    layoutSongChips();
+      }
+      layoutSongChips(scrollToPosition + 1);
+    });
+    layoutSongChips(-1);
 
     boolean isWidthLargeEnough = screenWidthDp - 16 >= 344;
     boolean large = (isPortrait && isWidthLargeEnough) || isLandTablet;
@@ -1271,7 +1291,7 @@ public class MainFragment extends BaseFragment
         (metronome.isSubdivisionActive() ? 1 : 0);
   }
 
-  private void layoutSongChips() {
+  private void layoutSongChips(int scrollToPosition) {
     int outerClosePadding = UiUtil.dpToPx(activity, 8);
     int innerClosePadding = UiUtil.dpToPx(activity, 0);
     int outerPadding = UiUtil.dpToPx(activity, 16);
@@ -1293,10 +1313,7 @@ public class MainFragment extends BaseFragment
               return;
             }
             RecyclerView recyclerView = binding.recyclerMainSongs;
-            if (recyclerView.getAdapter() != null
-                && recyclerView.getChildCount() == recyclerView.getAdapter().getItemCount()
-                && recyclerView.getChildCount() > 0
-            ) {
+            if (recyclerView.getAdapter() != null && recyclerView.getChildCount() > 0) {
               int totalWidth = 0;
               for (int i = 0; i < recyclerView.getChildCount(); i++) {
                 View child = recyclerView.getChildAt(i);
@@ -1321,36 +1338,15 @@ public class MainFragment extends BaseFragment
               } else {
                 recyclerView.setPadding(0, 0, 0, 0);
                 recyclerView.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
-                ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(5, 0);
+                if (scrollToPosition >= 0 && binding.recyclerMainSongs.getLayoutManager() != null) {
+                  // Scroll to active song chip
+                  binding.recyclerMainSongs.getLayoutManager().scrollToPosition(scrollToPosition);
+                }
               }
             }
             recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
           }
         });
-    // TODO: align active song chip
-    /*if (isActive && alignActiveOrCenter) {
-      int scrollX = binding.scrollHorizMainBookmarks.getScrollX();
-      int chipStart = isRtl ? chip.getRight() : chip.getLeft();
-      int chipEnd = isRtl ? chip.getLeft() : chip.getRight();
-      int scrollViewWidth = binding.scrollHorizMainBookmarks.getWidth();
-      int margin = UiUtil.dpToPx(activity, 16);
-      int start = chipStart + margin * (isRtl ? 1 : -1);
-      int end = chipEnd + margin * (isRtl ? -1 : 1);
-      if (start < scrollX) {
-        if (animated) {
-          binding.scrollHorizMainBookmarks.smoothScrollTo(start, 0);
-        } else {
-          binding.scrollHorizMainBookmarks.scrollTo(start, 0);
-        }
-      } else if (end > (scrollX + scrollViewWidth)) {
-        int scrollTo = end + scrollViewWidth * (isRtl ? 1 : -1);
-        if (animated) {
-          binding.scrollHorizMainBookmarks.smoothScrollTo(scrollTo, 0);
-        } else {
-          binding.scrollHorizMainBookmarks.scrollTo(scrollTo, 0);
-        }
-      }
-    }*/
   }
 
   private void changeTempo(int difference) {

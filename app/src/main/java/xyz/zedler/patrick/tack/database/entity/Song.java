@@ -47,7 +47,7 @@ public class Song {
 
   @Ignore
   public Song(@NonNull String name) {
-    this(name, Calendar.getInstance().getTimeInMillis(), false);
+    this(name, 0, false);
   }
 
   @NonNull
