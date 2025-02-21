@@ -37,6 +37,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
@@ -86,10 +87,14 @@ fun BeatsScreen(
           )
       ) {
         item {
-          ListHeader {
+          ListHeader(
+            // Necessary padding to prevent cut-off by time text
+            contentPadding = PaddingValues(top = 24.dp)
+          ) {
             Text(
               text = stringResource(id = R.string.wear_title_beats_count, state.beats.size),
-              style = MaterialTheme.typography.titleMedium
+              style = MaterialTheme.typography.titleMedium,
+              textAlign = TextAlign.Center
             )
           }
         }
@@ -136,7 +141,8 @@ fun BeatsScreen(
           ListHeader {
             Text(
               text = stringResource(id = R.string.wear_title_subdivisions_count, state.subdivisions.size),
-              style = MaterialTheme.typography.titleMedium
+              style = MaterialTheme.typography.titleMedium,
+              textAlign = TextAlign.Center
             )
           }
         }
