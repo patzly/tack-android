@@ -260,6 +260,8 @@
   <string name="settings_gain_disclaimer">Bei aktiver Verstärkung wird vor jeder Wiedergabe eine Warnung angezeigt. Der Entwickler übernimmt keine Verantwortung für etwaige Schäden.</string>
 
   <string name="settings_hide_sub_controls">Steuerung von Schlagunterteilungen ausblenden, wenn ungenutzt</string>
+  <string name="settings_hide_sub_controls_description">Zeigt zusätzliche Steuerung für Unterteilungen in Optionen an</string>
+
   <string name="settings_active_beat">Aktuellen Schlag hervorheben</string>
   <string name="settings_active_beat_description">Hilfreich für langsame Tempos</string>
 
