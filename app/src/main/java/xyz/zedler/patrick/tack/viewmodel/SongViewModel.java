@@ -40,7 +40,7 @@ public class SongViewModel extends AndroidViewModel {
 
     db = SongDatabase.getInstance(application);
 
-    /*Executors.newSingleThreadExecutor().execute(() -> {
+    Executors.newSingleThreadExecutor().execute(() -> {
       Song song1 = new Song("120 bpm");
       db.songDao().insertSong(song1);
 
@@ -57,7 +57,13 @@ public class SongViewModel extends AndroidViewModel {
       config2.setTimerDuration(4);
       Part part2 = new Part("Adagio", "80 bpm", config2);
       db.songDao().insertPart(part2);
-    });*/
+
+      MetronomeConfig config3 = new MetronomeConfig();
+      config3.setTempo(120);
+      config3.setTimerDuration(8);
+      Part part3 = new Part("Allegro", "80 bpm", config3);
+      db.songDao().insertPart(part3);
+    });
 
     allSongsWithParts = db.songDao().getAllSongsWithParts();
   }

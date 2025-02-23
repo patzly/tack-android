@@ -412,14 +412,11 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintEnd_toEndOf="parent">
 
-      <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_main_songs"
+      <xyz.zedler.patrick.tack.view.SongPickerView
+        android:id="@+id/song_picker_main"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_gravity="center_vertical"
-        android:overScrollMode="ifContentScrolls"
-        android:scrollbars="none"
-        tools:ignore="UselessParent" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical" />
 
     </FrameLayout>
 

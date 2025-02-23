@@ -72,6 +72,7 @@ public class MetronomeUtil {
   private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
   private ValueAnimator timerAnimator;
   private SongWithParts currentSongWithParts;
+  private String currentSongName;
   private int partIndex, muteCountDown;
   private long tickIndex, latency, elapsedStartTime, elapsedTime, elapsedPrevious, timerStartTime;
   private float timerProgress;
@@ -109,7 +110,7 @@ public class MetronomeUtil {
     setIgnoreFocus(sharedPrefs.getBoolean(PREF.IGNORE_FOCUS, DEF.IGNORE_FOCUS));
     setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
     setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
-    setCurrentSong(sharedPrefs.getString(PREF.CURRENT_SONG, DEF.CURRENT_SONG));
+    setCurrentSong(sharedPrefs.getString(PREF.SONG_CURRENT, DEF.SONG_CURRENT));
   }
 
   public MetronomeConfig getConfig() {
@@ -151,33 +152,44 @@ public class MetronomeUtil {
 
   @Nullable
   public String getCurrentSong() {
-    if (currentSongWithParts != null) {
-      return currentSongWithParts.getSong().getName();
+    if (currentSongName != null) {
+      return currentSongName;
     } else {
       return null;
     }
   }
 
   public void setCurrentSong(@Nullable String songName) {
+    currentSongName = songName;
     if (songName != null) {
       Executors.newSingleThreadExecutor().execute(() -> {
         currentSongWithParts = db.songDao().getSongWithPartsByName(songName);
         partIndex = 0;
-        new Handler(Looper.getMainLooper()).post(() -> {
-          List<Part> parts = currentSongWithParts.getParts();
-          if (!parts.isEmpty()) {
-            setConfig(parts.get(partIndex).toConfig());
-            restartIfPlaying(true);
-          } else {
-            Log.e(TAG, "setCurrentSong: parts cannot be empty");
-          }
-        });
+        if (currentSongWithParts != null) {
+          new Handler(Looper.getMainLooper()).post(() -> {
+            List<Part> parts = currentSongWithParts.getParts();
+            if (!parts.isEmpty()) {
+              setConfig(parts.get(partIndex).toConfig());
+              restartIfPlaying(true);
+            } else {
+              Log.e(TAG, "setCurrentSong: parts cannot be empty");
+            }
+            synchronized (listeners) {
+              for (MetronomeListener listener : listeners) {
+                listener.onMetronomeSongChanged(currentSongWithParts);
+                listener.onMetronomePartChanged(partIndex);
+              }
+            }
+          });
+        } else {
+          Log.e(TAG, "setCurrentSong: song '" + songName + "' not found");
+        }
       });
     } else {
       currentSongWithParts = null;
       partIndex = 0;
     }
-    sharedPrefs.edit().putString(PREF.CURRENT_SONG, songName).apply();
+    sharedPrefs.edit().putString(PREF.SONG_CURRENT, songName).apply();
   }
 
   public int getCurrentPartIndex() {
@@ -1208,6 +1220,8 @@ public class MetronomeUtil {
     void onMetronomeTimerStarted();
     void onMetronomeTimerSecondsChanged();
     void onMetronomeConfigChanged();
+    void onMetronomeSongChanged(@Nullable SongWithParts song);
+    void onMetronomePartChanged(int index);
     void onMetronomeConnectionMissing();
     void onMetronomePermissionMissing();
   }
@@ -1222,6 +1236,8 @@ public class MetronomeUtil {
     public void onMetronomeTimerStarted() {}
     public void onMetronomeTimerSecondsChanged() {}
     public void onMetronomeConfigChanged() {}
+    public void onMetronomeSongChanged(@Nullable SongWithParts song) {}
+    public void onMetronomePartChanged(int index) {}
     public void onMetronomeConnectionMissing() {}
     public void onMetronomePermissionMissing() {}
   }

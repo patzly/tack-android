@@ -1,6 +1,7 @@
 ## 5.0.0
 
 - New: bookmarks replaced by new song library for configuration combinations
+- Fixed: elapsed time dialog hidden when rotating device
 
 ## 4.8.0
 

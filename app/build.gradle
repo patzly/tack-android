@@ -97,6 +97,7 @@ dependencies {
     implementation libs.preference
     implementation libs.shapes
     implementation libs.material
+    implementation libs.recyclerview
     implementation libs.room.runtime
     annotationProcessor libs.room.compiler
 }

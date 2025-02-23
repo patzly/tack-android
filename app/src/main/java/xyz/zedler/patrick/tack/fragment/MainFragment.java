@@ -28,8 +28,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -49,19 +47,13 @@ import androidx.annotation.OptIn;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.badge.ExperimentalBadgeUtils;
-import com.google.android.material.chip.Chip;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.slider.Slider.OnSliderTouchListener;
 import com.google.android.material.snackbar.Snackbar;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
@@ -70,14 +62,12 @@ import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.database.relations.SongWithParts;
-import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipsAdapter;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
+import xyz.zedler.patrick.tack.database.entity.Part;
+import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.FragmentMainBinding;
 import xyz.zedler.patrick.tack.drawable.BeatsBgDrawable;
-import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipsAdapter.OnSongClickListener;
-import xyz.zedler.patrick.tack.recyclerview.decoration.SongChipItemDecoration;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil;
@@ -91,6 +81,7 @@ import xyz.zedler.patrick.tack.util.TempoTapDialogUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.BeatView;
+import xyz.zedler.patrick.tack.view.SongPickerView.SongPickerListener;
 import xyz.zedler.patrick.tack.view.TempoPickerView.OnPickListener;
 import xyz.zedler.patrick.tack.view.TempoPickerView.OnRotationListener;
 
@@ -108,7 +99,7 @@ public class MainFragment extends BaseFragment
   private ValueAnimator fabAnimator;
   private float cornerSizeStop, cornerSizePlay, cornerSizeCurrent;
   private int colorFlashNormal, colorFlashStrong, colorFlashMuted;
-  private DialogUtil dialogUtilGain, dialogUtilSplitScreen, dialogUtilElapsed;
+  private DialogUtil dialogUtilGain, dialogUtilSplitScreen, dialogUtilElapsed, dialogUtilParts;
   private OptionsUtil optionsUtil;
   private ShortcutUtil shortcutUtil;
   private TempoTapDialogUtil tempoTapDialogUtil;
@@ -281,6 +272,9 @@ public class MainFragment extends BaseFragment
     );
     dialogUtilElapsed.showIfWasShown(savedInstanceState);
 
+    dialogUtilParts = new DialogUtil(activity, "parts");
+    dialogUtilParts.showIfWasShown(savedInstanceState);
+
     tempoDialogUtil = new TempoDialogUtil(activity, this);
     tempoDialogUtil.showIfWasShown(savedInstanceState);
 
@@ -412,60 +406,25 @@ public class MainFragment extends BaseFragment
 
     setButtonStates();
 
-    OnSongClickListener onSongClickListener = new OnSongClickListener() {
+    binding.songPickerMain.init(activity);
+    binding.songPickerMain.setListener(new SongPickerListener() {
       @Override
-      public void onCloseClick(Drawable icon) {
-        ViewUtil.startIcon(icon);
-        getMetronomeUtil().setCurrentSong(null);
+      public void onCurrentSongChanged(@Nullable String currentSong) {
+        getMetronomeUtil().setCurrentSong(currentSong);
         performHapticClick();
       }
 
       @Override
-      public void onSongClick(Drawable icon, SongWithParts song) {
-        ViewUtil.startIcon(icon);
-        getMetronomeUtil().setCurrentSong(song.getSong().getName());
+      public void onCurrentSongClicked() {
+        dialogUtilParts.show();
         performHapticClick();
       }
-
-      @Override
-      public void onSelectedSongClick(Drawable icon) {
-        ViewUtil.startIcon(icon);
-        performHapticClick();
-      }
-    };
-    SongChipsAdapter adapter = new SongChipsAdapter(
-        onSongClickListener,
-        getMetronomeUtil().getCurrentSong()
-    );
-    binding.recyclerMainSongs.setAdapter(adapter);
-    LinearLayoutManager layoutManager = new LinearLayoutManager(
-        activity, LinearLayoutManager.HORIZONTAL, false
-    );
-    binding.recyclerMainSongs.setLayoutManager(layoutManager);
-    activity.getSongViewModel().getAllSongsWithParts().observe(getViewLifecycleOwner(), songs -> {
-      // Sort by last played
-      // TODO: name, last played, ASC / DESC
-      Collections.sort(
-          songs,
-          (s1, s2) -> Long.compare(s2.getSong().getLastPlayed(), s1.getSong().getLastPlayed())
-      );
-      Collections.reverse(songs);
-
-      adapter.setSongs(songs);
-
-      int scrollToPosition = -1;
-      String currentSongName = getMetronomeUtil().getCurrentSong();
-      if (currentSongName != null) {
-        for (int i = 0; i < songs.size(); i++) {
-          if (songs.get(i).getSong().getName().equals(currentSongName)) {
-            scrollToPosition = i;
-            break;
-          }
-        }
-      }
-      layoutSongChips(scrollToPosition + 1);
     });
-    layoutSongChips(-1);
+    activity.getSongViewModel().getAllSongsWithParts().observe(
+        getViewLifecycleOwner(), songs -> binding.songPickerMain.setSongs(songs)
+    );
+    // If activity was running but fragment is recreated, this will init the current song again
+    onMetronomeSongChanged(getMetronomeUtil().getCurrentSongWithParts());
 
     boolean isWidthLargeEnough = screenWidthDp - 16 >= 344;
     boolean large = (isPortrait && isWidthLargeEnough) || isLandTablet;
@@ -555,6 +514,12 @@ public class MainFragment extends BaseFragment
     super.onSaveInstanceState(outState);
     if (dialogUtilGain != null) {
       dialogUtilGain.saveState(outState);
+    }
+    if (dialogUtilElapsed != null) {
+      dialogUtilElapsed.saveState(outState);
+    }
+    if (dialogUtilParts != null) {
+      dialogUtilParts.saveState(outState);
     }
     if (optionsUtil != null) {
       optionsUtil.saveState(outState);
@@ -819,6 +784,37 @@ public class MainFragment extends BaseFragment
       updateOptions(true);
     };
     activity.runOnUiThread(runnable);
+  }
+
+  @Override
+  public void onMetronomeSongChanged(@Nullable SongWithParts song) {
+    if (song != null) {
+      activity.runOnUiThread(() -> {
+        if (binding == null) {
+          return;
+        }
+        List<Part> parts = song.getParts();
+        String[] names = new String[parts.size()];
+        for (int i = 0; i < parts.size(); i++) {
+          names[i] = parts.get(i).getName();
+          if (names[i] == null) {
+            names[i] = getString(R.string.label_part_unnamed, i + 1);
+          }
+        }
+        dialogUtilParts.createSingleChoice(
+            song.getSong().getName(),
+            names,
+            0,
+            (dialog, which) -> {
+              // TODO
+            });
+      });
+    }
+  }
+
+  @Override
+  public void onMetronomePartChanged(int index) {
+
   }
 
   @Override
@@ -1289,64 +1285,6 @@ public class MainFragment extends BaseFragment
         (metronome.isTimerActive() ? 1 : 0) +
         (metronome.isMuteActive() ? 1 : 0) +
         (metronome.isSubdivisionActive() ? 1 : 0);
-  }
-
-  private void layoutSongChips(int scrollToPosition) {
-    int outerClosePadding = UiUtil.dpToPx(activity, 8);
-    int innerClosePadding = UiUtil.dpToPx(activity, 0);
-    int outerPadding = UiUtil.dpToPx(activity, 16);
-    int innerPadding = UiUtil.dpToPx(activity, 4);
-    SongChipItemDecoration decoration = new SongChipItemDecoration(
-        outerClosePadding, innerClosePadding,
-        outerPadding, innerPadding,
-        isRtl
-    );
-    if (binding.recyclerMainSongs.getItemDecorationCount() > 0) {
-      binding.recyclerMainSongs.removeItemDecorationAt(0);
-    }
-    binding.recyclerMainSongs.addItemDecoration(decoration);
-    binding.recyclerMainSongs.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            if (binding == null) {
-              return;
-            }
-            RecyclerView recyclerView = binding.recyclerMainSongs;
-            if (recyclerView.getAdapter() != null && recyclerView.getChildCount() > 0) {
-              int totalWidth = 0;
-              for (int i = 0; i < recyclerView.getChildCount(); i++) {
-                View child = recyclerView.getChildAt(i);
-                totalWidth += child.getWidth();
-              }
-              if (recyclerView.getChildCount() > 0) {
-                totalWidth += outerClosePadding;
-                totalWidth += innerClosePadding;
-                totalWidth += innerPadding * 2 * (recyclerView.getChildCount() - 2);
-                totalWidth += outerPadding;
-              }
-              int containerWidth = recyclerView.getWidth();
-              boolean shouldCenter = totalWidth < containerWidth;
-              if (shouldCenter) {
-                int padding = (containerWidth - totalWidth) / 2;
-                padding -= UiUtil.dpToPx(activity, 8); // Remove close chip outer inset
-                recyclerView.setPadding(
-                    isRtl ? 0 : padding, 0,
-                    isRtl ? padding : 0, 0
-                );
-                recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
-              } else {
-                recyclerView.setPadding(0, 0, 0, 0);
-                recyclerView.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
-                if (scrollToPosition >= 0 && binding.recyclerMainSongs.getLayoutManager() != null) {
-                  // Scroll to active song chip
-                  binding.recyclerMainSongs.getLayoutManager().scrollToPosition(scrollToPosition);
-                }
-              }
-            }
-            recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-          }
-        });
   }
 
   private void changeTempo(int difference) {

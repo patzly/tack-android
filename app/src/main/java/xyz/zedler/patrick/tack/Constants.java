@@ -60,7 +60,6 @@ public final class Constants {
     public final static String IGNORE_FOCUS = "ignore_focus";
     public final static String GAIN = "gain";
     public final static String BIG_LOGO = "big_logo";
-    public final static String CURRENT_SONG = "current_song";
 
     // Options
     public final static String COUNT_IN = "count_in";
@@ -75,6 +74,10 @@ public final class Constants {
     public final static String MUTE_MUTE = "mute_mute";
     public final static String MUTE_UNIT = "mute_unit";
     public final static String MUTE_RANDOM = "mute_random";
+
+    // Song library
+    public static final String SONGS_ORDER = "songs_order";
+    public static final String SONG_CURRENT = "current_song";
   }
 
   public final static class DEF {
@@ -104,7 +107,6 @@ public final class Constants {
     public final static boolean IGNORE_FOCUS = false;
     public final static int GAIN = 0;
     public final static boolean BIG_LOGO = false;
-    public final static String CURRENT_SONG = null;
 
     // Options
     public final static int COUNT_IN = 0;
@@ -119,6 +121,10 @@ public final class Constants {
     public final static int MUTE_MUTE = 1;
     public final static String MUTE_UNIT = UNIT.BARS;
     public final static boolean MUTE_RANDOM = false;
+
+    // Song library
+    public final static int SONGS_ORDER = 0;
+    public final static String SONG_CURRENT = null;
   }
 
   public final static class SOUND {
@@ -146,6 +152,14 @@ public final class Constants {
     public final static String BARS = "bars";
     public final static String SECONDS = "seconds";
     public final static String MINUTES = "minutes";
+  }
+
+  public final static class SONGS_ORDER {
+
+    public final static int NAME_ASC = 0;
+    public final static int NAME_DESC = 1;
+    public final static int LAST_PLAYED_ASC = 2;
+    public final static int LAST_PLAYED_DESC = 3;
   }
 
   public final static class ACTION {

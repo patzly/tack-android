@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<FrameLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/frame_chip_song_container"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:minHeight="48dp">
+
+  <com.google.android.material.card.MaterialCardView
+    android:id="@+id/card_chip_song"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:stateListAnimator="@null"
+    app:contentPadding="0dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="?attr/colorOnTertiaryContainer"
+    app:cardCornerRadius="8dp"
+    app:cardBackgroundColor="?attr/colorTertiaryContainer">
+
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:minHeight="32dp"
+      android:paddingStart="8dp"
+      android:paddingEnd="8dp"
+      android:gravity="center_vertical">
+
+      <ImageView
+        android:id="@+id/image_chip_song"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:src="@drawable/ic_rounded_music_note_anim"
+        app:tint="?attr/colorOnTertiaryContainer"
+        tools:ignore="ContentDescription" />
+
+      <TextView
+        android:id="@+id/text_chip_song"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center_vertical"
+        android:textAppearance="@style/TextAppearance.Tack.LabelLarge"
+        android:textColor="?attr/colorOnTertiaryContainer"
+        android:fontFamily="@font/jost_medium"
+        android:text="Song" />
+
+      <ImageView
+        android:id="@+id/image_chip_song_close"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:src="@drawable/ic_rounded_close_anim"
+        app:tint="?attr/colorOnTertiaryContainer"
+        tools:ignore="ContentDescription"
+        android:scaleType="centerCrop" />
+
+    </LinearLayout>
+
+  </com.google.android.material.card.MaterialCardView>
+
+  <FrameLayout
+    android:id="@+id/frame_chip_song_close"
+    android:layout_width="40dp"
+    android:layout_height="48dp"
+    android:layout_gravity="end" />
+
+</FrameLayout>

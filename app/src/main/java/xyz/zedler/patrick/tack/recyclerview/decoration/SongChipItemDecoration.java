@@ -26,15 +26,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class SongChipItemDecoration extends RecyclerView.ItemDecoration {
 
-  private final int outerClosePadding, innerClosePadding, outerPadding, innerPadding;
+  private final int outerPadding, innerPadding;
   private final boolean isRtl;
 
-  public SongChipItemDecoration(
-      int outerClosePadding, int innerClosePadding, int outerPadding, int innerPadding,
-      boolean isRtl
-  ) {
-    this.outerClosePadding = outerClosePadding;
-    this.innerClosePadding = innerClosePadding;
+  public SongChipItemDecoration(int outerPadding, int innerPadding, boolean isRtl) {
     this.outerPadding = outerPadding;
     this.innerPadding = innerPadding;
     this.isRtl = isRtl;
@@ -47,16 +42,11 @@ public class SongChipItemDecoration extends RecyclerView.ItemDecoration {
   ) {
     int position = parent.getChildAdapterPosition(view);
     if (position == 0) {
-      outRect.left = isRtl ? innerClosePadding : outerClosePadding;
-      outRect.right = isRtl ? outerClosePadding : innerClosePadding;
+      outRect.left = isRtl ? innerPadding : outerPadding;
+      outRect.right = isRtl ? outerPadding : innerPadding;
     } else {
-      if (position == 1) { // second after close chip
-        outRect.left = isRtl ? innerPadding : 0;
-        outRect.right = isRtl ? 0 : innerPadding;
-      } else {
-        outRect.left = innerPadding;
-        outRect.right = innerPadding;
-      }
+      outRect.left = innerPadding;
+      outRect.right = innerPadding;
     }
 
     int count = state.getItemCount();
