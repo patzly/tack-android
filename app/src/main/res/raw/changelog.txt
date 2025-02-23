@@ -1,5 +1,10 @@
 ## 4.8.1
 
+? In this update I made it again the default behavior to keep subdivision controls visible on main screen when not in use. Thank you for your feedback!
+Currently I'm working on Tack v5.0 with a big new feature called "Song Library" for endless stored option combinations.
+Stay tuned!
+
+- New: setting to hide subdivision controls on main screen when not in use
 - Fixed: elapsed time dialog hidden after screen orientation change
 
 ## 4.8.0

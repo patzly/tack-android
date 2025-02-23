@@ -99,7 +99,7 @@ public class MainFragment extends BaseFragment
   private MainActivity activity;
   private Bundle savedState;
   private boolean flashScreen, reduceAnimations, isRtl, isLandTablet, bigLogo, showPickerNotLogo;
-  private boolean activeBeat;
+  private boolean hideSubControls, activeBeat;
   private LogoUtil logoUtil, logoCenterUtil;
   private ValueAnimator fabAnimator;
   private float cornerSizeStop, cornerSizePlay, cornerSizeCurrent;
@@ -179,6 +179,7 @@ public class MainFragment extends BaseFragment
 
     flashScreen = getSharedPrefs().getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
     reduceAnimations = getSharedPrefs().getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM);
+    hideSubControls = getSharedPrefs().getBoolean(PREF.HIDE_SUB_CONTROLS, DEF.HIDE_SUB_CONTROLS);
     activeBeat = getSharedPrefs().getBoolean(PREF.ACTIVE_BEAT, DEF.ACTIVE_BEAT);
 
     if (getSharedPrefs().getBoolean(PREF.BIG_TIME_TEXT, DEF.BIG_TIME_TEXT)) {
@@ -668,7 +669,10 @@ public class MainFragment extends BaseFragment
         ((BeatView) beat).beat();
       }
       View subdivision = binding.linearMainSubs.getChildAt(tick.subdivision - 1);
-      if (getMetronomeUtil().isSubdivisionActive() && subdivision instanceof BeatView) {
+      if ((getMetronomeUtil().isSubdivisionActive() || !hideSubControls)) {
+        if (!(subdivision instanceof BeatView)) {
+          return;
+        }
         ((BeatView) subdivision).setTickType(tick.subdivision == 1 ? TICK_TYPE.MUTED : tick.type);
         ((BeatView) subdivision).beat();
       }
@@ -1097,7 +1101,7 @@ public class MainFragment extends BaseFragment
     binding.buttonMainAddSubdivision.setEnabled(subdivisions < Constants.SUBS_MAX);
     binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
     binding.linearMainSubsBg.setVisibility(
-        getMetronomeUtil().isSubdivisionActive() ? View.VISIBLE : View.GONE
+        getMetronomeUtil().isSubdivisionActive() || !hideSubControls ? View.VISIBLE : View.GONE
     );
     subsCountBadge.setNumber(subdivisions);
     boolean show = subdivisions > 4;
@@ -1272,7 +1276,7 @@ public class MainFragment extends BaseFragment
         (metronome.isIncrementalActive() ? 1 : 0) +
         (metronome.isTimerActive() ? 1 : 0) +
         (metronome.isMuteActive() ? 1 : 0) +
-        (metronome.isSubdivisionActive() ? 1 : 0);
+        (metronome.isSubdivisionActive() && hideSubControls ? 1 : 0);
   }
 
   private Chip getBookmarkChip(int tempo) {
