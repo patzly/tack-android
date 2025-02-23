@@ -365,7 +365,6 @@
     style="@style/Widget.Tack.Slider"
     android:layout_marginStart="2dp"
     android:layout_marginEnd="2dp"
-    android:layout_marginBottom="4dp"
     android:valueFrom="0"
     android:valueTo="50"
     android:stepSize="1"
@@ -384,6 +383,7 @@
       style="@style/Widget.Tack.TextView.BodyMedium"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
+      android:layout_marginTop="4dp"
       android:paddingStart="16dp"
       android:paddingEnd="16dp"
       android:textColor="?attr/colorOnSurfaceVariant"
@@ -464,35 +464,43 @@
 
   </LinearLayout>
 
-  <TextView
-    style="@style/Widget.Tack.TextView"
+  <LinearLayout
+    android:id="@+id/linear_options_subdivisions_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:text="@string/options_subdivisions" />
+    android:orientation="vertical">
 
-  <TextView
-    android:id="@+id/text_options_subdivisions"
-    style="@style/Widget.Tack.TextView.BodyMedium"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:textColor="?attr/colorOnSurfaceVariant"
-    android:fontFeatureSettings="tnum" />
+    <TextView
+      style="@style/Widget.Tack.TextView"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp"
+      android:text="@string/options_subdivisions" />
 
-  <com.google.android.material.slider.CustomSlider
-    android:id="@+id/slider_options_subdivisions"
-    style="@style/Widget.Tack.Slider"
-    android:layout_marginStart="2dp"
-    android:layout_marginEnd="2dp"
-    android:valueFrom="1"
-    android:valueTo="10"
-    android:stepSize="1"
-    android:value="1"
-    app:labelBehavior="gone" />
+    <TextView
+      android:id="@+id/text_options_subdivisions"
+      style="@style/Widget.Tack.TextView.BodyMedium"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp"
+      android:textColor="?attr/colorOnSurfaceVariant"
+      android:fontFeatureSettings="tnum" />
+
+    <com.google.android.material.slider.CustomSlider
+      android:id="@+id/slider_options_subdivisions"
+      style="@style/Widget.Tack.Slider"
+      android:layout_marginStart="2dp"
+      android:layout_marginEnd="2dp"
+      android:valueFrom="1"
+      android:valueTo="10"
+      android:stepSize="1"
+      android:value="1"
+      app:labelBehavior="gone" />
+
+  </LinearLayout>
 
   <TextView
     style="@style/Widget.Tack.TextView"

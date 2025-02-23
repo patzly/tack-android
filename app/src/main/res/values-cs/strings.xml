@@ -99,6 +99,8 @@
   <string name="msg_connection_lost">Ztraceno spojení se službou, vyžadován restart aplikace</string>
   <string name="msg_reset">Resetovat vše?</string>
   <string name="msg_reset_description">Opravdu chcete resetovat celou aplikaci včetně záložek a nastavení? Tato akce je nevratná.</string>
+  <string name="msg_reset_elapsed">Resetovat uplynulý čas?</string>
+  <string name="msg_reset_elapsed_description">Opravdu chcete resetovat uplynulý čas? Tato akce je nevratná.</string>
   <string name="msg_gain">Přehrát se zesílenou hlasitostí?</string>
   <string name="msg_gain_description">Dejte si pozor, abyste zvuk nepřehrávali ve sluchátkách, jelikož hlasité zvuky mohou způsobit poškození sluchu!</string>
   <string name="msg_split_screen">Okno příliš malé</string>

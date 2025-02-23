@@ -31,6 +31,8 @@ import com.google.android.material.slider.Slider;
 import com.google.android.material.slider.Slider.OnChangeListener;
 import com.google.android.material.slider.Slider.OnSliderTouchListener;
 import xyz.zedler.patrick.tack.Constants;
+import xyz.zedler.patrick.tack.Constants.DEF;
+import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
@@ -50,6 +52,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   private final Runnable onModifiersCountChanged;
   private boolean isCountInActive, isIncrementalActive, isTimerActive;
   private boolean isMuteActive, isSubdivisionActive;
+  private boolean hideSubControls;
   private DialogUtil dialogUtil;
   private PartialDialogOptionsBinding bindingDialog;
 
@@ -72,6 +75,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     isTimerActive = getMetronomeUtil().isTimerActive();
     isMuteActive = getMetronomeUtil().isMuteActive();
     isSubdivisionActive = getMetronomeUtil().isSubdivisionActive();
+
+    hideSubControls = activity.getSharedPrefs().getBoolean(
+        PREF.HIDE_SUB_CONTROLS, DEF.HIDE_SUB_CONTROLS
+    );
 
     if (binding != null) {
       binding.sliderOptionsIncrementalAmount.addOnSliderTouchListener(this);
@@ -470,6 +477,11 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   }
 
   public void updateSubdivisions(boolean animated) {
+    // Only show if user decided to hide subdivisions when not in use
+    binding.linearOptionsSubdivisionsContainer.setVisibility(
+        hideSubControls ? View.VISIBLE : View.GONE
+    );
+
     int subdivisionsCount = getMetronomeUtil().getSubdivisionsCount();
     boolean isSubdivisionActive = getMetronomeUtil().isSubdivisionActive();
     if (this.isSubdivisionActive != isSubdivisionActive) {
