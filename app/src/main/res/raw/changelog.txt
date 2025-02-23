@@ -1,3 +1,7 @@
+## 4.8.1
+
+- Fixed: elapsed time dialog hidden after screen orientation change
+
 ## 4.8.0
 
 - New: removed "use subdivisions" setting in favor of new subdivisions option in options dialog

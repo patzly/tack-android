@@ -512,6 +512,9 @@ public class MainFragment extends BaseFragment
     if (dialogUtilGain != null) {
       dialogUtilGain.saveState(outState);
     }
+    if (dialogUtilElapsed != null) {
+      dialogUtilElapsed.saveState(outState);
+    }
     if (optionsUtil != null) {
       optionsUtil.saveState(outState);
     }
