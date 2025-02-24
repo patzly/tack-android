@@ -39,11 +39,11 @@ public class SongChipsAdapter extends Adapter<RecyclerView.ViewHolder> {
 
   private final OnSongClickListener listener;
   private List<SongWithParts> songs = new ArrayList<>();
-  private String currentSongName;
+  private boolean clickable;
 
-  public SongChipsAdapter(@NonNull OnSongClickListener listener, @Nullable String currentSongName) {
+  public SongChipsAdapter(@NonNull OnSongClickListener listener, boolean clickable) {
     this.listener = listener;
-    this.currentSongName = currentSongName;
+    this.clickable = clickable;
   }
 
   @NonNull
@@ -60,8 +60,8 @@ public class SongChipsAdapter extends Adapter<RecyclerView.ViewHolder> {
     SongWithParts songWithParts = songs.get(holder.getBindingAdapterPosition());
     SongChipViewHolder songViewHolder = (SongChipViewHolder) holder;
     songViewHolder.binding.chipRowSong.setText(songWithParts.getSong().getName());
-    songViewHolder.binding.chipRowSong.setClickable(currentSongName == null);
-    if (currentSongName == null) {
+    songViewHolder.binding.chipRowSong.setClickable(clickable);
+    if (clickable) {
       songViewHolder.binding.chipRowSong.setOnClickListener(
           v -> listener.onSongClick(songViewHolder.binding.chipRowSong, songWithParts)
       );
@@ -104,10 +104,9 @@ public class SongChipsAdapter extends Adapter<RecyclerView.ViewHolder> {
   }
 
   @SuppressLint("NotifyDataSetChanged")
-  public void setCurrentSongName(@Nullable String currentSongName) {
-    if ((this.currentSongName == null && currentSongName != null)
-        || (this.currentSongName != null && currentSongName == null)) {
-      this.currentSongName = currentSongName;
+  public void setClickable(boolean clickable) {
+    if ((this.clickable && !clickable) || (!this.clickable && clickable)) {
+      this.clickable = clickable;
       notifyDataSetChanged();
     }
   }
