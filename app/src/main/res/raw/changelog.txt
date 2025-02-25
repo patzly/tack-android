@@ -1,6 +1,8 @@
 ## 5.0.0
 
 - New: bookmarks replaced by new song library for configuration combinations
+- Improved: duration calculation and performance with duration unit bars
+- Fixed: arbitrary offset of subdivisions against beats when changing beats or subdivisions
 - Fixed: elapsed time dialog hidden when rotating device
 
 ## 4.8.1

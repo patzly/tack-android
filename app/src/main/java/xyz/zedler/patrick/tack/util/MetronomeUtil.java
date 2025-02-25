@@ -19,16 +19,12 @@
 
 package xyz.zedler.patrick.tack.util;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.util.Log;
-import android.view.animation.LinearInterpolator;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
@@ -70,7 +66,6 @@ public class MetronomeUtil {
   private HandlerThread tickThread, callbackThread;
   private Handler tickHandler, latencyHandler;
   private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
-  private ValueAnimator timerAnimator;
   private SongWithParts currentSongWithParts;
   private String currentSongName;
   private int partIndex, muteCountDown;
@@ -332,14 +327,22 @@ public class MetronomeUtil {
       // updateMuteHandler would be too late
       muteCountDown = calculateMuteCount(false);
     }
+    if (isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
+      // updateTimerHandler would be too late for bar counting (in tick runnable
+      if ((resetTimer && resetTimerIfNecessary) || equalsTimerProgress(1)) {
+        timerProgress = 0;
+      }
+    }
     tickHandler.post(new Runnable() {
       @Override
       public void run() {
         if (isPlaying()) {
           tickHandler.postDelayed(this, getInterval() / getSubdivisionsCount());
           Tick tick = performTick();
-          audioUtil.writeTickPeriod(tick, config.getTempo(), getSubdivisionsCount());
-          tickIndex++;
+          if (tick != null) {
+            audioUtil.writeTickPeriod(tick, config.getTempo(), getSubdivisionsCount());
+            tickIndex++;
+          }
         }
       }
     });
@@ -563,7 +566,7 @@ public class MetronomeUtil {
       config.setTempo(tempo);
       sharedPrefs.edit().putInt(PREF.TEMPO, tempo).apply();
       if (isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
-        updateTimerHandler(false);
+        updateTimerHandler(false, true);
       }
     }
   }
@@ -848,7 +851,11 @@ public class MetronomeUtil {
   public void setTimerDuration(int duration) {
     config.setTimerDuration(duration);
     sharedPrefs.edit().putInt(PREF.TIMER_DURATION, duration).apply();
-    updateTimerHandler(0, false);
+    if (config.getTimerUnit().equals(UNIT.BARS)) {
+      updateTimerHandler(false, true);
+    } else {
+      updateTimerHandler(0, false);
+    }
   }
 
   public int getTimerDuration() {
@@ -930,14 +937,13 @@ public class MetronomeUtil {
 
   public void updateTimerHandler(float fraction, boolean startAtFirstBeat) {
     timerProgress = fraction;
-    updateTimerHandler(startAtFirstBeat);
+    updateTimerHandler(startAtFirstBeat, false);
   }
 
-  public void updateTimerHandler(boolean startAtFirstBeat) {
+  public void updateTimerHandler(boolean startAtFirstBeat, boolean dirtyUpdate) {
     if (!fromService || !isPlaying()) {
       return;
     }
-    stopTimerAnimator();
     timerHandler.removeCallbacksAndMessages(null);
     if (!isTimerActive()) {
       return;
@@ -954,26 +960,7 @@ public class MetronomeUtil {
       timerProgress = (float) progressIntervalFullBars / getTimerInterval();
     }
 
-    if (config.getTimerUnit().equals(UNIT.BARS)) {
-      timerAnimator = ValueAnimator.ofFloat(timerProgress, 1);
-      timerAnimator.addUpdateListener(animation -> {
-        if (isPlaying()) {
-          timerProgress = (float) animation.getAnimatedValue();
-        } else {
-          stopTimerAnimator();
-        }
-      });
-      timerAnimator.addListener(new AnimatorListenerAdapter() {
-        @Override
-        public void onAnimationEnd(Animator animation) {
-          new Handler(Looper.getMainLooper()).post(() -> stop());
-          timerAnimator = null;
-        }
-      });
-      timerAnimator.setDuration(getTimerIntervalRemaining());
-      timerAnimator.setInterpolator(new LinearInterpolator());
-      timerAnimator.start();
-    } else {
+    if (!config.getTimerUnit().equals(UNIT.BARS)) {
       timerHandler.postDelayed(
           () -> new Handler(Looper.getMainLooper()).post(this::stop), getTimerIntervalRemaining()
       );
@@ -994,18 +981,12 @@ public class MetronomeUtil {
 
     synchronized (listeners) {
       for (MetronomeListener listener : listeners) {
-        listener.onMetronomeTimerStarted();
+        if (dirtyUpdate) {
+          listener.onMetronomeTimerProgressDirty();
+        } else {
+          listener.onMetronomeTimerStarted();
+        }
       }
-    }
-  }
-
-  private void stopTimerAnimator() {
-    if (timerAnimator != null) {
-      timerAnimator.pause();
-      timerAnimator.removeAllListeners();
-      timerAnimator.removeAllUpdateListeners();
-      timerAnimator.cancel();
-      timerAnimator = null;
     }
   }
 
@@ -1124,31 +1105,45 @@ public class MetronomeUtil {
     }
   }
 
-  private Tick performTick() {
+  private @Nullable Tick performTick() {
     int beat = getCurrentBeat();
     int subdivision = getCurrentSubdivision();
     String tickType = getCurrentTickType();
 
+    long beatIndex = tickIndex / getSubdivisionsCount();
+    long barIndex = beatIndex / getBeatsCount();
+    long barIndexWithoutCountIn = barIndex - getCountIn();
+    boolean isCountIn = barIndex < getCountIn();
+
     boolean isBeat = subdivision == 1;
     boolean isFirstBeat = ((tickIndex / getSubdivisionsCount()) % getBeatsCount()) == 0;
+
+    if (isTimerActive() && config.getTimerUnit().equals(UNIT.BARS) && !isCountIn) {
+      boolean increaseTimerProgress = barIndexWithoutCountIn != 0 || !isFirstBeat;
+      if (increaseTimerProgress) {
+        // Play the first beat without increasing
+        timerProgress += 1f / (getTimerDuration() * getBeatsCount() * getSubdivisionsCount());
+      }
+      if(timerProgress >= 1) {
+        stop();
+        return null;
+      }
+    }
+
     if (isBeat && isFirstBeat) {
-      long beatIndex = tickIndex / getSubdivisionsCount();
-      long barIndex = beatIndex / getBeatsCount();
-      boolean isCountIn = barIndex < getCountIn();
-      String unit = config.getIncrementalUnit();
-      int amount = config.getIncrementalAmount();
-      int interval = config.getIncrementalInterval();
-      int limit = config.getIncrementalLimit();
-      boolean increase = config.isIncrementalIncrease();
-      if (isIncrementalActive() && unit.equals(UNIT.BARS) && !isCountIn) {
-        barIndex = barIndex - getCountIn();
-        if (barIndex >= interval && barIndex % interval == 0) {
-          int upperLimit = limit != 0 ? limit : Constants.TEMPO_MAX;
-          int lowerLimit = limit != 0 ? limit : Constants.TEMPO_MIN;
-          if (increase && config.getTempo() + amount <= upperLimit) {
-            changeTempo(amount);
-          } else if (!increase && config.getTempo() - amount >= lowerLimit) {
-            changeTempo(-amount);
+      if (isIncrementalActive() && config.getIncrementalUnit().equals(UNIT.BARS) && !isCountIn) {
+        int incrementalAmount = config.getIncrementalAmount();
+        int incrementalInterval = config.getIncrementalInterval();
+        int incrementalLimit = config.getIncrementalLimit();
+        boolean incrementalIncrease = config.isIncrementalIncrease();
+        if (barIndexWithoutCountIn >= incrementalInterval
+            && barIndexWithoutCountIn % incrementalInterval == 0) {
+          int upperLimit = incrementalLimit != 0 ? incrementalLimit : Constants.TEMPO_MAX;
+          int lowerLimit = incrementalLimit != 0 ? incrementalLimit : Constants.TEMPO_MIN;
+          if (incrementalIncrease && config.getTempo() + incrementalAmount <= upperLimit) {
+            changeTempo(incrementalAmount);
+          } else if (!incrementalIncrease && config.getTempo() - incrementalAmount >= lowerLimit) {
+            changeTempo(-incrementalAmount);
           }
         }
       }
@@ -1225,6 +1220,7 @@ public class MetronomeUtil {
     void onMetronomeElapsedTimeSecondsChanged();
     void onMetronomeTimerStarted();
     void onMetronomeTimerSecondsChanged();
+    void onMetronomeTimerProgressDirty();
     void onMetronomeConfigChanged();
     void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex);
     void onMetronomeConnectionMissing();
@@ -1240,6 +1236,7 @@ public class MetronomeUtil {
     public void onMetronomeElapsedTimeSecondsChanged() {}
     public void onMetronomeTimerStarted() {}
     public void onMetronomeTimerSecondsChanged() {}
+    public void onMetronomeTimerProgressDirty() {}
     public void onMetronomeConfigChanged() {}
     public void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex) {}
     public void onMetronomeConnectionMissing() {}

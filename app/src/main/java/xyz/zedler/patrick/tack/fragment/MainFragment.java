@@ -54,7 +54,6 @@ import com.google.android.material.slider.Slider;
 import com.google.android.material.slider.Slider.OnSliderTouchListener;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.Arrays;
-import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
@@ -64,7 +63,6 @@ import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
-import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.FragmentMainBinding;
 import xyz.zedler.patrick.tack.drawable.BeatsBgDrawable;
@@ -769,6 +767,18 @@ public class MainFragment extends BaseFragment
   @Override
   public void onMetronomeTimerSecondsChanged() {
     activity.runOnUiThread(this::updateTimerDisplay);
+  }
+
+  @Override
+  public void onMetronomeTimerProgressDirty() {
+    activity.runOnUiThread(() -> {
+      if (binding == null) {
+        return;
+      }
+      updateTimerProgress(
+          1, getMetronomeUtil().getTimerIntervalRemaining(), true, true
+      );
+    });
   }
 
   @Override
