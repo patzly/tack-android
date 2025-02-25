@@ -74,6 +74,7 @@ import xyz.zedler.patrick.tack.util.MetronomeUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.OptionsUtil;
+import xyz.zedler.patrick.tack.util.PartsDialogUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.ShortcutUtil;
 import xyz.zedler.patrick.tack.util.TempoDialogUtil;
@@ -99,11 +100,12 @@ public class MainFragment extends BaseFragment
   private ValueAnimator fabAnimator;
   private float cornerSizeStop, cornerSizePlay, cornerSizeCurrent;
   private int colorFlashNormal, colorFlashStrong, colorFlashMuted;
-  private DialogUtil dialogUtilGain, dialogUtilSplitScreen, dialogUtilElapsed, dialogUtilParts;
+  private DialogUtil dialogUtilGain, dialogUtilSplitScreen, dialogUtilElapsed;
   private OptionsUtil optionsUtil;
-  private ShortcutUtil shortcutUtil;
+  private PartsDialogUtil partsDialogUtil;
   private TempoTapDialogUtil tempoTapDialogUtil;
   private TempoDialogUtil tempoDialogUtil;
+  private ShortcutUtil shortcutUtil;
   private BeatsBgDrawable beatsBgDrawable;
   private BadgeDrawable beatsCountBadge, subsCountBadge, optionsBadge;
   private ValueAnimator progressAnimator, progressTransitionAnimator;
@@ -133,6 +135,7 @@ public class MainFragment extends BaseFragment
     dialogUtilElapsed.dismiss();
     tempoDialogUtil.dismiss();
     optionsUtil.dismiss();
+    partsDialogUtil.dismiss();
     tempoTapDialogUtil.dismiss();
   }
 
@@ -273,9 +276,6 @@ public class MainFragment extends BaseFragment
     );
     dialogUtilElapsed.showIfWasShown(savedInstanceState);
 
-    dialogUtilParts = new DialogUtil(activity, "parts");
-    dialogUtilParts.showIfWasShown(savedInstanceState);
-
     tempoDialogUtil = new TempoDialogUtil(activity, this);
     tempoDialogUtil.showIfWasShown(savedInstanceState);
 
@@ -297,6 +297,9 @@ public class MainFragment extends BaseFragment
 
     shortcutUtil = new ShortcutUtil(activity);
     tempoTapDialogUtil = new TempoTapDialogUtil(activity, this);
+
+    partsDialogUtil = new PartsDialogUtil(activity, this);
+    partsDialogUtil.showIfWasShown(savedInstanceState);
 
     beatsBgDrawable = new BeatsBgDrawable(activity);
     binding.linearMainBeatsBg.setBackground(beatsBgDrawable);
@@ -417,15 +420,13 @@ public class MainFragment extends BaseFragment
 
       @Override
       public void onCurrentSongClicked() {
-        dialogUtilParts.show();
+        partsDialogUtil.show();
         performHapticClick();
       }
     });
     activity.getSongViewModel().getAllSongsWithParts().observe(
         getViewLifecycleOwner(), songs -> binding.songPickerMain.setSongs(songs)
     );
-    // If activity was running but fragment is recreated, this will init the current song again
-    onMetronomeSongChanged(getMetronomeUtil().getCurrentSongWithParts());
 
     boolean isWidthLargeEnough = screenWidthDp - 16 >= 344;
     boolean large = (isPortrait && isWidthLargeEnough) || isLandTablet;
@@ -519,8 +520,8 @@ public class MainFragment extends BaseFragment
     if (dialogUtilElapsed != null) {
       dialogUtilElapsed.saveState(outState);
     }
-    if (dialogUtilParts != null) {
-      dialogUtilParts.saveState(outState);
+    if (partsDialogUtil != null) {
+      partsDialogUtil.saveState(outState);
     }
     if (optionsUtil != null) {
       optionsUtil.saveState(outState);
@@ -540,6 +541,7 @@ public class MainFragment extends BaseFragment
     getMetronomeUtil().addListener(this);
     optionsUtil.showIfWasShown(savedState);
     tempoTapDialogUtil.showIfWasShown(savedState);
+
     savedState = null;
 
     if (getMetronomeUtil().isBeatModeVibrate()) {
@@ -791,10 +793,11 @@ public class MainFragment extends BaseFragment
   }
 
   @Override
-  public void onMetronomeSongChanged(@Nullable SongWithParts song) {
+  public void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex) {
     if (song != null) {
       activity.runOnUiThread(() -> {
-        if (binding == null) {
+        partsDialogUtil.update();
+        /*if (binding == null) {
           return;
         }
         List<Part> parts = song.getParts();
@@ -808,17 +811,13 @@ public class MainFragment extends BaseFragment
         dialogUtilParts.createSingleChoice(
             song.getSong().getName(),
             names,
-            0,
+            partIndex,
             (dialog, which) -> {
-              // TODO
-            });
+              getMetronomeUtil().setCurrentPartIndex(which);
+              performHapticClick();
+            });*/
       });
     }
-  }
-
-  @Override
-  public void onMetronomePartChanged(int index) {
-
   }
 
   @Override

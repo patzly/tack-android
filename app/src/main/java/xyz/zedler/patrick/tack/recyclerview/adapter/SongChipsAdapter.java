@@ -23,7 +23,6 @@ import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -58,15 +57,15 @@ public class SongChipsAdapter extends Adapter<RecyclerView.ViewHolder> {
   @Override
   public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
     SongWithParts songWithParts = songs.get(holder.getBindingAdapterPosition());
-    SongChipViewHolder songViewHolder = (SongChipViewHolder) holder;
-    songViewHolder.binding.chipRowSong.setText(songWithParts.getSong().getName());
-    songViewHolder.binding.chipRowSong.setClickable(clickable);
+    SongChipViewHolder songHolder = (SongChipViewHolder) holder;
+    songHolder.binding.chipRowSong.setText(songWithParts.getSong().getName());
+    songHolder.binding.chipRowSong.setClickable(clickable);
     if (clickable) {
-      songViewHolder.binding.chipRowSong.setOnClickListener(
-          v -> listener.onSongClick(songViewHolder.binding.chipRowSong, songWithParts)
+      songHolder.binding.chipRowSong.setOnClickListener(
+          v -> listener.onSongClick(songHolder.binding.chipRowSong, songWithParts)
       );
     } else {
-      songViewHolder.binding.chipRowSong.setOnClickListener(null);
+      songHolder.binding.chipRowSong.setOnClickListener(null);
     }
   }
 

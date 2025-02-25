@@ -26,5 +26,6 @@
   android:stateListAnimator="@null"
   android:checkable="false"
   app:chipIcon="@drawable/ic_rounded_music_note_anim"
+  app:chipIconTint="?attr/colorPrimary"
   app:closeIconVisible="false"
   android:textAppearance="@style/TextAppearance.Tack.LabelLarge" />

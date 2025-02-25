@@ -61,6 +61,7 @@
   <string name="label_tempo_prestissimo">Prestissimo</string>
   <string name="label_tempo_input_help">Values from %1$d to %2$d</string>
   <string name="label_part_unnamed">Part %1$d</string>
+  <string name="label_part_no_duration">No duration</string>
 
   <!-- ACTIONS -->
 

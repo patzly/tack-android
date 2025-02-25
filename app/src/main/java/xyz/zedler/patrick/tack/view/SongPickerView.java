@@ -29,6 +29,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.GradientDrawable.Orientation;
 import android.graphics.drawable.ScaleDrawable;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -44,6 +46,7 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
+import com.google.android.material.radiobutton.MaterialRadioButton;
 import java.util.Collections;
 import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
@@ -207,71 +210,72 @@ public class SongPickerView extends FrameLayout {
           // Scroll to current song chip
           layoutManager.scrollToPosition(position);
         }
-        View targetChip = layoutManager.findViewByPosition(position);
-        if (targetChip != null) {
-          int endLeft = targetChip.getLeft();
-          int startLeft = binding.frameSongPickerChipTouchTarget.getLeft();
-          // Compensate half of close icon width
-          startLeft += currentSong == null ? UiUtil.dpToPx(activity, 9) : 0;
-          int diff = endLeft - startLeft;
-          int closeIconWidth = UiUtil.dpToPx(activity, 18);
+        // Delay to ensure scrolling is finished
+        binding.recyclerSongPicker.post(() -> {
+          View targetChip = layoutManager.findViewByPosition(position);
+          if (targetChip != null) {
+            int endLeft = targetChip.getLeft();
+            int startLeft = binding.frameSongPickerChipTouchTarget.getLeft();
+            // Compensate half of close icon width
+            startLeft += currentSong == null ? UiUtil.dpToPx(activity, 9) : 0;
+            int diff = endLeft - startLeft;
+            int closeIconWidth = UiUtil.dpToPx(activity, 18);
 
-          if (currentSong != null) {
-            animator = ValueAnimator.ofFloat(0, 1);
-            animator.setInterpolator(new OvershootInterpolator());
-          } else {
-            animator = ValueAnimator.ofFloat(1, 0);
-            animator.setInterpolator(new FastOutSlowInInterpolator());
-          }
-          animator.addUpdateListener(animation -> {
-            float fraction = (float) animation.getAnimatedValue();
-            binding.frameSongPickerChipContainer.setTranslationX((1 - fraction) * diff);
-            closeIconParams.width = (int) Math.min(closeIconWidth * fraction, closeIconWidth);
-            binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
-            binding.imageSongPickerChipClose.setAlpha(fraction);
-            int colorTertiaryContainer = ResUtil.getColor(activity, R.attr.colorTertiaryContainer);
-            int colorOnTertiaryContainer = ResUtil.getColor(
-                activity, R.attr.colorOnTertiaryContainer
-            );
-            int colorSurface = ResUtil.getColor(activity, R.attr.colorSurface);
-            int colorOnSurface = ResUtil.getColor(activity, R.attr.colorOnSurface);
-            int colorOnSurfaceVariant = ResUtil.getColor(activity, R.attr.colorOnSurfaceVariant);
-            int colorOutline = ResUtil.getColor(activity, R.attr.colorOutline);
-
-            int colorBg = ColorUtils.blendARGB(colorSurface, colorTertiaryContainer, fraction);
-            int colorText = ColorUtils.blendARGB(
-                colorOnSurface, colorOnTertiaryContainer, fraction
-            );
-            int colorIcon = ColorUtils.blendARGB(
-                colorOnSurfaceVariant, colorOnTertiaryContainer, fraction
-            );
-            int colorStroke = ColorUtils.blendARGB(
-                colorOutline, colorOnTertiaryContainer, fraction
-            );
-            binding.cardSongPickerChip.setCardBackgroundColor(colorBg);
-            binding.cardSongPickerChip.setStrokeColor(colorStroke);
-            binding.textSongPickerChip.setTextColor(colorText);
-            binding.imageSongPickerChipIcon.setColorFilter(colorIcon);
-            binding.imageSongPickerChipClose.setColorFilter(colorIcon);
-
-            gradientLeft.setLevel((int) (10000 * fraction));
-            gradientRight.setLevel((int) (10000 * fraction));
-
-            binding.recyclerSongPicker.setAlpha(1 - fraction);
-          });
-          animator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-              if (currentSong == null) {
-                binding.frameSongPickerChipContainer.setVisibility(INVISIBLE);
-                binding.frameSongPickerChipContainer.setAlpha(1);
-              }
-              setRecyclerClicksEnabled(true);
+            if (currentSong != null) {
+              animator = ValueAnimator.ofFloat(0, 1);
+              animator.setInterpolator(new OvershootInterpolator());
+            } else {
+              animator = ValueAnimator.ofFloat(1, 0);
+              animator.setInterpolator(new FastOutSlowInInterpolator());
             }
-          });
-          animator.setDuration(Constants.ANIM_DURATION_LONG);
-          animator.start();
-        }
+            animator.addUpdateListener(animation -> {
+              float fraction = (float) animation.getAnimatedValue();
+              binding.frameSongPickerChipContainer.setTranslationX((1 - fraction) * diff);
+              closeIconParams.width = (int) Math.min(closeIconWidth * fraction, closeIconWidth);
+              binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
+              binding.imageSongPickerChipClose.setAlpha(fraction);
+              int colorTertiaryContainer = ResUtil.getColor(activity, R.attr.colorTertiaryContainer);
+              int colorOnTertiaryContainer = ResUtil.getColor(
+                  activity, R.attr.colorOnTertiaryContainer
+              );
+              int colorPrimary = ResUtil.getColor(activity, R.attr.colorPrimary);
+              int colorSurface = ResUtil.getColor(activity, R.attr.colorSurface);
+              int colorOnSurface = ResUtil.getColor(activity, R.attr.colorOnSurface);
+              int colorOutline = ResUtil.getColor(activity, R.attr.colorOutline);
+
+              int colorBg = ColorUtils.blendARGB(colorSurface, colorTertiaryContainer, fraction);
+              int colorText = ColorUtils.blendARGB(
+                  colorOnSurface, colorOnTertiaryContainer, fraction
+              );
+              int colorIcon = ColorUtils.blendARGB(colorPrimary, colorOnTertiaryContainer, fraction);
+              int colorStroke = ColorUtils.blendARGB(
+                  colorOutline, colorOnTertiaryContainer, fraction
+              );
+              binding.cardSongPickerChip.setCardBackgroundColor(colorBg);
+              binding.cardSongPickerChip.setStrokeColor(colorStroke);
+              binding.textSongPickerChip.setTextColor(colorText);
+              binding.imageSongPickerChipIcon.setColorFilter(colorIcon);
+              binding.imageSongPickerChipClose.setColorFilter(colorIcon);
+
+              gradientLeft.setLevel((int) (10000 * fraction));
+              gradientRight.setLevel((int) (10000 * fraction));
+
+              binding.recyclerSongPicker.setAlpha(1 - fraction);
+            });
+            animator.addListener(new AnimatorListenerAdapter() {
+              @Override
+              public void onAnimationEnd(Animator animation) {
+                if (currentSong == null) {
+                  binding.frameSongPickerChipContainer.setVisibility(INVISIBLE);
+                  binding.frameSongPickerChipContainer.setAlpha(1);
+                }
+                setRecyclerClicksEnabled(currentSong == null);
+              }
+            });
+            animator.setDuration(Constants.ANIM_DURATION_LONG);
+            animator.start();
+          }
+        });
       }
     } else {
       binding.recyclerSongPicker.setAlpha(1);

@@ -166,21 +166,7 @@ public class MetronomeUtil {
         currentSongWithParts = db.songDao().getSongWithPartsByName(songName);
         partIndex = 0;
         if (currentSongWithParts != null) {
-          new Handler(Looper.getMainLooper()).post(() -> {
-            List<Part> parts = currentSongWithParts.getParts();
-            if (!parts.isEmpty()) {
-              setConfig(parts.get(partIndex).toConfig());
-              restartIfPlaying(true);
-            } else {
-              Log.e(TAG, "setCurrentSong: parts cannot be empty");
-            }
-            synchronized (listeners) {
-              for (MetronomeListener listener : listeners) {
-                listener.onMetronomeSongChanged(currentSongWithParts);
-                listener.onMetronomePartChanged(partIndex);
-              }
-            }
-          });
+          setCurrentPartIndex(0);
         } else {
           Log.e(TAG, "setCurrentSong: song '" + songName + "' not found");
         }
@@ -194,6 +180,27 @@ public class MetronomeUtil {
 
   public int getCurrentPartIndex() {
     return partIndex;
+  }
+
+  public void setCurrentPartIndex(int index) {
+    partIndex = index;
+    if (currentSongWithParts == null) {
+      Log.e(TAG, "setCurrentPartIndex: song '" + currentSongName + "' is null");
+      return;
+    }
+    List<Part> parts = currentSongWithParts.getParts();
+    if (!parts.isEmpty()) {
+      setConfig(parts.get(index).toConfig());
+      restartIfPlaying(true);
+    } else {
+      Log.e(TAG, "setCurrentPartIndex: no part found for song '" + currentSongName + "'");
+      return;
+    }
+    synchronized (listeners) {
+      for (MetronomeListener listener : listeners) {
+        listener.onMetronomeSongOrPartChanged(currentSongWithParts, partIndex);
+      }
+    }
   }
 
   private void resetHandlersIfRequired() {
@@ -367,7 +374,6 @@ public class MetronomeUtil {
 
   public void stop() {
     stop(false);
-    Log.i(TAG, "stop: helloooo");
   }
 
   public void stop(boolean isRestarted) {
@@ -1220,8 +1226,7 @@ public class MetronomeUtil {
     void onMetronomeTimerStarted();
     void onMetronomeTimerSecondsChanged();
     void onMetronomeConfigChanged();
-    void onMetronomeSongChanged(@Nullable SongWithParts song);
-    void onMetronomePartChanged(int index);
+    void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex);
     void onMetronomeConnectionMissing();
     void onMetronomePermissionMissing();
   }
@@ -1236,8 +1241,7 @@ public class MetronomeUtil {
     public void onMetronomeTimerStarted() {}
     public void onMetronomeTimerSecondsChanged() {}
     public void onMetronomeConfigChanged() {}
-    public void onMetronomeSongChanged(@Nullable SongWithParts song) {}
-    public void onMetronomePartChanged(int index) {}
+    public void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex) {}
     public void onMetronomeConnectionMissing() {}
     public void onMetronomePermissionMissing() {}
   }

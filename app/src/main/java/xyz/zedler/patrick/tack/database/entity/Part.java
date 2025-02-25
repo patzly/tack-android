@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.database.entity;
 
+import android.content.Context;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
@@ -28,6 +29,9 @@ import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import java.util.Arrays;
+import java.util.Locale;
+import xyz.zedler.patrick.tack.Constants.UNIT;
+import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.model.MetronomeConfig;
 
 @Entity(
@@ -225,6 +229,22 @@ public class Part {
 
   public void setTimerUnit(String timerUnit) {
     this.timerUnit = timerUnit;
+  }
+
+  public String getTimerDurationString(@NonNull Context context) {
+    if (timerDuration == 0) {
+      return context.getString(R.string.label_part_no_duration);
+    }
+    switch (timerUnit) {
+      case UNIT.SECONDS:
+        return String.format(Locale.ENGLISH, "00:%02d", timerDuration);
+      case UNIT.MINUTES:
+        return String.format(Locale.ENGLISH, "%02d:00", timerDuration);
+      default:
+        return context.getResources().getQuantityString(
+            R.plurals.options_unit_bars, timerDuration, timerDuration
+        );
+    }
   }
 
   public int getMutePlay() {
