@@ -723,40 +723,42 @@ public class MainFragment extends BaseFragment
 
   @Override
   public void onMetronomeTimerStarted() {
-    stopTimerTransitionProgress();
-    stopTimerProgress();
-    if (binding == null) {
-      return;
-    }
-    int current = (int) binding.sliderMainTimer.getValue();
-    int max = (int) binding.sliderMainTimer.getValueTo();
-    float currentFraction = current / (float) max;
-    if (!getMetronomeUtil().equalsTimerProgress(currentFraction)) {
-      // position where the timer will be at animation end
-      // only if current progress is not equal to timer progress
-      long animDuration = Constants.ANIM_DURATION_LONG;
-      float fraction = (float) animDuration / getMetronomeUtil().getTimerInterval();
-      fraction += getMetronomeUtil().getTimerProgress();
-      progressTransitionAnimator = ValueAnimator.ofFloat(currentFraction, fraction);
-      progressTransitionAnimator.addUpdateListener(animation -> {
-        if (binding == null) {
-          return;
-        }
-        binding.sliderMainTimer.setValue((int) ((float) animation.getAnimatedValue() * max));
-      });
-      progressTransitionAnimator.addListener(new AnimatorListenerAdapter() {
-        @Override
-        public void onAnimationEnd(Animator animation) {
-          stopTimerTransitionProgress();
-        }
-      });
-      progressTransitionAnimator.setInterpolator(new FastOutSlowInInterpolator());
-      progressTransitionAnimator.setDuration(animDuration);
-      progressTransitionAnimator.start();
-    }
-    updateTimerProgress(
-        1, getMetronomeUtil().getTimerIntervalRemaining(), true, true
-    );
+    activity.runOnUiThread(() -> {
+      stopTimerTransitionProgress();
+      stopTimerProgress();
+      if (binding == null) {
+        return;
+      }
+      int current = (int) binding.sliderMainTimer.getValue();
+      int max = (int) binding.sliderMainTimer.getValueTo();
+      float currentFraction = current / (float) max;
+      if (!getMetronomeUtil().equalsTimerProgress(currentFraction)) {
+        // position where the timer will be at animation end
+        // only if current progress is not equal to timer progress
+        long animDuration = Constants.ANIM_DURATION_LONG;
+        float fraction = (float) animDuration / getMetronomeUtil().getTimerInterval();
+        fraction += getMetronomeUtil().getTimerProgress();
+        progressTransitionAnimator = ValueAnimator.ofFloat(currentFraction, fraction);
+        progressTransitionAnimator.addUpdateListener(animation -> {
+          if (binding == null) {
+            return;
+          }
+          binding.sliderMainTimer.setValue((int) ((float) animation.getAnimatedValue() * max));
+        });
+        progressTransitionAnimator.addListener(new AnimatorListenerAdapter() {
+          @Override
+          public void onAnimationEnd(Animator animation) {
+            stopTimerTransitionProgress();
+          }
+        });
+        progressTransitionAnimator.setInterpolator(new FastOutSlowInInterpolator());
+        progressTransitionAnimator.setDuration(animDuration);
+        progressTransitionAnimator.start();
+      }
+      updateTimerProgress(
+          1, getMetronomeUtil().getTimerIntervalRemaining(), true, true
+      );
+    });
   }
 
   @Override
@@ -783,7 +785,7 @@ public class MainFragment extends BaseFragment
 
   @Override
   public void onMetronomeConfigChanged() {
-    Runnable runnable = () -> {
+    activity.runOnUiThread(() -> {
       if (binding == null) {
         return;
       }
@@ -798,36 +800,16 @@ public class MainFragment extends BaseFragment
       updateTimerControls();
       updateElapsedDisplay();
       updateOptions(true);
-    };
-    activity.runOnUiThread(runnable);
+    });
   }
 
   @Override
   public void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex) {
-    if (song != null) {
-      activity.runOnUiThread(() -> {
+    activity.runOnUiThread(() -> {
+      if (song != null && binding != null) {
         partsDialogUtil.update();
-        /*if (binding == null) {
-          return;
-        }
-        List<Part> parts = song.getParts();
-        String[] names = new String[parts.size()];
-        for (int i = 0; i < parts.size(); i++) {
-          names[i] = parts.get(i).getName();
-          if (names[i] == null) {
-            names[i] = getString(R.string.label_part_unnamed, i + 1);
-          }
-        }
-        dialogUtilParts.createSingleChoice(
-            song.getSong().getName(),
-            names,
-            partIndex,
-            (dialog, which) -> {
-              getMetronomeUtil().setCurrentPartIndex(which);
-              performHapticClick();
-            });*/
-      });
-    }
+      }
+    });
   }
 
   @Override
@@ -839,7 +821,7 @@ public class MainFragment extends BaseFragment
 
   @Override
   public void onMetronomePermissionMissing() {
-    activity.requestNotificationPermission(true);
+    activity.runOnUiThread(() -> activity.requestNotificationPermission(true));
   }
 
   @Override

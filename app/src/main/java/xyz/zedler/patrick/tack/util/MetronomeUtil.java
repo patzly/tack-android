@@ -177,6 +177,10 @@ public class MetronomeUtil {
     return partIndex;
   }
 
+  private boolean hasNextPart() {
+    return currentSongWithParts != null && partIndex < currentSongWithParts.getParts().size() - 1;
+  }
+
   public void setCurrentPartIndex(int index) {
     partIndex = index;
     if (currentSongWithParts == null) {
@@ -289,10 +293,10 @@ public class MetronomeUtil {
   }
 
   public void start() {
-    start(true, false);
+    start(resetTimer, false);
   }
 
-  public void start(boolean resetTimerIfNecessary, boolean isRestarted) {
+  public void start(boolean resetTimer, boolean isRestarted) {
     if (!NotificationUtil.hasPermission(context)) {
       synchronized (listeners) {
         for (MetronomeListener listener : listeners) {
@@ -301,7 +305,8 @@ public class MetronomeUtil {
       }
       return;
     }
-    if (resetTimerIfNecessary) {
+    if (resetTimer) {
+      // TODO
       // notify system for shortcut usage prediction
       shortcutUtil.reportUsage(getTempo());
     }
@@ -329,7 +334,7 @@ public class MetronomeUtil {
     }
     if (isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
       // updateTimerHandler would be too late for bar counting (in tick runnable
-      if ((resetTimer && resetTimerIfNecessary) || equalsTimerProgress(1)) {
+      if (resetTimer || equalsTimerProgress(1)) {
         timerProgress = 0;
       }
     }
@@ -354,10 +359,7 @@ public class MetronomeUtil {
       elapsedStartTime = System.currentTimeMillis();
       updateElapsedHandler(false);
       timerStartTime = System.currentTimeMillis();
-      updateTimerHandler(
-          resetTimer && resetTimerIfNecessary ? 0 : timerProgress,
-          true
-      );
+      updateTimerHandler(resetTimer ? 0 : timerProgress, true);
       updateMuteHandler();
     }, getCountInInterval()); // already 0 if count-in is disabled
 
@@ -408,6 +410,8 @@ public class MetronomeUtil {
     if (isPlaying()) {
       stop(true);
       start(resetTimer, true);
+    } else if (resetTimer) {
+      timerProgress = 0;
     }
   }
 
@@ -565,7 +569,7 @@ public class MetronomeUtil {
     if (config.getTempo() != tempo) {
       config.setTempo(tempo);
       sharedPrefs.edit().putInt(PREF.TEMPO, tempo).apply();
-      if (isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
+      if (isPlaying() && isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
         updateTimerHandler(false, true);
       }
     }
@@ -1125,7 +1129,12 @@ public class MetronomeUtil {
         timerProgress += 1f / (getTimerDuration() * getBeatsCount() * getSubdivisionsCount());
       }
       if(timerProgress >= 1) {
-        stop();
+        timerProgress = 1;
+        if (hasNextPart()) {
+          setCurrentPartIndex(partIndex + 1);
+        } else {
+          stop();
+        }
         return null;
       }
     }
