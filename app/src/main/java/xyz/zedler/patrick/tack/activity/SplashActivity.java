@@ -65,7 +65,9 @@ public class SplashActivity extends MainActivity {
         ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 0);
         animator.setDuration(250);
         animator.setStartDelay(
-            startTime != null ? 900 - startTime.until(Instant.now(), ChronoUnit.MILLIS) : 0
+            startTime != null
+                ? Math.max(900 - startTime.until(Instant.now(), ChronoUnit.MILLIS), 0)
+                : 0
         );
         animator.addListener(new AnimatorListenerAdapter() {
           @Override

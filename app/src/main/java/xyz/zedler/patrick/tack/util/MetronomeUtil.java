@@ -1274,7 +1274,7 @@ public class MetronomeUtil {
           ", beat=" + beat +
           ", sub=" + subdivision +
           ", type=" + type +
-          ", sMuted=" + isMuted + '}';
+          ", muted=" + isMuted + '}';
     }
   }
 }

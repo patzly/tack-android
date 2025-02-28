@@ -39,7 +39,6 @@ import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.material3.Card
 import androidx.wear.compose.material3.CardDefaults
-import androidx.wear.compose.material3.ExperimentalWearMaterial3Api
 import androidx.wear.compose.material3.Icon
 import androidx.wear.compose.material3.ListHeader
 import androidx.wear.compose.material3.MaterialTheme
@@ -120,7 +119,6 @@ fun GainScreen(
   }
 }
 
-@OptIn(ExperimentalWearMaterial3Api::class)
 @Composable
 fun GainSlider(
   gain: Int,
