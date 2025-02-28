@@ -29,6 +29,7 @@ import android.media.audiofx.LoudnessEnhancer
 import android.os.Build
 import android.os.Handler
 import android.os.HandlerThread
+import android.os.SystemClock
 import android.util.Log
 import androidx.annotation.RawRes
 import xyz.zedler.patrick.tack.Constants.Sound
@@ -39,6 +40,7 @@ import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.charset.StandardCharsets
+import kotlin.math.max
 
 class AudioUtil(
   private val context: Context,
@@ -56,14 +58,10 @@ class AudioUtil(
   private val silence = FloatArray(SILENCE_CHUNK_SIZE)
   private val dataMarker = "data".toByteArray(StandardCharsets.US_ASCII)
 
-  private var beatsThread: HandlerThread? = null
-  private var subsThread: HandlerThread? = null
-  private var beatsHandler: Handler? = null
-  private var subsHandler: Handler? = null
-  private var beatsTrack: AudioTrack? = null
-  private var subsTrack: AudioTrack? = null
-  private var beatsLoudnessEnhancer: LoudnessEnhancer? = null
-  private var subsLoudnessEnhancer: LoudnessEnhancer? = null
+  private var audioThread: HandlerThread? = null
+  private var audioHandler: Handler? = null
+  private var audioTrack: AudioTrack? = null
+  private var loudnessEnhancer: LoudnessEnhancer? = null
   private var tickNormal: FloatArray? = null
   private var tickStrong: FloatArray? = null
   private var tickSub: FloatArray? = null
@@ -71,15 +69,7 @@ class AudioUtil(
   var gain = 0
     set(value) {
       field = value
-      beatsLoudnessEnhancer?.let {
-        try {
-          it.setTargetGain(field * 100)
-          it.setEnabled(field > 0)
-        } catch (e: RuntimeException) {
-          Log.e(TAG, "Failed to set target gain: ", e)
-        }
-      }
-      subsLoudnessEnhancer?.let {
+      loudnessEnhancer?.let {
         try {
           it.setTargetGain(field * 100)
           it.setEnabled(field > 0)
@@ -93,35 +83,28 @@ class AudioUtil(
 
   fun destroy() {
     removeHandlerCallbacks()
-    beatsThread?.quitSafely()
-    subsThread?.quitSafely()
+    audioThread?.quitSafely()
   }
 
   fun resetHandlersIfRequired() {
-    if (beatsThread == null || beatsThread?.isAlive == false) {
-      beatsThread = HandlerThread("audio_beats").apply { start() }
+    if (audioThread == null || audioThread?.isAlive == false) {
+      audioThread = HandlerThread("audio").apply { start() }
       removeHandlerCallbacks()
-      beatsHandler = Handler(beatsThread!!.looper)
-    }
-    if (subsThread == null || subsThread?.isAlive == false) {
-      subsThread = HandlerThread("audio_subdivisions").apply { start() }
-      removeHandlerCallbacks()
-      subsHandler = Handler(subsThread!!.looper)
+      audioHandler = Handler(audioThread!!.looper)
     }
   }
 
   fun removeHandlerCallbacks() {
-    beatsHandler?.removeCallbacksAndMessages(null)
-    subsHandler?.removeCallbacksAndMessages(null)
+    audioHandler?.removeCallbacksAndMessages(null)
   }
 
   fun play() {
     resetHandlersIfRequired()
 
     playing = true
-    beatsTrack = getTrack().apply {
+    audioTrack = getTrack().apply {
       try {
-        beatsLoudnessEnhancer = LoudnessEnhancer(audioSessionId).apply {
+        loudnessEnhancer = LoudnessEnhancer(audioSessionId).apply {
           setTargetGain(gain * 100)
           setEnabled(gain > 0)
         }
@@ -131,22 +114,7 @@ class AudioUtil(
       if (state == AudioTrack.STATE_INITIALIZED) {
         play()
       } else {
-        Log.e(TAG, "Failed to start audio beatsTrack")
-      }
-    }
-    subsTrack = getTrack().apply {
-      try {
-        subsLoudnessEnhancer = LoudnessEnhancer(audioSessionId).apply {
-          setTargetGain(gain * 100)
-          setEnabled(gain > 0)
-        }
-      } catch (e: RuntimeException) {
-        Log.e(TAG, "Failed to initialize LoudnessEnhancer: ", e)
-      }
-      if (state == AudioTrack.STATE_INITIALIZED) {
-        play()
-      } else {
-        Log.e(TAG, "Failed to start audio subsTrack")
+        Log.e(TAG, "Failed to start AudioTrack")
       }
     }
 
@@ -159,28 +127,14 @@ class AudioUtil(
     playing = false
     removeHandlerCallbacks()
 
-    beatsTrack?.apply {
+    audioTrack?.apply {
       if (state == AudioTrack.STATE_INITIALIZED) {
         stop()
       }
       flush()
       release()
     }
-    subsTrack?.apply {
-      if (state == AudioTrack.STATE_INITIALIZED) {
-        stop()
-      }
-      flush()
-      release()
-    }
-    beatsLoudnessEnhancer?.apply {
-      try {
-        release()
-      } catch (e: RuntimeException) {
-        Log.e(TAG, "stop: failed to release LoudnessEnhancer resources: ", e)
-      }
-    }
-    subsLoudnessEnhancer?.apply {
+    loudnessEnhancer?.apply {
       try {
         release()
       } catch (e: RuntimeException) {
@@ -196,13 +150,11 @@ class AudioUtil(
   override fun onAudioFocusChange(focusChange: Int) {
     when (focusChange) {
       AudioManager.AUDIOFOCUS_GAIN -> {
-        beatsTrack?.setVolume(1f)
-        subsTrack?.setVolume(1f)
+        audioTrack?.setVolume(1f)
       }
       AudioManager.AUDIOFOCUS_LOSS -> stop()
       AudioManager.AUDIOFOCUS_LOSS_TRANSIENT, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-        beatsTrack?.setVolume(0.25f)
-        subsTrack?.setVolume(0.25f)
+        audioTrack?.setVolume(0.25f)
       }
     }
   }
@@ -248,41 +200,35 @@ class AudioUtil(
   }
 
   fun writeTickPeriod(tick: MetronomeUtil.Tick, tempo: Int, subdivisionCount: Int) {
-    val periodSizeBeats = 60 * SAMPLE_RATE_IN_HZ / tempo
-    if (tick.subdivision == 1) {
-      beatsHandler?.post {
-        val tickSound = if (muted) silence else getTickSound(tick.type) ?: return@post
-        val sizeWritten = writeNextAudioData(beatsTrack, tickSound, periodSizeBeats, 0)
-        writeSilenceUntilPeriodFinished(beatsTrack, sizeWritten, periodSizeBeats)
+    val periodSize = 60 * SAMPLE_RATE_IN_HZ / tempo / subdivisionCount
+    val expectedTime = SystemClock.elapsedRealtime()
+    audioHandler?.post {
+      var periodSizeTrimmed = periodSize
+      if (tick.subdivision == 1) {
+        val currentTime = SystemClock.elapsedRealtime()
+        val delay = currentTime - expectedTime
+        if (delay > 1) {
+          val trimSize = delay.coerceAtLeast(10) * (SAMPLE_RATE_IN_HZ / 1000)
+          periodSizeTrimmed = max(0, periodSize - trimSize).toInt()
+        }
       }
-    }
-    subsHandler?.post {
-      val tickSound = if (muted || tick.subdivision == 1) {
-        silence
-      } else {
-        getTickSound(tick.type) ?: return@post
-      }
-      val periodSizeSubs = periodSizeBeats / subdivisionCount
-      val sizeWritten = writeNextAudioData(subsTrack, tickSound, periodSizeSubs, 0)
-      writeSilenceUntilPeriodFinished(subsTrack, sizeWritten, periodSizeSubs)
+      val tickSound = if (muted) silence else getTickSound(tick.type) ?: return@post
+      val sizeWritten = writeNextAudioData(tickSound, periodSizeTrimmed, 0)
+      writeSilenceUntilPeriodFinished(sizeWritten, periodSizeTrimmed)
     }
   }
 
-  private fun writeSilenceUntilPeriodFinished(
-    track: AudioTrack?, previousSizeWritten: Int, periodSize: Int
-  ) {
+  private fun writeSilenceUntilPeriodFinished(previousSizeWritten: Int, periodSize: Int) {
     var sizeWritten = previousSizeWritten
     while (sizeWritten < periodSize) {
-      sizeWritten += writeNextAudioData(track, silence, periodSize, sizeWritten)
+      sizeWritten += writeNextAudioData(silence, periodSize, sizeWritten)
     }
   }
 
-  private fun writeNextAudioData(
-    track: AudioTrack?, data: FloatArray, periodSize: Int, sizeWritten: Int
-  ): Int {
+  private fun writeNextAudioData(data: FloatArray, periodSize: Int, sizeWritten: Int): Int {
     val size = minOf(data.size, periodSize - sizeWritten)
     if (playing) {
-      writeAudio(track, data, size)
+      writeAudio(data, size)
     }
     return size
   }
@@ -310,9 +256,9 @@ class AudioUtil(
     }
   }
 
-  private fun writeAudio(track: AudioTrack?, data: FloatArray, size: Int) {
+  private fun writeAudio(data: FloatArray, size: Int) {
     try {
-      track?.write(data, 0, size, AudioTrack.WRITE_BLOCKING)?.takeIf { it < 0 }?.let {
+      audioTrack?.write(data, 0, size, AudioTrack.WRITE_BLOCKING)?.takeIf { it < 0 }?.let {
         stop()
         throw RuntimeException("Error code: $it")
       }

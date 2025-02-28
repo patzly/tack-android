@@ -261,24 +261,24 @@ public class AudioUtil implements OnAudioFocusChangeListener {
   }
 
   public void writeTickPeriod(Tick tick, int tempo, int subdivisionCount) {
-    int periodSize = 60 * SAMPLE_RATE_IN_HZ / tempo /subdivisionCount;
-    final long expectedTime = SystemClock.elapsedRealtime(); // Closure for Runnable lambdas
+    final int periodSize = 60 * SAMPLE_RATE_IN_HZ / tempo / subdivisionCount;
+    final long expectedTime = SystemClock.elapsedRealtime();
     audioHandler.post(() -> {
-      int finalPeriodSize = periodSize;
-      if (tick.subdivision == 1 && tick.beat == 1) {
+      int periodSizeTrimmed = periodSize;
+      if (tick.subdivision == 1) {
         long currentTime = SystemClock.elapsedRealtime();
         long delay = currentTime - expectedTime;
         if (delay > 1) {
-          int trimSize = (int) (Math.max(delay, 50) * (SAMPLE_RATE_IN_HZ / 1000));
-          finalPeriodSize = Math.max(0, finalPeriodSize - trimSize);
+          int trimSize = (int) (Math.max(delay, 10) * (SAMPLE_RATE_IN_HZ / 1000));
+          periodSizeTrimmed = Math.max(0, periodSize - trimSize);
         }
       }
       float[] tickSound = muted || tick.isMuted ? silence : getTickSound(tick.type);
-      int sizeWritten = writeNextAudioData(tickSound, finalPeriodSize, 0);
+      int sizeWritten = writeNextAudioData(tickSound, periodSizeTrimmed, 0);
       if (DEBUG) {
         Log.v(TAG, "writeTickPeriod: wrote tick sound for tick " + tick);
       }
-      writeSilenceUntilPeriodFinished(sizeWritten, finalPeriodSize);
+      writeSilenceUntilPeriodFinished(sizeWritten, periodSizeTrimmed);
     });
   }
 

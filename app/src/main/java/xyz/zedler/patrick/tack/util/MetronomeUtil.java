@@ -126,7 +126,6 @@ public class MetronomeUtil {
     }
     if (tickThread == null || !tickThread.isAlive()) {
       tickThread = new HandlerThread("metronome_ticks");
-      tickThread.setPriority(Thread.MAX_PRIORITY);
       tickThread.start();
       removeHandlerCallbacks();
       tickHandler = new Handler(tickThread.getLooper());
@@ -1153,7 +1152,7 @@ public class MetronomeUtil {
           ", beat=" + beat +
           ", sub=" + subdivision +
           ", type=" + type +
-          ", sMuted=" + isMuted + '}';
+          ", muted=" + isMuted + '}';
     }
   }
 }
