@@ -61,10 +61,10 @@ public class AudioUtil implements OnAudioFocusChangeListener {
   private final Context context;
   private final AudioManager audioManager;
   private final AudioListener listener;
-  private HandlerThread beatsThread, subsThread;
-  private Handler beatsHandler, subsHandler;
-  private AudioTrack beatsTrack, subsTrack;
-  private LoudnessEnhancer beatsLoudnessEnhancer, subsLoudnessEnhancer;
+  private HandlerThread audioThread;
+  private Handler audioHandler;
+  private AudioTrack audioTrack;
+  private LoudnessEnhancer loudnessEnhancer;
   private float[] tickStrong, tickNormal, tickSub;
   private int gain;
   private boolean playing, muted, ignoreFocus;
@@ -79,33 +79,22 @@ public class AudioUtil implements OnAudioFocusChangeListener {
 
   public void destroy() {
     removeHandlerCallbacks();
-    beatsThread.quitSafely();
-    subsThread.quitSafely();
+    audioThread.quitSafely();
   }
 
   private void resetHandlersIfRequired() {
-    if (beatsThread == null || !beatsThread.isAlive()) {
-      beatsThread = new HandlerThread("audio_beats");
-      beatsThread.setPriority(Thread.MAX_PRIORITY);
-      beatsThread.start();
+    if (audioThread == null || !audioThread.isAlive()) {
+      audioThread = new HandlerThread("audio");
+      audioThread.setPriority(Thread.MAX_PRIORITY);
+      audioThread.start();
       removeHandlerCallbacks();
-      beatsHandler = new Handler(beatsThread.getLooper());
-    }
-    if (subsThread == null || !subsThread.isAlive()) {
-      subsThread = new HandlerThread("audio_subdivisions");
-      subsThread.setPriority(Thread.MAX_PRIORITY);
-      subsThread.start();
-      removeHandlerCallbacks();
-      subsHandler = new Handler(subsThread.getLooper());
+      audioHandler = new Handler(audioThread.getLooper());
     }
   }
 
   private void removeHandlerCallbacks() {
-    if (beatsHandler != null) {
-      beatsHandler.removeCallbacksAndMessages(null);
-    }
-    if (subsHandler != null) {
-      subsHandler.removeCallbacksAndMessages(null);
+    if (audioHandler != null) {
+      audioHandler.removeCallbacksAndMessages(null);
     }
   }
 
@@ -113,27 +102,18 @@ public class AudioUtil implements OnAudioFocusChangeListener {
     resetHandlersIfRequired();
 
     playing = true;
-    beatsTrack = getTrack();
-    subsTrack = getTrack();
+    audioTrack = getTrack();
     try {
-      beatsLoudnessEnhancer = new LoudnessEnhancer(beatsTrack.getAudioSessionId());
-      beatsLoudnessEnhancer.setTargetGain(gain * 100);
-      beatsLoudnessEnhancer.setEnabled(gain > 0);
-      subsLoudnessEnhancer = new LoudnessEnhancer(subsTrack.getAudioSessionId());
-      subsLoudnessEnhancer.setTargetGain(gain * 100);
-      subsLoudnessEnhancer.setEnabled(gain > 0);
+      loudnessEnhancer = new LoudnessEnhancer(audioTrack.getAudioSessionId());
+      loudnessEnhancer.setTargetGain(gain * 100);
+      loudnessEnhancer.setEnabled(gain > 0);
     } catch (RuntimeException e) {
       Log.e(TAG, "play: failed to initialize LoudnessEnhancer: ", e);
     }
-    if (beatsTrack.getState() == AudioTrack.STATE_INITIALIZED) {
-      beatsTrack.play();
+    if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+      audioTrack.play();
     } else {
-      Log.e(TAG, "play: failed to start beatsTrack");
-    }
-    if (subsTrack.getState() == AudioTrack.STATE_INITIALIZED) {
-      subsTrack.play();
-    } else {
-      Log.e(TAG, "play: failed to start subsTrack");
+      Log.e(TAG, "play: failed to start AudioTrack");
     }
 
     if (ignoreFocus) {
@@ -157,35 +137,20 @@ public class AudioUtil implements OnAudioFocusChangeListener {
     playing = false;
     removeHandlerCallbacks();
 
-    if (beatsTrack != null) {
-      if (beatsTrack.getState() == AudioTrack.STATE_INITIALIZED) {
-        beatsTrack.stop();
+    if (audioTrack != null) {
+      if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+        audioTrack.stop();
       }
-      beatsTrack.flush();
-      beatsTrack.release();
+      audioTrack.flush();
+      audioTrack.release();
     }
-    if (subsTrack != null) {
-      if (subsTrack.getState() == AudioTrack.STATE_INITIALIZED) {
-        subsTrack.stop();
-      }
-      subsTrack.flush();
-      subsTrack.release();
-    }
-    if (beatsLoudnessEnhancer != null) {
+    if (loudnessEnhancer != null) {
       try {
-        beatsLoudnessEnhancer.release();
+        loudnessEnhancer.release();
       } catch (RuntimeException e) {
         Log.e(TAG, "stop: failed to release LoudnessEnhancer resources: ", e);
       }
-      beatsLoudnessEnhancer = null;
-    }
-    if (subsLoudnessEnhancer != null) {
-      try {
-        subsLoudnessEnhancer.release();
-      } catch (RuntimeException e) {
-        Log.e(TAG, "stop: failed to release LoudnessEnhancer resources: ", e);
-      }
-      subsLoudnessEnhancer = null;
+      loudnessEnhancer = null;
     }
     if (!ignoreFocus) {
       audioManager.abandonAudioFocus(this);
@@ -196,22 +161,16 @@ public class AudioUtil implements OnAudioFocusChangeListener {
   @Override
   public void onAudioFocusChange(int focusChange) {
     if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-      if (beatsTrack != null) {
-        beatsTrack.setVolume(1);
-      }
-      if (subsTrack != null) {
-        subsTrack.setVolume(1);
+      if (audioTrack != null) {
+        audioTrack.setVolume(1);
       }
     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
       stop();
     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
         || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
     ) {
-      if (beatsTrack != null) {
-        beatsTrack.setVolume(0.25f);
-      }
-      if (subsTrack != null) {
-        subsTrack.setVolume(0.25f);
+      if (audioTrack != null) {
+        audioTrack.setVolume(0.25f);
       }
     }
   }
@@ -275,18 +234,10 @@ public class AudioUtil implements OnAudioFocusChangeListener {
 
   public void setGain(int gain) {
     this.gain = gain;
-    if (beatsLoudnessEnhancer != null) {
+    if (loudnessEnhancer != null) {
       try {
-        beatsLoudnessEnhancer.setTargetGain(gain * 100);
-        beatsLoudnessEnhancer.setEnabled(gain > 0);
-      } catch (RuntimeException e) {
-        Log.e(TAG, "setGain: failed to set target gain: ", e);
-      }
-    }
-    if (subsLoudnessEnhancer != null) {
-      try {
-        subsLoudnessEnhancer.setTargetGain(gain * 100);
-        subsLoudnessEnhancer.setEnabled(gain > 0);
+        loudnessEnhancer.setTargetGain(gain * 100);
+        loudnessEnhancer.setEnabled(gain > 0);
       } catch (RuntimeException e) {
         Log.e(TAG, "setGain: failed to set target gain: ", e);
       }
@@ -310,64 +261,41 @@ public class AudioUtil implements OnAudioFocusChangeListener {
   }
 
   public void writeTickPeriod(Tick tick, int tempo, int subdivisionCount) {
+    int periodSize = 60 * SAMPLE_RATE_IN_HZ / tempo /subdivisionCount;
     final long expectedTime = SystemClock.elapsedRealtime(); // Closure for Runnable lambdas
-    int periodSizeBeats = 60 * SAMPLE_RATE_IN_HZ / tempo;
-    if (tick.subdivision == 1) {
-      beatsHandler.post(() -> {
-        int periodSize = periodSizeBeats;
+    audioHandler.post(() -> {
+      int finalPeriodSize = periodSize;
+      if (tick.subdivision == 1 && tick.beat == 1) {
         long currentTime = SystemClock.elapsedRealtime();
         long delay = currentTime - expectedTime;
         if (delay > 1) {
-          int trimSize = (int) (delay * (SAMPLE_RATE_IN_HZ / 1000));
-          periodSize = Math.max(0, periodSize - trimSize);
-          Log.i(TAG, "writeTickPeriod: beat sync=" + delay);
-        }
-        float[] tickSound = muted || tick.isMuted ? silence : getTickSound(tick.type);
-        int sizeWritten = writeNextAudioData(beatsTrack, tickSound, periodSize, 0);
-        if (DEBUG) {
-          Log.v(TAG, "writeTickPeriod: wrote tick sound for beat " + tick);
-        }
-        writeSilenceUntilPeriodFinished(beatsTrack, sizeWritten, periodSize);
-      });
-    }
-    subsHandler.post(() -> {
-      int periodSize = periodSizeBeats / subdivisionCount;
-      if (tick.subdivision == 1) {
-        long currentTime = SystemClock.elapsedRealtime();
-        long delay = currentTime - expectedTime;
-        if (delay > 1) {
-          int trimSize = (int) (delay * (SAMPLE_RATE_IN_HZ / 1000));
-          periodSize = Math.max(0, periodSize - trimSize);
-          Log.i(TAG, "writeTickPeriod: subdivision sync=" + delay);
+          int trimSize = (int) (Math.max(delay, 50) * (SAMPLE_RATE_IN_HZ / 1000));
+          finalPeriodSize = Math.max(0, finalPeriodSize - trimSize);
         }
       }
-      float[] tickSound = muted || tick.isMuted || tick.subdivision == 1
-          ? silence
-          : getTickSound(tick.type);
-      int sizeWritten = writeNextAudioData(subsTrack, tickSound, periodSize, 0);
+      float[] tickSound = muted || tick.isMuted ? silence : getTickSound(tick.type);
+      int sizeWritten = writeNextAudioData(tickSound, finalPeriodSize, 0);
       if (DEBUG) {
-        Log.v(TAG, "writeTickPeriod: wrote tick sound for subdivision " + tick);
+        Log.v(TAG, "writeTickPeriod: wrote tick sound for tick " + tick);
       }
-      writeSilenceUntilPeriodFinished(subsTrack, sizeWritten, periodSize);
+      writeSilenceUntilPeriodFinished(sizeWritten, finalPeriodSize);
     });
   }
 
-  private void writeSilenceUntilPeriodFinished(
-      AudioTrack track, int previousSizeWritten, int periodSize
-  ) {
+  private void writeSilenceUntilPeriodFinished(int previousSizeWritten, int periodSize) {
     int sizeWritten = previousSizeWritten;
     while (sizeWritten < periodSize) {
-      sizeWritten += writeNextAudioData(track, silence, periodSize, sizeWritten);
+      sizeWritten += writeNextAudioData(silence, periodSize, sizeWritten);
       if (DEBUG) {
         Log.v(TAG, "writeSilenceUntilPeriodFinished: wrote silence");
       }
     }
   }
 
-  private int writeNextAudioData(AudioTrack track, float[] data, int periodSize, int sizeWritten) {
+  private int writeNextAudioData(float[] data, int periodSize, int sizeWritten) {
     int size = Math.min(data.length, periodSize - sizeWritten);
     if (playing) {
-      writeAudio(track, data, size);
+      writeAudio(data, size);
     }
     return size;
   }
@@ -436,9 +364,9 @@ public class AudioUtil implements OnAudioFocusChangeListener {
     }
   }
 
-  private void writeAudio(AudioTrack track, float[] data, int size) {
+  private void writeAudio(float[] data, int size) {
     try {
-      int result = track.write(data, 0, size, AudioTrack.WRITE_BLOCKING);
+      int result = audioTrack.write(data, 0, size, AudioTrack.WRITE_BLOCKING);
       if (result < 0) {
         stop();
         throw new IllegalStateException("Error code: " + result);
