@@ -32,6 +32,7 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.SystemClock;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
@@ -85,12 +86,14 @@ public class AudioUtil implements OnAudioFocusChangeListener {
   private void resetHandlersIfRequired() {
     if (beatsThread == null || !beatsThread.isAlive()) {
       beatsThread = new HandlerThread("audio_beats");
+      beatsThread.setPriority(Thread.MAX_PRIORITY);
       beatsThread.start();
       removeHandlerCallbacks();
       beatsHandler = new Handler(beatsThread.getLooper());
     }
     if (subsThread == null || !subsThread.isAlive()) {
       subsThread = new HandlerThread("audio_subdivisions");
+      subsThread.setPriority(Thread.MAX_PRIORITY);
       subsThread.start();
       removeHandlerCallbacks();
       subsHandler = new Handler(subsThread.getLooper());
@@ -307,27 +310,45 @@ public class AudioUtil implements OnAudioFocusChangeListener {
   }
 
   public void writeTickPeriod(Tick tick, int tempo, int subdivisionCount) {
+    final long expectedTime = SystemClock.elapsedRealtime(); // Closure for Runnable lambdas
     int periodSizeBeats = 60 * SAMPLE_RATE_IN_HZ / tempo;
     if (tick.subdivision == 1) {
       beatsHandler.post(() -> {
-        float[] tickSound = muted || tick.isMuted ? silence : getTickSound(tick.type);
-        int sizeWritten = writeNextAudioData(beatsTrack, tickSound, periodSizeBeats, 0);
-        if (DEBUG) {
-          Log.v(TAG, "writePrimaryTickPeriod: wrote tick sound for beat " + tick);
+        int periodSize = periodSizeBeats;
+        long currentTime = SystemClock.elapsedRealtime();
+        long delay = currentTime - expectedTime;
+        if (delay > 1) {
+          int trimSize = (int) (delay * (SAMPLE_RATE_IN_HZ / 1000));
+          periodSize = Math.max(0, periodSize - trimSize);
+          Log.i(TAG, "writeTickPeriod: beat sync=" + delay);
         }
-        writeSilenceUntilPeriodFinished(beatsTrack, sizeWritten, periodSizeBeats);
+        float[] tickSound = muted || tick.isMuted ? silence : getTickSound(tick.type);
+        int sizeWritten = writeNextAudioData(beatsTrack, tickSound, periodSize, 0);
+        if (DEBUG) {
+          Log.v(TAG, "writeTickPeriod: wrote tick sound for beat " + tick);
+        }
+        writeSilenceUntilPeriodFinished(beatsTrack, sizeWritten, periodSize);
       });
     }
     subsHandler.post(() -> {
+      int periodSize = periodSizeBeats / subdivisionCount;
+      if (tick.subdivision == 1) {
+        long currentTime = SystemClock.elapsedRealtime();
+        long delay = currentTime - expectedTime;
+        if (delay > 1) {
+          int trimSize = (int) (delay * (SAMPLE_RATE_IN_HZ / 1000));
+          periodSize = Math.max(0, periodSize - trimSize);
+          Log.i(TAG, "writeTickPeriod: subdivision sync=" + delay);
+        }
+      }
       float[] tickSound = muted || tick.isMuted || tick.subdivision == 1
           ? silence
           : getTickSound(tick.type);
-      int periodSizeSubs = periodSizeBeats / subdivisionCount;
-      int sizeWritten = writeNextAudioData(subsTrack, tickSound, periodSizeSubs, 0);
+      int sizeWritten = writeNextAudioData(subsTrack, tickSound, periodSize, 0);
       if (DEBUG) {
         Log.v(TAG, "writeTickPeriod: wrote tick sound for subdivision " + tick);
       }
-      writeSilenceUntilPeriodFinished(subsTrack, sizeWritten, periodSizeSubs);
+      writeSilenceUntilPeriodFinished(subsTrack, sizeWritten, periodSize);
     });
   }
 
