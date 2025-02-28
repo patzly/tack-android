@@ -2,6 +2,7 @@
 
 - New: automatic audio offset compensation for long-term accuracy
 - Fixed: reverted separation of beats and subdivisions audio as it caused offsets with some configurations
+- Fixed: Italian tempo term not updated with tempo tap and keyboard input
 
 ## 4.8.1
 

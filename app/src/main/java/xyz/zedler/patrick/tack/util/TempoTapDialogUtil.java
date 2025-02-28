@@ -133,12 +133,10 @@ public class TempoTapDialogUtil {
   }
 
   private void setTempo(int tempoOld, int tempoNew) {
-    getMetronomeUtil().setTempo(
-        Math.min(Math.max(tempoNew, Constants.TEMPO_MIN), Constants.TEMPO_MAX)
-    );
-    if (binding == null) {
+    if (binding == null || fragment == null || !fragment.isAdded()) {
       return;
     }
+    fragment.setTempo(tempoNew);
     binding.textTempoTapTempo.setText(String.valueOf(tempoNew));
     String termNew = fragment.getTempoTerm(tempoNew);
     if (!termNew.equals(fragment.getTempoTerm(tempoOld))) {
@@ -151,7 +149,6 @@ public class TempoTapDialogUtil {
       );
       binding.textSwitcherTempoTapTempoTerm.setText(termNew);
     }
-    fragment.setTempo(tempoNew);
   }
 
   public int getTempo() {
