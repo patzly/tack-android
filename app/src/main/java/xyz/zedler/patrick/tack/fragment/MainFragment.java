@@ -590,9 +590,8 @@ public class MainFragment extends BaseFragment
     );
     updateFabCornerRadius(getMetronomeUtil().isPlaying(), false);
 
-    UiUtil.keepScreenAwake(
-        activity, getMetronomeUtil().getKeepAwake() && getMetronomeUtil().isPlaying()
-    );
+    boolean keepAwake = getMetronomeUtil().getKeepAwake() && getMetronomeUtil().isPlaying();
+    UiUtil.keepScreenAwake(activity, keepAwake);
   }
 
   @Override
@@ -615,13 +614,8 @@ public class MainFragment extends BaseFragment
           updatePickerAndLogo(false, true);
         }
       }
-    });
-    try {
-      // Inside UI thread appears to be often not effective
       UiUtil.keepScreenAwake(activity, getMetronomeUtil().getKeepAwake());
-    } catch (RuntimeException e) {
-      Log.w(TAG, "onMetronomeStart: keepScreenAwake(true)", e);
-    }
+    });
   }
 
   @Override
@@ -644,13 +638,8 @@ public class MainFragment extends BaseFragment
       }
       stopTimerTransitionProgress();
       stopTimerProgress();
-    });
-    try {
-      // Inside UI thread appears to be often not effective
       UiUtil.keepScreenAwake(activity, false);
-    } catch (RuntimeException e) {
-      Log.w(TAG, "onMetronomeStart: keepScreenAwake(false)", e);
-    }
+    });
   }
 
   @Override
