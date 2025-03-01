@@ -100,7 +100,7 @@
   <string name="msg_reset">Сбросить всё?</string>
   <string name="msg_reset_description">Вы уверены, что хотите сбросить все настройки приложения, в том числе закладки? Это действие нельзя обратить.</string>
   <string name="msg_reset_elapsed">Сбросить затраченное время?</string>
-  <string name="msg_reset_elapsed_description">Вы действительно хотите сбросить прошедшее время? Это действие нельзя отменить.</string>
+  <string name="msg_reset_elapsed_description">Вы действительно хотите сбросить затраченное время? Это действие нельзя отменить.</string>
   <string name="msg_gain">Включить усиление громкости?</string>
   <string name="msg_gain_description">Будьте осторожны и не слушайте метроном в наушниках, так как громкие звуки могут вызвать потерю слуха!</string>
   <string name="msg_split_screen">Окно слишком маленькое</string>
