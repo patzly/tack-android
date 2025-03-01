@@ -1,0 +1,4 @@
+• Improved: automatic audio offset compensation for long-term accuracy
+• Improved: duration calculation and performance with duration unit bars
+• Fixed: reverted separation of beats and subdivisions audio as it caused offsets with some configurations
+• Fixed: Italian tempo term not updated with tempo tap and keyboard input
