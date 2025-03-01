@@ -1127,8 +1127,9 @@ public class MetronomeUtil {
       if (increaseTimerProgress) {
         // Play the first beat without increasing
         timerProgress += 1f / (getTimerDuration() * getBeatsCount() * getSubdivisionsCount());
+        timerProgress += 0.0001f; // to avoid rounding errors
       }
-      if(timerProgress >= 1) {
+      if (timerProgress >= 1) {
         timerProgress = 1;
         if (hasNextPart()) {
           setCurrentPartIndex(partIndex + 1);
