@@ -293,6 +293,7 @@
   <string name="settings_gain_warning">Используйте с осторожностью!</string>
   <string name="settings_gain_disclaimer">Перед каждым использованием усиления будет показываться предупреждение. Разработчик не несёт ответственности за потенциальные травмы.</string>
 
+  <string name="settings_hide_sub_controls">Скрыть элементы управления дроблением когда не используются</string>
   <string name="settings_active_beat">Выделять текущий удар</string>
   <string name="settings_active_beat_description">Полезно при медленном темпе</string>
 
