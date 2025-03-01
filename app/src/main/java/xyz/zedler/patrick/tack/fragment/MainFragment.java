@@ -722,50 +722,64 @@ public class MainFragment extends BaseFragment
 
   @Override
   public void onMetronomeTimerStarted() {
-    stopTimerTransitionProgress();
-    stopTimerProgress();
-    if (binding == null) {
-      return;
-    }
-    int current = (int) binding.sliderMainTimer.getValue();
-    int max = (int) binding.sliderMainTimer.getValueTo();
-    float currentFraction = current / (float) max;
-    if (!getMetronomeUtil().equalsTimerProgress(currentFraction)) {
-      // position where the timer will be at animation end
-      // only if current progress is not equal to timer progress
-      long animDuration = Constants.ANIM_DURATION_LONG;
-      float fraction = (float) animDuration / getMetronomeUtil().getTimerInterval();
-      fraction += getMetronomeUtil().getTimerProgress();
-      progressTransitionAnimator = ValueAnimator.ofFloat(currentFraction, fraction);
-      progressTransitionAnimator.addUpdateListener(animation -> {
-        if (binding == null) {
-          return;
-        }
-        binding.sliderMainTimer.setValue((int) ((float) animation.getAnimatedValue() * max));
-      });
-      progressTransitionAnimator.addListener(new AnimatorListenerAdapter() {
-        @Override
-        public void onAnimationEnd(Animator animation) {
-          stopTimerTransitionProgress();
-        }
-      });
-      progressTransitionAnimator.setInterpolator(new FastOutSlowInInterpolator());
-      progressTransitionAnimator.setDuration(animDuration);
-      progressTransitionAnimator.start();
-    }
-    updateTimerProgress(
-        1, getMetronomeUtil().getTimerIntervalRemaining(), true, true
-    );
+    activity.runOnUiThread(() -> {
+      stopTimerTransitionProgress();
+      stopTimerProgress();
+      if (binding == null) {
+        return;
+      }
+      int current = (int) binding.sliderMainTimer.getValue();
+      int max = (int) binding.sliderMainTimer.getValueTo();
+      float currentFraction = current / (float) max;
+      if (!getMetronomeUtil().equalsTimerProgress(currentFraction)) {
+        // position where the timer will be at animation end
+        // only if current progress is not equal to timer progress
+        long animDuration = Constants.ANIM_DURATION_LONG;
+        float fraction = (float) animDuration / getMetronomeUtil().getTimerInterval();
+        fraction += getMetronomeUtil().getTimerProgress();
+        progressTransitionAnimator = ValueAnimator.ofFloat(currentFraction, fraction);
+        progressTransitionAnimator.addUpdateListener(animation -> {
+          if (binding == null) {
+            return;
+          }
+          binding.sliderMainTimer.setValue((int) ((float) animation.getAnimatedValue() * max));
+        });
+        progressTransitionAnimator.addListener(new AnimatorListenerAdapter() {
+          @Override
+          public void onAnimationEnd(Animator animation) {
+            stopTimerTransitionProgress();
+          }
+        });
+        progressTransitionAnimator.setInterpolator(new FastOutSlowInInterpolator());
+        progressTransitionAnimator.setDuration(animDuration);
+        progressTransitionAnimator.start();
+      }
+      updateTimerProgress(
+          1, getMetronomeUtil().getTimerIntervalRemaining(), true, true
+      );
+    });
   }
 
   @Override
-  public void onElapsedTimeSecondsChanged() {
+  public void onMetronomeElapsedTimeSecondsChanged() {
     activity.runOnUiThread(this::updateElapsedDisplay);
   }
 
   @Override
-  public void onTimerSecondsChanged() {
+  public void onMetronomeTimerSecondsChanged() {
     activity.runOnUiThread(this::updateTimerDisplay);
+  }
+
+  @Override
+  public void onMetronomeTimerProgressDirty() {
+    activity.runOnUiThread(() -> {
+      if (binding == null) {
+        return;
+      }
+      updateTimerProgress(
+          1, getMetronomeUtil().getTimerIntervalRemaining(), true, true
+      );
+    });
   }
 
   @Override
@@ -776,8 +790,8 @@ public class MainFragment extends BaseFragment
   }
 
   @Override
-  public void onPermissionMissing() {
-    activity.requestNotificationPermission(true);
+  public void onMetronomePermissionMissing() {
+    activity.runOnUiThread(() -> activity.requestNotificationPermission(true));
   }
 
   @Override
