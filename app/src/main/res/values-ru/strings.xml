@@ -99,7 +99,7 @@
   <string name="msg_connection_lost">Потеряно соединение с сервисом, требуется перезапуск приложения</string>
   <string name="msg_reset">Сбросить всё?</string>
   <string name="msg_reset_description">Вы уверены, что хотите сбросить все настройки приложения, в том числе закладки? Это действие нельзя обратить.</string>
-  <string name="msg_reset_elapsed">Сбросить прошедшее время?</string>
+  <string name="msg_reset_elapsed">Сбросить затраченное время?</string>
   <string name="msg_reset_elapsed_description">Вы действительно хотите сбросить прошедшее время? Это действие нельзя отменить.</string>
   <string name="msg_gain">Включить усиление громкости?</string>
   <string name="msg_gain_description">Будьте осторожны и не слушайте метроном в наушниках, так как громкие звуки могут вызвать потерю слуха!</string>
