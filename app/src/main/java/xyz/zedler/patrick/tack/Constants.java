@@ -79,6 +79,7 @@ public final class Constants {
     // Song library
     public static final String SONGS_ORDER = "songs_order";
     public static final String SONG_CURRENT = "current_song";
+    public static final String PART_CURRENT = "current_part";
   }
 
   public final static class DEF {
@@ -127,6 +128,7 @@ public final class Constants {
     // Song library
     public final static int SONGS_ORDER = 0;
     public final static String SONG_CURRENT = null;
+    public final static int PART_CURRENT = 0;
   }
 
   public final static class SOUND {

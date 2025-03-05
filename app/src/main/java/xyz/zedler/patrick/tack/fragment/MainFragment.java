@@ -31,7 +31,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -98,7 +97,7 @@ public class MainFragment extends BaseFragment
   private ValueAnimator fabAnimator;
   private float cornerSizeStop, cornerSizePlay, cornerSizeCurrent;
   private int colorFlashNormal, colorFlashStrong, colorFlashMuted;
-  private DialogUtil dialogUtilGain, dialogUtilSplitScreen, dialogUtilElapsed;
+  private DialogUtil dialogUtilGain, dialogUtilSplitScreen, dialogUtilTimer, dialogUtilElapsed;
   private OptionsUtil optionsUtil;
   private PartsDialogUtil partsDialogUtil;
   private TempoTapDialogUtil tempoTapDialogUtil;
@@ -130,6 +129,7 @@ public class MainFragment extends BaseFragment
     binding = null;
     dialogUtilGain.dismiss();
     dialogUtilSplitScreen.dismiss();
+    dialogUtilTimer.dismiss();
     dialogUtilElapsed.dismiss();
     tempoDialogUtil.dismiss();
     optionsUtil.dismiss();
@@ -265,7 +265,16 @@ public class MainFragment extends BaseFragment
       }
     }
 
-    dialogUtilElapsed = new DialogUtil(activity, "elapsed");
+    dialogUtilTimer = new DialogUtil(activity, "timer_reset");
+    dialogUtilTimer.createAction(
+        R.string.msg_reset_timer,
+        R.string.msg_reset_timer_description,
+        R.string.action_reset,
+        () -> getMetronomeUtil().resetTimerNow()
+    );
+    dialogUtilTimer.showIfWasShown(savedInstanceState);
+
+    dialogUtilElapsed = new DialogUtil(activity, "elapsed_reset");
     dialogUtilElapsed.createAction(
         R.string.msg_reset_elapsed,
         R.string.msg_reset_elapsed_description,
@@ -329,6 +338,10 @@ public class MainFragment extends BaseFragment
       public void onStopTrackingTouch(@NonNull Slider slider) {
         getMetronomeUtil().restorePlayingState();
       }
+    });
+    binding.chipMainTimerCurrent.frameChipNumbersContainer.setOnClickListener(v -> {
+      dialogUtilTimer.show();
+      performHapticClick();
     });
     binding.chipMainElapsedTime.frameChipNumbersContainer.setOnClickListener(v -> {
       dialogUtilElapsed.show();
@@ -412,7 +425,7 @@ public class MainFragment extends BaseFragment
     binding.songPickerMain.setListener(new SongPickerListener() {
       @Override
       public void onCurrentSongChanged(@Nullable String currentSong) {
-        getMetronomeUtil().setCurrentSong(currentSong);
+        getMetronomeUtil().setCurrentSong(currentSong, 0);
         performHapticClick();
       }
 
@@ -499,7 +512,7 @@ public class MainFragment extends BaseFragment
   public void onPause() {
     super.onPause();
     stopTimerProgress();
-    stopTimerTransitionProgress();
+    stopTimerProgressTransition();
   }
 
   @Override
@@ -514,6 +527,9 @@ public class MainFragment extends BaseFragment
     super.onSaveInstanceState(outState);
     if (dialogUtilGain != null) {
       dialogUtilGain.saveState(outState);
+    }
+    if (dialogUtilTimer != null) {
+      dialogUtilTimer.saveState(outState);
     }
     if (dialogUtilElapsed != null) {
       dialogUtilElapsed.saveState(outState);
@@ -626,7 +642,7 @@ public class MainFragment extends BaseFragment
           updatePickerAndLogo(true, true);
         }
       }
-      stopTimerTransitionProgress();
+      stopTimerProgressTransition();
       stopTimerProgress();
       UiUtil.keepScreenAwake(activity, false);
     });
@@ -713,40 +729,12 @@ public class MainFragment extends BaseFragment
   @Override
   public void onMetronomeTimerStarted() {
     activity.runOnUiThread(() -> {
-      stopTimerTransitionProgress();
+      stopTimerProgressTransition();
       stopTimerProgress();
       if (binding == null) {
         return;
       }
-      int current = (int) binding.sliderMainTimer.getValue();
-      int max = (int) binding.sliderMainTimer.getValueTo();
-      float currentFraction = current / (float) max;
-      if (!getMetronomeUtil().equalsTimerProgress(currentFraction)) {
-        // position where the timer will be at animation end
-        // only if current progress is not equal to timer progress
-        long animDuration = Constants.ANIM_DURATION_LONG;
-        float fraction = (float) animDuration / getMetronomeUtil().getTimerInterval();
-        fraction += getMetronomeUtil().getTimerProgress();
-        progressTransitionAnimator = ValueAnimator.ofFloat(currentFraction, fraction);
-        progressTransitionAnimator.addUpdateListener(animation -> {
-          if (binding == null) {
-            return;
-          }
-          binding.sliderMainTimer.setValue((int) ((float) animation.getAnimatedValue() * max));
-        });
-        progressTransitionAnimator.addListener(new AnimatorListenerAdapter() {
-          @Override
-          public void onAnimationEnd(Animator animation) {
-            stopTimerTransitionProgress();
-          }
-        });
-        progressTransitionAnimator.setInterpolator(new FastOutSlowInInterpolator());
-        progressTransitionAnimator.setDuration(animDuration);
-        progressTransitionAnimator.start();
-      }
-      updateTimerProgress(
-          1, getMetronomeUtil().getTimerIntervalRemaining(), true, true
-      );
+      updateTimerControls(true);
     });
   }
 
@@ -761,14 +749,12 @@ public class MainFragment extends BaseFragment
   }
 
   @Override
-  public void onMetronomeTimerProgressDirty() {
+  public void onMetronomeTimerProgressOneTime() {
     activity.runOnUiThread(() -> {
       if (binding == null) {
         return;
       }
-      updateTimerProgress(
-          1, getMetronomeUtil().getTimerIntervalRemaining(), true, true
-      );
+      updateTimerControls(true);
     });
   }
 
@@ -783,8 +769,6 @@ public class MainFragment extends BaseFragment
       updateBeatControls(true);
       updateSubs(getMetronomeUtil().getSubdivisions());
       updateSubControls(true);
-
-      // TODO: change song part index?
 
       updateTimerControls();
       updateElapsedDisplay();
@@ -1142,6 +1126,10 @@ public class MainFragment extends BaseFragment
   }
 
   public void updateTimerControls() {
+    updateTimerControls(true);
+  }
+
+  public void updateTimerControls(boolean animated) {
     boolean isPlaying = getMetronomeUtil().isPlaying();
     boolean isTimerActive = getMetronomeUtil().isTimerActive();
     int visibility = isTimerActive ? View.VISIBLE : View.GONE;
@@ -1152,12 +1140,19 @@ public class MainFragment extends BaseFragment
     measureTimerControls(false);
     // Check if timer is currently running
     if (isPlaying && isTimerActive && !getMetronomeUtil().isCountingIn()) {
+      float fraction = (float) Constants.ANIM_DURATION_LONG / getMetronomeUtil().getTimerInterval();
+      fraction += getMetronomeUtil().getTimerProgress();
+      startTimerProgressTransition(fraction);
       updateTimerProgress(
-          1, getMetronomeUtil().getTimerIntervalRemaining(), true, true
+          1, getMetronomeUtil().getTimerIntervalRemaining(), animated, true
       );
     } else {
       float timerProgress = getMetronomeUtil().getTimerProgress();
-      updateTimerProgress(timerProgress, 0, false, false);
+      if (animated) {
+        startTimerProgressTransition(timerProgress);
+      } else {
+        updateTimerProgress(timerProgress, 0, false, false);
+      }
     }
     updateTimerDisplay();
   }
@@ -1174,7 +1169,7 @@ public class MainFragment extends BaseFragment
                 - binding.sliderMainTimer.getTrackSidePadding() * 2;
             binding.sliderMainTimer.setValueTo(width);
             if (updateControls) {
-              updateTimerControls();
+              updateTimerControls(false);
             }
             if (binding.sliderMainTimer.getViewTreeObserver().isAlive()) {
               binding.sliderMainTimer.getViewTreeObserver().removeOnGlobalLayoutListener(
@@ -1348,7 +1343,33 @@ public class MainFragment extends BaseFragment
     }
   }
 
-  private void stopTimerTransitionProgress() {
+  private void startTimerProgressTransition(float fractionTo) {
+    int current = (int) binding.sliderMainTimer.getValue();
+    int max = (int) binding.sliderMainTimer.getValueTo();
+    float currentFraction = current / (float) max;
+    if (getMetronomeUtil().equalsTimerProgress(currentFraction)) {
+      // only if current progress is not equal to timer progress
+      return;
+    }
+    progressTransitionAnimator = ValueAnimator.ofFloat(currentFraction, fractionTo);
+    progressTransitionAnimator.addUpdateListener(animation -> {
+      if (binding == null) {
+        return;
+      }
+      binding.sliderMainTimer.setValue((int) ((float) animation.getAnimatedValue() * max));
+    });
+    progressTransitionAnimator.addListener(new AnimatorListenerAdapter() {
+      @Override
+      public void onAnimationEnd(Animator animation) {
+        stopTimerProgressTransition();
+      }
+    });
+    progressTransitionAnimator.setInterpolator(new FastOutSlowInInterpolator());
+    progressTransitionAnimator.setDuration(Constants.ANIM_DURATION_LONG);
+    progressTransitionAnimator.start();
+  }
+
+  private void stopTimerProgressTransition() {
     if (progressTransitionAnimator != null) {
       progressTransitionAnimator.pause();
       progressTransitionAnimator.removeAllUpdateListeners();
