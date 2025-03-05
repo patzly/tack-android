@@ -81,15 +81,6 @@ public class ShortcutUtil {
     }
   }
 
-  public void updateShortcut(@NonNull String shortcutId) {
-    hasShortcutAsync(shortcutId, hasShortcut -> {
-      if (isSupported() && hasShortcut) {
-        manager.removeDynamicShortcuts(Collections.singletonList(shortcutId));
-        manager.addDynamicShortcuts(Collections.singletonList(getShortcutInfo(shortcutId)));
-      }
-    });
-  }
-
   public void reportUsage(@Nullable String shortcutId) {
     hasShortcutAsync(shortcutId, hasShortcut -> {
       if (isSupported() && hasShortcut) {

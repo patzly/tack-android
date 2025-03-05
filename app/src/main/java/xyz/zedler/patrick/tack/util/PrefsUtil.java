@@ -100,6 +100,7 @@ public class PrefsUtil {
           LiveData<List<Song>> liveSongs = db.songDao().getAllSongs();
           new Handler(Looper.getMainLooper()).post(() -> {
             ShortcutUtil shortcutUtil = new ShortcutUtil(context);
+            shortcutUtil.removeAllShortcuts();
             liveSongs.observeForever(new Observer<>() {
               @Override
               public void onChanged(List<Song> songs) {
@@ -123,7 +124,7 @@ public class PrefsUtil {
                         Part part = new Part(null, songName, config);
                         db.songDao().insertPart(part);
                       });
-                      shortcutUtil.updateShortcut(songName);
+                      shortcutUtil.addShortcut(songName);
                     }
                   } catch (NumberFormatException e) {
                     Log.e(TAG, "migrateBookmarks: bookmark to tempo: ", e);
