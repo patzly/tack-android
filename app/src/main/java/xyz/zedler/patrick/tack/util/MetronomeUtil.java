@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
@@ -59,6 +60,7 @@ public class MetronomeUtil {
   private final HapticUtil hapticUtil;
   private final ShortcutUtil shortcutUtil;
   private final Set<MetronomeListener> listeners = Collections.synchronizedSet(new HashSet<>());
+  private final ExecutorService executorService = Executors.newSingleThreadExecutor();
   private final Random random = new Random();
   private final MetronomeConfig config = new MetronomeConfig();
   private final SongDatabase db;
@@ -160,7 +162,7 @@ public class MetronomeUtil {
   public void setCurrentSong(@Nullable String songName, int partIndex) {
     currentSongName = songName;
     if (songName != null) {
-      Executors.newSingleThreadExecutor().execute(() -> {
+      executorService.execute(() -> {
         currentSongWithParts = db.songDao().getSongWithPartsByName(songName);
         if (currentSongWithParts != null) {
           setCurrentPartIndex(partIndex);
@@ -310,9 +312,8 @@ public class MetronomeUtil {
       return;
     }
     if (resetTimer) {
-      // TODO
       // notify system for shortcut usage prediction
-      shortcutUtil.reportUsage(getTempo());
+      shortcutUtil.reportUsage(currentSongName);
     }
     if (isPlaying() && !isRestarted) {
       return;

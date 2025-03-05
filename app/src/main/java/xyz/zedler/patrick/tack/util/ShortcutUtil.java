@@ -29,8 +29,11 @@ import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import xyz.zedler.patrick.tack.Constants.ACTION;
@@ -54,20 +57,20 @@ public class ShortcutUtil {
     }
   }
 
-  public void addShortcut(int tempo) {
-    hasShortcutAsync(tempo, hasShortcut -> {
+  public void addShortcut(@NonNull String shortcutId) {
+    hasShortcutAsync(shortcutId, hasShortcut -> {
       if (isSupported() && !hasShortcut) {
         if (manager.getDynamicShortcuts().size() < manager.getMaxShortcutCountPerActivity()) {
-          manager.addDynamicShortcuts(Collections.singletonList(getShortcutInfo(tempo)));
+          manager.addDynamicShortcuts(Collections.singletonList(getShortcutInfo(shortcutId)));
         }
       }
     });
   }
 
-  public void removeShortcut(int tempo) {
-    hasShortcutAsync(tempo, hasShortcut -> {
+  public void removeShortcut(@NonNull String shortcutId) {
+    hasShortcutAsync(shortcutId, hasShortcut -> {
       if (isSupported() && hasShortcut) {
-        manager.removeDynamicShortcuts(Collections.singletonList(String.valueOf(tempo)));
+        manager.removeDynamicShortcuts(Collections.singletonList(shortcutId));
       }
     });
   }
@@ -78,10 +81,19 @@ public class ShortcutUtil {
     }
   }
 
-  public void reportUsage(int tempo) {
-    hasShortcutAsync(tempo, hasShortcut -> {
+  public void updateShortcut(@NonNull String shortcutId) {
+    hasShortcutAsync(shortcutId, hasShortcut -> {
       if (isSupported() && hasShortcut) {
-        manager.reportShortcutUsed(String.valueOf(tempo));
+        manager.removeDynamicShortcuts(Collections.singletonList(shortcutId));
+        manager.addDynamicShortcuts(Collections.singletonList(getShortcutInfo(shortcutId)));
+      }
+    });
+  }
+
+  public void reportUsage(@Nullable String shortcutId) {
+    hasShortcutAsync(shortcutId, hasShortcut -> {
+      if (isSupported() && hasShortcut) {
+        manager.reportShortcutUsed(shortcutId);
       }
     });
   }
@@ -89,13 +101,13 @@ public class ShortcutUtil {
   /**
    * Asynchronous because there was an ANR reported caused by manager.getDynamicShortcuts()
    */
-  private void hasShortcutAsync(int tempo, ShortcutCallback callback) {
+  private void hasShortcutAsync(@Nullable String shortcutId, ShortcutCallback callback) {
     if (isSupported()) {
       executorService.execute(() -> {
         boolean result = false;
         try {
           for (ShortcutInfo info : manager.getDynamicShortcuts()) {
-            if (String.valueOf(tempo).equals(info.getId())) {
+            if (Objects.equals(shortcutId, info.getId())) {
               result = true;
               break;
             }
@@ -112,13 +124,13 @@ public class ShortcutUtil {
   }
 
   @RequiresApi(api = VERSION_CODES.N_MR1)
-  private ShortcutInfo getShortcutInfo(int tempo) {
-    ShortcutInfo.Builder builder = new ShortcutInfo.Builder(context, String.valueOf(tempo));
-    builder.setShortLabel(context.getString(R.string.label_bpm_value, tempo));
+  private ShortcutInfo getShortcutInfo(@NonNull String shortcutId) {
+    ShortcutInfo.Builder builder = new ShortcutInfo.Builder(context, shortcutId);
+    builder.setShortLabel(shortcutId);
     builder.setIcon(Icon.createWithResource(context, R.mipmap.ic_shortcut));
     builder.setIntent(new Intent(context, ShortcutActivity.class)
-        .setAction(ACTION.START_TEMPO)
-        .putExtra(EXTRA.TEMPO, tempo)
+        .setAction(ACTION.START_SONG)
+        .putExtra(EXTRA.SONG_NAME, shortcutId)
         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     );
     return builder.build();

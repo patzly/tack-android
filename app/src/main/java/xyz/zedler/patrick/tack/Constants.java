@@ -169,7 +169,7 @@ public final class Constants {
   public final static class ACTION {
 
     public final static String START = "xyz.zedler.patrick.tack.intent.action.START";
-    public final static String START_TEMPO = "xyz.zedler.patrick.tack.intent.action.START_TEMPO";
+    public final static String START_SONG = "xyz.zedler.patrick.tack.intent.action.START_SONG";
     public final static String STOP = "xyz.zedler.patrick.tack.intent.action.STOP";
   }
 
@@ -178,7 +178,7 @@ public final class Constants {
     public static final String RUN_AS_SUPER_CLASS = "run_as_super_class";
     public static final String INSTANCE_STATE = "instance_state";
     public static final String SCROLL_POSITION = "scroll_position";
-    public static final String TEMPO = "tempo";
+    public static final String SONG_NAME = "song_name";
   }
 
   public static final class THEME {

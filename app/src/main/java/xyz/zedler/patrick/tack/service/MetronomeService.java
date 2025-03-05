@@ -96,8 +96,8 @@ public class MetronomeService extends Service {
     if (intent != null && intent.getAction() != null) {
       if (intent.getAction().equals(ACTION.START)) {
         metronomeUtil.start();
-      } else if (intent.getAction().equals(ACTION.START_TEMPO)) {
-        metronomeUtil.setTempo(intent.getIntExtra(EXTRA.TEMPO, metronomeUtil.getTempo()));
+      } else if (intent.getAction().equals(ACTION.START_SONG)) {
+        metronomeUtil.setCurrentSong(EXTRA.SONG_NAME, 0);
         metronomeUtil.start();
       } else if (intent.getAction().equals(ACTION.STOP)) {
         metronomeUtil.stop();
