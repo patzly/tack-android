@@ -98,15 +98,17 @@ public class PrefsUtil {
           SongDatabase db = SongDatabase.getInstance(context.getApplicationContext());
           LiveData<List<Song>> liveSongs = db.songDao().getAllSongs();
           new Handler(Looper.getMainLooper()).post(() -> {
-            List<String> shortcuts = new LinkedList<>();
+            List<Song> songsToAdd = new LinkedList<>();
+            List<Part> partsToAdd = new LinkedList<>();
             liveSongs.observeForever(new Observer<>() {
               @Override
               public void onChanged(List<Song> songs) {
+                liveSongs.removeObserver(this);
+                sharedPrefs.edit().remove(BOOKMARKS).apply();
                 for (String bookmark : bookmarks) {
                   try {
                     int tempo = Integer.parseInt(bookmark);
                     String songName = context.getString(R.string.label_bpm_value, tempo);
-                    Song song = new Song(songName);
                     boolean alreadyExists = false;
                     for (Song songCompare : songs) {
                       if (songCompare.getName().equals(songName)) {
@@ -115,27 +117,29 @@ public class PrefsUtil {
                       }
                     }
                     if (!alreadyExists) {
-                      Executors.newSingleThreadExecutor().execute(() -> {
-                        db.songDao().insertSong(song);
-                        MetronomeConfig config = new MetronomeConfig();
-                        config.setTempo(tempo);
-                        Part part = new Part(null, songName, config);
-                        db.songDao().insertPart(part);
-                      });
-                      shortcuts.add(songName);
+                      songsToAdd.add(new Song(songName));
+                      MetronomeConfig config = new MetronomeConfig();
+                      config.setTempo(tempo);
+                      partsToAdd.add(new Part(null, songName, config));
                     }
                   } catch (NumberFormatException e) {
                     Log.e(TAG, "migrateBookmarks: bookmark to tempo: ", e);
                   }
                 }
-                sharedPrefs.edit().remove(BOOKMARKS).apply();
-                liveSongs.removeObserver(this);
+              }
+            });
+            Executors.newSingleThreadExecutor().execute(() -> {
+              for (Song song : songsToAdd) {
+                db.songDao().insertSong(song);
+              }
+              for (Part part : partsToAdd) {
+                db.songDao().insertPart(part);
               }
             });
             ShortcutUtil shortcutUtil = new ShortcutUtil(context);
             shortcutUtil.removeAllShortcuts();
-            for (String shortcut : shortcuts) {
-              shortcutUtil.addShortcut(shortcut);
+            for (Song song : songsToAdd) {
+              shortcutUtil.addShortcut(song.getName());
             }
           });
         });
