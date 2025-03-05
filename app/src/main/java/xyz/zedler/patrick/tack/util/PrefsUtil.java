@@ -30,12 +30,11 @@ import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;
-import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.database.SongDatabase;
 import xyz.zedler.patrick.tack.database.entity.Part;
@@ -99,8 +98,7 @@ public class PrefsUtil {
           SongDatabase db = SongDatabase.getInstance(context.getApplicationContext());
           LiveData<List<Song>> liveSongs = db.songDao().getAllSongs();
           new Handler(Looper.getMainLooper()).post(() -> {
-            ShortcutUtil shortcutUtil = new ShortcutUtil(context);
-            shortcutUtil.removeAllShortcuts();
+            List<String> shortcuts = new LinkedList<>();
             liveSongs.observeForever(new Observer<>() {
               @Override
               public void onChanged(List<Song> songs) {
@@ -124,7 +122,7 @@ public class PrefsUtil {
                         Part part = new Part(null, songName, config);
                         db.songDao().insertPart(part);
                       });
-                      shortcutUtil.addShortcut(songName);
+                      shortcuts.add(songName);
                     }
                   } catch (NumberFormatException e) {
                     Log.e(TAG, "migrateBookmarks: bookmark to tempo: ", e);
@@ -134,6 +132,11 @@ public class PrefsUtil {
                 liveSongs.removeObserver(this);
               }
             });
+            ShortcutUtil shortcutUtil = new ShortcutUtil(context);
+            shortcutUtil.removeAllShortcuts();
+            for (String shortcut : shortcuts) {
+              shortcutUtil.addShortcut(shortcut);
+            }
           });
         });
       }
