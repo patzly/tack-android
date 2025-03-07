@@ -91,7 +91,7 @@
   <string name="msg_service_running">El servicio del metrónomo está funcionando</string>
   <string name="msg_service_running_return">Toca para regresar a Tack</string>
   <string name="msg_service_description">Servicio de reproducción y configuración del metrónomo </string>
-  <string name="msg_connection_lost">Conección del servicio perdida, es necesario reiniciar la app</string>
+  <string name="msg_connection_lost">Conexión del servicio perdida, es necesario reiniciar la app</string>
   <string name="msg_reset">¿Inicializar todo?</string>
   <string name="msg_reset_description">Realmente quieres inicializar la aplicación entera, incluyendo marcadores y configuración? Esto no es reversible.</string>
   <string name="msg_gain">¿Reproducir con aumento de volumen (Boost)?</string>
