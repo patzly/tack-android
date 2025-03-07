@@ -206,7 +206,7 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">Dil</string>
-  <string name="settings_language_info">Transifex\'teki tüm gönüllü çevirmenlere çok teşekkürler!\nTacki dilinizde kullanılabilir hale getirmek için nasıl yardım edebileceğinizi öğrenmek için lütfen GitHub\'daki Tack sayfasını ziyaret edin.</string>
+  <string name="settings_language_info">Transifex\'teki tüm gönüllü çevirmenlere çok teşekkürler!\nTack\'i dilinizde kullanılabilir hale getirmek için nasıl yardım edebileceğinizi öğrenmek için lütfen GitHub\'daki Tack sayfasını ziyaret edin.</string>
   <string name="settings_language_system">Sistemi takip et</string>
   <string name="settings_language_system_description">Çeviri mevcut değilse İngilizce</string>
 
