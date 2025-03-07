@@ -1241,6 +1241,10 @@ public class MetronomeUtil {
     }
   }
 
+  public boolean isFromService() {
+    return fromService;
+  }
+
   public interface MetronomeListener {
     void onMetronomeStart();
     void onMetronomeStop();

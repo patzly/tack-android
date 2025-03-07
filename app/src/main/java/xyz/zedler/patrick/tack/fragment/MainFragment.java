@@ -1135,8 +1135,11 @@ public class MainFragment extends BaseFragment
     binding.sliderMainTimer.setVisibility(visibility);
     binding.sliderMainTimer.setContinuousTicksCount(getMetronomeUtil().getTimerDuration() + 1);
     measureTimerControls(false);
-    // Check if timer is currently running
-    if (isPlaying && isTimerActive && !getMetronomeUtil().isCountingIn()) {
+    // Check if timer is currently running and if metronome is from service
+    if (!getMetronomeUtil().isFromService()) {
+      return;
+    }
+    if (isPlaying && isTimerActive) {
       float fraction = (float) Constants.ANIM_DURATION_LONG / getMetronomeUtil().getTimerInterval();
       fraction += getMetronomeUtil().getTimerProgress();
       startTimerProgressTransition(fraction);
@@ -1147,7 +1150,7 @@ public class MainFragment extends BaseFragment
       float timerProgress = getMetronomeUtil().getTimerProgress();
       if (animated) {
         startTimerProgressTransition(timerProgress);
-      } else {
+      } else if (getMetronomeUtil().isFromService()) {
         updateTimerProgress(timerProgress, 0, false, false);
       }
     }
