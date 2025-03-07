@@ -519,7 +519,7 @@ public class MainFragment extends BaseFragment
   @Override
   public void onResume() {
     super.onResume();
-    updateTimerControls();
+    updateTimerControls(true);
     updateElapsedDisplay();
   }
 
@@ -771,7 +771,7 @@ public class MainFragment extends BaseFragment
       updateSubs(getMetronomeUtil().getSubdivisions());
       updateSubControls(true);
 
-      updateTimerControls();
+      updateTimerControls(true);
       updateElapsedDisplay();
       updateOptions(true);
     });
@@ -1124,10 +1124,6 @@ public class MainFragment extends BaseFragment
         }
       }, 1);
     }
-  }
-
-  public void updateTimerControls() {
-    updateTimerControls(true);
   }
 
   public void updateTimerControls(boolean animated) {
