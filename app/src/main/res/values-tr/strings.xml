@@ -297,7 +297,7 @@
   <string name="about_developer">Geliştirici</string>
   <string name="about_vending_description">Geliştiricinin diğer uygulamaları</string>
   <string name="about_github_description">Kaynak kodu</string>
-  <string name="about_translation_description">Tack'i çevirmeye yardım et</string>
+  <string name="about_translation_description">Tack\'i çevirmeye yardım et</string>
   <string name="about_privacy">Gizlilik Politikası</string>
   <string name="about_privacy_description">Verilerinizin nasıl işlendiği</string>
 
