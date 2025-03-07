@@ -81,7 +81,7 @@
   <string name="action_issue">GitHub\'da Yeni Sorun Aç</string>
   <string name="action_issue_description">Hataları bildirin veya özellik önerin</string>
   <string name="action_retry">Yeniden Dene</string>
-  <string name="action_logcat">Logcat'i Göster</string>
+  <string name="action_logcat">Logcat\'i Göster</string>
   <string name="action_copy_to_clipboard">Panoya Kopyala</string>
   <string name="action_reload">Yeniden Yükle</string>
   <string name="action_change_tempo">Tempoyu Değiştir</string>
