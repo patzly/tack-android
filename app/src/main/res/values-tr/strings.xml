@@ -90,7 +90,7 @@
 
   <string name="msg_bookmarks_max">Yer işareti sınırı aşıldı</string>
   <string name="msg_feedback">Harika bir uygulama çok zaman gerektirir ve kullanıcılarının geri bildirimleriyle yaşar.</string>
-  <string name="msg_feedback_contact">Dilekleriniz, yorumlarınız veya sorularınız mı var? Benimle iletişime geçin!\nAksi takdirde Play Store'da güzel bir inceleme bırakırsanız çok mutlu olurum.</string>
+  <string name="msg_feedback_contact">Dilekleriniz, yorumlarınız veya sorularınız mı var? Benimle iletişime geçin!\nAksi takdirde Play Store\'da güzel bir inceleme bırakırsanız çok mutlu olurum.</string>
   <string name="msg_recommend">Bu harika metronom uygulamasını keşfet: \n%1$s</string>
   <string name="msg_vibration_unavailable">Bu cihazda titreşim kullanılamıyor</string>
   <string name="msg_service_running">Metronom servisi çalışıyor</string>
