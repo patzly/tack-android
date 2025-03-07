@@ -31,6 +31,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -1167,7 +1168,11 @@ public class MainFragment extends BaseFragment
             }
             int width = binding.sliderMainTimer.getWidth()
                 - binding.sliderMainTimer.getTrackSidePadding() * 2;
-            binding.sliderMainTimer.setValueTo(width);
+            float valueFrom = binding.sliderMainTimer.getValueFrom();
+            float valueTo = Math.max(valueFrom, width);
+            if (valueFrom < valueTo) {
+              binding.sliderMainTimer.setValueTo(valueTo);
+            }
             if (updateControls) {
               updateTimerControls(false);
             }

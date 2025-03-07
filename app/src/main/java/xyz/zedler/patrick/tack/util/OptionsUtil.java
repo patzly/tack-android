@@ -48,11 +48,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   private final MainActivity activity;
   private final MainFragment fragment;
   private final PartialOptionsBinding binding;
-  private final boolean useDialog;
+  private final boolean useDialog, hideSubControls;
   private final Runnable onModifiersCountChanged;
   private boolean isCountInActive, isIncrementalActive, isTimerActive;
   private boolean isMuteActive, isSubdivisionActive;
-  private boolean hideSubControls;
   private DialogUtil dialogUtil;
   private PartialDialogOptionsBinding bindingDialog;
 
