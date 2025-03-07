@@ -293,6 +293,9 @@
   <string name="settings_gain_warning">Používejte s opatrností!</string>
   <string name="settings_gain_disclaimer">Při povolení zesílení bude před každým spuštěním zobrazeno varování. Vývojář nenese žádnou zodpovědnost za jakékoli potenciální škody.</string>
 
+  <string name="settings_hide_sub_controls">Skrýt ovládání subdivizí, pokud nejsou používány</string>
+  <string name="settings_hide_sub_controls_description">Zobrazí ovládání subdivizí v možnostech</string>
+
   <string name="settings_active_beat">Zvýraznit aktuální rytmus</string>
   <string name="settings_active_beat_description">Užitečné pro pomalejší tempa</string>
 
