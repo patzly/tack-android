@@ -94,7 +94,7 @@
   <string name="msg_recommend">Bu harika metronom uygulamasını keşfet: \n%1$s</string>
   <string name="msg_vibration_unavailable">Bu cihazda titreşim kullanılamıyor</string>
   <string name="msg_service_running">Metronom servisi çalışıyor</string>
-  <string name="msg_service_running_return">Tack'e dönmek için dokunun</string>
+  <string name="msg_service_running_return">Tack\'e dönmek için dokunun</string>
   <string name="msg_service_description">Metronom yapılandırması ve oynatma için servis</string>
   <string name="msg_connection_lost">Servis bağlantısı koptu, uygulama yeniden başlatılmalı</string>
   <string name="msg_reset">Hepsini sıfırla?</string>
