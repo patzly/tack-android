@@ -78,7 +78,7 @@
   <string name="action_email_description">Geliştiriciyle iletişime geçin</string>
   <string name="action_rate">Google Play\\'de Oyla</string>
   <string name="action_rate_description">Gelişimi destekleyin</string>
-  <string name="action_issue">GitHub\\'da Yeni Sorun Aç</string>
+  <string name="action_issue">GitHub\'da Yeni Sorun Aç</string>
   <string name="action_issue_description">Hataları bildirin veya özellik önerin</string>
   <string name="action_retry">Yeniden Dene</string>
   <string name="action_logcat">Logcat'i Göster</string>
