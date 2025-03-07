@@ -157,7 +157,7 @@
     <item quantity="one">Her %1$d dakikada</item>
     <item quantity="other">Her %1$d dakikada</item>
   </plurals>
-  <string name="options_incremental_max">%1$d bpm'e kadar</string>
+  <string name="options_incremental_max">%1$d bpm\'e kadar</string>
   <string name="options_incremental_min">%1$d bpm'e kadar</string>
   <string name="options_incremental_no_max">Üst sınır yok</string>
   <string name="options_incremental_no_min">Alt sınır yok</string>
