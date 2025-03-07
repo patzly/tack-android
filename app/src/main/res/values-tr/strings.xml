@@ -73,7 +73,7 @@
   <string name="action_reset">Sıfırla</string>
   <string name="action_deactivate_gain">Güçlendirmeyi Devre Dışı Bırak</string>
   <string name="action_recommend">Tavsiye Et</string>
-  <string name="action_recommend_description">Tack'i arkadaşlarınıza önerin</string>
+  <string name="action_recommend_description">Tack\\'i arkadaşlarınıza önerin</string>
   <string name="action_email">E-posta Gönder</string>
   <string name="action_email_description">Geliştiriciyle iletişime geçin</string>
   <string name="action_rate">Google Play'de Oyla</string>
