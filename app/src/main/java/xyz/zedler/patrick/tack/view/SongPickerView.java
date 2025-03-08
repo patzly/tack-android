@@ -29,8 +29,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.GradientDrawable.Orientation;
 import android.graphics.drawable.ScaleDrawable;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -46,7 +44,6 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
-import com.google.android.material.radiobutton.MaterialRadioButton;
 import java.util.Collections;
 import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
@@ -192,11 +189,12 @@ public class SongPickerView extends FrameLayout {
     ViewGroup.LayoutParams closeIconParams = binding.imageSongPickerChipClose.getLayoutParams();
     if (animated) {
       setRecyclerClicksEnabled(false);
+      binding.frameSongPickerChipClose.setClickable(false);
+      binding.frameSongPickerChipTouchTarget.setClickable(false);
       if (currentSong != null) {
         binding.textSongPickerChip.setText(currentSong);
         binding.frameSongPickerChipContainer.setTranslationX(0);
-        binding.frameSongPickerChipContainer.setVisibility(View.VISIBLE);
-        binding.frameSongPickerChipContainer.setAlpha(1);
+        binding.frameSongPickerChipContainer.setVisibility(View.INVISIBLE);
         closeIconParams.width = 0;
         binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
       } else {
@@ -231,6 +229,9 @@ public class SongPickerView extends FrameLayout {
             animator.addUpdateListener(animation -> {
               float fraction = (float) animation.getAnimatedValue();
               binding.frameSongPickerChipContainer.setTranslationX((1 - fraction) * diff);
+              if (binding.frameSongPickerChipContainer.getVisibility() == View.INVISIBLE) {
+                binding.frameSongPickerChipContainer.setVisibility(View.VISIBLE);
+              }
               closeIconParams.width = (int) Math.min(closeIconWidth * fraction, closeIconWidth);
               binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
               binding.imageSongPickerChipClose.setAlpha(fraction);
@@ -267,8 +268,9 @@ public class SongPickerView extends FrameLayout {
               public void onAnimationEnd(Animator animation) {
                 if (currentSong == null) {
                   binding.frameSongPickerChipContainer.setVisibility(INVISIBLE);
-                  binding.frameSongPickerChipContainer.setAlpha(1);
                 }
+                binding.frameSongPickerChipClose.setClickable(currentSong != null);
+                binding.frameSongPickerChipTouchTarget.setClickable(currentSong != null);
                 setRecyclerClicksEnabled(currentSong == null);
               }
             });
@@ -281,10 +283,12 @@ public class SongPickerView extends FrameLayout {
       binding.recyclerSongPicker.setAlpha(1);
       binding.recyclerSongPicker.setVisibility(currentSong != null ? INVISIBLE : VISIBLE);
       binding.frameSongPickerChipContainer.setVisibility(currentSong == null ? INVISIBLE : VISIBLE);
+      binding.frameSongPickerChipClose.setClickable(currentSong != null);
       binding.textSongPickerChip.setText(currentSong);
       closeIconParams.width = UiUtil.dpToPx(activity, 18);
       binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
       binding.imageSongPickerChipClose.setAlpha(1f);
+      setRecyclerClicksEnabled(currentSong == null);
     }
     this.currentSong = currentSong;
   }
