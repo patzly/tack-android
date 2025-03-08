@@ -1146,8 +1146,10 @@ public class MetronomeUtil {
       boolean increaseTimerProgress = barIndexWithoutCountIn != 0 || !isFirstBeat;
       if (increaseTimerProgress) {
         // Play the first beat without increasing
-        timerProgress += 1f / (getTimerDuration() * getBeatsCount() * getSubdivisionsCount());
-        timerProgress += 0.0001f; // to avoid rounding errors
+        float stepSize = 1f / (getTimerDuration() * getBeatsCount() * getSubdivisionsCount());
+        timerProgress += stepSize;
+        int steps = Math.round(timerProgress / stepSize);
+        timerProgress = steps * stepSize; // to avoid rounding errors
       }
       if (timerProgress >= 1) {
         timerProgress = 1;
