@@ -24,7 +24,6 @@ Additionally you can change the emphasis of beats by tapping on them. In options
 #### How do I disable swing?
 
 If you have enabled swing in the options, all Tack does is to set the subdivisions for you. To disable swing, simply set the subdivisions manually to your liking.
-Instead of that, you can also disable subdivisions completely in settings.
 
 #### How can I get Tack for my language?
 

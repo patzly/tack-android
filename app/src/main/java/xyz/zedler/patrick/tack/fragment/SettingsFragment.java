@@ -425,7 +425,7 @@ public class SettingsFragment extends BaseFragment
     binding.switchSettingsElapsed.setOnCheckedChangeListener(this);
 
     binding.switchSettingsResetTimer.setOnCheckedChangeListener(null);
-    binding.switchSettingsResetTimer.setChecked(getMetronomeUtil().getResetTimer());
+    binding.switchSettingsResetTimer.setChecked(getMetronomeUtil().getResetTimerOnStop());
     binding.switchSettingsResetTimer.jumpDrawablesToCurrentState();
     binding.switchSettingsResetTimer.setOnCheckedChangeListener(this);
 
@@ -538,7 +538,7 @@ public class SettingsFragment extends BaseFragment
     } else if (id == R.id.switch_settings_reset_timer) {
       ViewUtil.startIcon(binding.imageSettingsResetTimer);
       performHapticClick();
-      getMetronomeUtil().setResetTimer(isChecked);
+      getMetronomeUtil().setResetTimerOnStop(isChecked);
     } else if (id == R.id.switch_settings_big_time_text) {
       ViewUtil.startIcon(binding.imageSettingsBigTimeText);
       performHapticClick();

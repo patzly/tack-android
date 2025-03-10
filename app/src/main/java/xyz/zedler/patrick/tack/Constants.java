@@ -51,7 +51,7 @@ public final class Constants {
     public final static String ACTIVE_BEAT = "highlight_active_beat";
     public final static String ALWAYS_VIBRATE = "always_vibrate";
     public final static String SHOW_ELAPSED = "show_elapsed";
-    public final static String RESET_TIMER = "reset_timer";
+    public final static String RESET_TIMER_ON_STOP = "reset_timer";
     public final static String BIG_TIME_TEXT = "big_time_text";
     public final static String PERM_NOTIFICATION = "permanent_notification";
     public final static String FLASH_SCREEN = "flash_screen";
@@ -100,7 +100,7 @@ public final class Constants {
     public final static boolean ACTIVE_BEAT = false;
     public final static boolean ALWAYS_VIBRATE = true;
     public final static boolean SHOW_ELAPSED = false;
-    public final static boolean RESET_TIMER = false;
+    public final static boolean RESET_TIMER_ON_STOP = false;
     public final static boolean BIG_TIME_TEXT = false;
     public final static boolean PERM_NOTIFICATION = false;
     public final static boolean FLASH_SCREEN = false;

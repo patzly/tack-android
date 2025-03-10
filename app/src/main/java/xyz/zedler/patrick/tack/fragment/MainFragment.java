@@ -426,7 +426,7 @@ public class MainFragment extends BaseFragment
     binding.songPickerMain.setListener(new SongPickerListener() {
       @Override
       public void onCurrentSongChanged(@Nullable String currentSong) {
-        getMetronomeUtil().setCurrentSong(currentSong, 0);
+        getMetronomeUtil().setCurrentSong(currentSong, 0, true);
         performHapticClick();
       }
 
@@ -1173,7 +1173,9 @@ public class MainFragment extends BaseFragment
               binding.sliderMainTimer.setValueTo(valueTo);
             }
             if (updateControls) {
-              updateTimerControls(false);
+              updateTimerControls(
+                  getMetronomeUtil().isPlaying() && getMetronomeUtil().isTimerActive()
+              );
             }
             if (binding.sliderMainTimer.getViewTreeObserver().isAlive()) {
               binding.sliderMainTimer.getViewTreeObserver().removeOnGlobalLayoutListener(
