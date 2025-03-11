@@ -2,6 +2,7 @@
 
 - New: bookmarks replaced by new song library for configuration combinations
 - New: reset timer with tap on current progress
+- Improved: timer performance and behavior
 
 ## 4.8.2
 

@@ -62,6 +62,12 @@
   <string name="label_tempo_input_help">Values from %1$d to %2$d</string>
   <string name="label_part_unnamed">Part %1$d</string>
   <string name="label_part_no_duration">No duration</string>
+  <plurals name="label_parts_count">
+    <item quantity="one">%1$d part</item>
+    <item quantity="other">%1$d parts</item>
+  </plurals>
+  <string name="label_song_looped">Looped</string>
+  <string name="label_song_not_looped">Not looped</string>
 
   <!-- ACTIONS -->
 

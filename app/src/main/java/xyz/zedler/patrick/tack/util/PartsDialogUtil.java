@@ -27,8 +27,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
+import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.PartialDialogPartsBinding;
+import xyz.zedler.patrick.tack.databinding.PartialDialogPartsTitleBinding;
 import xyz.zedler.patrick.tack.fragment.MainFragment;
 import xyz.zedler.patrick.tack.recyclerview.adapter.PartsDialogAdapter;
 
@@ -38,6 +41,7 @@ public class PartsDialogUtil {
 
   private final MainActivity activity;
   private final MainFragment fragment;
+  private final PartialDialogPartsTitleBinding titleBinding;
   private final PartialDialogPartsBinding binding;
   private final DialogUtil dialogUtil;
   private final PartsDialogAdapter adapter;
@@ -45,6 +49,8 @@ public class PartsDialogUtil {
   public PartsDialogUtil(MainActivity activity, MainFragment fragment) {
     this.activity = activity;
     this.fragment = fragment;
+
+    titleBinding = PartialDialogPartsTitleBinding.inflate(activity.getLayoutInflater());
 
     binding = PartialDialogPartsBinding.inflate(activity.getLayoutInflater());
     dialogUtil = new DialogUtil(activity, "parts");
@@ -58,7 +64,9 @@ public class PartsDialogUtil {
     });
     binding.recyclerParts.setAdapter(adapter);
 
-    dialogUtil.createCloseCustom(getMetronomeUtil().getCurrentSong(), binding.getRoot());
+    dialogUtil.createCloseCustomTitle(
+        titleBinding.getRoot(), binding.getRoot()
+    );
   }
 
   public void show() {
@@ -82,8 +90,38 @@ public class PartsDialogUtil {
   }
 
   public void update() {
-    dialogUtil.setTitle(getMetronomeUtil().getCurrentSong());
-    adapter.setSongWithParts(getMetronomeUtil().getCurrentSongWithParts());
+    if (binding == null || titleBinding == null) {
+      return;
+    }
+    titleBinding.textDialogPartsTitle.setText(getMetronomeUtil().getCurrentSong());
+    SongWithParts songWithParts = getMetronomeUtil().getCurrentSongWithParts();
+    if (songWithParts != null) {
+      // part count
+      int partCount = songWithParts.getParts().size();
+      titleBinding.textDialogPartsCount.setText(
+          activity.getResources().getQuantityString(
+              R.plurals.label_parts_count, partCount, partCount
+          )
+      );
+      // song duration
+      boolean hasNoDuration = partCount == 1
+          && songWithParts.getParts().get(0).getTimerDuration() == 0;
+      if (hasNoDuration) {
+        titleBinding.textDialogPartsDuration.setText(R.string.label_part_no_duration);
+      } else {
+        titleBinding.textDialogPartsDuration.setText(songWithParts.getDurationString());
+      }
+      // looped
+      titleBinding.textDialogPartsLooped.setText(
+          activity.getString(
+              songWithParts.getSong().isLooped()
+                  ? R.string.label_song_looped
+                  : R.string.label_song_not_looped
+          )
+      );
+    }
+
+    adapter.setSongWithParts(songWithParts);
     adapter.setPartIndex(getMetronomeUtil().getCurrentPartIndex());
     maybeShowDividers();
   }

@@ -19,12 +19,16 @@
 
 package xyz.zedler.patrick.tack.database.relations;
 
+import android.content.Context;
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.room.Embedded;
 import androidx.room.Relation;
 import java.util.List;
+import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.entity.Song;
+import xyz.zedler.patrick.tack.util.MetronomeUtil;
 
 public class SongWithParts {
 
@@ -51,6 +55,26 @@ public class SongWithParts {
 
   public void setParts(List<Part> parts) {
     this.parts = parts;
+  }
+
+  public String getDurationString() {
+    int seconds = 0;
+    for (Part part : parts) {
+      float factor;
+      switch (part.getTimerUnit()) {
+        case UNIT.SECONDS:
+          factor = 1;
+          break;
+        case UNIT.MINUTES:
+          factor = 60;
+          break;
+        default:
+          factor = ((float) 60 / part.getTempo()) * part.getBeatsCount();
+          break;
+      }
+      seconds += (int) (factor * part.getTimerDuration());
+    }
+    return MetronomeUtil.getTimeStringFromSeconds(seconds, false);
   }
 
   @NonNull

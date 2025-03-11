@@ -165,6 +165,19 @@ public class DialogUtil {
     createCloseCustom(activity.getString(titleResId), view);
   }
 
+  public void createCloseCustomTitle(@NonNull View titleView, @NonNull View view) {
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
+        activity, R.style.ThemeOverlay_Tack_AlertDialog
+    );
+    builder.setCustomTitle(titleView);
+    builder.setView(view);
+    builder.setPositiveButton(
+        R.string.action_close,
+        (dialog, which) -> activity.performHapticClick()
+    );
+    dialog = builder.create();
+  }
+
   public void createApplyCustom(
       @StringRes int titleResId, @NonNull View view, @Nullable Runnable taskApply
   ) {

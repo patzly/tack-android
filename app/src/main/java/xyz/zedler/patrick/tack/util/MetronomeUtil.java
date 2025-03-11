@@ -853,15 +853,7 @@ public class MetronomeUtil {
       return "";
     }
     int seconds = (int) (elapsedTime / 1000);
-    int minutes = seconds / 60;
-    int hours = minutes / 60;
-    if (hours > 0) {
-      return String.format(
-          Locale.ENGLISH, "%02d:%02d:%02d", hours, minutes % 60, seconds % 60
-      );
-    } else {
-      return String.format(Locale.ENGLISH, "%02d:%02d", minutes, seconds % 60);
-    }
+    return getTimeStringFromSeconds(seconds, false);
   }
 
   public void setTimerDuration(int duration) {
@@ -1024,15 +1016,19 @@ public class MetronomeUtil {
       return "";
     }
     long elapsedTime = (long) (getTimerProgress() * getTimerInterval());
+    int timerDuration = config.getTimerDuration();
     switch (config.getTimerUnit()) {
       case UNIT.SECONDS:
       case UNIT.MINUTES:
         int seconds = (int) (elapsedTime / 1000);
-        int minutes = seconds / 60;
-        return String.format(Locale.ENGLISH, "%02d:%02d", minutes, seconds % 60);
+        // Decide whether to force hours for consistency with total time
+        int totalHours = timerDuration / 3600;
+        if (config.getTimerUnit().equals(UNIT.MINUTES)) {
+          totalHours = timerDuration / 60;
+        }
+        return getTimeStringFromSeconds(seconds, totalHours > 0);
       default:
         long barInterval = getInterval() * getBeatsCount();
-        int timerDuration = config.getTimerDuration();
         int progressBarCount = Math.min((int) (elapsedTime / barInterval), timerDuration - 1);
 
         long elapsedTimeFullBars = progressBarCount * barInterval;
@@ -1051,14 +1047,28 @@ public class MetronomeUtil {
     int timerDuration = config.getTimerDuration();
     switch (config.getTimerUnit()) {
       case UNIT.SECONDS:
-        return String.format(Locale.ENGLISH, "00:%02d", timerDuration);
       case UNIT.MINUTES:
-        return String.format(Locale.ENGLISH, "%02d:00", timerDuration);
+        int seconds = timerDuration;
+        if (config.getTimerUnit().equals(UNIT.MINUTES)) {
+          seconds *= 60;
+        }
+        return getTimeStringFromSeconds(seconds, false);
       default:
         return context.getResources().getQuantityString(
             R.plurals.options_unit_bars, timerDuration, timerDuration
         );
     }
+  }
+
+  public static String getTimeStringFromSeconds(int seconds, boolean forceHours) {
+    int minutes = seconds / 60;
+    int hours = minutes / 60;
+    if (hours > 0 || forceHours) {
+      return String.format(
+          Locale.ENGLISH, "%02d:%02d:%02d", hours, minutes % 60, seconds % 60
+      );
+    }
+    return String.format(Locale.ENGLISH, "%02d:%02d", minutes, seconds % 60);
   }
 
   public void setMutePlay(int play) {

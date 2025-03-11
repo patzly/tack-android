@@ -33,6 +33,7 @@ import java.util.Locale;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.model.MetronomeConfig;
+import xyz.zedler.patrick.tack.util.MetronomeUtil;
 
 @Entity(
     tableName = "parts",
@@ -167,6 +168,10 @@ public class Part {
     this.beats = beats;
   }
 
+  public int getBeatsCount() {
+    return beats.split(",").length;
+  }
+
   public String getSubdivisions() {
     return subdivisions;
   }
@@ -237,9 +242,12 @@ public class Part {
     }
     switch (timerUnit) {
       case UNIT.SECONDS:
-        return String.format(Locale.ENGLISH, "00:%02d", timerDuration);
       case UNIT.MINUTES:
-        return String.format(Locale.ENGLISH, "%02d:00", timerDuration);
+        int seconds = timerDuration;
+        if (timerUnit.equals(UNIT.MINUTES)) {
+          seconds *= 60;
+        }
+        return MetronomeUtil.getTimeStringFromSeconds(seconds, false);
       default:
         return context.getResources().getQuantityString(
             R.plurals.options_unit_bars, timerDuration, timerDuration
