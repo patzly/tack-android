@@ -58,10 +58,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:stateListAnimator="@null"
+        android:focusable="true"
+        android:clickable="true"
         app:contentPadding="0dp"
         app:strokeWidth="1dp"
         app:strokeColor="?attr/colorOnTertiaryContainer"
+        app:rippleColor="@color/selector_highlight_tertiary"
         app:cardCornerRadius="8dp"
         app:cardBackgroundColor="?attr/colorTertiaryContainer">
 
@@ -91,7 +93,9 @@
             android:textAppearance="@style/TextAppearance.Tack.LabelLarge"
             android:textColor="?attr/colorOnTertiaryContainer"
             android:fontFamily="@font/jost_medium"
-            android:text="Song" />
+            android:text="Song"
+            android:singleLine="true"
+            tools:ignore="HardcodedText" />
 
           <ImageView
             android:id="@+id/image_song_picker_chip_close"

@@ -225,6 +225,10 @@
   <string name="options_swing_5">Quintuplet</string>
   <string name="options_swing_7">Septuplet</string>
 
+  <!-- SONG LIBRARY -->
+
+  <string name="songs_library">Song library</string>
+
   <!-- SETTINGS -->
 
   <string name="settings_language">Language</string>

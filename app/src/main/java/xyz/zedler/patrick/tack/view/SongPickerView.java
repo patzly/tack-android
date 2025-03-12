@@ -108,13 +108,18 @@ public class SongPickerView extends FrameLayout {
 
     if (songsOrder == SONGS_ORDER.NAME_ASC || songsOrder == SONGS_ORDER.NAME_DESC) {
       Collections.sort(
-          songs, (o1, o2) -> o1.getSong().getName().compareTo(o2.getSong().getName())
+          songs,
+          (o1, o2) -> o1.getSong().getName().compareTo(
+              o2.getSong().getName()
+          )
       );
     } else if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC
         || songsOrder == SONGS_ORDER.LAST_PLAYED_DESC) {
       Collections.sort(
           songs,
-          (s1, s2) -> Long.compare(s2.getSong().getLastPlayed(), s1.getSong().getLastPlayed())
+          (s1, s2) -> Long.compare(
+              s2.getSong().getLastPlayed(), s1.getSong().getLastPlayed()
+          )
       );
     }
     if (songsOrder == SONGS_ORDER.NAME_DESC || songsOrder == SONGS_ORDER.LAST_PLAYED_DESC) {
@@ -143,6 +148,9 @@ public class SongPickerView extends FrameLayout {
         activity, LinearLayoutManager.HORIZONTAL, false
     );
     binding.recyclerSongPicker.setLayoutManager(layoutManager);
+    boolean isPortrait = UiUtil.isOrientationPortrait(activity);
+    boolean isLandTablet = UiUtil.isLandTablet(activity);
+    binding.recyclerSongPicker.setHorizontalFadingEdgeEnabled(!isPortrait && !isLandTablet);
 
     maybeCenterSongChips(-1);
   }
@@ -162,6 +170,9 @@ public class SongPickerView extends FrameLayout {
         listener.onCurrentSongClicked();
       }
     });
+    binding.cardSongPickerChip.setOnClickListener(
+        v -> binding.frameSongPickerChipTouchTarget.callOnClick()
+    );
 
     int colorSurface = ResUtil.getColor(activity, R.attr.colorSurface);
     gradientLeft = new GradientDrawable(
@@ -191,6 +202,7 @@ public class SongPickerView extends FrameLayout {
       setRecyclerClicksEnabled(false);
       binding.frameSongPickerChipClose.setClickable(false);
       binding.frameSongPickerChipTouchTarget.setClickable(false);
+      binding.cardSongPickerChip.setClickable(false);
       if (currentSong != null) {
         binding.textSongPickerChip.setText(currentSong);
         binding.frameSongPickerChipContainer.setTranslationX(0);
@@ -271,6 +283,7 @@ public class SongPickerView extends FrameLayout {
                 }
                 binding.frameSongPickerChipClose.setClickable(currentSong != null);
                 binding.frameSongPickerChipTouchTarget.setClickable(currentSong != null);
+                binding.cardSongPickerChip.setClickable(currentSong != null);
                 setRecyclerClicksEnabled(currentSong == null);
               }
             });

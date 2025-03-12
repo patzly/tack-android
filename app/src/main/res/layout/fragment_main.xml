@@ -476,8 +476,8 @@
         <com.google.android.material.button.MaterialButton
           android:id="@+id/button_main_songs"
           style="@style/Widget.Tack.Button.IconButton"
-          android:contentDescription="@string/action_bookmark"
-          app:icon="@drawable/ic_rounded_bookmark_add_anim" />
+          android:contentDescription="@string/songs_library"
+          app:icon="@drawable/ic_rounded_bookmarks" />
 
         <com.google.android.material.button.MaterialButton
           android:id="@+id/button_main_beat_mode"
