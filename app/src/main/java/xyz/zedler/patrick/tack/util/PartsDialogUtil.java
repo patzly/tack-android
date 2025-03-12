@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
+import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.PartialDialogPartsBinding;
 import xyz.zedler.patrick.tack.databinding.PartialDialogPartsTitleBinding;
@@ -104,12 +105,17 @@ public class PartsDialogUtil {
           )
       );
       // song duration
-      boolean hasNoDuration = partCount == 1
-          && songWithParts.getParts().get(0).getTimerDuration() == 0;
-      if (hasNoDuration) {
-        titleBinding.textDialogPartsDuration.setText(R.string.label_part_no_duration);
-      } else {
+      boolean hasDuration = true;
+      for (Part part : songWithParts.getParts()) {
+        if (part.getTimerDuration() == 0) {
+          hasDuration = false;
+          break;
+        }
+      }
+      if (hasDuration) {
         titleBinding.textDialogPartsDuration.setText(songWithParts.getDurationString());
+      } else {
+        titleBinding.textDialogPartsDuration.setText(R.string.label_part_no_duration);
       }
       // looped
       titleBinding.textDialogPartsLooped.setText(
@@ -119,6 +125,9 @@ public class PartsDialogUtil {
                   : R.string.label_song_not_looped
           )
       );
+    } else {
+      // Don't show dialog if no song is selected
+      dismiss();
     }
 
     adapter.setSongWithParts(songWithParts);

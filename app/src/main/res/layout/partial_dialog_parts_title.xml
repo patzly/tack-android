@@ -48,6 +48,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:text="3 parts"
+      android:singleLine="true"
       tools:ignore="HardcodedText" />
 
     <ImageView
@@ -66,6 +67,7 @@
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:text="2:30"
+      android:singleLine="true"
       tools:ignore="HardcodedText" />
 
     <ImageView
@@ -83,7 +85,8 @@
       style="@style/Widget.Tack.TextView.ListItem.Description"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:text="@string/label_song_not_looped" />
+      android:text="@string/label_song_not_looped"
+      android:singleLine="true" />
 
   </LinearLayout>
 
