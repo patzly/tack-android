@@ -106,24 +106,20 @@ public class SongPickerView extends FrameLayout {
       throw new IllegalStateException("init() has to be called before any other method");
     }
 
-    if (songsOrder == SONGS_ORDER.NAME_ASC || songsOrder == SONGS_ORDER.NAME_DESC) {
+    if (songsOrder == SONGS_ORDER.NAME_ASC) {
       Collections.sort(
           songs,
           (o1, o2) -> o1.getSong().getName().compareTo(
               o2.getSong().getName()
           )
       );
-    } else if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC
-        || songsOrder == SONGS_ORDER.LAST_PLAYED_DESC) {
+    } else if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
       Collections.sort(
           songs,
           (s1, s2) -> Long.compare(
               s2.getSong().getLastPlayed(), s1.getSong().getLastPlayed()
           )
       );
-    }
-    if (songsOrder == SONGS_ORDER.NAME_DESC || songsOrder == SONGS_ORDER.LAST_PLAYED_DESC) {
-      Collections.reverse(songs);
     }
     adapter.setSongs(songs);
 

@@ -23,8 +23,10 @@ import android.graphics.drawable.Drawable;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -36,6 +38,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.ContextThemeWrapper;
+import androidx.lifecycle.Observer;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.divider.MaterialDivider;
@@ -43,21 +47,27 @@ import com.google.android.material.slider.Slider;
 import com.google.android.material.slider.Slider.OnChangeListener;
 import com.google.android.material.slider.Slider.OnSliderTouchListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import xyz.zedler.patrick.tack.Constants.CONTRAST;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
+import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
 import xyz.zedler.patrick.tack.Constants.SOUND;
 import xyz.zedler.patrick.tack.Constants.THEME;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
+import xyz.zedler.patrick.tack.database.entity.Part;
+import xyz.zedler.patrick.tack.database.entity.Song;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.FragmentSettingsBinding;
 import xyz.zedler.patrick.tack.databinding.FragmentSongsBinding;
+import xyz.zedler.patrick.tack.model.MetronomeConfig;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter.OnSongClickListener;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipAdapter;
@@ -79,6 +89,9 @@ public class SongsFragment extends BaseFragment {
 
   private FragmentSongsBinding binding;
   private MainActivity activity;
+  private List<SongWithParts> songs;
+  private int songsOrder;
+  private SongAdapter adapter;
 
   @Override
   public View onCreateView(
@@ -102,6 +115,7 @@ public class SongsFragment extends BaseFragment {
     systemBarBehavior.setAppBar(binding.appBarSongs);
     systemBarBehavior.setContainer(binding.constraintSongs);
     systemBarBehavior.setRecycler(binding.recyclerSongs);
+    systemBarBehavior.setAdditionalBottomInset(UiUtil.dpToPx(activity, 96));
     systemBarBehavior.setUp();
     SystemBarBehavior.applyBottomInset(binding.fabSongs);
 
@@ -116,7 +130,16 @@ public class SongsFragment extends BaseFragment {
         return false;
       }
       performHapticClick();
-      if (id == R.id.action_feedback) {
+      if (id == R.id.action_sort_name || id == R.id.action_sort_last_played) {
+        if (id == R.id.action_sort_name) {
+          songsOrder = SONGS_ORDER.NAME_ASC;
+        } else {
+          songsOrder = SONGS_ORDER.LAST_PLAYED_ASC;
+        }
+        item.setChecked(true);
+        setSongs(null);
+        getSharedPrefs().edit().putInt(PREF.SONGS_ORDER, songsOrder).apply();
+      } else if (id == R.id.action_feedback) {
         activity.showFeedbackBottomSheet();
       } else if (id == R.id.action_help) {
         activity.showTextBottomSheet(R.raw.help, R.string.title_help);
@@ -124,7 +147,16 @@ public class SongsFragment extends BaseFragment {
       return true;
     });
 
-    SongAdapter adapter = new SongAdapter(new OnSongClickListener() {
+    songsOrder = getSharedPrefs().getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER);
+    int itemId = songsOrder == SONGS_ORDER.NAME_ASC
+        ? R.id.action_sort_name
+        : R.id.action_sort_last_played;
+    MenuItem itemSort = binding.toolbarSongs.getMenu().findItem(itemId);
+    if (itemSort != null) {
+      itemSort.setChecked(true);
+    }
+
+    adapter = new SongAdapter(new OnSongClickListener() {
       @Override
       public void onSongClick(@NonNull SongWithParts song) {
 
@@ -134,9 +166,40 @@ public class SongsFragment extends BaseFragment {
     // Layout manager
     LinearLayoutManager layoutManager = new LinearLayoutManager(activity);
     binding.recyclerSongs.setLayoutManager(layoutManager);
+    binding.recyclerSongs.setItemAnimator(new DefaultItemAnimator());
 
     activity.getSongViewModel().getAllSongsWithParts().observe(
-        getViewLifecycleOwner(), adapter::setSongs
+        getViewLifecycleOwner(), this::setSongs
     );
+
+    binding.fabSongs.setOnClickListener(v -> {
+      /*String songName = "Test #10";
+      Song song = new Song(songName);
+      activity.getSongViewModel().insertSong(song);
+      Part part = new Part(null, songName, getMetronomeUtil().getConfig());
+      activity.getSongViewModel().insertPart(part);*/
+    });
+  }
+
+  public void setSongs(@Nullable List<SongWithParts> songs) {
+    if (songs != null) {
+      this.songs = songs;
+    }
+    if (songsOrder == SONGS_ORDER.NAME_ASC) {
+      Collections.sort(
+          this.songs,
+          (o1, o2) -> o1.getSong().getName().compareTo(
+              o2.getSong().getName()
+          )
+      );
+    } else if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
+      Collections.sort(
+          this.songs,
+          (s1, s2) -> Long.compare(
+              s2.getSong().getLastPlayed(), s1.getSong().getLastPlayed()
+          )
+      );
+    }
+    adapter.submitList(new ArrayList<>(this.songs));
   }
 }

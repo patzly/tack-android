@@ -314,6 +314,13 @@ public class MetronomeUtil {
     }
     // notify system for shortcut usage prediction
     shortcutUtil.reportUsage(currentSongName);
+    // update last played for song
+    if (currentSongWithParts != null) {
+      executorService.execute(() -> {
+        currentSongWithParts.getSong().setLastPlayed(System.currentTimeMillis());
+        db.songDao().updateSong(currentSongWithParts.getSong());
+      });
+    }
 
     if (isPlaying() && !isRestarted) {
       return;
@@ -972,6 +979,9 @@ public class MetronomeUtil {
       timerHandler.postDelayed(() -> {
         if (hasNextPart()) {
           setCurrentPartIndex(currentPartIndex + 1, true);
+        } else if (currentSongWithParts != null && currentSongWithParts.getSong().isLooped()) {
+          // Restart song
+          setCurrentPartIndex(0, true);
         } else {
           stop();
           if (currentSongWithParts != null) {
@@ -1170,6 +1180,9 @@ public class MetronomeUtil {
         timerProgress = 1;
         if (hasNextPart()) {
           setCurrentPartIndex(currentPartIndex + 1, true);
+        } else if (currentSongWithParts != null && currentSongWithParts.getSong().isLooped()) {
+          // Restart song
+          setCurrentPartIndex(0, true);
         } else {
           stop();
           if (currentSongWithParts != null) {

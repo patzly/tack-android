@@ -19,29 +19,26 @@
 
 package xyz.zedler.patrick.tack.recyclerview.adapter;
 
-import android.annotation.SuppressLint;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.Adapter;
-import com.google.android.material.chip.Chip;
-import java.util.ArrayList;
-import java.util.List;
+import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.RowSongBinding;
-import xyz.zedler.patrick.tack.databinding.RowSongChipBinding;
-import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipAdapter.SongChipViewHolder;
 
-public class SongAdapter extends Adapter<RecyclerView.ViewHolder> {
+public class SongAdapter extends ListAdapter<SongWithParts, RecyclerView.ViewHolder> {
 
   private final static String TAG = SongAdapter.class.getSimpleName();
 
   private final OnSongClickListener listener;
-  private List<SongWithParts> songs = new ArrayList<>();
 
   public SongAdapter(@NonNull OnSongClickListener listener) {
+    super(new SongDiffCallback());
     this.listener = listener;
   }
 
@@ -56,43 +53,39 @@ public class SongAdapter extends Adapter<RecyclerView.ViewHolder> {
 
   @Override
   public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-    SongWithParts songWithParts = songs.get(holder.getBindingAdapterPosition());
+    SongWithParts songWithParts = getItem(holder.getBindingAdapterPosition());
     SongViewHolder songHolder = (SongViewHolder) holder;
-    songHolder.binding.textSongName.setText(songWithParts.getSong().getName());
-    songHolder.binding.textSongDescription.setText(songWithParts.getSong().getName());
-  }
+    Context context = songHolder.binding.getRoot().getContext();
+    RowSongBinding binding = songHolder.binding;
 
-  @Override
-  public int getItemCount() {
-    return songs.size();
-  }
+    binding.textSongName.setText(songWithParts.getSong().getName());
 
-  public void setSongs(List<SongWithParts> newSongs) {
-    DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
-
-      @Override
-      public int getOldListSize() {
-        return songs != null ? songs.size() : 0;
+    // part count
+    int partCount = songWithParts.getParts().size();
+    binding.textSongPartCount.setText(
+        context.getResources().getQuantityString(R.plurals.label_parts_count, partCount, partCount)
+    );
+    // song duration
+    boolean hasDuration = true;
+    for (Part part : songWithParts.getParts()) {
+      if (part.getTimerDuration() == 0) {
+        hasDuration = false;
+        break;
       }
-
-      @Override
-      public int getNewListSize() {
-        return newSongs != null ? newSongs.size() : 0;
-      }
-
-      @Override
-      public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return songs.get(oldItemPosition).getSong().getName()
-            .equals(newSongs.get(newItemPosition).getSong().getName());
-      }
-
-      @Override
-      public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        return songs.get(oldItemPosition).equals(newSongs.get(newItemPosition));
-      }
-    });
-    this.songs = newSongs;
-    diffResult.dispatchUpdatesTo(this);
+    }
+    if (hasDuration) {
+      binding.textSongDuration.setText(songWithParts.getDurationString());
+    } else {
+      binding.textSongDuration.setText(R.string.label_part_no_duration);
+    }
+    // looped
+    binding.textSongLooped.setText(
+        context.getString(
+            songWithParts.getSong().isLooped()
+                ? R.string.label_song_looped
+                : R.string.label_song_not_looped
+        )
+    );
   }
 
   public static class SongViewHolder extends RecyclerView.ViewHolder {
@@ -107,5 +100,22 @@ public class SongAdapter extends Adapter<RecyclerView.ViewHolder> {
 
   public interface OnSongClickListener {
     void onSongClick(@NonNull SongWithParts song);
+  }
+}
+
+class SongDiffCallback extends DiffUtil.ItemCallback<SongWithParts> {
+
+  @Override
+  public boolean areItemsTheSame(
+      @NonNull SongWithParts oldItem, @NonNull SongWithParts newItem
+  ) {
+    return oldItem.getSong().getName().equals(newItem.getSong().getName());
+  }
+
+  @Override
+  public boolean areContentsTheSame(
+      @NonNull SongWithParts oldItem, @NonNull SongWithParts newItem
+  ) {
+    return oldItem.equals(newItem);
   }
 }

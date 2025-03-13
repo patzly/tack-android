@@ -23,6 +23,28 @@
   xmlns:app="http://schemas.android.com/apk/res-auto">
 
   <item
+    android:id="@+id/action_sort"
+    android:title="@string/action_sort_by"
+    android:icon="@drawable/ic_rounded_sort"
+    app:iconTint="?attr/colorOnSurfaceVariant"
+    app:showAsAction="ifRoom">
+
+    <menu>
+      <group
+        android:id="@+id/group_sort"
+        android:checkableBehavior="single">
+        <item
+          android:id="@+id/action_sort_name"
+          android:title="@string/label_sort_name" />
+        <item
+          android:id="@+id/action_sort_last_played"
+          android:title="@string/label_sort_last_played" />
+      </group>
+    </menu>
+
+  </item>
+
+  <item
     android:id="@+id/action_help"
     android:title="@string/title_help"
     app:showAsAction="never" />

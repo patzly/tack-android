@@ -25,6 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.room.Embedded;
 import androidx.room.Relation;
 import java.util.List;
+import java.util.Objects;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.entity.Song;
@@ -75,6 +76,20 @@ public class SongWithParts {
       seconds += (int) (factor * part.getTimerDuration());
     }
     return MetronomeUtil.getTimeStringFromSeconds(seconds, false);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    SongWithParts that = (SongWithParts) o;
+    return Objects.equals(song, that.song) && Objects.equals(parts, that.parts);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(song, parts);
   }
 
   @NonNull

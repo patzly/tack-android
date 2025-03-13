@@ -23,6 +23,7 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import xyz.zedler.patrick.tack.database.SongDatabase;
 import xyz.zedler.patrick.tack.database.entity.Part;
@@ -34,6 +35,7 @@ public class SongViewModel extends AndroidViewModel {
 
   private final SongDatabase db;
   private final LiveData<List<SongWithParts>> allSongsWithParts;
+  private final Executor executor = Executors.newSingleThreadExecutor();
 
   public SongViewModel(Application application) {
     super(application);
@@ -97,5 +99,13 @@ public class SongViewModel extends AndroidViewModel {
 
   public LiveData<List<SongWithParts>> getAllSongsWithParts() {
     return allSongsWithParts;
+  }
+
+  public void insertSong(Song song) {
+    executor.execute(() -> db.songDao().insertSong(song));
+  }
+
+  public void insertPart(Part part) {
+    executor.execute(() -> db.songDao().insertPart(part));
   }
 }

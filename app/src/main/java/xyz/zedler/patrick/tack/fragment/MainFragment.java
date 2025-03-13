@@ -927,7 +927,6 @@ public class MainFragment extends BaseFragment
         }
       }, 300);
     } else if (id == R.id.button_main_songs) {
-      ViewUtil.startIcon(binding.buttonMainSongs.getIcon());
       performHapticClick();
       activity.navigate(MainFragmentDirections.actionMainToSongs());
     } else if (id == R.id.button_main_options) {

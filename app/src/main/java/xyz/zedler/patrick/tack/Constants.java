@@ -161,9 +161,7 @@ public final class Constants {
   public final static class SONGS_ORDER {
 
     public final static int NAME_ASC = 0;
-    public final static int NAME_DESC = 1;
     public final static int LAST_PLAYED_ASC = 2;
-    public final static int LAST_PLAYED_DESC = 3;
   }
 
   public final static class ACTION {
