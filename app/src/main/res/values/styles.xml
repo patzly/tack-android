@@ -345,7 +345,7 @@
   <!-- Localized style, no empty base style needed -->
   <style
     name="Widget.Tack.ExtendedFloatingActionButton"
-    parent="Widget.Material3.ExtendedFloatingActionButton.Primary">
+    parent="Widget.Material3.ExtendedFloatingActionButton.Icon.Primary">
     <item name="android:fontFamily">@font/jost_medium</item>
     <item name="fontFamily">@font/jost_medium</item>
   </style>

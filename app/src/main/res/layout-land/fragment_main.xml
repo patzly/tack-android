@@ -492,7 +492,7 @@
           <com.google.android.material.button.MaterialButton
             android:id="@+id/button_main_songs"
             style="@style/Widget.Tack.Button.IconButton"
-            android:contentDescription="@string/songs_library"
+            android:contentDescription="@string/title_songs"
             app:icon="@drawable/ic_rounded_bookmarks" />
 
           <com.google.android.material.button.MaterialButton

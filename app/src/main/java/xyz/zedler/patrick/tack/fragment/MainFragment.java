@@ -465,7 +465,7 @@ public class MainFragment extends BaseFragment
     ViewUtil.setTooltipText(binding.buttonMainOptions, R.string.title_options);
     ViewUtil.setTooltipText(binding.buttonMainTempoTap, R.string.action_tempo_tap);
     ViewUtil.setTooltipText(binding.fabMainPlayStop, R.string.action_play_stop);
-    ViewUtil.setTooltipText(binding.buttonMainSongs, R.string.songs_library);
+    ViewUtil.setTooltipText(binding.buttonMainSongs, R.string.title_songs);
     ViewUtil.setTooltipText(binding.buttonMainBeatMode, R.string.action_beat_mode);
 
     ViewUtil.setTooltipTextAndContentDescription(
@@ -929,7 +929,7 @@ public class MainFragment extends BaseFragment
     } else if (id == R.id.button_main_songs) {
       ViewUtil.startIcon(binding.buttonMainSongs.getIcon());
       performHapticClick();
-      // TODO: implement songs
+      activity.navigate(MainFragmentDirections.actionMainToSongs());
     } else if (id == R.id.button_main_options) {
       performHapticClick();
       ViewUtil.startIcon(binding.buttonMainOptions.getIcon());

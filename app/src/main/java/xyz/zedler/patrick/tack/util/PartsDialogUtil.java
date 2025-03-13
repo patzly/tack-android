@@ -20,13 +20,11 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.database.entity.Part;
@@ -34,7 +32,7 @@ import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.PartialDialogPartsBinding;
 import xyz.zedler.patrick.tack.databinding.PartialDialogPartsTitleBinding;
 import xyz.zedler.patrick.tack.fragment.MainFragment;
-import xyz.zedler.patrick.tack.recyclerview.adapter.PartsDialogAdapter;
+import xyz.zedler.patrick.tack.recyclerview.adapter.PartDialogAdapter;
 
 public class PartsDialogUtil {
 
@@ -45,7 +43,7 @@ public class PartsDialogUtil {
   private final PartialDialogPartsTitleBinding titleBinding;
   private final PartialDialogPartsBinding binding;
   private final DialogUtil dialogUtil;
-  private final PartsDialogAdapter adapter;
+  private final PartDialogAdapter adapter;
 
   public PartsDialogUtil(MainActivity activity, MainFragment fragment) {
     this.activity = activity;
@@ -57,7 +55,7 @@ public class PartsDialogUtil {
     dialogUtil = new DialogUtil(activity, "parts");
 
     binding.recyclerParts.setLayoutManager(new LinearLayoutManager(activity));
-    adapter = new PartsDialogAdapter((partIndex, fromUser) -> {
+    adapter = new PartDialogAdapter((partIndex, fromUser) -> {
       if (fromUser) {
         fragment.performHapticClick();
         getMetronomeUtil().setCurrentPartIndex(partIndex, true);

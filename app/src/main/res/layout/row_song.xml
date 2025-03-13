@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/linear_song_container"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  android:minHeight="72dp"
+  android:paddingTop="8dp"
+  android:paddingBottom="8dp"
+  android:paddingStart="24dp"
+  android:paddingEnd="24dp"
+  android:gravity="center_vertical"
+  android:background="@drawable/ripple_list_item_bg"
+  android:clickable="true"
+  android:focusable="true">
+
+  <TextView
+    android:id="@+id/text_song_name"
+    style="@style/Widget.Tack.TextView.ListItem.Title" />
+
+  <TextView
+    android:id="@+id/text_song_description"
+    style="@style/Widget.Tack.TextView.ListItem.Description" />
+
+</LinearLayout>

@@ -39,6 +39,18 @@
       android:id="@+id/action_main_to_about"
       app:destination="@id/aboutFragment" />
 
+    <action
+      android:id="@+id/action_main_to_songs"
+      app:destination="@id/songsFragment" />
+
+  </fragment>
+
+  <fragment
+    android:id="@+id/songsFragment"
+    android:name="xyz.zedler.patrick.tack.fragment.SongsFragment"
+    android:label="fragment_songs"
+    tools:layout="@layout/fragment_songs">
+
   </fragment>
 
   <fragment

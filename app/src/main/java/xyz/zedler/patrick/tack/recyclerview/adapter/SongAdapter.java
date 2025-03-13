@@ -24,49 +24,42 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
 import com.google.android.material.chip.Chip;
 import java.util.ArrayList;
 import java.util.List;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
+import xyz.zedler.patrick.tack.databinding.RowSongBinding;
 import xyz.zedler.patrick.tack.databinding.RowSongChipBinding;
+import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipAdapter.SongChipViewHolder;
 
-public class SongChipsAdapter extends Adapter<RecyclerView.ViewHolder> {
+public class SongAdapter extends Adapter<RecyclerView.ViewHolder> {
 
-  private final static String TAG = SongChipsAdapter.class.getSimpleName();
+  private final static String TAG = SongAdapter.class.getSimpleName();
 
   private final OnSongClickListener listener;
   private List<SongWithParts> songs = new ArrayList<>();
-  private boolean clickable;
 
-  public SongChipsAdapter(@NonNull OnSongClickListener listener, boolean clickable) {
+  public SongAdapter(@NonNull OnSongClickListener listener) {
     this.listener = listener;
-    this.clickable = clickable;
   }
 
   @NonNull
   @Override
   public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-    RowSongChipBinding binding = RowSongChipBinding.inflate(
+    RowSongBinding binding = RowSongBinding.inflate(
         LayoutInflater.from(parent.getContext()), parent, false
     );
-    return new SongChipViewHolder(binding);
+    return new SongViewHolder(binding);
   }
 
   @Override
   public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
     SongWithParts songWithParts = songs.get(holder.getBindingAdapterPosition());
-    SongChipViewHolder songHolder = (SongChipViewHolder) holder;
-    songHolder.binding.chipRowSong.setText(songWithParts.getSong().getName());
-    songHolder.binding.chipRowSong.setClickable(clickable);
-    if (clickable) {
-      songHolder.binding.chipRowSong.setOnClickListener(
-          v -> listener.onSongClick(songHolder.binding.chipRowSong, songWithParts)
-      );
-    } else {
-      songHolder.binding.chipRowSong.setOnClickListener(null);
-    }
+    SongViewHolder songHolder = (SongViewHolder) holder;
+    songHolder.binding.textSongName.setText(songWithParts.getSong().getName());
+    songHolder.binding.textSongDescription.setText(songWithParts.getSong().getName());
   }
 
   @Override
@@ -102,25 +95,17 @@ public class SongChipsAdapter extends Adapter<RecyclerView.ViewHolder> {
     diffResult.dispatchUpdatesTo(this);
   }
 
-  @SuppressLint("NotifyDataSetChanged")
-  public void setClickable(boolean clickable) {
-    if ((this.clickable && !clickable) || (!this.clickable && clickable)) {
-      this.clickable = clickable;
-      notifyDataSetChanged();
-    }
-  }
+  public static class SongViewHolder extends RecyclerView.ViewHolder {
 
-  public static class SongChipViewHolder extends RecyclerView.ViewHolder {
+    private final RowSongBinding binding;
 
-    private final RowSongChipBinding binding;
-
-    public SongChipViewHolder(RowSongChipBinding binding) {
+    public SongViewHolder(RowSongBinding binding) {
       super(binding.getRoot());
       this.binding = binding;
     }
   }
 
   public interface OnSongClickListener {
-    void onSongClick(Chip chip, @NonNull SongWithParts song);
+    void onSongClick(@NonNull SongWithParts song);
   }
 }

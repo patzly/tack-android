@@ -44,6 +44,7 @@
   <string name="title_metronome">Metronome</string>
   <string name="title_controls">Controls</string>
   <string name="title_logcat">Logcat</string>
+  <string name="title_songs">Song library</string>
 
   <!-- LABELS -->
 
@@ -105,6 +106,7 @@
   <string name="action_copy_to_clipboard">Copy to clipboard</string>
   <string name="action_reload">Reload</string>
   <string name="action_change_tempo">Change tempo</string>
+  <string name="action_add_song">Add song</string>
 
   <!-- MESSAGES -->
 
@@ -224,10 +226,6 @@
   <string name="options_swing_3">Triplet</string>
   <string name="options_swing_5">Quintuplet</string>
   <string name="options_swing_7">Septuplet</string>
-
-  <!-- SONG LIBRARY -->
-
-  <string name="songs_library">Song library</string>
 
   <!-- SETTINGS -->
 

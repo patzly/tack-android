@@ -54,8 +54,8 @@ import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.ViewSongPickerBinding;
-import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipsAdapter;
-import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipsAdapter.OnSongClickListener;
+import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipAdapter;
+import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipAdapter.OnSongClickListener;
 import xyz.zedler.patrick.tack.recyclerview.decoration.SongChipItemDecoration;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
@@ -101,7 +101,7 @@ public class SongPickerView extends FrameLayout {
 
   public void setSongs(List<SongWithParts> songs) {
     this.songs = songs;
-    SongChipsAdapter adapter = (SongChipsAdapter) binding.recyclerSongPicker.getAdapter();
+    SongChipAdapter adapter = (SongChipAdapter) binding.recyclerSongPicker.getAdapter();
     if (adapter == null) {
       throw new IllegalStateException("init() has to be called before any other method");
     }
@@ -139,7 +139,7 @@ public class SongPickerView extends FrameLayout {
       }
       setCurrentSong(currentSong, true);
     };
-    SongChipsAdapter adapter = new SongChipsAdapter(
+    SongChipAdapter adapter = new SongChipAdapter(
         onSongClickListener, currentSong == null
     );
     binding.recyclerSongPicker.setAdapter(adapter);
@@ -369,7 +369,7 @@ public class SongPickerView extends FrameLayout {
   }
 
   private void setRecyclerClicksEnabled(boolean enabled) {
-    SongChipsAdapter adapter = (SongChipsAdapter) binding.recyclerSongPicker.getAdapter();
+    SongChipAdapter adapter = (SongChipAdapter) binding.recyclerSongPicker.getAdapter();
     if (adapter != null) {
       adapter.setClickable(enabled);
     }

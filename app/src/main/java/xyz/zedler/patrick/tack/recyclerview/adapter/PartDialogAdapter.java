@@ -21,7 +21,6 @@ package xyz.zedler.patrick.tack.recyclerview.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
@@ -29,16 +28,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import java.util.List;
-import java.util.Locale;
-import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.RowDialogPartBinding;
 
-public class PartsDialogAdapter extends Adapter<RecyclerView.ViewHolder> {
+public class PartDialogAdapter extends Adapter<RecyclerView.ViewHolder> {
 
-  private final static String TAG = SongChipsAdapter.class.getSimpleName();
+  private final static String TAG = SongChipAdapter.class.getSimpleName();
 
   private final static String PAYLOAD_RADIO = "radio";
 
@@ -46,7 +43,7 @@ public class PartsDialogAdapter extends Adapter<RecyclerView.ViewHolder> {
   private SongWithParts songWithParts;
   private int partIndex, partIndexPrev;
 
-  public PartsDialogAdapter(@NonNull OnPartChangedListener listener) {
+  public PartDialogAdapter(@NonNull OnPartChangedListener listener) {
     this.listener = listener;
   }
 

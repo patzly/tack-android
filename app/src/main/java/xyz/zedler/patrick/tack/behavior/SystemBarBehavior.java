@@ -33,6 +33,7 @@ import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat.Type;
 import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.appbar.AppBarLayout;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -54,6 +55,7 @@ public class SystemBarBehavior {
   private boolean applyStatusBarInsetOnContainer;
   private boolean applyCutoutInsetOnContainer;
   private boolean isScrollable;
+  private boolean hasScrollView, hasRecycler;
   private int addBottomInset, cutoutInsetLeft, cutoutInsetRight;
 
   public SystemBarBehavior(@NonNull Activity activity) {
@@ -73,6 +75,9 @@ public class SystemBarBehavior {
     applyAppBarInsetOnContainer = true;
     applyStatusBarInsetOnContainer = true;
     applyCutoutInsetOnContainer = true;
+
+    hasScrollView = false;
+    hasRecycler = false;
     isScrollable = false;
   }
 
@@ -92,9 +97,22 @@ public class SystemBarBehavior {
     this.scrollView = scrollView;
     this.scrollContent = scrollContent;
     scrollContentPaddingBottom = scrollContent.getPaddingBottom();
+    hasScrollView = true;
+    hasRecycler = false;
 
-    if (container == null) {
+    if (!hasContainer()) {
       setContainer(scrollView);
+    }
+  }
+
+  public void setRecycler(@NonNull RecyclerView recycler) {
+    this.scrollContent = recycler;
+    scrollContentPaddingBottom = scrollContent.getPaddingBottom();
+    hasRecycler = true;
+    hasScrollView = false;
+
+    if (!hasContainer()) {
+      throw new RuntimeException("Container has to be set before calling setRecycler()");
     }
   }
 
@@ -145,7 +163,7 @@ public class SystemBarBehavior {
           || UiUtil.isLandTablet(activity);
       if (useBottomInset && hasContainer()) {
         int navBarInset = insets.getInsets(Type.systemBars()).bottom;
-        if (hasScrollView()) {
+        if (hasScrollView || hasRecycler) {
           scrollContent.setPadding(
               scrollContent.getPaddingLeft(),
               scrollContent.getPaddingTop(),
@@ -163,7 +181,7 @@ public class SystemBarBehavior {
             root.getPaddingBottom()
         );
         // Add additional bottom inset
-        if (hasScrollView()) {
+        if (hasScrollView || hasRecycler) {
           scrollContent.setPadding(
               scrollContent.getPaddingLeft(),
               scrollContent.getPaddingTop(),
@@ -186,7 +204,7 @@ public class SystemBarBehavior {
       return insets;
     });
 
-    if (hasScrollView()) {
+    if (hasScrollView) {
       // call viewThreeObserver, this updates the system bar appearance
       measureScrollView();
     } else {
@@ -344,9 +362,5 @@ public class SystemBarBehavior {
 
   private boolean hasContainer() {
     return container != null;
-  }
-
-  private boolean hasScrollView() {
-    return scrollView != null;
   }
 }
