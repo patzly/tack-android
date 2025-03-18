@@ -25,6 +25,7 @@ import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.graphics.drawable.Icon;
 import android.os.Build;
+import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.os.Looper;
@@ -33,6 +34,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import java.util.Collections;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -40,6 +42,7 @@ import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.ShortcutActivity;
+import xyz.zedler.patrick.tack.database.entity.Song;
 
 public class ShortcutUtil {
 
@@ -57,14 +60,20 @@ public class ShortcutUtil {
     }
   }
 
-  public void addShortcut(@NonNull String shortcutId) {
-    hasShortcutAsync(shortcutId, hasShortcut -> {
+  public void addShortcut(@NonNull ShortcutInfo shortcutInfo) {
+    hasShortcutAsync(shortcutInfo.getId(), hasShortcut -> {
       if (isSupported() && !hasShortcut) {
-        if (manager.getDynamicShortcuts().size() < manager.getMaxShortcutCountPerActivity()) {
-          manager.addDynamicShortcuts(Collections.singletonList(getShortcutInfo(shortcutId)));
+        if (manager.getDynamicShortcuts().size() < getMaxShortcutCount()) {
+          manager.addDynamicShortcuts(Collections.singletonList(shortcutInfo));
         }
       }
     });
+  }
+
+  public void addAllShortcuts(@NonNull List<ShortcutInfo> shortcuts) {
+    if (isSupported()) {
+      manager.addDynamicShortcuts(shortcuts);
+    }
   }
 
   public void removeShortcut(@NonNull String shortcutId) {
@@ -81,12 +90,8 @@ public class ShortcutUtil {
     }
   }
 
-  public void reportUsage(@Nullable String shortcutId) {
-    hasShortcutAsync(shortcutId, hasShortcut -> {
-      if (isSupported() && hasShortcut) {
-        manager.reportShortcutUsed(shortcutId);
-      }
-    });
+  public int getMaxShortcutCount() {
+    return isSupported() ? manager.getMaxShortcutCountPerActivity() : 0;
   }
 
   /**
@@ -115,13 +120,13 @@ public class ShortcutUtil {
   }
 
   @RequiresApi(api = VERSION_CODES.N_MR1)
-  private ShortcutInfo getShortcutInfo(@NonNull String shortcutId) {
-    ShortcutInfo.Builder builder = new ShortcutInfo.Builder(context, shortcutId);
-    builder.setShortLabel(shortcutId);
+  public ShortcutInfo getShortcutInfo(@NonNull String id, @Nullable String name) {
+    ShortcutInfo.Builder builder = new ShortcutInfo.Builder(context, id);
+    builder.setShortLabel(name != null ? name : context.getString(R.string.label_song_name));
     builder.setIcon(Icon.createWithResource(context, R.mipmap.ic_shortcut));
     builder.setIntent(new Intent(context, ShortcutActivity.class)
         .setAction(ACTION.START_SONG)
-        .putExtra(EXTRA.SONG_NAME, shortcutId)
+        .putExtra(EXTRA.SONG_ID, id)
         .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     );
     return builder.build();

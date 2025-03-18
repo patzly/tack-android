@@ -20,6 +20,7 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import androidx.annotation.NonNull;
@@ -92,9 +93,9 @@ public class PartsDialogUtil {
     if (binding == null || titleBinding == null) {
       return;
     }
-    titleBinding.textDialogPartsTitle.setText(getMetronomeUtil().getCurrentSong());
     SongWithParts songWithParts = getMetronomeUtil().getCurrentSongWithParts();
     if (songWithParts != null) {
+      titleBinding.textDialogPartsTitle.setText(songWithParts.getSong().getName());
       // part count
       int partCount = songWithParts.getParts().size();
       titleBinding.textDialogPartsCount.setText(

@@ -39,6 +39,9 @@
         <item
           android:id="@+id/action_sort_last_played"
           android:title="@string/label_sort_last_played" />
+        <item
+          android:id="@+id/action_sort_most_played"
+          android:title="@string/label_sort_most_played" />
       </group>
     </menu>
 

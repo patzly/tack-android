@@ -242,9 +242,10 @@ public class UiUtil {
     InputMethodManager imm = (InputMethodManager) activity.getSystemService(
         Context.INPUT_METHOD_SERVICE
     );
-    imm.hideSoftInputFromWindow(
-        activity.findViewById(android.R.id.content).getWindowToken(), 0
-    );
+    View view = activity.getCurrentFocus();
+    if (view != null) {
+      imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
   }
 
   // Unit conversions

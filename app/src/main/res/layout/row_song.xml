@@ -89,6 +89,12 @@
 
     </LinearLayout>
 
+    <TextView
+      android:id="@+id/text_song_sort_details"
+      style="@style/Widget.Tack.TextView.ListItem.Description"
+      android:text="Last played 2021-01-01"
+      tools:ignore="HardcodedText" />
+
   </LinearLayout>
 
 </LinearLayout>

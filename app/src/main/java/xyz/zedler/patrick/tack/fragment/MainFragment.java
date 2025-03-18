@@ -422,7 +422,6 @@ public class MainFragment extends BaseFragment
 
     setButtonStates();
 
-    binding.songPickerMain.init(activity);
     binding.songPickerMain.setListener(new SongPickerListener() {
       @Override
       public void onCurrentSongChanged(@Nullable String currentSong) {
@@ -437,7 +436,16 @@ public class MainFragment extends BaseFragment
       }
     });
     activity.getSongViewModel().getAllSongsWithParts().observe(
-        getViewLifecycleOwner(), songs -> binding.songPickerMain.setSongs(songs)
+        getViewLifecycleOwner(), songs -> {
+          if (!binding.songPickerMain.isInitialized()) {
+            binding.songPickerMain.init(
+                getSharedPrefs().getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER),
+                getMetronomeUtil().getCurrentSongId(),
+                songs
+            );
+          }
+          binding.songPickerMain.setSongs(songs);
+        }
     );
 
     boolean isWidthLargeEnough = screenWidthDp - 16 >= 344;

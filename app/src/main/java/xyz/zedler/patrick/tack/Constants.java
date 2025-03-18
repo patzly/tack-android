@@ -78,8 +78,8 @@ public final class Constants {
 
     // Song library
     public static final String SONGS_ORDER = "songs_order";
-    public static final String SONG_CURRENT = "current_song";
-    public static final String PART_CURRENT = "current_part";
+    public static final String SONG_CURRENT_ID = "current_song_id";
+    public static final String PART_CURRENT_INDEX = "current_part_index";
   }
 
   public final static class DEF {
@@ -127,8 +127,8 @@ public final class Constants {
 
     // Song library
     public final static int SONGS_ORDER = 0;
-    public final static String SONG_CURRENT = null;
-    public final static int PART_CURRENT = 0;
+    public final static String SONG_CURRENT_ID = null;
+    public final static int PART_CURRENT_INDEX = 0;
   }
 
   public final static class SOUND {
@@ -162,6 +162,7 @@ public final class Constants {
 
     public final static int NAME_ASC = 0;
     public final static int LAST_PLAYED_ASC = 2;
+    public final static int MOST_PLAYED_ASC = 4;
   }
 
   public final static class ACTION {
@@ -176,7 +177,7 @@ public final class Constants {
     public static final String RUN_AS_SUPER_CLASS = "run_as_super_class";
     public static final String INSTANCE_STATE = "instance_state";
     public static final String SCROLL_POSITION = "scroll_position";
-    public static final String SONG_NAME = "song_name";
+    public static final String SONG_ID = "song_id";
   }
 
   public static final class THEME {

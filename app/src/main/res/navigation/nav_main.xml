@@ -51,6 +51,24 @@
     android:label="fragment_songs"
     tools:layout="@layout/fragment_songs">
 
+    <action
+      android:id="@+id/action_songs_to_song"
+      app:destination="@id/songFragment" />
+
+  </fragment>
+
+  <fragment
+    android:id="@+id/songFragment"
+    android:name="xyz.zedler.patrick.tack.fragment.SongFragment"
+    android:label="fragment_song"
+    tools:layout="@layout/fragment_song">
+
+    <argument
+      android:name="songId"
+      app:argType="string"
+      app:nullable="true"
+      android:defaultValue="@null" />
+
   </fragment>
 
   <fragment

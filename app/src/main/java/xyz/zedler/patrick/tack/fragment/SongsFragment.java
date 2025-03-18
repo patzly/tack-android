@@ -39,6 +39,7 @@ import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.lifecycle.Observer;
+import androidx.navigation.NavDirections;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.google.android.material.color.DynamicColors;
@@ -48,9 +49,11 @@ import com.google.android.material.slider.Slider.OnChangeListener;
 import com.google.android.material.slider.Slider.OnSliderTouchListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import xyz.zedler.patrick.tack.Constants.CONTRAST;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
@@ -58,6 +61,7 @@ import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
 import xyz.zedler.patrick.tack.Constants.SOUND;
 import xyz.zedler.patrick.tack.Constants.THEME;
+import xyz.zedler.patrick.tack.NavMainDirections;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
@@ -67,6 +71,7 @@ import xyz.zedler.patrick.tack.database.entity.Song;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.FragmentSettingsBinding;
 import xyz.zedler.patrick.tack.databinding.FragmentSongsBinding;
+import xyz.zedler.patrick.tack.fragment.SongsFragmentDirections.ActionSongsToSong;
 import xyz.zedler.patrick.tack.model.MetronomeConfig;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter.OnSongClickListener;
@@ -130,11 +135,15 @@ public class SongsFragment extends BaseFragment {
         return false;
       }
       performHapticClick();
-      if (id == R.id.action_sort_name || id == R.id.action_sort_last_played) {
+      if (id == R.id.action_sort_name
+          || id == R.id.action_sort_last_played
+          || id == R.id.action_sort_most_played) {
         if (id == R.id.action_sort_name) {
           songsOrder = SONGS_ORDER.NAME_ASC;
-        } else {
+        } else if (id == R.id.action_sort_last_played) {
           songsOrder = SONGS_ORDER.LAST_PLAYED_ASC;
+        } else {
+          songsOrder = SONGS_ORDER.MOST_PLAYED_ASC;
         }
         item.setChecked(true);
         setSongs(null);
@@ -148,19 +157,23 @@ public class SongsFragment extends BaseFragment {
     });
 
     songsOrder = getSharedPrefs().getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER);
-    int itemId = songsOrder == SONGS_ORDER.NAME_ASC
-        ? R.id.action_sort_name
-        : R.id.action_sort_last_played;
+    int itemId = R.id.action_sort_name;
+    if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
+      itemId = R.id.action_sort_last_played;
+    } else if (songsOrder == SONGS_ORDER.MOST_PLAYED_ASC) {
+      itemId = R.id.action_sort_most_played;
+    }
     MenuItem itemSort = binding.toolbarSongs.getMenu().findItem(itemId);
     if (itemSort != null) {
       itemSort.setChecked(true);
     }
 
-    adapter = new SongAdapter(new OnSongClickListener() {
-      @Override
-      public void onSongClick(@NonNull SongWithParts song) {
-
-      }
+    adapter = new SongAdapter(song -> {
+      performHapticClick();
+      ActionSongsToSong action
+          = SongsFragmentDirections.actionSongsToSong();
+      action.setSongId(song.getSong().getId());
+      activity.navigate(action);
     });
     binding.recyclerSongs.setAdapter(adapter);
     // Layout manager
@@ -173,11 +186,8 @@ public class SongsFragment extends BaseFragment {
     );
 
     binding.fabSongs.setOnClickListener(v -> {
-      /*String songName = "Test #10";
-      Song song = new Song(songName);
-      activity.getSongViewModel().insertSong(song);
-      Part part = new Part(null, songName, getMetronomeUtil().getConfig());
-      activity.getSongViewModel().insertPart(part);*/
+      // TODO: check unlock if new songs.size() >= 10
+      activity.navigate(SongsFragmentDirections.actionSongsToSong());
     });
   }
 
@@ -185,11 +195,13 @@ public class SongsFragment extends BaseFragment {
     if (songs != null) {
       this.songs = songs;
     }
+    adapter.setSortOrder(songsOrder);
     if (songsOrder == SONGS_ORDER.NAME_ASC) {
       Collections.sort(
           this.songs,
-          (o1, o2) -> o1.getSong().getName().compareTo(
-              o2.getSong().getName()
+          Comparator.comparing(
+              o -> o.getSong().getName(),
+              Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
           )
       );
     } else if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
@@ -197,6 +209,13 @@ public class SongsFragment extends BaseFragment {
           this.songs,
           (s1, s2) -> Long.compare(
               s2.getSong().getLastPlayed(), s1.getSong().getLastPlayed()
+          )
+      );
+    } else if (songsOrder == SONGS_ORDER.MOST_PLAYED_ASC) {
+      Collections.sort(
+          this.songs,
+          (s1, s2) -> Integer.compare(
+              s2.getSong().getPlayCount(), s1.getSong().getPlayCount()
           )
       );
     }

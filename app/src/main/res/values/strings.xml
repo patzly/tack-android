@@ -45,6 +45,7 @@
   <string name="title_controls">Controls</string>
   <string name="title_logcat">Logcat</string>
   <string name="title_songs">Song library</string>
+  <string name="title_song_details">Song details</string>
 
   <!-- LABELS -->
 
@@ -68,9 +69,21 @@
     <item quantity="other">%1$d parts</item>
   </plurals>
   <string name="label_song_looped">Looped</string>
+  <string name="label_song_looped_description">Start from beginning when at end</string>
   <string name="label_song_not_looped">Not looped</string>
   <string name="label_sort_name">Name</string>
   <string name="label_sort_last_played">Last played</string>
+  <string name="label_sort_last_played_date">Last played %1$s</string>
+  <string name="label_sort_never_played">Never played</string>
+  <string name="label_sort_most_played">Most played</string>
+  <plurals name="label_sort_most_played_times">
+    <item quantity="one">Played %1$d time</item>
+    <item quantity="other">Played %1$d times</item>
+  </plurals>
+  <string name="label_song_name">Song name</string>
+  <string name="label_song_name_help">Name must be unique</string>
+  <string name="label_song_name_used">Name already used</string>
+  <string name="label_song_parts">Parts (%1$d)</string>
 
   <!-- ACTIONS -->
 
@@ -110,6 +123,9 @@
   <string name="action_change_tempo">Change tempo</string>
   <string name="action_add_song">Add song</string>
   <string name="action_sort_by">Sort by</string>
+  <string name="action_add_part">Add part</string>
+  <string name="action_save">Save</string>
+  <string name="action_discard">Discard</string>
 
   <!-- MESSAGES -->
 
@@ -136,6 +152,8 @@
   <string name="msg_report_crash">Please report any crash with the crash log attached so I can try to fix them.</string>
   <string name="msg_copied_to_clipboard">Copied to clipboard successfully</string>
   <string name="msg_invalid_input">Invalid input</string>
+  <string name="msg_discard_changes">Discard changes?</string>
+  <string name="msg_discard_changes_description">Are you sure you don\'t want to save them?</string>
 
   <!-- OPTIONS -->
 

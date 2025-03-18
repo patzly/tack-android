@@ -19,8 +19,6 @@
 
 package xyz.zedler.patrick.tack.database.relations;
 
-import android.content.Context;
-import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.room.Embedded;
 import androidx.room.Relation;
@@ -37,8 +35,8 @@ public class SongWithParts {
   private Song song;
 
   @Relation(
-      parentColumn = "name",
-      entityColumn = "song_name"
+      parentColumn = "id",
+      entityColumn = "songId"
   )
   private List<Part> parts;
 
@@ -80,7 +78,7 @@ public class SongWithParts {
 
   @Override
   public boolean equals(Object o) {
-    if (o == null || getClass() != o.getClass()) {
+    if (!(o instanceof SongWithParts)) {
       return false;
     }
     SongWithParts that = (SongWithParts) o;

@@ -21,21 +21,31 @@ package xyz.zedler.patrick.tack.recyclerview.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.List;
+import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.RowSongBinding;
+import xyz.zedler.patrick.tack.util.LocaleUtil;
 
 public class SongAdapter extends ListAdapter<SongWithParts, RecyclerView.ViewHolder> {
 
   private final static String TAG = SongAdapter.class.getSimpleName();
 
   private final OnSongClickListener listener;
+  private int sortOrder = 0;
 
   public SongAdapter(@NonNull OnSongClickListener listener) {
     super(new SongDiffCallback());
@@ -57,6 +67,8 @@ public class SongAdapter extends ListAdapter<SongWithParts, RecyclerView.ViewHol
     SongViewHolder songHolder = (SongViewHolder) holder;
     Context context = songHolder.binding.getRoot().getContext();
     RowSongBinding binding = songHolder.binding;
+
+    binding.linearSongContainer.setOnClickListener(v -> listener.onSongClick(songWithParts));
 
     binding.textSongName.setText(songWithParts.getSong().getName());
 
@@ -86,6 +98,45 @@ public class SongAdapter extends ListAdapter<SongWithParts, RecyclerView.ViewHol
                 : R.string.label_song_not_looped
         )
     );
+
+    // last/most played
+    boolean sortDetailsEnabled = sortOrder == SONGS_ORDER.LAST_PLAYED_ASC
+        || sortOrder == SONGS_ORDER.MOST_PLAYED_ASC;
+    binding.textSongSortDetails.setVisibility(sortDetailsEnabled ? View.VISIBLE : View.GONE);
+    if (sortOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
+      long lastPlayed = songWithParts.getSong().getLastPlayed();
+      if (lastPlayed != 0) {
+        DateTimeFormatter formatter = DateTimeFormatter
+            .ofLocalizedDateTime(FormatStyle.SHORT)
+            .withLocale(LocaleUtil.getLocale());
+        LocalDateTime dateTime = Instant.ofEpochMilli(songWithParts.getSong().getLastPlayed())
+            .atZone(ZoneId.systemDefault())
+            .toLocalDateTime();
+        binding.textSongSortDetails.setText(
+            context.getString(R.string.label_sort_last_played_date, dateTime.format(formatter))
+        );
+      } else {
+        binding.textSongSortDetails.setText(R.string.label_sort_never_played);
+      }
+    } else if (sortOrder == SONGS_ORDER.MOST_PLAYED_ASC) {
+      int playCount = songWithParts.getSong().getPlayCount();
+      if (playCount > 0) {
+        binding.textSongSortDetails.setText(
+            context.getResources().getQuantityString(
+                R.plurals.label_sort_most_played_times, playCount, playCount
+            )
+        );
+      } else {
+        binding.textSongSortDetails.setText(R.string.label_sort_never_played);
+      }
+    }
+  }
+
+  public void setSortOrder(int sortOrder) {
+    if (this.sortOrder != sortOrder) {
+      this.sortOrder = sortOrder;
+      notifyDataSetChanged();
+    }
   }
 
   public static class SongViewHolder extends RecyclerView.ViewHolder {
@@ -109,7 +160,7 @@ class SongDiffCallback extends DiffUtil.ItemCallback<SongWithParts> {
   public boolean areItemsTheSame(
       @NonNull SongWithParts oldItem, @NonNull SongWithParts newItem
   ) {
-    return oldItem.getSong().getName().equals(newItem.getSong().getName());
+    return oldItem.getSong().getId().equals(newItem.getSong().getId());
   }
 
   @Override

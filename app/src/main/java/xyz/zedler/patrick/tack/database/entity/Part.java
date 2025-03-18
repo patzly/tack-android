@@ -30,6 +30,7 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.UUID;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.model.MetronomeConfig;
@@ -39,22 +40,20 @@ import xyz.zedler.patrick.tack.util.MetronomeUtil;
     tableName = "parts",
     foreignKeys = @ForeignKey(
         entity = Song.class,
-        parentColumns = "name",
-        childColumns = "song_name",
+        parentColumns = "id",
+        childColumns = "songId",
         onDelete = ForeignKey.CASCADE),
-    indices = {@Index("song_name")}
+    indices = {@Index("songId")}
 )
 public class Part {
 
-  @PrimaryKey(autoGenerate = true)
-  private int id;
-
+  @PrimaryKey
+  @NonNull
+  private String id;
   @Nullable
   private String name;
-
-  @ColumnInfo(name = "song_name")
   @NonNull
-  private String songName;
+  private String songId;
 
   // count in
   private int countIn;
@@ -75,8 +74,7 @@ public class Part {
   private boolean muteRandom;
 
   public Part(
-      int id,
-      @Nullable String name, @NonNull String songName,
+      @NonNull String id, @Nullable String name, @NonNull String songId,
       int countIn, int tempo,
       String beats, String subdivisions,
       int incrementalAmount, int incrementalInterval, int incrementalLimit,
@@ -86,7 +84,7 @@ public class Part {
   ) {
     this.id = id;
     this.name = name;
-    this.songName = songName;
+    this.songId = songId;
 
     this.countIn = countIn;
 
@@ -111,18 +109,20 @@ public class Part {
   }
 
   @Ignore
-  public Part(@Nullable String name, @NonNull String songName, @NonNull MetronomeConfig config) {
+  public Part(@Nullable String name, @NonNull String songId, @NonNull MetronomeConfig config) {
+    this.id = UUID.randomUUID().toString();
     this.name = name;
-    this.songName = songName;
+    this.songId = songId;
 
     setConfig(config);
   }
 
-  public int getId() {
+  @NonNull
+  public String getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(@NonNull String id) {
     this.id = id;
   }
 
@@ -136,12 +136,12 @@ public class Part {
   }
 
   @NonNull
-  public String getSongName() {
-    return songName;
+  public String getSongId() {
+    return songId;
   }
 
-  public void setSongName(@NonNull String songName) {
-    this.songName = songName;
+  public void setSongId(@NonNull String songId) {
+    this.songId = songId;
   }
 
   public int getCountIn() {
@@ -328,7 +328,7 @@ public class Part {
   public String toString() {
     return "Part{" +
         "name='" + name + '\'' +
-        ", songName='" + songName + '\'' +
+        ", songId='" + songId + '\'' +
         ", tempo=" + tempo +
         ", beats='" + beats + '\'' +
         ", subdivisions='" + subdivisions + '\'' +

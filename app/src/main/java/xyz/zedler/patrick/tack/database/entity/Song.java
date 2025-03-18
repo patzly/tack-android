@@ -20,42 +20,67 @@
 package xyz.zedler.patrick.tack.database.entity;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.Objects;
+import java.util.UUID;
 
-@Entity(
-    tableName = "songs",
-    indices = {@Index(value = "name", unique = true)}
-)
+@Entity(tableName = "songs", indices = {@Index(value = {"id"}, unique = true)})
 public class Song {
 
   @PrimaryKey
   @NonNull
+  private String id;
+  @Nullable
   private String name;
   private long lastPlayed;
+  private int playCount;
   private boolean isLooped;
 
-  public Song(@NonNull String name, long lastPlayed, boolean isLooped) {
+  public Song(
+      @NonNull String id, @Nullable String name, long lastPlayed, int playCount, boolean isLooped
+  ) {
+    this.id = id;
     this.name = name;
     this.lastPlayed = lastPlayed;
+    this.playCount = playCount;
     this.isLooped = isLooped;
   }
 
   @Ignore
-  public Song(@NonNull String name) {
-    this(name, 0, false);
+  public Song(@Nullable String name) {
+    this();
+    this.name = name;
+  }
+
+  @Ignore
+  public Song() {
+    this.id = UUID.randomUUID().toString();
+  }
+
+  public Song copy() {
+    return new Song(id, name, lastPlayed, playCount, isLooped);
   }
 
   @NonNull
+  public String getId() {
+    return id;
+  }
+
+  public void setId(@NonNull String id) {
+    this.id = id;
+  }
+
+  @Nullable
   public String getName() {
     return name;
   }
 
-  public void setName(@NonNull String name) {
+  public void setName(@Nullable String name) {
     this.name = name;
   }
 
@@ -67,6 +92,18 @@ public class Song {
     this.lastPlayed = lastPlayed;
   }
 
+  public int getPlayCount() {
+    return playCount;
+  }
+
+  public void setPlayCount(int playCount) {
+    this.playCount = playCount;
+  }
+
+  public void incrementPlayCount() {
+    playCount++;
+  }
+
   public boolean isLooped() {
     return isLooped;
   }
@@ -75,12 +112,28 @@ public class Song {
     isLooped = looped;
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof Song)) {
+      return false;
+    }
+    Song song = (Song) o;
+    return lastPlayed == song.lastPlayed && isLooped == song.isLooped
+        && Objects.equals(id, song.id) && Objects.equals(name, song.name);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, name, lastPlayed, isLooped);
+  }
+
   @NonNull
   @Override
   public String toString() {
     Date lastPlayed = new Date(this.lastPlayed);
     return "Song{" +
-        "name='" + name + '\'' +
+        "id='" + id + '\'' +
+        ", name='" + name + '\'' +
         ", lastPlayed=" + lastPlayed +
         ", isLooped=" + isLooped +
         '}';

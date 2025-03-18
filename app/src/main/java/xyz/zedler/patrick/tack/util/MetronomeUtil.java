@@ -21,6 +21,7 @@ package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ShortcutInfo;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
@@ -29,8 +30,10 @@ import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -46,6 +49,7 @@ import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.database.SongDatabase;
 import xyz.zedler.patrick.tack.database.entity.Part;
+import xyz.zedler.patrick.tack.database.entity.Song;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.model.MetronomeConfig;
 
@@ -68,7 +72,7 @@ public class MetronomeUtil {
   private Handler tickHandler, latencyHandler;
   private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
   private SongWithParts currentSongWithParts;
-  private String currentSongName;
+  private String currentSongId;
   private int currentPartIndex, muteCountDown;
   private long tickIndex, latency, elapsedStartTime, elapsedTime, elapsedPrevious, timerStartTime;
   private float timerProgress;
@@ -107,8 +111,8 @@ public class MetronomeUtil {
     setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
     setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
     setCurrentSong(
-        sharedPrefs.getString(PREF.SONG_CURRENT, DEF.SONG_CURRENT),
-        sharedPrefs.getInt(PREF.PART_CURRENT, DEF.PART_CURRENT),
+        sharedPrefs.getString(PREF.SONG_CURRENT_ID, DEF.SONG_CURRENT_ID),
+        sharedPrefs.getInt(PREF.PART_CURRENT_INDEX, DEF.PART_CURRENT_INDEX),
         false
     );
   }
@@ -151,29 +155,40 @@ public class MetronomeUtil {
   }
 
   @Nullable
-  public String getCurrentSong() {
-    if (currentSongName != null) {
-      return currentSongName;
-    } else {
-      return null;
-    }
+  public String getCurrentSongId() {
+    return currentSongId;
   }
 
-  public void setCurrentSong(@Nullable String songName, int partIndex, boolean restart) {
-    currentSongName = songName;
-    if (songName != null) {
+  public void setCurrentSong(@Nullable String songId, int partIndex, boolean restart) {
+    currentSongId = songId;
+    if (songId != null) {
       executorService.execute(() -> {
-        currentSongWithParts = db.songDao().getSongWithPartsByName(songName);
+        currentSongWithParts = db.songDao().getSongWithPartsById(songId);
         if (currentSongWithParts != null) {
           setCurrentPartIndex(partIndex, restart);
         } else {
-          Log.e(TAG, "setCurrentSong: song '" + songName + "' not found");
+          Log.e(TAG, "setCurrentSong: song with id='" + songId + "' not found");
         }
       });
     } else {
       currentSongWithParts = null;
     }
-    sharedPrefs.edit().putString(PREF.SONG_CURRENT, songName).apply();
+    sharedPrefs.edit().putString(PREF.SONG_CURRENT_ID, songId).apply();
+  }
+
+  public void reloadCurrentSong() {
+    if (currentSongId != null) {
+      executorService.execute(() -> {
+        currentSongWithParts = db.songDao().getSongWithPartsById(currentSongId);
+        if (currentSongWithParts != null) {
+          setCurrentPartIndex(currentPartIndex, false);
+        } else {
+          Log.e(TAG, "fetchCurrentSong: song with id='" + currentSongId + "' not found");
+        }
+      });
+    } else {
+      currentSongWithParts = null;
+    }
   }
 
   public int getCurrentPartIndex() {
@@ -188,7 +203,7 @@ public class MetronomeUtil {
   public void setCurrentPartIndex(int index, boolean restart) {
     currentPartIndex = index;
     if (currentSongWithParts == null) {
-      Log.e(TAG, "setCurrentPartIndex: song '" + currentSongName + "' is null");
+      Log.e(TAG, "setCurrentPartIndex: song with id='" + currentSongId + "' is null");
       return;
     }
     List<Part> parts = currentSongWithParts.getParts();
@@ -197,9 +212,11 @@ public class MetronomeUtil {
       if (restart) {
         restartIfPlaying(true);
       }
-      sharedPrefs.edit().putInt(PREF.PART_CURRENT, index).apply();
+      sharedPrefs.edit().putInt(PREF.PART_CURRENT_INDEX, index).apply();
     } else {
-      Log.e(TAG, "setCurrentPartIndex: no part found for song '" + currentSongName + "'");
+      Log.e(
+          TAG, "setCurrentPartIndex: no part found for song with id='" + currentSongId + "'"
+      );
       return;
     }
     synchronized (listeners) {
@@ -312,15 +329,7 @@ public class MetronomeUtil {
       }
       return;
     }
-    // notify system for shortcut usage prediction
-    shortcutUtil.reportUsage(currentSongName);
-    // update last played for song
-    if (currentSongWithParts != null) {
-      executorService.execute(() -> {
-        currentSongWithParts.getSong().setLastPlayed(System.currentTimeMillis());
-        db.songDao().updateSong(currentSongWithParts.getSong());
-      });
-    }
+    updateLastPlayedAndPlayCount();
 
     if (isPlaying() && !isRestarted) {
       return;
@@ -436,6 +445,31 @@ public class MetronomeUtil {
 
   public boolean isPlaying() {
     return playing;
+  }
+
+  private void updateLastPlayedAndPlayCount() {
+    executorService.execute(() -> {
+      if (currentSongWithParts == null) {
+        return;
+      }
+      Song currentSong = currentSongWithParts.getSong();
+      currentSong.setLastPlayed(System.currentTimeMillis());
+      currentSong.incrementPlayCount();
+      db.songDao().updateSong(currentSong);
+      List<Song> songs = db.songDao().getAllSongs();
+      List<Song> filteredSongs = new ArrayList<>(songs);
+      filteredSongs.removeIf(song -> song.getPlayCount() < 1);
+      Collections.sort(filteredSongs, Comparator
+          .comparingInt(Song::getPlayCount).reversed()
+          .thenComparing(Song::getName, String.CASE_INSENSITIVE_ORDER)
+      );
+      filteredSongs.subList(0, Math.min(filteredSongs.size(), shortcutUtil.getMaxShortcutCount()));
+      List <ShortcutInfo> shortcuts = new ArrayList<>();
+      for (Song song : filteredSongs) {
+        shortcuts.add(shortcutUtil.getShortcutInfo(song.getId(), song.getName()));
+      }
+      shortcutUtil.addAllShortcuts(shortcuts);
+    });
   }
 
   public void setBeats(String[] beats, boolean restart) {

@@ -34,6 +34,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.database.SongDatabase;
@@ -47,6 +48,7 @@ public class PrefsUtil {
 
   private final Context context;
   private final SharedPreferences sharedPrefs;
+  private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
   public PrefsUtil(Context context) {
     this.context = context;
@@ -94,52 +96,30 @@ public class PrefsUtil {
       // from bookmarks to songs
       Set<String> bookmarks = sharedPrefs.getStringSet(BOOKMARKS, Set.of());
       if (!bookmarks.isEmpty()) {
-        Executors.newSingleThreadExecutor().execute(() -> {
-          SongDatabase db = SongDatabase.getInstance(context.getApplicationContext());
-          LiveData<List<Song>> liveSongs = db.songDao().getAllSongs();
-          new Handler(Looper.getMainLooper()).post(() -> {
-            List<Song> songsToAdd = new LinkedList<>();
-            List<Part> partsToAdd = new LinkedList<>();
-            liveSongs.observeForever(new Observer<>() {
-              @Override
-              public void onChanged(List<Song> songs) {
-                liveSongs.removeObserver(this);
-                sharedPrefs.edit().remove(BOOKMARKS).apply();
-                for (String bookmark : bookmarks) {
-                  try {
-                    int tempo = Integer.parseInt(bookmark);
-                    String songName = context.getString(R.string.label_bpm_value, tempo);
-                    boolean alreadyExists = false;
-                    for (Song songCompare : songs) {
-                      if (songCompare.getName().equals(songName)) {
-                        alreadyExists = true;
-                        break;
-                      }
-                    }
-                    if (!alreadyExists) {
-                      songsToAdd.add(new Song(songName));
-                      MetronomeConfig config = new MetronomeConfig();
-                      config.setTempo(tempo);
-                      partsToAdd.add(new Part(null, songName, config));
-                    }
-                  } catch (NumberFormatException e) {
-                    Log.e(TAG, "migrateBookmarks: bookmark to tempo: ", e);
-                  }
-                }
-              }
-            });
-            Executors.newSingleThreadExecutor().execute(() -> {
-              for (Song song : songsToAdd) {
-                db.songDao().insertSong(song);
-              }
-              for (Part part : partsToAdd) {
-                db.songDao().insertPart(part);
-              }
-            });
-            ShortcutUtil shortcutUtil = new ShortcutUtil(context);
-            shortcutUtil.removeAllShortcuts();
+        new Handler(Looper.getMainLooper()).post(() -> {
+          List<Song> songsToAdd = new LinkedList<>();
+          List<Part> partsToAdd = new LinkedList<>();
+          sharedPrefs.edit().remove(BOOKMARKS).apply();
+          for (String bookmark : bookmarks) {
+            try {
+              int tempo = Integer.parseInt(bookmark);
+              String songName = context.getString(R.string.label_bpm_value, tempo);
+              Song song = new Song(songName);
+              songsToAdd.add(song);
+              MetronomeConfig config = new MetronomeConfig();
+              config.setTempo(tempo);
+              partsToAdd.add(new Part(null, song.getId(), config));
+            } catch (NumberFormatException e) {
+              Log.e(TAG, "migrateBookmarks: bookmark to tempo: ", e);
+            }
+          }
+          executorService.execute(() -> {
+            SongDatabase db = SongDatabase.getInstance(context.getApplicationContext());
             for (Song song : songsToAdd) {
-              shortcutUtil.addShortcut(song.getName());
+              db.songDao().insertSong(song);
+            }
+            for (Part part : partsToAdd) {
+              db.songDao().insertPart(part);
             }
           });
         });

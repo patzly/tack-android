@@ -89,8 +89,8 @@ public class SongChipAdapter extends Adapter<RecyclerView.ViewHolder> {
 
       @Override
       public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        return songs.get(oldItemPosition).getSong().getName()
-            .equals(newSongs.get(newItemPosition).getSong().getName());
+        return songs.get(oldItemPosition).getSong().getId()
+            .equals(newSongs.get(newItemPosition).getSong().getId());
       }
 
       @Override

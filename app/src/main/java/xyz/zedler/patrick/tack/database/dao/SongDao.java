@@ -49,15 +49,18 @@ public interface SongDao {
   void insertParts(List<Part> parts);
 
   @Transaction
-  @Query("SELECT * FROM songs WHERE name = :songName")
-  SongWithParts getSongWithPartsByName(String songName);
+  @Query("SELECT * FROM songs WHERE id = :songId")
+  SongWithParts getSongWithPartsById(String songId);
 
   @Transaction
   @Query("SELECT * FROM songs")
   LiveData<List<SongWithParts>> getAllSongsWithParts();
 
   @Query("SELECT * FROM songs")
-  LiveData<List<Song>> getAllSongs();
+  List<Song> getAllSongs();
+
+  @Query("SELECT * FROM songs")
+  LiveData<List<Song>> getAllSongsLive();
 
   @Update
   void updateSong(Song song);

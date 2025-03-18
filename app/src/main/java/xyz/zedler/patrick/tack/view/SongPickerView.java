@@ -45,6 +45,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
@@ -67,40 +68,52 @@ public class SongPickerView extends FrameLayout {
 
   private final ViewSongPickerBinding binding;
   private final boolean isRtl;
+  private final Context context;
   private SongPickerListener listener;
-  private MainActivity activity;
-  private List<SongWithParts> songs;
+  private List<SongWithParts> songsWithParts;
   private int songsOrder;
-  private String currentSong;
+  private String currentSongId;
   private Drawable gradientLeft, gradientRight;
   private ValueAnimator animator;
+  private boolean isInitialized;
 
   public SongPickerView(@NonNull Context context, AttributeSet attributeSet) {
     super(context, attributeSet);
+    this.context = context;
 
     binding = ViewSongPickerBinding.inflate(
         LayoutInflater.from(context), this, true
     );
     isRtl = UiUtil.isLayoutRtl(context);
-    songs = Collections.emptyList();
+    songsWithParts = Collections.emptyList();
   }
 
   public void setListener(SongPickerListener listener) {
     this.listener = listener;
   }
 
-  public void init(@NonNull MainActivity activity) {
-    this.activity = activity;
-    songsOrder = activity.getSharedPrefs().getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER);
-    currentSong = activity.getMetronomeUtil().getCurrentSong();
+  public void init(int songsOrder, @Nullable String currentSongId, List<SongWithParts> songs) {
+    if (isInitialized) {
+      return;
+    }
+    isInitialized = true;
+
+    this.songsOrder = songsOrder;
+    this.currentSongId = currentSongId;
+    // To display current song title in current chip at start
+    this.songsWithParts = songs;
 
     initRecycler();
     initChip();
-    setCurrentSong(currentSong, false);
+    setCurrentSong(currentSongId, false);
+  }
+
+  public boolean isInitialized() {
+    return isInitialized;
   }
 
   public void setSongs(List<SongWithParts> songs) {
-    this.songs = songs;
+    this.songsWithParts = songs;
     SongChipAdapter adapter = (SongChipAdapter) binding.recyclerSongPicker.getAdapter();
     if (adapter == null) {
       throw new IllegalStateException("init() has to be called before any other method");
@@ -108,9 +121,10 @@ public class SongPickerView extends FrameLayout {
 
     if (songsOrder == SONGS_ORDER.NAME_ASC) {
       Collections.sort(
-          songs,
-          (o1, o2) -> o1.getSong().getName().compareTo(
-              o2.getSong().getName()
+          this.songsWithParts,
+          Comparator.comparing(
+              o -> o.getSong().getName(),
+              Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
           )
       );
     } else if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
@@ -118,6 +132,13 @@ public class SongPickerView extends FrameLayout {
           songs,
           (s1, s2) -> Long.compare(
               s2.getSong().getLastPlayed(), s1.getSong().getLastPlayed()
+          )
+      );
+    } else if (songsOrder == SONGS_ORDER.MOST_PLAYED_ASC) {
+      Collections.sort(
+          songs,
+          (s1, s2) -> Integer.compare(
+              s2.getSong().getPlayCount(), s1.getSong().getPlayCount()
           )
       );
     }
@@ -129,23 +150,23 @@ public class SongPickerView extends FrameLayout {
   private void initRecycler() {
     // Adapter
     OnSongClickListener onSongClickListener = (chip, song) -> {
-      String currentSong = song.getSong().getName();
+      String currentSongId = song.getSong().getId();
       if (listener != null) {
-        listener.onCurrentSongChanged(currentSong);
+        listener.onCurrentSongChanged(currentSongId);
       }
-      setCurrentSong(currentSong, true);
+      setCurrentSong(currentSongId, true);
     };
     SongChipAdapter adapter = new SongChipAdapter(
-        onSongClickListener, currentSong == null
+        onSongClickListener, currentSongId == null
     );
     binding.recyclerSongPicker.setAdapter(adapter);
     // Layout manager
     LinearLayoutManager layoutManager = new LinearLayoutManager(
-        activity, LinearLayoutManager.HORIZONTAL, false
+        context, LinearLayoutManager.HORIZONTAL, false
     );
     binding.recyclerSongPicker.setLayoutManager(layoutManager);
-    boolean isPortrait = UiUtil.isOrientationPortrait(activity);
-    boolean isLandTablet = UiUtil.isLandTablet(activity);
+    boolean isPortrait = UiUtil.isOrientationPortrait(context);
+    boolean isLandTablet = UiUtil.isLandTablet(context);
     binding.recyclerSongPicker.setHorizontalFadingEdgeEnabled(!isPortrait && !isLandTablet);
 
     maybeCenterSongChips(-1);
@@ -153,7 +174,7 @@ public class SongPickerView extends FrameLayout {
 
   @SuppressLint("RtlHardcoded")
   private void initChip() {
-    binding.textSongPickerChip.setText(currentSong);
+    binding.textSongPickerChip.setText(getSongNameFromId(currentSongId));
     binding.frameSongPickerChipClose.setOnClickListener(v -> {
       if (listener != null) {
         listener.onCurrentSongChanged(null);
@@ -170,7 +191,7 @@ public class SongPickerView extends FrameLayout {
         v -> binding.frameSongPickerChipTouchTarget.callOnClick()
     );
 
-    int colorSurface = ResUtil.getColor(activity, R.attr.colorSurface);
+    int colorSurface = ResUtil.getColor(context, R.attr.colorSurface);
     gradientLeft = new GradientDrawable(
         GradientDrawable.Orientation.LEFT_RIGHT,
         new int[]{Color.TRANSPARENT, colorSurface, colorSurface, colorSurface}
@@ -185,7 +206,7 @@ public class SongPickerView extends FrameLayout {
     binding.viewSongPickerGradientEnd.setBackground(isRtl ? gradientLeft : gradientRight);
   }
 
-  private void setCurrentSong(@Nullable String currentSong, boolean animated) {
+  private void setCurrentSong(@Nullable String currentSongId, boolean animated) {
     if (animator != null) {
       animator.pause();
       animator.cancel();
@@ -199,8 +220,8 @@ public class SongPickerView extends FrameLayout {
       binding.frameSongPickerChipClose.setClickable(false);
       binding.frameSongPickerChipTouchTarget.setClickable(false);
       binding.cardSongPickerChip.setClickable(false);
-      if (currentSong != null) {
-        binding.textSongPickerChip.setText(currentSong);
+      if (currentSongId != null) {
+        binding.textSongPickerChip.setText(getSongNameFromId(currentSongId));
         binding.frameSongPickerChipContainer.setTranslationX(0);
         binding.frameSongPickerChipContainer.setVisibility(View.INVISIBLE);
         closeIconParams.width = 0;
@@ -209,10 +230,10 @@ public class SongPickerView extends FrameLayout {
         binding.recyclerSongPicker.setAlpha(0);
         binding.recyclerSongPicker.setVisibility(View.VISIBLE);
       }
-      int position = getPositionOfSong(currentSong != null ? currentSong : this.currentSong);
+      int position = getPositionOfSong(currentSongId != null ? currentSongId : this.currentSongId);
       LayoutManager layoutManager = binding.recyclerSongPicker.getLayoutManager();
       if (position >= 0 && layoutManager != null) {
-        if (currentSong == null) {
+        if (currentSongId == null) {
           // Scroll to current song chip
           layoutManager.scrollToPosition(position);
         }
@@ -223,11 +244,11 @@ public class SongPickerView extends FrameLayout {
             int endLeft = targetChip.getLeft();
             int startLeft = binding.frameSongPickerChipTouchTarget.getLeft();
             // Compensate half of close icon width
-            startLeft += currentSong == null ? UiUtil.dpToPx(activity, 9) : 0;
+            startLeft += currentSongId == null ? UiUtil.dpToPx(context, 9) : 0;
             int diff = endLeft - startLeft;
-            int closeIconWidth = UiUtil.dpToPx(activity, 18);
+            int closeIconWidth = UiUtil.dpToPx(context, 18);
 
-            if (currentSong != null) {
+            if (currentSongId != null) {
               animator = ValueAnimator.ofFloat(0, 1);
               animator.setInterpolator(new OvershootInterpolator());
             } else {
@@ -243,14 +264,16 @@ public class SongPickerView extends FrameLayout {
               closeIconParams.width = (int) Math.min(closeIconWidth * fraction, closeIconWidth);
               binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
               binding.imageSongPickerChipClose.setAlpha(fraction);
-              int colorTertiaryContainer = ResUtil.getColor(activity, R.attr.colorTertiaryContainer);
-              int colorOnTertiaryContainer = ResUtil.getColor(
-                  activity, R.attr.colorOnTertiaryContainer
+              int colorTertiaryContainer = ResUtil.getColor(
+                  context, R.attr.colorTertiaryContainer
               );
-              int colorPrimary = ResUtil.getColor(activity, R.attr.colorPrimary);
-              int colorSurface = ResUtil.getColor(activity, R.attr.colorSurface);
-              int colorOnSurface = ResUtil.getColor(activity, R.attr.colorOnSurface);
-              int colorOutline = ResUtil.getColor(activity, R.attr.colorOutline);
+              int colorOnTertiaryContainer = ResUtil.getColor(
+                  context, R.attr.colorOnTertiaryContainer
+              );
+              int colorPrimary = ResUtil.getColor(context, R.attr.colorPrimary);
+              int colorSurface = ResUtil.getColor(context, R.attr.colorSurface);
+              int colorOnSurface = ResUtil.getColor(context, R.attr.colorOnSurface);
+              int colorOutline = ResUtil.getColor(context, R.attr.colorOutline);
 
               int colorBg = ColorUtils.blendARGB(colorSurface, colorTertiaryContainer, fraction);
               int colorText = ColorUtils.blendARGB(
@@ -274,13 +297,13 @@ public class SongPickerView extends FrameLayout {
             animator.addListener(new AnimatorListenerAdapter() {
               @Override
               public void onAnimationEnd(Animator animation) {
-                if (currentSong == null) {
+                if (currentSongId == null) {
                   binding.frameSongPickerChipContainer.setVisibility(INVISIBLE);
                 }
-                binding.frameSongPickerChipClose.setClickable(currentSong != null);
-                binding.frameSongPickerChipTouchTarget.setClickable(currentSong != null);
-                binding.cardSongPickerChip.setClickable(currentSong != null);
-                setRecyclerClicksEnabled(currentSong == null);
+                binding.frameSongPickerChipClose.setClickable(currentSongId != null);
+                binding.frameSongPickerChipTouchTarget.setClickable(currentSongId != null);
+                binding.cardSongPickerChip.setClickable(currentSongId != null);
+                setRecyclerClicksEnabled(currentSongId == null);
               }
             });
             animator.setDuration(Constants.ANIM_DURATION_LONG);
@@ -290,23 +313,25 @@ public class SongPickerView extends FrameLayout {
       }
     } else {
       binding.recyclerSongPicker.setAlpha(1);
-      binding.recyclerSongPicker.setVisibility(currentSong != null ? INVISIBLE : VISIBLE);
-      binding.frameSongPickerChipContainer.setVisibility(currentSong == null ? INVISIBLE : VISIBLE);
-      binding.frameSongPickerChipClose.setClickable(currentSong != null);
-      binding.textSongPickerChip.setText(currentSong);
-      closeIconParams.width = UiUtil.dpToPx(activity, 18);
+      binding.recyclerSongPicker.setVisibility(currentSongId != null ? INVISIBLE : VISIBLE);
+      binding.frameSongPickerChipContainer.setVisibility(
+          currentSongId == null ? INVISIBLE : VISIBLE
+      );
+      binding.frameSongPickerChipClose.setClickable(currentSongId != null);
+      binding.textSongPickerChip.setText(getSongNameFromId(currentSongId));
+      closeIconParams.width = UiUtil.dpToPx(context, 18);
       binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
       binding.imageSongPickerChipClose.setAlpha(1f);
-      setRecyclerClicksEnabled(currentSong == null);
+      setRecyclerClicksEnabled(currentSongId == null);
     }
-    this.currentSong = currentSong;
+    this.currentSongId = currentSongId;
   }
 
-  private int getPositionOfSong(String songName) {
+  private int getPositionOfSong(@Nullable String songNameId) {
     int position = -1;
-    if (songName != null) {
-      for (int i = 0; i < songs.size(); i++) {
-        if (songs.get(i).getSong().getName().equals(songName)) {
+    if (songNameId != null) {
+      for (int i = 0; i < songsWithParts.size(); i++) {
+        if (songsWithParts.get(i).getSong().getId().equals(songNameId)) {
           position = i;
           break;
         }
@@ -364,6 +389,18 @@ public class SongPickerView extends FrameLayout {
         });
   }
 
+  private String getSongNameFromId(@Nullable String songId) {
+    if (songId == null) {
+      return null;
+    }
+    for (SongWithParts songWithParts : songsWithParts) {
+      if (songWithParts.getSong().getId().equals(songId)) {
+        return songWithParts.getSong().getName();
+      }
+    }
+    return null;
+  }
+
   private void setRecyclerClicksEnabled(boolean enabled) {
     SongChipAdapter adapter = (SongChipAdapter) binding.recyclerSongPicker.getAdapter();
     if (adapter != null) {
@@ -372,7 +409,7 @@ public class SongPickerView extends FrameLayout {
   }
 
   public interface SongPickerListener {
-    void onCurrentSongChanged(@Nullable String currentSong);
+    void onCurrentSongChanged(@Nullable String currentSongId);
     void onCurrentSongClicked();
   }
 }

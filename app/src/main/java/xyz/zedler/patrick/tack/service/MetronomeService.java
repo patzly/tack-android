@@ -98,7 +98,7 @@ public class MetronomeService extends Service {
         metronomeUtil.start();
       } else if (intent.getAction().equals(ACTION.START_SONG)) {
         metronomeUtil.setCurrentSong(
-            intent.getStringExtra(EXTRA.SONG_NAME), 0, true
+            intent.getStringExtra(EXTRA.SONG_ID), 0, true
         );
         metronomeUtil.start();
       } else if (intent.getAction().equals(ACTION.STOP)) {
