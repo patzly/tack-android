@@ -40,15 +40,13 @@ public class PartsDialogUtil {
   private static final String TAG = PartsDialogUtil.class.getSimpleName();
 
   private final MainActivity activity;
-  private final MainFragment fragment;
   private final PartialDialogPartsTitleBinding titleBinding;
   private final PartialDialogPartsBinding binding;
   private final DialogUtil dialogUtil;
   private final PartDialogAdapter adapter;
 
-  public PartsDialogUtil(MainActivity activity, MainFragment fragment) {
+  public PartsDialogUtil(MainActivity activity) {
     this.activity = activity;
-    this.fragment = fragment;
 
     titleBinding = PartialDialogPartsTitleBinding.inflate(activity.getLayoutInflater());
 
@@ -58,7 +56,7 @@ public class PartsDialogUtil {
     binding.recyclerParts.setLayoutManager(new LinearLayoutManager(activity));
     adapter = new PartDialogAdapter((partIndex, fromUser) -> {
       if (fromUser) {
-        fragment.performHapticClick();
+        activity.performHapticClick();
         getMetronomeUtil().setCurrentPartIndex(partIndex, true);
       }
     });

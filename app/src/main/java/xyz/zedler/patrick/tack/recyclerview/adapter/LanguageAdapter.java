@@ -90,7 +90,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageViewHolder> {
       return;
     }
 
-    Language language = languages.get(holder.getAdapterPosition() - 1);
+    Language language = languages.get(holder.getBindingAdapterPosition() - 1);
     holder.binding.textLanguageName.setText(language.getName());
     holder.binding.textLanguageTranslators.setText(language.getTranslators());
 

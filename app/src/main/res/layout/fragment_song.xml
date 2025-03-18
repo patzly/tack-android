@@ -117,15 +117,15 @@
 
       <TextView
         android:id="@+id/text_song_parts"
-        style="@style/Widget.Tack.TextView.ListItem.OverLine"
+        style="@style/Widget.Tack.TextView.Category"
         android:text="@string/label_song_parts"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"/>
+        android:paddingTop="8dp"
+        android:paddingBottom="4dp" />
 
       <com.google.android.material.divider.MaterialDivider
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         app:dividerInsetStart="16dp"
         app:dividerInsetEnd="16dp" />
 

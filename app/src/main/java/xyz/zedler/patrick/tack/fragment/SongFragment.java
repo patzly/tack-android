@@ -20,9 +20,10 @@
 package xyz.zedler.patrick.tack.fragment;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -55,8 +56,8 @@ public class SongFragment extends BaseFragment implements OnClickListener {
   private Song songSource;
   private Song songResult = new Song();
   private List<Song> songsExisting = new LinkedList<>();
-  private List<Part> partsResult = new LinkedList<>();
-  private boolean hasUnsavedChanges = false;
+  private final List<Part> partsResult = new LinkedList<>();
+  private boolean hasUnsavedChanges = true;
 
   @Override
   public View onCreateView(
@@ -135,6 +136,7 @@ public class SongFragment extends BaseFragment implements OnClickListener {
               getString(R.string.label_song_parts, songWithParts.getParts().size())
           );
         }
+        hasUnsavedChanges = false; // both are equal
       };
       activity.getSongViewModel().getSongWithParts().observe(getViewLifecycleOwner(), observer);
       activity.getSongViewModel().fetchSongWithParts(songId);
@@ -163,10 +165,12 @@ public class SongFragment extends BaseFragment implements OnClickListener {
         });
     binding.editTextSongName.addTextChangedListener(new TextWatcher() {
       @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+      }
 
       @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {}
+      public void onTextChanged(CharSequence s, int start, int before, int count) {
+      }
 
       @Override
       public void afterTextChanged(Editable s) {
@@ -212,9 +216,10 @@ public class SongFragment extends BaseFragment implements OnClickListener {
         if (songSource == null) {
           activity.getSongViewModel().insertSong(songResult);
         } else {
-          activity.getSongViewModel().updateSong(
-              songResult, () -> getMetronomeUtil().reloadCurrentSong()
-          );
+          activity.getSongViewModel().updateSong(songResult, () -> {
+            getMetronomeUtil().reloadCurrentSong();
+            getMetronomeUtil().updateShortcuts();
+          });
         }
         navigateUp();
       }

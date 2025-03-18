@@ -61,6 +61,9 @@ public class ShortcutUtil {
   }
 
   public void addShortcut(@NonNull ShortcutInfo shortcutInfo) {
+    if (!isSupported()) {
+      return;
+    }
     hasShortcutAsync(shortcutInfo.getId(), hasShortcut -> {
       if (isSupported() && !hasShortcut) {
         if (manager.getDynamicShortcuts().size() < getMaxShortcutCount()) {
@@ -88,6 +91,14 @@ public class ShortcutUtil {
     if (isSupported()) {
       manager.removeAllDynamicShortcuts();
     }
+  }
+
+  public void reportUsage(@NonNull String shortcutId) {
+    hasShortcutAsync(shortcutId, hasShortcut -> {
+      if (isSupported() && hasShortcut) {
+        manager.reportShortcutUsed(shortcutId);
+      }
+    });
   }
 
   public int getMaxShortcutCount() {
@@ -132,7 +143,7 @@ public class ShortcutUtil {
     return builder.build();
   }
 
-  private static boolean isSupported() {
+  public static boolean isSupported() {
     return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1;
   }
 

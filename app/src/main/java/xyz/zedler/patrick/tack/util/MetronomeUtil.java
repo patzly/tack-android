@@ -449,13 +449,22 @@ public class MetronomeUtil {
 
   private void updateLastPlayedAndPlayCount() {
     executorService.execute(() -> {
-      if (currentSongWithParts == null) {
+      if (currentSongWithParts != null) {
+        Song currentSong = currentSongWithParts.getSong();
+        currentSong.setLastPlayed(System.currentTimeMillis());
+        currentSong.incrementPlayCount();
+        db.songDao().updateSong(currentSong);
+        shortcutUtil.reportUsage(currentSong.getId());
+      }
+    });
+    updateShortcuts();
+  }
+
+  public void updateShortcuts() {
+    executorService.execute(() -> {
+      if (!ShortcutUtil.isSupported()) {
         return;
       }
-      Song currentSong = currentSongWithParts.getSong();
-      currentSong.setLastPlayed(System.currentTimeMillis());
-      currentSong.incrementPlayCount();
-      db.songDao().updateSong(currentSong);
       List<Song> songs = db.songDao().getAllSongs();
       List<Song> filteredSongs = new ArrayList<>(songs);
       filteredSongs.removeIf(song -> song.getPlayCount() < 1);

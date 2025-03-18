@@ -103,7 +103,6 @@ public class MainFragment extends BaseFragment
   private PartsDialogUtil partsDialogUtil;
   private TempoTapDialogUtil tempoTapDialogUtil;
   private TempoDialogUtil tempoDialogUtil;
-  private ShortcutUtil shortcutUtil;
   private BeatsBgDrawable beatsBgDrawable;
   private BadgeDrawable beatsCountBadge, subsCountBadge, optionsBadge;
   private ValueAnimator progressAnimator, progressTransitionAnimator;
@@ -303,10 +302,9 @@ public class MainFragment extends BaseFragment
     logoCenterUtil = new LogoUtil(binding.imageMainLogoCenter);
     bigLogo = getSharedPrefs().getBoolean(PREF.BIG_LOGO, DEF.BIG_LOGO);
 
-    shortcutUtil = new ShortcutUtil(activity);
     tempoTapDialogUtil = new TempoTapDialogUtil(activity, this);
 
-    partsDialogUtil = new PartsDialogUtil(activity, this);
+    partsDialogUtil = new PartsDialogUtil(activity);
     partsDialogUtil.showIfWasShown(savedInstanceState);
 
     beatsBgDrawable = new BeatsBgDrawable(activity);

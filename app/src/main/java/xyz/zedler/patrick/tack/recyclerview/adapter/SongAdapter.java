@@ -19,7 +19,11 @@
 
 package xyz.zedler.patrick.tack.recyclerview.adapter;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.Build;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,17 +31,21 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+import java.text.DateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.RowSongBinding;
+import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipAdapter.OnSongClickListener;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 
 public class SongAdapter extends ListAdapter<SongWithParts, RecyclerView.ViewHolder> {
@@ -106,15 +114,26 @@ public class SongAdapter extends ListAdapter<SongWithParts, RecyclerView.ViewHol
     if (sortOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
       long lastPlayed = songWithParts.getSong().getLastPlayed();
       if (lastPlayed != 0) {
-        DateTimeFormatter formatter = DateTimeFormatter
-            .ofLocalizedDateTime(FormatStyle.SHORT)
-            .withLocale(LocaleUtil.getLocale());
-        LocalDateTime dateTime = Instant.ofEpochMilli(songWithParts.getSong().getLastPlayed())
-            .atZone(ZoneId.systemDefault())
-            .toLocalDateTime();
-        binding.textSongSortDetails.setText(
-            context.getString(R.string.label_sort_last_played_date, dateTime.format(formatter))
-        );
+        Locale locale = LocaleUtil.getLocale();
+        if (VERSION.SDK_INT >= VERSION_CODES.O) {
+          DateTimeFormatter formatter = DateTimeFormatter
+              .ofLocalizedDateTime(FormatStyle.SHORT)
+              .withLocale(locale);
+          LocalDateTime dateTime = Instant.ofEpochMilli(lastPlayed)
+              .atZone(ZoneId.systemDefault())
+              .toLocalDateTime();
+          binding.textSongSortDetails.setText(
+              context.getString(R.string.label_sort_last_played_date, dateTime.format(formatter))
+          );
+        } else {
+          DateFormat dateFormat = DateFormat.getDateTimeInstance(
+              DateFormat.SHORT, DateFormat.SHORT, locale
+          );
+          String formattedDate = dateFormat.format(new Date(lastPlayed));
+          binding.textSongSortDetails.setText(
+              context.getString(R.string.label_sort_last_played_date, formattedDate)
+          );
+        }
       } else {
         binding.textSongSortDetails.setText(R.string.label_sort_never_played);
       }
@@ -132,6 +151,7 @@ public class SongAdapter extends ListAdapter<SongWithParts, RecyclerView.ViewHol
     }
   }
 
+  @SuppressLint("NotifyDataSetChanged")
   public void setSortOrder(int sortOrder) {
     if (this.sortOrder != sortOrder) {
       this.sortOrder = sortOrder;

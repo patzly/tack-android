@@ -197,13 +197,25 @@ public class SongsFragment extends BaseFragment {
     }
     adapter.setSortOrder(songsOrder);
     if (songsOrder == SONGS_ORDER.NAME_ASC) {
-      Collections.sort(
-          this.songs,
-          Comparator.comparing(
-              o -> o.getSong().getName(),
-              Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
-          )
-      );
+      if (VERSION.SDK_INT >= VERSION_CODES.N) {
+        Collections.sort(
+            this.songs,
+            Comparator.comparing(
+                o -> o.getSong().getName(),
+                Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
+            )
+        );
+      } else {
+        Collections.sort(this.songs, (o1, o2) -> {
+          String name1 = (o1.getSong() != null) ? o1.getSong().getName() : null;
+          String name2 = (o2.getSong() != null) ? o2.getSong().getName() : null;
+          // Nulls last handling
+          if (name1 == null && name2 == null) return 0;
+          if (name1 == null) return 1;
+          if (name2 == null) return -1;
+          return name1.compareToIgnoreCase(name2);
+        });
+      }
     } else if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
       Collections.sort(
           this.songs,

@@ -29,7 +29,10 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.GradientDrawable.Orientation;
 import android.graphics.drawable.ScaleDrawable;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -120,13 +123,25 @@ public class SongPickerView extends FrameLayout {
     }
 
     if (songsOrder == SONGS_ORDER.NAME_ASC) {
-      Collections.sort(
-          this.songsWithParts,
-          Comparator.comparing(
-              o -> o.getSong().getName(),
-              Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
-          )
-      );
+      if (VERSION.SDK_INT >= VERSION_CODES.N) {
+        Collections.sort(
+            this.songsWithParts,
+            Comparator.comparing(
+                o -> o.getSong().getName(),
+                Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
+            )
+        );
+      } else {
+        Collections.sort(this.songsWithParts, (o1, o2) -> {
+          String name1 = (o1.getSong() != null) ? o1.getSong().getName() : null;
+          String name2 = (o2.getSong() != null) ? o2.getSong().getName() : null;
+          // Nulls last handling
+          if (name1 == null && name2 == null) return 0;
+          if (name1 == null) return 1;
+          if (name2 == null) return -1;
+          return name1.compareToIgnoreCase(name2);
+        });
+      }
     } else if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
       Collections.sort(
           songs,
@@ -144,7 +159,7 @@ public class SongPickerView extends FrameLayout {
     }
     adapter.setSongs(songs);
 
-    maybeCenterSongChips(-1);
+    maybeCenterSongChips();
   }
 
   private void initRecycler() {
@@ -169,7 +184,7 @@ public class SongPickerView extends FrameLayout {
     boolean isLandTablet = UiUtil.isLandTablet(context);
     binding.recyclerSongPicker.setHorizontalFadingEdgeEnabled(!isPortrait && !isLandTablet);
 
-    maybeCenterSongChips(-1);
+    maybeCenterSongChips();
   }
 
   @SuppressLint("RtlHardcoded")
@@ -236,6 +251,7 @@ public class SongPickerView extends FrameLayout {
         if (currentSongId == null) {
           // Scroll to current song chip
           layoutManager.scrollToPosition(position);
+          maybeCenterSongChips();
         }
         // Delay to ensure scrolling is finished
         binding.recyclerSongPicker.post(() -> {
@@ -340,7 +356,7 @@ public class SongPickerView extends FrameLayout {
     return position;
   }
 
-  private void maybeCenterSongChips(int scrollToPosition) {
+  private void maybeCenterSongChips() {
     int outerPadding = UiUtil.dpToPx(getContext(), 16);
     int innerPadding = UiUtil.dpToPx(getContext(), 4);
     SongChipItemDecoration decoration = new SongChipItemDecoration(
@@ -377,11 +393,6 @@ public class SongPickerView extends FrameLayout {
               } else {
                 recyclerView.setPadding(0, 0, 0, 0);
                 recyclerView.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
-                if (scrollToPosition >= 0
-                    && binding.recyclerSongPicker.getLayoutManager() != null) {
-                  // Scroll to active song chip
-                  binding.recyclerSongPicker.getLayoutManager().scrollToPosition(scrollToPosition);
-                }
               }
             }
             recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
