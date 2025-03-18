@@ -115,13 +115,12 @@ public class PrefsUtil {
           }
           executorService.execute(() -> {
             SongDatabase db = SongDatabase.getInstance(context.getApplicationContext());
-            for (Song song : songsToAdd) {
-              db.songDao().insertSong(song);
-            }
-            for (Part part : partsToAdd) {
-              db.songDao().insertPart(part);
-            }
+            db.songDao().insertSongs(songsToAdd);
+            db.songDao().insertParts(partsToAdd);
           });
+          // Remove deprecated shortcuts
+          ShortcutUtil shortcutUtil = new ShortcutUtil(context);
+          shortcutUtil.removeAllShortcuts();
         });
       }
     }
