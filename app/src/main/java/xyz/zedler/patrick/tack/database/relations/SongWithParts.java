@@ -19,12 +19,14 @@
 
 package xyz.zedler.patrick.tack.database.relations;
 
+import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.room.Embedded;
 import androidx.room.Junction;
 import androidx.room.Relation;
 import java.util.List;
 import java.util.Objects;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.entity.Song;
@@ -58,23 +60,54 @@ public class SongWithParts {
   }
 
   public String getDurationString() {
-    int seconds = 0;
+    float seconds = 0;
     for (Part part : parts) {
-      float factor;
       switch (part.getTimerUnit()) {
         case UNIT.SECONDS:
-          factor = 1;
+          seconds += part.getTimerDuration();
           break;
         case UNIT.MINUTES:
-          factor = 60;
+          seconds += 60 * part.getTimerDuration();
           break;
-        default:
-          factor = ((float) 60 / part.getTempo()) * part.getBeatsCount();
+        default: // Bars
+          int incrementalAmount = part.getIncrementalAmount();
+          if (incrementalAmount > 0) {
+            // complex duration calculation with incremental tempo changes
+            String incrementalUnit = part.getIncrementalUnit();
+            int interval = part.getIncrementalInterval();
+            if (incrementalUnit.equals(UNIT.BARS)) {
+              int tempo = part.getTempo();
+              for (int i = 0; i < part.getTimerDuration(); i++) {
+                float factor = ((float) 60 / tempo) * part.getBeatsCount();
+                seconds += factor * interval;
+                if (i % interval == 0) {
+                  int incrementalLimit = part.getIncrementalLimit();
+                  if (part.isIncrementalIncrease()) {
+                    int upperLimit = incrementalLimit != 0 ? incrementalLimit : Constants.TEMPO_MAX;
+                    if (tempo + incrementalAmount <= upperLimit) {
+                      tempo += incrementalAmount;
+                    }
+                  } else {
+                    int lowerLimit = incrementalLimit != 0 ? incrementalLimit : Constants.TEMPO_MIN;
+                    if (tempo - incrementalAmount >= lowerLimit) {
+                      tempo -= incrementalAmount;
+                    }
+                  }
+                }
+              }
+            } else {
+              // TODO: implement incremental tempo changes for seconds and minutes
+              float factor = ((float) 60 / part.getTempo()) * part.getBeatsCount();
+              seconds += factor * part.getTimerDuration();
+            }
+          } else {
+            float factor = ((float) 60 / part.getTempo()) * part.getBeatsCount();
+            seconds += factor * part.getTimerDuration();
+          }
           break;
       }
-      seconds += (int) (factor * part.getTimerDuration());
     }
-    return MetronomeUtil.getTimeStringFromSeconds(seconds, false);
+    return MetronomeUtil.getTimeStringFromSeconds((int) seconds, false);
   }
 
   @Override

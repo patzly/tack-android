@@ -134,15 +134,6 @@ public class SongViewModel extends AndroidViewModel {
     executorService.execute(() -> db.songDao().updateSong(song));
   }
 
-  public void updateSong(Song song, @Nullable Runnable runOnUpdated) {
-    executorService.execute(() -> {
-      db.songDao().updateSong(song);
-      if (runOnUpdated != null) {
-        runOnUpdated.run();
-      }
-    });
-  }
-
   public void deleteSong(Song song) {
     executorService.execute(() -> db.songDao().deleteSong(song));
   }
@@ -161,6 +152,45 @@ public class SongViewModel extends AndroidViewModel {
 
   public void deletePart(Part part) {
     executorService.execute(() -> db.songDao().deletePart(part));
+  }
+
+  public void updateSongAndParts(
+      Song song, List<Part> partsNew, List<Part> partsOld, @Nullable Runnable runOnUpdated
+  ) {
+    executorService.execute(() -> {
+      db.songDao().updateSong(song);
+
+      for (Part part : partsNew) {
+        boolean isNew = true;
+        for (Part partSource : partsOld) {
+          if (part.getId().equals(partSource.getId())) {
+            isNew = false;
+            break;
+          }
+        }
+        if (isNew) {
+          db.songDao().insertPart(part);
+        } else {
+          db.songDao().updatePart(part);
+        }
+      }
+      for (Part part : partsOld) {
+        boolean isDeleted = true;
+        for (Part partResult : partsNew) {
+          if (part.getId().equals(partResult.getId())) {
+            isDeleted = false;
+            break;
+          }
+        }
+        if (isDeleted) {
+          db.songDao().deletePart(part);
+        }
+      }
+
+      if (runOnUpdated != null) {
+        runOnUpdated.run();
+      }
+    });
   }
 
   @Override

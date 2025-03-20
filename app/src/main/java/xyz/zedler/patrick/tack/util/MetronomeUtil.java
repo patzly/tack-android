@@ -341,6 +341,7 @@ public class MetronomeUtil {
   }
 
   public void start(boolean isRestarted) {
+    // isRestarted should suppress onStop/onStart callbacks and count-in
     if (!NotificationUtil.hasPermission(context)) {
       synchronized (listeners) {
         for (MetronomeListener listener : listeners) {
@@ -367,7 +368,8 @@ public class MetronomeUtil {
 
     playing = true;
     audioUtil.play();
-    tickIndex = 0;
+    int countInTickIndex = getCountIn() * getBeatsCount() * getSubdivisionsCount();
+    tickIndex = isRestarted && isCountInActive() ? countInTickIndex : 0;
     isMuted = false;
     if (isMuteActive()) {
       // updateMuteHandler would be too late
@@ -377,9 +379,9 @@ public class MetronomeUtil {
       @Override
       public void run() {
         if (isPlaying()) {
-          tickHandler.postDelayed(this, getInterval() / getSubdivisionsCount());
           Tick tick = performTick();
           if (tick != null) {
+            tickHandler.postDelayed(this, getInterval() / getSubdivisionsCount());
             audioUtil.writeTickPeriod(tick, config.getTempo(), getSubdivisionsCount());
             tickIndex++;
           }
@@ -396,7 +398,7 @@ public class MetronomeUtil {
       timerStartTime = System.currentTimeMillis();
       updateTimerHandler(timerProgress, true);
       updateMuteHandler();
-    }, getCountInInterval()); // already 0 if count-in is disabled
+    }, isRestarted ? 0 : getCountInInterval()); // already 0 if count-in is disabled
 
     if (getGain() > 0) {
       neverStartedWithGain = false;
@@ -442,7 +444,7 @@ public class MetronomeUtil {
           listener.onMetronomeStop();
         }
         if (isTimerReset) {
-          listener.onMetronomeTimerProgressOneTime();
+          listener.onMetronomeTimerProgressOneTime(true);
         }
       }
     }
@@ -457,7 +459,7 @@ public class MetronomeUtil {
       timerProgress = 0;
       synchronized (listeners) {
         for (MetronomeListener listener : listeners) {
-          listener.onMetronomeTimerProgressOneTime();
+          listener.onMetronomeTimerProgressOneTime(true);
         }
       }
     }
@@ -652,7 +654,7 @@ public class MetronomeUtil {
       config.setTempo(tempo);
       sharedPrefs.edit().putInt(PREF.TEMPO, tempo).apply();
       if (isPlaying() && isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
-        updateTimerHandler(false, true);
+        updateTimerHandler(false, true, false);
       }
     }
   }
@@ -664,6 +666,7 @@ public class MetronomeUtil {
   private void changeTempo(int change) {
     int tempoOld = getTempo();
     int tempoNew = tempoOld + change;
+    setTempo(tempoNew);
     // setTempo will only be called by callback below, else we would break timer animation
     synchronized (listeners) {
       for (MetronomeListener listener : listeners) {
@@ -1019,6 +1022,14 @@ public class MetronomeUtil {
   }
 
   public void updateTimerHandler(boolean startAtFirstBeat, boolean performOneTime) {
+    updateTimerHandler(startAtFirstBeat, performOneTime, true);
+  }
+
+  public void updateTimerHandler(
+      boolean startAtFirstBeat, boolean performOneTime, boolean withTransition
+  ) {
+    // withTransition is only relevant for tempo changes while playing (in setTempo)
+    // transitions make these changes laggy
     if (!fromService || !isPlaying()) {
       return;
     }
@@ -1070,7 +1081,7 @@ public class MetronomeUtil {
     synchronized (listeners) {
       for (MetronomeListener listener : listeners) {
         if (performOneTime) {
-          listener.onMetronomeTimerProgressOneTime();
+          listener.onMetronomeTimerProgressOneTime(withTransition);
         } else {
           listener.onMetronomeTimerStarted();
         }
@@ -1350,7 +1361,7 @@ public class MetronomeUtil {
     void onMetronomeElapsedTimeSecondsChanged();
     void onMetronomeTimerStarted();
     void onMetronomeTimerSecondsChanged();
-    void onMetronomeTimerProgressOneTime();
+    void onMetronomeTimerProgressOneTime(boolean withTransition);
     void onMetronomeConfigChanged();
     void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex);
     void onMetronomeConnectionMissing();
@@ -1366,7 +1377,7 @@ public class MetronomeUtil {
     public void onMetronomeElapsedTimeSecondsChanged() {}
     public void onMetronomeTimerStarted() {}
     public void onMetronomeTimerSecondsChanged() {}
-    public void onMetronomeTimerProgressOneTime() {}
+    public void onMetronomeTimerProgressOneTime(boolean withTransition) {}
     public void onMetronomeConfigChanged() {}
     public void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex) {}
     public void onMetronomeConnectionMissing() {}

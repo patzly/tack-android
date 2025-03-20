@@ -337,38 +337,13 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           activity.getSongViewModel().insertSong(songResult);
           activity.getSongViewModel().insertParts(partsResult);
         } else {
-          activity.getSongViewModel().updateSong(songResult, () -> {
-            // To update looped in metronome
-            getMetronomeUtil().reloadCurrentSong();
-            // To update shortcut names
-            getMetronomeUtil().updateShortcuts();
-          });
-          for (Part part : partsResult) {
-            boolean isNew = true;
-            for (Part partSource : partsSource) {
-              if (part.getId().equals(partSource.getId())) {
-                isNew = false;
-                break;
-              }
-            }
-            if (isNew) {
-              activity.getSongViewModel().insertPart(part);
-            } else {
-              activity.getSongViewModel().updatePart(part);
-            }
-          }
-          for (Part part : partsSource) {
-            boolean isDeleted = true;
-            for (Part partResult : partsResult) {
-              if (part.getId().equals(partResult.getId())) {
-                isDeleted = false;
-                break;
-              }
-            }
-            if (isDeleted) {
-              activity.getSongViewModel().deletePart(part);
-            }
-          }
+          activity.getSongViewModel().updateSongAndParts(
+              songResult, partsResult, partsSource, () -> {
+                // To update looped in metronome
+                getMetronomeUtil().reloadCurrentSong();
+                // To update shortcut names
+                getMetronomeUtil().updateShortcuts();
+              });
         }
         navigateUp();
       }
@@ -446,14 +421,12 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     }
 
     songResult.setLooped(binding.checkboxSongLooped.isChecked());
-    binding.textSongParts.setText(getString(R.string.label_song_parts, partsResult.size()));
 
     if (isValid) {
       clearError();
     }
 
     boolean hasUnsavedChanges = !songResult.equals(songSource) || !partsResult.equals(partsSource);
-    //Log.i(TAG, "updateResult: hello " + hasUnsavedChanges + "\n" + partsResult + "\n" + partsSource);
     setHasUnsavedChanges(hasUnsavedChanges, isValid);
   }
 

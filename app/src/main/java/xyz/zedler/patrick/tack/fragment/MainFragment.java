@@ -31,7 +31,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -74,7 +73,6 @@ import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.OptionsUtil;
 import xyz.zedler.patrick.tack.util.PartsDialogUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.ShortcutUtil;
 import xyz.zedler.patrick.tack.util.TempoDialogUtil;
 import xyz.zedler.patrick.tack.util.TempoTapDialogUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
@@ -525,7 +523,7 @@ public class MainFragment extends BaseFragment
   @Override
   public void onResume() {
     super.onResume();
-    updateTimerControls(true);
+    updateTimerControls(true, true);
     updateElapsedDisplay();
   }
 
@@ -730,7 +728,7 @@ public class MainFragment extends BaseFragment
 
   @Override
   public void onMetronomeTempoChanged(int tempoOld, int tempoNew) {
-    activity.runOnUiThread(() -> setTempo(tempoOld, tempoNew));
+    activity.runOnUiThread(() -> updateTempoDisplay(tempoOld, tempoNew));
   }
 
   @Override
@@ -741,7 +739,7 @@ public class MainFragment extends BaseFragment
       if (binding == null) {
         return;
       }
-      updateTimerControls(true);
+      updateTimerControls(true, true);
     });
   }
 
@@ -756,12 +754,12 @@ public class MainFragment extends BaseFragment
   }
 
   @Override
-  public void onMetronomeTimerProgressOneTime() {
+  public void onMetronomeTimerProgressOneTime(boolean withTransition) {
     activity.runOnUiThread(() -> {
       if (binding == null) {
         return;
       }
-      updateTimerControls(true);
+      updateTimerControls(true, withTransition);
     });
   }
 
@@ -777,7 +775,7 @@ public class MainFragment extends BaseFragment
       updateSubs(getMetronomeUtil().getSubdivisions());
       updateSubControls(true);
 
-      updateTimerControls(true);
+      updateTimerControls(true, true);
       updateElapsedDisplay();
       updateOptions(true);
     });
@@ -1131,7 +1129,7 @@ public class MainFragment extends BaseFragment
     }
   }
 
-  public void updateTimerControls(boolean animated) {
+  public void updateTimerControls(boolean animated, boolean withTransition) {
     boolean isPlaying = getMetronomeUtil().isPlaying();
     boolean isTimerActive = getMetronomeUtil().isTimerActive();
     int visibility = isTimerActive ? View.VISIBLE : View.GONE;
@@ -1145,15 +1143,18 @@ public class MainFragment extends BaseFragment
       return;
     }
     if (isPlaying && isTimerActive) {
-      float fraction = (float) Constants.ANIM_DURATION_LONG / getMetronomeUtil().getTimerInterval();
-      fraction += getMetronomeUtil().getTimerProgress();
-      startTimerProgressTransition(fraction);
+      if (withTransition) {
+        long timerInterval = getMetronomeUtil().getTimerInterval();
+        float fraction = (float) Constants.ANIM_DURATION_LONG / timerInterval;
+        fraction += getMetronomeUtil().getTimerProgress();
+        startTimerProgressTransition(fraction);
+      }
       updateTimerProgress(
           1, getMetronomeUtil().getTimerIntervalRemaining(), animated, true
       );
     } else {
       float timerProgress = getMetronomeUtil().getTimerProgress();
-      if (animated) {
+      if (animated && getMetronomeUtil().isFromService()) {
         startTimerProgressTransition(timerProgress);
       } else if (getMetronomeUtil().isFromService()) {
         updateTimerProgress(timerProgress, 0, false, false);
@@ -1179,7 +1180,8 @@ public class MainFragment extends BaseFragment
             }
             if (updateControls) {
               updateTimerControls(
-                  getMetronomeUtil().isPlaying() && getMetronomeUtil().isTimerActive()
+                  getMetronomeUtil().isPlaying() && getMetronomeUtil().isTimerActive(),
+                  true
               );
             }
             if (binding.sliderMainTimer.getViewTreeObserver().isAlive()) {
@@ -1286,12 +1288,12 @@ public class MainFragment extends BaseFragment
   }
 
   public void setTempo(int tempo) {
-    setTempo(getMetronomeUtil().getTempo(), tempo);
+    updateTempoDisplay(getMetronomeUtil().getTempo(), tempo);
+    getMetronomeUtil().setTempo(tempo);
   }
 
-  private void setTempo(int tempoOld, int tempoNew) {
+  private void updateTempoDisplay(int tempoOld, int tempoNew) {
     tempoNew = Math.min(Math.max(tempoNew, Constants.TEMPO_MIN), Constants.TEMPO_MAX);
-    getMetronomeUtil().setTempo(tempoNew);
     if (binding == null) {
       return;
     }

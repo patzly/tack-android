@@ -558,7 +558,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       int range = valueTo - valueFrom;
       getMetronomeUtil().setTimerDuration(getMetronomeUtil().getTimerDuration() - range - 1);
       updateTimer();
-      fragment.updateTimerControls(true);
+      fragment.updateTimerControls(true, true);
       ViewUtil.startIcon(binding.buttonOptionsTimerDecrease.getIcon());
     } else if (id == R.id.button_options_timer_increase) {
       int valueFrom = (int) binding.sliderOptionsTimerDuration.getValueFrom();
@@ -566,7 +566,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       int range = valueTo - valueFrom;
       getMetronomeUtil().setTimerDuration(getMetronomeUtil().getTimerDuration() + range + 1);
       updateTimer();
-      fragment.updateTimerControls(true);
+      fragment.updateTimerControls(true, true);
       ViewUtil.startIcon(binding.buttonOptionsTimerIncrease.getIcon());
     } else if (id == R.id.linear_options_mute_random) {
       binding.checkboxOptionsMuteRandom.toggle();
@@ -652,7 +652,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       activity.performHapticSegmentTick(slider, true);
       getMetronomeUtil().setTimerDuration((int) value);
       updateTimer();
-      fragment.updateTimerControls(true);
+      fragment.updateTimerControls(true, true);
     } else if (id == R.id.slider_options_mute_play) {
       activity.performHapticSegmentTick(slider, true);
       getMetronomeUtil().setMutePlay((int) value);
