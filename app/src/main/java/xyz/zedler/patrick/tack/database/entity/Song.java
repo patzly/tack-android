@@ -62,8 +62,13 @@ public class Song {
     this.id = UUID.randomUUID().toString();
   }
 
-  public Song copy() {
-    return new Song(id, name, lastPlayed, playCount, isLooped);
+  @Ignore
+  public Song(@NonNull Song song) {
+    this.id = song.id;
+    this.name = song.name;
+    this.lastPlayed = song.lastPlayed;
+    this.playCount = song.playCount;
+    this.isLooped = song.isLooped;
   }
 
   @NonNull

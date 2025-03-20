@@ -22,6 +22,8 @@ package xyz.zedler.patrick.tack.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ShortcutInfo;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
@@ -165,6 +167,7 @@ public class MetronomeUtil {
       executorService.execute(() -> {
         currentSongWithParts = db.songDao().getSongWithPartsById(songId);
         if (currentSongWithParts != null) {
+          sortParts();
           setCurrentPartIndex(partIndex, restart);
         } else {
           Log.e(TAG, "setCurrentSong: song with id='" + songId + "' not found");
@@ -181,6 +184,7 @@ public class MetronomeUtil {
       executorService.execute(() -> {
         currentSongWithParts = db.songDao().getSongWithPartsById(currentSongId);
         if (currentSongWithParts != null) {
+          sortParts();
           setCurrentPartIndex(currentPartIndex, false);
         } else {
           Log.e(TAG, "fetchCurrentSong: song with id='" + currentSongId + "' not found");
@@ -188,6 +192,22 @@ public class MetronomeUtil {
       });
     } else {
       currentSongWithParts = null;
+    }
+  }
+
+  private void sortParts() {
+    if (currentSongWithParts == null) {
+      return;
+    }
+    if (VERSION.SDK_INT >= VERSION_CODES.N) {
+      Collections.sort(
+          currentSongWithParts.getParts(), Comparator.comparingInt(Part::getPartIndex)
+      );
+    } else {
+      Collections.sort(
+          currentSongWithParts.getParts(),
+          (p1, p2) -> Integer.compare(p1.getPartIndex(), p2.getPartIndex())
+      );
     }
   }
 

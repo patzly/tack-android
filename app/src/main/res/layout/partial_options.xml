@@ -56,6 +56,114 @@
     android:stepSize="1"
     app:labelBehavior="gone" />
 
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingStart="0dp"
+    android:paddingEnd="12dp"
+    android:layout_marginTop="8dp"
+    android:gravity="center_vertical">
+
+    <LinearLayout
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:layout_weight="1">
+
+      <TextView
+        style="@style/Widget.Tack.TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp"
+        android:text="@string/options_timer" />
+
+      <TextView
+        android:id="@+id/text_options_timer_duration"
+        style="@style/Widget.Tack.TextView.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:singleLine="true"
+        android:fontFeatureSettings="tnum" />
+
+    </LinearLayout>
+
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/button_options_timer_decrease"
+      style="@style/Widget.Tack.Button.IconButton"
+      android:contentDescription="@string/action_decrease"
+      app:icon="@drawable/ic_rounded_first_page" />
+
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/button_options_timer_increase"
+      style="@style/Widget.Tack.Button.IconButton"
+      android:contentDescription="@string/action_increase"
+      app:icon="@drawable/ic_rounded_last_page" />
+
+  </LinearLayout>
+
+  <com.google.android.material.slider.CustomSlider
+    android:id="@+id/slider_options_timer_duration"
+    style="@style/Widget.Tack.Slider"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="2dp"
+    android:layout_marginEnd="2dp"
+    android:valueFrom="0"
+    android:valueTo="49"
+    android:stepSize="1"
+    android:value="0"
+    app:labelBehavior="gone" />
+
+  <LinearLayout
+    android:id="@+id/linear_options_timer_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:animateLayoutChanges="true">
+
+    <HorizontalScrollView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="16dp"
+      android:scrollbars="none"
+      android:overScrollMode="ifContentScrolls"
+      android:requiresFadingEdge="horizontal"
+      tools:ignore="UselessParent">
+
+      <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggle_options_timer_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:singleSelection="true"
+        app:selectionRequired="true">
+
+        <Button
+          android:id="@+id/button_options_timer_unit_bars"
+          style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
+          android:text="@string/options_unit_bars" />
+
+        <Button
+          android:id="@+id/button_options_timer_unit_seconds"
+          style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
+          android:text="@string/options_unit_seconds" />
+
+        <Button
+          android:id="@+id/button_options_timer_unit_minutes"
+          style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
+          android:text="@string/options_unit_minutes" />
+
+      </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    </HorizontalScrollView>
+
+  </LinearLayout>
+
   <TextView
     style="@style/Widget.Tack.TextView"
     android:layout_width="match_parent"
@@ -230,114 +338,6 @@
       android:stepSize="1"
       android:value="1"
       app:labelBehavior="gone" />
-
-  </LinearLayout>
-
-  <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:paddingStart="0dp"
-    android:paddingEnd="12dp"
-    android:layout_marginTop="8dp"
-    android:gravity="center_vertical">
-
-    <LinearLayout
-      android:layout_width="0dp"
-      android:layout_height="wrap_content"
-      android:orientation="vertical"
-      android:layout_weight="1">
-
-      <TextView
-        style="@style/Widget.Tack.TextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="8dp"
-        android:text="@string/options_timer" />
-
-      <TextView
-        android:id="@+id/text_options_timer_duration"
-        style="@style/Widget.Tack.TextView.BodyMedium"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="16dp"
-        android:paddingEnd="8dp"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        android:singleLine="true"
-        android:fontFeatureSettings="tnum" />
-
-    </LinearLayout>
-
-    <com.google.android.material.button.MaterialButton
-      android:id="@+id/button_options_timer_decrease"
-      style="@style/Widget.Tack.Button.IconButton"
-      android:contentDescription="@string/action_decrease"
-      app:icon="@drawable/ic_rounded_first_page" />
-
-    <com.google.android.material.button.MaterialButton
-      android:id="@+id/button_options_timer_increase"
-      style="@style/Widget.Tack.Button.IconButton"
-      android:contentDescription="@string/action_increase"
-      app:icon="@drawable/ic_rounded_last_page" />
-
-  </LinearLayout>
-
-  <com.google.android.material.slider.CustomSlider
-    android:id="@+id/slider_options_timer_duration"
-    style="@style/Widget.Tack.Slider"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="2dp"
-    android:layout_marginEnd="2dp"
-    android:valueFrom="0"
-    android:valueTo="49"
-    android:stepSize="1"
-    android:value="0"
-    app:labelBehavior="gone" />
-
-  <LinearLayout
-    android:id="@+id/linear_options_timer_container"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:animateLayoutChanges="true">
-
-    <HorizontalScrollView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_marginStart="16dp"
-      android:layout_marginEnd="16dp"
-      android:scrollbars="none"
-      android:overScrollMode="ifContentScrolls"
-      android:requiresFadingEdge="horizontal"
-      tools:ignore="UselessParent">
-
-      <com.google.android.material.button.MaterialButtonToggleGroup
-        android:id="@+id/toggle_options_timer_unit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:singleSelection="true"
-        app:selectionRequired="true">
-
-        <Button
-          android:id="@+id/button_options_timer_unit_bars"
-          style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
-          android:text="@string/options_unit_bars" />
-
-        <Button
-          android:id="@+id/button_options_timer_unit_seconds"
-          style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
-          android:text="@string/options_unit_seconds" />
-
-        <Button
-          android:id="@+id/button_options_timer_unit_minutes"
-          style="@style/Widget.Tack.Button.OutlinedButton.Elevated"
-          android:text="@string/options_unit_minutes" />
-
-      </com.google.android.material.button.MaterialButtonToggleGroup>
-
-    </HorizontalScrollView>
 
   </LinearLayout>
 

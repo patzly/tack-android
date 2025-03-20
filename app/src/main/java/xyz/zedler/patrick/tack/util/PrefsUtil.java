@@ -96,28 +96,25 @@ public class PrefsUtil {
       // from bookmarks to songs
       Set<String> bookmarks = sharedPrefs.getStringSet(BOOKMARKS, Set.of());
       if (!bookmarks.isEmpty()) {
-        List<Song> songsToAdd = new LinkedList<>();
-        List<Part> partsToAdd = new LinkedList<>();
         sharedPrefs.edit().remove(BOOKMARKS).apply();
+        SongDatabase db = SongDatabase.getInstance(context.getApplicationContext());
         for (String bookmark : bookmarks) {
           try {
             int tempo = Integer.parseInt(bookmark);
             String songName = context.getString(R.string.label_bpm_value, tempo);
             Song song = new Song(songName);
-            songsToAdd.add(song);
             MetronomeConfig config = new MetronomeConfig();
             config.setTempo(tempo);
-            partsToAdd.add(new Part(null, song.getId(), config));
+            Part part = new Part(null, song.getId(), 0, config);
+            executorService.execute(() -> {
+              db.songDao().insertSong(song);
+              db.songDao().insertPart(part);
+            });
             Log.i(TAG, "migrateBookmarks: added " + song + " for " + bookmark);
           } catch (NumberFormatException e) {
             Log.e(TAG, "migrateBookmarks: bookmark to tempo: ", e);
           }
         }
-        executorService.execute(() -> {
-          SongDatabase db = SongDatabase.getInstance(context.getApplicationContext());
-          db.songDao().insertSongs(songsToAdd);
-          db.songDao().insertParts(partsToAdd);
-        });
         // Remove deprecated shortcuts
         ShortcutUtil shortcutUtil = new ShortcutUtil(context);
         shortcutUtil.removeAllShortcuts();

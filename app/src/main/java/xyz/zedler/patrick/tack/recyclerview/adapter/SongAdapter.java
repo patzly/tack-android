@@ -21,7 +21,6 @@ package xyz.zedler.patrick.tack.recyclerview.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.view.LayoutInflater;
@@ -30,7 +29,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import java.text.DateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -38,17 +37,15 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.RowSongBinding;
-import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipAdapter.OnSongClickListener;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 
-public class SongAdapter extends ListAdapter<SongWithParts, RecyclerView.ViewHolder> {
+public class SongAdapter extends ListAdapter<SongWithParts, ViewHolder> {
 
   private final static String TAG = SongAdapter.class.getSimpleName();
 
@@ -62,7 +59,7 @@ public class SongAdapter extends ListAdapter<SongWithParts, RecyclerView.ViewHol
 
   @NonNull
   @Override
-  public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+  public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     RowSongBinding binding = RowSongBinding.inflate(
         LayoutInflater.from(parent.getContext()), parent, false
     );
@@ -70,7 +67,7 @@ public class SongAdapter extends ListAdapter<SongWithParts, RecyclerView.ViewHol
   }
 
   @Override
-  public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+  public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
     SongWithParts songWithParts = getItem(holder.getBindingAdapterPosition());
     SongViewHolder songHolder = (SongViewHolder) holder;
     Context context = songHolder.binding.getRoot().getContext();
@@ -159,7 +156,7 @@ public class SongAdapter extends ListAdapter<SongWithParts, RecyclerView.ViewHol
     }
   }
 
-  public static class SongViewHolder extends RecyclerView.ViewHolder {
+  public static class SongViewHolder extends ViewHolder {
 
     private final RowSongBinding binding;
 

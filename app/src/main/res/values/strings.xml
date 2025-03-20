@@ -53,6 +53,7 @@
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$s ms</string>
   <string name="label_db">+%1$d dB</string>
+  <string name="label_tempo">Tempo</string>
   <string name="label_tempo_largo">Largo</string>
   <string name="label_tempo_larghetto">Larghetto</string>
   <string name="label_tempo_adagio">Adagio</string>
@@ -62,6 +63,7 @@
   <string name="label_tempo_presto">Presto</string>
   <string name="label_tempo_prestissimo">Prestissimo</string>
   <string name="label_tempo_input_help">Values from %1$d to %2$d</string>
+  <string name="label_part_name">Part name</string>
   <string name="label_part_unnamed">Part %1$d</string>
   <string name="label_part_no_duration">No duration</string>
   <plurals name="label_parts_count">
@@ -124,6 +126,11 @@
   <string name="action_add_part">Add part</string>
   <string name="action_save">Save</string>
   <string name="action_discard">Discard</string>
+  <string name="action_rename">Rename</string>
+  <string name="action_update">Update</string>
+  <string name="action_delete">Delete</string>
+  <string name="action_move_up">Move up</string>
+  <string name="action_move_down">Move down</string>
 
   <!-- MESSAGES -->
 

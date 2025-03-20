@@ -21,6 +21,7 @@ package xyz.zedler.patrick.tack.viewmodel;
 
 import android.app.Application;
 import android.util.Log;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -38,7 +39,6 @@ public class SongViewModel extends AndroidViewModel {
 
   private final SongDatabase db;
   private final LiveData<List<SongWithParts>> allSongsWithParts;
-  private final MutableLiveData<SongWithParts> songWithParts = new MutableLiveData<>();
   private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
   public SongViewModel(Application application) {
@@ -52,7 +52,7 @@ public class SongViewModel extends AndroidViewModel {
 
       MetronomeConfig config1 = new MetronomeConfig();
       config1.setTempo(120);
-      Part part1 = new Part(null, song1.getId(), config1);
+      Part part1 = new Part(null, song1.getId(), 0, config1);
       db.songDao().insertPart(part1);
 
       Song song2 = new Song("80 bpm");
@@ -61,41 +61,41 @@ public class SongViewModel extends AndroidViewModel {
       MetronomeConfig config2 = new MetronomeConfig();
       config2.setTempo(80);
       config2.setTimerDuration(4);
-      Part part2 = new Part("Adagio", song2.getId(), config2);
+      Part part2 = new Part("Adagio", song2.getId(), 0, config2);
       db.songDao().insertPart(part2);
 
       MetronomeConfig config3 = new MetronomeConfig();
       config3.setTempo(120);
       config3.setTimerDuration(8);
-      Part part3 = new Part("Allegro",  song2.getId(), config3);
-      db.songDao().insertPart(part3);*/
-
-      /*Song song = new Song("Eine kleine Nachtmusik");
-      db.songDao().insertSong(song);
-
-      MetronomeConfig config1 = new MetronomeConfig();
-      config1.setTempo(120);
-      config1.setTimerDuration(20);
-      Part part1 = new Part("Allegro", song.getId(), config1);
-      db.songDao().insertPart(part1);
-
-      MetronomeConfig config2 = new MetronomeConfig();
-      config2.setTempo(90);
-      config2.setTimerDuration(40);
-      Part part2 = new Part("Andante", song.getId(), config2);
-      db.songDao().insertPart(part2);
-
-      MetronomeConfig config3 = new MetronomeConfig();
-      config3.setTempo(110);
-      config3.setTimerDuration(60);
-      Part part3 = new Part("Menuetto", song.getId(), config3);
+      Part part3 = new Part("Allegro",  song2.getId(), 1, config3);
       db.songDao().insertPart(part3);
+
+      Song song3 = new Song("Eine kleine Nachtmusik");
+      db.songDao().insertSong(song3);
 
       MetronomeConfig config4 = new MetronomeConfig();
       config4.setTempo(120);
-      config4.setTimerDuration(30);
-      Part part4 = new Part("Keine Angabe", song.getId(), config4);
-      db.songDao().insertPart(part4);*/
+      config4.setTimerDuration(20);
+      Part part4 = new Part("Allegro", song3.getId(), 0, config4);
+      db.songDao().insertPart(part4);
+
+      MetronomeConfig config5 = new MetronomeConfig();
+      config5.setTempo(90);
+      config5.setTimerDuration(40);
+      Part part5 = new Part("Andante", song3.getId(), 1, config5);
+      db.songDao().insertPart(part5);
+
+      MetronomeConfig config6 = new MetronomeConfig();
+      config6.setTempo(110);
+      config6.setTimerDuration(60);
+      Part part6 = new Part("Menuetto", song3.getId(), 2, config6);
+      db.songDao().insertPart(part6);
+
+      MetronomeConfig config7 = new MetronomeConfig();
+      config7.setTempo(120);
+      config7.setTimerDuration(30);
+      Part part7 = new Part("Keine Angabe", song3.getId(), 3, config7);
+      db.songDao().insertPart(part7);*/
     });
 
     allSongsWithParts = db.songDao().getAllSongsWithParts();
@@ -105,23 +105,21 @@ public class SongViewModel extends AndroidViewModel {
     return allSongsWithParts;
   }
 
-  public LiveData<SongWithParts> getSongWithParts() {
-    return songWithParts;
-  }
-
-  public void fetchSongWithParts(@Nullable String songId) {
+  public void fetchSongWithParts(
+      @Nullable String songId, @NonNull OnSongWithPartsFetchedListener listener
+  ) {
     if (songId != null) {
       executorService.execute(() -> {
         SongWithParts song = db.songDao().getSongWithPartsById(songId);
-        songWithParts.postValue(song);
+        listener.onSongWithPartsFetched(song);
       });
     } else {
-      songWithParts.postValue(null);
+      listener.onSongWithPartsFetched(null);
     }
   }
 
-  public void clearSongWithParts() {
-    songWithParts.postValue(null);
+  public interface OnSongWithPartsFetchedListener {
+    void onSongWithPartsFetched(@Nullable SongWithParts songWithParts);
   }
 
   public LiveData<List<Song>> getAllSongsLive() {
@@ -145,8 +143,24 @@ public class SongViewModel extends AndroidViewModel {
     });
   }
 
+  public void deleteSong(Song song) {
+    executorService.execute(() -> db.songDao().deleteSong(song));
+  }
+
   public void insertPart(Part part) {
     executorService.execute(() -> db.songDao().insertPart(part));
+  }
+
+  public void insertParts(List<Part> parts) {
+    executorService.execute(() -> db.songDao().insertParts(parts));
+  }
+
+  public void updatePart(Part part) {
+    executorService.execute(() -> db.songDao().updatePart(part));
+  }
+
+  public void deletePart(Part part) {
+    executorService.execute(() -> db.songDao().deletePart(part));
   }
 
   @Override

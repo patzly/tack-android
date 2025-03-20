@@ -30,10 +30,12 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.model.MetronomeConfig;
+import xyz.zedler.patrick.tack.recyclerview.adapter.PartAdapter;
 import xyz.zedler.patrick.tack.util.MetronomeUtil;
 
 @Entity(
@@ -54,6 +56,7 @@ public class Part {
   private String name;
   @NonNull
   private String songId;
+  private int partIndex;
 
   // count in
   private int countIn;
@@ -74,7 +77,7 @@ public class Part {
   private boolean muteRandom;
 
   public Part(
-      @NonNull String id, @Nullable String name, @NonNull String songId,
+      @NonNull String id, @Nullable String name, @NonNull String songId, int partIndex,
       int countIn, int tempo,
       String beats, String subdivisions,
       int incrementalAmount, int incrementalInterval, int incrementalLimit,
@@ -85,6 +88,7 @@ public class Part {
     this.id = id;
     this.name = name;
     this.songId = songId;
+    this.partIndex = partIndex;
 
     this.countIn = countIn;
 
@@ -109,12 +113,44 @@ public class Part {
   }
 
   @Ignore
-  public Part(@Nullable String name, @NonNull String songId, @NonNull MetronomeConfig config) {
+  public Part(
+      @Nullable String name, @NonNull String songId, int partIndex, @NonNull MetronomeConfig config
+  ) {
     this.id = UUID.randomUUID().toString();
     this.name = name;
     this.songId = songId;
+    this.partIndex = partIndex;
 
     setConfig(config);
+  }
+
+  @Ignore
+  public Part(@NonNull Part part) {
+    this.id = part.id;
+    this.name = part.name;
+    this.songId = part.songId;
+    this.partIndex = part.partIndex;
+
+    this.countIn = part.countIn;
+
+    this.tempo = part.tempo;
+
+    this.beats = part.beats;
+    this.subdivisions = part.subdivisions;
+
+    this.incrementalAmount = part.incrementalAmount;
+    this.incrementalInterval = part.incrementalInterval;
+    this.incrementalLimit = part.incrementalLimit;
+    this.incrementalUnit = part.incrementalUnit;
+    this.incrementalIncrease = part.incrementalIncrease;
+
+    this.timerDuration = part.timerDuration;
+    this.timerUnit = part.timerUnit;
+
+    this.mutePlay = part.mutePlay;
+    this.muteMute = part.muteMute;
+    this.muteUnit = part.muteUnit;
+    this.muteRandom = part.muteRandom;
   }
 
   @NonNull
@@ -142,6 +178,14 @@ public class Part {
 
   public void setSongId(@NonNull String songId) {
     this.songId = songId;
+  }
+
+  public int getPartIndex() {
+    return partIndex;
+  }
+
+  public void setPartIndex(int partIndex) {
+    this.partIndex = partIndex;
   }
 
   public int getCountIn() {
@@ -323,12 +367,42 @@ public class Part {
     muteRandom = config.isMuteRandom();
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof Part)) {
+      return false;
+    }
+    Part part = (Part) o;
+    return partIndex == part.partIndex && countIn == part.countIn && tempo == part.tempo
+        && incrementalAmount == part.incrementalAmount
+        && incrementalInterval == part.incrementalInterval
+        && incrementalLimit == part.incrementalLimit
+        && incrementalIncrease == part.incrementalIncrease && timerDuration == part.timerDuration
+        && mutePlay == part.mutePlay && muteMute == part.muteMute && muteRandom == part.muteRandom
+        && Objects.equals(id, part.id) && Objects.equals(name, part.name)
+        && Objects.equals(songId, part.songId)
+        && Objects.equals(beats, part.beats)
+        && Objects.equals(subdivisions, part.subdivisions)
+        && Objects.equals(incrementalUnit, part.incrementalUnit)
+        && Objects.equals(timerUnit, part.timerUnit) && Objects.equals(muteUnit, part.muteUnit);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, name, songId, partIndex, countIn, tempo, beats, subdivisions,
+        incrementalAmount, incrementalInterval, incrementalLimit, incrementalUnit,
+        incrementalIncrease, timerDuration, timerUnit, mutePlay, muteMute, muteUnit, muteRandom);
+  }
+
   @NonNull
   @Override
   public String toString() {
     return "Part{" +
-        "name='" + name + '\'' +
+        "id='" + id + '\'' +
+        ", name='" + name + '\'' +
         ", songId='" + songId + '\'' +
+        ", partIndex=" + partIndex +
+        ", countIn=" + countIn +
         ", tempo=" + tempo +
         ", beats='" + beats + '\'' +
         ", subdivisions='" + subdivisions + '\'' +

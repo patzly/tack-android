@@ -132,11 +132,11 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-      android:id="@+id/recycler_songs"
+      android:id="@+id/recycler_song_parts"
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:paddingTop="8dp"
-      android:paddingBottom="8dp"
+      android:paddingTop="16dp"
+      android:paddingBottom="16dp"
       android:clipToPadding="false"
       app:layout_constraintTop_toBottomOf="@+id/linear_song_details"
       app:layout_constraintBottom_toBottomOf="parent"

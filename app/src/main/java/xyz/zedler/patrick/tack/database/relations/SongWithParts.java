@@ -21,6 +21,7 @@ package xyz.zedler.patrick.tack.database.relations;
 
 import androidx.annotation.NonNull;
 import androidx.room.Embedded;
+import androidx.room.Junction;
 import androidx.room.Relation;
 import java.util.List;
 import java.util.Objects;

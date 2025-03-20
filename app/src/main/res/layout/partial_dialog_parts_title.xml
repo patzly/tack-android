@@ -38,10 +38,12 @@
     android:singleLine="true"
     tools:ignore="HardcodedText" />
 
-  <LinearLayout
+  <com.google.android.flexbox.FlexboxLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    app:flexWrap="wrap"
+    app:alignItems="center">
 
     <TextView
       android:id="@+id/text_dialog_parts_count"
@@ -58,7 +60,6 @@
       android:layout_marginStart="8dp"
       android:layout_marginEnd="8dp"
       android:src="@drawable/shape_text_separator_dot"
-      android:layout_gravity="center_vertical"
       app:tint="?attr/colorOnSurfaceVariant"
       tools:ignore="ContentDescription" />
 
@@ -77,7 +78,6 @@
       android:layout_marginStart="8dp"
       android:layout_marginEnd="8dp"
       android:src="@drawable/shape_text_separator_dot"
-      android:layout_gravity="center_vertical"
       app:tint="?attr/colorOnSurfaceVariant"
       tools:ignore="ContentDescription" />
 
@@ -89,6 +89,6 @@
       android:text="@string/label_song_not_looped"
       android:singleLine="true" />
 
-  </LinearLayout>
+  </com.google.android.flexbox.FlexboxLayout>
 
 </LinearLayout>

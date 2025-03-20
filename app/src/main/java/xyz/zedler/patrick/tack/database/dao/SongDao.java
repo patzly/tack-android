@@ -42,10 +42,10 @@ public interface SongDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   void insertSongs(List<Song> songs);
 
-  @Insert(onConflict = OnConflictStrategy.ABORT)
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
   void insertPart(Part part);
 
-  @Insert
+  @Insert(onConflict = OnConflictStrategy.REPLACE)
   void insertParts(List<Part> parts);
 
   @Transaction

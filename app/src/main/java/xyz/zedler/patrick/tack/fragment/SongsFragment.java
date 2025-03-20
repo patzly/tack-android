@@ -195,7 +195,6 @@ public class SongsFragment extends BaseFragment {
     if (songs != null) {
       this.songs = songs;
     }
-    adapter.setSortOrder(songsOrder);
     if (songsOrder == SONGS_ORDER.NAME_ASC) {
       if (VERSION.SDK_INT >= VERSION_CODES.N) {
         Collections.sort(
@@ -232,5 +231,6 @@ public class SongsFragment extends BaseFragment {
       );
     }
     adapter.submitList(new ArrayList<>(this.songs));
+    adapter.setSortOrder(songsOrder);
   }
 }

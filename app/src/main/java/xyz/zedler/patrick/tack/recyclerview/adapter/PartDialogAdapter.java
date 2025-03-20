@@ -24,7 +24,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import java.util.List;
@@ -33,7 +32,7 @@ import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.RowDialogPartBinding;
 
-public class PartDialogAdapter extends Adapter<RecyclerView.ViewHolder> {
+public class PartDialogAdapter extends Adapter<ViewHolder> {
 
   private final static String TAG = SongChipAdapter.class.getSimpleName();
 
@@ -49,7 +48,7 @@ public class PartDialogAdapter extends Adapter<RecyclerView.ViewHolder> {
 
   @NonNull
   @Override
-  public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+  public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     RowDialogPartBinding binding = RowDialogPartBinding.inflate(
         LayoutInflater.from(parent.getContext()), parent, false
     );
@@ -80,7 +79,7 @@ public class PartDialogAdapter extends Adapter<RecyclerView.ViewHolder> {
 
   @Override
   public void onBindViewHolder(
-      @NonNull RecyclerView.ViewHolder holder, int position, @NonNull List<Object> payloads
+      @NonNull ViewHolder holder, int position, @NonNull List<Object> payloads
   ) {
     if (payloads.contains(PAYLOAD_RADIO)) {
       int adapterPosition = holder.getBindingAdapterPosition();
@@ -88,8 +87,8 @@ public class PartDialogAdapter extends Adapter<RecyclerView.ViewHolder> {
 
       partHolder.binding.radioRowDialogPart.setChecked(adapterPosition == partIndexPrev);
       partHolder.binding.radioRowDialogPart.jumpDrawablesToCurrentState();
-      partHolder.binding.radioRowDialogPart.post(() ->
-          partHolder.binding.radioRowDialogPart.setChecked(adapterPosition == partIndex)
+      partHolder.binding.radioRowDialogPart.post(
+          () -> partHolder.binding.radioRowDialogPart.setChecked(adapterPosition == partIndex)
       );
     } else {
       onBindViewHolder(holder, position);
@@ -106,10 +105,10 @@ public class PartDialogAdapter extends Adapter<RecyclerView.ViewHolder> {
     if ((songWithParts == null && this.songWithParts == null)) {
       return;
     } else if (songWithParts != null) {
-      String nameNew = songWithParts.getSong().getName();
+      String idNew = songWithParts.getSong().getId();
       if (this.songWithParts != null) {
-        String nameOld = this.songWithParts.getSong().getName();
-        if (nameNew.equals(nameOld)
+        String idOld = this.songWithParts.getSong().getId();
+        if (idNew.equals(idOld)
             && songWithParts.getParts().size() == this.songWithParts.getParts().size()) {
           return;
         }
@@ -141,7 +140,7 @@ public class PartDialogAdapter extends Adapter<RecyclerView.ViewHolder> {
     listener.onPartChanged(partIndex, fromUser);
   }
 
-  public static class PartDialogViewHolder extends RecyclerView.ViewHolder {
+  public static class PartDialogViewHolder extends ViewHolder {
 
     private final RowDialogPartBinding binding;
 

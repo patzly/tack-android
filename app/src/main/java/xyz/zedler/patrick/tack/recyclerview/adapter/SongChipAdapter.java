@@ -26,13 +26,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import com.google.android.material.chip.Chip;
 import java.util.ArrayList;
 import java.util.List;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.RowSongChipBinding;
 
-public class SongChipAdapter extends Adapter<RecyclerView.ViewHolder> {
+public class SongChipAdapter extends Adapter<ViewHolder> {
 
   private final static String TAG = SongChipAdapter.class.getSimpleName();
 
@@ -47,7 +48,7 @@ public class SongChipAdapter extends Adapter<RecyclerView.ViewHolder> {
 
   @NonNull
   @Override
-  public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+  public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     RowSongChipBinding binding = RowSongChipBinding.inflate(
         LayoutInflater.from(parent.getContext()), parent, false
     );
@@ -55,7 +56,7 @@ public class SongChipAdapter extends Adapter<RecyclerView.ViewHolder> {
   }
 
   @Override
-  public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+  public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
     SongWithParts songWithParts = songs.get(holder.getBindingAdapterPosition());
     SongChipViewHolder songHolder = (SongChipViewHolder) holder;
     songHolder.binding.chipRowSong.setText(songWithParts.getSong().getName());
@@ -110,7 +111,7 @@ public class SongChipAdapter extends Adapter<RecyclerView.ViewHolder> {
     }
   }
 
-  public static class SongChipViewHolder extends RecyclerView.ViewHolder {
+  public static class SongChipViewHolder extends ViewHolder {
 
     private final RowSongChipBinding binding;
 

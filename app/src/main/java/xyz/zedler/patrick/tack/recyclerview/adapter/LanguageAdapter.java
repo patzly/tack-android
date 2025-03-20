@@ -26,17 +26,21 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
+import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import java.util.HashMap;
 import java.util.List;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.RowLanguageBinding;
+import xyz.zedler.patrick.tack.databinding.RowSongChipBinding;
 import xyz.zedler.patrick.tack.model.Language;
 import xyz.zedler.patrick.tack.recyclerview.adapter.LanguageAdapter.LanguageViewHolder;
+import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipAdapter.SongChipViewHolder;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
-public class LanguageAdapter extends RecyclerView.Adapter<LanguageViewHolder> {
+public class LanguageAdapter extends Adapter<ViewHolder> {
 
   private static final String TAG = LanguageAdapter.class.getSimpleName();
 
@@ -57,42 +61,35 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageViewHolder> {
     }
   }
 
-  public static class LanguageViewHolder extends RecyclerView.ViewHolder {
-
-    private final RowLanguageBinding binding;
-
-    public LanguageViewHolder(RowLanguageBinding binding) {
-      super(binding.getRoot());
-      this.binding = binding;
-    }
-  }
-
   @NonNull
   @Override
-  public LanguageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-    return new LanguageViewHolder(
-        RowLanguageBinding.inflate(
-            LayoutInflater.from(parent.getContext()), parent, false
-        )
+  public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    RowLanguageBinding binding = RowLanguageBinding.inflate(
+        LayoutInflater.from(parent.getContext()), parent, false
     );
+    return new LanguageViewHolder(binding);
   }
 
   @Override
-  public void onBindViewHolder(@NonNull final LanguageViewHolder holder, int position) {
-    if (position == 0) {
-      holder.binding.textLanguageName.setText(R.string.settings_language_system);
-      holder.binding.textLanguageTranslators.setText(R.string.settings_language_system_description);
+  public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    LanguageViewHolder languageHolder = (LanguageViewHolder) holder;
+    int adapterPosition = holder.getBindingAdapterPosition();
+    if (adapterPosition == 0) {
+      languageHolder.binding.textLanguageName.setText(R.string.settings_language_system);
+      languageHolder.binding.textLanguageTranslators.setText(
+          R.string.settings_language_system_description
+      );
 
-      setSelected(holder, selectedCode == null);
-      holder.binding.linearLanguageContainer.setOnClickListener(
+      setSelected(languageHolder, selectedCode == null);
+      languageHolder.binding.linearLanguageContainer.setOnClickListener(
           view -> listener.onItemRowClicked(null)
       );
       return;
     }
 
-    Language language = languages.get(holder.getBindingAdapterPosition() - 1);
-    holder.binding.textLanguageName.setText(language.getName());
-    holder.binding.textLanguageTranslators.setText(language.getTranslators());
+    Language language = languages.get(adapterPosition - 1);
+    languageHolder.binding.textLanguageName.setText(language.getName());
+    languageHolder.binding.textLanguageTranslators.setText(language.getTranslators());
 
     boolean isSelected = language.getCode().equals(selectedCode);
     if (selectedCode != null && !isSelected && !languageHashMap.containsKey(selectedCode)) {
@@ -101,8 +98,8 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageViewHolder> {
         isSelected = language.getCode().equals(lang);
       }
     }
-    setSelected(holder, isSelected);
-    holder.binding.linearLanguageContainer.setOnClickListener(
+    setSelected(languageHolder, isSelected);
+    languageHolder.binding.linearLanguageContainer.setOnClickListener(
         view -> listener.onItemRowClicked(language)
     );
   }
@@ -133,6 +130,16 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageViewHolder> {
     holder.binding.linearLanguageContainer.setOnClickListener(
         view -> listener.onItemRowClicked(null)
     );
+  }
+
+  public static class LanguageViewHolder extends ViewHolder {
+
+    private final RowLanguageBinding binding;
+
+    public LanguageViewHolder(RowLanguageBinding binding) {
+      super(binding.getRoot());
+      this.binding = binding;
+    }
   }
 
   public interface LanguageAdapterListener {
