@@ -92,6 +92,25 @@
         tools:ignore="HardcodedText" />
 
       <LinearLayout
+        android:id="@+id/linear_part_count_in"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+          style="@style/Widget.Tack.TextView.ListItem.Title"
+          android:layout_marginTop="8dp"
+          android:text="@string/options_count_in" />
+
+        <TextView
+          android:id="@+id/text_part_count_in"
+          style="@style/Widget.Tack.TextView.ListItem.Description"
+          android:text="Wait 1 bar before applying modifiers"
+          tools:ignore="HardcodedText" />
+
+      </LinearLayout>
+
+      <LinearLayout
         android:id="@+id/linear_part_incremental"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

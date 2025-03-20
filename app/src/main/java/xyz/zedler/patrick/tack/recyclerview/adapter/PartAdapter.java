@@ -107,6 +107,18 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
     int tempo = part.getTempo();
     partHolder.binding.textPartTempo.setText(context.getString(R.string.label_bpm_value, tempo));
 
+    // count in
+    boolean isCountInActive = part.getCountIn() > 0;
+    if (isCountInActive) {
+      int countIn = part.getCountIn();
+      partHolder.binding.textPartCountIn.setText(
+          context.getResources().getQuantityString(
+              R.plurals.options_count_in_description, countIn, countIn
+          )
+      );
+    }
+    partHolder.binding.linearPartCountIn.setVisibility(isCountInActive ? View.VISIBLE : View.GONE);
+
     // incremental
     int incrementalAmount = part.getIncrementalAmount();
     boolean incrementalIncrease = part.isIncrementalIncrease();
