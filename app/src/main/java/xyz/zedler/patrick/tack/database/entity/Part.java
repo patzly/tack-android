@@ -367,6 +367,24 @@ public class Part {
     muteRandom = config.isMuteRandom();
   }
 
+  public boolean equalsConfig(@NonNull MetronomeConfig config) {
+    return countIn == config.getCountIn()
+        && tempo == config.getTempo()
+        && Arrays.equals(beats.split(","), config.getBeats())
+        && Arrays.equals(subdivisions.split(","), config.getSubdivisions())
+        && incrementalAmount == config.getIncrementalAmount()
+        && incrementalInterval == config.getIncrementalInterval()
+        && incrementalLimit == config.getIncrementalLimit()
+        && incrementalUnit.equals(config.getIncrementalUnit())
+        && incrementalIncrease == config.isIncrementalIncrease()
+        && timerDuration == config.getTimerDuration()
+        && timerUnit.equals(config.getTimerUnit())
+        && mutePlay == config.getMutePlay()
+        && muteMute == config.getMuteMute()
+        && muteUnit.equals(config.getMuteUnit())
+        && muteRandom == config.isMuteRandom();
+  }
+
   @Override
   public boolean equals(Object o) {
     if (!(o instanceof Part)) {

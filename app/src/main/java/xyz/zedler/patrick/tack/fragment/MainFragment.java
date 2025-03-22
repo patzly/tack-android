@@ -52,7 +52,9 @@ import com.google.android.material.badge.ExperimentalBadgeUtils;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.slider.Slider.OnSliderTouchListener;
 import com.google.android.material.snackbar.Snackbar;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
@@ -62,6 +64,7 @@ import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
+import xyz.zedler.patrick.tack.database.entity.Song;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.FragmentMainBinding;
 import xyz.zedler.patrick.tack.drawable.BeatsBgDrawable;
@@ -420,7 +423,7 @@ public class MainFragment extends BaseFragment
 
     binding.songPickerMain.setListener(new SongPickerListener() {
       @Override
-      public void onCurrentSongChanged(@Nullable String currentSong) {
+      public void onCurrentSongChanged(@NonNull String currentSong) {
         getMetronomeUtil().setCurrentSong(currentSong, 0, true);
         performHapticClick();
       }
@@ -433,14 +436,22 @@ public class MainFragment extends BaseFragment
     });
     activity.getSongViewModel().getAllSongsWithParts().observe(
         getViewLifecycleOwner(), songs -> {
+          List<SongWithParts> songsWithParts = new ArrayList<>(songs);
+          for (SongWithParts songWithParts : songsWithParts) {
+            // Remove default song from song picker
+            if (songWithParts.getSong().getId().equals(Constants.SONG_ID_DEFAULT)) {
+              songsWithParts.remove(songWithParts);
+              break;
+            }
+          }
           if (!binding.songPickerMain.isInitialized()) {
             binding.songPickerMain.init(
                 getSharedPrefs().getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER),
                 getMetronomeUtil().getCurrentSongId(),
-                songs
+                songsWithParts
             );
           }
-          binding.songPickerMain.setSongs(songs);
+          binding.songPickerMain.setSongs(songsWithParts);
         }
     );
 

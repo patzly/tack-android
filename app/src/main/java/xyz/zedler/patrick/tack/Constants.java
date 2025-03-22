@@ -31,6 +31,7 @@ public final class Constants {
   public static final int BEATS_MAX = 20;
   public static final int SUBS_MAX = 10;
   public static final int TIMER_MAX = 399;
+  public static final String SONG_ID_DEFAULT = "default";
 
   public final static class PREF {
     // General
@@ -127,7 +128,7 @@ public final class Constants {
 
     // Song library
     public final static int SONGS_ORDER = 0;
-    public final static String SONG_CURRENT_ID = null;
+    public final static String SONG_CURRENT_ID = SONG_ID_DEFAULT;
     public final static int PART_CURRENT_INDEX = 0;
   }
 

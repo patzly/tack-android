@@ -206,41 +206,44 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     if (songId != null) {
       isNewSong = false;
       activity.getSongViewModel().fetchSongWithParts(songId, songWithParts -> {
-        if (songWithParts != null) {
-          songSource = songWithParts.getSong();
-          // Copy song to result
-          songResult = new Song(songSource);
-          // Copy name to form
-          binding.textInputSongName.setHintAnimationEnabled(false);
-          binding.editTextSongName.setText(songWithParts.getSong().getName());
-          binding.editTextSongName.post(() -> {
-            UiUtil.hideKeyboard(activity);
-            binding.editTextSongName.clearFocus();
-          });
-          binding.textInputSongName.setHintAnimationEnabled(true);
-          // Copy looped to form
-          binding.checkboxSongLooped.setOnCheckedChangeListener(null);
-          binding.checkboxSongLooped.setChecked(songWithParts.getSong().isLooped());
-          binding.checkboxSongLooped.jumpDrawablesToCurrentState();
-          binding.checkboxSongLooped.setOnCheckedChangeListener(this);
-          // Copy parts to form
-          partsSource = songWithParts.getParts();
-          partsResult = new LinkedList<>();
-          for (Part part : partsSource) {
-            partsResult.add(new Part(part));
+        Runnable runnable = () -> {
+          if (songWithParts != null) {
+            songSource = songWithParts.getSong();
+            // Copy song to result
+            songResult = new Song(songSource);
+            // Copy name to form
+            binding.textInputSongName.setHintAnimationEnabled(false);
+            binding.editTextSongName.setText(songWithParts.getSong().getName());
+            binding.editTextSongName.post(() -> {
+              UiUtil.hideKeyboard(activity);
+              binding.editTextSongName.clearFocus();
+            });
+            binding.textInputSongName.setHintAnimationEnabled(true);
+            // Copy looped to form
+            binding.checkboxSongLooped.setOnCheckedChangeListener(null);
+            binding.checkboxSongLooped.setChecked(songWithParts.getSong().isLooped());
+            binding.checkboxSongLooped.jumpDrawablesToCurrentState();
+            binding.checkboxSongLooped.setOnCheckedChangeListener(this);
+            // Copy parts to form
+            partsSource = songWithParts.getParts();
+            partsResult = new LinkedList<>();
+            for (Part part : partsSource) {
+              partsResult.add(new Part(part));
+            }
+            sortParts();
+            try {
+              adapter.submitList(new ArrayList<>(partsResult));
+              adapter.notifyMenusChanged();
+            } catch (IllegalStateException e) {
+              // "Cannot call this method while RecyclerView is computing a layout or scrolling"
+              Log.e(TAG, "onViewCreated: ", e);
+            }
+          } else {
+            Log.e(TAG, "onViewCreated: song with id=" + songId + " not found");
           }
-          sortParts();
-          try {
-            adapter.submitList(new ArrayList<>(partsResult));
-            adapter.notifyMenusChanged();
-          } catch (IllegalStateException e) {
-            // "Cannot call this method while RecyclerView is computing a layout or scrolling"
-            Log.e(TAG, "onViewCreated: ", e);
-          }
-        } else {
-          Log.e(TAG, "onViewCreated: song with id=" + songId + " not found");
-        }
-        updateResult();
+          updateResult();
+        };
+        activity.runOnUiThread(runnable);
       });
     } else {
       isNewSong = true;

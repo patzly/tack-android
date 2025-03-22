@@ -54,6 +54,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.CONTRAST;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
@@ -182,7 +183,17 @@ public class SongsFragment extends BaseFragment {
     binding.recyclerSongs.setItemAnimator(new DefaultItemAnimator());
 
     activity.getSongViewModel().getAllSongsWithParts().observe(
-        getViewLifecycleOwner(), this::setSongs
+        getViewLifecycleOwner(), songs -> {
+          List<SongWithParts> songsWithParts = new ArrayList<>(songs);
+          for (SongWithParts songWithParts : songsWithParts) {
+            // Remove default song from list
+            if (songWithParts.getSong().getId().equals(Constants.SONG_ID_DEFAULT)) {
+              songsWithParts.remove(songWithParts);
+              break;
+            }
+          }
+          setSongs(songsWithParts);
+        }
     );
 
     binding.fabSongs.setOnClickListener(v -> {

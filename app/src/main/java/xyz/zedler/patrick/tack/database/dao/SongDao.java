@@ -19,7 +19,6 @@
 
 package xyz.zedler.patrick.tack.database.dao;
 
-import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -39,14 +38,23 @@ public interface SongDao {
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   void insertSong(Song song);
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  void insertSongs(List<Song> songs);
+  @Update
+  void updateSong(Song song);
+
+  @Delete
+  void deleteSong(Song song);
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   void insertPart(Part part);
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
   void insertParts(List<Part> parts);
+
+  @Update
+  void updatePart(Part part);
+
+  @Delete
+  void deletePart(Part part);
 
   @Transaction
   @Query("SELECT * FROM songs WHERE id = :songId")
@@ -61,16 +69,4 @@ public interface SongDao {
 
   @Query("SELECT * FROM songs")
   LiveData<List<Song>> getAllSongsLive();
-
-  @Update
-  void updateSong(Song song);
-
-  @Update
-  void updatePart(Part part);
-
-  @Delete
-  void deleteSong(Song song);
-
-  @Delete
-  void deletePart(Part part);
 }

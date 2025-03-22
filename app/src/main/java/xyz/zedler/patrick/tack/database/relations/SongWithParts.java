@@ -22,8 +22,10 @@ package xyz.zedler.patrick.tack.database.relations;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.room.Embedded;
+import androidx.room.Ignore;
 import androidx.room.Junction;
 import androidx.room.Relation;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import xyz.zedler.patrick.tack.Constants;
@@ -42,6 +44,17 @@ public class SongWithParts {
       entityColumn = "songId"
   )
   private List<Part> parts;
+
+  public SongWithParts() {
+    this.song = new Song();
+    this.parts = new ArrayList<>();
+  }
+
+  @Ignore
+  public SongWithParts(@NonNull Song song, @NonNull List<Part> parts) {
+    this.song = song;
+    this.parts = parts;
+  }
 
   public Song getSong() {
     return song;
