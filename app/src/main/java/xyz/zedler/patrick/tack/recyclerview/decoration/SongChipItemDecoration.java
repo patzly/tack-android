@@ -54,5 +54,9 @@ public class SongChipItemDecoration extends RecyclerView.ItemDecoration {
       outRect.right = isRtl ? innerPadding : outerPadding;
       outRect.left = isRtl ? outerPadding : innerPadding;
     }
+    if (count == 1 && position == 0) {
+      outRect.left = outerPadding;
+      outRect.right = outerPadding;
+    }
   }
 }

@@ -22,8 +22,6 @@ package xyz.zedler.patrick.tack.fragment;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -38,34 +36,26 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.entity.Song;
-import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.FragmentSongBinding;
-import xyz.zedler.patrick.tack.fragment.SongsFragmentDirections.ActionSongsToSong;
 import xyz.zedler.patrick.tack.recyclerview.adapter.PartAdapter;
-import xyz.zedler.patrick.tack.recyclerview.adapter.PartAdapter.OnPartMenuItemClickListener;
-import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter;
 import xyz.zedler.patrick.tack.recyclerview.decoration.PartItemDecoration;
-import xyz.zedler.patrick.tack.recyclerview.decoration.SongChipItemDecoration;
 import xyz.zedler.patrick.tack.util.DialogUtil;
+import xyz.zedler.patrick.tack.util.RenameDialogUtil;
+import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
-import xyz.zedler.patrick.tack.viewmodel.SongViewModel;
-import xyz.zedler.patrick.tack.viewmodel.SongViewModel.OnSongWithPartsFetchedListener;
 
 public class SongFragment extends BaseFragment implements OnClickListener, OnCheckedChangeListener {
 
@@ -73,7 +63,8 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
 
   private FragmentSongBinding binding;
   private MainActivity activity;
-  private DialogUtil dialogUtilUnsaved;
+  private DialogUtil dialogUtilDiscard, dialogUtilDelete;
+  private RenameDialogUtil renameDialogUtil;
   private OnBackPressedCallback onBackPressedCallback;
   private PartAdapter adapter;
   private Song songSource;
@@ -98,6 +89,9 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     if (onBackPressedCallback != null) {
       onBackPressedCallback.remove();
     }
+    dialogUtilDiscard.dismiss();
+    dialogUtilDelete.dismiss();
+    renameDialogUtil.dismiss();
     binding = null;
   }
 
@@ -121,7 +115,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       if (getViewUtil().isClickEnabled(v.getId())) {
         performHapticClick();
         if (hasUnsavedChanges) {
-          dialogUtilUnsaved.show();
+          dialogUtilDiscard.show();
         } else {
           navigateUp();
         }
@@ -133,18 +127,47 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         return false;
       }
       performHapticClick();
-      if (id == R.id.action_feedback) {
+      if (id == R.id.action_save) {
+        if (hasUnsavedChanges) {
+          if (isNewSong) {
+            activity.getSongViewModel().insertSong(songResult);
+            activity.getSongViewModel().insertParts(partsResult);
+          } else {
+            activity.getSongViewModel().updateSongAndParts(
+                songResult, partsResult, partsSource, () -> {
+                  // To update looped in metronome
+                  getMetronomeUtil().reloadCurrentSong();
+                  // To update shortcut names
+                  getMetronomeUtil().updateShortcuts();
+                });
+          }
+          navigateUp();
+        }
+      } else if (id == R.id.action_delete) {
+        dialogUtilDelete.show();
+      } else if (id == R.id.action_feedback) {
         activity.showFeedbackBottomSheet();
       } else if (id == R.id.action_help) {
         activity.showTextBottomSheet(R.raw.help, R.string.title_help);
       }
       return true;
     });
+    ResUtil.tintMenuIcons(activity, binding.toolbarSong.getMenu());
+    setSaveEnabled(false);
 
     adapter = new PartAdapter((part, item) -> {
       performHapticClick();
       int itemId = item.getItemId();
-      if (itemId == R.id.action_update) {
+      if (itemId == R.id.action_rename) {
+        renameDialogUtil.setPart(part, name -> {
+          Part partResult = new Part(part);
+          partResult.setName(name);
+          partsResult.set(part.getPartIndex(), partResult);
+          adapter.submitList(new ArrayList<>(partsResult));
+          updateResult();
+        });
+        renameDialogUtil.show();
+      } else if (itemId == R.id.action_update) {
         Part partResult = new Part(part);
         partResult.setConfig(getMetronomeUtil().getConfig());
         partsResult.set(part.getPartIndex(), partResult);
@@ -268,6 +291,11 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       updateResult();
       clearError(); // first time the name is empty but user is not guilty
     }
+    MenuItem itemDelete = binding.toolbarSong.getMenu().findItem(R.id.action_delete);
+    if (itemDelete != null) {
+      // Only show delete if song not new
+      itemDelete.setVisible(!isNewSong);
+    }
 
     activity.getSongViewModel().getAllSongsLive().observe(
         getViewLifecycleOwner(), songs -> songsExisting = songs
@@ -297,13 +325,9 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       }
     });
 
-    // Disable save first
-    binding.buttonSongSave.setEnabled(false);
-
     ViewUtil.setOnClickListeners(
         this,
         binding.fabSong,
-        binding.buttonSongSave,
         binding.linearSongLooped
     );
 
@@ -312,45 +336,54 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         binding.checkboxSongLooped
     );
 
-    dialogUtilUnsaved = new DialogUtil(activity, "discard_changes");
-    dialogUtilUnsaved.createCaution(
+    dialogUtilDiscard = new DialogUtil(activity, "discard_changes");
+    dialogUtilDiscard.createCaution(
         R.string.msg_discard_changes,
         R.string.msg_discard_changes_description,
         R.string.action_discard,
         () -> activity.navigateUp()
     );
-    dialogUtilUnsaved.showIfWasShown(savedInstanceState);
+    dialogUtilDiscard.showIfWasShown(savedInstanceState);
+
+    dialogUtilDelete = new DialogUtil(activity, "delete");
+    dialogUtilDelete.createCaution(
+        R.string.msg_delete_song,
+        R.string.msg_delete_song_description,
+        R.string.action_delete,
+        () -> {
+          activity.getSongViewModel().deleteSong(songSource);
+          activity.getSongViewModel().deleteParts(partsSource);
+          activity.navigateUp();
+        }
+    );
+    dialogUtilDelete.showIfWasShown(savedInstanceState);
+
+    renameDialogUtil = new RenameDialogUtil(activity);
 
     onBackPressedCallback = new OnBackPressedCallback(false) {
       @Override
       public void handleOnBackPressed() {
-        dialogUtilUnsaved.show();
+        dialogUtilDiscard.show();
       }
     };
     activity.getOnBackPressedDispatcher().addCallback(activity, onBackPressedCallback);
   }
 
   @Override
+  public void onSaveInstanceState(@NonNull Bundle outState) {
+    super.onSaveInstanceState(outState);
+    if (dialogUtilDiscard != null) {
+      dialogUtilDiscard.saveState(outState);
+    }
+    if (dialogUtilDelete != null) {
+      dialogUtilDelete.saveState(outState);
+    }
+  }
+
+  @Override
   public void onClick(View v) {
     int id = v.getId();
-    if (id == R.id.button_song_save) {
-      performHapticClick();
-      if (hasUnsavedChanges) {
-        if (isNewSong) {
-          activity.getSongViewModel().insertSong(songResult);
-          activity.getSongViewModel().insertParts(partsResult);
-        } else {
-          activity.getSongViewModel().updateSongAndParts(
-              songResult, partsResult, partsSource, () -> {
-                // To update looped in metronome
-                getMetronomeUtil().reloadCurrentSong();
-                // To update shortcut names
-                getMetronomeUtil().updateShortcuts();
-              });
-        }
-        navigateUp();
-      }
-    } else if (id == R.id.linear_song_looped) {
+    if (id == R.id.linear_song_looped) {
       binding.checkboxSongLooped.toggle();
     } else if (id == R.id.fab_song) {
       performHapticClick();
@@ -438,7 +471,18 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     if (onBackPressedCallback != null) {
       onBackPressedCallback.setEnabled(hasUnsavedChanges);
     }
-    binding.buttonSongSave.setEnabled(hasUnsavedChanges && isValid);
+    setSaveEnabled(hasUnsavedChanges && isValid);
+  }
+
+  private void setSaveEnabled(boolean enabled) {
+    MenuItem itemSave = binding.toolbarSong.getMenu().findItem(R.id.action_save);
+    if (itemSave != null) {
+      itemSave.setEnabled(enabled);
+      float alphaDisabled = 0.32f;
+      if (itemSave.getIcon() != null) {
+        itemSave.getIcon().mutate().setAlpha(enabled ? 255 : (int) (alphaDisabled * 255));
+      }
+    }
   }
 
   private void setErrorSongName(boolean notUnique) {

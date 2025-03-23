@@ -197,6 +197,7 @@ public class SongsFragment extends BaseFragment {
     );
 
     binding.fabSongs.setOnClickListener(v -> {
+      performHapticClick();
       // TODO: check unlock if new songs.size() >= 10
       activity.navigate(SongsFragmentDirections.actionSongsToSong());
     });

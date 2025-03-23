@@ -39,15 +39,8 @@
         style="@style/Widget.Tack.Toolbar.Back"
         app:title="@string/title_song_details"
         app:navigationIcon="@drawable/ic_rounded_close_anim"
-        app:navigationContentDescription="@string/action_close" />
-
-      <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_song_save"
-        style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
-        android:contentDescription="@string/action_save"
-        android:layout_marginEnd="8dp"
-        android:layout_gravity="center_vertical|end"
-        app:icon="@drawable/ic_rounded_save" />
+        app:navigationContentDescription="@string/action_close"
+        app:menu="@menu/menu_song" />
 
     </FrameLayout>
 

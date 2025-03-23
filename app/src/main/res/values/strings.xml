@@ -127,6 +127,7 @@
   <string name="action_save">Save</string>
   <string name="action_discard">Discard</string>
   <string name="action_rename">Rename</string>
+  <string name="action_rename_part">Change part name</string>
   <string name="action_update">Update</string>
   <string name="action_delete">Delete</string>
   <string name="action_move_up">Move up</string>
@@ -158,6 +159,8 @@
   <string name="msg_invalid_input">Invalid input</string>
   <string name="msg_discard_changes">Discard changes?</string>
   <string name="msg_discard_changes_description">Are you sure you don\'t want to save them?</string>
+  <string name="msg_delete_song">Delete song?</string>
+  <string name="msg_delete_song_description">Are you sure you want to delete the entire song with all of its parts? This cannot be undone.</string>
 
   <!-- OPTIONS -->
 

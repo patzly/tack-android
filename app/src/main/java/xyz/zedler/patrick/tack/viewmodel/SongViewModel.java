@@ -154,6 +154,10 @@ public class SongViewModel extends AndroidViewModel {
     executorService.execute(() -> db.songDao().deletePart(part));
   }
 
+  public void deleteParts(List<Part> parts) {
+    executorService.execute(() -> db.songDao().deleteParts(parts));
+  }
+
   public void updateSongAndParts(
       Song song, List<Part> partsNew, List<Part> partsOld, @Nullable Runnable runOnUpdated
   ) {

@@ -56,6 +56,9 @@ public interface SongDao {
   @Delete
   void deletePart(Part part);
 
+  @Delete
+  void deleteParts(List<Part> parts);
+
   @Transaction
   @Query("SELECT * FROM songs WHERE id = :songId")
   SongWithParts getSongWithPartsById(String songId);
