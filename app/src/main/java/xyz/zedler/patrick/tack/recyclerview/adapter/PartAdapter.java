@@ -80,6 +80,33 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
     ResUtil.tintMenuIcons(context, partHolder.binding.toolbarPart.getMenu());
     updateMenuItems(partHolder);
 
+    // tempo
+    int tempo = part.getTempo();
+    partHolder.binding.textPartTempo.setText(context.getString(R.string.label_bpm_value, tempo));
+
+    // beats
+    String[] beats = part.getBeats().split(",");
+    partHolder.binding.beatsPartBeats.setBeats(beats);
+
+    // subdivisions
+    String[] subdivisions = part.getSubdivisions().split(",");
+    partHolder.binding.beatsPartSubdivisions.setBeats(subdivisions);
+    partHolder.binding.linearPartSubdivisions.setVisibility(
+        subdivisions.length > 1 ? View.VISIBLE : View.GONE
+    );
+
+    // count in
+    boolean isCountInActive = part.getCountIn() > 0;
+    if (isCountInActive) {
+      int countIn = part.getCountIn();
+      partHolder.binding.textPartCountIn.setText(
+          context.getResources().getQuantityString(
+              R.plurals.options_count_in_description, countIn, countIn
+          )
+      );
+    }
+    partHolder.binding.linearPartCountIn.setVisibility(isCountInActive ? View.VISIBLE : View.GONE);
+
     // duration
     int timerDuration = part.getTimerDuration();
     String timerUnit = part.getTimerUnit();
@@ -99,25 +126,10 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
       partHolder.binding.textPartDuration.setText(
           context.getResources().getQuantityString(durationResId, timerDuration, timerDuration)
       );
-    } else {
-      partHolder.binding.textPartDuration.setText(R.string.label_part_no_duration);
     }
-
-    // tempo
-    int tempo = part.getTempo();
-    partHolder.binding.textPartTempo.setText(context.getString(R.string.label_bpm_value, tempo));
-
-    // count in
-    boolean isCountInActive = part.getCountIn() > 0;
-    if (isCountInActive) {
-      int countIn = part.getCountIn();
-      partHolder.binding.textPartCountIn.setText(
-          context.getResources().getQuantityString(
-              R.plurals.options_count_in_description, countIn, countIn
-          )
-      );
-    }
-    partHolder.binding.linearPartCountIn.setVisibility(isCountInActive ? View.VISIBLE : View.GONE);
+    partHolder.binding.linearPartDuration.setVisibility(
+        timerDuration > 0 ? View.VISIBLE : View.GONE
+    );
 
     // incremental
     int incrementalAmount = part.getIncrementalAmount();

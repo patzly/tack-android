@@ -73,16 +73,6 @@
 
       <TextView
         style="@style/Widget.Tack.TextView.ListItem.Title"
-        android:text="@string/options_timer" />
-
-      <TextView
-        android:id="@+id/text_part_duration"
-        style="@style/Widget.Tack.TextView.ListItem.Description"
-        android:text="@string/label_part_no_duration" />
-
-      <TextView
-        style="@style/Widget.Tack.TextView.ListItem.Title"
-        android:layout_marginTop="8dp"
         android:text="@string/label_tempo" />
 
       <TextView
@@ -90,6 +80,37 @@
         style="@style/Widget.Tack.TextView.ListItem.Description"
         android:text="120 bpm"
         tools:ignore="HardcodedText" />
+
+      <TextView
+        style="@style/Widget.Tack.TextView.ListItem.Title"
+        android:layout_marginTop="8dp"
+        android:text="@string/options_unit_beats" />
+
+      <xyz.zedler.patrick.tack.view.PartBeatsView
+        android:id="@+id/beats_part_beats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="2dp" />
+
+      <LinearLayout
+        android:id="@+id/linear_part_subdivisions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+          android:id="@+id/text_part_subdivisions"
+          style="@style/Widget.Tack.TextView.ListItem.Title"
+          android:layout_marginTop="8dp"
+          android:text="@string/options_subdivisions" />
+
+        <xyz.zedler.patrick.tack.view.PartBeatsView
+          android:id="@+id/beats_part_subdivisions"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:paddingTop="2dp" />
+
+      </LinearLayout>
 
       <LinearLayout
         android:id="@+id/linear_part_count_in"
@@ -107,6 +128,24 @@
           style="@style/Widget.Tack.TextView.ListItem.Description"
           android:text="Wait 1 bar before applying modifiers"
           tools:ignore="HardcodedText" />
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/linear_part_duration"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+          style="@style/Widget.Tack.TextView.ListItem.Title"
+          android:layout_marginTop="8dp"
+          android:text="@string/options_timer" />
+
+        <TextView
+          android:id="@+id/text_part_duration"
+          style="@style/Widget.Tack.TextView.ListItem.Description"
+          android:text="@string/label_part_no_duration" />
 
       </LinearLayout>
 

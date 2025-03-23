@@ -159,13 +159,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       performHapticClick();
       int itemId = item.getItemId();
       if (itemId == R.id.action_rename) {
-        renameDialogUtil.setPart(part, name -> {
-          Part partResult = new Part(part);
-          partResult.setName(name);
-          partsResult.set(part.getPartIndex(), partResult);
-          adapter.submitList(new ArrayList<>(partsResult));
-          updateResult();
-        });
+        renameDialogUtil.setPart(part);
         renameDialogUtil.show();
       } else if (itemId == R.id.action_update) {
         Part partResult = new Part(part);
@@ -358,7 +352,8 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     );
     dialogUtilDelete.showIfWasShown(savedInstanceState);
 
-    renameDialogUtil = new RenameDialogUtil(activity);
+    renameDialogUtil = new RenameDialogUtil(activity, this);
+    renameDialogUtil.showIfWasShown(savedInstanceState);
 
     onBackPressedCallback = new OnBackPressedCallback(false) {
       @Override
@@ -377,6 +372,9 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     }
     if (dialogUtilDelete != null) {
       dialogUtilDelete.saveState(outState);
+    }
+    if (renameDialogUtil != null) {
+      renameDialogUtil.saveState(outState);
     }
   }
 
@@ -411,6 +409,19 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     sortParts();
     adapter.submitList(new ArrayList<>(partsResult));
     adapter.notifyMenusChanged();
+  }
+
+  public void renamePart(String partId, String name) {
+    for (Part part : partsResult) {
+      if (part.getId().equals(partId)) {
+        Part partResult = new Part(part);
+        partResult.setName(name);
+        partsResult.set(part.getPartIndex(), partResult);
+        adapter.submitList(new ArrayList<>(partsResult));
+        updateResult();
+        break;
+      }
+    }
   }
 
   private void sortParts() {

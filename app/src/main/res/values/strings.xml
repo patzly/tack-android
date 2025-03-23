@@ -71,7 +71,7 @@
     <item quantity="other">%1$d parts</item>
   </plurals>
   <string name="label_song_looped">Looped</string>
-  <string name="label_song_looped_description">Start from beginning when at end</string>
+  <string name="label_song_looped_description">Restart song when at end</string>
   <string name="label_song_not_looped">Not looped</string>
   <string name="label_sort_name">Name</string>
   <string name="label_sort_last_played">Last played</string>
