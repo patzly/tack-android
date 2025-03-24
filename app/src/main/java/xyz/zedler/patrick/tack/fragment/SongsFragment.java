@@ -204,6 +204,8 @@ public class SongsFragment extends BaseFragment {
   }
 
   public void setSongs(@Nullable List<SongWithParts> songs) {
+    boolean showPlaceholder = songs == null || songs.isEmpty();
+    binding.linearSongsEmpty.setVisibility(showPlaceholder ? View.VISIBLE : View.GONE);
     if (songs != null) {
       this.songs = songs;
     }

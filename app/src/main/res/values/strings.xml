@@ -161,6 +161,8 @@
   <string name="msg_discard_changes_description">Are you sure you don\'t want to save them?</string>
   <string name="msg_delete_song">Delete song?</string>
   <string name="msg_delete_song_description">Are you sure you want to delete the entire song with all of its parts? This cannot be undone.</string>
+  <string name="msg_songs_empty">Empty song library</string>
+  <string name="msg_songs_empty_description">Add songs you want to practice</string>
 
   <!-- OPTIONS -->
 

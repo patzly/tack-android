@@ -145,20 +145,20 @@ public class SongPickerView extends FrameLayout {
       }
     } else if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
       Collections.sort(
-          songs,
+          this.songsWithParts,
           (s1, s2) -> Long.compare(
               s2.getSong().getLastPlayed(), s1.getSong().getLastPlayed()
           )
       );
     } else if (songsOrder == SONGS_ORDER.MOST_PLAYED_ASC) {
       Collections.sort(
-          songs,
+          this.songsWithParts,
           (s1, s2) -> Integer.compare(
               s2.getSong().getPlayCount(), s1.getSong().getPlayCount()
           )
       );
     }
-    adapter.setSongs(songs);
+    adapter.setSongs(this.songsWithParts);
 
     maybeCenterSongChips();
   }
@@ -173,7 +173,7 @@ public class SongPickerView extends FrameLayout {
       setCurrentSong(currentSongId, true);
     };
     SongChipAdapter adapter = new SongChipAdapter(
-        onSongClickListener, currentSongId == null
+        onSongClickListener, currentSongId.equals(Constants.SONG_ID_DEFAULT)
     );
     binding.recyclerSongPicker.setAdapter(adapter);
     // Layout manager

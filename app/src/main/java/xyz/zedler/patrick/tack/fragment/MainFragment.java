@@ -31,6 +31,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -423,8 +424,8 @@ public class MainFragment extends BaseFragment
 
     binding.songPickerMain.setListener(new SongPickerListener() {
       @Override
-      public void onCurrentSongChanged(@NonNull String currentSong) {
-        getMetronomeUtil().setCurrentSong(currentSong, 0, true);
+      public void onCurrentSongChanged(@NonNull String currentSongId) {
+        getMetronomeUtil().setCurrentSong(currentSongId, 0, true);
         performHapticClick();
       }
 
