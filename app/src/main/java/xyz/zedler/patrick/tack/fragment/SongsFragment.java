@@ -204,10 +204,10 @@ public class SongsFragment extends BaseFragment {
   }
 
   public void setSongs(@Nullable List<SongWithParts> songs) {
-    boolean showPlaceholder = songs == null || songs.isEmpty();
-    binding.linearSongsEmpty.setVisibility(showPlaceholder ? View.VISIBLE : View.GONE);
     if (songs != null) {
       this.songs = songs;
+      // placeholder illustration
+      binding.linearSongsEmpty.setVisibility(songs.isEmpty() ? View.VISIBLE : View.GONE);
     }
     if (songsOrder == SONGS_ORDER.NAME_ASC) {
       if (VERSION.SDK_INT >= VERSION_CODES.N) {

@@ -208,6 +208,9 @@ public class SystemBarBehavior {
       // call viewThreeObserver, this updates the system bar appearance
       measureScrollView();
     } else {
+      if (hasRecycler) {
+        measureRecyclerView();
+      }
       // call directly because there won't be any changes caused by scroll content
       updateSystemBars();
     }
@@ -237,9 +240,35 @@ public class SystemBarBehavior {
             updateSystemBars();
             // Kill ViewTreeObserver
             if (scrollView.getViewTreeObserver().isAlive()) {
-              scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(
-                  this
+              scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+          }
+        });
+  }
+
+  private void measureRecyclerView() {
+    if (!hasContainer()) {
+      throw new RuntimeException("Container has to be set for RecyclerView");
+    }
+    scrollContent.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override
+          public void onGlobalLayout() {
+            int containerWidth = container.getWidth();
+            containerWidth -= container.getPaddingLeft() + container.getPaddingRight();
+            int scrollContentWidth = scrollContent.getWidth() + UiUtil.dpToPx(activity, 16);
+            if (applyCutoutInsetOnContainer && scrollContentWidth < containerWidth) {
+              // cutout insets not needed, remove them
+              container.setPadding(
+                  container.getPaddingLeft() - cutoutInsetLeft,
+                  container.getPaddingTop(),
+                  container.getPaddingRight() - cutoutInsetRight,
+                  container.getPaddingBottom()
               );
+            }
+            // Kill ViewTreeObserver
+            if (scrollContent.getViewTreeObserver().isAlive()) {
+              scrollContent.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
           }
         });

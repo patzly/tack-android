@@ -61,7 +61,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
 
     SystemBarBehavior systemBarBehavior = new SystemBarBehavior(activity);
     systemBarBehavior.setAppBar(binding.appBarAbout);
-    systemBarBehavior.setScroll(binding.scrollAbout, binding.constraintAbout);
+    systemBarBehavior.setScroll(binding.scrollAbout, binding.linearAboutContainer);
     systemBarBehavior.setUp();
 
     new ScrollBehavior().setUpScroll(binding.appBarAbout, binding.scrollAbout, true);
