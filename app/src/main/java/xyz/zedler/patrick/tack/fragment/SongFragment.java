@@ -55,6 +55,7 @@ import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.RenameDialogUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
+import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class SongFragment extends BaseFragment implements OnClickListener, OnCheckedChangeListener {
@@ -63,7 +64,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
 
   private FragmentSongBinding binding;
   private MainActivity activity;
-  private DialogUtil dialogUtilDiscard, dialogUtilDelete;
+  private DialogUtil dialogUtilDiscard, dialogUtilDelete, dialogUtilUnlock;
   private RenameDialogUtil renameDialogUtil;
   private OnBackPressedCallback onBackPressedCallback;
   private PartAdapter adapter;
@@ -92,6 +93,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     dialogUtilDiscard.dismiss();
     dialogUtilDelete.dismiss();
     renameDialogUtil.dismiss();
+    dialogUtilUnlock.dismiss();
     binding = null;
   }
 
@@ -352,6 +354,15 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     );
     dialogUtilDelete.showIfWasShown(savedInstanceState);
 
+    dialogUtilUnlock = new DialogUtil(activity, "unlock_parts");
+    dialogUtilUnlock.createAction(
+        R.string.msg_unlock,
+        R.string.msg_unlock_description,
+        R.string.action_open_play_store,
+        () -> UnlockUtil.openPlayStore(activity)
+    );
+    dialogUtilUnlock.showIfWasShown(savedInstanceState);
+
     renameDialogUtil = new RenameDialogUtil(activity, this);
     renameDialogUtil.showIfWasShown(savedInstanceState);
 
@@ -373,6 +384,9 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     if (dialogUtilDelete != null) {
       dialogUtilDelete.saveState(outState);
     }
+    if (dialogUtilUnlock != null) {
+      dialogUtilUnlock.saveState(outState);
+    }
     if (renameDialogUtil != null) {
       renameDialogUtil.saveState(outState);
     }
@@ -385,8 +399,12 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       binding.checkboxSongLooped.toggle();
     } else if (id == R.id.fab_song) {
       performHapticClick();
-      addPart();
-      updateResult();
+      if (UnlockUtil.isUnlocked(activity) || partsResult.size() < 2) {
+        addPart();
+        updateResult();
+      } else {
+        dialogUtilUnlock.show();
+      }
     }
   }
 

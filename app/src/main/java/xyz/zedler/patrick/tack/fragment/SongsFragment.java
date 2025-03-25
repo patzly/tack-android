@@ -86,6 +86,7 @@ import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.ShortcutUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
+import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.ThemeSelectionCardView;
 
@@ -95,7 +96,8 @@ public class SongsFragment extends BaseFragment {
 
   private FragmentSongsBinding binding;
   private MainActivity activity;
-  private List<SongWithParts> songs;
+  private DialogUtil dialogUtilUnlock;
+  private List<SongWithParts> songs = new ArrayList<>();
   private int songsOrder;
   private SongAdapter adapter;
 
@@ -111,6 +113,7 @@ public class SongsFragment extends BaseFragment {
   public void onDestroyView() {
     super.onDestroyView();
     binding = null;
+    dialogUtilUnlock.dismiss();
   }
 
   @Override
@@ -196,11 +199,31 @@ public class SongsFragment extends BaseFragment {
         }
     );
 
+    dialogUtilUnlock = new DialogUtil(activity, "unlock_songs");
+    dialogUtilUnlock.createAction(
+        R.string.msg_unlock,
+        R.string.msg_unlock_description,
+        R.string.action_open_play_store,
+        () -> UnlockUtil.openPlayStore(activity)
+    );
+    dialogUtilUnlock.showIfWasShown(savedInstanceState);
+
     binding.fabSongs.setOnClickListener(v -> {
       performHapticClick();
-      // TODO: check unlock if new songs.size() >= 10
-      activity.navigate(SongsFragmentDirections.actionSongsToSong());
+      if (UnlockUtil.isUnlocked(activity) || songs.size() < 10) {
+        activity.navigate(SongsFragmentDirections.actionSongsToSong());
+      } else {
+        dialogUtilUnlock.show();
+      }
     });
+  }
+
+  @Override
+  public void onSaveInstanceState(@NonNull Bundle outState) {
+    super.onSaveInstanceState(outState);
+    if (dialogUtilUnlock != null) {
+      dialogUtilUnlock.saveState(outState);
+    }
   }
 
   public void setSongs(@Nullable List<SongWithParts> songs) {
