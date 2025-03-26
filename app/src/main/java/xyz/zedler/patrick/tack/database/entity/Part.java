@@ -20,22 +20,21 @@
 package xyz.zedler.patrick.tack.database.entity;
 
 import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.model.MetronomeConfig;
-import xyz.zedler.patrick.tack.recyclerview.adapter.PartAdapter;
 import xyz.zedler.patrick.tack.util.MetronomeUtil;
 
 @Entity(
@@ -47,7 +46,7 @@ import xyz.zedler.patrick.tack.util.MetronomeUtil;
         onDelete = ForeignKey.CASCADE),
     indices = {@Index("songId")}
 )
-public class Part {
+public class Part implements Parcelable {
 
   @PrimaryKey
   @NonNull
@@ -151,6 +150,28 @@ public class Part {
     this.muteMute = part.muteMute;
     this.muteUnit = part.muteUnit;
     this.muteRandom = part.muteRandom;
+  }
+
+  protected Part(Parcel in) {
+    id = Objects.requireNonNull(in.readString());
+    name = in.readString();
+    songId = Objects.requireNonNull(in.readString());
+    partIndex = in.readInt();
+    countIn = in.readInt();
+    tempo = in.readInt();
+    beats = in.readString();
+    subdivisions = in.readString();
+    incrementalAmount = in.readInt();
+    incrementalInterval = in.readInt();
+    incrementalLimit = in.readInt();
+    incrementalUnit = in.readString();
+    incrementalIncrease = in.readByte() != 0;
+    timerDuration = in.readInt();
+    timerUnit = in.readString();
+    mutePlay = in.readInt();
+    muteMute = in.readInt();
+    muteUnit = in.readString();
+    muteRandom = in.readByte() != 0;
   }
 
   @NonNull
@@ -412,6 +433,34 @@ public class Part {
         incrementalIncrease, timerDuration, timerUnit, mutePlay, muteMute, muteUnit, muteRandom);
   }
 
+  @Override
+  public int describeContents() {
+    return 0;
+  }
+
+  @Override
+  public void writeToParcel(@NonNull Parcel dest, int flags) {
+    dest.writeString(id);
+    dest.writeString(name);
+    dest.writeString(songId);
+    dest.writeInt(partIndex);
+    dest.writeInt(countIn);
+    dest.writeInt(tempo);
+    dest.writeString(beats);
+    dest.writeString(subdivisions);
+    dest.writeInt(incrementalAmount);
+    dest.writeInt(incrementalInterval);
+    dest.writeInt(incrementalLimit);
+    dest.writeString(incrementalUnit);
+    dest.writeByte((byte) (incrementalIncrease ? 1 : 0));
+    dest.writeInt(timerDuration);
+    dest.writeString(timerUnit);
+    dest.writeInt(mutePlay);
+    dest.writeInt(muteMute);
+    dest.writeString(muteUnit);
+    dest.writeByte((byte) (muteRandom ? 1 : 0));
+  }
+
   @NonNull
   @Override
   public String toString() {
@@ -437,4 +486,16 @@ public class Part {
         ", muteRandom=" + muteRandom +
         '}';
   }
+
+  public static final Creator<Part> CREATOR = new Creator<>() {
+    @Override
+    public Part createFromParcel(Parcel in) {
+      return new Part(in);
+    }
+
+    @Override
+    public Part[] newArray(int size) {
+      return new Part[size];
+    }
+  };
 }

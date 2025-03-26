@@ -20,9 +20,9 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  xmlns:tools="http://schemas.android.com/tools"
   android:transitionGroup="true"
   android:background="?attr/colorSurface">
 
@@ -159,18 +159,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintWidth_max="@dimen/max_content_width" />
 
+      <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_song"
+        style="@style/Widget.Tack.ExtendedFloatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/action_add_part"
+        android:layout_marginBottom="@dimen/controls_bottom_margin_bottom"
+        android:layout_gravity="bottom|center_horizontal"
+        app:icon="@drawable/ic_rounded_add_anim"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
   </androidx.constraintlayout.widget.ConstraintLayout>
-
-  <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-    android:id="@+id/fab_song"
-    style="@style/Widget.Tack.ExtendedFloatingActionButton"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/action_add_part"
-    android:layout_marginBottom="32dp"
-    android:layout_gravity="bottom|center_horizontal"
-    app:icon="@drawable/ic_rounded_add_anim" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

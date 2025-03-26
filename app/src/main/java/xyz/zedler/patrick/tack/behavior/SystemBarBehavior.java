@@ -23,7 +23,6 @@ import android.app.Activity;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -54,7 +53,7 @@ public class SystemBarBehavior {
   private boolean applyAppBarInsetOnContainer;
   private boolean applyStatusBarInsetOnContainer;
   private boolean applyCutoutInsetOnContainer;
-  private boolean isScrollable;
+  private boolean isScrollable, isMultiColumnLayout;
   private boolean hasScrollView, hasRecycler;
   private int addBottomInset, cutoutInsetLeft, cutoutInsetRight;
 
@@ -79,6 +78,7 @@ public class SystemBarBehavior {
     hasScrollView = false;
     hasRecycler = false;
     isScrollable = false;
+    isMultiColumnLayout = false;
   }
 
   public void setAppBar(AppBarLayout appBarLayout) {
@@ -224,7 +224,10 @@ public class SystemBarBehavior {
             int scrollViewWidth = scrollView.getWidth();
             scrollViewWidth -= scrollView.getPaddingLeft() + scrollView.getPaddingRight();
             int scrollContentWidth = scrollContent.getWidth() + UiUtil.dpToPx(activity, 16);
-            if (applyCutoutInsetOnContainer && scrollContentWidth < scrollViewWidth) {
+            if (applyCutoutInsetOnContainer
+                && !isMultiColumnLayout
+                && scrollContentWidth < scrollViewWidth
+            ) {
               // cutout insets not needed, remove them
               scrollView.setPadding(
                   scrollView.getPaddingLeft() - cutoutInsetLeft,
@@ -257,7 +260,10 @@ public class SystemBarBehavior {
             int containerWidth = container.getWidth();
             containerWidth -= container.getPaddingLeft() + container.getPaddingRight();
             int scrollContentWidth = scrollContent.getWidth() + UiUtil.dpToPx(activity, 16);
-            if (applyCutoutInsetOnContainer && scrollContentWidth < containerWidth) {
+            if (applyCutoutInsetOnContainer
+                && !isMultiColumnLayout
+                && scrollContentWidth < containerWidth
+            ) {
               // cutout insets not needed, remove them
               container.setPadding(
                   container.getPaddingLeft() - cutoutInsetLeft,
@@ -284,6 +290,10 @@ public class SystemBarBehavior {
 
   public void applyCutoutInsetOnContainer(boolean apply) {
     applyCutoutInsetOnContainer = apply;
+  }
+
+  public void setMultiColumnLayout(boolean multiColumnLayout) {
+    isMultiColumnLayout = multiColumnLayout;
   }
 
   public static void applyBottomInset(@NonNull View view) {

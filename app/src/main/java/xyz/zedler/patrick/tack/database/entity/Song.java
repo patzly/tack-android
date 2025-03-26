@@ -19,6 +19,8 @@
 
 package xyz.zedler.patrick.tack.database.entity;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Entity;
@@ -30,7 +32,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity(tableName = "songs", indices = {@Index(value = {"id"}, unique = true)})
-public class Song {
+public class Song implements Parcelable {
 
   @PrimaryKey
   @NonNull
@@ -69,6 +71,15 @@ public class Song {
     this.lastPlayed = song.lastPlayed;
     this.playCount = song.playCount;
     this.isLooped = song.isLooped;
+  }
+
+  @Ignore
+  protected Song(Parcel in) {
+    id = Objects.requireNonNull(in.readString());
+    name = in.readString();
+    lastPlayed = in.readLong();
+    playCount = in.readInt();
+    isLooped = in.readByte() != 0;
   }
 
   @NonNull
@@ -132,6 +143,20 @@ public class Song {
     return Objects.hash(id, name, lastPlayed, isLooped);
   }
 
+  @Override
+  public int describeContents() {
+    return 0;
+  }
+
+  @Override
+  public void writeToParcel(@NonNull Parcel dest, int flags) {
+    dest.writeString(id);
+    dest.writeString(name);
+    dest.writeLong(lastPlayed);
+    dest.writeInt(playCount);
+    dest.writeByte((byte) (isLooped ? 1 : 0));
+  }
+
   @NonNull
   @Override
   public String toString() {
@@ -143,4 +168,16 @@ public class Song {
         ", isLooped=" + isLooped +
         '}';
   }
+
+  public static final Creator<Song> CREATOR = new Creator<>() {
+    @Override
+    public Song createFromParcel(Parcel in) {
+      return new Song(in);
+    }
+
+    @Override
+    public Song[] newArray(int size) {
+      return new Song[size];
+    }
+  };
 }

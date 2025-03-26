@@ -62,6 +62,9 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
 
   private static final String TAG = SongFragment.class.getSimpleName();
 
+  private static final String KEY_SONG_RESULT = "song_result";
+  private static final String KEY_PARTS_RESULT = "parts_result";
+
   private FragmentSongBinding binding;
   private MainActivity activity;
   private DialogUtil dialogUtilDiscard, dialogUtilDelete, dialogUtilUnlock;
@@ -105,7 +108,11 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     systemBarBehavior.setAppBar(binding.appBarSong);
     systemBarBehavior.setContainer(binding.constraintSongContainer);
     systemBarBehavior.setRecycler(binding.recyclerSongParts);
-    systemBarBehavior.setAdditionalBottomInset(UiUtil.dpToPx(activity, 96));
+    systemBarBehavior.setAdditionalBottomInset(
+        ResUtil.getDimension(activity, R.dimen.controls_bottom_margin_bottom)
+            + UiUtil.dpToPx(activity, 56)
+    );
+    systemBarBehavior.setMultiColumnLayout(!UiUtil.isOrientationPortrait(activity));
     systemBarBehavior.setUp();
     SystemBarBehavior.applyBottomInset(binding.fabSong);
 
@@ -230,17 +237,23 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
             songSource = songWithParts.getSong();
             // Copy song to result
             songResult = new Song(songSource);
+            if (savedInstanceState != null && savedInstanceState.containsKey(KEY_SONG_RESULT)) {
+              Song songRestored = savedInstanceState.getParcelable(KEY_SONG_RESULT);
+              if (songRestored != null) {
+                songResult = songRestored;
+              }
+            }
             // Copy name to form
             binding.textInputSongName.setHintAnimationEnabled(false);
-            binding.editTextSongName.setText(songWithParts.getSong().getName());
+            binding.editTextSongName.clearFocus(); // to prevent TextWatcher from being triggered
+            binding.editTextSongName.setText(songResult.getName());
             binding.editTextSongName.post(() -> {
               UiUtil.hideKeyboard(activity);
               binding.editTextSongName.clearFocus();
             });
             binding.textInputSongName.setHintAnimationEnabled(true);
             // Copy looped to form
-            binding.checkboxSongLooped.setOnCheckedChangeListener(null);
-            binding.checkboxSongLooped.setChecked(songWithParts.getSong().isLooped());
+            binding.checkboxSongLooped.setChecked(songResult.isLooped());
             binding.checkboxSongLooped.jumpDrawablesToCurrentState();
             binding.checkboxSongLooped.setOnCheckedChangeListener(this);
             // Copy parts to form
@@ -249,14 +262,17 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
             for (Part part : partsSource) {
               partsResult.add(new Part(part));
             }
-            sortParts();
-            try {
-              adapter.submitList(new ArrayList<>(partsResult));
-              adapter.notifyMenusChanged();
-            } catch (IllegalStateException e) {
-              // "Cannot call this method while RecyclerView is computing a layout or scrolling"
-              Log.e(TAG, "onViewCreated: ", e);
+            if (savedInstanceState != null && savedInstanceState.containsKey(KEY_PARTS_RESULT)) {
+              List<Part> restored = savedInstanceState.getParcelableArrayList(KEY_PARTS_RESULT);
+              if (restored != null) {
+                partsResult = new ArrayList<>(restored);
+              }
             }
+            sortParts();
+            // TODO: fix crash
+            //  "Cannot call this method while RecyclerView is computing a layout or scrolling"
+            adapter.submitList(new ArrayList<>(partsResult));
+            adapter.notifyMenusChanged();
           } else {
             Log.e(TAG, "onViewCreated: song with id=" + songId + " not found");
           }
@@ -268,14 +284,28 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       isNewSong = true;
       songSource = new Song();
       songResult = new Song(songSource);
+      if (savedInstanceState != null && savedInstanceState.containsKey(KEY_SONG_RESULT)) {
+        Song songRestored = savedInstanceState.getParcelable(KEY_SONG_RESULT);
+        if (songRestored != null) {
+          songResult = new Song(songRestored);
+        }
+      }
 
+      binding.editTextSongName.clearFocus(); // to prevent TextWatcher from being triggered
       binding.editTextSongName.setText(songResult.getName());
       binding.editTextSongName.post(() -> {
-        binding.editTextSongName.requestFocus();
-        UiUtil.showKeyboard(activity, binding.editTextSongName);
+        if (savedInstanceState == null) {
+          binding.editTextSongName.requestFocus();
+          UiUtil.showKeyboard(activity, binding.editTextSongName);
+        } else {
+          // Only show keyboard if not restored from orientation change
+          UiUtil.hideKeyboard(activity);
+        }
       });
+      binding.checkboxSongLooped.setOnCheckedChangeListener(null);
       binding.checkboxSongLooped.setChecked(songResult.isLooped());
       binding.checkboxSongLooped.jumpDrawablesToCurrentState();
+      binding.checkboxSongLooped.setOnCheckedChangeListener(this);
 
       partsResult = new LinkedList<>();
       addPart();
@@ -284,9 +314,21 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       for (Part part : partsResult) {
         partsSource.add(new Part(part));
       }
+      if (savedInstanceState != null && savedInstanceState.containsKey(KEY_PARTS_RESULT)) {
+        List<Part> partsRestored = savedInstanceState.getParcelableArrayList(KEY_PARTS_RESULT);
+        if (partsRestored != null) {
+          partsResult = new ArrayList<>(partsRestored);
+          sortParts();
+          adapter.submitList(partsResult);
+          adapter.notifyMenusChanged();
+        }
+      }
       updateResult();
-      clearError(); // first time the name is empty but user is not guilty
+      if (songResult.getName() == null || songResult.getName().isEmpty()) {
+        clearError(); // first time the name is empty but user is not guilty
+      }
     }
+
     MenuItem itemDelete = binding.toolbarSong.getMenu().findItem(R.id.action_delete);
     if (itemDelete != null) {
       // Only show delete if song not new
@@ -317,7 +359,9 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
 
       @Override
       public void afterTextChanged(Editable s) {
-        updateResult();
+        if (binding.editTextSongName.hasFocus()) {
+          updateResult();
+        }
       }
     });
 
@@ -325,11 +369,6 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         this,
         binding.fabSong,
         binding.linearSongLooped
-    );
-
-    ViewUtil.setOnCheckedChangeListeners(
-        this,
-        binding.checkboxSongLooped
     );
 
     dialogUtilDiscard = new DialogUtil(activity, "discard_changes");
@@ -390,6 +429,8 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     if (renameDialogUtil != null) {
       renameDialogUtil.saveState(outState);
     }
+    outState.putParcelable(KEY_SONG_RESULT, songResult);
+    outState.putParcelableArrayList(KEY_PARTS_RESULT, new ArrayList<>(partsResult));
   }
 
   @Override
