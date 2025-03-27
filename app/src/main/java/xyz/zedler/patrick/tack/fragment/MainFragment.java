@@ -435,7 +435,7 @@ public class MainFragment extends BaseFragment
         performHapticClick();
       }
     });
-    activity.getSongViewModel().getAllSongsWithParts().observe(
+    activity.getSongViewModel().getAllSongsWithPartsLive().observe(
         getViewLifecycleOwner(), songs -> {
           List<SongWithParts> songsWithParts = new ArrayList<>(songs);
           for (SongWithParts songWithParts : songsWithParts) {

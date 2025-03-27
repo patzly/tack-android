@@ -8,6 +8,7 @@ shapes = "1.0.1"
 material = "1.13.0-alpha12"
 recyclerview = "1.4.0"
 flexbox = "3.0.0"
+gson = "2.12.1"
 room = "2.7.0-rc03"
 kotlin = "2.1.10"
 lifecycle = "2.8.7"
@@ -32,6 +33,7 @@ shapes = { group = "androidx.graphics", name = "graphics-shapes", version.ref = 
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 # wear

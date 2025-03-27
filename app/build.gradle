@@ -99,6 +99,7 @@ dependencies {
     implementation libs.material
     implementation libs.recyclerview
     implementation libs.flexbox
+    implementation libs.gson
     implementation libs.room.runtime
     annotationProcessor libs.room.compiler
 }

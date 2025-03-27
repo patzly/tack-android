@@ -19,76 +19,50 @@
 
 package xyz.zedler.patrick.tack.fragment;
 
-import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.LinearLayout;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StyleRes;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.lifecycle.Observer;
-import androidx.navigation.NavDirections;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import com.google.android.material.color.DynamicColors;
-import com.google.android.material.divider.MaterialDivider;
-import com.google.android.material.slider.Slider;
-import com.google.android.material.slider.Slider.OnChangeListener;
-import com.google.android.material.slider.Slider.OnSliderTouchListener;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.CONTRAST;
 import xyz.zedler.patrick.tack.Constants.DEF;
-import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
-import xyz.zedler.patrick.tack.Constants.SOUND;
-import xyz.zedler.patrick.tack.Constants.THEME;
-import xyz.zedler.patrick.tack.NavMainDirections;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
-import xyz.zedler.patrick.tack.database.entity.Part;
-import xyz.zedler.patrick.tack.database.entity.Song;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
-import xyz.zedler.patrick.tack.databinding.FragmentSettingsBinding;
 import xyz.zedler.patrick.tack.databinding.FragmentSongsBinding;
 import xyz.zedler.patrick.tack.fragment.SongsFragmentDirections.ActionSongsToSong;
-import xyz.zedler.patrick.tack.model.MetronomeConfig;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter;
-import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter.OnSongClickListener;
-import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipAdapter;
-import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.HapticUtil;
-import xyz.zedler.patrick.tack.util.LocaleUtil;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
-import xyz.zedler.patrick.tack.util.ShortcutUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil;
-import xyz.zedler.patrick.tack.view.ThemeSelectionCardView;
 
 public class SongsFragment extends BaseFragment {
 
@@ -97,9 +71,12 @@ public class SongsFragment extends BaseFragment {
   private FragmentSongsBinding binding;
   private MainActivity activity;
   private DialogUtil dialogUtilUnlock;
-  private List<SongWithParts> songs = new ArrayList<>();
+  private List<SongWithParts> songsWithParts = new ArrayList<>();
   private int songsOrder;
   private SongAdapter adapter;
+  private ActivityResultLauncher<String> launcherBackup;
+  private ActivityResultLauncher<String[]> launcherRestore;
+  private final Gson gson = new Gson();
 
   @Override
   public View onCreateView(
@@ -150,8 +127,12 @@ public class SongsFragment extends BaseFragment {
           songsOrder = SONGS_ORDER.MOST_PLAYED_ASC;
         }
         item.setChecked(true);
-        setSongs(null);
+        setSongsWithParts(null);
         getSharedPrefs().edit().putInt(PREF.SONGS_ORDER, songsOrder).apply();
+      } else if (id == R.id.action_backup) {
+        launcherBackup.launch("song_library.json");
+      } else if (id == R.id.action_restore) {
+        launcherRestore.launch(new String[]{"application/json"});
       } else if (id == R.id.action_feedback) {
         activity.showFeedbackBottomSheet();
       } else if (id == R.id.action_help) {
@@ -185,7 +166,7 @@ public class SongsFragment extends BaseFragment {
     binding.recyclerSongs.setLayoutManager(layoutManager);
     binding.recyclerSongs.setItemAnimator(new DefaultItemAnimator());
 
-    activity.getSongViewModel().getAllSongsWithParts().observe(
+    activity.getSongViewModel().getAllSongsWithPartsLive().observe(
         getViewLifecycleOwner(), songs -> {
           List<SongWithParts> songsWithParts = new ArrayList<>(songs);
           for (SongWithParts songWithParts : songsWithParts) {
@@ -195,8 +176,17 @@ public class SongsFragment extends BaseFragment {
               break;
             }
           }
-          setSongs(songsWithParts);
+          setSongsWithParts(songsWithParts);
         }
+    );
+
+    launcherBackup = registerForActivityResult(
+        new ActivityResultContracts.CreateDocument("application/json"),
+        this::exportJsonToFile
+    );
+    launcherRestore = registerForActivityResult(
+        new ActivityResultContracts.OpenDocument(),
+        this::importJsonFromFile
     );
 
     dialogUtilUnlock = new DialogUtil(activity, "unlock_songs");
@@ -210,7 +200,7 @@ public class SongsFragment extends BaseFragment {
 
     binding.fabSongs.setOnClickListener(v -> {
       performHapticClick();
-      if (UnlockUtil.isUnlocked(activity) || songs.size() < 5) {
+      if (UnlockUtil.isUnlocked(activity) || songsWithParts.size() < 5) {
         activity.navigate(SongsFragmentDirections.actionSongsToSong());
       } else {
         dialogUtilUnlock.show();
@@ -226,23 +216,23 @@ public class SongsFragment extends BaseFragment {
     }
   }
 
-  public void setSongs(@Nullable List<SongWithParts> songs) {
-    if (songs != null) {
-      this.songs = songs;
+  private void setSongsWithParts(@Nullable List<SongWithParts> songsWithParts) {
+    if (songsWithParts != null) {
+      this.songsWithParts = songsWithParts;
       // placeholder illustration
-      binding.linearSongsEmpty.setVisibility(songs.isEmpty() ? View.VISIBLE : View.GONE);
+      binding.linearSongsEmpty.setVisibility(songsWithParts.isEmpty() ? View.VISIBLE : View.GONE);
     }
     if (songsOrder == SONGS_ORDER.NAME_ASC) {
       if (VERSION.SDK_INT >= VERSION_CODES.N) {
         Collections.sort(
-            this.songs,
+            this.songsWithParts,
             Comparator.comparing(
                 o -> o.getSong().getName(),
                 Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
             )
         );
       } else {
-        Collections.sort(this.songs, (o1, o2) -> {
+        Collections.sort(this.songsWithParts, (o1, o2) -> {
           String name1 = (o1.getSong() != null) ? o1.getSong().getName() : null;
           String name2 = (o2.getSong() != null) ? o2.getSong().getName() : null;
           // Nulls last handling
@@ -254,20 +244,99 @@ public class SongsFragment extends BaseFragment {
       }
     } else if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
       Collections.sort(
-          this.songs,
+          this.songsWithParts,
           (s1, s2) -> Long.compare(
               s2.getSong().getLastPlayed(), s1.getSong().getLastPlayed()
           )
       );
     } else if (songsOrder == SONGS_ORDER.MOST_PLAYED_ASC) {
       Collections.sort(
-          this.songs,
+          this.songsWithParts,
           (s1, s2) -> Integer.compare(
               s2.getSong().getPlayCount(), s1.getSong().getPlayCount()
           )
       );
     }
-    adapter.submitList(new ArrayList<>(this.songs));
+    adapter.submitList(new ArrayList<>(this.songsWithParts));
     adapter.setSortOrder(songsOrder);
+  }
+
+  private void exportJsonToFile(Uri uri) {
+    if (uri == null) {
+      showSnackbar(R.string.msg_backup_directory_missing);
+      return;
+    }
+    try (OutputStream outputStream = activity.getContentResolver().openOutputStream(uri)) {
+      if (outputStream != null) {
+        String json = gson.toJson(songsWithParts);
+        outputStream.write(json.getBytes());
+        outputStream.flush();
+        showSnackbar(R.string.msg_backup_success);
+      }
+    } catch (Exception e) {
+      showSnackbar(R.string.msg_backup_error);
+      Log.e(TAG, "exportJsonToFile: ", e);
+    }
+  }
+
+  private void importJsonFromFile(Uri uri) {
+    if (uri == null) {
+      showSnackbar(R.string.msg_restore_file_missing);
+      return;
+    }
+    try (InputStream inputStream = activity.getContentResolver().openInputStream(uri);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))
+    ) {
+      StringBuilder jsonString = new StringBuilder();
+      String line;
+      while ((line = reader.readLine()) != null) {
+        jsonString.append(line);
+      }
+      Type listType = new TypeToken<List<SongWithParts>>(){}.getType();
+      List<SongWithParts> songsWithParts = gson.fromJson(jsonString.toString(), listType);
+      if (songsWithParts != null) {
+        // look for duplicates of existing song names
+        Map<String, Integer> nameCountMap = new HashMap<>();
+        // count existing song names
+        for (SongWithParts existingSong : this.songsWithParts) {
+          String existingName = existingSong.getSong().getName();
+          if (existingName == null) {
+            continue;
+          }
+          Integer currentCount = nameCountMap.get(existingName);
+          Integer newCount = currentCount == null ? 1 : currentCount + 1;
+          nameCountMap.put(existingName, newCount);
+        }
+        for (SongWithParts songWithParts : songsWithParts) {
+          String originalName = songWithParts.getSong().getName();
+          String newName = originalName;
+          Integer count = nameCountMap.get(originalName);
+          int counter = count == null ? 0 : count;
+          // increment counter if name already exists
+          if (counter > 0) {
+            do {
+              newName = getString(R.string.msg_restore_duplicate_name, originalName, counter);
+              counter++;
+            } while (nameCountMap.containsKey(newName));
+          }
+          songWithParts.getSong().setName(newName);
+          nameCountMap.put(newName, 1);
+        }
+        activity.getSongViewModel().insertSongsWithParts(
+            songsWithParts, () -> showSnackbar(R.string.msg_restore_success)
+        );
+      } else {
+        showSnackbar(R.string.msg_restore_error);
+      }
+    } catch (Exception e) {
+      showSnackbar(R.string.msg_restore_error);
+      Log.e(TAG, "importJsonFromFile: ", e);
+    }
+  }
+
+  private void showSnackbar(int resId) {
+    Snackbar snackbar = activity.getSnackbar(resId, Snackbar.LENGTH_SHORT);
+    snackbar.setAnchorView(binding.fabSongs);
+    activity.showSnackbar(snackbar);
   }
 }
