@@ -60,7 +60,7 @@
 
     <LinearLayout
       android:id="@+id/linear_songs_empty"
-      android:layout_width="match_parent"
+      android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:orientation="vertical"
       android:layout_gravity="center"
@@ -74,8 +74,8 @@
       app:layout_constraintEnd_toEndOf="parent">
 
       <ImageView
-        android:layout_width="180dp"
-        android:layout_height="180dp"
+        android:layout_width="190dp"
+        android:layout_height="190dp"
         android:layout_gravity="center_horizontal"
         android:importantForAccessibility="no"
         android:src="@drawable/illustration_empty_songs"

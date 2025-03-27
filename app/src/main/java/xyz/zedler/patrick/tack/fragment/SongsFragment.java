@@ -210,7 +210,7 @@ public class SongsFragment extends BaseFragment {
 
     binding.fabSongs.setOnClickListener(v -> {
       performHapticClick();
-      if (UnlockUtil.isUnlocked(activity) || songs.size() < 10) {
+      if (UnlockUtil.isUnlocked(activity) || songs.size() < 5) {
         activity.navigate(SongsFragmentDirections.actionSongsToSong());
       } else {
         dialogUtilUnlock.show();

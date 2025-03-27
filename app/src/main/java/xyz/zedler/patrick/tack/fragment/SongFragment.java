@@ -29,15 +29,25 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnLayoutChangeListener;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsAnimationCompat;
+import androidx.core.view.WindowInsetsAnimationCompat.BoundsCompat;
+import androidx.core.view.WindowInsetsAnimationCompat.Callback;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.view.WindowInsetsCompat.Type;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import com.google.android.material.math.MathUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -45,6 +55,7 @@ import java.util.LinkedList;
 import java.util.List;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
+import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.entity.Song;
@@ -78,6 +89,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
   private List<Part> partsResult = new LinkedList<>();
   private boolean isNewSong;
   private boolean hasUnsavedChanges = true;
+  private float fabBaseY;
 
   @Override
   public View onCreateView(
@@ -108,17 +120,29 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     systemBarBehavior.setAppBar(binding.appBarSong);
     systemBarBehavior.setContainer(binding.constraintSongContainer);
     systemBarBehavior.setRecycler(binding.recyclerSongParts);
-    systemBarBehavior.setAdditionalBottomInset(
-        ResUtil.getDimension(activity, R.dimen.controls_bottom_margin_bottom)
-            + UiUtil.dpToPx(activity, 56)
-    );
+    int bottomInset = ResUtil.getDimension(activity, R.dimen.controls_bottom_margin_bottom);
+    bottomInset += UiUtil.dpToPx(activity, 56); // fab height
+    systemBarBehavior.setAdditionalBottomInset(bottomInset);
     systemBarBehavior.setMultiColumnLayout(!UiUtil.isOrientationPortrait(activity));
     systemBarBehavior.setUp();
     SystemBarBehavior.applyBottomInset(binding.fabSong);
 
-    /*new ScrollBehavior().setUpScroll(
-        binding.appBarSongs, null, true
-    );*/
+    binding.fabSong.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override
+          public void onGlobalLayout() {
+            fabBaseY = binding.fabSong.getY();
+            // Kill ViewTreeObserver
+            if (binding.fabSong.getViewTreeObserver().isAlive()) {
+              binding.fabSong.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+          }
+        });
+
+    setupImeAnimation(systemBarBehavior);
+
+    ScrollBehavior scrollBehavior = new ScrollBehavior();
+    scrollBehavior.setUpScroll(binding.appBarSong, null, true);
 
     binding.toolbarSong.setNavigationOnClickListener(v -> {
       if (getViewUtil().isClickEnabled(v.getId())) {
@@ -223,9 +247,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     binding.recyclerSongParts.setLayoutManager(layoutManager);
     binding.recyclerSongParts.setItemAnimator(new DefaultItemAnimator());
 
-    PartItemDecoration decoration = new PartItemDecoration(
-        UiUtil.dpToPx(activity, 16), UiUtil.dpToPx(activity, 8)
-    );
+    PartItemDecoration decoration = new PartItemDecoration(UiUtil.dpToPx(activity, 8));
     binding.recyclerSongParts.addItemDecoration(decoration);
 
     String songId = SongFragmentArgs.fromBundle(getArguments()).getSongId();
@@ -294,7 +316,9 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       binding.editTextSongName.clearFocus(); // to prevent TextWatcher from being triggered
       binding.editTextSongName.setText(songResult.getName());
       binding.editTextSongName.post(() -> {
-        if (savedInstanceState == null) {
+        boolean isPortrait = UiUtil.isOrientationPortrait(activity);
+        boolean isLandTablet = UiUtil.isLandTablet(activity);
+        if (savedInstanceState == null && (isPortrait || isLandTablet)) {
           binding.editTextSongName.requestFocus();
           UiUtil.showKeyboard(activity, binding.editTextSongName);
         } else {
@@ -564,5 +588,65 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
   private void clearError() {
     binding.textInputSongName.setError(null);
     binding.textInputSongName.setErrorEnabled(false);
+  }
+
+  private void setupImeAnimation(SystemBarBehavior systemBarBehavior) {
+    Callback callback = new Callback(Callback.DISPATCH_MODE_STOP) {
+      int imeInsetStart, imeInsetEnd;
+      float yStart, yEnd;
+
+      @Override
+      public void onPrepare(@NonNull WindowInsetsAnimationCompat animation) {
+        imeInsetStart = systemBarBehavior.getImeInset();
+        yStart = binding.fabSong.getY();
+      }
+
+      @NonNull
+      @Override
+      public BoundsCompat onStart(
+          @NonNull WindowInsetsAnimationCompat animation,
+          @NonNull BoundsCompat bounds
+      ) {
+        imeInsetEnd = systemBarBehavior.getImeInset();
+        systemBarBehavior.setImeInset(imeInsetStart);
+        systemBarBehavior.refresh(false);
+
+        yEnd = binding.fabSong.getY();
+        binding.fabSong.setY(yStart);
+        return bounds;
+      }
+
+      @NonNull
+      @Override
+      public WindowInsetsCompat onProgress(
+          @NonNull WindowInsetsCompat insets,
+          @NonNull List<WindowInsetsAnimationCompat> animations
+      ) {
+        if (animations.isEmpty() || animations.get(0) == null) {
+          return insets;
+        }
+        WindowInsetsAnimationCompat animation = animations.get(0);
+        systemBarBehavior.setImeInset(
+            (int) MathUtils.lerp(imeInsetStart, imeInsetEnd, animation.getInterpolatedFraction())
+        );
+        systemBarBehavior.refresh(false);
+        binding.fabSong.setY(MathUtils.lerp(yStart, yEnd, animation.getInterpolatedFraction()));
+        return insets;
+      }
+    };
+    ViewCompat.setOnApplyWindowInsetsListener(
+        binding.constraintSongContainer, (v, insets) -> {
+          int bottomInsetIme = insets.getInsets(Type.ime()).bottom;
+          systemBarBehavior.setImeInset(bottomInsetIme);
+          systemBarBehavior.refresh(false);
+          if (insets.isVisible(Type.ime())) {
+            int bottomInsetNav = insets.getInsets(Type.systemBars()).bottom;
+            binding.fabSong.setTranslationY(-bottomInsetIme + bottomInsetNav);
+          } else {
+            binding.fabSong.setY(fabBaseY);
+          }
+          return insets;
+        });
+    ViewCompat.setWindowInsetsAnimationCallback(binding.constraintSongContainer, callback);
   }
 }

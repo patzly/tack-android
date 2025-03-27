@@ -86,7 +86,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="8dp"
             android:hint="@string/label_song_name"
             app:helperText="@string/label_song_name_help">
 
@@ -152,6 +152,8 @@
         android:layout_height="0dp"
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="16dp"
         android:clipToPadding="false"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -55,7 +55,8 @@ public class SystemBarBehavior {
   private boolean applyCutoutInsetOnContainer;
   private boolean isScrollable, isMultiColumnLayout;
   private boolean hasScrollView, hasRecycler;
-  private int addBottomInset, cutoutInsetLeft, cutoutInsetRight;
+  private int statusBarInset, navBarInset, imeInset, addBottomInset;
+  private int cutoutInsetLeft, cutoutInsetRight;
 
   public SystemBarBehavior(@NonNull Activity activity) {
     this.activity = activity;
@@ -120,6 +121,18 @@ public class SystemBarBehavior {
     addBottomInset = additional;
   }
 
+  public int getAdditionalBottomInset() {
+    return addBottomInset;
+  }
+
+  public void setImeInset(int imeInset) {
+    this.imeInset = imeInset;
+  }
+
+  public int getImeInset() {
+    return imeInset;
+  }
+
   public void setUp() {
     View root = window.getDecorView().findViewById(android.R.id.content);
     ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
@@ -129,8 +142,8 @@ public class SystemBarBehavior {
       int containerPaddingRightExtra = 0;
 
       // TOP INSET
+      statusBarInset = insets.getInsets(Type.systemBars()).top;
       if (appBarLayout != null) {
-        int statusBarInset = insets.getInsets(Type.systemBars()).top;
         // STATUS BAR INSET
         appBarLayout.setPadding(0, statusBarInset, 0, appBarLayout.getPaddingBottom());
         appBarLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
@@ -146,7 +159,7 @@ public class SystemBarBehavior {
       } else if (hasContainer() && applyStatusBarInsetOnContainer) {
         // STATUS BAR INSET
         // if no app bar exists, status bar inset is applied to container
-        containerPaddingTopExtra += insets.getInsets(Type.systemBars()).top;
+        containerPaddingTopExtra += statusBarInset;
       }
 
       // CUTOUT INSET
@@ -158,22 +171,23 @@ public class SystemBarBehavior {
       }
 
       // NAV BAR INSET
-      boolean useBottomInset = UiUtil.isOrientationPortrait(activity)
+      boolean useBottomNavBarInset = UiUtil.isOrientationPortrait(activity)
           || UiUtil.isNavigationModeGesture(activity)
           || UiUtil.isLandTablet(activity);
-      if (useBottomInset && hasContainer()) {
-        int navBarInset = insets.getInsets(Type.systemBars()).bottom;
+      if (useBottomNavBarInset && hasContainer()) {
+        navBarInset = insets.getInsets(Type.systemBars()).bottom;
         if (hasScrollView || hasRecycler) {
           scrollContent.setPadding(
               scrollContent.getPaddingLeft(),
               scrollContent.getPaddingTop(),
               scrollContent.getPaddingRight(),
-              scrollContentPaddingBottom + addBottomInset + navBarInset
+              scrollContentPaddingBottom + addBottomInset + Math.max(navBarInset, imeInset)
           );
         } else {
-          containerPaddingBottomExtra += addBottomInset + navBarInset;
+          containerPaddingBottomExtra += addBottomInset + Math.max(navBarInset, imeInset);
         }
       } else if (hasContainer()) {
+        navBarInset = 0; // no bottom nav bar inset
         root.setPadding(
             insets.getInsets(Type.systemBars()).left,
             root.getPaddingTop(),
@@ -186,10 +200,10 @@ public class SystemBarBehavior {
               scrollContent.getPaddingLeft(),
               scrollContent.getPaddingTop(),
               scrollContent.getPaddingRight(),
-              scrollContentPaddingBottom + addBottomInset
+              scrollContentPaddingBottom + addBottomInset + imeInset
           );
         } else {
-          containerPaddingBottomExtra += addBottomInset;
+          containerPaddingBottomExtra += addBottomInset + imeInset;
         }
       }
 
@@ -208,6 +222,88 @@ public class SystemBarBehavior {
       // call viewThreeObserver, this updates the system bar appearance
       measureScrollView();
     } else {
+      if (hasRecycler) {
+        measureRecyclerView();
+      }
+      // call directly because there won't be any changes caused by scroll content
+      updateSystemBars();
+    }
+  }
+
+  public void refresh(boolean measureScrollContent) {
+    int containerPaddingTopExtra = 0;
+    int containerPaddingBottomExtra = 0;
+    int containerPaddingLeftExtra = 0;
+    int containerPaddingRightExtra = 0;
+
+    // TOP INSET
+    if (appBarLayout != null) {
+      // STATUS BAR INSET
+      appBarLayout.setPadding(0, statusBarInset, 0, appBarLayout.getPaddingBottom());
+      appBarLayout.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+      // APP BAR INSET
+      if (hasContainer() && applyAppBarInsetOnContainer) {
+        ViewGroup.MarginLayoutParams params
+            = (ViewGroup.MarginLayoutParams) container.getLayoutParams();
+        params.topMargin = appBarLayout.getMeasuredHeight();
+        container.setLayoutParams(params);
+      } else if (hasContainer() && applyStatusBarInsetOnContainer) {
+        containerPaddingTopExtra += statusBarInset;
+      }
+    } else if (hasContainer() && applyStatusBarInsetOnContainer) {
+      // STATUS BAR INSET
+      // if no app bar exists, status bar inset is applied to container
+      containerPaddingTopExtra += statusBarInset;
+    }
+
+    // CUTOUT INSET
+    if (hasContainer() && applyCutoutInsetOnContainer) {
+      containerPaddingLeftExtra += cutoutInsetLeft;
+      containerPaddingRightExtra += cutoutInsetRight;
+    }
+
+    // NAV BAR INSET
+    boolean useBottomInset = UiUtil.isOrientationPortrait(activity)
+        || UiUtil.isNavigationModeGesture(activity)
+        || UiUtil.isLandTablet(activity);
+    if (useBottomInset && hasContainer()) {
+      if (hasScrollView || hasRecycler) {
+        scrollContent.setPadding(
+            scrollContent.getPaddingLeft(),
+            scrollContent.getPaddingTop(),
+            scrollContent.getPaddingRight(),
+            scrollContentPaddingBottom + addBottomInset + Math.max(navBarInset, imeInset)
+        );
+      } else {
+        containerPaddingBottomExtra += addBottomInset + Math.max(navBarInset, imeInset);
+      }
+    } else if (hasContainer()) {
+      // Add additional bottom inset
+      if (hasScrollView || hasRecycler) {
+        scrollContent.setPadding(
+            scrollContent.getPaddingLeft(),
+            scrollContent.getPaddingTop(),
+            scrollContent.getPaddingRight(),
+            scrollContentPaddingBottom + addBottomInset + imeInset
+        );
+      } else {
+        containerPaddingBottomExtra += addBottomInset + imeInset;
+      }
+    }
+
+    if (hasContainer()) {
+      container.setPadding(
+          containerPaddingLeft + containerPaddingLeftExtra,
+          containerPaddingTop + containerPaddingTopExtra,
+          containerPaddingRight + containerPaddingRightExtra,
+          containerPaddingBottom + containerPaddingBottomExtra
+      );
+    }
+
+    if (hasScrollView && measureScrollContent) {
+      // call viewThreeObserver, this updates the system bar appearance
+      measureScrollView();
+    } else if (measureScrollContent) {
       if (hasRecycler) {
         measureRecyclerView();
       }

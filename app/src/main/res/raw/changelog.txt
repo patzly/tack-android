@@ -1,8 +1,11 @@
-## 5.0.0
+## 5.0.0 🎉
 
-- New: bookmarks replaced by new song library for configuration combinations
+? Song library has arrived! I worked hard to bring you a way to manage different metronome configurations and arrange them for playback. Hope you like it!
+
+- New: bookmarks replaced by new song library for complex configuration combinations
 - New: reset timer with tap on current progress
 - Improved: timer performance and behavior
+- Improved: order of metronome options
 
 ## 4.8.2
 

@@ -26,10 +26,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class PartItemDecoration extends RecyclerView.ItemDecoration {
 
-  private final int horizontalPadding, innerVerticalPadding;
+  private final int innerVerticalPadding;
 
-  public PartItemDecoration(int horizontalPadding, int innerVerticalPadding) {
-    this.horizontalPadding = horizontalPadding;
+  public PartItemDecoration(int innerVerticalPadding) {
     this.innerVerticalPadding = innerVerticalPadding;
   }
 
@@ -38,9 +37,6 @@ public class PartItemDecoration extends RecyclerView.ItemDecoration {
       @NonNull Rect outRect, @NonNull View view,
       @NonNull RecyclerView parent, @NonNull RecyclerView.State state
   ) {
-    outRect.left = horizontalPadding;
-    outRect.right = horizontalPadding;
-
     int position = parent.getChildAdapterPosition(view);
     if (position != 0) {
       outRect.top = innerVerticalPadding;
