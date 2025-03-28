@@ -168,9 +168,9 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           } else {
             activity.getSongViewModel().updateSongAndParts(
                 songResult, partsResult, partsSource, () -> {
-                  // To update looped in metronome
+                  // update looped in metronome
                   getMetronomeUtil().reloadCurrentSong();
-                  // To update shortcut names
+                  // update shortcut names
                   getMetronomeUtil().updateShortcuts();
                 });
           }

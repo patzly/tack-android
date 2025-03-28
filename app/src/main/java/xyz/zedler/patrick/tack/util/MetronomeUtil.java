@@ -502,8 +502,12 @@ public class MetronomeUtil {
       if (!ShortcutUtil.isSupported()) {
         return;
       }
+      shortcutUtil.removeAllShortcuts();
       List<Song> songs = db.songDao().getAllSongs();
       List<Song> filteredSongs = new ArrayList<>(songs);
+      filteredSongs.removeIf(
+          song -> song.getId().equals(Constants.SONG_ID_DEFAULT) || song.getPlayCount() < 1
+      );
       filteredSongs.removeIf(song -> song.getPlayCount() < 1);
       Collections.sort(filteredSongs, Comparator
           .comparingInt(Song::getPlayCount).reversed()
