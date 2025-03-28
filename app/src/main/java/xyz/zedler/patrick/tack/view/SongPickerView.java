@@ -125,11 +125,14 @@ public class SongPickerView extends FrameLayout {
 
     if (songsOrder == SONGS_ORDER.NAME_ASC) {
       if (VERSION.SDK_INT >= VERSION_CODES.N) {
+        Comparator<String> comparator = Comparator.nullsLast(
+            Comparator.comparing(String::toLowerCase, Comparator.naturalOrder())
+        );
         Collections.sort(
             this.songsWithParts,
             Comparator.comparing(
                 o -> o.getSong().getName(),
-                Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER)
+                comparator
             )
         );
       } else {
