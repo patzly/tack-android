@@ -95,6 +95,13 @@ public class SongViewModel extends AndroidViewModel {
     executorService.execute(() -> db.songDao().deleteSong(song));
   }
 
+  public void deleteSong(Song song, @NonNull Runnable runOnDeleted) {
+    executorService.execute(() -> {
+      db.songDao().deleteSong(song);
+      runOnDeleted.run();
+    });
+  }
+
   public void insertPart(Part part) {
     executorService.execute(() -> db.songDao().insertPart(part));
   }

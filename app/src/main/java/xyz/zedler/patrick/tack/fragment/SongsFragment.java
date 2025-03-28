@@ -325,9 +325,10 @@ public class SongsFragment extends BaseFragment {
           songWithParts.getSong().setName(newName);
           nameCountMap.put(newName, 1);
         }
-        activity.getSongViewModel().insertSongsWithParts(
-            songsWithParts, () -> showSnackbar(R.string.msg_restore_success)
-        );
+        activity.getSongViewModel().insertSongsWithParts(songsWithParts, () -> {
+          showSnackbar(R.string.msg_restore_success);
+          activity.getMetronomeUtil().updateShortcuts();
+        });
       } else {
         showSnackbar(R.string.msg_restore_error);
       }

@@ -410,8 +410,10 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         R.string.msg_delete_song_description,
         R.string.action_delete,
         () -> {
-          activity.getSongViewModel().deleteSong(songSource);
-          activity.getSongViewModel().deleteParts(partsSource);
+          activity.getSongViewModel().deleteSong(songSource, () -> {
+            activity.getSongViewModel().deleteParts(partsSource);
+            activity.getMetronomeUtil().updateShortcuts();
+          });
           activity.navigateUp();
         }
     );
