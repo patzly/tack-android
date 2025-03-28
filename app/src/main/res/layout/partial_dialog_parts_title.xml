@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  android:paddingTop="16dp"
+  android:paddingStart="24dp"
+  android:paddingEnd="24dp">
+
+  <TextView
+    android:id="@+id/text_dialog_parts_title"
+    style="@style/Widget.Tack.TextView.HeadlineSmall"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Song"
+    android:singleLine="true"
+    tools:ignore="HardcodedText" />
+
+  <com.google.android.flexbox.FlexboxLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    app:flexWrap="wrap"
+    app:alignItems="center">
+
+    <TextView
+      android:id="@+id/text_dialog_parts_count"
+      style="@style/Widget.Tack.TextView.ListItem.Description"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="3 parts"
+      android:singleLine="true"
+      tools:ignore="HardcodedText" />
+
+    <ImageView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="8dp"
+      android:layout_marginEnd="8dp"
+      android:src="@drawable/shape_text_separator_dot"
+      app:tint="?attr/colorOnSurfaceVariant"
+      tools:ignore="ContentDescription" />
+
+    <TextView
+      android:id="@+id/text_dialog_parts_duration"
+      style="@style/Widget.Tack.TextView.ListItem.Description"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="2:30"
+      android:singleLine="true"
+      tools:ignore="HardcodedText" />
+
+    <ImageView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="8dp"
+      android:layout_marginEnd="8dp"
+      android:src="@drawable/shape_text_separator_dot"
+      app:tint="?attr/colorOnSurfaceVariant"
+      tools:ignore="ContentDescription" />
+
+    <TextView
+      android:id="@+id/text_dialog_parts_looped"
+      style="@style/Widget.Tack.TextView.ListItem.Description"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="@string/label_song_not_looped"
+      android:singleLine="true" />
+
+  </com.google.android.flexbox.FlexboxLayout>
+
+</LinearLayout>

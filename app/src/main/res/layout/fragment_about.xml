@@ -49,18 +49,20 @@
     <androidx.constraintlayout.widget.ConstraintLayout
       android:id="@+id/constraint_about"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:paddingTop="8dp"
-      android:paddingBottom="8dp">
+      android:layout_height="wrap_content">
 
       <LinearLayout
+        android:id="@+id/linear_about_container"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_max="@dimen/max_content_width"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_max="@dimen/max_content_width">
 
         <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine">
 
@@ -148,6 +150,31 @@
             <TextView
               style="@style/Widget.Tack.TextView.ListItem.Description"
               android:text="@string/about_vending_description" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_about_key"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
+
+          <ImageView
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_key"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              android:id="@+id/text_about_key"
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/about_key" />
+
+            <TextView
+              android:id="@+id/text_about_key_description"
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/about_key_description_not_installed" />
 
           </LinearLayout>
 

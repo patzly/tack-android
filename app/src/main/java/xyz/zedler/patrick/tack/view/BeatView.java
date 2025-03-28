@@ -69,7 +69,7 @@ public class BeatView extends FrameLayout {
       R.drawable.ic_beat_pentagon_outlined_anim,
   };
 
-  private static boolean isColorRed(int color) {
+  public static boolean isColorRed(int color) {
     int tolerance = 30;
     int red = Color.red(color);
     int green = Color.green(color);

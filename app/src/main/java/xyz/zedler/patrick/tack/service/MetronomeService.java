@@ -32,6 +32,7 @@ import android.os.Build.VERSION_CODES;
 import android.os.IBinder;
 import android.util.Log;
 import androidx.annotation.Nullable;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
@@ -96,8 +97,12 @@ public class MetronomeService extends Service {
     if (intent != null && intent.getAction() != null) {
       if (intent.getAction().equals(ACTION.START)) {
         metronomeUtil.start();
-      } else if (intent.getAction().equals(ACTION.START_TEMPO)) {
-        metronomeUtil.setTempo(intent.getIntExtra(EXTRA.TEMPO, metronomeUtil.getTempo()));
+      } else if (intent.getAction().equals(ACTION.START_SONG)) {
+        String songId = intent.getStringExtra(EXTRA.SONG_ID);
+        if (songId == null) {
+          songId = Constants.SONG_ID_DEFAULT;
+        }
+        metronomeUtil.setCurrentSong(songId, 0, true);
         metronomeUtil.start();
       } else if (intent.getAction().equals(ACTION.STOP)) {
         metronomeUtil.stop();

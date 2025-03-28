@@ -21,22 +21,37 @@ package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import xyz.zedler.patrick.tack.Constants.PREF;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.database.SongDatabase;
+import xyz.zedler.patrick.tack.database.entity.Part;
+import xyz.zedler.patrick.tack.database.entity.Song;
+import xyz.zedler.patrick.tack.model.MetronomeConfig;
 
 public class PrefsUtil {
 
   private final static String TAG = PrefsUtil.class.getSimpleName();
 
+  private final Context context;
   private final SharedPreferences sharedPrefs;
+  private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
   public PrefsUtil(Context context) {
+    this.context = context;
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
   }
 
@@ -50,13 +65,15 @@ public class PrefsUtil {
   }
 
   private void migrateBookmarks() {
-    if (sharedPrefs.contains(PREF.BOOKMARKS)) {
+    String BOOKMARKS = "bookmarks";
+    if (sharedPrefs.contains(BOOKMARKS)) {
+      // from String to Set<String>
       try {
-        Set<String> bookmarks = sharedPrefs.getStringSet(PREF.BOOKMARKS, Set.of());
+        Set<String> bookmarks = sharedPrefs.getStringSet(BOOKMARKS, Set.of());
       } catch (Exception ignored) {
         SharedPreferences.Editor editor = sharedPrefs.edit();
         try {
-          String prefBookmarks = getSharedPrefs().getString(PREF.BOOKMARKS, "");
+          String prefBookmarks = getSharedPrefs().getString(BOOKMARKS, "");
           List<String> bookmarksArray = Arrays.asList(prefBookmarks.split(","));
           List<Integer> bookmarks = new ArrayList<>(bookmarksArray.size());
           for (String bookmark : bookmarksArray) {
@@ -64,16 +81,43 @@ public class PrefsUtil {
               bookmarks.add(Integer.parseInt(bookmark));
             }
           }
-          editor.remove(PREF.BOOKMARKS);
+          editor.remove(BOOKMARKS);
           Set<String> bookmarksSet = new HashSet<>();
           for (Integer tempo : bookmarks) {
             bookmarksSet.add(String.valueOf(tempo));
           }
-          editor.putStringSet(PREF.BOOKMARKS, bookmarksSet);
+          editor.putStringSet(BOOKMARKS, bookmarksSet);
         } catch (Exception ignore) {
-          editor.remove(PREF.BOOKMARKS);
+          editor.remove(BOOKMARKS);
         }
         editor.apply();
+      }
+
+      // from bookmarks to songs
+      Set<String> bookmarks = sharedPrefs.getStringSet(BOOKMARKS, Set.of());
+      if (!bookmarks.isEmpty()) {
+        sharedPrefs.edit().remove(BOOKMARKS).apply();
+        SongDatabase db = SongDatabase.getInstance(context.getApplicationContext());
+        for (String bookmark : bookmarks) {
+          try {
+            int tempo = Integer.parseInt(bookmark);
+            String songName = context.getString(R.string.label_bpm_value, tempo);
+            Song song = new Song(songName);
+            MetronomeConfig config = new MetronomeConfig();
+            config.setTempo(tempo);
+            Part part = new Part(null, song.getId(), 0, config);
+            executorService.execute(() -> {
+              db.songDao().insertSong(song);
+              db.songDao().insertPart(part);
+            });
+            Log.i(TAG, "migrateBookmarks: added " + song + " for " + bookmark);
+          } catch (NumberFormatException e) {
+            Log.e(TAG, "migrateBookmarks: bookmark to tempo: ", e);
+          }
+        }
+        // Remove deprecated shortcuts
+        ShortcutUtil shortcutUtil = new ShortcutUtil(context);
+        shortcutUtil.removeAllShortcuts();
       }
     }
   }

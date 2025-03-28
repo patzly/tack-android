@@ -39,6 +39,36 @@
       android:id="@+id/action_main_to_about"
       app:destination="@id/aboutFragment" />
 
+    <action
+      android:id="@+id/action_main_to_songs"
+      app:destination="@id/songsFragment" />
+
+  </fragment>
+
+  <fragment
+    android:id="@+id/songsFragment"
+    android:name="xyz.zedler.patrick.tack.fragment.SongsFragment"
+    android:label="fragment_songs"
+    tools:layout="@layout/fragment_songs">
+
+    <action
+      android:id="@+id/action_songs_to_song"
+      app:destination="@id/songFragment" />
+
+  </fragment>
+
+  <fragment
+    android:id="@+id/songFragment"
+    android:name="xyz.zedler.patrick.tack.fragment.SongFragment"
+    android:label="fragment_song"
+    tools:layout="@layout/fragment_song">
+
+    <argument
+      android:name="songId"
+      app:argType="string"
+      app:nullable="true"
+      android:defaultValue="@null" />
+
   </fragment>
 
   <fragment

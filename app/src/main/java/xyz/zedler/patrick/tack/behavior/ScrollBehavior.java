@@ -48,11 +48,13 @@ public class ScrollBehavior {
   private AppBarLayout appBarLayout;
   private NestedScrollView scrollView;
 
-  public void setUpScroll(@NonNull AppBarLayout appBarLayout,
+  public void setUpScroll(
+      @NonNull AppBarLayout appBarLayout,
       NestedScrollView scrollView,
       boolean liftOnScroll,
       boolean noOverScroll,
-      boolean killObserver) {
+      boolean killObserver
+  ) {
     this.appBarLayout = appBarLayout;
     this.scrollView = scrollView;
     this.liftOnScroll = liftOnScroll;

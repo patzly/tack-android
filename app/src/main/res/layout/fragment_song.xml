@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:transitionGroup="true"
+  android:background="?attr/colorSurface">
+
+  <com.google.android.material.appbar.AppBarLayout
+    android:id="@+id/app_bar_song"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+      <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar_song"
+        style="@style/Widget.Tack.Toolbar.Back"
+        app:title="@string/title_song_details"
+        app:navigationIcon="@drawable/ic_rounded_close_anim"
+        app:navigationContentDescription="@string/action_close"
+        app:menu="@menu/menu_song" />
+
+    </FrameLayout>
+
+  </com.google.android.material.appbar.AppBarLayout>
+
+  <androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/constraint_song_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="?attr/actionBarSize">
+
+    <LinearLayout
+      android:id="@+id/linear_song_details"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingTop="12dp"
+      android:orientation="vertical"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent">
+
+      <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/text_input_song_name"
+        style="@style/Widget.Tack.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/label_song_name"
+        app:helperText="@string/label_song_name_help">
+
+        <com.google.android.material.textfield.TextInputEditText
+          android:id="@+id/edit_text_song_name"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:imeOptions="actionDone"
+          android:inputType="textCapSentences"
+          android:singleLine="true" />
+
+      </com.google.android.material.textfield.TextInputLayout>
+
+      <LinearLayout
+        android:id="@+id/linear_song_looped"
+        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable"
+        android:layout_marginTop="8dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="8dp">
+
+        <ImageView
+          style="@style/Widget.Tack.ImageView.ListItem.Icon"
+          android:src="@drawable/ic_rounded_repeat"
+          tools:ignore="ContentDescription" />
+
+        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Title"
+            android:text="@string/label_song_looped" />
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Description"
+            android:text="@string/label_song_looped_description" />
+
+        </LinearLayout>
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+          android:id="@+id/checkbox_song_looped"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content" />
+
+      </LinearLayout>
+
+      <com.google.android.material.divider.MaterialDivider
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        app:dividerInsetStart="16dp"
+        app:dividerInsetEnd="16dp" />
+
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+      android:id="@+id/recycler_song_parts"
+      android:layout_width="match_parent"
+      android:layout_height="0dp"
+      android:paddingTop="16dp"
+      android:paddingBottom="16dp"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp"
+      android:clipToPadding="false"
+      app:layout_constraintTop_toBottomOf="@+id/linear_song_details"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent" />
+
+  </androidx.constraintlayout.widget.ConstraintLayout>
+
+  <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+    android:id="@+id/fab_song"
+    style="@style/Widget.Tack.ExtendedFloatingActionButton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/action_add_part"
+    android:layout_marginBottom="@dimen/controls_bottom_margin_bottom"
+    android:layout_gravity="bottom|center_horizontal"
+    app:icon="@drawable/ic_rounded_add_anim" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -24,6 +24,7 @@ import android.content.DialogInterface.OnMultiChoiceClickListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,6 +37,7 @@ import xyz.zedler.patrick.tack.activity.MainActivity;
 
 public class DialogUtil {
 
+  private static final String TAG = DialogUtil.class.getSimpleName();
   private static final String IS_SHOWING = "is_showing_dialog_";
 
   private final MainActivity activity;
@@ -146,11 +148,28 @@ public class DialogUtil {
     dialog = builder.create();
   }
 
-  public void createCloseCustom(@StringRes int titleResId, @NonNull View view) {
+  public void createCloseCustom(@Nullable String title, @NonNull View view) {
     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
         activity, R.style.ThemeOverlay_Tack_AlertDialog
     );
-    builder.setTitle(titleResId);
+    builder.setTitle(title);
+    builder.setView(view);
+    builder.setPositiveButton(
+        R.string.action_close,
+        (dialog, which) -> activity.performHapticClick()
+    );
+    dialog = builder.create();
+  }
+
+  public void createCloseCustom(@StringRes int titleResId, @NonNull View view) {
+    createCloseCustom(activity.getString(titleResId), view);
+  }
+
+  public void createCloseCustomTitle(@NonNull View titleView, @NonNull View view) {
+    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
+        activity, R.style.ThemeOverlay_Tack_AlertDialog
+    );
+    builder.setCustomTitle(titleView);
     builder.setView(view);
     builder.setPositiveButton(
         R.string.action_close,
@@ -235,13 +254,13 @@ public class DialogUtil {
   }
 
   public void createSingleChoice(
-      @StringRes int titleResId, @NonNull String[] choices,
+      @Nullable String title, @NonNull String[] choices,
       int initial, @NonNull OnClickListener listener
   ) {
     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
         activity, R.style.ThemeOverlay_Tack_AlertDialog
     );
-    builder.setTitle(titleResId);
+    builder.setTitle(title);
     builder.setSingleChoiceItems(choices, initial, listener);
     builder.setPositiveButton(
         R.string.action_close,
@@ -250,9 +269,18 @@ public class DialogUtil {
     dialog = builder.create();
   }
 
+  public void createSingleChoice(
+      @StringRes int titleResId, @NonNull String[] choices,
+      int initial, @NonNull OnClickListener listener
+  ) {
+    createSingleChoice(activity.getString(titleResId), choices, initial, listener);
+  }
+
   public void show() {
     if (dialog != null && !dialog.isShowing()) {
       dialog.show();
+    } else if (dialog == null) {
+      Log.e(TAG, "show: dialog for " + tag + " not created before showing");
     }
   }
 
@@ -274,6 +302,18 @@ public class DialogUtil {
   public void dismiss() {
     if (dialog != null && dialog.isShowing()) {
       dialog.dismiss();
+    }
+  }
+
+  public void setTitle(@Nullable String title) {
+    if (dialog != null) {
+      dialog.setTitle(title);
+    }
+  }
+
+  public void setTitle(@StringRes int titleResId) {
+    if (dialog != null) {
+      dialog.setTitle(titleResId);
     }
   }
 

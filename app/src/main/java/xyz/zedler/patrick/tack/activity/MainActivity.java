@@ -43,6 +43,7 @@ import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
@@ -69,6 +70,7 @@ import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.PrefsUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
+import xyz.zedler.patrick.tack.viewmodel.SongViewModel;
 
 public class MainActivity extends AppCompatActivity implements ServiceConnection {
 
@@ -83,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   private Locale locale;
   private Intent metronomeIntent;
   private MetronomeService metronomeService;
+  private SongViewModel songViewModel;
   private boolean runAsSuperClass, bound, stopServiceWithActivity, startMetronomeAfterPermission;
   private ActivityResultLauncher<String> requestPermissionLauncher;
 
@@ -135,6 +138,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
     hapticUtil = new HapticUtil(this);
     metronomeUtil = new MetronomeUtil(this, false);
+
+    songViewModel = new ViewModelProvider(this).get(SongViewModel.class);
 
     locale = LocaleUtil.getLocale();
 
@@ -305,6 +310,10 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     }
     getMetronomeUtil().addListeners(listeners);
     getMetronomeUtil().setToPreferences();
+  }
+
+  public SongViewModel getSongViewModel() {
+    return songViewModel;
   }
 
   public void requestNotificationPermission(boolean startMetronome) {

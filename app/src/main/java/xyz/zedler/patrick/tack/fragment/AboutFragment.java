@@ -34,6 +34,8 @@ import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentAboutBinding;
 import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.UiUtil;
+import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class AboutFragment extends BaseFragment implements OnClickListener {
@@ -61,7 +63,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
 
     SystemBarBehavior systemBarBehavior = new SystemBarBehavior(activity);
     systemBarBehavior.setAppBar(binding.appBarAbout);
-    systemBarBehavior.setScroll(binding.scrollAbout, binding.constraintAbout);
+    systemBarBehavior.setScroll(binding.scrollAbout, binding.linearAboutContainer);
     systemBarBehavior.setUp();
 
     new ScrollBehavior().setUpScroll(binding.appBarAbout, binding.scrollAbout, true);
@@ -84,11 +86,21 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
       return true;
     });
 
+    binding.linearAboutKey.setVisibility(
+        UnlockUtil.isPlayStoreInstalled(activity) ? View.VISIBLE : View.GONE
+    );
+    binding.textAboutKeyDescription.setText(
+        UnlockUtil.isKeyInstalled(activity)
+            ? R.string.about_key_description_installed
+            : R.string.about_key_description_not_installed
+    );
+
     ViewUtil.setOnClickListeners(
         this,
         binding.linearAboutDeveloper,
         binding.linearAboutChangelog,
         binding.linearAboutVending,
+        binding.linearAboutKey,
         binding.linearAboutGithub,
         binding.linearAboutTranslation,
         binding.linearAboutPrivacy,
@@ -114,6 +126,8 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
       activity.showChangelogBottomSheet();
     } else if (id == R.id.linear_about_vending) {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_vending_dev))));
+    } else if (id == R.id.linear_about_key) {
+      UnlockUtil.openPlayStore(activity);
     } else if (id == R.id.linear_about_github) {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_github))));
     } else if (id == R.id.linear_about_translation) {

@@ -20,8 +20,6 @@
 
 <resources>
 
-  <dimen name="timer_font_size">20sp</dimen>
-
   <dimen name="bpm_picker_size">220dp</dimen>
   <dimen name="bpm_text_size">64dp</dimen>
   <dimen name="label_text_size">27dp</dimen>

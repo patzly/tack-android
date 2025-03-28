@@ -6,6 +6,10 @@ navigation = "2.8.9"
 preference = "1.2.1"
 shapes = "1.0.1"
 material = "1.13.0-alpha12"
+recyclerview = "1.4.0"
+flexbox = "3.0.0"
+gson = "2.12.1"
+room = "2.7.0-rc03"
 kotlin = "2.1.10"
 lifecycle = "2.8.7"
 splashscreen = "1.1.0-rc01"
@@ -27,6 +31,11 @@ navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version
 preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
 shapes = { group = "androidx.graphics", name = "graphics-shapes", version.ref = "shapes" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
+room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 # wear
 wear-tooling = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wear-tooling" }
 wear-ongoing = { group = "androidx.wear", name = "wear-ongoing", version.ref = "wear-ongoing" }
