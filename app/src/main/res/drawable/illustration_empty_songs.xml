@@ -31,7 +31,7 @@
     android:fillColor="?attr/colorPrimary" />
   <path
     android:pathData="M30,31h15v3h-15z"
-    android:fillColor="?attr/colorSecondaryContainer" />
+    android:fillColor="?attr/colorTertiaryContainer" />
   <path
     android:pathData="M7,36l-0,-13l2,-0l0,13z"
     android:fillColor="?attr/colorPrimaryContainer" />
@@ -40,7 +40,7 @@
     android:fillColor="?attr/colorTertiary" />
   <path
     android:pathData="M11.926,36l-0,-12l2.074,-0l0,12z"
-    android:fillColor="?attr/colorPrimaryContainer" />
+    android:fillColor="?attr/colorSecondaryContainer" />
   <path
     android:pathData="M13.963,36l-0,-15l3.037,-0l0,15z"
     android:fillColor="?attr/colorSecondary" />
