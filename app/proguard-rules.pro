@@ -28,3 +28,7 @@
     native <methods>;
 }
 -keepattributes InnerClasses,Signature,SourceFile,LineNumberTable
+
+# Application classes that will be serialized/deserialized over Gson
+-keep class xyz.zedler.patrick.tack.database.entity.** { *; }
+-keep class xyz.zedler.patrick.tack.database.relations.** { *; }
