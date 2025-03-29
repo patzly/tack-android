@@ -32,13 +32,14 @@
   <string name="title_metronome">Metronom</string>
   <string name="title_controls">Bedienelemente</string>
   <string name="title_logcat">Fehlerprotokoll</string>
-
+  <string name="title_songs">Liedersammlung</string>
   <!-- LABELS -->
 
   <string name="label_bpm_value">%1$d bpm</string>
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$s ms</string>
   <string name="label_db">+%1$d dB</string>
+  <string name="label_tempo">Tempo</string>
   <string name="label_tempo_largo">Largo</string>
   <string name="label_tempo_larghetto">Larghetto</string>
   <string name="label_tempo_adagio">Adagio</string>
@@ -48,7 +49,13 @@
   <string name="label_tempo_presto">Presto</string>
   <string name="label_tempo_prestissimo">Prestissimo</string>
   <string name="label_tempo_input_help">Werte von %1$d bis %2$d</string>
-
+  <string name="label_part_name">Name des Teils</string>
+  <string name="label_part_unnamed">Teil %1$d</string>
+  <string name="label_part_no_duration">Keine Dauer</string>
+  <plurals name="label_parts_count">
+    <item quantity="one">%1$d Teil</item>
+    <item quantity="other">%1$d Teile</item>
+  </plurals>
   <!-- ACTIONS -->
 
   <string name="action_back">Zurück</string>
@@ -64,9 +71,7 @@
   <string name="action_remove_beat">Schlag entfernen</string>
   <string name="action_add_sub">Unterteilung hinzufügen</string>
   <string name="action_remove_sub">Unterteilung entfernen</string>
-  <string name="action_clear_all">Alle entfernen</string>
   <string name="action_tempo_tap">Tempo tippen</string>
-  <string name="action_bookmark">Lesezeichen hinzufügen</string>
   <string name="action_beat_mode">Schlagmodus</string>
   <string name="action_send_feedback">Rückmeldung senden</string>
   <string name="action_open_link">Externe Internetseite öffnen</string>
@@ -85,10 +90,9 @@
   <string name="action_copy_to_clipboard">Kopieren</string>
   <string name="action_reload">Neu laden</string>
   <string name="action_change_tempo">Tempo ändern</string>
-
+  <string name="action_delete">Löschen</string>
   <!-- MESSAGES -->
 
-  <string name="msg_bookmarks_max">Lesezeichen-Limit erreicht</string>
   <string name="msg_feedback">Eine großartige App benötigt viel Zeit und lebt von der Rückmeldungen ihrer Nutzer.</string>
   <string name="msg_feedback_contact">Hast du Wünsche, Anmerkungen oder Fragen? Kontaktiere mich!\nAnsonsten würde ich mich sehr über eine nette Bewertung im Play Store freuen.</string>
   <string name="msg_recommend">Schau dir mal diese coole Metronom-App an: \n%1$s</string>
@@ -109,7 +113,6 @@
   <string name="msg_report_crash">Bitte melden Sie jeden Absturz mit dem angehängten Fehlerprotokoll, damit ich versuchen kann, ihn zu beheben.</string>
   <string name="msg_copied_to_clipboard">Erfolgreich in Zwischenablage kopiert</string>
   <string name="msg_invalid_input">Ungültige Eingabe</string>
-
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Takte</string>
