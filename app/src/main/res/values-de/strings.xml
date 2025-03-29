@@ -316,6 +316,7 @@
   <string name="about_changelog_description">Neu in dieser Version</string>
   <string name="about_developer">Entwickler</string>
   <string name="about_vending_description">Mehr Apps des Entwicklers</string>
+  <string name="about_key_description_not_installed">Nicht installiert</string>
   <string name="about_github_description">Quellcode</string>
   <string name="about_translation_description">Hilf mit, Tack zu übersetzen</string>
   <string name="about_privacy">Informationen zum Datenschutz</string>
