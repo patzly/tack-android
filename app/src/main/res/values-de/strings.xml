@@ -58,6 +58,7 @@
   </plurals>
   <string name="label_song_looped">Dauerschleife</string>
   <string name="label_sort_name">Name</string>
+  <string name="label_sort_last_played">Zuletzt abgespielt</string>
   <!-- ACTIONS -->
 
   <string name="action_back">Zurück</string>
