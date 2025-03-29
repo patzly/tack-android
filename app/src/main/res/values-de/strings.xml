@@ -57,6 +57,7 @@
     <item quantity="other">%1$d Teile</item>
   </plurals>
   <string name="label_song_looped">Dauerschleife</string>
+  <string name="label_sort_name">Name</string>
   <!-- ACTIONS -->
 
   <string name="action_back">Zurück</string>
