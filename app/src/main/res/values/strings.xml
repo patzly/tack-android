@@ -86,7 +86,6 @@
   <string name="label_song_name">Song name</string>
   <string name="label_song_name_help">Name must be unique</string>
   <string name="label_song_name_used">Name already used</string>
-  <string name="label_song_parts">Parts (%1$d)</string>
 
   <!-- ACTIONS -->
 
