@@ -262,17 +262,17 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
   public interface OnPartMenuItemClickListener {
     void onMenuItemClick(@NonNull Part part, @NonNull MenuItem item);
   }
-}
 
-class PartDiffCallback extends DiffUtil.ItemCallback<Part> {
+  static class PartDiffCallback extends DiffUtil.ItemCallback<Part> {
 
-  @Override
-  public boolean areItemsTheSame(@NonNull Part oldItem, @NonNull Part newItem) {
-    return oldItem.getId().equals(newItem.getId());
-  }
+    @Override
+    public boolean areItemsTheSame(@NonNull Part oldItem, @NonNull Part newItem) {
+      return oldItem.getId().equals(newItem.getId());
+    }
 
-  @Override
-  public boolean areContentsTheSame(@NonNull Part oldItem, @NonNull Part newItem) {
-    return oldItem.equals(newItem);
+    @Override
+    public boolean areContentsTheSame(@NonNull Part oldItem, @NonNull Part newItem) {
+      return oldItem.equals(newItem);
+    }
   }
 }

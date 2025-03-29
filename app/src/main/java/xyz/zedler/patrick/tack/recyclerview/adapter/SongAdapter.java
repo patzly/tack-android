@@ -169,21 +169,21 @@ public class SongAdapter extends ListAdapter<SongWithParts, ViewHolder> {
   public interface OnSongClickListener {
     void onSongClick(@NonNull SongWithParts song);
   }
-}
 
-class SongDiffCallback extends DiffUtil.ItemCallback<SongWithParts> {
+  static class SongDiffCallback extends DiffUtil.ItemCallback<SongWithParts> {
 
-  @Override
-  public boolean areItemsTheSame(
-      @NonNull SongWithParts oldItem, @NonNull SongWithParts newItem
-  ) {
-    return oldItem.getSong().getId().equals(newItem.getSong().getId());
-  }
+    @Override
+    public boolean areItemsTheSame(
+        @NonNull SongWithParts oldItem, @NonNull SongWithParts newItem
+    ) {
+      return oldItem.getSong().getId().equals(newItem.getSong().getId());
+    }
 
-  @Override
-  public boolean areContentsTheSame(
-      @NonNull SongWithParts oldItem, @NonNull SongWithParts newItem
-  ) {
-    return oldItem.equals(newItem);
+    @Override
+    public boolean areContentsTheSame(
+        @NonNull SongWithParts oldItem, @NonNull SongWithParts newItem
+    ) {
+      return oldItem.equals(newItem);
+    }
   }
 }

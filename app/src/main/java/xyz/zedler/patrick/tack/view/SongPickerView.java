@@ -46,6 +46,7 @@ import androidx.core.graphics.ColorUtils;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -129,14 +130,14 @@ public class SongPickerView extends FrameLayout {
             Comparator.comparing(String::toLowerCase, Comparator.naturalOrder())
         );
         Collections.sort(
-            this.songsWithParts,
+            songsWithParts,
             Comparator.comparing(
                 o -> o.getSong().getName(),
                 comparator
             )
         );
       } else {
-        Collections.sort(this.songsWithParts, (o1, o2) -> {
+        Collections.sort(songsWithParts, (o1, o2) -> {
           String name1 = (o1.getSong() != null) ? o1.getSong().getName() : null;
           String name2 = (o2.getSong() != null) ? o2.getSong().getName() : null;
           // Nulls last handling
@@ -148,20 +149,20 @@ public class SongPickerView extends FrameLayout {
       }
     } else if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
       Collections.sort(
-          this.songsWithParts,
+          songsWithParts,
           (s1, s2) -> Long.compare(
               s2.getSong().getLastPlayed(), s1.getSong().getLastPlayed()
           )
       );
     } else if (songsOrder == SONGS_ORDER.MOST_PLAYED_ASC) {
       Collections.sort(
-          this.songsWithParts,
+          songsWithParts,
           (s1, s2) -> Integer.compare(
               s2.getSong().getPlayCount(), s1.getSong().getPlayCount()
           )
       );
     }
-    adapter.setSongs(this.songsWithParts);
+    adapter.submitList(songsWithParts);
 
     maybeCenterSongChips();
   }
@@ -372,16 +373,16 @@ public class SongPickerView extends FrameLayout {
           @Override
           public void onGlobalLayout() {
             RecyclerView recyclerView = binding.recyclerSongPicker;
-            if (recyclerView.getAdapter() != null && recyclerView.getChildCount() > 0) {
+            SongChipAdapter adapter = (SongChipAdapter) recyclerView.getAdapter();
+            int itemCount = adapter != null ? adapter.getItemCount() : 0;
+            if (adapter != null && itemCount > 0) {
               int totalWidth = 0;
-              for (int i = 0; i < recyclerView.getChildCount(); i++) {
+              for (int i = 0; i < itemCount; i++) {
                 View child = recyclerView.getChildAt(i);
                 totalWidth += child.getWidth();
               }
-              if (recyclerView.getChildCount() > 0) {
-                totalWidth += innerPadding * 2 * (recyclerView.getChildCount() - 1);
-                totalWidth += outerPadding * 2;
-              }
+              totalWidth += innerPadding * 2 * (itemCount - 1);
+              totalWidth += outerPadding * 2;
               int containerWidth = recyclerView.getWidth();
               boolean shouldCenter = totalWidth < containerWidth;
               if (shouldCenter) {

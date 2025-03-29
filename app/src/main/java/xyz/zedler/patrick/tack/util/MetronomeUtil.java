@@ -486,7 +486,8 @@ public class MetronomeUtil {
 
   private void updateLastPlayedAndPlayCount() {
     executorService.execute(() -> {
-      if (currentSongWithParts != null) {
+      if (currentSongWithParts != null && !currentSongId.equals(Constants.SONG_ID_DEFAULT)) {
+        // update last played and play count except for default song
         Song currentSong = currentSongWithParts.getSong();
         currentSong.setLastPlayed(System.currentTimeMillis());
         currentSong.incrementPlayCount();
