@@ -62,6 +62,10 @@
   <string name="label_sort_last_played_date">Zuletzt abgespielt am %1$s</string>
   <string name="label_sort_never_played">Nie abgespielt</string>
   <string name="label_sort_most_played">Meist abgespielt</string>
+  <plurals name="label_sort_most_played_times">
+    <item quantity="one">%1$d mal abgespielt</item>
+    <item quantity="other">%1$d mal abgespielt</item>
+  </plurals>
   <!-- ACTIONS -->
 
   <string name="action_back">Zurück</string>
