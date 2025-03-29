@@ -32,7 +32,7 @@
   <string name="title_metronome">Metronom</string>
   <string name="title_controls">Bedienelemente</string>
   <string name="title_logcat">Fehlerprotokoll</string>
-  <string name="title_songs">Liedersammlung</string>
+  <string name="title_songs">Werksammlung</string>
   <!-- LABELS -->
 
   <string name="label_bpm_value">%1$d bpm</string>
