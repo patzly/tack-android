@@ -127,7 +127,7 @@
   <string name="action_save">Save</string>
   <string name="action_discard">Discard</string>
   <string name="action_rename">Rename</string>
-  <string name="action_rename_part">Change part name</string>
+  <string name="action_rename_part">Rename part</string>
   <string name="action_update">Update</string>
   <string name="action_delete">Delete</string>
   <string name="action_move_up">Move up</string>
