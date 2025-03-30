@@ -416,6 +416,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       builder.setPositiveButton(R.string.action_delete, (dialog, which) -> {
         performHapticClick();
         if (songSource == null) {
+          Log.e(TAG, "onViewCreated: songSource annot be null");
           return;
         } else if (songSource.getId().equals(getMetronomeUtil().getCurrentSongId())) {
           // if current song is deleted, change to default
