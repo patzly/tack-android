@@ -120,6 +120,8 @@
   <string name="action_move_down">Nach unten verschieben</string>
   <string name="action_open_play_store">Play Store öffnen</string>
   <string name="action_backup">Sichern</string>
+  <string name="action_restore">Wiederherstellen</string>
+
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Eine großartige App benötigt viel Zeit und lebt von der Rückmeldungen ihrer Nutzer.</string>
