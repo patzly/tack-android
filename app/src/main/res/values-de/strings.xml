@@ -51,7 +51,7 @@
   <string name="label_tempo_presto">Presto</string>
   <string name="label_tempo_prestissimo">Prestissimo</string>
   <string name="label_tempo_input_help">Werte von %1$d bis %2$d</string>
-  <string name="label_part_name">Name des Teils</string>
+  <string name="label_part_name">Teilname</string>
   <string name="label_part_unnamed">Teil %1$d</string>
   <string name="label_part_no_duration">Keine Dauer</string>
   <plurals name="label_parts_count">
