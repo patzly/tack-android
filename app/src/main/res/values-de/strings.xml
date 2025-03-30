@@ -58,7 +58,7 @@
     <item quantity="one">%1$d Teil</item>
     <item quantity="other">%1$d Teile</item>
   </plurals>
-  <string name="label_song_looped">Endlosschleife</string>
+  <string name="label_song_looped">Dauerschleife</string>
   <string name="label_song_looped_description">Werk am Ende neustarten</string>
   <string name="label_song_not_looped">Einmalig</string>
   <string name="label_sort_name">Name</string>
