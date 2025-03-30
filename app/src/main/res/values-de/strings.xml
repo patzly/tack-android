@@ -59,7 +59,7 @@
     <item quantity="other">%1$d Teile</item>
   </plurals>
   <string name="label_song_looped">Wiederholen</string>
-  <string name="label_song_looped_description">Werk am Ende erneut starten</string>
+  <string name="label_song_looped_description">Werk am Ende neustarten</string>
   <string name="label_sort_name">Name</string>
   <string name="label_sort_last_played">Zuletzt abgespielt</string>
   <string name="label_sort_last_played_date">Zuletzt abgespielt am %1$s</string>
