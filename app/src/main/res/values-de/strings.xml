@@ -136,6 +136,7 @@
   <string name="msg_report_crash">Bitte melden Sie jeden Absturz mit dem angehängten Fehlerprotokoll, damit ich versuchen kann, ihn zu beheben.</string>
   <string name="msg_copied_to_clipboard">Erfolgreich in Zwischenablage kopiert</string>
   <string name="msg_invalid_input">Ungültige Eingabe</string>
+  <string name="msg_discard_changes">Änderungen verwerfen?</string>
   <string name="msg_delete_song">Werk löschen?</string>
   <string name="msg_songs_empty">Leere Werksammlung</string>
   <string name="msg_songs_empty_description">Füge Werke hinzu, die du üben möchtest</string>
