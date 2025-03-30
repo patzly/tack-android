@@ -109,6 +109,7 @@
   <string name="action_change_tempo">Tempo ändern</string>
   <string name="action_add_song">Werk hinzufügen</string>
   <string name="action_sort_by">Sortieren nach</string>
+  <string name="action_add_part">Teil hinzufügen</string>
   <string name="action_delete">Löschen</string>
   <!-- MESSAGES -->
 
