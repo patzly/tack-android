@@ -19,20 +19,15 @@
 
 package xyz.zedler.patrick.tack.util;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.databinding.PartialDialogPartRenameBinding;
-import xyz.zedler.patrick.tack.databinding.PartialDialogTempoBinding;
-import xyz.zedler.patrick.tack.fragment.MainFragment;
 import xyz.zedler.patrick.tack.fragment.SongFragment;
 
 public class RenameDialogUtil {
@@ -65,9 +60,16 @@ public class RenameDialogUtil {
     });
 
     dialogUtil = new DialogUtil(activity, "part_rename");
-    dialogUtil.createApplyCustom(R.string.action_rename_part, binding.getRoot(), () -> {
-      activity.performHapticClick();
-      rename();
+    dialogUtil.createDialog(builder -> {
+      builder.setTitle(R.string.action_rename_part);
+      builder.setView(binding.getRoot());
+      builder.setPositiveButton(R.string.action_rename, (dialog, which) -> {
+        activity.performHapticClick();
+        rename();
+      });
+      builder.setNegativeButton(
+          R.string.action_cancel, (dialog, which) -> activity.performHapticClick()
+      );
     });
   }
 

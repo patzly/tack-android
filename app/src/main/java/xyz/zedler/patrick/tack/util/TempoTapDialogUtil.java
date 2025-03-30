@@ -29,7 +29,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import java.util.LinkedList;
 import java.util.Queue;
-import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.PartialDialogTempoTapBinding;
@@ -84,7 +83,13 @@ public class TempoTapDialogUtil {
       return false;
     });
 
-    dialogUtil.createCloseCustom(R.string.action_tempo_tap, binding.getRoot());
+    dialogUtil.createDialog(builder -> {
+      builder.setTitle(R.string.action_tempo_tap);
+      builder.setView(binding.getRoot());
+      builder.setPositiveButton(
+          R.string.action_close, (dialog, which) -> activity.performHapticClick()
+      );
+    });
   }
 
   public void show() {

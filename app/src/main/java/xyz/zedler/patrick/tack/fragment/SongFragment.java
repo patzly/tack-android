@@ -29,7 +29,6 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLayoutChangeListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
@@ -38,7 +37,6 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsAnimationCompat;
 import androidx.core.view.WindowInsetsAnimationCompat.BoundsCompat;
@@ -396,36 +394,51 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     );
 
     dialogUtilDiscard = new DialogUtil(activity, "discard_changes");
-    dialogUtilDiscard.createCaution(
-        R.string.msg_discard_changes,
-        R.string.msg_discard_changes_description,
-        R.string.action_discard,
-        () -> activity.navigateUp()
-    );
+    dialogUtilDiscard.createDialogError(builder -> {
+      builder.setTitle(R.string.action_discard);
+      builder.setMessage(R.string.msg_discard_changes_description);
+      builder.setPositiveButton(R.string.action_discard, (dialog, which) -> {
+        performHapticClick();
+        activity.navigateUp();
+      });
+      builder.setNegativeButton(
+          R.string.action_cancel, (dialog, which) -> performHapticClick()
+      );
+    });
     dialogUtilDiscard.showIfWasShown(savedInstanceState);
 
     dialogUtilDelete = new DialogUtil(activity, "delete");
-    dialogUtilDelete.createCaution(
-        R.string.msg_delete_song,
-        R.string.msg_delete_song_description,
-        R.string.action_delete,
-        () -> {
-          activity.getSongViewModel().deleteSong(songSource, () -> {
-            activity.getSongViewModel().deleteParts(partsSource);
-            activity.getMetronomeUtil().updateShortcuts();
-          });
-          activity.navigateUp();
-        }
-    );
+    dialogUtilDelete.createDialogError(builder -> {
+      builder.setTitle(R.string.msg_delete_song);
+      builder.setMessage(R.string.msg_delete_song_description);
+      builder.setPositiveButton(R.string.action_delete, (dialog, which) -> {
+        performHapticClick();
+        activity.getSongViewModel().deleteSong(songSource, () -> {
+          activity.getSongViewModel().deleteParts(partsSource);
+          activity.getMetronomeUtil().updateShortcuts();
+        });
+        activity.navigateUp();
+      });
+      builder.setNegativeButton(
+          R.string.action_cancel, (dialog, which) -> performHapticClick()
+      );
+    });
     dialogUtilDelete.showIfWasShown(savedInstanceState);
 
     dialogUtilUnlock = new DialogUtil(activity, "unlock_parts");
-    dialogUtilUnlock.createAction(
-        R.string.msg_unlock,
-        R.string.msg_unlock_description,
-        R.string.action_open_play_store,
-        () -> UnlockUtil.openPlayStore(activity)
-    );
+    dialogUtilUnlock.createDialog(builder -> {
+      builder.setTitle(R.string.msg_unlock);
+      builder.setMessage(R.string.msg_unlock_description);
+      builder.setPositiveButton(
+          R.string.action_open_play_store,
+          (dialog, which) -> {
+            performHapticClick();
+            UnlockUtil.openPlayStore(activity);
+          });
+      builder.setNegativeButton(
+          R.string.action_cancel, (dialog, which) -> performHapticClick()
+      );
+    });
     dialogUtilUnlock.showIfWasShown(savedInstanceState);
 
     renameDialogUtil = new RenameDialogUtil(activity, this);
@@ -466,6 +479,9 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       binding.checkboxSongLooped.toggle();
     } else if (id == R.id.fab_song) {
       performHapticClick();
+      // Remove focus from edit text
+      UiUtil.hideKeyboard(activity);
+      binding.editTextSongName.clearFocus();
       if (UnlockUtil.isUnlocked(activity) || partsResult.size() < 2) {
         addPart();
         updateResult();
@@ -480,6 +496,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     int id = buttonView.getId();
     if (id == R.id.checkbox_song_looped) {
       performHapticClick();
+      // Remove focus from edit text
       UiUtil.hideKeyboard(activity);
       binding.editTextSongName.clearFocus();
       updateResult();

@@ -190,12 +190,19 @@ public class SongsFragment extends BaseFragment {
     );
 
     dialogUtilUnlock = new DialogUtil(activity, "unlock_songs");
-    dialogUtilUnlock.createAction(
-        R.string.msg_unlock,
-        R.string.msg_unlock_description,
-        R.string.action_open_play_store,
-        () -> UnlockUtil.openPlayStore(activity)
-    );
+    dialogUtilUnlock.createDialog(builder -> {
+      builder.setTitle(R.string.msg_unlock);
+      builder.setMessage(R.string.msg_unlock_description);
+      builder.setPositiveButton(
+          R.string.action_open_play_store,
+          (dialog, which) -> {
+            performHapticClick();
+            UnlockUtil.openPlayStore(activity);
+          });
+      builder.setNegativeButton(
+          R.string.action_cancel, (dialog, which) -> performHapticClick()
+      );
+    });
     dialogUtilUnlock.showIfWasShown(savedInstanceState);
 
     binding.fabSongs.setOnClickListener(v -> {

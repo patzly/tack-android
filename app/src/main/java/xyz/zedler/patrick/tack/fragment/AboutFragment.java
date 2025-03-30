@@ -33,8 +33,8 @@ import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentAboutBinding;
+import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
@@ -42,6 +42,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
 
   private FragmentAboutBinding binding;
   private MainActivity activity;
+  private DialogUtil dialogUtilUnlock;
 
   @Override
   public View onCreateView(
@@ -54,6 +55,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
   @Override
   public void onDestroyView() {
     super.onDestroyView();
+    dialogUtilUnlock.dismiss();
     binding = null;
   }
 
@@ -95,6 +97,22 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
             : R.string.about_key_description_not_installed
     );
 
+    dialogUtilUnlock = new DialogUtil(activity, "unlock_parts");
+    dialogUtilUnlock.createDialog(builder -> {
+      builder.setTitle(R.string.msg_unlock);
+      builder.setMessage(R.string.msg_unlock_description);
+      builder.setPositiveButton(
+          R.string.action_open_play_store,
+          (dialog, which) -> {
+            performHapticClick();
+            UnlockUtil.openPlayStore(activity);
+          });
+      builder.setNegativeButton(
+          R.string.action_cancel, (dialog, which) -> performHapticClick()
+      );
+    });
+    dialogUtilUnlock.showIfWasShown(savedInstanceState);
+
     ViewUtil.setOnClickListeners(
         this,
         binding.linearAboutDeveloper,
@@ -108,6 +126,14 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
         binding.linearAboutLicenseMaterialComponents,
         binding.linearAboutLicenseMaterialIcons
     );
+  }
+
+  @Override
+  public void onSaveInstanceState(@NonNull Bundle outState) {
+    super.onSaveInstanceState(outState);
+    if (dialogUtilUnlock != null) {
+      dialogUtilUnlock.saveState(outState);
+    }
   }
 
   @Override
@@ -127,7 +153,11 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     } else if (id == R.id.linear_about_vending) {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_vending_dev))));
     } else if (id == R.id.linear_about_key) {
-      UnlockUtil.openPlayStore(activity);
+      if (UnlockUtil.isKeyInstalled(activity)) {
+        UnlockUtil.openPlayStore(activity);
+      } else {
+        dialogUtilUnlock.show();
+      }
     } else if (id == R.id.linear_about_github) {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_github))));
     } else if (id == R.id.linear_about_translation) {

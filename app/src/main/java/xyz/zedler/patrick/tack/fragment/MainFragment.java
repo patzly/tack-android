@@ -31,7 +31,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -65,7 +64,6 @@ import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
-import xyz.zedler.patrick.tack.database.entity.Song;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.FragmentMainBinding;
 import xyz.zedler.patrick.tack.drawable.BeatsBgDrawable;
@@ -240,22 +238,31 @@ public class MainFragment extends BaseFragment
     updateSubs(getSharedPrefs().getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(","));
 
     dialogUtilGain = new DialogUtil(activity, "gain");
-    dialogUtilGain.createCaution(
-        R.string.msg_gain,
-        R.string.msg_gain_description,
-        R.string.action_play,
-        () -> getMetronomeUtil().start(),
-        R.string.action_deactivate_gain,
-        () -> {
-          getMetronomeUtil().setGain(0);
-          getMetronomeUtil().start();
-        });
+    dialogUtilGain.createDialogError(builder -> {
+      builder.setTitle(R.string.msg_gain);
+      builder.setMessage(R.string.msg_gain_description);
+      builder.setPositiveButton(R.string.action_play, (dialog, which) -> {
+        performHapticClick();
+        getMetronomeUtil().start();
+      });
+      builder.setNegativeButton(
+          R.string.action_deactivate_gain,
+          (dialog, which) -> {
+            performHapticClick();
+            getMetronomeUtil().setGain(0);
+            getMetronomeUtil().start();
+          });
+    });
     dialogUtilGain.showIfWasShown(savedInstanceState);
 
     dialogUtilSplitScreen = new DialogUtil(activity, "split_screen");
-    dialogUtilSplitScreen.createClose(
-        R.string.msg_split_screen, R.string.msg_split_screen_description
-    );
+    dialogUtilSplitScreen.createDialog(builder -> {
+      builder.setTitle(R.string.msg_split_screen);
+      builder.setMessage(R.string.msg_split_screen_description);
+      builder.setPositiveButton(
+          R.string.action_close, (dialog, which) -> performHapticClick()
+      );
+    });
     int screenWidthDp = UiUtil.dpFromPx(activity, UiUtil.getDisplayWidth(activity));
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
       boolean isMultiWindow = activity.isInMultiWindowMode();
@@ -268,21 +275,31 @@ public class MainFragment extends BaseFragment
     }
 
     dialogUtilTimer = new DialogUtil(activity, "timer_reset");
-    dialogUtilTimer.createAction(
-        R.string.msg_reset_timer,
-        R.string.msg_reset_timer_description,
-        R.string.action_reset,
-        () -> getMetronomeUtil().resetTimerNow()
-    );
+    dialogUtilTimer.createDialog(builder -> {
+      builder.setTitle(R.string.msg_reset_timer);
+      builder.setMessage(R.string.msg_reset_timer_description);
+      builder.setPositiveButton(R.string.action_reset, (dialog, which) -> {
+        performHapticClick();
+        getMetronomeUtil().resetTimerNow();
+      });
+      builder.setNegativeButton(
+          R.string.action_cancel, (dialog, which) -> performHapticClick()
+      );
+    });
     dialogUtilTimer.showIfWasShown(savedInstanceState);
 
     dialogUtilElapsed = new DialogUtil(activity, "elapsed_reset");
-    dialogUtilElapsed.createAction(
-        R.string.msg_reset_elapsed,
-        R.string.msg_reset_elapsed_description,
-        R.string.action_reset,
-        () -> getMetronomeUtil().resetElapsed()
-    );
+    dialogUtilElapsed.createDialog(builder -> {
+      builder.setTitle(R.string.msg_reset_elapsed);
+      builder.setMessage(R.string.msg_reset_elapsed_description);
+      builder.setPositiveButton(R.string.action_reset, (dialog, which) -> {
+        performHapticClick();
+        getMetronomeUtil().resetElapsed();
+      });
+      builder.setNegativeButton(
+          R.string.action_cancel, (dialog, which) -> performHapticClick()
+      );
+    });
     dialogUtilElapsed.showIfWasShown(savedInstanceState);
 
     tempoDialogUtil = new TempoDialogUtil(activity, this);

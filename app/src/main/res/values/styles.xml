@@ -37,9 +37,9 @@
     <item name="android:scrollbarThumbVertical">@drawable/shape_scrollbar_rounded</item>
   </style>
 
-  <style name="ThemeOverlay.Tack.AlertDialog.Caution" parent="ThemeOverlay.Tack.AlertDialog">
-    <item name="buttonBarPositiveButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog.Caution</item>
-    <item name="buttonBarNegativeButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog.Caution</item>
+  <style name="ThemeOverlay.Tack.AlertDialog.Error" parent="ThemeOverlay.Tack.AlertDialog">
+    <item name="buttonBarPositiveButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog.Error</item>
+    <item name="buttonBarNegativeButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog.Error</item>
     <item name="buttonBarNeutralButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog</item>
   </style>
 
@@ -171,7 +171,7 @@
   </style>
 
   <style
-    name="Widget.Tack.Button.TextButton.Dialog.Caution"
+    name="Widget.Tack.Button.TextButton.Dialog.Error"
     parent="Widget.Tack.Button.TextButton.Dialog">
     <item name="android:textColor">?attr/colorError</item>
     <item name="rippleColor">@color/selector_highlight_error</item>

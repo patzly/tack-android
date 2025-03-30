@@ -88,7 +88,14 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     }
 
     if (useDialog) {
-      dialogUtil.createCloseCustom(R.string.title_options, bindingDialog.getRoot());
+      dialogUtil.createDialog(builder -> {
+        builder.setTitle(R.string.title_options);
+        builder.setView(bindingDialog.getRoot());
+        builder.setPositiveButton(
+            R.string.action_close,
+            (dialog, which) -> activity.performHapticClick()
+        );
+      });
     }
   }
 

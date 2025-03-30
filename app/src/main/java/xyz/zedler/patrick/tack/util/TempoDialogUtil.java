@@ -65,9 +65,14 @@ public class TempoDialogUtil {
     );
 
     dialogUtil = new DialogUtil(activity, "tempo");
-    dialogUtil.createApplyCustom(
-        R.string.action_change_tempo, binding.getRoot(), null
-    );
+    dialogUtil.createDialog(builder -> {
+      builder.setTitle(R.string.action_change_tempo);
+      builder.setView(binding.getRoot());
+      builder.setPositiveButton(R.string.action_apply, null);
+      builder.setNegativeButton(
+          R.string.action_cancel, (dialog, which) -> activity.performHapticClick()
+      );
+    });
   }
 
   public void show() {
@@ -87,7 +92,10 @@ public class TempoDialogUtil {
   }
 
   private void overridePositiveAction() {
-    Button button = dialogUtil.getDialog().getButton(DialogInterface.BUTTON_POSITIVE);
+    Button button = null;
+    if (dialogUtil.getDialog() != null) {
+      button = dialogUtil.getDialog().getButton(DialogInterface.BUTTON_POSITIVE);
+    }
     if (button != null) {
       button.setOnClickListener(v -> {
         if (isInputValid()) {

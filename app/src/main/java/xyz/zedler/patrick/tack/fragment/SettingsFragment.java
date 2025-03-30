@@ -247,16 +247,20 @@ public class SettingsFragment extends BaseFragment
     binding.switchSettingsBigLogo.jumpDrawablesToCurrentState();
 
     dialogUtilReset = new DialogUtil(activity, "reset");
-    dialogUtilReset.createCaution(
-        R.string.msg_reset,
-        R.string.msg_reset_description,
-        R.string.action_reset,
-        () -> {
-          getMetronomeUtil().stop();
-          getSharedPrefs().edit().clear().apply();
-          new ShortcutUtil(activity).removeAllShortcuts();
-          activity.restartToApply(100, getInstanceState(), false, true);
-        });
+    dialogUtilReset.createDialogError(builder -> {
+      builder.setTitle(R.string.msg_reset);
+      builder.setMessage(R.string.msg_reset_description);
+      builder.setPositiveButton(R.string.action_reset, (dialog, which) -> {
+        performHapticClick();
+        getMetronomeUtil().stop();
+        getSharedPrefs().edit().clear().apply();
+        new ShortcutUtil(activity).removeAllShortcuts();
+        activity.restartToApply(100, getInstanceState(), false, true);
+      });
+      builder.setNegativeButton(
+          R.string.action_cancel, (dialog, which) -> performHapticClick()
+      );
+    });
     dialogUtilReset.showIfWasShown(savedInstanceState);
 
     dialogUtilSound = new DialogUtil(activity, "sound");
@@ -389,13 +393,21 @@ public class SettingsFragment extends BaseFragment
       init = 0;
       getSharedPrefs().edit().remove(PREF.SOUND).apply();
     }
-    binding.textSettingsSound.setText(items[init]);
-    dialogUtilSound.createSingleChoice(
-        R.string.settings_sound, items, init, (dialog, which) -> {
-          performHapticClick();
-          getMetronomeUtil().setSound(sounds.get(which));
-          binding.textSettingsSound.setText(items[which]);
-        });
+    int initFinal = init;
+    binding.textSettingsSound.setText(items[initFinal]);
+    dialogUtilSound.createDialog(builder -> {
+      builder.setTitle(R.string.settings_sound);
+      builder.setSingleChoiceItems(
+          items, initFinal, (dialog, which) -> {
+            performHapticClick();
+            getMetronomeUtil().setSound(sounds.get(which));
+            binding.textSettingsSound.setText(items[which]);
+          }
+      );
+      builder.setPositiveButton(
+          R.string.action_close, (dialog, which) -> performHapticClick()
+      );
+    });
     dialogUtilSound.showIfWasShown(savedState);
 
     binding.sliderSettingsLatency.removeOnChangeListener(this);

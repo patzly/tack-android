@@ -20,7 +20,6 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import androidx.annotation.NonNull;
@@ -32,7 +31,6 @@ import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.PartialDialogPartsBinding;
 import xyz.zedler.patrick.tack.databinding.PartialDialogPartsTitleBinding;
-import xyz.zedler.patrick.tack.fragment.MainFragment;
 import xyz.zedler.patrick.tack.recyclerview.adapter.PartDialogAdapter;
 
 public class PartsDialogUtil {
@@ -62,9 +60,13 @@ public class PartsDialogUtil {
     });
     binding.recyclerParts.setAdapter(adapter);
 
-    dialogUtil.createCloseCustomTitle(
-        titleBinding.getRoot(), binding.getRoot()
-    );
+    dialogUtil.createDialog(builder -> {
+      builder.setCustomTitle(titleBinding.getRoot());
+      builder.setView(binding.getRoot());
+      builder.setPositiveButton(
+          R.string.action_close, (dialog, which) -> activity.performHapticClick()
+      );
+    });
   }
 
   public void show() {
