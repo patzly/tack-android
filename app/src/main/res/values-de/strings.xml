@@ -107,6 +107,7 @@
   <string name="action_copy_to_clipboard">Kopieren</string>
   <string name="action_reload">Neu laden</string>
   <string name="action_change_tempo">Tempo ändern</string>
+  <string name="action_add_song">Werk hinzufügen</string>
   <string name="action_delete">Löschen</string>
   <!-- MESSAGES -->
 
