@@ -51,6 +51,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
@@ -414,6 +415,12 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       builder.setMessage(R.string.msg_delete_song_description);
       builder.setPositiveButton(R.string.action_delete, (dialog, which) -> {
         performHapticClick();
+        if (songSource == null) {
+          return;
+        } else if (songSource.getId().equals(getMetronomeUtil().getCurrentSongId())) {
+          // if current song is deleted, change to default
+          getMetronomeUtil().setCurrentSong(Constants.SONG_ID_DEFAULT, 0, true);
+        }
         activity.getSongViewModel().deleteSong(songSource, () -> {
           activity.getSongViewModel().deleteParts(partsSource);
           activity.getMetronomeUtil().updateShortcuts();
