@@ -114,6 +114,8 @@
   <string name="action_discard">Verwerfen</string>
   <string name="action_rename">Umbenennen</string>
   <string name="action_delete">Löschen</string>
+  <string name="action_songs_restore">Sicherung wiederherstellen</string>
+
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Eine großartige App benötigt viel Zeit und lebt von der Rückmeldungen ihrer Nutzer.</string>
