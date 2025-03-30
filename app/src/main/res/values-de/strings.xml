@@ -133,6 +133,7 @@
   <string name="msg_backup_directory_missing">Kein Speicherort für die Sicherung ausgewählt</string>
   <string name="msg_backup_success">Sicherung erfolgreich erstellt</string>
   <string name="msg_restore_error">Fehler beim Wiederherstellen der Sicherung</string>
+  <string name="msg_restore_file_missing">Keine Datei zum Wiederherstellen ausgewählt</string>
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
 
   <!-- OPTIONS -->
