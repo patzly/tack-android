@@ -133,8 +133,8 @@
   <string name="action_move_up">Move up</string>
   <string name="action_move_down">Move down</string>
   <string name="action_open_play_store">Open Play Store</string>
-  <string name="action_songs_backup">Backup library</string>
-  <string name="action_songs_restore">Restore backup</string>
+  <string name="action_backup">Backup</string>
+  <string name="action_restore">Restore</string>
 
   <!-- MESSAGES -->
 
