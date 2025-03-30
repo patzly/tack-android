@@ -227,7 +227,9 @@ public class SongsFragment extends BaseFragment {
     if (songsWithParts != null) {
       this.songsWithParts = songsWithParts;
       // placeholder illustration
-      binding.linearSongsEmpty.setVisibility(songsWithParts.isEmpty() ? View.VISIBLE : View.GONE);
+      binding.linearSongsEmpty.getRoot().setVisibility(
+          songsWithParts.isEmpty() ? View.VISIBLE : View.GONE
+      );
       // toolbar backup menu item
       MenuItem itemBackup = binding.toolbarSongs.getMenu().findItem(R.id.action_backup);
       if (itemBackup != null) {

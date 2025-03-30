@@ -86,7 +86,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="16dp"
             android:hint="@string/label_song_name"
             app:helperText="@string/label_song_name_help">
 
@@ -105,7 +105,7 @@
             style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable"
             android:layout_marginTop="8dp"
             android:paddingStart="16dp"
-            android:paddingEnd="8dp">
+            android:paddingEnd="16dp">
 
             <ImageView
               style="@style/Widget.Tack.ImageView.ListItem.Icon"
@@ -151,7 +151,7 @@
         android:layout_height="0dp"
         android:paddingTop="16dp"
         android:paddingBottom="16dp"
-        android:paddingStart="8dp"
+        android:paddingStart="0dp"
         android:paddingEnd="16dp"
         android:clipToPadding="false"
         app:layout_constraintTop_toTopOf="parent"
@@ -166,6 +166,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/action_add_part"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="@dimen/controls_bottom_margin_bottom"
         android:layout_gravity="bottom|center_horizontal"
         app:icon="@drawable/ic_rounded_add_anim"

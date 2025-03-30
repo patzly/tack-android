@@ -27,4 +27,6 @@
 
   <dimen name="controls_bottom_margin_bottom">16dp</dimen>
 
+  <dimen name="placeholder_illustration_size">140dp</dimen>
+
 </resources>

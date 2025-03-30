@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:baselineAligned="false">
+
+  <FrameLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1">
+
+    <ImageView
+      android:layout_width="@dimen/placeholder_illustration_size"
+      android:layout_height="@dimen/placeholder_illustration_size"
+      android:layout_gravity="center"
+      android:importantForAccessibility="no"
+      android:src="@drawable/illustration_empty_songs"
+      android:scaleType="centerCrop"/>
+
+  </FrameLayout>
+
+  <FrameLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1">
+
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:layout_gravity="center"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp"
+      tools:ignore="UselessParent">
+
+      <TextView
+        style="@style/Widget.Tack.TextView.TitleLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:text="@string/msg_songs_empty" />
+
+      <TextView
+        style="@style/Widget.Tack.TextView.ListItem.Description"
+        android:textAlignment="center"
+        android:text="@string/msg_songs_empty_description" />
+
+    </LinearLayout>
+
+  </FrameLayout>
+
+</LinearLayout>

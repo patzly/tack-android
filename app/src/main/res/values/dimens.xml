@@ -34,4 +34,6 @@
   <dimen name="controls_bottom_margin_bottom">32dp</dimen>
   <dimen name="controls_bottom_spacing">12dp</dimen>
 
+  <dimen name="placeholder_illustration_size">180dp</dimen>
+
 </resources>

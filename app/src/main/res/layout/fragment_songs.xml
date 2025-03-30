@@ -58,42 +58,17 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintEnd_toEndOf="parent" />
 
-    <LinearLayout
+    <include
       android:id="@+id/linear_songs_empty"
+      layout="@layout/partial_songs_empty"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:orientation="vertical"
-      android:layout_gravity="center"
-      android:paddingStart="16dp"
-      android:paddingEnd="16dp"
       android:layout_marginBottom="56dp"
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintWidth_max="@dimen/max_content_width"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintEnd_toEndOf="parent">
-
-      <ImageView
-        android:layout_width="190dp"
-        android:layout_height="190dp"
-        android:layout_gravity="center_horizontal"
-        android:importantForAccessibility="no"
-        android:src="@drawable/illustration_empty_songs"
-        android:scaleType="centerCrop"/>
-
-      <TextView
-        style="@style/Widget.Tack.TextView.TitleLarge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:text="@string/msg_songs_empty" />
-
-      <TextView
-        style="@style/Widget.Tack.TextView.ListItem.Description"
-        android:textAlignment="center"
-        android:text="@string/msg_songs_empty_description" />
-
-    </LinearLayout>
+      app:layout_constraintEnd_toEndOf="parent"/>
 
   </androidx.constraintlayout.widget.ConstraintLayout>
 
