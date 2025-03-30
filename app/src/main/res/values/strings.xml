@@ -167,7 +167,7 @@
   <string name="msg_songs_empty">Empty song library</string>
   <string name="msg_songs_empty_description">Add songs you want to practice</string>
   <string name="msg_unlock">Message from the developer</string>
-  <string name="msg_unlock_description">Do you appreciate the ad-free experience with tons of powerful features in Tack? I\'ve spent years of my spare time creating Tack for free, but especially the song library feature took months of hard work.\nIn order to continue improving Tack, I kindly ask for a small contribution. In return, you\'ll get an unlock app for unlimited songs and countless part combinations. Thanks for your support!</string>
+  <string name="msg_unlock_description">Do you appreciate the ad-free experience with tons of powerful features in Tack? I\'ve spent years of my spare time creating Tack for free, but especially the song library feature took months of hard work.\nIn order to continue improving Tack, I kindly ask for a small contribution. In return, you\'ll get an unlock app for unlimited songs and countless song parts. Thanks for your support!</string>
   <string name="msg_backup_error">Error during backup</string>
   <string name="msg_backup_directory_missing">No storage location selected for backup</string>
   <string name="msg_backup_success">Backup created successfully</string>
