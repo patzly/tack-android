@@ -69,6 +69,7 @@
     <item quantity="one">%1$d mal abgespielt</item>
     <item quantity="other">%1$d mal abgespielt</item>
   </plurals>
+  <string name="label_song_name">Werkname</string>
   <string name="label_song_name_help">Name muss eindeutig sein</string>
   <string name="label_song_name_used">Name bereits verwendet</string>
 
