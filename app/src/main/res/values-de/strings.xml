@@ -133,6 +133,7 @@
   <string name="msg_connection_lost">Service-Verbindung verloren, App-Neustart erforderlich</string>
   <string name="msg_reset">Alles zurücksetzen?</string>
   <string name="msg_reset_description">Möchtest du wirklich die gesamte App einschließlich Lesezeichen und Einstellungen zurücksetzen? Dies kann nicht rückgängig gemacht werden.</string>
+  <string name="msg_reset_timer">Timer zurücksetzen?</string>
   <string name="msg_reset_timer_description">Du kannst das Standardverhalten, ob der Timer beim Start zurückgesetzt werden soll, in den Einstellungen ändern.</string>
   <string name="msg_reset_elapsed">Vergangene Zeit zurücksetzen?</string>
   <string name="msg_reset_elapsed_description">Möchtest du wirklich die abgelaufene Zeit zurücksetzen? Dies kann nicht rückgängig gemacht werden.</string>
