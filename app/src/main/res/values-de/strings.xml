@@ -114,6 +114,7 @@
   <string name="action_discard">Verwerfen</string>
   <string name="action_rename">Umbenennen</string>
   <string name="action_delete">Löschen</string>
+  <string name="action_move_down">Nach unten verschieben</string>
   <string name="action_open_play_store">Play Store öffnen</string>
   <string name="action_songs_backup">Sammlung sichern</string>
   <string name="action_songs_restore">Sicherung wiederherstellen</string>
