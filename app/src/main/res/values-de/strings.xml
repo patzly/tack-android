@@ -128,6 +128,7 @@
   <string name="msg_report_crash">Bitte melden Sie jeden Absturz mit dem angehängten Fehlerprotokoll, damit ich versuchen kann, ihn zu beheben.</string>
   <string name="msg_copied_to_clipboard">Erfolgreich in Zwischenablage kopiert</string>
   <string name="msg_invalid_input">Ungültige Eingabe</string>
+  <string name="msg_unlock_description">Schätzt du das werbefreie Erlebnis mit zahlreichen leistungsstarken Funktionen in Tack? Ich habe Jahre meiner Freizeit damit verbracht, Tack kostenlos zu erstellen, aber vor allem die Werksammlung hat Monate harter Arbeit gekostet. Um Tack weiter zu verbessern, bitte ich dich um einen kleinen Beitrag. Im Gegenzug bekommst du eine Freischalt-App für unbegrenzte Werke und unzählige Werkteile. Vielen Dank für deine Unterstützung!</string>
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
 
   <!-- OPTIONS -->
@@ -316,7 +317,7 @@
   <string name="about_changelog_description">Neu in dieser Version</string>
   <string name="about_developer">Entwickler</string>
   <string name="about_vending_description">Mehr Apps des Entwicklers</string>
-  <string name="about_key">Schlüssel-App</string>
+  <string name="about_key">Freischalt-App</string>
   <string name="about_key_description_not_installed">Nicht installiert</string>
   <string name="about_key_description_installed">Installiert</string>
   <string name="about_github_description">Quellcode</string>
