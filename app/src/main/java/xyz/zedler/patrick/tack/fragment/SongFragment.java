@@ -60,6 +60,7 @@ import xyz.zedler.patrick.tack.database.entity.Song;
 import xyz.zedler.patrick.tack.databinding.FragmentSongBinding;
 import xyz.zedler.patrick.tack.recyclerview.adapter.PartAdapter;
 import xyz.zedler.patrick.tack.recyclerview.decoration.PartItemDecoration;
+import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.RenameDialogUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -241,7 +242,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     });
     binding.recyclerSongParts.setAdapter(adapter);
     // Layout manager
-    LinearLayoutManager layoutManager = new LinearLayoutManager(activity);
+    LinearLayoutManager layoutManager = new WrapperLinearLayoutManager(activity);
     binding.recyclerSongParts.setLayoutManager(layoutManager);
     binding.recyclerSongParts.setItemAnimator(new DefaultItemAnimator());
 
@@ -289,8 +290,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
               }
             }
             sortParts();
-            // TODO: fix crash
-            //  "Cannot call this method while RecyclerView is computing a layout or scrolling"
+            binding.recyclerSongParts.stopScroll();
             adapter.submitList(new ArrayList<>(partsResult));
             adapter.notifyMenusChanged();
           } else {
@@ -341,6 +341,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         if (partsRestored != null) {
           partsResult = new ArrayList<>(partsRestored);
           sortParts();
+          binding.recyclerSongParts.stopScroll();
           adapter.submitList(partsResult);
           adapter.notifyMenusChanged();
         }
