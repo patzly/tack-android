@@ -113,6 +113,7 @@
   <string name="action_save">Speichern</string>
   <string name="action_discard">Verwerfen</string>
   <string name="action_rename">Umbenennen</string>
+  <string name="action_rename_part">Teilname ändern</string>
   <string name="action_update">Aktualisieren</string>
   <string name="action_delete">Löschen</string>
   <string name="action_move_up">Nach oben verschieben</string>
