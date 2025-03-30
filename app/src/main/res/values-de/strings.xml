@@ -112,6 +112,7 @@
   <string name="action_add_part">Teil hinzufügen</string>
   <string name="action_save">Speichern</string>
   <string name="action_discard">Verwerfen</string>
+  <string name="action_rename">Umbenennen</string>
   <string name="action_delete">Löschen</string>
   <!-- MESSAGES -->
 
