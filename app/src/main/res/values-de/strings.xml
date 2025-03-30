@@ -138,6 +138,7 @@
   <string name="msg_invalid_input">Ungültige Eingabe</string>
   <string name="msg_delete_song">Werk löschen?</string>
   <string name="msg_songs_empty">Leere Werksammlung</string>
+  <string name="msg_songs_empty_description">Füge Werke hinzu, die du üben möchtest</string>
   <string name="msg_unlock">Nachricht des Entwicklers</string>
   <string name="msg_unlock_description">Schätzt du das werbefreie Erlebnis mit zahlreichen leistungsstarken Funktionen in Tack? Ich habe Jahre meiner Freizeit damit verbracht, Tack kostenlos zu erstellen, aber vor allem die Werksammlung hat Monate harter Arbeit gekostet. Um Tack weiter zu verbessern, bitte ich dich um einen kleinen Beitrag. Im Gegenzug bekommst du eine Freischalt-App für unbegrenzte Werke und unzählige Werkteile. Vielen Dank für deine Unterstützung!</string>
   <string name="msg_backup_error">Fehler bei der Sicherung</string>
