@@ -124,10 +124,9 @@
 
             </LinearLayout>
 
-            <com.google.android.material.checkbox.MaterialCheckBox
-              android:id="@+id/checkbox_song_looped"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content" />
+            <com.google.android.material.materialswitch.MaterialSwitch
+              android:id="@+id/switch_song_looped"
+              style="@style/Widget.Tack.Switch" />
 
           </LinearLayout>
 

@@ -273,9 +273,9 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
             });
             binding.textInputSongName.setHintAnimationEnabled(true);
             // Copy looped to form
-            binding.checkboxSongLooped.setChecked(songResult.isLooped());
-            binding.checkboxSongLooped.jumpDrawablesToCurrentState();
-            binding.checkboxSongLooped.setOnCheckedChangeListener(this);
+            binding.switchSongLooped.setChecked(songResult.isLooped());
+            binding.switchSongLooped.jumpDrawablesToCurrentState();
+            binding.switchSongLooped.setOnCheckedChangeListener(this);
             // Copy parts to form
             partsSource = songWithParts.getParts();
             partsResult = new LinkedList<>();
@@ -324,10 +324,10 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           UiUtil.hideKeyboard(activity);
         }
       });
-      binding.checkboxSongLooped.setOnCheckedChangeListener(null);
-      binding.checkboxSongLooped.setChecked(songResult.isLooped());
-      binding.checkboxSongLooped.jumpDrawablesToCurrentState();
-      binding.checkboxSongLooped.setOnCheckedChangeListener(this);
+      binding.switchSongLooped.setOnCheckedChangeListener(null);
+      binding.switchSongLooped.setChecked(songResult.isLooped());
+      binding.switchSongLooped.jumpDrawablesToCurrentState();
+      binding.switchSongLooped.setOnCheckedChangeListener(this);
 
       partsResult = new LinkedList<>();
       addPart();
@@ -476,7 +476,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
   public void onClick(View v) {
     int id = v.getId();
     if (id == R.id.linear_song_looped) {
-      binding.checkboxSongLooped.toggle();
+      binding.switchSongLooped.toggle();
     } else if (id == R.id.fab_song) {
       performHapticClick();
       // Remove focus from edit text
@@ -494,7 +494,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
   @Override
   public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
     int id = buttonView.getId();
-    if (id == R.id.checkbox_song_looped) {
+    if (id == R.id.switch_song_looped) {
       performHapticClick();
       // Remove focus from edit text
       UiUtil.hideKeyboard(activity);
@@ -569,7 +569,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       }
     }
 
-    songResult.setLooped(binding.checkboxSongLooped.isChecked());
+    songResult.setLooped(binding.switchSongLooped.isChecked());
 
     if (isValid) {
       clearError();

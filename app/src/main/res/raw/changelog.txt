@@ -3,7 +3,7 @@
 ? Song library has arrived! I worked hard to bring you an easy way to manage different metronome configurations and arrange them for playback. Hope you like it!
 
 - New: bookmark button replaced by song library button for managing complex configuration combinations
-- New: bookmarks bar replaced by song bar. Tap on song to apply it, tap again to open a dialog with all parts, tap X to switch back to previous configuration
+- New: bookmarks bar replaced by song bar. Tap on song to apply it, tap again to open a dialog with all parts, tap × to switch back to previous configuration
 - New: bookmarks in app shortcuts replaced by most frequently played songs
 - New: if installed from Google Play, a new app called "Tack: Unlock Key" is available for purchase to unlock unlimited songs and parts. Thank you for your support!
 - New: reset timer with tap on current progress
