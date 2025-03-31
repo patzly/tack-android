@@ -1,4 +1,4 @@
-## 5.0.0 🎉
+## 5.0.0 🥁
 
 ? Song library has arrived! I worked hard to bring you an easy way to manage different metronome configurations and arrange them for playback. Hope you like it!
 
