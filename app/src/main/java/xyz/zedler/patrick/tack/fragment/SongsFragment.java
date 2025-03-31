@@ -334,10 +334,13 @@ public class SongsFragment extends BaseFragment {
       if (songsWithParts != null) {
         // look for duplicates of existing song names
         Map<String, Integer> nameCountMap = new HashMap<>();
+        Map<String, String> idNameMap = new HashMap<>();
         // count existing song names
         for (SongWithParts existingSong : this.songsWithParts) {
+          // add existing song id to map
+          idNameMap.put(existingSong.getSong().getId(), existingSong.getSong().getName());
           String existingName = existingSong.getSong().getName();
-          if (existingName == null) {
+          if (existingName == null || existingName.isEmpty()) {
             continue;
           }
           Integer currentCount = nameCountMap.get(existingName);
@@ -345,6 +348,13 @@ public class SongsFragment extends BaseFragment {
           nameCountMap.put(existingName, newCount);
         }
         for (SongWithParts songWithParts : songsWithParts) {
+          String songId = songWithParts.getSong().getId();
+          if (idNameMap.containsKey(songId)) {
+            // if song id already exists, use existing song name
+            String existingName = idNameMap.get(songId);
+            songWithParts.getSong().setName(existingName);
+            continue;
+          }
           String originalName = songWithParts.getSong().getName();
           String newName = originalName;
           Integer count = nameCountMap.get(originalName);
