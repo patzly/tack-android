@@ -6,7 +6,7 @@ You can move the service to the background by tapping "Stop", but this no longer
 If you don't need the timer progress or elapsed time anymore, you can either tap on stop in the notification or close the app from recent apps for the notification to disappear.
 You can also enable permanent notification in settings to always have access to start/stop in the notifications area.
 
-#### Why disappears the metronome service notification when I close the app?
+#### Why does the metronome service notification disappear when I close the app?
 
 When you close the app from recent apps, the metronome service is stopped and the notification disappears. This is intended behavior to save battery and resources.
 If you want to permanently keep the notification for start/stop access, you can enable "Permanent notification" in settings and don't dismiss the app from recent apps.
@@ -24,6 +24,16 @@ Additionally you can change the emphasis of beats by tapping on them. In options
 #### How do I disable swing?
 
 If you have enabled swing in the options, all Tack does is to set the subdivisions for you. To disable swing, simply set the subdivisions manually to your liking.
+
+#### How does the song library work?
+
+The song library is a collection of metronome configurations that you can save and apply. To save your current configuration, simply go to the song library and create a new song. The current configuration will be added to the parts list. After you gave the song a name, don't forget to save your result with a tap on the disk icon in the top right corner.
+To apply a song, simply tap on it in the song bar on the main screen. You can also switch to a specific part of a song by tapping again to open the parts dialog.
+
+### Why does the song not switch to the next part?
+
+To switch to the next part of a song automatically, each part needs to have a duration set. If you don't set a duration, the part is considered to be infinite.
+To add a duration, simply apply the specific part in the parts dialog and adjust the metronome options accordingly. Then open the song in the song library and tap "update" in this part's menu to update it to the current configuration. Don't forget to save your changes.
 
 #### How can I get Tack for my language?
 
