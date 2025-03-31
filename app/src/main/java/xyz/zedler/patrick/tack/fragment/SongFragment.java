@@ -127,6 +127,11 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     systemBarBehavior.setUp();
     SystemBarBehavior.applyBottomInset(binding.fabSong);
 
+    int liftMode = UiUtil.isOrientationPortrait(activity)
+        ? ScrollBehavior.NEVER_LIFTED
+        : ScrollBehavior.LIFT_ON_SCROLL;
+    new ScrollBehavior().setUpScroll(binding.appBarSong, binding.recyclerSongParts, liftMode);
+
     binding.fabSong.getViewTreeObserver().addOnGlobalLayoutListener(
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override
@@ -140,9 +145,6 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         });
 
     setupImeAnimation(systemBarBehavior);
-
-    ScrollBehavior scrollBehavior = new ScrollBehavior();
-    scrollBehavior.setUpScroll(binding.appBarSong, null, true);
 
     binding.toolbarSong.setNavigationOnClickListener(v -> {
       if (getViewUtil().isClickEnabled(v.getId())) {

@@ -106,7 +106,7 @@ public class SettingsFragment extends BaseFragment
     systemBarBehavior.setUp();
 
     new ScrollBehavior().setUpScroll(
-        binding.appBarSettings, binding.scrollSettings, true
+        binding.appBarSettings, binding.scrollSettings, ScrollBehavior.LIFT_ON_SCROLL
     );
 
     binding.toolbarSettings.setNavigationOnClickListener(getNavigationOnClickListener());

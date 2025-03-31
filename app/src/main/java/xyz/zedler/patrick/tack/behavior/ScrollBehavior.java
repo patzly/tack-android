@@ -20,13 +20,15 @@
 package xyz.zedler.patrick.tack.behavior;
 
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener;
 import com.google.android.material.appbar.AppBarLayout;
 
 public class ScrollBehavior {
@@ -34,46 +36,66 @@ public class ScrollBehavior {
   private static final String TAG = ScrollBehavior.class.getSimpleName();
   private static final boolean DEBUG = false;
 
+  public static final int LIFT_ON_SCROLL = 0;
+  public static final int ALWAYS_LIFTED = 1;
+  public static final int NEVER_LIFTED = 2;
+
   private static final int STATE_SCROLLED_DOWN = 1;
   private static final int STATE_SCROLLED_UP = 2;
+
   // distance gets divided to prevent cutoff of edge effect
   private final int pufferDivider = 2;
   private int currentState = STATE_SCROLLED_UP;
   // distance before top scroll when overScroll is turned off
   private int pufferSize = 0;
   private boolean isTopScroll = false;
-  private boolean liftOnScroll = true;
-  private boolean killObserver = true;
-  private boolean noOverScroll = false;
+  private int liftMode = LIFT_ON_SCROLL;
   private AppBarLayout appBarLayout;
-  private NestedScrollView scrollView;
+  private ViewGroup scrollView;
 
   public void setUpScroll(
       @NonNull AppBarLayout appBarLayout,
-      NestedScrollView scrollView,
-      boolean liftOnScroll,
-      boolean noOverScroll,
-      boolean killObserver
+      @Nullable ViewGroup scrollView,
+      int liftMode, boolean keepScrollPosition
   ) {
     this.appBarLayout = appBarLayout;
     this.scrollView = scrollView;
-    this.liftOnScroll = liftOnScroll;
-    this.noOverScroll = noOverScroll;
-    this.killObserver = killObserver;
+    this.liftMode = liftMode;
 
     currentState = STATE_SCROLLED_UP;
 
-    measureScrollView();
-    setLiftOnScroll(liftOnScroll);
-
-    if (scrollView == null) {
-      return;
+    if (scrollView != null) {
+      measureScrollView();
+    } else {
+      // set lifted directly
+      setLiftOnScroll(liftMode);
     }
-    scrollView.setOnScrollChangeListener((NestedScrollView v,
-        int scrollX,
-        int scrollY,
-        int oldScrollX,
-        int oldScrollY) -> {
+
+    if (scrollView instanceof NestedScrollView) {
+      NestedScrollView nested = (NestedScrollView) scrollView;
+      if (!keepScrollPosition) {
+        nested.postDelayed(() -> nested.setScrollY(0), 100);
+      }
+      nested.setOnScrollChangeListener(getOnScrollChangeListener());
+    } else if (scrollView instanceof RecyclerView) {
+      RecyclerView recycler = (RecyclerView) scrollView;
+      if (!keepScrollPosition) {
+        recycler.postDelayed(() -> recycler.scrollToPosition(0), 1);
+      }
+      recycler.addOnScrollListener(getOnScrollListener());
+    }
+  }
+
+  public void setUpScroll(
+      @NonNull AppBarLayout appBarLayout,
+      @Nullable ViewGroup scrollView,
+      int liftMode
+  ) {
+    setUpScroll(appBarLayout, scrollView, liftMode, false);
+  }
+
+  private NestedScrollView.OnScrollChangeListener getOnScrollChangeListener() {
+    return (NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) -> {
       if (!isTopScroll && scrollY == 0) { // TOP
         onTopScroll();
       } else {
@@ -81,10 +103,10 @@ public class ScrollBehavior {
           if (currentState != STATE_SCROLLED_UP) {
             onScrollUp();
           }
-          if (liftOnScroll && scrollY < pufferSize) {
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
+          if (liftMode == LIFT_ON_SCROLL && scrollY < pufferSize) {
+            v.postDelayed(() -> {
               if (scrollY > 0) {
-                setOverScrollModeEnabled(false);
+                updateOverScrollMode(false);
               }
             }, 1);
           }
@@ -94,28 +116,53 @@ public class ScrollBehavior {
           }
         }
       }
-    });
+    };
   }
 
-  public void setUpScroll(@NonNull AppBarLayout appBarLayout,
-      NestedScrollView scrollView,
-      boolean liftOnScroll) {
-    setUpScroll(appBarLayout, scrollView, liftOnScroll, false, true);
+  private OnScrollListener getOnScrollListener() {
+    return new OnScrollListener() {
+      @Override
+      public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+        int scrollAbsoluteY = recyclerView.computeVerticalScrollOffset();
+        if (!isTopScroll && scrollAbsoluteY == 0) { // TOP
+          onTopScroll();
+        } else {
+          if (dy < 0) { // UP
+            if (currentState != STATE_SCROLLED_UP) {
+              onScrollUp();
+            }
+            if (liftMode == LIFT_ON_SCROLL && dy < pufferSize) {
+              recyclerView.postDelayed(() -> {
+                if (scrollAbsoluteY > 0) {
+                  updateOverScrollMode(false);
+                }
+              }, 1);
+            }
+          } else if (dy > 0) {
+            if (currentState != STATE_SCROLLED_DOWN) { // DOWN
+              onScrollDown();
+            }
+          }
+        }
+      }
+    };
   }
 
   private void onTopScroll() {
     isTopScroll = true;
-    if (liftOnScroll) {
+    if (liftMode == LIFT_ON_SCROLL) {
       appBarLayout.setLifted(false);
     }
     if (DEBUG) {
-      Log.i(TAG, "onTopScroll: liftOnScroll = " + liftOnScroll);
+      Log.i(TAG, "onTopScroll: liftMode = " + liftMode);
     }
   }
 
   private void onScrollUp() {
     currentState = STATE_SCROLLED_UP;
-    appBarLayout.setLifted(true);
+    if (liftMode != NEVER_LIFTED) {
+      appBarLayout.setLifted(true);
+    }
     if (DEBUG) {
       Log.i(TAG, "onScrollUp: UP");
     }
@@ -126,8 +173,10 @@ public class ScrollBehavior {
     isTopScroll = false;
     currentState = STATE_SCROLLED_DOWN;
     if (scrollView != null) {
-      appBarLayout.setLifted(true);
-      setOverScrollModeEnabled(!noOverScroll);
+      if (liftMode != NEVER_LIFTED) {
+        appBarLayout.setLifted(true);
+        updateOverScrollMode(true);
+      }
     } else if (DEBUG) {
       Log.e(TAG, "onScrollDown: scrollView is null");
     }
@@ -136,32 +185,31 @@ public class ScrollBehavior {
     }
   }
 
-  /**
-   * Sets the global boolean and changes the elevation manually if necessary. If scrollY of the
-   * scrollView is 0, overScroll is turned off. Otherwise it's on if the view is scrollable.
-   */
-  public void setLiftOnScroll(boolean lift) {
-    liftOnScroll = lift;
+  public void setLiftOnScroll(int liftMode) {
+    this.liftMode = liftMode;
     // We'll make this manually
     appBarLayout.setLiftOnScroll(false);
     appBarLayout.setLiftable(true);
     if (scrollView != null) {
-      if (lift) {
+      if (liftMode == LIFT_ON_SCROLL) {
         if (scrollView.getScrollY() == 0) {
           appBarLayout.setLifted(false);
-          setOverScrollModeEnabled(false);
+          updateOverScrollMode(false);
         } else {
           appBarLayout.setLifted(true);
         }
-      } else {
+      } else if (liftMode == ALWAYS_LIFTED) {
         appBarLayout.setLifted(true);
-        setOverScrollModeEnabled(!noOverScroll);
+        updateOverScrollMode(true);
+      } else if (liftMode == NEVER_LIFTED) {
+        appBarLayout.setLifted(false);
+        updateOverScrollMode(false);
       }
     } else {
-      appBarLayout.setLifted(!lift);
+      appBarLayout.setLifted(liftMode == ALWAYS_LIFTED);
     }
     if (DEBUG) {
-      Log.i(TAG, "setLiftOnScroll(" + lift + ")");
+      Log.i(TAG, "setLiftOnScroll(" + liftMode + ")");
     }
   }
 
@@ -173,17 +221,17 @@ public class ScrollBehavior {
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override
           public void onGlobalLayout() {
-            int scrollViewHeight = scrollView.getMeasuredHeight();
-            if (scrollView.getChildAt(0) != null) {
-              int scrollContentHeight = scrollView.getChildAt(0).getHeight();
-              pufferSize = (scrollContentHeight - scrollViewHeight) / pufferDivider;
-            } else if (DEBUG) {
-              Log.e(TAG, "measureScrollView: no child");
+            setLiftOnScroll(liftMode);
+            if (scrollView instanceof NestedScrollView) {
+              int scrollViewHeight = scrollView.getMeasuredHeight();
+              if (scrollView.getChildAt(0) != null) {
+                int scrollContentHeight = scrollView.getChildAt(0).getHeight();
+                pufferSize = (scrollContentHeight - scrollViewHeight) / pufferDivider;
+              } else if (DEBUG) {
+                Log.e(TAG, "measureScrollView: no child");
+              }
             }
             // Kill ViewTreeObserver
-            if (!killObserver) {
-              return;
-            }
             if (scrollView.getViewTreeObserver().isAlive()) {
               scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
             }
@@ -191,7 +239,7 @@ public class ScrollBehavior {
         });
   }
 
-  private void setOverScrollModeEnabled(boolean enabled) {
+  private void updateOverScrollMode(boolean enabled) {
     if (scrollView == null) {
       return;
     }

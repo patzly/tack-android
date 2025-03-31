@@ -152,7 +152,8 @@ public class MainFragment extends BaseFragment
     isLandTablet = UiUtil.isLandTablet(activity);
     isRtl = UiUtil.isLayoutRtl(activity);
 
-    new ScrollBehavior().setUpScroll(binding.appBarMain, null, isPortrait);
+    int liftMode = isLandTablet ? ScrollBehavior.ALWAYS_LIFTED : ScrollBehavior.NEVER_LIFTED;
+    new ScrollBehavior().setUpScroll(binding.appBarMain, null, liftMode);
 
     binding.toolbarMain.setOnMenuItemClickListener(item -> {
       int id = item.getItemId();

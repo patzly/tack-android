@@ -54,6 +54,7 @@ import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
+import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.FragmentSongsBinding;
@@ -106,9 +107,9 @@ public class SongsFragment extends BaseFragment {
     systemBarBehavior.setUp();
     SystemBarBehavior.applyBottomInset(binding.fabSongs);
 
-    /*new ScrollBehavior().setUpScroll(
-        binding.appBarSongs, null, true
-    );*/
+    new ScrollBehavior().setUpScroll(
+        binding.appBarSongs, binding.recyclerSongs, ScrollBehavior.LIFT_ON_SCROLL
+    );
 
     binding.toolbarSongs.setNavigationOnClickListener(getNavigationOnClickListener());
     binding.toolbarSongs.setOnMenuItemClickListener(item -> {
