@@ -374,7 +374,12 @@ public class SongPickerView extends FrameLayout {
               int totalWidth = 0;
               for (int i = 0; i < itemCount; i++) {
                 View child = recyclerView.getChildAt(i);
-                totalWidth += child.getWidth();
+                if (child != null) {
+                  // adapter item count sometimes leads to index out of bounds of recyclerview
+                  // but child count sometimes leads to wrong number of children which leads to
+                  // an animation to the wrong place, so simply ignore the index out of bounds
+                  totalWidth += child.getWidth();
+                }
               }
               totalWidth += innerPadding * 2 * (itemCount - 1);
               totalWidth += outerPadding * 2;
