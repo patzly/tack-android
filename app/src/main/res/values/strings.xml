@@ -147,7 +147,7 @@
   <string name="msg_service_description">Service for metronome configuration and playback</string>
   <string name="msg_connection_lost">Service connection lost, app restart required</string>
   <string name="msg_reset">Reset all?</string>
-  <string name="msg_reset_description">Do you really want to reset the entire app including bookmarks and settings? This cannot be undone.</string>
+  <string name="msg_reset_description">Do you really want to reset the entire app including song library and settings? Create a backup of your song library first if needed. Reset cannot be undone.</string>
   <string name="msg_reset_timer">Reset timer?</string>
   <string name="msg_reset_timer_description">You can change the default behavior of whether to reset the timer at start in settings.</string>
   <string name="msg_reset_elapsed">Reset elapsed time?</string>

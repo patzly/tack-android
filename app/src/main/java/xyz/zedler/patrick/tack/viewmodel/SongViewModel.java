@@ -161,6 +161,10 @@ public class SongViewModel extends AndroidViewModel {
     });
   }
 
+  public void deleteAll() {
+    executorService.execute(db::clearAllTables);
+  }
+
   @Override
   protected void onCleared() {
     super.onCleared();

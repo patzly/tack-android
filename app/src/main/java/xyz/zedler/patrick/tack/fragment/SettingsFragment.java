@@ -254,6 +254,7 @@ public class SettingsFragment extends BaseFragment
         performHapticClick();
         getMetronomeUtil().stop();
         getSharedPrefs().edit().clear().apply();
+        activity.getSongViewModel().deleteAll();
         new ShortcutUtil(activity).removeAllShortcuts();
         activity.restartToApply(100, getInstanceState(), false, true);
       });
