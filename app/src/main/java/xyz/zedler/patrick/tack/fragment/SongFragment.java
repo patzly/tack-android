@@ -397,7 +397,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
 
     dialogUtilDiscard = new DialogUtil(activity, "discard_changes");
     dialogUtilDiscard.createDialogError(builder -> {
-      builder.setTitle(R.string.action_discard);
+      builder.setTitle(R.string.msg_discard_changes);
       builder.setMessage(R.string.msg_discard_changes_description);
       builder.setPositiveButton(R.string.action_discard, (dialog, which) -> {
         performHapticClick();

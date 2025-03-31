@@ -90,7 +90,7 @@
         android:id="@+id/beats_part_beats"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="2dp" />
+        android:paddingTop="4dp" />
 
       <LinearLayout
         android:id="@+id/linear_part_subdivisions"
@@ -108,7 +108,7 @@
           android:id="@+id/beats_part_subdivisions"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:paddingTop="2dp" />
+          android:paddingTop="4dp" />
 
       </LinearLayout>
 
