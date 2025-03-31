@@ -175,6 +175,8 @@
   <string name="msg_restore_file_missing">No file selected for restoring</string>
   <string name="msg_restore_success">Backup restored successfully</string>
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
+  <string name="msg_songs_intro">Bookmarks are now songs</string>
+  <string name="msg_songs_intro_description">The new song library replaces the previous tempo bookmarks. Instead of bookmarking bpm values, you can now save and arrange entire metronome configurations as parts of a song. Simply adjust the controls and options to your liking and add the current configuration as a new part to a song or update an existing part.\nIf you have any questions, first please check out the song library help.</string>
 
   <!-- OPTIONS -->
 

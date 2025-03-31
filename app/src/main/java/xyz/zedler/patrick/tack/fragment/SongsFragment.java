@@ -70,7 +70,7 @@ public class SongsFragment extends BaseFragment {
 
   private FragmentSongsBinding binding;
   private MainActivity activity;
-  private DialogUtil dialogUtilUnlock;
+  private DialogUtil dialogUtilIntro, dialogUtilUnlock;
   private List<SongWithParts> songsWithParts = new ArrayList<>();
   private int songsOrder;
   private SongAdapter adapter;
@@ -90,6 +90,7 @@ public class SongsFragment extends BaseFragment {
   public void onDestroyView() {
     super.onDestroyView();
     binding = null;
+    dialogUtilIntro.dismiss();
     dialogUtilUnlock.dismiss();
   }
 
@@ -188,6 +189,25 @@ public class SongsFragment extends BaseFragment {
         new ActivityResultContracts.OpenDocument(),
         this::importJsonFromFile
     );
+
+    dialogUtilIntro = new DialogUtil(activity, "songs_intro");
+    dialogUtilIntro.createDialog(builder -> {
+      builder.setTitle(R.string.msg_songs_intro);
+      builder.setMessage(R.string.msg_songs_intro_description);
+      builder.setPositiveButton(
+          R.string.action_close,
+          (dialog, which) -> {
+            performHapticClick();
+            getSharedPrefs().edit().putBoolean(PREF.SONGS_INTRO_SHOWN, true).apply();
+          });
+      builder.setOnCancelListener(dialog -> {
+        performHapticClick();
+        getSharedPrefs().edit().putBoolean(PREF.SONGS_INTRO_SHOWN, true).apply();
+      });
+    });
+    if (!getSharedPrefs().getBoolean(PREF.SONGS_INTRO_SHOWN, false)) {
+      dialogUtilIntro.show();
+    }
 
     dialogUtilUnlock = new DialogUtil(activity, "unlock_songs");
     dialogUtilUnlock.createDialog(builder -> {
