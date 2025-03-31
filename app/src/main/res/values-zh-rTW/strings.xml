@@ -115,6 +115,7 @@
   <string name="msg_report_crash">請不吝回報任何當機情形，並附上當機紀錄，使開發者能順利修復問題。</string>
   <string name="msg_copied_to_clipboard">已複製至剪貼簿</string>
   <string name="msg_invalid_input">無效輸入</string>
+  <string name="msg_backup_error">備份時發生錯誤</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">小節</string>
