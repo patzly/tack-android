@@ -29,8 +29,8 @@ There also is a standalone Wear OS app available with haptic beats and many opti
 ### Phone/Tablet
 
 * Beautiful beat visualization with subdivisions and changeable emphasizes
-* BPM bookmarks as app shortcuts
-* Options for count in, incremental tempo change, duration, muted beats and swing
+* Song library for managing metrome configuration combinations
+* Options for count in, duration, incremental tempo change, muted beats and swing
 * Settings for flash screen, volume boost, audio latency correction and elapsed time
 * Support for dynamic color, dynamic contrast and large screens
 * No ads or analytics
