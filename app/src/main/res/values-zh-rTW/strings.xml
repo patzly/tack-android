@@ -32,7 +32,6 @@
   <string name="title_metronome">節拍器</string>
   <string name="title_controls">控制</string>
   <string name="title_logcat">日誌</string>
-
   <!-- LABELS -->
 
   <string name="label_bpm_value">%1$d 節拍／分鐘</string>
@@ -48,7 +47,10 @@
   <string name="label_tempo_presto">急板</string>
   <string name="label_tempo_prestissimo">最急板</string>
   <string name="label_tempo_input_help">值從 %1$d 到 %2$d</string>
-
+  <string name="label_sort_name">名稱</string>
+  <string name="label_sort_last_played">最近播放</string>
+  <string name="label_sort_never_played">從未播放</string>
+  <string name="label_sort_most_played">最常播放</string>
   <!-- ACTIONS -->
 
   <string name="action_back">返回</string>
@@ -64,9 +66,7 @@
   <string name="action_remove_beat">減少節拍</string>
   <string name="action_add_sub">新增子節拍</string>
   <string name="action_remove_sub">移除子節拍</string>
-  <string name="action_clear_all">全部清除</string>
   <string name="action_tempo_tap">輕拍速度</string>
-  <string name="action_bookmark">書籤</string>
   <string name="action_beat_mode">節拍模式</string>
   <string name="action_send_feedback">傳送意見回饋</string>
   <string name="action_open_link">開啟外部網站</string>
@@ -85,10 +85,15 @@
   <string name="action_copy_to_clipboard">複製至剪貼簿</string>
   <string name="action_reload">重新整理</string>
   <string name="action_change_tempo">改變節奏</string>
+  <string name="action_save">儲存</string>
+  <string name="action_rename">重新命名</string>
+  <string name="action_update">更新</string>
+  <string name="action_delete">刪除</string>
+  <string name="action_backup">備份</string>
+  <string name="action_restore">還原</string>
 
   <!-- MESSAGES -->
 
-  <string name="msg_bookmarks_max">書籤數量已滿</string>
   <string name="msg_feedback">一款優秀的應用程式需要花費大量的時間和獲取使用者的意見反映。</string>
   <string name="msg_feedback_contact">你有任何願望、評論或問題嗎？聯絡我！\n否則，我會非常高興在 Play 商店得到一個好評。</string>
   <string name="msg_recommend">看看這個很酷的節拍器應用程式：\n%1$s</string>
@@ -98,7 +103,6 @@
   <string name="msg_service_description">節拍器配置和播放服務</string>
   <string name="msg_connection_lost">服務連線丟失，需要重新啟動應用程式</string>
   <string name="msg_reset">全部重置？</string>
-  <string name="msg_reset_description">你真的想要重置包括書籤和設定在內整個應用程式嗎？這是無法撤銷的。</string>
   <string name="msg_reset_elapsed">重置已使用時間？</string>
   <string name="msg_gain">音量增強下播放？</string>
   <string name="msg_gain_description">小心不要透過耳機播放，因為太大的音量可以引致耳朵損傷！</string>
@@ -108,7 +112,6 @@
   <string name="msg_report_crash">請不吝回報任何當機情形，並附上當機紀錄，使開發者能順利修復問題。</string>
   <string name="msg_copied_to_clipboard">已複製至剪貼簿</string>
   <string name="msg_invalid_input">無效輸入</string>
-
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">小節</string>
@@ -275,6 +278,8 @@
   <string name="about_changelog_description">此版本新增功能</string>
   <string name="about_developer">開發者</string>
   <string name="about_vending_description">開發者的更多應用程式</string>
+  <string name="about_key">解除鎖定應用程式</string>
+  <string name="about_key_description_installed">已安裝</string>
   <string name="about_github_description">原始碼</string>
   <string name="about_translation_description">幫助翻譯 Tack</string>
   <string name="about_privacy">隱私政策</string>
