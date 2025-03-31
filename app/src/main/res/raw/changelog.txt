@@ -1,6 +1,6 @@
 ## 5.0.0 🥁
 
-? Song library has arrived! I worked hard to bring you an easy way to manage different metronome configurations and arrange them for playback. Hope you like it!
+? Song library has arrived! I worked hard to give you an easy way to manage different metronome configurations and arrange them for playback. Hope you like it!
 
 - New: bookmark button replaced by song library button for managing configuration combinations
 - New: bookmarks bar replaced by song bar. Tap on song to apply it, tap again to open a dialog with all parts, tap × to switch back to previous configuration
