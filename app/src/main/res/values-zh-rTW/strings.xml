@@ -51,6 +51,9 @@
   <string name="label_sort_last_played">最近播放</string>
   <string name="label_sort_never_played">從未播放</string>
   <string name="label_sort_most_played">最常播放</string>
+  <plurals name="label_sort_most_played_times">
+    <item quantity="other">已播放 %1$d 次</item>
+  </plurals>
   <!-- ACTIONS -->
 
   <string name="action_back">返回</string>
