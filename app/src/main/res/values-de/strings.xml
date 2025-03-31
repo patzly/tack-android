@@ -161,10 +161,9 @@
   <string name="msg_restore_error">Fehler beim Wiederherstellen der Sicherung</string>
   <string name="msg_restore_file_missing">Keine Datei zum Wiederherstellen ausgewählt</string>
   <string name="msg_restore_success">Sicherung erfolgreich wiederhergestellt</string>
+  <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
   <string name="msg_songs_intro">Lesezeichen sind jetzt Werke</string>
-  <string name="msg_songs_intro_description">Die neue Werksammlung ersetzt die bisherigen Tempo-Lesezeichen. Anstatt bpm-Werte zu speichern, kannst du jetzt ganze Metronom-Konfigurationen als Teile eines Werks speichern und anordnen. Passe einfach das Metronom und die Optionen nach deinen Wünschen an und füge die aktuelle Konfiguration als neuen Teil einem Werk hinzu oder aktualisiere einen bestehenden Teil.\nWenn du Fragen hast, lies bitte zuerst in den Hilfe-Abschnitten zur Werksammlung nach.</string>
-
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Takte</string>
