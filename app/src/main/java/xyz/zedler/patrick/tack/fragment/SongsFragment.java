@@ -48,7 +48,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
@@ -60,6 +59,7 @@ import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.FragmentSongsBinding;
 import xyz.zedler.patrick.tack.fragment.SongsFragmentDirections.ActionSongsToSong;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter;
+import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
@@ -162,7 +162,7 @@ public class SongsFragment extends BaseFragment {
     });
     binding.recyclerSongs.setAdapter(adapter);
     // Layout manager
-    LinearLayoutManager layoutManager = new LinearLayoutManager(activity);
+    LinearLayoutManager layoutManager = new WrapperLinearLayoutManager(activity);
     binding.recyclerSongs.setLayoutManager(layoutManager);
     binding.recyclerSongs.setItemAnimator(new DefaultItemAnimator());
 

@@ -32,6 +32,7 @@ import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.recyclerview.adapter.LanguageAdapter;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetLanguagesBinding;
 import xyz.zedler.patrick.tack.model.Language;
+import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 
@@ -50,9 +51,10 @@ public class LanguagesBottomSheetDialogFragment extends BaseBottomSheetDialogFra
 
     MainActivity activity = (MainActivity) requireActivity();
 
-    binding.recyclerLanguages.setLayoutManager(
-        new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+    LinearLayoutManager layoutManager = new WrapperLinearLayoutManager(
+        activity, LinearLayoutManager.VERTICAL, false
     );
+    binding.recyclerLanguages.setLayoutManager(layoutManager);
     binding.recyclerLanguages.setAdapter(
         new LanguageAdapter(
             LocaleUtil.getLanguages(activity),

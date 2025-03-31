@@ -32,7 +32,6 @@ import android.graphics.drawable.ScaleDrawable;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,28 +40,24 @@ import android.view.ViewTreeObserver;
 import android.view.animation.OvershootInterpolator;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.graphics.ColorUtils;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.DEF;
-import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
 import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.ViewSongPickerBinding;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipAdapter;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipAdapter.OnSongClickListener;
 import xyz.zedler.patrick.tack.recyclerview.decoration.SongChipItemDecoration;
+import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
@@ -181,7 +176,7 @@ public class SongPickerView extends FrameLayout {
     );
     binding.recyclerSongPicker.setAdapter(adapter);
     // Layout manager
-    LinearLayoutManager layoutManager = new LinearLayoutManager(
+    LinearLayoutManager layoutManager = new WrapperLinearLayoutManager(
         context, LinearLayoutManager.HORIZONTAL, false
     );
     binding.recyclerSongPicker.setLayoutManager(layoutManager);

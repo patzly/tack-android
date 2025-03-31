@@ -24,7 +24,6 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.database.entity.Part;
@@ -32,6 +31,7 @@ import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.PartialDialogPartsBinding;
 import xyz.zedler.patrick.tack.databinding.PartialDialogPartsTitleBinding;
 import xyz.zedler.patrick.tack.recyclerview.adapter.PartDialogAdapter;
+import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
 
 public class PartsDialogUtil {
 
@@ -51,7 +51,7 @@ public class PartsDialogUtil {
     binding = PartialDialogPartsBinding.inflate(activity.getLayoutInflater());
     dialogUtil = new DialogUtil(activity, "parts");
 
-    binding.recyclerParts.setLayoutManager(new LinearLayoutManager(activity));
+    binding.recyclerParts.setLayoutManager(new WrapperLinearLayoutManager(activity));
     adapter = new PartDialogAdapter((partIndex, fromUser) -> {
       if (fromUser) {
         activity.performHapticClick();

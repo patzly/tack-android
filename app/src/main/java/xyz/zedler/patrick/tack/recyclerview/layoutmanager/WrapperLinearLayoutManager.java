@@ -33,6 +33,10 @@ public class WrapperLinearLayoutManager extends LinearLayoutManager {
     super(context);
   }
 
+  public WrapperLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
+    super(context, orientation, reverseLayout);
+  }
+
   @Override
   public void onLayoutChildren(Recycler recycler, State state) {
     // Fix for IndexOutOfBoundsException: Inconsistency detected. Invalid item position
