@@ -308,7 +308,7 @@ public class SettingsFragment extends BaseFragment
         new Thread(() -> {
           getMetronomeUtil().restorePlayingState();
           getMetronomeUtil().removeListener(latencyListener);
-          getMetronomeUtil().setToPreferences();
+          getMetronomeUtil().setToPreferences(false);
         }).start();
       }
     });

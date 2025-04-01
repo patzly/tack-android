@@ -96,10 +96,10 @@ public class MetronomeUtil {
     db = SongDatabase.getInstance(context.getApplicationContext());
 
     resetHandlersIfRequired();
-    setToPreferences();
+    setToPreferences(false);
   }
 
-  public void setToPreferences() {
+  public void setToPreferences(boolean hasUtilSwitched) {
     config.setToPreferences(sharedPrefs);
 
     latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY);
@@ -113,6 +113,11 @@ public class MetronomeUtil {
     setIgnoreFocus(sharedPrefs.getBoolean(PREF.IGNORE_FOCUS, DEF.IGNORE_FOCUS));
     setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
     setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
+    if (hasUtilSwitched) {
+      // don't set current song if util switched after service binding
+      // else incremental tempo would be reset to the config tempo on every bind/unbind
+      return;
+    }
     setCurrentSong(
         sharedPrefs.getString(PREF.SONG_CURRENT_ID, DEF.SONG_CURRENT_ID),
         sharedPrefs.getInt(PREF.PART_CURRENT_INDEX, DEF.PART_CURRENT_INDEX),

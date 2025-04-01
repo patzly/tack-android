@@ -309,7 +309,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
       listeners.addAll(metronomeService.getMetronomeUtil().getListeners());
     }
     getMetronomeUtil().addListeners(listeners);
-    getMetronomeUtil().setToPreferences();
+    getMetronomeUtil().setToPreferences(true);
   }
 
   public SongViewModel getSongViewModel() {
