@@ -471,6 +471,19 @@ public class MainFragment extends BaseFragment
             );
           }
           binding.songPickerMain.setSongs(songsWithParts);
+          if (!isPortrait && !isLandTablet) {
+            // Hide song picker in landscape mode if empty to make place for other controls
+            binding.songPickerMain.setVisibility(
+                songsWithParts.isEmpty() ? View.GONE : View.VISIBLE
+            );
+            if (binding.dividerMainSongs != null) {
+              binding.dividerMainSongs.setVisibility(
+                  !songsWithParts.isEmpty() ? View.VISIBLE : View.GONE
+              );
+            }
+          } else {
+            binding.songPickerMain.setVisibility(View.VISIBLE);
+          }
         }
     );
 

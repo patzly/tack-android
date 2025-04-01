@@ -276,11 +276,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <com.google.android.material.divider.MaterialDivider
+          android:id="@+id/divider_main_songs"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_gravity="top"
+          app:dividerInsetStart="16dp"
+          app:dividerInsetEnd="16dp" />
+
         <xyz.zedler.patrick.tack.view.SongPickerView
           android:id="@+id/song_picker_main"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_gravity="center_vertical" />
+          android:layout_gravity="center_vertical"
+          android:layout_marginTop="1dp" />
 
       </FrameLayout>
 
