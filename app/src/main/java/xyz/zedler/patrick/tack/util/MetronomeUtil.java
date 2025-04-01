@@ -81,6 +81,7 @@ public class MetronomeUtil {
   private boolean playing, tempPlaying, beatModeVibrate, isCountingIn, isMuted;
   private boolean showElapsed, resetTimerOnStop, alwaysVibrate, flashScreen, keepAwake;
   private boolean neverStartedWithGain = true;
+  private boolean ignoreTimerCallbacksTemp = false;
 
   public MetronomeUtil(@NonNull Context context, boolean fromService) {
     this.context = context;
@@ -242,7 +243,11 @@ public class MetronomeUtil {
     }
     List<Part> parts = currentSongWithParts.getParts();
     if (!parts.isEmpty()) {
+      // ignore timer callbacks temporary if restarting
+      // else the timer transition would be laggy
+      ignoreTimerCallbacksTemp = restart;
       setConfig(parts.get(index).toConfig(), restart);
+      ignoreTimerCallbacksTemp = false;
       if (restart) {
         restartIfPlaying(true);
       }
@@ -472,6 +477,9 @@ public class MetronomeUtil {
       start(true);
     } else if (resetTimer) {
       timerProgress = 0;
+      if (ignoreTimerCallbacksTemp) {
+        return;
+      }
       synchronized (listeners) {
         for (MetronomeListener listener : listeners) {
           listener.onMetronomeTimerProgressOneTime(true);
@@ -1109,6 +1117,9 @@ public class MetronomeUtil {
       });
     }
 
+    if (ignoreTimerCallbacksTemp) {
+      return;
+    }
     synchronized (listeners) {
       for (MetronomeListener listener : listeners) {
         if (performOneTime) {

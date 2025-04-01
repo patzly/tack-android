@@ -630,7 +630,7 @@ public class MainFragment extends BaseFragment
     updateOptions(false);
 
     int tempo = getMetronomeUtil().getTempo();
-    setTempo(tempo);
+    updateTempoDisplay(tempo, tempo);
     binding.textSwitcherMainTempoTerm.setCurrentText(getTempoTerm(tempo));
 
     boolean showLogo = bigLogo && getMetronomeUtil().isPlaying();
@@ -1324,18 +1324,14 @@ public class MainFragment extends BaseFragment
 
   private void changeTempo(int difference) {
     int tempoNew = getMetronomeUtil().getTempo() + difference;
-    setTempo(tempoNew);
+    updateTempoDisplay(getMetronomeUtil().getTempo(), tempoNew);
+    getMetronomeUtil().setTempo(tempoNew);
     if (tempoNew >= Constants.TEMPO_MIN && tempoNew <= Constants.TEMPO_MAX) {
       performHapticTick();
     }
   }
 
-  public void setTempo(int tempo) {
-    updateTempoDisplay(getMetronomeUtil().getTempo(), tempo);
-    getMetronomeUtil().setTempo(tempo);
-  }
-
-  private void updateTempoDisplay(int tempoOld, int tempoNew) {
+  public void updateTempoDisplay(int tempoOld, int tempoNew) {
     tempoNew = Math.min(Math.max(tempoNew, Constants.TEMPO_MIN), Constants.TEMPO_MAX);
     if (binding == null) {
       return;
