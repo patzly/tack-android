@@ -96,10 +96,10 @@ public class MetronomeUtil {
     db = SongDatabase.getInstance(context.getApplicationContext());
 
     resetHandlersIfRequired();
-    setToPreferences(false);
+    setToPreferences(true);
   }
 
-  public void setToPreferences(boolean hasUtilSwitched) {
+  public void setToPreferences(boolean restart) {
     config.setToPreferences(sharedPrefs);
 
     latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY);
@@ -113,15 +113,10 @@ public class MetronomeUtil {
     setIgnoreFocus(sharedPrefs.getBoolean(PREF.IGNORE_FOCUS, DEF.IGNORE_FOCUS));
     setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
     setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
-    if (hasUtilSwitched) {
-      // don't set current song if util switched after service binding
-      // else incremental tempo would be reset to the config tempo on every bind/unbind
-      return;
-    }
     setCurrentSong(
         sharedPrefs.getString(PREF.SONG_CURRENT_ID, DEF.SONG_CURRENT_ID),
         sharedPrefs.getInt(PREF.PART_CURRENT_INDEX, DEF.PART_CURRENT_INDEX),
-        false
+        restart
     );
   }
 
@@ -132,8 +127,13 @@ public class MetronomeUtil {
   public void setConfig(MetronomeConfig config, boolean restart) {
     setCountIn(config.getCountIn());
 
-    int tempoDiff = config.getTempo() - getTempo();
-    changeTempo(tempoDiff);
+    // when MetronomeUtil instances are switched during service bind/unbind, restart is false
+    // use that to preserve tempo, else incremental tempo would be reset to the config tempo
+    // during incrementing
+    if (restart) {
+      int tempoDiff = config.getTempo() - getTempo();
+      changeTempo(tempoDiff);
+    }
 
     setBeats(config.getBeats(), restart);
     setSubdivisions(config.getSubdivisions());
