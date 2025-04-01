@@ -39,7 +39,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -75,7 +74,7 @@ public class MetronomeUtil {
   private Handler tickHandler, latencyHandler;
   private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
   private SongWithParts currentSongWithParts;
-  private String currentSongId;
+  private String currentSongId, timerStringBars;
   private int currentPartIndex, muteCountDown;
   private long tickIndex, latency, elapsedStartTime, elapsedTime, elapsedPrevious, timerStartTime;
   private float timerProgress;
@@ -1143,15 +1142,33 @@ public class MetronomeUtil {
         }
         return getTimeStringFromSeconds(seconds, totalHours > 0);
       default:
+        if (isPlaying() && timerStringBars != null) {
+          return timerStringBars;
+        }
+
         long barInterval = getInterval() * getBeatsCount();
         int progressBarCount = Math.min((int) (elapsedTime / barInterval), timerDuration - 1);
 
-        long elapsedTimeFullBars = progressBarCount * barInterval;
-        long remaining = elapsedTime - elapsedTimeFullBars;
+        long elapsedTimeFullBars = progressBarCount * barInterval; // full bars
+        long remaining = elapsedTime - elapsedTimeFullBars; // unfinished bar
         int beatCount = Math.min((int) (remaining / getInterval()), getBeatsCount() - 1);
-
+        remaining -= beatCount * getInterval(); // unfinished beat
+        int subdivisionCount = Math.min(
+            (int) (remaining / ((float) getInterval() / getSubdivisionsCount())),
+            getSubdivisionsCount() - 1
+        );
         String format = getBeatsCount() < 10 ? "%d.%01d" : "%d.%02d";
-        return String.format(Locale.ENGLISH, format, progressBarCount + 1, beatCount + 1);
+        if (getSubdivisionsCount() > 1) {
+          format += getSubdivisionsCount() < 10 ? ".%01d" : ".%02d";
+          return String.format(
+              Locale.ENGLISH, format,
+              progressBarCount + 1, beatCount + 1, subdivisionCount + 1
+          );
+        } else {
+          return String.format(
+              Locale.ENGLISH, format, progressBarCount + 1, beatCount + 1
+          );
+        }
     }
   }
 
@@ -1277,13 +1294,13 @@ public class MetronomeUtil {
     boolean isFirstBeat = ((tickIndex / getSubdivisionsCount()) % getBeatsCount()) == 0;
 
     if (isTimerActive() && config.getTimerUnit().equals(UNIT.BARS) && !isCountIn) {
-      boolean increaseTimerProgress = barIndexWithoutCountIn != 0 || !isFirstBeat;
+      boolean increaseTimerProgress = barIndexWithoutCountIn != 0 || !(isBeat && isFirstBeat);
+      // Play the first beat without increasing
       if (increaseTimerProgress) {
-        // Play the first beat without increasing
         float stepSize = 1f / (getTimerDuration() * getBeatsCount() * getSubdivisionsCount());
         timerProgress += stepSize;
         int steps = Math.round(timerProgress / stepSize);
-        timerProgress = steps * stepSize; // to avoid rounding errors
+        timerProgress = steps * stepSize;
       }
       if (timerProgress >= 1) {
         timerProgress = 1;
@@ -1300,6 +1317,27 @@ public class MetronomeUtil {
         }
         return null;
       }
+
+      // Update timer string after timer progress
+      // Only calculate bar from timerProgress because tickIndex is always starting from 0
+      // For beats and subdivisions the timerProgress is too unreliable
+      long elapsedTime = (long) (timerProgress * getTimerInterval());
+      long barInterval = getInterval() * getBeatsCount();
+      int progressBarCount = Math.min((int) (elapsedTime / barInterval), getTimerDuration() - 1);
+      String format = getBeatsCount() < 10 ? "%d.%01d" : "%d.%02d";
+      if (getSubdivisionsCount() > 1) {
+        format += getSubdivisionsCount() < 10 ? ".%01d" : ".%02d";
+        timerStringBars = String.format(
+            Locale.ENGLISH, format, progressBarCount + 1, beat, subdivision
+        );
+      } else {
+        timerStringBars = String.format(
+            Locale.ENGLISH, format, progressBarCount + 1, beat
+        );
+      }
+    } else {
+      // Calculate with timerProgress instead
+      timerStringBars = null;
     }
 
     if (isBeat && isFirstBeat) {

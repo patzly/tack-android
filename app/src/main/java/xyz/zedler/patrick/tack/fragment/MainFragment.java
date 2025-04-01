@@ -749,9 +749,9 @@ public class MainFragment extends BaseFragment
         if (bigLogo) {
           logoCenterUtil.nextBeat(getMetronomeUtil().getInterval());
         }
-        if (getMetronomeUtil().getTimerUnit().equals(UNIT.BARS)) {
-          updateTimerDisplay();
-        }
+      }
+      if (getMetronomeUtil().getTimerUnit().equals(UNIT.BARS)) {
+        updateTimerDisplay();
       }
     });
   }

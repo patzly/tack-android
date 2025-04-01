@@ -87,7 +87,6 @@
         android:paddingStart="16dp"
         android:paddingEnd="8dp"
         android:textColor="?attr/colorOnSurfaceVariant"
-        android:singleLine="true"
         android:fontFeatureSettings="tnum" />
 
     </LinearLayout>
@@ -309,7 +308,6 @@
         android:paddingEnd="8dp"
         android:textColor="?attr/colorOnSurfaceVariant"
         android:text="@string/options_incremental_max"
-        android:singleLine="true"
         android:fontFeatureSettings="tnum" />
 
       <com.google.android.material.button.MaterialButton
