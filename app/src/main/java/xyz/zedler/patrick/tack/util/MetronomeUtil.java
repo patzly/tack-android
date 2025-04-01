@@ -436,11 +436,12 @@ public class MetronomeUtil {
     if (!isPlaying()) {
       return;
     }
-    timerProgress = getTimerProgress(); // must be called before playing is set to false
     boolean isTimerReset = false;
     if (resetTimer || equalsTimerProgress(1)) {
       timerProgress = 0;
       isTimerReset = true;
+    } else {
+      timerProgress = getTimerProgress(); // must be called before playing is set to false
     }
     elapsedPrevious = elapsedTime;
 
