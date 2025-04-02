@@ -61,6 +61,8 @@
   </plurals>
   <string name="label_song_name">歌曲名稱</string>
   <string name="label_song_name_help">名稱必須是唯一的</string>
+  <string name="label_song_name_used">名稱已被使用</string>
+
   <!-- ACTIONS -->
 
   <string name="action_back">返回</string>
