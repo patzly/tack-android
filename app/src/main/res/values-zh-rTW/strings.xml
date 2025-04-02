@@ -273,6 +273,7 @@
   <string name="settings_gain_warning">謹慎使用！</string>
   <string name="settings_gain_disclaimer">當啟用增強功能時，每次啟動前都會顯示警告。開發者對任何潛在的損害不承擔責任。</string>
 
+  <string name="settings_hide_sub_controls">不使用時隱藏子節拍控制</string>
   <string name="settings_active_beat">突出顯示目前節拍</string>
   <string name="settings_active_beat_description">對較慢的節奏有幫助</string>
 
