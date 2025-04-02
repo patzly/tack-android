@@ -53,6 +53,7 @@
   <string name="label_tempo_input_help">值從 %1$d 到 %2$d</string>
   <string name="label_part_name">部份名稱</string>
   <string name="label_part_unnamed">部份 %1$d</string>
+  <string name="label_part_no_duration">無持續時間</string>
   <plurals name="label_parts_count">
     <item quantity="other">%1$d 個部份</item>
   </plurals>
