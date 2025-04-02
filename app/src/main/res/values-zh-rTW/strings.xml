@@ -108,6 +108,7 @@
   <string name="action_save">儲存</string>
   <string name="action_discard">捨棄</string>
   <string name="action_rename">重新命名</string>
+  <string name="action_rename_part">重新命名部份</string>
   <string name="action_update">更新</string>
   <string name="action_delete">刪除</string>
   <string name="action_move_up">向上移動</string>
