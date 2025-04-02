@@ -99,6 +99,7 @@
   <string name="action_rename">重新命名</string>
   <string name="action_update">更新</string>
   <string name="action_delete">刪除</string>
+  <string name="action_move_up">向上移動</string>
   <string name="action_backup">備份</string>
   <string name="action_restore">還原</string>
 
