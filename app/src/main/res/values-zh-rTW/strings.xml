@@ -118,6 +118,7 @@
   <string name="msg_reset">全部重置？</string>
   <string name="msg_reset_description">你確定要重置整個應用程式，包括歌曲庫和設定嗎？如果需要，請先建立歌曲庫的備份。重置無法撤銷。</string>
   <string name="msg_reset_timer">重置計時器？</string>
+  <string name="msg_reset_timer_description">你可以在設定中變更是否在啟動時重置計時器的預設行為。</string>
   <string name="msg_reset_elapsed">重置已使用時間？</string>
   <string name="msg_gain">音量增強下播放？</string>
   <string name="msg_gain_description">小心不要透過耳機播放，因為太大的音量可以引致耳朵損傷！</string>
