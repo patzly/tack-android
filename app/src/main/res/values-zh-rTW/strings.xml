@@ -51,6 +51,7 @@
   <string name="label_tempo_presto">急板</string>
   <string name="label_tempo_prestissimo">最急板</string>
   <string name="label_tempo_input_help">值從 %1$d 到 %2$d</string>
+  <string name="label_song_looped_description">結束時重新播放歌曲</string>
   <string name="label_sort_name">名稱</string>
   <string name="label_sort_last_played">最近播放</string>
   <string name="label_sort_never_played">從未播放</string>
