@@ -57,6 +57,7 @@
   <plurals name="label_parts_count">
     <item quantity="other">%1$d 個部份</item>
   </plurals>
+  <string name="label_song_looped">循環播放</string>
   <string name="label_song_looped_description">結束時重新播放歌曲</string>
   <string name="label_sort_name">名稱</string>
   <string name="label_sort_last_played">最近播放</string>
