@@ -144,6 +144,7 @@
   <string name="msg_backup_error">備份時發生錯誤</string>
   <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
+  <string name="msg_songs_intro">書籤現在是歌曲</string>
   <string name="msg_songs_intro_description">新的歌曲庫取代了以前的節奏書籤。現在你可以將整個節拍器配置儲存並安排為歌曲的一部分，而不必為節拍值增加書籤。只需要根據你的喜好調整控制項和選項，然後將目前配置作為新部分增加至歌曲或更新現有部分。</string>
 
   <!-- OPTIONS -->
