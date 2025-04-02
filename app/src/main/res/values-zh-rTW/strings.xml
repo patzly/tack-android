@@ -62,6 +62,7 @@
   <string name="label_song_not_looped">未循環</string>
   <string name="label_sort_name">名稱</string>
   <string name="label_sort_last_played">最近播放</string>
+  <string name="label_sort_last_played_date">最近播放 %1$s</string>
   <string name="label_sort_never_played">從未播放</string>
   <string name="label_sort_most_played">最常播放</string>
   <plurals name="label_sort_most_played_times">
