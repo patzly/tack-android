@@ -116,6 +116,7 @@
   <string name="msg_service_description">節拍器配置和播放服務</string>
   <string name="msg_connection_lost">服務連線丟失，需要重新啟動應用程式</string>
   <string name="msg_reset">全部重置？</string>
+  <string name="msg_reset_description">你確定要重置整個應用程式，包括歌曲庫和設定嗎？如果需要，請先建立歌曲庫的備份。重置無法撤銷。</string>
   <string name="msg_reset_timer">重置計時器？</string>
   <string name="msg_reset_elapsed">重置已使用時間？</string>
   <string name="msg_gain">音量增強下播放？</string>
