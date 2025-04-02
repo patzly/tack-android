@@ -101,6 +101,7 @@
   <string name="action_delete">刪除</string>
   <string name="action_move_up">向上移動</string>
   <string name="action_move_down">向下移動</string>
+  <string name="action_open_play_store">開啟 Play 商店</string>
   <string name="action_backup">備份</string>
   <string name="action_restore">還原</string>
 
