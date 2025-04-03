@@ -38,7 +38,7 @@
     android:paddingBottom="8dp"
     android:clickable="true"
     android:focusable="true"
-    android:background="@drawable/ripple_widget_list_item_more_bg"
+    android:background="@drawable/ripple_widget_list_item_bg"
     tools:ignore="UselessParent">
 
     <TextView

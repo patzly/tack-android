@@ -41,7 +41,7 @@
     android:paddingBottom="8dp"
     android:clickable="true"
     android:focusable="true"
-    android:background="@drawable/ripple_widget_list_item_song_bg"
+    android:background="@drawable/ripple_widget_list_item_bg"
     tools:ignore="UselessParent">
 
     <TextView
@@ -49,7 +49,7 @@
       style="@style/Widget.Tack.TextView.ListItem.Title"
       android:text="Song #1"
       android:textAppearance="?attr/textAppearanceBodyMedium"
-      android:textColor="?attr/colorOnTertiaryContainer"
+      android:textColor="?attr/colorOnSecondaryContainer"
       tools:ignore="HardcodedText" />
 
     <LinearLayout
@@ -63,7 +63,7 @@
         android:layout_width="wrap_content"
         android:text="3 parts"
         android:textAppearance="?attr/textAppearanceBodySmall"
-        android:textColor="?attr/colorOnTertiaryContainer"
+        android:textColor="?attr/colorOnSecondaryContainer"
         android:singleLine="true"
         tools:ignore="HardcodedText" />
 
@@ -74,8 +74,8 @@
         android:layout_marginEnd="6dp"
         android:src="@drawable/shape_text_separator_dot"
         android:layout_gravity="center_vertical"
-        app:tint="?attr/colorOnTertiaryContainer"
-        android:tint="?attr/colorOnTertiaryContainer"
+        app:tint="?attr/colorOnSecondaryContainer"
+        android:tint="?attr/colorOnSecondaryContainer"
         tools:ignore="ContentDescription,UseAppTint" />
 
       <TextView
@@ -84,7 +84,7 @@
         android:layout_width="wrap_content"
         android:text="2:30"
         android:textAppearance="?attr/textAppearanceBodySmall"
-        android:textColor="?attr/colorOnTertiaryContainer"
+        android:textColor="?attr/colorOnSecondaryContainer"
         android:singleLine="true"
         tools:ignore="HardcodedText" />
 
@@ -96,8 +96,8 @@
         android:layout_marginEnd="6dp"
         android:src="@drawable/shape_text_separator_dot"
         android:layout_gravity="center_vertical"
-        app:tint="?attr/colorOnTertiaryContainer"
-        android:tint="?attr/colorOnTertiaryContainer"
+        app:tint="?attr/colorOnSecondaryContainer"
+        android:tint="?attr/colorOnSecondaryContainer"
         tools:ignore="ContentDescription,UseAppTint" />
 
       <TextView
@@ -106,7 +106,7 @@
         android:layout_width="wrap_content"
         android:text="@string/label_song_not_looped"
         android:textAppearance="?attr/textAppearanceBodySmall"
-        android:textColor="?attr/colorOnTertiaryContainer"
+        android:textColor="?attr/colorOnSecondaryContainer"
         android:singleLine="true" />
 
     </LinearLayout>
@@ -116,7 +116,7 @@
       style="@style/Widget.Tack.TextView.ListItem.Description"
       android:text="Last played 2021-01-01"
       android:textAppearance="?attr/textAppearanceBodySmall"
-      android:textColor="?attr/colorOnTertiaryContainer"
+      android:textColor="?attr/colorOnSecondaryContainer"
       tools:ignore="HardcodedText" />
 
   </LinearLayout>
