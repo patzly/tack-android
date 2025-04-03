@@ -120,7 +120,6 @@
   <string name="action_open_play_store">開啟 Play 商店</string>
   <string name="action_backup">備份</string>
   <string name="action_restore">還原</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_feedback">一款優秀的應用程式需要花費大量的時間和獲取使用者的意見反映。</string>
