@@ -168,12 +168,18 @@ public class MetronomeUtil {
   }
 
   public void setCurrentSong(@NonNull String songId, int partIndex, boolean restart) {
+    setCurrentSong(songId, partIndex, restart, false);
+  }
+
+  public void setCurrentSong(
+      @NonNull String songId, int partIndex, boolean restart, boolean startPlaying
+  ) {
     currentSongId = songId;
     executorService.execute(() -> {
       currentSongWithParts = db.songDao().getSongWithPartsById(songId);
       if (currentSongWithParts != null) {
         sortParts();
-        setCurrentPartIndex(partIndex, restart);
+        setCurrentPartIndex(partIndex, restart, startPlaying);
       } else if (songId.equals(Constants.SONG_ID_DEFAULT)) {
         // default song not created yet
         Song songDefault = new Song(songId, null, 0, 0, false);
@@ -241,6 +247,10 @@ public class MetronomeUtil {
   }
 
   public void setCurrentPartIndex(int index, boolean restart) {
+    setCurrentPartIndex(index, restart, false);
+  }
+
+  public void setCurrentPartIndex(int index, boolean restart, boolean startPlaying) {
     currentPartIndex = index;
     if (currentSongWithParts == null) {
       Log.e(TAG, "setCurrentPartIndex: song with id='" + currentSongId + "' is null");
@@ -253,7 +263,9 @@ public class MetronomeUtil {
       ignoreTimerCallbacksTemp = restart;
       setConfig(parts.get(index).toConfig(), restart);
       ignoreTimerCallbacksTemp = false;
-      if (restart) {
+      if (!isPlaying() && startPlaying) {
+        start(false);
+      } else if (restart) {
         restartIfPlaying(true);
       }
       sharedPrefs.edit().putInt(PREF.PART_CURRENT_INDEX, index).apply();
@@ -364,7 +376,7 @@ public class MetronomeUtil {
     start(false);
   }
 
-  public void start(boolean isRestarted) {
+  private void start(boolean isRestarted) {
     // isRestarted should suppress onStop/onStart callbacks and count-in
     if (!NotificationUtil.hasPermission(context)) {
       synchronized (listeners) {
@@ -748,8 +760,12 @@ public class MetronomeUtil {
     return alwaysVibrate;
   }
 
-  public boolean areHapticEffectsPossible() {
-    return !isPlaying() || (!beatModeVibrate && !alwaysVibrate);
+  public boolean areHapticEffectsPossible(boolean ignoreIsPlaying) {
+    if (ignoreIsPlaying) {
+      return !beatModeVibrate && !alwaysVibrate;
+    } else {
+      return !isPlaying() || areHapticEffectsPossible(true);
+    }
   }
 
   public void setLatency(long offset) {

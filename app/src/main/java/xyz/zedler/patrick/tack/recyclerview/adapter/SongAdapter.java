@@ -27,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
@@ -37,24 +38,33 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.RowSongBinding;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
+import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class SongAdapter extends ListAdapter<SongWithParts, ViewHolder> {
 
   private final static String TAG = SongAdapter.class.getSimpleName();
 
+  private final static String PAYLOAD_PLAY = "play";
+
   private final OnSongClickListener listener;
   private int sortOrder = 0;
+  private String currentSongId = null;
+  private boolean isPlaying = false;
 
   public SongAdapter(@NonNull OnSongClickListener listener) {
     super(new SongDiffCallback());
     this.listener = listener;
+    setHasStableIds(true);
   }
 
   @NonNull
@@ -74,8 +84,39 @@ public class SongAdapter extends ListAdapter<SongWithParts, ViewHolder> {
     RowSongBinding binding = songHolder.binding;
 
     binding.linearSongContainer.setOnClickListener(v -> listener.onSongClick(songWithParts));
+    boolean isSelected = songWithParts.getSong().getId().equals(currentSongId);
+    if (isSelected) {
+      binding.linearSongContainer.setBackground(
+          ViewUtil.getBgListItemSelected(
+              context, R.attr.colorTertiaryContainer, 8, 8
+          )
+      );
+    } else {
+      binding.linearSongContainer.setBackgroundResource(R.drawable.ripple_list_item_bg);
+    }
+
+    binding.imageSongIcon.setColorFilter(
+        ResUtil.getColor(
+            context, isSelected ? R.attr.colorOnTertiaryContainer : R.attr.colorPrimary
+        )
+    );
 
     binding.textSongName.setText(songWithParts.getSong().getName());
+    binding.textSongName.setTextColor(
+        ResUtil.getColor(
+            context, isSelected ? R.attr.colorOnTertiaryContainer : R.attr.colorOnSurface
+        )
+    );
+
+    int colorFgSecondary = ResUtil.getColor(
+        context, isSelected ? R.attr.colorOnTertiaryContainer : R.attr.colorOnSurfaceVariant
+    );
+    binding.textSongPartCount.setTextColor(colorFgSecondary);
+    binding.imageSongDivider1.setColorFilter(colorFgSecondary);
+    binding.textSongDuration.setTextColor(colorFgSecondary);
+    binding.imageSongDivider2.setColorFilter(colorFgSecondary);
+    binding.textSongLooped.setTextColor(colorFgSecondary);
+    binding.textSongSortDetails.setTextColor(colorFgSecondary);
 
     // part count
     int partCount = songWithParts.getParts().size();
@@ -146,6 +187,52 @@ public class SongAdapter extends ListAdapter<SongWithParts, ViewHolder> {
         binding.textSongSortDetails.setText(R.string.label_sort_never_played);
       }
     }
+
+    binding.buttonSongPlayUnselected.setVisibility(isSelected ? View.GONE : View.VISIBLE);
+    binding.buttonSongPlayUnselected.setOnClickListener(v -> {
+      isPlaying = true;
+      listener.onPlayClick(songWithParts);
+    });
+
+    binding.buttonSongPlaySelected.setVisibility(isSelected ? View.VISIBLE : View.GONE);
+    binding.buttonSongPlaySelected.setIconResource(
+        isPlaying ? R.drawable.ic_rounded_stop : R.drawable.ic_rounded_play_arrow
+    );
+    binding.buttonSongPlaySelected.setOnClickListener(v -> listener.onPlayStopClick());
+
+    binding.frameSongPlay.setOnClickListener(v -> {
+      if (isSelected) {
+        binding.buttonSongPlaySelected.performClick();
+      } else {
+        binding.buttonSongPlayUnselected.performClick();
+      }
+    });
+
+    binding.buttonSongCloseSelected.setVisibility(isSelected ? View.VISIBLE : View.GONE);
+    binding.buttonSongCloseSelected.setOnClickListener(v -> listener.onCloseClick());
+  }
+
+  @Override
+  public void onBindViewHolder(
+      @NonNull ViewHolder holder, int position, @NonNull List<Object> payloads
+  ) {
+    if (payloads.contains(PAYLOAD_PLAY)) {
+      SongViewHolder songHolder = (SongViewHolder) holder;
+      RowSongBinding binding = songHolder.binding;
+
+      binding.buttonSongPlaySelected.setIconResource(
+          isPlaying ? R.drawable.ic_rounded_stop : R.drawable.ic_rounded_play_arrow
+      );
+    } else {
+      onBindViewHolder(holder, position);
+    }
+  }
+
+  @Override
+  public long getItemId(int position) {
+    String songId = getItem(position).getSong().getId();
+    UUID uuid = UUID.fromString(songId);
+    return uuid.getMostSignificantBits() ^ uuid.getLeastSignificantBits();
   }
 
   @SuppressLint("NotifyDataSetChanged")
@@ -153,6 +240,23 @@ public class SongAdapter extends ListAdapter<SongWithParts, ViewHolder> {
     if (this.sortOrder != sortOrder) {
       this.sortOrder = sortOrder;
       notifyDataSetChanged();
+    }
+  }
+
+  @SuppressLint("NotifyDataSetChanged")
+  public void setCurrentSongId(@Nullable String currentSongId) {
+    this.currentSongId = currentSongId;
+    // We don't know which previous item was selected, so we need to notify the whole list
+    notifyDataSetChanged();
+  }
+
+  public void setPlaying(boolean isPlaying) {
+    this.isPlaying = isPlaying;
+    for (int i = 0; i < getItemCount(); i++) {
+      if (getItem(i).getSong().getId().equals(currentSongId)) {
+        notifyItemChanged(i, PAYLOAD_PLAY);
+        break;
+      }
     }
   }
 
@@ -168,6 +272,9 @@ public class SongAdapter extends ListAdapter<SongWithParts, ViewHolder> {
 
   public interface OnSongClickListener {
     void onSongClick(@NonNull SongWithParts song);
+    void onPlayClick(@NonNull SongWithParts song);
+    void onPlayStopClick();
+    void onCloseClick();
   }
 
   static class SongDiffCallback extends DiffUtil.ItemCallback<SongWithParts> {

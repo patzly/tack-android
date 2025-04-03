@@ -102,8 +102,7 @@ public class MetronomeService extends Service {
         if (songId == null) {
           songId = Constants.SONG_ID_DEFAULT;
         }
-        metronomeUtil.setCurrentSong(songId, 0, true);
-        metronomeUtil.start();
+        metronomeUtil.setCurrentSong(songId, 0, false, true);
       } else if (intent.getAction().equals(ACTION.STOP)) {
         metronomeUtil.stop();
         if (!permNotification && hasPermission()) {

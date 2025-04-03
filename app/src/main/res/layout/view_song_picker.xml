@@ -103,8 +103,11 @@
             android:layout_height="18dp"
             android:src="@drawable/ic_rounded_close_anim"
             app:tint="?attr/colorOnTertiaryContainer"
-            tools:ignore="ContentDescription"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:importantForAccessibility="yes"
+            android:focusable="true"
+            android:clickable="true"
+            android:contentDescription="@string/action_close" />
 
         </LinearLayout>
 
@@ -114,7 +117,8 @@
         android:id="@+id/frame_song_picker_chip_close"
         android:layout_width="40dp"
         android:layout_height="48dp"
-        android:layout_gravity="end" />
+        android:layout_gravity="end"
+        android:importantForAccessibility="no" />
 
     </FrameLayout>
 

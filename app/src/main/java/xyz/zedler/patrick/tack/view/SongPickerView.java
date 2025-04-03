@@ -38,9 +38,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.OvershootInterpolator;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.core.graphics.ColorUtils;
+import androidx.core.view.AccessibilityDelegateCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -196,6 +200,21 @@ public class SongPickerView extends FrameLayout {
       }
       setCurrentSong(Constants.SONG_ID_DEFAULT, true);
     });
+    binding.imageSongPickerChipClose.setOnClickListener(
+        v -> binding.frameSongPickerChipClose.callOnClick()
+    );
+    ViewCompat.setAccessibilityDelegate(
+        binding.imageSongPickerChipClose, new AccessibilityDelegateCompat() {
+          @Override
+          public void onInitializeAccessibilityNodeInfo(
+              @NonNull View host,
+              @NonNull AccessibilityNodeInfoCompat info
+          ) {
+            super.onInitializeAccessibilityNodeInfo(host, info);
+            info.setClassName(Button.class.getName());
+          }
+        });
+    // TODO: improve accessibility
     binding.frameSongPickerChipTouchTarget.setOnClickListener(v -> {
       ViewUtil.startIcon(binding.imageSongPickerChipIcon);
       if (listener != null) {

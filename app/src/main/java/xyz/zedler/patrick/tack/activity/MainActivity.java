@@ -491,6 +491,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   }
 
   private boolean areHapticsAllowed() {
-    return getMetronomeUtil().areHapticEffectsPossible();
+    return getMetronomeUtil().areHapticEffectsPossible(false);
   }
 }

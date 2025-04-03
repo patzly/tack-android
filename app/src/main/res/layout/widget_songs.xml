@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@android:id/background"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:orientation="vertical"
+  android:theme="@style/Theme.Material3.DynamicColors.DayNight"
+  android:background="@drawable/shape_widget_bg">
+
+  <LinearLayout
+    android:id="@+id/linear_widget_songs_header"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <FrameLayout
+      android:layout_width="24dp"
+      android:layout_height="24dp"
+      android:layout_margin="12dp"
+      android:background="@drawable/shape_widget_header_icon_bg">
+
+      <ImageView
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="0.5dp"
+        android:src="@drawable/ic_logo_notification"
+        android:importantForAccessibility="no"
+        app:tint="?attr/colorOnPrimary"
+        android:tint="?attr/colorOnPrimary"
+        tools:ignore="ContentDescription,UseAppTint" />
+
+    </FrameLayout>
+
+    <TextView
+      android:id="@+id/text_widget_songs_title"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_vertical"
+      android:textAppearance="?attr/textAppearanceTitleMedium"
+      android:singleLine="true"
+      android:text="@string/title_songs" />
+
+  </LinearLayout>
+
+  <ListView
+    android:id="@+id/list_widget_songs"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginBottom="8dp"
+    android:divider="@null"
+    android:dividerHeight="4dp"
+    android:defaultFocusHighlightEnabled="false"
+    android:scrollbars="none"
+    android:clipToOutline="true"
+    tools:targetApi="31" />
+
+</LinearLayout>

@@ -43,7 +43,7 @@ public class SongViewModel extends AndroidViewModel {
 
     db = SongDatabase.getInstance(application);
 
-    allSongsWithParts = db.songDao().getAllSongsWithParts();
+    allSongsWithParts = db.songDao().getAllSongsWithPartsLive();
   }
 
   public LiveData<List<SongWithParts>> getAllSongsWithPartsLive() {

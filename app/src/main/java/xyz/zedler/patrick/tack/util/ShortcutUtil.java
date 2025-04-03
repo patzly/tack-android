@@ -25,7 +25,6 @@ import android.content.pm.ShortcutInfo;
 import android.content.pm.ShortcutManager;
 import android.graphics.drawable.Icon;
 import android.os.Build;
-import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.os.Looper;
@@ -42,7 +41,6 @@ import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.ShortcutActivity;
-import xyz.zedler.patrick.tack.database.entity.Song;
 
 public class ShortcutUtil {
 
@@ -135,10 +133,11 @@ public class ShortcutUtil {
     ShortcutInfo.Builder builder = new ShortcutInfo.Builder(context, id);
     builder.setShortLabel(name != null ? name : context.getString(R.string.label_song_name));
     builder.setIcon(Icon.createWithResource(context, R.mipmap.ic_shortcut));
-    builder.setIntent(new Intent(context, ShortcutActivity.class)
-        .setAction(ACTION.START_SONG)
-        .putExtra(EXTRA.SONG_ID, id)
-        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    builder.setIntent(
+        new Intent(context, ShortcutActivity.class)
+            .setAction(ACTION.START_SONG)
+            .putExtra(EXTRA.SONG_ID, id)
+            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
     );
     return builder.build();
   }

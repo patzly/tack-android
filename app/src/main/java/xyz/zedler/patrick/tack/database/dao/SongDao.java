@@ -65,7 +65,11 @@ public interface SongDao {
 
   @Transaction
   @Query("SELECT * FROM songs")
-  LiveData<List<SongWithParts>> getAllSongsWithParts();
+  List<SongWithParts> getAllSongsWithParts();
+
+  @Transaction
+  @Query("SELECT * FROM songs")
+  LiveData<List<SongWithParts>> getAllSongsWithPartsLive();
 
   @Query("SELECT * FROM songs")
   List<Song> getAllSongs();

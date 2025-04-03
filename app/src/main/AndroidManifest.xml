@@ -66,6 +66,10 @@
       android:exported="false" />
 
     <service
+      android:name=".widget.remote.SongsRemoteViewsService"
+      android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+    <service
       android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
       android:enabled="false"
       android:exported="false">
@@ -75,6 +79,17 @@
         android:value="true" />
 
     </service>
+
+    <receiver
+      android:name=".widget.SongsWidgetProvider"
+      android:exported="false">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/widget_songs" />
+    </receiver>
 
   </application>
 

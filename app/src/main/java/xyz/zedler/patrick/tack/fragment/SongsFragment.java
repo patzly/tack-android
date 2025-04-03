@@ -34,6 +34,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView.ItemAnimator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -60,8 +61,11 @@ import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.FragmentSongsBinding;
 import xyz.zedler.patrick.tack.fragment.SongsFragmentDirections.ActionSongsToSong;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter;
+import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter.OnSongClickListener;
 import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
 import xyz.zedler.patrick.tack.util.DialogUtil;
+import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
+import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
 
@@ -77,6 +81,7 @@ public class SongsFragment extends BaseFragment {
   private SongAdapter adapter;
   private ActivityResultLauncher<String> launcherBackup;
   private ActivityResultLauncher<String[]> launcherRestore;
+  private MetronomeListener metronomeListener;
   private final Gson gson = new Gson();
 
   @Override
@@ -93,6 +98,9 @@ public class SongsFragment extends BaseFragment {
     binding = null;
     dialogUtilIntro.dismiss();
     dialogUtilUnlock.dismiss();
+    if (metronomeListener != null) {
+      getMetronomeUtil().removeListener(metronomeListener);
+    }
   }
 
   @Override
@@ -155,18 +163,79 @@ public class SongsFragment extends BaseFragment {
       itemSort.setChecked(true);
     }
 
-    adapter = new SongAdapter(song -> {
-      performHapticClick();
-      ActionSongsToSong action
-          = SongsFragmentDirections.actionSongsToSong();
-      action.setSongId(song.getSong().getId());
-      activity.navigate(action);
+    metronomeListener = new MetronomeListenerAdapter() {
+      @Override
+      public void onMetronomeStart() {
+        activity.runOnUiThread(() -> adapter.setPlaying(true));
+      }
+
+      @Override
+      public void onMetronomeStop() {
+        activity.runOnUiThread(() -> adapter.setPlaying(false));
+      }
+
+      @Override
+      public void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex) {
+        activity.runOnUiThread(
+            () -> adapter.setCurrentSongId(song != null ? song.getSong().getId() : null)
+        );
+      }
+
+      @Override
+      public void onMetronomeConnectionMissing() {
+        activity.runOnUiThread(() -> showSnackbar(R.string.msg_connection_lost));
+      }
+    };
+    getMetronomeUtil().addListener(metronomeListener);
+
+    adapter = new SongAdapter(new OnSongClickListener() {
+      @Override
+      public void onSongClick(@NonNull SongWithParts song) {
+        performHapticClick();
+        ActionSongsToSong action
+            = SongsFragmentDirections.actionSongsToSong();
+        action.setSongId(song.getSong().getId());
+        activity.navigate(action);
+      }
+
+      @Override
+      public void onPlayClick(@NonNull SongWithParts song) {
+        if (getMetronomeUtil().areHapticEffectsPossible(true)) {
+          performHapticClick();
+        }
+        getMetronomeUtil().setCurrentSong(
+            song.getSong().getId(), 0, true, true
+        );
+      }
+
+      @Override
+      public void onPlayStopClick() {
+        if (getMetronomeUtil().areHapticEffectsPossible(true)) {
+          performHapticClick();
+        }
+        if (getMetronomeUtil().isPlaying()) {
+          getMetronomeUtil().stop();
+        } else {
+          getMetronomeUtil().start();
+        }
+      }
+
+      @Override
+      public void onCloseClick() {
+        performHapticClick();
+        getMetronomeUtil().setCurrentSong(Constants.SONG_ID_DEFAULT, 0, true);
+      }
     });
+    adapter.setCurrentSongId(getMetronomeUtil().getCurrentSongId());
+    adapter.setPlaying(getMetronomeUtil().isPlaying());
     binding.recyclerSongs.setAdapter(adapter);
     // Layout manager
     LinearLayoutManager layoutManager = new WrapperLinearLayoutManager(activity);
     binding.recyclerSongs.setLayoutManager(layoutManager);
-    binding.recyclerSongs.setItemAnimator(new DefaultItemAnimator());
+    ItemAnimator itemAnimator = new DefaultItemAnimator();
+    // Suppress fading on play tap caused by song play count
+    itemAnimator.setChangeDuration(0);
+    binding.recyclerSongs.setItemAnimator(itemAnimator);
 
     activity.getSongViewModel().getAllSongsWithPartsLive().observe(
         getViewLifecycleOwner(), songs -> {
@@ -270,9 +339,9 @@ public class SongsFragment extends BaseFragment {
             )
         );
       } else {
-        Collections.sort(this.songsWithParts, (o1, o2) -> {
-          String name1 = (o1.getSong() != null) ? o1.getSong().getName() : null;
-          String name2 = (o2.getSong() != null) ? o2.getSong().getName() : null;
+        Collections.sort(this.songsWithParts, (s1, s2) -> {
+          String name1 = (s1.getSong() != null) ? s1.getSong().getName() : null;
+          String name2 = (s2.getSong() != null) ? s2.getSong().getName() : null;
           // Nulls last handling
           if (name1 == null && name2 == null) return 0;
           if (name1 == null) return 1;
@@ -384,6 +453,9 @@ public class SongsFragment extends BaseFragment {
   }
 
   private void showSnackbar(int resId) {
+    if (binding == null) {
+      return;
+    }
     Snackbar snackbar = activity.getSnackbar(resId, Snackbar.LENGTH_SHORT);
     snackbar.setAnchorView(binding.fabSongs);
     activity.showSnackbar(snackbar);
