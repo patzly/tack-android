@@ -20,6 +20,7 @@
 <appwidget-provider
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
+  android:description="@string/msg_widget_description"
   android:targetCellWidth="3"
   android:targetCellHeight="2"
   android:minWidth="109dp"

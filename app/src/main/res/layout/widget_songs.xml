@@ -93,11 +93,12 @@
   </LinearLayout>
 
   <FrameLayout
-    android:id="@+id/frame_widget_songs_empty"
+    android:id="@+id/frame_widget_songs_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
+      android:id="@+id/linear_widget_songs_empty"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="vertical"
@@ -127,19 +128,19 @@
 
     </LinearLayout>
 
-  </FrameLayout>
+    <ListView
+      android:id="@+id/list_widget_songs"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginStart="8dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginBottom="8dp"
+      android:divider="@null"
+      android:dividerHeight="4dp"
+      android:scrollbars="none"
+      android:clipToOutline="true"
+      tools:targetApi="31" />
 
-  <ListView
-    android:id="@+id/list_widget_songs"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginBottom="8dp"
-    android:divider="@null"
-    android:dividerHeight="4dp"
-    android:scrollbars="none"
-    android:clipToOutline="true"
-    tools:targetApi="31" />
+  </FrameLayout>
 
 </LinearLayout>

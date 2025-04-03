@@ -107,7 +107,7 @@ public class SongsWidgetProvider extends AppWidgetProvider {
 
     views.setViewVisibility(R.id.list_widget_songs, areSongsEmpty ? View.GONE : View.VISIBLE);
     views.setViewVisibility(
-        R.id.frame_widget_songs_empty, areSongsEmpty ? View.VISIBLE : View.GONE
+        R.id.linear_widget_songs_empty, areSongsEmpty ? View.VISIBLE : View.GONE
     );
 
     if (!areSongsEmpty) {

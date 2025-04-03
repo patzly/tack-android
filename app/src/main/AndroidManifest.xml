@@ -82,6 +82,7 @@
 
     <receiver
       android:name=".widget.SongsWidgetProvider"
+      android:label="@string/title_songs"
       android:exported="false">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
