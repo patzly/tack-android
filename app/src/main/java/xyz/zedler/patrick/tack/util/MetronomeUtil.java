@@ -99,7 +99,13 @@ public class MetronomeUtil {
   }
 
   public void setToPreferences(boolean restart) {
+    int tempoTmp = getTempo();
     config.setToPreferences(sharedPrefs);
+
+    // restore tempo if incremental is active
+    if (isFromService() && isIncrementalActive()) {
+      config.setTempo(tempoTmp);
+    }
 
     latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY);
     alwaysVibrate = sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
