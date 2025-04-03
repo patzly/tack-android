@@ -362,11 +362,11 @@ public class MainFragment extends BaseFragment
       dialogUtilTimer.show();
       performHapticClick();
     });
-    binding.chipMainElapsedTime.frameChipNumbersContainer.setOnClickListener(v -> {
-      dialogUtilElapsed.show();
+    binding.chipMainTimerTotal.frameChipNumbersContainer.setOnClickListener(v -> {
+      dialogUtilTimer.show();
       performHapticClick();
     });
-    binding.chipMainElapsedTime.linearChipNumbers.setOnClickListener(v -> {
+    binding.chipMainElapsedTime.frameChipNumbersContainer.setOnClickListener(v -> {
       dialogUtilElapsed.show();
       performHapticClick();
     });
