@@ -22,16 +22,15 @@ package xyz.zedler.patrick.tack.widget;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.RemoteViews;
-import java.util.ArrayList;
+import androidx.annotation.Nullable;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.ACTION;
@@ -44,28 +43,33 @@ import xyz.zedler.patrick.tack.widget.remote.SongsRemoteViewsService;
 
 public class SongsWidgetProvider extends AppWidgetProvider {
 
-  private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-  private List<Song> songs = new ArrayList<>();
-
   @Override
   public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-    SongDatabase db = SongDatabase.getInstance(context);
-    executorService.execute(() -> {
-      songs = db.songDao().getAllSongs();
-      for (Song song : songs) {
-        if (song.getId().equals(Constants.SONG_ID_DEFAULT)) {
-          // Remove default song
-          songs.remove(song);
-          break;
-        }
-      }
+    fetchSongs(context, areSongsEmpty -> {
       for (int appWidgetId : appWidgetIds) {
-        updateWidget(context, appWidgetManager, appWidgetId);
+        updateWidget(context, appWidgetManager, appWidgetId, null, areSongsEmpty);
       }
+      appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_widget_songs);
     });
   }
 
-  private void updateWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
+  @Override
+  public void onAppWidgetOptionsChanged(
+      Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions
+  ) {
+    fetchSongs(context, areSongsEmpty -> {
+      updateWidget(context, appWidgetManager, appWidgetId, newOptions, areSongsEmpty);
+      appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.list_widget_songs);
+    });
+  }
+
+  private void updateWidget(
+      Context context,
+      AppWidgetManager appWidgetManager,
+      int appWidgetId,
+      @Nullable Bundle options,
+      boolean areSongsEmpty // for empty songs placeholder
+  ) {
     RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_songs);
 
     Intent intentIcon = new Intent(context, MainActivity.class);
@@ -83,6 +87,15 @@ public class SongsWidgetProvider extends AppWidgetProvider {
     );
     views.setOnClickPendingIntent(R.id.linear_widget_songs_header, pendingIntentTitle);
 
+    options = options != null ? options : appWidgetManager.getAppWidgetOptions(appWidgetId);
+    if (options != null) {
+      int minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
+      views.setTextViewText(
+          R.id.text_widget_songs_title,
+          context.getString(minWidth > 200 ? R.string.title_songs : R.string.title_songs_short)
+      );
+    }
+
     Intent intentUpdate = new Intent(context, SongsWidgetProvider.class);
     intentUpdate.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
     intentUpdate.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{appWidgetId});
@@ -92,13 +105,14 @@ public class SongsWidgetProvider extends AppWidgetProvider {
     );
     views.setOnClickPendingIntent(R.id.frame_widget_songs_update, pendingIntentUpdate);
 
-    views.setViewVisibility(R.id.list_widget_songs, songs.isEmpty() ? View.GONE : View.VISIBLE);
+    views.setViewVisibility(R.id.list_widget_songs, areSongsEmpty ? View.GONE : View.VISIBLE);
     views.setViewVisibility(
-        R.id.frame_widget_songs_empty, songs.isEmpty() ? View.VISIBLE : View.GONE
+        R.id.frame_widget_songs_empty, areSongsEmpty ? View.VISIBLE : View.GONE
     );
 
-    if (!songs.isEmpty()) {
+    if (!areSongsEmpty) {
       Intent serviceIntentSongs = new Intent(context, SongsRemoteViewsService.class);
+      serviceIntentSongs.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
       views.setRemoteAdapter(R.id.list_widget_songs, serviceIntentSongs);
 
       Intent intentSong = new Intent(context, SongActivity.class);
@@ -120,20 +134,22 @@ public class SongsWidgetProvider extends AppWidgetProvider {
     appWidgetManager.updateAppWidget(appWidgetId, views);
   }
 
-  @Override
-  public void onReceive(Context context, Intent intent) {
-    super.onReceive(context, intent);
-
-    String action = intent.getAction();
-    if (action != null && action.equals(AppWidgetManager.ACTION_APPWIDGET_UPDATE)) {
-      AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-      ComponentName componentName = new ComponentName(context, SongsWidgetProvider.class);
-      int[] appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
-      if (appWidgetIds == null) {
-        appWidgetIds = appWidgetManager.getAppWidgetIds(componentName);
+  private void fetchSongs(Context context, OnSongsFetchedListener listener) {
+    Executors.newSingleThreadExecutor().execute(() -> {
+      SongDatabase db = SongDatabase.getInstance(context);
+      List<Song> songs = db.songDao().getAllSongs();
+      for (Song song : songs) {
+        if (song.getId().equals(Constants.SONG_ID_DEFAULT)) {
+          // Remove default song
+          songs.remove(song);
+          break;
+        }
       }
-      onUpdate(context, appWidgetManager, appWidgetIds);
-      appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_widget_songs);
-    }
+      listener.onSongsFetched(songs.isEmpty());
+    });
+  }
+
+  private interface OnSongsFetchedListener {
+    void onSongsFetched(boolean areSongsEmpty);
   }
 }

@@ -26,6 +26,6 @@ public class SongsRemoteViewsService extends RemoteViewsService {
 
   @Override
   public RemoteViewsFactory onGetViewFactory(Intent intent) {
-    return new SongsRemoteViewsFactory(getApplicationContext());
+    return new SongsRemoteViewsFactory(getApplicationContext(), intent);
   }
 }

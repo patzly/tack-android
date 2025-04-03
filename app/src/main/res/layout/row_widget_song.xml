@@ -87,6 +87,7 @@
         tools:ignore="HardcodedText" />
 
       <ImageView
+        android:id="@+id/image_widget_song_looped"
         android:layout_width="2dp"
         android:layout_height="2dp"
         android:layout_marginStart="6dp"

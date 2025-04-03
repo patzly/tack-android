@@ -19,10 +19,12 @@
 
 package xyz.zedler.patrick.tack.widget.remote;
 
+import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
@@ -59,14 +61,21 @@ public class SongsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
 
   private final Context context;
   private final PrefsUtil prefsUtil;
+  private final AppWidgetManager appWidgetManager;
+  private final int appWidgetId;
   private SongDatabase db;
   private List<SongWithParts> songsWithParts = new ArrayList<>();
   private int sortOrder;
   private boolean isListTooBig;
+  private int minWidth = -1;
 
-  public SongsRemoteViewsFactory(Context context) {
+  public SongsRemoteViewsFactory(Context context, Intent intent) {
     this.context = context;
     this.prefsUtil = new PrefsUtil(context);
+    this.appWidgetId = intent.getIntExtra(
+        AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID
+    );
+    appWidgetManager = AppWidgetManager.getInstance(context);
   }
 
   @Override
@@ -92,6 +101,13 @@ public class SongsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
     isListTooBig = songsWithParts.size() > MAX_SONG_COUNT;
     if (isListTooBig) {
       songsWithParts = songsWithParts.subList(0, MAX_SONG_COUNT);
+    }
+
+    if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+      Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
+      if (options != null && options.containsKey(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)) {
+        minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
+      }
     }
   }
 
@@ -161,6 +177,9 @@ public class SongsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
       );
     }
     // looped
+    boolean showLooped = minWidth == -1 || minWidth > 200;
+    views.setViewVisibility(R.id.image_widget_song_looped, showLooped ? View.VISIBLE : View.GONE);
+    views.setViewVisibility(R.id.text_widget_song_looped, showLooped ? View.VISIBLE : View.GONE);
     views.setTextViewText(
         R.id.text_widget_song_looped,
         context.getString(
