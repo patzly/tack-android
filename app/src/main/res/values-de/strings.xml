@@ -159,7 +159,7 @@
   <string name="msg_unlock">Nachricht des Entwicklers</string>
   <string name="msg_unlock_description">Schätzt du das werbefreie Erlebnis mit zahlreichen leistungsstarken Funktionen in Tack? Ich habe Jahre meiner Freizeit damit verbracht, Tack kostenlos zu entwickeln, aber vor allem die Werksammlung hat Monate harter Arbeit gekostet. Um Tack weiter zu verbessern, bitte ich dich um einen kleinen Beitrag. Im Gegenzug bekommst du eine Freischalt-App für unbegrenzte Werke und unzählige Werkteile. Vielen Dank für deine Unterstützung!</string>
   <string name="msg_backup_error">Fehler bei der Sicherung</string>
-  <string name="msg_backup_directory_missing">Kein Speicherort für die Sicherung ausgewählt</string>
+  <string name="msg_backup_directory_missing">Kein Speicherort für Sicherung ausgewählt</string>
   <string name="msg_backup_success">Sicherung erfolgreich erstellt</string>
   <string name="msg_restore_error">Fehler beim Wiederherstellen der Sicherung</string>
   <string name="msg_restore_file_missing">Keine Datei zum Wiederherstellen ausgewählt</string>
