@@ -63,6 +63,7 @@ import xyz.zedler.patrick.tack.util.RenameDialogUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.SortUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
+import xyz.zedler.patrick.tack.util.UnlockDialogUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.util.WidgetUtil;
@@ -76,7 +77,8 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
 
   private FragmentSongBinding binding;
   private MainActivity activity;
-  private DialogUtil dialogUtilDiscard, dialogUtilDelete, dialogUtilUnlock;
+  private DialogUtil dialogUtilDiscard, dialogUtilDelete;
+  private UnlockDialogUtil unlockDialogUtil;
   private RenameDialogUtil renameDialogUtil;
   private OnBackPressedCallback onBackPressedCallback;
   private PartAdapter adapter;
@@ -106,7 +108,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     dialogUtilDiscard.dismiss();
     dialogUtilDelete.dismiss();
     renameDialogUtil.dismiss();
-    dialogUtilUnlock.dismiss();
+    unlockDialogUtil.dismiss();
     binding = null;
   }
 
@@ -441,21 +443,8 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     });
     dialogUtilDelete.showIfWasShown(savedInstanceState);
 
-    dialogUtilUnlock = new DialogUtil(activity, "unlock_parts");
-    dialogUtilUnlock.createDialog(builder -> {
-      builder.setTitle(R.string.msg_unlock);
-      builder.setMessage(R.string.msg_unlock_description);
-      builder.setPositiveButton(
-          R.string.action_open_play_store,
-          (dialog, which) -> {
-            performHapticClick();
-            UnlockUtil.openPlayStore(activity);
-          });
-      builder.setNegativeButton(
-          R.string.action_cancel, (dialog, which) -> performHapticClick()
-      );
-    });
-    dialogUtilUnlock.showIfWasShown(savedInstanceState);
+    unlockDialogUtil = new UnlockDialogUtil(activity);
+    unlockDialogUtil.showIfWasShown(savedInstanceState);
 
     renameDialogUtil = new RenameDialogUtil(activity, this);
     renameDialogUtil.showIfWasShown(savedInstanceState);
@@ -478,8 +467,8 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     if (dialogUtilDelete != null) {
       dialogUtilDelete.saveState(outState);
     }
-    if (dialogUtilUnlock != null) {
-      dialogUtilUnlock.saveState(outState);
+    if (unlockDialogUtil != null) {
+      unlockDialogUtil.saveState(outState);
     }
     if (renameDialogUtil != null) {
       renameDialogUtil.saveState(outState);
@@ -498,11 +487,14 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       // Remove focus from edit text
       UiUtil.hideKeyboard(activity);
       binding.editTextSongName.clearFocus();
-      if (UnlockUtil.isUnlocked(activity) || partsResult.size() < 2) {
+      if (activity.isUnlocked() || partsResult.size() < 2) {
         addPart();
         updateResult();
       } else {
-        dialogUtilUnlock.show();
+        unlockDialogUtil.show(
+            UnlockUtil.isKeyInstalled(activity)
+                && !UnlockUtil.isInstallerValid(activity)
+        );
       }
     }
   }

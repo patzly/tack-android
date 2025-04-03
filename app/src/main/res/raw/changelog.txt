@@ -6,7 +6,7 @@
 - New: bookmarks bar replaced by song bar. Tap on song to apply it, tap again to open a dialog with all parts, tap × to switch back to previous configuration
 - New: bookmarks in app shortcuts replaced by most frequently played songs
 - New: beautiful home screen widget for quick access to your song library
-- New: if Google Play is installed on your device, the app "Tack: Unlock Key" is available for purchase to unlock unlimited songs and parts. Thank you for your support!
+- New: if Google Play is installed on your device, the new app "Tack: Unlock Key" is available for purchase to unlock unlimited songs and parts. Thank you for your support!
 - New: reset timer with tap on current progress
 - Improved: timer performance and behavior
 - Improved: order of metronome options

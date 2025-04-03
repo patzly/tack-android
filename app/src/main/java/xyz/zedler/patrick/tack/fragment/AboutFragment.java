@@ -28,13 +28,15 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import xyz.zedler.patrick.tack.Constants.DEF;
+import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentAboutBinding;
-import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.UnlockDialogUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
@@ -42,7 +44,8 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
 
   private FragmentAboutBinding binding;
   private MainActivity activity;
-  private DialogUtil dialogUtilUnlock;
+  private UnlockDialogUtil unlockDialogUtil;
+  private int longClickCount = 0;
 
   @Override
   public View onCreateView(
@@ -55,7 +58,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
   @Override
   public void onDestroyView() {
     super.onDestroyView();
-    dialogUtilUnlock.dismiss();
+    unlockDialogUtil.dismiss();
     binding = null;
   }
 
@@ -93,27 +96,20 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     binding.linearAboutKey.setVisibility(
         UnlockUtil.isPlayStoreInstalled(activity) ? View.VISIBLE : View.GONE
     );
-    binding.textAboutKeyDescription.setText(
-        UnlockUtil.isKeyInstalled(activity)
-            ? R.string.about_key_description_installed
-            : R.string.about_key_description_not_installed
-    );
+    if (!activity.isUnlocked() && UnlockUtil.isKeyInstalled(activity)) {
+      binding.linearAboutKey.setOnLongClickListener(v -> {
+        longClickCount++;
+        if (longClickCount >= 5) {
+          getSharedPrefs().edit().putBoolean(PREF.CHECK_INSTALLER, false).apply();
+          updateKeyDescription();
+        }
+        return true;
+      });
+    }
+    updateKeyDescription();
 
-    dialogUtilUnlock = new DialogUtil(activity, "unlock_parts");
-    dialogUtilUnlock.createDialog(builder -> {
-      builder.setTitle(R.string.msg_unlock);
-      builder.setMessage(R.string.msg_unlock_description);
-      builder.setPositiveButton(
-          R.string.action_open_play_store,
-          (dialog, which) -> {
-            performHapticClick();
-            UnlockUtil.openPlayStore(activity);
-          });
-      builder.setNegativeButton(
-          R.string.action_cancel, (dialog, which) -> performHapticClick()
-      );
-    });
-    dialogUtilUnlock.showIfWasShown(savedInstanceState);
+    unlockDialogUtil = new UnlockDialogUtil(activity);
+    unlockDialogUtil.showIfWasShown(savedInstanceState);
 
     ViewUtil.setOnClickListeners(
         this,
@@ -133,8 +129,8 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
   @Override
   public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
-    if (dialogUtilUnlock != null) {
-      dialogUtilUnlock.saveState(outState);
+    if (unlockDialogUtil != null) {
+      unlockDialogUtil.saveState(outState);
     }
   }
 
@@ -155,10 +151,11 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     } else if (id == R.id.linear_about_vending) {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_vending_dev))));
     } else if (id == R.id.linear_about_key) {
-      if (UnlockUtil.isKeyInstalled(activity)) {
+      boolean isKeyInstalled = UnlockUtil.isKeyInstalled(activity);
+      if (isKeyInstalled && UnlockUtil.isInstallerValid(activity)) {
         UnlockUtil.openPlayStore(activity);
       } else {
-        dialogUtilUnlock.show();
+        unlockDialogUtil.show(isKeyInstalled);
       }
     } else if (id == R.id.linear_about_github) {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_github))));
@@ -186,5 +183,30 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
           R.string.license_material_icons_link
       );
     }
+  }
+
+  private void updateKeyDescription() {
+    if (!UnlockUtil.isPlayStoreInstalled(activity)) {
+      return;
+    }
+    boolean isKeyInstalled = UnlockUtil.isKeyInstalled(activity);
+    boolean checkInstaller = getSharedPrefs().getBoolean(PREF.CHECK_INSTALLER, DEF.CHECK_INSTALLER);
+    int resId = R.string.about_key_description_not_installed;
+    int textColor = ResUtil.getColor(activity, R.attr.colorOnSurfaceVariant);
+    if (isKeyInstalled) {
+      if (checkInstaller) {
+        boolean isInstallerValid = UnlockUtil.isInstallerValid(activity);
+        resId = isInstallerValid
+            ? R.string.about_key_description_installed
+            : R.string.about_key_description_invalid;
+        if (!isInstallerValid) {
+          textColor = ResUtil.getColor(activity, R.attr.colorError);
+        }
+      } else {
+        resId = R.string.about_key_description_installed;
+      }
+    }
+    binding.textAboutKeyDescription.setText(resId);
+    binding.textAboutKeyDescription.setTextColor(textColor);
   }
 }

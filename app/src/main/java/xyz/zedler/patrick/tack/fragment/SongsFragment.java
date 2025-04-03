@@ -64,6 +64,7 @@ import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter;
 import xyz.zedler.patrick.tack.util.SortUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
+import xyz.zedler.patrick.tack.util.UnlockDialogUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.WidgetUtil;
 
@@ -73,7 +74,8 @@ public class SongsFragment extends BaseFragment {
 
   private FragmentSongsBinding binding;
   private MainActivity activity;
-  private DialogUtil dialogUtilIntro, dialogUtilUnlock;
+  private DialogUtil dialogUtilIntro;
+  private UnlockDialogUtil unlockDialogUtil;
   private List<SongWithParts> songsWithParts = new ArrayList<>();
   private int sortOrder;
   private SongAdapter adapter;
@@ -95,7 +97,7 @@ public class SongsFragment extends BaseFragment {
     super.onDestroyView();
     binding = null;
     dialogUtilIntro.dismiss();
-    dialogUtilUnlock.dismiss();
+    unlockDialogUtil.dismiss();
     if (metronomeListener != null) {
       getMetronomeUtil().removeListener(metronomeListener);
     }
@@ -285,28 +287,18 @@ public class SongsFragment extends BaseFragment {
       dialogUtilIntro.show();
     }
 
-    dialogUtilUnlock = new DialogUtil(activity, "unlock_songs");
-    dialogUtilUnlock.createDialog(builder -> {
-      builder.setTitle(R.string.msg_unlock);
-      builder.setMessage(R.string.msg_unlock_description);
-      builder.setPositiveButton(
-          R.string.action_open_play_store,
-          (dialog, which) -> {
-            performHapticClick();
-            UnlockUtil.openPlayStore(activity);
-          });
-      builder.setNegativeButton(
-          R.string.action_cancel, (dialog, which) -> performHapticClick()
-      );
-    });
-    dialogUtilUnlock.showIfWasShown(savedInstanceState);
+    unlockDialogUtil = new UnlockDialogUtil(activity);
+    unlockDialogUtil.showIfWasShown(savedInstanceState);
 
     binding.fabSongs.setOnClickListener(v -> {
       performHapticClick();
-      if (UnlockUtil.isUnlocked(activity) || songsWithParts.size() < 3) {
+      if (activity.isUnlocked() || songsWithParts.size() < 3) {
         activity.navigate(SongsFragmentDirections.actionSongsToSong());
       } else {
-        dialogUtilUnlock.show();
+        unlockDialogUtil.show(
+            UnlockUtil.isKeyInstalled(activity)
+                && !UnlockUtil.isInstallerValid(activity)
+        );
       }
     });
   }
@@ -314,9 +306,10 @@ public class SongsFragment extends BaseFragment {
   @Override
   public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
-    if (dialogUtilUnlock != null) {
-      dialogUtilUnlock.saveState(outState);
+    if (unlockDialogUtil != null) {
+      unlockDialogUtil.saveState(outState);
     }
+    // dialogIntro not needed here
   }
 
   private void setSongsWithParts(@Nullable List<SongWithParts> songsWithParts) {

@@ -43,6 +43,7 @@ public final class Constants {
     public static final String LAST_VERSION = "last_version";
     public static final String FEEDBACK_POP_UP_COUNT = "feedback_pop_up_count";
     public static final String SONGS_INTRO_SHOWN = "songs_intro_shown";
+    public static final String CHECK_INSTALLER = "check_installer";
 
     // Metronome
     public final static String TEMPO = "tempo";
@@ -90,6 +91,7 @@ public final class Constants {
     public static final int UI_MODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
     public static final String UI_CONTRAST = CONTRAST.STANDARD;
     public static final boolean REDUCE_ANIM = false;
+    public static final boolean CHECK_INSTALLER = true;
 
     // Metronome
     public final static int TEMPO = 120;

@@ -179,6 +179,8 @@
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
   <string name="msg_songs_intro">Bookmarks are now songs</string>
   <string name="msg_songs_intro_description">The new song library replaces the previous tempo bookmarks. Instead of bookmarking bpm values, you can now save and arrange entire metronome configurations as parts of a song. Simply adjust the controls and options to your liking and add the current configuration as a new part to a song or update an existing part.</string>
+  <string name="msg_installer_check">Invalid unlock app</string>
+  <string name="msg_installer_check_description">Please purchase and install the unlock app on Google Play. Thank you for your support!</string>
 
   <!-- OPTIONS -->
 
@@ -370,6 +372,7 @@
   <string name="about_key">Unlock app</string>
   <string name="about_key_description_not_installed">Not installed</string>
   <string name="about_key_description_installed">Installed</string>
+  <string name="about_key_description_invalid">Invalid</string>
   <string name="about_github" translatable="false">GitHub</string>
   <string name="about_github_description">Source code</string>
   <string name="about_translation" translatable="false">Transifex</string>

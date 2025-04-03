@@ -21,7 +21,12 @@ package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.InstallSourceInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import androidx.annotation.NonNull;
 import xyz.zedler.patrick.tack.R;
 
@@ -38,6 +43,20 @@ public class UnlockUtil {
     }
   }
 
+  public static boolean isInstallerValid(@NonNull Context context) {
+    if (VERSION.SDK_INT < VERSION_CODES.R) {
+      return true;
+    }
+    PackageManager pm = context.getPackageManager();
+    try {
+      InstallSourceInfo sourceInfo = pm.getInstallSourceInfo(PACKAGE_KEY);
+      String installer = sourceInfo.getInstallingPackageName();
+      return installer != null && installer.equals("com.android.vending");
+    } catch (NameNotFoundException e) {
+      return false;
+    }
+  }
+
   public static boolean isPlayStoreInstalled(@NonNull Context context){
     try {
       context.getPackageManager().getPackageInfo("com.android.vending", 0);
@@ -47,8 +66,15 @@ public class UnlockUtil {
     }
   }
 
-  public static boolean isUnlocked(@NonNull Context context) {
-    return !isPlayStoreInstalled(context) || isKeyInstalled(context);
+  public static boolean isUnlocked(@NonNull Context context, boolean checkInstaller) {
+    if (isPlayStoreInstalled(context)) {
+      if (checkInstaller) {
+        return isKeyInstalled(context) && isInstallerValid(context);
+      } else {
+        return isKeyInstalled(context);
+      }
+    }
+    return true;
   }
 
   public static void openPlayStore(@NonNull Context context) {

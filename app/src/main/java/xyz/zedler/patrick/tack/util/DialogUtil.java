@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.util;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -27,25 +28,24 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
 
 public class DialogUtil {
 
   private static final String TAG = DialogUtil.class.getSimpleName();
   private static final String IS_SHOWING = "is_showing_dialog_";
 
-  private final MainActivity activity;
+  private final Context context;
   private final String tag;
   private AlertDialog dialog;
 
-  public DialogUtil(@NonNull MainActivity activity, @NonNull String tag) {
-    this.activity = activity;
+  public DialogUtil(@NonNull Context context, @NonNull String tag) {
+    this.context = context;
     this.tag = tag;
   }
 
   public void createDialog(@NonNull OnBuilderReadyListener listener) {
     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
-        activity, R.style.ThemeOverlay_Tack_AlertDialog
+        context, R.style.ThemeOverlay_Tack_AlertDialog
     );
     listener.onBuilderReady(builder);
     dialog = builder.create();
@@ -53,7 +53,7 @@ public class DialogUtil {
 
   public void createDialogError(@NonNull OnBuilderReadyListener listener) {
     MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
-        activity, R.style.ThemeOverlay_Tack_AlertDialog_Error
+        context, R.style.ThemeOverlay_Tack_AlertDialog_Error
     );
     listener.onBuilderReady(builder);
     dialog = builder.create();

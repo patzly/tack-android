@@ -71,6 +71,7 @@ import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.PrefsUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
+import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.viewmodel.SongViewModel;
 
 public class MainActivity extends AppCompatActivity implements ServiceConnection {
@@ -463,6 +464,11 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     action.setFile(R.raw.changelog);
     action.setHighlights(new String[]{"New:", "Improved:", "Fixed:"});
     navigate(action);
+  }
+
+  public boolean isUnlocked() {
+    boolean checkInstaller = sharedPrefs.getBoolean(PREF.CHECK_INSTALLER, DEF.CHECK_INSTALLER);
+    return UnlockUtil.isUnlocked(this, checkInstaller);
   }
 
   public HapticUtil getHapticUtil() {
