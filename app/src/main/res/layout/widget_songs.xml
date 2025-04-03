@@ -55,14 +55,75 @@
 
     <TextView
       android:id="@+id/text_widget_songs_title"
-      android:layout_width="match_parent"
+      android:layout_width="0dp"
       android:layout_height="wrap_content"
+      android:layout_weight="1"
       android:layout_gravity="center_vertical"
       android:textAppearance="?attr/textAppearanceTitleMedium"
+      android:textColor="?attr/colorOnSurface"
       android:singleLine="true"
       android:text="@string/title_songs" />
 
+    <FrameLayout
+      android:id="@+id/frame_widget_songs_update"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:clickable="true"
+      android:focusable="true"
+      android:background="?actionBarItemBackground"
+      android:importantForAccessibility="yes"
+      android:contentDescription="@string/action_update">
+
+      <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_rounded_refresh_anim"
+        app:tint="?attr/colorOnSurfaceVariant"
+        android:tint="?attr/colorOnSurfaceVariant"
+        tools:ignore="UseAppTint" />
+
+    </FrameLayout>
+
   </LinearLayout>
+
+  <FrameLayout
+    android:id="@+id/frame_widget_songs_empty"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:layout_gravity="center_vertical"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp"
+      android:layout_marginBottom="8dp"
+      tools:ignore="UseCompoundDrawables,UselessParent">
+
+      <ImageView
+        style="@style/Widget.Tack.ImageView.Icon"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/ic_rounded_music_note_anim"
+        app:tint="?attr/colorPrimary"
+        android:tint="?attr/colorPrimary"
+        tools:ignore="ContentDescription,UseAppTint" />
+
+      <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textAppearance="?attr/textAppearanceTitleSmall"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:textAlignment="center"
+        android:text="@string/msg_songs_empty" />
+
+    </LinearLayout>
+
+  </FrameLayout>
 
   <ListView
     android:id="@+id/list_widget_songs"
@@ -73,7 +134,6 @@
     android:layout_marginBottom="8dp"
     android:divider="@null"
     android:dividerHeight="4dp"
-    android:defaultFocusHighlightEnabled="false"
     android:scrollbars="none"
     android:clipToOutline="true"
     tools:targetApi="31" />

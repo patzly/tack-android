@@ -29,8 +29,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.GradientDrawable.Orientation;
 import android.graphics.drawable.ScaleDrawable;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -51,10 +49,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.ViewSongPickerBinding;
@@ -63,6 +59,7 @@ import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipAdapter.OnSongClickL
 import xyz.zedler.patrick.tack.recyclerview.decoration.SongChipItemDecoration;
 import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
 import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.SortUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
@@ -75,7 +72,7 @@ public class SongPickerView extends FrameLayout {
   private final Context context;
   private SongPickerListener listener;
   private List<SongWithParts> songsWithParts;
-  private int songsOrder;
+  private int sortOrder;
   private String currentSongId;
   private Drawable gradientLeft, gradientRight;
   private ValueAnimator animator;
@@ -102,7 +99,7 @@ public class SongPickerView extends FrameLayout {
     }
     isInitialized = true;
 
-    this.songsOrder = songsOrder;
+    this.sortOrder = songsOrder;
     this.currentSongId = currentSongId;
     // To display current song title in current chip at start
     this.songsWithParts = new ArrayList<>(songs);
@@ -123,44 +120,7 @@ public class SongPickerView extends FrameLayout {
       throw new IllegalStateException("init() has to be called before any other method");
     }
 
-    if (songsOrder == SONGS_ORDER.NAME_ASC) {
-      if (VERSION.SDK_INT >= VERSION_CODES.N) {
-        Comparator<String> comparator = Comparator.nullsLast(
-            Comparator.comparing(String::toLowerCase, Comparator.naturalOrder())
-        );
-        Collections.sort(
-            songsWithParts,
-            Comparator.comparing(
-                o -> o.getSong().getName(),
-                comparator
-            )
-        );
-      } else {
-        Collections.sort(songsWithParts, (o1, o2) -> {
-          String name1 = (o1.getSong() != null) ? o1.getSong().getName() : null;
-          String name2 = (o2.getSong() != null) ? o2.getSong().getName() : null;
-          // Nulls last handling
-          if (name1 == null && name2 == null) return 0;
-          if (name1 == null) return 1;
-          if (name2 == null) return -1;
-          return name1.compareToIgnoreCase(name2);
-        });
-      }
-    } else if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
-      Collections.sort(
-          songsWithParts,
-          (s1, s2) -> Long.compare(
-              s2.getSong().getLastPlayed(), s1.getSong().getLastPlayed()
-          )
-      );
-    } else if (songsOrder == SONGS_ORDER.MOST_PLAYED_ASC) {
-      Collections.sort(
-          songsWithParts,
-          (s1, s2) -> Integer.compare(
-              s2.getSong().getPlayCount(), s1.getSong().getPlayCount()
-          )
-      );
-    }
+    SortUtil.sortSongsWithParts(songsWithParts, sortOrder);
     adapter.submitList(songsWithParts);
 
     maybeCenterSongChips();

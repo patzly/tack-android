@@ -22,8 +22,6 @@ package xyz.zedler.patrick.tack.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ShortcutInfo;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
@@ -46,6 +44,7 @@ import java.util.concurrent.Executors;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
+import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
@@ -75,7 +74,7 @@ public class MetronomeUtil {
   private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
   private SongWithParts currentSongWithParts;
   private String currentSongId, timerStringBars;
-  private int currentPartIndex, muteCountDown;
+  private int currentPartIndex, muteCountDown, songsOrder;
   private long tickIndex, latency, elapsedStartTime, elapsedTime, elapsedPrevious, timerStartTime;
   private float timerProgress;
   private boolean playing, tempPlaying, beatModeVibrate, isCountingIn, isMuted;
@@ -108,6 +107,7 @@ public class MetronomeUtil {
     resetTimerOnStop = sharedPrefs.getBoolean(PREF.RESET_TIMER_ON_STOP, DEF.RESET_TIMER_ON_STOP);
     flashScreen = sharedPrefs.getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
     keepAwake = sharedPrefs.getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
+    songsOrder = sharedPrefs.getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER);
 
     setSound(sharedPrefs.getString(PREF.SOUND, DEF.SOUND));
     setIgnoreFocus(sharedPrefs.getBoolean(PREF.IGNORE_FOCUS, DEF.IGNORE_FOCUS));
@@ -221,20 +221,15 @@ public class MetronomeUtil {
     });
   }
 
+  public void updateSongsOrder(int sortOrder) {
+    songsOrder = sortOrder;
+  }
+
   private void sortParts() {
     if (currentSongWithParts == null) {
       return;
     }
-    if (VERSION.SDK_INT >= VERSION_CODES.N) {
-      Collections.sort(
-          currentSongWithParts.getParts(), Comparator.comparingInt(Part::getPartIndex)
-      );
-    } else {
-      Collections.sort(
-          currentSongWithParts.getParts(),
-          (p1, p2) -> Integer.compare(p1.getPartIndex(), p2.getPartIndex())
-      );
-    }
+    SortUtil.sortPartsByIndex(currentSongWithParts.getParts());
   }
 
   public int getCurrentPartIndex() {
@@ -518,6 +513,12 @@ public class MetronomeUtil {
         currentSong.incrementPlayCount();
         db.songDao().updateSong(currentSong);
         shortcutUtil.reportUsage(currentSong.getId());
+        // update widget only if songs are sorted by last played or most played
+        if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC
+            || songsOrder == SONGS_ORDER.MOST_PLAYED_ASC
+        ) {
+          WidgetUtil.sendWidgetUpdate(context);
+        }
       }
     });
     updateShortcuts();

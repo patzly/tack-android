@@ -20,8 +20,6 @@
 package xyz.zedler.patrick.tack.fragment;
 
 import android.net.Uri;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,8 +42,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,8 +62,10 @@ import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutMan
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter;
+import xyz.zedler.patrick.tack.util.SortUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
+import xyz.zedler.patrick.tack.util.WidgetUtil;
 
 public class SongsFragment extends BaseFragment {
 
@@ -77,7 +75,7 @@ public class SongsFragment extends BaseFragment {
   private MainActivity activity;
   private DialogUtil dialogUtilIntro, dialogUtilUnlock;
   private List<SongWithParts> songsWithParts = new ArrayList<>();
-  private int songsOrder;
+  private int sortOrder;
   private SongAdapter adapter;
   private ActivityResultLauncher<String> launcherBackup;
   private ActivityResultLauncher<String[]> launcherRestore;
@@ -129,16 +127,24 @@ public class SongsFragment extends BaseFragment {
       if (id == R.id.action_sort_name
           || id == R.id.action_sort_last_played
           || id == R.id.action_sort_most_played) {
+        if (item.isChecked()) {
+          return false;
+        }
         if (id == R.id.action_sort_name) {
-          songsOrder = SONGS_ORDER.NAME_ASC;
+          sortOrder = SONGS_ORDER.NAME_ASC;
         } else if (id == R.id.action_sort_last_played) {
-          songsOrder = SONGS_ORDER.LAST_PLAYED_ASC;
+          sortOrder = SONGS_ORDER.LAST_PLAYED_ASC;
         } else {
-          songsOrder = SONGS_ORDER.MOST_PLAYED_ASC;
+          sortOrder = SONGS_ORDER.MOST_PLAYED_ASC;
         }
         item.setChecked(true);
         setSongsWithParts(null);
-        getSharedPrefs().edit().putInt(PREF.SONGS_ORDER, songsOrder).apply();
+        getSharedPrefs().edit().putInt(PREF.SONGS_ORDER, sortOrder).apply();
+        getMetronomeUtil().updateSongsOrder(sortOrder);
+        if (!songsWithParts.isEmpty()) {
+          // only update widget if sort order is important
+          WidgetUtil.sendWidgetUpdate(activity);
+        }
       } else if (id == R.id.action_backup) {
         launcherBackup.launch("song_library.json");
       } else if (id == R.id.action_restore) {
@@ -151,11 +157,11 @@ public class SongsFragment extends BaseFragment {
       return true;
     });
 
-    songsOrder = getSharedPrefs().getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER);
+    sortOrder = getSharedPrefs().getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER);
     int itemId = R.id.action_sort_name;
-    if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
+    if (sortOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
       itemId = R.id.action_sort_last_played;
-    } else if (songsOrder == SONGS_ORDER.MOST_PLAYED_ASC) {
+    } else if (sortOrder == SONGS_ORDER.MOST_PLAYED_ASC) {
       itemId = R.id.action_sort_most_played;
     }
     MenuItem itemSort = binding.toolbarSongs.getMenu().findItem(itemId);
@@ -326,46 +332,9 @@ public class SongsFragment extends BaseFragment {
         itemBackup.setEnabled(!songsWithParts.isEmpty());
       }
     }
-    if (songsOrder == SONGS_ORDER.NAME_ASC) {
-      if (VERSION.SDK_INT >= VERSION_CODES.N) {
-        Comparator<String> comparator = Comparator.nullsLast(
-            Comparator.comparing(String::toLowerCase, Comparator.naturalOrder())
-        );
-        Collections.sort(
-            this.songsWithParts,
-            Comparator.comparing(
-                o -> o.getSong().getName(),
-                comparator
-            )
-        );
-      } else {
-        Collections.sort(this.songsWithParts, (s1, s2) -> {
-          String name1 = (s1.getSong() != null) ? s1.getSong().getName() : null;
-          String name2 = (s2.getSong() != null) ? s2.getSong().getName() : null;
-          // Nulls last handling
-          if (name1 == null && name2 == null) return 0;
-          if (name1 == null) return 1;
-          if (name2 == null) return -1;
-          return name1.compareToIgnoreCase(name2);
-        });
-      }
-    } else if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
-      Collections.sort(
-          this.songsWithParts,
-          (s1, s2) -> Long.compare(
-              s2.getSong().getLastPlayed(), s1.getSong().getLastPlayed()
-          )
-      );
-    } else if (songsOrder == SONGS_ORDER.MOST_PLAYED_ASC) {
-      Collections.sort(
-          this.songsWithParts,
-          (s1, s2) -> Integer.compare(
-              s2.getSong().getPlayCount(), s1.getSong().getPlayCount()
-          )
-      );
-    }
+    SortUtil.sortSongsWithParts(this.songsWithParts, sortOrder);
     adapter.submitList(new ArrayList<>(this.songsWithParts));
-    adapter.setSortOrder(songsOrder);
+    adapter.setSortOrder(sortOrder);
   }
 
   private void exportJsonToFile(Uri uri) {
@@ -441,7 +410,10 @@ public class SongsFragment extends BaseFragment {
         }
         activity.getSongViewModel().insertSongsWithParts(songsWithParts, () -> {
           showSnackbar(R.string.msg_restore_success);
+          // update shortcuts
           activity.getMetronomeUtil().updateShortcuts();
+          // update widget
+          WidgetUtil.sendWidgetUpdate(activity);
         });
       } else {
         showSnackbar(R.string.msg_restore_error);

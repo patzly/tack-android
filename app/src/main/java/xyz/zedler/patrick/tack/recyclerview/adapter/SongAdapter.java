@@ -155,7 +155,7 @@ public class SongAdapter extends ListAdapter<SongWithParts, ViewHolder> {
         Locale locale = LocaleUtil.getLocale();
         if (VERSION.SDK_INT >= VERSION_CODES.O) {
           DateTimeFormatter formatter = DateTimeFormatter
-              .ofLocalizedDateTime(FormatStyle.SHORT)
+              .ofLocalizedDate(FormatStyle.SHORT)
               .withLocale(locale);
           LocalDateTime dateTime = Instant.ofEpochMilli(lastPlayed)
               .atZone(ZoneId.systemDefault())

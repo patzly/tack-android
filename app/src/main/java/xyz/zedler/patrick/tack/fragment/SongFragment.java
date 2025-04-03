@@ -19,8 +19,6 @@
 
 package xyz.zedler.patrick.tack.fragment;
 
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -47,8 +45,6 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import com.google.android.material.math.MathUtils;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
@@ -65,9 +61,11 @@ import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutMan
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.RenameDialogUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.SortUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
+import xyz.zedler.patrick.tack.util.WidgetUtil;
 
 public class SongFragment extends BaseFragment implements OnClickListener, OnCheckedChangeListener {
 
@@ -167,6 +165,8 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           if (isNewSong) {
             activity.getSongViewModel().insertSong(songResult);
             activity.getSongViewModel().insertParts(partsResult);
+            // update widget, no shortcuts update needed because play count is zero
+            WidgetUtil.sendWidgetUpdate(activity);
           } else {
             activity.getSongViewModel().updateSongAndParts(
                 songResult, partsResult, partsSource, () -> {
@@ -174,6 +174,8 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
                   getMetronomeUtil().reloadCurrentSong();
                   // update shortcut names
                   getMetronomeUtil().updateShortcuts();
+                  // update widget
+                  WidgetUtil.sendWidgetUpdate(activity);
                 });
           }
           navigateUp();
@@ -426,7 +428,10 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         }
         activity.getSongViewModel().deleteSong(songSource, () -> {
           activity.getSongViewModel().deleteParts(partsSource);
+          // update shortcut names
           activity.getMetronomeUtil().updateShortcuts();
+          // update widget
+          WidgetUtil.sendWidgetUpdate(activity);
         });
         activity.navigateUp();
       });
@@ -538,17 +543,8 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
   }
 
   private void sortParts() {
-    if (VERSION.SDK_INT >= VERSION_CODES.N) {
-      Collections.sort(partsSource, Comparator.comparingInt(Part::getPartIndex));
-      Collections.sort(partsResult, Comparator.comparingInt(Part::getPartIndex));
-    } else {
-      Collections.sort(
-          partsSource, (p1, p2) -> Integer.compare(p1.getPartIndex(), p2.getPartIndex())
-      );
-      Collections.sort(
-          partsResult, (p1, p2) -> Integer.compare(p1.getPartIndex(), p2.getPartIndex())
-      );
-    }
+    SortUtil.sortPartsByIndex(partsSource);
+    SortUtil.sortPartsByIndex(partsResult);
   }
 
   private void updateResult() {
