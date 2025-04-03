@@ -553,7 +553,6 @@ public class SettingsFragment extends BaseFragment
       performHapticClick();
       getMetronomeUtil().setResetTimerOnStop(isChecked);
     } else if (id == R.id.switch_settings_big_time_text) {
-      ViewUtil.startIcon(binding.imageSettingsBigTimeText);
       performHapticClick();
       getSharedPrefs().edit().putBoolean(PREF.BIG_TIME_TEXT, isChecked).apply();
     } else if (id == R.id.switch_settings_flash_screen) {
