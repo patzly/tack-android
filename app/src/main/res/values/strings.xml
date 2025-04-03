@@ -46,6 +46,7 @@
   <string name="title_controls">Controls</string>
   <string name="title_logcat">Logcat</string>
   <string name="title_songs">Song library</string>
+  <!-- Short version of the term "song library" for smaller home screen widget sizes -->
   <string name="title_songs_short">Songs</string>
   <string name="title_song_details">Song details</string>
 
