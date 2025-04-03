@@ -33,6 +33,7 @@
   <string name="title_controls">Bedienelemente</string>
   <string name="title_logcat">Fehlerprotokoll</string>
   <string name="title_songs">Werksammlung</string>
+  <string name="title_songs_short">Werke</string>
   <string name="title_song_details">Werkdetails</string>
 
   <!-- LABELS -->
