@@ -126,29 +126,22 @@ public class SongsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
 
   @Override
   public RemoteViews getViewAt(int position) {
-    RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.row_widget_song);
+    // "View more songs" item
+    if (isListTooBig && position == songsWithParts.size()) {
+      RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.row_widget_more);
 
-    boolean isItemMore = isListTooBig && position == songsWithParts.size();
-
-    Intent fillInIntent = new Intent();
-    if (isItemMore) {
+      Intent fillInIntent = new Intent();
       fillInIntent.setAction(ACTION.SHOW_SONGS);
       views.setOnClickFillInIntent(R.id.frame_widget_song_container_more, fillInIntent);
-    } else {
-      fillInIntent.setAction(ACTION.START_SONG);
-      fillInIntent.putExtra(EXTRA.SONG_ID, songsWithParts.get(position).getSong().getId());
-      views.setOnClickFillInIntent(R.id.linear_widget_song_container_song, fillInIntent);
-    }
-
-    views.setViewVisibility(
-        R.id.linear_widget_song_container_song, isItemMore ? View.GONE : View.VISIBLE
-    );
-    views.setViewVisibility(
-        R.id.frame_widget_song_container_more, isItemMore ? View.VISIBLE : View.GONE
-    );
-    if (isItemMore) {
       return views;
     }
+
+    RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.row_widget_song);
+
+    Intent fillInIntent = new Intent();
+    fillInIntent.setAction(ACTION.START_SONG);
+    fillInIntent.putExtra(EXTRA.SONG_ID, songsWithParts.get(position).getSong().getId());
+    views.setOnClickFillInIntent(R.id.linear_widget_song_container_song, fillInIntent);
 
     SongWithParts songWithParts = songsWithParts.get(position);
 
@@ -250,7 +243,7 @@ public class SongsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
 
   @Override
   public int getViewTypeCount() {
-    return 1;
+    return 2;
   }
 
   @Override

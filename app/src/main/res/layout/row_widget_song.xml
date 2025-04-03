@@ -32,7 +32,9 @@
     android:id="@+id/linear_widget_song_container_song"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minHeight="48dp"
     android:orientation="vertical"
+    android:gravity="center_vertical"
     android:paddingStart="12dp"
     android:paddingEnd="12dp"
     android:paddingTop="8dp"
@@ -118,31 +120,5 @@
       tools:ignore="HardcodedText" />
 
   </LinearLayout>
-
-  <FrameLayout
-    android:id="@+id/frame_widget_song_container_more"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minHeight="48dp"
-    android:paddingStart="12dp"
-    android:paddingEnd="12dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
-    android:visibility="gone"
-    android:clickable="true"
-    android:focusable="true"
-    android:background="@drawable/ripple_widget_list_item_more_bg"
-    tools:ignore="UselessParent">
-
-    <TextView
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center"
-      android:textAlignment="center"
-      android:text="@string/action_view_more_songs"
-      android:textAppearance="?attr/textAppearanceLabelMedium"
-      android:textColor="?attr/colorOnSecondaryContainer" />
-
-  </FrameLayout>
 
 </FrameLayout>
