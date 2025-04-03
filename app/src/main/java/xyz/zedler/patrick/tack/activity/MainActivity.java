@@ -156,6 +156,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
       String action = intent.getAction();
       if (action.equals(ACTION.SHOW_SONGS)) {
         navController.navigate(NavMainDirections.actionGlobalSongsFragment());
+        // empty intent so orientation change does not show the song list again
+        setIntent(new Intent());
       }
     }
 

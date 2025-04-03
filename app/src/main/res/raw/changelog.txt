@@ -8,7 +8,7 @@
 - New: beautiful home screen widget for quick access to your song library
 - New: if Google Play is installed on your device, the new app "Tack: Unlock Key" is available for purchase to unlock unlimited songs and parts. Thank you for your support!
 - New: reset timer with tap on timer display
-- Improved: timer performance and behavior
+- Improved: timer performance and behavior, timer now resets on stop instead of next start
 - Improved: order of metronome options and settings
 
 ## 4.8.2
