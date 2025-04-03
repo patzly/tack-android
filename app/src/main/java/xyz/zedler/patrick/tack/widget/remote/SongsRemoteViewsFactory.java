@@ -38,6 +38,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import xyz.zedler.patrick.tack.Constants;
+import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
@@ -52,13 +53,16 @@ import xyz.zedler.patrick.tack.util.SortUtil;
 
 public class SongsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
-  private static final int MAX_VIEW_COUNT = 25;
+  private static final String TAG = SongsRemoteViewsFactory.class.getSimpleName();
+
+  private static final int MAX_SONG_COUNT = 20;
 
   private final Context context;
   private final PrefsUtil prefsUtil;
   private SongDatabase db;
   private List<SongWithParts> songsWithParts = new ArrayList<>();
   private int sortOrder;
+  private boolean isListTooBig;
 
   public SongsRemoteViewsFactory(Context context) {
     this.context = context;
@@ -82,9 +86,13 @@ public class SongsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
         }
       }
     }
-
     sortOrder = prefsUtil.getSharedPrefs().getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER);
     SortUtil.sortSongsWithParts(songsWithParts, sortOrder);
+
+    isListTooBig = songsWithParts.size() > MAX_SONG_COUNT;
+    if (isListTooBig) {
+      songsWithParts = songsWithParts.subList(0, MAX_SONG_COUNT);
+    }
   }
 
   @Override
@@ -97,18 +105,38 @@ public class SongsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
 
   @Override
   public int getCount() {
-    return songsWithParts.size();
+    return songsWithParts.size() + (isListTooBig ? 1 : 0);
   }
 
   @Override
   public RemoteViews getViewAt(int position) {
     RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.row_widget_song);
-    SongWithParts songWithParts = songsWithParts.get(position);
+
+    boolean isItemMore = isListTooBig && position == songsWithParts.size();
 
     Intent fillInIntent = new Intent();
-    fillInIntent.putExtra(EXTRA.SONG_ID, songWithParts.getSong().getId());
-    views.setOnClickFillInIntent(R.id.linear_widget_song_container, fillInIntent);
+    if (isItemMore) {
+      fillInIntent.setAction(ACTION.SHOW_SONGS);
+      views.setOnClickFillInIntent(R.id.frame_widget_song_container_more, fillInIntent);
+    } else {
+      fillInIntent.setAction(ACTION.START_SONG);
+      fillInIntent.putExtra(EXTRA.SONG_ID, songsWithParts.get(position).getSong().getId());
+      views.setOnClickFillInIntent(R.id.linear_widget_song_container_song, fillInIntent);
+    }
 
+    views.setViewVisibility(
+        R.id.linear_widget_song_container_song, isItemMore ? View.GONE : View.VISIBLE
+    );
+    views.setViewVisibility(
+        R.id.frame_widget_song_container_more, isItemMore ? View.VISIBLE : View.GONE
+    );
+    if (isItemMore) {
+      return views;
+    }
+
+    SongWithParts songWithParts = songsWithParts.get(position);
+
+    // song name
     views.setTextViewText(R.id.text_widget_song_name, songWithParts.getSong().getName());
 
     // part count
@@ -208,6 +236,9 @@ public class SongsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
 
   @Override
   public long getItemId(int position) {
+    if (position < 0 || position >= songsWithParts.size()) {
+      return position;
+    }
     String songId = songsWithParts.get(position).getSong().getId();
     UUID uuid = UUID.fromString(songId);
     return uuid.getMostSignificantBits() ^ uuid.getLeastSignificantBits();

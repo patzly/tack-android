@@ -142,6 +142,10 @@
     android:label="dialog_languages" />
 
   <action
+    android:id="@+id/action_global_songs_fragment"
+    app:destination="@id/songsFragment"/>
+
+  <action
     android:id="@+id/action_global_text_dialog"
     app:destination="@id/textBottomSheetDialogFragment"/>
 

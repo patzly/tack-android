@@ -25,17 +25,20 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import xyz.zedler.patrick.tack.service.MetronomeService;
 
-public class ShortcutActivity extends AppCompatActivity {
+public class SongActivity extends AppCompatActivity {
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    startActivity(new Intent(this, MainActivity.class));
-    Intent intent = getIntent();
-    if (intent != null) {
-      startService(intent.setClass(this, MetronomeService.class));
-    }
+    Intent intentActivity = new Intent(getIntent());
+    intentActivity.setClass(this, MainActivity.class);
+    startActivity(intentActivity);
+
+    Intent intentService = new Intent(getIntent());
+    intentService.setClass(this, MetronomeService.class);
+    startService(intentService);
+
     finish();
   }
 }

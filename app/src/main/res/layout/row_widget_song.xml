@@ -29,7 +29,7 @@
   so that the background ripple could not appear -->
 
   <LinearLayout
-    android:id="@+id/linear_widget_song_container"
+    android:id="@+id/linear_widget_song_container_song"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -39,7 +39,7 @@
     android:paddingBottom="8dp"
     android:clickable="true"
     android:focusable="true"
-    android:background="@drawable/shape_widget_list_item_bg"
+    android:background="@drawable/ripple_widget_list_item_song_bg"
     tools:ignore="UselessParent">
 
     <TextView
@@ -47,6 +47,7 @@
       style="@style/Widget.Tack.TextView.ListItem.Title"
       android:text="Song #1"
       android:textAppearance="?attr/textAppearanceBodyMedium"
+      android:textColor="?attr/colorOnTertiaryContainer"
       tools:ignore="HardcodedText" />
 
     <LinearLayout
@@ -60,6 +61,7 @@
         android:layout_width="wrap_content"
         android:text="3 parts"
         android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="?attr/colorOnTertiaryContainer"
         android:singleLine="true"
         tools:ignore="HardcodedText" />
 
@@ -70,8 +72,8 @@
         android:layout_marginEnd="6dp"
         android:src="@drawable/shape_text_separator_dot"
         android:layout_gravity="center_vertical"
-        app:tint="?attr/colorOnSurfaceVariant"
-        android:tint="?attr/colorOnSurfaceVariant"
+        app:tint="?attr/colorOnTertiaryContainer"
+        android:tint="?attr/colorOnTertiaryContainer"
         tools:ignore="ContentDescription,UseAppTint" />
 
       <TextView
@@ -80,6 +82,7 @@
         android:layout_width="wrap_content"
         android:text="2:30"
         android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="?attr/colorOnTertiaryContainer"
         android:singleLine="true"
         tools:ignore="HardcodedText" />
 
@@ -90,8 +93,8 @@
         android:layout_marginEnd="6dp"
         android:src="@drawable/shape_text_separator_dot"
         android:layout_gravity="center_vertical"
-        app:tint="?attr/colorOnSurfaceVariant"
-        android:tint="?attr/colorOnSurfaceVariant"
+        app:tint="?attr/colorOnTertiaryContainer"
+        android:tint="?attr/colorOnTertiaryContainer"
         tools:ignore="ContentDescription,UseAppTint" />
 
       <TextView
@@ -100,6 +103,7 @@
         android:layout_width="wrap_content"
         android:text="@string/label_song_not_looped"
         android:textAppearance="?attr/textAppearanceBodySmall"
+        android:textColor="?attr/colorOnTertiaryContainer"
         android:singleLine="true" />
 
     </LinearLayout>
@@ -109,8 +113,35 @@
       style="@style/Widget.Tack.TextView.ListItem.Description"
       android:text="Last played 2021-01-01"
       android:textAppearance="?attr/textAppearanceBodySmall"
+      android:textColor="?attr/colorOnTertiaryContainer"
       tools:ignore="HardcodedText" />
 
   </LinearLayout>
+
+  <FrameLayout
+    android:id="@+id/frame_widget_song_container_more"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="48dp"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:visibility="gone"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="@drawable/ripple_widget_list_item_more_bg"
+    tools:ignore="UselessParent">
+
+    <TextView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:textAlignment="center"
+      android:text="@string/action_view_more_songs"
+      android:textAppearance="?attr/textAppearanceLabelMedium"
+      android:textColor="?attr/colorOnSecondaryContainer" />
+
+  </FrameLayout>
 
 </FrameLayout>

@@ -52,6 +52,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import xyz.zedler.patrick.tack.BuildConfig;
+import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
@@ -148,6 +149,14 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     );
     assert navHost != null;
     navController = navHost.getNavController();
+
+    Intent intent = getIntent();
+    if (intent != null && intent.getAction() != null) {
+      String action = intent.getAction();
+      if (action.equals(ACTION.SHOW_SONGS)) {
+        navController.navigate(NavMainDirections.actionGlobalSongsFragment());
+      }
+    }
 
     requestPermissionLauncher = registerForActivityResult(new RequestPermission(), isGranted -> {
       if (!isGranted && VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {

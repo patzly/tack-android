@@ -37,7 +37,7 @@ import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.activity.ShortcutActivity;
+import xyz.zedler.patrick.tack.activity.SongActivity;
 import xyz.zedler.patrick.tack.database.SongDatabase;
 import xyz.zedler.patrick.tack.database.entity.Song;
 import xyz.zedler.patrick.tack.widget.remote.SongsRemoteViewsService;
@@ -68,12 +68,20 @@ public class SongsWidgetProvider extends AppWidgetProvider {
   private void updateWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
     RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_songs);
 
-    Intent intentHeader = new Intent(context, MainActivity.class);
-    PendingIntent pendingIntentHeader = PendingIntent.getActivity(
-        context, 0, intentHeader,
+    Intent intentIcon = new Intent(context, MainActivity.class);
+    PendingIntent pendingIntentIcon = PendingIntent.getActivity(
+        context, 0, intentIcon,
         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
     );
-    views.setOnClickPendingIntent(R.id.linear_widget_songs_header, pendingIntentHeader);
+    views.setOnClickPendingIntent(R.id.frame_widget_songs_icon, pendingIntentIcon);
+
+    Intent intentTitle = new Intent(context, MainActivity.class);
+    intentTitle.setAction(ACTION.SHOW_SONGS);
+    PendingIntent pendingIntentTitle = PendingIntent.getActivity(
+        context, 0, intentTitle,
+        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+    );
+    views.setOnClickPendingIntent(R.id.linear_widget_songs_header, pendingIntentTitle);
 
     Intent intentUpdate = new Intent(context, SongsWidgetProvider.class);
     intentUpdate.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
@@ -93,8 +101,7 @@ public class SongsWidgetProvider extends AppWidgetProvider {
       Intent serviceIntentSongs = new Intent(context, SongsRemoteViewsService.class);
       views.setRemoteAdapter(R.id.list_widget_songs, serviceIntentSongs);
 
-      Intent intentSong = new Intent(context, ShortcutActivity.class);
-      intentSong.setAction(ACTION.START_SONG);
+      Intent intentSong = new Intent(context, SongActivity.class);
       intentSong.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK  | Intent.FLAG_ACTIVITY_CLEAR_TASK);
       PendingIntent pendingIntentSong = PendingIntent.getActivity(
           context, 0, intentSong,

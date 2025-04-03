@@ -40,7 +40,7 @@ import java.util.concurrent.Executors;
 import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.ShortcutActivity;
+import xyz.zedler.patrick.tack.activity.SongActivity;
 
 public class ShortcutUtil {
 
@@ -134,7 +134,7 @@ public class ShortcutUtil {
     builder.setShortLabel(name != null ? name : context.getString(R.string.label_song_name));
     builder.setIcon(Icon.createWithResource(context, R.mipmap.ic_shortcut));
     builder.setIntent(
-        new Intent(context, ShortcutActivity.class)
+        new Intent(context, SongActivity.class)
             .setAction(ACTION.START_SONG)
             .putExtra(EXTRA.SONG_ID, id)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)

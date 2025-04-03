@@ -35,10 +35,14 @@
     android:orientation="horizontal">
 
     <FrameLayout
-      android:layout_width="24dp"
-      android:layout_height="24dp"
-      android:layout_margin="12dp"
-      android:background="@drawable/shape_widget_header_icon_bg">
+      android:id="@+id/frame_widget_songs_icon"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:background="@drawable/shape_widget_header_icon_bg"
+      android:clickable="true"
+      android:focusable="true"
+      android:importantForAccessibility="yes"
+      android:contentDescription="@string/app_name">
 
       <ImageView
         android:layout_width="14dp"
@@ -80,8 +84,8 @@
         android:layout_gravity="center"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_rounded_refresh_anim"
-        app:tint="?attr/colorOnSurfaceVariant"
-        android:tint="?attr/colorOnSurfaceVariant"
+        app:tint="?attr/colorOnSurface"
+        android:tint="?attr/colorOnSurface"
         tools:ignore="UseAppTint" />
 
     </FrameLayout>
