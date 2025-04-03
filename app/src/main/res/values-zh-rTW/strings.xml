@@ -32,12 +32,16 @@
   <string name="title_metronome">節拍器</string>
   <string name="title_controls">控制</string>
   <string name="title_logcat">日誌</string>
+  <string name="title_songs">歌曲庫</string>
+  <string name="title_song_details">歌曲詳情</string>
+
   <!-- LABELS -->
 
   <string name="label_bpm_value">%1$d 節拍／分鐘</string>
   <string name="label_bpm">節拍／分鐘</string>
   <string name="label_ms">%1$s 毫秒</string>
   <string name="label_db">+%1$d 分貝</string>
+  <string name="label_tempo">節奏</string>
   <string name="label_tempo_largo">廣板</string>
   <string name="label_tempo_larghetto">小廣板</string>
   <string name="label_tempo_adagio">柔板</string>
@@ -47,13 +51,27 @@
   <string name="label_tempo_presto">急板</string>
   <string name="label_tempo_prestissimo">最急板</string>
   <string name="label_tempo_input_help">值從 %1$d 到 %2$d</string>
+  <string name="label_part_name">部份名稱</string>
+  <string name="label_part_unnamed">部份 %1$d</string>
+  <string name="label_part_no_duration">無持續時間</string>
+  <plurals name="label_parts_count">
+    <item quantity="other">%1$d 個部份</item>
+  </plurals>
+  <string name="label_song_looped">已循環</string>
+  <string name="label_song_looped_description">結束時重新播放歌曲</string>
+  <string name="label_song_not_looped">未循環</string>
   <string name="label_sort_name">名稱</string>
   <string name="label_sort_last_played">最近播放</string>
+  <string name="label_sort_last_played_date">最近播放 %1$s</string>
   <string name="label_sort_never_played">從未播放</string>
   <string name="label_sort_most_played">最常播放</string>
   <plurals name="label_sort_most_played_times">
     <item quantity="other">已播放 %1$d 次</item>
   </plurals>
+  <string name="label_song_name">歌曲名稱</string>
+  <string name="label_song_name_help">名稱必須是唯一的</string>
+  <string name="label_song_name_used">名稱已被使用</string>
+
   <!-- ACTIONS -->
 
   <string name="action_back">返回</string>
@@ -69,7 +87,7 @@
   <string name="action_remove_beat">減少節拍</string>
   <string name="action_add_sub">新增子節拍</string>
   <string name="action_remove_sub">移除子節拍</string>
-  <string name="action_tempo_tap">輕拍速度</string>
+  <string name="action_tempo_tap">點擊節奏</string>
   <string name="action_beat_mode">節拍模式</string>
   <string name="action_send_feedback">傳送意見回饋</string>
   <string name="action_open_link">開啟外部網站</string>
@@ -88,10 +106,18 @@
   <string name="action_copy_to_clipboard">複製至剪貼簿</string>
   <string name="action_reload">重新整理</string>
   <string name="action_change_tempo">改變節奏</string>
+  <string name="action_add_song">增加歌曲</string>
+  <string name="action_sort_by">排序方式</string>
+  <string name="action_add_part">增加部份</string>
   <string name="action_save">儲存</string>
+  <string name="action_discard">捨棄</string>
   <string name="action_rename">重新命名</string>
+  <string name="action_rename_part">重新命名部份</string>
   <string name="action_update">更新</string>
   <string name="action_delete">刪除</string>
+  <string name="action_move_up">向上移動</string>
+  <string name="action_move_down">向下移動</string>
+  <string name="action_open_play_store">開啟 Play 商店</string>
   <string name="action_backup">備份</string>
   <string name="action_restore">還原</string>
 
@@ -106,8 +132,11 @@
   <string name="msg_service_description">節拍器配置和播放服務</string>
   <string name="msg_connection_lost">服務連線丟失，需要重新啟動應用程式</string>
   <string name="msg_reset">全部重置？</string>
+  <string name="msg_reset_description">你確定要重置整個應用程式，包括歌曲庫和設定嗎？如果需要，請先建立歌曲庫的備份。重置無法撤銷。</string>
   <string name="msg_reset_timer">重置計時器？</string>
+  <string name="msg_reset_timer_description">你可以在設定中變更是否在啟動時重置計時器的預設行為。</string>
   <string name="msg_reset_elapsed">重置已使用時間？</string>
+  <string name="msg_reset_elapsed_description">你確定要重置已使用時間嗎？這無法撤消。</string>
   <string name="msg_gain">音量增強下播放？</string>
   <string name="msg_gain_description">小心不要透過耳機播放，因為太大的音量可以引致耳朵損傷！</string>
   <string name="msg_split_screen">視窗太小</string>
@@ -116,7 +145,20 @@
   <string name="msg_report_crash">請不吝回報任何當機情形，並附上當機紀錄，使開發者能順利修復問題。</string>
   <string name="msg_copied_to_clipboard">已複製至剪貼簿</string>
   <string name="msg_invalid_input">無效輸入</string>
+  <string name="msg_discard_changes">捨棄變更？</string>
+  <string name="msg_discard_changes_description">你確定你不想儲存它們嗎？</string>
+  <string name="msg_delete_song">刪除歌曲？</string>
+  <string name="msg_delete_song_description">你確定你要刪除整首歌曲及其所有部分嗎？這無法撤消。</string>
+  <string name="msg_songs_empty_description">加入你想練習的歌曲</string>
+  <string name="msg_unlock">來自開發者的訊息</string>
+  <string name="msg_unlock_description">你是否喜歡 Tack 中大量強大功能和無廣告體驗？我花了數年的時間建立了免費的 Tack，尤其是歌曲庫功能花了數月的辛勤工作。\n為了繼續改進 Tack，我懇請大家做出一點小貢獻。作為回報，你將會獲得一個解鎖應用程式，其中包含無限的歌曲和無數的歌曲部分。感謝您的支持！</string>
   <string name="msg_backup_error">備份時發生錯誤</string>
+  <string name="msg_restore_file_missing">未選擇要還原的檔案</string>
+  <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
+  <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
+  <string name="msg_songs_intro">書籤現在是歌曲</string>
+  <string name="msg_songs_intro_description">新的歌曲庫取代了以前的節奏書籤。現在你可以將整個節拍器配置儲存並安排為歌曲的一部分，而不必為節拍值增加書籤。只需要根據你的喜好調整控制項和選項，然後將目前配置作為新部分增加至歌曲或更新現有部分。</string>
+
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">小節</string>
@@ -249,6 +291,9 @@
   <string name="settings_gain_warning">謹慎使用！</string>
   <string name="settings_gain_disclaimer">當啟用增強功能時，每次啟動前都會顯示警告。開發者對任何潛在的損害不承擔責任。</string>
 
+  <string name="settings_hide_sub_controls">不使用時隱藏子節拍控制</string>
+  <string name="settings_hide_sub_controls_description">在選項中顯示對子節拍的額外控制</string>
+
   <string name="settings_active_beat">突出顯示目前節拍</string>
   <string name="settings_active_beat_description">對較慢的節奏有幫助</string>
 
@@ -284,6 +329,7 @@
   <string name="about_developer">開發者</string>
   <string name="about_vending_description">開發者的更多應用程式</string>
   <string name="about_key">解除鎖定應用程式</string>
+  <string name="about_key_description_not_installed">未安裝</string>
   <string name="about_key_description_installed">已安裝</string>
   <string name="about_github_description">原始碼</string>
   <string name="about_translation_description">幫助翻譯 Tack</string>
