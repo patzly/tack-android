@@ -84,8 +84,8 @@
         android:layout_gravity="center"
         android:importantForAccessibility="no"
         android:src="@drawable/ic_rounded_refresh_anim"
-        app:tint="?attr/colorOnSurface"
-        android:tint="?attr/colorOnSurface"
+        app:tint="?attr/colorOnSurfaceVariant"
+        android:tint="?attr/colorOnSurfaceVariant"
         tools:ignore="UseAppTint" />
 
     </FrameLayout>
