@@ -43,4 +43,9 @@
   <dimen name="widget_songs_max_resize_width">624dp</dimen>
   <dimen name="widget_songs_max_resize_height">422dp</dimen>
 
+  <dimen name="widget_list_margin_horizontal">0dp</dimen>
+  <dimen name="widget_list_margin_bottom">0dp</dimen>
+  <dimen name="widget_list_padding_bottom">12dp</dimen>
+  <dimen name="widget_list_item_margin_horizontal">12dp</dimen>
+
 </resources>

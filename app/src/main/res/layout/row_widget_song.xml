@@ -34,6 +34,8 @@
     android:layout_height="wrap_content"
     android:baselineAligned="false"
     android:minHeight="48dp"
+    android:layout_marginStart="@dimen/widget_list_item_margin_horizontal"
+    android:layout_marginEnd="@dimen/widget_list_item_margin_horizontal"
     android:orientation="horizontal"
     android:gravity="center_vertical"
     android:clickable="true"

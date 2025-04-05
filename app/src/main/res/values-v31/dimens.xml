@@ -18,12 +18,11 @@
   ~ Copyright (c) 2020-2025 by Patrick Zedler
   -->
 
-<shape
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  android:shape="rectangle">
+<resources>
 
-  <solid android:color="?attr/colorSurfaceContainerHigh" />
+  <dimen name="widget_list_margin_horizontal">8dp</dimen>
+  <dimen name="widget_list_margin_bottom">8dp</dimen>
+  <dimen name="widget_list_padding_bottom">0dp</dimen>
+  <dimen name="widget_list_item_margin_horizontal">0dp</dimen>
 
-  <corners android:radius="14dp" />
-
-</shape>
+</resources>
