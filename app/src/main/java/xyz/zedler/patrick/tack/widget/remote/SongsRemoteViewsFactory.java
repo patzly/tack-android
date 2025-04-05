@@ -52,6 +52,7 @@ import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 import xyz.zedler.patrick.tack.util.PrefsUtil;
 import xyz.zedler.patrick.tack.util.SortUtil;
+import xyz.zedler.patrick.tack.util.UiUtil;
 
 public class SongsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
@@ -138,10 +139,10 @@ public class SongsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
 
     RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.row_widget_song);
 
-    Intent fillInIntent = new Intent();
-    fillInIntent.setAction(ACTION.START_SONG);
-    fillInIntent.putExtra(EXTRA.SONG_ID, songsWithParts.get(position).getSong().getId());
-    views.setOnClickFillInIntent(R.id.linear_widget_song_container_song, fillInIntent);
+    Intent fillInIntentApply = new Intent();
+    fillInIntentApply.setAction(ACTION.APPLY_SONG);
+    fillInIntentApply.putExtra(EXTRA.SONG_ID, songsWithParts.get(position).getSong().getId());
+    views.setOnClickFillInIntent(R.id.linear_widget_song_container, fillInIntentApply);
 
     SongWithParts songWithParts = songsWithParts.get(position);
 
@@ -170,7 +171,7 @@ public class SongsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
       );
     }
     // looped
-    boolean showLooped = minWidth == -1 || minWidth > 200;
+    boolean showLooped = minWidth == -1 || minWidth > 300;
     views.setViewVisibility(R.id.image_widget_song_looped, showLooped ? View.VISIBLE : View.GONE);
     views.setViewVisibility(R.id.text_widget_song_looped, showLooped ? View.VISIBLE : View.GONE);
     views.setTextViewText(
@@ -233,6 +234,20 @@ public class SongsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFa
         );
       }
     }
+
+    boolean showPlay = minWidth == -1 || minWidth > 200;
+    views.setViewVisibility(R.id.frame_widget_song_play, showPlay ? View.VISIBLE : View.GONE);
+    boolean isRtl = UiUtil.isLayoutRtl(context);
+    int paddingEnd = showPlay ? 0 : UiUtil.dpToPx(context, 12);
+    views.setViewPadding(
+        R.id.linear_widget_song_container,
+        isRtl ? paddingEnd : 0, 0, isRtl ? 0 : paddingEnd, 0
+    );
+    Intent fillInIntentPlay = new Intent();
+    fillInIntentPlay.setAction(ACTION.START_SONG);
+    fillInIntentPlay.putExtra(EXTRA.SONG_ID, songsWithParts.get(position).getSong().getId());
+    views.setOnClickFillInIntent(R.id.frame_widget_song_play, fillInIntentPlay);
+
     return views;
   }
 

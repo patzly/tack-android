@@ -135,7 +135,7 @@ public class ShortcutUtil {
     builder.setIcon(Icon.createWithResource(context, R.mipmap.ic_shortcut));
     builder.setIntent(
         new Intent(context, SongActivity.class)
-            .setAction(ACTION.START_SONG)
+            .setAction(ACTION.APPLY_SONG)
             .putExtra(EXTRA.SONG_ID, id)
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
     );

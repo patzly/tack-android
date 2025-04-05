@@ -29,95 +29,127 @@
   so that the background ripple could not appear -->
 
   <LinearLayout
-    android:id="@+id/linear_widget_song_container_song"
+    android:id="@+id/linear_widget_song_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:baselineAligned="false"
     android:minHeight="48dp"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:paddingStart="12dp"
-    android:paddingEnd="12dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
     android:clickable="true"
     android:focusable="true"
     android:background="@drawable/ripple_widget_list_item_bg"
     tools:ignore="UselessParent">
 
-    <TextView
-      android:id="@+id/text_widget_song_name"
-      style="@style/Widget.Tack.TextView.ListItem.Title"
-      android:text="Song #1"
-      android:textAppearance="?attr/textAppearanceBodyMedium"
-      android:textColor="?attr/colorOnSecondaryContainer"
-      tools:ignore="HardcodedText" />
-
     <LinearLayout
-      android:layout_width="match_parent"
+      android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:orientation="horizontal">
+      android:layout_weight="1"
+      android:paddingStart="12dp"
+      android:paddingEnd="0dp"
+      android:paddingTop="8dp"
+      android:paddingBottom="8dp"
+      android:orientation="vertical">
 
       <TextView
-        android:id="@+id/text_widget_song_part_count"
-        style="@style/Widget.Tack.TextView.ListItem.Description"
-        android:layout_width="wrap_content"
-        android:text="3 parts"
-        android:textAppearance="?attr/textAppearanceBodySmall"
+        android:id="@+id/text_widget_song_name"
+        style="@style/Widget.Tack.TextView.ListItem.Title"
+        android:text="Song #1"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
         android:textColor="?attr/colorOnSecondaryContainer"
-        android:singleLine="true"
         tools:ignore="HardcodedText" />
 
-      <ImageView
-        android:layout_width="2dp"
-        android:layout_height="2dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        android:src="@drawable/shape_text_separator_dot"
-        android:layout_gravity="center_vertical"
-        app:tint="?attr/colorOnSecondaryContainer"
-        android:tint="?attr/colorOnSecondaryContainer"
-        tools:ignore="ContentDescription,UseAppTint" />
+      <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+          android:id="@+id/text_widget_song_part_count"
+          style="@style/Widget.Tack.TextView.ListItem.Description"
+          android:layout_width="wrap_content"
+          android:text="3 parts"
+          android:textAppearance="?attr/textAppearanceBodySmall"
+          android:textColor="?attr/colorOnSecondaryContainer"
+          android:singleLine="true"
+          tools:ignore="HardcodedText" />
+
+        <ImageView
+          android:layout_width="2dp"
+          android:layout_height="2dp"
+          android:layout_marginStart="6dp"
+          android:layout_marginEnd="6dp"
+          android:src="@drawable/shape_text_separator_dot"
+          android:layout_gravity="center_vertical"
+          app:tint="?attr/colorOnSecondaryContainer"
+          android:tint="?attr/colorOnSecondaryContainer"
+          tools:ignore="ContentDescription,UseAppTint" />
+
+        <TextView
+          android:id="@+id/text_widget_song_duration"
+          style="@style/Widget.Tack.TextView.ListItem.Description"
+          android:layout_width="wrap_content"
+          android:text="2:30"
+          android:textAppearance="?attr/textAppearanceBodySmall"
+          android:textColor="?attr/colorOnSecondaryContainer"
+          android:singleLine="true"
+          tools:ignore="HardcodedText" />
+
+        <ImageView
+          android:id="@+id/image_widget_song_looped"
+          android:layout_width="2dp"
+          android:layout_height="2dp"
+          android:layout_marginStart="6dp"
+          android:layout_marginEnd="6dp"
+          android:src="@drawable/shape_text_separator_dot"
+          android:layout_gravity="center_vertical"
+          app:tint="?attr/colorOnSecondaryContainer"
+          android:tint="?attr/colorOnSecondaryContainer"
+          tools:ignore="ContentDescription,UseAppTint" />
+
+        <TextView
+          android:id="@+id/text_widget_song_looped"
+          style="@style/Widget.Tack.TextView.ListItem.Description"
+          android:layout_width="wrap_content"
+          android:text="@string/label_song_not_looped"
+          android:textAppearance="?attr/textAppearanceBodySmall"
+          android:textColor="?attr/colorOnSecondaryContainer"
+          android:singleLine="true" />
+
+      </LinearLayout>
 
       <TextView
-        android:id="@+id/text_widget_song_duration"
+        android:id="@+id/text_widget_song_sort_details"
         style="@style/Widget.Tack.TextView.ListItem.Description"
-        android:layout_width="wrap_content"
-        android:text="2:30"
+        android:text="Last played 2021-01-01"
         android:textAppearance="?attr/textAppearanceBodySmall"
         android:textColor="?attr/colorOnSecondaryContainer"
-        android:singleLine="true"
         tools:ignore="HardcodedText" />
-
-      <ImageView
-        android:id="@+id/image_widget_song_looped"
-        android:layout_width="2dp"
-        android:layout_height="2dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginEnd="6dp"
-        android:src="@drawable/shape_text_separator_dot"
-        android:layout_gravity="center_vertical"
-        app:tint="?attr/colorOnSecondaryContainer"
-        android:tint="?attr/colorOnSecondaryContainer"
-        tools:ignore="ContentDescription,UseAppTint" />
-
-      <TextView
-        android:id="@+id/text_widget_song_looped"
-        style="@style/Widget.Tack.TextView.ListItem.Description"
-        android:layout_width="wrap_content"
-        android:text="@string/label_song_not_looped"
-        android:textAppearance="?attr/textAppearanceBodySmall"
-        android:textColor="?attr/colorOnSecondaryContainer"
-        android:singleLine="true" />
 
     </LinearLayout>
 
-    <TextView
-      android:id="@+id/text_widget_song_sort_details"
-      style="@style/Widget.Tack.TextView.ListItem.Description"
-      android:text="Last played 2021-01-01"
-      android:textAppearance="?attr/textAppearanceBodySmall"
-      android:textColor="?attr/colorOnSecondaryContainer"
-      tools:ignore="HardcodedText" />
+    <FrameLayout
+      android:id="@+id/frame_widget_song_play"
+      android:layout_width="48dp"
+      android:layout_height="48dp"
+      android:layout_marginEnd="2dp"
+      android:clickable="true"
+      android:focusable="true"
+      android:background="?actionBarItemBackground"
+      android:importantForAccessibility="yes"
+      android:contentDescription="@string/action_play">
+
+      <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_rounded_play_arrow"
+        app:tint="?attr/colorOnSecondaryContainer"
+        android:tint="?attr/colorOnSecondaryContainer"
+        tools:ignore="UseAppTint" />
+
+    </FrameLayout>
 
   </LinearLayout>
 

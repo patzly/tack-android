@@ -95,19 +95,26 @@ public class MetronomeService extends Service {
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
     if (intent != null && intent.getAction() != null) {
-      if (intent.getAction().equals(ACTION.START)) {
-        metronomeUtil.start();
-      } else if (intent.getAction().equals(ACTION.START_SONG)) {
-        String songId = intent.getStringExtra(EXTRA.SONG_ID);
-        if (songId == null) {
-          songId = Constants.SONG_ID_DEFAULT;
-        }
-        metronomeUtil.setCurrentSong(songId, 0, false, true);
-      } else if (intent.getAction().equals(ACTION.STOP)) {
-        metronomeUtil.stop();
-        if (!permNotification && hasPermission()) {
-          stopForeground();
-        }
+      String action = intent.getAction();
+      switch (action) {
+        case ACTION.START:
+          metronomeUtil.start();
+          break;
+        case ACTION.APPLY_SONG:
+        case ACTION.START_SONG:
+          String songId = intent.getStringExtra(EXTRA.SONG_ID);
+          if (songId == null) {
+            songId = Constants.SONG_ID_DEFAULT;
+          }
+          boolean startPlaying = action.equals(ACTION.START_SONG);
+          metronomeUtil.setCurrentSong(songId, 0, false, startPlaying);
+          break;
+        case ACTION.STOP:
+          metronomeUtil.stop();
+          if (!permNotification && hasPermission()) {
+            stopForeground();
+          }
+          break;
       }
     }
     return START_NOT_STICKY;
