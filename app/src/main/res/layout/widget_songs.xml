@@ -25,7 +25,7 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:orientation="vertical"
-  android:theme="@style/Theme.Material3.DynamicColors.DayNight"
+  android:theme="@style/Theme.Tack.Widget"
   android:background="@drawable/shape_widget_bg">
 
   <LinearLayout
@@ -112,7 +112,7 @@
         style="@style/Widget.Tack.ImageView.Icon"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="8dp"
-        android:src="@drawable/ic_rounded_music_note_anim"
+        android:src="@drawable/ic_rounded_queue_music"
         app:tint="?attr/colorPrimary"
         android:tint="?attr/colorPrimary"
         tools:ignore="ContentDescription,UseAppTint" />

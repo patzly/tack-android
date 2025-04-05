@@ -22,6 +22,9 @@
 
   <integer name="picker_waves">12</integer>
 
+  <integer name="widget_songs_target_cell_width">3</integer>
+  <integer name="widget_songs_target_cell_height">2</integer>
+
   <integer name="app_bar_elevation_anim_duration" tools:ignore="PrivateResource">200</integer>
   <integer name="design_snackbar_text_max_lines" tools:ignore="PrivateResource">4</integer>
 

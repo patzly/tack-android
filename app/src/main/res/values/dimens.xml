@@ -36,4 +36,11 @@
 
   <dimen name="placeholder_illustration_size">180dp</dimen>
 
+  <dimen name="widget_songs_min_width">203dp</dimen>
+  <dimen name="widget_songs_min_height">115dp</dimen>
+  <dimen name="widget_songs_min_resize_width">109dp</dimen>
+  <dimen name="widget_songs_min_resize_height">115dp</dimen>
+  <dimen name="widget_songs_max_resize_width">624dp</dimen>
+  <dimen name="widget_songs_max_resize_height">422dp</dimen>
+
 </resources>

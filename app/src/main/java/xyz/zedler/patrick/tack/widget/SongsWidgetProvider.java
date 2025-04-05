@@ -79,13 +79,13 @@ public class SongsWidgetProvider extends AppWidgetProvider {
     );
     views.setOnClickPendingIntent(R.id.frame_widget_songs_icon, pendingIntentIcon);
 
-    Intent intentTitle = new Intent(context, MainActivity.class);
-    intentTitle.setAction(ACTION.SHOW_SONGS);
-    PendingIntent pendingIntentTitle = PendingIntent.getActivity(
-        context, 0, intentTitle,
+    Intent intentShowSongs = new Intent(context, MainActivity.class);
+    intentShowSongs.setAction(ACTION.SHOW_SONGS);
+    PendingIntent pendingIntentShowSongs = PendingIntent.getActivity(
+        context, 0, intentShowSongs,
         PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
     );
-    views.setOnClickPendingIntent(R.id.linear_widget_songs_header, pendingIntentTitle);
+    views.setOnClickPendingIntent(R.id.linear_widget_songs_header, pendingIntentShowSongs);
 
     options = options != null ? options : appWidgetManager.getAppWidgetOptions(appWidgetId);
     if (options != null) {
@@ -129,6 +129,9 @@ public class SongsWidgetProvider extends AppWidgetProvider {
             R.id.list_widget_songs, android.R.dimen.system_app_widget_inner_radius
         );
       }
+    } else {
+      // make container open song library
+      views.setOnClickPendingIntent(R.id.frame_widget_songs_container, pendingIntentShowSongs);
     }
 
     appWidgetManager.updateAppWidget(appWidgetId, views);

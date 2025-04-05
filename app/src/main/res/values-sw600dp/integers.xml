@@ -22,4 +22,7 @@
 
   <integer name="picker_waves">14</integer>
 
+  <integer name="widget_songs_target_cell_width">2</integer>
+  <integer name="widget_songs_target_cell_height">2</integer>
+
 </resources>
