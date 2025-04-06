@@ -168,7 +168,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
             activity.getSongViewModel().insertSong(songResult);
             activity.getSongViewModel().insertParts(partsResult);
             // update widget, no shortcuts update needed because play count is zero
-            WidgetUtil.sendWidgetUpdate(activity);
+            WidgetUtil.sendSongsWidgetUpdate(activity);
           } else {
             activity.getSongViewModel().updateSongAndParts(
                 songResult, partsResult, partsSource, () -> {
@@ -177,7 +177,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
                   // update shortcut names
                   getMetronomeUtil().updateShortcuts();
                   // update widget
-                  WidgetUtil.sendWidgetUpdate(activity);
+                  WidgetUtil.sendSongsWidgetUpdate(activity);
                 });
           }
           navigateUp();
@@ -433,7 +433,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           // update shortcut names
           activity.getMetronomeUtil().updateShortcuts();
           // update widget
-          WidgetUtil.sendWidgetUpdate(activity);
+          WidgetUtil.sendSongsWidgetUpdate(activity);
         });
         activity.navigateUp();
       });

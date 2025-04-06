@@ -118,6 +118,7 @@
         tools:ignore="ContentDescription,UseAppTint" />
 
       <TextView
+        android:id="@+id/text_widget_songs_empty"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

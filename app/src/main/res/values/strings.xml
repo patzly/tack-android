@@ -184,6 +184,8 @@
   <string name="msg_widget_description">View your songs and play them back</string>
   <string name="msg_installer_check">Invalid unlock app</string>
   <string name="msg_installer_check_description">Please purchase and install the unlock app on Google Play. Thank you for your support!</string>
+  <string name="msg_widget_prompt">Quick access to songs?</string>
+  <string name="msg_widget_prompt_description">Place a beautiful widget on your home screen.</string>
 
   <!-- OPTIONS -->
 

@@ -523,7 +523,7 @@ public class MetronomeUtil {
         if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC
             || songsOrder == SONGS_ORDER.MOST_PLAYED_ASC
         ) {
-          WidgetUtil.sendWidgetUpdate(context);
+          WidgetUtil.sendSongsWidgetUpdate(context);
         }
       }
     });

@@ -74,7 +74,7 @@ public class SongsFragment extends BaseFragment {
 
   private FragmentSongsBinding binding;
   private MainActivity activity;
-  private DialogUtil dialogUtilIntro;
+  private DialogUtil dialogUtilIntro, dialogUtilWidgetPrompt;
   private UnlockDialogUtil unlockDialogUtil;
   private List<SongWithParts> songsWithParts = new ArrayList<>();
   private int sortOrder;
@@ -97,6 +97,7 @@ public class SongsFragment extends BaseFragment {
     super.onDestroyView();
     binding = null;
     dialogUtilIntro.dismiss();
+    dialogUtilWidgetPrompt.dismiss();
     unlockDialogUtil.dismiss();
     if (metronomeListener != null) {
       getMetronomeUtil().removeListener(metronomeListener);
@@ -145,7 +146,7 @@ public class SongsFragment extends BaseFragment {
         getMetronomeUtil().updateSongsOrder(sortOrder);
         if (!songsWithParts.isEmpty()) {
           // only update widget if sort order is important
-          WidgetUtil.sendWidgetUpdate(activity);
+          WidgetUtil.sendSongsWidgetUpdate(activity);
         }
       } else if (id == R.id.action_backup) {
         launcherBackup.launch("song_library.json");
@@ -287,6 +288,34 @@ public class SongsFragment extends BaseFragment {
       dialogUtilIntro.show();
     }
 
+    dialogUtilWidgetPrompt = new DialogUtil(activity, "widget_prompt");
+    dialogUtilWidgetPrompt.createDialog(builder -> {
+      builder.setTitle(R.string.msg_widget_prompt);
+      builder.setMessage(R.string.msg_widget_prompt_description);
+      builder.setPositiveButton(R.string.action_apply, (dialog, which) -> {
+        performHapticClick();
+        WidgetUtil.requestSongsWidgetPin(activity);
+      });
+      builder.setNegativeButton(
+          R.string.action_cancel, (dialog, which) -> performHapticClick()
+      );
+    });
+    dialogUtilWidgetPrompt.showIfWasShown(savedInstanceState);
+    // show widget prompt if needed
+    if (savedInstanceState == null) {
+      int visitCount = getSharedPrefs().getInt(PREF.SONGS_VISIT_COUNT, 0);
+      if (visitCount != -1) { // no widget created and no dialog shown yet
+        visitCount++;
+        if (visitCount < 5) {
+          getSharedPrefs().edit().putInt(PREF.SONGS_VISIT_COUNT, visitCount).apply();
+        } else {
+          getSharedPrefs().edit().putInt(PREF.SONGS_VISIT_COUNT, -1).apply();
+          // show song library widget prompt
+          dialogUtilWidgetPrompt.show();
+        }
+      }
+    }
+
     unlockDialogUtil = new UnlockDialogUtil(activity);
     unlockDialogUtil.showIfWasShown(savedInstanceState);
 
@@ -308,6 +337,9 @@ public class SongsFragment extends BaseFragment {
     super.onSaveInstanceState(outState);
     if (unlockDialogUtil != null) {
       unlockDialogUtil.saveState(outState);
+    }
+    if (dialogUtilWidgetPrompt != null) {
+      dialogUtilWidgetPrompt.saveState(outState);
     }
     // dialogIntro not needed here
   }
@@ -406,7 +438,7 @@ public class SongsFragment extends BaseFragment {
           // update shortcuts
           activity.getMetronomeUtil().updateShortcuts();
           // update widget
-          WidgetUtil.sendWidgetUpdate(activity);
+          WidgetUtil.sendSongsWidgetUpdate(activity);
         });
       } else {
         showSnackbar(R.string.msg_restore_error);

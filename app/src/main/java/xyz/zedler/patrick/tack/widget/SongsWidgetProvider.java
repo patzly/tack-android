@@ -24,6 +24,7 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -34,14 +35,22 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.ACTION;
+import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.activity.SongActivity;
 import xyz.zedler.patrick.tack.database.SongDatabase;
 import xyz.zedler.patrick.tack.database.entity.Song;
+import xyz.zedler.patrick.tack.util.PrefsUtil;
 import xyz.zedler.patrick.tack.widget.remote.SongsRemoteViewsService;
 
 public class SongsWidgetProvider extends AppWidgetProvider {
+
+  @Override
+  public void onEnabled(Context context) {
+    SharedPreferences sharedPrefs = new PrefsUtil(context).getSharedPrefs();
+    sharedPrefs.edit().putInt(PREF.SONGS_VISIT_COUNT, -1).apply();
+  }
 
   @Override
   public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -94,6 +103,8 @@ public class SongsWidgetProvider extends AppWidgetProvider {
           R.id.text_widget_songs_title,
           context.getString(minWidth > 200 ? R.string.title_songs : R.string.title_songs_short)
       );
+    } else {
+      views.setTextViewText(R.id.text_widget_songs_title, context.getString(R.string.title_songs));
     }
 
     Intent intentUpdate = new Intent(context, SongsWidgetProvider.class);
@@ -130,6 +141,10 @@ public class SongsWidgetProvider extends AppWidgetProvider {
         );
       }
     } else {
+      // for using current language
+      views.setTextViewText(
+          R.id.text_widget_songs_empty, context.getString(R.string.msg_songs_empty)
+      );
       // make container open song library
       views.setOnClickPendingIntent(R.id.frame_widget_songs_container, pendingIntentShowSongs);
     }

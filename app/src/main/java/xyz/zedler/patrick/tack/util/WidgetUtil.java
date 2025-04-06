@@ -23,11 +23,13 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import xyz.zedler.patrick.tack.widget.SongsWidgetProvider;
 
 public class WidgetUtil {
 
-  public static void sendWidgetUpdate(Context context) {
+  public static void sendSongsWidgetUpdate(Context context) {
     Intent intent = new Intent(context, SongsWidgetProvider.class);
     intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
 
@@ -37,5 +39,21 @@ public class WidgetUtil {
 
     intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
     context.sendBroadcast(intent);
+  }
+
+  public static void requestSongsWidgetPin(Context context) {
+    if (VERSION.SDK_INT >= VERSION_CODES.O && isRequestPinAppWidgetSupported(context)) {
+      AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+      ComponentName widgetProvider = new ComponentName(context, SongsWidgetProvider.class);
+      appWidgetManager.requestPinAppWidget(widgetProvider, null, null);
+    }
+  }
+
+  public static boolean isRequestPinAppWidgetSupported(Context context) {
+    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+    if (VERSION.SDK_INT >= VERSION_CODES.O) {
+      return appWidgetManager.isRequestPinAppWidgetSupported();
+    }
+    return false;
   }
 }
