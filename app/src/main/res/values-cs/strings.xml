@@ -186,6 +186,7 @@
   <string name="msg_songs_intro_description">Nová knihovna skladeb nahrazuje předchozí záložky tempa. Namísto ukládání hodnot tempa nyní můžete uložit a nastavit celé konfigurace metronomu jako části vaší skladby. Jednoduše upravte ovládání a možnosti podle vašich představ a přidejte aktuální konfiguraci jako novou část skladby, nebo aktualizujte již existující.</string>
   <string name="msg_widget_description">Zobrazte si své skladby a přehrajte si je</string>
   <string name="msg_installer_check">Neplatná odemykací aplikace</string>
+  <string name="msg_installer_check_description">Kupte a nainstalujte si odemykací aplikaci z Obchodu Play. Děkuji za vaší podporu!</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Takty</string>
