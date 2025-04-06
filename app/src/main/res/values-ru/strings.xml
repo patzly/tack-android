@@ -145,6 +145,7 @@
   <string name="msg_discard_changes_description">Вы действительно уверены, что не хотите сохранять их?</string>
   <string name="msg_delete_song">Удалить песню?</string>
   <string name="msg_delete_song_description">Вы действительно уверены, что хотите удалить песню целиком, включая все её части? Это действие нельзя отменить.</string>
+  <string name="msg_songs_empty">Библиотека песен пуста</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Такты</string>
