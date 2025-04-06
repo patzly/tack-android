@@ -127,6 +127,8 @@
   <string name="action_reload">Načíst znovu</string>
   <string name="action_change_tempo">Změnit tempo</string>
   <string name="action_add_song">Přidat skladbu</string>
+  <string name="action_sort_by">Seřadit</string>
+  <string name="action_add_part">Přidat část</string>
   <string name="action_delete">Odstranit</string>
   <!-- MESSAGES -->
 
