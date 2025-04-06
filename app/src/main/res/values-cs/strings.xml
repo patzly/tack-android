@@ -32,6 +32,10 @@
   <string name="title_metronome">Metronom</string>
   <string name="title_controls">Ovládání</string>
   <string name="title_logcat">Logcat</string>
+  <string name="title_songs">Knihovna skladeb</string>
+  <!-- Short version of the term "song library" for smaller home screen widget sizes -->
+  <string name="title_songs_short">Skladby</string>
+  <string name="title_song_details">Podrobnosti o skladbě</string>
 
   <!-- LABELS -->
 
@@ -39,6 +43,7 @@
   <string name="label_bpm">dob/min</string>
   <string name="label_ms">%1$s ms</string>
   <string name="label_db">+%1$d dB</string>
+  <string name="label_tempo">Tempo</string>
   <string name="label_tempo_largo">Largo</string>
   <string name="label_tempo_larghetto">Larghetto</string>
   <string name="label_tempo_adagio">Adagio</string>
@@ -48,7 +53,31 @@
   <string name="label_tempo_presto">Presto</string>
   <string name="label_tempo_prestissimo">Prestissimo</string>
   <string name="label_tempo_input_help">Hodnoty od %1$d do %2$d</string>
-
+  <string name="label_part_name">Název části</string>
+  <string name="label_part_unnamed">Část %1$d</string>
+  <string name="label_part_no_duration">Žádná délka</string>
+  <plurals name="label_parts_count">
+    <item quantity="one">%1$d část</item>
+    <item quantity="few">%1$d části</item>
+    <item quantity="many">%1$d částí</item>
+    <item quantity="other">%1$d částí</item>
+  </plurals>
+  <string name="label_song_looped">Opakování</string>
+  <string name="label_song_looped_description">Po dosažení konce opakovat skladbu</string>
+  <string name="label_song_not_looped">Bez opakování</string>
+  <string name="label_sort_name">Název</string>
+  <string name="label_sort_last_played">Naposledy přehráno</string>
+  <string name="label_sort_last_played_date">Naposledy přehráno %1$s</string>
+  <string name="label_sort_never_played">Nikdy nepřehráno</string>
+  <string name="label_sort_most_played">Nejvíce přehráváno</string>
+  <plurals name="label_sort_most_played_times">
+    <item quantity="one">Přehráno %1$dkrát</item>
+    <item quantity="few">Přehráno %1$dkrát</item>
+    <item quantity="many">Přehráno %1$dkrát</item>
+    <item quantity="other">Přehráno %1$dkrát</item>
+  </plurals>
+  <string name="label_song_name">Název skladby</string>
+  <string name="label_song_name_help">Název musí být jedinečný</string>
   <!-- ACTIONS -->
 
   <string name="action_back">Zpět</string>
@@ -64,9 +93,7 @@
   <string name="action_remove_beat">Odstranit dobu</string>
   <string name="action_add_sub">Přidat subdivizi</string>
   <string name="action_remove_sub">Odstranit subdivizi</string>
-  <string name="action_clear_all">Vymazat vše</string>
   <string name="action_tempo_tap">Naklikat tempo</string>
-  <string name="action_bookmark">Záložka</string>
   <string name="action_beat_mode">Režim metronomu</string>
   <string name="action_send_feedback">Poslat zpětnou vazbu</string>
   <string name="action_open_link">Otevřít externí webovou stránku</string>
@@ -85,10 +112,9 @@
   <string name="action_copy_to_clipboard">Zkopírovat do schránky</string>
   <string name="action_reload">Načíst znovu</string>
   <string name="action_change_tempo">Změnit tempo</string>
-
+  <string name="action_delete">Odstranit</string>
   <!-- MESSAGES -->
 
-  <string name="msg_bookmarks_max">Dosažen limit záložek</string>
   <string name="msg_feedback">Dobrá aplikace vyžaduje spoustu času a existuje díky zpětné vazbě od uživatelů.</string>
   <string name="msg_feedback_contact">Máte nějaká přání, komentáře nebo dotazy? Kontaktujte mě!\nBudu také velmi rád, pokud zanecháte pěkné hodnocení v Obchodě Play.</string>
   <string name="msg_recommend">Používám tuhle skvělou aplikaci metronomu: \n%1$s</string>
@@ -98,7 +124,6 @@
   <string name="msg_service_description">Služba pro nastavení a přehrávání metronomu</string>
   <string name="msg_connection_lost">Ztraceno spojení se službou, vyžadován restart aplikace</string>
   <string name="msg_reset">Resetovat vše?</string>
-  <string name="msg_reset_description">Opravdu chcete resetovat celou aplikaci včetně záložek a nastavení? Tato akce je nevratná.</string>
   <string name="msg_reset_elapsed">Resetovat uplynulý čas?</string>
   <string name="msg_reset_elapsed_description">Opravdu chcete resetovat uplynulý čas? Tato akce je nevratná.</string>
   <string name="msg_gain">Přehrát se zesílenou hlasitostí?</string>
@@ -109,7 +134,6 @@
   <string name="msg_report_crash">Nahlaste prosím jakýkoli pád a přidejte záznam z protokolu, abych mohl chybu opravit.</string>
   <string name="msg_copied_to_clipboard">Úspěšně zkopírováno do schránky</string>
   <string name="msg_invalid_input">Neplatný vstup</string>
-
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Takty</string>
