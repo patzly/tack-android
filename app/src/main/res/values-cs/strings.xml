@@ -140,6 +140,8 @@
   <string name="action_open_play_store">Otevřít Obchod Play</string>
   <string name="action_backup">Zálohovat</string>
   <string name="action_restore">Obnovit</string>
+  <string name="action_view_more_songs">Zobrazit více skladeb</string>
+
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Dobrá aplikace vyžaduje spoustu času a existuje díky zpětné vazbě od uživatelů.</string>
