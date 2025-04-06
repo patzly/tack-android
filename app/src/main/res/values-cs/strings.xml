@@ -136,6 +136,7 @@
   <string name="action_update">Aktualizovat</string>
   <string name="action_delete">Odstranit</string>
   <string name="action_move_up">Přesunout nahoru</string>
+  <string name="action_move_down">Přesunout dolů</string>
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Dobrá aplikace vyžaduje spoustu času a existuje díky zpětné vazbě od uživatelů.</string>
