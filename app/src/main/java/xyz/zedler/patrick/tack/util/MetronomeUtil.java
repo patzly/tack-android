@@ -151,7 +151,7 @@ public class MetronomeUtil {
     setIncrementalUnit(config.getIncrementalUnit());
     setIncrementalIncrease(config.isIncrementalIncrease());
 
-    setTimerDuration(config.getTimerDuration());
+    setTimerDuration(config.getTimerDuration(), restart);
     setTimerUnit(config.getTimerUnit());
 
     setMutePlay(config.getMutePlay());
@@ -1012,14 +1012,14 @@ public class MetronomeUtil {
     return getTimeStringFromSeconds(seconds, false);
   }
 
-  public void setTimerDuration(int duration) {
+  public void setTimerDuration(int duration, boolean resetProgressIfNeeded) {
     config.setTimerDuration(duration);
     maybeUpdateDefaultSong();
     sharedPrefs.edit().putInt(PREF.TIMER_DURATION, duration).apply();
     if (config.getTimerUnit().equals(UNIT.BARS)) {
       updateTimerHandler(false, true);
     } else {
-      updateTimerHandler(0, false);
+      updateTimerHandler(resetProgressIfNeeded ? 0 : timerProgress, false);
     }
   }
 

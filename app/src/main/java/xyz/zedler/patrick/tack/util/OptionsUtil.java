@@ -563,7 +563,9 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       int valueFrom = (int) binding.sliderOptionsTimerDuration.getValueFrom();
       int valueTo = (int) binding.sliderOptionsTimerDuration.getValueTo();
       int range = valueTo - valueFrom;
-      getMetronomeUtil().setTimerDuration(getMetronomeUtil().getTimerDuration() - range - 1);
+      getMetronomeUtil().setTimerDuration(
+          getMetronomeUtil().getTimerDuration() - range - 1, true
+      );
       updateTimer();
       fragment.updateTimerControls(true, true);
       ViewUtil.startIcon(binding.buttonOptionsTimerDecrease.getIcon());
@@ -571,7 +573,9 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       int valueFrom = (int) binding.sliderOptionsTimerDuration.getValueFrom();
       int valueTo = (int) binding.sliderOptionsTimerDuration.getValueTo();
       int range = valueTo - valueFrom;
-      getMetronomeUtil().setTimerDuration(getMetronomeUtil().getTimerDuration() + range + 1);
+      getMetronomeUtil().setTimerDuration(
+          getMetronomeUtil().getTimerDuration() + range + 1, true
+      );
       updateTimer();
       fragment.updateTimerControls(true, true);
       ViewUtil.startIcon(binding.buttonOptionsTimerIncrease.getIcon());
@@ -657,7 +661,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       updateIncremental();
     } else if (id == R.id.slider_options_timer_duration) {
       activity.performHapticSegmentTick(slider, true);
-      getMetronomeUtil().setTimerDuration((int) value);
+      getMetronomeUtil().setTimerDuration((int) value, true);
       updateTimer();
       fragment.updateTimerControls(true, true);
     } else if (id == R.id.slider_options_mute_play) {

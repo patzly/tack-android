@@ -5,3 +5,5 @@
 • New: reset timer with tap on timer display
 • Improved: timer performance and behavior, timer now resets on stop instead of next start
 • Improved: order of metronome options and settings
+• Fixed: count-in not set correctly after screen orientation change while playing
+• Fixed: timer in minutes or seconds reset after screen orientation change when not playing
