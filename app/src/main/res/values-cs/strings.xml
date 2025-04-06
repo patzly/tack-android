@@ -78,6 +78,7 @@
   </plurals>
   <string name="label_song_name">Název skladby</string>
   <string name="label_song_name_help">Název musí být jedinečný</string>
+  <string name="label_song_name_used">Název se již používá</string>
   <!-- ACTIONS -->
 
   <string name="action_back">Zpět</string>
