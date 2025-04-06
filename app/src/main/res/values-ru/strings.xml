@@ -114,6 +114,7 @@
   <string name="action_delete">Удалить</string>
   <string name="action_move_up">Переместить выше</string>
   <string name="action_move_down">Переместить ниже</string>
+  <string name="action_open_play_store">Открыть Play Store</string>
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Разработка хорошего приложения занимает много времени и зависит от обратной связи пользователей</string>
