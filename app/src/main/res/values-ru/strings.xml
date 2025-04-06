@@ -146,6 +146,7 @@
   <string name="msg_delete_song">Удалить песню?</string>
   <string name="msg_delete_song_description">Вы действительно уверены, что хотите удалить песню целиком, включая все её части? Это действие нельзя отменить.</string>
   <string name="msg_songs_empty">Библиотека песен пуста</string>
+  <string name="msg_songs_empty_description">Добавьте песни, которые вы хотите играть</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Такты</string>
