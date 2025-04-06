@@ -171,6 +171,7 @@
   <string name="msg_widget_description">Zeige deine Werke an und spiele sie ab</string>
   <string name="msg_installer_check">Ungültige Freischalt-App</string>
   <string name="msg_installer_check_description">Bitte kaufe und installiere die Freischalt-App im Google Play Store. Vielen Dank für deine Unterstützung!</string>
+  <string name="msg_widget_prompt">Schneller Zugriff auf Werke?</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Takte</string>
