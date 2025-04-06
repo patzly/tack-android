@@ -381,6 +381,7 @@
   <string name="about_changelog_description">Что нового в этой версии</string>
   <string name="about_developer">Разработчик</string>
   <string name="about_vending_description">Больше приложений от разработчика</string>
+  <string name="about_key">Приложение разблокировки</string>
   <string name="about_github_description">Исходный код</string>
   <string name="about_translation_description">Помогите перевести Tack</string>
   <string name="about_privacy">Политика конфиденциальности</string>
