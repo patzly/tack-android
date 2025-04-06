@@ -188,6 +188,8 @@
   <string name="msg_installer_check">Neplatná odemykací aplikace</string>
   <string name="msg_installer_check_description">Kupte a nainstalujte si odemykací aplikaci z Obchodu Play. Děkuji za vaší podporu!</string>
   <string name="msg_widget_prompt">Rychlý přístup ke skladbám?</string>
+  <string name="msg_widget_prompt_description">Umístěte si widget aplikace na domovskou obrazovku.</string>
+
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Takty</string>
