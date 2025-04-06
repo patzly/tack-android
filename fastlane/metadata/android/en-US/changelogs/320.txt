@@ -1,9 +1,9 @@
 • New: bookmark button replaced by song library button for managing configuration combinations
-• New: bookmarks bar replaced by song bar. Tap on song to apply it, tap again to open a dialog with all parts, tap × to switch back to previous configuration
+• New: bookmarks bar replaced by song picker. Tap on song to apply it, tap again to open a dialog with all parts, tap × to switch back to previous configuration
 • New: bookmarks in app shortcuts replaced by most frequently played songs
 • New: beautiful home screen widget for quick access to your song library
 • New: reset timer with tap on timer display
 • Improved: timer performance and behavior, timer now resets on stop instead of next start
 • Improved: order of metronome options and settings
-• Fixed: count-in not set correctly after screen orientation change while playing
+• Fixed: count-in display continued incorrectly after screen orientation change while playing
 • Fixed: timer in minutes or seconds reset after screen orientation change when not playing

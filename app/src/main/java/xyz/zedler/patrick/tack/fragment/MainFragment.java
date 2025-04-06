@@ -401,7 +401,7 @@ public class MainFragment extends BaseFragment
       public void onPickDown(float x, float y) {
         binding.circleMain.setDragged(true, x, y);
         if (bigLogo && getMetronomeUtil().isPlaying()) {
-          updatePickerAndLogo(true, true);
+          updateTempoPickerAndLogo(true, true);
         }
       }
 
@@ -414,7 +414,7 @@ public class MainFragment extends BaseFragment
       public void onPickUpOrCancel() {
         binding.circleMain.setDragged(false, 0, 0);
         if (bigLogo && getMetronomeUtil().isPlaying()) {
-          updatePickerAndLogo(false, true);
+          updateTempoPickerAndLogo(false, true);
         }
       }
     });
@@ -476,11 +476,7 @@ public class MainFragment extends BaseFragment
             binding.songPickerMain.setVisibility(
                 songsWithParts.isEmpty() ? View.GONE : View.VISIBLE
             );
-            if (binding.dividerMainSongs != null) {
-              binding.dividerMainSongs.setVisibility(
-                  !songsWithParts.isEmpty() ? View.VISIBLE : View.GONE
-              );
-            }
+            updateSongPickerDividerVisibility();
           } else {
             binding.songPickerMain.setVisibility(View.VISIBLE);
           }
@@ -634,7 +630,7 @@ public class MainFragment extends BaseFragment
     binding.textSwitcherMainTempoTerm.setCurrentText(getTempoTerm(tempo));
 
     boolean showLogo = bigLogo && getMetronomeUtil().isPlaying();
-    updatePickerAndLogo(!showLogo, false);
+    updateTempoPickerAndLogo(!showLogo, false);
 
     if (getMetronomeUtil().isCountingIn()) {
       beatsBgDrawable.reset();
@@ -671,7 +667,7 @@ public class MainFragment extends BaseFragment
         }
         updateFabCornerRadius(true, true);
         if (bigLogo) {
-          updatePickerAndLogo(false, true);
+          updateTempoPickerAndLogo(false, true);
         }
       }
       UiUtil.keepScreenAwake(activity, getMetronomeUtil().getKeepAwake());
@@ -693,7 +689,7 @@ public class MainFragment extends BaseFragment
         }
         updateFabCornerRadius(false, true);
         if (bigLogo) {
-          updatePickerAndLogo(true, true);
+          updateTempoPickerAndLogo(true, true);
         }
       }
       stopTimerProgressTransition();
@@ -1132,6 +1128,7 @@ public class MainFragment extends BaseFragment
     binding.linearMainSubsBg.setVisibility(
         getMetronomeUtil().isSubdivisionActive() || !hideSubControls ? View.VISIBLE : View.GONE
     );
+    updateSongPickerDividerVisibility();
     subsCountBadge.setNumber(subdivisions);
     boolean show = subdivisions > 4;
     if (animated) {
@@ -1185,6 +1182,7 @@ public class MainFragment extends BaseFragment
     binding.chipMainTimerCurrent.frameChipNumbersContainer.setVisibility(visibility);
     binding.chipMainTimerTotal.frameChipNumbersContainer.setVisibility(visibility);
     binding.sliderMainTimer.setVisibility(visibility);
+    updateSongPickerDividerVisibility();
     binding.sliderMainTimer.setContinuousTicksCount(getMetronomeUtil().getTimerDuration() + 1);
     measureTimerControls(false);
     // Check if timer is currently running and if metronome is from service
@@ -1470,7 +1468,7 @@ public class MainFragment extends BaseFragment
     }
   }
 
-  private void updatePickerAndLogo(boolean showPicker, boolean animated) {
+  private void updateTempoPickerAndLogo(boolean showPicker, boolean animated) {
     showPickerNotLogo = showPicker;
     if (pickerLogoAnimator != null) {
       pickerLogoAnimator.pause();
@@ -1515,6 +1513,30 @@ public class MainFragment extends BaseFragment
       binding.imageMainLogoPlaceholder.setScaleX(showPickerNotLogo ? 0f : 1f);
       binding.imageMainLogoPlaceholder.setScaleY(showPickerNotLogo ? 0f : 1f);
     }
+  }
+
+  private void updateSongPickerDividerVisibility() {
+    if (binding == null || binding.scrollMainTop == null) {
+      return; // not landscape phone
+    }
+    binding.scrollMainTop.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override
+          public void onGlobalLayout() {
+            int scrollViewHeight = binding.scrollMainTop.getMeasuredHeight();
+            int scrollContentHeight = binding.linearMainTop.getHeight();
+            boolean showDivider = scrollContentHeight > scrollViewHeight;
+            if (binding.songPickerMain.getVisibility() != View.VISIBLE) {
+              showDivider = false;
+            }
+            if (binding.dividerMainSongs != null) {
+              binding.dividerMainSongs.setVisibility(showDivider ? View.VISIBLE : View.GONE);
+            }
+            if (binding.scrollMainTop.getViewTreeObserver().isAlive()) {
+              binding.scrollMainTop.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+          }
+        });
   }
 
   public void showSnackbar(Snackbar snackbar) {

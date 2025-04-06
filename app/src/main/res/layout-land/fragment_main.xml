@@ -99,14 +99,14 @@
       app:layout_constraintEnd_toStartOf="@id/container_main_end">
 
       <ScrollView
+        android:id="@+id/scroll_main_top"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/frame_main_songs_container"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:scrollbars="vertical"
-        android:scrollbarThumbVertical="@drawable/shape_scrollbar_rounded">
+        android:scrollbars="none">
 
         <LinearLayout
           android:id="@+id/linear_main_top"
@@ -272,6 +272,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/controls_bottom_margin_bottom"
+        android:paddingBottom="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
