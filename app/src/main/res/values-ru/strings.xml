@@ -153,6 +153,7 @@
   <string name="msg_backup_directory_missing">Не задан путь к бэкапу в хранилище</string>
   <string name="msg_backup_success">Бэкап успешно создан</string>
   <string name="msg_restore_error">Ошибка при восстановлении бэкапа</string>
+  <string name="msg_restore_file_missing">Не был выбран файл для восстановления</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Такты</string>
