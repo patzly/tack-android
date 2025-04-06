@@ -167,6 +167,8 @@
   <string name="msg_copied_to_clipboard">Úspěšně zkopírováno do schránky</string>
   <string name="msg_invalid_input">Neplatný vstup</string>
   <string name="msg_discard_changes">Zahodit změny?</string>
+  <string name="msg_discard_changes_description">Opravdu je nechcete uložit?</string>
+  <string name="msg_delete_song">Odstranit skladbu?</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Takty</string>
