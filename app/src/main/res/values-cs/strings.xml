@@ -413,6 +413,7 @@
   <string name="about_key">Odemykací aplikace</string>
   <string name="about_key_description_not_installed">Nenainstalována</string>
   <string name="about_key_description_installed">Nainstalována</string>
+  <string name="about_key_description_invalid">Neplatná</string>
   <string name="about_github_description">Zdrojový kód</string>
   <string name="about_translation_description">Pomoz nám přeložit Tack</string>
   <string name="about_privacy">Zásady ochrany soukromí</string>
