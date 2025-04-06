@@ -116,6 +116,7 @@
   <string name="action_move_down">Переместить ниже</string>
   <string name="action_open_play_store">Открыть Play Store</string>
   <string name="action_backup">Сделать бэкап</string>
+  <string name="action_restore">Восстановить бэкап</string>
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Разработка хорошего приложения занимает много времени и зависит от обратной связи пользователей</string>
