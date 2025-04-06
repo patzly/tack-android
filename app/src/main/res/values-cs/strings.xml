@@ -83,6 +83,8 @@
   <string name="widget_songs_preview_title1">Mahler, Symfonie č. 9</string>
   <!-- A placeholder song name in the widget preview for the user's widget picker -->
   <string name="widget_songs_preview_title2">Smetana, Má vlast</string>
+  <!-- A placeholder song name in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_title3">Dvořák, Rusalka</string>
   <!-- ACTIONS -->
 
   <string name="action_back">Zpět</string>
