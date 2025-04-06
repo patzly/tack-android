@@ -31,7 +31,7 @@
   android:maxResizeHeight="@dimen/widget_songs_max_resize_height"
   android:initialLayout="@layout/widget_songs"
   android:previewLayout="@layout/widget_songs_preview"
-  android:previewImage="@drawable/ic_rounded_refresh_anim"
+  android:previewImage="@drawable/widget_songs_preview"
   android:resizeMode="horizontal|vertical"
   android:widgetCategory="home_screen"
   tools:targetApi="31" />
