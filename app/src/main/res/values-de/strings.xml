@@ -75,7 +75,6 @@
   <string name="label_song_name">Werkname</string>
   <string name="label_song_name_help">Name muss eindeutig sein</string>
   <string name="label_song_name_used">Name bereits verwendet</string>
-
   <!-- ACTIONS -->
 
   <string name="action_back">Zurück</string>
