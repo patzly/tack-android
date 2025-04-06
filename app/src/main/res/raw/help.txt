@@ -28,7 +28,7 @@ If you have enabled swing in the options, all Tack does is to set the subdivisio
 #### How does the song library work?
 
 The song library is a collection of metronome configurations that you can save and apply. To save your current configuration, simply go to the song library and create a new song. The current configuration will be added to the parts list. After you gave the song a name, don't forget to save your result with a tap on the disk icon in the top right corner.
-Your created songs are displayed on the song library page and in the song bar on the main page. To change the order of the songs, choose your desired order from the menu in the top right corner. The same order is applied to the song bar on the main page.
+Your created songs are displayed on the song library page and in the song bar on the main page. To change the order of the songs, choose your desired order from the menu in the top right corner. The same order is applied to the song bar on the main page and to the home screen widget.
 
 #### How does the song bar work?
 

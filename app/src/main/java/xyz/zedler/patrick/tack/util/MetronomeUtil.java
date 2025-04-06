@@ -75,7 +75,8 @@ public class MetronomeUtil {
   private SongWithParts currentSongWithParts;
   private String currentSongId, timerStringBars;
   private int currentPartIndex, muteCountDown, songsOrder;
-  private long tickIndex, latency, elapsedStartTime, elapsedTime, elapsedPrevious, timerStartTime;
+  private long tickIndex, latency, countInStartTime, timerStartTime;
+  private long elapsedStartTime, elapsedTime, elapsedPrevious;
   private float timerProgress;
   private boolean playing, tempPlaying, beatModeVibrate, isCountingIn, isMuted;
   private boolean showElapsed, resetTimerOnStop, alwaysVibrate, flashScreen, keepAwake;
@@ -427,6 +428,7 @@ public class MetronomeUtil {
     });
 
     isCountingIn = isCountInActive();
+    countInStartTime = System.currentTimeMillis();
     countInHandler.postDelayed(() -> {
       isCountingIn = false;
       updateIncrementalHandler();
@@ -835,7 +837,7 @@ public class MetronomeUtil {
   }
 
   public boolean isCountInActive() {
-    return config.getCountIn() > 0;
+    return getCountIn() > 0;
   }
 
   public boolean isCountingIn() {
@@ -843,7 +845,23 @@ public class MetronomeUtil {
   }
 
   public long getCountInInterval() {
-    return getInterval() * getBeatsCount() * config.getCountIn();
+    return getInterval() * getBeatsCount() * getCountIn();
+  }
+
+  public float getCountInProgress() {
+    if (isPlaying() && isCountingIn()) {
+      long countInElapsed = System.currentTimeMillis() - countInStartTime;
+      return Math.max(0, Math.min(1, countInElapsed / (float) getCountInInterval()));
+    }
+    return 1;
+  }
+
+  public long getCountInIntervalRemaining() {
+    if (isPlaying() && isCountingIn()) {
+      long countInElapsed = System.currentTimeMillis() - countInStartTime;
+      return Math.max(0, getCountInInterval() - countInElapsed);
+    }
+    return 0;
   }
 
   public void setIncrementalAmount(int bpm) {

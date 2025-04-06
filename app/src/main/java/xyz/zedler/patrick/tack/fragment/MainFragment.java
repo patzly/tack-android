@@ -636,6 +636,14 @@ public class MainFragment extends BaseFragment
     boolean showLogo = bigLogo && getMetronomeUtil().isPlaying();
     updatePickerAndLogo(!showLogo, false);
 
+    if (getMetronomeUtil().isCountingIn()) {
+      beatsBgDrawable.reset();
+      if (getMetronomeUtil().getCountIn() > 0) {
+        beatsBgDrawable.setProgress(getMetronomeUtil().getCountInProgress(), 0);
+        beatsBgDrawable.setProgress(1, getMetronomeUtil().getCountInIntervalRemaining());
+      }
+    }
+
     ViewUtil.resetAnimatedIcon(binding.fabMainPlayStop);
     binding.fabMainPlayStop.setImageResource(
         getMetronomeUtil().isPlaying()
@@ -654,9 +662,7 @@ public class MainFragment extends BaseFragment
       if (binding != null) {
         beatsBgDrawable.reset();
         if (getMetronomeUtil().getCountIn() > 0) {
-          beatsBgDrawable.setProgress(
-              1, getMetronomeUtil().getCountInInterval(), true
-          );
+          beatsBgDrawable.setProgress(1, getMetronomeUtil().getCountInInterval());
         }
         binding.fabMainPlayStop.setImageResource(R.drawable.ic_rounded_play_to_stop_fill_anim);
         Drawable fabIcon = binding.fabMainPlayStop.getDrawable();
@@ -1185,7 +1191,7 @@ public class MainFragment extends BaseFragment
     if (!getMetronomeUtil().isFromService()) {
       return;
     }
-    if (isPlaying && isTimerActive) {
+    if (isPlaying && isTimerActive && !getMetronomeUtil().isCountingIn()) {
       if (withTransition) {
         long timerInterval = getMetronomeUtil().getTimerInterval();
         float fraction = (float) Constants.ANIM_DURATION_LONG / timerInterval;

@@ -63,7 +63,7 @@ public class BeatsBgDrawable extends Drawable {
     paintFg.setColor(ResUtil.getColor(context, R.attr.colorOnSurface));
     alphaBase = UiUtil.isDarkModeActive(context) ? ALPHA_FG_BASE_DARK : ALPHA_FG_BASE_LIGHT;
     progressThreshold = 1;
-    setProgress(0, false);
+    setProgress(0, 0);
   }
 
   @Override
@@ -115,11 +115,7 @@ public class BeatsBgDrawable extends Drawable {
     invalidateSelf();
   }
 
-  public void setProgress(float fraction, boolean animated) {
-    setProgress(fraction, Constants.ANIM_DURATION_LONG, animated);
-  }
-
-  public void setProgress(float fraction, long duration, boolean animated) {
+  public void setProgress(float fraction, long animationDuration) {
     if (progressAnimator != null) {
       progressAnimator.pause();
       progressAnimator.removeAllUpdateListeners();
@@ -127,7 +123,7 @@ public class BeatsBgDrawable extends Drawable {
       progressAnimator.cancel();
       progressAnimator = null;
     }
-    if (animated) {
+    if (animationDuration > 0) {
       progressAnimator = ValueAnimator.ofFloat(this.fraction, fraction);
       progressAnimator.addUpdateListener(
           animation -> setFraction((float) animation.getAnimatedValue())
@@ -141,7 +137,7 @@ public class BeatsBgDrawable extends Drawable {
         }
       });
       progressAnimator.setInterpolator(new LinearInterpolator());
-      progressAnimator.setDuration(duration);
+      progressAnimator.setDuration(animationDuration);
       progressAnimator.start();
     } else {
       setFraction(fraction);
@@ -174,7 +170,7 @@ public class BeatsBgDrawable extends Drawable {
   }
 
   public void reset() {
-    setProgress(0, false);
+    setProgress(0, 0);
     setProgressVisible(true, false);
   }
 }
