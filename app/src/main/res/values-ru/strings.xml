@@ -143,6 +143,7 @@
   <string name="msg_invalid_input">Неправильный ввод</string>
   <string name="msg_discard_changes">Отменить изменения?</string>
   <string name="msg_discard_changes_description">Вы действительно уверены, что не хотите сохранять их?</string>
+  <string name="msg_delete_song">Удалить песню?</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Такты</string>
