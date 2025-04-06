@@ -410,6 +410,8 @@
   <string name="about_changelog_description">Novinky v této verzi</string>
   <string name="about_developer">Vývojář</string>
   <string name="about_vending_description">Další aplikace od vývojáře</string>
+  <string name="about_key">Odemykací aplikace</string>
+  <string name="about_key_description_not_installed">Nenainstalována</string>
   <string name="about_github_description">Zdrojový kód</string>
   <string name="about_translation_description">Pomoz nám přeložit Tack</string>
   <string name="about_privacy">Zásady ochrany soukromí</string>
