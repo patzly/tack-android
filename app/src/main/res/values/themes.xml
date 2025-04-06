@@ -54,6 +54,24 @@
 
   <style name="Theme.Tack.Widget" parent="Theme.Tack.Yellow" />
 
+  <style name="Theme.Tack.Widget.Songs.Preview1" parent="">
+    <item name="widget_songs_preview_title">@string/widget_songs_preview_title1</item>
+    <item name="widget_songs_preview_parts">@string/widget_songs_preview_parts1</item>
+    <item name="widget_songs_preview_duration">11:34</item>
+  </style>
+
+  <style name="Theme.Tack.Widget.Songs.Preview2" parent="">
+    <item name="widget_songs_preview_title">@string/widget_songs_preview_title2</item>
+    <item name="widget_songs_preview_parts">@string/widget_songs_preview_parts2</item>
+    <item name="widget_songs_preview_duration">3:22</item>
+  </style>
+
+  <style name="Theme.Tack.Widget.Songs.Preview3" parent="">
+    <item name="widget_songs_preview_title">@string/widget_songs_preview_title3</item>
+    <item name="widget_songs_preview_parts">@string/widget_songs_preview_parts3</item>
+    <item name="widget_songs_preview_duration">19:34</item>
+  </style>
+
   <style name="Theme.Tack.Red" parent="Theme.Tack">
     <item name="colorPrimary">@color/red_theme_primary</item>
     <item name="colorOnPrimary">@color/red_theme_onPrimary</item>
