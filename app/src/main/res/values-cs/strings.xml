@@ -179,6 +179,7 @@
   <string name="msg_backup_success">Záloha úspěšně vytvořena</string>
   <string name="msg_restore_error">Chyba při vytváření zálohy</string>
   <string name="msg_restore_file_missing">Nebyly vybrány žádné soubory k obnovení</string>
+  <string name="msg_restore_success">Záloha úspěšně obnovena</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Takty</string>
