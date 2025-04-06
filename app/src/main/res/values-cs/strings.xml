@@ -126,6 +126,7 @@
   <string name="action_copy_to_clipboard">Zkopírovat do schránky</string>
   <string name="action_reload">Načíst znovu</string>
   <string name="action_change_tempo">Změnit tempo</string>
+  <string name="action_add_song">Přidat skladbu</string>
   <string name="action_delete">Odstranit</string>
   <!-- MESSAGES -->
 
