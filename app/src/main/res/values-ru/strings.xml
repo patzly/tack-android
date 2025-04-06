@@ -130,6 +130,7 @@
   <string name="msg_reset">Сбросить всё?</string>
   <string name="msg_reset_description">Вы действительно хотите сбросить приложение, включая библиотеку песен и настройки? Если вам нужен бэкап, сначала создайте его - сброс невозможно отменить.</string>
   <string name="msg_reset_timer">Сбросить таймер?</string>
+  <string name="msg_reset_timer_description">Вы можете указать в настройках, нужно ли сбрасывать таймер при запуске.</string>
   <string name="msg_reset_elapsed">Сбросить затраченное время?</string>
   <string name="msg_reset_elapsed_description">Вы действительно хотите сбросить затраченное время? Это действие нельзя отменить.</string>
   <string name="msg_gain">Включить усиление громкости?</string>
