@@ -128,6 +128,7 @@
   <string name="msg_service_description">Сервис для настройки и проигрывания метронома</string>
   <string name="msg_connection_lost">Потеряно соединение с сервисом, требуется перезапуск приложения</string>
   <string name="msg_reset">Сбросить всё?</string>
+  <string name="msg_reset_description">Вы действительно хотите сбросить приложение, включая библиотеку песен и настройки? Если вам нужен бэкап, сначала создайте его - сброс невозможно отменить.</string>
   <string name="msg_reset_elapsed">Сбросить затраченное время?</string>
   <string name="msg_reset_elapsed_description">Вы действительно хотите сбросить затраченное время? Это действие нельзя отменить.</string>
   <string name="msg_gain">Включить усиление громкости?</string>
