@@ -75,6 +75,8 @@
   <string name="label_song_name">Werkname</string>
   <string name="label_song_name_help">Name muss eindeutig sein</string>
   <string name="label_song_name_used">Name bereits verwendet</string>
+  <!-- A placeholder part count in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_parts1">3 Teile</string>
   <!-- ACTIONS -->
 
   <string name="action_back">Zurück</string>
