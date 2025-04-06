@@ -79,6 +79,8 @@
   <string name="label_song_name">Název skladby</string>
   <string name="label_song_name_help">Název musí být jedinečný</string>
   <string name="label_song_name_used">Název se již používá</string>
+  <!-- A placeholder song name in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_title1">Mahler, Symfonie č. 9</string>
   <!-- ACTIONS -->
 
   <string name="action_back">Zpět</string>
