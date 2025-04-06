@@ -142,6 +142,7 @@
   <string name="msg_copied_to_clipboard">Успешно скопировано в буфер обмена</string>
   <string name="msg_invalid_input">Неправильный ввод</string>
   <string name="msg_discard_changes">Отменить изменения?</string>
+  <string name="msg_discard_changes_description">Вы действительно уверены, что не хотите сохранять их?</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Такты</string>
