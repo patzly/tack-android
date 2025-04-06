@@ -76,6 +76,8 @@
   <string name="label_song_name_help">Name muss eindeutig sein</string>
   <string name="label_song_name_used">Name bereits verwendet</string>
   <!-- A placeholder song name in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_title2">Debussy Syrinx</string>
+  <!-- A placeholder song name in the widget preview for the user's widget picker -->
   <string name="widget_songs_preview_title3">Mozart Serenade Nr. 13</string>
   <!-- A placeholder part count in the widget preview for the user's widget picker -->
   <string name="widget_songs_preview_parts1">3 Teile</string>
