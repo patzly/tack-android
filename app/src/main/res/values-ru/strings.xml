@@ -112,6 +112,7 @@
   <string name="action_rename_part">Переименовать часть</string>
   <string name="action_update">Обновить</string>
   <string name="action_delete">Удалить</string>
+  <string name="action_move_up">Переместить выше</string>
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Разработка хорошего приложения занимает много времени и зависит от обратной связи пользователей</string>
