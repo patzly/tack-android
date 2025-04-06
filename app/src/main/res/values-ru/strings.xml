@@ -154,6 +154,7 @@
   <string name="msg_backup_success">Бэкап успешно создан</string>
   <string name="msg_restore_error">Ошибка при восстановлении бэкапа</string>
   <string name="msg_restore_file_missing">Не был выбран файл для восстановления</string>
+  <string name="msg_restore_success">Бэкап успешно восстановлен</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Такты</string>
