@@ -175,6 +175,7 @@
   <string name="msg_unlock">Zpráva od vývojáře</string>
   <string name="msg_unlock_description">Vážíte si zážitku bez reklam se spoustou výkonných funkcí v aplikaci Tack? Vytvářením aplikace Tack jsem strávil roky svého volného času, ale zejména funkce knihovny skladeb mi zabrala měsíce tvrdé práce.\nAbych mohl aplikaci Tack dále vylepšovat, žádám vás o malý příspěvek. Na oplátku získáte odemykací aplikaci pro neomezený počet skladeb a nespočet jejich částí. Děkuji za vaši podporu!</string>
   <string name="msg_backup_error">Chyba během zálohy</string>
+  <string name="msg_backup_directory_missing">Nebylo vybráno úložiště zálohy</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Takty</string>
