@@ -32,13 +32,16 @@
   <string name="title_metronome">Метроном</string>
   <string name="title_controls">Управление</string>
   <string name="title_logcat">Logcat</string>
-
+  <string name="title_songs">Библиотека песен</string>
+  <!-- Short version of the term "song library" for smaller home screen widget sizes -->
+  <string name="title_songs_short">Песни</string>
   <!-- LABELS -->
 
   <string name="label_bpm_value">%1$d bpm</string>
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$s мс</string>
   <string name="label_db">+%1$d дБ</string>
+  <string name="label_tempo">Темп</string>
   <string name="label_tempo_largo">Широко</string>
   <string name="label_tempo_larghetto">Умеренно широко</string>
   <string name="label_tempo_adagio">Медленно</string>
@@ -48,6 +51,23 @@
   <string name="label_tempo_presto">Быстро</string>
   <string name="label_tempo_prestissimo">Очень быстро</string>
   <string name="label_tempo_input_help">Значения от %1$d до %2$d</string>
+  <string name="label_part_name">Название части</string>
+  <string name="label_part_unnamed">Часть %1$d</string>
+  <plurals name="label_parts_count">
+    <item quantity="one">%1$d часть</item>
+    <item quantity="few">%1$d части</item>
+    <item quantity="many">%1$d частей</item>
+    <item quantity="other">%1$d частей</item>
+  </plurals>
+  <string name="label_song_name">Название песни</string>
+  <string name="label_song_name_help">Имя должно быть уникальным</string>
+  <string name="label_song_name_used">Имя уже используется</string>
+  <!-- A placeholder part count in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_parts1">3 части</string>
+  <!-- A placeholder part count in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_parts2">1 часть</string>
+  <!-- A placeholder part count in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_parts3">4 части</string>
 
   <!-- ACTIONS -->
 
@@ -64,9 +84,7 @@
   <string name="action_remove_beat">Убрать долю</string>
   <string name="action_add_sub">Добавить дробление</string>
   <string name="action_remove_sub">Убрать дробление</string>
-  <string name="action_clear_all">Удалить все</string>
   <string name="action_tempo_tap">Tap tempo</string>
-  <string name="action_bookmark">Добавить в закладки</string>
   <string name="action_beat_mode">Режим ударов</string>
   <string name="action_send_feedback">Написать отзыв</string>
   <string name="action_open_link">Открыть сторонний сайт</string>
@@ -85,10 +103,17 @@
   <string name="action_copy_to_clipboard">Скопировать в буфер обмена</string>
   <string name="action_reload">Перезагрузить</string>
   <string name="action_change_tempo">Изменить темп</string>
-
+  <string name="action_add_song">Добавить песню</string>
+  <string name="action_sort_by">Сортировать по</string>
+  <string name="action_add_part">Добавить часть</string>
+  <string name="action_save">Сохранить</string>
+  <string name="action_discard">Отменить</string>
+  <string name="action_rename">Переименовать</string>
+  <string name="action_rename_part">Переименовать часть</string>
+  <string name="action_update">Обновить</string>
+  <string name="action_delete">Удалить</string>
   <!-- MESSAGES -->
 
-  <string name="msg_bookmarks_max">Достигнут лимит закладок</string>
   <string name="msg_feedback">Разработка хорошего приложения занимает много времени и зависит от обратной связи пользователей</string>
   <string name="msg_feedback_contact">У вас есть пожелания, комментарии или вопросы? Напишите мне!\nЕсли нет, буду рад хорошему отзыву в Play Store.</string>
   <string name="msg_recommend">Зацени классный метроном: \n%1$s</string>
@@ -98,7 +123,6 @@
   <string name="msg_service_description">Сервис для настройки и проигрывания метронома</string>
   <string name="msg_connection_lost">Потеряно соединение с сервисом, требуется перезапуск приложения</string>
   <string name="msg_reset">Сбросить всё?</string>
-  <string name="msg_reset_description">Вы уверены, что хотите сбросить все настройки приложения, в том числе закладки? Это действие нельзя обратить.</string>
   <string name="msg_reset_elapsed">Сбросить затраченное время?</string>
   <string name="msg_reset_elapsed_description">Вы действительно хотите сбросить затраченное время? Это действие нельзя отменить.</string>
   <string name="msg_gain">Включить усиление громкости?</string>
@@ -109,7 +133,6 @@
   <string name="msg_report_crash">Пожалуйста сообщайте о каждом вылете, прикрепляя логи. Так я смогу это исправить.</string>
   <string name="msg_copied_to_clipboard">Успешно скопировано в буфер обмена</string>
   <string name="msg_invalid_input">Неправильный ввод</string>
-
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Такты</string>
