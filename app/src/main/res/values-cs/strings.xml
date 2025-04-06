@@ -169,6 +169,7 @@
   <string name="msg_discard_changes">Zahodit změny?</string>
   <string name="msg_discard_changes_description">Opravdu je nechcete uložit?</string>
   <string name="msg_delete_song">Odstranit skladbu?</string>
+  <string name="msg_delete_song_description">Opravdu chcete odstranit celou skladbu včetně všech jejích částí? Tato akce je nevratná.</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Takty</string>
