@@ -89,6 +89,9 @@
   <string name="widget_songs_preview_parts1">3 části</string>
   <!-- A placeholder part count in the widget preview for the user's widget picker -->
   <string name="widget_songs_preview_parts2">1 část</string>
+  <!-- A placeholder part count in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_parts3">4 části</string>
+
   <!-- ACTIONS -->
 
   <string name="action_back">Zpět</string>
