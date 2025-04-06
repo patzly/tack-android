@@ -85,6 +85,10 @@
   <string name="widget_songs_preview_title2">Smetana, Má vlast</string>
   <!-- A placeholder song name in the widget preview for the user's widget picker -->
   <string name="widget_songs_preview_title3">Dvořák, Rusalka</string>
+  <!-- A placeholder part count in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_parts1">3 části</string>
+  <!-- A placeholder part count in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_parts2">1 část</string>
   <!-- ACTIONS -->
 
   <string name="action_back">Zpět</string>
