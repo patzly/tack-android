@@ -131,6 +131,8 @@
   <string name="action_add_part">Přidat část</string>
   <string name="action_save">Uložit</string>
   <string name="action_discard">Zahodit</string>
+  <string name="action_rename">Přejmenovat</string>
+  <string name="action_rename_part">Přejmenovat část</string>
   <string name="action_delete">Odstranit</string>
   <!-- MESSAGES -->
 
