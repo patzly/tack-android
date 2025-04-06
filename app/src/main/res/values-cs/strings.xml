@@ -171,6 +171,7 @@
   <string name="msg_delete_song">Odstranit skladbu?</string>
   <string name="msg_delete_song_description">Opravdu chcete odstranit celou skladbu včetně všech jejích částí? Tato akce je nevratná.</string>
   <string name="msg_songs_empty">Prázdná knihovna skladeb</string>
+  <string name="msg_songs_empty_description">Přidejte skladby, které si chcete procvičit</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Takty</string>
