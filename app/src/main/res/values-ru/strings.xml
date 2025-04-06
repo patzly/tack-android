@@ -159,6 +159,7 @@
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
   <string name="msg_songs_intro">Закладки теперь называются песнями</string>
   <string name="msg_songs_intro_description">Новая библиотека песен заменяет предыдущие закладки с темпом. Вместо того, чтобы сохранять значения темпа, теперь вы можете сохранять целые конфигурации метронома как части песен. Просто настройте параметры на свой вкус и добавьте текущую конфигурацию как новую часть песни или замените существующую.</string>
+  <string name="msg_installer_check">Некорректное приложение разблокировки</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Такты</string>
