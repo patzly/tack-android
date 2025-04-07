@@ -55,6 +55,7 @@
   <string name="label_tempo_input_help">Значения от %1$d до %2$d</string>
   <string name="label_part_name">Название части</string>
   <string name="label_part_unnamed">Часть %1$d</string>
+  <string name="label_part_no_duration">Нет длительности</string>
   <plurals name="label_parts_count">
     <item quantity="one">%1$d часть</item>
     <item quantity="few">%1$d части</item>
