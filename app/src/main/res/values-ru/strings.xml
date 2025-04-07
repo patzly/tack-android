@@ -79,6 +79,8 @@
   <string name="label_song_name">Название песни</string>
   <string name="label_song_name_help">Имя должно быть уникальным</string>
   <string name="label_song_name_used">Имя уже используется</string>
+  <!-- A placeholder song name in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_title1">Бах. Бранденбургский концерт №2</string>
   <!-- A placeholder part count in the widget preview for the user's widget picker -->
   <string name="widget_songs_preview_parts1">3 части</string>
   <!-- A placeholder part count in the widget preview for the user's widget picker -->
