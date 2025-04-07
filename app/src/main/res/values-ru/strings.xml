@@ -70,6 +70,12 @@
   <string name="label_sort_last_played_date">Воспроизводилось %1$s</string>
   <string name="label_sort_never_played">Никогда не воспроизводилось</string>
   <string name="label_sort_most_played">Количество воспроизведений</string>
+  <plurals name="label_sort_most_played_times">
+    <item quantity="one">Воспроизводилось %1$d раз</item>
+    <item quantity="few">Воспроизводилось %1$d раз</item>
+    <item quantity="many">Воспроизводилось %1$d раз</item>
+    <item quantity="other">Воспроизводилось %1$d раз</item>
+  </plurals>
   <string name="label_song_name">Название песни</string>
   <string name="label_song_name_help">Имя должно быть уникальным</string>
   <string name="label_song_name_used">Имя уже используется</string>
