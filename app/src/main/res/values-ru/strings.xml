@@ -61,7 +61,7 @@
     <item quantity="many">%1$d частей</item>
     <item quantity="other">%1$d частей</item>
   </plurals>
-  <string name="label_song_looped">Зациклить</string>
+  <string name="label_song_looped">Зациклено</string>
   <string name="label_song_looped_description">Начать сначала после окончания</string>
   <string name="label_song_not_looped">Нет зациклено</string>
   <string name="label_song_name">Название песни</string>
