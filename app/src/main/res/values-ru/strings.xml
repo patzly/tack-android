@@ -67,6 +67,7 @@
   <string name="label_song_not_looped">Нет зациклено</string>
   <string name="label_sort_name">Название</string>
   <string name="label_sort_last_played">Дата воспроизведения</string>
+  <string name="label_sort_last_played_date">Воспроизводилось  %1$s</string>
   <string name="label_song_name">Название песни</string>
   <string name="label_song_name_help">Имя должно быть уникальным</string>
   <string name="label_song_name_used">Имя уже используется</string>
