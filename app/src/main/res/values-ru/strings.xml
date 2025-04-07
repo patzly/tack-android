@@ -187,6 +187,7 @@
   <string name="msg_widget_description">Просматривайте свои песни и включайте их</string>
   <string name="msg_installer_check">Некорректное приложение разблокировки</string>
   <string name="msg_installer_check_description">Пожалуйста, приобретите и установите приложение разблокировки в Google Play. Спасибо за вашу поддержку!</string>
+  <string name="msg_widget_prompt">Быстрый доступ к песням?</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Такты</string>
