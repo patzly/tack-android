@@ -63,7 +63,7 @@
   </plurals>
   <string name="label_song_looped">Зациклить</string>
   <string name="label_song_looped_description">Начать сначала после окончания</string>
-  <string name="label_song_not_looped">Нет длительности</string>
+  <string name="label_song_not_looped">Нет зациклено</string>
   <string name="label_song_name">Название песни</string>
   <string name="label_song_name_help">Имя должно быть уникальным</string>
   <string name="label_song_name_used">Имя уже используется</string>
