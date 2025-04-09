@@ -344,6 +344,7 @@
   <string name="about_key">解除鎖定應用程式</string>
   <string name="about_key_description_not_installed">未安裝</string>
   <string name="about_key_description_installed">已安裝</string>
+  <string name="about_key_description_invalid">無效</string>
   <string name="about_github_description">原始碼</string>
   <string name="about_translation_description">幫助翻譯 Tack</string>
   <string name="about_privacy">隱私政策</string>
