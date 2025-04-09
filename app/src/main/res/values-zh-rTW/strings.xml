@@ -33,6 +33,8 @@
   <string name="title_controls">控制</string>
   <string name="title_logcat">日誌</string>
   <string name="title_songs">歌曲庫</string>
+  <!-- Short version of the term "song library" for smaller home screen widget sizes -->
+  <string name="title_songs_short">歌曲</string>
   <string name="title_song_details">歌曲詳情</string>
 
   <!-- LABELS -->
