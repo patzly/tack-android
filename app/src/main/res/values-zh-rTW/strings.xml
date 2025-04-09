@@ -158,6 +158,7 @@
   <string name="msg_discard_changes_description">你確定你不想儲存它們嗎？</string>
   <string name="msg_delete_song">刪除歌曲？</string>
   <string name="msg_delete_song_description">你確定你要刪除整首歌曲及其所有部分嗎？這無法撤消。</string>
+  <string name="msg_songs_empty">空白的歌曲庫</string>
   <string name="msg_songs_empty_description">加入你想練習的歌曲</string>
   <string name="msg_unlock">來自開發者的訊息</string>
   <string name="msg_unlock_description">你是否喜歡 Tack 中大量強大功能和無廣告體驗？我花了數年的時間建立了免費的 Tack，尤其是歌曲庫功能花了數月的辛勤工作。\n為了繼續改進 Tack，我懇請大家做出一點小貢獻。作為回報，你將會獲得一個解鎖應用程式，其中包含無限的歌曲和無數的歌曲部分。感謝您的支持！</string>
