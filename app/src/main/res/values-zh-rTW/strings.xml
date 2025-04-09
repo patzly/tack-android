@@ -171,6 +171,7 @@
   <string name="msg_songs_intro_description">新的歌曲庫取代了以前的節奏書籤。現在你可以將整個節拍器配置儲存並安排為歌曲的一部分，而不必為節拍值增加書籤。只需要根據你的喜好調整控制項和選項，然後將目前配置作為新部分增加至歌曲或更新現有部分。</string>
   <string name="msg_widget_description">檢視你的歌曲並播放</string>
   <string name="msg_installer_check">無效的解鎖應用程式</string>
+  <string name="msg_installer_check_description">請在 Google Play 上購買並安裝解鎖應用程式。謝謝你的支持！</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">小節</string>
