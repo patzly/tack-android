@@ -1522,6 +1522,9 @@ public class MainFragment extends BaseFragment
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override
           public void onGlobalLayout() {
+            if (binding == null) {
+              return;
+            }
             int scrollViewHeight = binding.scrollMainTop.getMeasuredHeight();
             int scrollContentHeight = binding.linearMainTop.getHeight();
             boolean showDivider = scrollContentHeight > scrollViewHeight;

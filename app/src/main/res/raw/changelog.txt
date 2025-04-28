@@ -2,6 +2,7 @@
 
 ## 5.0.1
 
+- Fixed: crash caused by incorrect layout handling
 - Fixed: crash caused by invalid tempo values
 - Fixed: tempo buttons not updating correctly
 
