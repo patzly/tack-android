@@ -438,7 +438,7 @@ public class MainFragment extends BaseFragment
       );
     }
 
-    setButtonStates();
+    setButtonStates(getMetronomeUtil().getTempo());
 
     binding.songPickerMain.setListener(new SongPickerListener() {
       @Override
@@ -1328,9 +1328,9 @@ public class MainFragment extends BaseFragment
 
   private void changeTempo(int difference) {
     int tempoNew = getMetronomeUtil().getTempo() + difference;
-    updateTempoDisplay(getMetronomeUtil().getTempo(), tempoNew);
-    getMetronomeUtil().setTempo(tempoNew);
     if (tempoNew >= Constants.TEMPO_MIN && tempoNew <= Constants.TEMPO_MAX) {
+      updateTempoDisplay(getMetronomeUtil().getTempo(), tempoNew);
+      getMetronomeUtil().setTempo(tempoNew);
       performHapticTick();
     }
   }
@@ -1352,11 +1352,10 @@ public class MainFragment extends BaseFragment
       );
       binding.textSwitcherMainTempoTerm.setText(termNew);
     }
-    setButtonStates();
+    setButtonStates(tempoNew);
   }
 
-  private void setButtonStates() {
-    int tempo = getMetronomeUtil().getTempo();
+  private void setButtonStates(int tempo) {
     binding.buttonMainLess1.setEnabled(tempo > 1);
     binding.buttonMainLess5.setEnabled(tempo > 5);
     binding.buttonMainLess10.setEnabled(tempo > 10);

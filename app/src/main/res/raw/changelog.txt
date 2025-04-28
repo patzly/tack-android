@@ -1,6 +1,11 @@
-## 5.0.0 🥁
-
 ? Song library has arrived! I worked hard to give you an easy way to manage different metronome configurations and arrange them for playback. This feature comes with a brand new home screen widget and refined app shortcuts. Hope you like it!
+
+## 5.0.1
+
+- Fixed: crash caused by invalid tempo values
+- Fixed: tempo buttons not updating correctly
+
+## 5.0.0
 
 - New: bookmark button replaced by song library button for managing configuration combinations
 - New: bookmarks bar replaced by song picker. Tap on song to apply it, tap again to open a dialog with all parts, tap × to switch back to previous configuration
