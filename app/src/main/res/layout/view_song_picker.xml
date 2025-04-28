@@ -87,13 +87,13 @@
             android:id="@+id/text_song_picker_chip"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:maxWidth="200dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
             android:textAppearance="@style/TextAppearance.Tack.LabelLarge"
             android:textColor="?attr/colorOnTertiaryContainer"
             android:fontFamily="@font/jost_medium"
-            android:text="Song"
             android:singleLine="true"
             tools:ignore="HardcodedText" />
 

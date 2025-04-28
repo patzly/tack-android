@@ -271,13 +271,18 @@ public class SongPickerView extends FrameLayout {
               int colorOnSurface = ResUtil.getColor(context, R.attr.colorOnSurface);
               int colorOutline = ResUtil.getColor(context, R.attr.colorOutline);
 
-              int colorBg = ColorUtils.blendARGB(colorSurface, colorTertiaryContainer, fraction);
-              int colorText = ColorUtils.blendARGB(
-                  colorOnSurface, colorOnTertiaryContainer, fraction
+              float colorFraction = Math.max(0, Math.min(1, fraction));
+              int colorBg = ColorUtils.blendARGB(
+                  colorSurface, colorTertiaryContainer, colorFraction
               );
-              int colorIcon = ColorUtils.blendARGB(colorPrimary, colorOnTertiaryContainer, fraction);
+              int colorText = ColorUtils.blendARGB(
+                  colorOnSurface, colorOnTertiaryContainer, colorFraction
+              );
+              int colorIcon = ColorUtils.blendARGB(
+                  colorPrimary, colorOnTertiaryContainer, colorFraction
+              );
               int colorStroke = ColorUtils.blendARGB(
-                  colorOutline, colorOnTertiaryContainer, fraction
+                  colorOutline, colorOnTertiaryContainer, colorFraction
               );
               binding.cardSongPickerChip.setCardBackgroundColor(colorBg);
               binding.cardSongPickerChip.setStrokeColor(colorStroke);
@@ -288,7 +293,7 @@ public class SongPickerView extends FrameLayout {
               gradientLeft.setLevel((int) (10000 * fraction));
               gradientRight.setLevel((int) (10000 * fraction));
 
-              binding.recyclerSongPicker.setAlpha(1 - fraction);
+              binding.recyclerSongPicker.setAlpha(1 - colorFraction);
             });
             animator.addListener(new AnimatorListenerAdapter() {
               @Override

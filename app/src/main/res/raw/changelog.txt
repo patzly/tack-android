@@ -5,6 +5,7 @@
 - Fixed: crash caused by incorrect layout handling
 - Fixed: crash caused by invalid tempo values
 - Fixed: tempo buttons not updating correctly
+- Fixed: incorrect song picker colors during chip animation
 
 ## 5.0.0
 
