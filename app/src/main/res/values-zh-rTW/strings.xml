@@ -165,6 +165,7 @@
   <string name="msg_backup_error">備份時發生錯誤</string>
   <string name="msg_backup_directory_missing">未選擇備份的儲存位置</string>
   <string name="msg_backup_success">備份已成功建立</string>
+  <string name="msg_restore_error">還原備份時發生錯誤</string>
   <string name="msg_restore_file_missing">未選擇要還原的檔案</string>
   <string name="msg_restore_success">備份已成功還原</string>
   <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
