@@ -105,4 +105,6 @@
   <string name="wear_settings_flash_screen_description">A cada batida</string>
 
   <string name="wear_settings_reduce_animations">Reduzir animações </string>
+  <string name="wear_settings_reduce_animations_description">Pode melhorar a performance </string>
+
   </resources>
