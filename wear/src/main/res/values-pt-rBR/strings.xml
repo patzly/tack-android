@@ -96,4 +96,6 @@
   <string name="wear_settings_gain_disclaimer">Tenha cuidado! O desenvolvedor não se responsabiliza por qualquer potencial dano. </string>
 
   <string name="wear_settings_always_vibrate">Vibrar sempre </string>
+  <string name="wear_settings_always_vibrate_description">Mesmo que haja som</string>
+
   </resources>
