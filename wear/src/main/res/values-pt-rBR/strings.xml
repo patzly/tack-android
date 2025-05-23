@@ -110,4 +110,5 @@
   <string name="wear_settings_keep_awake">Manter a tela sempre ligada</string>
   <string name="wear_settings_keep_awake_description">Apenas quando o metrônomo estiver ligado</string>
 
+  <string name="wear_settings_rate">Avalie o Tack na Google Play</string>
   </resources>
