@@ -101,4 +101,5 @@
   <string name="wear_settings_strong_vibration">Vibração forte</string>
   <string name="wear_settings_strong_vibration_description">Mesmo que o feedback seja fraco </string>
 
+  <string name="wear_settings_flash_screen">Piscar a tela</string>
   </resources>
