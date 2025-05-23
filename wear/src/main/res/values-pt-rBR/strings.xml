@@ -95,4 +95,5 @@
   <string name="wear_settings_gain">Boost de volume </string>
   <string name="wear_settings_gain_disclaimer">Tenha cuidado! O desenvolvedor não se responsabiliza por qualquer potencial dano. </string>
 
+  <string name="wear_settings_always_vibrate">Vibrar sempre </string>
   </resources>
