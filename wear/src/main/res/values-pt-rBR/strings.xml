@@ -107,4 +107,5 @@
   <string name="wear_settings_reduce_animations">Reduzir animações </string>
   <string name="wear_settings_reduce_animations_description">Pode melhorar a performance </string>
 
+  <string name="wear_settings_keep_awake">Manter a tela sempre ligafa</string>
   </resources>
