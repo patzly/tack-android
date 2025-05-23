@@ -98,4 +98,5 @@
   <string name="wear_settings_always_vibrate">Vibrar sempre </string>
   <string name="wear_settings_always_vibrate_description">Mesmo que haja som</string>
 
+  <string name="wear_settings_strong_vibration">Vibração forte</string>
   </resources>
