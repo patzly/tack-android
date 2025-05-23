@@ -102,4 +102,6 @@
   <string name="wear_settings_strong_vibration_description">Mesmo que o feedback seja fraco </string>
 
   <string name="wear_settings_flash_screen">Piscar a tela</string>
+  <string name="wear_settings_flash_screen_description">A cada batida</string>
+
   </resources>
