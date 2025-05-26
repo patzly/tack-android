@@ -317,10 +317,13 @@
   <string name="settings_active_beat">現在のビートを強調表示</string>
   <string name="settings_active_beat_description">遅いテンポで役立ちます</string>
 
-  <string name="settings_always_vibrate">常に振動</string>
+  <string name="settings_always_vibrate">常に振動ビートモード</string>
   <string name="settings_always_vibrate_description">音声ビート状態でも振動します</string>
 
   <string name="settings_elapsed">経過時間表示</string>
+  <string name="settings_elapsed_description">練習時間を確認できます</string>
+
+  <string name="settings_reset_timer">停止時にタイマーリセット</string>
   <string name="about_privacy_description">データの取り扱い方針</string>
 
   </resources>
