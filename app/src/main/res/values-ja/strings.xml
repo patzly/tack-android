@@ -32,6 +32,9 @@
   <string name="title_metronome">メトロノーム</string>
   <string name="title_controls">コントロール</string>
   <string name="title_logcat">Logcat</string>
+  <string name="title_songs">ソングライブラリー</string>
+  <!-- Short version of the term "song library" for smaller home screen widget sizes -->
+  <string name="title_songs_short">ソング</string>
   <string name="title_song_details">ソング内容</string>
 
   <!-- LABELS -->
