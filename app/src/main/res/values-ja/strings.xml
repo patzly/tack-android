@@ -300,6 +300,12 @@
   <string name="settings_sound_hands">手拍子</string>
   <string name="settings_sound_folding">ノイズ</string>
 
+  <string name="settings_latency">遅延補正</string>
+  <string name="settings_latency_description">振動と画面表示に対するシステムオーディオ出力の遅延を補正します</string>
+
+  <string name="settings_ignore_focus">音声フォーカス拒否</string>
+  <string name="settings_ignore_focus_description">他のアプリが音を出しても再生を続けます</string>
+
   <string name="settings_always_vibrate">常に振動</string>
   <string name="about_privacy_description">データの取り扱い方針</string>
 
