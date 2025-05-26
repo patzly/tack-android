@@ -306,6 +306,12 @@
   <string name="settings_ignore_focus">音声フォーカス拒否</string>
   <string name="settings_ignore_focus_description">他のアプリが音を出しても再生を続けます</string>
 
+  <string name="settings_gain">音声ブースト</string>
+  <string name="settings_gain_description">システム音量に加えて更に音量を上げます</string>
+  <string name="settings_gain_warning">利用には注意が必要です！</string>
+  <string name="settings_gain_disclaimer">ブーストを有効化すると、再生前に警告が表示されます。開発者は、この設定によって引き起こされうる損害について一切責任を負いません。</string>
+
+  <string name="settings_hide_sub_controls">未使用時の拍分割ボタンを非表示</string>
   <string name="settings_always_vibrate">常に振動</string>
   <string name="about_privacy_description">データの取り扱い方針</string>
 
