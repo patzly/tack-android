@@ -338,6 +338,13 @@
   <string name="settings_perm_notification">常に通知表示</string>
   <string name="settings_perm_notification_description">いつでも再生/停止操作を実行できます</string>
 
+  <string name="settings_big_logo">大きなサイズのロゴアニメーション</string>
+  <string name="settings_big_logo_description">再生中のテンポ表示の代わりに動きます</string>
+
+  <!-- ABOUT -->
+
+  <string name="about_version">バージョン</string>
+  <string name="about_changelog">更新履歴</string>
   <string name="about_privacy_description">データの取り扱い方針</string>
 
   </resources>
