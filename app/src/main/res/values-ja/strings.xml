@@ -180,7 +180,7 @@
   <string name="msg_songs_intro_description">以前までのテンポブックマークに代わり、ソングライブラリが実装されました。bpmの値を記録する代わりに、メトロノームの構成全てをソング内にパートとして保存し、並べ替えることができます。自由に調整したメトロノーム操作とオプションを、パートとしてソング内に追加することも、既存パートに上書きすることも可能です。</string>
   <string name="msg_widget_description">ソングの表示と再生ができます</string>
   <string name="msg_installer_check">無効な制限解除アプリ</string>
-  <string name="msg_installer_check_description">Google Playで制限解除アプリを購入し、インストールしてください。ご支援をよろしくお願いします！</string>
+  <string name="msg_installer_check_description">Google Play で制限解除アプリを購入し、インストールしてください。ご支援をよろしくお願いします！</string>
   <string name="msg_widget_prompt">ソングに素早くアクセスしたいですか？</string>
   <string name="msg_widget_prompt_description">ホーム画面に素敵なウィジェットを配置しましょう。</string>
 
