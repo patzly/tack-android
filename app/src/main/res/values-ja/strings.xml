@@ -350,6 +350,9 @@
   <string name="about_vending_description">この開発者の他のアプリ</string>
   <string name="about_key">アプリ制限解除</string>
   <string name="about_key_description_not_installed">未インストール</string>
+  <string name="about_key_description_installed">インストール済</string>
+  <string name="about_key_description_invalid">無効</string>
+  <string name="about_github_description">ソースコード</string>
   <string name="about_privacy_description">データの取り扱い方針</string>
 
   </resources>
