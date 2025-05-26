@@ -345,6 +345,11 @@
 
   <string name="about_version">バージョン</string>
   <string name="about_changelog">更新履歴</string>
+  <string name="about_changelog_description">新機能をチェック</string>
+  <string name="about_developer">開発者</string>
+  <string name="about_vending_description">この開発者の他のアプリ</string>
+  <string name="about_key">アプリ制限解除</string>
+  <string name="about_key_description_not_installed">未インストール</string>
   <string name="about_privacy_description">データの取り扱い方針</string>
 
   </resources>
