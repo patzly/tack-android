@@ -1,0 +1,306 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="title_feedback">フィードバック</string>
+  <string name="title_about">Tack について</string>
+  <string name="title_help">ヘルプ</string>
+  <string name="title_licenses">オープンソースライセンス</string>
+  <string name="title_settings">設定</string>
+  <string name="title_notification_channel">メトロノーム サービス</string>
+  <string name="title_options">オプション</string>
+  <string name="title_general">一般</string>
+  <string name="title_metronome">メトロノーム</string>
+  <string name="title_controls">コントロール</string>
+  <string name="title_logcat">Logcat</string>
+  <!-- LABELS -->
+
+  <string name="label_bpm_value">%1$d bpm</string>
+  <string name="label_bpm">bpm</string>
+  <string name="label_ms">%1$s ms</string>
+  <string name="label_db">+%1$d dB</string>
+  <string name="label_tempo">テンポ</string>
+  <string name="label_tempo_largo">Largo</string>
+  <string name="label_tempo_larghetto">Larghetto</string>
+  <string name="label_tempo_adagio">Adagio</string>
+  <string name="label_tempo_andante">Andante</string>
+  <string name="label_tempo_moderato">Moderato</string>
+  <string name="label_tempo_allegro">Allegro</string>
+  <string name="label_tempo_presto">Presto</string>
+  <string name="label_tempo_prestissimo">Prestissimo</string>
+  <string name="label_tempo_input_help">%1$dから%2$dまでの値</string>
+  <string name="label_part_name">パート名</string>
+  <string name="label_part_unnamed">パート %1$d</string>
+  <string name="label_part_no_duration">期間なし</string>
+  <plurals name="label_parts_count">
+    <item quantity="other">%1$d パート</item>
+  </plurals>
+  <string name="label_song_looped">ループあり</string>
+  <string name="label_song_looped_description">ソングをリピート再生する</string>
+  <string name="label_song_not_looped">ループなし</string>
+  <string name="label_sort_name">名前</string>
+  <string name="label_sort_last_played">最近の再生</string>
+  <string name="label_sort_last_played_date">最近の再生日 %1$s</string>
+  <string name="label_sort_never_played">未再生</string>
+  <string name="label_sort_most_played">再生回数</string>
+  <plurals name="label_sort_most_played_times">
+    <item quantity="other">再生回数 %1$d</item>
+  </plurals>
+  <string name="label_song_name">ソング名</string>
+  <string name="label_song_name_help">固有の名前を入力してください</string>
+  <string name="label_song_name_used">その名前は既に使われています</string>
+  <!-- A placeholder song name in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_title1">バッハ ブランデンブルク協奏曲第2番</string>
+  <!-- A placeholder song name in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_title2">ドビュッシー シランクス</string>
+  <!-- A placeholder song name in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_title3">モーツァルト アイネ・クライネ・ナハトムジーク</string>
+  <!-- A placeholder part count in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_parts1">3 パート</string>
+  <!-- A placeholder part count in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_parts2">1 パート</string>
+  <!-- A placeholder part count in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_parts3">4 パート</string>
+
+  <!-- ACTIONS -->
+
+  <string name="action_back">戻る</string>
+  <string name="action_close">閉じる</string>
+  <string name="action_apply">適用</string>
+  <string name="action_cancel">キャンセル</string>
+  <string name="action_increase">増やす</string>
+  <string name="action_decrease">減らす</string>
+  <string name="action_play">再生</string>
+  <string name="action_play_stop">再生/停止</string>
+  <string name="action_stop">停止</string>
+  <string name="action_add_beat">拍を増やす</string>
+  <string name="action_remove_beat">拍を減らす</string>
+  <string name="action_add_sub">拍分割を増やす</string>
+  <string name="action_remove_sub">拍分割を減らす</string>
+  <string name="action_tempo_tap">タップしてテンポ設定</string>
+  <string name="action_beat_mode">ビートモード</string>
+  <string name="action_send_feedback">フィードバックを送る</string>
+  <string name="action_open_link">外部サイトを開く</string>
+  <string name="action_reset">リセット</string>
+  <string name="action_deactivate_gain">ブーストを無効化</string>
+  <string name="action_recommend">共有</string>
+  <string name="action_recommend_description">Tack を友達におすすめする</string>
+  <string name="action_email">メールを送信</string>
+  <string name="action_email_description">開発者に連絡</string>
+  <string name="action_rate">Google Play で評価</string>
+  <string name="action_rate_description">開発を援助</string>
+  <string name="action_issue">GitHub で新しい Issue を作成</string>
+  <string name="action_issue_description">バグ報告または機能の提案</string>
+  <string name="action_retry">再試行</string>
+  <string name="action_logcat">Logcat を表示</string>
+  <string name="action_copy_to_clipboard">クリップボードにコピー</string>
+  <string name="action_reload">再読み込み</string>
+  <string name="action_change_tempo">テンポ変更</string>
+  <string name="action_add_song">ソング追加</string>
+  <string name="action_sort_by">並べ替え</string>
+  <string name="action_add_part">パート追加</string>
+  <string name="action_save">保存</string>
+  <string name="action_discard">破棄</string>
+  <string name="action_rename">名前変更</string>
+  <string name="action_rename_part">パート名変更</string>
+  <string name="action_update">更新</string>
+  <string name="action_delete">削除</string>
+  <string name="action_move_up">上へ移動</string>
+  <string name="action_move_down">下へ移動</string>
+  <string name="action_open_play_store">Play ストアを開く</string>
+  <string name="action_backup">バックアップ作成</string>
+  <string name="action_restore">バックアップ復元</string>
+  <string name="action_view_more_songs">他のソングを見る</string>
+
+  <!-- MESSAGES -->
+
+  <string name="msg_feedback">素晴らしいアプリの開発には、膨大な時間とユーザーからのフィードバックが必要です。</string>
+  <string name="msg_feedback_contact">要望や意見、質問がある場合はご連絡ください！\nそして、 Play ストアで素敵なレビューを書いていただけると非常に嬉しいです。</string>
+  <string name="msg_recommend">素敵なメトロノームアプリをチェック: \n%1$s</string>
+  <string name="msg_vibration_unavailable">このデバイスでは振動を利用できません</string>
+  <string name="msg_service_running">メトロノーム機能実行中</string>
+  <string name="msg_service_running_return">タップして Tack に戻る</string>
+  <string name="msg_service_description">メトロノーム構成・再生機能</string>
+  <string name="msg_connection_lost">機能の接続が失われました。アプリの再起動が必要です。</string>
+  <string name="msg_reset">すべて初期化しますか？</string>
+  <string name="msg_reset_description">ソングライブラリと設定を含むアプリ全体を本当に初期化しますか？必要であれば、事前にソングライブラリのバックアップを作成してください。初期化操作を元に戻すことはできません。</string>
+  <string name="msg_reset_timer">タイマーをリセットしますか？</string>
+  <string name="msg_reset_timer_description">起動時のタイマーリセット動作は設定画面から変更できます。</string>
+  <string name="msg_reset_elapsed">経過時間をリセットしますか？</string>
+  <string name="msg_reset_elapsed_description">本当に経過時間をリセットしますか？この操作は元に戻せません。</string>
+  <string name="msg_gain">音量ブースト状態で再生しますか？</string>
+  <string name="msg_gain_description">大音量での再生は耳を痛める危険性があり、ヘッドホン着用時には特に注意が必要です！</string>
+  <string name="msg_split_screen">画面サイズが小さすぎます</string>
+  <string name="msg_split_screen_description">Tack を分割画面で表示すると、メトロノームの操作に問題が生じる場合があります。可能であれば、より大きなサイズの画面でご利用ください。</string>
+  <string name="msg_notification_permission_denied">再生するには通知を許可する必要があります</string>
+  <string name="msg_report_crash">アプリが強制終了した場合は、クラッシュログを添付してご報告ください。開発者が修正を試みます。</string>
+  <string name="msg_copied_to_clipboard">クリップボードにコピーされました</string>
+  <string name="msg_invalid_input">無効な入力</string>
+  <string name="msg_discard_changes">変更を破棄しますか？</string>
+  <string name="msg_discard_changes_description">本当に保存せずに操作を終えますか？</string>
+  <string name="msg_delete_song">ソングを削除しますか？</string>
+  <string name="msg_delete_song_description">本当にパートを含めたソング全体を削除しますか？この操作は元に戻せません。</string>
+  <string name="msg_songs_empty">空のソングライブラリ</string>
+  <string name="msg_songs_empty_description">練習したいソングを追加しましょう</string>
+  <string name="msg_unlock">開発者からのメッセージ</string>
+  <string name="msg_unlock_description">強力な機能の数々を広告なしで体験できる Tack にご満足いただけましたか？私は余暇を費やし何年もかけて無料アプリ Tack を開発しました。特にソングライブラリ機能の実装には数か月間労力を注ぎました。\nTack の改良を続けるためにも、ささやかな寄付をお願いしています。お礼として、保存ソング数無制限、保存パート数も大幅に増えた制限解除版アプリをお使いいただけるようになります。ご支援をよろしくお願いします！</string>
+  <string name="msg_backup_error">バックアップ作成中にエラーが発生しました</string>
+  <string name="msg_backup_directory_missing">バックアップ用に選択した保存場所がありません</string>
+  <string name="msg_backup_success">バックアップ作成に成功しました</string>
+  <string name="msg_restore_error">バックアップ復元中にエラーが発生しました</string>
+  <string name="msg_restore_file_missing">復元するファイルが選択されていません</string>
+  <string name="msg_restore_success">バックアップ復元に成功しました</string>
+  <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
+  <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
+  <string name="msg_songs_intro">ブックマークはソングに生まれ変わりました</string>
+  <string name="msg_songs_intro_description">以前までのテンポブックマークに代わり、ソングライブラリが実装されました。bpmの値を記録する代わりに、メトロノームの構成全てをソング内にパートとして保存し、並べ替えることができます。自由に調整したメトロノーム操作とオプションを、パートとしてソング内に追加することも、既存パートに上書きすることも可能です。</string>
+  <string name="msg_widget_description">ソングの表示と再生ができます</string>
+  <string name="msg_installer_check">無効な制限解除アプリ</string>
+  <string name="msg_installer_check_description">Google Playで制限解除アプリを購入し、インストールしてください。ご支援をよろしくお願いします！</string>
+  <string name="msg_widget_prompt">ソングに素早くアクセスしたいですか？</string>
+  <string name="msg_widget_prompt_description">ホーム画面に素敵なウィジェットを配置しましょう。</string>
+
+  <!-- OPTIONS -->
+
+  <string name="options_unit_bars">小節</string>
+  <plurals name="options_unit_bars">
+    <item quantity="other">%1$d 小節</item>
+  </plurals>
+  <string name="options_unit_beats">拍</string>
+  <plurals name="options_unit_beats">
+    <item quantity="other">%1$d 拍</item>
+  </plurals>
+  <plurals name="options_unit_subdivisions">
+    <item quantity="other">1拍を %1$d 分割</item>
+  </plurals>
+  <string name="options_unit_seconds">秒</string>
+  <plurals name="options_unit_seconds">
+    <item quantity="other">%1$d 秒</item>
+  </plurals>
+  <string name="options_unit_minutes">分</string>
+  <plurals name="options_unit_minutes">
+    <item quantity="other">%1$d 分</item>
+  </plurals>
+  <string name="options_inactive">無効</string>
+  <string name="options_count_in">前奏カウント</string>
+  <plurals name="options_count_in_description">
+    <item quantity="other">以下のオプションを適用する前に %1$d 小節待つ</item>
+  </plurals>
+  <string name="options_incremental">段階的なテンポ変更</string>
+  <string name="options_incremental_amount_increase">%1$d bpmずつ増やす　</string>
+  <string name="options_incremental_amount_decrease">%1$d bpmずつ減らす</string>
+  <plurals name="options_incremental_interval_bars">
+    <item quantity="other">%1$d 小節ごとに変更　</item>
+  </plurals>
+  <plurals name="options_incremental_interval_seconds">
+    <item quantity="other">%1$d 秒ごとに変更</item>
+  </plurals>
+  <plurals name="options_incremental_interval_minutes">
+    <item quantity="other">%1$d 分ごとに変更</item>
+  </plurals>
+  <string name="options_incremental_max">上限 %1$d bpm</string>
+  <string name="options_incremental_min">下限 %1$d bpm</string>
+  <string name="options_incremental_no_max">上限なし</string>
+  <string name="options_incremental_no_min">下限なし</string>
+  <string name="options_timer">継続</string>
+  <plurals name="options_timer_description_bars">
+    <item quantity="other">%1$d 小節後に停止</item>
+  </plurals>
+  <plurals name="options_timer_description_seconds">
+    <item quantity="other">%1$d 秒後に停止</item>
+  </plurals>
+  <plurals name="options_timer_description_minutes">
+    <item quantity="other">%1$d 分後に停止</item>
+  </plurals>
+  <string name="options_mute">消音</string>
+  <plurals name="options_mute_play_bars">
+    <item quantity="other">%1$d 小節間通常再生</item>
+  </plurals>
+  <plurals name="options_mute_play_seconds">
+    <item quantity="other">%1$d 秒間通常再生</item>
+  </plurals>
+  <plurals name="options_mute_mute_bars">
+    <item quantity="other">%1$d 小節間消音</item>
+  </plurals>
+  <plurals name="options_mute_mute_seconds">
+    <item quantity="other">%1$d 秒間消音</item>
+  </plurals>
+  <string name="options_mute_random">指定以下の値でランダム消音</string>
+  <string name="options_subdivisions">拍分割</string>
+  <plurals name="options_subdivisions_description">
+    <item quantity="other">1 拍を %1$d 分割</item>
+  </plurals>
+  <string name="options_swing">スウィング</string>
+  <string name="options_swing_description">スウィング比率に合わせて拍分割</string>
+  <string name="options_swing_3">3連符</string>
+  <string name="options_swing_5">5連符</string>
+  <string name="options_swing_7">7連符</string>
+
+  <!-- SETTINGS -->
+
+  <string name="settings_language">言語</string>
+  <string name="settings_language_info">Transifex の有志翻訳者のみなさまに心から感謝します/n Tack をあなたの言語で利用できるようにするための協力方法については Tack の GitHub をご覧ください。</string>
+  <string name="settings_language_system">システム準拠</string>
+  <string name="settings_language_system_description">翻訳が存在しない場合は英語</string>
+
+  <string name="settings_theme">テーマ</string>
+  <string name="settings_theme_description">好みで選べるバリエーション</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
+  <string name="settings_theme_auto">自動</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_dark">ダーク</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_light">ライト</string>
+
+  <string name="settings_contrast">コントラスト</string>
+  <string name="settings_contrast_description">視覚アクセシビリティ</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast. The button width should be as dense as possible. -->
+  <string name="settings_contrast_standard">標準</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_medium">中</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_high">高</string>
+  <string name="settings_contrast_dynamic">デバイステーマのコントラストはシステム設定から指定する必要があります</string>
+  <string name="settings_contrast_dynamic_unsupported">デバイステーマのダイナミックコントラストは Android 14 以降でのみ利用可能です。</string>
+
+  <string name="settings_haptic">触覚効果</string>
+  <string name="settings_haptic_description">振動ビートモードとは別に設定できます</string>
+
+  <string name="settings_reduce_animations">アニメーション省略</string>
+  <string name="settings_reduce_animations_description">パフォーマンスが向上する可能性があります</string>
+
+  <string name="settings_reset">すべて初期化</string>
+  <string name="settings_reset_description">元に戻せません</string>
+
+  <string name="settings_sound">ビート音</string>
+  <string name="settings_sound_wood">ウッド</string>
+  <string name="settings_sound_sine">サイン波</string>
+  <string name="settings_sound_mechanical">メトロノーム</string>
+  <string name="settings_sound_beatboxing_1">ビートボックス1</string>
+  <string name="settings_sound_beatboxing_2">ビートボックス2</string>
+  <string name="settings_sound_hands">手拍子</string>
+  <string name="settings_sound_folding">ノイズ</string>
+
+  <string name="settings_always_vibrate">常に振動</string>
+  <string name="about_privacy_description">データの取り扱い方針</string>
+
+  </resources>
