@@ -26,12 +26,14 @@
   <string name="title_help">ヘルプ</string>
   <string name="title_licenses">オープンソースライセンス</string>
   <string name="title_settings">設定</string>
-  <string name="title_notification_channel">メトロノーム サービス</string>
+  <string name="title_notification_channel">メトロノームサービス</string>
   <string name="title_options">オプション</string>
   <string name="title_general">一般</string>
   <string name="title_metronome">メトロノーム</string>
   <string name="title_controls">コントロール</string>
   <string name="title_logcat">Logcat</string>
+  <string name="title_song_details">ソング内容</string>
+
   <!-- LABELS -->
 
   <string name="label_bpm_value">%1$d bpm</string>
@@ -353,6 +355,8 @@
   <string name="about_key_description_installed">インストール済</string>
   <string name="about_key_description_invalid">無効</string>
   <string name="about_github_description">ソースコード</string>
+  <string name="about_translation_description">Tack の翻訳を手伝う</string>
+  <string name="about_privacy">プライバシーポリシー</string>
   <string name="about_privacy_description">データの取り扱い方針</string>
 
   </resources>
