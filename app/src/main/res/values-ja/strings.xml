@@ -312,7 +312,15 @@
   <string name="settings_gain_disclaimer">ブーストを有効化すると、再生前に警告が表示されます。開発者は、この設定によって引き起こされうる損害について一切責任を負いません。</string>
 
   <string name="settings_hide_sub_controls">未使用時の拍分割ボタンを非表示</string>
+  <string name="settings_hide_sub_controls_description">オプションから細分化を有効にした場合のみ表示されます</string>
+
+  <string name="settings_active_beat">現在のビートを強調表示</string>
+  <string name="settings_active_beat_description">遅いテンポで役立ちます</string>
+
   <string name="settings_always_vibrate">常に振動</string>
+  <string name="settings_always_vibrate_description">音声ビート状態でも振動します</string>
+
+  <string name="settings_elapsed">経過時間表示</string>
   <string name="about_privacy_description">データの取り扱い方針</string>
 
   </resources>
