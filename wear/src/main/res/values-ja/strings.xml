@@ -95,6 +95,8 @@
   <string name="wear_settings_always_vibrate_description">音声ビート状態でも振動します</string>
 
   <string name="wear_settings_strong_vibration">強い振動</string>
+  <string name="wear_settings_strong_vibration_description">触覚効果の振動が弱い場合</string>
+
   <string name="wear_settings_flash_screen">画面明滅</string>
   <string name="wear_settings_flash_screen_description">ビートに合せて明滅します</string>
 
@@ -104,6 +106,7 @@
   <string name="wear_settings_keep_awake">常に画面点灯</string>
   <string name="wear_settings_keep_awake_description">再生中は常に画面を点灯します</string>
 
+  <string name="wear_settings_rate">Tack を Google Play で評価</string>
   <string name="wear_settings_rate_description">開発支援</string>
 
 </resources>
