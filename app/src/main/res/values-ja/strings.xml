@@ -324,6 +324,11 @@
   <string name="settings_elapsed_description">練習時間を確認できます</string>
 
   <string name="settings_reset_timer">停止時にタイマーリセット</string>
+  <string name="settings_reset_timer_description">タイマーの途中再開を無効化します</string>
+
+  <string name="settings_big_time_text">大きなサイズの時間表示</string>
+  <string name="settings_big_time_text_description">既定の文字サイズでは足りない場合に便利です</string>
+
   <string name="about_privacy_description">データの取り扱い方針</string>
 
   </resources>
