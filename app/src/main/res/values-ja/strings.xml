@@ -112,7 +112,7 @@
   <string name="action_email">メールを送信</string>
   <string name="action_email_description">開発者に連絡</string>
   <string name="action_rate">Google Play で評価</string>
-  <string name="action_rate_description">開発を援助</string>
+  <string name="action_rate_description">開発支援</string>
   <string name="action_issue">GitHub で新しい Issue を作成</string>
   <string name="action_issue_description">バグ報告または機能の提案</string>
   <string name="action_retry">再試行</string>
