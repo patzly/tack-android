@@ -67,6 +67,11 @@
   <string name="wear_msg_notification_permission_denied_description">再生には通知許可が必要です</string>
   <string name="wear_msg_gain">音量ブースト状態で再生しますか？</string>
   <string name="wear_msg_gain_description">ヘッドホンで再生しないように注意してください！</string>
+  <string name="wear_msg_empty_bookmarks">まだ何もありません</string>
+  <string name="wear_msg_delete_bookmark">ブックマークを削除しますか？</string>
+  <!-- Content of a bookmark, e. g. 120 bpm, 4 beats, 1 subdivision -->
+  <string name="wear_msg_delete_bookmark_description">%1$s、%2$s、%3$s</string>
+
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">ビート音</string>
@@ -84,9 +89,12 @@
   <string name="wear_settings_ignore_focus_description">他のアプリが音を出しても再生を続けます</string>
 
   <string name="wear_settings_gain">音声ブースト</string>
+  <string name="wear_settings_gain_disclaimer">注意してください！開発者はいかなる損害に対しても責任を負いません。</string>
+
   <string name="wear_settings_always_vibrate">常に振動</string>
   <string name="wear_settings_always_vibrate_description">音声ビート状態でも振動します</string>
 
+  <string name="wear_settings_strong_vibration">強い振動</string>
   <string name="wear_settings_flash_screen">画面明滅</string>
   <string name="wear_settings_flash_screen_description">ビートに合せて明滅します</string>
 
