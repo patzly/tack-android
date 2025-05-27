@@ -70,6 +70,7 @@
   <string name="wear_msg_gain">Spelen met volume boost?</string>
   <string name="wear_msg_gain_description">Let op dat je niet door een koptelefoon speelt!</string>
   <string name="wear_msg_empty_bookmarks">Nog niets toegevoegd</string>
+  <string name="wear_msg_delete_bookmark">Bladwijzer verwijderen?</string>
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">Maat geluid</string>
