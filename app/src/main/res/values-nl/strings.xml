@@ -331,4 +331,5 @@
   <string name="settings_ignore_focus_description">Blijf spelen als andere apps geluid maken</string>
 
   <string name="settings_gain">Volume boost</string>
+  <string name="settings_gain_description">Versterking in dB (naast systeemvolume)</string>
   </resources>
