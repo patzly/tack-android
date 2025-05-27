@@ -315,4 +315,6 @@
   <string name="settings_reset">Alles resetten</string>
   <string name="settings_reset_description">Kan niet ongedaan worden gemaakt</string>
 
+  <string name="settings_sound">Maat geluid</string>
+  <string name="settings_sound_wood">Hout</string>
   </resources>
