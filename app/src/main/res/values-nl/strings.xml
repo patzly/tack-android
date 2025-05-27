@@ -319,4 +319,6 @@
   <string name="settings_sound_wood">Hout</string>
   <string name="settings_sound_sine">Sinus</string>
   <string name="settings_sound_mechanical">Mechanisch</string>
+  <string name="settings_sound_beatboxing_1">Beatbox 1</string>
+  <string name="settings_sound_beatboxing_2">Beatbox 2</string>
   </resources>
