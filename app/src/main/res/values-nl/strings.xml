@@ -327,4 +327,5 @@
   <string name="settings_latency">Vertragingscorrectie</string>
   <string name="settings_latency_description">Compenseer vertraging van systeemaudio-uitvoer voor trillingen en beeld </string>
 
+  <string name="settings_ignore_focus">Negeer audio focus</string>
   </resources>
