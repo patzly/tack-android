@@ -322,4 +322,6 @@
   <string name="settings_sound_beatboxing_1">Beatbox 1</string>
   <string name="settings_sound_beatboxing_2">Beatbox 2</string>
   <string name="settings_sound_hands">Handen</string>
+  <string name="settings_sound_folding">Vouwmeter</string>
+
   </resources>
