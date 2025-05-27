@@ -108,4 +108,5 @@
   <string name="wear_settings_keep_awake">Scherm aan houden</string>
   <string name="wear_settings_keep_awake_description">Als metronoom speelt</string>
 
+  <string name="wear_settings_rate">Beoordeel Tack op Google Play</string>
   </resources>
