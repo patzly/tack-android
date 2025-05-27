@@ -356,4 +356,5 @@
   <string name="settings_flash_screen">Scherm flitsen</string>
   <string name="settings_flash_screen_description">Op ieder maatdeel</string>
 
+  <string name="settings_keep_awake">Scherm aan houden</string>
   </resources>
