@@ -317,4 +317,5 @@
 
   <string name="settings_sound">Maat geluid</string>
   <string name="settings_sound_wood">Hout</string>
+  <string name="settings_sound_sine">Sinus</string>
   </resources>
