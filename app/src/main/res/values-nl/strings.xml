@@ -360,4 +360,6 @@
   <string name="settings_keep_awake_description">Als metronoom speelt</string>
 
   <string name="settings_perm_notification">Permanente melding</string>
+  <string name="settings_perm_notification_description">Altijd toegang tot speel/stop bediening</string>
+
   </resources>
