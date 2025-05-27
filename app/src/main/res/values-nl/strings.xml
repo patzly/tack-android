@@ -350,4 +350,5 @@
   <string name="settings_reset_timer">Reset timer bij stoppen</string>
   <string name="settings_reset_timer_description">In plaats van hervatten</string>
 
+  <string name="settings_big_time_text">Gebruik grote tekst voor tijd</string>
   </resources>
