@@ -313,4 +313,6 @@
   <string name="settings_reduce_animations_description">Kan mogelijk prestaties verbeteren</string>
 
   <string name="settings_reset">Alles resetten</string>
+  <string name="settings_reset_description">Kan niet ongedaan worden gemaakt</string>
+
   </resources>
