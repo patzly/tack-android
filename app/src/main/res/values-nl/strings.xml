@@ -347,4 +347,5 @@
   <string name="settings_elapsed">Verstreken tijd tonen</string>
   <string name="settings_elapsed_description">Toon hoe lang je oefent</string>
 
+  <string name="settings_reset_timer">Reset timer bij stoppen</string>
   </resources>
