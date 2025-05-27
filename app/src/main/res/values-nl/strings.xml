@@ -344,4 +344,5 @@
   <string name="settings_always_vibrate">Altijd trillen</string>
   <string name="settings_always_vibrate_description">Zelfs met geluid</string>
 
+  <string name="settings_elapsed">Verstreken tijd tonen</string>
   </resources>
