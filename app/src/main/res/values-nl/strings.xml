@@ -339,4 +339,6 @@
   <string name="settings_hide_sub_controls_description">Toont extra bediening voor maatdelen in opties</string>
 
   <string name="settings_active_beat">Highlight huidige maat</string>
+  <string name="settings_active_beat_description">Nuttig voor lagere tempo\'s</string>
+
   </resources>
