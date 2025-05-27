@@ -345,4 +345,6 @@
   <string name="settings_always_vibrate_description">Zelfs met geluid</string>
 
   <string name="settings_elapsed">Verstreken tijd tonen</string>
+  <string name="settings_elapsed_description">Toon hoe lang je oefent</string>
+
   </resources>
