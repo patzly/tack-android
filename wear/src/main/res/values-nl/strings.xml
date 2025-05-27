@@ -97,6 +97,8 @@
   <string name="wear_settings_always_vibrate_description">Zelfs met geluid</string>
 
   <string name="wear_settings_strong_vibration">Sterke trilling</string>
+  <string name="wear_settings_strong_vibration_description">Als trilling zwak is</string>
+
   <string name="wear_settings_flash_screen">Scherm flitsen</string>
   <string name="wear_settings_flash_screen_description">Op ieder maatdeel</string>
 
