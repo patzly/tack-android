@@ -66,6 +66,7 @@
   <string name="wear_msg_service_running_return">Tik voor meer</string>
   <string name="wear_msg_service_description">Dienst voor metronoom afspelen</string>
   <string name="wear_msg_notification_permission_denied">Toestemming vereist</string>
+  <string name="wear_msg_notification_permission_denied_description">Meldingstoestemming is vereist voor afspelen</string>
   <string name="wear_msg_gain">Spelen met volume boost?</string>
   <!-- SETTINGS -->
 
