@@ -362,6 +362,7 @@
   <string name="settings_perm_notification">Permanente melding</string>
   <string name="settings_perm_notification_description">Altijd toegang tot speel/stop bediening</string>
 
+  <string name="settings_big_logo">Toon groot logo animatie</string>
   <string name="settings_big_logo_description">In plaats van tempo kiezer tijdens spelen</string>
 
   <!-- ABOUT -->
