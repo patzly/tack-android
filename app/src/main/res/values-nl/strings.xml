@@ -324,4 +324,5 @@
   <string name="settings_sound_hands">Handen</string>
   <string name="settings_sound_folding">Vouwmeter</string>
 
+  <string name="settings_latency">Vertragingscorrectie</string>
   </resources>
