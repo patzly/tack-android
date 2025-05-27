@@ -91,9 +91,12 @@
   <string name="wear_settings_ignore_focus_description">Blijf spelen als andere apps geluid maken</string>
 
   <string name="wear_settings_gain">Volume boost</string>
+  <string name="wear_settings_gain_disclaimer">Wees voorzichtig! De ontwikkelaar neemt geen verantwoordelijkheid voor mogelijke schade.</string>
+
   <string name="wear_settings_always_vibrate">Altijd trillen</string>
   <string name="wear_settings_always_vibrate_description">Zelfs met geluid</string>
 
+  <string name="wear_settings_strong_vibration">Sterke trilling</string>
   <string name="wear_settings_flash_screen">Scherm flitsen</string>
   <string name="wear_settings_flash_screen_description">Op ieder maatdeel</string>
 
