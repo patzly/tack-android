@@ -368,4 +368,6 @@
 
   <string name="about_version">Versie</string>
   <string name="about_changelog">Changelog</string>
+  <string name="about_changelog_description">Nieuw in deze versie</string>
+  <string name="about_developer">Ontwikkelaar</string>
   </resources>
