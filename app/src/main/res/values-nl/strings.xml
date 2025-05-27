@@ -342,4 +342,6 @@
   <string name="settings_active_beat_description">Nuttig voor lagere tempo\'s</string>
 
   <string name="settings_always_vibrate">Altijd trillen</string>
+  <string name="settings_always_vibrate_description">Zelfs met geluid</string>
+
   </resources>
