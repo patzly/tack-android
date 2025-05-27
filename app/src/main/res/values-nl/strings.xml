@@ -372,4 +372,5 @@
   <string name="about_developer">Ontwikkelaar</string>
   <string name="about_vending_description">Meer apps door deze ontwikkelaar</string>
   <string name="about_key">Unlock app</string>
+  <string name="about_key_description_not_installed">Niet geïnstalleerd</string>
   </resources>
