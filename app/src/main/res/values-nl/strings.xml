@@ -374,4 +374,5 @@
   <string name="about_key">Unlock app</string>
   <string name="about_key_description_not_installed">Niet geïnstalleerd</string>
   <string name="about_key_description_installed">Geïnstalleerd</string>
+  <string name="about_key_description_invalid">Ongeldig</string>
   </resources>
