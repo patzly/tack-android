@@ -330,4 +330,5 @@
   <string name="settings_ignore_focus">Negeer audio focus</string>
   <string name="settings_ignore_focus_description">Blijf spelen als andere apps geluid maken</string>
 
+  <string name="settings_gain">Volume boost</string>
   </resources>
