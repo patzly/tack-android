@@ -351,4 +351,6 @@
   <string name="settings_reset_timer_description">In plaats van hervatten</string>
 
   <string name="settings_big_time_text">Gebruik grote tekst voor tijd</string>
+  <string name="settings_big_time_text_description">Nuttig als de standaardgrootte niet groot genoeg is</string>
+
   </resources>
