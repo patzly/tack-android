@@ -367,4 +367,5 @@
   <!-- ABOUT -->
 
   <string name="about_version">Versie</string>
+  <string name="about_changelog">Changelog</string>
   </resources>
