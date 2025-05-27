@@ -378,4 +378,6 @@
   <string name="about_github_description">Broncode</string>
   <string name="about_translation_description">Help Tack vertalen</string>
   <string name="about_privacy">Privacybeleid</string>
+  <string name="about_privacy_description">Hoe uw gegevens worden verwerkt</string>
+
   </resources>
