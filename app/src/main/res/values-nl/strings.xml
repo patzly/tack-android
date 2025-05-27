@@ -354,4 +354,6 @@
   <string name="settings_big_time_text_description">Nuttig als de standaardgrootte niet groot genoeg is</string>
 
   <string name="settings_flash_screen">Scherm flitsen</string>
+  <string name="settings_flash_screen_description">Op ieder maatdeel</string>
+
   </resources>
