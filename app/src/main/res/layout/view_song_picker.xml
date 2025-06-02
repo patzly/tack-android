@@ -95,6 +95,7 @@
             android:textColor="?attr/colorOnTertiaryContainer"
             android:fontFamily="@font/jost_medium"
             android:singleLine="true"
+            android:text="@string/label_song_name"
             tools:ignore="HardcodedText" />
 
           <ImageView
