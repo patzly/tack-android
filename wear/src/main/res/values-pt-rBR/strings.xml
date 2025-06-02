@@ -1,0 +1,116 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="wear_title_settings">Configurações</string>
+  <string name="wear_title_beats">Batidas</string>
+  <string name="wear_title_beats_count">Batidas (%1$d) </string>
+  <string name="wear_title_subdivisions_count">Subdivisão (%1$d) </string>
+  <string name="wear_title_notification_channel">Aplicação Metrônomo </string>
+  <string name="wear_title_bookmarks">Favoritos</string>
+
+  <!-- LABELS -->
+
+  <string name="wear_label_bpm_value">%1$d bpm</string>
+  <string name="wear_label_ms">%1$s ms</string>
+  <string name="wear_label_db">+%1$d dB</string>
+  <string name="wear_label_developer">Desenvolvido por</string>
+  <plurals name="wear_label_beats">
+    <item quantity="one">%1$d batida</item>
+    <item quantity="many">%1$d batidas</item>
+    <item quantity="other">%1$d batidas</item>
+  </plurals>
+  <plurals name="wear_label_subs">
+    <item quantity="one">%1$d subdivisão </item>
+    <item quantity="many">%1$d subdivisões </item>
+    <item quantity="other">%1$d subdivisões </item>
+  </plurals>
+
+  <!-- ACTIONS -->
+
+  <string name="wear_action_cancel">Cancelar </string>
+  <string name="wear_action_increase">Aumentar</string>
+  <string name="wear_action_decrease">Diminuir</string>
+  <string name="wear_action_play_stop">Começar/Parar</string>
+  <string name="wear_action_stop">Parar</string>
+  <string name="wear_action_add_beat">Adicionar batida</string>
+  <string name="wear_action_remove_beat">Remover batida</string>
+  <string name="wear_action_add_sub">Adicionar subdivisão </string>
+  <string name="wear_action_remove_sub">Remover subdivisão</string>
+  <string name="wear_action_tempo_tap">Tap Tempo</string>
+  <string name="wear_action_bookmark">Favorito</string>
+  <string name="wear_action_beat_mode">Modo da batida</string>
+  <string name="wear_action_retry">Recomeçar </string>
+  <string name="wear_action_delete">Deletar</string>
+
+  <!-- MESSAGES -->
+
+  <string name="wear_msg_service_running">Metrônomo tocando </string>
+  <string name="wear_msg_service_running_return">Toque para mais</string>
+  <string name="wear_msg_service_description">Serviço para reprodução do Metrônomo </string>
+  <string name="wear_msg_notification_permission_denied">Permissão necessária </string>
+  <string name="wear_msg_notification_permission_denied_description">Permissão para notificações é necessária para reprodução </string>
+  <string name="wear_msg_gain">Tocar com Boost de volume? </string>
+  <string name="wear_msg_gain_description">Tenha cuidado para não usar com fones de ouvido </string>
+  <string name="wear_msg_empty_bookmarks">Ainda não há nada incluído </string>
+  <string name="wear_msg_delete_bookmark">Excluir o favorito? </string>
+  <!-- Content of a bookmark, e. g. 120 bpm, 4 beats, 1 subdivision -->
+  <string name="wear_msg_delete_bookmark_description">%1$s, %2$s, %3$s</string>
+
+  <!-- SETTINGS -->
+
+  <string name="wear_settings_sound">Som da batida </string>
+  <string name="wear_settings_sound_sine">Senoide</string>
+  <string name="wear_settings_sound_wood">Madeira </string>
+  <string name="wear_settings_sound_mechanical">Máquina </string>
+  <string name="wear_settings_sound_beatboxing_1">Beatboxing 1</string>
+  <string name="wear_settings_sound_beatboxing_2">Beatboxing 2</string>
+  <string name="wear_settings_sound_hands">Palmas</string>
+  <string name="wear_settings_sound_folding">Chiado</string>
+
+  <string name="wear_settings_latency">Correção de latência </string>
+
+  <string name="wear_settings_ignore_focus">Ignorar sobreposição de áudio </string>
+  <string name="wear_settings_ignore_focus_description">Continuar tocando mesmo que outros aplicativos reproduzam sons</string>
+
+  <string name="wear_settings_gain">Boost de volume </string>
+  <string name="wear_settings_gain_disclaimer">Tenha cuidado! O desenvolvedor não se responsabiliza por qualquer potencial dano. </string>
+
+  <string name="wear_settings_always_vibrate">Vibrar sempre </string>
+  <string name="wear_settings_always_vibrate_description">Mesmo que haja som</string>
+
+  <string name="wear_settings_strong_vibration">Vibração forte</string>
+  <string name="wear_settings_strong_vibration_description">Mesmo que o feedback seja fraco </string>
+
+  <string name="wear_settings_flash_screen">Piscar a tela</string>
+  <string name="wear_settings_flash_screen_description">A cada batida</string>
+
+  <string name="wear_settings_reduce_animations">Reduzir animações </string>
+  <string name="wear_settings_reduce_animations_description">Pode melhorar a performance </string>
+
+  <string name="wear_settings_keep_awake">Manter a tela sempre ligada</string>
+  <string name="wear_settings_keep_awake_description">Apenas quando o metrônomo estiver ligado</string>
+
+  <string name="wear_settings_rate">Avalie o Tack na Google Play</string>
+  <string name="wear_settings_rate_description">Apoie o desenvolvimento </string>
+
+</resources>

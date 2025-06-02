@@ -1,0 +1,112 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="wear_title_settings">設定</string>
+  <string name="wear_title_beats">拍</string>
+  <string name="wear_title_beats_count">拍 (%1$d)</string>
+  <string name="wear_title_subdivisions_count">拍分割 (%1$d)</string>
+  <string name="wear_title_notification_channel">メトロノーム機能</string>
+  <string name="wear_title_bookmarks">ブックマーク</string>
+
+  <!-- LABELS -->
+
+  <string name="wear_label_bpm_value">%1$d bpm</string>
+  <string name="wear_label_ms">%1$s ms</string>
+  <string name="wear_label_db">+%1$d dB</string>
+  <string name="wear_label_developer">開発者</string>
+  <plurals name="wear_label_beats">
+    <item quantity="other">%1$d 拍</item>
+  </plurals>
+  <plurals name="wear_label_subs">
+    <item quantity="other">1拍を %1$d 分割</item>
+  </plurals>
+
+  <!-- ACTIONS -->
+
+  <string name="wear_action_cancel">キャンセル</string>
+  <string name="wear_action_increase">増やす</string>
+  <string name="wear_action_decrease">減らす</string>
+  <string name="wear_action_play_stop">再生/停止</string>
+  <string name="wear_action_stop">停止</string>
+  <string name="wear_action_add_beat">拍を追加</string>
+  <string name="wear_action_remove_beat">拍を削除</string>
+  <string name="wear_action_add_sub">拍分割を増やす</string>
+  <string name="wear_action_remove_sub">拍分割を減らす</string>
+  <string name="wear_action_tempo_tap">テンポをタップ</string>
+  <string name="wear_action_bookmark">ブックマーク</string>
+  <string name="wear_action_beat_mode">ビートモード</string>
+  <string name="wear_action_retry">再試行</string>
+  <string name="wear_action_delete">削除</string>
+
+  <!-- MESSAGES -->
+
+  <string name="wear_msg_service_running">メトロノーム再生中</string>
+  <string name="wear_msg_service_running_return">タップして更に表示</string>
+  <string name="wear_msg_service_description">メトロノーム再生機能</string>
+  <string name="wear_msg_notification_permission_denied">許可が必要</string>
+  <string name="wear_msg_notification_permission_denied_description">再生には通知許可が必要です</string>
+  <string name="wear_msg_gain">音量ブースト状態で再生しますか？</string>
+  <string name="wear_msg_gain_description">ヘッドホンで再生しないように注意してください！</string>
+  <string name="wear_msg_empty_bookmarks">まだ何もありません</string>
+  <string name="wear_msg_delete_bookmark">ブックマークを削除しますか？</string>
+  <!-- Content of a bookmark, e. g. 120 bpm, 4 beats, 1 subdivision -->
+  <string name="wear_msg_delete_bookmark_description">%1$s、%2$s、%3$s</string>
+
+  <!-- SETTINGS -->
+
+  <string name="wear_settings_sound">ビート音</string>
+  <string name="wear_settings_sound_sine">サイン波</string>
+  <string name="wear_settings_sound_wood">ウッド</string>
+  <string name="wear_settings_sound_mechanical">メトロノーム</string>
+  <string name="wear_settings_sound_beatboxing_1">ビートボックス1</string>
+  <string name="wear_settings_sound_beatboxing_2">ビートボックス2</string>
+  <string name="wear_settings_sound_hands">手拍子</string>
+  <string name="wear_settings_sound_folding">ノイズ</string>
+
+  <string name="wear_settings_latency">遅延補正</string>
+
+  <string name="wear_settings_ignore_focus">音声フォーカス拒否</string>
+  <string name="wear_settings_ignore_focus_description">他のアプリが音を出しても再生を続けます</string>
+
+  <string name="wear_settings_gain">音声ブースト</string>
+  <string name="wear_settings_gain_disclaimer">注意してください！開発者はいかなる損害に対しても責任を負いません。</string>
+
+  <string name="wear_settings_always_vibrate">常に振動</string>
+  <string name="wear_settings_always_vibrate_description">音声ビート状態でも振動します</string>
+
+  <string name="wear_settings_strong_vibration">強い振動</string>
+  <string name="wear_settings_strong_vibration_description">触覚効果の振動が弱い場合</string>
+
+  <string name="wear_settings_flash_screen">画面明滅</string>
+  <string name="wear_settings_flash_screen_description">ビートに合せて明滅します</string>
+
+  <string name="wear_settings_reduce_animations">アニメーション省略</string>
+  <string name="wear_settings_reduce_animations_description">パフォーマンスが向上する可能性があります</string>
+
+  <string name="wear_settings_keep_awake">常に画面点灯</string>
+  <string name="wear_settings_keep_awake_description">再生中は常に画面を点灯します</string>
+
+  <string name="wear_settings_rate">Tack を Google Play で評価</string>
+  <string name="wear_settings_rate_description">開発支援</string>
+
+</resources>

@@ -1,0 +1,114 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="wear_title_settings">Instellingen</string>
+  <string name="wear_title_beats">Tellen</string>
+  <string name="wear_title_beats_count">Maten (%1$d)</string>
+  <string name="wear_title_subdivisions_count">Maatdelen (%1$d)</string>
+  <string name="wear_title_notification_channel">Metronoom service</string>
+  <string name="wear_title_bookmarks">Bladwijzers</string>
+
+  <!-- LABELS -->
+
+  <string name="wear_label_bpm_value">%1$d bpm</string>
+  <string name="wear_label_ms">%1$s ms</string>
+  <string name="wear_label_db">+%1$d dB</string>
+  <string name="wear_label_developer">Ontwikkeld door</string>
+  <plurals name="wear_label_beats">
+    <item quantity="one">%1$d maat</item>
+    <item quantity="other">%1$d maten</item>
+  </plurals>
+  <plurals name="wear_label_subs">
+    <item quantity="one">%1$d maatdeel</item>
+    <item quantity="other">%1$d maatdelen</item>
+  </plurals>
+
+  <!-- ACTIONS -->
+
+  <string name="wear_action_cancel">Annuleren</string>
+  <string name="wear_action_increase">Verhogen</string>
+  <string name="wear_action_decrease">Verminderen</string>
+  <string name="wear_action_play_stop">Speel/Stop</string>
+  <string name="wear_action_stop">Stop</string>
+  <string name="wear_action_add_beat">Beat toevoegen</string>
+  <string name="wear_action_remove_beat">Beat verwijderen</string>
+  <string name="wear_action_add_sub">Onderverdeling toevoegen</string>
+  <string name="wear_action_remove_sub">Onderverdeling verwijderen</string>
+  <string name="wear_action_tempo_tap">Tik tempo</string>
+  <string name="wear_action_bookmark">Bladwijzer</string>
+  <string name="wear_action_beat_mode">Beat stand</string>
+  <string name="wear_action_retry">Opnieuw proberen</string>
+  <string name="wear_action_delete">Delete</string>
+
+  <!-- MESSAGES -->
+
+  <string name="wear_msg_service_running">Metronoom speelt</string>
+  <string name="wear_msg_service_running_return">Tik voor meer</string>
+  <string name="wear_msg_service_description">Dienst voor metronoom afspelen</string>
+  <string name="wear_msg_notification_permission_denied">Toestemming vereist</string>
+  <string name="wear_msg_notification_permission_denied_description">Meldingstoestemming is vereist voor afspelen</string>
+  <string name="wear_msg_gain">Spelen met volume boost?</string>
+  <string name="wear_msg_gain_description">Let op dat je niet door een koptelefoon speelt!</string>
+  <string name="wear_msg_empty_bookmarks">Nog niets toegevoegd</string>
+  <string name="wear_msg_delete_bookmark">Bladwijzer verwijderen?</string>
+  <!-- Content of a bookmark, e. g. 120 bpm, 4 beats, 1 subdivision -->
+  <string name="wear_msg_delete_bookmark_description">%1$s, %2$s, %3$s</string>
+
+  <!-- SETTINGS -->
+
+  <string name="wear_settings_sound">Maat geluid</string>
+  <string name="wear_settings_sound_sine">Sinus</string>
+  <string name="wear_settings_sound_wood">Hout</string>
+  <string name="wear_settings_sound_mechanical">Machanisch</string>
+  <string name="wear_settings_sound_beatboxing_1">Beatbox 1</string>
+  <string name="wear_settings_sound_beatboxing_2">Beatbox 2</string>
+  <string name="wear_settings_sound_hands">Handen</string>
+  <string name="wear_settings_sound_folding">Vouwmeter</string>
+
+  <string name="wear_settings_latency">Vertragingscorrectie</string>
+
+  <string name="wear_settings_ignore_focus">Negeer audio focus</string>
+  <string name="wear_settings_ignore_focus_description">Blijf spelen als andere apps geluid maken</string>
+
+  <string name="wear_settings_gain">Volume boost</string>
+  <string name="wear_settings_gain_disclaimer">Wees voorzichtig! De ontwikkelaar neemt geen verantwoordelijkheid voor mogelijke schade.</string>
+
+  <string name="wear_settings_always_vibrate">Altijd trillen</string>
+  <string name="wear_settings_always_vibrate_description">Zelfs met geluid</string>
+
+  <string name="wear_settings_strong_vibration">Sterke trilling</string>
+  <string name="wear_settings_strong_vibration_description">Als trilling zwak is</string>
+
+  <string name="wear_settings_flash_screen">Scherm flitsen</string>
+  <string name="wear_settings_flash_screen_description">Op ieder maatdeel</string>
+
+  <string name="wear_settings_reduce_animations">Animaties verminderen</string>
+  <string name="wear_settings_reduce_animations_description">Kan mogelijk prestaties verbeteren</string>
+
+  <string name="wear_settings_keep_awake">Scherm aan houden</string>
+  <string name="wear_settings_keep_awake_description">Als metronoom speelt</string>
+
+  <string name="wear_settings_rate">Beoordeel Tack op Google Play</string>
+  <string name="wear_settings_rate_description">Ontwikkeling ondersteunen</string>
+
+</resources>
