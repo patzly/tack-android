@@ -28,7 +28,9 @@
        the medium variant of Jost*, so there is no extra attention needed for e.g. the app bar.
        Affected languages: Arab, Chinese, Hebrew, Japanese, Uighur -->
 
-  <style name="ThemeOverlay.Tack.AlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+  <style
+    name="ThemeOverlay.Tack.AlertDialog"
+    parent="ThemeOverlay.Material3Expressive.MaterialAlertDialog">
     <item name="android:backgroundDimAmount">0.7</item>
     <item name="buttonBarPositiveButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog</item>
     <item name="buttonBarNegativeButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog</item>
@@ -44,7 +46,9 @@
   </style>
 
   <!-- Prevents title from being displayed with smaller text size when it's long -->
-  <style name="MaterialAlertDialog.Tack.Title.Text" parent="MaterialAlertDialog.Material3.Title.Text">
+  <style
+    name="MaterialAlertDialog.Tack.Title.Text"
+    parent="MaterialAlertDialog.Material3.Title.Text">
     <item name="android:textAppearance">?attr/textAppearanceHeadlineSmall</item>
     <item name="android:capitalize">none</item>
     <item name="android:singleLine">false</item>
@@ -53,9 +57,7 @@
 
   <!-- Toolbar -->
 
-  <style
-    name="Widget.Tack.Toolbar"
-    parent="@style/Widget.Material3.Toolbar.OnSurface">
+  <style name="Widget.Tack.Toolbar" parent="@style/Widget.Material3Expressive.Toolbar.OnSurface">
     <item name="android:layout_width">match_parent</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:minHeight">?attr/actionBarSize</item>
@@ -83,7 +85,7 @@
   <!-- Localized style, no empty base style needed -->
   <style
     name="Widget.Tack.Button.TextButton.Snackbar"
-    parent="Widget.Material3.Button.TextButton.Snackbar">
+    parent="Widget.Material3Expressive.Button.TextButton.Snackbar">
     <item name="android:fontFamily">@font/jost_medium</item>
     <item name="fontFamily">@font/jost_medium</item>
   </style>
@@ -105,18 +107,13 @@
   <!-- Button -->
 
   <!-- Base style -->
-  <style
-    name="Base.Tack.Button.UnelevatedButton"
-    parent="Widget.Material3.Button.UnelevatedButton">
+  <style name="Base.Tack.Button" parent="Widget.Material3Expressive.Button">
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">wrap_content</item>
-    <item name="android:singleLine">true</item>
   </style>
 
   <!-- Localized style -->
-  <style
-    name="Widget.Tack.Button.UnelevatedButton"
-    parent="Base.Tack.Button.UnelevatedButton">
+  <style name="Widget.Tack.Button" parent="Base.Tack.Button">
     <item name="android:fontFamily">@font/jost_medium</item>
     <item name="fontFamily">@font/jost_medium</item>
   </style>
@@ -124,7 +121,7 @@
   <!-- Base style -->
   <style
     name="Base.Tack.Button.OutlinedButton"
-    parent="Widget.Material3.Button.OutlinedButton">
+    parent="Widget.Material3Expressive.Button.OutlinedButton">
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:singleLine">true</item>
@@ -138,16 +135,10 @@
     <item name="fontFamily">@font/jost_medium</item>
   </style>
 
-  <style
-    name="Widget.Tack.Button.OutlinedButton.Elevated"
-    parent="Widget.Tack.Button.OutlinedButton">
-    <item name="strokeColor">@color/selector_button_outline_color_elevated</item>
-  </style>
-
   <!-- Base style -->
   <style
     name="Base.Tack.Button.TextButton"
-    parent="Widget.Material3.Button.TextButton">
+    parent="Widget.Material3Expressive.Button.TextButton">
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:singleLine">true</item>
@@ -164,7 +155,7 @@
   <!-- Localized style, no empty base style needed -->
   <style
     name="Widget.Tack.Button.TextButton.Dialog"
-    parent="Widget.Material3.Button.TextButton.Dialog">
+    parent="Widget.Material3Expressive.Button.TextButton.Dialog">
     <item name="android:singleLine">true</item>
     <item name="android:fontFamily">@font/jost_medium</item>
     <item name="fontFamily">@font/jost_medium</item>
@@ -178,69 +169,49 @@
   </style>
 
   <style
-    name="Widget.Tack.Button.IconButton"
-    parent="Widget.Material3.Button.IconButton">
-    <item name="android:layout_width">48dp</item>
-    <item name="android:layout_height">48dp</item>
-    <item name="iconTint">@color/selector_icon_button_icon_color</item>
-    <item name="iconSize">24dp</item>
-    <item name="android:paddingLeft">8dp</item>
-    <item name="android:paddingRight">8dp</item>
-    <item name="android:paddingTop">6dp</item>
-    <item name="android:paddingBottom">6dp</item>
+    name="Widget.Tack.Button.IconButton.Standard"
+    parent="Widget.Material3Expressive.Button.IconButton.Standard">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
   </style>
 
   <style
     name="Widget.Tack.Button.IconButton.Filled"
-    parent="Widget.Material3.Button.IconButton.Filled">
-    <item name="android:layout_width">48dp</item>
-    <item name="android:layout_height">48dp</item>
-    <item name="iconSize">24dp</item>
-    <item name="android:paddingLeft">8dp</item>
-    <item name="android:paddingRight">8dp</item>
-    <item name="android:paddingTop">6dp</item>
-    <item name="android:paddingBottom">6dp</item>
+    parent="Widget.Material3Expressive.Button.IconButton.Filled">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
   </style>
 
   <style
-    name="Widget.Tack.Button.IconButton.Filled.Tonal"
-    parent="Widget.Material3.Button.IconButton.Filled.Tonal">
-    <item name="android:layout_width">48dp</item>
-    <item name="android:layout_height">48dp</item>
-    <item name="iconSize">24dp</item>
-    <item name="android:paddingLeft">8dp</item>
-    <item name="android:paddingRight">8dp</item>
-    <item name="android:paddingTop">6dp</item>
-    <item name="android:paddingBottom">6dp</item>
+    name="Widget.Tack.Button.IconButton.Tonal"
+    parent="Widget.Material3Expressive.Button.IconButton.Tonal">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal.Medium.Narrow"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Medium.Narrow</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal.Medium.Wide"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Medium.Wide</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Small.Narrow</item>
   </style>
 
   <style
     name="Widget.Tack.Button.IconButton.Outlined"
-    parent="Widget.Material3.Button.IconButton.Outlined">
-    <item name="android:layout_width">48dp</item>
-    <item name="android:layout_height">48dp</item>
-    <item name="iconSize">24dp</item>
-    <item name="android:paddingLeft">8dp</item>
-    <item name="android:paddingRight">8dp</item>
-    <item name="android:paddingTop">6dp</item>
-    <item name="android:paddingBottom">6dp</item>
-  </style>
-
-  <style name="ShapeAppearance.Tack.Button.IconButton.Shape.Corner" parent="">
-    <item name="cornerSizeTopLeft">8dp</item>
-    <item name="cornerSizeBottomLeft">8dp</item>
-    <item name="cornerSizeTopRight">8dp</item>
-    <item name="cornerSizeBottomRight">8dp</item>
-  </style>
-
-  <style name="ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Top" parent="">
-    <item name="cornerSizeBottomLeft">8dp</item>
-    <item name="cornerSizeBottomRight">8dp</item>
-  </style>
-
-  <style name="ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Bottom" parent="">
-    <item name="cornerSizeTopRight">8dp</item>
-    <item name="cornerSizeTopLeft">8dp</item>
+    parent="Widget.Material3Expressive.Button.IconButton.Outlined">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
   </style>
 
   <!-- RadioButton -->

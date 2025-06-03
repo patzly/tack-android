@@ -164,7 +164,7 @@ public class SettingsFragment extends BaseFragment
       getSharedPrefs().edit().putInt(PREF.UI_MODE, pref).apply();
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsTheme);
-      activity.restartToApply(0, getInstanceState(), true, false);
+      activity.restartToApply(200, getInstanceState(), true, false);
     });
 
     int idContrast;

@@ -109,7 +109,7 @@
 
   <com.google.android.material.button.MaterialButton
     android:id="@+id/button_song_close_selected"
-    style="@style/Widget.Tack.Button.IconButton"
+    style="@style/Widget.Tack.Button.IconButton.Standard"
     android:contentDescription="@string/action_close"
     app:iconTint="?attr/colorOnTertiaryContainer"
     app:icon="@drawable/ic_rounded_close_anim" />
@@ -124,7 +124,7 @@
 
     <com.google.android.material.button.MaterialButton
       android:id="@+id/button_song_play_unselected"
-      style="@style/Widget.Tack.Button.IconButton"
+      style="@style/Widget.Tack.Button.IconButton.Standard"
       android:layout_gravity="center_vertical"
       android:contentDescription="@string/action_play"
       app:icon="@drawable/ic_rounded_play_arrow" />

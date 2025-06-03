@@ -24,6 +24,6 @@
     <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_logo_anim</item>
   </style>
 
-  <style name="Theme.Tack.Widget" parent="Theme.Material3.DynamicColors.DayNight" />
+  <style name="Theme.Tack.Widget" parent="Theme.Material3Expressive.DynamicColors.DayNight" />
 
 </resources>

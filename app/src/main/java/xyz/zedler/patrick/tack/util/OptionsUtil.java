@@ -19,12 +19,14 @@
 
 package xyz.zedler.patrick.tack.util;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.button.MaterialButtonToggleGroup.OnButtonCheckedListener;
 import com.google.android.material.slider.Slider;
@@ -201,6 +203,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
             : R.id.button_options_incremental_decrease
     );
     binding.toggleOptionsIncrementalDirection.addOnButtonCheckedListener(this);
+    updateSurfaceToggleButtons(binding.toggleOptionsIncrementalDirection);
     binding.toggleOptionsIncrementalDirection.setEnabled(isIncrementalActive);
 
     int incrementalInterval = getMetronomeUtil().getIncrementalInterval();
@@ -251,6 +254,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding.toggleOptionsIncrementalUnit.removeOnButtonCheckedListener(this);
     binding.toggleOptionsIncrementalUnit.check(checkedId);
     binding.toggleOptionsIncrementalUnit.addOnButtonCheckedListener(this);
+    updateSurfaceToggleButtons(binding.toggleOptionsIncrementalUnit);
     binding.toggleOptionsIncrementalUnit.setEnabled(isIncrementalActive);
 
     int incrementalLimit = getMetronomeUtil().getIncrementalLimit();
@@ -402,6 +406,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding.toggleOptionsTimerUnit.removeOnButtonCheckedListener(this);
     binding.toggleOptionsTimerUnit.check(checkedId);
     binding.toggleOptionsTimerUnit.addOnButtonCheckedListener(this);
+    updateSurfaceToggleButtons(binding.toggleOptionsTimerUnit);
     binding.toggleOptionsTimerUnit.setEnabled(isTimerActive);
   }
 
@@ -460,6 +465,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding.toggleOptionsMuteUnit.removeOnButtonCheckedListener(this);
     binding.toggleOptionsMuteUnit.check(checkedId);
     binding.toggleOptionsMuteUnit.addOnButtonCheckedListener(this);
+    updateSurfaceToggleButtons(binding.toggleOptionsMuteUnit);
     binding.toggleOptionsMuteUnit.setEnabled(isMuteActive);
 
     binding.linearOptionsMuteRandom.setOnClickListener(this);
@@ -539,6 +545,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       binding.toggleOptionsSwing.clearChecked();
     }
     binding.toggleOptionsSwing.addOnButtonCheckedListener(this);
+    updateSurfaceToggleButtons(binding.toggleOptionsSwing);
   }
 
   @Override
@@ -704,5 +711,25 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
 
   private MetronomeUtil getMetronomeUtil() {
     return activity.getMetronomeUtil();
+  }
+
+  private void updateSurfaceToggleButtons(MaterialButtonToggleGroup toggleGroup) {
+    if (useDialog) {
+      int strokeColor = ResUtil.getColor(activity, R.attr.colorOutlineVariant);
+      int bgColorChecked = ResUtil.getColor(activity, R.attr.colorPrimary);
+      int bgColorUnchecked = ResUtil.getColor(activity, R.attr.colorSurfaceContainerHigh);
+      for (int i = 0; i < toggleGroup.getChildCount(); i++) {
+        View child = toggleGroup.getChildAt(i);
+        MaterialButton button = (MaterialButton) child;
+        button.setStrokeColor(ColorStateList.valueOf(strokeColor));
+        if (button.getId() != toggleGroup.getCheckedButtonId()) {
+          button.setStrokeWidth(UiUtil.dpToPx(activity, 1));
+          button.setBackgroundTintList(ColorStateList.valueOf(bgColorUnchecked));
+        } else {
+          button.setStrokeWidth(0);
+          button.setBackgroundTintList(ColorStateList.valueOf(bgColorChecked));
+        }
+      }
+    }
   }
 }

@@ -68,6 +68,7 @@
   <string name="label_tempo_input_help">Values from %1$d to %2$d</string>
   <string name="label_part_name">Part name</string>
   <string name="label_part_unnamed">Part %1$d</string>
+  <string name="label_part_current">Part %1$d: %2$s</string>
   <string name="label_part_no_duration">No duration</string>
   <plurals name="label_parts_count">
     <item quantity="one">%1$d part</item>

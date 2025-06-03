@@ -125,7 +125,7 @@
 
             <com.google.android.material.button.MaterialButton
               android:id="@+id/button_main_remove_beat"
-              style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+              style="@style/Widget.Tack.Button.IconButton.Tonal"
               android:contentDescription="@string/action_remove_beat"
               android:layout_marginStart="4dp"
               android:layout_marginTop="4dp"
@@ -159,7 +159,7 @@
 
             <com.google.android.material.button.MaterialButton
               android:id="@+id/button_main_add_beat"
-              style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+              style="@style/Widget.Tack.Button.IconButton.Tonal"
               android:contentDescription="@string/action_add_beat"
               android:layout_marginEnd="4dp"
               android:layout_marginTop="4dp"
@@ -183,7 +183,7 @@
 
             <com.google.android.material.button.MaterialButton
               android:id="@+id/button_main_remove_subdivision"
-              style="@style/Widget.Tack.Button.IconButton"
+              style="@style/Widget.Tack.Button.IconButton.Standard"
               android:contentDescription="@string/action_remove_sub"
               android:layout_marginStart="4dp"
               android:layout_marginTop="4dp"
@@ -214,7 +214,7 @@
 
             <com.google.android.material.button.MaterialButton
               android:id="@+id/button_main_add_subdivision"
-              style="@style/Widget.Tack.Button.IconButton"
+              style="@style/Widget.Tack.Button.IconButton.Standard"
               android:contentDescription="@string/action_add_sub"
               android:layout_marginEnd="4dp"
               android:layout_marginTop="4dp"
@@ -380,10 +380,11 @@
 
       </FrameLayout>
 
-      <LinearLayout
+      <com.google.android.material.button.MaterialButtonGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:spacing="0dp"
         android:layout_marginStart="@dimen/controls_center_spacing"
         app:layout_constraintTop_toTopOf="@id/frame_main_center"
         app:layout_constraintBottom_toBottomOf="@id/frame_main_center"
@@ -392,31 +393,29 @@
 
         <com.google.android.material.button.MaterialButton
           android:id="@+id/button_main_less_1"
-          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
           android:contentDescription="@string/action_decrease"
-          app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Top"
           app:icon="@drawable/ic_rounded_navigate_before_anim" />
 
         <com.google.android.material.button.MaterialButton
           android:id="@+id/button_main_less_5"
-          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
           android:contentDescription="@string/action_decrease"
-          app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner"
           app:icon="@drawable/ic_rounded_keyboard_double_arrow_left_anim" />
 
         <com.google.android.material.button.MaterialButton
           android:id="@+id/button_main_less_10"
-          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
           android:contentDescription="@string/action_decrease"
-          app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Bottom"
           app:icon="@drawable/ic_rounded_triple_arrow_left_anim" />
 
-      </LinearLayout>
+      </com.google.android.material.button.MaterialButtonGroup>
 
-      <LinearLayout
+      <com.google.android.material.button.MaterialButtonGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:spacing="0dp"
         android:layout_marginEnd="@dimen/controls_center_spacing"
         app:layout_constraintTop_toTopOf="@id/frame_main_center"
         app:layout_constraintBottom_toBottomOf="@id/frame_main_center"
@@ -425,26 +424,23 @@
 
         <com.google.android.material.button.MaterialButton
           android:id="@+id/button_main_more_1"
-          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
           android:contentDescription="@string/action_increase"
-          app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Top"
           app:icon="@drawable/ic_rounded_navigate_after_anim" />
 
         <com.google.android.material.button.MaterialButton
           android:id="@+id/button_main_more_5"
-          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
           android:contentDescription="@string/action_increase"
-          app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner"
           app:icon="@drawable/ic_rounded_keyboard_double_arrow_right_anim" />
 
         <com.google.android.material.button.MaterialButton
           android:id="@+id/button_main_more_10"
-          style="@style/Widget.Tack.Button.IconButton.Filled.Tonal"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
           android:contentDescription="@string/action_increase"
-          app:shapeAppearanceOverlay="@style/ShapeAppearance.Tack.Button.IconButton.Shape.Corner.Bottom"
           app:icon="@drawable/ic_rounded_triple_arrow_right_anim" />
 
-      </LinearLayout>
+      </com.google.android.material.button.MaterialButtonGroup>
 
       <LinearLayout
         android:id="@+id/linear_main_bottom"
@@ -470,13 +466,13 @@
 
           <com.google.android.material.button.MaterialButton
             android:id="@+id/button_main_options"
-            style="@style/Widget.Tack.Button.IconButton"
+            style="@style/Widget.Tack.Button.IconButton.Standard"
             android:contentDescription="@string/title_options"
             app:icon="@drawable/ic_rounded_tune_anim" />
 
           <com.google.android.material.button.MaterialButton
             android:id="@+id/button_main_tempo_tap"
-            style="@style/Widget.Tack.Button.IconButton"
+            style="@style/Widget.Tack.Button.IconButton.Standard"
             android:contentDescription="@string/action_tempo_tap"
             app:icon="@drawable/ic_rounded_touch_app_anim" />
 
@@ -501,13 +497,13 @@
 
           <com.google.android.material.button.MaterialButton
             android:id="@+id/button_main_songs"
-            style="@style/Widget.Tack.Button.IconButton"
+            style="@style/Widget.Tack.Button.IconButton.Standard"
             android:contentDescription="@string/title_songs"
             app:icon="@drawable/ic_rounded_queue_music" />
 
           <com.google.android.material.button.MaterialButton
             android:id="@+id/button_main_beat_mode"
-            style="@style/Widget.Tack.Button.IconButton"
+            style="@style/Widget.Tack.Button.IconButton.Standard"
             android:contentDescription="@string/action_beat_mode"
             app:icon="@drawable/ic_rounded_vibration_to_volume_up_anim" />
 

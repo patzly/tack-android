@@ -164,17 +164,17 @@
 
             <Button
               android:id="@+id/button_settings_theme_auto"
-              style="@style/Widget.Tack.Button.OutlinedButton"
+              style="@style/Widget.Tack.Button"
               android:text="@string/settings_theme_auto" />
 
             <Button
               android:id="@+id/button_settings_theme_light"
-              style="@style/Widget.Tack.Button.OutlinedButton"
+              style="@style/Widget.Tack.Button"
               android:text="@string/settings_theme_light" />
 
             <Button
               android:id="@+id/button_settings_theme_dark"
-              style="@style/Widget.Tack.Button.OutlinedButton"
+              style="@style/Widget.Tack.Button"
               android:text="@string/settings_theme_dark" />
 
           </com.google.android.material.button.MaterialButtonToggleGroup>
@@ -241,17 +241,17 @@
 
             <Button
               android:id="@+id/button_other_contrast_standard"
-              style="@style/Widget.Tack.Button.OutlinedButton"
+              style="@style/Widget.Tack.Button"
               android:text="@string/settings_contrast_standard" />
 
             <Button
               android:id="@+id/button_other_contrast_medium"
-              style="@style/Widget.Tack.Button.OutlinedButton"
+              style="@style/Widget.Tack.Button"
               android:text="@string/settings_contrast_medium" />
 
             <Button
               android:id="@+id/button_other_contrast_high"
-              style="@style/Widget.Tack.Button.OutlinedButton"
+              style="@style/Widget.Tack.Button"
               android:text="@string/settings_contrast_high" />
 
           </com.google.android.material.button.MaterialButtonToggleGroup>
