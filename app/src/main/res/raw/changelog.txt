@@ -3,6 +3,7 @@
 ## 5.1.0
 
 - New: Material 3 Expressive style throughout the app
+- Improved: play/stop button now responds on press down instead of release for a more responsive feel
 - Improved: maximum width of applied song chip in song picker
 - Fixed: crash caused by incorrect layout handling
 - Fixed: crash caused by invalid tempo values

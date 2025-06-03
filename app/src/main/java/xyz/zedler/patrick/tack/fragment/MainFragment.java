@@ -34,6 +34,7 @@ import android.os.Looper;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -492,6 +493,23 @@ public class MainFragment extends BaseFragment
     binding.fabMainPlayStop.setImageResource(R.drawable.ic_rounded_play_to_stop_fill_anim);
     binding.fabMainPlayStop.setMaxImageSize(UiUtil.dpToPx(activity, large ? 36 : 24));
     binding.fabMainPlayStop.setCustomSize(UiUtil.dpToPx(activity, large ? 96 : 56));
+    binding.fabMainPlayStop.setOnTouchListener((v, event) -> {
+      if (event.getAction() == MotionEvent.ACTION_DOWN) {
+        if (getMetronomeUtil().isPlaying()) {
+          performHapticClick();
+          getMetronomeUtil().stop();
+        } else {
+          if (getMetronomeUtil().getGain() > 0 && getMetronomeUtil().neverStartedWithGainBefore()) {
+            dialogUtilGain.show();
+          } else {
+            getMetronomeUtil().start();
+          }
+          performHapticClick();
+        }
+        return true;
+      }
+      return false;
+    });
     if (!isWidthLargeEnough) {
       // Reduce bottom controls padding for small screens or large scaling
       int padding = UiUtil.dpToPx(activity, 4);
@@ -507,7 +525,6 @@ public class MainFragment extends BaseFragment
     ViewUtil.setTooltipText(binding.buttonMainRemoveSubdivision, R.string.action_remove_sub);
     ViewUtil.setTooltipText(binding.buttonMainOptions, R.string.title_options);
     ViewUtil.setTooltipText(binding.buttonMainTempoTap, R.string.action_tempo_tap);
-    ViewUtil.setTooltipText(binding.fabMainPlayStop, R.string.action_play_stop);
     ViewUtil.setTooltipText(binding.buttonMainSongs, R.string.title_songs);
     ViewUtil.setTooltipText(binding.buttonMainBeatMode, R.string.action_beat_mode);
 
@@ -547,8 +564,7 @@ public class MainFragment extends BaseFragment
         binding.buttonMainBeatMode,
         binding.buttonMainSongs,
         binding.buttonMainOptions,
-        binding.buttonMainTempoTap,
-        binding.fabMainPlayStop
+        binding.buttonMainTempoTap
     );
   }
 
@@ -910,18 +926,6 @@ public class MainFragment extends BaseFragment
         updateSubControls(true);
         optionsUtil.updateSubdivisions();
         optionsUtil.updateSwing();
-      }
-    } else if (id == R.id.fab_main_play_stop) {
-      if (getMetronomeUtil().isPlaying()) {
-        performHapticClick();
-        getMetronomeUtil().stop();
-      } else {
-        if (getMetronomeUtil().getGain() > 0 && getMetronomeUtil().neverStartedWithGainBefore()) {
-          dialogUtilGain.show();
-        } else {
-          getMetronomeUtil().start();
-        }
-        performHapticClick();
       }
     } else if (id == R.id.button_main_less_1) {
       ViewUtil.startIcon(binding.buttonMainLess1.getIcon());
