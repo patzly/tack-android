@@ -269,7 +269,7 @@ public class SongPickerView extends FrameLayout {
               int colorPrimary = ResUtil.getColor(context, R.attr.colorPrimary);
               int colorSurface = ResUtil.getColor(context, R.attr.colorSurface);
               int colorOnSurface = ResUtil.getColor(context, R.attr.colorOnSurface);
-              int colorOutline = ResUtil.getColor(context, R.attr.colorOutline);
+              int colorOutlineVariant = ResUtil.getColor(context, R.attr.colorOutlineVariant);
 
               float colorFraction = Math.max(0, Math.min(1, fraction));
               int colorBg = ColorUtils.blendARGB(
@@ -282,7 +282,7 @@ public class SongPickerView extends FrameLayout {
                   colorPrimary, colorOnTertiaryContainer, colorFraction
               );
               int colorStroke = ColorUtils.blendARGB(
-                  colorOutline, colorOnTertiaryContainer, colorFraction
+                  colorOutlineVariant, Color.TRANSPARENT, colorFraction
               );
               binding.cardSongPickerChip.setCardBackgroundColor(colorBg);
               binding.cardSongPickerChip.setStrokeColor(colorStroke);

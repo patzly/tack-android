@@ -28,4 +28,5 @@
   app:chipIcon="@drawable/ic_rounded_music_note_anim"
   app:chipIconTint="?attr/colorPrimary"
   app:closeIconVisible="false"
+  app:chipStrokeColor="?attr/colorOutlineVariant"
   android:textAppearance="@style/TextAppearance.Tack.LabelLarge" />

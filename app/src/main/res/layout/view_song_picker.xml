@@ -62,7 +62,7 @@
         android:clickable="true"
         app:contentPadding="0dp"
         app:strokeWidth="1dp"
-        app:strokeColor="?attr/colorOnTertiaryContainer"
+        app:strokeColor="@color/transparent"
         app:rippleColor="@color/selector_highlight_tertiary"
         app:cardCornerRadius="8dp"
         app:cardBackgroundColor="?attr/colorTertiaryContainer">
