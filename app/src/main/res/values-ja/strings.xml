@@ -55,6 +55,7 @@
   <string name="label_tempo_input_help">%1$dから%2$dまでの値</string>
   <string name="label_part_name">パート名</string>
   <string name="label_part_unnamed">パート %1$d</string>
+  <string name="label_part_current">パート %1$d: %2$s</string>
   <string name="label_part_no_duration">期間なし</string>
   <plurals name="label_parts_count">
     <item quantity="other">%1$d パート</item>
