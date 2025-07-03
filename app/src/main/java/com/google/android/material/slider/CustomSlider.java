@@ -57,7 +57,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.Px;
 import androidx.annotation.Size;
 import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
-import com.google.android.material.internal.ViewOverlayImpl;
 import com.google.android.material.internal.ViewUtils;
 import com.google.android.material.shape.MaterialShapeDrawable;
 import com.google.android.material.tooltip.TooltipDrawable;
@@ -115,7 +114,7 @@ public class CustomSlider extends Slider {
       }
       contentView.getHitRect(contentViewBounds);
       boolean isSliderVisibleOnScreen = getLocalVisibleRect(contentViewBounds);
-      ViewOverlayImpl contentViewOverlay = ViewUtils.getContentViewOverlay(this);
+      ViewOverlay contentViewOverlay = ViewUtils.getContentViewOverlay(this);
       if (contentViewOverlay == null) {
         return;
       }

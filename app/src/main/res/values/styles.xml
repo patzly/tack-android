@@ -107,7 +107,7 @@
   <!-- Button -->
 
   <!-- Base style -->
-  <style name="Base.Tack.Button" parent="Widget.Material3Expressive.Button">
+  <style name="Base.Tack.Button" parent="Widget.Material3.Button">
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">wrap_content</item>
   </style>
