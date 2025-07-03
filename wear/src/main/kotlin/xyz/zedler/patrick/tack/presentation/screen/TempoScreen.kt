@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -183,12 +182,6 @@ fun CenterPicker(
   onOptionChange: (Int) -> Unit,
   modifier: Modifier
 ) {
-  val bpm = stringResource(
-    id = R.string.wear_label_bpm_value,
-    pickerState.selectedOptionIndex + 1
-  )
-  val contentDescription by remember { derivedStateOf { bpm } }
-
   LaunchedEffect(pickerState.selectedOptionIndex) {
     onOptionChange(pickerState.selectedOptionIndex)
   }
@@ -203,8 +196,7 @@ fun CenterPicker(
       fontSize = if (isSmallScreen()) 24.sp else 32.sp
     ),
     hapticFeedbackEnabled = !mainState.isPlaying ||
-        (!mainState.beatModeVibrate && !mainState.alwaysVibrate),
-    contentDescription = contentDescription,
+        (!mainState.beatModeVibrate && !mainState.alwaysVibrate)
   )
 }
 

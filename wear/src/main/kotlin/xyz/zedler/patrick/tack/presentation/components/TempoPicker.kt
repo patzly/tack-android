@@ -50,7 +50,6 @@ import java.lang.reflect.Field
 @Composable
 fun TempoPicker(
   state: PickerState,
-  contentDescription: String?,
   modifier: Modifier = Modifier,
   verticalSpacing: Dp = 0.dp,
   textColor: Color = MaterialTheme.colorScheme.onSurface,
@@ -61,7 +60,7 @@ fun TempoPicker(
   val items = (Constants.TEMPO_MIN..Constants.TEMPO_MAX).toList()
   Picker(
     state = state,
-    contentDescription = contentDescription,
+    contentDescription = { "${state.selectedOptionIndex + 1}" },
     modifier = modifier,
     verticalSpacing = verticalSpacing,
     gradientRatio = gradientRatio,
@@ -95,8 +94,7 @@ fun TempoPickerPreview() {
     )
     TempoPicker(
       state = state,
-      modifier = Modifier.size(100.dp, 100.dp),
-      contentDescription = null
+      modifier = Modifier.size(100.dp, 100.dp)
     )
   }
 }

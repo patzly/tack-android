@@ -33,7 +33,6 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -322,12 +321,6 @@ fun TempoCard(
     shape = MaterialTheme.shapes.extraLarge,
     contentPadding = PaddingValues(0.dp)
   ) {
-    val bpm = stringResource(
-      id = R.string.wear_label_bpm_value,
-      pickerState.selectedOptionIndex + 1
-    )
-    val contentDescription by remember { derivedStateOf { bpm } }
-
     val minRatio = 0.001f // 0 would cause a small y-offset
     val gradientRatio by animateFloatAsState(
       targetValue = if (ambient) 0.2f else 0f,
@@ -355,8 +348,7 @@ fun TempoCard(
       ),
       gradientRatio = if (gradientRatio > minRatio) gradientRatio else minRatio,
       hapticFeedbackEnabled = !mainState.isPlaying ||
-          (!mainState.beatModeVibrate && !mainState.alwaysVibrate),
-      contentDescription = contentDescription
+          (!mainState.beatModeVibrate && !mainState.alwaysVibrate)
     )
   }
 }
