@@ -74,9 +74,13 @@
 
       <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_main"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_gravity="end"
+        android:paddingStart="0dp"
+        android:paddingEnd="12dp"
+        android:background="@drawable/shape_action_overflow_button_bg"
+        android:backgroundTint="?attr/colorSurfaceContainer"
         app:menu="@menu/menu_main" />
 
     </FrameLayout>
@@ -338,6 +342,7 @@
     </FrameLayout>
 
     <com.google.android.material.button.MaterialButtonGroup
+      android:id="@+id/button_group_main_less"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:orientation="vertical"
