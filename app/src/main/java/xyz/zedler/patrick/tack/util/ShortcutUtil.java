@@ -73,7 +73,10 @@ public class ShortcutUtil {
 
   public void addAllShortcuts(@NonNull List<ShortcutInfo> shortcuts) {
     if (isSupported()) {
-      manager.addDynamicShortcuts(shortcuts);
+      // Ensure we do not exceed the maximum number of shortcuts else it will throw an exception
+      manager.addDynamicShortcuts(
+          shortcuts.subList(0, Math.min(shortcuts.size(), getMaxShortcutCount()))
+      );
     }
   }
 

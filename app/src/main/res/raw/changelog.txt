@@ -2,12 +2,13 @@
 
 ## 5.1.0
 
-- New: Material 3 Expressive design throughout the app
+- New: Material 3 Expressive design throughout the app TODO
 - Improved: play/stop button now responds on press down instead of release for a more responsive feel
 - Improved: updated slider experience TODO
 - Improved: song picker colors
 - Fixed: crash caused by incorrect layout handling
 - Fixed: crash caused by invalid tempo values
+- Fixed: crash caused by app shortcut limit being reached (thanks Fabian!)
 - Fixed: tempo buttons not updating correctly
 - Fixed: incorrect song picker colors during chip animation
 - Fixed: incorrect size of subdivision controls on tablets in landscape mode

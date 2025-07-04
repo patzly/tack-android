@@ -551,7 +551,11 @@ public class MetronomeUtil {
       filteredSongs.subList(0, Math.min(filteredSongs.size(), shortcutUtil.getMaxShortcutCount()));
       List <ShortcutInfo> shortcuts = new ArrayList<>();
       for (Song song : filteredSongs) {
-        shortcuts.add(shortcutUtil.getShortcutInfo(song.getId(), song.getName()));
+        if (shortcuts.size() < shortcutUtil.getMaxShortcutCount()) {
+          shortcuts.add(shortcutUtil.getShortcutInfo(song.getId(), song.getName()));
+        } else {
+          break;
+        }
       }
       shortcutUtil.addAllShortcuts(shortcuts);
     });

@@ -96,7 +96,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     binding.linearAboutKey.setVisibility(
         UnlockUtil.isPlayStoreInstalled(activity) ? View.VISIBLE : View.GONE
     );
-    if (!activity.isUnlocked() && UnlockUtil.isKeyInstalled(activity)) {
+    if (!activity.isUnlocked()) {
       binding.linearAboutKey.setOnLongClickListener(v -> {
         longClickCount++;
         if (longClickCount >= 5) {
@@ -189,22 +189,19 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     if (!UnlockUtil.isPlayStoreInstalled(activity)) {
       return;
     }
-    boolean isKeyInstalled = UnlockUtil.isKeyInstalled(activity);
-    boolean checkInstaller = getSharedPrefs().getBoolean(PREF.CHECK_INSTALLER, DEF.CHECK_INSTALLER);
     int resId = R.string.about_key_description_not_installed;
     int textColor = ResUtil.getColor(activity, R.attr.colorOnSurfaceVariant);
-    if (isKeyInstalled) {
-      if (checkInstaller) {
-        boolean isInstallerValid = UnlockUtil.isInstallerValid(activity);
-        resId = isInstallerValid
-            ? R.string.about_key_description_installed
-            : R.string.about_key_description_invalid;
-        if (!isInstallerValid) {
-          textColor = ResUtil.getColor(activity, R.attr.colorError);
-        }
-      } else {
-        resId = R.string.about_key_description_installed;
+    if (getSharedPrefs().getBoolean(PREF.CHECK_INSTALLER, DEF.CHECK_INSTALLER)) {
+      boolean isInstallerValid = UnlockUtil.isKeyInstalled(activity)
+          && UnlockUtil.isInstallerValid(activity);
+      resId = isInstallerValid
+          ? R.string.about_key_description_installed
+          : R.string.about_key_description_invalid;
+      if (!isInstallerValid) {
+        textColor = ResUtil.getColor(activity, R.attr.colorError);
       }
+    } else {
+      resId = R.string.about_key_description_installed;
     }
     binding.textAboutKeyDescription.setText(resId);
     binding.textAboutKeyDescription.setTextColor(textColor);
