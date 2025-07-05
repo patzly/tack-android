@@ -1,5 +1,3 @@
-? Song library has arrived! I worked hard to give you an easy way to manage different metronome configurations and arrange them for playback. This feature comes with a brand new home screen widget and refined app shortcuts. Hope you like it!
-
 ## 5.1.0
 
 - New: Material 3 Expressive design throughout the app TODO

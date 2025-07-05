@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 /*
  * This file is part of Tack Android.
  *
@@ -25,12 +27,12 @@ plugins {
 
 android {
   namespace = "xyz.zedler.patrick.tack"
-  compileSdk = 35
+  compileSdk = 36
 
   defaultConfig {
     applicationId = "xyz.zedler.patrick.tack"
     minSdk = 26
-    targetSdk = 34
+    targetSdk = 36
     versionCode = 301 // last number is 1 for wear release
     versionName = "4.8.2"
     resourceConfigurations += listOf(
@@ -58,8 +60,10 @@ android {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_17
   }
-  kotlinOptions {
-    jvmTarget = "17"
+  kotlin {
+    compilerOptions {
+      jvmTarget.set(JvmTarget.JVM_17)
+    }
   }
   lint {
     abortOnError = false
@@ -67,8 +71,6 @@ android {
   }
   buildFeatures {
     compose = true
-  }
-  composeOptions {
   }
   packaging {
     resources {
