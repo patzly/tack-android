@@ -370,7 +370,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|top" />
 
-          <TextView
+          <com.google.android.material.textview.MaterialTextView
             android:id="@+id/text_main_tempo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -380,6 +380,7 @@
             android:layout_gravity="top"
             android:gravity="center_horizontal"
             android:textAlignment="center"
+            android:fontFamily="@font/nunito_semi_bold"
             android:fontFeatureSettings="tnum"
             android:textAppearance="?attr/textAppearanceDisplayLarge"
             android:textSize="@dimen/bpm_text_size" />

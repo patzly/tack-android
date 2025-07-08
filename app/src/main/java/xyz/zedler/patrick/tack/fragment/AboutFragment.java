@@ -166,7 +166,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     } else if (id == R.id.linear_about_license_jost) {
       ViewUtil.startIcon(binding.imageAboutLicenseJost);
       activity.showTextBottomSheet(
-          R.raw.license_ofl, R.string.license_jost, R.string.license_jost_link
+          R.raw.license_ofl, R.string.license_nunito, R.string.license_nunito_link
       );
     } else if (id == R.id.linear_about_license_material_components) {
       ViewUtil.startIcon(binding.imageAboutLicenseMaterialComponents);

@@ -28,6 +28,8 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.Drawable;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -180,7 +182,7 @@ public class MainFragment extends BaseFragment
     activeBeat = getSharedPrefs().getBoolean(PREF.ACTIVE_BEAT, DEF.ACTIVE_BEAT);
 
     if (getSharedPrefs().getBoolean(PREF.BIG_TIME_TEXT, DEF.BIG_TIME_TEXT)) {
-      Typeface typeface = ResourcesCompat.getFont(activity, R.font.jost_book);
+      Typeface typeface = ResourcesCompat.getFont(activity, R.font.nunito_medium);
       binding.chipMainTimerCurrent.textChipNumbers.setTextSize(28);
       binding.chipMainTimerCurrent.textChipNumbers.setTypeface(typeface);
       binding.chipMainElapsedTime.textChipNumbers.setTextSize(28);
@@ -384,6 +386,12 @@ public class MainFragment extends BaseFragment
     });
 
     binding.circleMain.setReduceAnimations(reduceAnimations);
+    binding.circleMain.setOnDragAnimListener(fraction -> {
+      if (VERSION.SDK_INT >= VERSION_CODES.O) {
+        binding.textMainTempo.setFontVariationSettings("'wght' " + (600 + (fraction * 100)));
+      }
+    });
+
     binding.tempoPickerMain.setOnRotationListener(new OnRotationListener() {
       @Override
       public void onRotate(int tempo) {
@@ -517,6 +525,11 @@ public class MainFragment extends BaseFragment
       binding.linearMainBottomControlsEnd.setPadding(padding, padding, padding, padding);
     }
 
+    if (VERSION.SDK_INT >= VERSION_CODES.O) {
+      Typeface variableTypeface = ResourcesCompat.getFont(activity, R.font.nunito_variable_wght);
+      binding.textMainTempo.setTypeface(variableTypeface);
+      binding.textMainTempo.setFontVariationSettings("'wght' 600");
+    }
     updateMetronomeControls();
 
     ViewUtil.setTooltipText(binding.buttonMainAddBeat, R.string.action_add_beat);

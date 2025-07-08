@@ -21,7 +21,6 @@ package xyz.zedler.patrick.tack.view;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -66,8 +65,10 @@ public class CircleView extends View {
   private float touchX, touchY;
   private float gradientBlendRatio = 0;
   private float innerRadius;
-  private AnimatorSet animatorSet;
+  private float currentFraction;
+  private ValueAnimator animator;
   private boolean reduceAnimations;
+  private OnDragAnimListener onDragAnimListener;
 
   public CircleView(@NonNull Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
@@ -115,6 +116,10 @@ public class CircleView extends View {
     updateShape();
   }
 
+  public void setOnDragAnimListener(OnDragAnimListener listener) {
+    onDragAnimListener = listener;
+  }
+
   private void updateShape() {
     RoundedPolygon star = ShapesKt.star(companion, waves, 1, innerRadius, cornerRounding);
     path.set(Shapes_androidKt.toPath(star));
@@ -133,38 +138,35 @@ public class CircleView extends View {
       touchX = x;
       touchY = y;
     }
-    if (animatorSet != null) {
-      animatorSet.pause();
-      animatorSet.cancel();
+    if (animator != null) {
+      animator.pause();
+      animator.cancel();
     }
-    // inner radius
-    ValueAnimator animatorAmplitude = ValueAnimator.ofFloat(
-        innerRadius, dragged ? innerRadiusDrag : innerRadiusDefault
-    );
-    animatorAmplitude.addUpdateListener(animation -> {
-      innerRadius = (float) animatorAmplitude.getAnimatedValue();
+    animator = ValueAnimator.ofFloat(currentFraction, dragged ? 1 : 0);
+    animator.addUpdateListener(animation -> {
+      currentFraction = (float) animator.getAnimatedValue();
+      // inner radius
+      innerRadius = innerRadiusDefault + (innerRadiusDrag - innerRadiusDefault) * currentFraction;
       updateShape();
-    });
-    // shader color
-    ValueAnimator alphaAnimator = ValueAnimator.ofFloat(gradientBlendRatio, dragged ? 0.5f : 0);
-    alphaAnimator.addUpdateListener(animation -> {
-      gradientBlendRatio = (float) alphaAnimator.getAnimatedValue();
+      // shader color
+      gradientBlendRatio = 0f + (0.5f - 0f) * currentFraction;
       paintFill.setShader(getGradient());
       invalidate();
+      if (onDragAnimListener != null) {
+        onDragAnimListener.onDragAnim(currentFraction);
+      }
     });
 
     if (!reduceAnimations) {
-      animatorSet = new AnimatorSet();
-      animatorSet.playTogether(alphaAnimator, animatorAmplitude);
-      animatorSet.setInterpolator(new FastOutSlowInInterpolator());
-      animatorSet.setDuration(Constants.ANIM_DURATION_LONG);
-      animatorSet.addListener(new AnimatorListenerAdapter() {
+      animator.setInterpolator(new FastOutSlowInInterpolator());
+      animator.setDuration(Constants.ANIM_DURATION_LONG);
+      animator.addListener(new AnimatorListenerAdapter() {
         @Override
         public void onAnimationEnd(Animator animation) {
-          animatorSet = null;
+          animator = null;
         }
       });
-      animatorSet.start();
+      animator.start();
     } else {
       innerRadius = innerRadiusDefault;
       updateShape();
@@ -211,5 +213,9 @@ public class CircleView extends View {
 
   public void setReduceAnimations(boolean reduce) {
     reduceAnimations = reduce;
+  }
+
+  public interface OnDragAnimListener {
+    void onDragAnim(float fraction);
   }
 }
