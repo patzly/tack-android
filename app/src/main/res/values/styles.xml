@@ -20,12 +20,12 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-  <!-- For languages not supported by Nunito, the system font will be used as fallback.
-       If the system font is used, the medium variant of Nunito won't be replaced by a medium/bold
+  <!-- For languages not supported by Jost*, the system font will be used as fallback.
+       If the system font is used, the medium variant of Jost* won't be replaced by a medium/bold
        variant of the system font, so we have to configure these texts to be styled bold for these
        locales with textStyle="bold".
        Untranslated text (names or untranslated strings) with textStyle set to bold will look like
-       the medium variant of Nunito, so there is no extra attention needed for e.g. the app bar.
+       the medium variant of Jost*, so there is no extra attention needed for e.g. the app bar.
        Affected languages: Arab, Chinese, Hebrew, Japanese, Uighur -->
 
   <style
@@ -86,8 +86,8 @@
   <style
     name="Widget.Tack.Button.TextButton.Snackbar"
     parent="Widget.Material3Expressive.Button.TextButton.Snackbar">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/jost_medium</item>
+    <item name="fontFamily">@font/jost_medium</item>
   </style>
 
   <!-- ImageView (icons) -->
@@ -114,8 +114,8 @@
 
   <!-- Localized style -->
   <style name="Widget.Tack.Button" parent="Base.Tack.Button">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/jost_medium</item>
+    <item name="fontFamily">@font/jost_medium</item>
   </style>
 
   <!-- Base style -->
@@ -131,8 +131,8 @@
   <style
     name="Widget.Tack.Button.OutlinedButton"
     parent="Base.Tack.Button.OutlinedButton">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/jost_medium</item>
+    <item name="fontFamily">@font/jost_medium</item>
   </style>
 
   <!-- Base style -->
@@ -148,8 +148,8 @@
   <style
     name="Widget.Tack.Button.TextButton"
     parent="Base.Tack.Button.TextButton">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/jost_medium</item>
+    <item name="fontFamily">@font/jost_medium</item>
   </style>
 
   <!-- Localized style, no empty base style needed -->
@@ -157,8 +157,8 @@
     name="Widget.Tack.Button.TextButton.Dialog"
     parent="Widget.Material3Expressive.Button.TextButton.Dialog">
     <item name="android:singleLine">true</item>
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/jost_medium</item>
+    <item name="fontFamily">@font/jost_medium</item>
   </style>
 
   <style
@@ -323,8 +323,8 @@
   <style
     name="Widget.Tack.ExtendedFloatingActionButton"
     parent="Widget.Material3.ExtendedFloatingActionButton.Icon.Primary">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/jost_medium</item>
+    <item name="fontFamily">@font/jost_medium</item>
   </style>
 
   <!-- LinearLayout (lists) -->
@@ -450,8 +450,8 @@
     <item name="android:textAppearance">?attr/textAppearanceBodyLarge</item>
     <item name="android:textColor">?attr/colorOnSurface</item>
     <item name="android:textAlignment">viewStart</item>
-    <item name="android:fontFamily">@font/nunito_medium</item>
-    <item name="fontFamily">@font/nunito_medium</item>
+    <!--item name="android:fontFamily">@font/jost_regular</item>
+    <item name="fontFamily">@font/jost_regular</item-->
     <item name="android:breakStrategy" tools:targetApi="m">high_quality</item>
     <item name="android:hyphenationFrequency" tools:targetApi="m">full</item>
     <item name="android:lineBreakWordStyle" tools:targetApi="33">phrase</item>
@@ -464,8 +464,8 @@
 
   <!-- Localized style, no empty base style needed -->
   <style name="Widget.Tack.TextView.Medium" parent="Widget.Tack.TextView">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/jost_medium</item>
+    <item name="fontFamily">@font/jost_medium</item>
   </style>
 
   <style name="Widget.Tack.TextView.Paragraph" parent="Widget.Tack.TextView" />
@@ -557,47 +557,47 @@
   <!-- TextAppearance -->
 
   <style name="TextAppearance.Tack.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
-    <item name="android:fontFamily">@font/nunito_medium</item>
-    <item name="fontFamily">@font/nunito_medium</item>
+    <item name="android:fontFamily">@font/jost_regular</item>
+    <item name="fontFamily">@font/jost_regular</item>
   </style>
 
   <style name="TextAppearance.Tack.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
-    <item name="android:fontFamily">@font/nunito_medium</item>
-    <item name="fontFamily">@font/nunito_medium</item>
+    <item name="android:fontFamily">@font/jost_regular</item>
+    <item name="fontFamily">@font/jost_regular</item>
   </style>
 
   <style name="TextAppearance.Tack.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
-    <item name="android:fontFamily">@font/nunito_medium</item>
-    <item name="fontFamily">@font/nunito_medium</item>
+    <item name="android:fontFamily">@font/jost_regular</item>
+    <item name="fontFamily">@font/jost_regular</item>
   </style>
 
   <style name="TextAppearance.Tack.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
-    <item name="android:fontFamily">@font/nunito_medium</item>
-    <item name="fontFamily">@font/nunito_medium</item>
+    <item name="android:fontFamily">@font/jost_regular</item>
+    <item name="fontFamily">@font/jost_regular</item>
   </style>
 
   <!-- Localized style, no empty base style needed -->
   <style name="TextAppearance.Tack.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/jost_medium</item>
+    <item name="fontFamily">@font/jost_medium</item>
   </style>
 
   <!-- Localized style, no empty base style needed -->
   <style name="TextAppearance.Tack.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/jost_medium</item>
+    <item name="fontFamily">@font/jost_medium</item>
   </style>
 
   <!-- Localized style, no empty base style needed -->
   <style name="TextAppearance.Tack.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/jost_medium</item>
+    <item name="fontFamily">@font/jost_medium</item>
   </style>
 
   <style name="TextAppearance.Tack.Tooltip" parent="TextAppearance.Material3.BodyLarge">
     <item name="android:textSize">14sp</item>
-    <item name="android:fontFamily">@font/nunito_medium</item>
-    <item name="fontFamily">@font/nunito_medium</item>
+    <item name="android:fontFamily">@font/jost_regular</item>
+    <item name="fontFamily">@font/jost_regular</item>
   </style>
 
 </resources>

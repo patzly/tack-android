@@ -380,7 +380,6 @@
             android:layout_gravity="top"
             android:gravity="center_horizontal"
             android:textAlignment="center"
-            android:fontFamily="@font/nunito_semi_bold"
             android:fontFeatureSettings="tnum"
             android:textAppearance="?attr/textAppearanceDisplayLarge"
             android:textSize="@dimen/bpm_text_size" />

@@ -93,7 +93,7 @@
             android:gravity="center_vertical"
             android:textAppearance="@style/TextAppearance.Tack.LabelLarge"
             android:textColor="?attr/colorOnTertiaryContainer"
-            android:fontFamily="@font/nunito_bold"
+            android:fontFamily="@font/jost_medium"
             android:singleLine="true"
             android:text="@string/label_song_name"
             tools:ignore="HardcodedText" />

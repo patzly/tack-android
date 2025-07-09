@@ -461,8 +461,8 @@
               style="@style/Widget.Tack.TextView.ListItem.Description"
               android:text="@string/settings_gain_warning"
               android:textColor="?attr/colorError"
-              android:fontFamily="@font/nunito_bold"
-              app:fontFamily="@font/nunito_bold" />
+              android:fontFamily="@font/jost_medium"
+              app:fontFamily="@font/jost_medium" />
 
           </LinearLayout>
 

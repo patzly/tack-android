@@ -52,7 +52,7 @@
       android:layout_marginStart="8dp"
       android:gravity="center_vertical"
       android:textAppearance="@style/TextAppearance.Tack.LabelLarge"
-      android:fontFamily="@font/nunito_bold"
+      android:fontFamily="@font/jost_medium"
       android:fontFeatureSettings="tnum" />
 
   </LinearLayout>
