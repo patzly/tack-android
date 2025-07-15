@@ -29,7 +29,7 @@
     <item name="android:colorControlHighlight">@color/selector_highlight_static</item>
     <item name="android:colorEdgeEffect">?attr/colorSecondary</item>
 
-    <item name="android:fontFamily">@font/jost_regular</item>
+    <item name="android:fontFamily">@font/nunito_medium</item>
 
     <!-- Widget styles -->
     <item name="snackbarStyle">@style/Widget.Tack.Snackbar</item>

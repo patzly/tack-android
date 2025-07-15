@@ -182,7 +182,7 @@ public class MainFragment extends BaseFragment
     activeBeat = getSharedPrefs().getBoolean(PREF.ACTIVE_BEAT, DEF.ACTIVE_BEAT);
 
     if (getSharedPrefs().getBoolean(PREF.BIG_TIME_TEXT, DEF.BIG_TIME_TEXT)) {
-      Typeface typeface = ResourcesCompat.getFont(activity, R.font.jost_medium);
+      Typeface typeface = ResourcesCompat.getFont(activity, R.font.nunito_medium);
       binding.chipMainTimerCurrent.textChipNumbers.setTextSize(28);
       binding.chipMainTimerCurrent.textChipNumbers.setTypeface(typeface);
       binding.chipMainElapsedTime.textChipNumbers.setTextSize(28);
@@ -388,7 +388,7 @@ public class MainFragment extends BaseFragment
     binding.circleMain.setReduceAnimations(reduceAnimations);
     binding.circleMain.setOnDragAnimListener(fraction -> {
       if (VERSION.SDK_INT >= VERSION_CODES.O) {
-        binding.textMainTempo.setFontVariationSettings("'wght' " + (400 + (fraction * 100)));
+        binding.textMainTempo.setFontVariationSettings("'wght' " + (600 + (fraction * 100)));
       }
     });
 
@@ -526,9 +526,9 @@ public class MainFragment extends BaseFragment
     }
 
     if (VERSION.SDK_INT >= VERSION_CODES.O) {
-      Typeface variableTypeface = ResourcesCompat.getFont(activity, R.font.jost_variable_wght);
+      Typeface variableTypeface = ResourcesCompat.getFont(activity, R.font.nunito_variable_wght);
       binding.textMainTempo.setTypeface(variableTypeface);
-      binding.textMainTempo.setFontVariationSettings("'wght' 400");
+      binding.textMainTempo.setFontVariationSettings("'wght' 600");
     }
     updateMetronomeControls();
 

@@ -470,6 +470,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
   public boolean isUnlocked() {
     boolean checkInstaller = sharedPrefs.getBoolean(PREF.CHECK_INSTALLER, DEF.CHECK_INSTALLER);
+    // also checks if Play Store is installed
     return UnlockUtil.isUnlocked(this, checkInstaller);
   }
 

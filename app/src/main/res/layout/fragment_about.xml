@@ -254,30 +254,6 @@
           android:text="@string/title_licenses" />
 
         <LinearLayout
-          android:id="@+id/linear_about_license_jost"
-          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
-
-          <ImageView
-            android:id="@+id/image_about_license_jost"
-            style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_rounded_copyright_anim"
-            tools:ignore="ContentDescription" />
-
-          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-            <TextView
-              style="@style/Widget.Tack.TextView.ListItem.Title"
-              android:text="@string/license_jost" />
-
-            <TextView
-              style="@style/Widget.Tack.TextView.ListItem.Description"
-              android:text="@string/license_jost_author" />
-
-          </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
           android:id="@+id/linear_about_license_material_components"
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
@@ -320,6 +296,30 @@
             <TextView
               style="@style/Widget.Tack.TextView.ListItem.Description"
               android:text="@string/license_author_google" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_about_license_nunito"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
+
+          <ImageView
+            android:id="@+id/image_about_license_nunito"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_copyright_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/license_nunito" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/license_nunito_author" />
 
           </LinearLayout>
 

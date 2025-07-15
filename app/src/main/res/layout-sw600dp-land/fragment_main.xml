@@ -381,6 +381,7 @@
             android:gravity="center_horizontal"
             android:textAlignment="center"
             android:fontFeatureSettings="tnum"
+            android:fontFamily="@font/nunito_semi_bold"
             android:textAppearance="?attr/textAppearanceDisplayLarge"
             android:textSize="@dimen/bpm_text_size" />
 

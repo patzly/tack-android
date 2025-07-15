@@ -120,9 +120,9 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
         binding.linearAboutGithub,
         binding.linearAboutTranslation,
         binding.linearAboutPrivacy,
-        binding.linearAboutLicenseJost,
         binding.linearAboutLicenseMaterialComponents,
-        binding.linearAboutLicenseMaterialIcons
+        binding.linearAboutLicenseMaterialIcons,
+        binding.linearAboutLicenseNunito
     );
   }
 
@@ -163,10 +163,10 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_translate))));
     } else if (id == R.id.linear_about_privacy) {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_privacy))));
-    } else if (id == R.id.linear_about_license_jost) {
-      ViewUtil.startIcon(binding.imageAboutLicenseJost);
+    } else if (id == R.id.linear_about_license_nunito) {
+      ViewUtil.startIcon(binding.imageAboutLicenseNunito);
       activity.showTextBottomSheet(
-          R.raw.license_ofl, R.string.license_jost, R.string.license_jost_link
+          R.raw.license_ofl, R.string.license_nunito, R.string.license_nunito_link
       );
     } else if (id == R.id.linear_about_license_material_components) {
       ViewUtil.startIcon(binding.imageAboutLicenseMaterialComponents);
@@ -191,16 +191,20 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     }
     int resId = R.string.about_key_description_not_installed;
     int textColor = ResUtil.getColor(activity, R.attr.colorOnSurfaceVariant);
-    if (getSharedPrefs().getBoolean(PREF.CHECK_INSTALLER, DEF.CHECK_INSTALLER)) {
-      boolean isInstallerValid = UnlockUtil.isKeyInstalled(activity)
-          && UnlockUtil.isInstallerValid(activity);
-      resId = isInstallerValid
-          ? R.string.about_key_description_installed
-          : R.string.about_key_description_invalid;
-      if (!isInstallerValid) {
-        textColor = ResUtil.getColor(activity, R.attr.colorError);
+    boolean checkInstaller = getSharedPrefs().getBoolean(PREF.CHECK_INSTALLER, DEF.CHECK_INSTALLER);
+    if (UnlockUtil.isKeyInstalled(activity)) {
+      if (checkInstaller) {
+        boolean isInstallerValid = UnlockUtil.isInstallerValid(activity);
+        resId = isInstallerValid
+            ? R.string.about_key_description_installed
+            : R.string.about_key_description_invalid;
+        if (!isInstallerValid) {
+          textColor = ResUtil.getColor(activity, R.attr.colorError);
+        }
+      } else {
+        resId = R.string.about_key_description_installed;
       }
-    } else {
+    } else if (!checkInstaller) {
       resId = R.string.about_key_description_installed;
     }
     binding.textAboutKeyDescription.setText(resId);
