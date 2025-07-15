@@ -55,6 +55,7 @@
   <string name="label_tempo_input_help">Hodnoty od %1$d do %2$d</string>
   <string name="label_part_name">Název části</string>
   <string name="label_part_unnamed">Část %1$d</string>
+  <string name="label_part_current">Část %1$d: %2$s</string>
   <string name="label_part_no_duration">Žádná délka</string>
   <plurals name="label_parts_count">
     <item quantity="one">%1$d část</item>
