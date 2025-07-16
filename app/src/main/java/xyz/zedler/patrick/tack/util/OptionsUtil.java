@@ -512,7 +512,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     }
 
     binding.sliderOptionsSubdivisions.removeOnChangeListener(this);
-    binding.sliderOptionsSubdivisions.setAnimateNonUserValueChange(animated);
+    //binding.sliderOptionsSubdivisions.setAnimateNonUserValueChange(animated);
     binding.sliderOptionsSubdivisions.setValue(subdivisionsCount);
     binding.sliderOptionsSubdivisions.addOnChangeListener(this);
     binding.sliderOptionsSubdivisions.setLabelFormatter(value -> {

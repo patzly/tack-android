@@ -46,7 +46,7 @@
     android:textColor="?attr/colorOnSurfaceVariant"
     android:fontFeatureSettings="tnum" />
 
-  <com.google.android.material.slider.CustomSlider
+  <com.google.android.material.slider.Slider
     android:id="@+id/slider_options_count_in"
     style="@style/Widget.Tack.Slider"
     android:layout_marginStart="2dp"
@@ -112,7 +112,7 @@
 
   </LinearLayout>
 
-  <com.google.android.material.slider.CustomSlider
+  <com.google.android.material.slider.Slider
     android:id="@+id/slider_options_timer_duration"
     style="@style/Widget.Tack.Slider"
     android:layout_width="match_parent"
@@ -190,7 +190,7 @@
     android:text="@string/options_incremental_amount_increase"
     android:fontFeatureSettings="tnum" />
 
-  <com.google.android.material.slider.CustomSlider
+  <com.google.android.material.slider.Slider
     android:id="@+id/slider_options_incremental_amount"
     style="@style/Widget.Tack.Slider"
     android:layout_marginStart="2dp"
@@ -249,7 +249,7 @@
       android:textColor="?attr/colorOnSurfaceVariant"
       android:fontFeatureSettings="tnum" />
 
-    <com.google.android.material.slider.CustomSlider
+    <com.google.android.material.slider.Slider
       android:id="@+id/slider_options_incremental_interval"
       style="@style/Widget.Tack.Slider"
       android:layout_width="match_parent"
@@ -338,7 +338,7 @@
 
     </LinearLayout>
 
-    <com.google.android.material.slider.CustomSlider
+    <com.google.android.material.slider.Slider
       android:id="@+id/slider_options_incremental_limit"
       style="@style/Widget.Tack.Slider"
       android:layout_width="match_parent"
@@ -372,7 +372,7 @@
     android:textColor="?attr/colorOnSurfaceVariant"
     android:fontFeatureSettings="tnum" />
 
-  <com.google.android.material.slider.CustomSlider
+  <com.google.android.material.slider.Slider
     android:id="@+id/slider_options_mute_play"
     style="@style/Widget.Tack.Slider"
     android:layout_marginStart="2dp"
@@ -401,7 +401,7 @@
       android:textColor="?attr/colorOnSurfaceVariant"
       android:fontFeatureSettings="tnum" />
 
-    <com.google.android.material.slider.CustomSlider
+    <com.google.android.material.slider.Slider
       android:id="@+id/slider_options_mute_mute"
       style="@style/Widget.Tack.Slider"
       android:layout_marginStart="2dp"
@@ -501,7 +501,7 @@
       android:textColor="?attr/colorOnSurfaceVariant"
       android:fontFeatureSettings="tnum" />
 
-    <com.google.android.material.slider.CustomSlider
+    <com.google.android.material.slider.Slider
       android:id="@+id/slider_options_subdivisions"
       style="@style/Widget.Tack.Slider"
       android:layout_marginStart="2dp"
