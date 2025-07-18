@@ -1200,7 +1200,7 @@ public class MainFragment extends BaseFragment
     binding.chipMainTimerTotal.frameChipNumbersContainer.setVisibility(visibility);
     binding.sliderMainTimer.setVisibility(visibility);
     updateSongPickerDividerVisibility();
-    binding.sliderMainTimer.setContinuousTicksCount(getMetronomeUtil().getTimerDuration() + 1);
+    binding.sliderMainTimer.setContinuousModeTickCount(getMetronomeUtil().getTimerDuration() + 1);
     measureTimerControls(false);
     // Check if timer is currently running and if metronome is from service
     if (!getMetronomeUtil().isFromService()) {

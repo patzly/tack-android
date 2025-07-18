@@ -281,7 +281,7 @@
 
           </LinearLayout>
 
-          <com.google.android.material.slider.CustomSlider
+          <com.google.android.material.slider.Slider
             android:id="@+id/slider_main_timer"
             style="@style/Widget.Tack.Slider"
             android:layout_marginStart="4dp"
