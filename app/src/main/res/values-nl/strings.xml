@@ -330,9 +330,6 @@
   <string name="settings_ignore_focus">Negeer audio focus</string>
   <string name="settings_ignore_focus_description">Blijf spelen als andere apps geluid maken</string>
 
-  <string name="settings_gain">Volume boost</string>
-  <string name="settings_gain_description">Versterking in dB (naast systeemvolume)</string>
-  <string name="settings_gain_warning">Voorzichtig gebruiken!</string>
   <string name="settings_gain_disclaimer">Wanneer boost is ingeschakeld wordt een waarschuwing getoond bij iedere start. De ontwikkelaar neemt geen verantwoordelijkheid voor mogelijke schade.</string>
 
   <string name="settings_hide_sub_controls">Verberg maatdeelbediening wanneer deze niet gebruikt wordt</string>

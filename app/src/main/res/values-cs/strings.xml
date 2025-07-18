@@ -369,9 +369,6 @@
   <string name="settings_ignore_focus">Ignorovat zaměření zvuku</string>
   <string name="settings_ignore_focus_description">Pokračovat v přehrávání, i když jiná aplikace začne přehrávat zvuk</string>
 
-  <string name="settings_gain">Zesílení hlasitosti</string>
-  <string name="settings_gain_description">Zesílení v dB (navíc k systémové hlasitosti)</string>
-  <string name="settings_gain_warning">Používejte s opatrností!</string>
   <string name="settings_gain_disclaimer">Při povolení zesílení bude před každým spuštěním zobrazeno varování. Vývojář nenese žádnou zodpovědnost za jakékoli potenciální škody.</string>
 
   <string name="settings_hide_sub_controls">Skrýt ovládání subdivizí, pokud nejsou používány</string>

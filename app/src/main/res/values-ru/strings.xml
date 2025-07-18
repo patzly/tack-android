@@ -368,9 +368,6 @@
   <string name="settings_ignore_focus">Игнорировать аудиофокус</string>
   <string name="settings_ignore_focus_description">Продолжать воспроизведение даже если другие приложения воспроизводят звук</string>
 
-  <string name="settings_gain">Усиление громкости</string>
-  <string name="settings_gain_description">Усиление в дБ (в дополнение к системной громкости)</string>
-  <string name="settings_gain_warning">Используйте с осторожностью!</string>
   <string name="settings_gain_disclaimer">Перед каждым использованием усиления будет показываться предупреждение. Разработчик не несёт ответственности за потенциальные травмы.</string>
 
   <string name="settings_hide_sub_controls">Скрыть элементы управления дроблением когда не используются</string>
