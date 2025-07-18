@@ -56,6 +56,7 @@
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$s ms</string>
   <string name="label_db">+%1$d dB</string>
+  <!-- A label for volume reduction in percent. You should probably simply insert the two parts (%1$d and %%) in your translation without a space in-between. The second part needs two percent signs because the first sign escapes the second sign. Else it would be handled as placeholder. -->
   <string name="label_percent">%1$d%%</string>
   <string name="label_tempo">Tempo</string>
   <string name="label_tempo_largo">Largo</string>
