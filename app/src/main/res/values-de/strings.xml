@@ -333,6 +333,7 @@
   <string name="settings_ignore_focus">Audiofokus ignorieren</string>
   <string name="settings_ignore_focus_description">Wiedergabe fortsetzen, wenn andere Anwendungen etwas wiedergeben</string>
 
+  <string name="settings_gain">Lautstärke erhöhen/verringern</string>
   <string name="settings_gain_disclaimer">Bei aktiver Verstärkung wird vor jeder Wiedergabe eine Warnung angezeigt. Der Entwickler übernimmt keine Verantwortung für etwaige Schäden.</string>
 
   <string name="settings_hide_sub_controls">Schlagunterteilungen ausblenden, wenn ungenutzt</string>
