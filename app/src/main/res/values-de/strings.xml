@@ -335,6 +335,7 @@
 
   <string name="settings_gain">Lautstärke erhöhen/verringern</string>
   <string name="settings_gain_description">Zusätzlich zur Systemlautstärke</string>
+  <string name="settings_gain_description_reduction">Relativ zur Systemlautstärke</string>
   <string name="settings_gain_disclaimer">Bei aktiver Verstärkung wird vor jeder Wiedergabe eine Warnung angezeigt. Der Entwickler übernimmt keine Verantwortung für etwaige Schäden.</string>
 
   <string name="settings_hide_sub_controls">Schlagunterteilungen ausblenden, wenn ungenutzt</string>
