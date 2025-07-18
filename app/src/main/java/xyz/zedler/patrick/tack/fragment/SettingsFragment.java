@@ -57,6 +57,7 @@ import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentSettingsBinding;
 import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.util.DialogUtil;
+import xyz.zedler.patrick.tack.util.GainDialogUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
@@ -76,6 +77,7 @@ public class SettingsFragment extends BaseFragment
   private MainActivity activity;
   private Bundle savedState;
   private DialogUtil dialogUtilReset, dialogUtilSound;
+  private GainDialogUtil gainDialogUtil;
   private Drawable itemBgFlash;
   private boolean flashScreen;
 
@@ -93,6 +95,7 @@ public class SettingsFragment extends BaseFragment
     binding = null;
     dialogUtilReset.dismiss();
     dialogUtilSound.dismiss();
+    gainDialogUtil.dismiss();
   }
 
   @Override
@@ -319,9 +322,9 @@ public class SettingsFragment extends BaseFragment
     );
     itemBgFlash = ViewUtil.getBgListItemSelected(activity, R.attr.colorTertiaryContainer);
 
-    binding.sliderSettingsGain.setLabelFormatter(
-        value -> getString(R.string.label_db, (int) value)
-    );
+    gainDialogUtil = new GainDialogUtil(activity, this);
+    gainDialogUtil.showIfWasShown(savedInstanceState);
+    updateGainDescription(getMetronomeUtil().getGain());
 
     binding.linearSettingsAlwaysVibrate.setVisibility(
         activity.getHapticUtil().hasVibrator() ? View.VISIBLE : View.GONE
@@ -337,6 +340,7 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsReset,
         binding.linearSettingsSound,
         binding.linearSettingsIgnoreFocus,
+        binding.linearSettingsGain,
         binding.linearSettingsHideSubControls,
         binding.linearSettingsActiveBeat,
         binding.linearSettingsPermNotification,
@@ -375,6 +379,9 @@ public class SettingsFragment extends BaseFragment
     }
     if (dialogUtilSound != null) {
       dialogUtilSound.saveState(outState);
+    }
+    if (gainDialogUtil != null) {
+      gainDialogUtil.saveState(outState);
     }
   }
 
@@ -420,10 +427,6 @@ public class SettingsFragment extends BaseFragment
     binding.switchSettingsIgnoreFocus.jumpDrawablesToCurrentState();
     binding.switchSettingsIgnoreFocus.setOnCheckedChangeListener(this);
 
-    binding.sliderSettingsGain.removeOnChangeListener(this);
-    binding.sliderSettingsGain.setValue(getMetronomeUtil().getGain());
-    binding.sliderSettingsGain.addOnChangeListener(this);
-
     binding.switchSettingsAlwaysVibrate.setOnCheckedChangeListener(null);
     binding.switchSettingsAlwaysVibrate.setChecked(getMetronomeUtil().isAlwaysVibrate());
     binding.switchSettingsAlwaysVibrate.jumpDrawablesToCurrentState();
@@ -460,6 +463,15 @@ public class SettingsFragment extends BaseFragment
     binding.switchSettingsPermNotification.setOnCheckedChangeListener(this);
   }
 
+  public void updateGainDescription(int gain) {
+    if (binding != null) {
+      int gainText = gain >= 0 ? gain : gain * 4;
+      binding.textSettingsGain.setText(
+          activity.getString(gain >= 0 ? R.string.label_db : R.string.label_percent, gainText)
+      );
+    }
+  }
+
   @Override
   public void onClick(View v) {
     int id = v.getId();
@@ -480,6 +492,8 @@ public class SettingsFragment extends BaseFragment
       dialogUtilSound.show();
     } else if (id == R.id.linear_settings_ignore_focus) {
       binding.switchSettingsIgnoreFocus.toggle();
+    } else if (id == R.id.linear_settings_gain) {
+      gainDialogUtil.show();
     } else if (id == R.id.linear_settings_hide_sub_controls) {
       binding.switchSettingsHideSubControls.toggle();
     } else if (id == R.id.linear_settings_active_beat) {
@@ -580,10 +594,6 @@ public class SettingsFragment extends BaseFragment
     if (id == R.id.slider_settings_latency) {
       getMetronomeUtil().setLatency((long) value);
       //ViewUtil.startIcon(binding.imageSettingsLatency);
-    } else if (id == R.id.slider_settings_gain) {
-      getMetronomeUtil().setGain((int) value);
-      ViewUtil.startIcon(binding.imageSettingsGain);
-      performHapticSegmentTick(slider, false);
     }
   }
 

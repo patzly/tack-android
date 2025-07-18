@@ -56,6 +56,7 @@
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$s ms</string>
   <string name="label_db">+%1$d dB</string>
+  <string name="label_percent">%1$d%%</string>
   <string name="label_tempo">Tempo</string>
   <string name="label_tempo_largo">Largo</string>
   <string name="label_tempo_larghetto">Larghetto</string>
@@ -344,9 +345,9 @@
   <string name="settings_ignore_focus">Ignore audio focus</string>
   <string name="settings_ignore_focus_description">Keep playing if other apps make sound</string>
 
-  <string name="settings_gain">Volume boost</string>
-  <string name="settings_gain_description">Gain in dB (in addition to system volume)</string>
-  <string name="settings_gain_warning">Use with caution!</string>
+  <string name="settings_gain">Volume boost/reduction</string>
+  <string name="settings_gain_description">In addition to system volume</string>
+  <string name="settings_gain_description_reduction">Relative to system volume</string>
   <string name="settings_gain_disclaimer">When boost is enabled, a warning will be displayed before each start. The developer takes no responsibility for any potential damage.</string>
 
   <string name="settings_hide_sub_controls">Hide subdivision controls when not in use</string>

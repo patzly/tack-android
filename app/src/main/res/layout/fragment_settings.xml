@@ -436,10 +436,8 @@
         </LinearLayout>
 
         <LinearLayout
-          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine"
-          android:paddingTop="12dp"
-          android:paddingBottom="0dp"
-          android:minHeight="56dp">
+          android:id="@+id/linear_settings_gain"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable">
 
           <ImageView
             android:id="@+id/image_settings_gain"
@@ -454,45 +452,13 @@
               android:text="@string/settings_gain" />
 
             <TextView
+              android:id="@+id/text_settings_gain"
               style="@style/Widget.Tack.TextView.ListItem.Description"
-              android:text="@string/settings_gain_description" />
-
-            <TextView
-              style="@style/Widget.Tack.TextView.ListItem.Description"
-              android:text="@string/settings_gain_warning"
-              android:textColor="?attr/colorError"
-              android:fontFamily="@font/nunito_bold"
-              app:fontFamily="@font/nunito_semi_bold" />
+              android:text="@string/label_db" />
 
           </LinearLayout>
 
         </LinearLayout>
-
-        <com.google.android.material.slider.CustomSlider
-          android:id="@+id/slider_settings_gain"
-          style="@style/Widget.Tack.Slider"
-          android:layout_marginStart="43dp"
-          android:layout_marginEnd="14dp"
-          android:valueFrom="0"
-          android:valueTo="20"
-          android:stepSize="5" />
-
-        <com.google.android.material.card.MaterialCardView
-          style="@style/Widget.Tack.Card.Text"
-          android:layout_marginStart="16dp"
-          android:layout_marginEnd="16dp"
-          android:layout_marginTop="4dp"
-          android:layout_marginBottom="12dp"
-          app:cardBackgroundColor="?attr/colorErrorContainer">
-
-          <TextView
-            style="@style/Widget.Tack.TextView.Paragraph"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="?attr/colorOnErrorContainer"
-            android:text="@string/settings_gain_disclaimer" />
-
-        </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout
           android:id="@+id/linear_settings_always_vibrate"

@@ -105,7 +105,7 @@ public class AudioUtil implements OnAudioFocusChangeListener {
     audioTrack = getTrack();
     try {
       loudnessEnhancer = new LoudnessEnhancer(audioTrack.getAudioSessionId());
-      loudnessEnhancer.setTargetGain(gain * 100);
+      loudnessEnhancer.setTargetGain(Math.max(0, gain * 100));
       loudnessEnhancer.setEnabled(gain > 0);
     } catch (RuntimeException e) {
       Log.e(TAG, "play: failed to initialize LoudnessEnhancer: ", e);
@@ -236,7 +236,7 @@ public class AudioUtil implements OnAudioFocusChangeListener {
     this.gain = gain;
     if (loudnessEnhancer != null) {
       try {
-        loudnessEnhancer.setTargetGain(gain * 100);
+        loudnessEnhancer.setTargetGain(Math.max(0, gain * 100));
         loudnessEnhancer.setEnabled(gain > 0);
       } catch (RuntimeException e) {
         Log.e(TAG, "setGain: failed to set target gain: ", e);
@@ -366,7 +366,17 @@ public class AudioUtil implements OnAudioFocusChangeListener {
 
   private void writeAudio(float[] data, int size) {
     try {
-      int result = audioTrack.write(data, 0, size, AudioTrack.WRITE_BLOCKING);
+      boolean reduceVolume = gain < 0;
+      float[] scaled = new float[size];
+      if (reduceVolume) {
+        float fraction = 1 - ((float) Math.abs(gain * 4) / 100);
+        for (int i = 0; i < size; i++) {
+          scaled[i] = data[i] * fraction;
+        }
+      }
+      int result = audioTrack.write(
+          reduceVolume ? scaled : data, 0, size, AudioTrack.WRITE_BLOCKING
+      );
       if (result < 0) {
         stop();
         throw new IllegalStateException("Error code: " + result);

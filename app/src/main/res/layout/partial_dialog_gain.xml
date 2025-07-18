@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  android:paddingTop="8dp">
+
+  <TextView
+    android:id="@+id/text_gain_value"
+    style="@style/Widget.Tack.TextView.TitleLarge"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:textAlignment="center"
+    android:gravity="center"
+    android:fontFeatureSettings="tnum"
+    android:text="@string/label_db" />
+
+  <TextView
+    android:id="@+id/text_gain_description"
+    style="@style/Widget.Tack.TextView.BodyMedium"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:textAlignment="center"
+    android:gravity="center"
+    android:textColor="?attr/colorOnSurfaceVariant"
+    android:text="@string/settings_gain_description" />
+
+  <com.google.android.material.slider.Slider
+    android:id="@+id/slider_gain"
+    style="@style/Widget.Tack.Slider"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="12dp"
+    android:valueFrom="-20"
+    android:valueTo="20"
+    android:stepSize="5"
+    app:labelBehavior="gone"
+    app:centered="true" />
+
+  <TextView
+    style="@style/Widget.Tack.TextView.Paragraph.BodyMedium"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:textColor="?attr/colorError"
+    android:text="@string/settings_gain_disclaimer"
+    android:fontFamily="@font/nunito_bold" />
+
+</LinearLayout>
