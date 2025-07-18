@@ -11,6 +11,7 @@
 - Fixed: tempo buttons not updating correctly
 - Fixed: incorrect song picker colors during chip animation
 - Fixed: incorrect size of subdivision controls on tablets in landscape mode
+- Fixed: incorrect preference restoration after latency correction setting change
 
 ## 5.0.0
 

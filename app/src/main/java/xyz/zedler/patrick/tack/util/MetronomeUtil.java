@@ -343,8 +343,12 @@ public class MetronomeUtil {
     config.setMutePlay(0);
 
     alwaysVibrate = true;
-    setGain(0);
-    setBeatModeVibrate(false);
+    audioUtil.setGain(0);
+
+    beatModeVibrate = false;
+    audioUtil.setMuted(false);
+    hapticUtil.setEnabled(true);
+
     start(false);
   }
 

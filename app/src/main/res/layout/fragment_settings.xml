@@ -396,7 +396,7 @@
 
           </LinearLayout>
 
-          <com.google.android.material.slider.CustomSlider
+          <com.google.android.material.slider.Slider
             android:id="@+id/slider_settings_latency"
             style="@style/Widget.Tack.Slider"
             android:layout_marginStart="43dp"
