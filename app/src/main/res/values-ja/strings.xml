@@ -315,6 +315,7 @@
   <string name="settings_ignore_focus_description">他のアプリが音を出しても再生を続けます</string>
 
   <string name="settings_gain">音量増幅/減衰</string>
+  <string name="settings_gain_description">システム音量から更に増減させます</string>
   <string name="settings_gain_disclaimer">ブーストを有効化すると、再生前に警告が表示されます。開発者は、この設定によって引き起こされうる損害について一切責任を負いません。</string>
 
   <string name="settings_hide_sub_controls">未使用時の拍分割ボタンを非表示</string>
