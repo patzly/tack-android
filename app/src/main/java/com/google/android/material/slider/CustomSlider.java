@@ -114,7 +114,7 @@ public class CustomSlider extends Slider {
       }
       contentView.getHitRect(contentViewBounds);
       boolean isSliderVisibleOnScreen = getLocalVisibleRect(contentViewBounds);
-      ViewOverlay contentViewOverlay = ViewUtils.getContentViewOverlay(this);
+      ViewOverlay contentViewOverlay = contentView.getOverlay();
       if (contentViewOverlay == null) {
         return;
       }
