@@ -18,88 +18,88 @@
  */
 
 plugins {
-    alias libs.plugins.android.application
-    alias libs.plugins.navigation.safeargs
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.navigation.safeargs)
 }
 
 android {
-    namespace 'xyz.zedler.patrick.tack'
-    compileSdk 36
+    namespace = 'xyz.zedler.patrick.tack'
+    compileSdk = 36
 
     defaultConfig {
-        applicationId "xyz.zedler.patrick.tack"
-        minSdk 21
-        targetSdk 36
-        versionCode 330 // last number is 0 for app release
-        versionName "5.1.0"
-        resourceConfigurations += ["cs", "de", "en", "es", "es-rCL", "fr", "in", "ko", "ru", "tr",
-                                   "zh-rCN", "zh-rHK", "zh-rTW"]
+        applicationId = "xyz.zedler.patrick.tack"
+        minSdk = 21
+        targetSdk = 36
+        versionCode = 330 // last number is 0 for app release
+        versionName = "5.1.0"
+        resourceConfigurations = ["en", "cs", "de", "es", "es-rCL", "fr", "in", "ja", "ko", "nl",
+                                  "ru", "tr", "zh-rCN", "zh-rHK", "zh-rTW"]
         vectorDrawables.generatedDensities = []
 
         javaCompileOptions {
             annotationProcessorOptions {
-                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
     }
 
     applicationVariants.configureEach { variant ->
-        variant.resValue "string", "versionName", variant.versionName
+        variant.resValue("string", "versionName", variant.versionName)
     }
 
     buildTypes {
         release {
             postprocessing {
-                removeUnusedCode true
-                removeUnusedResources true
-                obfuscate false
-                optimizeCode true
+                removeUnusedCode = true
+                removeUnusedResources = true
+                obfuscate = false
+                optimizeCode = true
                 proguardFiles {
                     getDefaultProguardFile('proguard-android-optimize.txt')
                     'proguard-rules.pro'
                 }
             }
-            debuggable false
+            debuggable = false
         }
     }
 
     buildFeatures {
-        viewBinding true
-        buildConfig true
+        viewBinding = true
+        buildConfig = true
     }
 
     lint {
-        abortOnError false
-        disable 'MissingTranslation'
+        abortOnError = false
+        disable = ['MissingTranslation']
     }
 
     bundle {
         storeArchive {
-            enable true
+            enable = true
         }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     dependenciesInfo {
-        includeInApk false
+        includeInApk = false
     }
 }
 
 dependencies {
-    implementation libs.appcompat
-    implementation libs.fragment
-    implementation libs.navigation.fragment
-    implementation libs.navigation.ui
-    implementation libs.preference
-    implementation libs.shapes
-    implementation libs.material
-    implementation libs.recyclerview
-    implementation libs.flexbox
-    implementation libs.gson
-    implementation libs.room.runtime
-    annotationProcessor libs.room.compiler
+    implementation(libs.appcompat)
+    implementation(libs.fragment)
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
+    implementation(libs.preference)
+    implementation(libs.shapes)
+    implementation(libs.material)
+    implementation(libs.recyclerview)
+    implementation(libs.flexbox)
+    implementation(libs.gson)
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.room.compiler)
 }
