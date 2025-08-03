@@ -134,7 +134,6 @@
   <string name="action_backup">備份</string>
   <string name="action_restore">還原</string>
   <string name="action_view_more_songs">檢視更多歌曲</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_feedback">一款優秀的應用程式需要花費大量的時間和獲取使用者的意見反映。</string>
@@ -155,7 +154,6 @@
   <string name="msg_gain_description">小心不要透過耳機播放，因為太大的音量可以引致耳朵損傷！</string>
   <string name="msg_split_screen">視窗太小</string>
   <string name="msg_split_screen_description">Tack 可能會在分割畫面模式下定位節拍器控制時遇到問題。如果可以，請使用更大的視窗。</string>
-  <string name="msg_notification_permission_denied">播放控制需要通知權限</string>
   <string name="msg_report_crash">請不吝回報任何當機情形，並附上當機紀錄，使開發者能順利修復問題。</string>
   <string name="msg_copied_to_clipboard">已複製至剪貼簿</string>
   <string name="msg_invalid_input">無效輸入</string>
