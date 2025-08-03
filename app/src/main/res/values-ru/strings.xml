@@ -141,7 +141,6 @@
   <string name="action_backup">Сделать бэкап</string>
   <string name="action_restore">Восстановить бэкап</string>
   <string name="action_view_more_songs">Показать больше песен</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Разработка хорошего приложения занимает много времени и зависит от обратной связи пользователей</string>
@@ -162,7 +161,6 @@
   <string name="msg_gain_description">Будьте осторожны и не слушайте метроном в наушниках, так как громкие звуки могут вызвать потерю слуха!</string>
   <string name="msg_split_screen">Окно слишком маленькое</string>
   <string name="msg_split_screen_description">В режиме разделённого экрана, некоторые элементы управления Tack могут отображаться некорректно. Если это возможно, увеличьте размер окна.</string>
-  <string name="msg_notification_permission_denied">Требуется разрешение на показ уведомлений для отображения элементов управления воспроизведением.</string>
   <string name="msg_report_crash">Пожалуйста сообщайте о каждом вылете, прикрепляя логи. Так я смогу это исправить.</string>
   <string name="msg_copied_to_clipboard">Успешно скопировано в буфер обмена</string>
   <string name="msg_invalid_input">Неправильный ввод</string>
