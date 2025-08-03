@@ -142,7 +142,6 @@
   <string name="action_backup">Zálohovat</string>
   <string name="action_restore">Obnovit</string>
   <string name="action_view_more_songs">Zobrazit více skladeb</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Dobrá aplikace vyžaduje spoustu času a existuje díky zpětné vazbě od uživatelů.</string>
@@ -163,7 +162,6 @@
   <string name="msg_gain_description">Dejte si pozor, abyste zvuk nepřehrávali ve sluchátkách, jelikož hlasité zvuky mohou způsobit poškození sluchu!</string>
   <string name="msg_split_screen">Okno příliš malé</string>
   <string name="msg_split_screen_description">V režimu rozdělené aplikace může mít Tack problém s pozicí ovládacích prvků metronomu. Pokud je to možné, použijte prosím větší okno.</string>
-  <string name="msg_notification_permission_denied">Pro ovládání přehrávání je vyžadováno oprávnění k oznámením.</string>
   <string name="msg_report_crash">Nahlaste prosím jakýkoli pád a přidejte záznam z protokolu, abych mohl chybu opravit.</string>
   <string name="msg_copied_to_clipboard">Úspěšně zkopírováno do schránky</string>
   <string name="msg_invalid_input">Neplatný vstup</string>
