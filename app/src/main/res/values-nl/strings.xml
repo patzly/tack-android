@@ -137,7 +137,6 @@
   <string name="action_backup">Backup</string>
   <string name="action_restore">Herstellen</string>
   <string name="action_view_more_songs">Bekijk meer nummers</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Een goede app heeft veel tijd nodig en leeft van de feedback van zijn gebruikers.</string>
@@ -158,7 +157,6 @@
   <string name="msg_gain_description">Let op dat je niet via een koptelefoon afspeelt, harde geluiden kunnen gehoorbeschadiging veroorzaken!</string>
   <string name="msg_split_screen">Venster te klein</string>
   <string name="msg_split_screen_description">Tack kan problemen hebben met de positie van de metronoomregelaars in split-screen modus. Gebruik indien mogelijk een groter venster.</string>
-  <string name="msg_notification_permission_denied">Meldingstoestemming is vereist voor afspeelbesturing</string>
   <string name="msg_report_crash">Meld elke crash met de crash log als bijlage, zodat ik kan proberen ze te repareren.</string>
   <string name="msg_copied_to_clipboard">Succesvol naar klembord gekopiëerd</string>
   <string name="msg_invalid_input">Ongeldige invoer</string>
