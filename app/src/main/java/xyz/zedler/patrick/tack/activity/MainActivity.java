@@ -161,20 +161,23 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
       }
     }
 
-    requestPermissionLauncher = registerForActivityResult(new RequestPermission(), isGranted -> {
-      if (!isGranted && VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
-        Snackbar snackbar = getSnackbar(
-            R.string.msg_notification_permission_denied, Snackbar.LENGTH_LONG
-        );
-        snackbar.setAction(
-            R.string.action_retry,
-            v -> requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        );
-        showSnackbar(snackbar);
-      } else if (startMetronomeAfterPermission) {
-        getMetronomeUtil().start();
-      }
-    });
+    requestPermissionLauncher = registerForActivityResult(
+        new RequestPermission(), isGranted -> {
+          if (!isGranted && VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
+            getSharedPrefs().edit().putBoolean(PREF.PERMISSION_DENIED, true).apply();
+            Snackbar snackbar = getSnackbar(
+                R.string.msg_notification_permission_denied, 5000
+            );
+            snackbar.setAction(
+                R.string.action_retry,
+                v -> requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            );
+            showSnackbar(snackbar);
+          } else if (startMetronomeAfterPermission) {
+            getMetronomeUtil().start();
+          }
+          getSharedPrefs().edit().putBoolean(PREF.PERMISSION_DENIED, !isGranted).apply();
+        });
 
     metronomeIntent = new Intent(this, MetronomeService.class);
     updateMetronomeUtil();

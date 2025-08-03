@@ -75,6 +75,7 @@ import xyz.zedler.patrick.tack.util.LogoUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
+import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.OptionsUtil;
 import xyz.zedler.patrick.tack.util.PartsDialogUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -102,6 +103,7 @@ public class MainFragment extends BaseFragment
   private float cornerSizeStop, cornerSizePlay, cornerSizeCurrent;
   private int colorFlashNormal, colorFlashStrong, colorFlashMuted;
   private DialogUtil dialogUtilGain, dialogUtilSplitScreen, dialogUtilTimer, dialogUtilElapsed;
+  private DialogUtil dialogUtilPermission;
   private OptionsUtil optionsUtil;
   private PartsDialogUtil partsDialogUtil;
   private TempoTapDialogUtil tempoTapDialogUtil;
@@ -134,6 +136,7 @@ public class MainFragment extends BaseFragment
     dialogUtilSplitScreen.dismiss();
     dialogUtilTimer.dismiss();
     dialogUtilElapsed.dismiss();
+    dialogUtilPermission.dismiss();
     tempoDialogUtil.dismiss();
     optionsUtil.dismiss();
     partsDialogUtil.dismiss();
@@ -258,6 +261,20 @@ public class MainFragment extends BaseFragment
           });
     });
     dialogUtilGain.showIfWasShown(savedInstanceState);
+
+    dialogUtilPermission = new DialogUtil(activity, "notification_permission");
+    dialogUtilPermission.createDialog(builder -> {
+      builder.setTitle(R.string.msg_notification_permission);
+      builder.setMessage(R.string.msg_notification_permission_description);
+      builder.setPositiveButton(R.string.action_next, (dialog, which) -> {
+        performHapticClick();
+        getMetronomeUtil().start();
+      });
+      builder.setNegativeButton(
+          R.string.action_cancel, (dialog, which) -> performHapticClick()
+      );
+    });
+    dialogUtilPermission.showIfWasShown(savedInstanceState);
 
     dialogUtilSplitScreen = new DialogUtil(activity, "split_screen");
     dialogUtilSplitScreen.createDialog(builder -> {
@@ -510,7 +527,14 @@ public class MainFragment extends BaseFragment
           if (getMetronomeUtil().getGain() > 0 && getMetronomeUtil().neverStartedWithGainBefore()) {
             dialogUtilGain.show();
           } else {
-            getMetronomeUtil().start();
+            boolean permissionDenied = getSharedPrefs().getBoolean(
+                PREF.PERMISSION_DENIED, false
+            );
+            if (NotificationUtil.hasPermission(activity) || permissionDenied) {
+              getMetronomeUtil().start();
+            } else {
+              dialogUtilPermission.show();
+            }
           }
           performHapticClick();
         }
@@ -600,6 +624,9 @@ public class MainFragment extends BaseFragment
     super.onSaveInstanceState(outState);
     if (dialogUtilGain != null) {
       dialogUtilGain.saveState(outState);
+    }
+    if (dialogUtilPermission != null) {
+      dialogUtilPermission.saveState(outState);
     }
     if (dialogUtilTimer != null) {
       dialogUtilTimer.saveState(outState);

@@ -384,7 +384,8 @@ public class MetronomeUtil {
 
   private void start(boolean isRestarted) {
     // isRestarted should suppress onStop/onStart callbacks and count-in
-    if (!NotificationUtil.hasPermission(context)) {
+    boolean permissionDenied = sharedPrefs.getBoolean(PREF.PERMISSION_DENIED, false);
+    if (!NotificationUtil.hasPermission(context) && !permissionDenied) {
       synchronized (listeners) {
         for (MetronomeListener listener : listeners) {
           listener.onMetronomePermissionMissing();
