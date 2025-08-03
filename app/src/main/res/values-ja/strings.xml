@@ -138,7 +138,6 @@
   <string name="action_backup">バックアップ作成</string>
   <string name="action_restore">バックアップ復元</string>
   <string name="action_view_more_songs">他のソングを見る</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_feedback">素晴らしいアプリの開発には、膨大な時間とユーザーからのフィードバックが必要です。</string>
@@ -159,7 +158,6 @@
   <string name="msg_gain_description">大音量での再生は耳を痛める危険性があり、ヘッドホン着用時には特に注意が必要です！</string>
   <string name="msg_split_screen">画面サイズが小さすぎます</string>
   <string name="msg_split_screen_description">Tack を分割画面で表示すると、メトロノームの操作に問題が生じる場合があります。可能であれば、より大きなサイズの画面でご利用ください。</string>
-  <string name="msg_notification_permission_denied">再生するには通知を許可する必要があります</string>
   <string name="msg_report_crash">アプリが強制終了した場合は、クラッシュログを添付してご報告ください。開発者が修正を試みます。</string>
   <string name="msg_copied_to_clipboard">クリップボードにコピーされました</string>
   <string name="msg_invalid_input">無効な入力</string>
