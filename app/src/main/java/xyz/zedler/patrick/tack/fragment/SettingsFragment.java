@@ -465,9 +465,11 @@ public class SettingsFragment extends BaseFragment
 
   public void updateGainDescription(int gain) {
     if (binding != null) {
-      int gainText = gain >= 0 ? gain : gain * 4;
       binding.textSettingsGain.setText(
-          activity.getString(gain >= 0 ? R.string.label_db : R.string.label_percent, gainText)
+          activity.getString(
+              R.string.label_db_signed,
+              gain > 0 ? "+" + gain : String.valueOf(gain)
+          )
       );
     }
   }

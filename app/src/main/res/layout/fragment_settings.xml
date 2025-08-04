@@ -454,7 +454,7 @@
             <TextView
               android:id="@+id/text_settings_gain"
               style="@style/Widget.Tack.TextView.ListItem.Description"
-              android:text="@string/label_db" />
+              android:text="@string/label_db_signed" />
 
           </LinearLayout>
 

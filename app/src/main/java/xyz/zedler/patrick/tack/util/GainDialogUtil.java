@@ -103,15 +103,10 @@ public class GainDialogUtil implements OnChangeListener {
       return;
     }
     int gain = getMetronomeUtil().getGain();
-    int gainText = gain >= 0 ? gain : gain * 4;
     binding.textGainValue.setText(
-        activity.getString(gain >= 0 ? R.string.label_db : R.string.label_percent, gainText)
-    );
-    binding.textGainDescription.setText(
         activity.getString(
-            gain >= 0
-                ? R.string.settings_gain_description
-                : R.string.settings_gain_description_reduction
+            R.string.label_db_signed,
+            gain > 0 ? "+" + gain : String.valueOf(gain)
         )
     );
   }

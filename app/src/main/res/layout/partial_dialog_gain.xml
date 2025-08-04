@@ -35,10 +35,9 @@
     android:textAlignment="center"
     android:gravity="center"
     android:fontFeatureSettings="tnum"
-    android:text="@string/label_db" />
+    android:text="@string/label_db_signed" />
 
   <TextView
-    android:id="@+id/text_gain_description"
     style="@style/Widget.Tack.TextView.BodyMedium"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"

@@ -66,7 +66,7 @@ public class AudioUtil implements OnAudioFocusChangeListener {
   private AudioTrack audioTrack;
   private LoudnessEnhancer loudnessEnhancer;
   private float[] tickStrong, tickNormal, tickSub;
-  private int gain;
+  private int gain, volumeReductionDb;
   private boolean playing, muted, ignoreFocus;
   private final float[] silence = new float[SILENCE_CHUNK_SIZE];
 
@@ -103,6 +103,7 @@ public class AudioUtil implements OnAudioFocusChangeListener {
 
     playing = true;
     audioTrack = getTrack();
+    audioTrack.setVolume(dbToLinearVolume(volumeReductionDb));
     try {
       loudnessEnhancer = new LoudnessEnhancer(audioTrack.getAudioSessionId());
       loudnessEnhancer.setTargetGain(Math.max(0, gain * 100));
@@ -162,7 +163,7 @@ public class AudioUtil implements OnAudioFocusChangeListener {
   public void onAudioFocusChange(int focusChange) {
     if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
       if (audioTrack != null) {
-        audioTrack.setVolume(1);
+        audioTrack.setVolume(dbToLinearVolume(volumeReductionDb));
       }
     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
       stop();
@@ -170,7 +171,7 @@ public class AudioUtil implements OnAudioFocusChangeListener {
         || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
     ) {
       if (audioTrack != null) {
-        audioTrack.setVolume(0.25f);
+        audioTrack.setVolume(Math.min(0.25f, dbToLinearVolume(volumeReductionDb)));
       }
     }
   }
@@ -241,6 +242,10 @@ public class AudioUtil implements OnAudioFocusChangeListener {
       } catch (RuntimeException e) {
         Log.e(TAG, "setGain: failed to set target gain: ", e);
       }
+    }
+    volumeReductionDb = Math.max(0, -gain * 100);
+    if (audioTrack != null) {
+      audioTrack.setVolume(dbToLinearVolume(volumeReductionDb));
     }
   }
 
@@ -435,6 +440,10 @@ public class AudioUtil implements OnAudioFocusChangeListener {
       return i;
     }
     return -1;
+  }
+
+  public static float dbToLinearVolume(int reductionDb) {
+    return (float) Math.pow(10f, reductionDb / 20f);
   }
 
   private enum Pitch {
