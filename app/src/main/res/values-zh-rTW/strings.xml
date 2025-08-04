@@ -42,6 +42,7 @@
   <string name="label_bpm_value">%1$d 節拍／分鐘</string>
   <string name="label_bpm">節拍／分鐘</string>
   <string name="label_ms">%1$s 毫秒</string>
+  <string name="label_db_signed">%1$s 分貝</string>
   <string name="label_tempo">節奏</string>
   <string name="label_tempo_largo">廣板</string>
   <string name="label_tempo_larghetto">小廣板</string>
