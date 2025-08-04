@@ -42,7 +42,6 @@
   <string name="label_bpm_value">%1$d bpm</string>
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$s мс</string>
-  <string name="label_db">+%1$d дБ</string>
   <string name="label_tempo">Темп</string>
   <string name="label_tempo_largo">Широко</string>
   <string name="label_tempo_larghetto">Умеренно широко</string>
