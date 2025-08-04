@@ -155,6 +155,7 @@
   <string name="msg_split_screen">視窗太小</string>
   <string name="msg_split_screen_description">Tack 可能會在分割畫面模式下定位節拍器控制時遇到問題。如果可以，請使用更大的視窗。</string>
   <string name="msg_notification_permission">需要通知權限</string>
+  <string name="msg_notification_permission_description">Tack 需要取得通知權限，才能透過顯示低優先權通知在背景繼續播放。如果你在下一個對話方塊中拒絕該權限，Android 系統會在你離開應用程式時停止播放。</string>
   <string name="msg_notification_permission_denied">背景播放需要通知權限</string>
   <string name="msg_report_crash">請不吝回報任何當機情形，並附上當機紀錄，使開發者能順利修復問題。</string>
   <string name="msg_copied_to_clipboard">已複製至剪貼簿</string>
