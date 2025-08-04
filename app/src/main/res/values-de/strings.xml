@@ -42,9 +42,6 @@
   <string name="label_bpm_value">%1$d bpm</string>
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$s ms</string>
-  <string name="label_db">+%1$d dB</string>
-  <!-- A label for volume reduction in percent. You should probably simply insert the two parts (%1$d and %%) in your translation without a space in-between. The second part needs two percent signs because the first sign escapes the second sign. Else it would be handled as placeholder. -->
-  <string name="label_percent">%1$d%%</string>
   <string name="label_tempo">Tempo</string>
   <string name="label_tempo_largo">Largo</string>
   <string name="label_tempo_larghetto">Larghetto</string>
@@ -337,8 +334,7 @@
   <string name="settings_ignore_focus_description">Wiedergabe fortsetzen, wenn andere Anwendungen etwas wiedergeben</string>
 
   <string name="settings_gain">Lautstärke erhöhen/verringern</string>
-  <string name="settings_gain_description">Zusätzlich zur Systemlautstärke</string>
-  <string name="settings_gain_description_reduction">Relativ zur Systemlautstärke</string>
+  <string name="settings_gain_description">Relativ zur Systemlautstärke</string>
   <string name="settings_gain_disclaimer">Bei aktiver Verstärkung wird vor jeder Wiedergabe eine Warnung angezeigt. Der Entwickler übernimmt keine Verantwortung für etwaige Schäden.</string>
 
   <string name="settings_hide_sub_controls">Schlagunterteilungen ausblenden, wenn ungenutzt</string>
