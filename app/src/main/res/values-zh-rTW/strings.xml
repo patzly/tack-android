@@ -310,6 +310,7 @@
   <string name="settings_ignore_focus_description">在其他應用程式發出聲音時保持播放</string>
 
   <string name="settings_gain">音量增強／減弱</string>
+  <string name="settings_gain_description">相對於系統音量</string>
   <string name="settings_gain_disclaimer">當啟用增強功能時，每次啟動前都會顯示警告。開發者對任何潛在的損害不承擔責任。</string>
 
   <string name="settings_hide_sub_controls">不使用時隱藏子節拍控制</string>
