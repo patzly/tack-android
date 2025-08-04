@@ -42,6 +42,7 @@
   <string name="label_bpm_value">%1$d bpm</string>
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$s ms</string>
+  <string name="label_db_signed">%1$s dB</string>
   <string name="label_tempo">テンポ</string>
   <string name="label_tempo_largo">Largo</string>
   <string name="label_tempo_larghetto">Larghetto</string>
@@ -135,6 +136,8 @@
   <string name="action_backup">バックアップ作成</string>
   <string name="action_restore">バックアップ復元</string>
   <string name="action_view_more_songs">他のソングを見る</string>
+  <string name="action_next">次へ</string>
+
   <!-- MESSAGES -->
 
   <string name="msg_feedback">素晴らしいアプリの開発には、膨大な時間とユーザーからのフィードバックが必要です。</string>
@@ -155,6 +158,9 @@
   <string name="msg_gain_description">大音量での再生は耳を痛める危険性があり、ヘッドホン着用時には特に注意が必要です！</string>
   <string name="msg_split_screen">画面サイズが小さすぎます</string>
   <string name="msg_split_screen_description">Tack を分割画面で表示すると、メトロノームの操作に問題が生じる場合があります。可能であれば、より大きなサイズの画面でご利用ください。</string>
+  <string name="msg_notification_permission">通知許可が必要です</string>
+  <string name="msg_notification_permission_description">Tackが低優先度の通知を表示して音声のバックグラウンド再生を継続するためには、通知の表示を許可する必要があります。次のダイアログで許可を拒否した場合、アプリが表示されていない状態では音声の再生が停止します。</string>
+  <string name="msg_notification_permission_denied">バックグラウンド再生には通知許可が必要です</string>
   <string name="msg_report_crash">アプリが強制終了した場合は、クラッシュログを添付してご報告ください。開発者が修正を試みます。</string>
   <string name="msg_copied_to_clipboard">クリップボードにコピーされました</string>
   <string name="msg_invalid_input">無効な入力</string>
