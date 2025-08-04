@@ -344,7 +344,7 @@
   <string name="settings_keep_awake_description">當節拍器播放時</string>
 
   <string name="settings_perm_notification">永久通知</string>
-  <string name="settings_perm_notification_description">隨時存取播放/停止控制</string>
+  <string name="settings_perm_notification_description">隨時存取播放／停止控制</string>
 
   <string name="settings_big_logo">顯示大型標識動畫</string>
   <string name="settings_big_logo_description">而不是在播放時顯示節奏選擇器</string>
