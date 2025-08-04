@@ -163,6 +163,7 @@
   <string name="msg_split_screen">Fenster zu klein</string>
   <string name="msg_split_screen_description">Tack hat möglicherweise Probleme mit der Positionierung der Bedienelemente im Splitscreen-Modus. Verwenden Sie wenn möglich ein größeres Fenster.</string>
   <string name="msg_notification_permission">Berechtigung für Benachrichtigungen benötigt</string>
+  <string name="msg_notification_permission_description">Tack benötigt die Erlaubnis, Benachrichtigungen anzuzeigen, um die Wiedergabe im Hintergrund fortzusetzen, indem eine Benachrichtigung mit niedriger Priorität angezeigt wird. Wenn du dies im nächsten Dialog ablehnst, stoppt Android die Wiedergabe beim Verlassen der App.</string>
   <string name="msg_notification_permission_denied">Für die Wiedergabe im Hintergrund ist die Berechtigung für Benachrichtigungen erforderlich</string>
   <string name="msg_report_crash">Bitte melden Sie jeden Absturz mit dem angehängten Fehlerprotokoll, damit ich versuchen kann, ihn zu beheben.</string>
   <string name="msg_copied_to_clipboard">Erfolgreich in Zwischenablage kopiert</string>
