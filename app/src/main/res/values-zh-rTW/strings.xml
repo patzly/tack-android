@@ -77,6 +77,8 @@
   <!-- A placeholder song name in the widget preview for the user's widget picker -->
   <string name="widget_songs_preview_title1">巴赫勃蘭登堡協奏曲第 2 號</string>
   <!-- A placeholder song name in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_title2">Debussy Syrinx</string>
+  <!-- A placeholder song name in the widget preview for the user's widget picker -->
   <string name="widget_songs_preview_title3">莫札特小夜曲第 13 號</string>
   <!-- A placeholder part count in the widget preview for the user's widget picker -->
   <string name="widget_songs_preview_parts1">3 個部份</string>
