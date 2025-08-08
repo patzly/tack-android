@@ -196,6 +196,54 @@
   </style>
 
   <style
+    name="Widget.Tack.Button.IconButton.Filled.Medium"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Medium</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Medium.Wide"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Medium.Wide</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Large"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Large</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Large.Narrow"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Large.Narrow</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Large.Wide"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Large.Wide</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Xlarge.Wide"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Xlarge.Wide</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal.Large.Narrow"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Large.Narrow</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal.Xlarge.Narrow"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Xlarge.Narrow</item>
+  </style>
+
+  <style
     name="Widget.Tack.Button.IconButton.Tonal.Medium.Narrow"
     parent="Widget.Tack.Button.IconButton.Tonal">
     <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Medium.Narrow</item>
@@ -218,6 +266,18 @@
     parent="Widget.Material3Expressive.Button.IconButton.Outlined">
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">wrap_content</item>
+  </style>
+
+  <!-- ButtonGroup -->
+
+  <style
+    name="Widget.Tack.ButtonGroup.Large"
+    parent="Widget.Material3Expressive.MaterialButtonGroup">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.Tack.ButtonGroup.Overflow</item>
+  </style>
+
+  <style name="ThemeOverlay.Tack.ButtonGroup.Overflow" parent="ThemeOverlay.Material3Expressive.MaterialButtonGroup.Overflow">
+    <item name="materialButtonGroupOverflowButtonStyle">@style/Widget.Tack.Button.IconButton.Tonal.Large.Narrow</item>
   </style>
 
   <!-- RadioButton -->

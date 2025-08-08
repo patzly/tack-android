@@ -47,6 +47,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat.Type;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -207,6 +208,22 @@ public class ViewUtil {
       }
       imageView.setImageDrawable(null);
       imageView.setImageDrawable((Drawable) animatable);
+    } catch (ClassCastException e) {
+      Log.v(TAG, "resetting animated icon requires AnimVectorDrawable");
+    }
+  }
+
+  public static void resetAnimatedIcon(MaterialButton button) {
+    if (button == null) {
+      return;
+    }
+    try {
+      Animatable animatable = (Animatable) button.getIcon();
+      if (animatable != null) {
+        animatable.stop();
+      }
+      button.setIcon(null);
+      button.setIcon((Drawable) animatable);
     } catch (ClassCastException e) {
       Log.v(TAG, "resetting animated icon requires AnimVectorDrawable");
     }

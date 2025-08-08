@@ -74,7 +74,7 @@ public class CircleView extends View {
     super(context, attrs);
 
     colorDefault = ResUtil.getColor(context, R.attr.colorSecondaryContainer);
-    int colorDrag = ResUtil.getColor(context, R.attr.colorTertiary);
+    int colorDrag = ResUtil.getColor(context, R.attr.colorOnSecondaryContainer);
 
     paintFill = new Paint();
     paintFill.setStyle(Style.FILL);

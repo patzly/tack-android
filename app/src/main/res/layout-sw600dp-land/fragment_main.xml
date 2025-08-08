@@ -468,7 +468,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         app:layout_constraintTop_toBottomOf="@+id/frame_main_center"
-        app:layout_constraintBottom_toTopOf="@+id/linear_main_bottom"
+        app:layout_constraintBottom_toTopOf="@+id/frame_main_bottom"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -480,74 +480,24 @@
 
       </FrameLayout>
 
-      <LinearLayout
-        android:id="@+id/linear_main_bottom"
+      <FrameLayout
+        android:id="@+id/frame_main_bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
         android:paddingBottom="@dimen/controls_bottom_margin_bottom"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <LinearLayout
-          android:id="@+id/linear_main_bottom_controls_start"
+        <include
+          android:id="@+id/controls_main_bottom"
+          layout="@layout/partial_main_bottom_controls"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          android:padding="8dp"
-          android:layout_marginEnd="@dimen/controls_bottom_spacing"
-          android:background="@drawable/shape_bottom_controls_bg_left">
+          android:layout_gravity="center_horizontal" />
 
-          <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_main_options"
-            style="@style/Widget.Tack.Button.IconButton.Standard"
-            android:contentDescription="@string/title_options"
-            app:icon="@drawable/ic_rounded_tune_anim" />
-
-          <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_main_tempo_tap"
-            style="@style/Widget.Tack.Button.IconButton.Standard"
-            android:contentDescription="@string/action_tempo_tap"
-            app:icon="@drawable/ic_rounded_touch_app_anim" />
-
-        </LinearLayout>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-          android:id="@+id/fab_main_play_stop"
-          style="@style/Widget.Material3.FloatingActionButton.Large.Primary"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:contentDescription="@string/action_play_stop"
-          app:srcCompat="@drawable/ic_rounded_play_to_stop_fill_anim" />
-
-        <LinearLayout
-          android:id="@+id/linear_main_bottom_controls_end"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:orientation="horizontal"
-          android:padding="8dp"
-          android:layout_marginStart="@dimen/controls_bottom_spacing"
-          android:background="@drawable/shape_bottom_controls_bg_right">
-
-          <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_main_songs"
-            style="@style/Widget.Tack.Button.IconButton.Standard"
-            android:contentDescription="@string/title_songs"
-            app:icon="@drawable/ic_rounded_queue_music" />
-
-          <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_main_beat_mode"
-            style="@style/Widget.Tack.Button.IconButton.Standard"
-            android:contentDescription="@string/action_beat_mode"
-            app:icon="@drawable/ic_rounded_vibration_to_volume_up_anim" />
-
-        </LinearLayout>
-
-      </LinearLayout>
+      </FrameLayout>
 
       <FrameLayout
         android:layout_width="0dp"

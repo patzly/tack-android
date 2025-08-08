@@ -1,6 +1,7 @@
 ## 5.1.0
 
-- New: Material 3 Expressive design throughout the app with new typeface
+- New: Material 3 Expressive design throughout the app with new typeface and redesigned bottom controls
+- New: "Always vibrate" setting replaced by beat mode dialog accessible from the main screen
 - New: volume boost setting extended for volume reduction
 - New: Japanese and Dutch translations (thanks to the contributors!)
 - Improved: play/stop button now responds on press down instead of release for a more responsive feel

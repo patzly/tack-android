@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<com.google.android.material.button.MaterialButtonGroup
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:id="@+id/button_group_main_bottom"
+  android:layout_width="wrap_content"
+  android:layout_height="wrap_content"
+  android:layout_gravity="center_horizontal"
+  android:spacing="8dp">
+
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/button_main_options"
+    style="@style/Widget.Tack.Button.IconButton.Tonal.Medium.Narrow"
+    android:contentDescription="@string/title_options"
+    app:icon="@drawable/ic_rounded_tune_anim" />
+
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/button_main_tempo_tap"
+    style="@style/Widget.Tack.Button.IconButton.Tonal.Medium.Narrow"
+    android:contentDescription="@string/action_tempo_tap"
+    app:icon="@drawable/ic_rounded_touch_app_anim" />
+
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/button_main_play_stop"
+    style="@style/Widget.Tack.Button.IconButton.Filled.Medium.Wide"
+    android:contentDescription="@string/action_play_stop"
+    android:checkable="true"
+    app:toggleCheckedStateOnClick="false"
+    app:icon="@drawable/ic_rounded_play_to_stop_fill_anim" />
+
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/button_main_songs"
+    style="@style/Widget.Tack.Button.IconButton.Tonal.Medium.Narrow"
+    android:contentDescription="@string/title_songs"
+    app:icon="@drawable/ic_rounded_queue_music" />
+
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/button_main_beat_mode"
+    style="@style/Widget.Tack.Button.IconButton.Tonal.Medium.Narrow"
+    android:contentDescription="@string/action_beat_mode"
+    app:icon="@drawable/ic_rounded_vibration_to_volume_up_anim" />
+
+</com.google.android.material.button.MaterialButtonGroup>
