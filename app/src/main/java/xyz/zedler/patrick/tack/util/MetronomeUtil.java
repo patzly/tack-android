@@ -42,6 +42,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import xyz.zedler.patrick.tack.Constants;
+import xyz.zedler.patrick.tack.Constants.BEAT_MODE;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
@@ -73,13 +74,13 @@ public class MetronomeUtil {
   private Handler tickHandler, latencyHandler;
   private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
   private SongWithParts currentSongWithParts;
-  private String currentSongId, timerStringBars;
+  private String beatMode, currentSongId, timerStringBars;
   private int currentPartIndex, muteCountDown, songsOrder;
   private long tickIndex, latency, countInStartTime, timerStartTime;
   private long elapsedStartTime, elapsedTime, elapsedPrevious;
   private float timerProgress;
-  private boolean playing, tempPlaying, beatModeVibrate, isCountingIn, isMuted;
-  private boolean showElapsed, resetTimerOnStop, alwaysVibrate, flashScreen, keepAwake;
+  private boolean playing, tempPlaying, isCountingIn, isMuted;
+  private boolean showElapsed, resetTimerOnStop, flashScreen, keepAwake;
   private boolean neverStartedWithGain = true;
   private boolean ignoreTimerCallbacksTemp = false;
 
@@ -109,7 +110,6 @@ public class MetronomeUtil {
     }
 
     latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY);
-    alwaysVibrate = sharedPrefs.getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
     showElapsed = sharedPrefs.getBoolean(PREF.SHOW_ELAPSED, DEF.SHOW_ELAPSED);
     resetTimerOnStop = sharedPrefs.getBoolean(PREF.RESET_TIMER_ON_STOP, DEF.RESET_TIMER_ON_STOP);
     flashScreen = sharedPrefs.getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
@@ -119,7 +119,7 @@ public class MetronomeUtil {
     setSound(sharedPrefs.getString(PREF.SOUND, DEF.SOUND));
     setIgnoreFocus(sharedPrefs.getBoolean(PREF.IGNORE_FOCUS, DEF.IGNORE_FOCUS));
     setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
-    setBeatModeVibrate(sharedPrefs.getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE));
+    setBeatMode(sharedPrefs.getString(PREF.BEAT_MODE, DEF.BEAT_MODE));
     setCurrentSong(
         sharedPrefs.getString(PREF.SONG_CURRENT_ID, DEF.SONG_CURRENT_ID),
         sharedPrefs.getInt(PREF.PART_CURRENT_INDEX, DEF.PART_CURRENT_INDEX),
@@ -342,10 +342,8 @@ public class MetronomeUtil {
     config.setTimerDuration(0);
     config.setMutePlay(0);
 
-    alwaysVibrate = true;
+    beatMode = BEAT_MODE.ALL;
     audioUtil.setGain(0);
-
-    beatModeVibrate = false;
     audioUtil.setMuted(false);
     hapticUtil.setEnabled(true);
 
@@ -754,33 +752,23 @@ public class MetronomeUtil {
     return sharedPrefs.getString(PREF.SOUND, DEF.SOUND);
   }
 
-  public void setBeatModeVibrate(boolean vibrate) {
+  public void setBeatMode(@NonNull String mode) {
     if (!hapticUtil.hasVibrator()) {
-      vibrate = false;
+      mode = BEAT_MODE.SOUND;
     }
-    beatModeVibrate = vibrate;
-    audioUtil.setMuted(vibrate);
-    hapticUtil.setEnabled(vibrate || alwaysVibrate);
-    sharedPrefs.edit().putBoolean(PREF.BEAT_MODE_VIBRATE, vibrate).apply();
+    beatMode = mode;
+    audioUtil.setMuted(mode.equals(BEAT_MODE.VIBRATION));
+    hapticUtil.setEnabled(!mode.equals(BEAT_MODE.SOUND));
+    sharedPrefs.edit().putString(PREF.BEAT_MODE, mode).apply();
   }
 
-  public boolean isBeatModeVibrate() {
-    return beatModeVibrate;
-  }
-
-  public void setAlwaysVibrate(boolean always) {
-    alwaysVibrate = always;
-    hapticUtil.setEnabled(always || beatModeVibrate);
-    sharedPrefs.edit().putBoolean(PREF.ALWAYS_VIBRATE, always).apply();
-  }
-
-  public boolean isAlwaysVibrate() {
-    return alwaysVibrate;
+  public String getBeatMode() {
+    return beatMode;
   }
 
   public boolean areHapticEffectsPossible(boolean ignoreIsPlaying) {
     if (ignoreIsPlaying) {
-      return !beatModeVibrate && !alwaysVibrate;
+      return beatMode.equals(BEAT_MODE.SOUND);
     } else {
       return !isPlaying() || areHapticEffectsPossible(true);
     }
@@ -1445,7 +1433,7 @@ public class MetronomeUtil {
       }
     }, Math.max(0, latency - Constants.BEAT_ANIM_OFFSET));
     latencyHandler.postDelayed(() -> {
-      if ((beatModeVibrate || alwaysVibrate) && !isMuted) {
+      if (!beatMode.equals(BEAT_MODE.SOUND) && !isMuted) {
         switch (tick.type) {
           case TICK_TYPE.STRONG:
             hapticUtil.heavyClick();

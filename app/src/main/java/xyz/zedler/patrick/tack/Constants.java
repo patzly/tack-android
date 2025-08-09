@@ -51,9 +51,12 @@ public final class Constants {
     public final static String TEMPO = "tempo";
     public final static String BEATS = "beats";
     public final static String SUBDIVISIONS = "subdivisions";
+    public final static String BEAT_MODE = "beat_mode";
+    @Deprecated
     public final static String BEAT_MODE_VIBRATE = "beat_mode_vibrate";
     public final static String HIDE_SUB_CONTROLS = "hide_subdivision_controls";
     public final static String ACTIVE_BEAT = "highlight_active_beat";
+    @Deprecated
     public final static String ALWAYS_VIBRATE = "always_vibrate";
     public final static String SHOW_ELAPSED = "show_elapsed";
     public final static String RESET_TIMER_ON_STOP = "reset_timer";
@@ -101,10 +104,9 @@ public final class Constants {
         ",", TICK_TYPE.STRONG, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL
     );
     public final static String SUBDIVISIONS = TICK_TYPE.MUTED;
-    public final static boolean BEAT_MODE_VIBRATE = false;
+    public final static String BEAT_MODE = Constants.BEAT_MODE.ALL;
     public final static boolean HIDE_SUB_CONTROLS = false;
     public final static boolean ACTIVE_BEAT = false;
-    public final static boolean ALWAYS_VIBRATE = true;
     public final static boolean SHOW_ELAPSED = false;
     public final static boolean RESET_TIMER_ON_STOP = false;
     public final static boolean BIG_TIME_TEXT = false;
@@ -146,6 +148,13 @@ public final class Constants {
     public final static String BEATBOXING_2 = "beatboxing_2";
     public final static String HANDS = "hands";
     public final static String FOLDING = "folding";
+  }
+
+  public final static class BEAT_MODE {
+
+    public final static String ALL = "all";
+    public final static String SOUND = "sound";
+    public final static String VIBRATION = "vibration";
   }
 
   public final static class TICK_TYPE {

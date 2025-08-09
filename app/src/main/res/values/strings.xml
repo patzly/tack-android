@@ -66,6 +66,9 @@
   <string name="label_tempo_presto">Presto</string>
   <string name="label_tempo_prestissimo">Prestissimo</string>
   <string name="label_tempo_input_help">Values from %1$d to %2$d</string>
+  <string name="label_beat_mode_all">Sound and vibration</string>
+  <string name="label_beat_mode_sound">Sound only</string>
+  <string name="label_beat_mode_vibration">Vibration only</string>
   <string name="label_part_name">Part name</string>
   <string name="label_part_unnamed">Part %1$d</string>
   <string name="label_part_current">Part %1$d: %2$s</string>
@@ -159,7 +162,7 @@
   <string name="msg_feedback">A great app requires a lot of time and lives from the feedback of its users.</string>
   <string name="msg_feedback_contact">Do you have any wishes, comments or questions? Contact me!\nOtherwise I would be very happy about a nice review in the Play Store.</string>
   <string name="msg_recommend">Check out this cool metronome app: \n%1$s</string>
-  <string name="msg_vibration_unavailable">Vibration unavailable on this device</string>
+  <string name="msg_vibration_unavailable">Vibration not available on this device. Sound will be used.</string>
   <string name="msg_service_running">Metronome service is running</string>
   <string name="msg_service_running_return">Tap to return to Tack</string>
   <string name="msg_service_description">Service for metronome configuration and playback</string>
@@ -357,9 +360,6 @@
 
   <string name="settings_active_beat">Highlight current beat</string>
   <string name="settings_active_beat_description">Helpful for slower tempos</string>
-
-  <string name="settings_always_vibrate">Always vibrate</string>
-  <string name="settings_always_vibrate_description">Even with sound</string>
 
   <string name="settings_elapsed">Show elapsed time</string>
   <string name="settings_elapsed_description">See how long you practice</string>

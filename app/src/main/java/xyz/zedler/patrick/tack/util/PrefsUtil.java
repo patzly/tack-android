@@ -21,21 +21,18 @@ package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 import androidx.preference.PreferenceManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import xyz.zedler.patrick.tack.Constants.BEAT_MODE;
+import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.database.SongDatabase;
 import xyz.zedler.patrick.tack.database.entity.Part;
@@ -57,6 +54,7 @@ public class PrefsUtil {
 
   public PrefsUtil checkForMigrations() {
     migrateBookmarks();
+    migrateBeatModeVibrateAndAlwaysVibrate();
     return this;
   }
 
@@ -119,6 +117,35 @@ public class PrefsUtil {
         ShortcutUtil shortcutUtil = new ShortcutUtil(context);
         shortcutUtil.removeAllShortcuts();
       }
+    }
+  }
+
+  private void migrateBeatModeVibrateAndAlwaysVibrate() {
+    String beatModeVibrateKeyOld = "beat_mode_vibrate";
+    boolean beatModeVibrateDefault = false;
+    String alwaysVibrateKeyOld = "always_vibrate";
+    boolean alwaysVibrateDefault = true;
+    if (sharedPrefs.contains(beatModeVibrateKeyOld)) {
+      SharedPreferences.Editor editor = sharedPrefs.edit();
+      try {
+        boolean currentBeatModeVibrate = sharedPrefs.getBoolean(
+            beatModeVibrateKeyOld, beatModeVibrateDefault
+        );
+        boolean currentAlwaysVibrate = sharedPrefs.getBoolean(
+            alwaysVibrateKeyOld, alwaysVibrateDefault
+        );
+        if (currentBeatModeVibrate) {
+          editor.putString(PREF.BEAT_MODE, BEAT_MODE.VIBRATION);
+        } else if (currentAlwaysVibrate) {
+          editor.putString(PREF.BEAT_MODE, BEAT_MODE.ALL);
+        } else {
+          editor.putString(PREF.BEAT_MODE, BEAT_MODE.SOUND);
+        }
+      } finally {
+        editor.remove(beatModeVibrateKeyOld);
+        editor.remove(alwaysVibrateKeyOld);
+      }
+      editor.apply();
     }
   }
 

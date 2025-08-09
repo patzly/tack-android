@@ -58,8 +58,11 @@ import com.google.android.material.slider.Slider.OnSliderTouchListener;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import xyz.zedler.patrick.tack.Constants;
+import xyz.zedler.patrick.tack.Constants.BEAT_MODE;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
@@ -104,7 +107,7 @@ public class MainFragment extends BaseFragment
   private float playStopButtonFraction;
   private int colorFlashNormal, colorFlashStrong, colorFlashMuted;
   private DialogUtil dialogUtilGain, dialogUtilSplitScreen, dialogUtilTimer, dialogUtilElapsed;
-  private DialogUtil dialogUtilPermission;
+  private DialogUtil dialogUtilPermission, dialogUtilBeatMode;
   private OptionsUtil optionsUtil;
   private PartsDialogUtil partsDialogUtil;
   private TempoTapDialogUtil tempoTapDialogUtil;
@@ -138,6 +141,7 @@ public class MainFragment extends BaseFragment
     dialogUtilTimer.dismiss();
     dialogUtilElapsed.dismiss();
     dialogUtilPermission.dismiss();
+    dialogUtilBeatMode.dismiss();
     tempoDialogUtil.dismiss();
     optionsUtil.dismiss();
     partsDialogUtil.dismiss();
@@ -327,6 +331,8 @@ public class MainFragment extends BaseFragment
     });
     dialogUtilElapsed.showIfWasShown(savedInstanceState);
 
+    dialogUtilBeatMode = new DialogUtil(activity, "beat_mode");
+
     tempoDialogUtil = new TempoDialogUtil(activity, this);
     tempoDialogUtil.showIfWasShown(savedInstanceState);
 
@@ -447,20 +453,11 @@ public class MainFragment extends BaseFragment
       performHapticClick();
     });
 
-    boolean alwaysVibrate = getSharedPrefs().getBoolean(PREF.ALWAYS_VIBRATE, DEF.ALWAYS_VIBRATE);
-    if (getSharedPrefs().getBoolean(PREF.BEAT_MODE_VIBRATE, DEF.BEAT_MODE_VIBRATE)) {
-      binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
-          alwaysVibrate
-              ? R.drawable.ic_rounded_volume_off_to_volume_up_anim
-              : R.drawable.ic_rounded_vibration_to_volume_up_anim
-      );
-    } else {
-      binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
-          alwaysVibrate
-              ? R.drawable.ic_rounded_volume_up_to_volume_off_anim
-              : R.drawable.ic_rounded_volume_up_to_vibration_anim
-      );
-    }
+    binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
+        getSharedPrefs().getString(PREF.BEAT_MODE, DEF.BEAT_MODE).equals(BEAT_MODE.VIBRATION)
+            ? R.drawable.ic_rounded_vibration_to_volume_up_anim
+            : R.drawable.ic_rounded_volume_up_to_vibration_anim
+    );
 
     setButtonStates(getMetronomeUtil().getTempo());
 
@@ -544,6 +541,7 @@ public class MainFragment extends BaseFragment
     }
     updateMetronomeControls();
 
+    ViewUtil.setTooltipText(binding.buttonMainMenu, R.string.action_more);
     ViewUtil.setTooltipText(binding.buttonMainAddBeat, R.string.action_add_beat);
     ViewUtil.setTooltipText(binding.buttonMainRemoveBeat, R.string.action_remove_beat);
     ViewUtil.setTooltipText(binding.buttonMainAddSubdivision, R.string.action_add_sub);
@@ -626,6 +624,9 @@ public class MainFragment extends BaseFragment
     if (dialogUtilElapsed != null) {
       dialogUtilElapsed.saveState(outState);
     }
+    if (dialogUtilBeatMode != null) {
+      dialogUtilBeatMode.saveState(outState);
+    }
     if (partsDialogUtil != null) {
       partsDialogUtil.saveState(outState);
     }
@@ -650,19 +651,11 @@ public class MainFragment extends BaseFragment
 
     savedState = null;
 
-    if (getMetronomeUtil().isBeatModeVibrate()) {
-      binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
-          getMetronomeUtil().isAlwaysVibrate()
-              ? R.drawable.ic_rounded_volume_off_to_volume_up_anim
-              : R.drawable.ic_rounded_vibration_to_volume_up_anim
-      );
-    } else {
-      binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
-          getMetronomeUtil().isAlwaysVibrate()
-              ? R.drawable.ic_rounded_volume_up_to_volume_off_anim
-              : R.drawable.ic_rounded_volume_up_to_vibration_anim
-      );
-    }
+    binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
+        getMetronomeUtil().getBeatMode().equals(BEAT_MODE.VIBRATION)
+            ? R.drawable.ic_rounded_vibration_to_volume_up_anim
+            : R.drawable.ic_rounded_volume_up_to_vibration_anim
+    );
 
     updateBeats(getMetronomeUtil().getBeats());
     updateBeatControls(false);
@@ -695,6 +688,57 @@ public class MainFragment extends BaseFragment
             : R.drawable.ic_rounded_play_arrow_fill
     );
     updatePlayStopButton(getMetronomeUtil().isPlaying(), false);
+
+    Map<String, String> beatModeLabels = new LinkedHashMap<>();
+    beatModeLabels.put(BEAT_MODE.ALL, getString(R.string.label_beat_mode_all));
+    beatModeLabels.put(BEAT_MODE.SOUND, getString(R.string.label_beat_mode_sound));
+    beatModeLabels.put(BEAT_MODE.VIBRATION, getString(R.string.label_beat_mode_vibration));
+    ArrayList<String> beatModes = new ArrayList<>(beatModeLabels.keySet());
+    String[] items = beatModeLabels.values().toArray(new String[]{});
+    int init = beatModes.indexOf(getMetronomeUtil().getBeatMode());
+    if (init == -1) {
+      init = 0;
+      getSharedPrefs().edit().remove(PREF.BEAT_MODE).apply();
+    }
+    int initFinal = init;
+    dialogUtilBeatMode.createDialog(builder -> {
+      builder.setTitle(R.string.action_beat_mode);
+      if (activity.getHapticUtil().hasVibrator()) {
+        builder.setSingleChoiceItems(
+            items, initFinal, (dialog, which) -> {
+              String beatModePrev = getMetronomeUtil().getBeatMode();
+              String beatMode = beatModes.get(which);
+              if (beatMode.equals(BEAT_MODE.SOUND)) {
+                performHapticClick();
+              }
+              getMetronomeUtil().setBeatMode(beatMode);
+              if (!beatMode.equals(BEAT_MODE.SOUND)) {
+                performHapticClick();
+              }
+
+              if (beatModePrev.equals(BEAT_MODE.VIBRATION)
+                  && !beatMode.equals(BEAT_MODE.VIBRATION)) {
+                binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
+                    R.drawable.ic_rounded_vibration_to_volume_up_anim
+                );
+                ViewUtil.startIcon(binding.controlsMainBottom.buttonMainBeatMode.getIcon());
+              } else if (!beatModePrev.equals(BEAT_MODE.VIBRATION)
+                  && beatMode.equals(BEAT_MODE.VIBRATION)) {
+                binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
+                    R.drawable.ic_rounded_volume_up_to_vibration_anim
+                );
+                ViewUtil.startIcon(binding.controlsMainBottom.buttonMainBeatMode.getIcon());
+              }
+            }
+        );
+      } else {
+        builder.setMessage(R.string.msg_vibration_unavailable);
+      }
+      builder.setPositiveButton(
+          R.string.action_close, (dialog, which) -> performHapticClick()
+      );
+    });
+    dialogUtilBeatMode.showIfWasShown(savedState);
 
     boolean keepAwake = getMetronomeUtil().getKeepAwake() && getMetronomeUtil().isPlaying();
     UiUtil.keepScreenAwake(activity, keepAwake);
@@ -982,39 +1026,14 @@ public class MainFragment extends BaseFragment
       ViewUtil.startIcon(binding.buttonMainMore10.getIcon());
       changeTempo(10);
     } else if (id == R.id.button_main_beat_mode) {
-      boolean beatModeVibrateNew = !getMetronomeUtil().isBeatModeVibrate();
-      if (beatModeVibrateNew && !activity.getHapticUtil().hasVibrator()) {
-        showSnackbar(
-            activity.getSnackbar(R.string.msg_vibration_unavailable, Snackbar.LENGTH_SHORT)
+      dialogUtilBeatMode.show();
+      if (getMetronomeUtil().getBeatMode().equals(BEAT_MODE.VIBRATION)) {
+        // Use available animated icon for click
+        binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
+            R.drawable.ic_rounded_vibration_anim
         );
-        return;
+        ViewUtil.startIcon(binding.controlsMainBottom.buttonMainBeatMode.getIcon());
       }
-      if (!beatModeVibrateNew) {
-        performHapticClick();
-      }
-      getMetronomeUtil().setBeatModeVibrate(beatModeVibrateNew);
-      if (beatModeVibrateNew) {
-        performHapticClick();
-      }
-      ViewUtil.startIcon(binding.controlsMainBottom.buttonMainBeatMode.getIcon());
-      new Handler(Looper.getMainLooper()).postDelayed(() -> {
-        if (binding == null) {
-          return;
-        }
-        if (beatModeVibrateNew) {
-          binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
-              getMetronomeUtil().isAlwaysVibrate()
-                  ? R.drawable.ic_rounded_volume_off_to_volume_up_anim
-                  : R.drawable.ic_rounded_vibration_to_volume_up_anim
-          );
-        } else {
-          binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
-              getMetronomeUtil().isAlwaysVibrate()
-                  ? R.drawable.ic_rounded_volume_up_to_volume_off_anim
-                  : R.drawable.ic_rounded_volume_up_to_vibration_anim
-          );
-        }
-      }, 300);
     } else if (id == R.id.button_main_songs) {
       performHapticClick();
       activity.navigate(MainFragmentDirections.actionMainToSongs());
