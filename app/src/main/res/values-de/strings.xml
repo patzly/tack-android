@@ -144,7 +144,6 @@
   <string name="msg_feedback">Eine großartige App benötigt viel Zeit und lebt von der Rückmeldungen ihrer Nutzer.</string>
   <string name="msg_feedback_contact">Hast du Wünsche, Anmerkungen oder Fragen? Kontaktiere mich!\nAnsonsten würde ich mich sehr über eine nette Bewertung im Play Store freuen.</string>
   <string name="msg_recommend">Schau dir mal diese coole Metronom-App an: \n%1$s</string>
-  <string name="msg_vibration_unavailable">Vibration auf diesem Gerät nicht verfügbar</string>
   <string name="msg_service_running">Metronom-Service läuft</string>
   <string name="msg_service_running_return">Tippen, um zu Tack zurückzukehren</string>
   <string name="msg_service_description">Service für die Konfiguration und Wiedergabe des Metronoms</string>
@@ -342,9 +341,6 @@
 
   <string name="settings_active_beat">Aktuellen Schlag hervorheben</string>
   <string name="settings_active_beat_description">Hilfreich für langsame Tempos</string>
-
-  <string name="settings_always_vibrate">Immer vibrieren</string>
-  <string name="settings_always_vibrate_description">Auch im Audiomodus</string>
 
   <string name="settings_elapsed">Vergangene Zeit anzeigen</string>
   <string name="settings_elapsed_description">Sieh, wie lange du übst</string>
