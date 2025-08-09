@@ -144,7 +144,6 @@
   <string name="msg_feedback">一款優秀的應用程式需要花費大量的時間和獲取使用者的意見反映。</string>
   <string name="msg_feedback_contact">你有任何願望、評論或問題嗎？聯絡我！\n否則，我會非常高興在 Play 商店得到一個好評。</string>
   <string name="msg_recommend">看看這個很酷的節拍器應用程式：\n%1$s</string>
-  <string name="msg_vibration_unavailable">此裝置無法使用震動功能</string>
   <string name="msg_service_running">節拍器服務正在執行</string>
   <string name="msg_service_running_return">點擊以返回 Tack</string>
   <string name="msg_service_description">節拍器配置和播放服務</string>
@@ -325,9 +324,6 @@
 
   <string name="settings_active_beat">突出顯示目前節拍</string>
   <string name="settings_active_beat_description">對較慢的節奏有幫助</string>
-
-  <string name="settings_always_vibrate">總是震動</string>
-  <string name="settings_always_vibrate_description">即使有聲音</string>
 
   <string name="settings_elapsed">顯示已使用的時間</string>
   <string name="settings_elapsed_description">看你練習了多久</string>
