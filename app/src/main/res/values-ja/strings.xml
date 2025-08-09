@@ -142,7 +142,6 @@
   <string name="msg_feedback">素晴らしいアプリの開発には、膨大な時間とユーザーからのフィードバックが必要です。</string>
   <string name="msg_feedback_contact">要望や意見、質問がある場合はご連絡ください！\nそして、 Play ストアで素敵なレビューを書いていただけると非常に嬉しいです。</string>
   <string name="msg_recommend">素敵なメトロノームアプリをチェック: \n%1$s</string>
-  <string name="msg_vibration_unavailable">このデバイスでは振動を利用できません</string>
   <string name="msg_service_running">メトロノーム機能実行中</string>
   <string name="msg_service_running_return">タップして Tack に戻る</string>
   <string name="msg_service_description">メトロノーム構成・再生機能</string>
@@ -323,9 +322,6 @@
 
   <string name="settings_active_beat">現在の拍を強調表示</string>
   <string name="settings_active_beat_description">遅いテンポで役立ちます</string>
-
-  <string name="settings_always_vibrate">常に振動ビートモード</string>
-  <string name="settings_always_vibrate_description">音声ビート状態でも振動します</string>
 
   <string name="settings_elapsed">経過時間表示</string>
   <string name="settings_elapsed_description">練習時間を確認できます</string>

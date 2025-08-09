@@ -145,7 +145,6 @@
   <string name="msg_feedback">Разработка хорошего приложения занимает много времени и зависит от обратной связи пользователей</string>
   <string name="msg_feedback_contact">У вас есть пожелания, комментарии или вопросы? Напишите мне!\nЕсли нет, буду рад хорошему отзыву в Play Store.</string>
   <string name="msg_recommend">Зацени классный метроном: \n%1$s</string>
-  <string name="msg_vibration_unavailable">Вибрация недоступна на этом устройстве</string>
   <string name="msg_service_running">Сервис метронома запущен</string>
   <string name="msg_service_running_return">Нажмите, чтобы вернуться в Tack</string>
   <string name="msg_service_description">Сервис для настройки и проигрывания метронома</string>
@@ -372,9 +371,6 @@
 
   <string name="settings_active_beat">Выделять текущий удар</string>
   <string name="settings_active_beat_description">Полезно при медленном темпе</string>
-
-  <string name="settings_always_vibrate">Всегда вибрировать</string>
-  <string name="settings_always_vibrate_description">Даже когда звук включен</string>
 
   <string name="settings_elapsed">Показать затраченное время</string>
   <string name="settings_elapsed_description">Следите за тем, как долго вы занимаетесь</string>

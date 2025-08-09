@@ -146,7 +146,6 @@
   <string name="msg_feedback">Dobrá aplikace vyžaduje spoustu času a existuje díky zpětné vazbě od uživatelů.</string>
   <string name="msg_feedback_contact">Máte nějaká přání, komentáře nebo dotazy? Kontaktujte mě!\nBudu také velmi rád, pokud zanecháte pěkné hodnocení v Obchodě Play.</string>
   <string name="msg_recommend">Používám tuhle skvělou aplikaci metronomu: \n%1$s</string>
-  <string name="msg_vibration_unavailable">Vibrace není na tomto zařízení dostupná</string>
   <string name="msg_service_running">Služba metronomu běží</string>
   <string name="msg_service_running_return">Klepněte pro návrat do aplikace Tack</string>
   <string name="msg_service_description">Služba pro nastavení a přehrávání metronomu</string>
@@ -373,9 +372,6 @@
 
   <string name="settings_active_beat">Zvýraznit aktuální rytmus</string>
   <string name="settings_active_beat_description">Užitečné pro pomalejší tempa</string>
-
-  <string name="settings_always_vibrate">Vždy vibrovat</string>
-  <string name="settings_always_vibrate_description">I se zvukem</string>
 
   <string name="settings_elapsed">Zobrazit uplynulý čas</string>
   <string name="settings_elapsed_description">Uvidíte, jak dlouho cvičíte</string>
