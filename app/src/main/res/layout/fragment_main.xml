@@ -72,16 +72,14 @@
         android:layout_gravity="center"
         android:text="@string/app_name" />
 
-      <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar_main"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_gravity="end"
-        android:paddingStart="0dp"
-        android:paddingEnd="12dp"
-        android:background="@drawable/shape_action_overflow_button_bg"
-        android:backgroundTint="?attr/colorSurfaceContainer"
-        app:menu="@menu/menu_main" />
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_main_menu"
+        style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
+        android:contentDescription="@string/action_more"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="8dp"
+        app:backgroundTint="?attr/colorSurfaceContainer"
+        app:icon="@drawable/ic_rounded_more_vert" />
 
     </FrameLayout>
 

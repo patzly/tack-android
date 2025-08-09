@@ -37,6 +37,7 @@
     <item name="badgeStyle">@style/Widget.Tack.Badge</item>
 
     <!-- Popup Menu styles -->
+    <item name="popupMenuStyle">@style/Widget.Tack.PopupMenu</item>
     <item name="popupMenuBackground">@drawable/shape_popup_menu</item>
     <item name="actionOverflowButtonStyle">@style/ThemeOverlay.Tack.OverFlow</item>
 

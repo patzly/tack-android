@@ -39,10 +39,13 @@ import android.widget.CompoundButton;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import androidx.annotation.AttrRes;
+import androidx.annotation.MenuRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.appcompat.widget.PopupMenu.OnMenuItemClickListener;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat.Type;
@@ -348,5 +351,15 @@ public class ViewUtil {
             ? Gravity.START
             : Gravity.CENTER_HORIZONTAL;
     content.requestLayout();
+  }
+
+  // PopupMenu
+
+  public static void showMenu(View v, @MenuRes int menuRes, OnMenuItemClickListener listener) {
+    PopupMenu popup = new PopupMenu(v.getContext(), v);
+    popup.getMenuInflater().inflate(menuRes, popup.getMenu());
+    popup.setOnMenuItemClickListener(listener);
+    popup.setGravity(Gravity.END);
+    popup.show();
   }
 }

@@ -1,0 +1,29 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:width="24dp"
+  android:height="24dp"
+  android:viewportWidth="960"
+  android:viewportHeight="960">
+  <path
+    android:pathData="M480,800q-33,0 -56.5,-23.5T400,720q0,-33 23.5,-56.5T480,640q33,0 56.5,23.5T560,720q0,33 -23.5,56.5T480,800ZM480,560q-33,0 -56.5,-23.5T400,480q0,-33 23.5,-56.5T480,400q33,0 56.5,23.5T560,480q0,33 -23.5,56.5T480,560ZM480,320q-33,0 -56.5,-23.5T400,240q0,-33 23.5,-56.5T480,160q33,0 56.5,23.5T560,240q0,33 -23.5,56.5T480,320Z"
+    android:fillColor="#000000" />
+</vector>

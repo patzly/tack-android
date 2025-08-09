@@ -162,22 +162,25 @@ public class MainFragment extends BaseFragment
     int liftMode = isLandTablet ? ScrollBehavior.ALWAYS_LIFTED : ScrollBehavior.NEVER_LIFTED;
     new ScrollBehavior().setUpScroll(binding.appBarMain, null, liftMode);
 
-    binding.toolbarMain.setOnMenuItemClickListener(item -> {
-      int id = item.getItemId();
-      if (getViewUtil().isClickDisabled(id)) {
-        return false;
-      }
+    binding.buttonMainMenu.setOnClickListener(v -> {
       performHapticClick();
-      if (id == R.id.action_settings) {
-        activity.navigate(MainFragmentDirections.actionMainToSettings());
-      } else if (id == R.id.action_about) {
-        activity.navigate(MainFragmentDirections.actionMainToAbout());
-      } else if (id == R.id.action_help) {
-        activity.showTextBottomSheet(R.raw.help, R.string.title_help);
-      } else if (id == R.id.action_feedback) {
-        activity.showFeedbackBottomSheet();
-      }
-      return true;
+      ViewUtil.showMenu(v, R.menu.menu_main, item -> {
+        int id = item.getItemId();
+        if (getViewUtil().isClickDisabled(id)) {
+          return false;
+        }
+        performHapticClick();
+        if (id == R.id.action_settings) {
+          activity.navigate(MainFragmentDirections.actionMainToSettings());
+        } else if (id == R.id.action_about) {
+          activity.navigate(MainFragmentDirections.actionMainToAbout());
+        } else if (id == R.id.action_help) {
+          activity.showTextBottomSheet(R.raw.help, R.string.title_help);
+        } else if (id == R.id.action_feedback) {
+          activity.showFeedbackBottomSheet();
+        }
+        return true;
+      });
     });
 
     flashScreen = getSharedPrefs().getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
