@@ -54,6 +54,7 @@
   <string name="label_tempo_prestissimo">最急板</string>
   <string name="label_tempo_input_help">值從 %1$d 到 %2$d</string>
   <string name="label_beat_mode_all">聲音和震動</string>
+  <string name="label_beat_mode_sound">僅聲音</string>
   <string name="label_part_name">部份名稱</string>
   <string name="label_part_unnamed">部份 %1$d</string>
   <string name="label_part_current">部份 %1$d：%2$s</string>
