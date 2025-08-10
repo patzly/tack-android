@@ -494,12 +494,12 @@ public class MainFragment extends BaseFragment
           binding.songPickerMain.setSongs(songsWithParts);
           if (!isPortrait && !isLandTablet) {
             // Hide song picker in landscape mode if empty to make place for other controls
-            binding.songPickerMain.setVisibility(
+            binding.frameMainSongsContainer.setVisibility(
                 songsWithParts.isEmpty() ? View.GONE : View.VISIBLE
             );
             updateSongPickerDividerVisibility();
           } else {
-            binding.songPickerMain.setVisibility(View.VISIBLE);
+            binding.frameMainSongsContainer.setVisibility(View.VISIBLE);
           }
         }
     );
@@ -1596,15 +1596,12 @@ public class MainFragment extends BaseFragment
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override
           public void onGlobalLayout() {
-            if (binding == null) {
+            if (binding == null || binding.frameMainSongsContainer.getVisibility() == View.GONE) {
               return;
             }
             int scrollViewHeight = binding.scrollMainTop.getMeasuredHeight();
             int scrollContentHeight = binding.linearMainTop.getHeight();
             boolean showDivider = scrollContentHeight > scrollViewHeight;
-            if (binding.songPickerMain.getVisibility() != View.VISIBLE) {
-              showDivider = false;
-            }
             if (binding.dividerMainSongs != null) {
               binding.dividerMainSongs.setVisibility(showDivider ? View.VISIBLE : View.GONE);
             }

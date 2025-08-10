@@ -227,7 +227,7 @@
 
           <com.google.android.material.slider.Slider
             android:id="@+id/slider_main_timer"
-            style="@style/Widget.Tack.Slider"
+            style="@style/Widget.Tack.Slider.Small"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
             android:layout_marginTop="4dp"
@@ -274,7 +274,6 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/controls_bottom_margin_bottom"
-        android:paddingBottom="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -292,7 +291,8 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_gravity="center_vertical"
-          android:layout_marginTop="1dp" />
+          android:layout_marginTop="2dp"
+          android:layout_marginBottom="4dp" />
 
       </FrameLayout>
 

@@ -369,6 +369,10 @@
     <item name="trackStopIndicatorSize">0dp</item>
   </style>
 
+  <style name="Widget.Tack.Slider.Small" parent="Widget.Tack.Slider">
+    <item name="trackHeight">24dp</item>
+  </style>
+
   <!-- Badge -->
 
   <style name="Widget.Tack.Badge" parent="Widget.Material3.Badge">

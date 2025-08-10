@@ -224,14 +224,13 @@
         <com.google.android.material.slider.Slider
           android:id="@+id/slider_main_timer"
           style="@style/Widget.Tack.Slider.Small"
+          android:layout_marginTop="4dp"
           android:layout_marginStart="4dp"
           android:layout_marginEnd="4dp"
-          android:layout_marginTop="4dp"
+          android:stepSize="0"
           android:valueFrom="0"
           android:valueTo="4"
-          android:stepSize="0"
           app:labelBehavior="gone" />
-
         <FrameLayout
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
@@ -280,8 +279,8 @@
 
     <FrameLayout
       android:id="@+id/frame_main_center"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
+      android:layout_width="@dimen/bpm_picker_size"
+      android:layout_height="@dimen/bpm_picker_size"
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintStart_toStartOf="parent"
@@ -289,24 +288,24 @@
 
       <xyz.zedler.patrick.tack.view.TempoPickerView
         android:id="@+id/tempo_picker_main"
-        android:layout_width="@dimen/bpm_picker_size"
-        android:layout_height="@dimen/bpm_picker_size"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:importantForAccessibility="yes" />
 
       <xyz.zedler.patrick.tack.view.CircleView
         android:id="@+id/circle_main"
-        android:layout_width="@dimen/bpm_picker_size"
-        android:layout_height="@dimen/bpm_picker_size" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
       <FrameLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         tools:ignore="SpUsage">
 
         <TextSwitcher
           android:id="@+id/text_switcher_main_tempo_term"
-          android:layout_width="@dimen/bpm_picker_size"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_gravity="center_horizontal|top" />
 
@@ -354,19 +353,19 @@
 
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_main_less_1"
-        style="@style/Widget.Tack.Button.IconButton.Tonal.Medium.Narrow"
+        style="@style/Widget.Tack.Button.IconButton.Tonal.Large.Narrow"
         android:contentDescription="@string/action_decrease"
         app:icon="@drawable/ic_rounded_navigate_before_anim" />
 
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_main_less_5"
-        style="@style/Widget.Tack.Button.IconButton.Tonal.Medium.Narrow"
+        style="@style/Widget.Tack.Button.IconButton.Tonal.Large.Narrow"
         android:contentDescription="@string/action_decrease"
         app:icon="@drawable/ic_rounded_keyboard_double_arrow_left_anim" />
 
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_main_less_10"
-        style="@style/Widget.Tack.Button.IconButton.Tonal.Medium.Narrow"
+        style="@style/Widget.Tack.Button.IconButton.Tonal.Large.Narrow"
         android:contentDescription="@string/action_decrease"
         app:icon="@drawable/ic_rounded_triple_arrow_left_anim" />
 
@@ -385,19 +384,19 @@
 
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_main_more_1"
-        style="@style/Widget.Tack.Button.IconButton.Tonal.Medium.Narrow"
+        style="@style/Widget.Tack.Button.IconButton.Tonal.Large.Narrow"
         android:contentDescription="@string/action_increase"
         app:icon="@drawable/ic_rounded_navigate_after_anim" />
 
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_main_more_5"
-        style="@style/Widget.Tack.Button.IconButton.Tonal.Medium.Narrow"
+        style="@style/Widget.Tack.Button.IconButton.Tonal.Large.Narrow"
         android:contentDescription="@string/action_increase"
         app:icon="@drawable/ic_rounded_keyboard_double_arrow_right_anim" />
 
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_main_more_10"
-        style="@style/Widget.Tack.Button.IconButton.Tonal.Medium.Narrow"
+        style="@style/Widget.Tack.Button.IconButton.Tonal.Large.Narrow"
         android:contentDescription="@string/action_increase"
         app:icon="@drawable/ic_rounded_triple_arrow_right_anim" />
 
