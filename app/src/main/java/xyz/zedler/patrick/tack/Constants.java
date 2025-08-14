@@ -31,6 +31,7 @@ public final class Constants {
   public static final int BEATS_MAX = 20;
   public static final int SUBS_MAX = 10;
   public static final int TIMER_MAX = 399;
+  public static final int INCREMENTAL_INTERVAL_MAX = 399;
   public static final String SONG_ID_DEFAULT = "default";
 
   public final static class PREF {

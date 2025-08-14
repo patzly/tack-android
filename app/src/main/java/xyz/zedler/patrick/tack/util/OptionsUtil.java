@@ -230,8 +230,40 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     );
     binding.textOptionsIncrementalInterval.setAlpha(isIncrementalActive ? 1 : 0.5f);
 
+    int intervalFrom = (int) binding.sliderOptionsIncrementalInterval.getValueFrom();
+    int intervalTo = (int) binding.sliderOptionsIncrementalInterval.getValueTo();
+    int intervalRange = intervalTo - intervalFrom;
+
+    // Calculate current range
+    int intervalFactor = (incrementalInterval - 1) / (intervalRange + 1);
+    int intervalFromNew = 1 + intervalFactor * (intervalRange + 1);
+    int intervalToNew = intervalFromNew + intervalRange;
+
+    binding.buttonOptionsIncrementalIntervalDecrease.setEnabled(
+        isIncrementalActive && intervalFromNew > 1
+    );
+    binding.buttonOptionsIncrementalIntervalDecrease.setOnClickListener(this);
+    ViewCompat.setTooltipText(
+        binding.buttonOptionsIncrementalIntervalDecrease,
+        activity.getString(R.string.action_decrease)
+    );
+
+    binding.buttonOptionsIncrementalIntervalIncrease.setEnabled(
+        isIncrementalActive && intervalToNew < Constants.INCREMENTAL_INTERVAL_MAX
+    );
+    binding.buttonOptionsIncrementalIntervalIncrease.setOnClickListener(this);
+    ViewCompat.setTooltipText(
+        binding.buttonOptionsIncrementalIntervalIncrease,
+        activity.getString(R.string.action_increase)
+    );
+
     binding.sliderOptionsIncrementalInterval.removeOnChangeListener(this);
-    binding.sliderOptionsIncrementalInterval.setValue(incrementalInterval);
+    binding.sliderOptionsIncrementalInterval.setValueFrom(intervalFromNew);
+    binding.sliderOptionsIncrementalInterval.setValueTo(intervalToNew);
+    int incrementalIntervalSafe = Math.max(
+        intervalFromNew, Math.min(incrementalInterval, intervalToNew)
+    );
+    binding.sliderOptionsIncrementalInterval.setValue(incrementalIntervalSafe);
     binding.sliderOptionsIncrementalInterval.addOnChangeListener(this);
     binding.sliderOptionsIncrementalInterval.setLabelFormatter(value -> {
       int resId;
@@ -552,7 +584,25 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   public void onClick(View v) {
     activity.performHapticClick();
     int id = v.getId();
-    if (id == R.id.button_options_incremental_limit_decrease) {
+    if (id == R.id.button_options_incremental_interval_decrease) {
+      int valueFrom = (int) binding.sliderOptionsIncrementalInterval.getValueFrom();
+      int valueTo = (int) binding.sliderOptionsIncrementalInterval.getValueTo();
+      int range = valueTo - valueFrom;
+      getMetronomeUtil().setIncrementalInterval(
+          getMetronomeUtil().getIncrementalInterval() - range - 1
+      );
+      updateIncremental();
+      ViewUtil.startIcon(binding.buttonOptionsIncrementalIntervalDecrease.getIcon());
+    } else if (id == R.id.button_options_incremental_interval_increase) {
+      int valueFrom = (int) binding.sliderOptionsIncrementalInterval.getValueFrom();
+      int valueTo = (int) binding.sliderOptionsIncrementalInterval.getValueTo();
+      int range = valueTo - valueFrom;
+      getMetronomeUtil().setIncrementalInterval(
+          getMetronomeUtil().getIncrementalInterval() + range + 1
+      );
+      updateIncremental();
+      ViewUtil.startIcon(binding.buttonOptionsIncrementalIntervalIncrease.getIcon());
+    } else if (id == R.id.button_options_incremental_limit_decrease) {
       int valueFrom = (int) binding.sliderOptionsIncrementalLimit.getValueFrom();
       int valueTo = (int) binding.sliderOptionsIncrementalLimit.getValueTo();
       int range = valueTo - valueFrom;

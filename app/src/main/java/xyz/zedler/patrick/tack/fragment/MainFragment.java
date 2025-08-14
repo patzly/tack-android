@@ -340,8 +340,6 @@ public class MainFragment extends BaseFragment
     optionsUtil = new OptionsUtil(activity, this, () -> updateOptions(true));
     boolean hideOptions = isLandTablet;
     binding.controlsMainBottom.buttonMainOptions.setEnabled(!hideOptions);
-    boolean hideBeatMode = !activity.getHapticUtil().hasVibrator();
-    binding.controlsMainBottom.buttonMainBeatMode.setEnabled(!hideBeatMode);
 
     logoUtil = new LogoUtil(binding.imageMainLogo);
     logoCenterUtil = new LogoUtil(binding.imageMainLogoCenter);
@@ -1026,6 +1024,7 @@ public class MainFragment extends BaseFragment
       ViewUtil.startIcon(binding.buttonMainMore10.getIcon());
       changeTempo(10);
     } else if (id == R.id.button_main_beat_mode) {
+      performHapticClick();
       dialogUtilBeatMode.show();
       if (getMetronomeUtil().getBeatMode().equals(BEAT_MODE.VIBRATION)) {
         // Use available animated icon for click
