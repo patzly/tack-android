@@ -8,6 +8,7 @@
 - Improved: updated slider experience TODO
 - Improved: layout on different screen sizes and orientations
 - Improved: metronome now works without notification permission if it was denied
+- Improved: allow change intervals of up to 400 for incremental tempo change
 - Fixed: crash caused by incorrect layout handling
 - Fixed: crash caused by invalid tempo values
 - Fixed: crash caused by app shortcut limit being reached (thanks Fabian!)
