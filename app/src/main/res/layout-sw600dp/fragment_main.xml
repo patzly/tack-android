@@ -77,7 +77,7 @@
         style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
         android:contentDescription="@string/action_more"
         android:layout_gravity="center_vertical|end"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="4dp"
         app:backgroundTint="?attr/colorSurfaceContainer"
         app:icon="@drawable/ic_rounded_more_vert" />
 

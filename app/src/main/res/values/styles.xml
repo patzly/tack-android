@@ -60,11 +60,16 @@
   <style name="Widget.Tack.Toolbar" parent="@style/Widget.Material3Expressive.Toolbar.OnSurface">
     <item name="android:layout_width">match_parent</item>
     <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_marginEnd">0dp</item>
     <item name="android:minHeight">?attr/actionBarSize</item>
     <item name="titleTextAppearance">@style/TextAppearance.Tack.TitleLarge</item>
     <item name="titleMarginStart">0dp</item>
     <item name="titleCentered">true</item>
     <item name="android:actionOverflowMenuStyle">@style/ThemeOverlay.Tack.OverFlow</item>
+  </style>
+
+  <style name="Widget.Tack.Toolbar.Uncentered" parent="@style/Widget.Tack.Toolbar">
+    <item name="titleCentered">false</item>
   </style>
 
   <style name="Widget.Tack.Toolbar.Back" parent="@style/Widget.Tack.Toolbar">
@@ -78,9 +83,8 @@
 
   <!-- PopupMenu -->
 
-  <style name="Widget.Tack.PopupMenu" parent="Widget.AppCompat.PopupMenu">
+  <style name="Widget.Tack.PopupMenu" parent="Widget.Material3.PopupMenu">
     <item name="android:popupBackground">@drawable/shape_popup_menu</item>
-    <item name="android:popupElevation">3dp</item>
     <item name="android:dropDownHorizontalOffset">-8dp</item>
     <item name="android:popupExitTransition" tools:targetApi="24">@transition/popup_window_exit</item>
   </style>
@@ -198,6 +202,12 @@
   </style>
 
   <style
+    name="Widget.Tack.Button.IconButton.Filled.Small.Wide"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Small.Wide</item>
+  </style>
+
+  <style
     name="Widget.Tack.Button.IconButton.Tonal"
     parent="Widget.Material3Expressive.Button.IconButton.Tonal">
     <item name="android:layout_width">wrap_content</item>
@@ -287,6 +297,7 @@
 
   <style name="ThemeOverlay.Tack.ButtonGroup.Overflow" parent="ThemeOverlay.Material3Expressive.MaterialButtonGroup.Overflow">
     <item name="materialButtonGroupOverflowButtonStyle">@style/Widget.Tack.Button.IconButton.Tonal.Large.Narrow</item>
+    <item name="materialButtonGroupPopupMenuStyle">@style/Widget.Tack.PopupMenu</item>
   </style>
 
   <!-- RadioButton -->

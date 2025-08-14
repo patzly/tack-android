@@ -31,11 +31,36 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <com.google.android.material.appbar.MaterialToolbar
-      android:id="@+id/toolbar_log"
-      style="@style/Widget.Tack.Toolbar.Back"
-      app:title="@string/title_logcat"
-      app:menu="@menu/menu_log" />
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize">
+
+      <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar_log"
+        style="@style/Widget.Tack.Toolbar"
+        app:contentInsetStart="56dp"
+        app:contentInsetEnd="56dp"
+        app:title="@string/title_logcat" />
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_log_back"
+        style="@style/Widget.Tack.Button.IconButton.Tonal"
+        android:contentDescription="@string/action_back"
+        android:layout_gravity="center_vertical|start"
+        android:layout_marginStart="4dp"
+        app:backgroundTint="?attr/colorSurfaceContainer"
+        app:icon="@drawable/ic_rounded_arrow_back" />
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_log_reload"
+        style="@style/Widget.Tack.Button.IconButton.Tonal"
+        android:contentDescription="@string/action_reload"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="4dp"
+        app:backgroundTint="?attr/colorSurfaceContainer"
+        app:icon="@drawable/ic_rounded_refresh_anim" />
+
+    </FrameLayout>
 
   </com.google.android.material.appbar.AppBarLayout>
 

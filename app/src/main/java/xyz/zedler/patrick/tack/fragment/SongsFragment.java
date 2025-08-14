@@ -30,6 +30,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.PopupMenu.OnMenuItemClickListener;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView.ItemAnimator;
@@ -66,6 +67,7 @@ import xyz.zedler.patrick.tack.util.SortUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.UnlockDialogUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
+import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.util.WidgetUtil;
 
 public class SongsFragment extends BaseFragment {
@@ -120,57 +122,64 @@ public class SongsFragment extends BaseFragment {
         binding.appBarSongs, binding.recyclerSongs, ScrollBehavior.LIFT_ON_SCROLL
     );
 
-    binding.toolbarSongs.setNavigationOnClickListener(getNavigationOnClickListener());
-    binding.toolbarSongs.setOnMenuItemClickListener(item -> {
-      int id = item.getItemId();
-      if (getViewUtil().isClickDisabled(id)) {
-        return false;
-      }
+    binding.buttonSongsBack.setOnClickListener(getNavigationOnClickListener());
+    binding.buttonSongsMenu.setOnClickListener(v -> {
       performHapticClick();
-      if (id == R.id.action_sort_name
-          || id == R.id.action_sort_last_played
-          || id == R.id.action_sort_most_played) {
-        if (item.isChecked()) {
+
+      OnMenuItemClickListener onClickListener = item -> {
+        int id = item.getItemId();
+        if (getViewUtil().isClickDisabled(id)) {
           return false;
         }
-        if (id == R.id.action_sort_name) {
-          sortOrder = SONGS_ORDER.NAME_ASC;
-        } else if (id == R.id.action_sort_last_played) {
-          sortOrder = SONGS_ORDER.LAST_PLAYED_ASC;
-        } else {
-          sortOrder = SONGS_ORDER.MOST_PLAYED_ASC;
+        performHapticClick();
+        if (id == R.id.action_sort_name
+            || id == R.id.action_sort_last_played
+            || id == R.id.action_sort_most_played) {
+          if (item.isChecked()) {
+            return false;
+          }
+          if (id == R.id.action_sort_name) {
+            sortOrder = SONGS_ORDER.NAME_ASC;
+          } else if (id == R.id.action_sort_last_played) {
+            sortOrder = SONGS_ORDER.LAST_PLAYED_ASC;
+          } else {
+            sortOrder = SONGS_ORDER.MOST_PLAYED_ASC;
+          }
+          item.setChecked(true);
+          setSongsWithParts(null);
+          getSharedPrefs().edit().putInt(PREF.SONGS_ORDER, sortOrder).apply();
+          getMetronomeUtil().updateSongsOrder(sortOrder);
+          if (!songsWithParts.isEmpty()) {
+            // only update widget if sort order is important
+            WidgetUtil.sendSongsWidgetUpdate(activity);
+          }
+        } else if (id == R.id.action_backup) {
+          launcherBackup.launch("song_library.json");
+        } else if (id == R.id.action_restore) {
+          launcherRestore.launch(new String[]{"application/json"});
+        } else if (id == R.id.action_feedback) {
+          activity.showFeedbackBottomSheet();
+        } else if (id == R.id.action_help) {
+          activity.showTextBottomSheet(R.raw.help, R.string.title_help);
         }
-        item.setChecked(true);
-        setSongsWithParts(null);
-        getSharedPrefs().edit().putInt(PREF.SONGS_ORDER, sortOrder).apply();
-        getMetronomeUtil().updateSongsOrder(sortOrder);
-        if (!songsWithParts.isEmpty()) {
-          // only update widget if sort order is important
-          WidgetUtil.sendSongsWidgetUpdate(activity);
+        return true;
+      };
+      ViewUtil.showMenu(v, R.menu.menu_songs, onClickListener, menu -> {
+        sortOrder = getSharedPrefs().getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER);
+        int itemId = R.id.action_sort_name;
+        if (sortOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
+          itemId = R.id.action_sort_last_played;
+        } else if (sortOrder == SONGS_ORDER.MOST_PLAYED_ASC) {
+          itemId = R.id.action_sort_most_played;
         }
-      } else if (id == R.id.action_backup) {
-        launcherBackup.launch("song_library.json");
-      } else if (id == R.id.action_restore) {
-        launcherRestore.launch(new String[]{"application/json"});
-      } else if (id == R.id.action_feedback) {
-        activity.showFeedbackBottomSheet();
-      } else if (id == R.id.action_help) {
-        activity.showTextBottomSheet(R.raw.help, R.string.title_help);
-      }
-      return true;
+        MenuItem itemSort = menu.findItem(itemId);
+        if (itemSort != null) {
+          itemSort.setChecked(true);
+        }
+      });
     });
-
-    sortOrder = getSharedPrefs().getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER);
-    int itemId = R.id.action_sort_name;
-    if (sortOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
-      itemId = R.id.action_sort_last_played;
-    } else if (sortOrder == SONGS_ORDER.MOST_PLAYED_ASC) {
-      itemId = R.id.action_sort_most_played;
-    }
-    MenuItem itemSort = binding.toolbarSongs.getMenu().findItem(itemId);
-    if (itemSort != null) {
-      itemSort.setChecked(true);
-    }
+    ViewUtil.setTooltipText(binding.buttonSongsBack, R.string.action_back);
+    ViewUtil.setTooltipText(binding.buttonSongsMenu, R.string.action_more);
 
     metronomeListener = new MetronomeListenerAdapter() {
       @Override

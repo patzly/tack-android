@@ -112,24 +112,29 @@ public class SettingsFragment extends BaseFragment
         binding.appBarSettings, binding.scrollSettings, ScrollBehavior.LIFT_ON_SCROLL
     );
 
-    binding.toolbarSettings.setNavigationOnClickListener(getNavigationOnClickListener());
-    binding.toolbarSettings.setOnMenuItemClickListener(item -> {
-      int id = item.getItemId();
-      if (getViewUtil().isClickDisabled(id)) {
-        return false;
-      }
+    binding.buttonSettingsBack.setOnClickListener(getNavigationOnClickListener());
+    binding.buttonSettingsMenu.setOnClickListener(v -> {
       performHapticClick();
-      if (id == R.id.action_feedback) {
-        activity.showFeedbackBottomSheet();
-      } else if (id == R.id.action_about) {
-        activity.navigate(SettingsFragmentDirections.actionSettingsToAbout());
-      } else if (id == R.id.action_help) {
-        activity.showTextBottomSheet(R.raw.help, R.string.title_help);
-      } else if (id == R.id.action_log) {
-        activity.navigate(SettingsFragmentDirections.actionSettingsToLog());
-      }
-      return true;
+      ViewUtil.showMenu(v, R.menu.menu_settings, item -> {
+        int id = item.getItemId();
+        if (getViewUtil().isClickDisabled(id)) {
+          return false;
+        }
+        performHapticClick();
+        if (id == R.id.action_feedback) {
+          activity.showFeedbackBottomSheet();
+        } else if (id == R.id.action_about) {
+          activity.navigate(SettingsFragmentDirections.actionSettingsToAbout());
+        } else if (id == R.id.action_help) {
+          activity.showTextBottomSheet(R.raw.help, R.string.title_help);
+        } else if (id == R.id.action_log) {
+          activity.navigate(SettingsFragmentDirections.actionSettingsToLog());
+        }
+        return true;
+      });
     });
+    ViewUtil.setTooltipText(binding.buttonSettingsBack, R.string.action_back);
+    ViewUtil.setTooltipText(binding.buttonSettingsMenu, R.string.action_more);
 
     binding.textSettingsLanguage.setText(
         LocaleUtil.followsSystem()

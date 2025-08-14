@@ -30,6 +30,7 @@ import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -361,5 +362,25 @@ public class ViewUtil {
     popup.setOnMenuItemClickListener(listener);
     popup.setGravity(Gravity.END);
     popup.show();
+  }
+
+  public static void showMenu(
+      View v,
+      @MenuRes int menuRes,
+      OnMenuItemClickListener onItemClickListener,
+      OnMenuInflatedListener onInflatedListener
+  ) {
+    PopupMenu popup = new PopupMenu(v.getContext(), v);
+    popup.getMenuInflater().inflate(menuRes, popup.getMenu());
+    if (onInflatedListener != null) {
+      onInflatedListener.onMenuInflated(popup.getMenu());
+    }
+    popup.setOnMenuItemClickListener(onItemClickListener);
+    popup.setGravity(Gravity.END);
+    popup.show();
+  }
+
+  public interface OnMenuInflatedListener {
+    void onMenuInflated(@NonNull Menu menu);
   }
 }

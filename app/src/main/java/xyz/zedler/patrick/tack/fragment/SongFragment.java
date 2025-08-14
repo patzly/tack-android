@@ -146,7 +146,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
 
     setupImeAnimation(systemBarBehavior);
 
-    binding.toolbarSong.setNavigationOnClickListener(v -> {
+    binding.buttonSongClose.setOnClickListener(v -> {
       if (getViewUtil().isClickEnabled(v.getId())) {
         performHapticClick();
         if (hasUnsavedChanges) {
@@ -156,42 +156,53 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         }
       }
     });
-    binding.toolbarSong.setOnMenuItemClickListener(item -> {
-      int id = item.getItemId();
-      if (getViewUtil().isClickDisabled(id)) {
-        return false;
+    binding.buttonSongSave.setOnClickListener(v -> {
+      if (getViewUtil().isClickDisabled(v.getId())) {
+        return;
       }
       performHapticClick();
-      if (id == R.id.action_save) {
-        if (hasUnsavedChanges) {
-          if (isNewSong) {
-            activity.getSongViewModel().insertSong(songResult);
-            activity.getSongViewModel().insertParts(partsResult);
-            // update widget, no shortcuts update needed because play count is zero
-            WidgetUtil.sendSongsWidgetUpdate(activity);
-          } else {
-            activity.getSongViewModel().updateSongAndParts(
-                songResult, partsResult, partsSource, () -> {
-                  // update looped in metronome
-                  getMetronomeUtil().reloadCurrentSong();
-                  // update shortcut names
-                  getMetronomeUtil().updateShortcuts();
-                  // update widget
-                  WidgetUtil.sendSongsWidgetUpdate(activity);
-                });
-          }
-          navigateUp();
+      if (hasUnsavedChanges) {
+        if (isNewSong) {
+          activity.getSongViewModel().insertSong(songResult);
+          activity.getSongViewModel().insertParts(partsResult);
+          // update widget, no shortcuts update needed because play count is zero
+          WidgetUtil.sendSongsWidgetUpdate(activity);
+        } else {
+          activity.getSongViewModel().updateSongAndParts(
+              songResult, partsResult, partsSource, () -> {
+                // update looped in metronome
+                getMetronomeUtil().reloadCurrentSong();
+                // update shortcut names
+                getMetronomeUtil().updateShortcuts();
+                // update widget
+                WidgetUtil.sendSongsWidgetUpdate(activity);
+              });
         }
-      } else if (id == R.id.action_delete) {
-        dialogUtilDelete.show();
-      } else if (id == R.id.action_feedback) {
-        activity.showFeedbackBottomSheet();
-      } else if (id == R.id.action_help) {
-        activity.showTextBottomSheet(R.raw.help, R.string.title_help);
+        navigateUp();
       }
-      return true;
     });
-    ResUtil.tintMenuIcons(activity, binding.toolbarSong.getMenu());
+    binding.buttonSongMenu.setOnClickListener(v -> {
+      performHapticClick();
+      ViewUtil.showMenu(v, R.menu.menu_song, item -> {
+        int id = item.getItemId();
+        if (getViewUtil().isClickDisabled(id)) {
+          return false;
+        }
+        performHapticClick();
+        if (id == R.id.action_delete) {
+          dialogUtilDelete.show();
+        } else if (id == R.id.action_feedback) {
+          activity.showFeedbackBottomSheet();
+        } else if (id == R.id.action_help) {
+          activity.showTextBottomSheet(R.raw.help, R.string.title_help);
+        }
+        return true;
+      });
+    });
+    ViewUtil.setTooltipText(binding.buttonSongClose, R.string.action_close);
+    ViewUtil.setTooltipText(binding.buttonSongSave, R.string.action_save);
+    ViewUtil.setTooltipText(binding.buttonSongMenu, R.string.action_more);
+
     setSaveEnabled(false);
 
     adapter = new PartAdapter((part, item) -> {
@@ -587,13 +598,12 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
   }
 
   private void setSaveEnabled(boolean enabled) {
-    MenuItem itemSave = binding.toolbarSong.getMenu().findItem(R.id.action_save);
-    if (itemSave != null) {
-      itemSave.setEnabled(enabled);
-      float alphaDisabled = 0.32f;
-      if (itemSave.getIcon() != null) {
-        itemSave.getIcon().mutate().setAlpha(enabled ? 255 : (int) (alphaDisabled * 255));
-      }
+    binding.buttonSongSave.setEnabled(enabled);
+    float alphaDisabled = 0.32f;
+    if (binding.buttonSongSave.getIcon() != null) {
+      binding.buttonSongSave.getIcon().mutate().setAlpha(
+          enabled ? 255 : (int) (alphaDisabled * 255)
+      );
     }
   }
 

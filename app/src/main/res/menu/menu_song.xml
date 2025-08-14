@@ -24,13 +24,6 @@
   xmlns:tools="http://schemas.android.com/tools">
 
   <item
-    android:id="@+id/action_save"
-    android:title="@string/action_save"
-    android:icon="@drawable/ic_rounded_save"
-    app:showAsAction="always"
-    tools:ignore="AlwaysShowAction" />
-
-  <item
     android:id="@+id/action_delete"
     android:title="@string/action_delete"
     app:showAsAction="never" />

@@ -186,6 +186,7 @@ public class MainFragment extends BaseFragment
         return true;
       });
     });
+    ViewUtil.setTooltipText(binding.buttonMainMenu, R.string.action_more);
 
     flashScreen = getSharedPrefs().getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
     reduceAnimations = getSharedPrefs().getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM);
@@ -541,7 +542,6 @@ public class MainFragment extends BaseFragment
     }
     updateMetronomeControls();
 
-    ViewUtil.setTooltipText(binding.buttonMainMenu, R.string.action_more);
     ViewUtil.setTooltipText(binding.buttonMainAddBeat, R.string.action_add_beat);
     ViewUtil.setTooltipText(binding.buttonMainRemoveBeat, R.string.action_remove_beat);
     ViewUtil.setTooltipText(binding.buttonMainAddSubdivision, R.string.action_add_sub);

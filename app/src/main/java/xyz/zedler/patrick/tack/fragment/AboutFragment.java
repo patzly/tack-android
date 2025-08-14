@@ -75,23 +75,28 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
         binding.appBarAbout, binding.scrollAbout, ScrollBehavior.LIFT_ON_SCROLL
     );
 
-    binding.toolbarAbout.setNavigationOnClickListener(getNavigationOnClickListener());
-    binding.toolbarAbout.setOnMenuItemClickListener(item -> {
-      int id = item.getItemId();
-      if (getViewUtil().isClickDisabled(id)) {
-        return false;
-      }
+    binding.buttonAboutBack.setOnClickListener(getNavigationOnClickListener());
+    binding.buttonAboutMenu.setOnClickListener(v -> {
       performHapticClick();
-      if (id == R.id.action_feedback) {
-        activity.showFeedbackBottomSheet();
-      } else if (id == R.id.action_help) {
-        activity.showTextBottomSheet(R.raw.help, R.string.title_help);
-      } else if (id == R.id.action_recommend) {
-        String text = getString(R.string.msg_recommend, getString(R.string.app_vending_app));
-        ResUtil.share(activity, text);
-      }
-      return true;
+      ViewUtil.showMenu(v, R.menu.menu_about, item -> {
+        int id = item.getItemId();
+        if (getViewUtil().isClickDisabled(id)) {
+          return false;
+        }
+        performHapticClick();
+        if (id == R.id.action_feedback) {
+          activity.showFeedbackBottomSheet();
+        } else if (id == R.id.action_help) {
+          activity.showTextBottomSheet(R.raw.help, R.string.title_help);
+        } else if (id == R.id.action_recommend) {
+          String text = getString(R.string.msg_recommend, getString(R.string.app_vending_app));
+          ResUtil.share(activity, text);
+        }
+        return true;
+      });
     });
+    ViewUtil.setTooltipText(binding.buttonAboutBack, R.string.action_back);
+    ViewUtil.setTooltipText(binding.buttonAboutMenu, R.string.action_more);
 
     binding.linearAboutKey.setVisibility(
         UnlockUtil.isPlayStoreInstalled(activity) ? View.VISIBLE : View.GONE

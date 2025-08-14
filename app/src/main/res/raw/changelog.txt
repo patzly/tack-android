@@ -6,7 +6,6 @@
 - New: Japanese and Dutch translations (thanks to the contributors!)
 - Improved: play/stop button now responds on press down instead of release for a more responsive feel
 - Improved: updated slider experience TODO
-- Improved: song picker colors
 - Improved: layout on different screen sizes and orientations
 - Improved: metronome now works without notification permission if it was denied
 - Fixed: crash caused by incorrect layout handling

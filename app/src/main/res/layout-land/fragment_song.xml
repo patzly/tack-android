@@ -33,15 +33,45 @@
 
     <FrameLayout
       android:layout_width="match_parent"
-      android:layout_height="wrap_content">
+      android:layout_height="?attr/actionBarSize">
 
       <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/toolbar_song"
-        style="@style/Widget.Tack.Toolbar.Back"
-        app:title="@string/title_song_details"
-        app:navigationIcon="@drawable/ic_rounded_close_anim"
-        app:navigationContentDescription="@string/action_close"
-        app:menu="@menu/menu_song" />
+        style="@style/Widget.Tack.Toolbar"
+        app:contentInsetStart="56dp"
+        app:contentInsetEnd="108dp"
+        app:title="@string/title_song_details" />
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_song_close"
+        style="@style/Widget.Tack.Button.IconButton.Tonal"
+        android:contentDescription="@string/action_close"
+        android:layout_gravity="center_vertical|start"
+        android:layout_marginStart="4dp"
+        app:backgroundTint="?attr/colorSurfaceContainer"
+        app:icon="@drawable/ic_rounded_close_anim" />
+
+      <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="4dp">
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_song_save"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Small.Wide"
+          android:contentDescription="@string/action_save"
+          app:icon="@drawable/ic_rounded_save" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_song_menu"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
+          android:contentDescription="@string/action_more"
+          app:backgroundTint="?attr/colorSurfaceContainer"
+          app:icon="@drawable/ic_rounded_more_vert" />
+
+      </LinearLayout>
 
     </FrameLayout>
 

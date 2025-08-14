@@ -80,19 +80,13 @@ public class LogFragment extends BaseFragment implements OnClickListener {
         binding.appBarLog, binding.scrollLog, ScrollBehavior.LIFT_ON_SCROLL
     );
 
-    binding.toolbarLog.setNavigationOnClickListener(getNavigationOnClickListener());
-    binding.toolbarLog.setOnMenuItemClickListener(item -> {
-      int id = item.getItemId();
-      if (getViewUtil().isClickDisabled(id)) {
-        return false;
-      }
-      performHapticClick();
-      if (id == R.id.action_reload) {
-        ViewUtil.startIcon(item.getIcon());
-        loadLogcat(log -> binding.textLog.setText(log));
-      }
-      return true;
+    binding.buttonLogBack.setOnClickListener(getNavigationOnClickListener());
+    binding.buttonLogReload.setOnClickListener(v -> {
+      ViewUtil.startIcon(binding.buttonLogReload.getIcon());
+      loadLogcat(log -> binding.textLog.setText(log));
     });
+    ViewUtil.setTooltipText(binding.buttonLogBack, R.string.action_back);
+    ViewUtil.setTooltipText(binding.buttonLogReload, R.string.action_reload);
 
     ViewUtil.setOnClickListeners(
         this,
