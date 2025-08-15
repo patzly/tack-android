@@ -174,8 +174,6 @@
   <string name="msg_restore_success">Backup succesvol hersteld</string>
   <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
-  <string name="msg_songs_intro">Bladwijzers zijn nu nummers</string>
-  <string name="msg_songs_intro_description">De nieuwe nummerbibliotheek vervangt de vorige tempo bladwijzers. In plaats van bpm-waarden te bookmarken, kun je nu volledige metronoomconfiguraties opslaan en arrangeren als onderdelen van een nummer. Pas gewoon de bediening en opties naar wens aan en voeg de huidige configuratie toe als een nieuw deel aan een nummer of werk een bestaand deel bij.</string>
   <string name="msg_widget_description">Je nummers bekijken en afspelen</string>
   <string name="msg_installer_check">Ongeldige unlock app</string>
   <string name="msg_installer_check_description">Koop en installeer de unlock app op Google Play. Bedankt voor je steun!</string>
