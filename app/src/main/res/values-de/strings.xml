@@ -186,8 +186,6 @@
   <string name="msg_restore_success">Sicherung erfolgreich wiederhergestellt</string>
   <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
-  <string name="msg_songs_intro">Lesezeichen sind jetzt Werke</string>
-  <string name="msg_songs_intro_description">Die neue Werksammlung ersetzt die bisherigen Tempo-Lesezeichen. Anstatt bpm-Werte zu speichern, kannst du jetzt ganze Metronom-Konfigurationen als Teile eines Werks speichern und anordnen. Passe einfach das Metronom und die Optionen nach deinen Wünschen an und füge die aktuelle Konfiguration als neuen Teil einem Werk hinzu oder aktualisiere einen bestehenden Teil.</string>
   <string name="msg_widget_description">Zeige deine Werke an und spiele sie ab</string>
   <string name="msg_installer_check">Ungültige Freischalt-App</string>
   <string name="msg_installer_check_description">Bitte kaufe und installiere die Freischalt-App im Google Play Store. Vielen Dank für deine Unterstützung!</string>
