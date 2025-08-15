@@ -179,8 +179,6 @@
   <string name="msg_restore_success">Záloha úspěšně obnovena</string>
   <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
-  <string name="msg_songs_intro">Záložky jsou nyní skladby</string>
-  <string name="msg_songs_intro_description">Nová knihovna skladeb nahrazuje předchozí záložky tempa. Namísto ukládání hodnot tempa nyní můžete uložit a nastavit celé konfigurace metronomu jako části vaší skladby. Jednoduše upravte ovládání a možnosti podle vašich představ a přidejte aktuální konfiguraci jako novou část skladby, nebo aktualizujte již existující.</string>
   <string name="msg_widget_description">Zobrazte si své skladby a přehrajte si je</string>
   <string name="msg_installer_check">Neplatná odemykací aplikace</string>
   <string name="msg_installer_check_description">Kupte a nainstalujte si odemykací aplikaci z Obchodu Play. Děkuji za vaší podporu!</string>
