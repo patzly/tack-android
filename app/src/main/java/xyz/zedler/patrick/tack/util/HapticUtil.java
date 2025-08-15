@@ -34,7 +34,7 @@ public class HapticUtil {
 
   private final Vibrator vibrator;
   private boolean enabled;
-  private final boolean hasAmplitudeControl;
+  private final boolean hasAmplitudeControl, supportsMainEffects;
 
   public static final long TICK = 20;
   public static final long CLICK = 50;
@@ -51,38 +51,64 @@ public class HapticUtil {
     enabled = hasVibrator();
     hasAmplitudeControl =
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && vibrator.hasAmplitudeControl();
+    if (hasAmplitudeControl && VERSION.SDK_INT >= VERSION_CODES.R) {
+      int result = vibrator.areAllEffectsSupported(
+          VibrationEffect.EFFECT_CLICK,
+          VibrationEffect.EFFECT_HEAVY_CLICK,
+          VibrationEffect.EFFECT_TICK
+      );
+      supportsMainEffects = result == Vibrator.VIBRATION_EFFECT_SUPPORT_YES;
+    } else {
+      supportsMainEffects = false;
+    }
   }
 
-  public void tick() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && hasAmplitudeControl) {
+  public void tick(boolean useEffect) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && hasAmplitudeControl && useEffect) {
       vibrate(VibrationEffect.EFFECT_TICK);
     } else {
       vibrate(TICK);
     }
   }
 
-  public void click() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && hasAmplitudeControl) {
+  public void tick() {
+    tick(true);
+  }
+
+  public void click(boolean useEffect) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && hasAmplitudeControl && useEffect) {
       vibrate(VibrationEffect.EFFECT_CLICK);
     } else {
       vibrate(CLICK);
     }
   }
 
-  public void heavyClick() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && hasAmplitudeControl) {
+  public void click() {
+    click(true);
+  }
+
+  public void heavyClick(boolean useEffect) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && hasAmplitudeControl && useEffect) {
       vibrate(VibrationEffect.EFFECT_HEAVY_CLICK);
     } else {
       vibrate(HEAVY);
     }
   }
 
-  public void doubleClick() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && hasAmplitudeControl) {
+  public void heavyClick() {
+    heavyClick(true);
+  }
+
+  public void doubleClick(boolean useEffect) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && hasAmplitudeControl && useEffect) {
       vibrate(VibrationEffect.EFFECT_DOUBLE_CLICK);
     } else {
       vibrate(CLICK);
     }
+  }
+
+  public void doubleClick() {
+    doubleClick(true);
   }
 
   public void hapticSegmentTick(View view, boolean frequent) {
@@ -103,6 +129,10 @@ public class HapticUtil {
 
   public boolean hasVibrator() {
     return vibrator.hasVibrator();
+  }
+
+  public boolean supportsMainEffects() {
+    return supportsMainEffects;
   }
 
   public static boolean areSystemHapticsTurnedOn(Context context) {

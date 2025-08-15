@@ -1436,15 +1436,15 @@ public class MetronomeUtil {
       if (!beatMode.equals(BEAT_MODE.SOUND) && !isMuted) {
         switch (tick.type) {
           case TICK_TYPE.STRONG:
-            hapticUtil.heavyClick();
+            hapticUtil.heavyClick(hapticUtil.supportsMainEffects());
             break;
           case TICK_TYPE.SUB:
-            hapticUtil.tick();
+            hapticUtil.tick(hapticUtil.supportsMainEffects());
             break;
           case TICK_TYPE.MUTED:
             break;
           default:
-            hapticUtil.click();
+            hapticUtil.click(hapticUtil.supportsMainEffects());
         }
       }
       synchronized (listeners) {
