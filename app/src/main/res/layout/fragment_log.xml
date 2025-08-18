@@ -53,11 +53,10 @@
 
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_log_reload"
-        style="@style/Widget.Tack.Button.IconButton.Tonal"
+        style="@style/Widget.Tack.Button.IconButton.Filled.Small.Wide"
         android:contentDescription="@string/action_reload"
         android:layout_gravity="center_vertical|end"
-        android:layout_marginEnd="4dp"
-        app:backgroundTint="?attr/colorSurfaceContainer"
+        android:layout_marginEnd="8dp"
         app:icon="@drawable/ic_rounded_refresh_anim" />
 
     </FrameLayout>

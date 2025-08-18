@@ -56,9 +56,11 @@ import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.entity.Song;
 import xyz.zedler.patrick.tack.databinding.FragmentSongBinding;
 import xyz.zedler.patrick.tack.recyclerview.adapter.PartAdapter;
+import xyz.zedler.patrick.tack.recyclerview.adapter.PartAdapter.OnPartItemClickListener;
 import xyz.zedler.patrick.tack.recyclerview.decoration.PartItemDecoration;
 import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
 import xyz.zedler.patrick.tack.util.DialogUtil;
+import xyz.zedler.patrick.tack.util.OptionsUtil;
 import xyz.zedler.patrick.tack.util.RenameDialogUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.SortUtil;
@@ -80,6 +82,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
   private DialogUtil dialogUtilDiscard, dialogUtilDelete;
   private UnlockDialogUtil unlockDialogUtil;
   private RenameDialogUtil renameDialogUtil;
+  private OptionsUtil optionsUtil;
   private OnBackPressedCallback onBackPressedCallback;
   private PartAdapter adapter;
   private Song songSource;
@@ -109,6 +112,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     dialogUtilDelete.dismiss();
     renameDialogUtil.dismiss();
     unlockDialogUtil.dismiss();
+    optionsUtil.dismiss();
     binding = null;
   }
 
@@ -203,21 +207,19 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     ViewUtil.setTooltipText(binding.buttonSongSave, R.string.action_save);
     ViewUtil.setTooltipText(binding.buttonSongMenu, R.string.action_more);
 
-    setSaveEnabled(false);
+    binding.buttonSongSave.setEnabled(false);
 
-    adapter = new PartAdapter((part, item) -> {
-      performHapticClick();
-      int itemId = item.getItemId();
-      if (itemId == R.id.action_rename) {
-        renameDialogUtil.setPart(part);
-        renameDialogUtil.show();
-      } else if (itemId == R.id.action_update) {
-        Part partResult = new Part(part);
-        partResult.setConfig(getMetronomeUtil().getConfig());
-        partsResult.set(part.getPartIndex(), partResult);
-        adapter.submitList(new ArrayList<>(partsResult));
-        updateResult();
-      } else if (itemId == R.id.action_move_up) {
+    adapter = new PartAdapter(new OnPartItemClickListener() {
+      @Override
+      public void onEditClick(@NonNull Part part) {
+        performHapticClick();
+        optionsUtil.setPart(part);
+        optionsUtil.show();
+      }
+
+      @Override
+      public void onMoveUpClick(@NonNull Part part) {
+        performHapticClick();
         Part partCurrent = new Part(part);
         int index = partCurrent.getPartIndex();
         if (index > 0) {
@@ -231,7 +233,11 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           adapter.notifyMenusChanged();
           updateResult();
         }
-      } else if (itemId == R.id.action_move_down) {
+      }
+
+      @Override
+      public void onMoveDownClick(@NonNull Part part) {
+        performHapticClick();
         Part partCurrent = new Part(part);
         int index = partCurrent.getPartIndex();
         if (index < partsResult.size() - 1) {
@@ -245,7 +251,33 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           adapter.notifyMenusChanged();
           updateResult();
         }
-      } else if (itemId == R.id.action_delete) {
+      }
+
+      @Override
+      public void onMoreClick(@NonNull Part part) {
+        performHapticClick();
+      }
+
+      @Override
+      public void onRenameClick(@NonNull Part part) {
+        performHapticClick();
+        renameDialogUtil.setPart(part);
+        renameDialogUtil.show();
+      }
+
+      @Override
+      public void onUpdateClick(@NonNull Part part) {
+        performHapticClick();
+        Part partResult = new Part(part);
+        partResult.setConfig(getMetronomeUtil().getConfig());
+        partsResult.set(part.getPartIndex(), partResult);
+        adapter.submitList(new ArrayList<>(partsResult));
+        updateResult();
+      }
+
+      @Override
+      public void onDeleteClick(@NonNull Part part) {
+        performHapticClick();
         if (partsResult.size() <= 1) {
           return;
         }
@@ -460,6 +492,13 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     renameDialogUtil = new RenameDialogUtil(activity, this);
     renameDialogUtil.showIfWasShown(savedInstanceState);
 
+    optionsUtil = new OptionsUtil(activity, (part) -> {
+      partsResult.set(part.getPartIndex(), part);
+      adapter.submitList(new ArrayList<>(partsResult));
+      updateResult();
+    });
+    optionsUtil.showIfWasShown(savedInstanceState);
+
     onBackPressedCallback = new OnBackPressedCallback(false) {
       @Override
       public void handleOnBackPressed() {
@@ -483,6 +522,9 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     }
     if (renameDialogUtil != null) {
       renameDialogUtil.saveState(outState);
+    }
+    if (optionsUtil != null) {
+      optionsUtil.saveState(outState);
     }
     outState.putParcelable(KEY_SONG_RESULT, songResult);
     outState.putParcelableArrayList(KEY_PARTS_RESULT, new ArrayList<>(partsResult));
@@ -594,17 +636,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     if (onBackPressedCallback != null) {
       onBackPressedCallback.setEnabled(hasUnsavedChanges);
     }
-    setSaveEnabled(hasUnsavedChanges && isValid);
-  }
-
-  private void setSaveEnabled(boolean enabled) {
-    binding.buttonSongSave.setEnabled(enabled);
-    float alphaDisabled = 0.32f;
-    if (binding.buttonSongSave.getIcon() != null) {
-      binding.buttonSongSave.getIcon().mutate().setAlpha(
-          enabled ? 255 : (int) (alphaDisabled * 255)
-      );
-    }
+    binding.buttonSongSave.setEnabled(hasUnsavedChanges && isValid);
   }
 
   private void setErrorSongName(boolean notUnique) {

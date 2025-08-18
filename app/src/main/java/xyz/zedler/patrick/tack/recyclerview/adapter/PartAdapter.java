@@ -27,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
@@ -35,17 +36,18 @@ import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.databinding.RowPartBinding;
-import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.ViewUtil;
+import xyz.zedler.patrick.tack.util.ViewUtil.OnMenuInflatedListener;
 
 public class PartAdapter extends ListAdapter<Part, ViewHolder> {
 
   private final static String TAG = SongChipAdapter.class.getSimpleName();
 
-  private final static String PAYLOAD_MENU = "menu";
+  private final static String PAYLOAD_MOVE = "move";
 
-  private final OnPartMenuItemClickListener listener;
+  private final OnPartItemClickListener listener;
 
-  public PartAdapter(@NonNull OnPartMenuItemClickListener listener) {
+  public PartAdapter(@NonNull OnPartItemClickListener listener) {
     super(new PartDiffCallback());
     this.listener = listener;
   }
@@ -73,12 +75,38 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
     }
     partHolder.binding.textPartName.setText(partName);
 
-    partHolder.binding.toolbarPart.setOnMenuItemClickListener(item -> {
-      listener.onMenuItemClick(part, item);
-      return true;
+    partHolder.binding.buttonPartEdit.setOnClickListener(
+        v -> listener.onEditClick(part)
+    );
+    partHolder.binding.buttonPartMoveUp.setOnClickListener(
+        v -> listener.onMoveUpClick(part)
+    );
+    partHolder.binding.buttonPartMoveDown.setOnClickListener(
+        v -> listener.onMoveDownClick(part)
+    );
+    partHolder.binding.buttonPartMenu.setOnClickListener(v -> {
+      listener.onMoreClick(part);
+      PopupMenu.OnMenuItemClickListener itemClickListener = item -> {
+        int id = item.getItemId();
+        if (id == R.id.action_rename) {
+          listener.onRenameClick(part);
+        } else if (id == R.id.action_update) {
+          listener.onUpdateClick(part);
+        } else if (id == R.id.action_delete) {
+          listener.onDeleteClick(part);
+        }
+        return true;
+      };
+      OnMenuInflatedListener menuInflatedListener = menu -> {
+        MenuItem itemDelete = menu.findItem(R.id.action_delete);
+        itemDelete.setEnabled(getItemCount() > 1);
+      };
+      ViewUtil.showMenu(v, R.menu.menu_part, itemClickListener, menuInflatedListener);
     });
-    ResUtil.tintMenuIcons(context, partHolder.binding.toolbarPart.getMenu());
-    updateMenuItems(partHolder);
+
+    ViewUtil.setTooltipText(partHolder.binding.buttonPartMenu, R.string.action_more);
+
+    updateMoveButtons(partHolder);
 
     // tempo
     int tempo = part.getTempo();
@@ -217,35 +245,24 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
       @NonNull ViewHolder holder, int position, @NonNull List<Object> payloads
   ) {
     PartViewHolder partHolder = (PartViewHolder) holder;
-    if (payloads.contains(PAYLOAD_MENU)) {
-      updateMenuItems(partHolder);
+    if (payloads.contains(PAYLOAD_MOVE)) {
+      updateMoveButtons(partHolder);
     } else {
       super.onBindViewHolder(holder, position, payloads);
     }
   }
 
-  private void updateMenuItems(PartViewHolder holder) {
+  private void updateMoveButtons(PartViewHolder holder) {
     int adapterPosition = holder.getBindingAdapterPosition();
-    float alphaDisabled = 0.32f;
-    MenuItem itemUp = holder.binding.toolbarPart.getMenu().findItem(R.id.action_move_up);
-    boolean isUpEnabled = getItemCount() > 1 && adapterPosition > 0;
-    itemUp.setEnabled(isUpEnabled);
-    if (itemUp.getIcon() != null) {
-      itemUp.getIcon().mutate().setAlpha(isUpEnabled ? 255 : (int) (alphaDisabled * 255));
-    }
-    MenuItem itemDown = holder.binding.toolbarPart.getMenu().findItem(R.id.action_move_down);
-    boolean isDownEnabled = getItemCount() > 1 && adapterPosition < getItemCount() - 1;
-    itemDown.setEnabled(isDownEnabled);
-    if (itemDown.getIcon() != null) {
-      itemDown.getIcon().mutate().setAlpha(isDownEnabled ? 255 : (int) (alphaDisabled * 255));
-    }
-    MenuItem itemDelete = holder.binding.toolbarPart.getMenu().findItem(R.id.action_delete);
-    itemDelete.setEnabled(getItemCount() > 1);
+    holder.binding.buttonPartMoveUp.setEnabled(getItemCount() > 1 && adapterPosition > 0);
+    holder.binding.buttonPartMoveDown.setEnabled(
+        getItemCount() > 1 && adapterPosition < getItemCount() - 1
+    );
   }
 
   public void notifyMenusChanged() {
     new Handler(Looper.getMainLooper()).postDelayed(
-        () -> notifyItemRangeChanged(0, getItemCount(), PAYLOAD_MENU), 50
+        () -> notifyItemRangeChanged(0, getItemCount(), PAYLOAD_MOVE), 50
     );
   }
 
@@ -259,8 +276,14 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
     }
   }
 
-  public interface OnPartMenuItemClickListener {
-    void onMenuItemClick(@NonNull Part part, @NonNull MenuItem item);
+  public interface OnPartItemClickListener {
+    void onEditClick(@NonNull Part part);
+    void onMoveUpClick(@NonNull Part part);
+    void onMoveDownClick(@NonNull Part part);
+    void onMoreClick(@NonNull Part part);
+    void onRenameClick(@NonNull Part part);
+    void onUpdateClick(@NonNull Part part);
+    void onDeleteClick(@NonNull Part part);
   }
 
   static class PartDiffCallback extends DiffUtil.ItemCallback<Part> {

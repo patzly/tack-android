@@ -41,7 +41,7 @@
 
       <TextView
         android:id="@+id/text_part_name"
-        style="@style/Widget.Tack.TextView.TitleLarge"
+        style="@style/Widget.Tack.TextView.TitleMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -53,13 +53,37 @@
         android:text="Part 1"
         tools:ignore="HardcodedText" />
 
-      <com.google.android.material.appbar.MaterialToolbar
-        android:id="@+id/toolbar_part"
+      <com.google.android.material.button.MaterialButtonGroup
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        app:contentInsetStart="0dp"
-        app:menu="@menu/menu_part"
-        tools:ignore="HardcodedText" />
+        android:layout_height="wrap_content"
+        android:spacing="0dp"
+        android:layout_marginEnd="4dp">
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_part_edit"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Xsmall.Wide"
+          android:contentDescription="@string/action_edit"
+          app:icon="@drawable/ic_rounded_edit" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_part_move_up"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Xsmall"
+          android:contentDescription="@string/action_move_up"
+          app:icon="@drawable/ic_rounded_keyboard_arrow_up" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_part_move_down"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Xsmall"
+          android:contentDescription="@string/action_move_down"
+          app:icon="@drawable/ic_rounded_keyboard_arrow_down" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_part_menu"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Xsmall"
+          android:contentDescription="@string/action_more"
+          app:icon="@drawable/ic_rounded_more_vert" />
+
+      </com.google.android.material.button.MaterialButtonGroup>
 
     </LinearLayout>
 

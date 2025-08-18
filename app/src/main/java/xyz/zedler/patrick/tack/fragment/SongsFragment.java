@@ -30,7 +30,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.PopupMenu.OnMenuItemClickListener;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView.ItemAnimator;
@@ -68,6 +68,7 @@ import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.UnlockDialogUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
+import xyz.zedler.patrick.tack.util.ViewUtil.OnMenuInflatedListener;
 import xyz.zedler.patrick.tack.util.WidgetUtil;
 
 public class SongsFragment extends BaseFragment {
@@ -126,7 +127,7 @@ public class SongsFragment extends BaseFragment {
     binding.buttonSongsMenu.setOnClickListener(v -> {
       performHapticClick();
 
-      OnMenuItemClickListener onClickListener = item -> {
+      PopupMenu.OnMenuItemClickListener itemClickListener = item -> {
         int id = item.getItemId();
         if (getViewUtil().isClickDisabled(id)) {
           return false;
@@ -164,7 +165,7 @@ public class SongsFragment extends BaseFragment {
         }
         return true;
       };
-      ViewUtil.showMenu(v, R.menu.menu_songs, onClickListener, menu -> {
+      OnMenuInflatedListener menuInflatedListener = menu -> {
         sortOrder = getSharedPrefs().getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER);
         int itemId = R.id.action_sort_name;
         if (sortOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
@@ -176,7 +177,8 @@ public class SongsFragment extends BaseFragment {
         if (itemSort != null) {
           itemSort.setChecked(true);
         }
-      });
+      };
+      ViewUtil.showMenu(v, R.menu.menu_songs, itemClickListener, menuInflatedListener);
     });
     ViewUtil.setTooltipText(binding.buttonSongsBack, R.string.action_back);
     ViewUtil.setTooltipText(binding.buttonSongsMenu, R.string.action_more);

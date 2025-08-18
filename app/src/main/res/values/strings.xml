@@ -147,6 +147,7 @@
   <string name="action_rename">Rename</string>
   <string name="action_rename_part">Rename part</string>
   <string name="action_update">Update</string>
+  <string name="action_use_current_config">Use current config</string>
   <string name="action_delete">Delete</string>
   <string name="action_move_up">Move up</string>
   <string name="action_move_down">Move down</string>
@@ -156,6 +157,7 @@
   <string name="action_view_more_songs">View more songs</string>
   <string name="action_next">Next</string>
   <string name="action_more">More</string>
+  <string name="action_edit">Edit</string>
 
   <!-- MESSAGES -->
 

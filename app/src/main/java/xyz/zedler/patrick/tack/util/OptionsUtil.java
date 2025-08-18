@@ -38,32 +38,41 @@ import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
+import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.databinding.PartialDialogOptionsBinding;
 import xyz.zedler.patrick.tack.databinding.PartialOptionsBinding;
 import xyz.zedler.patrick.tack.fragment.MainFragment;
+import xyz.zedler.patrick.tack.model.MetronomeConfig;
 
 public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     OnChangeListener, OnSliderTouchListener {
 
   private static final String TAG = OptionsUtil.class.getSimpleName();
 
+  private static final String PART = "part_dialog";
+
   private final MainActivity activity;
+  @Nullable
   private final MainFragment fragment;
-  private final PartialOptionsBinding binding;
-  private final boolean useDialog, hideSubControls;
-  private final Runnable onModifiersCountChanged;
+  private final boolean useDialog, hideSubControlsIfUnused, editPart;
+  private Runnable onModifiersCountChanged;
+  private OnPartUpdatedListener onPartUpdatedListener;
   private boolean isCountInActive, isIncrementalActive, isTimerActive;
   private boolean isMuteActive, isSubdivisionActive;
   private DialogUtil dialogUtil;
+  private PartialOptionsBinding binding;
   private PartialDialogOptionsBinding bindingDialog;
+  private Part part;
+  private MetronomeConfig config;
 
   public OptionsUtil(
-      MainActivity activity, MainFragment fragment, Runnable onModifiersCountChanged
+      MainActivity activity, @NonNull MainFragment fragment, Runnable onModifiersCountChanged
   ) {
     this.activity = activity;
     this.fragment = fragment;
     this.onModifiersCountChanged = onModifiersCountChanged;
 
+    editPart = false;
     useDialog = !UiUtil.isLandTablet(activity);
     if (useDialog) {
       bindingDialog = PartialDialogOptionsBinding.inflate(activity.getLayoutInflater());
@@ -77,7 +86,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     isMuteActive = getMetronomeUtil().isMuteActive();
     isSubdivisionActive = getMetronomeUtil().isSubdivisionActive();
 
-    hideSubControls = activity.getSharedPrefs().getBoolean(
+    hideSubControlsIfUnused = activity.getSharedPrefs().getBoolean(
         PREF.HIDE_SUB_CONTROLS, DEF.HIDE_SUB_CONTROLS
     );
 
@@ -101,6 +110,21 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     }
   }
 
+  public OptionsUtil(MainActivity activity, OnPartUpdatedListener onPartUpdatedListener) {
+    this.activity = activity;
+    this.fragment = null;
+    this.onPartUpdatedListener = onPartUpdatedListener;
+
+    editPart = true;
+    useDialog = true;
+    dialogUtil = new DialogUtil(activity, "edit_part");
+    bindingDialog = PartialDialogOptionsBinding.inflate(activity.getLayoutInflater());
+    binding = bindingDialog.partialOptions;
+
+    // Hide slider because of separate subdivision controls at the top
+    hideSubControlsIfUnused = false;
+  }
+
   public void show() {
     update();
     if (useDialog) {
@@ -109,9 +133,15 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   }
 
   public void showIfWasShown(@Nullable Bundle state) {
-    update();
-    if (useDialog) {
-      dialogUtil.showIfWasShown(state);
+    if (editPart) {
+      part = state != null ? state.getParcelable(PART) : null;
+      if (part != null) {
+        setPart(part);
+        update();
+        if (useDialog) {
+          dialogUtil.showIfWasShown(state);
+        }
+      }
     }
   }
 
@@ -124,7 +154,44 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   public void saveState(@NonNull Bundle outState) {
     if (useDialog && dialogUtil != null) {
       dialogUtil.saveState(outState);
+      if (editPart) {
+        outState.putParcelable(PART, part);
+      }
     }
+  }
+
+  public void setPart(@NonNull Part part) {
+    this.part = part;
+    config = part.toConfig();
+
+    bindingDialog = PartialDialogOptionsBinding.inflate(activity.getLayoutInflater());
+    binding = bindingDialog.partialOptions;
+
+    String partName = part.getName();
+    if (partName == null || partName.trim().isEmpty()) {
+      partName = activity.getString(
+          R.string.label_part_unnamed, part.getPartIndex() + 1
+      );
+    }
+    String finalPartName = partName;
+    dialogUtil.createDialog(builder -> {
+      builder.setTitle(finalPartName);
+      builder.setView(bindingDialog.getRoot());
+      builder.setPositiveButton(R.string.action_apply, (dialog, which) -> {
+        activity.performHapticClick();
+        if (onPartUpdatedListener != null) {
+          Part partResult = new Part(part);
+          partResult.setConfig(config);
+          onPartUpdatedListener.onPartUpdated(partResult);
+        }
+      });
+      builder.setNegativeButton(
+          R.string.action_cancel,
+          (dialog, which) -> activity.performHapticClick()
+      );
+    });
+
+    update();
   }
 
   public void update() {
@@ -140,12 +207,14 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   }
 
   private void updateCountIn() {
-    boolean isCountInActive = getMetronomeUtil().isCountInActive();
+    boolean isCountInActive = getConfig().isCountInActive();
     if (this.isCountInActive != isCountInActive) {
       this.isCountInActive = isCountInActive;
-      onModifiersCountChanged.run();
+      if (onModifiersCountChanged != null) {
+        onModifiersCountChanged.run();
+      }
     }
-    int countIn = getMetronomeUtil().getCountIn();
+    int countIn = getConfig().getCountIn();
     binding.sliderOptionsCountIn.removeOnChangeListener(this);
     binding.sliderOptionsCountIn.setValue(countIn);
     binding.sliderOptionsCountIn.addOnChangeListener(this);
@@ -154,7 +223,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
             R.plurals.options_unit_bars, (int) value, (int) value
         )
     );
-    if (getMetronomeUtil().isCountInActive()) {
+    if (getConfig().isCountInActive()) {
       binding.textOptionsCountIn.setText(
           activity.getResources().getQuantityString(
               R.plurals.options_count_in_description, countIn, countIn
@@ -166,12 +235,14 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   }
 
   private void updateIncremental() {
-    int incrementalAmount = getMetronomeUtil().getIncrementalAmount();
-    boolean incrementalIncrease = getMetronomeUtil().isIncrementalIncrease();
-    boolean isIncrementalActive = getMetronomeUtil().isIncrementalActive();
+    int incrementalAmount = getConfig().getIncrementalAmount();
+    boolean incrementalIncrease = getConfig().isIncrementalIncrease();
+    boolean isIncrementalActive = getConfig().isIncrementalActive();
     if (this.isIncrementalActive != isIncrementalActive) {
       this.isIncrementalActive = isIncrementalActive;
-      onModifiersCountChanged.run();
+      if (onModifiersCountChanged != null) {
+        onModifiersCountChanged.run();
+      }
     }
     if (isIncrementalActive) {
       binding.textOptionsIncrementalAmount.setText(activity.getString(
@@ -206,8 +277,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     updateSurfaceToggleButtons(binding.toggleOptionsIncrementalDirection);
     binding.toggleOptionsIncrementalDirection.setEnabled(isIncrementalActive);
 
-    int incrementalInterval = getMetronomeUtil().getIncrementalInterval();
-    String incrementalUnit = getMetronomeUtil().getIncrementalUnit();
+    int incrementalInterval = getConfig().getIncrementalInterval();
+    String incrementalUnit = getConfig().getIncrementalUnit();
     int intervalResId, checkedId;
     switch (incrementalUnit) {
       case UNIT.SECONDS:
@@ -289,7 +360,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     updateSurfaceToggleButtons(binding.toggleOptionsIncrementalUnit);
     binding.toggleOptionsIncrementalUnit.setEnabled(isIncrementalActive);
 
-    int incrementalLimit = getMetronomeUtil().getIncrementalLimit();
+    int incrementalLimit = getConfig().getIncrementalLimit();
     /* When slider should be automatically adjusted to tempo
     int tempo = getMetronomeUtil().getTempo();
     if ((incrementalIncrease && incrementalLimit < tempo)
@@ -356,13 +427,15 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   }
 
   private void updateTimer() {
-    int timerDuration = getMetronomeUtil().getTimerDuration();
-    boolean isTimerActive = getMetronomeUtil().isTimerActive();
+    int timerDuration = getConfig().getTimerDuration();
+    boolean isTimerActive = getConfig().isTimerActive();
     if (this.isTimerActive != isTimerActive) {
       this.isTimerActive = isTimerActive;
-      onModifiersCountChanged.run();
+      if (onModifiersCountChanged != null) {
+        onModifiersCountChanged.run();
+      }
     }
-    String timerUnit = getMetronomeUtil().getTimerUnit();
+    String timerUnit = getConfig().getTimerUnit();
     int durationResId, checkedId;
     switch (timerUnit) {
       case UNIT.SECONDS:
@@ -443,14 +516,16 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   }
 
   private void updateMute() {
-    int mutePlay = getMetronomeUtil().getMutePlay();
-    int muteMute = getMetronomeUtil().getMuteMute();
-    String muteUnit = getMetronomeUtil().getMuteUnit();
-    boolean muteRandom = getMetronomeUtil().isMuteRandom();
-    boolean isMuteActive = getMetronomeUtil().isMuteActive();
+    int mutePlay = getConfig().getMutePlay();
+    int muteMute = getConfig().getMuteMute();
+    String muteUnit = getConfig().getMuteUnit();
+    boolean muteRandom = getConfig().isMuteRandom();
+    boolean isMuteActive = getConfig().isMuteActive();
     if (this.isMuteActive != isMuteActive) {
       this.isMuteActive = isMuteActive;
-      onModifiersCountChanged.run();
+      if (onModifiersCountChanged != null) {
+        onModifiersCountChanged.run();
+      }
     }
     int resIdPlay, resIdMute, resIdLabel, checkedId;
     if (muteUnit.equals(UNIT.SECONDS)) {
@@ -511,7 +586,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding.checkboxOptionsMuteRandom.setOnCheckedChangeListener(null);
     binding.checkboxOptionsMuteRandom.setChecked(muteRandom);
     binding.checkboxOptionsMuteRandom.setOnCheckedChangeListener((buttonView, isChecked) -> {
-      getMetronomeUtil().setMuteRandom(isChecked);
+      getConfig().setMuteRandom(isChecked);
       updateMute();
     });
     binding.checkboxOptionsMuteRandom.setEnabled(isMuteActive);
@@ -523,14 +598,16 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   public void updateSubdivisions(boolean animated) {
     // Only show if user decided to hide subdivisions when not in use
     binding.linearOptionsSubdivisionsContainer.setVisibility(
-        hideSubControls ? View.VISIBLE : View.GONE
+        hideSubControlsIfUnused ? View.VISIBLE : View.GONE
     );
 
     int subdivisionsCount = getMetronomeUtil().getSubdivisionsCount();
     boolean isSubdivisionActive = getMetronomeUtil().isSubdivisionActive();
     if (this.isSubdivisionActive != isSubdivisionActive) {
       this.isSubdivisionActive = isSubdivisionActive;
-      onModifiersCountChanged.run();
+      if (onModifiersCountChanged != null) {
+        onModifiersCountChanged.run();
+      }
     }
 
     if (isSubdivisionActive) {
@@ -588,53 +665,61 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       int valueFrom = (int) binding.sliderOptionsIncrementalInterval.getValueFrom();
       int valueTo = (int) binding.sliderOptionsIncrementalInterval.getValueTo();
       int range = valueTo - valueFrom;
-      getMetronomeUtil().setIncrementalInterval(
-          getMetronomeUtil().getIncrementalInterval() - range - 1
-      );
+      getConfig().setIncrementalInterval(getConfig().getIncrementalInterval() - range - 1);
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalIntervalDecrease.getIcon());
     } else if (id == R.id.button_options_incremental_interval_increase) {
       int valueFrom = (int) binding.sliderOptionsIncrementalInterval.getValueFrom();
       int valueTo = (int) binding.sliderOptionsIncrementalInterval.getValueTo();
       int range = valueTo - valueFrom;
-      getMetronomeUtil().setIncrementalInterval(
-          getMetronomeUtil().getIncrementalInterval() + range + 1
-      );
+      getConfig().setIncrementalInterval(getConfig().getIncrementalInterval() + range + 1);
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalIntervalIncrease.getIcon());
     } else if (id == R.id.button_options_incremental_limit_decrease) {
       int valueFrom = (int) binding.sliderOptionsIncrementalLimit.getValueFrom();
       int valueTo = (int) binding.sliderOptionsIncrementalLimit.getValueTo();
       int range = valueTo - valueFrom;
-      getMetronomeUtil().setIncrementalLimit(getMetronomeUtil().getIncrementalLimit() - range - 1);
+      getConfig().setIncrementalLimit(getConfig().getIncrementalLimit() - range - 1);
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalLimitDecrease.getIcon());
     } else if (id == R.id.button_options_incremental_limit_increase) {
       int valueFrom = (int) binding.sliderOptionsIncrementalLimit.getValueFrom();
       int valueTo = (int) binding.sliderOptionsIncrementalLimit.getValueTo();
       int range = valueTo - valueFrom;
-      getMetronomeUtil().setIncrementalLimit(getMetronomeUtil().getIncrementalLimit() + range + 1);
+      getConfig().setIncrementalLimit(getConfig().getIncrementalLimit() + range + 1);
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalLimitIncrease.getIcon());
     } else if (id == R.id.button_options_timer_decrease) {
       int valueFrom = (int) binding.sliderOptionsTimerDuration.getValueFrom();
       int valueTo = (int) binding.sliderOptionsTimerDuration.getValueTo();
       int range = valueTo - valueFrom;
-      getMetronomeUtil().setTimerDuration(
-          getMetronomeUtil().getTimerDuration() - range - 1, true
-      );
+      if (editPart) {
+        getConfig().setTimerDuration(getConfig().getTimerDuration() - range - 1);
+      } else {
+        getMetronomeUtil().setTimerDuration(
+            getMetronomeUtil().getTimerDuration() - range - 1, true
+        );
+      }
       updateTimer();
-      fragment.updateTimerControls(true, true);
+      if (!editPart && fragment != null) {
+        fragment.updateTimerControls(true, true);
+      }
       ViewUtil.startIcon(binding.buttonOptionsTimerDecrease.getIcon());
     } else if (id == R.id.button_options_timer_increase) {
       int valueFrom = (int) binding.sliderOptionsTimerDuration.getValueFrom();
       int valueTo = (int) binding.sliderOptionsTimerDuration.getValueTo();
       int range = valueTo - valueFrom;
-      getMetronomeUtil().setTimerDuration(
-          getMetronomeUtil().getTimerDuration() + range + 1, true
-      );
+      if (editPart) {
+        getConfig().setTimerDuration(getConfig().getTimerDuration() + range + 1);
+      } else {
+        getMetronomeUtil().setTimerDuration(
+            getMetronomeUtil().getTimerDuration() + range + 1, true
+        );
+      }
       updateTimer();
-      fragment.updateTimerControls(true, true);
+      if (!editPart && fragment != null) {
+        fragment.updateTimerControls(true, true);
+      }
       ViewUtil.startIcon(binding.buttonOptionsTimerIncrease.getIcon());
     } else if (id == R.id.linear_options_mute_random) {
       binding.checkboxOptionsMuteRandom.toggle();
@@ -649,34 +734,36 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     activity.performHapticClick();
     int groupId = group.getId();
     if (groupId == R.id.toggle_options_incremental_direction) {
-      getMetronomeUtil().setIncrementalIncrease(
+      getConfig().setIncrementalIncrease(
           checkedId == R.id.button_options_incremental_increase
       );
       updateIncremental();
     } else if (groupId == R.id.toggle_options_incremental_unit) {
       if (checkedId == R.id.button_options_incremental_unit_bars) {
-        getMetronomeUtil().setIncrementalUnit(UNIT.BARS);
+        getConfig().setIncrementalUnit(UNIT.BARS);
       } else if (checkedId == R.id.button_options_incremental_unit_seconds) {
-        getMetronomeUtil().setIncrementalUnit(UNIT.SECONDS);
+        getConfig().setIncrementalUnit(UNIT.SECONDS);
       } else if (checkedId == R.id.button_options_incremental_unit_minutes) {
-        getMetronomeUtil().setIncrementalUnit(UNIT.MINUTES);
+        getConfig().setIncrementalUnit(UNIT.MINUTES);
       }
       updateIncremental();
     } else if (groupId == R.id.toggle_options_timer_unit) {
       if (checkedId == R.id.button_options_timer_unit_bars) {
-        getMetronomeUtil().setTimerUnit(UNIT.BARS);
+        getConfig().setTimerUnit(UNIT.BARS);
       } else if (checkedId == R.id.button_options_timer_unit_seconds) {
-        getMetronomeUtil().setTimerUnit(UNIT.SECONDS);
+        getConfig().setTimerUnit(UNIT.SECONDS);
       } else if (checkedId == R.id.button_options_timer_unit_minutes) {
-        getMetronomeUtil().setTimerUnit(UNIT.MINUTES);
+        getConfig().setTimerUnit(UNIT.MINUTES);
       }
       updateTimer();
-      fragment.updateTimerDisplay();
+      if (!editPart && fragment != null) {
+        fragment.updateTimerDisplay();
+      }
     } else if (groupId == R.id.toggle_options_mute_unit) {
       if (checkedId == R.id.button_options_mute_unit_seconds) {
-        getMetronomeUtil().setMuteUnit(UNIT.SECONDS);
+        getConfig().setMuteUnit(UNIT.SECONDS);
       } else if (checkedId == R.id.button_options_mute_unit_bars) {
-        getMetronomeUtil().setMuteUnit(UNIT.BARS);
+        getConfig().setMuteUnit(UNIT.BARS);
       }
       updateMute();
     } else if (groupId == R.id.toggle_options_swing) {
@@ -689,8 +776,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       }
       updateSubdivisions(true);
       updateSwing();
-      fragment.updateSubs(getMetronomeUtil().getSubdivisions());
-      fragment.updateSubControls(true);
+      if (!editPart && fragment != null) {
+        fragment.updateSubs(getConfig().getSubdivisions());
+        fragment.updateSubControls(true);
+      }
     }
   }
 
@@ -702,32 +791,39 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     int id = slider.getId();
     if (id == R.id.slider_options_count_in) {
       activity.performHapticSegmentTick(slider, false);
-      getMetronomeUtil().setCountIn((int) value);
+      getConfig().setCountIn((int) value);
       updateCountIn();
     } else if (id == R.id.slider_options_incremental_amount) {
       activity.performHapticSegmentTick(slider, true);
-      getMetronomeUtil().setIncrementalAmount((int) value);
+      getConfig().setIncrementalAmount((int) value);
       updateIncremental();
     } else if (id == R.id.slider_options_incremental_interval) {
       activity.performHapticSegmentTick(slider, true);
-      getMetronomeUtil().setIncrementalInterval((int) value);
+      getConfig().setIncrementalInterval((int) value);
       updateIncremental();
     } else if (id == R.id.slider_options_incremental_limit) {
       activity.performHapticSegmentTick(slider, true);
-      getMetronomeUtil().setIncrementalLimit((int) value);
+      getConfig().setIncrementalLimit((int) value);
       updateIncremental();
     } else if (id == R.id.slider_options_timer_duration) {
       activity.performHapticSegmentTick(slider, true);
-      getMetronomeUtil().setTimerDuration((int) value, true);
-      updateTimer();
-      fragment.updateTimerControls(true, true);
+      if (editPart) {
+        getConfig().setTimerDuration((int) value);
+        updateTimer();
+      } else {
+        getMetronomeUtil().setTimerDuration((int) value, true);
+        updateTimer();
+        if (fragment != null) {
+          fragment.updateTimerControls(true, true);
+        }
+      }
     } else if (id == R.id.slider_options_mute_play) {
       activity.performHapticSegmentTick(slider, true);
-      getMetronomeUtil().setMutePlay((int) value);
+      getConfig().setMutePlay((int) value);
       updateMute();
     } else if (id == R.id.slider_options_mute_mute) {
       activity.performHapticSegmentTick(slider, true);
-      getMetronomeUtil().setMuteMute((int) value);
+      getConfig().setMuteMute((int) value);
       updateMute();
     } else if (id == R.id.slider_options_subdivisions) {
       activity.performHapticSegmentTick(slider, true);
@@ -743,8 +839,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       }
       updateSubdivisions();
       updateSwing();
-      fragment.updateSubs(getMetronomeUtil().getSubdivisions());
-      fragment.updateSubControls(true);
+      if (!editPart && fragment != null) {
+        fragment.updateSubs(getConfig().getSubdivisions());
+        fragment.updateSubControls(true);
+      }
     }
   }
 
@@ -757,6 +855,14 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   @Override
   public void onStopTrackingTouch(@NonNull Slider slider) {
     getMetronomeUtil().restorePlayingState();
+  }
+
+  private MetronomeConfig getConfig() {
+    if (editPart) {
+      return config;
+    } else {
+      return getMetronomeUtil().getConfig();
+    }
   }
 
   private MetronomeUtil getMetronomeUtil() {
@@ -781,5 +887,9 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         }
       }
     }
+  }
+
+  public interface OnPartUpdatedListener {
+    void onPartUpdated(@NonNull Part part);
   }
 }

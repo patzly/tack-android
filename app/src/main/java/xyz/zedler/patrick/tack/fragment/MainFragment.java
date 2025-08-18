@@ -452,11 +452,13 @@ public class MainFragment extends BaseFragment
       performHapticClick();
     });
 
-    binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
-        getSharedPrefs().getString(PREF.BEAT_MODE, DEF.BEAT_MODE).equals(BEAT_MODE.VIBRATION)
-            ? R.drawable.ic_rounded_vibration_to_volume_up_anim
-            : R.drawable.ic_rounded_volume_up_to_vibration_anim
-    );
+    if (binding.controlsMainBottom.buttonMainBeatMode != null) {
+      binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
+          getSharedPrefs().getString(PREF.BEAT_MODE, DEF.BEAT_MODE).equals(BEAT_MODE.VIBRATION)
+              ? R.drawable.ic_rounded_vibration_to_volume_up_anim
+              : R.drawable.ic_rounded_volume_up_to_vibration_anim
+      );
+    }
 
     setButtonStates(getMetronomeUtil().getTempo());
 
@@ -545,13 +547,26 @@ public class MainFragment extends BaseFragment
     ViewUtil.setTooltipText(binding.buttonMainAddSubdivision, R.string.action_add_sub);
     ViewUtil.setTooltipText(binding.buttonMainRemoveSubdivision, R.string.action_remove_sub);
     ViewUtil.setTooltipText(binding.controlsMainBottom.buttonMainOptions, R.string.title_options);
-    ViewUtil.setTooltipText(
-        binding.controlsMainBottom.buttonMainTempoTap, R.string.action_tempo_tap
-    );
-    ViewUtil.setTooltipText(binding.controlsMainBottom.buttonMainSongs, R.string.title_songs);
-    ViewUtil.setTooltipText(
-        binding.controlsMainBottom.buttonMainBeatMode, R.string.action_beat_mode
-    );
+    if (binding.controlsMainBottom.buttonMainMenu != null) {
+      ViewUtil.setTooltipText(
+          binding.controlsMainBottom.buttonMainMenu, R.string.action_more
+      );
+    }
+    if (binding.controlsMainBottom.buttonMainTempoTap != null) {
+      ViewUtil.setTooltipText(
+          binding.controlsMainBottom.buttonMainTempoTap, R.string.action_tempo_tap
+      );
+    }
+    if (binding.controlsMainBottom.buttonMainSongs != null) {
+      ViewUtil.setTooltipText(
+          binding.controlsMainBottom.buttonMainSongs, R.string.title_songs
+      );
+    }
+    if (binding.controlsMainBottom.buttonMainBeatMode != null) {
+      ViewUtil.setTooltipText(
+          binding.controlsMainBottom.buttonMainBeatMode, R.string.action_beat_mode
+      );
+    }
 
     ViewUtil.setTooltipTextAndContentDescription(
         binding.buttonMainLess1,
@@ -589,7 +604,8 @@ public class MainFragment extends BaseFragment
         binding.controlsMainBottom.buttonMainBeatMode,
         binding.controlsMainBottom.buttonMainSongs,
         binding.controlsMainBottom.buttonMainOptions,
-        binding.controlsMainBottom.buttonMainTempoTap
+        binding.controlsMainBottom.buttonMainTempoTap,
+        binding.controlsMainBottom.buttonMainMenu
     );
   }
 
@@ -649,11 +665,13 @@ public class MainFragment extends BaseFragment
 
     savedState = null;
 
-    binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
-        getMetronomeUtil().getBeatMode().equals(BEAT_MODE.VIBRATION)
-            ? R.drawable.ic_rounded_vibration_to_volume_up_anim
-            : R.drawable.ic_rounded_volume_up_to_vibration_anim
-    );
+    if (binding.controlsMainBottom.buttonMainBeatMode != null) {
+      binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
+          getMetronomeUtil().getBeatMode().equals(BEAT_MODE.VIBRATION)
+              ? R.drawable.ic_rounded_vibration_to_volume_up_anim
+              : R.drawable.ic_rounded_volume_up_to_vibration_anim
+      );
+    }
 
     updateBeats(getMetronomeUtil().getBeats());
     updateBeatControls(false);
@@ -1028,10 +1046,12 @@ public class MainFragment extends BaseFragment
       dialogUtilBeatMode.show();
       if (getMetronomeUtil().getBeatMode().equals(BEAT_MODE.VIBRATION)) {
         // Use available animated icon for click
-        binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
-            R.drawable.ic_rounded_vibration_anim
-        );
-        ViewUtil.startIcon(binding.controlsMainBottom.buttonMainBeatMode.getIcon());
+        if (binding.controlsMainBottom.buttonMainBeatMode != null) {
+          binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
+              R.drawable.ic_rounded_vibration_anim
+          );
+          ViewUtil.startIcon(binding.controlsMainBottom.buttonMainBeatMode.getIcon());
+        }
       }
     } else if (id == R.id.button_main_songs) {
       performHapticClick();
@@ -1043,9 +1063,29 @@ public class MainFragment extends BaseFragment
       optionsUtil.show();
     } else if (id == R.id.button_main_tempo_tap) {
       performHapticClick();
-      ViewUtil.startIcon(binding.controlsMainBottom.buttonMainTempoTap.getIcon());
+      if (binding.controlsMainBottom.buttonMainTempoTap != null) {
+        ViewUtil.startIcon(binding.controlsMainBottom.buttonMainTempoTap.getIcon());
+      }
       tempoTapDialogUtil.update();
       tempoTapDialogUtil.show();
+    } else if (id == R.id.button_main_menu) {
+      performHapticClick();
+      ViewUtil.showMenu(v, R.menu.menu_main_bottom_collapsed, item -> {
+        int itemId = item.getItemId();
+        if (getViewUtil().isClickDisabled(itemId)) {
+          return false;
+        }
+        performHapticClick();
+        if (itemId == R.id.action_songs) {
+          activity.navigate(MainFragmentDirections.actionMainToSongs());
+        } else if (itemId == R.id.action_tempo_tap) {
+          tempoTapDialogUtil.update();
+          tempoTapDialogUtil.show();
+        } else if (itemId == R.id.action_beat_mode) {
+          dialogUtilBeatMode.show();
+        }
+        return true;
+      }, Gravity.CENTER);
     }
   }
 

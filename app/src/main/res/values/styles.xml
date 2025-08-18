@@ -208,10 +208,40 @@
   </style>
 
   <style
+    name="Widget.Tack.Button.IconButton.Filled.Xsmall"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Xsmall</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Xsmall.Narrow"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Xsmall.Narrow</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Xsmall.Wide"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Xsmall.Wide</item>
+  </style>
+
+  <style
     name="Widget.Tack.Button.IconButton.Tonal"
     parent="Widget.Material3Expressive.Button.IconButton.Tonal">
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">wrap_content</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal.Xsmall"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Xsmall</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal.Xsmall.Narrow"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Xsmall.Narrow</item>
   </style>
 
   <style

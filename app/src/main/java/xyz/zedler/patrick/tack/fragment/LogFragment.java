@@ -77,7 +77,7 @@ public class LogFragment extends BaseFragment implements OnClickListener {
     systemBarBehavior.setUp();
 
     new ScrollBehavior().setUpScroll(
-        binding.appBarLog, binding.scrollLog, ScrollBehavior.LIFT_ON_SCROLL
+        binding.appBarLog, binding.scrollLog, ScrollBehavior.ALWAYS_LIFTED
     );
 
     binding.buttonLogBack.setOnClickListener(getNavigationOnClickListener());

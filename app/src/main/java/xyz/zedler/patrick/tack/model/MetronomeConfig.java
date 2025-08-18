@@ -130,6 +130,10 @@ public class MetronomeConfig {
     this.countIn = countIn;
   }
 
+  public boolean isCountInActive() {
+    return countIn > 0;
+  }
+
   public int getTempo() {
     return tempo;
   }
@@ -202,12 +206,20 @@ public class MetronomeConfig {
     this.incrementalIncrease = incrementalIncrease;
   }
 
+  public boolean isIncrementalActive() {
+    return incrementalAmount > 0;
+  }
+
   public int getTimerDuration() {
     return timerDuration;
   }
 
   public void setTimerDuration(int timerDuration) {
     this.timerDuration = timerDuration;
+  }
+
+  public boolean isTimerActive() {
+    return timerDuration > 0;
   }
 
   public String getTimerUnit() {
@@ -224,6 +236,10 @@ public class MetronomeConfig {
 
   public void setMutePlay(int mutePlay) {
     this.mutePlay = mutePlay;
+  }
+
+  public boolean isMuteActive() {
+    return mutePlay > 0;
   }
 
   public int getMuteMute() {

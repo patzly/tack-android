@@ -46,7 +46,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
-import androidx.appcompat.widget.PopupMenu.OnMenuItemClickListener;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat.Type;
@@ -127,7 +126,9 @@ public class ViewUtil {
 
   public static void setOnClickListeners(View.OnClickListener listener, View... views) {
     for (View view : views) {
-      view.setOnClickListener(listener);
+      if (view != null) {
+        view.setOnClickListener(listener);
+      }
     }
   }
 
@@ -356,18 +357,26 @@ public class ViewUtil {
 
   // PopupMenu
 
-  public static void showMenu(View v, @MenuRes int menuRes, OnMenuItemClickListener listener) {
+  public static void showMenu(
+      View v, @MenuRes int menuRes, PopupMenu.OnMenuItemClickListener listener, int gravity
+  ) {
     PopupMenu popup = new PopupMenu(v.getContext(), v);
     popup.getMenuInflater().inflate(menuRes, popup.getMenu());
     popup.setOnMenuItemClickListener(listener);
-    popup.setGravity(Gravity.END);
+    popup.setGravity(gravity);
     popup.show();
+  }
+
+  public static void showMenu(
+      View v, @MenuRes int menuRes, PopupMenu.OnMenuItemClickListener listener
+  ) {
+    showMenu(v, menuRes, listener, Gravity.END);
   }
 
   public static void showMenu(
       View v,
       @MenuRes int menuRes,
-      OnMenuItemClickListener onItemClickListener,
+      PopupMenu.OnMenuItemClickListener onItemClickListener,
       OnMenuInflatedListener onInflatedListener
   ) {
     PopupMenu popup = new PopupMenu(v.getContext(), v);
