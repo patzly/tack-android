@@ -53,6 +53,9 @@
   <string name="label_tempo_presto">Presto</string>
   <string name="label_tempo_prestissimo">Prestissimo</string>
   <string name="label_tempo_input_help">%1$dから%2$dまでの値</string>
+  <string name="label_beat_mode_all">音と振動</string>
+  <string name="label_beat_mode_sound">音のみ</string>
+  <string name="label_beat_mode_vibration">振動のみ</string>
   <string name="label_part_name">パート名</string>
   <string name="label_part_unnamed">パート %1$d</string>
   <string name="label_part_current">パート %1$d: %2$s</string>
@@ -129,6 +132,7 @@
   <string name="action_rename">名前変更</string>
   <string name="action_rename_part">パート名変更</string>
   <string name="action_update">更新</string>
+  <string name="action_use_current_config">現在の設定を使用</string>
   <string name="action_delete">削除</string>
   <string name="action_move_up">上へ移動</string>
   <string name="action_move_down">下へ移動</string>
@@ -137,6 +141,8 @@
   <string name="action_restore">バックアップ復元</string>
   <string name="action_view_more_songs">他のソングを見る</string>
   <string name="action_next">次へ</string>
+  <string name="action_edit">編集</string>
+
   <!-- MESSAGES -->
 
   <string name="msg_feedback">素晴らしいアプリの開発には、膨大な時間とユーザーからのフィードバックが必要です。</string>
@@ -178,6 +184,7 @@
   <string name="msg_restore_success">バックアップ復元に成功しました</string>
   <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
+  <string name="msg_songs_intro_description">メトロノームの設定をソング内にパートとして保存し、並べ替えることができます。まっずメトロノーム操作とオプションを自由に調整し、新規パートとしてソング内に追加するか、既存パートに上書きできます。</string>
   <string name="msg_widget_description">ソングの表示と再生ができます</string>
   <string name="msg_installer_check">無効な制限解除アプリ</string>
   <string name="msg_installer_check_description">Google Play で制限解除アプリを購入し、インストールしてください。ご支援をよろしくお願いします！</string>
