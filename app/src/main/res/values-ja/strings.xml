@@ -148,6 +148,7 @@
   <string name="msg_feedback">素晴らしいアプリの開発には、膨大な時間とユーザーからのフィードバックが必要です。</string>
   <string name="msg_feedback_contact">要望や意見、質問がある場合はご連絡ください！\nそして、 Play ストアで素敵なレビューを書いていただけると非常に嬉しいです。</string>
   <string name="msg_recommend">素敵なメトロノームアプリをチェック: \n%1$s</string>
+  <string name="msg_vibration_unavailable">このデバイスでは振動を利用できません。音を出力します。</string>
   <string name="msg_service_running">メトロノーム機能実行中</string>
   <string name="msg_service_running_return">タップして Tack に戻る</string>
   <string name="msg_service_description">メトロノーム構成・再生機能</string>
@@ -184,6 +185,7 @@
   <string name="msg_restore_success">バックアップ復元に成功しました</string>
   <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
+  <string name="msg_songs_intro">ソングライブラリの機能</string>
   <string name="msg_songs_intro_description">メトロノームの設定をソング内にパートとして保存し、並べ替えることができます。まっずメトロノーム操作とオプションを自由に調整し、新規パートとしてソング内に追加するか、既存パートに上書きできます。</string>
   <string name="msg_widget_description">ソングの表示と再生ができます</string>
   <string name="msg_installer_check">無効な制限解除アプリ</string>
