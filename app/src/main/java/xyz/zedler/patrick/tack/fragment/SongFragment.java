@@ -132,7 +132,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     SystemBarBehavior.applyBottomInset(binding.fabSong);
 
     int liftMode = UiUtil.isOrientationPortrait(activity)
-        ? ScrollBehavior.NEVER_LIFTED
+        ? ScrollBehavior.ALWAYS_LIFTED
         : ScrollBehavior.LIFT_ON_SCROLL;
     new ScrollBehavior().setUpScroll(binding.appBarSong, binding.recyclerSongParts, liftMode);
 
@@ -230,7 +230,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           partsResult.set(index, partAbove);
           sortParts();
           adapter.submitList(new ArrayList<>(partsResult));
-          adapter.notifyMenusChanged();
+          adapter.notifyButtonsChanged();
           updateResult();
         }
       }
@@ -248,7 +248,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           partsResult.set(index, partBelow);
           sortParts();
           adapter.submitList(new ArrayList<>(partsResult));
-          adapter.notifyMenusChanged();
+          adapter.notifyButtonsChanged();
           updateResult();
         }
       }
@@ -271,12 +271,20 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         if (partsResult.size() <= 1) {
           return;
         }
-        partsResult.remove(part.getPartIndex());
+        int index = part.getPartIndex();
+        partsResult.remove(index);
         for (int i = 0; i < partsResult.size(); i++) {
           partsResult.get(i).setPartIndex(i);
         }
-        adapter.submitList(new ArrayList<>(partsResult));
-        adapter.notifyMenusChanged();
+        adapter.submitList(new ArrayList<>(partsResult), () -> {
+          if (index > 0) {
+            adapter.notifyItemChanged(index - 1);
+          }
+          if (index < partsResult.size()) {
+            adapter.notifyItemChanged(index);
+          }
+          adapter.notifyButtonsChanged();
+        });
         updateResult();
       }
     });
@@ -286,7 +294,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     binding.recyclerSongParts.setLayoutManager(layoutManager);
     binding.recyclerSongParts.setItemAnimator(new DefaultItemAnimator());
 
-    PartItemDecoration decoration = new PartItemDecoration(UiUtil.dpToPx(activity, 8));
+    PartItemDecoration decoration = new PartItemDecoration(UiUtil.dpToPx(activity, 0));
     binding.recyclerSongParts.addItemDecoration(decoration);
 
     String songId = SongFragmentArgs.fromBundle(getArguments()).getSongId();
@@ -332,7 +340,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
             sortParts();
             binding.recyclerSongParts.stopScroll();
             adapter.submitList(new ArrayList<>(partsResult));
-            adapter.notifyMenusChanged();
+            adapter.notifyButtonsChanged();
           } else {
             Log.e(TAG, "onViewCreated: song with id=" + songId + " not found");
           }
@@ -383,7 +391,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           sortParts();
           binding.recyclerSongParts.stopScroll();
           adapter.submitList(partsResult);
-          adapter.notifyMenusChanged();
+          adapter.notifyButtonsChanged();
         }
       }
       updateResult();
@@ -555,13 +563,20 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
   }
 
   private void addPart() {
-    Part part = new Part(
-        null, songResult.getId(), partsResult.size(), getMetronomeUtil().getConfig()
-    );
+    int index = partsResult.size();
+    Part part = new Part(null, songResult.getId(), index, getMetronomeUtil().getConfig());
     partsResult.add(part);
     sortParts();
-    adapter.submitList(new ArrayList<>(partsResult));
-    adapter.notifyMenusChanged();
+    adapter.submitList(new ArrayList<>(partsResult), () -> {
+      if (index > 0) {
+        adapter.notifyItemChanged(index - 1);
+      }
+      if (index + 1 < partsResult.size()) {
+        adapter.notifyItemChanged(index + 1);
+      }
+      adapter.notifyButtonsChanged();
+    });
+    adapter.notifyButtonsChanged();
   }
 
   public void renamePart(String partId, String name) {

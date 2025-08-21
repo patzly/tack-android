@@ -68,6 +68,26 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
     PartViewHolder partHolder = (PartViewHolder) holder;
     Context context = partHolder.binding.getRoot().getContext();
 
+    // item background
+
+    if (getItemCount() == 1) {
+      partHolder.binding.linearPartContainer.setBackgroundResource(
+          R.drawable.ripple_list_item_bg_segmented_single
+      );
+    } else if (adapterPosition == 0) {
+      partHolder.binding.linearPartContainer.setBackgroundResource(
+          R.drawable.ripple_list_item_bg_segmented_first
+      );
+    } else if (adapterPosition == getItemCount() - 1) {
+      partHolder.binding.linearPartContainer.setBackgroundResource(
+          R.drawable.ripple_list_item_bg_segmented_last
+      );
+    } else {
+      partHolder.binding.linearPartContainer.setBackgroundResource(
+          R.drawable.ripple_list_item_bg_segmented_middle
+      );
+    }
+
     // number
     String partNumber = context.getString(
         R.string.label_part_unnamed, adapterPosition + 1
@@ -265,7 +285,7 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
     );
   }
 
-  public void notifyMenusChanged() {
+  public void notifyButtonsChanged() {
     new Handler(Looper.getMainLooper()).postDelayed(
         () -> notifyItemRangeChanged(0, getItemCount(), PAYLOAD_MOVE), 50
     );

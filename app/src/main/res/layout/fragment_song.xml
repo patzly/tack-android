@@ -24,7 +24,7 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:transitionGroup="true"
-  android:background="?attr/colorSurface">
+  android:background="?attr/colorSurfaceContainer">
 
   <com.google.android.material.appbar.AppBarLayout
     android:id="@+id/app_bar_song"
@@ -48,7 +48,7 @@
         android:contentDescription="@string/action_close"
         android:layout_gravity="center_vertical|start"
         android:layout_marginStart="4dp"
-        app:backgroundTint="?attr/colorSurfaceContainer"
+        app:backgroundTint="?attr/colorSurfaceContainerHighest"
         app:icon="@drawable/ic_rounded_close_anim" />
 
       <com.google.android.material.button.MaterialButtonGroup
@@ -68,7 +68,7 @@
           android:id="@+id/button_song_menu"
           style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
           android:contentDescription="@string/action_more"
-          app:backgroundTint="?attr/colorSurfaceContainer"
+          app:backgroundTint="?attr/colorSurfaceContainerHighest"
           app:iconTint="?attr/colorOnSurface"
           app:icon="@drawable/ic_rounded_more_vert" />
 
@@ -82,7 +82,9 @@
     android:id="@+id/constraint_song_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="?attr/actionBarSize">
+    android:layout_marginTop="?attr/actionBarSize"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
 
     <LinearLayout
       android:id="@+id/linear_song_details"
@@ -94,32 +96,47 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintEnd_toEndOf="parent">
 
-      <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/text_input_song_name"
-        style="@style/Widget.Tack.TextInputLayout.OutlinedBox"
+      <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:hint="@string/label_song_name"
-        app:helperText="@string/label_song_name_help">
+        android:background="@drawable/ripple_list_item_bg_segmented_first">
 
-        <com.google.android.material.textfield.TextInputEditText
-          android:id="@+id/edit_text_song_name"
+        <com.google.android.material.textfield.TextInputLayout
+          android:id="@+id/text_input_song_name"
+          style="@style/Widget.Tack.TextInputLayout.OutlinedBox"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:imeOptions="actionDone"
-          android:inputType="textCapSentences"
-          android:singleLine="true" />
+          android:layout_marginStart="16dp"
+          android:layout_marginEnd="16dp"
+          android:layout_marginTop="12dp"
+          android:layout_marginBottom="4dp"
+          android:hint="@string/label_song_name"
+          app:helperText="@string/label_song_name_help"
+          app:boxCornerRadiusTopStart="12dp"
+          app:boxCornerRadiusTopEnd="12dp"
+          app:boxCornerRadiusBottomStart="12dp"
+          app:boxCornerRadiusBottomEnd="12dp">
 
-      </com.google.android.material.textfield.TextInputLayout>
+          <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_text_song_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionDone"
+            android:inputType="textCapSentences"
+            android:singleLine="true" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+      </FrameLayout>
 
       <LinearLayout
         android:id="@+id/linear_song_looped"
-        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Clickable"
-        android:layout_marginTop="8dp"
+        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+        android:background="@drawable/ripple_list_item_bg_segmented_last"
         android:paddingStart="16dp"
-        android:paddingEnd="16dp">
+        android:paddingEnd="16dp"
+        android:layout_marginBottom="16dp">
 
         <ImageView
           style="@style/Widget.Tack.ImageView.ListItem.Icon"
@@ -144,28 +161,28 @@
 
       </LinearLayout>
 
-      <com.google.android.material.divider.MaterialDivider
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        app:dividerInsetStart="16dp"
-        app:dividerInsetEnd="16dp" />
-
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-      android:id="@+id/recycler_song_parts"
+    <com.google.android.material.card.MaterialCardView
       android:layout_width="match_parent"
       android:layout_height="0dp"
-      android:paddingTop="16dp"
-      android:paddingBottom="16dp"
-      android:paddingStart="16dp"
-      android:paddingEnd="16dp"
-      android:clipToPadding="false"
       app:layout_constraintTop_toBottomOf="@+id/linear_song_details"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintEnd_toEndOf="parent" />
+      app:layout_constraintEnd_toEndOf="parent"
+      app:contentPadding="0dp"
+      app:strokeWidth="0dp"
+      app:cardCornerRadius="20dp"
+      app:cardBackgroundColor="?attr/colorSurfaceContainer">
+
+      <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_song_parts"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="16dp"
+        android:clipToPadding="false" />
+
+    </com.google.android.material.card.MaterialCardView>
 
   </androidx.constraintlayout.widget.ConstraintLayout>
 
