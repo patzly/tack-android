@@ -543,6 +543,46 @@
     <item name="android:layout_weight">1</item>
   </style>
 
+  <!-- Segmented list -->
+
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.SingleLine.Segmented"
+    parent="Widget.Tack.LinearLayout.ListItem">
+    <item name="android:minHeight">56dp</item>
+    <item name="android:paddingStart">16dp</item>
+    <item name="android:paddingEnd">16dp</item>
+    <item name="android:paddingTop">8dp</item>
+    <item name="android:paddingBottom">8dp</item>
+  </style>
+
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
+    parent="Widget.Tack.LinearLayout.ListItem">
+    <item name="android:minHeight">72dp</item>
+    <item name="android:paddingStart">16dp</item>
+    <item name="android:paddingEnd">16dp</item>
+    <item name="android:paddingTop">8dp</item>
+    <item name="android:paddingBottom">8dp</item>
+  </style>
+
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+    parent="Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented">
+    <item name="android:paddingTop">12dp</item>
+    <item name="android:paddingBottom">12dp</item>
+  </style>
+
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.ThreeLine.Segmented"
+    parent="Widget.Tack.LinearLayout.ListItem">
+    <item name="android:minHeight">88dp</item>
+    <item name="android:gravity">top</item>
+    <item name="android:paddingStart">16dp</item>
+    <item name="android:paddingEnd">16dp</item>
+    <item name="android:paddingTop">12dp</item>
+    <item name="android:paddingBottom">12dp</item>
+  </style>
+
   <!-- ImageView (lists) -->
 
   <style name="Widget.Tack.ImageView.ListItem.Icon" parent="">
@@ -653,6 +693,12 @@
     <item name="android:paddingBottom">3dp</item>
     <item name="android:textAppearance">?attr/textAppearanceTitleSmall</item>
     <item name="android:textColor">?attr/colorSecondary</item>
+  </style>
+
+  <style name="Widget.Tack.TextView.Category.Segmented" parent="Widget.Tack.TextView.Category">
+    <item name="android:layout_marginStart">0dp</item>
+    <item name="android:paddingTop">16dp</item>
+    <item name="android:paddingBottom">8dp</item>
   </style>
 
   <style name="Widget.Tack.TextView.ListItem.OverLine" parent="Widget.Tack.TextView.Medium">
