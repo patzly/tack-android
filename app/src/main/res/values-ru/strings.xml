@@ -53,7 +53,6 @@
   <string name="label_tempo_prestissimo">Очень быстро</string>
   <string name="label_tempo_input_help">Значения от %1$d до %2$d</string>
   <string name="label_part_name">Название части</string>
-  <string name="label_name">Название</string>
   <string name="label_part_unnamed">Часть %1$d</string>
   <string name="label_part_no_duration">Нет длительности</string>
   <plurals name="label_parts_count">
