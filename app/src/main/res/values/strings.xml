@@ -396,6 +396,7 @@
   <string name="about_key_description_not_installed">Not installed</string>
   <string name="about_key_description_installed">Installed</string>
   <string name="about_key_description_invalid">Invalid</string>
+  <string name="about_key_description_ignored">Ignored</string>
   <string name="about_github" translatable="false">GitHub</string>
   <string name="about_github_description">Source code</string>
   <string name="about_translation" translatable="false">Transifex</string>

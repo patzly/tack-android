@@ -28,7 +28,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
@@ -105,7 +104,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
       binding.linearAboutKey.setOnLongClickListener(v -> {
         longClickCount++;
         if (longClickCount >= 10) {
-          getSharedPrefs().edit().putBoolean(PREF.CHECK_INSTALLER, false).apply();
+          getSharedPrefs().edit().putBoolean(PREF.VERIFY_KEY, false).apply();
           updateKeyDescription();
           binding.linearAboutKey.setOnLongClickListener(null);
         }
@@ -197,9 +196,9 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     }
     int resId = R.string.about_key_description_not_installed;
     int textColor = ResUtil.getColor(activity, R.attr.colorOnSurfaceVariant);
-    boolean checkInstaller = getSharedPrefs().getBoolean(PREF.CHECK_INSTALLER, DEF.CHECK_INSTALLER);
+    boolean verifyKey = getSharedPrefs().getBoolean(PREF.VERIFY_KEY, true);
     if (UnlockUtil.isKeyInstalled(activity)) {
-      if (checkInstaller) {
+      if (verifyKey) {
         boolean isInstallerValid = UnlockUtil.isInstallerValid(activity);
         resId = isInstallerValid
             ? R.string.about_key_description_installed
@@ -210,8 +209,8 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
       } else {
         resId = R.string.about_key_description_installed;
       }
-    } else if (!checkInstaller) {
-      resId = R.string.about_key_description_installed;
+    } else if (!verifyKey) {
+      resId = R.string.about_key_description_ignored;
     }
     binding.textAboutKeyDescription.setText(resId);
     binding.textAboutKeyDescription.setTextColor(textColor);

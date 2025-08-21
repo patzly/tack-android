@@ -66,13 +66,9 @@ public class UnlockUtil {
     }
   }
 
-  public static boolean isUnlocked(@NonNull Context context, boolean checkInstaller) {
-    if (isPlayStoreInstalled(context)) {
-      if (checkInstaller) {
-        return isKeyInstalled(context) && isInstallerValid(context);
-      } else {
-        return isKeyInstalled(context);
-      }
+  public static boolean isUnlocked(@NonNull Context context, boolean verifyKey) {
+    if (verifyKey && isPlayStoreInstalled(context)) {
+      return isKeyInstalled(context) && isInstallerValid(context);
     }
     return true;
   }

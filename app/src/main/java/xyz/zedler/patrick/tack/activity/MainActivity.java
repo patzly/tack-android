@@ -472,9 +472,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   }
 
   public boolean isUnlocked() {
-    boolean checkInstaller = sharedPrefs.getBoolean(PREF.CHECK_INSTALLER, DEF.CHECK_INSTALLER);
+    boolean verifyKey = sharedPrefs.getBoolean(PREF.VERIFY_KEY, true);
     // also checks if Play Store is installed
-    return UnlockUtil.isUnlocked(this, checkInstaller);
+    return UnlockUtil.isUnlocked(this, verifyKey);
   }
 
   public HapticUtil getHapticUtil() {
