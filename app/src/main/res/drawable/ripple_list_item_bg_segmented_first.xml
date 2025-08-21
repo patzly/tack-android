@@ -25,8 +25,8 @@
   <item android:bottom="1dp">
     <shape android:shape="rectangle">
       <corners
-        android:topLeftRadius="16dp"
-        android:topRightRadius="16dp"
+        android:topLeftRadius="20dp"
+        android:topRightRadius="20dp"
         android:bottomLeftRadius="4dp"
         android:bottomRightRadius="4dp" />
       <solid android:color="?attr/colorSurfaceBright" />

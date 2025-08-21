@@ -32,7 +32,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/colorSurfaceContainer"
-    app:liftOnScrollColor="?attr/colorSurfaceContainerHigh">
+    app:liftOnScrollColor="?attr/colorSurfaceContainerHighest">
 
     <FrameLayout
       android:layout_width="match_parent"
@@ -51,7 +51,8 @@
         android:contentDescription="@string/action_back"
         android:layout_gravity="center_vertical|start"
         android:layout_marginStart="4dp"
-        app:backgroundTint="?attr/colorSurfaceContainerHigh"
+        app:backgroundTint="?attr/colorSurfaceContainerHighest"
+        app:iconTint="?attr/colorOnSurface"
         app:icon="@drawable/ic_rounded_arrow_back" />
 
       <com.google.android.material.button.MaterialButton
@@ -60,7 +61,8 @@
         android:contentDescription="@string/action_more"
         android:layout_gravity="center_vertical|end"
         android:layout_marginEnd="4dp"
-        app:backgroundTint="?attr/colorSurfaceContainerHigh"
+        app:backgroundTint="?attr/colorSurfaceContainerHighest"
+        app:iconTint="?attr/colorOnSurface"
         app:icon="@drawable/ic_rounded_more_vert" />
 
     </FrameLayout>
@@ -85,6 +87,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:paddingBottom="8dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -98,7 +101,7 @@
         <LinearLayout
           android:id="@+id/linear_settings_language"
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
-          android:background="@drawable/ripple_list_item_bg_segmented_first">
+          android:background="@drawable/ripple_list_item_bg_segmented_single">
 
           <ImageView
             android:id="@+id/image_settings_language"
@@ -125,11 +128,12 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:orientation="vertical"
-          android:background="@drawable/ripple_list_item_bg_segmented_middle">
+          android:layout_marginTop="16dp"
+          android:background="@drawable/ripple_list_item_bg_segmented_first">
 
           <LinearLayout
             style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
-            android:paddingTop="12dp"
+            android:paddingTop="14dp"
             android:paddingBottom="0dp"
             android:minHeight="0dp">
 
@@ -172,7 +176,7 @@
               android:layout_height="wrap_content"
               android:orientation="horizontal"
               android:paddingStart="56dp"
-              android:paddingEnd="20dp"
+              android:paddingEnd="16dp"
               android:paddingTop="8dp"
               android:paddingBottom="8dp" />
 
@@ -182,7 +186,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="56dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="10dp"
             android:scrollbars="none"
             android:overScrollMode="ifContentScrolls">
 
@@ -219,11 +223,11 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:orientation="vertical"
-          android:background="@drawable/ripple_list_item_bg_segmented_middle">
+          android:background="@drawable/ripple_list_item_bg_segmented_last">
 
           <LinearLayout
             style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
-            android:paddingTop="12dp"
+            android:paddingTop="14dp"
             android:paddingBottom="0dp"
             android:minHeight="0dp">
 
@@ -264,7 +268,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginStart="56dp"
             android:scrollbars="none"
             android:overScrollMode="ifContentScrolls">
@@ -301,7 +305,8 @@
         <LinearLayout
           android:id="@+id/linear_settings_haptic"
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
-          android:background="@drawable/ripple_list_item_bg_segmented_middle">
+          android:layout_marginTop="16dp"
+          android:background="@drawable/ripple_list_item_bg_segmented_first">
 
           <ImageView
             android:id="@+id/image_settings_haptic"
@@ -412,45 +417,26 @@
 
         <LinearLayout
           android:id="@+id/linear_settings_latency"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="vertical"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
           android:background="@drawable/ripple_list_item_bg_segmented_middle">
 
-          <LinearLayout
-            style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine"
-            android:paddingTop="12dp"
-            android:paddingBottom="0dp"
-            android:minHeight="56dp">
+          <ImageView
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_media_output"
+            tools:ignore="ContentDescription" />
 
-            <ImageView
-              style="@style/Widget.Tack.ImageView.ListItem.Icon"
-              android:src="@drawable/ic_rounded_media_output"
-              tools:ignore="ContentDescription" />
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
 
-            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_latency" />
 
-              <TextView
-                style="@style/Widget.Tack.TextView.ListItem.Title"
-                android:text="@string/settings_latency" />
-
-              <TextView
-                style="@style/Widget.Tack.TextView.ListItem.Description"
-                android:text="@string/settings_latency_description" />
-
-            </LinearLayout>
+            <TextView
+              android:id="@+id/text_settings_latency"
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/label_ms" />
 
           </LinearLayout>
-
-          <com.google.android.material.slider.Slider
-            android:id="@+id/slider_settings_latency"
-            style="@style/Widget.Tack.Slider"
-            android:layout_marginStart="43dp"
-            android:layout_marginEnd="2dp"
-            android:layout_marginBottom="4dp"
-            android:valueFrom="0"
-            android:valueTo="200"
-            android:stepSize="5" />
 
         </LinearLayout>
 

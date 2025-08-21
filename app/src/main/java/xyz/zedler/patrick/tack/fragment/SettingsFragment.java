@@ -19,7 +19,6 @@
 
 package xyz.zedler.patrick.tack.fragment;
 
-import android.graphics.drawable.Drawable;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -38,9 +37,6 @@ import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.ContextThemeWrapper;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.divider.MaterialDivider;
-import com.google.android.material.slider.Slider;
-import com.google.android.material.slider.Slider.OnChangeListener;
-import com.google.android.material.slider.Slider.OnSliderTouchListener;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -59,17 +55,15 @@ import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.GainDialogUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
+import xyz.zedler.patrick.tack.util.LatencyDialogUtil;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.ShortcutUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.view.ThemeSelectionCardView;
 
 public class SettingsFragment extends BaseFragment
-    implements OnClickListener, OnCheckedChangeListener, OnChangeListener {
+    implements OnClickListener, OnCheckedChangeListener {
 
   private static final String TAG = SettingsFragment.class.getSimpleName();
 
@@ -78,8 +72,7 @@ public class SettingsFragment extends BaseFragment
   private Bundle savedState;
   private DialogUtil dialogUtilReset, dialogUtilSound;
   private GainDialogUtil gainDialogUtil;
-  private Drawable itemBgFlash;
-  private boolean flashScreen;
+  private LatencyDialogUtil latencyDialogUtil;
 
   @Override
   public View onCreateView(
@@ -96,6 +89,7 @@ public class SettingsFragment extends BaseFragment
     dialogUtilReset.dismiss();
     dialogUtilSound.dismiss();
     gainDialogUtil.dismiss();
+    latencyDialogUtil.dismiss();
   }
 
   @Override
@@ -274,62 +268,13 @@ public class SettingsFragment extends BaseFragment
 
     dialogUtilSound = new DialogUtil(activity, "sound");
 
-    MetronomeListener latencyListener = new MetronomeListenerAdapter() {
-      @Override
-      public void onMetronomeTick(Tick tick) {
-        activity.runOnUiThread(() -> {
-          if (binding != null && flashScreen) {
-            binding.linearSettingsLatency.setBackground(itemBgFlash);
-            binding.linearSettingsLatency.postDelayed(() -> {
-              if (binding != null) {
-                binding.linearSettingsLatency.setBackground(null);
-              }
-            }, 100);
-          }
-        });
-      }
-
-      @Override
-      public void onMetronomeConnectionMissing() {
-        activity.runOnUiThread(() -> {
-          if (binding != null) {
-            activity.showSnackbar(R.string.msg_connection_lost);
-          }
-        });
-      }
-    };
-
-    binding.sliderSettingsLatency.addOnSliderTouchListener(new OnSliderTouchListener() {
-      @Override
-      public void onStartTrackingTouch(@NonNull Slider slider) {
-        flashScreen = true;
-        new Thread(() -> {
-          getMetronomeUtil().savePlayingState();
-          getMetronomeUtil().addListener(latencyListener);
-          getMetronomeUtil().setUpLatencyCalibration();
-        }).start();
-      }
-
-      @Override
-      public void onStopTrackingTouch(@NonNull Slider slider) {
-        flashScreen = false;
-        new Thread(() -> {
-          getMetronomeUtil().restorePlayingState();
-          getMetronomeUtil().removeListener(latencyListener);
-          getMetronomeUtil().setToPreferences(true);
-        }).start();
-      }
-    });
-    binding.sliderSettingsLatency.setLabelFormatter(
-        value -> getString(
-            R.string.label_ms, String.format(activity.getLocale(), "%.0f", value)
-        )
-    );
-    itemBgFlash = ViewUtil.getBgListItemSelected(activity, R.attr.colorTertiaryContainer);
-
     gainDialogUtil = new GainDialogUtil(activity, this);
     gainDialogUtil.showIfWasShown(savedInstanceState);
     updateGainDescription(getMetronomeUtil().getGain());
+
+    latencyDialogUtil = new LatencyDialogUtil(activity, this);
+    latencyDialogUtil.showIfWasShown(savedInstanceState);
+    updateLatencyDescription(getMetronomeUtil().getLatency());
 
     updateMetronomeSettings();
 
@@ -340,6 +285,7 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsReduceAnimations,
         binding.linearSettingsReset,
         binding.linearSettingsSound,
+        binding.linearSettingsLatency,
         binding.linearSettingsIgnoreFocus,
         binding.linearSettingsGain,
         binding.linearSettingsHideSubControls,
@@ -382,6 +328,9 @@ public class SettingsFragment extends BaseFragment
     if (gainDialogUtil != null) {
       gainDialogUtil.saveState(outState);
     }
+    if (latencyDialogUtil != null) {
+      latencyDialogUtil.saveState(outState);
+    }
   }
 
   public void updateMetronomeSettings() {
@@ -417,10 +366,6 @@ public class SettingsFragment extends BaseFragment
     });
     dialogUtilSound.showIfWasShown(savedState);
 
-    binding.sliderSettingsLatency.removeOnChangeListener(this);
-    binding.sliderSettingsLatency.setValue(getMetronomeUtil().getLatency());
-    binding.sliderSettingsLatency.addOnChangeListener(this);
-
     binding.switchSettingsIgnoreFocus.setOnCheckedChangeListener(null);
     binding.switchSettingsIgnoreFocus.setChecked(getMetronomeUtil().getIgnoreAudioFocus());
     binding.switchSettingsIgnoreFocus.jumpDrawablesToCurrentState();
@@ -454,17 +399,6 @@ public class SettingsFragment extends BaseFragment
     binding.switchSettingsPermNotification.setOnCheckedChangeListener(this);
   }
 
-  public void updateGainDescription(int gain) {
-    if (binding != null) {
-      binding.textSettingsGain.setText(
-          activity.getString(
-              R.string.label_db_signed,
-              gain > 0 ? "+" + gain : String.valueOf(gain)
-          )
-      );
-    }
-  }
-
   @Override
   public void onClick(View v) {
     int id = v.getId();
@@ -483,9 +417,13 @@ public class SettingsFragment extends BaseFragment
       ViewUtil.startIcon(binding.imageSettingsSound);
       performHapticClick();
       dialogUtilSound.show();
+    } else if (id == R.id.linear_settings_latency) {
+      performHapticClick();
+      latencyDialogUtil.show();
     } else if (id == R.id.linear_settings_ignore_focus) {
       binding.switchSettingsIgnoreFocus.toggle();
     } else if (id == R.id.linear_settings_gain) {
+      performHapticClick();
       gainDialogUtil.show();
     } else if (id == R.id.linear_settings_hide_sub_controls) {
       binding.switchSettingsHideSubControls.toggle();
@@ -572,15 +510,19 @@ public class SettingsFragment extends BaseFragment
     }
   }
 
-  @Override
-  public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-    if (!fromUser) {
-      return;
+  public void updateGainDescription(int gain) {
+    if (binding != null) {
+      binding.textSettingsGain.setText(
+          activity.getString(R.string.label_db_signed, gain > 0 ? "+" + gain : String.valueOf(gain))
+      );
     }
-    int id = slider.getId();
-    if (id == R.id.slider_settings_latency) {
-      getMetronomeUtil().setLatency((long) value);
-      //ViewUtil.startIcon(binding.imageSettingsLatency);
+  }
+
+  public void updateLatencyDescription(long latency) {
+    if (binding != null) {
+      binding.textSettingsLatency.setText(
+          activity.getString(R.string.label_ms, String.valueOf(latency))
+      );
     }
   }
 

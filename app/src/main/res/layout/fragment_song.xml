@@ -69,6 +69,7 @@
           style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
           android:contentDescription="@string/action_more"
           app:backgroundTint="?attr/colorSurfaceContainer"
+          app:iconTint="?attr/colorOnSurface"
           app:icon="@drawable/ic_rounded_more_vert" />
 
       </com.google.android.material.button.MaterialButtonGroup>

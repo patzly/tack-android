@@ -1068,7 +1068,7 @@ public class MainFragment extends BaseFragment
       }
       tempoTapDialogUtil.update();
       tempoTapDialogUtil.show();
-    } else if (id == R.id.button_main_menu) {
+    } else if (id == R.id.button_main_menu_bottom) {
       performHapticClick();
       ViewUtil.showMenu(v, R.menu.menu_main_bottom_collapsed, item -> {
         int itemId = item.getItemId();

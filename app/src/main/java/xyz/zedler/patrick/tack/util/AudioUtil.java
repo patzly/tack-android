@@ -245,7 +245,11 @@ public class AudioUtil implements OnAudioFocusChangeListener {
     }
     volumeReductionDb = Math.max(0, -gain * 100);
     if (audioTrack != null) {
-      audioTrack.setVolume(dbToLinearVolume(volumeReductionDb));
+      try {
+        audioTrack.setVolume(dbToLinearVolume(volumeReductionDb));
+      } catch (IllegalStateException e) {
+        Log.e(TAG, "setGain: failed to set volume on AudioTrack: ", e);
+      }
     }
   }
 

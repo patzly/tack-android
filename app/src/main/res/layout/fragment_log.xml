@@ -49,6 +49,7 @@
         android:layout_gravity="center_vertical|start"
         android:layout_marginStart="4dp"
         app:backgroundTint="?attr/colorSurfaceContainer"
+        app:iconTint="?attr/colorOnSurface"
         app:icon="@drawable/ic_rounded_arrow_back" />
 
       <com.google.android.material.button.MaterialButton
