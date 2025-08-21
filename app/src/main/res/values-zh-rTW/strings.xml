@@ -57,7 +57,6 @@
   <string name="label_beat_mode_sound">僅聲音</string>
   <string name="label_beat_mode_vibration">僅震動</string>
   <string name="label_part_name">部份名稱</string>
-  <string name="label_name">名稱</string>
   <string name="label_part_unnamed">部份 %1$d</string>
   <string name="label_part_current">部份 %1$d：%2$s</string>
   <string name="label_part_no_duration">無持續時間</string>
