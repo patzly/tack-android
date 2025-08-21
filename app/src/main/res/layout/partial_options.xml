@@ -35,7 +35,7 @@
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
     android:layout_marginBottom="8dp"
-    app:icon="@drawable/ic_rounded_reset_settings" />
+    app:icon="@drawable/ic_logo_simple" />
 
   <TextView
     style="@style/Widget.Tack.TextView"

@@ -101,6 +101,9 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
       ViewUtil.showMenu(v, R.menu.menu_part, itemClickListener, menuInflatedListener);
     });
 
+    ViewUtil.setTooltipText(partHolder.binding.buttonPartEdit, R.string.action_edit);
+    ViewUtil.setTooltipText(partHolder.binding.buttonPartMoveUp, R.string.action_move_up);
+    ViewUtil.setTooltipText(partHolder.binding.buttonPartMoveDown, R.string.action_move_down);
     ViewUtil.setTooltipText(partHolder.binding.buttonPartMenu, R.string.action_more);
 
     updateMoveButtons(partHolder);

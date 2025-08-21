@@ -167,15 +167,11 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     bindingDialog = PartialDialogOptionsBinding.inflate(activity.getLayoutInflater());
     binding = bindingDialog.partialOptions;
 
-    String partName = part.getName();
-    if (partName == null || partName.trim().isEmpty()) {
-      partName = activity.getString(
-          R.string.label_part_unnamed, part.getPartIndex() + 1
-      );
-    }
-    String finalPartName = partName;
+    String title = activity.getString(
+        R.string.label_part_unnamed, part.getPartIndex() + 1
+    );
     dialogUtil.createDialog(builder -> {
-      builder.setTitle(finalPartName);
+      builder.setTitle(title);
       builder.setView(bindingDialog.getRoot());
       builder.setPositiveButton(R.string.action_apply, (dialog, which) -> {
         activity.performHapticClick();

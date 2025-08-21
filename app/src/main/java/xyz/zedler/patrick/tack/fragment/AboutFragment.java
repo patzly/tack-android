@@ -104,9 +104,10 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     if (!activity.isUnlocked()) {
       binding.linearAboutKey.setOnLongClickListener(v -> {
         longClickCount++;
-        if (longClickCount >= 5) {
+        if (longClickCount >= 10) {
           getSharedPrefs().edit().putBoolean(PREF.CHECK_INSTALLER, false).apply();
           updateKeyDescription();
+          binding.linearAboutKey.setOnLongClickListener(null);
         }
         return true;
       });
