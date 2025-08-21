@@ -28,12 +28,9 @@ import android.content.res.Resources;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
-import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowInsetsController;
 import android.view.WindowManager;
@@ -42,25 +39,15 @@ import android.view.inputmethod.InputMethodManager;
 import androidx.annotation.Dimension;
 import androidx.annotation.NonNull;
 import androidx.annotation.StyleRes;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsAnimationCompat;
-import androidx.core.view.WindowInsetsAnimationCompat.BoundsCompat;
-import androidx.core.view.WindowInsetsAnimationCompat.Callback;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.core.view.WindowInsetsCompat.Type;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.color.DynamicColorsOptions;
 import com.google.android.material.color.HarmonizedColors;
 import com.google.android.material.color.HarmonizedColorsOptions;
-import com.google.android.material.math.MathUtils;
-import java.util.List;
 import xyz.zedler.patrick.tack.Constants.CONTRAST;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.THEME;
 import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 
 public class UiUtil {
 

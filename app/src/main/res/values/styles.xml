@@ -112,11 +112,6 @@
     <item name="android:importantForAccessibility">no</item>
   </style>
 
-  <style name="Widget.Tack.ImageView.Icon.Navigation" parent="Widget.Tack.ImageView.Icon">
-    <item name="tint">?attr/colorOnSurface</item>
-    <item name="android:layout_gravity">center</item>
-  </style>
-
   <!-- Button -->
 
   <!-- Base style -->
@@ -597,14 +592,6 @@
     name="Widget.Tack.ImageView.ListItem.Icon.Colored"
     parent="Widget.Tack.ImageView.ListItem.Icon">
     <item name="tint">@null</item>
-  </style>
-
-  <style
-    name="Widget.Tack.ImageView.ListItem.Icon.End"
-    parent="Widget.Tack.ImageView.ListItem.Icon">
-    <item name="android:layout_gravity">end|center_vertical</item>
-    <item name="android:layout_marginStart">16dp</item>
-    <item name="android:layout_marginEnd">0dp</item>
   </style>
 
   <!-- TextView -->

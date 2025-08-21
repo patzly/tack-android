@@ -32,6 +32,7 @@ import android.view.View;
 import android.widget.RemoteViews;
 import androidx.annotation.Nullable;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.ACTION;
@@ -153,18 +154,19 @@ public class SongsWidgetProvider extends AppWidgetProvider {
   }
 
   private void fetchSongs(Context context, OnSongsFetchedListener listener) {
-    Executors.newSingleThreadExecutor().execute(() -> {
+    ExecutorService executor = Executors.newSingleThreadExecutor();
+    executor.execute(() -> {
       SongDatabase db = SongDatabase.getInstance(context);
       List<Song> songs = db.songDao().getAllSongs();
       for (Song song : songs) {
         if (song.getId().equals(Constants.SONG_ID_DEFAULT)) {
-          // Remove default song
           songs.remove(song);
           break;
         }
       }
       listener.onSongsFetched(songs.isEmpty());
     });
+    executor.shutdown();
   }
 
   private interface OnSongsFetchedListener {

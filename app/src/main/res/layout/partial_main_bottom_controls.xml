@@ -43,7 +43,7 @@
     app:icon="@drawable/ic_rounded_play_to_stop_fill_anim" />
 
   <com.google.android.material.button.MaterialButton
-    android:id="@+id/button_main_menu"
+    android:id="@+id/button_main_menu_bottom"
     style="@style/Widget.Tack.Button.IconButton.Tonal.Large.Narrow"
     android:contentDescription="@string/action_more"
     app:icon="@drawable/ic_rounded_more_vert" />

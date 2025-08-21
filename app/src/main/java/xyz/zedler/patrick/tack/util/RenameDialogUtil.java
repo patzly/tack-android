@@ -141,8 +141,4 @@ public class RenameDialogUtil {
       UiUtil.showKeyboard(activity, binding.editTextName);
     }
   }
-
-  public interface OnRenameListener {
-    void onRename(@Nullable String name);
-  }
 }

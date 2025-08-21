@@ -547,9 +547,9 @@ public class MainFragment extends BaseFragment
     ViewUtil.setTooltipText(binding.buttonMainAddSubdivision, R.string.action_add_sub);
     ViewUtil.setTooltipText(binding.buttonMainRemoveSubdivision, R.string.action_remove_sub);
     ViewUtil.setTooltipText(binding.controlsMainBottom.buttonMainOptions, R.string.title_options);
-    if (binding.controlsMainBottom.buttonMainMenu != null) {
+    if (binding.controlsMainBottom.buttonMainMenuBottom != null) {
       ViewUtil.setTooltipText(
-          binding.controlsMainBottom.buttonMainMenu, R.string.action_more
+          binding.controlsMainBottom.buttonMainMenuBottom, R.string.action_more
       );
     }
     if (binding.controlsMainBottom.buttonMainTempoTap != null) {
@@ -605,7 +605,7 @@ public class MainFragment extends BaseFragment
         binding.controlsMainBottom.buttonMainSongs,
         binding.controlsMainBottom.buttonMainOptions,
         binding.controlsMainBottom.buttonMainTempoTap,
-        binding.controlsMainBottom.buttonMainMenu
+        binding.controlsMainBottom.buttonMainMenuBottom
     );
   }
 
