@@ -57,7 +57,6 @@
   <string name="label_beat_mode_sound">Nur Ton</string>
   <string name="label_beat_mode_vibration">Nur Vibration</string>
   <string name="label_part_name">Teilname</string>
-  <string name="label_name">Name</string>
   <string name="label_part_unnamed">Teil %1$d</string>
   <string name="label_part_current">Teil %1$d: %2$s</string>
   <string name="label_part_no_duration">Keine Dauer</string>
