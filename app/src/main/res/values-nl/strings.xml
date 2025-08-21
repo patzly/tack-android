@@ -53,6 +53,7 @@
   <string name="label_tempo_prestissimo">Prestissimo</string>
   <string name="label_tempo_input_help">Waardes van %1$d tot %2$d</string>
   <string name="label_part_name">Deel</string>
+  <string name="label_name">Naam</string>
   <string name="label_part_unnamed">Deel %1$d</string>
   <string name="label_part_no_duration">Geen duur</string>
   <plurals name="label_parts_count">
