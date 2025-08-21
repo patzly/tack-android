@@ -433,12 +433,21 @@
 
   <!-- ExtendedFloatingActionButton -->
 
-  <!-- Localized style, no empty base style needed -->
   <style
-    name="Widget.Tack.ExtendedFloatingActionButton"
-    parent="Widget.Material3.ExtendedFloatingActionButton.Icon.Primary">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    name="Widget.Tack.ExtendedFloatingActionButton.Primary"
+    parent="Widget.Material3.ExtendedFloatingActionButton.Medium">
+  </style>
+
+  <style
+    name="Widget.Tack.ExtendedFloatingActionButton.Tertiary"
+    parent="Widget.Material3.ExtendedFloatingActionButton.Medium">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.Material3.ExtendedFloatingActionButton.Tertiary</item>
+  </style>
+
+  <style
+    name="Widget.Tack.ExtendedFloatingActionButton.Tertiary.Small"
+    parent="Widget.Material3.ExtendedFloatingActionButton.Small">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.Material3.ExtendedFloatingActionButton.Tertiary</item>
   </style>
 
   <!-- LinearLayout (lists) -->

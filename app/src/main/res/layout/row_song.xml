@@ -107,38 +107,25 @@
 
   </LinearLayout>
 
-  <com.google.android.material.button.MaterialButton
-    android:id="@+id/button_song_close_selected"
-    style="@style/Widget.Tack.Button.IconButton.Standard"
-    android:contentDescription="@string/action_close"
-    app:iconTint="?attr/colorOnTertiaryContainer"
-    app:icon="@drawable/ic_rounded_close_anim" />
-
-  <FrameLayout
-    android:id="@+id/frame_song_play"
+  <com.google.android.material.button.MaterialButtonGroup
     android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    android:paddingStart="0dp"
-    android:paddingEnd="16dp"
-    android:importantForAccessibility="no">
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="16dp"
+    android:spacing="0dp">
 
     <com.google.android.material.button.MaterialButton
-      android:id="@+id/button_song_play_unselected"
-      style="@style/Widget.Tack.Button.IconButton.Standard"
-      android:layout_gravity="center_vertical"
-      android:contentDescription="@string/action_play"
-      app:icon="@drawable/ic_rounded_play_arrow" />
+      android:id="@+id/button_song_close_selected"
+      style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
+      android:contentDescription="@string/action_close"
+      app:icon="@drawable/ic_rounded_close_anim" />
 
     <com.google.android.material.button.MaterialButton
-      android:id="@+id/button_song_play_selected"
+      android:id="@+id/button_song_play"
       style="@style/Widget.Tack.Button.IconButton.Filled"
-      android:layout_gravity="center_vertical"
       android:contentDescription="@string/action_play_stop"
-      app:backgroundTint="?attr/colorTertiary"
-      app:rippleColor="@color/selector_highlight_on_tertiary"
-      app:iconTint="?attr/colorOnTertiary"
-      app:icon="@drawable/ic_rounded_play_arrow" />
+      app:icon="@drawable/ic_rounded_play_arrow"
+      android:checkable="true" />
 
-  </FrameLayout>
+  </com.google.android.material.button.MaterialButtonGroup>
 
 </LinearLayout>

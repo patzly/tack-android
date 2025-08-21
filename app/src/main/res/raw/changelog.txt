@@ -1,6 +1,7 @@
 ## 5.1.0
 
 - New: Material 3 Expressive design throughout the app with new typeface and redesigned bottom controls
+- New: song parts can now be directly edited from song details, "update part" menu option replaced by "use current config" button in the edit dialog for more clarity
 - New: "Always vibrate" setting replaced by beat mode dialog accessible from the main screen
 - New: volume boost setting extended for volume reduction
 - New: Japanese and Dutch translations (thanks to the contributors!)
@@ -8,6 +9,7 @@
 - Improved: updated slider experience TODO
 - Improved: layout on different screen sizes and orientations
 - Improved: metronome now works without notification permission if it was denied
+- Improved: song part number always shown in song details, optional name displayed below part number
 - Improved: allow change intervals of up to 400 for incremental tempo change
 - Improved: use of simple vibration for haptic beats if some haptic effects are not supported
 - Fixed: crash caused by incorrect layout handling

@@ -40,7 +40,7 @@
       android:paddingTop="4dp">
 
       <TextView
-        android:id="@+id/text_part_name"
+        android:id="@+id/text_part_number"
         style="@style/Widget.Tack.TextView.TitleMedium"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -94,6 +94,25 @@
       android:paddingStart="16dp"
       android:paddingEnd="16dp"
       android:paddingBottom="16dp">
+
+      <LinearLayout
+        android:id="@+id/linear_part_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+          style="@style/Widget.Tack.TextView.ListItem.Title"
+          android:text="@string/label_name" />
+
+        <TextView
+          android:id="@+id/text_part_name"
+          style="@style/Widget.Tack.TextView.ListItem.Description"
+          android:text="Test part"
+          tools:ignore="HardcodedText" />
+
+      </LinearLayout>
 
       <TextView
         style="@style/Widget.Tack.TextView.ListItem.Title"

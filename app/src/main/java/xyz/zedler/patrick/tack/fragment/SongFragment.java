@@ -125,7 +125,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     systemBarBehavior.setContainer(binding.constraintSongContainer);
     systemBarBehavior.setRecycler(binding.recyclerSongParts);
     int bottomInset = ResUtil.getDimension(activity, R.dimen.controls_bottom_margin_bottom);
-    bottomInset += UiUtil.dpToPx(activity, 56); // fab height
+    bottomInset += UiUtil.dpToPx(activity, 80); // fab height
     systemBarBehavior.setAdditionalBottomInset(bottomInset);
     systemBarBehavior.setMultiColumnLayout(!UiUtil.isOrientationPortrait(activity));
     systemBarBehavior.setUp();
@@ -263,16 +263,6 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         performHapticClick();
         renameDialogUtil.setPart(part);
         renameDialogUtil.show();
-      }
-
-      @Override
-      public void onUpdateClick(@NonNull Part part) {
-        performHapticClick();
-        Part partResult = new Part(part);
-        partResult.setConfig(getMetronomeUtil().getConfig());
-        partsResult.set(part.getPartIndex(), partResult);
-        adapter.submitList(new ArrayList<>(partsResult));
-        updateResult();
       }
 
       @Override

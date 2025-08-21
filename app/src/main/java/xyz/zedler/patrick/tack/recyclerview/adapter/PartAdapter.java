@@ -68,12 +68,11 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
     PartViewHolder partHolder = (PartViewHolder) holder;
     Context context = partHolder.binding.getRoot().getContext();
 
-    // name
-    String partName = part.getName();
-    if (partName == null || partName.trim().isEmpty()) {
-      partName = context.getString(R.string.label_part_unnamed, adapterPosition + 1);
-    }
-    partHolder.binding.textPartName.setText(partName);
+    // number
+    String partNumber = context.getString(
+        R.string.label_part_unnamed, adapterPosition + 1
+    );
+    partHolder.binding.textPartNumber.setText(partNumber);
 
     partHolder.binding.buttonPartEdit.setOnClickListener(
         v -> listener.onEditClick(part)
@@ -90,8 +89,6 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
         int id = item.getItemId();
         if (id == R.id.action_rename) {
           listener.onRenameClick(part);
-        } else if (id == R.id.action_update) {
-          listener.onUpdateClick(part);
         } else if (id == R.id.action_delete) {
           listener.onDeleteClick(part);
         }
@@ -107,6 +104,11 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
     ViewUtil.setTooltipText(partHolder.binding.buttonPartMenu, R.string.action_more);
 
     updateMoveButtons(partHolder);
+
+    // name
+    String partName = part.getName();
+    partHolder.binding.textPartName.setText(partName);
+    partHolder.binding.linearPartName.setVisibility(partName != null ? View.VISIBLE : View.GONE);
 
     // tempo
     int tempo = part.getTempo();
@@ -282,7 +284,6 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
     void onMoveDownClick(@NonNull Part part);
     void onMoreClick(@NonNull Part part);
     void onRenameClick(@NonNull Part part);
-    void onUpdateClick(@NonNull Part part);
     void onDeleteClick(@NonNull Part part);
   }
 

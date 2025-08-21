@@ -20,8 +20,11 @@
 package xyz.zedler.patrick.tack.model;
 
 import android.content.SharedPreferences;
+import java.util.Arrays;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
+import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 
 public class MetronomeConfig {
 
@@ -97,6 +100,47 @@ public class MetronomeConfig {
     this.muteRandom = DEF.MUTE_RANDOM;
   }
 
+  public MetronomeConfig(MetronomeConfig other) {
+    this.countIn = other.countIn;
+
+    this.tempo = other.tempo;
+
+    this.beats = other.beats.clone();
+    this.subdivisions = other.subdivisions.clone();
+
+    this.incrementalAmount = other.incrementalAmount;
+    this.incrementalInterval = other.incrementalInterval;
+    this.incrementalLimit = other.incrementalLimit;
+    this.incrementalUnit = other.incrementalUnit;
+    this.incrementalIncrease = other.incrementalIncrease;
+
+    this.timerDuration = other.timerDuration;
+    this.timerUnit = other.timerUnit;
+
+    this.mutePlay = other.mutePlay;
+    this.muteMute = other.muteMute;
+    this.muteUnit = other.muteUnit;
+    this.muteRandom = other.muteRandom;
+  }
+
+  public boolean equals(MetronomeConfig other) {
+    return this.countIn == other.countIn &&
+        this.tempo == other.tempo &&
+        java.util.Arrays.equals(this.beats, other.beats) &&
+        java.util.Arrays.equals(this.subdivisions, other.subdivisions) &&
+        this.incrementalAmount == other.incrementalAmount &&
+        this.incrementalInterval == other.incrementalInterval &&
+        this.incrementalLimit == other.incrementalLimit &&
+        this.incrementalUnit.equals(other.incrementalUnit) &&
+        this.incrementalIncrease == other.incrementalIncrease &&
+        this.timerDuration == other.timerDuration &&
+        this.timerUnit.equals(other.timerUnit) &&
+        this.mutePlay == other.mutePlay &&
+        this.muteMute == other.muteMute &&
+        this.muteUnit.equals(other.muteUnit) &&
+        this.muteRandom == other.muteRandom;
+  }
+
   public void setToPreferences(SharedPreferences sharedPrefs) {
     countIn = sharedPrefs.getInt(PREF.COUNT_IN, DEF.COUNT_IN);
 
@@ -154,6 +198,32 @@ public class MetronomeConfig {
     this.beats = beats.split(",");
   }
 
+  public void setBeat(int beat, String tickType) {
+    beats[beat] = tickType;
+  }
+
+  public int getBeatsCount() {
+    return beats.length;
+  }
+
+  public boolean addBeat() {
+    if (beats.length >= Constants.BEATS_MAX) {
+      return false;
+    }
+    String[] beats = Arrays.copyOf(this.beats, this.beats.length + 1);
+    beats[beats.length - 1] = TICK_TYPE.NORMAL;
+    this.beats = beats;
+    return true;
+  }
+
+  public boolean removeBeat() {
+    if (beats.length <= 1) {
+      return false;
+    }
+    beats = Arrays.copyOf(beats, beats.length - 1);
+    return true;
+  }
+
   public String[] getSubdivisions() {
     return subdivisions;
   }
@@ -164,6 +234,100 @@ public class MetronomeConfig {
 
   public void setSubdivisions(String subdivisions) {
     this.subdivisions = subdivisions.split(",");
+  }
+
+  public void setSubdivision(int subdivision, String tickType) {
+    subdivisions[subdivision] = tickType;
+  }
+
+  public int getSubdivisionsCount() {
+    return subdivisions.length;
+  }
+
+  public boolean isSubdivisionActive() {
+    return subdivisions.length > 1;
+  }
+
+  public boolean addSubdivision() {
+    if (subdivisions.length >= Constants.SUBS_MAX) {
+      return false;
+    }
+    String[] subdivisions = Arrays.copyOf(
+        this.subdivisions, this.subdivisions.length + 1
+    );
+    subdivisions[subdivisions.length - 1] = TICK_TYPE.SUB;
+    this.subdivisions = subdivisions;
+    return true;
+  }
+
+  public boolean removeSubdivision() {
+    if (subdivisions.length <= 1) {
+      return false;
+    }
+    subdivisions = Arrays.copyOf(subdivisions, subdivisions.length - 1);
+    return true;
+  }
+
+  public void setSwing3() {
+    subdivisions = String.join(
+        ",", TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL
+    ).split(",");
+  }
+
+  public boolean isSwing3() {
+    String triplet = String.join(",", TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.SUB);
+    String tripletAlt = String.join(
+        ",", TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL
+    );
+    String subdivisions = String.join(",", this.subdivisions);
+    return subdivisions.equals(triplet) || subdivisions.equals(tripletAlt);
+  }
+
+  public void setSwing5() {
+    subdivisions = String.join(
+        ",",
+        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL, TICK_TYPE.MUTED
+    ).split(",");
+  }
+
+  public boolean isSwing5() {
+    String quintuplet = String.join(
+        ",",
+        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.SUB, TICK_TYPE.MUTED
+    );
+    String quintupletAlt = String.join(
+        ",",
+        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL, TICK_TYPE.MUTED
+    );
+    String subdivisions = String.join(",", this.subdivisions);
+    return subdivisions.equals(quintuplet) || subdivisions.equals(quintupletAlt);
+  }
+
+  public void setSwing7() {
+    subdivisions = String.join(
+        ",",
+        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
+        TICK_TYPE.NORMAL, TICK_TYPE.MUTED, TICK_TYPE.MUTED
+    ).split(",");
+  }
+
+  public boolean isSwing7() {
+    String septuplet = String.join(
+        ",",
+        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
+        TICK_TYPE.SUB, TICK_TYPE.MUTED, TICK_TYPE.MUTED
+    );
+    String septupletAlt = String.join(
+        ",",
+        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
+        TICK_TYPE.NORMAL, TICK_TYPE.MUTED, TICK_TYPE.MUTED
+    );
+    String subdivisions = String.join(",", this.subdivisions);
+    return subdivisions.equals(septuplet) || subdivisions.equals(septupletAlt);
+  }
+
+  public boolean isSwingActive() {
+    return isSwing3() || isSwing5() || isSwing7();
   }
 
   public int getIncrementalAmount() {

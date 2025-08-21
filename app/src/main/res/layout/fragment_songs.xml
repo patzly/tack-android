@@ -88,7 +88,7 @@
       layout="@layout/partial_songs_empty"
       android:layout_width="0dp"
       android:layout_height="wrap_content"
-      android:layout_marginBottom="56dp"
+      android:layout_marginBottom="80dp"
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintWidth_max="@dimen/max_content_width"
@@ -99,7 +99,7 @@
 
   <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
     android:id="@+id/fab_songs"
-    style="@style/Widget.Tack.ExtendedFloatingActionButton"
+    style="@style/Widget.Tack.ExtendedFloatingActionButton.Primary"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="@string/action_add_song"

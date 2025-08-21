@@ -70,6 +70,7 @@
   <string name="label_beat_mode_sound">Sound only</string>
   <string name="label_beat_mode_vibration">Vibration only</string>
   <string name="label_part_name">Part name</string>
+  <string name="label_name">Name</string>
   <string name="label_part_unnamed">Part %1$d</string>
   <string name="label_part_current">Part %1$d: %2$s</string>
   <string name="label_part_no_duration">No duration</string>

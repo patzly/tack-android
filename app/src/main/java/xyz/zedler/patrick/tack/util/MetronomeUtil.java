@@ -31,7 +31,6 @@ import androidx.preference.PreferenceManager;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -578,31 +577,28 @@ public class MetronomeUtil {
   }
 
   public int getBeatsCount() {
-    return config.getBeats().length;
+    return config.getBeatsCount();
   }
 
   public void setBeat(int beat, String tickType) {
-    String[] beats = getBeats();
-    beats[beat] = tickType;
-    setBeats(beats, true);
+    config.setBeat(beat, tickType);
+    setBeats(config.getBeats(), true);
   }
 
   public boolean addBeat() {
-    if (getBeatsCount() >= Constants.BEATS_MAX) {
-      return false;
+    boolean success = config.addBeat();
+    if (success) {
+      setBeats(config.getBeats(), true);
     }
-    String[] beats = Arrays.copyOf(config.getBeats(), getBeatsCount() + 1);
-    beats[beats.length - 1] = TICK_TYPE.NORMAL;
-    setBeats(beats, true);
-    return true;
+    return success;
   }
 
   public boolean removeBeat() {
-    if (getBeatsCount() <= 1) {
-      return false;
+    boolean success = config.removeBeat();
+    if (success) {
+      setBeats(config.getBeats(), true);
     }
-    setBeats(Arrays.copyOf(config.getBeats(), getBeatsCount() - 1), true);
-    return true;
+    return success;
   }
 
   public void setSubdivisions(String[] subdivisions) {
@@ -618,98 +614,63 @@ public class MetronomeUtil {
   }
 
   public int getSubdivisionsCount() {
-    return config.getSubdivisions().length;
+    return config.getSubdivisionsCount();
   }
 
   public boolean isSubdivisionActive() {
-    return getSubdivisionsCount() > 1;
+    return config.isSubdivisionActive();
   }
 
   public void setSubdivision(int subdivision, String tickType) {
-    String[] subdivisions = getSubdivisions();
-    subdivisions[subdivision] = tickType;
-    setSubdivisions(subdivisions);
+    config.setSubdivision(subdivision, tickType);
+    setSubdivisions(config.getSubdivisions());
   }
 
   public boolean addSubdivision() {
-    if (getSubdivisionsCount() >= Constants.SUBS_MAX) {
-      return false;
+    boolean success = config.addSubdivision();
+    if (success) {
+      setSubdivisions(config.getSubdivisions());
     }
-    String[] subdivisions = Arrays.copyOf(
-        config.getSubdivisions(), getSubdivisionsCount() + 1
-    );
-    subdivisions[subdivisions.length - 1] = TICK_TYPE.SUB;
-    setSubdivisions(subdivisions);
-    return true;
+    return success;
   }
 
   public boolean removeSubdivision() {
-    if (getSubdivisionsCount() <= 1) {
-      return false;
+    boolean success = config.removeSubdivision();
+    if (success) {
+      setSubdivisions(config.getSubdivisions());
     }
-    setSubdivisions(Arrays.copyOf(config.getSubdivisions(), getSubdivisionsCount() - 1));
-    return true;
+    return success;
   }
 
   public void setSwing3() {
-    setSubdivisions(String.join(
-        ",", TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL).split(","));
+    config.setSwing3();
+    setSubdivisions(config.getSubdivisions());
   }
 
   public boolean isSwing3() {
-    String triplet = String.join(",", TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.SUB);
-    String tripletAlt = String.join(
-        ",", TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL
-    );
-    String subdivisions = String.join(",", getSubdivisions());
-    return subdivisions.equals(triplet) || subdivisions.equals(tripletAlt);
+    return config.isSwing3();
   }
 
   public void setSwing5() {
-    setSubdivisions(String.join(
-        ",",
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL, TICK_TYPE.MUTED
-    ).split(","));
+    config.setSwing5();
+    setSubdivisions(config.getSubdivisions());
   }
 
   public boolean isSwing5() {
-    String quintuplet = String.join(
-        ",",
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.SUB, TICK_TYPE.MUTED
-    );
-    String quintupletAlt = String.join(
-        ",",
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL, TICK_TYPE.MUTED
-    );
-    String subdivisions = String.join(",", getSubdivisions());
-    return subdivisions.equals(quintuplet) || subdivisions.equals(quintupletAlt);
+    return config.isSwing5();
   }
 
   public void setSwing7() {
-    setSubdivisions(String.join(
-        ",",
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
-        TICK_TYPE.NORMAL, TICK_TYPE.MUTED, TICK_TYPE.MUTED
-    ).split(","));
+    config.setSwing7();
+    setSubdivisions(config.getSubdivisions());
   }
 
   public boolean isSwing7() {
-    String septuplet = String.join(
-        ",",
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
-        TICK_TYPE.SUB, TICK_TYPE.MUTED, TICK_TYPE.MUTED
-    );
-    String septupletAlt = String.join(
-        ",",
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
-        TICK_TYPE.NORMAL, TICK_TYPE.MUTED, TICK_TYPE.MUTED
-    );
-    String subdivisions = String.join(",", getSubdivisions());
-    return subdivisions.equals(septuplet) || subdivisions.equals(septupletAlt);
+    return config.isSwing7();
   }
 
   public boolean isSwingActive() {
-    return isSwing3() || isSwing5() || isSwing7();
+    return config.isSwingActive();
   }
 
   public void setTempo(int tempo) {
@@ -834,7 +795,7 @@ public class MetronomeUtil {
   }
 
   public boolean isCountInActive() {
-    return getCountIn() > 0;
+    return config.getCountIn() > 0;
   }
 
   public boolean isCountingIn() {
@@ -842,7 +803,7 @@ public class MetronomeUtil {
   }
 
   public long getCountInInterval() {
-    return getInterval() * getBeatsCount() * getCountIn();
+    return getInterval() * config.getBeatsCount() * config.getCountIn();
   }
 
   public float getCountInProgress() {

@@ -188,23 +188,16 @@ public class SongAdapter extends ListAdapter<SongWithParts, ViewHolder> {
       }
     }
 
-    binding.buttonSongPlayUnselected.setVisibility(isSelected ? View.GONE : View.VISIBLE);
-    binding.buttonSongPlayUnselected.setOnClickListener(v -> {
-      isPlaying = true;
-      listener.onPlayClick(songWithParts);
-    });
-
-    binding.buttonSongPlaySelected.setVisibility(isSelected ? View.VISIBLE : View.GONE);
-    binding.buttonSongPlaySelected.setIconResource(
+    binding.buttonSongPlay.setChecked(isPlaying);
+    binding.buttonSongPlay.setIconResource(
         isPlaying ? R.drawable.ic_rounded_stop : R.drawable.ic_rounded_play_arrow
     );
-    binding.buttonSongPlaySelected.setOnClickListener(v -> listener.onPlayStopClick());
-
-    binding.frameSongPlay.setOnClickListener(v -> {
-      if (isSelected) {
-        binding.buttonSongPlaySelected.performClick();
+    binding.buttonSongPlay.setOnClickListener(v -> {
+      if (isPlaying) {
+        listener.onPlayStopClick();
       } else {
-        binding.buttonSongPlayUnselected.performClick();
+        isPlaying = true;
+        listener.onPlayClick(songWithParts);
       }
     });
 
@@ -220,7 +213,8 @@ public class SongAdapter extends ListAdapter<SongWithParts, ViewHolder> {
       SongViewHolder songHolder = (SongViewHolder) holder;
       RowSongBinding binding = songHolder.binding;
 
-      binding.buttonSongPlaySelected.setIconResource(
+      binding.buttonSongPlay.setChecked(isPlaying);
+      binding.buttonSongPlay.setIconResource(
           isPlaying ? R.drawable.ic_rounded_stop : R.drawable.ic_rounded_play_arrow
       );
     } else {

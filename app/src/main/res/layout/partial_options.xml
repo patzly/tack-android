@@ -25,8 +25,17 @@
   android:orientation="vertical"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
-  android:paddingTop="16dp"
+  android:paddingTop="12dp"
   android:animateLayoutChanges="true">
+
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/button_options_use_current_config"
+    style="@style/Widget.Tack.Button"
+    android:text="@string/action_use_current_config"
+    android:layout_marginStart="16dp"
+    android:layout_marginEnd="16dp"
+    android:layout_marginBottom="8dp"
+    app:icon="@drawable/ic_rounded_reset_settings" />
 
   <TextView
     style="@style/Widget.Tack.TextView"
@@ -34,6 +43,7 @@
     android:layout_height="wrap_content"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
+    android:layout_marginTop="4dp"
     android:text="@string/options_count_in" />
 
   <TextView

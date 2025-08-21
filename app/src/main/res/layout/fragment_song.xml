@@ -39,7 +39,7 @@
         android:id="@+id/toolbar_song"
         style="@style/Widget.Tack.Toolbar.Uncentered"
         app:contentInsetStart="56dp"
-        app:contentInsetEnd="108dp"
+        app:contentInsetEnd="116dp"
         app:title="@string/title_song_details" />
 
       <com.google.android.material.button.MaterialButton
@@ -51,12 +51,12 @@
         app:backgroundTint="?attr/colorSurfaceContainer"
         app:icon="@drawable/ic_rounded_close_anim" />
 
-      <LinearLayout
+      <com.google.android.material.button.MaterialButtonGroup
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_gravity="center_vertical|end"
-        android:layout_marginEnd="4dp">
+        android:layout_marginEnd="4dp"
+        android:spacing="4dp">
 
         <com.google.android.material.button.MaterialButton
           android:id="@+id/button_song_save"
@@ -71,7 +71,7 @@
           app:backgroundTint="?attr/colorSurfaceContainer"
           app:icon="@drawable/ic_rounded_more_vert" />
 
-      </LinearLayout>
+      </com.google.android.material.button.MaterialButtonGroup>
 
     </FrameLayout>
 
@@ -170,7 +170,7 @@
 
   <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
     android:id="@+id/fab_song"
-    style="@style/Widget.Tack.ExtendedFloatingActionButton"
+    style="@style/Widget.Tack.ExtendedFloatingActionButton.Tertiary"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="@string/action_add_part"
