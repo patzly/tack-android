@@ -31,7 +31,7 @@ android {
         minSdk = 21
         targetSdk = 36
         versionCode = 330 // last number is 0 for app release
-        versionName = "5.1.0"
+        versionName = "6.0.0"
         resourceConfigurations = ["en", "cs", "de", "es", "es-rCL", "fr", "in", "ja", "ko", "nl",
                                   "ru", "tr", "zh-rCN", "zh-rHK", "zh-rTW"]
         vectorDrawables.generatedDensities = []

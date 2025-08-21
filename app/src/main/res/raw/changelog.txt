@@ -1,4 +1,4 @@
-## 5.1.0
+## 6.0.0
 
 - New: Material 3 Expressive design throughout the app with new typeface and redesigned bottom controls
 - New: song parts can now be directly edited from song details, "update part" menu option replaced by "use current config" button in the edit dialog for more clarity
