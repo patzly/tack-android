@@ -104,7 +104,7 @@
 
         <TextView
           style="@style/Widget.Tack.TextView.ListItem.Title"
-          android:text="@string/label_name" />
+          android:text="@string/label_sort_name" />
 
         <TextView
           android:id="@+id/text_part_name"
