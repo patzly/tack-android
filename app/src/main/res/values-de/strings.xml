@@ -322,6 +322,7 @@
   <string name="settings_reduce_animations">Animationen reduzieren</string>
   <string name="settings_reduce_animations_description">Kann die Leistung verbessern</string>
 
+  <string name="settings_backup">Werksammlung sichern/wiederherstellen</string>
   <string name="settings_backup_description">Wichtig bei Gerätewechsel</string>
 
   <string name="settings_reset">Alles zurücksetzen</string>
