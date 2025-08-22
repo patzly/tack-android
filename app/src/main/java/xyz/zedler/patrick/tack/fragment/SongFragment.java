@@ -120,20 +120,20 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     activity = (MainActivity) requireActivity();
 
+    boolean isPortrait = UiUtil.isOrientationPortrait(activity);
+
     SystemBarBehavior systemBarBehavior = new SystemBarBehavior(activity);
     systemBarBehavior.setAppBar(binding.appBarSong);
     systemBarBehavior.setContainer(binding.constraintSongContainer);
     systemBarBehavior.setRecycler(binding.recyclerSongParts);
     int bottomInset = ResUtil.getDimension(activity, R.dimen.controls_bottom_margin_bottom);
-    bottomInset += UiUtil.dpToPx(activity, 80); // fab height
+    bottomInset += UiUtil.dpToPx(activity, isPortrait ? 80 : 56); // fab height
     systemBarBehavior.setAdditionalBottomInset(bottomInset);
-    systemBarBehavior.setMultiColumnLayout(!UiUtil.isOrientationPortrait(activity));
+    systemBarBehavior.setMultiColumnLayout(!isPortrait);
     systemBarBehavior.setUp();
     SystemBarBehavior.applyBottomInset(binding.fabSong);
 
-    int liftMode = UiUtil.isOrientationPortrait(activity)
-        ? ScrollBehavior.ALWAYS_LIFTED
-        : ScrollBehavior.LIFT_ON_SCROLL;
+    int liftMode = isPortrait ? ScrollBehavior.ALWAYS_LIFTED : ScrollBehavior.LIFT_ON_SCROLL;
     new ScrollBehavior().setUpScroll(binding.appBarSong, binding.recyclerSongParts, liftMode);
 
     binding.fabSong.getViewTreeObserver().addOnGlobalLayoutListener(
@@ -362,7 +362,6 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       binding.editTextSongName.clearFocus(); // to prevent TextWatcher from being triggered
       binding.editTextSongName.setText(songResult.getName());
       binding.editTextSongName.post(() -> {
-        boolean isPortrait = UiUtil.isOrientationPortrait(activity);
         boolean isLandTablet = UiUtil.isLandTablet(activity);
         if (savedInstanceState == null && (isPortrait || isLandTablet)) {
           binding.editTextSongName.requestFocus();
