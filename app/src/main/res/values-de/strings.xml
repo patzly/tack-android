@@ -139,6 +139,7 @@
   <string name="action_move_up">Nach oben verschieben</string>
   <string name="action_move_down">Nach unten verschieben</string>
   <string name="action_open_play_store">Play Store öffnen</string>
+  <string name="action_backup_restore">Sichern/wiederherstellen</string>
   <string name="action_backup">Sichern</string>
   <string name="action_restore">Wiederherstellen</string>
   <string name="action_view_more_songs">Mehr Werke anzeigen</string>
