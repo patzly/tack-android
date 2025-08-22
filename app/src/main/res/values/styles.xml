@@ -390,6 +390,8 @@
     <item name="android:layout_width">wrap_content</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:layout_marginStart">16dp</item>
+    <item name="thumbIcon">@drawable/selector_switch_thumb_icon</item>
+    <item name="thumbIconTint">@color/selector_switch_thumb_icon_tint</item>
   </style>
 
   <!-- Slider -->
