@@ -56,7 +56,9 @@ public class LatencyDialogUtil implements OnChangeListener {
     dialogUtil.createDialog(builder -> {
       builder.setTitle(R.string.settings_latency);
       builder.setView(binding.getRoot());
-      builder.setPositiveButton(R.string.action_close, null);
+      builder.setPositiveButton(
+          R.string.action_close, (dialog, which) -> activity.performHapticClick()
+      );
     });
 
     latencyListener = new MetronomeListenerAdapter() {

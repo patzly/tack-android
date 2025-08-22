@@ -33,35 +33,28 @@
     android:paddingEnd="24dp"
     android:text="@string/msg_backup_description" />
 
-  <HorizontalScrollView
-    android:layout_width="match_parent"
+  <com.google.android.material.button.MaterialButtonGroup
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="center_horizontal"
+    android:spacing="8dp"
     android:layout_marginStart="24dp"
     android:layout_marginEnd="24dp"
-    android:layout_marginTop="12dp"
-    android:scrollbars="none"
-    android:overScrollMode="ifContentScrolls"
-    android:requiresFadingEdge="horizontal">
+    android:layout_marginTop="16dp">
 
-    <com.google.android.material.button.MaterialButtonGroup
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="center_horizontal">
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/button_backup_backup"
+      style="@style/Widget.Tack.Button"
+      android:text="@string/action_backup"
+      app:icon="@drawable/ic_rounded_download" />
 
-      <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_backup_backup"
-        style="@style/Widget.Tack.Button"
-        android:text="@string/action_backup"
-        app:icon="@drawable/ic_rounded_save" />
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/button_backup_restore"
+      style="@style/Widget.Tack.Button"
+      android:text="@string/action_restore"
+      app:icon="@drawable/ic_rounded_upload" />
 
-      <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_backup_restore"
-        style="@style/Widget.Tack.Button"
-        android:text="@string/action_restore"
-        app:icon="@drawable/ic_rounded_settings_backup_restore" />
-
-    </com.google.android.material.button.MaterialButtonGroup>
-
-  </HorizontalScrollView>
+  </com.google.android.material.button.MaterialButtonGroup>
 
 </LinearLayout>

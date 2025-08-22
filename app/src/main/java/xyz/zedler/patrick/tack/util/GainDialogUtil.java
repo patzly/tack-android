@@ -48,7 +48,9 @@ public class GainDialogUtil implements OnChangeListener {
     dialogUtil.createDialog(builder -> {
       builder.setTitle(R.string.settings_gain);
       builder.setView(binding.getRoot());
-      builder.setPositiveButton(R.string.action_close, null);
+      builder.setPositiveButton(
+          R.string.action_cancel, (dialog, which) -> activity.performHapticClick()
+      );
     });
   }
 

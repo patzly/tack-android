@@ -66,7 +66,9 @@ public class BackupDialogUtil implements OnClickListener {
     dialogUtil.createDialog(builder -> {
       builder.setTitle(R.string.settings_backup);
       builder.setView(binding.getRoot());
-      builder.setPositiveButton(R.string.action_close, null);
+      builder.setPositiveButton(
+          R.string.action_close, (dialog, which) -> activity.performHapticClick()
+      );
     });
 
     launcherBackup = fragment.registerForActivityResult(
