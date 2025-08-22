@@ -49,12 +49,12 @@
 
   <item
     android:id="@+id/action_backup"
-    android:title="@string/action_backup"
+    android:title="@string/action_backup_restore"
     app:showAsAction="never" />
 
   <item
-    android:id="@+id/action_restore"
-    android:title="@string/action_restore"
+    android:id="@+id/action_settings"
+    android:title="@string/title_settings"
     app:showAsAction="never" />
 
   <item

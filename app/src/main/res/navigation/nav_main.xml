@@ -55,6 +55,10 @@
       android:id="@+id/action_songs_to_song"
       app:destination="@id/songFragment" />
 
+    <action
+      android:id="@+id/action_songs_to_settings"
+      app:destination="@id/settingsFragment" />
+
   </fragment>
 
   <fragment

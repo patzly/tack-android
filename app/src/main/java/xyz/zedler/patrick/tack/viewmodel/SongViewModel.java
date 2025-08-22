@@ -75,8 +75,19 @@ public class SongViewModel extends AndroidViewModel {
     }
   }
 
+  public void fetchAllSongsWithParts(@NonNull OnSongsWithPartsFetchedListener listener) {
+    executorService.execute(() -> {
+      List<SongWithParts> songs = db.songDao().getAllSongsWithParts();
+      listener.onSongsWithPartsFetched(songs);
+    });
+  }
+
   public interface OnSongWithPartsFetchedListener {
     void onSongWithPartsFetched(@Nullable SongWithParts songWithParts);
+  }
+
+  public interface OnSongsWithPartsFetchedListener {
+    void onSongsWithPartsFetched(List<SongWithParts> songsWithParts);
   }
 
   public LiveData<List<Song>> getAllSongsLive() {

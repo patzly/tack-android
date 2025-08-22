@@ -13,6 +13,7 @@
 - Improved: allow change intervals of up to 400 for incremental tempo change
 - Improved: use of simple vibration for haptic beats if some haptic effects are not supported
 - Improved: latency correction setting moved to separate dialog
+- Improved: song library backup/restore moved to separate dialog, also accessible from settings
 - Fixed: crash caused by incorrect layout handling
 - Fixed: crash caused by invalid tempo values
 - Fixed: crash caused by app shortcut limit being reached (thanks Fabian!)

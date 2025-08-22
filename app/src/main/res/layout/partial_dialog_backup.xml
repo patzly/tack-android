@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:orientation="vertical"
+  android:paddingTop="8dp">
+
+  <TextView
+    style="@style/Widget.Tack.TextView.BodyMedium"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="24dp"
+    android:paddingEnd="24dp"
+    android:text="@string/msg_backup_description" />
+
+  <HorizontalScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="24dp"
+    android:layout_marginEnd="24dp"
+    android:layout_marginTop="12dp"
+    android:scrollbars="none"
+    android:overScrollMode="ifContentScrolls"
+    android:requiresFadingEdge="horizontal">
+
+    <com.google.android.material.button.MaterialButtonGroup
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center_horizontal">
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_backup_backup"
+        style="@style/Widget.Tack.Button"
+        android:text="@string/action_backup"
+        app:icon="@drawable/ic_rounded_save" />
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_backup_restore"
+        style="@style/Widget.Tack.Button"
+        android:text="@string/action_restore"
+        app:icon="@drawable/ic_rounded_settings_backup_restore" />
+
+    </com.google.android.material.button.MaterialButtonGroup>
+
+  </HorizontalScrollView>
+
+</LinearLayout>

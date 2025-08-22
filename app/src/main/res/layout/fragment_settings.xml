@@ -362,10 +362,34 @@
         </LinearLayout>
 
         <LinearLayout
+          android:id="@+id/linear_settings_backup"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+          android:background="@drawable/ripple_list_item_bg_segmented_first"
+          android:layout_marginTop="16dp">
+
+          <ImageView
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_save"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_backup" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/settings_backup_description" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
           android:id="@+id/linear_settings_reset"
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
-          android:background="@drawable/ripple_list_item_bg_segmented_single"
-          android:layout_marginTop="16dp">
+          android:background="@drawable/ripple_list_item_bg_segmented_last">
 
           <ImageView
             style="@style/Widget.Tack.ImageView.ListItem.Icon"

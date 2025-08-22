@@ -19,15 +19,11 @@
 
 package xyz.zedler.patrick.tack.fragment;
 
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.PopupMenu;
@@ -36,16 +32,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView.ItemAnimator;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
@@ -60,6 +48,7 @@ import xyz.zedler.patrick.tack.fragment.SongsFragmentDirections.ActionSongsToSon
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter.OnSongClickListener;
 import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
+import xyz.zedler.patrick.tack.util.BackupDialogUtil;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter;
@@ -79,11 +68,10 @@ public class SongsFragment extends BaseFragment {
   private MainActivity activity;
   private DialogUtil dialogUtilIntro, dialogUtilWidgetPrompt;
   private UnlockDialogUtil unlockDialogUtil;
+  private BackupDialogUtil backupDialogUtil;
   private List<SongWithParts> songsWithParts = new ArrayList<>();
   private int sortOrder;
   private SongAdapter adapter;
-  private ActivityResultLauncher<String> launcherBackup;
-  private ActivityResultLauncher<String[]> launcherRestore;
   private MetronomeListener metronomeListener;
   private final Gson gson = new Gson();
 
@@ -102,6 +90,7 @@ public class SongsFragment extends BaseFragment {
     dialogUtilIntro.dismiss();
     dialogUtilWidgetPrompt.dismiss();
     unlockDialogUtil.dismiss();
+    backupDialogUtil.dismiss();
     if (metronomeListener != null) {
       getMetronomeUtil().removeListener(metronomeListener);
     }
@@ -155,9 +144,9 @@ public class SongsFragment extends BaseFragment {
             WidgetUtil.sendSongsWidgetUpdate(activity);
           }
         } else if (id == R.id.action_backup) {
-          launcherBackup.launch("song_library.json");
-        } else if (id == R.id.action_restore) {
-          launcherRestore.launch(new String[]{"application/json"});
+          backupDialogUtil.show();
+        } else if (id == R.id.action_settings) {
+          activity.navigate(SongsFragmentDirections.actionSongsToSettings());
         } else if (id == R.id.action_feedback) {
           activity.showFeedbackBottomSheet();
         } else if (id == R.id.action_help) {
@@ -271,15 +260,6 @@ public class SongsFragment extends BaseFragment {
         }
     );
 
-    launcherBackup = registerForActivityResult(
-        new ActivityResultContracts.CreateDocument("application/json"),
-        this::exportJsonToFile
-    );
-    launcherRestore = registerForActivityResult(
-        new ActivityResultContracts.OpenDocument(),
-        this::importJsonFromFile
-    );
-
     dialogUtilIntro = new DialogUtil(activity, "songs_intro");
     dialogUtilIntro.createDialog(builder -> {
       builder.setTitle(R.string.msg_songs_intro);
@@ -330,6 +310,9 @@ public class SongsFragment extends BaseFragment {
     unlockDialogUtil = new UnlockDialogUtil(activity);
     unlockDialogUtil.showIfWasShown(savedInstanceState);
 
+    backupDialogUtil = new BackupDialogUtil(activity, this);
+    backupDialogUtil.showIfWasShown(savedInstanceState);
+
     binding.fabSongs.setOnClickListener(v -> {
       performHapticClick();
       if (activity.isUnlocked() || songsWithParts.size() < 3) {
@@ -352,6 +335,9 @@ public class SongsFragment extends BaseFragment {
     if (dialogUtilWidgetPrompt != null) {
       dialogUtilWidgetPrompt.saveState(outState);
     }
+    if (backupDialogUtil != null) {
+      backupDialogUtil.saveState(outState);
+    }
     // dialogIntro not needed here
   }
 
@@ -371,93 +357,6 @@ public class SongsFragment extends BaseFragment {
     SortUtil.sortSongsWithParts(this.songsWithParts, sortOrder);
     adapter.submitList(new ArrayList<>(this.songsWithParts));
     adapter.setSortOrder(sortOrder);
-  }
-
-  private void exportJsonToFile(Uri uri) {
-    if (uri == null) {
-      showSnackbar(R.string.msg_backup_directory_missing);
-      return;
-    }
-    try (OutputStream outputStream = activity.getContentResolver().openOutputStream(uri)) {
-      if (outputStream != null) {
-        String json = gson.toJson(songsWithParts);
-        outputStream.write(json.getBytes());
-        outputStream.flush();
-        showSnackbar(R.string.msg_backup_success);
-      }
-    } catch (Exception e) {
-      showSnackbar(R.string.msg_backup_error);
-      Log.e(TAG, "exportJsonToFile: ", e);
-    }
-  }
-
-  private void importJsonFromFile(Uri uri) {
-    if (uri == null) {
-      showSnackbar(R.string.msg_restore_file_missing);
-      return;
-    }
-    try (InputStream inputStream = activity.getContentResolver().openInputStream(uri);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))
-    ) {
-      StringBuilder jsonString = new StringBuilder();
-      String line;
-      while ((line = reader.readLine()) != null) {
-        jsonString.append(line);
-      }
-      Type listType = new TypeToken<List<SongWithParts>>(){}.getType();
-      List<SongWithParts> songsWithParts = gson.fromJson(jsonString.toString(), listType);
-      if (songsWithParts != null) {
-        // look for duplicates of existing song names
-        Map<String, Integer> nameCountMap = new HashMap<>();
-        Map<String, String> idNameMap = new HashMap<>();
-        // count existing song names
-        for (SongWithParts existingSong : this.songsWithParts) {
-          // add existing song id to map
-          idNameMap.put(existingSong.getSong().getId(), existingSong.getSong().getName());
-          String existingName = existingSong.getSong().getName();
-          if (existingName == null || existingName.isEmpty()) {
-            continue;
-          }
-          Integer currentCount = nameCountMap.get(existingName);
-          Integer newCount = currentCount == null ? 1 : currentCount + 1;
-          nameCountMap.put(existingName, newCount);
-        }
-        for (SongWithParts songWithParts : songsWithParts) {
-          String songId = songWithParts.getSong().getId();
-          if (idNameMap.containsKey(songId)) {
-            // if song id already exists, use existing song name
-            String existingName = idNameMap.get(songId);
-            songWithParts.getSong().setName(existingName);
-            continue;
-          }
-          String originalName = songWithParts.getSong().getName();
-          String newName = originalName;
-          Integer count = nameCountMap.get(originalName);
-          int counter = count == null ? 0 : count;
-          // increment counter if name already exists
-          if (counter > 0) {
-            do {
-              newName = getString(R.string.msg_restore_duplicate_name, originalName, counter);
-              counter++;
-            } while (nameCountMap.containsKey(newName));
-          }
-          songWithParts.getSong().setName(newName);
-          nameCountMap.put(newName, 1);
-        }
-        activity.getSongViewModel().insertSongsWithParts(songsWithParts, () -> {
-          showSnackbar(R.string.msg_restore_success);
-          // update shortcuts
-          activity.getMetronomeUtil().updateShortcuts();
-          // update widget
-          WidgetUtil.sendSongsWidgetUpdate(activity);
-        });
-      } else {
-        showSnackbar(R.string.msg_restore_error);
-      }
-    } catch (Exception e) {
-      showSnackbar(R.string.msg_restore_error);
-      Log.e(TAG, "importJsonFromFile: ", e);
-    }
   }
 
   private void showSnackbar(int resId) {

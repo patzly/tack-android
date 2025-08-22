@@ -52,6 +52,7 @@ import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentSettingsBinding;
 import xyz.zedler.patrick.tack.service.MetronomeService;
+import xyz.zedler.patrick.tack.util.BackupDialogUtil;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.GainDialogUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
@@ -73,6 +74,7 @@ public class SettingsFragment extends BaseFragment
   private DialogUtil dialogUtilReset, dialogUtilSound;
   private GainDialogUtil gainDialogUtil;
   private LatencyDialogUtil latencyDialogUtil;
+  private BackupDialogUtil backupDialogUtil;
 
   @Override
   public View onCreateView(
@@ -90,6 +92,7 @@ public class SettingsFragment extends BaseFragment
     dialogUtilSound.dismiss();
     gainDialogUtil.dismiss();
     latencyDialogUtil.dismiss();
+    backupDialogUtil.dismiss();
   }
 
   @Override
@@ -276,6 +279,9 @@ public class SettingsFragment extends BaseFragment
     latencyDialogUtil.showIfWasShown(savedInstanceState);
     updateLatencyDescription(getMetronomeUtil().getLatency());
 
+    backupDialogUtil = new BackupDialogUtil(activity, this);
+    backupDialogUtil.showIfWasShown(savedInstanceState);
+
     updateMetronomeSettings();
 
     ViewUtil.setOnClickListeners(
@@ -283,6 +289,7 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsLanguage,
         binding.linearSettingsHaptic,
         binding.linearSettingsReduceAnimations,
+        binding.linearSettingsBackup,
         binding.linearSettingsReset,
         binding.linearSettingsSound,
         binding.linearSettingsLatency,
@@ -330,6 +337,9 @@ public class SettingsFragment extends BaseFragment
     }
     if (latencyDialogUtil != null) {
       latencyDialogUtil.saveState(outState);
+    }
+    if (backupDialogUtil != null) {
+      backupDialogUtil.saveState(outState);
     }
   }
 
@@ -410,6 +420,9 @@ public class SettingsFragment extends BaseFragment
       binding.switchSettingsHaptic.toggle();
     } else if (id == R.id.linear_settings_reduce_animations) {
       binding.switchSettingsReduceAnimations.toggle();
+    } else if (id == R.id.linear_settings_backup && getViewUtil().isClickEnabled(id)) {
+      performHapticClick();
+      backupDialogUtil.show();
     } else if (id == R.id.linear_settings_reset && getViewUtil().isClickEnabled(id)) {
       performHapticClick();
       dialogUtilReset.show();
@@ -417,12 +430,12 @@ public class SettingsFragment extends BaseFragment
       ViewUtil.startIcon(binding.imageSettingsSound);
       performHapticClick();
       dialogUtilSound.show();
-    } else if (id == R.id.linear_settings_latency) {
+    } else if (id == R.id.linear_settings_latency && getViewUtil().isClickEnabled(id)) {
       performHapticClick();
       latencyDialogUtil.show();
     } else if (id == R.id.linear_settings_ignore_focus) {
       binding.switchSettingsIgnoreFocus.toggle();
-    } else if (id == R.id.linear_settings_gain) {
+    } else if (id == R.id.linear_settings_gain && getViewUtil().isClickEnabled(id)) {
       performHapticClick();
       gainDialogUtil.show();
     } else if (id == R.id.linear_settings_hide_sub_controls) {

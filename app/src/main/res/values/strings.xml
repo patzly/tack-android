@@ -152,6 +152,7 @@
   <string name="action_move_up">Move up</string>
   <string name="action_move_down">Move down</string>
   <string name="action_open_play_store">Open Play Store</string>
+  <string name="action_backup_restore">Backup/restore</string>
   <string name="action_backup">Backup</string>
   <string name="action_restore">Restore</string>
   <string name="action_view_more_songs">View more songs</string>
@@ -193,6 +194,7 @@
   <string name="msg_songs_empty_description">Add songs you want to practice</string>
   <string name="msg_unlock">Message from the developer</string>
   <string name="msg_unlock_description">Do you appreciate the ad-free experience with tons of powerful features in Tack? I\'ve spent years of my spare time creating Tack for free, but especially the song library feature took months of hard work.\nIn order to continue improving Tack, I kindly ask for a small contribution. In return, you\'ll get an unlock app for unlimited songs and countless song parts. Thanks for your support!</string>
+  <string name="msg_backup_description">You can back up your entire song library to your device or restore songs from an existing backup. Existing songs will never be deleted or overwritten.</string>
   <string name="msg_backup_error">Error during backup</string>
   <string name="msg_backup_directory_missing">No storage location selected for backup</string>
   <string name="msg_backup_success">Backup created successfully</string>
@@ -334,6 +336,9 @@
 
   <string name="settings_reduce_animations">Reduce animations</string>
   <string name="settings_reduce_animations_description">May improve performance</string>
+
+  <string name="settings_backup">Backup/restore song library</string>
+  <string name="settings_backup_description">Important when switching devices</string>
 
   <string name="settings_reset">Reset all</string>
   <string name="settings_reset_description">Cannot be undone</string>
