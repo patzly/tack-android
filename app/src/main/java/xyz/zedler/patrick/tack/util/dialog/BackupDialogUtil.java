@@ -17,7 +17,7 @@
  * Copyright (c) 2020-2025 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+package xyz.zedler.patrick.tack.util.dialog;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -44,6 +44,9 @@ import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.PartialDialogBackupBinding;
 import xyz.zedler.patrick.tack.fragment.BaseFragment;
+import xyz.zedler.patrick.tack.util.DialogUtil;
+import xyz.zedler.patrick.tack.util.ViewUtil;
+import xyz.zedler.patrick.tack.util.WidgetUtil;
 
 public class BackupDialogUtil implements OnClickListener {
 

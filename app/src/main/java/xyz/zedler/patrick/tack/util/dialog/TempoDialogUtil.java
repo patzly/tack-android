@@ -17,7 +17,7 @@
  * Copyright (c) 2020-2025 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+package xyz.zedler.patrick.tack.util.dialog;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -31,6 +31,9 @@ import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.PartialDialogTempoBinding;
 import xyz.zedler.patrick.tack.fragment.MainFragment;
+import xyz.zedler.patrick.tack.util.DialogUtil;
+import xyz.zedler.patrick.tack.util.MetronomeUtil;
+import xyz.zedler.patrick.tack.util.UiUtil;
 
 public class TempoDialogUtil {
 

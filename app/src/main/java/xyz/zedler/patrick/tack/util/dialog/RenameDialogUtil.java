@@ -17,7 +17,7 @@
  * Copyright (c) 2020-2025 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+package xyz.zedler.patrick.tack.util.dialog;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -29,6 +29,8 @@ import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.databinding.PartialDialogPartRenameBinding;
 import xyz.zedler.patrick.tack.fragment.SongFragment;
+import xyz.zedler.patrick.tack.util.DialogUtil;
+import xyz.zedler.patrick.tack.util.UiUtil;
 
 public class RenameDialogUtil {
 

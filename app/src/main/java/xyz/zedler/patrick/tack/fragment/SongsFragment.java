@@ -48,13 +48,13 @@ import xyz.zedler.patrick.tack.fragment.SongsFragmentDirections.ActionSongsToSon
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter.OnSongClickListener;
 import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
-import xyz.zedler.patrick.tack.util.BackupDialogUtil;
+import xyz.zedler.patrick.tack.util.dialog.BackupDialogUtil;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter;
 import xyz.zedler.patrick.tack.util.SortUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
-import xyz.zedler.patrick.tack.util.UnlockDialogUtil;
+import xyz.zedler.patrick.tack.util.dialog.UnlockDialogUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil.OnMenuInflatedListener;

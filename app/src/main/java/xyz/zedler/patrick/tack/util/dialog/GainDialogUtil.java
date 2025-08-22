@@ -17,7 +17,7 @@
  * Copyright (c) 2020-2025 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+package xyz.zedler.patrick.tack.util.dialog;
 
 import android.os.Bundle;
 import androidx.annotation.NonNull;
@@ -28,6 +28,8 @@ import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.PartialDialogGainBinding;
 import xyz.zedler.patrick.tack.fragment.SettingsFragment;
+import xyz.zedler.patrick.tack.util.DialogUtil;
+import xyz.zedler.patrick.tack.util.MetronomeUtil;
 
 public class GainDialogUtil implements OnChangeListener {
 

@@ -17,7 +17,7 @@
  * Copyright (c) 2020-2025 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+package xyz.zedler.patrick.tack.util.dialog;
 
 import android.os.Bundle;
 import android.widget.Toast;
@@ -30,9 +30,12 @@ import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.PartialDialogLatencyBinding;
 import xyz.zedler.patrick.tack.fragment.SettingsFragment;
+import xyz.zedler.patrick.tack.util.DialogUtil;
+import xyz.zedler.patrick.tack.util.MetronomeUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
+import xyz.zedler.patrick.tack.util.ResUtil;
 
 public class LatencyDialogUtil implements OnChangeListener {
 
