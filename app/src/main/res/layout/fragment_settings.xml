@@ -369,7 +369,7 @@
 
           <ImageView
             style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_rounded_save"
+            android:src="@drawable/ic_rounded_download"
             tools:ignore="ContentDescription" />
 
           <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">

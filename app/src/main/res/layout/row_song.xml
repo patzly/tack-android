@@ -25,14 +25,7 @@
   android:id="@+id/linear_song_container"
   style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More"
   android:paddingStart="16dp"
-  android:paddingEnd="0dp">
-
-  <ImageView
-    android:id="@+id/image_song_icon"
-    style="@style/Widget.Tack.ImageView.ListItem.Icon"
-    android:src="@drawable/ic_rounded_music_note_anim"
-    app:tint="?attr/colorPrimary"
-    tools:ignore="ContentDescription" />
+  android:paddingEnd="12dp">
 
   <LinearLayout
     style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch"
@@ -110,7 +103,6 @@
   <com.google.android.material.button.MaterialButtonGroup
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="16dp"
     android:spacing="0dp">
 
     <com.google.android.material.button.MaterialButton

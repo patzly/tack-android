@@ -28,14 +28,23 @@
   android:paddingTop="12dp"
   android:animateLayoutChanges="true">
 
-  <com.google.android.material.button.MaterialButton
-    android:id="@+id/button_options_use_current_config"
-    style="@style/Widget.Tack.Button"
-    android:text="@string/action_use_current_config"
+  <HorizontalScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
     android:layout_marginBottom="8dp"
-    app:icon="@drawable/ic_logo_simple" />
+    android:scrollbars="none"
+    android:overScrollMode="ifContentScrolls"
+    android:requiresFadingEdge="horizontal">
+
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/button_options_use_current_config"
+      style="@style/Widget.Tack.Button"
+      android:text="@string/action_use_current_config"
+      app:icon="@drawable/ic_logo_simple" />
+
+  </HorizontalScrollView>
 
   <TextView
     style="@style/Widget.Tack.TextView"
@@ -484,13 +493,12 @@
 
     <LinearLayout
       android:id="@+id/linear_options_mute_random"
-      style="@style/Widget.Tack.LinearLayout.ListItem.SingleLine.Clickable"
+      style="@style/Widget.Tack.LinearLayout.ListItem.SingleLine"
       android:layout_height="wrap_content"
       android:paddingStart="8dp"
       android:paddingEnd="8dp"
       android:paddingTop="2dp"
       android:paddingBottom="2dp"
-      android:minHeight="0dp"
       android:background="@drawable/ripple_list_item_surface_container_high">
 
       <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">

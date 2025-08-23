@@ -229,8 +229,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           partsResult.set(index - 1, partCurrent);
           partsResult.set(index, partAbove);
           sortParts();
-          adapter.submitList(new ArrayList<>(partsResult));
-          adapter.notifyButtonsChanged();
+          adapter.setParts(new ArrayList<>(partsResult));
           updateResult();
         }
       }
@@ -247,8 +246,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           partsResult.set(index + 1, partCurrent);
           partsResult.set(index, partBelow);
           sortParts();
-          adapter.submitList(new ArrayList<>(partsResult));
-          adapter.notifyButtonsChanged();
+          adapter.setParts(new ArrayList<>(partsResult));
           updateResult();
         }
       }
@@ -276,15 +274,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         for (int i = 0; i < partsResult.size(); i++) {
           partsResult.get(i).setPartIndex(i);
         }
-        adapter.submitList(new ArrayList<>(partsResult), () -> {
-          if (index > 0) {
-            adapter.notifyItemChanged(index - 1);
-          }
-          if (index < partsResult.size()) {
-            adapter.notifyItemChanged(index);
-          }
-          adapter.notifyButtonsChanged();
-        });
+        adapter.setParts(new ArrayList<>(partsResult));
         updateResult();
       }
     });
@@ -339,8 +329,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
             }
             sortParts();
             binding.recyclerSongParts.stopScroll();
-            adapter.submitList(new ArrayList<>(partsResult));
-            adapter.notifyButtonsChanged();
+            adapter.setParts(new ArrayList<>(partsResult));
           } else {
             Log.e(TAG, "onViewCreated: song with id=" + songId + " not found");
           }
@@ -389,8 +378,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           partsResult = new ArrayList<>(partsRestored);
           sortParts();
           binding.recyclerSongParts.stopScroll();
-          adapter.submitList(partsResult);
-          adapter.notifyButtonsChanged();
+          adapter.setParts(partsResult);
         }
       }
       updateResult();
@@ -491,7 +479,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
 
     optionsUtil = new OptionsUtil(activity, (part) -> {
       partsResult.set(part.getPartIndex(), part);
-      adapter.submitList(new ArrayList<>(partsResult));
+      adapter.setParts(new ArrayList<>(partsResult));
       updateResult();
     });
     optionsUtil.showIfWasShown(savedInstanceState);
@@ -566,16 +554,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     Part part = new Part(null, songResult.getId(), index, getMetronomeUtil().getConfig());
     partsResult.add(part);
     sortParts();
-    adapter.submitList(new ArrayList<>(partsResult), () -> {
-      if (index > 0) {
-        adapter.notifyItemChanged(index - 1);
-      }
-      if (index + 1 < partsResult.size()) {
-        adapter.notifyItemChanged(index + 1);
-      }
-      adapter.notifyButtonsChanged();
-    });
-    adapter.notifyButtonsChanged();
+    adapter.setParts(new ArrayList<>(partsResult));
   }
 
   public void renamePart(String partId, String name) {
@@ -584,7 +563,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         Part partResult = new Part(part);
         partResult.setName(name);
         partsResult.set(part.getPartIndex(), partResult);
-        adapter.submitList(new ArrayList<>(partsResult));
+        adapter.setParts(new ArrayList<>(partsResult));
         updateResult();
         break;
       }

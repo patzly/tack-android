@@ -104,7 +104,7 @@ public class SongsFragment extends BaseFragment {
     systemBarBehavior.setAppBar(binding.appBarSongs);
     systemBarBehavior.setContainer(binding.constraintSongs);
     systemBarBehavior.setRecycler(binding.recyclerSongs);
-    systemBarBehavior.setAdditionalBottomInset(UiUtil.dpToPx(activity, 96));
+    systemBarBehavior.setAdditionalBottomInset(UiUtil.dpToPx(activity, 112));
     systemBarBehavior.setUp();
     SystemBarBehavior.applyBottomInset(binding.fabSongs);
 
@@ -355,7 +355,7 @@ public class SongsFragment extends BaseFragment {
       }
     }
     SortUtil.sortSongsWithParts(this.songsWithParts, sortOrder);
-    adapter.submitList(new ArrayList<>(this.songsWithParts));
+    adapter.setSongsWithParts(new ArrayList<>(this.songsWithParts));
     adapter.setSortOrder(sortOrder);
   }
 

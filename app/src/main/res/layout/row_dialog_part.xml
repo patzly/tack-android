@@ -21,7 +21,7 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
   android:id="@+id/linear_row_dialog_part"
-  style="@style/Widget.Tack.LinearLayout.ListItem.SingleLine.Clickable"
+  style="@style/Widget.Tack.LinearLayout.ListItem.SingleLine"
   android:background="?selectableItemBackground">
 
   <com.google.android.material.radiobutton.MaterialRadioButton

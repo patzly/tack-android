@@ -29,7 +29,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.ListAdapter;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import java.text.DateFormat;
 import java.time.Instant;
@@ -37,6 +37,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -44,32 +45,32 @@ import java.util.UUID;
 import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.database.entity.Part;
+import xyz.zedler.patrick.tack.database.entity.Song;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.RowSongBinding;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil;
 
-public class SongAdapter extends ListAdapter<SongWithParts, ViewHolder> {
+public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
 
   private final static String TAG = SongAdapter.class.getSimpleName();
 
   private final static String PAYLOAD_PLAY = "play";
 
+  private final List<SongWithParts> songsWithParts = new ArrayList<>();
   private final OnSongClickListener listener;
   private int sortOrder = 0;
   private String currentSongId = null;
   private boolean isPlaying = false;
 
   public SongAdapter(@NonNull OnSongClickListener listener) {
-    super(new SongDiffCallback());
     this.listener = listener;
     setHasStableIds(true);
   }
 
   @NonNull
   @Override
-  public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+  public SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     RowSongBinding binding = RowSongBinding.inflate(
         LayoutInflater.from(parent.getContext()), parent, false
     );
@@ -77,15 +78,36 @@ public class SongAdapter extends ListAdapter<SongWithParts, ViewHolder> {
   }
 
   @Override
-  public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-    SongWithParts songWithParts = getItem(holder.getBindingAdapterPosition());
-    SongViewHolder songHolder = (SongViewHolder) holder;
-    Context context = songHolder.binding.getRoot().getContext();
-    RowSongBinding binding = songHolder.binding;
+  public void onBindViewHolder(@NonNull SongViewHolder holder, int position) {
+    int adapterPosition = holder.getBindingAdapterPosition();
+    SongWithParts songWithParts = getItem(adapterPosition);
+    Context context = holder.binding.getRoot().getContext();
+    RowSongBinding binding = holder.binding;
 
     binding.linearSongContainer.setOnClickListener(v -> listener.onSongClick(songWithParts));
     boolean isSelected = songWithParts.getSong().getId().equals(currentSongId);
-    if (isSelected) {
+
+    // item background
+
+    if (getItemCount() == 1) {
+      binding.linearSongContainer.setBackgroundResource(
+          R.drawable.ripple_list_item_bg_segmented_single
+      );
+    } else if (adapterPosition == 0) {
+      binding.linearSongContainer.setBackgroundResource(
+          R.drawable.ripple_list_item_bg_segmented_first
+      );
+    } else if (adapterPosition == getItemCount() - 1) {
+      binding.linearSongContainer.setBackgroundResource(
+          R.drawable.ripple_list_item_bg_segmented_last
+      );
+    } else {
+      binding.linearSongContainer.setBackgroundResource(
+          R.drawable.ripple_list_item_bg_segmented_middle
+      );
+    }
+
+    /*if (isSelected) {
       binding.linearSongContainer.setBackground(
           ViewUtil.getBgListItemSelected(
               context, R.attr.colorTertiaryContainer, 8, 8
@@ -93,13 +115,7 @@ public class SongAdapter extends ListAdapter<SongWithParts, ViewHolder> {
       );
     } else {
       binding.linearSongContainer.setBackgroundResource(R.drawable.ripple_list_item_bg);
-    }
-
-    binding.imageSongIcon.setColorFilter(
-        ResUtil.getColor(
-            context, isSelected ? R.attr.colorOnTertiaryContainer : R.attr.colorPrimary
-        )
-    );
+    }*/
 
     binding.textSongName.setText(songWithParts.getSong().getName());
     binding.textSongName.setTextColor(
@@ -207,19 +223,26 @@ public class SongAdapter extends ListAdapter<SongWithParts, ViewHolder> {
 
   @Override
   public void onBindViewHolder(
-      @NonNull ViewHolder holder, int position, @NonNull List<Object> payloads
+      @NonNull SongViewHolder holder, int position, @NonNull List<Object> payloads
   ) {
     if (payloads.contains(PAYLOAD_PLAY)) {
-      SongViewHolder songHolder = (SongViewHolder) holder;
-      RowSongBinding binding = songHolder.binding;
-
+      RowSongBinding binding = holder.binding;
       binding.buttonSongPlay.setChecked(isPlaying);
       binding.buttonSongPlay.setIconResource(
           isPlaying ? R.drawable.ic_rounded_stop : R.drawable.ic_rounded_play_arrow
       );
     } else {
-      onBindViewHolder(holder, position);
+      super.onBindViewHolder(holder, position, payloads);
     }
+  }
+
+  @Override
+  public int getItemCount() {
+    return songsWithParts.size();
+  }
+
+  public SongWithParts getItem(int position) {
+    return songsWithParts.get(position);
   }
 
   @Override
@@ -254,8 +277,52 @@ public class SongAdapter extends ListAdapter<SongWithParts, ViewHolder> {
     }
   }
 
-  public static class SongViewHolder extends ViewHolder {
+  public void setSongsWithParts(List<SongWithParts> newSongsWithParts) {
+    DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+      @Override
+      public int getOldListSize() {
+        return songsWithParts.size();
+      }
 
+      @Override
+      public int getNewListSize() {
+        return newSongsWithParts.size();
+      }
+
+      @Override
+      public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+        Song oldSong = songsWithParts.get(oldItemPosition).getSong();
+        Song newSong = newSongsWithParts.get(newItemPosition).getSong();
+        return oldSong.getId().equals(newSong.getId());
+      }
+
+      @Override
+      public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+        SongWithParts oldSongWithParts = songsWithParts.get(oldItemPosition);
+        SongWithParts newSongWithParts = newSongsWithParts.get(newItemPosition);
+
+        if (!oldSongWithParts.equals(newSongWithParts)) {
+          return false;
+        }
+
+        int oldRole = getItemRole(oldItemPosition, songsWithParts.size());
+        int newRole = getItemRole(newItemPosition, newSongsWithParts.size());
+        return oldRole == newRole;
+      }
+
+      private int getItemRole(int position, int size) {
+        if (size == 1) return -1;
+        if (position == 0) return 0;
+        if (position == size - 1) return 2;
+        return 1;
+      }
+    });
+    songsWithParts.clear();
+    songsWithParts.addAll(newSongsWithParts);
+    diffResult.dispatchUpdatesTo(this);
+  }
+
+  public static class SongViewHolder extends ViewHolder {
     private final RowSongBinding binding;
 
     public SongViewHolder(RowSongBinding binding) {
@@ -269,22 +336,5 @@ public class SongAdapter extends ListAdapter<SongWithParts, ViewHolder> {
     void onPlayClick(@NonNull SongWithParts song);
     void onPlayStopClick();
     void onCloseClick();
-  }
-
-  static class SongDiffCallback extends DiffUtil.ItemCallback<SongWithParts> {
-
-    @Override
-    public boolean areItemsTheSame(
-        @NonNull SongWithParts oldItem, @NonNull SongWithParts newItem
-    ) {
-      return oldItem.getSong().getId().equals(newItem.getSong().getId());
-    }
-
-    @Override
-    public boolean areContentsTheSame(
-        @NonNull SongWithParts oldItem, @NonNull SongWithParts newItem
-    ) {
-      return oldItem.equals(newItem);
-    }
   }
 }

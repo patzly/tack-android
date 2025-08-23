@@ -25,10 +25,10 @@
   <item android:bottom="1dp">
     <shape android:shape="rectangle">
       <corners
-        android:topLeftRadius="20dp"
-        android:topRightRadius="20dp"
-        android:bottomLeftRadius="4dp"
-        android:bottomRightRadius="4dp" />
+        android:topLeftRadius="?attr/shapeCornerSizeLargeIncreased"
+        android:topRightRadius="?attr/shapeCornerSizeLargeIncreased"
+        android:bottomLeftRadius="?attr/shapeCornerSizeExtraSmall"
+        android:bottomRightRadius="?attr/shapeCornerSizeExtraSmall" />
       <solid android:color="?attr/colorSurfaceBright" />
     </shape>
   </item>

@@ -20,8 +20,6 @@
 package xyz.zedler.patrick.tack.recyclerview.adapter;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,8 +27,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.ListAdapter;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
+import java.util.ArrayList;
 import java.util.List;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
@@ -39,22 +38,22 @@ import xyz.zedler.patrick.tack.databinding.RowPartBinding;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil.OnMenuInflatedListener;
 
-public class PartAdapter extends ListAdapter<Part, ViewHolder> {
+public class PartAdapter extends Adapter<PartAdapter.PartViewHolder> {
 
   private final static String TAG = SongChipAdapter.class.getSimpleName();
 
-  private final static String PAYLOAD_MOVE = "move";
+  private final static String PAYLOAD_ROLE = "role";
 
+  private final List<Part> parts = new ArrayList<>();
   private final OnPartItemClickListener listener;
 
   public PartAdapter(@NonNull OnPartItemClickListener listener) {
-    super(new PartDiffCallback());
     this.listener = listener;
   }
 
   @NonNull
   @Override
-  public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+  public PartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     RowPartBinding binding = RowPartBinding.inflate(
         LayoutInflater.from(parent.getContext()), parent, false
     );
@@ -62,48 +61,30 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
   }
 
   @Override
-  public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+  public void onBindViewHolder(@NonNull PartViewHolder holder, int position) {
     int adapterPosition = holder.getBindingAdapterPosition();
     Part part = getItem(adapterPosition);
-    PartViewHolder partHolder = (PartViewHolder) holder;
-    Context context = partHolder.binding.getRoot().getContext();
+    Context context = holder.binding.getRoot().getContext();
 
-    // item background
-
-    if (getItemCount() == 1) {
-      partHolder.binding.linearPartContainer.setBackgroundResource(
-          R.drawable.ripple_list_item_bg_segmented_single
-      );
-    } else if (adapterPosition == 0) {
-      partHolder.binding.linearPartContainer.setBackgroundResource(
-          R.drawable.ripple_list_item_bg_segmented_first
-      );
-    } else if (adapterPosition == getItemCount() - 1) {
-      partHolder.binding.linearPartContainer.setBackgroundResource(
-          R.drawable.ripple_list_item_bg_segmented_last
-      );
-    } else {
-      partHolder.binding.linearPartContainer.setBackgroundResource(
-          R.drawable.ripple_list_item_bg_segmented_middle
-      );
-    }
+    updateItemBackground(holder, position);
+    updateMoveButtons(holder, position);
 
     // number
     String partNumber = context.getString(
         R.string.label_part_unnamed, adapterPosition + 1
     );
-    partHolder.binding.textPartNumber.setText(partNumber);
+    holder.binding.textPartNumber.setText(partNumber);
 
-    partHolder.binding.buttonPartEdit.setOnClickListener(
+    holder.binding.buttonPartEdit.setOnClickListener(
         v -> listener.onEditClick(part)
     );
-    partHolder.binding.buttonPartMoveUp.setOnClickListener(
+    holder.binding.buttonPartMoveUp.setOnClickListener(
         v -> listener.onMoveUpClick(part)
     );
-    partHolder.binding.buttonPartMoveDown.setOnClickListener(
+    holder.binding.buttonPartMoveDown.setOnClickListener(
         v -> listener.onMoveDownClick(part)
     );
-    partHolder.binding.buttonPartMenu.setOnClickListener(v -> {
+    holder.binding.buttonPartMenu.setOnClickListener(v -> {
       listener.onMoreClick(part);
       PopupMenu.OnMenuItemClickListener itemClickListener = item -> {
         int id = item.getItemId();
@@ -121,30 +102,28 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
       ViewUtil.showMenu(v, R.menu.menu_part, itemClickListener, menuInflatedListener);
     });
 
-    ViewUtil.setTooltipText(partHolder.binding.buttonPartEdit, R.string.action_edit);
-    ViewUtil.setTooltipText(partHolder.binding.buttonPartMoveUp, R.string.action_move_up);
-    ViewUtil.setTooltipText(partHolder.binding.buttonPartMoveDown, R.string.action_move_down);
-    ViewUtil.setTooltipText(partHolder.binding.buttonPartMenu, R.string.action_more);
-
-    updateMoveButtons(partHolder);
+    ViewUtil.setTooltipText(holder.binding.buttonPartEdit, R.string.action_edit);
+    ViewUtil.setTooltipText(holder.binding.buttonPartMoveUp, R.string.action_move_up);
+    ViewUtil.setTooltipText(holder.binding.buttonPartMoveDown, R.string.action_move_down);
+    ViewUtil.setTooltipText(holder.binding.buttonPartMenu, R.string.action_more);
 
     // name
     String partName = part.getName();
-    partHolder.binding.textPartName.setText(partName);
-    partHolder.binding.linearPartName.setVisibility(partName != null ? View.VISIBLE : View.GONE);
+    holder.binding.textPartName.setText(partName);
+    holder.binding.linearPartName.setVisibility(partName != null ? View.VISIBLE : View.GONE);
 
     // tempo
     int tempo = part.getTempo();
-    partHolder.binding.textPartTempo.setText(context.getString(R.string.label_bpm_value, tempo));
+    holder.binding.textPartTempo.setText(context.getString(R.string.label_bpm_value, tempo));
 
     // beats
     String[] beats = part.getBeats().split(",");
-    partHolder.binding.beatsPartBeats.setBeats(beats);
+    holder.binding.beatsPartBeats.setBeats(beats);
 
     // subdivisions
     String[] subdivisions = part.getSubdivisions().split(",");
-    partHolder.binding.beatsPartSubdivisions.setBeats(subdivisions);
-    partHolder.binding.linearPartSubdivisions.setVisibility(
+    holder.binding.beatsPartSubdivisions.setBeats(subdivisions);
+    holder.binding.linearPartSubdivisions.setVisibility(
         subdivisions.length > 1 ? View.VISIBLE : View.GONE
     );
 
@@ -152,13 +131,13 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
     boolean isCountInActive = part.getCountIn() > 0;
     if (isCountInActive) {
       int countIn = part.getCountIn();
-      partHolder.binding.textPartCountIn.setText(
+      holder.binding.textPartCountIn.setText(
           context.getResources().getQuantityString(
               R.plurals.options_count_in_description, countIn, countIn
           )
       );
     }
-    partHolder.binding.linearPartCountIn.setVisibility(isCountInActive ? View.VISIBLE : View.GONE);
+    holder.binding.linearPartCountIn.setVisibility(isCountInActive ? View.VISIBLE : View.GONE);
 
     // duration
     int timerDuration = part.getTimerDuration();
@@ -176,11 +155,11 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
         break;
     }
     if (timerDuration > 0) {
-      partHolder.binding.textPartDuration.setText(
+      holder.binding.textPartDuration.setText(
           context.getResources().getQuantityString(durationResId, timerDuration, timerDuration)
       );
     }
-    partHolder.binding.linearPartDuration.setVisibility(
+    holder.binding.linearPartDuration.setVisibility(
         timerDuration > 0 ? View.VISIBLE : View.GONE
     );
 
@@ -189,7 +168,7 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
     boolean incrementalIncrease = part.isIncrementalIncrease();
     boolean isIncrementalActive = part.getIncrementalAmount() > 0;
     if (isIncrementalActive) {
-      partHolder.binding.textPartIncrementalAmount.setText(context.getString(
+      holder.binding.textPartIncrementalAmount.setText(context.getString(
           incrementalIncrease
               ? R.string.options_incremental_amount_increase
               : R.string.options_incremental_amount_decrease,
@@ -210,7 +189,7 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
           intervalResId = R.plurals.options_incremental_interval_bars;
           break;
       }
-      partHolder.binding.textPartIncrementalInterval.setText(
+      holder.binding.textPartIncrementalInterval.setText(
           context.getResources().getQuantityString(
               intervalResId, incrementalInterval, incrementalInterval
           )
@@ -218,7 +197,7 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
 
       int incrementalLimit = part.getIncrementalLimit();
       if (incrementalLimit > 0) {
-        partHolder.binding.textPartIncrementalLimit.setText(
+        holder.binding.textPartIncrementalLimit.setText(
             context.getResources().getString(
                 incrementalIncrease
                     ? R.string.options_incremental_max
@@ -227,14 +206,14 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
             )
         );
       } else {
-        partHolder.binding.textPartIncrementalLimit.setText(
+        holder.binding.textPartIncrementalLimit.setText(
             incrementalIncrease
                 ? R.string.options_incremental_no_max
                 : R.string.options_incremental_no_min
         );
       }
     }
-    partHolder.binding.linearPartIncremental.setVisibility(
+    holder.binding.linearPartIncremental.setVisibility(
         isIncrementalActive ? View.VISIBLE : View.GONE
     );
 
@@ -253,46 +232,126 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
       resIdMute = R.plurals.options_mute_mute_bars;
     }
     if (isMuteActive) {
-      partHolder.binding.textPartMutePlay.setText(
+      holder.binding.textPartMutePlay.setText(
           context.getResources().getQuantityString(resIdPlay, mutePlay, mutePlay)
       );
-      partHolder.binding.textPartMuteMute.setText(
+      holder.binding.textPartMuteMute.setText(
           context.getResources().getQuantityString(resIdMute, muteMute, muteMute)
       );
-      partHolder.binding.imagePartMuteRandom.setVisibility(muteRandom ? View.VISIBLE : View.GONE);
-      partHolder.binding.textPartMuteRandom.setVisibility(muteRandom ? View.VISIBLE : View.GONE);
+      holder.binding.imagePartMuteRandom.setVisibility(muteRandom ? View.VISIBLE : View.GONE);
+      holder.binding.textPartMuteRandom.setVisibility(muteRandom ? View.VISIBLE : View.GONE);
     }
-    partHolder.binding.linearPartMute.setVisibility(isMuteActive ? View.VISIBLE : View.GONE);
+    holder.binding.linearPartMute.setVisibility(isMuteActive ? View.VISIBLE : View.GONE);
   }
 
   @Override
   public void onBindViewHolder(
-      @NonNull ViewHolder holder, int position, @NonNull List<Object> payloads
+      @NonNull PartViewHolder holder, int position, @NonNull List<Object> payloads
   ) {
-    PartViewHolder partHolder = (PartViewHolder) holder;
-    if (payloads.contains(PAYLOAD_MOVE)) {
-      updateMoveButtons(partHolder);
+    if (payloads.contains(PAYLOAD_ROLE)) {
+      updateItemBackground(holder, position);
+      updateMoveButtons(holder, position);
     } else {
       super.onBindViewHolder(holder, position, payloads);
     }
   }
 
-  private void updateMoveButtons(PartViewHolder holder) {
-    int adapterPosition = holder.getBindingAdapterPosition();
-    holder.binding.buttonPartMoveUp.setEnabled(getItemCount() > 1 && adapterPosition > 0);
-    holder.binding.buttonPartMoveDown.setEnabled(
-        getItemCount() > 1 && adapterPosition < getItemCount() - 1
-    );
+  @Override
+  public int getItemCount() {
+    return parts.size();
   }
 
-  public void notifyButtonsChanged() {
-    new Handler(Looper.getMainLooper()).postDelayed(
-        () -> notifyItemRangeChanged(0, getItemCount(), PAYLOAD_MOVE), 50
+  public Part getItem(int position) {
+    return parts.get(position);
+  }
+
+  public void setParts(List<Part> newParts) {
+    DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
+      @Override
+      public int getOldListSize() {
+        return parts.size();
+      }
+
+      @Override
+      public int getNewListSize() {
+        return newParts.size();
+      }
+
+      @Override
+      public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+        Part oldPart = parts.get(oldItemPosition);
+        Part newPart = newParts.get(newItemPosition);
+        return oldPart.getId().equals(newPart.getId());
+      }
+
+      @Override
+      public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+        Part oldPart = parts.get(oldItemPosition);
+        Part newPart = newParts.get(newItemPosition);
+
+        if (!oldPart.equals(newPart)) {
+          return false;
+        }
+
+        int oldRole = getItemRole(oldItemPosition, parts.size());
+        int newRole = getItemRole(newItemPosition, newParts.size());
+        return oldRole == newRole;
+      }
+
+      @Override
+      public Object getChangePayload(int oldItemPosition, int newItemPosition) {
+        Part oldPart = parts.get(oldItemPosition);
+        Part newPart = newParts.get(newItemPosition);
+
+        int oldRole = getItemRole(oldItemPosition, parts.size());
+        int newRole = getItemRole(newItemPosition, newParts.size());
+        if (oldPart.equals(newPart) && oldRole != newRole) {
+          return PAYLOAD_ROLE;
+        }
+
+        return null;
+      }
+
+      private int getItemRole(int position, int size) {
+        if (size == 1) return -1;
+        if (position == 0) return 0;
+        if (position == size - 1) return 2;
+        return 1;
+      }
+    });
+    parts.clear();
+    parts.addAll(newParts);
+    diffResult.dispatchUpdatesTo(this);
+  }
+
+  private void updateItemBackground(PartViewHolder holder, int position) {
+    if (getItemCount() == 1) {
+      holder.binding.linearPartContainer.setBackgroundResource(
+          R.drawable.ripple_list_item_bg_segmented_single
+      );
+    } else if (position == 0) {
+      holder.binding.linearPartContainer.setBackgroundResource(
+          R.drawable.ripple_list_item_bg_segmented_first
+      );
+    } else if (position == getItemCount() - 1) {
+      holder.binding.linearPartContainer.setBackgroundResource(
+          R.drawable.ripple_list_item_bg_segmented_last
+      );
+    } else {
+      holder.binding.linearPartContainer.setBackgroundResource(
+          R.drawable.ripple_list_item_bg_segmented_middle
+      );
+    }
+  }
+
+  private void updateMoveButtons(PartViewHolder holder, int position) {
+    holder.binding.buttonPartMoveUp.setEnabled(getItemCount() > 1 && position > 0);
+    holder.binding.buttonPartMoveDown.setEnabled(
+        getItemCount() > 1 && position < getItemCount() - 1
     );
   }
 
   public static class PartViewHolder extends ViewHolder {
-
     private final RowPartBinding binding;
 
     public PartViewHolder(RowPartBinding binding) {
@@ -308,18 +367,5 @@ public class PartAdapter extends ListAdapter<Part, ViewHolder> {
     void onMoreClick(@NonNull Part part);
     void onRenameClick(@NonNull Part part);
     void onDeleteClick(@NonNull Part part);
-  }
-
-  static class PartDiffCallback extends DiffUtil.ItemCallback<Part> {
-
-    @Override
-    public boolean areItemsTheSame(@NonNull Part oldItem, @NonNull Part newItem) {
-      return oldItem.getId().equals(newItem.getId());
-    }
-
-    @Override
-    public boolean areContentsTheSame(@NonNull Part oldItem, @NonNull Part newItem) {
-      return oldItem.equals(newItem);
-    }
   }
 }

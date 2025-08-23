@@ -171,7 +171,8 @@
       app:layout_constraintEnd_toEndOf="parent"
       app:contentPadding="0dp"
       app:strokeWidth="0dp"
-      app:cardCornerRadius="20dp"
+      app:cardPreventCornerOverlap="false"
+      app:shapeAppearance="@style/ShapeAppearance.Tack.Corner.LargeIncreased.Top"
       app:cardBackgroundColor="?attr/colorSurfaceContainer">
 
       <androidx.recyclerview.widget.RecyclerView
