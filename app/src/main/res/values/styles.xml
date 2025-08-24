@@ -126,6 +126,12 @@
     <item name="fontFamily">@font/nunito_bold</item>
   </style>
 
+  <style
+    name="Widget.Tack.Button.Xsmall"
+    parent="Widget.Tack.Button">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.Xsmall</item>
+  </style>
+
   <!-- Base style -->
   <style
     name="Base.Tack.Button.OutlinedButton"
@@ -158,6 +164,29 @@
     parent="Base.Tack.Button.TextButton">
     <item name="android:fontFamily">@font/nunito_bold</item>
     <item name="fontFamily">@font/nunito_bold</item>
+  </style>
+
+  <!-- Base style -->
+  <style
+    name="Base.Tack.Button.TonalButton"
+    parent="Widget.Material3Expressive.Button.TonalButton">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:singleLine">true</item>
+  </style>
+
+  <!-- Localized style -->
+  <style
+    name="Widget.Tack.Button.TonalButton"
+    parent="Base.Tack.Button.TonalButton">
+    <item name="android:fontFamily">@font/nunito_bold</item>
+    <item name="fontFamily">@font/nunito_bold</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.TonalButton.Xsmall"
+    parent="Widget.Tack.Button.TonalButton">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.Xsmall</item>
   </style>
 
   <!-- Localized style, no empty base style needed -->
@@ -354,6 +383,13 @@
     <item name="cornerSizeTopRight">?attr/shapeCornerSizeLargeIncreased</item>
     <item name="cornerSizeBottomLeft">0dp</item>
     <item name="cornerSizeBottomRight">0dp</item>
+  </style>
+
+  <style name="ShapeAppearance.Tack.Corner.Segmented.Last" parent="ShapeAppearance.Material3.Corner.LargeIncreased">
+    <item name="cornerSizeTopLeft">?attr/shapeCornerSizeExtraSmall</item>
+    <item name="cornerSizeTopRight">?attr/shapeCornerSizeExtraSmall</item>
+    <item name="cornerSizeBottomLeft">?attr/shapeCornerSizeLargeIncreased</item>
+    <item name="cornerSizeBottomRight">?attr/shapeCornerSizeLargeIncreased</item>
   </style>
 
   <!-- TextInputLayout -->

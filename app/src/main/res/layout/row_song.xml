@@ -100,24 +100,11 @@
 
   </LinearLayout>
 
-  <com.google.android.material.button.MaterialButtonGroup
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:spacing="0dp">
-
-    <com.google.android.material.button.MaterialButton
-      android:id="@+id/button_song_close_selected"
-      style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
-      android:contentDescription="@string/action_close"
-      app:icon="@drawable/ic_rounded_close_anim" />
-
-    <com.google.android.material.button.MaterialButton
-      android:id="@+id/button_song_play"
-      style="@style/Widget.Tack.Button.IconButton.Filled"
-      android:contentDescription="@string/action_play_stop"
-      app:icon="@drawable/ic_rounded_play_arrow"
-      android:checkable="true" />
-
-  </com.google.android.material.button.MaterialButtonGroup>
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/button_song_play"
+    style="@style/Widget.Tack.Button.IconButton.Filled"
+    android:contentDescription="@string/action_play_stop"
+    app:icon="@drawable/ic_rounded_play_arrow"
+    android:checkable="true" />
 
 </LinearLayout>

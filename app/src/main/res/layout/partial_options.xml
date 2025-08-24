@@ -40,7 +40,7 @@
 
     <com.google.android.material.button.MaterialButton
       android:id="@+id/button_options_use_current_config"
-      style="@style/Widget.Tack.Button"
+      style="@style/Widget.Tack.Button.OutlinedButton"
       android:text="@string/action_use_current_config"
       app:icon="@drawable/ic_logo_simple" />
 

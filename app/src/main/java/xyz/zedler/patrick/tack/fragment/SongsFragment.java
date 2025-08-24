@@ -41,6 +41,7 @@ import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
+import xyz.zedler.patrick.tack.behavior.ScrollBehavior.OnScrollChangedListener;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.FragmentSongsBinding;
@@ -48,17 +49,17 @@ import xyz.zedler.patrick.tack.fragment.SongsFragmentDirections.ActionSongsToSon
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter.OnSongClickListener;
 import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
-import xyz.zedler.patrick.tack.util.dialog.BackupDialogUtil;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter;
 import xyz.zedler.patrick.tack.util.SortUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
-import xyz.zedler.patrick.tack.util.dialog.UnlockDialogUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil.OnMenuInflatedListener;
 import xyz.zedler.patrick.tack.util.WidgetUtil;
+import xyz.zedler.patrick.tack.util.dialog.BackupDialogUtil;
+import xyz.zedler.patrick.tack.util.dialog.UnlockDialogUtil;
 
 public class SongsFragment extends BaseFragment {
 
@@ -108,7 +109,24 @@ public class SongsFragment extends BaseFragment {
     systemBarBehavior.setUp();
     SystemBarBehavior.applyBottomInset(binding.fabSongs);
 
-    new ScrollBehavior().setUpScroll(
+    ScrollBehavior scrollBehavior = new ScrollBehavior();
+    scrollBehavior.setOnScrollChangedListener(new OnScrollChangedListener() {
+      @Override
+      public void onScrollUp() {
+        binding.fabSongs.extend();
+      }
+
+      @Override
+      public void onScrollDown() {
+        binding.fabSongs.shrink();
+      }
+
+      @Override
+      public void onTopScroll() {
+        binding.fabSongs.extend();
+      }
+    });
+    scrollBehavior.setUpScroll(
         binding.appBarSongs, binding.recyclerSongs, ScrollBehavior.LIFT_ON_SCROLL
     );
 
@@ -227,12 +245,6 @@ public class SongsFragment extends BaseFragment {
         } else {
           getMetronomeUtil().start();
         }
-      }
-
-      @Override
-      public void onCloseClick() {
-        performHapticClick();
-        getMetronomeUtil().setCurrentSong(Constants.SONG_ID_DEFAULT, 0, true);
       }
     });
     adapter.setCurrentSongId(getMetronomeUtil().getCurrentSongId());

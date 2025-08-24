@@ -21,6 +21,7 @@ package xyz.zedler.patrick.tack.recyclerview.adapter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.view.LayoutInflater;
@@ -91,31 +92,29 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
 
     if (getItemCount() == 1) {
       binding.linearSongContainer.setBackgroundResource(
-          R.drawable.ripple_list_item_bg_segmented_single
+          isSelected
+              ? R.drawable.ripple_list_item_bg_tertiary_segmented_single
+              : R.drawable.ripple_list_item_bg_segmented_single
       );
     } else if (adapterPosition == 0) {
       binding.linearSongContainer.setBackgroundResource(
-          R.drawable.ripple_list_item_bg_segmented_first
+          isSelected
+              ? R.drawable.ripple_list_item_bg_tertiary_segmented_first
+              : R.drawable.ripple_list_item_bg_segmented_first
       );
     } else if (adapterPosition == getItemCount() - 1) {
       binding.linearSongContainer.setBackgroundResource(
-          R.drawable.ripple_list_item_bg_segmented_last
+          isSelected
+              ? R.drawable.ripple_list_item_bg_tertiary_segmented_last
+              : R.drawable.ripple_list_item_bg_segmented_last
       );
     } else {
       binding.linearSongContainer.setBackgroundResource(
-          R.drawable.ripple_list_item_bg_segmented_middle
+          isSelected
+              ? R.drawable.ripple_list_item_bg_tertiary_segmented_middle
+              : R.drawable.ripple_list_item_bg_segmented_middle
       );
     }
-
-    /*if (isSelected) {
-      binding.linearSongContainer.setBackground(
-          ViewUtil.getBgListItemSelected(
-              context, R.attr.colorTertiaryContainer, 8, 8
-          )
-      );
-    } else {
-      binding.linearSongContainer.setBackgroundResource(R.drawable.ripple_list_item_bg);
-    }*/
 
     binding.textSongName.setText(songWithParts.getSong().getName());
     binding.textSongName.setTextColor(
@@ -204,9 +203,21 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
       }
     }
 
-    binding.buttonSongPlay.setChecked(isPlaying);
+    boolean isPlayingSong = isPlaying && isSelected;
+    binding.buttonSongPlay.setChecked(isPlayingSong);
     binding.buttonSongPlay.setIconResource(
-        isPlaying ? R.drawable.ic_rounded_stop : R.drawable.ic_rounded_play_arrow
+        isPlayingSong ? R.drawable.ic_rounded_stop : R.drawable.ic_rounded_play_arrow
+    );
+    binding.buttonSongPlay.setBackgroundColor(
+        ResUtil.getColor(
+            context,
+            isSelected ? R.attr.colorTertiary : R.attr.colorSurfaceContainerHigh
+        )
+    );
+    binding.buttonSongPlay.setIconTint(
+        ColorStateList.valueOf(
+            ResUtil.getColor(context, isSelected ? R.attr.colorOnTertiary : R.attr.colorOnSurface)
+        )
     );
     binding.buttonSongPlay.setOnClickListener(v -> {
       if (isPlaying) {
@@ -216,9 +227,6 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
         listener.onPlayClick(songWithParts);
       }
     });
-
-    binding.buttonSongCloseSelected.setVisibility(isSelected ? View.VISIBLE : View.GONE);
-    binding.buttonSongCloseSelected.setOnClickListener(v -> listener.onCloseClick());
   }
 
   @Override
@@ -262,9 +270,18 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
 
   @SuppressLint("NotifyDataSetChanged")
   public void setCurrentSongId(@Nullable String currentSongId) {
+    String oldSongId = this.currentSongId;
     this.currentSongId = currentSongId;
-    // We don't know which previous item was selected, so we need to notify the whole list
-    notifyDataSetChanged();
+    for (int i = 0; i < getItemCount(); i++) {
+      if (oldSongId != null && getItem(i).getSong().getId().equals(oldSongId)) {
+        notifyItemChanged(i);
+        break;
+      }
+      if (currentSongId != null && getItem(i).getSong().getId().equals(currentSongId)) {
+        notifyItemChanged(i);
+        break;
+      }
+    }
   }
 
   public void setPlaying(boolean isPlaying) {
@@ -335,6 +352,5 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
     void onSongClick(@NonNull SongWithParts song);
     void onPlayClick(@NonNull SongWithParts song);
     void onPlayStopClick();
-    void onCloseClick();
   }
 }

@@ -51,6 +51,7 @@ import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
+import xyz.zedler.patrick.tack.behavior.ScrollBehavior.OnScrollChangedListener;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.entity.Song;
@@ -61,14 +62,14 @@ import xyz.zedler.patrick.tack.recyclerview.decoration.PartItemDecoration;
 import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.OptionsUtil;
-import xyz.zedler.patrick.tack.util.dialog.RenameDialogUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.SortUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
-import xyz.zedler.patrick.tack.util.dialog.UnlockDialogUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.util.WidgetUtil;
+import xyz.zedler.patrick.tack.util.dialog.RenameDialogUtil;
+import xyz.zedler.patrick.tack.util.dialog.UnlockDialogUtil;
 
 public class SongFragment extends BaseFragment implements OnClickListener, OnCheckedChangeListener {
 
@@ -133,8 +134,25 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     systemBarBehavior.setUp();
     SystemBarBehavior.applyBottomInset(binding.fabSong);
 
+    ScrollBehavior scrollBehavior = new ScrollBehavior();
+    scrollBehavior.setOnScrollChangedListener(new OnScrollChangedListener() {
+      @Override
+      public void onScrollUp() {
+        binding.fabSong.extend();
+      }
+
+      @Override
+      public void onScrollDown() {
+        binding.fabSong.shrink();
+      }
+
+      @Override
+      public void onTopScroll() {
+        binding.fabSong.extend();
+      }
+    });
     int liftMode = isPortrait ? ScrollBehavior.ALWAYS_LIFTED : ScrollBehavior.LIFT_ON_SCROLL;
-    new ScrollBehavior().setUpScroll(binding.appBarSong, binding.recyclerSongParts, liftMode);
+    scrollBehavior.setUpScroll(binding.appBarSong, binding.recyclerSongParts, liftMode);
 
     binding.fabSong.getViewTreeObserver().addOnGlobalLayoutListener(
         new ViewTreeObserver.OnGlobalLayoutListener() {

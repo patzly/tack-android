@@ -52,6 +52,7 @@ public class ScrollBehavior {
   private int liftMode = LIFT_ON_SCROLL;
   private AppBarLayout appBarLayout;
   private ViewGroup scrollView;
+  private OnScrollChangedListener onScrollChangedListener;
 
   public void setUpScroll(
       @NonNull AppBarLayout appBarLayout,
@@ -119,6 +120,10 @@ public class ScrollBehavior {
     };
   }
 
+  public void setOnScrollChangedListener(OnScrollChangedListener listener) {
+    this.onScrollChangedListener = listener;
+  }
+
   private OnScrollListener getOnScrollListener() {
     return new OnScrollListener() {
       @Override
@@ -153,6 +158,9 @@ public class ScrollBehavior {
     if (liftMode == LIFT_ON_SCROLL) {
       appBarLayout.setLifted(false);
     }
+    if (onScrollChangedListener != null) {
+      onScrollChangedListener.onTopScroll();
+    }
     if (DEBUG) {
       Log.i(TAG, "onTopScroll: liftMode = " + liftMode);
     }
@@ -162,6 +170,9 @@ public class ScrollBehavior {
     currentState = STATE_SCROLLED_UP;
     if (liftMode != NEVER_LIFTED) {
       appBarLayout.setLifted(true);
+    }
+    if (onScrollChangedListener != null) {
+      onScrollChangedListener.onScrollUp();
     }
     if (DEBUG) {
       Log.i(TAG, "onScrollUp: UP");
@@ -179,6 +190,9 @@ public class ScrollBehavior {
       }
     } else if (DEBUG) {
       Log.e(TAG, "onScrollDown: scrollView is null");
+    }
+    if (onScrollChangedListener != null) {
+      onScrollChangedListener.onScrollDown();
     }
     if (DEBUG) {
       Log.i(TAG, "onScrollDown: DOWN");
@@ -251,5 +265,11 @@ public class ScrollBehavior {
           enabled ? View.OVER_SCROLL_IF_CONTENT_SCROLLS : View.OVER_SCROLL_NEVER
       );
     }
+  }
+
+  public interface OnScrollChangedListener {
+    void onScrollUp();
+    void onScrollDown();
+    void onTopScroll();
   }
 }
