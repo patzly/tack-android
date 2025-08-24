@@ -272,7 +272,6 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">言語</string>
-  <string name="settings_language_info">Transifex の有志翻訳者のみなさまに心から感謝します/n Tack をあなたの言語で利用できるようにするための協力方法については Tack の GitHub をご覧ください。</string>
   <string name="settings_language_system">システム準拠</string>
   <string name="settings_language_system_description">翻訳が存在しない場合は英語</string>
 
