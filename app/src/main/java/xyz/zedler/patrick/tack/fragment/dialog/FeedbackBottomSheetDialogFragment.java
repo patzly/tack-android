@@ -64,11 +64,6 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
 
     activity = (MainActivity) requireActivity();
 
-    binding.linearFeedbackRate.setBackground(ViewUtil.getRippleBgListItemSurface(activity));
-    binding.linearFeedbackIssue.setBackground(ViewUtil.getRippleBgListItemSurface(activity));
-    binding.linearFeedbackEmail.setBackground(ViewUtil.getRippleBgListItemSurface(activity));
-    binding.linearFeedbackRecommend.setBackground(ViewUtil.getRippleBgListItemSurface(activity));
-
     ViewUtil.setOnClickListeners(
         this,
         binding.linearFeedbackRate,
@@ -85,6 +80,11 @@ public class FeedbackBottomSheetDialogFragment extends BaseBottomSheetDialogFrag
     if (getSharedPrefs().getInt(PREF.FEEDBACK_POP_UP_COUNT, 1) != 0) {
       getSharedPrefs().edit().putInt(PREF.FEEDBACK_POP_UP_COUNT, 0).apply();
     }
+  }
+
+  @Override
+  public int getBackgroundColor() {
+    return ResUtil.getColor(activity, R.attr.colorSurfaceContainer);
   }
 
   @Override

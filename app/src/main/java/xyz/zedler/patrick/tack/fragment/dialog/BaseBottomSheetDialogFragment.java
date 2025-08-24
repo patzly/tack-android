@@ -52,7 +52,6 @@ public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragme
   private View decorView;
   private ViewUtil viewUtil;
   private boolean lightNavBar;
-  private int backgroundColor;
 
   @Override
   public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -81,8 +80,7 @@ public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragme
             if (container == null || sheet == null) {
               return;
             }
-            backgroundColor = ResUtil.getColor(activity, R.attr.colorSurfaceContainerLow);
-            PaintDrawable background = new PaintDrawable(backgroundColor);
+            PaintDrawable background = new PaintDrawable(getBackgroundColor());
             int radius = UiUtil.dpToPx(requireContext(), 28);
             setCornerRadius(background, radius);
             sheet.setBackground(background);
@@ -156,6 +154,10 @@ public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragme
     return dialog;
   }
 
+  public int getBackgroundColor() {
+    return ResUtil.getColor(activity, R.attr.colorSurfaceContainerLow);
+  }
+
   private void updateCornerRadii(
       View bottomSheet, int insetTop, boolean isFullWidth, int radius, PaintDrawable background
   ) {
@@ -176,7 +178,7 @@ public class BaseBottomSheetDialogFragment extends CustomBottomSheetDialogFragme
         UiUtil.isOrientationPortrait(requireContext()) || insetBottom > 0;
     boolean isDarkModeActive = UiUtil.isDarkModeActive(requireContext());
 
-    int colorScrim = ColorUtils.setAlphaComponent(backgroundColor, (int) (0.7f * 255));
+    int colorScrim = ColorUtils.setAlphaComponent(getBackgroundColor(), (int) (0.7f * 255));
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) { // 29
       window.setStatusBarColor(Color.TRANSPARENT);
