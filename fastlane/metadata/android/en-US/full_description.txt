@@ -1,15 +1,34 @@
-<p>Tack is a modern metronome app for Android with a beautifully designed interface that has all the features you need for practicing a music piece accurate to the beat.</p>
+<p><b>🎵 A Metronome You’ll Actually Love Using</b></p>
+<p>
+  Tack is more than just a metronome — it’s a sleek, highly customizable rhythm companion
+  built for musicians who care about precision <i>and</i> aesthetics.
+  Whether you’re practicing alone or performing live, Tack helps you stay in perfect time without distractions.
+</p>
 
-<p><b>Features:</b></p><ul>
-   <li>Beautiful beat visualization with subdivisions and changeable emphasizes</li>
-   <li>BPM bookmarks as app shortcuts</li>
-   <li>Options for count in, incremental tempo change, song duration and swing</li>
-   <li>Settings for flash screen, volume boost, audio latency correction and elapsed time</li>
-   <li>Dynamic color and dynamic contrast support</li>
-   <li>Large screen support</li>
-   <li>No ads or analytics</li>
+<p><b>📱 On Your Phone — Powerful, Elegant, Thoughtful</b></p>
+<ul>
+  <li>Beautiful beat visualization with changeable emphasizes and subdivisions</li>
+  <li>Song library for saving and organizing metronome configurations</li>
+  <li>Options for count-in, duration, incremental tempo change, muted beats and swing</li>
+  <li>Settings for flash screen, volume, audio latency correction and elapsed time</li>
+  <li>Support for dynamic color, dynamic contrast and large screens</li>
+  <li>100% ad-free – no analytics, no interruptions</li>
 </ul>
 
-<p><b>Contribution:</b></p>
-<p>If you run into a bug or miss a feature, please open an issue in the project's <a href="https://github.com/patzly/tack-android/">GitHub repository</a>.
-You can also help translate this project at <a href="https://app.transifex.com/patzly/tack-android">Transifex</a>, if your language is incomplete, contains typos or is not available yet. Thanks for your contributions!</p>
+<p><b>⌚️ On Your Wrist — Best-in-Class for Wear OS</b></p>
+<ul>
+  <li>Quick tempo changes with intuitive picker and a separate tap screen</li>
+  <li>Advanced beat customization with changeable emphasizes and subdivisions</li>
+  <li>Bookmarks for tempo, beats and subdivisions</li>
+  <li>Settings for flash screen, volume and audio latency correction</li>
+</ul>
+
+<p><b>🌍 Built with Musicians, for Musicians</b></p>
+<p>
+  Tack is open-source and community-driven. Found a bug or missing a feature?
+  You’re welcome to contribute or report issues here:
+  <a href="https://github.com/patzly/tack-android">github.com/patzly/tack-android</a><br>
+  Want to help translate Tack into your language?
+  Join this project on Transifex:
+  <a href="https://app.transifex.com/patzly/tack-android">app.transifex.com/patzly/tack-android</a>
+</p>
