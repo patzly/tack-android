@@ -28,12 +28,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.os.LocaleListCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.recyclerview.adapter.LanguageAdapter;
 import xyz.zedler.patrick.tack.databinding.FragmentBottomsheetLanguagesBinding;
 import xyz.zedler.patrick.tack.model.Language;
 import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
+import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 
 public class LanguagesBottomSheetDialogFragment extends BaseBottomSheetDialogFragment
@@ -42,14 +44,14 @@ public class LanguagesBottomSheetDialogFragment extends BaseBottomSheetDialogFra
   private static final String TAG = "LanguagesBottomSheet";
 
   private FragmentBottomsheetLanguagesBinding binding;
+  private MainActivity activity;
 
   @Override
-  public View onCreateView(@NonNull LayoutInflater inflater,
-      ViewGroup container,
-      Bundle savedInstanceState) {
+  public View onCreateView(
+      @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState
+  ) {
     binding = FragmentBottomsheetLanguagesBinding.inflate(inflater, container, false);
-
-    MainActivity activity = (MainActivity) requireActivity();
+    activity = (MainActivity) requireActivity();
 
     LinearLayoutManager layoutManager = new WrapperLinearLayoutManager(
         activity, LinearLayoutManager.VERTICAL, false
@@ -73,6 +75,11 @@ public class LanguagesBottomSheetDialogFragment extends BaseBottomSheetDialogFra
   }
 
   @Override
+  public int getBackgroundColor() {
+    return ResUtil.getColor(activity, R.attr.colorSurfaceContainer);
+  }
+
+  @Override
   public void onItemRowClicked(@Nullable Language language) {
     String code = language != null ? language.getCode() : null;
     LocaleListCompat previous = AppCompatDelegate.getApplicationLocales();
@@ -87,7 +94,7 @@ public class LanguagesBottomSheetDialogFragment extends BaseBottomSheetDialogFra
   @Override
   public void applyBottomInset(int bottom) {
     binding.recyclerLanguages.setPadding(
-        0, UiUtil.dpToPx(requireContext(), 8),
+        0, UiUtil.dpToPx(requireContext(), 16),
         0, UiUtil.dpToPx(requireContext(), 8) + bottom
     );
   }

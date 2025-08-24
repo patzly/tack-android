@@ -34,7 +34,6 @@ import xyz.zedler.patrick.tack.databinding.RowLanguageBinding;
 import xyz.zedler.patrick.tack.model.Language;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class LanguageAdapter extends Adapter<ViewHolder> {
 
@@ -107,22 +106,44 @@ public class LanguageAdapter extends Adapter<ViewHolder> {
 
   private void setSelected(LanguageViewHolder holder, boolean selected) {
     Context context = holder.binding.getRoot().getContext();
-    int colorSelected = ResUtil.getColor(context, R.attr.colorOnSecondaryContainer);
-    holder.binding.imageLanguageSelected.setColorFilter(colorSelected);
-    holder.binding.imageLanguageSelected.setVisibility(selected ? View.VISIBLE : View.INVISIBLE);
-    if (selected) {
-      holder.binding.linearLanguageContainer.setBackground(ViewUtil.getBgListItemSelected(context));
+    int adapterPosition = holder.getBindingAdapterPosition();
+
+    if (getItemCount() == 1) {
+      holder.binding.linearLanguageContainer.setBackgroundResource(
+          selected
+              ? R.drawable.ripple_list_item_bg_secondary_segmented_single
+              : R.drawable.ripple_list_item_bg_segmented_single
+      );
+    } else if (adapterPosition == 0) {
+      holder.binding.linearLanguageContainer.setBackgroundResource(
+          selected
+              ? R.drawable.ripple_list_item_bg_secondary_segmented_first
+              : R.drawable.ripple_list_item_bg_segmented_first
+      );
+    } else if (adapterPosition == getItemCount() - 1) {
+      holder.binding.linearLanguageContainer.setBackgroundResource(
+          selected
+              ? R.drawable.ripple_list_item_bg_secondary_segmented_last
+              : R.drawable.ripple_list_item_bg_segmented_last
+      );
     } else {
-      holder.binding.linearLanguageContainer.setBackground(
-          ViewUtil.getRippleBgListItemSurface(context)
+      holder.binding.linearLanguageContainer.setBackgroundResource(
+          selected
+              ? R.drawable.ripple_list_item_bg_secondary_segmented_middle
+              : R.drawable.ripple_list_item_bg_segmented_middle
       );
     }
+
+    int colorFgSelected = ResUtil.getColor(context, R.attr.colorOnSecondaryContainer);
     holder.binding.textLanguageName.setTextColor(
-        selected ? colorSelected : ResUtil.getColor(context, R.attr.colorOnSurface)
+        selected ? colorFgSelected : ResUtil.getColor(context, R.attr.colorOnSurface)
     );
     holder.binding.textLanguageTranslators.setTextColor(
-        selected ? colorSelected : ResUtil.getColor(context, R.attr.colorOnSurfaceVariant)
+        selected ? colorFgSelected : ResUtil.getColor(context, R.attr.colorOnSurfaceVariant)
     );
+
+    holder.binding.imageLanguageSelected.setVisibility(selected ? View.VISIBLE : View.GONE);
+
     holder.binding.linearLanguageContainer.setOnClickListener(
         view -> listener.onItemRowClicked(null)
     );

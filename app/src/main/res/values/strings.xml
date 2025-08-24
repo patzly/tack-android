@@ -307,7 +307,7 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">Language</string>
-  <string name="settings_language_info">Many thanks to all the volunteer translators at Transifex!\nPlease visit Tack on GitHub to learn how you can help make Tack available for your language.</string>
+  <string name="settings_language_info">Many thanks to all the volunteer translators on Transifex! You can find a link to the project on the About page.</string>
   <string name="settings_language_system">Follow system</string>
   <string name="settings_language_system_description">English if translation is not available</string>
 
