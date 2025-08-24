@@ -1,0 +1,17 @@
+<p><i>Tack</i> ist eine moderne Metronom-App für Android mit einer schön gestalteten Oberfläche, die über alle Funktionen verfügt, die Sie zum taktgenauen Üben eines Musikstücks benötigen. Es gibt auch eine separate Wear OS-App mit vielen Funktionen direkt am Handgelenk.</p>
+<p><br><b>Funktionen der mobilen App:</b></p>
+<ul>
+<li>Schöne Beat-Visualisierung mit Unterteilungen und veränderbaren Hervorhebungen</li>
+<li>BPM-Lesezeichen als App-Verknüpfungen</li>
+<li>Optionen für Einzähler, schrittweise Tempoänderung, Songdauer und Swing</li>
+<li>Einstellungen für Flash-Bildschirm, Lautstärkeanhebung, Audio-Latenzkorrektur und verstrichene Zeit</li>
+<li>Unterstützung für dynamische Farben und dynamischen Kontrast</li>
+<li>Unterstützung für große Bildschirme</li>
+<li>Keine Werbung oder Analysen</li>
+</ul>
+<p><b>Funktionen der Wear OS-App:</b></p>
+<ul>
+<li>Praktischer Tempowähler und Tempotipp</li>
+<li>Erweiterte Beat-Optionen mit veränderbaren Hervorhebungen und Unterteilungen</li>
+<li>Einstellungen für Flash-Bildschirm, Lautstärkeerhöhung und Audio-Latenzkorrektur</li>
+</ul>
