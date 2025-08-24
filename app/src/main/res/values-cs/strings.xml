@@ -315,7 +315,6 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">Jazyk</string>
-  <string name="settings_language_info">Mockrát děkuji všem překladatelům na Transifexu!\nPokud chcete pomoci s přeložením aplikace do vašeho jazyka, navštivte prosím GitHub aplikace Tack.</string>
   <string name="settings_language_system">Podle systému</string>
   <string name="settings_language_system_description">Angličtina, pokud není dostupný překlad</string>
 
