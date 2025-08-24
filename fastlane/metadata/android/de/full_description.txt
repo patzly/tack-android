@@ -1,34 +1,20 @@
 <p><b>🎵 Ein Metronom, das du lieben wirst</b></p>
-<p>
-  Tack ist mehr als nur ein Metronom – es ist dein eleganter, hochgradig anpassbarer Rhythmus-Begleiter,
-  entwickelt für Musikerinnen und Musiker, die Wert auf Präzision <i>und</i> Ästhetik legen.
-  Egal ob du allein übst oder live auftrittst: Tack hält dich zuverlässig im Takt, ganz ohne Ablenkungen.
-</p>
-
+<p>Tack ist mehr als nur ein Metronom — es ist dein eleganter, hochgradig anpassbarer Rhythmus-Begleiter, entwickelt für Musikerinnen und Musiker, die Wert auf Präzision <i>und</i> Ästhetik legen. Egal ob du allein übst oder live auftrittst: Tack hält dich zuverlässig im Takt, ganz ohne Ablenkungen.</p>
 <p><b>📱 Auf deinem Smartphone — leistungsstark, elegant, durchdacht</b></p>
 <ul>
-  <li>Schöne Schlag-Visualisierung mit anpassbaren Betonungen und Unterteilungen</li>
-  <li>Werksammlung zum Speichern und Organisieren deiner Metronom-Konfigurationen</li>
-  <li>Optionen für Einzählen, Dauer, schrittweisen Tempowechsel, stumme geschaltete Schläge und Swing</li>
-  <li>Einstellungen für Bildschirmblitz, Lautstärke, Audiolatenz-Korrektur und verstrichene Zeit</li>
-  <li>Unterstützung für dynamische Farben, dynamischen Kontrast und große Bildschirme</li>
-  <li>100% werbefrei – keine Tracker, keine Unterbrechungen</li>
+<li>Schöne Schlag-Visualisierung mit anpassbaren Betonungen und Unterteilungen</li>
+<li>Werksammlung zum Speichern und Organisieren deiner Metronom-Konfigurationen</li>
+<li>Optionen für Einzählen, Dauer, schrittweisen Tempowechsel, stumme geschaltete Schläge und Swing</li>
+<li>Einstellungen für Bildschirmblitz, Lautstärke, Audiolatenz-Korrektur und verstrichene Zeit</li>
+<li>Unterstützung für dynamische Farben, dynamischen Kontrast und große Bildschirme</li>
+<li>100% werbefrei — keine Tracker, keine Unterbrechungen</li>
 </ul>
-
 <p><b>⌚️ An deinem Handgelenk — Spitzenklasse für Wear OS</b></p>
 <ul>
-  <li>Schnelle Tempowechsel mit intuitivem Wähler und separater Seite zum Tempo-Tippen</li>
-  <li>Erweiterte Schlag-Anpassung mit frei wählbaren Betonungen und Unterteilungen</li>
-  <li>Lesezeichen für Tempo, Schläge und Unterteilungen</li>
-  <li>Einstellungen für Bildschirmblitz, Lautstärke und Audiolatenz-Korrektur</li>
+<li>Schnelle Tempowechsel mit intuitivem Wähler und separater Seite zum Tempo-Tippen</li>
+<li>Erweiterte Schlag-Anpassung mit frei wählbaren Betonungen und Unterteilungen</li>
+<li>Lesezeichen für Tempo, Schläge und Unterteilungen</li>
+<li>Einstellungen für Bildschirmblitz, Lautstärke und Audiolatenz-Korrektur</li>
 </ul>
-
 <p><b>🌍 Für und mit Musikern und Musikerinnen entwickelt</b></p>
-<p>
-  Tack ist quelloffen und wird von der Community getragen.
-  Hast du einen Fehler gefunden oder fehlt dir eine Funktion?
-  Dann kannst du gerne zum Projekt beitragen oder ein Problem melden:
-  <a href="https://github.com/patzly/tack-android">github.com/patzly/tack-android</a><br>
-  Möchtest du Tack in deine Sprache übersetzen? Mach mit bei dem Projekt auf Transifex:
-  <a href="https://app.transifex.com/patzly/tack-android">app.transifex.com/patzly/tack-android</a>
-</p>
+<p>Tack ist quelloffen und wird von der Community getragen. Hast du einen Fehler gefunden oder fehlt dir eine Funktion? Dann kannst du gerne zum Projekt beitragen oder ein Problem melden: <a href="https://github.com/patzly/tack-android">github.com/patzly/tack-android</a><br>Möchtest du Tack in deine Sprache übersetzen? Mach mit bei dem Projekt auf Transifex:<a href="https://app.transifex.com/patzly/tack-android">app.transifex.com/patzly/tack-android</a></p>
