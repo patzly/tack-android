@@ -276,7 +276,6 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">Taal</string>
-  <string name="settings_language_info">Veel dank aan alle vrijwillige vertalers op Trasifex!\n Bezoek Tack op GitHub op te leren hoe je Tack beschikbaar maakt in jouw taal</string>
   <string name="settings_language_system">Systeem volgen</string>
   <string name="settings_language_system_description">Engels als vertaling niet beschikbaar is</string>
 
