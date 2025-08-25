@@ -185,35 +185,41 @@
           <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="56dp"
             android:layout_marginBottom="10dp"
             android:scrollbars="none"
             android:overScrollMode="ifContentScrolls">
 
-            <com.google.android.material.button.MaterialButtonToggleGroup
-              android:id="@+id/toggle_settings_theme"
+            <FrameLayout
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_marginEnd="16dp"
-              app:singleSelection="true"
-              app:selectionRequired="true">
+              android:paddingStart="56dp"
+              android:paddingEnd="16dp">
 
-              <Button
-                android:id="@+id/button_settings_theme_auto"
-                style="@style/Widget.Tack.Button"
-                android:text="@string/settings_theme_auto" />
+              <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle_settings_theme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="true">
 
-              <Button
-                android:id="@+id/button_settings_theme_light"
-                style="@style/Widget.Tack.Button"
-                android:text="@string/settings_theme_light" />
+                <Button
+                  android:id="@+id/button_settings_theme_auto"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_theme_auto" />
 
-              <Button
-                android:id="@+id/button_settings_theme_dark"
-                style="@style/Widget.Tack.Button"
-                android:text="@string/settings_theme_dark" />
+                <Button
+                  android:id="@+id/button_settings_theme_light"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_theme_light" />
 
-            </com.google.android.material.button.MaterialButtonToggleGroup>
+                <Button
+                  android:id="@+id/button_settings_theme_dark"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_theme_dark" />
+
+              </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            </FrameLayout>
 
           </HorizontalScrollView>
 
@@ -269,34 +275,40 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="10dp"
-            android:layout_marginStart="56dp"
             android:scrollbars="none"
             android:overScrollMode="ifContentScrolls">
 
-            <com.google.android.material.button.MaterialButtonToggleGroup
-              android:id="@+id/toggle_other_contrast"
+            <FrameLayout
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
-              android:layout_marginEnd="16dp"
-              app:singleSelection="true"
-              app:selectionRequired="true">
+              android:paddingStart="56dp"
+              android:paddingEnd="16dp">
 
-              <Button
-                android:id="@+id/button_other_contrast_standard"
-                style="@style/Widget.Tack.Button"
-                android:text="@string/settings_contrast_standard" />
+              <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle_settings_contrast"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="true">
 
-              <Button
-                android:id="@+id/button_other_contrast_medium"
-                style="@style/Widget.Tack.Button"
-                android:text="@string/settings_contrast_medium" />
+                <Button
+                  android:id="@+id/button_settings_contrast_standard"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_contrast_standard" />
 
-              <Button
-                android:id="@+id/button_other_contrast_high"
-                style="@style/Widget.Tack.Button"
-                android:text="@string/settings_contrast_high" />
+                <Button
+                  android:id="@+id/button_settings_contrast_medium"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_contrast_medium" />
 
-            </com.google.android.material.button.MaterialButtonToggleGroup>
+                <Button
+                  android:id="@+id/button_settings_contrast_high"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_contrast_high" />
+
+              </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            </FrameLayout>
 
           </HorizontalScrollView>
 
@@ -579,31 +591,79 @@
         </LinearLayout>
 
         <LinearLayout
-          android:id="@+id/linear_settings_keep_awake"
-          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
           android:background="@drawable/ripple_list_item_bg_segmented_last">
 
-          <ImageView
-            android:id="@+id/image_settings_keep_awake"
-            style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_rounded_preview_anim"
-            tools:ignore="ContentDescription" />
+          <LinearLayout
+            style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
+            android:paddingTop="14dp"
+            android:paddingBottom="0dp"
+            android:minHeight="0dp">
 
-          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+            <ImageView
+              android:id="@+id/image_settings_keep_awake"
+              style="@style/Widget.Tack.ImageView.ListItem.Icon"
+              android:src="@drawable/ic_rounded_preview_anim"
+              android:layout_gravity="center"
+              tools:ignore="ContentDescription" />
 
-            <TextView
-              style="@style/Widget.Tack.TextView.ListItem.Title"
-              android:text="@string/settings_keep_awake" />
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
 
-            <TextView
-              style="@style/Widget.Tack.TextView.ListItem.Description"
-              android:text="@string/settings_keep_awake_description" />
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Title"
+                android:text="@string/settings_keep_awake" />
+
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Description"
+                android:text="@string/settings_keep_awake_description" />
+
+            </LinearLayout>
 
           </LinearLayout>
 
-          <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/switch_settings_keep_awake"
-            style="@style/Widget.Tack.Switch" />
+          <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="10dp"
+            android:scrollbars="none"
+            android:overScrollMode="ifContentScrolls">
+
+            <FrameLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingStart="56dp"
+              android:paddingEnd="16dp">
+
+              <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle_settings_keep_awake"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <Button
+                  android:id="@+id/button_settings_keep_awake_always"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_keep_awake_always" />
+
+                <Button
+                  android:id="@+id/button_settings_keep_awake_while_playing"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_keep_awake_while_playing" />
+
+                <Button
+                  android:id="@+id/button_settings_keep_awake_never"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_keep_awake_never" />
+
+              </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            </FrameLayout>
+
+          </HorizontalScrollView>
 
         </LinearLayout>
 

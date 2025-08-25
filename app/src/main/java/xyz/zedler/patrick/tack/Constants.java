@@ -64,7 +64,7 @@ public final class Constants {
     public final static String BIG_TIME_TEXT = "big_time_text";
     public final static String PERM_NOTIFICATION = "permanent_notification";
     public final static String FLASH_SCREEN = "flash_screen";
-    public final static String KEEP_AWAKE = "keep_awake";
+    public final static String KEEP_AWAKE = "keep_screen_awake";
     public final static String SOUND = "sound";
     public final static String LATENCY = "latency_offset";
     public final static String IGNORE_FOCUS = "ignore_focus";
@@ -112,7 +112,7 @@ public final class Constants {
     public final static boolean BIG_TIME_TEXT = false;
     public final static boolean PERM_NOTIFICATION = false;
     public final static boolean FLASH_SCREEN = false;
-    public final static boolean KEEP_AWAKE = true;
+    public final static String KEEP_AWAKE = Constants.KEEP_AWAKE.WHILE_PLAYING;
     public final static String SOUND = Constants.SOUND.SINE;
     public final static long LATENCY = 100;
     public final static boolean IGNORE_FOCUS = false;
@@ -155,6 +155,13 @@ public final class Constants {
     public final static String ALL = "all";
     public final static String SOUND = "sound";
     public final static String VIBRATION = "vibration";
+  }
+
+  public final static class KEEP_AWAKE {
+
+    public final static String ALWAYS = "always";
+    public final static String WHILE_PLAYING = "while_playing";
+    public final static String NEVER = "never";
   }
 
   public final static class TICK_TYPE {

@@ -381,7 +381,10 @@
   <string name="settings_flash_screen_description">On every beat</string>
 
   <string name="settings_keep_awake">Keep screen awake</string>
-  <string name="settings_keep_awake_description">While metronome is playing</string>
+  <string name="settings_keep_awake_description">May use more battery</string>
+  <string name="settings_keep_awake_always">Always</string>
+  <string name="settings_keep_awake_while_playing">While playing</string>
+  <string name="settings_keep_awake_never">Never</string>
 
   <string name="settings_perm_notification">Permanent notification</string>
   <string name="settings_perm_notification_description">Always access to play/stop control</string>

@@ -73,13 +73,13 @@ public class MetronomeUtil {
   private Handler tickHandler, latencyHandler;
   private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
   private SongWithParts currentSongWithParts;
-  private String beatMode, currentSongId, timerStringBars;
+  private String beatMode, currentSongId, timerStringBars, keepAwake;
   private int currentPartIndex, muteCountDown, songsOrder;
   private long tickIndex, latency, countInStartTime, timerStartTime;
   private long elapsedStartTime, elapsedTime, elapsedPrevious;
   private float timerProgress;
   private boolean playing, tempPlaying, isCountingIn, isMuted;
-  private boolean showElapsed, resetTimerOnStop, flashScreen, keepAwake;
+  private boolean showElapsed, resetTimerOnStop, flashScreen;
   private boolean neverStartedWithGain = true;
   private boolean ignoreTimerCallbacksTemp = false;
 
@@ -112,7 +112,7 @@ public class MetronomeUtil {
     showElapsed = sharedPrefs.getBoolean(PREF.SHOW_ELAPSED, DEF.SHOW_ELAPSED);
     resetTimerOnStop = sharedPrefs.getBoolean(PREF.RESET_TIMER_ON_STOP, DEF.RESET_TIMER_ON_STOP);
     flashScreen = sharedPrefs.getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
-    keepAwake = sharedPrefs.getBoolean(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
+    keepAwake = sharedPrefs.getString(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
     songsOrder = sharedPrefs.getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER);
 
     setSound(sharedPrefs.getString(PREF.SOUND, DEF.SOUND));
@@ -775,12 +775,12 @@ public class MetronomeUtil {
     return flashScreen;
   }
 
-  public void setKeepAwake(boolean keepAwake) {
+  public void setKeepAwake(String keepAwake) {
     this.keepAwake = keepAwake;
-    sharedPrefs.edit().putBoolean(PREF.KEEP_AWAKE, keepAwake).apply();
+    sharedPrefs.edit().putString(PREF.KEEP_AWAKE, keepAwake).apply();
   }
 
-  public boolean getKeepAwake() {
+  public String getKeepAwake() {
     return keepAwake;
   }
 

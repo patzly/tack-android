@@ -64,6 +64,7 @@ import java.util.Map;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.BEAT_MODE;
 import xyz.zedler.patrick.tack.Constants.DEF;
+import xyz.zedler.patrick.tack.Constants.KEEP_AWAKE;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.Constants.UNIT;
@@ -756,8 +757,10 @@ public class MainFragment extends BaseFragment
     });
     dialogUtilBeatMode.showIfWasShown(savedState);
 
-    boolean keepAwake = getMetronomeUtil().getKeepAwake() && getMetronomeUtil().isPlaying();
-    UiUtil.keepScreenAwake(activity, keepAwake);
+    String keepAwake = getMetronomeUtil().getKeepAwake();
+    boolean keepAwakeNow = keepAwake.equals(KEEP_AWAKE.ALWAYS)
+        || (keepAwake.equals(KEEP_AWAKE.WHILE_PLAYING) && getMetronomeUtil().isPlaying());
+    UiUtil.keepScreenAwake(activity, keepAwakeNow);
   }
 
   @Override
@@ -780,7 +783,8 @@ public class MainFragment extends BaseFragment
           updateTempoPickerAndLogo(false, true);
         }
       }
-      UiUtil.keepScreenAwake(activity, getMetronomeUtil().getKeepAwake());
+      String keepAwake = getMetronomeUtil().getKeepAwake();
+      UiUtil.keepScreenAwake(activity, !keepAwake.equals(KEEP_AWAKE.NEVER));
     });
   }
 
@@ -806,7 +810,8 @@ public class MainFragment extends BaseFragment
       }
       stopTimerProgressTransition();
       stopTimerProgress();
-      UiUtil.keepScreenAwake(activity, false);
+      String keepAwake = getMetronomeUtil().getKeepAwake();
+      UiUtil.keepScreenAwake(activity, keepAwake.equals(KEEP_AWAKE.ALWAYS));
     });
   }
 

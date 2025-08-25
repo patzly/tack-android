@@ -35,6 +35,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.view.ContextThemeWrapper;
+import com.google.android.material.button.MaterialButtonToggleGroup;
+import com.google.android.material.button.MaterialButtonToggleGroup.OnButtonCheckedListener;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.divider.MaterialDivider;
 import java.util.ArrayList;
@@ -43,6 +45,7 @@ import java.util.Map;
 import xyz.zedler.patrick.tack.Constants.CONTRAST;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
+import xyz.zedler.patrick.tack.Constants.KEEP_AWAKE;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SOUND;
 import xyz.zedler.patrick.tack.Constants.THEME;
@@ -52,19 +55,19 @@ import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentSettingsBinding;
 import xyz.zedler.patrick.tack.service.MetronomeService;
-import xyz.zedler.patrick.tack.util.dialog.BackupDialogUtil;
 import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.dialog.GainDialogUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
-import xyz.zedler.patrick.tack.util.dialog.LatencyDialogUtil;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 import xyz.zedler.patrick.tack.util.ShortcutUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
+import xyz.zedler.patrick.tack.util.dialog.BackupDialogUtil;
+import xyz.zedler.patrick.tack.util.dialog.GainDialogUtil;
+import xyz.zedler.patrick.tack.util.dialog.LatencyDialogUtil;
 import xyz.zedler.patrick.tack.view.ThemeSelectionCardView;
 
 public class SettingsFragment extends BaseFragment
-    implements OnClickListener, OnCheckedChangeListener {
+    implements OnClickListener, OnCheckedChangeListener, OnButtonCheckedListener {
 
   private static final String TAG = SettingsFragment.class.getSimpleName();
 
@@ -175,24 +178,24 @@ public class SettingsFragment extends BaseFragment
     int idContrast;
     switch (getSharedPrefs().getString(PREF.UI_CONTRAST, DEF.UI_CONTRAST)) {
       case CONTRAST.MEDIUM:
-        idContrast = R.id.button_other_contrast_medium;
+        idContrast = R.id.button_settings_contrast_medium;
         break;
       case CONTRAST.HIGH:
-        idContrast = R.id.button_other_contrast_high;
+        idContrast = R.id.button_settings_contrast_high;
         break;
       default:
-        idContrast = R.id.button_other_contrast_standard;
+        idContrast = R.id.button_settings_contrast_standard;
         break;
     }
-    binding.toggleOtherContrast.check(idContrast);
-    binding.toggleOtherContrast.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
+    binding.toggleSettingsContrast.check(idContrast);
+    binding.toggleSettingsContrast.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
       if (!isChecked) {
         return;
       }
       String pref;
-      if (checkedId == R.id.button_other_contrast_medium) {
+      if (checkedId == R.id.button_settings_contrast_medium) {
         pref = CONTRAST.MEDIUM;
-      } else if (checkedId == R.id.button_other_contrast_high) {
+      } else if (checkedId == R.id.button_settings_contrast_high) {
         pref = CONTRAST.HIGH;
       } else {
         pref = CONTRAST.STANDARD;
@@ -210,7 +213,7 @@ public class SettingsFragment extends BaseFragment
     } else {
       isDynamic = currentTheme.equals(THEME.DYNAMIC);
     }
-    binding.toggleOtherContrast.setEnabled(!isDynamic);
+    binding.toggleSettingsContrast.setEnabled(!isDynamic);
     binding.textSettingsContrastDynamic.setVisibility(isDynamic ? View.VISIBLE : View.GONE);
     binding.textSettingsContrastDynamic.setText(
         VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE
@@ -302,7 +305,6 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsResetTimer,
         binding.linearSettingsBigTimeText,
         binding.linearSettingsFlashScreen,
-        binding.linearSettingsKeepAwake,
         binding.linearSettingsBigLogo
     );
 
@@ -318,7 +320,6 @@ public class SettingsFragment extends BaseFragment
         binding.switchSettingsResetTimer,
         binding.switchSettingsBigTimeText,
         binding.switchSettingsFlashScreen,
-        binding.switchSettingsKeepAwake,
         binding.switchSettingsBigLogo
     );
   }
@@ -396,10 +397,22 @@ public class SettingsFragment extends BaseFragment
     binding.switchSettingsFlashScreen.jumpDrawablesToCurrentState();
     binding.switchSettingsFlashScreen.setOnCheckedChangeListener(this);
 
-    binding.switchSettingsKeepAwake.setOnCheckedChangeListener(null);
-    binding.switchSettingsKeepAwake.setChecked(getMetronomeUtil().getKeepAwake());
-    binding.switchSettingsKeepAwake.jumpDrawablesToCurrentState();
-    binding.switchSettingsKeepAwake.setOnCheckedChangeListener(this);
+    binding.toggleSettingsKeepAwake.removeOnButtonCheckedListener(this);
+    int idKeepAwake;
+    switch (getSharedPrefs().getString(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE)) {
+      case KEEP_AWAKE.WHILE_PLAYING:
+        idKeepAwake = R.id.button_settings_keep_awake_while_playing;
+        break;
+      case KEEP_AWAKE.NEVER:
+        idKeepAwake = R.id.button_settings_keep_awake_never;
+        break;
+      default:
+        idKeepAwake = R.id.button_settings_keep_awake_always;
+        break;
+    }
+    binding.toggleSettingsKeepAwake.check(idKeepAwake);
+    binding.toggleSettingsKeepAwake.jumpDrawablesToCurrentState();
+    binding.toggleSettingsKeepAwake.addOnButtonCheckedListener(this);
 
     MetronomeService service = activity.getMetronomeService();
     boolean permNotification = service != null && service.getPermNotification();
@@ -452,8 +465,6 @@ public class SettingsFragment extends BaseFragment
       binding.switchSettingsBigTimeText.toggle();
     } else if (id == R.id.linear_settings_flash_screen) {
       binding.switchSettingsFlashScreen.toggle();
-    } else if (id == R.id.linear_settings_keep_awake) {
-      binding.switchSettingsKeepAwake.toggle();
     } else if (id == R.id.linear_settings_big_logo) {
       binding.switchSettingsBigLogo.toggle();
     }
@@ -511,16 +522,32 @@ public class SettingsFragment extends BaseFragment
       ViewUtil.startIcon(binding.imageSettingsFlashScreen);
       performHapticClick();
       getMetronomeUtil().setFlashScreen(isChecked);
-    } else if (id == R.id.switch_settings_keep_awake) {
-      ViewUtil.startIcon(binding.imageSettingsKeepAwake);
-      performHapticClick();
-      getMetronomeUtil().setKeepAwake(isChecked);
-      UiUtil.keepScreenAwake(activity, getMetronomeUtil().isPlaying() && isChecked);
     } else if (id == R.id.switch_settings_big_logo) {
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsBigLogo);
       getSharedPrefs().edit().putBoolean(PREF.BIG_LOGO, isChecked).apply();
     }
+  }
+
+  @Override
+  public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
+    if (!isChecked) {
+      return;
+    }
+    String keepAwake;
+    if (checkedId == R.id.button_settings_keep_awake_while_playing) {
+      keepAwake = KEEP_AWAKE.WHILE_PLAYING;
+    } else if (checkedId == R.id.button_settings_keep_awake_never) {
+      keepAwake = KEEP_AWAKE.NEVER;
+    } else {
+      keepAwake = KEEP_AWAKE.ALWAYS;
+    }
+    getMetronomeUtil().setKeepAwake(keepAwake);
+    performHapticClick();
+    ViewUtil.startIcon(binding.imageSettingsKeepAwake);
+    boolean keepAwakeNow = keepAwake.equals(KEEP_AWAKE.ALWAYS)
+        || (keepAwake.equals(KEEP_AWAKE.WHILE_PLAYING) && getMetronomeUtil().isPlaying());
+    UiUtil.keepScreenAwake(activity, keepAwakeNow);
   }
 
   public void updateGainDescription(int gain) {

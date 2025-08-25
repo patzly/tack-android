@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import xyz.zedler.patrick.tack.Constants.BEAT_MODE;
+import xyz.zedler.patrick.tack.Constants.KEEP_AWAKE;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.database.SongDatabase;
@@ -55,6 +56,7 @@ public class PrefsUtil {
   public PrefsUtil checkForMigrations() {
     migrateBookmarks();
     migrateBeatModeVibrateAndAlwaysVibrate();
+    migrateKeepAwake();
     return this;
   }
 
@@ -141,9 +143,26 @@ public class PrefsUtil {
         } else {
           editor.putString(PREF.BEAT_MODE, BEAT_MODE.SOUND);
         }
+      } catch (ClassCastException ignored) {
       } finally {
         editor.remove(beatModeVibrateKeyOld);
         editor.remove(alwaysVibrateKeyOld);
+      }
+      editor.apply();
+    }
+  }
+
+  private void migrateKeepAwake() {
+    String keepAwakeKeyOld = "keep_awake"; // now keep_screen_awake
+    boolean keepAwakeDefault = true;
+    if (sharedPrefs.contains(keepAwakeKeyOld)) {
+      SharedPreferences.Editor editor = sharedPrefs.edit();
+      try {
+        boolean current = sharedPrefs.getBoolean(keepAwakeKeyOld, keepAwakeDefault);
+        editor.putString(PREF.KEEP_AWAKE, current ? KEEP_AWAKE.WHILE_PLAYING : KEEP_AWAKE.NEVER);
+      } catch (ClassCastException ignored) {
+      } finally {
+        editor.remove(keepAwakeKeyOld);
       }
       editor.apply();
     }
