@@ -342,8 +342,6 @@
   <string name="settings_flash_screen_description">拍に合せて明滅します</string>
 
   <string name="settings_keep_awake">常に画面点灯</string>
-  <string name="settings_keep_awake_description">再生中は常に画面を点灯します</string>
-
   <string name="settings_perm_notification">常に通知表示</string>
   <string name="settings_perm_notification_description">いつでも再生/停止操作を実行できます</string>
 
