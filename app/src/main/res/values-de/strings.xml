@@ -368,6 +368,7 @@
   <string name="settings_flash_screen_description">Bei jedem Schlag</string>
 
   <string name="settings_keep_awake">Bildschirm wach halten</string>
+  <string name="settings_keep_awake_description">Kann zu erhöhtem Stromverbrauch führen</string>
   <string name="settings_perm_notification">Dauerhafte Benachrichtigung</string>
   <string name="settings_perm_notification_description">Jederzeit Zugriff auf Starten/Beenden</string>
 
