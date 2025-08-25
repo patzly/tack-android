@@ -383,8 +383,6 @@
   <string name="settings_flash_screen_description">Při každé době</string>
 
   <string name="settings_keep_awake">Nezhasínat obrazovku</string>
-  <string name="settings_keep_awake_description">Když metronom hraje</string>
-
   <string name="settings_perm_notification">Trvalé oznámení</string>
   <string name="settings_perm_notification_description">Okamžitý přístup k ovládání přehrání/zastavení</string>
 
