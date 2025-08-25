@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ This file is part of Tack Android.
   ~
   ~ Tack Android is free software: you can redistribute it and/or modify
@@ -20,21 +19,17 @@
 
 <resources>
 
-  <dimen name="bpm_picker_size">220dp</dimen>
-  <dimen name="bpm_text_size">64dp</dimen>
-  <dimen name="label_text_size">27dp</dimen>
+  <!-- Medium FAB on tablets, overrides landscape style -->
+  <style
+    name="Widget.Tack.ExtendedFloatingActionButton.Primary"
+    parent="Widget.Material3.ExtendedFloatingActionButton.Medium">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.Material3.ExtendedFloatingActionButton.Primary</item>
+  </style>
 
-  <dimen name="tempo_tap_size">220dp</dimen>
-
-  <dimen name="controls_bottom_margin_bottom">56dp</dimen>
-
-  <dimen name="placeholder_illustration_size">200dp</dimen>
-
-  <dimen name="widget_songs_min_width">180dp</dimen>
-  <dimen name="widget_songs_min_height">184dp</dimen>
-  <dimen name="widget_songs_min_resize_width">180dp</dimen>
-  <dimen name="widget_songs_min_resize_height">184dp</dimen>
-  <dimen name="widget_songs_max_resize_width">488dp</dimen>
-  <dimen name="widget_songs_max_resize_height">672dp</dimen>
+  <style
+    name="Widget.Tack.ExtendedFloatingActionButton.Tertiary"
+    parent="Widget.Material3.ExtendedFloatingActionButton.Medium">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.Material3.ExtendedFloatingActionButton.Tertiary</item>
+  </style>
 
 </resources>

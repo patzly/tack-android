@@ -101,14 +101,14 @@
           android:paddingStart="16dp"
           android:paddingEnd="16dp"
           android:paddingTop="16dp"
-          android:paddingBottom="8dp"
+          android:paddingBottom="12dp"
           android:background="@drawable/ripple_list_item_bg_segmented_first">
 
           <TextView
             style="@style/Widget.Tack.TextView.Paragraph"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="8dp"
             android:text="@string/msg_report_crash" />
 
           <com.google.android.material.button.MaterialButtonGroup
@@ -120,12 +120,12 @@
 
             <com.google.android.material.button.MaterialButton
               android:id="@+id/button_log_copy"
-              style="@style/Widget.Tack.Button.TonalButton.Xsmall"
+              style="@style/Widget.Tack.Button.TonalButton"
               android:text="@string/action_copy_to_clipboard" />
 
             <com.google.android.material.button.MaterialButton
               android:id="@+id/button_log_feedback"
-              style="@style/Widget.Tack.Button.Xsmall"
+              style="@style/Widget.Tack.Button"
               android:layout_marginStart="8dp"
               android:text="@string/action_send_feedback" />
 

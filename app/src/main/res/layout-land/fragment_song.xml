@@ -209,7 +209,7 @@
 
       <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/fab_song"
-        style="@style/Widget.Tack.ExtendedFloatingActionButton.Tertiary.Small"
+        style="@style/Widget.Tack.ExtendedFloatingActionButton.Tertiary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/action_add_part"

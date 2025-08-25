@@ -138,9 +138,12 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       if (part != null) {
         setPart(part);
         update();
-        if (useDialog) {
-          dialogUtil.showIfWasShown(state);
-        }
+        dialogUtil.showIfWasShown(state);
+      }
+    } else {
+      update();
+      if (useDialog) {
+        dialogUtil.showIfWasShown(state);
       }
     }
   }

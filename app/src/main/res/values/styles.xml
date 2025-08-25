@@ -126,12 +126,6 @@
     <item name="fontFamily">@font/nunito_bold</item>
   </style>
 
-  <style
-    name="Widget.Tack.Button.Xsmall"
-    parent="Widget.Tack.Button">
-    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.Xsmall</item>
-  </style>
-
   <!-- Base style -->
   <style
     name="Base.Tack.Button.OutlinedButton"
@@ -181,12 +175,6 @@
     parent="Base.Tack.Button.TonalButton">
     <item name="android:fontFamily">@font/nunito_bold</item>
     <item name="fontFamily">@font/nunito_bold</item>
-  </style>
-
-  <style
-    name="Widget.Tack.Button.TonalButton.Xsmall"
-    parent="Widget.Tack.Button.TonalButton">
-    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.Xsmall</item>
   </style>
 
   <!-- Localized style, no empty base style needed -->
@@ -473,20 +461,17 @@
 
   <!-- ExtendedFloatingActionButton -->
 
+  <!-- Overridden in land and sw600dp for different sizes -->
   <style
     name="Widget.Tack.ExtendedFloatingActionButton.Primary"
     parent="Widget.Material3.ExtendedFloatingActionButton.Medium">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.Material3.ExtendedFloatingActionButton.Primary</item>
   </style>
 
+  <!-- Overridden in land and sw600dp for different sizes -->
   <style
     name="Widget.Tack.ExtendedFloatingActionButton.Tertiary"
     parent="Widget.Material3.ExtendedFloatingActionButton.Medium">
-    <item name="materialThemeOverlay">@style/ThemeOverlay.Material3.ExtendedFloatingActionButton.Tertiary</item>
-  </style>
-
-  <style
-    name="Widget.Tack.ExtendedFloatingActionButton.Tertiary.Small"
-    parent="Widget.Material3.ExtendedFloatingActionButton.Small">
     <item name="materialThemeOverlay">@style/ThemeOverlay.Material3.ExtendedFloatingActionButton.Tertiary</item>
   </style>
 

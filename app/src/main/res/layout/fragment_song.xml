@@ -88,13 +88,14 @@
 
     <LinearLayout
       android:id="@+id/linear_song_details"
-      android:layout_width="match_parent"
+      android:layout_width="0dp"
       android:layout_height="wrap_content"
       android:paddingTop="12dp"
       android:orientation="vertical"
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintEnd_toEndOf="parent">
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintWidth_max="@dimen/max_content_width">
 
       <FrameLayout
         android:layout_width="match_parent"
@@ -163,12 +164,13 @@
     </LinearLayout>
 
     <com.google.android.material.card.MaterialCardView
-      android:layout_width="match_parent"
+      android:layout_width="0dp"
       android:layout_height="0dp"
       app:layout_constraintTop_toBottomOf="@+id/linear_song_details"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintWidth_max="@dimen/max_content_width"
       app:contentPadding="0dp"
       app:strokeWidth="0dp"
       app:cardPreventCornerOverlap="false"

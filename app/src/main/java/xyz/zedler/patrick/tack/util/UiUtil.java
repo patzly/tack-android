@@ -197,6 +197,11 @@ public class UiUtil {
     return orientation == Configuration.ORIENTATION_PORTRAIT;
   }
 
+  public static boolean isTablet(Context context) {
+    int width = context.getResources().getConfiguration().smallestScreenWidthDp;
+    return width > 600;
+  }
+
   public static boolean isLandTablet(Context context) {
     boolean isPortrait = isOrientationPortrait(context);
     int width = context.getResources().getConfiguration().smallestScreenWidthDp;

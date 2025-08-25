@@ -85,9 +85,9 @@
       android:clipToPadding="false"
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintWidth_max="@dimen/max_content_width"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintEnd_toEndOf="parent" />
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintWidth_max="@dimen/max_content_width" />
 
     <include
       android:id="@+id/linear_songs_empty"
@@ -109,7 +109,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="@string/action_add_song"
-    android:layout_marginBottom="32dp"
+    android:layout_marginBottom="@dimen/controls_bottom_margin_bottom"
     android:layout_gravity="bottom|center_horizontal"
     app:icon="@drawable/ic_rounded_music_note_add" />
 

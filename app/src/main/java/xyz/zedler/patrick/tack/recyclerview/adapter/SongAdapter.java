@@ -210,13 +210,15 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
     );
     binding.buttonSongPlay.setBackgroundColor(
         ResUtil.getColor(
-            context,
-            isSelected ? R.attr.colorTertiary : R.attr.colorSurfaceContainerHigh
+            context, isSelected ? R.attr.colorTertiary : R.attr.colorSurfaceBright
         )
     );
     binding.buttonSongPlay.setIconTint(
         ColorStateList.valueOf(
-            ResUtil.getColor(context, isSelected ? R.attr.colorOnTertiary : R.attr.colorOnSurface)
+            ResUtil.getColor(
+                context,
+                isSelected ? R.attr.colorOnTertiary : R.attr.colorOnSurfaceVariant
+            )
         )
     );
     binding.buttonSongPlay.setOnClickListener(v -> {
@@ -268,18 +270,17 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
     }
   }
 
-  @SuppressLint("NotifyDataSetChanged")
   public void setCurrentSongId(@Nullable String currentSongId) {
     String oldSongId = this.currentSongId;
     this.currentSongId = currentSongId;
     for (int i = 0; i < getItemCount(); i++) {
-      if (oldSongId != null && getItem(i).getSong().getId().equals(oldSongId)) {
+      String id = getItem(i).getSong().getId();
+      if (id.equals(oldSongId)) {
         notifyItemChanged(i);
-        break;
+        oldSongId = null;
       }
-      if (currentSongId != null && getItem(i).getSong().getId().equals(currentSongId)) {
+      if (id.equals(currentSongId)) {
         notifyItemChanged(i);
-        break;
       }
     }
   }

@@ -122,35 +122,38 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     activity = (MainActivity) requireActivity();
 
     boolean isPortrait = UiUtil.isOrientationPortrait(activity);
+    boolean isTablet = UiUtil.isTablet(activity);
 
     SystemBarBehavior systemBarBehavior = new SystemBarBehavior(activity);
     systemBarBehavior.setAppBar(binding.appBarSong);
     systemBarBehavior.setContainer(binding.constraintSongContainer);
     systemBarBehavior.setRecycler(binding.recyclerSongParts);
     int bottomInset = ResUtil.getDimension(activity, R.dimen.controls_bottom_margin_bottom);
-    bottomInset += UiUtil.dpToPx(activity, isPortrait ? 80 : 56); // fab height
+    bottomInset += UiUtil.dpToPx(activity, isPortrait || isTablet ? 80 : 56); // fab height
     systemBarBehavior.setAdditionalBottomInset(bottomInset);
     systemBarBehavior.setMultiColumnLayout(!isPortrait);
     systemBarBehavior.setUp();
     SystemBarBehavior.applyBottomInset(binding.fabSong);
 
     ScrollBehavior scrollBehavior = new ScrollBehavior();
-    scrollBehavior.setOnScrollChangedListener(new OnScrollChangedListener() {
-      @Override
-      public void onScrollUp() {
-        binding.fabSong.extend();
-      }
+    if (!isTablet) {
+      scrollBehavior.setOnScrollChangedListener(new OnScrollChangedListener() {
+        @Override
+        public void onScrollUp() {
+          binding.fabSong.extend();
+        }
 
-      @Override
-      public void onScrollDown() {
-        binding.fabSong.shrink();
-      }
+        @Override
+        public void onScrollDown() {
+          binding.fabSong.shrink();
+        }
 
-      @Override
-      public void onTopScroll() {
-        binding.fabSong.extend();
-      }
-    });
+        @Override
+        public void onTopScroll() {
+          binding.fabSong.extend();
+        }
+      });
+    }
     int liftMode = isPortrait ? ScrollBehavior.ALWAYS_LIFTED : ScrollBehavior.LIFT_ON_SCROLL;
     scrollBehavior.setUpScroll(binding.appBarSong, binding.recyclerSongParts, liftMode);
 
@@ -167,6 +170,8 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         });
 
     setupImeAnimation(systemBarBehavior);
+
+    binding.toolbarSong.setTitleCentered(isTablet || !isPortrait);
 
     binding.buttonSongClose.setOnClickListener(v -> {
       if (getViewUtil().isClickEnabled(v.getId())) {

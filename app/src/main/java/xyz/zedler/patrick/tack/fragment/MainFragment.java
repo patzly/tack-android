@@ -1055,11 +1055,15 @@ public class MainFragment extends BaseFragment
       }
     } else if (id == R.id.button_main_songs) {
       performHapticClick();
+      int visitCount = getSharedPrefs().getInt(PREF.SONGS_VISIT_COUNT, 0);
+      if (visitCount != -1) { // no widget created and no dialog shown yet
+        visitCount++;
+        getSharedPrefs().edit().putInt(PREF.SONGS_VISIT_COUNT, visitCount).apply();
+      }
       activity.navigate(MainFragmentDirections.actionMainToSongs());
     } else if (id == R.id.button_main_options) {
       performHapticClick();
       ViewUtil.startIcon(binding.controlsMainBottom.buttonMainOptions.getIcon());
-      optionsUtil.update();
       optionsUtil.show();
     } else if (id == R.id.button_main_tempo_tap) {
       performHapticClick();

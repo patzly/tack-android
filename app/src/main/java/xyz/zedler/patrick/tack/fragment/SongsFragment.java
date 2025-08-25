@@ -31,7 +31,6 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView.ItemAnimator;
 import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
@@ -52,6 +51,7 @@ import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutMan
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter;
+import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.SortUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
@@ -74,7 +74,6 @@ public class SongsFragment extends BaseFragment {
   private int sortOrder;
   private SongAdapter adapter;
   private MetronomeListener metronomeListener;
-  private final Gson gson = new Gson();
 
   @Override
   public View onCreateView(
@@ -101,31 +100,41 @@ public class SongsFragment extends BaseFragment {
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     activity = (MainActivity) requireActivity();
 
+    boolean isPortrait = UiUtil.isOrientationPortrait(activity);
+    boolean isTablet = UiUtil.isTablet(activity);
+
     SystemBarBehavior systemBarBehavior = new SystemBarBehavior(activity);
     systemBarBehavior.setAppBar(binding.appBarSongs);
     systemBarBehavior.setContainer(binding.constraintSongs);
     systemBarBehavior.setRecycler(binding.recyclerSongs);
-    systemBarBehavior.setAdditionalBottomInset(UiUtil.dpToPx(activity, 112));
+    // portrait and tablet landscape: 32 + 80 = 112
+    // landscape: 16 + 56 = 72
+    // tablet portrait: 56 + 80 = 136
+    int bottomInset = ResUtil.getDimension(activity, R.dimen.controls_bottom_margin_bottom);
+    bottomInset += UiUtil.dpToPx(activity, isPortrait || isTablet ? 80 : 56); // fab height
+    systemBarBehavior.setAdditionalBottomInset(bottomInset);
     systemBarBehavior.setUp();
     SystemBarBehavior.applyBottomInset(binding.fabSongs);
 
     ScrollBehavior scrollBehavior = new ScrollBehavior();
-    scrollBehavior.setOnScrollChangedListener(new OnScrollChangedListener() {
-      @Override
-      public void onScrollUp() {
-        binding.fabSongs.extend();
-      }
+    if (!isTablet) {
+      scrollBehavior.setOnScrollChangedListener(new OnScrollChangedListener() {
+        @Override
+        public void onScrollUp() {
+          binding.fabSongs.extend();
+        }
 
-      @Override
-      public void onScrollDown() {
-        binding.fabSongs.shrink();
-      }
+        @Override
+        public void onScrollDown() {
+          binding.fabSongs.shrink();
+        }
 
-      @Override
-      public void onTopScroll() {
-        binding.fabSongs.extend();
-      }
-    });
+        @Override
+        public void onTopScroll() {
+          binding.fabSongs.extend();
+        }
+      });
+    }
     scrollBehavior.setUpScroll(
         binding.appBarSongs, binding.recyclerSongs, ScrollBehavior.LIFT_ON_SCROLL
     );
@@ -307,15 +316,10 @@ public class SongsFragment extends BaseFragment {
     // show widget prompt if needed
     if (savedInstanceState == null) {
       int visitCount = getSharedPrefs().getInt(PREF.SONGS_VISIT_COUNT, 0);
-      if (visitCount != -1) { // no widget created and no dialog shown yet
-        visitCount++;
-        if (visitCount < 5) {
-          getSharedPrefs().edit().putInt(PREF.SONGS_VISIT_COUNT, visitCount).apply();
-        } else {
-          getSharedPrefs().edit().putInt(PREF.SONGS_VISIT_COUNT, -1).apply();
-          // show song library widget prompt
-          dialogUtilWidgetPrompt.show();
-        }
+      if (visitCount >= 5) {
+        getSharedPrefs().edit().putInt(PREF.SONGS_VISIT_COUNT, -1).apply();
+        // show song library widget prompt
+        dialogUtilWidgetPrompt.show();
       }
     }
 
