@@ -370,7 +370,7 @@
   <string name="settings_keep_awake">Bildschirm wach halten</string>
   <string name="settings_keep_awake_description">Kann zu erhöhtem Stromverbrauch führen</string>
   <string name="settings_keep_awake_always">Immer</string>
-  <string name="settings_keep_awake_while_playing">Bei Wiedergabe</string>
+  <string name="settings_keep_awake_while_playing">Während Wiedergabe</string>
   <string name="settings_keep_awake_never">Nie</string>
 
   <string name="settings_perm_notification">Dauerhafte Benachrichtigung</string>
