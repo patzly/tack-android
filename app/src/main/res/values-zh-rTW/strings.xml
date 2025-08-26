@@ -275,6 +275,7 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">語言</string>
+  <string name="settings_language_info">非常感謝 Transifex 上的所有義務翻譯者！你可以在關於頁面上找到此專案的連結。</string>
   <string name="settings_language_system">系統預設</string>
   <string name="settings_language_system_description">如果沒有對應的翻譯則為英語</string>
 
@@ -348,6 +349,11 @@
   <string name="settings_flash_screen_description">在每個節拍</string>
 
   <string name="settings_keep_awake">保持螢幕喚醒</string>
+  <string name="settings_keep_awake_description">可能會使用更多電量</string>
+  <string name="settings_keep_awake_always">總是</string>
+  <string name="settings_keep_awake_while_playing">在播放時</string>
+  <string name="settings_keep_awake_never">從不</string>
+
   <string name="settings_perm_notification">永久通知</string>
   <string name="settings_perm_notification_description">隨時存取播放／停止控制</string>
 
