@@ -204,7 +204,7 @@
   <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
   <string name="msg_songs_intro">How the song library works</string>
-  <string name="msg_songs_intro_description">You can save and arrange metronome configurations as parts of a song. Simply set the metronome controls and options to your preference, then add the current configuration as a new part to a song or update an existing part.</string>
+  <string name="msg_songs_intro_description">You can save and arrange metronome configurations as parts of a song. Simply set the metronome controls and options to your preference, then add the current configuration as a new part to a song or edit an existing part.</string>
   <string name="msg_widget_description">View your songs and play them back</string>
   <string name="msg_installer_check">Invalid unlock app</string>
   <string name="msg_installer_check_description">Please purchase and install the unlock app on Google Play. Thank you for your support!</string>
