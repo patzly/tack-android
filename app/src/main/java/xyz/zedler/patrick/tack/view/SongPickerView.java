@@ -242,8 +242,8 @@ public class SongPickerView extends FrameLayout {
       binding.cardSongPickerChip.setClickable(false);
       if (!isDefaultSong) {
         binding.textSongPickerChip.setText(getSongNameFromId(currentSongId));
-        binding.frameSongPickerChipContainer.setTranslationX(0);
-        binding.frameSongPickerChipContainer.setVisibility(View.INVISIBLE);
+        binding.constraintSongPickerChipContainer.setTranslationX(0);
+        binding.constraintSongPickerChipContainer.setVisibility(View.INVISIBLE);
         closeIconParams.width = 0;
         binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
       } else {
@@ -278,9 +278,9 @@ public class SongPickerView extends FrameLayout {
             }
             animator.addUpdateListener(animation -> {
               float fraction = (float) animation.getAnimatedValue();
-              binding.frameSongPickerChipContainer.setTranslationX((1 - fraction) * diff);
-              if (binding.frameSongPickerChipContainer.getVisibility() == View.INVISIBLE) {
-                binding.frameSongPickerChipContainer.setVisibility(View.VISIBLE);
+              binding.constraintSongPickerChipContainer.setTranslationX((1 - fraction) * diff);
+              if (binding.constraintSongPickerChipContainer.getVisibility() == View.INVISIBLE) {
+                binding.constraintSongPickerChipContainer.setVisibility(View.VISIBLE);
               }
               closeIconParams.width = (int) Math.min(closeIconWidth * fraction, closeIconWidth);
               binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
@@ -324,7 +324,7 @@ public class SongPickerView extends FrameLayout {
               @Override
               public void onAnimationEnd(Animator animation) {
                 if (isDefaultSong) {
-                  binding.frameSongPickerChipContainer.setVisibility(INVISIBLE);
+                  binding.constraintSongPickerChipContainer.setVisibility(INVISIBLE);
                 }
                 binding.frameSongPickerChipClose.setClickable(!isDefaultSong);
                 binding.frameSongPickerChipTouchTarget.setClickable(!isDefaultSong);
@@ -340,7 +340,7 @@ public class SongPickerView extends FrameLayout {
     } else {
       binding.recyclerSongPicker.setAlpha(1);
       binding.recyclerSongPicker.setVisibility(!isDefaultSong ? INVISIBLE : VISIBLE);
-      binding.frameSongPickerChipContainer.setVisibility(isDefaultSong ? INVISIBLE : VISIBLE);
+      binding.constraintSongPickerChipContainer.setVisibility(isDefaultSong ? INVISIBLE : VISIBLE);
       binding.frameSongPickerChipClose.setClickable(!isDefaultSong);
       binding.textSongPickerChip.setText(getSongNameFromId(currentSongId));
       closeIconParams.width = UiUtil.dpToPx(context, 18);

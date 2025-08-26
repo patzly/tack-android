@@ -124,7 +124,8 @@
             android:layout_height="wrap_content"
             android:imeOptions="actionDone"
             android:inputType="textCapSentences"
-            android:singleLine="true" />
+            android:singleLine="true"
+            android:maxLength="@integer/max_song_name_length" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

@@ -22,36 +22,40 @@
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
-  android:layout_height="wrap_content">
+  android:layout_height="48dp">
 
   <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/recycler_song_picker"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
+    android:layout_height="match_parent"
     android:layout_gravity="center_vertical"
     android:overScrollMode="ifContentScrolls"
     android:scrollbars="none"
     tools:ignore="UselessParent" />
 
-  <LinearLayout
-    android:id="@+id/frame_song_picker_chip_container"
+  <androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/constraint_song_picker_chip_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="horizontal">
 
     <View
       android:id="@+id/view_song_picker_gradient_start"
       android:layout_width="0dp"
       android:layout_height="match_parent"
-      android:layout_weight="1" />
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toStartOf="@id/frame_song_picker_chip_touch_target" />
 
     <FrameLayout
       android:id="@+id/frame_song_picker_chip_touch_target"
       android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:minHeight="48dp"
-      android:layout_gravity="center"
-      android:background="?attr/colorSurface">
+      android:layout_height="match_parent"
+      android:background="?attr/colorSurface"
+      android:layout_marginStart="32dp"
+      android:layout_marginEnd="32dp"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constrainedWidth="true">
 
       <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_song_picker_chip"
@@ -67,7 +71,7 @@
         app:cardCornerRadius="8dp"
         app:cardBackgroundColor="?attr/colorTertiaryContainer">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:minHeight="32dp"
@@ -81,13 +85,16 @@
             android:layout_height="18dp"
             android:src="@drawable/ic_rounded_music_note_anim"
             app:tint="?attr/colorOnTertiaryContainer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/text_song_picker_chip"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             tools:ignore="ContentDescription" />
 
           <TextView
             android:id="@+id/text_song_picker_chip"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:maxWidth="200dp"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:gravity="center_vertical"
@@ -96,6 +103,11 @@
             android:fontFamily="@font/nunito_bold"
             android:singleLine="true"
             android:text="@string/label_song_name"
+            app:layout_constraintStart_toEndOf="@id/image_song_picker_chip_icon"
+            app:layout_constraintEnd_toStartOf="@id/image_song_picker_chip_close"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constrainedWidth="true"
             tools:ignore="HardcodedText" />
 
           <ImageView
@@ -108,16 +120,20 @@
             android:importantForAccessibility="yes"
             android:focusable="true"
             android:clickable="true"
-            android:contentDescription="@string/action_close" />
+            android:contentDescription="@string/action_close"
+            app:layout_constraintStart_toEndOf="@id/text_song_picker_chip"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
       </com.google.android.material.card.MaterialCardView>
 
       <FrameLayout
         android:id="@+id/frame_song_picker_chip_close"
         android:layout_width="40dp"
-        android:layout_height="48dp"
+        android:layout_height="match_parent"
         android:layout_gravity="end"
         android:importantForAccessibility="no" />
 
@@ -127,8 +143,9 @@
       android:id="@+id/view_song_picker_gradient_end"
       android:layout_width="0dp"
       android:layout_height="match_parent"
-      android:layout_weight="1" />
+      app:layout_constraintStart_toEndOf="@id/frame_song_picker_chip_touch_target"
+      app:layout_constraintEnd_toEndOf="parent" />
 
-  </LinearLayout>
+  </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

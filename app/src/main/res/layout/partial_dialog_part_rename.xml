@@ -39,7 +39,8 @@
       android:layout_height="wrap_content"
       android:imeOptions="actionDone"
       android:singleLine="true"
-      android:inputType="textCapSentences" />
+      android:inputType="textCapSentences"
+      android:maxLength="@integer/max_part_name_length" />
 
   </com.google.android.material.textfield.TextInputLayout>
 
