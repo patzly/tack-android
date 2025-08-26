@@ -89,7 +89,6 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
     boolean isSelected = songWithParts.getSong().getId().equals(currentSongId);
 
     // item background
-
     if (getItemCount() == 1) {
       binding.linearSongContainer.setBackgroundResource(
           isSelected
@@ -222,7 +221,7 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
         )
     );
     binding.buttonSongPlay.setOnClickListener(v -> {
-      if (isPlaying) {
+      if (isPlaying && getItem(position).getSong().getId().equals(currentSongId)) {
         listener.onPlayStopClick();
       } else {
         isPlaying = true;

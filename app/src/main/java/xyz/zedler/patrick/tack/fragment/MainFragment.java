@@ -75,6 +75,7 @@ import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.FragmentMainBinding;
 import xyz.zedler.patrick.tack.drawable.BeatsBgDrawable;
+import xyz.zedler.patrick.tack.fragment.MainFragmentDirections.ActionMainToSong;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil;
@@ -82,12 +83,12 @@ import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.OptionsUtil;
-import xyz.zedler.patrick.tack.util.dialog.PartsDialogUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.dialog.TempoDialogUtil;
-import xyz.zedler.patrick.tack.util.dialog.TempoTapDialogUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
+import xyz.zedler.patrick.tack.util.dialog.PartsDialogUtil;
+import xyz.zedler.patrick.tack.util.dialog.TempoDialogUtil;
+import xyz.zedler.patrick.tack.util.dialog.TempoTapDialogUtil;
 import xyz.zedler.patrick.tack.view.BeatView;
 import xyz.zedler.patrick.tack.view.SongPickerView.SongPickerListener;
 import xyz.zedler.patrick.tack.view.TempoPickerView.OnPickListener;
@@ -474,6 +475,20 @@ public class MainFragment extends BaseFragment
       public void onCurrentSongClicked() {
         partsDialogUtil.show();
         performHapticClick();
+      }
+
+      @Override
+      public void onCurrentSongLongClicked() {
+        ActionMainToSong action = MainFragmentDirections.actionMainToSong();
+        action.setSongId(getMetronomeUtil().getCurrentSongId());
+        activity.navigate(action);
+      }
+
+      @Override
+      public void onSongLongClicked(@NonNull String songId) {
+        ActionMainToSong action = MainFragmentDirections.actionMainToSong();
+        action.setSongId(songId);
+        activity.navigate(action);
       }
     });
     activity.getSongViewModel().getAllSongsWithPartsLive().observe(

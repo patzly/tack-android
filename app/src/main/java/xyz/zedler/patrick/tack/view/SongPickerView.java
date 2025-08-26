@@ -124,16 +124,29 @@ public class SongPickerView extends FrameLayout {
     adapter.submitList(songsWithParts);
 
     maybeCenterSongChips();
+
+    // maybe name of current song changed
+    setCurrentSong(currentSongId, false);
   }
 
   private void initRecycler() {
     // Adapter
-    OnSongClickListener onSongClickListener = (chip, song) -> {
-      String currentSongId = song.getSong().getId();
-      if (listener != null) {
-        listener.onCurrentSongChanged(currentSongId);
+    OnSongClickListener onSongClickListener = new OnSongClickListener() {
+      @Override
+      public void onSongClick(@NonNull SongWithParts song) {
+        String currentSongId = song.getSong().getId();
+        if (listener != null) {
+          listener.onCurrentSongChanged(currentSongId);
+        }
+        setCurrentSong(currentSongId, true);
       }
-      setCurrentSong(currentSongId, true);
+
+      @Override
+      public void onSongLongClick(@NonNull SongWithParts song) {
+        if (listener != null) {
+          listener.onSongLongClicked(song.getSong().getId());
+        }
+      }
     };
     SongChipAdapter adapter = new SongChipAdapter(
         onSongClickListener, currentSongId.equals(Constants.SONG_ID_DEFAULT)
@@ -181,9 +194,21 @@ public class SongPickerView extends FrameLayout {
         listener.onCurrentSongClicked();
       }
     });
+    binding.frameSongPickerChipTouchTarget.setOnLongClickListener(v -> {
+      if (listener != null) {
+        listener.onCurrentSongLongClicked();
+      }
+      return true;
+    });
     binding.cardSongPickerChip.setOnClickListener(
         v -> binding.frameSongPickerChipTouchTarget.callOnClick()
     );
+    binding.cardSongPickerChip.setOnLongClickListener(v -> {
+      if (listener != null) {
+        listener.onCurrentSongLongClicked();
+      }
+      return true;
+    });
 
     int colorSurface = ResUtil.getColor(context, R.attr.colorSurface);
     gradientLeft = new GradientDrawable(
@@ -405,5 +430,7 @@ public class SongPickerView extends FrameLayout {
   public interface SongPickerListener {
     void onCurrentSongChanged(@NonNull String currentSongId);
     void onCurrentSongClicked();
+    void onCurrentSongLongClicked();
+    void onSongLongClicked(@NonNull String songId);
   }
 }

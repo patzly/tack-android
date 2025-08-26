@@ -26,7 +26,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
-import com.google.android.material.chip.Chip;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.RowSongChipBinding;
 
@@ -60,10 +59,15 @@ public class SongChipAdapter extends ListAdapter<SongWithParts, ViewHolder> {
     songHolder.binding.chipRowSong.setClickable(clickable);
     if (clickable) {
       songHolder.binding.chipRowSong.setOnClickListener(
-          v -> listener.onSongClick(songHolder.binding.chipRowSong, songWithParts)
+          v -> listener.onSongClick(songWithParts)
       );
+      songHolder.binding.chipRowSong.setOnLongClickListener(v -> {
+        listener.onSongLongClick(songWithParts);
+        return true;
+      });
     } else {
       songHolder.binding.chipRowSong.setOnClickListener(null);
+      songHolder.binding.chipRowSong.setOnLongClickListener(null);
     }
   }
 
@@ -86,7 +90,8 @@ public class SongChipAdapter extends ListAdapter<SongWithParts, ViewHolder> {
   }
 
   public interface OnSongClickListener {
-    void onSongClick(Chip chip, @NonNull SongWithParts song);
+    void onSongClick(@NonNull SongWithParts song);
+    void onSongLongClick(@NonNull SongWithParts song);
   }
 
   static class SongWithPartsDiffCallback extends DiffUtil.ItemCallback<SongWithParts> {

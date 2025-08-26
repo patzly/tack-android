@@ -43,6 +43,10 @@
       android:id="@+id/action_main_to_songs"
       app:destination="@id/songsFragment" />
 
+    <action
+      android:id="@+id/action_main_to_song"
+      app:destination="@id/songFragment" />
+
   </fragment>
 
   <fragment
