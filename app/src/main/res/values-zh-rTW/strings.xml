@@ -189,6 +189,7 @@
   <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
   <string name="msg_songs_intro">歌曲庫的工作原理</string>
+  <string name="msg_songs_intro_description">你可以將節拍器配置儲存並編排為歌曲的一部分。只需要根據你的偏好設定節拍器控制和選項，然後將目前配置作為新部分增加至歌曲中，或編輯現有部分即可。</string>
   <string name="msg_widget_description">檢視你的歌曲並播放</string>
   <string name="msg_installer_check">無效的解鎖應用程式</string>
   <string name="msg_installer_check_description">請在 Google Play 上購買並安裝解鎖應用程式。謝謝你的支持！</string>
