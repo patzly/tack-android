@@ -186,7 +186,6 @@
   <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
   <string name="msg_songs_intro">ソングライブラリの機能</string>
-  <string name="msg_songs_intro_description">メトロノームの設定をソング内にパートとして保存し、並べ替えることができます。まっずメトロノーム操作とオプションを自由に調整し、新規パートとしてソング内に追加するか、既存パートに上書きできます。</string>
   <string name="msg_widget_description">ソングの表示と再生ができます</string>
   <string name="msg_installer_check">無効な制限解除アプリ</string>
   <string name="msg_installer_check_description">Google Play で制限解除アプリを購入し、インストールしてください。ご支援をよろしくお願いします！</string>
