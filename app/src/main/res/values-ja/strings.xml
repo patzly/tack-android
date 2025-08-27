@@ -350,6 +350,7 @@
   <string name="settings_keep_awake">常に画面点灯</string>
   <string name="settings_keep_awake_description">バッテリー消費が増える可能性があります</string>
   <string name="settings_keep_awake_always">常時</string>
+  <string name="settings_keep_awake_while_playing">再生時</string>
   <string name="settings_keep_awake_never">オフ</string>
 
   <string name="settings_perm_notification">常に通知表示</string>
@@ -369,6 +370,7 @@
   <string name="about_key_description_not_installed">未インストール</string>
   <string name="about_key_description_installed">インストール済</string>
   <string name="about_key_description_invalid">無効</string>
+  <string name="about_key_description_ignored">無視</string>
   <string name="about_github_description">ソースコード</string>
   <string name="about_translation_description">Tack の翻訳を手伝う</string>
   <string name="about_privacy">プライバシーポリシー</string>
