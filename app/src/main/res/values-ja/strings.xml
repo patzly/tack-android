@@ -305,6 +305,8 @@
   <string name="settings_reduce_animations_description">パフォーマンスが向上する可能性があります</string>
 
   <string name="settings_backup">ソングライブラリのバックアップ/復元</string>
+  <string name="settings_backup_description">デバイス間のデータ引き継ぎに便利です</string>
+
   <string name="settings_reset">すべて初期化</string>
   <string name="settings_reset_description">元に戻せません</string>
 
@@ -346,6 +348,8 @@
   <string name="settings_flash_screen_description">拍に合せて明滅します</string>
 
   <string name="settings_keep_awake">常に画面点灯</string>
+  <string name="settings_keep_awake_description">バッテリー消費が増える可能性があります</string>
+  <string name="settings_keep_awake_always">常時</string>
   <string name="settings_keep_awake_never">オフ</string>
 
   <string name="settings_perm_notification">常に通知表示</string>
