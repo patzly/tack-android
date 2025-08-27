@@ -142,6 +142,7 @@
   <string name="action_restore">バックアップ復元</string>
   <string name="action_view_more_songs">他のソングを見る</string>
   <string name="action_next">次へ</string>
+  <string name="action_more">更に表示</string>
   <string name="action_edit">編集</string>
 
   <!-- MESSAGES -->
