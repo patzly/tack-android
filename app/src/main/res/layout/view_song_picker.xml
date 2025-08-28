@@ -22,12 +22,12 @@
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
-  android:layout_height="48dp">
+  android:layout_height="wrap_content">
 
   <androidx.recyclerview.widget.RecyclerView
     android:id="@+id/recycler_song_picker"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="48dp"
     android:layout_gravity="center_vertical"
     android:overScrollMode="ifContentScrolls"
     android:scrollbars="none"
@@ -36,31 +36,46 @@
   <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/constraint_song_picker_chip_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical">
 
     <View
       android:id="@+id/view_song_picker_gradient_start"
       android:layout_width="0dp"
-      android:layout_height="match_parent"
+      android:layout_height="0dp"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintEnd_toStartOf="@id/frame_song_picker_chip_touch_target" />
+      app:layout_constraintEnd_toStartOf="@id/frame_song_picker_chip_touch_target"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintBottom_toBottomOf="parent" />
+
+    <TextView
+      android:id="@+id/text_song_picker_part_placeholder"
+      style="@style/Widget.Tack.TextView.LabelMedium"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:text=" "
+      android:visibility="invisible"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintBottom_toTopOf="@id/frame_song_picker_chip_touch_target"
+      tools:ignore="HardcodedText" />
 
     <FrameLayout
       android:id="@+id/frame_song_picker_chip_touch_target"
       android:layout_width="wrap_content"
-      android:layout_height="match_parent"
+      android:layout_height="48dp"
       android:background="?attr/colorSurface"
       android:layout_marginStart="32dp"
       android:layout_marginEnd="32dp"
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toBottomOf="@id/text_song_picker_part_placeholder"
+      app:layout_constraintBottom_toTopOf="@id/text_song_picker_part"
       app:layout_constrainedWidth="true">
 
       <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_song_picker_chip"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="32dp"
         android:layout_gravity="center_vertical"
         android:focusable="true"
         android:clickable="true"
@@ -93,22 +108,19 @@
 
           <TextView
             android:id="@+id/text_song_picker_chip"
+            style="@style/Widget.Tack.TextView.LabelLarge"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
-            android:gravity="center_vertical"
-            android:textAppearance="@style/TextAppearance.Tack.LabelLarge"
             android:textColor="?attr/colorOnTertiaryContainer"
-            android:fontFamily="@font/nunito_bold"
             android:singleLine="true"
             android:text="@string/label_song_name"
             app:layout_constraintStart_toEndOf="@id/image_song_picker_chip_icon"
             app:layout_constraintEnd_toStartOf="@id/image_song_picker_chip_close"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constrainedWidth="true"
-            tools:ignore="HardcodedText" />
+            app:layout_constrainedWidth="true" />
 
           <ImageView
             android:id="@+id/image_song_picker_chip_close"
@@ -139,12 +151,27 @@
 
     </FrameLayout>
 
+    <TextView
+      android:id="@+id/text_song_picker_part"
+      style="@style/Widget.Tack.TextView.LabelMedium"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:gravity="center_horizontal"
+      android:textAlignment="center"
+      android:textColor="?attr/colorOnSurfaceVariant"
+      android:singleLine="true"
+      android:text="@string/label_part_name"
+      app:layout_constraintTop_toBottomOf="@id/frame_song_picker_chip_touch_target"
+      app:layout_constraintBottom_toBottomOf="parent" />
+
     <View
       android:id="@+id/view_song_picker_gradient_end"
       android:layout_width="0dp"
-      android:layout_height="match_parent"
+      android:layout_height="0dp"
       app:layout_constraintStart_toEndOf="@id/frame_song_picker_chip_touch_target"
-      app:layout_constraintEnd_toEndOf="parent" />
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintBottom_toBottomOf="parent" />
 
   </androidx.constraintlayout.widget.ConstraintLayout>
 

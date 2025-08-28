@@ -505,6 +505,7 @@ public class MainFragment extends BaseFragment
             binding.songPickerMain.init(
                 getSharedPrefs().getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER),
                 getMetronomeUtil().getCurrentSongId(),
+                getMetronomeUtil().getCurrentPartIndex(),
                 songsWithParts
             );
           }
@@ -963,6 +964,10 @@ public class MainFragment extends BaseFragment
     activity.runOnUiThread(() -> {
       if (song != null && binding != null) {
         partsDialogUtil.update();
+        if (!song.getSong().getId().equals(Constants.SONG_ID_DEFAULT)) {
+          // Only if not closing current song, else the user sees a switch to part 1 during anim
+          binding.songPickerMain.setPartIndex(partIndex);
+        }
       }
     });
   }

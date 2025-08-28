@@ -17,16 +17,58 @@
   ~ Copyright (c) 2020-2025 by Patrick Zedler
   -->
 
-<com.google.android.material.chip.Chip
+<FrameLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:id="@+id/chip_row_song"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/frame_song"
   android:layout_width="wrap_content"
-  android:layout_height="wrap_content"
-  android:stateListAnimator="@null"
-  android:checkable="false"
-  app:chipIcon="@drawable/ic_rounded_music_note_anim"
-  app:chipIconTint="?attr/colorPrimary"
-  app:closeIconVisible="false"
-  app:chipStrokeColor="?attr/colorOutlineVariant"
-  android:textAppearance="@style/TextAppearance.Tack.LabelLarge" />
+  android:layout_height="48dp">
+
+  <com.google.android.material.card.MaterialCardView
+    android:id="@+id/card_song"
+    android:layout_width="wrap_content"
+    android:layout_height="32dp"
+    android:layout_gravity="center_vertical"
+    android:focusable="true"
+    android:clickable="true"
+    app:contentPadding="0dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="?attr/colorOutlineVariant"
+    app:rippleColor="@color/selector_highlight"
+    app:cardCornerRadius="8dp"
+    app:cardBackgroundColor="?attr/colorSurface">
+
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:minHeight="32dp"
+      android:paddingStart="8dp"
+      android:paddingEnd="16dp"
+      android:gravity="center_vertical"
+      tools:ignore="UseCompoundDrawables">
+
+      <ImageView
+        android:id="@+id/image_song_icon"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:src="@drawable/ic_rounded_music_note_anim"
+        app:tint="?attr/colorPrimary"
+        tools:ignore="ContentDescription" />
+
+      <TextView
+        android:id="@+id/text_song"
+        style="@style/Widget.Tack.TextView.LabelLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:textColor="?attr/colorOnSurface"
+        android:singleLine="true"
+        android:text="@string/label_song_name" />
+
+    </LinearLayout>
+
+  </com.google.android.material.card.MaterialCardView>
+
+</FrameLayout>

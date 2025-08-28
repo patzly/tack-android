@@ -52,6 +52,7 @@ import java.util.Collections;
 import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
+import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.ViewSongPickerBinding;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipAdapter;
@@ -72,7 +73,7 @@ public class SongPickerView extends FrameLayout {
   private final Context context;
   private SongPickerListener listener;
   private List<SongWithParts> songsWithParts;
-  private int sortOrder;
+  private int sortOrder, currentPartIndex;
   private String currentSongId;
   private Drawable gradientLeft, gradientRight;
   private ValueAnimator animator;
@@ -93,7 +94,9 @@ public class SongPickerView extends FrameLayout {
     this.listener = listener;
   }
 
-  public void init(int songsOrder, @NonNull String currentSongId, List<SongWithParts> songs) {
+  public void init(
+      int songsOrder, @NonNull String currentSongId, int currentPartIndex, List<SongWithParts> songs
+  ) {
     if (isInitialized) {
       return;
     }
@@ -101,6 +104,7 @@ public class SongPickerView extends FrameLayout {
 
     this.sortOrder = songsOrder;
     this.currentSongId = currentSongId;
+    this.currentPartIndex = currentPartIndex;
     // To display current song title in current chip at start
     this.songsWithParts = new ArrayList<>(songs);
 
@@ -127,6 +131,19 @@ public class SongPickerView extends FrameLayout {
 
     // maybe name of current song changed
     setCurrentSong(currentSongId, false);
+    // maybe name of current part changed
+    setPartIndex(currentPartIndex);
+  }
+
+  public void setPartIndex(int partIndex) {
+    String partName = getPartNameFromIndex(partIndex);
+    String partLabel = context.getString(R.string.label_part_unnamed, partIndex + 1);
+    if (partName != null) {
+      partLabel = context.getString(
+          R.string.label_part_current, partIndex + 1, partName
+      );
+    }
+    binding.textSongPickerPart.setText(partLabel);
   }
 
   private void initRecycler() {
@@ -319,6 +336,8 @@ public class SongPickerView extends FrameLayout {
               gradientRight.setLevel((int) (10000 * fraction));
 
               binding.recyclerSongPicker.setAlpha(1 - colorFraction);
+
+              binding.textSongPickerPart.setAlpha(colorFraction);
             });
             animator.addListener(new AnimatorListenerAdapter() {
               @Override
@@ -339,13 +358,14 @@ public class SongPickerView extends FrameLayout {
       }
     } else {
       binding.recyclerSongPicker.setAlpha(1);
-      binding.recyclerSongPicker.setVisibility(!isDefaultSong ? INVISIBLE : VISIBLE);
+      binding.recyclerSongPicker.setVisibility(isDefaultSong ? VISIBLE : INVISIBLE);
       binding.constraintSongPickerChipContainer.setVisibility(isDefaultSong ? INVISIBLE : VISIBLE);
       binding.frameSongPickerChipClose.setClickable(!isDefaultSong);
       binding.textSongPickerChip.setText(getSongNameFromId(currentSongId));
       closeIconParams.width = UiUtil.dpToPx(context, 18);
       binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
       binding.imageSongPickerChipClose.setAlpha(1f);
+      binding.textSongPickerPart.setAlpha(isDefaultSong ? 0 : 1);
       setRecyclerClicksEnabled(isDefaultSong);
     }
     this.currentSongId = currentSongId;
@@ -415,6 +435,19 @@ public class SongPickerView extends FrameLayout {
     for (SongWithParts songWithParts : songsWithParts) {
       if (songWithParts.getSong().getId().equals(songId)) {
         return songWithParts.getSong().getName();
+      }
+    }
+    return null;
+  }
+
+  private String getPartNameFromIndex(int partIndex) {
+    for (SongWithParts songWithParts : songsWithParts) {
+      if (songWithParts.getSong().getId().equals(currentSongId)) {
+        for (Part part : songWithParts.getParts()) {
+          if (part.getPartIndex() == partIndex) {
+            return part.getName();
+          }
+        }
       }
     }
     return null;

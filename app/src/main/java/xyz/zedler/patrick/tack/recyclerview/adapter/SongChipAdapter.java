@@ -55,19 +55,28 @@ public class SongChipAdapter extends ListAdapter<SongWithParts, ViewHolder> {
   public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
     SongWithParts songWithParts = getItem(holder.getBindingAdapterPosition());
     SongChipViewHolder songHolder = (SongChipViewHolder) holder;
-    songHolder.binding.chipRowSong.setText(songWithParts.getSong().getName());
-    songHolder.binding.chipRowSong.setClickable(clickable);
+    songHolder.binding.textSong.setText(songWithParts.getSong().getName());
+    songHolder.binding.cardSong.setClickable(clickable);
     if (clickable) {
-      songHolder.binding.chipRowSong.setOnClickListener(
+      songHolder.binding.frameSong.setOnClickListener(
           v -> listener.onSongClick(songWithParts)
       );
-      songHolder.binding.chipRowSong.setOnLongClickListener(v -> {
+      songHolder.binding.cardSong.setOnClickListener(
+          v -> songHolder.binding.frameSong.callOnClick()
+      );
+      songHolder.binding.frameSong.setOnLongClickListener(v -> {
+        listener.onSongLongClick(songWithParts);
+        return true;
+      });
+      songHolder.binding.cardSong.setOnLongClickListener(v -> {
         listener.onSongLongClick(songWithParts);
         return true;
       });
     } else {
-      songHolder.binding.chipRowSong.setOnClickListener(null);
-      songHolder.binding.chipRowSong.setOnLongClickListener(null);
+      songHolder.binding.frameSong.setOnClickListener(null);
+      songHolder.binding.frameSong.setOnLongClickListener(null);
+      songHolder.binding.cardSong.setOnClickListener(null);
+      songHolder.binding.cardSong.setOnLongClickListener(null);
     }
   }
 

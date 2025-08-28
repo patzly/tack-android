@@ -2,6 +2,7 @@
 
 - New: Material 3 Expressive design throughout the app with new typeface and redesigned bottom controls
 - New: song parts can now be directly edited from song details, "update part" menu option replaced by "use current config" button in the edit dialog for more clarity
+- New: current song part displayed on main screen below song picker
 - New: "Always vibrate" setting replaced by beat mode dialog accessible from the main screen
 - New: volume boost setting extended for volume reduction and moved to separate dialog
 - New: long-tap on song chips to open song details
