@@ -31,6 +31,7 @@
   <style
     name="ThemeOverlay.Tack.AlertDialog"
     parent="ThemeOverlay.Material3Expressive.MaterialAlertDialog">
+    <item name="alertDialogStyle">@style/MaterialAlertDialog.Tack</item>
     <item name="android:backgroundDimAmount">0.7</item>
     <item name="buttonBarPositiveButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog</item>
     <item name="buttonBarNegativeButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog</item>
@@ -43,6 +44,10 @@
     <item name="buttonBarPositiveButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog.Error</item>
     <item name="buttonBarNegativeButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog.Error</item>
     <item name="buttonBarNeutralButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog</item>
+  </style>
+
+  <style name="MaterialAlertDialog.Tack" parent="MaterialAlertDialog.Material3Expressive">
+    <item name="singleChoiceItemLayout">@layout/row_alert_select_dialog_singlechoice</item>
   </style>
 
   <!-- Prevents title from being displayed with smaller text size when it's long -->
