@@ -347,7 +347,6 @@
 
   <string name="settings_flash_screen">螢幕閃爍</string>
   <string name="settings_flash_screen_description">在每個節拍</string>
-
   <string name="settings_keep_awake">保持螢幕喚醒</string>
   <string name="settings_keep_awake_description">可能會使用更多電量</string>
   <string name="settings_keep_awake_always">總是</string>
