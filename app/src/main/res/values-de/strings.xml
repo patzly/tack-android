@@ -367,6 +367,7 @@
   <string name="settings_flash_screen">Bildschirm aufblitzen lassen</string>
   <string name="settings_flash_screen_description">Bei jedem Schlag</string>
   <string name="settings_flash_screen_off">Aus</string>
+  <string name="settings_flash_screen_subtle">Dezent</string>
   <string name="settings_flash_screen_strong">Stark</string>
 
   <string name="settings_keep_awake">Bildschirm wach halten</string>
