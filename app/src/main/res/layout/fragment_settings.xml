@@ -562,31 +562,79 @@
         </LinearLayout>
 
         <LinearLayout
-          android:id="@+id/linear_settings_flash_screen"
-          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
           android:background="@drawable/ripple_list_item_bg_segmented_middle">
 
-          <ImageView
-            android:id="@+id/image_settings_flash_screen"
-            style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_rounded_bolt_anim"
-            tools:ignore="ContentDescription" />
+          <LinearLayout
+            style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
+            android:paddingTop="14dp"
+            android:paddingBottom="0dp"
+            android:minHeight="0dp">
 
-          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+            <ImageView
+              android:id="@+id/image_settings_flash_screen"
+              style="@style/Widget.Tack.ImageView.ListItem.Icon"
+              android:src="@drawable/ic_rounded_bolt_anim"
+              android:layout_gravity="center"
+              tools:ignore="ContentDescription" />
 
-            <TextView
-              style="@style/Widget.Tack.TextView.ListItem.Title"
-              android:text="@string/settings_flash_screen" />
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
 
-            <TextView
-              style="@style/Widget.Tack.TextView.ListItem.Description"
-              android:text="@string/settings_flash_screen_description" />
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Title"
+                android:text="@string/settings_flash_screen" />
+
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Description"
+                android:text="@string/settings_flash_screen_description" />
+
+            </LinearLayout>
 
           </LinearLayout>
 
-          <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/switch_settings_flash_screen"
-            style="@style/Widget.Tack.Switch" />
+          <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="10dp"
+            android:scrollbars="none"
+            android:overScrollMode="ifContentScrolls">
+
+            <FrameLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingStart="56dp"
+              android:paddingEnd="16dp">
+
+              <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle_settings_flash_screen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <Button
+                  android:id="@+id/button_settings_flash_screen_off"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_flash_screen_off" />
+
+                <Button
+                  android:id="@+id/button_settings_flash_screen_subtle"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_flash_screen_subtle" />
+
+                <Button
+                  android:id="@+id/button_settings_flash_screen_strong"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_flash_screen_strong" />
+
+              </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            </FrameLayout>
+
+          </HorizontalScrollView>
 
         </LinearLayout>
 

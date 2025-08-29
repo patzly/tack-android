@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import xyz.zedler.patrick.tack.Constants.BEAT_MODE;
+import xyz.zedler.patrick.tack.Constants.FLASH_SCREEN;
 import xyz.zedler.patrick.tack.Constants.KEEP_AWAKE;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.R;
@@ -56,6 +57,7 @@ public class PrefsUtil {
   public PrefsUtil checkForMigrations() {
     migrateBookmarks();
     migrateBeatModeVibrateAndAlwaysVibrate();
+    migrateFlashScreen();
     migrateKeepAwake();
     return this;
   }
@@ -147,6 +149,22 @@ public class PrefsUtil {
       } finally {
         editor.remove(beatModeVibrateKeyOld);
         editor.remove(alwaysVibrateKeyOld);
+      }
+      editor.apply();
+    }
+  }
+
+  private void migrateFlashScreen() {
+    String flashScreenKeyOld = "flash_screen"; // now flash_screen_strength
+    boolean flashScreenDefault = false;
+    if (sharedPrefs.contains(flashScreenKeyOld)) {
+      SharedPreferences.Editor editor = sharedPrefs.edit();
+      try {
+        boolean current = sharedPrefs.getBoolean(flashScreenKeyOld, flashScreenDefault);
+        editor.putString(PREF.FLASH_SCREEN, current ? FLASH_SCREEN.STRONG : FLASH_SCREEN.OFF);
+      } catch (ClassCastException ignored) {
+      } finally {
+        editor.remove(flashScreenKeyOld);
       }
       editor.apply();
     }

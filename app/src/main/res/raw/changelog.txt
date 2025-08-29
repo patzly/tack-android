@@ -4,7 +4,9 @@
 - New: song parts can now be directly edited from song details, "update part" menu option replaced by "use current config" button in the edit dialog for more clarity
 - New: current song part displayed on main screen below song picker
 - New: "Always vibrate" setting replaced by beat mode dialog accessible from the main screen
-- New: volume boost setting extended for volume reduction and moved to separate dialog
+- New: "volume boost" setting extended for volume reduction and moved to separate dialog
+- New: "flash screen" setting extended with option for subtle flash
+- New: "keep screen awake" setting extended with option for always awake
 - New: long-tap on song chips to open song details
 - New: Japanese and Dutch translations (thanks to the contributors!)
 - Improved: play/stop button now responds on press down instead of release for a more responsive feel

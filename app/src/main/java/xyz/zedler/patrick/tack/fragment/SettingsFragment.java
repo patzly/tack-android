@@ -45,6 +45,7 @@ import java.util.Map;
 import xyz.zedler.patrick.tack.Constants.CONTRAST;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
+import xyz.zedler.patrick.tack.Constants.FLASH_SCREEN;
 import xyz.zedler.patrick.tack.Constants.KEEP_AWAKE;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SOUND;
@@ -304,7 +305,6 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsElapsed,
         binding.linearSettingsResetTimer,
         binding.linearSettingsBigTimeText,
-        binding.linearSettingsFlashScreen,
         binding.linearSettingsBigLogo
     );
 
@@ -319,7 +319,6 @@ public class SettingsFragment extends BaseFragment
         binding.switchSettingsElapsed,
         binding.switchSettingsResetTimer,
         binding.switchSettingsBigTimeText,
-        binding.switchSettingsFlashScreen,
         binding.switchSettingsBigLogo
     );
   }
@@ -392,10 +391,22 @@ public class SettingsFragment extends BaseFragment
     binding.switchSettingsResetTimer.jumpDrawablesToCurrentState();
     binding.switchSettingsResetTimer.setOnCheckedChangeListener(this);
 
-    binding.switchSettingsFlashScreen.setOnCheckedChangeListener(null);
-    binding.switchSettingsFlashScreen.setChecked(getMetronomeUtil().getFlashScreen());
-    binding.switchSettingsFlashScreen.jumpDrawablesToCurrentState();
-    binding.switchSettingsFlashScreen.setOnCheckedChangeListener(this);
+    binding.toggleSettingsFlashScreen.removeOnButtonCheckedListener(this);
+    int idFlashScreen;
+    switch (getSharedPrefs().getString(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN)) {
+      case FLASH_SCREEN.SUBTLE:
+        idFlashScreen = R.id.button_settings_flash_screen_subtle;
+        break;
+      case FLASH_SCREEN.STRONG:
+        idFlashScreen = R.id.button_settings_flash_screen_strong;
+        break;
+      default:
+        idFlashScreen = R.id.button_settings_flash_screen_off;
+        break;
+    }
+    binding.toggleSettingsFlashScreen.check(idFlashScreen);
+    binding.toggleSettingsFlashScreen.jumpDrawablesToCurrentState();
+    binding.toggleSettingsFlashScreen.addOnButtonCheckedListener(this);
 
     binding.toggleSettingsKeepAwake.removeOnButtonCheckedListener(this);
     int idKeepAwake;
@@ -463,8 +474,6 @@ public class SettingsFragment extends BaseFragment
       binding.switchSettingsResetTimer.toggle();
     } else if (id == R.id.linear_settings_big_time_text) {
       binding.switchSettingsBigTimeText.toggle();
-    } else if (id == R.id.linear_settings_flash_screen) {
-      binding.switchSettingsFlashScreen.toggle();
     } else if (id == R.id.linear_settings_big_logo) {
       binding.switchSettingsBigLogo.toggle();
     }
@@ -518,10 +527,6 @@ public class SettingsFragment extends BaseFragment
     } else if (id == R.id.switch_settings_big_time_text) {
       performHapticClick();
       getSharedPrefs().edit().putBoolean(PREF.BIG_TIME_TEXT, isChecked).apply();
-    } else if (id == R.id.switch_settings_flash_screen) {
-      ViewUtil.startIcon(binding.imageSettingsFlashScreen);
-      performHapticClick();
-      getMetronomeUtil().setFlashScreen(isChecked);
     } else if (id == R.id.switch_settings_big_logo) {
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsBigLogo);
@@ -534,20 +539,35 @@ public class SettingsFragment extends BaseFragment
     if (!isChecked) {
       return;
     }
-    String keepAwake;
-    if (checkedId == R.id.button_settings_keep_awake_while_playing) {
-      keepAwake = KEEP_AWAKE.WHILE_PLAYING;
-    } else if (checkedId == R.id.button_settings_keep_awake_never) {
-      keepAwake = KEEP_AWAKE.NEVER;
-    } else {
-      keepAwake = KEEP_AWAKE.ALWAYS;
+    int id = group.getId();
+    if (id == R.id.toggle_settings_flash_screen) {
+      String flashScreen;
+      if (checkedId == R.id.button_settings_flash_screen_subtle) {
+        flashScreen = FLASH_SCREEN.SUBTLE;
+      } else if (checkedId == R.id.button_settings_flash_screen_strong) {
+        flashScreen = FLASH_SCREEN.STRONG;
+      } else {
+        flashScreen = FLASH_SCREEN.OFF;
+      }
+      getMetronomeUtil().setFlashScreen(flashScreen);
+      performHapticClick();
+      ViewUtil.startIcon(binding.imageSettingsFlashScreen);
+    } else if (id == R.id.toggle_settings_keep_awake) {
+      String keepAwake;
+      if (checkedId == R.id.button_settings_keep_awake_while_playing) {
+        keepAwake = KEEP_AWAKE.WHILE_PLAYING;
+      } else if (checkedId == R.id.button_settings_keep_awake_never) {
+        keepAwake = KEEP_AWAKE.NEVER;
+      } else {
+        keepAwake = KEEP_AWAKE.ALWAYS;
+      }
+      getMetronomeUtil().setKeepAwake(keepAwake);
+      performHapticClick();
+      ViewUtil.startIcon(binding.imageSettingsKeepAwake);
+      boolean keepAwakeNow = keepAwake.equals(KEEP_AWAKE.ALWAYS)
+          || (keepAwake.equals(KEEP_AWAKE.WHILE_PLAYING) && getMetronomeUtil().isPlaying());
+      UiUtil.keepScreenAwake(activity, keepAwakeNow);
     }
-    getMetronomeUtil().setKeepAwake(keepAwake);
-    performHapticClick();
-    ViewUtil.startIcon(binding.imageSettingsKeepAwake);
-    boolean keepAwakeNow = keepAwake.equals(KEEP_AWAKE.ALWAYS)
-        || (keepAwake.equals(KEEP_AWAKE.WHILE_PLAYING) && getMetronomeUtil().isPlaying());
-    UiUtil.keepScreenAwake(activity, keepAwakeNow);
   }
 
   public void updateGainDescription(int gain) {

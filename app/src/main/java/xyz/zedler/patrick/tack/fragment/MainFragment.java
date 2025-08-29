@@ -64,6 +64,7 @@ import java.util.Map;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.BEAT_MODE;
 import xyz.zedler.patrick.tack.Constants.DEF;
+import xyz.zedler.patrick.tack.Constants.FLASH_SCREEN;
 import xyz.zedler.patrick.tack.Constants.KEEP_AWAKE;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
@@ -190,7 +191,8 @@ public class MainFragment extends BaseFragment
     });
     ViewUtil.setTooltipText(binding.buttonMainMenu, R.string.action_more);
 
-    flashScreen = getSharedPrefs().getBoolean(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
+    String flashScreenMode = getSharedPrefs().getString(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
+    flashScreen = !flashScreenMode.equals(FLASH_SCREEN.OFF);
     reduceAnimations = getSharedPrefs().getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM);
     hideSubControls = getSharedPrefs().getBoolean(PREF.HIDE_SUB_CONTROLS, DEF.HIDE_SUB_CONTROLS);
     activeBeat = getSharedPrefs().getBoolean(PREF.ACTIVE_BEAT, DEF.ACTIVE_BEAT);
@@ -214,9 +216,17 @@ public class MainFragment extends BaseFragment
       binding.chipMainElapsedTime.imageChipNumbers.setVisibility(View.VISIBLE);
     }
 
-    colorFlashNormal = ResUtil.getColor(activity, R.attr.colorPrimary);
-    colorFlashStrong = ResUtil.getColor(activity, R.attr.colorError);
     colorFlashMuted = ResUtil.getColor(activity, R.attr.colorSurface);
+    if (flashScreenMode.equals(FLASH_SCREEN.SUBTLE)) {
+      float mixRatio = 0.7f;
+      colorFlashNormal = ResUtil.getColor(activity, R.attr.colorPrimaryContainer);
+      colorFlashNormal = ColorUtils.blendARGB(colorFlashMuted, colorFlashNormal, mixRatio);
+      colorFlashStrong = ResUtil.getColor(activity, R.attr.colorErrorContainer);
+      colorFlashStrong = ColorUtils.blendARGB(colorFlashMuted, colorFlashStrong, mixRatio);
+    } else {
+      colorFlashNormal = ResUtil.getColor(activity, R.attr.colorPrimary);
+      colorFlashStrong = ResUtil.getColor(activity, R.attr.colorError);
+    }
 
     beatsCountBadge = BadgeDrawable.create(activity);
     subsCountBadge = BadgeDrawable.create(activity);
