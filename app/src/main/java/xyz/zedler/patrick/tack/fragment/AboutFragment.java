@@ -100,18 +100,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     binding.linearAboutKey.setVisibility(
         UnlockUtil.isPlayStoreInstalled(activity) ? View.VISIBLE : View.GONE
     );
-    if (!activity.isUnlocked()) {
-      binding.linearAboutKey.setOnLongClickListener(v -> {
-        longClickCount++;
-        if (longClickCount >= 10) {
-          getSharedPrefs().edit().putBoolean(PREF.VERIFY_KEY, false).apply();
-          updateKeyDescription();
-          binding.linearAboutKey.setOnLongClickListener(null);
-        }
-        return true;
-      });
-    }
-    updateKeyDescription();
+    updateUnlockItem();
 
     unlockDialogUtil = new UnlockDialogUtil(activity);
     unlockDialogUtil.showIfWasShown(savedInstanceState);
@@ -129,6 +118,12 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
         binding.linearAboutLicenseMaterialIcons,
         binding.linearAboutLicenseNunito
     );
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    updateUnlockItem();
   }
 
   @Override
@@ -190,9 +185,22 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     }
   }
 
-  private void updateKeyDescription() {
+  private void updateUnlockItem() {
     if (!UnlockUtil.isPlayStoreInstalled(activity)) {
       return;
+    }
+    if (activity.isUnlocked()) {
+      binding.linearAboutKey.setOnLongClickListener(null);
+    } else {
+      binding.linearAboutKey.setOnLongClickListener(v -> {
+        longClickCount++;
+        if (longClickCount >= 10) {
+          getSharedPrefs().edit().putBoolean(PREF.VERIFY_KEY, false).apply();
+          updateUnlockItem();
+          binding.linearAboutKey.setOnLongClickListener(null);
+        }
+        return true;
+      });
     }
     int resId = R.string.about_key_description_not_installed;
     int textColor = ResUtil.getColor(activity, R.attr.colorOnSurfaceVariant);

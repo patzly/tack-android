@@ -77,9 +77,9 @@ import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.FragmentMainBinding;
 import xyz.zedler.patrick.tack.drawable.BeatsBgDrawable;
 import xyz.zedler.patrick.tack.fragment.MainFragmentDirections.ActionMainToSong;
+import xyz.zedler.patrick.tack.model.MetronomeConfig;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
-import xyz.zedler.patrick.tack.util.MetronomeUtil;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
 import xyz.zedler.patrick.tack.util.NotificationUtil;
@@ -191,8 +191,6 @@ public class MainFragment extends BaseFragment
     });
     ViewUtil.setTooltipText(binding.buttonMainMenu, R.string.action_more);
 
-    String flashScreenMode = getSharedPrefs().getString(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
-    flashScreen = !flashScreenMode.equals(FLASH_SCREEN.OFF);
     reduceAnimations = getSharedPrefs().getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM);
     hideSubControls = getSharedPrefs().getBoolean(PREF.HIDE_SUB_CONTROLS, DEF.HIDE_SUB_CONTROLS);
     activeBeat = getSharedPrefs().getBoolean(PREF.ACTIVE_BEAT, DEF.ACTIVE_BEAT);
@@ -214,18 +212,6 @@ public class MainFragment extends BaseFragment
           R.drawable.ic_rounded_schedule_anim
       );
       binding.chipMainElapsedTime.imageChipNumbers.setVisibility(View.VISIBLE);
-    }
-
-    colorFlashMuted = ResUtil.getColor(activity, R.attr.colorSurface);
-    if (flashScreenMode.equals(FLASH_SCREEN.SUBTLE)) {
-      float mixRatio = 0.7f;
-      colorFlashNormal = ResUtil.getColor(activity, R.attr.colorPrimaryContainer);
-      colorFlashNormal = ColorUtils.blendARGB(colorFlashMuted, colorFlashNormal, mixRatio);
-      colorFlashStrong = ResUtil.getColor(activity, R.attr.colorErrorContainer);
-      colorFlashStrong = ColorUtils.blendARGB(colorFlashMuted, colorFlashStrong, mixRatio);
-    } else {
-      colorFlashNormal = ResUtil.getColor(activity, R.attr.colorPrimary);
-      colorFlashStrong = ResUtil.getColor(activity, R.attr.colorError);
     }
 
     beatsCountBadge = BadgeDrawable.create(activity);
@@ -472,7 +458,7 @@ public class MainFragment extends BaseFragment
       );
     }
 
-    setButtonStates(getMetronomeUtil().getTempo());
+    setButtonStates(getMetronomeUtil().getConfig().getTempo());
 
     binding.songPickerMain.setListener(new SongPickerListener() {
       @Override
@@ -700,16 +686,16 @@ public class MainFragment extends BaseFragment
       );
     }
 
-    updateBeats(getMetronomeUtil().getBeats());
+    updateBeats(getMetronomeUtil().getConfig().getBeats());
     updateBeatControls(false);
-    updateSubs(getMetronomeUtil().getSubdivisions());
+    updateSubs(getMetronomeUtil().getConfig().getSubdivisions());
     updateSubControls(false);
 
     measureTimerControls(true); // calls updateTimerControls when measured
     updateElapsedDisplay();
     updateOptions(false);
 
-    int tempo = getMetronomeUtil().getTempo();
+    int tempo = getMetronomeUtil().getConfig().getTempo();
     updateTempoDisplay(tempo, tempo);
     binding.textSwitcherMainTempoTerm.setCurrentText(getTempoTerm(tempo));
 
@@ -782,6 +768,21 @@ public class MainFragment extends BaseFragment
       );
     });
     dialogUtilBeatMode.showIfWasShown(savedState);
+
+    String flashScreenMode = getMetronomeUtil().getFlashScreen();
+    flashScreen = !flashScreenMode.equals(FLASH_SCREEN.OFF);
+
+    colorFlashMuted = ResUtil.getColor(activity, R.attr.colorSurface);
+    if (flashScreenMode.equals(FLASH_SCREEN.SUBTLE)) {
+      float mixRatio = 0.7f;
+      colorFlashNormal = ResUtil.getColor(activity, R.attr.colorPrimaryContainer);
+      colorFlashNormal = ColorUtils.blendARGB(colorFlashMuted, colorFlashNormal, mixRatio);
+      colorFlashStrong = ResUtil.getColor(activity, R.attr.colorErrorContainer);
+      colorFlashStrong = ColorUtils.blendARGB(colorFlashMuted, colorFlashStrong, mixRatio);
+    } else {
+      colorFlashNormal = ResUtil.getColor(activity, R.attr.colorPrimary);
+      colorFlashStrong = ResUtil.getColor(activity, R.attr.colorError);
+    }
 
     String keepAwake = getMetronomeUtil().getKeepAwake();
     boolean keepAwakeNow = keepAwake.equals(KEEP_AWAKE.ALWAYS)
@@ -857,7 +858,7 @@ public class MainFragment extends BaseFragment
         ((BeatView) beat).beat();
       }
       View subdivision = binding.linearMainSubs.getChildAt(tick.subdivision - 1);
-      if ((getMetronomeUtil().isSubdivisionActive() || !hideSubControls)) {
+      if ((getMetronomeUtil().getConfig().isSubdivisionActive() || !hideSubControls)) {
         if (!(subdivision instanceof BeatView)) {
           return;
         }
@@ -908,7 +909,7 @@ public class MainFragment extends BaseFragment
           logoCenterUtil.nextBeat(getMetronomeUtil().getInterval());
         }
       }
-      if (getMetronomeUtil().getTimerUnit().equals(UNIT.BARS)) {
+      if (getMetronomeUtil().getConfig().getTimerUnit().equals(UNIT.BARS)) {
         updateTimerDisplay();
       }
     });
@@ -958,9 +959,9 @@ public class MainFragment extends BaseFragment
         return;
       }
       // tempo is updated in onMetronomeTempoChanged
-      updateBeats(getMetronomeUtil().getBeats());
+      updateBeats(getMetronomeUtil().getConfig().getBeats());
       updateBeatControls(true);
-      updateSubs(getMetronomeUtil().getSubdivisions());
+      updateSubs(getMetronomeUtil().getConfig().getSubdivisions());
       updateSubControls(true);
 
       updateTimerControls(true, true);
@@ -1172,7 +1173,7 @@ public class MainFragment extends BaseFragment
       beatsCountBadgeAnimator.cancel();
       beatsCountBadgeAnimator = null;
     }
-    int beats = getMetronomeUtil().getBeatsCount();
+    int beats = getMetronomeUtil().getConfig().getBeatsCount();
     binding.buttonMainAddBeat.setEnabled(beats < Constants.BEATS_MAX);
     binding.buttonMainRemoveBeat.setEnabled(beats > 1);
     beatsCountBadge.setNumber(beats);
@@ -1259,11 +1260,12 @@ public class MainFragment extends BaseFragment
       subsCountBadgeAnimator.cancel();
       subsCountBadgeAnimator = null;
     }
-    int subdivisions = getMetronomeUtil().getSubdivisionsCount();
+    int subdivisions = getMetronomeUtil().getConfig().getSubdivisionsCount();
     binding.buttonMainAddSubdivision.setEnabled(subdivisions < Constants.SUBS_MAX);
     binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
     binding.linearMainSubsBg.setVisibility(
-        getMetronomeUtil().isSubdivisionActive() || !hideSubControls ? View.VISIBLE : View.GONE
+        getMetronomeUtil().getConfig().isSubdivisionActive()
+            || !hideSubControls ? View.VISIBLE : View.GONE
     );
     updateSongPickerDividerVisibility();
     subsCountBadge.setNumber(subdivisions);
@@ -1461,18 +1463,18 @@ public class MainFragment extends BaseFragment
   }
 
   private int getModifierCount() {
-    MetronomeUtil metronome = getMetronomeUtil();
-    return (metronome.isCountInActive() ? 1 : 0) +
-        (metronome.isIncrementalActive() ? 1 : 0) +
-        (metronome.isTimerActive() ? 1 : 0) +
-        (metronome.isMuteActive() ? 1 : 0) +
-        (metronome.isSubdivisionActive() && hideSubControls ? 1 : 0);
+    MetronomeConfig config = getMetronomeUtil().getConfig();
+    return (config.isCountInActive() ? 1 : 0) +
+        (config.isIncrementalActive() ? 1 : 0) +
+        (config.isTimerActive() ? 1 : 0) +
+        (config.isMuteActive() ? 1 : 0) +
+        (config.isSubdivisionActive() && hideSubControls ? 1 : 0);
   }
 
   private void changeTempo(int difference) {
-    int tempoNew = getMetronomeUtil().getTempo() + difference;
+    int tempoNew = getMetronomeUtil().getConfig().getTempo() + difference;
     if (tempoNew >= Constants.TEMPO_MIN && tempoNew <= Constants.TEMPO_MAX) {
-      updateTempoDisplay(getMetronomeUtil().getTempo(), tempoNew);
+      updateTempoDisplay(getMetronomeUtil().getConfig().getTempo(), tempoNew);
       getMetronomeUtil().setTempo(tempoNew);
       performHapticTick();
     }

@@ -170,7 +170,7 @@ public class TempoDialogUtil {
       return;
     }
     int tempo = Integer.parseInt(tempoEditable.toString());
-    fragment.updateTempoDisplay(getMetronomeUtil().getTempo(), tempo);
+    fragment.updateTempoDisplay(getMetronomeUtil().getConfig().getTempo(), tempo);
     getMetronomeUtil().setTempo(tempo);
 
     binding.editTextTempo.clearFocus();

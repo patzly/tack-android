@@ -75,7 +75,7 @@ public class TempoTapDialogUtil {
         binding.cloverTempoTap.setTapped(true);
         boolean enoughData = tap();
         if (enoughData) {
-          setTempoDisplay(getMetronomeUtil().getTempo(), getTempo());
+          setTempoDisplay(getMetronomeUtil().getConfig().getTempo(), getTempo());
           getMetronomeUtil().setTempo(getTempo());
         }
         activity.performHapticHeavyClick();
@@ -117,7 +117,7 @@ public class TempoTapDialogUtil {
   }
 
   public void update() {
-    int tempo = getMetronomeUtil().getTempo();
+    int tempo = getMetronomeUtil().getConfig().getTempo();
     setTempoDisplay(tempo, tempo);
     binding.textSwitcherTempoTapTempoTerm.setCurrentText(fragment.getTempoTerm(tempo));
     binding.cloverTempoTap.setReduceAnimations(fragment.isReduceAnimations());
@@ -145,7 +145,7 @@ public class TempoTapDialogUtil {
     if (binding == null || fragment == null || !fragment.isAdded()) {
       return;
     }
-    fragment.updateTempoDisplay(getMetronomeUtil().getTempo(), tempoNew);
+    fragment.updateTempoDisplay(getMetronomeUtil().getConfig().getTempo(), tempoNew);
     binding.textTempoTapTempo.setText(String.valueOf(tempoNew));
     String termNew = fragment.getTempoTerm(tempoNew);
     if (!termNew.equals(fragment.getTempoTerm(tempoOld))) {

@@ -80,11 +80,12 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     }
     binding = useDialog ? bindingDialog.partialOptions : fragment.getBinding().partialOptions;
 
-    isCountInActive = getMetronomeUtil().isCountInActive();
-    isIncrementalActive = getMetronomeUtil().isIncrementalActive();
-    isTimerActive = getMetronomeUtil().isTimerActive();
-    isMuteActive = getMetronomeUtil().isMuteActive();
-    isSubdivisionActive = getMetronomeUtil().isSubdivisionActive();
+    MetronomeConfig config = getConfig();
+    isCountInActive = config.isCountInActive();
+    isIncrementalActive = config.isIncrementalActive();
+    isTimerActive = config.isTimerActive();
+    isMuteActive = config.isMuteActive();
+    isSubdivisionActive = config.isSubdivisionActive();
 
     hideSubControlsIfUnused = activity.getSharedPrefs().getBoolean(
         PREF.HIDE_SUB_CONTROLS, DEF.HIDE_SUB_CONTROLS
