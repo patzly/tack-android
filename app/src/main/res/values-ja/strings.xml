@@ -348,6 +348,8 @@
   <string name="settings_flash_screen">画面明滅</string>
   <string name="settings_flash_screen_description">拍に合せて明滅します</string>
   <string name="settings_flash_screen_off">オフ</string>
+  <string name="settings_flash_screen_strong">強</string>
+
   <string name="settings_keep_awake">常に画面点灯</string>
   <string name="settings_keep_awake_description">バッテリー消費が増える可能性があります</string>
   <string name="settings_keep_awake_always">常時</string>
