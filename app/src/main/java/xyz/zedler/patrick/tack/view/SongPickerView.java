@@ -130,7 +130,11 @@ public class SongPickerView extends FrameLayout {
     maybeCenterSongChips();
 
     // maybe name of current song changed
-    setCurrentSong(currentSongId, false);
+    String songName = getSongNameFromId(currentSongId);
+    String chipText = binding.textSongPickerChip.getText().toString();
+    if (songName != null && !songName.equals(chipText)) {
+      binding.textSongPickerChip.setText(songName);
+    }
     // maybe name of current part changed
     setPartIndex(currentPartIndex);
   }

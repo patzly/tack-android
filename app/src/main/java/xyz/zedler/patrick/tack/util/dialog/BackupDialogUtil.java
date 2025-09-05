@@ -36,9 +36,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
@@ -130,9 +132,15 @@ public class BackupDialogUtil implements OnClickListener {
       return;
     }
     activity.getSongViewModel().fetchAllSongsWithParts(songsWithParts -> {
+      List<SongWithParts> filteredSongs = new ArrayList<>(songsWithParts);
+      for (int i = filteredSongs.size() - 1; i >= 0; i--) {
+        if (filteredSongs.get(i).getSong().getId().equals(Constants.SONG_ID_DEFAULT)) {
+          filteredSongs.remove(i);
+        }
+      }
       try (OutputStream outputStream = activity.getContentResolver().openOutputStream(uri)) {
         if (outputStream != null) {
-          String json = gson.toJson(songsWithParts);
+          String json = gson.toJson(filteredSongs);
           outputStream.write(json.getBytes());
           outputStream.flush();
           showToast(R.string.msg_backup_success);
