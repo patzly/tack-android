@@ -159,6 +159,8 @@
   <string name="action_next">Next</string>
   <string name="action_more">More</string>
   <string name="action_edit">Edit</string>
+  <string name="action_extend">Extend</string>
+  <string name="action_collapse">Collapse</string>
 
   <!-- MESSAGES -->
 

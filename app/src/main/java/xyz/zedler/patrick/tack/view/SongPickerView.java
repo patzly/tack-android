@@ -227,7 +227,7 @@ public class SongPickerView extends FrameLayout {
       return true;
     });
 
-    int colorSurface = ResUtil.getColor(context, R.attr.colorSurface);
+    int colorSurface = ResUtil.getColor(context, R.attr.colorSurfaceContainer);
     gradientLeft = new GradientDrawable(
         GradientDrawable.Orientation.LEFT_RIGHT,
         new int[]{Color.TRANSPARENT, colorSurface, colorSurface, colorSurface}
@@ -279,6 +279,18 @@ public class SongPickerView extends FrameLayout {
         binding.recyclerSongPicker.post(() -> {
           View targetChip = layoutManager.findViewByPosition(position);
           if (targetChip != null) {
+            int colorTertiaryContainer = ResUtil.getColor(
+                context, R.attr.colorTertiaryContainer
+            );
+            int colorOnTertiaryContainer = ResUtil.getColor(
+                context, R.attr.colorOnTertiaryContainer
+            );
+            int colorPrimary = ResUtil.getColor(context, R.attr.colorPrimary);
+            int colorSurface = ResUtil.getColor(context, R.attr.colorSurface);
+            int colorOnSurface = ResUtil.getColor(context, R.attr.colorOnSurface);
+            int colorOutline = ResUtil.getColor(context, R.attr.colorOutline);
+            int colorOutlineVariant = ResUtil.getColor(context, R.attr.colorOutlineVariant);
+
             int endLeft = targetChip.getLeft();
             int startLeft = binding.frameSongPickerChipTouchTarget.getLeft();
             // Compensate half of close icon width
@@ -302,16 +314,6 @@ public class SongPickerView extends FrameLayout {
               closeIconParams.width = (int) Math.min(closeIconWidth * fraction, closeIconWidth);
               binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
               binding.imageSongPickerChipClose.setAlpha(fraction);
-              int colorTertiaryContainer = ResUtil.getColor(
-                  context, R.attr.colorTertiaryContainer
-              );
-              int colorOnTertiaryContainer = ResUtil.getColor(
-                  context, R.attr.colorOnTertiaryContainer
-              );
-              int colorPrimary = ResUtil.getColor(context, R.attr.colorPrimary);
-              int colorSurface = ResUtil.getColor(context, R.attr.colorSurface);
-              int colorOnSurface = ResUtil.getColor(context, R.attr.colorOnSurface);
-              int colorOutlineVariant = ResUtil.getColor(context, R.attr.colorOutlineVariant);
 
               float colorFraction = Math.max(0, Math.min(1, fraction));
               int colorBg = ColorUtils.blendARGB(
@@ -324,7 +326,7 @@ public class SongPickerView extends FrameLayout {
                   colorPrimary, colorOnTertiaryContainer, colorFraction
               );
               int colorStroke = ColorUtils.blendARGB(
-                  colorOutlineVariant, Color.TRANSPARENT, colorFraction
+                  colorOutlineVariant, colorOutline, colorFraction
               );
               binding.cardSongPickerChip.setCardBackgroundColor(colorBg);
               binding.cardSongPickerChip.setStrokeColor(colorStroke);
