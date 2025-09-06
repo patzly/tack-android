@@ -260,7 +260,12 @@ public class SongPickerView extends FrameLayout {
       setRecyclerClicksEnabled(false);
       binding.frameSongPickerChipClose.setClickable(false);
       binding.frameSongPickerChipTouchTarget.setClickable(false);
+      binding.frameSongPickerChipTouchTarget.setBackgroundColor(
+          ResUtil.getColor(context, R.attr.colorSurface)
+      );
       binding.cardSongPickerChip.setClickable(false);
+      binding.viewSongPickerGradientStart.setVisibility(VISIBLE);
+      binding.viewSongPickerGradientEnd.setVisibility(VISIBLE);
       if (!isDefaultSong) {
         binding.textSongPickerChip.setText(getSongNameFromId(currentSongId));
         binding.constraintSongPickerChipContainer.setTranslationX(0);
@@ -348,6 +353,10 @@ public class SongPickerView extends FrameLayout {
               public void onAnimationEnd(Animator animation) {
                 if (isDefaultSong) {
                   binding.constraintSongPickerChipContainer.setVisibility(INVISIBLE);
+                } else {
+                  binding.viewSongPickerGradientStart.setVisibility(INVISIBLE);
+                  binding.viewSongPickerGradientEnd.setVisibility(INVISIBLE);
+                  binding.frameSongPickerChipTouchTarget.setBackground(null);
                 }
                 binding.frameSongPickerChipClose.setClickable(!isDefaultSong);
                 binding.frameSongPickerChipTouchTarget.setClickable(!isDefaultSong);
@@ -364,6 +373,9 @@ public class SongPickerView extends FrameLayout {
       binding.recyclerSongPicker.setAlpha(1);
       binding.recyclerSongPicker.setVisibility(isDefaultSong ? VISIBLE : INVISIBLE);
       binding.constraintSongPickerChipContainer.setVisibility(isDefaultSong ? INVISIBLE : VISIBLE);
+      binding.viewSongPickerGradientStart.setVisibility(INVISIBLE);
+      binding.viewSongPickerGradientEnd.setVisibility(INVISIBLE);
+      binding.frameSongPickerChipTouchTarget.setBackground(null);
       binding.frameSongPickerChipClose.setClickable(!isDefaultSong);
       binding.textSongPickerChip.setText(getSongNameFromId(currentSongId));
       closeIconParams.width = UiUtil.dpToPx(context, 18);
