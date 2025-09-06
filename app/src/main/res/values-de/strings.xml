@@ -226,6 +226,10 @@
     <item quantity="other">%1$d Minuten</item>
   </plurals>
   <string name="options_inactive">Inaktiv</string>
+  <plurals name="options_beats_description">
+    <item quantity="one">%1$d Schlag pro Takt</item>
+    <item quantity="other">%1$d Schläge pro Takt</item>
+  </plurals>
   <string name="options_count_in">Einzählen</string>
   <plurals name="options_count_in_description">
     <item quantity="one">%1$d Takt vor Modifikationen warten</item>
