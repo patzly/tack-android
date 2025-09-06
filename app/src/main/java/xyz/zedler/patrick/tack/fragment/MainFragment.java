@@ -1043,7 +1043,7 @@ public class MainFragment extends BaseFragment
         binding.linearMainSubs.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
         updateSubControls(true);
-        optionsUtil.updateSubdivisions();
+        optionsUtil.updateSubdivisionsCount();
         optionsUtil.updateSwing();
       }
     } else if (id == R.id.button_main_remove_subdivision) {
@@ -1056,7 +1056,7 @@ public class MainFragment extends BaseFragment
             binding.scrollHorizMainSubs, true
         );
         updateSubControls(true);
-        optionsUtil.updateSubdivisions();
+        optionsUtil.updateSubdivisionsCount();
         optionsUtil.updateSwing();
       }
     } else if (id == R.id.button_main_less_1) {

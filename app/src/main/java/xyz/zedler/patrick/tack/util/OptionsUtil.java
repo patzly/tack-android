@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.util;
 
+import android.animation.LayoutTransition;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.View;
@@ -32,9 +33,11 @@ import com.google.android.material.button.MaterialButtonToggleGroup.OnButtonChec
 import com.google.android.material.slider.Slider;
 import com.google.android.material.slider.Slider.OnChangeListener;
 import com.google.android.material.slider.Slider.OnSliderTouchListener;
+import java.util.Arrays;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
+import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
@@ -43,6 +46,7 @@ import xyz.zedler.patrick.tack.databinding.PartialDialogOptionsBinding;
 import xyz.zedler.patrick.tack.databinding.PartialOptionsBinding;
 import xyz.zedler.patrick.tack.fragment.MainFragment;
 import xyz.zedler.patrick.tack.model.MetronomeConfig;
+import xyz.zedler.patrick.tack.view.BeatView;
 
 public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     OnChangeListener, OnSliderTouchListener {
@@ -172,7 +176,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding = bindingDialog.partialOptions;
 
     String title = activity.getString(
-        R.string.label_part_unnamed, part.getPartIndex() + 1
+        R.string.label_part_edit, part.getPartIndex() + 1
     );
     dialogUtil.createDialog(builder -> {
       builder.setTitle(title);
@@ -198,15 +202,131 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     if (useDialog) {
       bindingDialog.scrollOptions.scrollTo(0, 0);
     }
+    if (binding == null) {
+      return;
+    }
+    binding.linearOptionsEditPartContainer.setVisibility(editPart ? View.VISIBLE : View.GONE);
     binding.buttonOptionsUseCurrentConfig.setOnClickListener(this);
-    binding.buttonOptionsUseCurrentConfig.setVisibility(editPart ? View.VISIBLE : View.GONE);
-
+    updateBeats();
+    updateSubdivisions();
     updateCountIn();
     updateIncremental();
     updateTimer();
     updateMute();
-    updateSubdivisions();
+    updateSubdivisionsCount();
     updateSwing();
+  }
+
+  private void updateBeats() {
+    if (!editPart) {
+      return;
+    }
+    String[] beats = getConfig().getBeats();
+    String[] currentBeats = new String[binding.linearOptionsBeats.getChildCount()];
+    for (int i = 0; i < binding.linearOptionsBeats.getChildCount(); i++) {
+      currentBeats[i] = String.valueOf(binding.linearOptionsBeats.getChildAt(i));
+    }
+    if (Arrays.equals(beats, currentBeats)) {
+      return;
+    }
+    binding.linearOptionsBeats.removeAllViews();
+    for (int i = 0; i < beats.length; i++) {
+      String tickType = beats[i];
+      BeatView beatView = new BeatView(activity);
+      beatView.setTickType(tickType);
+      beatView.setIndex(i);
+      beatView.setOnClickListener(beat -> {
+        activity.performHapticClick();
+        getConfig().setBeat(beatView.getIndex(), beatView.nextTickType());
+      });
+      binding.linearOptionsBeats.addView(beatView);
+    }
+    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsBeats);
+    binding.linearOptionsBeats.post(() -> {
+      if (binding == null) {
+        return;
+      }
+      LayoutTransition transition = new LayoutTransition();
+      transition.setDuration(Constants.ANIM_DURATION_LONG);
+      binding.linearOptionsBeats.setLayoutTransition(transition);
+    });
+    updateBeatControls();
+  }
+
+  private void updateBeatControls() {
+    if (!editPart) {
+      return;
+    }
+    int beatsCount = getConfig().getBeatsCount();
+    binding.textOptionsBeats.setText(
+        activity.getResources().getQuantityString(
+            R.plurals.options_beats_description, beatsCount, beatsCount
+        )
+    );
+    binding.buttonOptionsBeatsAdd.setOnClickListener(this);
+    binding.buttonOptionsBeatsAdd.setEnabled(beatsCount < Constants.BEATS_MAX);
+    binding.buttonOptionsBeatsRemove.setOnClickListener(this);
+    binding.buttonOptionsBeatsRemove.setEnabled(beatsCount > 1);
+  }
+
+  private void updateSubdivisions() {
+    if (!editPart) {
+      return;
+    }
+    String[] subdivisions = getConfig().getSubdivisions();
+    String[] currentSubs = new String[binding.linearOptionsSubs.getChildCount()];
+    for (int i = 0; i < binding.linearOptionsSubs.getChildCount(); i++) {
+      currentSubs[i] = String.valueOf(binding.linearOptionsSubs.getChildAt(i));
+    }
+    if (Arrays.equals(subdivisions, currentSubs)) {
+      return;
+    }
+    binding.linearOptionsSubs.removeAllViews();
+    for (int i = 0; i < subdivisions.length; i++) {
+      String tickType = subdivisions[i];
+      BeatView beatView = new BeatView(activity);
+      beatView.setIsSubdivision(true);
+      beatView.setTickType(i == 0 ? TICK_TYPE.MUTED : tickType);
+      beatView.setIndex(i);
+      if (i > 0) {
+        beatView.setOnClickListener(beat -> {
+          activity.performHapticClick();
+          getConfig().setSubdivision(beatView.getIndex(), beatView.nextTickType());
+        });
+      }
+      binding.linearOptionsSubs.addView(beatView);
+    }
+    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsSubs, true);
+    binding.linearOptionsSubs.post(() -> {
+      if (binding == null) {
+        return;
+      }
+      LayoutTransition transition = new LayoutTransition();
+      transition.setDuration(Constants.ANIM_DURATION_LONG);
+      binding.linearOptionsSubs.setLayoutTransition(transition);
+    });
+    updateSubControls();
+  }
+
+  private void updateSubControls() {
+    if (!editPart) {
+      return;
+    }
+    int subdivisionsCount = getConfig().getSubdivisionsCount();
+    boolean isSubdivisionActive = getConfig().isSubdivisionActive();
+    if (isSubdivisionActive) {
+      binding.textOptionsSubs.setText(
+          activity.getResources().getQuantityString(
+              R.plurals.options_subdivisions_description, subdivisionsCount, subdivisionsCount
+          )
+      );
+    } else {
+      binding.textOptionsSubs.setText(R.string.options_inactive);
+    }
+    binding.buttonOptionsSubsAdd.setOnClickListener(this);
+    binding.buttonOptionsSubsAdd.setEnabled(subdivisionsCount < Constants.SUBS_MAX);
+    binding.buttonOptionsSubsRemove.setOnClickListener(this);
+    binding.buttonOptionsSubsRemove.setEnabled(subdivisionsCount > 1);
   }
 
   private void updateCountIn() {
@@ -603,9 +723,9 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding.linearOptionsMuteContainer.setVisibility(visibleControls ? View.VISIBLE : View.GONE);
   }
 
-  public void updateSubdivisions(boolean animated) {
+  public void updateSubdivisionsCount() {
     // Only show if user decided to hide subdivisions when not in use
-    binding.linearOptionsSubdivisionsContainer.setVisibility(
+    binding.linearOptionsSubsCountContainer.setVisibility(
         hideSubControlsIfUnused ? View.VISIBLE : View.GONE
     );
 
@@ -619,29 +739,24 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     }
 
     if (isSubdivisionActive) {
-      binding.textOptionsSubdivisions.setText(
+      binding.textOptionsSubsCount.setText(
           activity.getResources().getQuantityString(
               R.plurals.options_subdivisions_description, subdivisionsCount, subdivisionsCount
           )
       );
     } else {
-      binding.textOptionsSubdivisions.setText(R.string.options_inactive);
+      binding.textOptionsSubsCount.setText(R.string.options_inactive);
     }
 
-    binding.sliderOptionsSubdivisions.removeOnChangeListener(this);
-    //binding.sliderOptionsSubdivisions.setAnimateNonUserValueChange(animated);
-    binding.sliderOptionsSubdivisions.setValue(subdivisionsCount);
-    binding.sliderOptionsSubdivisions.addOnChangeListener(this);
-    binding.sliderOptionsSubdivisions.setLabelFormatter(value -> {
+    binding.sliderOptionsSubsCount.removeOnChangeListener(this);
+    binding.sliderOptionsSubsCount.setValue(subdivisionsCount);
+    binding.sliderOptionsSubsCount.addOnChangeListener(this);
+    binding.sliderOptionsSubsCount.setLabelFormatter(value -> {
       int count = (int) value;
       return activity.getResources().getQuantityString(
           R.plurals.options_unit_subdivisions, count, count
       );
     });
-  }
-
-  public void updateSubdivisions() {
-    updateSubdivisions(false);
   }
 
   public void updateSwing() {
@@ -672,6 +787,61 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     if (id == R.id.button_options_use_current_config) {
       config = new MetronomeConfig(getMetronomeUtil().getConfig());
       update();
+    } else if (id == R.id.button_options_beats_add) {
+      ViewUtil.startIcon(binding.buttonOptionsBeatsAdd.getIcon());
+      activity.performHapticClick();
+      boolean success = getConfig().addBeat();
+      if (success) {
+        BeatView beatView = new BeatView(activity);
+        beatView.setIndex(binding.linearOptionsBeats.getChildCount());
+        beatView.setOnClickListener(beat -> {
+          activity.performHapticClick();
+          getConfig().setBeat(beatView.getIndex(), beatView.nextTickType());
+        });
+        binding.linearOptionsBeats.addView(beatView);
+        ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsBeats);
+        updateBeatControls();
+      }
+    } else if (id == R.id.button_options_beats_remove) {
+      ViewUtil.startIcon(binding.buttonOptionsBeatsRemove.getIcon());
+      activity.performHapticClick();
+      boolean success = getConfig().removeBeat();
+      if (success) {
+        binding.linearOptionsBeats.removeViewAt(
+            binding.linearOptionsBeats.getChildCount() - 1
+        );
+        ViewUtil.centerScrollContentIfNotFullWidth(
+            binding.scrollHorizOptionsBeats, true
+        );
+        updateBeatControls();
+      }
+    } else if (id == R.id.button_options_subs_add) {
+      ViewUtil.startIcon(binding.buttonOptionsSubsAdd.getIcon());
+      activity.performHapticClick();
+      boolean success = getConfig().addSubdivision();
+      if (success) {
+        BeatView beatView = new BeatView(activity);
+        beatView.setIsSubdivision(true);
+        beatView.setIndex(binding.linearOptionsSubs.getChildCount());
+        beatView.setOnClickListener(subdivision -> {
+          activity.performHapticClick();
+          getConfig().setSubdivision(beatView.getIndex(), beatView.nextTickType());
+        });
+        binding.linearOptionsSubs.addView(beatView);
+        ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsSubs);
+        updateSubControls();
+      }
+    } else if (id == R.id.button_options_subs_remove) {
+      ViewUtil.startIcon(binding.buttonOptionsSubsRemove.getIcon());
+      activity.performHapticClick();
+      boolean success = getConfig().removeSubdivision();
+      if (success) {
+        binding.linearOptionsSubs.removeViewAt(binding.linearOptionsSubs.getChildCount() - 1);
+        ViewUtil.centerScrollContentIfNotFullWidth(
+            binding.scrollHorizOptionsSubs, true
+        );
+        updateSubControls();
+      }
     } else if (id == R.id.button_options_incremental_interval_decrease) {
       int valueFrom = (int) binding.sliderOptionsIncrementalInterval.getValueFrom();
       int valueTo = (int) binding.sliderOptionsIncrementalInterval.getValueTo();
@@ -830,7 +1000,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
           getMetronomeUtil().setSwing7();
         }
       }
-      updateSubdivisions(true);
+      updateSubdivisionsCount();
       updateSwing();
       if (!editPart && fragment != null) {
         fragment.updateSubs(getConfig().getSubdivisions());
@@ -902,7 +1072,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         getMetronomeUtil().setMuteMute((int) value);
       }
       updateMute();
-    } else if (id == R.id.slider_options_subdivisions) {
+    } else if (id == R.id.slider_options_subs_count) {
       activity.performHapticSegmentTick(slider, true);
       int oldCount = getConfig().getSubdivisionsCount();
       int newCount = (int) value;
@@ -915,7 +1085,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
           getMetronomeUtil().removeSubdivision();
         }
       }
-      updateSubdivisions();
+      updateSubdivisionsCount();
       updateSwing();
       if (!editPart && fragment != null) {
         fragment.updateSubs(getConfig().getSubdivisions());

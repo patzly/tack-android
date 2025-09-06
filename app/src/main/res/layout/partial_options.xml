@@ -28,23 +28,169 @@
   android:paddingTop="12dp"
   android:animateLayoutChanges="true">
 
-  <HorizontalScrollView
+  <LinearLayout
+    android:id="@+id/linear_options_edit_part_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginBottom="8dp"
-    android:scrollbars="none"
-    android:overScrollMode="ifContentScrolls"
-    android:requiresFadingEdge="horizontal">
+    android:orientation="vertical">
 
-    <com.google.android.material.button.MaterialButton
-      android:id="@+id/button_options_use_current_config"
-      style="@style/Widget.Tack.Button.OutlinedButton"
-      android:text="@string/action_use_current_config"
-      app:icon="@drawable/ic_logo_simple" />
+    <HorizontalScrollView
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="16dp"
+      android:scrollbars="none"
+      android:overScrollMode="ifContentScrolls"
+      android:requiresFadingEdge="horizontal">
 
-  </HorizontalScrollView>
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_options_use_current_config"
+        style="@style/Widget.Tack.Button.OutlinedButton"
+        android:text="@string/action_use_current_config"
+        app:icon="@drawable/ic_logo_simple" />
+
+    </HorizontalScrollView>
+
+    <TextView
+      style="@style/Widget.Tack.TextView"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp"
+      android:text="@string/options_unit_beats" />
+
+    <TextView
+      android:id="@+id/text_options_beats"
+      style="@style/Widget.Tack.TextView.BodyMedium"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="8dp"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp"
+      android:textColor="?attr/colorOnSurfaceVariant"
+      android:fontFeatureSettings="tnum" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_marginStart="12dp"
+      android:layout_marginEnd="12dp">
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_options_beats_remove"
+        style="@style/Widget.Tack.Button.IconButton.Filled.Small.Narrow"
+        android:contentDescription="@string/action_remove_beat"
+        app:icon="@drawable/ic_rounded_remove_anim" />
+
+      <com.google.android.material.card.MaterialCardView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        app:cardCornerRadius="?attr/shapeCornerSizeLarge"
+        app:cardBackgroundColor="@color/transparent">
+
+        <HorizontalScrollView
+          android:id="@+id/scroll_horiz_options_beats"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:overScrollMode="ifContentScrolls"
+          android:scrollbars="horizontal"
+          android:scrollbarThumbHorizontal="@drawable/shape_scrollbar_rounded"
+          android:clipToPadding="true"
+          android:clipChildren="true">
+
+          <LinearLayout
+            android:id="@+id/linear_options_beats"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal" />
+
+        </HorizontalScrollView>
+
+      </com.google.android.material.card.MaterialCardView>
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_options_beats_add"
+        style="@style/Widget.Tack.Button.IconButton.Filled.Small.Narrow"
+        android:contentDescription="@string/action_add_beat"
+        app:icon="@drawable/ic_rounded_add_anim" />
+
+    </LinearLayout>
+
+    <TextView
+      style="@style/Widget.Tack.TextView"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp"
+      android:layout_marginTop="8dp"
+      android:text="@string/options_subdivisions" />
+
+    <TextView
+      android:id="@+id/text_options_subs"
+      style="@style/Widget.Tack.TextView.BodyMedium"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="8dp"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp"
+      android:textColor="?attr/colorOnSurfaceVariant"
+      android:fontFeatureSettings="tnum" />
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:layout_marginStart="12dp"
+      android:layout_marginEnd="12dp"
+      android:layout_marginBottom="4dp">
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_options_subs_remove"
+        style="@style/Widget.Tack.Button.IconButton.Filled.Small.Narrow"
+        android:contentDescription="@string/action_remove_sub"
+        app:icon="@drawable/ic_rounded_remove_anim" />
+
+      <com.google.android.material.card.MaterialCardView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        app:cardCornerRadius="?attr/shapeCornerSizeLarge"
+        app:cardBackgroundColor="@color/transparent">
+
+        <HorizontalScrollView
+          android:id="@+id/scroll_horiz_options_subs"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:overScrollMode="ifContentScrolls"
+          android:scrollbars="horizontal"
+          android:scrollbarThumbHorizontal="@drawable/shape_scrollbar_rounded"
+          android:clipToPadding="true"
+          android:clipChildren="true">
+
+          <LinearLayout
+            android:id="@+id/linear_options_subs"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_gravity="center_horizontal" />
+
+        </HorizontalScrollView>
+
+      </com.google.android.material.card.MaterialCardView>
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_options_subs_add"
+        style="@style/Widget.Tack.Button.IconButton.Filled.Small.Narrow"
+        android:contentDescription="@string/action_add_sub"
+        app:icon="@drawable/ic_rounded_add_anim" />
+
+    </LinearLayout>
+
+  </LinearLayout>
 
   <TextView
     style="@style/Widget.Tack.TextView"
@@ -525,7 +671,7 @@
   </LinearLayout>
 
   <LinearLayout
-    android:id="@+id/linear_options_subdivisions_container"
+    android:id="@+id/linear_options_subs_count_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -540,7 +686,7 @@
       android:text="@string/options_subdivisions" />
 
     <TextView
-      android:id="@+id/text_options_subdivisions"
+      android:id="@+id/text_options_subs_count"
       style="@style/Widget.Tack.TextView.BodyMedium"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
@@ -550,7 +696,7 @@
       android:fontFeatureSettings="tnum" />
 
     <com.google.android.material.slider.Slider
-      android:id="@+id/slider_options_subdivisions"
+      android:id="@+id/slider_options_subs_count"
       style="@style/Widget.Tack.Slider"
       android:layout_marginStart="2dp"
       android:layout_marginEnd="2dp"
