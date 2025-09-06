@@ -59,6 +59,7 @@
   <string name="label_part_name">Name des Teils</string>
   <string name="label_part_unnamed">Teil %1$d</string>
   <string name="label_part_current">Teil %1$d: %2$s</string>
+  <string name="label_part_edit">Teil %1$d bearbeiten</string>
   <string name="label_part_no_duration">Keine Dauer</string>
   <plurals name="label_parts_count">
     <item quantity="one">%1$d Teil</item>
