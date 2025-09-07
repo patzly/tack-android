@@ -140,7 +140,7 @@ public class RenameDialogUtil {
   private void showKeyboard() {
     if (binding != null) {
       binding.editTextName.requestFocus();
-      UiUtil.showKeyboard(activity, binding.editTextName);
+      UiUtil.showKeyboard(binding.editTextName);
     }
   }
 }

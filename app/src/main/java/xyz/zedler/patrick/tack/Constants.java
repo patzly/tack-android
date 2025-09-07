@@ -70,6 +70,8 @@ public final class Constants {
     public final static String IGNORE_FOCUS = "ignore_focus";
     public final static String GAIN = "gain";
     public final static String BIG_LOGO = "big_logo";
+    public final static String TEMPO_INPUT_KEYBOARD = "tempo_input_keyboard";
+    public final static String TEMPO_TAP_INSTANT = "tempo_tap_instant";
 
     // Options
     public final static String COUNT_IN = "count_in";
@@ -118,6 +120,8 @@ public final class Constants {
     public final static boolean IGNORE_FOCUS = false;
     public final static int GAIN = 0;
     public final static boolean BIG_LOGO = false;
+    public final static boolean TEMPO_INPUT_KEYBOARD = true;
+    public final static boolean TEMPO_TAP_INSTANT = true;
 
     // Options
     public final static int COUNT_IN = 0;

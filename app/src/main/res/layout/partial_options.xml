@@ -314,17 +314,17 @@
         app:singleSelection="true"
         app:selectionRequired="true">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
           android:id="@+id/button_options_timer_unit_bars"
           style="@style/Widget.Tack.Button"
           android:text="@string/options_unit_bars" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
           android:id="@+id/button_options_timer_unit_seconds"
           style="@style/Widget.Tack.Button"
           android:text="@string/options_unit_seconds" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
           android:id="@+id/button_options_timer_unit_minutes"
           style="@style/Widget.Tack.Button"
           android:text="@string/options_unit_minutes" />
@@ -390,12 +390,12 @@
         app:singleSelection="true"
         app:selectionRequired="true">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
           android:id="@+id/button_options_incremental_decrease"
           style="@style/Widget.Tack.Button"
           android:text="@string/action_decrease" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
           android:id="@+id/button_options_incremental_increase"
           style="@style/Widget.Tack.Button"
           android:text="@string/action_increase" />
@@ -473,17 +473,17 @@
         app:singleSelection="true"
         app:selectionRequired="true">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
           android:id="@+id/button_options_incremental_unit_bars"
           style="@style/Widget.Tack.Button"
           android:text="@string/options_unit_bars" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
           android:id="@+id/button_options_incremental_unit_seconds"
           style="@style/Widget.Tack.Button"
           android:text="@string/options_unit_seconds" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
           android:id="@+id/button_options_incremental_unit_minutes"
           style="@style/Widget.Tack.Button"
           android:text="@string/options_unit_minutes" />
@@ -623,12 +623,12 @@
         app:singleSelection="true"
         app:selectionRequired="true">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
           android:id="@+id/button_options_mute_unit_bars"
           style="@style/Widget.Tack.Button"
           android:text="@string/options_unit_bars" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
           android:id="@+id/button_options_mute_unit_seconds"
           style="@style/Widget.Tack.Button"
           android:text="@string/options_unit_seconds" />
@@ -744,17 +744,17 @@
       app:singleSelection="true"
       app:selectionRequired="false">
 
-      <Button
+      <com.google.android.material.button.MaterialButton
         android:id="@+id/button_options_swing_3"
         style="@style/Widget.Tack.Button"
         android:text="@string/options_swing_3" />
 
-      <Button
+      <com.google.android.material.button.MaterialButton
         android:id="@+id/button_options_swing_5"
         style="@style/Widget.Tack.Button"
         android:text="@string/options_swing_5" />
 
-      <Button
+      <com.google.android.material.button.MaterialButton
         android:id="@+id/button_options_swing_7"
         style="@style/Widget.Tack.Button"
         android:text="@string/options_swing_7" />

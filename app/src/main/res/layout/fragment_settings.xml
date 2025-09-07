@@ -202,17 +202,17 @@
                 app:singleSelection="true"
                 app:selectionRequired="true">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                   android:id="@+id/button_settings_theme_auto"
                   style="@style/Widget.Tack.Button"
                   android:text="@string/settings_theme_auto" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                   android:id="@+id/button_settings_theme_light"
                   style="@style/Widget.Tack.Button"
                   android:text="@string/settings_theme_light" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                   android:id="@+id/button_settings_theme_dark"
                   style="@style/Widget.Tack.Button"
                   android:text="@string/settings_theme_dark" />
@@ -291,17 +291,17 @@
                 app:singleSelection="true"
                 app:selectionRequired="true">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                   android:id="@+id/button_settings_contrast_standard"
                   style="@style/Widget.Tack.Button"
                   android:text="@string/settings_contrast_standard" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                   android:id="@+id/button_settings_contrast_medium"
                   style="@style/Widget.Tack.Button"
                   android:text="@string/settings_contrast_medium" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                   android:id="@+id/button_settings_contrast_high"
                   style="@style/Widget.Tack.Button"
                   android:text="@string/settings_contrast_high" />
@@ -615,17 +615,17 @@
                 app:singleSelection="true"
                 app:selectionRequired="true">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                   android:id="@+id/button_settings_flash_screen_off"
                   style="@style/Widget.Tack.Button"
                   android:text="@string/settings_flash_screen_off" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                   android:id="@+id/button_settings_flash_screen_subtle"
                   style="@style/Widget.Tack.Button"
                   android:text="@string/settings_flash_screen_subtle" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                   android:id="@+id/button_settings_flash_screen_strong"
                   style="@style/Widget.Tack.Button"
                   android:text="@string/settings_flash_screen_strong" />
@@ -692,17 +692,17 @@
                 app:singleSelection="true"
                 app:selectionRequired="true">
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                   android:id="@+id/button_settings_keep_awake_always"
                   style="@style/Widget.Tack.Button"
                   android:text="@string/settings_keep_awake_always" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                   android:id="@+id/button_settings_keep_awake_while_playing"
                   style="@style/Widget.Tack.Button"
                   android:text="@string/settings_keep_awake_while_playing" />
 
-                <Button
+                <com.google.android.material.button.MaterialButton
                   android:id="@+id/button_settings_keep_awake_never"
                   style="@style/Widget.Tack.Button"
                   android:text="@string/settings_keep_awake_never" />

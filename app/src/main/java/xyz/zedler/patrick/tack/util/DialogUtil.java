@@ -20,6 +20,7 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -68,11 +69,21 @@ public class DialogUtil {
   }
 
   public boolean showIfWasShown(@Nullable Bundle state) {
-    boolean wasShowing = state != null && state.getBoolean(IS_SHOWING + tag);
+    boolean wasShowing = wasShown(state);
     if (wasShowing) {
       new Handler(Looper.getMainLooper()).postDelayed(this::show, 10);
     }
     return wasShowing;
+  }
+
+  public boolean wasShown(@Nullable Bundle state) {
+    return state != null && state.getBoolean(IS_SHOWING + tag);
+  }
+
+  public void setOnShowListener(@NonNull DialogInterface.OnShowListener listener) {
+    if (dialog != null) {
+      dialog.setOnShowListener(listener);
+    }
   }
 
   public void saveState(@NonNull Bundle outState) {

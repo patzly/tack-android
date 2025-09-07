@@ -50,7 +50,7 @@
 
     <TextView
       android:id="@+id/text_song_picker_part_placeholder"
-      style="@style/Widget.Tack.TextView.LabelMedium"
+      style="@style/Widget.Tack.TextView.LabelLarge"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:text=" "
@@ -153,7 +153,7 @@
 
     <TextView
       android:id="@+id/text_song_picker_part"
-      style="@style/Widget.Tack.TextView.LabelMedium"
+      style="@style/Widget.Tack.TextView.LabelLarge"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:gravity="center_horizontal"

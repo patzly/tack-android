@@ -79,7 +79,7 @@ public class MetronomeUtil {
   private long elapsedStartTime, elapsedTime, elapsedPrevious;
   private float timerProgress;
   private boolean playing, tempPlaying, isCountingIn, isMuted;
-  private boolean showElapsed, resetTimerOnStop;
+  private boolean showElapsed, resetTimerOnStop, tempoInputKeyboard, tempoTapInstant;
   private boolean neverStartedWithGain = true;
   private boolean ignoreTimerCallbacksTemp = false;
 
@@ -114,6 +114,10 @@ public class MetronomeUtil {
     flashScreen = sharedPrefs.getString(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
     keepAwake = sharedPrefs.getString(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
     songsOrder = sharedPrefs.getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER);
+    tempoInputKeyboard = sharedPrefs.getBoolean(
+        PREF.TEMPO_INPUT_KEYBOARD, DEF.TEMPO_INPUT_KEYBOARD
+    );
+    tempoTapInstant = sharedPrefs.getBoolean(PREF.TEMPO_TAP_INSTANT, DEF.TEMPO_TAP_INSTANT);
 
     setSound(sharedPrefs.getString(PREF.SOUND, DEF.SOUND));
     setIgnoreFocus(sharedPrefs.getBoolean(PREF.IGNORE_FOCUS, DEF.IGNORE_FOCUS));
@@ -744,6 +748,24 @@ public class MetronomeUtil {
 
   public String getKeepAwake() {
     return keepAwake;
+  }
+
+  public void setTempoInputKeyboard(boolean keyboard) {
+    tempoInputKeyboard = keyboard;
+    sharedPrefs.edit().putBoolean(PREF.TEMPO_INPUT_KEYBOARD, keyboard).apply();
+  }
+
+  public boolean getTempoInputKeyboard() {
+    return tempoInputKeyboard;
+  }
+
+  public void setTempoTapInstant(boolean instant) {
+    tempoTapInstant = instant;
+    sharedPrefs.edit().putBoolean(PREF.TEMPO_TAP_INSTANT, instant).apply();
+  }
+
+  public boolean getTempoTapInstant() {
+    return tempoTapInstant;
   }
 
   public void setCountIn(int bars) {

@@ -330,7 +330,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
             binding.editTextSongName.clearFocus(); // to prevent TextWatcher from being triggered
             binding.editTextSongName.setText(songResult.getName());
             binding.editTextSongName.post(() -> {
-              UiUtil.hideKeyboard(activity);
+              UiUtil.hideKeyboard(binding.editTextSongName);
               binding.editTextSongName.clearFocus();
             });
             binding.textInputSongName.setHintAnimationEnabled(true);
@@ -377,10 +377,10 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         boolean isLandTablet = UiUtil.isLandTablet(activity);
         if (savedInstanceState == null && (isPortrait || isLandTablet)) {
           binding.editTextSongName.requestFocus();
-          UiUtil.showKeyboard(activity, binding.editTextSongName);
+          UiUtil.showKeyboard(binding.editTextSongName);
         } else {
           // Only show keyboard if not restored from orientation change
-          UiUtil.hideKeyboard(activity);
+          UiUtil.hideKeyboard(binding.editTextSongName);
         }
       });
       binding.switchSongLooped.setOnCheckedChangeListener(null);
@@ -423,7 +423,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     binding.editTextSongName.setOnEditorActionListener(
         (v, actionId, event) -> {
           if (actionId == EditorInfo.IME_ACTION_DONE) {
-            UiUtil.hideKeyboard(activity);
+            UiUtil.hideKeyboard(binding.editTextSongName);
             binding.editTextSongName.clearFocus();
             updateResult();
           }
@@ -546,7 +546,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     } else if (id == R.id.fab_song) {
       performHapticClick();
       // Remove focus from edit text
-      UiUtil.hideKeyboard(activity);
+      UiUtil.hideKeyboard(binding.editTextSongName);
       binding.editTextSongName.clearFocus();
       if (activity.isUnlocked() || partsResult.size() < 2) {
         addPart();
@@ -566,7 +566,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     if (id == R.id.switch_song_looped) {
       performHapticClick();
       // Remove focus from edit text
-      UiUtil.hideKeyboard(activity);
+      UiUtil.hideKeyboard(binding.editTextSongName);
       binding.editTextSongName.clearFocus();
       updateResult();
     }

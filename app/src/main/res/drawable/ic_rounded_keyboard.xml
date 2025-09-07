@@ -1,0 +1,29 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:width="24dp"
+  android:height="24dp"
+  android:viewportWidth="960"
+  android:viewportHeight="960">
+  <path
+    android:pathData="M160,760q-33,0 -56.5,-23.5T80,680v-400q0,-33 23.5,-56.5T160,200h640q33,0 56.5,23.5T880,280v400q0,33 -23.5,56.5T800,760L160,760ZM160,680h640v-400L160,280v400ZM360,640h240q17,0 28.5,-11.5T640,600q0,-17 -11.5,-28.5T600,560L360,560q-17,0 -28.5,11.5T320,600q0,17 11.5,28.5T360,640ZM160,680v-400,400ZM240,400q17,0 28.5,-11.5T280,360q0,-17 -11.5,-28.5T240,320q-17,0 -28.5,11.5T200,360q0,17 11.5,28.5T240,400ZM360,400q17,0 28.5,-11.5T400,360q0,-17 -11.5,-28.5T360,320q-17,0 -28.5,11.5T320,360q0,17 11.5,28.5T360,400ZM480,400q17,0 28.5,-11.5T520,360q0,-17 -11.5,-28.5T480,320q-17,0 -28.5,11.5T440,360q0,17 11.5,28.5T480,400ZM600,400q17,0 28.5,-11.5T640,360q0,-17 -11.5,-28.5T600,320q-17,0 -28.5,11.5T560,360q0,17 11.5,28.5T600,400ZM720,400q17,0 28.5,-11.5T760,360q0,-17 -11.5,-28.5T720,320q-17,0 -28.5,11.5T680,360q0,17 11.5,28.5T720,400ZM240,520q17,0 28.5,-11.5T280,480q0,-17 -11.5,-28.5T240,440q-17,0 -28.5,11.5T200,480q0,17 11.5,28.5T240,520ZM360,520q17,0 28.5,-11.5T400,480q0,-17 -11.5,-28.5T360,440q-17,0 -28.5,11.5T320,480q0,17 11.5,28.5T360,520ZM480,520q17,0 28.5,-11.5T520,480q0,-17 -11.5,-28.5T480,440q-17,0 -28.5,11.5T440,480q0,17 11.5,28.5T480,520ZM600,520q17,0 28.5,-11.5T640,480q0,-17 -11.5,-28.5T600,440q-17,0 -28.5,11.5T560,480q0,17 11.5,28.5T600,520ZM720,520q17,0 28.5,-11.5T760,480q0,-17 -11.5,-28.5T720,440q-17,0 -28.5,11.5T680,480q0,17 11.5,28.5T720,520Z"
+    android:fillColor="#000000" />
+</vector>

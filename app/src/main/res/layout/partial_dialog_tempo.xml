@@ -17,21 +17,56 @@
   ~ Copyright (c) 2020-2025 by Patrick Zedler
   -->
 
-<FrameLayout
+<LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/linear_tempo_container"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
-  android:paddingTop="8dp"
-  android:paddingStart="24dp"
-  android:paddingEnd="24dp"
-  android:animateLayoutChanges="true">
+  android:orientation="vertical"
+  android:paddingTop="12dp">
+
+  <HorizontalScrollView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="24dp"
+    android:layout_marginEnd="24dp"
+    android:scrollbars="none"
+    android:overScrollMode="ifContentScrolls"
+    android:requiresFadingEdge="horizontal">
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+      android:id="@+id/toggle_tempo_method"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      app:singleSelection="true"
+      app:selectionRequired="true">
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_tempo_keyboard"
+        style="@style/Widget.Tack.Button"
+        android:text="@string/label_tempo_keyboard"
+        app:icon="@drawable/ic_rounded_keyboard" />
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_tempo_tap"
+        style="@style/Widget.Tack.Button"
+        android:text="@string/label_tempo_tap"
+        app:icon="@drawable/ic_rounded_touch_app_anim" />
+
+    </com.google.android.material.button.MaterialButtonToggleGroup>
+
+  </HorizontalScrollView>
 
   <com.google.android.material.textfield.TextInputLayout
     android:id="@+id/text_input_tempo"
     style="@style/Widget.Tack.TextInputLayout.OutlinedBox"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:layout_marginStart="24dp"
+    android:layout_marginEnd="24dp"
     android:hint="@string/label_bpm"
     app:helperText="@string/label_tempo_input_help">
 
@@ -45,4 +80,94 @@
 
   </com.google.android.material.textfield.TextInputLayout>
 
-</FrameLayout>
+  <LinearLayout
+    android:id="@+id/linear_tempo_instant"
+    style="@style/Widget.Tack.LinearLayout.ListItem.SingleLine"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="4dp"
+    android:layout_marginEnd="4dp"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:paddingTop="2dp"
+    android:paddingBottom="2dp"
+    android:background="@drawable/ripple_list_item_surface_container_high">
+
+    <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+      <TextView
+        android:id="@+id/text_tempo_instant"
+        style="@style/Widget.Tack.TextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingEnd="0dp"
+        android:text="@string/label_tempo_instant" />
+
+    </LinearLayout>
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+      android:id="@+id/switch_tempo_instant"
+      style="@style/Widget.Tack.Switch"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="8dp"/>
+
+  </LinearLayout>
+
+  <FrameLayout
+    android:id="@+id/frame_tempo_tap_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:layout_marginStart="24dp"
+    android:layout_marginEnd="24dp">
+
+    <xyz.zedler.patrick.tack.view.CloverView
+      android:id="@+id/clover_tempo_tap"
+      android:layout_width="@dimen/tempo_tap_size"
+      android:layout_height="@dimen/tempo_tap_size"
+      android:layout_gravity="center" />
+
+    <FrameLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      tools:ignore="SpUsage">
+
+      <TextSwitcher
+        android:id="@+id/text_switcher_tempo_tap_tempo_term"
+        android:layout_width="@dimen/tempo_tap_size"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top" />
+
+      <TextView
+        android:id="@+id/text_tempo_tap_tempo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/label_text_size"
+        android:layout_marginBottom="@dimen/label_text_size"
+        android:textColor="?attr/colorOnTertiaryContainer"
+        android:layout_gravity="top"
+        android:gravity="center_horizontal"
+        android:textAlignment="center"
+        android:fontFeatureSettings="tnum"
+        android:textAppearance="?attr/textAppearanceDisplayLarge"
+        android:textSize="@dimen/bpm_text_size" />
+
+      <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/label_bpm"
+        android:textColor="?attr/colorOnTertiaryContainer"
+        android:layout_gravity="bottom"
+        android:gravity="center_horizontal"
+        android:textAlignment="center"
+        android:textAppearance="?attr/textAppearanceBodyLarge"
+        android:textSize="@dimen/label_text_size" />
+
+    </FrameLayout>
+
+  </FrameLayout>
+
+</LinearLayout>

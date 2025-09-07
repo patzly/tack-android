@@ -19,6 +19,8 @@
 
 package xyz.zedler.patrick.tack.util;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -27,7 +29,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
-import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
@@ -38,6 +39,7 @@ import android.view.WindowMetrics;
 import android.view.inputmethod.InputMethodManager;
 import androidx.annotation.Dimension;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.color.DynamicColorsOptions;
@@ -232,23 +234,26 @@ public class UiUtil {
 
   // IME
 
-  public static void showKeyboard(@NonNull Activity activity, @NonNull View view) {
-    InputMethodManager imm = (InputMethodManager) activity.getSystemService(
-        Context.INPUT_METHOD_SERVICE
-    );
-    new Handler().postDelayed(
-        () -> imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT), 100
-    );
+  public static void showKeyboard(@NonNull View view) {
+    InputMethodManager imm = getInputMethodManager(view);
+    if (imm != null) {
+      view.postDelayed(
+          () -> imm.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT),
+          100
+      );
+    }
   }
 
-  public static void hideKeyboard(@NonNull Activity activity) {
-    InputMethodManager imm = (InputMethodManager) activity.getSystemService(
-        Context.INPUT_METHOD_SERVICE
-    );
-    View view = activity.getCurrentFocus();
-    if (view != null) {
-      imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+  public static void hideKeyboard(@NonNull View currentFocus) {
+    InputMethodManager imm = getInputMethodManager(currentFocus);
+    if (imm != null) {
+      imm.hideSoftInputFromWindow(currentFocus.getWindowToken(), 0);
     }
+  }
+
+  @Nullable
+  private static InputMethodManager getInputMethodManager(@NonNull View view) {
+    return getSystemService(view.getContext(), InputMethodManager.class);
   }
 
   // Unit conversions
