@@ -722,7 +722,7 @@
         <LinearLayout
           android:id="@+id/linear_settings_active_beat"
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
-          android:background="@drawable/ripple_list_item_bg_segmented_middle">
+          android:background="@drawable/ripple_list_item_bg_segmented_first">
 
           <ImageView
             style="@style/Widget.Tack.ImageView.ListItem.Icon"

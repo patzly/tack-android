@@ -68,7 +68,7 @@ public class BeatsBgDrawable extends Drawable {
         bottomRadius, bottomRadius,
         bottomRadius, bottomRadius
     };
-    paintBg.setColor(ResUtil.getColor(context, R.attr.colorSurfaceContainer));
+    paintBg.setColor(ResUtil.getColor(context, R.attr.colorSurfaceContainerHigh));
     paintFg.setColor(ResUtil.getColor(context, R.attr.colorOnSurface));
     alphaBase = UiUtil.isDarkModeActive(context) ? ALPHA_FG_BASE_DARK : ALPHA_FG_BASE_LIGHT;
     progressThreshold = 1;
