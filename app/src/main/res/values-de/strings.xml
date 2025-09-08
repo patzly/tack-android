@@ -108,7 +108,6 @@
   <string name="action_remove_beat">Schlag entfernen</string>
   <string name="action_add_sub">Unterteilung hinzufügen</string>
   <string name="action_remove_sub">Unterteilung entfernen</string>
-  <string name="action_tempo_tap">Tempo tippen</string>
   <string name="action_beat_mode">Schlagmodus</string>
   <string name="action_send_feedback">Rückmeldung senden</string>
   <string name="action_open_link">Externe Internetseite öffnen</string>
