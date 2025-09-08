@@ -106,7 +106,6 @@
   <string name="action_remove_beat">Убрать долю</string>
   <string name="action_add_sub">Добавить дробление</string>
   <string name="action_remove_sub">Убрать дробление</string>
-  <string name="action_tempo_tap">Tap tempo</string>
   <string name="action_beat_mode">Режим ударов</string>
   <string name="action_send_feedback">Написать отзыв</string>
   <string name="action_open_link">Открыть сторонний сайт</string>
