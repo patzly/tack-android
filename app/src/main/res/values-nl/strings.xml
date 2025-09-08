@@ -102,7 +102,6 @@
   <string name="action_remove_beat">Tel verwijderen</string>
   <string name="action_add_sub">Maatdeel toevoegen</string>
   <string name="action_remove_sub">Onderverdeling verwijderen</string>
-  <string name="action_tempo_tap">Tik tempo</string>
   <string name="action_beat_mode">Tel stand</string>
   <string name="action_send_feedback">Feedback versturen</string>
   <string name="action_open_link">Externe website openen</string>
