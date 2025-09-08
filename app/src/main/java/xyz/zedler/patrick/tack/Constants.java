@@ -53,11 +53,7 @@ public final class Constants {
     public final static String BEATS = "beats";
     public final static String SUBDIVISIONS = "subdivisions";
     public final static String BEAT_MODE = "beat_mode";
-    @Deprecated
-    public final static String BEAT_MODE_VIBRATE = "beat_mode_vibrate";
     public final static String ACTIVE_BEAT = "highlight_active_beat";
-    @Deprecated
-    public final static String ALWAYS_VIBRATE = "always_vibrate";
     public final static String SHOW_ELAPSED = "show_elapsed";
     public final static String RESET_TIMER_ON_STOP = "reset_timer";
     public final static String BIG_TIME_TEXT = "big_time_text";

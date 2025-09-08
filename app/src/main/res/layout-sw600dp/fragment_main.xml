@@ -176,7 +176,7 @@
           android:orientation="horizontal"
           android:layout_marginStart="16dp"
           android:layout_marginEnd="16dp"
-          android:layout_marginTop="8dp"
+          android:layout_marginTop="2dp"
           android:background="@drawable/shape_subdivisions_bg">
 
           <com.google.android.material.button.MaterialButton
@@ -186,7 +186,10 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            app:icon="@drawable/ic_rounded_remove_anim" />
+            app:icon="@drawable/ic_rounded_remove_anim"
+            app:iconTint="@color/selector_tonal_button_icon_tint"
+            app:rippleColor="@color/selector_tonal_button_ripple"
+            app:backgroundTint="@color/transparent" />
 
           <HorizontalScrollView
             android:id="@+id/scroll_horiz_main_subs"
@@ -219,16 +222,17 @@
             android:layout_marginEnd="4dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            app:icon="@drawable/ic_rounded_add_anim" />
+            app:icon="@drawable/ic_rounded_add_anim"
+            app:iconTint="@color/selector_tonal_button_icon_tint"
+            app:rippleColor="@color/selector_tonal_button_ripple"
+            app:backgroundTint="@color/transparent" />
 
         </LinearLayout>
 
         <com.google.android.material.slider.Slider
           android:id="@+id/slider_main_timer"
           style="@style/Widget.Tack.Slider.Small"
-          android:layout_marginTop="4dp"
-          android:layout_marginStart="4dp"
-          android:layout_marginEnd="4dp"
+          android:layout_marginTop="8dp"
           android:stepSize="0"
           android:valueFrom="0"
           android:valueTo="4"
