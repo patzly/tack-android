@@ -107,7 +107,6 @@
   <string name="action_remove_beat">Odstranit dobu</string>
   <string name="action_add_sub">Přidat subdivizi</string>
   <string name="action_remove_sub">Odstranit subdivizi</string>
-  <string name="action_tempo_tap">Naklikat tempo</string>
   <string name="action_beat_mode">Režim metronomu</string>
   <string name="action_send_feedback">Poslat zpětnou vazbu</string>
   <string name="action_open_link">Otevřít externí webovou stránku</string>
