@@ -324,9 +324,6 @@
 
   <string name="settings_gain_disclaimer">Wanneer boost is ingeschakeld wordt een waarschuwing getoond bij iedere start. De ontwikkelaar neemt geen verantwoordelijkheid voor mogelijke schade.</string>
 
-  <string name="settings_hide_sub_controls">Verberg maatdeelbediening wanneer deze niet gebruikt wordt</string>
-  <string name="settings_hide_sub_controls_description">Toont extra bediening voor maatdelen in opties</string>
-
   <string name="settings_active_beat">Highlight huidige maat</string>
   <string name="settings_active_beat_description">Nuttig voor lagere tempo\'s</string>
 
