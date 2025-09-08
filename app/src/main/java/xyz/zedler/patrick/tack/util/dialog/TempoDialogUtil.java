@@ -158,6 +158,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
       if (inputMethodKeyboard) {
         showKeyboard();
       }
+      overrideDialogActions();
     }
   }
 
@@ -174,6 +175,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
           getMetronomeUtil().setTempo(getTapTempo(tapAverage));
         }
       }
+      overrideDialogActions();
     }
   }
 
@@ -185,7 +187,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
       }
     });
     dialogUtil.show();
-    overridePositiveAction();
+    overrideDialogActions();
   }
 
   public void showIfWasShown(@Nullable Bundle state) {
@@ -195,18 +197,24 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
     }
     boolean showing = dialogUtil.showIfWasShown(state);
     if (showing) {
-      overridePositiveAction();
+      overrideDialogActions();
       showKeyboard();
     }
   }
 
-  private void overridePositiveAction() {
-    Button button = null;
+  private void overrideDialogActions() {
+    Button buttonPositive = null;
+    Button buttonNegative = null;
     if (dialogUtil.getDialog() != null) {
-      button = dialogUtil.getDialog().getButton(DialogInterface.BUTTON_POSITIVE);
+      buttonPositive = dialogUtil.getDialog().getButton(DialogInterface.BUTTON_POSITIVE);
+      buttonNegative = dialogUtil.getDialog().getButton(DialogInterface.BUTTON_NEGATIVE);
     }
-    if (button != null) {
-      button.setOnClickListener(v -> {
+    boolean showApplyButton = inputMethodKeyboard || !instantApply;
+    if (buttonPositive != null) {
+      buttonPositive.setText(
+          activity.getString(showApplyButton ? R.string.action_apply : R.string.action_close)
+      );
+      buttonPositive.setOnClickListener(v -> {
         if (inputMethodKeyboard) {
           if (isInputValid()) {
             activity.performHapticClick();
@@ -220,10 +228,15 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
         }
       });
     }
+    if (buttonNegative != null) {
+      buttonNegative.setVisibility(showApplyButton ? View.VISIBLE : View.GONE);
+    }
   }
 
   public void dismiss() {
     dialogUtil.dismiss();
+    intervals.clear();
+    previous = 0;
   }
 
   public void saveState(@NonNull Bundle outState) {
@@ -318,11 +331,14 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
 
       binding.editTextTempo.clearFocus();
     } else {
-      int tempo = getTapTempo();
-      fragment.updateTempoDisplay(getMetronomeUtil().getConfig().getTempo(), tempo);
-      getMetronomeUtil().setTempo(tempo);
+      long tapAverage = getTapAverage();
+      if (tapAverage > 0) {
+        int tempo = getTapTempo(tapAverage);
+        fragment.updateTempoDisplay(getMetronomeUtil().getConfig().getTempo(), tempo);
+        getMetronomeUtil().setTempo(tempo);
+      }
     }
-    dialogUtil.dismiss();
+    dismiss();
   }
 
   private void setError(boolean error) {

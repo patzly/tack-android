@@ -28,11 +28,6 @@
     app:showAsAction="never" />
 
   <item
-    android:id="@+id/action_tempo_tap"
-    android:title="@string/action_tempo_tap"
-    app:showAsAction="never" />
-
-  <item
     android:id="@+id/action_beat_mode"
     android:title="@string/action_beat_mode"
     app:showAsAction="never" />

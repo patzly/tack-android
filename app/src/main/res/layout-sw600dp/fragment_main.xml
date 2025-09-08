@@ -431,9 +431,34 @@
       app:layout_constraintStart_toStartOf="parent"
       app:layout_constraintEnd_toEndOf="parent">
 
-      <include
-        android:id="@+id/controls_main_bottom"
-        layout="@layout/partial_main_bottom_controls" />
+      <com.google.android.material.button.MaterialButtonGroup
+        android:id="@+id/button_group_main_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:spacing="8dp">
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_options"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Xlarge.Narrow"
+          android:contentDescription="@string/title_options"
+          app:icon="@drawable/ic_rounded_tune_anim" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_play_stop"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Xlarge.Wide"
+          android:contentDescription="@string/action_play_stop"
+          android:checkable="true"
+          app:toggleCheckedStateOnClick="false"
+          app:icon="@drawable/ic_rounded_play_to_stop_fill_anim" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_menu_bottom"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Xlarge.Narrow"
+          android:contentDescription="@string/action_more"
+          app:icon="@drawable/ic_rounded_more_vert" />
+
+      </com.google.android.material.button.MaterialButtonGroup>
 
     </FrameLayout>
 

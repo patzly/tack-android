@@ -89,7 +89,6 @@ import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.util.dialog.PartsDialogUtil;
 import xyz.zedler.patrick.tack.util.dialog.TempoDialogUtil;
-import xyz.zedler.patrick.tack.util.dialog.TempoTapDialogUtil;
 import xyz.zedler.patrick.tack.view.BeatView;
 import xyz.zedler.patrick.tack.view.SongPickerView.SongPickerListener;
 import xyz.zedler.patrick.tack.view.TempoPickerView.OnPickListener;
@@ -113,7 +112,6 @@ public class MainFragment extends BaseFragment
   private DialogUtil dialogUtilPermission, dialogUtilBeatMode;
   private OptionsUtil optionsUtil;
   private PartsDialogUtil partsDialogUtil;
-  private TempoTapDialogUtil tempoTapDialogUtil;
   private TempoDialogUtil tempoDialogUtil;
   private BeatsBgDrawable beatsBgDrawable;
   private BadgeDrawable beatsCountBadge, subsCountBadge, optionsBadge;
@@ -148,7 +146,6 @@ public class MainFragment extends BaseFragment
     tempoDialogUtil.dismiss();
     optionsUtil.dismiss();
     partsDialogUtil.dismiss();
-    tempoTapDialogUtil.dismiss();
   }
 
   @SuppressLint("ClickableViewAccessibility")
@@ -333,17 +330,14 @@ public class MainFragment extends BaseFragment
     dialogUtilBeatMode = new DialogUtil(activity, "beat_mode");
 
     tempoDialogUtil = new TempoDialogUtil(activity, this);
-    tempoDialogUtil.showIfWasShown(savedInstanceState);
 
     optionsUtil = new OptionsUtil(activity, this, () -> updateOptions(true));
     boolean hideOptions = isLandTablet;
-    binding.controlsMainBottom.buttonMainOptions.setEnabled(!hideOptions);
+    binding.buttonMainOptions.setEnabled(!hideOptions);
 
     logoUtil = new LogoUtil(binding.imageMainLogo);
     logoCenterUtil = new LogoUtil(binding.imageMainLogoCenter);
     bigLogo = getSharedPrefs().getBoolean(PREF.BIG_LOGO, DEF.BIG_LOGO);
-
-    tempoTapDialogUtil = new TempoTapDialogUtil(activity, this);
 
     partsDialogUtil = new PartsDialogUtil(activity);
     partsDialogUtil.showIfWasShown(savedInstanceState);
@@ -450,13 +444,12 @@ public class MainFragment extends BaseFragment
       performHapticClick();
     });
 
-    if (binding.controlsMainBottom.buttonMainBeatMode != null) {
-      binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
-          getSharedPrefs().getString(PREF.BEAT_MODE, DEF.BEAT_MODE).equals(BEAT_MODE.VIBRATION)
-              ? R.drawable.ic_rounded_vibration_to_volume_up_anim
-              : R.drawable.ic_rounded_volume_up_to_vibration_anim
-      );
-    }
+    // TODO: re-enable when menu button is replaced by beat mode button
+    /*binding.buttonMainBeatMode.setIconResource(
+        getSharedPrefs().getString(PREF.BEAT_MODE, DEF.BEAT_MODE).equals(BEAT_MODE.VIBRATION)
+            ? R.drawable.ic_rounded_vibration_to_volume_up_anim
+            : R.drawable.ic_rounded_volume_up_to_vibration_anim
+    );*/
 
     setButtonStates(getMetronomeUtil().getConfig().getTempo());
 
@@ -518,11 +511,11 @@ public class MainFragment extends BaseFragment
         }
     );
 
-    ViewUtil.resetAnimatedIcon(binding.controlsMainBottom.buttonMainPlayStop);
-    binding.controlsMainBottom.buttonMainPlayStop.setIconResource(
+    ViewUtil.resetAnimatedIcon(binding.buttonMainPlayStop);
+    binding.buttonMainPlayStop.setIconResource(
         R.drawable.ic_rounded_play_to_stop_fill_anim
     );
-    binding.controlsMainBottom.buttonMainPlayStop.setOnTouchListener(
+    binding.buttonMainPlayStop.setOnTouchListener(
         (v, event) -> {
           if (event.getAction() == MotionEvent.ACTION_DOWN) {
             if (getMetronomeUtil().isPlaying()) {
@@ -559,27 +552,12 @@ public class MainFragment extends BaseFragment
     ViewUtil.setTooltipText(binding.buttonMainRemoveBeat, R.string.action_remove_beat);
     ViewUtil.setTooltipText(binding.buttonMainAddSubdivision, R.string.action_add_sub);
     ViewUtil.setTooltipText(binding.buttonMainRemoveSubdivision, R.string.action_remove_sub);
-    ViewUtil.setTooltipText(binding.controlsMainBottom.buttonMainOptions, R.string.title_options);
-    if (binding.controlsMainBottom.buttonMainMenuBottom != null) {
-      ViewUtil.setTooltipText(
-          binding.controlsMainBottom.buttonMainMenuBottom, R.string.action_more
-      );
-    }
-    if (binding.controlsMainBottom.buttonMainTempoTap != null) {
-      ViewUtil.setTooltipText(
-          binding.controlsMainBottom.buttonMainTempoTap, R.string.action_tempo_tap
-      );
-    }
-    if (binding.controlsMainBottom.buttonMainSongs != null) {
-      ViewUtil.setTooltipText(
-          binding.controlsMainBottom.buttonMainSongs, R.string.title_songs
-      );
-    }
-    if (binding.controlsMainBottom.buttonMainBeatMode != null) {
-      ViewUtil.setTooltipText(
-          binding.controlsMainBottom.buttonMainBeatMode, R.string.action_beat_mode
-      );
-    }
+    ViewUtil.setTooltipText(binding.buttonMainOptions, R.string.title_options);
+    ViewUtil.setTooltipText(binding.buttonMainMenuBottom, R.string.action_more);
+    // TODO: re-enable when menu button is replaced by beat mode button
+    /*ViewUtil.setTooltipText(
+      binding.buttonGroupMainBottom.buttonMainBeatMode, R.string.action_beat_mode
+    );*/
 
     ViewUtil.setTooltipTextAndContentDescription(
         binding.buttonMainLess1,
@@ -614,11 +592,10 @@ public class MainFragment extends BaseFragment
         binding.buttonMainRemoveSubdivision,
         binding.buttonMainLess1, binding.buttonMainLess5, binding.buttonMainLess10,
         binding.buttonMainMore1, binding.buttonMainMore5, binding.buttonMainMore10,
-        binding.controlsMainBottom.buttonMainBeatMode,
-        binding.controlsMainBottom.buttonMainSongs,
-        binding.controlsMainBottom.buttonMainOptions,
-        binding.controlsMainBottom.buttonMainTempoTap,
-        binding.controlsMainBottom.buttonMainMenuBottom
+        // TODO: re-enable when menu button is replaced by beat mode button
+        //binding.buttonMainBeatMode,
+        binding.buttonMainOptions,
+        binding.buttonMainMenuBottom
     );
   }
 
@@ -663,9 +640,6 @@ public class MainFragment extends BaseFragment
     if (tempoDialogUtil != null) {
       tempoDialogUtil.saveState(outState);
     }
-    if (tempoTapDialogUtil != null) {
-      tempoTapDialogUtil.saveState(outState);
-    }
   }
 
   public void updateMetronomeControls() {
@@ -674,17 +648,16 @@ public class MainFragment extends BaseFragment
     }
     getMetronomeUtil().addListener(this);
     optionsUtil.showIfWasShown(savedState);
-    tempoTapDialogUtil.showIfWasShown(savedState);
+    tempoDialogUtil.showIfWasShown(savedState);
 
     savedState = null;
 
-    if (binding.controlsMainBottom.buttonMainBeatMode != null) {
-      binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
-          getMetronomeUtil().getBeatMode().equals(BEAT_MODE.VIBRATION)
-              ? R.drawable.ic_rounded_vibration_to_volume_up_anim
-              : R.drawable.ic_rounded_volume_up_to_vibration_anim
-      );
-    }
+    // TODO: re-enable when menu button is replaced by beat mode button
+    /*binding.buttonMainBeatMode.setIconResource(
+        getMetronomeUtil().getBeatMode().equals(BEAT_MODE.VIBRATION)
+            ? R.drawable.ic_rounded_vibration_to_volume_up_anim
+            : R.drawable.ic_rounded_volume_up_to_vibration_anim
+    );*/
 
     updateBeats(getMetronomeUtil().getConfig().getBeats());
     updateBeatControls(false);
@@ -710,8 +683,8 @@ public class MainFragment extends BaseFragment
       }
     }
 
-    ViewUtil.resetAnimatedIcon(binding.controlsMainBottom.buttonMainPlayStop);
-    binding.controlsMainBottom.buttonMainPlayStop.setIconResource(
+    ViewUtil.resetAnimatedIcon(binding.buttonMainPlayStop);
+    binding.buttonMainPlayStop.setIconResource(
         getMetronomeUtil().isPlaying()
             ? R.drawable.ic_rounded_stop_fill
             : R.drawable.ic_rounded_play_arrow_fill
@@ -745,19 +718,20 @@ public class MainFragment extends BaseFragment
                 performHapticClick();
               }
 
-              if (beatModePrev.equals(BEAT_MODE.VIBRATION)
+              // TODO: re-enable when menu button is replaced by beat mode button
+              /*if (beatModePrev.equals(BEAT_MODE.VIBRATION)
                   && !beatMode.equals(BEAT_MODE.VIBRATION)) {
-                binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
+                binding.buttonMainBeatMode.setIconResource(
                     R.drawable.ic_rounded_vibration_to_volume_up_anim
                 );
-                ViewUtil.startIcon(binding.controlsMainBottom.buttonMainBeatMode.getIcon());
+                ViewUtil.startIcon(binding.buttonMainBeatMode.getIcon());
               } else if (!beatModePrev.equals(BEAT_MODE.VIBRATION)
                   && beatMode.equals(BEAT_MODE.VIBRATION)) {
-                binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
+                binding.buttonMainBeatMode.setIconResource(
                     R.drawable.ic_rounded_volume_up_to_vibration_anim
                 );
-                ViewUtil.startIcon(binding.controlsMainBottom.buttonMainBeatMode.getIcon());
-              }
+                ViewUtil.startIcon(binding.buttonMainBeatMode.getIcon());
+              }*/
             }
         );
       } else {
@@ -798,10 +772,8 @@ public class MainFragment extends BaseFragment
         if (getMetronomeUtil().getCountIn() > 0) {
           beatsBgDrawable.setProgress(1, getMetronomeUtil().getCountInInterval());
         }
-        binding.controlsMainBottom.buttonMainPlayStop.setIconResource(
-            R.drawable.ic_rounded_play_to_stop_fill_anim
-        );
-        Drawable startStopIcon = binding.controlsMainBottom.buttonMainPlayStop.getIcon();
+        binding.buttonMainPlayStop.setIconResource(R.drawable.ic_rounded_play_to_stop_fill_anim);
+        Drawable startStopIcon = binding.buttonMainPlayStop.getIcon();
         if (startStopIcon != null) {
           ((Animatable) startStopIcon).start();
         }
@@ -823,10 +795,8 @@ public class MainFragment extends BaseFragment
         beatsBgDrawable.setProgressVisible(false, true);
         updateTimerDisplay();
         updateElapsedDisplay();
-        binding.controlsMainBottom.buttonMainPlayStop.setIconResource(
-            R.drawable.ic_rounded_stop_to_play_fill_anim
-        );
-        Drawable icon = binding.controlsMainBottom.buttonMainPlayStop.getIcon();
+        binding.buttonMainPlayStop.setIconResource(R.drawable.ic_rounded_stop_to_play_fill_anim);
+        Drawable icon = binding.buttonMainPlayStop.getIcon();
         if (icon != null) {
           ((Animatable) icon).start();
         }
@@ -1077,37 +1047,23 @@ public class MainFragment extends BaseFragment
     } else if (id == R.id.button_main_more_10) {
       ViewUtil.startIcon(binding.buttonMainMore10.getIcon());
       changeTempo(10);
-    } else if (id == R.id.button_main_beat_mode) {
+    } /*else if (id == R.id.button_main_beat_mode) {
+      // TODO: re-enable when menu button is replaced by beat mode button
       performHapticClick();
       dialogUtilBeatMode.show();
       if (getMetronomeUtil().getBeatMode().equals(BEAT_MODE.VIBRATION)) {
         // Use available animated icon for click
-        if (binding.controlsMainBottom.buttonMainBeatMode != null) {
-          binding.controlsMainBottom.buttonMainBeatMode.setIconResource(
+        if (binding.buttonMainBeatMode != null) {
+          binding.buttonMainBeatMode.setIconResource(
               R.drawable.ic_rounded_vibration_anim
           );
-          ViewUtil.startIcon(binding.controlsMainBottom.buttonMainBeatMode.getIcon());
+          ViewUtil.startIcon(binding.buttonMainBeatMode.getIcon());
         }
       }
-    } else if (id == R.id.button_main_songs) {
+    } */else if (id == R.id.button_main_options) {
       performHapticClick();
-      int visitCount = getSharedPrefs().getInt(PREF.SONGS_VISIT_COUNT, 0);
-      if (visitCount != -1) { // no widget created and no dialog shown yet
-        visitCount++;
-        getSharedPrefs().edit().putInt(PREF.SONGS_VISIT_COUNT, visitCount).apply();
-      }
-      activity.navigate(MainFragmentDirections.actionMainToSongs());
-    } else if (id == R.id.button_main_options) {
-      performHapticClick();
-      ViewUtil.startIcon(binding.controlsMainBottom.buttonMainOptions.getIcon());
+      ViewUtil.startIcon(binding.buttonMainOptions.getIcon());
       optionsUtil.show();
-    } else if (id == R.id.button_main_tempo_tap) {
-      performHapticClick();
-      if (binding.controlsMainBottom.buttonMainTempoTap != null) {
-        ViewUtil.startIcon(binding.controlsMainBottom.buttonMainTempoTap.getIcon());
-      }
-      tempoTapDialogUtil.update();
-      tempoTapDialogUtil.show();
     } else if (id == R.id.button_main_menu_bottom) {
       performHapticClick();
       ViewUtil.showMenu(v, R.menu.menu_main_bottom_collapsed, item -> {
@@ -1117,10 +1073,12 @@ public class MainFragment extends BaseFragment
         }
         performHapticClick();
         if (itemId == R.id.action_songs) {
+          int visitCount = getSharedPrefs().getInt(PREF.SONGS_VISIT_COUNT, 0);
+          if (visitCount != -1) { // no widget created and no dialog shown yet
+            visitCount++;
+            getSharedPrefs().edit().putInt(PREF.SONGS_VISIT_COUNT, visitCount).apply();
+          }
           activity.navigate(MainFragmentDirections.actionMainToSongs());
-        } else if (itemId == R.id.action_tempo_tap) {
-          tempoTapDialogUtil.update();
-          tempoTapDialogUtil.show();
         } else if (itemId == R.id.action_beat_mode) {
           dialogUtilBeatMode.show();
         }
@@ -1428,9 +1386,7 @@ public class MainFragment extends BaseFragment
         @Override
         public void onAnimationEnd(Animator animation) {
           if (!show && binding != null) {
-            BadgeUtils.detachBadgeDrawable(
-                optionsBadge, binding.controlsMainBottom.buttonMainOptions
-            );
+            BadgeUtils.detachBadgeDrawable(optionsBadge, binding.buttonMainOptions);
           }
         }
       });
@@ -1438,7 +1394,7 @@ public class MainFragment extends BaseFragment
       optionsBadgeAnimator.setDuration(Constants.ANIM_DURATION_LONG);
       optionsBadgeAnimator.start();
       if (show) {
-        BadgeUtils.attachBadgeDrawable(optionsBadge, binding.controlsMainBottom.buttonMainOptions);
+        BadgeUtils.attachBadgeDrawable(optionsBadge, binding.buttonMainOptions);
       }
     } else {
       optionsBadge.setAlpha(show ? 255 : 0);
@@ -1450,13 +1406,9 @@ public class MainFragment extends BaseFragment
           return;
         }
         if (show) {
-          BadgeUtils.attachBadgeDrawable(
-              optionsBadge, binding.controlsMainBottom.buttonMainOptions
-          );
+          BadgeUtils.attachBadgeDrawable(optionsBadge, binding.buttonMainOptions);
         } else {
-          BadgeUtils.detachBadgeDrawable(
-              optionsBadge, binding.controlsMainBottom.buttonMainOptions
-          );
+          BadgeUtils.detachBadgeDrawable(optionsBadge, binding.buttonMainOptions);
         }
       }, 1);
     }
@@ -1580,7 +1532,7 @@ public class MainFragment extends BaseFragment
   }
 
   private void updatePlayStopButton(boolean playing, boolean animated) {
-    binding.controlsMainBottom.buttonMainPlayStop.setChecked(playing);
+    binding.buttonMainPlayStop.setChecked(playing);
     if (playStopButtonAnimator != null) {
       playStopButtonAnimator.pause();
       playStopButtonAnimator.removeAllUpdateListeners();
@@ -1596,10 +1548,10 @@ public class MainFragment extends BaseFragment
       playStopButtonAnimator = ValueAnimator.ofFloat(playStopButtonFraction, targetFraction);
       playStopButtonAnimator.addUpdateListener(animation -> {
         playStopButtonFraction = (float) animation.getAnimatedValue();
-        binding.controlsMainBottom.buttonMainPlayStop.setBackgroundColor(
+        binding.buttonMainPlayStop.setBackgroundColor(
             ColorUtils.blendARGB(colorBgStopped, colorBgPlaying, playStopButtonFraction)
         );
-        binding.controlsMainBottom.buttonMainPlayStop.setIconTint(
+        binding.buttonMainPlayStop.setIconTint(
             ColorStateList.valueOf(
                 ColorUtils.blendARGB(colorFgStopped, colorFgPlaying, playStopButtonFraction)
             )
@@ -1610,10 +1562,10 @@ public class MainFragment extends BaseFragment
       playStopButtonAnimator.start();
     } else {
       playStopButtonFraction = targetFraction;
-      binding.controlsMainBottom.buttonMainPlayStop.setBackgroundColor(
+      binding.buttonMainPlayStop.setBackgroundColor(
           ColorUtils.blendARGB(colorBgStopped, colorBgPlaying, playStopButtonFraction)
       );
-      binding.controlsMainBottom.buttonMainPlayStop.setIconTint(
+      binding.buttonMainPlayStop.setIconTint(
           ColorStateList.valueOf(
               ColorUtils.blendARGB(colorFgStopped, colorFgPlaying, playStopButtonFraction)
           )
@@ -1693,7 +1645,7 @@ public class MainFragment extends BaseFragment
   }
 
   public void showSnackbar(Snackbar snackbar) {
-    snackbar.setAnchorView(binding.controlsMainBottom.buttonMainPlayStop);
+    snackbar.setAnchorView(binding.buttonMainPlayStop);
     snackbar.show();
   }
 

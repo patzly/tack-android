@@ -120,7 +120,7 @@ public final class Constants {
     public final static boolean IGNORE_FOCUS = false;
     public final static int GAIN = 0;
     public final static boolean BIG_LOGO = false;
-    public final static boolean TEMPO_INPUT_KEYBOARD = true;
+    public final static boolean TEMPO_INPUT_KEYBOARD = false;
     public final static boolean TEMPO_TAP_INSTANT = true;
 
     // Options
