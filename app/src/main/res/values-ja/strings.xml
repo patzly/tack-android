@@ -105,7 +105,6 @@
   <string name="action_remove_beat">拍を減らす</string>
   <string name="action_add_sub">拍分割を増やす</string>
   <string name="action_remove_sub">拍分割を減らす</string>
-  <string name="action_tempo_tap">タップしてテンポ設定</string>
   <string name="action_beat_mode">拍モード</string>
   <string name="action_send_feedback">フィードバックを送る</string>
   <string name="action_open_link">外部サイトを開く</string>
