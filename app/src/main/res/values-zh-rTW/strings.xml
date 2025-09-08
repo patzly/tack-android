@@ -45,6 +45,7 @@
   <string name="label_db_signed">%1$s 分貝</string>
   <string name="label_tempo">節奏</string>
   <string name="label_tempo_keyboard">鍵盤</string>
+  <string name="label_tempo_instant">立即套用</string>
   <string name="label_tempo_largo">廣板</string>
   <string name="label_tempo_larghetto">小廣板</string>
   <string name="label_tempo_adagio">柔板</string>
