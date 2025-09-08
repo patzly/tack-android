@@ -235,11 +235,6 @@ public class SettingsFragment extends BaseFragment
     );
     binding.switchSettingsReduceAnimations.jumpDrawablesToCurrentState();
 
-    binding.switchSettingsHideSubControls.setChecked(
-        getSharedPrefs().getBoolean(PREF.HIDE_SUB_CONTROLS, DEF.HIDE_SUB_CONTROLS)
-    );
-    binding.switchSettingsHideSubControls.jumpDrawablesToCurrentState();
-
     binding.switchSettingsActiveBeat.setChecked(
         getSharedPrefs().getBoolean(PREF.ACTIVE_BEAT, DEF.ACTIVE_BEAT)
     );
@@ -299,7 +294,6 @@ public class SettingsFragment extends BaseFragment
         binding.linearSettingsLatency,
         binding.linearSettingsIgnoreFocus,
         binding.linearSettingsGain,
-        binding.linearSettingsHideSubControls,
         binding.linearSettingsActiveBeat,
         binding.linearSettingsPermNotification,
         binding.linearSettingsElapsed,
@@ -313,7 +307,6 @@ public class SettingsFragment extends BaseFragment
         binding.switchSettingsHaptic,
         binding.switchSettingsReduceAnimations,
         binding.switchSettingsIgnoreFocus,
-        binding.switchSettingsHideSubControls,
         binding.switchSettingsActiveBeat,
         binding.switchSettingsPermNotification,
         binding.switchSettingsElapsed,
@@ -462,8 +455,6 @@ public class SettingsFragment extends BaseFragment
     } else if (id == R.id.linear_settings_gain && getViewUtil().isClickEnabled(id)) {
       performHapticClick();
       gainDialogUtil.show();
-    } else if (id == R.id.linear_settings_hide_sub_controls) {
-      binding.switchSettingsHideSubControls.toggle();
     } else if (id == R.id.linear_settings_active_beat) {
       binding.switchSettingsActiveBeat.toggle();
     } else if (id == R.id.linear_settings_perm_notification) {
@@ -495,10 +486,6 @@ public class SettingsFragment extends BaseFragment
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsIgnoreFocus);
       getMetronomeUtil().setIgnoreFocus(isChecked);
-    } else if (id == R.id.switch_settings_hide_sub_controls) {
-      performHapticClick();
-      ViewUtil.startIcon(binding.imageSettingsHideSubControls);
-      getSharedPrefs().edit().putBoolean(PREF.HIDE_SUB_CONTROLS, isChecked).apply();
     } else if (id == R.id.switch_settings_active_beat) {
       performHapticClick();
       getSharedPrefs().edit().putBoolean(PREF.ACTIVE_BEAT, isChecked).apply();

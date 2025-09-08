@@ -103,7 +103,7 @@ public class MainFragment extends BaseFragment
   private MainActivity activity;
   private Bundle savedState;
   private boolean flashScreen, reduceAnimations, isRtl, isLandTablet, bigLogo, showPickerNotLogo;
-  private boolean hideSubControls, activeBeat;
+  private boolean activeBeat;
   private LogoUtil logoUtil, logoCenterUtil;
   private ValueAnimator playStopButtonAnimator;
   private float playStopButtonFraction;
@@ -189,7 +189,6 @@ public class MainFragment extends BaseFragment
     ViewUtil.setTooltipText(binding.buttonMainMenu, R.string.action_more);
 
     reduceAnimations = getSharedPrefs().getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM);
-    hideSubControls = getSharedPrefs().getBoolean(PREF.HIDE_SUB_CONTROLS, DEF.HIDE_SUB_CONTROLS);
     activeBeat = getSharedPrefs().getBoolean(PREF.ACTIVE_BEAT, DEF.ACTIVE_BEAT);
 
     if (getSharedPrefs().getBoolean(PREF.BIG_TIME_TEXT, DEF.BIG_TIME_TEXT)) {
@@ -828,7 +827,7 @@ public class MainFragment extends BaseFragment
         ((BeatView) beat).beat();
       }
       View subdivision = binding.linearMainSubs.getChildAt(tick.subdivision - 1);
-      if ((getMetronomeUtil().getConfig().isSubdivisionActive() || !hideSubControls)) {
+      if ((getMetronomeUtil().getConfig().isSubdivisionActive())) {
         if (!(subdivision instanceof BeatView)) {
           return;
         }
@@ -1013,7 +1012,6 @@ public class MainFragment extends BaseFragment
         binding.linearMainSubs.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
         updateSubControls(true);
-        optionsUtil.updateSubdivisionsCount();
         optionsUtil.updateSwing();
       }
     } else if (id == R.id.button_main_remove_subdivision) {
@@ -1026,7 +1024,6 @@ public class MainFragment extends BaseFragment
             binding.scrollHorizMainSubs, true
         );
         updateSubControls(true);
-        optionsUtil.updateSubdivisionsCount();
         optionsUtil.updateSwing();
       }
     } else if (id == R.id.button_main_less_1) {
@@ -1221,10 +1218,6 @@ public class MainFragment extends BaseFragment
     int subdivisions = getMetronomeUtil().getConfig().getSubdivisionsCount();
     binding.buttonMainAddSubdivision.setEnabled(subdivisions < Constants.SUBS_MAX);
     binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
-    binding.linearMainSubsBg.setVisibility(
-        getMetronomeUtil().getConfig().isSubdivisionActive()
-            || !hideSubControls ? View.VISIBLE : View.GONE
-    );
     updateSongPickerDividerVisibility();
     subsCountBadge.setNumber(subdivisions);
     boolean show = subdivisions > 4;
@@ -1419,8 +1412,7 @@ public class MainFragment extends BaseFragment
     return (config.isCountInActive() ? 1 : 0) +
         (config.isIncrementalActive() ? 1 : 0) +
         (config.isTimerActive() ? 1 : 0) +
-        (config.isMuteActive() ? 1 : 0) +
-        (config.isSubdivisionActive() && hideSubControls ? 1 : 0);
+        (config.isMuteActive() ? 1 : 0);
   }
 
   private void changeTempo(int difference) {

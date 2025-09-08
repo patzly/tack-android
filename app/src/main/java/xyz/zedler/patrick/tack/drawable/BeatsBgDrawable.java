@@ -53,13 +53,22 @@ public class BeatsBgDrawable extends Drawable {
   private final Path pathFg = new Path();
   private final Path pathBg = new Path();
   private final float alphaBase, progressThreshold;
+  private final float[] radii;
   private final boolean rtl;
   private float fraction, alpha;
   private ValueAnimator progressAnimator, alphaAnimator;
 
   public BeatsBgDrawable(Context context) {
     rtl = UiUtil.isLayoutRtl(context);
-    paintBg.setColor(ResUtil.getColor(context, R.attr.colorSurfaceContainerHigh));
+    int topRadius = UiUtil.dpToPx(context, 20);
+    int bottomRadius = UiUtil.dpToPx(context, 4);
+    radii = new float[] {
+        topRadius, topRadius,
+        topRadius, topRadius,
+        bottomRadius, bottomRadius,
+        bottomRadius, bottomRadius
+    };
+    paintBg.setColor(ResUtil.getColor(context, R.attr.colorSurfaceContainer));
     paintFg.setColor(ResUtil.getColor(context, R.attr.colorOnSurface));
     alphaBase = UiUtil.isDarkModeActive(context) ? ALPHA_FG_BASE_DARK : ALPHA_FG_BASE_LIGHT;
     progressThreshold = 1;
@@ -68,10 +77,9 @@ public class BeatsBgDrawable extends Drawable {
 
   @Override
   public void draw(@NonNull Canvas canvas) {
-    float radius = getBounds().height() / 2f;
     rectBg.set(0, 0, getBounds().width(), getBounds().height());
     pathBg.reset();
-    pathBg.addRoundRect(rectBg, radius, radius, Direction.CW);
+    pathBg.addRoundRect(rectBg, radii, Direction.CW);
     canvas.drawPath(pathBg, paintBg);
 
     rectFg.set(rectBg);

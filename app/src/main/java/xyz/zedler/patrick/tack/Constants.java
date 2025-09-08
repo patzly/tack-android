@@ -55,7 +55,6 @@ public final class Constants {
     public final static String BEAT_MODE = "beat_mode";
     @Deprecated
     public final static String BEAT_MODE_VIBRATE = "beat_mode_vibrate";
-    public final static String HIDE_SUB_CONTROLS = "hide_subdivision_controls";
     public final static String ACTIVE_BEAT = "highlight_active_beat";
     @Deprecated
     public final static String ALWAYS_VIBRATE = "always_vibrate";
@@ -107,7 +106,6 @@ public final class Constants {
     );
     public final static String SUBDIVISIONS = TICK_TYPE.MUTED;
     public final static String BEAT_MODE = Constants.BEAT_MODE.ALL;
-    public final static boolean HIDE_SUB_CONTROLS = false;
     public final static boolean ACTIVE_BEAT = false;
     public final static boolean SHOW_ELAPSED = false;
     public final static boolean RESET_TIMER_ON_STOP = false;

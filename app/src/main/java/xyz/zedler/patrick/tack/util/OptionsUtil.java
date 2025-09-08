@@ -35,8 +35,6 @@ import com.google.android.material.slider.Slider.OnChangeListener;
 import com.google.android.material.slider.Slider.OnSliderTouchListener;
 import java.util.Arrays;
 import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.DEF;
-import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
@@ -58,11 +56,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   private final MainActivity activity;
   @Nullable
   private final MainFragment fragment;
-  private final boolean useDialog, hideSubControlsIfUnused, editPart;
+  private final boolean useDialog, editPart;
   private Runnable onModifiersCountChanged;
   private OnPartUpdatedListener onPartUpdatedListener;
-  private boolean isCountInActive, isIncrementalActive, isTimerActive;
-  private boolean isMuteActive, isSubdivisionActive;
+  private boolean isCountInActive, isIncrementalActive, isTimerActive, isMuteActive;
   private DialogUtil dialogUtil;
   private PartialOptionsBinding binding;
   private PartialDialogOptionsBinding bindingDialog;
@@ -89,11 +86,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     isIncrementalActive = config.isIncrementalActive();
     isTimerActive = config.isTimerActive();
     isMuteActive = config.isMuteActive();
-    isSubdivisionActive = config.isSubdivisionActive();
-
-    hideSubControlsIfUnused = activity.getSharedPrefs().getBoolean(
-        PREF.HIDE_SUB_CONTROLS, DEF.HIDE_SUB_CONTROLS
-    );
 
     if (binding != null) {
       binding.sliderOptionsIncrementalAmount.addOnSliderTouchListener(this);
@@ -125,9 +117,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     dialogUtil = new DialogUtil(activity, "edit_part");
     bindingDialog = PartialDialogOptionsBinding.inflate(activity.getLayoutInflater());
     binding = bindingDialog.partialOptions;
-
-    // Hide slider because of separate subdivision controls at the top
-    hideSubControlsIfUnused = false;
   }
 
   public void show() {
@@ -213,7 +202,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     updateIncremental();
     updateTimer();
     updateMute();
-    updateSubdivisionsCount();
     updateSwing();
   }
 
@@ -723,42 +711,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding.linearOptionsMuteContainer.setVisibility(visibleControls ? View.VISIBLE : View.GONE);
   }
 
-  public void updateSubdivisionsCount() {
-    // Only show if user decided to hide subdivisions when not in use
-    binding.linearOptionsSubsCountContainer.setVisibility(
-        hideSubControlsIfUnused ? View.VISIBLE : View.GONE
-    );
-
-    int subdivisionsCount = getConfig().getSubdivisionsCount();
-    boolean isSubdivisionActive = getConfig().isSubdivisionActive();
-    if (this.isSubdivisionActive != isSubdivisionActive) {
-      this.isSubdivisionActive = isSubdivisionActive;
-      if (onModifiersCountChanged != null) {
-        onModifiersCountChanged.run();
-      }
-    }
-
-    if (isSubdivisionActive) {
-      binding.textOptionsSubsCount.setText(
-          activity.getResources().getQuantityString(
-              R.plurals.options_subdivisions_description, subdivisionsCount, subdivisionsCount
-          )
-      );
-    } else {
-      binding.textOptionsSubsCount.setText(R.string.options_inactive);
-    }
-
-    binding.sliderOptionsSubsCount.removeOnChangeListener(this);
-    binding.sliderOptionsSubsCount.setValue(subdivisionsCount);
-    binding.sliderOptionsSubsCount.addOnChangeListener(this);
-    binding.sliderOptionsSubsCount.setLabelFormatter(value -> {
-      int count = (int) value;
-      return activity.getResources().getQuantityString(
-          R.plurals.options_unit_subdivisions, count, count
-      );
-    });
-  }
-
   public void updateSwing() {
     boolean isSwingActive = getConfig().isSwingActive();
 
@@ -1000,7 +952,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
           getMetronomeUtil().setSwing7();
         }
       }
-      updateSubdivisionsCount();
       updateSwing();
       if (!editPart && fragment != null) {
         fragment.updateSubs(getConfig().getSubdivisions());
@@ -1072,25 +1023,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         getMetronomeUtil().setMuteMute((int) value);
       }
       updateMute();
-    } else if (id == R.id.slider_options_subs_count) {
-      activity.performHapticSegmentTick(slider, true);
-      int oldCount = getConfig().getSubdivisionsCount();
-      int newCount = (int) value;
-      int diff = newCount - oldCount;
-      for (int i = 0; i < Math.abs(diff); i++) {
-        if (diff > 0) {
-          // only MetronomeUtil required as subdivision slider is hidden in editPart mode
-          getMetronomeUtil().addSubdivision();
-        } else {
-          getMetronomeUtil().removeSubdivision();
-        }
-      }
-      updateSubdivisionsCount();
-      updateSwing();
-      if (!editPart && fragment != null) {
-        fragment.updateSubs(getConfig().getSubdivisions());
-        fragment.updateSubControls(true);
-      }
     }
   }
 

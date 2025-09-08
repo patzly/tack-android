@@ -369,9 +369,6 @@
   <string name="settings_gain_description">Relative to system volume</string>
   <string name="settings_gain_disclaimer">When boost is enabled, a warning will be displayed before each start. The developer takes no responsibility for any potential damage.</string>
 
-  <string name="settings_hide_sub_controls">Hide subdivision controls when not in use</string>
-  <string name="settings_hide_sub_controls_description">Displays extra control for subdivisions in options</string>
-
   <string name="settings_active_beat">Highlight current beat</string>
   <string name="settings_active_beat_description">Helpful for slower tempos</string>
 

@@ -720,35 +720,6 @@
           android:text="@string/title_controls" />
 
         <LinearLayout
-          android:id="@+id/linear_settings_hide_sub_controls"
-          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
-          android:background="@drawable/ripple_list_item_bg_segmented_first">
-
-          <ImageView
-            android:id="@+id/image_settings_hide_sub_controls"
-            style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_rounded_steppers"
-            tools:ignore="ContentDescription" />
-
-          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
-
-            <TextView
-              style="@style/Widget.Tack.TextView.ListItem.Title"
-              android:text="@string/settings_hide_sub_controls" />
-
-            <TextView
-              style="@style/Widget.Tack.TextView.ListItem.Description"
-              android:text="@string/settings_hide_sub_controls_description" />
-
-          </LinearLayout>
-
-          <com.google.android.material.materialswitch.MaterialSwitch
-            android:id="@+id/switch_settings_hide_sub_controls"
-            style="@style/Widget.Tack.Switch" />
-
-        </LinearLayout>
-
-        <LinearLayout
           android:id="@+id/linear_settings_active_beat"
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
           android:background="@drawable/ripple_list_item_bg_segmented_middle">
