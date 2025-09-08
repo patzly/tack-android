@@ -105,7 +105,6 @@
   <string name="action_remove_beat">減少節拍</string>
   <string name="action_add_sub">新增子節拍</string>
   <string name="action_remove_sub">移除子節拍</string>
-  <string name="action_tempo_tap">點擊節奏</string>
   <string name="action_beat_mode">節拍模式</string>
   <string name="action_send_feedback">傳送意見回饋</string>
   <string name="action_open_link">開啟外部網站</string>
