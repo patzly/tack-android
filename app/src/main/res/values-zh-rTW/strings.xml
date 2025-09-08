@@ -221,6 +221,9 @@
     <item quantity="other">%1$d 分鐘</item>
   </plurals>
   <string name="options_inactive">停用</string>
+  <plurals name="options_beats_description">
+    <item quantity="other">每小節 %1$d 拍</item>
+  </plurals>
   <string name="options_count_in">計數</string>
   <plurals name="options_count_in_description">
     <item quantity="other">套用修飾符前等待 %1$d 小節</item>
