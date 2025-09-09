@@ -121,6 +121,8 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
       } else if (event.getAction() == MotionEvent.ACTION_UP
           || event.getAction() == MotionEvent.ACTION_CANCEL) {
         binding.cloverTempoTap.setTapped(false);
+        v.performClick();
+        return true;
       }
       return false;
     });

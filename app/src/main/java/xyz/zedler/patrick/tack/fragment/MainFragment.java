@@ -535,8 +535,10 @@ public class MainFragment extends BaseFragment
               }
               performHapticClick();
             }
-            return false;
+          } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            v.performClick();
           }
+          // Only false allowed for button animations to work
           return false;
         });
 
