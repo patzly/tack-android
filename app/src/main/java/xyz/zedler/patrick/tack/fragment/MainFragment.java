@@ -415,7 +415,7 @@ public class MainFragment extends BaseFragment
       binding.textMainTempo.setTextColor(colorTempoPickerFg);
       binding.textMainBpmLabel.setTextColor(colorTempoPickerFg);
       if (VERSION.SDK_INT >= VERSION_CODES.O) {
-        binding.textMainTempo.setFontVariationSettings("'wght' " + (600 + (fraction * 150)));
+        binding.textMainTempo.setFontVariationSettings("'wght' " + (600 + (fraction * 100)));
       }
     });
 

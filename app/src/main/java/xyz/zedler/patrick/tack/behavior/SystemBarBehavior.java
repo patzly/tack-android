@@ -331,6 +331,8 @@ public class SystemBarBehavior {
                   scrollView.getPaddingRight() - cutoutInsetRight,
                   scrollView.getPaddingBottom()
               );
+              // Re-measure scroll content, else padding could be lost
+              scrollContent.requestLayout();
             }
 
             int scrollViewHeight = scrollView.getHeight();

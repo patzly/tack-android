@@ -158,23 +158,24 @@ public class SettingsFragment extends BaseFragment
         break;
     }
     binding.toggleSettingsTheme.check(idMode);
-    binding.toggleSettingsTheme.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-      if (!isChecked) {
-        return;
-      }
-      int pref;
-      if (checkedId == R.id.button_settings_theme_light) {
-        pref = AppCompatDelegate.MODE_NIGHT_NO;
-      } else if (checkedId == R.id.button_settings_theme_dark) {
-        pref = AppCompatDelegate.MODE_NIGHT_YES;
-      } else {
-        pref = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
-      }
-      getSharedPrefs().edit().putInt(PREF.UI_MODE, pref).apply();
-      performHapticClick();
-      ViewUtil.startIcon(binding.imageSettingsTheme);
-      activity.restartToApply(200, getInstanceState(), true, false);
-    });
+    binding.toggleSettingsTheme.addOnButtonCheckedListener(
+        (group, checkedId, isChecked) -> {
+          if (!isChecked) {
+            return;
+          }
+          int pref;
+          if (checkedId == R.id.button_settings_theme_light) {
+            pref = AppCompatDelegate.MODE_NIGHT_NO;
+          } else if (checkedId == R.id.button_settings_theme_dark) {
+            pref = AppCompatDelegate.MODE_NIGHT_YES;
+          } else {
+            pref = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
+          }
+          getSharedPrefs().edit().putInt(PREF.UI_MODE, pref).apply();
+          performHapticClick();
+          ViewUtil.startIcon(binding.imageSettingsTheme);
+          activity.restartToApply(200, getInstanceState(), true, false);
+        });
 
     int idContrast;
     switch (getSharedPrefs().getString(PREF.UI_CONTRAST, DEF.UI_CONTRAST)) {
@@ -189,23 +190,24 @@ public class SettingsFragment extends BaseFragment
         break;
     }
     binding.toggleSettingsContrast.check(idContrast);
-    binding.toggleSettingsContrast.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-      if (!isChecked) {
-        return;
-      }
-      String pref;
-      if (checkedId == R.id.button_settings_contrast_medium) {
-        pref = CONTRAST.MEDIUM;
-      } else if (checkedId == R.id.button_settings_contrast_high) {
-        pref = CONTRAST.HIGH;
-      } else {
-        pref = CONTRAST.STANDARD;
-      }
-      getSharedPrefs().edit().putString(PREF.UI_CONTRAST, pref).apply();
-      performHapticClick();
-      ViewUtil.startIcon(binding.imageSettingsContrast);
-      activity.restartToApply(0, getInstanceState(), true, false);
-    });
+    binding.toggleSettingsContrast.addOnButtonCheckedListener(
+        (group, checkedId, isChecked) -> {
+          if (!isChecked) {
+            return;
+          }
+          String pref;
+          if (checkedId == R.id.button_settings_contrast_medium) {
+            pref = CONTRAST.MEDIUM;
+          } else if (checkedId == R.id.button_settings_contrast_high) {
+            pref = CONTRAST.HIGH;
+          } else {
+            pref = CONTRAST.STANDARD;
+          }
+          getSharedPrefs().edit().putString(PREF.UI_CONTRAST, pref).apply();
+          performHapticClick();
+          ViewUtil.startIcon(binding.imageSettingsContrast);
+          activity.restartToApply(0, getInstanceState(), true, false);
+        });
     String currentTheme = getSharedPrefs().getString(PREF.THEME, DEF.THEME);
     boolean isDynamic;
     boolean hasDynamic = DynamicColors.isDynamicColorAvailable();
