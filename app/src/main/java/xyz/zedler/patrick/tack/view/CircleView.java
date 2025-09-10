@@ -19,96 +19,75 @@
 
 package xyz.zedler.patrick.tack.view;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
+import static java.lang.Math.min;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
-import android.graphics.PointF;
-import android.graphics.RadialGradient;
 import android.graphics.RectF;
-import android.graphics.Shader;
-import android.graphics.Shader.TileMode;
 import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.graphics.ColorUtils;
-import androidx.graphics.shapes.CornerRounding;
+import androidx.dynamicanimation.animation.FloatPropertyCompat;
+import androidx.dynamicanimation.animation.SpringAnimation;
+import androidx.graphics.shapes.Morph;
 import androidx.graphics.shapes.RoundedPolygon;
-import androidx.graphics.shapes.ShapesKt;
 import androidx.graphics.shapes.Shapes_androidKt;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import xyz.zedler.patrick.tack.Constants;
+import com.google.android.material.motion.MotionUtils;
+import com.google.android.material.shape.MaterialShapes;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.UiUtil;
 
 public class CircleView extends View {
 
   private final static String TAG = CircleView.class.getSimpleName();
 
-  private final int waves;
-  private final Paint paintFill, paintStroke;
+  private final Paint paintFill;
   private final Path path;
-  private final RectF bounds;
   private final Matrix matrix;
-  private final RoundedPolygon.Companion companion;
-  private final CornerRounding cornerRounding;
-  private final float innerRadiusDefault, innerRadiusDrag;
-  private final int colorDefault;
-  private final int[] colorsDrag;
-  private float touchX, touchY;
-  private float gradientBlendRatio = 0;
-  private float innerRadius;
-  private float currentFraction;
-  private ValueAnimator animator;
+  private final Morph morph;
+  private final int colorDefault, colorDrag;
+  private float morphFactor, colorFraction;
   private boolean reduceAnimations;
   private OnDragAnimListener onDragAnimListener;
+  private SpringAnimation springAnimationMorph, springAnimationColor;
 
+  @SuppressLint("RestrictedApi")
   public CircleView(@NonNull Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
 
-    colorDefault = ResUtil.getColor(context, R.attr.colorSecondaryContainer);
-    int colorDrag = ResUtil.getColor(context, R.attr.colorOnSecondaryContainer);
+    colorDefault = ResUtil.getColor(context, R.attr.colorPrimaryContainer);
+    colorDrag = ResUtil.getColor(context, R.attr.colorTertiaryContainer);
 
     paintFill = new Paint();
     paintFill.setStyle(Style.FILL);
     paintFill.setColor(colorDefault);
-    paintStroke = new Paint();
-    paintStroke.setStyle(Style.STROKE);
-    paintStroke.setStrokeWidth(UiUtil.dpToPx(context, 1));
-    paintStroke.setColor(ResUtil.getColor(context, R.attr.colorPrimary));
 
-    colorsDrag = new int[]{
-        ColorUtils.blendARGB(colorDrag, colorDefault, 0.5f),
-        ColorUtils.blendARGB(colorDrag, colorDefault, 0.7f),
-        ColorUtils.blendARGB(colorDrag, colorDefault, 0.9f),
-        colorDefault
-    };
-
-    companion = RoundedPolygon.Companion;
-    cornerRounding = new CornerRounding(0.5f, 0);
-
-    waves = getResources().getInteger(R.integer.picker_waves);
-    innerRadiusDefault = 0.84f;
-    innerRadiusDrag = 0.78f;
-    innerRadius = innerRadiusDefault;
+    morph = new Morph(
+        normalize(
+            MaterialShapes.COOKIE_12, true, new RectF(-1, -1, 1, 1)
+        ),
+        normalize(
+            MaterialShapes.BURST, true, new RectF(-1, -1, 1, 1)
+        )
+    );
 
     path = new Path();
-    bounds = new RectF();
     matrix = new Matrix();
+
+    updateShape();
   }
 
   @Override
   protected void onDraw(@NonNull Canvas canvas) {
     super.onDraw(canvas);
     canvas.drawPath(path, paintFill);
-    canvas.drawPath(path, paintStroke);
   }
 
   @Override
@@ -121,94 +100,73 @@ public class CircleView extends View {
   }
 
   private void updateShape() {
-    RoundedPolygon star = ShapesKt.star(companion, waves, 1, innerRadius, cornerRounding);
-    path.set(Shapes_androidKt.toPath(star));
-    path.computeBounds(bounds, false);
-    float scaleX = getWidth() / bounds.width() - 3;
-    float scaleY = getHeight() / bounds.height();
+    path.rewind();
+    Shapes_androidKt.toPath(morph, morphFactor, path);
     matrix.reset();
-    matrix.preScale(0.99f, 0.99f);
-    matrix.postScale(scaleX, scaleY);
-    matrix.postTranslate(-bounds.left * scaleX, -bounds.top * scaleY);
+    matrix.setScale(getWidth() / 2f, getHeight() / 2f);
+    matrix.postTranslate(getWidth() / 2f, getHeight() / 2f);
     path.transform(matrix);
   }
 
-  public void setDragged(boolean dragged, float x, float y) {
-    if (dragged) {
-      touchX = x;
-      touchY = y;
+  @SuppressLint("PrivateResource")
+  public void setDragged(boolean dragged) {
+    if (springAnimationMorph != null) {
+      springAnimationMorph.cancel();
     }
-    if (animator != null) {
-      animator.pause();
-      animator.cancel();
+    if (springAnimationColor != null) {
+      springAnimationColor.cancel();
     }
-    animator = ValueAnimator.ofFloat(currentFraction, dragged ? 1 : 0);
-    animator.addUpdateListener(animation -> {
-      currentFraction = (float) animator.getAnimatedValue();
-      // inner radius
-      innerRadius = innerRadiusDefault + (innerRadiusDrag - innerRadiusDefault) * currentFraction;
-      updateShape();
-      // shader color
-      gradientBlendRatio = 0f + (0.5f - 0f) * currentFraction;
-      paintFill.setShader(getGradient());
-      invalidate();
-      if (onDragAnimListener != null) {
-        onDragAnimListener.onDragAnim(currentFraction);
-      }
-    });
-
     if (!reduceAnimations) {
-      animator.setInterpolator(new FastOutSlowInInterpolator());
-      animator.setDuration(Constants.ANIM_DURATION_LONG);
-      animator.addListener(new AnimatorListenerAdapter() {
-        @Override
-        public void onAnimationEnd(Animator animation) {
-          animator = null;
-        }
-      });
-      animator.start();
+      if (springAnimationMorph == null) {
+        springAnimationMorph =
+            new SpringAnimation(this, MORPH_FACTOR)
+                .setSpring(
+                    MotionUtils.resolveThemeSpringForce(
+                        getContext(),
+                        R.attr.motionSpringDefaultSpatial,
+                        R.style.Motion_Material3_Spring_Standard_Default_Spatial)
+                ).setMinimumVisibleChange(0.01f);
+      }
+      if (springAnimationColor == null) {
+        springAnimationColor =
+            new SpringAnimation(this, COLOR_FRACTION)
+                .setSpring(
+                    MotionUtils.resolveThemeSpringForce(
+                        getContext(),
+                        R.attr.motionSpringDefaultEffects,
+                        R.style.Motion_Material3_Spring_Standard_Default_Effects)
+                ).setMinimumVisibleChange(0.01f);
+      }
+      springAnimationMorph.animateToFinalPosition(dragged ? 1 : 0);
+      springAnimationColor.animateToFinalPosition(dragged ? 1 : 0);
     } else {
-      innerRadius = innerRadiusDefault;
-      updateShape();
-      gradientBlendRatio = 0;
-      paintFill.setShader(getGradient());
+      setMorphFactor(0);
+      setColorFraction(0);
       invalidate();
     }
   }
 
-  public void onDrag(float x, float y) {
-    touchX = x;
-    touchY = y;
-    if (!reduceAnimations) {
-      paintFill.setShader(getGradient());
-    }
+  private float getMorphFactor() {
+    return morphFactor;
+  }
+
+  private void setMorphFactor(float factor) {
+    morphFactor = factor;
+    updateShape();
     invalidate();
   }
 
-  private Shader getGradient() {
-    PointF pointF = getRotatedPoint(touchX, touchY, getPivotX(), getPivotY(), -getRotation());
-    return new RadialGradient(
-        pointF.x,
-        pointF.y,
-        getWidth(),
-        new int[]{
-            ColorUtils.blendARGB(colorDefault, colorsDrag[0], gradientBlendRatio),
-            ColorUtils.blendARGB(colorDefault, colorsDrag[1], gradientBlendRatio),
-            ColorUtils.blendARGB(colorDefault, colorsDrag[2], gradientBlendRatio),
-            ColorUtils.blendARGB(colorDefault, colorsDrag[3], gradientBlendRatio)
-        },
-        new float[]{0, 0.33f, 0.73f, 1},
-        TileMode.CLAMP
-    );
+  private float getColorFraction() {
+    return colorFraction;
   }
 
-  private PointF getRotatedPoint(float x, float y, float cx, float cy, float degrees) {
-    double radians = Math.toRadians(degrees);
-    float x1 = x - cx;
-    float y1 = y - cy;
-    float x2 = (float) (x1 * Math.cos(radians) - y1 * Math.sin(radians));
-    float y2 = (float) (x1 * Math.sin(radians) + y1 * Math.cos(radians));
-    return new PointF(x2 + cx, y2 + cy);
+  private void setColorFraction(float fraction) {
+    colorFraction = fraction;
+    paintFill.setColor(ColorUtils.blendARGB(colorDefault, colorDrag, fraction));
+    invalidate();
+    if (onDragAnimListener != null) {
+      onDragAnimListener.onDragAnim(fraction);
+    }
   }
 
   public void setReduceAnimations(boolean reduce) {
@@ -218,4 +176,57 @@ public class CircleView extends View {
   public interface OnDragAnimListener {
     void onDragAnim(float fraction);
   }
+
+  @NonNull
+  public static RoundedPolygon normalize(
+      @NonNull RoundedPolygon shape, boolean radial, @NonNull RectF dstBounds
+  ) {
+    float[] srcBoundsArray = new float[4];
+    if (radial) {
+      // This calculates the axis-aligned bounds of the shape and returns that rectangle. It
+      // determines the max dimension of the shape (by calculating the distance from its center to
+      // the start and midpoint of each curve) and returns a square which can be used to hold the
+      // object in any rotation.
+      shape.calculateMaxBounds(srcBoundsArray);
+    } else {
+      // This calculates the bounds of the shape without rotating the shape.
+      shape.calculateBounds(srcBoundsArray);
+    }
+    RectF srcBounds =
+        new RectF(srcBoundsArray[0], srcBoundsArray[1], srcBoundsArray[2], srcBoundsArray[3]);
+    float scale =
+        min(dstBounds.width() / srcBounds.width(), dstBounds.height() / srcBounds.height());
+    // Scales the shape with pivot point at its original center then moves it to align its original
+    // center with the destination bounds center.
+    Matrix transform = new Matrix();
+    transform.setScale(scale, scale);
+    transform.preTranslate(-srcBounds.centerX(), -srcBounds.centerY());
+    transform.postTranslate(dstBounds.centerX(), dstBounds.centerY());
+    return Shapes_androidKt.transformed(shape, transform);
+  }
+
+  private static final FloatPropertyCompat<CircleView> MORPH_FACTOR =
+      new FloatPropertyCompat<>("morphFactor") {
+        @Override
+        public float getValue(CircleView delegate) {
+          return delegate.getMorphFactor();
+        }
+
+        @Override
+        public void setValue(CircleView delegate, float value) {
+          delegate.setMorphFactor(value);
+        }
+      };
+  private static final FloatPropertyCompat<CircleView> COLOR_FRACTION =
+      new FloatPropertyCompat<>("colorFraction") {
+        @Override
+        public float getValue(CircleView delegate) {
+          return delegate.getColorFraction();
+        }
+
+        @Override
+        public void setValue(CircleView delegate, float value) {
+          delegate.setColorFraction(value);
+        }
+      };
 }

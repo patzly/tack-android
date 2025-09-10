@@ -24,7 +24,6 @@ import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.Editable;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -274,7 +273,6 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
       binding.switchTempoInstant.setOnCheckedChangeListener(this);
 
       int tempo = getMetronomeUtil().getConfig().getTempo();
-      Log.i(TAG, "update: hello A " + tempo);
       setTapTempoDisplay(tempo, tempo);
       binding.textSwitcherTempoTapTempoTerm.setCurrentText(fragment.getTempoTerm(tempo));
       binding.cloverTempoTap.setReduceAnimations(fragment.isReduceAnimations());

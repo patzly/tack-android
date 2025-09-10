@@ -123,7 +123,7 @@ public class TempoPickerView extends View implements View.OnTouchListener {
       isTouchStartedInCircle = isTouchInsideCircle;
       // on back gesture edge or outside ring
       if (isTouchInsideCircle) {
-        onPickListener.onPickDown(x, y);
+        onPickListener.onPickDown();
         if (isTouchOutsideCenter) {
           isTouchStartedInCenter = false;
           currAngle = angle;
@@ -142,7 +142,6 @@ public class TempoPickerView extends View implements View.OnTouchListener {
         currAngle = angle;
         animate(prevAngle, currAngle);
       }
-      onPickListener.onDrag(x, y);
     } else if (event.getAction() == MotionEvent.ACTION_UP
         || event.getAction() == MotionEvent.ACTION_CANCEL
     ) {
@@ -218,9 +217,7 @@ public class TempoPickerView extends View implements View.OnTouchListener {
 
   public interface OnPickListener {
 
-    void onPickDown(float x, float y);
-
-    void onDrag(float x, float y);
+    void onPickDown();
 
     void onPickUpOrCancel();
   }

@@ -108,6 +108,7 @@ public class MainFragment extends BaseFragment
   private ValueAnimator playStopButtonAnimator;
   private float playStopButtonFraction;
   private int colorFlashNormal, colorFlashStrong, colorFlashMuted;
+  private int colorTempoPickerFg, colorTempoPickerFgDefault, colorTempoPickerFgDragged;
   private DialogUtil dialogUtilGain, dialogUtilSplitScreen, dialogUtilTimer, dialogUtilElapsed;
   private DialogUtil dialogUtilPermission, dialogUtilBeatMode;
   private OptionsUtil optionsUtil;
@@ -385,6 +386,10 @@ public class MainFragment extends BaseFragment
       performHapticClick();
     });
 
+    colorTempoPickerFgDefault = ResUtil.getColor(activity, R.attr.colorOnPrimaryContainer);
+    colorTempoPickerFgDragged = ResUtil.getColor(activity, R.attr.colorOnTertiaryContainer);
+    colorTempoPickerFg = colorTempoPickerFgDefault;
+
     binding.textSwitcherMainTempoTerm.setFactory(() -> {
       TextView textView = new TextView(activity);
       textView.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -392,14 +397,25 @@ public class MainFragment extends BaseFragment
           TypedValue.COMPLEX_UNIT_PX,
           getResources().getDimension(R.dimen.label_text_size)
       );
-      textView.setTextColor(ResUtil.getColor(activity, R.attr.colorOnSecondaryContainer));
+      textView.setTextColor(colorTempoPickerFg);
       return textView;
     });
 
     binding.circleMain.setReduceAnimations(reduceAnimations);
     binding.circleMain.setOnDragAnimListener(fraction -> {
+      colorTempoPickerFg = ColorUtils.blendARGB(colorTempoPickerFgDefault, colorTempoPickerFgDragged, fraction);
+      TextView current = (TextView) binding.textSwitcherMainTempoTerm.getCurrentView();
+      if (current != null) {
+        current.setTextColor(colorTempoPickerFg);
+      }
+      TextView next = (TextView) binding.textSwitcherMainTempoTerm.getNextView();
+      if (next != null) {
+        next.setTextColor(colorTempoPickerFg);
+      }
+      binding.textMainTempo.setTextColor(colorTempoPickerFg);
+      binding.textMainBpmLabel.setTextColor(colorTempoPickerFg);
       if (VERSION.SDK_INT >= VERSION_CODES.O) {
-        binding.textMainTempo.setFontVariationSettings("'wght' " + (600 + (fraction * 100)));
+        binding.textMainTempo.setFontVariationSettings("'wght' " + (600 + (fraction * 150)));
       }
     });
 
@@ -418,21 +434,16 @@ public class MainFragment extends BaseFragment
     });
     binding.tempoPickerMain.setOnPickListener(new OnPickListener() {
       @Override
-      public void onPickDown(float x, float y) {
-        binding.circleMain.setDragged(true, x, y);
+      public void onPickDown() {
+        binding.circleMain.setDragged(true);
         if (bigLogo && getMetronomeUtil().isPlaying()) {
           updateTempoPickerAndLogo(true, true);
         }
       }
 
       @Override
-      public void onDrag(float x, float y) {
-        binding.circleMain.onDrag(x, y);
-      }
-
-      @Override
       public void onPickUpOrCancel() {
-        binding.circleMain.setDragged(false, 0, 0);
+        binding.circleMain.setDragged(false);
         if (bigLogo && getMetronomeUtil().isPlaying()) {
           updateTempoPickerAndLogo(false, true);
         }
@@ -1582,13 +1593,14 @@ public class MainFragment extends BaseFragment
       binding.imageMainLogo.setVisibility(View.VISIBLE);
       pickerLogoAnimator = ValueAnimator.ofFloat(binding.frameMainCenter.getAlpha(), pickerAlpha);
       pickerLogoAnimator.addUpdateListener(animation -> {
-        float alpha = (float) animation.getAnimatedValue();
-        binding.frameMainCenter.setAlpha(alpha);
-        binding.imageMainLogo.setScaleX(alpha);
-        binding.imageMainLogo.setScaleY(alpha);
-        binding.imageMainLogoPlaceholder.setAlpha(1 - alpha);
-        binding.imageMainLogoPlaceholder.setScaleX(1 - alpha);
-        binding.imageMainLogoPlaceholder.setScaleY(1 - alpha);
+        float fraction = (float) animation.getAnimatedValue();
+        binding.frameMainCenter.setAlpha(fraction);
+        binding.imageMainLogoCenter.setAlpha(1 - fraction);
+        binding.imageMainLogo.setScaleX(fraction);
+        binding.imageMainLogo.setScaleY(fraction);
+        binding.imageMainLogoPlaceholder.setAlpha(1 - fraction);
+        binding.imageMainLogoPlaceholder.setScaleX(1 - fraction);
+        binding.imageMainLogoPlaceholder.setScaleY(1 - fraction);
       });
       pickerLogoAnimator.addListener(new AnimatorListenerAdapter() {
         @Override

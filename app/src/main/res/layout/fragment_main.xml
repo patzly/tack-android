@@ -273,21 +273,20 @@
 
     <ImageView
       android:id="@+id/image_main_logo_center"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
+      android:layout_width="@dimen/bpm_picker_size"
+      android:layout_height="@dimen/bpm_picker_size"
       android:importantForAccessibility="no"
       android:src="@drawable/center_tack_logo"
+      android:background="@drawable/shape_center_logo_bg"
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintHeight_max="@dimen/bpm_picker_size"
-      app:layout_constraintWidth_max="@dimen/bpm_picker_size" />
+      app:layout_constraintEnd_toEndOf="parent" />
 
     <FrameLayout
       android:id="@+id/frame_main_center"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
+      android:layout_width="@dimen/bpm_picker_size"
+      android:layout_height="@dimen/bpm_picker_size"
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintStart_toStartOf="parent"
@@ -295,24 +294,24 @@
 
       <xyz.zedler.patrick.tack.view.TempoPickerView
         android:id="@+id/tempo_picker_main"
-        android:layout_width="@dimen/bpm_picker_size"
-        android:layout_height="@dimen/bpm_picker_size"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:importantForAccessibility="yes" />
 
       <xyz.zedler.patrick.tack.view.CircleView
         android:id="@+id/circle_main"
-        android:layout_width="@dimen/bpm_picker_size"
-        android:layout_height="@dimen/bpm_picker_size" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
       <FrameLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         tools:ignore="SpUsage">
 
         <TextSwitcher
           android:id="@+id/text_switcher_main_tempo_term"
-          android:layout_width="@dimen/bpm_picker_size"
+          android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_gravity="center_horizontal|top" />
 
@@ -322,20 +321,20 @@
           android:layout_height="wrap_content"
           android:layout_marginTop="@dimen/label_text_size"
           android:layout_marginBottom="@dimen/label_text_size"
-          android:textColor="?attr/colorOnSecondaryContainer"
+          android:textColor="?attr/colorOnPrimaryContainer"
           android:layout_gravity="top"
           android:gravity="center_horizontal"
           android:textAlignment="center"
           android:fontFamily="@font/nunito_semi_bold"
           android:fontFeatureSettings="tnum"
-          android:textAppearance="?attr/textAppearanceDisplayLarge"
-          android:textSize="@dimen/bpm_text_size" />
+          android:textAppearance="?attr/textAppearanceDisplayLarge" />
 
         <TextView
+          android:id="@+id/text_main_bpm_label"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:text="@string/label_bpm"
-          android:textColor="?attr/colorOnSecondaryContainer"
+          android:textColor="?attr/colorOnPrimaryContainer"
           android:layout_gravity="bottom"
           android:gravity="center_horizontal"
           android:textAlignment="center"

@@ -20,8 +20,6 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-  <integer name="picker_waves">12</integer>
-
   <integer name="max_song_name_length">40</integer>
   <integer name="max_part_name_length">50</integer>
 
