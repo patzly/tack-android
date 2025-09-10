@@ -20,10 +20,11 @@
 - Improved: use of simple vibration for haptic beats if some haptic effects are not supported
 - Improved: latency correction setting moved to separate dialog
 - Improved: song library backup/restore moved to separate dialog, also accessible from settings
+- Fixed: tempo buttons not updating correctly
+- Fixed: user changes overwritten with currently selected song part after pausing and resuming app
 - Fixed: crash caused by incorrect layout handling
 - Fixed: crash caused by invalid tempo values
 - Fixed: crash caused by app shortcut limit being reached (thanks Fabian!)
-- Fixed: tempo buttons not updating correctly
 - Fixed: incorrect song picker colors during chip animation
 - Fixed: incorrect size of subdivision controls on tablets in landscape mode
 - Fixed: incorrect preference restoration after latency correction setting change

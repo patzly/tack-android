@@ -100,13 +100,8 @@ public class MetronomeUtil {
   }
 
   public void setToPreferences(boolean restart) {
-    int tempoTmp = config.getTempo();
     config.setToPreferences(sharedPrefs);
-
-    // restore tempo if incremental is active
-    if (isFromService() && config.isIncrementalActive()) {
-      config.setTempo(tempoTmp);
-    }
+    MetronomeConfig configTmp = new MetronomeConfig(config);
 
     latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY);
     showElapsed = sharedPrefs.getBoolean(PREF.SHOW_ELAPSED, DEF.SHOW_ELAPSED);
@@ -126,7 +121,17 @@ public class MetronomeUtil {
     setCurrentSong(
         sharedPrefs.getString(PREF.SONG_CURRENT_ID, DEF.SONG_CURRENT_ID),
         sharedPrefs.getInt(PREF.PART_CURRENT_INDEX, DEF.PART_CURRENT_INDEX),
-        restart
+        restart,
+        false,
+        () -> {
+          if (!config.equals(configTmp)) {
+            // Re-apply all config changes a user could have made after a song was selected
+            setConfig(configTmp, false);
+            for (MetronomeListener listener : listeners) {
+              listener.onMetronomeConfigChanged();
+            }
+          }
+        }
     );
   }
 
@@ -184,6 +189,12 @@ public class MetronomeUtil {
   public void setCurrentSong(
       @NonNull String songId, int partIndex, boolean restart, boolean startPlaying
   ) {
+    setCurrentSong(songId, partIndex, restart, startPlaying, null);
+  }
+
+  public void setCurrentSong(
+      @NonNull String songId, int partIndex, boolean restart, boolean startPlaying, Runnable onDone
+  ) {
     currentSongId = songId;
     executorService.execute(() -> {
       currentSongWithParts = db.songDao().getSongWithPartsById(songId);
@@ -201,6 +212,9 @@ public class MetronomeUtil {
         currentSongWithParts = new SongWithParts(songDefault, parts);
       } else {
         Log.e(TAG, "setCurrentSong: song with id='" + songId + "' not found");
+      }
+      if (onDone != null) {
+        onDone.run();
       }
     });
     sharedPrefs.edit().putString(PREF.SONG_CURRENT_ID, songId).apply();

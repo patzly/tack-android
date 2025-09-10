@@ -101,6 +101,28 @@ public class MetronomeConfig {
   }
 
   public MetronomeConfig(MetronomeConfig other) {
+    setToConfig(other);
+  }
+
+  public boolean equals(MetronomeConfig other) {
+    return this.countIn == other.countIn &&
+        this.tempo == other.tempo &&
+        java.util.Arrays.equals(this.beats, other.beats) &&
+        java.util.Arrays.equals(this.subdivisions, other.subdivisions) &&
+        this.incrementalAmount == other.incrementalAmount &&
+        this.incrementalInterval == other.incrementalInterval &&
+        this.incrementalLimit == other.incrementalLimit &&
+        this.incrementalUnit.equals(other.incrementalUnit) &&
+        this.incrementalIncrease == other.incrementalIncrease &&
+        this.timerDuration == other.timerDuration &&
+        this.timerUnit.equals(other.timerUnit) &&
+        this.mutePlay == other.mutePlay &&
+        this.muteMute == other.muteMute &&
+        this.muteUnit.equals(other.muteUnit) &&
+        this.muteRandom == other.muteRandom;
+  }
+
+  public void setToConfig(MetronomeConfig other) {
     this.countIn = other.countIn;
 
     this.tempo = other.tempo;
@@ -121,24 +143,6 @@ public class MetronomeConfig {
     this.muteMute = other.muteMute;
     this.muteUnit = other.muteUnit;
     this.muteRandom = other.muteRandom;
-  }
-
-  public boolean equals(MetronomeConfig other) {
-    return this.countIn == other.countIn &&
-        this.tempo == other.tempo &&
-        java.util.Arrays.equals(this.beats, other.beats) &&
-        java.util.Arrays.equals(this.subdivisions, other.subdivisions) &&
-        this.incrementalAmount == other.incrementalAmount &&
-        this.incrementalInterval == other.incrementalInterval &&
-        this.incrementalLimit == other.incrementalLimit &&
-        this.incrementalUnit.equals(other.incrementalUnit) &&
-        this.incrementalIncrease == other.incrementalIncrease &&
-        this.timerDuration == other.timerDuration &&
-        this.timerUnit.equals(other.timerUnit) &&
-        this.mutePlay == other.mutePlay &&
-        this.muteMute == other.muteMute &&
-        this.muteUnit.equals(other.muteUnit) &&
-        this.muteRandom == other.muteRandom;
   }
 
   public void setToPreferences(SharedPreferences sharedPrefs) {
