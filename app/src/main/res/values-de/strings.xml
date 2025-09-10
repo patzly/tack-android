@@ -46,7 +46,7 @@
   <string name="label_tempo">Tempo</string>
   <string name="label_tempo_keyboard">Tastatur</string>
   <string name="label_tempo_tap">Tippen</string>
-  <string name="label_tempo_instant">Sofort anwenden</string>
+  <string name="label_tempo_instant">Sofort übernehmen</string>
   <string name="label_tempo_largo">Largo</string>
   <string name="label_tempo_larghetto">Larghetto</string>
   <string name="label_tempo_adagio">Adagio</string>
