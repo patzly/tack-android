@@ -237,12 +237,12 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
     binding.buttonSongMenu.setIconTint(
         ColorStateList.valueOf(
             ResUtil.getColor(
-                context,
-                isSelected ? R.attr.colorOnTertiaryContainer : R.attr.colorOnSurfaceVariant
+                context, isSelected ? R.attr.colorOnTertiaryContainer : R.attr.colorOnSurface
             )
         )
     );
     binding.buttonSongMenu.setOnClickListener(v -> {
+      listener.onMoreClick();
       PopupMenu.OnMenuItemClickListener itemClickListener = item -> {
         int id = item.getItemId();
         if (id == R.id.action_play) {
@@ -389,6 +389,7 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
     void onSongClick(@NonNull SongWithParts song);
     void onPlayClick(@NonNull SongWithParts song);
     void onPlayStopClick();
+    void onMoreClick();
     void onApplyClick(@NonNull SongWithParts song);
     void onDeleteClick(@NonNull SongWithParts song);
   }

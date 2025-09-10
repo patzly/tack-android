@@ -266,6 +266,11 @@ public class SongsFragment extends BaseFragment {
       }
 
       @Override
+      public void onMoreClick() {
+        performHapticClick();
+      }
+
+      @Override
       public void onApplyClick(@NonNull SongWithParts song) {
         performHapticClick();
         getMetronomeUtil().setCurrentSong(
