@@ -107,7 +107,6 @@
       app:layout_constraintEnd_toStartOf="@id/card_main_container_end">
 
       <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/container_main_start"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

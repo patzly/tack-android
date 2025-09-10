@@ -873,15 +873,21 @@ public class MainFragment extends BaseFragment
         if (tick.isMuted) {
           color = colorFlashMuted;
         }
-        View flashContainer = isLandTablet && binding.containerMainEnd != null
-            ? binding.containerMainEnd
-            : binding.coordinatorContainer;
-        flashContainer.setBackgroundColor(color);
-        flashContainer.postDelayed(() -> {
-          if (binding != null) {
-            flashContainer.setBackgroundColor(colorFlashMuted);
-          }
-        }, 100); // flash screen for 100 milliseconds
+        if (isLandTablet && binding.cardMainContainerEnd != null) {
+          binding.cardMainContainerEnd.setCardBackgroundColor(color);
+          binding.cardMainContainerEnd.postDelayed(() -> {
+            if (binding != null) {
+              binding.cardMainContainerEnd.setCardBackgroundColor(colorFlashMuted);
+            }
+          }, 100); // flash screen for 100 milliseconds
+        } else {
+          binding.coordinatorContainer.setBackgroundColor(color);
+          binding.coordinatorContainer.postDelayed(() -> {
+            if (binding != null) {
+              binding.coordinatorContainer.setBackgroundColor(colorFlashMuted);
+            }
+          }, 100); // flash screen for 100 milliseconds
+        }
       }
       if (tick.subdivision == 1) {
         if (!reduceAnimations) {
