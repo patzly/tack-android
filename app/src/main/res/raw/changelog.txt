@@ -20,6 +20,7 @@
 - Improved: use of simple vibration for haptic beats if some haptic effects are not supported
 - Improved: latency correction setting moved to separate dialog
 - Improved: song library backup/restore moved to separate dialog, also accessible from settings
+- Improved: song library page now with delete option for each song and play and apply options for the current song
 - Fixed: tempo buttons not updating correctly
 - Fixed: user changes overwritten with currently selected song part after pausing and resuming app
 - Fixed: crash caused by incorrect layout handling

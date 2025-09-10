@@ -25,10 +25,12 @@ import android.content.res.ColorStateList;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
@@ -51,6 +53,8 @@ import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.RowSongBinding;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.ViewUtil;
+import xyz.zedler.patrick.tack.util.ViewUtil.OnMenuInflatedListener;
 
 public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
 
@@ -203,6 +207,7 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
     }
 
     boolean isPlayingSong = isPlaying && isSelected;
+    binding.buttonSongPlay.setVisibility(isSelected ? View.VISIBLE : View.GONE);
     binding.buttonSongPlay.setChecked(isPlayingSong);
     binding.buttonSongPlay.setIconResource(
         isPlayingSong ? R.drawable.ic_rounded_stop : R.drawable.ic_rounded_play_arrow
@@ -228,6 +233,38 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
         listener.onPlayClick(songWithParts);
       }
     });
+
+    binding.buttonSongMenu.setIconTint(
+        ColorStateList.valueOf(
+            ResUtil.getColor(
+                context,
+                isSelected ? R.attr.colorOnTertiaryContainer : R.attr.colorOnSurfaceVariant
+            )
+        )
+    );
+    binding.buttonSongMenu.setOnClickListener(v -> {
+      PopupMenu.OnMenuItemClickListener itemClickListener = item -> {
+        int id = item.getItemId();
+        if (id == R.id.action_play) {
+          listener.onPlayClick(songWithParts);
+        } else if (id == R.id.action_apply) {
+          listener.onApplyClick(songWithParts);
+        } else if (id == R.id.action_delete) {
+          listener.onDeleteClick(songWithParts);
+        }
+        return true;
+      };
+      OnMenuInflatedListener menuInflatedListener = menu -> {
+        MenuItem itemPlay = menu.findItem(R.id.action_play);
+        itemPlay.setVisible(!isSelected);
+        MenuItem itemApply = menu.findItem(R.id.action_apply);
+        itemApply.setVisible(!isSelected);
+      };
+      ViewUtil.showMenu(v, R.menu.menu_song_list, itemClickListener, menuInflatedListener);
+    });
+
+    ViewUtil.setTooltipText(binding.buttonSongPlay, R.string.action_play);
+    ViewUtil.setTooltipText(binding.buttonSongMenu, R.string.action_more);
   }
 
   @Override
@@ -352,5 +389,7 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
     void onSongClick(@NonNull SongWithParts song);
     void onPlayClick(@NonNull SongWithParts song);
     void onPlayStopClick();
+    void onApplyClick(@NonNull SongWithParts song);
+    void onDeleteClick(@NonNull SongWithParts song);
   }
 }

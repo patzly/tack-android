@@ -20,6 +20,7 @@
 package xyz.zedler.patrick.tack.fragment;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -42,6 +43,8 @@ import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior.OnScrollChangedListener;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
+import xyz.zedler.patrick.tack.database.entity.Part;
+import xyz.zedler.patrick.tack.database.entity.Song;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.FragmentSongsBinding;
 import xyz.zedler.patrick.tack.fragment.SongsFragmentDirections.ActionSongsToSong;
@@ -65,13 +68,18 @@ public class SongsFragment extends BaseFragment {
 
   private static final String TAG = SongsFragment.class.getSimpleName();
 
+  private static final String KEY_SONG_TO_DELETE = "song_to_delete";
+  private static final String KEY_PARTS_TO_DELETE = "parts_to_delete";
+
   private FragmentSongsBinding binding;
   private MainActivity activity;
-  private DialogUtil dialogUtilIntro, dialogUtilWidgetPrompt;
+  private DialogUtil dialogUtilIntro, dialogUtilWidgetPrompt, dialogUtilDelete;
   private UnlockDialogUtil unlockDialogUtil;
   private BackupDialogUtil backupDialogUtil;
   private List<SongWithParts> songsWithParts = new ArrayList<>();
   private int sortOrder;
+  private Song songToDelete;
+  private List<Part> partsToDelete = new ArrayList<>();
   private SongAdapter adapter;
   private MetronomeListener metronomeListener;
 
@@ -89,6 +97,7 @@ public class SongsFragment extends BaseFragment {
     binding = null;
     dialogUtilIntro.dismiss();
     dialogUtilWidgetPrompt.dismiss();
+    dialogUtilDelete.dismiss();
     unlockDialogUtil.dismiss();
     backupDialogUtil.dismiss();
     if (metronomeListener != null) {
@@ -255,6 +264,22 @@ public class SongsFragment extends BaseFragment {
           getMetronomeUtil().start();
         }
       }
+
+      @Override
+      public void onApplyClick(@NonNull SongWithParts song) {
+        performHapticClick();
+        getMetronomeUtil().setCurrentSong(
+            song.getSong().getId(), 0, true, false
+        );
+      }
+
+      @Override
+      public void onDeleteClick(@NonNull SongWithParts song) {
+        performHapticClick();
+        songToDelete = song.getSong();
+        partsToDelete = new ArrayList<>(song.getParts());
+        dialogUtilDelete.show();
+      }
     });
     adapter.setCurrentSongId(getMetronomeUtil().getCurrentSongId());
     adapter.setPlaying(getMetronomeUtil().isPlaying());
@@ -323,6 +348,40 @@ public class SongsFragment extends BaseFragment {
       }
     }
 
+    if (savedInstanceState != null && savedInstanceState.containsKey(KEY_SONG_TO_DELETE)) {
+      songToDelete = savedInstanceState.getParcelable(KEY_SONG_TO_DELETE);
+    }
+    dialogUtilDelete = new DialogUtil(activity, "delete");
+    dialogUtilDelete.createDialogError(builder -> {
+      builder.setTitle(R.string.msg_delete_song);
+      builder.setMessage(R.string.msg_delete_song_description);
+      builder.setPositiveButton(R.string.action_delete, (dialog, which) -> {
+        performHapticClick();
+        if (songToDelete == null) {
+          Log.e(TAG, "No song to delete set");
+          return;
+        } else if (partsToDelete.isEmpty()) {
+          Log.e(TAG, "No parts to delete set");
+          return;
+        }
+        if (songToDelete.getId().equals(getMetronomeUtil().getCurrentSongId())) {
+          // if current song is deleted, change to default
+          getMetronomeUtil().setCurrentSong(Constants.SONG_ID_DEFAULT, 0, true);
+        }
+        activity.getSongViewModel().deleteSong(songToDelete, () -> {
+          activity.getSongViewModel().deleteParts(partsToDelete);
+          // update shortcut names
+          activity.getMetronomeUtil().updateShortcuts();
+          // update widget
+          WidgetUtil.sendSongsWidgetUpdate(activity);
+        });
+      });
+      builder.setNegativeButton(
+          R.string.action_cancel, (dialog, which) -> performHapticClick()
+      );
+    });
+    dialogUtilDelete.showIfWasShown(savedInstanceState);
+
     unlockDialogUtil = new UnlockDialogUtil(activity);
     unlockDialogUtil.showIfWasShown(savedInstanceState);
 
@@ -351,10 +410,16 @@ public class SongsFragment extends BaseFragment {
     if (dialogUtilWidgetPrompt != null) {
       dialogUtilWidgetPrompt.saveState(outState);
     }
+    if (dialogUtilDelete != null) {
+      dialogUtilDelete.saveState(outState);
+    }
     if (backupDialogUtil != null) {
       backupDialogUtil.saveState(outState);
     }
     // dialogIntro not needed here
+
+    outState.putParcelable(KEY_SONG_TO_DELETE, songToDelete);
+    outState.putParcelableArrayList(KEY_PARTS_TO_DELETE, new ArrayList<>(partsToDelete));
   }
 
   private void setSongsWithParts(@Nullable List<SongWithParts> songsWithParts) {

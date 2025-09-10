@@ -206,6 +206,12 @@
   </style>
 
   <style
+    name="Widget.Tack.Button.IconButton.Standard.Small.Narrow"
+    parent="Widget.Tack.Button.IconButton.Standard">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Small.Narrow</item>
+  </style>
+
+  <style
     name="Widget.Tack.Button.IconButton.Filled"
     parent="Widget.Material3Expressive.Button.IconButton.Filled">
     <item name="android:layout_width">wrap_content</item>

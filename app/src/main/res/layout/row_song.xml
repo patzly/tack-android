@@ -25,7 +25,7 @@
   android:id="@+id/linear_song_container"
   style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More"
   android:paddingStart="16dp"
-  android:paddingEnd="12dp">
+  android:paddingEnd="4dp">
 
   <LinearLayout
     style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch"
@@ -100,11 +100,25 @@
 
   </LinearLayout>
 
-  <com.google.android.material.button.MaterialButton
-    android:id="@+id/button_song_play"
-    style="@style/Widget.Tack.Button.IconButton.Filled"
-    android:contentDescription="@string/action_play_stop"
-    app:icon="@drawable/ic_rounded_play_arrow"
-    android:checkable="true" />
+  <com.google.android.material.button.MaterialButtonGroup
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:spacing="0dp">
+
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/button_song_play"
+      style="@style/Widget.Tack.Button.IconButton.Filled"
+      android:contentDescription="@string/action_play_stop"
+      app:icon="@drawable/ic_rounded_play_arrow"
+      android:checkable="true" />
+
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/button_song_menu"
+      style="@style/Widget.Tack.Button.IconButton.Standard.Small.Narrow"
+      android:contentDescription="@string/action_more"
+      app:icon="@drawable/ic_rounded_more_vert" />
+
+  </com.google.android.material.button.MaterialButtonGroup>
 
 </LinearLayout>

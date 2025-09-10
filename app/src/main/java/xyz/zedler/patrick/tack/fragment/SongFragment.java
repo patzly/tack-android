@@ -475,7 +475,8 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         if (songSource == null) {
           Log.e(TAG, "onViewCreated: songSource annot be null");
           return;
-        } else if (songSource.getId().equals(getMetronomeUtil().getCurrentSongId())) {
+        }
+        if (songSource.getId().equals(getMetronomeUtil().getCurrentSongId())) {
           // if current song is deleted, change to default
           getMetronomeUtil().setCurrentSong(Constants.SONG_ID_DEFAULT, 0, true);
         }
