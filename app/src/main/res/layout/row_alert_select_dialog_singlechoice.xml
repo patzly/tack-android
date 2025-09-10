@@ -29,7 +29,7 @@
   android:minHeight="?attr/listPreferredItemHeightSmall"
   android:gravity="start|center_vertical"
   android:textAlignment="viewStart"
-  android:paddingStart="@dimen/abc_select_dialog_padding_start_material"
+  android:paddingStart="20dp"
   android:paddingEnd="?attr/dialogPreferredPadding"
   app:drawableLeftCompat="?android:attr/listChoiceIndicatorSingle"
   app:drawableStartCompat="?android:attr/listChoiceIndicatorSingle"
