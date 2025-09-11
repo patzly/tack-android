@@ -923,7 +923,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       }
     } else if (groupId == R.id.toggle_options_mute_unit) {
       String unit = UNIT.BARS;
-      if (checkedId == R.id.button_options_timer_unit_seconds) {
+      if (checkedId == R.id.button_options_mute_unit_seconds) {
         unit = UNIT.SECONDS;
       }
       if (editPart) {
