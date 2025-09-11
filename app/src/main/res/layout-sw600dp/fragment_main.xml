@@ -56,11 +56,11 @@
 
         <ImageView
           android:id="@+id/image_main_logo_placeholder"
-          android:layout_width="16dp"
-          android:layout_height="16dp"
+          android:layout_width="8dp"
+          android:layout_height="8dp"
           android:layout_gravity="center"
           android:importantForAccessibility="no"
-          android:src="@drawable/ic_beat_oval_filled_anim"
+          android:src="@drawable/shape_logo_placeholder"
           app:tint="?attr/colorOutlineVariant" />
 
       </FrameLayout>

@@ -840,13 +840,11 @@ public class MainFragment extends BaseFragment
         ((BeatView) beat).beat();
       }
       View subdivision = binding.linearMainSubs.getChildAt(tick.subdivision - 1);
-      if ((getMetronomeUtil().getConfig().isSubdivisionActive())) {
-        if (!(subdivision instanceof BeatView)) {
-          return;
-        }
-        ((BeatView) subdivision).setTickType(tick.subdivision == 1 ? TICK_TYPE.MUTED : tick.type);
-        ((BeatView) subdivision).beat();
+      if (!(subdivision instanceof BeatView)) {
+        return;
       }
+      ((BeatView) subdivision).setTickType(tick.subdivision == 1 ? TICK_TYPE.MUTED : tick.type);
+      ((BeatView) subdivision).beat();
     });
   }
 

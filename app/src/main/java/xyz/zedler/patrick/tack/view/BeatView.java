@@ -26,77 +26,157 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.Canvas;
 import android.graphics.Color;
-import android.util.AttributeSet;
-import android.view.Gravity;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Paint.Style;
+import android.graphics.Path;
+import android.graphics.RectF;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
+import androidx.graphics.shapes.Morph;
+import androidx.graphics.shapes.RoundedPolygon;
+import androidx.graphics.shapes.Shapes_androidKt;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import com.google.android.material.button.MaterialButton;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import com.google.android.material.shape.MaterialShapes;
+import java.util.Random;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.ShapeUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class BeatView extends FrameLayout {
 
-  private static final int[] SHAPES_FILLED = new int[]{
-      R.drawable.ic_beat_star_filled_anim,
-      R.drawable.ic_beat_oval_filled_anim,
-      R.drawable.ic_beat_arrow_filled_anim,
-      R.drawable.ic_beat_clover_filled_anim,
-      R.drawable.ic_beat_pentagon_filled_anim,
-  };
-  private static final int[] SHAPES_TWO_TONE = new int[]{
-      R.drawable.ic_beat_star_two_tone_anim,
-      R.drawable.ic_beat_oval_two_tone_anim,
-      R.drawable.ic_beat_arrow_two_tone_anim,
-      R.drawable.ic_beat_clover_two_tone_anim,
-      R.drawable.ic_beat_pentagon_two_tone_anim,
-  };
-  private static final int[] SHAPES_OUTLINED = new int[]{
-      R.drawable.ic_beat_star_outlined_anim,
-      R.drawable.ic_beat_oval_outlined_anim,
-      R.drawable.ic_beat_arrow_outlined_anim,
-      R.drawable.ic_beat_clover_outlined_anim,
-      R.drawable.ic_beat_pentagon_outlined_anim,
-  };
+  @SuppressLint("RestrictedApi")
+  private static final RoundedPolygon[] SHAPES =
+      new RoundedPolygon[] {
+          ShapeUtil.normalize(
+              MaterialShapes.CIRCLE, true, new RectF(-1, -1, 1, 1)
+          ),
+          ShapeUtil.normalize(
+              MaterialShapes.SQUARE, false, new RectF(-1, -1, 1, 1)
+          ),
+          ShapeUtil.normalize(
+              MaterialShapes.SLANTED_SQUARE, false, new RectF(-1, -1, 1, 1)
+          ),
+          ShapeUtil.normalize(
+              MaterialShapes.OVAL, false, new RectF(-1, -1, 1, 1)
+          ),
+          ShapeUtil.normalize(
+              MaterialShapes.PILL, false, new RectF(-1, -1, 1, 1)
+          ),
+          ShapeUtil.normalize(
+              MaterialShapes.DIAMOND, false, new RectF(-1, -1, 1, 1)
+          ),
+          ShapeUtil.normalize(
+              MaterialShapes.PENTAGON, false, new RectF(-1, -1, 1, 1)
+          ),
+          ShapeUtil.normalize(
+              MaterialShapes.VERY_SUNNY, true, new RectF(-1, -1, 1, 1)
+          ),
+          ShapeUtil.normalize(
+              MaterialShapes.SUNNY, true, new RectF(-1, -1, 1, 1)
+          ),
+          ShapeUtil.normalize(
+              MaterialShapes.COOKIE_4, true, new RectF(-1, -1, 1, 1)
+          ),
+          ShapeUtil.normalize(
+              MaterialShapes.COOKIE_6, true, new RectF(-1, -1, 1, 1)
+          ),
+          ShapeUtil.normalize(
+              MaterialShapes.COOKIE_7, true, new RectF(-1, -1, 1, 1)
+          ),
+          ShapeUtil.normalize(
+              MaterialShapes.COOKIE_9, true, new RectF(-1, -1, 1, 1)
+          ),
+          ShapeUtil.normalize(
+              MaterialShapes.BURST, true, new RectF(-1, -1, 1, 1)
+          ),
+          ShapeUtil.normalize(
+              MaterialShapes.SOFT_BURST, true, new RectF(-1, -1, 1, 1)
+          ),
+          ShapeUtil.normalize(
+              MaterialShapes.BOOM, true, new RectF(-1, -1, 1, 1)
+          ),
+          ShapeUtil.normalize(
+              MaterialShapes.SOFT_BOOM, true, new RectF(-1, -1, 1, 1)
+          ),
+          ShapeUtil.normalize(
+              MaterialShapes.FLOWER, true, new RectF(-1, -1, 1, 1)
+          ),
+      };
 
-  public static boolean isColorRed(int color) {
-    int tolerance = 30;
-    int red = Color.red(color);
-    int green = Color.green(color);
-    int blue = Color.blue(color);
-    return red > green + tolerance && red > blue + tolerance;
+  private static final Morph[] MORPHS = new Morph[SHAPES.length];
+  static {
+    for (int i = 0; i < SHAPES.length; i++) {
+      MORPHS[i] = new Morph(SHAPES[0], SHAPES[i]);
+    }
   }
 
+  private final Path path = new Path();
+  private final Matrix matrix = new Matrix();
+  private final Random random = new Random();
+  private final FastOutSlowInInterpolator interpolator;
+  private final MaterialButton button;
+  private final Paint paintFill, paintStroke;
+  private final float shapeScaleBeat, shapeScaleNoBeat, shapeScaleMuted;
+  private final int colorStrong, colorSub, colorMuted, colorActive;
   private AnimatorSet animatorSet;
   private ValueAnimator strokeAnimator;
-  private int iconSize, iconSizeDefault, iconSizeBeat, iconSizeNoBeat, iconSizeMuted;
-  private FastOutSlowInInterpolator interpolator;
-  private ImageView imageView;
-  private MaterialButton button;
+  private Morph morph;
   private String tickType;
   private boolean isSubdivision, reduceAnimations, isActive;
-  private int index;
-  private int colorNormal, colorStrong, colorSub, colorMuted, colorActive;
+  private float morphFactor, shapeScale0, shapeScale1;
+  private int index, colorNormal;
 
   public BeatView(Context context) {
     super(context);
 
-    init(context);
-  }
+    setWillNotDraw(false);
 
-  public BeatView(Context context, @Nullable AttributeSet attrs) {
-    super(context, attrs);
+    tickType = TICK_TYPE.NORMAL;
 
-    init(context);
+    int minSize = UiUtil.dpToPx(context, 48);
+    setMinimumWidth(minSize);
+    setMinimumHeight(minSize);
+
+    button = new MaterialButton(context, null, R.attr.materialIconButtonStyle);
+    button.setStrokeWidth(UiUtil.dpToPx(context, 1));
+    button.setStrokeColor(ColorStateList.valueOf(Color.TRANSPARENT));
+    setOnClickListener(null);
+    addView(button);
+
+    shapeScaleNoBeat = 0.25f;
+    shapeScaleBeat = 0.75f;
+    shapeScaleMuted = 0.125f;
+    shapeScale0 = shapeScaleNoBeat;
+    shapeScale1 = shapeScaleBeat;
+
+    colorNormal = ResUtil.getColor(context, R.attr.colorPrimary);
+    if (isColorRed(colorNormal)) {
+      colorNormal = ResUtil.getColor(context, R.attr.colorTertiary);
+    }
+    colorStrong = ResUtil.getColor(context, R.attr.colorError);
+    colorSub = ResUtil.getColor(context, R.attr.colorOnSurfaceVariant);
+    colorMuted = ResUtil.getColor(context, R.attr.colorOutline);
+    colorActive = ResUtil.getColor(context, R.attr.colorOutline);
+
+    paintFill = new Paint();
+    paintFill.setStyle(Style.FILL);
+
+    paintStroke = new Paint();
+    paintStroke.setStyle(Style.STROKE);
+    paintStroke.setStrokeWidth(UiUtil.dpToPx(context, 2));
+
+    interpolator = new FastOutSlowInInterpolator();
+
+    morph = MORPHS[0];
+
+    setTickType(TICK_TYPE.NORMAL);
   }
 
   @Override
@@ -110,83 +190,20 @@ public class BeatView extends FrameLayout {
     }
   }
 
-  @SuppressLint("PrivateResource")
-  private void init(Context context) {
-    tickType = TICK_TYPE.NORMAL;
+  @Override
+  protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+    super.onLayout(changed, left, top, right, bottom);
 
-    int minSize = UiUtil.dpToPx(context, 48);
-    setMinimumWidth(minSize);
-    setMinimumHeight(minSize);
+    updateShape();
+    invalidate();
+  }
 
-    button = new MaterialButton(context);
-    // With 4 the buttons would be a tiny bit oval
-    int insetHorizontal = UiUtil.dpToPx(context, 3.9f);
-    try {
-      button.setLayoutParams(
-          new FrameLayout.LayoutParams(minSize, minSize)
-      );
-      Field buttonHelperField = MaterialButton.class.getDeclaredField("materialButtonHelper");
-      buttonHelperField.setAccessible(true);
-      Object materialButtonHelper = buttonHelperField.get(button);
-      if (materialButtonHelper != null) {
-        // Change horizontal insets to get icon-only ripple size
-        Field insetLeft = materialButtonHelper.getClass().getDeclaredField("insetLeft");
-        insetLeft.setAccessible(true);
-        insetLeft.set(materialButtonHelper, insetHorizontal);
-        Field insetRight = materialButtonHelper.getClass().getDeclaredField("insetRight");
-        insetRight.setAccessible(true);
-        insetRight.set(materialButtonHelper, insetHorizontal);
-        // Call updatedBackground() in MaterialButtonHelper to apply changed insets
-        Method updateBackground = materialButtonHelper.getClass().getDeclaredMethod(
-            "updateBackground"
-        );
-        updateBackground.setAccessible(true);
-        updateBackground.invoke(materialButtonHelper);
-        button.requestLayout();
-      }
-    } catch (Exception e) {
-      // If not possible, change size of whole button (and touch target, not good)
-      FrameLayout.LayoutParams paramsButton = new FrameLayout.LayoutParams(
-          minSize - insetHorizontal * 2, minSize
-      );
-      paramsButton.gravity = Gravity.CENTER;
-      button.setLayoutParams(paramsButton);
-    }
-    button.setRippleColor(
-        ContextCompat.getColorStateList(context, R.color.selector_tonal_button_ripple)
-    );
-    button.setBackgroundColor(Color.TRANSPARENT);
-    button.setStrokeWidth(UiUtil.dpToPx(context, 1));
-    button.setStrokeColor(ColorStateList.valueOf(Color.TRANSPARENT));
-    setOnClickListener(null);
-    addView(button);
+  @Override
+  protected void onDraw(@NonNull Canvas canvas) {
+    super.onDraw(canvas);
 
-    iconSizeDefault = UiUtil.dpToPx(context, 22);
-    iconSizeBeat = UiUtil.dpToPx(context, 30);
-    iconSizeNoBeat = iconSizeDefault;
-    iconSizeMuted = UiUtil.dpToPx(context, 10);
-    iconSize = iconSizeDefault;
-
-    colorNormal = ResUtil.getColor(context, R.attr.colorPrimary);
-    if (isColorRed(colorNormal)) {
-      colorNormal = ResUtil.getColor(context, R.attr.colorTertiary);
-    }
-    colorStrong = ResUtil.getColor(context, R.attr.colorError);
-    colorSub = ResUtil.getColor(context, R.attr.colorOnSurfaceVariant);
-    colorMuted = ResUtil.getColor(context, R.attr.colorOutline);
-    colorActive = ResUtil.getColor(context, R.attr.colorOutline);
-
-    imageView = new ImageView(context);
-    FrameLayout.LayoutParams paramsIcon = new FrameLayout.LayoutParams(iconSize, iconSize);
-    paramsIcon.gravity = Gravity.CENTER;
-    imageView.setLayoutParams(paramsIcon);
-    imageView.setAdjustViewBounds(false);
-    imageView.setImageResource(R.drawable.ic_beat_clover_filled_anim);
-    addView(imageView);
-
-    interpolator = new FastOutSlowInInterpolator();
-
-    setTickType(TICK_TYPE.NORMAL);
+    canvas.drawPath(path, paintFill);
+    canvas.drawPath(path, paintStroke);
   }
 
   public void setIndex(int index) {
@@ -205,32 +222,37 @@ public class BeatView extends FrameLayout {
 
   public void setTickType(String tickType) {
     this.tickType = tickType;
-    int color, iconSize;
-    int index = this.index % SHAPES_FILLED.length;
     switch (tickType) {
       case TICK_TYPE.STRONG:
-        color = colorStrong;
-        iconSize = iconSizeNoBeat;
-        imageView.setImageResource(SHAPES_FILLED[index]);
+        paintFill.setColor(colorStrong);
+        paintFill.setAlpha(255);
+        paintStroke.setColor(colorStrong);
+        shapeScale0 = shapeScaleNoBeat;
+        shapeScale1 = shapeScaleBeat;
         break;
       case TICK_TYPE.MUTED:
-        color = colorMuted;
-        iconSize = iconSizeMuted;
-        imageView.setImageResource(SHAPES_FILLED[index]);
+        paintFill.setColor(colorMuted);
+        paintFill.setAlpha(255);
+        paintStroke.setColor(colorMuted);
+        shapeScale0 = shapeScaleMuted;
+        shapeScale1 = shapeScaleNoBeat;
         break;
       case TICK_TYPE.SUB:
-        color = colorSub;
-        iconSize = iconSizeNoBeat;
-        imageView.setImageResource(SHAPES_OUTLINED[index]);
+        paintFill.setColor(colorSub);
+        paintFill.setAlpha(0);
+        paintStroke.setColor(colorSub);
+        shapeScale0 = shapeScaleNoBeat;
+        shapeScale1 = shapeScaleBeat;
         break;
       default:
-        color = colorNormal;
-        iconSize = iconSizeNoBeat;
-        imageView.setImageResource(SHAPES_TWO_TONE[index]);
+        paintFill.setColor(colorNormal);
+        paintFill.setAlpha((int) (0.3f * 255));
+        paintStroke.setColor(colorNormal);
+        shapeScale0 = shapeScaleNoBeat;
+        shapeScale1 = shapeScaleBeat;
     }
-    imageView.setImageTintList(ColorStateList.valueOf(color));
-    iconSizeDefault = iconSize;
-    updateIconSize(iconSizeDefault);
+    updateShape();
+    invalidate();
   }
 
   public String nextTickType() {
@@ -273,26 +295,29 @@ public class BeatView extends FrameLayout {
       return;
     }
 
-    if (!tickType.equals(TICK_TYPE.MUTED)) {
-      ViewUtil.startIcon(imageView);
+    if (tickType.equals(TICK_TYPE.MUTED)) {
+      morph = MORPHS[0];
+    } else {
+      int index = 1 + random.nextInt(MORPHS.length - 1);
+      morph = MORPHS[index];
     }
 
-    ValueAnimator animatorSizeIn = ValueAnimator.ofInt(iconSize, iconSizeBeat);
-    animatorSizeIn.addUpdateListener(
-        animation -> updateIconSize((Integer) animation.getAnimatedValue())
+    ValueAnimator animatorIn = ValueAnimator.ofFloat(0, 1);
+    animatorIn.addUpdateListener(
+        animation -> setMorphFactor((float) animation.getAnimatedValue())
     );
-    animatorSizeIn.setInterpolator(interpolator);
-    animatorSizeIn.setDuration(25);
+    animatorIn.setInterpolator(interpolator);
+    animatorIn.setDuration(25);
 
-    ValueAnimator animatorSizeOut = ValueAnimator.ofInt(iconSizeBeat, iconSizeDefault);
-    animatorSizeOut.addUpdateListener(
-      animation -> updateIconSize((Integer) animation.getAnimatedValue())
+    ValueAnimator animatorOut = ValueAnimator.ofFloat(1, 0);
+    animatorOut.addUpdateListener(
+        animation -> setMorphFactor((float) animation.getAnimatedValue())
     );
-    animatorSizeOut.setInterpolator(interpolator);
-    animatorSizeOut.setDuration(375);
+    animatorOut.setInterpolator(interpolator);
+    animatorOut.setDuration(375);
 
     animatorSet = new AnimatorSet();
-    animatorSet.playSequentially(animatorSizeIn, animatorSizeOut);
+    animatorSet.playSequentially(animatorIn, animatorOut);
     animatorSet.addListener(new AnimatorListenerAdapter() {
       @Override
       public void onAnimationEnd(Animator animation) {
@@ -300,14 +325,6 @@ public class BeatView extends FrameLayout {
       }
     });
     animatorSet.start();
-  }
-
-  private void updateIconSize(int size) {
-    iconSize = size;
-    imageView.getLayoutParams().width = size;
-    imageView.getLayoutParams().height = size;
-    imageView.invalidate();
-    imageView.requestLayout();
   }
 
   @Override
@@ -346,9 +363,33 @@ public class BeatView extends FrameLayout {
     strokeAnimator.start();
   }
 
+  private void updateShape() {
+    path.rewind();
+    Shapes_androidKt.toPath(morph, morphFactor, path);
+    matrix.reset();
+    float scale = shapeScale0 + morphFactor * (shapeScale1 - shapeScale0);
+    matrix.setScale(getWidth() / 2f * scale, getHeight() / 2f * scale);
+    matrix.postTranslate(getWidth() / 2f, getHeight() / 2f);
+    path.transform(matrix);
+  }
+
+  private void setMorphFactor(float factor) {
+    morphFactor = factor;
+    updateShape();
+    invalidate();
+  }
+
   @NonNull
   @Override
   public String toString() {
     return tickType;
+  }
+
+  public static boolean isColorRed(int color) {
+    int tolerance = 30;
+    int red = Color.red(color);
+    int green = Color.green(color);
+    int blue = Color.blue(color);
+    return red > green + tolerance && red > blue + tolerance;
   }
 }

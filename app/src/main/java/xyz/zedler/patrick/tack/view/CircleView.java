@@ -19,8 +19,6 @@
 
 package xyz.zedler.patrick.tack.view;
 
-import static java.lang.Math.min;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
@@ -37,12 +35,12 @@ import androidx.core.graphics.ColorUtils;
 import androidx.dynamicanimation.animation.FloatPropertyCompat;
 import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.graphics.shapes.Morph;
-import androidx.graphics.shapes.RoundedPolygon;
 import androidx.graphics.shapes.Shapes_androidKt;
 import com.google.android.material.motion.MotionUtils;
 import com.google.android.material.shape.MaterialShapes;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.ShapeUtil;
 
 public class CircleView extends View {
 
@@ -70,10 +68,10 @@ public class CircleView extends View {
     paintFill.setColor(colorDefault);
 
     morph = new Morph(
-        normalize(
+        ShapeUtil.normalize(
             MaterialShapes.COOKIE_12, true, new RectF(-1, -1, 1, 1)
         ),
-        normalize(
+        ShapeUtil.normalize(
             MaterialShapes.BURST, true, new RectF(-1, -1, 1, 1)
         )
     );
@@ -175,34 +173,6 @@ public class CircleView extends View {
 
   public interface OnDragAnimListener {
     void onDragAnim(float fraction);
-  }
-
-  @NonNull
-  public static RoundedPolygon normalize(
-      @NonNull RoundedPolygon shape, boolean radial, @NonNull RectF dstBounds
-  ) {
-    float[] srcBoundsArray = new float[4];
-    if (radial) {
-      // This calculates the axis-aligned bounds of the shape and returns that rectangle. It
-      // determines the max dimension of the shape (by calculating the distance from its center to
-      // the start and midpoint of each curve) and returns a square which can be used to hold the
-      // object in any rotation.
-      shape.calculateMaxBounds(srcBoundsArray);
-    } else {
-      // This calculates the bounds of the shape without rotating the shape.
-      shape.calculateBounds(srcBoundsArray);
-    }
-    RectF srcBounds =
-        new RectF(srcBoundsArray[0], srcBoundsArray[1], srcBoundsArray[2], srcBoundsArray[3]);
-    float scale =
-        min(dstBounds.width() / srcBounds.width(), dstBounds.height() / srcBounds.height());
-    // Scales the shape with pivot point at its original center then moves it to align its original
-    // center with the destination bounds center.
-    Matrix transform = new Matrix();
-    transform.setScale(scale, scale);
-    transform.preTranslate(-srcBounds.centerX(), -srcBounds.centerY());
-    transform.postTranslate(dstBounds.centerX(), dstBounds.centerY());
-    return Shapes_androidKt.transformed(shape, transform);
   }
 
   private static final FloatPropertyCompat<CircleView> MORPH_FACTOR =
