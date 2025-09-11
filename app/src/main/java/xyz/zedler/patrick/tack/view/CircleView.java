@@ -72,7 +72,7 @@ public class CircleView extends View {
             MaterialShapes.COOKIE_12, true, new RectF(-1, -1, 1, 1)
         ),
         ShapeUtil.normalize(
-            MaterialShapes.BURST, true, new RectF(-1, -1, 1, 1)
+            MaterialShapes.SOFT_BURST, true, new RectF(-1, -1, 1, 1)
         )
     );
 
