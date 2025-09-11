@@ -46,10 +46,85 @@
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_options_use_current_config"
         style="@style/Widget.Tack.Button.OutlinedButton"
-        android:text="@string/action_use_current_config"
-        app:icon="@drawable/ic_logo_simple" />
+        android:text="@string/action_use_current_config" />
 
     </HorizontalScrollView>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal"
+      android:paddingStart="0dp"
+      android:paddingEnd="12dp"
+      android:layout_marginTop="8dp"
+      android:gravity="center_vertical">
+
+      <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1">
+
+        <TextView
+          style="@style/Widget.Tack.TextView"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:paddingStart="16dp"
+          android:paddingEnd="8dp"
+          android:text="@string/label_tempo" />
+
+        <TextView
+          android:id="@+id/text_options_tempo"
+          style="@style/Widget.Tack.TextView.BodyMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:paddingStart="16dp"
+          android:paddingEnd="8dp"
+          android:textColor="?attr/colorOnSurfaceVariant"
+          android:text="@string/label_bpm_value"
+          android:fontFeatureSettings="tnum" />
+
+      </LinearLayout>
+
+      <com.google.android.material.button.MaterialButtonGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:spacing="0dp">
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_options_tempo_input"
+          style="@style/Widget.Tack.Button.IconButton.Standard.Small.Narrow"
+          android:contentDescription="@string/action_change_tempo"
+          app:icon="@drawable/ic_rounded_open_in_new" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_options_tempo_decrease"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Small.Narrow"
+          android:contentDescription="@string/action_decrease"
+          app:icon="@drawable/ic_rounded_first_page" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_options_tempo_increase"
+          style="@style/Widget.Tack.Button.IconButton.Filled.Small.Narrow"
+          android:contentDescription="@string/action_increase"
+          app:icon="@drawable/ic_rounded_last_page" />
+
+      </com.google.android.material.button.MaterialButtonGroup>
+
+    </LinearLayout>
+
+    <com.google.android.material.slider.Slider
+      android:id="@+id/slider_options_tempo"
+      style="@style/Widget.Tack.Slider"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="2dp"
+      android:layout_marginEnd="2dp"
+      android:valueFrom="1"
+      android:valueTo="50"
+      android:stepSize="1"
+      android:value="1"
+      app:labelBehavior="gone" />
 
     <TextView
       style="@style/Widget.Tack.TextView"

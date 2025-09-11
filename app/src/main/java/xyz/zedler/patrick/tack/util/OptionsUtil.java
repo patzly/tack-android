@@ -196,6 +196,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     }
     binding.linearOptionsEditPartContainer.setVisibility(editPart ? View.VISIBLE : View.GONE);
     binding.buttonOptionsUseCurrentConfig.setOnClickListener(this);
+    updateTempo();
     updateBeats();
     updateSubdivisions();
     updateCountIn();
@@ -203,6 +204,45 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     updateTimer();
     updateMute();
     updateSwing();
+  }
+
+  private void updateTempo() {
+    if (!editPart) {
+      return;
+    }
+    int tempo = getConfig().getTempo();
+    binding.textOptionsTempo.setText(activity.getString(R.string.label_bpm_value, tempo));
+
+    int tempoFrom = (int) binding.sliderOptionsTempo.getValueFrom();
+    int tempoTo = (int) binding.sliderOptionsTempo.getValueTo();
+    int tempoRange = tempoTo - tempoFrom;
+
+    // Calculate current range
+    int tempoFactor = (tempo - 1) / (tempoRange + 1);
+    int tempoFromNew = 1 + tempoFactor * (tempoRange + 1);
+    int tempoToNew = tempoFromNew + tempoRange;
+
+    binding.buttonOptionsTempoDecrease.setEnabled(tempoFromNew > Constants.TEMPO_MIN);
+    binding.buttonOptionsTempoDecrease.setOnClickListener(this);
+    ViewCompat.setTooltipText(
+        binding.buttonOptionsTempoDecrease, activity.getString(R.string.action_decrease)
+    );
+
+    binding.buttonOptionsTempoIncrease.setEnabled(tempoToNew < Constants.TEMPO_MAX);
+    binding.buttonOptionsTempoIncrease.setOnClickListener(this);
+    ViewCompat.setTooltipText(
+        binding.buttonOptionsTempoIncrease, activity.getString(R.string.action_increase)
+    );
+
+    binding.sliderOptionsTempo.removeOnChangeListener(this);
+    binding.sliderOptionsTempo.setValueFrom(tempoFromNew);
+    binding.sliderOptionsTempo.setValueTo(tempoToNew);
+    int tempoSafe = Math.max(tempoFromNew, Math.min(tempo, tempoToNew));
+    binding.sliderOptionsTempo.setValue(tempoSafe);
+    binding.sliderOptionsTempo.addOnChangeListener(this);
+    binding.sliderOptionsTempo.setLabelFormatter(
+        value -> activity.getString(R.string.label_bpm_value, value)
+    );
   }
 
   private void updateBeats() {
@@ -739,6 +779,30 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     if (id == R.id.button_options_use_current_config) {
       config = new MetronomeConfig(getMetronomeUtil().getConfig());
       update();
+    } else if (id == R.id.button_options_tempo_decrease) {
+      int valueFrom = (int) binding.sliderOptionsTempo.getValueFrom();
+      int valueTo = (int) binding.sliderOptionsTempo.getValueTo();
+      int range = valueTo - valueFrom;
+      int decreasedTempo = getConfig().getTempo() - range - 1;
+      if (editPart) {
+        getConfig().setTempo(decreasedTempo);
+      } else {
+        getMetronomeUtil().setTempo(decreasedTempo);
+      }
+      updateTempo();
+      ViewUtil.startIcon(binding.buttonOptionsTempoDecrease.getIcon());
+    } else if (id == R.id.button_options_tempo_increase) {
+      int valueFrom = (int) binding.sliderOptionsTempo.getValueFrom();
+      int valueTo = (int) binding.sliderOptionsTempo.getValueTo();
+      int range = valueTo - valueFrom;
+      int increasedTempo = getConfig().getTempo() + range + 1;
+      if (editPart) {
+        getConfig().setTempo(increasedTempo);
+      } else {
+        getMetronomeUtil().setTempo(increasedTempo);
+      }
+      updateTempo();
+      ViewUtil.startIcon(binding.buttonOptionsTempoIncrease.getIcon());
     } else if (id == R.id.button_options_beats_add) {
       ViewUtil.startIcon(binding.buttonOptionsBeatsAdd.getIcon());
       activity.performHapticClick();
@@ -966,7 +1030,15 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       return;
     }
     int id = slider.getId();
-    if (id == R.id.slider_options_count_in) {
+    if (id == R.id.slider_options_tempo) {
+      activity.performHapticSegmentTick(slider, true);
+      if (editPart) {
+        getConfig().setTempo((int) value);
+      } else {
+        getMetronomeUtil().setTempo((int) value);
+      }
+      updateTempo();
+    } else if (id == R.id.slider_options_count_in) {
       activity.performHapticSegmentTick(slider, false);
       if (editPart) {
         getConfig().setCountIn((int) value);
