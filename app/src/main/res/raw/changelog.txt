@@ -11,6 +11,7 @@
 - New: "hide subdivision controls" setting removed for simplicity
 - New: long-tap on song chips to open song details
 - New: Japanese and Dutch translations (thanks to the contributors!)
+- New: Support for Android 16 and dropped support for Android 5 due to dependency limitations
 - Improved: play/stop button now responds on press down instead of release for a more responsive feel
 - Improved: updated value slider and switch experience
 - Improved: layout on different screen sizes and orientations
