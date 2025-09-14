@@ -423,6 +423,7 @@ public class MainFragment extends BaseFragment
       @Override
       public void onRotate(int tempo) {
         changeTempo(isRtl ? -tempo : tempo);
+        activity.performHapticSegmentTick(binding.tempoPickerMain, false);
       }
 
       @Override
@@ -1046,21 +1047,27 @@ public class MainFragment extends BaseFragment
     } else if (id == R.id.button_main_less_1) {
       ViewUtil.startIcon(binding.buttonMainLess1.getIcon());
       changeTempo(-1);
+      performHapticClick();
     } else if (id == R.id.button_main_less_5) {
       ViewUtil.startIcon(binding.buttonMainLess5.getIcon());
       changeTempo(-5);
+      performHapticClick();
     } else if (id == R.id.button_main_less_10) {
       ViewUtil.startIcon(binding.buttonMainLess10.getIcon());
       changeTempo(-10);
+      performHapticClick();
     } else if (id == R.id.button_main_more_1) {
       ViewUtil.startIcon(binding.buttonMainMore1.getIcon());
       changeTempo(1);
+      performHapticClick();
     } else if (id == R.id.button_main_more_5) {
       ViewUtil.startIcon(binding.buttonMainMore5.getIcon());
       changeTempo(5);
+      performHapticClick();
     } else if (id == R.id.button_main_more_10) {
       ViewUtil.startIcon(binding.buttonMainMore10.getIcon());
       changeTempo(10);
+      performHapticClick();
     } /*else if (id == R.id.button_main_beat_mode) {
       // TODO: re-enable when menu button is replaced by beat mode button
       performHapticClick();
@@ -1437,7 +1444,6 @@ public class MainFragment extends BaseFragment
     if (tempoNew >= Constants.TEMPO_MIN && tempoNew <= Constants.TEMPO_MAX) {
       updateTempoDisplay(getMetronomeUtil().getConfig().getTempo(), tempoNew);
       getMetronomeUtil().setTempo(tempoNew);
-      performHapticTick();
     }
   }
 
