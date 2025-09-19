@@ -378,6 +378,7 @@
     </com.google.android.material.button.MaterialButtonGroup>
 
     <com.google.android.material.button.MaterialButtonGroup
+      android:id="@+id/button_group_main_more"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
       android:orientation="vertical"
@@ -408,22 +409,29 @@
 
     </com.google.android.material.button.MaterialButtonGroup>
 
+    <xyz.zedler.patrick.tack.view.SongPickerView
+      android:id="@+id/song_picker_main"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="16dp"
+      app:layout_constraintTop_toBottomOf="@+id/frame_main_center"
+      app:layout_constraintBottom_toTopOf="@+id/frame_main_bottom"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintWidth_max="@dimen/max_content_width" />
+
     <FrameLayout
       android:id="@+id/frame_main_songs_container"
       android:layout_width="0dp"
       android:layout_height="0dp"
+      android:clipChildren="false"
+      android:clipToPadding="false"
       app:layout_constraintTop_toBottomOf="@+id/frame_main_center"
       app:layout_constraintBottom_toTopOf="@+id/frame_main_bottom"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintEnd_toEndOf="parent">
-
-      <xyz.zedler.patrick.tack.view.SongPickerView
-        android:id="@+id/song_picker_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical" />
-
-    </FrameLayout>
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintWidth_max="@dimen/max_content_width" />
 
     <FrameLayout
       android:id="@+id/frame_main_bottom"
@@ -458,10 +466,10 @@
           app:icon="@drawable/ic_rounded_play_to_stop_fill_anim" />
 
         <com.google.android.material.button.MaterialButton
-          android:id="@+id/button_main_menu_bottom"
+          android:id="@+id/button_main_beat_mode"
           style="@style/Widget.Tack.Button.IconButton.Tonal.Large.Narrow"
-          android:contentDescription="@string/action_more"
-          app:icon="@drawable/ic_rounded_more_vert" />
+          android:contentDescription="@string/action_beat_mode"
+          app:icon="@drawable/ic_rounded_volume_up_to_vibration_anim" />
 
       </com.google.android.material.button.MaterialButtonGroup>
 

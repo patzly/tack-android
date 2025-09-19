@@ -140,7 +140,6 @@ public class CircleView extends View {
     } else {
       setMorphFactor(0);
       setColorFraction(0);
-      invalidate();
     }
   }
 

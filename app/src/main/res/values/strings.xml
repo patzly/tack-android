@@ -162,6 +162,9 @@
   <string name="action_next">Next</string>
   <string name="action_more">More</string>
   <string name="action_edit">Edit</string>
+  <string name="action_expand">Expand</string>
+  <string name="action_collapse">Collapse</string>
+  <string name="action_show_list">Show as list</string>
 
   <!-- MESSAGES -->
 

@@ -123,14 +123,14 @@ public class BeatView extends FrameLayout {
   private final FastOutSlowInInterpolator interpolator;
   private final MaterialButton button;
   private final Paint paintFill, paintStroke;
-  private final float shapeScaleBeat, shapeScaleNoBeat, shapeScaleMuted;
+  private final float shapeScaleNoBeat, shapeScaleMuted;
   private final int colorStrong, colorSub, colorMuted, colorActive;
   private AnimatorSet animatorSet;
   private ValueAnimator strokeAnimator;
   private Morph morph;
   private String tickType;
   private boolean isSubdivision, reduceAnimations, isActive;
-  private float morphFactor, shapeScale0, shapeScale1;
+  private float morphFactor, shapeScaleBeat, shapeScale0, shapeScale1;
   private int index, colorNormal;
 
   public BeatView(Context context) {
@@ -152,7 +152,7 @@ public class BeatView extends FrameLayout {
 
     shapeScaleNoBeat = 0.25f;
     shapeScaleBeat = 0.75f;
-    shapeScaleMuted = 0.125f;
+    shapeScaleMuted = 0.1f;
     shapeScale0 = shapeScaleNoBeat;
     shapeScale1 = shapeScaleBeat;
 
@@ -344,6 +344,9 @@ public class BeatView extends FrameLayout {
       return;
     }
     isActive = active;
+    // update beat scale for surrounding circle
+    shapeScaleBeat = active ? 0.6f : 0.75f;
+    shapeScale1 = tickType.equals(TICK_TYPE.MUTED) ? shapeScaleMuted : shapeScaleBeat;
     if (strokeAnimator != null) {
       strokeAnimator.pause();
       strokeAnimator.removeAllListeners();

@@ -19,30 +19,14 @@
 
 <vector
   xmlns:android="http://schemas.android.com/apk/res/android"
+  android:autoMirrored="true"
   android:height="24dp"
-  android:viewportHeight="24"
-  android:viewportWidth="24"
+  android:viewportHeight="960"
+  android:viewportWidth="960"
   android:width="24dp">
 
   <path
-    android:name="line_top"
-    android:pathData="M 4 7 L 20 7"
-    android:strokeColor="#000000"
-    android:strokeWidth="2"
-    android:strokeLineCap="round" />
-  <path
-    android:name="line_center"
-    android:pathData="M 4 12 L 20 12"
-    android:strokeColor="#000000"
-    android:strokeWidth="2"
-    android:trimPathEnd="0.625"
-    android:strokeLineCap="round" />
-  <path
-    android:name="line_bottom"
-    android:pathData="M 4 17 L 21 17"
-    android:strokeColor="#000000"
-    android:strokeWidth="2"
-    android:trimPathEnd="0.223"
-    android:strokeLineCap="round" />
+    android:fillColor="#000000"
+    android:pathData="M120,680v-400q0,-33 23.5,-56.5T200,200h560q33,0 56.5,23.5T840,280v400q0,33 -23.5,56.5T760,760L200,760q-33,0 -56.5,-23.5T120,680ZM200,360h80v-80h-80v80ZM360,360h400v-80L360,280v80ZM360,520h400v-80L360,440v80ZM360,680h400v-80L360,600v80ZM200,680h80v-80h-80v80ZM200,520h80v-80h-80v80Z" />
 
 </vector>

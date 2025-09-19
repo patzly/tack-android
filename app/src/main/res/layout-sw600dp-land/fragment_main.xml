@@ -412,6 +412,7 @@
         </FrameLayout>
 
         <com.google.android.material.button.MaterialButtonGroup
+          android:id="@+id/button_group_main_less"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:orientation="vertical"
@@ -443,6 +444,7 @@
         </com.google.android.material.button.MaterialButtonGroup>
 
         <com.google.android.material.button.MaterialButtonGroup
+          android:id="@+id/button_group_main_more"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:orientation="vertical"
@@ -523,10 +525,10 @@
               app:icon="@drawable/ic_rounded_play_to_stop_fill_anim" />
 
             <com.google.android.material.button.MaterialButton
-              android:id="@+id/button_main_menu_bottom"
+              android:id="@+id/button_main_beat_mode"
               style="@style/Widget.Tack.Button.IconButton.Tonal.Large.Narrow"
-              android:contentDescription="@string/action_more"
-              app:icon="@drawable/ic_rounded_more_vert" />
+              android:contentDescription="@string/action_beat_mode"
+              app:icon="@drawable/ic_rounded_volume_up_to_vibration_anim" />
 
           </com.google.android.material.button.MaterialButtonGroup>
 

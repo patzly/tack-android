@@ -86,9 +86,12 @@ import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.OptionsUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
+import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
+import xyz.zedler.patrick.tack.util.dialog.BackupDialogUtil;
 import xyz.zedler.patrick.tack.util.dialog.PartsDialogUtil;
 import xyz.zedler.patrick.tack.util.dialog.TempoDialogUtil;
+import xyz.zedler.patrick.tack.util.dialog.UnlockDialogUtil;
 import xyz.zedler.patrick.tack.view.BeatView;
 import xyz.zedler.patrick.tack.view.SongPickerView.SongPickerListener;
 import xyz.zedler.patrick.tack.view.TempoPickerView.OnPickListener;
@@ -109,16 +112,20 @@ public class MainFragment extends BaseFragment
   private float playStopButtonFraction;
   private int colorFlashNormal, colorFlashStrong, colorFlashMuted;
   private int colorTempoPickerFg, colorTempoPickerFgDefault, colorTempoPickerFgDragged;
+  private int songPickerAvailableHeight, tempoPickerMaxTop;
   private DialogUtil dialogUtilGain, dialogUtilSplitScreen, dialogUtilTimer, dialogUtilElapsed;
   private DialogUtil dialogUtilPermission, dialogUtilBeatMode;
+  private UnlockDialogUtil unlockDialogUtil;
   private OptionsUtil optionsUtil;
   private PartsDialogUtil partsDialogUtil;
   private TempoDialogUtil tempoDialogUtil;
+  private BackupDialogUtil backupDialogUtil;
   private BeatsBgDrawable beatsBgDrawable;
   private BadgeDrawable beatsCountBadge, subsCountBadge, optionsBadge;
   private ValueAnimator progressAnimator, progressTransitionAnimator;
   private ValueAnimator beatsCountBadgeAnimator, subsCountBadgeAnimator, optionsBadgeAnimator;
   private ValueAnimator pickerLogoAnimator;
+  private List<SongWithParts> songsWithParts;
 
   @Override
   public View onCreateView(
@@ -145,6 +152,8 @@ public class MainFragment extends BaseFragment
     dialogUtilPermission.dismiss();
     dialogUtilBeatMode.dismiss();
     tempoDialogUtil.dismiss();
+    unlockDialogUtil.dismiss();
+    backupDialogUtil.dismiss();
     optionsUtil.dismiss();
     partsDialogUtil.dismiss();
   }
@@ -327,6 +336,12 @@ public class MainFragment extends BaseFragment
     });
     dialogUtilElapsed.showIfWasShown(savedInstanceState);
 
+    unlockDialogUtil = new UnlockDialogUtil(activity);
+    unlockDialogUtil.showIfWasShown(savedInstanceState);
+
+    backupDialogUtil = new BackupDialogUtil(activity, this);
+    backupDialogUtil.showIfWasShown(savedInstanceState);
+
     dialogUtilBeatMode = new DialogUtil(activity, "beat_mode");
 
     tempoDialogUtil = new TempoDialogUtil(activity, this);
@@ -455,15 +470,16 @@ public class MainFragment extends BaseFragment
       performHapticClick();
     });
 
-    // TODO: re-enable when menu button is replaced by beat mode button
-    /*binding.buttonMainBeatMode.setIconResource(
+    binding.buttonMainBeatMode.setIconResource(
         getSharedPrefs().getString(PREF.BEAT_MODE, DEF.BEAT_MODE).equals(BEAT_MODE.VIBRATION)
             ? R.drawable.ic_rounded_vibration_to_volume_up_anim
             : R.drawable.ic_rounded_volume_up_to_vibration_anim
-    );*/
+    );
 
     setButtonStates(getMetronomeUtil().getConfig().getTempo());
 
+    binding.songPickerMain.setActivity(activity);
+    measureSongPicker();
     binding.songPickerMain.setListener(new SongPickerListener() {
       @Override
       public void onCurrentSongChanged(@NonNull String currentSongId) {
@@ -490,10 +506,100 @@ public class MainFragment extends BaseFragment
         action.setSongId(songId);
         activity.navigate(action);
       }
+
+      @Override
+      public void onExpandCollapseClicked(boolean expand) {
+        performHapticClick();
+      }
+
+      @Override
+      public void onOpenSongsClicked() {
+        performHapticClick();
+        int visitCount = getSharedPrefs().getInt(PREF.SONGS_VISIT_COUNT, 0);
+        if (visitCount != -1) { // no widget created and no dialog shown yet
+          visitCount++;
+          getSharedPrefs().edit().putInt(PREF.SONGS_VISIT_COUNT, visitCount).apply();
+        }
+        activity.navigate(MainFragmentDirections.actionMainToSongs());
+      }
+
+      @Override
+      public void onMenuOrMenuItemClicked() {
+        performHapticClick();
+      }
+
+      @Override
+      public void onBackupClicked() {
+        // haptic already performed in onMenuOrMenuItemClicked
+        backupDialogUtil.show();
+      }
+
+      @Override
+      public void onAddSongClicked() {
+        performHapticClick();
+        if (activity.isUnlocked() || songsWithParts.size() < 3) {
+          activity.navigate(SongsFragmentDirections.actionSongsToSong());
+        } else {
+          unlockDialogUtil.show(
+              UnlockUtil.isKeyInstalled(activity)
+                  && !UnlockUtil.isInstallerValid(activity)
+          );
+        }
+        performHapticClick();
+        activity.navigate(MainFragmentDirections.actionMainToSong());
+      }
+
+      @Override
+      public void onAnimateHeight(int collapsedHeight, int expandedHeight, float fraction) {
+        if (binding == null) {
+          return;
+        }
+        if (expandedHeight > songPickerAvailableHeight) {
+          int overlap = expandedHeight - songPickerAvailableHeight;
+          int tempoPickerCurrentTop = binding.frameMainCenter.getTop();
+          int tempoPickerTranslatedTop = tempoPickerCurrentTop - overlap;
+          if (tempoPickerTranslatedTop < tempoPickerMaxTop) {
+            int targetHeight =
+                binding.frameMainBottom.getTop() - tempoPickerMaxTop - expandedHeight;
+            int currentWidth = binding.frameMainCenter.getWidth();
+            int currentHeight = binding.frameMainCenter.getHeight();
+
+            float scale = 1 + (((float) targetHeight / currentHeight) - 1) * fraction;
+            float translationY = (tempoPickerMaxTop - tempoPickerCurrentTop) * fraction;
+
+            binding.frameMainCenter.setPivotY(0f);
+            binding.frameMainCenter.setPivotX(currentWidth / 2f);
+            binding.frameMainCenter.setScaleX(scale);
+            binding.frameMainCenter.setScaleY(scale);
+            binding.frameMainCenter.setTranslationY(translationY);
+
+            binding.buttonGroupMainLess.setPivotY(0f);
+            binding.buttonGroupMainLess.setPivotX(binding.buttonGroupMainLess.getWidth() / 2f);
+            binding.buttonGroupMainLess.setScaleX(scale);
+            binding.buttonGroupMainLess.setScaleY(scale);
+            binding.buttonGroupMainLess.setTranslationY(translationY);
+            int targetWidth = (int) (currentWidth * scale);
+            int translationX = (currentWidth - targetWidth) / 4;
+            binding.buttonGroupMainLess.setTranslationX(isRtl ? -translationX : translationX);
+
+            binding.buttonGroupMainMore.setPivotY(0f);
+            binding.buttonGroupMainMore.setPivotX(binding.buttonGroupMainMore.getWidth() / 2f);
+            binding.buttonGroupMainMore.setScaleX(scale);
+            binding.buttonGroupMainMore.setScaleY(scale);
+            binding.buttonGroupMainMore.setTranslationY(translationY);
+            binding.buttonGroupMainMore.setTranslationX(isRtl ? translationX : -translationX);
+          } else {
+            binding.frameMainCenter.setTranslationY(-overlap * fraction);
+            binding.buttonGroupMainLess.setTranslationY(-overlap * fraction);
+            binding.buttonGroupMainMore.setTranslationY(-overlap * fraction);
+          }
+          binding.songPickerMain.setTranslationY(-overlap * 0.5f * fraction);
+        }
+      }
     });
     activity.getSongViewModel().getAllSongsWithPartsLive().observe(
         getViewLifecycleOwner(), songs -> {
-          List<SongWithParts> songsWithParts = new ArrayList<>(songs);
+          songsWithParts = new ArrayList<>(songs);
           for (SongWithParts songWithParts : songsWithParts) {
             // Remove default song from song picker
             if (songWithParts.getSong().getId().equals(Constants.SONG_ID_DEFAULT)) {
@@ -533,7 +639,9 @@ public class MainFragment extends BaseFragment
               performHapticClick();
               getMetronomeUtil().stop();
             } else {
-              if (getMetronomeUtil().getGain() > 0 && getMetronomeUtil().neverStartedWithGainBefore()) {
+              if (getMetronomeUtil().getGain() > 0 &&
+                  getMetronomeUtil().neverStartedWithGainBefore()
+              ) {
                 dialogUtilGain.show();
               } else {
                 boolean permissionDenied = getSharedPrefs().getBoolean(
@@ -566,11 +674,7 @@ public class MainFragment extends BaseFragment
     ViewUtil.setTooltipText(binding.buttonMainAddSubdivision, R.string.action_add_sub);
     ViewUtil.setTooltipText(binding.buttonMainRemoveSubdivision, R.string.action_remove_sub);
     ViewUtil.setTooltipText(binding.buttonMainOptions, R.string.title_options);
-    ViewUtil.setTooltipText(binding.buttonMainMenuBottom, R.string.action_more);
-    // TODO: re-enable when menu button is replaced by beat mode button
-    /*ViewUtil.setTooltipText(
-      binding.buttonGroupMainBottom.buttonMainBeatMode, R.string.action_beat_mode
-    );*/
+    ViewUtil.setTooltipText(binding.buttonMainBeatMode, R.string.action_beat_mode);
 
     ViewUtil.setTooltipTextAndContentDescription(
         binding.buttonMainLess1,
@@ -605,10 +709,8 @@ public class MainFragment extends BaseFragment
         binding.buttonMainRemoveSubdivision,
         binding.buttonMainLess1, binding.buttonMainLess5, binding.buttonMainLess10,
         binding.buttonMainMore1, binding.buttonMainMore5, binding.buttonMainMore10,
-        // TODO: re-enable when menu button is replaced by beat mode button
-        //binding.buttonMainBeatMode,
-        binding.buttonMainOptions,
-        binding.buttonMainMenuBottom
+        binding.buttonMainBeatMode,
+        binding.buttonMainOptions
     );
   }
 
@@ -653,6 +755,12 @@ public class MainFragment extends BaseFragment
     if (tempoDialogUtil != null) {
       tempoDialogUtil.saveState(outState);
     }
+    if (unlockDialogUtil != null) {
+      unlockDialogUtil.saveState(outState);
+    }
+    if (backupDialogUtil != null) {
+      backupDialogUtil.saveState(outState);
+    }
   }
 
   public void updateMetronomeControls() {
@@ -665,12 +773,11 @@ public class MainFragment extends BaseFragment
 
     savedState = null;
 
-    // TODO: re-enable when menu button is replaced by beat mode button
-    /*binding.buttonMainBeatMode.setIconResource(
+    binding.buttonMainBeatMode.setIconResource(
         getMetronomeUtil().getBeatMode().equals(BEAT_MODE.VIBRATION)
             ? R.drawable.ic_rounded_vibration_to_volume_up_anim
             : R.drawable.ic_rounded_volume_up_to_vibration_anim
-    );*/
+    );
 
     updateBeats(getMetronomeUtil().getConfig().getBeats());
     updateBeatControls(false);
@@ -731,8 +838,7 @@ public class MainFragment extends BaseFragment
                 performHapticClick();
               }
 
-              // TODO: re-enable when menu button is replaced by beat mode button
-              /*if (beatModePrev.equals(BEAT_MODE.VIBRATION)
+              if (beatModePrev.equals(BEAT_MODE.VIBRATION)
                   && !beatMode.equals(BEAT_MODE.VIBRATION)) {
                 binding.buttonMainBeatMode.setIconResource(
                     R.drawable.ic_rounded_vibration_to_volume_up_anim
@@ -744,7 +850,7 @@ public class MainFragment extends BaseFragment
                     R.drawable.ic_rounded_volume_up_to_vibration_anim
                 );
                 ViewUtil.startIcon(binding.buttonMainBeatMode.getIcon());
-              }*/
+              }
             }
         );
       } else {
@@ -1068,43 +1174,20 @@ public class MainFragment extends BaseFragment
       ViewUtil.startIcon(binding.buttonMainMore10.getIcon());
       changeTempo(10);
       performHapticClick();
-    } /*else if (id == R.id.button_main_beat_mode) {
-      // TODO: re-enable when menu button is replaced by beat mode button
+    } else if (id == R.id.button_main_beat_mode) {
       performHapticClick();
       dialogUtilBeatMode.show();
       if (getMetronomeUtil().getBeatMode().equals(BEAT_MODE.VIBRATION)) {
         // Use available animated icon for click
-        if (binding.buttonMainBeatMode != null) {
-          binding.buttonMainBeatMode.setIconResource(
-              R.drawable.ic_rounded_vibration_anim
-          );
-          ViewUtil.startIcon(binding.buttonMainBeatMode.getIcon());
-        }
+        binding.buttonMainBeatMode.setIconResource(
+            R.drawable.ic_rounded_vibration_anim
+        );
+        ViewUtil.startIcon(binding.buttonMainBeatMode.getIcon());
       }
-    } */else if (id == R.id.button_main_options) {
+    } else if (id == R.id.button_main_options) {
       performHapticClick();
       ViewUtil.startIcon(binding.buttonMainOptions.getIcon());
       optionsUtil.show();
-    } else if (id == R.id.button_main_menu_bottom) {
-      performHapticClick();
-      ViewUtil.showMenu(v, R.menu.menu_main_bottom_collapsed, item -> {
-        int itemId = item.getItemId();
-        if (getViewUtil().isClickDisabled(itemId)) {
-          return false;
-        }
-        performHapticClick();
-        if (itemId == R.id.action_songs) {
-          int visitCount = getSharedPrefs().getInt(PREF.SONGS_VISIT_COUNT, 0);
-          if (visitCount != -1) { // no widget created and no dialog shown yet
-            visitCount++;
-            getSharedPrefs().edit().putInt(PREF.SONGS_VISIT_COUNT, visitCount).apply();
-          }
-          activity.navigate(MainFragmentDirections.actionMainToSongs());
-        } else if (itemId == R.id.action_beat_mode) {
-          dialogUtilBeatMode.show();
-        }
-        return true;
-      }, Gravity.CENTER);
     }
   }
 
@@ -1373,6 +1456,28 @@ public class MainFragment extends BaseFragment
         isElapsedActive ? View.VISIBLE : View.GONE
     );
     binding.chipMainElapsedTime.textChipNumbers.setText(getMetronomeUtil().getElapsedTimeString());
+  }
+
+  private void measureSongPicker() {
+    binding.coordinatorContainer.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override
+          public void onGlobalLayout() {
+            if (binding == null) {
+              return;
+            }
+            songPickerAvailableHeight = binding.frameMainSongsContainer.getHeight();
+            binding.songPickerMain.setParentWidth(binding.frameMainSongsContainer.getWidth());
+            // beat controls + timer controls + margins
+            tempoPickerMaxTop = binding.linearMainSubsBg.getBottom() +
+                UiUtil.dpToPx(activity, 8 + 48 * 2 + 16);
+            if (binding.coordinatorContainer.getViewTreeObserver().isAlive()) {
+              binding.coordinatorContainer.getViewTreeObserver().removeOnGlobalLayoutListener(
+                  this
+              );
+            }
+          }
+        });
   }
 
   @OptIn(markerClass = ExperimentalBadgeUtils.class)

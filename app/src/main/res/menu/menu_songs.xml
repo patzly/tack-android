@@ -25,9 +25,7 @@
   <item
     android:id="@+id/action_sort"
     android:title="@string/action_sort_by"
-    android:icon="@drawable/ic_rounded_sort"
-    app:iconTint="?attr/colorOnSurfaceVariant"
-    app:showAsAction="ifRoom">
+    app:showAsAction="never">
 
     <menu>
       <group

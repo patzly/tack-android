@@ -182,6 +182,12 @@
     <item name="fontFamily">@font/nunito_bold</item>
   </style>
 
+  <style
+    name="Widget.Tack.Button.TonalButton.Xsmall"
+    parent="Widget.Tack.Button.TonalButton">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.Xsmall</item>
+  </style>
+
   <!-- Localized style, no empty base style needed -->
   <style
     name="Widget.Tack.Button.TextButton.Dialog"
@@ -268,6 +274,12 @@
   </style>
 
   <style
+    name="Widget.Tack.Button.IconButton.Tonal.Xsmall.Wide"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Xsmall.Wide</item>
+  </style>
+
+  <style
     name="Widget.Tack.Button.IconButton.Filled.Medium"
     parent="Widget.Tack.Button.IconButton.Filled">
     <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Medium</item>
@@ -331,6 +343,12 @@
     name="Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
     parent="Widget.Tack.Button.IconButton.Tonal">
     <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Small.Narrow</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal.Small.Wide"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Small.Wide</item>
   </style>
 
   <style
@@ -598,16 +616,14 @@
     <item name="android:textAppearance">?attr/textAppearanceBodyLarge</item>
     <item name="android:textColor">?attr/colorOnSurface</item>
     <item name="android:textAlignment">viewStart</item>
-    <!--item name="android:fontFamily">@font/jost_regular</item>
-    <item name="fontFamily">@font/jost_regular</item-->
-    <item name="android:breakStrategy" tools:targetApi="m">high_quality</item>
-    <item name="android:hyphenationFrequency" tools:targetApi="m">full</item>
+    <item name="android:breakStrategy">high_quality</item>
+    <item name="android:hyphenationFrequency">full</item>
     <item name="android:lineBreakWordStyle" tools:targetApi="33">phrase</item>
   </style>
 
   <style name="Widget.Tack.TextView" parent="Base.Tack.TextView">
     <!-- Overridden in v33 with fullFast -->
-    <item name="android:hyphenationFrequency" tools:targetApi="m">full</item>
+    <item name="android:hyphenationFrequency">full</item>
   </style>
 
   <!-- Localized style, no empty base style needed -->

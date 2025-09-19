@@ -202,6 +202,10 @@ public class SongsFragment extends BaseFragment {
         if (itemSort != null) {
           itemSort.setChecked(true);
         }
+        MenuItem itemBackup = menu.findItem(R.id.action_backup);
+        if (itemBackup != null) {
+          itemBackup.setEnabled(!songsWithParts.isEmpty());
+        }
       };
       ViewUtil.showMenu(v, R.menu.menu_songs, itemClickListener, menuInflatedListener);
     });
@@ -434,11 +438,6 @@ public class SongsFragment extends BaseFragment {
       binding.linearSongsEmpty.getRoot().setVisibility(
           songsWithParts.isEmpty() ? View.VISIBLE : View.GONE
       );
-      // toolbar backup menu item
-      MenuItem itemBackup = binding.toolbarSongs.getMenu().findItem(R.id.action_backup);
-      if (itemBackup != null) {
-        itemBackup.setEnabled(!songsWithParts.isEmpty());
-      }
     }
     SortUtil.sortSongsWithParts(this.songsWithParts, sortOrder);
     adapter.setSongsWithParts(new ArrayList<>(this.songsWithParts));
