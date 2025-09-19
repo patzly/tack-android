@@ -111,7 +111,6 @@ public class MainFragment extends BaseFragment
   private ValueAnimator playStopButtonAnimator;
   private float playStopButtonFraction;
   private int colorFlashNormal, colorFlashStrong, colorFlashMuted;
-  private int colorTempoPickerFg, colorTempoPickerFgDefault, colorTempoPickerFgDragged;
   private int songPickerAvailableHeight, tempoPickerMaxTop;
   private DialogUtil dialogUtilGain, dialogUtilSplitScreen, dialogUtilTimer, dialogUtilElapsed;
   private DialogUtil dialogUtilPermission, dialogUtilBeatMode;
@@ -401,10 +400,6 @@ public class MainFragment extends BaseFragment
       performHapticClick();
     });
 
-    colorTempoPickerFgDefault = ResUtil.getColor(activity, R.attr.colorOnPrimaryContainer);
-    colorTempoPickerFgDragged = ResUtil.getColor(activity, R.attr.colorOnTertiaryContainer);
-    colorTempoPickerFg = colorTempoPickerFgDefault;
-
     binding.textSwitcherMainTempoTerm.setFactory(() -> {
       TextView textView = new TextView(activity);
       textView.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -412,23 +407,12 @@ public class MainFragment extends BaseFragment
           TypedValue.COMPLEX_UNIT_PX,
           getResources().getDimension(R.dimen.label_text_size)
       );
-      textView.setTextColor(colorTempoPickerFg);
+      textView.setTextColor(ResUtil.getColor(activity, R.attr.colorOnPrimaryContainer));
       return textView;
     });
 
     binding.circleMain.setReduceAnimations(reduceAnimations);
     binding.circleMain.setOnDragAnimListener(fraction -> {
-      colorTempoPickerFg = ColorUtils.blendARGB(colorTempoPickerFgDefault, colorTempoPickerFgDragged, fraction);
-      TextView current = (TextView) binding.textSwitcherMainTempoTerm.getCurrentView();
-      if (current != null) {
-        current.setTextColor(colorTempoPickerFg);
-      }
-      TextView next = (TextView) binding.textSwitcherMainTempoTerm.getNextView();
-      if (next != null) {
-        next.setTextColor(colorTempoPickerFg);
-      }
-      binding.textMainTempo.setTextColor(colorTempoPickerFg);
-      binding.textMainBpmLabel.setTextColor(colorTempoPickerFg);
       if (VERSION.SDK_INT >= VERSION_CODES.O) {
         binding.textMainTempo.setFontVariationSettings("'wght' " + (600 + (fraction * 150)));
       }
@@ -443,23 +427,26 @@ public class MainFragment extends BaseFragment
 
       @Override
       public void onRotate(float degrees) {
-        binding.circleMain.setRotation(
-            binding.circleMain.getRotation() + degrees
-        );
+        binding.circleMain.setRotation(binding.circleMain.getRotation() + degrees);
       }
     });
     binding.tempoPickerMain.setOnPickListener(new OnPickListener() {
       @Override
-      public void onPickDown() {
-        binding.circleMain.setDragged(true);
+      public void onPickDown(float x, float y) {
+        binding.circleMain.setDragged(true, x, y);
         if (bigLogo && getMetronomeUtil().isPlaying()) {
           updateTempoPickerAndLogo(true, true);
         }
       }
 
       @Override
+      public void onDrag(float x, float y) {
+        binding.circleMain.onDrag(x, y);
+      }
+
+      @Override
       public void onPickUpOrCancel() {
-        binding.circleMain.setDragged(false);
+        binding.circleMain.setDragged(false, 0, 0);
         if (bigLogo && getMetronomeUtil().isPlaying()) {
           updateTempoPickerAndLogo(false, true);
         }

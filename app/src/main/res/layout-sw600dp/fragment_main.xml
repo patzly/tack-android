@@ -330,7 +330,6 @@
           android:textSize="88sp" />
 
         <TextView
-          android:id="@+id/text_main_bpm_label"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:text="@string/label_bpm"

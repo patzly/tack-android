@@ -26,7 +26,11 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
+import android.graphics.PointF;
+import android.graphics.RadialGradient;
 import android.graphics.RectF;
+import android.graphics.Shader;
+import android.graphics.Shader.TileMode;
 import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.NonNull;
@@ -50,8 +54,8 @@ public class CircleView extends View {
   private final Path path;
   private final Matrix matrix;
   private final Morph morph;
-  private final int colorDefault, colorDrag;
-  private float morphFactor, colorFraction;
+  private final int colorDefault, colorDrag1, colorDrag2, colorDrag3;
+  private float morphFactor, colorFraction, touchX, touchY;
   private boolean reduceAnimations;
   private OnDragAnimListener onDragAnimListener;
   private SpringAnimation springAnimationMorph, springAnimationColor;
@@ -61,7 +65,9 @@ public class CircleView extends View {
     super(context, attrs);
 
     colorDefault = ResUtil.getColor(context, R.attr.colorPrimaryContainer);
-    colorDrag = ResUtil.getColor(context, R.attr.colorTertiaryContainer);
+    colorDrag1 = ResUtil.getColor(context, R.attr.colorTertiaryContainer);
+    colorDrag2 = ResUtil.getColor(context, R.attr.colorPrimaryContainer);
+    colorDrag3 = ResUtil.getColor(context, R.attr.colorSecondaryContainer);
 
     paintFill = new Paint();
     paintFill.setStyle(Style.FILL);
@@ -107,7 +113,11 @@ public class CircleView extends View {
   }
 
   @SuppressLint("PrivateResource")
-  public void setDragged(boolean dragged) {
+  public void setDragged(boolean dragged, float x, float y) {
+    if (dragged) {
+      touchX = x;
+      touchY = y;
+    }
     if (springAnimationMorph != null) {
       springAnimationMorph.cancel();
     }
@@ -136,11 +146,47 @@ public class CircleView extends View {
                 ).setMinimumVisibleChange(0.01f);
       }
       springAnimationMorph.animateToFinalPosition(dragged ? 1 : 0);
-      springAnimationColor.animateToFinalPosition(dragged ? 1 : 0);
+      springAnimationColor.animateToFinalPosition(dragged ? 0.75f : 0);
     } else {
       setMorphFactor(0);
       setColorFraction(0);
     }
+  }
+
+  public void onDrag(float x, float y) {
+    touchX = x;
+    touchY = y;
+    if (!reduceAnimations) {
+      paintFill.setShader(getGradient());
+    }
+
+    invalidate();
+  }
+
+  private Shader getGradient() {
+    PointF pointF = getRotatedPoint(touchX, touchY, getPivotX(), getPivotY(), -getRotation());
+    return new RadialGradient(
+        pointF.x,
+        pointF.y,
+        getWidth(),
+        new int[]{
+            ColorUtils.blendARGB(colorDefault, colorDrag1, colorFraction),
+            ColorUtils.blendARGB(colorDefault, colorDrag1, colorFraction),
+            ColorUtils.blendARGB(colorDefault, colorDrag2, colorFraction),
+            ColorUtils.blendARGB(colorDefault, colorDrag3, colorFraction)
+        },
+        new float[]{0, 0.1f, 0.5f, 0.9f},
+        TileMode.CLAMP
+    );
+  }
+
+  private PointF getRotatedPoint(float x, float y, float cx, float cy, float degrees) {
+    double radians = Math.toRadians(degrees);
+    float x1 = x - cx;
+    float y1 = y - cy;
+    float x2 = (float) (x1 * Math.cos(radians) - y1 * Math.sin(radians));
+    float y2 = (float) (x1 * Math.sin(radians) + y1 * Math.cos(radians));
+    return new PointF(x2 + cx, y2 + cy);
   }
 
   private float getMorphFactor() {
@@ -159,7 +205,9 @@ public class CircleView extends View {
 
   private void setColorFraction(float fraction) {
     colorFraction = fraction;
-    paintFill.setColor(ColorUtils.blendARGB(colorDefault, colorDrag, fraction));
+
+    paintFill.setShader(getGradient());
+
     invalidate();
     if (onDragAnimListener != null) {
       onDragAnimListener.onDragAnim(fraction);
