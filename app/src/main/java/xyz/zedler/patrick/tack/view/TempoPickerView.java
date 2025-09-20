@@ -142,6 +142,7 @@ public class TempoPickerView extends View implements View.OnTouchListener {
         currAngle = angle;
         animate(prevAngle, currAngle);
       }
+      onPickListener.onDrag(x, y);
     } else if (event.getAction() == MotionEvent.ACTION_UP
         || event.getAction() == MotionEvent.ACTION_CANCEL
     ) {

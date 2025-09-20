@@ -537,51 +537,8 @@ public class MainFragment extends BaseFragment
       }
 
       @Override
-      public void onAnimateHeight(int collapsedHeight, int expandedHeight, float fraction) {
-        if (binding == null) {
-          return;
-        }
-        if (expandedHeight > songPickerAvailableHeight) {
-          int overlap = expandedHeight - songPickerAvailableHeight;
-          int tempoPickerCurrentTop = binding.frameMainCenter.getTop();
-          int tempoPickerTranslatedTop = tempoPickerCurrentTop - overlap;
-          if (tempoPickerTranslatedTop < tempoPickerMaxTop) {
-            int targetHeight =
-                binding.frameMainBottom.getTop() - tempoPickerMaxTop - expandedHeight;
-            int currentWidth = binding.frameMainCenter.getWidth();
-            int currentHeight = binding.frameMainCenter.getHeight();
-
-            float scale = 1 + (((float) targetHeight / currentHeight) - 1) * fraction;
-            float translationY = (tempoPickerMaxTop - tempoPickerCurrentTop) * fraction;
-
-            binding.frameMainCenter.setPivotY(0f);
-            binding.frameMainCenter.setPivotX(currentWidth / 2f);
-            binding.frameMainCenter.setScaleX(scale);
-            binding.frameMainCenter.setScaleY(scale);
-            binding.frameMainCenter.setTranslationY(translationY);
-
-            binding.buttonGroupMainLess.setPivotY(0f);
-            binding.buttonGroupMainLess.setPivotX(binding.buttonGroupMainLess.getWidth() / 2f);
-            binding.buttonGroupMainLess.setScaleX(scale);
-            binding.buttonGroupMainLess.setScaleY(scale);
-            binding.buttonGroupMainLess.setTranslationY(translationY);
-            int targetWidth = (int) (currentWidth * scale);
-            int translationX = (currentWidth - targetWidth) / 4;
-            binding.buttonGroupMainLess.setTranslationX(isRtl ? -translationX : translationX);
-
-            binding.buttonGroupMainMore.setPivotY(0f);
-            binding.buttonGroupMainMore.setPivotX(binding.buttonGroupMainMore.getWidth() / 2f);
-            binding.buttonGroupMainMore.setScaleX(scale);
-            binding.buttonGroupMainMore.setScaleY(scale);
-            binding.buttonGroupMainMore.setTranslationY(translationY);
-            binding.buttonGroupMainMore.setTranslationX(isRtl ? translationX : -translationX);
-          } else {
-            binding.frameMainCenter.setTranslationY(-overlap * fraction);
-            binding.buttonGroupMainLess.setTranslationY(-overlap * fraction);
-            binding.buttonGroupMainMore.setTranslationY(-overlap * fraction);
-          }
-          binding.songPickerMain.setTranslationY(-overlap * 0.5f * fraction);
-        }
+      public void onHeightChanged() {
+        updateTempoPickerTranslationAndScale();
       }
     });
     activity.getSongViewModel().getAllSongsWithPartsLive().observe(
@@ -1465,6 +1422,55 @@ public class MainFragment extends BaseFragment
             }
           }
         });
+  }
+
+  private void updateTempoPickerTranslationAndScale() {
+    if (binding == null) {
+      return;
+    }
+    float fraction = binding.songPickerMain.getExpandFraction();
+    int expandedHeight = binding.songPickerMain.getHeightExpanded();
+    if (expandedHeight > songPickerAvailableHeight) {
+      int overlap = expandedHeight - songPickerAvailableHeight;
+      int tempoPickerCurrentTop = binding.frameMainCenter.getTop();
+      int tempoPickerTranslatedTop = tempoPickerCurrentTop - overlap;
+      if (tempoPickerTranslatedTop < tempoPickerMaxTop) {
+        int targetHeight =
+            binding.frameMainBottom.getTop() - tempoPickerMaxTop - expandedHeight;
+        int currentWidth = binding.frameMainCenter.getWidth();
+        int currentHeight = binding.frameMainCenter.getHeight();
+
+        float scale = 1 + (((float) targetHeight / currentHeight) - 1) * fraction;
+        float translationY = (tempoPickerMaxTop - tempoPickerCurrentTop) * fraction;
+
+        binding.frameMainCenter.setPivotY(0f);
+        binding.frameMainCenter.setPivotX(currentWidth / 2f);
+        binding.frameMainCenter.setScaleX(scale);
+        binding.frameMainCenter.setScaleY(scale);
+        binding.frameMainCenter.setTranslationY(translationY);
+
+        binding.buttonGroupMainLess.setPivotY(0f);
+        binding.buttonGroupMainLess.setPivotX(binding.buttonGroupMainLess.getWidth() / 2f);
+        binding.buttonGroupMainLess.setScaleX(scale);
+        binding.buttonGroupMainLess.setScaleY(scale);
+        binding.buttonGroupMainLess.setTranslationY(translationY);
+        int targetWidth = (int) (currentWidth * scale);
+        int translationX = (currentWidth - targetWidth) / 4;
+        binding.buttonGroupMainLess.setTranslationX(isRtl ? -translationX : translationX);
+
+        binding.buttonGroupMainMore.setPivotY(0f);
+        binding.buttonGroupMainMore.setPivotX(binding.buttonGroupMainMore.getWidth() / 2f);
+        binding.buttonGroupMainMore.setScaleX(scale);
+        binding.buttonGroupMainMore.setScaleY(scale);
+        binding.buttonGroupMainMore.setTranslationY(translationY);
+        binding.buttonGroupMainMore.setTranslationX(isRtl ? translationX : -translationX);
+      } else {
+        binding.frameMainCenter.setTranslationY(-overlap * fraction);
+        binding.buttonGroupMainLess.setTranslationY(-overlap * fraction);
+        binding.buttonGroupMainMore.setTranslationY(-overlap * fraction);
+      }
+      binding.songPickerMain.setTranslationY(-overlap * 0.5f * fraction);
+    }
   }
 
   @OptIn(markerClass = ExperimentalBadgeUtils.class)

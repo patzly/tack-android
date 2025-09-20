@@ -664,7 +664,7 @@ public class SongPickerView extends FrameLayout {
     }
   }
 
-  private float getExpandFraction() {
+  public float getExpandFraction() {
     return expandFraction;
   }
 
@@ -682,10 +682,16 @@ public class SongPickerView extends FrameLayout {
     lp.height = (int) (heightCollapsed + (heightExpanded - heightCollapsed) * fraction);
     setLayoutParams(lp);
     if (listener != null) {
-      listener.onAnimateHeight(
-          heightCollapsed, heightExpanded + heightExpandedMargin, fraction
-      );
+      listener.onHeightChanged();
     }
+  }
+
+  public int getHeightExpanded() {
+    return heightExpanded + heightExpandedMargin;
+  }
+
+  public int getHeightCollapsed() {
+    return heightCollapsed;
   }
 
   public interface SongPickerListener {
@@ -698,7 +704,7 @@ public class SongPickerView extends FrameLayout {
     void onMenuOrMenuItemClicked();
     void onBackupClicked();
     void onAddSongClicked();
-    void onAnimateHeight(int collapsedHeight, int expandedHeight, float fraction);
+    void onHeightChanged();
   }
 
   private static final FloatPropertyCompat<SongPickerView> EXPAND_FRACTION =

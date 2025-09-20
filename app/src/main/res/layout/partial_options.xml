@@ -92,12 +92,6 @@
         android:spacing="0dp">
 
         <com.google.android.material.button.MaterialButton
-          android:id="@+id/button_options_tempo_input"
-          style="@style/Widget.Tack.Button.IconButton.Standard.Small.Narrow"
-          android:contentDescription="@string/action_change_tempo"
-          app:icon="@drawable/ic_rounded_open_in_new" />
-
-        <com.google.android.material.button.MaterialButton
           android:id="@+id/button_options_tempo_decrease"
           style="@style/Widget.Tack.Button.IconButton.Filled.Small.Narrow"
           android:contentDescription="@string/action_decrease"

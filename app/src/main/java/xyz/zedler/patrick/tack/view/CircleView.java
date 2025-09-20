@@ -146,7 +146,7 @@ public class CircleView extends View {
                 ).setMinimumVisibleChange(0.01f);
       }
       springAnimationMorph.animateToFinalPosition(dragged ? 1 : 0);
-      springAnimationColor.animateToFinalPosition(dragged ? 0.75f : 0);
+      springAnimationColor.animateToFinalPosition(dragged ? 0.85f : 0);
     } else {
       setMorphFactor(0);
       setColorFraction(0);
@@ -159,7 +159,6 @@ public class CircleView extends View {
     if (!reduceAnimations) {
       paintFill.setShader(getGradient());
     }
-
     invalidate();
   }
 
