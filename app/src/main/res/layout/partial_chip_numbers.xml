@@ -24,7 +24,9 @@
   android:id="@+id/frame_chip_numbers_container"
   android:layout_width="wrap_content"
   android:layout_height="wrap_content"
-  android:minHeight="48dp">
+  android:minHeight="48dp"
+  android:paddingTop="8dp"
+  android:paddingBottom="8dp">
 
   <LinearLayout
     android:layout_width="wrap_content"

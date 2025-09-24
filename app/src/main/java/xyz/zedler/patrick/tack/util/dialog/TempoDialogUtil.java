@@ -62,14 +62,18 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
   private final MainFragment fragment;
   private final PartialDialogTempoBinding binding;
   private final DialogUtil dialogUtil;
+  private final TempoDialogListener listener;
   private final Queue<Long> intervals = new LinkedList<>();
   private long previous;
   private boolean inputMethodKeyboard, instantApply;
 
   @SuppressLint("ClickableViewAccessibility")
-  public TempoDialogUtil(MainActivity activity, MainFragment fragment) {
+  public TempoDialogUtil(
+      MainActivity activity, MainFragment fragment, TempoDialogListener listener
+  ) {
     this.activity = activity;
     this.fragment = fragment;
+    this.listener = listener;
 
     binding = PartialDialogTempoBinding.inflate(activity.getLayoutInflater());
 
@@ -326,7 +330,9 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
         return;
       }
       int tempo = Integer.parseInt(tempoEditable.toString());
-      fragment.updateTempoDisplay(getMetronomeUtil().getConfig().getTempo(), tempo);
+      if (listener != null) {
+        listener.onTempoChanged(tempo);
+      }
       getMetronomeUtil().setTempo(tempo);
 
       binding.editTextTempo.clearFocus();
@@ -334,7 +340,9 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
       long tapAverage = getTapAverage();
       if (tapAverage > 0) {
         int tempo = getTapTempo(tapAverage);
-        fragment.updateTempoDisplay(getMetronomeUtil().getConfig().getTempo(), tempo);
+        if (listener != null) {
+          listener.onTempoChanged(tempo);
+        }
         getMetronomeUtil().setTempo(tempo);
       }
     }
@@ -392,8 +400,8 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
     if (binding == null || fragment == null || !fragment.isAdded()) {
       return;
     }
-    if (instantApply) {
-      fragment.updateTempoDisplay(getMetronomeUtil().getConfig().getTempo(), tempoNew);
+    if (instantApply && listener != null) {
+      listener.onTempoChanged(tempoNew);
     }
     binding.textTempoTapTempo.setText(String.valueOf(tempoNew));
     String termNew = fragment.getTempoTerm(tempoNew);
@@ -441,5 +449,9 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
 
   private MetronomeUtil getMetronomeUtil() {
     return activity.getMetronomeUtil();
+  }
+
+  public interface TempoDialogListener {
+    void onTempoChanged(int tempo);
   }
 }

@@ -40,9 +40,9 @@ import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.database.entity.Part;
+import xyz.zedler.patrick.tack.databinding.FragmentMainBinding;
 import xyz.zedler.patrick.tack.databinding.PartialDialogOptionsBinding;
 import xyz.zedler.patrick.tack.databinding.PartialOptionsBinding;
-import xyz.zedler.patrick.tack.fragment.MainFragment;
 import xyz.zedler.patrick.tack.model.MetronomeConfig;
 import xyz.zedler.patrick.tack.view.BeatView;
 
@@ -54,10 +54,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   private static final String PART = "part_dialog";
 
   private final MainActivity activity;
-  @Nullable
-  private final MainFragment fragment;
   private final boolean useDialog, editPart;
-  private Runnable onModifiersCountChanged;
+  private Runnable onModifiersCountChanged, onTimerChanged, onSubsChanged;
   private OnPartUpdatedListener onPartUpdatedListener;
   private boolean isCountInActive, isIncrementalActive, isTimerActive, isMuteActive;
   private DialogUtil dialogUtil;
@@ -67,11 +65,12 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   private MetronomeConfig config;
 
   public OptionsUtil(
-      MainActivity activity, @NonNull MainFragment fragment, Runnable onModifiersCountChanged
+      MainActivity activity, FragmentMainBinding fragmentBinding,
+      Runnable onModifiersCountChanged, Runnable onTimerChanged, Runnable onSubsChanged
   ) {
     this.activity = activity;
-    this.fragment = fragment;
     this.onModifiersCountChanged = onModifiersCountChanged;
+    this.onTimerChanged = onTimerChanged;
 
     editPart = false;
     useDialog = !UiUtil.isLandTablet(activity);
@@ -79,7 +78,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       bindingDialog = PartialDialogOptionsBinding.inflate(activity.getLayoutInflater());
       dialogUtil = new DialogUtil(activity, "options");
     }
-    binding = useDialog ? bindingDialog.partialOptions : fragment.getBinding().partialOptions;
+    binding = useDialog ? bindingDialog.partialOptions : fragmentBinding.partialOptions;
 
     MetronomeConfig config = getConfig();
     isCountInActive = config.isCountInActive();
@@ -109,7 +108,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
 
   public OptionsUtil(MainActivity activity, OnPartUpdatedListener onPartUpdatedListener) {
     this.activity = activity;
-    this.fragment = null;
     this.onPartUpdatedListener = onPartUpdatedListener;
 
     editPart = true;
@@ -917,8 +915,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         getMetronomeUtil().setTimerDuration(decreasedDuration, true);
       }
       updateTimer();
-      if (!editPart && fragment != null) {
-        fragment.updateTimerControls(true, true);
+      if (!editPart && onTimerChanged != null) {
+        onTimerChanged.run();
       }
       ViewUtil.startIcon(binding.buttonOptionsTimerDecrease.getIcon());
     } else if (id == R.id.button_options_timer_increase) {
@@ -932,8 +930,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         getMetronomeUtil().setTimerDuration(increasedDuration, true);
       }
       updateTimer();
-      if (!editPart && fragment != null) {
-        fragment.updateTimerControls(true, true);
+      if (!editPart && onTimerChanged != null) {
+        onTimerChanged.run();
       }
       ViewUtil.startIcon(binding.buttonOptionsTimerIncrease.getIcon());
     } else if (id == R.id.linear_options_mute_random) {
@@ -982,8 +980,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         getMetronomeUtil().setTimerUnit(unit);
       }
       updateTimer();
-      if (!editPart && fragment != null) {
-        fragment.updateTimerDisplay();
+      if (!editPart && onTimerChanged != null) {
+        onTimerChanged.run();
       }
     } else if (groupId == R.id.toggle_options_mute_unit) {
       String unit = UNIT.BARS;
@@ -1017,9 +1015,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         }
       }
       updateSwing();
-      if (!editPart && fragment != null) {
-        fragment.updateSubs(getConfig().getSubdivisions());
-        fragment.updateSubControls(true);
+      if (!editPart && onSubsChanged != null) {
+        onSubsChanged.run();
       }
     }
   }
@@ -1074,9 +1071,11 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       activity.performHapticSegmentTick(slider, true);
       if (editPart) {
         getConfig().setTimerDuration((int) value);
-      } else if (fragment != null) {
+      } else {
         getMetronomeUtil().setTimerDuration((int) value, true);
-        fragment.updateTimerControls(true, true);
+        if (onTimerChanged != null) {
+          onTimerChanged.run();
+        }
       }
       updateTimer();
     } else if (id == R.id.slider_options_mute_play) {

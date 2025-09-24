@@ -42,7 +42,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.LinearInterpolator;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -53,8 +52,6 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.badge.ExperimentalBadgeUtils;
-import com.google.android.material.slider.Slider;
-import com.google.android.material.slider.Slider.OnSliderTouchListener;
 import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,22 +93,22 @@ import xyz.zedler.patrick.tack.view.BeatView;
 import xyz.zedler.patrick.tack.view.SongPickerView.SongPickerListener;
 import xyz.zedler.patrick.tack.view.TempoPickerView.OnPickListener;
 import xyz.zedler.patrick.tack.view.TempoPickerView.OnRotationListener;
+import xyz.zedler.patrick.tack.view.TimerView.TimerListener;
 
-public class MainFragment extends BaseFragment
-    implements OnClickListener, MetronomeListener {
+public class MainFragment extends BaseFragment implements OnClickListener, MetronomeListener {
 
   private static final String TAG = MainFragment.class.getSimpleName();
 
   private FragmentMainBinding binding;
   private MainActivity activity;
   private Bundle savedState;
-  private boolean flashScreen, reduceAnimations, isRtl, isLandTablet, bigLogo, showPickerNotLogo;
-  private boolean activeBeat;
+  private boolean flashScreen, reduceAnimations, isRtl, isPortrait, isLandTablet, bigLogo;
+  private boolean showPickerNotLogo, activeBeat;
   private LogoUtil logoUtil, logoCenterUtil;
   private ValueAnimator playStopButtonAnimator;
   private float playStopButtonFraction;
   private int colorFlashNormal, colorFlashStrong, colorFlashMuted;
-  private int songPickerAvailableHeight, tempoPickerMaxTop;
+  private int songPickerAvailableHeight, topControlsBottomMin;
   private DialogUtil dialogUtilGain, dialogUtilSplitScreen, dialogUtilTimer, dialogUtilElapsed;
   private DialogUtil dialogUtilPermission, dialogUtilBeatMode;
   private UnlockDialogUtil unlockDialogUtil;
@@ -121,7 +118,6 @@ public class MainFragment extends BaseFragment
   private BackupDialogUtil backupDialogUtil;
   private BeatsBgDrawable beatsBgDrawable;
   private BadgeDrawable beatsCountBadge, subsCountBadge, optionsBadge;
-  private ValueAnimator progressAnimator, progressTransitionAnimator;
   private ValueAnimator beatsCountBadgeAnimator, subsCountBadgeAnimator, optionsBadgeAnimator;
   private ValueAnimator pickerLogoAnimator;
   private List<SongWithParts> songsWithParts;
@@ -168,7 +164,7 @@ public class MainFragment extends BaseFragment
     systemBarBehavior.setContainer(binding.constraintMainContainer);
     systemBarBehavior.setUp();
 
-    boolean isPortrait = UiUtil.isOrientationPortrait(activity);
+    isPortrait = UiUtil.isOrientationPortrait(activity);
     isLandTablet = UiUtil.isLandTablet(activity);
     isRtl = UiUtil.isLayoutRtl(activity);
 
@@ -199,25 +195,7 @@ public class MainFragment extends BaseFragment
 
     reduceAnimations = getSharedPrefs().getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM);
     activeBeat = getSharedPrefs().getBoolean(PREF.ACTIVE_BEAT, DEF.ACTIVE_BEAT);
-
-    if (getSharedPrefs().getBoolean(PREF.BIG_TIME_TEXT, DEF.BIG_TIME_TEXT)) {
-      Typeface typeface = ResourcesCompat.getFont(activity, R.font.nunito_medium);
-      binding.chipMainTimerCurrent.textChipNumbers.setTextSize(28);
-      binding.chipMainTimerCurrent.textChipNumbers.setTypeface(typeface);
-      binding.chipMainElapsedTime.textChipNumbers.setTextSize(28);
-      binding.chipMainElapsedTime.textChipNumbers.setTypeface(typeface);
-      binding.chipMainTimerTotal.textChipNumbers.setTextSize(28);
-      binding.chipMainTimerTotal.textChipNumbers.setTypeface(typeface);
-    } else {
-      binding.chipMainTimerCurrent.imageChipNumbers.setImageResource(
-          R.drawable.ic_rounded_timer_anim
-      );
-      binding.chipMainTimerCurrent.imageChipNumbers.setVisibility(View.VISIBLE);
-      binding.chipMainElapsedTime.imageChipNumbers.setImageResource(
-          R.drawable.ic_rounded_schedule_anim
-      );
-      binding.chipMainElapsedTime.imageChipNumbers.setVisibility(View.VISIBLE);
-    }
+    boolean bigText = getSharedPrefs().getBoolean(PREF.BIG_TIME_TEXT, DEF.BIG_TIME_TEXT);
 
     beatsCountBadge = BadgeDrawable.create(activity);
     subsCountBadge = BadgeDrawable.create(activity);
@@ -255,6 +233,28 @@ public class MainFragment extends BaseFragment
     });
 
     updateSubs(getSharedPrefs().getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(","));
+
+    binding.timerMain.setMainActivity(activity);
+    binding.timerMain.setBigText(bigText);
+    binding.timerMain.setListener(new TimerListener() {
+      @Override
+      public void onCurrentTimeClick() {
+        dialogUtilTimer.show();
+        performHapticClick();
+      }
+
+      @Override
+      public void onElapsedTimeClick() {
+        dialogUtilElapsed.show();
+        performHapticClick();
+      }
+
+      @Override
+      public void onTotalTimeClick() {
+        dialogUtilTimer.show();
+        performHapticClick();
+      }
+    });
 
     dialogUtilGain = new DialogUtil(activity, "gain");
     dialogUtilGain.createDialogError(builder -> {
@@ -343,9 +343,20 @@ public class MainFragment extends BaseFragment
 
     dialogUtilBeatMode = new DialogUtil(activity, "beat_mode");
 
-    tempoDialogUtil = new TempoDialogUtil(activity, this);
+    tempoDialogUtil = new TempoDialogUtil(
+        activity, this,
+        tempo -> updateTempoDisplay(getMetronomeUtil().getConfig().getTempo(), tempo)
+    );
 
-    optionsUtil = new OptionsUtil(activity, this, () -> updateOptions(true));
+    optionsUtil = new OptionsUtil(
+        activity, binding,
+        () -> updateOptions(true),
+        () -> binding.timerMain.updateControls(true, true),
+        () -> {
+          updateSubs(getMetronomeUtil().getConfig().getSubdivisions());
+          updateSubControls(true);
+        }
+    );
     boolean hideOptions = isLandTablet;
     binding.buttonMainOptions.setEnabled(!hideOptions);
 
@@ -358,47 +369,6 @@ public class MainFragment extends BaseFragment
 
     beatsBgDrawable = new BeatsBgDrawable(activity);
     binding.linearMainBeatsBg.setBackground(beatsBgDrawable);
-
-    binding.sliderMainTimer.addOnChangeListener((slider, value, fromUser) -> {
-      if (!fromUser) {
-        return;
-      }
-      int positions = getMetronomeUtil().getTimerDuration();
-      int timerPositionCurrent = (int) (getMetronomeUtil().getTimerProgress() * positions);
-      float fraction = value / binding.sliderMainTimer.getValueTo();
-      int timerPositionNew = (int) (fraction * positions);
-      if (timerPositionCurrent != timerPositionNew
-          && timerPositionCurrent < positions
-          && timerPositionNew < positions) {
-        performHapticTick();
-      }
-      getMetronomeUtil().updateTimerHandler(fraction, true);
-      updateTimerDisplay();
-    });
-    binding.sliderMainTimer.addOnSliderTouchListener(new OnSliderTouchListener() {
-      @Override
-      public void onStartTrackingTouch(@NonNull Slider slider) {
-        getMetronomeUtil().savePlayingState();
-        getMetronomeUtil().stop();
-      }
-
-      @Override
-      public void onStopTrackingTouch(@NonNull Slider slider) {
-        getMetronomeUtil().restorePlayingState();
-      }
-    });
-    binding.chipMainTimerCurrent.frameChipNumbersContainer.setOnClickListener(v -> {
-      dialogUtilTimer.show();
-      performHapticClick();
-    });
-    binding.chipMainTimerTotal.frameChipNumbersContainer.setOnClickListener(v -> {
-      dialogUtilTimer.show();
-      performHapticClick();
-    });
-    binding.chipMainElapsedTime.frameChipNumbersContainer.setOnClickListener(v -> {
-      dialogUtilElapsed.show();
-      performHapticClick();
-    });
 
     binding.textSwitcherMainTempoTerm.setFactory(() -> {
       TextView textView = new TextView(activity);
@@ -560,15 +530,7 @@ public class MainFragment extends BaseFragment
             );
           }
           binding.songPickerMain.setSongs(songsWithParts);
-          if (!isPortrait && !isLandTablet) {
-            // Hide song picker in landscape mode if empty to make place for other controls
-            binding.frameMainSongsContainer.setVisibility(
-                songsWithParts.isEmpty() ? View.GONE : View.VISIBLE
-            );
-            updateSongPickerDividerVisibility();
-          } else {
-            binding.frameMainSongsContainer.setVisibility(View.VISIBLE);
-          }
+          // TODO: implement auto-collapse behavior
         }
     );
 
@@ -661,15 +623,14 @@ public class MainFragment extends BaseFragment
   @Override
   public void onPause() {
     super.onPause();
-    stopTimerProgress();
-    stopTimerProgressTransition();
+    binding.timerMain.stopProgress();
+    binding.timerMain.stopProgressTransition();
   }
 
   @Override
   public void onResume() {
     super.onResume();
-    updateTimerControls(true, true);
-    updateElapsedDisplay();
+    binding.timerMain.updateControls(true, true);
   }
 
   @Override
@@ -707,6 +668,9 @@ public class MainFragment extends BaseFragment
     }
   }
 
+  /*
+   * Called in MainActivity in onServiceConnected
+   */
   public void updateMetronomeControls() {
     if (binding == null) {
       return;
@@ -728,8 +692,7 @@ public class MainFragment extends BaseFragment
     updateSubs(getMetronomeUtil().getConfig().getSubdivisions());
     updateSubControls(false);
 
-    measureTimerControls(true); // calls updateTimerControls when measured
-    updateElapsedDisplay();
+    binding.timerMain.measureControls();
     updateOptions(false);
 
     int tempo = getMetronomeUtil().getConfig().getTempo();
@@ -856,8 +819,7 @@ public class MainFragment extends BaseFragment
       if (binding != null) {
         resetActiveBeats();
         beatsBgDrawable.setProgressVisible(false, true);
-        updateTimerDisplay();
-        updateElapsedDisplay();
+        binding.timerMain.updateDisplay();
         binding.buttonMainPlayStop.setIconResource(R.drawable.ic_rounded_stop_to_play_fill_anim);
         Drawable icon = binding.buttonMainPlayStop.getIcon();
         if (icon != null) {
@@ -867,9 +829,9 @@ public class MainFragment extends BaseFragment
         if (bigLogo) {
           updateTempoPickerAndLogo(true, true);
         }
+        binding.timerMain.stopProgressTransition();
+        binding.timerMain.stopProgress();
       }
-      stopTimerProgressTransition();
-      stopTimerProgress();
       String keepAwake = getMetronomeUtil().getKeepAwake();
       UiUtil.keepScreenAwake(activity, keepAwake.equals(KEEP_AWAKE.ALWAYS));
     });
@@ -947,7 +909,7 @@ public class MainFragment extends BaseFragment
         }
       }
       if (getMetronomeUtil().getConfig().getTimerUnit().equals(UNIT.BARS)) {
-        updateTimerDisplay();
+        binding.timerMain.updateDisplay();
       }
     });
   }
@@ -960,23 +922,23 @@ public class MainFragment extends BaseFragment
   @Override
   public void onMetronomeTimerStarted() {
     activity.runOnUiThread(() -> {
-      stopTimerProgressTransition();
-      stopTimerProgress();
       if (binding == null) {
         return;
       }
-      updateTimerControls(true, true);
+      binding.timerMain.stopProgressTransition();
+      binding.timerMain.stopProgress();
+      binding.timerMain.updateControls(true, true);
     });
   }
 
   @Override
   public void onMetronomeElapsedTimeSecondsChanged() {
-    activity.runOnUiThread(this::updateElapsedDisplay);
+    activity.runOnUiThread(() -> binding.timerMain.updateDisplay());
   }
 
   @Override
   public void onMetronomeTimerSecondsChanged() {
-    activity.runOnUiThread(this::updateTimerDisplay);
+    activity.runOnUiThread(() -> binding.timerMain.updateDisplay());
   }
 
   @Override
@@ -985,7 +947,7 @@ public class MainFragment extends BaseFragment
       if (binding == null) {
         return;
       }
-      updateTimerControls(true, withTransition);
+      binding.timerMain.updateControls(true, withTransition);
     });
   }
 
@@ -1001,8 +963,7 @@ public class MainFragment extends BaseFragment
       updateSubs(getMetronomeUtil().getConfig().getSubdivisions());
       updateSubControls(true);
 
-      updateTimerControls(true, true);
-      updateElapsedDisplay();
+      binding.timerMain.updateControls(true, true);
       updateOptions(true);
     });
   }
@@ -1050,7 +1011,7 @@ public class MainFragment extends BaseFragment
         binding.linearMainBeats.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
         updateBeatControls(true);
-        updateTimerDisplay(); // Update decimals for bar unit
+        binding.timerMain.updateDisplay(); // Update decimals for bar unit
       }
     } else if (id == R.id.button_main_remove_beat) {
       ViewUtil.startIcon(binding.buttonMainRemoveBeat.getIcon());
@@ -1062,7 +1023,7 @@ public class MainFragment extends BaseFragment
             binding.scrollHorizMainBeats, true
         );
         updateBeatControls(true);
-        updateTimerDisplay(); // Update decimals for bar unit
+        binding.timerMain.updateDisplay(); // Update decimals for bar unit
       }
     } else if (id == R.id.button_main_add_subdivision) {
       ViewUtil.startIcon(binding.buttonMainAddSubdivision.getIcon());
@@ -1228,7 +1189,7 @@ public class MainFragment extends BaseFragment
     }
   }
 
-  public void updateSubs(String[] subdivisions) {
+  private void updateSubs(String[] subdivisions) {
     String[] currentSubs = new String[binding.linearMainSubs.getChildCount()];
     for (int i = 0; i < binding.linearMainSubs.getChildCount(); i++) {
       currentSubs[i] = String.valueOf(binding.linearMainSubs.getChildAt(i));
@@ -1258,7 +1219,7 @@ public class MainFragment extends BaseFragment
   }
 
   @OptIn(markerClass = ExperimentalBadgeUtils.class)
-  public void updateSubControls(boolean animated) {
+  private void updateSubControls(boolean animated) {
     if (subsCountBadgeAnimator != null) {
       subsCountBadgeAnimator.pause();
       subsCountBadgeAnimator.removeAllUpdateListeners();
@@ -1269,7 +1230,6 @@ public class MainFragment extends BaseFragment
     int subdivisions = getMetronomeUtil().getConfig().getSubdivisionsCount();
     binding.buttonMainAddSubdivision.setEnabled(subdivisions < Constants.SUBS_MAX);
     binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
-    updateSongPickerDividerVisibility();
     subsCountBadge.setNumber(subdivisions);
     boolean show = subdivisions > 4;
     if (animated) {
@@ -1316,92 +1276,6 @@ public class MainFragment extends BaseFragment
     }
   }
 
-  public void updateTimerControls(boolean animated, boolean withTransition) {
-    boolean isPlaying = getMetronomeUtil().isPlaying();
-    boolean isTimerActive = getMetronomeUtil().isTimerActive();
-    int visibility = isTimerActive ? View.VISIBLE : View.GONE;
-    binding.chipMainTimerCurrent.frameChipNumbersContainer.setVisibility(visibility);
-    binding.chipMainTimerTotal.frameChipNumbersContainer.setVisibility(visibility);
-    binding.sliderMainTimer.setVisibility(visibility);
-    updateSongPickerDividerVisibility();
-    binding.sliderMainTimer.setContinuousModeTickCount(getMetronomeUtil().getTimerDuration() + 1);
-    measureTimerControls(false);
-    // Check if timer is currently running and if metronome is from service
-    if (!getMetronomeUtil().isFromService()) {
-      return;
-    }
-    if (isPlaying && isTimerActive && !getMetronomeUtil().isCountingIn()) {
-      if (withTransition) {
-        long timerInterval = getMetronomeUtil().getTimerInterval();
-        float fraction = (float) Constants.ANIM_DURATION_LONG / timerInterval;
-        fraction += getMetronomeUtil().getTimerProgress();
-        startTimerProgressTransition(fraction);
-      }
-      updateTimerProgress(
-          1, getMetronomeUtil().getTimerIntervalRemaining(), animated, true
-      );
-    } else {
-      float timerProgress = getMetronomeUtil().getTimerProgress();
-      if (animated && getMetronomeUtil().isFromService()) {
-        startTimerProgressTransition(timerProgress);
-      } else if (getMetronomeUtil().isFromService()) {
-        updateTimerProgress(timerProgress, 0, false, false);
-      }
-    }
-    updateTimerDisplay();
-  }
-
-  private void measureTimerControls(boolean updateControls) {
-    binding.sliderMainTimer.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            if (binding == null) {
-              return;
-            }
-            int width = binding.sliderMainTimer.getWidth()
-                - binding.sliderMainTimer.getTrackSidePadding() * 2;
-            float valueFrom = binding.sliderMainTimer.getValueFrom();
-            float valueTo = Math.max(valueFrom, width);
-            if (valueFrom < valueTo) {
-              binding.sliderMainTimer.setValueTo(valueTo);
-            }
-            if (updateControls) {
-              updateTimerControls(
-                  getMetronomeUtil().isPlaying() && getMetronomeUtil().isTimerActive(),
-                  true
-              );
-            }
-            if (binding.sliderMainTimer.getViewTreeObserver().isAlive()) {
-              binding.sliderMainTimer.getViewTreeObserver().removeOnGlobalLayoutListener(
-                  this
-              );
-            }
-          }
-        });
-  }
-
-  public void updateTimerDisplay() {
-    if (binding == null) {
-      return;
-    }
-    binding.chipMainTimerTotal.textChipNumbers.setText(getMetronomeUtil().getTotalTimeString());
-    binding.chipMainTimerCurrent.textChipNumbers.setText(
-        getMetronomeUtil().getCurrentTimerString()
-    );
-  }
-
-  public void updateElapsedDisplay() {
-    if (binding == null) {
-      return;
-    }
-    boolean isElapsedActive = getMetronomeUtil().isElapsedActive();
-    binding.chipMainElapsedTime.frameChipNumbersContainer.setVisibility(
-        isElapsedActive ? View.VISIBLE : View.GONE
-    );
-    binding.chipMainElapsedTime.textChipNumbers.setText(getMetronomeUtil().getElapsedTimeString());
-  }
-
   private void measureSongPicker() {
     binding.coordinatorContainer.getViewTreeObserver().addOnGlobalLayoutListener(
         new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -1410,11 +1284,22 @@ public class MainFragment extends BaseFragment
             if (binding == null) {
               return;
             }
-            songPickerAvailableHeight = binding.frameMainSongsContainer.getHeight();
-            binding.songPickerMain.setParentWidth(binding.frameMainSongsContainer.getWidth());
-            // beat controls + timer controls + margins
-            tempoPickerMaxTop = binding.linearMainSubsBg.getBottom() +
-                UiUtil.dpToPx(activity, 8 + 48 * 2 + 16);
+            songPickerAvailableHeight =
+                binding.frameMainBottom.getTop() - binding.frameMainCenter.getBottom();
+
+            ViewGroup songPickerParent = binding.constraintMainContainer;
+            if (isLandTablet) {
+              songPickerParent = binding.cardMainContainerEnd;
+            } else if (!isPortrait) {
+              songPickerParent = binding.linearMainTop;
+            }
+            if (songPickerParent != null) {
+              binding.songPickerMain.setParentWidth(songPickerParent.getWidth());
+            }
+
+            // bottom of top controls where timer height will be added to
+            topControlsBottomMin = binding.linearMainSubsBg.getBottom();
+
             if (binding.coordinatorContainer.getViewTreeObserver().isAlive()) {
               binding.coordinatorContainer.getViewTreeObserver().removeOnGlobalLayoutListener(
                   this
@@ -1434,14 +1319,14 @@ public class MainFragment extends BaseFragment
       int overlap = expandedHeight - songPickerAvailableHeight;
       int tempoPickerCurrentTop = binding.frameMainCenter.getTop();
       int tempoPickerTranslatedTop = tempoPickerCurrentTop - overlap;
-      if (tempoPickerTranslatedTop < tempoPickerMaxTop) {
+      if (tempoPickerTranslatedTop < topControlsBottomMin) {
         int targetHeight =
-            binding.frameMainBottom.getTop() - tempoPickerMaxTop - expandedHeight;
+            binding.frameMainBottom.getTop() - topControlsBottomMin - expandedHeight;
         int currentWidth = binding.frameMainCenter.getWidth();
         int currentHeight = binding.frameMainCenter.getHeight();
 
         float scale = 1 + (((float) targetHeight / currentHeight) - 1) * fraction;
-        float translationY = (tempoPickerMaxTop - tempoPickerCurrentTop) * fraction;
+        float translationY = (topControlsBottomMin - tempoPickerCurrentTop) * fraction;
 
         binding.frameMainCenter.setPivotY(0f);
         binding.frameMainCenter.setPivotX(currentWidth / 2f);
@@ -1474,7 +1359,7 @@ public class MainFragment extends BaseFragment
   }
 
   @OptIn(markerClass = ExperimentalBadgeUtils.class)
-  public void updateOptions(boolean animated) {
+  private void updateOptions(boolean animated) {
     if (optionsBadgeAnimator != null) {
       optionsBadgeAnimator.pause();
       optionsBadgeAnimator.removeAllUpdateListeners();
@@ -1545,7 +1430,7 @@ public class MainFragment extends BaseFragment
     }
   }
 
-  public void updateTempoDisplay(int tempoOld, int tempoNew) {
+  private void updateTempoDisplay(int tempoOld, int tempoNew) {
     tempoNew = Math.min(Math.max(tempoNew, Constants.TEMPO_MIN), Constants.TEMPO_MAX);
     if (binding == null) {
       return;
@@ -1572,76 +1457,6 @@ public class MainFragment extends BaseFragment
     binding.buttonMainMore1.setEnabled(tempo < Constants.TEMPO_MAX);
     binding.buttonMainMore5.setEnabled(tempo <= Constants.TEMPO_MAX - 5);
     binding.buttonMainMore10.setEnabled(tempo <= Constants.TEMPO_MAX - 10);
-  }
-
-  private void updateTimerProgress(
-      float fraction, long duration, boolean animated, boolean linear
-  ) {
-    stopTimerProgress();
-    int max = (int) binding.sliderMainTimer.getValueTo();
-    if (animated) {
-      float progress = getMetronomeUtil().getTimerProgress();
-      progressAnimator = ValueAnimator.ofFloat(progress, fraction);
-      progressAnimator.addUpdateListener(animation -> {
-        if (binding == null || progressTransitionAnimator != null) {
-          return;
-        }
-        binding.sliderMainTimer.setValue((int) ((float) animation.getAnimatedValue() * max));
-      });
-      progressAnimator.setInterpolator(
-          linear ? new LinearInterpolator() : new FastOutSlowInInterpolator()
-      );
-      progressAnimator.setDuration(duration);
-      progressAnimator.start();
-    } else {
-      binding.sliderMainTimer.setValue((int) (fraction * max));
-    }
-  }
-
-  private void stopTimerProgress() {
-    if (progressAnimator != null) {
-      progressAnimator.pause();
-      progressAnimator.removeAllUpdateListeners();
-      progressAnimator.removeAllListeners();
-      progressAnimator.cancel();
-      progressAnimator = null;
-    }
-  }
-
-  private void startTimerProgressTransition(float fractionTo) {
-    int current = (int) binding.sliderMainTimer.getValue();
-    int max = (int) binding.sliderMainTimer.getValueTo();
-    float currentFraction = current / (float) max;
-    if (getMetronomeUtil().equalsTimerProgress(currentFraction)) {
-      // only if current progress is not equal to timer progress
-      return;
-    }
-    progressTransitionAnimator = ValueAnimator.ofFloat(currentFraction, fractionTo);
-    progressTransitionAnimator.addUpdateListener(animation -> {
-      if (binding == null) {
-        return;
-      }
-      binding.sliderMainTimer.setValue((int) ((float) animation.getAnimatedValue() * max));
-    });
-    progressTransitionAnimator.addListener(new AnimatorListenerAdapter() {
-      @Override
-      public void onAnimationEnd(Animator animation) {
-        stopTimerProgressTransition();
-      }
-    });
-    progressTransitionAnimator.setInterpolator(new FastOutSlowInInterpolator());
-    progressTransitionAnimator.setDuration(Constants.ANIM_DURATION_LONG);
-    progressTransitionAnimator.start();
-  }
-
-  private void stopTimerProgressTransition() {
-    if (progressTransitionAnimator != null) {
-      progressTransitionAnimator.pause();
-      progressTransitionAnimator.removeAllUpdateListeners();
-      progressTransitionAnimator.removeAllListeners();
-      progressTransitionAnimator.cancel();
-      progressTransitionAnimator = null;
-    }
   }
 
   private void updatePlayStopButton(boolean playing, boolean animated) {
@@ -1734,30 +1549,6 @@ public class MainFragment extends BaseFragment
     }
   }
 
-  private void updateSongPickerDividerVisibility() {
-    if (binding == null || binding.scrollMainTop == null) {
-      return; // not landscape phone
-    }
-    binding.scrollMainTop.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            if (binding == null || binding.frameMainSongsContainer.getVisibility() == View.GONE) {
-              return;
-            }
-            int scrollViewHeight = binding.scrollMainTop.getMeasuredHeight();
-            int scrollContentHeight = binding.linearMainTop.getHeight();
-            boolean showDivider = scrollContentHeight > scrollViewHeight;
-            if (binding.dividerMainSongs != null) {
-              binding.dividerMainSongs.setVisibility(showDivider ? View.VISIBLE : View.GONE);
-            }
-            if (binding.scrollMainTop.getViewTreeObserver().isAlive()) {
-              binding.scrollMainTop.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            }
-          }
-        });
-  }
-
   public void showSnackbar(Snackbar snackbar) {
     snackbar.setAnchorView(binding.buttonMainPlayStop);
     snackbar.show();
@@ -1787,9 +1578,5 @@ public class MainFragment extends BaseFragment
 
   public boolean isReduceAnimations() {
     return reduceAnimations;
-  }
-
-  public FragmentMainBinding getBinding() {
-    return binding;
   }
 }

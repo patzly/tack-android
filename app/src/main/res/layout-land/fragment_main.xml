@@ -93,216 +93,155 @@
     android:layout_height="match_parent"
     android:layout_marginTop="?attr/actionBarSize">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-      android:id="@+id/container_main_start"
+    <ScrollView
+      android:id="@+id/scroll_main_start"
       android:layout_width="0dp"
       android:layout_height="match_parent"
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintBottom_toBottomOf="parent"
       app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintEnd_toStartOf="@id/container_main_end">
+      app:layout_constraintEnd_toStartOf="@id/container_main_end"
+      android:scrollbars="none">
 
-      <ScrollView
-        android:id="@+id/scroll_main_top"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/frame_main_songs_container"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:scrollbars="none">
+      <LinearLayout
+        android:id="@+id/linear_main_top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="8dp">
 
         <LinearLayout
-          android:id="@+id/linear_main_top"
+          android:id="@+id/linear_main_beats_bg"
           android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:orientation="vertical"
-          android:paddingTop="8dp">
+          android:layout_height="56dp"
+          android:orientation="horizontal"
+          android:layout_marginStart="16dp"
+          android:layout_marginEnd="16dp">
 
-          <LinearLayout
-            android:id="@+id/linear_main_beats_bg"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:orientation="horizontal"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp">
+          <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_main_remove_beat"
+            style="@style/Widget.Tack.Button.IconButton.Tonal"
+            android:contentDescription="@string/action_remove_beat"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            app:icon="@drawable/ic_rounded_remove_anim"
+            app:iconTint="?attr/colorOnSurface"
+            app:rippleColor="@color/selector_tonal_button_ripple"
+            app:backgroundTint="@color/transparent" />
 
-            <com.google.android.material.button.MaterialButton
-              android:id="@+id/button_main_remove_beat"
-              style="@style/Widget.Tack.Button.IconButton.Tonal"
-              android:contentDescription="@string/action_remove_beat"
-              android:layout_marginStart="4dp"
-              android:layout_marginTop="4dp"
-              android:layout_marginBottom="4dp"
-              app:icon="@drawable/ic_rounded_remove_anim"
-              app:iconTint="?attr/colorOnSurface"
-              app:rippleColor="@color/selector_tonal_button_ripple"
-              app:backgroundTint="@color/transparent" />
+          <HorizontalScrollView
+            android:id="@+id/scroll_horiz_main_beats"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:overScrollMode="ifContentScrolls"
+            android:scrollbars="horizontal"
+            android:scrollbarThumbHorizontal="@drawable/shape_scrollbar_rounded"
+            android:fadingEdge="horizontal"
+            android:requiresFadingEdge="horizontal">
 
-            <HorizontalScrollView
-              android:id="@+id/scroll_horiz_main_beats"
-              android:layout_width="0dp"
-              android:layout_height="match_parent"
-              android:layout_weight="1"
-              android:overScrollMode="ifContentScrolls"
-              android:scrollbars="horizontal"
-              android:scrollbarThumbHorizontal="@drawable/shape_scrollbar_rounded"
-              android:fadingEdge="horizontal"
-              android:requiresFadingEdge="horizontal">
-
-              <LinearLayout
-                android:id="@+id/linear_main_beats"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:orientation="horizontal"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="4dp" />
-
-            </HorizontalScrollView>
-
-            <com.google.android.material.button.MaterialButton
-              android:id="@+id/button_main_add_beat"
-              style="@style/Widget.Tack.Button.IconButton.Tonal"
-              android:contentDescription="@string/action_add_beat"
-              android:layout_marginEnd="4dp"
-              android:layout_marginTop="4dp"
-              android:layout_marginBottom="4dp"
-              app:icon="@drawable/ic_rounded_add_anim"
-              app:iconTint="?attr/colorOnSurface"
-              app:rippleColor="@color/selector_tonal_button_ripple"
-              app:backgroundTint="@color/transparent" />
-
-          </LinearLayout>
-
-          <LinearLayout
-            android:id="@+id/linear_main_subs_bg"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="2dp"
-            android:background="@drawable/shape_subdivisions_bg">
-
-            <com.google.android.material.button.MaterialButton
-              android:id="@+id/button_main_remove_subdivision"
-              style="@style/Widget.Tack.Button.IconButton.Standard"
-              android:contentDescription="@string/action_remove_sub"
-              android:layout_marginStart="4dp"
-              android:layout_marginTop="4dp"
-              android:layout_marginBottom="4dp"
-              app:icon="@drawable/ic_rounded_remove_anim"
-              app:iconTint="?attr/colorOnSurface"
-              app:rippleColor="@color/selector_tonal_button_ripple"
-              app:backgroundTint="@color/transparent" />
-
-            <HorizontalScrollView
-              android:id="@+id/scroll_horiz_main_subs"
-              android:layout_width="0dp"
-              android:layout_height="match_parent"
-              android:layout_weight="1"
-              android:overScrollMode="ifContentScrolls"
-              android:scrollbars="horizontal"
-              android:scrollbarThumbHorizontal="@drawable/shape_scrollbar_rounded"
-              android:fadingEdge="horizontal"
-              android:requiresFadingEdge="horizontal">
-
-              <LinearLayout
-                android:id="@+id/linear_main_subs"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:orientation="horizontal"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="4dp" />
-
-            </HorizontalScrollView>
-
-            <com.google.android.material.button.MaterialButton
-              android:id="@+id/button_main_add_subdivision"
-              style="@style/Widget.Tack.Button.IconButton.Standard"
-              android:contentDescription="@string/action_add_sub"
-              android:layout_marginEnd="4dp"
-              android:layout_marginTop="4dp"
-              android:layout_marginBottom="4dp"
-              app:icon="@drawable/ic_rounded_add_anim"
-              app:iconTint="?attr/colorOnSurface"
-              app:rippleColor="@color/selector_tonal_button_ripple"
-              app:backgroundTint="@color/transparent" />
-
-          </LinearLayout>
-
-          <com.google.android.material.slider.Slider
-            android:id="@+id/slider_main_timer"
-            style="@style/Widget.Tack.Slider.Small"
-            android:layout_marginTop="8dp"
-            android:valueFrom="0"
-            android:valueTo="4"
-            android:stepSize="0"
-            app:labelBehavior="gone" />
-
-          <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp">
-
-            <include
-              android:id="@+id/chip_main_timer_current"
-              layout="@layout/partial_chip_numbers"
+            <LinearLayout
+              android:id="@+id/linear_main_beats"
               android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="start" />
+              android:layout_height="48dp"
+              android:orientation="horizontal"
+              android:layout_gravity="center_horizontal"
+              android:layout_marginTop="4dp"
+              android:layout_marginBottom="4dp" />
 
-            <include
-              android:id="@+id/chip_main_elapsed_time"
-              layout="@layout/partial_chip_numbers"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="center_horizontal" />
+          </HorizontalScrollView>
 
-            <include
-              android:id="@+id/chip_main_timer_total"
-              layout="@layout/partial_chip_numbers"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_gravity="end" />
-
-          </FrameLayout>
+          <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_main_add_beat"
+            style="@style/Widget.Tack.Button.IconButton.Tonal"
+            android:contentDescription="@string/action_add_beat"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            app:icon="@drawable/ic_rounded_add_anim"
+            app:iconTint="?attr/colorOnSurface"
+            app:rippleColor="@color/selector_tonal_button_ripple"
+            app:backgroundTint="@color/transparent" />
 
         </LinearLayout>
 
-      </ScrollView>
-
-      <FrameLayout
-        android:id="@+id/frame_main_songs_container"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <com.google.android.material.divider.MaterialDivider
-          android:id="@+id/divider_main_songs"
+        <LinearLayout
+          android:id="@+id/linear_main_subs_bg"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:layout_gravity="top"
-          app:dividerInsetStart="16dp"
-          app:dividerInsetEnd="16dp" />
+          android:orientation="horizontal"
+          android:layout_marginStart="16dp"
+          android:layout_marginEnd="16dp"
+          android:layout_marginTop="2dp"
+          android:background="@drawable/shape_subdivisions_bg">
+
+          <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_main_remove_subdivision"
+            style="@style/Widget.Tack.Button.IconButton.Standard"
+            android:contentDescription="@string/action_remove_sub"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            app:icon="@drawable/ic_rounded_remove_anim"
+            app:iconTint="?attr/colorOnSurface"
+            app:rippleColor="@color/selector_tonal_button_ripple"
+            app:backgroundTint="@color/transparent" />
+
+          <HorizontalScrollView
+            android:id="@+id/scroll_horiz_main_subs"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:overScrollMode="ifContentScrolls"
+            android:scrollbars="horizontal"
+            android:scrollbarThumbHorizontal="@drawable/shape_scrollbar_rounded"
+            android:fadingEdge="horizontal"
+            android:requiresFadingEdge="horizontal">
+
+            <LinearLayout
+              android:id="@+id/linear_main_subs"
+              android:layout_width="wrap_content"
+              android:layout_height="48dp"
+              android:orientation="horizontal"
+              android:layout_gravity="center_horizontal"
+              android:layout_marginTop="4dp"
+              android:layout_marginBottom="4dp" />
+
+          </HorizontalScrollView>
+
+          <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_main_add_subdivision"
+            style="@style/Widget.Tack.Button.IconButton.Standard"
+            android:contentDescription="@string/action_add_sub"
+            android:layout_marginEnd="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            app:icon="@drawable/ic_rounded_add_anim"
+            app:iconTint="?attr/colorOnSurface"
+            app:rippleColor="@color/selector_tonal_button_ripple"
+            app:backgroundTint="@color/transparent" />
+
+        </LinearLayout>
+
+        <xyz.zedler.patrick.tack.view.TimerView
+          android:id="@+id/timer_main"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content" />
 
         <xyz.zedler.patrick.tack.view.SongPickerView
           android:id="@+id/song_picker_main"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_gravity="center_vertical"
-          android:layout_marginTop="2dp"
-          android:layout_marginBottom="4dp" />
+          android:layout_marginStart="16dp"
+          android:layout_marginEnd="16dp"
+          android:layout_marginTop="8dp"
+          android:layout_marginBottom="16dp" />
 
-      </FrameLayout>
+      </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
     <androidx.constraintlayout.widget.ConstraintLayout
       android:id="@+id/container_main_end"
@@ -310,7 +249,7 @@
       android:layout_height="match_parent"
       app:layout_constraintTop_toTopOf="parent"
       app:layout_constraintBottom_toBottomOf="parent"
-      app:layout_constraintStart_toEndOf="@id/container_main_start"
+      app:layout_constraintStart_toEndOf="@id/scroll_main_start"
       app:layout_constraintEnd_toEndOf="parent">
 
       <ImageView
