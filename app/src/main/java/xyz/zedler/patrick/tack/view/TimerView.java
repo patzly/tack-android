@@ -208,8 +208,14 @@ public class TimerView extends FrameLayout {
     if (binding == null) {
       return;
     }
-    binding.chipTimerTotal.textChipNumbers.setText(getMetronomeUtil().getTotalTimeString());
-    binding.chipTimerCurrent.textChipNumbers.setText(getMetronomeUtil().getCurrentTimerString());
+    String totalTime = getMetronomeUtil().getTotalTimeString();
+    if (!totalTime.isEmpty()) {
+      binding.chipTimerTotal.textChipNumbers.setText(getMetronomeUtil().getTotalTimeString());
+    }
+    String currentTime = getMetronomeUtil().getCurrentTimerString();
+    if (!currentTime.isEmpty()) {
+      binding.chipTimerCurrent.textChipNumbers.setText(getMetronomeUtil().getCurrentTimerString());
+    }
 
     boolean isElapsedActive = getMetronomeUtil().isElapsedActive();
     setElapsedExpanded(isElapsedActive, false);

@@ -83,7 +83,10 @@ public class SongPickerView extends FrameLayout {
   private final Context context;
   private final boolean isRtl;
   private final int heightCollapsed, heightExpanded, heightExpandedMargin;
-  private final int radiusCollapsed, radiusExpanded;
+  private final int paddingStartCollapsed, paddingStartExpanded;
+  private final int minHeightCollapsed, minHeightExpanded;
+  private final int colorBgCollapsed, colorBgExpanded;
+  private final int colorFgCollapsed, colorFgExpanded;
   private final ViewUtil viewUtil;
   private MainActivity activity;
   private SongPickerListener listener;
@@ -108,11 +111,20 @@ public class SongPickerView extends FrameLayout {
     isRtl = UiUtil.isLayoutRtl(context);
     songsWithParts = Collections.emptyList();
 
-    heightCollapsed = UiUtil.dpToPx(context, 48 + 8 * 2); // height + vertical margin
+    paddingStartCollapsed = UiUtil.dpToPx(context, 24 + 24 + 8);
+    paddingStartExpanded = UiUtil.dpToPx(context, 8 + 48 + 4);
+    minHeightCollapsed = UiUtil.dpToPx(context, 56);
+    minHeightExpanded = UiUtil.dpToPx(context, 48 + 8 * 2);
+
+    heightCollapsed = minHeightCollapsed;
     heightExpanded = UiUtil.dpToPx(context, 48 * 3 + 8 * 2);
     heightExpandedMargin = UiUtil.dpToPx(context, 32);
-    radiusCollapsed = UiUtil.dpToPx(context, 20);
-    radiusExpanded = UiUtil.dpToPx(context, 32);
+
+    colorBgCollapsed = ResUtil.getColor(context, R.attr.colorSecondaryContainer);
+    colorBgExpanded = ResUtil.getColor(context, R.attr.colorSurfaceContainer);
+
+    colorFgCollapsed = ResUtil.getColor(context, R.attr.colorOnSecondaryContainer);
+    colorFgExpanded = ResUtil.getColor(context, R.attr.colorOnSurface);
   }
 
   public void setActivity(MainActivity activity) {
@@ -192,9 +204,12 @@ public class SongPickerView extends FrameLayout {
     if (animated) {
       setRecyclerClicksEnabled(false);
       if (recyclerVisible) {
+        binding.buttonSongPickerCollapse.setVisibility(VISIBLE);
         binding.buttonGroupSongPickerTools.setVisibility(VISIBLE);
         binding.recyclerSongPicker.setVisibility(VISIBLE);
         binding.buttonSongPickerAddSong.setVisibility(VISIBLE);
+      } else if (!expanded) {
+        binding.imageSongPickerIcon.setVisibility(VISIBLE);
       }
       if (springAnimationExpand == null) {
         springAnimationExpand =
@@ -223,13 +238,11 @@ public class SongPickerView extends FrameLayout {
 
   private void setAnimationEndState() {
     boolean recyclerVisible = expanded && currentSongId.equals(Constants.SONG_ID_DEFAULT);
-    ViewUtil.setTooltipText(
-        binding.buttonSongPickerExpand,
-        expanded ? R.string.action_collapse : R.string.action_expand
-    );
-    binding.buttonSongPickerExpand.setContentDescription(
+    binding.frameSongPickerTop.setContentDescription(
         context.getString(expanded ? R.string.action_collapse : R.string.action_expand)
     );
+    binding.buttonSongPickerCollapse.setVisibility(recyclerVisible ? VISIBLE : GONE);
+    binding.imageSongPickerIcon.setVisibility(!expanded ? VISIBLE : GONE);
     binding.buttonGroupSongPickerTools.setVisibility(recyclerVisible ? VISIBLE : GONE);
     binding.recyclerSongPicker.setVisibility(recyclerVisible ? VISIBLE : GONE);
     setRecyclerClicksEnabled(recyclerVisible);
@@ -241,23 +254,40 @@ public class SongPickerView extends FrameLayout {
   }
 
   private void initPickerSize() {
-    OnClickListener onClickListener = v -> {
+    binding.buttonSongPickerCollapse.setOnClickListener(v -> {
+      if (listener != null) {
+        listener.onExpandCollapseClicked(false);
+      }
+      setExpanded(false, true);
+    });
+    ViewUtil.setTooltipText(binding.buttonSongPickerCollapse, R.string.action_collapse);
+    ViewCompat.setAccessibilityDelegate(
+        binding.frameSongPickerTop,
+        new AccessibilityDelegateCompat() {
+          @Override
+          public void onInitializeAccessibilityNodeInfo(
+              @NonNull View host,
+              @NonNull AccessibilityNodeInfoCompat info
+          ) {
+            super.onInitializeAccessibilityNodeInfo(host, info);
+            info.setClassName(Button.class.getName());
+          }
+        });
+    binding.frameSongPickerTop.setOnClickListener(v -> {
       if (listener != null) {
         listener.onExpandCollapseClicked(expanded);
       }
       setExpanded(!this.expanded, true);
-    };
-    binding.buttonSongPickerExpand.setOnClickListener(onClickListener);
-    binding.linearSongPickerTop.setOnClickListener(onClickListener);
-    binding.linearSongPickerTop.getViewTreeObserver().addOnGlobalLayoutListener(
+    });
+    binding.frameSongPickerTop.getViewTreeObserver().addOnGlobalLayoutListener(
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override
           public void onGlobalLayout() {
-            widthMin = binding.linearSongPickerTop.getWidth();
+            widthMin = binding.frameSongPickerTop.getWidth();
             boolean isDefaultSong = currentSongId.equals(Constants.SONG_ID_DEFAULT);
             setExpanded(!isDefaultSong, false);
-            if (binding.linearSongPickerTop.getViewTreeObserver().isAlive()) {
-              binding.linearSongPickerTop.getViewTreeObserver().removeOnGlobalLayoutListener(
+            if (binding.frameSongPickerTop.getViewTreeObserver().isAlive()) {
+              binding.frameSongPickerTop.getViewTreeObserver().removeOnGlobalLayoutListener(
                   this
               );
             }
@@ -670,13 +700,28 @@ public class SongPickerView extends FrameLayout {
 
   private void setExpandFraction(float fraction) {
     expandFraction = fraction;
-    binding.buttonSongPickerExpand.setRotation(90 * fraction);
+    binding.cardSongPickerContainer.setCardBackgroundColor(
+        ColorUtils.blendARGB(colorBgCollapsed, colorBgExpanded, fraction)
+    );
+    binding.textSongPickerTop.setTextColor(
+        ColorUtils.blendARGB(colorFgCollapsed, colorFgExpanded, fraction)
+    );
+    int paddingStart =
+        (int) (paddingStartCollapsed + (paddingStartExpanded - paddingStartCollapsed) * fraction);
+    binding.frameSongPickerTop.setPadding(
+        isRtl ? binding.frameSongPickerTop.getPaddingLeft() : paddingStart,
+        binding.frameSongPickerTop.getPaddingTop(),
+        isRtl ? paddingStart : binding.frameSongPickerTop.getPaddingRight(),
+        binding.frameSongPickerTop.getPaddingBottom()
+    );
+    binding.frameSongPickerTop.setMinimumHeight(
+        (int) (minHeightCollapsed + (minHeightExpanded - minHeightCollapsed) * fraction)
+    );
+    binding.buttonSongPickerCollapse.setAlpha(fraction);
+    binding.imageSongPickerIcon.setAlpha(1 - fraction);
     binding.buttonGroupSongPickerTools.setAlpha(fraction);
     binding.recyclerSongPicker.setAlpha(fraction);
     binding.buttonSongPickerAddSong.setAlpha(fraction);
-    binding.cardSongPickerContainer.setRadius(
-        radiusCollapsed + (radiusExpanded - radiusCollapsed) * fraction
-    );
     ViewGroup.LayoutParams lp = getLayoutParams();
     lp.width = (int) (widthMin + (widthMax - widthMin) * fraction);
     lp.height = (int) (heightCollapsed + (heightExpanded - heightCollapsed) * fraction);

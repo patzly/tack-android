@@ -33,36 +33,48 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
-      android:id="@+id/linear_song_picker_top"
+    <ImageView
+      android:id="@+id/image_song_picker_icon"
+      style="@style/Widget.Tack.ImageView.Icon"
+      android:src="@drawable/ic_rounded_queue_music"
+      android:layout_gravity="top|start"
+      android:layout_marginTop="16dp"
+      android:layout_marginStart="24dp"
+      app:tint="?attr/colorOnSecondaryContainer"
+      tools:ignore="ContentDescription" />
+
+    <FrameLayout
+      android:id="@+id/frame_song_picker_top"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:orientation="horizontal"
-      android:layout_gravity="top"
-      android:paddingStart="8dp"
+      android:layout_gravity="top|start"
+      android:minHeight="56dp"
+      android:paddingStart="56dp"
       android:paddingEnd="24dp"
-      android:paddingTop="8dp"
-      android:paddingBottom="8dp">
-
-      <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_song_picker_expand"
-        style="@style/Widget.Tack.Button.IconButton.Standard"
-        android:contentDescription="@string/action_expand"
-        android:layout_gravity="start"
-        app:iconTint="?attr/colorOnSurfaceVariant"
-        app:icon="@drawable/ic_rounded_expand_circle_right" />
+      android:clickable="true"
+      android:focusable="true">
 
       <TextView
+        android:id="@+id/text_song_picker_top"
         style="@style/Widget.Tack.TextView.LabelLarge"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginStart="4dp"
-        android:gravity="center_vertical"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:textColor="?attr/colorOnSurface"
         android:singleLine="true"
         android:text="@string/title_songs"/>
 
-    </LinearLayout>
+    </FrameLayout>
+
+    <com.google.android.material.button.MaterialButton
+      android:id="@+id/button_song_picker_collapse"
+      style="@style/Widget.Tack.Button.IconButton.Standard"
+      android:contentDescription="@string/action_collapse"
+      android:layout_gravity="top|start"
+      android:layout_marginStart="8dp"
+      android:layout_marginTop="8dp"
+      app:iconTint="?attr/colorOnSurfaceVariant"
+      app:icon="@drawable/ic_rounded_expand_circle_up" />
 
     <com.google.android.material.button.MaterialButtonGroup
       android:id="@+id/button_group_song_picker_tools"
