@@ -147,6 +147,10 @@
   <string name="action_next">下一頁</string>
   <string name="action_more">更多</string>
   <string name="action_edit">編輯</string>
+  <string name="action_expand">展開</string>
+  <string name="action_collapse">收合</string>
+  <string name="action_show_list">顯示為清單</string>
+
   <!-- MESSAGES -->
 
   <string name="msg_feedback">一款優秀的應用程式需要花費大量的時間和獲取使用者的意見反映。</string>
@@ -351,6 +355,8 @@
   <string name="settings_flash_screen_description">在每個節拍</string>
   <string name="settings_flash_screen_off">關閉</string>
   <string name="settings_flash_screen_subtle">細微</string>
+  <string name="settings_flash_screen_strong">強</string>
+
   <string name="settings_keep_awake">保持螢幕喚醒</string>
   <string name="settings_keep_awake_description">可能會使用更多電量</string>
   <string name="settings_keep_awake_always">總是</string>
