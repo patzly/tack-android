@@ -149,6 +149,7 @@
   <string name="action_next">Weiter</string>
   <string name="action_more">Mehr</string>
   <string name="action_edit">Bearbeiten</string>
+  <string name="action_expand">Ausklappen</string>
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Eine großartige App benötigt viel Zeit und lebt von der Rückmeldungen ihrer Nutzer.</string>
