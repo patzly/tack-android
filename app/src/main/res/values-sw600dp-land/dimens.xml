@@ -26,6 +26,6 @@
 
   <dimen name="tempo_tap_size">170dp</dimen>
 
-  <dimen name="controls_bottom_margin_bottom">32dp</dimen>
+  <dimen name="controls_bottom_margin_bottom">16dp</dimen>
 
 </resources>

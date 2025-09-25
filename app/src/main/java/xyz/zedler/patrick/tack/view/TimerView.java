@@ -22,18 +22,23 @@ package xyz.zedler.patrick.tack.view;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.dynamicanimation.animation.FloatPropertyCompat;
+import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import com.google.android.material.motion.MotionUtils;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.slider.Slider.OnSliderTouchListener;
 import xyz.zedler.patrick.tack.Constants;
@@ -41,13 +46,21 @@ import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.ViewTimerBinding;
 import xyz.zedler.patrick.tack.util.MetronomeUtil;
+import xyz.zedler.patrick.tack.util.UiUtil;
 
 public class TimerView extends FrameLayout {
 
+  private static final String TAG = TimerView.class.getSimpleName();
+
   private final ViewTimerBinding binding;
+  private final int sliderHeightExpanded;
   private MainActivity activity;
   private TimerListener listener;
   private ValueAnimator progressAnimator, progressTransitionAnimator;
+  private int displayHeightExpanded;
+  private float timerExpandFraction, elapsedExpandFraction;
+  private boolean timerExpanded, elapsedExpanded;
+  private SpringAnimation springAnimationTimerExpand, springAnimationElapsedExpand;
 
   public TimerView(Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
@@ -101,14 +114,16 @@ public class TimerView extends FrameLayout {
         listener.onTotalTimeClick();
       }
     });
-  }
 
-  public void setListener(TimerListener listener) {
-    this.listener = listener;
+    sliderHeightExpanded = UiUtil.dpToPx(context, 48);
   }
 
   public void setMainActivity(MainActivity activity) {
     this.activity = activity;
+  }
+
+  public void setListener(TimerListener listener) {
+    this.listener = listener;
   }
 
   public void setBigText(boolean bigText) {
@@ -142,7 +157,9 @@ public class TimerView extends FrameLayout {
             if (valueFrom < valueTo) {
               binding.sliderTimer.setValueTo(valueTo);
             }
+            displayHeightExpanded = binding.frameTimerDisplayContainer.getHeight();
             updateControls(
+                false,
                 getMetronomeUtil().isPlaying() && getMetronomeUtil().isTimerActive(),
                 true
             );
@@ -155,13 +172,12 @@ public class TimerView extends FrameLayout {
         });
   }
 
-  public void updateControls(boolean animated, boolean withTransition) {
+  public void updateControls(
+      boolean animateVisibility, boolean animateProgress, boolean withTransition
+  ) {
     boolean isPlaying = getMetronomeUtil().isPlaying();
     boolean isTimerActive = getMetronomeUtil().isTimerActive();
-    int visibility = isTimerActive ? View.VISIBLE : View.GONE;
-    binding.chipTimerCurrent.frameChipNumbersContainer.setVisibility(visibility);
-    binding.chipTimerTotal.frameChipNumbersContainer.setVisibility(visibility);
-    binding.sliderTimer.setVisibility(visibility);
+    setTimerExpanded(isTimerActive, animateVisibility);
     binding.sliderTimer.setContinuousModeTickCount(getMetronomeUtil().getTimerDuration() + 1);
     // Check if timer is currently running and if metronome is from service
     if (!getMetronomeUtil().isFromService()) {
@@ -175,11 +191,11 @@ public class TimerView extends FrameLayout {
         startProgressTransition(fraction);
       }
       updateProgress(
-          1, getMetronomeUtil().getTimerIntervalRemaining(), animated, true
+          1, getMetronomeUtil().getTimerIntervalRemaining(), animateProgress, true
       );
     } else {
       float timerProgress = getMetronomeUtil().getTimerProgress();
-      if (animated && getMetronomeUtil().isFromService()) {
+      if (animateProgress && getMetronomeUtil().isFromService()) {
         startProgressTransition(timerProgress);
       } else if (getMetronomeUtil().isFromService()) {
         updateProgress(timerProgress, 0, false, false);
@@ -196,9 +212,7 @@ public class TimerView extends FrameLayout {
     binding.chipTimerCurrent.textChipNumbers.setText(getMetronomeUtil().getCurrentTimerString());
 
     boolean isElapsedActive = getMetronomeUtil().isElapsedActive();
-    binding.chipTimerElapsed.frameChipNumbersContainer.setVisibility(
-        isElapsedActive ? View.VISIBLE : View.GONE
-    );
+    setElapsedExpanded(isElapsedActive, false);
     binding.chipTimerElapsed.textChipNumbers.setText(getMetronomeUtil().getElapsedTimeString());
   }
 
@@ -269,6 +283,136 @@ public class TimerView extends FrameLayout {
     }
   }
 
+  @SuppressLint("PrivateResource")
+  private void setTimerExpanded(boolean expanded, boolean animated) {
+    this.timerExpanded = expanded;
+    if (springAnimationTimerExpand != null) {
+      springAnimationTimerExpand.cancel();
+    }
+    if (animated) {
+      binding.sliderTimer.setVisibility(VISIBLE);
+      binding.chipTimerCurrent.frameChipNumbersContainer.setVisibility(VISIBLE);
+      binding.chipTimerTotal.frameChipNumbersContainer.setVisibility(VISIBLE);
+      if (springAnimationTimerExpand == null) {
+        springAnimationTimerExpand =
+            new SpringAnimation(this, TIMER_EXPAND_FRACTION)
+                .setSpring(
+                    MotionUtils.resolveThemeSpringForce(
+                        getContext(),
+                        R.attr.motionSpringDefaultSpatial,
+                        R.style.Motion_Material3_Spring_Standard_Default_Spatial)
+                )
+                //.setSpring(new SpringForce().setStiffness(20f).setDampingRatio(0.9f))
+                .setMinimumVisibleChange(0.01f)
+                .addEndListener(
+                    (animation, canceled, value, velocity) -> {
+                      if (!canceled) {
+                        setTimerExpandAnimationEndState();
+                      }
+                    });
+      }
+      springAnimationTimerExpand.animateToFinalPosition(expanded ? 1 : 0);
+    } else {
+      setTimerExpandFraction(expanded ? 1 : 0);
+      setTimerExpandAnimationEndState();
+    }
+  }
+
+  private void setTimerExpandAnimationEndState() {
+    binding.sliderTimer.setAlpha(timerExpanded ? 1 : 0);
+    binding.sliderTimer.setVisibility(timerExpanded ? VISIBLE : GONE);
+    binding.chipTimerCurrent.frameChipNumbersContainer.setAlpha(timerExpanded ? 1 : 0);
+    binding.chipTimerCurrent.frameChipNumbersContainer.setVisibility(
+        timerExpanded ? VISIBLE : INVISIBLE
+    );
+    binding.chipTimerCurrent.frameChipNumbersContainer.setClickable(timerExpanded);
+    binding.chipTimerTotal.frameChipNumbersContainer.setAlpha(timerExpanded ? 1 : 0);
+    binding.chipTimerTotal.frameChipNumbersContainer.setVisibility(
+        timerExpanded ? VISIBLE : INVISIBLE
+    );
+    binding.chipTimerTotal.frameChipNumbersContainer.setClickable(timerExpanded);
+  }
+
+  public float getTimerExpandFraction() {
+    return timerExpandFraction;
+  }
+
+  public void setTimerExpandFraction(float fraction) {
+    timerExpandFraction = fraction;
+    binding.chipTimerCurrent.frameChipNumbersContainer.setAlpha(fraction);
+    binding.chipTimerTotal.frameChipNumbersContainer.setAlpha(fraction);
+    binding.sliderTimer.setAlpha(fraction);
+    binding.sliderTimer.setPivotY(0);
+    binding.sliderTimer.setScaleY(fraction);
+    ViewGroup.LayoutParams lp = binding.frameTimerSliderContainer.getLayoutParams();
+    lp.height = (int) (sliderHeightExpanded * fraction);
+    binding.frameTimerSliderContainer.setLayoutParams(lp);
+    if (listener != null) {
+      listener.onHeightChanged();
+    }
+  }
+
+  public int getSliderHeightExpanded() {
+    return sliderHeightExpanded;
+  }
+
+  @SuppressLint("PrivateResource")
+  private void setElapsedExpanded(boolean expanded, boolean animated) {
+    this.elapsedExpanded = expanded;
+    if (springAnimationElapsedExpand != null) {
+      springAnimationElapsedExpand.cancel();
+    }
+    if (animated) {
+      binding.chipTimerElapsed.frameChipNumbersContainer.setVisibility(VISIBLE);
+      if (springAnimationElapsedExpand == null) {
+        springAnimationElapsedExpand =
+            new SpringAnimation(this, ELAPSED_EXPAND_FRACTION)
+                .setSpring(
+                    MotionUtils.resolveThemeSpringForce(
+                        getContext(),
+                        R.attr.motionSpringDefaultSpatial,
+                        R.style.Motion_Material3_Spring_Standard_Default_Spatial)
+                )
+                //.setSpring(new SpringForce().setStiffness(30f).setDampingRatio(0.9f))
+                .setMinimumVisibleChange(0.01f)
+                .addEndListener(
+                    (animation, canceled, value, velocity) -> {
+                      if (!canceled) {
+                        setElapsedExpandAnimationEndState();
+                      }
+                    });
+      }
+      springAnimationElapsedExpand.animateToFinalPosition(expanded ? 1 : 0);
+    } else {
+      setElapsedExpandFraction(expanded ? 1 : 0);
+      setElapsedExpandAnimationEndState();
+    }
+  }
+
+  private void setElapsedExpandAnimationEndState() {
+    binding.chipTimerElapsed.frameChipNumbersContainer.setAlpha(elapsedExpanded ? 1 : 0);
+    binding.chipTimerElapsed.frameChipNumbersContainer.setVisibility(
+        elapsedExpanded ? VISIBLE : INVISIBLE
+    );
+    binding.chipTimerElapsed.frameChipNumbersContainer.setClickable(elapsedExpanded);
+  }
+
+  public float getElapsedExpandFraction() {
+    return elapsedExpandFraction;
+  }
+
+  public void setElapsedExpandFraction(float fraction) {
+    elapsedExpandFraction = fraction;
+    binding.chipTimerElapsed.frameChipNumbersContainer.setAlpha(fraction);
+    if (listener != null) {
+      listener.onHeightChanged();
+    }
+  }
+
+  public int getDisplayHeightExpanded() {
+    return displayHeightExpanded;
+  }
+
   private MetronomeUtil getMetronomeUtil() {
     return activity.getMetronomeUtil();
   }
@@ -277,5 +421,31 @@ public class TimerView extends FrameLayout {
     void onCurrentTimeClick();
     void onElapsedTimeClick();
     void onTotalTimeClick();
+    void onHeightChanged();
   }
+
+  private static final FloatPropertyCompat<TimerView> TIMER_EXPAND_FRACTION =
+      new FloatPropertyCompat<>("timerExpandFraction") {
+        @Override
+        public float getValue(TimerView delegate) {
+          return delegate.getTimerExpandFraction();
+        }
+
+        @Override
+        public void setValue(TimerView delegate, float value) {
+          delegate.setTimerExpandFraction(value);
+        }
+      };
+  private static final FloatPropertyCompat<TimerView> ELAPSED_EXPAND_FRACTION =
+      new FloatPropertyCompat<>("elapsedExpandFraction") {
+        @Override
+        public float getValue(TimerView delegate) {
+          return delegate.getElapsedExpandFraction();
+        }
+
+        @Override
+        public void setValue(TimerView delegate, float value) {
+          delegate.setElapsedExpandFraction(value);
+        }
+      };
 }

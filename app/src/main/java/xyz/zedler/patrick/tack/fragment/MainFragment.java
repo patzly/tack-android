@@ -203,15 +203,6 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     optionsBadge.setVerticalOffset(UiUtil.dpToPx(activity, 16));
     optionsBadge.setHorizontalOffset(UiUtil.dpToPx(activity, 16));
 
-    binding.linearMainTop.post(() -> {
-      if (binding == null) {
-        return;
-      }
-      LayoutTransition transition = new LayoutTransition();
-      transition.setDuration(Constants.ANIM_DURATION_SHORT);
-      binding.linearMainTop.setLayoutTransition(transition);
-    });
-
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
     binding.linearMainBeats.post(() -> {
       if (binding == null) {
@@ -253,6 +244,11 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       public void onTotalTimeClick() {
         dialogUtilTimer.show();
         performHapticClick();
+      }
+
+      @Override
+      public void onHeightChanged() {
+        updateTempoPickerTranslationAndScale();
       }
     });
 
@@ -351,7 +347,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     optionsUtil = new OptionsUtil(
         activity, binding,
         () -> updateOptions(true),
-        () -> binding.timerMain.updateControls(true, true),
+        () -> binding.timerMain.updateControls(
+            true, true, true
+        ),
         () -> {
           updateSubs(getMetronomeUtil().getConfig().getSubdivisions());
           updateSubControls(true);
@@ -630,7 +628,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
   @Override
   public void onResume() {
     super.onResume();
-    binding.timerMain.updateControls(true, true);
+    binding.timerMain.updateControls(true, true, true);
   }
 
   @Override
@@ -927,7 +925,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       }
       binding.timerMain.stopProgressTransition();
       binding.timerMain.stopProgress();
-      binding.timerMain.updateControls(true, true);
+      binding.timerMain.updateControls(true, true, true);
     });
   }
 
@@ -947,7 +945,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       if (binding == null) {
         return;
       }
-      binding.timerMain.updateControls(true, withTransition);
+      binding.timerMain.updateControls(true, true, withTransition);
     });
   }
 
@@ -963,7 +961,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       updateSubs(getMetronomeUtil().getConfig().getSubdivisions());
       updateSubControls(true);
 
-      binding.timerMain.updateControls(true, true);
+      binding.timerMain.updateControls(true, true, true);
       updateOptions(true);
     });
   }
@@ -1298,7 +1296,8 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
             }
 
             // bottom of top controls where timer height will be added to
-            topControlsBottomMin = binding.linearMainSubsBg.getBottom();
+            topControlsBottomMin =
+                binding.linearMainSubsBg.getBottom() + UiUtil.dpToPx(activity, 24);
 
             if (binding.coordinatorContainer.getViewTreeObserver().isAlive()) {
               binding.coordinatorContainer.getViewTreeObserver().removeOnGlobalLayoutListener(
@@ -1310,32 +1309,42 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
   }
 
   private void updateTempoPickerTranslationAndScale() {
-    if (binding == null) {
+    if (binding == null || binding.frameMainBottom.getTop() == 0) {
       return;
     }
     float fraction = binding.songPickerMain.getExpandFraction();
-    int expandedHeight = binding.songPickerMain.getHeightExpanded();
-    if (expandedHeight > songPickerAvailableHeight) {
-      int overlap = expandedHeight - songPickerAvailableHeight;
+    int songPickerHeightExpanded = binding.songPickerMain.getHeightExpanded();
+    if (songPickerHeightExpanded > songPickerAvailableHeight) {
+      int songPickerOverlap = songPickerHeightExpanded - songPickerAvailableHeight;
       int tempoPickerCurrentTop = binding.frameMainCenter.getTop();
-      int tempoPickerTranslatedTop = tempoPickerCurrentTop - overlap;
-      if (tempoPickerTranslatedTop < topControlsBottomMin) {
+      int tempoPickerTranslatedTop = tempoPickerCurrentTop - songPickerOverlap;
+      int timerSliderHeight = binding.timerMain.getSliderHeightExpanded();
+      int timerSliderHeightCurrent = (int) (timerSliderHeight *
+          binding.timerMain.getTimerExpandFraction());
+      int timerDisplayHeight = binding.timerMain.getDisplayHeightExpanded();
+      int timerDisplayHeightCurrent = (int) Math.max(
+          timerDisplayHeight * binding.timerMain.getTimerExpandFraction(),
+          timerDisplayHeight * binding.timerMain.getElapsedExpandFraction()
+      );
+      int topControlsBottom =
+          topControlsBottomMin + timerSliderHeightCurrent + timerDisplayHeightCurrent;
+      if (topControlsBottom > tempoPickerTranslatedTop) {
         int targetHeight =
-            binding.frameMainBottom.getTop() - topControlsBottomMin - expandedHeight;
+            binding.frameMainBottom.getTop() - topControlsBottom - songPickerHeightExpanded;
         int currentWidth = binding.frameMainCenter.getWidth();
         int currentHeight = binding.frameMainCenter.getHeight();
 
         float scale = 1 + (((float) targetHeight / currentHeight) - 1) * fraction;
-        float translationY = (topControlsBottomMin - tempoPickerCurrentTop) * fraction;
+        if (Float.isNaN(scale)) {
+          scale = 1f;
+        }
+        int scaleCompensation = (currentHeight - targetHeight) / 2;
+        float translationY = (-songPickerOverlap + scaleCompensation) * fraction;
 
-        binding.frameMainCenter.setPivotY(0f);
-        binding.frameMainCenter.setPivotX(currentWidth / 2f);
         binding.frameMainCenter.setScaleX(scale);
         binding.frameMainCenter.setScaleY(scale);
         binding.frameMainCenter.setTranslationY(translationY);
 
-        binding.buttonGroupMainLess.setPivotY(0f);
-        binding.buttonGroupMainLess.setPivotX(binding.buttonGroupMainLess.getWidth() / 2f);
         binding.buttonGroupMainLess.setScaleX(scale);
         binding.buttonGroupMainLess.setScaleY(scale);
         binding.buttonGroupMainLess.setTranslationY(translationY);
@@ -1343,18 +1352,16 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         int translationX = (currentWidth - targetWidth) / 4;
         binding.buttonGroupMainLess.setTranslationX(isRtl ? -translationX : translationX);
 
-        binding.buttonGroupMainMore.setPivotY(0f);
-        binding.buttonGroupMainMore.setPivotX(binding.buttonGroupMainMore.getWidth() / 2f);
         binding.buttonGroupMainMore.setScaleX(scale);
         binding.buttonGroupMainMore.setScaleY(scale);
         binding.buttonGroupMainMore.setTranslationY(translationY);
         binding.buttonGroupMainMore.setTranslationX(isRtl ? translationX : -translationX);
       } else {
-        binding.frameMainCenter.setTranslationY(-overlap * fraction);
-        binding.buttonGroupMainLess.setTranslationY(-overlap * fraction);
-        binding.buttonGroupMainMore.setTranslationY(-overlap * fraction);
+        binding.frameMainCenter.setTranslationY(-songPickerOverlap * fraction);
+        binding.buttonGroupMainLess.setTranslationY(-songPickerOverlap * fraction);
+        binding.buttonGroupMainMore.setTranslationY(-songPickerOverlap * fraction);
       }
-      binding.songPickerMain.setTranslationY(-overlap * 0.5f * fraction);
+      binding.songPickerMain.setTranslationY(-songPickerOverlap * 0.5f * fraction);
     }
   }
 
