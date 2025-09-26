@@ -735,10 +735,6 @@ public class SongPickerView extends FrameLayout {
     return heightExpanded + heightExpandedMargin;
   }
 
-  public int getHeightCollapsed() {
-    return heightCollapsed;
-  }
-
   public interface SongPickerListener {
     void onCurrentSongChanged(@NonNull String currentSongId);
     void onCurrentSongClicked();

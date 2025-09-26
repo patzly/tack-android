@@ -1328,39 +1328,37 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       );
       int topControlsBottom =
           topControlsBottomMin + timerSliderHeightCurrent + timerDisplayHeightCurrent;
-      if (topControlsBottom > tempoPickerTranslatedTop) {
-        int targetHeight =
-            binding.frameMainBottom.getTop() - topControlsBottom - songPickerHeightExpanded;
-        int currentWidth = binding.frameMainCenter.getWidth();
-        int currentHeight = binding.frameMainCenter.getHeight();
-
-        float scale = 1 + (((float) targetHeight / currentHeight) - 1) * fraction;
-        if (Float.isNaN(scale)) {
-          scale = 1f;
-        }
-        int scaleCompensation = (currentHeight - targetHeight) / 2;
-        float translationY = (-songPickerOverlap + scaleCompensation) * fraction;
-
-        binding.frameMainCenter.setScaleX(scale);
-        binding.frameMainCenter.setScaleY(scale);
-        binding.frameMainCenter.setTranslationY(translationY);
-
-        binding.buttonGroupMainLess.setScaleX(scale);
-        binding.buttonGroupMainLess.setScaleY(scale);
-        binding.buttonGroupMainLess.setTranslationY(translationY);
-        int targetWidth = (int) (currentWidth * scale);
-        int translationX = (currentWidth - targetWidth) / 4;
-        binding.buttonGroupMainLess.setTranslationX(isRtl ? -translationX : translationX);
-
-        binding.buttonGroupMainMore.setScaleX(scale);
-        binding.buttonGroupMainMore.setScaleY(scale);
-        binding.buttonGroupMainMore.setTranslationY(translationY);
-        binding.buttonGroupMainMore.setTranslationX(isRtl ? translationX : -translationX);
-      } else {
-        binding.frameMainCenter.setTranslationY(-songPickerOverlap * fraction);
-        binding.buttonGroupMainLess.setTranslationY(-songPickerOverlap * fraction);
-        binding.buttonGroupMainMore.setTranslationY(-songPickerOverlap * fraction);
+      int currentWidth = binding.frameMainCenter.getWidth();
+      int currentHeight = binding.frameMainCenter.getHeight();
+      int targetHeight =
+          binding.frameMainBottom.getTop() - topControlsBottom - songPickerHeightExpanded;
+      if (targetHeight > currentHeight) {
+        targetHeight = currentHeight;
       }
+
+      float scale = 1 + (((float) targetHeight / currentHeight) - 1) * fraction;
+      if (Float.isNaN(scale)) {
+        scale = 1f;
+      }
+      int scaleCompensation = (currentHeight - targetHeight) / 2;
+      float translationY = (-songPickerOverlap + scaleCompensation) * fraction;
+
+      binding.frameMainCenter.setScaleX(scale);
+      binding.frameMainCenter.setScaleY(scale);
+      binding.frameMainCenter.setTranslationY(translationY);
+
+      binding.buttonGroupMainLess.setScaleX(scale);
+      binding.buttonGroupMainLess.setScaleY(scale);
+      binding.buttonGroupMainLess.setTranslationY(translationY);
+      int targetWidth = (int) (currentWidth * scale);
+      int translationX = (currentWidth - targetWidth) / 4;
+      binding.buttonGroupMainLess.setTranslationX(isRtl ? -translationX : translationX);
+
+      binding.buttonGroupMainMore.setScaleX(scale);
+      binding.buttonGroupMainMore.setScaleY(scale);
+      binding.buttonGroupMainMore.setTranslationY(translationY);
+      binding.buttonGroupMainMore.setTranslationX(isRtl ? translationX : -translationX);
+
       binding.songPickerMain.setTranslationY(-songPickerOverlap * 0.5f * fraction);
     }
   }

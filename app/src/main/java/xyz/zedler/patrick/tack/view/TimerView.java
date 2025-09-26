@@ -362,6 +362,22 @@ public class TimerView extends FrameLayout {
     return sliderHeightExpanded;
   }
 
+  public int getMaxHeight() {
+    return sliderHeightExpanded + displayHeightExpanded;
+  }
+
+  public int getTargetHeight() {
+    int height = 0;
+    if (timerExpanded) {
+      height += sliderHeightExpanded;
+      height += displayHeightExpanded;
+    }
+    if (!timerExpanded && elapsedExpanded) {
+      height += displayHeightExpanded;
+    }
+    return height;
+  }
+
   @SuppressLint("PrivateResource")
   private void setElapsedExpanded(boolean expanded, boolean animated) {
     this.elapsedExpanded = expanded;
