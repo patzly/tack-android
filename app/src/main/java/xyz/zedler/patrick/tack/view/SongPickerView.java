@@ -56,8 +56,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.DEF;
-import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
@@ -84,7 +82,7 @@ public class SongPickerView extends FrameLayout {
   private final boolean isRtl;
   private final int heightCollapsed, heightExpanded, heightExpandedMargin;
   private final int paddingStartCollapsed, paddingStartExpanded;
-  private final int minHeightCollapsed, minHeightExpanded;
+  private final int cornerRadiusCollapsed, cornerRadiusExpanded;
   private final int colorBgCollapsed, colorBgExpanded;
   private final int colorFgCollapsed, colorFgExpanded;
   private final ViewUtil viewUtil;
@@ -105,18 +103,16 @@ public class SongPickerView extends FrameLayout {
 
     viewUtil = new ViewUtil();
 
-    binding = ViewSongPickerBinding.inflate(
-        LayoutInflater.from(context), this, true
-    );
+    binding = ViewSongPickerBinding.inflate(LayoutInflater.from(context), this);
     isRtl = UiUtil.isLayoutRtl(context);
     songsWithParts = Collections.emptyList();
 
     paddingStartCollapsed = UiUtil.dpToPx(context, 24 + 24 + 8);
     paddingStartExpanded = UiUtil.dpToPx(context, 8 + 48 + 4);
-    minHeightCollapsed = UiUtil.dpToPx(context, 56);
-    minHeightExpanded = UiUtil.dpToPx(context, 48 + 8 * 2);
+    cornerRadiusCollapsed = UiUtil.dpToPx(context, 28);
+    cornerRadiusExpanded = UiUtil.dpToPx(context, 32);
 
-    heightCollapsed = minHeightCollapsed;
+    heightCollapsed = UiUtil.dpToPx(context, 56);
     heightExpanded = UiUtil.dpToPx(context, 48 * 3 + 8 * 2);
     heightExpandedMargin = UiUtil.dpToPx(context, 32);
 
@@ -135,15 +131,13 @@ public class SongPickerView extends FrameLayout {
     this.listener = listener;
   }
 
-  public void init(
-      int songsOrder, @NonNull String currentSongId, int currentPartIndex, List<SongWithParts> songs
-  ) {
+  public void init(@NonNull String currentSongId, int currentPartIndex, List<SongWithParts> songs) {
     if (isInitialized) {
       return;
     }
     isInitialized = true;
 
-    this.sortOrder = songsOrder;
+    this.sortOrder = activity.getMetronomeUtil().getSongsOrder();
     this.currentSongId = currentSongId;
     this.currentPartIndex = currentPartIndex;
     // To display current song title in current chip at start
@@ -196,21 +190,12 @@ public class SongPickerView extends FrameLayout {
   @SuppressLint("PrivateResource")
   public void setExpanded(boolean expanded, boolean animated) {
     this.expanded = expanded;
+    activity.getMetronomeUtil().setSongPickerExpanded(expanded);
+
     if (springAnimationExpand != null) {
       springAnimationExpand.cancel();
     }
-    boolean recyclerVisible =
-        expanded && currentSongId.equals(Constants.SONG_ID_DEFAULT);
     if (animated) {
-      setRecyclerClicksEnabled(false);
-      if (recyclerVisible) {
-        binding.buttonSongPickerCollapse.setVisibility(VISIBLE);
-        binding.buttonGroupSongPickerTools.setVisibility(VISIBLE);
-        binding.recyclerSongPicker.setVisibility(VISIBLE);
-        binding.buttonSongPickerAddSong.setVisibility(VISIBLE);
-      } else if (!expanded) {
-        binding.imageSongPickerIcon.setVisibility(VISIBLE);
-      }
       if (springAnimationExpand == null) {
         springAnimationExpand =
             new SpringAnimation(this, EXPAND_FRACTION)
@@ -225,24 +210,37 @@ public class SongPickerView extends FrameLayout {
                 .addEndListener(
                     (animation, canceled, value, velocity) -> {
                       if (!canceled) {
-                        setAnimationEndState();
+                        setExpandAnimationEndState();
                       }
                     });
       }
+      setExpandAnimationStartState();
       springAnimationExpand.animateToFinalPosition(expanded ? 1 : 0);
     } else {
+      setExpandAnimationStartState();
       setExpandFraction(expanded ? 1 : 0);
-      setAnimationEndState();
+      setExpandAnimationEndState();
     }
   }
 
-  private void setAnimationEndState() {
+  private void setExpandAnimationStartState() {
+    binding.buttonSongPickerExpand.setClickable(!expanded);
+    binding.buttonSongPickerCollapse.setClickable(expanded);
+    binding.frameSongPickerTop.setClickable(expanded);
+
     boolean recyclerVisible = expanded && currentSongId.equals(Constants.SONG_ID_DEFAULT);
-    binding.frameSongPickerTop.setContentDescription(
-        context.getString(expanded ? R.string.action_collapse : R.string.action_expand)
-    );
+    setRecyclerClicksEnabled(false);
+    if (recyclerVisible) {
+      binding.buttonSongPickerCollapse.setVisibility(VISIBLE);
+      binding.buttonGroupSongPickerTools.setVisibility(VISIBLE);
+      binding.recyclerSongPicker.setVisibility(VISIBLE);
+      binding.buttonSongPickerAddSong.setVisibility(VISIBLE);
+    }
+  }
+
+  private void setExpandAnimationEndState() {
+    boolean recyclerVisible = expanded && currentSongId.equals(Constants.SONG_ID_DEFAULT);
     binding.buttonSongPickerCollapse.setVisibility(recyclerVisible ? VISIBLE : GONE);
-    binding.imageSongPickerIcon.setVisibility(!expanded ? VISIBLE : GONE);
     binding.buttonGroupSongPickerTools.setVisibility(recyclerVisible ? VISIBLE : GONE);
     binding.recyclerSongPicker.setVisibility(recyclerVisible ? VISIBLE : GONE);
     setRecyclerClicksEnabled(recyclerVisible);
@@ -254,40 +252,38 @@ public class SongPickerView extends FrameLayout {
   }
 
   private void initPickerSize() {
+    binding.buttonSongPickerExpand.setOnClickListener(v -> {
+      if (expanded) {
+        return;
+      }
+      if (listener != null) {
+        listener.onExpandCollapseClicked(true);
+      }
+      setExpanded(true, true);
+    });
     binding.buttonSongPickerCollapse.setOnClickListener(v -> {
+      if (!expanded) {
+        return;
+      }
       if (listener != null) {
         listener.onExpandCollapseClicked(false);
       }
       setExpanded(false, true);
     });
     ViewUtil.setTooltipText(binding.buttonSongPickerCollapse, R.string.action_collapse);
-    ViewCompat.setAccessibilityDelegate(
-        binding.frameSongPickerTop,
-        new AccessibilityDelegateCompat() {
-          @Override
-          public void onInitializeAccessibilityNodeInfo(
-              @NonNull View host,
-              @NonNull AccessibilityNodeInfoCompat info
-          ) {
-            super.onInitializeAccessibilityNodeInfo(host, info);
-            info.setClassName(Button.class.getName());
-          }
-        });
-    binding.frameSongPickerTop.setOnClickListener(v -> {
-      if (listener != null) {
-        listener.onExpandCollapseClicked(expanded);
-      }
-      setExpanded(!this.expanded, true);
-    });
-    binding.frameSongPickerTop.getViewTreeObserver().addOnGlobalLayoutListener(
+    binding.frameSongPickerTop.setOnClickListener(
+        v -> binding.buttonSongPickerCollapse.performClick()
+    );
+    binding.buttonSongPickerExpand.getViewTreeObserver().addOnGlobalLayoutListener(
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override
           public void onGlobalLayout() {
-            widthMin = binding.frameSongPickerTop.getWidth();
-            boolean isDefaultSong = currentSongId.equals(Constants.SONG_ID_DEFAULT);
-            setExpanded(!isDefaultSong, false);
-            if (binding.frameSongPickerTop.getViewTreeObserver().isAlive()) {
-              binding.frameSongPickerTop.getViewTreeObserver().removeOnGlobalLayoutListener(
+            widthMin = binding.buttonSongPickerExpand.getWidth();
+
+            setExpanded(activity.getMetronomeUtil().isSongPickerExpanded(), false);
+
+            if (binding.buttonSongPickerExpand.getViewTreeObserver().isAlive()) {
+              binding.buttonSongPickerExpand.getViewTreeObserver().removeOnGlobalLayoutListener(
                   this
               );
             }
@@ -326,8 +322,7 @@ public class SongPickerView extends FrameLayout {
           }
           item.setChecked(true);
           setSongs(songsWithParts);
-          activity.getSharedPrefs().edit().putInt(PREF.SONGS_ORDER, sortOrder).apply();
-          activity.getMetronomeUtil().updateSongsOrder(sortOrder);
+          activity.getMetronomeUtil().setSongsOrder(sortOrder);
           if (!songsWithParts.isEmpty()) {
             // only update widget if sort order is important
             WidgetUtil.sendSongsWidgetUpdate(context);
@@ -340,7 +335,7 @@ public class SongPickerView extends FrameLayout {
         return true;
       };
       OnMenuInflatedListener menuInflatedListener = menu -> {
-        sortOrder = activity.getSharedPrefs().getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER);
+        sortOrder = activity.getMetronomeUtil().getSongsOrder();
         int itemId = R.id.action_sort_name;
         if (sortOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
           itemId = R.id.action_sort_last_played;
@@ -386,7 +381,7 @@ public class SongPickerView extends FrameLayout {
       }
     };
     SongChipAdapter adapter = new SongChipAdapter(
-        onSongClickListener, currentSongId.equals(Constants.SONG_ID_DEFAULT)
+        context, onSongClickListener, currentSongId.equals(Constants.SONG_ID_DEFAULT)
     );
     binding.recyclerSongPicker.setAdapter(adapter);
     // Layout manager
@@ -549,8 +544,12 @@ public class SongPickerView extends FrameLayout {
               int colorIcon = ColorUtils.blendARGB(
                   colorPrimary, colorOnTertiaryContainer, colorFraction
               );
+              boolean isDark = UiUtil.isDarkModeActive(context);
+              int recyclerColorStroke = ResUtil.getColor(
+                  context, isDark ? R.attr.colorSurfaceBright : R.attr.colorOutlineVariant
+              );
               int colorStroke = ColorUtils.blendARGB(
-                  colorOutlineVariant, Color.TRANSPARENT, colorFraction
+                  recyclerColorStroke, colorOnTertiaryContainer, colorFraction
               );
               binding.cardSongPickerChip.setCardBackgroundColor(colorBg);
               binding.cardSongPickerChip.setStrokeColor(colorStroke);
@@ -700,6 +699,13 @@ public class SongPickerView extends FrameLayout {
 
   private void setExpandFraction(float fraction) {
     expandFraction = fraction;
+    binding.buttonSongPickerExpand.setAlpha(1 - fraction);
+    binding.buttonSongPickerExpand.setBackgroundColor(
+        ColorUtils.blendARGB(colorBgCollapsed, colorBgExpanded, fraction)
+    );
+    binding.cardSongPickerContainer.setRadius(
+        cornerRadiusCollapsed + (cornerRadiusExpanded - cornerRadiusCollapsed) * fraction
+    );
     binding.cardSongPickerContainer.setCardBackgroundColor(
         ColorUtils.blendARGB(colorBgCollapsed, colorBgExpanded, fraction)
     );
@@ -714,11 +720,7 @@ public class SongPickerView extends FrameLayout {
         isRtl ? paddingStart : binding.frameSongPickerTop.getPaddingRight(),
         binding.frameSongPickerTop.getPaddingBottom()
     );
-    binding.frameSongPickerTop.setMinimumHeight(
-        (int) (minHeightCollapsed + (minHeightExpanded - minHeightCollapsed) * fraction)
-    );
     binding.buttonSongPickerCollapse.setAlpha(fraction);
-    binding.imageSongPickerIcon.setAlpha(1 - fraction);
     binding.buttonGroupSongPickerTools.setAlpha(fraction);
     binding.recyclerSongPicker.setAlpha(fraction);
     binding.buttonSongPickerAddSong.setAlpha(fraction);

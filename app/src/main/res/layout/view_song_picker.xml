@@ -17,257 +17,261 @@
   ~ Copyright (c) 2020-2025 by Patrick Zedler
   -->
 
-<com.google.android.material.card.MaterialCardView
+<merge
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
-  xmlns:tools="http://schemas.android.com/tools"
-  android:id="@+id/card_song_picker_container"
-  android:layout_width="match_parent"
-  android:layout_height="wrap_content"
-  app:cardBackgroundColor="?attr/colorSurfaceContainer"
-  app:strokeWidth="0dp"
-  app:cardCornerRadius="32dp"
-  app:rippleColor="@color/transparent">
+  xmlns:tools="http://schemas.android.com/tools">
 
-  <FrameLayout
+  <com.google.android.material.card.MaterialCardView
+    android:id="@+id/card_song_picker_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <ImageView
-      android:id="@+id/image_song_picker_icon"
-      style="@style/Widget.Tack.ImageView.Icon"
-      android:src="@drawable/ic_rounded_queue_music"
-      android:layout_gravity="top|start"
-      android:layout_marginTop="16dp"
-      android:layout_marginStart="24dp"
-      app:tint="?attr/colorOnSecondaryContainer"
-      tools:ignore="ContentDescription" />
+    android:layout_height="wrap_content"
+    app:cardBackgroundColor="?attr/colorSurfaceContainer"
+    app:strokeWidth="0dp"
+    app:cardCornerRadius="32dp"
+    app:rippleColor="@color/transparent">
 
     <FrameLayout
-      android:id="@+id/frame_song_picker_top"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="top|start"
-      android:minHeight="56dp"
-      android:paddingStart="56dp"
-      android:paddingEnd="24dp"
-      android:clickable="true"
-      android:focusable="true">
-
-      <TextView
-        android:id="@+id/text_song_picker_top"
-        style="@style/Widget.Tack.TextView.LabelLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:textColor="?attr/colorOnSurface"
-        android:singleLine="true"
-        android:text="@string/title_songs"/>
-
-    </FrameLayout>
-
-    <com.google.android.material.button.MaterialButton
-      android:id="@+id/button_song_picker_collapse"
-      style="@style/Widget.Tack.Button.IconButton.Standard"
-      android:contentDescription="@string/action_collapse"
-      android:layout_gravity="top|start"
-      android:layout_marginStart="8dp"
-      android:layout_marginTop="8dp"
-      app:iconTint="?attr/colorOnSurfaceVariant"
-      app:icon="@drawable/ic_rounded_expand_circle_up" />
-
-    <com.google.android.material.button.MaterialButtonGroup
-      android:id="@+id/button_group_song_picker_tools"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="top|end"
-      android:layout_marginTop="8dp"
-      android:layout_marginEnd="4dp"
-      android:spacing="0dp">
-
-      <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_song_picker_open"
-        style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Wide"
-        android:contentDescription="@string/action_open_link"
-        app:backgroundTint="?attr/colorSurfaceContainerHighest"
-        app:iconTint="?attr/colorOnSurfaceVariant"
-        app:icon="@drawable/ic_rounded_view_list" />
-
-      <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_song_picker_menu"
-        style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
-        android:contentDescription="@string/action_more"
-        app:backgroundTint="?attr/colorSurfaceContainerHighest"
-        app:iconTint="?attr/colorOnSurfaceVariant"
-        app:icon="@drawable/ic_rounded_more_vert" />
-
-    </com.google.android.material.button.MaterialButtonGroup>
-
-    <androidx.recyclerview.widget.RecyclerView
-      android:id="@+id/recycler_song_picker"
-      android:layout_width="match_parent"
-      android:layout_height="48dp"
-      android:layout_gravity="center_vertical"
-      android:overScrollMode="ifContentScrolls"
-      android:scrollbars="none"
-      tools:ignore="UselessParent" />
-
-    <com.google.android.material.button.MaterialButton
-      android:id="@+id/button_song_picker_add_song"
-      style="@style/Widget.Tack.Button.TonalButton"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_gravity="bottom|end"
-      android:layout_marginEnd="12dp"
-      android:layout_marginBottom="8dp"
-      android:text="@string/action_add_song"
-      app:icon="@drawable/ic_rounded_music_note_add" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-      android:id="@+id/constraint_song_picker_chip_container"
       android:layout_width="match_parent"
       android:layout_height="wrap_content">
 
-      <View
-        android:id="@+id/view_song_picker_gradient_start"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/frame_song_picker_chip_touch_target"
-        app:layout_constraintTop_toBottomOf="@id/text_song_picker_song_header"
-        app:layout_constraintBottom_toTopOf="@id/text_song_picker_part" />
-
-      <TextView
-        android:id="@+id/text_song_picker_song_header"
-        style="@style/Widget.Tack.TextView.LabelLarge"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:minHeight="48dp"
-        android:singleLine="true"
-        android:text=" "
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/frame_song_picker_chip_touch_target"
-        tools:ignore="HardcodedText" />
-
       <FrameLayout
-        android:id="@+id/frame_song_picker_chip_touch_target"
+        android:id="@+id/frame_song_picker_top"
         android:layout_width="wrap_content"
-        android:layout_height="48dp"
-        android:background="?attr/colorSurfaceContainer"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_song_picker_song_header"
-        app:layout_constraintBottom_toTopOf="@id/text_song_picker_part"
-        app:layout_constrainedWidth="true">
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|start"
+        android:minHeight="64dp"
+        android:paddingStart="60dp"
+        android:paddingEnd="24dp"
+        android:clickable="true"
+        android:focusable="true">
 
-        <com.google.android.material.card.MaterialCardView
-          android:id="@+id/card_song_picker_chip"
+        <TextView
+          android:id="@+id/text_song_picker_top"
+          style="@style/Widget.Tack.TextView.TitleMedium"
           android:layout_width="wrap_content"
-          android:layout_height="32dp"
+          android:layout_height="wrap_content"
           android:layout_gravity="center_vertical"
-          android:focusable="true"
-          android:clickable="true"
-          app:contentPadding="0dp"
-          app:strokeWidth="1dp"
-          app:strokeColor="@color/transparent"
-          app:rippleColor="@color/selector_highlight_tertiary"
-          app:cardCornerRadius="8dp"
-          app:cardBackgroundColor="?attr/colorTertiaryContainer">
-
-          <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:minHeight="32dp"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:gravity="center_vertical">
-
-            <ImageView
-              android:id="@+id/image_song_picker_chip_icon"
-              android:layout_width="18dp"
-              android:layout_height="18dp"
-              android:src="@drawable/ic_rounded_music_note_anim"
-              app:tint="?attr/colorOnTertiaryContainer"
-              app:layout_constraintStart_toStartOf="parent"
-              app:layout_constraintEnd_toStartOf="@id/text_song_picker_chip"
-              app:layout_constraintTop_toTopOf="parent"
-              app:layout_constraintBottom_toBottomOf="parent"
-              tools:ignore="ContentDescription" />
-
-            <TextView
-              android:id="@+id/text_song_picker_chip"
-              style="@style/Widget.Tack.TextView.LabelLarge"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:layout_marginStart="8dp"
-              android:layout_marginEnd="8dp"
-              android:textColor="?attr/colorOnTertiaryContainer"
-              android:singleLine="true"
-              android:text="@string/label_song_name"
-              app:layout_constraintStart_toEndOf="@id/image_song_picker_chip_icon"
-              app:layout_constraintEnd_toStartOf="@id/image_song_picker_chip_close"
-              app:layout_constraintTop_toTopOf="parent"
-              app:layout_constraintBottom_toBottomOf="parent"
-              app:layout_constrainedWidth="true" />
-
-            <ImageView
-              android:id="@+id/image_song_picker_chip_close"
-              android:layout_width="18dp"
-              android:layout_height="18dp"
-              android:src="@drawable/ic_rounded_close_anim"
-              app:tint="?attr/colorOnTertiaryContainer"
-              android:scaleType="centerCrop"
-              android:importantForAccessibility="yes"
-              android:focusable="true"
-              android:clickable="true"
-              android:contentDescription="@string/action_close"
-              app:layout_constraintStart_toEndOf="@id/text_song_picker_chip"
-              app:layout_constraintEnd_toEndOf="parent"
-              app:layout_constraintTop_toTopOf="parent"
-              app:layout_constraintBottom_toBottomOf="parent" />
-
-          </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <FrameLayout
-          android:id="@+id/frame_song_picker_chip_close"
-          android:layout_width="40dp"
-          android:layout_height="match_parent"
-          android:layout_gravity="end"
-          android:importantForAccessibility="no" />
+          android:textColor="?attr/colorOnSurface"
+          android:singleLine="true"
+          android:text="@string/title_songs"/>
 
       </FrameLayout>
 
-      <TextView
-        android:id="@+id/text_song_picker_part"
-        style="@style/Widget.Tack.TextView.LabelLarge"
-        android:layout_width="match_parent"
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_song_picker_collapse"
+        style="@style/Widget.Tack.Button.IconButton.Standard"
+        android:contentDescription="@string/action_collapse"
+        android:layout_gravity="top|start"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:iconTint="?attr/colorOnSurfaceVariant"
+        app:icon="@drawable/ic_rounded_expand_circle_up" />
+
+      <com.google.android.material.button.MaterialButtonGroup
+        android:id="@+id/button_group_song_picker_tools"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:spacing="0dp">
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_song_picker_open"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Wide"
+          android:contentDescription="@string/action_open_link"
+          app:backgroundTint="?attr/colorSurfaceContainerHighest"
+          app:iconTint="?attr/colorOnSurfaceVariant"
+          app:icon="@drawable/ic_rounded_view_list" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_song_picker_menu"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
+          android:contentDescription="@string/action_more"
+          app:backgroundTint="?attr/colorSurfaceContainerHighest"
+          app:iconTint="?attr/colorOnSurfaceVariant"
+          app:icon="@drawable/ic_rounded_more_vert" />
+
+      </com.google.android.material.button.MaterialButtonGroup>
+
+      <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_song_picker"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="center_vertical"
+        android:overScrollMode="ifContentScrolls"
+        android:scrollbars="none"
+        tools:ignore="UselessParent" />
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_song_picker_add_song"
+        style="@style/Widget.Tack.Button.TonalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="12dp"
         android:layout_marginBottom="8dp"
-        android:minHeight="48dp"
-        android:gravity="center"
-        android:textAlignment="center"
-        android:textColor="?attr/colorOnSurface"
-        android:singleLine="true"
-        android:text="@string/label_part_name"
-        app:layout_constraintTop_toBottomOf="@id/frame_song_picker_chip_touch_target"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:text="@string/action_add_song"
+        app:icon="@drawable/ic_rounded_music_note_add" />
 
-      <View
-        android:id="@+id/view_song_picker_gradient_end"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toEndOf="@id/frame_song_picker_chip_touch_target"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_song_picker_song_header"
-        app:layout_constraintBottom_toTopOf="@id/text_song_picker_part" />
+      <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraint_song_picker_chip_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <View
+          android:id="@+id/view_song_picker_gradient_start"
+          android:layout_width="0dp"
+          android:layout_height="0dp"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintEnd_toStartOf="@id/frame_song_picker_chip_touch_target"
+          app:layout_constraintTop_toBottomOf="@id/text_song_picker_song_header"
+          app:layout_constraintBottom_toTopOf="@id/text_song_picker_part" />
 
-  </FrameLayout>
+        <TextView
+          android:id="@+id/text_song_picker_song_header"
+          style="@style/Widget.Tack.TextView.LabelLarge"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:minHeight="48dp"
+          android:singleLine="true"
+          android:text=" "
+          app:layout_constraintTop_toTopOf="parent"
+          app:layout_constraintBottom_toTopOf="@id/frame_song_picker_chip_touch_target"
+          tools:ignore="HardcodedText" />
 
-</com.google.android.material.card.MaterialCardView>
+        <FrameLayout
+          android:id="@+id/frame_song_picker_chip_touch_target"
+          android:layout_width="wrap_content"
+          android:layout_height="48dp"
+          android:background="?attr/colorSurfaceContainer"
+          android:layout_marginStart="32dp"
+          android:layout_marginEnd="32dp"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/text_song_picker_song_header"
+          app:layout_constraintBottom_toTopOf="@id/text_song_picker_part"
+          app:layout_constrainedWidth="true">
+
+          <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_song_picker_chip"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_gravity="center_vertical"
+            android:focusable="true"
+            android:clickable="true"
+            app:contentPadding="0dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="?attr/colorOnTertiaryContainer"
+            app:rippleColor="@color/selector_highlight_tertiary"
+            app:cardCornerRadius="8dp"
+            app:cardBackgroundColor="?attr/colorTertiaryContainer">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:minHeight="32dp"
+              android:paddingStart="8dp"
+              android:paddingEnd="8dp"
+              android:gravity="center_vertical">
+
+              <ImageView
+                android:id="@+id/image_song_picker_chip_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_rounded_music_note_anim"
+                app:tint="?attr/colorOnTertiaryContainer"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/text_song_picker_chip"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:ignore="ContentDescription" />
+
+              <TextView
+                android:id="@+id/text_song_picker_chip"
+                style="@style/Widget.Tack.TextView.LabelLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:textColor="?attr/colorOnTertiaryContainer"
+                android:singleLine="true"
+                android:text="@string/label_song_name"
+                app:layout_constraintStart_toEndOf="@id/image_song_picker_chip_icon"
+                app:layout_constraintEnd_toStartOf="@id/image_song_picker_chip_close"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constrainedWidth="true" />
+
+              <ImageView
+                android:id="@+id/image_song_picker_chip_close"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:src="@drawable/ic_rounded_close_anim"
+                app:tint="?attr/colorOnTertiaryContainer"
+                android:scaleType="centerCrop"
+                android:importantForAccessibility="yes"
+                android:focusable="true"
+                android:clickable="true"
+                android:contentDescription="@string/action_close"
+                app:layout_constraintStart_toEndOf="@id/text_song_picker_chip"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+          </com.google.android.material.card.MaterialCardView>
+
+          <FrameLayout
+            android:id="@+id/frame_song_picker_chip_close"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:importantForAccessibility="no" />
+
+        </FrameLayout>
+
+        <TextView
+          android:id="@+id/text_song_picker_part"
+          style="@style/Widget.Tack.TextView.LabelLarge"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="8dp"
+          android:minHeight="48dp"
+          android:gravity="center"
+          android:textAlignment="center"
+          android:textColor="?attr/colorOnSurface"
+          android:singleLine="true"
+          android:text="@string/label_part_name"
+          app:layout_constraintTop_toBottomOf="@id/frame_song_picker_chip_touch_target"
+          app:layout_constraintBottom_toBottomOf="parent" />
+
+        <View
+          android:id="@+id/view_song_picker_gradient_end"
+          android:layout_width="0dp"
+          android:layout_height="0dp"
+          app:layout_constraintStart_toEndOf="@id/frame_song_picker_chip_touch_target"
+          app:layout_constraintEnd_toEndOf="parent"
+          app:layout_constraintTop_toBottomOf="@id/text_song_picker_song_header"
+          app:layout_constraintBottom_toTopOf="@id/text_song_picker_part" />
+
+      </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </FrameLayout>
+
+  </com.google.android.material.card.MaterialCardView>
+
+  <com.google.android.material.button.MaterialButton
+    android:id="@+id/button_song_picker_expand"
+    style="@style/Widget.Tack.Button.TonalButton.Medium"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="top|start"
+    android:alpha="0.2"
+    android:text="@string/title_songs"
+    app:icon="@drawable/ic_rounded_queue_music" />
+
+</merge>

@@ -35,7 +35,6 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
 import xyz.zedler.patrick.tack.R;
@@ -173,8 +172,7 @@ public class SongsFragment extends BaseFragment {
           }
           item.setChecked(true);
           setSongsWithParts(null);
-          getSharedPrefs().edit().putInt(PREF.SONGS_ORDER, sortOrder).apply();
-          getMetronomeUtil().updateSongsOrder(sortOrder);
+          getMetronomeUtil().setSongsOrder(sortOrder);
           if (!songsWithParts.isEmpty()) {
             // only update widget if sort order is important
             WidgetUtil.sendSongsWidgetUpdate(activity);
@@ -191,7 +189,7 @@ public class SongsFragment extends BaseFragment {
         return true;
       };
       OnMenuInflatedListener menuInflatedListener = menu -> {
-        sortOrder = getSharedPrefs().getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER);
+        sortOrder = getMetronomeUtil().getSongsOrder();
         int itemId = R.id.action_sort_name;
         if (sortOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
           itemId = R.id.action_sort_last_played;

@@ -188,6 +188,12 @@
     <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.Xsmall</item>
   </style>
 
+  <style
+    name="Widget.Tack.Button.TonalButton.Medium"
+    parent="Widget.Tack.Button.TonalButton">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.Medium</item>
+  </style>
+
   <!-- Localized style, no empty base style needed -->
   <style
     name="Widget.Tack.Button.TextButton.Dialog"

@@ -521,14 +521,12 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           }
           if (!binding.songPickerMain.isInitialized()) {
             binding.songPickerMain.init(
-                getSharedPrefs().getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER),
                 getMetronomeUtil().getCurrentSongId(),
                 getMetronomeUtil().getCurrentPartIndex(),
                 songsWithParts
             );
           }
           binding.songPickerMain.setSongs(songsWithParts);
-          // TODO: implement auto-collapse behavior
         }
     );
 
@@ -1316,8 +1314,6 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     int songPickerHeightExpanded = binding.songPickerMain.getHeightExpanded();
     if (songPickerHeightExpanded > songPickerAvailableHeight) {
       int songPickerOverlap = songPickerHeightExpanded - songPickerAvailableHeight;
-      int tempoPickerCurrentTop = binding.frameMainCenter.getTop();
-      int tempoPickerTranslatedTop = tempoPickerCurrentTop - songPickerOverlap;
       int timerSliderHeight = binding.timerMain.getSliderHeightExpanded();
       int timerSliderHeightCurrent = (int) (timerSliderHeight *
           binding.timerMain.getTimerExpandFraction());

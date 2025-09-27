@@ -81,7 +81,7 @@ public class MetronomeUtil {
   private boolean playing, tempPlaying, isCountingIn, isMuted;
   private boolean showElapsed, resetTimerOnStop, tempoInputKeyboard, tempoTapInstant;
   private boolean neverStartedWithGain = true;
-  private boolean ignoreTimerCallbacksTemp = false;
+  private boolean ignoreTimerCallbacksTemp, isSongPickerExpanded;
 
   public MetronomeUtil(@NonNull Context context, boolean fromService) {
     this.context = context;
@@ -218,6 +218,9 @@ public class MetronomeUtil {
       }
     });
     sharedPrefs.edit().putString(PREF.SONG_CURRENT_ID, songId).apply();
+    if(!isSongPickerExpanded) {
+      isSongPickerExpanded = !songId.equals(Constants.SONG_ID_DEFAULT);
+    }
   }
 
   public void reloadCurrentSong() {
@@ -245,8 +248,21 @@ public class MetronomeUtil {
     });
   }
 
-  public void updateSongsOrder(int sortOrder) {
+  public void setSongsOrder(int sortOrder) {
     songsOrder = sortOrder;
+    sharedPrefs.edit().putInt(PREF.SONGS_ORDER, sortOrder).apply();
+  }
+
+  public int getSongsOrder() {
+    return songsOrder;
+  }
+
+  public void setSongPickerExpanded(boolean songPickerExpanded) {
+    isSongPickerExpanded = songPickerExpanded;
+  }
+
+  public boolean isSongPickerExpanded() {
+    return isSongPickerExpanded;
   }
 
   private void sortParts() {
