@@ -444,15 +444,30 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
 
       @Override
       public void onCurrentSongClicked() {
+        ActionMainToSong action = MainFragmentDirections.actionMainToSong();
+        action.setSongId(getMetronomeUtil().getCurrentSongId());
+        activity.navigate(action);
+        performHapticClick();
+      }
+
+      @Override
+      public void onCurrentPartClicked() {
         partsDialogUtil.show();
         performHapticClick();
       }
 
       @Override
-      public void onCurrentSongLongClicked() {
-        ActionMainToSong action = MainFragmentDirections.actionMainToSong();
-        action.setSongId(getMetronomeUtil().getCurrentSongId());
-        activity.navigate(action);
+      public void onPreviousPartClicked() {
+        int currentPartIndex = getMetronomeUtil().getCurrentPartIndex();
+        getMetronomeUtil().setCurrentPartIndex(currentPartIndex - 1, true);
+        performHapticClick();
+      }
+
+      @Override
+      public void onNextPartClicked() {
+        int currentPartIndex = getMetronomeUtil().getCurrentPartIndex();
+        getMetronomeUtil().setCurrentPartIndex(currentPartIndex + 1, true);
+        performHapticClick();
       }
 
       @Override

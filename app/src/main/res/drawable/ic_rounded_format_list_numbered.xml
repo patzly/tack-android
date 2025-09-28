@@ -1,0 +1,29 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:width="24dp"
+  android:height="24dp"
+  android:viewportWidth="960"
+  android:viewportHeight="960">
+  <path
+    android:pathData="M150,880q-13,0 -21.5,-8.5T120,850q0,-13 8.5,-21.5T150,820h70v-30h-30q-13,0 -21.5,-8.5T160,760q0,-13 8.5,-21.5T190,730h30v-30h-70q-13,0 -21.5,-8.5T120,670q0,-13 8.5,-21.5T150,640h90q17,0 28.5,11.5T280,680v40q0,17 -11.5,28.5T240,760q17,0 28.5,11.5T280,800v40q0,17 -11.5,28.5T240,880h-90ZM150,600q-13,0 -21.5,-8.5T120,570v-80q0,-17 11.5,-28.5T160,450h60v-30h-70q-13,0 -21.5,-8.5T120,390q0,-13 8.5,-21.5T150,360h90q17,0 28.5,11.5T280,400v70q0,17 -11.5,28.5T240,510h-60v30h70q13,0 21.5,8.5T280,570q0,13 -8.5,21.5T250,600L150,600ZM210,320q-13,0 -21.5,-8.5T180,290v-150h-30q-13,0 -21.5,-8.5T120,110q0,-13 8.5,-21.5T150,80h60q13,0 21.5,8.5T240,110v180q0,13 -8.5,21.5T210,320ZM400,760q-17,0 -28.5,-11.5T360,720q0,-17 11.5,-28.5T400,680h400q17,0 28.5,11.5T840,720q0,17 -11.5,28.5T800,760L400,760ZM400,520q-17,0 -28.5,-11.5T360,480q0,-17 11.5,-28.5T400,440h400q17,0 28.5,11.5T840,480q0,17 -11.5,28.5T800,520L400,520ZM400,280q-17,0 -28.5,-11.5T360,240q0,-17 11.5,-28.5T400,200h400q17,0 28.5,11.5T840,240q0,17 -11.5,28.5T800,280L400,280Z"
+    android:fillColor="#000000" />
+</vector>

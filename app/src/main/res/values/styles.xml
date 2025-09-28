@@ -183,6 +183,13 @@
   </style>
 
   <style
+    name="Widget.Tack.Button.TonalButton.Small.SurfaceHighest"
+    parent="Widget.Tack.Button.TonalButton">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.Tack.Button.SurfaceHighest</item>
+    <item name="rippleColor">@color/selector_highlight</item>
+  </style>
+
+  <style
     name="Widget.Tack.Button.TonalButton.Xsmall"
     parent="Widget.Tack.Button.TonalButton">
     <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.Xsmall</item>
@@ -355,6 +362,25 @@
     name="Widget.Tack.Button.IconButton.Tonal.Small.Wide"
     parent="Widget.Tack.Button.IconButton.Tonal">
     <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Small.Wide</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.SurfaceHighest"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.Tack.Button.SurfaceHighest</item>
+    <item name="rippleColor">@color/selector_highlight</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.SurfaceHighest.Small.Wide"
+    parent="Widget.Tack.Button.IconButton.Tonal.Small.Wide">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.Tack.Button.SurfaceHighest</item>
+    <item name="rippleColor">@color/selector_highlight</item>
+  </style>
+
+  <style name="ThemeOverlay.Tack.Button.SurfaceHighest" parent="">
+    <item name="colorContainer">?attr/colorSurfaceContainerHighest</item>
+    <item name="colorOnContainer">?attr/colorOnSurfaceVariant</item>
   </style>
 
   <style

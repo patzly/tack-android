@@ -74,7 +74,7 @@ public class SongPickerView extends FrameLayout {
 
   private static final String TAG = SongPickerView.class.getSimpleName();
 
-  private static final boolean TEST_ANIMATIONS = true;
+  private static final boolean TEST_ANIMATIONS = false;
 
   private final ViewSongPickerBinding binding;
   private final Context context;
@@ -92,7 +92,7 @@ public class SongPickerView extends FrameLayout {
   private MainActivity activity;
   private SongPickerListener listener;
   private List<SongWithParts> songsWithParts;
-  private int sortOrder, currentPartIndex, widthMax, widthMin, chipTargetTranslationX;
+  private int sortOrder, initPartIndex, widthMax, widthMin, chipTargetTranslationX;
   private String currentSongId;
   private Drawable gradientLeft, gradientRight;
   private SpringAnimation springAnimationExpand;
@@ -152,7 +152,7 @@ public class SongPickerView extends FrameLayout {
 
     this.sortOrder = activity.getMetronomeUtil().getSongsOrder();
     this.currentSongId = currentSongId;
-    this.currentPartIndex = currentPartIndex;
+    this.initPartIndex = currentPartIndex;
     // To display current song title in current chip at start
     this.songsWithParts = new ArrayList<>(songs);
 
@@ -186,7 +186,7 @@ public class SongPickerView extends FrameLayout {
       binding.textSongPickerChip.setText(songName);
     }
     // maybe name of current part changed
-    setPartIndex(currentPartIndex);
+    setPartIndex(initPartIndex);
   }
 
   public void setPartIndex(int partIndex) {
@@ -197,7 +197,10 @@ public class SongPickerView extends FrameLayout {
           R.string.label_part_current, partIndex + 1, partName
       );
     }
-    binding.textSongPickerPart.setText(partLabel);
+    binding.buttonSongPickerPart.setText(partLabel);
+    int partCount = getPartCount();
+    binding.buttonSongPickerPartPrevious.setEnabled(partCount > 0 && partIndex > 0);
+    binding.buttonSongPickerPartNext.setEnabled(partCount > 0 && partIndex < partCount - 1);
   }
 
   public void setParentWidth(int width) {
@@ -251,7 +254,7 @@ public class SongPickerView extends FrameLayout {
         listener.onOpenSongsClicked();
       }
     });
-    ViewUtil.setTooltipText(binding.buttonSongPickerOpen, R.string.action_show_list);
+    ViewUtil.setTooltipText(binding.buttonSongPickerOpen, R.string.action_show_songs_list);
     binding.buttonSongPickerMenu.setOnClickListener(v -> {
       if (listener != null) {
         listener.onMenuOrMenuItemClicked();
@@ -383,21 +386,27 @@ public class SongPickerView extends FrameLayout {
         listener.onCurrentSongClicked();
       }
     });
-    binding.frameSongPickerChipTouchTarget.setOnLongClickListener(v -> {
-      if (listener != null) {
-        listener.onCurrentSongLongClicked();
-      }
-      return true;
-    });
     binding.cardSongPickerChip.setOnClickListener(
         v -> binding.frameSongPickerChipTouchTarget.callOnClick()
     );
-    binding.cardSongPickerChip.setOnLongClickListener(v -> {
+    binding.buttonSongPickerPart.setOnClickListener(v -> {
       if (listener != null) {
-        listener.onCurrentSongLongClicked();
+        listener.onCurrentPartClicked();
       }
-      return true;
     });
+    ViewUtil.setTooltipText(binding.buttonSongPickerPart, R.string.action_show_parts);
+    binding.buttonSongPickerPartPrevious.setOnClickListener(v -> {
+      if (listener != null) {
+        listener.onPreviousPartClicked();
+      }
+    });
+    ViewUtil.setTooltipText(binding.buttonSongPickerPartPrevious, R.string.action_prev_part);
+    binding.buttonSongPickerPartNext.setOnClickListener(v -> {
+      if (listener != null) {
+        listener.onNextPartClicked();
+      }
+    });
+    ViewUtil.setTooltipText(binding.buttonSongPickerPartNext, R.string.action_next_part);
 
     gradientLeft = new GradientDrawable(
         GradientDrawable.Orientation.LEFT_RIGHT,
@@ -484,9 +493,9 @@ public class SongPickerView extends FrameLayout {
     expandFraction = fraction;
 
     binding.buttonSongPickerExpand.setAlpha(1 - fraction);
-    binding.buttonSongPickerExpand.setBackgroundColor(
+    /*binding.buttonSongPickerExpand.setBackgroundColor(
         ColorUtils.blendARGB(colorBgCollapsed, colorBgExpanded, fraction)
-    );
+    );*/
     binding.cardSongPickerContainer.setRadius(
         cornerRadiusCollapsed + (cornerRadiusExpanded - cornerRadiusCollapsed) * fraction
     );
@@ -671,6 +680,9 @@ public class SongPickerView extends FrameLayout {
     binding.cardSongPickerChip.setClickable(!isDefaultSong);
     // card seems to ignore clickable false, disable manually
     binding.cardSongPickerChip.setEnabled(!isDefaultSong);
+    binding.buttonSongPickerPart.setClickable(!isDefaultSong);
+    binding.buttonSongPickerPartPrevious.setClickable(!isDefaultSong);
+    binding.buttonSongPickerPartNext.setClickable(!isDefaultSong);
 
     binding.buttonSongPickerAddSong.setVisibility(VISIBLE);
     binding.buttonSongPickerAddSong.setClickable(isDefaultSong);
@@ -730,10 +742,13 @@ public class SongPickerView extends FrameLayout {
         ColorUtils.blendARGB(colorOnSurfaceVariant, colorOnSurface, fraction)
     ));
     binding.buttonSongPickerCollapse.setAlpha(1 + (0.38f - 1) * fraction);
+    binding.buttonSongPickerCollapse.setRotation(90 * fraction);
     binding.recyclerSongPicker.setAlpha(1 - fraction);
     binding.buttonSongPickerAddSong.setAlpha(1 - fraction);
 
-    binding.textSongPickerPart.setAlpha(fraction);
+    binding.buttonSongPickerPart.setAlpha(fraction);
+    binding.buttonSongPickerPartPrevious.setAlpha(fraction);
+    binding.buttonSongPickerPartNext.setAlpha(fraction);
   }
 
   private float getEffectsSelectFraction() {
@@ -809,6 +824,15 @@ public class SongPickerView extends FrameLayout {
     return null;
   }
 
+  private int getPartCount() {
+    for (SongWithParts songWithParts : songsWithParts) {
+      if (songWithParts.getSong().getId().equals(currentSongId)) {
+        return songWithParts.getParts().size();
+      }
+    }
+    return 0;
+  }
+
   private String getPartNameFromIndex(int partIndex) {
     for (SongWithParts songWithParts : songsWithParts) {
       if (songWithParts.getSong().getId().equals(currentSongId)) {
@@ -832,7 +856,9 @@ public class SongPickerView extends FrameLayout {
   public interface SongPickerListener {
     void onCurrentSongChanged(@NonNull String currentSongId);
     void onCurrentSongClicked();
-    void onCurrentSongLongClicked();
+    void onCurrentPartClicked();
+    void onPreviousPartClicked();
+    void onNextPartClicked();
     void onSongLongClicked(@NonNull String songId);
     void onExpandCollapseClicked(boolean expand);
     void onOpenSongsClicked();

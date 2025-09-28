@@ -80,7 +80,7 @@
         <com.google.android.material.button.MaterialButton
           android:id="@+id/button_song_picker_open"
           style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Wide"
-          android:contentDescription="@string/action_open_link"
+          android:contentDescription="@string/action_show_songs_list"
           app:backgroundTint="?attr/colorSurfaceContainerHighest"
           app:iconTint="?attr/colorOnSurfaceVariant"
           app:icon="@drawable/ic_rounded_view_list" />
@@ -127,7 +127,7 @@
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintEnd_toStartOf="@id/frame_song_picker_chip_touch_target"
           app:layout_constraintTop_toBottomOf="@id/text_song_picker_song_header"
-          app:layout_constraintBottom_toTopOf="@id/text_song_picker_part" />
+          app:layout_constraintBottom_toTopOf="@id/button_group_song_picker_part" />
 
         <TextView
           android:id="@+id/text_song_picker_song_header"
@@ -153,7 +153,7 @@
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_song_picker_song_header"
-          app:layout_constraintBottom_toTopOf="@id/text_song_picker_part"
+          app:layout_constraintBottom_toTopOf="@id/button_group_song_picker_part"
           app:layout_constrainedWidth="true">
 
           <com.google.android.material.card.MaterialCardView
@@ -235,20 +235,43 @@
 
         </FrameLayout>
 
-        <TextView
-          android:id="@+id/text_song_picker_part"
-          style="@style/Widget.Tack.TextView.LabelLarge"
+        <com.google.android.material.button.MaterialButtonGroup
+          android:id="@+id/button_group_song_picker_part"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
+          android:layout_marginStart="12dp"
+          android:layout_marginEnd="12dp"
           android:layout_marginBottom="8dp"
-          android:minHeight="48dp"
-          android:gravity="center"
-          android:textAlignment="center"
-          android:textColor="?attr/colorOnSurface"
-          android:singleLine="true"
-          android:text="@string/label_part_name"
+          android:spacing="8dp"
+          android:gravity="center_vertical"
+          app:layout_constraintStart_toStartOf="parent"
+          app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toBottomOf="@id/frame_song_picker_chip_touch_target"
-          app:layout_constraintBottom_toBottomOf="parent" />
+          app:layout_constraintBottom_toBottomOf="parent">
+
+          <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_song_picker_part_previous"
+            style="@style/Widget.Tack.Button.IconButton.SurfaceHighest.Small.Wide"
+            android:contentDescription="@string/action_next_part"
+            app:icon="@drawable/ic_rounded_skip_previous" />
+
+          <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_song_picker_part"
+            style="@style/Widget.Tack.Button.TonalButton.Small.SurfaceHighest"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/label_part_name"
+            android:textColor="?attr/colorOnSurface"
+            android:contentDescription="@string/action_show_parts" />
+
+          <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_song_picker_part_next"
+            style="@style/Widget.Tack.Button.IconButton.SurfaceHighest.Small.Wide"
+            android:contentDescription="@string/action_prev_part"
+            app:icon="@drawable/ic_rounded_skip_next" />
+
+        </com.google.android.material.button.MaterialButtonGroup>
 
         <View
           android:id="@+id/view_song_picker_gradient_end"
@@ -257,7 +280,7 @@
           app:layout_constraintStart_toEndOf="@id/frame_song_picker_chip_touch_target"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_song_picker_song_header"
-          app:layout_constraintBottom_toTopOf="@id/text_song_picker_part" />
+          app:layout_constraintBottom_toTopOf="@id/button_group_song_picker_part" />
 
       </androidx.constraintlayout.widget.ConstraintLayout>
 

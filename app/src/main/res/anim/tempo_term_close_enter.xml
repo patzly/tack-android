@@ -25,9 +25,9 @@
   <translate
     android:fromXDelta="@fraction/tempo_term_fading_start"
     android:toXDelta="0"
-    android:duration="@android:integer/config_mediumAnimTime" />
+    android:duration="@android:integer/config_shortAnimTime" />
   <alpha
     android:fromAlpha="0"
     android:toAlpha="1"
-    android:duration="@android:integer/config_mediumAnimTime" />
+    android:duration="@android:integer/config_shortAnimTime" />
 </set>

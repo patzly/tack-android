@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!--
   ~ This file is part of Tack Android.
   ~
@@ -18,16 +17,16 @@
   ~ Copyright (c) 2020-2025 by Patrick Zedler
   -->
 
-<set
+<vector
   xmlns:android="http://schemas.android.com/apk/res/android"
-  android:interpolator="@android:interpolator/fast_out_slow_in"
-  android:shareInterpolator="true">
-  <translate
-    android:fromXDelta="0"
-    android:toXDelta="@fraction/tempo_term_fading_end"
-    android:duration="@android:integer/config_shortAnimTime" />
-  <alpha
-    android:fromAlpha="1"
-    android:toAlpha="0"
-    android:duration="@android:integer/config_shortAnimTime" />
-</set>
+  android:autoMirrored="true"
+  android:height="24dp"
+  android:viewportHeight="960"
+  android:viewportWidth="960"
+  android:width="24dp">
+
+  <path
+    android:fillColor="#000000"
+    android:pathData="M220,680v-400q0,-17 11.5,-28.5T260,240q17,0 28.5,11.5T300,280v400q0,17 -11.5,28.5T260,720q-17,0 -28.5,-11.5T220,680ZM678,679L430,513q-9,-6 -13.5,-14.5T412,480q0,-10 4.5,-18.5T430,447l248,-166q5,-4 11,-5t11,-1q16,0 28,11t12,29v330q0,18 -12,29t-28,11q-5,0 -11,-1t-11,-5ZM660,480ZM660,570v-180l-136,90 136,90Z" />
+
+</vector>

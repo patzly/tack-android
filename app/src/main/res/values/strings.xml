@@ -160,11 +160,14 @@
   <string name="action_restore">Restore</string>
   <string name="action_view_more_songs">View more songs</string>
   <string name="action_next">Next</string>
+  <string name="action_show_parts">Show parts</string>
+  <string name="action_next_part">Next part</string>
+  <string name="action_prev_part">Previous part</string>
   <string name="action_more">More</string>
   <string name="action_edit">Edit</string>
   <string name="action_expand">Expand</string>
   <string name="action_collapse">Collapse</string>
-  <string name="action_show_list">Show as list</string>
+  <string name="action_show_songs_list">Show songs as list</string>
 
   <!-- MESSAGES -->
 
