@@ -19,11 +19,9 @@
 
 package xyz.zedler.patrick.tack.view;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -36,7 +34,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.OvershootInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
@@ -47,7 +44,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 import androidx.dynamicanimation.animation.FloatPropertyCompat;
 import androidx.dynamicanimation.animation.SpringAnimation;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import androidx.dynamicanimation.animation.SpringForce;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
@@ -77,6 +74,8 @@ public class SongPickerView extends FrameLayout {
 
   private static final String TAG = SongPickerView.class.getSimpleName();
 
+  private static final boolean TEST_ANIMATIONS = true;
+
   private final ViewSongPickerBinding binding;
   private final Context context;
   private final boolean isRtl;
@@ -85,17 +84,22 @@ public class SongPickerView extends FrameLayout {
   private final int cornerRadiusCollapsed, cornerRadiusExpanded;
   private final int colorBgCollapsed, colorBgExpanded;
   private final int colorFgCollapsed, colorFgExpanded;
+  private final int chipCloseIconWidth;
+  private final int colorPrimary, colorTertiaryContainer, colorOnTertiaryContainer;
+  private final int colorSurfaceBright, colorSurfaceContainer;
+  private final int colorOnSurface, colorOnSurfaceVariant;
   private final ViewUtil viewUtil;
   private MainActivity activity;
   private SongPickerListener listener;
   private List<SongWithParts> songsWithParts;
-  private int sortOrder, currentPartIndex, widthMax, widthMin;
+  private int sortOrder, currentPartIndex, widthMax, widthMin, chipTargetTranslationX;
   private String currentSongId;
   private Drawable gradientLeft, gradientRight;
-  private ValueAnimator animator;
   private SpringAnimation springAnimationExpand;
-  private float expandFraction;
-  private boolean isInitialized, expanded;
+  private SpringAnimation springAnimationDeselectSpatial, springAnimationDeselectEffects;
+  private SpringAnimation springAnimationSelectSpatial, springAnimationSelectEffects;
+  private float expandFraction, selectSpatialFraction, selectEffectsFraction;
+  private boolean isInitialized, isExpanded;
 
   public SongPickerView(@NonNull Context context, AttributeSet attributeSet) {
     super(context, attributeSet);
@@ -121,6 +125,15 @@ public class SongPickerView extends FrameLayout {
 
     colorFgCollapsed = ResUtil.getColor(context, R.attr.colorOnSecondaryContainer);
     colorFgExpanded = ResUtil.getColor(context, R.attr.colorOnSurface);
+
+    chipCloseIconWidth = UiUtil.dpToPx(context, 18);
+    colorTertiaryContainer = ResUtil.getColor(context, R.attr.colorTertiaryContainer);
+    colorOnTertiaryContainer = ResUtil.getColor(context, R.attr.colorOnTertiaryContainer);
+    colorPrimary = ResUtil.getColor(context, R.attr.colorPrimary);
+    colorSurfaceBright = ResUtil.getColor(context, R.attr.colorSurfaceBright);
+    colorSurfaceContainer = ResUtil.getColor(context, R.attr.colorSurfaceContainer);
+    colorOnSurface = ResUtil.getColor(context, R.attr.colorOnSurface);
+    colorOnSurfaceVariant = ResUtil.getColor(context, R.attr.colorOnSurfaceVariant);
   }
 
   public void setActivity(MainActivity activity) {
@@ -187,73 +200,13 @@ public class SongPickerView extends FrameLayout {
     binding.textSongPickerPart.setText(partLabel);
   }
 
-  @SuppressLint("PrivateResource")
-  public void setExpanded(boolean expanded, boolean animated) {
-    this.expanded = expanded;
-    activity.getMetronomeUtil().setSongPickerExpanded(expanded);
-
-    if (springAnimationExpand != null) {
-      springAnimationExpand.cancel();
-    }
-    if (animated) {
-      if (springAnimationExpand == null) {
-        springAnimationExpand =
-            new SpringAnimation(this, EXPAND_FRACTION)
-                .setSpring(
-                    MotionUtils.resolveThemeSpringForce(
-                        getContext(),
-                        R.attr.motionSpringDefaultSpatial,
-                        R.style.Motion_Material3_Spring_Standard_Default_Spatial)
-                )
-                //.setSpring(new SpringForce().setStiffness(30f).setDampingRatio(0.9f))
-                .setMinimumVisibleChange(0.01f)
-                .addEndListener(
-                    (animation, canceled, value, velocity) -> {
-                      if (!canceled) {
-                        setExpandAnimationEndState();
-                      }
-                    });
-      }
-      setExpandAnimationStartState();
-      springAnimationExpand.animateToFinalPosition(expanded ? 1 : 0);
-    } else {
-      setExpandAnimationStartState();
-      setExpandFraction(expanded ? 1 : 0);
-      setExpandAnimationEndState();
-    }
-  }
-
-  private void setExpandAnimationStartState() {
-    binding.buttonSongPickerExpand.setClickable(!expanded);
-    binding.buttonSongPickerCollapse.setClickable(expanded);
-    binding.frameSongPickerTop.setClickable(expanded);
-
-    boolean recyclerVisible = expanded && currentSongId.equals(Constants.SONG_ID_DEFAULT);
-    setRecyclerClicksEnabled(false);
-    if (recyclerVisible) {
-      binding.buttonSongPickerCollapse.setVisibility(VISIBLE);
-      binding.buttonGroupSongPickerTools.setVisibility(VISIBLE);
-      binding.recyclerSongPicker.setVisibility(VISIBLE);
-      binding.buttonSongPickerAddSong.setVisibility(VISIBLE);
-    }
-  }
-
-  private void setExpandAnimationEndState() {
-    boolean recyclerVisible = expanded && currentSongId.equals(Constants.SONG_ID_DEFAULT);
-    binding.buttonSongPickerCollapse.setVisibility(recyclerVisible ? VISIBLE : GONE);
-    binding.buttonGroupSongPickerTools.setVisibility(recyclerVisible ? VISIBLE : GONE);
-    binding.recyclerSongPicker.setVisibility(recyclerVisible ? VISIBLE : GONE);
-    setRecyclerClicksEnabled(recyclerVisible);
-    binding.buttonSongPickerAddSong.setVisibility(recyclerVisible ? VISIBLE : GONE);
-  }
-
   public void setParentWidth(int width) {
     widthMax = width - UiUtil.dpToPx(context, 16 + 16); // add horizontal margin
   }
 
   private void initPickerSize() {
     binding.buttonSongPickerExpand.setOnClickListener(v -> {
-      if (expanded) {
+      if (isExpanded) {
         return;
       }
       if (listener != null) {
@@ -262,7 +215,7 @@ public class SongPickerView extends FrameLayout {
       setExpanded(true, true);
     });
     binding.buttonSongPickerCollapse.setOnClickListener(v -> {
-      if (!expanded) {
+      if (!isExpanded) {
         return;
       }
       if (listener != null) {
@@ -280,7 +233,11 @@ public class SongPickerView extends FrameLayout {
           public void onGlobalLayout() {
             widthMin = binding.buttonSongPickerExpand.getWidth();
 
-            setExpanded(activity.getMetronomeUtil().isSongPickerExpanded(), false);
+            boolean expanded = activity.getMetronomeUtil().isSongPickerExpanded();
+            setExpanded(expanded, false);
+            if (expanded) {
+              setCurrentSong(activity.getMetronomeUtil().getCurrentSongId(), false);
+            }
 
             if (binding.buttonSongPickerExpand.getViewTreeObserver().isAlive()) {
               binding.buttonSongPickerExpand.getViewTreeObserver().removeOnGlobalLayoutListener(
@@ -442,52 +399,220 @@ public class SongPickerView extends FrameLayout {
       return true;
     });
 
-    int colorSurface = ResUtil.getColor(context, R.attr.colorSurfaceContainer);
     gradientLeft = new GradientDrawable(
         GradientDrawable.Orientation.LEFT_RIGHT,
-        new int[]{Color.TRANSPARENT, colorSurface, colorSurface, colorSurface}
+        new int[]{
+            Color.TRANSPARENT, colorSurfaceContainer, colorSurfaceContainer, colorSurfaceContainer
+        }
     );
     gradientLeft = new ScaleDrawable(gradientLeft, Gravity.RIGHT, 1, 0);
     gradientRight = new GradientDrawable(
         Orientation.RIGHT_LEFT,
-        new int[]{Color.TRANSPARENT, colorSurface, colorSurface, colorSurface}
+        new int[]{
+            Color.TRANSPARENT, colorSurfaceContainer, colorSurfaceContainer, colorSurfaceContainer
+        }
     );
     gradientRight = new ScaleDrawable(gradientRight, Gravity.LEFT, 1, 0);
     binding.viewSongPickerGradientStart.setBackground(isRtl ? gradientRight : gradientLeft);
     binding.viewSongPickerGradientEnd.setBackground(isRtl ? gradientLeft : gradientRight);
   }
 
+  @SuppressLint("PrivateResource")
+  public void setExpanded(boolean expanded, boolean animated) {
+    this.isExpanded = expanded;
+    activity.getMetronomeUtil().setSongPickerExpanded(expanded);
+
+    if (springAnimationExpand != null) {
+      springAnimationExpand.cancel();
+    }
+    if (animated) {
+      if (springAnimationExpand == null) {
+        springAnimationExpand =
+            new SpringAnimation(this, EXPAND_FRACTION)
+                .setSpring(
+                    MotionUtils.resolveThemeSpringForce(
+                        getContext(),
+                        R.attr.motionSpringDefaultSpatial,
+                        R.style.Motion_Material3_Spring_Standard_Default_Spatial)
+                )
+                .setMinimumVisibleChange(0.01f)
+                .addEndListener(
+                    (animation, canceled, value, velocity) -> {
+                      if (!canceled) {
+                        setExpandAnimationEndState();
+                      }
+                    });
+      }
+      if (TEST_ANIMATIONS) {
+        springAnimationExpand.setSpring(new SpringForce().setStiffness(30f).setDampingRatio(0.9f));
+      }
+      setExpandAnimationStartState();
+      springAnimationExpand.animateToFinalPosition(expanded ? 1 : 0);
+    } else {
+      setExpandAnimationStartState();
+      setExpandFraction(expanded ? 1 : 0);
+      setExpandAnimationEndState();
+    }
+  }
+
+  private void setExpandAnimationStartState() {
+    binding.buttonSongPickerExpand.setClickable(!isExpanded);
+    binding.buttonSongPickerCollapse.setClickable(isExpanded);
+    binding.frameSongPickerTop.setClickable(isExpanded);
+    binding.buttonSongPickerOpen.setClickable(isExpanded);
+    binding.buttonSongPickerMenu.setClickable(isExpanded);
+    binding.buttonSongPickerAddSong.setClickable(isExpanded);
+
+    binding.buttonSongPickerExpand.setVisibility(VISIBLE);
+    binding.buttonSongPickerCollapse.setVisibility(VISIBLE);
+    binding.buttonGroupSongPickerTools.setVisibility(VISIBLE);
+    binding.recyclerSongPicker.setVisibility(VISIBLE);
+    setRecyclerClicksEnabled(false);
+    binding.buttonSongPickerAddSong.setVisibility(VISIBLE);
+  }
+
+  private void setExpandAnimationEndState() {
+    binding.buttonSongPickerExpand.setVisibility(isExpanded ? INVISIBLE : VISIBLE);
+    binding.buttonSongPickerCollapse.setVisibility(isExpanded ? VISIBLE : GONE);
+    binding.buttonGroupSongPickerTools.setVisibility(isExpanded ? VISIBLE : GONE);
+    binding.recyclerSongPicker.setVisibility(isExpanded ? VISIBLE : INVISIBLE);
+    setRecyclerClicksEnabled(isExpanded);
+    binding.buttonSongPickerAddSong.setVisibility(isExpanded ? VISIBLE : GONE);
+  }
+
+  private void setExpandFraction(float fraction) {
+    expandFraction = fraction;
+
+    binding.buttonSongPickerExpand.setAlpha(1 - fraction);
+    binding.buttonSongPickerExpand.setBackgroundColor(
+        ColorUtils.blendARGB(colorBgCollapsed, colorBgExpanded, fraction)
+    );
+    binding.cardSongPickerContainer.setRadius(
+        cornerRadiusCollapsed + (cornerRadiusExpanded - cornerRadiusCollapsed) * fraction
+    );
+    binding.cardSongPickerContainer.setCardBackgroundColor(
+        ColorUtils.blendARGB(colorBgCollapsed, colorBgExpanded, fraction)
+    );
+    int paddingStart =
+        (int) (paddingStartCollapsed + (paddingStartExpanded - paddingStartCollapsed) * fraction);
+    binding.frameSongPickerTop.setPadding(
+        isRtl ? binding.frameSongPickerTop.getPaddingLeft() : paddingStart,
+        binding.frameSongPickerTop.getPaddingTop(),
+        isRtl ? paddingStart : binding.frameSongPickerTop.getPaddingRight(),
+        binding.frameSongPickerTop.getPaddingBottom()
+    );
+    binding.buttonSongPickerCollapse.setAlpha(fraction);
+    binding.textSongPickerTop.setTextColor(
+        ColorUtils.blendARGB(colorFgCollapsed, colorFgExpanded, fraction)
+    );
+    binding.buttonGroupSongPickerTools.setAlpha(fraction);
+    binding.recyclerSongPicker.setAlpha(fraction);
+    binding.buttonSongPickerAddSong.setAlpha(fraction);
+
+    ViewGroup.LayoutParams lp = getLayoutParams();
+    lp.width = (int) (widthMin + (widthMax - widthMin) * fraction);
+    lp.height = (int) (heightCollapsed + (heightExpanded - heightCollapsed) * fraction);
+    setLayoutParams(lp);
+    if (listener != null) {
+      listener.onHeightChanged();
+    }
+  }
+
+  public float getExpandFraction() {
+    return expandFraction;
+  }
+
+  public int getHeightExpanded() {
+    return heightExpanded + heightExpandedMargin;
+  }
+
+  @SuppressLint("PrivateResource")
   private void setCurrentSong(@NonNull String currentSongId, boolean animated) {
     boolean isDefaultSong = currentSongId.equals(Constants.SONG_ID_DEFAULT);
-    if (animator != null) {
-      animator.pause();
-      animator.cancel();
-      animator.removeAllUpdateListeners();
-      animator.removeAllListeners();
-      animator = null;
+    int position = getPositionOfSong(isDefaultSong ? this.currentSongId : currentSongId);
+    this.currentSongId = currentSongId;
+
+    if (springAnimationSelectSpatial != null) {
+      springAnimationSelectSpatial.cancel();
     }
-    ViewGroup.LayoutParams closeIconParams = binding.imageSongPickerChipClose.getLayoutParams();
+    if (springAnimationSelectEffects != null) {
+      springAnimationSelectEffects.cancel();
+    }
+    if (springAnimationDeselectSpatial != null) {
+      springAnimationDeselectSpatial.cancel();
+    }
+    if (springAnimationDeselectEffects != null) {
+      springAnimationDeselectEffects.cancel();
+    }
     if (animated) {
-      setRecyclerClicksEnabled(false);
-      binding.frameSongPickerChipClose.setClickable(false);
-      binding.frameSongPickerChipTouchTarget.setClickable(false);
-      binding.frameSongPickerChipTouchTarget.setBackgroundColor(
-          ResUtil.getColor(context, R.attr.colorSurfaceContainer)
-      );
-      binding.cardSongPickerChip.setClickable(false);
-      binding.viewSongPickerGradientStart.setVisibility(VISIBLE);
-      binding.viewSongPickerGradientEnd.setVisibility(VISIBLE);
-      if (!isDefaultSong) {
-        binding.textSongPickerChip.setText(getSongNameFromId(currentSongId));
-        binding.constraintSongPickerChipContainer.setTranslationX(0);
-        binding.constraintSongPickerChipContainer.setVisibility(View.INVISIBLE);
-        closeIconParams.width = 0;
-        binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
-      } else {
-        binding.recyclerSongPicker.setAlpha(0);
-        binding.recyclerSongPicker.setVisibility(View.VISIBLE);
+      if (springAnimationSelectSpatial == null) {
+        springAnimationSelectSpatial =
+            new SpringAnimation(this, SELECT_SPATIAL_FRACTION)
+                .setSpring(new SpringForce().setStiffness(300f).setDampingRatio(0.6f))
+                .setMinimumVisibleChange(0.01f)
+                .addEndListener(
+                    (animation, canceled, value, velocity) -> {
+                      if (!canceled) {
+                        setSelectAnimationEndState();
+                      }
+                    });
+        if (TEST_ANIMATIONS) {
+          springAnimationSelectSpatial.setSpring(
+              new SpringForce().setStiffness(20f).setDampingRatio(0.3f)
+          );
+        }
       }
-      int position = getPositionOfSong(!isDefaultSong ? currentSongId : this.currentSongId);
+      if (springAnimationSelectEffects == null) {
+        springAnimationSelectEffects =
+            new SpringAnimation(this, SELECT_EFFECTS_FRACTION)
+                .setSpring(new SpringForce().setStiffness(300f).setDampingRatio(1f))
+                .setMinimumVisibleChange(0.01f);
+        if (TEST_ANIMATIONS) {
+          springAnimationSelectEffects.setSpring(
+              new SpringForce().setStiffness(40f).setDampingRatio(1f)
+          );
+        }
+      }
+      if (springAnimationDeselectSpatial == null) {
+        springAnimationDeselectSpatial =
+            new SpringAnimation(this, DESELECT_SPATIAL_FRACTION)
+                .setSpring(
+                    MotionUtils.resolveThemeSpringForce(
+                        getContext(),
+                        R.attr.motionSpringSlowSpatial,
+                        R.style.Motion_Material3_Spring_Standard_Slow_Spatial)
+                )
+                .setMinimumVisibleChange(0.01f)
+                .addEndListener(
+                    (animation, canceled, value, velocity) -> {
+                      if (!canceled) {
+                        setSelectAnimationEndState();
+                      }
+                    });
+        if (TEST_ANIMATIONS) {
+          springAnimationDeselectSpatial.setSpring(
+              new SpringForce().setStiffness(30f).setDampingRatio(0.9f)
+          );
+        }
+      }
+      if (springAnimationDeselectEffects == null) {
+        springAnimationDeselectEffects =
+            new SpringAnimation(this, DESELECT_EFFECTS_FRACTION)
+                .setSpring(
+                    MotionUtils.resolveThemeSpringForce(
+                        getContext(),
+                        R.attr.motionSpringSlowEffects,
+                        R.style.Motion_Material3_Spring_Standard_Slow_Effects)
+                )
+                .setMinimumVisibleChange(0.01f);
+        if (TEST_ANIMATIONS) {
+          springAnimationDeselectEffects.setSpring(
+              new SpringForce().setStiffness(40f).setDampingRatio(1f)
+          );
+        }
+      }
+      setSelectAnimationStartState();
+
       LayoutManager layoutManager = binding.recyclerSongPicker.getLayoutManager();
       if (position >= 0 && layoutManager != null) {
         if (isDefaultSong) {
@@ -501,107 +626,118 @@ public class SongPickerView extends FrameLayout {
           if (targetChip != null) {
             int endLeft = targetChip.getLeft();
             int startLeft = binding.frameSongPickerChipTouchTarget.getLeft();
-            // Compensate half of close icon width
-            startLeft += isDefaultSong ? UiUtil.dpToPx(context, 9) : 0;
-            int diff = endLeft - startLeft;
-            int closeIconWidth = UiUtil.dpToPx(context, 18);
-
-            int colorTertiaryContainer = ResUtil.getColor(
-                context, R.attr.colorTertiaryContainer
-            );
-            int colorOnTertiaryContainer = ResUtil.getColor(
-                context, R.attr.colorOnTertiaryContainer
-            );
-            int colorPrimary = ResUtil.getColor(context, R.attr.colorPrimary);
-            int colorSurface = ResUtil.getColor(context, R.attr.colorSurfaceBright);
-            int colorOnSurface = ResUtil.getColor(context, R.attr.colorOnSurface);
-            int colorOutlineVariant = ResUtil.getColor(context, R.attr.colorOutlineVariant);
-
-            if (!isDefaultSong) {
-              animator = ValueAnimator.ofFloat(0, 1);
-              animator.setInterpolator(new OvershootInterpolator());
-            } else {
-              animator = ValueAnimator.ofFloat(1, 0);
-              animator.setInterpolator(new FastOutSlowInInterpolator());
-            }
-            animator.addUpdateListener(animation -> {
-              float fraction = (float) animation.getAnimatedValue();
-              binding.constraintSongPickerChipContainer.setTranslationX((1 - fraction) * diff);
-              if (binding.constraintSongPickerChipContainer.getVisibility() == View.INVISIBLE) {
-                binding.constraintSongPickerChipContainer.setVisibility(View.VISIBLE);
-              }
-              closeIconParams.width = (int) Math.min(closeIconWidth * fraction, closeIconWidth);
-              binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
-              binding.imageSongPickerChipClose.setAlpha(fraction);
-
-              float colorFraction = Math.max(0, Math.min(1, fraction));
-              int colorBg = ColorUtils.blendARGB(
-                  colorSurface, colorTertiaryContainer, colorFraction
-              );
-              int colorText = ColorUtils.blendARGB(
-                  colorOnSurface, colorOnTertiaryContainer, colorFraction
-              );
-              int colorIcon = ColorUtils.blendARGB(
-                  colorPrimary, colorOnTertiaryContainer, colorFraction
-              );
-              boolean isDark = UiUtil.isDarkModeActive(context);
-              int recyclerColorStroke = ResUtil.getColor(
-                  context, isDark ? R.attr.colorSurfaceBright : R.attr.colorOutlineVariant
-              );
-              int colorStroke = ColorUtils.blendARGB(
-                  recyclerColorStroke, colorOnTertiaryContainer, colorFraction
-              );
-              binding.cardSongPickerChip.setCardBackgroundColor(colorBg);
-              binding.cardSongPickerChip.setStrokeColor(colorStroke);
-              binding.textSongPickerChip.setTextColor(colorText);
-              binding.imageSongPickerChipIcon.setColorFilter(colorIcon);
-              binding.imageSongPickerChipClose.setColorFilter(colorIcon);
-
-              gradientLeft.setLevel((int) (10000 * fraction));
-              gradientRight.setLevel((int) (10000 * fraction));
-
-              binding.recyclerSongPicker.setAlpha(1 - colorFraction);
-
-              binding.textSongPickerPart.setAlpha(colorFraction);
-            });
-            animator.addListener(new AnimatorListenerAdapter() {
-              @Override
-              public void onAnimationEnd(Animator animation) {
-                if (isDefaultSong) {
-                  binding.constraintSongPickerChipContainer.setVisibility(INVISIBLE);
-                } else {
-                  binding.viewSongPickerGradientStart.setVisibility(INVISIBLE);
-                  binding.viewSongPickerGradientEnd.setVisibility(INVISIBLE);
-                  binding.frameSongPickerChipTouchTarget.setBackground(null);
-                }
-                binding.frameSongPickerChipClose.setClickable(!isDefaultSong);
-                binding.frameSongPickerChipTouchTarget.setClickable(!isDefaultSong);
-                binding.cardSongPickerChip.setClickable(!isDefaultSong);
-                setRecyclerClicksEnabled(isDefaultSong);
-              }
-            });
-            animator.setDuration(Constants.ANIM_DURATION_LONG);
-            animator.start();
+            startLeft += isDefaultSong ? (chipCloseIconWidth / 2) : 0;
+            chipTargetTranslationX = endLeft - startLeft;
+          }
+          if (isDefaultSong) {
+            springAnimationDeselectSpatial.animateToFinalPosition(0);
+            springAnimationDeselectEffects.animateToFinalPosition(0);
+          } else {
+            springAnimationSelectSpatial.animateToFinalPosition(1);
+            springAnimationSelectEffects.animateToFinalPosition(1);
           }
         });
       }
     } else {
-      boolean recyclerVisible = expanded && isDefaultSong;
-      binding.recyclerSongPicker.setAlpha(recyclerVisible ? 1 : 0);
-      binding.recyclerSongPicker.setVisibility(recyclerVisible ? VISIBLE : INVISIBLE);
-      binding.constraintSongPickerChipContainer.setVisibility(isDefaultSong ? INVISIBLE : VISIBLE);
-      binding.viewSongPickerGradientStart.setVisibility(INVISIBLE);
-      binding.viewSongPickerGradientEnd.setVisibility(INVISIBLE);
-      binding.frameSongPickerChipTouchTarget.setBackground(null);
-      binding.frameSongPickerChipClose.setClickable(!isDefaultSong);
-      binding.textSongPickerChip.setText(getSongNameFromId(currentSongId));
-      closeIconParams.width = UiUtil.dpToPx(context, 18);
-      binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
-      binding.imageSongPickerChipClose.setAlpha(1f);
-      binding.textSongPickerPart.setAlpha(isDefaultSong ? 0 : 1);
-      setRecyclerClicksEnabled(isDefaultSong);
+      setSelectAnimationStartState();
+      setSpatialSelectFraction(isDefaultSong ? 0 : 1);
+      setEffectsSelectFraction(isDefaultSong ? 0 : 1);
+      setSelectAnimationEndState();
     }
-    this.currentSongId = currentSongId;
+  }
+
+  private void setSelectAnimationStartState() {
+    boolean isDefaultSong = currentSongId.equals(Constants.SONG_ID_DEFAULT);
+
+    binding.buttonSongPickerCollapse.setEnabled(isDefaultSong);
+    binding.frameSongPickerTop.setClickable(isDefaultSong);
+
+    binding.recyclerSongPicker.setVisibility(VISIBLE);
+    setRecyclerClicksEnabled(isDefaultSong);
+    if (isDefaultSong) {
+      binding.recyclerSongPicker.setAlpha(0);
+    } else {
+      binding.textSongPickerChip.setText(getSongNameFromId(currentSongId));
+
+      // Don't make container visible yet to prevent flashing bevor proper placing
+      binding.constraintSongPickerChipContainer.setTranslationX(0);
+
+      ViewGroup.LayoutParams closeIconParams = binding.imageSongPickerChipClose.getLayoutParams();
+      closeIconParams.width = 0;
+      binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
+    }
+    binding.frameSongPickerChipClose.setClickable(!isDefaultSong);
+    binding.frameSongPickerChipTouchTarget.setClickable(!isDefaultSong);
+    binding.cardSongPickerChip.setClickable(!isDefaultSong);
+    // card seems to ignore clickable false, disable manually
+    binding.cardSongPickerChip.setEnabled(!isDefaultSong);
+
+    binding.buttonSongPickerAddSong.setVisibility(VISIBLE);
+    binding.buttonSongPickerAddSong.setClickable(isDefaultSong);
+  }
+
+  private void setSelectAnimationEndState() {
+    boolean isDefaultSong = currentSongId.equals(Constants.SONG_ID_DEFAULT);
+
+    binding.recyclerSongPicker.setVisibility(isDefaultSong ? VISIBLE : INVISIBLE);
+    binding.constraintSongPickerChipContainer.setVisibility(isDefaultSong ? INVISIBLE : VISIBLE);
+
+    binding.buttonSongPickerAddSong.setVisibility(isDefaultSong ? VISIBLE : GONE);
+  }
+
+  private void setSpatialSelectFraction(float fraction) {
+    selectSpatialFraction = fraction;
+
+    binding.constraintSongPickerChipContainer.setTranslationX(
+        (1 - fraction) * chipTargetTranslationX
+    );
+    if (binding.constraintSongPickerChipContainer.getVisibility() == INVISIBLE) {
+      binding.constraintSongPickerChipContainer.setVisibility(VISIBLE);
+    }
+
+    ViewGroup.LayoutParams closeIconParams = binding.imageSongPickerChipClose.getLayoutParams();
+    closeIconParams.width = (int) Math.min(chipCloseIconWidth * fraction, chipCloseIconWidth);
+    binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
+  }
+
+  private float getSpatialSelectFraction() {
+    return selectSpatialFraction;
+  }
+
+  private void setEffectsSelectFraction(float fraction) {
+    selectEffectsFraction = fraction;
+
+    binding.imageSongPickerChipClose.setAlpha(fraction);
+
+    int colorBg = ColorUtils.blendARGB(colorSurfaceBright, colorTertiaryContainer, fraction);
+    int colorText = ColorUtils.blendARGB(colorOnSurface, colorOnTertiaryContainer, fraction);
+    int colorIcon = ColorUtils.blendARGB(colorPrimary, colorOnTertiaryContainer, fraction);
+    boolean isDark = UiUtil.isDarkModeActive(context);
+    int recyclerColorStroke = ResUtil.getColor(
+        context, isDark ? R.attr.colorSurfaceBright : R.attr.colorOutlineVariant
+    );
+    int colorStroke = ColorUtils.blendARGB(recyclerColorStroke, colorOnTertiaryContainer, fraction);
+    binding.cardSongPickerChip.setCardBackgroundColor(colorBg);
+    binding.cardSongPickerChip.setStrokeColor(colorStroke);
+    binding.textSongPickerChip.setTextColor(colorText);
+    binding.imageSongPickerChipIcon.setColorFilter(colorIcon);
+    binding.imageSongPickerChipClose.setColorFilter(colorIcon);
+
+    gradientLeft.setLevel((int) (10000 * fraction));
+    gradientRight.setLevel((int) (10000 * fraction));
+
+    binding.buttonSongPickerCollapse.setIconTint(ColorStateList.valueOf(
+        ColorUtils.blendARGB(colorOnSurfaceVariant, colorOnSurface, fraction)
+    ));
+    binding.buttonSongPickerCollapse.setAlpha(1 + (0.38f - 1) * fraction);
+    binding.recyclerSongPicker.setAlpha(1 - fraction);
+    binding.buttonSongPickerAddSong.setAlpha(1 - fraction);
+
+    binding.textSongPickerPart.setAlpha(fraction);
+  }
+
+  private float getEffectsSelectFraction() {
+    return selectEffectsFraction;
   }
 
   private int getPositionOfSong(@NonNull String songNameId) {
@@ -693,50 +829,6 @@ public class SongPickerView extends FrameLayout {
     }
   }
 
-  public float getExpandFraction() {
-    return expandFraction;
-  }
-
-  private void setExpandFraction(float fraction) {
-    expandFraction = fraction;
-    binding.buttonSongPickerExpand.setAlpha(1 - fraction);
-    binding.buttonSongPickerExpand.setBackgroundColor(
-        ColorUtils.blendARGB(colorBgCollapsed, colorBgExpanded, fraction)
-    );
-    binding.cardSongPickerContainer.setRadius(
-        cornerRadiusCollapsed + (cornerRadiusExpanded - cornerRadiusCollapsed) * fraction
-    );
-    binding.cardSongPickerContainer.setCardBackgroundColor(
-        ColorUtils.blendARGB(colorBgCollapsed, colorBgExpanded, fraction)
-    );
-    binding.textSongPickerTop.setTextColor(
-        ColorUtils.blendARGB(colorFgCollapsed, colorFgExpanded, fraction)
-    );
-    int paddingStart =
-        (int) (paddingStartCollapsed + (paddingStartExpanded - paddingStartCollapsed) * fraction);
-    binding.frameSongPickerTop.setPadding(
-        isRtl ? binding.frameSongPickerTop.getPaddingLeft() : paddingStart,
-        binding.frameSongPickerTop.getPaddingTop(),
-        isRtl ? paddingStart : binding.frameSongPickerTop.getPaddingRight(),
-        binding.frameSongPickerTop.getPaddingBottom()
-    );
-    binding.buttonSongPickerCollapse.setAlpha(fraction);
-    binding.buttonGroupSongPickerTools.setAlpha(fraction);
-    binding.recyclerSongPicker.setAlpha(fraction);
-    binding.buttonSongPickerAddSong.setAlpha(fraction);
-    ViewGroup.LayoutParams lp = getLayoutParams();
-    lp.width = (int) (widthMin + (widthMax - widthMin) * fraction);
-    lp.height = (int) (heightCollapsed + (heightExpanded - heightCollapsed) * fraction);
-    setLayoutParams(lp);
-    if (listener != null) {
-      listener.onHeightChanged();
-    }
-  }
-
-  public int getHeightExpanded() {
-    return heightExpanded + heightExpandedMargin;
-  }
-
   public interface SongPickerListener {
     void onCurrentSongChanged(@NonNull String currentSongId);
     void onCurrentSongClicked();
@@ -760,6 +852,54 @@ public class SongPickerView extends FrameLayout {
         @Override
         public void setValue(SongPickerView delegate, float value) {
           delegate.setExpandFraction(value);
+        }
+      };
+  private static final FloatPropertyCompat<SongPickerView> SELECT_SPATIAL_FRACTION =
+      new FloatPropertyCompat<>("selectSpatialFraction") {
+        @Override
+        public float getValue(SongPickerView delegate) {
+          return delegate.getSpatialSelectFraction();
+        }
+
+        @Override
+        public void setValue(SongPickerView delegate, float value) {
+          delegate.setSpatialSelectFraction(value);
+        }
+      };
+  private static final FloatPropertyCompat<SongPickerView> SELECT_EFFECTS_FRACTION =
+      new FloatPropertyCompat<>("selectEffectsFraction") {
+        @Override
+        public float getValue(SongPickerView delegate) {
+          return delegate.getEffectsSelectFraction();
+        }
+
+        @Override
+        public void setValue(SongPickerView delegate, float value) {
+          delegate.setEffectsSelectFraction(value);
+        }
+      };
+  private static final FloatPropertyCompat<SongPickerView> DESELECT_SPATIAL_FRACTION =
+      new FloatPropertyCompat<>("deselectSpatialFraction") {
+        @Override
+        public float getValue(SongPickerView delegate) {
+          return delegate.getSpatialSelectFraction();
+        }
+
+        @Override
+        public void setValue(SongPickerView delegate, float value) {
+          delegate.setSpatialSelectFraction(value);
+        }
+      };
+  private static final FloatPropertyCompat<SongPickerView> DESELECT_EFFECTS_FRACTION =
+      new FloatPropertyCompat<>("deselectEffectsFraction") {
+        @Override
+        public float getValue(SongPickerView delegate) {
+          return delegate.getEffectsSelectFraction();
+        }
+
+        @Override
+        public void setValue(SongPickerView delegate, float value) {
+          delegate.setEffectsSelectFraction(value);
         }
       };
 }

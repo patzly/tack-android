@@ -149,6 +149,7 @@
           android:background="?attr/colorSurfaceContainer"
           android:layout_marginStart="32dp"
           android:layout_marginEnd="32dp"
+          android:backgroundTint="?attr/colorSurfaceContainer"
           app:layout_constraintStart_toStartOf="parent"
           app:layout_constraintEnd_toEndOf="parent"
           app:layout_constraintTop_toBottomOf="@id/text_song_picker_song_header"
