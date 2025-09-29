@@ -145,6 +145,7 @@
   <string name="action_restore">還原</string>
   <string name="action_view_more_songs">檢視更多歌曲</string>
   <string name="action_next">下一頁</string>
+  <string name="action_show_parts">顯示部份</string>
   <string name="action_more">更多</string>
   <string name="action_edit">編輯</string>
   <string name="action_expand">展開</string>
