@@ -147,6 +147,7 @@
   <string name="action_next">下一頁</string>
   <string name="action_show_parts">顯示部份</string>
   <string name="action_next_part">下一個部份</string>
+  <string name="action_prev_part">上一個部份</string>
   <string name="action_more">更多</string>
   <string name="action_edit">編輯</string>
   <string name="action_expand">展開</string>
