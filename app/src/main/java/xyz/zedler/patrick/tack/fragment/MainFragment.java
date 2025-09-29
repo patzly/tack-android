@@ -159,17 +159,32 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     savedState = savedInstanceState;
     activity = (MainActivity) requireActivity();
 
-    SystemBarBehavior systemBarBehavior = new SystemBarBehavior(activity);
-    systemBarBehavior.setAppBar(binding.appBarMain);
-    systemBarBehavior.setContainer(binding.constraintMainContainer);
-    systemBarBehavior.setUp();
-
     isPortrait = UiUtil.isOrientationPortrait(activity);
     isLandTablet = UiUtil.isLandTablet(activity);
     isRtl = UiUtil.isLayoutRtl(activity);
 
-    int liftMode = isLandTablet ? ScrollBehavior.ALWAYS_LIFTED : ScrollBehavior.NEVER_LIFTED;
-    new ScrollBehavior().setUpScroll(binding.appBarMain, null, liftMode);
+    SystemBarBehavior systemBarBehavior = new SystemBarBehavior(activity);
+    systemBarBehavior.setAppBar(binding.appBarMain);
+    if (isPortrait || isLandTablet) {
+      systemBarBehavior.setContainer(binding.constraintMainContainer);
+    } else if (binding.scrollMainStart != null) {
+      systemBarBehavior.setContainer(binding.constraintMainContainer);
+      systemBarBehavior.setScroll(binding.scrollMainStart, binding.linearMainTop);
+      systemBarBehavior.setMultiColumnLayout(true);
+      if (binding.containerMainEnd != null) {
+        SystemBarBehavior.applyBottomInset(binding.containerMainEnd);
+      }
+    }
+    systemBarBehavior.setUp();
+
+    if (isPortrait || isLandTablet) {
+      int liftMode = isLandTablet ? ScrollBehavior.ALWAYS_LIFTED : ScrollBehavior.NEVER_LIFTED;
+      new ScrollBehavior().setUpScroll(binding.appBarMain, null, liftMode);
+    } else {
+      new ScrollBehavior().setUpScroll(
+          binding.appBarMain, binding.scrollMainStart, ScrollBehavior.LIFT_ON_SCROLL
+      );
+    }
 
     binding.buttonMainMenu.setOnClickListener(v -> {
       performHapticClick();
@@ -248,7 +263,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
 
       @Override
       public void onHeightChanged() {
-        updateTempoPickerTranslationAndScale();
+        if (isPortrait || isLandTablet) {
+          updateTempoPickerTranslationAndScale();
+        }
       }
     });
 
@@ -521,7 +538,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
 
       @Override
       public void onHeightChanged() {
-        updateTempoPickerTranslationAndScale();
+        if (isPortrait || isLandTablet) {
+          updateTempoPickerTranslationAndScale();
+        }
       }
     });
     activity.getSongViewModel().getAllSongsWithPartsLive().observe(
@@ -538,7 +557,8 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
             binding.songPickerMain.init(
                 getMetronomeUtil().getCurrentSongId(),
                 getMetronomeUtil().getCurrentPartIndex(),
-                songsWithParts
+                songsWithParts,
+                getMetronomeUtil().isSongPickerExpanded()
             );
           }
           binding.songPickerMain.setSongs(songsWithParts);

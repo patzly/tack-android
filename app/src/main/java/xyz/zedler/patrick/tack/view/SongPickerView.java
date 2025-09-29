@@ -80,10 +80,7 @@ public class SongPickerView extends FrameLayout {
   private final Context context;
   private final boolean isRtl;
   private final int heightCollapsed, heightExpanded, heightExpandedMargin;
-  private final int paddingStartCollapsed, paddingStartExpanded;
-  private final int cornerRadiusCollapsed, cornerRadiusExpanded;
   private final int colorBgCollapsed, colorBgExpanded;
-  private final int colorFgCollapsed, colorFgExpanded;
   private final int chipCloseIconWidth;
   private final int colorPrimary, colorTertiaryContainer, colorOnTertiaryContainer;
   private final int colorSurfaceBright, colorSurfaceContainer;
@@ -111,20 +108,12 @@ public class SongPickerView extends FrameLayout {
     isRtl = UiUtil.isLayoutRtl(context);
     songsWithParts = Collections.emptyList();
 
-    paddingStartCollapsed = UiUtil.dpToPx(context, 24 + 24 + 8);
-    paddingStartExpanded = UiUtil.dpToPx(context, 8 + 48 + 4);
-    cornerRadiusCollapsed = UiUtil.dpToPx(context, 28);
-    cornerRadiusExpanded = UiUtil.dpToPx(context, 32);
-
     heightCollapsed = UiUtil.dpToPx(context, 56);
     heightExpanded = UiUtil.dpToPx(context, 48 * 3 + 8 * 2);
     heightExpandedMargin = UiUtil.dpToPx(context, 32);
 
     colorBgCollapsed = ResUtil.getColor(context, R.attr.colorSecondaryContainer);
     colorBgExpanded = ResUtil.getColor(context, R.attr.colorSurfaceContainer);
-
-    colorFgCollapsed = ResUtil.getColor(context, R.attr.colorOnSecondaryContainer);
-    colorFgExpanded = ResUtil.getColor(context, R.attr.colorOnSurface);
 
     chipCloseIconWidth = UiUtil.dpToPx(context, 18);
     colorTertiaryContainer = ResUtil.getColor(context, R.attr.colorTertiaryContainer);
@@ -144,7 +133,12 @@ public class SongPickerView extends FrameLayout {
     this.listener = listener;
   }
 
-  public void init(@NonNull String currentSongId, int currentPartIndex, List<SongWithParts> songs) {
+  public void init(
+      @NonNull String currentSongId,
+      int currentPartIndex,
+      List<SongWithParts> songs,
+      boolean expanded
+  ) {
     if (isInitialized) {
       return;
     }
@@ -156,7 +150,7 @@ public class SongPickerView extends FrameLayout {
     // To display current song title in current chip at start
     this.songsWithParts = new ArrayList<>(songs);
 
-    initPickerSize();
+    initPickerSize(expanded);
     initRecycler();
     initChip();
     setCurrentSong(currentSongId, false);
@@ -204,10 +198,15 @@ public class SongPickerView extends FrameLayout {
   }
 
   public void setParentWidth(int width) {
+    boolean isPortrait = UiUtil.isOrientationPortrait(context);
+    boolean isLandTablet = UiUtil.isLandTablet(context);
+    if (isPortrait || isLandTablet) {
+      width = Math.min(width, ResUtil.getDimension(context, R.dimen.max_content_width));
+    }
     widthMax = width - UiUtil.dpToPx(context, 16 + 16); // add horizontal margin
   }
 
-  private void initPickerSize() {
+  private void initPickerSize(boolean expanded) {
     binding.buttonSongPickerExpand.setOnClickListener(v -> {
       if (isExpanded) {
         return;
@@ -236,9 +235,9 @@ public class SongPickerView extends FrameLayout {
           public void onGlobalLayout() {
             widthMin = binding.buttonSongPickerExpand.getWidth();
 
-            boolean expanded = activity.getMetronomeUtil().isSongPickerExpanded();
             setExpanded(expanded, false);
             if (expanded) {
+              // Redo song select animation stuff
               setCurrentSong(activity.getMetronomeUtil().getCurrentSongId(), false);
             }
 
@@ -493,27 +492,10 @@ public class SongPickerView extends FrameLayout {
     expandFraction = fraction;
 
     binding.buttonSongPickerExpand.setAlpha(1 - fraction);
-    /*binding.buttonSongPickerExpand.setBackgroundColor(
-        ColorUtils.blendARGB(colorBgCollapsed, colorBgExpanded, fraction)
-    );*/
-    binding.cardSongPickerContainer.setRadius(
-        cornerRadiusCollapsed + (cornerRadiusExpanded - cornerRadiusCollapsed) * fraction
-    );
     binding.cardSongPickerContainer.setCardBackgroundColor(
         ColorUtils.blendARGB(colorBgCollapsed, colorBgExpanded, fraction)
     );
-    int paddingStart =
-        (int) (paddingStartCollapsed + (paddingStartExpanded - paddingStartCollapsed) * fraction);
-    binding.frameSongPickerTop.setPadding(
-        isRtl ? binding.frameSongPickerTop.getPaddingLeft() : paddingStart,
-        binding.frameSongPickerTop.getPaddingTop(),
-        isRtl ? paddingStart : binding.frameSongPickerTop.getPaddingRight(),
-        binding.frameSongPickerTop.getPaddingBottom()
-    );
     binding.buttonSongPickerCollapse.setAlpha(fraction);
-    binding.textSongPickerTop.setTextColor(
-        ColorUtils.blendARGB(colorFgCollapsed, colorFgExpanded, fraction)
-    );
     binding.buttonGroupSongPickerTools.setAlpha(fraction);
     binding.recyclerSongPicker.setAlpha(fraction);
     binding.buttonSongPickerAddSong.setAlpha(fraction);
@@ -700,6 +682,8 @@ public class SongPickerView extends FrameLayout {
   private void setSpatialSelectFraction(float fraction) {
     selectSpatialFraction = fraction;
 
+    binding.buttonSongPickerCollapse.setRotation(90 * fraction);
+
     binding.constraintSongPickerChipContainer.setTranslationX(
         (1 - fraction) * chipTargetTranslationX
     );
@@ -742,7 +726,6 @@ public class SongPickerView extends FrameLayout {
         ColorUtils.blendARGB(colorOnSurfaceVariant, colorOnSurface, fraction)
     ));
     binding.buttonSongPickerCollapse.setAlpha(1 + (0.38f - 1) * fraction);
-    binding.buttonSongPickerCollapse.setRotation(90 * fraction);
     binding.recyclerSongPicker.setAlpha(1 - fraction);
     binding.buttonSongPickerAddSong.setAlpha(1 - fraction);
 

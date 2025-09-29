@@ -258,10 +258,12 @@ public class MetronomeUtil {
   }
 
   public void setSongPickerExpanded(boolean songPickerExpanded) {
+    Log.i(TAG, "setSongPickerExpanded: hello " + songPickerExpanded + " " + isFromService());
     isSongPickerExpanded = songPickerExpanded;
   }
 
   public boolean isSongPickerExpanded() {
+    Log.i(TAG, "isSongPickerExpanded: hello " + isSongPickerExpanded + " " + isFromService());
     return isSongPickerExpanded;
   }
 
