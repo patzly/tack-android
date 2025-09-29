@@ -149,8 +149,6 @@
   <string name="action_edit">編集</string>
   <string name="action_expand">展開</string>
   <string name="action_collapse">折りたたみ</string>
-  <string name="action_show_list">一覧表示</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_feedback">素晴らしいアプリの開発には、膨大な時間とユーザーからのフィードバックが必要です。</string>
