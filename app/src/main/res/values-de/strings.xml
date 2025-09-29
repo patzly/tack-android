@@ -148,6 +148,7 @@
   <string name="action_view_more_songs">Mehr Werke anzeigen</string>
   <string name="action_next">Weiter</string>
   <string name="action_show_parts">Teile anzeigen</string>
+  <string name="action_next_part">Nächster Teil</string>
   <string name="action_more">Mehr</string>
   <string name="action_edit">Bearbeiten</string>
   <string name="action_expand">Ausklappen</string>
