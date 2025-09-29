@@ -152,6 +152,8 @@
   <string name="action_edit">編輯</string>
   <string name="action_expand">展開</string>
   <string name="action_collapse">收合</string>
+  <string name="action_show_songs_list">顯示歌曲為清單</string>
+
   <!-- MESSAGES -->
 
   <string name="msg_feedback">一款優秀的應用程式需要花費大量的時間和獲取使用者的意見反映。</string>
