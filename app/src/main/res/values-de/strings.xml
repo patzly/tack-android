@@ -113,6 +113,7 @@
   <string name="action_remove_sub">Unterteilung entfernen</string>
   <string name="action_beat_mode">Schlagmodus</string>
   <string name="action_send_feedback">Rückmeldung senden</string>
+  <string name="action_open_link">Website öffnen</string>
   <string name="action_reset">Zurücksetzen</string>
   <string name="action_deactivate_gain">Verstärkung deaktivieren</string>
   <string name="action_recommend">Weiterempfehlen</string>
