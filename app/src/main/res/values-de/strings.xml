@@ -165,7 +165,6 @@
   <string name="msg_service_running">Metronom-Service läuft</string>
   <string name="msg_service_running_return">Tippen, um zu Tack zurückzukehren</string>
   <string name="msg_service_description">Service für die Konfiguration und Wiedergabe des Metronoms</string>
-  <string name="msg_connection_lost">Service-Verbindung verloren, App-Neustart erforderlich</string>
   <string name="msg_reset">Alles zurücksetzen?</string>
   <string name="msg_reset_description">Möchtest du wirklich die gesamte App einschließlich Werksammlung und Einstellungen zurücksetzen? Erstelle erst eine Sicherung deiner Werksammlung, wenn nötig. Das Zurücksetzen kann nicht rückgängig gemacht werden.</string>
   <string name="msg_reset_timer">Timer zurücksetzen?</string>
