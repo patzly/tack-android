@@ -104,6 +104,18 @@
         android:scrollbars="none"
         tools:ignore="UselessParent" />
 
+      <TextView
+        android:id="@+id/text_song_picker_empty"
+        style="@style/Widget.Tack.TextView.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="48dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:text="@string/msg_songs_empty" />
+
       <com.google.android.material.button.MaterialButton
         android:id="@+id/button_song_picker_add_song"
         style="@style/Widget.Tack.Button.TonalButton"

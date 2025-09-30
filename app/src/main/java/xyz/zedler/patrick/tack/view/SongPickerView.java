@@ -46,7 +46,6 @@ import androidx.dynamicanimation.animation.FloatPropertyCompat;
 import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 import com.google.android.material.motion.MotionUtils;
 import java.util.ArrayList;
@@ -157,7 +156,9 @@ public class SongPickerView extends FrameLayout {
 
   public void setSongs(List<SongWithParts> songs) {
     this.songsWithParts = new ArrayList<>(songs);
-    // TODO: placeholder text if empty
+
+    binding.textSongPickerEmpty.setVisibility(songsWithParts.isEmpty() ? VISIBLE : GONE);
+
     SongChipAdapter adapter = (SongChipAdapter) binding.recyclerSongPicker.getAdapter();
     if (adapter == null) {
       throw new IllegalStateException("init() has to be called before any other method");
@@ -166,7 +167,7 @@ public class SongPickerView extends FrameLayout {
     SortUtil.sortSongsWithParts(songsWithParts, sortOrder);
     adapter.submitList(songsWithParts);
 
-    maybeCenterSongChips();
+    binding.recyclerSongPicker.post(this::maybeCenterSongChips);
 
     // maybe name of current song changed
     String songName = getSongNameFromId(currentSongId);
@@ -428,8 +429,6 @@ public class SongPickerView extends FrameLayout {
       listener.onExpandChanged(expanded);
     }
 
-    // TODO: center song chips before animation if no song is selected
-
     if (springAnimationExpand != null) {
       springAnimationExpand.cancel();
     }
@@ -476,6 +475,9 @@ public class SongPickerView extends FrameLayout {
     binding.buttonGroupSongPickerTools.setVisibility(VISIBLE);
     binding.recyclerSongPicker.setVisibility(VISIBLE);
     setRecyclerClicksEnabled(false);
+    if (isExpanded) {
+      maybeCenterSongChips();
+    }
     binding.buttonSongPickerAddSong.setVisibility(VISIBLE);
   }
 
@@ -692,7 +694,7 @@ public class SongPickerView extends FrameLayout {
     }
 
     ViewGroup.LayoutParams closeIconParams = binding.imageSongPickerChipClose.getLayoutParams();
-    closeIconParams.width = (int) Math.min(chipCloseIconWidth * fraction, chipCloseIconWidth);
+    closeIconParams.width = (int) (chipCloseIconWidth * fraction);
     binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
   }
 
@@ -727,6 +729,7 @@ public class SongPickerView extends FrameLayout {
     ));
     binding.buttonSongPickerCollapse.setAlpha(1 + (0.38f - 1) * fraction);
     binding.recyclerSongPicker.setAlpha(1 - fraction);
+    binding.textSongPickerEmpty.setAlpha(1 - fraction);
     binding.buttonSongPickerAddSong.setAlpha(1 - fraction);
 
     binding.buttonSongPickerPart.setAlpha(fraction);
@@ -755,21 +758,19 @@ public class SongPickerView extends FrameLayout {
     SongChipItemDecoration decoration = new SongChipItemDecoration(
         outerPadding, innerPadding, isRtl
     );
-    if (binding.recyclerSongPicker.getItemDecorationCount() > 0) {
-      binding.recyclerSongPicker.removeItemDecorationAt(0);
+    if (binding.recyclerSongPicker.getItemDecorationCount() == 0) {
+      binding.recyclerSongPicker.addItemDecoration(decoration);
     }
-    binding.recyclerSongPicker.addItemDecoration(decoration);
     binding.recyclerSongPicker.getViewTreeObserver().addOnGlobalLayoutListener(
         new ViewTreeObserver.OnGlobalLayoutListener() {
           @Override
           public void onGlobalLayout() {
-            RecyclerView recyclerView = binding.recyclerSongPicker;
-            SongChipAdapter adapter = (SongChipAdapter) recyclerView.getAdapter();
-            int itemCount = adapter != null ? adapter.getItemCount() : 0;
-            if (adapter != null && itemCount > 0) {
+            binding.recyclerSongPicker.invalidateItemDecorations();
+            int itemCount = songsWithParts.size();
+            if (itemCount > 0) {
               int totalWidth = 0;
               for (int i = 0; i < itemCount; i++) {
-                View child = recyclerView.getChildAt(i);
+                View child = binding.recyclerSongPicker.getChildAt(i);
                 if (child != null) {
                   // adapter item count sometimes leads to index out of bounds of recyclerview
                   // but child count sometimes leads to wrong number of children which leads to
@@ -779,21 +780,22 @@ public class SongPickerView extends FrameLayout {
               }
               totalWidth += innerPadding * 2 * (itemCount - 1);
               totalWidth += outerPadding * 2;
-              int containerWidth = recyclerView.getWidth();
-              boolean shouldCenter = totalWidth < containerWidth;
+              boolean shouldCenter = totalWidth < widthMax;
               if (shouldCenter) {
-                int padding = (containerWidth - totalWidth) / 2;
-                recyclerView.setPadding(
+                int padding = (widthMax - totalWidth) / 2;
+                binding.recyclerSongPicker.setPadding(
                     isRtl ? 0 : padding, 0,
                     isRtl ? padding : 0, 0
                 );
-                recyclerView.setOverScrollMode(View.OVER_SCROLL_NEVER);
+                binding.recyclerSongPicker.setOverScrollMode(View.OVER_SCROLL_NEVER);
               } else {
-                recyclerView.setPadding(0, 0, 0, 0);
-                recyclerView.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
+                binding.recyclerSongPicker.setPadding(0, 0, 0, 0);
+                binding.recyclerSongPicker.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
               }
             }
-            recyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            binding.recyclerSongPicker.getViewTreeObserver().removeOnGlobalLayoutListener(
+                this
+            );
           }
         });
   }
