@@ -143,7 +143,6 @@
   <string name="msg_service_running">Metronoom service wordt uitgevoerd</string>
   <string name="msg_service_running_return">Tik om terug te keren naar Tack</string>
   <string name="msg_service_description">Service voor metronoomconfiguratie en playback</string>
-  <string name="msg_connection_lost">Serviceverbinding verloren, app opnieuw opstarten vereist</string>
   <string name="msg_reset">Alles resetten?</string>
   <string name="msg_reset_description">Weet je zeker dat je de hele app wilt resetten, inclusief de muziekbibliotheek en instellingen? Maak indien nodig eerst een back-up van je muziekbibliotheek. Een reset kan niet ongedaan worden gemaakt.</string>
   <string name="msg_reset_timer">Timer resetten?</string>
