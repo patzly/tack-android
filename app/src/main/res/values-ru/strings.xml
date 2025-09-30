@@ -141,7 +141,6 @@
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Разработка хорошего приложения занимает много времени и зависит от обратной связи пользователей</string>
-  <string name="msg_feedback_contact">У вас есть пожелания, комментарии или вопросы? Напишите мне!\nЕсли нет, буду рад хорошему отзыву в Play Store.</string>
   <string name="msg_recommend">Зацени классный метроном: \n%1$s</string>
   <string name="msg_service_running">Сервис метронома запущен</string>
   <string name="msg_service_running_return">Нажмите, чтобы вернуться в Tack</string>
