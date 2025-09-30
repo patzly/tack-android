@@ -35,7 +35,7 @@
     android:layout_gravity="bottom" />
 
   <androidx.core.widget.NestedScrollView
-    android:id="@+id/scroll_options"
+    android:id="@+id/scroll_text"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="1dp"

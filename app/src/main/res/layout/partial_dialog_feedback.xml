@@ -36,7 +36,7 @@
     android:layout_gravity="bottom" />
 
   <androidx.core.widget.NestedScrollView
-    android:id="@+id/scroll_options"
+    android:id="@+id/scroll_feedback"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="1dp"
@@ -52,7 +52,7 @@
       android:paddingStart="24dp"
       android:paddingEnd="24dp"
       android:paddingTop="16dp"
-      android:paddingBottom="16dp">
+      android:paddingBottom="20dp">
 
       <TextView
         style="@style/Widget.Tack.TextView.Paragraph"

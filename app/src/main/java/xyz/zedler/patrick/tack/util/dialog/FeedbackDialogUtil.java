@@ -48,10 +48,12 @@ public class FeedbackDialogUtil {
   }
 
   public void show() {
+    update();
     dialogUtil.show();
   }
 
   public void showIfWasShown(@Nullable Bundle state) {
+    update();
     dialogUtil.showIfWasShown(state);
   }
 
@@ -63,5 +65,9 @@ public class FeedbackDialogUtil {
     if (dialogUtil != null) {
       dialogUtil.saveState(outState);
     }
+  }
+
+  private void update() {
+    binding.scrollFeedback.scrollTo(0, 0);
   }
 }
