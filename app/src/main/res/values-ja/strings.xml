@@ -151,7 +151,6 @@
   <!-- MESSAGES -->
 
   <string name="msg_feedback">素晴らしいアプリの開発には、膨大な時間とユーザーからのフィードバックが必要です。</string>
-  <string name="msg_feedback_contact">要望や意見、質問がある場合はご連絡ください！\nそして、 Play ストアで素敵なレビューを書いていただけると非常に嬉しいです。</string>
   <string name="msg_recommend">素敵なメトロノームアプリをチェック: \n%1$s</string>
   <string name="msg_vibration_unavailable">このデバイスでは振動を利用できません。音を出力します。</string>
   <string name="msg_service_running">メトロノーム機能実行中</string>
