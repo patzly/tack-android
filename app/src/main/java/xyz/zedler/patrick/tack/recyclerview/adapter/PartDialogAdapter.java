@@ -30,7 +30,7 @@ import java.util.List;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
-import xyz.zedler.patrick.tack.databinding.RowDialogPartBinding;
+import xyz.zedler.patrick.tack.databinding.RowDialogRadioBinding;
 
 public class PartDialogAdapter extends Adapter<ViewHolder> {
 
@@ -49,7 +49,7 @@ public class PartDialogAdapter extends Adapter<ViewHolder> {
   @NonNull
   @Override
   public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-    RowDialogPartBinding binding = RowDialogPartBinding.inflate(
+    RowDialogRadioBinding binding = RowDialogRadioBinding.inflate(
         LayoutInflater.from(parent.getContext()), parent, false
     );
     return new PartDialogViewHolder(binding);
@@ -66,13 +66,13 @@ public class PartDialogAdapter extends Adapter<ViewHolder> {
     if (name == null) {
       name = context.getString(R.string.label_part_unnamed, adapterPosition + 1);
     }
-    partHolder.binding.textRowDialogPartName.setText(name);
-    partHolder.binding.textRowDialogPartDuration.setText(part.getTimerDurationString(context));
+    partHolder.binding.textRowDialogName.setText(name);
+    partHolder.binding.textRowDialogDescription.setText(part.getTimerDurationString(context));
 
-    partHolder.binding.radioRowDialogPart.setChecked(adapterPosition == partIndex);
-    partHolder.binding.radioRowDialogPart.jumpDrawablesToCurrentState();
+    partHolder.binding.radioRowDialog.setChecked(adapterPosition == partIndex);
+    partHolder.binding.radioRowDialog.jumpDrawablesToCurrentState();
 
-    partHolder.binding.linearRowDialogPart.setOnClickListener(
+    partHolder.binding.linearRowDialog.setOnClickListener(
         v -> setPartIndex(adapterPosition, true)
     );
   }
@@ -85,10 +85,10 @@ public class PartDialogAdapter extends Adapter<ViewHolder> {
       int adapterPosition = holder.getBindingAdapterPosition();
       PartDialogViewHolder partHolder = (PartDialogViewHolder) holder;
 
-      partHolder.binding.radioRowDialogPart.setChecked(adapterPosition == partIndexPrev);
-      partHolder.binding.radioRowDialogPart.jumpDrawablesToCurrentState();
-      partHolder.binding.radioRowDialogPart.post(
-          () -> partHolder.binding.radioRowDialogPart.setChecked(adapterPosition == partIndex)
+      partHolder.binding.radioRowDialog.setChecked(adapterPosition == partIndexPrev);
+      partHolder.binding.radioRowDialog.jumpDrawablesToCurrentState();
+      partHolder.binding.radioRowDialog.post(
+          () -> partHolder.binding.radioRowDialog.setChecked(adapterPosition == partIndex)
       );
     } else {
       onBindViewHolder(holder, position);
@@ -142,9 +142,9 @@ public class PartDialogAdapter extends Adapter<ViewHolder> {
 
   public static class PartDialogViewHolder extends ViewHolder {
 
-    private final RowDialogPartBinding binding;
+    private final RowDialogRadioBinding binding;
 
-    public PartDialogViewHolder(RowDialogPartBinding binding) {
+    public PartDialogViewHolder(RowDialogRadioBinding binding) {
       super(binding.getRoot());
       this.binding = binding;
     }

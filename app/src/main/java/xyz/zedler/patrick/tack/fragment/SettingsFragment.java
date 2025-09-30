@@ -65,6 +65,7 @@ import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.util.dialog.BackupDialogUtil;
 import xyz.zedler.patrick.tack.util.dialog.GainDialogUtil;
+import xyz.zedler.patrick.tack.util.dialog.LanguagesDialogUtil;
 import xyz.zedler.patrick.tack.util.dialog.LatencyDialogUtil;
 import xyz.zedler.patrick.tack.view.ThemeSelectionCardView;
 
@@ -77,6 +78,7 @@ public class SettingsFragment extends BaseFragment
   private MainActivity activity;
   private Bundle savedState;
   private DialogUtil dialogUtilReset, dialogUtilSound;
+  private LanguagesDialogUtil languagesDialogUtil;
   private GainDialogUtil gainDialogUtil;
   private LatencyDialogUtil latencyDialogUtil;
   private BackupDialogUtil backupDialogUtil;
@@ -95,6 +97,7 @@ public class SettingsFragment extends BaseFragment
     binding = null;
     dialogUtilReset.dismiss();
     dialogUtilSound.dismiss();
+    languagesDialogUtil.dismiss();
     gainDialogUtil.dismiss();
     latencyDialogUtil.dismiss();
     backupDialogUtil.dismiss();
@@ -275,6 +278,9 @@ public class SettingsFragment extends BaseFragment
 
     dialogUtilSound = new DialogUtil(activity, "sound");
 
+    languagesDialogUtil = new LanguagesDialogUtil(activity);
+    languagesDialogUtil.showIfWasShown(savedInstanceState);
+
     gainDialogUtil = new GainDialogUtil(activity, this);
     gainDialogUtil.showIfWasShown(savedInstanceState);
 
@@ -327,6 +333,9 @@ public class SettingsFragment extends BaseFragment
     }
     if (dialogUtilSound != null) {
       dialogUtilSound.saveState(outState);
+    }
+    if (languagesDialogUtil != null) {
+      languagesDialogUtil.saveState(outState);
     }
     if (gainDialogUtil != null) {
       gainDialogUtil.saveState(outState);
@@ -445,7 +454,7 @@ public class SettingsFragment extends BaseFragment
     if (id == R.id.linear_settings_language && getViewUtil().isClickEnabled(id)) {
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsLanguage);
-      activity.navigate(SettingsFragmentDirections.actionSettingsToLanguagesDialog());
+      languagesDialogUtil.show();
     } else if (id == R.id.linear_settings_haptic) {
       binding.switchSettingsHaptic.toggle();
     } else if (id == R.id.linear_settings_reduce_animations) {

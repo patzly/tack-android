@@ -168,6 +168,7 @@
   <string name="action_expand">Expand</string>
   <string name="action_collapse">Collapse</string>
   <string name="action_show_songs_list">Show songs as list</string>
+  <string name="action_open_transifex">Open Transifex</string>
 
   <!-- MESSAGES -->
 
@@ -319,7 +320,7 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">Language</string>
-  <string name="settings_language_info">Many thanks to all the volunteer translators on Transifex! You can find a link to the project on the About page.</string>
+  <string name="settings_language_info">Many thanks to all the volunteer translators on Transifex!</string>
   <string name="settings_language_system">Follow system</string>
   <string name="settings_language_system_description">English if translation is not available</string>
 

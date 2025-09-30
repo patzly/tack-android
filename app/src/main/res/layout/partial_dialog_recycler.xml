@@ -25,19 +25,19 @@
   android:paddingTop="16dp">
 
   <com.google.android.material.divider.MaterialDivider
-    android:id="@+id/divider_dialog_parts_top"
+    android:id="@+id/divider_dialog_top"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="top" />
 
   <com.google.android.material.divider.MaterialDivider
-    android:id="@+id/divider_dialog_parts_bottom"
+    android:id="@+id/divider_dialog_bottom"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="bottom" />
 
   <androidx.recyclerview.widget.RecyclerView
-    android:id="@+id/recycler_parts"
+    android:id="@+id/recycler_dialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="1dp"

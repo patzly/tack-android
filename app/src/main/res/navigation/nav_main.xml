@@ -93,10 +93,6 @@
       android:id="@+id/action_settings_to_log"
       app:destination="@id/logFragment" />
 
-    <action
-      android:id="@+id/action_settings_to_languages_dialog"
-      app:destination="@id/languagesBottomSheetDialogFragment" />
-
   </fragment>
 
   <fragment
@@ -110,11 +106,6 @@
     android:name="xyz.zedler.patrick.tack.fragment.LogFragment"
     android:label="fragment_log"
     tools:layout="@layout/fragment_log"/>
-
-  <dialog
-    android:id="@+id/languagesBottomSheetDialogFragment"
-    android:name="xyz.zedler.patrick.tack.fragment.dialog.LanguagesBottomSheetDialogFragment"
-    android:label="dialog_languages" />
 
   <action
     android:id="@+id/action_global_songs_fragment"

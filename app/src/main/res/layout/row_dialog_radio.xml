@@ -20,12 +20,12 @@
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:tools="http://schemas.android.com/tools"
-  android:id="@+id/linear_row_dialog_part"
+  android:id="@+id/linear_row_dialog"
   style="@style/Widget.Tack.LinearLayout.ListItem.SingleLine"
   android:background="?selectableItemBackground">
 
   <com.google.android.material.radiobutton.MaterialRadioButton
-    android:id="@+id/radio_row_dialog_part"
+    android:id="@+id/radio_row_dialog"
     android:layout_width="wrap_content"
     android:layout_height="32dp"
     android:layout_marginStart="4dp"
@@ -36,15 +36,16 @@
   <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
 
     <TextView
-      android:id="@+id/text_row_dialog_part_name"
+      android:id="@+id/text_row_dialog_name"
       style="@style/Widget.Tack.TextView.ListItem.Title"
-      android:text="Part 1"
+      android:text="Name"
       tools:ignore="HardcodedText" />
 
     <TextView
-      android:id="@+id/text_row_dialog_part_duration"
+      android:id="@+id/text_row_dialog_description"
       style="@style/Widget.Tack.TextView.ListItem.Description"
-      android:text="@string/label_part_no_duration" />
+      android:text="Description"
+      tools:ignore="HardcodedText" />
 
   </LinearLayout>
 
