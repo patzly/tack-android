@@ -224,7 +224,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         } else if (id == R.id.action_feedback) {
           activity.showFeedbackBottomSheet();
         } else if (id == R.id.action_help) {
-          activity.showTextBottomSheet(R.raw.help, R.string.title_help);
+          activity.showHelp();
         }
         return true;
       });

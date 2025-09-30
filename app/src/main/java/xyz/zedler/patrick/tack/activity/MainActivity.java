@@ -39,7 +39,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RawRes;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -66,6 +65,7 @@ import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.PrefsUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
+import xyz.zedler.patrick.tack.util.dialog.TextDialogUtil;
 import xyz.zedler.patrick.tack.viewmodel.SongViewModel;
 
 public class MainActivity extends AppCompatActivity implements ServiceConnection {
@@ -80,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   private Intent metronomeIntent;
   private MetronomeService metronomeService;
   private SongViewModel songViewModel;
+  private TextDialogUtil textDialogUtilChangelog, textDialogUtilHelp;
   private boolean runAsSuperClass, bound, stopServiceWithActivity, startMetronomeAfterPermission;
   private ActivityResultLauncher<String> requestPermissionLauncher;
 
@@ -171,6 +172,21 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     metronomeIntent = new Intent(this, MetronomeService.class);
     stopServiceWithActivity = true;
 
+    textDialogUtilChangelog = new TextDialogUtil(
+        this,
+        R.string.about_changelog,
+        R.raw.changelog,
+        new String[]{"New:", "Improved:", "Fixed:"}
+    );
+    textDialogUtilChangelog.showIfWasShown(savedInstanceState);
+
+    textDialogUtilHelp = new TextDialogUtil(
+        this,
+        R.string.title_help,
+        R.raw.help
+    );
+    textDialogUtilHelp.showIfWasShown(savedInstanceState);
+
     if (savedInstanceState == null && bundleInstanceState == null) {
       new Handler(Looper.getMainLooper()).postDelayed(
           this::showInitialBottomSheets, VERSION.SDK_INT >= 31 ? 950 : 0
@@ -184,6 +200,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
     if (!runAsSuperClass) {
       binding = null;
+      textDialogUtilChangelog.dismiss();
+
       if (isFinishing()) {
         // metronome should be stopped when app is removed from recent apps
         // stopServiceWithActivity is false when it's e. g. only a theme change
@@ -228,6 +246,18 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
       hapticUtil.setEnabled(
           sharedPrefs.getBoolean(PREF.HAPTIC, HapticUtil.areSystemHapticsTurnedOn(this))
       );
+    }
+  }
+
+  @Override
+  protected void onSaveInstanceState(@NonNull Bundle outState) {
+    super.onSaveInstanceState(outState);
+
+    if (textDialogUtilChangelog != null) {
+      textDialogUtilChangelog.saveState(outState);
+    }
+    if (textDialogUtilHelp != null) {
+      textDialogUtilHelp.saveState(outState);
     }
   }
 
@@ -396,7 +426,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
       sharedPrefs.edit().putInt(PREF.LAST_VERSION, versionNew).apply();
     } else if (versionOld != versionNew) {
       sharedPrefs.edit().putInt(PREF.LAST_VERSION, versionNew).apply();
-      showChangelogBottomSheet();
+      showChangelog();
     }
 
     // Feedback
@@ -410,32 +440,16 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     }
   }
 
-  public void showTextBottomSheet(@RawRes int file, @StringRes int title) {
-    showTextBottomSheet(file, title, 0);
-  }
-
-  public void showTextBottomSheet(@RawRes int file, @StringRes int title, @StringRes int link) {
-    NavMainDirections.ActionGlobalTextDialog action
-        = NavMainDirections.actionGlobalTextDialog();
-    action.setTitle(title);
-    action.setFile(file);
-    if (link != 0) {
-      action.setLink(link);
-    }
-    navigate(action);
-  }
-
   public void showFeedbackBottomSheet() {
     navigate(NavMainDirections.actionGlobalFeedbackDialog());
   }
 
-  public void showChangelogBottomSheet() {
-    NavMainDirections.ActionGlobalTextDialog action
-        = NavMainDirections.actionGlobalTextDialog();
-    action.setTitle(R.string.about_changelog);
-    action.setFile(R.raw.changelog);
-    action.setHighlights(new String[]{"New:", "Improved:", "Fixed:"});
-    navigate(action);
+  public void showChangelog() {
+    textDialogUtilChangelog.show();
+  }
+
+  public void showHelp() {
+    textDialogUtilHelp.show();
   }
 
   public boolean isUnlocked() {

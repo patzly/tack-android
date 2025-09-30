@@ -128,7 +128,7 @@ public class SettingsFragment extends BaseFragment
         } else if (id == R.id.action_about) {
           activity.navigate(SettingsFragmentDirections.actionSettingsToAbout());
         } else if (id == R.id.action_help) {
-          activity.showTextBottomSheet(R.raw.help, R.string.title_help);
+          activity.showHelp();
         } else if (id == R.id.action_log) {
           activity.navigate(SettingsFragmentDirections.actionSettingsToLog());
         }

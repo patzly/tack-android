@@ -18,31 +18,38 @@
   ~ Copyright (c) 2020-2025 by Patrick Zedler
   -->
 
-<LinearLayout
+<FrameLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
-  android:layout_height="wrap_content"
-  android:orientation="vertical">
-
-  <com.google.android.material.appbar.MaterialToolbar
-    android:id="@+id/toolbar_text"
-    style="@style/Widget.Tack.Toolbar" />
+  android:layout_height="match_parent"
+  android:paddingTop="16dp">
 
   <com.google.android.material.divider.MaterialDivider
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
+    android:layout_height="wrap_content"
+    android:layout_gravity="top" />
 
-  <androidx.core.widget.NestedScrollView
+  <com.google.android.material.divider.MaterialDivider
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:scrollbars="none"
-    android:importantForAccessibility="no">
+    android:layout_gravity="bottom" />
+
+  <androidx.core.widget.NestedScrollView
+    android:id="@+id/scroll_options"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="1dp"
+    android:layout_marginBottom="1dp"
+    android:scrollbars="vertical"
+    android:scrollbarThumbVertical="@drawable/shape_scrollbar_rounded">
 
     <xyz.zedler.patrick.tack.view.FormattedTextView
       android:id="@+id/formatted_text"
       android:layout_width="match_parent"
-      android:layout_height="wrap_content" />
+      android:layout_height="wrap_content"
+      android:layout_marginStart="8dp"
+      android:layout_marginEnd="8dp" />
 
   </androidx.core.widget.NestedScrollView>
 
-</LinearLayout>
+</FrameLayout>

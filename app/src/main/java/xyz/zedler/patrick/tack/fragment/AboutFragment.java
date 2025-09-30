@@ -35,6 +35,7 @@ import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentAboutBinding;
 import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.dialog.TextDialogUtil;
 import xyz.zedler.patrick.tack.util.dialog.UnlockDialogUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
@@ -43,6 +44,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
 
   private FragmentAboutBinding binding;
   private MainActivity activity;
+  private TextDialogUtil textDialogUtilMdc, textDialogUtilMds, textDialogUtilNunito;
   private UnlockDialogUtil unlockDialogUtil;
   private int longClickCount = 0;
 
@@ -57,6 +59,9 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
   @Override
   public void onDestroyView() {
     super.onDestroyView();
+    textDialogUtilMdc.dismiss();
+    textDialogUtilMds.dismiss();
+    textDialogUtilNunito.dismiss();
     unlockDialogUtil.dismiss();
     binding = null;
   }
@@ -86,7 +91,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
         if (id == R.id.action_feedback) {
           activity.showFeedbackBottomSheet();
         } else if (id == R.id.action_help) {
-          activity.showTextBottomSheet(R.raw.help, R.string.title_help);
+          activity.showHelp();
         } else if (id == R.id.action_recommend) {
           String text = getString(R.string.msg_recommend, getString(R.string.app_vending_app));
           ResUtil.share(activity, text);
@@ -104,6 +109,30 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
 
     unlockDialogUtil = new UnlockDialogUtil(activity);
     unlockDialogUtil.showIfWasShown(savedInstanceState);
+
+    textDialogUtilMdc = new TextDialogUtil(
+        activity,
+        R.string.license_material_components,
+        R.raw.license_apache,
+        R.string.license_material_components_link
+    );
+    textDialogUtilMdc.showIfWasShown(savedInstanceState);
+
+    textDialogUtilMds = new TextDialogUtil(
+        activity,
+        R.string.license_material_icons,
+        R.raw.license_apache,
+        R.string.license_material_icons_link
+    );
+    textDialogUtilMds.showIfWasShown(savedInstanceState);
+
+    textDialogUtilNunito = new TextDialogUtil(
+        activity,
+        R.string.license_nunito,
+        R.raw.license_ofl,
+        R.string.license_nunito_link
+    );
+    textDialogUtilNunito.showIfWasShown(savedInstanceState);
 
     ViewUtil.setOnClickListeners(
         this,
@@ -132,6 +161,15 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     if (unlockDialogUtil != null) {
       unlockDialogUtil.saveState(outState);
     }
+    if (textDialogUtilMdc != null) {
+      textDialogUtilMdc.saveState(outState);
+    }
+    if (textDialogUtilMds != null) {
+      textDialogUtilMds.saveState(outState);
+    }
+    if (textDialogUtilNunito != null) {
+      textDialogUtilNunito.saveState(outState);
+    }
   }
 
   @Override
@@ -147,7 +185,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_website))));
     } else if (id == R.id.linear_about_changelog) {
       ViewUtil.startIcon(binding.imageAboutChangelog);
-      activity.showChangelogBottomSheet();
+      activity.showChangelog();
     } else if (id == R.id.linear_about_vending) {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_vending_dev))));
     } else if (id == R.id.linear_about_key) {
@@ -165,23 +203,13 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_privacy))));
     } else if (id == R.id.linear_about_license_nunito) {
       ViewUtil.startIcon(binding.imageAboutLicenseNunito);
-      activity.showTextBottomSheet(
-          R.raw.license_ofl, R.string.license_nunito, R.string.license_nunito_link
-      );
+      textDialogUtilNunito.show();
     } else if (id == R.id.linear_about_license_material_components) {
       ViewUtil.startIcon(binding.imageAboutLicenseMaterialComponents);
-      activity.showTextBottomSheet(
-          R.raw.license_apache,
-          R.string.license_material_components,
-          R.string.license_material_components_link
-      );
+      textDialogUtilMdc.show();
     } else if (id == R.id.linear_about_license_material_icons) {
       ViewUtil.startIcon(binding.imageAboutLicenseMaterialIcons);
-      activity.showTextBottomSheet(
-          R.raw.license_apache,
-          R.string.license_material_icons,
-          R.string.license_material_icons_link
-      );
+      textDialogUtilMds.show();
     }
   }
 
