@@ -19,22 +19,33 @@
 
 package xyz.zedler.patrick.tack.util.dialog;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.PartialDialogFeedbackBinding;
 import xyz.zedler.patrick.tack.util.DialogUtil;
+import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.ViewUtil;
 
-public class FeedbackDialogUtil {
+public class FeedbackDialogUtil implements OnClickListener {
 
   private static final String TAG = FeedbackDialogUtil.class.getSimpleName();
 
   private final PartialDialogFeedbackBinding binding;
   private final DialogUtil dialogUtil;
+  private final ViewUtil viewUtil;
+  private final MainActivity activity;
 
   public FeedbackDialogUtil(MainActivity activity) {
+    this.activity = activity;
+
     binding = PartialDialogFeedbackBinding.inflate(activity.getLayoutInflater());
 
     dialogUtil = new DialogUtil(activity, "feedback");
@@ -45,6 +56,64 @@ public class FeedbackDialogUtil {
           R.string.action_close, (dialog, which) -> activity.performHapticClick()
       );
     });
+
+    viewUtil = new ViewUtil();
+
+    ViewUtil.setOnClickListeners(
+        this,
+        binding.linearFeedbackRate,
+        binding.linearFeedbackIssue,
+        binding.linearFeedbackEmail,
+        binding.linearFeedbackRecommend
+    );
+  }
+
+  @Override
+  public void onClick(View v) {
+    int id = v.getId();
+    if (viewUtil.isClickDisabled(id)) {
+      return;
+    }
+    activity.performHapticClick();
+    if (id == R.id.linear_feedback_rate) {
+      Uri uri = Uri.parse(
+          "market://details?id=" + activity.getApplicationContext().getPackageName()
+      );
+      Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
+      goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
+          Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
+          Intent.FLAG_ACTIVITY_MULTIPLE_TASK |
+          Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+      try {
+        activity.startActivity(goToMarket);
+      } catch (ActivityNotFoundException e) {
+        activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
+            "http://play.google.com/store/apps/details?id="
+                + activity.getApplicationContext().getPackageName()
+        )));
+      }
+    } else if (id == R.id.linear_feedback_issue) {
+      String issues = activity.getString(R.string.app_github) + "/issues";
+      activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(issues)));
+    } else if (id == R.id.linear_feedback_email) {
+      Intent intent = new Intent(Intent.ACTION_SENDTO);
+      intent.setData(
+          Uri.parse(
+              "mailto:"
+                  + activity.getString(R.string.app_mail)
+                  + "?subject=" + Uri.encode("Feedback@Tack")
+          )
+      );
+      activity.startActivity(
+          Intent.createChooser(intent, activity.getString(R.string.action_send_feedback))
+      );
+    } else if (id == R.id.linear_feedback_recommend) {
+      String text = activity.getString(
+          R.string.msg_recommend, activity.getString(R.string.app_vending_app)
+      );
+      ResUtil.share(activity, text);
+    }
+    dismiss();
   }
 
   public void show() {
