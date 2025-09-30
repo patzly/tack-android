@@ -155,7 +155,6 @@
   <string name="action_expand">Ausklappen</string>
   <string name="action_collapse">Einklappen</string>
   <string name="action_show_songs_list">Werke als Liste anzeigen</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Eine großartige App benötigt viel Zeit und lebt von der Rückmeldungen ihrer Nutzer.</string>
@@ -306,7 +305,6 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">Sprache</string>
-  <string name="settings_language_info">Vielen Dank an alle freiwilligen Übersetzer auf Transifex! Einen Link zum Projekt findest du auf der Seite „Über“.</string>
   <string name="settings_language_system">System folgen</string>
   <string name="settings_language_system_description">Englisch, wenn Übersetzung nicht verfügbar</string>
 
