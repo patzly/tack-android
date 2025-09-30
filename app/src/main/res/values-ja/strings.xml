@@ -158,7 +158,6 @@
   <string name="msg_service_running">メトロノーム機能実行中</string>
   <string name="msg_service_running_return">タップして Tack に戻る</string>
   <string name="msg_service_description">メトロノーム構成・再生機能</string>
-  <string name="msg_connection_lost">機能の接続が失われました。アプリの再起動が必要です。</string>
   <string name="msg_reset">すべて初期化しますか？</string>
   <string name="msg_reset_description">ソングライブラリと設定を含むアプリ全体を本当に初期化しますか？必要であれば、事前にソングライブラリのバックアップを作成してください。初期化操作を元に戻すことはできません。</string>
   <string name="msg_reset_timer">タイマーをリセットしますか？</string>
