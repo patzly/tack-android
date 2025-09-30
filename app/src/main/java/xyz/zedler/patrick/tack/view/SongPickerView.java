@@ -165,9 +165,7 @@ public class SongPickerView extends FrameLayout {
     }
 
     SortUtil.sortSongsWithParts(songsWithParts, sortOrder);
-    adapter.submitList(songsWithParts);
-
-    binding.recyclerSongPicker.post(this::maybeCenterSongChips);
+    adapter.submitList(songsWithParts, this::maybeCenterSongChips);
 
     // maybe name of current song changed
     String songName = getSongNameFromId(currentSongId);
