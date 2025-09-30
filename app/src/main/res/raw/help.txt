@@ -1,11 +1,11 @@
 ##### How can I change the tempo?
 
-To change the tempo, you can rotate the tempo picker in the center or tap on the buttons on the left and the right of the circle.
+To change the tempo, you can drag and rotate the tempo picker in the center or tap on the buttons on the left and the right of the circle.
 By tapping the tempo picker, you can open the tempo dialog to set the tempo by tapping in BPM or using keyboard input.
 
 ##### How do I set the time signature?
 
-Simply look at the first number of your time signature and set the beats in Tack accordingly. That means 4 beats for 4/4, 2 for 2/2 and so on. 6/8 is a bit special, here you need 2 beats with optionally 3 subdivisions because only the 1st and the 4th eights are downbeats.
+Simply look at the first number of your time signature and set the beats in Tack accordingly. That means 4 beats for 4/4, 2 for 2/2 and so on. 6/8 is a bit special, here you use 2 beats with optionally 3 subdivisions because only the 1st and the 4th eights are downbeats.
 Additionally you can change the emphasis of beats by tapping on them. In options you also can select a swing percentage, which automatically sets the subdivisions for you.
 
 ##### How do I disable swing?
@@ -14,18 +14,18 @@ If you have enabled swing in the options, all Tack does is to set the subdivisio
 
 ##### How does the song library work?
 
-The song library is a collection of metronome configurations that you can save and apply. To save your current configuration, simply go to the song library and create a new song. The current configuration will be added to the parts list. After you gave the song a name, don't forget to save your result with a tap on the disk icon in the top right corner.
-Your created songs are displayed on the song library page and in the song picker on the main page. To change the order of the songs, choose your desired order from the menu in the top right corner. The same order is applied to the song picker and to the home screen widget.
+The song library is a collection of metronome configurations that you can save and apply. To save your current configuration, simply open the song library and create a new song. The current configuration will be added to the parts list. After you gave the song a name, don't forget to save your result with a tap on the disk icon in the top right corner.
+Your created songs are displayed in the song picker on the main page, but you can open a full-screen list if you want. To change the order of the songs, choose your desired order from the menu in the top right corner. The same order is applied to the home screen widget.
 
 ##### How does the song picker work?
 
-All songs from your song library are displayed in the song picker on the main page. The order depends on your choice in the menu on the song library page. To apply a song, simply tap on it. You can also jump to a specific part of a song by tapping again on it to open the parts dialog.
-If you want to switch back to the previous configuration, tap the × next to the song name.
+All songs from your song library are displayed in the song picker on the main page, but you can open a full-screen list if you want. The order depends on your choice in the menu. To apply a song, simply tap on it. You can also jump to a specific part of a song by tapping on the current part below the song open the parts dialog or by using the skip buttons.
+If you want to switch back to the configuration you had before selecting a song, tap the × next to the song name.
 
 ##### Why does the song not switch to the next part?
 
 To switch to the next part of a song automatically, each part needs to have a duration set. If you don't set a duration, the part is considered to be infinite.
-To set a duration, simply apply the specific part in the parts dialog and adjust the metronome options accordingly. Then open the song in the song library and tap "update" in this part's menu to update it to the current configuration. Don't forget to save your changes.
+To set a duration, simply tap on the current song to open song details and set the part's duration by tapping on the edit icon of the part. Don't forget to save your changes!
 
 ##### Why is the metronome service notification displayed when I leave the app?
 
