@@ -112,11 +112,6 @@
     tools:layout="@layout/fragment_log"/>
 
   <dialog
-    android:id="@+id/feedbackBottomSheetDialogFragment"
-    android:name="xyz.zedler.patrick.tack.fragment.dialog.FeedbackBottomSheetDialogFragment"
-    android:label="dialog_feedback" />
-
-  <dialog
     android:id="@+id/languagesBottomSheetDialogFragment"
     android:name="xyz.zedler.patrick.tack.fragment.dialog.LanguagesBottomSheetDialogFragment"
     android:label="dialog_languages" />
@@ -124,9 +119,5 @@
   <action
     android:id="@+id/action_global_songs_fragment"
     app:destination="@id/songsFragment"/>
-
-  <action
-    android:id="@+id/action_global_feedback_dialog"
-    app:destination="@id/feedbackBottomSheetDialogFragment" />
 
 </navigation>

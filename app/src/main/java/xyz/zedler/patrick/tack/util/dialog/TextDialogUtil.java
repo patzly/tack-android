@@ -38,7 +38,6 @@ public class TextDialogUtil {
 
   private final PartialDialogTextBinding binding;
   private final DialogUtil dialogUtil;
-  private String link;
 
   public TextDialogUtil(
       MainActivity activity,

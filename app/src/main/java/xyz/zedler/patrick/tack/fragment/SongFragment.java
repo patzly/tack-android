@@ -222,7 +222,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         if (id == R.id.action_delete) {
           dialogUtilDelete.show();
         } else if (id == R.id.action_feedback) {
-          activity.showFeedbackBottomSheet();
+          activity.showFeedback();
         } else if (id == R.id.action_help) {
           activity.showHelp();
         }

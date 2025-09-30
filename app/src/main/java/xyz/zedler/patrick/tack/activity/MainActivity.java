@@ -65,6 +65,7 @@ import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.PrefsUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
+import xyz.zedler.patrick.tack.util.dialog.FeedbackDialogUtil;
 import xyz.zedler.patrick.tack.util.dialog.TextDialogUtil;
 import xyz.zedler.patrick.tack.viewmodel.SongViewModel;
 
@@ -81,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   private MetronomeService metronomeService;
   private SongViewModel songViewModel;
   private TextDialogUtil textDialogUtilChangelog, textDialogUtilHelp;
+  private FeedbackDialogUtil feedbackDialogUtil;
   private boolean runAsSuperClass, bound, stopServiceWithActivity, startMetronomeAfterPermission;
   private ActivityResultLauncher<String> requestPermissionLauncher;
 
@@ -187,9 +189,12 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     );
     textDialogUtilHelp.showIfWasShown(savedInstanceState);
 
+    feedbackDialogUtil = new FeedbackDialogUtil(this);
+    feedbackDialogUtil.showIfWasShown(savedInstanceState);
+
     if (savedInstanceState == null && bundleInstanceState == null) {
       new Handler(Looper.getMainLooper()).postDelayed(
-          this::showInitialBottomSheets, VERSION.SDK_INT >= 31 ? 950 : 0
+          this::showInitialDialogs, VERSION.SDK_INT >= 31 ? 950 : 0
       );
     }
   }
@@ -258,6 +263,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     }
     if (textDialogUtilHelp != null) {
       textDialogUtilHelp.saveState(outState);
+    }
+    if (feedbackDialogUtil != null) {
+      feedbackDialogUtil.saveState(outState);
     }
   }
 
@@ -418,7 +426,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     }, delay);
   }
 
-  private void showInitialBottomSheets() {
+  private void showInitialDialogs() {
     // Changelog
     int versionNew = BuildConfig.VERSION_CODE;
     int versionOld = sharedPrefs.getInt(PREF.LAST_VERSION, 0);
@@ -435,13 +443,13 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
       if (feedbackCount < 5) {
         sharedPrefs.edit().putInt(PREF.FEEDBACK_POP_UP_COUNT, feedbackCount + 1).apply();
       } else {
-        showFeedbackBottomSheet();
+        showFeedback();
       }
     }
   }
 
-  public void showFeedbackBottomSheet() {
-    navigate(NavMainDirections.actionGlobalFeedbackDialog());
+  public void showFeedback() {
+    feedbackDialogUtil.show();
   }
 
   public void showChangelog() {

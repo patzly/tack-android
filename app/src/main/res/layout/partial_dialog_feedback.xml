@@ -18,59 +18,54 @@
   ~ Copyright (c) 2020-2025 by Patrick Zedler
   -->
 
-<LinearLayout
+<FrameLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
-  android:layout_height="wrap_content"
-  android:orientation="vertical">
-
-  <com.google.android.material.appbar.MaterialToolbar
-    style="@style/Widget.Tack.Toolbar"
-    app:title="@string/title_feedback" />
+  android:layout_height="match_parent"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:paddingTop="16dp">
 
   <com.google.android.material.divider.MaterialDivider
     android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
+    android:layout_height="wrap_content"
+    android:layout_gravity="top" />
 
-  <androidx.core.widget.NestedScrollView
+  <com.google.android.material.divider.MaterialDivider
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:scrollbars="none">
+    android:layout_gravity="bottom" />
+
+  <androidx.core.widget.NestedScrollView
+    android:id="@+id/scroll_options"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="1dp"
+    android:layout_marginBottom="1dp"
+    android:scrollbars="vertical"
+    android:scrollbarThumbVertical="@drawable/shape_scrollbar_rounded">
 
     <LinearLayout
       android:id="@+id/linear_feedback_container"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="vertical"
-      android:paddingStart="16dp"
-      android:paddingEnd="16dp"
+      android:paddingStart="24dp"
+      android:paddingEnd="24dp"
       android:paddingTop="16dp"
-      android:paddingBottom="8dp"
-      android:background="?attr/colorSurfaceContainer">
+      android:paddingBottom="16dp">
 
-      <LinearLayout
+      <TextView
+        style="@style/Widget.Tack.TextView.Paragraph"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:background="@drawable/ripple_list_item_bg_segmented_single">
+        android:layout_marginBottom="8dp"
+        android:text="@string/msg_feedback" />
 
-        <TextView
-          style="@style/Widget.Tack.TextView.Paragraph"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:layout_marginBottom="8dp"
-          android:text="@string/msg_feedback" />
-
-        <TextView
-          style="@style/Widget.Tack.TextView.Paragraph"
-          android:layout_width="match_parent"
-          android:layout_height="wrap_content"
-          android:text="@string/msg_feedback_contact" />
-
-      </LinearLayout>
+      <TextView
+        style="@style/Widget.Tack.TextView.Paragraph"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/msg_feedback_contact" />
 
       <LinearLayout
         android:id="@+id/linear_feedback_rate"
@@ -173,4 +168,4 @@
 
   </androidx.core.widget.NestedScrollView>
 
-</LinearLayout>
+</FrameLayout>

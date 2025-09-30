@@ -124,7 +124,7 @@ public class SettingsFragment extends BaseFragment
         }
         performHapticClick();
         if (id == R.id.action_feedback) {
-          activity.showFeedbackBottomSheet();
+          activity.showFeedback();
         } else if (id == R.id.action_about) {
           activity.navigate(SettingsFragmentDirections.actionSettingsToAbout());
         } else if (id == R.id.action_help) {

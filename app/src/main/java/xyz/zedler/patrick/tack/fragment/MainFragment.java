@@ -205,7 +205,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         } else if (id == R.id.action_help) {
           activity.showHelp();
         } else if (id == R.id.action_feedback) {
-          activity.showFeedbackBottomSheet();
+          activity.showFeedback();
         }
         return true;
       });

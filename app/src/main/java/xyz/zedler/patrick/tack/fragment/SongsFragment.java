@@ -183,7 +183,7 @@ public class SongsFragment extends BaseFragment {
         } else if (id == R.id.action_settings) {
           activity.navigate(SongsFragmentDirections.actionSongsToSettings());
         } else if (id == R.id.action_feedback) {
-          activity.showFeedbackBottomSheet();
+          activity.showFeedback();
         } else if (id == R.id.action_help) {
           activity.showHelp();
         }

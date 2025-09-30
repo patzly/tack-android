@@ -172,7 +172,7 @@
   <!-- MESSAGES -->
 
   <string name="msg_feedback">A great app requires a lot of time and lives from the feedback of its users.</string>
-  <string name="msg_feedback_contact">Do you have any wishes, comments or questions? Contact me!\nOtherwise I would be very happy about a nice review in the Play Store.</string>
+  <string name="msg_feedback_contact">Do you have any wishes, comments or questions? Contact me! Otherwise I would be very happy about a nice review in the Play Store.</string>
   <string name="msg_recommend">Check out this cool metronome app: \n%1$s</string>
   <string name="msg_vibration_unavailable">Vibration not available on this device. Sound will be used.</string>
   <string name="msg_service_running">Metronome service is running</string>

@@ -89,7 +89,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
         }
         performHapticClick();
         if (id == R.id.action_feedback) {
-          activity.showFeedbackBottomSheet();
+          activity.showFeedback();
         } else if (id == R.id.action_help) {
           activity.showHelp();
         } else if (id == R.id.action_recommend) {
