@@ -148,7 +148,6 @@
   <string name="msg_service_running">Služba metronomu běží</string>
   <string name="msg_service_running_return">Klepněte pro návrat do aplikace Tack</string>
   <string name="msg_service_description">Služba pro nastavení a přehrávání metronomu</string>
-  <string name="msg_connection_lost">Ztraceno spojení se službou, vyžadován restart aplikace</string>
   <string name="msg_reset">Resetovat vše?</string>
   <string name="msg_reset_description">Opravdu chcete resetovat celou aplikaci, včetně knihovny skladeb a nastavení? Pokud potřebujete, vytvořte si nejprve zálohu vaší knihovny skladeb. Reset je nevratný.</string>
   <string name="msg_reset_timer">Resetovat časovač?</string>
