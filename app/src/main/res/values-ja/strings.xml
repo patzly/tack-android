@@ -111,7 +111,6 @@
   <string name="action_remove_sub">拍分割を減らす</string>
   <string name="action_beat_mode">拍モード</string>
   <string name="action_send_feedback">フィードバックを送る</string>
-  <string name="action_open_link">外部サイトを開く</string>
   <string name="action_reset">リセット</string>
   <string name="action_deactivate_gain">ブーストを無効化</string>
   <string name="action_recommend">共有</string>
