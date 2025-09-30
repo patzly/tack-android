@@ -152,7 +152,6 @@
   <string name="action_expand">展開</string>
   <string name="action_collapse">收合</string>
   <string name="action_show_songs_list">顯示歌曲為清單</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_feedback">一款優秀的應用程式需要花費大量的時間和獲取使用者的意見反映。</string>
@@ -284,7 +283,6 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">語言</string>
-  <string name="settings_language_info">非常感謝 Transifex 上的所有義務翻譯者！你可以在關於頁面上找到此專案的連結。</string>
   <string name="settings_language_system">系統預設</string>
   <string name="settings_language_system_description">如果沒有對應的翻譯則為英語</string>
 
