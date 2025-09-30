@@ -473,7 +473,7 @@ public class SystemBarBehavior {
       } else {
         window.setNavigationBarColor(isDarkModeActive ? Color.BLACK : UiUtil.SCRIM);
       }
-    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { // 23
+    } else { // 23
       window.setStatusBarColor(Color.TRANSPARENT);
       if (!isDarkModeActive) {
         UiUtil.setLightStatusBar(window.getDecorView(), true);
@@ -484,15 +484,6 @@ public class SystemBarBehavior {
         );
       } else {
         window.setNavigationBarColor(isDarkModeActive ? colorScrim : UiUtil.SCRIM);
-      }
-    } else { // 21
-      window.setStatusBarColor(isDarkModeActive ? Color.TRANSPARENT : UiUtil.SCRIM);
-      if (isOrientationPortrait || isLandTablet) {
-        window.setNavigationBarColor(
-            isDarkModeActive ? (isScrollable ? colorScrim : Color.TRANSPARENT) : UiUtil.SCRIM
-        );
-      } else {
-        window.setNavigationBarColor(Color.BLACK);
       }
     }
   }

@@ -20,7 +20,6 @@
 package xyz.zedler.patrick.tack.util.dialog;
 
 import android.os.Bundle;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.slider.Slider;
@@ -31,10 +30,10 @@ import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.PartialDialogLatencyBinding;
 import xyz.zedler.patrick.tack.fragment.SettingsFragment;
 import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.MetronomeUtil;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListener;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.Tick;
 import xyz.zedler.patrick.tack.util.ResUtil;
 
 public class LatencyDialogUtil implements OnChangeListener {
@@ -76,11 +75,6 @@ public class LatencyDialogUtil implements OnChangeListener {
           }
         });
       }
-
-      @Override
-      public void onMetronomeConnectionMissing() {
-        Toast.makeText(activity, R.string.msg_connection_lost, Toast.LENGTH_SHORT).show();
-      }
     };
 
     colorBgFlash = ResUtil.getColor(activity, R.attr.colorTertiaryContainer);
@@ -107,23 +101,23 @@ public class LatencyDialogUtil implements OnChangeListener {
   }
 
   public void update() {
-    if (binding == null) {
+    if (binding == null || getMetronomeEngine() == null) {
       return;
     }
 
     updateValueDisplay();
 
     binding.sliderLatency.removeOnChangeListener(this);
-    binding.sliderLatency.setValue(getMetronomeUtil().getLatency());
+    binding.sliderLatency.setValue(getMetronomeEngine().getLatency());
     binding.sliderLatency.addOnChangeListener(this);
     binding.sliderLatency.addOnSliderTouchListener(new OnSliderTouchListener() {
       @Override
       public void onStartTrackingTouch(@NonNull Slider slider) {
         flashScreen = true;
         new Thread(() -> {
-          getMetronomeUtil().savePlayingState();
-          getMetronomeUtil().addListener(latencyListener);
-          getMetronomeUtil().setUpLatencyCalibration();
+          getMetronomeEngine().savePlayingState();
+          getMetronomeEngine().addListener(latencyListener);
+          getMetronomeEngine().setUpLatencyCalibration();
         }).start();
       }
 
@@ -131,9 +125,9 @@ public class LatencyDialogUtil implements OnChangeListener {
       public void onStopTrackingTouch(@NonNull Slider slider) {
         flashScreen = false;
         new Thread(() -> {
-          getMetronomeUtil().restorePlayingState();
-          getMetronomeUtil().removeListener(latencyListener);
-          getMetronomeUtil().setToPreferences(true);
+          getMetronomeEngine().restorePlayingState();
+          getMetronomeEngine().removeListener(latencyListener);
+          getMetronomeEngine().setToPreferences(true);
         }).start();
       }
     });
@@ -141,27 +135,28 @@ public class LatencyDialogUtil implements OnChangeListener {
 
   @Override
   public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-    if (!fromUser) {
+    if (!fromUser || getMetronomeEngine() == null) {
       return;
     }
     int id = slider.getId();
     if (id == R.id.slider_latency) {
-      getMetronomeUtil().setLatency((int) value);
+      getMetronomeEngine().setLatency((int) value);
       updateValueDisplay();
       fragment.updateLatencyDescription((int) value);
     }
   }
 
   private void updateValueDisplay() {
-    if (binding == null) {
+    if (binding == null || getMetronomeEngine() == null) {
       return;
     }
     binding.textLatencyValue.setText(
-        activity.getString(R.string.label_ms, String.valueOf(getMetronomeUtil().getLatency()))
+        activity.getString(R.string.label_ms, String.valueOf(getMetronomeEngine().getLatency()))
     );
   }
 
-  private MetronomeUtil getMetronomeUtil() {
-    return activity.getMetronomeUtil();
+  @Nullable
+  private MetronomeEngine getMetronomeEngine() {
+    return activity.getMetronomeEngine();
   }
 }

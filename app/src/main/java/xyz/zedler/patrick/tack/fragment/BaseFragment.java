@@ -27,7 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.transition.MaterialSharedAxis;
 import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.util.MetronomeUtil;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class BaseFragment extends Fragment {
@@ -56,9 +56,12 @@ public class BaseFragment extends Fragment {
     viewUtil.cleanUp();
   }
 
-  public MetronomeUtil getMetronomeUtil() {
-    return activity.getMetronomeUtil();
+  @Nullable
+  public MetronomeEngine getMetronomeEngine() {
+    return activity.getMetronomeEngine();
   }
+
+  public void updateMetronomeControls(boolean init) {}
 
   public SharedPreferences getSharedPrefs() {
     return activity.getSharedPrefs();

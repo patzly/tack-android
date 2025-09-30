@@ -17,7 +17,7 @@
  * Copyright (c) 2020-2025 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+package xyz.zedler.patrick.tack.metronome;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -53,14 +53,19 @@ import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.entity.Song;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.model.MetronomeConfig;
+import xyz.zedler.patrick.tack.util.HapticUtil;
+import xyz.zedler.patrick.tack.util.NotificationUtil;
+import xyz.zedler.patrick.tack.util.ShortcutUtil;
+import xyz.zedler.patrick.tack.util.SortUtil;
+import xyz.zedler.patrick.tack.util.WidgetUtil;
 
-public class MetronomeUtil {
+public class MetronomeEngine {
 
-  private static final String TAG = MetronomeUtil.class.getSimpleName();
+  private static final String TAG = MetronomeEngine.class.getSimpleName();
 
   private final Context context;
   private final SharedPreferences sharedPrefs;
-  private final AudioUtil audioUtil;
+  private final AudioEngine audioEngine;
   private final HapticUtil hapticUtil;
   private final ShortcutUtil shortcutUtil;
   private final Set<MetronomeListener> listeners = Collections.synchronizedSet(new HashSet<>());
@@ -68,7 +73,6 @@ public class MetronomeUtil {
   private final Random random = new Random();
   private final MetronomeConfig config = new MetronomeConfig();
   private final SongDatabase db;
-  private final boolean fromService;
   private HandlerThread tickThread, callbackThread;
   private Handler tickHandler, latencyHandler;
   private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
@@ -83,13 +87,12 @@ public class MetronomeUtil {
   private boolean neverStartedWithGain = true;
   private boolean ignoreTimerCallbacksTemp, isSongPickerExpanded;
 
-  public MetronomeUtil(@NonNull Context context, boolean fromService) {
+  public MetronomeEngine(@NonNull Context context) {
     this.context = context;
-    this.fromService = fromService;
 
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
-    audioUtil = new AudioUtil(context, this::stop);
+    audioEngine = new AudioEngine(context, this::stop);
     hapticUtil = new HapticUtil(context);
     shortcutUtil = new ShortcutUtil(context);
 
@@ -141,14 +144,6 @@ public class MetronomeUtil {
 
   public void setConfig(MetronomeConfig config, boolean restart) {
     setCountIn(config.getCountIn());
-
-    // when MetronomeUtil instances are switched during service bind/unbind, restart is false
-    // use that to preserve tempo, else incremental tempo would be reset to the config tempo
-    // during incrementing
-    if (restart) {
-      int tempoDiff = config.getTempo() - this.config.getTempo();
-      changeTempo(tempoDiff);
-    }
 
     setBeats(config.getBeats(), restart);
     setSubdivisions(config.getSubdivisions());
@@ -258,12 +253,10 @@ public class MetronomeUtil {
   }
 
   public void setSongPickerExpanded(boolean songPickerExpanded) {
-    Log.i(TAG, "setSongPickerExpanded: hello " + songPickerExpanded + " " + isFromService());
     isSongPickerExpanded = songPickerExpanded;
   }
 
   public boolean isSongPickerExpanded() {
-    Log.i(TAG, "isSongPickerExpanded: hello " + isSongPickerExpanded + " " + isFromService());
     return isSongPickerExpanded;
   }
 
@@ -320,9 +313,6 @@ public class MetronomeUtil {
   }
 
   private void resetHandlersIfRequired() {
-    if (!fromService) {
-      return;
-    }
     if (tickThread == null || !tickThread.isAlive()) {
       tickThread = new HandlerThread("metronome_ticks");
       tickThread.start();
@@ -378,8 +368,8 @@ public class MetronomeUtil {
     config.setMutePlay(0);
 
     beatMode = BEAT_MODE.ALL;
-    audioUtil.setGain(0);
-    audioUtil.setMuted(false);
+    audioEngine.setGain(0);
+    audioEngine.setMuted(false);
     hapticUtil.setEnabled(true);
 
     start(false);
@@ -387,28 +377,18 @@ public class MetronomeUtil {
 
   public void destroy() {
     listeners.clear();
-    if (fromService) {
-      removeHandlerCallbacks();
-      tickThread.quit();
-      callbackThread.quit();
-      audioUtil.destroy();
-    }
+    removeHandlerCallbacks();
+    tickThread.quit();
+    callbackThread.quit();
+    audioEngine.destroy();
   }
 
   public void addListener(MetronomeListener listener) {
     listeners.add(listener);
   }
 
-  public void addListeners(Set<MetronomeListener> listeners) {
-    this.listeners.addAll(listeners);
-  }
-
   public void removeListener(MetronomeListener listener) {
     listeners.remove(listener);
-  }
-
-  public Set<MetronomeListener> getListeners() {
-    return Collections.unmodifiableSet(listeners);
   }
 
   public void start() {
@@ -431,21 +411,13 @@ public class MetronomeUtil {
     if (isPlaying() && !isRestarted) {
       return;
     }
-    if (!fromService) {
-      synchronized (listeners) {
-        for (MetronomeListener listener : listeners) {
-          listener.onMetronomeConnectionMissing();
-        }
-      }
-      return;
-    } else {
-      resetHandlersIfRequired();
-    }
+    resetHandlersIfRequired();
 
     playing = true;
-    audioUtil.play();
-    int countInTickIndex = getCountIn() * config.getBeatsCount() * config.getSubdivisionsCount();
-    tickIndex = isRestarted && isCountInActive() ? countInTickIndex : 0;
+    audioEngine.play();
+    int countInTickIndex = config.getCountIn() *
+        config.getBeatsCount() * config.getSubdivisionsCount();
+    tickIndex = isRestarted && config.isCountInActive() ? countInTickIndex : 0;
     isMuted = false;
     if (config.isMuteActive()) {
       // updateMuteHandler would be too late
@@ -460,14 +432,14 @@ public class MetronomeUtil {
             tickHandler.postDelayed(
                 this, getInterval() / config.getSubdivisionsCount()
             );
-            audioUtil.writeTickPeriod(tick, config.getTempo(), config.getSubdivisionsCount());
+            audioEngine.writeTickPeriod(tick, config.getTempo(), config.getSubdivisionsCount());
             tickIndex++;
           }
         }
       }
     });
 
-    isCountingIn = isCountInActive();
+    isCountingIn = config.isCountInActive();
     countInStartTime = System.currentTimeMillis();
     countInHandler.postDelayed(() -> {
       isCountingIn = false;
@@ -511,12 +483,10 @@ public class MetronomeUtil {
     elapsedPrevious = elapsedTime;
 
     playing = false;
-    audioUtil.stop();
+    audioEngine.stop();
     isCountingIn = false;
 
-    if (fromService) {
-      removeHandlerCallbacks();
-    }
+    removeHandlerCallbacks();
 
     synchronized (listeners) {
       for (MetronomeListener listener : listeners) {
@@ -605,7 +575,7 @@ public class MetronomeUtil {
     config.setBeats(beats);
     maybeUpdateDefaultSong();
     sharedPrefs.edit().putString(PREF.BEATS, String.join(",", beats)).apply();
-    if (restart && isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
+    if (restart && config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
       restartIfPlaying(false);
     }
   }
@@ -680,7 +650,7 @@ public class MetronomeUtil {
       config.setTempo(tempo);
       maybeUpdateDefaultSong();
       sharedPrefs.edit().putInt(PREF.TEMPO, tempo).apply();
-      if (isPlaying() && isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
+      if (isPlaying() && config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
         updateTimerHandler(false, true, false);
       }
     }
@@ -703,7 +673,7 @@ public class MetronomeUtil {
   }
 
   public void setSound(String sound) {
-    audioUtil.setSound(sound);
+    audioEngine.setSound(sound);
     sharedPrefs.edit().putString(PREF.SOUND, sound).apply();
   }
 
@@ -716,7 +686,7 @@ public class MetronomeUtil {
       mode = BEAT_MODE.SOUND;
     }
     beatMode = mode;
-    audioUtil.setMuted(mode.equals(BEAT_MODE.VIBRATION));
+    audioEngine.setMuted(mode.equals(BEAT_MODE.VIBRATION));
     hapticUtil.setEnabled(!mode.equals(BEAT_MODE.SOUND));
     sharedPrefs.edit().putString(PREF.BEAT_MODE, mode).apply();
   }
@@ -743,21 +713,21 @@ public class MetronomeUtil {
   }
 
   public void setIgnoreFocus(boolean ignore) {
-    audioUtil.setIgnoreFocus(ignore);
+    audioEngine.setIgnoreFocus(ignore);
     sharedPrefs.edit().putBoolean(PREF.IGNORE_FOCUS, ignore).apply();
   }
 
   public boolean getIgnoreAudioFocus() {
-    return audioUtil.getIgnoreFocus();
+    return audioEngine.getIgnoreFocus();
   }
 
   public void setGain(int gain) {
-    audioUtil.setGain(gain);
+    audioEngine.setGain(gain);
     sharedPrefs.edit().putInt(PREF.GAIN, gain).apply();
   }
 
   public int getGain() {
-    return audioUtil.getGain();
+    return audioEngine.getGain();
   }
 
   public boolean neverStartedWithGainBefore() {
@@ -804,14 +774,6 @@ public class MetronomeUtil {
     config.setCountIn(bars);
     maybeUpdateDefaultSong();
     sharedPrefs.edit().putInt(PREF.COUNT_IN, bars).apply();
-  }
-
-  public int getCountIn() {
-    return config.getCountIn();
-  }
-
-  public boolean isCountInActive() {
-    return config.getCountIn() > 0;
   }
 
   public boolean isCountingIn() {
@@ -875,7 +837,7 @@ public class MetronomeUtil {
   }
 
   private void updateIncrementalHandler() {
-    if (!fromService || !isPlaying()) {
+    if (!isPlaying()) {
       return;
     }
     incrementalHandler.removeCallbacksAndMessages(null);
@@ -928,7 +890,7 @@ public class MetronomeUtil {
   }
 
   public void updateElapsedHandler(boolean reset) {
-    if (!fromService || !isPlaying()) {
+    if (!isPlaying()) {
       return;
     }
     elapsedHandler.removeCallbacksAndMessages(null);
@@ -973,14 +935,6 @@ public class MetronomeUtil {
     }
   }
 
-  public int getTimerDuration() {
-    return config.getTimerDuration();
-  }
-
-  public boolean isTimerActive() {
-    return config.getTimerDuration() > 0;
-  }
-
   public long getTimerInterval() {
     long factor;
     switch (config.getTimerUnit()) {
@@ -1021,7 +975,7 @@ public class MetronomeUtil {
   }
 
   public float getTimerProgress() {
-    if (isTimerActive()) {
+    if (config.isTimerActive()) {
       if (!config.getTimerUnit().equals(UNIT.BARS) && isPlaying() && !isCountingIn) {
         long previousDuration = (long) (timerProgress * getTimerInterval());
         long elapsedTime = System.currentTimeMillis() - timerStartTime + previousDuration;
@@ -1061,11 +1015,11 @@ public class MetronomeUtil {
   ) {
     // withTransition is only relevant for tempo changes while playing (in setTempo)
     // transitions make these changes laggy
-    if (!fromService || !isPlaying()) {
+    if (!isPlaying()) {
       return;
     }
     timerHandler.removeCallbacksAndMessages(null);
-    if (!isTimerActive()) {
+    if (!config.isTimerActive()) {
       return;
     }
 
@@ -1124,13 +1078,13 @@ public class MetronomeUtil {
   }
 
   public void resetTimerNow() {
-    if (isTimerActive()) {
+    if (config.isTimerActive()) {
       restartIfPlaying(true);
     }
   }
 
   public String getCurrentTimerString() {
-    if (!isTimerActive()) {
+    if (!config.isTimerActive()) {
       return "";
     }
     long elapsedTime = (long) (getTimerProgress() * getTimerInterval());
@@ -1177,7 +1131,7 @@ public class MetronomeUtil {
   }
 
   public String getTotalTimeString() {
-    if (!isTimerActive()) {
+    if (!config.isTimerActive()) {
       return "";
     }
     int timerDuration = config.getTimerDuration();
@@ -1239,7 +1193,7 @@ public class MetronomeUtil {
   }
 
   private void updateMuteHandler() {
-    if (!fromService || !isPlaying()) {
+    if (!isPlaying()) {
       return;
     }
     muteHandler.removeCallbacksAndMessages(null);
@@ -1271,14 +1225,14 @@ public class MetronomeUtil {
 
     long beatIndex = tickIndex / config.getSubdivisionsCount();
     long barIndex = beatIndex / config.getBeatsCount();
-    long barIndexWithoutCountIn = barIndex - getCountIn();
-    boolean isCountIn = barIndex < getCountIn();
+    long barIndexWithoutCountIn = barIndex - config.getCountIn();
+    boolean isCountIn = barIndex < config.getCountIn();
 
     boolean isBeat = subdivision == 1;
     boolean isFirstBeat =
         ((tickIndex / config.getSubdivisionsCount()) % config.getBeatsCount()) == 0;
 
-    if (isTimerActive() && config.getTimerUnit().equals(UNIT.BARS) && !isCountIn) {
+    if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS) && !isCountIn) {
       boolean increaseTimerProgress = barIndexWithoutCountIn != 0 || !(isBeat && isFirstBeat);
       // Play the first beat without increasing
       if (increaseTimerProgress) {
@@ -1412,10 +1366,6 @@ public class MetronomeUtil {
     }
   }
 
-  public boolean isFromService() {
-    return fromService;
-  }
-
   public interface MetronomeListener {
     void onMetronomeStart();
     void onMetronomeStop();
@@ -1428,7 +1378,6 @@ public class MetronomeUtil {
     void onMetronomeTimerProgressOneTime(boolean withTransition);
     void onMetronomeConfigChanged();
     void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex);
-    void onMetronomeConnectionMissing();
     void onMetronomePermissionMissing();
   }
 
@@ -1444,7 +1393,6 @@ public class MetronomeUtil {
     public void onMetronomeTimerProgressOneTime(boolean withTransition) {}
     public void onMetronomeConfigChanged() {}
     public void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex) {}
-    public void onMetronomeConnectionMissing() {}
     public void onMetronomePermissionMissing() {}
   }
 

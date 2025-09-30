@@ -46,7 +46,7 @@ import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.PartialDialogTempoBinding;
 import xyz.zedler.patrick.tack.fragment.MainFragment;
 import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.MetronomeUtil;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 
@@ -113,10 +113,10 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
       if (event.getAction() == MotionEvent.ACTION_DOWN) {
         binding.cloverTempoTap.setTapped(true);
         boolean enoughData = tap();
-        if (enoughData) {
-          setTapTempoDisplay(getMetronomeUtil().getConfig().getTempo(), getTapTempo());
+        if (enoughData && getMetronomeEngine() != null) {
+          setTapTempoDisplay(getMetronomeEngine().getConfig().getTempo(), getTapTempo());
           if (instantApply) {
-            getMetronomeUtil().setTempo(getTapTempo());
+            getMetronomeEngine().setTempo(getTapTempo());
           }
         }
         activity.performHapticHeavyClick();
@@ -143,14 +143,14 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
 
   @Override
   public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
-    if (!isChecked) {
+    if (!isChecked || getMetronomeEngine() == null) {
       return;
     }
     activity.performHapticClick();
     int groupId = group.getId();
     if (groupId == R.id.toggle_tempo_method) {
       boolean inputMethodKeyboard = checkedId == R.id.button_tempo_keyboard;
-      getMetronomeUtil().setTempoInputKeyboard(inputMethodKeyboard);
+      getMetronomeEngine().setTempoInputKeyboard(inputMethodKeyboard);
       if (!inputMethodKeyboard) {
         View currentFocus = binding.linearTempoContainer.getFocusedChild();
         if (currentFocus != null) {
@@ -170,14 +170,14 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
   @Override
   public void onCheckedChanged(@NonNull CompoundButton buttonView, boolean isChecked) {
     int id = buttonView.getId();
-    if (id == R.id.switch_tempo_instant) {
+    if (id == R.id.switch_tempo_instant && getMetronomeEngine() != null) {
       activity.performHapticClick();
       instantApply = isChecked;
-      getMetronomeUtil().setTempoTapInstant(isChecked);
+      getMetronomeEngine().setTempoTapInstant(isChecked);
       if (isChecked) {
         long tapAverage = getTapAverage();
         if (tapAverage > 0) {
-          getMetronomeUtil().setTempo(getTapTempo(tapAverage));
+          getMetronomeEngine().setTempo(getTapTempo(tapAverage));
         }
       }
       overrideDialogActions();
@@ -187,7 +187,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
   public void show() {
     update();
     dialogUtil.setOnShowListener(dialog -> {
-      if (getMetronomeUtil().getTempoInputKeyboard()) {
+      if (getMetronomeEngine() != null && getMetronomeEngine().getTempoInputKeyboard()) {
         showKeyboard();
       }
     });
@@ -251,11 +251,12 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
   }
 
   public void update() {
-    if (binding == null) {
+    MetronomeEngine metronomeEngine = getMetronomeEngine();
+    if (binding == null || metronomeEngine == null) {
       return;
     }
-    inputMethodKeyboard = getMetronomeUtil().getTempoInputKeyboard();
-    instantApply = getMetronomeUtil().getTempoTapInstant();
+    inputMethodKeyboard = metronomeEngine.getTempoInputKeyboard();
+    instantApply = metronomeEngine.getTempoTapInstant();
 
     binding.toggleTempoMethod.removeOnButtonCheckedListener(this);
     if (inputMethodKeyboard) {
@@ -276,7 +277,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
       binding.switchTempoInstant.jumpDrawablesToCurrentState();
       binding.switchTempoInstant.setOnCheckedChangeListener(this);
 
-      int tempo = getMetronomeUtil().getConfig().getTempo();
+      int tempo = metronomeEngine.getConfig().getTempo();
       setTapTempoDisplay(tempo, tempo);
       binding.textSwitcherTempoTapTempoTerm.setCurrentText(fragment.getTempoTerm(tempo));
       binding.cloverTempoTap.setReduceAnimations(fragment.isReduceAnimations());
@@ -318,7 +319,8 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
   }
 
   private void setTempoFromInputAndDismiss() {
-    if (binding == null) {
+    MetronomeEngine metronomeEngine = getMetronomeEngine();
+    if (binding == null || metronomeEngine == null) {
       return;
     }
     if (inputMethodKeyboard) {
@@ -333,7 +335,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
       if (listener != null) {
         listener.onTempoChanged(tempo);
       }
-      getMetronomeUtil().setTempo(tempo);
+      metronomeEngine.setTempo(tempo);
 
       binding.editTextTempo.clearFocus();
     } else {
@@ -343,7 +345,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
         if (listener != null) {
           listener.onTempoChanged(tempo);
         }
-        getMetronomeUtil().setTempo(tempo);
+        metronomeEngine.setTempo(tempo);
       }
     }
     dismiss();
@@ -447,8 +449,9 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
         || interval > getTapAverage() * INTERVAL_FACTOR;
   }
 
-  private MetronomeUtil getMetronomeUtil() {
-    return activity.getMetronomeUtil();
+  @Nullable
+  private MetronomeEngine getMetronomeEngine() {
+    return activity.getMetronomeEngine();
   }
 
   public interface TempoDialogListener {

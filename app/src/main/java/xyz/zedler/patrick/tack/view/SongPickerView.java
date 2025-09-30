@@ -55,7 +55,6 @@ import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
 import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.ViewSongPickerBinding;
@@ -86,7 +85,6 @@ public class SongPickerView extends FrameLayout {
   private final int colorSurfaceBright, colorSurfaceContainer;
   private final int colorOnSurface, colorOnSurfaceVariant;
   private final ViewUtil viewUtil;
-  private MainActivity activity;
   private SongPickerListener listener;
   private List<SongWithParts> songsWithParts;
   private int sortOrder, initPartIndex, widthMax, widthMin, chipTargetTranslationX;
@@ -125,10 +123,6 @@ public class SongPickerView extends FrameLayout {
     colorOnSurfaceVariant = ResUtil.getColor(context, R.attr.colorOnSurfaceVariant);
   }
 
-  public void setActivity(MainActivity activity) {
-    this.activity = activity;
-  }
-
   public void setListener(SongPickerListener listener) {
     this.listener = listener;
   }
@@ -137,6 +131,7 @@ public class SongPickerView extends FrameLayout {
       @NonNull String currentSongId,
       int currentPartIndex,
       List<SongWithParts> songs,
+      int sortOrder,
       boolean expanded
   ) {
     if (isInitialized) {
@@ -144,13 +139,13 @@ public class SongPickerView extends FrameLayout {
     }
     isInitialized = true;
 
-    this.sortOrder = activity.getMetronomeUtil().getSongsOrder();
+    this.sortOrder = sortOrder;
     this.currentSongId = currentSongId;
     this.initPartIndex = currentPartIndex;
     // To display current song title in current chip at start
     this.songsWithParts = new ArrayList<>(songs);
 
-    initPickerSize(expanded);
+    initPickerSize(expanded, currentSongId);
     initRecycler();
     initChip();
     setCurrentSong(currentSongId, false);
@@ -206,7 +201,7 @@ public class SongPickerView extends FrameLayout {
     widthMax = width - UiUtil.dpToPx(context, 16 + 16); // add horizontal margin
   }
 
-  private void initPickerSize(boolean expanded) {
+  private void initPickerSize(boolean expanded, String currentSongId) {
     binding.buttonSongPickerExpand.setOnClickListener(v -> {
       if (isExpanded) {
         return;
@@ -238,7 +233,7 @@ public class SongPickerView extends FrameLayout {
             setExpanded(expanded, false);
             if (expanded) {
               // Redo song select animation stuff
-              setCurrentSong(activity.getMetronomeUtil().getCurrentSongId(), false);
+              setCurrentSong(currentSongId, false);
             }
 
             if (binding.buttonSongPickerExpand.getViewTreeObserver().isAlive()) {
@@ -281,7 +276,9 @@ public class SongPickerView extends FrameLayout {
           }
           item.setChecked(true);
           setSongs(songsWithParts);
-          activity.getMetronomeUtil().setSongsOrder(sortOrder);
+          if (listener != null) {
+            listener.onSortOrderChanged(sortOrder);
+          }
           if (!songsWithParts.isEmpty()) {
             // only update widget if sort order is important
             WidgetUtil.sendSongsWidgetUpdate(context);
@@ -294,7 +291,6 @@ public class SongPickerView extends FrameLayout {
         return true;
       };
       OnMenuInflatedListener menuInflatedListener = menu -> {
-        sortOrder = activity.getMetronomeUtil().getSongsOrder();
         int itemId = R.id.action_sort_name;
         if (sortOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
           itemId = R.id.action_sort_last_played;
@@ -428,7 +424,11 @@ public class SongPickerView extends FrameLayout {
   @SuppressLint("PrivateResource")
   public void setExpanded(boolean expanded, boolean animated) {
     this.isExpanded = expanded;
-    activity.getMetronomeUtil().setSongPickerExpanded(expanded);
+    if (listener != null) {
+      listener.onExpandChanged(expanded);
+    }
+
+    // TODO: center song chips before animation if no song is selected
 
     if (springAnimationExpand != null) {
       springAnimationExpand.cancel();
@@ -847,8 +847,10 @@ public class SongPickerView extends FrameLayout {
     void onOpenSongsClicked();
     void onMenuOrMenuItemClicked();
     void onBackupClicked();
+    void onSortOrderChanged(int sortOrder);
     void onAddSongClicked();
     void onHeightChanged();
+    void onExpandChanged(boolean expanded);
   }
 
   private static final FloatPropertyCompat<SongPickerView> EXPAND_FRACTION =

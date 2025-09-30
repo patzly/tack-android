@@ -77,8 +77,9 @@ import xyz.zedler.patrick.tack.fragment.MainFragmentDirections.ActionMainToSong;
 import xyz.zedler.patrick.tack.model.MetronomeConfig;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListener;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.Tick;
 import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.OptionsUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -134,6 +135,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
   public void onDestroyView() {
     super.onDestroyView();
 
+    if (getMetronomeEngine() != null) {
+      getMetronomeEngine().removeListener(this);
+    }
     if (playStopButtonAnimator != null) {
       playStopButtonAnimator.pause();
       playStopButtonAnimator.removeAllUpdateListeners();
@@ -274,15 +278,19 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       builder.setTitle(R.string.msg_gain);
       builder.setMessage(R.string.msg_gain_description);
       builder.setPositiveButton(R.string.action_play, (dialog, which) -> {
-        performHapticClick();
-        getMetronomeUtil().start();
+        if (getMetronomeEngine() != null) {
+          performHapticClick();
+          getMetronomeEngine().start();
+        }
       });
       builder.setNegativeButton(
           R.string.action_deactivate_gain,
           (dialog, which) -> {
-            performHapticClick();
-            getMetronomeUtil().setGain(0);
-            getMetronomeUtil().start();
+            if (getMetronomeEngine() != null) {
+              performHapticClick();
+              getMetronomeEngine().setGain(0);
+              getMetronomeEngine().start();
+            }
           });
     });
     dialogUtilGain.showIfWasShown(savedInstanceState);
@@ -292,8 +300,10 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       builder.setTitle(R.string.msg_notification_permission);
       builder.setMessage(R.string.msg_notification_permission_description);
       builder.setPositiveButton(R.string.action_next, (dialog, which) -> {
-        performHapticClick();
-        getMetronomeUtil().start();
+        if (getMetronomeEngine() != null) {
+          performHapticClick();
+          getMetronomeEngine().start();
+        }
       });
       builder.setNegativeButton(
           R.string.action_cancel, (dialog, which) -> performHapticClick()
@@ -325,8 +335,10 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       builder.setTitle(R.string.msg_reset_timer);
       builder.setMessage(R.string.msg_reset_timer_description);
       builder.setPositiveButton(R.string.action_reset, (dialog, which) -> {
-        performHapticClick();
-        getMetronomeUtil().resetTimerNow();
+        if (getMetronomeEngine() != null) {
+          performHapticClick();
+          getMetronomeEngine().resetTimerNow();
+        }
       });
       builder.setNegativeButton(
           R.string.action_cancel, (dialog, which) -> performHapticClick()
@@ -339,8 +351,10 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       builder.setTitle(R.string.msg_reset_elapsed);
       builder.setMessage(R.string.msg_reset_elapsed_description);
       builder.setPositiveButton(R.string.action_reset, (dialog, which) -> {
-        performHapticClick();
-        getMetronomeUtil().resetElapsed();
+        if (getMetronomeEngine() != null) {
+          performHapticClick();
+          getMetronomeEngine().resetElapsed();
+        }
       });
       builder.setNegativeButton(
           R.string.action_cancel, (dialog, which) -> performHapticClick()
@@ -356,10 +370,11 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
 
     dialogUtilBeatMode = new DialogUtil(activity, "beat_mode");
 
-    tempoDialogUtil = new TempoDialogUtil(
-        activity, this,
-        tempo -> updateTempoDisplay(getMetronomeUtil().getConfig().getTempo(), tempo)
-    );
+    tempoDialogUtil = new TempoDialogUtil(activity, this, tempo -> {
+      if (getMetronomeEngine() != null) {
+        updateTempoDisplay(getMetronomeEngine().getConfig().getTempo(), tempo);
+      }
+    });
 
     optionsUtil = new OptionsUtil(
         activity, binding,
@@ -368,19 +383,19 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
             true, true, true
         ),
         () -> {
-          updateSubs(getMetronomeUtil().getConfig().getSubdivisions());
-          updateSubControls(true);
+          if (getMetronomeEngine() != null) {
+            updateSubs(getMetronomeEngine().getConfig().getSubdivisions());
+            updateSubControls(true);
+          }
         }
     );
-    boolean hideOptions = isLandTablet;
-    binding.buttonMainOptions.setEnabled(!hideOptions);
+    binding.buttonMainOptions.setEnabled(!isLandTablet);
 
     logoUtil = new LogoUtil(binding.imageMainLogo);
     logoCenterUtil = new LogoUtil(binding.imageMainLogoCenter);
     bigLogo = getSharedPrefs().getBoolean(PREF.BIG_LOGO, DEF.BIG_LOGO);
 
     partsDialogUtil = new PartsDialogUtil(activity);
-    partsDialogUtil.showIfWasShown(savedInstanceState);
 
     beatsBgDrawable = new BeatsBgDrawable(activity);
     binding.linearMainBeatsBg.setBackground(beatsBgDrawable);
@@ -419,7 +434,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       @Override
       public void onPickDown(float x, float y) {
         binding.circleMain.setDragged(true, x, y);
-        if (bigLogo && getMetronomeUtil().isPlaying()) {
+        if (bigLogo && getMetronomeEngine() != null && getMetronomeEngine().isPlaying()) {
           updateTempoPickerAndLogo(true, true);
         }
       }
@@ -432,7 +447,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       @Override
       public void onPickUpOrCancel() {
         binding.circleMain.setDragged(false, 0, 0);
-        if (bigLogo && getMetronomeUtil().isPlaying()) {
+        if (bigLogo && getMetronomeEngine() != null && getMetronomeEngine().isPlaying()) {
           updateTempoPickerAndLogo(false, true);
         }
       }
@@ -442,29 +457,24 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       performHapticClick();
     });
 
-    binding.buttonMainBeatMode.setIconResource(
-        getSharedPrefs().getString(PREF.BEAT_MODE, DEF.BEAT_MODE).equals(BEAT_MODE.VIBRATION)
-            ? R.drawable.ic_rounded_vibration_to_volume_up_anim
-            : R.drawable.ic_rounded_volume_up_to_vibration_anim
-    );
-
-    setButtonStates(getMetronomeUtil().getConfig().getTempo());
-
-    binding.songPickerMain.setActivity(activity);
     measureSongPicker();
     binding.songPickerMain.setListener(new SongPickerListener() {
       @Override
       public void onCurrentSongChanged(@NonNull String currentSongId) {
-        getMetronomeUtil().setCurrentSong(currentSongId, 0, true);
-        performHapticClick();
+        if (getMetronomeEngine() != null) {
+          getMetronomeEngine().setCurrentSong(currentSongId, 0, true);
+          performHapticClick();
+        }
       }
 
       @Override
       public void onCurrentSongClicked() {
-        ActionMainToSong action = MainFragmentDirections.actionMainToSong();
-        action.setSongId(getMetronomeUtil().getCurrentSongId());
-        activity.navigate(action);
-        performHapticClick();
+        if (getMetronomeEngine() != null) {
+          ActionMainToSong action = MainFragmentDirections.actionMainToSong();
+          action.setSongId(getMetronomeEngine().getCurrentSongId());
+          activity.navigate(action);
+          performHapticClick();
+        }
       }
 
       @Override
@@ -475,16 +485,20 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
 
       @Override
       public void onPreviousPartClicked() {
-        int currentPartIndex = getMetronomeUtil().getCurrentPartIndex();
-        getMetronomeUtil().setCurrentPartIndex(currentPartIndex - 1, true);
-        performHapticClick();
+        if (getMetronomeEngine() != null) {
+          int currentPartIndex = getMetronomeEngine().getCurrentPartIndex();
+          getMetronomeEngine().setCurrentPartIndex(currentPartIndex - 1, true);
+          performHapticClick();
+        }
       }
 
       @Override
       public void onNextPartClicked() {
-        int currentPartIndex = getMetronomeUtil().getCurrentPartIndex();
-        getMetronomeUtil().setCurrentPartIndex(currentPartIndex + 1, true);
-        performHapticClick();
+        if (getMetronomeEngine() != null) {
+          int currentPartIndex = getMetronomeEngine().getCurrentPartIndex();
+          getMetronomeEngine().setCurrentPartIndex(currentPartIndex + 1, true);
+          performHapticClick();
+        }
       }
 
       @Override
@@ -522,6 +536,13 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       }
 
       @Override
+      public void onSortOrderChanged(int sortOrder) {
+        if (getMetronomeEngine() != null) {
+          getMetronomeEngine().setSongsOrder(sortOrder);
+        }
+      }
+
+      @Override
       public void onAddSongClicked() {
         performHapticClick();
         if (activity.isUnlocked() || songsWithParts.size() < 3) {
@@ -542,28 +563,14 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           updateTempoPickerTranslationAndScale();
         }
       }
-    });
-    activity.getSongViewModel().getAllSongsWithPartsLive().observe(
-        getViewLifecycleOwner(), songs -> {
-          songsWithParts = new ArrayList<>(songs);
-          for (SongWithParts songWithParts : songsWithParts) {
-            // Remove default song from song picker
-            if (songWithParts.getSong().getId().equals(Constants.SONG_ID_DEFAULT)) {
-              songsWithParts.remove(songWithParts);
-              break;
-            }
-          }
-          if (!binding.songPickerMain.isInitialized()) {
-            binding.songPickerMain.init(
-                getMetronomeUtil().getCurrentSongId(),
-                getMetronomeUtil().getCurrentPartIndex(),
-                songsWithParts,
-                getMetronomeUtil().isSongPickerExpanded()
-            );
-          }
-          binding.songPickerMain.setSongs(songsWithParts);
+
+      @Override
+      public void onExpandChanged(boolean expanded) {
+        if (getMetronomeEngine() != null) {
+          getMetronomeEngine().setSongPickerExpanded(expanded);
         }
-    );
+      }
+    });
 
     ViewUtil.resetAnimatedIcon(binding.buttonMainPlayStop);
     binding.buttonMainPlayStop.setIconResource(
@@ -571,13 +578,16 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     );
     binding.buttonMainPlayStop.setOnTouchListener(
         (v, event) -> {
+          if (getMetronomeEngine() == null) {
+            return false;
+          }
           if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (getMetronomeUtil().isPlaying()) {
+            if (getMetronomeEngine().isPlaying()) {
               performHapticClick();
-              getMetronomeUtil().stop();
+              getMetronomeEngine().stop();
             } else {
-              if (getMetronomeUtil().getGain() > 0 &&
-                  getMetronomeUtil().neverStartedWithGainBefore()
+              if (getMetronomeEngine().getGain() > 0 &&
+                  getMetronomeEngine().neverStartedWithGainBefore()
               ) {
                 dialogUtilGain.show();
               } else {
@@ -585,7 +595,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
                     PREF.PERMISSION_DENIED, false
                 );
                 if (NotificationUtil.hasPermission(activity) || permissionDenied) {
-                  getMetronomeUtil().start();
+                  getMetronomeEngine().start();
                 } else {
                   dialogUtilPermission.show();
                 }
@@ -604,7 +614,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       binding.textMainTempo.setTypeface(variableTypeface);
       binding.textMainTempo.setFontVariationSettings("'wght' 600");
     }
-    updateMetronomeControls();
+    updateMetronomeControls(true);
 
     ViewUtil.setTooltipText(binding.buttonMainAddBeat, R.string.action_add_beat);
     ViewUtil.setTooltipText(binding.buttonMainRemoveBeat, R.string.action_remove_beat);
@@ -659,12 +669,6 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
   }
 
   @Override
-  public void onResume() {
-    super.onResume();
-    binding.timerMain.updateControls(true, true, true);
-  }
-
-  @Override
   public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
     if (dialogUtilGain != null) {
@@ -699,55 +703,101 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     }
   }
 
-  /*
-   * Called in MainActivity in onServiceConnected
-   */
-  public void updateMetronomeControls() {
+  @Override
+  public void updateMetronomeControls(boolean init) {
     if (binding == null) {
       return;
     }
-    getMetronomeUtil().addListener(this);
+    MetronomeEngine metronomeEngine = activity.getMetronomeEngine();
+    MetronomeConfig metronomeConfig = metronomeEngine != null
+        ? metronomeEngine.getConfig()
+        : new MetronomeConfig(getSharedPrefs());
+
+    optionsUtil.maybeInit();
     optionsUtil.showIfWasShown(savedState);
     tempoDialogUtil.showIfWasShown(savedState);
-
+    partsDialogUtil.showIfWasShown(savedState);
     savedState = null;
 
+    updateBeats(metronomeConfig.getBeats());
+    updateBeatControls(false);
+    updateSubs(metronomeConfig.getSubdivisions());
+    updateSubControls(false);
+
+    if (init) {
+      binding.timerMain.measureControls();
+    } else {
+      binding.timerMain.updateControls(true, true, true);
+    }
+
+    updateOptions(false);
+
+    int tempo = metronomeConfig.getTempo();
+    updateTempoDisplay(tempo, tempo);
+    binding.textSwitcherMainTempoTerm.setCurrentText(getTempoTerm(tempo));
+
+    if (metronomeEngine == null) {
+      // Below only stuff that only works with metronome engine
+      return;
+    }
+
+    metronomeEngine.addListener(this);
+
     binding.buttonMainBeatMode.setIconResource(
-        getMetronomeUtil().getBeatMode().equals(BEAT_MODE.VIBRATION)
+        metronomeEngine.getBeatMode().equals(BEAT_MODE.VIBRATION)
             ? R.drawable.ic_rounded_vibration_to_volume_up_anim
             : R.drawable.ic_rounded_volume_up_to_vibration_anim
     );
 
-    updateBeats(getMetronomeUtil().getConfig().getBeats());
-    updateBeatControls(false);
-    updateSubs(getMetronomeUtil().getConfig().getSubdivisions());
-    updateSubControls(false);
-
-    binding.timerMain.measureControls();
-    updateOptions(false);
-
-    int tempo = getMetronomeUtil().getConfig().getTempo();
-    updateTempoDisplay(tempo, tempo);
-    binding.textSwitcherMainTempoTerm.setCurrentText(getTempoTerm(tempo));
-
-    boolean showLogo = bigLogo && getMetronomeUtil().isPlaying();
+    boolean showLogo = bigLogo && metronomeEngine.isPlaying();
     updateTempoPickerAndLogo(!showLogo, false);
 
-    if (getMetronomeUtil().isCountingIn()) {
+    if (metronomeEngine.isCountingIn()) {
       beatsBgDrawable.reset();
-      if (getMetronomeUtil().getCountIn() > 0) {
-        beatsBgDrawable.setProgress(getMetronomeUtil().getCountInProgress(), 0);
-        beatsBgDrawable.setProgress(1, getMetronomeUtil().getCountInIntervalRemaining());
+      if (metronomeConfig.getCountIn() > 0) {
+        beatsBgDrawable.setProgress(metronomeEngine.getCountInProgress(), 0);
+        beatsBgDrawable.setProgress(1, metronomeEngine.getCountInIntervalRemaining());
       }
     }
 
+    activity.getSongViewModel().getAllSongsWithPartsLive().removeObservers(getViewLifecycleOwner());
+    activity.getSongViewModel().getAllSongsWithPartsLive().observe(
+        getViewLifecycleOwner(), songs -> {
+          songsWithParts = new ArrayList<>(songs);
+          for (SongWithParts songWithParts : songsWithParts) {
+            // Remove default song from song picker
+            if (songWithParts.getSong().getId().equals(Constants.SONG_ID_DEFAULT)) {
+              songsWithParts.remove(songWithParts);
+              break;
+            }
+          }
+          if (!binding.songPickerMain.isInitialized() && getMetronomeEngine() != null) {
+            binding.songPickerMain.init(
+                getMetronomeEngine().getCurrentSongId(),
+                getMetronomeEngine().getCurrentPartIndex(),
+                songsWithParts,
+                getMetronomeEngine().getSongsOrder(),
+                getMetronomeEngine().isSongPickerExpanded()
+            );
+          }
+          binding.songPickerMain.setSongs(songsWithParts);
+        }
+    );
+
     ViewUtil.resetAnimatedIcon(binding.buttonMainPlayStop);
     binding.buttonMainPlayStop.setIconResource(
-        getMetronomeUtil().isPlaying()
+        metronomeEngine.isPlaying()
             ? R.drawable.ic_rounded_stop_fill
             : R.drawable.ic_rounded_play_arrow_fill
     );
-    updatePlayStopButton(getMetronomeUtil().isPlaying(), false);
+    updatePlayStopButton(metronomeEngine.isPlaying(), false);
+
+    binding.buttonMainBeatMode.setIconResource(
+        metronomeEngine.getBeatMode().equals(BEAT_MODE.VIBRATION)
+            ? R.drawable.ic_rounded_vibration_to_volume_up_anim
+            : R.drawable.ic_rounded_volume_up_to_vibration_anim
+    );
+    setButtonStates(metronomeConfig.getTempo());
 
     Map<String, String> beatModeLabels = new LinkedHashMap<>();
     beatModeLabels.put(BEAT_MODE.ALL, getString(R.string.label_beat_mode_all));
@@ -755,23 +805,26 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     beatModeLabels.put(BEAT_MODE.VIBRATION, getString(R.string.label_beat_mode_vibration));
     ArrayList<String> beatModes = new ArrayList<>(beatModeLabels.keySet());
     String[] items = beatModeLabels.values().toArray(new String[]{});
-    int init = beatModes.indexOf(getMetronomeUtil().getBeatMode());
-    if (init == -1) {
-      init = 0;
+    int initItem = beatModes.indexOf(metronomeEngine.getBeatMode());
+    if (initItem == -1) {
+      initItem = 0;
       getSharedPrefs().edit().remove(PREF.BEAT_MODE).apply();
     }
-    int initFinal = init;
+    int initItemFinal = initItem;
     dialogUtilBeatMode.createDialog(builder -> {
       builder.setTitle(R.string.action_beat_mode);
       if (activity.getHapticUtil().hasVibrator()) {
         builder.setSingleChoiceItems(
-            items, initFinal, (dialog, which) -> {
-              String beatModePrev = getMetronomeUtil().getBeatMode();
+            items, initItemFinal, (dialog, which) -> {
+              if (getMetronomeEngine() == null) {
+                return;
+              }
+              String beatModePrev = getMetronomeEngine().getBeatMode();
               String beatMode = beatModes.get(which);
               if (beatMode.equals(BEAT_MODE.SOUND)) {
                 performHapticClick();
               }
-              getMetronomeUtil().setBeatMode(beatMode);
+              getMetronomeEngine().setBeatMode(beatMode);
               if (!beatMode.equals(BEAT_MODE.SOUND)) {
                 performHapticClick();
               }
@@ -800,7 +853,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     });
     dialogUtilBeatMode.showIfWasShown(savedState);
 
-    String flashScreenMode = getMetronomeUtil().getFlashScreen();
+    String flashScreenMode = metronomeEngine.getFlashScreen();
     flashScreen = !flashScreenMode.equals(FLASH_SCREEN.OFF);
 
     colorFlashMuted = ResUtil.getColor(activity, R.attr.colorSurface);
@@ -815,31 +868,32 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       colorFlashStrong = ResUtil.getColor(activity, R.attr.colorError);
     }
 
-    String keepAwake = getMetronomeUtil().getKeepAwake();
+    String keepAwake = metronomeEngine.getKeepAwake();
     boolean keepAwakeNow = keepAwake.equals(KEEP_AWAKE.ALWAYS)
-        || (keepAwake.equals(KEEP_AWAKE.WHILE_PLAYING) && getMetronomeUtil().isPlaying());
+        || (keepAwake.equals(KEEP_AWAKE.WHILE_PLAYING) && metronomeEngine.isPlaying());
     UiUtil.keepScreenAwake(activity, keepAwakeNow);
   }
 
   @Override
   public void onMetronomeStart() {
     activity.runOnUiThread(() -> {
-      if (binding != null) {
-        beatsBgDrawable.reset();
-        if (getMetronomeUtil().getCountIn() > 0) {
-          beatsBgDrawable.setProgress(1, getMetronomeUtil().getCountInInterval());
-        }
-        binding.buttonMainPlayStop.setIconResource(R.drawable.ic_rounded_play_to_stop_fill_anim);
-        Drawable startStopIcon = binding.buttonMainPlayStop.getIcon();
-        if (startStopIcon != null) {
-          ((Animatable) startStopIcon).start();
-        }
-        updatePlayStopButton(true, !reduceAnimations);
-        if (bigLogo) {
-          updateTempoPickerAndLogo(false, true);
-        }
+      if (binding == null || getMetronomeEngine() == null) {
+        return;
       }
-      String keepAwake = getMetronomeUtil().getKeepAwake();
+      beatsBgDrawable.reset();
+      if (getMetronomeEngine().getConfig().getCountIn() > 0) {
+        beatsBgDrawable.setProgress(1, getMetronomeEngine().getCountInInterval());
+      }
+      binding.buttonMainPlayStop.setIconResource(R.drawable.ic_rounded_play_to_stop_fill_anim);
+      Drawable startStopIcon = binding.buttonMainPlayStop.getIcon();
+      if (startStopIcon != null) {
+        ((Animatable) startStopIcon).start();
+      }
+      updatePlayStopButton(true, !reduceAnimations);
+      if (bigLogo) {
+        updateTempoPickerAndLogo(false, true);
+      }
+      String keepAwake = getMetronomeEngine().getKeepAwake();
       UiUtil.keepScreenAwake(activity, !keepAwake.equals(KEEP_AWAKE.NEVER));
     });
   }
@@ -847,23 +901,24 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
   @Override
   public void onMetronomeStop() {
     activity.runOnUiThread(() -> {
-      if (binding != null) {
-        resetActiveBeats();
-        beatsBgDrawable.setProgressVisible(false, true);
-        binding.timerMain.updateDisplay();
-        binding.buttonMainPlayStop.setIconResource(R.drawable.ic_rounded_stop_to_play_fill_anim);
-        Drawable icon = binding.buttonMainPlayStop.getIcon();
-        if (icon != null) {
-          ((Animatable) icon).start();
-        }
-        updatePlayStopButton(false, !reduceAnimations);
-        if (bigLogo) {
-          updateTempoPickerAndLogo(true, true);
-        }
-        binding.timerMain.stopProgressTransition();
-        binding.timerMain.stopProgress();
+      if (binding == null || getMetronomeEngine() == null) {
+        return;
       }
-      String keepAwake = getMetronomeUtil().getKeepAwake();
+      resetActiveBeats();
+      beatsBgDrawable.setProgressVisible(false, true);
+      binding.timerMain.updateDisplay();
+      binding.buttonMainPlayStop.setIconResource(R.drawable.ic_rounded_stop_to_play_fill_anim);
+      Drawable icon = binding.buttonMainPlayStop.getIcon();
+      if (icon != null) {
+        ((Animatable) icon).start();
+      }
+      updatePlayStopButton(false, !reduceAnimations);
+      if (bigLogo) {
+        updateTempoPickerAndLogo(true, true);
+      }
+      binding.timerMain.stopProgressTransition();
+      binding.timerMain.stopProgress();
+      String keepAwake = getMetronomeEngine().getKeepAwake();
       UiUtil.keepScreenAwake(activity, keepAwake.equals(KEEP_AWAKE.ALWAYS));
     });
   }
@@ -895,7 +950,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
   @Override
   public void onMetronomeTick(Tick tick) {
     activity.runOnUiThread(() -> {
-      if (binding == null) {
+      if (binding == null || getMetronomeEngine() == null) {
         return;
       }
       if (flashScreen) {
@@ -933,13 +988,13 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       }
       if (tick.subdivision == 1) {
         if (!reduceAnimations) {
-          logoUtil.nextBeat(getMetronomeUtil().getInterval());
+          logoUtil.nextBeat(getMetronomeEngine().getInterval());
         }
         if (bigLogo) {
-          logoCenterUtil.nextBeat(getMetronomeUtil().getInterval());
+          logoCenterUtil.nextBeat(getMetronomeEngine().getInterval());
         }
       }
-      if (getMetronomeUtil().getConfig().getTimerUnit().equals(UNIT.BARS)) {
+      if (getMetronomeEngine().getConfig().getTimerUnit().equals(UNIT.BARS)) {
         binding.timerMain.updateDisplay();
       }
     });
@@ -985,13 +1040,13 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
   @Override
   public void onMetronomeConfigChanged() {
     activity.runOnUiThread(() -> {
-      if (binding == null) {
+      if (binding == null || getMetronomeEngine() == null) {
         return;
       }
       // tempo is updated in onMetronomeTempoChanged
-      updateBeats(getMetronomeUtil().getConfig().getBeats());
+      updateBeats(getMetronomeEngine().getConfig().getBeats());
       updateBeatControls(true);
-      updateSubs(getMetronomeUtil().getConfig().getSubdivisions());
+      updateSubs(getMetronomeEngine().getConfig().getSubdivisions());
       updateSubControls(true);
 
       binding.timerMain.updateControls(true, true, true);
@@ -1013,30 +1068,29 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
   }
 
   @Override
-  public void onMetronomeConnectionMissing() {
-    activity.runOnUiThread(() -> showSnackbar(
-        activity.getSnackbar(R.string.msg_connection_lost, Snackbar.LENGTH_SHORT)
-    ));
-  }
-
-  @Override
   public void onMetronomePermissionMissing() {
     activity.runOnUiThread(() -> activity.requestNotificationPermission(true));
   }
 
   @Override
   public void onClick(View v) {
+    MetronomeEngine metronomeEngine = activity.getMetronomeEngine();
+    if (binding == null || metronomeEngine == null) {
+      return;
+    }
     int id = v.getId();
     if (id == R.id.button_main_add_beat) {
       ViewUtil.startIcon(binding.buttonMainAddBeat.getIcon());
       performHapticClick();
-      boolean success = getMetronomeUtil().addBeat();
+      boolean success = metronomeEngine.addBeat();
       if (success) {
         BeatView beatView = new BeatView(activity);
         beatView.setIndex(binding.linearMainBeats.getChildCount());
         beatView.setOnClickListener(beat -> {
-          performHapticClick();
-          getMetronomeUtil().setBeat(beatView.getIndex(), beatView.nextTickType());
+          if (getMetronomeEngine() != null) {
+            performHapticClick();
+            getMetronomeEngine().setBeat(beatView.getIndex(), beatView.nextTickType());
+          }
         });
         beatView.setReduceAnimations(reduceAnimations);
         binding.linearMainBeats.addView(beatView);
@@ -1047,7 +1101,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     } else if (id == R.id.button_main_remove_beat) {
       ViewUtil.startIcon(binding.buttonMainRemoveBeat.getIcon());
       performHapticClick();
-      boolean success = getMetronomeUtil().removeBeat();
+      boolean success = metronomeEngine.removeBeat();
       if (success) {
         binding.linearMainBeats.removeViewAt(binding.linearMainBeats.getChildCount() - 1);
         ViewUtil.centerScrollContentIfNotFullWidth(
@@ -1059,14 +1113,16 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     } else if (id == R.id.button_main_add_subdivision) {
       ViewUtil.startIcon(binding.buttonMainAddSubdivision.getIcon());
       performHapticClick();
-      boolean success = getMetronomeUtil().addSubdivision();
+      boolean success = metronomeEngine.addSubdivision();
       if (success) {
         BeatView beatView = new BeatView(activity);
         beatView.setIsSubdivision(true);
         beatView.setIndex(binding.linearMainSubs.getChildCount());
         beatView.setOnClickListener(subdivision -> {
-          performHapticClick();
-          getMetronomeUtil().setSubdivision(beatView.getIndex(), beatView.nextTickType());
+          if (getMetronomeEngine() != null) {
+            performHapticClick();
+            getMetronomeEngine().setSubdivision(beatView.getIndex(), beatView.nextTickType());
+          }
         });
         beatView.setReduceAnimations(reduceAnimations);
         binding.linearMainSubs.addView(beatView);
@@ -1077,7 +1133,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     } else if (id == R.id.button_main_remove_subdivision) {
       ViewUtil.startIcon(binding.buttonMainRemoveSubdivision.getIcon());
       performHapticClick();
-      boolean success = getMetronomeUtil().removeSubdivision();
+      boolean success = metronomeEngine.removeSubdivision();
       if (success) {
         binding.linearMainSubs.removeViewAt(binding.linearMainSubs.getChildCount() - 1);
         ViewUtil.centerScrollContentIfNotFullWidth(
@@ -1113,7 +1169,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     } else if (id == R.id.button_main_beat_mode) {
       performHapticClick();
       dialogUtilBeatMode.show();
-      if (getMetronomeUtil().getBeatMode().equals(BEAT_MODE.VIBRATION)) {
+      if (metronomeEngine.getBeatMode().equals(BEAT_MODE.VIBRATION)) {
         // Use available animated icon for click
         binding.buttonMainBeatMode.setIconResource(
             R.drawable.ic_rounded_vibration_anim
@@ -1142,8 +1198,10 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       beatView.setTickType(tickType);
       beatView.setIndex(i);
       beatView.setOnClickListener(beat -> {
-        performHapticClick();
-        getMetronomeUtil().setBeat(beatView.getIndex(), beatView.nextTickType());
+        if (getMetronomeEngine() != null) {
+          performHapticClick();
+          getMetronomeEngine().setBeat(beatView.getIndex(), beatView.nextTickType());
+        }
       });
       beatView.setReduceAnimations(reduceAnimations);
       binding.linearMainBeats.addView(beatView);
@@ -1171,7 +1229,10 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       beatsCountBadgeAnimator.cancel();
       beatsCountBadgeAnimator = null;
     }
-    int beats = getMetronomeUtil().getConfig().getBeatsCount();
+    if (binding == null || getMetronomeEngine() == null) {
+      return;
+    }
+    int beats = getMetronomeEngine().getConfig().getBeatsCount();
     binding.buttonMainAddBeat.setEnabled(beats < Constants.BEATS_MAX);
     binding.buttonMainRemoveBeat.setEnabled(beats > 1);
     beatsCountBadge.setNumber(beats);
@@ -1221,6 +1282,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
   }
 
   private void updateSubs(String[] subdivisions) {
+    if (binding == null) {
+      return;
+    }
     String[] currentSubs = new String[binding.linearMainSubs.getChildCount()];
     for (int i = 0; i < binding.linearMainSubs.getChildCount(); i++) {
       currentSubs[i] = String.valueOf(binding.linearMainSubs.getChildAt(i));
@@ -1237,8 +1301,10 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       beatView.setIndex(i);
       if (i > 0) {
         beatView.setOnClickListener(beat -> {
-          performHapticClick();
-          getMetronomeUtil().setSubdivision(beatView.getIndex(), beatView.nextTickType());
+          if (getMetronomeEngine() != null) {
+            performHapticClick();
+            getMetronomeEngine().setSubdivision(beatView.getIndex(), beatView.nextTickType());
+          }
         });
       }
       beatView.setReduceAnimations(reduceAnimations);
@@ -1251,6 +1317,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
 
   @OptIn(markerClass = ExperimentalBadgeUtils.class)
   private void updateSubControls(boolean animated) {
+    if (binding == null || getMetronomeEngine() == null) {
+      return;
+    }
     if (subsCountBadgeAnimator != null) {
       subsCountBadgeAnimator.pause();
       subsCountBadgeAnimator.removeAllUpdateListeners();
@@ -1258,7 +1327,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       subsCountBadgeAnimator.cancel();
       subsCountBadgeAnimator = null;
     }
-    int subdivisions = getMetronomeUtil().getConfig().getSubdivisionsCount();
+    int subdivisions = getMetronomeEngine().getConfig().getSubdivisionsCount();
     binding.buttonMainAddSubdivision.setEnabled(subdivisions < Constants.SUBS_MAX);
     binding.buttonMainRemoveSubdivision.setEnabled(subdivisions > 1);
     subsCountBadge.setNumber(subdivisions);
@@ -1451,7 +1520,10 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
   }
 
   private int getModifierCount() {
-    MetronomeConfig config = getMetronomeUtil().getConfig();
+    if (getMetronomeEngine() == null) {
+      return 0;
+    }
+    MetronomeConfig config = getMetronomeEngine().getConfig();
     return (config.isCountInActive() ? 1 : 0) +
         (config.isIncrementalActive() ? 1 : 0) +
         (config.isTimerActive() ? 1 : 0) +
@@ -1459,10 +1531,13 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
   }
 
   private void changeTempo(int difference) {
-    int tempoNew = getMetronomeUtil().getConfig().getTempo() + difference;
+    if (getMetronomeEngine() == null) {
+      return;
+    }
+    int tempoNew = getMetronomeEngine().getConfig().getTempo() + difference;
     if (tempoNew >= Constants.TEMPO_MIN && tempoNew <= Constants.TEMPO_MAX) {
-      updateTempoDisplay(getMetronomeUtil().getConfig().getTempo(), tempoNew);
-      getMetronomeUtil().setTempo(tempoNew);
+      updateTempoDisplay(getMetronomeEngine().getConfig().getTempo(), tempoNew);
+      getMetronomeEngine().setTempo(tempoNew);
     }
   }
 

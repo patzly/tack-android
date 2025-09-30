@@ -48,9 +48,6 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 import com.google.android.material.snackbar.Snackbar;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
 import xyz.zedler.patrick.tack.BuildConfig;
 import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
@@ -61,13 +58,10 @@ import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.databinding.ActivityMainBinding;
 import xyz.zedler.patrick.tack.fragment.BaseFragment;
 import xyz.zedler.patrick.tack.fragment.MainFragment;
-import xyz.zedler.patrick.tack.fragment.SettingsFragment;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
 import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.service.MetronomeService.MetronomeBinder;
 import xyz.zedler.patrick.tack.util.HapticUtil;
-import xyz.zedler.patrick.tack.util.LocaleUtil;
-import xyz.zedler.patrick.tack.util.MetronomeUtil;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
 import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.PrefsUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
@@ -83,8 +77,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   private NavHostFragment navHost;
   private SharedPreferences sharedPrefs;
   private HapticUtil hapticUtil;
-  private MetronomeUtil metronomeUtil;
-  private Locale locale;
   private Intent metronomeIntent;
   private MetronomeService metronomeService;
   private SongViewModel songViewModel;
@@ -139,11 +131,8 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     setContentView(binding.getRoot());
 
     hapticUtil = new HapticUtil(this);
-    metronomeUtil = new MetronomeUtil(this, false);
 
     songViewModel = new ViewModelProvider(this).get(SongViewModel.class);
-
-    locale = LocaleUtil.getLocale();
 
     navHost = (NavHostFragment) getSupportFragmentManager().findFragmentById(
         R.id.fragment_main_nav_host
@@ -173,14 +162,13 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
                 v -> requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             );
             showSnackbar(snackbar);
-          } else if (startMetronomeAfterPermission) {
-            getMetronomeUtil().start();
+          } else if (startMetronomeAfterPermission && getMetronomeEngine() != null) {
+            getMetronomeEngine().start();
           }
           getSharedPrefs().edit().putBoolean(PREF.PERMISSION_DENIED, !isGranted).apply();
         });
 
     metronomeIntent = new Intent(this, MetronomeService.class);
-    updateMetronomeUtil();
     stopServiceWithActivity = true;
 
     if (savedInstanceState == null && bundleInstanceState == null) {
@@ -197,7 +185,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     if (!runAsSuperClass) {
       binding = null;
       if (isFinishing()) {
-        metronomeUtil.destroy();
         // metronome should be stopped when app is removed from recent apps
         // stopServiceWithActivity is false when it's e. g. only a theme change
         if (stopServiceWithActivity) {
@@ -230,7 +217,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     if (!runAsSuperClass && bound) {
       unbindService(this);
       bound = false;
-      updateMetronomeUtil();
     }
   }
 
@@ -277,21 +263,15 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     MetronomeBinder binder = (MetronomeBinder) iBinder;
     metronomeService = binder.getService();
     bound = true;
-    updateMetronomeUtil();
-    if (bound) {
-      BaseFragment current = getCurrentFragment();
-      if (current instanceof MainFragment) {
-        ((MainFragment) current).updateMetronomeControls();
-      } else if (current instanceof SettingsFragment) {
-        ((SettingsFragment) current).updateMetronomeSettings();
-      }
+    BaseFragment current = getCurrentFragment();
+    if (current != null) {
+      current.updateMetronomeControls(false);
     }
   }
 
   @Override
   public void onServiceDisconnected(ComponentName componentName) {
     bound = false;
-    updateMetronomeUtil();
   }
 
   @Override
@@ -310,21 +290,12 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     return metronomeService;
   }
 
-  public MetronomeUtil getMetronomeUtil() {
+  @Nullable
+  public MetronomeEngine getMetronomeEngine() {
     if (bound) {
-      return metronomeService.getMetronomeUtil();
-    } else {
-      return metronomeUtil;
+      return metronomeService.getMetronomeEngine();
     }
-  }
-
-  private void updateMetronomeUtil() {
-    Set<MetronomeListener> listeners = new HashSet<>(metronomeUtil.getListeners());
-    if (bound) {
-      listeners.addAll(metronomeService.getMetronomeUtil().getListeners());
-    }
-    getMetronomeUtil().addListeners(listeners);
-    getMetronomeUtil().setToPreferences(false);
+    return null;
   }
 
   public SongViewModel getSongViewModel() {
@@ -392,10 +363,6 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
   public SharedPreferences getSharedPrefs() {
     return sharedPrefs;
-  }
-
-  public Locale getLocale() {
-    return locale;
   }
 
   public void restartToApply(
@@ -512,6 +479,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   }
 
   private boolean areHapticsAllowed() {
-    return getMetronomeUtil().areHapticEffectsPossible(false);
+    if (getMetronomeEngine() != null) {
+      return getMetronomeEngine().areHapticEffectsPossible(false);
+    }
+    return false;
   }
 }

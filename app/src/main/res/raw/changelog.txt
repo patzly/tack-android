@@ -2,18 +2,17 @@
 
 - New: Material 3 Expressive design throughout the app with new typeface and redesigned controls
 - New: song parts can now be directly edited from song details, "update part" menu option replaced by "use current config" button in the edit dialog for more clarity
-- New: current song part displayed on main screen below song picker
+- New: song picker redesigned to display current song part in expanded state
+- New: long-tap on song chips or tap on current song to open song details
 - New: tempo tap button replaced by extended tempo change dialog accessible with tap on tempo picker
 - New: "always vibrate" setting replaced by beat mode dialog accessible from the main screen
 - New: "volume boost" setting extended for volume reduction and moved to separate dialog
 - New: "flash screen" setting extended with option for subtle flash
 - New: "keep screen awake" setting extended with option for always awake
-- New: "hide subdivision controls" setting removed for simplicity
-- New: long-tap on song chips to open song details
 - New: Japanese and Dutch translations (thanks to the contributors!)
 - New: Support for Android 16 and dropped support for Android 5 due to dependency limitations
+- Improved: "hide subdivision controls" setting removed for simplicity
 - Improved: play/stop button now responds on press down instead of release for a more responsive feel
-- Improved: updated value slider and switch experience
 - Improved: layout on different screen sizes and orientations
 - Improved: metronome now works without notification permission if it was denied
 - Improved: song part number always shown in song details, optional name displayed below part number

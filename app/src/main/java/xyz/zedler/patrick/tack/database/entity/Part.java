@@ -35,7 +35,7 @@ import java.util.UUID;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.model.MetronomeConfig;
-import xyz.zedler.patrick.tack.util.MetronomeUtil;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
 
 @Entity(
     tableName = "parts",
@@ -312,7 +312,7 @@ public class Part implements Parcelable {
         if (timerUnit.equals(UNIT.MINUTES)) {
           seconds *= 60;
         }
-        return MetronomeUtil.getTimeStringFromSeconds(seconds, false);
+        return MetronomeEngine.getTimeStringFromSeconds(seconds, false);
       default:
         return context.getResources().getQuantityString(
             R.plurals.options_unit_bars, timerDuration, timerDuration

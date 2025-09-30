@@ -92,7 +92,7 @@ public class UiUtil {
           isLight ? WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS : 0,
           WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
       );
-    } else if (Build.VERSION.SDK_INT >= VERSION_CODES.M) {
+    } else {
       int flags = view.getSystemUiVisibility();
       if (isLight) {
         flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;

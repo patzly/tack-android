@@ -116,14 +116,7 @@ public class CustomBottomSheetDialog extends AppCompatDialog {
     if (window != null) {
       // The status bar should always be transparent because of the window animation.
       window.setStatusBarColor(0);
-
       window.addFlags(LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-      if (VERSION.SDK_INT < VERSION_CODES.M) {
-        // It can be transparent for API 23 and above because we will handle switching the status
-        // bar icons to light or dark as appropriate. For API 21 and API 22 we just set the
-        // translucent status bar.
-        window.addFlags(LayoutParams.FLAG_TRANSLUCENT_STATUS);
-      }
       if (!UiUtil.isDarkModeActive(getContext()) && !UiUtil.isNavigationModeGesture(getContext())) {
         UiUtil.setLightNavigationBar(window.getDecorView(), true);
       }
@@ -404,8 +397,7 @@ public class CustomBottomSheetDialog extends AppCompatDialog {
     private EdgeToEdgeCallback(
         @NonNull final View bottomSheet, @NonNull WindowInsetsCompat insetsCompat) {
       this.insetsCompat = insetsCompat;
-      lightStatusBar = VERSION.SDK_INT >= VERSION_CODES.M
-          && (bottomSheet.getSystemUiVisibility() & SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) != 0;
+      lightStatusBar = (bottomSheet.getSystemUiVisibility() & SYSTEM_UI_FLAG_LIGHT_STATUS_BAR) != 0;
 
       BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(bottomSheet);
 
@@ -480,7 +472,7 @@ public class CustomBottomSheetDialog extends AppCompatDialog {
           isLight ? WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS : 0,
           WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
       );
-    } else if (VERSION.SDK_INT >= VERSION_CODES.M) {
+    } else {
       int flags = view.getSystemUiVisibility();
       if (isLight) {
         flags |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;

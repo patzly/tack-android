@@ -59,6 +59,7 @@ import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
 import xyz.zedler.patrick.tack.util.ShortcutUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
@@ -258,7 +259,9 @@ public class SettingsFragment extends BaseFragment
       builder.setMessage(R.string.msg_reset_description);
       builder.setPositiveButton(R.string.action_reset, (dialog, which) -> {
         performHapticClick();
-        getMetronomeUtil().stop();
+        if (getMetronomeEngine() != null) {
+          getMetronomeEngine().stop();
+        }
         getSharedPrefs().edit().clear().apply();
         activity.getSongViewModel().deleteAll();
         new ShortcutUtil(activity).removeAllShortcuts();
@@ -274,16 +277,14 @@ public class SettingsFragment extends BaseFragment
 
     gainDialogUtil = new GainDialogUtil(activity, this);
     gainDialogUtil.showIfWasShown(savedInstanceState);
-    updateGainDescription(getMetronomeUtil().getGain());
 
     latencyDialogUtil = new LatencyDialogUtil(activity, this);
     latencyDialogUtil.showIfWasShown(savedInstanceState);
-    updateLatencyDescription(getMetronomeUtil().getLatency());
 
     backupDialogUtil = new BackupDialogUtil(activity, this);
     backupDialogUtil.showIfWasShown(savedInstanceState);
 
-    updateMetronomeSettings();
+    updateMetronomeControls(true);
 
     ViewUtil.setOnClickListeners(
         this,
@@ -338,7 +339,12 @@ public class SettingsFragment extends BaseFragment
     }
   }
 
-  public void updateMetronomeSettings() {
+  @Override
+  public void updateMetronomeControls(boolean init) {
+    MetronomeEngine metronomeEngine = activity.getMetronomeEngine();
+    if (binding == null || metronomeEngine == null) {
+      return;
+    }
     Map<String, String> labels = new LinkedHashMap<>();
     labels.put(SOUND.SINE, getString(R.string.settings_sound_sine));
     labels.put(SOUND.WOOD, getString(R.string.settings_sound_wood));
@@ -349,19 +355,21 @@ public class SettingsFragment extends BaseFragment
     labels.put(SOUND.FOLDING, getString(R.string.settings_sound_folding));
     ArrayList<String> sounds = new ArrayList<>(labels.keySet());
     String[] items = labels.values().toArray(new String[]{});
-    int init = sounds.indexOf(getMetronomeUtil().getSound());
-    if (init == -1) {
-      init = 0;
+    int initItem = sounds.indexOf(metronomeEngine.getSound());
+    if (initItem == -1) {
+      initItem = 0;
       getSharedPrefs().edit().remove(PREF.SOUND).apply();
     }
-    int initFinal = init;
-    binding.textSettingsSound.setText(items[initFinal]);
+    int initItemFinal = initItem;
+    binding.textSettingsSound.setText(items[initItemFinal]);
     dialogUtilSound.createDialog(builder -> {
       builder.setTitle(R.string.settings_sound);
       builder.setSingleChoiceItems(
-          items, initFinal, (dialog, which) -> {
+          items, initItemFinal, (dialog, which) -> {
             performHapticClick();
-            getMetronomeUtil().setSound(sounds.get(which));
+            if (getMetronomeEngine() != null) {
+              getMetronomeEngine().setSound(sounds.get(which));
+            }
             binding.textSettingsSound.setText(items[which]);
           }
       );
@@ -372,17 +380,20 @@ public class SettingsFragment extends BaseFragment
     dialogUtilSound.showIfWasShown(savedState);
 
     binding.switchSettingsIgnoreFocus.setOnCheckedChangeListener(null);
-    binding.switchSettingsIgnoreFocus.setChecked(getMetronomeUtil().getIgnoreAudioFocus());
+    binding.switchSettingsIgnoreFocus.setChecked(metronomeEngine.getIgnoreAudioFocus());
     binding.switchSettingsIgnoreFocus.jumpDrawablesToCurrentState();
     binding.switchSettingsIgnoreFocus.setOnCheckedChangeListener(this);
 
+    updateGainDescription(metronomeEngine.getGain());
+    updateLatencyDescription(metronomeEngine.getLatency());
+
     binding.switchSettingsElapsed.setOnCheckedChangeListener(null);
-    binding.switchSettingsElapsed.setChecked(getMetronomeUtil().getShowElapsed());
+    binding.switchSettingsElapsed.setChecked(metronomeEngine.getShowElapsed());
     binding.switchSettingsElapsed.jumpDrawablesToCurrentState();
     binding.switchSettingsElapsed.setOnCheckedChangeListener(this);
 
     binding.switchSettingsResetTimer.setOnCheckedChangeListener(null);
-    binding.switchSettingsResetTimer.setChecked(getMetronomeUtil().getResetTimerOnStop());
+    binding.switchSettingsResetTimer.setChecked(metronomeEngine.getResetTimerOnStop());
     binding.switchSettingsResetTimer.jumpDrawablesToCurrentState();
     binding.switchSettingsResetTimer.setOnCheckedChangeListener(this);
 
@@ -473,7 +484,11 @@ public class SettingsFragment extends BaseFragment
   }
 
   @Override
-  public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+  public void onCheckedChanged(@NonNull CompoundButton buttonView, boolean isChecked) {
+    MetronomeEngine metronomeEngine = activity.getMetronomeEngine();
+    if (metronomeEngine == null) {
+      return;
+    }
     int id = buttonView.getId();
     if (id == R.id.switch_settings_haptic) {
       performHapticClick();
@@ -487,7 +502,7 @@ public class SettingsFragment extends BaseFragment
     } else if (id == R.id.switch_settings_ignore_focus) {
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsIgnoreFocus);
-      getMetronomeUtil().setIgnoreFocus(isChecked);
+      metronomeEngine.setIgnoreFocus(isChecked);
     } else if (id == R.id.switch_settings_active_beat) {
       performHapticClick();
       getSharedPrefs().edit().putBoolean(PREF.ACTIVE_BEAT, isChecked).apply();
@@ -502,17 +517,15 @@ public class SettingsFragment extends BaseFragment
           binding.switchSettingsPermNotification.setChecked(false);
           activity.requestNotificationPermission(false);
         }
-      } else {
-        activity.showSnackbar(R.string.msg_connection_lost);
       }
     } else if (id == R.id.switch_settings_elapsed) {
       ViewUtil.startIcon(binding.imageSettingsElapsed);
       performHapticClick();
-      getMetronomeUtil().setShowElapsed(isChecked);
+      metronomeEngine.setShowElapsed(isChecked);
     } else if (id == R.id.switch_settings_reset_timer) {
       ViewUtil.startIcon(binding.imageSettingsResetTimer);
       performHapticClick();
-      getMetronomeUtil().setResetTimerOnStop(isChecked);
+      metronomeEngine.setResetTimerOnStop(isChecked);
     } else if (id == R.id.switch_settings_big_time_text) {
       performHapticClick();
       getSharedPrefs().edit().putBoolean(PREF.BIG_TIME_TEXT, isChecked).apply();
@@ -525,7 +538,8 @@ public class SettingsFragment extends BaseFragment
 
   @Override
   public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
-    if (!isChecked) {
+    MetronomeEngine metronomeEngine = activity.getMetronomeEngine();
+    if (!isChecked || metronomeEngine == null) {
       return;
     }
     int id = group.getId();
@@ -538,7 +552,7 @@ public class SettingsFragment extends BaseFragment
       } else {
         flashScreen = FLASH_SCREEN.OFF;
       }
-      getMetronomeUtil().setFlashScreen(flashScreen);
+      metronomeEngine.setFlashScreen(flashScreen);
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsFlashScreen);
     } else if (id == R.id.toggle_settings_keep_awake) {
@@ -550,11 +564,11 @@ public class SettingsFragment extends BaseFragment
       } else {
         keepAwake = KEEP_AWAKE.ALWAYS;
       }
-      getMetronomeUtil().setKeepAwake(keepAwake);
+      metronomeEngine.setKeepAwake(keepAwake);
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsKeepAwake);
       boolean keepAwakeNow = keepAwake.equals(KEEP_AWAKE.ALWAYS)
-          || (keepAwake.equals(KEEP_AWAKE.WHILE_PLAYING) && getMetronomeUtil().isPlaying());
+          || (keepAwake.equals(KEEP_AWAKE.WHILE_PLAYING) && metronomeEngine.isPlaying());
       UiUtil.keepScreenAwake(activity, keepAwakeNow);
     }
   }

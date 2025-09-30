@@ -197,10 +197,13 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         } else {
           activity.getSongViewModel().updateSongAndParts(
               songResult, partsResult, partsSource, () -> {
+                if (getMetronomeEngine() == null) {
+                  return;
+                }
                 // update looped in metronome
-                getMetronomeUtil().reloadCurrentSong();
+                getMetronomeEngine().reloadCurrentSong();
                 // update shortcut names
-                getMetronomeUtil().updateShortcuts();
+                getMetronomeEngine().updateShortcuts();
                 // update widget
                 WidgetUtil.sendSongsWidgetUpdate(activity);
               });
@@ -473,17 +476,22 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       builder.setPositiveButton(R.string.action_delete, (dialog, which) -> {
         performHapticClick();
         if (songSource == null) {
-          Log.e(TAG, "onViewCreated: songSource annot be null");
+          Log.e(TAG, "onViewCreated: songSource cannot be null");
+          return;
+        } else if (getMetronomeEngine() == null) {
           return;
         }
-        if (songSource.getId().equals(getMetronomeUtil().getCurrentSongId())) {
+        if (songSource.getId().equals(getMetronomeEngine().getCurrentSongId())) {
           // if current song is deleted, change to default
-          getMetronomeUtil().setCurrentSong(Constants.SONG_ID_DEFAULT, 0, true);
+          getMetronomeEngine().setCurrentSong(Constants.SONG_ID_DEFAULT, 0, true);
         }
         activity.getSongViewModel().deleteSong(songSource, () -> {
+          if (getMetronomeEngine() == null) {
+            return;
+          }
           activity.getSongViewModel().deleteParts(partsSource);
           // update shortcut names
-          activity.getMetronomeUtil().updateShortcuts();
+          getMetronomeEngine().updateShortcuts();
           // update widget
           WidgetUtil.sendSongsWidgetUpdate(activity);
         });
@@ -574,8 +582,11 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
   }
 
   private void addPart() {
+    if (getMetronomeEngine() == null) {
+      return;
+    }
     int index = partsResult.size();
-    Part part = new Part(null, songResult.getId(), index, getMetronomeUtil().getConfig());
+    Part part = new Part(null, songResult.getId(), index, getMetronomeEngine().getConfig());
     partsResult.add(part);
     sortParts();
     adapter.setParts(new ArrayList<>(partsResult));

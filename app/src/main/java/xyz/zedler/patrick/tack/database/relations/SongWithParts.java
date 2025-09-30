@@ -30,7 +30,7 @@ import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.entity.Song;
-import xyz.zedler.patrick.tack.util.MetronomeUtil;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
 
 public class SongWithParts {
 
@@ -118,7 +118,7 @@ public class SongWithParts {
           break;
       }
     }
-    return MetronomeUtil.getTimeStringFromSeconds((int) seconds, false);
+    return MetronomeEngine.getTimeStringFromSeconds((int) seconds, false);
   }
 
   @Override

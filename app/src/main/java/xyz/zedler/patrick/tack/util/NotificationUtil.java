@@ -103,13 +103,13 @@ public class NotificationUtil {
     Intent openIntent = new Intent(context, MainActivity.class);
     openIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
     PendingIntent activityPendingIntent = PendingIntent.getActivity(
-        context, REQUEST_CODE, openIntent, getPendingIntentFlags()
+        context, REQUEST_CODE, openIntent, PendingIntent.FLAG_IMMUTABLE
     );
 
     Intent startIntent = new Intent(context, MetronomeService.class);
     startIntent.setAction(ACTION.START);
     PendingIntent startServicePendingIntent = PendingIntent.getService(
-        context, REQUEST_CODE, startIntent, getPendingIntentFlags()
+        context, REQUEST_CODE, startIntent, PendingIntent.FLAG_IMMUTABLE
     );
     Action actionStart = new Action(
         R.drawable.ic_rounded_play_arrow_fill,
@@ -120,7 +120,7 @@ public class NotificationUtil {
     Intent stopIntent = new Intent(context, MetronomeService.class);
     stopIntent.setAction(ACTION.STOP);
     PendingIntent stopServicePendingIntent = PendingIntent.getService(
-        context, REQUEST_CODE, stopIntent, getPendingIntentFlags()
+        context, REQUEST_CODE, stopIntent, PendingIntent.FLAG_IMMUTABLE
     );
     Action actionStop = new Action(
         R.drawable.ic_rounded_stop_fill,
@@ -145,12 +145,6 @@ public class NotificationUtil {
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
         .build();
-  }
-
-  private int getPendingIntentFlags() {
-    return VERSION.SDK_INT >= VERSION_CODES.M
-        ? PendingIntent.FLAG_IMMUTABLE
-        : PendingIntent.FLAG_UPDATE_CURRENT;
   }
 
   private int getColor() {

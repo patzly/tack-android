@@ -45,7 +45,8 @@ import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.ViewTimerBinding;
-import xyz.zedler.patrick.tack.util.MetronomeUtil;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
+import xyz.zedler.patrick.tack.model.MetronomeConfig;
 import xyz.zedler.patrick.tack.util.UiUtil;
 
 public class TimerView extends FrameLayout {
@@ -70,11 +71,11 @@ public class TimerView extends FrameLayout {
     );
 
     binding.sliderTimer.addOnChangeListener((slider, value, fromUser) -> {
-      if (!fromUser) {
+      if (!fromUser || getMetronomeEngine() == null) {
         return;
       }
-      int positions = getMetronomeUtil().getTimerDuration();
-      int timerPositionCurrent = (int) (getMetronomeUtil().getTimerProgress() * positions);
+      int positions = getMetronomeEngine().getConfig().getTimerDuration();
+      int timerPositionCurrent = (int) (getMetronomeEngine().getTimerProgress() * positions);
       float fraction = value / binding.sliderTimer.getValueTo();
       int timerPositionNew = (int) (fraction * positions);
       if (timerPositionCurrent != timerPositionNew
@@ -83,19 +84,23 @@ public class TimerView extends FrameLayout {
       ) {
         activity.performHapticSegmentTick(binding.sliderTimer, false);
       }
-      getMetronomeUtil().updateTimerHandler(fraction, true);
+      getMetronomeEngine().updateTimerHandler(fraction, true);
       updateDisplay();
     });
     binding.sliderTimer.addOnSliderTouchListener(new OnSliderTouchListener() {
       @Override
       public void onStartTrackingTouch(@NonNull Slider slider) {
-        getMetronomeUtil().savePlayingState();
-        getMetronomeUtil().stop();
+        if (getMetronomeEngine() != null) {
+          getMetronomeEngine().savePlayingState();
+          getMetronomeEngine().stop();
+        }
       }
 
       @Override
       public void onStopTrackingTouch(@NonNull Slider slider) {
-        getMetronomeUtil().restorePlayingState();
+        if (getMetronomeEngine() != null) {
+          getMetronomeEngine().restorePlayingState();
+        }
       }
     });
 
@@ -158,9 +163,11 @@ public class TimerView extends FrameLayout {
               binding.sliderTimer.setValueTo(valueTo);
             }
             displayHeightExpanded = binding.frameTimerDisplayContainer.getHeight();
+            MetronomeEngine metronomeEngine = getMetronomeEngine();
             updateControls(
                 false,
-                getMetronomeUtil().isPlaying() && getMetronomeUtil().isTimerActive(),
+                metronomeEngine != null &&
+                    metronomeEngine.isPlaying() && metronomeEngine.getConfig().isTimerActive(),
                 true
             );
             if (binding.linearTimerContainer.getViewTreeObserver().isAlive()) {
@@ -175,29 +182,35 @@ public class TimerView extends FrameLayout {
   public void updateControls(
       boolean animateVisibility, boolean animateProgress, boolean withTransition
   ) {
-    boolean isPlaying = getMetronomeUtil().isPlaying();
-    boolean isTimerActive = getMetronomeUtil().isTimerActive();
+    MetronomeEngine metronomeEngine = activity.getMetronomeEngine();
+    MetronomeConfig metronomeConfig = metronomeEngine != null
+        ? metronomeEngine.getConfig()
+        : new MetronomeConfig(activity.getSharedPrefs());
+    boolean isPlaying = metronomeEngine != null && metronomeEngine.isPlaying();
+    boolean isTimerActive = metronomeConfig.isTimerActive();
     setTimerExpanded(isTimerActive, animateVisibility);
-    binding.sliderTimer.setContinuousModeTickCount(getMetronomeUtil().getTimerDuration() + 1);
-    // Check if timer is currently running and if metronome is from service
-    if (!getMetronomeUtil().isFromService()) {
+    binding.sliderTimer.setContinuousModeTickCount(metronomeConfig.getTimerDuration() + 1);
+
+    if (metronomeEngine == null) {
       return;
     }
-    if (isPlaying && isTimerActive && !getMetronomeUtil().isCountingIn()) {
+
+    // Check if timer is currently running
+    if (isPlaying && isTimerActive && !metronomeEngine.isCountingIn()) {
       if (withTransition) {
-        long timerInterval = getMetronomeUtil().getTimerInterval();
+        long timerInterval = metronomeEngine.getTimerInterval();
         float fraction = (float) Constants.ANIM_DURATION_LONG / timerInterval;
-        fraction += getMetronomeUtil().getTimerProgress();
+        fraction += metronomeEngine.getTimerProgress();
         startProgressTransition(fraction);
       }
       updateProgress(
-          1, getMetronomeUtil().getTimerIntervalRemaining(), animateProgress, true
+          1, metronomeEngine.getTimerIntervalRemaining(), animateProgress, true
       );
     } else {
-      float timerProgress = getMetronomeUtil().getTimerProgress();
-      if (animateProgress && getMetronomeUtil().isFromService()) {
+      float timerProgress = metronomeEngine.getTimerProgress();
+      if (animateProgress) {
         startProgressTransition(timerProgress);
-      } else if (getMetronomeUtil().isFromService()) {
+      } else  {
         updateProgress(timerProgress, 0, false, false);
       }
     }
@@ -205,29 +218,31 @@ public class TimerView extends FrameLayout {
   }
 
   public void updateDisplay() {
-    if (binding == null) {
+    if (binding == null || getMetronomeEngine() == null) {
       return;
     }
-    String totalTime = getMetronomeUtil().getTotalTimeString();
+    String totalTime = getMetronomeEngine().getTotalTimeString();
     if (!totalTime.isEmpty()) {
-      binding.chipTimerTotal.textChipNumbers.setText(getMetronomeUtil().getTotalTimeString());
+      binding.chipTimerTotal.textChipNumbers.setText(getMetronomeEngine().getTotalTimeString());
     }
-    String currentTime = getMetronomeUtil().getCurrentTimerString();
+    String currentTime = getMetronomeEngine().getCurrentTimerString();
     if (!currentTime.isEmpty()) {
-      binding.chipTimerCurrent.textChipNumbers.setText(getMetronomeUtil().getCurrentTimerString());
+      binding.chipTimerCurrent.textChipNumbers.setText(getMetronomeEngine().getCurrentTimerString());
     }
 
-    boolean isElapsedActive = getMetronomeUtil().isElapsedActive();
+    boolean isElapsedActive = getMetronomeEngine().isElapsedActive();
     setElapsedExpanded(isElapsedActive, false);
-    binding.chipTimerElapsed.textChipNumbers.setText(getMetronomeUtil().getElapsedTimeString());
+    binding.chipTimerElapsed.textChipNumbers.setText(getMetronomeEngine().getElapsedTimeString());
   }
 
   private void updateProgress(float fraction, long duration, boolean animated, boolean linear) {
     stopProgress();
     int max = (int) binding.sliderTimer.getValueTo();
     if (animated) {
-      float progress = getMetronomeUtil().getTimerProgress();
-      progressAnimator = ValueAnimator.ofFloat(progress, fraction);
+      if (getMetronomeEngine() == null) {
+        return;
+      }
+      progressAnimator = ValueAnimator.ofFloat(getMetronomeEngine().getTimerProgress(), fraction);
       progressAnimator.addUpdateListener(animation -> {
         if (progressTransitionAnimator != null) {
           return;
@@ -258,7 +273,7 @@ public class TimerView extends FrameLayout {
     int current = (int) binding.sliderTimer.getValue();
     int max = (int) binding.sliderTimer.getValueTo();
     float currentFraction = current / (float) max;
-    if (getMetronomeUtil().equalsTimerProgress(currentFraction)) {
+    if (getMetronomeEngine() != null && getMetronomeEngine().equalsTimerProgress(currentFraction)) {
       // only if current progress is not equal to timer progress
       return;
     }
@@ -435,8 +450,9 @@ public class TimerView extends FrameLayout {
     return displayHeightExpanded;
   }
 
-  private MetronomeUtil getMetronomeUtil() {
-    return activity.getMetronomeUtil();
+  @Nullable
+  private MetronomeEngine getMetronomeEngine() {
+    return activity.getMetronomeEngine();
   }
 
   public interface TimerListener {

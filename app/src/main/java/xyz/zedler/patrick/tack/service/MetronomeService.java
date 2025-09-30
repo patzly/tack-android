@@ -37,8 +37,8 @@ import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.util.MetronomeUtil;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter;
 import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.PrefsUtil;
 
@@ -47,7 +47,7 @@ public class MetronomeService extends Service {
   private static final String TAG = MetronomeService.class.getSimpleName();
 
   private final IBinder binder = new MetronomeBinder();
-  private MetronomeUtil metronomeUtil;
+  private MetronomeEngine metronomeEngine;
   private NotificationUtil notificationUtil;
   private SharedPreferences sharedPrefs;
   private boolean isBound, configChange, permNotification;
@@ -57,8 +57,8 @@ public class MetronomeService extends Service {
     super.onCreate();
 
     notificationUtil = new NotificationUtil(this);
-    metronomeUtil = new MetronomeUtil(this, true);
-    metronomeUtil.addListener(new MetronomeListenerAdapter() {
+    metronomeEngine = new MetronomeEngine(this);
+    metronomeEngine.addListener(new MetronomeListenerAdapter() {
       @Override
       public void onMetronomeStart() {
         if (permNotification && hasPermission()) {
@@ -88,7 +88,7 @@ public class MetronomeService extends Service {
     super.onDestroy();
 
     stopForeground();
-    metronomeUtil.destroy();
+    metronomeEngine.destroy();
     Log.d(TAG, "onDestroy: service destroyed");
   }
 
@@ -98,7 +98,7 @@ public class MetronomeService extends Service {
       String action = intent.getAction();
       switch (action) {
         case ACTION.START:
-          metronomeUtil.start();
+          metronomeEngine.start();
           break;
         case ACTION.APPLY_SONG:
         case ACTION.START_SONG:
@@ -107,10 +107,10 @@ public class MetronomeService extends Service {
             songId = Constants.SONG_ID_DEFAULT;
           }
           boolean startPlaying = action.equals(ACTION.START_SONG);
-          metronomeUtil.setCurrentSong(songId, 0, false, startPlaying);
+          metronomeEngine.setCurrentSong(songId, 0, false, startPlaying);
           break;
         case ACTION.STOP:
-          metronomeUtil.stop();
+          metronomeEngine.stop();
           if (!permNotification && hasPermission()) {
             stopForeground();
           }
@@ -182,8 +182,8 @@ public class MetronomeService extends Service {
     configChange = false;
   }
 
-  public MetronomeUtil getMetronomeUtil() {
-    return metronomeUtil;
+  public MetronomeEngine getMetronomeEngine() {
+    return metronomeEngine;
   }
 
   public boolean getPermNotification() {
@@ -194,7 +194,7 @@ public class MetronomeService extends Service {
     if (permNotification != permanent) {
       if (permanent) {
         if (hasPermission()) {
-          startForeground(!metronomeUtil.isPlaying());
+          startForeground(!metronomeEngine.isPlaying());
         } else {
           throw new IllegalStateException("Notification permission missing");
         }
@@ -217,8 +217,9 @@ public class MetronomeService extends Service {
   }
 
   private boolean canShowNonPermNotification() {
-    boolean realTimeActive = metronomeUtil.isTimerActive() || metronomeUtil.isElapsedActive();
-    return metronomeUtil.isPlaying() || realTimeActive;
+    boolean realTimeActive =
+        metronomeEngine.getConfig().isTimerActive() || metronomeEngine.isElapsedActive();
+    return metronomeEngine.isPlaying() || realTimeActive;
   }
 
   private boolean hasPermission() {

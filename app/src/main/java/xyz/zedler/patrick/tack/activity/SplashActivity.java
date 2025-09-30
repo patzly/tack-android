@@ -109,21 +109,17 @@ public class SplashActivity extends MainActivity {
 
       new SystemBarBehavior(this).setUp();
 
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        LayerDrawable splashContent = (LayerDrawable) ResourcesCompat.getDrawable(
-            getResources(), R.drawable.splash_content, getTheme()
+      LayerDrawable splashContent = (LayerDrawable) ResourcesCompat.getDrawable(
+          getResources(), R.drawable.splash_content, getTheme()
+      );
+      getWindow().getDecorView().setBackground(splashContent);
+      try {
+        assert splashContent != null;
+        ViewUtil.startIcon(splashContent.findDrawableByLayerId(R.id.splash_logo));
+        new Handler(Looper.getMainLooper()).postDelayed(
+            this::startNewMainActivity, 600
         );
-        getWindow().getDecorView().setBackground(splashContent);
-        try {
-          assert splashContent != null;
-          ViewUtil.startIcon(splashContent.findDrawableByLayerId(R.id.splash_logo));
-          new Handler(Looper.getMainLooper()).postDelayed(
-              this::startNewMainActivity, 600
-          );
-        } catch (Exception e) {
-          startNewMainActivity();
-        }
-      } else {
+      } catch (Exception e) {
         startNewMainActivity();
       }
     }

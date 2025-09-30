@@ -211,7 +211,9 @@ public class BackupDialogUtil implements OnClickListener {
           activity.getSongViewModel().insertSongsWithParts(songsWithParts, () -> {
             showToast(R.string.msg_restore_success);
             // update shortcuts
-            activity.getMetronomeUtil().updateShortcuts();
+            if (activity.getMetronomeEngine() != null) {
+              activity.getMetronomeEngine().updateShortcuts();
+            }
             // update widget
             WidgetUtil.sendSongsWidgetUpdate(activity);
           });

@@ -46,6 +46,33 @@ public class MetronomeConfig {
   private String muteUnit;
   private boolean muteRandom;
 
+  public MetronomeConfig() {
+    this.countIn = DEF.COUNT_IN;
+
+    this.tempo = DEF.TEMPO;
+
+    this.beats = DEF.BEATS.split(",");
+    this.subdivisions = DEF.SUBDIVISIONS.split(",");
+
+    this.incrementalAmount = DEF.INCREMENTAL_AMOUNT;
+    this.incrementalInterval = DEF.INCREMENTAL_INTERVAL;
+    this.incrementalLimit = DEF.INCREMENTAL_LIMIT;
+    this.incrementalUnit = DEF.INCREMENTAL_UNIT;
+    this.incrementalIncrease = DEF.INCREMENTAL_INCREASE;
+
+    this.timerDuration = DEF.TIMER_DURATION;
+    this.timerUnit = DEF.TIMER_UNIT;
+
+    this.mutePlay = DEF.MUTE_PLAY;
+    this.muteMute = DEF.MUTE_MUTE;
+    this.muteUnit = DEF.MUTE_UNIT;
+    this.muteRandom = DEF.MUTE_RANDOM;
+  }
+
+  public MetronomeConfig(SharedPreferences sharedPrefs) {
+    setToPreferences(sharedPrefs);
+  }
+
   public MetronomeConfig(
       int countIn,
       int tempo,
@@ -75,29 +102,6 @@ public class MetronomeConfig {
     this.muteMute = muteMute;
     this.muteUnit = muteUnit;
     this.muteRandom = muteRandom;
-  }
-
-  public MetronomeConfig() {
-    this.countIn = DEF.COUNT_IN;
-
-    this.tempo = DEF.TEMPO;
-
-    this.beats = DEF.BEATS.split(",");
-    this.subdivisions = DEF.SUBDIVISIONS.split(",");
-
-    this.incrementalAmount = DEF.INCREMENTAL_AMOUNT;
-    this.incrementalInterval = DEF.INCREMENTAL_INTERVAL;
-    this.incrementalLimit = DEF.INCREMENTAL_LIMIT;
-    this.incrementalUnit = DEF.INCREMENTAL_UNIT;
-    this.incrementalIncrease = DEF.INCREMENTAL_INCREASE;
-
-    this.timerDuration = DEF.TIMER_DURATION;
-    this.timerUnit = DEF.TIMER_UNIT;
-
-    this.mutePlay = DEF.MUTE_PLAY;
-    this.muteMute = DEF.MUTE_MUTE;
-    this.muteUnit = DEF.MUTE_UNIT;
-    this.muteRandom = DEF.MUTE_RANDOM;
   }
 
   public MetronomeConfig(MetronomeConfig other) {

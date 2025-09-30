@@ -51,8 +51,9 @@ import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter.OnSongClickListener;
 import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
 import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListener;
-import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListener;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.SortUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
@@ -99,8 +100,8 @@ public class SongsFragment extends BaseFragment {
     dialogUtilDelete.dismiss();
     unlockDialogUtil.dismiss();
     backupDialogUtil.dismiss();
-    if (metronomeListener != null) {
-      getMetronomeUtil().removeListener(metronomeListener);
+    if (metronomeListener != null && getMetronomeEngine() != null) {
+      getMetronomeEngine().removeListener(metronomeListener);
     }
   }
 
@@ -153,7 +154,7 @@ public class SongsFragment extends BaseFragment {
 
       PopupMenu.OnMenuItemClickListener itemClickListener = item -> {
         int id = item.getItemId();
-        if (getViewUtil().isClickDisabled(id)) {
+        if (getViewUtil().isClickDisabled(id) || getMetronomeEngine() == null) {
           return false;
         }
         performHapticClick();
@@ -172,7 +173,7 @@ public class SongsFragment extends BaseFragment {
           }
           item.setChecked(true);
           setSongsWithParts(null);
-          getMetronomeUtil().setSongsOrder(sortOrder);
+          getMetronomeEngine().setSongsOrder(sortOrder);
           if (!songsWithParts.isEmpty()) {
             // only update widget if sort order is important
             WidgetUtil.sendSongsWidgetUpdate(activity);
@@ -189,7 +190,10 @@ public class SongsFragment extends BaseFragment {
         return true;
       };
       OnMenuInflatedListener menuInflatedListener = menu -> {
-        sortOrder = getMetronomeUtil().getSongsOrder();
+        if (getMetronomeEngine() == null) {
+          return;
+        }
+        sortOrder = getMetronomeEngine().getSongsOrder();
         int itemId = R.id.action_sort_name;
         if (sortOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
           itemId = R.id.action_sort_last_played;
@@ -227,13 +231,7 @@ public class SongsFragment extends BaseFragment {
             () -> adapter.setCurrentSongId(song != null ? song.getSong().getId() : null)
         );
       }
-
-      @Override
-      public void onMetronomeConnectionMissing() {
-        activity.runOnUiThread(() -> showSnackbar(R.string.msg_connection_lost));
-      }
     };
-    getMetronomeUtil().addListener(metronomeListener);
 
     adapter = new SongAdapter(new OnSongClickListener() {
       @Override
@@ -247,23 +245,29 @@ public class SongsFragment extends BaseFragment {
 
       @Override
       public void onPlayClick(@NonNull SongWithParts song) {
-        if (getMetronomeUtil().areHapticEffectsPossible(true)) {
+        if (getMetronomeEngine() == null) {
+          return;
+        }
+        if (getMetronomeEngine().areHapticEffectsPossible(true)) {
           performHapticClick();
         }
-        getMetronomeUtil().setCurrentSong(
+        getMetronomeEngine().setCurrentSong(
             song.getSong().getId(), 0, true, true
         );
       }
 
       @Override
       public void onPlayStopClick() {
-        if (getMetronomeUtil().areHapticEffectsPossible(true)) {
+        if (getMetronomeEngine() == null) {
+          return;
+        }
+        if (getMetronomeEngine().areHapticEffectsPossible(true)) {
           performHapticClick();
         }
-        if (getMetronomeUtil().isPlaying()) {
-          getMetronomeUtil().stop();
+        if (getMetronomeEngine().isPlaying()) {
+          getMetronomeEngine().stop();
         } else {
-          getMetronomeUtil().start();
+          getMetronomeEngine().start();
         }
       }
 
@@ -274,8 +278,11 @@ public class SongsFragment extends BaseFragment {
 
       @Override
       public void onApplyClick(@NonNull SongWithParts song) {
+        if (getMetronomeEngine() == null) {
+          return;
+        }
         performHapticClick();
-        getMetronomeUtil().setCurrentSong(
+        getMetronomeEngine().setCurrentSong(
             song.getSong().getId(), 0, true, false
         );
       }
@@ -288,8 +295,6 @@ public class SongsFragment extends BaseFragment {
         dialogUtilDelete.show();
       }
     });
-    adapter.setCurrentSongId(getMetronomeUtil().getCurrentSongId());
-    adapter.setPlaying(getMetronomeUtil().isPlaying());
     binding.recyclerSongs.setAdapter(adapter);
     // Layout manager
     LinearLayoutManager layoutManager = new WrapperLinearLayoutManager(activity);
@@ -312,6 +317,8 @@ public class SongsFragment extends BaseFragment {
           setSongsWithParts(songsWithParts);
         }
     );
+
+    updateMetronomeControls(true);
 
     dialogUtilIntro = new DialogUtil(activity, "songs_intro");
     dialogUtilIntro.createDialog(builder -> {
@@ -370,15 +377,20 @@ public class SongsFragment extends BaseFragment {
         } else if (partsToDelete.isEmpty()) {
           Log.e(TAG, "No parts to delete set");
           return;
+        } else if (getMetronomeEngine() == null) {
+          return;
         }
-        if (songToDelete.getId().equals(getMetronomeUtil().getCurrentSongId())) {
+        if (songToDelete.getId().equals(getMetronomeEngine().getCurrentSongId())) {
           // if current song is deleted, change to default
-          getMetronomeUtil().setCurrentSong(Constants.SONG_ID_DEFAULT, 0, true);
+          getMetronomeEngine().setCurrentSong(Constants.SONG_ID_DEFAULT, 0, true);
         }
         activity.getSongViewModel().deleteSong(songToDelete, () -> {
+          if (getMetronomeEngine() == null) {
+            return;
+          }
           activity.getSongViewModel().deleteParts(partsToDelete);
           // update shortcut names
-          activity.getMetronomeUtil().updateShortcuts();
+          getMetronomeEngine().updateShortcuts();
           // update widget
           WidgetUtil.sendSongsWidgetUpdate(activity);
         });
@@ -427,6 +439,18 @@ public class SongsFragment extends BaseFragment {
 
     outState.putParcelable(KEY_SONG_TO_DELETE, songToDelete);
     outState.putParcelableArrayList(KEY_PARTS_TO_DELETE, new ArrayList<>(partsToDelete));
+  }
+
+  @Override
+  public void updateMetronomeControls(boolean init) {
+    MetronomeEngine metronomeEngine = activity.getMetronomeEngine();
+    if (binding == null || metronomeEngine == null) {
+      return;
+    }
+    metronomeEngine.addListener(metronomeListener);
+
+    adapter.setCurrentSongId(metronomeEngine.getCurrentSongId());
+    adapter.setPlaying(metronomeEngine.isPlaying());
   }
 
   private void setSongsWithParts(@Nullable List<SongWithParts> songsWithParts) {

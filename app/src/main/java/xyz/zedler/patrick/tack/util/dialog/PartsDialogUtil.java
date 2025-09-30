@@ -33,7 +33,7 @@ import xyz.zedler.patrick.tack.databinding.PartialDialogPartsTitleBinding;
 import xyz.zedler.patrick.tack.recyclerview.adapter.PartDialogAdapter;
 import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
 import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.MetronomeUtil;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
 
 public class PartsDialogUtil {
 
@@ -55,9 +55,9 @@ public class PartsDialogUtil {
 
     binding.recyclerParts.setLayoutManager(new WrapperLinearLayoutManager(activity));
     adapter = new PartDialogAdapter((partIndex, fromUser) -> {
-      if (fromUser) {
+      if (fromUser && getMetronomeEngine() != null) {
         activity.performHapticClick();
-        getMetronomeUtil().setCurrentPartIndex(partIndex, true);
+        getMetronomeEngine().setCurrentPartIndex(partIndex, true);
       }
     });
     binding.recyclerParts.setAdapter(adapter);
@@ -92,10 +92,11 @@ public class PartsDialogUtil {
   }
 
   public void update() {
-    if (binding == null || titleBinding == null) {
+    MetronomeEngine metronomeEngine = getMetronomeEngine();
+    if (binding == null || titleBinding == null || metronomeEngine == null) {
       return;
     }
-    SongWithParts songWithParts = getMetronomeUtil().getCurrentSongWithParts();
+    SongWithParts songWithParts = metronomeEngine.getCurrentSongWithParts();
     if (songWithParts != null) {
       titleBinding.textDialogPartsTitle.setText(songWithParts.getSong().getName());
       // part count
@@ -132,7 +133,7 @@ public class PartsDialogUtil {
     }
 
     adapter.setSongWithParts(songWithParts);
-    adapter.setPartIndex(getMetronomeUtil().getCurrentPartIndex());
+    adapter.setPartIndex(metronomeEngine.getCurrentPartIndex());
     maybeShowDividers();
   }
 
@@ -150,7 +151,8 @@ public class PartsDialogUtil {
         });
   }
 
-  private MetronomeUtil getMetronomeUtil() {
-    return activity.getMetronomeUtil();
+  @Nullable
+  private MetronomeEngine getMetronomeEngine() {
+    return activity.getMetronomeEngine();
   }
 }

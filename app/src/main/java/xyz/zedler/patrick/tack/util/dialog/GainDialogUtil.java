@@ -29,7 +29,7 @@ import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.PartialDialogGainBinding;
 import xyz.zedler.patrick.tack.fragment.SettingsFragment;
 import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.MetronomeUtil;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
 
 public class GainDialogUtil implements OnChangeListener {
 
@@ -77,25 +77,25 @@ public class GainDialogUtil implements OnChangeListener {
   }
 
   public void update() {
-    if (binding == null) {
+    if (binding == null || getMetronomeEngine() == null) {
       return;
     }
 
     updateValueDisplay();
 
     binding.sliderGain.removeOnChangeListener(this);
-    binding.sliderGain.setValue(getMetronomeUtil().getGain());
+    binding.sliderGain.setValue(getMetronomeEngine().getGain());
     binding.sliderGain.addOnChangeListener(this);
   }
 
   @Override
   public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-    if (!fromUser) {
+    if (!fromUser || getMetronomeEngine() == null) {
       return;
     }
     int id = slider.getId();
     if (id == R.id.slider_gain) {
-      getMetronomeUtil().setGain((int) value);
+      getMetronomeEngine().setGain((int) value);
       activity.performHapticSegmentTick(slider, false);
       updateValueDisplay();
       fragment.updateGainDescription((int) value);
@@ -103,10 +103,10 @@ public class GainDialogUtil implements OnChangeListener {
   }
 
   private void updateValueDisplay() {
-    if (binding == null) {
+    if (binding == null || getMetronomeEngine() == null) {
       return;
     }
-    int gain = getMetronomeUtil().getGain();
+    int gain = getMetronomeEngine().getGain();
     binding.textGainValue.setText(
         activity.getString(
             R.string.label_db_signed,
@@ -115,7 +115,8 @@ public class GainDialogUtil implements OnChangeListener {
     );
   }
 
-  private MetronomeUtil getMetronomeUtil() {
-    return activity.getMetronomeUtil();
+  @Nullable
+  private MetronomeEngine getMetronomeEngine() {
+    return activity.getMetronomeEngine();
   }
 }

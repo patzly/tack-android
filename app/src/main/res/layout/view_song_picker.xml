@@ -113,6 +113,9 @@
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="8dp"
         android:text="@string/action_add_song"
+        android:textColor="?attr/colorOnPrimaryContainer"
+        app:backgroundTint="?attr/colorPrimaryContainer"
+        app:iconTint="?attr/colorOnPrimaryContainer"
         app:icon="@drawable/ic_rounded_music_note_add" />
 
       <androidx.constraintlayout.widget.ConstraintLayout
