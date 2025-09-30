@@ -108,7 +108,6 @@
   <string name="action_remove_sub">Убрать дробление</string>
   <string name="action_beat_mode">Режим ударов</string>
   <string name="action_send_feedback">Написать отзыв</string>
-  <string name="action_open_link">Открыть сторонний сайт</string>
   <string name="action_reset">Сбросить</string>
   <string name="action_deactivate_gain">Выключить усиление</string>
   <string name="action_recommend">Рекомендовать</string>
