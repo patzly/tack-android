@@ -109,7 +109,6 @@
   <string name="action_remove_sub">Odstranit subdivizi</string>
   <string name="action_beat_mode">Režim metronomu</string>
   <string name="action_send_feedback">Poslat zpětnou vazbu</string>
-  <string name="action_open_link">Otevřít externí webovou stránku</string>
   <string name="action_reset">Resetovat</string>
   <string name="action_deactivate_gain">Deaktivovat zesílení</string>
   <string name="action_recommend">Doporučit</string>
