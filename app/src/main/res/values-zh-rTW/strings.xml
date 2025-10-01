@@ -111,6 +111,7 @@
   <string name="action_remove_sub">移除子節拍</string>
   <string name="action_beat_mode">節拍模式</string>
   <string name="action_send_feedback">傳送意見回饋</string>
+  <string name="action_open_link">開啟網站</string>
   <string name="action_reset">重置</string>
   <string name="action_deactivate_gain">停用增強</string>
   <string name="action_recommend">推薦</string>
