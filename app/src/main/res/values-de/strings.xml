@@ -154,6 +154,8 @@
   <string name="action_expand">Ausklappen</string>
   <string name="action_collapse">Einklappen</string>
   <string name="action_show_songs_list">Werke als Liste anzeigen</string>
+  <string name="action_learn_more">Mehr erfahren</string>
+
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Eine großartige App benötigt viel Zeit und lebt von der Rückmeldungen ihrer Nutzer.</string>
