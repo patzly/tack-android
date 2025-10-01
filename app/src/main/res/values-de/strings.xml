@@ -113,7 +113,6 @@
   <string name="action_remove_sub">Unterteilung entfernen</string>
   <string name="action_beat_mode">Schlagmodus</string>
   <string name="action_send_feedback">Rückmeldung senden</string>
-  <string name="action_open_link">Website öffnen</string>
   <string name="action_reset">Zurücksetzen</string>
   <string name="action_deactivate_gain">Verstärkung deaktivieren</string>
   <string name="action_recommend">Weiterempfehlen</string>
@@ -155,8 +154,6 @@
   <string name="action_expand">Ausklappen</string>
   <string name="action_collapse">Einklappen</string>
   <string name="action_show_songs_list">Werke als Liste anzeigen</string>
-  <string name="action_open_transifex">Transifex öffnen</string>
-
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Eine großartige App benötigt viel Zeit und lebt von der Rückmeldungen ihrer Nutzer.</string>
