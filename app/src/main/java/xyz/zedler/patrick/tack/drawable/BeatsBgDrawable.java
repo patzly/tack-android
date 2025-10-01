@@ -60,7 +60,7 @@ public class BeatsBgDrawable extends Drawable {
 
   public BeatsBgDrawable(Context context) {
     rtl = UiUtil.isLayoutRtl(context);
-    int topRadius = UiUtil.dpToPx(context, 20);
+    int topRadius = UiUtil.dpToPx(context, 24);
     int bottomRadius = UiUtil.dpToPx(context, 4);
     radii = new float[] {
         topRadius, topRadius,

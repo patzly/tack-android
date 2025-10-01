@@ -56,8 +56,8 @@ public class TextDialogUtil {
           R.string.action_close, (dialog, which) -> activity.performHapticClick()
       );
       if (link != 0) {
-        builder.setNegativeButton(
-            R.string.action_open_link, (dialog, which) -> {
+        builder.setNeutralButton(
+            R.string.action_learn_more, (dialog, which) -> {
               activity.performHapticClick();
               activity.startActivity(
                   new Intent(Intent.ACTION_VIEW, Uri.parse(activity.getString(link)))

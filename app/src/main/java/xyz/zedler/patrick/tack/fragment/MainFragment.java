@@ -245,6 +245,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     updateSubs(getSharedPrefs().getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(","));
 
     binding.timerMain.setMainActivity(activity);
+    binding.timerMain.setChangeHeightOfChips(!isPortrait && !isLandTablet);
     binding.timerMain.setBigText(bigText);
     binding.timerMain.setListener(new TimerListener() {
       @Override

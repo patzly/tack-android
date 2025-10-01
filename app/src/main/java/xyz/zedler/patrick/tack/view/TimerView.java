@@ -37,6 +37,7 @@ import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.dynamicanimation.animation.FloatPropertyCompat;
 import androidx.dynamicanimation.animation.SpringAnimation;
+import androidx.dynamicanimation.animation.SpringForce;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import com.google.android.material.motion.MotionUtils;
 import com.google.android.material.slider.Slider;
@@ -53,6 +54,8 @@ public class TimerView extends FrameLayout {
 
   private static final String TAG = TimerView.class.getSimpleName();
 
+  private static final boolean TEST_ANIMATIONS = false;
+
   private final ViewTimerBinding binding;
   private final int sliderHeightExpanded;
   private MainActivity activity;
@@ -60,7 +63,7 @@ public class TimerView extends FrameLayout {
   private ValueAnimator progressAnimator, progressTransitionAnimator;
   private int displayHeightExpanded;
   private float timerExpandFraction, elapsedExpandFraction;
-  private boolean timerExpanded, elapsedExpanded;
+  private boolean timerExpanded, elapsedExpanded, changeHeightOfChips;
   private SpringAnimation springAnimationTimerExpand, springAnimationElapsedExpand;
 
   public TimerView(Context context, @Nullable AttributeSet attrs) {
@@ -129,6 +132,10 @@ public class TimerView extends FrameLayout {
 
   public void setListener(TimerListener listener) {
     this.listener = listener;
+  }
+
+  public void setChangeHeightOfChips(boolean change) {
+    changeHeightOfChips = change;
   }
 
   public void setBigText(boolean bigText) {
@@ -323,7 +330,6 @@ public class TimerView extends FrameLayout {
                         R.attr.motionSpringDefaultSpatial,
                         R.style.Motion_Material3_Spring_Standard_Default_Spatial)
                 )
-                //.setSpring(new SpringForce().setStiffness(20f).setDampingRatio(0.9f))
                 .setMinimumVisibleChange(0.01f)
                 .addEndListener(
                     (animation, canceled, value, velocity) -> {
@@ -331,6 +337,11 @@ public class TimerView extends FrameLayout {
                         setTimerExpandAnimationEndState();
                       }
                     });
+        if (TEST_ANIMATIONS) {
+          springAnimationTimerExpand.setSpring(
+              new SpringForce().setStiffness(20f).setDampingRatio(0.9f)
+          );
+        }
       }
       springAnimationTimerExpand.animateToFinalPosition(expanded ? 1 : 0);
     } else {
@@ -360,14 +371,34 @@ public class TimerView extends FrameLayout {
 
   public void setTimerExpandFraction(float fraction) {
     timerExpandFraction = fraction;
-    binding.chipTimerCurrent.frameChipNumbersContainer.setAlpha(fraction);
-    binding.chipTimerTotal.frameChipNumbersContainer.setAlpha(fraction);
+
     binding.sliderTimer.setAlpha(fraction);
     binding.sliderTimer.setPivotY(0);
     binding.sliderTimer.setScaleY(fraction);
     ViewGroup.LayoutParams lp = binding.frameTimerSliderContainer.getLayoutParams();
     lp.height = (int) (sliderHeightExpanded * fraction);
     binding.frameTimerSliderContainer.setLayoutParams(lp);
+
+    binding.chipTimerCurrent.frameChipNumbersContainer.setAlpha(fraction);
+    if (changeHeightOfChips) {
+      binding.chipTimerCurrent.frameChipNumbersContainer.setPivotY(0);
+      binding.chipTimerCurrent.frameChipNumbersContainer.setScaleY(fraction);
+      ViewGroup.LayoutParams lpCurrent =
+          binding.chipTimerCurrent.frameChipNumbersContainer.getLayoutParams();
+      lpCurrent.height = (int) (displayHeightExpanded * fraction);
+      binding.chipTimerCurrent.frameChipNumbersContainer.setLayoutParams(lpCurrent);
+    }
+
+    binding.chipTimerTotal.frameChipNumbersContainer.setAlpha(fraction);
+    if (changeHeightOfChips) {
+      binding.chipTimerTotal.frameChipNumbersContainer.setPivotY(0);
+      binding.chipTimerTotal.frameChipNumbersContainer.setScaleY(fraction);
+      ViewGroup.LayoutParams lpTotal =
+          binding.chipTimerTotal.frameChipNumbersContainer.getLayoutParams();
+      lpTotal.height = (int) (displayHeightExpanded * fraction);
+      binding.chipTimerTotal.frameChipNumbersContainer.setLayoutParams(lpTotal);
+    }
+
     if (listener != null) {
       listener.onHeightChanged();
     }
@@ -410,7 +441,6 @@ public class TimerView extends FrameLayout {
                         R.attr.motionSpringDefaultSpatial,
                         R.style.Motion_Material3_Spring_Standard_Default_Spatial)
                 )
-                //.setSpring(new SpringForce().setStiffness(30f).setDampingRatio(0.9f))
                 .setMinimumVisibleChange(0.01f)
                 .addEndListener(
                     (animation, canceled, value, velocity) -> {
@@ -418,6 +448,11 @@ public class TimerView extends FrameLayout {
                         setElapsedExpandAnimationEndState();
                       }
                     });
+        if (TEST_ANIMATIONS) {
+          springAnimationElapsedExpand.setSpring(
+              new SpringForce().setStiffness(30f).setDampingRatio(0.9f)
+          );
+        }
       }
       springAnimationElapsedExpand.animateToFinalPosition(expanded ? 1 : 0);
     } else {
@@ -440,7 +475,17 @@ public class TimerView extends FrameLayout {
 
   public void setElapsedExpandFraction(float fraction) {
     elapsedExpandFraction = fraction;
+
     binding.chipTimerElapsed.frameChipNumbersContainer.setAlpha(fraction);
+    if (changeHeightOfChips) {
+      binding.chipTimerElapsed.frameChipNumbersContainer.setPivotY(0);
+      binding.chipTimerElapsed.frameChipNumbersContainer.setScaleY(fraction);
+      ViewGroup.LayoutParams lpTotal =
+          binding.chipTimerElapsed.frameChipNumbersContainer.getLayoutParams();
+      lpTotal.height = (int) (displayHeightExpanded * fraction);
+      binding.chipTimerElapsed.frameChipNumbersContainer.setLayoutParams(lpTotal);
+    }
+
     if (listener != null) {
       listener.onHeightChanged();
     }

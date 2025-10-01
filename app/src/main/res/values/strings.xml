@@ -126,7 +126,6 @@
   <string name="action_remove_sub">Remove subdivision</string>
   <string name="action_beat_mode">Beat mode</string>
   <string name="action_send_feedback">Send feedback</string>
-  <string name="action_open_link">Open website</string>
   <string name="action_reset">Reset</string>
   <string name="action_deactivate_gain">Deactivate boost</string>
   <string name="action_recommend">Recommend</string>
@@ -168,7 +167,7 @@
   <string name="action_expand">Expand</string>
   <string name="action_collapse">Collapse</string>
   <string name="action_show_songs_list">Show songs as list</string>
-  <string name="action_open_transifex">Open Transifex</string>
+  <string name="action_learn_more">Learn more</string>
 
   <!-- MESSAGES -->
 

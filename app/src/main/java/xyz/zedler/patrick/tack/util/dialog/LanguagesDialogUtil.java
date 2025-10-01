@@ -80,8 +80,8 @@ public class LanguagesDialogUtil {
       builder.setPositiveButton(
           R.string.action_close, (dialog, which) -> activity.performHapticClick()
       );
-      builder.setNegativeButton(
-          R.string.action_open_transifex,
+      builder.setNeutralButton(
+          R.string.action_learn_more,
           (dialog, which) -> {
             activity.performHapticClick();
             activity.startActivity(

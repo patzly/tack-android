@@ -35,7 +35,7 @@
     <item name="android:backgroundDimAmount">0.7</item>
     <item name="buttonBarPositiveButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog</item>
     <item name="buttonBarNegativeButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog</item>
-    <item name="buttonBarNeutralButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog</item>
+    <item name="buttonBarNeutralButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog.Neutral</item>
     <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.Tack.Title.Text</item>
     <item name="android:scrollbarThumbVertical">@drawable/shape_scrollbar_rounded</item>
   </style>
@@ -43,7 +43,7 @@
   <style name="ThemeOverlay.Tack.AlertDialog.Error" parent="ThemeOverlay.Tack.AlertDialog">
     <item name="buttonBarPositiveButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog.Error</item>
     <item name="buttonBarNegativeButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog.Error</item>
-    <item name="buttonBarNeutralButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog</item>
+    <item name="buttonBarNeutralButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog.Neutral</item>
   </style>
 
   <style name="MaterialAlertDialog.Tack" parent="MaterialAlertDialog.Material3Expressive">
@@ -208,6 +208,13 @@
     <item name="android:singleLine">true</item>
     <item name="android:fontFamily">@font/nunito_bold</item>
     <item name="fontFamily">@font/nunito_bold</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.TextButton.Dialog.Neutral"
+    parent="Widget.Tack.Button.TextButton.Dialog">
+    <item name="android:layout_marginLeft">0dp</item>
+    <item name="android:layout_marginStart">0dp</item>
   </style>
 
   <style
