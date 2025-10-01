@@ -111,6 +111,7 @@
   <string name="action_remove_sub">拍分割を減らす</string>
   <string name="action_beat_mode">拍モード</string>
   <string name="action_send_feedback">フィードバックを送る</string>
+  <string name="action_open_link">ウェブサイトを開く</string>
   <string name="action_reset">リセット</string>
   <string name="action_deactivate_gain">ブーストを無効化</string>
   <string name="action_recommend">共有</string>
@@ -144,10 +145,16 @@
   <string name="action_restore">バックアップ復元</string>
   <string name="action_view_more_songs">他のソングを見る</string>
   <string name="action_next">次へ</string>
+  <string name="action_show_parts">パート表示</string>
+  <string name="action_next_part">次のパート</string>
+  <string name="action_prev_part">前のパート</string>
   <string name="action_more">更に表示</string>
   <string name="action_edit">編集</string>
   <string name="action_expand">展開</string>
   <string name="action_collapse">折りたたみ</string>
+  <string name="action_show_songs_list">ソング一覧表示</string>
+  <string name="action_open_transifex">Transifexを開く</string>
+
   <!-- MESSAGES -->
 
   <string name="msg_feedback">素晴らしいアプリの開発には、膨大な時間とユーザーからのフィードバックが必要です。</string>
@@ -279,6 +286,7 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">言語</string>
+  <string name="settings_language_info">Transifex の有志翻訳者のみなさまに心から感謝します！</string>
   <string name="settings_language_system">システム準拠</string>
   <string name="settings_language_system_description">翻訳が存在しない場合は英語</string>
 
