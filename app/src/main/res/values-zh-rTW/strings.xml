@@ -286,6 +286,7 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">語言</string>
+  <string name="settings_language_info">非常感謝 Transifex 上的所有義務翻譯者！</string>
   <string name="settings_language_system">系統預設</string>
   <string name="settings_language_system_description">如果沒有對應的翻譯則為英語</string>
 
