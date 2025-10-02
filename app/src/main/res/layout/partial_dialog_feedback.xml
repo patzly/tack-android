@@ -40,9 +40,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="1dp"
-    android:layout_marginBottom="1dp"
-    android:scrollbars="vertical"
-    android:scrollbarThumbVertical="@drawable/shape_scrollbar_rounded">
+    android:layout_marginBottom="1dp">
 
     <LinearLayout
       android:id="@+id/linear_feedback_container"

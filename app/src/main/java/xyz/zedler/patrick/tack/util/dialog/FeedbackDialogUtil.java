@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.PartialDialogFeedbackBinding;
@@ -55,6 +56,11 @@ public class FeedbackDialogUtil implements OnClickListener {
       builder.setPositiveButton(
           R.string.action_close, (dialog, which) -> activity.performHapticClick()
       );
+      builder.setOnDismissListener(dialog -> {
+        if (activity.getSharedPrefs().getInt(PREF.FEEDBACK_POP_UP_COUNT, 1) != 0) {
+          activity.getSharedPrefs().edit().putInt(PREF.FEEDBACK_POP_UP_COUNT, 0).apply();
+        }
+      });
     });
 
     viewUtil = new ViewUtil();
