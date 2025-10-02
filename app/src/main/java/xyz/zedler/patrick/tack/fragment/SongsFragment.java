@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -31,7 +32,7 @@ import androidx.appcompat.widget.PopupMenu;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView.ItemAnimator;
-import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.shape.MaterialShapes;
 import java.util.ArrayList;
 import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
@@ -46,14 +47,15 @@ import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.entity.Song;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.FragmentSongsBinding;
+import xyz.zedler.patrick.tack.drawable.ShapeDrawable;
 import xyz.zedler.patrick.tack.fragment.SongsFragmentDirections.ActionSongsToSong;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListener;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter.OnSongClickListener;
 import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
 import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListener;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.SortUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
@@ -119,7 +121,7 @@ public class SongsFragment extends BaseFragment {
     // portrait and tablet landscape: 32 + 80 = 112
     // landscape: 16 + 56 = 72
     // tablet portrait: 56 + 80 = 136
-    int bottomInset = ResUtil.getDimension(activity, R.dimen.controls_bottom_margin_bottom);
+    int bottomInset = ResUtil.getDimension(activity, R.dimen.fab_margin_bottom);
     bottomInset += UiUtil.dpToPx(activity, isPortrait || isTablet ? 80 : 56); // fab height
     systemBarBehavior.setAdditionalBottomInset(bottomInset);
     systemBarBehavior.setUp();
@@ -453,25 +455,25 @@ public class SongsFragment extends BaseFragment {
     adapter.setPlaying(metronomeEngine.isPlaying());
   }
 
+  @SuppressLint("RestrictedApi")
   private void setSongsWithParts(@Nullable List<SongWithParts> songsWithParts) {
     if (songsWithParts != null) {
       this.songsWithParts = songsWithParts;
+
       // placeholder illustration
       binding.linearSongsEmpty.getRoot().setVisibility(
           songsWithParts.isEmpty() ? View.VISIBLE : View.GONE
       );
+      if (songsWithParts.isEmpty()) {
+        binding.linearSongsEmpty.imageSongsEmptyBg.setImageDrawable(
+            new ShapeDrawable(
+                MaterialShapes.SOFT_BOOM, ResUtil.getColor(activity, R.attr.colorTertiaryContainer)
+            )
+        );
+      }
     }
     SortUtil.sortSongsWithParts(this.songsWithParts, sortOrder);
     adapter.setSongsWithParts(new ArrayList<>(this.songsWithParts));
     adapter.setSortOrder(sortOrder);
-  }
-
-  private void showSnackbar(int resId) {
-    if (binding == null) {
-      return;
-    }
-    Snackbar snackbar = activity.getSnackbar(resId, Snackbar.LENGTH_SHORT);
-    snackbar.setAnchorView(binding.fabSongs);
-    activity.showSnackbar(snackbar);
   }
 }

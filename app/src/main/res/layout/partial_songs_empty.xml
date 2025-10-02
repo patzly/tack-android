@@ -19,6 +19,7 @@
 
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
   android:orientation="vertical"
@@ -26,13 +27,30 @@
   android:paddingStart="16dp"
   android:paddingEnd="16dp">
 
-  <ImageView
-    android:layout_width="@dimen/placeholder_illustration_size"
-    android:layout_height="@dimen/placeholder_illustration_size"
-    android:layout_gravity="center_horizontal"
-    android:importantForAccessibility="no"
-    android:src="@drawable/illustration_empty_songs"
-    android:scaleType="centerCrop"/>
+  <FrameLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    android:layout_gravity="center_horizontal">
+
+    <ImageView
+      android:id="@+id/image_songs_empty_bg"
+      android:layout_width="@dimen/placeholder_illustration_bg_size"
+      android:layout_height="@dimen/placeholder_illustration_bg_size"
+      android:layout_gravity="center"
+      android:importantForAccessibility="no"
+      android:scaleType="centerCrop" />
+
+    <ImageView
+      android:layout_width="@dimen/placeholder_illustration_fg_size"
+      android:layout_height="@dimen/placeholder_illustration_fg_size"
+      android:layout_gravity="center"
+      android:importantForAccessibility="no"
+      android:src="@drawable/ic_rounded_queue_music"
+      android:scaleType="centerCrop"
+      app:tint="?attr/colorOnTertiaryContainer" />
+
+  </FrameLayout>
 
   <TextView
     style="@style/Widget.Tack.TextView.TitleLarge"

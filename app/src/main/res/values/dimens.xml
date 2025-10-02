@@ -33,7 +33,9 @@
   <dimen name="controls_center_spacing">8dp</dimen>
   <dimen name="controls_bottom_margin_bottom">16dp</dimen>
 
-  <dimen name="placeholder_illustration_size">180dp</dimen>
+  <dimen name="fab_margin_bottom">32dp</dimen>
+  <dimen name="placeholder_illustration_fg_size">50dp</dimen>
+  <dimen name="placeholder_illustration_bg_size">140dp</dimen>
 
   <dimen name="widget_songs_min_width">203dp</dimen>
   <dimen name="widget_songs_min_height">115dp</dimen>

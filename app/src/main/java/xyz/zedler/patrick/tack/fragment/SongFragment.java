@@ -128,7 +128,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     systemBarBehavior.setAppBar(binding.appBarSong);
     systemBarBehavior.setContainer(binding.constraintSongContainer);
     systemBarBehavior.setRecycler(binding.recyclerSongParts);
-    int bottomInset = ResUtil.getDimension(activity, R.dimen.controls_bottom_margin_bottom);
+    int bottomInset = ResUtil.getDimension(activity, R.dimen.fab_margin_bottom);
     bottomInset += UiUtil.dpToPx(activity, isPortrait || isTablet ? 80 : 56); // fab height
     systemBarBehavior.setAdditionalBottomInset(bottomInset);
     systemBarBehavior.setMultiColumnLayout(!isPortrait);

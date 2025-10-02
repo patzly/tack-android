@@ -22,6 +22,7 @@
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
   android:baselineAligned="false">
 
   <FrameLayout
@@ -30,12 +31,21 @@
     android:layout_weight="1">
 
     <ImageView
-      android:layout_width="@dimen/placeholder_illustration_size"
-      android:layout_height="@dimen/placeholder_illustration_size"
+      android:id="@+id/image_songs_empty_bg"
+      android:layout_width="@dimen/placeholder_illustration_bg_size"
+      android:layout_height="@dimen/placeholder_illustration_bg_size"
       android:layout_gravity="center"
       android:importantForAccessibility="no"
-      android:src="@drawable/illustration_empty_songs"
-      android:scaleType="centerCrop"/>
+      android:scaleType="centerCrop" />
+
+    <ImageView
+      android:layout_width="@dimen/placeholder_illustration_fg_size"
+      android:layout_height="@dimen/placeholder_illustration_fg_size"
+      android:layout_gravity="center"
+      android:importantForAccessibility="no"
+      android:src="@drawable/ic_rounded_queue_music"
+      android:scaleType="centerCrop"
+      app:tint="?attr/colorOnTertiaryContainer" />
 
   </FrameLayout>
 

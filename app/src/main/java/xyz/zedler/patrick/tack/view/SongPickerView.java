@@ -473,9 +473,6 @@ public class SongPickerView extends FrameLayout {
     binding.buttonGroupSongPickerTools.setVisibility(VISIBLE);
     binding.recyclerSongPicker.setVisibility(VISIBLE);
     setRecyclerClicksEnabled(false);
-    if (isExpanded) {
-      maybeCenterSongChips();
-    }
     binding.buttonSongPickerAddSong.setVisibility(VISIBLE);
   }
 
@@ -485,6 +482,9 @@ public class SongPickerView extends FrameLayout {
     binding.buttonGroupSongPickerTools.setVisibility(isExpanded ? VISIBLE : GONE);
     binding.recyclerSongPicker.setVisibility(isExpanded ? VISIBLE : INVISIBLE);
     setRecyclerClicksEnabled(isExpanded);
+    if (isExpanded) {
+      maybeCenterSongChips();
+    }
     binding.buttonSongPickerAddSong.setVisibility(isExpanded ? VISIBLE : GONE);
   }
 

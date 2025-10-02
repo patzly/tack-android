@@ -26,8 +26,8 @@
 
   <dimen name="tempo_tap_size">130dp</dimen>
 
-  <dimen name="controls_bottom_margin_bottom">16dp</dimen>
-
-  <dimen name="placeholder_illustration_size">160dp</dimen>
+  <dimen name="fab_margin_bottom">16dp</dimen>
+  <dimen name="placeholder_illustration_fg_size">45dp</dimen>
+  <dimen name="placeholder_illustration_bg_size">120dp</dimen>
 
 </resources>
