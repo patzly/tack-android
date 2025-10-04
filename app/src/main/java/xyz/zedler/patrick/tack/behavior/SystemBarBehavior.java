@@ -395,10 +395,13 @@ public class SystemBarBehavior {
   }
 
   public static void applyBottomInset(@NonNull View view) {
+    applyBottomInset(view, 0);
+  }
+
+  public static void applyBottomInset(@NonNull View view, int additionalMargin) {
     ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-    int marginBottom = params.bottomMargin;
     ViewCompat.setOnApplyWindowInsetsListener(view, (v, insets) -> {
-      params.bottomMargin = marginBottom + insets.getInsets(Type.systemBars()).bottom;
+      params.bottomMargin = additionalMargin + insets.getInsets(Type.systemBars()).bottom;
       view.setLayoutParams(params);
       return insets;
     });

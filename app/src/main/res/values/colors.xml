@@ -23,6 +23,21 @@
   <color name="white">#ffffff</color>
   <color name="transparent">#00000000</color>
 
+  <color name="base_theme_colorCustomGreen">#4B662C</color>
+  <color name="base_theme_colorOnCustomGreen">#FFFFFF</color>
+  <color name="base_theme_colorCustomGreenContainer">#CDEDA4</color>
+  <color name="base_theme_colorOnCustomGreenContainer">#102000</color>
+
+  <color name="base_theme_colorCustomGreen_mediumContrast">#314A12</color>
+  <color name="base_theme_colorOnCustomGreen_mediumContrast">#FFFFFF</color>
+  <color name="base_theme_colorCustomGreenContainer_mediumContrast">#617D40</color>
+  <color name="base_theme_colorOnCustomGreenContainer_mediumContrast">#FFFFFF</color>
+
+  <color name="base_theme_colorCustomGreen_highContrast">#142700</color>
+  <color name="base_theme_colorOnCustomGreen_highContrast">#FFFFFF</color>
+  <color name="base_theme_colorCustomGreenContainer_highContrast">#314A12</color>
+  <color name="base_theme_colorOnCustomGreenContainer_highContrast">#FFFFFF</color>
+
   <!-- RED -->
 
   <color name="red_theme_primary">#8F4A4C</color>

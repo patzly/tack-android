@@ -43,6 +43,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.color.DynamicColorsOptions;
+import com.google.android.material.color.HarmonizedColorAttributes;
 import com.google.android.material.color.HarmonizedColors;
 import com.google.android.material.color.HarmonizedColorsOptions;
 import xyz.zedler.patrick.tack.Constants.CONTRAST;
@@ -139,11 +140,25 @@ public class UiUtil {
         break;
       default:
         if (DynamicColors.isDynamicColorAvailable()) {
+          int[] attrIds = new int[] {
+              R.attr.colorError,
+              R.attr.colorOnError,
+              R.attr.colorErrorContainer,
+              R.attr.colorOnErrorContainer,
+
+              R.attr.colorCustomGreen,
+              R.attr.colorOnCustomGreen,
+              R.attr.colorCustomGreenContainer,
+              R.attr.colorOnCustomGreenContainer
+          };
           DynamicColors.applyToActivityIfAvailable(
               activity,
               new DynamicColorsOptions.Builder().setOnAppliedCallback(
                   a -> HarmonizedColors.applyToContextIfAvailable(
-                      a, HarmonizedColorsOptions.createMaterialDefaults()
+                      a,
+                      new HarmonizedColorsOptions.Builder()
+                          .setColorAttributes(HarmonizedColorAttributes.create(attrIds))
+                          .build()
                   )
               ).build()
           );

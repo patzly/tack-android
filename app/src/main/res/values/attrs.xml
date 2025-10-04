@@ -19,6 +19,11 @@
 
 <resources>
 
+  <attr name="colorCustomGreen" format="color" />
+  <attr name="colorOnCustomGreen" format="color" />
+  <attr name="colorCustomGreenContainer" format="color" />
+  <attr name="colorOnCustomGreenContainer" format="color" />
+
   <attr name="widget_songs_preview_title" format="string" />
   <attr name="widget_songs_preview_parts" format="string" />
   <attr name="widget_songs_preview_duration" format="string" />

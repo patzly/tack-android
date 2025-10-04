@@ -20,6 +20,21 @@
 
 <resources>
 
+  <color name="base_theme_colorCustomGreen">#B1D18A</color>
+  <color name="base_theme_colorOnCustomGreen">#1F3701</color>
+  <color name="base_theme_colorCustomGreenContainer">#354E16</color>
+  <color name="base_theme_colorOnCustomGreenContainer">#CDEDA4</color>
+
+  <color name="base_theme_colorCustomGreen_mediumContrast">#B5D58E</color>
+  <color name="base_theme_colorOnCustomGreen_mediumContrast">#0C1A00</color>
+  <color name="base_theme_colorCustomGreenContainer_mediumContrast">#7D9A59</color>
+  <color name="base_theme_colorOnCustomGreenContainer_mediumContrast">#000000</color>
+
+  <color name="base_theme_colorCustomGreen_highContrast">#F4FFE0</color>
+  <color name="base_theme_colorOnCustomGreen_highContrast">#000000</color>
+  <color name="base_theme_colorCustomGreenContainer_highContrast">#B5D58E</color>
+  <color name="base_theme_colorOnCustomGreenContainer_highContrast">#000000</color>
+
   <!-- RED -->
 
   <color name="red_theme_primary">#FFB3B3</color>

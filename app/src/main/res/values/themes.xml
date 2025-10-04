@@ -43,6 +43,12 @@
     <!-- Dialog themes -->
     <item name="materialAlertDialogTheme">@style/ThemeOverlay.Tack.AlertDialog</item>
     <item name="bottomSheetDialogTheme">@style/Theme.Tack.BottomSheetDialog</item>
+
+    <!-- Custom colors -->
+    <item name="colorCustomGreen">@color/base_theme_colorCustomGreen</item>
+    <item name="colorOnCustomGreen">@color/base_theme_colorOnCustomGreen</item>
+    <item name="colorCustomGreenContainer">@color/base_theme_colorCustomGreenContainer</item>
+    <item name="colorOnCustomGreenContainer">@color/base_theme_colorOnCustomGreenContainer</item>
   </style>
 
   <style name="Theme.Tack" parent="Base.Tack" />

@@ -20,48 +20,39 @@
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/linear_songs_empty_container"
   android:layout_width="match_parent"
-  android:layout_height="wrap_content"
-  android:orientation="vertical"
-  android:layout_gravity="center"
-  android:paddingStart="16dp"
-  android:paddingEnd="16dp">
+  android:layout_height="match_parent">
 
-  <FrameLayout
-    android:layout_width="wrap_content"
+  <LinearLayout
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="16dp"
-    android:layout_gravity="center_horizontal">
+    android:orientation="vertical"
+    android:layout_gravity="center_vertical"
+    tools:ignore="UselessParent">
 
     <ImageView
-      android:id="@+id/image_songs_empty_bg"
-      android:layout_width="@dimen/placeholder_illustration_bg_size"
-      android:layout_height="@dimen/placeholder_illustration_bg_size"
-      android:layout_gravity="center"
+      android:id="@+id/image_songs_empty"
+      android:layout_width="@dimen/placeholder_illustration_size"
+      android:layout_height="@dimen/placeholder_illustration_size"
+      android:layout_marginBottom="16dp"
+      android:layout_gravity="center_horizontal"
       android:importantForAccessibility="no"
       android:scaleType="centerCrop" />
 
-    <ImageView
-      android:layout_width="@dimen/placeholder_illustration_fg_size"
-      android:layout_height="@dimen/placeholder_illustration_fg_size"
-      android:layout_gravity="center"
-      android:importantForAccessibility="no"
-      android:src="@drawable/ic_rounded_queue_music"
-      android:scaleType="centerCrop"
-      app:tint="?attr/colorOnTertiaryContainer" />
+    <TextView
+      style="@style/Widget.Tack.TextView.TitleLarge"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:textAlignment="center"
+      android:text="@string/msg_songs_empty" />
 
-  </FrameLayout>
+    <TextView
+      style="@style/Widget.Tack.TextView.ListItem.Description"
+      android:textAlignment="center"
+      android:text="@string/msg_songs_empty_description" />
 
-  <TextView
-    style="@style/Widget.Tack.TextView.TitleLarge"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:textAlignment="center"
-    android:text="@string/msg_songs_empty" />
-
-  <TextView
-    style="@style/Widget.Tack.TextView.ListItem.Description"
-    android:textAlignment="center"
-    android:text="@string/msg_songs_empty_description" />
+  </LinearLayout>
 
 </LinearLayout>

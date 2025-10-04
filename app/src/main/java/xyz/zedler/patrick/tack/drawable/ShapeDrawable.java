@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.drawable;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
 import android.graphics.Matrix;
@@ -28,50 +29,73 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.graphics.shapes.RoundedPolygon;
 import androidx.graphics.shapes.Shapes_androidKt;
 import xyz.zedler.patrick.tack.util.ShapeUtil;
 
 public class ShapeDrawable extends Drawable {
 
-  private final Paint paint = new Paint();
   private final Path path = new Path();
   private final Matrix matrix = new Matrix();
+  private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+  private final Drawable contentDrawable;
 
-  public ShapeDrawable(RoundedPolygon shape, @ColorInt int color) {
-    paint.setColor(color);
+  public ShapeDrawable(
+      @NonNull Context context, @NonNull RoundedPolygon shape, @DrawableRes int drawableResId
+  ) {
     RoundedPolygon normalized = ShapeUtil.normalize(
         shape, true, new RectF(-1, -1, 1, 1)
     );
     Shapes_androidKt.toPath(normalized, path);
+    this.contentDrawable = AppCompatResources.getDrawable(context, drawableResId);
   }
 
   @Override
   protected void onBoundsChange(@NonNull Rect bounds) {
+    super.onBoundsChange(bounds);
+
     matrix.reset();
     matrix.setScale(bounds.width() / 2f, bounds.height() / 2f);
     matrix.postTranslate(bounds.width() / 2f, bounds.height() / 2f);
     path.transform(matrix);
+
+    if (contentDrawable != null) {
+      contentDrawable.setBounds(bounds);
+    }
   }
 
   @Override
   public void draw(@NonNull Canvas canvas) {
-    canvas.drawPath(path, paint);
+    int save = canvas.save();
+    canvas.clipPath(path);
+    contentDrawable.draw(canvas);
+    canvas.restoreToCount(save);
   }
 
-  @Deprecated
   @Override
-  public void setAlpha(int alpha) {}
+  public void setAlpha(int alpha) {
+    paint.setAlpha(alpha);
+    if (contentDrawable != null) {
+      contentDrawable.setAlpha(alpha);
+    }
+    invalidateSelf();
+  }
 
-  @Deprecated
   @Override
-  public void setColorFilter(@Nullable ColorFilter colorFilter) {}
+  public void setColorFilter(@Nullable ColorFilter colorFilter) {
+    paint.setColorFilter(colorFilter);
+    if (contentDrawable != null) {
+      contentDrawable.setColorFilter(colorFilter);
+    }
+    invalidateSelf();
+  }
 
   @Override
   public int getOpacity() {
-    return PixelFormat.OPAQUE;
+    return PixelFormat.TRANSLUCENT;
   }
 }

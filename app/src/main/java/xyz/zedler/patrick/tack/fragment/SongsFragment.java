@@ -125,7 +125,9 @@ public class SongsFragment extends BaseFragment {
     bottomInset += UiUtil.dpToPx(activity, isPortrait || isTablet ? 80 : 56); // fab height
     systemBarBehavior.setAdditionalBottomInset(bottomInset);
     systemBarBehavior.setUp();
-    SystemBarBehavior.applyBottomInset(binding.fabSongs);
+    int bottomMargin = ResUtil.getDimension(activity, R.dimen.fab_margin_bottom);
+    SystemBarBehavior.applyBottomInset(binding.fabSongs, bottomMargin);
+    SystemBarBehavior.applyBottomInset(binding.songsEmpty.linearSongsEmptyContainer, bottomMargin);
 
     ScrollBehavior scrollBehavior = new ScrollBehavior();
     if (!isTablet) {
@@ -461,13 +463,15 @@ public class SongsFragment extends BaseFragment {
       this.songsWithParts = songsWithParts;
 
       // placeholder illustration
-      binding.linearSongsEmpty.getRoot().setVisibility(
+      binding.songsEmpty.getRoot().setVisibility(
           songsWithParts.isEmpty() ? View.VISIBLE : View.GONE
       );
       if (songsWithParts.isEmpty()) {
-        binding.linearSongsEmpty.imageSongsEmptyBg.setImageDrawable(
+        binding.songsEmpty.imageSongsEmpty.setImageDrawable(
             new ShapeDrawable(
-                MaterialShapes.SOFT_BOOM, ResUtil.getColor(activity, R.attr.colorTertiaryContainer)
+                activity,
+                MaterialShapes.COOKIE_9,
+                R.drawable.illustration_songs_empty
             )
         );
       }
