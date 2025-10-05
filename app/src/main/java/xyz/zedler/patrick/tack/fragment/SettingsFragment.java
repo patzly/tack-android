@@ -388,6 +388,9 @@ public class SettingsFragment extends BaseFragment
     });
     dialogUtilSound.showIfWasShown(savedState);
 
+    gainDialogUtil.showIfWasShown(savedState);
+    latencyDialogUtil.showIfWasShown(savedState);
+
     binding.switchSettingsIgnoreFocus.setOnCheckedChangeListener(null);
     binding.switchSettingsIgnoreFocus.setChecked(metronomeEngine.getIgnoreAudioFocus());
     binding.switchSettingsIgnoreFocus.jumpDrawablesToCurrentState();

@@ -21,6 +21,8 @@ package xyz.zedler.patrick.tack.util.dialog;
 
 import android.os.Bundle;
 import android.text.Editable;
+import android.view.View;
+import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -53,13 +55,14 @@ public class RenameDialogUtil {
     this.fragment = fragment;
 
     binding = PartialDialogPartRenameBinding.inflate(activity.getLayoutInflater());
-    binding.editTextName.setOnEditorActionListener((v, actionId, event) -> {
-      if (actionId == EditorInfo.IME_ACTION_DONE) {
-        activity.performHapticClick();
-        rename();
-      }
-      return false;
-    });
+    binding.editTextPartRename.setOnEditorActionListener(
+        (v, actionId, event) -> {
+          if (actionId == EditorInfo.IME_ACTION_DONE) {
+            activity.performHapticClick();
+            rename();
+          }
+          return false;
+        });
 
     dialogUtil = new DialogUtil(activity, "part_rename");
     dialogUtil.createDialog(builder -> {
@@ -73,6 +76,8 @@ public class RenameDialogUtil {
           R.string.action_cancel, (dialog, which) -> activity.performHapticClick()
       );
     });
+
+    setDividerVisibility(!UiUtil.isOrientationPortrait(activity));
   }
 
   public void show() {
@@ -109,13 +114,15 @@ public class RenameDialogUtil {
     if (binding == null) {
       return;
     }
-    binding.editTextName.setText(partNamePrev);
-    Editable text = binding.editTextName.getText();
-    binding.editTextName.setSelection(text != null ? text.length() : 0);
+    binding.editTextPartRename.setText(partNamePrev);
+    Editable text = binding.editTextPartRename.getText();
+    binding.editTextPartRename.setSelection(text != null ? text.length() : 0);
     // placeholder
-    binding.editTextName.setHint(
+    binding.editTextPartRename.setHint(
         activity.getString(R.string.label_part_unnamed, partIndex + 1)
     );
+
+    measureScrollView();
   }
 
   public void setPart(@NonNull Part part) {
@@ -126,7 +133,7 @@ public class RenameDialogUtil {
   }
 
   private void rename() {
-    Editable text = binding.editTextName.getText();
+    Editable text = binding.editTextPartRename.getText();
     String name = null;
     if (text != null) {
       name = text.toString();
@@ -139,8 +146,33 @@ public class RenameDialogUtil {
 
   private void showKeyboard() {
     if (binding != null) {
-      binding.editTextName.requestFocus();
-      UiUtil.showKeyboard(binding.editTextName);
+      binding.editTextPartRename.requestFocus();
+      UiUtil.showKeyboard(binding.editTextPartRename);
     }
+  }
+
+  private void measureScrollView() {
+    binding.scrollPartRename.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override
+          public void onGlobalLayout() {
+            boolean isScrollable = binding.scrollPartRename.canScrollVertically(-1)
+                || binding.scrollPartRename.canScrollVertically(1);
+            setDividerVisibility(isScrollable);
+            binding.scrollPartRename.getViewTreeObserver()
+                .removeOnGlobalLayoutListener(this);
+          }
+        });
+  }
+
+  private void setDividerVisibility(boolean visible) {
+    binding.dividerPartRenameTop.setVisibility(visible ? View.VISIBLE : View.GONE);
+    binding.dividerPartRenameBottom.setVisibility(visible ? View.VISIBLE : View.GONE);
+    binding.linearPartRenameContainer.setPadding(
+        binding.linearPartRenameContainer.getPaddingLeft(),
+        visible ? UiUtil.dpToPx(activity, 16) : 0,
+        binding.linearPartRenameContainer.getPaddingRight(),
+        visible ? UiUtil.dpToPx(activity, 16) : 0
+    );
   }
 }

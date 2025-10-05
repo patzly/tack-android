@@ -26,6 +26,7 @@
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
   android:paddingTop="12dp"
+  android:paddingBottom="12dp"
   android:animateLayoutChanges="true">
 
   <LinearLayout
@@ -765,7 +766,6 @@
     android:overScrollMode="ifContentScrolls"
     android:layout_marginStart="16dp"
     android:layout_marginEnd="16dp"
-    android:layout_marginBottom="12dp"
     android:requiresFadingEdge="horizontal">
 
     <com.google.android.material.button.MaterialButtonToggleGroup

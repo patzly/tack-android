@@ -41,7 +41,7 @@
   </style>
 
   <style name="ThemeOverlay.Tack.AlertDialog.Error" parent="ThemeOverlay.Tack.AlertDialog">
-    <item name="buttonBarPositiveButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog.Error</item>
+    <item name="buttonBarPositiveButtonStyle">@style/Widget.Tack.Button.Dialog.Error</item>
     <item name="buttonBarNegativeButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog.Error</item>
     <item name="buttonBarNeutralButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog.Neutral</item>
   </style>
@@ -222,6 +222,18 @@
     parent="Widget.Tack.Button.TextButton.Dialog">
     <item name="android:textColor">?attr/colorError</item>
     <item name="rippleColor">@color/selector_highlight_error</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.Dialog.Error"
+    parent="Widget.Tack.Button.TextButton.Dialog">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.Tack.Button.Filled.Error</item>
+    <item name="rippleColor">@color/selector_highlight_on_error</item>
+  </style>
+
+  <style name="ThemeOverlay.Tack.Button.Filled.Error" parent="">
+    <item name="colorContainer">?attr/colorError</item>
+    <item name="colorOnContainer">?attr/colorOnError</item>
   </style>
 
   <style

@@ -87,12 +87,11 @@
     android:layout_marginStart="24dp"
     android:layout_marginEnd="24dp"
     android:layout_marginTop="12dp"
-    android:layout_marginBottom="16dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
-    android:background="@drawable/ripple_list_item_bg_segmented_single">
+    android:background="@drawable/ripple_list_item_bg_segmented_first">
 
     <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
 
@@ -118,7 +117,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="24dp"
-    android:layout_marginEnd="24dp">
+    android:layout_marginEnd="24dp"
+    android:padding="16dp"
+    android:background="@drawable/ripple_list_item_bg_segmented_last">
 
     <xyz.zedler.patrick.tack.view.CloverView
       android:id="@+id/clover_tempo_tap"

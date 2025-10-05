@@ -208,10 +208,6 @@ public class SongsFragment extends BaseFragment {
         if (itemSort != null) {
           itemSort.setChecked(true);
         }
-        MenuItem itemBackup = menu.findItem(R.id.action_backup);
-        if (itemBackup != null) {
-          itemBackup.setEnabled(!songsWithParts.isEmpty());
-        }
       };
       ViewUtil.showMenu(v, R.menu.menu_songs, itemClickListener, menuInflatedListener);
     });

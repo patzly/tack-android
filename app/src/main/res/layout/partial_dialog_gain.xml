@@ -17,58 +17,106 @@
   ~ Copyright (c) 2020-2025 by Patrick Zedler
   -->
 
-<LinearLayout
+<FrameLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
-  android:orientation="vertical"
-  android:paddingTop="8dp">
+  android:paddingTop="20dp">
 
-  <TextView
-    android:id="@+id/text_gain_value"
-    style="@style/Widget.Tack.TextView"
+  <com.google.android.material.divider.MaterialDivider
+    android:id="@+id/divider_gain_top"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="24dp"
-    android:paddingEnd="24dp"
-    android:textAlignment="center"
-    android:gravity="center"
-    android:fontFeatureSettings="tnum"
-    android:text="@string/label_db_signed" />
+    android:layout_gravity="top" />
 
-  <TextView
-    style="@style/Widget.Tack.TextView.BodyMedium"
+  <com.google.android.material.divider.MaterialDivider
+    android:id="@+id/divider_gain_bottom"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="24dp"
-    android:paddingEnd="24dp"
-    android:textAlignment="center"
-    android:gravity="center"
-    android:textColor="?attr/colorOnSurfaceVariant"
-    android:text="@string/settings_gain_description" />
+    android:layout_gravity="bottom" />
 
-  <com.google.android.material.slider.Slider
-    android:id="@+id/slider_gain"
-    style="@style/Widget.Tack.Slider.Small"
-    android:layout_marginStart="8dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="12dp"
-    android:valueFrom="-20"
-    android:valueTo="20"
-    android:stepSize="5"
-    app:labelBehavior="gone"
-    app:centered="true" />
-
-  <TextView
-    style="@style/Widget.Tack.TextView.Paragraph.BodyMedium"
+  <androidx.core.widget.NestedScrollView
+    android:id="@+id/scroll_gain"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingStart="24dp"
-    android:paddingEnd="24dp"
-    android:textColor="?attr/colorError"
-    android:text="@string/settings_gain_disclaimer"
-    android:fontFamily="@font/nunito_bold" />
+    android:layout_height="match_parent"
+    android:layout_marginTop="1dp"
+    android:layout_marginBottom="1dp">
 
-</LinearLayout>
+    <LinearLayout
+      android:id="@+id/linear_gain_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:paddingStart="24dp"
+      android:paddingEnd="24dp"
+      android:paddingTop="16dp"
+      android:paddingBottom="16dp">
+
+      <TextView
+        style="@style/Widget.Tack.TextView.Paragraph.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/colorError"
+        android:text="@string/settings_gain_disclaimer"
+        android:fontFamily="@font/nunito_bold"
+        android:layout_marginBottom="16dp" />
+
+      <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:strokeWidth="0dp"
+        app:cardCornerRadius="?attr/shapeCornerSizeLargeIncreased">
+
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:paddingTop="16dp"
+          android:paddingBottom="12dp"
+          android:background="?attr/colorSurfaceBright"
+          tools:ignore="UselessParent">
+
+          <TextView
+            android:id="@+id/text_gain_value"
+            style="@style/Widget.Tack.TextView.LabelLarge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:fontFeatureSettings="tnum"
+            android:text="@string/label_db_signed" />
+
+          <TextView
+            style="@style/Widget.Tack.TextView.BodyMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textAlignment="center"
+            android:gravity="center"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:text="@string/settings_gain_description" />
+
+          <com.google.android.material.slider.Slider
+            android:id="@+id/slider_gain"
+            style="@style/Widget.Tack.Slider.Small"
+            android:layout_marginTop="8dp"
+            android:valueFrom="-20"
+            android:valueTo="20"
+            android:stepSize="5"
+            app:labelBehavior="gone"
+            app:centered="true" />
+
+        </LinearLayout>
+
+      </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+  </androidx.core.widget.NestedScrollView>
+
+</FrameLayout>

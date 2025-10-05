@@ -20,6 +20,8 @@
 package xyz.zedler.patrick.tack.util.dialog;
 
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewTreeObserver;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.slider.Slider;
@@ -30,6 +32,7 @@ import xyz.zedler.patrick.tack.databinding.PartialDialogGainBinding;
 import xyz.zedler.patrick.tack.fragment.SettingsFragment;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
+import xyz.zedler.patrick.tack.util.UiUtil;
 
 public class GainDialogUtil implements OnChangeListener {
 
@@ -51,9 +54,11 @@ public class GainDialogUtil implements OnChangeListener {
       builder.setTitle(R.string.settings_gain);
       builder.setView(binding.getRoot());
       builder.setPositiveButton(
-          R.string.action_cancel, (dialog, which) -> activity.performHapticClick()
+          R.string.action_close, (dialog, which) -> activity.performHapticClick()
       );
     });
+
+    setDividerVisibility(!UiUtil.isOrientationPortrait(activity));
   }
 
   public void show() {
@@ -76,16 +81,19 @@ public class GainDialogUtil implements OnChangeListener {
     }
   }
 
-  public void update() {
-    if (binding == null || getMetronomeEngine() == null) {
+  private void update() {
+    if (binding == null) {
       return;
     }
 
-    updateValueDisplay();
+    measureScrollView();
 
-    binding.sliderGain.removeOnChangeListener(this);
-    binding.sliderGain.setValue(getMetronomeEngine().getGain());
-    binding.sliderGain.addOnChangeListener(this);
+    if (getMetronomeEngine() != null) {
+      updateValueDisplay();
+      binding.sliderGain.removeOnChangeListener(this);
+      binding.sliderGain.setValue(getMetronomeEngine().getGain());
+      binding.sliderGain.addOnChangeListener(this);
+    }
   }
 
   @Override
@@ -112,6 +120,30 @@ public class GainDialogUtil implements OnChangeListener {
             R.string.label_db_signed,
             gain > 0 ? "+" + gain : String.valueOf(gain)
         )
+    );
+  }
+
+  private void measureScrollView() {
+    binding.scrollGain.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override
+          public void onGlobalLayout() {
+            boolean isScrollable = binding.scrollGain.canScrollVertically(-1)
+                || binding.scrollGain.canScrollVertically(1);
+            setDividerVisibility(isScrollable);
+            binding.scrollGain.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+          }
+        });
+  }
+
+  private void setDividerVisibility(boolean visible) {
+    binding.dividerGainTop.setVisibility(visible ? View.VISIBLE : View.GONE);
+    binding.dividerGainBottom.setVisibility(visible ? View.VISIBLE : View.GONE);
+    binding.linearGainContainer.setPadding(
+        binding.linearGainContainer.getPaddingLeft(),
+        visible ? UiUtil.dpToPx(activity, 16) : 0,
+        binding.linearGainContainer.getPaddingRight(),
+        visible ? UiUtil.dpToPx(activity, 16) : 0
     );
   }
 

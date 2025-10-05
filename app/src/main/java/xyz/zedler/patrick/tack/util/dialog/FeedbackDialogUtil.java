@@ -25,6 +25,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewTreeObserver;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import xyz.zedler.patrick.tack.Constants.PREF;
@@ -33,6 +34,7 @@ import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.PartialDialogFeedbackBinding;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class FeedbackDialogUtil implements OnClickListener {
@@ -72,6 +74,8 @@ public class FeedbackDialogUtil implements OnClickListener {
         binding.linearFeedbackEmail,
         binding.linearFeedbackRecommend
     );
+
+    setDividerVisibility(!UiUtil.isOrientationPortrait(activity));
   }
 
   @Override
@@ -143,6 +147,34 @@ public class FeedbackDialogUtil implements OnClickListener {
   }
 
   private void update() {
+    if (binding == null) {
+      return;
+    }
     binding.scrollFeedback.scrollTo(0, 0);
+    measureScrollView();
+  }
+
+  private void measureScrollView() {
+    binding.scrollFeedback.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override
+          public void onGlobalLayout() {
+            boolean isScrollable = binding.scrollFeedback.canScrollVertically(-1)
+                || binding.scrollFeedback.canScrollVertically(1);
+            setDividerVisibility(isScrollable);
+            binding.scrollFeedback.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+          }
+        });
+  }
+
+  private void setDividerVisibility(boolean visible) {
+    binding.dividerFeedbackTop.setVisibility(visible ? View.VISIBLE : View.GONE);
+    binding.dividerFeedbackBottom.setVisibility(visible ? View.VISIBLE : View.GONE);
+    binding.linearFeedbackContainer.setPadding(
+        binding.linearFeedbackContainer.getPaddingLeft(),
+        visible ? UiUtil.dpToPx(activity, 16) : 0,
+        binding.linearFeedbackContainer.getPaddingRight(),
+        visible ? UiUtil.dpToPx(activity, 16) : 0
+    );
   }
 }

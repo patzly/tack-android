@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewTreeObserver;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -47,6 +48,7 @@ import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.PartialDialogBackupBinding;
 import xyz.zedler.patrick.tack.fragment.BaseFragment;
 import xyz.zedler.patrick.tack.util.DialogUtil;
+import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.util.WidgetUtil;
 
@@ -87,16 +89,20 @@ public class BackupDialogUtil implements OnClickListener {
 
     ViewUtil.setOnClickListeners(
         this,
-        binding.buttonBackupBackup,
-        binding.buttonBackupRestore
+        binding.linearBackupBackup,
+        binding.linearBackupRestore
     );
+
+    setDividerVisibility(!UiUtil.isOrientationPortrait(activity));
   }
 
   public void show() {
+    update();
     dialogUtil.show();
   }
 
   public void showIfWasShown(@Nullable Bundle state) {
+    update();
     dialogUtil.showIfWasShown(state);
   }
 
@@ -110,6 +116,14 @@ public class BackupDialogUtil implements OnClickListener {
     }
   }
 
+  public void update() {
+    if (binding == null) {
+      return;
+    }
+    binding.scrollBackup.scrollTo(0, 0);
+    measureScrollView();
+  }
+
   @Override
   public void onClick(View v) {
     int id = v.getId();
@@ -119,9 +133,9 @@ public class BackupDialogUtil implements OnClickListener {
       activity.performHapticClick();
     }
 
-    if (id == R.id.button_backup_backup) {
+    if (id == R.id.linear_backup_backup) {
       launcherBackup.launch("song_library.json");
-    } else if (id == R.id.button_backup_restore) {
+    } else if (id == R.id.linear_backup_restore) {
       launcherRestore.launch(new String[]{"application/json"});
     }
   }
@@ -229,5 +243,29 @@ public class BackupDialogUtil implements OnClickListener {
 
   private void showToast(int resId) {
     activity.runOnUiThread(() -> Toast.makeText(activity, resId, Toast.LENGTH_SHORT).show());
+  }
+
+  private void measureScrollView() {
+    binding.scrollBackup.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override
+          public void onGlobalLayout() {
+            boolean isScrollable = binding.scrollBackup.canScrollVertically(-1)
+                || binding.scrollBackup.canScrollVertically(1);
+            setDividerVisibility(isScrollable);
+            binding.scrollBackup.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+          }
+        });
+  }
+
+  private void setDividerVisibility(boolean visible) {
+    binding.dividerBackupTop.setVisibility(visible ? View.VISIBLE : View.GONE);
+    binding.dividerBackupBottom.setVisibility(visible ? View.VISIBLE : View.GONE);
+    binding.linearBackupContainer.setPadding(
+        binding.linearBackupContainer.getPaddingLeft(),
+        visible ? UiUtil.dpToPx(activity, 16) : 0,
+        binding.linearBackupContainer.getPaddingRight(),
+        visible ? UiUtil.dpToPx(activity, 16) : 0
+    );
   }
 }

@@ -113,10 +113,10 @@
           android:layout_marginBottom="4dp"
           android:hint="@string/label_song_name"
           app:helperText="@string/label_song_name_help"
-          app:boxCornerRadiusTopStart="12dp"
-          app:boxCornerRadiusTopEnd="12dp"
-          app:boxCornerRadiusBottomStart="12dp"
-          app:boxCornerRadiusBottomEnd="12dp">
+          app:boxCornerRadiusTopStart="8dp"
+          app:boxCornerRadiusTopEnd="8dp"
+          app:boxCornerRadiusBottomStart="8dp"
+          app:boxCornerRadiusBottomEnd="8dp">
 
           <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/edit_text_song_name"

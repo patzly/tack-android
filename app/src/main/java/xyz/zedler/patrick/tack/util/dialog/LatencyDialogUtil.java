@@ -20,6 +20,8 @@
 package xyz.zedler.patrick.tack.util.dialog;
 
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewTreeObserver;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.slider.Slider;
@@ -35,6 +37,7 @@ import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListener;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine.Tick;
 import xyz.zedler.patrick.tack.util.ResUtil;
+import xyz.zedler.patrick.tack.util.UiUtil;
 
 public class LatencyDialogUtil implements OnChangeListener {
 
@@ -45,7 +48,7 @@ public class LatencyDialogUtil implements OnChangeListener {
   private final PartialDialogLatencyBinding binding;
   private final DialogUtil dialogUtil;
   private final MetronomeListener latencyListener;
-  private final int colorBgFlash;
+  private final int colorBg, colorBgFlash;
   private boolean flashScreen;
 
   public LatencyDialogUtil(MainActivity activity, SettingsFragment fragment) {
@@ -63,21 +66,24 @@ public class LatencyDialogUtil implements OnChangeListener {
       );
     });
 
+    colorBg = ResUtil.getColor(activity, R.attr.colorSurfaceBright);
+    colorBgFlash = ResUtil.getColor(activity, R.attr.colorTertiaryContainer);
+
     latencyListener = new MetronomeListenerAdapter() {
       @Override
       public void onMetronomeTick(Tick tick) {
         activity.runOnUiThread(() -> {
           if (flashScreen) {
-            binding.linearLatencyContainer.setBackgroundColor(colorBgFlash);
-            binding.linearLatencyContainer.postDelayed(
-                () -> binding.linearLatencyContainer.setBackground(null), 100
+            binding.linearLatencyFlash.setBackgroundColor(colorBgFlash);
+            binding.linearLatencyFlash.postDelayed(
+                () -> binding.linearLatencyFlash.setBackgroundColor(colorBg), 100
             );
           }
         });
       }
     };
 
-    colorBgFlash = ResUtil.getColor(activity, R.attr.colorTertiaryContainer);
+    setDividerVisibility(!UiUtil.isOrientationPortrait(activity));
   }
 
   public void show() {
@@ -100,11 +106,16 @@ public class LatencyDialogUtil implements OnChangeListener {
     }
   }
 
-  public void update() {
-    if (binding == null || getMetronomeEngine() == null) {
+  private void update() {
+    if (binding == null) {
       return;
     }
 
+    measureScrollView();
+
+    if (getMetronomeEngine() == null) {
+      return;
+    }
     updateValueDisplay();
 
     binding.sliderLatency.removeOnChangeListener(this);
@@ -152,6 +163,30 @@ public class LatencyDialogUtil implements OnChangeListener {
     }
     binding.textLatencyValue.setText(
         activity.getString(R.string.label_ms, String.valueOf(getMetronomeEngine().getLatency()))
+    );
+  }
+
+  private void measureScrollView() {
+    binding.scrollLatency.getViewTreeObserver().addOnGlobalLayoutListener(
+        new ViewTreeObserver.OnGlobalLayoutListener() {
+          @Override
+          public void onGlobalLayout() {
+            boolean isScrollable = binding.scrollLatency.canScrollVertically(-1)
+                || binding.scrollLatency.canScrollVertically(1);
+            setDividerVisibility(isScrollable);
+            binding.scrollLatency.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+          }
+        });
+  }
+
+  private void setDividerVisibility(boolean visible) {
+    binding.dividerLatencyTop.setVisibility(visible ? View.VISIBLE : View.GONE);
+    binding.dividerLatencyBottom.setVisibility(visible ? View.VISIBLE : View.GONE);
+    binding.linearLatencyContainer.setPadding(
+        binding.linearLatencyContainer.getPaddingLeft(),
+        visible ? UiUtil.dpToPx(activity, 16) : 0,
+        binding.linearLatencyContainer.getPaddingRight(),
+        visible ? UiUtil.dpToPx(activity, 16) : 0
     );
   }
 
