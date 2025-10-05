@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     resApp.updateConfiguration(configApp, getResources().getDisplayMetrics());
 
     UiUtil.setTheme(this, sharedPrefs);
+    UiUtil.applyColorHarmonization(this);
 
     Bundle bundleInstanceState = getIntent().getBundleExtra(EXTRA.INSTANCE_STATE);
     super.onCreate(bundleInstanceState != null ? bundleInstanceState : savedInstanceState);

@@ -140,25 +140,11 @@ public class UiUtil {
         break;
       default:
         if (DynamicColors.isDynamicColorAvailable()) {
-          int[] attrIds = new int[] {
-              R.attr.colorError,
-              R.attr.colorOnError,
-              R.attr.colorErrorContainer,
-              R.attr.colorOnErrorContainer,
-
-              R.attr.colorCustomGreen,
-              R.attr.colorOnCustomGreen,
-              R.attr.colorCustomGreenContainer,
-              R.attr.colorOnCustomGreenContainer
-          };
           DynamicColors.applyToActivityIfAvailable(
               activity,
               new DynamicColorsOptions.Builder().setOnAppliedCallback(
                   a -> HarmonizedColors.applyToContextIfAvailable(
-                      a,
-                      new HarmonizedColorsOptions.Builder()
-                          .setColorAttributes(HarmonizedColorAttributes.create(attrIds))
-                          .build()
+                      a, HarmonizedColorsOptions.createMaterialDefaults()
                   )
               ).build()
           );
@@ -191,6 +177,24 @@ public class UiUtil {
       default:
         activity.setTheme(resIdStandard);
     }
+  }
+
+  public static void applyColorHarmonization(Context context) {
+    int[] attrIds = new int[] {
+        R.attr.colorError,
+        R.attr.colorOnError,
+        R.attr.colorErrorContainer,
+        R.attr.colorOnErrorContainer,
+
+        R.attr.colorCustomGreen,
+        R.attr.colorOnCustomGreen,
+        R.attr.colorCustomGreenContainer,
+        R.attr.colorOnCustomGreenContainer
+    };
+    HarmonizedColorsOptions options = new HarmonizedColorsOptions.Builder()
+        .setColorAttributes(HarmonizedColorAttributes.create(attrIds))
+        .build();
+    HarmonizedColors.applyToContextIfAvailable(context, options);
   }
 
   public static boolean isDarkModeActive(Context context) {

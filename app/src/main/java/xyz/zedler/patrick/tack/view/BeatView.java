@@ -124,14 +124,14 @@ public class BeatView extends FrameLayout {
   private final MaterialButton button;
   private final Paint paintFill, paintStroke;
   private final float shapeScaleNoBeat, shapeScaleMuted;
-  private final int colorStrong, colorSub, colorMuted, colorActive;
+  private final int colorActive;
   private AnimatorSet animatorSet;
   private ValueAnimator strokeAnimator;
   private Morph morph;
   private String tickType;
   private boolean isSubdivision, reduceAnimations, isActive;
   private float morphFactor, shapeScaleBeat, shapeScale0, shapeScale1;
-  private int index, colorNormal;
+  private int index;
 
   public BeatView(Context context) {
     super(context);
@@ -156,13 +156,6 @@ public class BeatView extends FrameLayout {
     shapeScale0 = shapeScaleNoBeat;
     shapeScale1 = shapeScaleBeat;
 
-    colorNormal = ResUtil.getColor(context, R.attr.colorPrimary);
-    if (isColorRed(colorNormal)) {
-      colorNormal = ResUtil.getColor(context, R.attr.colorTertiary);
-    }
-    colorStrong = ResUtil.getColor(context, R.attr.colorError);
-    colorSub = ResUtil.getColor(context, R.attr.colorOnSurfaceVariant);
-    colorMuted = ResUtil.getColor(context, R.attr.colorOutline);
     colorActive = ResUtil.getColor(context, R.attr.colorOutline);
 
     paintFill = new Paint();
@@ -222,6 +215,16 @@ public class BeatView extends FrameLayout {
 
   public void setTickType(String tickType) {
     this.tickType = tickType;
+
+    Context context = getContext();
+    int colorNormal = ResUtil.getColor(context, R.attr.colorPrimary);
+    if (isColorRed(colorNormal)) {
+      colorNormal = ResUtil.getColor(context, R.attr.colorTertiary);
+    }
+    int colorStrong = ResUtil.getColor(context, R.attr.colorError);
+    int colorSub = ResUtil.getColor(context, R.attr.colorOnSurfaceVariant);
+    int colorMuted = ResUtil.getColor(context, R.attr.colorOutline);
+
     switch (tickType) {
       case TICK_TYPE.STRONG:
         paintFill.setColor(colorStrong);

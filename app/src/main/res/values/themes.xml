@@ -168,6 +168,11 @@
     <item name="colorSurfaceContainer">@color/red_theme_surfaceContainer_mediumContrast</item>
     <item name="colorSurfaceContainerHigh">@color/red_theme_surfaceContainerHigh_mediumContrast</item>
     <item name="colorSurfaceContainerHighest">@color/red_theme_surfaceContainerHighest_mediumContrast</item>
+
+    <item name="colorCustomGreen">@color/base_theme_colorCustomGreen_mediumContrast</item>
+    <item name="colorOnCustomGreen">@color/base_theme_colorOnCustomGreen_mediumContrast</item>
+    <item name="colorCustomGreenContainer">@color/base_theme_colorCustomGreenContainer_mediumContrast</item>
+    <item name="colorOnCustomGreenContainer">@color/base_theme_colorOnCustomGreenContainer_mediumContrast</item>
   </style>
   
   <style name="ThemeOverlay.Tack.Red.HighContrast" parent="Theme.Tack.Red">
@@ -214,6 +219,11 @@
     <item name="colorSurfaceContainer">@color/red_theme_surfaceContainer_highContrast</item>
     <item name="colorSurfaceContainerHigh">@color/red_theme_surfaceContainerHigh_highContrast</item>
     <item name="colorSurfaceContainerHighest">@color/red_theme_surfaceContainerHighest_highContrast</item>
+
+    <item name="colorCustomGreen">@color/base_theme_colorCustomGreen_highContrast</item>
+    <item name="colorOnCustomGreen">@color/base_theme_colorOnCustomGreen_highContrast</item>
+    <item name="colorCustomGreenContainer">@color/base_theme_colorCustomGreenContainer_highContrast</item>
+    <item name="colorOnCustomGreenContainer">@color/base_theme_colorOnCustomGreenContainer_highContrast</item>
   </style>
 
   <style name="Theme.Tack.Yellow" parent="Theme.Tack">
@@ -306,6 +316,11 @@
     <item name="colorSurfaceContainer">@color/yellow_theme_surfaceContainer_mediumContrast</item>
     <item name="colorSurfaceContainerHigh">@color/yellow_theme_surfaceContainerHigh_mediumContrast</item>
     <item name="colorSurfaceContainerHighest">@color/yellow_theme_surfaceContainerHighest_mediumContrast</item>
+
+    <item name="colorCustomGreen">@color/base_theme_colorCustomGreen_mediumContrast</item>
+    <item name="colorOnCustomGreen">@color/base_theme_colorOnCustomGreen_mediumContrast</item>
+    <item name="colorCustomGreenContainer">@color/base_theme_colorCustomGreenContainer_mediumContrast</item>
+    <item name="colorOnCustomGreenContainer">@color/base_theme_colorOnCustomGreenContainer_mediumContrast</item>
   </style>
 
   <style name="ThemeOverlay.Tack.Yellow.HighContrast" parent="Theme.Tack.Yellow">
@@ -352,6 +367,11 @@
     <item name="colorSurfaceContainer">@color/yellow_theme_surfaceContainer_highContrast</item>
     <item name="colorSurfaceContainerHigh">@color/yellow_theme_surfaceContainerHigh_highContrast</item>
     <item name="colorSurfaceContainerHighest">@color/yellow_theme_surfaceContainerHighest_highContrast</item>
+
+    <item name="colorCustomGreen">@color/base_theme_colorCustomGreen_highContrast</item>
+    <item name="colorOnCustomGreen">@color/base_theme_colorOnCustomGreen_highContrast</item>
+    <item name="colorCustomGreenContainer">@color/base_theme_colorCustomGreenContainer_highContrast</item>
+    <item name="colorOnCustomGreenContainer">@color/base_theme_colorOnCustomGreenContainer_highContrast</item>
   </style>
 
   <style name="Theme.Tack.Green" parent="Theme.Tack">
@@ -444,6 +464,11 @@
     <item name="colorSurfaceContainer">@color/green_theme_surfaceContainer_mediumContrast</item>
     <item name="colorSurfaceContainerHigh">@color/green_theme_surfaceContainerHigh_mediumContrast</item>
     <item name="colorSurfaceContainerHighest">@color/green_theme_surfaceContainerHighest_mediumContrast</item>
+
+    <item name="colorCustomGreen">@color/base_theme_colorCustomGreen_mediumContrast</item>
+    <item name="colorOnCustomGreen">@color/base_theme_colorOnCustomGreen_mediumContrast</item>
+    <item name="colorCustomGreenContainer">@color/base_theme_colorCustomGreenContainer_mediumContrast</item>
+    <item name="colorOnCustomGreenContainer">@color/base_theme_colorOnCustomGreenContainer_mediumContrast</item>
   </style>
   
   <style name="ThemeOverlay.Tack.Green.HighContrast" parent="Theme.Tack.Green">
@@ -490,6 +515,11 @@
     <item name="colorSurfaceContainer">@color/green_theme_surfaceContainer_highContrast</item>
     <item name="colorSurfaceContainerHigh">@color/green_theme_surfaceContainerHigh_highContrast</item>
     <item name="colorSurfaceContainerHighest">@color/green_theme_surfaceContainerHighest_highContrast</item>
+
+    <item name="colorCustomGreen">@color/base_theme_colorCustomGreen_highContrast</item>
+    <item name="colorOnCustomGreen">@color/base_theme_colorOnCustomGreen_highContrast</item>
+    <item name="colorCustomGreenContainer">@color/base_theme_colorCustomGreenContainer_highContrast</item>
+    <item name="colorOnCustomGreenContainer">@color/base_theme_colorOnCustomGreenContainer_highContrast</item>
   </style>
 
   <style name="Theme.Tack.Blue" parent="Theme.Tack">
@@ -582,6 +612,11 @@
     <item name="colorSurfaceContainer">@color/blue_theme_surfaceContainer_mediumContrast</item>
     <item name="colorSurfaceContainerHigh">@color/blue_theme_surfaceContainerHigh_mediumContrast</item>
     <item name="colorSurfaceContainerHighest">@color/blue_theme_surfaceContainerHighest_mediumContrast</item>
+
+    <item name="colorCustomGreen">@color/base_theme_colorCustomGreen_mediumContrast</item>
+    <item name="colorOnCustomGreen">@color/base_theme_colorOnCustomGreen_mediumContrast</item>
+    <item name="colorCustomGreenContainer">@color/base_theme_colorCustomGreenContainer_mediumContrast</item>
+    <item name="colorOnCustomGreenContainer">@color/base_theme_colorOnCustomGreenContainer_mediumContrast</item>
   </style>
   
   <style name="ThemeOverlay.Tack.Blue.HighContrast" parent="Theme.Tack.Blue">
@@ -628,6 +663,11 @@
     <item name="colorSurfaceContainer">@color/blue_theme_surfaceContainer_highContrast</item>
     <item name="colorSurfaceContainerHigh">@color/blue_theme_surfaceContainerHigh_highContrast</item>
     <item name="colorSurfaceContainerHighest">@color/blue_theme_surfaceContainerHighest_highContrast</item>
+
+    <item name="colorCustomGreen">@color/base_theme_colorCustomGreen_highContrast</item>
+    <item name="colorOnCustomGreen">@color/base_theme_colorOnCustomGreen_highContrast</item>
+    <item name="colorCustomGreenContainer">@color/base_theme_colorCustomGreenContainer_highContrast</item>
+    <item name="colorOnCustomGreenContainer">@color/base_theme_colorOnCustomGreenContainer_highContrast</item>
   </style>
   
 </resources>
