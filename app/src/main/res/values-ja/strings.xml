@@ -144,6 +144,7 @@
   <string name="action_backup">バックアップ作成</string>
   <string name="action_backup_description">任意のディレクトリにバックアップファイルを保存します</string>
   <string name="action_restore">バックアップ復元</string>
+  <string name="action_restore_description">既存の曲が削除・上書きされることはありません</string>
   <string name="action_view_more_songs">他のソングを見る</string>
   <string name="action_next">次へ</string>
   <string name="action_show_parts">パート表示</string>
