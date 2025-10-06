@@ -296,12 +296,6 @@
   </plurals>
   <string name="options_mute_random">Náhodný výběr menších hodnot</string>
   <string name="options_subdivisions">Subdivize</string>
-  <plurals name="options_subdivisions_description">
-    <item quantity="one">%1$d subdivize na dobu</item>
-    <item quantity="few">%1$d subdivize na dobu</item>
-    <item quantity="many">%1$d subdivizí na dobu</item>
-    <item quantity="other">%1$d subdivizí na dobu</item>
-  </plurals>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Subdivize nastavené pro shodu s poměrem swingu</string>
   <string name="options_swing_3">Trioly</string>
