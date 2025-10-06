@@ -142,6 +142,7 @@
   <string name="action_open_play_store">Play ストアを開く</string>
   <string name="action_backup_restore">バックアップ/復元</string>
   <string name="action_backup">バックアップ作成</string>
+  <string name="action_backup_description">任意のディレクトリにバックアップファイルを保存します</string>
   <string name="action_restore">バックアップ復元</string>
   <string name="action_view_more_songs">他のソングを見る</string>
   <string name="action_next">次へ</string>
