@@ -190,6 +190,7 @@
   <string name="msg_songs_empty_description">練習したいソングを追加しましょう</string>
   <string name="msg_unlock">開発者からのメッセージ</string>
   <string name="msg_unlock_description">強力な機能の数々を広告なしで体験できる Tack にご満足いただけましたか？私は余暇を費やし何年もかけて無料アプリ Tack を開発しました。特にソングライブラリ機能の実装には数か月間労力を注ぎました。\nTack の改良を続けるためにも、ささやかなご支援をお願いしています。お礼として、保存ソング数無制限、保存パート数も大幅に増えた制限解除版アプリをお使いいただけるようになります。ご支援をよろしくお願いします！</string>
+  <string name="msg_backup_description">ソングライブラリ全体のバックアップを作成してデバイス内に保存し、バックアップからソングライブラリを復元できます。</string>
   <string name="msg_backup_error">バックアップ作成中にエラーが発生しました</string>
   <string name="msg_backup_directory_missing">バックアップ用に選択した保存場所がありません</string>
   <string name="msg_backup_success">バックアップ作成に成功しました</string>
