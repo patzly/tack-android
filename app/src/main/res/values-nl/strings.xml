@@ -259,10 +259,6 @@
   </plurals>
   <string name="options_mute_random">Kleine waarden willekeurig maken</string>
   <string name="options_subdivisions">Maatdelen</string>
-  <plurals name="options_subdivisions_description">
-    <item quantity="one">%1$d maatdeel per maat</item>
-    <item quantity="other">%1$d maatdelen per maat</item>
-  </plurals>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Maatdelen ingesteld op swing verdeling</string>
   <string name="options_swing_3">Triool</string>
