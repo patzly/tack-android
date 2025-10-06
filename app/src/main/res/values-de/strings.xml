@@ -147,6 +147,7 @@
   <string name="action_backup">Sichern</string>
   <string name="action_backup_description">Speichere eine Sicherungsdatei in einem Verzeichnis deiner Wahl</string>
   <string name="action_restore">Wiederherstellen</string>
+  <string name="action_restore_description">Bestehende Werke werden niemals gelöscht oder überschrieben</string>
   <string name="action_view_more_songs">Mehr Werke anzeigen</string>
   <string name="action_next">Weiter</string>
   <string name="action_show_parts">Teile anzeigen</string>
