@@ -74,7 +74,7 @@
           android:layout_height="wrap_content"
           android:orientation="vertical"
           android:paddingTop="16dp"
-          android:paddingBottom="12dp"
+          android:paddingBottom="8dp"
           android:background="?attr/colorSurfaceBright"
           tools:ignore="UselessParent">
 

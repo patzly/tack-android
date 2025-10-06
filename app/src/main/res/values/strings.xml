@@ -151,6 +151,7 @@
   <string name="action_rename_part_description">Can also be left empty if numbering alone is enough</string>
   <string name="action_update">Update</string>
   <string name="action_use_current_config">Use current config</string>
+  <string name="action_use_current_config_description">From the main page</string>
   <string name="action_delete">Delete</string>
   <string name="action_move_up">Move up</string>
   <string name="action_move_down">Move down</string>

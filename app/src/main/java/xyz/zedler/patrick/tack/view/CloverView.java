@@ -40,13 +40,12 @@ import androidx.graphics.shapes.Shapes_androidKt;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.UiUtil;
 
 public class CloverView extends View {
 
   private final static String TAG = CloverView.class.getSimpleName();
 
-  private final Paint paintFill, paintStroke;
+  private final Paint paintFill;
   private final Path path;
   private final RectF bounds;
   private final Matrix matrix;
@@ -63,10 +62,6 @@ public class CloverView extends View {
     paintFill = new Paint();
     paintFill.setStyle(Style.FILL);
     paintFill.setColor(ResUtil.getColor(context, R.attr.colorTertiaryContainer));
-    paintStroke = new Paint();
-    paintStroke.setStyle(Style.STROKE);
-    paintStroke.setStrokeWidth(UiUtil.dpToPx(context, 1));
-    paintStroke.setColor(ResUtil.getColor(context, R.attr.colorTertiary));
 
     companion = RoundedPolygon.Companion;
     cornerRounding = new CornerRounding(0.32f, 0);
@@ -84,7 +79,6 @@ public class CloverView extends View {
   protected void onDraw(@NonNull Canvas canvas) {
     super.onDraw(canvas);
     canvas.drawPath(path, paintFill);
-    canvas.drawPath(path, paintStroke);
   }
 
   @Override
