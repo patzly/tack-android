@@ -21,7 +21,6 @@ package xyz.zedler.patrick.tack.util.dialog;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.TypedValue;
@@ -35,7 +34,6 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.button.MaterialButtonToggleGroup.OnButtonCheckedListener;
 import java.util.LinkedList;
@@ -45,8 +43,8 @@ import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.PartialDialogTempoBinding;
 import xyz.zedler.patrick.tack.fragment.MainFragment;
-import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
+import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 
@@ -196,14 +194,13 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
   }
 
   public void showIfWasShown(@Nullable Bundle state) {
-    boolean wasShown = dialogUtil.wasShown(state);
-    if (wasShown) {
-      update();
-    }
+    update();
     boolean showing = dialogUtil.showIfWasShown(state);
     if (showing) {
       overrideDialogActions();
-      showKeyboard();
+      if (inputMethodKeyboard) {
+        showKeyboard();
+      }
     }
   }
 
@@ -265,7 +262,6 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
       binding.toggleTempoMethod.check(R.id.button_tempo_tap);
     }
     binding.toggleTempoMethod.addOnButtonCheckedListener(this);
-    updateSurfaceToggleButtons(binding.toggleTempoMethod);
 
     if (inputMethodKeyboard) {
       setError(false);
@@ -282,7 +278,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
       binding.textSwitcherTempoTapTempoTerm.setCurrentText(fragment.getTempoTerm(tempo));
       binding.cloverTempoTap.setReduceAnimations(fragment.isReduceAnimations());
     }
-    binding.textInputTempo.setVisibility(inputMethodKeyboard ? View.VISIBLE : View.GONE);
+    binding.frameTempoInputContainer.setVisibility(inputMethodKeyboard ? View.VISIBLE : View.GONE);
     binding.frameTempoTapContainer.setVisibility(inputMethodKeyboard ? View.GONE : View.VISIBLE);
     binding.linearTempoInstant.setVisibility(inputMethodKeyboard ? View.GONE : View.VISIBLE);
   }
@@ -359,24 +355,6 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
       binding.textInputTempo.setError(activity.getString(R.string.msg_invalid_input));
     } else {
       binding.textInputTempo.setErrorEnabled(false);
-    }
-  }
-
-  private void updateSurfaceToggleButtons(MaterialButtonToggleGroup toggleGroup) {
-    int strokeColor = ResUtil.getColor(activity, R.attr.colorOutlineVariant);
-    int bgColorChecked = ResUtil.getColor(activity, R.attr.colorPrimary);
-    int bgColorUnchecked = ResUtil.getColor(activity, R.attr.colorSurfaceContainerHigh);
-    for (int i = 0; i < toggleGroup.getChildCount(); i++) {
-      View child = toggleGroup.getChildAt(i);
-      MaterialButton button = (MaterialButton) child;
-      button.setStrokeColor(ColorStateList.valueOf(strokeColor));
-      if (button.getId() != toggleGroup.getCheckedButtonId()) {
-        button.setStrokeWidth(UiUtil.dpToPx(activity, 1));
-        button.setBackgroundTintList(ColorStateList.valueOf(bgColorUnchecked));
-      } else {
-        button.setStrokeWidth(0);
-        button.setBackgroundTintList(ColorStateList.valueOf(bgColorChecked));
-      }
     }
   }
 

@@ -346,7 +346,7 @@
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginStart="16dp"
-      android:layout_marginEnd="8dp"
+      android:layout_marginEnd="16dp"
       android:text="@string/options_count_in" />
 
     <TextView
@@ -395,14 +395,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp">
 
         <TextView
           style="@style/Widget.Tack.TextView"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:paddingStart="16dp"
-          android:paddingEnd="8dp"
           android:text="@string/options_timer" />
 
         <TextView
@@ -410,8 +410,6 @@
           style="@style/Widget.Tack.TextView.BodyMedium"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:paddingStart="16dp"
-          android:paddingEnd="8dp"
           android:textColor="?attr/colorOnSurfaceVariant"
           android:fontFeatureSettings="tnum" />
 
@@ -511,8 +509,8 @@
       style="@style/Widget.Tack.TextView"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:paddingStart="16dp"
-      android:paddingEnd="16dp"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="16dp"
       android:text="@string/options_incremental" />
 
     <TextView
@@ -588,8 +586,8 @@
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_weight="1"
-          android:paddingStart="16dp"
-          android:paddingEnd="8dp"
+          android:layout_marginStart="16dp"
+          android:layout_marginEnd="8dp"
           android:textColor="?attr/colorOnSurfaceVariant"
           android:fontFeatureSettings="tnum" />
 
@@ -675,8 +673,8 @@
           android:layout_width="0dp"
           android:layout_height="wrap_content"
           android:layout_weight="1"
-          android:paddingStart="16dp"
-          android:paddingEnd="8dp"
+          android:layout_marginStart="16dp"
+          android:layout_marginEnd="8dp"
           android:textColor="?attr/colorOnSurfaceVariant"
           android:text="@string/options_incremental_max"
           android:fontFeatureSettings="tnum" />
@@ -867,8 +865,8 @@
       style="@style/Widget.Tack.TextView"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:paddingStart="16dp"
-      android:paddingEnd="16dp"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="16dp"
       android:text="@string/options_swing" />
 
     <TextView
@@ -876,8 +874,8 @@
       style="@style/Widget.Tack.TextView.BodyMedium"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:paddingStart="16dp"
-      android:paddingEnd="16dp"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="16dp"
       android:layout_marginBottom="4dp"
       android:textColor="?attr/colorOnSurfaceVariant" />
 

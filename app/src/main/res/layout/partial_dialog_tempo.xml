@@ -25,73 +25,94 @@
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
   android:orientation="vertical"
-  android:paddingTop="12dp">
+  android:paddingStart="24dp"
+  android:paddingEnd="24dp"
+  android:paddingTop="16dp">
 
-  <HorizontalScrollView
+  <FrameLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="24dp"
-    android:layout_marginEnd="24dp"
-    android:scrollbars="none"
-    android:overScrollMode="ifContentScrolls"
-    android:requiresFadingEdge="horizontal">
+    android:paddingTop="12dp"
+    android:paddingBottom="12dp"
+    android:background="@drawable/ripple_list_item_bg_segmented_first">
 
-    <com.google.android.material.button.MaterialButtonToggleGroup
-      android:id="@+id/toggle_tempo_method"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      app:singleSelection="true"
-      app:selectionRequired="true">
-
-      <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_tempo_keyboard"
-        style="@style/Widget.Tack.Button"
-        android:text="@string/label_tempo_keyboard"
-        app:icon="@drawable/ic_rounded_keyboard" />
-
-      <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_tempo_tap"
-        style="@style/Widget.Tack.Button"
-        android:text="@string/label_tempo_tap"
-        app:icon="@drawable/ic_rounded_touch_app_anim" />
-
-    </com.google.android.material.button.MaterialButtonToggleGroup>
-
-  </HorizontalScrollView>
-
-  <com.google.android.material.textfield.TextInputLayout
-    android:id="@+id/text_input_tempo"
-    style="@style/Widget.Tack.TextInputLayout.OutlinedBox"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:layout_marginStart="24dp"
-    android:layout_marginEnd="24dp"
-    android:hint="@string/label_bpm"
-    app:helperText="@string/label_tempo_input_help">
-
-    <com.google.android.material.textfield.TextInputEditText
-      android:id="@+id/edit_text_tempo"
+    <HorizontalScrollView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:imeOptions="actionDone"
-      android:singleLine="true"
-      android:inputType="number" />
+      android:scrollbars="none"
+      android:overScrollMode="ifContentScrolls"
+      tools:ignore="UselessParent">
 
-  </com.google.android.material.textfield.TextInputLayout>
+      <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggle_tempo_method"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        app:singleSelection="true"
+        app:selectionRequired="true">
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_tempo_keyboard"
+          style="@style/Widget.Tack.Button"
+          android:text="@string/label_tempo_keyboard"
+          app:icon="@drawable/ic_rounded_keyboard" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_tempo_tap"
+          style="@style/Widget.Tack.Button"
+          android:text="@string/label_tempo_tap"
+          app:icon="@drawable/ic_rounded_touch_app_anim" />
+
+      </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    </HorizontalScrollView>
+
+  </FrameLayout>
+
+  <FrameLayout
+    android:id="@+id/frame_tempo_input_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/ripple_list_item_bg_segmented_last">
+
+    <com.google.android.material.textfield.TextInputLayout
+      android:id="@+id/text_input_tempo"
+      style="@style/Widget.Tack.TextInputLayout.OutlinedBox"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="16dp"
+      android:layout_marginEnd="16dp"
+      android:layout_marginTop="12dp"
+      android:layout_marginBottom="4dp"
+      android:hint="@string/label_bpm"
+      app:helperText="@string/label_tempo_input_help"
+      app:boxCornerRadiusTopStart="8dp"
+      app:boxCornerRadiusTopEnd="8dp"
+      app:boxCornerRadiusBottomStart="8dp"
+      app:boxCornerRadiusBottomEnd="8dp">
+
+      <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/edit_text_tempo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:imeOptions="actionDone"
+        android:singleLine="true"
+        android:inputType="number" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+  </FrameLayout>
 
   <LinearLayout
     android:id="@+id/linear_tempo_instant"
     style="@style/Widget.Tack.LinearLayout.ListItem.SingleLine.Segmented"
     android:layout_height="wrap_content"
-    android:layout_marginStart="24dp"
-    android:layout_marginEnd="24dp"
-    android:layout_marginTop="12dp"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
     android:paddingTop="8dp"
     android:paddingBottom="8dp"
-    android:background="@drawable/ripple_list_item_bg_segmented_first">
+    android:background="@drawable/ripple_list_item_bg_segmented_middle">
 
     <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
 
@@ -116,8 +137,6 @@
     android:id="@+id/frame_tempo_tap_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="24dp"
-    android:layout_marginEnd="24dp"
     android:padding="16dp"
     android:background="@drawable/ripple_list_item_bg_segmented_last">
 

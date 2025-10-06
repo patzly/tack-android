@@ -466,7 +466,7 @@ public class SongsFragment extends BaseFragment {
         binding.songsEmpty.imageSongsEmpty.setImageDrawable(
             new ShapeDrawable(
                 activity,
-                MaterialShapes.COOKIE_9,
+                MaterialShapes.COOKIE_7,
                 R.drawable.illustration_songs_empty
             )
         );
