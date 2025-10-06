@@ -295,7 +295,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     int beatsCount = getConfig().getBeatsCount();
     binding.textOptionsBeats.setText(
         activity.getResources().getQuantityString(
-            R.plurals.options_beats_description, beatsCount, beatsCount
+            R.plurals.options_beats_subs_description, beatsCount, beatsCount
         )
     );
     binding.buttonOptionsBeatsAdd.setOnClickListener(this);
@@ -354,7 +354,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     if (isSubdivisionActive) {
       binding.textOptionsSubs.setText(
           activity.getResources().getQuantityString(
-              R.plurals.options_subdivisions_description, subdivisionsCount, subdivisionsCount
+              R.plurals.options_beats_subs_description, subdivisionsCount, subdivisionsCount
           )
       );
     } else {
