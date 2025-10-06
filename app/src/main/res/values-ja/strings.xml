@@ -229,9 +229,6 @@
     <item quantity="other">%1$d 分</item>
   </plurals>
   <string name="options_inactive">無効</string>
-  <plurals name="options_beats_description">
-    <item quantity="other">%1$d 拍 / 1小節</item>
-  </plurals>
   <string name="options_count_in">前奏カウント</string>
   <plurals name="options_count_in_description">
     <item quantity="other">以下のオプションを適用する前に %1$d 小節待つ</item>
@@ -277,9 +274,6 @@
   </plurals>
   <string name="options_mute_random">指定以下の値でランダム消音</string>
   <string name="options_subdivisions">拍分割</string>
-  <plurals name="options_subdivisions_description">
-    <item quantity="other">1 拍を %1$d 分割</item>
-  </plurals>
   <string name="options_swing">スウィング</string>
   <string name="options_swing_description">スウィング比率に合わせて拍分割</string>
   <string name="options_swing_3">3連符</string>
