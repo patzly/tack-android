@@ -35,6 +35,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.PopupMenu;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsAnimationCompat;
 import androidx.core.view.WindowInsetsAnimationCompat.BoundsCompat;
@@ -67,6 +68,7 @@ import xyz.zedler.patrick.tack.util.SortUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
+import xyz.zedler.patrick.tack.util.ViewUtil.OnMenuInflatedListener;
 import xyz.zedler.patrick.tack.util.WidgetUtil;
 import xyz.zedler.patrick.tack.util.dialog.RenameDialogUtil;
 import xyz.zedler.patrick.tack.util.dialog.UnlockDialogUtil;
@@ -215,7 +217,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     });
     binding.buttonSongMenu.setOnClickListener(v -> {
       performHapticClick();
-      ViewUtil.showMenu(v, R.menu.menu_song, item -> {
+      PopupMenu.OnMenuItemClickListener itemClickListener = item -> {
         int id = item.getItemId();
         if (getViewUtil().isClickDisabled(id)) {
           return false;
@@ -229,7 +231,17 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           activity.showHelp();
         }
         return true;
-      });
+      };
+      OnMenuInflatedListener menuInflatedListener = menu -> {
+        if (getMetronomeEngine() == null) {
+          return;
+        }
+        MenuItem itemDelete = menu.findItem(R.id.action_delete);
+        if (itemDelete != null) {
+          itemDelete.setVisible(!isNewSong);
+        }
+      };
+      ViewUtil.showMenu(v, R.menu.menu_song, itemClickListener, menuInflatedListener);
     });
     ViewUtil.setTooltipText(binding.buttonSongClose, R.string.action_close);
     ViewUtil.setTooltipText(binding.buttonSongSave, R.string.action_save);
