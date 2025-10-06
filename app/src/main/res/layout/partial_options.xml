@@ -22,12 +22,12 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
+  android:id="@+id/linear_options_container"
   android:orientation="vertical"
   android:layout_width="match_parent"
   android:layout_height="wrap_content"
   android:paddingTop="16dp"
-  android:paddingBottom="16dp"
-  android:animateLayoutChanges="true">
+  android:paddingBottom="16dp">
 
   <LinearLayout
     android:id="@+id/linear_options_edit_part_container"
@@ -380,8 +380,7 @@
     android:layout_marginEnd="16dp"
     android:paddingTop="12dp"
     android:paddingBottom="8dp"
-    android:background="@drawable/ripple_list_item_bg_segmented_middle"
-    android:animateLayoutChanges="true">
+    android:background="@drawable/ripple_list_item_bg_segmented_middle">
 
     <LinearLayout
       android:layout_width="match_parent"
@@ -502,8 +501,7 @@
     android:layout_marginEnd="16dp"
     android:paddingTop="12dp"
     android:paddingBottom="8dp"
-    android:background="@drawable/ripple_list_item_bg_segmented_middle"
-    android:animateLayoutChanges="true">
+    android:background="@drawable/ripple_list_item_bg_segmented_middle">
 
     <TextView
       style="@style/Widget.Tack.TextView"
@@ -539,8 +537,7 @@
       android:id="@+id/linear_main_incremental_container"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="vertical"
-      android:animateLayoutChanges="true">
+      android:orientation="vertical">
 
       <HorizontalScrollView
         android:layout_width="match_parent"
@@ -725,8 +722,7 @@
     android:layout_marginEnd="16dp"
     android:paddingTop="16dp"
     android:paddingBottom="8dp"
-    android:background="@drawable/ripple_list_item_bg_segmented_middle"
-    android:animateLayoutChanges="true">
+    android:background="@drawable/ripple_list_item_bg_segmented_middle">
 
     <TextView
       style="@style/Widget.Tack.TextView"
@@ -761,8 +757,7 @@
       android:id="@+id/linear_options_mute_container"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:orientation="vertical"
-      android:animateLayoutChanges="true">
+      android:orientation="vertical">
 
       <TextView
         android:id="@+id/text_options_mute_mute"
@@ -858,8 +853,7 @@
     android:layout_marginEnd="16dp"
     android:paddingTop="16dp"
     android:paddingBottom="8dp"
-    android:background="@drawable/ripple_list_item_bg_segmented_last"
-    android:animateLayoutChanges="true">
+    android:background="@drawable/ripple_list_item_bg_segmented_last">
 
     <TextView
       style="@style/Widget.Tack.TextView"

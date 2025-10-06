@@ -26,6 +26,8 @@ import android.view.View.OnClickListener;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
+import androidx.transition.AutoTransition;
+import androidx.transition.TransitionManager;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.button.MaterialButtonToggleGroup.OnButtonCheckedListener;
 import com.google.android.material.slider.Slider;
@@ -434,10 +436,14 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         value -> activity.getString(R.string.label_bpm_value, (int) value)
     );
 
-    boolean visibleControls = isIncrementalActive || !useDialog;
-    binding.linearMainIncrementalContainer.setVisibility(
-        visibleControls ? View.VISIBLE : View.GONE
-    );
+    int visibilityOld = binding.linearMainIncrementalContainer.getVisibility();
+    int visibilityNew = (isIncrementalActive || !useDialog) ? View.VISIBLE : View.GONE;
+    if (visibilityOld != visibilityNew) {
+      TransitionManager.beginDelayedTransition(
+          binding.linearOptionsContainer, new AutoTransition()
+      );
+      binding.linearMainIncrementalContainer.setVisibility(visibilityNew);
+    }
 
     binding.toggleOptionsIncrementalDirection.removeOnButtonCheckedListener(this);
     binding.toggleOptionsIncrementalDirection.check(
@@ -678,8 +684,14 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       return activity.getResources().getQuantityString(resId, interval, interval);
     });
 
-    boolean visibleControls = isTimerActive || !useDialog;
-    binding.linearOptionsTimerContainer.setVisibility(visibleControls ? View.VISIBLE : View.GONE);
+    int visibilityOld = binding.linearOptionsTimerContainer.getVisibility();
+    int visibilityNew = (isTimerActive || !useDialog) ? View.VISIBLE : View.GONE;
+    if (visibilityOld != visibilityNew) {
+      TransitionManager.beginDelayedTransition(
+          binding.linearOptionsContainer, new AutoTransition()
+      );
+      binding.linearOptionsTimerContainer.setVisibility(visibilityNew);
+    }
 
     binding.toggleOptionsTimerUnit.removeOnButtonCheckedListener(this);
     binding.toggleOptionsTimerUnit.check(checkedId);
@@ -770,8 +782,14 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         });
     binding.checkboxOptionsMuteRandom.setEnabled(isMuteActive);
 
-    boolean visibleControls = isMuteActive || !useDialog;
-    binding.linearOptionsMuteContainer.setVisibility(visibleControls ? View.VISIBLE : View.GONE);
+    int visibilityOld = binding.linearOptionsMuteContainer.getVisibility();
+    int visibilityNew = (isMuteActive || !useDialog) ? View.VISIBLE : View.GONE;
+    if (visibilityOld != visibilityNew) {
+      TransitionManager.beginDelayedTransition(
+          binding.linearOptionsContainer, new AutoTransition()
+      );
+      binding.linearOptionsMuteContainer.setVisibility(visibilityNew);
+    }
   }
 
   public void updateSwing() {
