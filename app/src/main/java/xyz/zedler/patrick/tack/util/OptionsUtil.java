@@ -19,7 +19,6 @@
 
 package xyz.zedler.patrick.tack.util;
 
-import android.animation.LayoutTransition;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.transition.AutoTransition;
+import androidx.transition.ChangeBounds;
 import androidx.transition.TransitionManager;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.button.MaterialButtonToggleGroup.OnButtonCheckedListener;
@@ -279,14 +279,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       binding.linearOptionsBeats.addView(beatView);
     }
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsBeats);
-    binding.linearOptionsBeats.post(() -> {
-      if (binding == null) {
-        return;
-      }
-      LayoutTransition transition = new LayoutTransition();
-      transition.setDuration(Constants.ANIM_DURATION_LONG);
-      binding.linearOptionsBeats.setLayoutTransition(transition);
-    });
     updateBeatControls();
   }
 
@@ -336,14 +328,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       binding.linearOptionsSubs.addView(beatView);
     }
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsSubs, true);
-    binding.linearOptionsSubs.post(() -> {
-      if (binding == null) {
-        return;
-      }
-      LayoutTransition transition = new LayoutTransition();
-      transition.setDuration(Constants.ANIM_DURATION_LONG);
-      binding.linearOptionsSubs.setLayoutTransition(transition);
-    });
     updateSubControls();
   }
 
@@ -864,6 +848,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
             config.setBeat(beatView.getIndex(), beatView.nextTickType());
           }
         });
+        TransitionManager.beginDelayedTransition(binding.linearOptionsBeats, new ChangeBounds());
         binding.linearOptionsBeats.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsBeats);
         updateBeatControls();
@@ -873,6 +858,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       activity.performHapticClick();
       boolean success = config.removeBeat();
       if (success) {
+        TransitionManager.beginDelayedTransition(binding.linearOptionsBeats, new ChangeBounds());
         binding.linearOptionsBeats.removeViewAt(
             binding.linearOptionsBeats.getChildCount() - 1
         );
@@ -895,6 +881,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
             getConfig().setSubdivision(beatView.getIndex(), beatView.nextTickType());
           }
         });
+        TransitionManager.beginDelayedTransition(binding.linearOptionsSubs, new ChangeBounds());
         binding.linearOptionsSubs.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsSubs);
         updateSubControls();
@@ -904,6 +891,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       activity.performHapticClick();
       boolean success = config.removeSubdivision();
       if (success) {
+        TransitionManager.beginDelayedTransition(binding.linearOptionsSubs, new ChangeBounds());
         binding.linearOptionsSubs.removeViewAt(binding.linearOptionsSubs.getChildCount() - 1);
         ViewUtil.centerScrollContentIfNotFullWidth(
             binding.scrollHorizOptionsSubs, true

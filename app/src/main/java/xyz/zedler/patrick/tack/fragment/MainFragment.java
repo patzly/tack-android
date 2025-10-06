@@ -21,7 +21,6 @@ package xyz.zedler.patrick.tack.fragment;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.LayoutTransition;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
@@ -49,6 +48,8 @@ import androidx.annotation.OptIn;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import androidx.transition.ChangeBounds;
+import androidx.transition.TransitionManager;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
 import com.google.android.material.badge.ExperimentalBadgeUtils;
@@ -74,12 +75,12 @@ import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.FragmentMainBinding;
 import xyz.zedler.patrick.tack.drawable.BeatsBgDrawable;
 import xyz.zedler.patrick.tack.fragment.MainFragmentDirections.ActionMainToSong;
-import xyz.zedler.patrick.tack.model.MetronomeConfig;
-import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.LogoUtil;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListener;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine.Tick;
+import xyz.zedler.patrick.tack.model.MetronomeConfig;
+import xyz.zedler.patrick.tack.util.DialogUtil;
+import xyz.zedler.patrick.tack.util.LogoUtil;
 import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.OptionsUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -223,25 +224,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     optionsBadge.setHorizontalOffset(UiUtil.dpToPx(activity, 16));
 
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
-    binding.linearMainBeats.post(() -> {
-      if (binding == null) {
-        return;
-      }
-      LayoutTransition transition = new LayoutTransition();
-      transition.setDuration(Constants.ANIM_DURATION_LONG);
-      binding.linearMainBeats.setLayoutTransition(transition);
-    });
     updateBeats(getSharedPrefs().getString(PREF.BEATS, DEF.BEATS).split(","));
-    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
-    binding.linearMainSubs.post(() -> {
-      if (binding == null) {
-        return;
-      }
-      LayoutTransition transition = new LayoutTransition();
-      transition.setDuration(Constants.ANIM_DURATION_LONG);
-      binding.linearMainSubs.setLayoutTransition(transition);
-    });
 
+    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
     updateSubs(getSharedPrefs().getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(","));
 
     binding.timerMain.setMainActivity(activity);
@@ -1092,6 +1077,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           }
         });
         beatView.setReduceAnimations(reduceAnimations);
+        TransitionManager.beginDelayedTransition(binding.linearMainBeats, new ChangeBounds());
         binding.linearMainBeats.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
         updateBeatControls(true);
@@ -1102,6 +1088,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       performHapticClick();
       boolean success = metronomeEngine.removeBeat();
       if (success) {
+        TransitionManager.beginDelayedTransition(binding.linearMainBeats, new ChangeBounds());
         binding.linearMainBeats.removeViewAt(binding.linearMainBeats.getChildCount() - 1);
         ViewUtil.centerScrollContentIfNotFullWidth(
             binding.scrollHorizMainBeats, true
@@ -1124,6 +1111,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           }
         });
         beatView.setReduceAnimations(reduceAnimations);
+        TransitionManager.beginDelayedTransition(binding.linearMainSubs, new ChangeBounds());
         binding.linearMainSubs.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
         updateSubControls(true);
@@ -1134,6 +1122,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       performHapticClick();
       boolean success = metronomeEngine.removeSubdivision();
       if (success) {
+        TransitionManager.beginDelayedTransition(binding.linearMainSubs, new ChangeBounds());
         binding.linearMainSubs.removeViewAt(binding.linearMainSubs.getChildCount() - 1);
         ViewUtil.centerScrollContentIfNotFullWidth(
             binding.scrollHorizMainSubs, true
