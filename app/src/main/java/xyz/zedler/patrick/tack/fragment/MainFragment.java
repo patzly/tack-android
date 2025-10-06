@@ -547,15 +547,13 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       public void onAddSongClicked() {
         performHapticClick();
         if (activity.isUnlocked() || songsWithParts.size() < 3) {
-          activity.navigate(SongsFragmentDirections.actionSongsToSong());
+          activity.navigate(MainFragmentDirections.actionMainToSong());
         } else {
           unlockDialogUtil.show(
               UnlockUtil.isKeyInstalled(activity)
                   && !UnlockUtil.isInstallerValid(activity)
           );
         }
-        performHapticClick();
-        activity.navigate(MainFragmentDirections.actionMainToSong());
       }
 
       @Override
