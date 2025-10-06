@@ -295,12 +295,6 @@
   </plurals>
   <string name="options_mute_random">Рандомизировать меньшие значения</string>
   <string name="options_subdivisions">Дробления</string>
-  <plurals name="options_subdivisions_description">
-    <item quantity="one">%1$d часть на такт</item>
-    <item quantity="few">%1$d части на такт</item>
-    <item quantity="many">%1$d частей на такт</item>
-    <item quantity="other">%1$d частей на такт</item>
-  </plurals>
   <string name="options_swing">Свинг</string>
   <string name="options_swing_description">Дробление настроено в соответствии с типом свинга</string>
   <string name="options_swing_3">Триоль</string>
