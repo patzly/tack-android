@@ -133,6 +133,7 @@
   <string name="action_discard">破棄</string>
   <string name="action_rename">名前変更</string>
   <string name="action_rename_part">パート名変更</string>
+  <string name="action_rename_part_description">パート名を空白にすると番号のみ表示されます</string>
   <string name="action_update">更新</string>
   <string name="action_use_current_config">現在の設定を使用</string>
   <string name="action_delete">削除</string>
