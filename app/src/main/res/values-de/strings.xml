@@ -137,6 +137,7 @@
   <string name="action_rename_part">Teil umbenennen</string>
   <string name="action_update">Aktualisieren</string>
   <string name="action_use_current_config">Aktuelle Konfiguration nutzen</string>
+  <string name="action_use_current_config_description">Von der Hauptseite</string>
   <string name="action_delete">Löschen</string>
   <string name="action_move_up">Nach oben verschieben</string>
   <string name="action_move_down">Nach unten verschieben</string>
