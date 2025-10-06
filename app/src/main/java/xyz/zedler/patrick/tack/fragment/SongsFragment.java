@@ -56,6 +56,7 @@ import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter.OnSongClickListener;
 import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
 import xyz.zedler.patrick.tack.util.DialogUtil;
+import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.SortUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
@@ -75,7 +76,8 @@ public class SongsFragment extends BaseFragment {
 
   private FragmentSongsBinding binding;
   private MainActivity activity;
-  private DialogUtil dialogUtilIntro, dialogUtilWidgetPrompt, dialogUtilDelete;
+  private DialogUtil dialogUtilIntro, dialogUtilWidgetPrompt;
+  private DialogUtil dialogUtilDelete, dialogUtilPermission, dialogUtilGain;
   private UnlockDialogUtil unlockDialogUtil;
   private BackupDialogUtil backupDialogUtil;
   private List<SongWithParts> songsWithParts = new ArrayList<>();
@@ -102,6 +104,8 @@ public class SongsFragment extends BaseFragment {
     dialogUtilDelete.dismiss();
     unlockDialogUtil.dismiss();
     backupDialogUtil.dismiss();
+    dialogUtilPermission.dismiss();
+    dialogUtilGain.dismiss();
     if (metronomeListener != null && getMetronomeEngine() != null) {
       getMetronomeEngine().removeListener(metronomeListener);
     }
@@ -231,6 +235,11 @@ public class SongsFragment extends BaseFragment {
             () -> adapter.setCurrentSongId(song != null ? song.getSong().getId() : null)
         );
       }
+
+      @Override
+      public void onMetronomePermissionMissing() {
+        activity.runOnUiThread(() -> activity.requestNotificationPermission(true));
+      }
     };
 
     adapter = new SongAdapter(new OnSongClickListener() {
@@ -248,12 +257,24 @@ public class SongsFragment extends BaseFragment {
         if (getMetronomeEngine() == null) {
           return;
         }
-        if (getMetronomeEngine().areHapticEffectsPossible(true)) {
-          performHapticClick();
+        if (getMetronomeEngine().getGain() > 0 &&
+            getMetronomeEngine().neverStartedWithGainBefore()
+        ) {
+          dialogUtilGain.show();
+        } else {
+          boolean permissionDenied = getSharedPrefs().getBoolean(
+              PREF.PERMISSION_DENIED, false
+          );
+          getMetronomeEngine().setCurrentSong(
+              song.getSong().getId(), 0, true, false
+          );
+          if (NotificationUtil.hasPermission(activity) || permissionDenied) {
+            getMetronomeEngine().start();
+          } else {
+            dialogUtilPermission.show();
+          }
         }
-        getMetronomeEngine().setCurrentSong(
-            song.getSong().getId(), 0, true, true
-        );
+        performHapticClick();
       }
 
       @Override
@@ -261,13 +282,25 @@ public class SongsFragment extends BaseFragment {
         if (getMetronomeEngine() == null) {
           return;
         }
-        if (getMetronomeEngine().areHapticEffectsPossible(true)) {
-          performHapticClick();
-        }
         if (getMetronomeEngine().isPlaying()) {
+          performHapticClick();
           getMetronomeEngine().stop();
         } else {
-          getMetronomeEngine().start();
+          if (getMetronomeEngine().getGain() > 0 &&
+              getMetronomeEngine().neverStartedWithGainBefore()
+          ) {
+            dialogUtilGain.show();
+          } else {
+            boolean permissionDenied = getSharedPrefs().getBoolean(
+                PREF.PERMISSION_DENIED, false
+            );
+            if (NotificationUtil.hasPermission(activity) || permissionDenied) {
+              getMetronomeEngine().start();
+            } else {
+              dialogUtilPermission.show();
+            }
+          }
+          performHapticClick();
         }
       }
 
@@ -407,6 +440,44 @@ public class SongsFragment extends BaseFragment {
     backupDialogUtil = new BackupDialogUtil(activity, this);
     backupDialogUtil.showIfWasShown(savedInstanceState);
 
+    dialogUtilPermission = new DialogUtil(activity, "notification_permission");
+    dialogUtilPermission.createDialog(builder -> {
+      builder.setTitle(R.string.msg_notification_permission);
+      builder.setMessage(R.string.msg_notification_permission_description);
+      builder.setPositiveButton(R.string.action_next, (dialog, which) -> {
+        if (getMetronomeEngine() != null) {
+          performHapticClick();
+          getMetronomeEngine().start();
+        }
+      });
+      builder.setNegativeButton(
+          R.string.action_cancel, (dialog, which) -> performHapticClick()
+      );
+    });
+    dialogUtilPermission.showIfWasShown(savedInstanceState);
+
+    dialogUtilGain = new DialogUtil(activity, "gain");
+    dialogUtilGain.createDialogError(builder -> {
+      builder.setTitle(R.string.msg_gain);
+      builder.setMessage(R.string.msg_gain_description);
+      builder.setPositiveButton(R.string.action_play, (dialog, which) -> {
+        if (getMetronomeEngine() != null) {
+          performHapticClick();
+          getMetronomeEngine().start();
+        }
+      });
+      builder.setNegativeButton(
+          R.string.action_deactivate_gain,
+          (dialog, which) -> {
+            if (getMetronomeEngine() != null) {
+              performHapticClick();
+              getMetronomeEngine().setGain(0);
+              getMetronomeEngine().start();
+            }
+          });
+    });
+    dialogUtilGain.showIfWasShown(savedInstanceState);
+
     binding.fabSongs.setOnClickListener(v -> {
       performHapticClick();
       if (activity.isUnlocked() || songsWithParts.size() < 3) {
@@ -434,6 +505,12 @@ public class SongsFragment extends BaseFragment {
     }
     if (backupDialogUtil != null) {
       backupDialogUtil.saveState(outState);
+    }
+    if (dialogUtilPermission != null) {
+      dialogUtilPermission.saveState(outState);
+    }
+    if (dialogUtilGain != null) {
+      dialogUtilGain.saveState(outState);
     }
     // dialogIntro not needed here
 

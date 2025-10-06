@@ -294,7 +294,7 @@ public class MetronomeEngine {
       setConfig(parts.get(index).toConfig(), restart);
       ignoreTimerCallbacksTemp = false;
       if (!isPlaying() && startPlaying) {
-        start(false);
+        start(false, false);
       } else if (restart) {
         restartIfPlaying(true);
       }
@@ -352,7 +352,7 @@ public class MetronomeEngine {
 
   public void restorePlayingState() {
     if (tempPlaying) {
-      start(false);
+      start(false, false);
     } else {
       stop(false, false);
     }
@@ -372,7 +372,7 @@ public class MetronomeEngine {
     audioEngine.setMuted(false);
     hapticUtil.setEnabled(true);
 
-    start(false);
+    start(false, true);
   }
 
   public void destroy() {
@@ -392,13 +392,13 @@ public class MetronomeEngine {
   }
 
   public void start() {
-    start(false);
+    start(false, false);
   }
 
-  private void start(boolean isRestarted) {
+  private void start(boolean isRestarted, boolean ignorePermission) {
     // isRestarted should suppress onStop/onStart callbacks and count-in
     boolean permissionDenied = sharedPrefs.getBoolean(PREF.PERMISSION_DENIED, false);
-    if (!NotificationUtil.hasPermission(context) && !permissionDenied) {
+    if (!NotificationUtil.hasPermission(context) && !permissionDenied && !ignorePermission) {
       synchronized (listeners) {
         for (MetronomeListener listener : listeners) {
           listener.onMetronomePermissionMissing();
@@ -504,7 +504,7 @@ public class MetronomeEngine {
   public void restartIfPlaying(boolean resetTimer) {
     if (isPlaying()) {
       stop(resetTimer, true);
-      start(true);
+      start(true, false);
     } else if (resetTimer) {
       timerProgress = 0;
       if (ignoreTimerCallbacksTemp) {

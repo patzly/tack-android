@@ -31,15 +31,15 @@ import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.PartialDialogLatencyBinding;
 import xyz.zedler.patrick.tack.fragment.SettingsFragment;
-import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListener;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine.Tick;
+import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 
-public class LatencyDialogUtil implements OnChangeListener {
+public class LatencyDialogUtil implements OnChangeListener, OnSliderTouchListener {
 
   private static final String TAG = LatencyDialogUtil.class.getSimpleName();
 
@@ -121,27 +121,8 @@ public class LatencyDialogUtil implements OnChangeListener {
     binding.sliderLatency.removeOnChangeListener(this);
     binding.sliderLatency.setValue(getMetronomeEngine().getLatency());
     binding.sliderLatency.addOnChangeListener(this);
-    binding.sliderLatency.addOnSliderTouchListener(new OnSliderTouchListener() {
-      @Override
-      public void onStartTrackingTouch(@NonNull Slider slider) {
-        flashScreen = true;
-        new Thread(() -> {
-          getMetronomeEngine().savePlayingState();
-          getMetronomeEngine().addListener(latencyListener);
-          getMetronomeEngine().setUpLatencyCalibration();
-        }).start();
-      }
-
-      @Override
-      public void onStopTrackingTouch(@NonNull Slider slider) {
-        flashScreen = false;
-        new Thread(() -> {
-          getMetronomeEngine().restorePlayingState();
-          getMetronomeEngine().removeListener(latencyListener);
-          getMetronomeEngine().setToPreferences(true);
-        }).start();
-      }
-    });
+    binding.sliderLatency.removeOnSliderTouchListener(this);
+    binding.sliderLatency.addOnSliderTouchListener(this);
   }
 
   @Override
@@ -154,6 +135,26 @@ public class LatencyDialogUtil implements OnChangeListener {
       getMetronomeEngine().setLatency((int) value);
       updateValueDisplay();
       fragment.updateLatencyDescription((int) value);
+    }
+  }
+
+  @Override
+  public void onStartTrackingTouch(@NonNull Slider slider) {
+    flashScreen = true;
+    if (getMetronomeEngine() != null) {
+      getMetronomeEngine().savePlayingState();
+      getMetronomeEngine().addListener(latencyListener);
+      getMetronomeEngine().setUpLatencyCalibration();
+    }
+  }
+
+  @Override
+  public void onStopTrackingTouch(@NonNull Slider slider) {
+    flashScreen = false;
+    if (getMetronomeEngine() != null) {
+      getMetronomeEngine().restorePlayingState();
+      getMetronomeEngine().removeListener(latencyListener);
+      getMetronomeEngine().setToPreferences(true);
     }
   }
 
