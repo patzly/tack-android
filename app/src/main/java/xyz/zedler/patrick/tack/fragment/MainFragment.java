@@ -112,7 +112,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
   private int colorFlashNormal, colorFlashStrong, colorFlashMuted;
   private int songPickerAvailableHeight, topControlsBottomMin;
   private DialogUtil dialogUtilGain, dialogUtilSplitScreen, dialogUtilTimer, dialogUtilElapsed;
-  private DialogUtil dialogUtilPermission, dialogUtilBeatMode;
+  private DialogUtil dialogUtilPermission, dialogUtilBeatMode, dialogUtilIntro;
   private UnlockDialogUtil unlockDialogUtil;
   private OptionsUtil optionsUtil;
   private PartsDialogUtil partsDialogUtil;
@@ -154,6 +154,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     tempoDialogUtil.dismiss();
     unlockDialogUtil.dismiss();
     backupDialogUtil.dismiss();
+    dialogUtilIntro.dismiss();
     optionsUtil.dismiss();
     partsDialogUtil.dismiss();
   }
@@ -354,6 +355,23 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     backupDialogUtil = new BackupDialogUtil(activity, this);
     backupDialogUtil.showIfWasShown(savedInstanceState);
 
+    dialogUtilIntro = new DialogUtil(activity, "songs_intro");
+    dialogUtilIntro.createDialog(builder -> {
+      builder.setTitle(R.string.msg_songs_intro);
+      builder.setMessage(R.string.msg_songs_intro_description);
+      builder.setPositiveButton(
+          R.string.action_close,
+          (dialog, which) -> {
+            performHapticClick();
+            getSharedPrefs().edit().putBoolean(PREF.SONGS_INTRO_SHOWN, true).apply();
+          });
+      builder.setOnCancelListener(dialog -> {
+        performHapticClick();
+        getSharedPrefs().edit().putBoolean(PREF.SONGS_INTRO_SHOWN, true).apply();
+      });
+    });
+    dialogUtilIntro.showIfWasShown(savedInstanceState);
+
     dialogUtilBeatMode = new DialogUtil(activity, "beat_mode");
 
     tempoDialogUtil = new TempoDialogUtil(activity, this, tempo -> {
@@ -497,6 +515,11 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       @Override
       public void onExpandCollapseClicked(boolean expand) {
         performHapticClick();
+        if (expand && !getSharedPrefs().getBoolean(PREF.SONGS_INTRO_SHOWN, false)) {
+          new Handler(Looper.getMainLooper()).postDelayed(
+              () -> dialogUtilIntro.show(), 200
+          );
+        }
       }
 
       @Override
@@ -669,6 +692,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     }
     if (dialogUtilBeatMode != null) {
       dialogUtilBeatMode.saveState(outState);
+    }
+    if (dialogUtilIntro != null) {
+      dialogUtilIntro.saveState(outState);
     }
     if (partsDialogUtil != null) {
       partsDialogUtil.saveState(outState);

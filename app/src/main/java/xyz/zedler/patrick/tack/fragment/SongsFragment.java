@@ -76,8 +76,7 @@ public class SongsFragment extends BaseFragment {
 
   private FragmentSongsBinding binding;
   private MainActivity activity;
-  private DialogUtil dialogUtilIntro, dialogUtilWidgetPrompt;
-  private DialogUtil dialogUtilDelete, dialogUtilPermission, dialogUtilGain;
+  private DialogUtil dialogUtilWidgetPrompt, dialogUtilDelete, dialogUtilPermission, dialogUtilGain;
   private UnlockDialogUtil unlockDialogUtil;
   private BackupDialogUtil backupDialogUtil;
   private List<SongWithParts> songsWithParts = new ArrayList<>();
@@ -99,7 +98,6 @@ public class SongsFragment extends BaseFragment {
   public void onDestroyView() {
     super.onDestroyView();
     binding = null;
-    dialogUtilIntro.dismiss();
     dialogUtilWidgetPrompt.dismiss();
     dialogUtilDelete.dismiss();
     unlockDialogUtil.dismiss();
@@ -352,25 +350,6 @@ public class SongsFragment extends BaseFragment {
     );
 
     updateMetronomeControls(true);
-
-    dialogUtilIntro = new DialogUtil(activity, "songs_intro");
-    dialogUtilIntro.createDialog(builder -> {
-      builder.setTitle(R.string.msg_songs_intro);
-      builder.setMessage(R.string.msg_songs_intro_description);
-      builder.setPositiveButton(
-          R.string.action_close,
-          (dialog, which) -> {
-            performHapticClick();
-            getSharedPrefs().edit().putBoolean(PREF.SONGS_INTRO_SHOWN, true).apply();
-          });
-      builder.setOnCancelListener(dialog -> {
-        performHapticClick();
-        getSharedPrefs().edit().putBoolean(PREF.SONGS_INTRO_SHOWN, true).apply();
-      });
-    });
-    if (!getSharedPrefs().getBoolean(PREF.SONGS_INTRO_SHOWN, false)) {
-      dialogUtilIntro.show();
-    }
 
     dialogUtilWidgetPrompt = new DialogUtil(activity, "widget_prompt");
     dialogUtilWidgetPrompt.createDialog(builder -> {
