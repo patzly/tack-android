@@ -112,7 +112,6 @@
   <string name="action_beat_mode">節拍模式</string>
   <string name="action_send_feedback">傳送意見回饋</string>
   <string name="action_reset">重置</string>
-  <string name="action_deactivate_gain">停用增強</string>
   <string name="action_recommend">推薦</string>
   <string name="action_recommend_description">向朋友介紹 Tack</string>
   <string name="action_email">傳送電子郵件</string>
