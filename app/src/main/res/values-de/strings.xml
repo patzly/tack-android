@@ -400,6 +400,7 @@
   <string name="help_song_picker">Wie funktioniert der Werkswähler?</string>
   <string name="help_song_part">Warum springt das Werk nicht zum nächsten Teil?</string>
   <string name="help_notification_displays">Warum wird die Benachrichtigung des Metronom-Services angezeigt, wenn ich die App verlasse?</string>
+  <string name="help_notification_disappears">Warum verschwindet die Benachrichtigung des Metronom-Services, wenn ich die App schließe?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Version</string>
