@@ -402,6 +402,8 @@
   <string name="help_notification_displays">Warum wird die Benachrichtigung des Metronom-Services angezeigt, wenn ich die App verlasse?</string>
   <string name="help_notification_disappears">Warum verschwindet die Benachrichtigung des Metronom-Services, wenn ich die App schließe?</string>
   <string name="help_translation">Wie kann ich Tack für meine Sprache erhalten?</string>
+  <string name="help_translation_answer">Übersetzungen für Tack werden auf Transifex verwaltet, wo Nutzer wie du sie übersetzen können! Besuche GitHub für weitere Informationen oder beginne direkt mit der Übersetzung:</string>
+
   <!-- ABOUT -->
 
   <string name="about_version">Version</string>
