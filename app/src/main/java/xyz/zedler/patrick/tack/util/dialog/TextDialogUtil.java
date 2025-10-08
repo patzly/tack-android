@@ -67,6 +67,7 @@ public class TextDialogUtil {
       }
     });
 
+    binding.formattedText.setIsDialog(true);
     if (highlights != null) {
       binding.formattedText.setText(ResUtil.getRawText(activity, file), highlights);
     } else {

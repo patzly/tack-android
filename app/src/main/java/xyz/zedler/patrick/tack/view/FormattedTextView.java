@@ -45,6 +45,7 @@ public class FormattedTextView extends LinearLayout {
 
   private final Context context;
   private int textColor, textColorVariant;
+  private boolean isDialog;
 
   public FormattedTextView(Context context) {
     super(context);
@@ -83,7 +84,9 @@ public class FormattedTextView extends LinearLayout {
       } else if (part.startsWith("#")) {
         boolean keepDistance = !partNext.startsWith("=> ");
         String[] h = part.split(" ");
-        addView(getHeadline(h[0].length(), part.substring(h[0].length() + 1), keepDistance));
+        addView(
+            getHeadline(h[0].length(), part.substring(h[0].length() + 1), keepDistance)
+        );
       } else if (part.startsWith("- ")) {
         String[] bullets = part.trim().split("- ");
         for (int index = 1; index < bullets.length; index++) {
@@ -100,17 +103,24 @@ public class FormattedTextView extends LinearLayout {
         addView(getDivider());
       } else {
         boolean keepDistance = !partNext.startsWith("=> ") && !partNext.startsWith("__ ");
-        addView(getParagraph(part, keepDistance));
+        if (isDialog) {
+          addView(getMediumParagraph(part));
+        } else {
+          addView(getParagraph(part, keepDistance));
+        }
       }
     }
   }
-
 
   /**
    * Call this before setText().
    */
   public void setTextColor(@ColorInt int color) {
     textColor = color;
+  }
+
+  public void setIsDialog(boolean isDialog) {
+    this.isDialog = isDialog;
   }
 
   private MaterialTextView getParagraph(String text, boolean keepDistance) {
@@ -211,7 +221,11 @@ public class FormattedTextView extends LinearLayout {
     viewBullet.setBackground(shape);
 
     MaterialTextView textViewHeight = new MaterialTextView(
-        new ContextThemeWrapper(context, R.style.Widget_Tack_TextView), null, 0
+        new ContextThemeWrapper(
+            context,
+            isDialog ? R.style.Widget_Tack_TextView_BodyMedium : R.style.Widget_Tack_TextView
+        ),
+        null, 0
     );
     textViewHeight.setLayoutParams(
         new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -227,7 +241,11 @@ public class FormattedTextView extends LinearLayout {
     frameLayout.addView(textViewHeight);
 
     MaterialTextView textView = new MaterialTextView(
-        new ContextThemeWrapper(context, R.style.Widget_Tack_TextView), null, 0
+        new ContextThemeWrapper(
+            context,
+            isDialog ? R.style.Widget_Tack_TextView_BodyMedium : R.style.Widget_Tack_TextView
+        ),
+        null, 0
     );
     LayoutParams paramsText = new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT);
     paramsText.weight = 1;

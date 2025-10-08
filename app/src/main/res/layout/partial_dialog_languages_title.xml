@@ -37,6 +37,7 @@
     style="@style/Widget.Tack.TextView.BodyMedium"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:textColor="?attr/colorOnSurfaceVariant"
     android:text="@string/settings_language_info" />
 
 </LinearLayout>
