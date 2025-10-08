@@ -29,7 +29,7 @@ import xyz.zedler.patrick.tack.util.UnlockUtil;
 
 public class UnlockDialogUtil {
 
-  private final DialogUtil dialogUtilUnlock, dialogUtilInstaller;
+  private final DialogUtil dialogUtilUnlock;
 
   public UnlockDialogUtil(@NonNull MainActivity activity) {
     dialogUtilUnlock = new DialogUtil(activity, "unlock");
@@ -46,47 +46,23 @@ public class UnlockDialogUtil {
           R.string.action_cancel, (dialog, which) -> activity.performHapticClick()
       );
     });
-
-    dialogUtilInstaller = new DialogUtil(activity, "installer_check");
-    dialogUtilInstaller.createDialog(builder -> {
-      builder.setTitle(R.string.msg_installer_check);
-      builder.setMessage(R.string.msg_installer_check_description);
-      builder.setPositiveButton(
-          R.string.action_open_play_store,
-          (dialog, which) -> {
-            activity.performHapticClick();
-            UnlockUtil.openPlayStore(activity);
-          });
-      builder.setNegativeButton(
-          R.string.action_cancel, (dialog, which) -> activity.performHapticClick()
-      );
-    });
   }
 
-  public void show(boolean showInstallerCheck) {
-    if (showInstallerCheck) {
-      dialogUtilInstaller.show();
-    } else {
-      dialogUtilUnlock.show();
-    }
+  public void show() {
+    dialogUtilUnlock.show();
   }
 
   public void showIfWasShown(@Nullable Bundle state) {
     dialogUtilUnlock.showIfWasShown(state);
-    dialogUtilInstaller.showIfWasShown(state);
   }
 
   public void dismiss() {
     dialogUtilUnlock.dismiss();
-    dialogUtilInstaller.dismiss();
   }
 
   public void saveState(@NonNull Bundle outState) {
     if (dialogUtilUnlock != null) {
       dialogUtilUnlock.saveState(outState);
-    }
-    if (dialogUtilInstaller != null) {
-      dialogUtilInstaller.saveState(outState);
     }
   }
 }

@@ -85,7 +85,6 @@ import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.OptionsUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
-import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.util.dialog.BackupDialogUtil;
 import xyz.zedler.patrick.tack.util.dialog.PartsDialogUtil;
@@ -418,7 +417,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     binding.circleMain.setReduceAnimations(reduceAnimations);
     binding.circleMain.setOnDragAnimListener(fraction -> {
       if (VERSION.SDK_INT >= VERSION_CODES.O) {
-        binding.textMainTempo.setFontVariationSettings("'wght' " + (600 + (fraction * 150)));
+        binding.textMainTempo.setFontVariationSettings("'wght' " + (600 + (fraction * 300)));
       }
     });
 
@@ -557,10 +556,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         if (activity.isUnlocked() || songsWithParts.size() < 3) {
           activity.navigate(MainFragmentDirections.actionMainToSong());
         } else {
-          unlockDialogUtil.show(
-              UnlockUtil.isKeyInstalled(activity)
-                  && !UnlockUtil.isInstallerValid(activity)
-          );
+          unlockDialogUtil.show();
         }
       }
 

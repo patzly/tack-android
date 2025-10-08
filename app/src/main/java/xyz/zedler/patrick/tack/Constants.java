@@ -45,7 +45,7 @@ public final class Constants {
     public static final String FEEDBACK_POP_UP_COUNT = "feedback_pop_up_count";
     public static final String SONGS_INTRO_SHOWN = "songs_intro_shown";
     public static final String SONGS_VISIT_COUNT = "songs_visit_count";
-    public static final String VERIFY_KEY = "check_installer";
+    public static final String CHECK_UNLOCK_KEY = "check_installer";
     public static final String PERMISSION_DENIED = "notification_permission_denied";
 
     // Metronome

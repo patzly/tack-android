@@ -60,7 +60,6 @@ import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.SortUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
-import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil.OnMenuInflatedListener;
 import xyz.zedler.patrick.tack.util.WidgetUtil;
@@ -462,10 +461,7 @@ public class SongsFragment extends BaseFragment {
       if (activity.isUnlocked() || songsWithParts.size() < 3) {
         activity.navigate(SongsFragmentDirections.actionSongsToSong());
       } else {
-        unlockDialogUtil.show(
-            UnlockUtil.isKeyInstalled(activity)
-                && !UnlockUtil.isInstallerValid(activity)
-        );
+        unlockDialogUtil.show();
       }
     });
   }

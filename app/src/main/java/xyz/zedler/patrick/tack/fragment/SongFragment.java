@@ -66,7 +66,6 @@ import xyz.zedler.patrick.tack.util.OptionsUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.SortUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
-import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil.OnMenuInflatedListener;
 import xyz.zedler.patrick.tack.util.WidgetUtil;
@@ -575,10 +574,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         addPart();
         updateResult();
       } else {
-        unlockDialogUtil.show(
-            UnlockUtil.isKeyInstalled(activity)
-                && !UnlockUtil.isInstallerValid(activity)
-        );
+        unlockDialogUtil.show();
       }
     }
   }

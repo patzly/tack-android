@@ -102,9 +102,6 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     ViewUtil.setTooltipText(binding.buttonAboutBack, R.string.action_back);
     ViewUtil.setTooltipText(binding.buttonAboutMenu, R.string.action_more);
 
-    binding.linearAboutKey.setVisibility(
-        UnlockUtil.isPlayStoreInstalled(activity) ? View.VISIBLE : View.GONE
-    );
     updateUnlockItem();
 
     unlockDialogUtil = new UnlockDialogUtil(activity);
@@ -189,11 +186,10 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     } else if (id == R.id.linear_about_vending) {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_vending_dev))));
     } else if (id == R.id.linear_about_key) {
-      boolean isKeyInstalled = UnlockUtil.isKeyInstalled(activity);
-      if (isKeyInstalled && UnlockUtil.isInstallerValid(activity)) {
+      if (UnlockUtil.isKeyInstalled(activity)) {
         UnlockUtil.openPlayStore(activity);
       } else {
-        unlockDialogUtil.show(isKeyInstalled);
+        unlockDialogUtil.show();
       }
     } else if (id == R.id.linear_about_github) {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_github))));
@@ -214,7 +210,9 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
   }
 
   private void updateUnlockItem() {
-    if (!UnlockUtil.isPlayStoreInstalled(activity)) {
+    boolean isPlayStoreInstalled = UnlockUtil.isPlayStoreInstalled(activity);
+    binding.linearAboutKey.setVisibility(isPlayStoreInstalled ? View.VISIBLE : View.GONE);
+    if (!isPlayStoreInstalled) {
       return;
     }
     if (activity.isUnlocked()) {
@@ -223,7 +221,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
       binding.linearAboutKey.setOnLongClickListener(v -> {
         longClickCount++;
         if (longClickCount >= 10) {
-          getSharedPrefs().edit().putBoolean(PREF.VERIFY_KEY, false).apply();
+          getSharedPrefs().edit().putBoolean(PREF.CHECK_UNLOCK_KEY, false).apply();
           updateUnlockItem();
           binding.linearAboutKey.setOnLongClickListener(null);
         }
@@ -232,20 +230,10 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     }
     int resId = R.string.about_key_description_not_installed;
     int textColor = ResUtil.getColor(activity, R.attr.colorOnSurfaceVariant);
-    boolean verifyKey = getSharedPrefs().getBoolean(PREF.VERIFY_KEY, true);
+    boolean checkUnlockKey = getSharedPrefs().getBoolean(PREF.CHECK_UNLOCK_KEY, true);
     if (UnlockUtil.isKeyInstalled(activity)) {
-      if (verifyKey) {
-        boolean isInstallerValid = UnlockUtil.isInstallerValid(activity);
-        resId = isInstallerValid
-            ? R.string.about_key_description_installed
-            : R.string.about_key_description_invalid;
-        if (!isInstallerValid) {
-          textColor = ResUtil.getColor(activity, R.attr.colorError);
-        }
-      } else {
-        resId = R.string.about_key_description_installed;
-      }
-    } else if (!verifyKey) {
+      resId = R.string.about_key_description_installed;
+    } else if (!checkUnlockKey) {
       resId = R.string.about_key_description_ignored;
     }
     binding.textAboutKeyDescription.setText(resId);
