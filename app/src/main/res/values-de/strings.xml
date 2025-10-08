@@ -398,6 +398,7 @@
   <string name="help_swing">Wie deaktiviere ich Swing?</string>
   <string name="help_song_library">Wie funktioniert die Werksammlung?</string>
   <string name="help_song_picker">Wie funktioniert der Werkswähler?</string>
+  <string name="help_song_part">Warum springt das Werk nicht zum nächsten Teil?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Version</string>
