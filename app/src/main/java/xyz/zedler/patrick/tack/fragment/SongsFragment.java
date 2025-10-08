@@ -445,7 +445,7 @@ public class SongsFragment extends BaseFragment {
         }
       });
       builder.setNegativeButton(
-          R.string.action_deactivate_gain,
+          R.string.action_deactivate,
           (dialog, which) -> {
             if (getMetronomeEngine() != null) {
               performHapticClick();

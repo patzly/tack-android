@@ -127,7 +127,7 @@
   <string name="action_beat_mode">Beat mode</string>
   <string name="action_send_feedback">Send feedback</string>
   <string name="action_reset">Reset</string>
-  <string name="action_deactivate_gain">Deactivate boost</string>
+  <string name="action_deactivate">Deactivate</string>
   <string name="action_recommend">Recommend</string>
   <string name="action_recommend_description">Tell your friends about Tack</string>
   <string name="action_email">Send email</string>

@@ -270,7 +270,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         }
       });
       builder.setNegativeButton(
-          R.string.action_deactivate_gain,
+          R.string.action_deactivate,
           (dialog, which) -> {
             if (getMetronomeEngine() != null) {
               performHapticClick();
