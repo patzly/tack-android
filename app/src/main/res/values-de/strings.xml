@@ -400,6 +400,7 @@
   <string name="help_swing">Wie deaktiviere ich Swing?</string>
   <string name="help_swing_answer">Wenn du Swing in den Optionen aktiviert hast, legt Tack lediglich die Schlag-Unterteilungen für dich fest. Um Swing zu deaktivieren, änderst du die Unterteilungen einfach manuell nach deinen Wünschen.</string>
   <string name="help_song_library">Wie funktioniert die Werksammlung?</string>
+  <string name="help_song_library_answer">Die Werksammlung ist eine Sammlung von Metronomkonfigurationen, die du speichern und anwenden kannst. Um deine aktuelle Konfiguration zu speichern, öffnest du einfach die Werksammlung und erstellst ein neues Werk. Deine aktuelle Konfiguration wird zur Teil-Liste hinzugefügt, wo du sie weiter anpassen kannst. Vergiss nicht, dein Ergebnis durch Tippen auf das Diskettensymbol in der oberen rechten Ecke zu speichern, nachdem du dem Werk einen Namen gegeben hast.</string>
   <string name="help_song_picker">Wie funktioniert der Werkswähler?</string>
   <string name="help_song_part">Warum springt das Werk nicht zum nächsten Teil?</string>
   <string name="help_notification_displays">Warum wird die Benachrichtigung des Metronom-Services angezeigt, wenn ich die App verlasse?</string>
