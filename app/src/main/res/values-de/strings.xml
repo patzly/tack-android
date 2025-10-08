@@ -394,6 +394,7 @@
   <!-- HELP -->
 
   <string name="help_tempo_change">Wie kann ich das Tempo ändern?</string>
+  <string name="help_time_signature">Wie stelle ich die Taktart ein?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Version</string>
