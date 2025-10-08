@@ -397,6 +397,7 @@
   <string name="help_time_signature">Wie stelle ich die Taktart ein?</string>
   <string name="help_swing">Wie deaktiviere ich Swing?</string>
   <string name="help_song_library">Wie funktioniert die Werksammlung?</string>
+  <string name="help_song_picker">Wie funktioniert der Werkswähler?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Version</string>
