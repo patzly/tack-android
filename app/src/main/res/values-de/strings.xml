@@ -394,6 +394,7 @@
   <!-- HELP -->
 
   <string name="help_tempo_change">Wie kann ich das Tempo ändern?</string>
+  <string name="help_tempo_change_answer">Um das Tempo zu ändern, kannst du den Tempo-Wähler in der Mitte der Hauptseite ziehen und drehen oder auf die Schaltflächen links und rechts neben dem Kreis tippen. Durch Tippen auf den Tempo-Wähler öffnet sich ein Dialog, in dem du das Tempo durch Tippen in BPM oder über die Tastatur einstellen kannst.</string>
   <string name="help_time_signature">Wie stelle ich die Taktart ein?</string>
   <string name="help_swing">Wie deaktiviere ich Swing?</string>
   <string name="help_song_library">Wie funktioniert die Werksammlung?</string>
