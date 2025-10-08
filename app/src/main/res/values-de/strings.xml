@@ -391,6 +391,9 @@
   <string name="settings_big_logo">Große Logo-Animation anzeigen</string>
   <string name="settings_big_logo_description">Statt Tempo-Wähler während Wiedergabe</string>
 
+  <!-- HELP -->
+
+  <string name="help_tempo_change">Wie kann ich das Tempo ändern?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Version</string>
