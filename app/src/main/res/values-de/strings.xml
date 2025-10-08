@@ -114,6 +114,7 @@
   <string name="action_beat_mode">Schlagmodus</string>
   <string name="action_send_feedback">Rückmeldung senden</string>
   <string name="action_reset">Zurücksetzen</string>
+  <string name="action_deactivate">Deaktivieren</string>
   <string name="action_recommend">Weiterempfehlen</string>
   <string name="action_recommend_description">Erzähle deinen Freunden von Tack</string>
   <string name="action_email">E-Mail senden</string>
