@@ -372,6 +372,16 @@
   <string name="settings_big_logo">大きなサイズのロゴアニメーション</string>
   <string name="settings_big_logo_description">再生中のテンポ表示の代わりに動きます</string>
 
+  <!-- HELP -->
+
+  <string name="help_tempo_change">テンポを変更するには？</string>
+  <string name="help_tempo_change_answer">テンポを変更するには、メインページ中央のテンポメーターを回すか、メーターの左右にあるボタンをタップしましょう。\nテンポメーターを一度タップすると、BPMタップまたはキーボード入力でテンポを指定するダイアログが開きます。</string>
+  <string name="help_time_signature">拍子を指定するには？</string>
+  <string name="help_time_signature_answer">拍子記号の上の数字に応じてTackで拍を指定しましょう。つまり、4/4拍子なら拍数を4に、2/2拍子なら2にすればいいのです。6/8拍子は少し特殊で、8拍のうち1拍目と4拍目のみがダウンビートです。拍数を2にしたあとで拍分割を3にしましょう。\nさらに、各拍のドットをタップすることでアクセントを変更できます。オプションでスウィング比率を指定した場合は、拍分割が自動的に変更されます。</string>
+  <string name="help_swing">スウィングを無効化するには？</string>
+  <string name="help_swing_answer">オプションでスウィングを有効にした場合、拍分割が自動的に変更されます。拍分割を変更するとスウィングも無効化されます。</string>
+  <string name="help_translation_answer">TackのローカライズはTransifexで管理されており、ユーザーは翻訳に参加できます。詳細はTackのGitHubをご覧になるか、翻訳サイトにアクセスしてください:</string>
+
   <!-- ABOUT -->
 
   <string name="about_version">バージョン</string>
