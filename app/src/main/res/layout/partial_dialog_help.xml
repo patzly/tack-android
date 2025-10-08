@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2025 by Patrick Zedler
+  -->
+
+<FrameLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:paddingTop="20dp">
+
+  <com.google.android.material.divider.MaterialDivider
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="top" />
+
+  <com.google.android.material.divider.MaterialDivider
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom" />
+
+  <androidx.core.widget.NestedScrollView
+    android:id="@+id/scroll_help"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="1dp"
+    android:layout_marginBottom="1dp"
+    android:scrollbars="vertical"
+    android:scrollbarThumbVertical="@drawable/shape_scrollbar_rounded">
+
+    <LinearLayout
+      android:id="@+id/linear_help_container"
+      android:orientation="vertical"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingStart="24dp"
+      android:paddingEnd="24dp"
+      android:paddingTop="16dp"
+      android:paddingBottom="16dp">
+
+      <LinearLayout
+        android:id="@+id/linear_help_question1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/ripple_list_item_bg_segmented_first">
+
+        <TextView
+          style="@style/Widget.Tack.TextView.TitleMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/help_tempo_change" />
+
+        <TextView
+          android:id="@+id/text_help_answer1"
+          style="@style/Widget.Tack.TextView.BodyMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="@string/help_tempo_change_answer"
+          android:visibility="gone" />
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/linear_help_question2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/ripple_list_item_bg_segmented_middle">
+
+        <TextView
+          style="@style/Widget.Tack.TextView.TitleMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/help_time_signature" />
+
+        <TextView
+          android:id="@+id/text_help_answer2"
+          style="@style/Widget.Tack.TextView.BodyMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="@string/help_time_signature_answer"
+          android:visibility="gone" />
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/linear_help_question3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/ripple_list_item_bg_segmented_middle">
+
+        <TextView
+          style="@style/Widget.Tack.TextView.TitleMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/help_swing" />
+
+        <TextView
+          android:id="@+id/text_help_answer3"
+          style="@style/Widget.Tack.TextView.BodyMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="@string/help_swing_answer"
+          android:visibility="gone" />
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/linear_help_question4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/ripple_list_item_bg_segmented_middle">
+
+        <TextView
+          style="@style/Widget.Tack.TextView.TitleMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/help_song_library" />
+
+        <TextView
+          android:id="@+id/text_help_answer4"
+          style="@style/Widget.Tack.TextView.BodyMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="@string/help_song_library_answer"
+          android:visibility="gone" />
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/linear_help_question5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/ripple_list_item_bg_segmented_middle">
+
+        <TextView
+          style="@style/Widget.Tack.TextView.TitleMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/help_song_picker" />
+
+        <TextView
+          android:id="@+id/text_help_answer5"
+          style="@style/Widget.Tack.TextView.BodyMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="@string/help_song_picker_answer"
+          android:visibility="gone" />
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/linear_help_question6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/ripple_list_item_bg_segmented_middle">
+
+        <TextView
+          style="@style/Widget.Tack.TextView.TitleMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/help_song_part" />
+
+        <TextView
+          android:id="@+id/text_help_answer6"
+          style="@style/Widget.Tack.TextView.BodyMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="@string/help_song_part_answer"
+          android:visibility="gone" />
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/linear_help_question7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/ripple_list_item_bg_segmented_middle">
+
+        <TextView
+          style="@style/Widget.Tack.TextView.TitleMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/help_notification_displays" />
+
+        <TextView
+          android:id="@+id/text_help_answer7"
+          style="@style/Widget.Tack.TextView.BodyMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="@string/help_notification_displays_answer"
+          android:visibility="gone" />
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/linear_help_question8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/ripple_list_item_bg_segmented_middle">
+
+        <TextView
+          style="@style/Widget.Tack.TextView.TitleMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/help_notification_disappears" />
+
+        <TextView
+          android:id="@+id/text_help_answer8"
+          style="@style/Widget.Tack.TextView.BodyMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:text="@string/help_notification_disappears_answer"
+          android:visibility="gone" />
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/linear_help_question9"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="12dp"
+        android:background="@drawable/ripple_list_item_bg_segmented_last">
+
+        <TextView
+          style="@style/Widget.Tack.TextView.TitleMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginBottom="4dp"
+          android:text="@string/help_translation" />
+
+        <TextView
+          android:id="@+id/text_help_answer9"
+          style="@style/Widget.Tack.TextView.BodyMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="4dp"
+          android:text="@string/help_translation_answer"
+          android:visibility="gone" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_help_translate"
+          style="@style/Widget.Tack.Button.TonalButton"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="8dp"
+          android:visibility="gone"
+          android:text="@string/about_translation"
+          app:icon="@drawable/ic_rounded_translate" />
+
+      </LinearLayout>
+
+    </LinearLayout>
+
+  </androidx.core.widget.NestedScrollView>
+
+</FrameLayout>
