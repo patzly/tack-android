@@ -381,6 +381,7 @@
   <string name="help_notification_displays">為什麼我離開應用程式時會顯示節拍器服務通知？</string>
   <string name="help_notification_displays_answer">如果你未在設定中啟用「永久通知」，則當節拍器服務在背景運行時，該通知對於節拍器服務保持活動狀態至關重要。\n該服務負責管理播放並追蹤計時器或已使用時間等即時數據，以將播放與應用程式介面區分開。\n你可以點擊「停止」以將服務移至後台，但是這不再保證它不會被系統終止。這可能會導致計時器和已使用時間被重置，直至服務再次處於前台。\n你也可以在設定中啟用永久通知，以便始終能夠在通知區域中存取啟動或停止功能。</string>
   <string name="help_notification_disappears">為什麼當我關閉應用程式時節拍器服務通知會消失？</string>
+  <string name="help_notification_disappears_answer">當你從最近的應用程式關閉應用程式時，節拍器服務將會停止，通知也會消失。此行為旨在節省電力和資源。\n如果你想永久保留通知以供啟動或停止功能，你可以在設定中啟用「永久通知」，並且不要從最近的應用程式中關閉此應用程式。</string>
   <!-- ABOUT -->
 
   <string name="about_version">版本</string>
