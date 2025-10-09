@@ -378,6 +378,7 @@
   <string name="help_song_picker">歌曲選擇器如何運作？</string>
   <string name="help_song_picker_answer">你歌曲庫中的所有歌曲都會顯示在主頁的歌曲選擇器中，但是你可以根據需要開啟全螢幕清單。顯示順序取決於你在選單中的選擇。要套用某首歌曲，只需要點擊即可。你也可以透過點擊歌曲下方的目前部份或使用跳過按鈕跳到歌曲的特定部份。\n如果你想切換回選擇歌曲之前的配置，請點擊歌曲名稱旁邊的 ×。</string>
   <string name="help_song_part">為什麼歌曲沒有切換到下一部份？</string>
+  <string name="help_notification_displays">為什麼我離開應用程式時會顯示節拍器服務通知？</string>
   <!-- ABOUT -->
 
   <string name="about_version">版本</string>
