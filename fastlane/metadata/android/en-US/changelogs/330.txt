@@ -7,6 +7,7 @@
 • New: "volume boost" setting extended for volume reduction and moved to separate dialog
 • New: "flash screen" setting extended with option for subtle flash
 • New: "keep screen awake" setting extended with option for always awake
+• New: help dialog now translatable and with expandable sections
 • New: Japanese and Dutch translations (thanks to the contributors!)
 • New: Support for Android 16 and dropped support for Android 5 due to dependency limitations
 • Improved: "hide subdivision controls" setting removed for simplicity

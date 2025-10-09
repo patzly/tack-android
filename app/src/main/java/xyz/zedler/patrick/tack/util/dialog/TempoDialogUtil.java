@@ -104,7 +104,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
     if (VERSION.SDK_INT >= VERSION_CODES.O) {
       Typeface variableTypeface = ResourcesCompat.getFont(activity, R.font.nunito_variable_wght);
       binding.textTempoTapTempo.setTypeface(variableTypeface);
-      binding.textTempoTapTempo.setFontVariationSettings("'wght' " + 900);
+      binding.textTempoTapTempo.setFontVariationSettings("'wght' " + 750);
     }
     binding.textSwitcherTempoTapTempoTerm.setFactory(() -> {
       TextView textView = new TextView(activity);

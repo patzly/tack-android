@@ -36,7 +36,6 @@ import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
 import androidx.graphics.shapes.Morph;
 import androidx.graphics.shapes.Shapes_androidKt;
-import com.google.android.material.motion.MotionUtils;
 import com.google.android.material.shape.MaterialShapes;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -64,10 +63,10 @@ public class TempoTapView extends View {
 
     morph = new Morph(
         ShapeUtil.normalize(
-            MaterialShapes.SQUARE, true, new RectF(-1, -1, 1, 1)
+            MaterialShapes.VERY_SUNNY, true, new RectF(-1, -1, 1, 1)
         ),
         ShapeUtil.normalize(
-            MaterialShapes.PILL, true, new RectF(-1, -1, 1, 1)
+            MaterialShapes.SUNNY, true, new RectF(-1, -1, 1, 1)
         )
     );
 
@@ -115,12 +114,8 @@ public class TempoTapView extends View {
       if (springAnimationRelease == null) {
         springAnimationRelease =
             new SpringAnimation(this, TOUCH_FACTOR)
-                .setSpring(
-                    MotionUtils.resolveThemeSpringForce(
-                        getContext(),
-                        R.attr.motionSpringFastSpatial,
-                        R.style.Motion_Material3_Spring_Standard_Fast_Spatial)
-                ).setMinimumVisibleChange(0.01f);
+                .setSpring(new SpringForce().setStiffness(1400).setDampingRatio(0.6f))
+                .setMinimumVisibleChange(0.01f);
       }
       if (touched) {
         springAnimationTouch.animateToFinalPosition(1);
