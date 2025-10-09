@@ -140,7 +140,7 @@ public class TempoTapView extends View {
       if (springAnimationRelease == null) {
         springAnimationRelease =
             new SpringAnimation(this, TOUCH_FACTOR)
-                .setSpring(new SpringForce().setStiffness(1400).setDampingRatio(0.6f))
+                .setSpring(new SpringForce().setStiffness(1400).setDampingRatio(0.4f))
                 .setMinimumVisibleChange(0.01f);
       }
       if (touched) {
