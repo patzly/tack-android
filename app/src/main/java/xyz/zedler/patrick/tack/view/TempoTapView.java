@@ -26,11 +26,14 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
+import android.graphics.RadialGradient;
 import android.graphics.RectF;
+import android.graphics.Shader.TileMode;
 import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.ColorUtils;
 import androidx.dynamicanimation.animation.FloatPropertyCompat;
 import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
@@ -49,7 +52,9 @@ public class TempoTapView extends View {
   private final Path path;
   private final Matrix matrix;
   private final Morph morph;
+  private final int colorGradient1, colorGradient2;
   private float touchFactor;
+  private RadialGradient gradient;
   private boolean reduceAnimations;
   private SpringAnimation springAnimationTouch, springAnimationRelease;
 
@@ -57,9 +62,12 @@ public class TempoTapView extends View {
   public TempoTapView(@NonNull Context context, @Nullable AttributeSet attrs) {
     super(context, attrs);
 
+    colorGradient1 = ResUtil.getColor(context, R.attr.colorSecondaryContainer);
+    colorGradient2 = ResUtil.getColor(context, R.attr.colorTertiaryContainer);
+
     paintFill = new Paint();
     paintFill.setStyle(Style.FILL);
-    paintFill.setColor(ResUtil.getColor(context, R.attr.colorTertiaryContainer));
+    paintFill.setColor(colorGradient2);
 
     morph = new Morph(
         ShapeUtil.normalize(
@@ -85,6 +93,24 @@ public class TempoTapView extends View {
   @Override
   protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
     updateShape();
+
+    if (gradient == null) {
+      float blendFraction = 0.5f;
+      gradient = new RadialGradient(
+          right,
+          top,
+          getWidth() * 2,
+          new int[]{
+              ColorUtils.blendARGB(colorGradient2, colorGradient1, blendFraction),
+              ColorUtils.blendARGB(colorGradient2, colorGradient1, blendFraction),
+              ColorUtils.blendARGB(colorGradient2, colorGradient2, blendFraction),
+              ColorUtils.blendARGB(colorGradient2, colorGradient2, blendFraction)
+          },
+          new float[]{0, 0.1f, 0.6f, 0.8f},
+          TileMode.CLAMP
+      );
+    }
+    paintFill.setShader(gradient);
   }
 
   private void updateShape() {
