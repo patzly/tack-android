@@ -140,8 +140,8 @@
     android:padding="16dp"
     android:background="@drawable/ripple_list_item_bg_segmented_last">
 
-    <xyz.zedler.patrick.tack.view.CloverView
-      android:id="@+id/clover_tempo_tap"
+    <xyz.zedler.patrick.tack.view.TempoTapView
+      android:id="@+id/tempo_tap_tempo"
       android:layout_width="@dimen/tempo_tap_size"
       android:layout_height="@dimen/tempo_tap_size"
       android:layout_gravity="center" />

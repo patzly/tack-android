@@ -21,6 +21,9 @@ package xyz.zedler.patrick.tack.util.dialog;
 
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
+import android.graphics.Typeface;
+import android.os.Build.VERSION;
+import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.TypedValue;
@@ -34,6 +37,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.button.MaterialButtonToggleGroup.OnButtonCheckedListener;
 import java.util.LinkedList;
@@ -97,6 +101,11 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
         v -> binding.switchTempoInstant.toggle()
     );
 
+    if (VERSION.SDK_INT >= VERSION_CODES.O) {
+      Typeface variableTypeface = ResourcesCompat.getFont(activity, R.font.nunito_variable_wght);
+      binding.textTempoTapTempo.setTypeface(variableTypeface);
+      binding.textTempoTapTempo.setFontVariationSettings("'wght' " + 900);
+    }
     binding.textSwitcherTempoTapTempoTerm.setFactory(() -> {
       TextView textView = new TextView(activity);
       textView.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -109,7 +118,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
     });
     binding.frameTempoTapContainer.setOnTouchListener((v, event) -> {
       if (event.getAction() == MotionEvent.ACTION_DOWN) {
-        binding.cloverTempoTap.setTapped(true);
+        binding.tempoTapTempo.setTouched(true);
         boolean enoughData = tap();
         if (enoughData && getMetronomeEngine() != null) {
           setTapTempoDisplay(getMetronomeEngine().getConfig().getTempo(), getTapTempo());
@@ -121,7 +130,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
         return true;
       } else if (event.getAction() == MotionEvent.ACTION_UP
           || event.getAction() == MotionEvent.ACTION_CANCEL) {
-        binding.cloverTempoTap.setTapped(false);
+        binding.tempoTapTempo.setTouched(false);
         v.performClick();
         return true;
       }
@@ -276,7 +285,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
       int tempo = metronomeEngine.getConfig().getTempo();
       setTapTempoDisplay(tempo, tempo);
       binding.textSwitcherTempoTapTempoTerm.setCurrentText(fragment.getTempoTerm(tempo));
-      binding.cloverTempoTap.setReduceAnimations(fragment.isReduceAnimations());
+      binding.tempoTapTempo.setReduceAnimations(fragment.isReduceAnimations());
     }
     binding.frameTempoInputContainer.setVisibility(inputMethodKeyboard ? View.VISIBLE : View.GONE);
     binding.frameTempoTapContainer.setVisibility(inputMethodKeyboard ? View.GONE : View.VISIBLE);
