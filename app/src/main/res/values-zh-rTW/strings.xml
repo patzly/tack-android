@@ -112,6 +112,7 @@
   <string name="action_beat_mode">節拍模式</string>
   <string name="action_send_feedback">傳送意見回饋</string>
   <string name="action_reset">重置</string>
+  <string name="action_deactivate">停用</string>
   <string name="action_recommend">推薦</string>
   <string name="action_recommend_description">向朋友介紹 Tack</string>
   <string name="action_email">傳送電子郵件</string>
@@ -132,15 +133,19 @@
   <string name="action_discard">捨棄</string>
   <string name="action_rename">重新命名</string>
   <string name="action_rename_part">重新命名部份</string>
+  <string name="action_rename_part_description">如果編號就夠了，也可以留空</string>
   <string name="action_update">更新</string>
   <string name="action_use_current_config">使用目前配置</string>
+  <string name="action_use_current_config_description">從主頁</string>
   <string name="action_delete">刪除</string>
   <string name="action_move_up">向上移動</string>
   <string name="action_move_down">向下移動</string>
   <string name="action_open_play_store">開啟 Play 商店</string>
   <string name="action_backup_restore">備份／還原</string>
   <string name="action_backup">備份</string>
+  <string name="action_backup_description">儲存備份檔案在你選擇的目錄中</string>
   <string name="action_restore">還原</string>
+  <string name="action_restore_description">現有的歌曲永遠不會被刪除或覆寫</string>
   <string name="action_view_more_songs">檢視更多歌曲</string>
   <string name="action_next">下一頁</string>
   <string name="action_show_parts">顯示部份</string>
@@ -151,6 +156,8 @@
   <string name="action_expand">展開</string>
   <string name="action_collapse">收合</string>
   <string name="action_show_songs_list">顯示歌曲為清單</string>
+  <string name="action_learn_more">瞭解更多</string>
+
   <!-- MESSAGES -->
 
   <string name="msg_feedback">一款優秀的應用程式需要花費大量的時間和獲取使用者的意見反映。</string>
@@ -184,6 +191,7 @@
   <string name="msg_songs_empty_description">加入你想練習的歌曲</string>
   <string name="msg_unlock">來自開發者的訊息</string>
   <string name="msg_unlock_description">你是否喜歡 Tack 中大量強大功能和無廣告體驗？我花了數年的時間建立了免費的 Tack，尤其是歌曲庫功能花了數月的辛勤工作。\n為了繼續改進 Tack，我懇請大家做出一點小貢獻。作為回報，你將會獲得一個解鎖應用程式，其中包含無限的歌曲和無數的歌曲部分。感謝您的支持！</string>
+  <string name="msg_backup_description">你可以將整個歌曲庫備份至裝置，也可以從備份中還原歌曲庫。</string>
   <string name="msg_backup_error">備份時發生錯誤</string>
   <string name="msg_backup_directory_missing">未選擇備份的儲存位置</string>
   <string name="msg_backup_success">備份已成功建立</string>
@@ -360,6 +368,22 @@
 
   <string name="settings_big_logo">顯示大型標識動畫</string>
   <string name="settings_big_logo_description">而不是在播放時顯示節奏選擇器</string>
+
+  <!-- HELP -->
+
+  <string name="help_tempo_change">我怎樣才能變更拍子？</string>
+  <string name="help_swing">我如何停用擺動？</string>
+  <string name="help_song_library">歌曲庫如何運作？</string>
+  <string name="help_song_library_answer">歌曲庫是節拍器配置的集合，你可以儲存並套用這些配置。要儲存目前配置，只需要開啟歌曲庫並建立新歌曲即可。目前配置將會新增至部份清單中，你可以在其中進一步調整。為歌曲命名後，請不要忘記點擊右上角的磁碟圖示來儲存。</string>
+  <string name="help_song_picker">歌曲選擇器如何運作？</string>
+  <string name="help_song_picker_answer">你歌曲庫中的所有歌曲都會顯示在主頁的歌曲選擇器中，但是你可以根據需要開啟全螢幕清單。顯示順序取決於你在選單中的選擇。要套用某首歌曲，只需要點擊即可。你也可以透過點擊歌曲下方的目前部份或使用跳過按鈕跳到歌曲的特定部份。\n如果你想切換回選擇歌曲之前的配置，請點擊歌曲名稱旁邊的 ×。</string>
+  <string name="help_song_part">為什麼歌曲沒有切換到下一部份？</string>
+  <string name="help_notification_displays">為什麼我離開應用程式時會顯示節拍器服務通知？</string>
+  <string name="help_notification_displays_answer">如果你未在設定中啟用「永久通知」，則當節拍器服務在背景運行時，該通知對於節拍器服務保持活動狀態至關重要。\n該服務負責管理播放並追蹤計時器或已使用時間等即時數據，以將播放與應用程式介面區分開。\n你可以點擊「停止」以將服務移至後台，但是這不再保證它不會被系統終止。這可能會導致計時器和已使用時間被重置，直至服務再次處於前台。\n你也可以在設定中啟用永久通知，以便始終能夠在通知區域中存取啟動或停止功能。</string>
+  <string name="help_notification_disappears">為什麼當我關閉應用程式時節拍器服務通知會消失？</string>
+  <string name="help_notification_disappears_answer">當你從最近的應用程式關閉應用程式時，節拍器服務將會停止，通知也會消失。此行為旨在節省電力和資源。\n如果你想永久保留通知以供啟動或停止功能，你可以在設定中啟用「永久通知」，並且不要從最近的應用程式中關閉此應用程式。</string>
+  <string name="help_translation">我怎樣才能獲得適合我的語言的 Tack？</string>
+  <string name="help_translation_answer">Tack 的翻譯由 Transifex 管理，像你一樣的使用者也可以在這裏翻譯！請訪問 GitHub 上的 Tack 以獲取更多資訊，或直接進入翻譯流程：</string>
 
   <!-- ABOUT -->
 
