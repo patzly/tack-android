@@ -375,6 +375,7 @@
   <string name="help_swing">我如何停用擺動？</string>
   <string name="help_song_library">歌曲庫如何運作？</string>
   <string name="help_song_library_answer">歌曲庫是節拍器配置的集合，你可以儲存並套用這些配置。要儲存目前配置，只需要開啟歌曲庫並建立新歌曲即可。目前配置將會新增至部份清單中，你可以在其中進一步調整。為歌曲命名後，請不要忘記點擊右上角的磁碟圖示來儲存。</string>
+  <string name="help_song_picker">歌曲選擇器如何運作？</string>
   <!-- ABOUT -->
 
   <string name="about_version">版本</string>
