@@ -191,6 +191,7 @@
   <string name="msg_songs_empty_description">加入你想練習的歌曲</string>
   <string name="msg_unlock">來自開發者的訊息</string>
   <string name="msg_unlock_description">你是否喜歡 Tack 中大量強大功能和無廣告體驗？我花了數年的時間建立了免費的 Tack，尤其是歌曲庫功能花了數月的辛勤工作。\n為了繼續改進 Tack，我懇請大家做出一點小貢獻。作為回報，你將會獲得一個解鎖應用程式，其中包含無限的歌曲和無數的歌曲部分。感謝您的支持！</string>
+  <string name="msg_backup_description">你可以將整個歌曲庫備份至裝置，也可以從備份中還原歌曲庫。</string>
   <string name="msg_backup_error">備份時發生錯誤</string>
   <string name="msg_backup_directory_missing">未選擇備份的儲存位置</string>
   <string name="msg_backup_success">備份已成功建立</string>
