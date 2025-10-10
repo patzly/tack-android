@@ -112,6 +112,7 @@
   <string name="action_beat_mode">拍モード</string>
   <string name="action_send_feedback">フィードバックを送る</string>
   <string name="action_reset">リセット</string>
+  <string name="action_deactivate">無効化</string>
   <string name="action_recommend">共有</string>
   <string name="action_recommend_description">Tack を友達におすすめする</string>
   <string name="action_email">メールを送信</string>
