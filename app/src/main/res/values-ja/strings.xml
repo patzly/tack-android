@@ -157,6 +157,7 @@
   <string name="action_collapse">折りたたみ</string>
   <string name="action_show_songs_list">ソング一覧表示</string>
   <string name="action_learn_more">詳細</string>
+  <string name="action_tempo_tap">タップしてテンポ設定</string>
 
   <!-- MESSAGES -->
 
