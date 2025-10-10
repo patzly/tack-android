@@ -26,7 +26,6 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
 import android.text.Editable;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -401,7 +400,6 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
     binding.textTempoTapTempo.setText(String.valueOf(tempoNew));
     String termNew = fragment.getTempoTerm(tempoNew);
     if (!termNew.equals(fragment.getTempoTerm(tempoOld))) {
-      Log.i(TAG, "setTapTempoDisplay: hello " + termNew + " " + fragment.getTempoTerm(tempoOld));
       boolean isFaster = tempoNew > tempoOld;
       binding.textSwitcherTempoTapTempoTerm.setInAnimation(
           activity, isFaster ? R.anim.tempo_term_open_enter : R.anim.tempo_term_close_enter
