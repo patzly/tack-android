@@ -157,6 +157,7 @@
   <string name="action_collapse">收合</string>
   <string name="action_show_songs_list">顯示歌曲為清單</string>
   <string name="action_learn_more">瞭解更多</string>
+  <string name="action_tempo_tap">點擊節奏</string>
 
   <!-- MESSAGES -->
 
