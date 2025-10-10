@@ -24,7 +24,7 @@
   <dimen name="bpm_text_size">64dp</dimen>
   <dimen name="label_text_size">28dp</dimen>
 
-  <dimen name="tempo_tap_size">220dp</dimen>
+  <dimen name="tempo_tap_size">270dp</dimen>
 
   <dimen name="controls_bottom_margin_bottom">56dp</dimen>
 

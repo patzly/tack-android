@@ -25,9 +25,7 @@
   android:id="@+id/linear_options_container"
   android:orientation="vertical"
   android:layout_width="match_parent"
-  android:layout_height="wrap_content"
-  android:paddingTop="16dp"
-  android:paddingBottom="16dp">
+  android:layout_height="wrap_content">
 
   <LinearLayout
     android:id="@+id/linear_options_edit_part_container"
@@ -38,8 +36,6 @@
     <LinearLayout
       android:id="@+id/linear_options_use_current_config"
       style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
-      android:layout_marginStart="16dp"
-      android:layout_marginEnd="16dp"
       android:contentDescription="@string/action_use_current_config"
       android:background="@drawable/ripple_list_item_bg_segmented_single">
 
@@ -61,8 +57,6 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:orientation="vertical"
-      android:layout_marginStart="16dp"
-      android:layout_marginEnd="16dp"
       android:layout_marginTop="16dp"
       android:paddingTop="12dp"
       android:paddingBottom="8dp"
@@ -140,8 +134,6 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:orientation="vertical"
-      android:layout_marginStart="16dp"
-      android:layout_marginEnd="16dp"
       android:paddingTop="12dp"
       android:paddingBottom="12dp"
       android:background="@drawable/ripple_list_item_bg_segmented_middle">
@@ -236,8 +228,6 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent"
       android:orientation="vertical"
-      android:layout_marginStart="16dp"
-      android:layout_marginEnd="16dp"
       android:paddingTop="12dp"
       android:paddingBottom="12dp"
       android:background="@drawable/ripple_list_item_bg_segmented_middle">
@@ -335,8 +325,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
     android:paddingTop="16dp"
     android:paddingBottom="8dp"
     android:background="@drawable/ripple_list_item_bg_segmented_middle">
@@ -376,8 +364,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
     android:paddingTop="12dp"
     android:paddingBottom="8dp"
     android:background="@drawable/ripple_list_item_bg_segmented_middle">
@@ -497,8 +483,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
     android:paddingTop="12dp"
     android:paddingBottom="8dp"
     android:background="@drawable/ripple_list_item_bg_segmented_middle">
@@ -718,8 +702,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
     android:paddingTop="16dp"
     android:paddingBottom="8dp"
     android:background="@drawable/ripple_list_item_bg_segmented_middle">
@@ -814,10 +796,10 @@
         android:id="@+id/linear_options_mute_random"
         style="@style/Widget.Tack.LinearLayout.ListItem.SingleLine"
         android:layout_height="wrap_content"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"
         android:background="@drawable/ripple_list_item_surface_bright">
 
         <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
@@ -827,15 +809,14 @@
             style="@style/Widget.Tack.TextView.BodyMedium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="8dp"
-            android:paddingEnd="0dp"
             android:textColor="?attr/colorOnSurfaceVariant"
             android:text="@string/options_mute_random" />
 
         </LinearLayout>
 
-        <com.google.android.material.checkbox.MaterialCheckBox
-          android:id="@+id/checkbox_options_mute_random"
+        <com.google.android.material.materialswitch.MaterialSwitch
+          android:id="@+id/switch_options_mute_random"
+          style="@style/Widget.Tack.Switch"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content" />
 
@@ -849,8 +830,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
     android:paddingTop="16dp"
     android:paddingBottom="8dp"
     android:background="@drawable/ripple_list_item_bg_segmented_last">

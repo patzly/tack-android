@@ -753,9 +753,9 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
             : R.drawable.ripple_list_item_bg
     );
     binding.textOptionsMuteRandom.setAlpha(isMuteActive ? 1 : 0.5f);
-    binding.checkboxOptionsMuteRandom.setOnCheckedChangeListener(null);
-    binding.checkboxOptionsMuteRandom.setChecked(muteRandom);
-    binding.checkboxOptionsMuteRandom.setOnCheckedChangeListener(
+    binding.switchOptionsMuteRandom.setOnCheckedChangeListener(null);
+    binding.switchOptionsMuteRandom.setChecked(muteRandom);
+    binding.switchOptionsMuteRandom.setOnCheckedChangeListener(
         (buttonView, isChecked) -> {
           if (editPart && getConfig() != null) {
             getConfig().setMuteRandom(isChecked);
@@ -764,7 +764,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
           }
           updateMute();
         });
-    binding.checkboxOptionsMuteRandom.setEnabled(isMuteActive);
+    binding.switchOptionsMuteRandom.setEnabled(isMuteActive);
 
     int visibilityOld = binding.linearOptionsMuteContainer.getVisibility();
     int visibilityNew = (isMuteActive || !useDialog) ? View.VISIBLE : View.GONE;
@@ -977,7 +977,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       }
       ViewUtil.startIcon(binding.buttonOptionsTimerIncrease.getIcon());
     } else if (id == R.id.linear_options_mute_random) {
-      binding.checkboxOptionsMuteRandom.toggle();
+      binding.switchOptionsMuteRandom.toggle();
     }
   }
 

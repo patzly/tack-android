@@ -27,7 +27,7 @@
   <corners
     android:topLeftRadius="4dp"
     android:topRightRadius="4dp"
-    android:bottomLeftRadius="24dp"
-    android:bottomRightRadius="24dp" />
+    android:bottomLeftRadius="@dimen/segmented_large_corner_size"
+    android:bottomRightRadius="@dimen/segmented_large_corner_size" />
 
 </shape>
