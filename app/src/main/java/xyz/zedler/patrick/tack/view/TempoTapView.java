@@ -88,18 +88,12 @@ public class TempoTapView extends View {
   @Override
   protected void onDraw(@NonNull Canvas canvas) {
     super.onDraw(canvas);
-    canvas.drawPath(path, paintFill);
-  }
-
-  @Override
-  protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-    updateShape();
 
     if (gradient == null) {
-      float blendFraction = 1f;
+      float blendFraction = 0.75f;
       gradient = new RadialGradient(
-          right,
-          top,
+          getWidth(),
+          0,
           getWidth() * 1.25f,
           new int[]{
               ColorUtils.blendARGB(colorGradient3, colorGradient1, blendFraction),
@@ -107,11 +101,18 @@ public class TempoTapView extends View {
               ColorUtils.blendARGB(colorGradient3, colorGradient2, blendFraction),
               ColorUtils.blendARGB(colorGradient3, colorGradient3, blendFraction)
           },
-          new float[]{0, 0.3f, 0.6f, 0.95f},
+          new float[]{0, 0.1f, 0.4f, 0.8f},
           TileMode.CLAMP
       );
+      paintFill.setShader(gradient);
     }
-    paintFill.setShader(gradient);
+
+    canvas.drawPath(path, paintFill);
+  }
+
+  @Override
+  protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+    updateShape();
   }
 
   private void updateShape() {
