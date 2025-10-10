@@ -30,6 +30,7 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -67,6 +68,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
   private final DialogUtil dialogUtil;
   private final TempoDialogListener listener;
   private final Queue<Long> intervals = new LinkedList<>();
+  private final OnTouchListener onTouchListener;
   private long previous;
   private int tempoOld;
   private boolean inputMethodKeyboard, instantApply;
@@ -113,20 +115,35 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
       textView.setGravity(Gravity.CENTER_HORIZONTAL);
       textView.setTextSize(
           TypedValue.COMPLEX_UNIT_PX,
-          activity.getResources().getDimension(R.dimen.label_text_size)
+          activity.getResources().getDimension(R.dimen.tempo_tap_label_text_size)
       );
+      Typeface typeface = ResourcesCompat.getFont(activity, R.font.nunito_bold);
+      textView.setTypeface(typeface);
       textView.setTextColor(ResUtil.getColor(activity, R.attr.colorOnTertiaryContainer));
       return textView;
     });
-    binding.tempoTapTempo.setOnTouchListener((v, event) -> {
+    onTouchListener = (v, event) -> {
       if (event.getAction() == MotionEvent.ACTION_DOWN) {
         binding.tempoTapTempo.setTouched(true);
         boolean enoughData = tap();
-        if (enoughData && getMetronomeEngine() != null) {
+        if (enoughData) {
+          if (binding.frameTempoTapTempo.getVisibility() == View.GONE) {
+            binding.frameTempoTapTempo.setAlpha(0);
+            binding.frameTempoTapTempo.setVisibility(View.VISIBLE);
+            binding.frameTempoTapTempo.animate()
+                .alpha(1)
+                .setDuration(150)
+                .start();
+            binding.textTempoPlaceholder.animate()
+                .alpha(0)
+                .setDuration(150)
+                .withEndAction(() -> binding.textTempoPlaceholder.setVisibility(View.GONE))
+                .start();
+          }
           int tempoNew = getTapTempo();
           setTapTempoDisplay(tempoOld, tempoNew);
           tempoOld = tempoNew;
-          if (instantApply) {
+          if (instantApply && getMetronomeEngine() != null) {
             getMetronomeEngine().setTempo(tempoNew);
           }
         }
@@ -139,7 +156,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
         return true;
       }
       return false;
-    });
+    };
 
     dialogUtil = new DialogUtil(activity, "tempo");
     dialogUtil.createDialog(builder -> {
@@ -188,15 +205,20 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
 
   @Override
   public void onCheckedChanged(@NonNull CompoundButton buttonView, boolean isChecked) {
+    MetronomeEngine metronomeEngine = getMetronomeEngine();
     int id = buttonView.getId();
-    if (id == R.id.switch_tempo_instant && getMetronomeEngine() != null) {
+    if (id == R.id.switch_tempo_instant && metronomeEngine != null) {
       activity.performHapticClick();
       instantApply = isChecked;
-      getMetronomeEngine().setTempoTapInstant(isChecked);
+      metronomeEngine.setTempoTapInstant(isChecked);
       if (isChecked) {
         long tapAverage = getTapAverage();
         if (tapAverage > 0) {
-          getMetronomeEngine().setTempo(getTapTempo(tapAverage));
+          int tempo = getTapTempo(tapAverage);
+          if (listener != null) {
+            listener.onTempoChanged(tempo);
+          }
+          metronomeEngine.setTempo(tempo);
         }
       }
       overrideDialogActions();
@@ -291,6 +313,11 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
       setTapTempoDisplay(tempoOld, tempoOld);
       binding.textSwitcherTempoTapTempoTerm.setCurrentText(fragment.getTempoTerm(tempoOld));
       binding.tempoTapTempo.setReduceAnimations(fragment.isReduceAnimations());
+
+      binding.frameTempoTapTempo.setVisibility(View.GONE);
+      binding.frameTempoTapTempo.setAlpha(0);
+      binding.textTempoPlaceholder.setVisibility(View.VISIBLE);
+      binding.textTempoPlaceholder.setAlpha(1);
     }
     binding.frameTempoInputContainer.setVisibility(inputMethodKeyboard ? View.VISIBLE : View.GONE);
     binding.frameTempoTapContainer.setVisibility(inputMethodKeyboard ? View.GONE : View.VISIBLE);
@@ -451,11 +478,11 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
                 || binding.scrollTempo.canScrollVertically(1);
             if (isScrollable) {
               // Only tempo tap view should handle touch events to avoid conflicts with scrolling
+              binding.tempoTapTempo.setOnTouchListener(onTouchListener);
               binding.frameTempoTapContainer.setOnTouchListener(null);
             } else {
-              binding.frameTempoTapContainer.setOnTouchListener((v, event) -> {
-                return binding.tempoTapTempo.dispatchTouchEvent(event);
-              });
+              binding.tempoTapTempo.setOnTouchListener(null);
+              binding.frameTempoTapContainer.setOnTouchListener(onTouchListener);
             }
             setDividerVisibility(isScrollable);
             binding.scrollTempo.getViewTreeObserver().removeOnGlobalLayoutListener(this);

@@ -339,7 +339,6 @@
               android:layout_marginTop="@dimen/label_text_size"
               android:layout_marginBottom="@dimen/label_text_size"
               android:textColor="?attr/colorOnPrimaryContainer"
-              android:layout_gravity="top"
               android:gravity="center_horizontal"
               android:textAlignment="center"
               android:fontFeatureSettings="tnum"
@@ -347,6 +346,7 @@
               android:textAppearance="?attr/textAppearanceDisplayLarge" />
 
             <TextView
+              style="@style/Widget.Tack.TextView.LabelLarge"
               android:layout_width="match_parent"
               android:layout_height="wrap_content"
               android:text="@string/label_bpm"
@@ -354,7 +354,6 @@
               android:layout_gravity="bottom"
               android:gravity="center_horizontal"
               android:textAlignment="center"
-              android:textAppearance="?attr/textAppearanceBodyLarge"
               android:textSize="@dimen/label_text_size" />
 
           </FrameLayout>

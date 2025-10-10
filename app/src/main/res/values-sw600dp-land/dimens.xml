@@ -23,10 +23,12 @@
   <dimen name="segmented_large_corner_size">16dp</dimen>
 
   <dimen name="bpm_picker_size">184dp</dimen>
-  <dimen name="bpm_text_size">54dp</dimen>
+  <dimen name="bpm_text_size">54sp</dimen>
   <dimen name="label_text_size">16sp</dimen>
 
-  <dimen name="tempo_tap_size">200dp</dimen>
+  <dimen name="tempo_tap_size">184dp</dimen>
+  <dimen name="tempo_tap_bpm_text_size">54sp</dimen>
+  <dimen name="tempo_tap_label_text_size">16sp</dimen>
 
   <dimen name="controls_bottom_margin_bottom">16dp</dimen>
 

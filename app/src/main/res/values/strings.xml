@@ -172,6 +172,7 @@
   <string name="action_collapse">Collapse</string>
   <string name="action_show_songs_list">Show songs as list</string>
   <string name="action_learn_more">Learn more</string>
+  <string name="action_tempo_tap">Tap tempo</string>
 
   <!-- MESSAGES -->
 

@@ -52,7 +52,7 @@ public class TempoTapView extends View {
   private final Path path;
   private final Matrix matrix;
   private final Morph morph;
-  private final int colorGradient1, colorGradient2;
+  private final int colorGradient1, colorGradient2, colorGradient3;
   private float touchFactor;
   private RadialGradient gradient;
   private boolean reduceAnimations;
@@ -63,11 +63,12 @@ public class TempoTapView extends View {
     super(context, attrs);
 
     colorGradient1 = ResUtil.getColor(context, R.attr.colorSecondaryContainer);
-    colorGradient2 = ResUtil.getColor(context, R.attr.colorTertiaryContainer);
+    colorGradient2 = ResUtil.getColor(context, R.attr.colorPrimaryContainer);
+    colorGradient3 = ResUtil.getColor(context, R.attr.colorTertiaryContainer);
 
     paintFill = new Paint();
     paintFill.setStyle(Style.FILL);
-    paintFill.setColor(colorGradient2);
+    paintFill.setColor(colorGradient3);
 
     morph = new Morph(
         ShapeUtil.normalize(
@@ -95,18 +96,18 @@ public class TempoTapView extends View {
     updateShape();
 
     if (gradient == null) {
-      float blendFraction = 0.5f;
+      float blendFraction = 1f;
       gradient = new RadialGradient(
           right,
           top,
-          getWidth() * 2,
+          getWidth() * 1.25f,
           new int[]{
-              ColorUtils.blendARGB(colorGradient2, colorGradient1, blendFraction),
-              ColorUtils.blendARGB(colorGradient2, colorGradient1, blendFraction),
-              ColorUtils.blendARGB(colorGradient2, colorGradient2, blendFraction),
-              ColorUtils.blendARGB(colorGradient2, colorGradient2, blendFraction)
+              ColorUtils.blendARGB(colorGradient3, colorGradient1, blendFraction),
+              ColorUtils.blendARGB(colorGradient3, colorGradient1, blendFraction),
+              ColorUtils.blendARGB(colorGradient3, colorGradient2, blendFraction),
+              ColorUtils.blendARGB(colorGradient3, colorGradient3, blendFraction)
           },
-          new float[]{0, 0.1f, 0.6f, 0.8f},
+          new float[]{0, 0.3f, 0.6f, 0.95f},
           TileMode.CLAMP
       );
     }
@@ -134,7 +135,7 @@ public class TempoTapView extends View {
       if (springAnimationTouch == null) {
         springAnimationTouch =
             new SpringAnimation(this, TOUCH_FACTOR)
-                .setSpring(new SpringForce().setStiffness(4000f).setDampingRatio(0.9f))
+                .setSpring(new SpringForce().setStiffness(6000f).setDampingRatio(0.9f))
                 .setMinimumVisibleChange(0.01f);
       }
       if (springAnimationRelease == null) {

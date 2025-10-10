@@ -410,6 +410,8 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           TypedValue.COMPLEX_UNIT_PX,
           getResources().getDimension(R.dimen.label_text_size)
       );
+      Typeface typeface = ResourcesCompat.getFont(activity, R.font.nunito_bold);
+      textView.setTypeface(typeface);
       textView.setTextColor(ResUtil.getColor(activity, R.attr.colorOnPrimaryContainer));
       return textView;
     });

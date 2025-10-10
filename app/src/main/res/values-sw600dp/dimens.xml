@@ -21,10 +21,12 @@
 <resources>
 
   <dimen name="bpm_picker_size">304dp</dimen>
-  <dimen name="bpm_text_size">64dp</dimen>
-  <dimen name="label_text_size">28dp</dimen>
+  <dimen name="bpm_text_size">88sp</dimen>
+  <dimen name="label_text_size">24dp</dimen>
 
-  <dimen name="tempo_tap_size">270dp</dimen>
+  <dimen name="tempo_tap_size">250dp</dimen>
+  <dimen name="tempo_tap_bpm_text_size">64sp</dimen>
+  <dimen name="tempo_tap_label_text_size">22sp</dimen>
 
   <dimen name="controls_bottom_margin_bottom">56dp</dimen>
 

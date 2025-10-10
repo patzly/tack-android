@@ -172,6 +172,7 @@
           android:layout_gravity="center" />
 
         <FrameLayout
+          android:id="@+id/frame_tempo_tap_tempo"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_gravity="center"
@@ -190,14 +191,15 @@
             android:layout_marginTop="@dimen/label_text_size"
             android:layout_marginBottom="@dimen/label_text_size"
             android:textColor="?attr/colorOnTertiaryContainer"
-            android:layout_gravity="top"
+            android:layout_gravity="center"
             android:gravity="center_horizontal"
             android:textAlignment="center"
             android:fontFeatureSettings="tnum"
             android:textAppearance="?attr/textAppearanceDisplayLarge"
-            android:textSize="@dimen/bpm_text_size" />
+            android:textSize="@dimen/tempo_tap_bpm_text_size" />
 
           <TextView
+            style="@style/Widget.Tack.TextView.LabelLarge"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/label_bpm"
@@ -205,10 +207,20 @@
             android:layout_gravity="bottom"
             android:gravity="center_horizontal"
             android:textAlignment="center"
-            android:textAppearance="?attr/textAppearanceBodyLarge"
-            android:textSize="@dimen/label_text_size" />
+            android:textSize="@dimen/tempo_tap_label_text_size" />
 
         </FrameLayout>
+
+        <TextView
+          android:id="@+id/text_tempo_placeholder"
+          style="@style/Widget.Tack.TextView.LabelLarge"
+          android:layout_width="@dimen/tempo_tap_size"
+          android:layout_height="wrap_content"
+          android:textColor="?attr/colorOnTertiaryContainer"
+          android:layout_gravity="center"
+          android:gravity="center_horizontal"
+          android:textAlignment="center"
+          android:text="@string/action_tempo_tap"/>
 
       </FrameLayout>
 
