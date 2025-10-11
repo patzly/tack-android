@@ -842,7 +842,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       ViewUtil.startIcon(binding.buttonOptionsTempoIncrease.getIcon());
     } else if (id == R.id.button_options_beats_add) {
       ViewUtil.startIcon(binding.buttonOptionsBeatsAdd.getIcon());
-      activity.performHapticClick();
       boolean success = config.addBeat();
       if (success) {
         BeatView beatView = new BeatView(activity);
@@ -860,7 +859,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       }
     } else if (id == R.id.button_options_beats_remove) {
       ViewUtil.startIcon(binding.buttonOptionsBeatsRemove.getIcon());
-      activity.performHapticClick();
       boolean success = config.removeBeat();
       if (success) {
         TransitionManager.beginDelayedTransition(binding.linearOptionsBeats, new ChangeBounds());
@@ -874,7 +872,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       }
     } else if (id == R.id.button_options_subs_add) {
       ViewUtil.startIcon(binding.buttonOptionsSubsAdd.getIcon());
-      activity.performHapticClick();
       boolean success = config.addSubdivision();
       if (success) {
         BeatView beatView = new BeatView(activity);
@@ -893,7 +890,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       }
     } else if (id == R.id.button_options_subs_remove) {
       ViewUtil.startIcon(binding.buttonOptionsSubsRemove.getIcon());
-      activity.performHapticClick();
       boolean success = config.removeSubdivision();
       if (success) {
         TransitionManager.beginDelayedTransition(binding.linearOptionsSubs, new ChangeBounds());
