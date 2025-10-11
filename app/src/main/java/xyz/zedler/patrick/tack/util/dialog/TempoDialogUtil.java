@@ -89,7 +89,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
           activity.performHapticClick();
           setTempoFromInputAndDismiss();
         } else {
-          activity.performHapticDoubleClick();
+          activity.performHapticReject(binding.getRoot());
           return true;
         }
       }
@@ -255,7 +255,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
             activity.performHapticClick();
             setTempoFromInputAndDismiss();
           } else {
-            activity.performHapticDoubleClick();
+            activity.performHapticReject(binding.getRoot());
           }
         } else {
           activity.performHapticClick();

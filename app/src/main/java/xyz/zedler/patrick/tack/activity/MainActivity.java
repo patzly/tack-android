@@ -485,9 +485,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     }
   }
 
-  public void performHapticDoubleClick() {
+  public void performHapticReject(View view) {
     if (areHapticsAllowed()) {
-      hapticUtil.doubleClick();
+      hapticUtil.hapticReject(view);
     }
   }
 
