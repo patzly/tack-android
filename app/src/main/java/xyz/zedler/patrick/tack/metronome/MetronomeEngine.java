@@ -296,7 +296,7 @@ public class MetronomeEngine {
       setConfig(parts.get(index).toConfig(), restart);
       ignoreTimerCallbacksTemp = false;
       if (!isPlaying() && startPlaying) {
-        start(false, false);
+        start(false);
       } else if (restart) {
         restartIfPlaying(true);
       }
@@ -354,9 +354,9 @@ public class MetronomeEngine {
 
   public void restorePlayingState() {
     if (tempPlaying) {
-      start(false, false);
+      start(false);
     } else {
-      stop(false, false);
+      stop(false);
     }
   }
 
@@ -374,7 +374,7 @@ public class MetronomeEngine {
     audioEngine.setMuted(false);
     hapticUtil.setEnabled(true);
 
-    start(false, true);
+    start(true);
   }
 
   public void destroy() {
@@ -394,10 +394,10 @@ public class MetronomeEngine {
   }
 
   public void start() {
-    start(false, false);
+    start(false);
   }
 
-  private void start(boolean isRestarted, boolean ignorePermission) {
+  private void start(boolean ignorePermission) {
     // isRestarted should suppress onStop/onStart callbacks and count-in
     boolean permissionDenied = sharedPrefs.getBoolean(PREF.PERMISSION_DENIED, false);
     if (!NotificationUtil.hasPermission(context) && !permissionDenied && !ignorePermission) {
@@ -408,20 +408,16 @@ public class MetronomeEngine {
       }
       return;
     }
-    if (!isRestarted) {
-      updateLastPlayedAndPlayCount();
-    }
+    updateLastPlayedAndPlayCount();
 
-    if (isPlaying() && !isRestarted) {
+    if (isPlaying()) {
       return;
     }
     resetHandlersIfRequired();
 
     playing = true;
     audioEngine.play();
-    int countInTickIndex = config.getCountIn() *
-        config.getBeatsCount() * config.getSubdivisionsCount();
-    tickIndex = isRestarted && config.isCountInActive() ? countInTickIndex : 0;
+    tickIndex = 0;
     isMuted = false;
     if (config.isMuteActive()) {
       // updateMuteHandler would be too late
@@ -453,27 +449,25 @@ public class MetronomeEngine {
       timerStartTime = System.currentTimeMillis();
       updateTimerHandler(timerProgress, true);
       updateMuteHandler();
-    }, isRestarted ? 0 : getCountInInterval()); // already 0 if count-in is disabled
+    }, getCountInInterval()); // already 0 if count-in is disabled
 
     if (getGain() > 0) {
       neverStartedWithGain = false;
     }
 
-    if (!isRestarted) {
-      synchronized (listeners) {
-        for (MetronomeListener listener : listeners) {
-          listener.onMetronomeStart();
-        }
+    synchronized (listeners) {
+      for (MetronomeListener listener : listeners) {
+        listener.onMetronomeStart();
       }
     }
     Log.i(TAG, "start: started metronome handler");
   }
 
   public void stop() {
-    stop(resetTimerOnStop, false);
+    stop(resetTimerOnStop);
   }
 
-  public void stop(boolean resetTimer, boolean isRestarted) {
+  private void stop(boolean resetTimer) {
     if (!isPlaying()) {
       return;
     }
@@ -494,9 +488,7 @@ public class MetronomeEngine {
 
     synchronized (listeners) {
       for (MetronomeListener listener : listeners) {
-        if (!isRestarted) {
-          listener.onMetronomeStop();
-        }
+        listener.onMetronomeStop();
         if (isTimerReset) {
           listener.onMetronomeTimerProgressOneTime(true);
         }
@@ -507,8 +499,56 @@ public class MetronomeEngine {
 
   public void restartIfPlaying(boolean resetTimer) {
     if (isPlaying()) {
-      stop(resetTimer, true);
-      start(true, false);
+      // stop-like logic without audio interruption
+      boolean isTimerReset = false;
+      if (resetTimer || equalsTimerProgress(1)) {
+        timerProgress = 0;
+        isTimerReset = true;
+      } else {
+        timerProgress = getTimerProgress(); // must be called before playing is set to false
+      }
+      elapsedPrevious = elapsedTime;
+      removeHandlerCallbacks();
+      synchronized (listeners) {
+        for (MetronomeListener listener : listeners) {
+          if (isTimerReset) {
+            listener.onMetronomeTimerProgressOneTime(true);
+          }
+        }
+      }
+
+      // start-like logic without audio interruption
+      resetHandlersIfRequired();
+      int countInTickIndex = config.getCountIn() *
+          config.getBeatsCount() * config.getSubdivisionsCount();
+      tickIndex = config.isCountInActive() ? countInTickIndex : 0;
+      isMuted = false;
+      if (config.isMuteActive()) {
+        // updateMuteHandler would be too late
+        muteCountDown = calculateMuteCount(false);
+      }
+      tickHandler.post(new Runnable() {
+        @Override
+        public void run() {
+          if (isPlaying()) {
+            Tick tick = performTick();
+            if (tick != null) {
+              tickHandler.postDelayed(
+                  this, getInterval() / config.getSubdivisionsCount()
+              );
+              audioEngine.writeTickPeriod(tick, config.getTempo(), config.getSubdivisionsCount());
+              tickIndex++;
+            }
+          }
+        }
+      });
+      isCountingIn = false;
+      updateIncrementalHandler();
+      elapsedStartTime = System.currentTimeMillis();
+      updateElapsedHandler(false);
+      timerStartTime = System.currentTimeMillis();
+      updateTimerHandler(timerProgress, true);
+      updateMuteHandler();
     } else if (resetTimer) {
       timerProgress = 0;
       if (ignoreTimerCallbacksTemp) {
