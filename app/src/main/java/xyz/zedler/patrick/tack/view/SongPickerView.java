@@ -86,7 +86,7 @@ public class SongPickerView extends FrameLayout {
   private final ViewUtil viewUtil;
   private SongPickerListener listener;
   private List<SongWithParts> songsWithParts;
-  private int sortOrder, initPartIndex, widthMax, widthMin, chipTargetTranslationX;
+  private int sortOrder, partIndex, widthMax, widthMin, chipTargetTranslationX;
   private String currentSongId;
   private Drawable gradientLeft, gradientRight;
   private SpringAnimation springAnimationExpand;
@@ -140,7 +140,6 @@ public class SongPickerView extends FrameLayout {
 
     this.sortOrder = sortOrder;
     this.currentSongId = currentSongId;
-    this.initPartIndex = currentPartIndex;
     // To display current song title in current chip at start
     this.songsWithParts = new ArrayList<>(songs);
 
@@ -148,6 +147,7 @@ public class SongPickerView extends FrameLayout {
     initRecycler();
     initChip();
     setCurrentSong(currentSongId, false);
+    setPartIndex(currentPartIndex);
   }
 
   public boolean isInitialized() {
@@ -159,14 +159,11 @@ public class SongPickerView extends FrameLayout {
 
     binding.textSongPickerEmpty.setVisibility(songsWithParts.isEmpty() ? VISIBLE : GONE);
 
-    SongChipAdapter adapter = (SongChipAdapter) binding.recyclerSongPicker.getAdapter();
-    if (adapter == null) {
-      throw new IllegalStateException("init() has to be called before any other method");
+    sortSongs();
+
+    if (currentSongId.equals(Constants.SONG_ID_DEFAULT)) {
+      return;
     }
-
-    SortUtil.sortSongsWithParts(songsWithParts, sortOrder);
-    adapter.submitList(songsWithParts, this::maybeCenterSongChips);
-
     // maybe name of current song changed
     String songName = getSongNameFromId(currentSongId);
     String chipText = binding.textSongPickerChip.getText().toString();
@@ -174,10 +171,28 @@ public class SongPickerView extends FrameLayout {
       binding.textSongPickerChip.setText(songName);
     }
     // maybe name of current part changed
-    setPartIndex(initPartIndex);
+    String partName = getPartNameFromIndex(partIndex);
+    String partLabel = context.getString(R.string.label_part_unnamed, partIndex + 1);
+    if (partName != null) {
+      partLabel = context.getString(
+          R.string.label_part_current, partIndex + 1, partName
+      );
+    }
+    binding.buttonSongPickerPart.setText(partLabel);
+  }
+
+  private void sortSongs() {
+    SortUtil.sortSongsWithParts(songsWithParts, sortOrder);
+    SongChipAdapter adapter = (SongChipAdapter) binding.recyclerSongPicker.getAdapter();
+    if (adapter != null) {
+      adapter.submitList(songsWithParts, this::maybeCenterSongChips);
+    } else {
+      throw new IllegalStateException("init() has to be called before any other method");
+    }
   }
 
   public void setPartIndex(int partIndex) {
+    this.partIndex = partIndex;
     String partName = getPartNameFromIndex(partIndex);
     String partLabel = context.getString(R.string.label_part_unnamed, partIndex + 1);
     if (partName != null) {
@@ -275,6 +290,9 @@ public class SongPickerView extends FrameLayout {
           }
           item.setChecked(true);
           setSongs(songsWithParts);
+
+          sortSongs();
+
           if (listener != null) {
             listener.onSortOrderChanged(sortOrder);
           }

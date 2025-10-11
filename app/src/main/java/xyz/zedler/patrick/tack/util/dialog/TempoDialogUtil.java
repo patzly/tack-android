@@ -145,6 +145,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
           tempoOld = tempoNew;
           if (instantApply && getMetronomeEngine() != null) {
             getMetronomeEngine().setTempo(tempoNew);
+            getMetronomeEngine().maybeUpdateDefaultSong();
           }
         }
         activity.performHapticHeavyClick();
@@ -219,6 +220,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
             listener.onTempoChanged(tempo);
           }
           metronomeEngine.setTempo(tempo);
+          metronomeEngine.maybeUpdateDefaultSong();
         }
       }
       overrideDialogActions();
@@ -373,6 +375,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
         listener.onTempoChanged(tempo);
       }
       metronomeEngine.setTempo(tempo);
+      metronomeEngine.maybeUpdateDefaultSong();
 
       binding.editTextTempo.clearFocus();
     } else {
@@ -383,6 +386,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
           listener.onTempoChanged(tempo);
         }
         metronomeEngine.setTempo(tempo);
+        metronomeEngine.maybeUpdateDefaultSong();
       }
     }
     dismiss();

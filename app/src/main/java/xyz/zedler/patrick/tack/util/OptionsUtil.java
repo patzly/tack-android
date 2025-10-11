@@ -84,8 +84,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding = useDialog ? bindingDialog.partialOptions : fragmentBinding.partialOptions;
 
     if (binding != null) {
+      binding.sliderOptionsCountIn.addOnSliderTouchListener(this);
       binding.sliderOptionsIncrementalAmount.addOnSliderTouchListener(this);
       binding.sliderOptionsIncrementalInterval.addOnSliderTouchListener(this);
+      binding.sliderOptionsIncrementalLimit.addOnSliderTouchListener(this);
       binding.sliderOptionsTimerDuration.addOnSliderTouchListener(this);
       binding.sliderOptionsMutePlay.addOnSliderTouchListener(this);
       binding.sliderOptionsMuteMute.addOnSliderTouchListener(this);
@@ -761,6 +763,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
             getConfig().setMuteRandom(isChecked);
           } else if (getMetronomeEngine() != null) {
             getMetronomeEngine().setMuteRandom(isChecked);
+            getMetronomeEngine().maybeUpdateDefaultSong();
           }
           updateMute();
         });
@@ -820,6 +823,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         config.setTempo(decreasedTempo);
       } else {
         metronomeEngine.setTempo(decreasedTempo);
+        metronomeEngine.maybeUpdateDefaultSong();
       }
       updateTempo();
       ViewUtil.startIcon(binding.buttonOptionsTempoDecrease.getIcon());
@@ -832,6 +836,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         config.setTempo(increasedTempo);
       } else {
         metronomeEngine.setTempo(increasedTempo);
+        metronomeEngine.maybeUpdateDefaultSong();
       }
       updateTempo();
       ViewUtil.startIcon(binding.buttonOptionsTempoIncrease.getIcon());
@@ -907,6 +912,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         config.setIncrementalInterval(decreasedInterval);
       } else {
         metronomeEngine.setIncrementalInterval(decreasedInterval);
+        metronomeEngine.maybeUpdateDefaultSong();
       }
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalIntervalDecrease.getIcon());
@@ -919,6 +925,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         config.setIncrementalInterval(increasedInterval);
       } else {
         metronomeEngine.setIncrementalInterval(increasedInterval);
+        metronomeEngine.maybeUpdateDefaultSong();
       }
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalIntervalIncrease.getIcon());
@@ -931,6 +938,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         config.setIncrementalLimit(decreasedLimit);
       } else {
         metronomeEngine.setIncrementalLimit(decreasedLimit);
+        metronomeEngine.maybeUpdateDefaultSong();
       }
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalLimitDecrease.getIcon());
@@ -943,6 +951,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         config.setIncrementalLimit(increasedLimit);
       } else {
         metronomeEngine.setIncrementalLimit(increasedLimit);
+        metronomeEngine.maybeUpdateDefaultSong();
       }
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalLimitIncrease.getIcon());
@@ -955,6 +964,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         config.setTimerDuration(decreasedDuration);
       } else {
         metronomeEngine.setTimerDuration(decreasedDuration, true);
+        metronomeEngine.maybeUpdateDefaultSong();
       }
       updateTimer();
       if (!editPart && onTimerChanged != null) {
@@ -970,6 +980,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         config.setTimerDuration(increasedDuration);
       } else {
         metronomeEngine.setTimerDuration(increasedDuration, true);
+        metronomeEngine.maybeUpdateDefaultSong();
       }
       updateTimer();
       if (!editPart && onTimerChanged != null) {
@@ -996,6 +1007,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         config.setIncrementalIncrease(incrementalIncrease);
       } else {
         metronomeEngine.setIncrementalIncrease(incrementalIncrease);
+        metronomeEngine.maybeUpdateDefaultSong();
       }
       updateIncremental();
     } else if (groupId == R.id.toggle_options_incremental_unit) {
@@ -1009,6 +1021,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         config.setIncrementalUnit(unit);
       } else {
         metronomeEngine.setIncrementalUnit(unit);
+        metronomeEngine.maybeUpdateDefaultSong();
       }
       updateIncremental();
     } else if (groupId == R.id.toggle_options_timer_unit) {
@@ -1022,6 +1035,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         config.setTimerUnit(unit);
       } else {
         metronomeEngine.setTimerUnit(unit);
+        metronomeEngine.maybeUpdateDefaultSong();
       }
       updateTimer();
       if (!editPart && onTimerChanged != null) {
@@ -1036,6 +1050,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         config.setMuteUnit(unit);
       } else {
         metronomeEngine.setMuteUnit(unit);
+        metronomeEngine.maybeUpdateDefaultSong();
       }
       updateMute();
     } else if (groupId == R.id.toggle_options_swing) {
@@ -1044,18 +1059,31 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
           config.setSwing3();
         } else {
           metronomeEngine.setSwing3();
+          // config has not changed timer duration or timer unit so we can reuse it
+          if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
+            metronomeEngine.restartIfPlaying(false);
+          }
+          metronomeEngine.maybeUpdateDefaultSong();
         }
       } else if (checkedId == R.id.button_options_swing_5) {
         if (editPart) {
           config.setSwing5();
         } else {
           metronomeEngine.setSwing5();
+          if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
+            metronomeEngine.restartIfPlaying(false);
+          }
+          metronomeEngine.maybeUpdateDefaultSong();
         }
       } else if (checkedId == R.id.button_options_swing_7) {
         if (editPart) {
           config.setSwing7();
         } else {
           metronomeEngine.setSwing7();
+          if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
+            metronomeEngine.restartIfPlaying(false);
+          }
+          metronomeEngine.maybeUpdateDefaultSong();
         }
       }
       updateSwing();
@@ -1120,9 +1148,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         config.setTimerDuration((int) value);
       } else {
         metronomeEngine.setTimerDuration((int) value, true);
-        if (onTimerChanged != null) {
-          onTimerChanged.run();
-        }
       }
       updateTimer();
     } else if (id == R.id.slider_options_mute_play) {
@@ -1156,8 +1181,17 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   @Override
   public void onStopTrackingTouch(@NonNull Slider slider) {
     // listener only registered in non-editPart mode
-    if (getMetronomeEngine() != null) {
-      getMetronomeEngine().restorePlayingState();
+    MetronomeEngine metronomeEngine = getMetronomeEngine();
+    if (metronomeEngine == null) {
+      return;
+    }
+    metronomeEngine.restorePlayingState();
+    metronomeEngine.maybeUpdateDefaultSong();
+
+    if (slider.getId() == R.id.slider_options_timer_duration) {
+      if (onTimerChanged != null) {
+        onTimerChanged.run();
+      }
     }
   }
 

@@ -145,7 +145,7 @@ public class MetronomeEngine {
   public void setConfig(MetronomeConfig config, boolean restart) {
     setCountIn(config.getCountIn());
 
-    setBeats(config.getBeats(), restart);
+    setBeats(config.getBeats());
     setSubdivisions(config.getSubdivisions());
 
     setIncrementalAmount(config.getIncrementalAmount());
@@ -161,6 +161,8 @@ public class MetronomeEngine {
     setMuteMute(config.getMuteMute());
     setMuteUnit(config.getMuteUnit());
     setMuteRandom(config.isMuteRandom());
+
+    maybeUpdateDefaultSong();
 
     for (MetronomeListener listener : listeners) {
       listener.onMetronomeConfigChanged();
@@ -230,7 +232,7 @@ public class MetronomeEngine {
     });
   }
 
-  private void maybeUpdateDefaultSong() {
+  public void maybeUpdateDefaultSong() {
     executorService.execute(() -> {
       if (currentSongWithParts != null && currentSongId.equals(Constants.SONG_ID_DEFAULT)) {
         Part part = currentSongWithParts.getParts().get(0);
@@ -280,7 +282,7 @@ public class MetronomeEngine {
     setCurrentPartIndex(index, restart, false);
   }
 
-  public void setCurrentPartIndex(int index, boolean restart, boolean startPlaying) {
+  private void setCurrentPartIndex(int index, boolean restart, boolean startPlaying) {
     currentPartIndex = index;
     if (currentSongWithParts == null) {
       Log.e(TAG, "setCurrentPartIndex: song with id='" + currentSongId + "' is null");
@@ -406,7 +408,9 @@ public class MetronomeEngine {
       }
       return;
     }
-    updateLastPlayedAndPlayCount();
+    if (!isRestarted) {
+      updateLastPlayedAndPlayCount();
+    }
 
     if (isPlaying() && !isRestarted) {
       return;
@@ -571,24 +575,20 @@ public class MetronomeEngine {
     });
   }
 
-  public void setBeats(String[] beats, boolean restart) {
+  private void setBeats(String[] beats) {
     config.setBeats(beats);
-    maybeUpdateDefaultSong();
     sharedPrefs.edit().putString(PREF.BEATS, String.join(",", beats)).apply();
-    if (restart && config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
-      restartIfPlaying(false);
-    }
   }
 
   public void setBeat(int beat, String tickType) {
     config.setBeat(beat, tickType);
-    setBeats(config.getBeats(), true);
+    setBeats(config.getBeats());
   }
 
   public boolean addBeat() {
     boolean success = config.addBeat();
     if (success) {
-      setBeats(config.getBeats(), true);
+      setBeats(config.getBeats());
     }
     return success;
   }
@@ -596,14 +596,13 @@ public class MetronomeEngine {
   public boolean removeBeat() {
     boolean success = config.removeBeat();
     if (success) {
-      setBeats(config.getBeats(), true);
+      setBeats(config.getBeats());
     }
     return success;
   }
 
-  public void setSubdivisions(String[] subdivisions) {
+  private void setSubdivisions(String[] subdivisions) {
     config.setSubdivisions(subdivisions);
-    maybeUpdateDefaultSong();
     sharedPrefs.edit()
         .putString(PREF.SUBDIVISIONS, String.join(",", config.getSubdivisions()))
         .apply();
@@ -648,7 +647,6 @@ public class MetronomeEngine {
   public void setTempo(int tempo) {
     if (config.getTempo() != tempo) {
       config.setTempo(tempo);
-      maybeUpdateDefaultSong();
       sharedPrefs.edit().putInt(PREF.TEMPO, tempo).apply();
       if (isPlaying() && config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
         updateTimerHandler(false, true, false);
@@ -666,6 +664,7 @@ public class MetronomeEngine {
         listener.onMetronomeTempoChanged(tempoOld, tempoNew);
       }
     }
+    maybeUpdateDefaultSong();
   }
 
   public long getInterval() {
@@ -772,7 +771,6 @@ public class MetronomeEngine {
 
   public void setCountIn(int bars) {
     config.setCountIn(bars);
-    maybeUpdateDefaultSong();
     sharedPrefs.edit().putInt(PREF.COUNT_IN, bars).apply();
   }
 
@@ -802,20 +800,17 @@ public class MetronomeEngine {
 
   public void setIncrementalAmount(int bpm) {
     config.setIncrementalAmount(bpm);
-    maybeUpdateDefaultSong();
     sharedPrefs.edit().putInt(PREF.INCREMENTAL_AMOUNT, bpm).apply();
     updateIncrementalHandler();
   }
 
   public void setIncrementalIncrease(boolean increase) {
     config.setIncrementalIncrease(increase);
-    maybeUpdateDefaultSong();
     sharedPrefs.edit().putBoolean(PREF.INCREMENTAL_INCREASE, increase).apply();
   }
 
   public void setIncrementalInterval(int interval) {
     config.setIncrementalInterval(interval);
-    maybeUpdateDefaultSong();
     sharedPrefs.edit().putInt(PREF.INCREMENTAL_INTERVAL, interval).apply();
     updateIncrementalHandler();
   }
@@ -825,14 +820,12 @@ public class MetronomeEngine {
       return;
     }
     config.setIncrementalUnit(unit);
-    maybeUpdateDefaultSong();
     sharedPrefs.edit().putString(PREF.INCREMENTAL_UNIT, unit).apply();
     updateIncrementalHandler();
   }
 
   public void setIncrementalLimit(int limit) {
     config.setIncrementalLimit(limit);
-    maybeUpdateDefaultSong();
     sharedPrefs.edit().putInt(PREF.INCREMENTAL_LIMIT, limit).apply();
   }
 
@@ -926,7 +919,6 @@ public class MetronomeEngine {
 
   public void setTimerDuration(int duration, boolean resetProgressIfNeeded) {
     config.setTimerDuration(duration);
-    maybeUpdateDefaultSong();
     sharedPrefs.edit().putInt(PREF.TIMER_DURATION, duration).apply();
     if (config.getTimerUnit().equals(UNIT.BARS)) {
       updateTimerHandler(false, true);
@@ -960,7 +952,6 @@ public class MetronomeEngine {
       return;
     }
     config.setTimerUnit(unit);
-    maybeUpdateDefaultSong();
     sharedPrefs.edit().putString(PREF.TIMER_UNIT, unit).apply();
     updateTimerHandler(0, false);
   }
@@ -1163,14 +1154,12 @@ public class MetronomeEngine {
 
   public void setMutePlay(int play) {
     config.setMutePlay(play);
-    maybeUpdateDefaultSong();
     sharedPrefs.edit().putInt(PREF.MUTE_PLAY, play).apply();
     updateMuteHandler();
   }
 
   public void setMuteMute(int mute) {
     config.setMuteMute(mute);
-    maybeUpdateDefaultSong();
     sharedPrefs.edit().putInt(PREF.MUTE_MUTE, mute).apply();
     updateMuteHandler();
   }
@@ -1180,14 +1169,12 @@ public class MetronomeEngine {
       return;
     }
     config.setMuteUnit(unit);
-    maybeUpdateDefaultSong();
     sharedPrefs.edit().putString(PREF.MUTE_UNIT, unit).apply();
     updateMuteHandler();
   }
 
   public void setMuteRandom(boolean random) {
     config.setMuteRandom(random);
-    maybeUpdateDefaultSong();
     sharedPrefs.edit().putBoolean(PREF.MUTE_RANDOM, random).apply();
     updateMuteHandler();
   }

@@ -1086,18 +1086,24 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     if (binding == null || metronomeEngine == null) {
       return;
     }
+    MetronomeConfig config = metronomeEngine.getConfig();
     int id = v.getId();
     if (id == R.id.button_main_add_beat) {
       ViewUtil.startIcon(binding.buttonMainAddBeat.getIcon());
       performHapticClick();
       boolean success = metronomeEngine.addBeat();
       if (success) {
+        if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
+          metronomeEngine.restartIfPlaying(false);
+        }
+        metronomeEngine.maybeUpdateDefaultSong();
         BeatView beatView = new BeatView(activity);
         beatView.setIndex(binding.linearMainBeats.getChildCount());
         beatView.setOnClickListener(beat -> {
           if (getMetronomeEngine() != null) {
             performHapticClick();
             getMetronomeEngine().setBeat(beatView.getIndex(), beatView.nextTickType());
+            getMetronomeEngine().maybeUpdateDefaultSong();
           }
         });
         beatView.setReduceAnimations(reduceAnimations);
@@ -1112,6 +1118,10 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       performHapticClick();
       boolean success = metronomeEngine.removeBeat();
       if (success) {
+        if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
+          metronomeEngine.restartIfPlaying(false);
+        }
+        metronomeEngine.maybeUpdateDefaultSong();
         TransitionManager.beginDelayedTransition(binding.linearMainBeats, new ChangeBounds());
         binding.linearMainBeats.removeViewAt(binding.linearMainBeats.getChildCount() - 1);
         ViewUtil.centerScrollContentIfNotFullWidth(
@@ -1125,6 +1135,10 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       performHapticClick();
       boolean success = metronomeEngine.addSubdivision();
       if (success) {
+        if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
+          metronomeEngine.restartIfPlaying(false);
+        }
+        metronomeEngine.maybeUpdateDefaultSong();
         BeatView beatView = new BeatView(activity);
         beatView.setIsSubdivision(true);
         beatView.setIndex(binding.linearMainSubs.getChildCount());
@@ -1132,6 +1146,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           if (getMetronomeEngine() != null) {
             performHapticClick();
             getMetronomeEngine().setSubdivision(beatView.getIndex(), beatView.nextTickType());
+            getMetronomeEngine().maybeUpdateDefaultSong();
           }
         });
         beatView.setReduceAnimations(reduceAnimations);
@@ -1146,6 +1161,10 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       performHapticClick();
       boolean success = metronomeEngine.removeSubdivision();
       if (success) {
+        if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
+          metronomeEngine.restartIfPlaying(false);
+        }
+        metronomeEngine.maybeUpdateDefaultSong();
         TransitionManager.beginDelayedTransition(binding.linearMainSubs, new ChangeBounds());
         binding.linearMainSubs.removeViewAt(binding.linearMainSubs.getChildCount() - 1);
         ViewUtil.centerScrollContentIfNotFullWidth(
@@ -1213,6 +1232,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         if (getMetronomeEngine() != null) {
           performHapticClick();
           getMetronomeEngine().setBeat(beatView.getIndex(), beatView.nextTickType());
+          getMetronomeEngine().maybeUpdateDefaultSong();
         }
       });
       beatView.setReduceAnimations(reduceAnimations);
@@ -1316,6 +1336,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           if (getMetronomeEngine() != null) {
             performHapticClick();
             getMetronomeEngine().setSubdivision(beatView.getIndex(), beatView.nextTickType());
+            getMetronomeEngine().maybeUpdateDefaultSong();
           }
         });
       }
@@ -1550,6 +1571,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     if (tempoNew >= Constants.TEMPO_MIN && tempoNew <= Constants.TEMPO_MAX) {
       updateTempoDisplay(getMetronomeEngine().getConfig().getTempo(), tempoNew);
       getMetronomeEngine().setTempo(tempoNew);
+      getMetronomeEngine().maybeUpdateDefaultSong();
     }
   }
 
