@@ -61,8 +61,8 @@ public class LanguagesDialogUtil {
           LocaleListCompat previous = AppCompatDelegate.getApplicationLocales();
           LocaleListCompat selected = LocaleListCompat.forLanguageTags(languageCode);
           if (!previous.equals(selected)) {
-            activity.performHapticClick();
             if (fromUser) {
+              activity.performHapticClick();
               setLanguageCode(languageCode);
             }
             new Handler(Looper.getMainLooper()).postDelayed(() -> {

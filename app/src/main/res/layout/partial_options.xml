@@ -579,13 +579,13 @@
 
           <com.google.android.material.button.MaterialButton
             android:id="@+id/button_options_incremental_interval_decrease"
-            style="@style/Widget.Tack.Button.IconButton.Filled.Small.Narrow"
+            style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
             android:contentDescription="@string/action_decrease"
             app:icon="@drawable/ic_rounded_first_page" />
 
           <com.google.android.material.button.MaterialButton
             android:id="@+id/button_options_incremental_interval_increase"
-            style="@style/Widget.Tack.Button.IconButton.Filled.Small.Narrow"
+            style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
             android:contentDescription="@string/action_increase"
             app:icon="@drawable/ic_rounded_last_page" />
 
@@ -667,13 +667,13 @@
 
           <com.google.android.material.button.MaterialButton
             android:id="@+id/button_options_incremental_limit_decrease"
-            style="@style/Widget.Tack.Button.IconButton.Filled.Small.Narrow"
+            style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
             android:contentDescription="@string/action_decrease"
             app:icon="@drawable/ic_rounded_first_page" />
 
           <com.google.android.material.button.MaterialButton
             android:id="@+id/button_options_incremental_limit_increase"
-            style="@style/Widget.Tack.Button.IconButton.Filled.Small.Narrow"
+            style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
             android:contentDescription="@string/action_increase"
             app:icon="@drawable/ic_rounded_last_page" />
 
