@@ -1,3 +1,5 @@
+After six months of dedicated work in my spare time, I'm thrilled to announce the release of Tack 6.0 — featuring a major redesign, numerous improvements, and plenty of bug fixes!
+
 ### 6.0.0
 
 - New: Material 3 Expressive design throughout the app with new typeface and redesigned controls
