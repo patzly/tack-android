@@ -496,7 +496,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         }
         if (songSource.getId().equals(getMetronomeEngine().getCurrentSongId())) {
           // if current song is deleted, change to default
-          getMetronomeEngine().setCurrentSong(Constants.SONG_ID_DEFAULT, 0, true);
+          getMetronomeEngine().setCurrentSong(Constants.SONG_ID_DEFAULT, 0);
         }
         activity.getSongViewModel().deleteSong(songSource, () -> {
           if (getMetronomeEngine() == null) {

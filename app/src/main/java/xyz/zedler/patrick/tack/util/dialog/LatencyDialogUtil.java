@@ -154,7 +154,7 @@ public class LatencyDialogUtil implements OnChangeListener, OnSliderTouchListene
     if (getMetronomeEngine() != null) {
       getMetronomeEngine().restorePlayingState();
       getMetronomeEngine().removeListener(latencyListener);
-      getMetronomeEngine().setToPreferences(true);
+      getMetronomeEngine().setToPreferences();
     }
   }
 

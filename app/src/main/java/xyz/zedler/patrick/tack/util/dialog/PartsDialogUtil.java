@@ -57,7 +57,7 @@ public class PartsDialogUtil {
     adapter = new PartDialogAdapter((partIndex, fromUser) -> {
       if (fromUser && getMetronomeEngine() != null) {
         activity.performHapticClick();
-        getMetronomeEngine().setCurrentPartIndex(partIndex, true);
+        getMetronomeEngine().setCurrentPartIndex(partIndex);
       }
     });
     binding.recyclerDialog.setAdapter(adapter);

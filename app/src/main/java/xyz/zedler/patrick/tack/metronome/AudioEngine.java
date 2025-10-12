@@ -93,7 +93,6 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   public void play() {
     resetHandlersIfRequired();
 
-    playing = true;
     audioTrack = getTrack();
     audioTrack.setVolume(AudioUtil.dbToLinearVolume(volumeReductionDb));
     try {
@@ -105,6 +104,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     }
     try {
       audioTrack.play();
+      playing = true;
     } catch (IllegalStateException e) {
       Log.e(TAG, "play: failed to start AudioTrack: ", e);
     }
@@ -151,10 +151,31 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     listener.onAudioStop();
   }
 
+  public void restart() {
+    if (!playing) {
+      return;
+    }
+    playing = false;
+    removeHandlerCallbacks();
+
+    if (audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+      audioTrack.pause();
+      audioTrack.flush();
+    }
+    resetHandlersIfRequired();
+
+    try {
+      audioTrack.play();
+      playing = true;
+    } catch (IllegalStateException e) {
+      Log.e(TAG, "play: failed to start AudioTrack: ", e);
+    }
+  }
+
   @Override
   public void onAudioFocusChange(int focusChange) {
     if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-      if (audioTrack != null) {
+      if (audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
         audioTrack.setVolume(AudioUtil.dbToLinearVolume(volumeReductionDb));
       }
     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
@@ -162,7 +183,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
         || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
     ) {
-      if (audioTrack != null) {
+      if (audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
         audioTrack.setVolume(Math.min(0.25f, AudioUtil.dbToLinearVolume(volumeReductionDb)));
       }
     }
@@ -236,7 +257,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
       }
     }
     volumeReductionDb = Math.max(0, -gain * 100);
-    if (audioTrack != null) {
+    if (audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
       try {
         audioTrack.setVolume(AudioUtil.dbToLinearVolume(volumeReductionDb));
       } catch (IllegalStateException e) {
@@ -359,6 +380,9 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   }
 
   private void writeAudio(float[] data, int size) {
+    if (audioTrack == null || audioTrack.getState() != AudioTrack.STATE_INITIALIZED) {
+      return;
+    }
     try {
       boolean reduceVolume = gain < 0;
       float[] scaled = new float[size];

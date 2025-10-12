@@ -107,7 +107,7 @@ public class MetronomeService extends Service {
             songId = Constants.SONG_ID_DEFAULT;
           }
           boolean startPlaying = action.equals(ACTION.START_SONG);
-          metronomeEngine.setCurrentSong(songId, 0, false, startPlaying);
+          metronomeEngine.setCurrentSong(songId, 0, startPlaying);
           break;
         case ACTION.STOP:
           metronomeEngine.stop();

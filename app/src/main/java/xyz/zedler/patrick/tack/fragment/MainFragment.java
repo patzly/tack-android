@@ -469,7 +469,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       @Override
       public void onCurrentSongChanged(@NonNull String currentSongId) {
         if (getMetronomeEngine() != null) {
-          getMetronomeEngine().setCurrentSong(currentSongId, 0, true);
+          getMetronomeEngine().setCurrentSong(currentSongId, 0);
           performHapticClick();
         }
       }
@@ -494,7 +494,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       public void onPreviousPartClicked() {
         if (getMetronomeEngine() != null) {
           int currentPartIndex = getMetronomeEngine().getCurrentPartIndex();
-          getMetronomeEngine().setCurrentPartIndex(currentPartIndex - 1, true);
+          getMetronomeEngine().setCurrentPartIndex(currentPartIndex - 1);
           performHapticClick();
         }
       }
@@ -503,7 +503,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       public void onNextPartClicked() {
         if (getMetronomeEngine() != null) {
           int currentPartIndex = getMetronomeEngine().getCurrentPartIndex();
-          getMetronomeEngine().setCurrentPartIndex(currentPartIndex + 1, true);
+          getMetronomeEngine().setCurrentPartIndex(currentPartIndex + 1);
           performHapticClick();
         }
       }
@@ -1114,7 +1114,6 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           }
         });
         beatView.setReduceAnimations(reduceAnimations);
-        TransitionManager.beginDelayedTransition(binding.linearMainBeats, new ChangeBounds());
         binding.linearMainBeats.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
         updateBeatControls(true);
@@ -1134,7 +1133,6 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         transition.setDuration(Constants.ANIM_DURATION_SHORT);
         TransitionManager.beginDelayedTransition(binding.linearMainBeats, transition);
 
-        TransitionManager.beginDelayedTransition(binding.linearMainBeats, new ChangeBounds());
         binding.linearMainBeats.removeViewAt(binding.linearMainBeats.getChildCount() - 1);
         ViewUtil.centerScrollContentIfNotFullWidth(
             binding.scrollHorizMainBeats, true

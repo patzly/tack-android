@@ -262,9 +262,7 @@ public class SongsFragment extends BaseFragment {
           boolean permissionDenied = getSharedPrefs().getBoolean(
               PREF.PERMISSION_DENIED, false
           );
-          getMetronomeEngine().setCurrentSong(
-              song.getSong().getId(), 0, true, false
-          );
+          getMetronomeEngine().setCurrentSong(song.getSong().getId(), 0);
           if (NotificationUtil.hasPermission(activity) || permissionDenied) {
             getMetronomeEngine().start();
           } else {
@@ -312,9 +310,7 @@ public class SongsFragment extends BaseFragment {
           return;
         }
         performHapticClick();
-        getMetronomeEngine().setCurrentSong(
-            song.getSong().getId(), 0, true, false
-        );
+        getMetronomeEngine().setCurrentSong(song.getSong().getId(), 0);
       }
 
       @Override
@@ -393,7 +389,7 @@ public class SongsFragment extends BaseFragment {
         }
         if (songToDelete.getId().equals(getMetronomeEngine().getCurrentSongId())) {
           // if current song is deleted, change to default
-          getMetronomeEngine().setCurrentSong(Constants.SONG_ID_DEFAULT, 0, true);
+          getMetronomeEngine().setCurrentSong(Constants.SONG_ID_DEFAULT, 0);
         }
         activity.getSongViewModel().deleteSong(songToDelete, () -> {
           if (getMetronomeEngine() == null) {

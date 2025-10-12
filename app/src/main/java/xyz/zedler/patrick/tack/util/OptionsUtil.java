@@ -972,7 +972,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       if (editPart) {
         config.setTimerDuration(decreasedDuration);
       } else {
-        metronomeEngine.setTimerDuration(decreasedDuration, true);
+        metronomeEngine.setTimerDuration(decreasedDuration);
         metronomeEngine.maybeUpdateDefaultSong();
       }
       updateTimer();
@@ -988,7 +988,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       if (editPart) {
         config.setTimerDuration(increasedDuration);
       } else {
-        metronomeEngine.setTimerDuration(increasedDuration, true);
+        metronomeEngine.setTimerDuration(increasedDuration);
         metronomeEngine.maybeUpdateDefaultSong();
       }
       updateTimer();
@@ -1156,7 +1156,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       if (editPart) {
         config.setTimerDuration((int) value);
       } else {
-        metronomeEngine.setTimerDuration((int) value, true);
+        metronomeEngine.setTimerDuration((int) value);
       }
       updateTimer();
     } else if (id == R.id.slider_options_mute_play) {

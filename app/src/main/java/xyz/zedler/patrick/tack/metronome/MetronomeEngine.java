@@ -99,10 +99,10 @@ public class MetronomeEngine {
     db = SongDatabase.getInstance(context.getApplicationContext());
 
     resetHandlersIfRequired();
-    setToPreferences(true);
+    setToPreferences();
   }
 
-  public void setToPreferences(boolean restart) {
+  public void setToPreferences() {
     config.setToPreferences(sharedPrefs);
     MetronomeConfig configTmp = new MetronomeConfig(config);
 
@@ -124,12 +124,11 @@ public class MetronomeEngine {
     setCurrentSong(
         sharedPrefs.getString(PREF.SONG_CURRENT_ID, DEF.SONG_CURRENT_ID),
         sharedPrefs.getInt(PREF.PART_CURRENT_INDEX, DEF.PART_CURRENT_INDEX),
-        restart,
         false,
         () -> {
           if (!config.equals(configTmp)) {
             // Re-apply all config changes a user could have made after a song was selected
-            setConfig(configTmp, false);
+            setConfig(configTmp);
             for (MetronomeListener listener : listeners) {
               listener.onMetronomeConfigChanged();
             }
@@ -142,8 +141,11 @@ public class MetronomeEngine {
     return config;
   }
 
-  public void setConfig(MetronomeConfig config, boolean restart) {
+  public void setConfig(MetronomeConfig config) {
     setCountIn(config.getCountIn());
+
+    int tempoDiff = config.getTempo() - this.config.getTempo();
+    changeTempo(tempoDiff);
 
     setBeats(config.getBeats());
     setSubdivisions(config.getSubdivisions());
@@ -154,7 +156,7 @@ public class MetronomeEngine {
     setIncrementalUnit(config.getIncrementalUnit());
     setIncrementalIncrease(config.isIncrementalIncrease());
 
-    setTimerDuration(config.getTimerDuration(), restart);
+    setTimerDuration(config.getTimerDuration());
     setTimerUnit(config.getTimerUnit());
 
     setMutePlay(config.getMutePlay());
@@ -179,25 +181,23 @@ public class MetronomeEngine {
     return currentSongId;
   }
 
-  public void setCurrentSong(@NonNull String songId, int partIndex, boolean restart) {
-    setCurrentSong(songId, partIndex, restart, false);
+  public void setCurrentSong(@NonNull String songId, int partIndex) {
+    setCurrentSong(songId, partIndex, false, null);
+  }
+
+  public void setCurrentSong(@NonNull String songId, int partIndex, boolean startPlaying) {
+    setCurrentSong(songId, partIndex, startPlaying, null);
   }
 
   public void setCurrentSong(
-      @NonNull String songId, int partIndex, boolean restart, boolean startPlaying
-  ) {
-    setCurrentSong(songId, partIndex, restart, startPlaying, null);
-  }
-
-  public void setCurrentSong(
-      @NonNull String songId, int partIndex, boolean restart, boolean startPlaying, Runnable onDone
+      @NonNull String songId, int partIndex, boolean startPlaying, Runnable onDone
   ) {
     currentSongId = songId;
     executorService.execute(() -> {
       currentSongWithParts = db.songDao().getSongWithPartsById(songId);
       if (currentSongWithParts != null) {
         sortParts();
-        setCurrentPartIndex(partIndex, restart, startPlaying);
+        setCurrentPartIndex(partIndex, startPlaying);
       } else if (songId.equals(Constants.SONG_ID_DEFAULT)) {
         // default song not created yet
         Song songDefault = new Song(songId, null, 0, 0, false);
@@ -225,7 +225,7 @@ public class MetronomeEngine {
       currentSongWithParts = db.songDao().getSongWithPartsById(currentSongId);
       if (currentSongWithParts != null) {
         sortParts();
-        setCurrentPartIndex(currentPartIndex, false);
+        setCurrentPartIndex(currentPartIndex);
       } else {
         Log.e(TAG, "reloadCurrentSong: song with id='" + currentSongId + "' not found");
       }
@@ -278,11 +278,11 @@ public class MetronomeEngine {
         < currentSongWithParts.getParts().size() - 1;
   }
 
-  public void setCurrentPartIndex(int index, boolean restart) {
-    setCurrentPartIndex(index, restart, false);
+  public void setCurrentPartIndex(int index) {
+    setCurrentPartIndex(index, false);
   }
 
-  private void setCurrentPartIndex(int index, boolean restart, boolean startPlaying) {
+  private void setCurrentPartIndex(int index, boolean startPlaying) {
     currentPartIndex = index;
     if (currentSongWithParts == null) {
       Log.e(TAG, "setCurrentPartIndex: song with id='" + currentSongId + "' is null");
@@ -290,14 +290,14 @@ public class MetronomeEngine {
     }
     List<Part> parts = currentSongWithParts.getParts();
     if (!parts.isEmpty()) {
-      // ignore timer callbacks temporary if restarting
+      // ignore timer callbacks temporary
       // else the timer transition would be laggy
-      ignoreTimerCallbacksTemp = restart;
-      setConfig(parts.get(index).toConfig(), restart);
+      ignoreTimerCallbacksTemp = true;
+      setConfig(parts.get(index).toConfig());
       ignoreTimerCallbacksTemp = false;
       if (!isPlaying() && startPlaying) {
         start(false);
-      } else if (restart) {
+      } else {
         restartIfPlaying(true);
       }
       sharedPrefs.edit().putInt(PREF.PART_CURRENT_INDEX, index).apply();
@@ -499,7 +499,7 @@ public class MetronomeEngine {
 
   public void restartIfPlaying(boolean resetTimer) {
     if (isPlaying()) {
-      // stop-like logic without audio interruption
+      // stop-like logic
       boolean isTimerReset = false;
       if (resetTimer || equalsTimerProgress(1)) {
         timerProgress = 0;
@@ -517,11 +517,12 @@ public class MetronomeEngine {
         }
       }
 
-      // start-like logic without audio interruption
+      // start-like logic
       resetHandlersIfRequired();
       int countInTickIndex = config.getCountIn() *
           config.getBeatsCount() * config.getSubdivisionsCount();
       tickIndex = config.isCountInActive() ? countInTickIndex : 0;
+      audioEngine.restart();
       isMuted = false;
       if (config.isMuteActive()) {
         // updateMuteHandler would be too late
@@ -957,13 +958,13 @@ public class MetronomeEngine {
     return getTimeStringFromSeconds(seconds, false);
   }
 
-  public void setTimerDuration(int duration, boolean resetProgressIfNeeded) {
+  public void setTimerDuration(int duration) {
     config.setTimerDuration(duration);
     sharedPrefs.edit().putInt(PREF.TIMER_DURATION, duration).apply();
     if (config.getTimerUnit().equals(UNIT.BARS)) {
       updateTimerHandler(false, true);
     } else {
-      updateTimerHandler(resetProgressIfNeeded ? 0 : timerProgress, false);
+      updateTimerHandler(0, false);
     }
   }
 
@@ -1067,15 +1068,16 @@ public class MetronomeEngine {
 
     if (!config.getTimerUnit().equals(UNIT.BARS)) {
       timerHandler.postDelayed(() -> {
+        Log.i(TAG, "updateTimerHandler: hello");
         if (hasNextPart()) {
-          setCurrentPartIndex(currentPartIndex + 1, true);
+          setCurrentPartIndex(currentPartIndex + 1);
         } else if (currentSongWithParts != null && currentSongWithParts.getSong().isLooped()) {
           // Restart song
-          setCurrentPartIndex(0, true);
+          setCurrentPartIndex(0);
         } else {
           stop();
           if (currentSongWithParts != null) {
-            setCurrentPartIndex(0, false);
+            setCurrentPartIndex(0);
           }
         }
       }, getTimerIntervalRemaining());
@@ -1272,14 +1274,14 @@ public class MetronomeEngine {
       if (timerProgress >= 1) {
         timerProgress = 1;
         if (hasNextPart()) {
-          setCurrentPartIndex(currentPartIndex + 1, true);
+          setCurrentPartIndex(currentPartIndex + 1);
         } else if (currentSongWithParts != null && currentSongWithParts.getSong().isLooped()) {
           // Restart song
-          setCurrentPartIndex(0, true);
+          setCurrentPartIndex(0);
         } else {
           stop();
           if (currentSongWithParts != null) {
-            setCurrentPartIndex(0, false);
+            setCurrentPartIndex(0);
           }
         }
         return null;
