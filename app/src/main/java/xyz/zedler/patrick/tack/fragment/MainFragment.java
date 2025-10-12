@@ -48,7 +48,9 @@ import androidx.annotation.OptIn;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.ColorUtils;
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import androidx.transition.AutoTransition;
 import androidx.transition.ChangeBounds;
+import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.badge.BadgeUtils;
@@ -1097,6 +1099,11 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           metronomeEngine.restartIfPlaying(false);
         }
         metronomeEngine.maybeUpdateDefaultSong();
+
+        Transition transition = new AutoTransition();
+        transition.setDuration(Constants.ANIM_DURATION_SHORT);
+        TransitionManager.beginDelayedTransition(binding.linearMainBeats, transition);
+
         BeatView beatView = new BeatView(activity);
         beatView.setIndex(binding.linearMainBeats.getChildCount());
         beatView.setOnClickListener(beat -> {
@@ -1122,6 +1129,11 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           metronomeEngine.restartIfPlaying(false);
         }
         metronomeEngine.maybeUpdateDefaultSong();
+
+        Transition transition = new ChangeBounds();
+        transition.setDuration(Constants.ANIM_DURATION_SHORT);
+        TransitionManager.beginDelayedTransition(binding.linearMainBeats, transition);
+
         TransitionManager.beginDelayedTransition(binding.linearMainBeats, new ChangeBounds());
         binding.linearMainBeats.removeViewAt(binding.linearMainBeats.getChildCount() - 1);
         ViewUtil.centerScrollContentIfNotFullWidth(
@@ -1139,6 +1151,11 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           metronomeEngine.restartIfPlaying(false);
         }
         metronomeEngine.maybeUpdateDefaultSong();
+
+        Transition transition = new AutoTransition();
+        transition.setDuration(Constants.ANIM_DURATION_SHORT);
+        TransitionManager.beginDelayedTransition(binding.linearMainSubs, transition);
+
         BeatView beatView = new BeatView(activity);
         beatView.setIsSubdivision(true);
         beatView.setIndex(binding.linearMainSubs.getChildCount());
@@ -1150,7 +1167,6 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           }
         });
         beatView.setReduceAnimations(reduceAnimations);
-        TransitionManager.beginDelayedTransition(binding.linearMainSubs, new ChangeBounds());
         binding.linearMainSubs.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
         updateSubControls(true);
@@ -1165,7 +1181,11 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           metronomeEngine.restartIfPlaying(false);
         }
         metronomeEngine.maybeUpdateDefaultSong();
-        TransitionManager.beginDelayedTransition(binding.linearMainSubs, new ChangeBounds());
+
+        Transition transition = new ChangeBounds();
+        transition.setDuration(Constants.ANIM_DURATION_SHORT);
+        TransitionManager.beginDelayedTransition(binding.linearMainSubs, transition);
+
         binding.linearMainSubs.removeViewAt(binding.linearMainSubs.getChildCount() - 1);
         ViewUtil.centerScrollContentIfNotFullWidth(
             binding.scrollHorizMainSubs, true

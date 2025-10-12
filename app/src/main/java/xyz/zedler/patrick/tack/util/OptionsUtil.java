@@ -27,6 +27,7 @@ import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.transition.AutoTransition;
 import androidx.transition.ChangeBounds;
+import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.button.MaterialButtonToggleGroup.OnButtonCheckedListener;
@@ -422,13 +423,13 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         value -> activity.getString(R.string.label_bpm_value, (int) value)
     );
 
-    int visibilityOld = binding.linearMainIncrementalContainer.getVisibility();
+    int visibilityOld = binding.linearOptionsIncrementalContainer.getVisibility();
     int visibilityNew = (isIncrementalActive || !useDialog) ? View.VISIBLE : View.GONE;
     if (visibilityOld != visibilityNew) {
-      TransitionManager.beginDelayedTransition(
-          binding.linearOptionsContainer, new AutoTransition()
-      );
-      binding.linearMainIncrementalContainer.setVisibility(visibilityNew);
+      Transition transition = new AutoTransition();
+      transition.setDuration(Constants.ANIM_DURATION_SHORT);
+      TransitionManager.beginDelayedTransition(binding.linearOptionsContainer, transition);
+      binding.linearOptionsIncrementalContainer.setVisibility(visibilityNew);
     }
 
     binding.toggleOptionsIncrementalDirection.removeOnButtonCheckedListener(this);
@@ -673,9 +674,9 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     int visibilityOld = binding.linearOptionsTimerContainer.getVisibility();
     int visibilityNew = (isTimerActive || !useDialog) ? View.VISIBLE : View.GONE;
     if (visibilityOld != visibilityNew) {
-      TransitionManager.beginDelayedTransition(
-          binding.linearOptionsContainer, new AutoTransition()
-      );
+      Transition transition = new AutoTransition();
+      transition.setDuration(Constants.ANIM_DURATION_SHORT);
+      TransitionManager.beginDelayedTransition(binding.linearOptionsContainer, transition);
       binding.linearOptionsTimerContainer.setVisibility(visibilityNew);
     }
 
@@ -772,9 +773,9 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     int visibilityOld = binding.linearOptionsMuteContainer.getVisibility();
     int visibilityNew = (isMuteActive || !useDialog) ? View.VISIBLE : View.GONE;
     if (visibilityOld != visibilityNew) {
-      TransitionManager.beginDelayedTransition(
-          binding.linearOptionsContainer, new AutoTransition()
-      );
+      Transition transition = new AutoTransition();
+      transition.setDuration(Constants.ANIM_DURATION_SHORT);
+      TransitionManager.beginDelayedTransition(binding.linearOptionsContainer, transition);
       binding.linearOptionsMuteContainer.setVisibility(visibilityNew);
     }
   }
@@ -844,6 +845,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       ViewUtil.startIcon(binding.buttonOptionsBeatsAdd.getIcon());
       boolean success = config.addBeat();
       if (success) {
+        Transition transition = new AutoTransition();
+        transition.setDuration(Constants.ANIM_DURATION_SHORT);
+        TransitionManager.beginDelayedTransition(binding.linearOptionsBeats, transition);
+
         BeatView beatView = new BeatView(activity);
         beatView.setIndex(binding.linearOptionsBeats.getChildCount());
         beatView.setOnClickListener(beat -> {
@@ -852,7 +857,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
             config.setBeat(beatView.getIndex(), beatView.nextTickType());
           }
         });
-        TransitionManager.beginDelayedTransition(binding.linearOptionsBeats, new ChangeBounds());
         binding.linearOptionsBeats.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsBeats);
         updateBeatControls();
@@ -861,7 +865,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       ViewUtil.startIcon(binding.buttonOptionsBeatsRemove.getIcon());
       boolean success = config.removeBeat();
       if (success) {
-        TransitionManager.beginDelayedTransition(binding.linearOptionsBeats, new ChangeBounds());
+        Transition transition = new ChangeBounds();
+        transition.setDuration(Constants.ANIM_DURATION_SHORT);
+        TransitionManager.beginDelayedTransition(binding.linearOptionsBeats, transition);
+
         binding.linearOptionsBeats.removeViewAt(
             binding.linearOptionsBeats.getChildCount() - 1
         );
@@ -874,6 +881,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       ViewUtil.startIcon(binding.buttonOptionsSubsAdd.getIcon());
       boolean success = config.addSubdivision();
       if (success) {
+        Transition transition = new AutoTransition();
+        transition.setDuration(Constants.ANIM_DURATION_SHORT);
+        TransitionManager.beginDelayedTransition(binding.linearOptionsSubs, transition);
+
         BeatView beatView = new BeatView(activity);
         beatView.setIsSubdivision(true);
         beatView.setIndex(binding.linearOptionsSubs.getChildCount());
@@ -883,7 +894,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
             getConfig().setSubdivision(beatView.getIndex(), beatView.nextTickType());
           }
         });
-        TransitionManager.beginDelayedTransition(binding.linearOptionsSubs, new ChangeBounds());
         binding.linearOptionsSubs.addView(beatView);
         ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsSubs);
         updateSubControls();
@@ -892,7 +902,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       ViewUtil.startIcon(binding.buttonOptionsSubsRemove.getIcon());
       boolean success = config.removeSubdivision();
       if (success) {
-        TransitionManager.beginDelayedTransition(binding.linearOptionsSubs, new ChangeBounds());
+        Transition transition = new ChangeBounds();
+        transition.setDuration(Constants.ANIM_DURATION_SHORT);
+        TransitionManager.beginDelayedTransition(binding.linearOptionsSubs, transition);
+
         binding.linearOptionsSubs.removeViewAt(binding.linearOptionsSubs.getChildCount() - 1);
         ViewUtil.centerScrollContentIfNotFullWidth(
             binding.scrollHorizOptionsSubs, true

@@ -518,7 +518,7 @@
       app:labelBehavior="gone" />
 
     <LinearLayout
-      android:id="@+id/linear_main_incremental_container"
+      android:id="@+id/linear_options_incremental_container"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="vertical">
