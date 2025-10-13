@@ -137,6 +137,7 @@
   <string name="action_rename">Umbenennen</string>
   <string name="action_rename_part">Teil umbenennen</string>
   <string name="action_rename_part_description">Kann auch leer gelassen werden, wenn Nummerierung ausreicht</string>
+  <string name="action_duplicate">Duplizieren</string>
   <string name="action_update">Aktualisieren</string>
   <string name="action_use_current_config">Aktuelle Konfiguration nutzen</string>
   <string name="action_use_current_config_description">Von der Hauptseite</string>
