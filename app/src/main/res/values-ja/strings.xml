@@ -129,6 +129,7 @@
   <string name="action_add_song">ソング追加</string>
   <string name="action_sort_by">並べ替え</string>
   <string name="action_add_part">パート追加</string>
+  <string name="action_add">追加</string>
   <string name="action_save">保存</string>
   <string name="action_discard">破棄</string>
   <string name="action_rename">名前変更</string>
