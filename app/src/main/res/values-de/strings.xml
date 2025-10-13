@@ -131,6 +131,7 @@
   <string name="action_add_song">Werk hinzufügen</string>
   <string name="action_sort_by">Sortieren nach</string>
   <string name="action_add_part">Teil hinzufügen</string>
+  <string name="action_add">Hinzufügen</string>
   <string name="action_save">Speichern</string>
   <string name="action_discard">Verwerfen</string>
   <string name="action_rename">Umbenennen</string>
