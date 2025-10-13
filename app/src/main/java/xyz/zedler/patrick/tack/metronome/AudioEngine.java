@@ -66,12 +66,43 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     this.context = context;
     this.listener = listener;
     audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+
     resetHandlersIfRequired();
+
+    audioTrack = getTrack();
+    try {
+      audioTrack.setVolume(AudioUtil.dbToLinearVolume(volumeReductionDb));
+      loudnessEnhancer = new LoudnessEnhancer(audioTrack.getAudioSessionId());
+      loudnessEnhancer.setTargetGain(Math.max(0, gain * 100));
+      loudnessEnhancer.setEnabled(gain > 0);
+    } catch (Exception e) {
+      Log.e(TAG, "play: failed to initialize LoudnessEnhancer: ", e);
+    }
   }
 
   public void destroy() {
     removeHandlerCallbacks();
     audioThread.quitSafely();
+
+    try {
+      if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+        audioTrack.stop();
+      }
+      audioTrack.flush();
+      audioTrack.release();
+      audioTrack = null;
+    } catch (Exception e) {
+      Log.e(TAG, "destroy: failed to release AudioTrack: ", e);
+    }
+
+    if (loudnessEnhancer != null) {
+      try {
+        loudnessEnhancer.release();
+      } catch (RuntimeException e) {
+        Log.e(TAG, "stop: failed to release LoudnessEnhancer resources: ", e);
+      }
+      loudnessEnhancer = null;
+    }
   }
 
   private void resetHandlersIfRequired() {
@@ -93,19 +124,12 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   public void play() {
     resetHandlersIfRequired();
 
-    audioTrack = getTrack();
-    audioTrack.setVolume(AudioUtil.dbToLinearVolume(volumeReductionDb));
     try {
-      loudnessEnhancer = new LoudnessEnhancer(audioTrack.getAudioSessionId());
-      loudnessEnhancer.setTargetGain(Math.max(0, gain * 100));
-      loudnessEnhancer.setEnabled(gain > 0);
-    } catch (RuntimeException e) {
-      Log.e(TAG, "play: failed to initialize LoudnessEnhancer: ", e);
-    }
-    try {
-      audioTrack.play();
+      if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+        audioTrack.play();
+      }
       playing = true;
-    } catch (IllegalStateException e) {
+    } catch (Exception e) {
       Log.e(TAG, "play: failed to start AudioTrack: ", e);
     }
 
@@ -127,24 +151,18 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   }
 
   public void stop() {
-    playing = false;
     removeHandlerCallbacks();
 
-    if (audioTrack != null) {
+    try {
       if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
-        audioTrack.stop();
+        audioTrack.pause();
       }
+      playing = false;
       audioTrack.flush();
-      audioTrack.release();
+    } catch (Exception e) {
+      Log.e(TAG, "play: failed to start AudioTrack: ", e);
     }
-    if (loudnessEnhancer != null) {
-      try {
-        loudnessEnhancer.release();
-      } catch (RuntimeException e) {
-        Log.e(TAG, "stop: failed to release LoudnessEnhancer resources: ", e);
-      }
-      loudnessEnhancer = null;
-    }
+
     if (!ignoreFocus) {
       audioManager.abandonAudioFocus(this);
     }
@@ -158,7 +176,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     playing = false;
     removeHandlerCallbacks();
 
-    if (audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+    if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
       audioTrack.pause();
       audioTrack.flush();
     }
@@ -167,7 +185,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     try {
       audioTrack.play();
       playing = true;
-    } catch (IllegalStateException e) {
+    } catch (Exception e) {
       Log.e(TAG, "play: failed to start AudioTrack: ", e);
     }
   }
@@ -175,7 +193,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   @Override
   public void onAudioFocusChange(int focusChange) {
     if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-      if (audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+      if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
         audioTrack.setVolume(AudioUtil.dbToLinearVolume(volumeReductionDb));
       }
     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
@@ -183,7 +201,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
         || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
     ) {
-      if (audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+      if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
         audioTrack.setVolume(Math.min(0.25f, AudioUtil.dbToLinearVolume(volumeReductionDb)));
       }
     }
@@ -257,7 +275,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
       }
     }
     volumeReductionDb = Math.max(0, -gain * 100);
-    if (audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+    if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
       try {
         audioTrack.setVolume(AudioUtil.dbToLinearVolume(volumeReductionDb));
       } catch (IllegalStateException e) {
@@ -380,7 +398,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   }
 
   private void writeAudio(float[] data, int size) {
-    if (audioTrack == null || audioTrack.getState() != AudioTrack.STATE_INITIALIZED) {
+    if (audioTrack.getState() != AudioTrack.STATE_INITIALIZED) {
       return;
     }
     try {
