@@ -256,6 +256,12 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         performHapticClick();
         optionsUtil.setPart(new Part(part), false);
         optionsUtil.show();
+
+        binding.editTextSongName.postDelayed(() -> {
+          // Remove focus from edit text but with delay to prevent animation jank
+          UiUtil.hideKeyboard(binding.editTextSongName);
+          binding.editTextSongName.clearFocus();
+        }, 200);
       }
 
       @Override
@@ -273,6 +279,9 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           adapter.setParts(new ArrayList<>(partsResult));
           updateResult();
         }
+        // Remove focus from edit text
+        UiUtil.hideKeyboard(binding.editTextSongName);
+        binding.editTextSongName.clearFocus();
       }
 
       @Override
@@ -290,11 +299,17 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           adapter.setParts(new ArrayList<>(partsResult));
           updateResult();
         }
+        // Remove focus from edit text
+        UiUtil.hideKeyboard(binding.editTextSongName);
+        binding.editTextSongName.clearFocus();
       }
 
       @Override
       public void onMoreClick(@NonNull Part part) {
         performHapticClick();
+        // Remove focus from edit text
+        UiUtil.hideKeyboard(binding.editTextSongName);
+        binding.editTextSongName.clearFocus();
       }
 
       @Override
@@ -302,6 +317,28 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         performHapticClick();
         renameDialogUtil.setPart(part);
         renameDialogUtil.show();
+      }
+
+      @Override
+      public void onDuplicateClick(@NonNull Part part) {
+        performHapticClick();
+        if (activity.isUnlocked() || partsResult.size() < 2) {
+          Part partNew = new Part(part);
+          partNew.setRandomId();
+          partNew.setPartIndex(part.getPartIndex() + 1);
+          // move all parts below down by one
+          for (int i = partNew.getPartIndex(); i < partsResult.size(); i++) {
+            Part partBelow = new Part(partsResult.get(i));
+            partBelow.setPartIndex(partBelow.getPartIndex() + 1);
+            partsResult.set(i, partBelow);
+          }
+          partsResult.add(partNew);
+          sortParts();
+          adapter.setParts(new ArrayList<>(partsResult));
+          updateResult();
+        } else {
+          unlockDialogUtil.show();
+        }
       }
 
       @Override

@@ -150,6 +150,7 @@
   <string name="action_rename">Rename</string>
   <string name="action_rename_part">Rename part</string>
   <string name="action_rename_part_description">Can also be left empty if numbering alone is enough</string>
+  <string name="action_duplicate">Duplicate</string>
   <string name="action_update">Update</string>
   <string name="action_use_current_config">Use current config</string>
   <string name="action_use_current_config_description">From the main page</string>

@@ -90,6 +90,8 @@ public class PartAdapter extends Adapter<PartAdapter.PartViewHolder> {
         int id = item.getItemId();
         if (id == R.id.action_rename) {
           listener.onRenameClick(part);
+        } else if (id == R.id.action_duplicate) {
+          listener.onDuplicateClick(part);
         } else if (id == R.id.action_delete) {
           listener.onDeleteClick(part);
         }
@@ -366,6 +368,7 @@ public class PartAdapter extends Adapter<PartAdapter.PartViewHolder> {
     void onMoveDownClick(@NonNull Part part);
     void onMoreClick(@NonNull Part part);
     void onRenameClick(@NonNull Part part);
+    void onDuplicateClick(@NonNull Part part);
     void onDeleteClick(@NonNull Part part);
   }
 }

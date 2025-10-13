@@ -27,7 +27,9 @@ import android.view.View.OnClickListener;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.transition.AutoTransition;
+import androidx.transition.Transition;
 import androidx.transition.TransitionManager;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.databinding.PartialDialogHelpBinding;
@@ -128,7 +130,9 @@ public class HelpDialogUtil implements OnClickListener {
   }
 
   private void toggleAnswerVisibility(View answerView) {
-    TransitionManager.beginDelayedTransition(binding.linearHelpContainer, new AutoTransition());
+    Transition transition = new AutoTransition();
+    transition.setDuration(Constants.ANIM_DURATION_SHORT);
+    TransitionManager.beginDelayedTransition(binding.linearHelpContainer, transition);
     answerView.setVisibility(
         answerView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE
     );

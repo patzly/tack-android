@@ -183,6 +183,10 @@ public class Part implements Parcelable {
     this.id = id;
   }
 
+  public void setRandomId() {
+    this.id = UUID.randomUUID().toString();
+  }
+
   @Nullable
   public String getName() {
     return name;
