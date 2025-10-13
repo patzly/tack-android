@@ -20,6 +20,7 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import androidx.annotation.NonNull;
@@ -54,13 +55,14 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   private static final String TAG = OptionsUtil.class.getSimpleName();
 
   private static final String PART = "part_dialog";
+  private static final String IS_NEW = "new_part_dialog";
 
   private final MainActivity activity;
   private final boolean useDialog, editPart;
   private Runnable onModifiersCountChanged, onTimerChanged, onSubsChanged;
-  private OnPartUpdatedListener onPartUpdatedListener;
+  private OnPartEditListener onPartEditListener;
   private boolean isCountInActive, isIncrementalActive, isTimerActive, isMuteActive;
-  private boolean isInitialized;
+  private boolean isNew, isInitialized;
   private DialogUtil dialogUtil;
   private PartialOptionsBinding binding;
   private PartialDialogOptionsBinding bindingDialog;
@@ -106,9 +108,9 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     }
   }
 
-  public OptionsUtil(MainActivity activity, OnPartUpdatedListener onPartUpdatedListener) {
+  public OptionsUtil(MainActivity activity, OnPartEditListener onPartEditListener) {
     this.activity = activity;
-    this.onPartUpdatedListener = onPartUpdatedListener;
+    this.onPartEditListener = onPartEditListener;
 
     editPart = true;
     useDialog = true;
@@ -140,8 +142,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   public void showIfWasShown(@Nullable Bundle state) {
     if (editPart) {
       part = state != null ? state.getParcelable(PART) : null;
+      isNew = state != null && state.getBoolean(IS_NEW, false);
+      Log.i(TAG, "showIfWasShown: hello " + part + " isNew=" + isNew);
       if (part != null) {
-        setPart(part);
+        setPart(part, isNew);
         update();
         dialogUtil.showIfWasShown(state);
       }
@@ -163,32 +167,45 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     if (useDialog && dialogUtil != null) {
       dialogUtil.saveState(outState);
       if (editPart) {
+        part.setConfig(config);
         outState.putParcelable(PART, part);
+        outState.putBoolean(IS_NEW, isNew);
       }
     }
   }
 
-  public void setPart(@NonNull Part part) {
+  public void setPart(@NonNull Part part, boolean isNew) {
     this.part = part;
+    this.isNew = isNew;
+
     config = part.toConfig();
 
     bindingDialog = PartialDialogOptionsBinding.inflate(activity.getLayoutInflater());
     binding = bindingDialog.partialOptions;
 
-    String title = activity.getString(
-        R.string.label_part_edit, part.getPartIndex() + 1
-    );
     dialogUtil.createDialog(builder -> {
+      String title = activity.getString(
+          R.string.label_part_edit, part.getPartIndex() + 1
+      );
+      if (isNew) {
+        title = activity.getString(R.string.action_add_part);
+      }
       builder.setTitle(title);
       builder.setView(bindingDialog.getRoot());
-      builder.setPositiveButton(R.string.action_apply, (dialog, which) -> {
-        activity.performHapticClick();
-        if (onPartUpdatedListener != null) {
-          Part partResult = new Part(part);
-          partResult.setConfig(config);
-          onPartUpdatedListener.onPartUpdated(partResult);
-        }
-      });
+      builder.setPositiveButton(
+          isNew ? R.string.action_add : R.string.action_apply,
+          (dialog, which) -> {
+            activity.performHapticClick();
+            if (onPartEditListener != null) {
+              Part partResult = new Part(part);
+              partResult.setConfig(config);
+              if (isNew) {
+                onPartEditListener.onPartAdded(partResult);
+              } else {
+                onPartEditListener.onPartUpdated(partResult);
+              }
+            }
+          });
       builder.setNegativeButton(
           R.string.action_cancel,
           (dialog, which) -> activity.performHapticClick()
@@ -1220,7 +1237,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     return activity.getMetronomeEngine();
   }
 
-  public interface OnPartUpdatedListener {
+  public interface OnPartEditListener {
+    void onPartAdded(@NonNull Part part);
     void onPartUpdated(@NonNull Part part);
   }
 }

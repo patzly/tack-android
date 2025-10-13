@@ -144,6 +144,7 @@
   <string name="action_add_song">Add song</string>
   <string name="action_sort_by">Sort by</string>
   <string name="action_add_part">Add part</string>
+  <string name="action_add">Add</string>
   <string name="action_save">Save</string>
   <string name="action_discard">Discard</string>
   <string name="action_rename">Rename</string>

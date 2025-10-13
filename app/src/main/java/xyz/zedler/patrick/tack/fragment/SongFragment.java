@@ -57,12 +57,14 @@ import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.entity.Song;
 import xyz.zedler.patrick.tack.databinding.FragmentSongBinding;
+import xyz.zedler.patrick.tack.model.MetronomeConfig;
 import xyz.zedler.patrick.tack.recyclerview.adapter.PartAdapter;
 import xyz.zedler.patrick.tack.recyclerview.adapter.PartAdapter.OnPartItemClickListener;
 import xyz.zedler.patrick.tack.recyclerview.decoration.PartItemDecoration;
 import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.OptionsUtil;
+import xyz.zedler.patrick.tack.util.OptionsUtil.OnPartEditListener;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.SortUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
@@ -252,7 +254,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       @Override
       public void onEditClick(@NonNull Part part) {
         performHapticClick();
-        optionsUtil.setPart(part);
+        optionsUtil.setPart(new Part(part), false);
         optionsUtil.show();
       }
 
@@ -405,7 +407,19 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       binding.switchSongLooped.setOnCheckedChangeListener(this);
 
       partsResult = new LinkedList<>();
-      addPart();
+
+      Part firstPart = new Part(
+          null,
+          songResult.getId(),
+          partsResult.size(),
+          getMetronomeEngine() != null
+              ? getMetronomeEngine().getConfig()
+              : new MetronomeConfig()
+      );
+      partsResult.add(firstPart);
+      sortParts();
+      adapter.setParts(new ArrayList<>(partsResult));
+
       // Copy result to source after default part to prevent diff on result check
       partsSource = new ArrayList<>();
       for (Part part : partsResult) {
@@ -522,10 +536,21 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     renameDialogUtil = new RenameDialogUtil(activity, this);
     renameDialogUtil.showIfWasShown(savedInstanceState);
 
-    optionsUtil = new OptionsUtil(activity, (part) -> {
-      partsResult.set(part.getPartIndex(), part);
-      adapter.setParts(new ArrayList<>(partsResult));
-      updateResult();
+    optionsUtil = new OptionsUtil(activity, new OnPartEditListener() {
+      @Override
+      public void onPartAdded(@NonNull Part part) {
+        partsResult.add(part);
+        sortParts();
+        adapter.setParts(new ArrayList<>(partsResult));
+        updateResult();
+      }
+
+      @Override
+      public void onPartUpdated(@NonNull Part part) {
+        partsResult.set(part.getPartIndex(), part);
+        adapter.setParts(new ArrayList<>(partsResult));
+        updateResult();
+      }
     });
     optionsUtil.showIfWasShown(savedInstanceState);
 
@@ -571,8 +596,14 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       UiUtil.hideKeyboard(binding.editTextSongName);
       binding.editTextSongName.clearFocus();
       if (activity.isUnlocked() || partsResult.size() < 2) {
-        addPart();
-        updateResult();
+        Part part = new Part(
+            null,
+            songResult.getId(),
+            partsResult.size(),
+            new MetronomeConfig()
+        );
+        optionsUtil.setPart(part, true);
+        optionsUtil.show();
       } else {
         unlockDialogUtil.show();
       }
@@ -589,17 +620,6 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
       binding.editTextSongName.clearFocus();
       updateResult();
     }
-  }
-
-  private void addPart() {
-    if (getMetronomeEngine() == null) {
-      return;
-    }
-    int index = partsResult.size();
-    Part part = new Part(null, songResult.getId(), index, getMetronomeEngine().getConfig());
-    partsResult.add(part);
-    sortParts();
-    adapter.setParts(new ArrayList<>(partsResult));
   }
 
   public void renamePart(String partId, String name) {
