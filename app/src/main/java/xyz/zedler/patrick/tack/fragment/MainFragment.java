@@ -1034,7 +1034,11 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
 
   @Override
   public void onMetronomeTimerSecondsChanged() {
-    activity.runOnUiThread(() -> binding.timerMain.updateDisplay());
+    activity.runOnUiThread(() -> {
+      if (binding != null) {
+        binding.timerMain.updateDisplay();
+      }
+    });
   }
 
   @Override
@@ -1059,7 +1063,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       updateSubs(getMetronomeEngine().getConfig().getSubdivisions());
       updateSubControls(true);
 
-      binding.timerMain.updateControls(true, true, true);
+      // no timer updateControls here, as it is called from onMetronomeTimerProgressOneTime
+      //binding.timerMain.updateControls(true, true, true);
+
       updateOptions(true);
     });
   }

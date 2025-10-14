@@ -103,9 +103,6 @@ public class MetronomeEngine {
   }
 
   public void setToPreferences() {
-    config.setToPreferences(sharedPrefs);
-    MetronomeConfig configTmp = new MetronomeConfig(config);
-
     latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY);
     showElapsed = sharedPrefs.getBoolean(PREF.SHOW_ELAPSED, DEF.SHOW_ELAPSED);
     resetTimerOnStop = sharedPrefs.getBoolean(PREF.RESET_TIMER_ON_STOP, DEF.RESET_TIMER_ON_STOP);
@@ -126,12 +123,8 @@ public class MetronomeEngine {
         sharedPrefs.getInt(PREF.PART_CURRENT_INDEX, DEF.PART_CURRENT_INDEX),
         false,
         () -> {
-          if (!config.equals(configTmp)) {
-            // Re-apply all config changes a user could have made after a song was selected
-            setConfig(configTmp);
-            for (MetronomeListener listener : listeners) {
-              listener.onMetronomeConfigChanged();
-            }
+          for (MetronomeListener listener : listeners) {
+            listener.onMetronomeConfigChanged();
           }
         }
     );
@@ -189,7 +182,7 @@ public class MetronomeEngine {
     setCurrentSong(songId, partIndex, startPlaying, null);
   }
 
-  public void setCurrentSong(
+  private void setCurrentSong(
       @NonNull String songId, int partIndex, boolean startPlaying, Runnable onDone
   ) {
     currentSongId = songId;
