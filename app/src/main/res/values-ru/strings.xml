@@ -384,6 +384,7 @@
   <string name="settings_big_logo_description">Во время проигрывания вместо колеса выбора темпа</string>
 
   <string name="help_song_library">Как работает библиотека песен?</string>
+  <string name="help_song_part">Почему песня не переходит к следующей части?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Версия</string>
