@@ -20,7 +20,6 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import androidx.annotation.NonNull;
@@ -143,7 +142,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     if (editPart) {
       part = state != null ? state.getParcelable(PART) : null;
       isNew = state != null && state.getBoolean(IS_NEW, false);
-      Log.i(TAG, "showIfWasShown: hello " + part + " isNew=" + isNew);
       if (part != null) {
         setPart(part, isNew);
         update();

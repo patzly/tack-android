@@ -1061,7 +1061,6 @@ public class MetronomeEngine {
 
     if (!config.getTimerUnit().equals(UNIT.BARS)) {
       timerHandler.postDelayed(() -> {
-        Log.i(TAG, "updateTimerHandler: hello");
         if (hasNextPart()) {
           setCurrentPartIndex(currentPartIndex + 1);
         } else if (currentSongWithParts != null && currentSongWithParts.getSong().isLooped()) {
