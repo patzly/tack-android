@@ -145,6 +145,7 @@
   <string name="action_restore">Восстановить бэкап</string>
   <string name="action_restore_description">Существующие песни никогда не будут удалены или перезаписаны.</string>
   <string name="action_view_more_songs">Показать больше песен</string>
+  <string name="action_show_songs_list">Показывать песни списком</string>
   <string name="action_tempo_tap">Tap tempo</string>
 
   <!-- MESSAGES -->
