@@ -42,6 +42,7 @@
   <string name="label_bpm_value">%1$d bpm</string>
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$s мс</string>
+  <string name="label_db_signed">%1$s дБ</string>
   <string name="label_tempo">Темп</string>
   <string name="label_tempo_largo">Широко</string>
   <string name="label_tempo_larghetto">Умеренно широко</string>
@@ -52,8 +53,13 @@
   <string name="label_tempo_presto">Быстро</string>
   <string name="label_tempo_prestissimo">Очень быстро</string>
   <string name="label_tempo_input_help">Значения от %1$d до %2$d</string>
+  <string name="label_beat_mode_all">Звук и вибрация</string>
+  <string name="label_beat_mode_sound">Только звук</string>
+  <string name="label_beat_mode_vibration">Только вибрация</string>
   <string name="label_part_name">Название части</string>
   <string name="label_part_unnamed">Часть %1$d</string>
+  <string name="label_part_current">Часть %1$d: %2$s</string>
+  <string name="label_part_edit">Редактировать часть %1$d</string>
   <string name="label_part_no_duration">Нет длительности</string>
   <plurals name="label_parts_count">
     <item quantity="one">%1$d часть</item>
@@ -109,7 +115,6 @@
   <string name="action_beat_mode">Режим ударов</string>
   <string name="action_send_feedback">Написать отзыв</string>
   <string name="action_reset">Сбросить</string>
-  <string name="action_deactivate_gain">Выключить усиление</string>
   <string name="action_recommend">Рекомендовать</string>
   <string name="action_recommend_description">Рассказать друзьям о Tack</string>
   <string name="action_email">Отправить письмо на эл. почту</string>
@@ -130,6 +135,7 @@
   <string name="action_discard">Отменить</string>
   <string name="action_rename">Переименовать</string>
   <string name="action_rename_part">Переименовать часть</string>
+  <string name="action_duplicate">Дублировать</string>
   <string name="action_update">Обновить</string>
   <string name="action_delete">Удалить</string>
   <string name="action_move_up">Переместить выше</string>
@@ -137,7 +143,11 @@
   <string name="action_open_play_store">Открыть Play Store</string>
   <string name="action_backup">Сделать бэкап</string>
   <string name="action_restore">Восстановить бэкап</string>
+  <string name="action_restore_description">Существующие песни никогда не будут удалены или перезаписаны.</string>
   <string name="action_view_more_songs">Показать больше песен</string>
+  <string name="action_show_songs_list">Показывать песни списком</string>
+  <string name="action_tempo_tap">Tap tempo</string>
+
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Разработка хорошего приложения занимает много времени и зависит от обратной связи пользователей</string>
@@ -174,6 +184,7 @@
   <string name="msg_restore_success">Бэкап успешно восстановлен</string>
   <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
+  <string name="msg_songs_intro">Как работает библиотека песен</string>
   <string name="msg_widget_description">Просматривайте свои песни и включайте их</string>
   <string name="msg_installer_check">Некорректное приложение разблокировки</string>
   <string name="msg_installer_check_description">Пожалуйста, приобретите и установите приложение разблокировки в Google Play. Спасибо за вашу поддержку!</string>
@@ -374,6 +385,8 @@
   <string name="settings_big_logo">Показывать большой анимированный логотип</string>
   <string name="settings_big_logo_description">Во время проигрывания вместо колеса выбора темпа</string>
 
+  <string name="help_song_library">Как работает библиотека песен?</string>
+  <string name="help_song_part">Почему песня не переходит к следующей части?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Версия</string>
