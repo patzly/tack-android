@@ -127,6 +127,17 @@ public class HelpDialogUtil implements OnClickListener {
 
   private void update() {
     binding.scrollHelp.scrollTo(0, 0);
+
+    binding.textHelpAnswer1.setVisibility(View.GONE);
+    binding.textHelpAnswer2.setVisibility(View.GONE);
+    binding.textHelpAnswer3.setVisibility(View.GONE);
+    binding.textHelpAnswer4.setVisibility(View.GONE);
+    binding.textHelpAnswer5.setVisibility(View.GONE);
+    binding.textHelpAnswer6.setVisibility(View.GONE);
+    binding.textHelpAnswer7.setVisibility(View.GONE);
+    binding.textHelpAnswer8.setVisibility(View.GONE);
+    binding.textHelpAnswer9.setVisibility(View.GONE);
+    binding.buttonHelpTranslate.setVisibility(View.GONE);
   }
 
   private void toggleAnswerVisibility(View answerView) {

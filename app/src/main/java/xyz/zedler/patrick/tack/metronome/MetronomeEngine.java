@@ -103,6 +103,8 @@ public class MetronomeEngine {
   }
 
   public void setToPreferences() {
+    config.setToPreferences(sharedPrefs);
+
     latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY);
     showElapsed = sharedPrefs.getBoolean(PREF.SHOW_ELAPSED, DEF.SHOW_ELAPSED);
     resetTimerOnStop = sharedPrefs.getBoolean(PREF.RESET_TIMER_ON_STOP, DEF.RESET_TIMER_ON_STOP);

@@ -426,7 +426,7 @@
   <string name="help_notification_disappears">Why does the metronome service notification disappear when I close the app?</string>
   <string name="help_notification_disappears_answer">When you close the app from recent apps, the metronome service is stopped and the notification disappears. This is intended behavior to save battery and resources.\nIf you want to permanently keep the notification for start/stop access, you can enable &quot;Permanent notification&quot; in settings and don\'t dismiss the app from recent apps.</string>
   <string name="help_translation">How can I get Tack for my language?</string>
-  <string name="help_translation_answer">Translations for Tack are managed on Transifex, where users like you can translate it! Please visit Tack on GitHub for more information or jump directly into the translation process:</string>
+  <string name="help_translation_answer">Translations for Tack are managed on Transifex, where users like you can help translate the app! Please visit Tack on GitHub for more information or jump directly into the translation process:</string>
 
   <!-- ABOUT -->
 

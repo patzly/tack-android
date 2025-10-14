@@ -74,8 +74,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginTop="8dp"
-          android:text="@string/help_tempo_change_answer"
-          android:visibility="gone" />
+          android:text="@string/help_tempo_change_answer" />
 
       </LinearLayout>
 
@@ -99,8 +98,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginTop="8dp"
-          android:text="@string/help_time_signature_answer"
-          android:visibility="gone" />
+          android:text="@string/help_time_signature_answer" />
 
       </LinearLayout>
 
@@ -124,8 +122,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginTop="8dp"
-          android:text="@string/help_swing_answer"
-          android:visibility="gone" />
+          android:text="@string/help_swing_answer" />
 
       </LinearLayout>
 
@@ -149,8 +146,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginTop="8dp"
-          android:text="@string/help_song_library_answer"
-          android:visibility="gone" />
+          android:text="@string/help_song_library_answer" />
 
       </LinearLayout>
 
@@ -174,8 +170,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginTop="8dp"
-          android:text="@string/help_song_picker_answer"
-          android:visibility="gone" />
+          android:text="@string/help_song_picker_answer" />
 
       </LinearLayout>
 
@@ -199,8 +194,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginTop="8dp"
-          android:text="@string/help_song_part_answer"
-          android:visibility="gone" />
+          android:text="@string/help_song_part_answer" />
 
       </LinearLayout>
 
@@ -224,8 +218,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginTop="8dp"
-          android:text="@string/help_notification_displays_answer"
-          android:visibility="gone" />
+          android:text="@string/help_notification_displays_answer" />
 
       </LinearLayout>
 
@@ -249,8 +242,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginTop="8dp"
-          android:text="@string/help_notification_disappears_answer"
-          android:visibility="gone" />
+          android:text="@string/help_notification_disappears_answer" />
 
       </LinearLayout>
 
@@ -278,8 +270,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_marginTop="4dp"
-          android:text="@string/help_translation_answer"
-          android:visibility="gone" />
+          android:text="@string/help_translation_answer" />
 
         <com.google.android.material.button.MaterialButton
           android:id="@+id/button_help_translate"
@@ -287,7 +278,6 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginTop="8dp"
-          android:visibility="gone"
           android:text="@string/about_translation"
           app:icon="@drawable/ic_rounded_translate" />
 
