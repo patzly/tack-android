@@ -393,6 +393,8 @@
   <string name="help_notification_disappears">アプリを終了するとメトロノームの通知が消えるのはどうして？</string>
   <string name="help_notification_disappears_answer">「最近使ったアプリ」からアプリを終了するとメトロノームが停止し、通知が消えます。これはバッテリーとリソースを節約するための動作です。\n開始/停止の通知を常に表示したい場合は、設定で「常に通知表示」を有効にし、最近使ったアプリからアプリを閉じないようにしてください。</string>
   <string name="help_translation">私の言語でTackを使うには？</string>
+  <string name="help_translation_answer">TackのローカライズはTransifexで管理されており、ユーザーは翻訳作業に協力できます。詳細はTackのGitHubをご覧になるか、翻訳サイトにアクセスしてください:</string>
+
   <!-- ABOUT -->
 
   <string name="about_version">バージョン</string>
