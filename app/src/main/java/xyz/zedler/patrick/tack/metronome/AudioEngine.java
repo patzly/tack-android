@@ -30,7 +30,6 @@ import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.os.SystemClock;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
@@ -48,19 +47,19 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   private static final boolean DEBUG = false;
 
   public static final int SAMPLE_RATE_IN_HZ = 48000;
-  private static final int SILENCE_CHUNK_SIZE = 8000;
 
   private final Context context;
   private final AudioManager audioManager;
   private final AudioListener listener;
+  private final float[] silence;
   private HandlerThread audioThread;
   private Handler audioHandler;
   private AudioTrack audioTrack;
   private LoudnessEnhancer loudnessEnhancer;
-  private float[] tickStrong, tickNormal, tickSub;
   private int gain, volumeReductionDb;
   private boolean playing, muted, ignoreFocus;
-  private final float[] silence = new float[SILENCE_CHUNK_SIZE];
+  private float[] tickStrong, tickNormal, tickSub;
+  private float[] scaledBuffer;
 
   public AudioEngine(@NonNull Context context, @NonNull AudioListener listener) {
     this.context = context;
@@ -69,7 +68,25 @@ public class AudioEngine implements OnAudioFocusChangeListener {
 
     resetHandlersIfRequired();
 
-    audioTrack = getTrack();
+    AudioFormat audioFormat = new AudioFormat.Builder()
+        .setEncoding(AudioFormat.ENCODING_PCM_FLOAT)
+        .setSampleRate(SAMPLE_RATE_IN_HZ)
+        .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
+        .build();
+    int bufferSize = AudioTrack.getMinBufferSize(
+        audioFormat.getSampleRate(), audioFormat.getChannelMask(), audioFormat.getEncoding()
+    );
+    audioTrack = new AudioTrack(
+        AudioUtil.getAttributes(),
+        audioFormat,
+        bufferSize,
+        AudioTrack.MODE_STREAM,
+        AudioManager.AUDIO_SESSION_ID_GENERATE
+    );
+
+    silence = new float[bufferSize];
+    scaledBuffer = new float[bufferSize];
+
     try {
       audioTrack.setVolume(AudioUtil.dbToLinearVolume(volumeReductionDb));
       loudnessEnhancer = new LoudnessEnhancer(audioTrack.getAudioSessionId());
@@ -78,6 +95,18 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     } catch (Exception e) {
       Log.e(TAG, "play: failed to initialize LoudnessEnhancer: ", e);
     }
+
+    if (audioTrack.getState() != AudioTrack.STATE_INITIALIZED) {
+      return;
+    }
+    resetHandlersIfRequired();
+    audioTrack.play();
+    audioHandler.post(() -> {
+      // pre-fill AudioTrack buffer to avoid initial glitches
+      writeSilenceUntilPeriodFinished(0, bufferSize);
+      audioTrack.pause();
+      audioTrack.flush();
+    });
   }
 
   public void destroy() {
@@ -133,17 +162,14 @@ public class AudioEngine implements OnAudioFocusChangeListener {
       Log.e(TAG, "play: failed to start AudioTrack: ", e);
     }
 
-    if (ignoreFocus) {
-      return;
-    }
-    if (VERSION.SDK_INT >= VERSION_CODES.O) {
+    if (!ignoreFocus && VERSION.SDK_INT >= VERSION_CODES.O) {
       AudioFocusRequest request = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
           .setAudioAttributes(AudioUtil.getAttributes())
           .setWillPauseWhenDucked(true)
           .setOnAudioFocusChangeListener(this)
           .build();
       audioManager.requestAudioFocus(request);
-    } else {
+    } else if (!ignoreFocus) {
       audioManager.requestAudioFocus(
           this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN
       );
@@ -300,18 +326,15 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     return ignoreFocus;
   }
 
-  public void writeTickPeriod(Tick tick, int tempo, int subdivisionCount) {
-    final int periodSize = 60 * SAMPLE_RATE_IN_HZ / tempo / subdivisionCount;
-    final long expectedTime = SystemClock.elapsedRealtime();
+  public void writeTickPeriod(Tick tick, int tempo, int subdivisionCount, long scheduledNano) {
     audioHandler.post(() -> {
+      int periodSize = 60 * SAMPLE_RATE_IN_HZ / tempo / subdivisionCount;
       int periodSizeTrimmed = periodSize;
-      if (tick.subdivision == 1) {
-        long currentTime = SystemClock.elapsedRealtime();
-        long delay = currentTime - expectedTime;
-        if (delay > 1) {
-          int trimSize = (int) (Math.max(delay, 10) * (SAMPLE_RATE_IN_HZ / 1000));
-          periodSizeTrimmed = Math.max(0, periodSize - trimSize);
-        }
+      long nowNano = System.nanoTime();
+      long delayMs = (nowNano - scheduledNano) / 1_000_000L;
+      if (delayMs > 1) {
+        int trimSize = (int) (delayMs * (SAMPLE_RATE_IN_HZ / 1000));
+        periodSizeTrimmed = Math.max(0, periodSize - trimSize);
       }
       float[] tickSound = muted || tick.isMuted ? silence : getTickSound(tick.type);
       int sizeWritten = writeNextAudioData(tickSound, periodSizeTrimmed, 0);
@@ -353,23 +376,6 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     }
   }
 
-  private static AudioTrack getTrack() {
-    AudioFormat audioFormat = new AudioFormat.Builder()
-        .setEncoding(AudioFormat.ENCODING_PCM_FLOAT)
-        .setSampleRate(SAMPLE_RATE_IN_HZ)
-        .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
-        .build();
-    return new AudioTrack(
-        AudioUtil.getAttributes(),
-        audioFormat,
-        AudioTrack.getMinBufferSize(
-            audioFormat.getSampleRate(), audioFormat.getChannelMask(), audioFormat.getEncoding()
-        ),
-        AudioTrack.MODE_STREAM,
-        AudioManager.AUDIO_SESSION_ID_GENERATE
-    );
-  }
-
   private float[] loadAudio(@RawRes int resId, Pitch pitch) {
     try (InputStream stream = context.getResources().openRawResource(resId)) {
       return adjustPitch(AudioUtil.readDataFromWavFloat(stream), pitch);
@@ -403,16 +409,17 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     }
     try {
       boolean reduceVolume = gain < 0;
-      float[] scaled = new float[size];
+      float[] out = reduceVolume ? scaledBuffer : data;
       if (reduceVolume) {
+        if (scaledBuffer.length < size) {
+          scaledBuffer = new float[size];
+        }
         float fraction = 1 - ((float) Math.abs(gain * 4) / 100);
         for (int i = 0; i < size; i++) {
-          scaled[i] = data[i] * fraction;
+          scaledBuffer[i] = data[i] * fraction;
         }
       }
-      int result = audioTrack.write(
-          reduceVolume ? scaled : data, 0, size, AudioTrack.WRITE_BLOCKING
-      );
+      int result = audioTrack.write(out, 0, size, AudioTrack.WRITE_BLOCKING);
       if (result < 0) {
         stop();
         throw new IllegalStateException("Error code: " + result);

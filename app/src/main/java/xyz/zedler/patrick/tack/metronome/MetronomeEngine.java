@@ -410,29 +410,12 @@ public class MetronomeEngine {
     }
     resetHandlersIfRequired();
 
-    playing = true;
-    audioEngine.play();
     tickIndex = 0;
     isMuted = false;
     if (config.isMuteActive()) {
       // updateMuteHandler would be too late
       muteCountDown = calculateMuteCount(false);
     }
-    tickHandler.post(new Runnable() {
-      @Override
-      public void run() {
-        if (isPlaying()) {
-          Tick tick = performTick();
-          if (tick != null) {
-            tickHandler.postDelayed(
-                this, getInterval() / config.getSubdivisionsCount()
-            );
-            audioEngine.writeTickPeriod(tick, config.getTempo(), config.getSubdivisionsCount());
-            tickIndex++;
-          }
-        }
-      }
-    });
 
     isCountingIn = config.isCountInActive();
     countInStartTime = System.currentTimeMillis();
@@ -449,6 +432,27 @@ public class MetronomeEngine {
     if (getGain() > 0) {
       neverStartedWithGain = false;
     }
+
+    playing = true;
+    audioEngine.play();
+    Runnable tickRunnable = new Runnable() {
+      @Override
+      public void run() {
+        if (!isPlaying()) {
+          return;
+        }
+        tickHandler.postDelayed(this, getInterval() / config.getSubdivisionsCount());
+        Tick tick = performTick();
+        if (tick != null) {
+          long scheduledNano = System.nanoTime();
+          audioEngine.writeTickPeriod(
+              tick, config.getTempo(), config.getSubdivisionsCount(), scheduledNano
+          );
+          tickIndex++;
+        }
+      }
+    };
+    tickHandler.post(tickRunnable);
 
     synchronized (listeners) {
       for (MetronomeListener listener : listeners) {
@@ -523,21 +527,26 @@ public class MetronomeEngine {
         // updateMuteHandler would be too late
         muteCountDown = calculateMuteCount(false);
       }
-      tickHandler.post(new Runnable() {
+
+      Runnable tickRunnable = new Runnable() {
         @Override
         public void run() {
-          if (isPlaying()) {
-            Tick tick = performTick();
-            if (tick != null) {
-              tickHandler.postDelayed(
-                  this, getInterval() / config.getSubdivisionsCount()
-              );
-              audioEngine.writeTickPeriod(tick, config.getTempo(), config.getSubdivisionsCount());
-              tickIndex++;
-            }
+          if (!isPlaying()) {
+            return;
+          }
+          tickHandler.postDelayed(this, getInterval() / config.getSubdivisionsCount());
+          Tick tick = performTick();
+          if (tick != null) {
+            long scheduledNano = System.nanoTime();
+            audioEngine.writeTickPeriod(
+                tick, config.getTempo(), config.getSubdivisionsCount(), scheduledNano
+            );
+            tickIndex++;
           }
         }
-      });
+      };
+      tickHandler.post(tickRunnable);
+
       isCountingIn = false;
       updateIncrementalHandler();
       elapsedStartTime = System.currentTimeMillis();
