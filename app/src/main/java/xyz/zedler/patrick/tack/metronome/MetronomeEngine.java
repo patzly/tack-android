@@ -444,10 +444,8 @@ public class MetronomeEngine {
         tickHandler.postDelayed(this, getInterval() / config.getSubdivisionsCount());
         Tick tick = performTick();
         if (tick != null) {
-          long scheduledNano = System.nanoTime();
-          audioEngine.writeTickPeriod(
-              tick, config.getTempo(), config.getSubdivisionsCount(), scheduledNano
-          );
+          int subdivisionRate = config.getTempo() * config.getSubdivisionsCount();
+          audioEngine.writeTickPeriod(tick, subdivisionRate);
           tickIndex++;
         }
       }
@@ -537,10 +535,8 @@ public class MetronomeEngine {
           tickHandler.postDelayed(this, getInterval() / config.getSubdivisionsCount());
           Tick tick = performTick();
           if (tick != null) {
-            long scheduledNano = System.nanoTime();
-            audioEngine.writeTickPeriod(
-                tick, config.getTempo(), config.getSubdivisionsCount(), scheduledNano
-            );
+            int subdivisionRate = config.getTempo() * config.getSubdivisionsCount();
+            audioEngine.writeTickPeriod(tick, subdivisionRate);
             tickIndex++;
           }
         }
