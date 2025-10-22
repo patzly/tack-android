@@ -1262,7 +1262,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       beatView.setReduceAnimations(reduceAnimations);
       binding.linearMainBeats.addView(beatView);
     }
-    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
+    binding.linearMainBeats.post(
+        () -> ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats)
+    );
 
     updateBeatControls(true);
   }
