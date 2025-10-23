@@ -300,6 +300,10 @@
   </plurals>
   <string name="options_mute_random">Zufall mit kleineren Werten</string>
   <string name="options_subdivisions">Unterteilungen</string>
+  <plurals name="options_subdivisions_description">
+    <item quantity="one">%1$d pro Schlag</item>
+    <item quantity="other">%1$d pro Schlag</item>
+  </plurals>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Unterteilungen an Swing-Verhältnis angepasst</string>
   <string name="options_swing_3">Triole</string>
