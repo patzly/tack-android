@@ -35,7 +35,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.atomic.AtomicLong;
 import xyz.zedler.patrick.tack.Constants.SOUND;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.R;
@@ -48,13 +47,11 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   private static final boolean DEBUG = false;
 
   private static final int SAMPLE_RATE_IN_HZ = 48000;
-  private static final int CHUNK_SIZE = 240;
 
   private final Context context;
   private final AudioManager audioManager;
   private final AudioListener listener;
   private final float[] silence;
-  private final AtomicLong writeGeneration = new AtomicLong(0);
   private HandlerThread audioThread;
   private Handler audioHandler;
   private AudioTrack audioTrack;
@@ -105,7 +102,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     audioTrack.play();
     audioHandler.post(() -> {
       // pre-fill AudioTrack buffer to avoid initial glitches
-      writeSilenceUntilPeriodFinished(0, bufferSize, writeGeneration.get());
+      writeSilenceUntilPeriodFinished(0, bufferSize);
       audioTrack.pause();
       audioTrack.flush();
     });
@@ -330,14 +327,8 @@ public class AudioEngine implements OnAudioFocusChangeListener {
 
   public void writeTickPeriod(Tick tick, int subdivisionRate) {
     long scheduledNano = System.nanoTime();
-
-    writeGeneration.incrementAndGet();
     removeHandlerCallbacks();
-    final long generation = writeGeneration.get();
     audioHandler.post(() -> {
-      if (generation != writeGeneration.get()) {
-        return;
-      }
       int periodSize = (60 * SAMPLE_RATE_IN_HZ) / subdivisionRate;
       int periodSizeTrimmed = periodSize;
       long nowNano = System.nanoTime();
@@ -347,50 +338,30 @@ public class AudioEngine implements OnAudioFocusChangeListener {
         periodSizeTrimmed = Math.max(0, periodSize - trimSize);
       }
       float[] tickSound = muted || tick.isMuted ? silence : getTickSound(tick.type);
-      int sizeWritten = writeNextAudioDataChunked(
-          tickSound, periodSizeTrimmed, 0, generation
-      );
+      int sizeWritten = writeNextAudioData(tickSound, periodSizeTrimmed, 0);
       if (DEBUG) {
         Log.v(TAG, "writeTickPeriod: wrote tick sound for tick " + tick);
       }
-      writeSilenceUntilPeriodFinished(sizeWritten, periodSizeTrimmed, generation);
+      writeSilenceUntilPeriodFinished(sizeWritten, periodSizeTrimmed);
     });
   }
 
-  private void writeSilenceUntilPeriodFinished(
-      int previousSizeWritten, int periodSize, long generation
-  ) {
+  private void writeSilenceUntilPeriodFinished(int previousSizeWritten, int periodSize) {
     int sizeWritten = previousSizeWritten;
     while (sizeWritten < periodSize) {
-      if (generation != writeGeneration.get()) {
-        return;
-      }
-      int wrote = writeNextAudioDataChunked(silence, periodSize, sizeWritten, generation);
-      if (wrote <= 0) {
-        // nothing written (maybe aborted), break to avoid infinite loop
-        return;
-      }
-      sizeWritten += wrote;
+      sizeWritten += writeNextAudioData(silence, periodSize, sizeWritten);
       if (DEBUG) {
         Log.v(TAG, "writeSilenceUntilPeriodFinished: wrote silence");
       }
     }
   }
 
-  private int writeNextAudioDataChunked(
-      float[] data, int periodSize, int sizeWritten, long generation
-  ) {
+  private int writeNextAudioData(float[] data, int periodSize, int sizeWritten) {
     int size = Math.min(data.length, periodSize - sizeWritten);
-    int totalWritten = 0;
-    while (totalWritten < size) {
-      if (generation != writeGeneration.get()) {
-        return totalWritten;
-      }
-      int toWrite = Math.min(CHUNK_SIZE, size - totalWritten);
-      writeAudioChunked(data, totalWritten, toWrite, generation);
-      totalWritten += toWrite;
+    if (playing) {
+      writeAudio(data, size);
     }
-    return totalWritten;
+    return size;
   }
 
   private float[] getTickSound(String tickType) {
@@ -433,7 +404,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     }
   }
 
-  private void writeAudioChunked(float[] data, int offset, int size, long generation) {
+  private void writeAudio(float[] data, int size) {
     if (audioTrack.getState() != AudioTrack.STATE_INITIALIZED) {
       return;
     }
@@ -449,21 +420,10 @@ public class AudioEngine implements OnAudioFocusChangeListener {
           scaledBuffer[i] = data[i] * fraction;
         }
       }
-
-      int written = 0;
-      while (written < size) {
-        if (generation != writeGeneration.get()) {
-          Log.e(TAG, "writeAudioChunked: aborted write, generation=" + generation);
-          return;
-        }
-        int writeOffset = (reduceVolume ? 0 : offset + written);
-        int writeCount = size - written;
-        int result = audioTrack.write(out, writeOffset, writeCount, AudioTrack.WRITE_BLOCKING);
-        if (result < 0) {
-          stop();
-          throw new IllegalStateException("Error code: " + result);
-        }
-        written += result;
+      int result = audioTrack.write(out, 0, size, AudioTrack.WRITE_BLOCKING);
+      if (result < 0) {
+        stop();
+        throw new IllegalStateException("Error code: " + result);
       }
     } catch (Exception e) {
       Log.e(TAG, "writeAudio: failed to play audion data", e);
