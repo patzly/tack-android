@@ -96,7 +96,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
       Log.e(TAG, "play: failed to initialize LoudnessEnhancer: ", e);
     }
 
-    if (audioTrack.getState() != AudioTrack.STATE_INITIALIZED) {
+    if (!isInitialized()) {
       return;
     }
     audioTrack.play();
@@ -113,7 +113,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     audioThread.quitSafely();
 
     try {
-      if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+      if (isInitialized()) {
         audioTrack.stop();
       }
       audioTrack.flush();
@@ -153,7 +153,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     resetHandlersIfRequired();
 
     try {
-      if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+      if (isInitialized()) {
         audioTrack.play();
       }
       playing = true;
@@ -179,7 +179,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     removeHandlerCallbacks();
 
     try {
-      if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+      if (isInitialized()) {
         audioTrack.pause();
       }
       playing = false;
@@ -201,7 +201,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     playing = false;
     removeHandlerCallbacks();
 
-    if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+    if (isInitialized()) {
       audioTrack.pause();
       audioTrack.flush();
     }
@@ -218,7 +218,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   @Override
   public void onAudioFocusChange(int focusChange) {
     if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-      if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+      if (isInitialized()) {
         audioTrack.setVolume(AudioUtil.dbToLinearVolume(volumeReductionDb));
       }
     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
@@ -226,7 +226,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
         || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
     ) {
-      if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+      if (isInitialized()) {
         audioTrack.setVolume(Math.min(0.25f, AudioUtil.dbToLinearVolume(volumeReductionDb)));
       }
     }
@@ -300,7 +300,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
       }
     }
     volumeReductionDb = Math.max(0, -gain * 100);
-    if (audioTrack.getState() == AudioTrack.STATE_INITIALIZED) {
+    if (isInitialized()) {
       try {
         audioTrack.setVolume(AudioUtil.dbToLinearVolume(volumeReductionDb));
       } catch (IllegalStateException e) {
@@ -405,7 +405,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   }
 
   private void writeAudio(float[] data, int size) {
-    if (audioTrack.getState() != AudioTrack.STATE_INITIALIZED) {
+    if (!isInitialized()) {
       return;
     }
     try {
@@ -428,6 +428,10 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     } catch (Exception e) {
       Log.e(TAG, "writeAudio: failed to play audion data", e);
     }
+  }
+
+  private boolean isInitialized() {
+    return audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED;
   }
 
   private enum Pitch {

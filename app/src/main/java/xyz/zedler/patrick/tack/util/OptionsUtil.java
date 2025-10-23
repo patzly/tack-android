@@ -268,7 +268,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding.sliderOptionsTempo.setValue(tempoSafe);
     binding.sliderOptionsTempo.addOnChangeListener(this);
     binding.sliderOptionsTempo.setLabelFormatter(
-        value -> activity.getString(R.string.label_bpm_value, value)
+        value -> activity.getString(R.string.label_bpm_value, (int) value)
     );
   }
 
