@@ -233,7 +233,7 @@
     <item quantity="other">%1$d 分</item>
   </plurals>
   <string name="options_inactive">無効</string>
-  <plurals name="options_beats_subs_description">
+  <plurals name="options_beats_description">
     <item quantity="other">%1$d / 1小節</item>
   </plurals>
   <string name="options_count_in">前奏カウント</string>
