@@ -196,7 +196,21 @@ public class TimerView extends FrameLayout {
     boolean isPlaying = metronomeEngine != null && metronomeEngine.isPlaying();
     boolean isTimerActive = metronomeConfig.isTimerActive();
     setTimerExpanded(isTimerActive, animateVisibility);
-    binding.sliderTimer.setContinuousModeTickCount(metronomeConfig.getTimerDuration() + 1);
+
+    int tickCount = metronomeConfig.getTimerDuration();
+    int tickSpacingPx = (int) (binding.sliderTimer.getValueTo() / tickCount);
+    int tickSpacingDp = UiUtil.dpFromPx(activity, tickSpacingPx);
+    if (tickSpacingDp < 16) {
+      // reduce tick count to only show every tenth tick
+      tickCount = (int) Math.ceil(tickCount / 10f);
+      tickSpacingPx = (int) (binding.sliderTimer.getValueTo() / tickCount);
+      tickSpacingDp = UiUtil.dpFromPx(activity, tickSpacingPx);
+      if (tickSpacingDp < 16) {
+        // reduce tick count again to only show every hundredth tick
+        tickCount = (int) Math.ceil(tickCount / 10f);
+      }
+    }
+    binding.sliderTimer.setContinuousModeTickCount(tickCount + 1);
 
     if (metronomeEngine == null) {
       return;
