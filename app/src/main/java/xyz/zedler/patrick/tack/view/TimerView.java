@@ -138,15 +138,7 @@ public class TimerView extends FrameLayout {
   protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
     super.onLayout(changed, left, top, right, bottom);
 
-    binding.sliderTimer.getGlobalVisibleRect(globalRect);
-    this.getLocationOnScreen(locationOnScreen);
-    // Convert global to local
-    exclusionRect.set(
-        globalRect.left - locationOnScreen[0],
-        globalRect.top  - locationOnScreen[1],
-        globalRect.right - locationOnScreen[0],
-        globalRect.bottom - locationOnScreen[1]
-    );
+    binding.sliderTimer.getHitRect(exclusionRect);
     exclusionRects.clear();
     exclusionRects.add(exclusionRect);
     ViewCompat.setSystemGestureExclusionRects(this, exclusionRects);
