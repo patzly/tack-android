@@ -291,11 +291,20 @@ public class TimerView extends FrameLayout {
   }
 
   private void startProgressTransition(float fractionTo) {
+    if (getMetronomeEngine() == null) {
+      return;
+    }
     int current = (int) binding.sliderTimer.getValue();
     int max = (int) binding.sliderTimer.getValueTo();
     float currentFraction = current / (float) max;
-    if (getMetronomeEngine() != null && getMetronomeEngine().equalsTimerProgress(currentFraction)) {
-      // only if current progress is not equal to timer progress
+    int currentFractionPx = (int) (currentFraction * binding.sliderTimer.getValueTo());
+    int currentFractionDp = UiUtil.dpFromPx(activity, currentFractionPx);
+    float currentProgress = getMetronomeEngine().getTimerProgress();
+    int currentProgressPx = (int) (currentProgress * binding.sliderTimer.getValueTo());
+    int currentProgressDp = UiUtil.dpFromPx(activity, currentProgressPx);
+    int diffDp = Math.abs(currentFractionDp - currentProgressDp);
+    if (diffDp < 2) {
+      // only if current progress is not nearly equal to timer progress
       return;
     }
     progressTransitionAnimator = ValueAnimator.ofFloat(currentFraction, fractionTo);

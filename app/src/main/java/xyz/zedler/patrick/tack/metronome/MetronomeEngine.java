@@ -77,8 +77,9 @@ public class MetronomeEngine {
   private Handler tickHandler, latencyHandler;
   private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
   private SongWithParts currentSongWithParts;
-  private String beatMode, currentSongId, timerStringBars, keepAwake, flashScreen;
+  private String beatMode, currentSongId, keepAwake, flashScreen;
   private int currentPartIndex, muteCountDown, songsOrder;
+  private int timerBarIndex, timerBeatIndex, timerSubIndex;
   private long tickIndex, latency, countInStartTime, timerStartTime;
   private long elapsedStartTime, elapsedTime, elapsedPrevious;
   private float timerProgress;
@@ -469,8 +470,11 @@ public class MetronomeEngine {
       return;
     }
     boolean isTimerReset = false;
-    if (resetTimer || equalsTimerProgress(1)) {
+    if (resetTimer || isTimerFinished()) {
       timerProgress = 0;
+      timerBarIndex = 0;
+      timerBeatIndex = 0;
+      timerSubIndex = 0;
       isTimerReset = true;
     } else {
       timerProgress = getTimerProgress(); // must be called before playing is set to false
@@ -498,8 +502,11 @@ public class MetronomeEngine {
     if (isPlaying()) {
       // stop-like logic
       boolean isTimerReset = false;
-      if (resetTimer || equalsTimerProgress(1)) {
+      if (resetTimer || isTimerFinished()) {
         timerProgress = 0;
+        timerBarIndex = 0;
+        timerBeatIndex = 0;
+        timerSubIndex = 0;
         isTimerReset = true;
       } else {
         timerProgress = getTimerProgress(); // must be called before playing is set to false
@@ -1021,20 +1028,54 @@ public class MetronomeEngine {
     }
   }
 
-  public boolean equalsTimerProgress(float fraction) {
-    try {
-      BigDecimal bdProgress = BigDecimal.valueOf(getTimerProgress()).setScale(
-          2, RoundingMode.HALF_UP
-      );
-      BigDecimal bdFraction = new BigDecimal(fraction).setScale(2, RoundingMode.HALF_UP);
-      return bdProgress.equals(bdFraction);
-    } catch (NumberFormatException e) {
-      return false;
+  public boolean isTimerFinished() {
+    if (config.getTimerUnit().equals(UNIT.BARS)) {
+      return timerBarIndex >= config.getTimerDuration() - 1 &&
+          timerBeatIndex >= config.getBeatsCount() - 1 &&
+          timerSubIndex >= config.getSubdivisionsCount() - 1;
+    } else {
+      try {
+        BigDecimal bdProgress = BigDecimal.valueOf(getTimerProgress()).setScale(
+            2, RoundingMode.HALF_UP
+        );
+        BigDecimal bdFraction = new BigDecimal(1).setScale(2, RoundingMode.HALF_UP);
+        return bdProgress.equals(bdFraction);
+      } catch (NumberFormatException e) {
+        return false;
+      }
     }
   }
 
   public void updateTimerHandler(float fraction, boolean startAtFirstBeat) {
     timerProgress = fraction;
+    switch (config.getTimerUnit()) {
+      case UNIT.SECONDS:
+      case UNIT.MINUTES:
+        boolean isUnitSeconds = config.getTimerUnit().equals(UNIT.SECONDS);
+        long totalMillis = config.getTimerDuration() * (isUnitSeconds ? 1000L : 60000L);
+        long elapsedMillis = (long) (fraction * totalMillis);
+        timerBarIndex = (int) (elapsedMillis / getInterval() / config.getBeatsCount());
+        long beatMillis = getInterval();
+        timerBeatIndex =
+            (int) ((elapsedMillis % (getInterval() * config.getBeatsCount())) / beatMillis);
+        long subdivisionMillis = getInterval() / config.getSubdivisionsCount();
+        timerSubIndex = (int) ((elapsedMillis % beatMillis) / subdivisionMillis);
+        break;
+      default:
+        int barIndex = (int) (fraction * config.getTimerDuration());
+        timerBarIndex = Math.min(barIndex, config.getTimerDuration() - 1);
+
+        if (barIndex <= config.getTimerDuration() - 1) {
+          timerBeatIndex = (int) ((fraction * config.getTimerDuration() * config.getBeatsCount())
+              % config.getBeatsCount());
+          timerSubIndex = (int) (fraction * config.getTimerDuration() * config.getBeatsCount()
+              * config.getSubdivisionsCount()) % config.getSubdivisionsCount();
+        } else {
+          timerBeatIndex = config.getBeatsCount() - 1;
+          timerSubIndex = config.getSubdivisionsCount() - 1;
+        }
+        break;
+    }
     updateTimerHandler(startAtFirstBeat, false);
   }
 
@@ -1055,15 +1096,14 @@ public class MetronomeEngine {
       return;
     }
 
-    if (equalsTimerProgress(1)) {
+    if (isTimerFinished()) {
       timerProgress = 0;
     } else if (startAtFirstBeat) {
       // set timer progress on start of this bar
-      long progressInterval = (long) (getTimerProgress() * getTimerInterval());
       long barInterval = getInterval() * config.getBeatsCount();
-      int progressBarCount = (int) (progressInterval / barInterval);
-      long progressIntervalFullBars = progressBarCount * barInterval;
-      timerProgress = (float) progressIntervalFullBars / getTimerInterval();
+      timerProgress = timerBarIndex * barInterval / (float) getTimerInterval();
+      timerBeatIndex = 0;
+      timerSubIndex = 0;
     }
 
     if (!config.getTimerUnit().equals(UNIT.BARS)) {
@@ -1119,44 +1159,28 @@ public class MetronomeEngine {
     if (!config.isTimerActive()) {
       return "";
     }
-    long elapsedTime = (long) (getTimerProgress() * getTimerInterval());
-    int timerDuration = config.getTimerDuration();
     switch (config.getTimerUnit()) {
       case UNIT.SECONDS:
       case UNIT.MINUTES:
+        long elapsedTime = (long) (getTimerProgress() * getTimerInterval());
         int seconds = (int) (elapsedTime / 1000);
         // Decide whether to force hours for consistency with total time
-        int totalHours = timerDuration / 3600;
+        int totalHours = config.getTimerDuration() / 3600;
         if (config.getTimerUnit().equals(UNIT.MINUTES)) {
-          totalHours = timerDuration / 60;
+          totalHours = config.getTimerDuration() / 60;
         }
         return getTimeStringFromSeconds(seconds, totalHours > 0);
       default:
-        if (isPlaying() && timerStringBars != null) {
-          return timerStringBars;
-        }
-
-        long barInterval = getInterval() * config.getBeatsCount();
-        int progressBarCount = Math.min((int) (elapsedTime / barInterval), timerDuration - 1);
-
-        long elapsedTimeFullBars = progressBarCount * barInterval; // full bars
-        long remaining = elapsedTime - elapsedTimeFullBars; // unfinished bar
-        int beatCount = Math.min((int) (remaining / getInterval()), config.getBeatsCount() - 1);
-        remaining -= beatCount * getInterval(); // unfinished beat
-        int subdivisionCount = Math.min(
-            (int) (remaining / ((float) getInterval() / config.getSubdivisionsCount())),
-            config.getSubdivisionsCount() - 1
-        );
         String format = config.getBeatsCount() < 10 ? "%d.%01d" : "%d.%02d";
         if (config.getSubdivisionsCount() > 1) {
           format += config.getSubdivisionsCount() < 10 ? ".%01d" : ".%02d";
           return String.format(
               Locale.ENGLISH, format,
-              progressBarCount + 1, beatCount + 1, subdivisionCount + 1
+              timerBarIndex + 1, timerBeatIndex + 1, timerSubIndex + 1
           );
         } else {
           return String.format(
-              Locale.ENGLISH, format, progressBarCount + 1, beatCount + 1
+              Locale.ENGLISH, format, timerBarIndex + 1, timerBeatIndex + 1
           );
         }
     }
@@ -1264,13 +1288,37 @@ public class MetronomeEngine {
       boolean increaseTimerProgress = barIndexWithoutCountIn != 0 || !(isBeat && isFirstBeat);
       // Play the first beat without increasing
       if (increaseTimerProgress) {
-        float stepSize = 1f / (config.getTimerDuration() *
-            config.getBeatsCount() * config.getSubdivisionsCount());
-        timerProgress += stepSize;
-        int steps = Math.round(timerProgress / stepSize);
-        timerProgress = steps * stepSize;
+        if (isFirstBeat) {
+          timerBarIndex++;
+        }
+        if (isBeat) {
+          timerBeatIndex++;
+          if (timerBeatIndex >= config.getBeatsCount()) {
+            timerBeatIndex = 0;
+          }
+        }
+        timerSubIndex++;
+        if (timerSubIndex >= config.getSubdivisionsCount()) {
+          timerSubIndex = 0;
+        }
+        long barInterval = getInterval() * config.getBeatsCount();
+        long subInterval = getInterval() / config.getSubdivisionsCount();
+        long progressInterval = timerBarIndex * barInterval
+            + timerBeatIndex * getInterval()
+            + timerSubIndex * subInterval;
+        timerProgress = progressInterval / (float) getTimerInterval();
       }
-      if (timerProgress >= 1) {
+      boolean isTimerFinished = isTimerFinished();
+      if (config.getTimerUnit().equals(UNIT.BARS)) {
+        // Cannot use isTimerFinished() here because last beat has to be still played
+        isTimerFinished = timerBarIndex > config.getTimerDuration() - 1;
+        if (isTimerFinished) {
+          timerBarIndex = config.getTimerDuration() - 1;
+          timerBeatIndex = config.getBeatsCount() - 1;
+          timerSubIndex = config.getSubdivisionsCount() - 1;
+        }
+      }
+      if (isTimerFinished) {
         timerProgress = 1;
         if (hasNextPart()) {
           setCurrentPartIndex(currentPartIndex + 1);
@@ -1285,29 +1333,6 @@ public class MetronomeEngine {
         }
         return null;
       }
-
-      // Update timer string after timer progress
-      // Only calculate bar from timerProgress because tickIndex is always starting from 0
-      // For beats and subdivisions the timerProgress is too unreliable
-      long elapsedTime = (long) (timerProgress * getTimerInterval());
-      long barInterval = getInterval() * config.getBeatsCount();
-      int progressBarCount = Math.min(
-          (int) (elapsedTime / barInterval), config.getTimerDuration() - 1
-      );
-      String format = config.getBeatsCount() < 10 ? "%d.%01d" : "%d.%02d";
-      if (config.getSubdivisionsCount() > 1) {
-        format += config.getSubdivisionsCount() < 10 ? ".%01d" : ".%02d";
-        timerStringBars = String.format(
-            Locale.ENGLISH, format, progressBarCount + 1, beat, subdivision
-        );
-      } else {
-        timerStringBars = String.format(
-            Locale.ENGLISH, format, progressBarCount + 1, beat
-        );
-      }
-    } else {
-      // Calculate with timerProgress instead
-      timerStringBars = null;
     }
 
     if (isBeat && isFirstBeat) {

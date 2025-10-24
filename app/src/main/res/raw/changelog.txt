@@ -25,13 +25,12 @@ After six months of dedicated work in my spare time, I'm thrilled to announce th
 - Improved: song library backup/restore moved to separate dialog, also accessible from settings
 - Improved: song library page now with delete option for each song and play and apply options for the current song
 - Fixed: delay on transitions between song parts (thanks Kuba!)
+- Fixed: wrong bar numbers in timer display (thanks Zeron!)
 - Fixed: tempo buttons not updating correctly
 - Fixed: user changes overwritten with currently selected song part after pausing and resuming app
+- Fixed: crash caused by app shortcut limit being reached (thanks Fabian!)
 - Fixed: crash caused by incorrect layout handling
 - Fixed: crash caused by invalid tempo values
-- Fixed: crash caused by app shortcut limit being reached (thanks Fabian!)
-- Fixed: incorrect song picker colors during chip animation
-- Fixed: incorrect size of subdivision controls on tablets in landscape mode
 - Fixed: incorrect preference restoration after latency correction setting change
 
 ### 5.0.0
