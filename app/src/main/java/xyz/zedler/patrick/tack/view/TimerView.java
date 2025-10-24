@@ -24,6 +24,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -35,6 +36,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.core.view.ViewCompat;
 import androidx.dynamicanimation.animation.FloatPropertyCompat;
 import androidx.dynamicanimation.animation.SpringAnimation;
 import androidx.dynamicanimation.animation.SpringForce;
@@ -42,6 +44,8 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import com.google.android.material.motion.MotionUtils;
 import com.google.android.material.slider.Slider;
 import com.google.android.material.slider.Slider.OnSliderTouchListener;
+import java.util.ArrayList;
+import java.util.List;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
@@ -58,6 +62,10 @@ public class TimerView extends FrameLayout {
 
   private final ViewTimerBinding binding;
   private final int sliderHeightExpanded;
+  private final List<Rect> exclusionRects = new ArrayList<>();
+  private final Rect exclusionRect = new Rect();
+  private final Rect globalRect = new Rect();
+  private final int[] locationOnScreen = new int[2];
   private MainActivity activity;
   private TimerListener listener;
   private ValueAnimator progressAnimator, progressTransitionAnimator;
@@ -124,6 +132,24 @@ public class TimerView extends FrameLayout {
     });
 
     sliderHeightExpanded = UiUtil.dpToPx(context, 48);
+  }
+
+  @Override
+  protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+    super.onLayout(changed, left, top, right, bottom);
+
+    binding.sliderTimer.getGlobalVisibleRect(globalRect);
+    this.getLocationOnScreen(locationOnScreen);
+    // Convert global to local
+    exclusionRect.set(
+        globalRect.left - locationOnScreen[0],
+        globalRect.top  - locationOnScreen[1],
+        globalRect.right - locationOnScreen[0],
+        globalRect.bottom - locationOnScreen[1]
+    );
+    exclusionRects.clear();
+    exclusionRects.add(exclusionRect);
+    ViewCompat.setSystemGestureExclusionRects(this, exclusionRects);
   }
 
   public void setMainActivity(MainActivity activity) {
