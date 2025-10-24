@@ -316,20 +316,20 @@ public class ViewUtil {
   }
 
   public static void centerScrollContentIfNotFullWidth(HorizontalScrollView scrollView) {
-    centerScrollContentIfNotFullWidth(scrollView, false);
+    centerScrollContentIfNotFullWidth(scrollView, 0);
   }
 
   public static void centerScrollContentIfNotFullWidth(
-      HorizontalScrollView scrollView, boolean canCenterEarlier
+      HorizontalScrollView scrollView, int additionalContentWidth
   ) {
     if (scrollView.isLaidOut()) {
-      centerScrollContentIfPossible(scrollView, canCenterEarlier);
+      centerScrollContentIfPossible(scrollView, additionalContentWidth);
     } else {
       scrollView.getViewTreeObserver().addOnGlobalLayoutListener(
           new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-              centerScrollContentIfPossible(scrollView, canCenterEarlier);
+              centerScrollContentIfPossible(scrollView, additionalContentWidth);
               if (scrollView.getViewTreeObserver().isAlive()) {
                 scrollView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
               }
@@ -339,15 +339,15 @@ public class ViewUtil {
   }
 
   private static void centerScrollContentIfPossible(
-      HorizontalScrollView scrollView, boolean canCenterEarlier
+      HorizontalScrollView scrollView, int additionalContentWidth
   ) {
     if (scrollView.getChildCount() == 0) {
       return;
     }
     View content = scrollView.getChildAt(0);
     int scrollWidth = scrollView.getWidth();
-    int tolerance = UiUtil.dpToPx(scrollView.getContext(), 16) * (canCenterEarlier ? -1 : 1);
-    int contentWidth = content.getWidth() + tolerance;
+    //int tolerance = UiUtil.dpToPx(scrollView.getContext(), 16) * (canCenterEarlier ? -1 : 1);
+    int contentWidth = content.getWidth() + additionalContentWidth;
     ((HorizontalScrollView.LayoutParams) content.getLayoutParams()).gravity =
         contentWidth >= scrollWidth
             ? Gravity.START

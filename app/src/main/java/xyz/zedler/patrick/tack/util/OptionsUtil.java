@@ -345,7 +345,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       }
       binding.linearOptionsSubs.addView(beatView);
     }
-    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsSubs, true);
+    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsSubs);
     updateSubControls();
   }
 
@@ -864,6 +864,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         transition.setDuration(Constants.ANIM_DURATION_SHORT);
         TransitionManager.beginDelayedTransition(binding.linearOptionsBeats, transition);
 
+        ViewUtil.centerScrollContentIfNotFullWidth(
+            binding.scrollHorizOptionsBeats, UiUtil.dpToPx(activity, 48)
+        );
+
         BeatView beatView = new BeatView(activity);
         beatView.setIndex(binding.linearOptionsBeats.getChildCount());
         beatView.setOnClickListener(beat -> {
@@ -873,7 +877,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
           }
         });
         binding.linearOptionsBeats.addView(beatView);
-        ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsBeats);
         updateBeatControls();
       }
     } else if (id == R.id.button_options_beats_remove) {
@@ -884,11 +887,12 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         transition.setDuration(Constants.ANIM_DURATION_SHORT);
         TransitionManager.beginDelayedTransition(binding.linearOptionsBeats, transition);
 
+        ViewUtil.centerScrollContentIfNotFullWidth(
+            binding.scrollHorizOptionsBeats, -UiUtil.dpToPx(activity, 48)
+        );
+
         binding.linearOptionsBeats.removeViewAt(
             binding.linearOptionsBeats.getChildCount() - 1
-        );
-        ViewUtil.centerScrollContentIfNotFullWidth(
-            binding.scrollHorizOptionsBeats, true
         );
         updateBeatControls();
       }
@@ -900,6 +904,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         transition.setDuration(Constants.ANIM_DURATION_SHORT);
         TransitionManager.beginDelayedTransition(binding.linearOptionsSubs, transition);
 
+        ViewUtil.centerScrollContentIfNotFullWidth(
+            binding.scrollHorizOptionsSubs, UiUtil.dpToPx(activity, 48)
+        );
+
         BeatView beatView = new BeatView(activity);
         beatView.setIsSubdivision(true);
         beatView.setIndex(binding.linearOptionsSubs.getChildCount());
@@ -910,7 +918,6 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
           }
         });
         binding.linearOptionsSubs.addView(beatView);
-        ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsSubs);
         updateSubControls();
       }
     } else if (id == R.id.button_options_subs_remove) {
@@ -921,10 +928,11 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         transition.setDuration(Constants.ANIM_DURATION_SHORT);
         TransitionManager.beginDelayedTransition(binding.linearOptionsSubs, transition);
 
-        binding.linearOptionsSubs.removeViewAt(binding.linearOptionsSubs.getChildCount() - 1);
         ViewUtil.centerScrollContentIfNotFullWidth(
-            binding.scrollHorizOptionsSubs, true
+            binding.scrollHorizOptionsSubs, -UiUtil.dpToPx(activity, 48)
         );
+
+        binding.linearOptionsSubs.removeViewAt(binding.linearOptionsSubs.getChildCount() - 1);
         updateSubControls();
       }
     } else if (id == R.id.button_options_incremental_interval_decrease) {

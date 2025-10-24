@@ -1120,8 +1120,12 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           }
         });
         beatView.setReduceAnimations(reduceAnimations);
+
+        ViewUtil.centerScrollContentIfNotFullWidth(
+            binding.scrollHorizMainBeats, UiUtil.dpToPx(activity, 48)
+        );
+
         binding.linearMainBeats.addView(beatView);
-        ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
         updateBeatControls(true);
         binding.timerMain.updateDisplay(); // Update decimals for bar unit
       }
@@ -1139,10 +1143,11 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         transition.setDuration(Constants.ANIM_DURATION_SHORT);
         TransitionManager.beginDelayedTransition(binding.linearMainBeats, transition);
 
-        binding.linearMainBeats.removeViewAt(binding.linearMainBeats.getChildCount() - 1);
         ViewUtil.centerScrollContentIfNotFullWidth(
-            binding.scrollHorizMainBeats, true
+            binding.scrollHorizMainBeats, -UiUtil.dpToPx(activity, 48)
         );
+
+        binding.linearMainBeats.removeViewAt(binding.linearMainBeats.getChildCount() - 1);
         updateBeatControls(true);
         binding.timerMain.updateDisplay(); // Update decimals for bar unit
       }
@@ -1171,8 +1176,12 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           }
         });
         beatView.setReduceAnimations(reduceAnimations);
+
+        ViewUtil.centerScrollContentIfNotFullWidth(
+            binding.scrollHorizMainSubs, UiUtil.dpToPx(activity, 48)
+        );
+
         binding.linearMainSubs.addView(beatView);
-        ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
         updateSubControls(true);
         optionsUtil.updateSwing();
       }
@@ -1190,10 +1199,11 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         transition.setDuration(Constants.ANIM_DURATION_SHORT);
         TransitionManager.beginDelayedTransition(binding.linearMainSubs, transition);
 
-        binding.linearMainSubs.removeViewAt(binding.linearMainSubs.getChildCount() - 1);
         ViewUtil.centerScrollContentIfNotFullWidth(
-            binding.scrollHorizMainSubs, true
+            binding.scrollHorizMainSubs, -UiUtil.dpToPx(activity, 48)
         );
+
+        binding.linearMainSubs.removeViewAt(binding.linearMainSubs.getChildCount() - 1);
         updateSubControls(true);
         optionsUtil.updateSwing();
       }
@@ -1369,7 +1379,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       beatView.setReduceAnimations(reduceAnimations);
       binding.linearMainSubs.addView(beatView);
     }
-    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs, true);
+    binding.linearMainSubs.post(
+        () -> ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs)
+    );
 
     updateSubControls(true);
   }
