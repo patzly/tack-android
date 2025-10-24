@@ -1281,11 +1281,12 @@ public class MetronomeEngine {
     boolean isCountIn = barIndex < config.getCountIn();
 
     boolean isBeat = subdivision == 1;
-    boolean isFirstBeat =
+    boolean isFirstBeat = isBeat &&
         ((tickIndex / config.getSubdivisionsCount()) % config.getBeatsCount()) == 0;
 
     if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS) && !isCountIn) {
-      boolean increaseTimerProgress = barIndexWithoutCountIn != 0 || !(isBeat && isFirstBeat);
+      boolean isFirstBeatInFirstBar = barIndexWithoutCountIn == 0 && isFirstBeat;
+      boolean increaseTimerProgress = barIndexWithoutCountIn > 0 || !isFirstBeatInFirstBar;
       // Play the first beat without increasing
       if (increaseTimerProgress) {
         if (isFirstBeat) {
@@ -1335,7 +1336,7 @@ public class MetronomeEngine {
       }
     }
 
-    if (isBeat && isFirstBeat) {
+    if (isFirstBeat) {
       if (config.isIncrementalActive()
           && config.getIncrementalUnit().equals(UNIT.BARS)
           && !isCountIn
