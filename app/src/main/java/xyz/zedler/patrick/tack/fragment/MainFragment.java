@@ -226,10 +226,16 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     optionsBadge.setHorizontalOffset(UiUtil.dpToPx(activity, 16));
 
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
-    updateBeats(getSharedPrefs().getString(PREF.BEATS, DEF.BEATS).split(","));
+    updateBeats(
+        getSharedPrefs().getString(PREF.BEATS, DEF.BEATS).split(","),
+        false
+    );
 
     ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
-    updateSubs(getSharedPrefs().getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(","));
+    updateSubs(
+        getSharedPrefs().getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(","),
+        false
+    );
 
     binding.timerMain.setMainActivity(activity);
     binding.timerMain.setChangeHeightOfChips(!isPortrait && !isLandTablet);
@@ -389,7 +395,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         ),
         () -> {
           if (getMetronomeEngine() != null) {
-            updateSubs(getMetronomeEngine().getConfig().getSubdivisions());
+            updateSubs(getMetronomeEngine().getConfig().getSubdivisions(), false);
             updateSubControls(true);
           }
         }
@@ -729,9 +735,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     partsDialogUtil.showIfWasShown(savedState);
     savedState = null;
 
-    updateBeats(metronomeConfig.getBeats());
+    updateBeats(metronomeConfig.getBeats(), false);
     updateBeatControls(false);
-    updateSubs(metronomeConfig.getSubdivisions());
+    updateSubs(metronomeConfig.getSubdivisions(), false);
     updateSubControls(false);
 
     if (init) {
@@ -942,7 +948,6 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       View beat = binding.linearMainBeats.getChildAt(tick.beat - 1);
       if (beat instanceof BeatView && tick.subdivision == 1) {
         resetActiveBeats();
-        ((BeatView) beat).setTickType(tick.type);
         if (activeBeat) {
           ((BeatView) beat).setActive(true);
         }
@@ -952,7 +957,6 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       if (!(subdivision instanceof BeatView)) {
         return;
       }
-      ((BeatView) subdivision).setTickType(tick.subdivision == 1 ? TICK_TYPE.MUTED : tick.type);
       ((BeatView) subdivision).beat();
     });
   }
@@ -1058,9 +1062,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         return;
       }
       // tempo is updated in onMetronomeTempoChanged
-      updateBeats(getMetronomeEngine().getConfig().getBeats());
+      updateBeats(getMetronomeEngine().getConfig().getBeats(), false);
       updateBeatControls(true);
-      updateSubs(getMetronomeEngine().getConfig().getSubdivisions());
+      updateSubs(getMetronomeEngine().getConfig().getSubdivisions(), false);
       updateSubControls(true);
 
       // no timer updateControls here, as it is called from onMetronomeTimerProgressOneTime
@@ -1110,21 +1114,13 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         transition.setDuration(Constants.ANIM_DURATION_SHORT);
         TransitionManager.beginDelayedTransition(binding.linearMainBeats, transition);
 
-        BeatView beatView = new BeatView(activity);
-        beatView.setIndex(binding.linearMainBeats.getChildCount());
-        beatView.setOnClickListener(beat -> {
-          if (getMetronomeEngine() != null) {
-            performHapticClick();
-            getMetronomeEngine().setBeat(beatView.getIndex(), beatView.nextTickType());
-            getMetronomeEngine().maybeUpdateDefaultSong();
-          }
-        });
-        beatView.setReduceAnimations(reduceAnimations);
-
+        // already add new BeatView's width to centering calculation
         ViewUtil.centerScrollContentIfNotFullWidth(
             binding.scrollHorizMainBeats, UiUtil.dpToPx(activity, 48)
         );
 
+        BeatView beatView = getNewBeatView(false);
+        beatView.setIndex(binding.linearMainBeats.getChildCount());
         binding.linearMainBeats.addView(beatView);
         updateBeatControls(true);
         binding.timerMain.updateDisplay(); // Update decimals for bar unit
@@ -1143,6 +1139,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         transition.setDuration(Constants.ANIM_DURATION_SHORT);
         TransitionManager.beginDelayedTransition(binding.linearMainBeats, transition);
 
+        // already remove old BeatView's width from centering calculation
         ViewUtil.centerScrollContentIfNotFullWidth(
             binding.scrollHorizMainBeats, -UiUtil.dpToPx(activity, 48)
         );
@@ -1165,22 +1162,13 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         transition.setDuration(Constants.ANIM_DURATION_SHORT);
         TransitionManager.beginDelayedTransition(binding.linearMainSubs, transition);
 
-        BeatView beatView = new BeatView(activity);
-        beatView.setIsSubdivision(true);
-        beatView.setIndex(binding.linearMainSubs.getChildCount());
-        beatView.setOnClickListener(subdivision -> {
-          if (getMetronomeEngine() != null) {
-            performHapticClick();
-            getMetronomeEngine().setSubdivision(beatView.getIndex(), beatView.nextTickType());
-            getMetronomeEngine().maybeUpdateDefaultSong();
-          }
-        });
-        beatView.setReduceAnimations(reduceAnimations);
-
+        // already add new BeatView's width to centering calculation
         ViewUtil.centerScrollContentIfNotFullWidth(
             binding.scrollHorizMainSubs, UiUtil.dpToPx(activity, 48)
         );
 
+        BeatView beatView = getNewBeatView(true);
+        beatView.setIndex(binding.linearMainSubs.getChildCount());
         binding.linearMainSubs.addView(beatView);
         updateSubControls(true);
         optionsUtil.updateSwing();
@@ -1199,6 +1187,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         transition.setDuration(Constants.ANIM_DURATION_SHORT);
         TransitionManager.beginDelayedTransition(binding.linearMainSubs, transition);
 
+        // already remove old BeatView's width from centering calculation
         ViewUtil.centerScrollContentIfNotFullWidth(
             binding.scrollHorizMainSubs, -UiUtil.dpToPx(activity, 48)
         );
@@ -1248,30 +1237,49 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     }
   }
 
-  private void updateBeats(String[] beats) {
+  private void updateBeats(String[] beats, boolean firstSubChanged) {
+    if (binding == null) {
+      return;
+    }
+    boolean isFirstSubMuted = false;
+    if (getMetronomeEngine() != null) {
+      isFirstSubMuted = getMetronomeEngine().getConfig().isFirstSubdivisionMuted();
+    }
+
+    if (firstSubChanged) {
+      for (int i = 0; i < binding.linearMainBeats.getChildCount(); i++) {
+        BeatView beatView = (BeatView) binding.linearMainBeats.getChildAt(i);
+        beatView.setTickType(isFirstSubMuted ? TICK_TYPE.MUTED : beats[i], true);
+      }
+      // Only update tick types, no need to rebuild views
+      return;
+    }
+
+    String[] beatsMaybeMuted = beats.clone();
+    if (isFirstSubMuted) {
+      Arrays.fill(beatsMaybeMuted, TICK_TYPE.MUTED);
+    }
     String[] currentBeats = new String[binding.linearMainBeats.getChildCount()];
     for (int i = 0; i < binding.linearMainBeats.getChildCount(); i++) {
       currentBeats[i] = String.valueOf(binding.linearMainBeats.getChildAt(i));
     }
-    if (Arrays.equals(beats, currentBeats)) {
+    if (Arrays.equals(beatsMaybeMuted, currentBeats)) {
       return;
+    } else if (beatsMaybeMuted.length == currentBeats.length) {
+      for (int i = 0; i < beatsMaybeMuted.length; i++) {
+        BeatView beatView = (BeatView) binding.linearMainBeats.getChildAt(i);
+        beatView.setTickType(beatsMaybeMuted[i], false);
+      }
+    } else {
+      binding.linearMainBeats.removeAllViews();
+      for (int i = 0; i < beatsMaybeMuted.length; i++) {
+        BeatView beatView = getNewBeatView(false);
+        beatView.setTickType(beatsMaybeMuted[i], false);
+        beatView.setIndex(i);
+        binding.linearMainBeats.addView(beatView);
+      }
     }
-    binding.linearMainBeats.removeAllViews();
-    for (int i = 0; i < beats.length; i++) {
-      String tickType = beats[i];
-      BeatView beatView = new BeatView(activity);
-      beatView.setTickType(tickType);
-      beatView.setIndex(i);
-      beatView.setOnClickListener(beat -> {
-        if (getMetronomeEngine() != null) {
-          performHapticClick();
-          getMetronomeEngine().setBeat(beatView.getIndex(), beatView.nextTickType());
-          getMetronomeEngine().maybeUpdateDefaultSong();
-        }
-      });
-      beatView.setReduceAnimations(reduceAnimations);
-      binding.linearMainBeats.addView(beatView);
-    }
+
     binding.linearMainBeats.post(
         () -> ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats)
     );
@@ -1349,36 +1357,50 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     }
   }
 
-  private void updateSubs(String[] subdivisions) {
+  private void updateSubs(String[] subdivisions, boolean firstSubChanged) {
     if (binding == null) {
       return;
     }
+    boolean isFirstSubMuted = false;
+    if (getMetronomeEngine() != null) {
+      isFirstSubMuted = getMetronomeEngine().getConfig().isFirstSubdivisionMuted();
+    }
+
+    if (firstSubChanged) {
+      BeatView beatView = (BeatView) binding.linearMainSubs.getChildAt(0);
+      beatView.setTickType(
+          isFirstSubMuted ? TICK_TYPE.BEAT_SUB_MUTED : TICK_TYPE.BEAT_SUB, true
+      );
+      // Only update first tick type, no need to rebuild views
+      return;
+    }
+
     String[] currentSubs = new String[binding.linearMainSubs.getChildCount()];
     for (int i = 0; i < binding.linearMainSubs.getChildCount(); i++) {
       currentSubs[i] = String.valueOf(binding.linearMainSubs.getChildAt(i));
     }
     if (Arrays.equals(subdivisions, currentSubs)) {
       return;
-    }
-    binding.linearMainSubs.removeAllViews();
-    for (int i = 0; i < subdivisions.length; i++) {
-      String tickType = subdivisions[i];
-      BeatView beatView = new BeatView(activity);
-      beatView.setIsSubdivision(true);
-      beatView.setTickType(i == 0 ? TICK_TYPE.MUTED : tickType);
-      beatView.setIndex(i);
-      if (i > 0) {
-        beatView.setOnClickListener(beat -> {
-          if (getMetronomeEngine() != null) {
-            performHapticClick();
-            getMetronomeEngine().setSubdivision(beatView.getIndex(), beatView.nextTickType());
-            getMetronomeEngine().maybeUpdateDefaultSong();
-          }
-        });
+    } else if (subdivisions.length == currentSubs.length) {
+      for (int i = 0; i < subdivisions.length; i++) {
+        BeatView beatView = (BeatView) binding.linearMainSubs.getChildAt(i);
+        beatView.setTickType(subdivisions[i], false);
       }
-      beatView.setReduceAnimations(reduceAnimations);
-      binding.linearMainSubs.addView(beatView);
+    } else {
+      binding.linearMainSubs.removeAllViews();
+      for (int i = 0; i < subdivisions.length; i++) {
+        BeatView beatView = getNewBeatView(true);
+        String tickType = subdivisions[i];
+        if (i == 0 && tickType.equals(TICK_TYPE.MUTED)) {
+          // Migration from old muted first subdivision
+          tickType = TICK_TYPE.BEAT_SUB;
+        }
+        beatView.setTickType(tickType, false);
+        beatView.setIndex(i);
+        binding.linearMainSubs.addView(beatView);
+      }
     }
+
     binding.linearMainSubs.post(
         () -> ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs)
     );
@@ -1445,6 +1467,44 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         }
       }, 1);
     }
+  }
+
+  @NonNull
+  private BeatView getNewBeatView(boolean isSubdivision) {
+    BeatView beatView = new BeatView(activity);
+    beatView.setIsSubdivision(isSubdivision);
+    beatView.setOnClickListener(beat -> {
+      if (getMetronomeEngine() == null) {
+        return;
+      }
+      performHapticClick();
+
+      if (isSubdivision) {
+        getMetronomeEngine().setSubdivision(beatView.getIndex(), beatView.nextTickType());
+        getMetronomeEngine().maybeUpdateDefaultSong();
+        if (beatView.getIndex() == 0) {
+          // Update all beats if first subdivision was changed (muted or not)
+          updateBeats(getMetronomeEngine().getConfig().getBeats(), true);
+        }
+      } else {
+        if (getMetronomeEngine().getConfig().isFirstSubdivisionMuted()) {
+          getMetronomeEngine().setSubdivision(0, TICK_TYPE.BEAT_SUB);
+          updateBeats(
+              getMetronomeEngine().getConfig().getBeats(),
+              true
+          );
+          updateSubs(
+              getMetronomeEngine().getConfig().getSubdivisions(),
+              true
+          );
+        } else {
+          getMetronomeEngine().setBeat(beatView.getIndex(), beatView.nextTickType());
+          getMetronomeEngine().maybeUpdateDefaultSong();
+        }
+      }
+    });
+    beatView.setReduceAnimations(reduceAnimations);
+    return beatView;
   }
 
   private void measureSongPicker() {

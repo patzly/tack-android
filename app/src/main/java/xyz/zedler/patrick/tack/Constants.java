@@ -100,7 +100,7 @@ public final class Constants {
     public final static String BEATS = String.join(
         ",", TICK_TYPE.STRONG, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL
     );
-    public final static String SUBDIVISIONS = TICK_TYPE.MUTED;
+    public final static String SUBDIVISIONS = TICK_TYPE.BEAT_SUB;
     public final static String BEAT_MODE = Constants.BEAT_MODE.ALL;
     public final static boolean ACTIVE_BEAT = false;
     public final static boolean SHOW_ELAPSED = false;
@@ -175,6 +175,8 @@ public final class Constants {
     public final static String STRONG = "strong";
     public final static String SUB = "sub";
     public final static String MUTED = "muted";
+    public final static String BEAT_SUB = "beat_sub";
+    public final static String BEAT_SUB_MUTED = "beat_sub_muted";
   }
 
   public final static class UNIT {

@@ -371,6 +371,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
       case TICK_TYPE.SUB:
         return tickSub;
       case TICK_TYPE.MUTED:
+      case TICK_TYPE.BEAT_SUB_MUTED:
         return silence;
       default:
         return tickNormal;

@@ -1386,6 +1386,7 @@ public class MetronomeEngine {
             hapticUtil.tick(hapticUtil.supportsMainEffects());
             break;
           case TICK_TYPE.MUTED:
+          case TICK_TYPE.BEAT_SUB_MUTED:
             break;
           default:
             hapticUtil.click(hapticUtil.supportsMainEffects());
@@ -1412,8 +1413,12 @@ public class MetronomeEngine {
   private String getCurrentTickType() {
     int subdivisionsCount = config.getSubdivisionsCount();
     if ((tickIndex % subdivisionsCount) == 0) {
-      String[] beats = config.getBeats();
-      return beats[(int) ((tickIndex / subdivisionsCount) % beats.length)];
+      if (config.isFirstSubdivisionMuted()) {
+        return TICK_TYPE.BEAT_SUB_MUTED;
+      } else {
+        String[] beats = config.getBeats();
+        return beats[(int) ((tickIndex / subdivisionsCount) % beats.length)];
+      }
     } else {
       String[] subdivisions = config.getSubdivisions();
       return subdivisions[(int) (tickIndex % subdivisionsCount)];

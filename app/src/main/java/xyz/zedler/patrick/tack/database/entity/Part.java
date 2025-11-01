@@ -34,8 +34,8 @@ import java.util.Objects;
 import java.util.UUID;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.model.MetronomeConfig;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
+import xyz.zedler.patrick.tack.model.MetronomeConfig;
 
 @Entity(
     tableName = "parts",

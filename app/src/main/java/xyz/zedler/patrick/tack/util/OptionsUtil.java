@@ -224,8 +224,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding.linearOptionsEditPartContainer.setVisibility(editPart ? View.VISIBLE : View.GONE);
     binding.linearOptionsUseCurrentConfig.setOnClickListener(this);
     updateTempo();
-    updateBeats();
-    updateSubdivisions();
+    updateBeats(false);
+    updateSubdivisions(false);
     updateCountIn();
     updateIncremental();
     updateTimer();
@@ -272,31 +272,52 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     );
   }
 
-  private void updateBeats() {
+  private void updateBeats(boolean firstSubChanged) {
     if (!editPart || getConfig() == null) {
       return;
     }
     String[] beats = getConfig().getBeats();
+    boolean isFirstSubMuted = getConfig().isFirstSubdivisionMuted();
+
+    if (firstSubChanged) {
+      for (int i = 0; i < binding.linearOptionsBeats.getChildCount(); i++) {
+        BeatView beatView = (BeatView) binding.linearOptionsBeats.getChildAt(i);
+        beatView.setTickType(isFirstSubMuted ? TICK_TYPE.MUTED : beats[i], true);
+      }
+      // Only update tick types, no need to rebuild views
+      return;
+    }
+
+    String[] beatsMaybeMuted = beats.clone();
+    if (isFirstSubMuted) {
+      Arrays.fill(beatsMaybeMuted, TICK_TYPE.MUTED);
+    }
     String[] currentBeats = new String[binding.linearOptionsBeats.getChildCount()];
     for (int i = 0; i < binding.linearOptionsBeats.getChildCount(); i++) {
       currentBeats[i] = String.valueOf(binding.linearOptionsBeats.getChildAt(i));
     }
-    if (Arrays.equals(beats, currentBeats)) {
+
+    if (Arrays.equals(beatsMaybeMuted, currentBeats)) {
       return;
+    } else if (beatsMaybeMuted.length == currentBeats.length) {
+      for (int i = 0; i < beatsMaybeMuted.length; i++) {
+        BeatView beatView = (BeatView) binding.linearOptionsBeats.getChildAt(i);
+        beatView.setTickType(beatsMaybeMuted[i], false);
+      }
+    } else {
+      binding.linearOptionsBeats.removeAllViews();
+      for (int i = 0; i < beats.length; i++) {
+        BeatView beatView = getNewBeatView(false);
+        beatView.setTickType(beatsMaybeMuted[i], false);
+        beatView.setIndex(i);
+        binding.linearOptionsBeats.addView(beatView);
+      }
     }
-    binding.linearOptionsBeats.removeAllViews();
-    for (int i = 0; i < beats.length; i++) {
-      String tickType = beats[i];
-      BeatView beatView = new BeatView(activity);
-      beatView.setTickType(tickType);
-      beatView.setIndex(i);
-      beatView.setOnClickListener(beat -> {
-        activity.performHapticClick();
-        getConfig().setBeat(beatView.getIndex(), beatView.nextTickType());
-      });
-      binding.linearOptionsBeats.addView(beatView);
-    }
-    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsBeats);
+
+    binding.linearOptionsBeats.post(
+        () -> ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsBeats)
+    );
+
     updateBeatControls();
   }
 
@@ -316,36 +337,52 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding.buttonOptionsBeatsRemove.setEnabled(beatsCount > 1);
   }
 
-  private void updateSubdivisions() {
+  private void updateSubdivisions(boolean firstSubChanged) {
     if (!editPart || getConfig() == null) {
       return;
     }
     String[] subdivisions = getConfig().getSubdivisions();
+    boolean isFirstSubMuted = getConfig().isFirstSubdivisionMuted();
+
+    if (firstSubChanged) {
+      BeatView beatView = (BeatView) binding.linearOptionsSubs.getChildAt(0);
+      beatView.setTickType(
+          isFirstSubMuted ? TICK_TYPE.BEAT_SUB_MUTED : TICK_TYPE.BEAT_SUB, true
+      );
+      // Only update first tick type, no need to rebuild views
+      return;
+    }
+
     String[] currentSubs = new String[binding.linearOptionsSubs.getChildCount()];
     for (int i = 0; i < binding.linearOptionsSubs.getChildCount(); i++) {
       currentSubs[i] = String.valueOf(binding.linearOptionsSubs.getChildAt(i));
     }
     if (Arrays.equals(subdivisions, currentSubs)) {
       return;
-    }
-    binding.linearOptionsSubs.removeAllViews();
-    for (int i = 0; i < subdivisions.length; i++) {
-      String tickType = subdivisions[i];
-      BeatView beatView = new BeatView(activity);
-      beatView.setIsSubdivision(true);
-      beatView.setTickType(i == 0 ? TICK_TYPE.MUTED : tickType);
-      beatView.setIndex(i);
-      if (i > 0) {
-        beatView.setOnClickListener(beat -> {
-          if (getConfig() != null) {
-            activity.performHapticClick();
-            getConfig().setSubdivision(beatView.getIndex(), beatView.nextTickType());
-          }
-        });
+    } else if (subdivisions.length == currentSubs.length) {
+      for (int i = 0; i < subdivisions.length; i++) {
+        BeatView beatView = (BeatView) binding.linearOptionsSubs.getChildAt(i);
+        beatView.setTickType(subdivisions[i], false);
       }
-      binding.linearOptionsSubs.addView(beatView);
+    } else {
+      binding.linearOptionsSubs.removeAllViews();
+      for (int i = 0; i < subdivisions.length; i++) {
+        BeatView beatView = getNewBeatView(true);
+        String tickType = subdivisions[i];
+        if (i == 0 && tickType.equals(TICK_TYPE.MUTED)) {
+          // Migration from old muted first subdivision
+          tickType = TICK_TYPE.BEAT_SUB;
+        }
+        beatView.setTickType(tickType, false);
+        beatView.setIndex(i);
+        binding.linearOptionsSubs.addView(beatView);
+      }
     }
-    ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsSubs);
+
+    binding.linearOptionsSubs.post(
+        () -> ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsSubs)
+    );
+
     updateSubControls();
   }
 
@@ -361,6 +398,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
               R.plurals.options_subdivisions_description, subdivisionsCount, subdivisionsCount
           )
       );
+    } else if (getConfig().isFirstSubdivisionMuted()) {
+      binding.textOptionsSubs.setText(R.string.options_subdivisions_beats_muted);
     } else {
       binding.textOptionsSubs.setText(R.string.options_inactive);
     }
@@ -368,6 +407,38 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding.buttonOptionsSubsAdd.setEnabled(subdivisionsCount < Constants.SUBS_MAX);
     binding.buttonOptionsSubsRemove.setOnClickListener(this);
     binding.buttonOptionsSubsRemove.setEnabled(subdivisionsCount > 1);
+  }
+
+  @NonNull
+  private BeatView getNewBeatView(boolean isSubdivision) {
+    BeatView beatView = new BeatView(activity);
+    beatView.setIsSubdivision(isSubdivision);
+    beatView.setOnClickListener(beat -> {
+      MetronomeConfig config = getConfig();
+      if (config == null) {
+        return;
+      }
+      activity.performHapticClick();
+
+      if (isSubdivision) {
+        config.setSubdivision(beatView.getIndex(), beatView.nextTickType());
+        if (beatView.getIndex() == 0) {
+          // Update all beats if first subdivision was changed (muted or not)
+          updateBeats(true);
+        }
+      } else {
+        if (config.isFirstSubdivisionMuted()) {
+          config.setSubdivision(0, TICK_TYPE.BEAT_SUB);
+          updateBeats(true);
+          updateSubdivisions(true);
+        } else {
+          config.setBeat(beatView.getIndex(), beatView.nextTickType());
+        }
+      }
+      // Maybe change description
+      updateSubControls();
+    });
+    return beatView;
   }
 
   private void updateCountIn() {
@@ -777,9 +848,9 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         (buttonView, isChecked) -> {
           if (editPart && getConfig() != null) {
             getConfig().setMuteRandom(isChecked);
-          } else if (getMetronomeEngine() != null) {
-            getMetronomeEngine().setMuteRandom(isChecked);
-            getMetronomeEngine().maybeUpdateDefaultSong();
+          } else if (activity.getMetronomeEngine() != null) {
+            activity.getMetronomeEngine().setMuteRandom(isChecked);
+            activity.getMetronomeEngine().maybeUpdateDefaultSong();
           }
           updateMute();
         });
@@ -864,18 +935,13 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         transition.setDuration(Constants.ANIM_DURATION_SHORT);
         TransitionManager.beginDelayedTransition(binding.linearOptionsBeats, transition);
 
+        // already add new BeatView's width to centering calculation
         ViewUtil.centerScrollContentIfNotFullWidth(
             binding.scrollHorizOptionsBeats, UiUtil.dpToPx(activity, 48)
         );
 
-        BeatView beatView = new BeatView(activity);
+        BeatView beatView = getNewBeatView(false);
         beatView.setIndex(binding.linearOptionsBeats.getChildCount());
-        beatView.setOnClickListener(beat -> {
-          if (getConfig() != null) {
-            activity.performHapticClick();
-            config.setBeat(beatView.getIndex(), beatView.nextTickType());
-          }
-        });
         binding.linearOptionsBeats.addView(beatView);
         updateBeatControls();
       }
@@ -887,6 +953,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         transition.setDuration(Constants.ANIM_DURATION_SHORT);
         TransitionManager.beginDelayedTransition(binding.linearOptionsBeats, transition);
 
+        // already remove old BeatView's width from centering calculation
         ViewUtil.centerScrollContentIfNotFullWidth(
             binding.scrollHorizOptionsBeats, -UiUtil.dpToPx(activity, 48)
         );
@@ -904,19 +971,13 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         transition.setDuration(Constants.ANIM_DURATION_SHORT);
         TransitionManager.beginDelayedTransition(binding.linearOptionsSubs, transition);
 
+        // already add new BeatView's width to centering calculation
         ViewUtil.centerScrollContentIfNotFullWidth(
             binding.scrollHorizOptionsSubs, UiUtil.dpToPx(activity, 48)
         );
 
-        BeatView beatView = new BeatView(activity);
-        beatView.setIsSubdivision(true);
+        BeatView beatView = getNewBeatView(true);
         beatView.setIndex(binding.linearOptionsSubs.getChildCount());
-        beatView.setOnClickListener(subdivision -> {
-          if (getConfig() != null) {
-            activity.performHapticClick();
-            getConfig().setSubdivision(beatView.getIndex(), beatView.nextTickType());
-          }
-        });
         binding.linearOptionsSubs.addView(beatView);
         updateSubControls();
       }
@@ -928,6 +989,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         transition.setDuration(Constants.ANIM_DURATION_SHORT);
         TransitionManager.beginDelayedTransition(binding.linearOptionsSubs, transition);
 
+        // already remove old BeatView's width from centering calculation
         ViewUtil.centerScrollContentIfNotFullWidth(
             binding.scrollHorizOptionsSubs, -UiUtil.dpToPx(activity, 48)
         );
@@ -1119,7 +1181,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         }
       }
       updateSwing();
-      updateSubdivisions();
+      updateSubdivisions(false);
       if (!editPart && onSubsChanged != null) {
         onSubsChanged.run();
       }

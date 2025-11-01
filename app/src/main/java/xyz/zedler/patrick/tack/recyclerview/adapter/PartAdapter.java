@@ -30,7 +30,9 @@ import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.Constants.UNIT;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.database.entity.Part;
@@ -120,13 +122,22 @@ public class PartAdapter extends Adapter<PartAdapter.PartViewHolder> {
 
     // beats
     String[] beats = part.getBeats().split(",");
-    holder.binding.beatsPartBeats.setBeats(beats);
+    String[] beatsMaybeMuted = beats.clone();
+    String[] subs = part.getSubdivisions().split(",");
+    if (subs.length >= 1 && subs[0].equals(TICK_TYPE.BEAT_SUB_MUTED)) {
+      Arrays.fill(beatsMaybeMuted, TICK_TYPE.MUTED);
+    }
+    holder.binding.beatsPartBeats.setBeats(beatsMaybeMuted);
 
     // subdivisions
     String[] subdivisions = part.getSubdivisions().split(",");
     holder.binding.beatsPartSubdivisions.setBeats(subdivisions);
+    boolean showSubdivisions = subdivisions.length > 1;
+    if (!showSubdivisions && subdivisions[0].equals(TICK_TYPE.BEAT_SUB_MUTED)) {
+      showSubdivisions = true;
+    }
     holder.binding.linearPartSubdivisions.setVisibility(
-        subdivisions.length > 1 ? View.VISIBLE : View.GONE
+        showSubdivisions ? View.VISIBLE : View.GONE
     );
 
     // count in

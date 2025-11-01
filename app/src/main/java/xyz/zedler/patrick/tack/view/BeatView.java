@@ -36,6 +36,10 @@ import android.graphics.RectF;
 import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.ColorUtils;
+import androidx.dynamicanimation.animation.FloatPropertyCompat;
+import androidx.dynamicanimation.animation.SpringAnimation;
+import androidx.dynamicanimation.animation.SpringForce;
 import androidx.graphics.shapes.Morph;
 import androidx.graphics.shapes.RoundedPolygon;
 import androidx.graphics.shapes.Shapes_androidKt;
@@ -43,6 +47,7 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.shape.MaterialShapes;
 import java.util.Random;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -116,6 +121,7 @@ public class BeatView extends FrameLayout {
       MORPHS[i] = new Morph(SHAPES[0], SHAPES[i]);
     }
   }
+  private static final boolean TEST_ANIMATIONS = false;
 
   private final Path path = new Path();
   private final Matrix matrix = new Matrix();
@@ -123,15 +129,18 @@ public class BeatView extends FrameLayout {
   private final FastOutSlowInInterpolator interpolator;
   private final MaterialButton button;
   private final Paint paintFill, paintStroke;
-  private final float shapeScaleNoBeat, shapeScaleMuted;
+  private final float shapeScaleSub, shapeScaleBeatSub, shapeScaleNoBeat, shapeScaleMuted;
   private final int colorActive;
   private AnimatorSet animatorSet;
   private ValueAnimator strokeAnimator;
+  private SpringAnimation springAnimationTickType;
   private Morph morph;
   private String tickType;
   private boolean isSubdivision, reduceAnimations, isActive;
-  private float morphFactor, shapeScaleBeat, shapeScale0, shapeScale1;
+  private float morphFactor, tickTypeFraction, shapeScaleBeat, shapeScale0, shapeScale1;
   private int index;
+  private int colorFillSource, colorFillTarget, colorStrokeSource, colorStrokeTarget;
+  private float shapeScale0Source, shapeScale1Source, shapeScale0Target, shapeScale1Target;
 
   public BeatView(Context context) {
     super(context);
@@ -152,6 +161,8 @@ public class BeatView extends FrameLayout {
 
     shapeScaleNoBeat = 0.25f;
     shapeScaleBeat = 0.75f;
+    shapeScaleSub = shapeScaleBeat;
+    shapeScaleBeatSub = 0.4f;
     shapeScaleMuted = 0.1f;
     shapeScale0 = shapeScaleNoBeat;
     shapeScale1 = shapeScaleBeat;
@@ -169,7 +180,7 @@ public class BeatView extends FrameLayout {
 
     morph = MORPHS[0];
 
-    setTickType(TICK_TYPE.NORMAL);
+    setTickType(TICK_TYPE.NORMAL, false);
   }
 
   @Override
@@ -201,7 +212,7 @@ public class BeatView extends FrameLayout {
 
   public void setIndex(int index) {
     this.index = index;
-    setTickType(tickType);
+    setTickType(tickType, false);
   }
 
   public int getIndex() {
@@ -210,10 +221,10 @@ public class BeatView extends FrameLayout {
 
   public void setIsSubdivision(boolean isSubdivision) {
     this.isSubdivision = isSubdivision;
-    setTickType(TICK_TYPE.SUB);
+    setTickType(TICK_TYPE.SUB, false);
   }
 
-  public void setTickType(String tickType) {
+  public void setTickType(String tickType, boolean animated) {
     this.tickType = tickType;
 
     Context context = getContext();
@@ -225,44 +236,73 @@ public class BeatView extends FrameLayout {
     int colorSub = ResUtil.getColor(context, R.attr.colorOnSurfaceVariant);
     int colorMuted = ResUtil.getColor(context, R.attr.colorOutline);
 
+    colorFillSource = paintFill.getColor();
+    colorStrokeSource = paintStroke.getColor();
+    shapeScale0Source = shapeScale0;
+    shapeScale1Source = shapeScale1;
+    int colorTarget, alphaTarget;
     switch (tickType) {
       case TICK_TYPE.STRONG:
-        paintFill.setColor(colorStrong);
-        paintFill.setAlpha(255);
-        paintStroke.setColor(colorStrong);
-        shapeScale0 = shapeScaleNoBeat;
-        shapeScale1 = shapeScaleBeat;
+        colorTarget = colorStrong;
+        alphaTarget = 255;
+        shapeScale0Target = shapeScaleNoBeat;
+        shapeScale1Target = shapeScaleBeat;
         break;
       case TICK_TYPE.MUTED:
-        paintFill.setColor(colorMuted);
-        paintFill.setAlpha(255);
-        paintStroke.setColor(colorMuted);
-        shapeScale0 = shapeScaleMuted;
-        shapeScale1 = shapeScaleNoBeat;
+      case TICK_TYPE.BEAT_SUB_MUTED:
+        colorTarget = colorMuted;
+        alphaTarget = 255;
+        shapeScale0Target = shapeScaleMuted;
+        shapeScale1Target = shapeScaleNoBeat;
         break;
       case TICK_TYPE.SUB:
-        paintFill.setColor(colorSub);
-        paintFill.setAlpha(0);
-        paintStroke.setColor(colorSub);
-        shapeScale0 = shapeScaleNoBeat;
-        shapeScale1 = shapeScaleBeat;
+        colorTarget = colorSub;
+        alphaTarget = 0;
+        shapeScale0Target = shapeScaleNoBeat;
+        shapeScale1Target = shapeScaleSub;
+        break;
+      case TICK_TYPE.BEAT_SUB:
+        colorTarget = colorMuted;
+        alphaTarget = 255;
+        shapeScale0Target = shapeScaleNoBeat;
+        shapeScale1Target = shapeScaleBeatSub;
         break;
       default:
-        paintFill.setColor(colorNormal);
-        paintFill.setAlpha((int) (0.3f * 255));
-        paintStroke.setColor(colorNormal);
-        shapeScale0 = shapeScaleNoBeat;
-        shapeScale1 = shapeScaleBeat;
+        colorTarget = colorNormal;
+        alphaTarget = (int) (0.3f * 255);
+        shapeScale0Target = shapeScaleNoBeat;
+        shapeScale1Target = shapeScaleBeat;
     }
-    updateShape();
-    invalidate();
+    colorFillTarget = ColorUtils.setAlphaComponent(colorTarget, alphaTarget);
+    colorStrokeTarget = colorTarget;
+
+    if (springAnimationTickType != null) {
+      springAnimationTickType.cancel();
+    }
+    if (animated) {
+      tickTypeFraction = 0;
+      if (springAnimationTickType == null) {
+        springAnimationTickType =
+            new SpringAnimation(this, TICK_TYPE_FRACTION)
+                .setSpring(new SpringForce().setStiffness(1400f).setDampingRatio(0.6f))
+                .setMinimumVisibleChange(0.01f);
+      }
+      if (TEST_ANIMATIONS) {
+        springAnimationTickType.setSpring(
+            new SpringForce().setStiffness(20f).setDampingRatio(0.3f)
+        );
+      }
+      springAnimationTickType.animateToFinalPosition(1);
+    } else {
+      setTickTypeFraction(1);
+    }
   }
 
   public String nextTickType() {
     String next;
     switch (tickType) {
       case TICK_TYPE.NORMAL:
-        next = isSubdivision ? TICK_TYPE.MUTED : TICK_TYPE.STRONG;
+        next = isSubdivision ? TICK_TYPE.MUTED : Constants.TICK_TYPE.STRONG;
         break;
       case TICK_TYPE.STRONG:
         next = TICK_TYPE.MUTED;
@@ -270,23 +310,20 @@ public class BeatView extends FrameLayout {
       case TICK_TYPE.SUB:
         next = TICK_TYPE.NORMAL;
         break;
+      case TICK_TYPE.BEAT_SUB:
+        next = TICK_TYPE.BEAT_SUB_MUTED;
+        break;
+      case TICK_TYPE.BEAT_SUB_MUTED:
+        next = TICK_TYPE.BEAT_SUB;
+        break;
       default:
-        next = isSubdivision ? TICK_TYPE.SUB : TICK_TYPE.NORMAL;
+        next = isSubdivision ? TICK_TYPE.SUB : Constants.TICK_TYPE.NORMAL;
     }
-    if (isSubdivision && index == 0) {
-      return TICK_TYPE.MUTED;
-    } else {
-      setTickType(next);
-      beat(true);
-      return next;
-    }
+    setTickType(next, true);
+    return next;
   }
 
   public void beat() {
-    beat(false);
-  }
-
-  public void beat(boolean forceAnimation) {
     if (animatorSet != null) {
       animatorSet.pause();
       animatorSet.removeAllListeners();
@@ -294,11 +331,14 @@ public class BeatView extends FrameLayout {
       animatorSet = null;
     }
 
-    if (reduceAnimations && !forceAnimation) {
+    if (reduceAnimations) {
       return;
     }
 
-    if (tickType.equals(TICK_TYPE.MUTED)) {
+    if (tickType.equals(TICK_TYPE.MUTED)
+        || tickType.equals(TICK_TYPE.BEAT_SUB)
+        ||  tickType.equals(TICK_TYPE.BEAT_SUB_MUTED)
+    ) {
       morph = MORPHS[0];
     } else {
       int index = 1 + random.nextInt(MORPHS.length - 1);
@@ -385,6 +425,21 @@ public class BeatView extends FrameLayout {
     invalidate();
   }
 
+  private void setTickTypeFraction(float fraction) {
+    tickTypeFraction = fraction;
+    float colorFraction = Math.min(Math.max(fraction, 0), 1);
+    paintFill.setColor(ColorUtils.blendARGB(colorFillSource, colorFillTarget, colorFraction));
+    paintStroke.setColor(ColorUtils.blendARGB(colorStrokeSource, colorStrokeTarget, colorFraction));
+    shapeScale0 = shapeScale0Source + fraction * (shapeScale0Target - shapeScale0Source);
+    shapeScale1 = shapeScale1Source + fraction * (shapeScale1Target - shapeScale1Source);
+    updateShape();
+    invalidate();
+  }
+
+  public float getTickTypeFraction() {
+    return tickTypeFraction;
+  }
+
   @NonNull
   @Override
   public String toString() {
@@ -398,4 +453,17 @@ public class BeatView extends FrameLayout {
     int blue = Color.blue(color);
     return red > green + tolerance && red > blue + tolerance;
   }
+
+  private static final FloatPropertyCompat<BeatView> TICK_TYPE_FRACTION =
+      new FloatPropertyCompat<>("tickTypeFraction") {
+        @Override
+        public float getValue(BeatView delegate) {
+          return delegate.getTickTypeFraction();
+        }
+
+        @Override
+        public void setValue(BeatView delegate, float value) {
+          delegate.setTickTypeFraction(value);
+        }
+      };
 }

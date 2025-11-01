@@ -47,26 +47,27 @@ public class MetronomeConfig {
   private boolean muteRandom;
 
   public MetronomeConfig() {
-    this.countIn = DEF.COUNT_IN;
+    countIn = DEF.COUNT_IN;
 
-    this.tempo = DEF.TEMPO;
+    tempo = DEF.TEMPO;
 
-    this.beats = DEF.BEATS.split(",");
-    this.subdivisions = DEF.SUBDIVISIONS.split(",");
+    beats = DEF.BEATS.split(",");
+    subdivisions = DEF.SUBDIVISIONS.split(",");
+    maybeMigrateOldSubdivision();
 
-    this.incrementalAmount = DEF.INCREMENTAL_AMOUNT;
-    this.incrementalInterval = DEF.INCREMENTAL_INTERVAL;
-    this.incrementalLimit = DEF.INCREMENTAL_LIMIT;
-    this.incrementalUnit = DEF.INCREMENTAL_UNIT;
-    this.incrementalIncrease = DEF.INCREMENTAL_INCREASE;
+    incrementalAmount = DEF.INCREMENTAL_AMOUNT;
+    incrementalInterval = DEF.INCREMENTAL_INTERVAL;
+    incrementalLimit = DEF.INCREMENTAL_LIMIT;
+    incrementalUnit = DEF.INCREMENTAL_UNIT;
+    incrementalIncrease = DEF.INCREMENTAL_INCREASE;
 
-    this.timerDuration = DEF.TIMER_DURATION;
-    this.timerUnit = DEF.TIMER_UNIT;
+    timerDuration = DEF.TIMER_DURATION;
+    timerUnit = DEF.TIMER_UNIT;
 
-    this.mutePlay = DEF.MUTE_PLAY;
-    this.muteMute = DEF.MUTE_MUTE;
-    this.muteUnit = DEF.MUTE_UNIT;
-    this.muteRandom = DEF.MUTE_RANDOM;
+    mutePlay = DEF.MUTE_PLAY;
+    muteMute = DEF.MUTE_MUTE;
+    muteUnit = DEF.MUTE_UNIT;
+    muteRandom = DEF.MUTE_RANDOM;
   }
 
   public MetronomeConfig(SharedPreferences sharedPrefs) {
@@ -88,6 +89,7 @@ public class MetronomeConfig {
 
     this.beats = beats;
     this.subdivisions = subdivisions;
+    maybeMigrateOldSubdivision();
 
     this.incrementalAmount = incrementalAmount;
     this.incrementalInterval = incrementalInterval;
@@ -133,6 +135,7 @@ public class MetronomeConfig {
 
     this.beats = other.beats.clone();
     this.subdivisions = other.subdivisions.clone();
+    maybeMigrateOldSubdivision();
 
     this.incrementalAmount = other.incrementalAmount;
     this.incrementalInterval = other.incrementalInterval;
@@ -156,6 +159,7 @@ public class MetronomeConfig {
 
     beats = sharedPrefs.getString(PREF.BEATS, DEF.BEATS).split(",");
     subdivisions = sharedPrefs.getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(",");
+    maybeMigrateOldSubdivision();
 
     incrementalAmount = sharedPrefs.getInt(PREF.INCREMENTAL_AMOUNT, DEF.INCREMENTAL_AMOUNT);
     incrementalInterval = sharedPrefs.getInt(PREF.INCREMENTAL_INTERVAL, DEF.INCREMENTAL_INTERVAL);
@@ -238,14 +242,17 @@ public class MetronomeConfig {
 
   public void setSubdivisions(String[] subdivisions) {
     this.subdivisions = subdivisions;
+    maybeMigrateOldSubdivision();
   }
 
   public void setSubdivisions(String subdivisions) {
     this.subdivisions = subdivisions.split(",");
+    maybeMigrateOldSubdivision();
   }
 
   public void setSubdivision(int subdivision, String tickType) {
     subdivisions[subdivision] = tickType;
+    maybeMigrateOldSubdivision();
   }
 
   public int getSubdivisionsCount() {
@@ -254,6 +261,10 @@ public class MetronomeConfig {
 
   public boolean isSubdivisionActive() {
     return subdivisions.length > 1;
+  }
+
+  public boolean isFirstSubdivisionMuted() {
+    return subdivisions.length > 0 && subdivisions[0].equals(TICK_TYPE.BEAT_SUB_MUTED);
   }
 
   public boolean addSubdivision() {
@@ -278,14 +289,14 @@ public class MetronomeConfig {
 
   public void setSwing3() {
     subdivisions = String.join(
-        ",", TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL
+        ",", TICK_TYPE.BEAT_SUB, TICK_TYPE.MUTED, TICK_TYPE.NORMAL
     ).split(",");
   }
 
   public boolean isSwing3() {
-    String triplet = String.join(",", TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.SUB);
+    String triplet = String.join(",", TICK_TYPE.BEAT_SUB, TICK_TYPE.MUTED, TICK_TYPE.SUB);
     String tripletAlt = String.join(
-        ",", TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL
+        ",", TICK_TYPE.BEAT_SUB, TICK_TYPE.MUTED, TICK_TYPE.NORMAL
     );
     String subdivisions = String.join(",", this.subdivisions);
     return subdivisions.equals(triplet) || subdivisions.equals(tripletAlt);
@@ -294,18 +305,18 @@ public class MetronomeConfig {
   public void setSwing5() {
     subdivisions = String.join(
         ",",
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL, TICK_TYPE.MUTED
+        TICK_TYPE.BEAT_SUB, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL, TICK_TYPE.MUTED
     ).split(",");
   }
 
   public boolean isSwing5() {
     String quintuplet = String.join(
         ",",
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.SUB, TICK_TYPE.MUTED
+        TICK_TYPE.BEAT_SUB, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.SUB, TICK_TYPE.MUTED
     );
     String quintupletAlt = String.join(
         ",",
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL, TICK_TYPE.MUTED
+        TICK_TYPE.BEAT_SUB, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.NORMAL, TICK_TYPE.MUTED
     );
     String subdivisions = String.join(",", this.subdivisions);
     return subdivisions.equals(quintuplet) || subdivisions.equals(quintupletAlt);
@@ -314,7 +325,7 @@ public class MetronomeConfig {
   public void setSwing7() {
     subdivisions = String.join(
         ",",
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
+        TICK_TYPE.BEAT_SUB, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
         TICK_TYPE.NORMAL, TICK_TYPE.MUTED, TICK_TYPE.MUTED
     ).split(",");
   }
@@ -322,12 +333,12 @@ public class MetronomeConfig {
   public boolean isSwing7() {
     String septuplet = String.join(
         ",",
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
+        TICK_TYPE.BEAT_SUB, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
         TICK_TYPE.SUB, TICK_TYPE.MUTED, TICK_TYPE.MUTED
     );
     String septupletAlt = String.join(
         ",",
-        TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
+        TICK_TYPE.BEAT_SUB, TICK_TYPE.MUTED, TICK_TYPE.MUTED, TICK_TYPE.MUTED,
         TICK_TYPE.NORMAL, TICK_TYPE.MUTED, TICK_TYPE.MUTED
     );
     String subdivisions = String.join(",", this.subdivisions);
@@ -436,5 +447,12 @@ public class MetronomeConfig {
 
   public void setMuteRandom(boolean muteRandom) {
     this.muteRandom = muteRandom;
+  }
+
+  private void maybeMigrateOldSubdivision() {
+    if (subdivisions[0].equals(TICK_TYPE.MUTED)) {
+      // Migrate from old muted subdivision type
+      subdivisions[0] = TICK_TYPE.BEAT_SUB;
+    }
   }
 }

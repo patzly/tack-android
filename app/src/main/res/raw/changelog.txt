@@ -11,6 +11,7 @@ After six months of dedicated work in my spare time, I'm thrilled to announce th
 - New: "volume boost" setting extended for volume reduction and moved to separate dialog
 - New: "flash screen" setting extended with option for subtle flash
 - New: "keep screen awake" setting extended with option for always awake
+- New: first subdivision (which actually is a placeholder for every beat) can now be muted separately to mute all beats at once (thanks Alexandr!)
 - New: help dialog now translatable and with expandable sections
 - New: Japanese and Dutch translations (thanks to the contributors!)
 - New: Support for Android 16 and dropped support for Android 5 due to dependency limitations

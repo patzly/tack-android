@@ -317,6 +317,7 @@
     <item quantity="one">%1$d per beat</item>
     <item quantity="other">%1$d per beat</item>
   </plurals>
+  <string name="options_subdivisions_beats_muted">Beats muted</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Subdivisions set to match swing ratio</string>
   <string name="options_swing_3">Triplet</string>

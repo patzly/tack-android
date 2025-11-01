@@ -27,6 +27,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
@@ -56,7 +57,7 @@ public class PartBeatsView extends View {
 
   private void init(Context context) {
     circleSize = UiUtil.dpToPx(context, 10);
-    circleSizeMuted = UiUtil.dpToPx(context, 6);
+    circleSizeMuted = UiUtil.dpToPx(context, 5);
     circleSpace = UiUtil.dpToPx(context, 8);
     paintSolid = new Paint(Paint.ANTI_ALIAS_FLAG);
     paintSolid.setStyle(Style.FILL);
@@ -114,7 +115,7 @@ public class PartBeatsView extends View {
     for (String beat : beats) {
       adjustPaint(beat);
       float radiusFinal = radius;
-      if (beat.equals("muted")) {
+      if (beat.equals(TICK_TYPE.MUTED) || beat.equals(TICK_TYPE.BEAT_SUB_MUTED)) {
         radiusFinal = circleSizeMuted / 2f;
       }
       canvas.drawCircle(startX, centerY, radiusFinal - strokeWidth, paintSolid);
@@ -125,21 +126,23 @@ public class PartBeatsView extends View {
 
   private void adjustPaint(String beat) {
     switch (beat) {
-      case "normal":
+      case TICK_TYPE.NORMAL:
         paintSolid.setColor(colorNormal);
         paintSolid.setAlpha((int) (0.3 * 255));
         paintOutline.setColor(colorNormal);
         break;
-      case "strong":
+      case TICK_TYPE.STRONG:
         paintSolid.setColor(colorStrong);
         paintSolid.setAlpha(255);
         paintOutline.setColor(colorStrong);
         break;
-      case "sub":
+      case TICK_TYPE.SUB:
         paintSolid.setAlpha(0);
         paintOutline.setColor(colorSub);
         break;
-      case "muted":
+      case TICK_TYPE.MUTED:
+      case TICK_TYPE.BEAT_SUB:
+      case TICK_TYPE.BEAT_SUB_MUTED:
         paintSolid.setColor(colorMuted);
         paintSolid.setAlpha(255);
         paintOutline.setColor(colorMuted);
