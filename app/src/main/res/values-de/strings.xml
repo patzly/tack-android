@@ -304,6 +304,7 @@
     <item quantity="one">%1$d pro Schlag</item>
     <item quantity="other">%1$d pro Schlag</item>
   </plurals>
+  <string name="options_subdivisions_beats_muted">Schläge stummgeschaltet</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Unterteilungen an Swing-Verhältnis angepasst</string>
   <string name="options_swing_3">Triole</string>
