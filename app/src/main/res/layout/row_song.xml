@@ -108,7 +108,7 @@
 
     <com.google.android.material.button.MaterialButton
       android:id="@+id/button_song_play"
-      style="@style/Widget.Tack.Button.IconButton.Filled"
+      style="@style/Widget.Tack.Button.IconButton.Filled.Small.Wide"
       android:contentDescription="@string/action_play_stop"
       app:icon="@drawable/ic_rounded_play_arrow"
       android:checkable="true" />

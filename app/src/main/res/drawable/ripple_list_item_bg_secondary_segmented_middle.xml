@@ -27,7 +27,7 @@
     android:bottom="1dp">
     <shape android:shape="rectangle">
       <corners android:radius="?attr/shapeCornerSizeExtraSmall" />
-      <solid android:color="?attr/colorTertiaryContainer" />
+      <solid android:color="?attr/colorSecondaryContainer" />
     </shape>
   </item>
 

@@ -22,10 +22,14 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:color="@color/selector_highlight_bright">
 
-  <item>
+  <item android:top="1dp">
     <shape android:shape="rectangle">
-      <corners android:radius="?attr/shapeCornerSizeLargeIncreased" />
-      <solid android:color="?attr/colorTertiaryContainer" />
+      <corners
+        android:topLeftRadius="?attr/shapeCornerSizeExtraSmall"
+        android:topRightRadius="?attr/shapeCornerSizeExtraSmall"
+        android:bottomLeftRadius="?attr/shapeCornerSizeLargeIncreased"
+        android:bottomRightRadius="?attr/shapeCornerSizeLargeIncreased" />
+      <solid android:color="?attr/colorSecondaryContainer" />
     </shape>
   </item>
 

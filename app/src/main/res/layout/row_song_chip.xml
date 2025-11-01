@@ -37,7 +37,7 @@
     app:strokeColor="?attr/colorOutlineVariant"
     app:rippleColor="@color/selector_highlight"
     app:cardCornerRadius="8dp"
-    app:cardBackgroundColor="?attr/colorSurfaceBright">
+    app:cardBackgroundColor="?attr/colorSurfaceContainer">
 
     <LinearLayout
       android:layout_width="wrap_content"

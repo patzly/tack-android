@@ -96,25 +96,25 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
     if (getItemCount() == 1) {
       binding.linearSongContainer.setBackgroundResource(
           isSelected
-              ? R.drawable.ripple_list_item_bg_tertiary_segmented_single
+              ? R.drawable.ripple_list_item_bg_secondary_segmented_single
               : R.drawable.ripple_list_item_bg_segmented_single
       );
     } else if (adapterPosition == 0) {
       binding.linearSongContainer.setBackgroundResource(
           isSelected
-              ? R.drawable.ripple_list_item_bg_tertiary_segmented_first
+              ? R.drawable.ripple_list_item_bg_secondary_segmented_first
               : R.drawable.ripple_list_item_bg_segmented_first
       );
     } else if (adapterPosition == getItemCount() - 1) {
       binding.linearSongContainer.setBackgroundResource(
           isSelected
-              ? R.drawable.ripple_list_item_bg_tertiary_segmented_last
+              ? R.drawable.ripple_list_item_bg_secondary_segmented_last
               : R.drawable.ripple_list_item_bg_segmented_last
       );
     } else {
       binding.linearSongContainer.setBackgroundResource(
           isSelected
-              ? R.drawable.ripple_list_item_bg_tertiary_segmented_middle
+              ? R.drawable.ripple_list_item_bg_secondary_segmented_middle
               : R.drawable.ripple_list_item_bg_segmented_middle
       );
     }
@@ -122,12 +122,12 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
     binding.textSongName.setText(songWithParts.getSong().getName());
     binding.textSongName.setTextColor(
         ResUtil.getColor(
-            context, isSelected ? R.attr.colorOnTertiaryContainer : R.attr.colorOnSurface
+            context, isSelected ? R.attr.colorOnSecondaryContainer : R.attr.colorOnSurface
         )
     );
 
     int colorFgSecondary = ResUtil.getColor(
-        context, isSelected ? R.attr.colorOnTertiaryContainer : R.attr.colorOnSurfaceVariant
+        context, isSelected ? R.attr.colorOnSecondaryContainer : R.attr.colorOnSurfaceVariant
     );
     binding.textSongPartCount.setTextColor(colorFgSecondary);
     binding.imageSongDivider1.setColorFilter(colorFgSecondary);
@@ -214,14 +214,14 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
     );
     binding.buttonSongPlay.setBackgroundColor(
         ResUtil.getColor(
-            context, isSelected ? R.attr.colorTertiary : R.attr.colorSurfaceBright
+            context, isSelected ? R.attr.colorSecondary : R.attr.colorSurfaceBright
         )
     );
     binding.buttonSongPlay.setIconTint(
         ColorStateList.valueOf(
             ResUtil.getColor(
                 context,
-                isSelected ? R.attr.colorOnTertiary : R.attr.colorOnSurfaceVariant
+                isSelected ? R.attr.colorOnSecondary : R.attr.colorOnSurfaceVariant
             )
         )
     );
@@ -230,7 +230,7 @@ public class SongAdapter extends Adapter<SongAdapter.SongViewHolder> {
     binding.buttonSongMenu.setIconTint(
         ColorStateList.valueOf(
             ResUtil.getColor(
-                context, isSelected ? R.attr.colorOnTertiaryContainer : R.attr.colorOnSurface
+                context, isSelected ? R.attr.colorOnSecondaryContainer : R.attr.colorOnSurface
             )
         )
     );

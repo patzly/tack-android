@@ -180,10 +180,10 @@
             android:clickable="true"
             app:contentPadding="0dp"
             app:strokeWidth="1dp"
-            app:strokeColor="?attr/colorOnTertiaryContainer"
-            app:rippleColor="@color/selector_highlight_tertiary"
+            app:strokeColor="?attr/colorOutlineVariant"
+            app:rippleColor="@color/selector_highlight"
             app:cardCornerRadius="8dp"
-            app:cardBackgroundColor="?attr/colorTertiaryContainer">
+            app:cardBackgroundColor="?attr/colorSurfaceContainer">
 
             <androidx.constraintlayout.widget.ConstraintLayout
               android:layout_width="wrap_content"
@@ -198,7 +198,7 @@
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:src="@drawable/ic_rounded_music_note_anim"
-                app:tint="?attr/colorOnTertiaryContainer"
+                app:tint="?attr/colorPrimary"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/text_song_picker_chip"
                 app:layout_constraintTop_toTopOf="parent"
@@ -212,7 +212,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginEnd="8dp"
-                android:textColor="?attr/colorOnTertiaryContainer"
+                android:textColor="?attr/colorOnSurface"
                 android:singleLine="true"
                 android:text="@string/label_song_name"
                 app:layout_constraintStart_toEndOf="@id/image_song_picker_chip_icon"
@@ -226,7 +226,7 @@
                 android:layout_width="18dp"
                 android:layout_height="18dp"
                 android:src="@drawable/ic_rounded_close_anim"
-                app:tint="?attr/colorOnTertiaryContainer"
+                app:tint="?attr/colorOnSurface"
                 android:scaleType="centerCrop"
                 android:importantForAccessibility="yes"
                 android:focusable="true"

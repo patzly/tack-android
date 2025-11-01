@@ -27,18 +27,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView.ViewHolder;
-import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.databinding.RowSongChipBinding;
-import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.UiUtil;
 
 public class SongChipAdapter extends ListAdapter<SongWithParts, ViewHolder> {
 
   private final static String TAG = SongChipAdapter.class.getSimpleName();
 
   private final OnSongClickListener listener;
-  private final int colorStroke;
   private boolean clickable;
 
   public SongChipAdapter(
@@ -47,11 +43,6 @@ public class SongChipAdapter extends ListAdapter<SongWithParts, ViewHolder> {
     super(new SongWithPartsDiffCallback());
     this.listener = listener;
     this.clickable = clickable;
-
-    boolean isDark = UiUtil.isDarkModeActive(context);
-    colorStroke = ResUtil.getColor(
-        context, isDark ? R.attr.colorSurfaceBright : R.attr.colorOutlineVariant
-    );
   }
 
   @NonNull
@@ -68,7 +59,6 @@ public class SongChipAdapter extends ListAdapter<SongWithParts, ViewHolder> {
     SongWithParts songWithParts = getItem(holder.getBindingAdapterPosition());
     SongChipViewHolder songHolder = (SongChipViewHolder) holder;
     songHolder.binding.textSong.setText(songWithParts.getSong().getName());
-    songHolder.binding.cardSong.setStrokeColor(colorStroke);
     songHolder.binding.cardSong.setClickable(clickable);
     if (clickable) {
       songHolder.binding.frameSong.setOnClickListener(

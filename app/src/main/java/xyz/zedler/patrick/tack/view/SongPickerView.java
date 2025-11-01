@@ -719,20 +719,6 @@ public class SongPickerView extends FrameLayout {
 
     binding.imageSongPickerChipClose.setAlpha(fraction);
 
-    int colorBg = ColorUtils.blendARGB(colorSurfaceBright, colorTertiaryContainer, fraction);
-    int colorText = ColorUtils.blendARGB(colorOnSurface, colorOnTertiaryContainer, fraction);
-    int colorIcon = ColorUtils.blendARGB(colorPrimary, colorOnTertiaryContainer, fraction);
-    boolean isDark = UiUtil.isDarkModeActive(context);
-    int recyclerColorStroke = ResUtil.getColor(
-        context, isDark ? R.attr.colorSurfaceBright : R.attr.colorOutlineVariant
-    );
-    int colorStroke = ColorUtils.blendARGB(recyclerColorStroke, colorOnTertiaryContainer, fraction);
-    binding.cardSongPickerChip.setCardBackgroundColor(colorBg);
-    binding.cardSongPickerChip.setStrokeColor(colorStroke);
-    binding.textSongPickerChip.setTextColor(colorText);
-    binding.imageSongPickerChipIcon.setColorFilter(colorIcon);
-    binding.imageSongPickerChipClose.setColorFilter(colorIcon);
-
     gradientLeft.setLevel((int) (10000 * fraction));
     gradientRight.setLevel((int) (10000 * fraction));
 
