@@ -941,6 +941,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         );
 
         BeatView beatView = getNewBeatView(false);
+        boolean isFirstSubMuted = config.isFirstSubdivisionMuted();
+        beatView.setTickType(isFirstSubMuted ? TICK_TYPE.MUTED : TICK_TYPE.NORMAL, false);
         beatView.setIndex(binding.linearOptionsBeats.getChildCount());
         binding.linearOptionsBeats.addView(beatView);
         updateBeatControls();

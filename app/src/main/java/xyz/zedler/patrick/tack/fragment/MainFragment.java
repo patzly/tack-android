@@ -1120,6 +1120,8 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         );
 
         BeatView beatView = getNewBeatView(false);
+        boolean isFirstSubMuted = config.isFirstSubdivisionMuted();
+        beatView.setTickType(isFirstSubMuted ? TICK_TYPE.MUTED : TICK_TYPE.NORMAL, false);
         beatView.setIndex(binding.linearMainBeats.getChildCount());
         binding.linearMainBeats.addView(beatView);
         updateBeatControls(true);

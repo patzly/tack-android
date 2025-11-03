@@ -221,7 +221,7 @@ public class BeatView extends FrameLayout {
 
   public void setIsSubdivision(boolean isSubdivision) {
     this.isSubdivision = isSubdivision;
-    setTickType(TICK_TYPE.SUB, false);
+    setTickType(isSubdivision ? TICK_TYPE.SUB : TICK_TYPE.NORMAL, false);
   }
 
   public void setTickType(String tickType, boolean animated) {
