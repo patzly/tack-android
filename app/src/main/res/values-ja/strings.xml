@@ -284,6 +284,7 @@
   <plurals name="options_subdivisions_description">
     <item quantity="other">%1$d / 1拍</item>
   </plurals>
+  <string name="options_subdivisions_beats_muted">ミュート拍</string>
   <string name="options_swing">スウィング</string>
   <string name="options_swing_description">スウィング比率に合わせて拍分割</string>
   <string name="options_swing_3">3連符</string>
