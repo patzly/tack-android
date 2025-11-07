@@ -16,6 +16,7 @@ After six months of dedicated work in my spare time, I'm thrilled to announce th
 - New: Japanese and Dutch translations (thanks to the contributors!)
 - New: Support for Android 16 and dropped support for Android 5 due to dependency limitations
 - Improved: "hide subdivision controls" setting removed for simplicity
+- Improved: play/stop button now responds on press down instead of release for a more responsive feel
 - Improved: layout on different screen sizes and orientations
 - Improved: metronome now works without notification permission if it was denied
 - Improved: song part number always shown in song details, optional name displayed below part number

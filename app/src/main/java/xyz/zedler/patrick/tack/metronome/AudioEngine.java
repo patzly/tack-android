@@ -21,20 +21,17 @@ package xyz.zedler.patrick.tack.metronome;
 
 import android.content.Context;
 import android.media.AudioFocusRequest;
-import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
-import android.media.AudioTrack;
 import android.media.audiofx.LoudnessEnhancer;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
 import java.io.IOException;
 import java.io.InputStream;
+import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.SOUND;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
 import xyz.zedler.patrick.tack.R;
@@ -43,153 +40,113 @@ import xyz.zedler.patrick.tack.util.AudioUtil;
 
 public class AudioEngine implements OnAudioFocusChangeListener {
 
-  private static final String TAG = AudioEngine.class.getSimpleName();
-  private static final boolean DEBUG = false;
+  private static final String TAG = AudioEngineOld.class.getSimpleName();
 
-  private static final int SAMPLE_RATE_IN_HZ = 48000;
+  static {
+    System.loadLibrary("oboe-audio-engine");
+  }
+  private static final int NATIVE_TICK_TYPE_STRONG = 1;
+  private static final int NATIVE_TICK_TYPE_NORMAL = 2;
+  private static final int NATIVE_TICK_TYPE_SUB = 3;
 
   private final Context context;
   private final AudioManager audioManager;
   private final AudioListener listener;
-  private final float[] silence;
-  private HandlerThread audioThread;
-  private Handler audioHandler;
-  private AudioTrack audioTrack;
+  private long engineHandle;
+  private int gain;
+  private volatile boolean playing;
+  private boolean muted, ignoreFocus;
   private LoudnessEnhancer loudnessEnhancer;
-  private int gain, volumeReductionDb;
-  private boolean playing, muted, ignoreFocus;
-  private float[] tickStrong, tickNormal, tickSub;
-  private float[] scaledBuffer;
+
+  private native long nativeCreate();
+  private native void nativeDestroy(long handle);
+  private native boolean nativeStart(long handle);
+  private native void nativeStop(long handle);
+  private native void nativeSetTickData(long handle, int tickType, float[] data);
+  private native void nativePlayTick(long handle, int tickType);
+  private native void nativeSetMasterVolume(long handle, float volume);
+  private native void nativeSetDuckingVolume(long handle, float volume);
+  private native void nativeSetMuted(long handle, boolean muted);
+  private native int nativeGetSessionId(long handle);
 
   public AudioEngine(@NonNull Context context, @NonNull AudioListener listener) {
     this.context = context;
     this.listener = listener;
+
     audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
-    resetHandlersIfRequired();
-
-    AudioFormat audioFormat = new AudioFormat.Builder()
-        .setEncoding(AudioFormat.ENCODING_PCM_FLOAT)
-        .setSampleRate(SAMPLE_RATE_IN_HZ)
-        .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
-        .build();
-    int bufferSize = AudioTrack.getMinBufferSize(
-        audioFormat.getSampleRate(), audioFormat.getChannelMask(), audioFormat.getEncoding()
-    );
-    audioTrack = new AudioTrack(
-        AudioUtil.getAttributes(),
-        audioFormat,
-        bufferSize,
-        AudioTrack.MODE_STREAM,
-        AudioManager.AUDIO_SESSION_ID_GENERATE
-    );
-
-    silence = new float[bufferSize];
-    scaledBuffer = new float[bufferSize];
-
-    try {
-      audioTrack.setVolume(AudioUtil.dbToLinearVolume(volumeReductionDb));
-      loudnessEnhancer = new LoudnessEnhancer(audioTrack.getAudioSessionId());
-      loudnessEnhancer.setTargetGain(Math.max(0, gain * 100));
-      loudnessEnhancer.setEnabled(gain > 0);
-    } catch (Exception e) {
-      Log.e(TAG, "play: failed to initialize LoudnessEnhancer: ", e);
-    }
-
-    if (!isInitialized()) {
+    engineHandle = nativeCreate();
+    if (engineHandle == 0) {
+      Log.e(TAG, "Failed to create Oboe engine");
       return;
     }
-    audioTrack.play();
-    audioHandler.post(() -> {
-      // pre-fill AudioTrack buffer to avoid initial glitches
-      writeSilenceUntilPeriodFinished(0, bufferSize);
-      audioTrack.pause();
-      audioTrack.flush();
-    });
+
+    setSound(DEF.SOUND);
+    setGain(DEF.GAIN);
   }
 
   public void destroy() {
-    removeHandlerCallbacks();
-    audioThread.quitSafely();
-
-    try {
-      if (isInitialized()) {
-        audioTrack.stop();
-      }
-      audioTrack.flush();
-      audioTrack.release();
-      audioTrack = null;
-    } catch (Exception e) {
-      Log.e(TAG, "destroy: failed to release AudioTrack: ", e);
-    }
-
-    if (loudnessEnhancer != null) {
-      try {
-        loudnessEnhancer.release();
-      } catch (RuntimeException e) {
-        Log.e(TAG, "stop: failed to release LoudnessEnhancer resources: ", e);
-      }
-      loudnessEnhancer = null;
+    stop();
+    if (isInitialized()) {
+      nativeDestroy(engineHandle);
+      engineHandle = 0;
     }
   }
 
-  private void resetHandlersIfRequired() {
-    if (audioThread == null || !audioThread.isAlive()) {
-      audioThread = new HandlerThread("audio");
-      audioThread.setPriority(Thread.MAX_PRIORITY);
-      audioThread.start();
-      removeHandlerCallbacks();
-      audioHandler = new Handler(audioThread.getLooper());
-    }
-  }
-
-  private void removeHandlerCallbacks() {
-    if (audioHandler != null) {
-      audioHandler.removeCallbacksAndMessages(null);
-    }
+  private float dbToLinear(float db) {
+    return (float) Math.pow(10.0, db / 20.0);
   }
 
   public void play() {
-    resetHandlersIfRequired();
-
-    try {
-      if (isInitialized()) {
-        audioTrack.play();
-      }
-      playing = true;
-    } catch (Exception e) {
-      Log.e(TAG, "play: failed to start AudioTrack: ", e);
+    if (playing || !isInitialized()) {
+      return;
     }
+    boolean success = nativeStart(engineHandle);
+    if (success) {
+      playing = true;
+      requestAudioFocus();
 
-    if (!ignoreFocus && VERSION.SDK_INT >= VERSION_CODES.O) {
-      AudioFocusRequest request = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-          .setAudioAttributes(AudioUtil.getAttributes())
-          .setWillPauseWhenDucked(true)
-          .setOnAudioFocusChangeListener(this)
-          .build();
-      audioManager.requestAudioFocus(request);
-    } else if (!ignoreFocus) {
-      audioManager.requestAudioFocus(
-          this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN
-      );
+      int sessionId = nativeGetSessionId(engineHandle);
+      if (sessionId > 0) {
+        if (loudnessEnhancer != null) {
+          try {
+            loudnessEnhancer.release();
+          } catch (RuntimeException e) {
+            Log.e(TAG, "Failed to release LoudnessEnhancer: ", e);
+          }
+          loudnessEnhancer = null;
+        }
+        try {
+          loudnessEnhancer = new LoudnessEnhancer(sessionId);
+          updateGain();
+        } catch (Exception e) {
+          Log.e(TAG, "Failed to initialize LoudnessEnhancer: ", e);
+          loudnessEnhancer = null;
+        }
+      } else {
+        Log.e(TAG, "Failed to get Oboe session ID");
+      }
+    } else {
+      Log.e(TAG, "Failed to start Oboe engine");
+      playing = false;
+      if (!ignoreFocus) {
+        audioManager.abandonAudioFocus(this);
+      }
     }
   }
 
   public void stop() {
-    removeHandlerCallbacks();
-
-    try {
-      if (isInitialized()) {
-        audioTrack.pause();
-      }
-      playing = false;
-      audioTrack.flush();
-    } catch (Exception e) {
-      Log.e(TAG, "play: failed to start AudioTrack: ", e);
+    if (!playing || !isInitialized()) {
+      return;
     }
+    playing = false;
 
     if (!ignoreFocus) {
       audioManager.abandonAudioFocus(this);
+    }
+
+    if (isInitialized()) {
+      nativeStop(engineHandle);
     }
     listener.onAudioStop();
   }
@@ -198,37 +155,46 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     if (!playing) {
       return;
     }
-    playing = false;
-    removeHandlerCallbacks();
-
     if (isInitialized()) {
-      audioTrack.pause();
-      audioTrack.flush();
+      nativeStop(engineHandle);
+      boolean success = nativeStart(engineHandle);
+      if (!success) {
+        Log.e(TAG, "Failed to restart Oboe engine");
+        playing = false;
+      }
     }
-    resetHandlersIfRequired();
+  }
 
-    try {
-      audioTrack.play();
-      playing = true;
-    } catch (Exception e) {
-      Log.e(TAG, "play: failed to start AudioTrack: ", e);
+  private void requestAudioFocus() {
+    if (ignoreFocus) {
+      return;
+    }
+    if (VERSION.SDK_INT >= VERSION_CODES.O) {
+      AudioFocusRequest request = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+          .setAudioAttributes(AudioUtil.getAttributes())
+          .setWillPauseWhenDucked(true)
+          .setOnAudioFocusChangeListener(this)
+          .build();
+      audioManager.requestAudioFocus(request);
+    } else {
+      audioManager.requestAudioFocus(
+          this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN
+      );
     }
   }
 
   @Override
   public void onAudioFocusChange(int focusChange) {
+    if (!isInitialized()) {
+      return;
+    }
     if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-      if (isInitialized()) {
-        audioTrack.setVolume(AudioUtil.dbToLinearVolume(volumeReductionDb));
-      }
+      nativeSetDuckingVolume(engineHandle, 1.0f);
     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
       stop();
     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
-        || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
-    ) {
-      if (isInitialized()) {
-        audioTrack.setVolume(Math.min(0.25f, AudioUtil.dbToLinearVolume(volumeReductionDb)));
-      }
+        || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+      nativeSetDuckingVolume(engineHandle, 0.25f);
     }
   }
 
@@ -284,27 +250,46 @@ public class AudioEngine implements OnAudioFocusChangeListener {
         resIdSub = R.raw.sine;
         break;
     }
-    tickNormal = loadAudio(resIdNormal, pitchNormal);
-    tickStrong = loadAudio(resIdStrong, pitchStrong);
-    tickSub = loadAudio(resIdSub, pitchSub);
+
+    if (isInitialized()) {
+      nativeSetTickData(engineHandle, NATIVE_TICK_TYPE_NORMAL, loadAudio(resIdNormal, pitchNormal));
+      nativeSetTickData(engineHandle, NATIVE_TICK_TYPE_STRONG, loadAudio(resIdStrong, pitchStrong));
+      nativeSetTickData(engineHandle, NATIVE_TICK_TYPE_SUB, loadAudio(resIdSub, pitchSub));
+    }
   }
 
   public void setGain(int gain) {
     this.gain = gain;
-    if (loudnessEnhancer != null) {
-      try {
-        loudnessEnhancer.setTargetGain(Math.max(0, gain * 100));
-        loudnessEnhancer.setEnabled(gain > 0);
-      } catch (RuntimeException e) {
-        Log.e(TAG, "setGain: failed to set target gain: ", e);
-      }
+    updateGain();
+  }
+
+  private void updateGain() {
+    if (!isInitialized()) {
+      return;
     }
-    volumeReductionDb = Math.max(0, -gain * 100);
-    if (isInitialized()) {
-      try {
-        audioTrack.setVolume(AudioUtil.dbToLinearVolume(volumeReductionDb));
-      } catch (IllegalStateException e) {
-        Log.e(TAG, "setGain: failed to set volume on AudioTrack: ", e);
+
+    float gainInDb = (float) (gain * 100) / 100.0f;
+
+    if (gain > 0) {
+      nativeSetMasterVolume(engineHandle, 1.0f);
+
+      if (loudnessEnhancer != null) {
+        try {
+          loudnessEnhancer.setTargetGain(gain * 100);
+          loudnessEnhancer.setEnabled(true);
+        } catch (RuntimeException e) {
+          Log.e(TAG, "setGain: failed to set target gain: ", e);
+        }
+      }
+    } else {
+      nativeSetMasterVolume(engineHandle, dbToLinear(gainInDb));
+
+      if (loudnessEnhancer != null) {
+        try {
+          loudnessEnhancer.setEnabled(false);
+        } catch (RuntimeException e) {
+          Log.e(TAG, "setGain: failed to disable enhancer: ", e);
+        }
       }
     }
   }
@@ -315,6 +300,9 @@ public class AudioEngine implements OnAudioFocusChangeListener {
 
   public void setMuted(boolean muted) {
     this.muted = muted;
+    if (isInitialized()) {
+      nativeSetMuted(engineHandle, muted);
+    }
   }
 
   public void setIgnoreFocus(boolean ignore) {
@@ -325,57 +313,31 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     return ignoreFocus;
   }
 
-  public void writeTickPeriod(Tick tick, int subdivisionRate) {
-    long scheduledNano = System.nanoTime();
-    removeHandlerCallbacks();
-    audioHandler.post(() -> {
-      int periodSize = (60 * SAMPLE_RATE_IN_HZ) / subdivisionRate;
-      int periodSizeTrimmed = periodSize;
-      long nowNano = System.nanoTime();
-      long delayMs = (nowNano - scheduledNano) / 1_000_000L;
-      if (delayMs > 1) {
-        int trimSize = (int) (Math.max(delayMs, 10) * (SAMPLE_RATE_IN_HZ / 1000));
-        periodSizeTrimmed = Math.max(0, periodSize - trimSize);
-      }
-      float[] tickSound = muted || tick.isMuted ? silence : getTickSound(tick.type);
-      int sizeWritten = writeNextAudioData(tickSound, periodSizeTrimmed, 0);
-      if (DEBUG) {
-        Log.v(TAG, "writeTickPeriod: wrote tick sound for tick " + tick);
-      }
-      writeSilenceUntilPeriodFinished(sizeWritten, periodSizeTrimmed);
-    });
-  }
-
-  private void writeSilenceUntilPeriodFinished(int previousSizeWritten, int periodSize) {
-    int sizeWritten = previousSizeWritten;
-    while (sizeWritten < periodSize) {
-      sizeWritten += writeNextAudioData(silence, periodSize, sizeWritten);
-      if (DEBUG) {
-        Log.v(TAG, "writeSilenceUntilPeriodFinished: wrote silence");
-      }
+  public void writeTickPeriod(Tick tick) {
+    if (!playing || !isInitialized() || muted || tick.isMuted) {
+      return;
     }
-  }
 
-  private int writeNextAudioData(float[] data, int periodSize, int sizeWritten) {
-    int size = Math.min(data.length, periodSize - sizeWritten);
-    if (playing) {
-      writeAudio(data, size);
-    }
-    return size;
-  }
-
-  private float[] getTickSound(String tickType) {
-    switch (tickType) {
+    int nativeTickType;
+    switch (tick.type) {
       case TICK_TYPE.STRONG:
-        return tickStrong;
+        nativeTickType = NATIVE_TICK_TYPE_STRONG;
+        break;
       case TICK_TYPE.SUB:
-        return tickSub;
+        nativeTickType = NATIVE_TICK_TYPE_SUB;
+        break;
       case TICK_TYPE.MUTED:
       case TICK_TYPE.BEAT_SUB_MUTED:
-        return silence;
+        // silence instead
+        return;
       default:
-        return tickNormal;
+        nativeTickType = NATIVE_TICK_TYPE_NORMAL;
+        break;
     }
+
+    // Der entscheidende Aufruf: Signal an Oboe, diesen Tick zu spielen.
+    // Dies ist ein nicht-blockierender, extrem schneller JNI-Aufruf.
+    nativePlayTick(engineHandle, nativeTickType);
   }
 
   private float[] loadAudio(@RawRes int resId, Pitch pitch) {
@@ -405,34 +367,8 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     }
   }
 
-  private void writeAudio(float[] data, int size) {
-    if (!isInitialized()) {
-      return;
-    }
-    try {
-      boolean reduceVolume = gain < 0;
-      float[] out = reduceVolume ? scaledBuffer : data;
-      if (reduceVolume) {
-        if (scaledBuffer.length < size) {
-          scaledBuffer = new float[size];
-        }
-        float fraction = 1 - ((float) Math.abs(gain * 4) / 100);
-        for (int i = 0; i < size; i++) {
-          scaledBuffer[i] = data[i] * fraction;
-        }
-      }
-      int result = audioTrack.write(out, 0, size, AudioTrack.WRITE_BLOCKING);
-      if (result < 0) {
-        stop();
-        throw new IllegalStateException("Error code: " + result);
-      }
-    } catch (Exception e) {
-      Log.e(TAG, "writeAudio: failed to play audion data", e);
-    }
-  }
-
   private boolean isInitialized() {
-    return audioTrack != null && audioTrack.getState() == AudioTrack.STATE_INITIALIZED;
+    return engineHandle != 0;
   }
 
   private enum Pitch {

@@ -36,6 +36,7 @@ import android.os.Looper;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -588,6 +589,38 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     binding.buttonMainPlayStop.setIconResource(
         R.drawable.ic_rounded_play_to_stop_fill_anim
     );
+    binding.buttonMainPlayStop.setOnTouchListener(
+        (v, event) -> {
+          if (getMetronomeEngine() == null) {
+            return false;
+          }
+          if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (getMetronomeEngine().isPlaying()) {
+              performHapticClick();
+              getMetronomeEngine().stop();
+            } else {
+              if (getMetronomeEngine().getGain() > 0 &&
+                  getMetronomeEngine().neverStartedWithGainBefore()
+              ) {
+                dialogUtilGain.show();
+              } else {
+                boolean permissionDenied = getSharedPrefs().getBoolean(
+                    PREF.PERMISSION_DENIED, false
+                );
+                if (NotificationUtil.hasPermission(activity) || permissionDenied) {
+                  getMetronomeEngine().start();
+                } else {
+                  dialogUtilPermission.show();
+                }
+              }
+              performHapticClick();
+            }
+          } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            v.performClick();
+          }
+          // Only false allowed for button animations to work
+          return false;
+        });
 
     if (VERSION.SDK_INT >= VERSION_CODES.O) {
       Typeface variableTypeface = ResourcesCompat.getFont(activity, R.font.nunito_variable_wght);
@@ -600,7 +633,6 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     ViewUtil.setTooltipText(binding.buttonMainRemoveBeat, R.string.action_remove_beat);
     ViewUtil.setTooltipText(binding.buttonMainAddSubdivision, R.string.action_add_sub);
     ViewUtil.setTooltipText(binding.buttonMainRemoveSubdivision, R.string.action_remove_sub);
-    ViewUtil.setTooltipText(binding.buttonMainPlayStop, R.string.action_play_stop);
     ViewUtil.setTooltipText(binding.buttonMainOptions, R.string.title_options);
     ViewUtil.setTooltipText(binding.buttonMainBeatMode, R.string.action_beat_mode);
 
@@ -637,7 +669,6 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         binding.buttonMainRemoveSubdivision,
         binding.buttonMainLess1, binding.buttonMainLess5, binding.buttonMainLess10,
         binding.buttonMainMore1, binding.buttonMainMore5, binding.buttonMainMore10,
-        binding.buttonMainPlayStop,
         binding.buttonMainBeatMode,
         binding.buttonMainOptions
     );
@@ -1191,25 +1222,6 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       ViewUtil.startIcon(binding.buttonMainMore10.getIcon());
       changeTempo(10);
       performHapticClick();
-    } else if (id == R.id.button_main_play_stop) {
-      if (metronomeEngine.isPlaying()) {
-        performHapticClick();
-        metronomeEngine.stop();
-      } else {
-        if (metronomeEngine.getGain() > 0 && metronomeEngine.neverStartedWithGainBefore()) {
-          dialogUtilGain.show();
-        } else {
-          boolean permissionDenied = getSharedPrefs().getBoolean(
-              PREF.PERMISSION_DENIED, false
-          );
-          if (NotificationUtil.hasPermission(activity) || permissionDenied) {
-            metronomeEngine.start();
-          } else {
-            dialogUtilPermission.show();
-          }
-        }
-        performHapticClick();
-      }
     } else if (id == R.id.button_main_beat_mode) {
       performHapticClick();
       dialogUtilBeatMode.show();

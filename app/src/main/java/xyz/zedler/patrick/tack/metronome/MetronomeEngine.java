@@ -73,8 +73,8 @@ public class MetronomeEngine {
   private final Random random = new Random();
   private final MetronomeConfig config = new MetronomeConfig();
   private final SongDatabase db;
-  private HandlerThread tickThread, callbackThread;
-  private Handler tickHandler, latencyHandler;
+  private HandlerThread tickThread, audioThread, callbackThread;
+  private Handler tickHandler, latencyHandler, audioHandler;
   private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
   private SongWithParts currentSongWithParts;
   private String beatMode, currentSongId, keepAwake, flashScreen;
@@ -317,6 +317,12 @@ public class MetronomeEngine {
       removeHandlerCallbacks();
       tickHandler = new Handler(tickThread.getLooper());
     }
+    if (audioThread == null || !audioThread.isAlive()) {
+      audioThread = new HandlerThread("metronome_audio");
+      audioThread.start();
+      removeHandlerCallbacks();
+      audioHandler = new Handler(audioThread.getLooper());
+    }
     if (callbackThread == null || !callbackThread.isAlive()) {
       callbackThread = new HandlerThread("metronome_callback");
       callbackThread.start();
@@ -333,6 +339,9 @@ public class MetronomeEngine {
   private void removeHandlerCallbacks() {
     if (tickHandler != null) {
       tickHandler.removeCallbacksAndMessages(null);
+    }
+    if (audioHandler != null) {
+      audioHandler.removeCallbacksAndMessages(null);
     }
     if (latencyHandler != null) {
       latencyHandler.removeCallbacksAndMessages(null);
@@ -377,6 +386,7 @@ public class MetronomeEngine {
     listeners.clear();
     removeHandlerCallbacks();
     tickThread.quit();
+    audioThread.quit();
     callbackThread.quit();
     audioEngine.destroy();
   }
@@ -435,7 +445,6 @@ public class MetronomeEngine {
     }
 
     playing = true;
-    audioEngine.play();
     Runnable tickRunnable = new Runnable() {
       @Override
       public void run() {
@@ -445,13 +454,15 @@ public class MetronomeEngine {
         tickHandler.postDelayed(this, getInterval() / config.getSubdivisionsCount());
         Tick tick = performTick();
         if (tick != null) {
-          int subdivisionRate = config.getTempo() * config.getSubdivisionsCount();
-          audioEngine.writeTickPeriod(tick, subdivisionRate);
+          audioEngine.writeTickPeriod(tick);
           tickIndex++;
         }
       }
     };
-    tickHandler.post(tickRunnable);
+    audioHandler.post(() -> {
+      audioEngine.play();
+      tickHandler.post(tickRunnable);
+    });
 
     synchronized (listeners) {
       for (MetronomeListener listener : listeners) {
@@ -481,11 +492,11 @@ public class MetronomeEngine {
     }
     elapsedPrevious = elapsedTime;
 
-    playing = false;
-    audioEngine.stop();
-    isCountingIn = false;
-
     removeHandlerCallbacks();
+
+    playing = false;
+    audioHandler.post(audioEngine::stop);
+    isCountingIn = false;
 
     synchronized (listeners) {
       for (MetronomeListener listener : listeners) {
@@ -526,7 +537,6 @@ public class MetronomeEngine {
       int countInTickIndex = config.getCountIn() *
           config.getBeatsCount() * config.getSubdivisionsCount();
       tickIndex = config.isCountInActive() ? countInTickIndex : 0;
-      audioEngine.restart();
       isMuted = false;
       if (config.isMuteActive()) {
         // updateMuteHandler would be too late
@@ -542,13 +552,15 @@ public class MetronomeEngine {
           tickHandler.postDelayed(this, getInterval() / config.getSubdivisionsCount());
           Tick tick = performTick();
           if (tick != null) {
-            int subdivisionRate = config.getTempo() * config.getSubdivisionsCount();
-            audioEngine.writeTickPeriod(tick, subdivisionRate);
+            audioEngine.writeTickPeriod(tick);
             tickIndex++;
           }
         }
       };
-      tickHandler.post(tickRunnable);
+      audioHandler.post(() -> {
+        audioEngine.restart();
+        tickHandler.post(tickRunnable);
+      });
 
       isCountingIn = false;
       updateIncrementalHandler();

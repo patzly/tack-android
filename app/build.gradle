@@ -41,6 +41,12 @@ android {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_STL=c++_shared"
+            }
+        }
     }
 
     applicationVariants.configureEach { variant ->
@@ -66,6 +72,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        prefab = true
     }
 
     lint {
@@ -87,6 +94,14 @@ android {
     dependenciesInfo {
         includeInApk = false
     }
+
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+            version "4.1.2"
+        }
+    }
+    ndkVersion '29.0.14206865'
 }
 
 dependencies {
@@ -95,6 +110,7 @@ dependencies {
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
     implementation(libs.preference)
+    implementation(libs.oboe)
     implementation(libs.shapes)
     implementation(libs.material)
     implementation(libs.recyclerview)
