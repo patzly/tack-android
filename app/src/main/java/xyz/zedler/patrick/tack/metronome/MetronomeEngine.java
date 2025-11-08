@@ -725,7 +725,7 @@ public class MetronomeEngine {
   }
 
   public long getInterval() {
-    return 1000 * 60 / config.getTempo();
+    return 1000 * 60 / Math.max(config.getTempo(), 1);
   }
 
   public void setSound(String sound) {
