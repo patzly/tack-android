@@ -34,6 +34,7 @@ public class MetronomeConfig {
   private int tempo;
   // beats
   private String[] beats, subdivisions;
+  private boolean usePolyrhythm;
   // incremental tempo change
   private int incrementalAmount, incrementalInterval, incrementalLimit;
   private String incrementalUnit;
@@ -54,6 +55,7 @@ public class MetronomeConfig {
     beats = DEF.BEATS.split(",");
     subdivisions = DEF.SUBDIVISIONS.split(",");
     maybeMigrateOldSubdivision();
+    usePolyrhythm = DEF.USE_POLYRHYTHM;
 
     incrementalAmount = DEF.INCREMENTAL_AMOUNT;
     incrementalInterval = DEF.INCREMENTAL_INTERVAL;
@@ -77,7 +79,7 @@ public class MetronomeConfig {
   public MetronomeConfig(
       int countIn,
       int tempo,
-      String[] beats, String[] subdivisions,
+      String[] beats, String[] subdivisions, boolean usePolyrhythm,
       int incrementalAmount, int incrementalInterval, int incrementalLimit,
       String incrementalUnit, boolean incrementalIncrease,
       int timerDuration, String timerUnit,
@@ -90,6 +92,7 @@ public class MetronomeConfig {
     this.beats = beats;
     this.subdivisions = subdivisions;
     maybeMigrateOldSubdivision();
+    this.usePolyrhythm = usePolyrhythm;
 
     this.incrementalAmount = incrementalAmount;
     this.incrementalInterval = incrementalInterval;
@@ -115,6 +118,7 @@ public class MetronomeConfig {
         this.tempo == other.tempo &&
         java.util.Arrays.equals(this.beats, other.beats) &&
         java.util.Arrays.equals(this.subdivisions, other.subdivisions) &&
+        this.usePolyrhythm == other.usePolyrhythm &&
         this.incrementalAmount == other.incrementalAmount &&
         this.incrementalInterval == other.incrementalInterval &&
         this.incrementalLimit == other.incrementalLimit &&
@@ -136,6 +140,7 @@ public class MetronomeConfig {
     this.beats = other.beats.clone();
     this.subdivisions = other.subdivisions.clone();
     maybeMigrateOldSubdivision();
+    this.usePolyrhythm = other.usePolyrhythm;
 
     this.incrementalAmount = other.incrementalAmount;
     this.incrementalInterval = other.incrementalInterval;
@@ -160,6 +165,7 @@ public class MetronomeConfig {
     beats = sharedPrefs.getString(PREF.BEATS, DEF.BEATS).split(",");
     subdivisions = sharedPrefs.getString(PREF.SUBDIVISIONS, DEF.SUBDIVISIONS).split(",");
     maybeMigrateOldSubdivision();
+    usePolyrhythm = sharedPrefs.getBoolean(PREF.USE_POLYRHYTHM, DEF.USE_POLYRHYTHM);
 
     incrementalAmount = sharedPrefs.getInt(PREF.INCREMENTAL_AMOUNT, DEF.INCREMENTAL_AMOUNT);
     incrementalInterval = sharedPrefs.getInt(PREF.INCREMENTAL_INTERVAL, DEF.INCREMENTAL_INTERVAL);
@@ -285,6 +291,14 @@ public class MetronomeConfig {
     }
     subdivisions = Arrays.copyOf(subdivisions, subdivisions.length - 1);
     return true;
+  }
+
+  public boolean usePolyrhythm() {
+    return usePolyrhythm;
+  }
+
+  public void setUsePolyrhythm(boolean usePolyrhythm) {
+    this.usePolyrhythm = usePolyrhythm;
   }
 
   public void setSwing3() {

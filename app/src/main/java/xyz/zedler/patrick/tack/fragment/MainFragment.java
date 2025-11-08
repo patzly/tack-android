@@ -942,11 +942,11 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
   @Override
   public void onMetronomePreTick(Tick tick) {
     activity.runOnUiThread(() -> {
-      if (binding == null) {
+      if (binding == null || getMetronomeEngine() == null) {
         return;
       }
       View beat = binding.linearMainBeats.getChildAt(tick.beat - 1);
-      if (beat instanceof BeatView && tick.subdivision == 1) {
+      if (beat instanceof BeatView && tick.subdivision == 1 && !tick.isPoly) {
         resetActiveBeats();
         if (activeBeat) {
           ((BeatView) beat).setActive(true);
@@ -955,6 +955,8 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       }
       View subdivision = binding.linearMainSubs.getChildAt(tick.subdivision - 1);
       if (!(subdivision instanceof BeatView)) {
+        return;
+      } else if (getMetronomeEngine().getConfig().usePolyrhythm() && !tick.isPoly) {
         return;
       }
       ((BeatView) subdivision).beat();
@@ -1105,9 +1107,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       performHapticClick();
       boolean success = metronomeEngine.addBeat();
       if (success) {
-        if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
-          metronomeEngine.restartIfPlaying(false);
-        }
+        metronomeEngine.restartIfPlaying(false);
         metronomeEngine.maybeUpdateDefaultSong();
 
         Transition transition = new AutoTransition();
@@ -1132,9 +1132,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       performHapticClick();
       boolean success = metronomeEngine.removeBeat();
       if (success) {
-        if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
-          metronomeEngine.restartIfPlaying(false);
-        }
+        metronomeEngine.restartIfPlaying(false);
         metronomeEngine.maybeUpdateDefaultSong();
 
         Transition transition = new ChangeBounds();
@@ -1155,9 +1153,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       performHapticClick();
       boolean success = metronomeEngine.addSubdivision();
       if (success) {
-        if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
-          metronomeEngine.restartIfPlaying(false);
-        }
+        metronomeEngine.restartIfPlaying(false);
         metronomeEngine.maybeUpdateDefaultSong();
 
         Transition transition = new AutoTransition();
@@ -1180,9 +1176,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       performHapticClick();
       boolean success = metronomeEngine.removeSubdivision();
       if (success) {
-        if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
-          metronomeEngine.restartIfPlaying(false);
-        }
+        metronomeEngine.restartIfPlaying(false);
         metronomeEngine.maybeUpdateDefaultSong();
 
         Transition transition = new ChangeBounds();
@@ -1244,14 +1238,21 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       return;
     }
     boolean isFirstSubMuted = false;
+    boolean usePolyrhythm = false;
     if (getMetronomeEngine() != null) {
       isFirstSubMuted = getMetronomeEngine().getConfig().isFirstSubdivisionMuted();
+      usePolyrhythm = getMetronomeEngine().getConfig().usePolyrhythm();
     }
 
     if (firstSubChanged) {
       for (int i = 0; i < binding.linearMainBeats.getChildCount(); i++) {
         BeatView beatView = (BeatView) binding.linearMainBeats.getChildAt(i);
-        beatView.setTickType(isFirstSubMuted ? TICK_TYPE.MUTED : beats[i], true);
+        if (usePolyrhythm) {
+          boolean muted = isFirstSubMuted && i == 0;
+          beatView.setTickType(muted ? TICK_TYPE.MUTED : beats[i] , true);
+        } else {
+          beatView.setTickType(isFirstSubMuted ? TICK_TYPE.MUTED : beats[i], true);
+        }
       }
       // Only update tick types, no need to rebuild views
       return;
@@ -1660,7 +1661,8 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     return (config.isCountInActive() ? 1 : 0) +
         (config.isIncrementalActive() ? 1 : 0) +
         (config.isTimerActive() ? 1 : 0) +
-        (config.isMuteActive() ? 1 : 0);
+        (config.isMuteActive() ? 1 : 0) +
+        (config.usePolyrhythm() ? 1 : 0);
   }
 
   private void changeTempo(int difference) {

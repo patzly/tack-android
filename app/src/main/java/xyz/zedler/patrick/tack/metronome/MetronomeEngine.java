@@ -80,7 +80,7 @@ public class MetronomeEngine {
   private String beatMode, currentSongId, keepAwake, flashScreen;
   private int currentPartIndex, muteCountDown, songsOrder;
   private int timerBarIndex, timerBeatIndex, timerSubIndex;
-  private long tickIndex, latency, countInStartTime, timerStartTime;
+  private long tickIndex, tickIndexPoly, latency, countInStartTime, timerStartTime;
   private long elapsedStartTime, elapsedTime, elapsedPrevious;
   private float timerProgress;
   private boolean playing, tempPlaying, isCountingIn, isMuted;
@@ -422,6 +422,7 @@ public class MetronomeEngine {
     resetHandlersIfRequired();
 
     tickIndex = 0;
+    tickIndexPoly = 0;
     isMuted = false;
     if (config.isMuteActive()) {
       // updateMuteHandler would be too late
@@ -451,17 +452,37 @@ public class MetronomeEngine {
         if (!isPlaying()) {
           return;
         }
-        tickHandler.postDelayed(this, getInterval() / config.getSubdivisionsCount());
+        long interval = getInterval() / config.getSubdivisionsCount();
+        if (config.usePolyrhythm()) {
+          interval = getInterval();
+        }
+        tickHandler.postDelayed(this, interval);
         Tick tick = performTick();
         if (tick != null) {
-          audioEngine.writeTickPeriod(tick);
+          audioEngine.playTick(tick);
           tickIndex++;
         }
+      }
+    };
+    Runnable tickRunnablePoly = new Runnable() {
+      @Override
+      public void run() {
+        if (!isPlaying()) {
+          return;
+        }
+        long barInterval = getInterval() * config.getBeatsCount();
+        tickHandler.postDelayed(this, barInterval / config.getSubdivisionsCount());
+        Tick tick = performTickPoly();
+        audioEngine.playTick(tick);
+        tickIndexPoly++;
       }
     };
     audioHandler.post(() -> {
       audioEngine.play();
       tickHandler.post(tickRunnable);
+      if (config.usePolyrhythm()) {
+        tickHandler.post(tickRunnablePoly);
+      }
     });
 
     synchronized (listeners) {
@@ -536,7 +557,12 @@ public class MetronomeEngine {
       resetHandlersIfRequired();
       int countInTickIndex = config.getCountIn() *
           config.getBeatsCount() * config.getSubdivisionsCount();
+      if (config.usePolyrhythm()) {
+        countInTickIndex = config.getCountIn() *
+            config.getBeatsCount(); // subdivisions are handled in polyrhythm
+      }
       tickIndex = config.isCountInActive() ? countInTickIndex : 0;
+      tickIndexPoly = (long) config.getCountIn() * config.getSubdivisionsCount();
       isMuted = false;
       if (config.isMuteActive()) {
         // updateMuteHandler would be too late
@@ -549,15 +575,38 @@ public class MetronomeEngine {
           if (!isPlaying()) {
             return;
           }
-          tickHandler.postDelayed(this, getInterval() / config.getSubdivisionsCount());
+          long interval = getInterval() / config.getSubdivisionsCount();
+          if (config.usePolyrhythm()) {
+            interval = getInterval();
+          }
+          tickHandler.postDelayed(this, interval);
           Tick tick = performTick();
           if (tick != null) {
-            audioEngine.writeTickPeriod(tick);
+            audioEngine.playTick(tick);
             tickIndex++;
           }
         }
       };
-      tickHandler.post(tickRunnable);
+      Runnable tickRunnablePoly = new Runnable() {
+        @Override
+        public void run() {
+          if (!isPlaying()) {
+            return;
+          }
+          long barInterval = getInterval() * config.getBeatsCount();
+          tickHandler.postDelayed(this, barInterval / config.getSubdivisionsCount());
+          Tick tick = performTickPoly();
+          audioEngine.playTick(tick);
+          tickIndexPoly++;
+        }
+      };
+      audioHandler.post(() -> {
+        audioEngine.play();
+        tickHandler.post(tickRunnable);
+        if (config.usePolyrhythm()) {
+          tickHandler.post(tickRunnablePoly);
+        }
+      });
 
       isCountingIn = false;
       updateIncrementalHandler();
@@ -726,6 +775,12 @@ public class MetronomeEngine {
 
   public long getInterval() {
     return 1000 * 60 / Math.max(config.getTempo(), 1);
+  }
+
+  public void setUsePolyrhythm(boolean usePolyrhythm) {
+    config.setUsePolyrhythm(usePolyrhythm);
+    sharedPrefs.edit().putBoolean(PREF.USE_POLYRHYTHM, usePolyrhythm).apply();
+    restartIfPlaying(false);
   }
 
   public void setSound(String sound) {
@@ -1279,19 +1334,19 @@ public class MetronomeEngine {
     }
   }
 
-  private @Nullable Tick performTick() {
+  @Nullable
+  private Tick performTick() {
     int beat = getCurrentBeat();
     int subdivision = getCurrentSubdivision();
     String tickType = getCurrentTickType();
 
-    long beatIndex = tickIndex / config.getSubdivisionsCount();
+    long beatIndex = config.usePolyrhythm() ? tickIndex : tickIndex / config.getSubdivisionsCount();
     long barIndex = beatIndex / config.getBeatsCount();
     long barIndexWithoutCountIn = barIndex - config.getCountIn();
     boolean isCountIn = barIndex < config.getCountIn();
 
     boolean isBeat = subdivision == 1;
-    boolean isFirstBeat = isBeat &&
-        ((tickIndex / config.getSubdivisionsCount()) % config.getBeatsCount()) == 0;
+    boolean isFirstBeat = isBeat && (beatIndex % config.getBeatsCount()) == 0;
 
     if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS) && !isCountIn) {
       boolean isFirstBeatInFirstBar = barIndexWithoutCountIn == 0 && isFirstBeat;
@@ -1376,7 +1431,49 @@ public class MetronomeEngine {
       }
     }
 
-    Tick tick = new Tick(tickIndex, beat, subdivision, tickType, isMuted);
+    Tick tick = new Tick(tickIndex, beat, subdivision, tickType, isMuted, false);
+
+    latencyHandler.postDelayed(() -> {
+      synchronized (listeners) {
+        for (MetronomeListener listener : listeners) {
+          listener.onMetronomePreTick(tick);
+        }
+      }
+    }, Math.max(0, latency - Constants.BEAT_ANIM_OFFSET));
+    latencyHandler.postDelayed(() -> {
+      if (!beatMode.equals(BEAT_MODE.SOUND) && !isMuted) {
+        switch (tick.type) {
+          case TICK_TYPE.STRONG:
+            hapticUtil.heavyClick(hapticUtil.supportsMainEffects());
+            break;
+          case TICK_TYPE.SUB:
+            hapticUtil.tick(hapticUtil.supportsMainEffects());
+            break;
+          case TICK_TYPE.MUTED:
+          case TICK_TYPE.BEAT_SUB_MUTED:
+            break;
+          default:
+            hapticUtil.click(hapticUtil.supportsMainEffects());
+        }
+      }
+      synchronized (listeners) {
+        for (MetronomeListener listener : listeners) {
+          listener.onMetronomeTick(tick);
+        }
+      }
+    }, latency);
+
+    return tick;
+  }
+
+  @NonNull
+  private Tick performTickPoly() {
+    int subdivisionPoly = getCurrentSubdivisionPoly();
+    String tickTypePoly = getCurrentTickTypePoly();
+
+    Tick tick = new Tick(
+        tickIndexPoly, 1, subdivisionPoly, tickTypePoly, isMuted, true
+    );
 
     latencyHandler.postDelayed(() -> {
       synchronized (listeners) {
@@ -1412,25 +1509,56 @@ public class MetronomeEngine {
   }
 
   private int getCurrentBeat() {
+    if (config.usePolyrhythm()) {
+      return (int) (tickIndex % config.getBeats().length) + 1;
+    }
     return (int) ((tickIndex / config.getSubdivisionsCount()) % config.getBeats().length) + 1;
   }
 
   private int getCurrentSubdivision() {
+    if (config.usePolyrhythm()) {
+      return 1;
+    }
     return (int) (tickIndex % config.getSubdivisionsCount()) + 1;
   }
 
+  private int getCurrentSubdivisionPoly() {
+    return (int) (tickIndexPoly % config.getSubdivisionsCount()) + 1;
+  }
+
   private String getCurrentTickType() {
-    int subdivisionsCount = config.getSubdivisionsCount();
-    if ((tickIndex % subdivisionsCount) == 0) {
-      if (config.isFirstSubdivisionMuted()) {
+    if (config.usePolyrhythm()) {
+      String[] beats = config.getBeats();
+      int beatIndex = (int) (tickIndex % beats.length);
+      if (beatIndex == 0 && config.isFirstSubdivisionMuted()) {
+        // mute first beat if first subdivision is muted because user expects that with polyrhythm
         return TICK_TYPE.BEAT_SUB_MUTED;
       } else {
-        String[] beats = config.getBeats();
-        return beats[(int) ((tickIndex / subdivisionsCount) % beats.length)];
+        return beats[(int) (tickIndex % beats.length)];
       }
     } else {
+      int subdivisionsCount = config.getSubdivisionsCount();
+      if ((tickIndex % subdivisionsCount) == 0) {
+        if (config.isFirstSubdivisionMuted()) {
+          return TICK_TYPE.BEAT_SUB_MUTED;
+        } else {
+          String[] beats = config.getBeats();
+          return beats[(int) ((tickIndex / subdivisionsCount) % beats.length)];
+        }
+      } else {
+        String[] subdivisions = config.getSubdivisions();
+        return subdivisions[(int) (tickIndex % subdivisionsCount)];
+      }
+    }
+  }
+
+  private String getCurrentTickTypePoly() {
+    int subdivisionsCount = config.getSubdivisionsCount();
+    if ((tickIndexPoly % subdivisionsCount) == 0) {
+      return TICK_TYPE.BEAT_SUB_MUTED;
+    } else {
       String[] subdivisions = config.getSubdivisions();
-      return subdivisions[(int) (tickIndex % subdivisionsCount)];
+      return subdivisions[(int) (tickIndexPoly % subdivisionsCount)];
     }
   }
 
@@ -1469,14 +1597,22 @@ public class MetronomeEngine {
     public final int beat, subdivision;
     @NonNull
     public final String type;
-    public final boolean isMuted;
+    public final boolean isMuted, isPoly;
 
-    public Tick(long index, int beat, int subdivision, @NonNull String type, boolean isMuted) {
+    public Tick(
+        long index,
+        int beat,
+        int subdivision,
+        @NonNull String type,
+        boolean isMuted,
+        boolean isPoly
+    ) {
       this.index = index;
       this.beat = beat;
       this.subdivision = subdivision;
       this.type = type;
       this.isMuted = isMuted;
+      this.isPoly = isPoly;
     }
 
     @NonNull
@@ -1486,6 +1622,7 @@ public class MetronomeEngine {
           ", beat=" + beat +
           ", sub=" + subdivision +
           ", type=" + type +
+          ", isPoly=" + isPoly +
           ", muted=" + isMuted + '}';
     }
   }

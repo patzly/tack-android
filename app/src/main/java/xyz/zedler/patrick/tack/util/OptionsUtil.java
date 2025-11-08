@@ -60,7 +60,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   private final boolean useDialog, editPart;
   private Runnable onModifiersCountChanged, onTimerChanged, onSubsChanged;
   private OnPartEditListener onPartEditListener;
-  private boolean isCountInActive, isIncrementalActive, isTimerActive, isMuteActive;
+  private boolean isCountInActive, isIncrementalActive, isTimerActive, isMuteActive, usePolyrhythm;
   private boolean isNew, isInitialized;
   private DialogUtil dialogUtil;
   private PartialOptionsBinding binding;
@@ -231,6 +231,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     updateTimer();
     updateMute();
     updateSwing();
+    updatePolyrhythm();
   }
 
   private void updateTempo() {
@@ -282,7 +283,12 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     if (firstSubChanged) {
       for (int i = 0; i < binding.linearOptionsBeats.getChildCount(); i++) {
         BeatView beatView = (BeatView) binding.linearOptionsBeats.getChildAt(i);
-        beatView.setTickType(isFirstSubMuted ? TICK_TYPE.MUTED : beats[i], true);
+        if (usePolyrhythm) {
+          boolean muted = isFirstSubMuted && i == 0;
+          beatView.setTickType(muted ? TICK_TYPE.MUTED : beats[i] , true);
+        } else {
+          beatView.setTickType(isFirstSubMuted ? TICK_TYPE.MUTED : beats[i], true);
+        }
       }
       // Only update tick types, no need to rebuild views
       return;
@@ -889,6 +895,33 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding.toggleOptionsSwing.addOnButtonCheckedListener(this);
   }
 
+  private void updatePolyrhythm() {
+    if (getConfig() == null) {
+      return;
+    }
+    boolean usePolyrhythm = getConfig().usePolyrhythm();
+    if (this.usePolyrhythm != usePolyrhythm) {
+      this.usePolyrhythm = usePolyrhythm;
+      if (onModifiersCountChanged != null) {
+        onModifiersCountChanged.run();
+      }
+    }
+
+    binding.linearOptionsPolyrhythm.setOnClickListener(this);
+    binding.switchOptionsPolyrhythm.setOnCheckedChangeListener(null);
+    binding.switchOptionsPolyrhythm.setChecked(usePolyrhythm);
+    binding.switchOptionsPolyrhythm.setOnCheckedChangeListener(
+        (buttonView, isChecked) -> {
+          if (editPart && getConfig() != null) {
+            getConfig().setUsePolyrhythm(isChecked);
+          } else if (activity.getMetronomeEngine() != null) {
+            activity.getMetronomeEngine().setUsePolyrhythm(isChecked);
+            activity.getMetronomeEngine().maybeUpdateDefaultSong();
+          }
+          updatePolyrhythm();
+        });
+  }
+
   @Override
   public void onClick(View v) {
     MetronomeConfig config = getConfig();
@@ -1085,6 +1118,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       ViewUtil.startIcon(binding.buttonOptionsTimerIncrease.getIcon());
     } else if (id == R.id.linear_options_mute_random) {
       binding.switchOptionsMuteRandom.toggle();
+    } else if (id == R.id.linear_options_polyrhythm) {
+      binding.switchOptionsPolyrhythm.toggle();
     }
   }
 

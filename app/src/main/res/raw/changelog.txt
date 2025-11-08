@@ -3,11 +3,12 @@ After six months of dedicated work in my spare time, I'm thrilled to announce th
 ### 6.0.0
 
 - New: Material 3 Expressive design throughout the app with new typeface and redesigned controls
-- New: Migration to Oboe audio library for minimum latency and much better performance
+- New: migration to Oboe audio library for minimum latency and much better performance
 - New: song parts can now be directly edited or duplicated from song details, "update part" menu option replaced by "use current config" button in the edit dialog for more clarity
 - New: song picker redesigned to display current song part in expanded state
 - New: long-tap on song chips or tap on current song to open song details, tap on current part to open parts dialog
 - New: tempo tap button replaced by extended tempo change dialog accessible with tap on tempo picker
+- New: option for polyrhythmic subdivisions (thanks Alexander!)
 - New: "always vibrate" setting replaced by beat mode dialog accessible from the main screen
 - New: "volume boost" setting extended for volume reduction and moved to separate dialog
 - New: "flash screen" setting extended with option for subtle flash

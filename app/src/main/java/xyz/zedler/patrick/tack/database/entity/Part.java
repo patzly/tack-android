@@ -63,6 +63,7 @@ public class Part implements Parcelable {
   private int tempo;
   // beats
   private String beats, subdivisions;
+  private boolean usePolyrhythm;
   // incremental tempo change
   private int incrementalAmount, incrementalInterval, incrementalLimit;
   private String incrementalUnit;
@@ -78,7 +79,7 @@ public class Part implements Parcelable {
   public Part(
       @NonNull String id, @Nullable String name, @NonNull String songId, int partIndex,
       int countIn, int tempo,
-      String beats, String subdivisions,
+      String beats, String subdivisions, boolean usePolyrhythm,
       int incrementalAmount, int incrementalInterval, int incrementalLimit,
       String incrementalUnit, boolean incrementalIncrease,
       int timerDuration, String timerUnit,
@@ -95,6 +96,7 @@ public class Part implements Parcelable {
 
     this.beats = beats;
     this.subdivisions = subdivisions;
+    this.usePolyrhythm = usePolyrhythm;
 
     this.incrementalAmount = incrementalAmount;
     this.incrementalInterval = incrementalInterval;
@@ -136,6 +138,7 @@ public class Part implements Parcelable {
 
     this.beats = part.beats;
     this.subdivisions = part.subdivisions;
+    this.usePolyrhythm = part.usePolyrhythm;
 
     this.incrementalAmount = part.incrementalAmount;
     this.incrementalInterval = part.incrementalInterval;
@@ -161,6 +164,7 @@ public class Part implements Parcelable {
     tempo = in.readInt();
     beats = in.readString();
     subdivisions = in.readString();
+    usePolyrhythm = in.readByte() != 0;
     incrementalAmount = in.readInt();
     incrementalInterval = in.readInt();
     incrementalLimit = in.readInt();
@@ -247,6 +251,14 @@ public class Part implements Parcelable {
 
   public void setSubdivisions(String subdivisions) {
     this.subdivisions = subdivisions;
+  }
+
+  public boolean usePolyrhythm() {
+    return usePolyrhythm;
+  }
+
+  public void setUsePolyrhythm(boolean usePolyrhythm) {
+    this.usePolyrhythm = usePolyrhythm;
   }
 
   public int getIncrementalAmount() {
@@ -361,7 +373,7 @@ public class Part implements Parcelable {
     return new MetronomeConfig(
         countIn,
         tempo,
-        beats.split(","), subdivisions.split(","),
+        beats.split(","), subdivisions.split(","), usePolyrhythm,
         incrementalAmount, incrementalInterval, incrementalLimit,
         incrementalUnit, incrementalIncrease,
         timerDuration, timerUnit,
@@ -376,6 +388,7 @@ public class Part implements Parcelable {
 
     beats = String.join(",", config.getBeats());
     subdivisions = String.join(",", config.getSubdivisions());
+    usePolyrhythm = config.usePolyrhythm();
 
     incrementalAmount = config.getIncrementalAmount();
     incrementalInterval = config.getIncrementalInterval();
@@ -397,6 +410,7 @@ public class Part implements Parcelable {
         && tempo == config.getTempo()
         && Arrays.equals(beats.split(","), config.getBeats())
         && Arrays.equals(subdivisions.split(","), config.getSubdivisions())
+        && usePolyrhythm == config.usePolyrhythm()
         && incrementalAmount == config.getIncrementalAmount()
         && incrementalInterval == config.getIncrementalInterval()
         && incrementalLimit == config.getIncrementalLimit()
@@ -426,6 +440,7 @@ public class Part implements Parcelable {
         && Objects.equals(songId, part.songId)
         && Objects.equals(beats, part.beats)
         && Objects.equals(subdivisions, part.subdivisions)
+        && Objects.equals(usePolyrhythm, part.usePolyrhythm)
         && Objects.equals(incrementalUnit, part.incrementalUnit)
         && Objects.equals(timerUnit, part.timerUnit) && Objects.equals(muteUnit, part.muteUnit);
   }
@@ -433,7 +448,7 @@ public class Part implements Parcelable {
   @Override
   public int hashCode() {
     return Objects.hash(id, name, songId, partIndex, countIn, tempo, beats, subdivisions,
-        incrementalAmount, incrementalInterval, incrementalLimit, incrementalUnit,
+        usePolyrhythm, incrementalAmount, incrementalInterval, incrementalLimit, incrementalUnit,
         incrementalIncrease, timerDuration, timerUnit, mutePlay, muteMute, muteUnit, muteRandom);
   }
 
@@ -452,6 +467,7 @@ public class Part implements Parcelable {
     dest.writeInt(tempo);
     dest.writeString(beats);
     dest.writeString(subdivisions);
+    dest.writeByte((byte) (usePolyrhythm ? 1 : 0));
     dest.writeInt(incrementalAmount);
     dest.writeInt(incrementalInterval);
     dest.writeInt(incrementalLimit);
@@ -477,6 +493,7 @@ public class Part implements Parcelable {
         ", tempo=" + tempo +
         ", beats='" + beats + '\'' +
         ", subdivisions='" + subdivisions + '\'' +
+        ", usePolyrhythm=" + usePolyrhythm +
         ", incrementalAmount=" + incrementalAmount +
         ", incrementalInterval=" + incrementalInterval +
         ", incrementalLimit=" + incrementalLimit +

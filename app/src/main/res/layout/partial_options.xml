@@ -816,9 +816,7 @@
 
         <com.google.android.material.materialswitch.MaterialSwitch
           android:id="@+id/switch_options_mute_random"
-          style="@style/Widget.Tack.Switch"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content" />
+          style="@style/Widget.Tack.Switch" />
 
       </LinearLayout>
 
@@ -832,7 +830,7 @@
     android:orientation="vertical"
     android:paddingTop="16dp"
     android:paddingBottom="8dp"
-    android:background="@drawable/ripple_list_item_bg_segmented_last">
+    android:background="@drawable/ripple_list_item_bg_segmented_middle">
 
     <TextView
       style="@style/Widget.Tack.TextView"
@@ -885,6 +883,29 @@
       </com.google.android.material.button.MaterialButtonToggleGroup>
 
     </HorizontalScrollView>
+
+  </LinearLayout>
+
+  <LinearLayout
+    android:id="@+id/linear_options_polyrhythm"
+    style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+    android:background="@drawable/ripple_list_item_bg_segmented_last">
+
+    <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+      <TextView
+        style="@style/Widget.Tack.TextView.ListItem.Title"
+        android:text="@string/options_polyrhythm" />
+
+      <TextView
+        style="@style/Widget.Tack.TextView.ListItem.Description"
+        android:text="@string/options_polyrhythm_description" />
+
+    </LinearLayout>
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+      android:id="@+id/switch_options_polyrhythm"
+      style="@style/Widget.Tack.Switch" />
 
   </LinearLayout>
 

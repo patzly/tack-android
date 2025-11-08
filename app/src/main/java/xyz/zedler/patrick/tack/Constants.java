@@ -52,6 +52,7 @@ public final class Constants {
     public final static String TEMPO = "tempo";
     public final static String BEATS = "beats";
     public final static String SUBDIVISIONS = "subdivisions";
+    public final static String USE_POLYRHYTHM = "use_polyrhythm";
     public final static String BEAT_MODE = "beat_mode";
     public final static String ACTIVE_BEAT = "highlight_active_beat";
     public final static String SHOW_ELAPSED = "show_elapsed";
@@ -101,6 +102,7 @@ public final class Constants {
         ",", TICK_TYPE.STRONG, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL
     );
     public final static String SUBDIVISIONS = TICK_TYPE.BEAT_SUB;
+    public final static boolean USE_POLYRHYTHM = false;
     public final static String BEAT_MODE = Constants.BEAT_MODE.ALL;
     public final static boolean ACTIVE_BEAT = false;
     public final static boolean SHOW_ELAPSED = false;

@@ -323,6 +323,8 @@
   <string name="options_swing_3">Triplet</string>
   <string name="options_swing_5">Quintuplet</string>
   <string name="options_swing_7">Septuplet</string>
+  <string name="options_polyrhythm">Polyrhythm</string>
+  <string name="options_polyrhythm_description">Plays the subdivisions spread across the entire bar</string>
 
   <!-- SETTINGS -->
 
