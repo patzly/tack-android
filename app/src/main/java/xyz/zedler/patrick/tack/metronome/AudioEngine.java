@@ -51,7 +51,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   private final Context context;
   private final AudioManager audioManager;
   private final AudioListener listener;
-  private long engineHandleBeats, engineHandleSubs;
+  private long engineHandle;
   private int gain;
   private volatile boolean playing;
   private boolean muted, ignoreFocus;
@@ -72,9 +72,8 @@ public class AudioEngine implements OnAudioFocusChangeListener {
 
     audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
-    engineHandleBeats = nativeCreate();
-    engineHandleSubs = nativeCreate();
-    if (engineHandleBeats == 0 || engineHandleSubs == 0) {
+    engineHandle = nativeCreate();
+    if (engineHandle == 0) {
       Log.e(TAG, "Failed to create Oboe engine");
       return;
     }
@@ -86,10 +85,8 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   public void destroy() {
     stop();
     if (isInitialized()) {
-      nativeDestroy(engineHandleBeats);
-      nativeDestroy(engineHandleSubs);
-      engineHandleBeats = 0;
-      engineHandleSubs = 0;
+      nativeDestroy(engineHandle);
+      engineHandle = 0;
     }
   }
 
@@ -101,9 +98,8 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     if (playing || !isInitialized()) {
       return;
     }
-    boolean successBeats = nativeStart(engineHandleBeats);
-    boolean successSubs = nativeStart(engineHandleSubs);
-    if (successBeats && successSubs) {
+    boolean success = nativeStart(engineHandle);
+    if (success) {
       playing = true;
       requestAudioFocus();
     } else {
@@ -126,8 +122,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     }
 
     if (isInitialized()) {
-      nativeStop(engineHandleBeats);
-      nativeStop(engineHandleSubs);
+      nativeStop(engineHandle);
     }
     listener.onAudioStop();
   }
@@ -156,14 +151,12 @@ public class AudioEngine implements OnAudioFocusChangeListener {
       return;
     }
     if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-      nativeSetDuckingVolume(engineHandleBeats, 1.0f);
-      nativeSetDuckingVolume(engineHandleSubs, 1.0f);
+      nativeSetDuckingVolume(engineHandle, 1.0f);
     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
       stop();
     } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
         || focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
-      nativeSetDuckingVolume(engineHandleBeats, 0.25f);
-      nativeSetDuckingVolume(engineHandleSubs, 0.25f);
+      nativeSetDuckingVolume(engineHandle, 0.25f);
     }
   }
 
@@ -221,32 +214,16 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     }
 
     if (isInitialized()) {
-      nativeSetTickData(
-          engineHandleBeats, NATIVE_TICK_TYPE_NORMAL, loadAudio(resIdNormal, pitchNormal)
-      );
-      nativeSetTickData(
-          engineHandleSubs, NATIVE_TICK_TYPE_NORMAL, loadAudio(resIdNormal, pitchNormal)
-      );
-      nativeSetTickData(
-          engineHandleBeats, NATIVE_TICK_TYPE_STRONG, loadAudio(resIdStrong, pitchStrong)
-      );
-      nativeSetTickData(
-          engineHandleSubs, NATIVE_TICK_TYPE_STRONG, loadAudio(resIdStrong, pitchStrong)
-      );
-      nativeSetTickData(
-          engineHandleBeats, NATIVE_TICK_TYPE_SUB, loadAudio(resIdSub, pitchSub)
-      );
-      nativeSetTickData(
-          engineHandleSubs, NATIVE_TICK_TYPE_SUB, loadAudio(resIdSub, pitchSub)
-      );
+      nativeSetTickData(engineHandle, NATIVE_TICK_TYPE_NORMAL, loadAudio(resIdNormal, pitchNormal));
+      nativeSetTickData(engineHandle, NATIVE_TICK_TYPE_STRONG, loadAudio(resIdStrong, pitchStrong));
+      nativeSetTickData(engineHandle, NATIVE_TICK_TYPE_SUB, loadAudio(resIdSub, pitchSub));
     }
   }
 
   public void setGain(int gain) {
     this.gain = gain;
     if (isInitialized()) {
-      nativeSetMasterVolume(engineHandleBeats, dbToLinear((float) (gain * 100) / 100.0f));
-      nativeSetMasterVolume(engineHandleSubs, dbToLinear((float) (gain * 100) / 100.0f));
+      nativeSetMasterVolume(engineHandle, dbToLinear((float) (gain * 100) / 100.0f));
     }
   }
 
@@ -257,8 +234,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   public void setMuted(boolean muted) {
     this.muted = muted;
     if (isInitialized()) {
-      nativeSetMuted(engineHandleBeats, muted);
-      nativeSetMuted(engineHandleSubs, muted);
+      nativeSetMuted(engineHandle, muted);
     }
   }
 
@@ -291,7 +267,6 @@ public class AudioEngine implements OnAudioFocusChangeListener {
         nativeTickType = NATIVE_TICK_TYPE_NORMAL;
         break;
     }
-    long engineHandle = tick.subdivision == 1 ? engineHandleBeats : engineHandleSubs;
     nativePlayTick(engineHandle, nativeTickType);
   }
 
@@ -323,7 +298,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   }
 
   private boolean isInitialized() {
-    return engineHandleBeats != 0 && engineHandleSubs != 0;
+    return engineHandle != 0;
   }
 
   private enum Pitch {

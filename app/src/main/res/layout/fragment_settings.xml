@@ -452,31 +452,6 @@
         </LinearLayout>
 
         <LinearLayout
-          android:id="@+id/linear_settings_latency"
-          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
-          android:background="@drawable/ripple_list_item_bg_segmented_middle">
-
-          <ImageView
-            style="@style/Widget.Tack.ImageView.ListItem.Icon"
-            android:src="@drawable/ic_rounded_media_output"
-            tools:ignore="ContentDescription" />
-
-          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
-
-            <TextView
-              style="@style/Widget.Tack.TextView.ListItem.Title"
-              android:text="@string/settings_latency" />
-
-            <TextView
-              android:id="@+id/text_settings_latency"
-              style="@style/Widget.Tack.TextView.ListItem.Description"
-              android:text="@string/label_ms" />
-
-          </LinearLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
           android:id="@+id/linear_settings_ignore_focus"
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
           android:background="@drawable/ripple_list_item_bg_segmented_middle">
@@ -508,7 +483,7 @@
         <LinearLayout
           android:id="@+id/linear_settings_gain"
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
-          android:background="@drawable/ripple_list_item_bg_segmented_last">
+          android:background="@drawable/ripple_list_item_bg_segmented_middle">
 
           <ImageView
             android:id="@+id/image_settings_gain"
@@ -526,6 +501,31 @@
               android:id="@+id/text_settings_gain"
               style="@style/Widget.Tack.TextView.ListItem.Description"
               android:text="@string/label_db_signed" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_settings_latency"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
+          android:background="@drawable/ripple_list_item_bg_segmented_last">
+
+          <ImageView
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_media_output"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_latency" />
+
+            <TextView
+              android:id="@+id/text_settings_latency"
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/label_ms" />
 
           </LinearLayout>
 
