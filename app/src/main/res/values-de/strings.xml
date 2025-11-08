@@ -310,7 +310,7 @@
   <string name="options_swing_3">Triole</string>
   <string name="options_swing_5">Quintole</string>
   <string name="options_swing_7">Septole</string>
-  <string name="options_polyrhythm_description">Spielt die Schlag-Unterteilungen über den ganzen Takt verteilt</string>
+  <string name="options_polyrhythm_description">Spielt die Unterteilungen über den ganzen Takt verteilt</string>
 
   <!-- SETTINGS -->
 
