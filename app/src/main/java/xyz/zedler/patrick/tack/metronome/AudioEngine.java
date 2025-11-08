@@ -23,7 +23,6 @@ import android.content.Context;
 import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
-import android.media.audiofx.LoudnessEnhancer;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.util.Log;
@@ -40,7 +39,7 @@ import xyz.zedler.patrick.tack.util.AudioUtil;
 
 public class AudioEngine implements OnAudioFocusChangeListener {
 
-  private static final String TAG = AudioEngineOld.class.getSimpleName();
+  private static final String TAG = AudioEngine.class.getSimpleName();
 
   static {
     System.loadLibrary("oboe-audio-engine");
@@ -56,7 +55,6 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   private int gain;
   private volatile boolean playing;
   private boolean muted, ignoreFocus;
-  private LoudnessEnhancer loudnessEnhancer;
 
   private native long nativeCreate();
   private native void nativeDestroy(long handle);
@@ -67,7 +65,6 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   private native void nativeSetMasterVolume(long handle, float volume);
   private native void nativeSetDuckingVolume(long handle, float volume);
   private native void nativeSetMuted(long handle, boolean muted);
-  private native int nativeGetSessionId(long handle);
 
   public AudioEngine(@NonNull Context context, @NonNull AudioListener listener) {
     this.context = context;
@@ -105,27 +102,6 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     if (success) {
       playing = true;
       requestAudioFocus();
-
-      int sessionId = nativeGetSessionId(engineHandle);
-      if (sessionId > 0) {
-        if (loudnessEnhancer != null) {
-          try {
-            loudnessEnhancer.release();
-          } catch (RuntimeException e) {
-            Log.e(TAG, "Failed to release LoudnessEnhancer: ", e);
-          }
-          loudnessEnhancer = null;
-        }
-        try {
-          loudnessEnhancer = new LoudnessEnhancer(sessionId);
-          updateGain();
-        } catch (Exception e) {
-          Log.e(TAG, "Failed to initialize LoudnessEnhancer: ", e);
-          loudnessEnhancer = null;
-        }
-      } else {
-        Log.e(TAG, "Failed to get Oboe session ID");
-      }
     } else {
       Log.e(TAG, "Failed to start Oboe engine");
       playing = false;
@@ -149,20 +125,6 @@ public class AudioEngine implements OnAudioFocusChangeListener {
       nativeStop(engineHandle);
     }
     listener.onAudioStop();
-  }
-
-  public void restart() {
-    if (!playing) {
-      return;
-    }
-    if (isInitialized()) {
-      nativeStop(engineHandle);
-      boolean success = nativeStart(engineHandle);
-      if (!success) {
-        Log.e(TAG, "Failed to restart Oboe engine");
-        playing = false;
-      }
-    }
   }
 
   private void requestAudioFocus() {
@@ -260,37 +222,8 @@ public class AudioEngine implements OnAudioFocusChangeListener {
 
   public void setGain(int gain) {
     this.gain = gain;
-    updateGain();
-  }
-
-  private void updateGain() {
-    if (!isInitialized()) {
-      return;
-    }
-
-    float gainInDb = (float) (gain * 100) / 100.0f;
-
-    if (gain > 0) {
-      nativeSetMasterVolume(engineHandle, 1.0f);
-
-      if (loudnessEnhancer != null) {
-        try {
-          loudnessEnhancer.setTargetGain(gain * 100);
-          loudnessEnhancer.setEnabled(true);
-        } catch (RuntimeException e) {
-          Log.e(TAG, "setGain: failed to set target gain: ", e);
-        }
-      }
-    } else {
-      nativeSetMasterVolume(engineHandle, dbToLinear(gainInDb));
-
-      if (loudnessEnhancer != null) {
-        try {
-          loudnessEnhancer.setEnabled(false);
-        } catch (RuntimeException e) {
-          Log.e(TAG, "setGain: failed to disable enhancer: ", e);
-        }
-      }
+    if (isInitialized()) {
+      nativeSetMasterVolume(engineHandle, dbToLinear((float) (gain * 100) / 100.0f));
     }
   }
 
@@ -334,9 +267,6 @@ public class AudioEngine implements OnAudioFocusChangeListener {
         nativeTickType = NATIVE_TICK_TYPE_NORMAL;
         break;
     }
-
-    // Der entscheidende Aufruf: Signal an Oboe, diesen Tick zu spielen.
-    // Dies ist ein nicht-blockierender, extrem schneller JNI-Aufruf.
     nativePlayTick(engineHandle, nativeTickType);
   }
 

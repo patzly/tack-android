@@ -61,7 +61,7 @@ public final class Constants {
     public final static String FLASH_SCREEN = "flash_screen_strength";
     public final static String KEEP_AWAKE = "keep_screen_awake";
     public final static String SOUND = "sound";
-    public final static String LATENCY = "latency_offset";
+    public final static String LATENCY = "latency_ms";
     public final static String IGNORE_FOCUS = "ignore_focus";
     public final static String GAIN = "gain";
     public final static String BIG_LOGO = "big_logo";
@@ -110,7 +110,7 @@ public final class Constants {
     public final static String FLASH_SCREEN = Constants.FLASH_SCREEN.OFF;
     public final static String KEEP_AWAKE = Constants.KEEP_AWAKE.WHILE_PLAYING;
     public final static String SOUND = Constants.SOUND.SINE;
-    public final static long LATENCY = 100;
+    public final static long LATENCY = 0;
     public final static boolean IGNORE_FOCUS = false;
     public final static int GAIN = 0;
     public final static boolean BIG_LOGO = false;

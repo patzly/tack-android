@@ -4,15 +4,17 @@
 #include <atomic>
 #include <mutex>
 #include <android/log.h>
+#include <cmath>
+#include <algorithm>
 
 #define LOG_TAG "OboeAudioEngine"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 
 constexpr int32_t NATIVE_TICK_TYPE_STRONG = 1;
 constexpr int32_t NATIVE_TICK_TYPE_NORMAL = 2;
-constexpr int32_t NATIVE_TICK_TYPE_SUB    = 3;
+constexpr int32_t NATIVE_TICK_TYPE_SUB = 3;
 
-class OboeAudioEngine : public oboe::AudioStreamDataCallback {
+class OboeAudioEngine: public oboe::AudioStreamDataCallback {
  public:
   OboeAudioEngine() {
     mTickToPlay.store(-1);
@@ -20,6 +22,25 @@ class OboeAudioEngine : public oboe::AudioStreamDataCallback {
     mMasterVolume.store(1.0f);
     mDuckingVolume.store(1.0f);
     mMuted.store(false);
+
+    mSampleRate = 48000.0f;
+
+    // Threshold: -12 dB. All above this level will be compressed.
+    const float kThreshold_dB = -12.0f;
+    // Ratio: 4:1. For each 4 dB above the threshold, output increases by 1 dB.
+    const float kRatio = 8.0f;
+    // Attack: 1 ms. How quickly the compressor responds to increasing levels.
+    const float kAttackTime_s = 0.001f;
+    // Release: 50 ms. How quickly the compressor stops reducing gain after the signal falls below the threshold.
+    const float kReleaseTime_s = 0.05f;
+
+    mCompThreshold = decibelsToLinear(kThreshold_dB);
+    mCompSlope = 1.0f / kRatio;
+
+    mAttackCoeff = std::exp(-1.0f / (kAttackTime_s * mSampleRate));
+    mReleaseCoeff = std::exp(-1.0f / (kReleaseTime_s * mSampleRate));
+
+    mCompressorEnvelope = 0.0f;
   }
 
   ~OboeAudioEngine() override {
@@ -29,12 +50,11 @@ class OboeAudioEngine : public oboe::AudioStreamDataCallback {
   bool start() {
     oboe::AudioStreamBuilder builder;
     builder.setDirection(oboe::Direction::Output)
-        ->setSessionId(oboe::SessionId::Allocate)
         ->setPerformanceMode(oboe::PerformanceMode::LowLatency)
         ->setSharingMode(oboe::SharingMode::Exclusive)
         ->setFormat(oboe::AudioFormat::Float)
         ->setChannelCount(1)
-        ->setSampleRate(48000)
+        ->setSampleRate(mSampleRate)
         ->setDataCallback(this);
 
     oboe::Result result = builder.openStream(mStream);
@@ -43,7 +63,8 @@ class OboeAudioEngine : public oboe::AudioStreamDataCallback {
       return false;
     }
 
-    result = mStream->requestStart();
+    constexpr int64_t kTimeoutNanos = 1 * 1000 * 1000 * 1000; // 1 second
+    result = mStream->start(kTimeoutNanos);
     if (result != oboe::Result::OK) {
       LOGE("Failed to start Oboe stream: %s", oboe::convertToText(result));
       return false;
@@ -59,40 +80,72 @@ class OboeAudioEngine : public oboe::AudioStreamDataCallback {
     }
   }
 
-  /**
-   * Der Kern-Audio-Callback. Wird vom System auf einem Echtzeit-Thread aufgerufen.
-   * Muss extrem schnell sein, nicht blockieren und keinen Speicher allozieren.
-   */
-  oboe::DataCallbackResult onAudioReady(oboe::AudioStream *stream, void *audioData, int32_t numFrames) override {
+  oboe::DataCallbackResult onAudioReady(oboe::AudioStream *stream,
+      void *audioData,
+      int32_t numFrames) override {
     float *outputBuffer = static_cast<float *>(audioData);
 
     float masterVol = mMasterVolume.load();
     float duckingVol = mDuckingVolume.load();
     bool muted = mMuted.load();
-    float finalVolume = muted ? 0.0f : (masterVol * duckingVol);
+
+    float makeupGain = muted ? 0.0f : (masterVol * duckingVol);
 
     int32_t tickType = mTickToPlay.load();
     int32_t readIndex = mReadIndex.load();
 
-    std::vector<float>* sourceData = nullptr;
+    std::vector<float> *sourceData = nullptr;
 
     std::lock_guard<std::mutex> lock(mLock);
     if (tickType == NATIVE_TICK_TYPE_STRONG) sourceData = &mTickStrong;
     else if (tickType == NATIVE_TICK_TYPE_NORMAL) sourceData = &mTickNormal;
     else if (tickType == NATIVE_TICK_TYPE_SUB) sourceData = &mTickSub;
 
+    float attack = mAttackCoeff;
+    float release = mReleaseCoeff;
+    float threshold = mCompThreshold;
+    float slope = mCompSlope;
+    float envelope = mCompressorEnvelope;
+
     for (int i = 0; i < numFrames; ++i) {
+      float drySample = 0.0f;
+
       if (sourceData && readIndex < sourceData->size()) {
-        outputBuffer[i] = (*sourceData)[readIndex] * finalVolume;
+        drySample = (*sourceData)[readIndex];
         readIndex++;
-      } else {
-        outputBuffer[i] = 0.0f;
       }
+
+      // Compression algorithm
+
+      // measure the input level
+      float sampleAbs = std::fabs(drySample);
+      if (sampleAbs > envelope) {
+        // ATTACK
+        envelope = attack * envelope + (1.0f - attack) * sampleAbs;
+      } else {
+        // RELEASE
+        envelope = release * envelope + (1.0f - release) * sampleAbs;
+      }
+
+      // Compute gain reduction
+      float gain = 1.0f;
+      if (envelope > threshold) {
+        // Signal is above threshold
+        // gain = (threshold / envelope)^(1 - slope)
+        float overshoot = envelope / threshold;
+        float gainReduction = std::pow(overshoot, slope - 1.0f);
+        gain = gainReduction;
+      }
+
+      float compressedSample = drySample * gain;
+      // apply makeup gain
+      outputBuffer[i] = std::tanh(compressedSample * makeupGain);
     }
 
-    // Wenn der Tick zu Ende gespielt wurde, setze den Status zurück
+    mCompressorEnvelope = envelope;
+
     if (sourceData && readIndex >= sourceData->size()) {
-      mTickToPlay.store(-1); // Keinen Tick mehr spielen
+      mTickToPlay.store(-1);
       readIndex = 0;
     }
     mReadIndex.store(readIndex);
@@ -100,9 +153,9 @@ class OboeAudioEngine : public oboe::AudioStreamDataCallback {
     return oboe::DataCallbackResult::Continue;
   }
 
-  void setTickData(int32_t tickType, const float* data, int32_t length) {
+  void setTickData(int32_t tickType, const float *data, int32_t length) {
     std::lock_guard<std::mutex> lock(mLock);
-    std::vector<float>* targetVector = nullptr;
+    std::vector<float> *targetVector = nullptr;
 
     if (tickType == NATIVE_TICK_TYPE_STRONG) targetVector = &mTickStrong;
     else if (tickType == NATIVE_TICK_TYPE_NORMAL) targetVector = &mTickNormal;
@@ -114,8 +167,6 @@ class OboeAudioEngine : public oboe::AudioStreamDataCallback {
   }
 
   void playTick(int32_t tickType) {
-    // Setze den Lese-Index auf 0 zurück und signalisiere, welcher Tick gespielt werden soll.
-    // Dies wird vom nächsten `onAudioReady`-Callback sofort aufgenommen.
     mReadIndex.store(0);
     mTickToPlay.store(tickType);
   }
@@ -132,18 +183,16 @@ class OboeAudioEngine : public oboe::AudioStreamDataCallback {
     mMuted.store(muted);
   }
 
-  int32_t getSessionId() {
-    if (mStream) {
-      return mStream->getSessionId();
-    }
-    return -1; // oboe::SessionId::None
+  inline float decibelsToLinear(float dB) {
+    return std::pow(10.0f, dB / 20.0f);
   }
 
  private:
   std::shared_ptr<oboe::AudioStream> mStream;
 
-  std::atomic<int32_t> mTickToPlay;  // -1 = Stille, 1 = Strong, 2 = Normal, 3 = Sub
-  std::atomic<int32_t> mReadIndex;   // Aktuelle Position im Tick-Sample
+  std::atomic<int32_t>
+      mTickToPlay;  // -1 = silence, 1 = strong, 2 = normal, 3 = sub
+  std::atomic<int32_t> mReadIndex;   // current position in tick sample
 
   std::atomic<float> mMasterVolume;
   std::atomic<float> mDuckingVolume;
@@ -153,6 +202,15 @@ class OboeAudioEngine : public oboe::AudioStreamDataCallback {
   std::vector<float> mTickStrong;
   std::vector<float> mTickNormal;
   std::vector<float> mTickSub;
+
+  float mSampleRate;
+
+  float mCompThreshold;
+  float mCompSlope;
+  float mAttackCoeff;
+  float mReleaseCoeff;
+
+  float mCompressorEnvelope;
 };
 
 
@@ -185,11 +243,17 @@ Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeStop(
 
 JNIEXPORT void JNICALL
 Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeSetTickData(
-    JNIEnv *env, jobject jEngine, jlong handle, jint tick_type, jfloatArray data) {
+    JNIEnv *env,
+    jobject jEngine,
+    jlong handle,
+    jint tick_type,
+    jfloatArray data) {
   jfloat *rawData = env->GetFloatArrayElements(data, nullptr);
   jsize length = env->GetArrayLength(data);
 
-  reinterpret_cast<OboeAudioEngine *>(handle)->setTickData(tick_type, rawData, length);
+  reinterpret_cast<OboeAudioEngine *>(handle)->setTickData(tick_type,
+      rawData,
+      length);
 
   env->ReleaseFloatArrayElements(data, rawData, JNI_ABORT);
 }
@@ -216,12 +280,6 @@ JNIEXPORT void JNICALL
 Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeSetMuted(
     JNIEnv *env, jobject jEngine, jlong handle, jboolean muted) {
   reinterpret_cast<OboeAudioEngine *>(handle)->setMuted(muted);
-}
-
-JNIEXPORT jint JNICALL
-Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeGetSessionId(
-    JNIEnv *env, jobject jEngine, jlong handle) {
-  return reinterpret_cast<OboeAudioEngine *>(handle)->getSessionId();
 }
 
 } // extern "C"

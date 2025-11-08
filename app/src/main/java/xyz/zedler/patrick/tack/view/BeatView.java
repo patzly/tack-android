@@ -350,14 +350,15 @@ public class BeatView extends FrameLayout {
         animation -> setMorphFactor((float) animation.getAnimatedValue())
     );
     animatorIn.setInterpolator(interpolator);
-    animatorIn.setDuration(25);
+    animatorIn.setDuration(10);
 
     ValueAnimator animatorOut = ValueAnimator.ofFloat(1, 0);
     animatorOut.addUpdateListener(
         animation -> setMorphFactor((float) animation.getAnimatedValue())
     );
     animatorOut.setInterpolator(interpolator);
-    animatorOut.setDuration(375);
+    animatorOut.setDuration(300);
+    animatorOut.setStartDelay(30);
 
     animatorSet = new AnimatorSet();
     animatorSet.playSequentially(animatorIn, animatorOut);
