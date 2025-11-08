@@ -557,10 +557,7 @@ public class MetronomeEngine {
           }
         }
       };
-      audioHandler.post(() -> {
-        audioEngine.restart();
-        tickHandler.post(tickRunnable);
-      });
+      tickHandler.post(tickRunnable);
 
       isCountingIn = false;
       updateIncrementalHandler();
