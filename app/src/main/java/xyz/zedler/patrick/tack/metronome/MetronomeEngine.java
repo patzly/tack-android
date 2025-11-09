@@ -1483,7 +1483,15 @@ public class MetronomeEngine {
       }
     }, Math.max(0, latency - Constants.BEAT_ANIM_OFFSET));
     latencyHandler.postDelayed(() -> {
-      if (!beatMode.equals(BEAT_MODE.SOUND) && !isMuted) {
+      boolean shouldVibrate = !beatMode.equals(BEAT_MODE.SOUND) && !isMuted;
+      if (shouldVibrate) {
+        // check whether any poly subdivision collides with a beat
+        long product = (long) (subdivisionPoly - 1) * config.getBeatsCount();
+        if (product % config.getSubdivisionsCount() == 0) {
+          shouldVibrate = false;
+        }
+      }
+      if (shouldVibrate) {
         switch (tick.type) {
           case TICK_TYPE.STRONG:
             hapticUtil.heavyClick(hapticUtil.supportsMainEffects());
@@ -1496,11 +1504,6 @@ public class MetronomeEngine {
             break;
           default:
             hapticUtil.click(hapticUtil.supportsMainEffects());
-        }
-      }
-      synchronized (listeners) {
-        for (MetronomeListener listener : listeners) {
-          listener.onMetronomeTick(tick);
         }
       }
     }, latency);
