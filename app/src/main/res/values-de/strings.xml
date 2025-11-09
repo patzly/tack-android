@@ -311,6 +311,8 @@
   <string name="options_swing_5">Quintole</string>
   <string name="options_swing_7">Septole</string>
   <string name="options_polyrhythm">Polyrhythmik</string>
+  <string name="options_polyrhythm_description">Spielt Unterteilungen über den ganzen Takt verteilt</string>
+
   <!-- SETTINGS -->
 
   <string name="settings_language">Sprache</string>
