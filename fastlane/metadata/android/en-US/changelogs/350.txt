@@ -1,12 +1,15 @@
 • New: Material 3 Expressive design throughout the app with new typeface and redesigned controls
-• New: song parts can now be directly edited from song details, "update part" menu option replaced by "use current config" button in the edit dialog for more clarity
+• New: migration to Oboe audio library for minimum latency and much better performance
+• New: song parts can now be directly edited or duplicated from song details, "update part" menu option replaced by "use current config" button in the edit dialog for more clarity
 • New: song picker redesigned to display current song part in expanded state
 • New: long-tap on song chips or tap on current song to open song details, tap on current part to open parts dialog
 • New: tempo tap button replaced by extended tempo change dialog accessible with tap on tempo picker
+• New: option for polyrhythmic subdivisions
 • New: "always vibrate" setting replaced by beat mode dialog accessible from the main screen
 • New: "volume boost" setting extended for volume reduction and moved to separate dialog
 • New: "flash screen" setting extended with option for subtle flash
 • New: "keep screen awake" setting extended with option for always awake
+• New: first subdivision (which actually is a placeholder for every beat) can now be muted separately to mute all beats at once
 • New: help dialog now translatable and with expandable sections
 • New: Japanese and Dutch translations (thanks to the contributors!)
 • New: Support for Android 16 and dropped support for Android 5 due to dependency limitations
@@ -19,13 +22,12 @@
 • Improved: use of simple vibration for haptic beats if some haptic effects are not supported
 • Improved: latency correction setting moved to separate dialog
 • Improved: song library backup/restore moved to separate dialog, also accessible from settings
-• Improved: song library page now with delete option for each song and play and apply options for the current song
-• Fixed: delay on transitions between song parts (thanks Kuba!)
+• Improved: song library page now with delete, apply and play options for each song
+• Fixed: delay on transitions between song parts
+• Fixed: wrong bar numbers in timer display
 • Fixed: tempo buttons not updating correctly
 • Fixed: user changes overwritten with currently selected song part after pausing and resuming app
+• Fixed: crash caused by app shortcut limit being reached
 • Fixed: crash caused by incorrect layout handling
 • Fixed: crash caused by invalid tempo values
-• Fixed: crash caused by app shortcut limit being reached (thanks Fabian!)
-• Fixed: incorrect song picker colors during chip animation
-• Fixed: incorrect size of subdivision controls on tablets in landscape mode
 • Fixed: incorrect preference restoration after latency correction setting change
