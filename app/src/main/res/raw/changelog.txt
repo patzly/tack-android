@@ -1,4 +1,4 @@
-After six months of dedicated work in my spare time, I'm thrilled to announce the release of Tack 6.0 — featuring a major redesign, numerous improvements, and plenty of bug fixes!
+After six months of dedicated work in my spare time, I'm thrilled to announce the release of Tack 6.0 — featuring a major redesign and low-latency audio!
 
 ### 6.0.0
 
@@ -26,7 +26,7 @@ After six months of dedicated work in my spare time, I'm thrilled to announce th
 - Improved: use of simple vibration for haptic beats if some haptic effects are not supported
 - Improved: latency correction setting moved to separate dialog
 - Improved: song library backup/restore moved to separate dialog, also accessible from settings
-- Improved: song library page now with delete option for each song and play and apply options for the current song
+- Improved: song library page now with delete, apply and play options for each song
 - Fixed: delay on transitions between song parts (thanks Kuba!)
 - Fixed: wrong bar numbers in timer display (thanks Zeron!)
 - Fixed: tempo buttons not updating correctly

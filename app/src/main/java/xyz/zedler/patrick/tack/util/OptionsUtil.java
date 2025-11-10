@@ -58,7 +58,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
 
   private final MainActivity activity;
   private final boolean useDialog, editPart;
-  private Runnable onModifiersCountChanged, onTimerChanged, onSubsChanged;
+  private OnOptionsListener listener;
   private OnPartEditListener onPartEditListener;
   private boolean isCountInActive, isIncrementalActive, isTimerActive, isMuteActive, usePolyrhythm;
   private boolean isNew, isInitialized;
@@ -69,13 +69,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   private MetronomeConfig config;
 
   public OptionsUtil(
-      MainActivity activity, FragmentMainBinding fragmentBinding,
-      Runnable onModifiersCountChanged, Runnable onTimerChanged, Runnable onSubsChanged
+      MainActivity activity, FragmentMainBinding fragmentBinding, OnOptionsListener listener
   ) {
     this.activity = activity;
-    this.onModifiersCountChanged = onModifiersCountChanged;
-    this.onTimerChanged = onTimerChanged;
-    this.onSubsChanged = onSubsChanged;
+    this.listener = listener;
 
     editPart = false;
     useDialog = !UiUtil.isLandTablet(activity);
@@ -454,8 +451,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     boolean isCountInActive = getConfig().isCountInActive();
     if (this.isCountInActive != isCountInActive) {
       this.isCountInActive = isCountInActive;
-      if (onModifiersCountChanged != null) {
-        onModifiersCountChanged.run();
+      if (listener != null) {
+        listener.onModifiersCountChanged();
       }
     }
     int countIn = getConfig().getCountIn();
@@ -493,8 +490,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     boolean isIncrementalActive = getConfig().isIncrementalActive();
     if (this.isIncrementalActive != isIncrementalActive) {
       this.isIncrementalActive = isIncrementalActive;
-      if (onModifiersCountChanged != null) {
-        onModifiersCountChanged.run();
+      if (listener != null) {
+        listener.onModifiersCountChanged();
       }
     }
     if (isIncrementalActive) {
@@ -689,8 +686,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     boolean isTimerActive = getConfig().isTimerActive();
     if (this.isTimerActive != isTimerActive) {
       this.isTimerActive = isTimerActive;
-      if (onModifiersCountChanged != null) {
-        onModifiersCountChanged.run();
+      if (listener != null) {
+        listener.onModifiersCountChanged();
       }
     }
     String timerUnit = getConfig().getTimerUnit();
@@ -789,8 +786,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     boolean isMuteActive = getConfig().isMuteActive();
     if (this.isMuteActive != isMuteActive) {
       this.isMuteActive = isMuteActive;
-      if (onModifiersCountChanged != null) {
-        onModifiersCountChanged.run();
+      if (listener != null) {
+        listener.onModifiersCountChanged();
       }
     }
     int resIdPlay, resIdMute, resIdLabel, checkedId;
@@ -902,8 +899,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     boolean usePolyrhythm = getConfig().usePolyrhythm();
     if (this.usePolyrhythm != usePolyrhythm) {
       this.usePolyrhythm = usePolyrhythm;
-      if (onModifiersCountChanged != null) {
-        onModifiersCountChanged.run();
+      if (listener != null) {
+        listener.onModifiersCountChanged();
       }
     }
 
@@ -919,6 +916,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
             activity.getMetronomeEngine().maybeUpdateDefaultSong();
           }
           updatePolyrhythm();
+          if (!editPart && listener != null) {
+            listener.onBeatsChanged();
+          }
+          updateBeats(true);
         });
   }
 
@@ -1096,8 +1097,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         metronomeEngine.maybeUpdateDefaultSong();
       }
       updateTimer();
-      if (!editPart && onTimerChanged != null) {
-        onTimerChanged.run();
+      if (!editPart && listener != null) {
+        listener.onTimerChanged();
       }
       ViewUtil.startIcon(binding.buttonOptionsTimerDecrease.getIcon());
     } else if (id == R.id.button_options_timer_increase) {
@@ -1112,8 +1113,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         metronomeEngine.maybeUpdateDefaultSong();
       }
       updateTimer();
-      if (!editPart && onTimerChanged != null) {
-        onTimerChanged.run();
+      if (!editPart && listener != null) {
+        listener.onTimerChanged();
       }
       ViewUtil.startIcon(binding.buttonOptionsTimerIncrease.getIcon());
     } else if (id == R.id.linear_options_mute_random) {
@@ -1169,8 +1170,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         metronomeEngine.maybeUpdateDefaultSong();
       }
       updateTimer();
-      if (!editPart && onTimerChanged != null) {
-        onTimerChanged.run();
+      if (!editPart && listener != null) {
+        listener.onTimerChanged();
       }
     } else if (groupId == R.id.toggle_options_mute_unit) {
       String unit = UNIT.BARS;
@@ -1219,8 +1220,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       }
       updateSwing();
       updateSubdivisions(false);
-      if (!editPart && onSubsChanged != null) {
-        onSubsChanged.run();
+      if (!editPart && listener != null) {
+        listener.onSubsChanged();
       }
     }
   }
@@ -1319,10 +1320,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     metronomeEngine.restorePlayingState();
     metronomeEngine.maybeUpdateDefaultSong();
 
-    if (slider.getId() == R.id.slider_options_timer_duration) {
-      if (onTimerChanged != null) {
-        onTimerChanged.run();
-      }
+    if (slider.getId() == R.id.slider_options_timer_duration && listener != null) {
+      listener.onTimerChanged();
     }
   }
 
@@ -1345,5 +1344,12 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   public interface OnPartEditListener {
     void onPartAdded(@NonNull Part part);
     void onPartUpdated(@NonNull Part part);
+  }
+
+  public interface OnOptionsListener {
+    void onModifiersCountChanged();
+    void onTimerChanged();
+    void onBeatsChanged();
+    void onSubsChanged();
   }
 }

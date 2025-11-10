@@ -85,6 +85,7 @@ import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.LogoUtil;
 import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.OptionsUtil;
+import xyz.zedler.patrick.tack.util.OptionsUtil.OnOptionsListener;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
@@ -387,19 +388,34 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       }
     });
 
-    optionsUtil = new OptionsUtil(
-        activity, binding,
-        () -> updateOptions(true),
-        () -> binding.timerMain.updateControls(
+    optionsUtil = new OptionsUtil(activity, binding, new OnOptionsListener() {
+      @Override
+      public void onModifiersCountChanged() {
+        updateOptions(true);
+      }
+
+      @Override
+      public void onTimerChanged() {
+        binding.timerMain.updateControls(
             true, true, true
-        ),
-        () -> {
-          if (getMetronomeEngine() != null) {
-            updateSubs(getMetronomeEngine().getConfig().getSubdivisions(), false);
-            updateSubControls(true);
-          }
+        );
+      }
+
+      @Override
+      public void onBeatsChanged() {
+        if (getMetronomeEngine() != null) {
+          updateBeats(getMetronomeEngine().getConfig().getBeats(), true);
         }
-    );
+      }
+
+      @Override
+      public void onSubsChanged() {
+        if (getMetronomeEngine() != null) {
+          updateSubs(getMetronomeEngine().getConfig().getSubdivisions(), false);
+          updateSubControls(true);
+        }
+      }
+    });
     binding.buttonMainOptions.setEnabled(!isLandTablet);
 
     logoUtil = new LogoUtil(binding.imageMainLogo);
