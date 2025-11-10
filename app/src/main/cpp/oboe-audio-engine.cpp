@@ -1,11 +1,11 @@
+#include <android/log.h>
 #include <jni.h>
 #include <oboe/Oboe.h>
-#include <vector>
-#include <atomic>
-#include <mutex>
-#include <android/log.h>
-#include <cmath>
 #include <algorithm>
+#include <atomic>
+#include <cmath>
+#include <memory>
+#include <vector>
 
 #define LOG_TAG "OboeAudioEngine"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
@@ -21,7 +21,9 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
   OboeAudioEngine() {
     for (int i = 0; i < kNumVoices; ++i) {
       mTickToPlay[i].store(-1);
-      mReadIndex[i].store(0);
+      mPendingTickType[i].store(-1);
+      mReadIndexLocal[i] = 0;
+      mPrevLocalTickToPlay[i] = -1;
     }
     mNextVoiceToSteal.store(0);
 
@@ -29,27 +31,29 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
     mDuckingVolume.store(1.0f);
     mMuted.store(false);
 
-    mSampleRate = 48000;
+    mSampleRate = 48000;  // default; overwritten after openStream()
 
-    // Threshold: -12 dB. All above this level will be compressed.
+    // Compressor defaults
+    mAttackTime_s = 0.001f;
+    mReleaseTime_s = 0.05f;
+
     const float kThreshold_dB = -12.0f;
-    // Ratio: 4:1. For each 4 dB above the threshold, output increases by 1 dB.
     const float kRatio = 8.0f;
-    // Attack: 1 ms. How quickly the compressor responds to increasing levels.
-    const float kAttackTime_s = 0.001f;
-    // Release: 50 ms. How quickly the compressor stops reducing gain after the
-    // signal falls below the threshold.
-    const float kReleaseTime_s = 0.05f;
 
     mCompThreshold = decibelsToLinear(kThreshold_dB);
     mCompSlope = 1.0f / kRatio;
 
-    mAttackCoeff =
-        std::exp(-1.0f / (kAttackTime_s * static_cast<float>(mSampleRate)));
-    mReleaseCoeff =
-        std::exp(-1.0f / (kReleaseTime_s * static_cast<float>(mSampleRate)));
+    recomputeCompressorCoeffs();
 
     mCompressorEnvelope = 0.0f;
+
+    // initialize empty buffers
+    std::atomic_store(
+        &mTickStrongPtr, std::make_shared<std::vector<float>>());
+    std::atomic_store(
+        &mTickNormalPtr, std::make_shared<std::vector<float>>());
+    std::atomic_store(
+        &mTickSubPtr, std::make_shared<std::vector<float>>());
   }
 
   ~OboeAudioEngine() override {
@@ -72,13 +76,18 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
       return false;
     }
 
-    constexpr int64_t kTimeoutNanos = 1 * 1000 * 1000 * 1000; // 1 second
+    // use real sample rate reported by stream
+    mSampleRate = mStream->getSampleRate();
+    recomputeCompressorCoeffs();
+
+    constexpr int64_t kTimeoutNanos = 1 * 1000 * 1000 * 1000;  // 1 second
     result = mStream->start(kTimeoutNanos);
     if (result != oboe::Result::OK) {
       LOGE("Failed to start Oboe stream: %s",
           oboe::convertToText(result));
       return false;
     }
+
     return true;
   }
 
@@ -90,6 +99,7 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
     }
   }
 
+  // Realtime audio callback
   oboe::DataCallbackResult onAudioReady(oboe::AudioStream *stream,
       void *audioData,
       int32_t numFrames) override {
@@ -98,7 +108,6 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
     float masterVol = mMasterVolume.load();
     float duckingVol = mDuckingVolume.load();
     bool muted = mMuted.load();
-
     float makeupGain = muted ? 0.0f : (masterVol * duckingVol);
 
     float attack = mAttackCoeff;
@@ -107,43 +116,86 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
     float slope = mCompSlope;
     float envelope = mCompressorEnvelope;
 
-    // load voice states into local variables
-    int32_t localReadIndex[kNumVoices];
+    // Load which tick types are assigned to voices (atomic snapshot)
     int32_t localTickToPlay[kNumVoices];
-    std::vector<float> *sourceData[kNumVoices];
-
     for (int v = 0; v < kNumVoices; ++v) {
       localTickToPlay[v] = mTickToPlay[v].load(std::memory_order_relaxed);
-      localReadIndex[v] = mReadIndex[v].load(std::memory_order_relaxed);
     }
 
-    {
-      std::lock_guard<std::mutex> lock(mLock);
-      for (int v = 0; v < kNumVoices; ++v) {
-        int32_t tickType = localTickToPlay[v];
-        if (tickType == NATIVE_TICK_TYPE_STRONG) {
-          sourceData[v] = &mTickStrong;
-        } else if (tickType == NATIVE_TICK_TYPE_NORMAL) {
-          sourceData[v] = &mTickNormal;
-        } else if (tickType == NATIVE_TICK_TYPE_SUB) {
-          sourceData[v] = &mTickSub;
+    // Atomically load buffers once per callback
+    auto strong = std::atomic_load(&mTickStrongPtr);
+    auto normal = std::atomic_load(&mTickNormalPtr);
+    auto sub = std::atomic_load(&mTickSubPtr);
+
+    // Map voice -> buffer shared_ptr (snapshot)
+    std::shared_ptr<std::vector<float>> sourceData[kNumVoices];
+    for (int v = 0; v < kNumVoices; ++v) {
+      int32_t tickType = localTickToPlay[v];
+      if (tickType == NATIVE_TICK_TYPE_STRONG)
+        sourceData[v] = strong;
+      else if (tickType == NATIVE_TICK_TYPE_NORMAL)
+        sourceData[v] = normal;
+      else if (tickType == NATIVE_TICK_TYPE_SUB)
+        sourceData[v] = sub;
+      else
+        sourceData[v] = nullptr;
+
+      // initialize prev state if different
+      if (mPrevLocalTickToPlay[v] != localTickToPlay[v]) {
+        if (localTickToPlay[v] != -1) {
+          // If assignment was present at the moment of snapshot, we keep
+          // readIndexLocal as-is (it may be 0 or a continued index).
+          // The pending mechanism handles sample-accurate starts.
         } else {
-          sourceData[v] = nullptr;
+          mReadIndexLocal[v] = 0;
         }
+        mPrevLocalTickToPlay[v] = localTickToPlay[v];
       }
     }
 
     for (int i = 0; i < numFrames; ++i) {
       float drySample = 0.0f;
-      // mix all active voices
+
+      // Check pending tick events BEFORE mixing for this sample
       for (int v = 0; v < kNumVoices; ++v) {
-        if (sourceData[v] != nullptr && localReadIndex[v] < sourceData[v]->size()) {
-          drySample += (*sourceData[v])[localReadIndex[v]];
-          localReadIndex[v]++;
+        int32_t pending = mPendingTickType[v].load(std::memory_order_acquire);
+        if (pending != -1) {
+          // There is a pending immediate start for voice v.
+          // Atomically clear pending
+          mPendingTickType[v].store(-1, std::memory_order_release);
+
+          // Assign the tick type to the active voice (mTickToPlay already set
+          // by playTick, but refresh localTickToPlay and sourceData for safety)
+          localTickToPlay[v] = mTickToPlay[v].load(std::memory_order_relaxed);
+
+          if (localTickToPlay[v] == NATIVE_TICK_TYPE_STRONG)
+            sourceData[v] = strong;
+          else if (localTickToPlay[v] == NATIVE_TICK_TYPE_NORMAL)
+            sourceData[v] = normal;
+          else if (localTickToPlay[v] == NATIVE_TICK_TYPE_SUB)
+            sourceData[v] = sub;
+          else
+            sourceData[v] = nullptr;
+
+          // Start playing at the current sample
+          mReadIndexLocal[v] = 0;
+          mPrevLocalTickToPlay[v] = localTickToPlay[v];
+        }
+      }
+
+      // Mix active voices for this sample
+      for (int v = 0; v < kNumVoices; ++v) {
+        auto &buf = sourceData[v];
+        if (buf && mReadIndexLocal[v] < static_cast<int32_t>(buf->size())) {
+          drySample += (*buf)[mReadIndexLocal[v]];
+          ++mReadIndexLocal[v];
         } else {
           // voice is inactive or finished
           if (localTickToPlay[v] != -1) {
             localTickToPlay[v] = -1;
+            mPrevLocalTickToPlay[v] = -1;
+            mReadIndexLocal[v] = 0;
+            sourceData[v] = nullptr;
           }
         }
       }
@@ -166,68 +218,73 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
       outputBuffer[i] = std::tanh(compressedSample * makeupGain);
     }
 
-    // store local variables back to atomic variables
-    mCompressorEnvelope = envelope;
+    // publish voice active/inactive state back to atomics
     for (int v = 0; v < kNumVoices; ++v) {
       mTickToPlay[v].store(
           localTickToPlay[v], std::memory_order_relaxed);
-      mReadIndex[v].store(localReadIndex[v], std::memory_order_relaxed);
     }
 
+    mCompressorEnvelope = envelope;
     return oboe::DataCallbackResult::Continue;
   }
 
   void setTickData(int32_t tickType, const float *data, int32_t length) {
-    std::lock_guard<std::mutex> lock(mLock);
-    std::vector<float> *targetVector = nullptr;
-
-    if (tickType == NATIVE_TICK_TYPE_STRONG) targetVector = &mTickStrong;
-    else if (tickType == NATIVE_TICK_TYPE_NORMAL) targetVector = &mTickNormal;
-    else if (tickType == NATIVE_TICK_TYPE_SUB) targetVector = &mTickSub;
-
-    if (targetVector) {
-      targetVector->assign(data, data + length);
+    auto newVec = std::make_shared<std::vector<float>>(
+        data, data + length);
+    if (tickType == NATIVE_TICK_TYPE_STRONG) {
+      std::atomic_store(&mTickStrongPtr, newVec);
+    } else if (tickType == NATIVE_TICK_TYPE_NORMAL) {
+      std::atomic_store(&mTickNormalPtr, newVec);
+    } else if (tickType == NATIVE_TICK_TYPE_SUB) {
+      std::atomic_store(&mTickSubPtr, newVec);
     }
   }
 
   void playTick(int32_t tickType) {
     // find free voice
     for (int v = 0; v < kNumVoices; ++v) {
-      int32_t expected = -1; // default is inactive
-      // atomic compare-and-swap
-      // swap -1 with tickType if current value is still -1
+      int32_t expected = -1;
       if (mTickToPlay[v].compare_exchange_strong(expected, tickType)) {
-        mReadIndex[v].store(0);
+        mPendingTickType[v].store(tickType, std::memory_order_release);
         return;
       }
     }
     // no free voice found, steal next voice
     int32_t voiceToSteal = mNextVoiceToSteal.fetch_add(1) % kNumVoices;
-    mTickToPlay[voiceToSteal].store(tickType);
-    mReadIndex[voiceToSteal].store(0);
+    mTickToPlay[voiceToSteal].store(tickType, std::memory_order_relaxed);
+    mPendingTickType[voiceToSteal].store(
+        tickType, std::memory_order_release);
   }
 
-  void setMasterVolume(float volume) {
-    mMasterVolume.store(volume);
-  }
+  void setMasterVolume(float volume) { mMasterVolume.store(volume); }
 
-  void setDuckingVolume(float volume) {
-    mDuckingVolume.store(volume);
-  }
+  void setDuckingVolume(float volume) { mDuckingVolume.store(volume); }
 
-  void setMuted(bool muted) {
-    mMuted.store(muted);
-  }
+  void setMuted(bool muted) { mMuted.store(muted); }
 
   static inline float decibelsToLinear(float dB) {
     return std::pow(10.0f, dB / 20.0f);
   }
 
  private:
+  void recomputeCompressorCoeffs() {
+    mAttackCoeff =
+        std::exp(-1.0f / (mAttackTime_s * static_cast<float>(mSampleRate)));
+    mReleaseCoeff =
+        std::exp(-1.0f / (mReleaseTime_s * static_cast<float>(mSampleRate)));
+  }
+
   std::shared_ptr<oboe::AudioStream> mStream;
 
+  // which tick type is assigned to each voice (-1 = free)
   std::atomic<int32_t> mTickToPlay[kNumVoices];
-  std::atomic<int32_t> mReadIndex[kNumVoices];
+
+  // pending tick requests for sample-accurate start (-1 = none)
+  std::atomic<int32_t> mPendingTickType[kNumVoices];
+
+  // read indices owned by audio thread only (not atomic)
+  int32_t mReadIndexLocal[kNumVoices];
+  int32_t mPrevLocalTickToPlay[kNumVoices];
 
   std::atomic<int32_t> mNextVoiceToSteal;
 
@@ -235,17 +292,20 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
   std::atomic<float> mDuckingVolume;
   std::atomic<bool> mMuted;
 
-  std::mutex mLock;
-  std::vector<float> mTickStrong;
-  std::vector<float> mTickNormal;
-  std::vector<float> mTickSub;
+  // buffers swapped atomically (no locks)
+  std::shared_ptr<std::vector<float>> mTickStrongPtr;
+  std::shared_ptr<std::vector<float>> mTickNormalPtr;
+  std::shared_ptr<std::vector<float>> mTickSubPtr;
 
   int32_t mSampleRate;
 
+  // compressor state
   float mCompThreshold;
   float mCompSlope;
   float mAttackCoeff;
   float mReleaseCoeff;
+  float mAttackTime_s;
+  float mReleaseTime_s;
 
   float mCompressorEnvelope;
 };
@@ -280,10 +340,7 @@ Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeStop(
 
 JNIEXPORT void JNICALL
 Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeSetTickData(
-    JNIEnv *env,
-    jobject jEngine,
-    jlong handle,
-    jint tick_type,
+    JNIEnv *env, jobject jEngine, jlong handle, jint tick_type,
     jfloatArray data) {
   jfloat *rawData = env->GetFloatArrayElements(data, nullptr);
   jsize length = env->GetArrayLength(data);
