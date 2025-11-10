@@ -170,15 +170,8 @@ public class SongPickerView extends FrameLayout {
     if (songName != null && !songName.equals(chipText)) {
       binding.textSongPickerChip.setText(songName);
     }
-    // maybe name of current part changed
-    String partName = getPartNameFromIndex(partIndex);
-    String partLabel = context.getString(R.string.label_part_unnamed, partIndex + 1);
-    if (partName != null) {
-      partLabel = context.getString(
-          R.string.label_part_current, partIndex + 1, partName
-      );
-    }
-    binding.buttonSongPickerPart.setText(partLabel);
+    // maybe name of current part or part count changed
+    setPartIndex(partIndex);
   }
 
   private void sortSongs() {
