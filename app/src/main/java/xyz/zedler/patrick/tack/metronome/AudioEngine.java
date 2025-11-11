@@ -90,10 +90,6 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     }
   }
 
-  private float dbToLinear(float db) {
-    return (float) Math.pow(10.0, db / 20.0);
-  }
-
   public void play() {
     if (playing || !isInitialized()) {
       return;
@@ -223,7 +219,8 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   public void setGain(int gain) {
     this.gain = gain;
     if (isInitialized()) {
-      nativeSetMasterVolume(engineHandle, dbToLinear((float) (gain * 100) / 100.0f));
+      float dbToLinear = (float) Math.pow(10.0, gain / 20.0);
+      nativeSetMasterVolume(engineHandle, dbToLinear);
     }
   }
 

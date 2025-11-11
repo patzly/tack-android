@@ -35,15 +35,16 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
 
     // Compressor defaults
     mAttackTime_s = 0.001f;
-    mReleaseTime_s = 0.05f;
+    mReleaseTime_s = 0.25f;
 
     const float kThreshold_dB = -12.0f;
-    const float kRatio = 8.0f;
+    const float kRatio = 5.0f;
 
     mCompThreshold = decibelsToLinear(kThreshold_dB);
     mCompSlope = 1.0f / kRatio;
 
     recomputeCompressorCoeffs();
+    recomputeCompressorTable();
 
     mCompressorEnvelope = 0.0f;
 
@@ -119,7 +120,7 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
     // Load which tick types are assigned to voices (atomic snapshot)
     int32_t localTickToPlay[kNumVoices];
     for (int v = 0; v < kNumVoices; ++v) {
-      localTickToPlay[v] = mTickToPlay[v].load(std::memory_order_relaxed);
+      localTickToPlay[v] = mTickToPlay[v].load(std::memory_order_acquire);
     }
 
     // Atomically load buffers once per callback
@@ -158,7 +159,8 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
 
       // Check pending tick events BEFORE mixing for this sample
       for (int v = 0; v < kNumVoices; ++v) {
-        int32_t pending = mPendingTickType[v].load(std::memory_order_acquire);
+        int32_t pending = mPendingTickType[v].load(
+            std::memory_order_acquire);
         if (pending != -1) {
           // There is a pending immediate start for voice v.
           // Atomically clear pending
@@ -166,7 +168,8 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
 
           // Assign the tick type to the active voice (mTickToPlay already set
           // by playTick, but refresh localTickToPlay and sourceData for safety)
-          localTickToPlay[v] = mTickToPlay[v].load(std::memory_order_relaxed);
+          localTickToPlay[v] = mTickToPlay[v].load(
+              std::memory_order_relaxed);
 
           if (localTickToPlay[v] == NATIVE_TICK_TYPE_STRONG)
             sourceData[v] = strong;
@@ -200,28 +203,30 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
         }
       }
 
-      float sampleAbs = std::fabs(drySample);
-      if (sampleAbs > envelope) {
-        envelope = attack * envelope + (1.0f - attack) * sampleAbs;
-      } else {
-        envelope = release * envelope + (1.0f - release) * sampleAbs;
+      if ((i & 7) == 0) {
+        float sampleAbs = std::fabs(drySample);
+        if (sampleAbs > envelope)
+          envelope = attack * envelope + (1.0f - attack) * sampleAbs;
+        else
+          envelope = release * envelope + (1.0f - release) * sampleAbs;
       }
 
       float gain = 1.0f;
       if (envelope > threshold) {
         float overshoot = envelope / threshold;
-        float gainReduction = std::pow(overshoot, slope - 1.0f);
-        gain = gainReduction;
+        float t = std::min(overshoot, 11.0f);
+        int idx = static_cast<int>((t - 1.0f) * (kCompTableSize - 1) / 10.0f);
+        gain = mCompGainTable[idx];
       }
 
       float compressedSample = drySample * gain;
-      outputBuffer[i] = std::tanh(compressedSample * makeupGain);
+      outputBuffer[i] = fastTanh(compressedSample * makeupGain);
     }
 
     // publish voice active/inactive state back to atomics
     for (int v = 0; v < kNumVoices; ++v) {
       mTickToPlay[v].store(
-          localTickToPlay[v], std::memory_order_relaxed);
+          localTickToPlay[v], std::memory_order_release);
     }
 
     mCompressorEnvelope = envelope;
@@ -244,14 +249,17 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
     // find free voice
     for (int v = 0; v < kNumVoices; ++v) {
       int32_t expected = -1;
-      if (mTickToPlay[v].compare_exchange_strong(expected, tickType)) {
+      // use acq_rel to synchronize properly with audio thread
+      if (mTickToPlay[v].compare_exchange_strong(
+          expected, tickType,
+          std::memory_order_acq_rel, std::memory_order_acquire)) {
         mPendingTickType[v].store(tickType, std::memory_order_release);
         return;
       }
     }
     // no free voice found, steal next voice
     int32_t voiceToSteal = mNextVoiceToSteal.fetch_add(1) % kNumVoices;
-    mTickToPlay[voiceToSteal].store(tickType, std::memory_order_relaxed);
+    mTickToPlay[voiceToSteal].store(tickType, std::memory_order_release);
     mPendingTickType[voiceToSteal].store(
         tickType, std::memory_order_release);
   }
@@ -262,8 +270,22 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
 
   void setMuted(bool muted) { mMuted.store(muted); }
 
+  void recomputeCompressorTable() {
+    for (int i = 0; i < kCompTableSize; ++i) {
+      float overshoot = 1.0f +(10.0f * static_cast<float>(i) /
+          static_cast<float>(kCompTableSize - 1));
+      float gain = std::pow(overshoot, mCompSlope - 1.0f);
+      mCompGainTable[i] = gain;
+    }
+  }
+
   static inline float decibelsToLinear(float dB) {
     return std::pow(10.0f, dB / 20.0f);
+  }
+
+  static inline float fastTanh(float x) {
+    float x2 = x * x;
+    return x * (27.0f + x2) / (27.0f + 9.0f * x2);
   }
 
  private:
@@ -308,6 +330,9 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
   float mReleaseTime_s;
 
   float mCompressorEnvelope;
+
+  static constexpr int kCompTableSize = 1024;
+  std::array<float, kCompTableSize> mCompGainTable;
 };
 
 
