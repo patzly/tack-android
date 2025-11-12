@@ -541,9 +541,11 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       public void onExpandCollapseClicked(boolean expand) {
         performHapticClick();
         if (expand && !getSharedPrefs().getBoolean(PREF.SONGS_INTRO_SHOWN, false)) {
-          new Handler(Looper.getMainLooper()).postDelayed(
-              () -> dialogUtilIntro.show(), 200
-          );
+          new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (dialogUtilIntro != null) {
+              dialogUtilIntro.show();
+            }
+          }, 200);
         }
       }
 
@@ -909,7 +911,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
   @Override
   public void onMetronomeStart() {
     activity.runOnUiThread(() -> {
-      if (binding == null || getMetronomeEngine() == null) {
+      if (binding == null || getMetronomeEngine() == null || beatsBgDrawable == null) {
         return;
       }
       beatsBgDrawable.reset();
@@ -933,7 +935,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
   @Override
   public void onMetronomeStop() {
     activity.runOnUiThread(() -> {
-      if (binding == null || getMetronomeEngine() == null) {
+      if (binding == null || getMetronomeEngine() == null || beatsBgDrawable == null) {
         return;
       }
       resetActiveBeats();
@@ -1051,7 +1053,11 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
 
   @Override
   public void onMetronomeElapsedTimeSecondsChanged() {
-    activity.runOnUiThread(() -> binding.timerMain.updateDisplay());
+    activity.runOnUiThread(() -> {
+      if (binding != null) {
+        binding.timerMain.updateDisplay();
+      }
+    });
   }
 
   @Override
@@ -1299,9 +1305,11 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       }
     }
 
-    binding.linearMainBeats.post(
-        () -> ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats)
-    );
+    binding.linearMainBeats.post(() -> {
+      if (binding != null) {
+        ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainBeats);
+      }
+    });
 
     updateBeatControls(true);
   }
@@ -1334,14 +1342,14 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     boolean show = beats > 4;
     if (animated) {
       beatsCountBadgeAnimator = ValueAnimator.ofInt(beatsCountBadge.getAlpha(), show ? 255 : 0);
+      int colorBadgeBg = ResUtil.getColor(activity, R.attr.colorError);
       beatsCountBadgeAnimator.addUpdateListener(animation -> {
-        if (binding == null) {
+        if (binding == null || beatsCountBadge == null) {
           return;
         }
         beatsCountBadge.setAlpha((int) animation.getAnimatedValue());
         float fraction = (float) ((int) animation.getAnimatedValue()) / 255;
-        int colorBg = ResUtil.getColor(activity, R.attr.colorError);
-        int color = ColorUtils.blendARGB(Color.TRANSPARENT, colorBg, fraction);
+        int color = ColorUtils.blendARGB(Color.TRANSPARENT, colorBadgeBg, fraction);
         beatsCountBadge.setBackgroundColor(color);
       });
       beatsCountBadgeAnimator.addListener(new AnimatorListenerAdapter() {
@@ -1364,7 +1372,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           show ? ResUtil.getColor(activity, R.attr.colorError) : Color.TRANSPARENT
       );
       new Handler(Looper.getMainLooper()).postDelayed(() -> {
-        if (binding == null) {
+        if (binding == null || beatsCountBadge == null) {
           return;
         }
         if (show) {
@@ -1420,9 +1428,11 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       }
     }
 
-    binding.linearMainSubs.post(
-        () -> ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs)
-    );
+    binding.linearMainSubs.post(() -> {
+      if (binding != null) {
+        ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizMainSubs);
+      }
+    });
 
     updateSubControls(true);
   }
@@ -1446,14 +1456,14 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     boolean show = subdivisions > 4;
     if (animated) {
       subsCountBadgeAnimator = ValueAnimator.ofInt(subsCountBadge.getAlpha(), show ? 255 : 0);
+      int colorBadgeBg = ResUtil.getColor(activity, R.attr.colorError);
       subsCountBadgeAnimator.addUpdateListener(animation -> {
         if (binding == null) {
           return;
         }
         subsCountBadge.setAlpha((int) animation.getAnimatedValue());
         float fraction = (float) ((int) animation.getAnimatedValue()) / 255;
-        int colorBg = ResUtil.getColor(activity, R.attr.colorError);
-        int color = ColorUtils.blendARGB(Color.TRANSPARENT, colorBg, fraction);
+        int color = ColorUtils.blendARGB(Color.TRANSPARENT, colorBadgeBg, fraction);
         subsCountBadge.setBackgroundColor(color);
       });
       subsCountBadgeAnimator.addListener(new AnimatorListenerAdapter() {
@@ -1476,7 +1486,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           show ? ResUtil.getColor(activity, R.attr.colorError) : Color.TRANSPARENT
       );
       new Handler(Looper.getMainLooper()).postDelayed(() -> {
-        if (binding == null) {
+        if (binding == null || subsCountBadge == null) {
           return;
         }
         if (show) {
@@ -1631,14 +1641,14 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     optionsBadge.setNumber(modifierCount);
     if (animated) {
       optionsBadgeAnimator = ValueAnimator.ofInt(optionsBadge.getAlpha(), show ? 255 : 0);
+      int colorBadgeBg = ResUtil.getColor(activity, R.attr.colorError);
       optionsBadgeAnimator.addUpdateListener(animation -> {
-        if (binding == null) {
+        if (binding == null || optionsBadge == null) {
           return;
         }
         optionsBadge.setAlpha((int) animation.getAnimatedValue());
         float fraction = (float) ((int) animation.getAnimatedValue()) / 255;
-        int colorBg = ResUtil.getColor(activity, R.attr.colorError);
-        int color = ColorUtils.blendARGB(Color.TRANSPARENT, colorBg, fraction);
+        int color = ColorUtils.blendARGB(Color.TRANSPARENT, colorBadgeBg, fraction);
         optionsBadge.setBackgroundColor(color);
       });
       optionsBadgeAnimator.addListener(new AnimatorListenerAdapter() {
@@ -1661,7 +1671,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           show ? ResUtil.getColor(activity, R.attr.colorError) : Color.TRANSPARENT
       );
       new Handler(Looper.getMainLooper()).postDelayed(() -> {
-        if (binding == null) {
+        if (binding == null || optionsBadge == null) {
           return;
         }
         if (show) {
@@ -1742,6 +1752,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     if (animated) {
       playStopButtonAnimator = ValueAnimator.ofFloat(playStopButtonFraction, targetFraction);
       playStopButtonAnimator.addUpdateListener(animation -> {
+        if (binding == null) {
+          return;
+        }
         playStopButtonFraction = (float) animation.getAnimatedValue();
         binding.buttonMainPlayStop.setBackgroundColor(
             ColorUtils.blendARGB(colorBgStopped, colorBgPlaying, playStopButtonFraction)
@@ -1783,6 +1796,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       binding.imageMainLogo.setVisibility(View.VISIBLE);
       pickerLogoAnimator = ValueAnimator.ofFloat(binding.frameMainCenter.getAlpha(), pickerAlpha);
       pickerLogoAnimator.addUpdateListener(animation -> {
+        if (binding == null) {
+          return;
+        }
         float fraction = (float) animation.getAnimatedValue();
         binding.frameMainCenter.setAlpha(fraction);
         binding.imageMainLogoCenter.setAlpha(1 - fraction);

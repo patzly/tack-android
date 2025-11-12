@@ -19,8 +19,6 @@
 
 package xyz.zedler.patrick.tack.util;
 
-import static androidx.core.content.ContextCompat.getSystemService;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -41,6 +39,7 @@ import androidx.annotation.Dimension;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StyleRes;
+import androidx.core.content.ContextCompat;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.color.DynamicColorsOptions;
 import com.google.android.material.color.HarmonizedColorAttributes;
@@ -55,8 +54,6 @@ import xyz.zedler.patrick.tack.R;
 public class UiUtil {
 
   public static final int SCRIM = 0x55000000;
-  public static final int SCRIM_DARK_DIALOG = 0xFF0c0c0e;
-  public static final int SCRIM_LIGHT_DIALOG = 0xFF666666;
 
   public static void layoutEdgeToEdge(Window window) {
     if (Build.VERSION.SDK_INT >= VERSION_CODES.R) {
@@ -272,7 +269,7 @@ public class UiUtil {
 
   @Nullable
   private static InputMethodManager getInputMethodManager(@NonNull View view) {
-    return getSystemService(view.getContext(), InputMethodManager.class);
+    return ContextCompat.getSystemService(view.getContext(), InputMethodManager.class);
   }
 
   // Unit conversions
