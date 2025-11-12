@@ -2,8 +2,9 @@ After six months of dedicated work in my spare time, I'm thrilled to announce th
 
 ### 6.0.1
 
-- Fixed: some beats randomly not playing due to threading issues
+- Fixed: some beats randomly not playing due to threading issues (thanks Gwrvan!)
 - Fixed: polyrhythmic subdivisions getting out of sync with main beat
+- Fixed: wrong placement of center logo animation when song picker was expanded (thanks James!)
 - Fixed: crash when device orientation was changed in song details
 
 ### 6.0.0

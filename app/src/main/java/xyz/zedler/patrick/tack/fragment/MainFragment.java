@@ -1596,6 +1596,10 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       binding.frameMainCenter.setScaleX(scale);
       binding.frameMainCenter.setScaleY(scale);
       binding.frameMainCenter.setTranslationY(translationY);
+      // logo should behave the same
+      binding.imageMainLogoCenter.setScaleX(scale);
+      binding.imageMainLogoCenter.setScaleY(scale);
+      binding.imageMainLogoCenter.setTranslationY(translationY);
 
       binding.buttonGroupMainLess.setScaleX(scale);
       binding.buttonGroupMainLess.setScaleY(scale);
