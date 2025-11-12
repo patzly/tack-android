@@ -1,5 +1,10 @@
 After six months of dedicated work in my spare time, I'm thrilled to announce the release of Tack 6.0 — featuring a major redesign and low-latency audio!
 
+### 6.0.1
+
+- Fixed: some beats randomly not playing due to threading issues
+- Fixed: polyrhythmic subdivisions getting out of sync with main beat
+
 ### 6.0.0
 
 - New: Material 3 Expressive design throughout the app with new typeface and redesigned controls

@@ -446,44 +446,7 @@ public class MetronomeEngine {
     }
 
     playing = true;
-    Runnable tickRunnable = new Runnable() {
-      @Override
-      public void run() {
-        if (!isPlaying()) {
-          return;
-        }
-        long interval = getInterval() / config.getSubdivisionsCount();
-        if (config.usePolyrhythm()) {
-          interval = getInterval();
-        }
-        tickHandler.postDelayed(this, interval);
-        Tick tick = performTick();
-        if (tick != null) {
-          audioEngine.playTick(tick);
-          tickIndex++;
-        }
-      }
-    };
-    Runnable tickRunnablePoly = new Runnable() {
-      @Override
-      public void run() {
-        if (!isPlaying()) {
-          return;
-        }
-        long barInterval = getInterval() * config.getBeatsCount();
-        tickHandler.postDelayed(this, barInterval / config.getSubdivisionsCount());
-        Tick tick = performTickPoly();
-        audioEngine.playTick(tick);
-        tickIndexPoly++;
-      }
-    };
-    audioHandler.post(() -> {
-      audioEngine.play();
-      tickHandler.post(tickRunnable);
-      if (config.usePolyrhythm()) {
-        tickHandler.post(tickRunnablePoly);
-      }
-    });
+    startTicks();
 
     synchronized (listeners) {
       for (MetronomeListener listener : listeners) {
@@ -569,44 +532,7 @@ public class MetronomeEngine {
         muteCountDown = calculateMuteCount(false);
       }
 
-      Runnable tickRunnable = new Runnable() {
-        @Override
-        public void run() {
-          if (!isPlaying()) {
-            return;
-          }
-          long interval = getInterval() / config.getSubdivisionsCount();
-          if (config.usePolyrhythm()) {
-            interval = getInterval();
-          }
-          tickHandler.postDelayed(this, interval);
-          Tick tick = performTick();
-          if (tick != null) {
-            audioEngine.playTick(tick);
-            tickIndex++;
-          }
-        }
-      };
-      Runnable tickRunnablePoly = new Runnable() {
-        @Override
-        public void run() {
-          if (!isPlaying()) {
-            return;
-          }
-          long barInterval = getInterval() * config.getBeatsCount();
-          tickHandler.postDelayed(this, barInterval / config.getSubdivisionsCount());
-          Tick tick = performTickPoly();
-          audioEngine.playTick(tick);
-          tickIndexPoly++;
-        }
-      };
-      audioHandler.post(() -> {
-        audioEngine.play();
-        tickHandler.post(tickRunnable);
-        if (config.usePolyrhythm()) {
-          tickHandler.post(tickRunnablePoly);
-        }
-      });
+      startTicks();
 
       isCountingIn = false;
       updateIncrementalHandler();
@@ -630,6 +556,64 @@ public class MetronomeEngine {
 
   public boolean isPlaying() {
     return playing;
+  }
+
+  private void startTicks() {
+    Runnable tickRunnablePoly = new Runnable() {
+      @Override
+      public void run() {
+        if (!isPlaying()) {
+          return;
+        }
+        int subdivisionPoly = getCurrentSubdivisionPoly();
+        String tickTypePoly = getCurrentTickTypePoly();
+        Tick tick = new Tick(
+            tickIndexPoly, 1, subdivisionPoly, tickTypePoly, isMuted, true
+        );
+
+        if (subdivisionPoly < config.getSubdivisionsCount()) {
+          // first poly subdivision handled in main tick runnable to keep poly in sync
+          long barInterval = getInterval() * config.getBeatsCount();
+          tickHandler.postDelayed(this, barInterval / config.getSubdivisionsCount());
+        }
+
+        performTickPoly(tick);
+        audioEngine.playTick(tick);
+        tickIndexPoly++;
+      }
+    };
+    Runnable tickRunnable = new Runnable() {
+      @Override
+      public void run() {
+        if (!isPlaying()) {
+          return;
+        }
+        int beat = getCurrentBeat();
+        int subdivision = getCurrentSubdivision();
+        String tickType = getCurrentTickType();
+        Tick tick = new Tick(tickIndex, beat, subdivision, tickType, isMuted, false);
+
+        long interval = config.usePolyrhythm()
+            ? getInterval()
+            : getInterval() / config.getSubdivisionsCount();
+        tickHandler.postDelayed(this, interval);
+        if (tick.beat == 1 && config.usePolyrhythm()) {
+          // start polyrhythm subdivisions every new bar
+          tickHandler.post(tickRunnablePoly);
+        }
+
+        boolean playing = performTick(tick); // don't play next tick if timer finished
+        if (playing) {
+          audioEngine.playTick(tick);
+          tickIndex++;
+        }
+      }
+    };
+    audioHandler.post(() -> {
+      audioEngine.play();
+      // wait for audio engine to be started
+      tickHandler.post(tickRunnable);
+    });
   }
 
   private void updateLastPlayedAndPlayCount() {
@@ -1334,18 +1318,13 @@ public class MetronomeEngine {
     }
   }
 
-  @Nullable
-  private Tick performTick() {
-    int beat = getCurrentBeat();
-    int subdivision = getCurrentSubdivision();
-    String tickType = getCurrentTickType();
-
+  private boolean performTick(Tick tick) {
     long beatIndex = config.usePolyrhythm() ? tickIndex : tickIndex / config.getSubdivisionsCount();
     long barIndex = beatIndex / config.getBeatsCount();
     long barIndexWithoutCountIn = barIndex - config.getCountIn();
     boolean isCountIn = barIndex < config.getCountIn();
 
-    boolean isBeat = subdivision == 1;
+    boolean isBeat = tick.subdivision == 1;
     boolean isFirstBeat = isBeat && (beatIndex % config.getBeatsCount()) == 0;
 
     if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS) && !isCountIn) {
@@ -1396,7 +1375,7 @@ public class MetronomeEngine {
             setCurrentPartIndex(0);
           }
         }
-        return null;
+        return false;
       }
     }
 
@@ -1431,8 +1410,6 @@ public class MetronomeEngine {
       }
     }
 
-    Tick tick = new Tick(tickIndex, beat, subdivision, tickType, isMuted, false);
-
     latencyHandler.postDelayed(() -> {
       synchronized (listeners) {
         for (MetronomeListener listener : listeners) {
@@ -1463,18 +1440,10 @@ public class MetronomeEngine {
       }
     }, latency);
 
-    return tick;
+    return true;
   }
 
-  @NonNull
-  private Tick performTickPoly() {
-    int subdivisionPoly = getCurrentSubdivisionPoly();
-    String tickTypePoly = getCurrentTickTypePoly();
-
-    Tick tick = new Tick(
-        tickIndexPoly, 1, subdivisionPoly, tickTypePoly, isMuted, true
-    );
-
+  private void performTickPoly(Tick tick) {
     latencyHandler.postDelayed(() -> {
       synchronized (listeners) {
         for (MetronomeListener listener : listeners) {
@@ -1486,7 +1455,7 @@ public class MetronomeEngine {
       boolean shouldVibrate = !beatMode.equals(BEAT_MODE.SOUND) && !isMuted;
       if (shouldVibrate) {
         // check whether any poly subdivision collides with a beat
-        long product = (long) (subdivisionPoly - 1) * config.getBeatsCount();
+        long product = (long) (tick.subdivision - 1) * config.getBeatsCount();
         if (product % config.getSubdivisionsCount() == 0) {
           shouldVibrate = false;
         }
@@ -1507,8 +1476,6 @@ public class MetronomeEngine {
         }
       }
     }, latency);
-
-    return tick;
   }
 
   private int getCurrentBeat() {
