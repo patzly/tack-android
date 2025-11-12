@@ -161,7 +161,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   public void saveState(@NonNull Bundle outState) {
     if (useDialog && dialogUtil != null) {
       dialogUtil.saveState(outState);
-      if (editPart) {
+      if (editPart && part != null) {
         part.setConfig(config);
         outState.putParcelable(PART, part);
         outState.putBoolean(IS_NEW, isNew);
