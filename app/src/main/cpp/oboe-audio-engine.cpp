@@ -196,7 +196,6 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
           // voice is inactive or finished
           if (localTickToPlay[v] != -1) {
             localTickToPlay[v] = -1;
-            mPrevLocalTickToPlay[v] = -1;
             mReadIndexLocal[v] = 0;
             sourceData[v] = nullptr;
           }
@@ -204,6 +203,7 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
       }
 
       if ((i & 7) == 0) {
+        // only update envelope every 8 samples for performance
         float sampleAbs = std::fabs(drySample);
         if (sampleAbs > envelope)
           envelope = attack * envelope + (1.0f - attack) * sampleAbs;
@@ -227,6 +227,21 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
     for (int v = 0; v < kNumVoices; ++v) {
       mTickToPlay[v].store(
           localTickToPlay[v], std::memory_order_release);
+    }
+
+    for (int v = 0; v < kNumVoices; ++v) {
+      if (localTickToPlay[v] == -1) {
+        int32_t finishedTickType = mPrevLocalTickToPlay[v];
+        if (finishedTickType != -1) {
+          // voice just finished, clear mTickToPlay
+          // if still set to finishedTickType
+          mTickToPlay[v].compare_exchange_strong(
+              finishedTickType,
+              -1,
+              std::memory_order_release,
+              std::memory_order_relaxed);
+        }
+      }
     }
 
     mCompressorEnvelope = envelope;
