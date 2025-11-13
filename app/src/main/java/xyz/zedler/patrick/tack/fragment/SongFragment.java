@@ -72,7 +72,6 @@ import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil.OnMenuInflatedListener;
 import xyz.zedler.patrick.tack.util.WidgetUtil;
 import xyz.zedler.patrick.tack.util.dialog.RenameDialogUtil;
-import xyz.zedler.patrick.tack.util.dialog.UnlockDialogUtil;
 
 public class SongFragment extends BaseFragment implements OnClickListener, OnCheckedChangeListener {
 
@@ -84,7 +83,6 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
   private FragmentSongBinding binding;
   private MainActivity activity;
   private DialogUtil dialogUtilDiscard, dialogUtilDelete;
-  private UnlockDialogUtil unlockDialogUtil;
   private RenameDialogUtil renameDialogUtil;
   private OptionsUtil optionsUtil;
   private OnBackPressedCallback onBackPressedCallback;
@@ -115,7 +113,6 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     dialogUtilDiscard.dismiss();
     dialogUtilDelete.dismiss();
     renameDialogUtil.dismiss();
-    unlockDialogUtil.dismiss();
     optionsUtil.dismiss();
     binding = null;
   }
@@ -227,9 +224,9 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         if (id == R.id.action_delete) {
           dialogUtilDelete.show();
         } else if (id == R.id.action_feedback) {
-          activity.showFeedback();
+          activity.showFeedbackDialog();
         } else if (id == R.id.action_help) {
-          activity.showHelp();
+          activity.showHelpDialog();
         }
         return true;
       };
@@ -337,7 +334,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           adapter.setParts(new ArrayList<>(partsResult));
           updateResult();
         } else {
-          unlockDialogUtil.show();
+          activity.showUnlockDialog();
         }
       }
 
@@ -567,9 +564,6 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     });
     dialogUtilDelete.showIfWasShown(savedInstanceState);
 
-    unlockDialogUtil = new UnlockDialogUtil(activity);
-    unlockDialogUtil.showIfWasShown(savedInstanceState);
-
     renameDialogUtil = new RenameDialogUtil(activity, this);
     renameDialogUtil.showIfWasShown(savedInstanceState);
 
@@ -609,9 +603,6 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     if (dialogUtilDelete != null) {
       dialogUtilDelete.saveState(outState);
     }
-    if (unlockDialogUtil != null) {
-      unlockDialogUtil.saveState(outState);
-    }
     if (renameDialogUtil != null) {
       renameDialogUtil.saveState(outState);
     }
@@ -642,7 +633,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         optionsUtil.setPart(part, true);
         optionsUtil.show();
       } else {
-        unlockDialogUtil.show();
+        activity.showUnlockDialog();
       }
     }
   }

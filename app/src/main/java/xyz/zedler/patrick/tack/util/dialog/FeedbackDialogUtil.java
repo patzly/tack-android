@@ -23,6 +23,8 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewTreeObserver;
@@ -45,9 +47,11 @@ public class FeedbackDialogUtil implements OnClickListener {
   private final DialogUtil dialogUtil;
   private final ViewUtil viewUtil;
   private final MainActivity activity;
+  private final Runnable onSupportClick;
 
-  public FeedbackDialogUtil(MainActivity activity) {
+  public FeedbackDialogUtil(MainActivity activity, @NonNull Runnable onSupportClick) {
     this.activity = activity;
+    this.onSupportClick = onSupportClick;
 
     binding = PartialDialogFeedbackBinding.inflate(activity.getLayoutInflater());
 
@@ -70,6 +74,7 @@ public class FeedbackDialogUtil implements OnClickListener {
     ViewUtil.setOnClickListeners(
         this,
         binding.linearFeedbackRate,
+        binding.linearFeedbackSupport,
         binding.linearFeedbackIssue,
         binding.linearFeedbackEmail,
         binding.linearFeedbackRecommend
@@ -102,6 +107,8 @@ public class FeedbackDialogUtil implements OnClickListener {
                 + activity.getApplicationContext().getPackageName()
         )));
       }
+    } if (id == R.id.linear_feedback_support) {
+      new Handler(Looper.getMainLooper()).postDelayed(onSupportClick, 200);
     } else if (id == R.id.linear_feedback_issue) {
       String issues = activity.getString(R.string.app_github) + "/issues";
       activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(issues)));

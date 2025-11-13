@@ -92,7 +92,6 @@ import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.util.dialog.BackupDialogUtil;
 import xyz.zedler.patrick.tack.util.dialog.PartsDialogUtil;
 import xyz.zedler.patrick.tack.util.dialog.TempoDialogUtil;
-import xyz.zedler.patrick.tack.util.dialog.UnlockDialogUtil;
 import xyz.zedler.patrick.tack.view.BeatView;
 import xyz.zedler.patrick.tack.view.SongPickerView.SongPickerListener;
 import xyz.zedler.patrick.tack.view.TempoPickerView.OnPickListener;
@@ -115,7 +114,6 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
   private int songPickerAvailableHeight, topControlsBottomMin;
   private DialogUtil dialogUtilGain, dialogUtilSplitScreen, dialogUtilTimer, dialogUtilElapsed;
   private DialogUtil dialogUtilPermission, dialogUtilBeatMode, dialogUtilIntro;
-  private UnlockDialogUtil unlockDialogUtil;
   private OptionsUtil optionsUtil;
   private PartsDialogUtil partsDialogUtil;
   private TempoDialogUtil tempoDialogUtil;
@@ -154,7 +152,6 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     dialogUtilPermission.dismiss();
     dialogUtilBeatMode.dismiss();
     tempoDialogUtil.dismiss();
-    unlockDialogUtil.dismiss();
     backupDialogUtil.dismiss();
     dialogUtilIntro.dismiss();
     optionsUtil.dismiss();
@@ -207,9 +204,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         } else if (id == R.id.action_about) {
           activity.navigate(MainFragmentDirections.actionMainToAbout());
         } else if (id == R.id.action_help) {
-          activity.showHelp();
+          activity.showHelpDialog();
         } else if (id == R.id.action_feedback) {
-          activity.showFeedback();
+          activity.showFeedbackDialog();
         }
         return true;
       });
@@ -356,9 +353,6 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       );
     });
     dialogUtilElapsed.showIfWasShown(savedInstanceState);
-
-    unlockDialogUtil = new UnlockDialogUtil(activity);
-    unlockDialogUtil.showIfWasShown(savedInstanceState);
 
     backupDialogUtil = new BackupDialogUtil(activity, this);
     backupDialogUtil.showIfWasShown(savedInstanceState);
@@ -584,7 +578,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         if (activity.isUnlocked() || songsWithParts.size() < 3) {
           activity.navigate(MainFragmentDirections.actionMainToSong());
         } else {
-          unlockDialogUtil.show();
+          activity.showUnlockDialog();
         }
       }
 
@@ -728,9 +722,6 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     }
     if (tempoDialogUtil != null) {
       tempoDialogUtil.saveState(outState);
-    }
-    if (unlockDialogUtil != null) {
-      unlockDialogUtil.saveState(outState);
     }
     if (backupDialogUtil != null) {
       backupDialogUtil.saveState(outState);

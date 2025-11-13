@@ -64,7 +64,6 @@ import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil.OnMenuInflatedListener;
 import xyz.zedler.patrick.tack.util.WidgetUtil;
 import xyz.zedler.patrick.tack.util.dialog.BackupDialogUtil;
-import xyz.zedler.patrick.tack.util.dialog.UnlockDialogUtil;
 
 public class SongsFragment extends BaseFragment {
 
@@ -76,7 +75,6 @@ public class SongsFragment extends BaseFragment {
   private FragmentSongsBinding binding;
   private MainActivity activity;
   private DialogUtil dialogUtilWidgetPrompt, dialogUtilDelete, dialogUtilPermission, dialogUtilGain;
-  private UnlockDialogUtil unlockDialogUtil;
   private BackupDialogUtil backupDialogUtil;
   private List<SongWithParts> songsWithParts = new ArrayList<>();
   private int sortOrder;
@@ -99,7 +97,6 @@ public class SongsFragment extends BaseFragment {
     binding = null;
     dialogUtilWidgetPrompt.dismiss();
     dialogUtilDelete.dismiss();
-    unlockDialogUtil.dismiss();
     backupDialogUtil.dismiss();
     dialogUtilPermission.dismiss();
     dialogUtilGain.dismiss();
@@ -188,9 +185,9 @@ public class SongsFragment extends BaseFragment {
         } else if (id == R.id.action_settings) {
           activity.navigate(SongsFragmentDirections.actionSongsToSettings());
         } else if (id == R.id.action_feedback) {
-          activity.showFeedback();
+          activity.showFeedbackDialog();
         } else if (id == R.id.action_help) {
-          activity.showHelp();
+          activity.showHelpDialog();
         }
         return true;
       };
@@ -408,9 +405,6 @@ public class SongsFragment extends BaseFragment {
     });
     dialogUtilDelete.showIfWasShown(savedInstanceState);
 
-    unlockDialogUtil = new UnlockDialogUtil(activity);
-    unlockDialogUtil.showIfWasShown(savedInstanceState);
-
     backupDialogUtil = new BackupDialogUtil(activity, this);
     backupDialogUtil.showIfWasShown(savedInstanceState);
 
@@ -457,7 +451,7 @@ public class SongsFragment extends BaseFragment {
       if (activity.isUnlocked() || songsWithParts.size() < 3) {
         activity.navigate(SongsFragmentDirections.actionSongsToSong());
       } else {
-        unlockDialogUtil.show();
+        activity.showUnlockDialog();
       }
     });
   }
@@ -465,9 +459,7 @@ public class SongsFragment extends BaseFragment {
   @Override
   public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
-    if (unlockDialogUtil != null) {
-      unlockDialogUtil.saveState(outState);
-    }
+
     if (dialogUtilWidgetPrompt != null) {
       dialogUtilWidgetPrompt.saveState(outState);
     }

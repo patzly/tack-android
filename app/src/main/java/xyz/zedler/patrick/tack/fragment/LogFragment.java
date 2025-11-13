@@ -115,7 +115,7 @@ public class LogFragment extends BaseFragment implements OnClickListener {
           activity.getSnackbar(R.string.msg_copied_to_clipboard, Snackbar.LENGTH_SHORT)
       );
     } else if (id == R.id.button_log_feedback) {
-      activity.showFeedback();
+      activity.showFeedbackDialog();
     }
   }
 

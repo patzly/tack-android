@@ -35,17 +35,15 @@ import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentAboutBinding;
 import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.dialog.TextDialogUtil;
-import xyz.zedler.patrick.tack.util.dialog.UnlockDialogUtil;
 import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
+import xyz.zedler.patrick.tack.util.dialog.TextDialogUtil;
 
 public class AboutFragment extends BaseFragment implements OnClickListener {
 
   private FragmentAboutBinding binding;
   private MainActivity activity;
   private TextDialogUtil textDialogUtilMdc, textDialogUtilMds, textDialogUtilNunito;
-  private UnlockDialogUtil unlockDialogUtil;
   private int longClickCount = 0;
 
   @Override
@@ -62,7 +60,6 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     textDialogUtilMdc.dismiss();
     textDialogUtilMds.dismiss();
     textDialogUtilNunito.dismiss();
-    unlockDialogUtil.dismiss();
     binding = null;
   }
 
@@ -89,9 +86,9 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
         }
         performHapticClick();
         if (id == R.id.action_feedback) {
-          activity.showFeedback();
+          activity.showFeedbackDialog();
         } else if (id == R.id.action_help) {
-          activity.showHelp();
+          activity.showHelpDialog();
         } else if (id == R.id.action_recommend) {
           String text = getString(R.string.msg_recommend, getString(R.string.app_vending_app));
           ResUtil.share(activity, text);
@@ -103,9 +100,6 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     ViewUtil.setTooltipText(binding.buttonAboutMenu, R.string.action_more);
 
     updateUnlockItem();
-
-    unlockDialogUtil = new UnlockDialogUtil(activity);
-    unlockDialogUtil.showIfWasShown(savedInstanceState);
 
     textDialogUtilMdc = new TextDialogUtil(
         activity,
@@ -155,9 +149,6 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
   @Override
   public void onSaveInstanceState(@NonNull Bundle outState) {
     super.onSaveInstanceState(outState);
-    if (unlockDialogUtil != null) {
-      unlockDialogUtil.saveState(outState);
-    }
     if (textDialogUtilMdc != null) {
       textDialogUtilMdc.saveState(outState);
     }
@@ -182,14 +173,14 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_website))));
     } else if (id == R.id.linear_about_changelog) {
       ViewUtil.startIcon(binding.imageAboutChangelog);
-      activity.showChangelog();
+      activity.showChangelogDialog();
     } else if (id == R.id.linear_about_vending) {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_vending_dev))));
     } else if (id == R.id.linear_about_key) {
       if (UnlockUtil.isKeyInstalled(activity)) {
         UnlockUtil.openPlayStore(activity);
       } else {
-        unlockDialogUtil.show();
+        activity.showUnlockDialog();
       }
     } else if (id == R.id.linear_about_github) {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_github))));

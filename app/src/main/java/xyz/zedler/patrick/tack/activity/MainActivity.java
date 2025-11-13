@@ -68,6 +68,7 @@ import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.dialog.FeedbackDialogUtil;
 import xyz.zedler.patrick.tack.util.dialog.HelpDialogUtil;
 import xyz.zedler.patrick.tack.util.dialog.TextDialogUtil;
+import xyz.zedler.patrick.tack.util.dialog.UnlockDialogUtil;
 import xyz.zedler.patrick.tack.viewmodel.SongViewModel;
 
 public class MainActivity extends AppCompatActivity implements ServiceConnection {
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
   private TextDialogUtil textDialogUtilChangelog;
   private HelpDialogUtil helpDialogUtil;
   private FeedbackDialogUtil feedbackDialogUtil;
+  private UnlockDialogUtil unlockDialogUtil;
   private boolean runAsSuperClass, bound, stopServiceWithActivity, startMetronomeAfterPermission;
   private ActivityResultLauncher<String> requestPermissionLauncher;
 
@@ -188,8 +190,11 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     helpDialogUtil = new HelpDialogUtil(this);
     helpDialogUtil.showIfWasShown(savedInstanceState);
 
-    feedbackDialogUtil = new FeedbackDialogUtil(this);
+    feedbackDialogUtil = new FeedbackDialogUtil(this, () -> unlockDialogUtil.show());
     feedbackDialogUtil.showIfWasShown(savedInstanceState);
+
+    unlockDialogUtil = new UnlockDialogUtil(this);
+    unlockDialogUtil.showIfWasShown(savedInstanceState);
 
     if (savedInstanceState == null && bundleInstanceState == null) {
       new Handler(Looper.getMainLooper()).postDelayed(
@@ -205,6 +210,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     if (!runAsSuperClass) {
       binding = null;
       textDialogUtilChangelog.dismiss();
+      feedbackDialogUtil.dismiss();
+      helpDialogUtil.dismiss();
+      unlockDialogUtil.dismiss();
 
       if (isFinishing()) {
         // metronome should be stopped when app is removed from recent apps
@@ -265,6 +273,9 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     }
     if (feedbackDialogUtil != null) {
       feedbackDialogUtil.saveState(outState);
+    }
+    if (unlockDialogUtil != null) {
+      unlockDialogUtil.saveState(outState);
     }
   }
 
@@ -433,7 +444,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
       sharedPrefs.edit().putInt(PREF.LAST_VERSION, versionNew).apply();
     } else if (versionOld != versionNew) {
       sharedPrefs.edit().putInt(PREF.LAST_VERSION, versionNew).apply();
-      showChangelog();
+      showChangelogDialog();
     }
 
     // Feedback
@@ -442,21 +453,25 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
       if (feedbackCount < 5) {
         sharedPrefs.edit().putInt(PREF.FEEDBACK_POP_UP_COUNT, feedbackCount + 1).apply();
       } else {
-        showFeedback();
+        showFeedbackDialog();
       }
     }
   }
 
-  public void showFeedback() {
+  public void showFeedbackDialog() {
     feedbackDialogUtil.show();
   }
 
-  public void showChangelog() {
+  public void showChangelogDialog() {
     textDialogUtilChangelog.show();
   }
 
-  public void showHelp() {
+  public void showHelpDialog() {
     helpDialogUtil.show();
+  }
+
+  public void showUnlockDialog() {
+    unlockDialogUtil.show();
   }
 
   public boolean isUnlocked() {
