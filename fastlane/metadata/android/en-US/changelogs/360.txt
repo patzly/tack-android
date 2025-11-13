@@ -1,4 +1,4 @@
-• Fixed: some beats randomly not playing due to threading issues (thanks Gwrvan!)
+• Fixed: some beats randomly not playing due to threading issues
 • Fixed: polyrhythmic subdivisions getting out of sync with main beat
-• Fixed: wrong placement of center logo animation when song picker was expanded (thanks James!)
+• Fixed: wrong placement of center logo animation when song picker was expanded
 • Fixed: crash when device orientation was changed
