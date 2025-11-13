@@ -120,7 +120,7 @@
   <string name="action_email">E-Mail senden</string>
   <string name="action_email_description">Entwickler kontaktieren</string>
   <string name="action_rate">Auf Google Play bewerten</string>
-  <string name="action_rate_description">Entwicklung unterstützen</string>
+  <string name="action_support">Entwicklung unterstützen</string>
   <string name="action_issue">Neues Issue auf GitHub eröffnen</string>
   <string name="action_issue_description">Fehler melden oder Funktionen vorschlagen</string>
   <string name="action_retry">Erneut versuchen</string>
