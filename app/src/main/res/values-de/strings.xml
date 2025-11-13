@@ -122,6 +122,7 @@
   <string name="action_rate">Auf Google Play bewerten</string>
   <string name="action_rate_description">Teile deine Gedanken</string>
   <string name="action_support">Entwicklung unterstützen</string>
+  <string name="action_support_description">Kaufe die Freischalt-App</string>
   <string name="action_issue">Neues Issue auf GitHub eröffnen</string>
   <string name="action_issue_description">Fehler melden oder Funktionen vorschlagen</string>
   <string name="action_retry">Erneut versuchen</string>
