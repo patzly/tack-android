@@ -279,45 +279,47 @@ public class PartAdapter extends Adapter<PartAdapter.PartViewHolder> {
   }
 
   public void setParts(List<Part> newParts) {
+    List<Part> oldParts = new ArrayList<>(parts);
+    List<Part> newPartsCopy = new ArrayList<>(newParts);
     DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
       @Override
       public int getOldListSize() {
-        return parts.size();
+        return oldParts.size();
       }
 
       @Override
       public int getNewListSize() {
-        return newParts.size();
+        return newPartsCopy.size();
       }
 
       @Override
       public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        Part oldPart = parts.get(oldItemPosition);
-        Part newPart = newParts.get(newItemPosition);
+        Part oldPart = oldParts.get(oldItemPosition);
+        Part newPart = newPartsCopy.get(newItemPosition);
         return oldPart.getId().equals(newPart.getId());
       }
 
       @Override
       public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        Part oldPart = parts.get(oldItemPosition);
-        Part newPart = newParts.get(newItemPosition);
+        Part oldPart = oldParts.get(oldItemPosition);
+        Part newPart = newPartsCopy.get(newItemPosition);
 
         if (!oldPart.equals(newPart)) {
           return false;
         }
 
-        int oldRole = getItemRole(oldItemPosition, parts.size());
-        int newRole = getItemRole(newItemPosition, newParts.size());
+        int oldRole = getItemRole(oldItemPosition, oldParts.size());
+        int newRole = getItemRole(newItemPosition, newPartsCopy.size());
         return oldRole == newRole;
       }
 
       @Override
       public Object getChangePayload(int oldItemPosition, int newItemPosition) {
-        Part oldPart = parts.get(oldItemPosition);
-        Part newPart = newParts.get(newItemPosition);
+        Part oldPart = oldParts.get(oldItemPosition);
+        Part newPart = newPartsCopy.get(newItemPosition);
 
-        int oldRole = getItemRole(oldItemPosition, parts.size());
-        int newRole = getItemRole(newItemPosition, newParts.size());
+        int oldRole = getItemRole(oldItemPosition, oldParts.size());
+        int newRole = getItemRole(newItemPosition, newPartsCopy.size());
         if (oldPart.equals(newPart) && oldRole != newRole) {
           return PAYLOAD_ROLE;
         }
@@ -333,7 +335,7 @@ public class PartAdapter extends Adapter<PartAdapter.PartViewHolder> {
       }
     });
     parts.clear();
-    parts.addAll(newParts);
+    parts.addAll(newPartsCopy);
     diffResult.dispatchUpdatesTo(this);
   }
 
