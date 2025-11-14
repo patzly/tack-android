@@ -95,6 +95,10 @@ android {
         includeInApk = false
     }
 
+    packagingOptions {
+        jniLibs.useLegacyPackaging = false
+    }
+
     externalNativeBuild {
         cmake {
             path "src/main/cpp/CMakeLists.txt"

@@ -12,3 +12,10 @@ target_link_libraries(
         oboe::oboe
         ${log-lib}
 )
+
+# Make builds reproducible
+add_link_options(-Wl,--build-id=none)
+set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE}   -g0 -fdebug-prefix-map=${CMAKE_SOURCE_DIR}=.")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g0 -fdebug-prefix-map=${CMAKE_SOURCE_DIR}=.")
+set(CMAKE_SORT_OUTPUT_ON ON)
+set(CMAKE_TEMP_FILE_PREFIX .tmp)
