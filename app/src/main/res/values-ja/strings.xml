@@ -22,7 +22,7 @@
   <!-- TITLES -->
 
   <string name="title_feedback">フィードバック</string>
-  <string name="title_about">Tack について</string>
+  <string name="title_about">Tackについて</string>
   <string name="title_help">ヘルプ</string>
   <string name="title_licenses">オープンソースライセンス</string>
   <string name="title_settings">設定</string>
@@ -114,17 +114,17 @@
   <string name="action_reset">リセット</string>
   <string name="action_deactivate">無効化</string>
   <string name="action_recommend">共有</string>
-  <string name="action_recommend_description">Tack を友達におすすめする</string>
+  <string name="action_recommend_description">Tackを友達におすすめする</string>
   <string name="action_email">メールを送信</string>
   <string name="action_email_description">開発者に連絡</string>
-  <string name="action_rate">Google Play で評価</string>
+  <string name="action_rate">Google Playで評価</string>
   <string name="action_rate_description">ご意見をお聞かせください</string>
   <string name="action_support">開発者を支援</string>
   <string name="action_support_description">制限解除アプリ購入</string>
-  <string name="action_issue">GitHub で新しい Issue を作成</string>
+  <string name="action_issue">GitHubで新しいIssueを作成</string>
   <string name="action_issue_description">バグ報告または機能の提案</string>
   <string name="action_retry">再試行</string>
-  <string name="action_logcat">Logcat を表示</string>
+  <string name="action_logcat">Logcatを表示</string>
   <string name="action_copy_to_clipboard">クリップボードにコピー</string>
   <string name="action_reload">再読み込み</string>
   <string name="action_change_tempo">テンポ変更</string>
@@ -181,7 +181,7 @@
   <string name="msg_gain">音量ブースト状態で再生しますか？</string>
   <string name="msg_gain_description">大音量での再生は耳を痛める危険性があり、ヘッドホン着用時には特に注意が必要です！</string>
   <string name="msg_split_screen">画面サイズが小さすぎます</string>
-  <string name="msg_split_screen_description">Tack を分割画面で表示すると、メトロノームの操作に問題が生じる場合があります。可能であれば、より大きなサイズの画面でご利用ください。</string>
+  <string name="msg_split_screen_description">Tackを分割画面で表示すると、メトロノームの操作に問題が生じる場合があります。可能であれば、より大きなサイズの画面でご利用ください。</string>
   <string name="msg_notification_permission">通知許可が必要です</string>
   <string name="msg_notification_permission_description">Tackが低優先度の通知を表示して音声のバックグラウンド再生を継続するためには、通知の表示を許可する必要があります。次のダイアログで許可を拒否した場合、アプリが表示されていない状態では音声の再生が停止します。</string>
   <string name="msg_notification_permission_denied">バックグラウンド再生には通知許可が必要です</string>
@@ -417,7 +417,7 @@
   <string name="about_key_description_invalid">無効</string>
   <string name="about_key_description_ignored">無視</string>
   <string name="about_github_description">ソースコード</string>
-  <string name="about_translation_description">Tack の翻訳を手伝う</string>
+  <string name="about_translation_description">Tackの翻訳を手伝う</string>
   <string name="about_privacy">プライバシーポリシー</string>
   <string name="about_privacy_description">データの取り扱い方針</string>
 
