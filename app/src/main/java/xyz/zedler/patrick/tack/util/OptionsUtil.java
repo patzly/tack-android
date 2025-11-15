@@ -211,13 +211,9 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   }
 
   public void update() {
-    if (useDialog) {
-      bindingDialog.scrollOptions.scrollTo(0, 0);
-    }
     if (binding == null) {
       return;
     }
-
     binding.linearOptionsEditPartContainer.setVisibility(editPart ? View.VISIBLE : View.GONE);
     binding.linearOptionsUseCurrentConfig.setOnClickListener(this);
     updateTempo();
