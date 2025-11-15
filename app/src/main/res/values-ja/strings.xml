@@ -320,7 +320,7 @@
   <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
   <string name="settings_contrast_high">高</string>
   <string name="settings_contrast_dynamic">デバイステーマのコントラストはシステム設定から指定する必要があります</string>
-  <string name="settings_contrast_dynamic_unsupported">デバイステーマのダイナミックコントラストは Android 14 以降でのみ利用可能です。</string>
+  <string name="settings_contrast_dynamic_unsupported">デバイステーマのダイナミックコントラストはAndroid 14以降でのみ利用可能です。</string>
 
   <string name="settings_haptic">触覚効果</string>
   <string name="settings_haptic_description">拍モードでの振動と個別に設定できます</string>
