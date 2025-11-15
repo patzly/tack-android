@@ -117,7 +117,7 @@
   <string name="action_recommend_description">Tackを友達におすすめする</string>
   <string name="action_email">メールを送信</string>
   <string name="action_email_description">開発者に連絡</string>
-  <string name="action_rate">Google Playで評価</string>
+  <string name="action_rate">Google Play Storeで評価</string>
   <string name="action_rate_description">ご意見をお聞かせください</string>
   <string name="action_support">開発者を支援</string>
   <string name="action_support_description">制限解除アプリ購入</string>
@@ -144,7 +144,7 @@
   <string name="action_delete">削除</string>
   <string name="action_move_up">上へ移動</string>
   <string name="action_move_down">下へ移動</string>
-  <string name="action_open_play_store">Playストアを開く</string>
+  <string name="action_open_play_store">Play Storeを開く</string>
   <string name="action_backup_restore">バックアップ/復元</string>
   <string name="action_backup">バックアップ作成</string>
   <string name="action_backup_description">任意のディレクトリにバックアップファイルを保存します</string>
@@ -166,7 +166,7 @@
   <!-- MESSAGES -->
 
   <string name="msg_feedback">素晴らしいアプリの開発には、膨大な時間とユーザーからのフィードバックが必要です。</string>
-  <string name="msg_feedback_contact">要望や意見、質問がある場合はご連絡ください！そして、 Playストアで素敵なレビューを書いていただけると非常に嬉しいです。</string>
+  <string name="msg_feedback_contact">要望や意見、質問がある場合はご連絡ください！そして、 Play Storeで素敵なレビューを書いていただけると非常に嬉しいです。</string>
   <string name="msg_recommend">素敵なメトロノームアプリをチェック: \n%1$s</string>
   <string name="msg_vibration_unavailable">このデバイスでは振動を利用できません。音を出力します。</string>
   <string name="msg_service_running">メトロノーム機能実行中</string>
@@ -209,7 +209,7 @@
   <string name="msg_songs_intro_description">メトロノームの設定をソング内にパートとして保存し、並べ替えることができます。まっずメトロノーム操作とオプションを自由に調整し、新規パートとしてソング内に追加するか、既存パートを編集できます。</string>
   <string name="msg_widget_description">ソングの表示と再生ができます</string>
   <string name="msg_installer_check">無効な制限解除アプリ</string>
-  <string name="msg_installer_check_description">Google Playで制限解除アプリを購入し、インストールしてください。ご支援をよろしくお願いします！</string>
+  <string name="msg_installer_check_description">Google Play Storeで制限解除アプリを購入し、インストールしてください。ご支援をよろしくお願いします！</string>
   <string name="msg_widget_prompt">ソングに素早くアクセスしたいですか？</string>
   <string name="msg_widget_prompt_description">ホーム画面に素敵なウィジェットを配置しましょう。</string>
 
