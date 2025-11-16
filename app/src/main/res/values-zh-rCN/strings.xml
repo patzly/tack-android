@@ -224,7 +224,7 @@
     <item quantity="other">%1$d 拍</item>
   </plurals>
   <plurals name="options_unit_subdivisions">
-    <item quantity="other">%1$d 细分节拍</item>
+    <item quantity="other">%1$d 个细分节拍</item>
   </plurals>
   <string name="options_unit_seconds">秒</string>
   <plurals name="options_unit_seconds">
