@@ -397,6 +397,7 @@
   <string name="help_song_picker_answer">你歌曲库中的所有歌曲都会显示在主页的歌曲选择器中，但是你可以根据需要开启全屏清单。展示顺序取决于你在清单中的选择。要应用某首歌曲，只需要点击即可。\n如果你想要切换回选择歌曲前的配置，请点击歌曲名称旁的 × 号。</string>
   <string name="help_song_part">为什么歌曲没有切换到下一部分？</string>
   <string name="help_song_part_answer">要自动切换到歌曲的下一部分，需要已经设置每个部分的时长。如果你没有设置时长，则该部分将会被认定为没有时长限制。\n要设置时长，只需要简单的点击当前曲目并打开曲目详细，然后点击目标部分的编辑按钮以设置该部分的时长。不要忘记保存你的变更！</string>
+  <string name="help_notification_displays">为什么在我在前台离开应用时会显示节拍器服务通知？</string>
   <!-- ABOUT -->
 
   <string name="about_version">版本</string>
