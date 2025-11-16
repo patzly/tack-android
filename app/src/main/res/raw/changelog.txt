@@ -1,5 +1,9 @@
 After six months of dedicated work in my spare time, I'm thrilled to announce the release of Tack 6.0 — featuring a major redesign and low-latency audio!
 
+### 6.0.2
+
+- Fixed: haptic feedback while rotating tempo picker after limits reached
+
 ### 6.0.1
 
 - Fixed: some beats randomly not playing due to threading issues (thanks Gwrvan!)

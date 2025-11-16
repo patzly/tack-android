@@ -444,8 +444,10 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     binding.tempoPickerMain.setOnRotationListener(new OnRotationListener() {
       @Override
       public void onRotate(int tempo) {
-        changeTempo(isRtl ? -tempo : tempo);
-        activity.performHapticSegmentTick(binding.tempoPickerMain, false);
+        boolean success = changeTempo(isRtl ? -tempo : tempo);
+        if (success) {
+          activity.performHapticSegmentTick(binding.tempoPickerMain, false);
+        }
       }
 
       @Override
@@ -1686,16 +1688,18 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         (config.usePolyrhythm() ? 1 : 0);
   }
 
-  private void changeTempo(int difference) {
+  private boolean changeTempo(int difference) {
     if (getMetronomeEngine() == null) {
-      return;
+      return false;
     }
     int tempoNew = getMetronomeEngine().getConfig().getTempo() + difference;
     if (tempoNew >= Constants.TEMPO_MIN && tempoNew <= Constants.TEMPO_MAX) {
       updateTempoDisplay(getMetronomeEngine().getConfig().getTempo(), tempoNew);
       getMetronomeEngine().setTempo(tempoNew);
       getMetronomeEngine().maybeUpdateDefaultSong();
+      return true;
     }
+    return false;
   }
 
   private void updateTempoDisplay(int tempoOld, int tempoNew) {
