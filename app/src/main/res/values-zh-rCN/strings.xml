@@ -283,6 +283,9 @@
   </plurals>
   <string name="options_mute_random">随机化较小的值</string>
   <string name="options_subdivisions">子节拍</string>
+  <plurals name="options_subdivisions_description">
+    <item quantity="other">%1$d / 每拍</item>
+  </plurals>
   <string name="options_swing">摇摆</string>
   <string name="options_swing_3">三连音</string>
   <string name="options_swing_5">五连音</string>
