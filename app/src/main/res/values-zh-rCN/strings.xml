@@ -209,6 +209,7 @@
   <string name="msg_songs_intro_description">你可以将节拍器配置存储并编排为歌曲的一部分。只需要根据你的偏好设定节拍器控制和选项，然后将目前配置作为新部分添加至歌曲中，或编辑现有部分即可。</string>
   <string name="msg_widget_description">查看你的歌曲并播放</string>
   <string name="msg_installer_check">无效的解锁应用</string>
+  <string name="msg_installer_check_description">请在 Google Play 上购买并安装解锁应用。谢谢你的支持！</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">小节</string>
