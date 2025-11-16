@@ -398,6 +398,7 @@
   <string name="help_song_part">为什么歌曲没有切换到下一部分？</string>
   <string name="help_song_part_answer">要自动切换到歌曲的下一部分，需要已经设置每个部分的时长。如果你没有设置时长，则该部分将会被认定为没有时长限制。\n要设置时长，只需要简单的点击当前曲目并打开曲目详细，然后点击目标部分的编辑按钮以设置该部分的时长。不要忘记保存你的变更！</string>
   <string name="help_notification_displays">为什么在我在前台离开应用时会显示节拍器服务通知？</string>
+  <string name="help_notification_displays_answer">如果你未在设置中启用「永久通知」，则当节拍器在后台运行时，该通知对节拍器服务保持活动状态至关重要。\n该服务负责管理播放并追踪计时器和已使用时间等实时数据，以将播放与应用界面进行区分。\n你可以点击「停止」以降服务移至后台，但是这不再保证它不会被系统终止。这可能会导致计时器和已使用时间被重置，直到服务再次位于前台。\n你也可以在设置中启用永久通知，以便始终能够在通知区域访问启动或停止功能。</string>
   <!-- ABOUT -->
 
   <string name="about_version">版本</string>
