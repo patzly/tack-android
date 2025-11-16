@@ -211,6 +211,8 @@
   <string name="msg_installer_check">无效的解锁应用</string>
   <string name="msg_installer_check_description">请在 Google Play 上购买并安装解锁应用。谢谢你的支持！</string>
   <string name="msg_widget_prompt">快速访问你的曲目？</string>
+  <string name="msg_widget_prompt_description">在你的桌面放置一个漂亮的小部件。</string>
+
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">小节</string>
