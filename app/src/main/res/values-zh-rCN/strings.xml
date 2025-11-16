@@ -367,6 +367,7 @@
 
   <string name="settings_flash_screen">屏幕闪烁</string>
   <string name="settings_flash_screen_description">在每个节拍</string>
+  <string name="settings_flash_screen_off">关闭</string>
   <string name="settings_keep_awake">保持屏幕唤醒</string>
   <string name="settings_perm_notification">永远通知</string>
   <string name="settings_perm_notification_description">始终访问播放/停止控制</string>
