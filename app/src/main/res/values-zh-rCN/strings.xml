@@ -191,6 +191,7 @@
   <string name="msg_discard_changes">放弃更改？</string>
   <string name="msg_discard_changes_description">你确定不想保存它们吗？</string>
   <string name="msg_delete_song">删除歌曲？</string>
+  <string name="msg_delete_song_description">你确定你要删除整首歌曲及其所有部分吗？该行为不可逆转。</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">小节</string>
