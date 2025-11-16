@@ -195,6 +195,7 @@
   <string name="msg_songs_empty">空的歌曲库</string>
   <string name="msg_songs_empty_description">添加你想联系的歌曲</string>
   <string name="msg_unlock">来自开发者的消息</string>
+  <string name="msg_unlock_description">你是否喜欢 Tack 中大量强大功能和无广告体验？我花了数年时间建立了免费的 Tack，尤其是歌曲库功能花了数月的辛勤工作。\n为了继续改进 Tack，我恳请大家做出一点小贡献。作为回报，你将会获得一个解锁应用，其中包含无限制的歌曲数量和无限制的歌曲部分。感谢您的支持！</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">小节</string>
