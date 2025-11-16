@@ -108,7 +108,7 @@
   <string name="action_add_beat">增加节拍</string>
   <string name="action_remove_beat">减少节拍</string>
   <string name="action_add_sub">新增细分节拍</string>
-  <string name="action_remove_sub">移除细分节拍</string>
+  <string name="action_remove_sub">移除细分音符</string>
   <string name="action_beat_mode">节拍模式</string>
   <string name="action_send_feedback">反馈</string>
   <string name="action_reset">重置</string>
@@ -224,7 +224,7 @@
     <item quantity="other">%1$d 拍</item>
   </plurals>
   <plurals name="options_unit_subdivisions">
-    <item quantity="other">%1$d 个细分节拍</item>
+    <item quantity="other">%1$d 个细分音符</item>
   </plurals>
   <string name="options_unit_seconds">秒</string>
   <plurals name="options_unit_seconds">
