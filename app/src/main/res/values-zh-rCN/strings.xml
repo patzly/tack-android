@@ -383,6 +383,9 @@
   <string name="settings_big_logo">显示大型 Logo 动画</string>
   <string name="settings_big_logo_description">而不是在播放时显示节奏选择器</string>
 
+  <!-- HELP -->
+
+  <string name="help_tempo_change">如何才能变更拍子？</string>
   <!-- ABOUT -->
 
   <string name="about_version">版本</string>
