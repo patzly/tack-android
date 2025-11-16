@@ -402,6 +402,8 @@
   <string name="help_notification_disappears">为什么当我关闭应用时节拍器服务通知会消失？</string>
   <string name="help_notification_disappears_answer">当从最近应用中关闭应用时，节拍器服务节拍器服务将会终止，通知也会消失。此行为皆在节省电力和资源。\n如果你想永久保留通知以供启动或停止功能，你可以在设置中启用「永久通知」，并且不要从最近应用中关闭此应用。</string>
   <string name="help_translation">如何获取适合我的语言的Tack？</string>
+  <string name="help_translation_answer">Tack 的翻译由 Transifex 管理，像你一样的使用者也可以在这里翻译！请访问 GitHub 上的 Tack 以获取更多资讯，或直接进入翻译流程：</string>
+
   <!-- ABOUT -->
 
   <string name="about_version">版本</string>
