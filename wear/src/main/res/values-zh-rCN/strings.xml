@@ -24,7 +24,7 @@
   <string name="wear_title_settings">设置</string>
   <string name="wear_title_beats">拍数</string>
   <string name="wear_title_beats_count">节拍（%1$d）</string>
-  <string name="wear_title_subdivisions_count">分区（%1$d）</string>
+  <string name="wear_title_subdivisions_count">细分音符（%1$d）</string>
   <string name="wear_title_notification_channel">节拍器服务</string>
   <string name="wear_title_bookmarks">书签</string>
 
