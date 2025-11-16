@@ -235,6 +235,9 @@
     <item quantity="other">%1$d 分钟</item>
   </plurals>
   <string name="options_inactive">停用</string>
+  <plurals name="options_beats_description">
+    <item quantity="other">%1$d 每小节</item>
+  </plurals>
   <string name="options_count_in">计数</string>
   <plurals name="options_count_in_description">
     <item quantity="other">应用修改器之前的等待 %1$d 条</item>
