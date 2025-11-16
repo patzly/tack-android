@@ -393,6 +393,7 @@
   <string name="help_swing_answer">如果你在选项中启用了摇摆，Tack 只是为你自动设置细分区域。要禁用摆动功能，只需根据您的喜好手动设置细分节拍即可。</string>
   <string name="help_song_library">歌曲库如何运作？</string>
   <string name="help_song_library_answer">歌曲库是节拍器配置的集合，你可以存储并应用这些配置。要存储当前配置，只需要开启歌曲库并创建新的歌曲即可。当前配置将会自动添加至歌曲部分清单中，你可以在其中进一步调整。为歌曲命名后，请不要忘记点击右上角的软碟图标来保存结果。</string>
+  <string name="help_song_picker">歌曲选择器如何运作？</string>
   <!-- ABOUT -->
 
   <string name="about_version">版本</string>
