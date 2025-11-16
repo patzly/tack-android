@@ -395,6 +395,7 @@
   <string name="help_song_library_answer">歌曲库是节拍器配置的集合，你可以存储并应用这些配置。要存储当前配置，只需要开启歌曲库并创建新的歌曲即可。当前配置将会自动添加至歌曲部分清单中，你可以在其中进一步调整。为歌曲命名后，请不要忘记点击右上角的软碟图标来保存结果。</string>
   <string name="help_song_picker">歌曲选择器如何运作？</string>
   <string name="help_song_picker_answer">你歌曲库中的所有歌曲都会显示在主页的歌曲选择器中，但是你可以根据需要开启全屏清单。展示顺序取决于你在清单中的选择。要应用某首歌曲，只需要点击即可。\n如果你想要切换回选择歌曲前的配置，请点击歌曲名称旁的 × 号。</string>
+  <string name="help_song_part">为什么歌曲没有切换到下一部分？</string>
   <!-- ABOUT -->
 
   <string name="about_version">版本</string>
