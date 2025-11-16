@@ -199,6 +199,7 @@
   <string name="msg_backup_description">你可以将整个歌曲库备份至装置，也可以从备份中还原歌曲库。</string>
   <string name="msg_backup_error">备份时发生错误</string>
   <string name="msg_backup_directory_missing">未选择备份的存储目录</string>
+  <string name="msg_backup_success">备份已成功创建</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">小节</string>
