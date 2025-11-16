@@ -50,8 +50,8 @@
   <string name="wear_action_stop">停止</string>
   <string name="wear_action_add_beat">增加节拍</string>
   <string name="wear_action_remove_beat">减少节拍</string>
-  <string name="wear_action_add_sub">新增分区</string>
-  <string name="wear_action_remove_sub">移除分区</string>
+  <string name="wear_action_add_sub">新增细分音符</string>
+  <string name="wear_action_remove_sub">移除细分音符</string>
   <string name="wear_action_tempo_tap">轻拍速度</string>
   <string name="wear_action_bookmark">书签</string>
   <string name="wear_action_beat_mode">节拍模式</string>
