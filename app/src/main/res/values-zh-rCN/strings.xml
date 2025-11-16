@@ -202,6 +202,7 @@
   <string name="msg_backup_success">备份已成功创建</string>
   <string name="msg_restore_error">还原备份时发生错误</string>
   <string name="msg_restore_file_missing">未选择要还原的档案</string>
+  <string name="msg_restore_success">备份已成功还原</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">小节</string>
