@@ -38,7 +38,7 @@
     <item quantity="other">%1$d 拍</item>
   </plurals>
   <plurals name="wear_label_subs">
-    <item quantity="other">%1$d 分区</item>
+    <item quantity="other">%1$d 个细分音符</item>
   </plurals>
 
   <!-- ACTIONS -->
