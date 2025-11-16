@@ -387,7 +387,7 @@
 
   <string name="help_tempo_change">如何才能变更拍子？</string>
   <string name="help_tempo_change_answer">为修改节奏，你可以拖动和旋转位于软件主页正中心的节拍选择器或点击圆圈左右两边的按钮。\n通过点击节奏选择器，你可以打开一个对话框以使用轻敲节奏或使用键盘输入来变更节奏。</string>
-  <string name="help_time_signature">如何设置时间签名？</string>
+  <string name="help_time_signature">如何指定拍号？</string>
   <!-- ABOUT -->
 
   <string name="about_version">版本</string>
