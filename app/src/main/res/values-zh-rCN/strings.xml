@@ -286,7 +286,7 @@
   <plurals name="options_subdivisions_description">
     <item quantity="other">%1$d / 每拍</item>
   </plurals>
-  <string name="options_subdivisions_beats_muted">静音节拍</string>
+  <string name="options_subdivisions_beats_muted">节拍已静音</string>
   <string name="options_swing">摇摆</string>
   <string name="options_swing_3">三连音</string>
   <string name="options_swing_5">五连音</string>
