@@ -282,7 +282,7 @@
     <item quantity="other">静音 %1$d 秒</item>
   </plurals>
   <string name="options_mute_random">随机化较小的值</string>
-  <string name="options_subdivisions">细分节拍</string>
+  <string name="options_subdivisions">细分音符</string>
   <plurals name="options_subdivisions_description">
     <item quantity="other">%1$d / 每拍</item>
   </plurals>
