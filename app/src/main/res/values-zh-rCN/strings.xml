@@ -292,6 +292,7 @@
   <string name="options_swing_3">三连音</string>
   <string name="options_swing_5">五连音</string>
   <string name="options_swing_7">七连音</string>
+  <string name="options_polyrhythm">复节奏</string>
   <!-- SETTINGS -->
 
   <string name="settings_language">语言</string>
