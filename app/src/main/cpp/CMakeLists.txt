@@ -14,8 +14,9 @@ target_link_libraries(
 )
 
 # Make builds reproducible
+add_link_options(-Wl,--strip-comment)
 add_link_options(-Wl,--build-id=none)
-set(CMAKE_C_FLAGS_RELEASE   "${CMAKE_C_FLAGS_RELEASE}   -g0 -fdebug-prefix-map=${CMAKE_SOURCE_DIR}=.")
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -g0 -fdebug-prefix-map=${CMAKE_SOURCE_DIR}=.")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffile-prefix-map=${CMAKE_SOURCE_DIR}=.")
+set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -ffile-prefix-map=${CMAKE_SOURCE_DIR}=.")
 set(CMAKE_SORT_OUTPUT_ON ON)
 set(CMAKE_TEMP_FILE_PREFIX .tmp)
