@@ -194,6 +194,7 @@
   <string name="msg_delete_song_description">你确定你要删除整首歌曲及其所有部分吗？该行为不可逆转。</string>
   <string name="msg_songs_empty">空的歌曲库</string>
   <string name="msg_songs_empty_description">添加你想联系的歌曲</string>
+  <string name="msg_unlock">来自开发者的消息</string>
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">小节</string>
