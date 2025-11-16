@@ -236,7 +236,7 @@
   </plurals>
   <string name="options_inactive">停用</string>
   <plurals name="options_beats_description">
-    <item quantity="other">%1$d 每小节</item>
+    <item quantity="other">%1$d / 每小节</item>
   </plurals>
   <string name="options_count_in">计数</string>
   <plurals name="options_count_in_description">
