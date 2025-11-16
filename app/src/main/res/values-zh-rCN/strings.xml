@@ -329,6 +329,8 @@
   <string name="settings_reduce_animations_description">可提高性能</string>
 
   <string name="settings_backup">备份 / 还原歌曲库</string>
+  <string name="settings_backup_description">在切换设备时十分重要</string>
+
   <string name="settings_reset">全部重置</string>
   <string name="settings_reset_description">无法撤销</string>
 
