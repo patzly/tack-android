@@ -288,6 +288,7 @@
   </plurals>
   <string name="options_subdivisions_beats_muted">节拍已静音</string>
   <string name="options_swing">摇摆</string>
+  <string name="options_swing_description">子节拍设定为匹配摇摆比率</string>
   <string name="options_swing_3">三连音</string>
   <string name="options_swing_5">五连音</string>
   <string name="options_swing_7">七连音</string>
