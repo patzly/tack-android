@@ -414,6 +414,7 @@
   <string name="about_key">解锁应用</string>
   <string name="about_key_description_not_installed">未安装</string>
   <string name="about_key_description_installed">已安装</string>
+  <string name="about_key_description_invalid">无效</string>
   <string name="about_github_description">源码</string>
   <string name="about_translation_description">帮助翻译 Tack</string>
   <string name="about_privacy">隐私政策</string>
