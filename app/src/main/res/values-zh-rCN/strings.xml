@@ -390,6 +390,7 @@
   <string name="help_time_signature">如何指定拍号？</string>
   <string name="help_time_signature_answer">查看拍号的第一个数字，并在 Tack 中相应地设置节拍。例如，4/4 拍设置 4 拍，2/2 拍设置 2 拍，以此类推。6/8 拍比较特殊，这里使用 2 拍，并可选择 3 个细分，因为只有第 1 和第 4 个八分音符是重拍。\n此外，您可以通过点击节拍来更改其重音。在选项中，您还可以选择摇摆比率，它会自动为您设置细分。</string>
   <string name="help_swing">如何停用摇摆？</string>
+  <string name="help_swing_answer">如果你在选项中启用了摇摆，Tack 只是为你自动设置细分区域。要禁用摆动功能，只需根据您的喜好手动设置细分区域即可。</string>
   <!-- ABOUT -->
 
   <string name="about_version">版本</string>
