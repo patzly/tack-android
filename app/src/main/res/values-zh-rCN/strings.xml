@@ -349,6 +349,7 @@
   <string name="settings_ignore_focus">忽略音频焦点</string>
   <string name="settings_ignore_focus_description">在其他应用程序发出声音时保持播放</string>
 
+  <string name="settings_gain">音量增强 / 减弱</string>
   <string name="settings_gain_disclaimer">当启用增强功能时，每次启动前都会显示警告。开发者对任何潜在的损害不承担责任。</string>
 
   <string name="settings_active_beat">高亮当前节拍</string>
