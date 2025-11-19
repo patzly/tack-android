@@ -137,6 +137,7 @@
   <string name="action_rename">重新命名</string>
   <string name="action_rename_part">重新命名部份</string>
   <string name="action_rename_part_description">如果編號就夠了，也可以留空</string>
+  <string name="action_duplicate">複製</string>
   <string name="action_update">更新</string>
   <string name="action_use_current_config">使用目前配置</string>
   <string name="action_use_current_config_description">從主頁</string>
