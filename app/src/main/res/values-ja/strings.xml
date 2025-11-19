@@ -363,7 +363,7 @@
   <string name="settings_reset_timer_description">タイマーの途中再開を無効化します</string>
 
   <string name="settings_big_time_text">大きなサイズの時間表示</string>
-  <string name="settings_big_time_text_description">既定の文字サイズでは足りない場合に便利です</string>
+  <string name="settings_big_time_text_description">既定の文字サイズが小さすぎる場合に便利です</string>
 
   <string name="settings_flash_screen">画面明滅</string>
   <string name="settings_flash_screen_description">拍に合せて明滅します</string>
