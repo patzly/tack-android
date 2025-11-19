@@ -305,6 +305,7 @@
     <item quantity="one">Play %1$d second</item>
     <item quantity="other">Play %1$d seconds</item>
   </plurals>
+  <string name="options_mute_mute_beats">Mute %1$d%% of all beats</string>
   <plurals name="options_mute_mute_bars">
     <item quantity="one">Mute %1$d bar</item>
     <item quantity="other">Mute %1$d bars</item>

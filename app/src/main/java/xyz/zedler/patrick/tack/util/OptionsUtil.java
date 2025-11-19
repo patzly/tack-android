@@ -67,6 +67,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   private PartialDialogOptionsBinding bindingDialog;
   private Part part;
   private MetronomeConfig config;
+  private final int ticksMaxPerRange;
 
   public OptionsUtil(
       MainActivity activity, FragmentMainBinding fragmentBinding, OnOptionsListener listener
@@ -92,6 +93,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       binding.sliderOptionsMuteMute.addOnSliderTouchListener(this);
     }
 
+    ticksMaxPerRange = UiUtil.isTablet(activity) ? 50 : 20;
+
     if (useDialog) {
       dialogUtil.createDialog(builder -> {
         builder.setTitle(R.string.title_options);
@@ -113,6 +116,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     dialogUtil = new DialogUtil(activity, "edit_part");
     bindingDialog = PartialDialogOptionsBinding.inflate(activity.getLayoutInflater());
     binding = bindingDialog.partialOptions;
+
+    ticksMaxPerRange = UiUtil.isTablet(activity) ? 50 : 20;
   }
 
   public void maybeInit() {
@@ -234,14 +239,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     int tempo = getConfig().getTempo();
     binding.textOptionsTempo.setText(activity.getString(R.string.label_bpm_value, tempo));
 
-    int tempoFrom = (int) binding.sliderOptionsTempo.getValueFrom();
-    int tempoTo = (int) binding.sliderOptionsTempo.getValueTo();
-    int tempoRange = tempoTo - tempoFrom;
-
     // Calculate current range
-    int tempoFactor = (tempo - 1) / (tempoRange + 1);
-    int tempoFromNew = 1 + tempoFactor * (tempoRange + 1);
-    int tempoToNew = tempoFromNew + tempoRange;
+    int tempoFactor = (tempo - 1) / ticksMaxPerRange;
+    int tempoFromNew = 1 + tempoFactor * ticksMaxPerRange;
+    int tempoToNew = tempoFromNew + ticksMaxPerRange - 1;
 
     binding.buttonOptionsTempoDecrease.setEnabled(tempoFromNew > Constants.TEMPO_MIN);
     binding.buttonOptionsTempoDecrease.setOnClickListener(this);
@@ -256,10 +257,9 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     );
 
     binding.sliderOptionsTempo.removeOnChangeListener(this);
-    binding.sliderOptionsTempo.setValueFrom(tempoFromNew);
-    binding.sliderOptionsTempo.setValueTo(tempoToNew);
-    int tempoSafe = Math.max(tempoFromNew, Math.min(tempo, tempoToNew));
-    binding.sliderOptionsTempo.setValue(tempoSafe);
+    ViewUtil.configureSliderSafely(
+        binding.sliderOptionsTempo, tempoFromNew, tempoToNew, 1, tempo
+    );
     binding.sliderOptionsTempo.addOnChangeListener(this);
     binding.sliderOptionsTempo.setLabelFormatter(
         value -> activity.getString(R.string.label_bpm_value, (int) value)
@@ -453,7 +453,9 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     }
     int countIn = getConfig().getCountIn();
     binding.sliderOptionsCountIn.removeOnChangeListener(this);
-    binding.sliderOptionsCountIn.setValue(countIn);
+    ViewUtil.configureSliderSafely(
+        binding.sliderOptionsCountIn, 0, Constants.COUNT_IN_MAX, 1, countIn
+    );
     binding.sliderOptionsCountIn.addOnChangeListener(this);
     binding.sliderOptionsCountIn.setLabelFormatter(
         value -> activity.getResources().getQuantityString(
@@ -501,8 +503,34 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       binding.textOptionsIncrementalAmount.setText(R.string.options_inactive);
     }
 
+    // Calculate current range
+    int factorAmount = incrementalAmount / ticksMaxPerRange;
+    int valueFromNewAmount = factorAmount * ticksMaxPerRange;
+    int valueToNewAmount = Math.min(
+        valueFromNewAmount + ticksMaxPerRange - 1, Constants.INCREMENTAL_AMOUNT_MAX
+    );
+
+    binding.buttonOptionsIncrementalAmountDecrease.setEnabled(valueFromNewAmount > 0);
+    binding.buttonOptionsIncrementalAmountDecrease.setOnClickListener(this);
+    ViewCompat.setTooltipText(
+        binding.buttonOptionsIncrementalAmountDecrease,
+        activity.getString(R.string.action_decrease)
+    );
+
+    binding.buttonOptionsIncrementalAmountIncrease.setEnabled(
+        valueToNewAmount < Constants.INCREMENTAL_AMOUNT_MAX
+    );
+    binding.buttonOptionsIncrementalAmountIncrease.setOnClickListener(this);
+    ViewCompat.setTooltipText(
+        binding.buttonOptionsIncrementalAmountIncrease,
+        activity.getString(R.string.action_increase)
+    );
+
     binding.sliderOptionsIncrementalAmount.removeOnChangeListener(this);
-    binding.sliderOptionsIncrementalAmount.setValue(incrementalAmount);
+    ViewUtil.configureSliderSafely(
+        binding.sliderOptionsIncrementalAmount,
+        valueFromNewAmount, valueToNewAmount, 1, incrementalAmount
+    );
     binding.sliderOptionsIncrementalAmount.addOnChangeListener(this);
     binding.sliderOptionsIncrementalAmount.setLabelFormatter(
         value -> activity.getString(R.string.label_bpm_value, (int) value)
@@ -550,14 +578,12 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     );
     binding.textOptionsIncrementalInterval.setAlpha(isIncrementalActive ? 1 : 0.5f);
 
-    int intervalFrom = (int) binding.sliderOptionsIncrementalInterval.getValueFrom();
-    int intervalTo = (int) binding.sliderOptionsIncrementalInterval.getValueTo();
-    int intervalRange = intervalTo - intervalFrom;
-
     // Calculate current range
-    int intervalFactor = (incrementalInterval - 1) / (intervalRange + 1);
-    int intervalFromNew = 1 + intervalFactor * (intervalRange + 1);
-    int intervalToNew = intervalFromNew + intervalRange;
+    int intervalFactor = (incrementalInterval - 1) / ticksMaxPerRange;
+    int intervalFromNew = 1 + intervalFactor * ticksMaxPerRange;
+    int intervalToNew = Math.min(
+        intervalFromNew + ticksMaxPerRange - 1, Constants.INCREMENTAL_INTERVAL_MAX
+    );
 
     binding.buttonOptionsIncrementalIntervalDecrease.setEnabled(
         isIncrementalActive && intervalFromNew > 1
@@ -578,12 +604,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     );
 
     binding.sliderOptionsIncrementalInterval.removeOnChangeListener(this);
-    binding.sliderOptionsIncrementalInterval.setValueFrom(intervalFromNew);
-    binding.sliderOptionsIncrementalInterval.setValueTo(intervalToNew);
-    int incrementalIntervalSafe = Math.max(
-        intervalFromNew, Math.min(incrementalInterval, intervalToNew)
+    ViewUtil.configureSliderSafely(
+        binding.sliderOptionsIncrementalInterval,
+        intervalFromNew, intervalToNew, 1, incrementalInterval
     );
-    binding.sliderOptionsIncrementalInterval.setValue(incrementalIntervalSafe);
     binding.sliderOptionsIncrementalInterval.addOnChangeListener(this);
     binding.sliderOptionsIncrementalInterval.setLabelFormatter(value -> {
       int resId;
@@ -635,14 +659,12 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     }
     binding.textOptionsIncrementalLimit.setAlpha(isIncrementalActive ? 1 : 0.5f);
 
-    int valueFrom = (int) binding.sliderOptionsIncrementalLimit.getValueFrom();
-    int valueTo = (int) binding.sliderOptionsIncrementalLimit.getValueTo();
-    int range = valueTo - valueFrom;
-
     // Calculate current range
-    int factor = incrementalLimit / (range + 1);
-    int valueFromNew = factor * (range + 1);
-    int valueToNew = valueFromNew + range;
+    int factor = incrementalLimit / ticksMaxPerRange;
+    int valueFromNew = factor * ticksMaxPerRange;
+    int valueToNew = Math.min(
+        valueFromNew + ticksMaxPerRange - 1, Constants.TEMPO_MAX - 1
+    );
 
     binding.buttonOptionsIncrementalLimitDecrease.setEnabled(
         isIncrementalActive && valueFromNew > 0
@@ -663,10 +685,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     );
 
     binding.sliderOptionsIncrementalLimit.removeOnChangeListener(this);
-    binding.sliderOptionsIncrementalLimit.setValueFrom(valueFromNew);
-    binding.sliderOptionsIncrementalLimit.setValueTo(valueToNew);
-    int incrementalLimitSafe = Math.max(valueFromNew, Math.min(incrementalLimit, valueToNew));
-    binding.sliderOptionsIncrementalLimit.setValue(incrementalLimitSafe);
+    ViewUtil.configureSliderSafely(
+        binding.sliderOptionsIncrementalLimit,
+        valueFromNew, valueToNew, 1, incrementalLimit
+    );
     binding.sliderOptionsIncrementalLimit.addOnChangeListener(this);
     binding.sliderOptionsIncrementalLimit.setLabelFormatter(
         value -> activity.getString(R.string.label_bpm_value, (int) value)
@@ -710,14 +732,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       binding.textOptionsTimerDuration.setText(R.string.options_inactive);
     }
 
-    int valueFrom = (int) binding.sliderOptionsTimerDuration.getValueFrom();
-    int valueTo = (int) binding.sliderOptionsTimerDuration.getValueTo();
-    int range = valueTo - valueFrom;
-
     // Calculate current range
-    int factor = timerDuration / (range + 1);
-    int valueFromNew = factor * (range + 1);
-    int valueToNew = valueFromNew + range;
+    int factor = timerDuration / ticksMaxPerRange;
+    int valueFromNew = factor * ticksMaxPerRange;
+    int valueToNew = Math.min(valueFromNew + ticksMaxPerRange - 1, Constants.TIMER_MAX);
 
     binding.buttonOptionsTimerDecrease.setEnabled(valueFromNew > 0);
     binding.buttonOptionsTimerDecrease.setOnClickListener(this);
@@ -734,10 +752,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     );
 
     binding.sliderOptionsTimerDuration.removeOnChangeListener(this);
-    binding.sliderOptionsTimerDuration.setValueFrom(valueFromNew);
-    binding.sliderOptionsTimerDuration.setValueTo(valueToNew);
-    int timerDurationSafe = Math.max(valueFromNew, Math.min(timerDuration, valueToNew));
-    binding.sliderOptionsTimerDuration.setValue(timerDurationSafe);
+    ViewUtil.configureSliderSafely(
+        binding.sliderOptionsTimerDuration,
+        valueFromNew, valueToNew, 1, timerDuration
+    );
     binding.sliderOptionsTimerDuration.addOnChangeListener(this);
     binding.sliderOptionsTimerDuration.setLabelFormatter(value -> {
       int resId;
@@ -778,6 +796,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     int mutePlay = getConfig().getMutePlay();
     int muteMute = getConfig().getMuteMute();
     String muteUnit = getConfig().getMuteUnit();
+    boolean isUnitBeats = muteUnit.equals(UNIT.BEATS);
     boolean muteRandom = getConfig().isMuteRandom();
     boolean isMuteActive = getConfig().isMuteActive();
     if (this.isMuteActive != isMuteActive) {
@@ -786,52 +805,118 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         listener.onModifiersCountChanged();
       }
     }
-    int resIdPlay, resIdMute, resIdLabel, checkedId;
+
+    // Mute Play
+
+    boolean showPlay = !isUnitBeats;
+    int visibilityPlayOld = binding.linearOptionsMutePlay.getVisibility();
+    int visibilityPlayNew = showPlay ? View.VISIBLE : View.GONE;
+    boolean visibilityPlayChanged = visibilityPlayOld != visibilityPlayNew;
+
+    int resIdPlay, resIdLabelPlay;
     if (muteUnit.equals(UNIT.SECONDS)) {
       resIdPlay = R.plurals.options_mute_play_seconds;
-      resIdMute = R.plurals.options_mute_mute_seconds;
-      resIdLabel = R.plurals.options_unit_seconds;
-      checkedId = R.id.button_options_mute_unit_seconds;
+      resIdLabelPlay = R.plurals.options_unit_seconds;
     } else {
       resIdPlay = R.plurals.options_mute_play_bars;
-      resIdMute = R.plurals.options_mute_mute_bars;
-      resIdLabel = R.plurals.options_unit_bars;
-      checkedId = R.id.button_options_mute_unit_bars;
+      resIdLabelPlay = R.plurals.options_unit_bars;
     }
-    if (isMuteActive) {
-      binding.textOptionsMutePlay.setText(
-          activity.getResources().getQuantityString(resIdPlay, mutePlay, mutePlay)
-      );
-    } else {
-      binding.textOptionsMutePlay.setText(R.string.options_inactive);
+    if (showPlay) {
+      if (isMuteActive) {
+        binding.textOptionsMutePlay.setText(
+            activity.getResources().getQuantityString(resIdPlay, mutePlay, mutePlay)
+        );
+      } else {
+        binding.textOptionsMutePlay.setText(R.string.options_inactive);
+      }
     }
 
     binding.sliderOptionsMutePlay.removeOnChangeListener(this);
-    binding.sliderOptionsMutePlay.setValue(mutePlay);
+    ViewUtil.configureSliderSafely(
+        binding.sliderOptionsMutePlay, 0, 49, 1, mutePlay
+    );
     binding.sliderOptionsMutePlay.addOnChangeListener(this);
     binding.sliderOptionsMutePlay.setLabelFormatter(value -> {
       int play = (int) value;
-      return activity.getResources().getQuantityString(resIdLabel, play, play);
+      return activity.getResources().getQuantityString(resIdLabelPlay, play, play);
     });
 
-    binding.textOptionsMuteMute.setText(
-        activity.getResources().getQuantityString(resIdMute, muteMute, muteMute)
-    );
-    binding.textOptionsMuteMute.setAlpha(isMuteActive ? 1 : 0.5f);
+    // Mute Mute
+
+    boolean showMute = isUnitBeats || isMuteActive || !useDialog;
+    int visibilityMuteOld = binding.linearOptionsMuteMute.getVisibility();
+    int visibilityMuteNew = showMute ? View.VISIBLE : View.GONE;
+    boolean visibilityMuteChanged = visibilityMuteOld != visibilityMuteNew;
+
+    int resIdMute, resIdLabelMute;
+    if (muteUnit.equals(UNIT.SECONDS)) {
+      resIdMute = R.plurals.options_mute_mute_seconds;
+      resIdLabelMute = R.plurals.options_unit_seconds;
+    } else if (muteUnit.equals(UNIT.BARS)) {
+      resIdMute = R.plurals.options_mute_mute_bars;
+      resIdLabelMute = R.plurals.options_unit_bars;
+    } else {
+      resIdMute = 0;
+      resIdLabelMute = R.plurals.options_unit_beats;
+    }
+    if (isUnitBeats && isMuteActive) {
+      binding.textOptionsMuteMute.setText(
+          activity.getString(R.string.options_mute_mute_beats, muteMute)
+      );
+    } else if (isUnitBeats) {
+      binding.textOptionsMuteMute.setText(R.string.options_inactive);
+    } else {
+      binding.textOptionsMuteMute.setText(
+          activity.getResources().getQuantityString(resIdMute, muteMute, muteMute)
+      );
+    }
+    binding.textOptionsMuteMute.setAlpha(isUnitBeats || isMuteActive ? 1 : 0.5f);
 
     binding.sliderOptionsMuteMute.removeOnChangeListener(this);
-    binding.sliderOptionsMuteMute.setValue(muteMute);
+    ViewUtil.configureSliderSafely(
+        binding.sliderOptionsMuteMute,
+        isUnitBeats ? Constants.MUTE_MUTE_MIN_BEATS : Constants.MUTE_MUTE_MIN,
+        isUnitBeats ? Constants.MUTE_MUTE_MAX_BEATS : Constants.MUTE_MUTE_MAX,
+        isUnitBeats ? Constants.MUTE_MUTE_STEP_SIZE_BEATS : Constants.MUTE_MUTE_STEP_SIZE,
+        muteMute
+    );
     binding.sliderOptionsMuteMute.addOnChangeListener(this);
     binding.sliderOptionsMuteMute.setLabelFormatter(value -> {
       int mute = (int) value;
-      return activity.getResources().getQuantityString(resIdLabel, mute, mute);
+      if (isUnitBeats) {
+        return activity.getString(R.string.options_mute_mute_beats, mute);
+      } else {
+        return activity.getResources().getQuantityString(resIdLabelMute, mute, mute);
+      }
     });
-    binding.sliderOptionsMuteMute.setEnabled(isMuteActive);
+    binding.sliderOptionsMuteMute.setEnabled(isUnitBeats || isMuteActive);
 
+    // Mute Unit
+
+    boolean showUnit = isMuteActive || !useDialog;
+    int visibilityUnitOld = binding.scrollHorizOptionsMuteUnit.getVisibility();
+    int visibilityUnitNew = showUnit ? View.VISIBLE : View.GONE;
+    boolean visibleUnitChanged = visibilityUnitOld != visibilityUnitNew;
+
+    int checkedId;
+    if (muteUnit.equals(UNIT.SECONDS)) {
+      checkedId = R.id.button_options_mute_unit_seconds;
+    } else if (muteUnit.equals(UNIT.BARS)) {
+      checkedId = R.id.button_options_mute_unit_bars;
+    } else {
+      checkedId = R.id.button_options_mute_unit_beats;
+    }
     binding.toggleOptionsMuteUnit.removeOnButtonCheckedListener(this);
     binding.toggleOptionsMuteUnit.check(checkedId);
     binding.toggleOptionsMuteUnit.addOnButtonCheckedListener(this);
     binding.toggleOptionsMuteUnit.setEnabled(isMuteActive);
+
+    // Mute Random
+
+    boolean showRandom = !isUnitBeats && (isMuteActive || !useDialog);
+    int visibilityRandomOld = binding.linearOptionsMuteRandom.getVisibility();
+    int visibilityRandomNew = showRandom ? View.VISIBLE : View.GONE;
+    boolean visibilityRandomChanged = visibilityRandomOld != visibilityRandomNew;
 
     binding.linearOptionsMuteRandom.setOnClickListener(this);
     binding.linearOptionsMuteRandom.setEnabled(isMuteActive);
@@ -855,13 +940,25 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         });
     binding.switchOptionsMuteRandom.setEnabled(isMuteActive);
 
-    int visibilityOld = binding.linearOptionsMuteContainer.getVisibility();
-    int visibilityNew = (isMuteActive || !useDialog) ? View.VISIBLE : View.GONE;
-    if (visibilityOld != visibilityNew) {
+    if (visibilityPlayChanged || visibilityMuteChanged
+        || visibleUnitChanged || visibilityRandomChanged
+    ) {
       Transition transition = new AutoTransition();
       transition.setDuration(Constants.ANIM_DURATION_SHORT);
       TransitionManager.beginDelayedTransition(binding.linearOptionsContainer, transition);
-      binding.linearOptionsMuteContainer.setVisibility(visibilityNew);
+    }
+
+    if (visibilityPlayChanged) {
+      binding.linearOptionsMutePlay.setVisibility(visibilityPlayNew);
+    }
+    if (visibilityMuteChanged) {
+      binding.linearOptionsMuteMute.setVisibility(visibilityMuteNew);
+    }
+    if (visibleUnitChanged) {
+      binding.scrollHorizOptionsMuteUnit.setVisibility(visibilityUnitNew);
+    }
+    if (visibilityRandomChanged) {
+      binding.linearOptionsMuteRandom.setVisibility(visibilityRandomNew);
     }
   }
 
@@ -1029,11 +1126,28 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         binding.linearOptionsSubs.removeViewAt(binding.linearOptionsSubs.getChildCount() - 1);
         updateSubControls();
       }
+    } else if (id == R.id.button_options_incremental_amount_decrease) {
+      int decreasedAmount = config.getIncrementalAmount() - ticksMaxPerRange;
+      if (editPart) {
+        config.setIncrementalAmount(decreasedAmount);
+      } else {
+        metronomeEngine.setIncrementalAmount(decreasedAmount);
+        metronomeEngine.maybeUpdateDefaultSong();
+      }
+      updateIncremental();
+      ViewUtil.startIcon(binding.buttonOptionsIncrementalAmountDecrease.getIcon());
+    } else if (id == R.id.button_options_incremental_amount_increase) {
+      int increasedAmount = config.getIncrementalAmount() + ticksMaxPerRange;
+      if (editPart) {
+        config.setIncrementalAmount(increasedAmount);
+      } else {
+        metronomeEngine.setIncrementalAmount(increasedAmount);
+        metronomeEngine.maybeUpdateDefaultSong();
+      }
+      updateIncremental();
+      ViewUtil.startIcon(binding.buttonOptionsIncrementalAmountIncrease.getIcon());
     } else if (id == R.id.button_options_incremental_interval_decrease) {
-      int valueFrom = (int) binding.sliderOptionsIncrementalInterval.getValueFrom();
-      int valueTo = (int) binding.sliderOptionsIncrementalInterval.getValueTo();
-      int range = valueTo - valueFrom;
-      int decreasedInterval = config.getIncrementalInterval() - range - 1;
+      int decreasedInterval = config.getIncrementalInterval() - ticksMaxPerRange;
       if (editPart) {
         config.setIncrementalInterval(decreasedInterval);
       } else {
@@ -1043,10 +1157,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalIntervalDecrease.getIcon());
     } else if (id == R.id.button_options_incremental_interval_increase) {
-      int valueFrom = (int) binding.sliderOptionsIncrementalInterval.getValueFrom();
-      int valueTo = (int) binding.sliderOptionsIncrementalInterval.getValueTo();
-      int range = valueTo - valueFrom;
-      int increasedInterval = config.getIncrementalInterval() + range + 1;
+      int increasedInterval = config.getIncrementalInterval() + ticksMaxPerRange;
       if (editPart) {
         config.setIncrementalInterval(increasedInterval);
       } else {
@@ -1056,10 +1167,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalIntervalIncrease.getIcon());
     } else if (id == R.id.button_options_incremental_limit_decrease) {
-      int valueFrom = (int) binding.sliderOptionsIncrementalLimit.getValueFrom();
-      int valueTo = (int) binding.sliderOptionsIncrementalLimit.getValueTo();
-      int range = valueTo - valueFrom;
-      int decreasedLimit = config.getIncrementalLimit() - range - 1;
+      int decreasedLimit = config.getIncrementalLimit() - ticksMaxPerRange;
       if (editPart) {
         config.setIncrementalLimit(decreasedLimit);
       } else {
@@ -1069,10 +1177,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalLimitDecrease.getIcon());
     } else if (id == R.id.button_options_incremental_limit_increase) {
-      int valueFrom = (int) binding.sliderOptionsIncrementalLimit.getValueFrom();
-      int valueTo = (int) binding.sliderOptionsIncrementalLimit.getValueTo();
-      int range = valueTo - valueFrom;
-      int increasedLimit = config.getIncrementalLimit() + range + 1;
+      int increasedLimit = config.getIncrementalLimit() + ticksMaxPerRange;
       if (editPart) {
         config.setIncrementalLimit(increasedLimit);
       } else {
@@ -1082,10 +1187,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalLimitIncrease.getIcon());
     } else if (id == R.id.button_options_timer_decrease) {
-      int valueFrom = (int) binding.sliderOptionsTimerDuration.getValueFrom();
-      int valueTo = (int) binding.sliderOptionsTimerDuration.getValueTo();
-      int range = valueTo - valueFrom;
-      int decreasedDuration = config.getTimerDuration() - range - 1;
+      int decreasedDuration = config.getTimerDuration() - ticksMaxPerRange;
       if (editPart) {
         config.setTimerDuration(decreasedDuration);
       } else {
@@ -1098,10 +1200,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       }
       ViewUtil.startIcon(binding.buttonOptionsTimerDecrease.getIcon());
     } else if (id == R.id.button_options_timer_increase) {
-      int valueFrom = (int) binding.sliderOptionsTimerDuration.getValueFrom();
-      int valueTo = (int) binding.sliderOptionsTimerDuration.getValueTo();
-      int range = valueTo - valueFrom;
-      int increasedDuration = config.getTimerDuration() + range + 1;
+      int increasedDuration = config.getTimerDuration() + ticksMaxPerRange;
       if (editPart) {
         config.setTimerDuration(increasedDuration);
       } else {
@@ -1170,8 +1269,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         listener.onTimerChanged();
       }
     } else if (groupId == R.id.toggle_options_mute_unit) {
-      String unit = UNIT.BARS;
-      if (checkedId == R.id.button_options_mute_unit_seconds) {
+      String unit = UNIT.BEATS;
+      if (checkedId == R.id.button_options_mute_unit_bars) {
+        unit = UNIT.BARS;
+      } else if (checkedId == R.id.button_options_mute_unit_seconds) {
         unit = UNIT.SECONDS;
       }
       if (editPart) {
@@ -1300,7 +1401,8 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
   @Override
   public void onStartTrackingTouch(@NonNull Slider slider) {
     // listener only registered in non-editPart mode
-    if (getMetronomeEngine() != null) {
+    boolean stopMetronome = slider.getId() != R.id.slider_options_mute_mute;
+    if (getMetronomeEngine() != null && stopMetronome) {
       getMetronomeEngine().savePlayingState();
       getMetronomeEngine().stop();
     }
@@ -1313,7 +1415,10 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     if (metronomeEngine == null) {
       return;
     }
-    metronomeEngine.restorePlayingState();
+    boolean stopMetronome = slider.getId() != R.id.slider_options_mute_mute;
+    if (stopMetronome) {
+      metronomeEngine.restorePlayingState();
+    }
     metronomeEngine.maybeUpdateDefaultSong();
 
     if (slider.getId() == R.id.slider_options_timer_duration && listener != null) {

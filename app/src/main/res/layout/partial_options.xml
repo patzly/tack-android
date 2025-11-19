@@ -487,24 +487,59 @@
     android:paddingBottom="8dp"
     android:background="@drawable/ripple_list_item_bg_segmented_middle">
 
-    <TextView
-      style="@style/Widget.Tack.TextView"
+    <LinearLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginStart="16dp"
-      android:layout_marginEnd="16dp"
-      android:text="@string/options_incremental" />
+      android:orientation="horizontal"
+      android:paddingStart="0dp"
+      android:paddingEnd="12dp"
+      android:gravity="center_vertical">
 
-    <TextView
-      android:id="@+id/text_options_incremental_amount"
-      style="@style/Widget.Tack.TextView.BodyMedium"
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:paddingStart="16dp"
-      android:paddingEnd="16dp"
-      android:textColor="?attr/colorOnSurfaceVariant"
-      android:text="@string/options_incremental_amount_increase"
-      android:fontFeatureSettings="tnum" />
+      <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp">
+
+        <TextView
+          style="@style/Widget.Tack.TextView"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/options_incremental" />
+
+        <TextView
+          android:id="@+id/text_options_incremental_amount"
+          style="@style/Widget.Tack.TextView.BodyMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:textColor="?attr/colorOnSurfaceVariant"
+          android:text="@string/options_incremental_amount_increase"
+          android:fontFeatureSettings="tnum" />
+
+      </LinearLayout>
+
+      <com.google.android.material.button.MaterialButtonGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:spacing="0dp">
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_options_incremental_amount_decrease"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
+          android:contentDescription="@string/action_decrease"
+          app:icon="@drawable/ic_rounded_first_page" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_options_incremental_amount_increase"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
+          android:contentDescription="@string/action_increase"
+          app:icon="@drawable/ic_rounded_last_page" />
+
+      </com.google.android.material.button.MaterialButtonGroup>
+
+    </LinearLayout>
 
     <com.google.android.material.slider.Slider
       android:id="@+id/slider_options_incremental_amount"
@@ -512,7 +547,7 @@
       android:layout_marginStart="2dp"
       android:layout_marginEnd="2dp"
       android:valueFrom="0"
-      android:valueTo="50"
+      android:valueTo="99"
       android:stepSize="1"
       android:value="0"
       app:labelBehavior="gone" />
@@ -714,29 +749,38 @@
       android:layout_marginEnd="16dp"
       android:text="@string/options_mute" />
 
-    <TextView
-      android:id="@+id/text_options_mute_play"
-      style="@style/Widget.Tack.TextView.BodyMedium"
+    <LinearLayout
+      android:id="@+id/linear_options_mute_play"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
-      android:layout_marginStart="16dp"
-      android:layout_marginEnd="16dp"
-      android:textColor="?attr/colorOnSurfaceVariant"
-      android:fontFeatureSettings="tnum" />
+      android:orientation="vertical">
 
-    <com.google.android.material.slider.Slider
-      android:id="@+id/slider_options_mute_play"
-      style="@style/Widget.Tack.Slider"
-      android:layout_marginStart="2dp"
-      android:layout_marginEnd="2dp"
-      android:valueFrom="0"
-      android:valueTo="49"
-      android:stepSize="1"
-      android:value="0"
-      app:labelBehavior="gone" />
+      <TextView
+        android:id="@+id/text_options_mute_play"
+        style="@style/Widget.Tack.TextView.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:fontFeatureSettings="tnum" />
+
+      <com.google.android.material.slider.Slider
+        android:id="@+id/slider_options_mute_play"
+        style="@style/Widget.Tack.Slider"
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="2dp"
+        android:layout_marginBottom="4dp"
+        android:valueFrom="0"
+        android:valueTo="49"
+        android:stepSize="1"
+        android:value="0"
+        app:labelBehavior="gone" />
+
+    </LinearLayout>
 
     <LinearLayout
-      android:id="@+id/linear_options_mute_container"
+      android:id="@+id/linear_options_mute_mute"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="vertical">
@@ -746,7 +790,6 @@
         style="@style/Widget.Tack.TextView.BodyMedium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
         android:textColor="?attr/colorOnSurfaceVariant"
@@ -763,62 +806,68 @@
         android:value="1"
         app:labelBehavior="gone" />
 
-      <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none"
-        android:overScrollMode="ifContentScrolls">
+    </LinearLayout>
 
-        <com.google.android.material.button.MaterialButtonToggleGroup
-          android:id="@+id/toggle_options_mute_unit"
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:paddingStart="16dp"
-          android:paddingEnd="16dp"
-          app:singleSelection="true"
-          app:selectionRequired="true">
+    <HorizontalScrollView
+      android:id="@+id/scroll_horiz_options_mute_unit"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:scrollbars="none"
+      android:overScrollMode="ifContentScrolls">
 
-          <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_options_mute_unit_bars"
-            style="@style/Widget.Tack.Button"
-            android:text="@string/options_unit_bars" />
-
-          <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_options_mute_unit_seconds"
-            style="@style/Widget.Tack.Button"
-            android:text="@string/options_unit_seconds" />
-
-        </com.google.android.material.button.MaterialButtonToggleGroup>
-
-      </HorizontalScrollView>
-
-      <LinearLayout
-        android:id="@+id/linear_options_mute_random"
-        style="@style/Widget.Tack.LinearLayout.ListItem.SingleLine"
+      <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/toggle_options_mute_unit"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
-        android:background="@drawable/ripple_list_item_surface_bright">
+        app:singleSelection="true"
+        app:selectionRequired="true">
 
-        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_options_mute_unit_beats"
+          style="@style/Widget.Tack.Button"
+          android:text="@string/options_unit_beats" />
 
-          <TextView
-            android:id="@+id/text_options_mute_random"
-            style="@style/Widget.Tack.TextView.BodyMedium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="?attr/colorOnSurfaceVariant"
-            android:text="@string/options_mute_random" />
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_options_mute_unit_bars"
+          style="@style/Widget.Tack.Button"
+          android:text="@string/options_unit_bars" />
 
-        </LinearLayout>
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_options_mute_unit_seconds"
+          style="@style/Widget.Tack.Button"
+          android:text="@string/options_unit_seconds" />
 
-        <com.google.android.material.materialswitch.MaterialSwitch
-          android:id="@+id/switch_options_mute_random"
-          style="@style/Widget.Tack.Switch" />
+      </com.google.android.material.button.MaterialButtonToggleGroup>
+
+    </HorizontalScrollView>
+
+    <LinearLayout
+      android:id="@+id/linear_options_mute_random"
+      style="@style/Widget.Tack.LinearLayout.ListItem.SingleLine"
+      android:layout_height="wrap_content"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp"
+      android:paddingTop="4dp"
+      android:paddingBottom="4dp"
+      android:background="@drawable/ripple_list_item_surface_bright">
+
+      <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+        <TextView
+          android:id="@+id/text_options_mute_random"
+          style="@style/Widget.Tack.TextView.BodyMedium"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:textColor="?attr/colorOnSurfaceVariant"
+          android:text="@string/options_mute_random" />
 
       </LinearLayout>
+
+      <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/switch_options_mute_random"
+        style="@style/Widget.Tack.Switch" />
 
     </LinearLayout>
 

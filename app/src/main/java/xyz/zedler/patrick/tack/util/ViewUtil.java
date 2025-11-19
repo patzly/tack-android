@@ -52,6 +52,7 @@ import androidx.core.view.WindowInsetsCompat.Type;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.slider.Slider;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -391,5 +392,48 @@ public class ViewUtil {
 
   public interface OnMenuInflatedListener {
     void onMenuInflated(@NonNull Menu menu);
+  }
+
+  // Slider
+
+  public static void configureSliderSafely(
+      Slider slider, int valueFrom, int valueTo, int stepSize, int value
+  ) {
+    if (valueTo <= valueFrom) {
+      throw new IllegalArgumentException("valueTo must be > valueFrom");
+    }
+    if (stepSize < 0) {
+      throw new IllegalArgumentException("stepSize must be >= 0");
+    }
+
+    slider.setStepSize(0f);
+
+    int safeTo = valueTo;
+    if (stepSize > 0) {
+      int range = valueTo - valueFrom;
+      int steps = range / stepSize;
+      safeTo = valueFrom + steps * stepSize;
+    }
+
+    slider.setValueFrom(valueFrom);
+    slider.setValueTo(safeTo);
+
+    int valueFinal = Math.max(valueFrom, Math.min(value, safeTo));
+
+    if (stepSize > 0) {
+      int offset = valueFinal - valueFrom;
+      int tick = Math.round((float) offset / stepSize); // nearest tick
+      int snapped = valueFrom + tick * stepSize;
+      if (snapped < valueFrom) {
+        snapped = valueFrom;
+      }
+      if (snapped > safeTo) {
+        snapped = safeTo;
+      }
+      valueFinal = snapped;
+    }
+
+    slider.setValue(valueFinal);
+    slider.setStepSize(stepSize);
   }
 }

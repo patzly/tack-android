@@ -282,6 +282,7 @@
           tools:ignore="HardcodedText" />
 
         <ImageView
+          android:id="@+id/image_part_mute_mute"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_marginStart="8dp"

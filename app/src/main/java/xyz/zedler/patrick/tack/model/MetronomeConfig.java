@@ -25,6 +25,7 @@ import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
+import xyz.zedler.patrick.tack.Constants.UNIT;
 
 public class MetronomeConfig {
 
@@ -436,7 +437,7 @@ public class MetronomeConfig {
   }
 
   public boolean isMuteActive() {
-    return mutePlay > 0;
+    return muteUnit.equals(UNIT.BEATS) ? muteMute > 0 : mutePlay > 0;
   }
 
   public int getMuteMute() {
@@ -445,6 +446,7 @@ public class MetronomeConfig {
 
   public void setMuteMute(int muteMute) {
     this.muteMute = muteMute;
+    snapToMuteMuteStepSize();
   }
 
   public String getMuteUnit() {
@@ -453,6 +455,11 @@ public class MetronomeConfig {
 
   public void setMuteUnit(String muteUnit) {
     this.muteUnit = muteUnit;
+    if (muteUnit.equals(UNIT.BEATS) && muteMute == Constants.MUTE_MUTE_MIN) {
+      // Switch to small percentage to prevent inactivity
+      muteMute = Constants.MUTE_MUTE_STEP_SIZE_BEATS;
+    }
+    snapToMuteMuteStepSize();
   }
 
   public boolean isMuteRandom() {
@@ -461,6 +468,22 @@ public class MetronomeConfig {
 
   public void setMuteRandom(boolean muteRandom) {
     this.muteRandom = muteRandom;
+  }
+
+  private void snapToMuteMuteStepSize() {
+    int min = muteUnit.equals(UNIT.BEATS)
+        ? Constants.MUTE_MUTE_MIN_BEATS
+        : Constants.MUTE_MUTE_MIN;
+    int max = muteUnit.equals(UNIT.BEATS)
+        ? Constants.MUTE_MUTE_MAX_BEATS
+        : Constants.MUTE_MUTE_MAX;
+    int stepSize = muteUnit.equals(UNIT.BEATS)
+        ? Constants.MUTE_MUTE_STEP_SIZE_BEATS
+        : Constants.MUTE_MUTE_STEP_SIZE;
+    int maxStepIndex = (max - min) / stepSize;
+    int desiredStepIndex = (int) Math.round((double)(muteMute - min) / stepSize);
+    int clampedStepIndex = Math.max(0, Math.min(maxStepIndex, desiredStepIndex));
+    muteMute = min + clampedStepIndex * stepSize;
   }
 
   private void maybeMigrateOldSubdivision() {

@@ -567,8 +567,12 @@ public class MetronomeEngine {
         }
         int subdivisionPoly = getCurrentSubdivisionPoly();
         String tickTypePoly = getCurrentTickTypePoly();
+        boolean muted = isMuted;
+        if (config.isMuteActive() && config.getMuteUnit().equals(UNIT.BEATS)) {
+          muted = random.nextInt(100) < config.getMuteMute();
+        }
         Tick tick = new Tick(
-            tickIndexPoly, 1, subdivisionPoly, tickTypePoly, isMuted, true
+            tickIndexPoly, 1, subdivisionPoly, tickTypePoly, muted, true
         );
 
         if (subdivisionPoly < config.getSubdivisionsCount()) {
@@ -591,7 +595,11 @@ public class MetronomeEngine {
         int beat = getCurrentBeat();
         int subdivision = getCurrentSubdivision();
         String tickType = getCurrentTickType();
-        Tick tick = new Tick(tickIndex, beat, subdivision, tickType, isMuted, false);
+        boolean muted = isMuted;
+        if (config.isMuteActive() && config.getMuteUnit().equals(UNIT.BEATS)) {
+          muted = random.nextInt(100) < config.getMuteMute();
+        }
+        Tick tick = new Tick(tickIndex, beat, subdivision, tickType, muted, false);
 
         long interval = config.usePolyrhythm()
             ? getInterval()
@@ -1273,7 +1281,7 @@ public class MetronomeEngine {
 
   public void setMuteMute(int mute) {
     config.setMuteMute(mute);
-    sharedPrefs.edit().putInt(PREF.MUTE_MUTE, mute).apply();
+    sharedPrefs.edit().putInt(PREF.MUTE_MUTE, config.getMuteMute()).apply();
     updateMuteHandler();
   }
 
@@ -1283,6 +1291,9 @@ public class MetronomeEngine {
     }
     config.setMuteUnit(unit);
     sharedPrefs.edit().putString(PREF.MUTE_UNIT, unit).apply();
+    // Trigger snapping to correct step size
+    setMuteMute(config.getMuteMute());
+
     updateMuteHandler();
   }
 
@@ -1298,7 +1309,7 @@ public class MetronomeEngine {
     }
     muteHandler.removeCallbacksAndMessages(null);
     isMuted = false;
-    if (!config.getMuteUnit().equals(UNIT.BARS) && config.isMuteActive()) {
+    if (config.isMuteActive() && config.getMuteUnit().equals(UNIT.SECONDS)) {
       muteHandler.postDelayed(new Runnable() {
         @Override
         public void run() {

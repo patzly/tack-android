@@ -30,8 +30,19 @@ public final class Constants {
   public static final int TEMPO_MAX = 600;
   public static final int BEATS_MAX = 20;
   public static final int SUBS_MAX = 10;
+  public static final int COUNT_IN_MAX = 4;
   public static final int TIMER_MAX = 399;
-  public static final int INCREMENTAL_INTERVAL_MAX = 399;
+  public static final int INCREMENTAL_AMOUNT_MAX = 99;
+  public static final int INCREMENTAL_INTERVAL_MAX = 400;
+  public static final int INCREMENTAL_LIMIT_MAX = 599;
+  public static final int MUTE_PLAY_MIN = 0;
+  public static final int MUTE_PLAY_MAX = 49;
+  public static final int MUTE_MUTE_MIN = 1;
+  public static final int MUTE_MUTE_MIN_BEATS = 0;
+  public static final int MUTE_MUTE_MAX = 49;
+  public static final int MUTE_MUTE_MAX_BEATS = 100;
+  public static final int MUTE_MUTE_STEP_SIZE = 1;
+  public static final int MUTE_MUTE_STEP_SIZE_BEATS = 5;
   public static final String SONG_ID_DEFAULT = "default";
 
   public final static class PREF {
@@ -130,7 +141,7 @@ public final class Constants {
     public final static String TIMER_UNIT = UNIT.BARS;
     public final static int MUTE_PLAY = 0;
     public final static int MUTE_MUTE = 1;
-    public final static String MUTE_UNIT = UNIT.BARS;
+    public final static String MUTE_UNIT = UNIT.BEATS;
     public final static boolean MUTE_RANDOM = false;
 
     // Song library
