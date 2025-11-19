@@ -278,6 +278,7 @@
   </plurals>
   <string name="options_mute_random">隨機化較小的值</string>
   <string name="options_subdivisions">子節拍</string>
+  <string name="options_subdivisions_beats_muted">節拍已靜音</string>
   <string name="options_swing">搖擺</string>
   <string name="options_swing_description">設定子節拍匹配搖擺比率</string>
   <string name="options_swing_3">三連音</string>
