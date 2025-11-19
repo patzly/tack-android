@@ -119,6 +119,7 @@
   <string name="action_email_description">聯絡開發者</string>
   <string name="action_rate">在 Google Play 上評分</string>
   <string name="action_support">支援開發</string>
+  <string name="action_support_description">購買解鎖應用程式</string>
   <string name="action_issue">在 GitHub 上提問</string>
   <string name="action_issue_description">報告錯誤或建議功能</string>
   <string name="action_retry">重試</string>
