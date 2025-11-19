@@ -129,6 +129,7 @@
   <string name="action_add_song">增加歌曲</string>
   <string name="action_sort_by">排序方式</string>
   <string name="action_add_part">增加部份</string>
+  <string name="action_add">增加</string>
   <string name="action_save">儲存</string>
   <string name="action_discard">捨棄</string>
   <string name="action_rename">重新命名</string>
