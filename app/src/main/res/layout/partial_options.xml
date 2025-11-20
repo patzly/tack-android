@@ -772,7 +772,7 @@
         android:layout_marginEnd="2dp"
         android:layout_marginBottom="4dp"
         android:valueFrom="0"
-        android:valueTo="49"
+        android:valueTo="19"
         android:stepSize="1"
         android:value="0"
         app:labelBehavior="gone" />
@@ -801,7 +801,7 @@
         android:layout_marginStart="2dp"
         android:layout_marginEnd="2dp"
         android:valueFrom="1"
-        android:valueTo="50"
+        android:valueTo="20"
         android:stepSize="1"
         android:value="1"
         app:labelBehavior="gone" />

@@ -833,7 +833,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
 
     binding.sliderOptionsMutePlay.removeOnChangeListener(this);
     ViewUtil.configureSliderSafely(
-        binding.sliderOptionsMutePlay, 0, 49, 1, mutePlay
+        binding.sliderOptionsMutePlay, 0, Constants.MUTE_PLAY_MAX, 1, mutePlay
     );
     binding.sliderOptionsMutePlay.addOnChangeListener(this);
     binding.sliderOptionsMutePlay.setLabelFormatter(value -> {
