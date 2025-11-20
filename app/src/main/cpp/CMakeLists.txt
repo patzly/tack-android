@@ -14,9 +14,13 @@ target_link_libraries(
 )
 
 # Make builds reproducible
-add_link_options(-Wl,--strip-comment)
-add_link_options(-Wl,--build-id=none)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ffile-prefix-map=${CMAKE_SOURCE_DIR}=.")
-set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS}   -ffile-prefix-map=${CMAKE_SOURCE_DIR}=.")
+target_compile_options(oboe-audio-engine PRIVATE
+        "-ffile-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}=."
+        "-fno-ident"
+)
+target_link_options(oboe-audio-engine PRIVATE
+        "-Wl,--build-id=none"
+        "-Wl,--strip-all"
+)
 set(CMAKE_SORT_OUTPUT_ON ON)
 set(CMAKE_TEMP_FILE_PREFIX .tmp)
