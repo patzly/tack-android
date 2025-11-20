@@ -460,13 +460,12 @@
 
   <!-- LICENSES -->
 
+  <string name="license_google_sans_flex" translatable="false">Google Sans Flex Typeface</string>
+  <string name="license_google_sans_flex_link" translatable="false">https://fonts.google.com/specimen/Google+Sans+Flex</string>
   <string name="license_material_components" translatable="false">Material Components Android</string>
   <string name="license_material_components_link" translatable="false">https://github.com/material-components/material-components-android</string>
   <string name="license_material_icons" translatable="false">Material Symbols</string>
   <string name="license_material_icons_link" translatable="false">https://github.com/google/material-design-icons</string>
   <string name="license_author_google" translatable="false">Google</string>
-  <string name="license_nunito" translatable="false">Nunito Typeface</string>
-  <string name="license_nunito_author" translatable="false">Vernon Adams, Jacques Le Bailly, Manvel Shmavonyan, Alexei Vanyashin</string>
-  <string name="license_nunito_link" translatable="false">https://github.com/googlefonts/nunito</string>
 
 </resources>

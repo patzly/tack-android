@@ -43,7 +43,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
 
   private FragmentAboutBinding binding;
   private MainActivity activity;
-  private TextDialogUtil textDialogUtilMdc, textDialogUtilMds, textDialogUtilNunito;
+  private TextDialogUtil textDialogUtilMdc, textDialogUtilMds, textDialogUtilGoogleSansFlex;
   private int longClickCount = 0;
 
   @Override
@@ -59,7 +59,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     super.onDestroyView();
     textDialogUtilMdc.dismiss();
     textDialogUtilMds.dismiss();
-    textDialogUtilNunito.dismiss();
+    textDialogUtilGoogleSansFlex.dismiss();
     binding = null;
   }
 
@@ -117,13 +117,13 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     );
     textDialogUtilMds.showIfWasShown(savedInstanceState);
 
-    textDialogUtilNunito = new TextDialogUtil(
+    textDialogUtilGoogleSansFlex = new TextDialogUtil(
         activity,
-        R.string.license_nunito,
+        R.string.license_google_sans_flex,
         R.raw.license_ofl,
-        R.string.license_nunito_link
+        R.string.license_google_sans_flex_link
     );
-    textDialogUtilNunito.showIfWasShown(savedInstanceState);
+    textDialogUtilGoogleSansFlex.showIfWasShown(savedInstanceState);
 
     ViewUtil.setOnClickListeners(
         this,
@@ -136,7 +136,7 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
         binding.linearAboutPrivacy,
         binding.linearAboutLicenseMaterialComponents,
         binding.linearAboutLicenseMaterialIcons,
-        binding.linearAboutLicenseNunito
+        binding.linearAboutLicenseGoogleSansFlex
     );
   }
 
@@ -155,8 +155,8 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     if (textDialogUtilMds != null) {
       textDialogUtilMds.saveState(outState);
     }
-    if (textDialogUtilNunito != null) {
-      textDialogUtilNunito.saveState(outState);
+    if (textDialogUtilGoogleSansFlex != null) {
+      textDialogUtilGoogleSansFlex.saveState(outState);
     }
   }
 
@@ -188,9 +188,9 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_translate))));
     } else if (id == R.id.linear_about_privacy) {
       startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_privacy))));
-    } else if (id == R.id.linear_about_license_nunito) {
-      ViewUtil.startIcon(binding.imageAboutLicenseNunito);
-      textDialogUtilNunito.show();
+    } else if (id == R.id.linear_about_license_google_sans_flex) {
+      ViewUtil.startIcon(binding.imageAboutLicenseGoogleSansFlex);
+      textDialogUtilGoogleSansFlex.show();
     } else if (id == R.id.linear_about_license_material_components) {
       ViewUtil.startIcon(binding.imageAboutLicenseMaterialComponents);
       textDialogUtilMdc.show();

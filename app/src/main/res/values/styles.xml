@@ -104,8 +104,8 @@
   <style
     name="Widget.Tack.Button.TextButton.Snackbar"
     parent="Widget.Material3Expressive.Button.TextButton.Snackbar">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
   </style>
 
   <!-- ImageView (icons) -->
@@ -127,8 +127,8 @@
 
   <!-- Localized style -->
   <style name="Widget.Tack.Button" parent="Base.Tack.Button">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
   </style>
 
   <!-- Base style -->
@@ -144,8 +144,8 @@
   <style
     name="Widget.Tack.Button.OutlinedButton"
     parent="Base.Tack.Button.OutlinedButton">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
   </style>
 
   <!-- Base style -->
@@ -161,8 +161,8 @@
   <style
     name="Widget.Tack.Button.TextButton"
     parent="Base.Tack.Button.TextButton">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
   </style>
 
   <!-- Base style -->
@@ -178,8 +178,8 @@
   <style
     name="Widget.Tack.Button.TonalButton"
     parent="Base.Tack.Button.TonalButton">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
   </style>
 
   <style
@@ -206,8 +206,8 @@
     name="Widget.Tack.Button.TextButton.Dialog"
     parent="Widget.Material3Expressive.Button.TextButton.Dialog">
     <item name="android:singleLine">true</item>
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
   </style>
 
   <style
@@ -679,8 +679,8 @@
 
   <!-- Localized style, no empty base style needed -->
   <style name="Widget.Tack.TextView.Medium" parent="Widget.Tack.TextView">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
   </style>
 
   <style name="Widget.Tack.TextView.Paragraph" parent="Widget.Tack.TextView" />
@@ -778,47 +778,47 @@
   <!-- TextAppearance -->
 
   <style name="TextAppearance.Tack.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
-    <item name="android:fontFamily">@font/nunito_medium</item>
-    <item name="fontFamily">@font/nunito_medium</item>
+    <item name="android:fontFamily">@font/google_sans_flex_regular</item>
+    <item name="fontFamily">@font/google_sans_flex_regular</item>
   </style>
 
   <style name="TextAppearance.Tack.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
-    <item name="android:fontFamily">@font/nunito_medium</item>
-    <item name="fontFamily">@font/nunito_medium</item>
+    <item name="android:fontFamily">@font/google_sans_flex_regular</item>
+    <item name="fontFamily">@font/google_sans_flex_regular</item>
   </style>
 
   <style name="TextAppearance.Tack.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
-    <item name="android:fontFamily">@font/nunito_medium</item>
-    <item name="fontFamily">@font/nunito_medium</item>
+    <item name="android:fontFamily">@font/google_sans_flex_regular</item>
+    <item name="fontFamily">@font/google_sans_flex_regular</item>
   </style>
 
   <style name="TextAppearance.Tack.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
-    <item name="android:fontFamily">@font/nunito_medium</item>
-    <item name="fontFamily">@font/nunito_medium</item>
+    <item name="android:fontFamily">@font/google_sans_flex_regular</item>
+    <item name="fontFamily">@font/google_sans_flex_regular</item>
   </style>
 
   <!-- Localized style, no empty base style needed -->
   <style name="TextAppearance.Tack.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
   </style>
 
   <!-- Localized style, no empty base style needed -->
   <style name="TextAppearance.Tack.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
   </style>
 
   <!-- Localized style, no empty base style needed -->
   <style name="TextAppearance.Tack.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
-    <item name="android:fontFamily">@font/nunito_bold</item>
-    <item name="fontFamily">@font/nunito_bold</item>
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
   </style>
 
   <style name="TextAppearance.Tack.Tooltip" parent="TextAppearance.Material3.BodyLarge">
     <item name="android:textSize">14sp</item>
-    <item name="android:fontFamily">@font/nunito_medium</item>
-    <item name="fontFamily">@font/nunito_medium</item>
+    <item name="android:fontFamily">@font/google_sans_flex_regular</item>
+    <item name="fontFamily">@font/google_sans_flex_regular</item>
   </style>
 
 </resources>

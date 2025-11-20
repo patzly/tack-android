@@ -428,7 +428,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           TypedValue.COMPLEX_UNIT_PX,
           getResources().getDimension(R.dimen.label_text_size)
       );
-      Typeface typeface = ResourcesCompat.getFont(activity, R.font.nunito_bold);
+      Typeface typeface = ResourcesCompat.getFont(activity, R.font.google_sans_flex_medium);
       textView.setTypeface(typeface);
       textView.setTextColor(ResUtil.getColor(activity, R.attr.colorOnPrimaryContainer));
       return textView;
@@ -437,7 +437,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     binding.circleMain.setReduceAnimations(reduceAnimations);
     binding.circleMain.setOnDragAnimListener(fraction -> {
       if (VERSION.SDK_INT >= VERSION_CODES.O) {
-        binding.textMainTempo.setFontVariationSettings("'wght' " + (600 + (fraction * 300)));
+        binding.textMainTempo.setFontVariationSettings(
+            "'wght' " + (600 + (fraction * 300)) + ", 'ROND' 100, 'wdth' " + (100 + (fraction * 5))
+        );
       }
     });
 
@@ -637,9 +639,11 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         });
 
     if (VERSION.SDK_INT >= VERSION_CODES.O) {
-      Typeface variableTypeface = ResourcesCompat.getFont(activity, R.font.nunito_variable_wght);
+      Typeface variableTypeface = ResourcesCompat.getFont(
+          activity, R.font.google_sans_flex_variable
+      );
       binding.textMainTempo.setTypeface(variableTypeface);
-      binding.textMainTempo.setFontVariationSettings("'wght' 600");
+      binding.textMainTempo.setFontVariationSettings("'wght' 600, 'ROND' 100, 'wdth' 100");
     }
     updateMetronomeControls(true);
 

@@ -60,7 +60,8 @@
         android:layout_height="wrap_content"
         android:textColor="?attr/colorError"
         android:text="@string/settings_gain_disclaimer"
-        android:fontFamily="@font/nunito_bold"
+        android:fontFamily="@font/google_sans_flex_medium"
+        app:fontFamily="@font/google_sans_flex_medium"
         android:layout_marginBottom="16dp" />
 
       <com.google.android.material.card.MaterialCardView

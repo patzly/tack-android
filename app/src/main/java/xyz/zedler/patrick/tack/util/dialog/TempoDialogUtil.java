@@ -106,9 +106,11 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
     );
 
     if (VERSION.SDK_INT >= VERSION_CODES.O) {
-      Typeface variableTypeface = ResourcesCompat.getFont(activity, R.font.nunito_variable_wght);
+      Typeface variableTypeface = ResourcesCompat.getFont(
+          activity, R.font.google_sans_flex_variable
+      );
       binding.textTempoTapTempo.setTypeface(variableTypeface);
-      binding.textTempoTapTempo.setFontVariationSettings("'wght' " + 750);
+      binding.textTempoTapTempo.setFontVariationSettings("'wght' 700, 'ROND' 100");
     }
     binding.textSwitcherTempoTapTempoTerm.setFactory(() -> {
       TextView textView = new TextView(activity);
@@ -117,7 +119,7 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
           TypedValue.COMPLEX_UNIT_PX,
           activity.getResources().getDimension(R.dimen.tempo_tap_label_text_size)
       );
-      Typeface typeface = ResourcesCompat.getFont(activity, R.font.nunito_bold);
+      Typeface typeface = ResourcesCompat.getFont(activity, R.font.google_sans_flex_medium);
       textView.setTypeface(typeface);
       textView.setTextColor(ResUtil.getColor(activity, R.attr.colorOnTertiaryContainer));
       return textView;

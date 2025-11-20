@@ -292,7 +292,7 @@
           android:textColor="?attr/colorOnPrimaryContainer"
           android:gravity="center_horizontal"
           android:textAlignment="center"
-          android:fontFamily="@font/nunito_semi_bold"
+          android:fontFamily="@font/google_sans_flex_medium"
           android:fontFeatureSettings="tnum"
           android:textAppearance="?attr/textAppearanceDisplayLarge" />
 

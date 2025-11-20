@@ -64,7 +64,8 @@
       <TextView
         style="@style/Widget.Tack.TextView.ListItem.Description"
         android:textAlignment="center"
-        android:text="@string/msg_songs_empty_description" />
+        android:text="@string/msg_songs_empty_description"
+        android:layout_marginTop="8dp" />
 
     </LinearLayout>
 

@@ -158,7 +158,7 @@ public class TimerView extends FrameLayout {
 
   public void setBigText(boolean bigText) {
     if (bigText) {
-      Typeface typeface = ResourcesCompat.getFont(activity, R.font.nunito_medium);
+      Typeface typeface = ResourcesCompat.getFont(activity, R.font.google_sans_flex_regular);
       binding.chipTimerCurrent.textChipNumbers.setTextSize(28);
       binding.chipTimerCurrent.textChipNumbers.setTypeface(typeface);
       binding.chipTimerElapsed.textChipNumbers.setTextSize(28);
