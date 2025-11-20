@@ -292,6 +292,7 @@
     <item quantity="one">%1$d Sekunde schlagen</item>
     <item quantity="other">%1$d Sekunden schlagen</item>
   </plurals>
+  <string name="options_mute_mute_beats">%1$d%% aller Schläge stummschalten</string>
   <plurals name="options_mute_mute_bars">
     <item quantity="one">%1$d Takt stummschalten</item>
     <item quantity="other">%1$d Takte stummschalten</item>
