@@ -275,7 +275,7 @@
   <plurals name="options_mute_play_seconds">
     <item quantity="other">%1$d 秒間通常再生</item>
   </plurals>
-  <string name="options_mute_mute_beats">%1$d 小節間全拍を消音</string>
+  <string name="options_mute_mute_beats">全拍の%1$d%%を消音</string>
   <plurals name="options_mute_mute_bars">
     <item quantity="other">%1$d 小節間消音</item>
   </plurals>
