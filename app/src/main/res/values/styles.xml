@@ -761,7 +761,7 @@
     <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
   </style>
 
-  <style name="Widget.Tack.TextView.ListItem.Title" parent="Widget.Tack.TextView">
+  <style name="Widget.Tack.TextView.ListItem.Title" parent="Widget.Tack.TextView.Medium">
     <item name="android:layout_width">match_parent</item>
     <item name="android:layout_height">wrap_content</item>
     <item name="android:textAppearance">?attr/textAppearanceBodyLarge</item>

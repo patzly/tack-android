@@ -78,7 +78,7 @@
           android:layout_marginEnd="8dp">
 
           <TextView
-            style="@style/Widget.Tack.TextView"
+            style="@style/Widget.Tack.TextView.ListItem.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/label_tempo" />
@@ -154,7 +154,7 @@
           android:layout_marginEnd="8dp">
 
           <TextView
-            style="@style/Widget.Tack.TextView"
+            style="@style/Widget.Tack.TextView.ListItem.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/options_unit_beats" />
@@ -248,7 +248,7 @@
           android:layout_marginEnd="8dp">
 
           <TextView
-            style="@style/Widget.Tack.TextView"
+            style="@style/Widget.Tack.TextView.ListItem.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/options_subdivisions" />
@@ -330,7 +330,7 @@
     android:background="@drawable/ripple_list_item_bg_segmented_middle">
 
     <TextView
-      style="@style/Widget.Tack.TextView"
+      style="@style/Widget.Tack.TextView.ListItem.Title"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginStart="16dp"
@@ -385,7 +385,7 @@
         android:layout_marginEnd="8dp">
 
         <TextView
-          style="@style/Widget.Tack.TextView"
+          style="@style/Widget.Tack.TextView.ListItem.Title"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:text="@string/options_timer" />
@@ -504,7 +504,7 @@
         android:layout_marginEnd="8dp">
 
         <TextView
-          style="@style/Widget.Tack.TextView"
+          style="@style/Widget.Tack.TextView.ListItem.Title"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:text="@string/options_incremental" />
@@ -742,7 +742,7 @@
     android:background="@drawable/ripple_list_item_bg_segmented_middle">
 
     <TextView
-      style="@style/Widget.Tack.TextView"
+      style="@style/Widget.Tack.TextView.ListItem.Title"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginStart="16dp"
@@ -882,7 +882,7 @@
     android:background="@drawable/ripple_list_item_bg_segmented_middle">
 
     <TextView
-      style="@style/Widget.Tack.TextView"
+      style="@style/Widget.Tack.TextView.ListItem.Title"
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_marginStart="16dp"
