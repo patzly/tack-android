@@ -1,5 +1,3 @@
-After six months of dedicated work in my spare time, I'm thrilled to announce the release of Tack 6.0 — featuring a major redesign and low-latency audio!
-
 ### 6.1.0
 
 - New: muted beats option extended with beats unit for beat-wise muting
