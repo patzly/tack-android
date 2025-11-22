@@ -225,11 +225,6 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
 
     // publish voice active/inactive state back to atomics
     for (int v = 0; v < kNumVoices; ++v) {
-      mTickToPlay[v].store(
-          localTickToPlay[v], std::memory_order_release);
-    }
-
-    for (int v = 0; v < kNumVoices; ++v) {
       if (localTickToPlay[v] == -1) {
         int32_t finishedTickType = mPrevLocalTickToPlay[v];
         if (finishedTickType != -1) {
