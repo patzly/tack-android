@@ -37,6 +37,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -185,9 +187,13 @@ fun BookmarkOption(
     selectionContentDescription = null,
     onContainerClick = onContainerClick,
     label = {
+      val typefaceMedium = remember {
+        FontFamily(Font(R.font.google_sans_flex_medium))
+      }
       Text(
         text = stringResource(id = R.string.wear_label_bpm_value, bookmark.tempo),
         style = MaterialTheme.typography.bodyLarge,
+        fontFamily = typefaceMedium,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis
       )

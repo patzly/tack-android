@@ -75,22 +75,26 @@ private fun tackColorScheme(): ColorScheme {
 
 @Composable
 private fun tackTypography(): Typography {
-  val jostBook = remember { FontFamily(Font(R.font.jost_book)) }
-  val jostMedium = remember { FontFamily(Font(R.font.jost_medium)) }
+  val typefaceRegular = remember {
+    FontFamily(Font(R.font.google_sans_flex_regular))
+  }
+  val typefaceMedium = remember {
+    FontFamily(Font(R.font.google_sans_flex_medium))
+  }
   return Typography(
-    defaultFontFamily = jostBook,
-    displayLarge = MaterialTheme.typography.displayLarge.copy(fontFamily = jostBook),
-    displayMedium = MaterialTheme.typography.displayMedium.copy(fontFamily = jostBook),
-    displaySmall = MaterialTheme.typography.displaySmall.copy(fontFamily = jostMedium),
-    titleLarge = MaterialTheme.typography.titleLarge.copy(fontFamily = jostMedium),
-    titleMedium = MaterialTheme.typography.titleMedium.copy(fontFamily = jostMedium),
-    titleSmall = MaterialTheme.typography.titleSmall.copy(fontFamily = jostMedium),
-    labelLarge = MaterialTheme.typography.labelLarge.copy(fontFamily = jostMedium),
-    labelMedium = MaterialTheme.typography.labelMedium.copy(fontFamily = jostMedium),
-    labelSmall = MaterialTheme.typography.labelSmall.copy(fontFamily = jostMedium),
-    bodyLarge = MaterialTheme.typography.bodyLarge.copy(fontFamily = jostBook),
-    bodyMedium = MaterialTheme.typography.bodyMedium.copy(fontFamily = jostBook),
-    bodySmall = MaterialTheme.typography.bodySmall.copy(fontFamily = jostMedium),
-    bodyExtraSmall = MaterialTheme.typography.bodyExtraSmall.copy(fontFamily = jostBook)
+    defaultFontFamily = typefaceRegular,
+    displayLarge = MaterialTheme.typography.displayLarge.copy(fontFamily = typefaceRegular),
+    displayMedium = MaterialTheme.typography.displayMedium.copy(fontFamily = typefaceRegular),
+    displaySmall = MaterialTheme.typography.displaySmall.copy(fontFamily = typefaceMedium),
+    titleLarge = MaterialTheme.typography.titleLarge.copy(fontFamily = typefaceMedium),
+    titleMedium = MaterialTheme.typography.titleMedium.copy(fontFamily = typefaceMedium),
+    titleSmall = MaterialTheme.typography.titleSmall.copy(fontFamily = typefaceMedium),
+    labelLarge = MaterialTheme.typography.labelLarge.copy(fontFamily = typefaceMedium),
+    labelMedium = MaterialTheme.typography.labelMedium.copy(fontFamily = typefaceMedium),
+    labelSmall = MaterialTheme.typography.labelSmall.copy(fontFamily = typefaceMedium),
+    bodyLarge = MaterialTheme.typography.bodyLarge.copy(fontFamily = typefaceRegular),
+    bodyMedium = MaterialTheme.typography.bodyMedium.copy(fontFamily = typefaceRegular),
+    bodySmall = MaterialTheme.typography.bodySmall.copy(fontFamily = typefaceMedium),
+    bodyExtraSmall = MaterialTheme.typography.bodyExtraSmall.copy(fontFamily = typefaceRegular)
   )
 }

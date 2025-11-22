@@ -22,8 +22,11 @@ package xyz.zedler.patrick.tack.presentation.components
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,6 +35,7 @@ import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.touchTargetAwareSize
+import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.isSmallScreen
 
@@ -60,10 +64,14 @@ fun TextIconButton(
       if (isSmallScreen()) 42.dp else IconButtonDefaults.SmallButtonSize
     )
   ) {
+    val typefaceSemiBold = remember {
+      FontFamily(Font(R.font.google_sans_flex_semi_bold))
+    }
     Text(
       modifier = Modifier.wrapContentSize(Alignment.Center),
       textAlign = TextAlign.Center,
       style = MaterialTheme.typography.titleLarge,
+      fontFamily = typefaceSemiBold,
       text = label
     )
   }

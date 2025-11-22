@@ -94,7 +94,7 @@ fun GainScreen(
         item {
           Text(
             text = stringResource(id = R.string.wear_label_db, state.gain),
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.titleSmall,
             textAlign = TextAlign.Center,
             modifier = Modifier
               .fillMaxWidth()

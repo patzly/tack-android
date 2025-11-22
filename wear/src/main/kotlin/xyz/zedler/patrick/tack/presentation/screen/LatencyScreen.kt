@@ -92,7 +92,7 @@ fun LatencyScreen(
         item {
           Text(
             text = stringResource(id = R.string.wear_label_ms, state.latency),
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.titleSmall,
             textAlign = TextAlign.Center,
             modifier = Modifier
               .fillMaxWidth()

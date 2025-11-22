@@ -43,6 +43,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -317,7 +319,7 @@ fun TempoCard(
   WrapContentCard(
     onClick = onClick,
     modifier = modifier.wrapContentWidth(),
-    border = BorderStroke(2.dp, borderColor),
+    border = BorderStroke(1.dp, borderColor),
     shape = MaterialTheme.shapes.extraLarge,
     contentPadding = PaddingValues(0.dp)
   ) {
@@ -332,19 +334,21 @@ fun TempoCard(
       label = "pickerAlpha",
       animationSpec = TweenSpec(durationMillis = if (mainState.reduceAnim) 0 else 300)
     )
-
+    val typefaceMedium = remember {
+      FontFamily(Font(R.font.google_sans_flex_medium))
+    }
     TempoPicker(
       state = pickerState,
       modifier = Modifier
         .graphicsLayer(alpha = pickerAlpha)
         .size(
-          spToDp(spValue = if (isSmallScreen()) 76 else 100),
+          spToDp(spValue = if (isSmallScreen()) 80 else 100),
           spToDp(spValue = if (isSmallScreen()) 44 else 56)
         ),
-      verticalSpacing = if (isSmallScreen()) (-8).dp else (-7).dp,
       textColor = MaterialTheme.colorScheme.onSurface,
       textStyle = MaterialTheme.typography.displayMedium.copy(
-        fontSize = if (isSmallScreen()) 30.sp else 40.sp
+        fontSize = if (isSmallScreen()) 30.sp else 38.sp,
+        fontFamily = typefaceMedium
       ),
       gradientRatio = if (gradientRatio > minRatio) gradientRatio else minRatio,
       hapticFeedbackEnabled = !mainState.isPlaying ||

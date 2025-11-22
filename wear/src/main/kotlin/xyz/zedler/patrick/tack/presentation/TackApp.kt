@@ -25,6 +25,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.navigation.NavController
 import androidx.wear.compose.material3.AppScaffold
 import androidx.wear.compose.material3.MaterialTheme
@@ -34,6 +37,7 @@ import androidx.wear.compose.material3.timeTextCurvedText
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
+import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.navigation.Screen
 import xyz.zedler.patrick.tack.presentation.screen.BeatsScreen
 import xyz.zedler.patrick.tack.presentation.screen.BookmarksScreen
@@ -75,8 +79,11 @@ fun TackApp(
 
     AppScaffold(
       timeText = {
+        val typefaceSemiBold = remember {
+          FontFamily(Font(R.font.google_sans_flex_semi_bold))
+        }
         val style = TimeTextDefaults.timeTextStyle().copy(
-          fontFamily = MaterialTheme.typography.labelMedium.fontFamily,
+          fontFamily = typefaceSemiBold,
           color = MaterialTheme.colorScheme.onSurface.copy(alpha = timeAlpha)
         )
         TimeText { time ->

@@ -21,7 +21,6 @@ package xyz.zedler.patrick.tack.presentation.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -33,6 +32,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -81,10 +82,7 @@ fun SettingsScreen(
           )
       ) {
         item {
-          ListHeader(
-            // Necessary padding to prevent cut-off by time text
-            contentPadding = PaddingValues(top = 24.dp)
-          ) {
+          ListHeader {
             Text(
               text = stringResource(id = R.string.wear_title_settings),
               style = MaterialTheme.typography.titleMedium
@@ -222,9 +220,13 @@ fun ClickCard(
   TitleCard(
     onClick = onClick,
     title = {
+      val typefaceMedium = remember {
+        FontFamily(Font(R.font.google_sans_flex_medium))
+      }
       Text(
         text = title,
         style = MaterialTheme.typography.bodyLarge,
+        fontFamily = typefaceMedium,
         color = MaterialTheme.colorScheme.onSurface,
         maxLines = 3,
         overflow = TextOverflow.Ellipsis
@@ -255,9 +257,13 @@ fun SwitchCard(
     onCheckedChange = onCheckedChange,
     modifier = Modifier.fillMaxWidth(),
     label = {
+      val typefaceMedium = remember {
+        FontFamily(Font(R.font.google_sans_flex_medium))
+      }
       Text(
         text = label,
         style = MaterialTheme.typography.bodyLarge,
+        fontFamily = typefaceMedium,
         maxLines = 3,
         overflow = TextOverflow.Ellipsis
       )

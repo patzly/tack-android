@@ -36,6 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -184,15 +186,18 @@ fun CenterPicker(
   LaunchedEffect(pickerState.selectedOptionIndex) {
     onOptionChange(pickerState.selectedOptionIndex)
   }
+  val typefaceMedium = remember {
+    FontFamily(Font(R.font.google_sans_flex_medium))
+  }
   TempoPicker(
     state = pickerState,
     modifier = modifier.size(
       spToDp(spValue = if (isSmallScreen()) 64 else 72),
       spToDp(spValue = if (isSmallScreen()) 104 else 140)
     ),
-    verticalSpacing = if (isSmallScreen()) (-4).dp else (-6).dp,
     textStyle = MaterialTheme.typography.displayMedium.copy(
-      fontSize = if (isSmallScreen()) 24.sp else 32.sp
+      fontSize = if (isSmallScreen()) 24.sp else 32.sp,
+      fontFamily = typefaceMedium
     ),
     hapticFeedbackEnabled = !mainState.isPlaying ||
         (!mainState.beatModeVibrate && !mainState.alwaysVibrate)

@@ -35,6 +35,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.res.stringResource
@@ -90,10 +91,7 @@ fun BeatsScreen(
           )
       ) {
         item {
-          ListHeader(
-            // Necessary padding to prevent cut-off by time text
-            contentPadding = PaddingValues(top = 24.dp)
-          ) {
+          ListHeader {
             Text(
               text = stringResource(id = R.string.wear_title_beats_count, state.beats.size),
               style = MaterialTheme.typography.titleMedium,
@@ -259,7 +257,9 @@ fun ControlCard(
       .fillMaxWidth()
       .defaultMinSize(minHeight = 40.dp)
   ) {
-    Row {
+    Row(
+      verticalAlignment = Alignment.CenterVertically
+    ) {
       val animTriggerAdd = remember { mutableStateOf(false) }
       val animTriggerRemove = remember { mutableStateOf(false) }
       IconButton(
