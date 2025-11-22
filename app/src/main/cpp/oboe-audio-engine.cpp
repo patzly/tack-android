@@ -19,13 +19,7 @@ constexpr int32_t kNumVoices = 10;
 class OboeAudioEngine: public oboe::AudioStreamDataCallback {
  public:
   OboeAudioEngine() {
-    for (int i = 0; i < kNumVoices; ++i) {
-      mTickToPlay[i].store(-1);
-      mPendingTickType[i].store(-1);
-      mReadIndexLocal[i] = 0;
-      mPrevLocalTickToPlay[i] = -1;
-    }
-    mNextVoiceToSteal.store(0);
+    reset();
 
     mMasterVolume.store(1.0f);
     mDuckingVolume.store(1.0f);
@@ -45,8 +39,6 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
 
     recomputeCompressorCoeffs();
     recomputeCompressorTable();
-
-    mCompressorEnvelope = 0.0f;
 
     // initialize empty buffers
     std::atomic_store(
@@ -97,6 +89,8 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
       mStream->stop();
       mStream->close();
       mStream.reset();
+
+      reset();
     }
   }
 
@@ -299,6 +293,17 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
   }
 
  private:
+  void reset() {
+    for (int i = 0; i < kNumVoices; ++i) {
+      mTickToPlay[i].store(-1);
+      mPendingTickType[i].store(-1);
+      mReadIndexLocal[i] = 0;
+      mPrevLocalTickToPlay[i] = -1;
+    }
+    mNextVoiceToSteal.store(0);
+    mCompressorEnvelope = 0.0f;
+  }
+
   void recomputeCompressorCoeffs() {
     mAttackCoeff =
         std::exp(-1.0f / (mAttackTime_s * static_cast<float>(mSampleRate)));
