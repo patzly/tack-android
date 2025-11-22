@@ -24,6 +24,8 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.database.entity.Part;
@@ -108,7 +110,8 @@ public class PartsDialogUtil {
       );
       // song duration
       boolean hasDuration = true;
-      for (Part part : songWithParts.getParts()) {
+      List<Part> parts = new ArrayList<>(songWithParts.getParts());
+      for (Part part : parts) {
         if (part.getTimerDuration() == 0) {
           hasDuration = false;
           break;

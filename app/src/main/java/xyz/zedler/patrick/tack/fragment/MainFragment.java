@@ -810,8 +810,10 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
                 getMetronomeEngine().getSongsOrder(),
                 getMetronomeEngine().isSongPickerExpanded()
             );
+            binding.songPickerMain.setSongs(songsWithParts);
+          } else if (binding.songPickerMain.isInitialized()) {
+            binding.songPickerMain.setSongs(songsWithParts);
           }
-          binding.songPickerMain.setSongs(songsWithParts);
         }
     );
 
