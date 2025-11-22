@@ -38,7 +38,11 @@
     <item name="badgeStyle">@style/Widget.Tack.Badge</item>
 
     <!-- Popup Menu styles -->
+    <item name="android:itemBackground">@drawable/ripple_menu_item_bg</item>
+    <item name="android:itemTextAppearance">@style/TextAppearance.Tack.LabelLarge</item>
+    <item name="android:listChoiceBackgroundIndicator">@drawable/ripple_menu_item_bg</item>
     <item name="popupMenuStyle">@style/Widget.Tack.PopupMenu</item>
+    <item name="actionOverflowMenuStyle">@style/Widget.Tack.PopupMenu</item>
     <item name="actionOverflowButtonStyle">@style/ThemeOverlay.Tack.OverFlow</item>
 
     <!-- Dialog themes -->
