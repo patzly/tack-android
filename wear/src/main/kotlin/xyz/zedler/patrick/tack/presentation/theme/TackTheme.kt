@@ -22,17 +22,20 @@ package xyz.zedler.patrick.tack.presentation.theme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.wear.compose.material3.ColorScheme
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Typography
+import androidx.wear.compose.material3.dynamicColorScheme
 import xyz.zedler.patrick.tack.R
 
 @Composable
 fun TackTheme(content: @Composable () -> Unit) {
+  val dynamicColorScheme = dynamicColorScheme(LocalContext.current)
   MaterialTheme(
-    colorScheme = tackColorScheme(),
+    colorScheme = dynamicColorScheme ?: tackColorScheme(),
     typography = tackTypography(),
     content = content
   )
