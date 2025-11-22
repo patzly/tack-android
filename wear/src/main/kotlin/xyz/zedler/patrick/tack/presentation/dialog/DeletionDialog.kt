@@ -127,7 +127,9 @@ fun DeletionDialog(
 fun DeletionDialogPreview() {
   DeletionDialog(
     visible = true,
-    bookmark = Bookmark(120, listOf("strong", "normal"), listOf("muted", "sub")),
+    bookmark = Bookmark(
+      120, listOf("strong", "normal"), listOf("muted", "sub")
+    ),
     onConfirm = {},
     onDismiss = {}
   )

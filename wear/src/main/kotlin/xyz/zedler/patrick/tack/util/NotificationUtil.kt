@@ -93,7 +93,9 @@ class NotificationUtil(private val context: Context) {
       val ongoingStatus = Status.Builder()
         .addTemplate(context.getString(R.string.wear_msg_service_running))
         .build()
-      val ongoingActivity = OngoingActivity.Builder(context, NOTIFICATION_ID, builder)
+      val ongoingActivity = OngoingActivity.Builder(
+        context, NOTIFICATION_ID, builder
+      )
         .setAnimatedIcon(R.drawable.ic_logo_ongoing)
         .setStaticIcon(R.drawable.ic_logo_notification)
         .setTouchIntent(activityPendingIntent)

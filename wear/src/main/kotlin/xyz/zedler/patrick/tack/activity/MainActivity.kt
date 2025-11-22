@@ -24,7 +24,6 @@ import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -34,21 +33,22 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.preference.PreferenceManager
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine
 import xyz.zedler.patrick.tack.presentation.TackApp
 import xyz.zedler.patrick.tack.presentation.state.MainState
 import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.util.ButtonUtil
 import xyz.zedler.patrick.tack.util.ButtonUtil.OnPressListener
-import xyz.zedler.patrick.tack.util.MetronomeUtil
 import xyz.zedler.patrick.tack.util.keepScreenAwake
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 class MainActivity : ComponentActivity(), ServiceConnection {
 
   private lateinit var metronomeService: MetronomeService
-  private lateinit var metronomeUtil: MetronomeUtil
+  private lateinit var metronomeEngine: MetronomeEngine
   private lateinit var viewModel: MainViewModel
   private lateinit var buttonUtilFaster: ButtonUtil
   private lateinit var buttonUtilSlower: ButtonUtil
@@ -62,14 +62,14 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
     setTheme(android.R.style.Theme_DeviceDefault)
 
-    metronomeUtil = MetronomeUtil(this, false)
-    metronomeUtil.addListener(object : MetronomeUtil.MetronomeListenerAdapter() {
-      override fun onMetronomePreTick(tick: MetronomeUtil.Tick) {
+    metronomeEngine = MetronomeEngine(this, false)
+    metronomeEngine.addListener(object : MetronomeEngine.MetronomeListenerAdapter() {
+      override fun onMetronomePreTick(tick: MetronomeEngine.Tick) {
         runOnUiThread {
           viewModel.onPreTick(tick)
         }
       }
-      override fun onMetronomeTick(tick: MetronomeUtil.Tick) {
+      override fun onMetronomeTick(tick: MetronomeEngine.Tick) {
         runOnUiThread {
           viewModel.onTick(tick)
         }
@@ -257,12 +257,12 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     return super.onKeyUp(keyCode, event)
   }
 
-  private fun getMetronomeUtil(): MetronomeUtil {
-    return if (bound) metronomeService.getMetronomeUtil() else metronomeUtil
+  private fun getMetronomeUtil(): MetronomeEngine {
+    return if (bound) metronomeService.getMetronomeUtil() else metronomeEngine
   }
 
   private fun updateMetronomeUtil() {
-    val listeners: MutableSet<MetronomeUtil.MetronomeListener> = HashSet(metronomeUtil.listeners)
+    val listeners: MutableSet<MetronomeEngine.MetronomeListener> = HashSet(metronomeEngine.listeners)
     if (bound) {
       listeners.addAll(metronomeService.getMetronomeUtil().listeners)
     }
@@ -275,7 +275,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     val packageName = applicationContext.packageName
     val goToMarket = Intent(
       Intent.ACTION_VIEW,
-      Uri.parse("market://details?id=$packageName")
+      "market://details?id=$packageName".toUri()
     )
     goToMarket.addFlags(
       Intent.FLAG_ACTIVITY_NO_HISTORY or
@@ -288,7 +288,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
       startActivity(
         Intent(
           Intent.ACTION_VIEW,
-          Uri.parse("http://play.google.com/store/apps/details?id=$packageName")
+          "http://play.google.com/store/apps/details?id=$packageName".toUri()
         )
       )
     }

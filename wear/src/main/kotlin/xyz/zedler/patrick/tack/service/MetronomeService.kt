@@ -28,8 +28,8 @@ import android.os.IBinder
 import android.util.Log
 import androidx.lifecycle.LifecycleService
 import xyz.zedler.patrick.tack.Constants.Action
-import xyz.zedler.patrick.tack.util.MetronomeUtil
-import xyz.zedler.patrick.tack.util.MetronomeUtil.MetronomeListenerAdapter
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter
 import xyz.zedler.patrick.tack.util.NotificationUtil
 
 class MetronomeService : LifecycleService() {
@@ -38,7 +38,7 @@ class MetronomeService : LifecycleService() {
     private const val TAG = "MetronomeService"
   }
 
-  private lateinit var metronomeUtil: MetronomeUtil
+  private lateinit var metronomeEngine: MetronomeEngine
   private lateinit var notificationUtil: NotificationUtil
 
   private var configChange = false
@@ -47,8 +47,8 @@ class MetronomeService : LifecycleService() {
   override fun onCreate() {
     super.onCreate()
 
-    metronomeUtil = MetronomeUtil(this, true)
-    metronomeUtil.addListener(object : MetronomeListenerAdapter() {
+    metronomeEngine = MetronomeEngine(this, true)
+    metronomeEngine.addListener(object : MetronomeListenerAdapter() {
       override fun onMetronomeStop() {
         stopForeground()
       }
@@ -61,7 +61,7 @@ class MetronomeService : LifecycleService() {
     super.onDestroy()
 
     stopForeground()
-    metronomeUtil.destroy()
+    metronomeEngine.destroy()
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -69,7 +69,7 @@ class MetronomeService : LifecycleService() {
 
     val action = intent?.action ?: ""
     if (action == Action.STOP) {
-      metronomeUtil.stop()
+      metronomeEngine.stop()
     }
     return START_NOT_STICKY
   }
@@ -100,13 +100,16 @@ class MetronomeService : LifecycleService() {
 
   private fun startForeground() {
     val hasPermission = NotificationUtil.hasPermission(this)
-    if (hasPermission && !configChange && metronomeUtil.isPlaying) {
+    if (hasPermission && !configChange && metronomeEngine.isPlaying) {
       notificationUtil.createNotificationChannel()
       val notification = notificationUtil.notification
       try {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
           val type = ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
-          startForeground(NotificationUtil.NOTIFICATION_ID, notification, type)
+          startForeground(
+            NotificationUtil.NOTIFICATION_ID, notification,
+            type
+          )
         } else {
           startForeground(NotificationUtil.NOTIFICATION_ID, notification)
         }
@@ -122,8 +125,8 @@ class MetronomeService : LifecycleService() {
     configChange = false
   }
 
-  fun getMetronomeUtil(): MetronomeUtil {
-    return metronomeUtil
+  fun getMetronomeUtil(): MetronomeEngine {
+    return metronomeEngine
   }
 
   inner class MetronomeBinder : Binder() {

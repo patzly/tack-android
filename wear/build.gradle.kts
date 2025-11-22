@@ -84,6 +84,7 @@ android {
 dependencies {
   implementation(platform(libs.compose.bom))
   implementation(libs.preference)
+  implementation(libs.core.ktx)
   implementation(libs.lifecycle.service)
   implementation(libs.splashscreen)
   implementation(libs.ui)

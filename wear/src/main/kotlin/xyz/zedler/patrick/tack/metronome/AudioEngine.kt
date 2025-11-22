@@ -17,7 +17,7 @@
  * Copyright (c) 2020-2025 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util
+package xyz.zedler.patrick.tack.metronome
 
 import android.content.Context
 import android.media.AudioAttributes
@@ -32,8 +32,7 @@ import android.os.HandlerThread
 import android.os.SystemClock
 import android.util.Log
 import androidx.annotation.RawRes
-import xyz.zedler.patrick.tack.Constants.Sound
-import xyz.zedler.patrick.tack.Constants.TickType
+import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -42,13 +41,13 @@ import java.nio.ByteOrder
 import java.nio.charset.StandardCharsets
 import kotlin.math.max
 
-class AudioUtil(
+class AudioEngine(
   private val context: Context,
   private val onAudioStop: () -> Unit
 ) : AudioManager.OnAudioFocusChangeListener {
 
-  companion object {
-    private const val TAG = "AudioUtil"
+  companion object Companion {
+    private const val TAG = "AudioEngine"
     private const val SAMPLE_RATE_IN_HZ = 48000
     private const val SILENCE_CHUNK_SIZE = 8000
     private const val DATA_CHUNK_SIZE = 8
@@ -163,32 +162,38 @@ class AudioUtil(
     var pitchStrong = Pitch.HIGH
     var pitchSub = Pitch.LOW
     val (resIdNormal, resIdStrong, resIdSub) = when (sound) {
-      Sound.WOOD -> Triple(R.raw.wood, R.raw.wood, R.raw.mechanical_knock).also {
+      Constants.Sound.WOOD -> Triple(
+        R.raw.wood, R.raw.wood, R.raw.mechanical_knock
+      ).also {
         pitchSub = Pitch.NORMAL
       }
-      Sound.MECHANICAL -> Triple(
+      Constants.Sound.MECHANICAL -> Triple(
         R.raw.mechanical_tick, R.raw.mechanical_ding, R.raw.mechanical_knock
       ).also {
         pitchStrong = Pitch.NORMAL
         pitchSub = Pitch.NORMAL
       }
-      Sound.BEATBOXING_1 -> Triple(
+      Constants.Sound.BEATBOXING_1 -> Triple(
         R.raw.beatbox_snare1, R.raw.beatbox_kick1, R.raw.beatbox_hihat1
       ).also {
         pitchStrong = Pitch.NORMAL
         pitchSub = Pitch.NORMAL
       }
-      Sound.BEATBOXING_2 -> Triple(
+      Constants.Sound.BEATBOXING_2 -> Triple(
         R.raw.beatbox_snare2, R.raw.beatbox_kick2, R.raw.beatbox_hihat2
       ).also {
         pitchStrong = Pitch.NORMAL
         pitchSub = Pitch.NORMAL
       }
-      Sound.HANDS -> Triple(R.raw.hands_hit, R.raw.hands_clap, R.raw.hands_snap).also {
+      Constants.Sound.HANDS -> Triple(
+        R.raw.hands_hit, R.raw.hands_clap, R.raw.hands_snap
+      ).also {
         pitchStrong = Pitch.NORMAL
         pitchSub = Pitch.NORMAL
       }
-      Sound.FOLDING -> Triple(R.raw.folding_knock, R.raw.folding_fold, R.raw.folding_tap).also {
+      Constants.Sound.FOLDING -> Triple(
+        R.raw.folding_knock, R.raw.folding_fold, R.raw.folding_tap
+      ).also {
         pitchStrong = Pitch.NORMAL
         pitchSub = Pitch.NORMAL
       }
@@ -199,7 +204,7 @@ class AudioUtil(
     tickSub = loadAudio(resIdSub, pitchSub)
   }
 
-  fun writeTickPeriod(tick: MetronomeUtil.Tick, tempo: Int, subdivisionCount: Int) {
+  fun writeTickPeriod(tick: MetronomeEngine.Tick, tempo: Int, subdivisionCount: Int) {
     val periodSize = 60 * SAMPLE_RATE_IN_HZ / tempo / subdivisionCount
     val expectedTime = SystemClock.elapsedRealtime()
     audioHandler?.post {
@@ -235,9 +240,9 @@ class AudioUtil(
 
   private fun getTickSound(tickType: String): FloatArray? {
     return when (tickType) {
-      TickType.STRONG -> tickStrong
-      TickType.SUB -> tickSub
-      TickType.MUTED -> silence
+      Constants.TickType.STRONG -> tickStrong
+      Constants.TickType.SUB -> tickSub
+      Constants.TickType.MUTED -> silence
       else -> tickNormal
     }
   }

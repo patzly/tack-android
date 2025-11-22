@@ -28,15 +28,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.foundation.rememberActiveFocusRequester
+import androidx.wear.compose.foundation.requestFocusOnHierarchyActive
 import androidx.wear.compose.foundation.rotary.RotaryScrollableDefaults
 import androidx.wear.compose.foundation.rotary.rotaryScrollable
 import androidx.wear.compose.material3.ListHeader
@@ -66,14 +68,16 @@ fun SettingsScreen(
       scrollState = scrollableState,
       modifier = Modifier.background(MaterialTheme.colorScheme.background)
     ) {
+      val focusRequester = remember { FocusRequester() }
       val state by viewModel.state.collectAsState()
       ScalingLazyColumn(
         state = scrollableState,
         modifier = Modifier
           .fillMaxSize()
+          .requestFocusOnHierarchyActive()
           .rotaryScrollable(
             RotaryScrollableDefaults.behavior(scrollableState = scrollableState),
-            focusRequester = rememberActiveFocusRequester()
+            focusRequester = focusRequester
           )
       ) {
         item {

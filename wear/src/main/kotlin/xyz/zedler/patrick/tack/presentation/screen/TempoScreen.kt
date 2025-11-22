@@ -67,7 +67,7 @@ fun TempoScreen(
   TackTheme {
     val state by viewModel.state.collectAsState()
     val pickerCoroutineScope = rememberCoroutineScope()
-    var pickerOption = remember { state.tempo - 1 }
+    val pickerOption = remember { state.tempo - 1 }
     val pickerState = rememberPickerState(
       initialNumberOfOptions = Constants.TEMPO_MAX,
       initiallySelectedIndex = pickerOption,
@@ -95,7 +95,6 @@ fun TempoScreen(
           mainState = state,
           pickerState = pickerState,
           onOptionChange = {
-            pickerOption = it
             viewModel.updateTempo(it + 1)
           },
           modifier = Modifier.constrainAs(tempoPicker) {

@@ -20,6 +20,7 @@
 package xyz.zedler.patrick.tack.viewmodel
 
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,10 +30,10 @@ import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.Constants.Def
 import xyz.zedler.patrick.tack.Constants.Pref
 import xyz.zedler.patrick.tack.Constants.TickType
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.Tick
 import xyz.zedler.patrick.tack.presentation.navigation.Screen
 import xyz.zedler.patrick.tack.presentation.state.Bookmark
 import xyz.zedler.patrick.tack.presentation.state.MainState
-import xyz.zedler.patrick.tack.util.MetronomeUtil.Tick
 import xyz.zedler.patrick.tack.util.TempoTapUtil
 
 class MainViewModel(
@@ -110,7 +111,9 @@ class MainViewModel(
         animateTempoChange = animate
       ) }
       listener?.onMetronomeConfigChanged(_state.value)
-      sharedPrefs?.edit()?.putInt(Pref.TEMPO, tempo)?.apply()
+      sharedPrefs?.edit {
+        putInt(Pref.TEMPO, tempo)
+      }
     }
   }
 
@@ -129,7 +132,9 @@ class MainViewModel(
       beatTriggers = beatTriggers(beats.size)
     ) }
     listener?.onMetronomeConfigChanged(_state.value)
-    sharedPrefs?.edit()?.putString(Pref.BEATS, beats.joinToString(","))?.apply()
+    sharedPrefs?.edit {
+      putString(Pref.BEATS, beats.joinToString(","))
+    }
   }
 
   private fun beatTriggers(count: Int): List<Boolean> {
@@ -159,9 +164,9 @@ class MainViewModel(
       subdivisionTriggers = subdivisionTriggers(subdivisions.size)
     ) }
     listener?.onMetronomeConfigChanged(_state.value)
-    sharedPrefs?.edit()?.putString(
-      Pref.SUBDIVISIONS, subdivisions.joinToString(",")
-    )?.apply()
+    sharedPrefs?.edit {
+      putString(Pref.SUBDIVISIONS, subdivisions.joinToString(","))
+    }
   }
 
   private fun subdivisionTriggers(count: Int): List<Boolean> {
@@ -234,32 +239,40 @@ class MainViewModel(
 
   private fun updateBookmarks(bookmarks: List<Bookmark>) {
     _state.update { it.copy(bookmarks = bookmarks.sorted().toList()) }
-    sharedPrefs?.edit()?.putString(
-      Pref.BOOKMARKS,
-      bookmarks.joinToString("|") {
-        "${it.tempo}" +
-            "&${it.beats.joinToString(",")}" +
-            "&${it.subdivisions.joinToString(",")}"
-      }
-    )?.apply()
+    sharedPrefs?.edit {
+      putString(
+        Pref.BOOKMARKS,
+        bookmarks.joinToString("|") {
+          "${it.tempo}" +
+              "&${it.beats.joinToString(",")}" +
+              "&${it.subdivisions.joinToString(",")}"
+        }
+      )
+    }
   }
 
   fun updateBeatModeVibrate(vibrate: Boolean) {
     _state.update { it.copy(beatModeVibrate = vibrate) }
     listener?.onMetronomeConfigChanged(_state.value)
-    sharedPrefs?.edit()?.putBoolean(Pref.BEAT_MODE_VIBRATE, vibrate)?.apply()
+    sharedPrefs?.edit {
+      putBoolean(Pref.BEAT_MODE_VIBRATE, vibrate)
+    }
   }
 
   fun updateAlwaysVibrate(alwaysVibrate: Boolean) {
     _state.update { it.copy(alwaysVibrate = alwaysVibrate) }
     listener?.onMetronomeConfigChanged(_state.value)
-    sharedPrefs?.edit()?.putBoolean(Pref.ALWAYS_VIBRATE, alwaysVibrate)?.apply()
+    sharedPrefs?.edit {
+      putBoolean(Pref.ALWAYS_VIBRATE, alwaysVibrate)
+    }
   }
 
   fun updateStrongVibration(strongVibration: Boolean) {
     _state.update { it.copy(strongVibration = strongVibration) }
     listener?.onMetronomeConfigChanged(_state.value)
-    sharedPrefs?.edit()?.putBoolean(Pref.STRONG_VIBRATION, strongVibration)?.apply()
+    sharedPrefs?.edit {
+      putBoolean(Pref.STRONG_VIBRATION, strongVibration)
+    }
   }
 
   fun updateGain(gain: Int) {
@@ -275,31 +288,41 @@ class MainViewModel(
       startedWithGain = startedWithGain
     ) }
     listener?.onMetronomeConfigChanged(_state.value)
-    sharedPrefs?.edit()?.putInt(Pref.GAIN, gain)?.apply()
+    sharedPrefs?.edit {
+      putInt(Pref.GAIN, gain)
+    }
   }
 
   fun updateSound(sound: String) {
     _state.update { it.copy(sound = sound) }
     listener?.onMetronomeConfigChanged(_state.value)
-    sharedPrefs?.edit()?.putString(Pref.SOUND, sound)?.apply()
+    sharedPrefs?.edit {
+      putString(Pref.SOUND, sound)
+    }
   }
 
   fun updateIgnoreFocus(ignoreFocus: Boolean) {
     _state.update { it.copy(ignoreFocus = ignoreFocus) }
     listener?.onMetronomeConfigChanged(_state.value)
-    sharedPrefs?.edit()?.putBoolean(Pref.IGNORE_FOCUS, ignoreFocus)?.apply()
+    sharedPrefs?.edit {
+      putBoolean(Pref.IGNORE_FOCUS, ignoreFocus)
+    }
   }
 
   fun updateLatency(latency: Long) {
     _state.update { it.copy(latency = latency) }
     listener?.onMetronomeConfigChanged(_state.value)
-    sharedPrefs?.edit()?.putLong(Pref.LATENCY, latency)?.apply()
+    sharedPrefs?.edit {
+      putLong(Pref.LATENCY, latency)
+    }
   }
 
   fun updateKeepAwake(awake: Boolean) {
     _state.update { it.copy(keepAwake = awake) }
     listener?.onKeepAwakeChanged(keepAwake())
-    sharedPrefs?.edit()?.putBoolean(Pref.KEEP_AWAKE, awake)?.apply()
+    sharedPrefs?.edit {
+      putBoolean(Pref.KEEP_AWAKE, awake)
+    }
   }
 
   private fun keepAwake(): Boolean {
@@ -313,13 +336,17 @@ class MainViewModel(
 
   fun updateReduceAnim(reduceAnim: Boolean) {
     _state.update { it.copy(reduceAnim = reduceAnim) }
-    sharedPrefs?.edit()?.putBoolean(Pref.REDUCE_ANIM, reduceAnim)?.apply()
+    sharedPrefs?.edit {
+      putBoolean(Pref.REDUCE_ANIM, reduceAnim)
+    }
   }
 
   fun updateFlashScreen(flashScreen: Boolean) {
     _state.update { it.copy(flashScreen = flashScreen) }
     listener?.onMetronomeConfigChanged(_state.value)
-    sharedPrefs?.edit()?.putBoolean(Pref.FLASH_SCREEN, flashScreen)?.apply()
+    sharedPrefs?.edit {
+      putBoolean(Pref.FLASH_SCREEN, flashScreen)
+    }
   }
 
   fun onPreTick(tick: Tick) {

@@ -17,7 +17,7 @@
  * Copyright (c) 2020-2025 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util
+package xyz.zedler.patrick.tack.metronome
 
 import android.content.Context
 import android.os.Handler
@@ -25,10 +25,11 @@ import android.os.HandlerThread
 import android.os.Looper
 import android.util.Log
 import xyz.zedler.patrick.tack.Constants
-import xyz.zedler.patrick.tack.Constants.TickType
 import xyz.zedler.patrick.tack.presentation.state.MainState
+import xyz.zedler.patrick.tack.util.HapticUtil
+import xyz.zedler.patrick.tack.util.NotificationUtil
 
-class MetronomeUtil(
+class MetronomeEngine(
   private val context: Context,
   private val fromService: Boolean
 ) {
@@ -37,7 +38,7 @@ class MetronomeUtil(
     private const val TAG = "MetronomeUtil"
   }
 
-  private val audioUtil = AudioUtil(context, ::stop)
+  private val audioEngine = AudioEngine(context, ::stop)
   private val hapticUtil = HapticUtil(context)
 
   private var tickThread: HandlerThread? = null
@@ -110,7 +111,7 @@ class MetronomeUtil(
       removeHandlerCallbacks()
       tickThread?.quitSafely()
       callbackThread?.quit()
-      audioUtil.destroy()
+      audioEngine.destroy()
     }
   }
 
@@ -128,14 +129,14 @@ class MetronomeUtil(
 
     resetHandlersIfRequired()
     isPlaying = true
-    audioUtil.play()
+    audioEngine.play()
     tickIndex = 0
     tickHandler?.post(object : Runnable {
       override fun run() {
         if (isPlaying) {
           tickHandler?.postDelayed(this, getInterval() / getSubdivisionsCount())
           val tick = performTick()
-          audioUtil.writeTickPeriod(tick, tempo, getSubdivisionsCount())
+          audioEngine.writeTickPeriod(tick, tempo, getSubdivisionsCount())
           tickIndex++
         }
       }
@@ -148,7 +149,7 @@ class MetronomeUtil(
   fun stop() {
     if (!isPlaying) return
     isPlaying = false
-    audioUtil.stop()
+    audioEngine.stop()
 
     if (fromService) {
       removeHandlerCallbacks()
@@ -176,7 +177,7 @@ class MetronomeUtil(
 
   fun addBeat() {
     if (beats.size < Constants.BEATS_MAX) {
-      beats.add(TickType.NORMAL)
+      beats.add(Constants.TickType.NORMAL)
     }
   }
 
@@ -194,7 +195,7 @@ class MetronomeUtil(
 
   fun addSubdivision() {
     if (subdivisions.size < Constants.SUBS_MAX) {
-      subdivisions.add(TickType.SUB)
+      subdivisions.add(Constants.TickType.SUB)
     }
   }
 
@@ -205,31 +206,35 @@ class MetronomeUtil(
   }
 
   fun setSwing3() {
-    subdivisions = mutableListOf(TickType.MUTED, TickType.MUTED, TickType.NORMAL)
+    subdivisions = mutableListOf(
+      Constants.TickType.MUTED, Constants.TickType.MUTED, Constants.TickType.NORMAL
+    )
   }
 
   fun setSwing5() {
     subdivisions = mutableListOf(
-      TickType.MUTED, TickType.MUTED, TickType.MUTED, TickType.NORMAL, TickType.MUTED
+      Constants.TickType.MUTED, Constants.TickType.MUTED, Constants.TickType.MUTED,
+      Constants.TickType.NORMAL, Constants.TickType.MUTED
     )
   }
 
   fun setSwing7() {
     subdivisions = mutableListOf(
-      TickType.MUTED, TickType.MUTED, TickType.MUTED, TickType.MUTED,
-      TickType.NORMAL, TickType.MUTED, TickType.MUTED
+      Constants.TickType.MUTED, Constants.TickType.MUTED, Constants.TickType.MUTED,
+      Constants.TickType.MUTED, Constants.TickType.NORMAL, Constants.TickType.MUTED,
+      Constants.TickType.MUTED
     )
   }
 
   fun getInterval(): Long = (1000 * 60 / tempo).toLong()
 
   private fun setSound(sound: String) {
-    audioUtil.setSound(sound)
+    audioEngine.setSound(sound)
   }
 
   private fun setBeatModeVibrate(vibrate: Boolean) {
     beatModeVibrate = vibrate && hapticUtil.hasVibrator()
-    audioUtil.muted = beatModeVibrate
+    audioEngine.muted = beatModeVibrate
     hapticUtil.enabled = beatModeVibrate || alwaysVibrate
   }
 
@@ -243,26 +248,31 @@ class MetronomeUtil(
   }
 
   private fun setIgnoreFocus(ignore: Boolean) {
-    audioUtil.ignoreFocus = ignore
+    audioEngine.ignoreFocus = ignore
   }
 
   private fun setGain(gain: Int) {
-    audioUtil.gain = gain
+    audioEngine.gain = gain
   }
 
   private fun performTick(): Tick {
-    val tick = Tick(tickIndex, getCurrentBeat(), getCurrentSubdivision(), getCurrentTickType())
+    val tick = Tick(
+      tickIndex,
+      getCurrentBeat(),
+      getCurrentSubdivision(),
+      getCurrentTickType()
+    )
 
     latencyHandler?.postDelayed({
       listeners.forEach { it.onMetronomePreTick(tick) }
-    }, maxOf(0, latency - Constants.BEAT_ANIM_OFFSET))
+    }, kotlin.comparisons.maxOf(0, latency - Constants.BEAT_ANIM_OFFSET))
 
     latencyHandler?.postDelayed({
       if (beatModeVibrate || alwaysVibrate) {
         when (tick.type) {
-          TickType.STRONG -> hapticUtil.heavyClick()
-          TickType.SUB -> hapticUtil.tick()
-          TickType.MUTED -> {}
+          Constants.TickType.STRONG -> hapticUtil.heavyClick()
+          Constants.TickType.SUB -> hapticUtil.tick()
+          Constants.TickType.MUTED -> {}
           else -> hapticUtil.click()
         }
       }

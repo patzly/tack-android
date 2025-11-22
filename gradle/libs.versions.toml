@@ -12,6 +12,7 @@ flexbox = "3.0.0"
 gson = "2.13.2"
 room = "2.8.4"
 kotlin = "2.2.21"
+core-ktx = "1.17.0"
 lifecycle = "2.10.0"
 splashscreen = "1.2.0"
 wear-input = "1.2.0"
@@ -42,6 +43,7 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 wear-tooling = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wear-tooling" }
 wear-ongoing = { group = "androidx.wear", name = "wear-ongoing", version.ref = "wear-ongoing" }
 wear-input = { group = "androidx.wear", name = "wear-input", version.ref = "wear-input" }
+core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycle" }
 splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
 ui = { group = "androidx.compose.ui", name = "ui" }
