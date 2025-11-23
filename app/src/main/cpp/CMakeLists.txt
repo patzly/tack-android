@@ -15,8 +15,9 @@ target_link_libraries(
 
 # Make builds reproducible
 target_compile_options(oboe-audio-engine PRIVATE
-        "-ffile-prefix-map=${CMAKE_CURRENT_SOURCE_DIR}=."
-        "-fno-ident"
+        "-ffile-prefix-map=${CMAKE_SOURCE_DIR}="
+        "-ffile-prefix-map=${CMAKE_BINARY_DIR}="
+        "-ffile-prefix-map=${ANDROID_TOOLCHAIN_ROOT}="
 )
 target_link_options(oboe-audio-engine PRIVATE
         "-Wl,--build-id=none"
