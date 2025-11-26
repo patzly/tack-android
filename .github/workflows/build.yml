@@ -49,19 +49,12 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > release.keystore
 
-      # --- Release ---
-      - name: Build App Release
-        run: ./gradlew :app:assembleRelease
+      # --- Build ---
+      - name: Build App
+        run: ./gradlew :app:assembleRelease :app:assembleDebug
 
-      - name: Build Wear Release
-        run: ./gradlew :wear:assembleRelease
-
-      # --- Debug ---
-      - name: Build App Debug
-        run: ./gradlew :app:assembleDebug
-
-      - name: Build Wear Debug
-        run: ./gradlew :wear:assembleDebug
+      - name: Build Wear
+        run: ./gradlew :wear:assembleRelease :wear:assembleDebug
 
       # Upload Artifact
       - name: Upload App Release Artifact
@@ -120,9 +113,20 @@ jobs:
           name: wear-debug
           path: artifacts/wear/debug
 
-      - name: Delete old pre-release
+      - name: Check if pre-release exists
+        id: check_prerelease
         run: |
-          gh release delete pre-release -y --cleanup-tag
+          if gh release view pre-release >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Delete old pre-release
+        if: steps.check_prerelease.outputs.exists == 'true'
+        run: gh release delete pre-release -y --cleanup-tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
