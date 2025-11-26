@@ -49,6 +49,15 @@ android {
     )*/
   }
 
+  signingConfigs {
+    create("release") {
+      storeFile = rootProject.extra["keystoreFile"] as File
+      storePassword = rootProject.extra["keystorePassword"] as String
+      keyAlias = rootProject.extra["keyAlias"] as String
+      keyPassword = rootProject.extra["keyPassword"] as String
+    }
+  }
+
   buildTypes {
     release {
       isMinifyEnabled = true
@@ -56,6 +65,7 @@ android {
         getDefaultProguardFile("proguard-android-optimize.txt"),
         "proguard-rules.pro"
       )
+      signingConfig = signingConfigs.getByName("release")
     }
   }
   compileOptions {

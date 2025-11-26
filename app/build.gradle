@@ -53,6 +53,15 @@ android {
         variant.resValue("string", "versionName", variant.versionName)
     }
 
+    signingConfigs {
+        release {
+            storeFile rootProject.ext.keystoreFile
+            storePassword rootProject.ext.keystorePassword
+            keyAlias rootProject.ext.keyAlias
+            keyPassword rootProject.ext.keyPassword
+        }
+    }
+
     buildTypes {
         release {
             postprocessing {
@@ -65,6 +74,7 @@ android {
                     'proguard-rules.pro'
                 }
             }
+            signingConfig signingConfigs.release
             debuggable = false
         }
     }
