@@ -319,7 +319,7 @@ fun TempoCard(
   WrapContentCard(
     onClick = onClick,
     modifier = modifier.wrapContentWidth(),
-    border = BorderStroke(1.dp, borderColor),
+    border = BorderStroke(2.dp, borderColor),
     shape = MaterialTheme.shapes.extraLarge,
     contentPadding = PaddingValues(0.dp)
   ) {

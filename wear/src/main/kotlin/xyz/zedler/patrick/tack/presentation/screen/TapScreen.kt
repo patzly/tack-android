@@ -20,29 +20,36 @@
 package xyz.zedler.patrick.tack.presentation.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.Text
-import androidx.wear.compose.material3.ripple
 import androidx.wear.tooling.preview.devices.WearDevices
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.presentation.components.TempoTap
 import xyz.zedler.patrick.tack.presentation.state.MainState
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.isSmallScreen
@@ -76,50 +83,51 @@ fun TapBox(
   onClick: () -> Unit,
   modifier: Modifier = Modifier
 ) {
+  val interactionSource = remember { MutableInteractionSource() }
+  val isPressed by interactionSource.collectIsPressedAsState()
+
   Box(
     modifier = modifier
       .fillMaxSize()
       .background(color = MaterialTheme.colorScheme.background)
       .padding(32.dp)
   ) {
+    TempoTap(
+      isTouched = isPressed,
+      modifier = modifier.fillMaxSize(),
+      color = MaterialTheme.colorScheme.tertiary
+    )
     Box(
       contentAlignment = Alignment.Center,
       modifier = modifier
         .fillMaxSize()
-        .border(
-          width = 2.dp,
-          color = MaterialTheme.colorScheme.tertiary,
-          shape = CircleShape
-        )
-        .background(
-          color = MaterialTheme.colorScheme.tertiaryContainer,
-          shape = CircleShape
-        )
         .pointerInput(Unit) {
-          awaitPointerEventScope {
-            while (true) {
-              val event = awaitPointerEvent()
-              if (event.type == PointerEventType.Press) {
-                onClick()
-              }
-            }
+          awaitEachGesture {
+            awaitFirstDown(pass = PointerEventPass.Initial)
+            onClick()
+            waitForUpOrCancellation()
           }
         }
-        .clip(CircleShape)
         .clickable(
-          interactionSource = remember { MutableInteractionSource() },
-          onClick = {},
-          indication = ripple(
-            color = MaterialTheme.colorScheme.onTertiaryContainer
-          )
+          interactionSource = interactionSource,
+          indication = null,
+          onClick = {}
         )
     ) {
+      val typefaceMedium = remember {
+        FontFamily(Font(R.font.google_sans_flex_medium))
+      }
       Text(
-        text = state.tempo.toString(),
-        color = MaterialTheme.colorScheme.onTertiaryContainer,
-        style = MaterialTheme.typography.displayLarge.copy(
-          fontSize = if (isSmallScreen()) 30.sp else 40.sp
-        )
+        text = buildAnnotatedString {
+          withStyle(style = SpanStyle(fontFeatureSettings = "tnum")) {
+            append(state.tempo.toString())
+          }
+        },
+        color = MaterialTheme.colorScheme.onSurface,
+        style = MaterialTheme.typography.displayMedium.copy(
+            fontSize = if (isSmallScreen()) 30.sp else 38.sp,
+        ),
+        fontFamily = typefaceMedium
       )
     }
   }

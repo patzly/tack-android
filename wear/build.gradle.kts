@@ -93,6 +93,7 @@ dependencies {
   implementation(libs.wear.ongoing)
   implementation(libs.wear.input)
   implementation(libs.compose.material)
+  implementation(libs.compose.material.wear)
   implementation(libs.compose.foundation)
   implementation(libs.compose.runtime)
   implementation(libs.compose.animation.graphics)
