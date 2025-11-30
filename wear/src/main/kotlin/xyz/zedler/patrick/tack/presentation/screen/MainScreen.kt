@@ -329,7 +329,7 @@ fun TempoCard(
     onClick = onClick,
     modifier = modifier.wrapContentWidth(),
     border = BorderStroke(2.dp, borderColor),
-    shape = MaterialTheme.shapes.large,
+    shape = MaterialTheme.shapes.extraLarge,
     contentPadding = PaddingValues(0.dp)
   ) {
     val minRatio = 0.001f // 0 would cause a small y-offset

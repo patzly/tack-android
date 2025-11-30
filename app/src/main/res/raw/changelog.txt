@@ -4,6 +4,7 @@
 - New: Google Sans Flex typeface for improved consistency with Material 3 Expressive
 - Improved: smaller slider ranges in options dialog on phones for better usability
 - Improved: audio engine performance and stability
+- Improved: play/stop button again responds on touch up instead of down for a consistent experience
 - Improved: menu appearance
 - Improved: dynamic theme support (Wear OS)
 - Fixed: haptic feedback while rotating tempo picker after limits reached
