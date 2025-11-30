@@ -1107,15 +1107,18 @@ public class MetronomeEngine {
     switch (config.getTimerUnit()) {
       case UNIT.SECONDS:
       case UNIT.MINUTES:
+        long intervalMillis = Math.max(getInterval(), 1);
         boolean isUnitSeconds = config.getTimerUnit().equals(UNIT.SECONDS);
         long totalMillis = config.getTimerDuration() * (isUnitSeconds ? 1000L : 60000L);
         long elapsedMillis = (long) (fraction * totalMillis);
-        timerBarIndex = (int) (elapsedMillis / getInterval() / config.getBeatsCount());
-        long beatMillis = getInterval();
+        timerBarIndex = (int) (elapsedMillis / intervalMillis / config.getBeatsCount());
         timerBeatIndex =
-            (int) ((elapsedMillis % (getInterval() * config.getBeatsCount())) / beatMillis);
-        long subdivisionMillis = getInterval() / config.getSubdivisionsCount();
-        timerSubIndex = (int) ((elapsedMillis % beatMillis) / subdivisionMillis);
+            (int) ((elapsedMillis % (intervalMillis * config.getBeatsCount())) / intervalMillis);
+        long subdivisionMillis = intervalMillis / config.getSubdivisionsCount();
+        if (subdivisionMillis == 0) { // maybe caused division by zero
+          subdivisionMillis = 1;
+        }
+        timerSubIndex = (int) ((elapsedMillis % intervalMillis) / subdivisionMillis);
         break;
       default:
         int barIndex = (int) (fraction * config.getTimerDuration());
