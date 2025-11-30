@@ -38,6 +38,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -59,6 +60,7 @@ import androidx.wear.compose.material3.ScreenScaffold
 import androidx.wear.compose.material3.rememberPickerState
 import androidx.wear.compose.material3.touchTargetAwareSize
 import androidx.wear.tooling.preview.devices.WearDevices
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
@@ -133,8 +135,15 @@ fun MainScreen(
               }
             }
           }
-          LaunchedEffect(pickerState.selectedOptionIndex) {
-            viewModel.updateTempo(pickerState.selectedOptionIndex + 1, picker = true)
+          LaunchedEffect(pickerState) {
+            snapshotFlow { pickerState.selectedOptionIndex }
+              .drop(1)
+              .collect { index ->
+                val newTempo = index + 1
+                if (newTempo != state.tempo) {
+                  viewModel.updateTempo(newTempo, picker = true)
+                }
+              }
           }
 
           IconButton(
@@ -320,7 +329,7 @@ fun TempoCard(
     onClick = onClick,
     modifier = modifier.wrapContentWidth(),
     border = BorderStroke(2.dp, borderColor),
-    shape = MaterialTheme.shapes.extraLarge,
+    shape = MaterialTheme.shapes.large,
     contentPadding = PaddingValues(0.dp)
   ) {
     val minRatio = 0.001f // 0 would cause a small y-offset

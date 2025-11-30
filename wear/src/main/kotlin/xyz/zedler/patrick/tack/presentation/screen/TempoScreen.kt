@@ -29,9 +29,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
@@ -69,14 +71,22 @@ fun TempoScreen(
   TackTheme {
     val state by viewModel.state.collectAsState()
     val pickerCoroutineScope = rememberCoroutineScope()
-    val pickerOption = remember { state.tempo - 1 }
+    val initialOption = remember { state.tempo - 1 }
     val pickerState = rememberPickerState(
       initialNumberOfOptions = Constants.TEMPO_MAX,
-      initiallySelectedIndex = pickerOption,
+      initiallySelectedIndex = initialOption,
       shouldRepeatOptions = false
     )
+    var accumulatedIndex by remember { mutableIntStateOf(initialOption) }
+    LaunchedEffect(pickerState.isScrollInProgress, state.tempo) {
+      if (!pickerState.isScrollInProgress) {
+        accumulatedIndex = state.tempo - 1
+      }
+    }
+
     fun safelyAnimateToOption(index: Int) {
       val safeIndex = index.coerceIn(Constants.TEMPO_MIN - 1, Constants.TEMPO_MAX - 1)
+      accumulatedIndex = safeIndex
       pickerCoroutineScope.launch {
         if (state.reduceAnim) {
           pickerState.scrollToOption(safeIndex)
@@ -110,7 +120,7 @@ fun TempoScreen(
           label = "-5",
           reduceAnim = state.reduceAnim,
           onClick = {
-            safelyAnimateToOption(state.tempo - 6)
+            safelyAnimateToOption(accumulatedIndex - 5)
           },
           modifier = Modifier.constrainAs(minus5Button) {
             top.linkTo(parent.top, margin = 40.dp)
@@ -123,7 +133,7 @@ fun TempoScreen(
           label = "-10",
           reduceAnim = state.reduceAnim,
           onClick = {
-            safelyAnimateToOption(state.tempo - 11)
+            safelyAnimateToOption(accumulatedIndex - 10)
           },
           modifier = Modifier.constrainAs(minus10Button) {
             top.linkTo(minus5Button.bottom)
@@ -136,7 +146,7 @@ fun TempoScreen(
           label = "+5",
           reduceAnim = state.reduceAnim,
           onClick = {
-            safelyAnimateToOption(state.tempo + 4)
+            safelyAnimateToOption(accumulatedIndex + 5)
           },
           modifier = Modifier.constrainAs(plus5Button) {
             top.linkTo(parent.top, margin = 40.dp)
@@ -149,7 +159,7 @@ fun TempoScreen(
           label = "+10",
           reduceAnim = state.reduceAnim,
           onClick = {
-            safelyAnimateToOption(state.tempo + 9)
+            safelyAnimateToOption(accumulatedIndex + 10)
           },
           modifier = Modifier.constrainAs(plus10Button) {
             top.linkTo(plus5Button.bottom)
