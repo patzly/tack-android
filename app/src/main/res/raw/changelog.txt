@@ -7,6 +7,7 @@
 - Improved: menu appearance
 - Improved: dynamic theme support (Wear OS)
 - Fixed: haptic feedback while rotating tempo picker after limits reached
+- Fixed: some beats still randomly not playing due to threading issues
 - Fixed: some crashes in certain situations
 - Fixed: fast tempo changes on tempo screen causing incorrect tempo (Wear OS)
 

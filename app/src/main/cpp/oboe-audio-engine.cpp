@@ -113,8 +113,11 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
 
     // Load which tick types are assigned to voices (atomic snapshot)
     int32_t localTickToPlay[kNumVoices];
+    bool voiceJustChanged[kNumVoices]; // remember if voice assignment changed
+
     for (int v = 0; v < kNumVoices; ++v) {
       localTickToPlay[v] = mTickToPlay[v].load(std::memory_order_acquire);
+      voiceJustChanged[v] = false;
     }
 
     // Atomically load buffers once per callback
@@ -124,40 +127,40 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
 
     // Map voice -> buffer shared_ptr (snapshot)
     std::shared_ptr<std::vector<float>> sourceData[kNumVoices];
-    for (int v = 0; v < kNumVoices; ++v) {
-      int32_t tickType = localTickToPlay[v];
-      if (tickType == NATIVE_TICK_TYPE_STRONG)
-        sourceData[v] = strong;
-      else if (tickType == NATIVE_TICK_TYPE_NORMAL)
-        sourceData[v] = normal;
-      else if (tickType == NATIVE_TICK_TYPE_SUB)
-        sourceData[v] = sub;
-      else
-        sourceData[v] = nullptr;
 
-      // initialize prev state if different
+    for (int v = 0; v < kNumVoices; ++v) {
+      // check if voice assignment changed
       if (mPrevLocalTickToPlay[v] != localTickToPlay[v]) {
-        if (localTickToPlay[v] != -1) {
-          // If assignment was present at the moment of snapshot, we keep
-          // readIndexLocal as-is (it may be 0 or a continued index).
-          // The pending mechanism handles sample-accurate starts.
-        } else {
-          mReadIndexLocal[v] = 0;
-        }
+        voiceJustChanged[v] = true;
         mPrevLocalTickToPlay[v] = localTickToPlay[v];
+      }
+
+      int32_t tickType = localTickToPlay[v];
+      if (tickType == NATIVE_TICK_TYPE_STRONG) {
+        sourceData[v] = strong;
+      } else if (tickType == NATIVE_TICK_TYPE_NORMAL) {
+        sourceData[v] = normal;
+      } else if (tickType == NATIVE_TICK_TYPE_SUB) {
+        sourceData[v] = sub;
+      } else {
+        sourceData[v] = nullptr;
+      }
+
+      // if assigned but not started, suppress output to avoid processing
+      // with stale index or accidental cleanup
+      if (voiceJustChanged[v] && localTickToPlay[v] != -1) {
+        sourceData[v] = nullptr;
       }
     }
 
     for (int i = 0; i < numFrames; ++i) {
       float drySample = 0.0f;
 
-      // Check pending tick events BEFORE mixing for this sample
+      // Check pending tick events before mixing for this sample
       for (int v = 0; v < kNumVoices; ++v) {
         int32_t pending = mPendingTickType[v].load(
             std::memory_order_acquire);
         if (pending != -1) {
-          // There is a pending immediate start for voice v.
-          // Atomically clear pending
           mPendingTickType[v].store(-1, std::memory_order_release);
 
           // Assign the tick type to the active voice (mTickToPlay already set
@@ -165,14 +168,15 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
           localTickToPlay[v] = mTickToPlay[v].load(
               std::memory_order_relaxed);
 
-          if (localTickToPlay[v] == NATIVE_TICK_TYPE_STRONG)
+          if (localTickToPlay[v] == NATIVE_TICK_TYPE_STRONG) {
             sourceData[v] = strong;
-          else if (localTickToPlay[v] == NATIVE_TICK_TYPE_NORMAL)
+          } else if (localTickToPlay[v] == NATIVE_TICK_TYPE_NORMAL) {
             sourceData[v] = normal;
-          else if (localTickToPlay[v] == NATIVE_TICK_TYPE_SUB)
+          } else if (localTickToPlay[v] == NATIVE_TICK_TYPE_SUB) {
             sourceData[v] = sub;
-          else
+          } else {
             sourceData[v] = nullptr;
+          }
 
           // Start playing at the current sample
           mReadIndexLocal[v] = 0;
@@ -188,7 +192,8 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
           ++mReadIndexLocal[v];
         } else {
           // voice is inactive or finished
-          if (localTickToPlay[v] != -1) {
+          // only kill voice if we don't wait for a pending start
+          if (localTickToPlay[v] != -1 && !voiceJustChanged[v]) {
             localTickToPlay[v] = -1;
             mReadIndexLocal[v] = 0;
             sourceData[v] = nullptr;
