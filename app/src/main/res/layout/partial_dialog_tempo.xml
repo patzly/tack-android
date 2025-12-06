@@ -143,7 +143,7 @@
 
           <TextView
             android:id="@+id/text_tempo_instant"
-            style="@style/Widget.Tack.TextView"
+            style="@style/Widget.Tack.TextView.ListItem.Title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/label_tempo_instant" />
@@ -186,6 +186,7 @@
 
           <TextView
             android:id="@+id/text_tempo_tap_tempo"
+            style="@style/Widget.Tack.TextView.Medium"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/label_text_size"

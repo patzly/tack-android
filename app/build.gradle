@@ -24,12 +24,12 @@ plugins {
 
 android {
     namespace = 'xyz.zedler.patrick.tack'
-    compileSdk = 36
+    compileSdk = 36.1
 
     defaultConfig {
         applicationId = "xyz.zedler.patrick.tack"
         minSdk = 23
-        targetSdk = 36
+        targetSdk = 36.1
         versionCode = 370 // last number is 0 for app release
         versionName = "6.1.0"
         resourceConfigurations = ["en", "cs", "de", "es", "es-rCL", "fr", "in", "ja", "ko", "nl",
