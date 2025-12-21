@@ -54,8 +54,9 @@
       android:layout_marginStart="8dp"
       android:gravity="center_vertical"
       android:textAppearance="@style/TextAppearance.Tack.LabelLarge"
+      android:fontFeatureSettings="tnum"
       android:fontFamily="@font/google_sans_flex_medium"
-      android:fontFeatureSettings="tnum" />
+      app:fontFamily="@font/google_sans_flex_medium" />
 
   </LinearLayout>
 

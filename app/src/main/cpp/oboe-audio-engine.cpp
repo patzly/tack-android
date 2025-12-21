@@ -6,6 +6,7 @@
 #include <cmath>
 #include <memory>
 #include <vector>
+#include <unistd.h>
 
 #define LOG_TAG "OboeAudioEngine"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
@@ -31,8 +32,8 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
     mAttackTime_s = 0.001f;
     mReleaseTime_s = 0.25f;
 
-    const float kThreshold_dB = -12.0f;
-    const float kRatio = 5.0f;
+    const float kThreshold_dB = -0.1f;
+    const float kRatio = 10.0f;
 
     mCompThreshold = decibelsToLinear(kThreshold_dB);
     mCompSlope = 1.0f / kRatio;
@@ -50,10 +51,14 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
   }
 
   ~OboeAudioEngine() override {
-    stop();
+    if (mStream) {
+      mStream->stop();
+      mStream->close();
+      mStream.reset();
+    }
   }
 
-  bool start() {
+  bool init() {
     oboe::AudioStreamBuilder builder;
     builder.setDirection(oboe::Direction::Output)
         ->setPerformanceMode(oboe::PerformanceMode::LowLatency)
@@ -61,7 +66,9 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
         ->setFormat(oboe::AudioFormat::Float)
         ->setChannelCount(1)
         ->setSampleRate(mSampleRate)
-        ->setDataCallback(this);
+        ->setDataCallback(this)
+        ->setUsage(oboe::Usage::Game)
+        ->setContentType(oboe::ContentType::Sonification);
 
     oboe::Result result = builder.openStream(mStream);
     if (result != oboe::Result::OK) {
@@ -73,8 +80,18 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
     mSampleRate = mStream->getSampleRate();
     recomputeCompressorCoeffs();
 
+    // quick start/stop to avoid initial fade-in
+    start();
+    usleep(200 * 1000);
+    stop();
+
+    return true;
+  }
+
+  bool start() {
     constexpr int64_t kTimeoutNanos = 1 * 1000 * 1000 * 1000;  // 1 second
-    result = mStream->start(kTimeoutNanos);
+    oboe::Result result = mStream->start(kTimeoutNanos);
+
     if (result != oboe::Result::OK) {
       LOGE("Failed to start Oboe stream: %s",
           oboe::convertToText(result));
@@ -84,14 +101,29 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
     return true;
   }
 
-  void stop() {
-    if (mStream) {
-      mStream->stop();
-      mStream->close();
-      mStream.reset();
+  bool stop() {
+    if (!mStream) return false;
 
-      reset();
+    constexpr int64_t kTimeoutNanos = 1 * 1000 * 1000 * 1000;  // 1 second
+    oboe::Result result = mStream->pause(kTimeoutNanos);
+
+    if (result != oboe::Result::OK) {
+      LOGE("Failed to pause Oboe stream: %s",
+          oboe::convertToText(result));
+      return false;
     }
+
+    mStream->requestFlush();
+
+    mResetRequested.store(true);
+
+    for (int i = 0; i < kNumVoices; ++i) {
+      mTickToPlay[i].store(-1);
+      mPendingTickType[i].store(-1);
+    }
+    mNextVoiceToSteal.store(0);
+
+    return true;
   }
 
   // Realtime audio callback
@@ -99,6 +131,17 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
       void *audioData,
       int32_t numFrames) override {
     auto *outputBuffer = static_cast<float *>(audioData);
+
+    if (mResetRequested.exchange(false)) {
+      for (int i = 0; i < kNumVoices; ++i) {
+        mReadIndexLocal[i] = 0;
+        mPrevLocalTickToPlay[i] = -1;
+      }
+      mCompressorEnvelope = 0.0f;
+
+      memset(outputBuffer, 0, numFrames * sizeof(float));
+      return oboe::DataCallbackResult::Continue;
+    }
 
     float masterVol = mMasterVolume.load();
     float duckingVol = mDuckingVolume.load();
@@ -329,6 +372,7 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
   int32_t mPrevLocalTickToPlay[kNumVoices];
 
   std::atomic<int32_t> mNextVoiceToSteal;
+  std::atomic<bool> mResetRequested { true };
 
   std::atomic<float> mMasterVolume;
   std::atomic<float> mDuckingVolume;
@@ -372,15 +416,21 @@ Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeDestroy(
 }
 
 JNIEXPORT jboolean JNICALL
+Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeInit(
+    JNIEnv *env, jobject jEngine, jlong handle) {
+  return reinterpret_cast<OboeAudioEngine *>(handle)->init();
+}
+
+JNIEXPORT jboolean JNICALL
 Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeStart(
     JNIEnv *env, jobject jEngine, jlong handle) {
   return reinterpret_cast<OboeAudioEngine *>(handle)->start();
 }
 
-JNIEXPORT void JNICALL
+JNIEXPORT jboolean JNICALL
 Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeStop(
     JNIEnv *env, jobject jEngine, jlong handle) {
-  reinterpret_cast<OboeAudioEngine *>(handle)->stop();
+  return reinterpret_cast<OboeAudioEngine *>(handle)->stop();
 }
 
 JNIEXPORT void JNICALL

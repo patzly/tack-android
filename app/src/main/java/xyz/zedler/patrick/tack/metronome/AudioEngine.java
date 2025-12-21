@@ -58,8 +58,9 @@ public class AudioEngine implements OnAudioFocusChangeListener {
 
   private native long nativeCreate();
   private native void nativeDestroy(long handle);
+  private native boolean nativeInit(long handle);
   private native boolean nativeStart(long handle);
-  private native void nativeStop(long handle);
+  private native boolean nativeStop(long handle);
   private native void nativeSetTickData(long handle, int tickType, float[] data);
   private native void nativePlayTick(long handle, int tickType);
   private native void nativeSetMasterVolume(long handle, float volume);
@@ -75,6 +76,11 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     engineHandle = nativeCreate();
     if (engineHandle == 0) {
       Log.e(TAG, "Failed to create Oboe engine");
+      return;
+    }
+    boolean success = nativeInit(engineHandle);
+    if (!success) {
+      Log.e(TAG, "Failed to init Oboe audio stream");
       return;
     }
 
@@ -100,10 +106,6 @@ public class AudioEngine implements OnAudioFocusChangeListener {
       requestAudioFocus();
     } else {
       Log.e(TAG, "Failed to start Oboe engine");
-      playing = false;
-      if (!ignoreFocus) {
-        audioManager.abandonAudioFocus(this);
-      }
     }
   }
 
@@ -111,16 +113,16 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     if (!playing || !isInitialized()) {
       return;
     }
-    playing = false;
-
-    if (!ignoreFocus) {
-      audioManager.abandonAudioFocus(this);
+    boolean success = nativeStop(engineHandle);
+    if (success) {
+      playing = false;
+      if (!ignoreFocus) {
+        audioManager.abandonAudioFocus(this);
+      }
+      listener.onAudioStop();
+    } else {
+      Log.e(TAG, "Failed to stop Oboe engine");
     }
-
-    if (isInitialized()) {
-      nativeStop(engineHandle);
-    }
-    listener.onAudioStop();
   }
 
   private void requestAudioFocus() {

@@ -103,6 +103,15 @@ public class MetronomeEngine {
     setToPreferences();
   }
 
+  public void destroy() {
+    listeners.clear();
+    removeHandlerCallbacks();
+    tickThread.quit();
+    audioThread.quit();
+    callbackThread.quit();
+    audioEngine.destroy();
+  }
+
   public void setToPreferences() {
     config.setToPreferences(sharedPrefs);
 
@@ -380,15 +389,6 @@ public class MetronomeEngine {
     hapticUtil.setEnabled(true);
 
     start(true);
-  }
-
-  public void destroy() {
-    listeners.clear();
-    removeHandlerCallbacks();
-    tickThread.quit();
-    audioThread.quit();
-    callbackThread.quit();
-    audioEngine.destroy();
   }
 
   public void addListener(MetronomeListener listener) {
