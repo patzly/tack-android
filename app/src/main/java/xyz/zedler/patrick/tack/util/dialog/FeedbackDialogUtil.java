@@ -37,6 +37,7 @@ import xyz.zedler.patrick.tack.databinding.PartialDialogFeedbackBinding;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
+import xyz.zedler.patrick.tack.util.UnlockUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class FeedbackDialogUtil implements OnClickListener {
@@ -79,6 +80,13 @@ public class FeedbackDialogUtil implements OnClickListener {
         binding.linearFeedbackEmail,
         binding.linearFeedbackRecommend
     );
+
+    boolean checkUnlockKey = activity.getSharedPrefs().getBoolean(
+        PREF.CHECK_UNLOCK_KEY, true
+    );
+    boolean isSupportVisible = checkUnlockKey &&
+        UnlockUtil.isPlayStoreInstalled(activity) && !UnlockUtil.isKeyInstalled(activity);
+    binding.linearFeedbackSupport.setVisibility(isSupportVisible ? View.VISIBLE : View.GONE);
 
     setDividerVisibility(!UiUtil.isOrientationPortrait(activity));
   }

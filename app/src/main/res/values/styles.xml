@@ -38,6 +38,7 @@
     <item name="buttonBarNeutralButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog.Neutral</item>
     <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.Tack.Title.Text</item>
     <item name="android:scrollbarThumbVertical">@drawable/shape_scrollbar_rounded</item>
+    <item name="android:listChoiceBackgroundIndicator">?android:attr/selectableItemBackground</item>
   </style>
 
   <style name="ThemeOverlay.Tack.AlertDialog.Error" parent="ThemeOverlay.Tack.AlertDialog">
