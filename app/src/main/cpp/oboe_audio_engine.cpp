@@ -7,6 +7,7 @@
 #include <memory>
 #include <vector>
 #include <unistd.h>
+#include <array>
 
 #define LOG_TAG "OboeAudioEngine"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
@@ -27,19 +28,6 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
     mMuted.store(false);
 
     mSampleRate = 48000;  // default; overwritten after openStream()
-
-    // Compressor defaults
-    mAttackTime_s = 0.001f;
-    mReleaseTime_s = 0.25f;
-
-    const float kThreshold_dB = -0.1f;
-    const float kRatio = 10.0f;
-
-    mCompThreshold = decibelsToLinear(kThreshold_dB);
-    mCompSlope = 1.0f / kRatio;
-
-    recomputeCompressorCoeffs();
-    recomputeCompressorTable();
 
     // initialize empty buffers
     std::atomic_store(
@@ -78,7 +66,6 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
 
     // use real sample rate reported by stream
     mSampleRate = mStream->getSampleRate();
-    recomputeCompressorCoeffs();
 
     // quick start/stop to avoid initial fade-in
     start();
@@ -91,13 +78,11 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
   bool start() {
     constexpr int64_t kTimeoutNanos = 1 * 1000 * 1000 * 1000;  // 1 second
     oboe::Result result = mStream->start(kTimeoutNanos);
-
     if (result != oboe::Result::OK) {
       LOGE("Failed to start Oboe stream: %s",
           oboe::convertToText(result));
       return false;
     }
-
     return true;
   }
 
@@ -112,11 +97,10 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
           oboe::convertToText(result));
       return false;
     }
-
     mStream->requestFlush();
-
     mResetRequested.store(true);
 
+    // clear pending voices
     for (int i = 0; i < kNumVoices; ++i) {
       mTickToPlay[i].store(-1);
       mPendingTickType[i].store(-1);
@@ -126,7 +110,7 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
     return true;
   }
 
-  // Realtime audio callback
+  // realtime audio callback
   oboe::DataCallbackResult onAudioReady(oboe::AudioStream *stream,
       void *audioData,
       int32_t numFrames) override {
@@ -137,24 +121,16 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
         mReadIndexLocal[i] = 0;
         mPrevLocalTickToPlay[i] = -1;
       }
-      mCompressorEnvelope = 0.0f;
-
       memset(outputBuffer, 0, numFrames * sizeof(float));
       return oboe::DataCallbackResult::Continue;
     }
 
+    // calculate gain
     float masterVol = mMasterVolume.load();
     float duckingVol = mDuckingVolume.load();
     bool muted = mMuted.load();
-    float makeupGain = muted ? 0.0f : (masterVol * duckingVol);
+    float inputGain = muted ? 0.0f : (masterVol * duckingVol);
 
-    float attack = mAttackCoeff;
-    float release = mReleaseCoeff;
-    float threshold = mCompThreshold;
-    float slope = mCompSlope;
-    float envelope = mCompressorEnvelope;
-
-    // Load which tick types are assigned to voices (atomic snapshot)
     int32_t localTickToPlay[kNumVoices];
     bool voiceJustChanged[kNumVoices]; // remember if voice assignment changed
 
@@ -163,7 +139,7 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
       voiceJustChanged[v] = false;
     }
 
-    // Atomically load buffers once per callback
+    // atomically load buffers once per callback
     auto strong = std::atomic_load(&mTickStrongPtr);
     auto normal = std::atomic_load(&mTickNormalPtr);
     auto sub = std::atomic_load(&mTickSubPtr);
@@ -189,12 +165,16 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
         sourceData[v] = nullptr;
       }
 
-      // if assigned but not started, suppress output to avoid processing
+      // If assigned but not started, suppress output to avoid processing
       // with stale index or accidental cleanup
       if (voiceJustChanged[v] && localTickToPlay[v] != -1) {
-        sourceData[v] = nullptr;
+        sourceData[v] = nullptr; // Wait for pending tick sync
       }
     }
+
+    static float sLimiterGain = 1.0f;
+    const float kTargetCeiling = 0.95f; // below 1.0 to avoid clipping
+    const float kReleaseSpeed = 0.0005f; // how fast the gain recovers
 
     for (int i = 0; i < numFrames; ++i) {
       float drySample = 0.0f;
@@ -234,8 +214,8 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
           drySample += (*buf)[mReadIndexLocal[v]];
           ++mReadIndexLocal[v];
         } else {
-          // voice is inactive or finished
-          // only kill voice if we don't wait for a pending start
+          // Voice is inactive or finished
+          // Only kill voice if we don't wait for a pending start
           if (localTickToPlay[v] != -1 && !voiceJustChanged[v]) {
             localTickToPlay[v] = -1;
             mReadIndexLocal[v] = 0;
@@ -244,33 +224,31 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
         }
       }
 
-      if ((i & 7) == 0) {
-        // only update envelope every 8 samples for performance
-        float sampleAbs = std::fabs(drySample);
-        if (sampleAbs > envelope)
-          envelope = attack * envelope + (1.0f - attack) * sampleAbs;
-        else
-          envelope = release * envelope + (1.0f - release) * sampleAbs;
+      float amplified = drySample * inputGain;
+      float absSample = std::fabs(amplified);
+
+      // Calculate desired gain to avoid clipping
+      float desiredGain = 1.0f;
+      if (absSample > kTargetCeiling) {
+        desiredGain = kTargetCeiling / absSample;
       }
 
-      float gain = 1.0f;
-      if (envelope > threshold) {
-        float overshoot = envelope / threshold;
-        float t = std::min(overshoot, 11.0f);
-        int idx = static_cast<int>((t - 1.0f) * (kCompTableSize - 1) / 10.0f);
-        gain = mCompGainTable[idx];
+      // Apply gain with instant attack and smooth release
+      if (desiredGain < sLimiterGain) {
+        sLimiterGain = desiredGain;
+      } else {
+        sLimiterGain += (1.0f - sLimiterGain) * kReleaseSpeed;
       }
 
-      float compressedSample = drySample * gain;
-      outputBuffer[i] = fastTanh(compressedSample * makeupGain);
+      outputBuffer[i] = amplified * sLimiterGain;
     }
 
-    // publish voice active/inactive state back to atomics
+    // Publish voice active/inactive state back to atomics
     for (int v = 0; v < kNumVoices; ++v) {
       if (localTickToPlay[v] == -1) {
         int32_t finishedTickType = mPrevLocalTickToPlay[v];
         if (finishedTickType != -1) {
-          // voice just finished, clear mTickToPlay
+          // Voice just finished, clear mTickToPlay
           // if still set to finishedTickType
           mTickToPlay[v].compare_exchange_strong(
               finishedTickType,
@@ -281,7 +259,6 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
       }
     }
 
-    mCompressorEnvelope = envelope;
     return oboe::DataCallbackResult::Continue;
   }
 
@@ -316,28 +293,16 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
         tickType, std::memory_order_release);
   }
 
-  void setMasterVolume(float volume) { mMasterVolume.store(volume); }
-
-  void setDuckingVolume(float volume) { mDuckingVolume.store(volume); }
-
-  void setMuted(bool muted) { mMuted.store(muted); }
-
-  void recomputeCompressorTable() {
-    for (int i = 0; i < kCompTableSize; ++i) {
-      float overshoot = 1.0f +(10.0f * static_cast<float>(i) /
-          static_cast<float>(kCompTableSize - 1));
-      float gain = std::pow(overshoot, mCompSlope - 1.0f);
-      mCompGainTable[i] = gain;
-    }
+  void setMasterVolume(float volume) {
+    mMasterVolume.store(volume);
   }
 
-  static inline float decibelsToLinear(float dB) {
-    return std::pow(10.0f, dB / 20.0f);
+  void setDuckingVolume(float volume) {
+    mDuckingVolume.store(volume);
   }
 
-  static inline float fastTanh(float x) {
-    float x2 = x * x;
-    return x * (27.0f + x2) / (27.0f + 9.0f * x2);
+  void setMuted(bool muted) {
+    mMuted.store(muted);
   }
 
  private:
@@ -349,14 +314,6 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
       mPrevLocalTickToPlay[i] = -1;
     }
     mNextVoiceToSteal.store(0);
-    mCompressorEnvelope = 0.0f;
-  }
-
-  void recomputeCompressorCoeffs() {
-    mAttackCoeff =
-        std::exp(-1.0f / (mAttackTime_s * static_cast<float>(mSampleRate)));
-    mReleaseCoeff =
-        std::exp(-1.0f / (mReleaseTime_s * static_cast<float>(mSampleRate)));
   }
 
   std::shared_ptr<oboe::AudioStream> mStream;
@@ -384,19 +341,6 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
   std::shared_ptr<std::vector<float>> mTickSubPtr;
 
   int32_t mSampleRate;
-
-  // compressor state
-  float mCompThreshold;
-  float mCompSlope;
-  float mAttackCoeff;
-  float mReleaseCoeff;
-  float mAttackTime_s;
-  float mReleaseTime_s;
-
-  float mCompressorEnvelope;
-
-  static constexpr int kCompTableSize = 1024;
-  std::array<float, kCompTableSize> mCompGainTable;
 };
 
 

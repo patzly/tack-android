@@ -3,7 +3,7 @@ project("oboejava")
 
 find_package(oboe REQUIRED CONFIG)
 
-add_library(oboe-audio-engine SHARED oboe-audio-engine.cpp)
+add_library(oboe-audio-engine SHARED oboe_audio_engine.cpp)
 
 find_library(log-lib log)
 
