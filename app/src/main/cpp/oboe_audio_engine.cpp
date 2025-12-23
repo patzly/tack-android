@@ -299,7 +299,8 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
             currentVal, taggedTick,
             std::memory_order_acq_rel, std::memory_order_acquire)) {
 
-          mPendingTickType[v].store(taggedTick, std::memory_order_release);
+          mPendingTickType[v].store(
+              taggedTick, std::memory_order_release);
           return;
         }
       }
