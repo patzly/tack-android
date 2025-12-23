@@ -154,7 +154,10 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
         mPrevLocalTickToPlay[v] = localTickToPlay[v];
       }
 
-      int32_t tickType = localTickToPlay[v];
+      // unpack tick type (lower 4 bits)
+      int32_t rawVal = localTickToPlay[v];
+      int32_t tickType = (rawVal == -1) ? -1 : (rawVal & 0x0F);
+
       if (tickType == NATIVE_TICK_TYPE_STRONG) {
         sourceData[v] = strong;
       } else if (tickType == NATIVE_TICK_TYPE_NORMAL) {
@@ -169,6 +172,7 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
       // with stale index or accidental cleanup
       if (voiceJustChanged[v] && localTickToPlay[v] != -1) {
         sourceData[v] = nullptr; // Wait for pending tick sync
+        mReadIndexLocal[v] = 0;
       }
     }
 
@@ -191,11 +195,15 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
           localTickToPlay[v] = mTickToPlay[v].load(
               std::memory_order_relaxed);
 
-          if (localTickToPlay[v] == NATIVE_TICK_TYPE_STRONG) {
+          // unpack tick type (lower 4 bits)
+          int32_t rawVal = localTickToPlay[v];
+          int32_t tickType = (rawVal == -1) ? -1 : (rawVal & 0x0F);
+
+          if (tickType == NATIVE_TICK_TYPE_STRONG) {
             sourceData[v] = strong;
-          } else if (localTickToPlay[v] == NATIVE_TICK_TYPE_NORMAL) {
+          } else if (tickType == NATIVE_TICK_TYPE_NORMAL) {
             sourceData[v] = normal;
-          } else if (localTickToPlay[v] == NATIVE_TICK_TYPE_SUB) {
+          } else if (tickType == NATIVE_TICK_TYPE_SUB) {
             sourceData[v] = sub;
           } else {
             sourceData[v] = nullptr;
@@ -203,6 +211,7 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
 
           // Start playing at the current sample
           mReadIndexLocal[v] = 0;
+          // Set to raw value including sequence id
           mPrevLocalTickToPlay[v] = localTickToPlay[v];
         }
       }
@@ -275,22 +284,33 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
   }
 
   void playTick(int32_t tickType) {
+    // increment tick counter, overflow is fine
+    int32_t sequence = mTickCounter.fetch_add(1);
+
+    // packing: 4 bits tick type, rest sequence id
+    int32_t taggedTick = (sequence << 4) | (tickType & 0x0F);
+
     // find free voice
     for (int v = 0; v < kNumVoices; ++v) {
-      int32_t expected = -1;
-      // use acq_rel to synchronize properly with audio thread
-      if (mTickToPlay[v].compare_exchange_strong(
-          expected, tickType,
-          std::memory_order_acq_rel, std::memory_order_acquire)) {
-        mPendingTickType[v].store(tickType, std::memory_order_release);
-        return;
+      int32_t currentVal = mTickToPlay[v].load(std::memory_order_acquire);
+      // check for free voice
+      if (currentVal == -1) {
+        if (mTickToPlay[v].compare_exchange_strong(
+            currentVal, taggedTick,
+            std::memory_order_acq_rel, std::memory_order_acquire)) {
+
+          mPendingTickType[v].store(taggedTick, std::memory_order_release);
+          return;
+        }
       }
     }
+
     // no free voice found, steal next voice
     int32_t voiceToSteal = mNextVoiceToSteal.fetch_add(1) % kNumVoices;
-    mTickToPlay[voiceToSteal].store(tickType, std::memory_order_release);
+    mTickToPlay[voiceToSteal].store(
+        taggedTick, std::memory_order_release);
     mPendingTickType[voiceToSteal].store(
-        tickType, std::memory_order_release);
+        taggedTick, std::memory_order_release);
   }
 
   void setMasterVolume(float volume) {
@@ -320,6 +340,7 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
 
   // which tick type is assigned to each voice (-1 = free)
   std::atomic<int32_t> mTickToPlay[kNumVoices];
+  std::atomic<int32_t> mTickCounter{0};
 
   // pending tick requests for sample-accurate start (-1 = none)
   std::atomic<int32_t> mPendingTickType[kNumVoices];
