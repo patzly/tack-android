@@ -81,13 +81,6 @@ public class FeedbackDialogUtil implements OnClickListener {
         binding.linearFeedbackRecommend
     );
 
-    boolean checkUnlockKey = activity.getSharedPrefs().getBoolean(
-        PREF.CHECK_UNLOCK_KEY, true
-    );
-    boolean isSupportVisible = checkUnlockKey &&
-        UnlockUtil.isPlayStoreInstalled(activity) && !UnlockUtil.isKeyInstalled(activity);
-    binding.linearFeedbackSupport.setVisibility(isSupportVisible ? View.VISIBLE : View.GONE);
-
     setDividerVisibility(!UiUtil.isOrientationPortrait(activity));
   }
 
@@ -167,6 +160,13 @@ public class FeedbackDialogUtil implements OnClickListener {
     }
     binding.scrollFeedback.scrollTo(0, 0);
     measureScrollView();
+
+    boolean checkUnlockKey = activity.getSharedPrefs().getBoolean(
+        PREF.CHECK_UNLOCK_KEY, true
+    );
+    boolean isSupportVisible = checkUnlockKey &&
+        UnlockUtil.isPlayStoreInstalled(activity) && !UnlockUtil.isKeyInstalled(activity);
+    binding.linearFeedbackSupport.setVisibility(isSupportVisible ? View.VISIBLE : View.GONE);
   }
 
   private void measureScrollView() {
