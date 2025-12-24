@@ -32,7 +32,7 @@
 
   <string name="wear_label_bpm_value">%1$d bpm</string>
   <string name="wear_label_ms">%1$s мс</string>
-  <string name="wear_label_db">+%1$d дБ</string>
+  <string name="wear_label_db_signed">%1$s дБ</string>
   <string name="wear_label_developer">Разработано</string>
   <plurals name="wear_label_beats">
     <item quantity="one">%1$d удар</item>
