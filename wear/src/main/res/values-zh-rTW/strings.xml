@@ -32,7 +32,7 @@
 
   <string name="wear_label_bpm_value">%1$d 節拍／分鐘</string>
   <string name="wear_label_ms">%1$s 毫秒</string>
-  <string name="wear_label_db">+%1$d 分貝</string>
+  <string name="wear_label_db_signed">%1$s 分貝</string>
   <string name="wear_label_developer">開發者</string>
   <plurals name="wear_label_beats">
     <item quantity="other">%1$d 拍</item>
