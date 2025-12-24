@@ -2,7 +2,7 @@
 
 - New: muted beats option extended with beats unit for beat-wise muting
 - New: Google Sans Flex typeface to better support expressive style
-- Improved: smaller slider ranges in options dialog on phones for better usability
+- Improved: smaller slider ranges in options dialog for better usability
 - Improved: audio engine performance and stability
 - Improved: play/stop button again responds on touch up instead of down for a consistent experience
 - Improved: menu appearance

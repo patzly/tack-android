@@ -80,9 +80,7 @@ public class SongPickerView extends FrameLayout {
   private final int heightCollapsed, heightExpanded, heightExpandedMargin;
   private final int colorBgCollapsed, colorBgExpanded;
   private final int chipCloseIconWidth;
-  private final int colorPrimary, colorTertiaryContainer, colorOnTertiaryContainer;
-  private final int colorSurfaceBright, colorSurfaceContainer;
-  private final int colorOnSurface, colorOnSurfaceVariant;
+  private final int colorSurfaceContainer, colorOnSurface, colorOnSurfaceVariant;
   private final ViewUtil viewUtil;
   private SongPickerListener listener;
   private List<SongWithParts> songsWithParts;
@@ -113,10 +111,6 @@ public class SongPickerView extends FrameLayout {
     colorBgExpanded = ResUtil.getColor(context, R.attr.colorSurfaceContainer);
 
     chipCloseIconWidth = UiUtil.dpToPx(context, 18);
-    colorTertiaryContainer = ResUtil.getColor(context, R.attr.colorTertiaryContainer);
-    colorOnTertiaryContainer = ResUtil.getColor(context, R.attr.colorOnTertiaryContainer);
-    colorPrimary = ResUtil.getColor(context, R.attr.colorPrimary);
-    colorSurfaceBright = ResUtil.getColor(context, R.attr.colorSurfaceBright);
     colorSurfaceContainer = ResUtil.getColor(context, R.attr.colorSurfaceContainer);
     colorOnSurface = ResUtil.getColor(context, R.attr.colorOnSurface);
     colorOnSurfaceVariant = ResUtil.getColor(context, R.attr.colorOnSurfaceVariant);
