@@ -136,7 +136,7 @@ class MetronomeEngine(
         if (isPlaying) {
           tickHandler?.postDelayed(this, getInterval() / getSubdivisionsCount())
           val tick = performTick()
-          audioEngine.writeTickPeriod(tick, tempo, getSubdivisionsCount())
+          audioEngine.playTick(tick)
           tickIndex++
         }
       }
@@ -234,7 +234,7 @@ class MetronomeEngine(
 
   private fun setBeatModeVibrate(vibrate: Boolean) {
     beatModeVibrate = vibrate && hapticUtil.hasVibrator()
-    audioEngine.muted = beatModeVibrate
+    audioEngine.isMuted = beatModeVibrate
     hapticUtil.enabled = beatModeVibrate || alwaysVibrate
   }
 
@@ -260,7 +260,8 @@ class MetronomeEngine(
       tickIndex,
       getCurrentBeat(),
       getCurrentSubdivision(),
-      getCurrentTickType()
+      getCurrentTickType(),
+      false
     )
 
     latencyHandler?.postDelayed({
@@ -323,7 +324,8 @@ class MetronomeEngine(
     val index: Long,
     val beat: Int,
     val subdivision: Int,
-    val type: String
+    val type: String,
+    val isMuted: Boolean
   ) {
     override fun toString(): String {
       return "Tick{index=$index, beat=$beat, sub=$subdivision, type=$type}"

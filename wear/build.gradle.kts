@@ -35,18 +35,20 @@ android {
     targetSdk = 36
     versionCode = 311 // last number is 1 for wear release
     versionName = "6.1.0"
-    resourceConfigurations += listOf(
-      "en", "cs", "de",  "es", "es-rCL", "fr", "in", "ja", "ko", "nl", "pt-rBR", "ru", "tr",
-      "zh-rCN","zh-rHK", "zh-rTW"
-    )
+
+    externalNativeBuild {
+      cmake {
+        arguments("-DANDROID_STL=c++_shared")
+      }
+    }
   }
 
   androidResources {
     // Use this when the new API is stable
-    /*localeFilters += listOf(
+    localeFilters += listOf(
       "en", "cs", "de",  "es", "es-rCL", "fr", "in", "ja", "ko", "nl", "pt-rBR", "ru", "tr",
       "zh-rCN","zh-rHK", "zh-rTW"
-    )*/
+    )
   }
 
   buildTypes {
@@ -73,18 +75,32 @@ android {
   }
   buildFeatures {
     compose = true
+    prefab = true
   }
   packaging {
     resources {
       excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
+    jniLibs.useLegacyPackaging = false
   }
+  dependenciesInfo {
+    includeInApk = false
+  }
+
+  externalNativeBuild {
+    cmake {
+      path = file("src/main/cpp/CMakeLists.txt")
+      version = "4.0.2"
+    }
+  }
+  ndkVersion = "29.0.14206865"
 }
 
 dependencies {
   implementation(platform(libs.compose.bom))
   implementation(libs.preference)
   implementation(libs.core.ktx)
+  implementation(libs.oboe)
   implementation(libs.lifecycle.service)
   implementation(libs.splashscreen)
   implementation(libs.ui)

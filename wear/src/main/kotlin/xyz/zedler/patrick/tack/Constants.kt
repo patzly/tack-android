@@ -39,7 +39,7 @@ object Constants {
     const val KEEP_AWAKE: String = "keep_awake"
     const val REDUCE_ANIM: String = "reduce_animations"
     const val SOUND: String = "sound"
-    const val LATENCY: String = "latency_offset"
+    const val LATENCY: String = "latency_ms"
     const val IGNORE_FOCUS: String = "ignore_focus"
     const val GAIN: String = "gain"
     const val BOOKMARKS: String = "bookmarks"
@@ -57,7 +57,7 @@ object Constants {
     const val KEEP_AWAKE: Boolean = true
     const val REDUCE_ANIM: Boolean = false
     const val SOUND: String = Sound.SINE
-    const val LATENCY: Long = 100
+    const val LATENCY: Long = 0
     const val IGNORE_FOCUS: Boolean = false
     const val GAIN: Int = 0
     const val BOOKMARKS: String = ""
@@ -78,6 +78,7 @@ object Constants {
     const val STRONG: String = "strong"
     const val SUB: String = "sub"
     const val MUTED: String = "muted"
+    const val BEAT_SUB_MUTED: String = "beat_sub_muted"
   }
 
   object Action {

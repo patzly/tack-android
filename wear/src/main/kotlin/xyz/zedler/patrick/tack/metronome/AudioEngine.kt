@@ -20,332 +20,290 @@
 package xyz.zedler.patrick.tack.metronome
 
 import android.content.Context
-import android.media.AudioAttributes
 import android.media.AudioFocusRequest
-import android.media.AudioFormat
 import android.media.AudioManager
-import android.media.AudioTrack
-import android.media.audiofx.LoudnessEnhancer
-import android.os.Build
-import android.os.Handler
-import android.os.HandlerThread
-import android.os.SystemClock
+import android.media.AudioManager.OnAudioFocusChangeListener
 import android.util.Log
+import androidx.annotation.Keep
 import androidx.annotation.RawRes
+import androidx.core.content.getSystemService
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
-import java.io.ByteArrayOutputStream
-import java.io.InputStream
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.nio.charset.StandardCharsets
-import kotlin.math.max
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.Tick
+import xyz.zedler.patrick.tack.util.AudioUtil
+import java.io.IOException
+import kotlin.math.pow
 
+@Keep
 class AudioEngine(
   private val context: Context,
-  private val onAudioStop: () -> Unit
-) : AudioManager.OnAudioFocusChangeListener {
+  private val listener: AudioListener
+) : OnAudioFocusChangeListener {
 
-  companion object Companion {
-    private const val TAG = "AudioEngine"
-    private const val SAMPLE_RATE_IN_HZ = 48000
-    private const val SILENCE_CHUNK_SIZE = 8000
-    private const val DATA_CHUNK_SIZE = 8
-  }
+  private val audioManager: AudioManager? = context.getSystemService()
 
-  private val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-  private val silence = FloatArray(SILENCE_CHUNK_SIZE)
-  private val dataMarker = "data".toByteArray(StandardCharsets.US_ASCII)
+  private var engineHandle: Long = 0
 
-  private var audioThread: HandlerThread? = null
-  private var audioHandler: Handler? = null
-  private var audioTrack: AudioTrack? = null
-  private var loudnessEnhancer: LoudnessEnhancer? = null
-  private var tickNormal: FloatArray? = null
-  private var tickStrong: FloatArray? = null
-  private var tickSub: FloatArray? = null
-  private var playing = false
-  var gain = 0
+  @Volatile
+  private var isPlaying: Boolean = false
+
+  // Properties with custom setters to update native engine immediately
+  var gain: Int = Constants.Def.GAIN
     set(value) {
       field = value
-      loudnessEnhancer?.let {
-        try {
-          it.setTargetGain(field * 100)
-          it.setEnabled(field > 0)
-        } catch (e: RuntimeException) {
-          Log.e(TAG, "Failed to set target gain: ", e)
-        }
+      if (isInitialized) {
+        val dbToLinear = 10.0.pow(value / 20.0).toFloat()
+        nativeSetMasterVolume(engineHandle, dbToLinear)
       }
     }
-  var muted = false
-  var ignoreFocus = false
 
-  fun destroy() {
-    removeHandlerCallbacks()
-    audioThread?.quitSafely()
-  }
+  var isMuted: Boolean = false
+    set(value) {
+      field = value
+      if (isInitialized) {
+        nativeSetMuted(engineHandle, value)
+      }
+    }
 
-  fun resetHandlersIfRequired() {
-    if (audioThread == null || audioThread?.isAlive == false) {
-      audioThread = HandlerThread("audio").apply { start() }
-      removeHandlerCallbacks()
-      audioHandler = Handler(audioThread!!.looper)
+  var ignoreFocus: Boolean = false
+
+  private val isInitialized: Boolean
+    get() = engineHandle != 0L
+
+  init {
+    engineHandle = nativeCreate()
+    if (engineHandle == 0L) {
+      Log.e(TAG, "Failed to create Oboe engine")
+    } else {
+      if (!nativeInit(engineHandle)) {
+        Log.e(TAG, "Failed to init Oboe audio stream")
+      } else {
+        // Initialize defaults
+        setSound(Constants.Def.SOUND)
+        // Force update gain on native side
+        val currentGain = gain
+        gain = currentGain
+      }
     }
   }
 
-  fun removeHandlerCallbacks() {
-    audioHandler?.removeCallbacksAndMessages(null)
+  fun destroy() {
+    stop()
+    if (isInitialized) {
+      nativeDestroy(engineHandle)
+      engineHandle = 0
+    }
   }
 
   fun play() {
-    resetHandlersIfRequired()
+    if (isPlaying || !isInitialized) return
 
-    playing = true
-    audioTrack = getTrack().apply {
-      try {
-        loudnessEnhancer = LoudnessEnhancer(audioSessionId).apply {
-          setTargetGain(gain * 100)
-          setEnabled(gain > 0)
-        }
-      } catch (e: RuntimeException) {
-        Log.e(TAG, "Failed to initialize LoudnessEnhancer: ", e)
-      }
-      if (state == AudioTrack.STATE_INITIALIZED) {
-        play()
-      } else {
-        Log.e(TAG, "Failed to start AudioTrack")
-      }
-    }
-
-    if (!ignoreFocus) {
-      audioManager.requestAudioFocus(getAudioFocusRequest())
+    if (nativeStart(engineHandle)) {
+      isPlaying = true
+      requestAudioFocus()
+    } else {
+      Log.e(TAG, "Failed to start Oboe engine")
     }
   }
 
   fun stop() {
-    playing = false
-    removeHandlerCallbacks()
+    if (!isPlaying || !isInitialized) return
 
-    audioTrack?.apply {
-      if (state == AudioTrack.STATE_INITIALIZED) {
-        stop()
+    if (nativeStop(engineHandle)) {
+      isPlaying = false
+      if (!ignoreFocus) {
+        audioManager?.abandonAudioFocus(this)
       }
-      flush()
-      release()
+      listener.onAudioStop()
+    } else {
+      Log.e(TAG, "Failed to stop Oboe engine")
     }
-    loudnessEnhancer?.apply {
-      try {
-        release()
-      } catch (e: RuntimeException) {
-        Log.e(TAG, "stop: failed to release LoudnessEnhancer resources: ", e)
-      }
-    }
-    if (!ignoreFocus) {
-      audioManager.abandonAudioFocusRequest(getAudioFocusRequest())
-    }
-    onAudioStop()
   }
 
-  override fun onAudioFocusChange(focusChange: Int) {
-    when (focusChange) {
-      AudioManager.AUDIOFOCUS_GAIN -> {
-        audioTrack?.setVolume(1f)
-      }
-      AudioManager.AUDIOFOCUS_LOSS -> stop()
-      AudioManager.AUDIOFOCUS_LOSS_TRANSIENT, AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-        audioTrack?.setVolume(0.25f)
-      }
+  fun playTick(tick: Tick) {
+    if (!isPlaying || !isInitialized || isMuted || tick.isMuted) return
+
+    val nativeTickType = when (tick.type) {
+      Constants.TickType.STRONG -> NATIVE_TICK_TYPE_STRONG
+      Constants.TickType.SUB -> NATIVE_TICK_TYPE_SUB
+      Constants.TickType.MUTED, Constants.TickType.BEAT_SUB_MUTED -> return // Silence
+      else -> NATIVE_TICK_TYPE_NORMAL
     }
+    nativePlayTick(engineHandle, nativeTickType)
   }
 
   fun setSound(sound: String) {
-    var pitchStrong = Pitch.HIGH
-    var pitchSub = Pitch.LOW
-    val (resIdNormal, resIdStrong, resIdSub) = when (sound) {
-      Constants.Sound.WOOD -> Triple(
-        R.raw.wood, R.raw.wood, R.raw.mechanical_knock
-      ).also {
+    if (!isInitialized) return
+
+    val config = when (sound) {
+      Constants.Sound.WOOD -> SoundConfig(
+        normal = R.raw.wood, strong = R.raw.wood, sub = R.raw.wood
+      )
+
+      Constants.Sound.MECHANICAL -> SoundConfig(
+        normal = R.raw.mechanical_tick,
+        strong = R.raw.mechanical_ding,
+        sub = R.raw.mechanical_knock,
+        pitchStrong = Pitch.NORMAL,
         pitchSub = Pitch.NORMAL
-      }
-      Constants.Sound.MECHANICAL -> Triple(
-        R.raw.mechanical_tick, R.raw.mechanical_ding, R.raw.mechanical_knock
-      ).also {
-        pitchStrong = Pitch.NORMAL
+      )
+
+      Constants.Sound.BEATBOXING_1 -> SoundConfig(
+        normal = R.raw.beatbox_snare1,
+        strong = R.raw.beatbox_kick1,
+        sub = R.raw.beatbox_hihat1,
+        pitchStrong = Pitch.NORMAL,
         pitchSub = Pitch.NORMAL
-      }
-      Constants.Sound.BEATBOXING_1 -> Triple(
-        R.raw.beatbox_snare1, R.raw.beatbox_kick1, R.raw.beatbox_hihat1
-      ).also {
-        pitchStrong = Pitch.NORMAL
+      )
+
+      Constants.Sound.BEATBOXING_2 -> SoundConfig(
+        normal = R.raw.beatbox_snare2,
+        strong = R.raw.beatbox_kick2,
+        sub = R.raw.beatbox_hihat2,
+        pitchStrong = Pitch.NORMAL,
         pitchSub = Pitch.NORMAL
-      }
-      Constants.Sound.BEATBOXING_2 -> Triple(
-        R.raw.beatbox_snare2, R.raw.beatbox_kick2, R.raw.beatbox_hihat2
-      ).also {
-        pitchStrong = Pitch.NORMAL
+      )
+
+      Constants.Sound.HANDS -> SoundConfig(
+        normal = R.raw.hands_hit,
+        strong = R.raw.hands_clap,
+        sub = R.raw.hands_snap,
+        pitchStrong = Pitch.NORMAL,
         pitchSub = Pitch.NORMAL
-      }
-      Constants.Sound.HANDS -> Triple(
-        R.raw.hands_hit, R.raw.hands_clap, R.raw.hands_snap
-      ).also {
-        pitchStrong = Pitch.NORMAL
+      )
+
+      Constants.Sound.FOLDING -> SoundConfig(
+        normal = R.raw.folding_knock,
+        strong = R.raw.folding_fold,
+        sub = R.raw.folding_tap,
+        pitchStrong = Pitch.NORMAL,
         pitchSub = Pitch.NORMAL
-      }
-      Constants.Sound.FOLDING -> Triple(
-        R.raw.folding_knock, R.raw.folding_fold, R.raw.folding_tap
-      ).also {
-        pitchStrong = Pitch.NORMAL
-        pitchSub = Pitch.NORMAL
-      }
-      else -> Triple(R.raw.sine, R.raw.sine, R.raw.sine)
+      )
+
+      else -> SoundConfig(
+        normal = R.raw.sine, strong = R.raw.sine, sub = R.raw.sine
+      )
     }
-    tickNormal = loadAudio(resIdNormal)
-    tickStrong = loadAudio(resIdStrong, pitchStrong)
-    tickSub = loadAudio(resIdSub, pitchSub)
+
+    nativeSetTickData(
+      engineHandle,
+      NATIVE_TICK_TYPE_NORMAL,
+      loadAudio(config.normal, config.pitchNormal)
+    )
+    nativeSetTickData(
+      engineHandle,
+      NATIVE_TICK_TYPE_STRONG,
+      loadAudio(config.strong, config.pitchStrong)
+    )
+    nativeSetTickData(
+      engineHandle,
+      NATIVE_TICK_TYPE_SUB,
+      loadAudio(config.sub, config.pitchSub)
+    )
   }
 
-  fun writeTickPeriod(tick: MetronomeEngine.Tick, tempo: Int, subdivisionCount: Int) {
-    val periodSize = 60 * SAMPLE_RATE_IN_HZ / tempo / subdivisionCount
-    val expectedTime = SystemClock.elapsedRealtime()
-    audioHandler?.post {
-      var periodSizeTrimmed = periodSize
-      if (tick.subdivision == 1) {
-        val currentTime = SystemClock.elapsedRealtime()
-        val delay = currentTime - expectedTime
-        if (delay > 1) {
-          val trimSize = delay.coerceAtLeast(10) * (SAMPLE_RATE_IN_HZ / 1000)
-          periodSizeTrimmed = max(0, periodSize - trimSize).toInt()
-        }
+  private fun requestAudioFocus() {
+    if (ignoreFocus || audioManager == null) return
+
+    val request = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+      .setAudioAttributes(AudioUtil.getAttributes())
+      .setWillPauseWhenDucked(true)
+      .setOnAudioFocusChangeListener(this)
+      .build()
+    audioManager.requestAudioFocus(request)
+  }
+
+  override fun onAudioFocusChange(focusChange: Int) {
+    if (!isInitialized) return
+
+    when (focusChange) {
+      AudioManager.AUDIOFOCUS_GAIN -> {
+        nativeSetDuckingVolume(engineHandle, 1.0f)
       }
-      val tickSound = if (muted) silence else getTickSound(tick.type) ?: return@post
-      val sizeWritten = writeNextAudioData(tickSound, periodSizeTrimmed, 0)
-      writeSilenceUntilPeriodFinished(sizeWritten, periodSizeTrimmed)
+
+      AudioManager.AUDIOFOCUS_LOSS -> {
+        stop()
+      }
+
+      AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
+      AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+        nativeSetDuckingVolume(engineHandle, 0.25f)
+      }
     }
   }
 
-  private fun writeSilenceUntilPeriodFinished(previousSizeWritten: Int, periodSize: Int) {
-    var sizeWritten = previousSizeWritten
-    while (sizeWritten < periodSize) {
-      sizeWritten += writeNextAudioData(silence, periodSize, sizeWritten)
-    }
-  }
-
-  private fun writeNextAudioData(data: FloatArray, periodSize: Int, sizeWritten: Int): Int {
-    val size = minOf(data.size, periodSize - sizeWritten)
-    if (playing) {
-      writeAudio(data, size)
-    }
-    return size
-  }
-
-  private fun getTickSound(tickType: String): FloatArray? {
-    return when (tickType) {
-      Constants.TickType.STRONG -> tickStrong
-      Constants.TickType.SUB -> tickSub
-      Constants.TickType.MUTED -> silence
-      else -> tickNormal
-    }
-  }
-
-  private fun loadAudio(@RawRes resId: Int, pitch: Pitch = Pitch.NORMAL): FloatArray {
-    return context.resources.openRawResource(resId).use {
-      adjustPitch(readDataFromWavFloat(it), pitch)
+  private fun loadAudio(@RawRes resId: Int, pitch: Pitch): FloatArray {
+    return try {
+      context.resources.openRawResource(resId).use { stream ->
+        adjustPitch(AudioUtil.readDataFromWavFloat(stream), pitch)
+      }
+    } catch (e: IOException) {
+      throw RuntimeException(e)
     }
   }
 
   private fun adjustPitch(originalData: FloatArray, pitch: Pitch): FloatArray {
     return when (pitch) {
-      Pitch.HIGH -> originalData.filterIndexed { index, _ -> index % 2 == 0 }.toFloatArray()
-      Pitch.LOW -> originalData.flatMap { listOf(it, it) }.toFloatArray()
-      else -> originalData
-    }
-  }
-
-  private fun writeAudio(data: FloatArray, size: Int) {
-    try {
-      audioTrack?.write(data, 0, size, AudioTrack.WRITE_BLOCKING)?.takeIf { it < 0 }?.let {
-        stop()
-        throw RuntimeException("Error code: $it")
+      Pitch.HIGH -> {
+        FloatArray(originalData.size / 2) { i -> originalData[i * 2] }
       }
-    } catch (e: RuntimeException) {
-      Log.e(TAG, "writeAudio: failed to play audion data", e)
-    }
-  }
 
-  private fun readDataFromWavFloat(input: InputStream): FloatArray {
-    val content = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-      input.readBytes()
-    } else {
-      readInputStreamToBytes(input)
-    }
-    val indexOfDataMarker = getIndexOfDataMarker(content)
-    val startOfSound = indexOfDataMarker + DATA_CHUNK_SIZE
-    return ByteBuffer.wrap(content, startOfSound, content.size - startOfSound).apply {
-      order(ByteOrder.LITTLE_ENDIAN)
-    }.asFloatBuffer().let {
-      FloatArray(it.remaining()).also { data -> it.get(data) }
-    }
-  }
-
-  private fun readInputStreamToBytes(input: InputStream): ByteArray {
-    return ByteArrayOutputStream().use { buffer ->
-      val data = ByteArray(4096)
-      var read: Int
-      while (input.read(data).also { read = it } != -1) {
-        buffer.write(data, 0, read)
-      }
-      buffer.toByteArray()
-    }
-  }
-
-  private fun getIndexOfDataMarker(array: ByteArray): Int {
-    if (dataMarker.isEmpty()) {
-      return 0
-    }
-    outer@ for (i in 0..array.size - dataMarker.size) {
-      for (j in dataMarker.indices) {
-        if (array[i + j] != dataMarker[j]) {
-          continue@outer
+      Pitch.LOW -> {
+        FloatArray(originalData.size * 2).apply {
+          for (i in originalData.indices) {
+            val j = i * 2
+            this[j] = originalData[i]
+            this[j + 1] = originalData[i]
+          }
         }
       }
-      return i
+
+      Pitch.NORMAL -> originalData
     }
-    return -1
   }
 
-  private fun getTrack(): AudioTrack {
-    val audioFormat = AudioFormat.Builder()
-      .setEncoding(AudioFormat.ENCODING_PCM_FLOAT)
-      .setSampleRate(SAMPLE_RATE_IN_HZ)
-      .setChannelMask(AudioFormat.CHANNEL_OUT_MONO)
-      .build()
-    return AudioTrack(
-      getAttributes(),
-      audioFormat,
-      AudioTrack.getMinBufferSize(
-        audioFormat.sampleRate, audioFormat.channelMask, audioFormat.encoding
-      ),
-      AudioTrack.MODE_STREAM,
-      AudioManager.AUDIO_SESSION_ID_GENERATE
-    )
-  }
+  // --- Native Methods ---
+  private external fun nativeCreate(): Long
+  private external fun nativeDestroy(handle: Long)
+  private external fun nativeInit(handle: Long): Boolean
+  private external fun nativeStart(handle: Long): Boolean
+  private external fun nativeStop(handle: Long): Boolean
+  private external fun nativeSetTickData(handle: Long, tickType: Int, data: FloatArray)
+  private external fun nativePlayTick(handle: Long, tickType: Int)
+  private external fun nativeSetMasterVolume(handle: Long, volume: Float)
+  private external fun nativeSetDuckingVolume(handle: Long, volume: Float)
+  private external fun nativeSetMuted(handle: Long, muted: Boolean)
 
-  private fun getAttributes(): AudioAttributes {
-    return AudioAttributes.Builder()
-      .setUsage(AudioAttributes.USAGE_MEDIA)
-      .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-      .build()
-  }
-
-  private fun getAudioFocusRequest(): AudioFocusRequest {
-    return AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-      .setAudioAttributes(getAttributes())
-      .setWillPauseWhenDucked(true)
-      .setOnAudioFocusChangeListener(this)
-      .build()
-  }
+  // --- Helper Types ---
 
   private enum class Pitch {
     NORMAL, HIGH, LOW
+  }
+
+  private data class SoundConfig(
+    @RawRes val normal: Int,
+    @RawRes val strong: Int,
+    @RawRes val sub: Int,
+    val pitchNormal: Pitch = Pitch.NORMAL,
+    val pitchStrong: Pitch = Pitch.HIGH,
+    val pitchSub: Pitch = Pitch.LOW
+  )
+
+  fun interface AudioListener {
+
+    fun onAudioStop()
+  }
+
+  companion object Companion {
+
+    private val TAG = AudioEngine::class.java.simpleName
+
+    private const val NATIVE_TICK_TYPE_STRONG = 1
+    private const val NATIVE_TICK_TYPE_NORMAL = 2
+    private const val NATIVE_TICK_TYPE_SUB = 3
+
+    init {
+      System.loadLibrary("oboe-audio-engine")
+    }
   }
 }

@@ -91,8 +91,4 @@ public class AudioUtil {
     }
     return -1;
   }
-
-  public static float dbToLinearVolume(int reductionDb) {
-    return (float) Math.pow(10f, reductionDb / 20f);
-  }
 }
