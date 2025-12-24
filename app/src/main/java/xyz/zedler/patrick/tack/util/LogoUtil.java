@@ -19,7 +19,7 @@
 
 package xyz.zedler.patrick.tack.util;
 
-import android.animation.AnimatorSet;
+import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.RotateDrawable;
@@ -32,7 +32,7 @@ public class LogoUtil {
   private final static String TAG = LogoUtil.class.getSimpleName();
 
   private final RotateDrawable pointer;
-  private AnimatorSet animatorSet;
+  private Animator animator;
   private boolean isLeft = true;
 
   public LogoUtil(ImageView imageView) {
@@ -42,21 +42,18 @@ public class LogoUtil {
   }
 
   public void nextBeat(long interval) {
-    if (animatorSet != null) {
-      animatorSet.pause();
-      animatorSet.cancel();
+    if (animator != null) {
+      animator.pause();
+      animator.cancel();
     }
-    animatorSet = new AnimatorSet();
-    animatorSet.play(getAnimator(interval, isLeft ? 10000 : 0));
-    animatorSet.start();
-    isLeft = !isLeft;
-  }
 
-  private ObjectAnimator getAnimator(long duration, int level) {
-    ObjectAnimator animator = ObjectAnimator.ofInt(
-        pointer, "level", pointer.getLevel(), level
-    ).setDuration(duration);
+    animator = ObjectAnimator.ofInt(
+        pointer, "level", pointer.getLevel(), isLeft ? 10000 : 0
+    );
+    animator.setDuration(interval);
     animator.setInterpolator(new AccelerateDecelerateInterpolator());
-    return animator;
+    animator.start();
+
+    isLeft = !isLeft;
   }
 }
