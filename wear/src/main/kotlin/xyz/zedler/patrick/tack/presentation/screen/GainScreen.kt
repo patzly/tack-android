@@ -93,7 +93,10 @@ fun GainScreen(
         }
         item {
           Text(
-            text = stringResource(id = R.string.wear_label_db, state.gain),
+            text = stringResource(
+              id = R.string.wear_label_db_signed,
+              if (state.gain > 0) "+" + state.gain else state.gain.toString()
+            ),
             style = MaterialTheme.typography.titleSmall,
             textAlign = TextAlign.Center,
             modifier = Modifier
@@ -131,7 +134,7 @@ fun GainSlider(
   Slider(
     value = gain,
     onValueChange = onValueChange,
-    valueProgression = IntProgression.fromClosedRange(0, 20, 5),
+    valueProgression = IntProgression.fromClosedRange(-20, 20, 5),
     segmented = true,
     decreaseIcon = {
       Icon(

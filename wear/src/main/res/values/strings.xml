@@ -37,7 +37,7 @@
 
   <string name="wear_label_bpm_value">%1$d bpm</string>
   <string name="wear_label_ms">%1$s ms</string>
-  <string name="wear_label_db">+%1$d dB</string>
+  <string name="wear_label_db_signed">%1$s dB</string>
   <string name="wear_label_developer">Developed by</string>
   <plurals name="wear_label_beats">
     <item quantity="one">%1$d beat</item>

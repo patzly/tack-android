@@ -120,7 +120,10 @@ fun SettingsScreen(
         item {
           ClickCard(
             title = stringResource(R.string.wear_settings_gain),
-            subtitle = stringResource(R.string.wear_label_db, state.gain),
+            subtitle = stringResource(
+              R.string.wear_label_db_signed,
+              if (state.gain > 0) "+" + state.gain else state.gain.toString()
+            ),
             onClick = onGainClick
           )
         }

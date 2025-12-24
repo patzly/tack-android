@@ -276,13 +276,7 @@ class MainViewModel(
   }
 
   fun updateGain(gain: Int) {
-    val startedWithGain = if (gain == 0) {
-      true
-    } else if (gain > 0) {
-      false
-    } else {
-      _state.value.startedWithGain
-    }
+    val startedWithGain = gain <= 0 || _state.value.startedWithGain
     _state.update { it.copy(
       gain = gain,
       startedWithGain = startedWithGain
