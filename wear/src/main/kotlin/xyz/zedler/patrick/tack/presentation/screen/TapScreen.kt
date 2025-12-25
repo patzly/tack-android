@@ -94,8 +94,7 @@ fun TapBox(
   ) {
     TempoTap(
       isTouched = isPressed,
-      modifier = modifier.fillMaxSize(),
-      color = MaterialTheme.colorScheme.tertiary
+      modifier = modifier.fillMaxSize()
     )
     Box(
       contentAlignment = Alignment.Center,

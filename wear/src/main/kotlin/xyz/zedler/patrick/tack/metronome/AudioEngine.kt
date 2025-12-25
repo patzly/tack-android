@@ -296,7 +296,7 @@ class AudioEngine(
 
   companion object Companion {
 
-    private val TAG = AudioEngine::class.java.simpleName
+    private const val TAG = "AudioEngine"
 
     private const val NATIVE_TICK_TYPE_STRONG = 1
     private const val NATIVE_TICK_TYPE_NORMAL = 2

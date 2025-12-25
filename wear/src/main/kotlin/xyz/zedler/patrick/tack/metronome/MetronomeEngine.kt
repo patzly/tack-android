@@ -266,7 +266,7 @@ class MetronomeEngine(
 
     latencyHandler?.postDelayed({
       listeners.forEach { it.onMetronomePreTick(tick) }
-    }, kotlin.comparisons.maxOf(0, latency - Constants.BEAT_ANIM_OFFSET))
+    }, maxOf(0, latency - Constants.BEAT_ANIM_OFFSET))
 
     latencyHandler?.postDelayed({
       if (beatModeVibrate || alwaysVibrate) {

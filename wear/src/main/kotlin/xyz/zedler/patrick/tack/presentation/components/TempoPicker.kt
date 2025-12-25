@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.presentation.components
 
+import android.util.Log
 import androidx.annotation.FloatRange
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -26,12 +27,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.foundation.lazy.ScalingLazyListState
@@ -60,7 +63,7 @@ fun TempoPicker(
   val items = (Constants.TEMPO_MIN..Constants.TEMPO_MAX).toList()
   Picker(
     state = state,
-    contentDescription = { "${state.selectedOptionIndex + 1}" },
+    contentDescription = { "${items.getOrNull(state.selectedOptionIndex + 1) ?: ""}" },
     modifier = modifier,
     verticalSpacing = verticalSpacing,
     gradientRatio = gradientRatio,
@@ -70,6 +73,7 @@ fun TempoPicker(
       hapticFeedbackEnabled = hapticFeedbackEnabled
     )
   ) {
+    val text = items.getOrNull(it)?.toString() ?: ""
     Text(
       modifier = Modifier.wrapContentSize(),
       textAlign = TextAlign.Center,
@@ -77,7 +81,7 @@ fun TempoPicker(
       style = textStyle,
       text = buildAnnotatedString {
         withStyle(style = SpanStyle(fontFeatureSettings = "tnum")) {
-          append(items[it].toString())
+          append(text)
         }
       }
     )
@@ -100,43 +104,54 @@ fun TempoPickerPreview() {
 }
 
 @Composable
-private fun PickerState.toRotarySnapLayoutInfoProvider(): RotarySnapLayoutInfoProvider =
-  remember(this) { PickerRotarySnapLayoutInfoProvider(this) }
+private fun PickerState.toRotarySnapLayoutInfoProvider(): RotarySnapLayoutInfoProvider {
+  val density = LocalDensity.current
+  return remember(this) { PickerRotarySnapLayoutInfoProvider(this, density) }
+}
 
-private class PickerRotarySnapLayoutInfoProvider(scrollableState: PickerState) :
-  RotarySnapLayoutInfoProvider {
+private class PickerRotarySnapLayoutInfoProvider(
+  scrollableState: PickerState,
+  private val density: Density
+) : RotarySnapLayoutInfoProvider {
 
-  private val scalingLazyListState = accessScalingLazyListState(scrollableState)!!
+  private val scalingLazyListState = accessScalingLazyListState(scrollableState)
 
   /** Returns a height of a first item, as all items in picker have the same height. */
   override val averageItemSize: Float
-    get() =
-      scalingLazyListState.layoutInfo.visibleItemsInfo
-        .firstOrNull()
-        ?.unadjustedSize
-        ?.toFloat() ?: 0f
+    get() {
+      val state = scalingLazyListState ?: return 0f
+      val firstItem = state.layoutInfo.visibleItemsInfo.firstOrNull()
 
-  /** Current (centred) item index. */
+      return if (firstItem != null && firstItem.unadjustedSize > 0) {
+        firstItem.unadjustedSize.toFloat()
+      } else {
+        // fallback size in pixels
+        with(density) { 40.dp.toPx() }
+      }
+    }
+
   override val currentItemIndex: Int
-    get() = scalingLazyListState.centerItemIndex
+    get() = scalingLazyListState?.centerItemIndex ?: 0
 
   /** An offset from the item centre. */
   override val currentItemOffset: Float
-    get() = scalingLazyListState.centerItemScrollOffset.toFloat()
+    get() = scalingLazyListState?.centerItemScrollOffset?.toFloat() ?: 0f
 
   override val totalItemCount: Int
-    get() = scalingLazyListState.layoutInfo.totalItemsCount
+    get() = scalingLazyListState?.layoutInfo?.totalItemsCount ?: 0
 
   private fun accessScalingLazyListState(pickerState: PickerState): ScalingLazyListState? {
     return try {
-      val field: Field = PickerState::class.java.getDeclaredField(
-        "scalingLazyListState"
-      )
+      val field: Field = PickerState::class.java.getDeclaredField("scalingLazyListState")
       field.isAccessible = true
       field.get(pickerState) as? ScalingLazyListState
     } catch (e: Exception) {
-      e.printStackTrace()
+      Log.e(TAG, "accessScalingLazyListState: ", e)
       null
     }
+  }
+
+  companion object {
+    private const val TAG = "TempoPicker"
   }
 }
