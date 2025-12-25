@@ -24,14 +24,14 @@ plugins {
 
 android {
     namespace = 'xyz.zedler.patrick.tack'
-    compileSdk = 36.1
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "xyz.zedler.patrick.tack"
         minSdk = 23
-        targetSdk = 36.1
-        versionCode = 370 // last number is 0 for app release
-        versionName = "6.1.0"
+        targetSdk = 36
+        versionCode = 380 // last number is 0 for app release
+        versionName = "6.1.1"
         resourceConfigurations = ["en", "cs", "de", "es", "es-rCL", "fr", "in", "ja", "ko", "nl",
                                   "ru", "tr", "zh-rCN", "zh-rHK", "zh-rTW"]
         vectorDrawables.generatedDensities = []

@@ -72,15 +72,30 @@
         android:layout_gravity="center"
         android:text="@string/app_name" />
 
-      <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_main_menu"
-        style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
-        android:contentDescription="@string/action_more"
+      <com.google.android.material.button.MaterialButtonGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:spacing="0dp"
         android:layout_gravity="center_vertical|end"
-        android:layout_marginEnd="4dp"
-        app:backgroundTint="?attr/colorSurfaceContainer"
-        app:iconTint="?attr/colorOnSurface"
-        app:icon="@drawable/ic_rounded_more_vert" />
+        android:layout_marginEnd="4dp">
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_support"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Wide"
+          android:contentDescription="@string/action_support"
+          app:backgroundTint="?attr/colorSurfaceContainer"
+          app:iconTint="?attr/colorOnSurface"
+          app:icon="@drawable/ic_rounded_volunteer_activism" />
+
+        <com.google.android.material.button.MaterialButton
+          android:id="@+id/button_main_menu"
+          style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
+          android:contentDescription="@string/action_more"
+          app:backgroundTint="?attr/colorSurfaceContainer"
+          app:iconTint="?attr/colorOnSurface"
+          app:icon="@drawable/ic_rounded_more_vert" />
+
+      </com.google.android.material.button.MaterialButtonGroup>
 
     </FrameLayout>
 
