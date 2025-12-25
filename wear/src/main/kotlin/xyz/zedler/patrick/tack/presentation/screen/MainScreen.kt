@@ -117,20 +117,31 @@ fun MainScreen(
           val (beatsButton, tempoTapButton) = createRefs()
           val (bookmarksButton, beatModeButton) = createRefs()
 
-          val pickerOption = remember { state.tempo - 1 }
+          val initialIndex = (state.tempo - 1).coerceAtLeast(0)
+
           val pickerCoroutineScope = rememberCoroutineScope()
           val pickerState = rememberPickerState(
             initialNumberOfOptions = Constants.TEMPO_MAX,
-            initiallySelectedIndex = pickerOption,
+            initiallySelectedIndex = initialIndex,
             shouldRepeatOptions = false
           )
+
+          LaunchedEffect(Unit) {
+            if (pickerState.selectedOptionIndex != state.tempo - 1) {
+              pickerState.scrollToOption((state.tempo - 1).coerceAtLeast(0))
+            }
+          }
+
           LaunchedEffect(state.tempo) {
             if (!state.tempoChangedByPicker) {
-              pickerCoroutineScope.launch {
-                if (state.animateTempoChange && !state.reduceAnim) {
-                  pickerState.animateScrollToOption(state.tempo - 1)
-                } else {
-                  pickerState.scrollToOption(state.tempo - 1)
+              val targetIndex = (state.tempo - 1).coerceAtLeast(0)
+              if (pickerState.selectedOptionIndex != targetIndex) {
+                pickerCoroutineScope.launch {
+                  if (state.animateTempoChange && !state.reduceAnim) {
+                    pickerState.animateScrollToOption(targetIndex)
+                  } else {
+                    pickerState.scrollToOption(targetIndex)
+                  }
                 }
               }
             }
