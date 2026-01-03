@@ -105,7 +105,7 @@ public final class Constants {
     public static final int UI_MODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
     public static final String UI_CONTRAST = CONTRAST.STANDARD;
     public static final boolean REDUCE_ANIM = false;
-    public static final int VIBRATION_INTENSITY = 0;
+    public static final String VIBRATION_INTENSITY = Constants.VIBRATION_INTENSITY.AUTO;
 
     // Metronome
     public final static int TEMPO = 120;
@@ -238,5 +238,12 @@ public final class Constants {
     public static final String STANDARD = "standard";
     public static final String MEDIUM = "medium";
     public static final String HIGH = "high";
+  }
+
+  public static final class VIBRATION_INTENSITY {
+
+    public static final String AUTO = "auto";
+    public static final String SOFT = "soft";
+    public static final String STRONG = "strong";
   }
 }

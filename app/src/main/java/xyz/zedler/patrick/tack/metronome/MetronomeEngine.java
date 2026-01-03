@@ -96,7 +96,9 @@ public class MetronomeEngine {
     audioEngine = new AudioEngine(context, this::stop);
 
     hapticUtil = new HapticUtil(context);
-    hapticUtil.setIntensity(sharedPrefs.getInt(PREF.VIBRATION_INTENSITY, DEF.VIBRATION_INTENSITY));
+    hapticUtil.setIntensity(
+        sharedPrefs.getString(PREF.VIBRATION_INTENSITY, DEF.VIBRATION_INTENSITY)
+    );
 
     shortcutUtil = new ShortcutUtil(context);
 
@@ -809,9 +811,9 @@ public class MetronomeEngine {
     }
   }
 
-  public void setVibrationIntensity(int intensity) {
+  public void setVibrationIntensity(String intensity) {
     hapticUtil.setIntensity(intensity);
-    sharedPrefs.edit().putInt(PREF.VIBRATION_INTENSITY, intensity).apply();
+    sharedPrefs.edit().putString(PREF.VIBRATION_INTENSITY, intensity).apply();
   }
 
   public void setLatency(long offset) {

@@ -29,12 +29,9 @@ import android.os.VibratorManager;
 import android.provider.Settings;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
+import xyz.zedler.patrick.tack.Constants.VIBRATION_INTENSITY;
 
 public class HapticUtil {
-
-  public static final int INTENSITY_AUTO = 0;
-  public static final int INTENSITY_SOFT = 1;
-  public static final int INTENSITY_STRONG = 2;
 
   public static final long TICK = 2;
   public static final long TICK_STRONG = 20;
@@ -46,7 +43,7 @@ public class HapticUtil {
   private final Vibrator vibrator;
   private final boolean supportsMainEffects;
   private boolean enabled;
-  private int intensity;
+  private String intensity;
 
   public HapticUtil(Context context) {
     if (Build.VERSION.SDK_INT >= VERSION_CODES.S) {
@@ -72,35 +69,38 @@ public class HapticUtil {
       supportsMainEffects = false;
     }
 
-    intensity = supportsMainEffects ? INTENSITY_AUTO : INTENSITY_SOFT;
+    intensity = supportsMainEffects ? VIBRATION_INTENSITY.AUTO : VIBRATION_INTENSITY.SOFT;
   }
 
   public void tick() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && intensity == INTENSITY_AUTO) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        && intensity.equals(VIBRATION_INTENSITY.AUTO)) {
       vibrate(VibrationEffect.EFFECT_TICK);
     } else {
-      vibrate(intensity == INTENSITY_STRONG ? TICK_STRONG : TICK);
+      vibrate(intensity.equals(VIBRATION_INTENSITY.STRONG) ? TICK_STRONG : TICK);
     }
   }
 
   public void click() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && intensity == INTENSITY_AUTO) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        && intensity.equals(VIBRATION_INTENSITY.AUTO)) {
       vibrate(VibrationEffect.EFFECT_CLICK);
     } else {
-      vibrate(intensity == INTENSITY_STRONG ? CLICK_STRONG : CLICK);
+      vibrate(intensity.equals(VIBRATION_INTENSITY.STRONG) ? CLICK_STRONG : CLICK);
     }
   }
 
   public void heavyClick() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && intensity == INTENSITY_AUTO) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        && intensity.equals(VIBRATION_INTENSITY.AUTO)) {
       vibrate(VibrationEffect.EFFECT_HEAVY_CLICK);
     } else {
-      vibrate(intensity == INTENSITY_STRONG ? HEAVY_STRONG : HEAVY);
+      vibrate(intensity.equals(VIBRATION_INTENSITY.STRONG) ? HEAVY_STRONG : HEAVY);
     }
   }
 
   public void hapticReject(View view) {
-    if (VERSION.SDK_INT >= VERSION_CODES.R && intensity == INTENSITY_AUTO) {
+    if (VERSION.SDK_INT >= VERSION_CODES.R && intensity.equals(VIBRATION_INTENSITY.AUTO)) {
       view.performHapticFeedback(HapticFeedbackConstants.REJECT);
     } else {
       click();
@@ -108,7 +108,8 @@ public class HapticUtil {
   }
 
   public void hapticSegmentTick(View view, boolean frequent) {
-    if (VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE && intensity == INTENSITY_AUTO) {
+    if (VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE
+        && intensity.equals(VIBRATION_INTENSITY.AUTO)) {
       view.performHapticFeedback(
           frequent
               ? HapticFeedbackConstants.SEGMENT_FREQUENT_TICK
@@ -123,14 +124,14 @@ public class HapticUtil {
     this.enabled = enabled && hasVibrator();
   }
 
-  public void setIntensity(int intensity) {
+  public void setIntensity(String intensity) {
     this.intensity = intensity;
-    if (intensity == INTENSITY_AUTO && !supportsMainEffects) {
-      this.intensity = INTENSITY_SOFT;
+    if (intensity.equals(VIBRATION_INTENSITY.AUTO) && !supportsMainEffects) {
+      this.intensity = VIBRATION_INTENSITY.SOFT;
     }
   }
 
-  public int getIntensity() {
+  public String getIntensity() {
     return intensity;
   }
 
@@ -149,7 +150,7 @@ public class HapticUtil {
     return hapticFeedbackEnabled != 0;
   }
 
-  public void vibrate(long duration) {
+  private void vibrate(long duration) {
     if (enabled) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         vibrator.vibrate(

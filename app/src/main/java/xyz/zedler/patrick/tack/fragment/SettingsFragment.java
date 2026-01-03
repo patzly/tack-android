@@ -50,16 +50,17 @@ import xyz.zedler.patrick.tack.Constants.KEEP_AWAKE;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SOUND;
 import xyz.zedler.patrick.tack.Constants.THEME;
+import xyz.zedler.patrick.tack.Constants.VIBRATION_INTENSITY;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
 import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
 import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
 import xyz.zedler.patrick.tack.databinding.FragmentSettingsBinding;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
 import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
 import xyz.zedler.patrick.tack.util.ShortcutUtil;
 import xyz.zedler.patrick.tack.util.UiUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil;
@@ -242,10 +243,10 @@ public class SettingsFragment extends BaseFragment
     binding.toggleSettingsVibrationIntensity.removeOnButtonCheckedListener(this);
     int idVibrationIntensity;
     switch (activity.getHapticUtil().getIntensity()) {
-      case HapticUtil.INTENSITY_SOFT:
+      case VIBRATION_INTENSITY.SOFT:
         idVibrationIntensity = R.id.button_settings_vibration_intensity_soft;
         break;
-      case HapticUtil.INTENSITY_STRONG:
+      case VIBRATION_INTENSITY.STRONG:
         idVibrationIntensity = R.id.button_settings_vibration_intensity_strong;
         break;
       default:
@@ -576,13 +577,13 @@ public class SettingsFragment extends BaseFragment
     }
     int id = group.getId();
     if (id == R.id.toggle_settings_vibration_intensity) {
-      int vibrationIntensity;
+      String vibrationIntensity;
       if (checkedId == R.id.button_settings_vibration_intensity_soft) {
-        vibrationIntensity = HapticUtil.INTENSITY_SOFT;
+        vibrationIntensity = VIBRATION_INTENSITY.SOFT;
       } else if (checkedId == R.id.button_settings_vibration_intensity_strong) {
-        vibrationIntensity = HapticUtil.INTENSITY_STRONG;
+        vibrationIntensity = VIBRATION_INTENSITY.STRONG;
       } else {
-        vibrationIntensity = HapticUtil.INTENSITY_AUTO;
+        vibrationIntensity = VIBRATION_INTENSITY.AUTO;
       }
       metronomeEngine.setVibrationIntensity(vibrationIntensity);
       activity.getHapticUtil().setIntensity(vibrationIntensity);
