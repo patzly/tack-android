@@ -275,6 +275,10 @@ class MainViewModel(
     }
   }
 
+  fun updateSupportsVibrationEffects(support: Boolean) {
+    _state.update { it.copy(supportsVibrationEffects = support) }
+  }
+
   fun updateGain(gain: Int) {
     val startedWithGain = gain <= 0 || _state.value.startedWithGain
     _state.update { it.copy(

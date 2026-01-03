@@ -29,15 +29,9 @@ import xyz.zedler.patrick.tack.Constants
 
 class HapticUtil(context: Context) {
 
-  private val vibrator: Vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-    (context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager)
-      .defaultVibrator
-  } else {
-    @Suppress("DEPRECATION")
-    context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-  }
+  private val vibrator: Vibrator = getVibrator(context)
 
-  var supportsMainEffects: Boolean = false
+  var supportsMainEffects: Boolean = areMainEffectsSupported(context)
     private set
 
   var enabled: Boolean = false
@@ -63,6 +57,7 @@ class HapticUtil(context: Context) {
     } else {
       null
     }
+
   private val audioAttributes: AudioAttributes? =
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
       AudioAttributes.Builder()
@@ -75,23 +70,7 @@ class HapticUtil(context: Context) {
 
   init {
     enabled = hasVibrator
-
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && vibrator.hasAmplitudeControl()) {
-      val result = vibrator.areAllEffectsSupported(
-        VibrationEffect.EFFECT_CLICK,
-        VibrationEffect.EFFECT_HEAVY_CLICK,
-        VibrationEffect.EFFECT_TICK
-      )
-      supportsMainEffects = result == Vibrator.VIBRATION_EFFECT_SUPPORT_YES
-    } else {
-      supportsMainEffects = false
-    }
-
-    intensity = if (supportsMainEffects) {
-      Constants.VibrationIntensity.AUTO
-    } else {
-      Constants.VibrationIntensity.SOFT
-    }
+    intensity = getDefaultIntensity(context)
   }
 
   fun tick() = vibrate(
@@ -146,5 +125,36 @@ class HapticUtil(context: Context) {
     const val CLICK_STRONG = 50L
     const val HEAVY = 40L
     const val HEAVY_STRONG = 80L
+
+    private fun getVibrator(context: Context): Vibrator {
+      return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        (context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager)
+          .defaultVibrator
+      } else {
+        @Suppress("DEPRECATION")
+        context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+      }
+    }
+
+    fun areMainEffectsSupported(context: Context): Boolean {
+      val vibrator = getVibrator(context)
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && vibrator.hasAmplitudeControl()) {
+        val result = vibrator.areAllEffectsSupported(
+          VibrationEffect.EFFECT_CLICK,
+          VibrationEffect.EFFECT_HEAVY_CLICK,
+          VibrationEffect.EFFECT_TICK
+        )
+        return result == Vibrator.VIBRATION_EFFECT_SUPPORT_YES
+      }
+      return false
+    }
+
+    fun getDefaultIntensity(context: Context): String {
+      return if (areMainEffectsSupported(context)) {
+        Constants.VibrationIntensity.AUTO
+      } else {
+        Constants.VibrationIntensity.SOFT
+      }
+    }
   }
 }

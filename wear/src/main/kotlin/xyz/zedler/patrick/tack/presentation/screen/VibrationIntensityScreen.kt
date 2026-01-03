@@ -64,14 +64,16 @@ fun VibrationIntensityScreen(
             )
           }
         }
-        item {
-          VibrationIntensityOption(
-            label = stringResource(id = R.string.wear_settings_vibration_intensity_auto),
-            selected = state.vibrationIntensity == Constants.VibrationIntensity.AUTO,
-            onSelected = {
-              viewModel.updateVibrationIntensity(Constants.VibrationIntensity.AUTO)
-            }
-          )
+        if (state.supportsVibrationEffects) {
+          item {
+            VibrationIntensityOption(
+              label = stringResource(id = R.string.wear_settings_vibration_intensity_auto),
+              selected = state.vibrationIntensity == Constants.VibrationIntensity.AUTO,
+              onSelected = {
+                viewModel.updateVibrationIntensity(Constants.VibrationIntensity.AUTO)
+              }
+            )
+          }
         }
         item {
           VibrationIntensityOption(

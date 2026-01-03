@@ -37,6 +37,7 @@ data class MainState(
   val beatModeVibrate: Boolean = Def.BEAT_MODE_VIBRATE,
   val alwaysVibrate: Boolean = Def.ALWAYS_VIBRATE,
   val vibrationIntensity: String = Def.VIBRATION_INTENSITY,
+  val supportsVibrationEffects: Boolean = true,
   val gain: Int = Def.GAIN,
   val sound: String = Def.SOUND,
   val ignoreFocus: Boolean = Def.IGNORE_FOCUS,

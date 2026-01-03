@@ -36,12 +36,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.preference.PreferenceManager
+import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine
 import xyz.zedler.patrick.tack.presentation.TackApp
 import xyz.zedler.patrick.tack.presentation.state.MainState
 import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.util.ButtonUtil
 import xyz.zedler.patrick.tack.util.ButtonUtil.OnPressListener
+import xyz.zedler.patrick.tack.util.HapticUtil
 import xyz.zedler.patrick.tack.util.keepScreenAwake
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
@@ -135,6 +137,16 @@ class MainActivity : ComponentActivity(), ServiceConnection {
         viewModel.updateSubdivisions(getMetronomeUtil().subdivisions)
       }
     })
+    viewModel.updateSupportsVibrationEffects(
+      HapticUtil.areMainEffectsSupported(this)
+    )
+    viewModel.updateVibrationIntensity(
+      sharedPrefs.getString(
+        Constants.Pref.VIBRATION_INTENSITY,
+        HapticUtil.getDefaultIntensity(this)
+      )!!
+    )
+
     updateMetronomeUtil()
 
     requestPermissionLauncher = registerForActivityResult(

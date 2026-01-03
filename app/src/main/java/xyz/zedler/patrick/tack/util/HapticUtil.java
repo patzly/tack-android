@@ -154,7 +154,12 @@ public class HapticUtil {
     if (enabled) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         vibrator.vibrate(
-            VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE)
+            VibrationEffect.createOneShot(
+                duration,
+                intensity.equals(VIBRATION_INTENSITY.STRONG)
+                    ? 255
+                    : VibrationEffect.DEFAULT_AMPLITUDE
+            )
         );
       } else {
         vibrator.vibrate(duration);
