@@ -220,7 +220,6 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
       });
     }
     int resId = R.string.about_key_description_not_installed;
-    int textColor = ResUtil.getColor(activity, R.attr.colorOnSurfaceVariant);
     boolean checkUnlockKey = getSharedPrefs().getBoolean(PREF.CHECK_UNLOCK_KEY, true);
     if (UnlockUtil.isKeyInstalled(activity)) {
       resId = R.string.about_key_description_installed;
@@ -228,6 +227,5 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
       resId = R.string.about_key_description_ignored;
     }
     binding.textAboutKeyDescription.setText(resId);
-    binding.textAboutKeyDescription.setTextColor(textColor);
   }
 }

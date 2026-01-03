@@ -30,8 +30,8 @@ android {
         applicationId = "xyz.zedler.patrick.tack"
         minSdk = 23
         targetSdk = 36
-        versionCode = 380 // last number is 0 for app release
-        versionName = "6.1.1"
+        versionCode = 390 // last number is 0 for app release
+        versionName = "6.1.2"
         resourceConfigurations = ["en", "cs", "de", "es", "es-rCL", "fr", "in", "ja", "ko", "nl",
                                   "ru", "tr", "zh-rCN", "zh-rHK", "zh-rTW"]
         vectorDrawables.generatedDensities = []
@@ -88,7 +88,7 @@ android {
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     dependenciesInfo {

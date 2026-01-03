@@ -1,3 +1,7 @@
+### 6.1.2
+
+- Fixed: Bluetooth audio stream stopping unexpectedly on some devices
+
 ### 6.1.1
 
 - Improved: moved "support development" option to home screen for better discoverability
