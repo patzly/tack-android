@@ -1,7 +1,9 @@
 ### 6.2.0
 
 - New: "vibration intensity" setting for haptic beats and effects
+- Improved: dynamic theme support (Wear OS)
 - Fixed: bluetooth audio stream stopping unexpectedly on some devices
+- Fixed: fast tempo changes on tempo screen causing incorrect tempo (Wear OS)
 
 ### 6.1.1
 
@@ -16,11 +18,9 @@
 - Improved: audio engine performance and stability
 - Improved: play/stop button again responds on touch up instead of down for a consistent experience
 - Improved: menu appearance
-- Improved: dynamic theme support (Wear OS)
 - Fixed: haptic feedback while rotating tempo picker after limits reached
 - Fixed: some beats still randomly not playing due to threading issues
 - Fixed: some crashes in certain situations
-- Fixed: fast tempo changes on tempo screen causing incorrect tempo (Wear OS)
 
 ### 6.0.1
 
