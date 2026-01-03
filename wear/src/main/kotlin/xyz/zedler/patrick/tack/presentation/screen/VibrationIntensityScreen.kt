@@ -43,7 +43,7 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Preview(device = WearDevices.LARGE_ROUND)
 @Composable
-fun SoundScreen(
+fun VibrationIntensityScreen(
   viewModel: MainViewModel = MainViewModel()
 ) {
   TackTheme {
@@ -59,71 +59,35 @@ fun SoundScreen(
         item {
           ListHeader {
             Text(
-              text = stringResource(id = R.string.wear_settings_sound),
+              text = stringResource(id = R.string.wear_settings_vibration_intensity),
               style = MaterialTheme.typography.titleMedium
             )
           }
         }
         item {
-          SoundOption(
-            label = stringResource(id = R.string.wear_settings_sound_sine),
-            selected = state.sound == Constants.Sound.SINE,
+          VibrationIntensityOption(
+            label = stringResource(id = R.string.wear_settings_vibration_intensity_auto),
+            selected = state.vibrationIntensity == Constants.VibrationIntensity.AUTO,
             onSelected = {
-              viewModel.updateSound(Constants.Sound.SINE)
+              viewModel.updateVibrationIntensity(Constants.VibrationIntensity.AUTO)
             }
           )
         }
         item {
-          SoundOption(
-            label = stringResource(id = R.string.wear_settings_sound_wood),
-            selected = state.sound == Constants.Sound.WOOD,
+          VibrationIntensityOption(
+            label = stringResource(id = R.string.wear_settings_vibration_intensity_soft),
+            selected = state.vibrationIntensity == Constants.VibrationIntensity.SOFT,
             onSelected = {
-              viewModel.updateSound(Constants.Sound.WOOD)
+              viewModel.updateVibrationIntensity(Constants.VibrationIntensity.SOFT)
             }
           )
         }
         item {
-          SoundOption(
-            label = stringResource(id = R.string.wear_settings_sound_mechanical),
-            selected = state.sound == Constants.Sound.MECHANICAL,
+          VibrationIntensityOption(
+            label = stringResource(id = R.string.wear_settings_vibration_intensity_strong),
+            selected = state.vibrationIntensity == Constants.VibrationIntensity.STRONG,
             onSelected = {
-              viewModel.updateSound(Constants.Sound.MECHANICAL)
-            }
-          )
-        }
-        item {
-          SoundOption(
-            label = stringResource(id = R.string.wear_settings_sound_beatboxing_1),
-            selected = state.sound == Constants.Sound.BEATBOXING_1,
-            onSelected = {
-              viewModel.updateSound(Constants.Sound.BEATBOXING_1)
-            }
-          )
-        }
-        item {
-          SoundOption(
-            label = stringResource(id = R.string.wear_settings_sound_beatboxing_2),
-            selected = state.sound == Constants.Sound.BEATBOXING_2,
-            onSelected = {
-              viewModel.updateSound(Constants.Sound.BEATBOXING_2)
-            }
-          )
-        }
-        item {
-          SoundOption(
-            label = stringResource(id = R.string.wear_settings_sound_hands),
-            selected = state.sound == Constants.Sound.HANDS,
-            onSelected = {
-              viewModel.updateSound(Constants.Sound.HANDS)
-            }
-          )
-        }
-        item {
-          SoundOption(
-            label = stringResource(id = R.string.wear_settings_sound_folding),
-            selected = state.sound == Constants.Sound.FOLDING,
-            onSelected = {
-              viewModel.updateSound(Constants.Sound.FOLDING)
+              viewModel.updateVibrationIntensity(Constants.VibrationIntensity.STRONG)
             }
           )
         }
@@ -133,7 +97,7 @@ fun SoundScreen(
 }
 
 @Composable
-fun SoundOption(
+fun VibrationIntensityOption(
   label: String,
   selected: Boolean,
   onSelected: () -> Unit,

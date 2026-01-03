@@ -29,4 +29,5 @@ sealed class Screen(val route: String) {
   data object Gain : Screen("gain")
   data object Sound : Screen("sound")
   data object Latency : Screen("latency")
+  data object VibrationIntensity : Screen("vibration_intensity")
 }

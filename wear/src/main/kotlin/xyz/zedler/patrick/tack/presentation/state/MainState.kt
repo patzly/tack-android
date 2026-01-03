@@ -36,7 +36,7 @@ data class MainState(
   val bookmarks: List<Bookmark> = listOf(),
   val beatModeVibrate: Boolean = Def.BEAT_MODE_VIBRATE,
   val alwaysVibrate: Boolean = Def.ALWAYS_VIBRATE,
-  val strongVibration: Boolean = Def.STRONG_VIBRATION,
+  val vibrationIntensity: String = Def.VIBRATION_INTENSITY,
   val gain: Int = Def.GAIN,
   val sound: String = Def.SOUND,
   val ignoreFocus: Boolean = Def.IGNORE_FOCUS,

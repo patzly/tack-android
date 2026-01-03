@@ -81,7 +81,7 @@ class MetronomeEngine(
     setGain(state.gain)
     setBeatModeVibrate(state.beatModeVibrate)
     setAlwaysVibrate(state.alwaysVibrate)
-    setStrongVibration(state.strongVibration)
+    setVibrationIntensity(state.vibrationIntensity)
   }
 
   private fun resetHandlersIfRequired() {
@@ -233,7 +233,7 @@ class MetronomeEngine(
   }
 
   private fun setBeatModeVibrate(vibrate: Boolean) {
-    beatModeVibrate = vibrate && hapticUtil.hasVibrator()
+    beatModeVibrate = vibrate && hapticUtil.hasVibrator
     audioEngine.isMuted = beatModeVibrate
     hapticUtil.enabled = beatModeVibrate || alwaysVibrate
   }
@@ -243,8 +243,8 @@ class MetronomeEngine(
     hapticUtil.enabled = always || beatModeVibrate
   }
 
-  private fun setStrongVibration(strong: Boolean) {
-    hapticUtil.strong = strong
+  private fun setVibrationIntensity(intensity: String) {
+    hapticUtil.intensity = intensity
   }
 
   private fun setIgnoreFocus(ignore: Boolean) {

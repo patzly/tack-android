@@ -49,7 +49,7 @@ import androidx.wear.compose.material3.SwitchButton
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.TitleCard
 import androidx.wear.tooling.preview.devices.WearDevices
-import xyz.zedler.patrick.tack.Constants.Sound
+import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -61,6 +61,7 @@ fun SettingsScreen(
   onSoundClick: () -> Unit = {},
   onGainClick: () -> Unit = {},
   onLatencyClick: () -> Unit = {},
+  onVibrationIntensityClick: () -> Unit = {},
   onRateClick: () -> Unit = {}
 ) {
   TackTheme {
@@ -92,22 +93,22 @@ fun SettingsScreen(
         item {
           var name = stringResource(id = R.string.wear_settings_sound_sine)
           when (state.sound) {
-            Sound.WOOD -> {
+            Constants.Sound.WOOD -> {
               name = stringResource(id = R.string.wear_settings_sound_wood)
             }
-            Sound.MECHANICAL -> {
+            Constants.Sound.MECHANICAL -> {
               name = stringResource(id = R.string.wear_settings_sound_mechanical)
             }
-            Sound.BEATBOXING_1 -> {
+            Constants.Sound.BEATBOXING_1 -> {
               name = stringResource(id = R.string.wear_settings_sound_beatboxing_1)
             }
-            Sound.BEATBOXING_2 -> {
+            Constants.Sound.BEATBOXING_2 -> {
               name = stringResource(id = R.string.wear_settings_sound_beatboxing_2)
             }
-            Sound.HANDS -> {
+            Constants.Sound.HANDS -> {
               name = stringResource(id = R.string.wear_settings_sound_hands)
             }
-            Sound.FOLDING -> {
+            Constants.Sound.FOLDING -> {
               name = stringResource(id = R.string.wear_settings_sound_folding)
             }
           }
@@ -151,11 +152,19 @@ fun SettingsScreen(
           )
         }
         item {
-          SwitchCard(
-            checked = state.strongVibration,
-            onCheckedChange = { viewModel.updateStrongVibration(it) },
-            label = stringResource(id = R.string.wear_settings_strong_vibration),
-            secondaryLabel = stringResource(id = R.string.wear_settings_strong_vibration_description)
+          var name = stringResource(id = R.string.wear_settings_vibration_intensity_auto)
+          when (state.vibrationIntensity) {
+            Constants.VibrationIntensity.SOFT -> {
+              name = stringResource(id = R.string.wear_settings_vibration_intensity_soft)
+            }
+            Constants.VibrationIntensity.STRONG -> {
+              name = stringResource(id = R.string.wear_settings_vibration_intensity_strong)
+            }
+          }
+          ClickCard(
+            title = stringResource(R.string.wear_settings_vibration_intensity),
+            subtitle = name,
+            onClick = onVibrationIntensityClick
           )
         }
         item {

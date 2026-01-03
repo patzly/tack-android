@@ -68,8 +68,8 @@ class MainViewModel(
           .getBoolean(Pref.BEAT_MODE_VIBRATE, Def.BEAT_MODE_VIBRATE),
         alwaysVibrate = sharedPrefs
           .getBoolean(Pref.ALWAYS_VIBRATE, Def.ALWAYS_VIBRATE),
-        strongVibration = sharedPrefs
-          .getBoolean(Pref.STRONG_VIBRATION, Def.STRONG_VIBRATION),
+        vibrationIntensity = sharedPrefs
+          .getString(Pref.VIBRATION_INTENSITY, Def.VIBRATION_INTENSITY)!!,
         gain = sharedPrefs.getInt(Pref.GAIN, Def.GAIN),
         sound = sharedPrefs.getString(Pref.SOUND, Def.SOUND)!!,
         ignoreFocus = sharedPrefs.getBoolean(Pref.IGNORE_FOCUS, Def.IGNORE_FOCUS),
@@ -267,11 +267,11 @@ class MainViewModel(
     }
   }
 
-  fun updateStrongVibration(strongVibration: Boolean) {
-    _state.update { it.copy(strongVibration = strongVibration) }
+  fun updateVibrationIntensity(intensity: String) {
+    _state.update { it.copy(vibrationIntensity = intensity) }
     listener?.onMetronomeConfigChanged(_state.value)
     sharedPrefs?.edit {
-      putBoolean(Pref.STRONG_VIBRATION, strongVibration)
+      putString(Pref.VIBRATION_INTENSITY, intensity)
     }
   }
 

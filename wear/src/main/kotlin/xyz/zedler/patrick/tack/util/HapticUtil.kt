@@ -19,78 +19,132 @@
 package xyz.zedler.patrick.tack.util
 
 import android.content.Context
+import android.media.AudioAttributes
 import android.os.Build
-import android.os.Build.VERSION_CODES
+import android.os.VibrationAttributes
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import xyz.zedler.patrick.tack.Constants
 
 class HapticUtil(context: Context) {
 
-  private val vibrator: Vibrator = if (Build.VERSION.SDK_INT >= VERSION_CODES.S) {
-    val manager = context.getSystemService(
-      Context.VIBRATOR_MANAGER_SERVICE
-    ) as VibratorManager
-    manager.defaultVibrator
+  private val vibrator: Vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+    (context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager)
+      .defaultVibrator
   } else {
-    @Suppress("deprecation")
+    @Suppress("DEPRECATION")
     context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
   }
-  private val hasAmplitudeControl: Boolean = vibrator.hasAmplitudeControl()
-  var enabled: Boolean = hasVibrator()
+
+  var supportsMainEffects: Boolean = false
+    private set
+
+  var enabled: Boolean = false
     set(value) {
-      field = value && vibrator.hasVibrator()
+      field = value && hasVibrator
     }
-  var strong: Boolean = false
 
-  private fun vibrate(duration: Long) {
-    if (enabled) {
-      vibrator.vibrate(VibrationEffect.createOneShot(
-        duration, VibrationEffect.DEFAULT_AMPLITUDE
-      ))
+  var intensity: String = Constants.VibrationIntensity.SOFT
+    set(value) {
+      field = if (value == Constants.VibrationIntensity.AUTO && !supportsMainEffects) {
+        Constants.VibrationIntensity.SOFT
+      } else {
+        value
+      }
     }
-  }
 
-  private fun vibrate(effectId: Int) {
-    if (enabled && Build.VERSION.SDK_INT >= VERSION_CODES.Q) {
-      vibrator.vibrate(VibrationEffect.createPredefined(effectId))
-    }
-  }
+  val hasVibrator: Boolean
+    get() = vibrator.hasVibrator()
 
-  fun tick() {
-    if (Build.VERSION.SDK_INT >= VERSION_CODES.Q && hasAmplitudeControl && !strong) {
-      vibrate(VibrationEffect.EFFECT_TICK)
+  private val vibrationAttributes: VibrationAttributes? =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      VibrationAttributes.createForUsage(VibrationAttributes.USAGE_TOUCH)
     } else {
-      vibrate(if (strong) TICK_STRONG else TICK)
+      null
     }
-  }
-
-  fun click() {
-    if (Build.VERSION.SDK_INT >= VERSION_CODES.Q && hasAmplitudeControl && !strong) {
-      vibrate(VibrationEffect.EFFECT_CLICK)
+  private val audioAttributes: AudioAttributes? =
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+      AudioAttributes.Builder()
+        .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+        .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+        .build()
     } else {
-      vibrate(if (strong) CLICK_STRONG else CLICK)
+      null
     }
-  }
 
-  fun heavyClick() {
-    if (Build.VERSION.SDK_INT >= VERSION_CODES.Q && hasAmplitudeControl && !strong) {
-      vibrate(VibrationEffect.EFFECT_HEAVY_CLICK)
+  init {
+    enabled = hasVibrator
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && vibrator.hasAmplitudeControl()) {
+      val result = vibrator.areAllEffectsSupported(
+        VibrationEffect.EFFECT_CLICK,
+        VibrationEffect.EFFECT_HEAVY_CLICK,
+        VibrationEffect.EFFECT_TICK
+      )
+      supportsMainEffects = result == Vibrator.VIBRATION_EFFECT_SUPPORT_YES
     } else {
-      vibrate(if (strong) HEAVY_STRONG else HEAVY)
+      supportsMainEffects = false
+    }
+
+    intensity = if (supportsMainEffects) {
+      Constants.VibrationIntensity.AUTO
+    } else {
+      Constants.VibrationIntensity.SOFT
     }
   }
 
-  fun hasVibrator(): Boolean {
-    return vibrator.hasVibrator()
+  fun tick() = vibrate(
+    if (intensity == Constants.VibrationIntensity.AUTO
+      && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+      VibrationEffect.EFFECT_TICK else null,
+    if (intensity == Constants.VibrationIntensity.STRONG) TICK_STRONG else TICK
+  )
+
+  fun click() = vibrate(
+    if (intensity == Constants.VibrationIntensity.AUTO
+      && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+      VibrationEffect.EFFECT_CLICK else null,
+    if (intensity == Constants.VibrationIntensity.STRONG) CLICK_STRONG else CLICK
+  )
+
+  fun heavyClick() = vibrate(
+    if (intensity == Constants.VibrationIntensity.AUTO
+      && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+      VibrationEffect.EFFECT_HEAVY_CLICK else null,
+    if (intensity == Constants.VibrationIntensity.STRONG) HEAVY_STRONG else HEAVY
+  )
+
+  private fun vibrate(effectId: Int?, duration: Long) {
+    if (!enabled) return
+
+    val effect = if (effectId != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+      VibrationEffect.createPredefined(effectId)
+    } else {
+      VibrationEffect.createOneShot(
+        duration,
+        if (intensity == Constants.VibrationIntensity.STRONG) 255
+        else VibrationEffect.DEFAULT_AMPLITUDE
+      )
+    }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && effect != null) {
+      vibrator.vibrate(effect, vibrationAttributes as VibrationAttributes)
+    } else if (effect != null) {
+      @Suppress("DEPRECATION")
+      vibrator.vibrate(effect, audioAttributes as AudioAttributes)
+    } else {
+      @Suppress("DEPRECATION")
+      vibrator.vibrate(duration)
+    }
   }
 
   companion object {
-    private const val TICK: Long = 13
-    private const val TICK_STRONG: Long = 20
-    private const val CLICK: Long = 20
-    private const val CLICK_STRONG: Long = 50
-    private const val HEAVY: Long = 50
-    private const val HEAVY_STRONG: Long = 80
+    const val TICK = 2L
+    const val TICK_STRONG = 20L
+    const val CLICK = 8L
+    const val CLICK_STRONG = 50L
+    const val HEAVY = 40L
+    const val HEAVY_STRONG = 80L
   }
 }

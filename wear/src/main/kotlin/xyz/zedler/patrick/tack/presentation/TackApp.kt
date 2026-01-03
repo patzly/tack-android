@@ -48,6 +48,7 @@ import xyz.zedler.patrick.tack.presentation.screen.SettingsScreen
 import xyz.zedler.patrick.tack.presentation.screen.SoundScreen
 import xyz.zedler.patrick.tack.presentation.screen.TapScreen
 import xyz.zedler.patrick.tack.presentation.screen.TempoScreen
+import xyz.zedler.patrick.tack.presentation.screen.VibrationIntensityScreen
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
@@ -128,6 +129,9 @@ fun TackApp(
             onLatencyClick = {
               navController.navigate(Screen.Latency.route)
             },
+            onVibrationIntensityClick = {
+              navController.navigate(Screen.VibrationIntensity.route)
+            },
             onRateClick = onRateClick
           )
         }
@@ -151,6 +155,9 @@ fun TackApp(
         }
         composable(route = Screen.Latency.route) {
           LatencyScreen(viewModel = viewModel)
+        }
+        composable(route = Screen.VibrationIntensity.route) {
+          VibrationIntensityScreen(viewModel = viewModel)
         }
       }
     }

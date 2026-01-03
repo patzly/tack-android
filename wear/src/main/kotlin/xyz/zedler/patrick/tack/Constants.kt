@@ -34,7 +34,7 @@ object Constants {
     const val SUBDIVISIONS: String = "subdivisions"
     const val BEAT_MODE_VIBRATE: String = "beat_mode_vibrate"
     const val ALWAYS_VIBRATE: String = "always_vibrate"
-    const val STRONG_VIBRATION: String = "strong_vibration"
+    const val VIBRATION_INTENSITY: String = "vibration_intensity"
     const val FLASH_SCREEN: String = "flash_screen"
     const val KEEP_AWAKE: String = "keep_awake"
     const val REDUCE_ANIM: String = "reduce_animations"
@@ -52,7 +52,7 @@ object Constants {
     const val SUBDIVISIONS: String = TickType.MUTED
     const val BEAT_MODE_VIBRATE: Boolean = false
     const val ALWAYS_VIBRATE: Boolean = true
-    const val STRONG_VIBRATION: Boolean = false
+    const val VIBRATION_INTENSITY: String = VibrationIntensity.AUTO
     const val FLASH_SCREEN: Boolean = false
     const val KEEP_AWAKE: Boolean = true
     const val REDUCE_ANIM: Boolean = false
@@ -79,6 +79,12 @@ object Constants {
     const val SUB: String = "sub"
     const val MUTED: String = "muted"
     const val BEAT_SUB_MUTED: String = "beat_sub_muted"
+  }
+
+  object VibrationIntensity {
+    const val AUTO: String = "auto"
+    const val SOFT: String = "soft"
+    const val STRONG: String = "strong"
   }
 
   object Action {
