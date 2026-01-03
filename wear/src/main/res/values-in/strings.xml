@@ -93,9 +93,7 @@
   <string name="wear_settings_always_vibrate">Selalu getar</string>
   <string name="wear_settings_always_vibrate_description">Bahkan dengan suara</string>
 
-  <string name="wear_settings_strong_vibration">Getaran kuat</string>
-  <string name="wear_settings_strong_vibration_description">Jika haptik lemah</string>
-
+  <string name="wear_settings_vibration_intensity_auto">Otomatis</string>
   <string name="wear_settings_flash_screen">Layar kilat</string>
   <string name="wear_settings_flash_screen_description">Pada setiap ketukan</string>
 
