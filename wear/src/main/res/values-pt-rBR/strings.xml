@@ -98,8 +98,8 @@
   <string name="wear_settings_always_vibrate">Vibrar sempre </string>
   <string name="wear_settings_always_vibrate_description">Mesmo que haja som</string>
 
-  <string name="wear_settings_strong_vibration">Vibração forte</string>
-  <string name="wear_settings_strong_vibration_description">Mesmo que o feedback seja fraco </string>
+  <string name="wear_settings_vibration_intensity_auto">Auto</string>
+  <string name="wear_settings_vibration_intensity_strong">Intenso</string>
 
   <string name="wear_settings_flash_screen">Piscar a tela</string>
   <string name="wear_settings_flash_screen_description">A cada batida</string>
