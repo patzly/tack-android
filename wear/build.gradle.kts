@@ -44,7 +44,6 @@ android {
   }
 
   androidResources {
-    // Use this when the new API is stable
     localeFilters += listOf(
       "en", "cs", "de",  "es", "es-rCL", "fr", "in", "ja", "ko", "nl", "pt-rBR", "ru", "tr",
       "zh-rCN","zh-rHK", "zh-rTW"
@@ -62,7 +61,7 @@ android {
   }
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_11
-    targetCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_21
   }
   kotlin {
     compilerOptions {
