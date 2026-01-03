@@ -49,6 +49,7 @@ public final class Constants {
     public static final String UI_MODE = "ui_mode";
     public static final String UI_CONTRAST = "ui_contrast";
     public static final String HAPTIC = "haptic_feedback";
+    public static final String VIBRATION_INTENSITY = "vibration_intensity";
     public static final String REDUCE_ANIM = "reduce_animations";
     public static final String LAST_VERSION = "last_version";
     public static final String FEEDBACK_POP_UP_COUNT = "feedback_app_start_count";
@@ -104,6 +105,7 @@ public final class Constants {
     public static final int UI_MODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
     public static final String UI_CONTRAST = CONTRAST.STANDARD;
     public static final boolean REDUCE_ANIM = false;
+    public static final int VIBRATION_INTENSITY = 0;
 
     // Metronome
     public final static int TEMPO = 120;

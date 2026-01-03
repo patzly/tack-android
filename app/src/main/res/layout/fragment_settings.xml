@@ -345,6 +345,82 @@
         </LinearLayout>
 
         <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:background="@drawable/ripple_list_item_bg_segmented_middle">
+
+          <LinearLayout
+            style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
+            android:paddingTop="14dp"
+            android:paddingBottom="0dp"
+            android:minHeight="0dp">
+
+            <ImageView
+              style="@style/Widget.Tack.ImageView.ListItem.Icon"
+              android:src="@drawable/ic_rounded_mobile_sensor_lo"
+              android:layout_gravity="center"
+              tools:ignore="ContentDescription" />
+
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Title"
+                android:text="@string/settings_vibration_intensity" />
+
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Description"
+                android:text="@string/settings_vibration_intensity_description" />
+
+            </LinearLayout>
+
+          </LinearLayout>
+
+          <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="10dp"
+            android:scrollbars="none"
+            android:overScrollMode="ifContentScrolls">
+
+            <FrameLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingStart="56dp"
+              android:paddingEnd="16dp">
+
+              <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle_settings_vibration_intensity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_vibration_intensity_auto"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_vibration_intensity_auto" />
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_vibration_intensity_soft"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_vibration_intensity_soft" />
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_vibration_intensity_strong"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_vibration_intensity_strong" />
+
+              </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            </FrameLayout>
+
+          </HorizontalScrollView>
+
+        </LinearLayout>
+
+        <LinearLayout
           android:id="@+id/linear_settings_reduce_animations"
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
           android:background="@drawable/ripple_list_item_bg_segmented_last">

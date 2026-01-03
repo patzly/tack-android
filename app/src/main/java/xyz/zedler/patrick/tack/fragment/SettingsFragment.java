@@ -236,6 +236,26 @@ public class SettingsFragment extends BaseFragment
         activity.getHapticUtil().hasVibrator() ? View.VISIBLE : View.GONE
     );
 
+    binding.buttonSettingsVibrationIntensityAuto.setVisibility(
+        activity.getHapticUtil().supportsMainEffects() ? View.VISIBLE : View.GONE
+    );
+    binding.toggleSettingsVibrationIntensity.removeOnButtonCheckedListener(this);
+    int idVibrationIntensity;
+    switch (activity.getHapticUtil().getIntensity()) {
+      case HapticUtil.INTENSITY_SOFT:
+        idVibrationIntensity = R.id.button_settings_vibration_intensity_soft;
+        break;
+      case HapticUtil.INTENSITY_STRONG:
+        idVibrationIntensity = R.id.button_settings_vibration_intensity_strong;
+        break;
+      default:
+        idVibrationIntensity = R.id.button_settings_vibration_intensity_auto;
+        break;
+    }
+    binding.toggleSettingsVibrationIntensity.check(idVibrationIntensity);
+    binding.toggleSettingsVibrationIntensity.jumpDrawablesToCurrentState();
+    binding.toggleSettingsVibrationIntensity.addOnButtonCheckedListener(this);
+
     binding.switchSettingsReduceAnimations.setChecked(
         getSharedPrefs().getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM)
     );
@@ -555,7 +575,19 @@ public class SettingsFragment extends BaseFragment
       return;
     }
     int id = group.getId();
-    if (id == R.id.toggle_settings_flash_screen) {
+    if (id == R.id.toggle_settings_vibration_intensity) {
+      int vibrationIntensity;
+      if (checkedId == R.id.button_settings_vibration_intensity_soft) {
+        vibrationIntensity = HapticUtil.INTENSITY_SOFT;
+      } else if (checkedId == R.id.button_settings_vibration_intensity_strong) {
+        vibrationIntensity = HapticUtil.INTENSITY_STRONG;
+      } else {
+        vibrationIntensity = HapticUtil.INTENSITY_AUTO;
+      }
+      metronomeEngine.setVibrationIntensity(vibrationIntensity);
+      activity.getHapticUtil().setIntensity(vibrationIntensity);
+      performHapticClick();
+    } else if (id == R.id.toggle_settings_flash_screen) {
       String flashScreen;
       if (checkedId == R.id.button_settings_flash_screen_subtle) {
         flashScreen = FLASH_SCREEN.SUBTLE;

@@ -32,13 +32,21 @@ import android.view.View;
 
 public class HapticUtil {
 
-  private final Vibrator vibrator;
-  private boolean enabled;
-  private final boolean hasAmplitudeControl, supportsMainEffects;
+  public static final int INTENSITY_AUTO = 0;
+  public static final int INTENSITY_SOFT = 1;
+  public static final int INTENSITY_STRONG = 2;
 
-  public static final long TICK = 20;
-  public static final long CLICK = 50;
-  public static final long HEAVY = 80;
+  public static final long TICK = 2;
+  public static final long TICK_STRONG = 20;
+  public static final long CLICK = 8;
+  public static final long CLICK_STRONG = 50;
+  public static final long HEAVY = 40;
+  public static final long HEAVY_STRONG = 80;
+
+  private final Vibrator vibrator;
+  private final boolean supportsMainEffects;
+  private boolean enabled;
+  private int intensity;
 
   public HapticUtil(Context context) {
     if (Build.VERSION.SDK_INT >= VERSION_CODES.S) {
@@ -48,8 +56,10 @@ public class HapticUtil {
     } else {
       vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
+
     enabled = hasVibrator();
-    hasAmplitudeControl =
+
+    boolean hasAmplitudeControl =
         Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && vibrator.hasAmplitudeControl();
     if (hasAmplitudeControl && VERSION.SDK_INT >= VERSION_CODES.R) {
       int result = vibrator.areAllEffectsSupported(
@@ -61,46 +71,36 @@ public class HapticUtil {
     } else {
       supportsMainEffects = false;
     }
-  }
 
-  public void tick(boolean useEffect) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && hasAmplitudeControl && useEffect) {
-      vibrate(VibrationEffect.EFFECT_TICK);
-    } else {
-      vibrate(TICK);
-    }
+    intensity = supportsMainEffects ? INTENSITY_AUTO : INTENSITY_SOFT;
   }
 
   public void tick() {
-    tick(true);
-  }
-
-  public void click(boolean useEffect) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && hasAmplitudeControl && useEffect) {
-      vibrate(VibrationEffect.EFFECT_CLICK);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && intensity == INTENSITY_AUTO) {
+      vibrate(VibrationEffect.EFFECT_TICK);
     } else {
-      vibrate(CLICK);
+      vibrate(intensity == INTENSITY_STRONG ? TICK_STRONG : TICK);
     }
   }
 
   public void click() {
-    click(true);
-  }
-
-  public void heavyClick(boolean useEffect) {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && hasAmplitudeControl && useEffect) {
-      vibrate(VibrationEffect.EFFECT_HEAVY_CLICK);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && intensity == INTENSITY_AUTO) {
+      vibrate(VibrationEffect.EFFECT_CLICK);
     } else {
-      vibrate(HEAVY);
+      vibrate(intensity == INTENSITY_STRONG ? CLICK_STRONG : CLICK);
     }
   }
 
   public void heavyClick() {
-    heavyClick(true);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && intensity == INTENSITY_AUTO) {
+      vibrate(VibrationEffect.EFFECT_HEAVY_CLICK);
+    } else {
+      vibrate(intensity == INTENSITY_STRONG ? HEAVY_STRONG : HEAVY);
+    }
   }
 
   public void hapticReject(View view) {
-    if (VERSION.SDK_INT >= VERSION_CODES.R) {
+    if (VERSION.SDK_INT >= VERSION_CODES.R && intensity == INTENSITY_AUTO) {
       view.performHapticFeedback(HapticFeedbackConstants.REJECT);
     } else {
       click();
@@ -108,7 +108,7 @@ public class HapticUtil {
   }
 
   public void hapticSegmentTick(View view, boolean frequent) {
-    if (VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE) {
+    if (VERSION.SDK_INT >= VERSION_CODES.UPSIDE_DOWN_CAKE && intensity == INTENSITY_AUTO) {
       view.performHapticFeedback(
           frequent
               ? HapticFeedbackConstants.SEGMENT_FREQUENT_TICK
@@ -121,6 +121,17 @@ public class HapticUtil {
 
   public void setEnabled(boolean enabled) {
     this.enabled = enabled && hasVibrator();
+  }
+
+  public void setIntensity(int intensity) {
+    this.intensity = intensity;
+    if (intensity == INTENSITY_AUTO && !supportsMainEffects) {
+      this.intensity = INTENSITY_SOFT;
+    }
+  }
+
+  public int getIntensity() {
+    return intensity;
   }
 
   public boolean hasVibrator() {

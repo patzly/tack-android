@@ -28,7 +28,9 @@ import android.os.VibratorManager
 class HapticUtil(context: Context) {
 
   private val vibrator: Vibrator = if (Build.VERSION.SDK_INT >= VERSION_CODES.S) {
-    val manager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager
+    val manager = context.getSystemService(
+      Context.VIBRATOR_MANAGER_SERVICE
+    ) as VibratorManager
     manager.defaultVibrator
   } else {
     @Suppress("deprecation")
@@ -43,7 +45,9 @@ class HapticUtil(context: Context) {
 
   private fun vibrate(duration: Long) {
     if (enabled) {
-      vibrator.vibrate(VibrationEffect.createOneShot(duration, VibrationEffect.DEFAULT_AMPLITUDE))
+      vibrator.vibrate(VibrationEffect.createOneShot(
+        duration, VibrationEffect.DEFAULT_AMPLITUDE
+      ))
     }
   }
 

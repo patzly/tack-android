@@ -139,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     setContentView(binding.getRoot());
 
     hapticUtil = new HapticUtil(this);
+    hapticUtil.setIntensity(sharedPrefs.getInt(PREF.VIBRATION_INTENSITY, DEF.VIBRATION_INTENSITY));
 
     songViewModel = new ViewModelProvider(this).get(SongViewModel.class);
 

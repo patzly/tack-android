@@ -1,6 +1,7 @@
-### 6.1.2
+### 6.2.0
 
-- Fixed: Bluetooth audio stream stopping unexpectedly on some devices
+- New: "vibration intensity" setting for haptic beats and effects
+- Fixed: bluetooth audio stream stopping unexpectedly on some devices
 
 ### 6.1.1
 

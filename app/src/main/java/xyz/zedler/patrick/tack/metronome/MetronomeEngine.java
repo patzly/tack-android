@@ -94,7 +94,10 @@ public class MetronomeEngine {
     sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
 
     audioEngine = new AudioEngine(context, this::stop);
+
     hapticUtil = new HapticUtil(context);
+    hapticUtil.setIntensity(sharedPrefs.getInt(PREF.VIBRATION_INTENSITY, DEF.VIBRATION_INTENSITY));
+
     shortcutUtil = new ShortcutUtil(context);
 
     db = SongDatabase.getInstance(context.getApplicationContext());
@@ -806,6 +809,11 @@ public class MetronomeEngine {
     }
   }
 
+  public void setVibrationIntensity(int intensity) {
+    hapticUtil.setIntensity(intensity);
+    sharedPrefs.edit().putInt(PREF.VIBRATION_INTENSITY, intensity).apply();
+  }
+
   public void setLatency(long offset) {
     latency = offset;
     sharedPrefs.edit().putLong(PREF.LATENCY, offset).apply();
@@ -1435,16 +1443,16 @@ public class MetronomeEngine {
       if (!beatMode.equals(BEAT_MODE.SOUND) && !isMuted) {
         switch (tick.type) {
           case TICK_TYPE.STRONG:
-            hapticUtil.heavyClick(hapticUtil.supportsMainEffects());
+            hapticUtil.heavyClick();
             break;
           case TICK_TYPE.SUB:
-            hapticUtil.tick(hapticUtil.supportsMainEffects());
+            hapticUtil.tick();
             break;
           case TICK_TYPE.MUTED:
           case TICK_TYPE.BEAT_SUB_MUTED:
             break;
           default:
-            hapticUtil.click(hapticUtil.supportsMainEffects());
+            hapticUtil.click();
         }
       }
       synchronized (listeners) {
@@ -1477,16 +1485,16 @@ public class MetronomeEngine {
       if (shouldVibrate) {
         switch (tick.type) {
           case TICK_TYPE.STRONG:
-            hapticUtil.heavyClick(hapticUtil.supportsMainEffects());
+            hapticUtil.heavyClick();
             break;
           case TICK_TYPE.SUB:
-            hapticUtil.tick(hapticUtil.supportsMainEffects());
+            hapticUtil.tick();
             break;
           case TICK_TYPE.MUTED:
           case TICK_TYPE.BEAT_SUB_MUTED:
             break;
           default:
-            hapticUtil.click(hapticUtil.supportsMainEffects());
+            hapticUtil.click();
         }
       }
     }, latency);
