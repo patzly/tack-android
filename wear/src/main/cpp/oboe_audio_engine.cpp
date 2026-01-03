@@ -8,6 +8,7 @@
 #include <vector>
 #include <unistd.h>
 #include <array>
+#include <thread>
 
 #define LOG_TAG "OboeAudioEngine"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
@@ -18,7 +19,7 @@ constexpr int32_t NATIVE_TICK_TYPE_SUB = 3;
 
 constexpr int32_t kNumVoices = 10;
 
-class OboeAudioEngine: public oboe::AudioStreamDataCallback {
+class OboeAudioEngine: public oboe::AudioStreamCallback {
  public:
   OboeAudioEngine() {
     reset();
@@ -46,7 +47,7 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
     }
   }
 
-  bool init() {
+  bool init(bool avoidInitialFade) {
     oboe::AudioStreamBuilder builder;
     builder.setDirection(oboe::Direction::Output)
         ->setPerformanceMode(oboe::PerformanceMode::LowLatency)
@@ -55,10 +56,18 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
         ->setChannelCount(1)
         ->setSampleRate(mSampleRate)
         ->setDataCallback(this)
+        ->setErrorCallback(this)
         ->setUsage(oboe::Usage::Game)
         ->setContentType(oboe::ContentType::Sonification);
 
     oboe::Result result = builder.openStream(mStream);
+
+    if (result != oboe::Result::OK) {
+      // Bluetooth or other device that doesn't support exclusive mode
+      builder.setSharingMode(oboe::SharingMode::Shared);
+      result = builder.openStream(mStream);
+    }
+
     if (result != oboe::Result::OK) {
       LOGE("Failed to open Oboe stream: %s", oboe::convertToText(result));
       return false;
@@ -68,14 +77,20 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
     mSampleRate = mStream->getSampleRate();
 
     // quick start/stop to avoid initial fade-in
-    start();
-    usleep(200 * 1000);
-    stop();
+    if (avoidInitialFade) {
+      bool success = start();
+      if (success) {
+        usleep(200 * 1000);
+        stop();
+      }
+    }
 
     return true;
   }
 
   bool start() {
+    if (!mStream) return false;
+
     constexpr int64_t kTimeoutNanos = 1 * 1000 * 1000 * 1000;  // 1 second
     oboe::Result result = mStream->start(kTimeoutNanos);
     if (result != oboe::Result::OK) {
@@ -83,6 +98,7 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
           oboe::convertToText(result));
       return false;
     }
+    mIsPlaying = true;
     return true;
   }
 
@@ -107,6 +123,7 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
     }
     mNextVoiceToSteal.store(0);
 
+    mIsPlaying = false;
     return true;
   }
 
@@ -271,6 +288,17 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
     return oboe::DataCallbackResult::Continue;
   }
 
+  void onErrorAfterClose(
+      oboe::AudioStream *oboeStream, oboe::Result error) override {
+    if (error == oboe::Result::ErrorDisconnected) {
+      LOGE("Stream disconnected, restarting...");
+      std::thread t(&OboeAudioEngine::restart, this);
+      t.detach();
+    } else {
+      LOGE("Error occurred: %s", oboe::convertToText(error));
+    }
+  }
+
   void setTickData(int32_t tickType, const float *data, int32_t length) {
     auto newVec = std::make_shared<std::vector<float>>(
         data, data + length);
@@ -337,6 +365,18 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
     mNextVoiceToSteal.store(0);
   }
 
+  void restart() {
+    if (mStream) {
+      mStream->stop();
+      mStream->close();
+      mStream.reset();
+    }
+
+    if (init(false) && mIsPlaying.load()) {
+      mStream->start();
+    }
+  }
+
   std::shared_ptr<oboe::AudioStream> mStream;
 
   // which tick type is assigned to each voice (-1 = free)
@@ -363,6 +403,8 @@ class OboeAudioEngine: public oboe::AudioStreamDataCallback {
   std::shared_ptr<std::vector<float>> mTickSubPtr;
 
   int32_t mSampleRate;
+
+  std::atomic<bool> mIsPlaying{false};
 };
 
 
@@ -384,7 +426,7 @@ Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeDestroy(
 JNIEXPORT jboolean JNICALL
 Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeInit(
     JNIEnv *env, jobject jEngine, jlong handle) {
-  return reinterpret_cast<OboeAudioEngine *>(handle)->init();
+  return reinterpret_cast<OboeAudioEngine *>(handle)->init(true);
 }
 
 JNIEXPORT jboolean JNICALL
