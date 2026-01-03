@@ -94,8 +94,8 @@
   <string name="wear_settings_always_vibrate">总是振动</string>
   <string name="wear_settings_always_vibrate_description">即使有声音</string>
 
-  <string name="wear_settings_strong_vibration">强烈振动</string>
-  <string name="wear_settings_strong_vibration_description">如果触觉很弱</string>
+  <string name="wear_settings_vibration_intensity_auto">自动</string>
+  <string name="wear_settings_vibration_intensity_strong">强</string>
 
   <string name="wear_settings_flash_screen">屏幕闪烁</string>
   <string name="wear_settings_flash_screen_description">在每个节拍</string>
