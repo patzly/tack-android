@@ -99,9 +99,7 @@
   <string name="wear_settings_always_vibrate">Vždy vibrovat</string>
   <string name="wear_settings_always_vibrate_description">I se zvukem</string>
 
-  <string name="wear_settings_strong_vibration">Silné vibrace</string>
-  <string name="wear_settings_strong_vibration_description">Pokud je haptická odezva slabá</string>
-
+  <string name="wear_settings_vibration_intensity_auto">Automaticky</string>
   <string name="wear_settings_flash_screen">Blikání obrazovky</string>
   <string name="wear_settings_flash_screen_description">Při každé době</string>
 
