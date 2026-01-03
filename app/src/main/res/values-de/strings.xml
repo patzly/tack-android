@@ -350,6 +350,7 @@
   <string name="settings_vibration_intensity_description">Für haptische Schläge und Effekte</string>
   <!-- This is the name for a vibration intensity: User can choose between soft or strong intensity or system-set (automatic or shorter auto) intensity. The button width should be as dense as possible. -->
   <string name="settings_vibration_intensity_auto">Auto</string>
+  <string name="settings_vibration_intensity_soft">Weich</string>
   <string name="settings_vibration_intensity_strong">Stark</string>
 
   <string name="settings_reduce_animations">Animationen reduzieren</string>
