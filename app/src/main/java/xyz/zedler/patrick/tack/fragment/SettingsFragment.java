@@ -233,9 +233,6 @@ public class SettingsFragment extends BaseFragment
         getSharedPrefs().getBoolean(PREF.HAPTIC, HapticUtil.areSystemHapticsTurnedOn(activity))
     );
     binding.switchSettingsHaptic.jumpDrawablesToCurrentState();
-    binding.linearSettingsHaptic.setVisibility(
-        activity.getHapticUtil().hasVibrator() ? View.VISIBLE : View.GONE
-    );
 
     binding.buttonSettingsVibrationIntensityAuto.setVisibility(
         activity.getHapticUtil().supportsMainEffects() ? View.VISIBLE : View.GONE
@@ -256,6 +253,15 @@ public class SettingsFragment extends BaseFragment
     binding.toggleSettingsVibrationIntensity.check(idVibrationIntensity);
     binding.toggleSettingsVibrationIntensity.jumpDrawablesToCurrentState();
     binding.toggleSettingsVibrationIntensity.addOnButtonCheckedListener(this);
+
+    boolean hasVibrator = activity.getHapticUtil().hasVibrator();
+    binding.linearSettingsHaptic.setVisibility(hasVibrator ? View.VISIBLE : View.GONE);
+    binding.linearSettingsVibrationIntensity.setVisibility(hasVibrator ? View.VISIBLE : View.GONE);
+    binding.linearSettingsReduceAnimations.setBackgroundResource(
+        hasVibrator
+            ? R.drawable.ripple_list_item_bg_segmented_last
+            : R.drawable.ripple_list_item_bg_segmented_single
+    );
 
     binding.switchSettingsReduceAnimations.setChecked(
         getSharedPrefs().getBoolean(PREF.REDUCE_ANIM, DEF.REDUCE_ANIM)

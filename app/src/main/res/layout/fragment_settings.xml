@@ -229,6 +229,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:orientation="vertical"
+          android:layout_marginBottom="16dp"
           android:background="@drawable/ripple_list_item_bg_segmented_last">
 
           <LinearLayout
@@ -317,7 +318,6 @@
         <LinearLayout
           android:id="@+id/linear_settings_haptic"
           style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
-          android:layout_marginTop="16dp"
           android:background="@drawable/ripple_list_item_bg_segmented_first">
 
           <ImageView
@@ -345,6 +345,7 @@
         </LinearLayout>
 
         <LinearLayout
+          android:id="@+id/linear_settings_vibration_intensity"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:orientation="vertical"
