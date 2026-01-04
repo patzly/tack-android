@@ -947,6 +947,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       View beat = binding.linearMainBeats.getChildAt(tick.beat - 1);
       if (beat instanceof BeatView && tick.subdivision == 1 && !tick.isPoly) {
         resetActiveBeats();
+        ViewUtil.scrollToViewMinimal(binding.scrollHorizMainBeats, beat);
         if (activeBeat) {
           ((BeatView) beat).setActive(true);
         }
@@ -958,6 +959,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       } else if (getMetronomeEngine().getConfig().usePolyrhythm() && !tick.isPoly) {
         return;
       }
+      ViewUtil.scrollToViewMinimal(binding.scrollHorizMainSubs, subdivision);
       ((BeatView) subdivision).beat();
     });
   }

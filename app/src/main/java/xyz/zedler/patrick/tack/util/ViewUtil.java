@@ -436,4 +436,36 @@ public class ViewUtil {
     slider.setValue(valueFinal);
     slider.setStepSize(stepSize);
   }
+
+  // Horizontal scroll view
+
+  public static void scrollToViewMinimal(HorizontalScrollView scrollView, View targetView) {
+    if (scrollView == null) {
+      return;
+    }
+    scrollView.post(() -> {
+      if (targetView == null) {
+        return;
+      }
+      int targetLeft = targetView.getLeft();
+      int targetRight = targetView.getRight();
+
+      int scrollX = scrollView.getScrollX();
+      int scrollViewWidth = scrollView.getWidth();
+
+      int visibleLeft = scrollX + scrollView.getPaddingLeft();
+      int visibleRight = scrollX + scrollViewWidth - scrollView.getPaddingRight();
+
+      if (targetLeft >= visibleLeft && targetRight <= visibleRight) {
+        return;
+      }
+
+      if (targetLeft < visibleLeft) {
+        scrollView.smoothScrollTo(targetLeft - scrollView.getPaddingLeft(), 0);
+      } else {
+        int newScrollX = targetRight - (scrollViewWidth - scrollView.getPaddingRight());
+        scrollView.smoothScrollTo(newScrollX, 0);
+      }
+    });
+  }
 }

@@ -1,81 +1,82 @@
 ### 6.2.0
 
-- New: "vibration intensity" setting for haptic beats and effects (mobile and Wear OS)
-- New: dynamic theme support (Wear OS)
-- Improved: haptic feedback in general (mobile and Wear OS)
-- Fixed: bluetooth audio stream stopping unexpectedly on some devices (mobile and Wear OS)
-- Fixed: fast tempo changes on tempo screen causing incorrect tempo (Wear OS)
-- Fixed: crash when switching song parts in certain situations
+- New: "Vibration intensity" setting for haptic beats and effects (Mobile and Wear OS)
+- New: Support for dynamic themes (Wear OS)
+- Improved: Beats and subdivisions now automatically scroll to the current position
+- Improved: Overall haptic feedback experience (Mobile and Wear OS)
+- Fixed: Bluetooth audio streams stopped unexpectedly on some devices (Mobile and Wear OS)
+- Fixed: Rapid tempo changes on tempo screen caused incorrect tempo (Wear OS)
+- Fixed: Crash when switching song parts in certain situations
 
 ### 6.1.1
 
-- Improved: moved "support development" option to home screen for better discoverability
-- Fixed: wrong default value for beat-wise muting option
+- Improved: Moved "support development" option to home screen for better discoverability
+- Fixed: Wrong default value for beat-wise muting option
 
 ### 6.1.0
 
-- New: muted beats option extended with beats unit for beat-wise muting
+- New: Muted beats option extended with beats unit for beat-wise muting
 - New: Google Sans Flex typeface to better support expressive style
-- Improved: smaller slider ranges in options dialog for better usability
-- Improved: audio engine performance and stability
-- Improved: play/stop button again responds on touch up instead of down for a consistent experience
-- Improved: menu appearance
-- Fixed: haptic feedback while rotating tempo picker after limits reached
-- Fixed: some beats still randomly not playing due to threading issues
-- Fixed: some crashes in certain situations
+- Improved: Smaller slider ranges in options dialog for better usability
+- Improved: Audio engine performance and stability
+- Improved: Play/stop button again responds on touch up instead of down for a consistent experience
+- Improved: Menu appearance
+- Fixed: Haptic feedback while rotating tempo picker after limits reached
+- Fixed: Some beats still randomly not playing due to threading issues
+- Fixed: Some crashes in certain situations
 
 ### 6.0.1
 
-- Fixed: some beats randomly not playing due to threading issues (thanks Gwrvan!)
-- Fixed: polyrhythmic subdivisions getting out of sync with main beat
-- Fixed: wrong placement of center logo animation when song picker was expanded (thanks James!)
-- Fixed: crash when device orientation was changed
+- Fixed: Some beats randomly not playing due to threading issues (thanks Gwrvan!)
+- Fixed: Polyrhythmic subdivisions getting out of sync with main beat
+- Fixed: Wrong placement of center logo animation when song picker was expanded (thanks James!)
+- Fixed: Crash when device orientation was changed
 
 ### 6.0.0
 
 - New: Material 3 Expressive design throughout the app with new typeface and redesigned controls
-- New: migration to Oboe audio library for minimum latency and much better performance
-- New: song parts can now be directly edited or duplicated from song details, "update part" menu option replaced by "use current config" button in the edit dialog for more clarity
-- New: song picker redesigned to display current song part in expanded state
-- New: long-tap on song chips or tap on current song to open song details, tap on current part to open parts dialog
-- New: tempo tap button replaced by extended tempo change dialog accessible with tap on tempo picker
-- New: option for polyrhythmic subdivisions (thanks Alexander!)
-- New: "always vibrate" setting replaced by beat mode dialog accessible from the main screen
-- New: "volume boost" setting extended for volume reduction and moved to separate dialog
-- New: "flash screen" setting extended with option for subtle flash
-- New: "keep screen awake" setting extended with option for always awake
-- New: first subdivision (which actually is a placeholder for every beat) can now be muted separately to mute all beats at once (thanks Alexandr!)
-- New: help dialog now translatable and with expandable sections
+- New: Migration to Oboe audio library for minimum latency and much better performance
+- New: Song parts can now be directly edited or duplicated from song details, "update part" menu option replaced by "use current config" button in the edit dialog for more clarity
+- New: Song picker redesigned to display current song part in expanded state
+- New: Long-tap on song chips or tap on current song to open song details, tap on current part to open parts dialog
+- New: Tempo tap button replaced by extended tempo change dialog accessible with tap on tempo picker
+- New: Option for polyrhythmic subdivisions (thanks Alexander!)
+- New: "Always vibrate" setting replaced by beat mode dialog accessible from the main screen
+- New: "Volume boost" setting extended for volume reduction and moved to separate dialog
+- New: "Flash screen" setting extended with option for subtle flash
+- New: "Keep screen awake" setting extended with option for always awake
+- New: First subdivision (which actually is a placeholder for every beat) can now be muted separately to mute all beats at once (thanks Alexandr!)
+- New: Help dialog now translatable and with expandable sections
 - New: Japanese and Dutch translations (thanks to the contributors!)
 - New: Support for Android 16 and dropped support for Android 5 due to dependency limitations
-- Improved: "hide subdivision controls" setting removed for simplicity
-- Improved: play/stop button now responds on press down instead of release for a more responsive feel
-- Improved: layout on different screen sizes and orientations
-- Improved: metronome now works without notification permission if it was denied
-- Improved: song part number always shown in song details, optional name displayed below part number
-- Improved: allow change intervals of up to 400 for incremental tempo change
-- Improved: use of simple vibration for haptic beats if some haptic effects are not supported
-- Improved: latency correction setting moved to separate dialog
-- Improved: song library backup/restore moved to separate dialog, also accessible from settings
-- Improved: song library page now with delete, apply and play options for each song
-- Fixed: delay on transitions between song parts (thanks Kuba!)
-- Fixed: wrong bar numbers in timer display (thanks Zeron!)
-- Fixed: tempo buttons not updating correctly
-- Fixed: user changes overwritten with currently selected song part after pausing and resuming app
-- Fixed: crash caused by app shortcut limit being reached (thanks Fabian!)
-- Fixed: crash caused by incorrect layout handling
-- Fixed: crash caused by invalid tempo values
-- Fixed: incorrect preference restoration after latency correction setting change
+- Improved: "Hide subdivision controls" setting removed for simplicity
+- Improved: Play/stop button now responds on press down instead of release for a more responsive feel
+- Improved: Layout on different screen sizes and orientations
+- Improved: Metronome now works without notification permission if it was denied
+- Improved: Song part number always shown in song details, optional name displayed below part number
+- Improved: Allow change intervals of up to 400 for incremental tempo change
+- Improved: Use of simple vibration for haptic beats if some haptic effects are not supported
+- Improved: Latency correction setting moved to separate dialog
+- Improved: Song library backup/restore moved to separate dialog, also accessible from settings
+- Improved: Song library page now with delete, apply and play options for each song
+- Fixed: Delay on transitions between song parts (thanks Kuba!)
+- Fixed: Wrong bar numbers in timer display (thanks Zeron!)
+- Fixed: Tempo buttons not updating correctly
+- Fixed: User changes overwritten with currently selected song part after pausing and resuming app
+- Fixed: Crash caused by app shortcut limit being reached (thanks Fabian!)
+- Fixed: Crash caused by incorrect layout handling
+- Fixed: Crash caused by invalid tempo values
+- Fixed: Incorrect preference restoration after latency correction setting change
 
 ### 5.0.0
 
-- New: bookmark button replaced by song library button for managing configuration combinations
-- New: bookmarks bar replaced by song picker. Tap on song to apply it, tap again to open a dialog with all parts, tap × to switch back to previous configuration
-- New: bookmarks in app shortcuts replaced by most frequently played songs
-- New: beautiful home screen widget for quick access to your song library
-- New: if Google Play is installed on your device, the new app "Tack: Unlock Key" is available for purchase to unlock unlimited songs and parts. Thank you for your support!
-- New: reset timer with tap on timer display
-- Improved: timer performance and behavior, timer now resets on stop instead of next start
-- Improved: order of metronome options and settings
-- Fixed: count-in display continued incorrectly after screen orientation change while playing
-- Fixed: timer in minutes or seconds reset after screen orientation change when not playing
+- New: Bookmark button replaced by song library button for managing configuration combinations
+- New: Bookmarks bar replaced by song picker. Tap on song to apply it, tap again to open a dialog with all parts, tap × to switch back to previous configuration
+- New: Bookmarks in app shortcuts replaced by most frequently played songs
+- New: Beautiful home screen widget for quick access to your song library
+- New: If Google Play is installed on your device, the new app "Tack: Unlock Key" is available for purchase to unlock unlimited songs and parts. Thank you for your support!
+- New: Reset timer with tap on timer display
+- Improved: Timer performance and behavior, timer now resets on stop instead of next start
+- Improved: Order of metronome options and settings
+- Fixed: Count-in display continued incorrectly after screen orientation change while playing
+- Fixed: Timer in minutes or seconds reset after screen orientation change when not playing
