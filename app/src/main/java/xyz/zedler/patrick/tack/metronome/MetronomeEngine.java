@@ -293,12 +293,13 @@ public class MetronomeEngine {
   }
 
   private void setCurrentPartIndex(int index, boolean startPlaying) {
-    currentPartIndex = index;
     if (currentSongWithParts == null) {
       Log.e(TAG, "setCurrentPartIndex: song with id='" + currentSongId + "' is null");
       return;
     }
     List<Part> parts = currentSongWithParts.getParts();
+    index = Math.max(0, Math.min(index, parts.size() - 1));
+    currentPartIndex = index;
     if (!parts.isEmpty()) {
       // ignore timer callbacks temporary
       // else the timer transition would be laggy

@@ -4,8 +4,8 @@
 - New: dynamic theme support (Wear OS)
 - Improved: haptic feedback in general (mobile and Wear OS)
 - Fixed: bluetooth audio stream stopping unexpectedly on some devices (mobile and Wear OS)
-- Fixed: crash when switching song parts in certain situations
 - Fixed: fast tempo changes on tempo screen causing incorrect tempo (Wear OS)
+- Fixed: crash when switching song parts in certain situations
 
 ### 6.1.1
 
