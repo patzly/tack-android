@@ -39,7 +39,9 @@ class HapticUtil(context: Context) {
       field = value && hasVibrator
     }
 
-  var intensity: String = Constants.VibrationIntensity.SOFT
+  var intensity: String =
+    if (supportsMainEffects) Constants.VibrationIntensity.AUTO
+    else Constants.VibrationIntensity.SOFT
     set(value) {
       field = if (value == Constants.VibrationIntensity.AUTO && !supportsMainEffects) {
         Constants.VibrationIntensity.SOFT
@@ -107,14 +109,11 @@ class HapticUtil(context: Context) {
       )
     }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && effect != null) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
       vibrator.vibrate(effect, vibrationAttributes as VibrationAttributes)
-    } else if (effect != null) {
-      @Suppress("DEPRECATION")
-      vibrator.vibrate(effect, audioAttributes as AudioAttributes)
     } else {
       @Suppress("DEPRECATION")
-      vibrator.vibrate(duration)
+      vibrator.vibrate(effect, audioAttributes as AudioAttributes)
     }
   }
 

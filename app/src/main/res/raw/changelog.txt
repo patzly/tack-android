@@ -1,8 +1,9 @@
 ### 6.2.0
 
-- New: "vibration intensity" setting for haptic beats and effects
-- Improved: dynamic theme support (Wear OS)
-- Fixed: bluetooth audio stream stopping unexpectedly on some devices
+- New: "vibration intensity" setting for haptic beats and effects (mobile and Wear OS)
+- New: dynamic theme support (Wear OS)
+- Improved: haptic feedback in general (mobile and Wear OS)
+- Fixed: bluetooth audio stream stopping unexpectedly on some devices (mobile and Wear OS)
 - Fixed: fast tempo changes on tempo screen causing incorrect tempo (Wear OS)
 
 ### 6.1.1

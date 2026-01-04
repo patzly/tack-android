@@ -20,15 +20,18 @@
 package xyz.zedler.patrick.tack.util;
 
 import android.content.Context;
+import android.media.AudioAttributes;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.VibrationAttributes;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.os.VibratorManager;
 import android.provider.Settings;
 import android.view.HapticFeedbackConstants;
 import android.view.View;
+import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.VIBRATION_INTENSITY;
 
 public class HapticUtil {
@@ -42,61 +45,62 @@ public class HapticUtil {
 
   private final Vibrator vibrator;
   private final boolean supportsMainEffects;
+  private final VibrationAttributes vibrationAttributes;
+  private final AudioAttributes audioAttributes;
   private boolean enabled;
   private String intensity;
 
   public HapticUtil(Context context) {
-    if (Build.VERSION.SDK_INT >= VERSION_CODES.S) {
-      VibratorManager manager =
-          (VibratorManager) context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
-      vibrator = manager.getDefaultVibrator();
-    } else {
-      vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-    }
-
+    vibrator = getVibrator(context);
+    supportsMainEffects = areMainEffectsSupported(context);
     enabled = hasVibrator();
 
-    boolean hasAmplitudeControl =
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && vibrator.hasAmplitudeControl();
-    if (hasAmplitudeControl && VERSION.SDK_INT >= VERSION_CODES.R) {
-      int result = vibrator.areAllEffectsSupported(
-          VibrationEffect.EFFECT_CLICK,
-          VibrationEffect.EFFECT_HEAVY_CLICK,
-          VibrationEffect.EFFECT_TICK
-      );
-      supportsMainEffects = result == Vibrator.VIBRATION_EFFECT_SUPPORT_YES;
+    intensity = getDefaultIntensity(context);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      vibrationAttributes = VibrationAttributes.createForUsage(VibrationAttributes.USAGE_TOUCH);
     } else {
-      supportsMainEffects = false;
+      vibrationAttributes = null;
     }
 
-    intensity = supportsMainEffects ? VIBRATION_INTENSITY.AUTO : VIBRATION_INTENSITY.SOFT;
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+      audioAttributes = new AudioAttributes.Builder()
+          .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+          .setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION)
+          .build();
+    } else {
+      audioAttributes = null;
+    }
   }
 
   public void tick() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-        && intensity.equals(VIBRATION_INTENSITY.AUTO)) {
-      vibrate(VibrationEffect.EFFECT_TICK);
-    } else {
-      vibrate(intensity.equals(VIBRATION_INTENSITY.STRONG) ? TICK_STRONG : TICK);
-    }
+    int effectId = intensity.equals(Constants.VIBRATION_INTENSITY.AUTO)
+        && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        ? VibrationEffect.EFFECT_TICK
+        : -1;
+    long duration = intensity.equals(VIBRATION_INTENSITY.STRONG) ? TICK_STRONG : TICK;
+
+    vibrate(effectId, duration);
   }
 
   public void click() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-        && intensity.equals(VIBRATION_INTENSITY.AUTO)) {
-      vibrate(VibrationEffect.EFFECT_CLICK);
-    } else {
-      vibrate(intensity.equals(VIBRATION_INTENSITY.STRONG) ? CLICK_STRONG : CLICK);
-    }
+    int effectId = intensity.equals(Constants.VIBRATION_INTENSITY.AUTO)
+        && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        ? VibrationEffect.EFFECT_CLICK
+        : -1;
+    long duration = intensity.equals(VIBRATION_INTENSITY.STRONG) ? CLICK_STRONG : CLICK;
+
+    vibrate(effectId, duration);
   }
 
   public void heavyClick() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-        && intensity.equals(VIBRATION_INTENSITY.AUTO)) {
-      vibrate(VibrationEffect.EFFECT_HEAVY_CLICK);
-    } else {
-      vibrate(intensity.equals(VIBRATION_INTENSITY.STRONG) ? HEAVY_STRONG : HEAVY);
-    }
+    int effectId = intensity.equals(Constants.VIBRATION_INTENSITY.AUTO)
+        && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
+        ? VibrationEffect.EFFECT_HEAVY_CLICK
+        : -1;
+    long duration = intensity.equals(VIBRATION_INTENSITY.STRONG) ? HEAVY_STRONG : HEAVY;
+
+    vibrate(effectId, duration);
   }
 
   public void hapticReject(View view) {
@@ -150,26 +154,56 @@ public class HapticUtil {
     return hapticFeedbackEnabled != 0;
   }
 
-  private void vibrate(long duration) {
-    if (enabled) {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        vibrator.vibrate(
-            VibrationEffect.createOneShot(
-                duration,
-                intensity.equals(VIBRATION_INTENSITY.STRONG)
-                    ? 255
-                    : VibrationEffect.DEFAULT_AMPLITUDE
-            )
-        );
-      } else {
-        vibrator.vibrate(duration);
-      }
+  private void vibrate(int effectId, long duration) {
+    if (!enabled) return;
+
+    VibrationEffect effect;
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && effectId != -1) {
+      effect = VibrationEffect.createPredefined(effectId);
+    } else {
+      effect = VibrationEffect.createOneShot(
+          duration,
+          intensity.equals(VIBRATION_INTENSITY.STRONG)
+              ? 255
+              : VibrationEffect.DEFAULT_AMPLITUDE
+      );
+    }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      vibrator.vibrate(effect, vibrationAttributes);
+    } else {
+      vibrator.vibrate(effect, audioAttributes);
     }
   }
 
-  private void vibrate(int effectId) {
-    if (enabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-      vibrator.vibrate(VibrationEffect.createPredefined(effectId));
+  @SuppressWarnings("deprecation")
+  private static Vibrator getVibrator(Context context) {
+    if (Build.VERSION.SDK_INT >= VERSION_CODES.S) {
+      VibratorManager manager =
+          (VibratorManager) context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+      return manager.getDefaultVibrator();
+    } else {
+      return (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
+  }
+
+  public static boolean areMainEffectsSupported(Context context) {
+    Vibrator vibrator = getVibrator(context);
+    boolean hasAmplitudeControl =
+        Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && vibrator.hasAmplitudeControl();
+    if (hasAmplitudeControl && VERSION.SDK_INT >= VERSION_CODES.R) {
+      int result = vibrator.areAllEffectsSupported(
+          VibrationEffect.EFFECT_CLICK,
+          VibrationEffect.EFFECT_HEAVY_CLICK,
+          VibrationEffect.EFFECT_TICK
+      );
+      return result == Vibrator.VIBRATION_EFFECT_SUPPORT_YES;
+    } else {
+      return false;
+    }
+  }
+
+  public static String getDefaultIntensity(Context context) {
+    return areMainEffectsSupported(context) ? VIBRATION_INTENSITY.AUTO : VIBRATION_INTENSITY.SOFT;
   }
 }
