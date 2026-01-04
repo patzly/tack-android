@@ -53,6 +53,7 @@ import xyz.zedler.patrick.tack.databinding.ViewTimerBinding;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
 import xyz.zedler.patrick.tack.model.MetronomeConfig;
 import xyz.zedler.patrick.tack.util.UiUtil;
+import xyz.zedler.patrick.tack.util.ViewUtil;
 
 public class TimerView extends FrameLayout {
 
@@ -187,6 +188,13 @@ public class TimerView extends FrameLayout {
             if (valueFrom < valueTo) {
               binding.sliderTimer.setValueTo(valueTo);
             }
+            ViewUtil.configureSliderSafely(
+                binding.sliderTimer,
+                (int) binding.sliderTimer.getValueFrom(),
+                (int) Math.max(valueFrom, width),
+                0,
+                (int) binding.sliderTimer.getValue()
+            );
             displayHeightExpanded = binding.frameTimerDisplayContainer.getHeight();
             MetronomeEngine metronomeEngine = getMetronomeEngine();
             updateControls(
@@ -286,7 +294,13 @@ public class TimerView extends FrameLayout {
         if (progressTransitionAnimator != null) {
           return;
         }
-        binding.sliderTimer.setValue((int) ((float) animation.getAnimatedValue() * max));
+        ViewUtil.configureSliderSafely(
+            binding.sliderTimer,
+            (int) binding.sliderTimer.getValueFrom(),
+            (int) binding.sliderTimer.getValueTo(),
+            0,
+            (int) ((float) animation.getAnimatedValue() * max)
+        );
       });
       progressAnimator.setInterpolator(
           linear ? new LinearInterpolator() : new FastOutSlowInInterpolator()
@@ -294,7 +308,13 @@ public class TimerView extends FrameLayout {
       progressAnimator.setDuration(duration);
       progressAnimator.start();
     } else {
-      binding.sliderTimer.setValue((int) (fraction * max));
+      ViewUtil.configureSliderSafely(
+          binding.sliderTimer,
+          (int) binding.sliderTimer.getValueFrom(),
+          (int) binding.sliderTimer.getValueTo(),
+          0,
+          (int) (fraction * max)
+      );
     }
   }
 
@@ -326,11 +346,16 @@ public class TimerView extends FrameLayout {
       return;
     }
     progressTransitionAnimator = ValueAnimator.ofFloat(currentFraction, fractionTo);
-    progressTransitionAnimator.addUpdateListener(
-        animation -> binding.sliderTimer.setValue(
-            (int) ((float) animation.getAnimatedValue() * max)
-        )
-    );
+    progressTransitionAnimator.addUpdateListener(animation -> {
+      int value = (int) ((float) animation.getAnimatedValue() * max);
+      ViewUtil.configureSliderSafely(
+          binding.sliderTimer,
+          (int) binding.sliderTimer.getValueFrom(),
+          (int) binding.sliderTimer.getValueTo(),
+          0,
+          value
+      );
+    });
     progressTransitionAnimator.addListener(new AnimatorListenerAdapter() {
       @Override
       public void onAnimationEnd(Animator animation) {
