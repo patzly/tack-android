@@ -94,7 +94,9 @@
   <string name="wear_settings_always_vibrate">常に振動</string>
   <string name="wear_settings_always_vibrate_description">音声ビート状態でも振動します</string>
 
+  <string name="wear_settings_vibration_intensity">振動の強度</string>
   <string name="wear_settings_vibration_intensity_auto">自動</string>
+  <string name="wear_settings_vibration_intensity_soft">ソフト</string>
   <string name="wear_settings_vibration_intensity_strong">強</string>
 
   <string name="wear_settings_flash_screen">画面明滅</string>

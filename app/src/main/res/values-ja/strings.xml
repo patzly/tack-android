@@ -326,8 +326,11 @@
   <string name="settings_haptic">触覚効果</string>
   <string name="settings_haptic_description">拍モードでの振動と個別に設定できます</string>
 
+  <string name="settings_vibration_intensity">振動の強度</string>
+  <string name="settings_vibration_intensity_description">拍の振動と触覚効果</string>
   <!-- This is the name for a vibration intensity: User can choose between soft or strong intensity or system-set (automatic or shorter auto) intensity. The button width should be as dense as possible. -->
   <string name="settings_vibration_intensity_auto">自動</string>
+  <string name="settings_vibration_intensity_soft">ソフト</string>
   <string name="settings_vibration_intensity_strong">強</string>
 
   <string name="settings_reduce_animations">アニメーション省略</string>
