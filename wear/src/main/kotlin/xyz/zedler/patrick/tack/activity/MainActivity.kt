@@ -43,7 +43,8 @@ import xyz.zedler.patrick.tack.presentation.state.MainState
 import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.util.ButtonUtil
 import xyz.zedler.patrick.tack.util.ButtonUtil.OnPressListener
-import xyz.zedler.patrick.tack.util.HapticUtil
+import xyz.zedler.patrick.tack.util.HapticUtil.Companion.areMainEffectsSupported
+import xyz.zedler.patrick.tack.util.HapticUtil.Companion.getDefaultIntensity
 import xyz.zedler.patrick.tack.util.keepScreenAwake
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
@@ -136,14 +137,17 @@ class MainActivity : ComponentActivity(), ServiceConnection {
         }
         viewModel.updateSubdivisions(getMetronomeUtil().subdivisions)
       }
+      override fun onVibrationIntensityChanged() {
+        getMetronomeUtil().vibrateForDemo()
+      }
     })
     viewModel.updateSupportsVibrationEffects(
-      HapticUtil.areMainEffectsSupported(this)
+      areMainEffectsSupported(this)
     )
     viewModel.updateVibrationIntensity(
       sharedPrefs.getString(
         Constants.Pref.VIBRATION_INTENSITY,
-        HapticUtil.getDefaultIntensity(this)
+        getDefaultIntensity(this)
       )!!
     )
 

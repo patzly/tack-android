@@ -268,11 +268,13 @@ class MainViewModel(
   }
 
   fun updateVibrationIntensity(intensity: String) {
+    if (intensity == _state.value.vibrationIntensity) return
     _state.update { it.copy(vibrationIntensity = intensity) }
     listener?.onMetronomeConfigChanged(_state.value)
     sharedPrefs?.edit {
       putString(Pref.VIBRATION_INTENSITY, intensity)
     }
+    listener?.onVibrationIntensityChanged()
   }
 
   fun updateSupportsVibrationEffects(support: Boolean) {
@@ -406,6 +408,7 @@ class MainViewModel(
     fun onRemoveSubdivisionRequest()
     fun onChangeSubdivisionRequest(subdivision: Int, tickType: String)
     fun onSwingChangeRequest(swing: Int)
+    fun onVibrationIntensityChanged()
   }
 
   companion object {

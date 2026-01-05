@@ -247,6 +247,10 @@ class MetronomeEngine(
     hapticUtil.intensity = intensity
   }
 
+  fun vibrateForDemo() {
+    hapticUtil.click()
+  }
+
   private fun setIgnoreFocus(ignore: Boolean) {
     audioEngine.ignoreFocus = ignore
   }

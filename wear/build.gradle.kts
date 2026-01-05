@@ -34,7 +34,7 @@ android {
     minSdk = 26
     targetSdk = 36
     versionCode = 311 // last number is 1 for wear release
-    versionName = "6.1.0"
+    versionName = "6.2.0"
 
     externalNativeBuild {
       cmake {
