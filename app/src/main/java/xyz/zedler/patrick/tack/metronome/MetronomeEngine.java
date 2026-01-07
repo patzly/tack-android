@@ -598,6 +598,27 @@ public class MetronomeEngine {
         if (!isPlaying()) {
           return;
         }
+
+        // first calculate muted state
+        long beatIndex = config.usePolyrhythm()
+            ? tickIndex
+            : tickIndex / config.getSubdivisionsCount();
+        boolean isBeat = config.usePolyrhythm()
+            || (tickIndex % config.getSubdivisionsCount()) == 0;
+        boolean isFirstBeat = isBeat && (beatIndex % config.getBeatsCount()) == 0;
+        long barIndex = beatIndex / config.getBeatsCount();
+        boolean isCountIn = barIndex < config.getCountIn();
+        if (isFirstBeat
+            && config.isMuteActive() && config.getMuteUnit().equals(UNIT.BARS) && !isCountIn) {
+          if (muteCountDown > 0) {
+            muteCountDown--;
+          } else {
+            isMuted = !isMuted;
+            // Minus 1 because it's already the next bar
+            muteCountDown = Math.max(calculateMuteCount(isMuted) - 1, 0);
+          }
+        }
+        // now calculate tick
         int beat = getCurrentBeat();
         int subdivision = getCurrentSubdivision();
         String tickType = getCurrentTickType();
@@ -618,6 +639,7 @@ public class MetronomeEngine {
 
         boolean playing = performTick(tick); // don't play next tick if timer finished
         if (playing) {
+          Log.i(TAG, "run: hello " + tick);
           audioEngine.playTick(tick);
           tickIndex++;
         }
@@ -1424,15 +1446,6 @@ public class MetronomeEngine {
           }
         }
       }
-      if (config.isMuteActive() && config.getMuteUnit().equals(UNIT.BARS) && !isCountIn) {
-        if (muteCountDown > 0) {
-          muteCountDown--;
-        } else {
-          isMuted = !isMuted;
-          // Minus 1 because it's already the next bar
-          muteCountDown = Math.max(calculateMuteCount(isMuted) - 1, 0);
-        }
-      }
     }
 
     latencyHandler.postDelayed(() -> {
@@ -1443,7 +1456,7 @@ public class MetronomeEngine {
       }
     }, Math.max(0, latency - Constants.BEAT_ANIM_OFFSET));
     latencyHandler.postDelayed(() -> {
-      if (!beatMode.equals(BEAT_MODE.SOUND) && !isMuted) {
+      if (!beatMode.equals(BEAT_MODE.SOUND) && !tick.isMuted) {
         switch (tick.type) {
           case TICK_TYPE.STRONG:
             hapticUtil.heavyClick();
