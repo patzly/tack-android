@@ -944,8 +944,8 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       if (binding == null || getMetronomeEngine() == null) {
         return;
       }
-      View beat = binding.linearMainBeats.getChildAt(tick.beat - 1);
-      if (beat instanceof BeatView && tick.subdivision == 1 && !tick.isPoly) {
+      View beat = binding.linearMainBeats.getChildAt(tick.beat() - 1);
+      if (beat instanceof BeatView && tick.subdivision() == 1 && !tick.isPoly()) {
         resetActiveBeats();
         ViewUtil.scrollToViewMinimal(binding.scrollHorizMainBeats, beat);
         if (activeBeat) {
@@ -953,10 +953,10 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         }
         ((BeatView) beat).beat();
       }
-      View subdivision = binding.linearMainSubs.getChildAt(tick.subdivision - 1);
+      View subdivision = binding.linearMainSubs.getChildAt(tick.subdivision() - 1);
       if (!(subdivision instanceof BeatView)) {
         return;
-      } else if (getMetronomeEngine().getConfig().usePolyrhythm() && !tick.isPoly) {
+      } else if (getMetronomeEngine().getConfig().usePolyrhythm() && !tick.isPoly()) {
         return;
       }
       ViewUtil.scrollToViewMinimal(binding.scrollHorizMainSubs, subdivision);
@@ -972,7 +972,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       }
       if (flashScreen) {
         int color;
-        switch (tick.type) {
+        switch (tick.type()) {
           case TICK_TYPE.STRONG:
             color = colorFlashStrong;
             break;
@@ -984,7 +984,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
             color = colorFlashNormal;
             break;
         }
-        if (tick.isMuted) {
+        if (tick.isMuted()) {
           color = colorFlashMuted;
         }
         if (isLandTablet && binding.cardMainContainerEnd != null) {
@@ -1003,7 +1003,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           }, 100); // flash screen for 100 milliseconds
         }
       }
-      if (tick.subdivision == 1) {
+      if (tick.subdivision() == 1) {
         if (!reduceAnimations) {
           logoUtil.nextBeat(getMetronomeEngine().getInterval());
         }

@@ -25,6 +25,7 @@ compose-navigation = "1.5.6"
 compose-foundation = "1.5.6"
 compose-activity = "1.12.2"
 compose-constraintlayout = "1.1.1"
+auto-value = "1.11.1"
 
 [libraries]
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
@@ -60,6 +61,8 @@ compose-animation-graphics = { group = "androidx.compose.animation", name = "ani
 compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "compose-navigation" }
 compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "compose-activity" }
 compose-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "compose-constraintlayout" }
+auto-value-annotations = { group = "com.google.auto.value", name = "auto-value-annotations", version.ref = "auto-value" }
+auto-value = { group = "com.google.auto.value", name = "auto-value", version.ref = "auto-value" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

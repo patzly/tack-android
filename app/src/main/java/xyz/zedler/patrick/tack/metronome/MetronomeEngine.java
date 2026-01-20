@@ -25,9 +25,13 @@ import android.content.pm.ShortcutInfo;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
+
+import com.google.auto.value.AutoValue;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -40,6 +44,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.BEAT_MODE;
 import xyz.zedler.patrick.tack.Constants.DEF;
@@ -577,7 +582,7 @@ public class MetronomeEngine {
         if (config.isMuteActive() && config.getMuteUnit().equals(UNIT.BEATS)) {
           muted = random.nextInt(100) < config.getMuteMute();
         }
-        Tick tick = new Tick(
+        Tick tick = Tick.create(
             tickIndexPoly, 1, subdivisionPoly, tickTypePoly, muted, true
         );
 
@@ -626,13 +631,13 @@ public class MetronomeEngine {
         if (config.isMuteActive() && config.getMuteUnit().equals(UNIT.BEATS)) {
           muted = random.nextInt(100) < config.getMuteMute();
         }
-        Tick tick = new Tick(tickIndex, beat, subdivision, tickType, muted, false);
+        Tick tick = Tick.create(tickIndex, beat, subdivision, tickType, muted, false);
 
         long interval = config.usePolyrhythm()
             ? getInterval()
             : getInterval() / config.getSubdivisionsCount();
         tickHandler.postDelayed(this, interval);
-        if (tick.beat == 1 && config.usePolyrhythm()) {
+        if (tick.beat() == 1 && config.usePolyrhythm()) {
           // start polyrhythm subdivisions every new bar
           tickHandler.post(tickRunnablePoly);
         }
@@ -1371,7 +1376,7 @@ public class MetronomeEngine {
     long barIndexWithoutCountIn = barIndex - config.getCountIn();
     boolean isCountIn = barIndex < config.getCountIn();
 
-    boolean isBeat = tick.subdivision == 1;
+    boolean isBeat = tick.subdivision() == 1;
     boolean isFirstBeat = isBeat && (beatIndex % config.getBeatsCount()) == 0;
 
     if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS) && !isCountIn) {
@@ -1456,8 +1461,8 @@ public class MetronomeEngine {
       }
     }, Math.max(0, latency - Constants.BEAT_ANIM_OFFSET));
     latencyHandler.postDelayed(() -> {
-      if (!beatMode.equals(BEAT_MODE.SOUND) && !tick.isMuted) {
-        switch (tick.type) {
+      if (!beatMode.equals(BEAT_MODE.SOUND) && !tick.isMuted()) {
+        switch (tick.type()) {
           case TICK_TYPE.STRONG:
             hapticUtil.heavyClick();
             break;
@@ -1493,13 +1498,13 @@ public class MetronomeEngine {
       boolean shouldVibrate = !beatMode.equals(BEAT_MODE.SOUND) && !isMuted;
       if (shouldVibrate) {
         // check whether any poly subdivision collides with a beat
-        long product = (long) (tick.subdivision - 1) * config.getBeatsCount();
+        long product = (long) (tick.subdivision() - 1) * config.getBeatsCount();
         if (product % config.getSubdivisionsCount() == 0) {
           shouldVibrate = false;
         }
       }
       if (shouldVibrate) {
-        switch (tick.type) {
+        switch (tick.type()) {
           case TICK_TYPE.STRONG:
             hapticUtil.heavyClick();
             break;
@@ -1608,38 +1613,23 @@ public class MetronomeEngine {
     }
   }
 
-  public static class Tick {
-    public final long index;
-    public final int beat, subdivision;
-    @NonNull
-    public final String type;
-    public final boolean isMuted, isPoly;
-
-    public Tick(
-        long index,
-        int beat,
-        int subdivision,
-        @NonNull String type,
-        boolean isMuted,
-        boolean isPoly
-    ) {
-      this.index = index;
-      this.beat = beat;
-      this.subdivision = subdivision;
-      this.type = type;
-      this.isMuted = isMuted;
-      this.isPoly = isPoly;
+  @AutoValue
+  public static abstract class Tick {
+    static Tick create(long index, int beat, int subdivision, @NonNull String type, boolean isMuted, boolean isPoly) {
+      return new AutoValue_MetronomeEngine_Tick(index, beat, subdivision, type, isMuted, isPoly);
     }
 
+    public abstract long index();
+
+    public abstract int beat();
+
+    public abstract int subdivision();
+
     @NonNull
-    @Override
-    public String toString() {
-      return "Tick{index = " + index +
-          ", beat=" + beat +
-          ", sub=" + subdivision +
-          ", type=" + type +
-          ", isPoly=" + isPoly +
-          ", muted=" + isMuted + '}';
-    }
+    public abstract String type();
+
+    public abstract boolean isMuted();
+
+    public abstract boolean isPoly();
   }
 }

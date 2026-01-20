@@ -109,6 +109,7 @@ android {
 }
 
 dependencies {
+    annotationProcessor libs.auto.value
     implementation(libs.appcompat)
     implementation(libs.fragment)
     implementation(libs.navigation.fragment)
@@ -122,4 +123,5 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.room.runtime)
     annotationProcessor(libs.room.compiler)
+    compileOnly libs.auto.value.annotations
 }
