@@ -33,7 +33,6 @@ import xyz.zedler.patrick.tack.databinding.PartialDialogLatencyBinding;
 import xyz.zedler.patrick.tack.fragment.SettingsFragment;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListener;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine.Tick;
 import xyz.zedler.patrick.tack.util.DialogUtil;
 import xyz.zedler.patrick.tack.util.ResUtil;
@@ -69,7 +68,7 @@ public class LatencyDialogUtil implements OnChangeListener, OnSliderTouchListene
     colorBg = ResUtil.getColor(activity, R.attr.colorSurfaceBright);
     colorBgFlash = ResUtil.getColor(activity, R.attr.colorTertiaryContainer);
 
-    latencyListener = new MetronomeListenerAdapter() {
+    latencyListener = new MetronomeListener() {
       @Override
       public void onMetronomeTick(Tick tick) {
         activity.runOnUiThread(() -> {

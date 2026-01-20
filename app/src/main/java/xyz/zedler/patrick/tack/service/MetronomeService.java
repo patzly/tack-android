@@ -38,7 +38,7 @@ import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListener;
 import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.PrefsUtil;
 
@@ -58,7 +58,7 @@ public class MetronomeService extends Service {
 
     notificationUtil = new NotificationUtil(this);
     metronomeEngine = new MetronomeEngine(this);
-    metronomeEngine.addListener(new MetronomeListenerAdapter() {
+    metronomeEngine.addListener(new MetronomeListener() {
       @Override
       public void onMetronomeStart() {
         if (permNotification && hasPermission()) {

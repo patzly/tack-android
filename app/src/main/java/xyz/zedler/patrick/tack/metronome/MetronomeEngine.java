@@ -1571,33 +1571,41 @@ public class MetronomeEngine {
   }
 
   public interface MetronomeListener {
-    void onMetronomeStart();
-    void onMetronomeStop();
-    void onMetronomePreTick(Tick tick);
-    void onMetronomeTick(Tick tick);
-    void onMetronomeTempoChanged(int tempoOld, int tempoNew);
-    void onMetronomeElapsedTimeSecondsChanged();
-    void onMetronomeTimerStarted();
-    void onMetronomeTimerSecondsChanged();
-    void onMetronomeTimerProgressOneTime(boolean withTransition);
-    void onMetronomeConfigChanged();
-    void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex);
-    void onMetronomePermissionMissing();
-  }
+    default void onMetronomeStart() {
+    }
 
-  public static class MetronomeListenerAdapter implements MetronomeListener {
-    public void onMetronomeStart() {}
-    public void onMetronomeStop() {}
-    public void onMetronomePreTick(Tick tick) {}
-    public void onMetronomeTick(Tick tick) {}
-    public void onMetronomeTempoChanged(int tempoOld, int tempoNew) {}
-    public void onMetronomeElapsedTimeSecondsChanged() {}
-    public void onMetronomeTimerStarted() {}
-    public void onMetronomeTimerSecondsChanged() {}
-    public void onMetronomeTimerProgressOneTime(boolean withTransition) {}
-    public void onMetronomeConfigChanged() {}
-    public void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex) {}
-    public void onMetronomePermissionMissing() {}
+    default void onMetronomeStop() {
+    }
+
+    default void onMetronomePreTick(Tick tick) {
+    }
+
+    default void onMetronomeTick(Tick tick) {
+    }
+
+    default void onMetronomeTempoChanged(int tempoOld, int tempoNew) {
+    }
+
+    default void onMetronomeElapsedTimeSecondsChanged() {
+    }
+
+    default void onMetronomeTimerStarted() {
+    }
+
+    default void onMetronomeTimerSecondsChanged() {
+    }
+
+    default void onMetronomeTimerProgressOneTime(boolean withTransition) {
+    }
+
+    default void onMetronomeConfigChanged() {
+    }
+
+    default void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex) {
+    }
+
+    default void onMetronomePermissionMissing() {
+    }
   }
 
   public static class Tick {
