@@ -450,7 +450,10 @@ public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChange
 
   private int getTapTempo(long interval) {
     if (interval > 0) {
-      return (int) (60000 / interval);
+      return Math.min(
+          Math.max((int) (60000 / interval), Constants.TEMPO_MIN),
+          Constants.TEMPO_MAX
+      );
     } else {
       return 0;
     }
