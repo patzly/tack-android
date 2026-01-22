@@ -1,3 +1,4 @@
+import com.android.build.api.dsl.ApplicationExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 /*
@@ -25,7 +26,7 @@ plugins {
   alias(libs.plugins.compose.compiler)
 }
 
-android {
+configure<ApplicationExtension> {
   namespace = "xyz.zedler.patrick.tack"
   compileSdk = 36
 
@@ -63,11 +64,6 @@ android {
     sourceCompatibility = JavaVersion.VERSION_11
     targetCompatibility = JavaVersion.VERSION_21
   }
-  kotlin {
-    compilerOptions {
-      jvmTarget.set(JvmTarget.JVM_21)
-    }
-  }
   lint {
     abortOnError = false
     disable += listOf("MissingTranslation")
@@ -93,6 +89,12 @@ android {
     }
   }
   ndkVersion = "29.0.14206865"
+}
+
+kotlin {
+  compilerOptions {
+    jvmTarget.set(JvmTarget.JVM_21)
+  }
 }
 
 dependencies {
