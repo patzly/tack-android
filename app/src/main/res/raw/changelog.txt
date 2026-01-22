@@ -8,6 +8,7 @@
 - Fixed: Bluetooth audio stopped unexpectedly on some devices (Mobile and Wear OS)
 - Fixed: Rapid tempo changes on tempo screen caused incorrect tempo (Wear OS)
 - Fixed: Crash when switching song parts in certain situations
+- Fixed: Tempo tap not respecting tempo limits
 
 ### 6.1.1
 

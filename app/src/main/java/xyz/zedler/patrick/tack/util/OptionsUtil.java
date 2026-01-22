@@ -930,6 +930,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding.switchOptionsMuteRandom.setChecked(muteRandom);
     binding.switchOptionsMuteRandom.setOnCheckedChangeListener(
         (buttonView, isChecked) -> {
+          activity.performHapticClick();
           if (editPart && getConfig() != null) {
             getConfig().setMuteRandom(isChecked);
           } else if (activity.getMetronomeEngine() != null) {
@@ -1002,6 +1003,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     binding.switchOptionsPolyrhythm.setChecked(usePolyrhythm);
     binding.switchOptionsPolyrhythm.setOnCheckedChangeListener(
         (buttonView, isChecked) -> {
+          activity.performHapticClick();
           if (editPart && getConfig() != null) {
             getConfig().setUsePolyrhythm(isChecked);
           } else if (activity.getMetronomeEngine() != null) {
@@ -1023,12 +1025,13 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
     if (config == null || metronomeEngine == null) {
       return;
     }
-    activity.performHapticClick();
     int id = v.getId();
     if (id == R.id.linear_options_use_current_config) {
+      activity.performHapticClick();
       this.config = new MetronomeConfig(metronomeEngine.getConfig());
       update();
     } else if (id == R.id.button_options_tempo_decrease) {
+      activity.performHapticClick();
       int valueFrom = (int) binding.sliderOptionsTempo.getValueFrom();
       int valueTo = (int) binding.sliderOptionsTempo.getValueTo();
       int range = valueTo - valueFrom;
@@ -1042,6 +1045,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       updateTempo();
       ViewUtil.startIcon(binding.buttonOptionsTempoDecrease.getIcon());
     } else if (id == R.id.button_options_tempo_increase) {
+      activity.performHapticClick();
       int valueFrom = (int) binding.sliderOptionsTempo.getValueFrom();
       int valueTo = (int) binding.sliderOptionsTempo.getValueTo();
       int range = valueTo - valueFrom;
@@ -1055,6 +1059,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       updateTempo();
       ViewUtil.startIcon(binding.buttonOptionsTempoIncrease.getIcon());
     } else if (id == R.id.button_options_beats_add) {
+      activity.performHapticClick();
       ViewUtil.startIcon(binding.buttonOptionsBeatsAdd.getIcon());
       boolean success = config.addBeat();
       if (success) {
@@ -1075,6 +1080,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         updateBeatControls();
       }
     } else if (id == R.id.button_options_beats_remove) {
+      activity.performHapticClick();
       ViewUtil.startIcon(binding.buttonOptionsBeatsRemove.getIcon());
       boolean success = config.removeBeat();
       if (success) {
@@ -1093,6 +1099,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         updateBeatControls();
       }
     } else if (id == R.id.button_options_subs_add) {
+      activity.performHapticClick();
       ViewUtil.startIcon(binding.buttonOptionsSubsAdd.getIcon());
       boolean success = config.addSubdivision();
       if (success) {
@@ -1111,6 +1118,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         updateSubControls();
       }
     } else if (id == R.id.button_options_subs_remove) {
+      activity.performHapticClick();
       ViewUtil.startIcon(binding.buttonOptionsSubsRemove.getIcon());
       boolean success = config.removeSubdivision();
       if (success) {
@@ -1127,6 +1135,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
         updateSubControls();
       }
     } else if (id == R.id.button_options_incremental_amount_decrease) {
+      activity.performHapticClick();
       int decreasedAmount = config.getIncrementalAmount() - ticksMaxPerRange;
       if (editPart) {
         config.setIncrementalAmount(decreasedAmount);
@@ -1137,6 +1146,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalAmountDecrease.getIcon());
     } else if (id == R.id.button_options_incremental_amount_increase) {
+      activity.performHapticClick();
       int increasedAmount = config.getIncrementalAmount() + ticksMaxPerRange;
       if (editPart) {
         config.setIncrementalAmount(increasedAmount);
@@ -1147,6 +1157,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalAmountIncrease.getIcon());
     } else if (id == R.id.button_options_incremental_interval_decrease) {
+      activity.performHapticClick();
       int decreasedInterval = config.getIncrementalInterval() - ticksMaxPerRange;
       if (editPart) {
         config.setIncrementalInterval(decreasedInterval);
@@ -1157,6 +1168,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalIntervalDecrease.getIcon());
     } else if (id == R.id.button_options_incremental_interval_increase) {
+      activity.performHapticClick();
       int increasedInterval = config.getIncrementalInterval() + ticksMaxPerRange;
       if (editPart) {
         config.setIncrementalInterval(increasedInterval);
@@ -1167,6 +1179,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalIntervalIncrease.getIcon());
     } else if (id == R.id.button_options_incremental_limit_decrease) {
+      activity.performHapticClick();
       int decreasedLimit = config.getIncrementalLimit() - ticksMaxPerRange;
       if (editPart) {
         config.setIncrementalLimit(decreasedLimit);
@@ -1177,6 +1190,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalLimitDecrease.getIcon());
     } else if (id == R.id.button_options_incremental_limit_increase) {
+      activity.performHapticClick();
       int increasedLimit = config.getIncrementalLimit() + ticksMaxPerRange;
       if (editPart) {
         config.setIncrementalLimit(increasedLimit);
@@ -1187,6 +1201,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       updateIncremental();
       ViewUtil.startIcon(binding.buttonOptionsIncrementalLimitIncrease.getIcon());
     } else if (id == R.id.button_options_timer_decrease) {
+      activity.performHapticClick();
       int decreasedDuration = config.getTimerDuration() - ticksMaxPerRange;
       if (editPart) {
         config.setTimerDuration(decreasedDuration);
@@ -1200,6 +1215,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
       }
       ViewUtil.startIcon(binding.buttonOptionsTimerDecrease.getIcon());
     } else if (id == R.id.button_options_timer_increase) {
+      activity.performHapticClick();
       int increasedDuration = config.getTimerDuration() + ticksMaxPerRange;
       if (editPart) {
         config.setTimerDuration(increasedDuration);
