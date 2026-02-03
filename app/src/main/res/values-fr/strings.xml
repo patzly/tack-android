@@ -244,6 +244,7 @@
   <string name="options_mute_mute_beats">Mettre en sourdine %1$d%% de tous les battements</string>
   <string name="options_subdivisions">Subdivisions</string>
   <string name="options_swing">Swing</string>
+  <string name="options_swing_description">Subdivisions définies pour correspondre au ratio de swing</string>
   <string name="options_swing_3">Triolet</string>
   <string name="options_swing_5">Quintuplé</string>
   <string name="options_swing_7">Septuplé</string>
