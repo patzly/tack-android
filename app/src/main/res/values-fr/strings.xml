@@ -281,6 +281,7 @@
   <string name="settings_haptic">Effets haptiques</string>
   <string name="settings_haptic_description">En plus des battements haptiques en mode vibreur</string>
 
+  <string name="settings_vibration_intensity">Intensité de la vibration</string>
   <!-- This is the name for a vibration intensity: User can choose between soft or strong intensity or system-set (automatic or shorter auto) intensity. The button width should be as dense as possible. -->
   <string name="settings_vibration_intensity_auto">Automatique</string>
   <string name="settings_vibration_intensity_strong">Fort</string>
