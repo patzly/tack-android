@@ -348,6 +348,7 @@
   <string name="about_developer">Développeur</string>
   <string name="about_vending_description">Plus d\'applications du développeur</string>
   <string name="about_key">Application déverrouillée </string>
+  <string name="about_key_description_not_installed">Pas installé</string>
   <string name="about_github_description">Code source</string>
   <string name="about_translation_description">Aider à traduire Tack</string>
   <string name="about_privacy">Politique de confidentialité</string>
