@@ -110,7 +110,7 @@
   <string name="action_support">Soutenir le développement</string>
   <string name="action_support_description">Acheter l’application déverrouillée</string>
   <string name="action_issue">Ouvrir un ticket sur Github</string>
-  <string name="action_issue_description">Signaler un bug ou proposer une fonctionnalité</string>
+  <string name="action_issue_description">Signaler une erreur ou proposer une fonctionnalité</string>
   <string name="action_retry">Réessayer</string>
   <string name="action_logcat">Consulter logcat</string>
   <string name="action_copy_to_clipboard">Copier dans le presse-papiers</string>
