@@ -166,7 +166,7 @@
   <string name="msg_reset_timer_description">Vous pouvez modifier, dans les paramètres, la réinitialisation automatique du minuteur au démarrage.</string>
   <string name="msg_reset_elapsed">Réinitialiser le temps écoulé ?</string>
   <string name="msg_reset_elapsed_description">Voulez-vous vraiment réinitialiser le temps écoulé ? Cette action ne peut être annulée.</string>
-  <string name="msg_gain">Jouer avec le boost de volume ?</string>
+  <string name="msg_gain">Jouer avec le volume augmenté ?</string>
   <string name="msg_gain_description">Essayez de ne pas jouer avec des écouteurs, les sons forts peuvent endommager les oreilles !</string>
   <string name="msg_split_screen">Fenêtre trop petite</string>
   <string name="msg_split_screen_description">Tack peut rencontrer des problèmes à positionner les contrôles du métronome en mode écran partagé. Veuillez utiliser une fenêtre plus grande si possible.</string>
