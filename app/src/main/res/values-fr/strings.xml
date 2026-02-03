@@ -65,6 +65,7 @@
   <string name="label_part_edit">Modifier la partie %1$d</string>
   <string name="label_part_no_duration">Aucune durée</string>
   <string name="label_song_looped">en boucle</string>
+  <string name="label_song_looped_description">Redémarrer le morceau à la fin</string>
   <!-- ACTIONS -->
 
   <string name="action_back">Retour</string>
