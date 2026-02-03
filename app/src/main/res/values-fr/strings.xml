@@ -67,6 +67,7 @@
   <string name="label_song_looped">en boucle</string>
   <string name="label_song_looped_description">Redémarrer le morceau à la fin</string>
   <string name="label_song_not_looped">Non bouclé</string>
+  <string name="label_sort_name">Nom</string>
   <!-- ACTIONS -->
 
   <string name="action_back">Retour</string>
