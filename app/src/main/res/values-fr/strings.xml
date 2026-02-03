@@ -73,6 +73,7 @@
   <string name="label_sort_most_played">Le plus joué</string>
   <string name="label_song_name">Nom du morceau</string>
   <string name="label_song_name_help">Le nom doit être unique</string>
+  <string name="label_song_name_used">Nom déjà utilisé</string>
   <!-- ACTIONS -->
 
   <string name="action_back">Retour</string>
