@@ -233,6 +233,7 @@
   <string name="options_inactive">Inactif</string>
   <string name="options_count_in">Prise en compte</string>
   <string name="options_incremental">Changement incrémental de tempo</string>
+  <string name="options_incremental_amount_increase">Augmenter de %1$dbpm</string>
   <string name="options_incremental_max">Monter jusqu\'à %1$d bpm</string>
   <string name="options_incremental_min">Descendre jusqu\'à %1$d bpm</string>
   <string name="options_incremental_no_max">Pas de limite supérieure</string>
