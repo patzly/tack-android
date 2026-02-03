@@ -323,6 +323,7 @@
   <string name="help_time_signature">Comment définir la signature rythmique ?</string>
   <string name="help_time_signature_answer">Regardez le premier chiffre de votre signature rythmique et réglez les battements dans Tack en conséquence. 4 battements pour 4/4, 2 pour 2/2, etc. 6/8 est un peu particulier, ici vous utilisez 2 battements avec éventuellement 3 subdivisions, car seuls le 1er et le 4e croches sont des temps forts. De plus, vous pouvez modifier l\'accentuation des battements en appuyant dessus. Dans les options, vous pouvez également sélectionner un pourcentage de swing, qui définit automatiquement les subdivisions pour vous.</string>
   <string name="help_swing">Comment désactiver le swing ?</string>
+  <string name="help_swing_answer">Si vous avez activé le swing dans les options, Tack se contente de définir les subdivisions pour vous. Pour le désactiver, il vous suffit de définir manuellement les subdivisions selon vos préférences.</string>
   <!-- ABOUT -->
 
   <string name="about_version">Version</string>
