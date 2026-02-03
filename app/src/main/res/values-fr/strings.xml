@@ -69,6 +69,7 @@
   <string name="label_song_not_looped">Non bouclé</string>
   <string name="label_sort_name">Nom</string>
   <string name="label_sort_last_played">Dernière lecture</string>
+  <string name="label_sort_last_played_date">Dernier joué %1$s</string>
   <string name="label_sort_never_played">Jamais joué</string>
   <string name="label_sort_most_played">Le plus joué</string>
   <string name="label_song_name">Nom du morceau</string>
