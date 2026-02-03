@@ -79,6 +79,9 @@
   <string name="widget_songs_preview_parts1">3 parties</string>
   <!-- A placeholder part count in the widget preview for the user's widget picker -->
   <string name="widget_songs_preview_parts2">1 partie</string>
+  <!-- A placeholder part count in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_parts3">4 parties</string>
+
   <!-- ACTIONS -->
 
   <string name="action_back">Retour</string>
