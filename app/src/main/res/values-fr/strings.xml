@@ -70,6 +70,7 @@
   <string name="label_sort_name">Nom</string>
   <string name="label_sort_last_played">Dernière lecture</string>
   <string name="label_sort_never_played">Jamais joué</string>
+  <string name="label_sort_most_played">Le plus joué</string>
   <!-- ACTIONS -->
 
   <string name="action_back">Retour</string>
