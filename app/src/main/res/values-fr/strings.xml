@@ -249,6 +249,8 @@
   <string name="options_swing_5">Quintuplé</string>
   <string name="options_swing_7">Septuplé</string>
   <string name="options_polyrhythm">Polyrythmie</string>
+  <string name="options_polyrhythm_description">Joue les subdivisions réparties sur toute la mesure</string>
+
   <!-- SETTINGS -->
 
   <string name="settings_language">Langue</string>
