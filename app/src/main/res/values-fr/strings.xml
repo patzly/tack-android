@@ -332,7 +332,7 @@
   <string name="settings_flash_screen">Flash d\'écran</string>
   <string name="settings_flash_screen_description">À chaque battement</string>
   <string name="settings_flash_screen_off">Eteint</string>
-  <string name="settings_flash_screen_subtle">Subtile</string>
+  <string name="settings_flash_screen_subtle">Sous titre</string>
   <string name="settings_flash_screen_strong">Fort</string>
 
   <string name="settings_keep_awake">Maintenir l\'écran allumé</string>
