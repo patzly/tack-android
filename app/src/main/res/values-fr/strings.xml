@@ -32,13 +32,21 @@
   <string name="title_metronome">Métronome</string>
   <string name="title_controls">Commandes</string>
   <string name="title_logcat">Logcat</string>
+  <string name="title_songs">Bibliothèque musicale</string>
+  <!-- Short version of the term "song library" for smaller home screen widget sizes -->
+  <string name="title_songs_short">Musiques</string>
+  <string name="title_song_details">Détails de la musique</string>
 
   <!-- LABELS -->
 
   <string name="label_bpm_value">%1$d bpm</string>
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$s ms</string>
-  <string name="label_db">+%1$d dB</string>
+  <string name="label_db_signed">%1$s dB</string>
+  <string name="label_tempo">Tempo</string>
+  <string name="label_tempo_keyboard">Clavier</string>
+  <string name="label_tempo_tap">Taper</string>
+  <string name="label_tempo_instant">Appliquer instantanément</string>
   <string name="label_tempo_largo">Largo</string>
   <string name="label_tempo_larghetto">Larghetto</string>
   <string name="label_tempo_adagio">Adagio</string>
@@ -47,10 +55,20 @@
   <string name="label_tempo_allegro">Allegro</string>
   <string name="label_tempo_presto">Presto</string>
   <string name="label_tempo_prestissimo">Prestissimo</string>
+  <string name="label_tempo_input_help">Valeurs de %1$d à %2$d</string>
+  <string name="label_beat_mode_all">Son et vibration</string>
+  <string name="label_beat_mode_sound">Son uniquement</string>
+  <string name="label_beat_mode_vibration">Vibration uniquement</string>
+  <string name="label_part_name">Nom de la partie</string>
+  <string name="label_part_unnamed">Partie %1$d</string>
+  <string name="label_part_current">Partie %1$d : %2$s</string>
+  <string name="label_part_edit">Modifier la partie %1$d</string>
+  <string name="label_part_no_duration">Aucune durée</string>
   <!-- ACTIONS -->
 
   <string name="action_back">Retour</string>
   <string name="action_close">Fermer</string>
+  <string name="action_apply">Appliquer</string>
   <string name="action_cancel">Annuler</string>
   <string name="action_increase">Augmenter</string>
   <string name="action_decrease">Diminuer</string>
@@ -61,46 +79,108 @@
   <string name="action_remove_beat">Supprimer un battement</string>
   <string name="action_add_sub">Ajouter une subdivision</string>
   <string name="action_remove_sub">Retirer une subdivision</string>
-  <string name="action_clear_all">Effacer tout</string>
-  <string name="action_tempo_tap">Battez la mesure</string>
-  <string name="action_bookmark">Marque-page</string>
   <string name="action_beat_mode">Mode de battement</string>
   <string name="action_send_feedback">Envoyer un commentaire</string>
-  <string name="action_open_link">Ouvrir un site web extérieur</string>
   <string name="action_reset">Réinitialiser</string>
-  <string name="action_deactivate_gain">Désactiver le boost</string>
+  <string name="action_deactivate">Désactiver</string>
   <string name="action_recommend">Recommander</string>
   <string name="action_recommend_description">Faites connaître Tack à vos amis</string>
   <string name="action_email">Envoyer un email</string>
   <string name="action_email_description">Contacter le développeur</string>
   <string name="action_rate">Noter dans Google Play</string>
-  <string name="action_rate_description">Soutenir le développement</string>
+  <string name="action_rate_description">Partager ce que vous en pensez</string>
+  <string name="action_support">Soutenir le développement</string>
+  <string name="action_support_description">Acheter l’application déverrouillée</string>
   <string name="action_issue">Ouvrir un ticket sur Github</string>
   <string name="action_issue_description">Signaler un bug ou proposer une fonctionnalité</string>
   <string name="action_retry">Réessayer</string>
   <string name="action_logcat">Consulter logcat</string>
   <string name="action_copy_to_clipboard">Copier dans le presse-papiers</string>
   <string name="action_reload">Recharger</string>
+  <string name="action_change_tempo">Changer le tempo</string>
+  <string name="action_add_song">Ajouter une musique</string>
+  <string name="action_sort_by">Trier par</string>
+  <string name="action_add_part">Ajouter une partie</string>
+  <string name="action_add">Ajouter</string>
+  <string name="action_save">Enregistrer</string>
+  <string name="action_discard">Abandonner</string>
+  <string name="action_rename">Renommer</string>
+  <string name="action_rename_part">Renommer la partie</string>
+  <string name="action_rename_part_description">Peut également être laissé vide si la numérotation seule suffit</string>
+  <string name="action_duplicate">Dupliquer</string>
+  <string name="action_update">Mettre à jour</string>
+  <string name="action_use_current_config">Utiliser la configuration actuelle</string>
+  <string name="action_use_current_config_description">Depuis la page principale</string>
+  <string name="action_delete">Supprimer</string>
+  <string name="action_move_up">Déplacer vers le haut</string>
+  <string name="action_move_down">Déplacer vers le bas</string>
+  <string name="action_open_play_store">Ouvrir le Play Store</string>
+  <string name="action_backup_restore">Sauvegarder / restaurer</string>
+  <string name="action_backup">Sauvegarder</string>
+  <string name="action_backup_description">Enregistrer un fichier de sauvegarde dans un répertoire de votre choix</string>
+  <string name="action_restore">Restaurer</string>
+  <string name="action_restore_description">Les musiques existantes ne seront jamais supprimées ou écrasées</string>
+  <string name="action_view_more_songs">Voir plus de musiques</string>
+  <string name="action_next">Suivante</string>
+  <string name="action_show_parts">Afficher les parties</string>
+  <string name="action_next_part">Partie suivante</string>
+  <string name="action_prev_part">Partie précédente</string>
+  <string name="action_more">Plus</string>
+  <string name="action_edit">Modifier</string>
+  <string name="action_expand">Étendre</string>
+  <string name="action_collapse">Réduire</string>
+  <string name="action_show_songs_list">Afficher les musiques comme liste</string>
+  <string name="action_learn_more">En savoir plus</string>
+  <string name="action_tempo_tap">Battez la mesure</string>
+
   <!-- MESSAGES -->
 
-  <string name="msg_bookmarks_max">Nombre de marque-pages maximum atteint</string>
   <string name="msg_feedback">Une bonne application demande beaucoup de temps et vit des commentaires de ses utilisateurs.</string>
-  <string name="msg_feedback_contact">Vous avez des souhaits, des commentaires ou des questions ? Contactez-moi !\nSinon, je serais très heureux d\'avoir une bonne critique dans le Play Store.</string>
+  <string name="msg_feedback_contact">Vous avez des souhaits, des commentaires ou des questions ? Contactez-moi ! Autrement, je vous serai reconnaissant de laisser une bonne appréciation dans le Play Store.</string>
   <string name="msg_recommend">Jetez un coup d\'œil à cette application sympa de métronome : \n%1$s</string>
-  <string name="msg_vibration_unavailable">Le vibreur n\'est pas disponible sur cet appareil</string>
+  <string name="msg_vibration_unavailable">Le vibreur n’est pas disponible sur cet appareil. L’appli utilisera le son.</string>
   <string name="msg_service_running">Le service métronome est en cours d\'utilisation</string>
   <string name="msg_service_running_return">Tapez pour revenir à Tack</string>
   <string name="msg_service_description">Service pour la configuration du métronome et la lecture</string>
-  <string name="msg_connection_lost">Connexion au service perdue, redémarrage de l\'application nécessaire</string>
   <string name="msg_reset">Tout réinitialiser ?</string>
-  <string name="msg_reset_description">Voulez-vous réellement réinitialiser l\'application, favoris et paramètres inclus ? Cette action ne peut pas être annulée.</string>
+  <string name="msg_reset_description">Voulez-vous vraiment réinitialiser entièrement l’application ainsi que la bibliothèque musicale et les paramètres ? Créez d’abord une sauvegarde de votre bibliothèque si besoin. La réinitialisation ne pourra pas être annulée.</string>
+  <string name="msg_reset_timer">Réinitialiser le minuteur ?</string>
+  <string name="msg_reset_timer_description">Vous pouvez modifier, dans les paramètres, la réinitialisation automatique du minuteur au démarrage.</string>
+  <string name="msg_reset_elapsed">Réinitialiser le temps écoulé ?</string>
+  <string name="msg_reset_elapsed_description">Voulez-vous vraiment réinitialiser le temps écoulé ? Cette action ne peut être annulée.</string>
   <string name="msg_gain">Jouer avec le boost de volume ?</string>
   <string name="msg_gain_description">Essayez de ne pas jouer avec des écouteurs, les sons forts peuvent endommager les oreilles !</string>
   <string name="msg_split_screen">Fenêtre trop petite</string>
   <string name="msg_split_screen_description">Tack peut rencontrer des problèmes à positionner les contrôles du métronome en mode écran partagé. Veuillez utiliser une fenêtre plus grande si possible.</string>
-  <string name="msg_notification_permission_denied">L\'autorisation de notification est requise pour les contrôles de lecture</string>
+  <string name="msg_notification_permission">Permission requise pour les notifications</string>
+  <string name="msg_notification_permission_description">Tack a besoin de la permission d’afficher des notifications pour continuer la lecture en arrière-plan en affichant une notification de priorité basse. Si vous refusez d’accorder cette permission dans la prochaine boîte de dialogue, Android interrompra la lecture lorsque vous quitterez l’application.</string>
+  <string name="msg_notification_permission_denied">Permission d’envoyer des notifications requise pour la lecture en arrière-plan</string>
   <string name="msg_report_crash">Merci de reporter tout problème avec le journal des accidents en pièce jointe afin que je puisse essayer de le corriger.</string>
-  <string name="msg_copied_to_clipboard">Copié dans le presse-papier avec succès</string>
+  <string name="msg_copied_to_clipboard">Copié vers le presse-papier avec succès</string>
+  <string name="msg_invalid_input">Saisie invalide</string>
+  <string name="msg_discard_changes">Abandonner les modifications ?</string>
+  <string name="msg_discard_changes_description">Êtes-vous sûr de ne pas vouloir les enregistrer ?</string>
+  <string name="msg_delete_song">Supprimer la musique ?</string>
+  <string name="msg_delete_song_description">Êtes-vous sûr de vouloir supprimer cette musique avec toutes ses parties ? Cette action ne pourra pas être annulée.</string>
+  <string name="msg_songs_empty">Bibliothèque musicale vide</string>
+  <string name="msg_songs_empty_description">Ajouter des musiques sur lesquelles vous exercer</string>
+  <string name="msg_unlock">Message du développeur</string>
+  <string name="msg_unlock_description">Vous appréciez l\'expérience sans publicité et les nombreuses fonctionnalités puissantes de Tack ? J\'ai passé des années de mon temps libre à créer Tack gratuitement, mais la fonctionnalité de bibliothèque musicale m\'a notamment demandé des mois de travail acharné. Afin de continuer à améliorer Tack, je vous demande de bien vouloir faire un petit don. En échange, vous obtiendrez une application débloquée pour un nombre illimité de chansons et d\'innombrables parties musicales. Merci pour votre soutien !</string>
+  <string name="msg_backup_description">Vous pouvez sauvegarder l’entièreté de votre bibliothèque musicale sur votre appareil ou restaurer une bibliothèque musicale depuis une sauvegarde.</string>
+  <string name="msg_backup_error">Erreur durant la sauvegarde.</string>
+  <string name="msg_backup_directory_missing">Pas d\'emplacement sélectionné pour la sauvegarde.</string>
+  <string name="msg_backup_success">Sauvegarde créée avec succès.</string>
+  <string name="msg_restore_error">Erreur lors de la restauration de la sauvegarde.</string>
+  <string name="msg_restore_file_missing">Aucun fichier sélectionné pour la restauration.</string>
+  <string name="msg_restore_success">Sauvegarde restaurée avec succès.</string>
+  <string name="msg_songs_intro">Comment la librairie de musique fonctionne t-elle</string>
+  <string name="msg_songs_intro_description">Vous pouvez enregistrer et organiser les configurations du métronome comme des parties d\'un morceau. Il vous suffit de régler les commandes et les options du métronome selon vos préférences, puis d\'ajouter la configuration actuelle comme nouvelle partie d\'un morceau ou de modifier une partie existante.</string>
+  <string name="msg_widget_description">Affichez vos morceaux et écoutez-les</string>
+  <string name="msg_installer_check">Application déverrouillée non valide</string>
+  <string name="msg_installer_check_description">Vous pouvez acheter et installer l\'application de déverrouillage sur Google Play. Merci pour votre soutien !</string>
+  <string name="msg_widget_prompt">Accès rapide aux chansons ?</string>
+  <string name="msg_widget_prompt_description">Placez un magnifique widget sur votre écran d\'accueil.</string>
+
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Mesures</string>
@@ -137,16 +217,20 @@
   <string name="options_incremental">Changement incrémental de tempo</string>
   <string name="options_incremental_max">Monter jusqu\'à %1$d bpm</string>
   <string name="options_incremental_min">Descendre jusqu\'à %1$d bpm</string>
+  <string name="options_incremental_no_max">Pas de limite supérieure</string>
+  <string name="options_incremental_no_min">Pas de limite inférieure</string>
+  <string name="options_timer">Durée</string>
   <string name="options_mute">Battements muets</string>
+  <string name="options_subdivisions">Subdivisions</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_3">Triolet</string>
   <string name="options_swing_5">Quintuplé</string>
   <string name="options_swing_7">Septuplé</string>
-
+  <string name="options_polyrhythm">Polyrythmie</string>
   <!-- SETTINGS -->
 
   <string name="settings_language">Langue</string>
-  <string name="settings_language_info">Merci beaucoup à tous les traducteurs bénévoles via Transiflex !\nVeuillez consulter Tack sur GitHub pour savoir comment contribuer à rendre Tack disponible pour votre langue.</string>
+  <string name="settings_language_info">Merci à tous les traducteurs volontaires sur Transifex !</string>
   <string name="settings_language_system">Réglage système</string>
   <string name="settings_language_system_description">Anglais si la traduction n\'est pas disponible</string>
 
@@ -173,8 +257,15 @@
   <string name="settings_haptic">Effets haptiques</string>
   <string name="settings_haptic_description">En plus des battements haptiques en mode vibreur</string>
 
+  <!-- This is the name for a vibration intensity: User can choose between soft or strong intensity or system-set (automatic or shorter auto) intensity. The button width should be as dense as possible. -->
+  <string name="settings_vibration_intensity_auto">Automatique</string>
+  <string name="settings_vibration_intensity_strong">Fort</string>
+
   <string name="settings_reduce_animations">Réduire les animations</string>
   <string name="settings_reduce_animations_description">Peut améliorer la fluidité</string>
+
+  <string name="settings_backup">Sauvegarder / restaurer la bibliothèque musicale</string>
+  <string name="settings_backup_description">Important si vous changez d’appareil</string>
 
   <string name="settings_reset">Tout réinitialiser</string>
   <string name="settings_reset_description">Ne peut être annulé</string>
@@ -194,13 +285,12 @@
   <string name="settings_ignore_focus">Ignorer le focus audio</string>
   <string name="settings_ignore_focus_description">Continuer à jouer si d\'autres applications diffusent du son</string>
 
-  <string name="settings_gain">Boost de volume</string>
-  <string name="settings_gain_description">Gain en dB (en plus du volume système)</string>
-  <string name="settings_gain_warning">À utiliser avec prudence !</string>
+  <string name="settings_gain">Augmentation/réduction du volume</string>
+  <string name="settings_gain_description">Par rapport au volume du système</string>
   <string name="settings_gain_disclaimer">Lorsque l\'option « boost » est activée, un avertissement s\'affiche avant chaque démarrage. Le développeur n\'est pas tenu responsable des éventuels dommages.</string>
 
-  <string name="settings_always_vibrate">Toujours vibrer</string>
-  <string name="settings_always_vibrate_description">En suivant le son</string>
+  <string name="settings_active_beat">Mettre en évidence le temps actuel</string>
+  <string name="settings_active_beat_description">Utile pour les tempos lents</string>
 
   <string name="settings_elapsed">Afficher le temps écoulé</string>
   <string name="settings_elapsed_description">Voir votre temps de répétition</string>
@@ -213,13 +303,26 @@
 
   <string name="settings_flash_screen">Flash d\'écran</string>
   <string name="settings_flash_screen_description">À chaque battement</string>
+  <string name="settings_flash_screen_off">Eteint</string>
+  <string name="settings_flash_screen_subtle">Subtile</string>
+  <string name="settings_flash_screen_strong">Fort</string>
 
   <string name="settings_keep_awake">Maintenir l\'écran allumé</string>
-  <string name="settings_keep_awake_description">Quand le métronome fonctionne</string>
+  <string name="settings_keep_awake_description">Peut augmenter l’utilisation de la batterie</string>
+  <string name="settings_keep_awake_always">Toujours</string>
+  <string name="settings_keep_awake_while_playing">Pendant la lecture</string>
+  <string name="settings_keep_awake_never">Jamais</string>
+
+  <string name="settings_perm_notification">Notification permanente</string>
+  <string name="settings_perm_notification_description">Toujours accéder aux contrôle de lecture / pause</string>
 
   <string name="settings_big_logo">Afficher le grand logo avec animation</string>
   <string name="settings_big_logo_description">Au lieu du sélecteur de tempo pendant la lecture</string>
 
+  <string name="help_tempo_change_answer">Pour modifier le tempo, vous pouvez faire glisser ou pivoter le sélecteur de tempo au centre de la page principale, ou bien appuyer sur les boutons situés à gauche et à droite. En appuyant sur le sélecteur de tempo, vous pouvez ouvrir une boîte de dialogue pour régler le tempo en tapant  le tempo au doigt ou en utilisant le clavier.</string>
+  <string name="help_time_signature">Comment définir la signature rythmique ?</string>
+  <string name="help_time_signature_answer">Regardez le premier chiffre de votre signature rythmique et réglez les battements dans Tack en conséquence. 4 battements pour 4/4, 2 pour 2/2, etc. 6/8 est un peu particulier, ici vous utilisez 2 battements avec éventuellement 3 subdivisions, car seuls le 1er et le 4e croches sont des temps forts. De plus, vous pouvez modifier l\'accentuation des battements en appuyant dessus. Dans les options, vous pouvez également sélectionner un pourcentage de swing, qui définit automatiquement les subdivisions pour vous.</string>
+  <string name="help_swing">Comment désactiver le swing ?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Version</string>
