@@ -351,6 +351,7 @@
   <string name="about_key_description_not_installed">Pas installé</string>
   <string name="about_key_description_installed">Installé</string>
   <string name="about_key_description_invalid">Invalide</string>
+  <string name="about_key_description_ignored">Ignoré</string>
   <string name="about_github_description">Code source</string>
   <string name="about_translation_description">Aider à traduire Tack</string>
   <string name="about_privacy">Politique de confidentialité</string>
