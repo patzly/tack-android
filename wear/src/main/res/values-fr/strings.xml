@@ -98,6 +98,7 @@
   <string name="wear_settings_always_vibrate">Toujours vibrer</string>
   <string name="wear_settings_always_vibrate_description">En suivant le son</string>
 
+  <string name="wear_settings_vibration_intensity">Intensité de la vibration</string>
   <string name="wear_settings_vibration_intensity_auto">Automatique</string>
   <string name="wear_settings_vibration_intensity_strong">Fort</string>
 
