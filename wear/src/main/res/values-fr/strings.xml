@@ -100,6 +100,7 @@
 
   <string name="wear_settings_vibration_intensity">Intensité de la vibration</string>
   <string name="wear_settings_vibration_intensity_auto">Automatique</string>
+  <string name="wear_settings_vibration_intensity_soft">doux</string>
   <string name="wear_settings_vibration_intensity_strong">Fort</string>
 
   <string name="wear_settings_flash_screen">Flash d\'écran</string>
