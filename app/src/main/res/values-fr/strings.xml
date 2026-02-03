@@ -319,6 +319,9 @@
   <string name="settings_big_logo">Afficher le grand logo avec animation</string>
   <string name="settings_big_logo_description">Au lieu du sélecteur de tempo pendant la lecture</string>
 
+  <!-- HELP -->
+
+  <string name="help_tempo_change">Comment changer le tempo ?</string>
   <string name="help_tempo_change_answer">Pour modifier le tempo, vous pouvez faire glisser ou pivoter le sélecteur de tempo au centre de la page principale, ou bien appuyer sur les boutons situés à gauche et à droite. En appuyant sur le sélecteur de tempo, vous pouvez ouvrir une boîte de dialogue pour régler le tempo en tapant  le tempo au doigt ou en utilisant le clavier.</string>
   <string name="help_time_signature">Comment définir la signature rythmique ?</string>
   <string name="help_time_signature_answer">Regardez le premier chiffre de votre signature rythmique et réglez les battements dans Tack en conséquence. 4 battements pour 4/4, 2 pour 2/2, etc. 6/8 est un peu particulier, ici vous utilisez 2 battements avec éventuellement 3 subdivisions, car seuls le 1er et le 4e croches sont des temps forts. De plus, vous pouvez modifier l\'accentuation des battements en appuyant dessus. Dans les options, vous pouvez également sélectionner un pourcentage de swing, qui définit automatiquement les subdivisions pour vous.</string>
