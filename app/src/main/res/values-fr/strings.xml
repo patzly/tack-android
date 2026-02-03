@@ -191,7 +191,7 @@
   <string name="msg_restore_error">Erreur lors de la restauration de la sauvegarde.</string>
   <string name="msg_restore_file_missing">Aucun fichier sélectionné pour la restauration.</string>
   <string name="msg_restore_success">Sauvegarde restaurée avec succès.</string>
-  <string name="msg_songs_intro">Comment la librairie de musique fonctionne t-elle</string>
+  <string name="msg_songs_intro">Comment la bibliothéque de musique fonctionne t-elle</string>
   <string name="msg_songs_intro_description">Vous pouvez enregistrer et organiser les configurations du métronome comme des parties d\'un morceau. Il vous suffit de régler les commandes et les options du métronome selon vos préférences, puis d\'ajouter la configuration actuelle comme nouvelle partie d\'un morceau ou de modifier une partie existante.</string>
   <string name="msg_widget_description">Affichez vos morceaux et écoutez-les</string>
   <string name="msg_installer_check">Application déverrouillée non valide</string>
