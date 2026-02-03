@@ -68,6 +68,7 @@
   <string name="label_song_looped_description">Redémarrer le morceau à la fin</string>
   <string name="label_song_not_looped">Non bouclé</string>
   <string name="label_sort_name">Nom</string>
+  <string name="label_sort_last_played">Dernière lecture</string>
   <!-- ACTIONS -->
 
   <string name="action_back">Retour</string>
