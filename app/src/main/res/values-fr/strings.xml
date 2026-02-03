@@ -333,6 +333,7 @@
   <string name="help_song_picker_answer">Tous les morceaux de votre librairie sont affichés dans le sélecteur sur la page principale, mais vous pouvez ouvrir une liste en plein écran si vous le souhaitez. L\'ordre dépend de votre choix dans le menu. Pour appliquer un morceau, il suffit de le sélectionner. Vous pouvez également passer à une de ses parties spécifique en appuyant sur la partie actuelle ou en utilisant les boutons de saut. Si vous souhaitez revenir à la configuration que vous aviez avant de sélectionner un morceau, appuyez sur le × à côté de son nom.</string>
   <string name="help_song_part">Pourquoi le morceau ne passe-t-il pas à la partie suivante ?</string>
   <string name="help_song_part_answer">Pour passer automatiquement à la partie suivante d\'un morceau, chaque partie doit avoir une durée définie. Si vous ne définissez pas de durée, la partie est considérée comme infinie. Pour définir une durée, il suffit d\'appuyer sur le morceau en cours pour ouvrir les détails et définir la durée de la partie en appuyant sur l\'icône d\'édition de la partie. N\'oubliez pas d\'enregistrer vos modifications !</string>
+  <string name="help_notification_displays">Pourquoi la notification du service métronome s\'affiche-t-elle lorsque je quitte l\'application ?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Version</string>
