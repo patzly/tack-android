@@ -144,6 +144,7 @@
   <string name="action_duplicate">Duplicar</string>
   <string name="action_update">Atualizar</string>
   <string name="action_use_current_config">Usar config. atual</string>
+  <string name="action_use_current_config_description">Para a página inicial</string>
   <string name="action_delete">Deletar</string>
   <string name="action_move_up">Mover para cima</string>
   <string name="action_move_down">Mover para baixo</string>
