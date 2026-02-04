@@ -438,6 +438,7 @@
   <string name="help_tempo_change_answer">Para alterar o tempo, você pode arrastar ou girar o botão central da tela principal ou apertar os botões da esquerda ou direita do círculo.\nClicando no selecionador do tempo, vai ser aberta uma opção para você batucar na batida desejada ou indicar através do teclado.</string>
   <string name="help_time_signature">Como eu posso definir a divisão de compassos?</string>
   <string name="help_swing">Como eu desabilito a variação / swing?</string>
+  <string name="help_swing_answer">Se você habilitar a variação / swing, o Tack vai definir automaticamente as subdivisões pra você. Para desabilitar, basta definir as subdivisões manualmente conforme preferir.</string>
   <string name="help_song_library">Como a biblioteca de músicas funciona?</string>
   <string name="help_song_library_answer">A biblioteca de músicas é uma coleção de configurações do metrônomo que você pode salvar e aplicar. Para salvar a configuração atual, simplesmente abra a biblioteca de músicas e crie uma nova música. A configuração atual será adicionada à lista de partes, onde você pode ajustar a fundo. Depois de dar nome à uma música, não se esqueça de salvar o resultado clicando no ícone de disco no contato superior direito.</string>
   <string name="help_song_picker">Como o a seleção de músicas funciona?</string>
