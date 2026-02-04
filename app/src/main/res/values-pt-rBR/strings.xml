@@ -435,6 +435,7 @@
   <!-- HELP -->
 
   <string name="help_tempo_change">Como eu mudo o tempo?</string>
+  <string name="help_tempo_change_answer">Para alterar o tempo, você pode arrastar ou girar o botão central da tela principal ou apertar os botões da esquerda ou direita do círculo.\nClicando no selecionador do tempo, vai ser aberta uma opção para você batucar na batida desejada ou indicar através do teclado.</string>
   <string name="help_time_signature">Como eu posso definir a divisão de compassos?</string>
   <string name="help_swing">Como eu desabilito a variação / swing?</string>
   <string name="help_song_library">Como a biblioteca de músicas funciona?</string>
