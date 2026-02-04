@@ -443,6 +443,7 @@
   <string name="help_song_library">Como a biblioteca de músicas funciona?</string>
   <string name="help_song_library_answer">A biblioteca de músicas é uma coleção de configurações do metrônomo que você pode salvar e aplicar. Para salvar a configuração atual, simplesmente abra a biblioteca de músicas e crie uma nova música. A configuração atual será adicionada à lista de partes, onde você pode ajustar a fundo. Depois de dar nome à uma música, não se esqueça de salvar o resultado clicando no ícone de disco no contato superior direito.</string>
   <string name="help_song_picker">Como o a seleção de músicas funciona?</string>
+  <string name="help_song_picker_answer">Todas as músicas na sua biblioteca vão aparecer na página de seleção de música, mas você pode abrir a lista em tela cheia, se quiser. A ordem depende de como você organizou o menu. Para selecionar uma música, simplesmente clique nela. Você também pode pular para uma parte específica da música usando a barra de seleção ou usando os botões de pulo/skip.\nSe você quiser limpar as configurações que realizou em uma música, basta clicar no × ao lado do nome da música.</string>
   <string name="help_song_part">Porquê a música não avança para a próxima parte?</string>
   <string name="help_notification_displays">Por que a notificação do serviço de metrônomo é mostrada quando saio do app?</string>
   <string name="help_notification_disappears">Por que a notificação do serviço de metrônomo desaparece quando fecho o app?</string>
