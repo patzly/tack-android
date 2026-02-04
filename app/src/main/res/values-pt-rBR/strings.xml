@@ -212,6 +212,7 @@
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
   <string name="msg_songs_intro">Como a biblioteca de músicas funciona</string>
   <string name="msg_songs_intro_description">Você pode salvar e organizar configurações do metrônomo como sendo partes de uma música. Simplesmente ajuste os controles do metrônomo e as opções para a sua preferência, e então adicione a configuração atual como uma nova parte de uma música, ou edite uma parte existente.</string>
+  <string name="msg_widget_description">Veja suas músicas e toque junto com elas</string>
   <string name="msg_installer_check">App de desbloqueio (unlock app) inválido</string>
   <string name="msg_installer_check_description">Por favor compre e instale o app de desbloqueio (unlock app) na Play Store. Obrigado por seu apoio!</string>
   <string name="msg_widget_prompt">Acesso rápido às músicas?</string>
