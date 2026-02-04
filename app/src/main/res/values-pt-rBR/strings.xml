@@ -289,6 +289,11 @@
     <item quantity="many">Parar depois de %1$d compassos</item>
     <item quantity="other">Parar depois de %1$d compassos</item>
   </plurals>
+  <plurals name="options_timer_description_seconds">
+    <item quantity="one">Parar depois de %1$d segundo</item>
+    <item quantity="many">Parar depois de %1$d segundos</item>
+    <item quantity="other">Parar depois de %1$d segundos</item>
+  </plurals>
   <string name="options_mute">Batidas mudas</string>
   <string name="options_mute_random">Valores baixos em aleatório</string>
   <string name="options_subdivisions">Subdivisões</string>
