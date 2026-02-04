@@ -283,6 +283,7 @@
   <string name="options_incremental_no_max">Sem limite máximo</string>
   <string name="options_incremental_no_min">Sem limite mínimo</string>
   <string name="options_timer">Duração</string>
+  <string name="options_mute">Contagem muda</string>
   <!-- SETTINGS -->
 
   <string name="settings_language">Idioma</string>
