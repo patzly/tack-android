@@ -439,6 +439,7 @@
   <string name="help_swing">Como eu desabilito a variação / swing?</string>
   <string name="help_song_library">Como a biblioteca de músicas funciona?</string>
   <string name="help_song_library_answer">A biblioteca de músicas é uma coleção de configurações do metrônomo que você pode salvar e aplicar. Para salvar a configuração atual, simplesmente abra a biblioteca de músicas e crie uma nova música. A configuração atual será adicionada à lista de partes, onde você pode ajustar a fundo. Depois de dar nome à uma música, não se esqueça de salvar o resultado clicando no ícone de disco no contato superior direito.</string>
+  <string name="help_song_picker">Como o a seleção de músicas funciona?</string>
   <string name="help_notification_displays">Por que a notificação do serviço de metrônomo é mostrada quando saio do app?</string>
   <string name="help_notification_disappears">Por que a notificação do serviço de metrônomo desaparece quando fecho o app?</string>
   <string name="help_notification_disappears_answer">Quando você fecha o aplicativo da lista de apps recentes, o serviço de metrônomo é interrompido e a notificação some. Isso serve para economizar bateria e recursos. \nSe quiser manter a notificação permantemente para acesso ao iniciar/parar, você pode ativar &quot;Notificação permanente&quot; nas configurações e não fechar o aplicativo da lista de apps recentes.</string>
