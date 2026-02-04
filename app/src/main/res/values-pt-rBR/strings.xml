@@ -187,6 +187,8 @@
   <string name="msg_split_screen_description">Tack talvez tenha problemas para posicionar os controles do metrônomo no modo de tela dividida. Por favor, use uma janela maior caso possível.</string>
   <string name="msg_notification_permission">É necessária permissão para exibir notificações</string>
   <string name="msg_notification_permission_description">O Tack precisa exibir notificações para continuar a reprodução em segundo plano, ao exibir uma notificação de baixa prioridade. Se você negar a próxima solicitação, o Android vai interromper a reprodução quando você sair do aplicativo.</string>
+  <string name="msg_notification_permission_denied"> 
+É necessária permissão para execução em segundo plano</string>
   <string name="msg_copied_to_clipboard">Copiado com sucesso</string>
   <string name="msg_discard_changes">Descartar mudanças?</string>
   <string name="msg_discard_changes_description">Tem certeza que não quer salvá-las?</string>
