@@ -100,6 +100,7 @@
 
   <string name="wear_settings_vibration_intensity">Intensidade da vibração</string>
   <string name="wear_settings_vibration_intensity_auto">Auto</string>
+  <string name="wear_settings_vibration_intensity_soft">Suave</string>
   <string name="wear_settings_vibration_intensity_strong">Intenso</string>
 
   <string name="wear_settings_flash_screen">Piscar a tela</string>
