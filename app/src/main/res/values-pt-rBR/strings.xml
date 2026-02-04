@@ -179,6 +179,7 @@
   <string name="msg_reset">Resetar tudo?</string>
   <string name="msg_reset_description">Tem certeza que quer resetar (reiniciar) todo o app, incluindo a biblioteca de músicas e as configurações? Crie um backup da sua biblioteca de músicas primeiro se for necessário. A restauração não pode ser desfeita.</string>
   <string name="msg_reset_timer">Reiniciar temporizador?</string>
+  <string name="msg_reset_timer_description">Você pode alterar o comportamento padrão de qualquer configuração para resetar o contador no início das configurações.</string>
   <string name="msg_reset_elapsed">Limpar tempo contado até aqui?</string>
   <string name="msg_reset_elapsed_description">Você realmente quer limpar a contagem do tempo? Essa ação não pode ser desfeita.</string>
   <string name="msg_gain">Tocar com boost de volume? </string>
