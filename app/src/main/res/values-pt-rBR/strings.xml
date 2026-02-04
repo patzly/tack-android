@@ -191,6 +191,7 @@
 É necessária permissão para execução em segundo plano</string>
   <string name="msg_report_crash">Por favor, reporte qualquer problema anexando o log. Assim eu posso tentar corrigir o problema.</string>
   <string name="msg_copied_to_clipboard">Copiado com sucesso</string>
+  <string name="msg_invalid_input">Valor inválido</string>
   <string name="msg_discard_changes">Descartar mudanças?</string>
   <string name="msg_discard_changes_description">Tem certeza que não quer salvá-las?</string>
   <string name="msg_delete_song">Apagar música?</string>
