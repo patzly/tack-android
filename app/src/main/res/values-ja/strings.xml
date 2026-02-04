@@ -65,7 +65,7 @@
   <string name="label_part_edit">編集 パート %1$d</string>
   <string name="label_part_no_duration">期間なし</string>
   <plurals name="label_parts_count">
-    <item quantity="other">%1$d パート</item>
+    <item quantity="other">%1$d パー</item>
   </plurals>
   <string name="label_song_looped">ループあり</string>
   <string name="label_song_looped_description">ソングをリピート再生する</string>
