@@ -280,6 +280,7 @@
     <item quantity="other">A cada %1$d minutos</item>
   </plurals>
   <string name="options_incremental_max">Até %1$d bpm</string>
+  <string name="options_incremental_min">Diminuir até %1$d bpm</string>
   <string name="options_incremental_no_max">Sem limite máximo</string>
   <string name="options_incremental_no_min">Sem limite mínimo</string>
   <string name="options_timer">Duração</string>
