@@ -285,6 +285,7 @@
   <string name="options_timer">Duração</string>
   <string name="options_mute">Batidas mudas</string>
   <string name="options_mute_random">Valores baixos em aleatório</string>
+  <string name="options_subdivisions">Subdivisões</string>
   <!-- SETTINGS -->
 
   <string name="settings_language">Idioma</string>
