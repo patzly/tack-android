@@ -305,6 +305,11 @@
     <item quantity="many">Tocar %1$d compassos</item>
     <item quantity="other">Tocar %1$d compassos</item>
   </plurals>
+  <plurals name="options_mute_play_seconds">
+    <item quantity="one">Tocar %1$d segundo</item>
+    <item quantity="many">Tocar %1$d segundos</item>
+    <item quantity="other">Tocar %1$d segundos</item>
+  </plurals>
   <string name="options_mute_random">Valores baixos em aleatório</string>
   <string name="options_subdivisions">Subdivisões</string>
   <string name="options_subdivisions_beats_muted">Batidas mudas</string>
