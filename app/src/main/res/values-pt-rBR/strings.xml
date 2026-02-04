@@ -349,6 +349,7 @@
   <string name="settings_active_beat">Destacar batida atual</string>
   <string name="settings_active_beat_description">Útil para tempos mais lentos</string>
 
+  <string name="settings_elapsed">Mostrar tempo contado até aqui</string>
   <string name="settings_elapsed_description">Veja quanto tempo você pratica</string>
 
   <string name="settings_reset_timer">Reiniciar o temporizador quando pausado</string>
