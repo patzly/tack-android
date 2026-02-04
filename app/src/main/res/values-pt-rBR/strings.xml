@@ -75,7 +75,7 @@
   <string name="label_sort_name">Nome</string>
   <string name="label_sort_last_played">Tocado pela última vez</string>
   <string name="label_sort_last_played_date">Tocado pela última vez %1$s</string>
-  <string name="label_sort_never_played">Nunca tocado</string>
+  <string name="label_sort_never_played">Nunca foi tocado</string>
   <string name="label_sort_most_played">Mais tocado</string>
   <plurals name="label_sort_most_played_times">
     <item quantity="one">Tocado %1$d vez</item>
