@@ -45,6 +45,7 @@
   <string name="label_db_signed">%1$s dB</string>
   <string name="label_tempo">Tempo</string>
   <string name="label_tempo_keyboard">Teclado</string>
+  <string name="label_tempo_tap">Toque</string>
   <string name="label_tempo_instant">Aplicar instantaneamente</string>
   <string name="label_tempo_largo">Largo</string>
   <string name="label_tempo_larghetto">Larghetto</string>
