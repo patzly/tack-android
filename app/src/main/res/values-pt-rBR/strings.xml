@@ -284,6 +284,7 @@
   <string name="options_incremental_no_min">Sem limite mínimo</string>
   <string name="options_timer">Duração</string>
   <string name="options_mute">Batidas mudas</string>
+  <string name="options_mute_random">Valores baixos em aleatório</string>
   <!-- SETTINGS -->
 
   <string name="settings_language">Idioma</string>
