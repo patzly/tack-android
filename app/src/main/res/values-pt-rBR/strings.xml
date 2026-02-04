@@ -218,7 +218,7 @@
 
   <!-- OPTIONS -->
 
-  <string name="options_unit_bars">Compasso</string>
+  <string name="options_unit_bars">Compassos</string>
   <string name="options_unit_beats">Batidas</string>
   <plurals name="options_unit_beats">
     <item quantity="one">%1$d batida</item>
