@@ -393,6 +393,8 @@
   <string name="settings_sound_folding">Chiado</string>
 
   <string name="settings_latency">Correção de latência </string>
+  <string name="settings_latency_description">Compensar latência de áudio entre vibração e batida</string>
+
   <string name="settings_ignore_focus">Ignorar sobreposição de áudio </string>
   <string name="settings_ignore_focus_description">Continuar tocando mesmo que outros aplicativos reproduzam sons</string>
 
