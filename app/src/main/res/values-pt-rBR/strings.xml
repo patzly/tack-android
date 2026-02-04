@@ -310,6 +310,7 @@
     <item quantity="many">Tocar %1$d segundos</item>
     <item quantity="other">Tocar %1$d segundos</item>
   </plurals>
+  <string name="options_mute_mute_beats">Mutar %1$dde %% de todas as batidas</string>
   <string name="options_mute_random">Valores baixos em aleatório</string>
   <string name="options_subdivisions">Subdivisões</string>
   <string name="options_subdivisions_beats_muted">Batidas mudas</string>
