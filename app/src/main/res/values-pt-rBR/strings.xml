@@ -60,6 +60,7 @@
   <string name="label_beat_mode_vibration">Apenas vibração</string>
   <string name="label_part_name">Nome da parte</string>
   <string name="label_part_unnamed">Parte %1$d</string>
+  <string name="label_part_current">Divisão %1$d:%2$s</string>
   <string name="label_part_edit">Editar parte %1$d</string>
   <string name="label_part_no_duration">Sem duração</string>
   <plurals name="label_parts_count">
