@@ -377,6 +377,7 @@
   <string name="settings_reduce_animations">Menos animações </string>
   <string name="settings_reduce_animations_description">Pode melhorar a performance </string>
 
+  <string name="settings_backup">Fazer backup/restaurar a biblioteca de músicas</string>
   <string name="settings_reset">Redefinir tudo</string>
   <string name="settings_reset_description">Não pode ser desfeito</string>
 
