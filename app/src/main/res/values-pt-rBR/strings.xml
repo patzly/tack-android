@@ -288,6 +288,7 @@
   <string name="options_subdivisions">Subdivisões</string>
   <string name="options_subdivisions_beats_muted">Batidas mudas</string>
   <string name="options_swing">Variação / Swing</string>
+  <string name="options_swing_description">Subdivisões para acompanhar a mudança de Variação/Swing</string>
   <!-- SETTINGS -->
 
   <string name="settings_language">Idioma</string>
