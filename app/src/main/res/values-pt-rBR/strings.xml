@@ -343,6 +343,7 @@
   <string name="settings_ignore_focus_description">Continuar tocando mesmo que outros aplicativos reproduzam sons</string>
 
   <string name="settings_gain">Boost ou redução de volume</string>
+  <string name="settings_gain_description">Volume relativo ao do sistema</string>
   <string name="settings_gain_disclaimer">Quando o boost está ativado, um aviso será mostrado antes de cada início. O desenvolvedor não assume responsabilidade por quaisquer potenciais danos.</string>
 
   <string name="settings_active_beat">Destacar batida atual</string>
