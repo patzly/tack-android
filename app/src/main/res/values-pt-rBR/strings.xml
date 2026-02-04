@@ -368,6 +368,7 @@
   <string name="settings_haptic_description">Usar vibração do metrônomo quando celular estiver no modo vibração</string>
 
   <string name="settings_vibration_intensity">Intensidade da vibração</string>
+  <string name="settings_vibration_intensity_description">Para vibração junto da batida</string>
   <!-- This is the name for a vibration intensity: User can choose between soft or strong intensity or system-set (automatic or shorter auto) intensity. The button width should be as dense as possible. -->
   <string name="settings_vibration_intensity_auto">Auto</string>
   <string name="settings_vibration_intensity_soft">Suave</string>
