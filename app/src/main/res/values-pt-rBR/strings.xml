@@ -182,6 +182,7 @@
   <string name="msg_gain_description">Evite tocar com fones de ouvido porque sons altos podem causar danos na audição!</string>
   <string name="msg_split_screen">Janela do app muito pequena</string>
   <string name="msg_split_screen_description">Tack talvez tenha problemas para posicionar os controles do metrônomo no modo de tela dividida. Por favor, use uma janela maior caso possível.</string>
+  <string name="msg_notification_permission">É necessária permissão para exibir notificações</string>
   <string name="msg_copied_to_clipboard">Copiado com sucesso</string>
   <string name="msg_discard_changes">Descartar mudanças?</string>
   <string name="msg_discard_changes_description">Tem certeza que não quer salvá-las?</string>
