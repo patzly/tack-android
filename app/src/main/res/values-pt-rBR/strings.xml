@@ -378,6 +378,8 @@
   <string name="settings_reduce_animations_description">Pode melhorar a performance </string>
 
   <string name="settings_backup">Fazer backup/restaurar a biblioteca de músicas</string>
+  <string name="settings_backup_description">Importante utilizar quando for trocar de dispositivo</string>
+
   <string name="settings_reset">Redefinir tudo</string>
   <string name="settings_reset_description">Não pode ser desfeito</string>
 
