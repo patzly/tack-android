@@ -393,6 +393,7 @@
   <string name="about_key">App de desbloqueio</string>
   <string name="about_key_description_not_installed">Não instalado</string>
   <string name="about_key_description_installed">Instalado</string>
+  <string name="about_key_description_invalid">Inválido</string>
   <string name="about_github_description">Código fonte</string>
   <string name="about_translation_description">Ajude a traduzir o Tack</string>
   <string name="about_privacy">Política de privacidade</string>
