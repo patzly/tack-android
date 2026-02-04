@@ -251,7 +251,7 @@
   <plurals name="options_beats_description">
     <item quantity="one">%1$d por compasso</item>
     <item quantity="many">%1$d por compassos</item>
-    <item quantity="other">%1$dpor compassos</item>
+    <item quantity="other">%1$d por compassos</item>
   </plurals>
   <string name="options_incremental_amount_increase">Aumente em %1$d bpm</string>
   <string name="options_incremental_amount_decrease">Diminua em %1$d bpm</string>
