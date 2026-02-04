@@ -300,6 +300,11 @@
     <item quantity="other">Parar depois de %1$d minutos</item>
   </plurals>
   <string name="options_mute">Batidas mudas</string>
+  <plurals name="options_mute_play_bars">
+    <item quantity="one">Tocar %1$d compasso</item>
+    <item quantity="many">Tocar %1$d compassos</item>
+    <item quantity="other">Tocar %1$d compassos</item>
+  </plurals>
   <string name="options_mute_random">Valores baixos em aleatório</string>
   <string name="options_subdivisions">Subdivisões</string>
   <string name="options_subdivisions_beats_muted">Batidas mudas</string>
