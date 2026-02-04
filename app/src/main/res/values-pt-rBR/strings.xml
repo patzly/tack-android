@@ -435,6 +435,7 @@
   <!-- HELP -->
 
   <string name="help_tempo_change">Como eu mudo o tempo?</string>
+  <string name="help_time_signature">Como eu posso definir a divisão de compassos?</string>
   <string name="help_song_library_answer">A biblioteca de músicas é uma coleção de configurações do metrônomo que você pode salvar e aplicar. Para salvar a configuração atual, simplesmente abra a biblioteca de músicas e crie uma nova música. A configuração atual será adicionada à lista de partes, onde você pode ajustar a fundo. Depois de dar nome à uma música, não se esqueça de salvar o resultado clicando no ícone de disco no contato superior direito.</string>
   <string name="help_notification_displays">Por que a notificação do serviço de metrônomo é mostrada quando saio do app?</string>
   <string name="help_notification_disappears">Por que a notificação do serviço de metrônomo desaparece quando fecho o app?</string>
