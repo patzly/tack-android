@@ -282,6 +282,7 @@
   <plurals name="options_mute_mute_seconds">
     <item quantity="other">Bisukan %1$d detik</item>
   </plurals>
+  <string name="options_mute_random">Acak nilai-nilai yang lebih kecil</string>
   <string name="options_swing">Ayunan</string>
   <string name="options_swing_3">Triplet</string>
   <string name="options_swing_5">Quintuplet</string>
