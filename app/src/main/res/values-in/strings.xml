@@ -251,6 +251,9 @@
   <plurals name="options_incremental_interval_seconds">
     <item quantity="other">Setiap %1$d detik</item>
   </plurals>
+  <plurals name="options_incremental_interval_minutes">
+    <item quantity="other">Setiap %1$d menit</item>
+  </plurals>
   <string name="options_incremental_max">Naik hingga %1$d bpm</string>
   <string name="options_incremental_min">Turun hingga %1$d bpm</string>
   <string name="options_mute">Ketukan dibisukan</string>
