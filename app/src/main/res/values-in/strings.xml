@@ -276,6 +276,9 @@
     <item quantity="other">Mainkan %1$d detik</item>
   </plurals>
   <string name="options_mute_mute_beats">Bisukan %1$d%% untuk semua ketukan</string>
+  <plurals name="options_mute_mute_bars">
+    <item quantity="other">Bisukan %1$d bar</item>
+  </plurals>
   <string name="options_swing">Ayunan</string>
   <string name="options_swing_3">Triplet</string>
   <string name="options_swing_5">Quintuplet</string>
