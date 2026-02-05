@@ -32,6 +32,7 @@
 
   <string name="wear_label_bpm_value">%1$d bpm</string>
   <string name="wear_label_ms">%1$s md</string>
+  <string name="wear_label_db_signed">%1$s dB</string>
   <string name="wear_label_developer">Dikembangkan oleh</string>
   <plurals name="wear_label_beats">
     <item quantity="other">%1$dketukan</item>
