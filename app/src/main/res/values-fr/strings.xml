@@ -31,7 +31,7 @@
   <string name="title_general">Général</string>
   <string name="title_metronome">Métronome</string>
   <string name="title_controls">Commandes</string>
-  <string name="title_logcat">Logcat</string>
+  <string name="title_logcat">Journal de bord</string>
   <string name="title_songs">Bibliothèque musicale</string>
   <!-- Short version of the term "song library" for smaller home screen widget sizes -->
   <string name="title_songs_short">Musiques</string>
