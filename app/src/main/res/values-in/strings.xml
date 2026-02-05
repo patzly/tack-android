@@ -259,6 +259,9 @@
   <string name="options_incremental_no_max">Tidak ada batas atas</string>
   <string name="options_incremental_no_min">Tidak ada batas bawah</string>
   <string name="options_timer">Durasi</string>
+  <plurals name="options_timer_description_bars">
+    <item quantity="other">Berhenti setelah %1$d bar</item>
+  </plurals>
   <string name="options_mute">Ketukan dibisukan</string>
   <string name="options_swing">Ayunan</string>
   <string name="options_swing_3">Triplet</string>
