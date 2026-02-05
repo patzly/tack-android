@@ -272,6 +272,9 @@
   <plurals name="options_mute_play_bars">
     <item quantity="other">Mainkan %1$d bar</item>
   </plurals>
+  <plurals name="options_mute_play_seconds">
+    <item quantity="other">Mainkan %1$d detik</item>
+  </plurals>
   <string name="options_swing">Ayunan</string>
   <string name="options_swing_3">Triplet</string>
   <string name="options_swing_5">Quintuplet</string>
