@@ -293,6 +293,7 @@
   <string name="options_swing_3">Triplet</string>
   <string name="options_swing_5">Quintuplet</string>
   <string name="options_swing_7">Septuplet</string>
+  <string name="options_polyrhythm">Poliritme</string>
   <!-- SETTINGS -->
 
   <string name="settings_language">Bahasa</string>
