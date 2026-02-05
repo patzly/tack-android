@@ -1,6 +1,7 @@
 ### 6.2.0
 
 - New: "Vibration intensity" setting for haptic beats and effects (Mobile and Wear OS)
+- New: Portuguese (Brazil) translation (thanks to the contributors!)
 - New: Support for dynamic themes (Wear OS)
 - Improved: Beats and subdivisions now automatically scroll to the current position(Mobile and Wear OS)
 - Improved: Overall haptic feedback experience (Mobile and Wear OS)
