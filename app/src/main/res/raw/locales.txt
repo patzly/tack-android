@@ -28,6 +28,9 @@ stoutcho21, pimozone
 nl
 mikavanoverveldt
 
+pt-BR
+cassiofiorin, naecv
+
 ru
 RomanPro100, pupsiknastile
 
