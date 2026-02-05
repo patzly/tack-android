@@ -269,6 +269,9 @@
     <item quantity="other">Berhenti setelah %1$d menit</item>
   </plurals>
   <string name="options_mute">Ketukan dibisukan</string>
+  <plurals name="options_mute_play_bars">
+    <item quantity="other">Mainkan %1$d bar</item>
+  </plurals>
   <string name="options_swing">Ayunan</string>
   <string name="options_swing_3">Triplet</string>
   <string name="options_swing_5">Quintuplet</string>
