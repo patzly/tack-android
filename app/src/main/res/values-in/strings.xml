@@ -284,6 +284,9 @@
   </plurals>
   <string name="options_mute_random">Acak nilai-nilai yang lebih kecil</string>
   <string name="options_subdivisions">Subdivisi</string>
+  <plurals name="options_subdivisions_description">
+    <item quantity="other">%1$d per ketukan</item>
+  </plurals>
   <string name="options_swing">Ayunan</string>
   <string name="options_swing_3">Triplet</string>
   <string name="options_swing_5">Quintuplet</string>
