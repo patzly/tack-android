@@ -257,6 +257,7 @@
   <string name="options_incremental_max">Naik hingga %1$d bpm</string>
   <string name="options_incremental_min">Turun hingga %1$d bpm</string>
   <string name="options_incremental_no_max">Tidak ada batas atas</string>
+  <string name="options_incremental_no_min">Tidak ada batas bawah</string>
   <string name="options_mute">Ketukan dibisukan</string>
   <string name="options_swing">Ayunan</string>
   <string name="options_swing_3">Triplet</string>
