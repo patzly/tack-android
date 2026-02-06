@@ -315,6 +315,11 @@
     <item quantity="other">Mettre en sourdine%1$dsecondes</item>
   </plurals>
   <string name="options_subdivisions">Subdivisions</string>
+  <plurals name="options_subdivisions_description">
+    <item quantity="one">%1$dpar temps</item>
+    <item quantity="many">%1$dpar temps</item>
+    <item quantity="other">%1$dpar temps</item>
+  </plurals>
   <string name="options_subdivisions_beats_muted">Battements en sourdine</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Subdivisions définies pour correspondre au ratio de swing</string>
