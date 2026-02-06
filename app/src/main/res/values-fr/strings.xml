@@ -249,6 +249,11 @@
     <item quantity="other">%1$d par mesure</item>
   </plurals>
   <string name="options_count_in">Prise en compte</string>
+  <plurals name="options_count_in_description">
+    <item quantity="one">Attendre %1$dmesure avant d\'appliquer les modifications</item>
+    <item quantity="many">Attendre %1$dmesures avant d\'appliquer les modifications</item>
+    <item quantity="other">Attendre %1$dmesures avant d\'appliquer les modifications</item>
+  </plurals>
   <string name="options_incremental">Changement incrémental de tempo</string>
   <string name="options_incremental_amount_increase">Augmenter de %1$dbpm</string>
   <string name="options_incremental_amount_decrease">Diminuer de%1$dbpm</string>
