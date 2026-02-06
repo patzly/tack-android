@@ -304,6 +304,11 @@
     <item quantity="other">Jouer %1$dsecondes</item>
   </plurals>
   <string name="options_mute_mute_beats">Mettre en sourdine %1$d%% de tous les battements</string>
+  <plurals name="options_mute_mute_bars">
+    <item quantity="one">Mettre en sourdine%1$dmesure</item>
+    <item quantity="many">Mettre en sourdine%1$dmesures</item>
+    <item quantity="other">Mettre en sourdine %1$d mesures</item>
+  </plurals>
   <string name="options_subdivisions">Subdivisions</string>
   <string name="options_subdivisions_beats_muted">Battements en sourdine</string>
   <string name="options_swing">Swing</string>
