@@ -85,6 +85,8 @@
   <string name="label_song_name">Nom de la musique</string>
   <string name="label_song_name_help">Le nom doit être unique</string>
   <string name="label_song_name_used">Nom déjà utilisé</string>
+  <!-- A placeholder song name in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_title1">Bach Brandenburg Concerto No. 2</string>
   <!-- A placeholder part count in the widget preview for the user's widget picker -->
   <string name="widget_songs_preview_parts1">3 parties</string>
   <!-- A placeholder part count in the widget preview for the user's widget picker -->
