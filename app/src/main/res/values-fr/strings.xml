@@ -89,6 +89,8 @@
   <string name="widget_songs_preview_title1">Bach Brandenburg Concerto No. 2</string>
   <!-- A placeholder song name in the widget preview for the user's widget picker -->
   <string name="widget_songs_preview_title2">Debussy Syrinx</string>
+  <!-- A placeholder song name in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_title3">Mozart Serenade No. 13</string>
   <!-- A placeholder part count in the widget preview for the user's widget picker -->
   <string name="widget_songs_preview_parts1">3 parties</string>
   <!-- A placeholder part count in the widget preview for the user's widget picker -->
