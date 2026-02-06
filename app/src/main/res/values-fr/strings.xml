@@ -287,6 +287,11 @@
     <item quantity="many">Arrêter après%1$dsecondes</item>
     <item quantity="other">Arrêter après%1$dsecondes</item>
   </plurals>
+  <plurals name="options_timer_description_minutes">
+    <item quantity="one">Arrêter après %1$dminute</item>
+    <item quantity="many">Arrêter après%1$dminutes</item>
+    <item quantity="other">Arrêter après%1$dminutes</item>
+  </plurals>
   <string name="options_mute">Battements muets</string>
   <string name="options_mute_mute_beats">Mettre en sourdine %1$d%% de tous les battements</string>
   <string name="options_subdivisions">Subdivisions</string>
