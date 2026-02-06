@@ -201,6 +201,8 @@
   <string name="msg_restore_error">Erreur lors de la restauration de la sauvegarde.</string>
   <string name="msg_restore_file_missing">Aucun fichier sélectionné pour la restauration.</string>
   <string name="msg_restore_success">Sauvegarde restaurée avec succès.</string>
+  <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
+  <string name="msg_restore_duplicate_name">%1$s(%2$d)</string>
   <string name="msg_songs_intro">Comment la bibliothéque de musique fonctionne t-elle</string>
   <string name="msg_songs_intro_description">Vous pouvez enregistrer et organiser les configurations du métronome comme des parties d\'une musique. Il vous suffit de régler les commandes et les options du métronome selon vos préférences, puis d\'ajouter la configuration actuelle comme nouvelle partie d\'une mmusiqueu ou de modifier une partie existante.</string>
   <string name="msg_widget_description">Affichez vos morceaux et écoutez-les</string>
