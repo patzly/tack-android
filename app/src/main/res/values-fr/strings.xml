@@ -298,6 +298,11 @@
     <item quantity="many">Jouer %1$dmesures</item>
     <item quantity="other">Jouer %1$dmesures</item>
   </plurals>
+  <plurals name="options_mute_play_seconds">
+    <item quantity="one">Jouer %1$dseconde</item>
+    <item quantity="many">Jouer %1$dsecondes</item>
+    <item quantity="other">Jouer %1$dsecondes</item>
+  </plurals>
   <string name="options_mute_mute_beats">Mettre en sourdine %1$d%% de tous les battements</string>
   <string name="options_subdivisions">Subdivisions</string>
   <string name="options_subdivisions_beats_muted">Battements en sourdine</string>
