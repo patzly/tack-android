@@ -262,6 +262,11 @@
     <item quantity="many">Chaque %1$dmesures</item>
     <item quantity="other">Chaque %1$d mesures</item>
   </plurals>
+  <plurals name="options_incremental_interval_seconds">
+    <item quantity="one">Toutes les %1$d seconde </item>
+    <item quantity="many">Toutes les %1$dsecondes</item>
+    <item quantity="other">Toutes les %1$dsecondes</item>
+  </plurals>
   <string name="options_incremental_max">Monter jusqu\'à %1$d bpm</string>
   <string name="options_incremental_min">Descendre jusqu\'à %1$d bpm</string>
   <string name="options_incremental_no_max">Pas de limite supérieure</string>
