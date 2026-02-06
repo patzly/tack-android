@@ -277,6 +277,11 @@
   <string name="options_incremental_no_max">Pas de limite supérieure</string>
   <string name="options_incremental_no_min">Pas de limite inférieure</string>
   <string name="options_timer">Durée</string>
+  <plurals name="options_timer_description_bars">
+    <item quantity="one">Arrêter après%1$dmesure</item>
+    <item quantity="many">Arrêter après%1$dmesures</item>
+    <item quantity="other">Arrêter après %1$dmesures</item>
+  </plurals>
   <string name="options_mute">Battements muets</string>
   <string name="options_mute_mute_beats">Mettre en sourdine %1$d%% de tous les battements</string>
   <string name="options_subdivisions">Subdivisions</string>
