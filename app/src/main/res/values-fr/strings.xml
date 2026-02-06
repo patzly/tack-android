@@ -67,7 +67,7 @@
   <plurals name="label_parts_count">
     <item quantity="one">%1$dpartie</item>
     <item quantity="many">%1$dparties</item>
-    <item quantity="other">%1$d partie(s)</item>
+    <item quantity="other">%1$d parties</item>
   </plurals>
   <string name="label_song_looped">en boucle</string>
   <string name="label_song_looped_description">Redémarrer le morceau à la fin</string>
