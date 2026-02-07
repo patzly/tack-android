@@ -128,7 +128,7 @@
   <string name="action_issue">Ouvrir un ticket sur Github</string>
   <string name="action_issue_description">Signaler une erreur ou proposer une fonctionnalité</string>
   <string name="action_retry">Réessayer</string>
-  <string name="action_logcat">Consulter logcat</string>
+  <string name="action_logcat">Consulter le journal des événements</string>
   <string name="action_copy_to_clipboard">Copier dans le presse-papiers</string>
   <string name="action_reload">Recharger</string>
   <string name="action_change_tempo">Changer le tempo</string>
