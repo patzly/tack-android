@@ -340,7 +340,7 @@
 
   <string name="settings_language">Langue</string>
   <string name="settings_language_info">Merci à tous les traducteurs volontaires sur Transifex !</string>
-  <string name="settings_language_system">Réglage système</string>
+  <string name="settings_language_system">Suivre le système</string>
   <string name="settings_language_system_description">Anglais si la traduction n\'est pas disponible</string>
 
   <string name="settings_theme">Thème</string>
