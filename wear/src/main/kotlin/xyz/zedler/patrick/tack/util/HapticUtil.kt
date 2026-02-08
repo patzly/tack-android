@@ -53,9 +53,15 @@ class HapticUtil(context: Context) {
   val hasVibrator: Boolean
     get() = vibrator.hasVibrator()
 
-  private val vibrationAttributes: VibrationAttributes? =
+  private val vibrationAttributesTouch: VibrationAttributes? =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
       VibrationAttributes.createForUsage(VibrationAttributes.USAGE_TOUCH)
+    } else {
+      null
+    }
+  private val vibrationAttributesMedia: VibrationAttributes? =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      VibrationAttributes.createForUsage(VibrationAttributes.USAGE_MEDIA)
     } else {
       null
     }
@@ -75,28 +81,31 @@ class HapticUtil(context: Context) {
     intensity = getDefaultIntensity(context)
   }
 
-  fun tick() = vibrate(
+  fun tick(isTouchEvent: Boolean = true) = vibrate(
     if (intensity == Constants.VibrationIntensity.AUTO
       && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
       VibrationEffect.EFFECT_TICK else null,
-    if (intensity == Constants.VibrationIntensity.STRONG) TICK_STRONG else TICK
+    if (intensity == Constants.VibrationIntensity.STRONG) TICK_STRONG else TICK,
+    isTouchEvent
   )
 
-  fun click() = vibrate(
+  fun click(isTouchEvent: Boolean = true) = vibrate(
     if (intensity == Constants.VibrationIntensity.AUTO
       && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
       VibrationEffect.EFFECT_CLICK else null,
-    if (intensity == Constants.VibrationIntensity.STRONG) CLICK_STRONG else CLICK
+    if (intensity == Constants.VibrationIntensity.STRONG) CLICK_STRONG else CLICK,
+    isTouchEvent
   )
 
-  fun heavyClick() = vibrate(
+  fun heavyClick(isTouchEvent: Boolean = true) = vibrate(
     if (intensity == Constants.VibrationIntensity.AUTO
       && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
       VibrationEffect.EFFECT_HEAVY_CLICK else null,
-    if (intensity == Constants.VibrationIntensity.STRONG) HEAVY_STRONG else HEAVY
+    if (intensity == Constants.VibrationIntensity.STRONG) HEAVY_STRONG else HEAVY,
+    isTouchEvent
   )
 
-  private fun vibrate(effectId: Int?, duration: Long) {
+  private fun vibrate(effectId: Int?, duration: Long, isTouchEvent: Boolean) {
     if (!enabled) return
 
     val effect = if (effectId != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -110,7 +119,11 @@ class HapticUtil(context: Context) {
     }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-      vibrator.vibrate(effect, vibrationAttributes as VibrationAttributes)
+      vibrator.vibrate(
+        effect,
+        if (isTouchEvent) vibrationAttributesTouch as VibrationAttributes
+        else vibrationAttributesMedia as VibrationAttributes
+      )
     } else {
       @Suppress("DEPRECATION")
       vibrator.vibrate(effect, audioAttributes as AudioAttributes)

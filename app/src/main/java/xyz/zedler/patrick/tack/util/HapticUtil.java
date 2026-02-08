@@ -45,7 +45,7 @@ public class HapticUtil {
 
   private final Vibrator vibrator;
   private final boolean supportsMainEffects;
-  private final VibrationAttributes vibrationAttributes;
+  private final VibrationAttributes vibrationAttributesTouch, vibrationAttributesMedia;
   private final AudioAttributes audioAttributes;
   private boolean enabled;
   private String intensity;
@@ -58,9 +58,15 @@ public class HapticUtil {
     intensity = getDefaultIntensity(context);
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-      vibrationAttributes = VibrationAttributes.createForUsage(VibrationAttributes.USAGE_TOUCH);
+      vibrationAttributesTouch = VibrationAttributes.createForUsage(
+          VibrationAttributes.USAGE_TOUCH
+      );
+      vibrationAttributesMedia = VibrationAttributes.createForUsage(
+          VibrationAttributes.USAGE_MEDIA
+      );
     } else {
-      vibrationAttributes = null;
+      vibrationAttributesTouch = null;
+      vibrationAttributesMedia = null;
     }
 
     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
@@ -74,33 +80,45 @@ public class HapticUtil {
   }
 
   public void tick() {
+    tick(true);
+  }
+
+  public void tick(boolean isTouchEvent) {
     int effectId = intensity.equals(Constants.VIBRATION_INTENSITY.AUTO)
         && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
         ? VibrationEffect.EFFECT_TICK
         : -1;
     long duration = intensity.equals(VIBRATION_INTENSITY.STRONG) ? TICK_STRONG : TICK;
 
-    vibrate(effectId, duration);
+    vibrate(effectId, duration, isTouchEvent);
   }
 
   public void click() {
+    click(true);
+  }
+
+  public void click(boolean isTouchEvent) {
     int effectId = intensity.equals(Constants.VIBRATION_INTENSITY.AUTO)
         && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
         ? VibrationEffect.EFFECT_CLICK
         : -1;
     long duration = intensity.equals(VIBRATION_INTENSITY.STRONG) ? CLICK_STRONG : CLICK;
 
-    vibrate(effectId, duration);
+    vibrate(effectId, duration, isTouchEvent);
   }
 
   public void heavyClick() {
+    heavyClick(true);
+  }
+
+  public void heavyClick(boolean isTouchEvent) {
     int effectId = intensity.equals(Constants.VIBRATION_INTENSITY.AUTO)
         && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
         ? VibrationEffect.EFFECT_HEAVY_CLICK
         : -1;
     long duration = intensity.equals(VIBRATION_INTENSITY.STRONG) ? HEAVY_STRONG : HEAVY;
 
-    vibrate(effectId, duration);
+    vibrate(effectId, duration, isTouchEvent);
   }
 
   public void hapticReject(View view) {
@@ -154,13 +172,13 @@ public class HapticUtil {
     return hapticFeedbackEnabled != 0;
   }
 
-  private void vibrate(int effectId, long duration) {
+  private void vibrate(int effectId, long duration, boolean isTouchEvent) {
     if (!enabled) return;
 
-    VibrationEffect effect;
+    VibrationEffect effect = null;
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && effectId != -1) {
       effect = VibrationEffect.createPredefined(effectId);
-    } else {
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       effect = VibrationEffect.createOneShot(
           duration,
           intensity.equals(VIBRATION_INTENSITY.STRONG)
@@ -169,10 +187,12 @@ public class HapticUtil {
       );
     }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-      vibrator.vibrate(effect, vibrationAttributes);
-    } else {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && effect != null) {
+      vibrator.vibrate(effect, isTouchEvent ? vibrationAttributesTouch : vibrationAttributesMedia);
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && effect != null) {
       vibrator.vibrate(effect, audioAttributes);
+    } else {
+      vibrator.vibrate(duration, audioAttributes);
     }
   }
 
