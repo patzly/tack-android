@@ -307,21 +307,12 @@ class MetronomeEngine(
   }
 
   interface MetronomeListener {
-    fun onMetronomeStart()
-    fun onMetronomeStop()
-    fun onMetronomePreTick(tick: Tick)
-    fun onMetronomeTick(tick: Tick)
-    fun onFlashScreenEnd()
-    fun onPermissionMissing()
-  }
-
-  open class MetronomeListenerAdapter : MetronomeListener {
-    override fun onMetronomeStart() {}
-    override fun onMetronomeStop() {}
-    override fun onMetronomePreTick(tick: Tick) {}
-    override fun onMetronomeTick(tick: Tick) {}
-    override fun onFlashScreenEnd() {}
-    override fun onPermissionMissing() {}
+    fun onMetronomeStart() {}
+    fun onMetronomeStop() {}
+    fun onMetronomePreTick(tick: Tick) {}
+    fun onMetronomeTick(tick: Tick) {}
+    fun onFlashScreenEnd() {}
+    fun onPermissionMissing() {}
   }
 
   data class Tick(

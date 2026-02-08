@@ -29,7 +29,7 @@ import android.util.Log
 import androidx.lifecycle.LifecycleService
 import xyz.zedler.patrick.tack.Constants.Action
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListener
 import xyz.zedler.patrick.tack.util.NotificationUtil
 
 class MetronomeService : LifecycleService() {
@@ -48,7 +48,7 @@ class MetronomeService : LifecycleService() {
     super.onCreate()
 
     metronomeEngine = MetronomeEngine(this, true)
-    metronomeEngine.addListener(object : MetronomeListenerAdapter() {
+    metronomeEngine.addListener(object : MetronomeListener {
       override fun onMetronomeStop() {
         stopForeground()
       }

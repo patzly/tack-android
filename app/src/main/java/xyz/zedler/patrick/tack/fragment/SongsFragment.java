@@ -51,7 +51,6 @@ import xyz.zedler.patrick.tack.drawable.ShapeDrawable;
 import xyz.zedler.patrick.tack.fragment.SongsFragmentDirections.ActionSongsToSong;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListener;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter;
 import xyz.zedler.patrick.tack.recyclerview.adapter.SongAdapter.OnSongClickListener;
 import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
@@ -212,7 +211,7 @@ public class SongsFragment extends BaseFragment {
     ViewUtil.setTooltipText(binding.buttonSongsBack, R.string.action_back);
     ViewUtil.setTooltipText(binding.buttonSongsMenu, R.string.action_more);
 
-    metronomeListener = new MetronomeListenerAdapter() {
+    metronomeListener = new MetronomeListener() {
       @Override
       public void onMetronomeStart() {
         activity.runOnUiThread(() -> adapter.setPlaying(true));

@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     setTheme(android.R.style.Theme_DeviceDefault)
 
     metronomeEngine = MetronomeEngine(this, false)
-    metronomeEngine.addListener(object : MetronomeEngine.MetronomeListenerAdapter() {
+    metronomeEngine.addListener(object : MetronomeEngine.MetronomeListener {
       override fun onMetronomePreTick(tick: MetronomeEngine.Tick) {
         runOnUiThread {
           viewModel.onPreTick(tick)

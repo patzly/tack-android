@@ -246,12 +246,12 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   }
 
   public void playTick(Tick tick) {
-    if (!playing || !isInitialized() || muted || tick.isMuted) {
+    if (!playing || !isInitialized() || muted || tick.isMuted()) {
       return;
     }
 
     int nativeTickType;
-    switch (tick.type) {
+    switch (tick.type()) {
       case TICK_TYPE.STRONG:
         nativeTickType = NATIVE_TICK_TYPE_STRONG;
         break;
