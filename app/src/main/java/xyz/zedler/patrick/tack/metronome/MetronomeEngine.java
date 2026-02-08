@@ -640,7 +640,6 @@ public class MetronomeEngine {
 
         boolean playing = performTick(tick); // don't play next tick if timer finished
         if (playing) {
-          Log.i(TAG, "run: hello " + tick);
           audioEngine.playTick(tick);
           tickIndex++;
         }
@@ -801,7 +800,7 @@ public class MetronomeEngine {
   public void setUsePolyrhythm(boolean usePolyrhythm) {
     config.setUsePolyrhythm(usePolyrhythm);
     sharedPrefs.edit().putBoolean(PREF.USE_POLYRHYTHM, usePolyrhythm).apply();
-    restartIfPlaying(false);
+    // no restart here, may cause race condition during parts change
   }
 
   public void setSound(String sound) {

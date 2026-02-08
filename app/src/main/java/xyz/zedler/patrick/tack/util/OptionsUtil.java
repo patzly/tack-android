@@ -1009,6 +1009,7 @@ public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
           } else if (activity.getMetronomeEngine() != null) {
             activity.getMetronomeEngine().setUsePolyrhythm(isChecked);
             activity.getMetronomeEngine().maybeUpdateDefaultSong();
+            activity.getMetronomeEngine().restartIfPlaying(false);
           }
           updatePolyrhythm();
           if (!editPart && listener != null) {
