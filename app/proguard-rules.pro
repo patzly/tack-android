@@ -27,7 +27,7 @@
 -keepclasseswithmembernames,includedescriptorclasses class * {
     native <methods>;
 }
--keepattributes InnerClasses,Signature,SourceFile,LineNumberTable
+-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod
 
 # Application classes that will be serialized/deserialized over Gson
 -keep class xyz.zedler.patrick.tack.database.entity.** { *; }

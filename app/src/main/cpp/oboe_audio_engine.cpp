@@ -89,13 +89,30 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
   }
 
   bool start() {
-    if (!mStream) return false;
+    if (!mStream) {
+      LOGE("Stream was null, attempting to re-initialize");
+      if (!init(false)) return false;
+    }
 
-    constexpr int64_t kTimeoutNanos = 1 * 1000 * 1000 * 1000;  // 1 second
+    constexpr int64_t kTimeoutNanos = 1 * 1000 * 1000 * 1000; // 1 second
     oboe::Result result = mStream->start(kTimeoutNanos);
     if (result != oboe::Result::OK) {
-      LOGE("Failed to start Oboe stream: %s",
+      LOGE("Failed to start stream (Error: %s). Attempting recovery...",
           oboe::convertToText(result));
+
+      mStream->close();
+      mStream.reset();
+
+      if (init(true)) {
+        result = mStream->start(kTimeoutNanos);
+        if (result == oboe::Result::OK) {
+          LOGE("Stream recovered successfully.");
+          mIsPlaying = true;
+          return true;
+        }
+      }
+
+      LOGE("Recovery failed: %s", oboe::convertToText(result));
       return false;
     }
     mIsPlaying = true;
@@ -366,14 +383,21 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
   }
 
   void restart() {
+    usleep(300 * 1000); // wait 300ms
     if (mStream) {
-      mStream->stop();
       mStream->close();
       mStream.reset();
     }
 
     if (init(false) && mIsPlaying.load()) {
-      mStream->start();
+      if (mIsPlaying.load()) {
+        oboe::Result result = mStream->start();
+        if (result != oboe::Result::OK) {
+          LOGE("Restart failed inside thread: %s",
+              oboe::convertToText(result));
+          mIsPlaying = false;
+        }
+      }
     }
   }
 

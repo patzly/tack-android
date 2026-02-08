@@ -28,4 +28,4 @@
 -keepclasseswithmembernames,includedescriptorclasses class * {
     native <methods>;
 }
--keepattributes InnerClasses,Signature,SourceFile,LineNumberTable
+-keepattributes Exceptions,InnerClasses,Signature,Deprecated,SourceFile,LineNumberTable,*Annotation*,EnclosingMethod
