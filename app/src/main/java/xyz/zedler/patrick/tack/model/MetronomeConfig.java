@@ -454,10 +454,18 @@ public class MetronomeConfig {
   }
 
   public void setMuteUnit(String muteUnit) {
+    String unitPrev = this.muteUnit;
     this.muteUnit = muteUnit;
-    if (muteUnit.equals(UNIT.BEATS) && muteMute == Constants.MUTE_MUTE_MIN) {
-      // Switch to small percentage to prevent inactivity
-      muteMute = Constants.MUTE_MUTE_STEP_SIZE_BEATS;
+    if (!unitPrev.equals(muteUnit) && unitPrev.equals(UNIT.BEATS)) {
+      float ratio = (float) (muteMute - Constants.MUTE_MUTE_MIN_BEATS) /
+          (Constants.MUTE_MUTE_MAX_BEATS - Constants.MUTE_MUTE_MIN_BEATS);
+      muteMute = (int) (Constants.MUTE_MUTE_MIN + ratio *
+          (Constants.MUTE_MUTE_MAX - Constants.MUTE_MUTE_MIN));
+    } else if (!unitPrev.equals(muteUnit)) {
+      float ratio = (float) (muteMute - Constants.MUTE_MUTE_MIN) /
+          (Constants.MUTE_MUTE_MAX - Constants.MUTE_MUTE_MIN);
+      muteMute = (int) (Constants.MUTE_MUTE_MIN_BEATS + ratio *
+          (Constants.MUTE_MUTE_MAX_BEATS - Constants.MUTE_MUTE_MIN_BEATS));
     }
     snapToMuteMuteStepSize();
   }
@@ -481,7 +489,7 @@ public class MetronomeConfig {
         ? Constants.MUTE_MUTE_STEP_SIZE_BEATS
         : Constants.MUTE_MUTE_STEP_SIZE;
     int maxStepIndex = (max - min) / stepSize;
-    int desiredStepIndex = (int) Math.round((double)(muteMute - min) / stepSize);
+    int desiredStepIndex = (int) Math.ceil((double)(muteMute - min) / stepSize);
     int clampedStepIndex = Math.max(0, Math.min(maxStepIndex, desiredStepIndex));
     muteMute = min + clampedStepIndex * stepSize;
   }

@@ -139,7 +139,7 @@ public final class Constants {
     public final static int INCREMENTAL_LIMIT = 0;
     public final static int TIMER_DURATION = 0;
     public final static String TIMER_UNIT = UNIT.BARS;
-    public final static int MUTE_PLAY = 0;
+    public final static int MUTE_PLAY = 1;
     public final static int MUTE_MUTE = 0;
     public final static String MUTE_UNIT = UNIT.BEATS;
     public final static boolean MUTE_RANDOM = false;
