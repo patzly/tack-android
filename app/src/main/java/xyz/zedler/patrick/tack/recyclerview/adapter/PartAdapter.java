@@ -139,6 +139,9 @@ public class PartAdapter extends Adapter<PartAdapter.PartViewHolder> {
     holder.binding.linearPartSubdivisions.setVisibility(
         showSubdivisions ? View.VISIBLE : View.GONE
     );
+    holder.binding.textPartSubdivisionsPolyrhythm.setVisibility(
+        part.usePolyrhythm() ? View.VISIBLE : View.GONE
+    );
 
     // count in
     boolean isCountInActive = part.getCountIn() > 0;

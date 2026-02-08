@@ -6,6 +6,7 @@
 - Improved: Beats and subdivisions now automatically scroll to the current position(Mobile and Wear OS)
 - Improved: Overall haptic feedback experience (Mobile and Wear OS)
 - Fixed: Muted bars option not working correctly (Mobile)
+- Fixed: Polyrhythm option ignored in song parts (Mobile)
 - Fixed: Bluetooth audio stopped unexpectedly on some devices (Mobile and Wear OS)
 - Fixed: Rapid tempo changes on tempo screen caused incorrect tempo (Wear OS)
 - Fixed: Crash when switching song parts in certain situations

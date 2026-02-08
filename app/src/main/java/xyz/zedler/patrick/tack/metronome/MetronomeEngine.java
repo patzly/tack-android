@@ -159,6 +159,7 @@ public class MetronomeEngine {
 
     setBeats(config.getBeats());
     setSubdivisions(config.getSubdivisions());
+    setUsePolyrhythm(config.usePolyrhythm());
 
     setIncrementalAmount(config.getIncrementalAmount());
     setIncrementalInterval(config.getIncrementalInterval());
