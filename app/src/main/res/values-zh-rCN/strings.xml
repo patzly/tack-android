@@ -294,8 +294,6 @@
   <string name="options_swing_5">五连音</string>
   <string name="options_swing_7">七连音</string>
   <string name="options_polyrhythm">复节奏</string>
-  <string name="options_polyrhythm_description">在整个小节中演奏均匀分布的细分音符</string>
-
   <!-- SETTINGS -->
 
   <string name="settings_language">语言</string>
