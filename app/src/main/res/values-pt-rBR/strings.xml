@@ -335,8 +335,6 @@
   <string name="options_swing_5">Quintuplet</string>
   <string name="options_swing_7">Septuplet</string>
   <string name="options_polyrhythm">Poliritmia </string>
-  <string name="options_polyrhythm_description">Tocar as subdivisões através de um mesmo compasso</string>
-
   <!-- SETTINGS -->
 
   <string name="settings_language">Idioma</string>
