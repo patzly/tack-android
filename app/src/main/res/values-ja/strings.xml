@@ -294,6 +294,8 @@
   <string name="options_swing_5">5連符</string>
   <string name="options_swing_7">7連符</string>
   <string name="options_polyrhythm">ポリリズム</string>
+  <string name="options_polyrhythm_description">小節全体で拍分割を再生</string>
+
   <!-- SETTINGS -->
 
   <string name="settings_language">言語</string>
