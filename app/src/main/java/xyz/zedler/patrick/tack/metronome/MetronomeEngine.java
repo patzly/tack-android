@@ -82,6 +82,7 @@ public class MetronomeEngine {
   private int timerBarIndex, timerBeatIndex, timerSubIndex;
   private long tickIndex, tickIndexPoly, latency, countInStartTime, timerStartTime;
   private long elapsedStartTime, elapsedTime, elapsedPrevious;
+  private long nextScheduleTime, nextPolyScheduleTime;
   private float timerProgress;
   private boolean playing, tempPlaying, isCountingIn, isMuted;
   private boolean showElapsed, resetTimerOnStop, tempoInputKeyboard, tempoTapInstant;
@@ -566,6 +567,10 @@ public class MetronomeEngine {
   }
 
   private void startTicks() {
+    long now = System.currentTimeMillis();
+    nextScheduleTime = now;
+    nextPolyScheduleTime = now;
+
     Runnable tickRunnablePoly = new Runnable() {
       @Override
       public void run() {
@@ -585,7 +590,13 @@ public class MetronomeEngine {
         if (subdivisionPoly < config.getSubdivisionsCount()) {
           // first poly subdivision handled in main tick runnable to keep poly in sync
           long barInterval = getInterval() * config.getBeatsCount();
-          tickHandler.postDelayed(this, barInterval / config.getSubdivisionsCount());
+          long step = barInterval / config.getSubdivisionsCount();
+          nextPolyScheduleTime += step;
+          long delay = nextPolyScheduleTime - System.currentTimeMillis();
+          if (delay < 0) {
+            delay = 0;
+          }
+          tickHandler.postDelayed(this, delay);
         }
 
         performTickPoly(tick);
@@ -632,7 +643,19 @@ public class MetronomeEngine {
         long interval = config.usePolyrhythm()
             ? getInterval()
             : getInterval() / config.getSubdivisionsCount();
-        tickHandler.postDelayed(this, interval);
+        nextScheduleTime += interval;
+
+        if (tick.beat == 1 && tick.subdivision == 1) {
+          // first beat and subdivision is handled in main tick runnable to keep poly in sync
+          nextPolyScheduleTime = nextScheduleTime - interval;
+        }
+
+        long delay = nextScheduleTime - System.currentTimeMillis();
+        if (delay < 0) {
+          delay = 0;
+        }
+        tickHandler.postDelayed(this, delay);
+
         if (tick.beat == 1 && config.usePolyrhythm()) {
           // start polyrhythm subdivisions every new bar
           tickHandler.post(tickRunnablePoly);
