@@ -212,7 +212,6 @@
   <string name="msg_installer_check_description">請在 Google Play 上購買並安裝解鎖應用程式。謝謝你的支持！</string>
   <string name="msg_widget_prompt">快速存取歌曲？</string>
   <string name="msg_widget_prompt_description">在你的主畫面上放置一個漂亮的小工具。</string>
-
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">小節</string>
