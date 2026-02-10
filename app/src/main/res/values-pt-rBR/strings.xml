@@ -217,7 +217,7 @@
   <string name="msg_installer_check_description">Por favor compre e instale o app de desbloqueio (unlock app) na Play Store. Obrigado por seu apoio!</string>
   <string name="msg_widget_prompt">Acesso rápido às músicas?</string>
   <string name="msg_widget_prompt_description">Coloque um belo widget na sua tela inicial.</string>
-  <string name="msg_beat_mode_warning">Também alterar a contagem, para tocar apenas com som?</string>
+  <string name="msg_beat_mode_warning">Também alterar a contagem para tocar apenas com som?</string>
 
   <!-- OPTIONS -->
 
