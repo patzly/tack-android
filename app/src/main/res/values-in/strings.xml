@@ -212,7 +212,6 @@
   <string name="msg_installer_check_description">Silakan beli dan instal aplikasi pembuka kunci di Google Play. Terima kasih atas dukungannya!</string>
   <string name="msg_widget_prompt">Akses cepat ke lagu?</string>
   <string name="msg_widget_prompt_description">Tempatkan widget yang indah di layar beranda Anda.</string>
-
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Bar</string>
