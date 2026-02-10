@@ -39,9 +39,11 @@ import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.button.MaterialButtonToggleGroup.OnButtonCheckedListener;
 import com.google.android.material.color.DynamicColors;
 import com.google.android.material.divider.MaterialDivider;
+import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import xyz.zedler.patrick.tack.Constants.BEAT_MODE;
 import xyz.zedler.patrick.tack.Constants.CONTRAST;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
@@ -534,6 +536,21 @@ public class SettingsFragment extends BaseFragment
       ViewUtil.startIcon(binding.imageSettingsHaptic);
       getSharedPrefs().edit().putBoolean(PREF.HAPTIC, isChecked).apply();
       activity.getHapticUtil().setEnabled(isChecked);
+      if (!isChecked && activity.getMetronomeEngine() != null) {
+        String beatMode = activity.getMetronomeEngine().getBeatMode();
+        if (beatMode.equals(BEAT_MODE.ALL) || beatMode.equals(BEAT_MODE.VIBRATION)) {
+          Snackbar snackbar = activity.getSnackbar(
+              R.string.msg_beat_mode_warning, Snackbar.LENGTH_LONG
+          );
+          snackbar.setAction(R.string.action_apply, v -> {
+            activity.performHapticClick();
+            if (activity.getMetronomeEngine() != null) {
+              activity.getMetronomeEngine().setBeatMode(BEAT_MODE.SOUND);
+            }
+          });
+          activity.showSnackbar(snackbar);
+        }
+      }
     } else if (id == R.id.switch_settings_reduce_animations) {
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsReduceAnimations);

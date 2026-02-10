@@ -265,7 +265,9 @@
                 android:text="@string/settings_contrast_dynamic"
                 android:textColor="?attr/colorError"
                 android:paddingStart="0dp"
-                android:paddingEnd="16dp" />
+                android:paddingEnd="16dp"
+                android:fontFamily="@font/google_sans_flex_medium"
+                app:fontFamily="@font/google_sans_flex_medium" />
 
             </LinearLayout>
 

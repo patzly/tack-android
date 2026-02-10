@@ -227,6 +227,7 @@
   <string name="msg_installer_check_description">Please purchase and install the unlock app on Google Play. Thank you for your support!</string>
   <string name="msg_widget_prompt">Quick access to songs?</string>
   <string name="msg_widget_prompt_description">Place a beautiful widget on your home screen.</string>
+  <string name="msg_beat_mode_warning">Switch beat mode to sound-only as well?</string>
 
   <!-- OPTIONS -->
 
