@@ -421,6 +421,8 @@
   <string name="settings_flash_screen_subtle">Sutil</string>
   <string name="settings_flash_screen_strong">Intenso</string>
 
+  <string name="settings_flashlight">Piscar o Led de flash</string>
+
   <string name="settings_keep_awake">Manter a tela sempre ligafa</string>
   <string name="settings_keep_awake_description">Talvez gaste mais bateria</string>
   <string name="settings_keep_awake_always">Sempre</string>
