@@ -28,8 +28,9 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -44,8 +45,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.PlatformTextStyle
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,6 +63,7 @@ import androidx.wear.compose.material3.IconButtonDefaults
 import androidx.wear.compose.material3.MaterialTheme
 import androidx.wear.compose.material3.PickerState
 import androidx.wear.compose.material3.ScreenScaffold
+import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.rememberPickerState
 import androidx.wear.compose.material3.touchTargetAwareSize
 import androidx.wear.tooling.preview.devices.WearDevices
@@ -329,9 +336,22 @@ fun TempoCard(
     animationSpec = TweenSpec(durationMillis = if (mainState.reduceAnim) 0 else 250)
   )
 
+  val height = spToDp(spValue = if (isSmallScreen()) 44 else 56)
+  val width = spToDp(spValue = if (isSmallScreen()) 80 else 100)
+
+  val typefaceMedium = remember {
+    FontFamily(Font(R.font.google_sans_flex_medium))
+  }
+  val textStyle = MaterialTheme.typography.displayMedium.copy(
+    fontSize = if (isSmallScreen()) 30.sp else 38.sp,
+    fontFamily = typefaceMedium,
+    platformStyle = PlatformTextStyle(includeFontPadding = false)
+  )
+  val textColor = MaterialTheme.colorScheme.onSurface
+
   WrapContentCard(
     onClick = onClick,
-    modifier = modifier.wrapContentWidth(),
+    modifier = modifier.size(width, height),
     border = BorderStroke(2.dp, borderColor),
     shape = MaterialTheme.shapes.extraLarge,
     contentPadding = PaddingValues(0.dp)
@@ -347,26 +367,35 @@ fun TempoCard(
       label = "pickerAlpha",
       animationSpec = TweenSpec(durationMillis = if (mainState.reduceAnim) 0 else 300)
     )
-    val typefaceMedium = remember {
-      FontFamily(Font(R.font.google_sans_flex_medium))
+
+    Box(
+      modifier = Modifier.fillMaxSize(),
+      contentAlignment = Alignment.Center
+    ) {
+      Text(
+        text = buildAnnotatedString {
+          withStyle(style = SpanStyle(fontFeatureSettings = "tnum")) {
+            append(mainState.tempo.toString())
+          }
+        },
+        style = textStyle,
+        color = textColor.copy(alpha = if (pickerState.isScrollInProgress) 0f else pickerAlpha),
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+          .fillMaxWidth()
+          .wrapContentHeight()
+      )
+
+      TempoPicker(
+        state = pickerState,
+        modifier = Modifier.fillMaxSize(),
+        textColor = textColor,
+        textStyle = textStyle,
+        gradientRatio = if (gradientRatio > minRatio) gradientRatio else minRatio,
+        hapticFeedbackEnabled = !mainState.isPlaying ||
+            (!mainState.beatModeVibrate && !mainState.alwaysVibrate)
+      )
     }
-    TempoPicker(
-      state = pickerState,
-      modifier = Modifier
-        .graphicsLayer(alpha = pickerAlpha)
-        .size(
-          spToDp(spValue = if (isSmallScreen()) 80 else 100),
-          spToDp(spValue = if (isSmallScreen()) 44 else 56)
-        ),
-      textColor = MaterialTheme.colorScheme.onSurface,
-      textStyle = MaterialTheme.typography.displayMedium.copy(
-        fontSize = if (isSmallScreen()) 30.sp else 38.sp,
-        fontFamily = typefaceMedium
-      ),
-      gradientRatio = if (gradientRatio > minRatio) gradientRatio else minRatio,
-      hapticFeedbackEnabled = !mainState.isPlaying ||
-          (!mainState.beatModeVibrate && !mainState.alwaysVibrate)
-    )
   }
 }
 

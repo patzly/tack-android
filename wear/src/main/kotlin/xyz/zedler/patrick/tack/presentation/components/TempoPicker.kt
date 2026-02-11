@@ -60,7 +60,8 @@ fun TempoPicker(
   @FloatRange(from = 0.0, to = 0.5) gradientRatio: Float = PickerDefaults.GradientRatio,
   hapticFeedbackEnabled: Boolean = true
 ) {
-  val items = (Constants.TEMPO_MIN..Constants.TEMPO_MAX).toList()
+  val items = remember { (Constants.TEMPO_MIN..Constants.TEMPO_MAX).toList() }
+
   Picker(
     state = state,
     contentDescription = { "${items.getOrNull(state.selectedOptionIndex + 1) ?: ""}" },
@@ -133,7 +134,6 @@ private class PickerRotarySnapLayoutInfoProvider(
   override val currentItemIndex: Int
     get() = scalingLazyListState?.centerItemIndex ?: 0
 
-  /** An offset from the item centre. */
   override val currentItemOffset: Float
     get() = scalingLazyListState?.centerItemScrollOffset?.toFloat() ?: 0f
 
