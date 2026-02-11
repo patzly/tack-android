@@ -400,6 +400,8 @@
   <string name="settings_flash_screen_subtle">Dezent</string>
   <string name="settings_flash_screen_strong">Stark</string>
 
+  <string name="settings_flashlight">Taschenlampe aufblitzen lassen</string>
+
   <string name="settings_keep_awake">Bildschirm wach halten</string>
   <string name="settings_keep_awake_description">Kann zu erhöhtem Stromverbrauch führen</string>
   <string name="settings_keep_awake_always">Immer</string>
