@@ -47,6 +47,7 @@ import xyz.zedler.patrick.tack.Constants.BEAT_MODE;
 import xyz.zedler.patrick.tack.Constants.CONTRAST;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
+import xyz.zedler.patrick.tack.Constants.FLASHLIGHT;
 import xyz.zedler.patrick.tack.Constants.FLASH_SCREEN;
 import xyz.zedler.patrick.tack.Constants.KEEP_AWAKE;
 import xyz.zedler.patrick.tack.Constants.PREF;
@@ -61,6 +62,7 @@ import xyz.zedler.patrick.tack.databinding.FragmentSettingsBinding;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
 import xyz.zedler.patrick.tack.service.MetronomeService;
 import xyz.zedler.patrick.tack.util.DialogUtil;
+import xyz.zedler.patrick.tack.util.FlashlightUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.LocaleUtil;
 import xyz.zedler.patrick.tack.util.ShortcutUtil;
@@ -455,6 +457,29 @@ public class SettingsFragment extends BaseFragment
     binding.toggleSettingsFlashScreen.jumpDrawablesToCurrentState();
     binding.toggleSettingsFlashScreen.addOnButtonCheckedListener(this);
 
+    binding.linearSettingsFlashlight.setVisibility(
+        FlashlightUtil.hasFlash(activity) ? View.VISIBLE : View.GONE
+    );
+    binding.toggleSettingsFlashlight.removeOnButtonCheckedListener(this);
+    binding.buttonSettingsFlashlightSubtle.setVisibility(
+        FlashlightUtil.hasStrengthControl(activity) ? View.VISIBLE : View.GONE
+    );
+    int idFlashlight;
+    switch (getSharedPrefs().getString(PREF.FLASHLIGHT, DEF.FLASHLIGHT)) {
+      case FLASHLIGHT.SUBTLE:
+        idFlashlight = R.id.button_settings_flashlight_subtle;
+        break;
+      case FLASHLIGHT.STRONG:
+        idFlashlight = R.id.button_settings_flashlight_strong;
+        break;
+      default:
+        idFlashlight = R.id.button_settings_flashlight_off;
+        break;
+    }
+    binding.toggleSettingsFlashlight.check(idFlashlight);
+    binding.toggleSettingsFlashlight.jumpDrawablesToCurrentState();
+    binding.toggleSettingsFlashlight.addOnButtonCheckedListener(this);
+
     binding.toggleSettingsKeepAwake.removeOnButtonCheckedListener(this);
     int idKeepAwake;
     switch (getSharedPrefs().getString(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE)) {
@@ -623,6 +648,18 @@ public class SettingsFragment extends BaseFragment
       metronomeEngine.setFlashScreen(flashScreen);
       performHapticClick();
       ViewUtil.startIcon(binding.imageSettingsFlashScreen);
+    } else if (id == R.id.toggle_settings_flashlight) {
+      String flashlight;
+      if (checkedId == R.id.button_settings_flashlight_subtle) {
+        flashlight = FLASHLIGHT.SUBTLE;
+      } else if (checkedId == R.id.button_settings_flashlight_strong) {
+        flashlight = FLASHLIGHT.STRONG;
+      } else {
+        flashlight = FLASHLIGHT.OFF;
+      }
+      metronomeEngine.setFlashlight(flashlight);
+      performHapticClick();
+      ViewUtil.startIcon(binding.imageSettingsFlashlight);
     } else if (id == R.id.toggle_settings_keep_awake) {
       String keepAwake;
       if (checkedId == R.id.button_settings_keep_awake_while_playing) {

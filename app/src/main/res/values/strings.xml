@@ -413,6 +413,8 @@
   <string name="settings_flash_screen_subtle">Subtle</string>
   <string name="settings_flash_screen_strong">Strong</string>
 
+  <string name="settings_flashlight">Blink flashlight</string>
+
   <string name="settings_keep_awake">Keep screen awake</string>
   <string name="settings_keep_awake_description">May use more battery</string>
   <string name="settings_keep_awake_always">Always</string>

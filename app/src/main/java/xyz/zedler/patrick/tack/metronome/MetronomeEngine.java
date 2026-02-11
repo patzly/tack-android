@@ -43,6 +43,7 @@ import java.util.concurrent.Executors;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.BEAT_MODE;
 import xyz.zedler.patrick.tack.Constants.DEF;
+import xyz.zedler.patrick.tack.Constants.FLASHLIGHT;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
@@ -53,6 +54,7 @@ import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.entity.Song;
 import xyz.zedler.patrick.tack.database.relations.SongWithParts;
 import xyz.zedler.patrick.tack.model.MetronomeConfig;
+import xyz.zedler.patrick.tack.util.FlashlightUtil;
 import xyz.zedler.patrick.tack.util.HapticUtil;
 import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.ShortcutUtil;
@@ -68,6 +70,7 @@ public class MetronomeEngine {
   private final AudioEngine audioEngine;
   private final HapticUtil hapticUtil;
   private final ShortcutUtil shortcutUtil;
+  private final FlashlightUtil flashlightUtil;
   private final Set<MetronomeListener> listeners = Collections.synchronizedSet(new HashSet<>());
   private final ExecutorService executorService = Executors.newSingleThreadExecutor();
   private final Random random = new Random();
@@ -77,7 +80,7 @@ public class MetronomeEngine {
   private Handler tickHandler, latencyHandler, audioHandler;
   private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
   private SongWithParts currentSongWithParts;
-  private String beatMode, currentSongId, keepAwake, flashScreen;
+  private String beatMode, currentSongId, keepAwake, flashScreen, flashlight;
   private int currentPartIndex, muteCountDown, songsOrder;
   private int timerBarIndex, timerBeatIndex, timerSubIndex;
   private long tickIndex, tickIndexPoly, latency, countInStartTime, timerStartTime;
@@ -101,6 +104,8 @@ public class MetronomeEngine {
         sharedPrefs.getString(PREF.VIBRATION_INTENSITY, DEF.VIBRATION_INTENSITY)
     );
 
+    flashlightUtil = new FlashlightUtil(context);
+
     shortcutUtil = new ShortcutUtil(context);
 
     db = SongDatabase.getInstance(context.getApplicationContext());
@@ -116,6 +121,7 @@ public class MetronomeEngine {
     audioThread.quit();
     callbackThread.quit();
     audioEngine.destroy();
+    flashlightUtil.cleanup();
   }
 
   public void setToPreferences() {
@@ -125,6 +131,7 @@ public class MetronomeEngine {
     showElapsed = sharedPrefs.getBoolean(PREF.SHOW_ELAPSED, DEF.SHOW_ELAPSED);
     resetTimerOnStop = sharedPrefs.getBoolean(PREF.RESET_TIMER_ON_STOP, DEF.RESET_TIMER_ON_STOP);
     flashScreen = sharedPrefs.getString(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
+    flashlight = sharedPrefs.getString(PREF.FLASHLIGHT, DEF.FLASHLIGHT);
     keepAwake = sharedPrefs.getString(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
     songsOrder = sharedPrefs.getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER);
     tempoInputKeyboard = sharedPrefs.getBoolean(
@@ -902,6 +909,15 @@ public class MetronomeEngine {
     return flashScreen;
   }
 
+  public void setFlashlight(String strength) {
+    flashlight = strength;
+    sharedPrefs.edit().putString(PREF.FLASHLIGHT, strength).apply();
+  }
+
+  public String getFlashlight() {
+    return flashlight;
+  }
+
   public void setKeepAwake(String keepAwake) {
     this.keepAwake = keepAwake;
     sharedPrefs.edit().putString(PREF.KEEP_AWAKE, keepAwake).apply();
@@ -1483,6 +1499,10 @@ public class MetronomeEngine {
         switch (tick.type) {
           case TICK_TYPE.STRONG:
             hapticUtil.heavyClick(false);
+            if (!flashlight.equals(FLASHLIGHT.OFF)) {
+              float strength = flashlight.equals(FLASHLIGHT.STRONG) ? 1 : 0.15f;
+              flashlightUtil.flash(100, strength);
+            }
             break;
           case TICK_TYPE.SUB:
             hapticUtil.tick(false);
@@ -1492,6 +1512,10 @@ public class MetronomeEngine {
             break;
           default:
             hapticUtil.click(false);
+            if (!flashlight.equals(FLASHLIGHT.OFF)) {
+              float strength = flashlight.equals(FLASHLIGHT.STRONG) ? 1 : 0.15f;
+              flashlightUtil.flash(20, strength);
+            }
         }
       }
       synchronized (listeners) {
