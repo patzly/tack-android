@@ -11,9 +11,9 @@
 - Fixed: Bluetooth audio stopped unexpectedly and didn't resume after changing devices or after ending a call (Mobile and Wear OS)
 - Fixed: Cumulative timing drift over long sessions (thanks Paul!) (Mobile and Wear OS)
 - Fixed: Haptic beats incorrectly declared as touch feedback (Mobile and Wear OS)
+- Fixed: Crash when switching song parts in certain situations (Mobile)
+- Fixed: Tempo tap not respecting tempo limits (Mobile)
 - Fixed: Rapid tempo changes on tempo screen caused incorrect tempo (Wear OS)
-- Fixed: Crash when switching song parts in certain situations
-- Fixed: Tempo tap not respecting tempo limits
 
 ### 6.1.1
 
