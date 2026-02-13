@@ -212,6 +212,8 @@
   <string name="msg_installer_check_description">Google Play Storeで制限解除アプリを購入し、インストールしてください。ご支援をよろしくお願いします！</string>
   <string name="msg_widget_prompt">ソングに素早くアクセスしたいですか？</string>
   <string name="msg_widget_prompt_description">ホーム画面に素敵なウィジェットを配置しましょう。</string>
+  <string name="msg_beat_mode_warning">拍モードも音のみに切り替えますか？</string>
+
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">小節</string>
