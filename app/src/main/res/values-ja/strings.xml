@@ -212,6 +212,8 @@
   <string name="msg_installer_check_description">Google Play Storeで制限解除アプリを購入し、インストールしてください。ご支援をよろしくお願いします！</string>
   <string name="msg_widget_prompt">ソングに素早くアクセスしたいですか？</string>
   <string name="msg_widget_prompt_description">ホーム画面に素敵なウィジェットを配置しましょう。</string>
+  <string name="msg_beat_mode_warning">拍モードも音のみに切り替えますか？</string>
+
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">小節</string>
@@ -373,10 +375,12 @@
   <string name="settings_big_time_text_description">既定の文字サイズが小さすぎる場合に便利です</string>
 
   <string name="settings_flash_screen">画面明滅</string>
-  <string name="settings_flash_screen_description">拍に合せて明滅します</string>
+  <string name="settings_flash_screen_description">拍に合わせて明滅します</string>
   <string name="settings_flash_screen_off">オフ</string>
   <string name="settings_flash_screen_subtle">弱</string>
   <string name="settings_flash_screen_strong">強</string>
+
+  <string name="settings_flashlight">ライト点滅</string>
 
   <string name="settings_keep_awake">常に画面点灯</string>
   <string name="settings_keep_awake_description">バッテリー消費が増える可能性があります</string>
