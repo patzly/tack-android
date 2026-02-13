@@ -375,7 +375,7 @@
   <string name="settings_big_time_text_description">既定の文字サイズが小さすぎる場合に便利です</string>
 
   <string name="settings_flash_screen">画面明滅</string>
-  <string name="settings_flash_screen_description">拍に合せて明滅します</string>
+  <string name="settings_flash_screen_description">拍に合わせて明滅します</string>
   <string name="settings_flash_screen_off">オフ</string>
   <string name="settings_flash_screen_subtle">弱</string>
   <string name="settings_flash_screen_strong">強</string>
