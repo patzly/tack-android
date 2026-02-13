@@ -8,6 +8,7 @@
 - Improved: Overall haptic feedback experience (Mobile and Wear OS)
 - Fixed: Muted bars option not working correctly (Mobile)
 - Fixed: Polyrhythm option ignored in song parts (Mobile)
+- Fixed: Duplicated ticks when starting a song from the library page (thanks Selemba!) (Mobile)
 - Fixed: Bluetooth audio stopped unexpectedly and didn't resume after changing devices or after ending a call (Mobile and Wear OS)
 - Fixed: Cumulative timing drift over long sessions (thanks Paul!) (Mobile and Wear OS)
 - Fixed: Haptic beats incorrectly declared as touch feedback (Mobile and Wear OS)

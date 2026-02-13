@@ -259,12 +259,14 @@ public class SongsFragment extends BaseFragment {
           boolean permissionDenied = getSharedPrefs().getBoolean(
               PREF.PERMISSION_DENIED, false
           );
-          getMetronomeEngine().setCurrentSong(song.getSong().getId(), 0);
-          if (NotificationUtil.hasPermission(activity) || permissionDenied) {
-            getMetronomeEngine().start();
-          } else {
-            dialogUtilPermission.show();
-          }
+          getMetronomeEngine().setCurrentSong(
+              song.getSong().getId(), 0, false, () -> {
+                if (NotificationUtil.hasPermission(activity) || permissionDenied) {
+                  getMetronomeEngine().start();
+                } else {
+                  dialogUtilPermission.show();
+                }
+              });
         }
         performHapticClick();
       }

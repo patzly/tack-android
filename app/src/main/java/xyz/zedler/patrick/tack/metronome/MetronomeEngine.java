@@ -208,7 +208,7 @@ public class MetronomeEngine {
     setCurrentSong(songId, partIndex, startPlaying, null);
   }
 
-  private void setCurrentSong(
+  public void setCurrentSong(
       @NonNull String songId, int partIndex, boolean startPlaying, Runnable onDone
   ) {
     currentSongId = songId;
