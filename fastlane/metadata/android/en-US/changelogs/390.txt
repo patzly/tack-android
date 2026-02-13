@@ -1,0 +1,7 @@
+• New: "Vibration intensity" setting for haptic beats and effects
+• New: Portuguese (Brazil) translation (thanks to the contributors!)
+• Improved: Beats and subdivisions now automatically scroll to the current position
+• Fixed: Polyrhythm option ignored in song parts
+• Fixed: Bluetooth audio stopped unexpectedly and didn't resume after changing devices or after ending a call
+• Fixed: Cumulative timing drift over long sessions
+• Fixed: Crash when switching song parts in certain situations

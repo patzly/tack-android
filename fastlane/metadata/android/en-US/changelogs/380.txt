@@ -1,2 +1,2 @@
-- Improved: moved "support development" option to home screen for better discoverability
-- Fixed: wrong default value for beat-wise muting option
+• Improved: moved "support development" option to home screen for better discoverability
+• Fixed: wrong default value for beat-wise muting option
