@@ -380,6 +380,8 @@
   <string name="settings_flash_screen_subtle">弱</string>
   <string name="settings_flash_screen_strong">強</string>
 
+  <string name="settings_flashlight">ライト点滅</string>
+
   <string name="settings_keep_awake">常に画面点灯</string>
   <string name="settings_keep_awake_description">バッテリー消費が増える可能性があります</string>
   <string name="settings_keep_awake_always">常時</string>
