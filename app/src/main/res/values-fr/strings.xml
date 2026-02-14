@@ -324,9 +324,9 @@
   <string name="options_mute_random">Aléatoire pour les plus petites valeurs</string>
   <string name="options_subdivisions">Subdivisions</string>
   <plurals name="options_subdivisions_description">
-    <item quantity="one">%1$dpar temps</item>
-    <item quantity="many">%1$dpar temps</item>
-    <item quantity="other">%1$dpar temps</item>
+    <item quantity="one">%1$d par temps</item>
+    <item quantity="many">%1$d par temps</item>
+    <item quantity="other">%1$d par temps</item>
   </plurals>
   <string name="options_subdivisions_beats_muted">Battements en sourdine</string>
   <string name="options_swing">Swing</string>
