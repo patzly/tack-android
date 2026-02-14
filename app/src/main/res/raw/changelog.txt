@@ -1,5 +1,10 @@
+### 6.2.1
+
+- Fixed: "Blink flashlight" setting only worked with haptic beats enabled (Mobile)
+
 ### 6.2.0
 
+- New: "Blink flashlight" setting (Mobile)
 - New: "Vibration intensity" setting for haptic beats and effects (Mobile and Wear OS)
 - New: Portuguese (Brazil) translation (thanks to the contributors!)
 - New: Support for dynamic themes (Wear OS)

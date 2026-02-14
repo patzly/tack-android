@@ -978,6 +978,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
             break;
           case TICK_TYPE.SUB:
           case TICK_TYPE.MUTED:
+          case TICK_TYPE.BEAT_SUB_MUTED:
             color = colorFlashMuted;
             break;
           default:

@@ -1499,10 +1499,6 @@ public class MetronomeEngine {
         switch (tick.type) {
           case TICK_TYPE.STRONG:
             hapticUtil.heavyClick(false);
-            if (!flashlight.equals(FLASHLIGHT.OFF)) {
-              float strength = flashlight.equals(FLASHLIGHT.STRONG) ? 1 : 0.15f;
-              flashlightUtil.flash(100, strength);
-            }
             break;
           case TICK_TYPE.SUB:
             hapticUtil.tick(false);
@@ -1512,10 +1508,20 @@ public class MetronomeEngine {
             break;
           default:
             hapticUtil.click(false);
-            if (!flashlight.equals(FLASHLIGHT.OFF)) {
-              float strength = flashlight.equals(FLASHLIGHT.STRONG) ? 1 : 0.15f;
-              flashlightUtil.flash(20, strength);
-            }
+        }
+      }
+      if (!flashlight.equals(FLASHLIGHT.OFF)) {
+        float strength = flashlight.equals(FLASHLIGHT.STRONG) ? 0.8f : 0.15f;
+        switch (tick.type) {
+          case TICK_TYPE.STRONG:
+            flashlightUtil.flash(100, strength);
+            break;
+          case TICK_TYPE.SUB:
+          case TICK_TYPE.MUTED:
+          case TICK_TYPE.BEAT_SUB_MUTED:
+            break;
+          default:
+            flashlightUtil.flash(20, strength);
         }
       }
       synchronized (listeners) {
