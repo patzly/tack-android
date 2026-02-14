@@ -416,6 +416,8 @@
   <string name="settings_flash_screen_subtle">Sous titre</string>
   <string name="settings_flash_screen_strong">Fort</string>
 
+  <string name="settings_flashlight">Flash clignotant</string>
+
   <string name="settings_keep_awake">Maintenir l\'écran allumé</string>
   <string name="settings_keep_awake_description">Peut augmenter l’utilisation de la batterie</string>
   <string name="settings_keep_awake_always">Toujours</string>
