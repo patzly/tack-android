@@ -21,8 +21,15 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Setup Android NDK
+      - name: Setup Android SDK & NDK
         uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: 14742923
+
+      - name: Install CMake & NDK
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager "cmake;4.0.2" "ndk;29.0.14206865"
 
       - name: Decode Keystore
         run: |

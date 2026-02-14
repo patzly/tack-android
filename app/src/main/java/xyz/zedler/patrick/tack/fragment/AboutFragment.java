@@ -28,6 +28,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import xyz.zedler.patrick.tack.BuildConfig;
 import xyz.zedler.patrick.tack.Constants.PREF;
 import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.activity.MainActivity;
@@ -98,6 +99,8 @@ public class AboutFragment extends BaseFragment implements OnClickListener {
     });
     ViewUtil.setTooltipText(binding.buttonAboutBack, R.string.action_back);
     ViewUtil.setTooltipText(binding.buttonAboutMenu, R.string.action_more);
+
+    binding.textAboutVersion.setText(BuildConfig.VERSION_NAME);
 
     updateUnlockItem();
 

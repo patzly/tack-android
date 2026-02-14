@@ -49,10 +49,6 @@ android {
         }
     }
 
-    applicationVariants.configureEach { variant ->
-        variant.resValue("string", "versionName", variant.versionName)
-    }
-
     signingConfigs {
         release {
             storeFile = file(System.getenv("KEYSTORE_PATH") ?: "keine_datei")
@@ -108,7 +104,6 @@ android {
     externalNativeBuild {
         cmake {
             path "src/main/cpp/CMakeLists.txt"
-            version "4.0.2"
         }
     }
     ndkVersion '29.0.14206865'
