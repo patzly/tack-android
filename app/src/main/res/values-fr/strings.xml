@@ -216,6 +216,8 @@
   <string name="msg_installer_check_description">Vous pouvez acheter et installer l\'application de déverrouillage sur Google Play. Merci pour votre soutien !</string>
   <string name="msg_widget_prompt">Accès rapide aux musiques ?</string>
   <string name="msg_widget_prompt_description">Placez un magnifique widget sur votre écran d\'accueil.</string>
+  <string name="msg_beat_mode_warning">Passer également le battement en mode sonore uniquement ?</string>
+
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Mesures</string>
