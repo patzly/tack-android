@@ -210,7 +210,7 @@
   <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
   <string name="msg_restore_duplicate_name">%1$s(%2$d)</string>
   <string name="msg_songs_intro">Comment la bibliothéque de musique fonctionne t-elle</string>
-  <string name="msg_songs_intro_description">Vous pouvez enregistrer et organiser les configurations du métronome comme des parties d\'une musique. Il vous suffit de régler les commandes et les options du métronome selon vos préférences, puis d\'ajouter la configuration actuelle comme nouvelle partie d\'une mmusiqueu ou de modifier une partie existante.</string>
+  <string name="msg_songs_intro_description">Vous pouvez enregistrer et organiser les configurations du métronome comme des parties d\'une musique. Il vous suffit de régler les commandes et les options du métronome selon vos préférences, puis d\'ajouter la configuration actuelle comme nouvelle partie d\'une musique ou de modifier une partie existante.</string>
   <string name="msg_widget_description">Affichez vos morceaux et écoutez-les</string>
   <string name="msg_installer_check">Application déverrouillée non valide</string>
   <string name="msg_installer_check_description">Vous pouvez acheter et installer l\'application de déverrouillage sur Google Play. Merci pour votre soutien !</string>
