@@ -301,9 +301,9 @@
   </plurals>
   <string name="options_mute">Battements muets</string>
   <plurals name="options_mute_play_bars">
-    <item quantity="one">Jouer %1$dmesure</item>
-    <item quantity="many">Jouer %1$dmesures</item>
-    <item quantity="other">Jouer %1$dmesures</item>
+    <item quantity="one">Jouer %1$d mesure</item>
+    <item quantity="many">Jouer %1$d mesures</item>
+    <item quantity="other">Jouer %1$d mesures</item>
   </plurals>
   <plurals name="options_mute_play_seconds">
     <item quantity="one">Jouer %1$dseconde</item>
