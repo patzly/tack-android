@@ -306,9 +306,9 @@
     <item quantity="other">Jouer %1$d mesures</item>
   </plurals>
   <plurals name="options_mute_play_seconds">
-    <item quantity="one">Jouer %1$dseconde</item>
-    <item quantity="many">Jouer %1$dsecondes</item>
-    <item quantity="other">Jouer %1$dsecondes</item>
+    <item quantity="one">Jouer %1$d seconde</item>
+    <item quantity="many">Jouer %1$d secondes</item>
+    <item quantity="other">Jouer %1$d secondes</item>
   </plurals>
   <string name="options_mute_mute_beats">Mettre en sourdine %1$d%% de tous les battements</string>
   <plurals name="options_mute_mute_bars">
