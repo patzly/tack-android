@@ -205,7 +205,7 @@ public class CircleView extends View {
   private void setColorFraction(float fraction) {
     colorFraction = fraction;
 
-    if (paintFill != null) {
+    if (paintFill != null && getWidth() > 0) {
       paintFill.setShader(getGradient());
     }
 
