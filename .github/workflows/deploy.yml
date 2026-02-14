@@ -1,6 +1,8 @@
 name: Build App Module
 
 on:
+  workflow_dispatch:
+
   push:
     tags:
       - 'v*'
