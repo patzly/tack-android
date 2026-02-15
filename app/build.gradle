@@ -51,7 +51,8 @@ android {
 
     signingConfigs {
         release {
-            storeFile = file(System.getenv("KEYSTORE_PATH") ?: "keine_datei")
+            def keystorePath = System.getenv("KEYSTORE_PATH")
+            storeFile = keystorePath ? file(keystorePath) : null
             storePassword = System.getenv("KEYSTORE_PASSWORD")
             keyAlias = System.getenv("KEY_ALIAS")
             keyPassword = System.getenv("KEY_PASSWORD")
@@ -60,7 +61,11 @@ android {
 
     buildTypes {
         release {
-            signingConfig = signingConfigs.release
+            if (signingConfigs.release.storeFile?.exists()) {
+                signingConfig = signingConfigs.release
+            } else {
+                println "Keystore not found, building unsigned release."
+            }
             minifyEnabled = true
             shrinkResources = true
             proguardFiles {
