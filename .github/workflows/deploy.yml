@@ -1,11 +1,12 @@
 name: Build App Module
 
 on:
-  workflow_dispatch:
-
   push:
     tags:
       - 'v*'
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -36,8 +37,18 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
+      - name: Rename APK
+        run: |
+          mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/Tack-Android-${{ github.ref_name }}.apk
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: app/build/outputs/apk/release/*.apk
+
+      - name: Upload to Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: app/build/outputs/apk/release/*.apk
