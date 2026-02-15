@@ -38,7 +38,6 @@
   <string name="label_bpm_value">%1$d bpm</string>
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$s ms</string>
-  <string name="label_db">+%1$d dB</string>
   <string name="label_tempo_largo">Largo</string>
   <string name="label_tempo_larghetto">Larghetto</string>
   <string name="label_tempo_adagio">Adagio</string>
@@ -64,14 +63,10 @@
   <string name="action_remove_beat">Vuruş Sil</string>
   <string name="action_add_sub">Alt Bölüm Ekle</string>
   <string name="action_remove_sub">Alt Bölüm Sil</string>
-  <string name="action_clear_all">Hepsini Temizle</string>
   <string name="action_tempo_tap">Tempoyu Vur</string>
-  <string name="action_bookmark">Yer İşareti</string>
   <string name="action_beat_mode">Vuruş Modu</string>
   <string name="action_send_feedback">Geri Bildirim Gönder</string>
-  <string name="action_open_link">Harici Web Sitesini Aç</string>
   <string name="action_reset">Sıfırla</string>
-  <string name="action_deactivate_gain">Güçlendirmeyi Devre Dışı Bırak</string>
   <string name="action_recommend">Tavsiye Et</string>
   <string name="action_recommend_description">Tack\'i arkadaşlarınıza önerin</string>
   <string name="action_email">E-posta Gönder</string>
@@ -88,7 +83,6 @@
 
   <!-- MESSAGES -->
 
-  <string name="msg_bookmarks_max">Yer işareti sınırı aşıldı</string>
   <string name="msg_feedback">Harika bir uygulama çok zaman gerektirir ve kullanıcılarının geri bildirimleriyle yaşar.</string>
   <string name="msg_feedback_contact">Dilekleriniz, yorumlarınız veya sorularınız mı var? Benimle iletişime geçin!\nAksi takdirde Play Store\'da güzel bir inceleme bırakırsanız çok mutlu olurum.</string>
   <string name="msg_recommend">Bu harika metronom uygulamasını keşfet: \n%1$s</string>
@@ -96,7 +90,6 @@
   <string name="msg_service_running">Metronom servisi çalışıyor</string>
   <string name="msg_service_running_return">Tack\'e dönmek için dokunun</string>
   <string name="msg_service_description">Metronom yapılandırması ve oynatma için servis</string>
-  <string name="msg_connection_lost">Servis bağlantısı koptu, uygulama yeniden başlatılmalı</string>
   <string name="msg_reset">Hepsini sıfırla?</string>
   <string name="msg_reset_description">Uygulamayı, yer işaretleri ve ayarlar dahil tamamen sıfırlamak istediğinizden emin misiniz? Bu işlem geri alınamaz.</string>
   <string name="msg_reset_elapsed">Geçen süreyi sıfırla?</string>
@@ -256,17 +249,10 @@
 
   <string name="settings_gain">Ses yükseltme</string>
   <string name="settings_gain_description">dB cinsinden kazanç (sistem sesine ek olarak)</string>
-  <string name="settings_gain_warning">Dikkatli kullanın!</string>
   <string name="settings_gain_disclaimer">Yükseltme etkinleştirildiğinde, her başlangıçta bir uyarı görüntülenecektir. Geliştirici, olası herhangi bir zarardan sorumlu değildir.</string>
-
-  <string name="settings_hide_sub_controls">Kullanılmadığında alt bölüm kontrollerini gizle</string>
-  <string name="settings_hide_sub_controls_description">Seçeneklerde alt bölümler için ek kontrol gösterir</string>
 
   <string name="settings_active_beat">Geçerli vuruşu vurgula</string>
   <string name="settings_active_beat_description">Daha yavaş tempolar için yardımcı</string>
-
-  <string name="settings_always_vibrate">Her zaman titreş</string>
-  <string name="settings_always_vibrate_description">Sesle bile</string>
 
   <string name="settings_elapsed">Geçen süreyi göster</string>
   <string name="settings_elapsed_description">Ne kadar süre pratik yaptığınızı görün</string>

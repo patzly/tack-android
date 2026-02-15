@@ -38,7 +38,6 @@
   <string name="label_bpm_value">%1$d bpm</string>
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$s ms</string>
-  <string name="label_db">+%1$d dB</string>
   <string name="label_tempo_largo">Largo</string>
   <string name="label_tempo_larghetto">Larghetto</string>
   <string name="label_tempo_adagio">Adagio</string>
@@ -61,14 +60,10 @@
   <string name="action_remove_beat">Quitar pulso</string>
   <string name="action_add_sub">Agregar subdivisión</string>
   <string name="action_remove_sub">Quitar subdivisión</string>
-  <string name="action_clear_all">Limpiar todo</string>
   <string name="action_tempo_tap">Dar tempo</string>
-  <string name="action_bookmark">Guardar en marcadores</string>
   <string name="action_beat_mode">Modo</string>
   <string name="action_send_feedback">Enviar retroalimentación</string>
-  <string name="action_open_link">Abrir sitio web externo</string>
   <string name="action_reset">Inicializar</string>
-  <string name="action_deactivate_gain">Desactivar aumento de volumen</string>
   <string name="action_recommend">Recomendar</string>
   <string name="action_recommend_description">Dile a tus amigos sobre Tack</string>
   <string name="action_email">Enviar correo electrónico</string>
@@ -83,7 +78,6 @@
   <string name="action_reload">Cargar de nuevo</string>
   <!-- MESSAGES -->
 
-  <string name="msg_bookmarks_max">Ha alcanzado el límite de marcadores</string>
   <string name="msg_feedback">Una gran aplicación requiere mucho tiempo y vive de la retroalimentación de sus usuarios.</string>
   <string name="msg_feedback_contact">¿Tienes algún deseo, comentario o pregunta? Contáctame!\nPor otro lado, estaría muy feliz con una reseña positiva en la Play Store.</string>
   <string name="msg_recommend">Mira esta genial aplicación de metrónomo: \n%1$s</string>
@@ -91,7 +85,6 @@
   <string name="msg_service_running">El servicio del metrónomo está funcionando</string>
   <string name="msg_service_running_return">Toca para regresar a Tack</string>
   <string name="msg_service_description">Servicio de reproducción y configuración del metrónomo </string>
-  <string name="msg_connection_lost">Conexión del servicio perdida, es necesario reiniciar la app</string>
   <string name="msg_reset">¿Inicializar todo?</string>
   <string name="msg_reset_description">Realmente quieres inicializar la aplicación entera, incluyendo marcadores y configuración? Esto no es reversible.</string>
   <string name="msg_gain">¿Reproducir con aumento de volumen (Boost)?</string>
@@ -191,11 +184,7 @@
 
   <string name="settings_gain">Aumento de volumen (Boost)</string>
   <string name="settings_gain_description">Ganancia en dB (adicional al volumen del sistema)</string>
-  <string name="settings_gain_warning">¡Use con cuidado!</string>
   <string name="settings_gain_disclaimer">Cuando el aumento de volúmen está activado, se mostrará una precaución antes de cada inicio. El desarrollador no se hace responsable por cualquier potencial daño.</string>
-
-  <string name="settings_always_vibrate">Siempre vibrar</string>
-  <string name="settings_always_vibrate_description">Incluso con sonido</string>
 
   <string name="settings_elapsed">Mostrar tiempo transcurrido</string>
   <string name="settings_elapsed_description">Ve cuanto tiempo practicas</string>

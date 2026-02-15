@@ -38,7 +38,6 @@
   <string name="label_bpm_value">%1$d bpm</string>
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$s ms</string>
-  <string name="label_db">+%1$d dB</string>
   <string name="label_tempo_largo">Largo</string>
   <string name="label_tempo_larghetto">Larghetto</string>
   <string name="label_tempo_adagio">Adagio</string>
@@ -61,14 +60,10 @@
   <string name="action_remove_beat">박자 제거</string>
   <string name="action_add_sub">세분음(subdivision) 추가</string>
   <string name="action_remove_sub">세분음(subdivision) 삭제</string>
-  <string name="action_clear_all">초기화</string>
   <string name="action_tempo_tap">탭 탬포</string>
-  <string name="action_bookmark">북마크</string>
   <string name="action_beat_mode">박자 모드</string>
   <string name="action_send_feedback">피드백 보내기</string>
-  <string name="action_open_link">외부 웹페이지 열기</string>
   <string name="action_reset">초기화</string>
-  <string name="action_deactivate_gain">볼륨 증폭 비활성화</string>
   <string name="action_recommend">추천하기</string>
   <string name="action_recommend_description">Tack을 친구들에게 추천해주세요</string>
   <string name="action_email">메일 보내기</string>
@@ -83,7 +78,6 @@
   <string name="action_reload">새로 고침</string>
   <!-- MESSAGES -->
 
-  <string name="msg_bookmarks_max">북마크 한도에 도달 하였습니다.</string>
   <string name="msg_feedback">훌륭한 앱은 많은 시간과 노력이 필요하며, 사용자 여러분들의 피드백을 통해 발전합니다.</string>
   <string name="msg_feedback_contact">바라는점, 의견, 질문이 있으신가요? 언제든지 연락 주세요!\n그 외에 Play 스토어에 좋은 리뷰를 남겨주시면 정말 감사하겠습니다.\"</string>
   <string name="msg_recommend">이 멋들어진 메트로놈 앱을 확인해보세요: \n%1$s</string>
@@ -91,7 +85,6 @@
   <string name="msg_service_running">메트로놈 서비스가 실행중입니다</string>
   <string name="msg_service_running_return">Tack으로 돌아가려면 탭하세요</string>
   <string name="msg_service_description">메트로놈 설정 및 재생을 위한 서비스</string>
-  <string name="msg_connection_lost">서비스와의 연결이 끊겼습니다, 앱을 다시 시작 해주세요</string>
   <string name="msg_reset">모두 초기화 하시겠습니까?</string>
   <string name="msg_reset_description">정말 북마크를 포함한 모든 앱의 설정을 초기화 하시겠습니까? 이 작업은 되돌릴 수 없습니다.</string>
   <string name="msg_gain">볼륨을 증폭한 상태로 재생 하시겠습니까?</string>
@@ -183,11 +176,7 @@
 
   <string name="settings_gain">볼륨 증폭</string>
   <string name="settings_gain_description">dB단위 게인 (시스템 볼륨 이외)</string>
-  <string name="settings_gain_warning">주의하세요!</string>
   <string name="settings_gain_disclaimer">볼륨 증폭이 활성화되면, 매 시작시에 경고가 표시됩니다. 발생할 수 있는 어떠한 손해도 개발자는 책임을 지지 않습니다.</string>
-
-  <string name="settings_always_vibrate">항상 진동</string>
-  <string name="settings_always_vibrate_description">소리와 함께</string>
 
   <string name="settings_elapsed">진행시간 표시</string>
   <string name="settings_elapsed_description">연습을 얼마나 하였는지 확인해보세요</string>

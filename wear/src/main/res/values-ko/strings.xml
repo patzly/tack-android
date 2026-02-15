@@ -30,7 +30,6 @@
 
   <string name="wear_label_bpm_value">%1$d bpm</string>
   <string name="wear_label_ms">%1$s ms</string>
-  <string name="wear_label_db">+%1$d dB</string>
   <!-- ACTIONS -->
 
   <string name="wear_action_cancel">취소</string>
@@ -71,7 +70,6 @@
   <string name="wear_settings_always_vibrate">항상 진동</string>
   <string name="wear_settings_always_vibrate_description">소리와 함께</string>
 
-  <string name="wear_settings_strong_vibration">강한 진동</string>
   <string name="wear_settings_flash_screen">화면 번쩍이기</string>
   <string name="wear_settings_flash_screen_description">매 박자마다</string>
 

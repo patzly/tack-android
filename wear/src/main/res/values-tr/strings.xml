@@ -24,11 +24,12 @@
   <string name="wear_title_settings">Ayarlar</string>
   <string name="wear_title_beats">Vuruşlar</string>
   <string name="wear_title_notification_channel">Metronom servisi</string>
+
   <!-- LABELS -->
 
   <string name="wear_label_bpm_value">%1$d bpm</string>
   <string name="wear_label_ms">%1$s ms</string>
-  <string name="wear_label_db">+%1$d dB</string>
+
   <!-- ACTIONS -->
 
   <string name="wear_action_cancel">İptal</string>
@@ -45,6 +46,7 @@
   <string name="wear_action_beat_mode">Vuruş modu</string>
   <string name="wear_action_retry">Tekrar dene</string>
   <string name="wear_msg_gain">Ses artışıyla oynat?</string>
+
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">Vuruş sesi</string>

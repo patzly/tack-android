@@ -110,7 +110,6 @@
   <string name="action_beat_mode">Režim metronomu</string>
   <string name="action_send_feedback">Poslat zpětnou vazbu</string>
   <string name="action_reset">Resetovat</string>
-  <string name="action_deactivate_gain">Deaktivovat zesílení</string>
   <string name="action_recommend">Doporučit</string>
   <string name="action_recommend_description">Řekni o apce svým kámošům</string>
   <string name="action_email">Poslat vývojáři e-mail</string>

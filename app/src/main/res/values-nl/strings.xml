@@ -105,7 +105,6 @@
   <string name="action_beat_mode">Tel stand</string>
   <string name="action_send_feedback">Feedback versturen</string>
   <string name="action_reset">Opnieuw instellen</string>
-  <string name="action_deactivate_gain">Boost deactiveren</string>
   <string name="action_recommend">Aandbevelen</string>
   <string name="action_recommend_description">Vertel je vrienden over Tack</string>
   <string name="action_email">Verstuur e-mail</string>
