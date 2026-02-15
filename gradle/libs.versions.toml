@@ -64,5 +64,4 @@ compose-constraintlayout = { group = "androidx.constraintlayout", name = "constr
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 navigation-safeargs = { id = "androidx.navigation.safeargs", version.ref = "navigation" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
