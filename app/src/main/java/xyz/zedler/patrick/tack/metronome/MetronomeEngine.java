@@ -618,6 +618,13 @@ public class MetronomeEngine {
           return;
         }
 
+        if (tickIndex == 0) {
+          // compensate handler initialization latency
+          long now = System.currentTimeMillis();
+          nextScheduleTime = now;
+          nextPolyScheduleTime = now;
+        }
+
         // first calculate muted state
         long beatIndex = config.usePolyrhythm()
             ? tickIndex
