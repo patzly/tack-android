@@ -1,7 +1,8 @@
 ### 6.2.1
 
+- Improved: Audio engine performance and stability (Mobile and Wear OS)
 - Fixed: "Blink flashlight" setting only worked with haptic beats enabled (Mobile)
-- Fixed: Timing delay on the first beat
+- Fixed: Timing delay on the first beat (Mobile and Wear OS)
 
 ### 6.2.0
 

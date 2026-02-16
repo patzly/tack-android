@@ -47,7 +47,7 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
     }
   }
 
-  bool init(bool avoidInitialFade) {
+  bool init() {
     oboe::AudioStreamBuilder builder;
     builder.setDirection(oboe::Direction::Output)
         ->setPerformanceMode(oboe::PerformanceMode::LowLatency)
@@ -76,22 +76,13 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
     // use real sample rate reported by stream
     mSampleRate = mStream->getSampleRate();
 
-    // quick start/stop to avoid initial fade-in
-    if (avoidInitialFade) {
-      bool success = start();
-      if (success) {
-        usleep(200 * 1000);
-        stop();
-      }
-    }
-
     return true;
   }
 
   bool start() {
     if (!mStream) {
       LOGE("Stream was null, attempting to re-initialize");
-      if (!init(false)) return false;
+      if (!init()) return false;
     }
 
     constexpr int64_t kTimeoutNanos = 1 * 1000 * 1000 * 1000; // 1 second
@@ -103,7 +94,7 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
       mStream->close();
       mStream.reset();
 
-      if (init(true)) {
+      if (init()) {
         result = mStream->start(kTimeoutNanos);
         if (result == oboe::Result::OK) {
           LOGE("Stream recovered successfully.");
@@ -387,7 +378,7 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
       mStream.reset();
     }
 
-    if (init(false) && mIsPlaying.load()) {
+    if (init() && mIsPlaying.load()) {
       if (mIsPlaying.load()) {
         oboe::Result result = mStream->start();
         if (result != oboe::Result::OK) {
@@ -448,7 +439,7 @@ Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeDestroy(
 JNIEXPORT jboolean JNICALL
 Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeInit(
     JNIEnv *env, jobject jEngine, jlong handle) {
-  return reinterpret_cast<OboeAudioEngine *>(handle)->init(true);
+  return reinterpret_cast<OboeAudioEngine *>(handle)->init();
 }
 
 JNIEXPORT jboolean JNICALL

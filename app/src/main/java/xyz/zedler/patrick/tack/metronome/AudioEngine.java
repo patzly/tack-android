@@ -30,6 +30,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RawRes;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.SOUND;
 import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
@@ -47,14 +51,17 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   private static final int NATIVE_TICK_TYPE_STRONG = 1;
   private static final int NATIVE_TICK_TYPE_NORMAL = 2;
   private static final int NATIVE_TICK_TYPE_SUB = 3;
+  private static final long STREAM_DELAY_SECONDS = 60;
 
   private final Context context;
   private final AudioManager audioManager;
   private final AudioListener listener;
+  private final ScheduledExecutorService executor;
   private long engineHandle;
   private int gain;
-  private volatile boolean playing;
+  private volatile boolean playing, streamRunning;
   private boolean muted, ignoreFocus;
+  private ScheduledFuture<?> delayedStopTask;
 
   private native long nativeCreate();
   private native void nativeDestroy(long handle);
@@ -73,22 +80,33 @@ public class AudioEngine implements OnAudioFocusChangeListener {
 
     audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
+    executor = Executors.newSingleThreadScheduledExecutor();
+
     engineHandle = nativeCreate();
     if (engineHandle == 0) {
       Log.e(TAG, "Failed to create Oboe engine");
       return;
     }
-    boolean success = nativeInit(engineHandle);
-    if (!success) {
+    boolean initSuccess = nativeInit(engineHandle);
+    if (!initSuccess) {
       Log.e(TAG, "Failed to init Oboe audio stream");
       return;
     }
 
     setSound(DEF.SOUND);
     setGain(DEF.GAIN);
+
+    boolean startSuccess = nativeStart(engineHandle);
+    if (startSuccess) {
+      streamRunning = true;
+      scheduleStreamShutdown();
+    } else {
+      Log.e(TAG, "Failed to warm up Oboe audio stream");
+    }
   }
 
   public void destroy() {
+    executor.shutdownNow();
     stop();
     if (isInitialized()) {
       nativeDestroy(engineHandle);
@@ -97,50 +115,59 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   }
 
   public void play() {
-    if (playing || !isInitialized()) {
+    if (!isInitialized()) {
       return;
     }
-    boolean success = nativeStart(engineHandle);
-    if (success) {
+
+    cancelDelayedStop();
+
+    if (!streamRunning) {
+      boolean success = nativeStart(engineHandle);
+      if (success) {
+        streamRunning = true;
+      } else {
+        Log.e(TAG, "Failed to start Oboe audio stream");
+        return;
+      }
+    }
+
+    if (!playing) {
       playing = true;
       requestAudioFocus();
-    } else {
-      Log.e(TAG, "Failed to start Oboe engine");
     }
   }
 
   public void stop() {
-    if (!playing || !isInitialized()) {
+    if (!isInitialized()) {
       return;
     }
+    cancelDelayedStop();
+
     boolean success = nativeStop(engineHandle);
     if (success) {
+      streamRunning = false;
       playing = false;
+
       if (!ignoreFocus) {
         audioManager.abandonAudioFocus(this);
       }
-      listener.onAudioStop();
     } else {
       Log.e(TAG, "Failed to stop Oboe engine");
     }
   }
 
-  private void requestAudioFocus() {
-    if (ignoreFocus) {
+  public void scheduleDelayedStop() {
+    if (!playing) {
       return;
     }
-    if (VERSION.SDK_INT >= VERSION_CODES.O) {
-      AudioFocusRequest request = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-          .setAudioAttributes(AudioUtil.getAttributes())
-          .setWillPauseWhenDucked(true)
-          .setOnAudioFocusChangeListener(this)
-          .build();
-      audioManager.requestAudioFocus(request);
-    } else {
-      audioManager.requestAudioFocus(
-          this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN
-      );
+    playing = false;
+
+    if (!ignoreFocus) {
+      audioManager.abandonAudioFocus(this);
     }
+
+    listener.onAudioStop();
+    scheduleStreamShutdown();
   }
 
   @Override
@@ -293,6 +320,46 @@ public class AudioEngine implements OnAudioFocusChangeListener {
       return newData;
     } else {
       return originalData;
+    }
+  }
+
+  private void scheduleStreamShutdown() {
+    if (!streamRunning) {
+      return;
+    }
+
+    try {
+      delayedStopTask = executor.schedule(() -> {
+        if (!playing && streamRunning) {
+          stop();
+        }
+      }, STREAM_DELAY_SECONDS, TimeUnit.SECONDS);
+    } catch (Exception e) {
+      Log.e(TAG, "scheduleStreamShutdown: failed to schedule stream stop", e);
+    }
+  }
+
+  private void cancelDelayedStop() {
+    if (delayedStopTask != null && !delayedStopTask.isDone()) {
+      delayedStopTask.cancel(false);
+    }
+  }
+
+  private void requestAudioFocus() {
+    if (ignoreFocus) {
+      return;
+    }
+    if (VERSION.SDK_INT >= VERSION_CODES.O) {
+      AudioFocusRequest request = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+          .setAudioAttributes(AudioUtil.getAttributes())
+          .setWillPauseWhenDucked(true)
+          .setOnAudioFocusChangeListener(this)
+          .build();
+      audioManager.requestAudioFocus(request);
+    } else {
+      audioManager.requestAudioFocus(
+          this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN
+      );
     }
   }
 

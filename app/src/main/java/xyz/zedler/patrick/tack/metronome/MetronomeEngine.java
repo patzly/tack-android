@@ -494,7 +494,7 @@ public class MetronomeEngine {
     removeHandlerCallbacks();
 
     playing = false;
-    audioHandler.post(audioEngine::stop);
+    audioHandler.post(audioEngine::scheduleDelayedStop);
     isCountingIn = false;
 
     synchronized (listeners) {
