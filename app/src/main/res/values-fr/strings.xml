@@ -65,8 +65,8 @@
   <string name="label_part_edit">Editer la partie %1$d</string>
   <string name="label_part_no_duration">Aucune durée</string>
   <plurals name="label_parts_count">
-    <item quantity="one">%1$dpartie</item>
-    <item quantity="many">%1$dparties</item>
+    <item quantity="one">%1$d partie</item>
+    <item quantity="many">%1$d parties</item>
     <item quantity="other">%1$d parties</item>
   </plurals>
   <string name="label_song_looped">en boucle</string>
