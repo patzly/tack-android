@@ -155,8 +155,6 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
         mReadIndexLocal[i] = 0;
         mPrevLocalTickToPlay[i] = -1;
       }
-      memset(outputBuffer, 0, numFrames * sizeof(float));
-      return oboe::DataCallbackResult::Continue;
     }
 
     // calculate gain
