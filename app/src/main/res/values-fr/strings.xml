@@ -296,8 +296,8 @@
   </plurals>
   <plurals name="options_timer_description_minutes">
     <item quantity="one">Arrêter après %1$d minute</item>
-    <item quantity="many">Arrêter après%1$d minutes</item>
-    <item quantity="other">Arrêter après%1$d minutes</item>
+    <item quantity="many">Arrêter après %1$d minutes</item>
+    <item quantity="other">Arrêter après %1$d minutes</item>
   </plurals>
   <string name="options_mute">Battements muets</string>
   <plurals name="options_mute_play_bars">
