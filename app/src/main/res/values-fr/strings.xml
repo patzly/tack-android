@@ -251,8 +251,8 @@
   </plurals>
   <string name="options_inactive">Inactif</string>
   <plurals name="options_beats_description">
-    <item quantity="one">%1$dpar mesure</item>
-    <item quantity="many">%1$dpar mesure</item>
+    <item quantity="one">%1$d par mesure</item>
+    <item quantity="many">%1$d par mesure</item>
     <item quantity="other">%1$d par mesure</item>
   </plurals>
   <string name="options_count_in">Prise en compte</string>
