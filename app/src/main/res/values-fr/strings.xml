@@ -290,9 +290,9 @@
     <item quantity="other">Arrêter après %1$d mesures</item>
   </plurals>
   <plurals name="options_timer_description_seconds">
-    <item quantity="one">Arrêter après%1$dseconde</item>
-    <item quantity="many">Arrêter après%1$dsecondes</item>
-    <item quantity="other">Arrêter après%1$dsecondes</item>
+    <item quantity="one">Arrêter après %1$d seconde</item>
+    <item quantity="many">Arrêter après %1$d secondes</item>
+    <item quantity="other">Arrêter après %1$d secondes</item>
   </plurals>
   <plurals name="options_timer_description_minutes">
     <item quantity="one">Arrêter après %1$d minute</item>
