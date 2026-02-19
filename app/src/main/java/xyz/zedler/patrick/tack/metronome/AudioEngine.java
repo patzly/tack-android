@@ -95,14 +95,6 @@ public class AudioEngine implements OnAudioFocusChangeListener {
 
     setSound(DEF.SOUND);
     setGain(DEF.GAIN);
-
-    boolean startSuccess = nativeStart(engineHandle);
-    if (startSuccess) {
-      streamRunning = true;
-      scheduleStreamShutdown();
-    } else {
-      Log.e(TAG, "Failed to warm up Oboe audio stream");
-    }
   }
 
   public void destroy() {
@@ -112,6 +104,24 @@ public class AudioEngine implements OnAudioFocusChangeListener {
       nativeDestroy(engineHandle);
       engineHandle = 0;
     }
+  }
+
+  public void warmUp() {
+    if (!isInitialized()) {
+      return;
+    }
+    cancelDelayedStop();
+
+    if (!streamRunning) {
+      boolean success = nativeStart(engineHandle);
+      if (success) {
+        streamRunning = true;
+      } else {
+        Log.e(TAG, "Failed to warm up Oboe audio stream");
+      }
+    }
+
+    scheduleStreamShutdown();
   }
 
   public void play() {

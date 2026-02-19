@@ -318,6 +318,12 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
     if (current != null) {
       current.updateMetronomeControls(false);
     }
+
+    // warm up Oboe stream to avoid delay when starting the next time
+    MetronomeEngine metronomeEngine = getMetronomeEngine();
+    if (metronomeEngine != null) {
+      metronomeEngine.warmUpAudio();
+    }
   }
 
   @Override

@@ -124,6 +124,10 @@ public class MetronomeEngine {
     flashlightUtil.cleanup();
   }
 
+  public void warmUpAudio() {
+    audioEngine.warmUp();
+  }
+
   public void setToPreferences() {
     config.setToPreferences(sharedPrefs);
 
