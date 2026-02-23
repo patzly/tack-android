@@ -69,6 +69,6 @@ Thanks for your contributions!
 
 ## License
 
-Copyright &copy; 2020-2025 Patrick Zedler. All rights reserved.
+Copyright &copy; 2020-2026 Patrick Zedler. All rights reserved.
 
 [GNU General Public License version 3](https://www.gnu.org/licenses/gpl.txt)
