@@ -23,3 +23,10 @@ plugins {
     alias(libs.plugins.navigation.safeargs) apply false
     alias(libs.plugins.compose.compiler) apply false
 }
+
+ext {
+    keystoreFile = file(System.getenv("KEYSTORE_FILE") ?: "release.keystore")
+    keystorePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+    keyAlias = System.getenv("KEY_ALIAS") ?: ""
+    keyPassword = System.getenv("KEY_PASSWORD") ?: ""
+}

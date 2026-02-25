@@ -1,0 +1,144 @@
+name: Build and Release Android Apps
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      KEYSTORE_FILE: release.keystore
+      KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up Gradle
+        uses: gradle/gradle-build-action@v3
+
+      - name: Set up CMake 4.0.2
+        uses: jwlawson/actions-setup-cmake@v2
+        with:
+          cmake-version: '4.0.2'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install NDK 29.0.14206865
+        run: sdkmanager "ndk;29.0.14206865"
+
+      - name: Configure NDK environment
+        run: |
+          echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/29.0.14206865" >> $GITHUB_ENV
+          echo "ANDROID_NDK_ROOT=$ANDROID_HOME/ndk/29.0.14206865" >> $GITHUB_ENV
+          echo "PATH=$ANDROID_HOME/ndk/29.0.14206865:$PATH" >> $GITHUB_ENV
+
+      - name: Decode Keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > release.keystore
+
+      # --- Build ---
+      - name: Build App
+        run: ./gradlew :app:assembleRelease :app:assembleDebug
+
+      - name: Build Wear
+        run: ./gradlew :wear:assembleRelease :wear:assembleDebug
+
+      # Upload Artifact
+      - name: Upload App Release Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: app/build/outputs/apk/release/*.apk
+
+      - name: Upload Wear Release Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wear-release
+          path: wear/build/outputs/apk/release/*.apk
+
+      - name: Upload App Debug Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: app/build/outputs/apk/debug/*.apk
+
+      - name: Upload Wear Debug Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: wear-debug
+          path: wear/build/outputs/apk/debug/*.apk
+
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download App Release Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release
+          path: artifacts/app/release
+
+      - name: Download Wear Release Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: wear-release
+          path: artifacts/wear/release
+
+      - name: Download App Debug Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-debug
+          path: artifacts/app/debug
+
+      - name: Download Wear Debug Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: wear-debug
+          path: artifacts/wear/debug
+
+      - name: Check if pre-release exists
+        id: check_prerelease
+        run: |
+          if gh release view pre-release >/dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Delete old pre-release
+        if: steps.check_prerelease.outputs.exists == 'true'
+        run: gh release delete pre-release -y --cleanup-tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create pre-release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: pre-release
+          prerelease: true
+          files: |
+            artifacts/app/release/*.apk
+            artifacts/wear/release/*.apk
+            artifacts/app/debug/*.apk
+            artifacts/wear/debug/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
