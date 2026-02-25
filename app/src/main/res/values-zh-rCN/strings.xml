@@ -325,6 +325,7 @@
   <string name="settings_haptic">触觉效果</string>
   <string name="settings_haptic_description">除了振动模式下的触觉节拍外</string>
 
+  <string name="settings_vibration_intensity">震动强度</string>
   <!-- This is the name for a vibration intensity: User can choose between soft or strong intensity or system-set (automatic or shorter auto) intensity. The button width should be as dense as possible. -->
   <string name="settings_vibration_intensity_auto">自动</string>
   <string name="settings_vibration_intensity_strong">强</string>
