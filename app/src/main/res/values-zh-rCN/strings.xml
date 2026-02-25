@@ -374,7 +374,7 @@
   <string name="settings_big_time_text">使用大字号显示时间</string>
   <string name="settings_big_time_text_description">如果默认字体大小不够大的话会很有用</string>
 
-  <string name="settings_flash_screen">屏幕闪烁</string>
+  <string name="settings_flash_screen">闪烁屏幕</string>
   <string name="settings_flash_screen_description">在每个节拍</string>
   <string name="settings_flash_screen_off">关闭</string>
   <string name="settings_flash_screen_subtle">细微</string>
