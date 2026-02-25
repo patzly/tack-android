@@ -378,6 +378,8 @@
   <string name="settings_flash_screen_subtle">细微</string>
   <string name="settings_flash_screen_strong">强</string>
 
+  <string name="settings_flashlight">闪烁闪光灯</string>
+
   <string name="settings_keep_awake">保持屏幕唤醒</string>
   <string name="settings_keep_awake_description">可能会消耗更多电量</string>
   <string name="settings_keep_awake_always">总是</string>
