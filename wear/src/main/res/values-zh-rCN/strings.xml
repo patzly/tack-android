@@ -96,6 +96,7 @@
 
   <string name="wear_settings_vibration_intensity">震动强度</string>
   <string name="wear_settings_vibration_intensity_auto">自动</string>
+  <string name="wear_settings_vibration_intensity_soft">轻</string>
   <string name="wear_settings_vibration_intensity_strong">强</string>
 
   <string name="wear_settings_flash_screen">屏幕闪烁</string>
