@@ -212,6 +212,8 @@
   <string name="msg_installer_check_description">请在 Google Play 上购买并安装解锁应用。谢谢你的支持！</string>
   <string name="msg_widget_prompt">快速访问你的曲目？</string>
   <string name="msg_widget_prompt_description">在你的桌面放置一个漂亮的小部件。</string>
+  <string name="msg_beat_mode_warning">是否切换节拍模式为仅声音?</string>
+
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">小节</string>
