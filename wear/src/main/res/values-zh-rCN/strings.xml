@@ -94,6 +94,7 @@
   <string name="wear_settings_always_vibrate">总是振动</string>
   <string name="wear_settings_always_vibrate_description">即使有声音</string>
 
+  <string name="wear_settings_vibration_intensity">震动强度</string>
   <string name="wear_settings_vibration_intensity_auto">自动</string>
   <string name="wear_settings_vibration_intensity_strong">强</string>
 
