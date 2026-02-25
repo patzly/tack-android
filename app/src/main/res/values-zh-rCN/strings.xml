@@ -329,7 +329,7 @@
   <string name="settings_vibration_intensity_description">用于触觉感知节拍和效果</string>
   <!-- This is the name for a vibration intensity: User can choose between soft or strong intensity or system-set (automatic or shorter auto) intensity. The button width should be as dense as possible. -->
   <string name="settings_vibration_intensity_auto">自动</string>
-  <string name="settings_vibration_intensity_soft">轻</string>
+  <string name="settings_vibration_intensity_soft">弱</string>
   <string name="settings_vibration_intensity_strong">强</string>
 
   <string name="settings_reduce_animations">减少动画</string>
