@@ -402,22 +402,22 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
   std::shared_ptr<oboe::AudioStream> mStream;
 
   // which tick type is assigned to each voice (-1 = free)
-  std::atomic<int32_t> mTickToPlay[kNumVoices];
+  std::atomic<int32_t> mTickToPlay[kNumVoices]{};
   std::atomic<int32_t> mTickCounter{0};
 
   // pending tick requests for sample-accurate start (-1 = none)
-  std::atomic<int32_t> mPendingTickType[kNumVoices];
+  std::atomic<int32_t> mPendingTickType[kNumVoices]{};
 
   // read indices owned by audio thread only (not atomic)
-  int32_t mReadIndexLocal[kNumVoices];
-  int32_t mPrevLocalTickToPlay[kNumVoices];
+  int32_t mReadIndexLocal[kNumVoices]{};
+  int32_t mPrevLocalTickToPlay[kNumVoices]{};
 
-  std::atomic<int32_t> mNextVoiceToSteal;
-  std::atomic<bool> mResetRequested { true };
+  std::atomic<int32_t> mNextVoiceToSteal = 0;
+  std::atomic<bool> mResetRequested = true;
 
-  std::atomic<float> mMasterVolume;
-  std::atomic<float> mDuckingVolume;
-  std::atomic<bool> mMuted;
+  std::atomic<float> mMasterVolume = 1.0f;
+  std::atomic<float> mDuckingVolume = 1.0f;
+  std::atomic<bool> mMuted = false;
 
   // buffers swapped atomically (no locks)
   std::shared_ptr<std::vector<float>> mTickStrongPtr;

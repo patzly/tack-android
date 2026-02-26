@@ -57,6 +57,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
   private final AudioManager audioManager;
   private final AudioListener listener;
   private final ScheduledExecutorService executor;
+  private final AudioFocusRequest audioFocusRequest;
   private long engineHandle;
   private int gain;
   private volatile boolean playing, streamRunning;
@@ -81,6 +82,16 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     audioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
     executor = Executors.newSingleThreadScheduledExecutor();
+
+    if (VERSION.SDK_INT >= VERSION_CODES.O) {
+      audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+          .setAudioAttributes(AudioUtil.getAttributes())
+          .setWillPauseWhenDucked(true)
+          .setOnAudioFocusChangeListener(this)
+          .build();
+    } else {
+      audioFocusRequest = null;
+    }
 
     engineHandle = nativeCreate();
     if (engineHandle == 0) {
@@ -158,7 +169,9 @@ public class AudioEngine implements OnAudioFocusChangeListener {
       streamRunning = false;
       playing = false;
 
-      if (!ignoreFocus) {
+      if (!ignoreFocus && VERSION.SDK_INT >= VERSION_CODES.O) {
+        audioManager.abandonAudioFocusRequest(audioFocusRequest);
+      } else if (!ignoreFocus) {
         audioManager.abandonAudioFocus(this);
       }
     } else {
@@ -172,7 +185,9 @@ public class AudioEngine implements OnAudioFocusChangeListener {
     }
     playing = false;
 
-    if (!ignoreFocus) {
+    if (!ignoreFocus && VERSION.SDK_INT >= VERSION_CODES.O) {
+      audioManager.abandonAudioFocusRequest(audioFocusRequest);
+    } else if (!ignoreFocus) {
       audioManager.abandonAudioFocus(this);
     }
 
@@ -360,12 +375,7 @@ public class AudioEngine implements OnAudioFocusChangeListener {
       return;
     }
     if (VERSION.SDK_INT >= VERSION_CODES.O) {
-      AudioFocusRequest request = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-          .setAudioAttributes(AudioUtil.getAttributes())
-          .setWillPauseWhenDucked(true)
-          .setOnAudioFocusChangeListener(this)
-          .build();
-      audioManager.requestAudioFocus(request);
+      audioManager.requestAudioFocus(audioFocusRequest);
     } else {
       audioManager.requestAudioFocus(
           this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN

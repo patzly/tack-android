@@ -1,4 +1,4 @@
-<img src="assets/header.png" />
+<img src="assets/header.png" alt="Tack logo in the foreground against an out-of-focus band rehearsal room" />
 
 # Tack Android
 

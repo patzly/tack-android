@@ -48,6 +48,11 @@ class AudioEngine(
   private var engineHandle: Long = 0
   private val executor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
   private var delayedStopTask: ScheduledFuture<*>? = null
+  private val audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+    .setAudioAttributes(AudioUtil.getAttributes())
+    .setWillPauseWhenDucked(true)
+    .setOnAudioFocusChangeListener(this)
+    .build()
 
   @Volatile
   private var isPlaying: Boolean = false
@@ -150,7 +155,7 @@ class AudioEngine(
       isPlaying = false
 
       if (!ignoreFocus) {
-        audioManager!!.abandonAudioFocus(this)
+        audioManager!!.abandonAudioFocusRequest(audioFocusRequest)
       }
     } else {
       Log.e(TAG, "Failed to stop Oboe engine")
@@ -162,7 +167,7 @@ class AudioEngine(
     isPlaying = false
 
     if (!ignoreFocus) {
-      audioManager!!.abandonAudioFocus(this)
+      audioManager!!.abandonAudioFocusRequest(audioFocusRequest)
     }
 
     listener.onAudioStop()
@@ -307,7 +312,6 @@ class AudioEngine(
       delayedStopTask = executor.schedule({
         if (!isPlaying && isStreamRunning) {
           stop()
-          Log.i(TAG, "scheduleStreamShutdown: hello")
         }
       }, STREAM_DELAY_SECONDS, TimeUnit.SECONDS)
     } catch (e: Exception) {
@@ -316,21 +320,15 @@ class AudioEngine(
   }
 
   private fun cancelDelayedStop() {
-    if (delayedStopTask != null && !delayedStopTask!!.isDone()) {
+    if (delayedStopTask != null && !delayedStopTask!!.isDone) {
       delayedStopTask!!.cancel(false)
-      Log.i(TAG, "cancelDelayedStop: hello")
     }
   }
 
   private fun requestAudioFocus() {
     if (ignoreFocus || audioManager == null) return
 
-    val request = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-      .setAudioAttributes(AudioUtil.getAttributes())
-      .setWillPauseWhenDucked(true)
-      .setOnAudioFocusChangeListener(this)
-      .build()
-    audioManager.requestAudioFocus(request)
+    audioManager.requestAudioFocus(audioFocusRequest)
   }
 
   // --- Native Methods ---
@@ -352,9 +350,9 @@ class AudioEngine(
   }
 
   private data class SoundConfig(
-    @RawRes val normal: Int,
-    @RawRes val strong: Int,
-    @RawRes val sub: Int,
+    @get:RawRes val normal: Int,
+    @get:RawRes val strong: Int,
+    @get:RawRes val sub: Int,
     val pitchNormal: Pitch = Pitch.NORMAL,
     val pitchStrong: Pitch = Pitch.HIGH,
     val pitchSub: Pitch = Pitch.LOW

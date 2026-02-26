@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements ServiceConnection
 
       if (isFinishing()) {
         // metronome should be stopped when app is removed from recent apps
-        // stopServiceWithActivity is false when it's e. g. only a theme change
+        // stopServiceWithActivity is false when it's e.g. only a theme change
         if (stopServiceWithActivity) {
           stopService(metronomeIntent);
         }

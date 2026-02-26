@@ -241,29 +241,32 @@ public class PartAdapter extends Adapter<PartAdapter.PartViewHolder> {
     boolean isMuteActive = muteUnit.equals(UNIT.BEATS)
         ? part.getMuteMute() > 0
         : part.getMutePlay() > 0;
-    int resIdPlay, resIdMute;
+    int resIdPlay, resIdMutePlural, resIdMuteString;
     if (muteUnit.equals(UNIT.SECONDS)) {
       resIdPlay = R.plurals.options_mute_play_seconds;
-      resIdMute = R.plurals.options_mute_mute_seconds;
+      resIdMutePlural = R.plurals.options_mute_mute_seconds;
+      resIdMuteString = 0;
     } else if (muteUnit.equals(UNIT.BARS)) {
       resIdPlay = R.plurals.options_mute_play_bars;
-      resIdMute = R.plurals.options_mute_mute_bars;
+      resIdMutePlural = R.plurals.options_mute_mute_bars;
+      resIdMuteString = 0;
     } else {
       resIdPlay = 0;
-      resIdMute = R.string.options_mute_mute_beats;
+      resIdMutePlural = 0;
+      resIdMuteString = R.string.options_mute_mute_beats;
     }
     if (isMuteActive) {
       int playVisibility = muteUnit.equals(UNIT.BEATS) ? View.GONE : View.VISIBLE;
       holder.binding.textPartMutePlay.setVisibility(playVisibility);
       holder.binding.imagePartMuteMute.setVisibility(playVisibility);
       if (muteUnit.equals(UNIT.BEATS)) {
-        holder.binding.textPartMuteMute.setText(context.getString(resIdMute, muteMute));
+        holder.binding.textPartMuteMute.setText(context.getString(resIdMuteString, muteMute));
       } else {
         holder.binding.textPartMutePlay.setText(
             context.getResources().getQuantityString(resIdPlay, mutePlay, mutePlay)
         );
         holder.binding.textPartMuteMute.setText(
-            context.getResources().getQuantityString(resIdMute, muteMute, muteMute)
+            context.getResources().getQuantityString(resIdMutePlural, muteMute, muteMute)
         );
       }
       holder.binding.imagePartMuteRandom.setVisibility(muteRandom ? View.VISIBLE : View.GONE);
