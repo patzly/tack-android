@@ -170,6 +170,7 @@
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Um bom aplicativo requer muito tempo e vive do feedback de seus usuários.</string>
+  <string name="msg_feedback_contact">Você gostaria de algo novo, fazer algum comentário ou realizar alguma pergunta? É só entrar em contato comigo! Caso prefira, eu também ficaria muito feliz com uma avaliação bem detalhada na Play Store.</string>
   <string name="msg_recommend">Dê uma olhada nesse app legal de metrônomo: \n%1$s</string>
   <string name="msg_vibration_unavailable">Vibração indisponível nesse dispositivo. O som será usado.</string>
   <string name="msg_service_running">O serviço de metrônomo está funcionando</string>
