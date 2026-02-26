@@ -166,7 +166,6 @@
   <!-- MESSAGES -->
 
   <string name="msg_feedback">一款优秀的应用程序需要花费大量的时间和获取用户的反馈。</string>
-  <string name="msg_feedback_contact">您有任何愿望、评论或问题吗？联系我！否则，我会非常高兴在 Play 商店得到一个好评。</string>
   <string name="msg_recommend">看看这个很酷的节拍器应用程序：\n%1$s</string>
   <string name="msg_vibration_unavailable">此设备不支持震动功能。将使用声音。</string>
   <string name="msg_service_running">节拍器服务正在运行</string>
@@ -189,13 +188,11 @@
   <string name="msg_copied_to_clipboard">已成功复制到剪贴板</string>
   <string name="msg_invalid_input">无效输入</string>
   <string name="msg_discard_changes">放弃更改？</string>
-  <string name="msg_discard_changes_description">你确定不想保存它们吗？</string>
   <string name="msg_delete_song">删除歌曲？</string>
   <string name="msg_delete_song_description">你确定你要删除整首歌曲及其所有部分吗？该行为不可逆转。</string>
   <string name="msg_songs_empty">空的歌曲库</string>
   <string name="msg_songs_empty_description">添加你想联系的歌曲</string>
   <string name="msg_unlock">来自开发者的消息</string>
-  <string name="msg_unlock_description">你是否喜欢 Tack 中大量强大功能和无广告体验？我花了数年时间建立了免费的 Tack，尤其是歌曲库功能花了数月的辛勤工作。\n为了继续改进 Tack，我恳请大家做出一点小贡献。作为回报，你将会获得一个解锁应用，其中包含无限制的歌曲数量和无限制的歌曲部分。感谢您的支持！</string>
   <string name="msg_backup_description">你可以将整个歌曲库备份至装置，也可以从备份中还原歌曲库。</string>
   <string name="msg_backup_error">备份时发生错误</string>
   <string name="msg_backup_directory_missing">未选择备份的存储目录</string>
@@ -208,8 +205,6 @@
   <string name="msg_songs_intro">歌曲库的工作原理</string>
   <string name="msg_songs_intro_description">你可以将节拍器配置存储并编排为歌曲的一部分。只需要根据你的偏好设定节拍器控制和选项，然后将目前配置作为新部分添加至歌曲中，或编辑现有部分即可。</string>
   <string name="msg_widget_description">查看你的歌曲并播放</string>
-  <string name="msg_installer_check">无效的解锁应用</string>
-  <string name="msg_installer_check_description">请在 Google Play 上购买并安装解锁应用。谢谢你的支持！</string>
   <string name="msg_widget_prompt">快速访问你的曲目？</string>
   <string name="msg_widget_prompt_description">在你的桌面放置一个漂亮的小部件。</string>
   <string name="msg_beat_mode_warning">是否切换节拍模式为仅声音?</string>
@@ -399,19 +394,14 @@
   <string name="help_tempo_change">如何才能变更拍子？</string>
   <string name="help_tempo_change_answer">为修改节奏，你可以拖动和旋转位于软件主页正中心的节拍选择器或点击圆圈左右两边的按钮。\n通过点击节奏选择器，你可以打开一个对话框以使用轻敲节奏或使用键盘输入来变更节奏。</string>
   <string name="help_time_signature">如何指定拍号？</string>
-  <string name="help_time_signature_answer">查看拍号的第一个数字，并在 Tack 中相应地设置节拍。例如，4/4 拍设置 4 拍，2/2 拍设置 2 拍，以此类推。6/8 拍比较特殊，这里使用 2 拍，并可选择 3 个细分，因为只有第 1 和第 4 个八分音符是重拍。\n此外，您可以通过点击节拍来更改其重音。在选项中，您还可以选择摇摆比率，它会自动为您设置细分音符。</string>
   <string name="help_swing">如何停用摇摆？</string>
   <string name="help_swing_answer">如果你在选项中启用了摇摆，Tack 只是为你自动设置细分区域。要禁用摆动功能，只需根据您的喜好手动设置细分音符即可。</string>
   <string name="help_song_library">歌曲库如何运作？</string>
-  <string name="help_song_library_answer">歌曲库是节拍器配置的集合，你可以存储并应用这些配置。要存储当前配置，只需要开启歌曲库并创建新的歌曲即可。当前配置将会自动添加至歌曲部分清单中，你可以在其中进一步调整。为歌曲命名后，请不要忘记点击右上角的软碟图标来保存结果。</string>
   <string name="help_song_picker">歌曲选择器如何运作？</string>
   <string name="help_song_picker_answer">你歌曲库中的所有歌曲都会显示在主页的歌曲选择器中，但是你可以根据需要开启全屏清单。展示顺序取决于你在清单中的选择。要应用某首歌曲，只需要点击即可。\n如果你想要切换回选择歌曲前的配置，请点击歌曲名称旁的 × 号。</string>
   <string name="help_song_part">为什么歌曲没有切换到下一部分？</string>
-  <string name="help_song_part_answer">要自动切换到歌曲的下一部分，需要已经设置每个部分的时长。如果你没有设置时长，则该部分将会被认定为没有时长限制。\n要设置时长，只需要简单的点击当前曲目并打开曲目详细，然后点击目标部分的编辑按钮以设置该部分的时长。不要忘记保存你的变更！</string>
   <string name="help_notification_displays">为什么在我在前台离开应用时会显示节拍器服务通知？</string>
-  <string name="help_notification_displays_answer">如果你未在设置中启用「永久通知」，则当节拍器在后台运行时，该通知对节拍器服务保持活动状态至关重要。\n该服务负责管理播放并追踪计时器和已使用时间等实时数据，以将播放与应用界面进行区分。\n你可以点击「停止」以降服务移至后台，但是这不再保证它不会被系统终止。这可能会导致计时器和已使用时间被重置，直到服务再次位于前台。\n你也可以在设置中启用永久通知，以便始终能够在通知区域访问启动或停止功能。</string>
   <string name="help_notification_disappears">为什么当我关闭应用时节拍器服务通知会消失？</string>
-  <string name="help_notification_disappears_answer">当从最近应用中关闭应用时，节拍器服务节拍器服务将会终止，通知也会消失。此行为皆在节省电力和资源。\n如果你想永久保留通知以供启动或停止功能，你可以在设置中启用「永久通知」，并且不要从最近应用中关闭此应用。</string>
   <string name="help_translation">如何获取适合我的语言的Tack？</string>
   <string name="help_translation_answer">Tack 的翻译由 Transifex 管理，像你一样的使用者也可以在这里翻译！请访问 GitHub 上的 Tack 以获取更多资讯，或直接进入翻译流程：</string>
 
@@ -425,7 +415,6 @@
   <string name="about_key">解锁应用</string>
   <string name="about_key_description_not_installed">未安装</string>
   <string name="about_key_description_installed">已安装</string>
-  <string name="about_key_description_invalid">无效</string>
   <string name="about_key_description_ignored">已忽略</string>
   <string name="about_github_description">源码</string>
   <string name="about_translation_description">帮助翻译 Tack</string>
