@@ -170,6 +170,7 @@
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Um bom aplicativo requer muito tempo e vive do feedback de seus usuários.</string>
+  <string name="msg_feedback_contact">Você gostaria de algo novo, fazer algum comentário ou realizar alguma pergunta? É só entrar em contato comigo! Caso prefira, eu também ficaria muito feliz com uma avaliação bem detalhada na Play Store.</string>
   <string name="msg_recommend">Dê uma olhada nesse app legal de metrônomo: \n%1$s</string>
   <string name="msg_vibration_unavailable">Vibração indisponível nesse dispositivo. O som será usado.</string>
   <string name="msg_service_running">O serviço de metrônomo está funcionando</string>
@@ -193,6 +194,7 @@
   <string name="msg_copied_to_clipboard">Copiado com sucesso</string>
   <string name="msg_invalid_input">Valor inválido</string>
   <string name="msg_discard_changes">Descartar mudanças?</string>
+  <string name="msg_discard_changes_description">Tem certeza que não quer salvar os ajustes?</string>
   <string name="msg_delete_song">Apagar música?</string>
   <string name="msg_delete_song_description">Tem certeza que quer apagar o som inteiro com todas as suas partes? Isso não pode ser desfeito.</string>
   <string name="msg_songs_empty">Biblioteca vazia</string>
