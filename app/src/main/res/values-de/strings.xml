@@ -168,7 +168,6 @@
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Eine großartige App benötigt viel Zeit und lebt von der Rückmeldungen ihrer Nutzer.</string>
-  <string name="msg_feedback_contact">Hast du Wünsche, Anmerkungen oder Fragen? Kontaktiere mich! Ansonsten würde ich mich sehr über eine nette Bewertung im Play Store freuen.</string>
   <string name="msg_recommend">Schau dir mal diese coole Metronom-App an: \n%1$s</string>
   <string name="msg_vibration_unavailable">Vibration ist auf diesem Gerät nicht verfügbar, deshalb wird Ton verwendet.</string>
   <string name="msg_service_running">Metronom-Service läuft</string>
@@ -191,13 +190,11 @@
   <string name="msg_copied_to_clipboard">Erfolgreich in Zwischenablage kopiert</string>
   <string name="msg_invalid_input">Ungültige Eingabe</string>
   <string name="msg_discard_changes">Änderungen verwerfen?</string>
-  <string name="msg_discard_changes_description">Bist du sicher, dass du sie nicht speichern möchtest?</string>
   <string name="msg_delete_song">Werk löschen?</string>
   <string name="msg_delete_song_description">Bist du sicher, dass du das gesamte Werk mit allen Teilen löschen möchtest? Dies kann nicht rückgängig gemacht werden.</string>
   <string name="msg_songs_empty">Leere Werksammlung</string>
   <string name="msg_songs_empty_description">Füge Werke hinzu, die du üben möchtest</string>
   <string name="msg_unlock">Nachricht des Entwicklers</string>
-  <string name="msg_unlock_description">Schätzt du das werbefreie Erlebnis mit zahlreichen leistungsstarken Funktionen in Tack? Ich habe Jahre meiner Freizeit damit verbracht, Tack kostenlos zu entwickeln, aber vor allem die Werksammlung hat Monate harter Arbeit gekostet. Um Tack weiter zu verbessern, bitte ich dich um einen kleinen Beitrag. Im Gegenzug bekommst du eine Freischalt-App für unbegrenzte Werke und unzählige Werkteile. Vielen Dank für deine Unterstützung!</string>
   <string name="msg_backup_description">Du kannst deine gesamte Werksammlung auf deinem Gerät sichern oder eine Werksammlung aus einer Sicherung wiederherstellen.</string>
   <string name="msg_backup_error">Fehler bei Sicherung</string>
   <string name="msg_backup_directory_missing">Kein Speicherort für Sicherung ausgewählt</string>
@@ -210,8 +207,6 @@
   <string name="msg_songs_intro">Wie die Werksammlung funktioniert</string>
   <string name="msg_songs_intro_description">Du kannst Metronom-Konfigurationen als Teile eines Werks speichern und anordnen. Stelle einfach das Metronom und die Optionen nach deinen Wünschen ein und füge die aktuelle Konfiguration als neuen Teil einem Werk hinzu oder bearbeite einen bestehenden Teil.</string>
   <string name="msg_widget_description">Zeige deine Werke an und spiele sie ab</string>
-  <string name="msg_installer_check">Ungültige Freischalt-App</string>
-  <string name="msg_installer_check_description">Bitte kaufe und installiere die Freischalt-App im Google Play Store. Vielen Dank für deine Unterstützung!</string>
   <string name="msg_widget_prompt">Schneller Zugriff auf Werke?</string>
   <string name="msg_widget_prompt_description">Platziere ein elegantes Widget auf deinem Startbildschirm.</string>
   <string name="msg_beat_mode_warning">Schlagmodus auch auf „Nur Ton“ umschalten?</string>
@@ -419,19 +414,14 @@
   <string name="help_tempo_change">Wie kann ich das Tempo ändern?</string>
   <string name="help_tempo_change_answer">Um das Tempo zu ändern, kannst du den Tempo-Wähler in der Mitte der Hauptseite ziehen und drehen oder auf die Schaltflächen links und rechts neben dem Kreis tippen. Durch Tippen auf den Tempo-Wähler öffnet sich ein Dialog, in dem du das Tempo durch Tippen in BPM oder über die Tastatur einstellen kannst.</string>
   <string name="help_time_signature">Wie stelle ich die Taktart ein?</string>
-  <string name="help_time_signature_answer">Sieh dir die erste Zahl deiner Taktart an und stell die Schläge in Tack entsprechend ein. Das heißt 4 Schläge für 4/4, 2 für 2/2 und so weiter. 6/8 ist etwas speziell, hier nimmst du 2 Schläge mit optional 3 Unterteilungen, weil nur die 1. und die 4. Achtel ein betonter Schlag sind.\nZusätzlich kannst du die Betonung der Schläge ändern, indem du sie antippst. In den Optionen kannst du auch einen Swing-Anteil auswählen, der die Unterteilungen automatisch für dich festlegt.</string>
   <string name="help_swing">Wie deaktiviere ich Swing?</string>
   <string name="help_swing_answer">Wenn du Swing in den Optionen aktiviert hast, legt Tack lediglich die Schlag-Unterteilungen für dich fest. Um Swing zu deaktivieren, änderst du die Unterteilungen einfach manuell nach deinen Wünschen.</string>
   <string name="help_song_library">Wie funktioniert die Werksammlung?</string>
-  <string name="help_song_library_answer">Die Werksammlung ist eine Sammlung von Metronomkonfigurationen, die du speichern und anwenden kannst. Um deine aktuelle Konfiguration zu speichern, öffnest du einfach die Werksammlung und erstellst ein neues Werk. Deine aktuelle Konfiguration wird zur Teil-Liste hinzugefügt, wo du sie weiter anpassen kannst. Vergiss nicht, dein Ergebnis durch Tippen auf das Diskettensymbol in der oberen rechten Ecke zu speichern, nachdem du dem Werk einen Namen gegeben hast.</string>
   <string name="help_song_picker">Wie funktioniert das Werks-Auswahlfeld?</string>
   <string name="help_song_picker_answer">Alle Werke aus deiner Werksammlung werden im Werks-Auswahlfeld auf der Hauptseite angezeigt, aber du kannst auch eine Vollbildliste öffnen, wenn du möchtest. Die Reihenfolge hängt von deiner Auswahl im Menü ab. Tippe auf ein Werk, um es anzuwenden. Du kannst auch zu einem bestimmten Teil eines Werks springen, indem du auf den aktuellen Teil unterhalb des Werks tippst oder die Sprungtasten verwendest.\nWenn du zu der Konfiguration zurückkehren möchtest, die du vor der Auswahl eines Werks hattest, tippe auf das × neben dem Werksnamen.</string>
   <string name="help_song_part">Warum springt das Werk nicht zum nächsten Teil?</string>
-  <string name="help_song_part_answer">Um automatisch zum nächsten Teil eines Werks zu wechseln, muss für jeden Teil eine Dauer festgelegt werden. Wenn keine Dauer festgelegt ist, wird der Teil als unendlich lang betrachtet. Um eine Dauer festzulegen, tippe einfach auf das aktuelle Werk, um die Werkdetails zu öffnen, und lege die Dauer des Teils fest, indem du auf das Bearbeitungssymbol des Teils tippen. Vergiss nicht, deine Änderungen zu speichern!</string>
   <string name="help_notification_displays">Warum wird die Benachrichtigung des Metronom-Services angezeigt, wenn ich die App verlasse?</string>
-  <string name="help_notification_displays_answer">Wenn du „Permanente Benachrichtigung“ in den Einstellungen nicht aktiviert hast, ist die Benachrichtigung notwendig, damit der Metronom-Service aktiv bleibt, wenn sich die App im Hintergrund befindet. Der Service verwaltet die Wiedergabe und verwaltet Echtzeitdaten wie Timer oder verstrichene Zeit, um die Wiedergabe von der App-Oberfläche zu trennen. Du kannst den Service in den Hintergrund verschieben, indem du auf „Stopp“ tippst, aber dann ist nicht mehr garantiert, dass er nicht vom System beendet wird. Dies kann dazu führen, dass der Timer und die verstrichene Zeit zurückgesetzt werden, bis der Service wieder im Vordergrund ist. Du kannst auch die permanente Benachrichtigung in den Einstellungen aktivieren, um immer Zugriff auf Start/Stopp im Benachrichtigungsbereich zu haben.</string>
   <string name="help_notification_disappears">Warum verschwindet die Benachrichtigung des Metronom-Services, wenn ich die App schließe?</string>
-  <string name="help_notification_disappears_answer">Wenn du die App aus den zuletzt verwendeten Apps entfernst, wird der Metronom-Service beendet und die Benachrichtigung verschwindet. Dies ist beabsichtigtes Verhalten, um Akku und Ressourcen zu sparen.\nWenn du die Benachrichtigung für den Start-/Stopp-Zugriff dauerhaft beibehalten möchtest, kannst du in den Einstellungen „Permanente Benachrichtigung” aktivieren und die App nicht aus den zuletzt verwendeten Apps entfernen.</string>
   <string name="help_translation">Wie kann ich Tack für meine Sprache erhalten?</string>
   <string name="help_translation_answer">Übersetzungen für Tack werden auf Transifex verwaltet, wo Nutzer wie du bei der Übersetzung der App helfen können! Besuche GitHub für weitere Informationen oder beginne direkt mit der Übersetzung:</string>
 
@@ -445,7 +435,6 @@
   <string name="about_key">Freischalt-App</string>
   <string name="about_key_description_not_installed">Nicht installiert</string>
   <string name="about_key_description_installed">Installiert</string>
-  <string name="about_key_description_invalid">Ungültig</string>
   <string name="about_key_description_ignored">Ignoriert</string>
   <string name="about_github_description">Quellcode</string>
   <string name="about_translation_description">Hilf mit, Tack zu übersetzen</string>

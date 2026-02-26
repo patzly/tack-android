@@ -170,7 +170,6 @@
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Um bom aplicativo requer muito tempo e vive do feedback de seus usuários.</string>
-  <string name="msg_feedback_contact">Você tem quaisquer pedidos, comentários ou perguntas? Me contate! Caso não tenha, eu ficaria muito feliz com uma avaliação positiva na Play Store.</string>
   <string name="msg_recommend">Dê uma olhada nesse app legal de metrônomo: \n%1$s</string>
   <string name="msg_vibration_unavailable">Vibração indisponível nesse dispositivo. O som será usado.</string>
   <string name="msg_service_running">O serviço de metrônomo está funcionando</string>
@@ -194,13 +193,11 @@
   <string name="msg_copied_to_clipboard">Copiado com sucesso</string>
   <string name="msg_invalid_input">Valor inválido</string>
   <string name="msg_discard_changes">Descartar mudanças?</string>
-  <string name="msg_discard_changes_description">Tem certeza que não quer salvá-las?</string>
   <string name="msg_delete_song">Apagar música?</string>
   <string name="msg_delete_song_description">Tem certeza que quer apagar o som inteiro com todas as suas partes? Isso não pode ser desfeito.</string>
   <string name="msg_songs_empty">Biblioteca vazia</string>
   <string name="msg_songs_empty_description">Adiciona músicas que você quer praticar</string>
   <string name="msg_unlock">Mensagem do desenvolvedor</string>
-  <string name="msg_unlock_description">Você gosta da experiência sem anúncios e com vários recursos no Tack? Gastei anos do meu tempo livre criando o Tack de graça, mas especialmente o recurso da biblioteca de músicas levou meses de trabalho duro. \nPara continuar melhorando o Tack, te peço gentilmente por uma pequena contribuição. Em troca, você receberá um app de desbloqueio para músicas ilimitadas e incontáveis partes de músicas. Obrigado pelo seu apoio!</string>
   <string name="msg_backup_description">Você pode fazer backup de toda a sua biblioteca de músicas para o seu dispositivo, ou restaurar a sua biblioteca de um backup.</string>
   <string name="msg_backup_error">Erro durante o backup</string>
   <string name="msg_backup_directory_missing">Nenhum lugar selecionado para o backup</string>
@@ -213,8 +210,6 @@
   <string name="msg_songs_intro">Como a biblioteca de músicas funciona</string>
   <string name="msg_songs_intro_description">Você pode salvar e organizar configurações do metrônomo como sendo partes de uma música. Simplesmente ajuste os controles do metrônomo e as opções para a sua preferência, e então adicione a configuração atual como uma nova parte de uma música, ou edite uma parte existente.</string>
   <string name="msg_widget_description">Veja suas músicas e toque junto com elas</string>
-  <string name="msg_installer_check">App de desbloqueio (unlock app) inválido</string>
-  <string name="msg_installer_check_description">Por favor compre e instale o app de desbloqueio (unlock app) na Play Store. Obrigado por seu apoio!</string>
   <string name="msg_widget_prompt">Acesso rápido às músicas?</string>
   <string name="msg_widget_prompt_description">Coloque um belo widget na sua tela inicial.</string>
   <string name="msg_beat_mode_warning">Também alterar a contagem para tocar apenas com som?</string>
@@ -440,19 +435,14 @@
   <string name="help_tempo_change">Como eu mudo o tempo?</string>
   <string name="help_tempo_change_answer">Para alterar o tempo, você pode arrastar ou girar o botão central da tela principal ou apertar os botões da esquerda ou direita do círculo.\nClicando no selecionador do tempo, vai ser aberta uma opção para você batucar na batida desejada ou indicar através do teclado.</string>
   <string name="help_time_signature">Como eu posso definir a divisão de compassos?</string>
-  <string name="help_time_signature_answer">Através do primeiro número da assinatura de tempo, então configure o Tack com essa informação. Isso significa que são 4 batidas para 4/4, 2 para 2/2 e por aí vai. O 6/8 é um pouco especial, aqui você vai usar 2 batidas e opcionalmente 3 subdivisões, porque somente no 1° e no no 4° oitavos vão acontecer os contratempos.\nVocê também pode mudar a ênfase na batida ao clicar nela. Outra possibilidade é utilizar uma porcentagem na variação / swing, que vai então criar automaticamente a subdivisão pra você.</string>
   <string name="help_swing">Como eu desabilito a variação / swing?</string>
   <string name="help_swing_answer">Se você habilitar a variação / swing, o Tack vai definir automaticamente as subdivisões pra você. Para desabilitar, basta definir as subdivisões manualmente conforme preferir.</string>
   <string name="help_song_library">Como a biblioteca de músicas funciona?</string>
-  <string name="help_song_library_answer">A biblioteca de músicas é uma coleção de configurações do metrônomo que você pode salvar e aplicar. Para salvar a configuração atual, simplesmente abra a biblioteca de músicas e crie uma nova música. A configuração atual será adicionada à lista de partes, onde você pode ajustar a fundo. Depois de dar nome à uma música, não se esqueça de salvar o resultado clicando no ícone de disco no contato superior direito.</string>
   <string name="help_song_picker">Como o a seleção de músicas funciona?</string>
   <string name="help_song_picker_answer">Todas as músicas na sua biblioteca vão aparecer na página de seleção de música, mas você pode abrir a lista em tela cheia, se quiser. A ordem depende de como você organizou o menu. Para selecionar uma música, simplesmente clique nela. Você também pode pular para uma parte específica da música usando a barra de seleção ou usando os botões de pulo/skip.\nSe você quiser limpar as configurações que realizou em uma música, basta clicar no × ao lado do nome da música.</string>
   <string name="help_song_part">Porquê a música não avança para a próxima parte?</string>
-  <string name="help_song_part_answer">Para passar automaticamente para próxima parte da música, você precisa indicar o tempo de duração de cada parte. Se você não indicar a duração, essa parte é considerada infinita.\nPara indicar a duração, basta clicar na música, então você verá os detalhes dela, assim você pode indicar a duração clicando no botão de editar. Um detalhe importante, não esqueça de salvar as alterações!</string>
   <string name="help_notification_displays">Por que a notificação do serviço de metrônomo é mostrada quando saio do app?</string>
-  <string name="help_notification_displays_answer">Se você não habilitou as \"Notificações permanentes\" nas configurações, é importante revisar essa decisão, as notificações são importantes para manter o serviço do metrônomo executando em segundo plano.\nEsse serviço em segundo plano é o que mantém a contagem de tempo funcionando corretamente, junto das estatísticas gerais do aplicativo. Você pode mover o serviço para segundo plano ao clicar em \"Parar\", mas isso pode causar com que o aplicativo seja fechado a qualquer momento pelo Android. Isso pode causar interrupções na contagem até que o aplicativo seja aberto novamente.\nVocê pode utilizar o menu de configurações para garantir que a Notificação permanente esteja ativada, isso também vai permitir que você possa Começar/Pausar o metrônomo diretamente através da notificação.</string>
   <string name="help_notification_disappears">Por que a notificação do serviço de metrônomo desaparece quando fecho o app?</string>
-  <string name="help_notification_disappears_answer">Quando você fecha o aplicativo da lista de apps recentes, o serviço de metrônomo é interrompido e a notificação some. Isso serve para economizar bateria e recursos. \nSe quiser manter a notificação permantemente para acesso ao iniciar/parar, você pode ativar &quot;Notificação permanente&quot; nas configurações e não fechar o aplicativo da lista de apps recentes.</string>
   <string name="help_translation">Como posso ter o Tack na minha língua?</string>
   <string name="help_translation_answer">Traduções para o Tack são gerenciados no Transifex, onde usuários como você podem ajudar a traduzir o app! Por favor, visite o Tack no GitHub para mais informações, ou vá direto ao processo de tradução:</string>
 
@@ -466,7 +456,6 @@
   <string name="about_key">App de desbloqueio</string>
   <string name="about_key_description_not_installed">Não instalado</string>
   <string name="about_key_description_installed">Instalado</string>
-  <string name="about_key_description_invalid">Inválido</string>
   <string name="about_key_description_ignored">Ignorado</string>
   <string name="about_github_description">Código fonte</string>
   <string name="about_translation_description">Ajude a traduzir o Tack</string>
