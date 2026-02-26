@@ -444,6 +444,7 @@
   <string name="help_song_picker">Como o a seleção de músicas funciona?</string>
   <string name="help_song_picker_answer">Todas as músicas na sua biblioteca vão aparecer na página de seleção de música, mas você pode abrir a lista em tela cheia, se quiser. A ordem depende de como você organizou o menu. Para selecionar uma música, simplesmente clique nela. Você também pode pular para uma parte específica da música usando a barra de seleção ou usando os botões de pulo/skip.\nSe você quiser limpar as configurações que realizou em uma música, basta clicar no × ao lado do nome da música.</string>
   <string name="help_song_part">Porquê a música não avança para a próxima parte?</string>
+  <string name="help_song_part_answer">Para seguir automaticamente para próxima parte da música, você precisa indicar o tempo de duração de cada parte. Se você não indicar a duração, essa parte é considerada infinita.\nPara indicar a duração, é só clicar na música, então você verá os detalhes dela, assim você pode indicar a duração clicando no botão de editar. Um detalhe importante, não esqueça de salvar as alterações!</string>
   <string name="help_notification_displays">Por que a notificação do serviço de metrônomo é mostrada quando saio do app?</string>
   <string name="help_notification_disappears">Por que a notificação do serviço de metrônomo desaparece quando fecho o app?</string>
   <string name="help_translation">Como posso ter o Tack na minha língua?</string>
