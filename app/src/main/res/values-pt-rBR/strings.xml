@@ -194,6 +194,7 @@
   <string name="msg_copied_to_clipboard">Copiado com sucesso</string>
   <string name="msg_invalid_input">Valor inválido</string>
   <string name="msg_discard_changes">Descartar mudanças?</string>
+  <string name="msg_discard_changes_description">Tem certeza que não quer salvar os ajustes?</string>
   <string name="msg_delete_song">Apagar música?</string>
   <string name="msg_delete_song_description">Tem certeza que quer apagar o som inteiro com todas as suas partes? Isso não pode ser desfeito.</string>
   <string name="msg_songs_empty">Biblioteca vazia</string>
