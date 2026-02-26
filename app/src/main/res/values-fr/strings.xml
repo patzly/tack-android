@@ -170,7 +170,6 @@
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Une bonne application demande beaucoup de temps et vit des commentaires de ses utilisateurs.</string>
-  <string name="msg_feedback_contact">Vous avez des souhaits, des commentaires ou des questions ? Contactez-moi ! Autrement, je vous serai reconnaissant de laisser une bonne appréciation dans le Play Store.</string>
   <string name="msg_recommend">Jetez un coup d\'œil à cette application sympa de métronome : \n%1$s</string>
   <string name="msg_vibration_unavailable">Le vibreur n’est pas disponible sur cet appareil. L’appli utilisera le son.</string>
   <string name="msg_service_running">Le service métronome est en cours d\'utilisation</string>
@@ -193,13 +192,11 @@
   <string name="msg_copied_to_clipboard">Copié vers le presse-papier avec succès</string>
   <string name="msg_invalid_input">Saisie invalide</string>
   <string name="msg_discard_changes">Abandonner les modifications ?</string>
-  <string name="msg_discard_changes_description">Êtes-vous sûr de ne pas vouloir les enregistrer ?</string>
   <string name="msg_delete_song">Supprimer la musique ?</string>
   <string name="msg_delete_song_description">Êtes-vous sûr de vouloir supprimer cette musique avec toutes ses parties ? Cette action ne pourra pas être annulée.</string>
   <string name="msg_songs_empty">Bibliothèque musicale vide</string>
   <string name="msg_songs_empty_description">Ajouter des musiques sur lesquelles vous exercer</string>
   <string name="msg_unlock">Message du développeur</string>
-  <string name="msg_unlock_description">Vous appréciez l\'expérience sans publicité et les nombreuses fonctionnalités puissantes de Tack ? J\'ai passé des années de mon temps libre à créer Tack gratuitement, mais la fonctionnalité de bibliothèque musicale m\'a notamment demandé des mois de travail acharné. Afin de continuer à améliorer Tack, je vous demande de bien vouloir faire un petit don. En échange, vous obtiendrez une application débloquée pour un nombre illimité de chansons et d\'innombrables parties musicales. Merci pour votre soutien !</string>
   <string name="msg_backup_description">Vous pouvez sauvegarder l’entièreté de votre bibliothèque musicale sur votre appareil ou restaurer une bibliothèque musicale depuis une sauvegarde.</string>
   <string name="msg_backup_error">Erreur durant la sauvegarde.</string>
   <string name="msg_backup_directory_missing">Pas d\'emplacement sélectionné pour la sauvegarde.</string>
@@ -212,8 +209,6 @@
   <string name="msg_songs_intro">Comment la bibliothéque de musique fonctionne t-elle</string>
   <string name="msg_songs_intro_description">Vous pouvez enregistrer et organiser les configurations du métronome comme des parties d\'une musique. Il vous suffit de régler les commandes et les options du métronome selon vos préférences, puis d\'ajouter la configuration actuelle comme nouvelle partie d\'une musique ou de modifier une partie existante.</string>
   <string name="msg_widget_description">Affichez vos morceaux et écoutez-les</string>
-  <string name="msg_installer_check">Application déverrouillée non valide</string>
-  <string name="msg_installer_check_description">Vous pouvez acheter et installer l\'application de déverrouillage sur Google Play. Merci pour votre soutien !</string>
   <string name="msg_widget_prompt">Accès rapide aux musiques ?</string>
   <string name="msg_widget_prompt_description">Placez un magnifique widget sur votre écran d\'accueil.</string>
   <string name="msg_beat_mode_warning">Passer également le battement en mode sonore uniquement ?</string>
@@ -439,19 +434,14 @@
   <string name="help_tempo_change">Comment changer le tempo ?</string>
   <string name="help_tempo_change_answer">Pour modifier le tempo, vous pouvez faire glisser ou pivoter le sélecteur de tempo au centre de la page principale, ou bien appuyer sur les boutons situés à gauche et à droite. En appuyant sur le sélecteur de tempo, vous pouvez ouvrir une boîte de dialogue pour régler le tempo en tapant  le tempo au doigt ou en utilisant le clavier.</string>
   <string name="help_time_signature">Comment définir la signature rythmique ?</string>
-  <string name="help_time_signature_answer">Regardez le premier chiffre de votre signature rythmique et réglez les battements dans Tack en conséquence. 4 battements pour 4/4, 2 pour 2/2, etc. 6/8 est un peu particulier, ici vous utilisez 2 battements avec éventuellement 3 subdivisions, car seuls le 1er et le 4e croches sont des temps forts. De plus, vous pouvez modifier l\'accentuation des battements en appuyant dessus. Dans les options, vous pouvez également sélectionner un pourcentage de swing, qui définit automatiquement les subdivisions pour vous.</string>
   <string name="help_swing">Comment désactiver le swing ?</string>
   <string name="help_swing_answer">Si vous avez activé le swing dans les options, Tack se contente de définir les subdivisions pour vous. Pour le désactiver, il vous suffit de définir manuellement les subdivisions selon vos préférences.</string>
   <string name="help_song_library">Comment fonctionne la bibliothèque musicale ?</string>
-  <string name="help_song_library_answer">La bibliothèque musicale est une collection de configurations de métronome que vous pouvez enregistrer et appliquer. Pour enregistrer votre configuration actuelle, il vous suffit d\'ouvrir la bibliothèque musicale et de créer une nouvelle musique. La configuration actuelle sera ajoutée à la liste des parties, où vous pourrez la modifier davantage. Après avoir donné un nom à cette musique, n\'oubliez pas d\'enregistrer votre résultat en appuyant sur l\'icône en forme de disquette dans le coin supérieur droit.</string>
   <string name="help_song_picker">Comment fonctionne le sélecteur de musique ?</string>
   <string name="help_song_picker_answer">Toutes les musiques de votre bibliothèque sont affichées dans le sélecteur sur la page principale, mais vous pouvez ouvrir une liste en plein écran si vous le souhaitez. L\'ordre dépend de votre choix dans le menu. Pour appliquer les paramètres d\'une musique, il suffit de la sélectionner. Vous pouvez également passer à une de ses parties spécifique en appuyant sur la partie actuelle ou en utilisant les boutons de saut. Si vous souhaitez revenir à la configuration que vous aviez avant de sélectionner une musique, appuyez sur le × à côté de son nom.</string>
   <string name="help_song_part">Pourquoi la musique ne passe-t-elle pas à la partie suivante ?</string>
-  <string name="help_song_part_answer">Pour passer automatiquement à la partie suivante d\'une musique, chaque partie doit avoir une durée définie. Si vous ne définissez pas de durée, la partie est considérée comme infinie. Pour définir une durée, il suffit d\'appuyer sur la musique en cours pour ouvrir les détails et définir la durée de la partie en appuyant sur l\'icône d\'édition de la partie. N\'oubliez pas d\'enregistrer vos modifications !</string>
   <string name="help_notification_displays">Pourquoi la notification du service métronome s\'affiche-t-elle lorsque je quitte l\'application ?</string>
-  <string name="help_notification_displays_answer">Même si vous n\'avez pas activé l\'option « Notification permanente » dans les paramètres, la notification est nécessaire pour que le service métronome reste actif lorsque l\'application est en arrière-plan. Le service gère la lecture et suit les données en temps réel telles que le minuteur ou le temps écoulé afin de séparer la lecture de l\'interface de l\'application. Vous pouvez déplacer le service en arrière-plan en appuyant sur « Arrêter », mais cela ne garantit plus qu\'il ne sera pas interrompu par le système. Cela peut entraîner la réinitialisation du minuteur et du temps écoulé jusqu\'à ce que le service soit à nouveau au premier plan. Vous pouvez également activer la notification permanente dans les paramètres pour toujours avoir accès au démarrage/à l\'arrêt dans la zone de notifications.</string>
   <string name="help_notification_disappears">Pourquoi la notification du service métronome disparaît-elle lorsque je ferme l\'application ?</string>
-  <string name="help_notification_disappears_answer">Lorsque vous fermez l\'application à partir des applications récentes, le service métronome est arrêté et la notification disparaît. Il s\'agit d\'un comportement normal visant à économiser la batterie et les ressources. Si vous souhaitez conserver en permanence la notification pour l\'accès au démarrage/à l\'arrêt, vous pouvez activer « Notification permanente » dans les paramètres et ne pas fermer l\'application à partir des applications récentes.</string>
   <string name="help_translation">Comment puis-je obtenir Tack dans ma langue ?</string>
   <string name="help_translation_answer">Les traductions pour Tack sont gérées sur Transifex, où des utilisateurs comme vous peuvent aider à traduire l\'application ! Veuillez consulter Tack sur GitHub pour plus d\'informations ou passer directement au processus de traduction :</string>
 
@@ -465,7 +455,6 @@
   <string name="about_key">Application déverrouillée </string>
   <string name="about_key_description_not_installed">Pas installé</string>
   <string name="about_key_description_installed">Installé</string>
-  <string name="about_key_description_invalid">Invalide</string>
   <string name="about_key_description_ignored">Ignoré</string>
   <string name="about_github_description">Code source</string>
   <string name="about_translation_description">Aider à traduire Tack</string>
