@@ -54,7 +54,7 @@ class MetronomeEngine(
   private var alwaysVibrate: Boolean = false
   private var flashScreen: Boolean = false
 
-  val listeners: MutableSet<MetronomeListener> = mutableSetOf()
+  val listeners: MutableMap<String, MetronomeListener> = mutableMapOf()
   var beats: MutableList<String> = mutableListOf()
     set(value) {
       field = value.toMutableList()
@@ -120,12 +120,8 @@ class MetronomeEngine(
     }
   }
 
-  fun addListener(listener: MetronomeListener) {
-    listeners.add(listener)
-  }
-
-  fun addListeners(newListeners: Set<MetronomeListener>) {
-    listeners.addAll(newListeners)
+  fun addListener(tag: String, listener: MetronomeListener) {
+    listeners[tag] = listener
   }
 
   fun start() {
@@ -163,7 +159,7 @@ class MetronomeEngine(
       }
     })
 
-    listeners.forEach { it.onMetronomeStart() }
+    listeners.forEach { it.value.onMetronomeStart() }
     Log.i(TAG, "start: started metronome handler")
   }
 
@@ -177,7 +173,7 @@ class MetronomeEngine(
     isPlaying = false
     audioEngine.scheduleDelayedStop()
 
-    listeners.forEach { it.onMetronomeStop() }
+    listeners.forEach { it.value.onMetronomeStop() }
     Log.i(TAG, "stop: stopped metronome handler")
   }
 
@@ -186,7 +182,7 @@ class MetronomeEngine(
       if (NotificationUtil.hasPermission(context)) {
         start()
       } else {
-        listeners.forEach { it.onPermissionMissing() }
+        listeners.forEach { it.value.onPermissionMissing() }
       }
     } else {
       stop()
@@ -291,7 +287,7 @@ class MetronomeEngine(
     )
 
     latencyHandler?.postDelayed({
-      listeners.forEach { it.onMetronomePreTick(tick) }
+      listeners.forEach { it.value.onMetronomePreTick(tick) }
     }, maxOf(0, latency - Constants.BEAT_ANIM_OFFSET))
 
     latencyHandler?.postDelayed({
@@ -303,12 +299,12 @@ class MetronomeEngine(
           else -> hapticUtil.click()
         }
       }
-      listeners.forEach { it.onMetronomeTick(tick) }
+      listeners.forEach { it.value.onMetronomeTick(tick) }
     }, latency)
 
     if (flashScreen) {
       flashHandler?.postDelayed({
-        listeners.forEach { it.onFlashScreenEnd() }
+        listeners.forEach { it.value.onFlashScreenEnd() }
       }, latency + Constants.FLASH_SCREEN_DURATION)
     }
     return tick
@@ -329,21 +325,12 @@ class MetronomeEngine(
   }
 
   interface MetronomeListener {
-    fun onMetronomeStart()
-    fun onMetronomeStop()
-    fun onMetronomePreTick(tick: Tick)
-    fun onMetronomeTick(tick: Tick)
-    fun onFlashScreenEnd()
-    fun onPermissionMissing()
-  }
-
-  open class MetronomeListenerAdapter : MetronomeListener {
-    override fun onMetronomeStart() {}
-    override fun onMetronomeStop() {}
-    override fun onMetronomePreTick(tick: Tick) {}
-    override fun onMetronomeTick(tick: Tick) {}
-    override fun onFlashScreenEnd() {}
-    override fun onPermissionMissing() {}
+    fun onMetronomeStart() {}
+    fun onMetronomeStop() {}
+    fun onMetronomePreTick(tick: Tick) {}
+    fun onMetronomeTick(tick: Tick) {}
+    fun onFlashScreenEnd() {}
+    fun onPermissionMissing() {}
   }
 
   data class Tick(

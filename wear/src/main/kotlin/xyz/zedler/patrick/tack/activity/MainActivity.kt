@@ -206,6 +206,32 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
     val metronomeEngine = getMetronomeEngine() ?: return
 
+    metronomeEngine.addListener("ui", object : MetronomeEngine.MetronomeListener {
+      override fun onMetronomePreTick(tick: MetronomeEngine.Tick) {
+        runOnUiThread {
+          viewModel.onPreTick(tick)
+        }
+      }
+      override fun onMetronomeTick(tick: MetronomeEngine.Tick) {
+        runOnUiThread {
+          viewModel.onTick(tick)
+        }
+      }
+      override fun onFlashScreenEnd() {
+        runOnUiThread {
+          viewModel.onFlashScreenEnd()
+        }
+      }
+      override fun onPermissionMissing() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+          try {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+          } catch (e: IllegalStateException) {
+            Log.e(TAG, "onPermissionMissing: ", e)
+          }
+        }
+      }
+    })
     metronomeEngine.updateFromState(viewModel.state.value)
     viewModel.updatePlaying(metronomeEngine.isPlaying)
 

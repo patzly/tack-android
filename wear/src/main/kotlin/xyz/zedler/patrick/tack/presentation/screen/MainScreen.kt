@@ -103,7 +103,13 @@ fun MainScreen(
     } else {
       MaterialTheme.colorScheme.background
     }
-
+    val controlsColor = if (state.flashStrong) {
+      MaterialTheme.colorScheme.onError
+    } else if (state.flash) {
+      MaterialTheme.colorScheme.onPrimary
+    } else {
+      MaterialTheme.colorScheme.onSurfaceVariant
+    }
     val controlsAlpha by animateFloatAsState(
       targetValue = if (state.isPlaying && state.keepAwake) .5f else 1f,
       label = "controlsAlpha",
@@ -159,9 +165,7 @@ fun MainScreen(
 
           IconButton(
             onClick = onSettingsButtonClick,
-            colors = IconButtonDefaults.iconButtonColors(
-              contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            ),
+            colors = IconButtonDefaults.iconButtonColors(contentColor = controlsColor),
             modifier = Modifier
               .graphicsLayer(alpha = controlsAlpha)
               .constrainAs(settingsButton) {
@@ -206,9 +210,7 @@ fun MainScreen(
           )
           IconButton(
             onClick = onBeatsButtonClick,
-            colors = IconButtonDefaults.iconButtonColors(
-              contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            ),
+            colors = IconButtonDefaults.iconButtonColors(contentColor = controlsColor),
             modifier = Modifier
               .graphicsLayer(alpha = controlsAlpha)
               .constrainAs(beatsButton) {
@@ -225,9 +227,7 @@ fun MainScreen(
           }
           IconButton(
             onClick = onTempoTapButtonClick,
-            colors = IconButtonDefaults.iconButtonColors(
-              contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            ),
+            colors = IconButtonDefaults.iconButtonColors(contentColor = controlsColor),
             modifier = Modifier
               .graphicsLayer(alpha = controlsAlpha)
               .constrainAs(tempoTapButton) {
@@ -247,9 +247,7 @@ fun MainScreen(
             onLongClick = {
               viewModel.circulateThroughBookmarks()
             },
-            colors = IconButtonDefaults.iconButtonColors(
-              contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-            ),
+            colors = IconButtonDefaults.iconButtonColors(contentColor = controlsColor),
             modifier = Modifier
               .graphicsLayer(alpha = controlsAlpha)
               .constrainAs(bookmarksButton) {
@@ -264,13 +262,11 @@ fun MainScreen(
               contentDescription = stringResource(id = R.string.wear_title_bookmarks)
             )
           }
-          BeatModeButton(
-            state = state,
-            beatModeVibrate = state.beatModeVibrate,
-            alwaysVibrate = state.alwaysVibrate,
+          IconButton(
             onClick = {
               viewModel.updateBeatModeVibrate(!state.beatModeVibrate)
             },
+            colors = IconButtonDefaults.iconButtonColors(contentColor = controlsColor),
             modifier = Modifier
               .graphicsLayer(alpha = controlsAlpha)
               .constrainAs(beatModeButton) {
@@ -278,8 +274,26 @@ fun MainScreen(
                 bottom.linkTo(parent.bottom, margin = 40.dp)
                 start.linkTo(playButton.end)
                 end.linkTo(parent.end)
-              }
-          )
+              }.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
+          ) {
+            val resId1 = if (state.alwaysVibrate) {
+              R.drawable.ic_rounded_volume_off_to_volume_up_anim
+            } else {
+              R.drawable.ic_rounded_vibration_to_volume_up_anim
+            }
+            val resId2 = if (state.alwaysVibrate) {
+              R.drawable.ic_rounded_volume_up_to_volume_off_anim
+            } else {
+              R.drawable.ic_rounded_volume_up_to_vibration_anim
+            }
+            AnimatedIcon(
+              resId1 = resId2,
+              resId2 = resId1,
+              description = stringResource(id = R.string.wear_action_beat_mode),
+              trigger = state.beatModeVibrate,
+              animated = !state.reduceAnim
+            )
+          }
         }
         VolumeDialog(
           visible = showVolumeDialog,
@@ -464,41 +478,6 @@ fun PlayButton(
       description = stringResource(id = R.string.wear_action_play_stop),
       trigger = animTrigger,
       modifier = Modifier.size(IconButtonDefaults.LargeIconSize),
-      animated = !state.reduceAnim
-    )
-  }
-}
-
-@Composable
-fun BeatModeButton(
-  state: MainState,
-  beatModeVibrate: Boolean,
-  alwaysVibrate: Boolean,
-  onClick: () -> Unit,
-  modifier: Modifier
-) {
-  IconButton(
-    onClick = onClick,
-    colors = IconButtonDefaults.iconButtonColors(
-      contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-    ),
-    modifier = modifier.touchTargetAwareSize(IconButtonDefaults.DefaultButtonSize)
-  ) {
-    val resId1 = if (alwaysVibrate) {
-      R.drawable.ic_rounded_volume_off_to_volume_up_anim
-    } else {
-      R.drawable.ic_rounded_vibration_to_volume_up_anim
-    }
-    val resId2 = if (alwaysVibrate) {
-      R.drawable.ic_rounded_volume_up_to_volume_off_anim
-    } else {
-      R.drawable.ic_rounded_volume_up_to_vibration_anim
-    }
-    AnimatedIcon(
-      resId1 = resId2,
-      resId2 = resId1,
-      description = stringResource(id = R.string.wear_action_beat_mode),
-      trigger = beatModeVibrate,
       animated = !state.reduceAnim
     )
   }
