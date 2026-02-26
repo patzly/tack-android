@@ -437,6 +437,7 @@
   <string name="help_tempo_change">Como eu mudo o tempo?</string>
   <string name="help_tempo_change_answer">Para alterar o tempo, você pode arrastar ou girar o botão central da tela principal ou apertar os botões da esquerda ou direita do círculo.\nClicando no selecionador do tempo, vai ser aberta uma opção para você batucar na batida desejada ou indicar através do teclado.</string>
   <string name="help_time_signature">Como eu posso definir a divisão de compassos?</string>
+  <string name="help_time_signature_answer">Considere o primeiro número da assinatura de tempo, então configure o Tack com essa informação. Isso significa que são 4 batidas para 4/4, 2 para 2/2 e por aí vai. O 6/8 é um pouco especial, aqui você vai usar 2 batidas e opcionalmente 3 subdivisões, porque somente no 1° e no 4° oitavos vão acontecer os contratempos.\nVocê também pode mudar a ênfase na batida ao clicar nela. Outra possibilidade é utilizar uma porcentagem na variação / swing, que vai então criar automaticamente a subdivisão pra você.</string>
   <string name="help_swing">Como eu desabilito a variação / swing?</string>
   <string name="help_swing_answer">Se você habilitar a variação / swing, o Tack vai definir automaticamente as subdivisões pra você. Para desabilitar, basta definir as subdivisões manualmente conforme preferir.</string>
   <string name="help_song_library">Como a biblioteca de músicas funciona?</string>
