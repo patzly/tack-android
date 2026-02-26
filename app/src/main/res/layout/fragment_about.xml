@@ -112,7 +112,8 @@
 
             <TextView
               android:id="@+id/text_about_version"
-              style="@style/Widget.Tack.TextView.ListItem.Title" />
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:fontFeatureSettings="tnum" />
 
           </LinearLayout>
 

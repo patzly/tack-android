@@ -83,10 +83,13 @@ public class FormattedTextView extends LinearLayout {
         addView(getMediumParagraph(part.substring(2)));
       } else if (part.startsWith("#")) {
         boolean keepDistance = !partNext.startsWith("=> ");
-        String[] h = part.split(" ");
-        addView(
-            getHeadline(h[0].length(), part.substring(h[0].length() + 1), keepDistance)
-        );
+        int firstSpace = part.indexOf(' ');
+        int prefixEnd = firstSpace != -1 ? firstSpace : part.length();
+        String prefix = part.substring(0, prefixEnd);
+        boolean useTNum = prefix.endsWith("_");
+        String h0 = useTNum ? prefix.substring(0, prefix.length() - 1) : prefix;
+        String headlineText = firstSpace != -1 ? part.substring(firstSpace + 1) : "";
+        addView(getHeadline(h0.length(), headlineText, keepDistance, useTNum));
       } else if (part.startsWith("- ")) {
         String[] bullets = part.trim().split("- ");
         for (int index = 1; index < bullets.length; index++) {
@@ -147,7 +150,7 @@ public class FormattedTextView extends LinearLayout {
     return textView;
   }
 
-  private MaterialTextView getHeadline(int h, String title, boolean keepDistance) {
+  private MaterialTextView getHeadline(int h, String title, boolean keepDistance, boolean useTNum) {
     MaterialTextView textView = new MaterialTextView(
         new ContextThemeWrapper(context, R.style.Widget_Tack_TextView), null, 0
     );
@@ -173,6 +176,7 @@ public class FormattedTextView extends LinearLayout {
     }
     TextViewCompat.setTextAppearance(textView, resId);
     textView.setTextColor(textColor);
+    textView.setFontFeatureSettings(useTNum ? "tnum" : "normal");
     return textView;
   }
 

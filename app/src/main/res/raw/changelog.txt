@@ -1,10 +1,10 @@
-### 6.2.1
+###_ 6.2.1
 
 - Improved: Audio engine performance and stability (Mobile and Wear OS)
 - Fixed: "Blink flashlight" setting only worked with haptic beats enabled (Mobile)
 - Fixed: Timing delay on the first beat (Mobile and Wear OS)
 
-### 6.2.0
+###_ 6.2.0
 
 - New: "Blink flashlight" setting (Mobile)
 - New: "Vibration intensity" setting for haptic beats and effects (Mobile and Wear OS)
@@ -23,12 +23,12 @@
 - Fixed: Tempo tap not respecting tempo limits (Mobile)
 - Fixed: Rapid tempo changes on tempo screen caused incorrect tempo (Wear OS)
 
-### 6.1.1
+###_ 6.1.1
 
 - Improved: Moved "support development" option to home screen for better discoverability
 - Fixed: Wrong default value for beat-wise muting option
 
-### 6.1.0
+###_ 6.1.0
 
 - New: Muted beats option extended with beats unit for beat-wise muting
 - New: Google Sans Flex typeface to better support expressive style
@@ -40,14 +40,14 @@
 - Fixed: Some beats still randomly not playing due to threading issues
 - Fixed: Some crashes in certain situations
 
-### 6.0.1
+###_ 6.0.1
 
 - Fixed: Some beats randomly not playing due to threading issues (thanks Gwrvan!)
 - Fixed: Polyrhythmic subdivisions getting out of sync with main beat
 - Fixed: Wrong placement of center logo animation when song picker was expanded (thanks James!)
 - Fixed: Crash when device orientation was changed
 
-### 6.0.0
+###_ 6.0.0
 
 - New: Material 3 Expressive design throughout the app with new typeface and redesigned controls
 - New: Migration to Oboe audio library for minimum latency and much better performance
@@ -83,7 +83,7 @@
 - Fixed: Crash caused by invalid tempo values
 - Fixed: Incorrect preference restoration after latency correction setting change
 
-### 5.0.0
+###_ 5.0.0
 
 - New: Bookmark button replaced by song library button for managing configuration combinations
 - New: Bookmarks bar replaced by song picker. Tap on song to apply it, tap again to open a dialog with all parts, tap × to switch back to previous configuration
