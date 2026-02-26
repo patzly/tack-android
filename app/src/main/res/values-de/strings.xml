@@ -191,6 +191,7 @@
   <string name="msg_copied_to_clipboard">Erfolgreich in Zwischenablage kopiert</string>
   <string name="msg_invalid_input">Ungültige Eingabe</string>
   <string name="msg_discard_changes">Änderungen verwerfen?</string>
+  <string name="msg_discard_changes_description">Bist du sicher, dass du sie nicht speichern möchtest?</string>
   <string name="msg_delete_song">Werk löschen?</string>
   <string name="msg_delete_song_description">Bist du sicher, dass du das gesamte Werk mit allen Teilen löschen möchtest? Dies kann nicht rückgängig gemacht werden.</string>
   <string name="msg_songs_empty">Leere Werksammlung</string>
