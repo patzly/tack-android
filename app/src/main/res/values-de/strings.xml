@@ -168,6 +168,7 @@
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Eine großartige App benötigt viel Zeit und lebt von der Rückmeldungen ihrer Nutzer.</string>
+  <string name="msg_feedback_contact">Hast du Wünsche, Anmerkungen oder Fragen? Kontaktiere mich! Ansonsten würde ich mich sehr über eine nette Bewertung im Play Store freuen.</string>
   <string name="msg_recommend">Schau dir mal diese coole Metronom-App an: \n%1$s</string>
   <string name="msg_vibration_unavailable">Vibration ist auf diesem Gerät nicht verfügbar, deshalb wird Ton verwendet.</string>
   <string name="msg_service_running">Metronom-Service läuft</string>
