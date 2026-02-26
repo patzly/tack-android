@@ -166,7 +166,6 @@
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Aplikasi yang hebat membutuhkan banyak waktu dan hidup dari umpan balik penggunanya.</string>
-  <string name="msg_feedback_contact">Apakah Anda memiliki permintaan, komentar, atau pertanyaan? Hubungi saya! Jika tidak, saya akan sangat senang jika Anda memberikan ulasan yang bagus di Play Store.</string>
   <string name="msg_recommend">Lihatlah aplikasi metronom yang keren ini: \n%1$s</string>
   <string name="msg_vibration_unavailable">Getaran tidak tersedia pada perangkat ini. Suara akan digunakan.</string>
   <string name="msg_service_running">Layanan metronom berjalan</string>
@@ -189,13 +188,11 @@
   <string name="msg_copied_to_clipboard">Berhasil disalin ke papan klip</string>
   <string name="msg_invalid_input">Masukan tidak valid</string>
   <string name="msg_discard_changes">Batalkan perubahan?</string>
-  <string name="msg_discard_changes_description">Apakah Anda yakin tidak ingin menyimpannya?</string>
   <string name="msg_delete_song">Hapus lagu?</string>
   <string name="msg_delete_song_description">Apakah Anda yakin ingin menghapus seluruh lagu beserta semua bagiannya? Tindakan ini tidak dapat dibatalkan.</string>
   <string name="msg_songs_empty">Perpustakaan lagu kosong</string>
   <string name="msg_songs_empty_description">Tambahkan lagu yang ingin Anda praktikkan</string>
   <string name="msg_unlock">Pesan dari pengembang</string>
-  <string name="msg_unlock_description">Apakah Anda menghargai pengalaman bebas iklan dengan fitur-fitur canggih di Tack? Saya telah menghabiskan bertahun-tahun waktu luang saya untuk mengembangkan Tack secara gratis, tetapi terutama fitur perpustakaan lagu membutuhkan bulan-bulan kerja keras.\nUntuk terus meningkatkan Tack, saya dengan hormat meminta kontribusi kecil. Sebagai imbalan, Anda akan mendapatkan akses tak terbatas ke lagu-lagu dan bagian-bagian lagu tanpa batas. Terima kasih atas dukungan Anda!</string>
   <string name="msg_backup_description">Anda dapat mencadangkan seluruh perpustakaan lagu ke perangkat atau memulihkan perpustakaan lagu dari cadangan.</string>
   <string name="msg_backup_error">Kesalahan saat pencadangan</string>
   <string name="msg_backup_directory_missing">Tidak ada lokasi penyimpanan yang dipilih untuk cadangan.</string>
@@ -208,8 +205,6 @@
   <string name="msg_songs_intro">Bagaimana cara kerja perpustakaan lagu</string>
   <string name="msg_songs_intro_description">Anda dapat menyimpan dan mengatur konfigurasi metronom sebagai bagian dari lagu. Cukup atur pengaturan dan opsi metronom sesuai preferensi Anda, lalu tambahkan konfigurasi saat ini sebagai bagian baru dalam lagu atau edit bagian yang sudah ada.</string>
   <string name="msg_widget_description">Lihat lagu Anda dan memutarnya kembali</string>
-  <string name="msg_installer_check">Aplikasi pembuka kunci tidak valid</string>
-  <string name="msg_installer_check_description">Silakan beli dan instal aplikasi pembuka kunci di Google Play. Terima kasih atas dukungannya!</string>
   <string name="msg_widget_prompt">Akses cepat ke lagu?</string>
   <string name="msg_widget_prompt_description">Tempatkan widget yang indah di layar beranda Anda.</string>
   <!-- OPTIONS -->
