@@ -32,6 +32,10 @@ import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine.Tick
 import xyz.zedler.patrick.tack.util.AudioUtil
 import java.io.IOException
+import java.util.concurrent.Executors
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
 import kotlin.math.pow
 
 @Keep
@@ -41,11 +45,18 @@ class AudioEngine(
 ) : OnAudioFocusChangeListener {
 
   private val audioManager: AudioManager? = context.getSystemService()
-
   private var engineHandle: Long = 0
+  private val executor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
+  private var delayedStopTask: ScheduledFuture<*>? = null
 
   @Volatile
   private var isPlaying: Boolean = false
+  @Volatile
+  private var isStreamRunning: Boolean = false
+  var ignoreFocus: Boolean = false
+
+  private val isInitialized: Boolean
+    get() = engineHandle != 0L
 
   // Properties with custom setters to update native engine immediately
   var gain: Int = Constants.Def.GAIN
@@ -65,17 +76,13 @@ class AudioEngine(
       }
     }
 
-  var ignoreFocus: Boolean = false
-
-  private val isInitialized: Boolean
-    get() = engineHandle != 0L
-
   init {
     engineHandle = nativeCreate()
     if (engineHandle == 0L) {
       Log.e(TAG, "Failed to create Oboe engine")
     } else {
-      if (!nativeInit(engineHandle)) {
+      val initSuccess = nativeInit(engineHandle)
+      if (!initSuccess) {
         Log.e(TAG, "Failed to init Oboe audio stream")
       } else {
         // Initialize defaults
@@ -88,6 +95,7 @@ class AudioEngine(
   }
 
   fun destroy() {
+    executor.shutdownNow()
     stop()
     if (isInitialized) {
       nativeDestroy(engineHandle)
@@ -95,41 +103,89 @@ class AudioEngine(
     }
   }
 
-  fun play() {
-    if (isPlaying || !isInitialized) return
+  fun warmUp() {
+    if (!isInitialized) return
+    cancelDelayedStop()
 
-    if (nativeStart(engineHandle)) {
+    if (!isStreamRunning) {
+      val success = nativeStart(engineHandle)
+      if (success) {
+        isStreamRunning = true
+      } else {
+        Log.e(TAG, "Failed to warm up Oboe audio stream")
+      }
+    }
+
+    scheduleStreamShutdown()
+  }
+
+  fun play() {
+    if (!isInitialized) return
+
+    cancelDelayedStop()
+
+    if (!isStreamRunning) {
+      val success = nativeStart(engineHandle)
+      if (success) {
+        isStreamRunning = true
+      } else {
+        Log.e(TAG, "Failed to start Oboe audio stream")
+        return
+      }
+    }
+
+    if (!isPlaying) {
       isPlaying = true
       requestAudioFocus()
-    } else {
-      Log.e(TAG, "Failed to start Oboe engine")
     }
   }
 
   fun stop() {
-    if (!isPlaying || !isInitialized) return
+    if (!isInitialized) return
+    cancelDelayedStop()
 
-    if (nativeStop(engineHandle)) {
+    val success = nativeStop(engineHandle)
+    if (success) {
+      isStreamRunning = false
       isPlaying = false
+
       if (!ignoreFocus) {
-        audioManager?.abandonAudioFocus(this)
+        audioManager!!.abandonAudioFocus(this)
       }
-      listener.onAudioStop()
     } else {
       Log.e(TAG, "Failed to stop Oboe engine")
     }
   }
 
-  fun playTick(tick: Tick) {
-    if (!isPlaying || !isInitialized || isMuted || tick.isMuted) return
+  fun scheduleDelayedStop() {
+    if (!isPlaying) return
+    isPlaying = false
 
-    val nativeTickType = when (tick.type) {
-      Constants.TickType.STRONG -> NATIVE_TICK_TYPE_STRONG
-      Constants.TickType.SUB -> NATIVE_TICK_TYPE_SUB
-      Constants.TickType.MUTED, Constants.TickType.BEAT_SUB_MUTED -> return // Silence
-      else -> NATIVE_TICK_TYPE_NORMAL
+    if (!ignoreFocus) {
+      audioManager!!.abandonAudioFocus(this)
     }
-    nativePlayTick(engineHandle, nativeTickType)
+
+    listener.onAudioStop()
+    scheduleStreamShutdown()
+  }
+
+  override fun onAudioFocusChange(focusChange: Int) {
+    if (!isInitialized) return
+
+    when (focusChange) {
+      AudioManager.AUDIOFOCUS_GAIN -> {
+        nativeSetDuckingVolume(engineHandle, 1.0f)
+      }
+
+      AudioManager.AUDIOFOCUS_LOSS -> {
+        stop()
+      }
+
+      AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
+      AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
+        nativeSetDuckingVolume(engineHandle, 0.25f)
+      }
+    }
   }
 
   fun setSound(sound: String) {
@@ -202,34 +258,16 @@ class AudioEngine(
     )
   }
 
-  private fun requestAudioFocus() {
-    if (ignoreFocus || audioManager == null) return
+  fun playTick(tick: Tick) {
+    if (!isPlaying || !isInitialized || isMuted || tick.isMuted) return
 
-    val request = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-      .setAudioAttributes(AudioUtil.getAttributes())
-      .setWillPauseWhenDucked(true)
-      .setOnAudioFocusChangeListener(this)
-      .build()
-    audioManager.requestAudioFocus(request)
-  }
-
-  override fun onAudioFocusChange(focusChange: Int) {
-    if (!isInitialized) return
-
-    when (focusChange) {
-      AudioManager.AUDIOFOCUS_GAIN -> {
-        nativeSetDuckingVolume(engineHandle, 1.0f)
-      }
-
-      AudioManager.AUDIOFOCUS_LOSS -> {
-        stop()
-      }
-
-      AudioManager.AUDIOFOCUS_LOSS_TRANSIENT,
-      AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK -> {
-        nativeSetDuckingVolume(engineHandle, 0.25f)
-      }
+    val nativeTickType = when (tick.type) {
+      Constants.TickType.STRONG -> NATIVE_TICK_TYPE_STRONG
+      Constants.TickType.SUB -> NATIVE_TICK_TYPE_SUB
+      Constants.TickType.MUTED, Constants.TickType.BEAT_SUB_MUTED -> return // Silence
+      else -> NATIVE_TICK_TYPE_NORMAL
     }
+    nativePlayTick(engineHandle, nativeTickType)
   }
 
   private fun loadAudio(@RawRes resId: Int, pitch: Pitch): FloatArray {
@@ -260,6 +298,39 @@ class AudioEngine(
 
       Pitch.NORMAL -> originalData
     }
+  }
+
+  private fun scheduleStreamShutdown() {
+    if (!isStreamRunning) return
+
+    try {
+      delayedStopTask = executor.schedule({
+        if (!isPlaying && isStreamRunning) {
+          stop()
+          Log.i(TAG, "scheduleStreamShutdown: hello")
+        }
+      }, STREAM_DELAY_SECONDS, TimeUnit.SECONDS)
+    } catch (e: Exception) {
+      Log.e(TAG, "scheduleStreamShutdown: failed to schedule stream stop", e)
+    }
+  }
+
+  private fun cancelDelayedStop() {
+    if (delayedStopTask != null && !delayedStopTask!!.isDone()) {
+      delayedStopTask!!.cancel(false)
+      Log.i(TAG, "cancelDelayedStop: hello")
+    }
+  }
+
+  private fun requestAudioFocus() {
+    if (ignoreFocus || audioManager == null) return
+
+    val request = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+      .setAudioAttributes(AudioUtil.getAttributes())
+      .setWillPauseWhenDucked(true)
+      .setOnAudioFocusChangeListener(this)
+      .build()
+    audioManager.requestAudioFocus(request)
   }
 
   // --- Native Methods ---
@@ -298,9 +369,10 @@ class AudioEngine(
 
     private const val TAG = "AudioEngine"
 
-    private const val NATIVE_TICK_TYPE_STRONG = 1
-    private const val NATIVE_TICK_TYPE_NORMAL = 2
-    private const val NATIVE_TICK_TYPE_SUB = 3
+    private const val NATIVE_TICK_TYPE_STRONG: Int = 1
+    private const val NATIVE_TICK_TYPE_NORMAL: Int = 2
+    private const val NATIVE_TICK_TYPE_SUB: Int = 3
+    private const val STREAM_DELAY_SECONDS: Long = 60
 
     init {
       System.loadLibrary("oboe-audio-engine")

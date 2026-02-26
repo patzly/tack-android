@@ -35,7 +35,7 @@ class MetronomeEngine(
 ) {
 
   companion object {
-    private const val TAG = "MetronomeUtil"
+    private const val TAG = "MetronomeEngine"
   }
 
   private val audioEngine = AudioEngine(context, ::stop)
@@ -83,6 +83,10 @@ class MetronomeEngine(
     setBeatModeVibrate(state.beatModeVibrate)
     setAlwaysVibrate(state.alwaysVibrate)
     setVibrationIntensity(state.vibrationIntensity)
+  }
+
+  fun warmUpAudio() {
+    audioEngine.warmUp()
   }
 
   private fun resetHandlersIfRequired() {
@@ -165,12 +169,13 @@ class MetronomeEngine(
 
   fun stop() {
     if (!isPlaying) return
-    isPlaying = false
-    audioEngine.stop()
 
     if (fromService) {
       removeHandlerCallbacks()
     }
+
+    isPlaying = false
+    audioEngine.scheduleDelayedStop()
 
     listeners.forEach { it.onMetronomeStop() }
     Log.i(TAG, "stop: stopped metronome handler")

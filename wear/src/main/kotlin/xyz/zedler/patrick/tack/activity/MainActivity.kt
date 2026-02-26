@@ -50,12 +50,11 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 class MainActivity : ComponentActivity(), ServiceConnection {
 
-  private lateinit var metronomeService: MetronomeService
-  private lateinit var metronomeEngine: MetronomeEngine
   private lateinit var viewModel: MainViewModel
   private lateinit var buttonUtilFaster: ButtonUtil
   private lateinit var buttonUtilSlower: ButtonUtil
   private lateinit var requestPermissionLauncher: ActivityResultLauncher<String>
+  private var metronomeService: MetronomeService? = null
   private var bound: Boolean = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,80 +64,62 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
     setTheme(android.R.style.Theme_DeviceDefault)
 
-    metronomeEngine = MetronomeEngine(this, false)
-    metronomeEngine.addListener(object : MetronomeEngine.MetronomeListenerAdapter() {
-      override fun onMetronomePreTick(tick: MetronomeEngine.Tick) {
-        runOnUiThread {
-          viewModel.onPreTick(tick)
-        }
-      }
-      override fun onMetronomeTick(tick: MetronomeEngine.Tick) {
-        runOnUiThread {
-          viewModel.onTick(tick)
-        }
-      }
-      override fun onFlashScreenEnd() {
-        runOnUiThread {
-          viewModel.onFlashScreenEnd()
-        }
-      }
-      override fun onPermissionMissing() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-          try {
-            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-          } catch (e: IllegalStateException) {
-            Log.e(TAG, "onPermissionMissing: ", e)
-          }
-        }
-      }
-    })
-
     val sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this)
     viewModel = MainViewModel(sharedPrefs, object : MainViewModel.StateListener {
       override fun onMetronomeConfigChanged(state: MainState) {
-        getMetronomeUtil().updateFromState(state)
+        val metronomeEngine = getMetronomeEngine() ?: return
+        metronomeEngine.updateFromState(state)
       }
       override fun onKeepAwakeChanged(keepAwake: Boolean) {
         keepScreenAwake(this@MainActivity, keepAwake)
       }
       override fun onPlayingToggleRequest() {
-        getMetronomeUtil().setPlayback(!getMetronomeUtil().isPlaying)
-        viewModel.updatePlaying(getMetronomeUtil().isPlaying)
+        val metronomeEngine = getMetronomeEngine() ?: return
+        metronomeEngine.setPlayback(!metronomeEngine.isPlaying)
+        viewModel.updatePlaying(metronomeEngine.isPlaying)
       }
       override fun onAddBeatRequest() {
-        getMetronomeUtil().addBeat()
-        viewModel.updateBeats(getMetronomeUtil().beats)
+        val metronomeEngine = getMetronomeEngine() ?: return
+        metronomeEngine.addBeat()
+        viewModel.updateBeats(metronomeEngine.beats)
       }
       override fun onRemoveBeatRequest() {
-        getMetronomeUtil().removeBeat()
-        viewModel.updateBeats(getMetronomeUtil().beats)
+        val metronomeEngine = getMetronomeEngine() ?: return
+        metronomeEngine.removeBeat()
+        viewModel.updateBeats(metronomeEngine.beats)
       }
       override fun onChangeBeatRequest(beat: Int, tickType: String) {
-        getMetronomeUtil().changeBeat(beat, tickType)
-        viewModel.updateBeats(getMetronomeUtil().beats)
+        val metronomeEngine = getMetronomeEngine() ?: return
+        metronomeEngine.changeBeat(beat, tickType)
+        viewModel.updateBeats(metronomeEngine.beats)
       }
       override fun onAddSubdivisionRequest() {
-        getMetronomeUtil().addSubdivision()
-        viewModel.updateSubdivisions(getMetronomeUtil().subdivisions)
+        val metronomeEngine = getMetronomeEngine() ?: return
+        metronomeEngine.addSubdivision()
+        viewModel.updateSubdivisions(metronomeEngine.subdivisions)
       }
       override fun onRemoveSubdivisionRequest() {
-        getMetronomeUtil().removeSubdivision()
-        viewModel.updateSubdivisions(getMetronomeUtil().subdivisions)
+        val metronomeEngine = getMetronomeEngine() ?: return
+        metronomeEngine.removeSubdivision()
+        viewModel.updateSubdivisions(metronomeEngine.subdivisions)
       }
       override fun onChangeSubdivisionRequest(subdivision: Int, tickType: String) {
-        getMetronomeUtil().changeSubdivision(subdivision, tickType)
-        viewModel.updateSubdivisions(getMetronomeUtil().subdivisions)
+        val metronomeEngine = getMetronomeEngine() ?: return
+        metronomeEngine.changeSubdivision(subdivision, tickType)
+        viewModel.updateSubdivisions(metronomeEngine.subdivisions)
       }
       override fun onSwingChangeRequest(swing: Int) {
+        val metronomeEngine = getMetronomeEngine() ?: return
         when (swing) {
-          3 -> getMetronomeUtil().setSwing3()
-          5 -> getMetronomeUtil().setSwing5()
-          7 -> getMetronomeUtil().setSwing7()
+          3 -> metronomeEngine.setSwing3()
+          5 -> metronomeEngine.setSwing5()
+          7 -> metronomeEngine.setSwing7()
         }
-        viewModel.updateSubdivisions(getMetronomeUtil().subdivisions)
+        viewModel.updateSubdivisions(metronomeEngine.subdivisions)
       }
       override fun onVibrationIntensityChanged() {
-        getMetronomeUtil().vibrateForDemo()
+        val metronomeEngine = getMetronomeEngine() ?: return
+        metronomeEngine.vibrateForDemo()
       }
     })
     viewModel.updateSupportsVibrationEffects(
@@ -151,8 +132,6 @@ class MainActivity : ComponentActivity(), ServiceConnection {
       )!!
     )
 
-    updateMetronomeUtil()
-
     requestPermissionLauncher = registerForActivityResult(
       ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
@@ -163,18 +142,22 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
     buttonUtilFaster = ButtonUtil(this, object : OnPressListener {
       override fun onPress() {
-        viewModel.updateTempo(getMetronomeUtil().tempo + 1, animate = true)
+        val metronomeEngine = getMetronomeEngine() ?: return
+        viewModel.updateTempo(metronomeEngine.tempo + 1, animate = true)
       }
       override fun onFastPress() {
-        viewModel.updateTempo(getMetronomeUtil().tempo + 1, animate = false)
+        val metronomeEngine = getMetronomeEngine() ?: return
+        viewModel.updateTempo(metronomeEngine.tempo + 1, animate = false)
       }
     })
     buttonUtilSlower = ButtonUtil(this, object : OnPressListener {
       override fun onPress() {
-        viewModel.updateTempo(getMetronomeUtil().tempo - 1, animate = true)
+        val metronomeEngine = getMetronomeEngine() ?: return
+        viewModel.updateTempo(metronomeEngine.tempo - 1, animate = true)
       }
       override fun onFastPress() {
-        viewModel.updateTempo(getMetronomeUtil().tempo - 1, animate = false)
+        val metronomeEngine = getMetronomeEngine() ?: return
+        viewModel.updateTempo(metronomeEngine.tempo - 1, animate = false)
       }
     })
 
@@ -213,7 +196,6 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     if (bound) {
       unbindService(this)
       bound = false
-      updateMetronomeUtil()
     }
   }
 
@@ -221,12 +203,18 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     val binder: MetronomeService.MetronomeBinder = iBinder as MetronomeService.MetronomeBinder
     metronomeService = binder.service
     bound = true
-    updateMetronomeUtil()
+
+    val metronomeEngine = getMetronomeEngine() ?: return
+
+    metronomeEngine.updateFromState(viewModel.state.value)
+    viewModel.updatePlaying(metronomeEngine.isPlaying)
+
+    // warm up Oboe stream to avoid delay when starting the next time
+    metronomeEngine.warmUpAudio()
   }
 
   override fun onServiceDisconnected(name: ComponentName?) {
     bound = false
-    updateMetronomeUtil()
   }
 
   override fun onBindingDied(name: ComponentName?) {
@@ -243,11 +231,13 @@ class MainActivity : ComponentActivity(), ServiceConnection {
   override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
     when (keyCode) {
       KeyEvent.KEYCODE_NAVIGATE_NEXT -> {
-        viewModel.updateTempo(getMetronomeUtil().tempo + 1)
+        val metronomeEngine = getMetronomeEngine() ?: return false
+        viewModel.updateTempo(metronomeEngine.tempo + 1)
         return true
       }
       KeyEvent.KEYCODE_NAVIGATE_PREVIOUS -> {
-        viewModel.updateTempo(getMetronomeUtil().tempo - 1)
+        val metronomeEngine = getMetronomeEngine() ?: return false
+        viewModel.updateTempo(metronomeEngine.tempo - 1)
         return true
       }
       KeyEvent.KEYCODE_STEM_1 -> {
@@ -273,18 +263,11 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     return super.onKeyUp(keyCode, event)
   }
 
-  private fun getMetronomeUtil(): MetronomeEngine {
-    return if (bound) metronomeService.getMetronomeUtil() else metronomeEngine
-  }
-
-  private fun updateMetronomeUtil() {
-    val listeners: MutableSet<MetronomeEngine.MetronomeListener> = HashSet(metronomeEngine.listeners)
+  fun getMetronomeEngine(): MetronomeEngine? {
     if (bound) {
-      listeners.addAll(metronomeService.getMetronomeUtil().listeners)
+      return metronomeService!!.getMetronomeEngine()
     }
-    getMetronomeUtil().addListeners(listeners)
-    getMetronomeUtil().updateFromState(viewModel.state.value)
-    viewModel.updatePlaying(getMetronomeUtil().isPlaying)
+    return null
   }
 
   private fun onRateClick() {

@@ -125,7 +125,7 @@ class MetronomeService : LifecycleService() {
     configChange = false
   }
 
-  fun getMetronomeUtil(): MetronomeEngine {
+  fun getMetronomeEngine(): MetronomeEngine {
     return metronomeEngine
   }
 
