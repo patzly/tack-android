@@ -181,7 +181,7 @@
   <!-- MESSAGES -->
 
   <string name="msg_feedback">A great app requires a lot of time and lives from the feedback of its users.</string>
-  <string name="msg_feedback_contact">Do you have any wishes, comments or questions? Contact me! Otherwise I would be very happy about a nice review in the Play Store.</string>
+  <string name="msg_feedback_contact">Do you have any wishes, comments or questions? Contact me! Otherwise, I would be very happy about a nice review in the Play Store.</string>
   <string name="msg_recommend">Check out this cool metronome app: \n%1$s</string>
   <string name="msg_vibration_unavailable">Vibration not available on this device. Sound will be used.</string>
   <string name="msg_service_running">Metronome service is running</string>
@@ -204,13 +204,13 @@
   <string name="msg_copied_to_clipboard">Copied to clipboard successfully</string>
   <string name="msg_invalid_input">Invalid input</string>
   <string name="msg_discard_changes">Discard changes?</string>
-  <string name="msg_discard_changes_description">Are you sure you don\'t want to save them?</string>
+  <string name="msg_discard_changes_description">Are you sure you don’t want to save them?</string>
   <string name="msg_delete_song">Delete song?</string>
   <string name="msg_delete_song_description">Are you sure you want to delete the entire song with all of its parts? This cannot be undone.</string>
   <string name="msg_songs_empty">Empty song library</string>
   <string name="msg_songs_empty_description">Add songs you want to practice</string>
   <string name="msg_unlock">Message from the developer</string>
-  <string name="msg_unlock_description">Do you appreciate the ad-free experience with tons of powerful features in Tack? I\'ve spent years of my spare time creating Tack for free, but especially the song library feature took months of hard work.\nIn order to continue improving Tack, I kindly ask for a small contribution. In return, you\'ll get an unlock app for unlimited songs and countless song parts. Thanks for your support!</string>
+  <string name="msg_unlock_description">Do you appreciate the ad-free experience with tons of powerful features in Tack? I’ve spent years of my spare time creating Tack for free, but especially the song library feature took months of hard work.\nIn order to continue improving Tack, I kindly ask for a small contribution. In return, you’ll get an unlock app for unlimited songs and countless song parts. Thanks for your support!</string>
   <string name="msg_backup_description">You can back up your entire song library to your device or restore a song library from a backup.</string>
   <string name="msg_backup_error">Error during backup</string>
   <string name="msg_backup_directory_missing">No storage location selected for backup</string>
@@ -223,8 +223,6 @@
   <string name="msg_songs_intro">How the song library works</string>
   <string name="msg_songs_intro_description">You can save and arrange metronome configurations as parts of a song. Simply set the metronome controls and options to your preference, then add the current configuration as a new part to a song or edit an existing part.</string>
   <string name="msg_widget_description">View your songs and play them back</string>
-  <string name="msg_installer_check">Invalid unlock app</string>
-  <string name="msg_installer_check_description">Please purchase and install the unlock app on Google Play. Thank you for your support!</string>
   <string name="msg_widget_prompt">Quick access to songs?</string>
   <string name="msg_widget_prompt_description">Place a beautiful widget on your home screen.</string>
   <string name="msg_beat_mode_warning">Switch beat mode to sound-only as well?</string>
@@ -432,19 +430,19 @@
   <string name="help_tempo_change">How can I change tempo?</string>
   <string name="help_tempo_change_answer">To change the tempo, you can drag and rotate the tempo picker in the center of the main page or tap on the buttons on the left and the right of the circle.\nBy tapping the tempo picker, you can open a dialog to set the tempo by tapping in BPM or using keyboard input.</string>
   <string name="help_time_signature">How do I set the time signature?</string>
-  <string name="help_time_signature_answer">Look at the first number of your time signature and set the beats in Tack accordingly. That means 4 beats for 4/4, 2 for 2/2 and so on. 6/8 is a bit special, here you use 2 beats with optionally 3 subdivisions because only the 1st and the 4th eights are downbeats.\nAdditionally you can change the emphasis of beats by tapping on them. In options you also can select a swing percentage, which automatically sets the subdivisions for you.</string>
+  <string name="help_time_signature_answer">Look at the first number of your time signature and set the beats in Tack accordingly. That means 4 beats for 4/4, 2 for 2/2 and so on. 6/8 is a bit special, here you use 2 beats with optionally 3 subdivisions because only the 1st and the 4th eights are downbeats.\nAdditionally you can change the emphasis of beats by tapping on them. In options, you also can select a swing percentage, which automatically sets the subdivisions for you.</string>
   <string name="help_swing">How do I disable swing?</string>
   <string name="help_swing_answer">If you have enabled swing in the options, all Tack does is to set the subdivisions for you. To disable swing, simply set the subdivisions manually to your liking.</string>
   <string name="help_song_library">How does the song library work?</string>
-  <string name="help_song_library_answer">The song library is a collection of metronome configurations that you can save and apply. To save your current configuration, simply open the song library and create a new song. The current configuration will be added to the parts list where you can further adjust it. After you gave the song a name, don\'t forget to save your result with a tap on the disk icon in the top right corner.</string>
+  <string name="help_song_library_answer">The song library is a collection of metronome configurations that you can save and apply. To save your current configuration, simply open the song library and create a new song. The current configuration will be added to the parts list where you can further adjust it. After you gave the song a name, don’t forget to save your result with a tap on the disk icon in the top right corner.</string>
   <string name="help_song_picker">How does the song picker work?</string>
   <string name="help_song_picker_answer">All songs from your song library are displayed in the song picker on the main page, but you can open a full-screen list if you want. The order depends on your choice in the menu. To apply a song, simply tap on it. You can also jump to a specific part of a song by tapping on the current part below the song or by using the skip buttons.\nIf you want to switch back to the configuration you had before selecting a song, tap the × next to the song name.</string>
   <string name="help_song_part">Why does the song not switch to the next part?</string>
-  <string name="help_song_part_answer">To switch to the next part of a song automatically, each part needs to have a duration set. If you don\'t set a duration, the part is considered to be infinite.\nTo set a duration, simply tap on the current song to open song details and set the part\'s duration by tapping on the edit icon of the part. Don\'t forget to save your changes!</string>
+  <string name="help_song_part_answer">To switch to the next part of a song automatically, each part needs to have a duration set. If you don’t set a duration, the part is considered to be infinite.\nTo set a duration, simply tap on the current song to open song details and set the part’s duration by tapping on the edit icon of the part. Don’t forget to save your changes!</string>
   <string name="help_notification_displays">Why is the metronome service notification displayed when I leave the app?</string>
-  <string name="help_notification_displays_answer">If you haven\'t enabled &quot;Permanent notification&quot; in settings, the notification is necessary for the metronome service to stay alive when the app is in background.\nThe service manages playback and keeps track of real-time data like timer or elapsed time to separate playback from the app interface.\nYou can move the service to the background by tapping &quot;Stop&quot;, but this no longer guarantees that it isn\'t killed by the system. This may result in resets of timer and elapsed time until the service is in foreground again.\nYou can also enable permanent notification in settings to always have access to start/stop in the notifications area.</string>
+  <string name="help_notification_displays_answer">If you haven’t enabled “Permanent notification” in settings, the notification is necessary for the metronome service to stay alive when the app is in background.\nThe service manages playback and keeps track of real-time data like timer or elapsed time to separate playback from the app interface.\nYou can move the service to the background by tapping “Stop”, but this no longer guarantees that it isn’t killed by the system. This may result in resets of timer and elapsed time until the service is in foreground again.\nYou can also enable permanent notification in settings to always have access to start/stop in the notifications area.</string>
   <string name="help_notification_disappears">Why does the metronome service notification disappear when I close the app?</string>
-  <string name="help_notification_disappears_answer">When you close the app from recent apps, the metronome service is stopped and the notification disappears. This is intended behavior to save battery and resources.\nIf you want to permanently keep the notification for start/stop access, you can enable &quot;Permanent notification&quot; in settings and don\'t dismiss the app from recent apps.</string>
+  <string name="help_notification_disappears_answer">When you close the app from recent apps, the metronome service is stopped and the notification disappears. This is intended behavior to save battery and resources.\nIf you want to permanently keep the notification for start/stop access, you can enable “Permanent notification” in settings and don’t dismiss the app from recent apps.</string>
   <string name="help_translation">How can I get Tack for my language?</string>
   <string name="help_translation_answer">Translations for Tack are managed on Transifex, where users like you can help translate the app! Please visit Tack on GitHub for more information or jump directly into the translation process:</string>
 
@@ -459,7 +457,6 @@
   <string name="about_key">Unlock app</string>
   <string name="about_key_description_not_installed">Not installed</string>
   <string name="about_key_description_installed">Installed</string>
-  <string name="about_key_description_invalid">Invalid</string>
   <string name="about_key_description_ignored">Ignored</string>
   <string name="about_github" translatable="false">GitHub</string>
   <string name="about_github_description">Source code</string>
