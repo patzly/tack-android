@@ -170,6 +170,7 @@
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Une bonne application demande beaucoup de temps et vit des commentaires de ses utilisateurs.</string>
+  <string name="msg_feedback_contact">Avez-vous des souhaits, des commentaires ou des questions ? Contactez-moi ! Sinon, je serais très heureux de recevoir un avis positif dans le Play Store.</string>
   <string name="msg_recommend">Jetez un coup d\'œil à cette application sympa de métronome : \n%1$s</string>
   <string name="msg_vibration_unavailable">Le vibreur n’est pas disponible sur cet appareil. L’appli utilisera le son.</string>
   <string name="msg_service_running">Le service métronome est en cours d\'utilisation</string>
@@ -192,6 +193,7 @@
   <string name="msg_copied_to_clipboard">Copié vers le presse-papier avec succès</string>
   <string name="msg_invalid_input">Saisie invalide</string>
   <string name="msg_discard_changes">Abandonner les modifications ?</string>
+  <string name="msg_discard_changes_description">Êtes-vous sûr de ne pas vouloir les enregistrer ?</string>
   <string name="msg_delete_song">Supprimer la musique ?</string>
   <string name="msg_delete_song_description">Êtes-vous sûr de vouloir supprimer cette musique avec toutes ses parties ? Cette action ne pourra pas être annulée.</string>
   <string name="msg_songs_empty">Bibliothèque musicale vide</string>
