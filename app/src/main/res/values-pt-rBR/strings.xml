@@ -84,7 +84,7 @@
   </plurals>
   <string name="label_song_name">Nome da música</string>
   <string name="label_song_name_help">O nome deve ser único</string>
-  <string name="label_song_name_used">Nome já usado</string>
+  <string name="label_song_name_used">Nome já em uso</string>
   <!-- A placeholder song name in the widget preview for the user's widget picker -->
   <string name="widget_songs_preview_title1">Concerto Brandenburg No. 2 de Bach </string>
   <!-- A placeholder song name in the widget preview for the user's widget picker -->
