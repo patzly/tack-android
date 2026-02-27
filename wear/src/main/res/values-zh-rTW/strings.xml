@@ -69,7 +69,7 @@
   <string name="wear_msg_gain_description">小心不要透過耳機播放！</string>
   <string name="wear_msg_empty_bookmarks">尚未增加任何內容</string>
   <string name="wear_msg_delete_bookmark">刪除書籤？</string>
-  <!-- Content of a bookmark, e. g. 120 bpm, 4 beats, 1 subdivision -->
+  <!-- Content of a bookmark, e.g. 120 bpm, 4 beats, 1 subdivision -->
   <string name="wear_msg_delete_bookmark_description">%1$s、%2$s、%3$s</string>
 
   <!-- SETTINGS -->
@@ -95,6 +95,7 @@
   <string name="wear_settings_always_vibrate_description">即使有聲音</string>
 
   <string name="wear_settings_vibration_intensity_auto">自動</string>
+  <string name="wear_settings_vibration_intensity_soft">軟</string>
   <string name="wear_settings_vibration_intensity_strong">強</string>
 
   <string name="wear_settings_flash_screen">螢幕閃爍</string>
