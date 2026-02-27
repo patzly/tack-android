@@ -199,6 +199,7 @@
   <string name="msg_songs_empty">Bibliothèque musicale vide</string>
   <string name="msg_songs_empty_description">Ajouter des musiques sur lesquelles vous exercer</string>
   <string name="msg_unlock">Message du développeur</string>
+  <string name="msg_unlock_description">Vous appréciez l\'expérience sans publicité et les nombreuses fonctionnalités puissantes de Tack ? J\'ai passé des années de mon temps libre à créer Tack gratuitement, mais la fonctionnalité de bibliothèque musicale m\'a notamment demandé des mois de travail acharné. Afin de continuer à améliorer Tack, je vous demande de bien vouloir faire un petit don. En échange, vous obtiendrez une application débloquée pour un nombre illimité de chansons et d\'innombrables parties musicales. Merci pour votre soutien !</string>
   <string name="msg_backup_description">Vous pouvez sauvegarder l’entièreté de votre bibliothèque musicale sur votre appareil ou restaurer une bibliothèque musicale depuis une sauvegarde.</string>
   <string name="msg_backup_error">Erreur durant la sauvegarde.</string>
   <string name="msg_backup_directory_missing">Pas d\'emplacement sélectionné pour la sauvegarde.</string>
