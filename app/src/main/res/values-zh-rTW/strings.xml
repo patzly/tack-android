@@ -280,6 +280,7 @@
   <string name="options_swing_3">三連音</string>
   <string name="options_swing_5">五連音</string>
   <string name="options_swing_7">七連音</string>
+  <string name="options_polyrhythm">複節奏</string>
   <!-- SETTINGS -->
 
   <string name="settings_language">語言</string>
