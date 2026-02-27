@@ -71,7 +71,7 @@
   </plurals>
   <string name="label_song_looped">Em repetição</string>
   <string name="label_song_looped_description">Recomeçar quando a música chegar ao fim</string>
-  <string name="label_song_not_looped">Sem repetição</string>
+  <string name="label_song_not_looped">Sem repetir</string>
   <string name="label_sort_name">Nome</string>
   <string name="label_sort_last_played">Tocado pela última vez</string>
   <string name="label_sort_last_played_date">Tocado pela última vez %1$s</string>
