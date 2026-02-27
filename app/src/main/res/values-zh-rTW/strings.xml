@@ -381,6 +381,7 @@
   <!-- HELP -->
 
   <string name="help_tempo_change">我怎樣才能變更拍子？</string>
+  <string name="help_time_signature">如何設定拍子記號？</string>
   <string name="help_swing">我如何停用擺動？</string>
   <string name="help_song_library">歌曲庫如何運作？</string>
   <string name="help_song_picker">歌曲選擇器如何運作？</string>
