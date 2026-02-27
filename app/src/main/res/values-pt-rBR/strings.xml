@@ -118,7 +118,7 @@
   <string name="action_reset">Resetar</string>
   <string name="action_deactivate">Desativar</string>
   <string name="action_recommend">Recomendar</string>
-  <string name="action_recommend_description">Compartilhe o Tack com seus amigos</string>
+  <string name="action_recommend_description">Fale sobre o Tack com seus amigos</string>
   <string name="action_email">Enviar e-mail</string>
   <string name="action_email_description">Contate o desenvolvedor</string>
   <string name="action_rate">Avalie no Google Play</string>
