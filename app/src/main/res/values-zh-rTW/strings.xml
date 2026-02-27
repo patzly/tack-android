@@ -313,6 +313,7 @@
 
   <!-- This is the name for a vibration intensity: User can choose between soft or strong intensity or system-set (automatic or shorter auto) intensity. The button width should be as dense as possible. -->
   <string name="settings_vibration_intensity_auto">自動</string>
+  <string name="settings_vibration_intensity_soft">軟</string>
   <string name="settings_vibration_intensity_strong">強</string>
 
   <string name="settings_reduce_animations">減少動畫</string>
