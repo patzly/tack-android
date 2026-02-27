@@ -200,6 +200,7 @@
   <string name="msg_songs_empty">Biblioteca vazia</string>
   <string name="msg_songs_empty_description">Adiciona músicas que você quer praticar</string>
   <string name="msg_unlock">Mensagem do desenvolvedor</string>
+  <string name="msg_unlock_description">Você gosta de uma experiência sem anúncios e recheada de funções poderosas no Tack? Eu passei anos do meu tempo livre criando o Tack de graça, a função de biblioteca, em especial, levou meses de trabalho muito intenso.\nPara continuar melhorando o Tack, eu peço gentilmente por uma pequena contribuição. Em troca, vou disponibilizar a possilidade de você ter músicas ilimitadas com inúmeras partes. Obrigado pelo seu apoio!</string>
   <string name="msg_backup_description">Você pode fazer backup de toda a sua biblioteca de músicas para o seu dispositivo, ou restaurar a sua biblioteca de um backup.</string>
   <string name="msg_backup_error">Erro durante o backup</string>
   <string name="msg_backup_directory_missing">Nenhum lugar selecionado para o backup</string>
