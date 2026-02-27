@@ -447,6 +447,7 @@
   <string name="help_song_part_answer">Para seguir automaticamente para próxima parte da música, você precisa indicar o tempo de duração de cada parte. Se você não indicar a duração, essa parte é considerada infinita.\nPara indicar a duração, é só clicar na música, então você verá os detalhes dela, assim você pode indicar a duração clicando no botão de editar. Um detalhe importante, não esqueça de salvar as alterações!</string>
   <string name="help_notification_displays">Por que a notificação do serviço de metrônomo é mostrada quando saio do app?</string>
   <string name="help_notification_disappears">Por que a notificação do serviço de metrônomo desaparece quando fecho o app?</string>
+  <string name="help_notification_disappears_answer">Quando você fecha o app através da lista de aplicativos recentes, o serviço de metrônomo é interrompido e a notificação desaparece. Esse é o comportamento esperado para economizar bateria e recursos do sistema.\nSe você quer manter a notificação sendo exibida de de maneira permanente, para facilitar o acesso ao executar/pausar, você pode habilitar a \"Notificação permanente\" nas configurações e não encerrar o aplicativo na lista de aplicativos recentes.</string>
   <string name="help_translation">Como posso ter o Tack na minha língua?</string>
   <string name="help_translation_answer">Traduções para o Tack são gerenciados no Transifex, onde usuários como você podem ajudar a traduzir o app! Por favor, visite o Tack no GitHub para mais informações, ou vá direto ao processo de tradução:</string>
 
