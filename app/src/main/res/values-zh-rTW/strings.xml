@@ -188,6 +188,7 @@
   <string name="msg_copied_to_clipboard">已複製至剪貼簿</string>
   <string name="msg_invalid_input">無效輸入</string>
   <string name="msg_discard_changes">捨棄變更？</string>
+  <string name="msg_discard_changes_description">你確定你不想儲存他們嗎？</string>
   <string name="msg_delete_song">刪除歌曲？</string>
   <string name="msg_delete_song_description">你確定你要刪除整首歌曲及其所有部分嗎？這無法撤消。</string>
   <string name="msg_songs_empty">空白的歌曲庫</string>
