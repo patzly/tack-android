@@ -74,7 +74,7 @@
   <string name="label_song_not_looped">Sem repetir</string>
   <string name="label_sort_name">Nome</string>
   <string name="label_sort_last_played">Tocado por último</string>
-  <string name="label_sort_last_played_date">Tocado pela última vez %1$s</string>
+  <string name="label_sort_last_played_date">Tocado por último em %1$s</string>
   <string name="label_sort_never_played">Nunca foi tocado</string>
   <string name="label_sort_most_played">Mais tocado</string>
   <plurals name="label_sort_most_played_times">
