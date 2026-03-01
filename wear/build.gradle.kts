@@ -52,8 +52,8 @@ configure<ApplicationExtension> {
     applicationId = "xyz.zedler.patrick.tack"
     minSdk = 26
     targetSdk = 36
-    versionCode = 311 // last number is 1 for wear release
-    versionName = "6.2.0"
+    versionCode = 321 // last number is 1 for wear release
+    versionName = "6.3.0"
 
     externalNativeBuild {
       cmake {
