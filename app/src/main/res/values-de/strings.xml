@@ -73,7 +73,7 @@
   <string name="label_song_looped">Dauerschleife</string>
   <string name="label_song_looped_description">Werk am Ende neustarten</string>
   <string name="label_song_not_looped">Einmalig</string>
-  <string name="label_song_speed">Übungstempo</string>
+  <string name="label_song_speed">Übetempo</string>
   <string name="label_song_speed_description">Teile mit %1$d%% ihres Originaltempos spielen</string>
   <string name="label_song_speed_description_original">Teile im Originaltempo spielen</string>
   <string name="label_song_speed_short">%1$d%% Übungstempo</string>
