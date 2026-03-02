@@ -76,7 +76,7 @@
   <string name="label_song_speed">Übetempo</string>
   <string name="label_song_speed_description">Teile mit %1$d%% ihres Originaltempos spielen</string>
   <string name="label_song_speed_description_original">Teile im Originaltempo spielen</string>
-  <string name="label_song_speed_short">%1$d%% Übungstempo</string>
+  <string name="label_song_speed_short">%1$d%% Übetempo</string>
   <string name="label_song_speed_original">Originaltempo</string>
   <string name="label_sort_name">Name</string>
   <string name="label_sort_last_played">Zuletzt abgespielt</string>
