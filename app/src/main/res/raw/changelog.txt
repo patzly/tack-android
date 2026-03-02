@@ -1,5 +1,6 @@
-###_ 6.2.1
+###_ 6.3.0
 
+- New: "Practice tempo" option in song details, allowing parts to be played at a reduced speed (thanks Dorian!) (Mobile)
 - Improved: Audio engine performance and stability (Mobile and Wear OS)
 - Fixed: "Blink flashlight" setting only worked with haptic beats enabled (Mobile)
 - Fixed: Timing delay on the first beat (Mobile and Wear OS)

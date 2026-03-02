@@ -81,9 +81,16 @@
     <item quantity="one">%1$d part</item>
     <item quantity="other">%1$d parts</item>
   </plurals>
+  <string name="label_song_options">Additional options</string>
+  <string name="label_song_options_dialog">Song options</string>
   <string name="label_song_looped">Looped</string>
   <string name="label_song_looped_description">Restart song when at end</string>
   <string name="label_song_not_looped">Not looped</string>
+  <string name="label_song_speed">Practice tempo</string>
+  <string name="label_song_speed_description">Play parts at %1$d%% of their original tempo</string>
+  <string name="label_song_speed_description_original">Play parts at their original tempo</string>
+  <string name="label_song_speed_short">%1$d%% practice tempo</string>
+  <string name="label_song_speed_original">Original tempo</string>
   <string name="label_sort_name">Name</string>
   <string name="label_sort_last_played">Last played</string>
   <string name="label_sort_last_played_date">Last played %1$s</string>

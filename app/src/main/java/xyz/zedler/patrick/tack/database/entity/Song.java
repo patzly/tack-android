@@ -40,17 +40,19 @@ public class Song implements Parcelable {
   @Nullable
   private String name;
   private long lastPlayed;
-  private int playCount;
+  private int playCount, speed;
   private boolean isLooped;
 
   public Song(
-      @NonNull String id, @Nullable String name, long lastPlayed, int playCount, boolean isLooped
+      @NonNull String id, @Nullable String name, long lastPlayed, int playCount, boolean isLooped,
+      int speed
   ) {
     this.id = id;
     this.name = name;
     this.lastPlayed = lastPlayed;
     this.playCount = playCount;
     this.isLooped = isLooped;
+    this.speed = speed;
   }
 
   @Ignore
@@ -71,6 +73,7 @@ public class Song implements Parcelable {
     this.lastPlayed = song.lastPlayed;
     this.playCount = song.playCount;
     this.isLooped = song.isLooped;
+    this.speed = song.speed;
   }
 
   @Ignore
@@ -80,6 +83,7 @@ public class Song implements Parcelable {
     lastPlayed = in.readLong();
     playCount = in.readInt();
     isLooped = in.readByte() != 0;
+    speed = in.readInt();
   }
 
   @NonNull
@@ -128,19 +132,27 @@ public class Song implements Parcelable {
     isLooped = looped;
   }
 
+  public int getSpeed() {
+    return speed;
+  }
+
+  public void setSpeed(int speed) {
+    this.speed = speed;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (!(o instanceof Song)) {
       return false;
     }
     Song song = (Song) o;
-    return lastPlayed == song.lastPlayed && isLooped == song.isLooped
+    return lastPlayed == song.lastPlayed && isLooped == song.isLooped && speed == song.speed
         && Objects.equals(id, song.id) && Objects.equals(name, song.name);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, name, lastPlayed, isLooped);
+    return Objects.hash(id, name, lastPlayed, isLooped, speed);
   }
 
   @Override
@@ -155,6 +167,7 @@ public class Song implements Parcelable {
     dest.writeLong(lastPlayed);
     dest.writeInt(playCount);
     dest.writeByte((byte) (isLooped ? 1 : 0));
+    dest.writeInt(speed);
   }
 
   @NonNull
@@ -166,6 +179,7 @@ public class Song implements Parcelable {
         ", name='" + name + '\'' +
         ", lastPlayed=" + lastPlayed +
         ", isLooped=" + isLooped +
+        ", speed=" + speed +
         '}';
   }
 

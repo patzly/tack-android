@@ -149,33 +149,55 @@
           </FrameLayout>
 
           <LinearLayout
-            android:id="@+id/linear_song_looped"
+            android:id="@+id/linear_song_options"
             style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
             android:background="@drawable/ripple_list_item_bg_segmented_last"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:layout_marginBottom="16dp">
 
-            <ImageView
-              style="@style/Widget.Tack.ImageView.ListItem.Icon"
-              android:src="@drawable/ic_rounded_repeat"
-              tools:ignore="ContentDescription" />
-
             <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
 
               <TextView
                 style="@style/Widget.Tack.TextView.ListItem.Title"
-                android:text="@string/label_song_looped" />
+                android:text="@string/label_song_options" />
 
-              <TextView
-                style="@style/Widget.Tack.TextView.ListItem.Description"
-                android:text="@string/label_song_looped_description" />
+              <com.google.android.flexbox.FlexboxLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:flexWrap="wrap"
+                app:alignItems="center">
+
+                <TextView
+                  android:id="@+id/text_song_looped"
+                  style="@style/Widget.Tack.TextView.ListItem.Description"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/label_song_not_looped"
+                  android:singleLine="true" />
+
+                <ImageView
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_marginStart="8dp"
+                  android:layout_marginEnd="8dp"
+                  android:src="@drawable/shape_text_separator_dot"
+                  app:tint="?attr/colorOnSurfaceVariant"
+                  tools:ignore="ContentDescription" />
+
+                <TextView
+                  android:id="@+id/text_song_speed"
+                  style="@style/Widget.Tack.TextView.ListItem.Description"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:text="@string/label_song_speed_short"
+                  android:singleLine="true"
+                  tools:ignore="HardcodedText" />
+
+              </com.google.android.flexbox.FlexboxLayout>
 
             </LinearLayout>
-
-            <com.google.android.material.materialswitch.MaterialSwitch
-              android:id="@+id/switch_song_looped"
-              style="@style/Widget.Tack.Switch" />
 
           </LinearLayout>
 

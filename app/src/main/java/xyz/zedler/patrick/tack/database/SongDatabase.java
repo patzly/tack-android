@@ -31,7 +31,7 @@ import xyz.zedler.patrick.tack.database.dao.SongDao;
 import xyz.zedler.patrick.tack.database.entity.Part;
 import xyz.zedler.patrick.tack.database.entity.Song;
 
-@Database(entities = {Song.class, Part.class}, version = 2)
+@Database(entities = {Song.class, Part.class}, version = 3)
 public abstract class SongDatabase extends RoomDatabase {
 
   public abstract SongDao songDao();
@@ -44,6 +44,12 @@ public abstract class SongDatabase extends RoomDatabase {
       database.execSQL("ALTER TABLE parts ADD COLUMN usePolyrhythm INTEGER NOT NULL DEFAULT 0");
     }
   };
+  private static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+    @Override
+    public void migrate(@NonNull SupportSQLiteDatabase database) {
+      database.execSQL("ALTER TABLE songs ADD COLUMN speed INTEGER NOT NULL DEFAULT 100");
+    }
+  };
 
   public static SongDatabase getInstance(Context context) {
     if (INSTANCE == null) {
@@ -54,7 +60,7 @@ public abstract class SongDatabase extends RoomDatabase {
               SongDatabase.class,
               "song_database"
           )
-          .addMigrations(MIGRATION_1_2)
+          .addMigrations(MIGRATION_1_2).addMigrations(MIGRATION_2_3)
           .build();
         }
       }

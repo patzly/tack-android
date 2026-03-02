@@ -384,6 +384,10 @@ public class SongPickerView extends FrameLayout {
     binding.cardSongPickerChip.setOnClickListener(
         v -> binding.frameSongPickerChipTouchTarget.callOnClick()
     );
+    binding.cardSongPickerChip.setOnLongClickListener(v -> {
+      binding.frameSongPickerChipTouchTarget.callOnClick();
+      return true;
+    });
     binding.buttonSongPickerPart.setOnClickListener(v -> {
       if (listener != null) {
         listener.onCurrentPartClicked();

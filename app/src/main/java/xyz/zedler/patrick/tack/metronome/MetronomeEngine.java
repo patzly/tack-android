@@ -166,7 +166,12 @@ public class MetronomeEngine {
   public void setConfig(MetronomeConfig config) {
     setCountIn(config.getCountIn());
 
-    int tempoDiff = config.getTempo() - this.config.getTempo();
+    int tempo = config.getTempo();
+    if (currentSongWithParts != null) {
+      int speed = currentSongWithParts.getSong().getSpeed();
+      tempo = (int) Math.round(tempo * speed / 100.0);
+    }
+    int tempoDiff = tempo - this.config.getTempo();
     changeTempo(tempoDiff);
 
     setBeats(config.getBeats());
@@ -223,7 +228,9 @@ public class MetronomeEngine {
         setCurrentPartIndex(partIndex, startPlaying);
       } else if (songId.equals(Constants.SONG_ID_DEFAULT)) {
         // default song not created yet
-        Song songDefault = new Song(songId, null, 0, 0, false);
+        Song songDefault = new Song(
+            songId, null, 0, 0, false, 100
+        );
         db.songDao().insertSong(songDefault);
         Part partDefault = new Part(null, songDefault.getId(), 0, config);
         db.songDao().insertPart(partDefault);

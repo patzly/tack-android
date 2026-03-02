@@ -130,6 +130,13 @@ public class PartsDialogUtil {
                   : R.string.label_song_not_looped
           )
       );
+      // speed
+      int speed = songWithParts.getSong().getSpeed();
+      titleBinding.textDialogPartsSpeed.setText(
+          speed == 100
+              ? activity.getString(R.string.label_song_speed_original)
+              : activity.getString(R.string.label_song_speed_short, speed)
+      );
     } else {
       // Don't show dialog if no song is selected
       dismiss();

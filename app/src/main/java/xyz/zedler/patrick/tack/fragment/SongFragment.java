@@ -30,8 +30,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.EditorInfo;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -72,8 +70,9 @@ import xyz.zedler.patrick.tack.util.ViewUtil;
 import xyz.zedler.patrick.tack.util.ViewUtil.OnMenuInflatedListener;
 import xyz.zedler.patrick.tack.util.WidgetUtil;
 import xyz.zedler.patrick.tack.util.dialog.RenameDialogUtil;
+import xyz.zedler.patrick.tack.util.dialog.SongOptionsDialogUtil;
 
-public class SongFragment extends BaseFragment implements OnClickListener, OnCheckedChangeListener {
+public class SongFragment extends BaseFragment implements OnClickListener {
 
   private static final String TAG = SongFragment.class.getSimpleName();
 
@@ -83,6 +82,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
   private FragmentSongBinding binding;
   private MainActivity activity;
   private DialogUtil dialogUtilDiscard, dialogUtilDelete;
+  private SongOptionsDialogUtil songOptionsDialogUtil;
   private RenameDialogUtil renameDialogUtil;
   private OptionsUtil optionsUtil;
   private OnBackPressedCallback onBackPressedCallback;
@@ -112,6 +112,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     }
     dialogUtilDiscard.dismiss();
     dialogUtilDelete.dismiss();
+    songOptionsDialogUtil.dismiss();
     renameDialogUtil.dismiss();
     optionsUtil.dismiss();
     binding = null;
@@ -362,7 +363,8 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     PartItemDecoration decoration = new PartItemDecoration(UiUtil.dpToPx(activity, 0));
     binding.recyclerSongParts.addItemDecoration(decoration);
 
-    String songId = SongFragmentArgs.fromBundle(getArguments()).getSongId();
+    Bundle arguments = getArguments() != null ? getArguments() : new Bundle();
+    String songId = SongFragmentArgs.fromBundle(arguments).getSongId();
     if (songId != null) {
       isNewSong = false;
       activity.getSongViewModel().fetchSongWithParts(songId, songWithParts -> {
@@ -386,10 +388,8 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
               binding.editTextSongName.clearFocus();
             });
             binding.textInputSongName.setHintAnimationEnabled(true);
-            // Copy looped to form
-            binding.switchSongLooped.setChecked(songResult.isLooped());
-            binding.switchSongLooped.jumpDrawablesToCurrentState();
-            binding.switchSongLooped.setOnCheckedChangeListener(this);
+            // Copy song options to form
+            setSongOptions(songResult.isLooped(), songResult.getSpeed());
             // Copy parts to form
             partsSource = songWithParts.getParts();
             partsResult = new LinkedList<>();
@@ -435,10 +435,6 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
           UiUtil.hideKeyboard(binding.editTextSongName);
         }
       });
-      binding.switchSongLooped.setOnCheckedChangeListener(null);
-      binding.switchSongLooped.setChecked(songResult.isLooped());
-      binding.switchSongLooped.jumpDrawablesToCurrentState();
-      binding.switchSongLooped.setOnCheckedChangeListener(this);
 
       partsResult = new LinkedList<>();
 
@@ -513,7 +509,7 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     ViewUtil.setOnClickListeners(
         this,
         binding.fabSong,
-        binding.linearSongLooped
+        binding.linearSongOptions
     );
 
     dialogUtilDiscard = new DialogUtil(activity, "discard_changes");
@@ -564,6 +560,9 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     });
     dialogUtilDelete.showIfWasShown(savedInstanceState);
 
+    songOptionsDialogUtil = new SongOptionsDialogUtil(activity, this);
+    songOptionsDialogUtil.showIfWasShown(savedInstanceState);
+
     renameDialogUtil = new RenameDialogUtil(activity, this);
     renameDialogUtil.showIfWasShown(savedInstanceState);
 
@@ -603,6 +602,9 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     if (dialogUtilDelete != null) {
       dialogUtilDelete.saveState(outState);
     }
+    if (songOptionsDialogUtil != null) {
+      songOptionsDialogUtil.saveState(outState);
+    }
     if (renameDialogUtil != null) {
       renameDialogUtil.saveState(outState);
     }
@@ -616,8 +618,10 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
   @Override
   public void onClick(View v) {
     int id = v.getId();
-    if (id == R.id.linear_song_looped) {
-      binding.switchSongLooped.toggle();
+    if (id == R.id.linear_song_options) {
+      performHapticClick();
+      songOptionsDialogUtil.setSongOptions(songResult.isLooped(), songResult.getSpeed());
+      songOptionsDialogUtil.show();
     } else if (id == R.id.fab_song) {
       performHapticClick();
       // Remove focus from edit text
@@ -638,16 +642,20 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
     }
   }
 
-  @Override
-  public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-    int id = buttonView.getId();
-    if (id == R.id.switch_song_looped) {
-      performHapticClick();
-      // Remove focus from edit text
-      UiUtil.hideKeyboard(binding.editTextSongName);
-      binding.editTextSongName.clearFocus();
-      updateResult();
-    }
+  public void setSongOptions(boolean looped, int speed) {
+    songResult.setLooped(looped);
+    songResult.setSpeed(speed);
+
+    binding.textSongLooped.setText(
+        activity.getString(looped ? R.string.label_song_looped : R.string.label_song_not_looped)
+    );
+    binding.textSongSpeed.setText(
+        speed == 100
+            ? activity.getString(R.string.label_song_speed_original)
+            : activity.getString(R.string.label_song_speed_short, speed)
+    );
+
+    updateResult();
   }
 
   public void renamePart(String partId, String name) {
@@ -696,8 +704,6 @@ public class SongFragment extends BaseFragment implements OnClickListener, OnChe
         }
       }
     }
-
-    songResult.setLooped(binding.switchSongLooped.isChecked());
 
     if (isValid) {
       clearError();
