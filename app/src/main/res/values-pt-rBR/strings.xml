@@ -69,6 +69,7 @@
     <item quantity="many">%1$d partes</item>
     <item quantity="other">%1$d partes</item>
   </plurals>
+  <string name="label_song_options">Opções adicionais</string>
   <string name="label_song_looped">Em repetição</string>
   <string name="label_song_looped_description">Recomeçar quando a música chegar ao fim</string>
   <string name="label_song_not_looped">Sem repetir</string>
