@@ -74,6 +74,7 @@
   <string name="label_song_looped_description">Werk am Ende neustarten</string>
   <string name="label_song_not_looped">Einmalig</string>
   <string name="label_song_speed">Übungstempo</string>
+  <string name="label_song_speed_short">%1$d%% Übungstempo</string>
   <string name="label_song_speed_original">Originaltempo</string>
   <string name="label_sort_name">Name</string>
   <string name="label_sort_last_played">Zuletzt abgespielt</string>
