@@ -220,6 +220,7 @@ public final class Constants {
 
     public final static String START = "xyz.zedler.patrick.tack.intent.action.START";
     public final static String STOP = "xyz.zedler.patrick.tack.intent.action.STOP";
+    public final static String DISMISS = "xyz.zedler.patrick.tack.intent.action.DISMISS";
     public final static String APPLY_SONG = "xyz.zedler.patrick.tack.intent.action.APPLY_SONG";
     public final static String START_SONG = "xyz.zedler.patrick.tack.intent.action.START_SONG";
     public final static String SHOW_SONGS = "xyz.zedler.patrick.tack.intent.action.SHOW_SONGS";

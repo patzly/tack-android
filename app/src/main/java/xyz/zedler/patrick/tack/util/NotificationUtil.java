@@ -128,6 +128,12 @@ public class NotificationUtil {
         stopServicePendingIntent
     );
 
+    Intent dismissIntent = new Intent(context, MetronomeService.class);
+    dismissIntent.setAction(ACTION.DISMISS);
+    PendingIntent dismissPendingIntent = PendingIntent.getService(
+        context, REQUEST_CODE, dismissIntent, PendingIntent.FLAG_IMMUTABLE
+    );
+
     String title = context.getString(R.string.msg_service_running);
     String text = context.getString(R.string.msg_service_running_return);
     return new NotificationCompat.Builder(context, CHANNEL_ID)
@@ -139,6 +145,7 @@ public class NotificationUtil {
         .setAutoCancel(true)
         .setSilent(true)
         .setOngoing(true)
+        .setDeleteIntent(dismissPendingIntent)
         .setColor(getColor())
         .setSmallIcon(R.drawable.ic_logo_notification)
         .setPriority(NotificationCompat.PRIORITY_HIGH)

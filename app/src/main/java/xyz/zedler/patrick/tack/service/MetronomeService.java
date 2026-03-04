@@ -113,6 +113,14 @@ public class MetronomeService extends Service {
           metronomeEngine.stop();
           if (!permNotification && hasPermission()) {
             stopForeground();
+            stopSelf();
+          }
+          break;
+        case ACTION.DISMISS:
+          if (!isBound) {
+            metronomeEngine.stop();
+            stopForeground();
+            stopSelf();
           }
           break;
       }
@@ -142,10 +150,17 @@ public class MetronomeService extends Service {
 
   @Override
   public boolean onUnbind(Intent intent) {
-    if (canShowNonPermNotification() && !permNotification && hasPermission()) {
-      startForeground(false);
-    }
     isBound = false;
+
+    if (hasPermission()) {
+      if (!permNotification && canShowNonPermNotification()) {
+        startForeground(false);
+      } else if (permNotification) {
+        notificationUtil.updateNotification(
+            notificationUtil.getNotification(!metronomeEngine.isPlaying())
+        );
+      }
+    }
     return true;
   }
 
