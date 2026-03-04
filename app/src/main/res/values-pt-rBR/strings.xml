@@ -77,6 +77,7 @@
   <string name="label_song_speed">Treino de Tempo</string>
   <string name="label_song_speed_description">Tocar os trechos a %1$d%% do tempo original</string>
   <string name="label_song_speed_description_original">Tocar trechos no tempo original</string>
+  <string name="label_song_speed_short">%1$d%% treinar tempo </string>
   <string name="label_song_speed_original">Tempo original</string>
   <string name="label_sort_name">Nome</string>
   <string name="label_sort_last_played">Tocado por último</string>
