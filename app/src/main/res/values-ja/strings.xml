@@ -68,6 +68,7 @@
     <item quantity="other">%1$d パート</item>
   </plurals>
   <string name="label_song_options">その他オプション</string>
+  <string name="label_song_options_dialog">ソングオプション</string>
   <string name="label_song_looped">ループあり</string>
   <string name="label_song_looped_description">ソングをリピート再生する</string>
   <string name="label_song_not_looped">ループなし</string>
