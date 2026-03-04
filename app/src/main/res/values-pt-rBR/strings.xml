@@ -75,6 +75,7 @@
   <string name="label_song_looped_description">Recomeçar quando a música chegar ao fim</string>
   <string name="label_song_not_looped">Sem repetir</string>
   <string name="label_song_speed">Treino de Tempo</string>
+  <string name="label_song_speed_description">Tocar os trechos a %1$d%% do tempo original</string>
   <string name="label_song_speed_original">Tempo original</string>
   <string name="label_sort_name">Nome</string>
   <string name="label_sort_last_played">Tocado por último</string>
