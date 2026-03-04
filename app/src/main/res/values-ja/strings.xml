@@ -196,6 +196,7 @@
   <string name="msg_copied_to_clipboard">クリップボードにコピーされました</string>
   <string name="msg_invalid_input">無効な入力</string>
   <string name="msg_discard_changes">変更を破棄しますか？</string>
+  <string name="msg_discard_changes_description">本当に保存せずに操作を終えますか？</string>
   <string name="msg_delete_song">ソングを削除しますか？</string>
   <string name="msg_delete_song_description">本当にパートを含めたソング全体を削除しますか？この操作は元に戻せません。</string>
   <string name="msg_songs_empty">空のソングライブラリ</string>
