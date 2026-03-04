@@ -73,6 +73,7 @@
   <string name="label_song_looped_description">ソングをリピート再生する</string>
   <string name="label_song_not_looped">ループなし</string>
   <string name="label_song_speed">練習テンポ</string>
+  <string name="label_song_speed_description">パートを実際の%1$d%%のテンポで再生</string>
   <string name="label_sort_name">名前</string>
   <string name="label_sort_last_played">最近の再生</string>
   <string name="label_sort_last_played_date">最近の再生日 %1$s</string>
