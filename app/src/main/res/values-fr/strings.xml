@@ -75,6 +75,7 @@
   <string name="label_song_looped_description">Redémarrer la musique à la fin</string>
   <string name="label_song_not_looped">Non bouclé</string>
   <string name="label_song_speed">Tempo d\'entraînement. </string>
+  <string name="label_song_speed_description_original">jouer à son tempo d\'origine.</string>
   <string name="label_song_speed_short">%1$d%% tempo d\'entraînement. </string>
   <string name="label_song_speed_original">Tempo d\'origine. </string>
   <string name="label_sort_name">Nom</string>
