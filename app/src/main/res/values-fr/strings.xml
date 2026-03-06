@@ -69,6 +69,7 @@
     <item quantity="many">%1$d parties</item>
     <item quantity="other">%1$d parties</item>
   </plurals>
+  <string name="label_song_options">Options supplémentaires. </string>
   <string name="label_song_looped">en boucle</string>
   <string name="label_song_looped_description">Redémarrer la musique à la fin</string>
   <string name="label_song_not_looped">Non bouclé</string>
