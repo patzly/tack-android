@@ -73,6 +73,7 @@
   <string name="label_song_looped">en boucle</string>
   <string name="label_song_looped_description">Redémarrer la musique à la fin</string>
   <string name="label_song_not_looped">Non bouclé</string>
+  <string name="label_song_speed">Tempo d\'entraînement. </string>
   <string name="label_sort_name">Nom</string>
   <string name="label_sort_last_played">Dernière lecture</string>
   <string name="label_sort_last_played_date">Dernier joué %1$s</string>
