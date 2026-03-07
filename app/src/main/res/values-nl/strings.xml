@@ -192,6 +192,7 @@
   <string name="msg_split_screen">Venster te klein</string>
   <string name="msg_split_screen_description">Tack kan problemen hebben met de positie van de metronoomregelaars in split-screen modus. Gebruik indien mogelijk een groter venster.</string>
   <string name="msg_notification_permission">Meldingstoestemming vereist</string>
+  <string name="msg_notification_permission_description">Tack heeft toestemming nodig om meldingen te tonen om het afspelen op de achtergrond voort te zetten via een melding met lage prioriteit. Als je dit in het volgende venster weigert, zal Android het afspelen stoppen zodra je de app verlaat.</string>
   <string name="msg_report_crash">Meld elke crash met de crash log als bijlage, zodat ik kan proberen ze te repareren.</string>
   <string name="msg_copied_to_clipboard">Succesvol naar klembord gekopiëerd</string>
   <string name="msg_invalid_input">Ongeldige invoer</string>
