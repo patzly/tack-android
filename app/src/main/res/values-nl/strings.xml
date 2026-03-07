@@ -193,10 +193,12 @@
   <string name="msg_split_screen_description">Tack kan problemen hebben met de positie van de metronoomregelaars in split-screen modus. Gebruik indien mogelijk een groter venster.</string>
   <string name="msg_notification_permission">Meldingstoestemming vereist</string>
   <string name="msg_notification_permission_description">Tack heeft toestemming nodig om meldingen te tonen om het afspelen op de achtergrond voort te zetten via een melding met lage prioriteit. Als je dit in het volgende venster weigert, zal Android het afspelen stoppen zodra je de app verlaat.</string>
+  <string name="msg_notification_permission_denied">Meldingstoestemming is vereist voor spelen in achtergrond</string>
   <string name="msg_report_crash">Meld elke crash met de crash log als bijlage, zodat ik kan proberen ze te repareren.</string>
   <string name="msg_copied_to_clipboard">Succesvol naar klembord gekopiëerd</string>
   <string name="msg_invalid_input">Ongeldige invoer</string>
   <string name="msg_discard_changes">Veranderingen weggooien?</string>
+  <string name="msg_discard_changes_description">Weet je zeker dat je ze niet op wilt slaan?</string>
   <string name="msg_delete_song">Verwijder nummer?</string>
   <string name="msg_delete_song_description">Weet je zeker dat je het hele nummer met alle delen wilt verwijderen? Dit kan niet ongedaan gemaakt worden.</string>
   <string name="msg_songs_empty">Lege nummerbibliotheek</string>
