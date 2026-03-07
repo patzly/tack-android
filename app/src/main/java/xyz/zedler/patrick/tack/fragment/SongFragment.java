@@ -436,6 +436,8 @@ public class SongFragment extends BaseFragment implements OnClickListener {
         }
       });
 
+      setSongOptions(songResult.isLooped(), songResult.getSpeed());
+
       partsResult = new LinkedList<>();
 
       Part firstPart = new Part(

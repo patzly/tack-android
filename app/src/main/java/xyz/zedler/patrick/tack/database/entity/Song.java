@@ -59,11 +59,13 @@ public class Song implements Parcelable {
   public Song(@Nullable String name) {
     this();
     this.name = name;
+    this.speed = 100;
   }
 
   @Ignore
   public Song() {
     this.id = UUID.randomUUID().toString();
+    this.speed = 100;
   }
 
   @Ignore
