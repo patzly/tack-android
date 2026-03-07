@@ -37,8 +37,11 @@ import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.EXTRA;
 import xyz.zedler.patrick.tack.Constants.PREF;
+import xyz.zedler.patrick.tack.Constants.UNIT;
+import xyz.zedler.patrick.tack.R;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter;
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.Tick;
 import xyz.zedler.patrick.tack.util.NotificationUtil;
 import xyz.zedler.patrick.tack.util.PrefsUtil;
 
@@ -50,7 +53,7 @@ public class MetronomeService extends Service {
   private MetronomeEngine metronomeEngine;
   private NotificationUtil notificationUtil;
   private SharedPreferences sharedPrefs;
-  private boolean isBound, configChange, permNotification;
+  private boolean isBound, configChange, permNotification, showPlayButton;
 
   @Override
   public void onCreate() {
@@ -62,14 +65,46 @@ public class MetronomeService extends Service {
       @Override
       public void onMetronomeStart() {
         if (permNotification && hasPermission()) {
-          notificationUtil.updateNotification(notificationUtil.getNotification(false));
+          showPlayButton = false;
+          notificationUtil.updateNotification(getNotification());
         }
       }
 
       @Override
       public void onMetronomeStop() {
         if (permNotification && hasPermission()) {
-          notificationUtil.updateNotification(notificationUtil.getNotification(true));
+          showPlayButton = true;
+          notificationUtil.updateNotification(getNotification());
+        }
+      }
+
+      @Override
+      public void onMetronomeTick(Tick tick) {
+        if (metronomeEngine.getConfig().isTimerActive()
+            && metronomeEngine.getConfig().getTimerUnit().equals(UNIT.BARS)) {
+          updateTimerNotification();
+        }
+      }
+
+      @Override
+      public void onMetronomeTimerSecondsChanged() {
+        updateTimerNotification();
+      }
+
+      @Override
+      public void onMetronomeTimerProgressOneTime(boolean withTransition) {
+        updateTimerNotification();
+      }
+
+      @Override
+      public void onMetronomeTimerActiveStateChanged(boolean active) {
+        updateTimerNotification();
+      }
+
+      private void updateTimerNotification() {
+        boolean isTimerActive = metronomeEngine.getConfig().isTimerActive();
+        if (isTimerActive && (permNotification || !isBound) && hasPermission()) {
+          notificationUtil.updateNotification(getNotification());
         }
       }
     });
@@ -78,7 +113,8 @@ public class MetronomeService extends Service {
 
     permNotification = sharedPrefs.getBoolean(PREF.PERM_NOTIFICATION, DEF.PERM_NOTIFICATION);
     if (permNotification && hasPermission()) {
-      startForeground(true);
+      showPlayButton = true;
+      startForeground();
     }
     Log.d(TAG, "onCreate: service created");
   }
@@ -154,11 +190,11 @@ public class MetronomeService extends Service {
 
     if (hasPermission()) {
       if (!permNotification && canShowNonPermNotification()) {
-        startForeground(false);
+        showPlayButton = false;
+        startForeground();
       } else if (permNotification) {
-        notificationUtil.updateNotification(
-            notificationUtil.getNotification(!metronomeEngine.isPlaying())
-        );
+        showPlayButton = !metronomeEngine.isPlaying();
+        notificationUtil.updateNotification(getNotification());
       }
     }
     return true;
@@ -171,16 +207,15 @@ public class MetronomeService extends Service {
     configChange = true;
   }
 
-  private void startForeground(boolean playButton) {
+  private void startForeground() {
     if (hasPermission() && !configChange) {
       notificationUtil.createNotificationChannel();
-      Notification notification = notificationUtil.getNotification(playButton);
       try {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
           int type = ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK;
-          startForeground(NotificationUtil.NOTIFICATION_ID, notification, type);
+          startForeground(NotificationUtil.NOTIFICATION_ID, getNotification(), type);
         } else {
-          startForeground(NotificationUtil.NOTIFICATION_ID, notification);
+          startForeground(NotificationUtil.NOTIFICATION_ID, getNotification());
         }
       } catch (Exception e) {
         Log.e(TAG, "startForeground: could not start foreground", e);
@@ -201,15 +236,16 @@ public class MetronomeService extends Service {
     return metronomeEngine;
   }
 
-  public boolean getPermNotification() {
+  public boolean usePermNotification() {
     return permNotification;
   }
 
   public boolean setPermNotification(boolean permanent) {
     if (permNotification != permanent) {
       if (permanent) {
+        showPlayButton = !metronomeEngine.isPlaying();
         if (hasPermission()) {
-          startForeground(!metronomeEngine.isPlaying());
+          startForeground();
         } else {
           throw new IllegalStateException("Notification permission missing");
         }
@@ -217,7 +253,8 @@ public class MetronomeService extends Service {
         if (!isBound && canShowNonPermNotification()) {
           if (hasPermission()) {
             // Only provide stop action in non-permanent notification
-            startForeground(false);
+            showPlayButton = false;
+            startForeground();
           } else {
             throw new IllegalStateException("Notification permission missing");
           }
@@ -235,6 +272,23 @@ public class MetronomeService extends Service {
     boolean realTimeActive =
         metronomeEngine.getConfig().isTimerActive() || metronomeEngine.isElapsedActive();
     return metronomeEngine.isPlaying() || realTimeActive;
+  }
+
+  private Notification getNotification() {
+    boolean isTimerActive = metronomeEngine.getConfig().isTimerActive();
+    return notificationUtil.getNotification(
+        showPlayButton,
+        isTimerActive,
+        isTimerActive && metronomeEngine.isPlaying(),
+        getString(
+            R.string.label_part_duration_notification,
+            metronomeEngine.getCurrentTimerString(),
+            metronomeEngine.getTotalTimeString()
+        ),
+        metronomeEngine.getCurrentTimerString(),
+        metronomeEngine.getTimerProgress(),
+        metronomeEngine.getConfig().getTimerDuration()
+    );
   }
 
   private boolean hasPermission() {

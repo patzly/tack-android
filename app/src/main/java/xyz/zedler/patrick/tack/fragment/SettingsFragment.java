@@ -498,7 +498,7 @@ public class SettingsFragment extends BaseFragment
     binding.toggleSettingsKeepAwake.addOnButtonCheckedListener(this);
 
     MetronomeService service = activity.getMetronomeService();
-    boolean permNotification = service != null && service.getPermNotification();
+    boolean permNotification = service != null && service.usePermNotification();
     binding.switchSettingsPermNotification.setOnCheckedChangeListener(null);
     binding.switchSettingsPermNotification.setChecked(permNotification);
     binding.switchSettingsPermNotification.jumpDrawablesToCurrentState();

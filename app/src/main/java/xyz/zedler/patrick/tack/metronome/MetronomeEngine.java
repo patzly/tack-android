@@ -1112,8 +1112,22 @@ public class MetronomeEngine {
   }
 
   public void setTimerDuration(int duration) {
+    int durationOld = config.getTimerDuration();
+
     config.setTimerDuration(duration);
     sharedPrefs.edit().putInt(PREF.TIMER_DURATION, duration).apply();
+
+    if (duration != durationOld) {
+      if (duration == 0 || durationOld == 0) {
+        // timer is activated or deactivated
+        synchronized (listeners) {
+          for (MetronomeListener listener : listeners) {
+            listener.onMetronomeTimerActiveStateChanged(config.isTimerActive());
+          }
+        }
+      }
+    }
+
     if (config.getTimerUnit().equals(UNIT.BARS)) {
       updateTimerHandler(false, true);
     } else {
@@ -1651,6 +1665,7 @@ public class MetronomeEngine {
     void onMetronomeTimerStarted();
     void onMetronomeTimerSecondsChanged();
     void onMetronomeTimerProgressOneTime(boolean withTransition);
+    void onMetronomeTimerActiveStateChanged(boolean active);
     void onMetronomeConfigChanged();
     void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex);
     void onMetronomePermissionMissing();
@@ -1666,6 +1681,7 @@ public class MetronomeEngine {
     public void onMetronomeTimerStarted() {}
     public void onMetronomeTimerSecondsChanged() {}
     public void onMetronomeTimerProgressOneTime(boolean withTransition) {}
+    public void onMetronomeTimerActiveStateChanged(boolean active) {}
     public void onMetronomeConfigChanged() {}
     public void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex) {}
     public void onMetronomePermissionMissing() {}

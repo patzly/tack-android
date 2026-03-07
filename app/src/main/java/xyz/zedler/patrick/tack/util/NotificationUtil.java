@@ -38,6 +38,8 @@ import androidx.core.app.NotificationCompat.Action;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import com.google.android.material.color.DynamicColors;
+import java.util.ArrayList;
+import java.util.List;
 import xyz.zedler.patrick.tack.Constants.ACTION;
 import xyz.zedler.patrick.tack.Constants.DEF;
 import xyz.zedler.patrick.tack.Constants.PREF;
@@ -99,7 +101,15 @@ public class NotificationUtil {
     }
   }
 
-  public Notification getNotification(boolean playButton) {
+  public Notification getNotification(
+      boolean showPlayButton,
+      boolean showTimer,
+      boolean showPromotedLiveUpdate,
+      String timerTextLong,
+      String timerTextShort,
+      float timerProgress,
+      int timerDuration
+  ) {
     Intent openIntent = new Intent(context, MainActivity.class);
     openIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
     PendingIntent activityPendingIntent = PendingIntent.getActivity(
@@ -136,22 +146,66 @@ public class NotificationUtil {
 
     String title = context.getString(R.string.msg_service_running);
     String text = context.getString(R.string.msg_service_running_return);
-    return new NotificationCompat.Builder(context, CHANNEL_ID)
+
+    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
         .setContentTitle(title)
         .setContentText(text)
         .setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(title).bigText(text))
         .setContentIntent(activityPendingIntent)
-        .addAction(playButton ? actionStart : actionStop)
+        .addAction(showPlayButton ? actionStart : actionStop)
         .setAutoCancel(true)
+        .setOnlyAlertOnce(true)
         .setSilent(true)
         .setOngoing(true)
+        .setShowWhen(false)
         .setDeleteIntent(dismissPendingIntent)
         .setColor(getColor())
         .setSmallIcon(R.drawable.ic_logo_notification)
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
-        .build();
+        .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE);
+
+    if (showTimer) {
+      NotificationCompat.ProgressStyle progressStyle = new NotificationCompat.ProgressStyle();
+      int safeDuration = timerDuration > 0 ? timerDuration : 1;
+
+      if (safeDuration > 10) {
+        progressStyle.setProgressSegments(
+            List.of(new NotificationCompat.ProgressStyle.Segment(100))
+        );
+      } else {
+        List<NotificationCompat.ProgressStyle.Point> points = new ArrayList<>();
+        List<NotificationCompat.ProgressStyle.Segment> segments = new ArrayList<>();
+        int previousOffset = 0;
+
+        for (int i = 1; i <= safeDuration; i++) {
+          int currentOffset = Math.round((i * 100f) / safeDuration);
+          int segmentLength = currentOffset - previousOffset;
+
+          segments.add(new NotificationCompat.ProgressStyle.Segment(segmentLength));
+
+          if (safeDuration <= 5) {
+            points.add(new NotificationCompat.ProgressStyle.Point(currentOffset));
+          }
+
+          previousOffset = currentOffset;
+        }
+
+        progressStyle.setProgressSegments(segments);
+        if (!points.isEmpty()) {
+          progressStyle.setProgressPoints(points);
+        }
+      }
+
+      progressStyle.setProgress((int) (timerProgress * 100));
+
+      builder
+          .setContentText(timerTextLong)
+          .setShortCriticalText(timerTextShort)
+          .setStyle(progressStyle)
+          .setRequestPromotedOngoing(showPromotedLiveUpdate);
+    }
+    return builder.build();
   }
 
   private int getColor() {

@@ -1,5 +1,6 @@
 [versions]
-agp = "9.0.1"
+agp = "9.1.0"
+core = "1.17.0"
 appcompat = "1.7.1"
 fragment = "1.8.9"
 navigation = "2.9.7"
@@ -27,6 +28,7 @@ compose-activity = "1.12.4"
 compose-constraintlayout = "1.1.1"
 
 [libraries]
+core = { group = "androidx.core", name = "core", version.ref = "core" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
 navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigation" }

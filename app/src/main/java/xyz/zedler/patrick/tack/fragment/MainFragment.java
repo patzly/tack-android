@@ -1012,7 +1012,8 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
           logoCenterUtil.nextBeat(getMetronomeEngine().getInterval());
         }
       }
-      if (getMetronomeEngine().getConfig().getTimerUnit().equals(UNIT.BARS)) {
+      if (getMetronomeEngine().getConfig().isTimerActive()
+          && getMetronomeEngine().getConfig().getTimerUnit().equals(UNIT.BARS)) {
         binding.timerMain.updateDisplay();
       }
     });
@@ -1047,8 +1048,11 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
   @Override
   public void onMetronomeTimerSecondsChanged() {
     activity.runOnUiThread(() -> {
-      if (binding != null) {
-        binding.timerMain.updateDisplay();
+      if (binding != null && getMetronomeEngine() != null) {
+        String timerUnit = getMetronomeEngine().getConfig().getTimerUnit();
+        if (!timerUnit.equals(UNIT.BARS)) {
+          binding.timerMain.updateDisplay();
+        }
       }
     });
   }
@@ -1062,6 +1066,9 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       binding.timerMain.updateControls(true, true, withTransition);
     });
   }
+
+  @Override
+  public void onMetronomeTimerActiveStateChanged(boolean active) {}
 
   @Override
   public void onMetronomeConfigChanged() {
