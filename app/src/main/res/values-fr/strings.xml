@@ -69,9 +69,16 @@
     <item quantity="many">%1$d parties</item>
     <item quantity="other">%1$d parties</item>
   </plurals>
+  <string name="label_song_options">Options supplémentaires. </string>
+  <string name="label_song_options_dialog">Options pour la musique.</string>
   <string name="label_song_looped">en boucle</string>
   <string name="label_song_looped_description">Redémarrer la musique à la fin</string>
   <string name="label_song_not_looped">Non bouclé</string>
+  <string name="label_song_speed">Tempo d\'entraînement. </string>
+  <string name="label_song_speed_description">Jouer les parties à %1$d%% à leur tempo d\'origine</string>
+  <string name="label_song_speed_description_original">jouer à son tempo d\'origine.</string>
+  <string name="label_song_speed_short">%1$d%% tempo d\'entraînement. </string>
+  <string name="label_song_speed_original">Tempo d\'origine. </string>
   <string name="label_sort_name">Nom</string>
   <string name="label_sort_last_played">Dernière lecture</string>
   <string name="label_sort_last_played_date">Dernier joué %1$s</string>
