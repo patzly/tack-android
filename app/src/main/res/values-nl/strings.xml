@@ -42,7 +42,11 @@
   <string name="label_bpm_value">%1$d bpm</string>
   <string name="label_bpm">bpm</string>
   <string name="label_ms">%1$s ms</string>
+  <string name="label_db_signed">dB</string>
   <string name="label_tempo">Tempo</string>
+  <string name="label_tempo_keyboard">Toetsenbord</string>
+  <string name="label_tempo_tap">Tik</string>
+  <string name="label_tempo_instant">Direct toepassen</string>
   <string name="label_tempo_largo">Largo</string>
   <string name="label_tempo_larghetto">Larghetto</string>
   <string name="label_tempo_adagio">Adagio</string>
@@ -52,16 +56,28 @@
   <string name="label_tempo_presto">Presto</string>
   <string name="label_tempo_prestissimo">Prestissimo</string>
   <string name="label_tempo_input_help">Waardes van %1$d tot %2$d</string>
+  <string name="label_beat_mode_all">Geluid en trillen</string>
+  <string name="label_beat_mode_sound">Alleen geluid</string>
+  <string name="label_beat_mode_vibration">Alleen trillen</string>
   <string name="label_part_name">Deel</string>
   <string name="label_part_unnamed">Deel %1$d</string>
+  <string name="label_part_current">Deel %1$d:%2$s</string>
+  <string name="label_part_edit">Bewerk deel %1$d</string>
   <string name="label_part_no_duration">Geen duur</string>
   <plurals name="label_parts_count">
     <item quantity="one">%1$d deel</item>
     <item quantity="other">%1$d delen</item>
   </plurals>
+  <string name="label_song_options">Extra opties</string>
+  <string name="label_song_options_dialog">Nummer opties</string>
   <string name="label_song_looped">Herhalen</string>
   <string name="label_song_looped_description">Herstart nummer aan het eind</string>
   <string name="label_song_not_looped">Niet herhalen</string>
+  <string name="label_song_speed">Oefen tempo</string>
+  <string name="label_song_speed_description">Speel delen op %1$d%% van hun originele tempo</string>
+  <string name="label_song_speed_description_original">Speel delen op hun originele tempo</string>
+  <string name="label_song_speed_short">%1$d%% oefen tempo</string>
+  <string name="label_song_speed_original">Origineel tempo</string>
   <string name="label_sort_name">Naam</string>
   <string name="label_sort_last_played">Laatst gespeeld</string>
   <string name="label_sort_last_played_date">Laatst gespeeld %1$s</string>
@@ -105,12 +121,15 @@
   <string name="action_beat_mode">Tel stand</string>
   <string name="action_send_feedback">Feedback versturen</string>
   <string name="action_reset">Opnieuw instellen</string>
+  <string name="action_deactivate">Uitschakelen</string>
   <string name="action_recommend">Aandbevelen</string>
   <string name="action_recommend_description">Vertel je vrienden over Tack</string>
   <string name="action_email">Verstuur e-mail</string>
   <string name="action_email_description">Contact opnemen met de ontwikkelaar</string>
   <string name="action_rate">Beoordelen op Google Play</string>
-  <string name="action_rate_description">Ondersteun de ontwikkeling</string>
+  <string name="action_rate_description">Gedachten delen</string>
+  <string name="action_support">Ondersteun de ontwikkeling</string>
+  <string name="action_support_description">Koop de unlock app</string>
   <string name="action_issue">Open nieuw probleem op GitHub</string>
   <string name="action_issue_description">Bugs melden of functies voorstellen</string>
   <string name="action_retry">Opnieuw proberen</string>
@@ -121,18 +140,38 @@
   <string name="action_add_song">Voeg nummer toe</string>
   <string name="action_sort_by">Sorteren op</string>
   <string name="action_add_part">Deel toevoegen</string>
+  <string name="action_add">Toevoegen</string>
   <string name="action_save">Opslaan</string>
   <string name="action_discard">Weggooien</string>
   <string name="action_rename">Hernoem</string>
   <string name="action_rename_part">Hernoem deel</string>
+  <string name="action_rename_part_description">Kan ook leeg worden gelaten als enkel nummeren genoeg is</string>
+  <string name="action_duplicate">Dupliceren</string>
   <string name="action_update">Update</string>
+  <string name="action_use_current_config">Gebruik huidige opzet</string>
+  <string name="action_use_current_config_description">Van de hoofdpagina</string>
   <string name="action_delete">Delete</string>
   <string name="action_move_up">Omhoog</string>
   <string name="action_move_down">Omlaag</string>
   <string name="action_open_play_store">Open Play Store</string>
+  <string name="action_backup_restore">Backup/terugzetten</string>
   <string name="action_backup">Backup</string>
+  <string name="action_backup_description">Sla een backup bestand op in een map naar keuze</string>
   <string name="action_restore">Herstellen</string>
+  <string name="action_restore_description">Bestaande nummers worden nooit verwijderd of overschreven</string>
   <string name="action_view_more_songs">Bekijk meer nummers</string>
+  <string name="action_next">Volgende</string>
+  <string name="action_show_parts">Delen tonen</string>
+  <string name="action_next_part">Volgend deel</string>
+  <string name="action_prev_part">Vorig deel</string>
+  <string name="action_more">Meer</string>
+  <string name="action_edit">Bewerk</string>
+  <string name="action_expand">Uitvouwen</string>
+  <string name="action_collapse">Invouwen</string>
+  <string name="action_show_songs_list">Toon nummers in lijst</string>
+  <string name="action_learn_more">Meer leren</string>
+  <string name="action_tempo_tap">Tik tempo</string>
+
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Een goede app heeft veel tijd nodig en leeft van de feedback van zijn gebruikers.</string>
@@ -154,13 +193,11 @@
   <string name="msg_copied_to_clipboard">Succesvol naar klembord gekopiëerd</string>
   <string name="msg_invalid_input">Ongeldige invoer</string>
   <string name="msg_discard_changes">Veranderingen weggooien?</string>
-  <string name="msg_discard_changes_description">Weet je zeker dat je ze niet op wilt slaan?</string>
   <string name="msg_delete_song">Verwijder nummer?</string>
   <string name="msg_delete_song_description">Weet je zeker dat je het hele nummer met alle delen wilt verwijderen? Dit kan niet ongedaan gemaakt worden.</string>
   <string name="msg_songs_empty">Lege nummerbibliotheek</string>
   <string name="msg_songs_empty_description">Voeg nummers toe die je wilt oefenen</string>
   <string name="msg_unlock">Bericht van de ontwikkelaar</string>
-  <string name="msg_unlock_description">Waardeer je de advertentievrije ervaring met een heleboel krachtige functies in Tack? Ik heb jaren van mijn vrije tijd besteed aan het gratis maken van Tack, maar vooral de nummerbibliotheek functie heeft maanden hard werk gekost.\nOm Tack te kunnen blijven verbeteren vraag ik om een kleine bijdrage. In ruil daarvoor krij je een unlock app voor onbeperkte nummers en ontelbare nummer delen. Bedankt voor je steun!</string>
   <string name="msg_backup_error">Fout tijdens backup</string>
   <string name="msg_backup_directory_missing">Geen bestandslocatie voor backup geselecteerd</string>
   <string name="msg_backup_success">Backup succesvol aangemaakt</string>
@@ -170,11 +207,8 @@
   <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
   <string name="msg_widget_description">Je nummers bekijken en afspelen</string>
-  <string name="msg_installer_check">Ongeldige unlock app</string>
-  <string name="msg_installer_check_description">Koop en installeer de unlock app op Google Play. Bedankt voor je steun!</string>
   <string name="msg_widget_prompt">Snelle toegang tot nummers?</string>
   <string name="msg_widget_prompt_description">Plaats een prachtige widget op je startscherm.</string>
-
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Maten</string>
@@ -263,7 +297,6 @@
   <string name="options_swing_3">Triool</string>
   <string name="options_swing_5">Kwintool</string>
   <string name="options_swing_7">Septool</string>
-
   <!-- SETTINGS -->
 
   <string name="settings_language">Taal</string>
@@ -293,6 +326,8 @@
   <string name="settings_haptic">Trillingseffecten</string>
   <string name="settings_haptic_description">Naast trillen in trilmodus</string>
 
+  <!-- This is the name for a vibration intensity: User can choose between soft or strong intensity or system-set (automatic or shorter auto) intensity. The button width should be as dense as possible. -->
+  <string name="settings_vibration_intensity_auto">Auto</string>
   <string name="settings_reduce_animations">Animaties verminderen</string>
   <string name="settings_reduce_animations_description">Kan mogelijk prestaties verbeteren</string>
 
@@ -347,7 +382,6 @@
   <string name="about_key">Unlock app</string>
   <string name="about_key_description_not_installed">Niet geïnstalleerd</string>
   <string name="about_key_description_installed">Geïnstalleerd</string>
-  <string name="about_key_description_invalid">Ongeldig</string>
   <string name="about_github_description">Broncode</string>
   <string name="about_translation_description">Help Tack vertalen</string>
   <string name="about_privacy">Privacybeleid</string>
