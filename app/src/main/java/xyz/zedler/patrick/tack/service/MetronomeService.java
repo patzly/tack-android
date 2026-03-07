@@ -29,7 +29,9 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
 import androidx.annotation.Nullable;
 import xyz.zedler.patrick.tack.Constants;
@@ -50,6 +52,7 @@ public class MetronomeService extends Service {
   private static final String TAG = MetronomeService.class.getSimpleName();
 
   private final IBinder binder = new MetronomeBinder();
+  private final Handler mainHandler = new Handler(Looper.getMainLooper());
   private MetronomeEngine metronomeEngine;
   private NotificationUtil notificationUtil;
   private SharedPreferences sharedPrefs;
@@ -64,41 +67,47 @@ public class MetronomeService extends Service {
     metronomeEngine.addListener(new MetronomeListenerAdapter() {
       @Override
       public void onMetronomeStart() {
-        if (permNotification && hasPermission()) {
-          showPlayButton = false;
-          notificationUtil.updateNotification(getNotification());
-        }
+        mainHandler.post(() -> {
+          if (permNotification && hasPermission()) {
+            showPlayButton = false;
+            notificationUtil.updateNotification(getNotification());
+          }
+        });
       }
 
       @Override
       public void onMetronomeStop() {
-        if (permNotification && hasPermission()) {
-          showPlayButton = true;
-          notificationUtil.updateNotification(getNotification());
-        }
+        mainHandler.post(() -> {
+          if (permNotification && hasPermission()) {
+            showPlayButton = true;
+            notificationUtil.updateNotification(getNotification());
+          }
+        });
       }
 
       @Override
       public void onMetronomeTick(Tick tick) {
-        if (metronomeEngine.getConfig().isTimerActive()
-            && metronomeEngine.getConfig().getTimerUnit().equals(UNIT.BARS)) {
-          updateTimerNotification();
-        }
+        mainHandler.post(() -> {
+          if (metronomeEngine.getConfig().isTimerActive()
+              && metronomeEngine.getConfig().getTimerUnit().equals(UNIT.BARS)) {
+            updateTimerNotification();
+          }
+        });
       }
 
       @Override
       public void onMetronomeTimerSecondsChanged() {
-        updateTimerNotification();
+        mainHandler.post(this::updateTimerNotification);
       }
 
       @Override
       public void onMetronomeTimerProgressOneTime(boolean withTransition) {
-        updateTimerNotification();
+        mainHandler.post(this::updateTimerNotification);
       }
 
       @Override
       public void onMetronomeTimerActiveStateChanged(boolean active) {
-        updateTimerNotification();
+        mainHandler.post(this::updateTimerNotification);
       }
 
       private void updateTimerNotification() {

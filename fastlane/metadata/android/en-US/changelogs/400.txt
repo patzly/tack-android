@@ -1,0 +1,6 @@
+• New: "Practice tempo" option in song details, allowing parts to be played at a reduced speed
+• New: Live update notification for active timer on Android 16+
+• Improved: Audio engine performance and stability
+• Improved: Background playback/notification behavior and shutdown logic
+• Fixed: "Blink flashlight" setting only worked with haptic beats enabled
+• Fixed: Timing delay on the first beat
