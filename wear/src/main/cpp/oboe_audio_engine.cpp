@@ -479,24 +479,28 @@ Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeCreate(
 JNIEXPORT void JNICALL
 Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeDestroy(
     JNIEnv *env, jobject jEngine, jlong handle) {
+  if (handle == 0) return;
   delete reinterpret_cast<OboeAudioEngine *>(handle);
 }
 
 JNIEXPORT jboolean JNICALL
 Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeInit(
     JNIEnv *env, jobject jEngine, jlong handle) {
+  if (handle == 0) return JNI_FALSE;
   return reinterpret_cast<OboeAudioEngine *>(handle)->init();
 }
 
 JNIEXPORT jboolean JNICALL
 Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeStart(
     JNIEnv *env, jobject jEngine, jlong handle) {
+  if (handle == 0) return JNI_FALSE;
   return reinterpret_cast<OboeAudioEngine *>(handle)->start();
 }
 
 JNIEXPORT jboolean JNICALL
 Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeStop(
     JNIEnv *env, jobject jEngine, jlong handle) {
+  if (handle == 0) return JNI_FALSE;
   return reinterpret_cast<OboeAudioEngine *>(handle)->stop();
 }
 
@@ -504,6 +508,7 @@ JNIEXPORT void JNICALL
 Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeSetTickData(
     JNIEnv *env, jobject jEngine, jlong handle, jint tick_type,
     jfloatArray data) {
+  if (handle == 0) return;
   jfloat *rawData = env->GetFloatArrayElements(data, nullptr);
   jsize length = env->GetArrayLength(data);
 
@@ -516,24 +521,28 @@ Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeSetTickData(
 JNIEXPORT void JNICALL
 Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativePlayTick(
     JNIEnv *env, jobject jEngine, jlong handle, jint tick_type) {
+  if (handle == 0) return;
   reinterpret_cast<OboeAudioEngine *>(handle)->playTick(tick_type);
 }
 
 JNIEXPORT void JNICALL
 Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeSetMasterVolume(
     JNIEnv *env, jobject jEngine, jlong handle, jfloat volume) {
+  if (handle == 0) return;
   reinterpret_cast<OboeAudioEngine *>(handle)->setMasterVolume(volume);
 }
 
 JNIEXPORT void JNICALL
 Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeSetDuckingVolume(
     JNIEnv *env, jobject jEngine, jlong handle, jfloat volume) {
+  if (handle == 0) return;
   reinterpret_cast<OboeAudioEngine *>(handle)->setDuckingVolume(volume);
 }
 
 JNIEXPORT void JNICALL
 Java_xyz_zedler_patrick_tack_metronome_AudioEngine_nativeSetMuted(
     JNIEnv *env, jobject jEngine, jlong handle, jboolean muted) {
+  if (handle == 0) return;
   reinterpret_cast<OboeAudioEngine *>(handle)->setMuted(muted);
 }
 
