@@ -26,6 +26,8 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.navigation.NavController
@@ -92,6 +94,8 @@ fun TackApp(
         }
       }
     ) {
+      val hapticFeedback = LocalHapticFeedback.current
+
       SwipeDismissableNavHost(
         navController = navController,
         startDestination = Screen.Main.route
@@ -100,18 +104,23 @@ fun TackApp(
           MainScreen(
             viewModel = viewModel,
             onSettingsButtonClick = {
+              hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
               navController.navigate(Screen.Settings.route)
             },
             onTempoCardClick = {
+              hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
               navController.navigate(Screen.Tempo.route)
             },
             onBeatsButtonClick = {
+              hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
               navController.navigate(Screen.Beats.route)
             },
             onTempoTapButtonClick = {
+              hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
               navController.navigate(Screen.Tap.route)
             },
             onBookmarksButtonClick = {
+              hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
               navController.navigate(Screen.Bookmarks.route)
             },
             onPermissionRequestClick = onPermissionRequestClick
@@ -121,15 +130,19 @@ fun TackApp(
           SettingsScreen(
             viewModel = viewModel,
             onSoundClick = {
+              hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
               navController.navigate(Screen.Sound.route)
             },
             onGainClick = {
+              hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
               navController.navigate(Screen.Gain.route)
             },
             onLatencyClick = {
+              hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
               navController.navigate(Screen.Latency.route)
             },
             onVibrationIntensityClick = {
+              hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
               navController.navigate(Screen.VibrationIntensity.route)
             },
             onRateClick = onRateClick

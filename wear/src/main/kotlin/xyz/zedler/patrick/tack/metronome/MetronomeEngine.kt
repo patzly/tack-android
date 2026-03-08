@@ -293,10 +293,10 @@ class MetronomeEngine(
     latencyHandler?.postDelayed({
       if (beatModeVibrate || alwaysVibrate) {
         when (tick.type) {
-          Constants.TickType.STRONG -> hapticUtil.heavyClick()
-          Constants.TickType.SUB -> hapticUtil.tick()
+          Constants.TickType.STRONG -> hapticUtil.heavyClick(false)
+          Constants.TickType.SUB -> hapticUtil.tick(false)
           Constants.TickType.MUTED -> {}
-          else -> hapticUtil.click()
+          else -> hapticUtil.click(false)
         }
       }
       listeners.forEach { it.value.onMetronomeTick(tick) }
