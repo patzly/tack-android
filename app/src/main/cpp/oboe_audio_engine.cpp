@@ -9,6 +9,8 @@
 #include <unistd.h>
 #include <array>
 #include <thread>
+#include <mutex>
+#include <condition_variable>
 
 #define LOG_TAG "OboeAudioEngine"
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
@@ -37,9 +39,21 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
         &mTickNormalPtr, std::make_shared<std::vector<float>>());
     std::atomic_store(
         &mTickSubPtr, std::make_shared<std::vector<float>>());
+
+    mRestartThread = std::thread(&OboeAudioEngine::restartThreadLoop, this);
   }
 
   ~OboeAudioEngine() override {
+    {
+      std::lock_guard<std::mutex> lock(mThreadLock);
+      mIsShuttingDown = true;
+      mRestartCv.notify_all();
+    }
+    if (mRestartThread.joinable()) {
+      mRestartThread.join();
+    }
+
+    std::lock_guard<std::recursive_mutex> lock(mStreamLock);
     if (mStream) {
       mStream->stop();
       mStream->close();
@@ -48,6 +62,7 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
   }
 
   bool init() {
+    std::lock_guard<std::recursive_mutex> lock(mStreamLock);
     oboe::AudioStreamBuilder builder;
     builder.setDirection(oboe::Direction::Output)
         ->setPerformanceMode(oboe::PerformanceMode::LowLatency)
@@ -80,6 +95,7 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
   }
 
   bool start() {
+    std::lock_guard<std::recursive_mutex> lock(mStreamLock);
     if (!mStream) {
       LOGE("Stream was null, attempting to re-initialize");
       if (!init()) return false;
@@ -111,6 +127,7 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
   }
 
   bool stop() {
+    std::lock_guard<std::recursive_mutex> lock(mStreamLock);
     if (!mStream) return false;
 
     constexpr int64_t kTimeoutNanos = 1 * 1000 * 1000 * 1000;  // 1 second
@@ -297,9 +314,11 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
   void onErrorAfterClose(
       oboe::AudioStream *oboeStream, oboe::Result error) override {
     if (error == oboe::Result::ErrorDisconnected) {
-      LOGE("Stream disconnected, restarting...");
-      std::thread t(&OboeAudioEngine::restart, this);
-      t.detach();
+      LOGE("Stream disconnected, requesting restart...");
+      // instead of detach a new thread, signal the existing restart thread
+      std::lock_guard<std::mutex> lock(mThreadLock);
+      mRestartRequested = true;
+      mRestartCv.notify_all();
     } else {
       LOGE("Error occurred: %s", oboe::convertToText(error));
     }
@@ -371,28 +390,55 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
     mNextVoiceToSteal.store(0);
   }
 
-  void restart() {
-    usleep(300 * 1000); // wait 300ms
-    if (mStream) {
-      mStream->close();
-      mStream.reset();
-    }
+  void restartThreadLoop() {
+    std::unique_lock<std::mutex> lock(mThreadLock);
+    while (!mIsShuttingDown) {
+      mRestartCv.wait(lock,
+          [this]{ return mIsShuttingDown || mRestartRequested; });
 
-    if (init() && mIsPlaying.load()) {
-      if (mIsPlaying.load()) {
-        oboe::Result result = mStream->start();
-        if (result != oboe::Result::OK) {
-          LOGE("Restart failed inside thread: %s",
-              oboe::convertToText(result));
-          mIsPlaying = false;
+      if (mIsShuttingDown) break;
+
+      if (mRestartRequested) {
+        mRestartRequested = false;
+        lock.unlock();
+
+        usleep(300 * 1000);
+
+        {
+          std::lock_guard<std::mutex> checkLock(mThreadLock);
+          if (mIsShuttingDown) break;
         }
+
+        {
+          std::lock_guard<std::recursive_mutex> streamLock(mStreamLock);
+          if (mStream) {
+            mStream->close();
+            mStream.reset();
+          }
+          if (init() && mIsPlaying.load()) {
+            oboe::Result result = mStream->start();
+            if (result != oboe::Result::OK) {
+              LOGE("Restart failed inside thread: %s",
+                  oboe::convertToText(result));
+              mIsPlaying = false;
+            }
+          }
+        }
+        lock.lock();
       }
     }
   }
 
   std::shared_ptr<oboe::AudioStream> mStream;
+  std::recursive_mutex mStreamLock;
 
-  // which tick type is assigned to each voice (-1 = free)
+  // lifecycle management for threads
+  std::thread mRestartThread;
+  std::mutex mThreadLock;
+  std::condition_variable mRestartCv;
+  bool mIsShuttingDown = false;
+  bool mRestartRequested = false;
+
   std::atomic<int32_t> mTickToPlay[kNumVoices]{};
   std::atomic<int32_t> mTickCounter{0};
 
