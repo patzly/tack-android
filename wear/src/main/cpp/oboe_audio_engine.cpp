@@ -33,12 +33,9 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
     mSampleRate = 48000;  // default; overwritten after openStream()
 
     // initialize empty buffers
-    std::atomic_store(
-        &mTickStrongPtr, std::make_shared<std::vector<float>>());
-    std::atomic_store(
-        &mTickNormalPtr, std::make_shared<std::vector<float>>());
-    std::atomic_store(
-        &mTickSubPtr, std::make_shared<std::vector<float>>());
+    mTickStrongPtr.store(new std::vector<float>());
+    mTickNormalPtr.store(new std::vector<float>());
+    mTickSubPtr.store(new std::vector<float>());
 
     mRestartThread = std::thread(&OboeAudioEngine::restartThreadLoop, this);
   }
@@ -59,6 +56,10 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
       mStream->close();
       mStream.reset();
     }
+
+    delete mTickStrongPtr.load();
+    delete mTickNormalPtr.load();
+    delete mTickSubPtr.load();
   }
 
   bool init() {
@@ -180,12 +181,15 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
     }
 
     // atomically load buffers once per callback
-    auto strong = std::atomic_load(&mTickStrongPtr);
-    auto normal = std::atomic_load(&mTickNormalPtr);
-    auto sub = std::atomic_load(&mTickSubPtr);
+    auto strong = mTickStrongPtr.load(
+        std::memory_order_acquire);
+    auto normal = mTickNormalPtr.load(
+        std::memory_order_acquire);
+    auto sub = mTickSubPtr.load(
+        std::memory_order_acquire);
 
     // Map voice -> buffer shared_ptr (snapshot)
-    std::shared_ptr<std::vector<float>> sourceData[kNumVoices];
+    std::vector<float>* sourceData[kNumVoices];
 
     for (int v = 0; v < kNumVoices; ++v) {
       // check if voice assignment changed
@@ -325,14 +329,26 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
   }
 
   void setTickData(int32_t tickType, const float *data, int32_t length) {
-    auto newVec = std::make_shared<std::vector<float>>(
+    auto newVec = new std::vector<float>(
         data, data + length);
+    std::vector<float>* oldVec = nullptr;
+
     if (tickType == NATIVE_TICK_TYPE_STRONG) {
-      std::atomic_store(&mTickStrongPtr, newVec);
+      oldVec = mTickStrongPtr.exchange(
+          newVec, std::memory_order_release);
     } else if (tickType == NATIVE_TICK_TYPE_NORMAL) {
-      std::atomic_store(&mTickNormalPtr, newVec);
+      oldVec = mTickNormalPtr.exchange(
+          newVec, std::memory_order_release);
     } else if (tickType == NATIVE_TICK_TYPE_SUB) {
-      std::atomic_store(&mTickSubPtr, newVec);
+      oldVec = mTickSubPtr.exchange(
+          newVec, std::memory_order_release);
+    }
+
+    if (oldVec != nullptr) {
+      std::thread([oldVec]() {
+        usleep(50 * 1000);
+        delete oldVec;
+      }).detach();
     }
   }
 
@@ -457,9 +473,9 @@ class OboeAudioEngine: public oboe::AudioStreamCallback {
   std::atomic<bool> mMuted = false;
 
   // buffers swapped atomically (no locks)
-  std::shared_ptr<std::vector<float>> mTickStrongPtr;
-  std::shared_ptr<std::vector<float>> mTickNormalPtr;
-  std::shared_ptr<std::vector<float>> mTickSubPtr;
+  std::atomic<std::vector<float>*> mTickStrongPtr{nullptr};
+  std::atomic<std::vector<float>*> mTickNormalPtr{nullptr};
+  std::atomic<std::vector<float>*> mTickSubPtr{nullptr};
 
   int32_t mSampleRate;
 
