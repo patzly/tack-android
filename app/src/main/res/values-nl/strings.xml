@@ -299,6 +299,7 @@
     <item quantity="one">Speel %1$d seconde</item>
     <item quantity="other">Speel %1$d seconden</item>
   </plurals>
+  <string name="options_mute_mute_beats">Demp %1$d%% van alle tellen</string>
   <plurals name="options_mute_mute_bars">
     <item quantity="one">Demp %1$d maat</item>
     <item quantity="other">Demp %1$d maten</item>
