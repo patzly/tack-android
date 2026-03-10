@@ -427,6 +427,7 @@
   <string name="help_time_signature">Hoe kan ik maatsoort instellen?</string>
   <string name="help_time_signature_answer">Kijk naar het eerste nummer van de maatsoort en zet te tellen in Tack goed. Dat betekent 4 tellen voor 4/4, 2 voor 2/2 enz. 6/8 is speciaal, hier gebruik je 2 tellen met mogeiljk 3 maatdelen omdat alleen de 1e en de 4e achtste maat downbeats zijn.\nDaarnaast kan je het accent op de beats aanpassen door erop te tikken. In de instellingen kan je ook een swing percentage kiezen, dat de maatdelen automatisch zet.</string>
   <string name="help_swing">Hoe kan ik swing uitschakelen?</string>
+  <string name="help_swing_answer">Als je swing aan hebt staan in de instellingen, zet Tack alleen maar de maatdelen voor je. Om swing uit te zeten, kan je simpelweg de maatdelen aanpassen naar je gewenste configuratie.</string>
   <!-- ABOUT -->
 
   <string name="about_version">Versie</string>
