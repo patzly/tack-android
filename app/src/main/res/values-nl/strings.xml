@@ -205,6 +205,7 @@
   <string name="msg_songs_empty">Lege nummerbibliotheek</string>
   <string name="msg_songs_empty_description">Voeg nummers toe die je wilt oefenen</string>
   <string name="msg_unlock">Bericht van de ontwikkelaar</string>
+  <string name="msg_unlock_description">Waardeer je de advertentievrije ervaring met een heleboel krachtige functies in Tack? Ik heb jaren van mijn vrije tijd besteed aan het gratis maken van Tack, maar vooral de nummerbibliotheek functie heeft maanden hard werk gekost.\nOm Tack te kunnen blijven verbeteren vraag ik om een kleine bijdrage. In ruil daarvoor krij je een unlock app voor onbeperkte nummers en ontelbare nummer delen. Bedankt voor je steun!</string>
   <string name="msg_backup_error">Fout tijdens backup</string>
   <string name="msg_backup_directory_missing">Geen bestandslocatie voor backup geselecteerd</string>
   <string name="msg_backup_success">Backup succesvol aangemaakt</string>
