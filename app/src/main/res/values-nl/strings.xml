@@ -432,6 +432,7 @@
   <string name="help_song_library_answer">De nummerbibliotheek is een collectie van metronoomconfiguraties die je kan opslaan en toepassen. Om je huidige configuratie op te slaan, open de nummerbibliotheek en maak een nieuw nummer aan. De huidige configuratie wordt toegevoegd aan de lijst met delen, waar je het verder kan aanpassen. Vergeet niet om je werk op te slaan door op het disk-icoontje te tikken rechtsbovenin nadat je het nummer een naam hebt gegeven.</string>
   <string name="help_song_picker">Hoe werkt de nummerkiezer?</string>
   <string name="help_song_picker_answer">Alle nummers van je nummerbibliotheek worden weergegeven in de nummerkiezer op de hoofdpagina, maar je kan een fullscreen lijst openen als je wilt. De volgorde is op basis van de keuze in het menu. Om een nummer toe te passen, kun je er simpelweg op tikken. Je kan ook naar een specifiek deel van het nummer springen door op het huidige deel onder het nummer te tikken, of door de skip-knoppen te gebruiken.\nAls je terug wilt naar de configuratie voordat het nummer was geselecteerd, tik op × naast de naam van het nummer.</string>
+  <string name="help_song_part">Waarom switcht het nummer niet naar het volgende deel?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Versie</string>
