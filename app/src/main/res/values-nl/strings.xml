@@ -434,6 +434,7 @@
   <string name="help_song_picker_answer">Alle nummers van je nummerbibliotheek worden weergegeven in de nummerkiezer op de hoofdpagina, maar je kan een fullscreen lijst openen als je wilt. De volgorde is op basis van de keuze in het menu. Om een nummer toe te passen, kun je er simpelweg op tikken. Je kan ook naar een specifiek deel van het nummer springen door op het huidige deel onder het nummer te tikken, of door de skip-knoppen te gebruiken.\nAls je terug wilt naar de configuratie voordat het nummer was geselecteerd, tik op × naast de naam van het nummer.</string>
   <string name="help_song_part">Waarom switcht het nummer niet naar het volgende deel?</string>
   <string name="help_song_part_answer">Om automatisch te switchen naar het volgende deel van het nummer moet er voor ieder deel een periode ingesteld zijn. Als je geen periode instelt, wordt het deel beschouwd als oneindig.\nOm een periode in te stellen, tik op het huidige nummer om de nummer details te openen en stel de periode van een deel in door op het edit-icoon te tikken. Vergeet niet om je veranderingen op te slaan!</string>
+  <string name="help_notification_displays">Waarom wordt een metronoom service melding getoond wanneer ik de app verlaat?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Versie</string>
