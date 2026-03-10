@@ -314,6 +314,7 @@
     <item quantity="one">%1$d per tel</item>
     <item quantity="other">%1$d per tel</item>
   </plurals>
+  <string name="options_subdivisions_beats_muted">Tellen gedempt</string>
   <string name="options_swing">Swing</string>
   <string name="options_swing_description">Maatdelen ingesteld op swing verdeling</string>
   <string name="options_swing_3">Triool</string>
