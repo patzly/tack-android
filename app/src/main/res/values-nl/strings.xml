@@ -406,6 +406,8 @@
   <string name="settings_flash_screen_subtle">Subtiel</string>
   <string name="settings_flash_screen_strong">Sterk</string>
 
+  <string name="settings_flashlight">Zaklamp flitsen</string>
+
   <string name="settings_keep_awake">Scherm aan houden</string>
   <string name="settings_perm_notification">Permanente melding</string>
   <string name="settings_perm_notification_description">Altijd toegang tot speel/stop bediening</string>
