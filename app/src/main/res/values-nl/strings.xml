@@ -321,6 +321,8 @@
   <string name="options_swing_5">Kwintool</string>
   <string name="options_swing_7">Septool</string>
   <string name="options_polyrhythm">Polyritme</string>
+  <string name="options_polyrhythm_description">Speel maatdelen verspreid over de hele maat</string>
+
   <!-- SETTINGS -->
 
   <string name="settings_language">Taal</string>
