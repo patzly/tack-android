@@ -385,6 +385,7 @@
   <string name="settings_ignore_focus_description">Blijf spelen als andere apps geluid maken</string>
 
   <string name="settings_gain">Volume boost/vermindering</string>
+  <string name="settings_gain_description">Relatief t.o.v. systeemvolume</string>
   <string name="settings_gain_disclaimer">Wanneer boost is ingeschakeld wordt een waarschuwing getoond bij iedere start. De ontwikkelaar neemt geen verantwoordelijkheid voor mogelijke schade.</string>
 
   <string name="settings_active_beat">Highlight huidige maat</string>
@@ -401,6 +402,7 @@
 
   <string name="settings_flash_screen">Scherm flitsen</string>
   <string name="settings_flash_screen_description">Op ieder maatdeel</string>
+  <string name="settings_flash_screen_off">Uit</string>
   <string name="settings_flash_screen_strong">Sterk</string>
 
   <string name="settings_keep_awake">Scherm aan houden</string>
