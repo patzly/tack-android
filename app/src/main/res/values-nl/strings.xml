@@ -424,6 +424,7 @@
 
   <string name="help_tempo_change">Hoe kan ik het tempo veranderen?</string>
   <string name="help_tempo_change_answer">Om het tempo te veranderen, kan je de tempokiezer op de hoofdpagina slepen en roteren, of je kunt op de knoppen links en rechts tikken.\nDoor op de tempokiezer te tikken kan je een dialoogscherm openen, waar je het tempo kan instellen door het BPM te tikken of je toetsenbord input te gebruiken.</string>
+  <string name="help_time_signature">Hoe kan ik maatsoort instellen?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Versie</string>
