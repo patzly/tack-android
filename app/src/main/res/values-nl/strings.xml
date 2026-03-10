@@ -220,6 +220,8 @@
   <string name="msg_widget_description">Je nummers bekijken en afspelen</string>
   <string name="msg_widget_prompt">Snelle toegang tot nummers?</string>
   <string name="msg_widget_prompt_description">Plaats een prachtige widget op je startscherm.</string>
+  <string name="msg_beat_mode_warning">Beat-mode ook overschakelen naar alleen geluid?</string>
+
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Maten</string>
