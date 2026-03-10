@@ -411,6 +411,9 @@
   <string name="settings_keep_awake">Scherm aan houden</string>
   <string name="settings_keep_awake_description">Gebruikt mogelijk meer batterij</string>
   <string name="settings_keep_awake_always">Altijd</string>
+  <string name="settings_keep_awake_while_playing">Tijdens spelen</string>
+  <string name="settings_keep_awake_never">Nooit</string>
+
   <string name="settings_perm_notification">Permanente melding</string>
   <string name="settings_perm_notification_description">Altijd toegang tot speel/stop bediening</string>
 
