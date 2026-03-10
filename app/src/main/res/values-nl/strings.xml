@@ -430,6 +430,7 @@
   <string name="help_swing_answer">Als je swing aan hebt staan in de instellingen, zet Tack alleen maar de maatdelen voor je. Om swing uit te zeten, kan je simpelweg de maatdelen aanpassen naar je gewenste configuratie.</string>
   <string name="help_song_library">Hoe werkt de nummerbibliotheek?</string>
   <string name="help_song_library_answer">De nummerbibliotheek is een collectie van metronoomconfiguraties die je kan opslaan en toepassen. Om je huidige configuratie op te slaan, open de nummerbibliotheek en maak een nieuw nummer aan. De huidige configuratie wordt toegevoegd aan de lijst met delen, waar je het verder kan aanpassen. Vergeet niet om je werk op te slaan door op het disk-icoontje te tikken rechtsbovenin nadat je het nummer een naam hebt gegeven.</string>
+  <string name="help_song_picker">Hoe werkt de nummer picker?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Versie</string>
