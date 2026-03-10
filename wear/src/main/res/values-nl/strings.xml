@@ -96,7 +96,11 @@
   <string name="wear_settings_always_vibrate">Altijd trillen</string>
   <string name="wear_settings_always_vibrate_description">Zelfs met geluid</string>
 
+  <string name="wear_settings_vibration_intensity">Trilintensiteit</string>
   <string name="wear_settings_vibration_intensity_auto">Auto</string>
+  <string name="wear_settings_vibration_intensity_soft">Zacht</string>
+  <string name="wear_settings_vibration_intensity_strong">Sterk</string>
+
   <string name="wear_settings_flash_screen">Scherm flitsen</string>
   <string name="wear_settings_flash_screen_description">Op ieder maatdeel</string>
 
