@@ -249,6 +249,10 @@
     <item quantity="other">%1$d minuten</item>
   </plurals>
   <string name="options_inactive">Inactief</string>
+  <plurals name="options_beats_description">
+    <item quantity="one">%1$d per maat</item>
+    <item quantity="other">%1$d per maat</item>
+  </plurals>
   <string name="options_count_in">Aftellen</string>
   <plurals name="options_count_in_description">
     <item quantity="one">Wacht %1$d maat voor modificator toepassen</item>
