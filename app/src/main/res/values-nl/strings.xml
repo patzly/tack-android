@@ -349,6 +349,7 @@
   <string name="settings_haptic">Trillingseffecten</string>
   <string name="settings_haptic_description">Naast trillen in trilmodus</string>
 
+  <string name="settings_vibration_intensity_description">Voor haptische tellen en effecten</string>
   <!-- This is the name for a vibration intensity: User can choose between soft or strong intensity or system-set (automatic or shorter auto) intensity. The button width should be as dense as possible. -->
   <string name="settings_vibration_intensity_auto">Auto</string>
   <string name="settings_reduce_animations">Animaties verminderen</string>
