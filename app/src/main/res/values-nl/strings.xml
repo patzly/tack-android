@@ -420,6 +420,9 @@
   <string name="settings_big_logo">Toon groot logo animatie</string>
   <string name="settings_big_logo_description">In plaats van tempo kiezer tijdens spelen</string>
 
+  <!-- HELP -->
+
+  <string name="help_tempo_change">Hoe kan ik het tempo veranderen?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Versie</string>
