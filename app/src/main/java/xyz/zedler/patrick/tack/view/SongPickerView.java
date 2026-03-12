@@ -87,10 +87,11 @@ public class SongPickerView extends FrameLayout {
   private int sortOrder, partIndex, widthMax, widthMin, chipTargetTranslationX;
   private String currentSongId;
   private Drawable gradientLeft, gradientRight;
-  private SpringAnimation springAnimationExpand;
+  private SpringAnimation springAnimationExpandSpatial, springAnimationExpandEffects;
   private SpringAnimation springAnimationDeselectSpatial, springAnimationDeselectEffects;
   private SpringAnimation springAnimationSelectSpatial, springAnimationSelectEffects;
-  private float expandFraction, selectSpatialFraction, selectEffectsFraction;
+  private float expandSpatialFraction, expandEffectsFraction;
+  private float selectSpatialFraction, selectEffectsFraction;
   private boolean isInitialized, isExpanded;
 
   public SongPickerView(@NonNull Context context, AttributeSet attributeSet) {
@@ -432,13 +433,13 @@ public class SongPickerView extends FrameLayout {
       listener.onExpandChanged(expanded);
     }
 
-    if (springAnimationExpand != null) {
-      springAnimationExpand.cancel();
+    if (springAnimationExpandSpatial != null) {
+      springAnimationExpandSpatial.cancel();
     }
     if (animated) {
-      if (springAnimationExpand == null) {
-        springAnimationExpand =
-            new SpringAnimation(this, EXPAND_FRACTION)
+      if (springAnimationExpandSpatial == null) {
+        springAnimationExpandSpatial =
+            new SpringAnimation(this, EXPAND_SPATIAL_FRACTION)
                 .setSpring(
                     MotionUtils.resolveThemeSpringForce(
                         getContext(),
@@ -452,15 +453,35 @@ public class SongPickerView extends FrameLayout {
                         setExpandAnimationEndState();
                       }
                     });
+        if (TEST_ANIMATIONS) {
+          springAnimationExpandSpatial.setSpring(
+              new SpringForce().setStiffness(30f).setDampingRatio(0.9f)
+          );
+        }
       }
-      if (TEST_ANIMATIONS) {
-        springAnimationExpand.setSpring(new SpringForce().setStiffness(30f).setDampingRatio(0.9f));
+      if (springAnimationExpandEffects == null) {
+        springAnimationExpandEffects =
+            new SpringAnimation(this, EXPAND_EFFECTS_FRACTION)
+                .setSpring(
+                    MotionUtils.resolveThemeSpringForce(
+                        getContext(),
+                        R.attr.motionSpringDefaultEffects,
+                        R.style.Motion_Material3_Spring_Standard_Default_Effects)
+                )
+                .setMinimumVisibleChange(0.01f);
+        if (TEST_ANIMATIONS) {
+          springAnimationExpandEffects.setSpring(
+              new SpringForce().setStiffness(30f).setDampingRatio(0.9f)
+          );
+        }
       }
       setExpandAnimationStartState();
-      springAnimationExpand.animateToFinalPosition(expanded ? 1 : 0);
+      springAnimationExpandSpatial.animateToFinalPosition(expanded ? 1 : 0);
+      springAnimationExpandEffects.animateToFinalPosition(expanded ? 1 : 0);
     } else {
       setExpandAnimationStartState();
-      setExpandFraction(expanded ? 1 : 0);
+      setExpandSpatialFraction(expanded ? 1 : 0);
+      setExpandEffectsFraction(expanded ? 1 : 0);
       setExpandAnimationEndState();
     }
   }
@@ -493,8 +514,24 @@ public class SongPickerView extends FrameLayout {
     binding.buttonSongPickerAddSong.setVisibility(isExpanded ? VISIBLE : GONE);
   }
 
-  private void setExpandFraction(float fraction) {
-    expandFraction = fraction;
+  private void setExpandSpatialFraction(float fraction) {
+    expandSpatialFraction = fraction;
+
+    ViewGroup.LayoutParams lp = getLayoutParams();
+    lp.width = (int) (widthMin + (widthMax - widthMin) * Math.max(fraction, 0));
+    lp.height = (int) (heightCollapsed + (heightExpanded - heightCollapsed) * fraction);
+    setLayoutParams(lp);
+    if (listener != null) {
+      listener.onHeightChanged();
+    }
+  }
+
+  public float getExpandSpatialFraction() {
+    return expandSpatialFraction;
+  }
+
+  private void setExpandEffectsFraction(float fraction) {
+    expandEffectsFraction = fraction;
 
     binding.buttonSongPickerExpand.setAlpha(1 - fraction);
     binding.cardSongPickerContainer.setCardBackgroundColor(
@@ -504,18 +541,10 @@ public class SongPickerView extends FrameLayout {
     binding.buttonGroupSongPickerTools.setAlpha(fraction);
     binding.recyclerSongPicker.setAlpha(fraction);
     binding.buttonSongPickerAddSong.setAlpha(fraction);
-
-    ViewGroup.LayoutParams lp = getLayoutParams();
-    lp.width = (int) (widthMin + (widthMax - widthMin) * fraction);
-    lp.height = (int) (heightCollapsed + (heightExpanded - heightCollapsed) * fraction);
-    setLayoutParams(lp);
-    if (listener != null) {
-      listener.onHeightChanged();
-    }
   }
 
-  public float getExpandFraction() {
-    return expandFraction;
+  public float getExpandEffectsFraction() {
+    return expandEffectsFraction;
   }
 
   public int getHeightExpanded() {
@@ -844,16 +873,28 @@ public class SongPickerView extends FrameLayout {
     void onExpandChanged(boolean expanded);
   }
 
-  private static final FloatPropertyCompat<SongPickerView> EXPAND_FRACTION =
-      new FloatPropertyCompat<>("expandFraction") {
+  private static final FloatPropertyCompat<SongPickerView> EXPAND_SPATIAL_FRACTION =
+      new FloatPropertyCompat<>("expandSpatialFraction") {
         @Override
         public float getValue(SongPickerView delegate) {
-          return delegate.getExpandFraction();
+          return delegate.getExpandSpatialFraction();
         }
 
         @Override
         public void setValue(SongPickerView delegate, float value) {
-          delegate.setExpandFraction(value);
+          delegate.setExpandSpatialFraction(value);
+        }
+      };
+  private static final FloatPropertyCompat<SongPickerView> EXPAND_EFFECTS_FRACTION =
+      new FloatPropertyCompat<>("expandEffectsFraction") {
+        @Override
+        public float getValue(SongPickerView delegate) {
+          return delegate.getExpandEffectsFraction();
+        }
+
+        @Override
+        public void setValue(SongPickerView delegate, float value) {
+          delegate.setExpandEffectsFraction(value);
         }
       };
   private static final FloatPropertyCompat<SongPickerView> SELECT_SPATIAL_FRACTION =

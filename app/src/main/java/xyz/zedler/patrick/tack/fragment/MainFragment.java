@@ -26,8 +26,6 @@ import android.annotation.SuppressLint;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.Animatable;
-import android.graphics.drawable.Drawable;
 import android.os.Build.VERSION;
 import android.os.Build.VERSION_CODES;
 import android.os.Bundle;
@@ -900,10 +898,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
         beatsBgDrawable.setProgress(1, getMetronomeEngine().getCountInInterval());
       }
       binding.buttonMainPlayStop.setIconResource(R.drawable.ic_rounded_play_to_stop_fill_anim);
-      Drawable startStopIcon = binding.buttonMainPlayStop.getIcon();
-      if (startStopIcon != null) {
-        ((Animatable) startStopIcon).start();
-      }
+      ViewUtil.startIcon(binding.buttonMainPlayStop.getIcon());
       updatePlayStopButton(true, !reduceAnimations);
       if (bigLogo) {
         updateTempoPickerAndLogo(false, true);
@@ -923,10 +918,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       beatsBgDrawable.setProgressVisible(false, true);
       binding.timerMain.updateDisplay();
       binding.buttonMainPlayStop.setIconResource(R.drawable.ic_rounded_stop_to_play_fill_anim);
-      Drawable icon = binding.buttonMainPlayStop.getIcon();
-      if (icon != null) {
-        ((Animatable) icon).start();
-      }
+      ViewUtil.startIcon(binding.buttonMainPlayStop.getIcon());
       updatePlayStopButton(false, !reduceAnimations);
       if (bigLogo) {
         updateTempoPickerAndLogo(true, true);
@@ -1584,7 +1576,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     if (binding == null || binding.frameMainBottom.getTop() == 0) {
       return;
     }
-    float fraction = binding.songPickerMain.getExpandFraction();
+    float fraction = binding.songPickerMain.getExpandSpatialFraction();
     int songPickerHeightExpanded = binding.songPickerMain.getHeightExpanded();
     if (songPickerHeightExpanded > songPickerAvailableHeight) {
       int songPickerOverlap = songPickerHeightExpanded - songPickerAvailableHeight;
