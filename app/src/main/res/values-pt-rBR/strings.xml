@@ -64,6 +64,7 @@
   <string name="label_part_current">Divisão %1$d:%2$s</string>
   <string name="label_part_edit">Editar parte %1$d</string>
   <string name="label_part_no_duration">Sem duração</string>
+  <string name="label_part_duration_notification">%1$s / %2$s</string>
   <plurals name="label_parts_count">
     <item quantity="one">%1$d parte</item>
     <item quantity="many">%1$d partes</item>
