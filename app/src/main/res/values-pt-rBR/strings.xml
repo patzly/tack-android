@@ -132,7 +132,7 @@
   <string name="action_rate">Avalie no Google Play</string>
   <string name="action_rate_description">Compartilhe suas ideias</string>
   <string name="action_support">Apoie o desenvolvimento</string>
-  <string name="action_support_description">Compre o app de desbloqueio</string>
+  <string name="action_support_description">Compre e desbloqueie o app</string>
   <string name="action_issue">Abrir nova issue no GitHub</string>
   <string name="action_issue_description">Reporte bugs ou sugira recursos</string>
   <string name="action_retry">Recomeçar </string>
