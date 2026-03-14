@@ -800,8 +800,8 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
     ViewUtil.resetAnimatedIcon(binding.buttonMainPlayStop);
     binding.buttonMainPlayStop.setIconResource(
         metronomeEngine.isPlaying()
-            ? R.drawable.ic_rounded_stop_fill
-            : R.drawable.ic_rounded_play_arrow_fill
+            ? R.drawable.ic_rounded_stop_to_play_fill_anim
+            : R.drawable.ic_rounded_play_to_stop_fill_anim
     );
     updatePlayStopButton(metronomeEngine.isPlaying(), false);
 
@@ -897,8 +897,12 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       if (getMetronomeEngine().getConfig().getCountIn() > 0) {
         beatsBgDrawable.setProgress(1, getMetronomeEngine().getCountInInterval());
       }
-      binding.buttonMainPlayStop.setIconResource(R.drawable.ic_rounded_play_to_stop_fill_anim);
       ViewUtil.startIcon(binding.buttonMainPlayStop.getIcon());
+      new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        if (binding != null) {
+          binding.buttonMainPlayStop.setIconResource(R.drawable.ic_rounded_stop_to_play_fill_anim);
+        }
+      }, 300);
       updatePlayStopButton(true, !reduceAnimations);
       if (bigLogo) {
         updateTempoPickerAndLogo(false, true);
@@ -917,8 +921,12 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       resetActiveBeats();
       beatsBgDrawable.setProgressVisible(false, true);
       binding.timerMain.updateDisplay();
-      binding.buttonMainPlayStop.setIconResource(R.drawable.ic_rounded_stop_to_play_fill_anim);
       ViewUtil.startIcon(binding.buttonMainPlayStop.getIcon());
+      new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        if (binding != null) {
+          binding.buttonMainPlayStop.setIconResource(R.drawable.ic_rounded_play_to_stop_fill_anim);
+        }
+      }, 300);
       updatePlayStopButton(false, !reduceAnimations);
       if (bigLogo) {
         updateTempoPickerAndLogo(true, true);
@@ -1245,9 +1253,7 @@ public class MainFragment extends BaseFragment implements OnClickListener, Metro
       dialogUtilBeatMode.show();
       if (metronomeEngine.getBeatMode().equals(BEAT_MODE.VIBRATION)) {
         // Use available animated icon for click
-        binding.buttonMainBeatMode.setIconResource(
-            R.drawable.ic_rounded_vibration_anim
-        );
+        binding.buttonMainBeatMode.setIconResource(R.drawable.ic_rounded_vibration_anim);
         ViewUtil.startIcon(binding.buttonMainBeatMode.getIcon());
       }
     } else if (id == R.id.button_main_options) {
