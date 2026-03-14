@@ -464,9 +464,7 @@ fun PlayButton(
     shapes = if (state.reduceAnim) {
       IconButtonDefaults.shapes()
     } else {
-      IconButtonDefaults.animatedShapes(
-        pressedShape = MaterialTheme.shapes.small
-      )
+      IconButtonDefaults.animatedShapes()
     },
     border = BorderStroke(2.dp, borderColor),
     interactionSource = interactionSource,
