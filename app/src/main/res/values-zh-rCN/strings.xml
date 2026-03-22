@@ -67,6 +67,7 @@
   <plurals name="label_parts_count">
     <item quantity="other">%1$d 个部分</item>
   </plurals>
+  <string name="label_song_options">额外选项</string>
   <string name="label_song_looped">已循环</string>
   <string name="label_song_looped_description">结束时重新播放歌曲</string>
   <string name="label_song_not_looped">未循环</string>
