@@ -64,6 +64,7 @@
   <string name="label_part_current">第 %1$d 部分: %2$s</string>
   <string name="label_part_edit">编辑部分 %1$d</string>
   <string name="label_part_no_duration">无持续时间</string>
+  <string name="label_part_duration_notification">%1$s / %2$s</string>
   <plurals name="label_parts_count">
     <item quantity="other">%1$d 个部分</item>
   </plurals>
