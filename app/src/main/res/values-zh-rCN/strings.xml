@@ -73,6 +73,7 @@
   <string name="label_song_looped">已循环</string>
   <string name="label_song_looped_description">结束时重新播放歌曲</string>
   <string name="label_song_not_looped">未循环</string>
+  <string name="label_song_speed">练习节奏</string>
   <string name="label_sort_name">名称</string>
   <string name="label_sort_last_played">最近播放</string>
   <string name="label_sort_last_played_date">最近播放 %1$s</string>
