@@ -366,6 +366,7 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">Jazyk</string>
+  <string name="settings_language_info">Moc děkujeme všem dobrovolníkům překladatelům na Transifexu!</string>
   <string name="settings_language_system">Podle systému</string>
   <string name="settings_language_system_description">Angličtina, pokud není dostupný překlad</string>
 
@@ -392,6 +393,7 @@
   <string name="settings_haptic">Haptická odezva</string>
   <string name="settings_haptic_description">Navíc k haptickým dobám v režimu vibrací</string>
 
+  <string name="settings_vibration_intensity">Intenzita vibrací</string>
   <!-- This is the name for a vibration intensity: User can choose between soft or strong intensity or system-set (automatic or shorter auto) intensity. The button width should be as dense as possible. -->
   <string name="settings_vibration_intensity_auto">Automaticky</string>
   <string name="settings_reduce_animations">Omezit animace</string>
