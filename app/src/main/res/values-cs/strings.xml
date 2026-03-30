@@ -42,7 +42,11 @@
   <string name="label_bpm_value">%1$d dob/min</string>
   <string name="label_bpm">dob/min</string>
   <string name="label_ms">%1$s ms</string>
+  <string name="label_db_signed">%1$s dB</string>
   <string name="label_tempo">Tempo</string>
+  <string name="label_tempo_keyboard">Klávesy</string>
+  <string name="label_tempo_tap">Klepnutí</string>
+  <string name="label_tempo_instant">Použít okamžitě</string>
   <string name="label_tempo_largo">Largo</string>
   <string name="label_tempo_larghetto">Larghetto</string>
   <string name="label_tempo_adagio">Adagio</string>
@@ -52,19 +56,31 @@
   <string name="label_tempo_presto">Presto</string>
   <string name="label_tempo_prestissimo">Prestissimo</string>
   <string name="label_tempo_input_help">Hodnoty od %1$d do %2$d</string>
+  <string name="label_beat_mode_all">Zvuk a vibrace</string>
+  <string name="label_beat_mode_sound">Pouze zvuk</string>
+  <string name="label_beat_mode_vibration">Pouze vibrace</string>
   <string name="label_part_name">Název části</string>
   <string name="label_part_unnamed">Část %1$d</string>
   <string name="label_part_current">Část %1$d: %2$s</string>
+  <string name="label_part_edit">Upravit část %1$d</string>
   <string name="label_part_no_duration">Žádná délka</string>
+  <string name="label_part_duration_notification">%1$s / %2$s</string>
   <plurals name="label_parts_count">
     <item quantity="one">%1$d část</item>
     <item quantity="few">%1$d části</item>
     <item quantity="many">%1$d částí</item>
     <item quantity="other">%1$d částí</item>
   </plurals>
+  <string name="label_song_options">Další možnosti</string>
+  <string name="label_song_options_dialog">Možnosti skladby</string>
   <string name="label_song_looped">Opakování</string>
   <string name="label_song_looped_description">Po dosažení konce opakovat skladbu</string>
   <string name="label_song_not_looped">Bez opakování</string>
+  <string name="label_song_speed">Procvičit tempo</string>
+  <string name="label_song_speed_description">Přehrát části v %1$d%% jejich původního tempa</string>
+  <string name="label_song_speed_description_original">Přehrát části v jejich původním tempu</string>
+  <string name="label_song_speed_short">%1$d%% procvičovací tempo</string>
+  <string name="label_song_speed_original">Původní tempo</string>
   <string name="label_sort_name">Název</string>
   <string name="label_sort_last_played">Naposledy přehráno</string>
   <string name="label_sort_last_played_date">Naposledy přehráno %1$s</string>
@@ -110,12 +126,15 @@
   <string name="action_beat_mode">Režim metronomu</string>
   <string name="action_send_feedback">Poslat zpětnou vazbu</string>
   <string name="action_reset">Resetovat</string>
+  <string name="action_deactivate">Deaktivovat</string>
   <string name="action_recommend">Doporučit</string>
   <string name="action_recommend_description">Řekni o apce svým kámošům</string>
   <string name="action_email">Poslat vývojáři e-mail</string>
   <string name="action_email_description">Kontaktovat vývojáře</string>
   <string name="action_rate">Ohodnotit na Google Play</string>
-  <string name="action_rate_description">Podpořit vývoj</string>
+  <string name="action_rate_description">Sdílejte své myšlenky</string>
+  <string name="action_support">Podpořit vývoj</string>
+  <string name="action_support_description">Kupte si odemykací aplikaci</string>
   <string name="action_issue">Otevřít nový problém na GitHubu</string>
   <string name="action_issue_description">Nahlásit chyby nebo navrhnout funkce</string>
   <string name="action_retry">Zkusit znovu</string>
@@ -126,18 +145,36 @@
   <string name="action_add_song">Přidat skladbu</string>
   <string name="action_sort_by">Seřadit</string>
   <string name="action_add_part">Přidat část</string>
+  <string name="action_add">Přidat</string>
   <string name="action_save">Uložit</string>
   <string name="action_discard">Zahodit</string>
   <string name="action_rename">Přejmenovat</string>
   <string name="action_rename_part">Přejmenovat část</string>
+  <string name="action_rename_part_description">Může být ponecháno prázdné, pokud stačí číslování</string>
+  <string name="action_duplicate">Duplikovat</string>
   <string name="action_update">Aktualizovat</string>
+  <string name="action_use_current_config">Použít aktuální konfiguraci</string>
+  <string name="action_use_current_config_description">Z hlavní stránky</string>
   <string name="action_delete">Odstranit</string>
   <string name="action_move_up">Přesunout nahoru</string>
   <string name="action_move_down">Přesunout dolů</string>
   <string name="action_open_play_store">Otevřít Obchod Play</string>
+  <string name="action_backup_restore">Záloha/obnovení</string>
   <string name="action_backup">Zálohovat</string>
+  <string name="action_backup_description">Uložit soubor zálohy do zvoleného adresáře</string>
   <string name="action_restore">Obnovit</string>
+  <string name="action_restore_description">Existující skladby nikdy nebudou smazány nebo přepsány</string>
   <string name="action_view_more_songs">Zobrazit více skladeb</string>
+  <string name="action_next">Další</string>
+  <string name="action_show_parts">Zobrazit části</string>
+  <string name="action_next_part">Další část</string>
+  <string name="action_prev_part">Předchozí část</string>
+  <string name="action_more">Další</string>
+  <string name="action_edit">Upravit</string>
+  <string name="action_expand">Rozbalit</string>
+  <string name="action_collapse">Sbalit</string>
+  <string name="action_tempo_tap">Naklikat tempo</string>
+
   <!-- MESSAGES -->
 
   <string name="msg_feedback">Dobrá aplikace vyžaduje spoustu času a existuje díky zpětné vazbě od uživatelů.</string>
@@ -159,13 +196,11 @@
   <string name="msg_copied_to_clipboard">Úspěšně zkopírováno do schránky</string>
   <string name="msg_invalid_input">Neplatný vstup</string>
   <string name="msg_discard_changes">Zahodit změny?</string>
-  <string name="msg_discard_changes_description">Opravdu je nechcete uložit?</string>
   <string name="msg_delete_song">Odstranit skladbu?</string>
   <string name="msg_delete_song_description">Opravdu chcete odstranit celou skladbu včetně všech jejích částí? Tato akce je nevratná.</string>
   <string name="msg_songs_empty">Prázdná knihovna skladeb</string>
   <string name="msg_songs_empty_description">Přidejte skladby, které si chcete procvičit</string>
   <string name="msg_unlock">Zpráva od vývojáře</string>
-  <string name="msg_unlock_description">Vážíte si zážitku bez reklam se spoustou výkonných funkcí v aplikaci Tack? Vytvářením aplikace Tack jsem strávil roky svého volného času, ale zejména funkce knihovny skladeb mi zabrala měsíce tvrdé práce.\nAbych mohl aplikaci Tack dále vylepšovat, žádám vás o malý příspěvek. Na oplátku získáte odemykací aplikaci pro neomezený počet skladeb a nespočet jejich částí. Děkuji za vaši podporu!</string>
   <string name="msg_backup_error">Chyba během zálohy</string>
   <string name="msg_backup_directory_missing">Nebylo vybráno úložiště zálohy</string>
   <string name="msg_backup_success">Záloha úspěšně vytvořena</string>
@@ -175,11 +210,8 @@
   <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
   <string name="msg_widget_description">Zobrazte si své skladby a přehrajte si je</string>
-  <string name="msg_installer_check">Neplatná odemykací aplikace</string>
-  <string name="msg_installer_check_description">Kupte a nainstalujte si odemykací aplikaci z Obchodu Play. Děkuji za vaší podporu!</string>
   <string name="msg_widget_prompt">Rychlý přístup ke skladbám?</string>
   <string name="msg_widget_prompt_description">Umístěte si widget aplikace na domovskou obrazovku.</string>
-
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Takty</string>
@@ -300,7 +332,6 @@
   <string name="options_swing_3">Trioly</string>
   <string name="options_swing_5">Kvintoly</string>
   <string name="options_swing_7">Septoly</string>
-
   <!-- SETTINGS -->
 
   <string name="settings_language">Jazyk</string>
@@ -330,6 +361,8 @@
   <string name="settings_haptic">Haptická odezva</string>
   <string name="settings_haptic_description">Navíc k haptickým dobám v režimu vibrací</string>
 
+  <!-- This is the name for a vibration intensity: User can choose between soft or strong intensity or system-set (automatic or shorter auto) intensity. The button width should be as dense as possible. -->
+  <string name="settings_vibration_intensity_auto">Automaticky</string>
   <string name="settings_reduce_animations">Omezit animace</string>
   <string name="settings_reduce_animations_description">Může zvýšit výkon</string>
 
@@ -384,7 +417,6 @@
   <string name="about_key">Odemykací aplikace</string>
   <string name="about_key_description_not_installed">Nenainstalována</string>
   <string name="about_key_description_installed">Nainstalována</string>
-  <string name="about_key_description_invalid">Neplatná</string>
   <string name="about_github_description">Zdrojový kód</string>
   <string name="about_translation_description">Pomoz nám přeložit Tack</string>
   <string name="about_privacy">Zásady ochrany soukromí</string>
