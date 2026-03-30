@@ -32,6 +32,7 @@
 
   <string name="wear_label_bpm_value">%1$d bpm</string>
   <string name="wear_label_ms">%1$s ms</string>
+  <string name="wear_label_db_signed">%1$s dB</string>
   <string name="wear_label_developer">Vytvořil</string>
   <plurals name="wear_label_beats">
     <item quantity="one">%1$d doba</item>
@@ -74,7 +75,7 @@
   <string name="wear_msg_gain_description">Dejte si pozor, abyste zvuk nepřehrávali ve sluchátkách!</string>
   <string name="wear_msg_empty_bookmarks">Zatím nebylo nic přidáno</string>
   <string name="wear_msg_delete_bookmark">Odstranit záložku?</string>
-  <!-- Content of a bookmark, e. g. 120 bpm, 4 beats, 1 subdivision -->
+  <!-- Content of a bookmark, e.g. 120 bpm, 4 beats, 1 subdivision -->
   <string name="wear_msg_delete_bookmark_description">%1$s, %2$s, %3$s</string>
 
   <!-- SETTINGS -->
