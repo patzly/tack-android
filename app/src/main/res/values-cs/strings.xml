@@ -361,6 +361,8 @@
   <string name="options_swing_5">Kvintoly</string>
   <string name="options_swing_7">Septoly</string>
   <string name="options_polyrhythm">Polyrytmus</string>
+  <string name="options_polyrhythm_description">Přehrát poddivize rozložené napříč celým taktem</string>
+
   <!-- SETTINGS -->
 
   <string name="settings_language">Jazyk</string>
