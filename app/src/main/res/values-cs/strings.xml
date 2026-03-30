@@ -397,6 +397,9 @@
   <string name="settings_vibration_intensity_description">Pro haptické doby a efekty</string>
   <!-- This is the name for a vibration intensity: User can choose between soft or strong intensity or system-set (automatic or shorter auto) intensity. The button width should be as dense as possible. -->
   <string name="settings_vibration_intensity_auto">Automaticky</string>
+  <string name="settings_vibration_intensity_soft">Mírné</string>
+  <string name="settings_vibration_intensity_strong">Silné</string>
+
   <string name="settings_reduce_animations">Omezit animace</string>
   <string name="settings_reduce_animations_description">Může zvýšit výkon</string>
 
@@ -434,6 +437,8 @@
 
   <string name="settings_flash_screen">Blikání obrazovky</string>
   <string name="settings_flash_screen_description">Při každé době</string>
+  <string name="settings_flash_screen_strong">Silné</string>
+
   <string name="settings_keep_awake">Nezhasínat obrazovku</string>
   <string name="settings_perm_notification">Trvalé oznámení</string>
   <string name="settings_perm_notification_description">Okamžitý přístup k ovládání přehrání/zastavení</string>
