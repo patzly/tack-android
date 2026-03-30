@@ -220,6 +220,7 @@
   <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
   <string name="msg_songs_intro">Jak funguje knihovna skladeb</string>
+  <string name="msg_songs_intro_description">Konfigurace metronomu můžete uložit a upravit jako části skladby. Jednoduše nastavte ovládání a možnosti metronomu na vaše předvolby a přidejte aktuální konfiguraci jako novou část skladby, případně upravte již existující část.</string>
   <string name="msg_widget_description">Zobrazte si své skladby a přehrajte si je</string>
   <string name="msg_widget_prompt">Rychlý přístup ke skladbám?</string>
   <string name="msg_widget_prompt_description">Umístěte si widget aplikace na domovskou obrazovku.</string>
