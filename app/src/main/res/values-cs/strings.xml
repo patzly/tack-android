@@ -182,6 +182,7 @@
   <string name="msg_feedback">Dobrá aplikace vyžaduje spoustu času a existuje díky zpětné vazbě od uživatelů.</string>
   <string name="msg_feedback_contact">Máte nějaká přání, komentáře nebo dotazy? Kontaktujte mě! Budu také velmi rád, pokud zanecháte pěkné hodnocení v Obchodě Play.</string>
   <string name="msg_recommend">Používám tuhle skvělou aplikaci metronomu: \n%1$s</string>
+  <string name="msg_vibration_unavailable">Vibrace nejsou na tomto zařízení dostupné. Bude použit zvuk.</string>
   <string name="msg_service_running">Služba metronomu běží</string>
   <string name="msg_service_running_return">Klepněte pro návrat do aplikace Tack</string>
   <string name="msg_service_description">Služba pro nastavení a přehrávání metronomu</string>
@@ -195,6 +196,7 @@
   <string name="msg_gain_description">Dejte si pozor, abyste zvuk nepřehrávali ve sluchátkách, jelikož hlasité zvuky mohou způsobit poškození sluchu!</string>
   <string name="msg_split_screen">Okno příliš malé</string>
   <string name="msg_split_screen_description">V režimu rozdělené aplikace může mít Tack problém s pozicí ovládacích prvků metronomu. Pokud je to možné, použijte prosím větší okno.</string>
+  <string name="msg_notification_permission">Vyžadováno oprávnění k oznámením</string>
   <string name="msg_report_crash">Nahlaste prosím jakýkoli pád a přidejte záznam z protokolu, abych mohl chybu opravit.</string>
   <string name="msg_copied_to_clipboard">Úspěšně zkopírováno do schránky</string>
   <string name="msg_invalid_input">Neplatný vstup</string>
