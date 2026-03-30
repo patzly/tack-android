@@ -463,7 +463,7 @@
   <!-- HELP -->
 
   <string name="help_tempo_change">Jak mohu změnit tempo?</string>
-  <string name="help_tempo_change_answer">Pro změnu tempa držte a otáčejte výběrem tempa uprostřed hlavní stránky nebo klepněte na tlačítka vlevo a vpravo od kruhu.\nKlepnutím na výběr tempa otevřete dialog k nastavení tempa klepáním v rytmu nebo použitím kláves.</string>
+  <string name="help_tempo_change_answer">Pro změnu tempa držte a otáčejte výběrem tempa uprostřed hlavní stránky nebo klepněte na tlačítka vlevo a vpravo od kruhu.\nKlepnutím na výběr tempa otevřete dialog k nastavení tempa klepáním v rytmu nebo použitím klávesnice.</string>
   <!-- ABOUT -->
 
   <string name="about_version">Verze</string>
