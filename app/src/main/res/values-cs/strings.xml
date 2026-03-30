@@ -173,6 +173,8 @@
   <string name="action_edit">Upravit</string>
   <string name="action_expand">Rozbalit</string>
   <string name="action_collapse">Sbalit</string>
+  <string name="action_show_songs_list">Zobrazit skladby jako seznam</string>
+  <string name="action_learn_more">Zjistit více</string>
   <string name="action_tempo_tap">Naklikat tempo</string>
 
   <!-- MESSAGES -->
