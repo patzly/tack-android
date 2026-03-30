@@ -333,6 +333,7 @@
     <item quantity="many">Přehrát %1$d sekund</item>
     <item quantity="other">Přehrát %1$d sekund</item>
   </plurals>
+  <string name="options_mute_mute_beats">Ztlumit %1$d%% ze všech dob</string>
   <plurals name="options_mute_mute_bars">
     <item quantity="one">Ztlumit %1$d takt</item>
     <item quantity="few">Ztlumit %1$d takty</item>
