@@ -102,6 +102,9 @@
 
   <string name="wear_settings_vibration_intensity">Intenzita vibrací</string>
   <string name="wear_settings_vibration_intensity_auto">Automaticky</string>
+  <string name="wear_settings_vibration_intensity_soft">Mírné</string>
+  <string name="wear_settings_vibration_intensity_strong">Silné</string>
+
   <string name="wear_settings_flash_screen">Blikání obrazovky</string>
   <string name="wear_settings_flash_screen_description">Při každé době</string>
 
