@@ -263,6 +263,12 @@
     <item quantity="other">%1$d minut</item>
   </plurals>
   <string name="options_inactive">Neaktivní</string>
+  <plurals name="options_beats_description">
+    <item quantity="one">%1$d za takt</item>
+    <item quantity="few">%1$d na takt</item>
+    <item quantity="many">%1$d za takt</item>
+    <item quantity="other">%1$d za takt</item>
+  </plurals>
   <string name="options_count_in">Počítat do</string>
   <plurals name="options_count_in_description">
     <item quantity="one">Počkejte %1$d takt před použitím úprav</item>
