@@ -224,6 +224,8 @@
   <string name="msg_widget_description">Zobrazte si své skladby a přehrajte si je</string>
   <string name="msg_widget_prompt">Rychlý přístup ke skladbám?</string>
   <string name="msg_widget_prompt_description">Umístěte si widget aplikace na domovskou obrazovku.</string>
+  <string name="msg_beat_mode_warning">Přepnout režim dob také na režim pouze zvuku?</string>
+
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Takty</string>
