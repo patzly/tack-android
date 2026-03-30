@@ -100,6 +100,7 @@
   <string name="wear_settings_always_vibrate">Vždy vibrovat</string>
   <string name="wear_settings_always_vibrate_description">I se zvukem</string>
 
+  <string name="wear_settings_vibration_intensity">Intenzita vibrací</string>
   <string name="wear_settings_vibration_intensity_auto">Automaticky</string>
   <string name="wear_settings_flash_screen">Blikání obrazovky</string>
   <string name="wear_settings_flash_screen_description">Při každé době</string>
