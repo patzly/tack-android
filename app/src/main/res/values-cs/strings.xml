@@ -451,6 +451,9 @@
   <string name="settings_keep_awake">Nezhasínat obrazovku</string>
   <string name="settings_keep_awake_description">Může využívat více baterie</string>
   <string name="settings_keep_awake_always">Vždy</string>
+  <string name="settings_keep_awake_while_playing">Během přehrávání</string>
+  <string name="settings_keep_awake_never">Nikdy</string>
+
   <string name="settings_perm_notification">Trvalé oznámení</string>
   <string name="settings_perm_notification_description">Okamžitý přístup k ovládání přehrání/zastavení</string>
 
