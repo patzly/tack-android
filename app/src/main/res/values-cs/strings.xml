@@ -425,6 +425,7 @@
   <string name="settings_ignore_focus_description">Pokračovat v přehrávání, i když jiná aplikace začne přehrávat zvuk</string>
 
   <string name="settings_gain">Zvýšení/snížení hlasitosti</string>
+  <string name="settings_gain_description">Relativní k systémové hlasitosti</string>
   <string name="settings_gain_disclaimer">Při povolení zesílení bude před každým spuštěním zobrazeno varování. Vývojář nenese žádnou zodpovědnost za jakékoli potenciální škody.</string>
 
   <string name="settings_active_beat">Zvýraznit aktuální rytmus</string>
