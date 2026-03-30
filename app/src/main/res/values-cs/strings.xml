@@ -182,7 +182,6 @@
   <string name="msg_feedback">Dobrá aplikace vyžaduje spoustu času a existuje díky zpětné vazbě od uživatelů.</string>
   <string name="msg_feedback_contact">Máte nějaká přání, komentáře nebo dotazy? Kontaktujte mě! Budu také velmi rád, pokud zanecháte pěkné hodnocení v Obchodě Play.</string>
   <string name="msg_recommend">Používám tuhle skvělou aplikaci metronomu: \n%1$s</string>
-  <string name="msg_vibration_unavailable">Vibrace nejsou na tomto zařízení dostupné. Bude použit zvuk.</string>
   <string name="msg_service_running">Služba metronomu běží</string>
   <string name="msg_service_running_return">Klepněte pro návrat do aplikace Tack</string>
   <string name="msg_service_description">Služba pro nastavení a přehrávání metronomu</string>
