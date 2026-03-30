@@ -460,6 +460,9 @@
   <string name="settings_big_logo">Zobrazit velkou animaci loga</string>
   <string name="settings_big_logo_description">Namísto výběru tempa při přehrávání</string>
 
+  <!-- HELP -->
+
+  <string name="help_tempo_change">Jak mohu změnit tempo?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Verze</string>
