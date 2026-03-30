@@ -404,6 +404,8 @@
   <string name="settings_reduce_animations_description">Může zvýšit výkon</string>
 
   <string name="settings_backup">Zálohovat/obnovit knihovnu skladeb</string>
+  <string name="settings_backup_description">Důležité při výměně zařízení</string>
+
   <string name="settings_reset">Resetovat vše</string>
   <string name="settings_reset_description">Tato akce je nevratná</string>
 
