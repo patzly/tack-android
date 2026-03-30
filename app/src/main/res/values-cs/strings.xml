@@ -442,6 +442,7 @@
 
   <string name="settings_flash_screen">Blikání obrazovky</string>
   <string name="settings_flash_screen_description">Při každé době</string>
+  <string name="settings_flash_screen_off">Vypnuto</string>
   <string name="settings_flash_screen_strong">Silné</string>
 
   <string name="settings_keep_awake">Nezhasínat obrazovku</string>
