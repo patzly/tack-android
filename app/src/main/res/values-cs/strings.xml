@@ -446,6 +446,8 @@
   <string name="settings_flash_screen_subtle">Jemné</string>
   <string name="settings_flash_screen_strong">Silné</string>
 
+  <string name="settings_flashlight">Blikání svítilny</string>
+
   <string name="settings_keep_awake">Nezhasínat obrazovku</string>
   <string name="settings_perm_notification">Trvalé oznámení</string>
   <string name="settings_perm_notification_description">Okamžitý přístup k ovládání přehrání/zastavení</string>
