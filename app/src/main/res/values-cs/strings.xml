@@ -197,15 +197,20 @@
   <string name="msg_split_screen">Okno příliš malé</string>
   <string name="msg_split_screen_description">V režimu rozdělené aplikace může mít Tack problém s pozicí ovládacích prvků metronomu. Pokud je to možné, použijte prosím větší okno.</string>
   <string name="msg_notification_permission">Vyžadováno oprávnění k oznámením</string>
+  <string name="msg_notification_permission_description">Tack vyžaduje oprávnění k zobrazování oznámení pro pokračování v přehrávání na pozadí zobrazením oznámení nízké priority. Pokud jej v dalším dialogu zakážete, systém Android po opuštění aplikace zastaví přehrávání.</string>
+  <string name="msg_notification_permission_denied">Pro přehrávání na pozadí je vyžadováno oprávnění k oznámením</string>
   <string name="msg_report_crash">Nahlaste prosím jakýkoli pád a přidejte záznam z protokolu, abych mohl chybu opravit.</string>
   <string name="msg_copied_to_clipboard">Úspěšně zkopírováno do schránky</string>
   <string name="msg_invalid_input">Neplatný vstup</string>
   <string name="msg_discard_changes">Zahodit změny?</string>
+  <string name="msg_discard_changes_description">Opravdu je nechcete uložit?</string>
   <string name="msg_delete_song">Odstranit skladbu?</string>
   <string name="msg_delete_song_description">Opravdu chcete odstranit celou skladbu včetně všech jejích částí? Tato akce je nevratná.</string>
   <string name="msg_songs_empty">Prázdná knihovna skladeb</string>
   <string name="msg_songs_empty_description">Přidejte skladby, které si chcete procvičit</string>
   <string name="msg_unlock">Zpráva od vývojáře</string>
+  <string name="msg_unlock_description">Oceňujete, že Tack nabízí prostředí bez reklam a spoustu užitečných funkcí? Strávil jsem roky svého volného času tím, že jsem Tack vyvíjel zdarma, ale zejména funkce knihovny skladeb mi zabrala měsíce tvrdé práce.\nAbych mohl ve vylepšování aplikace Tack pokračovat, rád bych vás poprosil o malý příspěvek. Na oplátku získáte odemknutou verzi aplikace s neomezeným počtem skladeb a nespočtem částí skladeb. Děkuji za vaši podporu!</string>
+  <string name="msg_backup_description">Můžete zálohovat celou svou knihovnu skladeb do vašeho zařízení nebo obnovit knihovnu skladeb ze zálohy.</string>
   <string name="msg_backup_error">Chyba během zálohy</string>
   <string name="msg_backup_directory_missing">Nebylo vybráno úložiště zálohy</string>
   <string name="msg_backup_success">Záloha úspěšně vytvořena</string>
@@ -214,6 +219,7 @@
   <string name="msg_restore_success">Záloha úspěšně obnovena</string>
   <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
   <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
+  <string name="msg_songs_intro">Jak funguje knihovna skladeb</string>
   <string name="msg_widget_description">Zobrazte si své skladby a přehrajte si je</string>
   <string name="msg_widget_prompt">Rychlý přístup ke skladbám?</string>
   <string name="msg_widget_prompt_description">Umístěte si widget aplikace na domovskou obrazovku.</string>
