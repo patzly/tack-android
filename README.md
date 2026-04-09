@@ -48,7 +48,7 @@ Tack for phones and tablets requires at least Android 6.0 Marshmallow and works 
 
 ## Verifying Fingerprints
 
-This is the SHA-256 fingerprint for my signing certificate of the GitHub and IzziOnDroid releases:
+This is the SHA-256 fingerprint for my signing certificate of the GitHub and IzzyOnDroid releases:
 
 `5C:6C:89:E2:98:E9:0B:54:8B:1E:BC:62:7A:AF:B5:C8:22:E5:D9:4B:4B:1C:6C:24:C4:02:8B:85:D2:3C:ED:6F`
 
