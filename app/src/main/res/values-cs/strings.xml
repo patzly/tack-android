@@ -470,6 +470,7 @@
   <string name="help_swing_answer">Pokud jste v možnostech povolili swing, aplikace za vás pouze nastaví subdivize. Pro zakázání swingu jednoduše nastavte subdivize ručně dle svého uvážení.</string>
   <string name="help_song_library">Jak funguje knihovna skladeb?</string>
   <string name="help_song_library_answer">Knihovna skladeb je sbírka konfigurací metronomu, které si můžete uložit a použít. Chcete-li uložit svou aktuální konfiguraci, jednoduše otevřete knihovnu skladeb a vytvořte novou skladbu. Aktuální konfigurace bude přidána do seznamu částí, kde ji můžete dále upravovat. Jakmile skladbu pojmenujete, nezapomeňte svůj výsledek uložit klepnutím na ikonu diskety v pravém horním rohu.</string>
+  <string name="help_song_picker">Jak funguje výběr skladeb?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Verze</string>
