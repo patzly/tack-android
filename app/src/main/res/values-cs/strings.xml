@@ -471,6 +471,7 @@
   <string name="help_song_library">Jak funguje knihovna skladeb?</string>
   <string name="help_song_library_answer">Knihovna skladeb je sbírka konfigurací metronomu, které si můžete uložit a použít. Chcete-li uložit svou aktuální konfiguraci, jednoduše otevřete knihovnu skladeb a vytvořte novou skladbu. Aktuální konfigurace bude přidána do seznamu částí, kde ji můžete dále upravovat. Jakmile skladbu pojmenujete, nezapomeňte svůj výsledek uložit klepnutím na ikonu diskety v pravém horním rohu.</string>
   <string name="help_song_picker">Jak funguje výběr skladeb?</string>
+  <string name="help_song_picker_answer">Všechny skladby z vaší knihovny skladeb se zobrazují ve výběru skladeb na hlavní stránce, ale pokud chcete, můžete otevřít seznam na celou obrazovku. Pořadí závisí na vaší volbě v nabídce. Chcete-li skladbu použít, jednoduše na ni klepněte. Můžete také přeskočit na konkrétní část skladby klepnutím na aktuální část pod skladbou nebo pomocí tlačítek pro přeskočení.\nPokud se chcete přepnout zpět na konfiguraci, kterou jste měli před výběrem skladby, klepněte na křížek (×) vedle názvu skladby.</string>
   <!-- ABOUT -->
 
   <string name="about_version">Verze</string>
