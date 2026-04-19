@@ -479,6 +479,8 @@
   <string name="help_notification_disappears">Proč oznámení služby metronomu zmizí, když aplikaci zavřu?</string>
   <string name="help_notification_disappears_answer">Když aplikaci zavřete z nedávných aplikací, služba metronomu se zastaví a oznámení zmizí. Jedná se o zamýšlené chování pro úsporu baterie a systémových prostředků.\nPokud si chcete oznámení trvale ponechat pro přístup ke spuštění/zastavení, můžete v nastavení povolit „Trvalé oznámení“ a nezavírat aplikaci z nedávných aplikací.</string>
   <string name="help_translation">Jak mohu získat Tack ve svém jazyce?</string>
+  <string name="help_translation_answer">Překlady pro aplikaci Tack jsou spravovány na platformě Transifex, kde mohou uživatelé jako vy pomoci aplikaci přeložit! Pro více informací prosím navštivte Tack na GitHubu, nebo se rovnou zapojte do procesu překladu:</string>
+
   <!-- ABOUT -->
 
   <string name="about_version">Verze</string>
