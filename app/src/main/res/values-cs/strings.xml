@@ -476,6 +476,7 @@
   <string name="help_song_part_answer">Aby se skladba automaticky přepnula na další část, musí mít každá část nastavenou délku. Pokud délku nenastavíte, je část považována za nekonečnou.\nChcete-li nastavit délku, jednoduše klepněte na aktuální skladbu, čímž otevřete detaily skladby, a nastavte délku části klepnutím na ikonu úprav u dané části. Nezapomeňte své změny uložit!</string>
   <string name="help_notification_displays">Proč se zobrazuje oznámení služby metronomu, když opustím aplikaci?</string>
   <string name="help_notification_displays_answer">Pokud jste v nastavení nepovolili „Trvalé oznámení“, je toto oznámení nezbytné k tomu, aby služba metronomu zůstala aktivní, když je aplikace na pozadí.\nTato služba spravuje přehrávání a sleduje data v reálném čase, jako je časovač nebo uplynulý čas, aby oddělila přehrávání od rozhraní aplikace.\nSlužbu můžete přesunout na pozadí klepnutím na „Stop“, ale to už nezaručuje, že ji systém neukončí. To může vést k resetování časovače a uplynulého času, dokud nebude služba opět v popředí.\nV nastavení můžete také povolit trvalé oznámení, abyste měli v oblasti oznámení vždy přístup ke spuštění/zastavení.</string>
+  <string name="help_notification_disappears">Proč oznámení služby metronomu zmizí, když aplikaci zavřu?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Verze</string>
