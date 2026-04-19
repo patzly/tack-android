@@ -468,6 +468,7 @@
   <string name="help_time_signature_answer">Podívejte se na první číslo vašeho časového podpisu a nastavte podle něj doby. To znamená 4 doby pro 4/4, 2 pro 2/2 a tak dále. 6/8 je trochu zvláštní, zde použijte 2 doby a volitelně 3 subdivize, protože pouze 1. a 4. osmina jsou hlavní doby.\nDále můžete také změnit důraz dob klepnutím na ně. V možnostech si také můžete zvolit procento swingu, které vám automaticky nastaví subdivize.</string>
   <string name="help_swing">Jak zakážu swing?</string>
   <string name="help_swing_answer">Pokud jste v možnostech povolili swing, aplikace za vás pouze nastaví subdivize. Pro zakázání swingu jednoduše nastavte subdivize ručně dle svého uvážení.</string>
+  <string name="help_song_library">Jak funguje knihovna skladeb?</string>
   <!-- ABOUT -->
 
   <string name="about_version">Verze</string>
