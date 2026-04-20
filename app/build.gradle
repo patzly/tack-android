@@ -59,6 +59,15 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            storeFile rootProject.ext.keystoreFile
+            storePassword rootProject.ext.keystorePassword
+            keyAlias rootProject.ext.keyAlias
+            keyPassword rootProject.ext.keyPassword
+        }
+    }
+
     buildTypes {
         release {
             if (signingConfigs.release.storeFile?.exists()) {
@@ -72,6 +81,7 @@ android {
                 getDefaultProguardFile('proguard-android-optimize.txt')
                 'proguard-rules.pro'
             }
+            signingConfig signingConfigs.release
             debuggable = false
         }
     }
