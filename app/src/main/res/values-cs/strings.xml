@@ -464,6 +464,23 @@
 
   <string name="help_tempo_change">Jak mohu změnit tempo?</string>
   <string name="help_tempo_change_answer">Pro změnu tempa držte a otáčejte výběrem tempa uprostřed hlavní stránky nebo klepněte na tlačítka vlevo a vpravo od kruhu.\nKlepnutím na výběr tempa otevřete dialog k nastavení tempa klepáním v rytmu nebo použitím klávesnice.</string>
+  <string name="help_time_signature">Jak nastavím taktové předznamenání?</string>
+  <string name="help_time_signature_answer">Podívejte se na první číslo vašeho časového podpisu a nastavte podle něj doby. To znamená 4 doby pro 4/4, 2 pro 2/2 a tak dále. 6/8 je trochu zvláštní, zde použijte 2 doby a volitelně 3 subdivize, protože pouze 1. a 4. osmina jsou hlavní doby.\nDále můžete také změnit důraz dob klepnutím na ně. V možnostech si také můžete zvolit procento swingu, které vám automaticky nastaví subdivize.</string>
+  <string name="help_swing">Jak zakážu swing?</string>
+  <string name="help_swing_answer">Pokud jste v možnostech povolili swing, aplikace za vás pouze nastaví subdivize. Pro zakázání swingu jednoduše nastavte subdivize ručně dle svého uvážení.</string>
+  <string name="help_song_library">Jak funguje knihovna skladeb?</string>
+  <string name="help_song_library_answer">Knihovna skladeb je sbírka konfigurací metronomu, které si můžete uložit a použít. Chcete-li uložit svou aktuální konfiguraci, jednoduše otevřete knihovnu skladeb a vytvořte novou skladbu. Aktuální konfigurace bude přidána do seznamu částí, kde ji můžete dále upravovat. Jakmile skladbu pojmenujete, nezapomeňte svůj výsledek uložit klepnutím na ikonu diskety v pravém horním rohu.</string>
+  <string name="help_song_picker">Jak funguje výběr skladeb?</string>
+  <string name="help_song_picker_answer">Všechny skladby z vaší knihovny skladeb se zobrazují ve výběru skladeb na hlavní stránce, ale pokud chcete, můžete otevřít seznam na celou obrazovku. Pořadí závisí na vaší volbě v nabídce. Chcete-li skladbu použít, jednoduše na ni klepněte. Můžete také přeskočit na konkrétní část skladby klepnutím na aktuální část pod skladbou nebo pomocí tlačítek pro přeskočení.\nPokud se chcete přepnout zpět na konfiguraci, kterou jste měli před výběrem skladby, klepněte na ikonu × vedle názvu skladby.</string>
+  <string name="help_song_part">Proč se skladba nepřepne na další část?</string>
+  <string name="help_song_part_answer">Aby se skladba automaticky přepnula na další část, musí mít každá část nastavenou délku. Pokud délku nenastavíte, je část považována za nekonečnou.\nChcete-li nastavit délku, jednoduše klepněte na aktuální skladbu, čímž otevřete detaily skladby, a nastavte délku části klepnutím na ikonu úprav u dané části. Nezapomeňte své změny uložit!</string>
+  <string name="help_notification_displays">Proč se zobrazuje oznámení služby metronomu, když opustím aplikaci?</string>
+  <string name="help_notification_displays_answer">Pokud jste v nastavení nepovolili „Trvalé oznámení“, je toto oznámení nezbytné k tomu, aby služba metronomu zůstala aktivní, když je aplikace na pozadí.\nTato služba spravuje přehrávání a sleduje data v reálném čase, jako je časovač nebo uplynulý čas, aby oddělila přehrávání od rozhraní aplikace.\nSlužbu můžete přesunout na pozadí klepnutím na „Stop“, ale to už nezaručuje, že ji systém neukončí. To může vést k resetování časovače a uplynulého času, dokud nebude služba opět v popředí.\nV nastavení můžete také povolit trvalé oznámení, abyste měli v oblasti oznámení vždy přístup ke spuštění/zastavení.</string>
+  <string name="help_notification_disappears">Proč oznámení služby metronomu zmizí, když aplikaci zavřu?</string>
+  <string name="help_notification_disappears_answer">Když aplikaci zavřete z nedávných aplikací, služba metronomu se zastaví a oznámení zmizí. Jedná se o zamýšlené chování pro úsporu baterie a systémových prostředků.\nPokud si chcete oznámení trvale ponechat pro přístup ke spuštění/zastavení, můžete v nastavení povolit „Trvalé oznámení“ a nezavírat aplikaci z nedávných aplikací.</string>
+  <string name="help_translation">Jak mohu získat Tack ve svém jazyce?</string>
+  <string name="help_translation_answer">Překlady pro aplikaci Tack jsou spravovány na platformě Transifex, kde mohou uživatelé jako vy pomoci aplikaci přeložit! Pro více informací prosím navštivte Tack na GitHubu, nebo se rovnou zapojte do procesu překladu:</string>
+
   <!-- ABOUT -->
 
   <string name="about_version">Verze</string>
