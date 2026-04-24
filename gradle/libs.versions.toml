@@ -1,27 +1,25 @@
 [versions]
-agp = "9.1.0"
-core = "1.18.0"
+agp = "9.2.0"
+core = "1.19.0-alpha01"
 appcompat = "1.7.1"
 fragment = "1.8.9"
-navigation = "2.9.7"
+navigation = "2.9.8"
 preference = "1.2.1"
 oboe = "1.10.0"
 shapes = "1.1.0"
 material = "1.14.0-beta01"
 recyclerview = "1.4.0"
 flexbox = "3.0.0"
-gson = "2.13.2"
+gson = "2.14.0"
 room = "2.8.4"
-kotlin = "2.3.20"
-# TODO: rename to core when ktx module is removed
-core-ktx = "1.18.0"
+kotlin = "2.3.21"
 lifecycle = "2.10.0"
 splashscreen = "1.2.0"
 wear-input = "1.2.0"
 wear-tooling = "1.0.0"
 wear-ongoing = "1.1.0"
-compose-bom = "2026.03.01"
-compose-material = "1.5.0-alpha17"
+compose-bom = "2026.04.01"
+compose-material = "1.5.0-alpha18"
 compose-material-wear = "1.6.1"
 compose-navigation = "1.6.1"
 compose-foundation = "1.6.1"
@@ -47,8 +45,6 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 wear-tooling = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wear-tooling" }
 wear-ongoing = { group = "androidx.wear", name = "wear-ongoing", version.ref = "wear-ongoing" }
 wear-input = { group = "androidx.wear", name = "wear-input", version.ref = "wear-input" }
-# TODO: use core when ktx module is removed
-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycle" }
 splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
 ui = { group = "androidx.compose.ui", name = "ui" }

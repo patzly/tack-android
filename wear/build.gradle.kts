@@ -46,7 +46,7 @@ plugins {
 
 configure<ApplicationExtension> {
   namespace = "xyz.zedler.patrick.tack"
-  compileSdk = 36
+  compileSdk = 37
 
   defaultConfig {
     applicationId = "xyz.zedler.patrick.tack"
@@ -72,6 +72,7 @@ configure<ApplicationExtension> {
   buildTypes {
     release {
       isMinifyEnabled = true
+      isShrinkResources = true
       proguardFiles(
         getDefaultProguardFile("proguard-android-optimize.txt"),
         "proguard-rules.pro"
@@ -117,7 +118,7 @@ kotlin {
 dependencies {
   implementation(platform(libs.compose.bom))
   implementation(libs.preference)
-  implementation(libs.core.ktx)
+  implementation(libs.core)
   implementation(libs.oboe)
   implementation(libs.lifecycle.service)
   implementation(libs.splashscreen)
