@@ -417,6 +417,7 @@
   <string name="help_song_library">Как работает библиотека песен?</string>
   <string name="help_song_picker">Как работает подбор песен?</string>
   <string name="help_song_part">Почему песня не переходит к следующей части?</string>
+  <string name="help_notification_displays">Почему при выходе из приложения появляется уведомление о работе метронома?</string>
   <string name="help_notification_disappears">Почему уведомление о работе метронома исчезает, когда я закрываю приложение?</string>
   <string name="help_translation">Как перевести Tack на мой язык?</string>
   <!-- ABOUT -->
