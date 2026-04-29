@@ -148,6 +148,7 @@
   <string name="action_duplicate">Дублировать</string>
   <string name="action_update">Обновить</string>
   <string name="action_use_current_config">Использовать текущую конфигурацию</string>
+  <string name="action_use_current_config_description">С главной страницы</string>
   <string name="action_delete">Удалить</string>
   <string name="action_move_up">Переместить выше</string>
   <string name="action_move_down">Переместить ниже</string>
