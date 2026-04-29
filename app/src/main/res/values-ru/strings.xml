@@ -340,6 +340,7 @@
   </plurals>
   <string name="options_mute_random">Рандомизировать меньшие значения</string>
   <string name="options_subdivisions">Дробления</string>
+  <string name="options_subdivisions_beats_muted">Тактов заглушено</string>
   <string name="options_swing">Свинг</string>
   <string name="options_swing_description">Дробление настроено в соответствии с типом свинга</string>
   <string name="options_swing_3">Триоль</string>
