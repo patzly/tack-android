@@ -423,6 +423,8 @@
   <string name="help_notification_displays">Почему при выходе из приложения появляется уведомление о работе метронома?</string>
   <string name="help_notification_disappears">Почему уведомление о работе метронома исчезает, когда я закрываю приложение?</string>
   <string name="help_translation">Как перевести Tack на мой язык?</string>
+  <string name="help_translation_answer">Переводы для Tack обрабатываются на платформе Transifex, где такие же пользователи, как и вы, могут помочь с переводом приложения! Пожалуйста, посетите страницу Tack на GitHub, чтобы узнать больше, или сразу приступайте к переводу:</string>
+
   <!-- ABOUT -->
 
   <string name="about_version">Версия</string>
