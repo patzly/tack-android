@@ -354,6 +354,7 @@
   <string name="settings_reduce_animations">Уменьшить анимации</string>
   <string name="settings_reduce_animations_description">Может улучшить производительность</string>
 
+  <string name="settings_backup">Резервное копирование/восстановление библиотеки песен</string>
   <string name="settings_backup_description">Важно при переключении устройств</string>
 
   <string name="settings_reset">Сбросить всё</string>
