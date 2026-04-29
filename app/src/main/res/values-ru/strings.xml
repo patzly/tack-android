@@ -319,6 +319,7 @@
   <!-- SETTINGS -->
 
   <string name="settings_language">Язык</string>
+  <string name="settings_language_info">Большое спасибо всем переводчикам-волонтерам на Transifex!</string>
   <string name="settings_language_system">Язык системы</string>
   <string name="settings_language_system_description">Английский, если перевод недоступен</string>
 
@@ -414,6 +415,8 @@
   <!-- HELP -->
 
   <string name="help_tempo_change">Как мне сменить темп?</string>
+  <string name="help_time_signature">Как изменить тактовый размер?</string>
+  <string name="help_swing">Как отключить свинг?</string>
   <string name="help_song_library">Как работает библиотека песен?</string>
   <string name="help_song_picker">Как работает подбор песен?</string>
   <string name="help_song_part">Почему песня не переходит к следующей части?</string>
