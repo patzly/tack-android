@@ -155,6 +155,7 @@
   <string name="action_open_play_store">Открыть Play Store</string>
   <string name="action_backup_restore">Резервное копирование/восстановление</string>
   <string name="action_backup">Сделать бэкап</string>
+  <string name="action_backup_description">Сохраните файл резервной копии в нужной вам папке</string>
   <string name="action_restore">Восстановить бэкап</string>
   <string name="action_restore_description">Существующие песни никогда не будут удалены или перезаписаны.</string>
   <string name="action_view_more_songs">Показать больше песен</string>
