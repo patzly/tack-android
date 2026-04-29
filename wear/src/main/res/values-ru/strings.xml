@@ -102,6 +102,7 @@
 
   <string name="wear_settings_vibration_intensity">Интенсивность вибрации</string>
   <string name="wear_settings_vibration_intensity_auto">Авто</string>
+  <string name="wear_settings_vibration_intensity_soft">Слабо</string>
   <string name="wear_settings_vibration_intensity_strong">Сильно</string>
 
   <string name="wear_settings_flash_screen">Моргать экраном</string>
