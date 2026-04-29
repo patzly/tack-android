@@ -71,6 +71,7 @@
     <item quantity="other">%1$d частей</item>
   </plurals>
   <string name="label_song_options">Дополнительные опции</string>
+  <string name="label_song_options_dialog">Дополнительные опции</string>
   <string name="label_song_looped">Зациклено</string>
   <string name="label_song_looped_description">Начать сначала после окончания</string>
   <string name="label_song_not_looped">Нет зациклено</string>
