@@ -126,6 +126,7 @@
   <string name="action_email">Отправить письмо на эл. почту</string>
   <string name="action_email_description">Написать разработчику</string>
   <string name="action_rate">Оценить на Google Play</string>
+  <string name="action_rate_description">Поделитесь своими мыслями</string>
   <string name="action_support">Поддержать разработку</string>
   <string name="action_support_description">Купить приложение разблокировки</string>
   <string name="action_issue">Открыть задачу на GitHub</string>
