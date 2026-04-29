@@ -345,6 +345,7 @@
   <string name="settings_haptic">Эффекты вибрации</string>
   <string name="settings_haptic_description">В дополнение к вибрирующим ударам метронома</string>
 
+  <string name="settings_vibration_intensity">Интенсивность вибрации</string>
   <!-- This is the name for a vibration intensity: User can choose between soft or strong intensity or system-set (automatic or shorter auto) intensity. The button width should be as dense as possible. -->
   <string name="settings_vibration_intensity_auto">Авто</string>
   <string name="settings_vibration_intensity_strong">Сильно</string>
