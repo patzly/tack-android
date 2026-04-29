@@ -170,6 +170,7 @@
   <string name="action_prev_part">Предыдущая часть</string>
   <string name="action_more">Больше</string>
   <string name="action_edit">Редактировать</string>
+  <string name="action_expand">Расширить</string>
   <string name="action_show_songs_list">Показывать песни списком</string>
   <string name="action_tempo_tap">Tap tempo</string>
 
