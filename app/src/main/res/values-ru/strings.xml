@@ -78,6 +78,7 @@
   <string name="label_song_speed">Практикуйтесь в темпе</string>
   <string name="label_song_speed_description">Исполняйте партии в %1$d%% от их исходного темпа</string>
   <string name="label_song_speed_description_original">Исполняйте партии в оригинальном темпе</string>
+  <string name="label_song_speed_short">%1$d%% практика темпа</string>
   <string name="label_song_speed_original">Оригинальный темп</string>
   <string name="label_sort_name">Название</string>
   <string name="label_sort_last_played">Дата воспроизведения</string>
