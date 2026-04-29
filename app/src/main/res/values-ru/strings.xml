@@ -366,6 +366,7 @@
   <string name="settings_ignore_focus">Игнорировать аудиофокус</string>
   <string name="settings_ignore_focus_description">Продолжать воспроизведение даже если другие приложения воспроизводят звук</string>
 
+  <string name="settings_gain">Увеличение/уменьшение громкости</string>
   <string name="settings_gain_disclaimer">Перед каждым использованием усиления будет показываться предупреждение. Разработчик не несёт ответственности за потенциальные травмы.</string>
 
   <string name="settings_active_beat">Выделять текущий удар</string>
