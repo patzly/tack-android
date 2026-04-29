@@ -208,6 +208,7 @@
   <string name="msg_songs_empty">Библиотека песен пуста</string>
   <string name="msg_songs_empty_description">Добавьте песни, которые вы хотите играть</string>
   <string name="msg_unlock">Сообщение от разработчика</string>
+  <string name="msg_unlock_description">Вам нравится, что в Tack нет рекламы, но при этом есть множество мощных функций? Я потратил годы своего свободного времени на создание Tack, но особенно много сил ушло на создание библиотеки песен. Чтобы продолжать улучшать Tack, я прошу вас сделать небольшое пожертвование. Взамен вы получите приложение для разблокировки неограниченного количества песен и их фрагментов. Спасибо за вашу поддержку!</string>
   <string name="msg_backup_error">Ошибка при создании бэкапа</string>
   <string name="msg_backup_directory_missing">Не задан путь к бэкапу в хранилище</string>
   <string name="msg_backup_success">Бэкап успешно создан</string>
