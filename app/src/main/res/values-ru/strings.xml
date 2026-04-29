@@ -197,6 +197,7 @@
   <string name="msg_split_screen_description">В режиме разделённого экрана, некоторые элементы управления Tack могут отображаться некорректно. Если это возможно, увеличьте размер окна.</string>
   <string name="msg_notification_permission">Требуется разрешение для показа уведомлений</string>
   <string name="msg_notification_permission_description">Tack запрашивает разрешение для показа уведомлений, чтобы продолжить воспроизведение в фоновом режиме, отображая уведомление с низким приоритетом. Если вы откажетесь от этого в следующем диалоговом окне, Android остановит воспроизведение, когда вы выйдете из приложения.</string>
+  <string name="msg_notification_permission_denied">Для фонового воспроизведения требуется разрешение на отправку уведомлений</string>
   <string name="msg_report_crash">Пожалуйста сообщайте о каждом вылете, прикрепляя логи. Так я смогу это исправить.</string>
   <string name="msg_copied_to_clipboard">Успешно скопировано в буфер обмена</string>
   <string name="msg_invalid_input">Неправильный ввод</string>
