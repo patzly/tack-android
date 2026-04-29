@@ -45,6 +45,7 @@
   <string name="label_db_signed">%1$s дБ</string>
   <string name="label_tempo">Темп</string>
   <string name="label_tempo_keyboard">Клавиатура</string>
+  <string name="label_tempo_tap">Тап</string>
   <string name="label_tempo_instant">Применить мгновенно</string>
   <string name="label_tempo_largo">Largo</string>
   <string name="label_tempo_larghetto">Larghetto</string>
