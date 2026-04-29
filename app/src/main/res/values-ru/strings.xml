@@ -327,7 +327,7 @@
     <item quantity="many">Играть %1$d секунд</item>
     <item quantity="other">Играть %1$d секунд</item>
   </plurals>
-  <string name="options_mute_mute_beats">Заглушить %1$d тактов</string>
+  <string name="options_mute_mute_beats">Заглушить %1$d%% тактов</string>
   <plurals name="options_mute_mute_bars">
     <item quantity="one">Заглушить %1$d такт</item>
     <item quantity="few">Заглушить %1$d такта</item>
