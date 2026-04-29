@@ -142,6 +142,7 @@
   <string name="action_discard">Отменить</string>
   <string name="action_rename">Переименовать</string>
   <string name="action_rename_part">Переименовать часть</string>
+  <string name="action_rename_part_description">Можно оставить поле пустым, если достаточно только нумерации</string>
   <string name="action_duplicate">Дублировать</string>
   <string name="action_update">Обновить</string>
   <string name="action_delete">Удалить</string>
