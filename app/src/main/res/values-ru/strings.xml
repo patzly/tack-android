@@ -168,6 +168,7 @@
   <string name="action_show_parts">Показать части</string>
   <string name="action_next_part">Следующая часть</string>
   <string name="action_prev_part">Предыдущая часть</string>
+  <string name="action_more">Больше</string>
   <string name="action_show_songs_list">Показывать песни списком</string>
   <string name="action_tempo_tap">Tap tempo</string>
 
