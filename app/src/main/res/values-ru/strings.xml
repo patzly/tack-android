@@ -153,6 +153,7 @@
   <string name="action_move_up">Переместить выше</string>
   <string name="action_move_down">Переместить ниже</string>
   <string name="action_open_play_store">Открыть Play Store</string>
+  <string name="action_backup_restore">Резервное копирование/восстановление</string>
   <string name="action_backup">Сделать бэкап</string>
   <string name="action_restore">Восстановить бэкап</string>
   <string name="action_restore_description">Существующие песни никогда не будут удалены или перезаписаны.</string>
