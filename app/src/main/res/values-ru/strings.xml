@@ -223,6 +223,8 @@
   <string name="msg_widget_description">Просматривайте свои песни и включайте их</string>
   <string name="msg_widget_prompt">Быстрый доступ к песням?</string>
   <string name="msg_widget_prompt_description">Разместите красивый виджет на рабочем столе.</string>
+  <string name="msg_beat_mode_warning">Переключить режим воспроизведения ритма в режим только звука?</string>
+
   <!-- OPTIONS -->
 
   <string name="options_unit_bars">Такты</string>
