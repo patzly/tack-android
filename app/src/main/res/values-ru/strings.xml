@@ -202,6 +202,7 @@
   <string name="msg_copied_to_clipboard">Успешно скопировано в буфер обмена</string>
   <string name="msg_invalid_input">Неправильный ввод</string>
   <string name="msg_discard_changes">Отменить изменения?</string>
+  <string name="msg_discard_changes_description">Вы уверены, что не хотите сохранить изменения?</string>
   <string name="msg_delete_song">Удалить песню?</string>
   <string name="msg_delete_song_description">Вы действительно уверены, что хотите удалить песню целиком, включая все её части? Это действие нельзя отменить.</string>
   <string name="msg_songs_empty">Библиотека песен пуста</string>
