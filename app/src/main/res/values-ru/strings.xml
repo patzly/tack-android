@@ -382,6 +382,7 @@
 
   <string name="settings_flash_screen">Моргать экраном</string>
   <string name="settings_flash_screen_description">На каждый такт</string>
+  <string name="settings_flash_screen_off">Выкл</string>
   <string name="settings_flash_screen_subtle">Слабо</string>
   <string name="settings_flash_screen_strong">Сильно</string>
 
