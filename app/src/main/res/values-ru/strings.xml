@@ -294,7 +294,7 @@
   <string name="options_incremental_max">До %1$d bpm</string>
   <string name="options_incremental_min">До %1$d bpm</string>
   <string name="options_incremental_no_max">Без верхнего порога</string>
-  <string name="options_incremental_no_min">Без ограничения снизу</string>
+  <string name="options_incremental_no_min">Без нижнего порога</string>
   <string name="options_timer">Длительность</string>
   <plurals name="options_timer_description_bars">
     <item quantity="one">Остановиться после %1$d такта</item>
