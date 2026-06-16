@@ -464,4 +464,5 @@
   <!-- ABOUT -->
 
   <string name="about_version">Versione</string>
+  <string name="about_changelog">Note di rilascio</string>
   </resources>
