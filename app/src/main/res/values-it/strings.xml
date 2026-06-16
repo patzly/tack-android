@@ -461,4 +461,7 @@
   <string name="help_translation">Come posso avere Tack nella mia lingua?</string>
   <string name="help_translation_answer">Le traduzioni di Tack sono gestite su Transifex, dove utenti come te possono contribuire alla traduzione dell’app! Visita Tack su GitHub per maggiori informazioni oppure vai direttamente al processo di traduzione:</string>
 
+  <!-- ABOUT -->
+
+  <string name="about_version">Versione</string>
   </resources>
