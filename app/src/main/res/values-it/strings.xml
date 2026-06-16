@@ -405,6 +405,7 @@
   <string name="settings_ignore_focus_description">Continua metronomo quando altre app riproducono suoni</string>
 
   <string name="settings_gain">Amplifica/riduci volume</string>
+  <string name="settings_gain_description">Relativo al volume di sistema</string>
   <string name="settings_flash_screen_strong">Forte</string>
 
   </resources>
