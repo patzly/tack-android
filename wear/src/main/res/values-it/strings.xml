@@ -95,6 +95,7 @@
   <string name="wear_settings_gain">Volume amplificato</string>
   <string name="wear_settings_gain_disclaimer">Fa attenzione! Lo sviluppatore non si assume responsabilità per eventuali danni.</string>
 
+  <string name="wear_settings_always_vibrate">Vibra sempre</string>
   <string name="wear_settings_vibration_intensity">Intensità della vibrazione</string>
   <string name="wear_settings_vibration_intensity_auto">Auto</string>
   <string name="wear_settings_vibration_intensity_soft">Leggera</string>
