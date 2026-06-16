@@ -401,6 +401,7 @@
   <string name="settings_latency">Correzione di latenza</string>
   <string name="settings_latency_description">Compensa latenza dell\'audio di sistema per vibrazioni e display</string>
 
+  <string name="settings_ignore_focus">Ignora focus audio</string>
   <string name="settings_flash_screen_strong">Forte</string>
 
   </resources>
