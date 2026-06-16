@@ -459,4 +459,6 @@
   <string name="help_notification_disappears">Perché la notifica del servizio metronomo sparisce quando chiudo l\'app?</string>
   <string name="help_notification_disappears_answer">Quando chiudi l’app dalle app recenti, il servizio del metronomo viene interrotto e la notifica scompare. Questo comportamento è intenzionale, per risparmiare batteria e risorse.\nSe vuoi mantenere sempre la notifica per avviare/arrestare il metronomo, puoi attivare \"Notifica permanente\" nelle impostazioni e non rimuovere l’app dalle app recenti.</string>
   <string name="help_translation">Come posso avere Tack nella mia lingua?</string>
+  <string name="help_translation_answer">Le traduzioni di Tack sono gestite su Transifex, dove utenti come te possono contribuire alla traduzione dell’app! Visita Tack su GitHub per maggiori informazioni oppure vai direttamente al processo di traduzione:</string>
+
   </resources>
