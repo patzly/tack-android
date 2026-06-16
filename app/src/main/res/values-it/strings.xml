@@ -467,4 +467,5 @@
   <string name="about_changelog">Note di rilascio</string>
   <string name="about_changelog_description">Novità di questa versione</string>
   <string name="about_developer">Sviluppatore</string>
+  <string name="about_vending_description">Altre app dello sviluppatore</string>
   </resources>
