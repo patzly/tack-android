@@ -112,4 +112,5 @@
   <string name="wear_settings_keep_awake">Mantieni schermo attivo</string>
   <string name="wear_settings_keep_awake_description">Mentre il metronomo è attivo</string>
 
+  <string name="wear_settings_rate">Valuta Tack su Google Play</string>
   </resources>
