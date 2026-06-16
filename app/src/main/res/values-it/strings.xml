@@ -428,4 +428,5 @@
 
   <string name="settings_flashlight">Lampeggio torcia</string>
 
+  <string name="settings_keep_awake">Mantieni schermo attivo</string>
   </resources>
