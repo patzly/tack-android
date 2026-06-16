@@ -432,4 +432,6 @@
   <string name="settings_keep_awake_description">Potrebbe consumare più batteria</string>
   <string name="settings_keep_awake_always">Sempre</string>
   <string name="settings_keep_awake_while_playing">In riproduzione</string>
+  <string name="settings_keep_awake_never">Mai</string>
+
   </resources>
