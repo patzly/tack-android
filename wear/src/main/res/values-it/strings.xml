@@ -110,4 +110,6 @@
   <string name="wear_settings_reduce_animations_description">Potrebbe migliorare le performance</string>
 
   <string name="wear_settings_keep_awake">Mantieni schermo attivo</string>
+  <string name="wear_settings_keep_awake_description">Mentre il metronomo è attivo</string>
+
   </resources>
