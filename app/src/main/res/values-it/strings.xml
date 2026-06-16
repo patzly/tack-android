@@ -415,6 +415,8 @@
   <string name="settings_elapsed_description">Vedi da quanto tempo stai studiando</string>
 
   <string name="settings_reset_timer">Reimposta timer una volta fermato</string>
+  <string name="settings_reset_timer_description">Invece di continuarlo</string>
+
   <string name="settings_flash_screen_strong">Forte</string>
 
   </resources>
