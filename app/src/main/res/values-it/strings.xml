@@ -396,6 +396,8 @@
   <string name="settings_sound_beatboxing_1">Beatboxing 1</string>
   <string name="settings_sound_beatboxing_2">Beatboxing 2</string>
   <string name="settings_sound_hands">Mani</string>
+  <string name="settings_sound_folding">Metro pieghevole</string>
+
   <string name="settings_latency">Correzione di latenza</string>
   <string name="settings_flash_screen_strong">Forte</string>
 
