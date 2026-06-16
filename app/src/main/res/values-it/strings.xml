@@ -443,4 +443,5 @@
   <!-- HELP -->
 
   <string name="help_tempo_change">Come cambio il tempo?</string>
+  <string name="help_tempo_change_answer">Per cambiare il tempo, puoi trascinare e ruotare il selettore al centro della pagina principale oppure toccare le frecce a sinistra e a destra del cerchio. Toccando il selettore del tempo, puoi aprire una finestra per impostare il BPM tramite tap o inserimento da tastiera.</string>
   </resources>
