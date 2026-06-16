@@ -474,4 +474,5 @@
   <string name="about_key_description_ignored">Ignorata</string>
   <string name="about_github_description">Codice sorgente</string>
   <string name="about_translation_description">Aiuta a tradurre Tack</string>
+  <string name="about_privacy">Informativa sulla privacy</string>
   </resources>
