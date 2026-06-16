@@ -475,4 +475,6 @@
   <string name="about_github_description">Codice sorgente</string>
   <string name="about_translation_description">Aiuta a tradurre Tack</string>
   <string name="about_privacy">Informativa sulla privacy</string>
+  <string name="about_privacy_description">Come vengono utilizzati i tuoi dati</string>
+
   </resources>
