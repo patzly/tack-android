@@ -437,4 +437,5 @@
   <string name="settings_perm_notification">Notifica permanente</string>
   <string name="settings_perm_notification_description">Accedi sempre ai controlli play/stop</string>
 
+  <string name="settings_big_logo">Mostra animazione grande del logo</string>
   </resources>
