@@ -421,6 +421,7 @@
   <string name="settings_big_time_text_description">Utile se la dimensione predefinita è troppo piccola</string>
 
   <string name="settings_flash_screen">Flash schermo</string>
+  <string name="settings_flash_screen_description">Ad ogni battito</string>
   <string name="settings_flash_screen_strong">Forte</string>
 
   </resources>
