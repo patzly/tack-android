@@ -411,6 +411,7 @@
   <string name="settings_active_beat">Evidenzia battito corrente</string>
   <string name="settings_active_beat_description">Utile per tempi lenti</string>
 
+  <string name="settings_elapsed">Mostra tempo trascorso</string>
   <string name="settings_flash_screen_strong">Forte</string>
 
   </resources>
