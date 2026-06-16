@@ -450,4 +450,5 @@
   <string name="help_swing_answer">Se hai attivato lo swing nelle opzioni, tutto quello che Tack fa è impostare per te le suddivisioni. Per rimuovere lo swing, puoi semplicemente impostare manualmente le suddivisioni a tuo piacimento.</string>
   <string name="help_song_library">Come funziona la libreria di canzoni?</string>
   <string name="help_song_library_answer">La libreria delle canzoni è una raccolta di configurazioni del metronomo che puoi salvare e riutilizzare. Per salvare la configurazione attuale, apri la libreria e crea una nuova canzone. La configurazione corrente verrà aggiunta all’elenco delle sezioni, dove potrai modificarla ulteriormente. Dopo aver dato un nome alla canzone, ricordati di salvare il risultato toccando l’icona del disco nell’angolo in alto a destra.</string>
+  <string name="help_song_picker">Come funziona il selettore di canzoni?</string>
   </resources>
