@@ -1,0 +1,101 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2026 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="wear_title_settings">Impostazioni</string>
+  <string name="wear_title_beats">Battiti</string>
+  <string name="wear_title_beats_count">Battiti (%1$d)</string>
+  <string name="wear_title_subdivisions_count">Suddivisioni (%1$d)</string>
+  <string name="wear_title_notification_channel">Servizio metronomo</string>
+  <string name="wear_title_bookmarks">Preferiti</string>
+
+  <!-- LABELS -->
+
+  <string name="wear_label_bpm_value">%1$d bpm</string>
+  <string name="wear_label_ms">%1$s ms</string>
+  <string name="wear_label_db_signed">1 %1$s dB</string>
+  <string name="wear_label_developer">Sviluppato da</string>
+  <plurals name="wear_label_beats">
+    <item quantity="one">%1$d battito</item>
+    <item quantity="many">%1$d battiti</item>
+    <item quantity="other">%1$d battiti</item>
+  </plurals>
+  <plurals name="wear_label_subs">
+    <item quantity="one">%1$d suddivisione</item>
+    <item quantity="many">%1$d suddivisioni</item>
+    <item quantity="other">%1$d suddivisioni</item>
+  </plurals>
+
+  <!-- ACTIONS -->
+
+  <string name="wear_action_cancel">Annulla</string>
+  <string name="wear_action_increase">Incrementa</string>
+  <string name="wear_action_decrease">Riduci</string>
+  <string name="wear_action_play_stop">Avvia/Interrompi</string>
+  <string name="wear_action_stop">Interrompi</string>
+  <string name="wear_action_add_beat">Aggiungi battito</string>
+  <string name="wear_action_remove_beat">Rimuovi battito</string>
+  <string name="wear_action_add_sub">Aggiungi suddivisione</string>
+  <string name="wear_action_remove_sub">Rimuovi suddivisione</string>
+  <string name="wear_action_tempo_tap">Batti il tempo</string>
+  <string name="wear_action_bookmark">Segnalibro</string>
+  <string name="wear_action_beat_mode">Modalità battito</string>
+  <string name="wear_action_retry">Riprova</string>
+  <string name="wear_action_delete">Elimina</string>
+
+  <!-- MESSAGES -->
+
+  <string name="wear_msg_service_running">Metronomo in riproduzione</string>
+  <string name="wear_msg_service_running_return">Tocca per vedere altro</string>
+  <string name="wear_msg_notification_permission_denied">Autorizzazione richiesta</string>
+  <string name="wear_msg_gain">Riprodurre con aumento del volume?</string>
+  <!-- SETTINGS -->
+
+  <string name="wear_settings_sound">Suono dei battiti</string>
+  <string name="wear_settings_sound_sine">Sinusoide</string>
+  <string name="wear_settings_sound_wood">Legno</string>
+  <string name="wear_settings_sound_mechanical">Meccanico</string>
+  <string name="wear_settings_sound_beatboxing_1">Beatboxing 1</string>
+  <string name="wear_settings_sound_beatboxing_2">Beatboxing 2</string>
+  <string name="wear_settings_sound_hands">Mani</string>
+  <string name="wear_settings_sound_folding">Metro pieghevole</string>
+
+  <string name="wear_settings_latency">Correzione di latenza</string>
+
+  <string name="wear_settings_ignore_focus">Ignora focus audio</string>
+  <string name="wear_settings_ignore_focus_description">Continua metronomo quando altre app riproducono suoni</string>
+
+  <string name="wear_settings_gain_disclaimer">Fa attenzione! Lo sviluppatore non si assume responsabilità per eventuali danni.</string>
+
+  <string name="wear_settings_vibration_intensity">Intensità della vibrazione</string>
+  <string name="wear_settings_vibration_intensity_auto">Auto</string>
+  <string name="wear_settings_vibration_intensity_soft">Leggera</string>
+  <string name="wear_settings_vibration_intensity_strong">Forte</string>
+
+  <string name="wear_settings_flash_screen">Flash schermo</string>
+  <string name="wear_settings_flash_screen_description">Ad ogni battito</string>
+
+  <string name="wear_settings_reduce_animations">Riduci animazioni</string>
+  <string name="wear_settings_reduce_animations_description">Potrebbe migliorare le performance</string>
+
+  <string name="wear_settings_keep_awake">Mantieni schermo attivo</string>
+  </resources>
