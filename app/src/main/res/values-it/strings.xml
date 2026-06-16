@@ -447,4 +447,5 @@
   <string name="help_time_signature">Come imposto l\'indicazione metrica?</string>
   <string name="help_time_signature_answer">Guarda il primo numero della tua indicazione di tempo e imposta di conseguenza i battiti in Tack. Questo significa 4 battiti per il 4/4, 2 per il 2/2 e così via. Il 6/8 è un caso particolare: qui si usano 2 battiti con, opzionalmente, 3 suddivisioni, perché solo il primo e il quarto ottavo sono accenti forti.</string>
   <string name="help_swing">Come disattivo lo swing?</string>
+  <string name="help_swing_answer">Se hai attivato lo swing nelle opzioni, tutto quello che Tack fa è impostare per te le suddivisioni. Per rimuovere lo swing, puoi semplicemente impostare manualmente le suddivisioni a tuo piacimento.</string>
   </resources>
