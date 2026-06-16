@@ -70,6 +70,7 @@
   <string name="wear_msg_notification_permission_denied">Autorizzazione richiesta</string>
   <string name="wear_msg_notification_permission_denied_description">Autorizzazione notifiche necessaria per riprodurre in background</string>
   <string name="wear_msg_gain">Riprodurre con volume amplificato?</string>
+  <string name="wear_msg_gain_description">Attenzione: evita di usare le cuffie!</string>
   <!-- SETTINGS -->
 
   <string name="wear_settings_sound">Suono dei battiti</string>
