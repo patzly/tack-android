@@ -435,4 +435,6 @@
   <string name="settings_keep_awake_never">Mai</string>
 
   <string name="settings_perm_notification">Notifica permanente</string>
+  <string name="settings_perm_notification_description">Accedi sempre ai controlli play/stop</string>
+
   </resources>
