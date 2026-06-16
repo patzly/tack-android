@@ -406,6 +406,8 @@
 
   <string name="settings_gain">Amplifica/riduci volume</string>
   <string name="settings_gain_description">Relativo al volume di sistema</string>
+  <string name="settings_gain_disclaimer">Quando il volume è amplificato, un messaggio di avviso verrà visualizzato prima di ogni avvio. Lo sviluppatore non è responsabile per eventuali danni collaterali.</string>
+
   <string name="settings_flash_screen_strong">Forte</string>
 
   </resources>
