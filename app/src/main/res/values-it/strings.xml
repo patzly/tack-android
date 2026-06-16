@@ -426,4 +426,6 @@
   <string name="settings_flash_screen_subtle">Leggero</string>
   <string name="settings_flash_screen_strong">Forte</string>
 
+  <string name="settings_flashlight">Lampeggio torcia</string>
+
   </resources>
