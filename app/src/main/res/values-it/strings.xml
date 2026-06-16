@@ -438,4 +438,6 @@
   <string name="settings_perm_notification_description">Accedi sempre ai controlli play/stop</string>
 
   <string name="settings_big_logo">Mostra animazione grande del logo</string>
+  <string name="settings_big_logo_description">Sostituisce il selettore del tempo con riproduzione attiva</string>
+
   </resources>
