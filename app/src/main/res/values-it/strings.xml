@@ -440,4 +440,7 @@
   <string name="settings_big_logo">Mostra animazione grande del logo</string>
   <string name="settings_big_logo_description">Sostituisce il selettore del tempo con riproduzione attiva</string>
 
+  <!-- HELP -->
+
+  <string name="help_tempo_change">Come cambio il tempo?</string>
   </resources>
