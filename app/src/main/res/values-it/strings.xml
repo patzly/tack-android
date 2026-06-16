@@ -471,4 +471,5 @@
   <string name="about_key">App sbloccata</string>
   <string name="about_key_description_not_installed">Non installata</string>
   <string name="about_key_description_installed">Installata</string>
+  <string name="about_key_description_ignored">Ignorata</string>
   </resources>
