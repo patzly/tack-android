@@ -465,4 +465,5 @@
 
   <string name="about_version">Versione</string>
   <string name="about_changelog">Note di rilascio</string>
+  <string name="about_changelog_description">Novità di questa versione</string>
   </resources>
