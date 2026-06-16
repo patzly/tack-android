@@ -66,6 +66,7 @@
 
   <string name="wear_msg_service_running">Metronomo in riproduzione</string>
   <string name="wear_msg_service_running_return">Tocca per vedere altro</string>
+  <string name="wear_msg_service_description">Servizio per riproduzione metronomo</string>
   <string name="wear_msg_notification_permission_denied">Autorizzazione richiesta</string>
   <string name="wear_msg_gain">Riprodurre con aumento del volume?</string>
   <!-- SETTINGS -->
