@@ -393,6 +393,8 @@
   <string name="settings_sound_wood">Legno</string>
   <string name="settings_sound_sine">Sinusoide</string>
   <string name="settings_sound_mechanical">Meccanico</string>
+  <string name="settings_sound_beatboxing_1">Beatboxing 1</string>
+  <string name="settings_sound_beatboxing_2">Beatboxing 2</string>
   <string name="settings_latency">Correzione di latenza</string>
   <string name="settings_flash_screen_strong">Forte</string>
 
