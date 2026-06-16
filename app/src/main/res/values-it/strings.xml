@@ -412,6 +412,8 @@
   <string name="settings_active_beat_description">Utile per tempi lenti</string>
 
   <string name="settings_elapsed">Mostra tempo trascorso</string>
+  <string name="settings_elapsed_description">Vedi da quanto tempo stai studiando</string>
+
   <string name="settings_flash_screen_strong">Forte</string>
 
   </resources>
