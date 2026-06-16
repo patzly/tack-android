@@ -469,4 +469,5 @@
   <string name="about_developer">Sviluppatore</string>
   <string name="about_vending_description">Altre app dello sviluppatore</string>
   <string name="about_key">Sblocca app</string>
+  <string name="about_key_description_not_installed">Non installata</string>
   </resources>
