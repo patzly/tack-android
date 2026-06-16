@@ -418,6 +418,8 @@
   <string name="settings_reset_timer_description">Invece di riprendere da dove si era fermato</string>
 
   <string name="settings_big_time_text">Testo ingrandito per il tempo</string>
+  <string name="settings_big_time_text_description">Utile se la dimensione predefinita è troppo piccola</string>
+
   <string name="settings_flash_screen_strong">Forte</string>
 
   </resources>
