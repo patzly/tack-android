@@ -85,7 +85,8 @@ public class MetronomeEngine {
   private int timerBarIndex, timerBeatIndex, timerSubIndex;
   private long tickIndex, tickIndexPoly, latency, countInStartTime, timerStartTime;
   private long elapsedStartTime, elapsedTime, elapsedPrevious;
-  private long nextScheduleTime, nextPolyScheduleTime;
+  // accumulated in double to avoid fractional-ms truncation drift
+  private double nextScheduleTime, nextPolyScheduleTime;
   private float timerProgress;
   private boolean playing, tempPlaying, isCountingIn, isMuted;
   private boolean showElapsed, resetTimerOnStop, tempoInputKeyboard, tempoTapInstant;
@@ -607,10 +608,11 @@ public class MetronomeEngine {
 
         if (subdivisionPoly < config.getSubdivisionsCount()) {
           // first poly subdivision handled in main tick runnable to keep poly in sync
-          long barInterval = getInterval() * config.getBeatsCount();
-          long step = barInterval / config.getSubdivisionsCount();
+          double tempo = Math.max(config.getTempo(), 1);
+          double barInterval = 60_000.0 * config.getBeatsCount() / tempo;
+          double step = barInterval / config.getSubdivisionsCount();
           nextPolyScheduleTime += step;
-          long delay = nextPolyScheduleTime - System.currentTimeMillis();
+          long delay = (long) (nextPolyScheduleTime - System.currentTimeMillis());
           if (delay < 0) {
             delay = 0;
           }
@@ -665,9 +667,10 @@ public class MetronomeEngine {
         }
         Tick tick = new Tick(tickIndex, beat, subdivision, tickType, muted, false);
 
-        long interval = config.usePolyrhythm()
-            ? getInterval()
-            : getInterval() / config.getSubdivisionsCount();
+        double tempo = Math.max(config.getTempo(), 1);
+        double interval = config.usePolyrhythm()
+            ? 60_000.0 / tempo
+            : 60_000.0 / tempo / config.getSubdivisionsCount();
         nextScheduleTime += interval;
 
         if (tick.beat == 1 && tick.subdivision == 1) {
@@ -675,7 +678,7 @@ public class MetronomeEngine {
           nextPolyScheduleTime = nextScheduleTime - interval;
         }
 
-        long delay = nextScheduleTime - System.currentTimeMillis();
+        long delay = (long) (nextScheduleTime - System.currentTimeMillis());
         if (delay < 0) {
           delay = 0;
         }
