@@ -49,7 +49,7 @@ class MetronomeEngine(
 
   private var tickIndex: Long = 0
   private var latency: Long = 0
-  private var nextScheduleTime: Long = 0
+  private var nextScheduleTime: Double = 0.0
   private var beatModeVibrate: Boolean = false
   private var alwaysVibrate: Boolean = false
   private var flashScreen: Boolean = false
@@ -133,23 +133,20 @@ class MetronomeEngine(
     audioEngine.play()
     tickIndex = 0
 
-    nextScheduleTime = System.currentTimeMillis()
+    nextScheduleTime = System.currentTimeMillis().toDouble()
 
     tickHandler?.post(object : Runnable {
       override fun run() {
         if (isPlaying) {
           if (tickIndex == 0L) {
             // compensate handler initialization latency
-            nextScheduleTime = System.currentTimeMillis()
+            nextScheduleTime = System.currentTimeMillis().toDouble()
           }
 
-          val interval = getInterval() / getSubdivisionsCount()
+          val interval = 60_000.0 / maxOf(tempo, 1) / getSubdivisionsCount()
           nextScheduleTime += interval
 
-          var delay = nextScheduleTime - System.currentTimeMillis()
-          if (delay < 0) {
-            delay = 0
-          }
+          val delay = (nextScheduleTime - System.currentTimeMillis()).toLong().coerceAtLeast(0)
           tickHandler!!.postDelayed(this, delay)
 
           val tick = performTick()
