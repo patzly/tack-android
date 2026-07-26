@@ -123,7 +123,6 @@ dependencies {
   implementation(libs.lifecycle.service)
   implementation(libs.splashscreen)
   implementation(libs.ui)
-  implementation(libs.ui.tooling.preview)
   implementation(libs.wear.tooling)
   implementation(libs.wear.ongoing)
   implementation(libs.wear.input)
