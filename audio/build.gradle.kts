@@ -10,12 +10,21 @@ android {
 
     defaultConfig {
         minSdk = 26
+
+        externalNativeBuild {
+            cmake {
+                arguments("-DANDROID_STL=c++_shared")
+            }
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_21
     }
 
+    buildFeatures {
+        prefab = true
+    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -38,5 +47,6 @@ kotlin {
 }
 
 dependencies {
+    implementation(libs.core)
     implementation(libs.oboe)
 }

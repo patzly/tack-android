@@ -29,8 +29,6 @@ import androidx.annotation.RawRes
 import androidx.core.content.getSystemService
 import xyz.zedler.patrick.audio.bridge.OboeNativeBridge
 import xyz.zedler.patrick.audio.util.AudioUtil
-import xyz.zedler.patrick.tack.Constants
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine.Tick
 import java.io.IOException
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -264,10 +262,10 @@ class AudioEngine(
     )
   }
 
-  fun playTick(tick: Tick) {
-    if (!isPlaying || !isInitialized || isMuted || tick.isMuted) return
+  fun playTick(tickType: String, muted: Boolean) {
+    if (!isPlaying || !isInitialized || isMuted || muted) return
 
-    val nativeTickType = when (tick.type) {
+    val nativeTickType = when (tickType) {
       Constants.TickType.STRONG -> NATIVE_TICK_TYPE_STRONG
       Constants.TickType.SUB -> NATIVE_TICK_TYPE_SUB
       Constants.TickType.MUTED, Constants.TickType.BEAT_SUB_MUTED -> return // Silence
