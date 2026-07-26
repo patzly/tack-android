@@ -41,12 +41,6 @@ android {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
-
-        externalNativeBuild {
-            cmake {
-                arguments "-DANDROID_STL=c++_shared"
-            }
-        }
     }
 
     signingConfigs {
@@ -79,7 +73,6 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
-        prefab = true
     }
 
     lint {
@@ -101,20 +94,10 @@ android {
     dependenciesInfo {
         includeInApk = false
     }
-
-    packagingOptions {
-        jniLibs.useLegacyPackaging = false
-    }
-
-    externalNativeBuild {
-        cmake {
-            path "src/main/cpp/CMakeLists.txt"
-        }
-    }
-    ndkVersion = '29.0.14206865'
 }
 
 dependencies {
+    implementation(project(":audio"))
     implementation(libs.core)
     implementation(libs.appcompat)
     implementation(libs.fragment)

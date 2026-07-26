@@ -54,12 +54,6 @@ configure<ApplicationExtension> {
     targetSdk = 36
     versionCode = 331 // last number is 1 for wear release
     versionName = "6.3.1"
-
-    externalNativeBuild {
-      cmake {
-        arguments("-DANDROID_STL=c++_shared")
-      }
-    }
   }
 
   androidResources {
@@ -89,24 +83,15 @@ configure<ApplicationExtension> {
   }
   buildFeatures {
     compose = true
-    prefab = true
   }
   packaging {
     resources {
       excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
-    jniLibs.useLegacyPackaging = false
   }
   dependenciesInfo {
     includeInApk = false
   }
-
-  externalNativeBuild {
-    cmake {
-      path = file("src/main/cpp/CMakeLists.txt")
-    }
-  }
-  ndkVersion = "29.0.14206865"
 }
 
 kotlin {
@@ -116,6 +101,7 @@ kotlin {
 }
 
 dependencies {
+  implementation(project(":audio"))
   implementation(platform(libs.compose.bom))
   implementation(libs.preference)
   implementation(libs.core)

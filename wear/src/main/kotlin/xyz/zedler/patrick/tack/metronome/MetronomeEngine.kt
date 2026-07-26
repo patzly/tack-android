@@ -24,6 +24,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
 import android.util.Log
+import xyz.zedler.patrick.audio.AudioEngine
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.presentation.state.MainState
 import xyz.zedler.patrick.tack.util.HapticUtil
@@ -153,7 +154,7 @@ class MetronomeEngine(
           tickHandler!!.postDelayed(this, delay)
 
           val tick = performTick()
-          audioEngine.playTick(tick)
+          audioEngine.playTick(tick.type, tick.isMuted)
           tickIndex++
         }
       }

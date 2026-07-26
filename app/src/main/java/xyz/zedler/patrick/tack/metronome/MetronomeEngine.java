@@ -40,6 +40,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import xyz.zedler.patrick.audio.AudioEngine;
 import xyz.zedler.patrick.tack.Constants;
 import xyz.zedler.patrick.tack.Constants.BEAT_MODE;
 import xyz.zedler.patrick.tack.Constants.DEF;
@@ -618,7 +620,7 @@ public class MetronomeEngine {
         }
 
         performTickPoly(tick);
-        audioEngine.playTick(tick);
+        audioEngine.playTick(tick.type, tick.isMuted);
         tickIndexPoly++;
       }
     };
@@ -688,7 +690,7 @@ public class MetronomeEngine {
 
         boolean playing = performTick(tick); // don't play next tick if timer finished
         if (playing) {
-          audioEngine.playTick(tick);
+          audioEngine.playTick(tick.type, tick.isMuted);
           tickIndex++;
         }
       }
