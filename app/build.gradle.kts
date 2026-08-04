@@ -25,7 +25,7 @@ plugins {
 }
 
 android {
-    namespace = 'xyz.zedler.patrick.tack'
+    namespace = "xyz.zedler.patrick.tack"
     compileSdk = 37
 
     defaultConfig {
@@ -34,19 +34,21 @@ android {
         targetSdk = 37
         versionCode = 420 // last number is 0 for app release
         versionName = "6.3.2"
-        resourceConfigurations = ["en", "cs", "de", "es", "es-rCL", "fr", "in", "ja", "ko", "nl",
-                                  "pt-rBR", "ru", "tr", "zh-rCN", "zh-rHK", "zh-rTW"]
-        vectorDrawables.generatedDensities = []
 
-        ksp {
-            arg("room.schemaLocation", "$projectDir/schemas".toString())
-        }
+        vectorDrawables.generatedDensities?.clear()
+    }
+
+    androidResources {
+        localeFilters += listOf(
+            "en", "cs", "de", "es", "es-rCL", "fr", "in", "ja", "ko", "nl",
+            "pt-rBR", "ru", "tr", "zh-rCN", "zh-rHK", "zh-rTW"
+        )
     }
 
     signingConfigs {
-        release {
-            def keystorePath = System.getenv("KEYSTORE_PATH")
-            storeFile = keystorePath ? file(keystorePath) : null
+        create("release") {
+            val keystorePath = System.getenv("KEYSTORE_PATH")
+            storeFile = if (keystorePath != null) file(keystorePath) else null
             storePassword = System.getenv("KEYSTORE_PASSWORD")
             keyAlias = System.getenv("KEY_ALIAS")
             keyPassword = System.getenv("KEY_PASSWORD")
@@ -55,18 +57,19 @@ android {
 
     buildTypes {
         release {
-            if (signingConfigs.release.storeFile?.exists()) {
-                signingConfig = signingConfigs.release
+            val releaseSigningConfig = signingConfigs.getByName("release")
+            if (releaseSigningConfig.storeFile?.exists() == true) {
+                signingConfig = releaseSigningConfig
             } else {
-                println "Keystore not found, building unsigned release."
+                println("Keystore not found, building unsigned release.")
             }
-            minifyEnabled = true
-            shrinkResources = true
-            proguardFiles {
-                getDefaultProguardFile('proguard-android-optimize.txt')
-                'proguard-rules.pro'
-            }
-            debuggable = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            isDebuggable = false
         }
     }
 
@@ -77,7 +80,7 @@ android {
 
     lint {
         abortOnError = false
-        disable = ['MissingTranslation']
+        disable += "MissingTranslation"
     }
 
     bundle {
@@ -94,6 +97,10 @@ android {
     dependenciesInfo {
         includeInApk = false
     }
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 dependencies {

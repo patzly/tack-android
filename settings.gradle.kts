@@ -17,12 +17,22 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-plugins {
-    alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.navigation.safeargs) apply false
-    alias(libs.plugins.compose.compiler) apply false
-    alias(libs.plugins.android.library) apply false
-    alias(libs.plugins.kotlin.parcelize) apply false
-    alias(libs.plugins.ksp) apply false
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
 }
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.name = "Tack Android"
+include(":app")
+include(":wear")
+include(":audio")
