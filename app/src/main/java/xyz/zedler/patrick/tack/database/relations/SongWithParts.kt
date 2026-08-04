@@ -17,130 +17,79 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.database.relations;
+package xyz.zedler.patrick.tack.database.relations
 
-import androidx.annotation.NonNull;
-import androidx.room.Embedded;
-import androidx.room.Ignore;
-import androidx.room.Relation;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.UNIT;
-import xyz.zedler.patrick.tack.database.entity.Part;
-import xyz.zedler.patrick.tack.database.entity.Song;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
+import androidx.room.Embedded
+import androidx.room.Relation
+import xyz.zedler.patrick.tack.Constants
+import xyz.zedler.patrick.tack.Constants.UNIT
+import xyz.zedler.patrick.tack.database.entity.Part
+import xyz.zedler.patrick.tack.database.entity.Song
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine
 
-public class SongWithParts {
-
+data class SongWithParts(
   @Embedded
-  private Song song;
+  val song: Song,
 
   @Relation(
-      parentColumn = "id",
-      entityColumn = "songId"
+    parentColumn = "id",
+    entityColumn = "songId"
   )
-  private List<Part> parts;
+  val parts: List<Part>
+) {
 
-  public SongWithParts() {
-    this.song = new Song();
-    this.parts = new ArrayList<>();
-  }
-
-  @Ignore
-  public SongWithParts(@NonNull Song song, @NonNull List<Part> parts) {
-    this.song = song;
-    this.parts = parts;
-  }
-
-  public Song getSong() {
-    return song;
-  }
-
-  public void setSong(Song song) {
-    this.song = song;
-  }
-
-  public List<Part> getParts() {
-    return parts;
-  }
-
-  public void setParts(List<Part> parts) {
-    this.parts = parts;
-  }
-
-  public String getDurationString() {
-    float seconds = 0;
-    for (Part part : parts) {
-      switch (part.getTimerUnit()) {
-        case UNIT.SECONDS:
-          seconds += part.getTimerDuration();
-          break;
-        case UNIT.MINUTES:
-          seconds += 60 * part.getTimerDuration();
-          break;
-        default: // Bars
-          int incrementalAmount = part.getIncrementalAmount();
+  fun getDurationString(): String {
+    var seconds = 0f
+    parts.forEach {
+      when (it.timerUnit) {
+        UNIT.SECONDS -> seconds += it.timerDuration
+        UNIT.MINUTES -> seconds += 60 * it.timerDuration
+        else -> { // Bars
+          val incrementalAmount = it.incrementalAmount
           if (incrementalAmount > 0) {
             // complex duration calculation with incremental tempo changes
-            String incrementalUnit = part.getIncrementalUnit();
-            int interval = part.getIncrementalInterval();
-            if (incrementalUnit.equals(UNIT.BARS)) {
-              int tempo = part.getTempo();
-              for (int i = 0; i < part.getTimerDuration(); i++) {
-                float factor = ((float) 60 / tempo) * part.getBeatsCount();
-                seconds += factor * interval;
+            val incrementalUnit = it.incrementalUnit
+            val interval = it.incrementalInterval
+            if (incrementalUnit == UNIT.BARS) {
+              var tempo = it.tempo
+              for (i in 0 until it.timerDuration) {
+                val factor = (60f / tempo) * it.beatsCount
+                seconds += factor * interval
                 if (i % interval == 0) {
-                  int incrementalLimit = part.getIncrementalLimit();
-                  if (part.isIncrementalIncrease()) {
-                    int upperLimit = incrementalLimit != 0 ? incrementalLimit : Constants.TEMPO_MAX;
+                  val incrementalLimit = it.incrementalLimit
+                  if (it.incrementalIncrease) {
+                    val upperLimit = if (incrementalLimit != 0) {
+                      incrementalLimit
+                    } else {
+                      Constants.TEMPO_MAX
+                    }
                     if (tempo + incrementalAmount <= upperLimit) {
-                      tempo += incrementalAmount;
+                      tempo += incrementalAmount
                     }
                   } else {
-                    int lowerLimit = incrementalLimit != 0 ? incrementalLimit : Constants.TEMPO_MIN;
+                    val lowerLimit = if (incrementalLimit != 0) {
+                      incrementalLimit
+                    } else {
+                      Constants.TEMPO_MIN
+                    }
                     if (tempo - incrementalAmount >= lowerLimit) {
-                      tempo -= incrementalAmount;
+                      tempo -= incrementalAmount
                     }
                   }
                 }
               }
             } else {
               // TODO: implement incremental tempo changes for seconds and minutes
-              float factor = ((float) 60 / part.getTempo()) * part.getBeatsCount();
-              seconds += factor * part.getTimerDuration();
+              val factor = (60f / it.tempo) * it.beatsCount
+              seconds += factor * it.timerDuration
             }
           } else {
-            float factor = ((float) 60 / part.getTempo()) * part.getBeatsCount();
-            seconds += factor * part.getTimerDuration();
+            val factor = (60f / it.tempo) * it.beatsCount
+            seconds += factor * it.timerDuration
           }
-          break;
+        }
       }
     }
-    return MetronomeEngine.getTimeStringFromSeconds((int) seconds, false);
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (!(o instanceof SongWithParts)) {
-      return false;
-    }
-    SongWithParts that = (SongWithParts) o;
-    return Objects.equals(song, that.song) && Objects.equals(parts, that.parts);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(song, parts);
-  }
-
-  @NonNull
-  @Override
-  public String toString() {
-    return "SongWithParts{" +
-        "song=" + song +
-        ", parts=" + parts +
-        '}';
+    return MetronomeEngine.getTimeStringFromSeconds(seconds.toInt(), false)
   }
 }

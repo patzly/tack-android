@@ -17,67 +17,34 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+@file:JvmName("SortUtil")
 
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
-import xyz.zedler.patrick.tack.database.entity.Part;
-import xyz.zedler.patrick.tack.database.relations.SongWithParts;
+package xyz.zedler.patrick.tack.util
 
-public class SortUtil {
+import xyz.zedler.patrick.tack.Constants.SONGS_ORDER
+import xyz.zedler.patrick.tack.database.entity.Part
+import xyz.zedler.patrick.tack.database.relations.SongWithParts
 
-  public static void sortSongsWithParts(List<SongWithParts> songsWithParts, int sortOrder) {
-    if (sortOrder == SONGS_ORDER.NAME_ASC) {
-      if (VERSION.SDK_INT >= VERSION_CODES.N) {
-        Comparator<String> comparator = Comparator.nullsLast(
-            Comparator.comparing(String::toLowerCase, Comparator.naturalOrder())
-        );
-        Collections.sort(
-            songsWithParts,
-            Comparator.comparing(
-                o -> o.getSong().getName(),
-                comparator
-            )
-        );
-      } else {
-        Collections.sort(songsWithParts, (s1, s2) -> {
-          String name1 = (s1.getSong() != null) ? s1.getSong().getName() : null;
-          String name2 = (s2.getSong() != null) ? s2.getSong().getName() : null;
-          // Nulls last handling
-          if (name1 == null && name2 == null) return 0;
-          if (name1 == null) return 1;
-          if (name2 == null) return -1;
-          return name1.compareToIgnoreCase(name2);
-        });
-      }
-    } else if (sortOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
-      Collections.sort(
-          songsWithParts,
-          (s1, s2) -> Long.compare(
-              s2.getSong().getLastPlayed(), s1.getSong().getLastPlayed()
-          )
-      );
-    } else if (sortOrder == SONGS_ORDER.MOST_PLAYED_ASC) {
-      Collections.sort(
-          songsWithParts,
-          (s1, s2) -> Integer.compare(
-              s2.getSong().getPlayCount(), s1.getSong().getPlayCount()
-          )
-      );
+fun sortSongsWithParts(songsWithParts: MutableList<SongWithParts>, sortOrder: Int) {
+  when (sortOrder) {
+    SONGS_ORDER.NAME_ASC -> {
+      songsWithParts.sortWith(
+        compareBy(nullsLast(String.CASE_INSENSITIVE_ORDER)) {
+          it.song.name
+        }
+      )
+    }
+
+    SONGS_ORDER.LAST_PLAYED_ASC -> {
+      songsWithParts.sortByDescending { it.song.lastPlayed }
+    }
+
+    SONGS_ORDER.MOST_PLAYED_ASC -> {
+      songsWithParts.sortByDescending { it.song.playCount }
     }
   }
+}
 
-  public static void sortPartsByIndex(List<Part> parts) {
-    if (VERSION.SDK_INT >= VERSION_CODES.N) {
-      Collections.sort(parts, Comparator.comparingInt(Part::getPartIndex));
-    } else {
-      Collections.sort(
-          parts, (p1, p2) -> Integer.compare(p1.getPartIndex(), p2.getPartIndex())
-      );
-    }
-  }
+fun sortPartsByIndex(parts: MutableList<Part>) {
+  parts.sortBy { it.partIndex }
 }

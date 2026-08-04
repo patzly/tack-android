@@ -17,389 +17,277 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.recyclerview.adapter;
+package xyz.zedler.patrick.tack.recyclerview.adapter
 
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.RecyclerView.Adapter;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
-import xyz.zedler.patrick.tack.Constants.UNIT;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.database.entity.Part;
-import xyz.zedler.patrick.tack.databinding.RowPartBinding;
-import xyz.zedler.patrick.tack.util.ViewUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil.OnMenuInflatedListener;
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.RecyclerView
+import xyz.zedler.patrick.tack.Constants.DEF
+import xyz.zedler.patrick.tack.Constants.TICK_TYPE
+import xyz.zedler.patrick.tack.Constants.UNIT
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.database.entity.Part
+import xyz.zedler.patrick.tack.databinding.RowPartBinding
+import xyz.zedler.patrick.tack.util.setBackgroundSegmented
+import xyz.zedler.patrick.tack.util.setTooltipText
+import xyz.zedler.patrick.tack.util.showMenu
 
-public class PartAdapter extends Adapter<PartAdapter.PartViewHolder> {
+class PartAdapter(
+  private val listener: OnPartItemClickListener
+) : RecyclerView.Adapter<PartAdapter.PartViewHolder>() {
 
-  private final static String TAG = SongChipAdapter.class.getSimpleName();
+  private val parts = mutableListOf<Part>()
 
-  private final static String PAYLOAD_ROLE = "role";
-
-  private final List<Part> parts = new ArrayList<>();
-  private final OnPartItemClickListener listener;
-
-  public PartAdapter(@NonNull OnPartItemClickListener listener) {
-    this.listener = listener;
+  enum class Payload {
+    ROLE
   }
 
-  @NonNull
-  @Override
-  public PartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-    RowPartBinding binding = RowPartBinding.inflate(
-        LayoutInflater.from(parent.getContext()), parent, false
-    );
-    return new PartViewHolder(binding);
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PartViewHolder {
+    val binding = RowPartBinding.inflate(
+      LayoutInflater.from(parent.context), parent, false
+    )
+    return PartViewHolder(binding)
   }
 
-  @Override
-  public void onBindViewHolder(@NonNull PartViewHolder holder, int position) {
-    int adapterPosition = holder.getBindingAdapterPosition();
-    Part part = getItem(adapterPosition);
-    Context context = holder.binding.getRoot().getContext();
+  override fun onBindViewHolder(holder: PartViewHolder, position: Int) {
+    val part = getItem(position)
+    val context = holder.binding.root.context
+    val binding = holder.binding
 
-    updateItemBackground(holder, position);
-    updateMoveButtons(holder, position);
+    binding.linearPartContainer.setBackgroundSegmented(position, itemCount)
+    binding.buttonPartMoveUp.isEnabled = itemCount > 1 && position > 0
+    binding.buttonPartMoveDown.isEnabled = itemCount > 1 && position < itemCount - 1
 
     // number
-    String partNumber = context.getString(
-        R.string.label_part_unnamed, adapterPosition + 1
-    );
-    holder.binding.textPartNumber.setText(partNumber);
+    binding.textPartNumber.text = context.getString(
+      R.string.label_part_unnamed, position + 1
+    )
 
-    holder.binding.buttonPartEdit.setOnClickListener(
-        v -> listener.onEditClick(part)
-    );
-    holder.binding.buttonPartMoveUp.setOnClickListener(
-        v -> listener.onMoveUpClick(part)
-    );
-    holder.binding.buttonPartMoveDown.setOnClickListener(
-        v -> listener.onMoveDownClick(part)
-    );
-    holder.binding.buttonPartMenu.setOnClickListener(v -> {
-      listener.onMoreClick(part);
-      PopupMenu.OnMenuItemClickListener itemClickListener = item -> {
-        int id = item.getItemId();
-        if (id == R.id.action_rename) {
-          listener.onRenameClick(part);
-        } else if (id == R.id.action_duplicate) {
-          listener.onDuplicateClick(part);
-        } else if (id == R.id.action_delete) {
-          listener.onDeleteClick(part);
+    binding.buttonPartEdit.setOnClickListener { listener.onEditClick(part) }
+    binding.buttonPartMoveUp.setOnClickListener { listener.onMoveUpClick(part) }
+    binding.buttonPartMoveDown.setOnClickListener { listener.onMoveDownClick(part) }
+    binding.buttonPartMenu.setOnClickListener { view ->
+      listener.onMoreClick(part)
+      view.showMenu(R.menu.menu_part, { item ->
+        when (item.itemId) {
+          R.id.action_rename -> listener.onRenameClick(part)
+          R.id.action_duplicate -> listener.onDuplicateClick(part)
+          R.id.action_delete -> listener.onDeleteClick(part)
         }
-        return true;
-      };
-      OnMenuInflatedListener menuInflatedListener = menu -> {
-        MenuItem itemDelete = menu.findItem(R.id.action_delete);
-        itemDelete.setEnabled(getItemCount() > 1);
-      };
-      ViewUtil.showMenu(v, R.menu.menu_part, itemClickListener, menuInflatedListener);
-    });
+        true
+      }, { menu ->
+        menu.findItem(R.id.action_delete).isEnabled = itemCount > 1
+      })
+    }
 
-    ViewUtil.setTooltipText(holder.binding.buttonPartEdit, R.string.action_edit);
-    ViewUtil.setTooltipText(holder.binding.buttonPartMoveUp, R.string.action_move_up);
-    ViewUtil.setTooltipText(holder.binding.buttonPartMoveDown, R.string.action_move_down);
-    ViewUtil.setTooltipText(holder.binding.buttonPartMenu, R.string.action_more);
+    binding.buttonPartEdit.setTooltipText(R.string.action_edit)
+    binding.buttonPartMoveUp.setTooltipText(R.string.action_move_up)
+    binding.buttonPartMoveDown.setTooltipText(R.string.action_move_down)
+    binding.buttonPartMenu.setTooltipText(R.string.action_more)
 
     // name
-    String partName = part.getName();
-    holder.binding.textPartName.setText(partName);
-    holder.binding.linearPartName.setVisibility(partName != null ? View.VISIBLE : View.GONE);
+    val partName = part.name
+    binding.textPartName.text = partName
+    binding.linearPartName.visibility = if (partName != null) View.VISIBLE else View.GONE
 
     // tempo
-    int tempo = part.getTempo();
-    holder.binding.textPartTempo.setText(context.getString(R.string.label_bpm_value, tempo));
+    binding.textPartTempo.text = context.getString(R.string.label_bpm_value, part.tempo)
 
     // beats
-    String[] beats = part.getBeats().split(",");
-    String[] beatsMaybeMuted = beats.clone();
-    String[] subs = part.getSubdivisions().split(",");
-    if (subs.length >= 1 && subs[0].equals(TICK_TYPE.BEAT_SUB_MUTED)) {
-      Arrays.fill(beatsMaybeMuted, TICK_TYPE.MUTED);
+    val beats = (part.beats ?: DEF.BEATS).split(",").toTypedArray()
+    val beatsMaybeMuted = beats.clone()
+    val subs = (part.subdivisions ?: DEF.SUBDIVISIONS).split(",").toTypedArray()
+    if (subs.isNotEmpty() && subs[0] == TICK_TYPE.BEAT_SUB_MUTED) {
+      beatsMaybeMuted.fill(TICK_TYPE.MUTED)
     }
-    holder.binding.beatsPartBeats.setBeats(beatsMaybeMuted);
+    binding.beatsPartBeats.setBeats(beatsMaybeMuted)
 
     // subdivisions
-    String[] subdivisions = part.getSubdivisions().split(",");
-    holder.binding.beatsPartSubdivisions.setBeats(subdivisions);
-    boolean showSubdivisions = subdivisions.length > 1;
-    if (!showSubdivisions && subdivisions[0].equals(TICK_TYPE.BEAT_SUB_MUTED)) {
-      showSubdivisions = true;
-    }
-    holder.binding.linearPartSubdivisions.setVisibility(
-        showSubdivisions ? View.VISIBLE : View.GONE
-    );
-    holder.binding.textPartSubdivisionsPolyrhythm.setVisibility(
-        part.usePolyrhythm() ? View.VISIBLE : View.GONE
-    );
+    val subdivisions = (part.subdivisions ?: DEF.SUBDIVISIONS).split(",").toTypedArray()
+    binding.beatsPartSubdivisions.setBeats(subdivisions)
+    val showSubdivisions = subdivisions.size > 1 ||
+        (subdivisions.size == 1 && subdivisions[0] == TICK_TYPE.BEAT_SUB_MUTED)
+    binding.linearPartSubdivisions.visibility = if (showSubdivisions) View.VISIBLE else View.GONE
+    binding.textPartSubdivisionsPolyrhythm.visibility =
+      if (part.usePolyrhythm) View.VISIBLE else View.GONE
 
     // count in
-    boolean isCountInActive = part.getCountIn() > 0;
+    val isCountInActive = part.countIn > 0
     if (isCountInActive) {
-      int countIn = part.getCountIn();
-      holder.binding.textPartCountIn.setText(
-          context.getResources().getQuantityString(
-              R.plurals.options_count_in_description, countIn, countIn
-          )
-      );
+      binding.textPartCountIn.text = context.resources.getQuantityString(
+        R.plurals.options_count_in_description, part.countIn, part.countIn
+      )
     }
-    holder.binding.linearPartCountIn.setVisibility(isCountInActive ? View.VISIBLE : View.GONE);
+    binding.linearPartCountIn.visibility = if (isCountInActive) View.VISIBLE else View.GONE
 
     // duration
-    int timerDuration = part.getTimerDuration();
-    String timerUnit = part.getTimerUnit();
-    int durationResId;
-    switch (timerUnit) {
-      case UNIT.SECONDS:
-        durationResId = R.plurals.options_timer_description_seconds;
-        break;
-      case UNIT.MINUTES:
-        durationResId = R.plurals.options_timer_description_minutes;
-        break;
-      default:
-        durationResId = R.plurals.options_timer_description_bars;
-        break;
-    }
+    val timerDuration = part.timerDuration
     if (timerDuration > 0) {
-      holder.binding.textPartDuration.setText(
-          context.getResources().getQuantityString(durationResId, timerDuration, timerDuration)
-      );
+      val durationResId = when (part.timerUnit) {
+        UNIT.SECONDS -> R.plurals.options_timer_description_seconds
+        UNIT.MINUTES -> R.plurals.options_timer_description_minutes
+        else -> R.plurals.options_timer_description_bars
+      }
+      binding.textPartDuration.text = context.resources.getQuantityString(
+        durationResId, timerDuration, timerDuration
+      )
     }
-    holder.binding.linearPartDuration.setVisibility(
-        timerDuration > 0 ? View.VISIBLE : View.GONE
-    );
+    binding.linearPartDuration.visibility = if (timerDuration > 0) View.VISIBLE else View.GONE
 
     // incremental
-    int incrementalAmount = part.getIncrementalAmount();
-    boolean incrementalIncrease = part.isIncrementalIncrease();
-    boolean isIncrementalActive = part.getIncrementalAmount() > 0;
+    val isIncrementalActive = part.incrementalAmount > 0
     if (isIncrementalActive) {
-      holder.binding.textPartIncrementalAmount.setText(context.getString(
-          incrementalIncrease
-              ? R.string.options_incremental_amount_increase
-              : R.string.options_incremental_amount_decrease,
-          incrementalAmount
-      ));
+      binding.textPartIncrementalAmount.text = context.getString(
+        if (part.incrementalIncrease) {
+          R.string.options_incremental_amount_increase
+        } else {
+          R.string.options_incremental_amount_decrease
+        },
+        part.incrementalAmount
+      )
 
-      int incrementalInterval = part.getIncrementalInterval();
-      String incrementalUnit = part.getIncrementalUnit();
-      int intervalResId;
-      switch (incrementalUnit) {
-        case UNIT.SECONDS:
-          intervalResId = R.plurals.options_incremental_interval_seconds;
-          break;
-        case UNIT.MINUTES:
-          intervalResId = R.plurals.options_incremental_interval_minutes;
-          break;
-        default:
-          intervalResId = R.plurals.options_incremental_interval_bars;
-          break;
+      val intervalResId = when (part.incrementalUnit) {
+        UNIT.SECONDS -> R.plurals.options_incremental_interval_seconds
+        UNIT.MINUTES -> R.plurals.options_incremental_interval_minutes
+        else -> R.plurals.options_incremental_interval_bars
       }
-      holder.binding.textPartIncrementalInterval.setText(
-          context.getResources().getQuantityString(
-              intervalResId, incrementalInterval, incrementalInterval
-          )
-      );
+      binding.textPartIncrementalInterval.text = context.resources.getQuantityString(
+        intervalResId, part.incrementalInterval, part.incrementalInterval
+      )
 
-      int incrementalLimit = part.getIncrementalLimit();
-      if (incrementalLimit > 0) {
-        holder.binding.textPartIncrementalLimit.setText(
-            context.getResources().getString(
-                incrementalIncrease
-                    ? R.string.options_incremental_max
-                    : R.string.options_incremental_min,
-                incrementalLimit
-            )
-        );
+      if (part.incrementalLimit > 0) {
+        binding.textPartIncrementalLimit.text = context.getString(
+          if (part.incrementalIncrease) {
+            R.string.options_incremental_max
+          } else {
+            R.string.options_incremental_min
+          },
+          part.incrementalLimit
+        )
       } else {
-        holder.binding.textPartIncrementalLimit.setText(
-            incrementalIncrease
-                ? R.string.options_incremental_no_max
-                : R.string.options_incremental_no_min
-        );
+        binding.textPartIncrementalLimit.text = context.getString(
+          if (part.incrementalIncrease) {
+            R.string.options_incremental_no_max
+          } else {
+            R.string.options_incremental_no_min
+          }
+        )
       }
     }
-    holder.binding.linearPartIncremental.setVisibility(
-        isIncrementalActive ? View.VISIBLE : View.GONE
-    );
+    binding.linearPartIncremental.visibility = if (isIncrementalActive) View.VISIBLE else View.GONE
 
     // muted
-    int mutePlay = part.getMutePlay();
-    int muteMute = part.getMuteMute();
-    String muteUnit = part.getMuteUnit();
-    boolean muteRandom = !muteUnit.equals(UNIT.BEATS) && part.isMuteRandom();
-    boolean isMuteActive = muteUnit.equals(UNIT.BEATS)
-        ? part.getMuteMute() > 0
-        : part.getMutePlay() > 0;
-    int resIdPlay, resIdMutePlural, resIdMuteString;
-    if (muteUnit.equals(UNIT.SECONDS)) {
-      resIdPlay = R.plurals.options_mute_play_seconds;
-      resIdMutePlural = R.plurals.options_mute_mute_seconds;
-      resIdMuteString = 0;
-    } else if (muteUnit.equals(UNIT.BARS)) {
-      resIdPlay = R.plurals.options_mute_play_bars;
-      resIdMutePlural = R.plurals.options_mute_mute_bars;
-      resIdMuteString = 0;
+    val isMuteActive = if (part.muteUnit == UNIT.BEATS) {
+      part.muteMute > 0
     } else {
-      resIdPlay = 0;
-      resIdMutePlural = 0;
-      resIdMuteString = R.string.options_mute_mute_beats;
+      part.mutePlay > 0
     }
     if (isMuteActive) {
-      int playVisibility = muteUnit.equals(UNIT.BEATS) ? View.GONE : View.VISIBLE;
-      holder.binding.textPartMutePlay.setVisibility(playVisibility);
-      holder.binding.imagePartMuteMute.setVisibility(playVisibility);
-      if (muteUnit.equals(UNIT.BEATS)) {
-        holder.binding.textPartMuteMute.setText(context.getString(resIdMuteString, muteMute));
+      val playVisibility = if (part.muteUnit == UNIT.BEATS) View.GONE else View.VISIBLE
+      binding.textPartMutePlay.visibility = playVisibility
+      binding.imagePartMuteMute.visibility = playVisibility
+      if (part.muteUnit == UNIT.BEATS) {
+        binding.textPartMuteMute.text = context.getString(
+          R.string.options_mute_mute_beats, part.muteMute
+        )
       } else {
-        holder.binding.textPartMutePlay.setText(
-            context.getResources().getQuantityString(resIdPlay, mutePlay, mutePlay)
-        );
-        holder.binding.textPartMuteMute.setText(
-            context.getResources().getQuantityString(resIdMutePlural, muteMute, muteMute)
-        );
+        val resIdPlay = if (part.muteUnit == UNIT.SECONDS) {
+          R.plurals.options_mute_play_seconds
+        } else {
+          R.plurals.options_mute_play_bars
+        }
+        val resIdMute = if (part.muteUnit == UNIT.SECONDS) {
+          R.plurals.options_mute_mute_seconds
+        } else {
+          R.plurals.options_mute_mute_bars
+        }
+        binding.textPartMutePlay.text = context.resources.getQuantityString(
+          resIdPlay, part.mutePlay, part.mutePlay
+        )
+        binding.textPartMuteMute.text = context.resources.getQuantityString(
+          resIdMute, part.muteMute, part.muteMute
+        )
       }
-      holder.binding.imagePartMuteRandom.setVisibility(muteRandom ? View.VISIBLE : View.GONE);
-      holder.binding.textPartMuteRandom.setVisibility(muteRandom ? View.VISIBLE : View.GONE);
+      val muteRandom = part.muteUnit != UNIT.BEATS && part.muteRandom
+      binding.imagePartMuteRandom.visibility = if (muteRandom) View.VISIBLE else View.GONE
+      binding.textPartMuteRandom.visibility = if (muteRandom) View.VISIBLE else View.GONE
     }
-    holder.binding.linearPartMute.setVisibility(isMuteActive ? View.VISIBLE : View.GONE);
+    binding.linearPartMute.visibility = if (isMuteActive) View.VISIBLE else View.GONE
   }
 
-  @Override
-  public void onBindViewHolder(
-      @NonNull PartViewHolder holder, int position, @NonNull List<Object> payloads
+  override fun onBindViewHolder(
+    holder: PartViewHolder,
+    position: Int,
+    payloads: List<Any>
   ) {
-    if (payloads.contains(PAYLOAD_ROLE)) {
-      updateItemBackground(holder, position);
-      updateMoveButtons(holder, position);
+    if (payloads.contains(Payload.ROLE)) {
+      holder.binding.linearPartContainer.setBackgroundSegmented(position, itemCount)
+      holder.binding.buttonPartMoveUp.isEnabled = itemCount > 1 && position > 0
+      holder.binding.buttonPartMoveDown.isEnabled = itemCount > 1 && position < itemCount - 1
     } else {
-      super.onBindViewHolder(holder, position, payloads);
+      super.onBindViewHolder(holder, position, payloads)
     }
   }
 
-  @Override
-  public int getItemCount() {
-    return parts.size();
-  }
+  override fun getItemCount(): Int = parts.size
 
-  public Part getItem(int position) {
-    return parts.get(position);
-  }
+  fun getItem(position: Int): Part = parts[position]
 
-  public void setParts(List<Part> newParts) {
-    List<Part> oldParts = new ArrayList<>(parts);
-    List<Part> newPartsCopy = new ArrayList<>(newParts);
-    DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffUtil.Callback() {
-      @Override
-      public int getOldListSize() {
-        return oldParts.size();
+  fun setParts(newParts: List<Part>) {
+    val oldParts = ArrayList(parts)
+    val newPartsCopy = ArrayList(newParts)
+    val diffResult = DiffUtil.calculateDiff(object : DiffUtil.Callback() {
+      override fun getOldListSize(): Int = oldParts.size
+      override fun getNewListSize(): Int = newPartsCopy.size
+
+      override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        return oldParts[oldItemPosition].id == newPartsCopy[newItemPosition].id
       }
 
-      @Override
-      public int getNewListSize() {
-        return newPartsCopy.size();
+      override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        val oldPart = oldParts[oldItemPosition]
+        val newPart = newPartsCopy[newItemPosition]
+        if (oldPart != newPart) return false
+
+        val oldRole = getItemRole(oldItemPosition, oldParts.size)
+        val newRole = getItemRole(newItemPosition, newPartsCopy.size)
+        return oldRole == newRole
       }
 
-      @Override
-      public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-        Part oldPart = oldParts.get(oldItemPosition);
-        Part newPart = newPartsCopy.get(newItemPosition);
-        return oldPart.getId().equals(newPart.getId());
+      override fun getChangePayload(oldItemPosition: Int, newItemPosition: Int): Any? {
+        val oldPart = oldParts[oldItemPosition]
+        val newPart = newPartsCopy[newItemPosition]
+        val oldRole = getItemRole(oldItemPosition, oldParts.size)
+        val newRole = getItemRole(newItemPosition, newPartsCopy.size)
+        return if (oldPart == newPart && oldRole != newRole) Payload.ROLE else null
       }
 
-      @Override
-      public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-        Part oldPart = oldParts.get(oldItemPosition);
-        Part newPart = newPartsCopy.get(newItemPosition);
-
-        if (!oldPart.equals(newPart)) {
-          return false;
+      private fun getItemRole(position: Int, size: Int): Int {
+        return when {
+          size == 1 -> -1
+          position == 0 -> 0
+          position == size - 1 -> 2
+          else -> 1
         }
-
-        int oldRole = getItemRole(oldItemPosition, oldParts.size());
-        int newRole = getItemRole(newItemPosition, newPartsCopy.size());
-        return oldRole == newRole;
       }
-
-      @Override
-      public Object getChangePayload(int oldItemPosition, int newItemPosition) {
-        Part oldPart = oldParts.get(oldItemPosition);
-        Part newPart = newPartsCopy.get(newItemPosition);
-
-        int oldRole = getItemRole(oldItemPosition, oldParts.size());
-        int newRole = getItemRole(newItemPosition, newPartsCopy.size());
-        if (oldPart.equals(newPart) && oldRole != newRole) {
-          return PAYLOAD_ROLE;
-        }
-
-        return null;
-      }
-
-      private int getItemRole(int position, int size) {
-        if (size == 1) return -1;
-        if (position == 0) return 0;
-        if (position == size - 1) return 2;
-        return 1;
-      }
-    });
-    parts.clear();
-    parts.addAll(newPartsCopy);
-    diffResult.dispatchUpdatesTo(this);
+    })
+    parts.clear()
+    parts.addAll(newPartsCopy)
+    diffResult.dispatchUpdatesTo(this)
   }
 
-  private void updateItemBackground(PartViewHolder holder, int position) {
-    if (getItemCount() == 1) {
-      holder.binding.linearPartContainer.setBackgroundResource(
-          R.drawable.ripple_list_item_bg_segmented_single
-      );
-    } else if (position == 0) {
-      holder.binding.linearPartContainer.setBackgroundResource(
-          R.drawable.ripple_list_item_bg_segmented_first
-      );
-    } else if (position == getItemCount() - 1) {
-      holder.binding.linearPartContainer.setBackgroundResource(
-          R.drawable.ripple_list_item_bg_segmented_last
-      );
-    } else {
-      holder.binding.linearPartContainer.setBackgroundResource(
-          R.drawable.ripple_list_item_bg_segmented_middle
-      );
-    }
-  }
+  class PartViewHolder(val binding: RowPartBinding)
+    : RecyclerView.ViewHolder(binding.root)
 
-  private void updateMoveButtons(PartViewHolder holder, int position) {
-    holder.binding.buttonPartMoveUp.setEnabled(getItemCount() > 1 && position > 0);
-    holder.binding.buttonPartMoveDown.setEnabled(
-        getItemCount() > 1 && position < getItemCount() - 1
-    );
-  }
-
-  public static class PartViewHolder extends ViewHolder {
-    private final RowPartBinding binding;
-
-    public PartViewHolder(RowPartBinding binding) {
-      super(binding.getRoot());
-      this.binding = binding;
-    }
-  }
-
-  public interface OnPartItemClickListener {
-    void onEditClick(@NonNull Part part);
-    void onMoveUpClick(@NonNull Part part);
-    void onMoveDownClick(@NonNull Part part);
-    void onMoreClick(@NonNull Part part);
-    void onRenameClick(@NonNull Part part);
-    void onDuplicateClick(@NonNull Part part);
-    void onDeleteClick(@NonNull Part part);
+  interface OnPartItemClickListener {
+    fun onEditClick(part: Part)
+    fun onMoveUpClick(part: Part)
+    fun onMoveDownClick(part: Part)
+    fun onMoreClick(part: Part)
+    fun onRenameClick(part: Part)
+    fun onDuplicateClick(part: Part)
+    fun onDeleteClick(part: Part)
   }
 }

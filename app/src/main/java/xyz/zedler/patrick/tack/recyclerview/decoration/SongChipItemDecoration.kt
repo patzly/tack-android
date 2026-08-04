@@ -17,46 +17,41 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.recyclerview.decoration;
+package xyz.zedler.patrick.tack.recyclerview.decoration
 
-import android.graphics.Rect;
-import android.view.View;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import android.graphics.Rect
+import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 
-public class SongChipItemDecoration extends RecyclerView.ItemDecoration {
+class SongChipItemDecoration(
+  private val outerPadding: Int,
+  private val innerPadding: Int,
+  private val isRtl: Boolean
+) : RecyclerView.ItemDecoration() {
 
-  private final int outerPadding, innerPadding;
-  private final boolean isRtl;
-
-  public SongChipItemDecoration(int outerPadding, int innerPadding, boolean isRtl) {
-    this.outerPadding = outerPadding;
-    this.innerPadding = innerPadding;
-    this.isRtl = isRtl;
-  }
-
-  @Override
-  public void getItemOffsets(
-      @NonNull Rect outRect, @NonNull View view,
-      @NonNull RecyclerView parent, @NonNull RecyclerView.State state
+  override fun getItemOffsets(
+    outRect: Rect,
+    view: View,
+    parent: RecyclerView,
+    state: RecyclerView.State
   ) {
-    int position = parent.getChildAdapterPosition(view);
+    val position = parent.getChildAdapterPosition(view)
     if (position == 0) {
-      outRect.left = isRtl ? innerPadding : outerPadding;
-      outRect.right = isRtl ? outerPadding : innerPadding;
+      outRect.left = if (isRtl) innerPadding else outerPadding
+      outRect.right = if (isRtl) outerPadding else innerPadding
     } else {
-      outRect.left = innerPadding;
-      outRect.right = innerPadding;
+      outRect.left = innerPadding
+      outRect.right = innerPadding
     }
 
-    int count = state.getItemCount();
+    val count = state.itemCount
     if (position == count - 1) {
-      outRect.right = isRtl ? innerPadding : outerPadding;
-      outRect.left = isRtl ? outerPadding : innerPadding;
+      outRect.right = if (isRtl) innerPadding else outerPadding
+      outRect.left = if (isRtl) outerPadding else innerPadding
     }
     if (count == 1 && position == 0) {
-      outRect.left = outerPadding;
-      outRect.right = outerPadding;
+      outRect.left = outerPadding
+      outRect.right = outerPadding
     }
   }
 }

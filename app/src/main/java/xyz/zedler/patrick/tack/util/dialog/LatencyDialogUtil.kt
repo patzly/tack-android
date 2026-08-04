@@ -17,182 +17,131 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util.dialog;
+package xyz.zedler.patrick.tack.util.dialog
 
-import android.os.Bundle;
-import android.view.View;
-import android.view.ViewTreeObserver;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.slider.Slider;
-import com.google.android.material.slider.Slider.OnChangeListener;
-import com.google.android.material.slider.Slider.OnSliderTouchListener;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.databinding.PartialDialogLatencyBinding;
-import xyz.zedler.patrick.tack.fragment.SettingsFragment;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListener;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine.Tick;
-import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.UiUtil;
+import android.os.Bundle
+import com.google.android.material.slider.Slider
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.activity.MainActivity
+import xyz.zedler.patrick.tack.databinding.PartialDialogLatencyBinding
+import xyz.zedler.patrick.tack.fragment.SettingsFragment
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.Tick
+import xyz.zedler.patrick.tack.util.*
 
-public class LatencyDialogUtil implements OnChangeListener, OnSliderTouchListener {
+class LatencyDialogUtil(
+  private val activity: MainActivity,
+  private val fragment: SettingsFragment
+) {
 
-  private static final String TAG = LatencyDialogUtil.class.getSimpleName();
+  private val binding = PartialDialogLatencyBinding.inflate(activity.layoutInflater)
+  private val dialogUtil = DialogUtil(activity, "latency")
+  private val colorBg = activity.getAttrColor(R.attr.colorSurfaceBright)
+  private val colorBgFlash = activity.getAttrColor(R.attr.colorTertiaryContainer)
+  private var flashScreen = false
 
-  private final MainActivity activity;
-  private final SettingsFragment fragment;
-  private final PartialDialogLatencyBinding binding;
-  private final DialogUtil dialogUtil;
-  private final MetronomeListener latencyListener;
-  private final int colorBg, colorBgFlash;
-  private boolean flashScreen;
-
-  public LatencyDialogUtil(MainActivity activity, SettingsFragment fragment) {
-    this.activity = activity;
-    this.fragment = fragment;
-
-    binding = PartialDialogLatencyBinding.inflate(activity.getLayoutInflater());
-
-    dialogUtil = new DialogUtil(activity, "latency");
-    dialogUtil.createDialog(builder -> {
-      builder.setTitle(R.string.settings_latency);
-      builder.setView(binding.getRoot());
-      builder.setPositiveButton(
-          R.string.action_close, (dialog, which) -> activity.performHapticClick()
-      );
-    });
-
-    colorBg = ResUtil.getColor(activity, R.attr.colorSurfaceBright);
-    colorBgFlash = ResUtil.getColor(activity, R.attr.colorTertiaryContainer);
-
-    latencyListener = new MetronomeListenerAdapter() {
-      @Override
-      public void onMetronomeTick(Tick tick) {
-        activity.runOnUiThread(() -> {
-          if (flashScreen) {
-            binding.linearLatencyFlash.setBackgroundColor(colorBgFlash);
-            binding.linearLatencyFlash.postDelayed(
-                () -> binding.linearLatencyFlash.setBackgroundColor(colorBg), 100
-            );
-          }
-        });
+  private val latencyListener = object : MetronomeListenerAdapter() {
+    override fun onMetronomeTick(tick: Tick) {
+      activity.runOnUiThread {
+        if (flashScreen) {
+          binding.linearLatencyFlash.setBackgroundColor(colorBgFlash)
+          binding.linearLatencyFlash.postDelayed({
+            binding.linearLatencyFlash.setBackgroundColor(colorBg)
+          }, 100)
+        }
       }
-    };
-
-    setDividerVisibility(!UiUtil.isOrientationPortrait(activity));
-  }
-
-  public void show() {
-    update();
-    dialogUtil.show();
-  }
-
-  public void showIfWasShown(@Nullable Bundle state) {
-    update();
-    dialogUtil.showIfWasShown(state);
-  }
-
-  public void dismiss() {
-    dialogUtil.dismiss();
-  }
-
-  public void saveState(@NonNull Bundle outState) {
-    if (dialogUtil != null) {
-      dialogUtil.saveState(outState);
     }
   }
 
-  private void update() {
-    if (binding == null) {
-      return;
+  init {
+    dialogUtil.createDialog { builder ->
+      builder.setTitle(R.string.settings_latency)
+      builder.setView(binding.root)
+      builder.setPositiveButton(R.string.action_close) { _, _ ->
+        activity.performHapticClick()
+      }
     }
 
-    measureScrollView();
-
-    if (getMetronomeEngine() == null) {
-      return;
+    binding.sliderLatency.addOnChangeListener { _, value, fromUser ->
+      if (fromUser) {
+        activity.metronomeEngine?.let { engine ->
+          engine.latency = value.toLong()
+          updateValueDisplay()
+          fragment.updateLatencyDescription(value.toLong())
+        }
+      }
     }
-    updateValueDisplay();
 
-    binding.sliderLatency.removeOnChangeListener(this);
-    binding.sliderLatency.setValue(getMetronomeEngine().getLatency());
-    binding.sliderLatency.addOnChangeListener(this);
-    binding.sliderLatency.removeOnSliderTouchListener(this);
-    binding.sliderLatency.addOnSliderTouchListener(this);
+    binding.sliderLatency.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
+      override fun onStartTrackingTouch(slider: Slider) {
+        flashScreen = true
+        activity.metronomeEngine?.apply {
+          savePlayingState()
+          addListener(latencyListener)
+          setUpLatencyCalibration()
+        }
+      }
+
+      override fun onStopTrackingTouch(slider: Slider) {
+        flashScreen = false
+        activity.metronomeEngine?.apply {
+          restorePlayingState()
+          removeListener(latencyListener)
+          setToPreferences()
+        }
+      }
+    })
+
+    updateDividerVisibility(activity.isOrientationPortrait().not())
   }
 
-  @Override
-  public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-    if (!fromUser || getMetronomeEngine() == null) {
-      return;
+  fun show() {
+    update()
+    dialogUtil.show()
+  }
+
+  fun showIfWasShown(state: Bundle?) {
+    update()
+    dialogUtil.showIfWasShown(state)
+  }
+
+  fun dismiss() {
+    dialogUtil.dismiss()
+  }
+
+  fun saveState(outState: Bundle) {
+    dialogUtil.saveState(outState)
+  }
+
+  private fun update() {
+    measureScrollView()
+    updateValueDisplay()
+    activity.metronomeEngine?.let { engine ->
+      binding.sliderLatency.value = engine.latency.toFloat()
     }
-    int id = slider.getId();
-    if (id == R.id.slider_latency) {
-      getMetronomeEngine().setLatency((int) value);
-      updateValueDisplay();
-      fragment.updateLatencyDescription((int) value);
+  }
+
+  private fun updateValueDisplay() {
+    val engine = activity.metronomeEngine ?: return
+    binding.textLatencyValue.text = activity.getString(
+      R.string.label_ms, engine.latency.toString()
+    )
+  }
+
+  private fun measureScrollView() {
+    binding.scrollLatency.onGlobalLayout {
+      val isScrollable = binding.scrollLatency.canScrollVertically(-1) ||
+          binding.scrollLatency.canScrollVertically(1)
+      updateDividerVisibility(isScrollable)
     }
   }
 
-  @Override
-  public void onStartTrackingTouch(@NonNull Slider slider) {
-    flashScreen = true;
-    if (getMetronomeEngine() != null) {
-      getMetronomeEngine().savePlayingState();
-      getMetronomeEngine().addListener(latencyListener);
-      getMetronomeEngine().setUpLatencyCalibration();
-    }
-  }
-
-  @Override
-  public void onStopTrackingTouch(@NonNull Slider slider) {
-    flashScreen = false;
-    if (getMetronomeEngine() != null) {
-      getMetronomeEngine().restorePlayingState();
-      getMetronomeEngine().removeListener(latencyListener);
-      getMetronomeEngine().setToPreferences();
-    }
-  }
-
-  private void updateValueDisplay() {
-    if (binding == null || getMetronomeEngine() == null) {
-      return;
-    }
-    binding.textLatencyValue.setText(
-        activity.getString(R.string.label_ms, String.valueOf(getMetronomeEngine().getLatency()))
-    );
-  }
-
-  private void measureScrollView() {
-    binding.scrollLatency.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            boolean isScrollable = binding.scrollLatency.canScrollVertically(-1)
-                || binding.scrollLatency.canScrollVertically(1);
-            setDividerVisibility(isScrollable);
-            binding.scrollLatency.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-          }
-        });
-  }
-
-  private void setDividerVisibility(boolean visible) {
-    binding.dividerLatencyTop.setVisibility(visible ? View.VISIBLE : View.GONE);
-    binding.dividerLatencyBottom.setVisibility(visible ? View.VISIBLE : View.GONE);
-    binding.linearLatencyContainer.setPadding(
-        binding.linearLatencyContainer.getPaddingLeft(),
-        visible ? UiUtil.dpToPx(activity, 16) : 0,
-        binding.linearLatencyContainer.getPaddingRight(),
-        visible ? UiUtil.dpToPx(activity, 16) : 0
-    );
-  }
-
-  @Nullable
-  private MetronomeEngine getMetronomeEngine() {
-    return activity.getMetronomeEngine();
+  private fun updateDividerVisibility(visible: Boolean) {
+    binding.scrollLatency.setDividerVisibility(
+      visible,
+      binding.dividerLatencyTop,
+      binding.dividerLatencyBottom,
+      binding.linearLatencyContainer
+    )
   }
 }

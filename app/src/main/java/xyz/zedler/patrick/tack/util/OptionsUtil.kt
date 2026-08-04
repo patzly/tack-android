@@ -17,1457 +17,1298 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+package xyz.zedler.patrick.tack.util
 
-import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.view.ViewCompat;
-import androidx.transition.AutoTransition;
-import androidx.transition.ChangeBounds;
-import androidx.transition.Transition;
-import androidx.transition.TransitionManager;
-import com.google.android.material.button.MaterialButtonToggleGroup;
-import com.google.android.material.button.MaterialButtonToggleGroup.OnButtonCheckedListener;
-import com.google.android.material.slider.Slider;
-import com.google.android.material.slider.Slider.OnChangeListener;
-import com.google.android.material.slider.Slider.OnSliderTouchListener;
-import java.util.Arrays;
-import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
-import xyz.zedler.patrick.tack.Constants.UNIT;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.database.entity.Part;
-import xyz.zedler.patrick.tack.databinding.FragmentMainBinding;
-import xyz.zedler.patrick.tack.databinding.PartialDialogOptionsBinding;
-import xyz.zedler.patrick.tack.databinding.PartialOptionsBinding;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
-import xyz.zedler.patrick.tack.model.MetronomeConfig;
-import xyz.zedler.patrick.tack.view.BeatView;
+import android.os.Bundle
+import android.view.View
+import android.view.View.OnClickListener
+import androidx.transition.AutoTransition
+import androidx.transition.ChangeBounds
+import androidx.transition.TransitionManager
+import com.google.android.material.button.MaterialButtonToggleGroup
+import com.google.android.material.button.MaterialButtonToggleGroup.OnButtonCheckedListener
+import com.google.android.material.slider.Slider
+import com.google.android.material.slider.Slider.OnChangeListener
+import com.google.android.material.slider.Slider.OnSliderTouchListener
+import xyz.zedler.patrick.tack.Constants
+import xyz.zedler.patrick.tack.Constants.TICK_TYPE
+import xyz.zedler.patrick.tack.Constants.UNIT
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.activity.MainActivity
+import xyz.zedler.patrick.tack.database.entity.Part
+import xyz.zedler.patrick.tack.databinding.FragmentMainBinding
+import xyz.zedler.patrick.tack.databinding.PartialDialogOptionsBinding
+import xyz.zedler.patrick.tack.databinding.PartialOptionsBinding
+import xyz.zedler.patrick.tack.model.MetronomeConfig
+import xyz.zedler.patrick.tack.view.BeatView
 
-public class OptionsUtil implements OnClickListener, OnButtonCheckedListener,
-    OnChangeListener, OnSliderTouchListener {
+class OptionsUtil : OnClickListener, OnButtonCheckedListener, OnChangeListener,
+  OnSliderTouchListener {
 
-  private static final String TAG = OptionsUtil.class.getSimpleName();
+  private val activity: MainActivity
+  private val useDialog: Boolean
+  private val editPart: Boolean
+  private var onOptionsListener: OnOptionsListener? = null
+  private var onPartEditListener: OnPartEditListener? = null
+  private var isCountInActive = false
+  private var isIncrementalActive = false
+  private var isTimerActive = false
+  private var isMuteActive = false
+  private var usePolyrhythm = false
+  private var isNew = false
+  private var isInitialized = false
+  private var dialogUtil: DialogUtil? = null
+  private var binding: PartialOptionsBinding? = null
+  private var bindingDialog: PartialDialogOptionsBinding? = null
+  private var part: Part? = null
+  private var config: MetronomeConfig? = null
+  private val ticksMaxPerRange: Int
 
-  private static final String PART = "part_dialog";
-  private static final String IS_NEW = "new_part_dialog";
-
-  private final MainActivity activity;
-  private final boolean useDialog, editPart;
-  private OnOptionsListener listener;
-  private OnPartEditListener onPartEditListener;
-  private boolean isCountInActive, isIncrementalActive, isTimerActive, isMuteActive, usePolyrhythm;
-  private boolean isNew, isInitialized;
-  private DialogUtil dialogUtil;
-  private PartialOptionsBinding binding;
-  private PartialDialogOptionsBinding bindingDialog;
-  private Part part;
-  private MetronomeConfig config;
-  private final int ticksMaxPerRange;
-
-  public OptionsUtil(
-      MainActivity activity, FragmentMainBinding fragmentBinding, OnOptionsListener listener
+  constructor(
+    activity: MainActivity,
+    fragmentBinding: FragmentMainBinding,
+    listener: OnOptionsListener
   ) {
-    this.activity = activity;
-    this.listener = listener;
+    this.activity = activity
+    this.onOptionsListener = listener
 
-    editPart = false;
-    useDialog = !UiUtil.isLandTablet(activity);
+    editPart = false
+    useDialog = !activity.isLandTablet()
     if (useDialog) {
-      bindingDialog = PartialDialogOptionsBinding.inflate(activity.getLayoutInflater());
-      dialogUtil = new DialogUtil(activity, "options");
+      bindingDialog = PartialDialogOptionsBinding.inflate(activity.layoutInflater)
+      dialogUtil = DialogUtil(activity, "options")
     }
-    binding = useDialog ? bindingDialog.partialOptions : fragmentBinding.partialOptions;
+    binding = if (useDialog) bindingDialog?.partialOptions else fragmentBinding.partialOptions
 
-    if (binding != null) {
-      binding.sliderOptionsCountIn.addOnSliderTouchListener(this);
-      binding.sliderOptionsIncrementalAmount.addOnSliderTouchListener(this);
-      binding.sliderOptionsIncrementalInterval.addOnSliderTouchListener(this);
-      binding.sliderOptionsIncrementalLimit.addOnSliderTouchListener(this);
-      binding.sliderOptionsTimerDuration.addOnSliderTouchListener(this);
-      binding.sliderOptionsMutePlay.addOnSliderTouchListener(this);
-      binding.sliderOptionsMuteMute.addOnSliderTouchListener(this);
+    binding?.let {
+      it.sliderOptionsCountIn.addOnSliderTouchListener(this)
+      it.sliderOptionsIncrementalAmount.addOnSliderTouchListener(this)
+      it.sliderOptionsIncrementalInterval.addOnSliderTouchListener(this)
+      it.sliderOptionsIncrementalLimit.addOnSliderTouchListener(this)
+      it.sliderOptionsTimerDuration.addOnSliderTouchListener(this)
+      it.sliderOptionsMutePlay.addOnSliderTouchListener(this)
+      it.sliderOptionsMuteMute.addOnSliderTouchListener(this)
     }
 
-    ticksMaxPerRange = UiUtil.isTablet(activity) ? 50 : 20;
+    ticksMaxPerRange = if (activity.isTablet()) 50 else 20
 
     if (useDialog) {
-      dialogUtil.createDialog(builder -> {
-        builder.setTitle(R.string.title_options);
-        builder.setView(bindingDialog.getRoot());
-        builder.setPositiveButton(
-            R.string.action_close,
-            (dialog, which) -> activity.performHapticClick()
-        );
-      });
+      dialogUtil?.createDialog { builder ->
+        builder.setTitle(R.string.title_options)
+        builder.setView(bindingDialog?.root)
+        builder.setPositiveButton(R.string.action_close) { _, _ ->
+          activity.performHapticClick()
+        }
+      }
     }
   }
 
-  public OptionsUtil(MainActivity activity, OnPartEditListener onPartEditListener) {
-    this.activity = activity;
-    this.onPartEditListener = onPartEditListener;
+  constructor(activity: MainActivity, onPartEditListener: OnPartEditListener) {
+    this.activity = activity
+    this.onPartEditListener = onPartEditListener
 
-    editPart = true;
-    useDialog = true;
-    dialogUtil = new DialogUtil(activity, "edit_part");
-    bindingDialog = PartialDialogOptionsBinding.inflate(activity.getLayoutInflater());
-    binding = bindingDialog.partialOptions;
+    editPart = true
+    useDialog = true
+    dialogUtil = DialogUtil(activity, "edit_part")
+    bindingDialog = PartialDialogOptionsBinding.inflate(activity.layoutInflater)
+    binding = bindingDialog?.partialOptions
 
-    ticksMaxPerRange = UiUtil.isTablet(activity) ? 50 : 20;
+    ticksMaxPerRange = if (activity.isTablet()) 50 else 20
   }
 
-  public void maybeInit() {
-    if (editPart || getConfig() == null || isInitialized) {
-      return;
+  fun maybeInit() {
+    val config = configInternal ?: return
+    if (editPart || isInitialized) {
+      return
     }
-    MetronomeConfig config = getConfig();
-    isCountInActive = config.isCountInActive();
-    isIncrementalActive = config.isIncrementalActive();
-    isTimerActive = config.isTimerActive();
-    isMuteActive = config.isMuteActive();
-
-    isInitialized = true;
+    isCountInActive = config.isCountInActive()
+    isIncrementalActive = config.isIncrementalActive()
+    isTimerActive = config.isTimerActive()
+    isMuteActive = config.isMuteActive()
+    isInitialized = true
   }
 
-  public void show() {
-    update();
+  fun show() {
+    update()
     if (useDialog) {
-      dialogUtil.show();
+      dialogUtil?.show()
     }
   }
 
-  public void showIfWasShown(@Nullable Bundle state) {
+  fun showIfWasShown(state: Bundle?) {
     if (editPart) {
-      part = state != null ? state.getParcelable(PART) : null;
-      isNew = state != null && state.getBoolean(IS_NEW, false);
-      if (part != null) {
-        setPart(part, isNew);
-        update();
-        dialogUtil.showIfWasShown(state);
+      part = state?.getParcelable(PART)
+      isNew = state?.getBoolean(IS_NEW, false) ?: false
+      val p = part
+      if (p != null) {
+        setPart(p, isNew)
+        update()
+        dialogUtil?.showIfWasShown(state)
       }
     } else {
-      update();
+      update()
       if (useDialog) {
-        dialogUtil.showIfWasShown(state);
+        dialogUtil?.showIfWasShown(state)
       }
     }
   }
 
-  public void dismiss() {
+  fun dismiss() {
     if (useDialog) {
-      dialogUtil.dismiss();
+      dialogUtil?.dismiss()
     }
   }
 
-  public void saveState(@NonNull Bundle outState) {
+  fun saveState(outState: Bundle) {
     if (useDialog && dialogUtil != null) {
-      dialogUtil.saveState(outState);
+      dialogUtil?.saveState(outState)
       if (editPart && part != null) {
-        part.setConfig(config);
-        outState.putParcelable(PART, part);
-        outState.putBoolean(IS_NEW, isNew);
+        config?.let { part?.setConfig(it) }
+        outState.putParcelable(PART, part)
+        outState.putBoolean(IS_NEW, isNew)
       }
     }
   }
 
-  public void setPart(@NonNull Part part, boolean isNew) {
-    this.part = part;
-    this.isNew = isNew;
+  fun setPart(part: Part, isNew: Boolean) {
+    this.part = part
+    this.isNew = isNew
 
-    config = part.toConfig();
+    config = part.toConfig()
 
-    bindingDialog = PartialDialogOptionsBinding.inflate(activity.getLayoutInflater());
-    binding = bindingDialog.partialOptions;
+    bindingDialog = PartialDialogOptionsBinding.inflate(activity.layoutInflater)
+    binding = bindingDialog?.partialOptions
 
-    dialogUtil.createDialog(builder -> {
-      String title = activity.getString(
-          R.string.label_part_edit, part.getPartIndex() + 1
-      );
+    dialogUtil?.createDialog { builder ->
+      var title = activity.getString(R.string.label_part_edit, part.partIndex + 1)
       if (isNew) {
-        title = activity.getString(R.string.action_add_part);
+        title = activity.getString(R.string.action_add_part)
       }
-      builder.setTitle(title);
-      builder.setView(bindingDialog.getRoot());
+      builder.setTitle(title)
+      builder.setView(bindingDialog?.root)
       builder.setPositiveButton(
-          isNew ? R.string.action_add : R.string.action_apply,
-          (dialog, which) -> {
-            activity.performHapticClick();
-            if (onPartEditListener != null) {
-              Part partResult = new Part(part);
-              partResult.setConfig(config);
-              if (isNew) {
-                onPartEditListener.onPartAdded(partResult);
-              } else {
-                onPartEditListener.onPartUpdated(partResult);
-              }
-            }
-          });
-      builder.setNegativeButton(
-          R.string.action_cancel,
-          (dialog, which) -> activity.performHapticClick()
-      );
-    });
+        if (isNew) R.string.action_add else R.string.action_apply
+      ) { _, _ ->
+        activity.performHapticClick()
+        onPartEditListener?.let { listener ->
+          val partResult = part.copy()
+          config?.let { partResult.setConfig(it) }
+          if (isNew) {
+            listener.onPartAdded(partResult)
+          } else {
+            listener.onPartUpdated(partResult)
+          }
+        }
+      }
+      builder.setNegativeButton(R.string.action_cancel) { _, _ ->
+        activity.performHapticClick()
+      }
+    }
 
-    update();
+    update()
   }
 
-  public void update() {
-    if (binding == null) {
-      return;
-    }
-    binding.linearOptionsEditPartContainer.setVisibility(editPart ? View.VISIBLE : View.GONE);
-    binding.linearOptionsUseCurrentConfig.setOnClickListener(this);
-    updateTempo();
-    updateBeats(false);
-    updateSubdivisions(false);
-    updateCountIn();
-    updateIncremental();
-    updateTimer();
-    updateMute();
-    updateSwing();
-    updatePolyrhythm();
+  fun update() {
+    val b = binding ?: return
+    b.linearOptionsEditPartContainer.visibility = if (editPart) View.VISIBLE else View.GONE
+    b.linearOptionsUseCurrentConfig.setOnClickListener(this)
+    updateTempo()
+    updateBeats(false)
+    updateSubdivisions(false)
+    updateCountIn()
+    updateIncremental()
+    updateTimer()
+    updateMute()
+    updateSwing()
+    updatePolyrhythm()
   }
 
-  private void updateTempo() {
-    if (!editPart || getConfig() == null) {
-      return;
+  private fun updateTempo() {
+    val config = configInternal ?: return
+    val b = binding ?: return
+    val tempo = config.tempo
+    b.textOptionsTempo.text = activity.getString(R.string.label_bpm_value, tempo)
+
+    val tempoFactor = (tempo - 1) / ticksMaxPerRange
+    val tempoFromNew = 1 + tempoFactor * ticksMaxPerRange
+    val tempoToNew = tempoFromNew + ticksMaxPerRange - 1
+
+    b.buttonOptionsTempoDecrease.isEnabled = tempoFromNew > Constants.TEMPO_MIN
+    b.buttonOptionsTempoDecrease.setOnClickListener(this)
+    b.buttonOptionsTempoDecrease.setTooltipText(R.string.action_decrease)
+
+    b.buttonOptionsTempoIncrease.isEnabled = tempoToNew < Constants.TEMPO_MAX
+    b.buttonOptionsTempoIncrease.setOnClickListener(this)
+    b.buttonOptionsTempoIncrease.setTooltipText(R.string.action_increase)
+
+    b.sliderOptionsTempo.removeOnChangeListener(this)
+    b.sliderOptionsTempo.configureSafely(
+      tempoFromNew, tempoToNew, 1, tempo
+    )
+    b.sliderOptionsTempo.addOnChangeListener(this)
+    b.sliderOptionsTempo.setLabelFormatter { value ->
+      activity.getString(R.string.label_bpm_value, value.toInt())
     }
-    int tempo = getConfig().getTempo();
-    binding.textOptionsTempo.setText(activity.getString(R.string.label_bpm_value, tempo));
-
-    // Calculate current range
-    int tempoFactor = (tempo - 1) / ticksMaxPerRange;
-    int tempoFromNew = 1 + tempoFactor * ticksMaxPerRange;
-    int tempoToNew = tempoFromNew + ticksMaxPerRange - 1;
-
-    binding.buttonOptionsTempoDecrease.setEnabled(tempoFromNew > Constants.TEMPO_MIN);
-    binding.buttonOptionsTempoDecrease.setOnClickListener(this);
-    ViewCompat.setTooltipText(
-        binding.buttonOptionsTempoDecrease, activity.getString(R.string.action_decrease)
-    );
-
-    binding.buttonOptionsTempoIncrease.setEnabled(tempoToNew < Constants.TEMPO_MAX);
-    binding.buttonOptionsTempoIncrease.setOnClickListener(this);
-    ViewCompat.setTooltipText(
-        binding.buttonOptionsTempoIncrease, activity.getString(R.string.action_increase)
-    );
-
-    binding.sliderOptionsTempo.removeOnChangeListener(this);
-    ViewUtil.configureSliderSafely(
-        binding.sliderOptionsTempo, tempoFromNew, tempoToNew, 1, tempo
-    );
-    binding.sliderOptionsTempo.addOnChangeListener(this);
-    binding.sliderOptionsTempo.setLabelFormatter(
-        value -> activity.getString(R.string.label_bpm_value, (int) value)
-    );
   }
 
-  private void updateBeats(boolean firstSubChanged) {
-    if (!editPart || getConfig() == null) {
-      return;
-    }
-    String[] beats = getConfig().getBeats();
-    boolean isFirstSubMuted = getConfig().isFirstSubdivisionMuted();
+  private fun updateBeats(firstSubChanged: Boolean) {
+    val config = configInternal ?: return
+    val b = binding ?: return
+    val beats = config.beats
+    val isFirstSubMuted = config.isFirstSubdivisionMuted()
 
     if (firstSubChanged) {
-      for (int i = 0; i < binding.linearOptionsBeats.getChildCount(); i++) {
-        BeatView beatView = (BeatView) binding.linearOptionsBeats.getChildAt(i);
+      for (i in 0 until b.linearOptionsBeats.childCount) {
+        val beatView = b.linearOptionsBeats.getChildAt(i) as BeatView
         if (usePolyrhythm) {
-          boolean muted = isFirstSubMuted && i == 0;
-          beatView.setTickType(muted ? TICK_TYPE.MUTED : beats[i] , true);
+          val muted = isFirstSubMuted && i == 0
+          beatView.setTickType(if (muted) TICK_TYPE.MUTED else beats[i], true)
         } else {
-          beatView.setTickType(isFirstSubMuted ? TICK_TYPE.MUTED : beats[i], true);
+          beatView.setTickType(if (isFirstSubMuted) TICK_TYPE.MUTED else beats[i], true)
         }
       }
-      // Only update tick types, no need to rebuild views
-      return;
+      return
     }
 
-    String[] beatsMaybeMuted = beats.clone();
+    val beatsMaybeMuted = beats.clone()
     if (isFirstSubMuted) {
-      Arrays.fill(beatsMaybeMuted, TICK_TYPE.MUTED);
+      beatsMaybeMuted.fill(TICK_TYPE.MUTED)
     }
-    String[] currentBeats = new String[binding.linearOptionsBeats.getChildCount()];
-    for (int i = 0; i < binding.linearOptionsBeats.getChildCount(); i++) {
-      currentBeats[i] = String.valueOf(binding.linearOptionsBeats.getChildAt(i));
+    val currentBeats = Array(b.linearOptionsBeats.childCount) {
+      b.linearOptionsBeats.getChildAt(it).toString()
     }
 
-    if (Arrays.equals(beatsMaybeMuted, currentBeats)) {
-      return;
-    } else if (beatsMaybeMuted.length == currentBeats.length) {
-      for (int i = 0; i < beatsMaybeMuted.length; i++) {
-        BeatView beatView = (BeatView) binding.linearOptionsBeats.getChildAt(i);
-        beatView.setTickType(beatsMaybeMuted[i], false);
+    if (beatsMaybeMuted.contentEquals(currentBeats)) {
+      return
+    } else if (beatsMaybeMuted.size == currentBeats.size) {
+      for (i in beatsMaybeMuted.indices) {
+        val beatView = b.linearOptionsBeats.getChildAt(i) as BeatView
+        beatView.setTickType(beatsMaybeMuted[i], false)
       }
     } else {
-      binding.linearOptionsBeats.removeAllViews();
-      for (int i = 0; i < beats.length; i++) {
-        BeatView beatView = getNewBeatView(false);
-        beatView.setTickType(beatsMaybeMuted[i], false);
-        beatView.setIndex(i);
-        binding.linearOptionsBeats.addView(beatView);
+      b.linearOptionsBeats.removeAllViews()
+      for (i in beatsMaybeMuted.indices) {
+        val beatView = getNewBeatView(false)
+        beatView.setTickType(beatsMaybeMuted[i], false)
+        beatView.setIndex(i)
+        b.linearOptionsBeats.addView(beatView)
       }
     }
 
-    binding.linearOptionsBeats.post(
-        () -> ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsBeats)
-    );
+    b.linearOptionsBeats.post {
+      b.scrollHorizOptionsBeats.centerScrollContentIfNotFullWidth()
+    }
 
-    updateBeatControls();
+    updateBeatControls()
   }
 
-  private void updateBeatControls() {
-    if (!editPart || getConfig() == null) {
-      return;
-    }
-    int beatsCount = getConfig().getBeatsCount();
-    binding.textOptionsBeats.setText(
-        activity.getResources().getQuantityString(
-            R.plurals.options_beats_description, beatsCount, beatsCount
-        )
-    );
-    binding.buttonOptionsBeatsAdd.setOnClickListener(this);
-    binding.buttonOptionsBeatsAdd.setEnabled(beatsCount < Constants.BEATS_MAX);
-    binding.buttonOptionsBeatsRemove.setOnClickListener(this);
-    binding.buttonOptionsBeatsRemove.setEnabled(beatsCount > 1);
+  private fun updateBeatControls() {
+    val config = configInternal ?: return
+    val b = binding ?: return
+    val beatsCount = config.getBeatsCount()
+    b.textOptionsBeats.text = activity.resources.getQuantityString(
+      R.plurals.options_beats_description, beatsCount, beatsCount
+    )
+    b.buttonOptionsBeatsAdd.setOnClickListener(this)
+    b.buttonOptionsBeatsAdd.isEnabled = beatsCount < Constants.BEATS_MAX
+    b.buttonOptionsBeatsRemove.setOnClickListener(this)
+    b.buttonOptionsBeatsRemove.isEnabled = beatsCount > 1
   }
 
-  private void updateSubdivisions(boolean firstSubChanged) {
-    if (!editPart || getConfig() == null) {
-      return;
-    }
-    String[] subdivisions = getConfig().getSubdivisions();
-    boolean isFirstSubMuted = getConfig().isFirstSubdivisionMuted();
+  private fun updateSubdivisions(firstSubChanged: Boolean) {
+    val config = configInternal ?: return
+    val b = binding ?: return
+    val subdivisions = config.subdivisions
+    val isFirstSubMuted = config.isFirstSubdivisionMuted()
 
     if (firstSubChanged) {
-      BeatView beatView = (BeatView) binding.linearOptionsSubs.getChildAt(0);
+      val beatView = b.linearOptionsSubs.getChildAt(0) as BeatView
       beatView.setTickType(
-          isFirstSubMuted ? TICK_TYPE.BEAT_SUB_MUTED : TICK_TYPE.BEAT_SUB, true
-      );
-      // Only update first tick type, no need to rebuild views
-      return;
+        if (isFirstSubMuted) TICK_TYPE.BEAT_SUB_MUTED else TICK_TYPE.BEAT_SUB, true
+      )
+      return
     }
 
-    String[] currentSubs = new String[binding.linearOptionsSubs.getChildCount()];
-    for (int i = 0; i < binding.linearOptionsSubs.getChildCount(); i++) {
-      currentSubs[i] = String.valueOf(binding.linearOptionsSubs.getChildAt(i));
+    val currentSubs = Array(b.linearOptionsSubs.childCount) {
+      b.linearOptionsSubs.getChildAt(it).toString()
     }
-    if (Arrays.equals(subdivisions, currentSubs)) {
-      return;
-    } else if (subdivisions.length == currentSubs.length) {
-      for (int i = 0; i < subdivisions.length; i++) {
-        BeatView beatView = (BeatView) binding.linearOptionsSubs.getChildAt(i);
-        beatView.setTickType(subdivisions[i], false);
+    if (subdivisions.contentEquals(currentSubs)) {
+      return
+    } else if (subdivisions.size == currentSubs.size) {
+      for (i in subdivisions.indices) {
+        val beatView = b.linearOptionsSubs.getChildAt(i) as BeatView
+        beatView.setTickType(subdivisions[i], false)
       }
     } else {
-      binding.linearOptionsSubs.removeAllViews();
-      for (int i = 0; i < subdivisions.length; i++) {
-        BeatView beatView = getNewBeatView(true);
-        String tickType = subdivisions[i];
-        if (i == 0 && tickType.equals(TICK_TYPE.MUTED)) {
-          // Migration from old muted first subdivision
-          tickType = TICK_TYPE.BEAT_SUB;
+      b.linearOptionsSubs.removeAllViews()
+      for (i in subdivisions.indices) {
+        val beatView = getNewBeatView(true)
+        var tickType = subdivisions[i]
+        if (i == 0 && tickType == TICK_TYPE.MUTED) {
+          tickType = TICK_TYPE.BEAT_SUB
         }
-        beatView.setTickType(tickType, false);
-        beatView.setIndex(i);
-        binding.linearOptionsSubs.addView(beatView);
+        beatView.setTickType(tickType, false)
+        beatView.setIndex(i)
+        b.linearOptionsSubs.addView(beatView)
       }
     }
 
-    binding.linearOptionsSubs.post(
-        () -> ViewUtil.centerScrollContentIfNotFullWidth(binding.scrollHorizOptionsSubs)
-    );
+    b.linearOptionsSubs.post {
+      b.scrollHorizOptionsSubs.centerScrollContentIfNotFullWidth()
+    }
 
-    updateSubControls();
+    updateSubControls()
   }
 
-  private void updateSubControls() {
-    if (!editPart || getConfig() == null) {
-      return;
-    }
-    int subdivisionsCount = getConfig().getSubdivisionsCount();
-    boolean isSubdivisionActive = getConfig().isSubdivisionActive();
+  private fun updateSubControls() {
+    val config = configInternal ?: return
+    val b = binding ?: return
+    val subdivisionsCount = config.getSubdivisionsCount()
+    val isSubdivisionActive = config.isSubdivisionActive()
     if (isSubdivisionActive) {
-      binding.textOptionsSubs.setText(
-          activity.getResources().getQuantityString(
-              R.plurals.options_subdivisions_description, subdivisionsCount, subdivisionsCount
-          )
-      );
-    } else if (getConfig().isFirstSubdivisionMuted()) {
-      binding.textOptionsSubs.setText(R.string.options_subdivisions_beats_muted);
+      b.textOptionsSubs.text = activity.resources.getQuantityString(
+        R.plurals.options_subdivisions_description, subdivisionsCount, subdivisionsCount
+      )
+    } else if (config.isFirstSubdivisionMuted()) {
+      b.textOptionsSubs.setText(R.string.options_subdivisions_beats_muted)
     } else {
-      binding.textOptionsSubs.setText(R.string.options_inactive);
+      b.textOptionsSubs.setText(R.string.options_inactive)
     }
-    binding.buttonOptionsSubsAdd.setOnClickListener(this);
-    binding.buttonOptionsSubsAdd.setEnabled(subdivisionsCount < Constants.SUBS_MAX);
-    binding.buttonOptionsSubsRemove.setOnClickListener(this);
-    binding.buttonOptionsSubsRemove.setEnabled(subdivisionsCount > 1);
+    b.buttonOptionsSubsAdd.setOnClickListener(this)
+    b.buttonOptionsSubsAdd.isEnabled = subdivisionsCount < Constants.SUBS_MAX
+    b.buttonOptionsSubsRemove.setOnClickListener(this)
+    b.buttonOptionsSubsRemove.isEnabled = subdivisionsCount > 1
   }
 
-  @NonNull
-  private BeatView getNewBeatView(boolean isSubdivision) {
-    BeatView beatView = new BeatView(activity);
-    beatView.setIsSubdivision(isSubdivision);
-    beatView.setOnClickListener(beat -> {
-      MetronomeConfig config = getConfig();
-      if (config == null) {
-        return;
-      }
-      activity.performHapticClick();
+  private fun getNewBeatView(isSubdivision: Boolean): BeatView {
+    val beatView = BeatView(activity)
+    beatView.setIsSubdivision(isSubdivision)
+    beatView.setOnClickListener {
+      val config = configInternal ?: return@setOnClickListener
+      activity.performHapticClick()
 
       if (isSubdivision) {
-        config.setSubdivision(beatView.getIndex(), beatView.nextTickType());
-        if (beatView.getIndex() == 0) {
-          // Update all beats if first subdivision was changed (muted or not)
-          updateBeats(true);
+        config.setSubdivision(beatView.index, beatView.nextTickType())
+        if (beatView.index == 0) {
+          updateBeats(true)
         }
       } else {
         if (config.isFirstSubdivisionMuted()) {
-          config.setSubdivision(0, TICK_TYPE.BEAT_SUB);
-          updateBeats(true);
-          updateSubdivisions(true);
+          config.setSubdivision(0, TICK_TYPE.BEAT_SUB)
+          updateBeats(true)
+          updateSubdivisions(true)
         } else {
-          config.setBeat(beatView.getIndex(), beatView.nextTickType());
+          config.setBeat(beatView.index, beatView.nextTickType())
         }
       }
-      // Maybe change description
-      updateSubControls();
-    });
-    return beatView;
+      updateSubControls()
+    }
+    return beatView
   }
 
-  private void updateCountIn() {
-    if (getConfig() == null) {
-      return;
-    }
-    boolean isCountInActive = getConfig().isCountInActive();
+  private fun updateCountIn() {
+    val config = configInternal ?: return
+    val b = binding ?: return
+    val isCountInActive = config.isCountInActive()
     if (this.isCountInActive != isCountInActive) {
-      this.isCountInActive = isCountInActive;
-      if (listener != null) {
-        listener.onModifiersCountChanged();
-      }
+      this.isCountInActive = isCountInActive
+      onOptionsListener?.onModifiersCountChanged()
     }
-    int countIn = getConfig().getCountIn();
-    binding.sliderOptionsCountIn.removeOnChangeListener(this);
-    ViewUtil.configureSliderSafely(
-        binding.sliderOptionsCountIn, 0, Constants.COUNT_IN_MAX, 1, countIn
-    );
-    binding.sliderOptionsCountIn.addOnChangeListener(this);
-    binding.sliderOptionsCountIn.setLabelFormatter(
-        value -> activity.getResources().getQuantityString(
-            R.plurals.options_unit_bars, (int) value, (int) value
-        )
-    );
-    if (getConfig().isCountInActive()) {
-      binding.textOptionsCountIn.setText(
-          activity.getResources().getQuantityString(
-              R.plurals.options_count_in_description, countIn, countIn
-          )
-      );
+    val countIn = config.countIn
+    b.sliderOptionsCountIn.removeOnChangeListener(this)
+    b.sliderOptionsCountIn.configureSafely(
+      0, Constants.COUNT_IN_MAX, 1, countIn
+    )
+    b.sliderOptionsCountIn.addOnChangeListener(this)
+    b.sliderOptionsCountIn.setLabelFormatter { value ->
+      activity.resources.getQuantityString(
+        R.plurals.options_unit_bars, value.toInt(), value.toInt()
+      )
+    }
+    if (config.isCountInActive()) {
+      b.textOptionsCountIn.text = activity.resources.getQuantityString(
+        R.plurals.options_count_in_description, countIn, countIn
+      )
     } else {
-      binding.textOptionsCountIn.setText(R.string.options_inactive);
+      b.textOptionsCountIn.setText(R.string.options_inactive)
     }
 
-    binding.linearOptionsCountInContainer.setBackgroundResource(
-        editPart
-            ? R.drawable.ripple_list_item_bg_segmented_middle
-            : R.drawable.ripple_list_item_bg_segmented_first
-    );
+    b.linearOptionsCountInContainer.setBackgroundResource(
+      if (editPart) R.drawable.ripple_list_item_bg_segmented_middle
+      else R.drawable.ripple_list_item_bg_segmented_first
+    )
   }
 
-  private void updateIncremental() {
-    if (getConfig() == null) {
-      return;
-    }
-    int incrementalAmount = getConfig().getIncrementalAmount();
-    boolean incrementalIncrease = getConfig().isIncrementalIncrease();
-    boolean isIncrementalActive = getConfig().isIncrementalActive();
+  private fun updateIncremental() {
+    val config = configInternal ?: return
+    val b = binding ?: return
+    val incrementalAmount = config.incrementalAmount
+    val incrementalIncrease = config.incrementalIncrease
+    val isIncrementalActive = config.isIncrementalActive()
     if (this.isIncrementalActive != isIncrementalActive) {
-      this.isIncrementalActive = isIncrementalActive;
-      if (listener != null) {
-        listener.onModifiersCountChanged();
-      }
+      this.isIncrementalActive = isIncrementalActive
+      onOptionsListener?.onModifiersCountChanged()
     }
     if (isIncrementalActive) {
-      binding.textOptionsIncrementalAmount.setText(activity.getString(
-          incrementalIncrease
-              ? R.string.options_incremental_amount_increase
-              : R.string.options_incremental_amount_decrease,
-          incrementalAmount
-      ));
+      b.textOptionsIncrementalAmount.text = activity.getString(
+        if (incrementalIncrease) R.string.options_incremental_amount_increase
+        else R.string.options_incremental_amount_decrease,
+        incrementalAmount
+      )
     } else {
-      binding.textOptionsIncrementalAmount.setText(R.string.options_inactive);
+      b.textOptionsIncrementalAmount.setText(R.string.options_inactive)
     }
 
-    // Calculate current range
-    int factorAmount = incrementalAmount / ticksMaxPerRange;
-    int valueFromNewAmount = factorAmount * ticksMaxPerRange;
-    int valueToNewAmount = Math.min(
-        valueFromNewAmount + ticksMaxPerRange - 1, Constants.INCREMENTAL_AMOUNT_MAX
-    );
+    val factorAmount = incrementalAmount / ticksMaxPerRange
+    val valueFromNewAmount = factorAmount * ticksMaxPerRange
+    val valueToNewAmount = minOf(
+      valueFromNewAmount + ticksMaxPerRange - 1, Constants.INCREMENTAL_AMOUNT_MAX
+    )
 
-    binding.buttonOptionsIncrementalAmountDecrease.setEnabled(valueFromNewAmount > 0);
-    binding.buttonOptionsIncrementalAmountDecrease.setOnClickListener(this);
-    ViewCompat.setTooltipText(
-        binding.buttonOptionsIncrementalAmountDecrease,
-        activity.getString(R.string.action_decrease)
-    );
+    b.buttonOptionsIncrementalAmountDecrease.isEnabled = valueFromNewAmount > 0
+    b.buttonOptionsIncrementalAmountDecrease.setOnClickListener(this)
+    b.buttonOptionsIncrementalAmountDecrease.setTooltipText(R.string.action_decrease)
 
-    binding.buttonOptionsIncrementalAmountIncrease.setEnabled(
-        valueToNewAmount < Constants.INCREMENTAL_AMOUNT_MAX
-    );
-    binding.buttonOptionsIncrementalAmountIncrease.setOnClickListener(this);
-    ViewCompat.setTooltipText(
-        binding.buttonOptionsIncrementalAmountIncrease,
-        activity.getString(R.string.action_increase)
-    );
+    b.buttonOptionsIncrementalAmountIncrease.isEnabled =
+      valueToNewAmount < Constants.INCREMENTAL_AMOUNT_MAX
+    b.buttonOptionsIncrementalAmountIncrease.setOnClickListener(this)
+    b.buttonOptionsIncrementalAmountIncrease.setTooltipText(R.string.action_increase)
 
-    binding.sliderOptionsIncrementalAmount.removeOnChangeListener(this);
-    ViewUtil.configureSliderSafely(
-        binding.sliderOptionsIncrementalAmount,
-        valueFromNewAmount, valueToNewAmount, 1, incrementalAmount
-    );
-    binding.sliderOptionsIncrementalAmount.addOnChangeListener(this);
-    binding.sliderOptionsIncrementalAmount.setLabelFormatter(
-        value -> activity.getString(R.string.label_bpm_value, (int) value)
-    );
+    b.sliderOptionsIncrementalAmount.removeOnChangeListener(this)
+    b.sliderOptionsIncrementalAmount.configureSafely(
+      valueFromNewAmount, valueToNewAmount, 1, incrementalAmount
+    )
+    b.sliderOptionsIncrementalAmount.addOnChangeListener(this)
+    b.sliderOptionsIncrementalAmount.setLabelFormatter { value ->
+      activity.getString(R.string.label_bpm_value, value.toInt())
+    }
 
-    int visibilityOld = binding.linearOptionsIncrementalContainer.getVisibility();
-    int visibilityNew = (isIncrementalActive || !useDialog) ? View.VISIBLE : View.GONE;
+    val visibilityOld = b.linearOptionsIncrementalContainer.visibility
+    val visibilityNew = if (isIncrementalActive || !useDialog) View.VISIBLE else View.GONE
     if (visibilityOld != visibilityNew) {
-      Transition transition = new AutoTransition();
-      transition.setDuration(Constants.ANIM_DURATION_SHORT);
-      TransitionManager.beginDelayedTransition(binding.linearOptionsContainer, transition);
-      binding.linearOptionsIncrementalContainer.setVisibility(visibilityNew);
-    }
-
-    binding.toggleOptionsIncrementalDirection.removeOnButtonCheckedListener(this);
-    binding.toggleOptionsIncrementalDirection.check(
-        incrementalIncrease
-            ? R.id.button_options_incremental_increase
-            : R.id.button_options_incremental_decrease
-    );
-    binding.toggleOptionsIncrementalDirection.addOnButtonCheckedListener(this);
-    binding.toggleOptionsIncrementalDirection.setEnabled(isIncrementalActive);
-
-    int incrementalInterval = getConfig().getIncrementalInterval();
-    String incrementalUnit = getConfig().getIncrementalUnit();
-    int intervalResId, checkedId;
-    switch (incrementalUnit) {
-      case UNIT.SECONDS:
-        intervalResId = R.plurals.options_incremental_interval_seconds;
-        checkedId = R.id.button_options_incremental_unit_seconds;
-        break;
-      case UNIT.MINUTES:
-        intervalResId = R.plurals.options_incremental_interval_minutes;
-        checkedId = R.id.button_options_incremental_unit_minutes;
-        break;
-      default:
-        intervalResId = R.plurals.options_incremental_interval_bars;
-        checkedId = R.id.button_options_incremental_unit_bars;
-        break;
-    }
-    binding.textOptionsIncrementalInterval.setText(
-        activity.getResources().getQuantityString(
-            intervalResId, incrementalInterval, incrementalInterval
-        )
-    );
-    binding.textOptionsIncrementalInterval.setAlpha(isIncrementalActive ? 1 : 0.5f);
-
-    // Calculate current range
-    int intervalFactor = (incrementalInterval - 1) / ticksMaxPerRange;
-    int intervalFromNew = 1 + intervalFactor * ticksMaxPerRange;
-    int intervalToNew = Math.min(
-        intervalFromNew + ticksMaxPerRange - 1, Constants.INCREMENTAL_INTERVAL_MAX
-    );
-
-    binding.buttonOptionsIncrementalIntervalDecrease.setEnabled(
-        isIncrementalActive && intervalFromNew > 1
-    );
-    binding.buttonOptionsIncrementalIntervalDecrease.setOnClickListener(this);
-    ViewCompat.setTooltipText(
-        binding.buttonOptionsIncrementalIntervalDecrease,
-        activity.getString(R.string.action_decrease)
-    );
-
-    binding.buttonOptionsIncrementalIntervalIncrease.setEnabled(
-        isIncrementalActive && intervalToNew < Constants.INCREMENTAL_INTERVAL_MAX
-    );
-    binding.buttonOptionsIncrementalIntervalIncrease.setOnClickListener(this);
-    ViewCompat.setTooltipText(
-        binding.buttonOptionsIncrementalIntervalIncrease,
-        activity.getString(R.string.action_increase)
-    );
-
-    binding.sliderOptionsIncrementalInterval.removeOnChangeListener(this);
-    ViewUtil.configureSliderSafely(
-        binding.sliderOptionsIncrementalInterval,
-        intervalFromNew, intervalToNew, 1, incrementalInterval
-    );
-    binding.sliderOptionsIncrementalInterval.addOnChangeListener(this);
-    binding.sliderOptionsIncrementalInterval.setLabelFormatter(value -> {
-      int resId;
-      switch (incrementalUnit) {
-        case UNIT.SECONDS:
-          resId = R.plurals.options_unit_seconds;
-          break;
-        case UNIT.MINUTES:
-          resId = R.plurals.options_unit_minutes;
-          break;
-        default:
-          resId = R.plurals.options_unit_bars;
-          break;
+      val transition = AutoTransition().apply {
+        duration = Constants.ANIM_DURATION_SHORT
       }
-      int interval = (int) value;
-      return activity.getResources().getQuantityString(resId, interval, interval);
-    });
-    binding.sliderOptionsIncrementalInterval.setEnabled(isIncrementalActive);
-
-    binding.toggleOptionsIncrementalUnit.removeOnButtonCheckedListener(this);
-    binding.toggleOptionsIncrementalUnit.check(checkedId);
-    binding.toggleOptionsIncrementalUnit.addOnButtonCheckedListener(this);
-    binding.toggleOptionsIncrementalUnit.setEnabled(isIncrementalActive);
-
-    int incrementalLimit = getConfig().getIncrementalLimit();
-    /* When slider should be automatically adjusted to tempo
-    int tempo = getMetronomeEngine().getTempo();
-    if ((incrementalIncrease && incrementalLimit < tempo)
-        || (!incrementalIncrease && incrementalLimit > tempo)
-    ) {
-      //getMetronomeEngine().setIncrementalLimit(tempo);
-      //incrementalLimit = tempo;
-    } */
-    if (incrementalLimit > 0) {
-      binding.textOptionsIncrementalLimit.setText(
-          activity.getResources().getString(
-              incrementalIncrease
-                  ? R.string.options_incremental_max
-                  : R.string.options_incremental_min,
-              incrementalLimit
-          )
-      );
-    } else {
-      binding.textOptionsIncrementalLimit.setText(
-          incrementalIncrease
-              ? R.string.options_incremental_no_max
-              : R.string.options_incremental_no_min
-      );
+      TransitionManager.beginDelayedTransition(b.linearOptionsContainer, transition)
+      b.linearOptionsIncrementalContainer.visibility = visibilityNew
     }
-    binding.textOptionsIncrementalLimit.setAlpha(isIncrementalActive ? 1 : 0.5f);
 
-    // Calculate current range
-    int factor = incrementalLimit / ticksMaxPerRange;
-    int valueFromNew = factor * ticksMaxPerRange;
-    int valueToNew = Math.min(
-        valueFromNew + ticksMaxPerRange - 1, Constants.TEMPO_MAX - 1
-    );
+    b.toggleOptionsIncrementalDirection.removeOnButtonCheckedListener(this)
+    b.toggleOptionsIncrementalDirection.check(
+      if (incrementalIncrease) R.id.button_options_incremental_increase
+      else R.id.button_options_incremental_decrease
+    )
+    b.toggleOptionsIncrementalDirection.addOnButtonCheckedListener(this)
+    b.toggleOptionsIncrementalDirection.isEnabled = isIncrementalActive
 
-    binding.buttonOptionsIncrementalLimitDecrease.setEnabled(
-        isIncrementalActive && valueFromNew > 0
-    );
-    binding.buttonOptionsIncrementalLimitDecrease.setOnClickListener(this);
-    ViewCompat.setTooltipText(
-        binding.buttonOptionsIncrementalLimitDecrease,
-        activity.getString(R.string.action_decrease)
-    );
+    val incrementalInterval = config.incrementalInterval
+    val incrementalUnit = config.incrementalUnit
+    val (intervalResId, checkedId) = when (incrementalUnit) {
+      UNIT.SECONDS -> R.plurals.options_incremental_interval_seconds to
+          R.id.button_options_incremental_unit_seconds
 
-    binding.buttonOptionsIncrementalLimitIncrease.setEnabled(
-        isIncrementalActive && valueToNew < Constants.TEMPO_MAX - 1
-    );
-    binding.buttonOptionsIncrementalLimitIncrease.setOnClickListener(this);
-    ViewCompat.setTooltipText(
-        binding.buttonOptionsIncrementalLimitIncrease,
-        activity.getString(R.string.action_increase)
-    );
+      UNIT.MINUTES -> R.plurals.options_incremental_interval_minutes to
+          R.id.button_options_incremental_unit_minutes
 
-    binding.sliderOptionsIncrementalLimit.removeOnChangeListener(this);
-    ViewUtil.configureSliderSafely(
-        binding.sliderOptionsIncrementalLimit,
-        valueFromNew, valueToNew, 1, incrementalLimit
-    );
-    binding.sliderOptionsIncrementalLimit.addOnChangeListener(this);
-    binding.sliderOptionsIncrementalLimit.setLabelFormatter(
-        value -> activity.getString(R.string.label_bpm_value, (int) value)
-    );
-    binding.sliderOptionsIncrementalLimit.setEnabled(isIncrementalActive);
+      else -> R.plurals.options_incremental_interval_bars to
+          R.id.button_options_incremental_unit_bars
+    }
+    b.textOptionsIncrementalInterval.text = activity.resources.getQuantityString(
+      intervalResId, incrementalInterval, incrementalInterval
+    )
+    b.textOptionsIncrementalInterval.alpha = if (isIncrementalActive) 1f else 0.5f
+
+    val intervalFactor = (incrementalInterval - 1) / ticksMaxPerRange
+    val intervalFromNew = 1 + intervalFactor * ticksMaxPerRange
+    val intervalToNew = minOf(
+      intervalFromNew + ticksMaxPerRange - 1, Constants.INCREMENTAL_INTERVAL_MAX
+    )
+
+    b.buttonOptionsIncrementalIntervalDecrease.isEnabled =
+      isIncrementalActive && intervalFromNew > 1
+    b.buttonOptionsIncrementalIntervalDecrease.setOnClickListener(this)
+    b.buttonOptionsIncrementalIntervalDecrease.setTooltipText(R.string.action_decrease)
+
+    b.buttonOptionsIncrementalIntervalIncrease.isEnabled =
+      isIncrementalActive && intervalToNew < Constants.INCREMENTAL_INTERVAL_MAX
+    b.buttonOptionsIncrementalIntervalIncrease.setOnClickListener(this)
+    b.buttonOptionsIncrementalIntervalIncrease.setTooltipText(R.string.action_increase)
+
+    b.sliderOptionsIncrementalInterval.removeOnChangeListener(this)
+    b.sliderOptionsIncrementalInterval.configureSafely(
+      intervalFromNew, intervalToNew, 1, incrementalInterval
+    )
+    b.sliderOptionsIncrementalInterval.addOnChangeListener(this)
+    b.sliderOptionsIncrementalInterval.setLabelFormatter { value ->
+      val resId = when (incrementalUnit) {
+        UNIT.SECONDS -> R.plurals.options_unit_seconds
+        UNIT.MINUTES -> R.plurals.options_unit_minutes
+        else -> R.plurals.options_unit_bars
+      }
+      val interval = value.toInt()
+      activity.resources.getQuantityString(resId, interval, interval)
+    }
+    b.sliderOptionsIncrementalInterval.isEnabled = isIncrementalActive
+
+    b.toggleOptionsIncrementalUnit.removeOnButtonCheckedListener(this)
+    b.toggleOptionsIncrementalUnit.check(checkedId)
+    b.toggleOptionsIncrementalUnit.addOnButtonCheckedListener(this)
+    b.toggleOptionsIncrementalUnit.isEnabled = isIncrementalActive
+
+    val incrementalLimit = config.incrementalLimit
+    if (incrementalLimit > 0) {
+      b.textOptionsIncrementalLimit.text = activity.resources.getString(
+        if (incrementalIncrease) R.string.options_incremental_max
+        else R.string.options_incremental_min,
+        incrementalLimit
+      )
+    } else {
+      b.textOptionsIncrementalLimit.setText(
+        if (incrementalIncrease) R.string.options_incremental_no_max
+        else R.string.options_incremental_no_min
+      )
+    }
+    b.textOptionsIncrementalLimit.alpha = if (isIncrementalActive) 1f else 0.5f
+
+    val factor = incrementalLimit / ticksMaxPerRange
+    val valueFromNew = factor * ticksMaxPerRange
+    val valueToNew = minOf(valueFromNew + ticksMaxPerRange - 1, Constants.TEMPO_MAX - 1)
+
+    b.buttonOptionsIncrementalLimitDecrease.isEnabled = isIncrementalActive && valueFromNew > 0
+    b.buttonOptionsIncrementalLimitDecrease.setOnClickListener(this)
+    b.buttonOptionsIncrementalLimitDecrease.setTooltipText(R.string.action_decrease)
+
+    b.buttonOptionsIncrementalLimitIncrease.isEnabled =
+      isIncrementalActive && valueToNew < Constants.TEMPO_MAX - 1
+    b.buttonOptionsIncrementalLimitIncrease.setOnClickListener(this)
+    b.buttonOptionsIncrementalLimitIncrease.setTooltipText(R.string.action_increase)
+
+    b.sliderOptionsIncrementalLimit.removeOnChangeListener(this)
+    b.sliderOptionsIncrementalLimit.configureSafely(
+      valueFromNew, valueToNew, 1, incrementalLimit
+    )
+    b.sliderOptionsIncrementalLimit.addOnChangeListener(this)
+    b.sliderOptionsIncrementalLimit.setLabelFormatter { value ->
+      activity.getString(R.string.label_bpm_value, value.toInt())
+    }
+    b.sliderOptionsIncrementalLimit.isEnabled = isIncrementalActive
   }
 
-  private void updateTimer() {
-    if (getConfig() == null) {
-      return;
-    }
-    int timerDuration = getConfig().getTimerDuration();
-    boolean isTimerActive = getConfig().isTimerActive();
+  private fun updateTimer() {
+    val config = configInternal ?: return
+    val b = binding ?: return
+    val timerDuration = config.timerDuration
+    val isTimerActive = config.isTimerActive()
     if (this.isTimerActive != isTimerActive) {
-      this.isTimerActive = isTimerActive;
-      if (listener != null) {
-        listener.onModifiersCountChanged();
-      }
+      this.isTimerActive = isTimerActive
+      onOptionsListener?.onModifiersCountChanged()
     }
-    String timerUnit = getConfig().getTimerUnit();
-    int durationResId, checkedId;
-    switch (timerUnit) {
-      case UNIT.SECONDS:
-        durationResId = R.plurals.options_timer_description_seconds;
-        checkedId = R.id.button_options_timer_unit_seconds;
-        break;
-      case UNIT.MINUTES:
-        durationResId = R.plurals.options_timer_description_minutes;
-        checkedId = R.id.button_options_timer_unit_minutes;
-        break;
-      default:
-        durationResId = R.plurals.options_timer_description_bars;
-        checkedId = R.id.button_options_timer_unit_bars;
-        break;
+    val timerUnit = config.timerUnit
+    val (durationResId, checkedId) = when (timerUnit) {
+      UNIT.SECONDS -> R.plurals.options_timer_description_seconds to
+          R.id.button_options_timer_unit_seconds
+
+      UNIT.MINUTES -> R.plurals.options_timer_description_minutes to
+          R.id.button_options_timer_unit_minutes
+
+      else -> R.plurals.options_timer_description_bars to
+          R.id.button_options_timer_unit_bars
     }
     if (isTimerActive) {
-      binding.textOptionsTimerDuration.setText(
-          activity.getResources().getQuantityString(durationResId, timerDuration, timerDuration)
-      );
+      b.textOptionsTimerDuration.text = activity.resources.getQuantityString(
+        durationResId, timerDuration, timerDuration
+      )
     } else {
-      binding.textOptionsTimerDuration.setText(R.string.options_inactive);
+      b.textOptionsTimerDuration.setText(R.string.options_inactive)
     }
 
-    // Calculate current range
-    int factor = timerDuration / ticksMaxPerRange;
-    int valueFromNew = factor * ticksMaxPerRange;
-    int valueToNew = Math.min(valueFromNew + ticksMaxPerRange - 1, Constants.TIMER_MAX);
+    val factor = timerDuration / ticksMaxPerRange
+    val valueFromNew = factor * ticksMaxPerRange
+    val valueToNew = minOf(valueFromNew + ticksMaxPerRange - 1, Constants.TIMER_MAX)
 
-    binding.buttonOptionsTimerDecrease.setEnabled(valueFromNew > 0);
-    binding.buttonOptionsTimerDecrease.setOnClickListener(this);
-    ViewCompat.setTooltipText(
-        binding.buttonOptionsTimerDecrease,
-        activity.getString(R.string.action_decrease)
-    );
+    b.buttonOptionsTimerDecrease.isEnabled = valueFromNew > 0
+    b.buttonOptionsTimerDecrease.setOnClickListener(this)
+    b.buttonOptionsTimerDecrease.setTooltipText(R.string.action_decrease)
 
-    binding.buttonOptionsTimerIncrease.setEnabled(valueToNew < Constants.TIMER_MAX);
-    binding.buttonOptionsTimerIncrease.setOnClickListener(this);
-    ViewCompat.setTooltipText(
-        binding.buttonOptionsTimerIncrease,
-        activity.getString(R.string.action_increase)
-    );
+    b.buttonOptionsTimerIncrease.isEnabled = valueToNew < Constants.TIMER_MAX
+    b.buttonOptionsTimerIncrease.setOnClickListener(this)
+    b.buttonOptionsTimerIncrease.setTooltipText(R.string.action_increase)
 
-    binding.sliderOptionsTimerDuration.removeOnChangeListener(this);
-    ViewUtil.configureSliderSafely(
-        binding.sliderOptionsTimerDuration,
-        valueFromNew, valueToNew, 1, timerDuration
-    );
-    binding.sliderOptionsTimerDuration.addOnChangeListener(this);
-    binding.sliderOptionsTimerDuration.setLabelFormatter(value -> {
-      int resId;
-      switch (timerUnit) {
-        case UNIT.SECONDS:
-          resId = R.plurals.options_unit_seconds;
-          break;
-        case UNIT.MINUTES:
-          resId = R.plurals.options_unit_minutes;
-          break;
-        default:
-          resId = R.plurals.options_unit_bars;
-          break;
+    b.sliderOptionsTimerDuration.removeOnChangeListener(this)
+    b.sliderOptionsTimerDuration.configureSafely(
+      valueFromNew, valueToNew, 1, timerDuration
+    )
+    b.sliderOptionsTimerDuration.addOnChangeListener(this)
+    b.sliderOptionsTimerDuration.setLabelFormatter { value ->
+      val resId = when (timerUnit) {
+        UNIT.SECONDS -> R.plurals.options_unit_seconds
+        UNIT.MINUTES -> R.plurals.options_unit_minutes
+        else -> R.plurals.options_unit_bars
       }
-      int interval = (int) value;
-      return activity.getResources().getQuantityString(resId, interval, interval);
-    });
-
-    int visibilityOld = binding.linearOptionsTimerContainer.getVisibility();
-    int visibilityNew = (isTimerActive || !useDialog) ? View.VISIBLE : View.GONE;
-    if (visibilityOld != visibilityNew) {
-      Transition transition = new AutoTransition();
-      transition.setDuration(Constants.ANIM_DURATION_SHORT);
-      TransitionManager.beginDelayedTransition(binding.linearOptionsContainer, transition);
-      binding.linearOptionsTimerContainer.setVisibility(visibilityNew);
+      val interval = value.toInt()
+      activity.resources.getQuantityString(resId, interval, interval)
     }
 
-    binding.toggleOptionsTimerUnit.removeOnButtonCheckedListener(this);
-    binding.toggleOptionsTimerUnit.check(checkedId);
-    binding.toggleOptionsTimerUnit.addOnButtonCheckedListener(this);
-    binding.toggleOptionsTimerUnit.setEnabled(isTimerActive);
+    val visibilityOld = b.linearOptionsTimerContainer.visibility
+    val visibilityNew = if (isTimerActive || !useDialog) View.VISIBLE else View.GONE
+    if (visibilityOld != visibilityNew) {
+      val transition = AutoTransition().apply {
+        duration = Constants.ANIM_DURATION_SHORT
+      }
+      TransitionManager.beginDelayedTransition(b.linearOptionsContainer, transition)
+      b.linearOptionsTimerContainer.visibility = visibilityNew
+    }
+
+    b.toggleOptionsTimerUnit.removeOnButtonCheckedListener(this)
+    b.toggleOptionsTimerUnit.check(checkedId)
+    b.toggleOptionsTimerUnit.addOnButtonCheckedListener(this)
+    b.toggleOptionsTimerUnit.isEnabled = isTimerActive
   }
 
-  private void updateMute() {
-    if (getConfig() == null) {
-      return;
-    }
-    int mutePlay = getConfig().getMutePlay();
-    int muteMute = getConfig().getMuteMute();
-    String muteUnit = getConfig().getMuteUnit();
-    boolean isUnitBeats = muteUnit.equals(UNIT.BEATS);
-    boolean muteRandom = getConfig().isMuteRandom();
-    boolean isMuteActive = getConfig().isMuteActive();
+  private fun updateMute() {
+    val config = configInternal ?: return
+    val b = binding ?: return
+    val mutePlay = config.mutePlay
+    val muteMute = config.muteMute
+    val muteUnit = config.muteUnit
+    val isUnitBeats = muteUnit == UNIT.BEATS
+    val muteRandom = config.muteRandom
+    val isMuteActive = config.isMuteActive()
     if (this.isMuteActive != isMuteActive) {
-      this.isMuteActive = isMuteActive;
-      if (listener != null) {
-        listener.onModifiersCountChanged();
-      }
+      this.isMuteActive = isMuteActive
+      onOptionsListener?.onModifiersCountChanged()
     }
 
-    // Mute Play
+    val showPlay = !isUnitBeats
+    val visibilityPlayOld = b.linearOptionsMutePlay.visibility
+    val visibilityPlayNew = if (showPlay) View.VISIBLE else View.GONE
+    val visibilityPlayChanged = visibilityPlayOld != visibilityPlayNew
 
-    boolean showPlay = !isUnitBeats;
-    int visibilityPlayOld = binding.linearOptionsMutePlay.getVisibility();
-    int visibilityPlayNew = showPlay ? View.VISIBLE : View.GONE;
-    boolean visibilityPlayChanged = visibilityPlayOld != visibilityPlayNew;
-
-    int resIdPlay, resIdLabelPlay;
-    if (muteUnit.equals(UNIT.SECONDS)) {
-      resIdPlay = R.plurals.options_mute_play_seconds;
-      resIdLabelPlay = R.plurals.options_unit_seconds;
+    val (resIdPlay, resIdLabelPlay) = if (muteUnit == UNIT.SECONDS) {
+      R.plurals.options_mute_play_seconds to R.plurals.options_unit_seconds
     } else {
-      resIdPlay = R.plurals.options_mute_play_bars;
-      resIdLabelPlay = R.plurals.options_unit_bars;
+      R.plurals.options_mute_play_bars to R.plurals.options_unit_bars
     }
     if (showPlay) {
       if (isMuteActive) {
-        binding.textOptionsMutePlay.setText(
-            activity.getResources().getQuantityString(resIdPlay, mutePlay, mutePlay)
-        );
+        b.textOptionsMutePlay.text = activity.resources.getQuantityString(
+          resIdPlay, mutePlay, mutePlay
+        )
       } else {
-        binding.textOptionsMutePlay.setText(R.string.options_inactive);
+        b.textOptionsMutePlay.setText(R.string.options_inactive)
       }
     }
 
-    binding.sliderOptionsMutePlay.removeOnChangeListener(this);
-    ViewUtil.configureSliderSafely(
-        binding.sliderOptionsMutePlay, 0, Constants.MUTE_PLAY_MAX, 1, mutePlay
-    );
-    binding.sliderOptionsMutePlay.addOnChangeListener(this);
-    binding.sliderOptionsMutePlay.setLabelFormatter(value -> {
-      int play = (int) value;
-      return activity.getResources().getQuantityString(resIdLabelPlay, play, play);
-    });
+    b.sliderOptionsMutePlay.removeOnChangeListener(this)
+    b.sliderOptionsMutePlay.configureSafely(
+      0, Constants.MUTE_PLAY_MAX, 1, mutePlay
+    )
+    b.sliderOptionsMutePlay.addOnChangeListener(this)
+    b.sliderOptionsMutePlay.setLabelFormatter { value ->
+      val play = value.toInt()
+      activity.resources.getQuantityString(resIdLabelPlay, play, play)
+    }
 
-    // Mute Mute
+    val showMute = isUnitBeats || isMuteActive || !useDialog
+    val visibilityMuteOld = b.linearOptionsMuteMute.visibility
+    val visibilityMuteNew = if (showMute) View.VISIBLE else View.GONE
+    val visibilityMuteChanged = visibilityMuteOld != visibilityMuteNew
 
-    boolean showMute = isUnitBeats || isMuteActive || !useDialog;
-    int visibilityMuteOld = binding.linearOptionsMuteMute.getVisibility();
-    int visibilityMuteNew = showMute ? View.VISIBLE : View.GONE;
-    boolean visibilityMuteChanged = visibilityMuteOld != visibilityMuteNew;
-
-    int resIdMute, resIdLabelMute;
-    if (muteUnit.equals(UNIT.SECONDS)) {
-      resIdMute = R.plurals.options_mute_mute_seconds;
-      resIdLabelMute = R.plurals.options_unit_seconds;
-    } else if (muteUnit.equals(UNIT.BARS)) {
-      resIdMute = R.plurals.options_mute_mute_bars;
-      resIdLabelMute = R.plurals.options_unit_bars;
-    } else {
-      resIdMute = 0;
-      resIdLabelMute = R.plurals.options_unit_beats;
+    val (resIdMute, resIdLabelMute) = when (muteUnit) {
+      UNIT.SECONDS -> R.plurals.options_mute_mute_seconds to R.plurals.options_unit_seconds
+      UNIT.BARS -> R.plurals.options_mute_mute_bars to R.plurals.options_unit_bars
+      else -> 0 to R.plurals.options_unit_beats
     }
     if (isUnitBeats && isMuteActive) {
-      binding.textOptionsMuteMute.setText(
-          activity.getString(R.string.options_mute_mute_beats, muteMute)
-      );
+      b.textOptionsMuteMute.text = activity.getString(
+        R.string.options_mute_mute_beats, muteMute
+      )
     } else if (isUnitBeats) {
-      binding.textOptionsMuteMute.setText(R.string.options_inactive);
+      b.textOptionsMuteMute.setText(R.string.options_inactive)
     } else {
-      binding.textOptionsMuteMute.setText(
-          activity.getResources().getQuantityString(resIdMute, muteMute, muteMute)
-      );
+      b.textOptionsMuteMute.text = activity.resources.getQuantityString(
+        resIdMute, muteMute, muteMute
+      )
     }
-    binding.textOptionsMuteMute.setAlpha(isUnitBeats || isMuteActive ? 1 : 0.5f);
+    b.textOptionsMuteMute.alpha = if (isUnitBeats || isMuteActive) 1f else 0.5f
 
-    binding.sliderOptionsMuteMute.removeOnChangeListener(this);
-    ViewUtil.configureSliderSafely(
-        binding.sliderOptionsMuteMute,
-        isUnitBeats ? Constants.MUTE_MUTE_MIN_BEATS : Constants.MUTE_MUTE_MIN,
-        isUnitBeats ? Constants.MUTE_MUTE_MAX_BEATS : Constants.MUTE_MUTE_MAX,
-        isUnitBeats ? Constants.MUTE_MUTE_STEP_SIZE_BEATS : Constants.MUTE_MUTE_STEP_SIZE,
-        muteMute
-    );
-    binding.sliderOptionsMuteMute.addOnChangeListener(this);
-    binding.sliderOptionsMuteMute.setLabelFormatter(value -> {
-      int mute = (int) value;
+    b.sliderOptionsMuteMute.removeOnChangeListener(this)
+    b.sliderOptionsMuteMute.configureSafely(
+      if (isUnitBeats) Constants.MUTE_MUTE_MIN_BEATS else Constants.MUTE_MUTE_MIN,
+      if (isUnitBeats) Constants.MUTE_MUTE_MAX_BEATS else Constants.MUTE_MUTE_MAX,
+      if (isUnitBeats) Constants.MUTE_MUTE_STEP_SIZE_BEATS
+      else Constants.MUTE_MUTE_STEP_SIZE,
+      muteMute
+    )
+    b.sliderOptionsMuteMute.addOnChangeListener(this)
+    b.sliderOptionsMuteMute.setLabelFormatter { value ->
+      val mute = value.toInt()
       if (isUnitBeats) {
-        return activity.getString(R.string.options_mute_mute_beats, mute);
+        activity.getString(R.string.options_mute_mute_beats, mute)
       } else {
-        return activity.getResources().getQuantityString(resIdLabelMute, mute, mute);
+        activity.resources.getQuantityString(resIdLabelMute, mute, mute)
       }
-    });
-    binding.sliderOptionsMuteMute.setEnabled(isUnitBeats || isMuteActive);
-
-    // Mute Unit
-
-    boolean showUnit = isMuteActive || !useDialog;
-    int visibilityUnitOld = binding.scrollHorizOptionsMuteUnit.getVisibility();
-    int visibilityUnitNew = showUnit ? View.VISIBLE : View.GONE;
-    boolean visibleUnitChanged = visibilityUnitOld != visibilityUnitNew;
-
-    int checkedId;
-    if (muteUnit.equals(UNIT.SECONDS)) {
-      checkedId = R.id.button_options_mute_unit_seconds;
-    } else if (muteUnit.equals(UNIT.BARS)) {
-      checkedId = R.id.button_options_mute_unit_bars;
-    } else {
-      checkedId = R.id.button_options_mute_unit_beats;
     }
-    binding.toggleOptionsMuteUnit.removeOnButtonCheckedListener(this);
-    binding.toggleOptionsMuteUnit.check(checkedId);
-    binding.toggleOptionsMuteUnit.addOnButtonCheckedListener(this);
-    binding.toggleOptionsMuteUnit.setEnabled(isMuteActive);
+    b.sliderOptionsMuteMute.isEnabled = isUnitBeats || isMuteActive
 
-    // Mute Random
+    val showUnit = isMuteActive || !useDialog
+    val visibilityUnitOld = b.scrollHorizOptionsMuteUnit.visibility
+    val visibilityUnitNew = if (showUnit) View.VISIBLE else View.GONE
+    val visibleUnitChanged = visibilityUnitOld != visibilityUnitNew
 
-    boolean showRandom = !isUnitBeats && (isMuteActive || !useDialog);
-    int visibilityRandomOld = binding.linearOptionsMuteRandom.getVisibility();
-    int visibilityRandomNew = showRandom ? View.VISIBLE : View.GONE;
-    boolean visibilityRandomChanged = visibilityRandomOld != visibilityRandomNew;
+    val checkedId = when (muteUnit) {
+      UNIT.SECONDS -> R.id.button_options_mute_unit_seconds
+      UNIT.BARS -> R.id.button_options_mute_unit_bars
+      else -> R.id.button_options_mute_unit_beats
+    }
+    b.toggleOptionsMuteUnit.removeOnButtonCheckedListener(this)
+    b.toggleOptionsMuteUnit.check(checkedId)
+    b.toggleOptionsMuteUnit.addOnButtonCheckedListener(this)
+    b.toggleOptionsMuteUnit.isEnabled = isMuteActive
 
-    binding.linearOptionsMuteRandom.setOnClickListener(this);
-    binding.linearOptionsMuteRandom.setEnabled(isMuteActive);
-    binding.linearOptionsMuteRandom.setBackgroundResource(
-        useDialog
-            ? R.drawable.ripple_list_item_surface_bright
-            : R.drawable.ripple_list_item_bg
-    );
-    binding.textOptionsMuteRandom.setAlpha(isMuteActive ? 1 : 0.5f);
-    binding.switchOptionsMuteRandom.setOnCheckedChangeListener(null);
-    binding.switchOptionsMuteRandom.setChecked(muteRandom);
-    binding.switchOptionsMuteRandom.setOnCheckedChangeListener(
-        (buttonView, isChecked) -> {
-          activity.performHapticClick();
-          if (editPart && getConfig() != null) {
-            getConfig().setMuteRandom(isChecked);
-          } else if (activity.getMetronomeEngine() != null) {
-            activity.getMetronomeEngine().setMuteRandom(isChecked);
-            activity.getMetronomeEngine().maybeUpdateDefaultSong();
-          }
-          updateMute();
-        });
-    binding.switchOptionsMuteRandom.setEnabled(isMuteActive);
+    val showRandom = !isUnitBeats && (isMuteActive || !useDialog)
+    val visibilityRandomOld = b.linearOptionsMuteRandom.visibility
+    val visibilityRandomNew = if (showRandom) View.VISIBLE else View.GONE
+    val visibilityRandomChanged = visibilityRandomOld != visibilityRandomNew
+
+    b.linearOptionsMuteRandom.setOnClickListener(this)
+    b.linearOptionsMuteRandom.isEnabled = isMuteActive
+    b.linearOptionsMuteRandom.setBackgroundResource(
+      if (useDialog) R.drawable.ripple_list_item_surface_bright
+      else R.drawable.ripple_list_item_bg
+    )
+    b.textOptionsMuteRandom.alpha = if (isMuteActive) 1f else 0.5f
+    b.switchOptionsMuteRandom.setOnCheckedChangeListener(null)
+    b.switchOptionsMuteRandom.isChecked = muteRandom
+    b.switchOptionsMuteRandom.setOnCheckedChangeListener { _, isChecked ->
+      activity.performHapticClick()
+      if (editPart && configInternal != null) {
+        configInternal?.muteRandom = isChecked
+      } else {
+        activity.metronomeEngine?.let { engine ->
+          engine.setMuteRandom(isChecked)
+          engine.maybeUpdateDefaultSong()
+        }
+      }
+      updateMute()
+    }
+    b.switchOptionsMuteRandom.isEnabled = isMuteActive
 
     if (visibilityPlayChanged || visibilityMuteChanged
-        || visibleUnitChanged || visibilityRandomChanged
+      || visibleUnitChanged || visibilityRandomChanged
     ) {
-      Transition transition = new AutoTransition();
-      transition.setDuration(Constants.ANIM_DURATION_SHORT);
-      TransitionManager.beginDelayedTransition(binding.linearOptionsContainer, transition);
+      val transition = AutoTransition().apply {
+        duration = Constants.ANIM_DURATION_SHORT
+      }
+      TransitionManager.beginDelayedTransition(b.linearOptionsContainer, transition)
     }
 
-    if (visibilityPlayChanged) {
-      binding.linearOptionsMutePlay.setVisibility(visibilityPlayNew);
-    }
-    if (visibilityMuteChanged) {
-      binding.linearOptionsMuteMute.setVisibility(visibilityMuteNew);
-    }
-    if (visibleUnitChanged) {
-      binding.scrollHorizOptionsMuteUnit.setVisibility(visibilityUnitNew);
-    }
-    if (visibilityRandomChanged) {
-      binding.linearOptionsMuteRandom.setVisibility(visibilityRandomNew);
-    }
+    if (visibilityPlayChanged) b.linearOptionsMutePlay.visibility = visibilityPlayNew
+    if (visibilityMuteChanged) b.linearOptionsMuteMute.visibility = visibilityMuteNew
+    if (visibleUnitChanged) b.scrollHorizOptionsMuteUnit.visibility = visibilityUnitNew
+    if (visibilityRandomChanged) b.linearOptionsMuteRandom.visibility = visibilityRandomNew
   }
 
-  public void updateSwing() {
-    if (getConfig() == null) {
-      return;
-    }
-    boolean isSwingActive = getConfig().isSwingActive();
+  fun updateSwing() {
+    val config = configInternal ?: return
+    val b = binding ?: return
+    val isSwingActive = config.isSwingActive()
 
-    binding.textOptionsSwing.setText(
-        isSwingActive ? R.string.options_swing_description : R.string.options_inactive
-    );
+    b.textOptionsSwing.setText(
+      if (isSwingActive) R.string.options_swing_description else R.string.options_inactive
+    )
 
-    binding.toggleOptionsSwing.removeOnButtonCheckedListener(this);
-    if (getConfig().isSwing3()) {
-      binding.toggleOptionsSwing.check(R.id.button_options_swing_3);
-    } else if (getConfig().isSwing5()) {
-      binding.toggleOptionsSwing.check(R.id.button_options_swing_5);
-    } else if (getConfig().isSwing7()) {
-      binding.toggleOptionsSwing.check(R.id.button_options_swing_7);
-    } else {
-      binding.toggleOptionsSwing.clearChecked();
+    b.toggleOptionsSwing.removeOnButtonCheckedListener(this)
+    when {
+      config.isSwing3() -> b.toggleOptionsSwing.check(R.id.button_options_swing_3)
+      config.isSwing5() -> b.toggleOptionsSwing.check(R.id.button_options_swing_5)
+      config.isSwing7() -> b.toggleOptionsSwing.check(R.id.button_options_swing_7)
+      else -> b.toggleOptionsSwing.clearChecked()
     }
-    binding.toggleOptionsSwing.addOnButtonCheckedListener(this);
+    b.toggleOptionsSwing.addOnButtonCheckedListener(this)
   }
 
-  private void updatePolyrhythm() {
-    if (getConfig() == null) {
-      return;
-    }
-    boolean usePolyrhythm = getConfig().usePolyrhythm();
+  private fun updatePolyrhythm() {
+    val config = configInternal ?: return
+    val b = binding ?: return
+    val usePolyrhythm = config.usePolyrhythm
     if (this.usePolyrhythm != usePolyrhythm) {
-      this.usePolyrhythm = usePolyrhythm;
-      if (listener != null) {
-        listener.onModifiersCountChanged();
-      }
+      this.usePolyrhythm = usePolyrhythm
+      onOptionsListener?.onModifiersCountChanged()
     }
 
-    binding.linearOptionsPolyrhythm.setOnClickListener(this);
-    binding.switchOptionsPolyrhythm.setOnCheckedChangeListener(null);
-    binding.switchOptionsPolyrhythm.setChecked(usePolyrhythm);
-    binding.switchOptionsPolyrhythm.setOnCheckedChangeListener(
-        (buttonView, isChecked) -> {
-          activity.performHapticClick();
-          if (editPart && getConfig() != null) {
-            getConfig().setUsePolyrhythm(isChecked);
-          } else if (activity.getMetronomeEngine() != null) {
-            activity.getMetronomeEngine().setUsePolyrhythm(isChecked);
-            activity.getMetronomeEngine().maybeUpdateDefaultSong();
-            activity.getMetronomeEngine().restartIfPlaying(false);
-          }
-          updatePolyrhythm();
-          if (!editPart && listener != null) {
-            listener.onBeatsChanged();
-          }
-          updateBeats(true);
-        });
-  }
-
-  @Override
-  public void onClick(View v) {
-    MetronomeConfig config = getConfig();
-    MetronomeEngine metronomeEngine = activity.getMetronomeEngine();
-    if (config == null || metronomeEngine == null) {
-      return;
-    }
-    int id = v.getId();
-    if (id == R.id.linear_options_use_current_config) {
-      activity.performHapticClick();
-      this.config = new MetronomeConfig(metronomeEngine.getConfig());
-      update();
-    } else if (id == R.id.button_options_tempo_decrease) {
-      activity.performHapticClick();
-      int valueFrom = (int) binding.sliderOptionsTempo.getValueFrom();
-      int valueTo = (int) binding.sliderOptionsTempo.getValueTo();
-      int range = valueTo - valueFrom;
-      int decreasedTempo = config.getTempo() - range - 1;
-      if (editPart) {
-        config.setTempo(decreasedTempo);
+    b.linearOptionsPolyrhythm.setOnClickListener(this)
+    b.switchOptionsPolyrhythm.setOnCheckedChangeListener(null)
+    b.switchOptionsPolyrhythm.isChecked = usePolyrhythm
+    b.switchOptionsPolyrhythm.setOnCheckedChangeListener { _, isChecked ->
+      activity.performHapticClick()
+      if (editPart && configInternal != null) {
+        configInternal?.usePolyrhythm = isChecked
       } else {
-        metronomeEngine.setTempo(decreasedTempo);
-        metronomeEngine.maybeUpdateDefaultSong();
-      }
-      updateTempo();
-      ViewUtil.startIcon(binding.buttonOptionsTempoDecrease.getIcon());
-    } else if (id == R.id.button_options_tempo_increase) {
-      activity.performHapticClick();
-      int valueFrom = (int) binding.sliderOptionsTempo.getValueFrom();
-      int valueTo = (int) binding.sliderOptionsTempo.getValueTo();
-      int range = valueTo - valueFrom;
-      int increasedTempo = config.getTempo() + range + 1;
-      if (editPart) {
-        config.setTempo(increasedTempo);
-      } else {
-        metronomeEngine.setTempo(increasedTempo);
-        metronomeEngine.maybeUpdateDefaultSong();
-      }
-      updateTempo();
-      ViewUtil.startIcon(binding.buttonOptionsTempoIncrease.getIcon());
-    } else if (id == R.id.button_options_beats_add) {
-      activity.performHapticClick();
-      ViewUtil.startIcon(binding.buttonOptionsBeatsAdd.getIcon());
-      boolean success = config.addBeat();
-      if (success) {
-        Transition transition = new AutoTransition();
-        transition.setDuration(Constants.ANIM_DURATION_SHORT);
-        TransitionManager.beginDelayedTransition(binding.linearOptionsBeats, transition);
-
-        // already add new BeatView's width to centering calculation
-        ViewUtil.centerScrollContentIfNotFullWidth(
-            binding.scrollHorizOptionsBeats, UiUtil.dpToPx(activity, 48)
-        );
-
-        BeatView beatView = getNewBeatView(false);
-        boolean isFirstSubMuted = config.isFirstSubdivisionMuted();
-        beatView.setTickType(isFirstSubMuted ? TICK_TYPE.MUTED : TICK_TYPE.NORMAL, false);
-        beatView.setIndex(binding.linearOptionsBeats.getChildCount());
-        binding.linearOptionsBeats.addView(beatView);
-        updateBeatControls();
-      }
-    } else if (id == R.id.button_options_beats_remove) {
-      activity.performHapticClick();
-      ViewUtil.startIcon(binding.buttonOptionsBeatsRemove.getIcon());
-      boolean success = config.removeBeat();
-      if (success) {
-        Transition transition = new ChangeBounds();
-        transition.setDuration(Constants.ANIM_DURATION_SHORT);
-        TransitionManager.beginDelayedTransition(binding.linearOptionsBeats, transition);
-
-        // already remove old BeatView's width from centering calculation
-        ViewUtil.centerScrollContentIfNotFullWidth(
-            binding.scrollHorizOptionsBeats, -UiUtil.dpToPx(activity, 48)
-        );
-
-        binding.linearOptionsBeats.removeViewAt(
-            binding.linearOptionsBeats.getChildCount() - 1
-        );
-        updateBeatControls();
-      }
-    } else if (id == R.id.button_options_subs_add) {
-      activity.performHapticClick();
-      ViewUtil.startIcon(binding.buttonOptionsSubsAdd.getIcon());
-      boolean success = config.addSubdivision();
-      if (success) {
-        Transition transition = new AutoTransition();
-        transition.setDuration(Constants.ANIM_DURATION_SHORT);
-        TransitionManager.beginDelayedTransition(binding.linearOptionsSubs, transition);
-
-        // already add new BeatView's width to centering calculation
-        ViewUtil.centerScrollContentIfNotFullWidth(
-            binding.scrollHorizOptionsSubs, UiUtil.dpToPx(activity, 48)
-        );
-
-        BeatView beatView = getNewBeatView(true);
-        beatView.setIndex(binding.linearOptionsSubs.getChildCount());
-        binding.linearOptionsSubs.addView(beatView);
-        updateSubControls();
-      }
-    } else if (id == R.id.button_options_subs_remove) {
-      activity.performHapticClick();
-      ViewUtil.startIcon(binding.buttonOptionsSubsRemove.getIcon());
-      boolean success = config.removeSubdivision();
-      if (success) {
-        Transition transition = new ChangeBounds();
-        transition.setDuration(Constants.ANIM_DURATION_SHORT);
-        TransitionManager.beginDelayedTransition(binding.linearOptionsSubs, transition);
-
-        // already remove old BeatView's width from centering calculation
-        ViewUtil.centerScrollContentIfNotFullWidth(
-            binding.scrollHorizOptionsSubs, -UiUtil.dpToPx(activity, 48)
-        );
-
-        binding.linearOptionsSubs.removeViewAt(binding.linearOptionsSubs.getChildCount() - 1);
-        updateSubControls();
-      }
-    } else if (id == R.id.button_options_incremental_amount_decrease) {
-      activity.performHapticClick();
-      int decreasedAmount = config.getIncrementalAmount() - ticksMaxPerRange;
-      if (editPart) {
-        config.setIncrementalAmount(decreasedAmount);
-      } else {
-        metronomeEngine.setIncrementalAmount(decreasedAmount);
-        metronomeEngine.maybeUpdateDefaultSong();
-      }
-      updateIncremental();
-      ViewUtil.startIcon(binding.buttonOptionsIncrementalAmountDecrease.getIcon());
-    } else if (id == R.id.button_options_incremental_amount_increase) {
-      activity.performHapticClick();
-      int increasedAmount = config.getIncrementalAmount() + ticksMaxPerRange;
-      if (editPart) {
-        config.setIncrementalAmount(increasedAmount);
-      } else {
-        metronomeEngine.setIncrementalAmount(increasedAmount);
-        metronomeEngine.maybeUpdateDefaultSong();
-      }
-      updateIncremental();
-      ViewUtil.startIcon(binding.buttonOptionsIncrementalAmountIncrease.getIcon());
-    } else if (id == R.id.button_options_incremental_interval_decrease) {
-      activity.performHapticClick();
-      int decreasedInterval = config.getIncrementalInterval() - ticksMaxPerRange;
-      if (editPart) {
-        config.setIncrementalInterval(decreasedInterval);
-      } else {
-        metronomeEngine.setIncrementalInterval(decreasedInterval);
-        metronomeEngine.maybeUpdateDefaultSong();
-      }
-      updateIncremental();
-      ViewUtil.startIcon(binding.buttonOptionsIncrementalIntervalDecrease.getIcon());
-    } else if (id == R.id.button_options_incremental_interval_increase) {
-      activity.performHapticClick();
-      int increasedInterval = config.getIncrementalInterval() + ticksMaxPerRange;
-      if (editPart) {
-        config.setIncrementalInterval(increasedInterval);
-      } else {
-        metronomeEngine.setIncrementalInterval(increasedInterval);
-        metronomeEngine.maybeUpdateDefaultSong();
-      }
-      updateIncremental();
-      ViewUtil.startIcon(binding.buttonOptionsIncrementalIntervalIncrease.getIcon());
-    } else if (id == R.id.button_options_incremental_limit_decrease) {
-      activity.performHapticClick();
-      int decreasedLimit = config.getIncrementalLimit() - ticksMaxPerRange;
-      if (editPart) {
-        config.setIncrementalLimit(decreasedLimit);
-      } else {
-        metronomeEngine.setIncrementalLimit(decreasedLimit);
-        metronomeEngine.maybeUpdateDefaultSong();
-      }
-      updateIncremental();
-      ViewUtil.startIcon(binding.buttonOptionsIncrementalLimitDecrease.getIcon());
-    } else if (id == R.id.button_options_incremental_limit_increase) {
-      activity.performHapticClick();
-      int increasedLimit = config.getIncrementalLimit() + ticksMaxPerRange;
-      if (editPart) {
-        config.setIncrementalLimit(increasedLimit);
-      } else {
-        metronomeEngine.setIncrementalLimit(increasedLimit);
-        metronomeEngine.maybeUpdateDefaultSong();
-      }
-      updateIncremental();
-      ViewUtil.startIcon(binding.buttonOptionsIncrementalLimitIncrease.getIcon());
-    } else if (id == R.id.button_options_timer_decrease) {
-      activity.performHapticClick();
-      int decreasedDuration = config.getTimerDuration() - ticksMaxPerRange;
-      if (editPart) {
-        config.setTimerDuration(decreasedDuration);
-      } else {
-        metronomeEngine.setTimerDuration(decreasedDuration);
-        metronomeEngine.maybeUpdateDefaultSong();
-      }
-      updateTimer();
-      if (!editPart && listener != null) {
-        listener.onTimerChanged();
-      }
-      ViewUtil.startIcon(binding.buttonOptionsTimerDecrease.getIcon());
-    } else if (id == R.id.button_options_timer_increase) {
-      activity.performHapticClick();
-      int increasedDuration = config.getTimerDuration() + ticksMaxPerRange;
-      if (editPart) {
-        config.setTimerDuration(increasedDuration);
-      } else {
-        metronomeEngine.setTimerDuration(increasedDuration);
-        metronomeEngine.maybeUpdateDefaultSong();
-      }
-      updateTimer();
-      if (!editPart && listener != null) {
-        listener.onTimerChanged();
-      }
-      ViewUtil.startIcon(binding.buttonOptionsTimerIncrease.getIcon());
-    } else if (id == R.id.linear_options_mute_random) {
-      binding.switchOptionsMuteRandom.toggle();
-    } else if (id == R.id.linear_options_polyrhythm) {
-      binding.switchOptionsPolyrhythm.toggle();
-    }
-  }
-
-  @Override
-  public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
-    MetronomeConfig config = getConfig();
-    MetronomeEngine metronomeEngine = activity.getMetronomeEngine();
-    if (!isChecked || config == null || metronomeEngine == null) {
-      return;
-    }
-    activity.performHapticClick();
-    int groupId = group.getId();
-    if (groupId == R.id.toggle_options_incremental_direction) {
-      boolean incrementalIncrease = checkedId == R.id.button_options_incremental_increase;
-      if (editPart) {
-        config.setIncrementalIncrease(incrementalIncrease);
-      } else {
-        metronomeEngine.setIncrementalIncrease(incrementalIncrease);
-        metronomeEngine.maybeUpdateDefaultSong();
-      }
-      updateIncremental();
-    } else if (groupId == R.id.toggle_options_incremental_unit) {
-      String unit = UNIT.BARS;
-      if (checkedId == R.id.button_options_incremental_unit_seconds) {
-        unit = UNIT.SECONDS;
-      } else if (checkedId == R.id.button_options_incremental_unit_minutes) {
-        unit = UNIT.MINUTES;
-      }
-      if (editPart) {
-        config.setIncrementalUnit(unit);
-      } else {
-        metronomeEngine.setIncrementalUnit(unit);
-        metronomeEngine.maybeUpdateDefaultSong();
-      }
-      updateIncremental();
-    } else if (groupId == R.id.toggle_options_timer_unit) {
-      String unit = UNIT.BARS;
-      if (checkedId == R.id.button_options_timer_unit_seconds) {
-        unit = UNIT.SECONDS;
-      } else if (checkedId == R.id.button_options_timer_unit_minutes) {
-        unit = UNIT.MINUTES;
-      }
-      if (editPart) {
-        config.setTimerUnit(unit);
-      } else {
-        metronomeEngine.setTimerUnit(unit);
-        metronomeEngine.maybeUpdateDefaultSong();
-      }
-      updateTimer();
-      if (!editPart && listener != null) {
-        listener.onTimerChanged();
-      }
-    } else if (groupId == R.id.toggle_options_mute_unit) {
-      String unit = UNIT.BEATS;
-      if (checkedId == R.id.button_options_mute_unit_bars) {
-        unit = UNIT.BARS;
-      } else if (checkedId == R.id.button_options_mute_unit_seconds) {
-        unit = UNIT.SECONDS;
-      }
-      if (editPart) {
-        config.setMuteUnit(unit);
-      } else {
-        metronomeEngine.setMuteUnit(unit);
-        metronomeEngine.maybeUpdateDefaultSong();
-      }
-      updateMute();
-    } else if (groupId == R.id.toggle_options_swing) {
-      if (checkedId == R.id.button_options_swing_3) {
-        if (editPart) {
-          config.setSwing3();
-        } else {
-          metronomeEngine.setSwing3();
-          // config has not changed timer duration or timer unit so we can reuse it
-          if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
-            metronomeEngine.restartIfPlaying(false);
-          }
-          metronomeEngine.maybeUpdateDefaultSong();
-        }
-      } else if (checkedId == R.id.button_options_swing_5) {
-        if (editPart) {
-          config.setSwing5();
-        } else {
-          metronomeEngine.setSwing5();
-          if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
-            metronomeEngine.restartIfPlaying(false);
-          }
-          metronomeEngine.maybeUpdateDefaultSong();
-        }
-      } else if (checkedId == R.id.button_options_swing_7) {
-        if (editPart) {
-          config.setSwing7();
-        } else {
-          metronomeEngine.setSwing7();
-          if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
-            metronomeEngine.restartIfPlaying(false);
-          }
-          metronomeEngine.maybeUpdateDefaultSong();
+        activity.metronomeEngine?.let { engine ->
+          engine.setUsePolyrhythm(isChecked)
+          engine.maybeUpdateDefaultSong()
+          engine.restartIfPlaying(false)
         }
       }
-      updateSwing();
-      updateSubdivisions(false);
-      if (!editPart && listener != null) {
-        listener.onSubsChanged();
+      updatePolyrhythm()
+      if (!editPart) {
+        onOptionsListener?.onBeatsChanged()
+      }
+      updateBeats(true)
+    }
+  }
+
+  override fun onClick(v: View) {
+    val config = configInternal ?: return
+    val metronomeEngine = activity.metronomeEngine ?: return
+    val b = binding ?: return
+    val id = v.id
+    when (id) {
+      R.id.linear_options_use_current_config -> {
+        activity.performHapticClick()
+        this.config = MetronomeConfig(metronomeEngine.config)
+        update()
+      }
+
+      R.id.button_options_tempo_decrease -> {
+        activity.performHapticClick()
+        val valueFrom = b.sliderOptionsTempo.valueFrom.toInt()
+        val valueTo = b.sliderOptionsTempo.valueTo.toInt()
+        val range = valueTo - valueFrom
+        val decreasedTempo = config.tempo - range - 1
+        if (editPart) {
+          config.tempo = decreasedTempo
+        } else {
+          metronomeEngine.setTempo(decreasedTempo)
+          metronomeEngine.maybeUpdateDefaultSong()
+        }
+        updateTempo()
+        b.buttonOptionsTempoDecrease.icon.start()
+      }
+
+      R.id.button_options_tempo_increase -> {
+        activity.performHapticClick()
+        val valueFrom = b.sliderOptionsTempo.valueFrom.toInt()
+        val valueTo = b.sliderOptionsTempo.valueTo.toInt()
+        val range = valueTo - valueFrom
+        val increasedTempo = config.tempo + range + 1
+        if (editPart) {
+          config.tempo = increasedTempo
+        } else {
+          metronomeEngine.setTempo(increasedTempo)
+          metronomeEngine.maybeUpdateDefaultSong()
+        }
+        updateTempo()
+        b.buttonOptionsTempoIncrease.icon.start()
+      }
+
+      R.id.button_options_beats_add -> {
+        activity.performHapticClick()
+        b.buttonOptionsBeatsAdd.icon.start()
+        if (config.addBeat()) {
+          val transition = AutoTransition().apply {
+            duration = Constants.ANIM_DURATION_SHORT
+          }
+          TransitionManager.beginDelayedTransition(b.linearOptionsBeats, transition)
+
+          b.scrollHorizOptionsBeats.centerScrollContentIfNotFullWidth(
+            activity.dpToPx(48f)
+          )
+
+          val beatView = getNewBeatView(false)
+          val isFirstSubMuted = config.isFirstSubdivisionMuted()
+          beatView.setTickType(
+            if (isFirstSubMuted) TICK_TYPE.MUTED else TICK_TYPE.NORMAL, false
+          )
+          beatView.setIndex(b.linearOptionsBeats.childCount)
+          b.linearOptionsBeats.addView(beatView)
+          updateBeatControls()
+        }
+      }
+
+      R.id.button_options_beats_remove -> {
+        activity.performHapticClick()
+        b.buttonOptionsBeatsRemove.icon.start()
+        if (config.removeBeat()) {
+          val transition = ChangeBounds().apply {
+            duration = Constants.ANIM_DURATION_SHORT
+          }
+          TransitionManager.beginDelayedTransition(b.linearOptionsBeats, transition)
+
+          b.scrollHorizOptionsBeats.centerScrollContentIfNotFullWidth(
+            -activity.dpToPx(48f)
+          )
+
+          b.linearOptionsBeats.removeViewAt(b.linearOptionsBeats.childCount - 1)
+          updateBeatControls()
+        }
+      }
+
+      R.id.button_options_subs_add -> {
+        activity.performHapticClick()
+        b.buttonOptionsSubsAdd.icon.start()
+        if (config.addSubdivision()) {
+          val transition = AutoTransition().apply {
+            duration = Constants.ANIM_DURATION_SHORT
+          }
+          TransitionManager.beginDelayedTransition(b.linearOptionsSubs, transition)
+
+          b.scrollHorizOptionsSubs.centerScrollContentIfNotFullWidth(
+            activity.dpToPx(48f)
+          )
+
+          val beatView = getNewBeatView(true)
+          beatView.setIndex(b.linearOptionsSubs.childCount)
+          b.linearOptionsSubs.addView(beatView)
+          updateSubControls()
+        }
+      }
+
+      R.id.button_options_subs_remove -> {
+        activity.performHapticClick()
+        b.buttonOptionsSubsRemove.icon.start()
+        if (config.removeSubdivision()) {
+          val transition = ChangeBounds().apply {
+            duration = Constants.ANIM_DURATION_SHORT
+          }
+          TransitionManager.beginDelayedTransition(b.linearOptionsSubs, transition)
+
+          b.scrollHorizOptionsSubs.centerScrollContentIfNotFullWidth(
+            -activity.dpToPx(48f)
+          )
+
+          b.linearOptionsSubs.removeViewAt(b.linearOptionsSubs.childCount - 1)
+          updateSubControls()
+        }
+      }
+
+      R.id.button_options_incremental_amount_decrease -> {
+        activity.performHapticClick()
+        val decreasedAmount = config.incrementalAmount - ticksMaxPerRange
+        if (editPart) {
+          config.incrementalAmount = decreasedAmount
+        } else {
+          metronomeEngine.setIncrementalAmount(decreasedAmount)
+          metronomeEngine.maybeUpdateDefaultSong()
+        }
+        updateIncremental()
+        b.buttonOptionsIncrementalAmountDecrease.icon.start()
+      }
+
+      R.id.button_options_incremental_amount_increase -> {
+        activity.performHapticClick()
+        val increasedAmount = config.incrementalAmount + ticksMaxPerRange
+        if (editPart) {
+          config.incrementalAmount = increasedAmount
+        } else {
+          metronomeEngine.setIncrementalAmount(increasedAmount)
+          metronomeEngine.maybeUpdateDefaultSong()
+        }
+        updateIncremental()
+        b.buttonOptionsIncrementalAmountIncrease.icon.start()
+      }
+
+      R.id.button_options_incremental_interval_decrease -> {
+        activity.performHapticClick()
+        val decreasedInterval = config.incrementalInterval - ticksMaxPerRange
+        if (editPart) {
+          config.incrementalInterval = decreasedInterval
+        } else {
+          metronomeEngine.setIncrementalInterval(decreasedInterval)
+          metronomeEngine.maybeUpdateDefaultSong()
+        }
+        updateIncremental()
+        b.buttonOptionsIncrementalIntervalDecrease.icon.start()
+      }
+
+      R.id.button_options_incremental_interval_increase -> {
+        activity.performHapticClick()
+        val increasedInterval = config.incrementalInterval + ticksMaxPerRange
+        if (editPart) {
+          config.incrementalInterval = increasedInterval
+        } else {
+          metronomeEngine.setIncrementalInterval(increasedInterval)
+          metronomeEngine.maybeUpdateDefaultSong()
+        }
+        updateIncremental()
+        b.buttonOptionsIncrementalIntervalIncrease.icon.start()
+      }
+
+      R.id.button_options_incremental_limit_decrease -> {
+        activity.performHapticClick()
+        val decreasedLimit = config.incrementalLimit - ticksMaxPerRange
+        if (editPart) {
+          config.incrementalLimit = decreasedLimit
+        } else {
+          metronomeEngine.setIncrementalLimit(decreasedLimit)
+          metronomeEngine.maybeUpdateDefaultSong()
+        }
+        updateIncremental()
+        b.buttonOptionsIncrementalLimitDecrease.icon.start()
+      }
+
+      R.id.button_options_incremental_limit_increase -> {
+        activity.performHapticClick()
+        val increasedLimit = config.incrementalLimit + ticksMaxPerRange
+        if (editPart) {
+          config.incrementalLimit = increasedLimit
+        } else {
+          metronomeEngine.setIncrementalLimit(increasedLimit)
+          metronomeEngine.maybeUpdateDefaultSong()
+        }
+        updateIncremental()
+        b.buttonOptionsIncrementalLimitIncrease.icon.start()
+      }
+
+      R.id.button_options_timer_decrease -> {
+        activity.performHapticClick()
+        val decreasedDuration = config.timerDuration - ticksMaxPerRange
+        if (editPart) {
+          config.timerDuration = decreasedDuration
+        } else {
+          metronomeEngine.setTimerDuration(decreasedDuration)
+          metronomeEngine.maybeUpdateDefaultSong()
+        }
+        updateTimer()
+        if (!editPart) onOptionsListener?.onTimerChanged()
+        b.buttonOptionsTimerDecrease.icon.start()
+      }
+
+      R.id.button_options_timer_increase -> {
+        activity.performHapticClick()
+        val increasedDuration = config.timerDuration + ticksMaxPerRange
+        if (editPart) {
+          config.timerDuration = increasedDuration
+        } else {
+          metronomeEngine.setTimerDuration(increasedDuration)
+          metronomeEngine.maybeUpdateDefaultSong()
+        }
+        updateTimer()
+        if (!editPart) onOptionsListener?.onTimerChanged()
+        b.buttonOptionsTimerIncrease.icon.start()
+      }
+
+      R.id.linear_options_mute_random -> b.switchOptionsMuteRandom.toggle()
+      R.id.linear_options_polyrhythm -> b.switchOptionsPolyrhythm.toggle()
+    }
+  }
+
+  override fun onButtonChecked(
+    group: MaterialButtonToggleGroup,
+    checkedId: Int,
+    isChecked: Boolean
+  ) {
+    val config = configInternal ?: return
+    val metronomeEngine = activity.metronomeEngine ?: return
+    if (!isChecked) return
+    activity.performHapticClick()
+    val groupId = group.id
+    when (groupId) {
+      R.id.toggle_options_incremental_direction -> {
+        val incrementalIncrease = checkedId == R.id.button_options_incremental_increase
+        if (editPart) {
+          config.incrementalIncrease = incrementalIncrease
+        } else {
+          metronomeEngine.setIncrementalIncrease(incrementalIncrease)
+          metronomeEngine.maybeUpdateDefaultSong()
+        }
+        updateIncremental()
+      }
+
+      R.id.toggle_options_incremental_unit -> {
+        val unit = when (checkedId) {
+          R.id.button_options_incremental_unit_seconds -> UNIT.SECONDS
+          R.id.button_options_incremental_unit_minutes -> UNIT.MINUTES
+          else -> UNIT.BARS
+        }
+        if (editPart) {
+          config.incrementalUnit = unit
+        } else {
+          metronomeEngine.setIncrementalUnit(unit)
+          metronomeEngine.maybeUpdateDefaultSong()
+        }
+        updateIncremental()
+      }
+
+      R.id.toggle_options_timer_unit -> {
+        val unit = when (checkedId) {
+          R.id.button_options_timer_unit_seconds -> UNIT.SECONDS
+          R.id.button_options_timer_unit_minutes -> UNIT.MINUTES
+          else -> UNIT.BARS
+        }
+        if (editPart) {
+          config.timerUnit = unit
+        } else {
+          metronomeEngine.setTimerUnit(unit)
+          metronomeEngine.maybeUpdateDefaultSong()
+        }
+        updateTimer()
+        if (!editPart) onOptionsListener?.onTimerChanged()
+      }
+
+      R.id.toggle_options_mute_unit -> {
+        val unit = when (checkedId) {
+          R.id.button_options_mute_unit_bars -> UNIT.BARS
+          R.id.button_options_mute_unit_seconds -> UNIT.SECONDS
+          else -> UNIT.BEATS
+        }
+        if (editPart) {
+          config.muteUnit = unit
+        } else {
+          metronomeEngine.setMuteUnit(unit)
+          metronomeEngine.maybeUpdateDefaultSong()
+        }
+        updateMute()
+      }
+
+      R.id.toggle_options_swing -> {
+        when (checkedId) {
+          R.id.button_options_swing_3 -> {
+            if (editPart) {
+              config.setSwing3()
+            } else {
+              metronomeEngine.setSwing3()
+              if (config.isTimerActive() && config.timerUnit == UNIT.BARS) {
+                metronomeEngine.restartIfPlaying(false)
+              }
+              metronomeEngine.maybeUpdateDefaultSong()
+            }
+          }
+
+          R.id.button_options_swing_5 -> {
+            if (editPart) {
+              config.setSwing5()
+            } else {
+              metronomeEngine.setSwing5()
+              if (config.isTimerActive() && config.timerUnit == UNIT.BARS) {
+                metronomeEngine.restartIfPlaying(false)
+              }
+              metronomeEngine.maybeUpdateDefaultSong()
+            }
+          }
+
+          R.id.button_options_swing_7 -> {
+            if (editPart) {
+              config.setSwing7()
+            } else {
+              metronomeEngine.setSwing7()
+              if (config.isTimerActive() && config.timerUnit == UNIT.BARS) {
+                metronomeEngine.restartIfPlaying(false)
+              }
+              metronomeEngine.maybeUpdateDefaultSong()
+            }
+          }
+        }
+        updateSwing()
+        updateSubdivisions(false)
+        if (!editPart) onOptionsListener?.onSubsChanged()
       }
     }
   }
 
-  @Override
-  public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-    MetronomeConfig config = getConfig();
-    MetronomeEngine metronomeEngine = activity.getMetronomeEngine();
-    if (!fromUser || config == null || metronomeEngine == null) {
-      return;
-    }
-    int id = slider.getId();
-    if (id == R.id.slider_options_tempo) {
-      activity.performHapticSegmentTick(slider, true);
-      if (editPart) {
-        config.setTempo((int) value);
-      } else {
-        metronomeEngine.setTempo((int) value);
+  override fun onValueChange(slider: Slider, value: Float, fromUser: Boolean) {
+    val config = configInternal ?: return
+    val metronomeEngine = activity.metronomeEngine ?: return
+    if (!fromUser) return
+    val id = slider.id
+    when (id) {
+      R.id.slider_options_tempo -> {
+        activity.performHapticSegmentTick(slider, true)
+        if (editPart) config.tempo = value.toInt() else metronomeEngine.setTempo(value.toInt())
+        updateTempo()
       }
-      updateTempo();
-    } else if (id == R.id.slider_options_count_in) {
-      activity.performHapticSegmentTick(slider, false);
-      if (editPart) {
-        config.setCountIn((int) value);
-      } else {
-        metronomeEngine.setCountIn((int) value);
+
+      R.id.slider_options_count_in -> {
+        activity.performHapticSegmentTick(slider, false)
+        if (editPart) config.countIn = value.toInt() else metronomeEngine.setCountIn(value.toInt())
+        updateCountIn()
       }
-      updateCountIn();
-    } else if (id == R.id.slider_options_incremental_amount) {
-      activity.performHapticSegmentTick(slider, true);
-      if (editPart) {
-        config.setIncrementalAmount((int) value);
-      } else {
-        metronomeEngine.setIncrementalAmount((int) value);
+
+      R.id.slider_options_incremental_amount -> {
+        activity.performHapticSegmentTick(slider, true)
+        if (editPart) config.incrementalAmount =
+          value.toInt() else metronomeEngine.setIncrementalAmount(value.toInt())
+        updateIncremental()
       }
-      updateIncremental();
-    } else if (id == R.id.slider_options_incremental_interval) {
-      activity.performHapticSegmentTick(slider, true);
-      if (editPart) {
-        config.setIncrementalInterval((int) value);
-      } else {
-        metronomeEngine.setIncrementalInterval((int) value);
+
+      R.id.slider_options_incremental_interval -> {
+        activity.performHapticSegmentTick(slider, true)
+        if (editPart) config.incrementalInterval =
+          value.toInt() else metronomeEngine.setIncrementalInterval(value.toInt())
+        updateIncremental()
       }
-      updateIncremental();
-    } else if (id == R.id.slider_options_incremental_limit) {
-      activity.performHapticSegmentTick(slider, true);
-      if (editPart) {
-        config.setIncrementalLimit((int) value);
-      } else {
-        metronomeEngine.setIncrementalLimit((int) value);
+
+      R.id.slider_options_incremental_limit -> {
+        activity.performHapticSegmentTick(slider, true)
+        if (editPart) config.incrementalLimit =
+          value.toInt() else metronomeEngine.setIncrementalLimit(value.toInt())
+        updateIncremental()
       }
-      updateIncremental();
-    } else if (id == R.id.slider_options_timer_duration) {
-      activity.performHapticSegmentTick(slider, true);
-      if (editPart) {
-        config.setTimerDuration((int) value);
-      } else {
-        metronomeEngine.setTimerDuration((int) value);
+
+      R.id.slider_options_timer_duration -> {
+        activity.performHapticSegmentTick(slider, true)
+        if (editPart) config.timerDuration = value.toInt() else metronomeEngine.setTimerDuration(
+          value.toInt()
+        )
+        updateTimer()
       }
-      updateTimer();
-    } else if (id == R.id.slider_options_mute_play) {
-      activity.performHapticSegmentTick(slider, true);
-      if (editPart) {
-        config.setMutePlay((int) value);
-      } else {
-        metronomeEngine.setMutePlay((int) value);
+
+      R.id.slider_options_mute_play -> {
+        activity.performHapticSegmentTick(slider, true)
+        if (editPart) config.mutePlay =
+          value.toInt() else metronomeEngine.setMutePlay(value.toInt())
+        updateMute()
       }
-      updateMute();
-    } else if (id == R.id.slider_options_mute_mute) {
-      activity.performHapticSegmentTick(slider, true);
-      if (editPart) {
-        config.setMuteMute((int) value);
-      } else {
-        metronomeEngine.setMuteMute((int) value);
+
+      R.id.slider_options_mute_mute -> {
+        activity.performHapticSegmentTick(slider, true)
+        if (editPart) config.muteMute =
+          value.toInt() else metronomeEngine.setMuteMute(value.toInt())
+        updateMute()
       }
-      updateMute();
     }
   }
 
-  @Override
-  public void onStartTrackingTouch(@NonNull Slider slider) {
-    // listener only registered in non-editPart mode
-    boolean stopMetronome = slider.getId() != R.id.slider_options_mute_mute;
-    if (getMetronomeEngine() != null && stopMetronome) {
-      getMetronomeEngine().savePlayingState();
-      getMetronomeEngine().stop();
+  override fun onStartTrackingTouch(slider: Slider) {
+    val stopMetronome = slider.id != R.id.slider_options_mute_mute
+    if (activity.metronomeEngine != null && stopMetronome) {
+      activity.metronomeEngine?.savePlayingState()
+      activity.metronomeEngine?.stop()
     }
   }
 
-  @Override
-  public void onStopTrackingTouch(@NonNull Slider slider) {
-    // listener only registered in non-editPart mode
-    MetronomeEngine metronomeEngine = getMetronomeEngine();
-    if (metronomeEngine == null) {
-      return;
-    }
-    boolean stopMetronome = slider.getId() != R.id.slider_options_mute_mute;
+  override fun onStopTrackingTouch(slider: Slider) {
+    val metronomeEngine = activity.metronomeEngine ?: return
+    val stopMetronome = slider.id != R.id.slider_options_mute_mute
     if (stopMetronome) {
-      metronomeEngine.restorePlayingState();
+      metronomeEngine.restorePlayingState()
     }
-    metronomeEngine.maybeUpdateDefaultSong();
+    metronomeEngine.maybeUpdateDefaultSong()
 
-    if (slider.getId() == R.id.slider_options_timer_duration && listener != null) {
-      listener.onTimerChanged();
-    }
-  }
-
-  @Nullable
-  private MetronomeConfig getConfig() {
-    if (editPart) {
-      return config;
-    } else if (getMetronomeEngine() != null) {
-      return getMetronomeEngine().getConfig();
-    } else {
-      return null;
+    if (slider.id == R.id.slider_options_timer_duration) {
+      onOptionsListener?.onTimerChanged()
     }
   }
 
-  @Nullable
-  private MetronomeEngine getMetronomeEngine() {
-    return activity.getMetronomeEngine();
+  private val configInternal: MetronomeConfig?
+    get() = if (editPart) config else activity.metronomeEngine?.config
+
+  interface OnPartEditListener {
+    fun onPartAdded(part: Part)
+    fun onPartUpdated(part: Part)
   }
 
-  public interface OnPartEditListener {
-    void onPartAdded(@NonNull Part part);
-    void onPartUpdated(@NonNull Part part);
+  interface OnOptionsListener {
+    fun onModifiersCountChanged()
+    fun onTimerChanged()
+    fun onBeatsChanged()
+    fun onSubsChanged()
   }
 
-  public interface OnOptionsListener {
-    void onModifiersCountChanged();
-    void onTimerChanged();
-    void onBeatsChanged();
-    void onSubsChanged();
+  companion object {
+    private val TAG = OptionsUtil::class.java.simpleName
+    private const val PART = "part_dialog"
+    private const val IS_NEW = "new_part_dialog"
   }
 }

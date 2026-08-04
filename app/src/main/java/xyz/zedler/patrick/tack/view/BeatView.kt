@@ -17,454 +17,463 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.view;
+package xyz.zedler.patrick.tack.view
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.AnimatorSet;
-import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
-import android.graphics.Path;
-import android.graphics.RectF;
-import android.widget.FrameLayout;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.graphics.ColorUtils;
-import androidx.dynamicanimation.animation.FloatPropertyCompat;
-import androidx.dynamicanimation.animation.SpringAnimation;
-import androidx.dynamicanimation.animation.SpringForce;
-import androidx.graphics.shapes.Morph;
-import androidx.graphics.shapes.RoundedPolygon;
-import androidx.graphics.shapes.Shapes_androidKt;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.shape.MaterialShapes;
-import java.util.Random;
-import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.ShapeUtil;
-import xyz.zedler.patrick.tack.util.UiUtil;
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.AnimatorSet
+import android.animation.ValueAnimator
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RectF
+import android.util.AttributeSet
+import android.widget.FrameLayout
+import androidx.core.graphics.ColorUtils
+import androidx.dynamicanimation.animation.FloatPropertyCompat
+import androidx.dynamicanimation.animation.SpringAnimation
+import androidx.dynamicanimation.animation.SpringForce
+import androidx.graphics.shapes.Morph
+import androidx.graphics.shapes.RoundedPolygon
+import androidx.graphics.shapes.toPath
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.shape.MaterialShapes
+import xyz.zedler.patrick.tack.Constants
+import xyz.zedler.patrick.tack.Constants.TICK_TYPE
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.util.getAttrColor
+import xyz.zedler.patrick.tack.util.dpToPx
+import java.util.Random
 
-public class BeatView extends FrameLayout {
+class BeatView @JvmOverloads constructor(
+  context: Context,
+  attrs: AttributeSet? = null
+) : FrameLayout(context, attrs) {
 
-  @SuppressLint("RestrictedApi")
-  private static final RoundedPolygon[] SHAPES =
-      new RoundedPolygon[] {
-          ShapeUtil.normalize(
-              MaterialShapes.CIRCLE, true, new RectF(-1, -1, 1, 1)
-          ),
-          ShapeUtil.normalize(
-              MaterialShapes.SQUARE, false, new RectF(-1, -1, 1, 1)
-          ),
-          ShapeUtil.normalize(
-              MaterialShapes.SLANTED_SQUARE, false, new RectF(-1, -1, 1, 1)
-          ),
-          ShapeUtil.normalize(
-              MaterialShapes.OVAL, false, new RectF(-1, -1, 1, 1)
-          ),
-          ShapeUtil.normalize(
-              MaterialShapes.PILL, false, new RectF(-1, -1, 1, 1)
-          ),
-          ShapeUtil.normalize(
-              MaterialShapes.DIAMOND, false, new RectF(-1, -1, 1, 1)
-          ),
-          ShapeUtil.normalize(
-              MaterialShapes.PENTAGON, false, new RectF(-1, -1, 1, 1)
-          ),
-          ShapeUtil.normalize(
-              MaterialShapes.VERY_SUNNY, true, new RectF(-1, -1, 1, 1)
-          ),
-          ShapeUtil.normalize(
-              MaterialShapes.SUNNY, true, new RectF(-1, -1, 1, 1)
-          ),
-          ShapeUtil.normalize(
-              MaterialShapes.COOKIE_4, true, new RectF(-1, -1, 1, 1)
-          ),
-          ShapeUtil.normalize(
-              MaterialShapes.COOKIE_6, true, new RectF(-1, -1, 1, 1)
-          ),
-          ShapeUtil.normalize(
-              MaterialShapes.COOKIE_7, true, new RectF(-1, -1, 1, 1)
-          ),
-          ShapeUtil.normalize(
-              MaterialShapes.COOKIE_9, true, new RectF(-1, -1, 1, 1)
-          ),
-          ShapeUtil.normalize(
-              MaterialShapes.BURST, true, new RectF(-1, -1, 1, 1)
-          ),
-          ShapeUtil.normalize(
-              MaterialShapes.SOFT_BURST, true, new RectF(-1, -1, 1, 1)
-          ),
-          ShapeUtil.normalize(
-              MaterialShapes.BOOM, true, new RectF(-1, -1, 1, 1)
-          ),
-          ShapeUtil.normalize(
-              MaterialShapes.SOFT_BOOM, true, new RectF(-1, -1, 1, 1)
-          ),
-          ShapeUtil.normalize(
-              MaterialShapes.FLOWER, true, new RectF(-1, -1, 1, 1)
-          ),
-      };
+  private val path = Path()
+  private val matrix = Matrix()
+  private val random = Random()
+  private val interpolator = FastOutSlowInInterpolator()
+  private val button: MaterialButton
+  private val paintFill = Paint().apply { style = Paint.Style.FILL }
+  private val paintStroke = Paint().apply {
+    style = Paint.Style.STROKE
+    strokeWidth = context.dpToPx(2f).toFloat()
+  }
 
-  private static final Morph[] MORPHS = new Morph[SHAPES.length];
-  static {
-    for (int i = 0; i < SHAPES.length; i++) {
-      MORPHS[i] = new Morph(SHAPES[0], SHAPES[i]);
+  private val shapeScaleSub: Float
+  private val shapeScaleBeatSub: Float
+  private val shapeScaleNoBeat: Float
+  private val shapeScaleMuted: Float
+  private val colorActive = context.getAttrColor(R.attr.colorOutline)
+
+  private var animatorSet: AnimatorSet? = null
+  private var strokeAnimator: ValueAnimator? = null
+  private var springAnimationTickType: SpringAnimation? = null
+  private var morph: Morph = MORPHS[0]
+  private var tickType: String = TICK_TYPE.NORMAL
+  private var isSubdivision = false
+  private var reduceAnimations = false
+  private var isActive = false
+  private var morphFactor = 0f
+  private var tickTypeFraction = 0f
+  var shapeScaleBeat: Float
+  var shapeScale0: Float
+  var shapeScale1: Float
+  internal var index = 0
+
+  private var colorFillSource = 0
+  private var colorFillTarget = 0
+  private var colorStrokeSource = 0
+  private var colorStrokeTarget = 0
+  private var shapeScale0Source = 0f
+  private var shapeScale1Source = 0f
+  private var shapeScale0Target = 0f
+  private var shapeScale1Target = 0f
+
+  init {
+    setWillNotDraw(false)
+
+    val minSize = context.dpToPx(48f)
+    minimumWidth = minSize
+    minimumHeight = minSize
+
+    button = MaterialButton(
+      context, null, R.attr.materialIconButtonStyle
+    ).apply {
+      strokeWidth = context.dpToPx(1f)
+      strokeColor = ColorStateList.valueOf(Color.TRANSPARENT)
+      setOnClickListener(null)
     }
-  }
-  private static final boolean TEST_ANIMATIONS = false;
+    addView(button)
 
-  private final Path path = new Path();
-  private final Matrix matrix = new Matrix();
-  private final Random random = new Random();
-  private final FastOutSlowInInterpolator interpolator;
-  private final MaterialButton button;
-  private final Paint paintFill, paintStroke;
-  private final float shapeScaleSub, shapeScaleBeatSub, shapeScaleNoBeat, shapeScaleMuted;
-  private final int colorActive;
-  private AnimatorSet animatorSet;
-  private ValueAnimator strokeAnimator;
-  private SpringAnimation springAnimationTickType;
-  private Morph morph;
-  private String tickType;
-  private boolean isSubdivision, reduceAnimations, isActive;
-  private float morphFactor, tickTypeFraction, shapeScaleBeat, shapeScale0, shapeScale1;
-  private int index;
-  private int colorFillSource, colorFillTarget, colorStrokeSource, colorStrokeTarget;
-  private float shapeScale0Source, shapeScale1Source, shapeScale0Target, shapeScale1Target;
+    shapeScaleNoBeat = 0.25f
+    shapeScaleBeat = 0.75f
+    shapeScaleSub = shapeScaleBeat
+    shapeScaleBeatSub = 0.4f
+    shapeScaleMuted = 0.1f
+    shapeScale0 = shapeScaleNoBeat
+    shapeScale1 = shapeScaleBeat
 
-  public BeatView(Context context) {
-    super(context);
-
-    setWillNotDraw(false);
-
-    tickType = TICK_TYPE.NORMAL;
-
-    int minSize = UiUtil.dpToPx(context, 48);
-    setMinimumWidth(minSize);
-    setMinimumHeight(minSize);
-
-    button = new MaterialButton(context, null, R.attr.materialIconButtonStyle);
-    button.setStrokeWidth(UiUtil.dpToPx(context, 1));
-    button.setStrokeColor(ColorStateList.valueOf(Color.TRANSPARENT));
-    setOnClickListener(null);
-    addView(button);
-
-    shapeScaleNoBeat = 0.25f;
-    shapeScaleBeat = 0.75f;
-    shapeScaleSub = shapeScaleBeat;
-    shapeScaleBeatSub = 0.4f;
-    shapeScaleMuted = 0.1f;
-    shapeScale0 = shapeScaleNoBeat;
-    shapeScale1 = shapeScaleBeat;
-
-    colorActive = ResUtil.getColor(context, R.attr.colorOutline);
-
-    paintFill = new Paint();
-    paintFill.setStyle(Style.FILL);
-
-    paintStroke = new Paint();
-    paintStroke.setStyle(Style.STROKE);
-    paintStroke.setStrokeWidth(UiUtil.dpToPx(context, 2));
-
-    interpolator = new FastOutSlowInInterpolator();
-
-    morph = MORPHS[0];
-
-    setTickType(TICK_TYPE.NORMAL, false);
+    setTickType(TICK_TYPE.NORMAL, false)
   }
 
-  @Override
-  protected void onDetachedFromWindow() {
-    super.onDetachedFromWindow();
-
-    if (animatorSet != null) {
-      animatorSet.pause();
-      animatorSet.removeAllListeners();
-      animatorSet.cancel();
+  override fun onDetachedFromWindow() {
+    super.onDetachedFromWindow()
+    animatorSet?.apply {
+      pause()
+      removeAllListeners()
+      cancel()
     }
   }
 
-  @Override
-  protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-    super.onLayout(changed, left, top, right, bottom);
-
-    updateShape();
-    invalidate();
+  override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+    super.onLayout(changed, left, top, right, bottom)
+    updateShape()
+    invalidate()
   }
 
-  @Override
-  protected void onDraw(@NonNull Canvas canvas) {
-    super.onDraw(canvas);
-
-    canvas.drawPath(path, paintFill);
-    canvas.drawPath(path, paintStroke);
+  override fun onDraw(canvas: Canvas) {
+    super.onDraw(canvas)
+    canvas.drawPath(path, paintFill)
+    canvas.drawPath(path, paintStroke)
   }
 
-  public void setIndex(int index) {
-    this.index = index;
-    setTickType(tickType, false);
+  fun setIndex(index: Int) {
+    this.index = index
+    setTickType(tickType, false)
   }
 
-  public int getIndex() {
-    return index;
+  fun getIndex(): Int = index
+
+  fun setIsSubdivision(isSubdivision: Boolean) {
+    this.isSubdivision = isSubdivision
+    setTickType(if (isSubdivision) TICK_TYPE.SUB else TICK_TYPE.NORMAL, false)
   }
 
-  public void setIsSubdivision(boolean isSubdivision) {
-    this.isSubdivision = isSubdivision;
-    setTickType(isSubdivision ? TICK_TYPE.SUB : TICK_TYPE.NORMAL, false);
-  }
+  fun setTickType(tickType: String, animated: Boolean) {
+    this.tickType = tickType
 
-  public void setTickType(String tickType, boolean animated) {
-    this.tickType = tickType;
-
-    Context context = getContext();
-    int colorNormal = ResUtil.getColor(context, R.attr.colorPrimary);
-    if (isColorRed(colorNormal)) {
-      colorNormal = ResUtil.getColor(context, R.attr.colorTertiary);
+    val colorNormalPrimary = context.getAttrColor(R.attr.colorPrimary)
+    val colorNormal = if (isColorRed(colorNormalPrimary)) {
+      context.getAttrColor(R.attr.colorTertiary)
+    } else {
+      colorNormalPrimary
     }
-    int colorStrong = ResUtil.getColor(context, R.attr.colorError);
-    int colorSub = ResUtil.getColor(context, R.attr.colorOnSurfaceVariant);
-    int colorMuted = ResUtil.getColor(context, R.attr.colorOutline);
+    val colorStrong = context.getAttrColor(R.attr.colorError)
+    val colorSub = context.getAttrColor(R.attr.colorOnSurfaceVariant)
+    val colorMuted = context.getAttrColor(R.attr.colorOutline)
 
-    colorFillSource = paintFill.getColor();
-    colorStrokeSource = paintStroke.getColor();
-    shapeScale0Source = shapeScale0;
-    shapeScale1Source = shapeScale1;
-    int colorTarget, alphaTarget;
-    switch (tickType) {
-      case TICK_TYPE.STRONG:
-        colorTarget = colorStrong;
-        alphaTarget = 255;
-        shapeScale0Target = shapeScaleNoBeat;
-        shapeScale1Target = shapeScaleBeat;
-        break;
-      case TICK_TYPE.MUTED:
-      case TICK_TYPE.BEAT_SUB_MUTED:
-        colorTarget = colorMuted;
-        alphaTarget = 255;
-        shapeScale0Target = shapeScaleMuted;
-        shapeScale1Target = shapeScaleNoBeat;
-        break;
-      case TICK_TYPE.SUB:
-        colorTarget = colorSub;
-        alphaTarget = 0;
-        shapeScale0Target = shapeScaleNoBeat;
-        shapeScale1Target = shapeScaleSub;
-        break;
-      case TICK_TYPE.BEAT_SUB:
-        colorTarget = colorMuted;
-        alphaTarget = 255;
-        shapeScale0Target = shapeScaleNoBeat;
-        shapeScale1Target = shapeScaleBeatSub;
-        break;
-      default:
-        colorTarget = colorNormal;
-        alphaTarget = (int) (0.3f * 255);
-        shapeScale0Target = shapeScaleNoBeat;
-        shapeScale1Target = shapeScaleBeat;
-    }
-    colorFillTarget = ColorUtils.setAlphaComponent(colorTarget, alphaTarget);
-    colorStrokeTarget = colorTarget;
+    colorFillSource = paintFill.color
+    colorStrokeSource = paintStroke.color
+    shapeScale0Source = shapeScale0
+    shapeScale1Source = shapeScale1
 
-    if (springAnimationTickType != null) {
-      springAnimationTickType.cancel();
+    val colorTarget: Int
+    val alphaTarget: Int
+    when (tickType) {
+      TICK_TYPE.STRONG -> {
+        colorTarget = colorStrong
+        alphaTarget = 255
+        shapeScale0Target = shapeScaleNoBeat
+        shapeScale1Target = shapeScaleBeat
+      }
+
+      TICK_TYPE.MUTED, TICK_TYPE.BEAT_SUB_MUTED -> {
+        colorTarget = colorMuted
+        alphaTarget = 255
+        shapeScale0Target = shapeScaleMuted
+        shapeScale1Target = shapeScaleNoBeat
+      }
+
+      TICK_TYPE.SUB -> {
+        colorTarget = colorSub
+        alphaTarget = 0
+        shapeScale0Target = shapeScaleNoBeat
+        shapeScale1Target = shapeScaleSub
+      }
+
+      TICK_TYPE.BEAT_SUB -> {
+        colorTarget = colorMuted
+        alphaTarget = 255
+        shapeScale0Target = shapeScaleNoBeat
+        shapeScale1Target = shapeScaleBeatSub
+      }
+
+      else -> {
+        colorTarget = colorNormal
+        alphaTarget = (0.3f * 255).toInt()
+        shapeScale0Target = shapeScaleNoBeat
+        shapeScale1Target = shapeScaleBeat
+      }
     }
+    colorFillTarget = ColorUtils.setAlphaComponent(colorTarget, alphaTarget)
+    colorStrokeTarget = colorTarget
+
+    springAnimationTickType?.cancel()
     if (animated) {
-      tickTypeFraction = 0;
+      tickTypeFraction = 0f
       if (springAnimationTickType == null) {
-        springAnimationTickType =
-            new SpringAnimation(this, TICK_TYPE_FRACTION)
-                .setSpring(new SpringForce().setStiffness(1400f).setDampingRatio(0.6f))
-                .setMinimumVisibleChange(0.01f);
+        springAnimationTickType = SpringAnimation(
+          this, TICK_TYPE_FRACTION
+        ).apply {
+          spring = SpringForce().apply {
+            stiffness = if (TEST_ANIMATIONS) 20f else 1400f
+            dampingRatio = if (TEST_ANIMATIONS) 0.3f else 0.6f
+          }
+          minimumVisibleChange = 0.01f
+        }
       }
-      if (TEST_ANIMATIONS) {
-        springAnimationTickType.setSpring(
-            new SpringForce().setStiffness(20f).setDampingRatio(0.3f)
-        );
-      }
-      springAnimationTickType.animateToFinalPosition(1);
+      springAnimationTickType?.animateToFinalPosition(1f)
     } else {
-      setTickTypeFraction(1);
+      setTickTypeFraction(1f)
     }
   }
 
-  public String nextTickType() {
-    String next;
-    switch (tickType) {
-      case TICK_TYPE.NORMAL:
-        next = isSubdivision ? TICK_TYPE.MUTED : Constants.TICK_TYPE.STRONG;
-        break;
-      case TICK_TYPE.STRONG:
-        next = TICK_TYPE.MUTED;
-        break;
-      case TICK_TYPE.SUB:
-        next = TICK_TYPE.NORMAL;
-        break;
-      case TICK_TYPE.BEAT_SUB:
-        next = TICK_TYPE.BEAT_SUB_MUTED;
-        break;
-      case TICK_TYPE.BEAT_SUB_MUTED:
-        next = TICK_TYPE.BEAT_SUB;
-        break;
-      default:
-        next = isSubdivision ? TICK_TYPE.SUB : Constants.TICK_TYPE.NORMAL;
+  fun nextTickType(): String {
+    val next = when (tickType) {
+      TICK_TYPE.NORMAL -> if (isSubdivision) TICK_TYPE.MUTED else Constants.TICK_TYPE.STRONG
+      TICK_TYPE.STRONG -> TICK_TYPE.MUTED
+      TICK_TYPE.SUB -> TICK_TYPE.NORMAL
+      TICK_TYPE.BEAT_SUB -> TICK_TYPE.BEAT_SUB_MUTED
+      TICK_TYPE.BEAT_SUB_MUTED -> TICK_TYPE.BEAT_SUB
+      else -> if (isSubdivision) TICK_TYPE.SUB else Constants.TICK_TYPE.NORMAL
     }
-    setTickType(next, true);
-    return next;
+    setTickType(next, true)
+    return next
   }
 
-  public void beat() {
-    if (animatorSet != null) {
-      animatorSet.pause();
-      animatorSet.removeAllListeners();
-      animatorSet.cancel();
-      animatorSet = null;
+  fun beat() {
+    animatorSet?.apply {
+      pause()
+      removeAllListeners()
+      cancel()
     }
+    animatorSet = null
 
-    if (reduceAnimations) {
-      return;
-    }
+    if (reduceAnimations) return
 
-    if (tickType.equals(TICK_TYPE.MUTED)
-        || tickType.equals(TICK_TYPE.BEAT_SUB)
-        ||  tickType.equals(TICK_TYPE.BEAT_SUB_MUTED)
+    morph = if (tickType == TICK_TYPE.MUTED ||
+      tickType == TICK_TYPE.BEAT_SUB ||
+      tickType == TICK_TYPE.BEAT_SUB_MUTED
     ) {
-      morph = MORPHS[0];
+      MORPHS[0]
     } else {
-      int index = 1 + random.nextInt(MORPHS.length - 1);
-      morph = MORPHS[index];
+      MORPHS[1 + random.nextInt(MORPHS.size - 1)]
     }
 
-    ValueAnimator animatorIn = ValueAnimator.ofFloat(0, 1);
-    animatorIn.addUpdateListener(
-        animation -> setMorphFactor((float) animation.getAnimatedValue())
-    );
-    animatorIn.setInterpolator(interpolator);
-    animatorIn.setDuration(10);
-
-    ValueAnimator animatorOut = ValueAnimator.ofFloat(1, 0);
-    animatorOut.addUpdateListener(
-        animation -> setMorphFactor((float) animation.getAnimatedValue())
-    );
-    animatorOut.setInterpolator(interpolator);
-    animatorOut.setDuration(300);
-    animatorOut.setStartDelay(30);
-
-    animatorSet = new AnimatorSet();
-    animatorSet.playSequentially(animatorIn, animatorOut);
-    animatorSet.addListener(new AnimatorListenerAdapter() {
-      @Override
-      public void onAnimationEnd(Animator animation) {
-        animatorSet = null;
-      }
-    });
-    animatorSet.start();
-  }
-
-  @Override
-  public void setOnClickListener(@Nullable OnClickListener l) {
-    if (l != null) {
-      button.setOnClickListener(l);
+    val animatorIn = ValueAnimator.ofFloat(0f, 1f).apply {
+      addUpdateListener { setMorphFactor(it.animatedValue as Float) }
+      interpolator = this@BeatView.interpolator
+      duration = 10
     }
-    button.setEnabled(l != null);
-  }
 
-  public void setReduceAnimations(boolean reduce) {
-    reduceAnimations = reduce;
-  }
-
-  public void setActive(boolean active) {
-    if (isActive == active) {
-      return;
+    val animatorOut = ValueAnimator.ofFloat(1f, 0f).apply {
+      addUpdateListener { setMorphFactor(it.animatedValue as Float) }
+      interpolator = this@BeatView.interpolator
+      duration = 300
+      startDelay = 30
     }
-    isActive = active;
-    // update beat scale for surrounding circle
-    shapeScaleBeat = active ? 0.6f : 0.75f;
-    shapeScale1 = tickType.equals(TICK_TYPE.MUTED) ? shapeScaleMuted : shapeScaleBeat;
-    if (strokeAnimator != null) {
-      strokeAnimator.pause();
-      strokeAnimator.removeAllListeners();
-      strokeAnimator.cancel();
-      strokeAnimator = null;
+
+    animatorSet = AnimatorSet().apply {
+      playSequentially(animatorIn, animatorOut)
+      addListener(object : AnimatorListenerAdapter() {
+        override fun onAnimationEnd(animation: Animator) {
+          animatorSet = null
+        }
+      })
+      start()
+    }
+  }
+
+  override fun setOnClickListener(l: OnClickListener?) {
+    button.setOnClickListener(l)
+    button.isEnabled = l != null
+  }
+
+  fun setReduceAnimations(reduce: Boolean) {
+    reduceAnimations = reduce
+  }
+
+  fun setActive(active: Boolean) {
+    if (isActive == active) return
+    isActive = active
+    shapeScaleBeat = if (active) 0.6f else 0.75f
+    shapeScale1 = if (tickType == TICK_TYPE.MUTED) shapeScaleMuted else shapeScaleBeat
+
+    strokeAnimator?.apply {
+      pause()
+      removeAllListeners()
+      cancel()
     }
     strokeAnimator = ValueAnimator.ofArgb(
-        button.getStrokeColor().getDefaultColor(),
-        active ? colorActive : Color.TRANSPARENT
-    );
-    strokeAnimator.addUpdateListener(animation -> {
-      int color = (int) animation.getAnimatedValue();
-      button.setStrokeColor(ColorStateList.valueOf(color));
-    });
-    strokeAnimator.setInterpolator(interpolator);
-    strokeAnimator.setDuration(active ? 25 : 300);
-    strokeAnimator.start();
+      button.strokeColor.defaultColor,
+      if (active) colorActive else Color.TRANSPARENT
+    ).apply {
+      addUpdateListener {
+        button.setStrokeColor(ColorStateList.valueOf(it.animatedValue as Int))
+      }
+      interpolator = this@BeatView.interpolator
+      duration = if (active) 25 else 300
+      start()
+    }
   }
 
-  private void updateShape() {
-    path.rewind();
-    Shapes_androidKt.toPath(morph, morphFactor, path);
-    matrix.reset();
-    float scale = shapeScale0 + morphFactor * (shapeScale1 - shapeScale0);
-    matrix.setScale(getWidth() / 2f * scale, getHeight() / 2f * scale);
-    matrix.postTranslate(getWidth() / 2f, getHeight() / 2f);
-    path.transform(matrix);
+  private fun updateShape() {
+    path.rewind()
+    morph.toPath(morphFactor, path)
+    matrix.reset()
+    val scale = shapeScale0 + morphFactor * (shapeScale1 - shapeScale0)
+    matrix.setScale(width / 2f * scale, height / 2f * scale)
+    matrix.postTranslate(width / 2f, height / 2f)
+    path.transform(matrix)
   }
 
-  private void setMorphFactor(float factor) {
-    morphFactor = factor;
-    updateShape();
-    invalidate();
+  private fun setMorphFactor(factor: Float) {
+    morphFactor = factor
+    updateShape()
+    invalidate()
   }
 
-  private void setTickTypeFraction(float fraction) {
-    tickTypeFraction = fraction;
-    float colorFraction = Math.min(Math.max(fraction, 0), 1);
-    paintFill.setColor(ColorUtils.blendARGB(colorFillSource, colorFillTarget, colorFraction));
-    paintStroke.setColor(ColorUtils.blendARGB(colorStrokeSource, colorStrokeTarget, colorFraction));
-    shapeScale0 = shapeScale0Source + fraction * (shapeScale0Target - shapeScale0Source);
-    shapeScale1 = shapeScale1Source + fraction * (shapeScale1Target - shapeScale1Source);
-    updateShape();
-    invalidate();
+  private fun setTickTypeFraction(fraction: Float) {
+    tickTypeFraction = fraction
+    val colorFraction = fraction.coerceIn(0f, 1f)
+    paintFill.color = ColorUtils.blendARGB(
+      colorFillSource, colorFillTarget, colorFraction
+    )
+    paintStroke.color = ColorUtils.blendARGB(
+      colorStrokeSource, colorStrokeTarget, colorFraction
+    )
+    shapeScale0 = shapeScale0Source + fraction * (shapeScale0Target - shapeScale0Source)
+    shapeScale1 = shapeScale1Source + fraction * (shapeScale1Target - shapeScale1Source)
+    updateShape()
+    invalidate()
   }
 
-  public float getTickTypeFraction() {
-    return tickTypeFraction;
+  fun getTickTypeFraction(): Float = tickTypeFraction
+
+  override fun toString(): String = tickType
+
+  companion object {
+    @SuppressLint("RestrictedApi")
+    private val SHAPES = arrayOf<RoundedPolygon>(
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.CIRCLE,
+        true,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.SQUARE,
+        false,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.SLANTED_SQUARE,
+        false,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.OVAL,
+        false,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.PILL,
+        false,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.DIAMOND,
+        false,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.PENTAGON,
+        false,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.VERY_SUNNY,
+        true,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.SUNNY,
+        true,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.COOKIE_4,
+        true,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.COOKIE_6,
+        true,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.COOKIE_7,
+        true,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.COOKIE_9,
+        true,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.BURST,
+        true,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.SOFT_BURST,
+        true,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.BOOM,
+        true,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.SOFT_BOOM,
+        true,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      xyz.zedler.patrick.tack.util.normalize(
+        MaterialShapes.FLOWER,
+        true,
+        RectF(-1f, -1f, 1f, 1f)
+      )
+    )
+
+    private val MORPHS = Array(SHAPES.size) { i -> Morph(SHAPES[0], SHAPES[i]) }
+
+    private const val TEST_ANIMATIONS = false
+
+    @JvmStatic
+    fun isColorRed(color: Int): Boolean {
+      val tolerance = 30
+      val red = Color.red(color)
+      val green = Color.green(color)
+      val blue = Color.blue(color)
+      return red > green + tolerance && red > blue + tolerance
+    }
+
+    private val TICK_TYPE_FRACTION = object
+      : FloatPropertyCompat<BeatView>("tickTypeFraction") {
+      override fun getValue(delegate: BeatView): Float = delegate.getTickTypeFraction()
+      override fun setValue(delegate: BeatView, value: Float) {
+        delegate.setTickTypeFraction(value)
+      }
+    }
   }
-
-  @NonNull
-  @Override
-  public String toString() {
-    return tickType;
-  }
-
-  public static boolean isColorRed(int color) {
-    int tolerance = 30;
-    int red = Color.red(color);
-    int green = Color.green(color);
-    int blue = Color.blue(color);
-    return red > green + tolerance && red > blue + tolerance;
-  }
-
-  private static final FloatPropertyCompat<BeatView> TICK_TYPE_FRACTION =
-      new FloatPropertyCompat<>("tickTypeFraction") {
-        @Override
-        public float getValue(BeatView delegate) {
-          return delegate.getTickTypeFraction();
-        }
-
-        @Override
-        public void setValue(BeatView delegate, float value) {
-          delegate.setTickTypeFraction(value);
-        }
-      };
 }

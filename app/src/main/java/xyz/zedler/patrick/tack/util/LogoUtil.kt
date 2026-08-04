@@ -17,43 +17,42 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+package xyz.zedler.patrick.tack.util
 
-import android.animation.Animator;
-import android.animation.ObjectAnimator;
-import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.RotateDrawable;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.ImageView;
-import xyz.zedler.patrick.tack.R;
+import android.animation.Animator
+import android.animation.ObjectAnimator
+import android.graphics.drawable.LayerDrawable
+import android.graphics.drawable.RotateDrawable
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.ImageView
+import xyz.zedler.patrick.tack.R
 
-public class LogoUtil {
+class LogoUtil(imageView: ImageView) {
 
-  private final static String TAG = LogoUtil.class.getSimpleName();
+  private val pointer: RotateDrawable
+  private var animator: Animator? = null
+  private var isLeft = true
 
-  private final RotateDrawable pointer;
-  private Animator animator;
-  private boolean isLeft = true;
-
-  public LogoUtil(ImageView imageView) {
-    LayerDrawable layers = (LayerDrawable) imageView.getDrawable();
-    pointer = (RotateDrawable) layers.findDrawableByLayerId(R.id.logo_pointer);
-    pointer.setLevel(0);
+  init {
+    val layers = imageView.drawable as LayerDrawable
+    pointer = layers.findDrawableByLayerId(R.id.logo_pointer) as RotateDrawable
+    pointer.level = 0
   }
 
-  public void nextBeat(long interval) {
-    if (animator != null) {
-      animator.pause();
-      animator.cancel();
+  fun nextBeat(interval: Long) {
+    animator?.apply {
+      pause()
+      cancel()
     }
 
     animator = ObjectAnimator.ofInt(
-        pointer, "level", pointer.getLevel(), isLeft ? 10000 : 0
-    );
-    animator.setDuration(interval);
-    animator.setInterpolator(new AccelerateDecelerateInterpolator());
-    animator.start();
+      pointer, "level", pointer.level, if (isLeft) 10000 else 0
+    ).apply {
+      duration = interval
+      interpolator = AccelerateDecelerateInterpolator()
+      start()
+    }
 
-    isLeft = !isLeft;
+    isLeft = !isLeft
   }
 }

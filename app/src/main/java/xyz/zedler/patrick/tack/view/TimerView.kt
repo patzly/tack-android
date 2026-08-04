@@ -17,584 +17,518 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.view;
+package xyz.zedler.patrick.tack.view
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.util.AttributeSet;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.animation.LinearInterpolator;
-import android.widget.FrameLayout;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.core.view.ViewCompat;
-import androidx.dynamicanimation.animation.FloatPropertyCompat;
-import androidx.dynamicanimation.animation.SpringAnimation;
-import androidx.dynamicanimation.animation.SpringForce;
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
-import com.google.android.material.motion.MotionUtils;
-import com.google.android.material.slider.Slider;
-import com.google.android.material.slider.Slider.OnSliderTouchListener;
-import java.util.ArrayList;
-import java.util.List;
-import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.databinding.ViewTimerBinding;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
-import xyz.zedler.patrick.tack.model.MetronomeConfig;
-import xyz.zedler.patrick.tack.util.UiUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil;
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ValueAnimator
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Rect
+import android.graphics.Typeface
+import android.util.AttributeSet
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewTreeObserver
+import android.view.animation.LinearInterpolator
+import android.widget.FrameLayout
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.ViewCompat
+import androidx.dynamicanimation.animation.FloatPropertyCompat
+import androidx.dynamicanimation.animation.SpringAnimation
+import androidx.dynamicanimation.animation.SpringForce
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import com.google.android.material.motion.MotionUtils
+import com.google.android.material.slider.Slider
+import xyz.zedler.patrick.tack.Constants
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.activity.MainActivity
+import xyz.zedler.patrick.tack.databinding.ViewTimerBinding
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine
+import xyz.zedler.patrick.tack.model.MetronomeConfig
+import xyz.zedler.patrick.tack.util.configureSafely
+import xyz.zedler.patrick.tack.util.dpToPx
+import xyz.zedler.patrick.tack.util.dpFromPx
+import kotlin.math.abs
+import kotlin.math.ceil
 
-public class TimerView extends FrameLayout {
+class TimerView @JvmOverloads constructor(
+  context: Context,
+  attrs: AttributeSet? = null
+) : FrameLayout(context, attrs) {
 
-  private static final String TAG = TimerView.class.getSimpleName();
+  private val binding = ViewTimerBinding.inflate(
+    LayoutInflater.from(context), this, true
+  )
+  private val sliderHeightExpanded = context.dpToPx(48f)
+  private val exclusionRects = mutableListOf<Rect>()
+  private val exclusionRect = Rect()
 
-  private static final boolean TEST_ANIMATIONS = false;
+  private var activity: MainActivity? = null
+  private var listener: TimerListener? = null
+  private var progressAnimator: ValueAnimator? = null
+  private var progressTransitionAnimator: ValueAnimator? = null
+  private var displayHeightExpanded = 0
+  private var timerExpandFraction = 0f
+  private var elapsedExpandFraction = 0f
+  private var timerExpanded = false
+  private var elapsedExpanded = false
+  private var changeHeightOfChips = false
+  private var springAnimationTimerExpand: SpringAnimation? = null
+  private var springAnimationElapsedExpand: SpringAnimation? = null
 
-  private final ViewTimerBinding binding;
-  private final int sliderHeightExpanded;
-  private final List<Rect> exclusionRects = new ArrayList<>();
-  private final Rect exclusionRect = new Rect();
-  private final Rect globalRect = new Rect();
-  private final int[] locationOnScreen = new int[2];
-  private MainActivity activity;
-  private TimerListener listener;
-  private ValueAnimator progressAnimator, progressTransitionAnimator;
-  private int displayHeightExpanded;
-  private float timerExpandFraction, elapsedExpandFraction;
-  private boolean timerExpanded, elapsedExpanded, changeHeightOfChips;
-  private SpringAnimation springAnimationTimerExpand, springAnimationElapsedExpand;
+  init {
+    binding.sliderTimer.addOnChangeListener { _, value, fromUser ->
+      val engine = getMetronomeEngine()
+      if (!fromUser || engine == null) return@addOnChangeListener
 
-  public TimerView(Context context, @Nullable AttributeSet attrs) {
-    super(context, attrs);
+      val positions = engine.config.timerDuration
+      val timerPositionCurrent = (engine.getTimerProgress() * positions).toInt()
+      val fraction = value / binding.sliderTimer.valueTo
+      val timerPositionNew = (fraction * positions).toInt()
 
-    binding = ViewTimerBinding.inflate(
-        LayoutInflater.from(context), this, true
-    );
-
-    binding.sliderTimer.addOnChangeListener((slider, value, fromUser) -> {
-      if (!fromUser || getMetronomeEngine() == null) {
-        return;
-      }
-      int positions = getMetronomeEngine().getConfig().getTimerDuration();
-      int timerPositionCurrent = (int) (getMetronomeEngine().getTimerProgress() * positions);
-      float fraction = value / binding.sliderTimer.getValueTo();
-      int timerPositionNew = (int) (fraction * positions);
-      if (timerPositionCurrent != timerPositionNew
-          && timerPositionCurrent < positions
-          && timerPositionNew < positions
+      if (timerPositionCurrent != timerPositionNew &&
+        timerPositionCurrent < positions &&
+        timerPositionNew < positions
       ) {
-        activity.performHapticSegmentTick(binding.sliderTimer, false);
+        activity?.performHapticSegmentTick(binding.sliderTimer, false)
       }
-      getMetronomeEngine().updateTimerHandler(fraction, true);
-      updateDisplay();
-    });
-    binding.sliderTimer.addOnSliderTouchListener(new OnSliderTouchListener() {
-      @Override
-      public void onStartTrackingTouch(@NonNull Slider slider) {
-        if (getMetronomeEngine() != null) {
-          getMetronomeEngine().savePlayingState();
-          getMetronomeEngine().stop();
+      engine.updateTimerHandler(fraction, true)
+      updateDisplay()
+    }
+
+    binding.sliderTimer.addOnSliderTouchListener(object : Slider.OnSliderTouchListener {
+      override fun onStartTrackingTouch(slider: Slider) {
+        getMetronomeEngine()?.apply {
+          savePlayingState()
+          stop()
         }
       }
 
-      @Override
-      public void onStopTrackingTouch(@NonNull Slider slider) {
-        if (getMetronomeEngine() != null) {
-          getMetronomeEngine().restorePlayingState();
+      override fun onStopTrackingTouch(slider: Slider) {
+        getMetronomeEngine()?.restorePlayingState()
+      }
+    })
+
+    binding.chipTimerCurrent.frameChipNumbersContainer.setOnClickListener {
+      listener?.onCurrentTimeClick()
+    }
+    binding.chipTimerElapsed.frameChipNumbersContainer.setOnClickListener {
+      listener?.onElapsedTimeClick()
+    }
+    binding.chipTimerTotal.frameChipNumbersContainer.setOnClickListener {
+      listener?.onTotalTimeClick()
+    }
+  }
+
+  override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+    super.onLayout(changed, left, top, right, bottom)
+    binding.sliderTimer.getHitRect(exclusionRect)
+    exclusionRects.clear()
+    exclusionRects.add(exclusionRect)
+    ViewCompat.setSystemGestureExclusionRects(this, exclusionRects)
+  }
+
+  fun setMainActivity(activity: MainActivity) {
+    this.activity = activity
+  }
+
+  fun setListener(listener: TimerListener) {
+    this.listener = listener
+  }
+
+  fun setChangeHeightOfChips(change: Boolean) {
+    changeHeightOfChips = change
+  }
+
+  fun setBigText(bigText: Boolean) {
+    activity?.let { act ->
+      if (bigText) {
+        val typeface = ResourcesCompat.getFont(act, R.font.google_sans_flex_regular)
+        listOf(
+          binding.chipTimerCurrent.textChipNumbers,
+          binding.chipTimerElapsed.textChipNumbers,
+          binding.chipTimerTotal.textChipNumbers
+        ).forEach {
+          it.textSize = 28f
+          it.typeface = typeface
         }
-      }
-    });
-
-    binding.chipTimerCurrent.frameChipNumbersContainer.setOnClickListener(v -> {
-      if (listener != null) {
-        listener.onCurrentTimeClick();
-      }
-    });
-    binding.chipTimerElapsed.frameChipNumbersContainer.setOnClickListener(v -> {
-      if (listener != null) {
-        listener.onElapsedTimeClick();
-      }
-    });
-    binding.chipTimerTotal.frameChipNumbersContainer.setOnClickListener(v -> {
-      if (listener != null) {
-        listener.onTotalTimeClick();
-      }
-    });
-
-    sliderHeightExpanded = UiUtil.dpToPx(context, 48);
-  }
-
-  @Override
-  protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-    super.onLayout(changed, left, top, right, bottom);
-
-    binding.sliderTimer.getHitRect(exclusionRect);
-    exclusionRects.clear();
-    exclusionRects.add(exclusionRect);
-    ViewCompat.setSystemGestureExclusionRects(this, exclusionRects);
-  }
-
-  public void setMainActivity(MainActivity activity) {
-    this.activity = activity;
-  }
-
-  public void setListener(TimerListener listener) {
-    this.listener = listener;
-  }
-
-  public void setChangeHeightOfChips(boolean change) {
-    changeHeightOfChips = change;
-  }
-
-  public void setBigText(boolean bigText) {
-    if (bigText) {
-      Typeface typeface = ResourcesCompat.getFont(activity, R.font.google_sans_flex_regular);
-      binding.chipTimerCurrent.textChipNumbers.setTextSize(28);
-      binding.chipTimerCurrent.textChipNumbers.setTypeface(typeface);
-      binding.chipTimerElapsed.textChipNumbers.setTextSize(28);
-      binding.chipTimerElapsed.textChipNumbers.setTypeface(typeface);
-      binding.chipTimerTotal.textChipNumbers.setTextSize(28);
-      binding.chipTimerTotal.textChipNumbers.setTypeface(typeface);
-    } else {
-      binding.chipTimerCurrent.imageChipNumbers.setImageResource(R.drawable.ic_rounded_timer_anim);
-      binding.chipTimerCurrent.imageChipNumbers.setVisibility(View.VISIBLE);
-      binding.chipTimerElapsed.imageChipNumbers.setImageResource(
+      } else {
+        binding.chipTimerCurrent.imageChipNumbers.setImageResource(R.drawable.ic_rounded_timer_anim)
+        binding.chipTimerCurrent.imageChipNumbers.visibility = View.VISIBLE
+        binding.chipTimerElapsed.imageChipNumbers.setImageResource(
           R.drawable.ic_rounded_schedule_anim
-      );
-      binding.chipTimerElapsed.imageChipNumbers.setVisibility(View.VISIBLE);
-    }
-  }
-
-  public void measureControls() {
-    binding.linearTimerContainer.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            int width =
-                binding.sliderTimer.getWidth() - binding.sliderTimer.getTrackSidePadding() * 2;
-            float valueFrom = binding.sliderTimer.getValueFrom();
-            float valueTo = Math.max(valueFrom, width);
-            if (valueFrom < valueTo) {
-              binding.sliderTimer.setValueTo(valueTo);
-            }
-            ViewUtil.configureSliderSafely(
-                binding.sliderTimer,
-                (int) binding.sliderTimer.getValueFrom(),
-                (int) Math.max(valueFrom, width),
-                0,
-                (int) binding.sliderTimer.getValue()
-            );
-            displayHeightExpanded = binding.frameTimerDisplayContainer.getHeight();
-            MetronomeEngine metronomeEngine = getMetronomeEngine();
-            updateControls(
-                false,
-                metronomeEngine != null &&
-                    metronomeEngine.isPlaying() && metronomeEngine.getConfig().isTimerActive(),
-                true
-            );
-            if (binding.linearTimerContainer.getViewTreeObserver().isAlive()) {
-              binding.linearTimerContainer.getViewTreeObserver().removeOnGlobalLayoutListener(
-                  this
-              );
-            }
-          }
-        });
-  }
-
-  public void updateControls(
-      boolean animateVisibility, boolean animateProgress, boolean withTransition
-  ) {
-    MetronomeEngine metronomeEngine = activity.getMetronomeEngine();
-    MetronomeConfig metronomeConfig = metronomeEngine != null
-        ? metronomeEngine.getConfig()
-        : new MetronomeConfig(activity.getSharedPrefs());
-    boolean isPlaying = metronomeEngine != null && metronomeEngine.isPlaying();
-    boolean isTimerActive = metronomeConfig.isTimerActive();
-    setTimerExpanded(isTimerActive, animateVisibility);
-
-    int tickCount = metronomeConfig.getTimerDuration();
-    int tickSpacingPx = (int) (binding.sliderTimer.getValueTo() / tickCount);
-    int tickSpacingDp = UiUtil.dpFromPx(activity, tickSpacingPx);
-    if (tickSpacingDp < 16) {
-      // reduce tick count to only show every tenth tick
-      tickCount = (int) Math.ceil(tickCount / 10f);
-      tickSpacingPx = (int) (binding.sliderTimer.getValueTo() / tickCount);
-      tickSpacingDp = UiUtil.dpFromPx(activity, tickSpacingPx);
-      if (tickSpacingDp < 16) {
-        // reduce tick count again to only show every hundredth tick
-        tickCount = (int) Math.ceil(tickCount / 10f);
+        )
+        binding.chipTimerElapsed.imageChipNumbers.visibility = View.VISIBLE
       }
     }
-    binding.sliderTimer.setContinuousModeTickCount(tickCount + 1);
+  }
 
-    if (metronomeEngine == null) {
-      return;
+  fun measureControls() {
+    binding.linearTimerContainer.viewTreeObserver.addOnGlobalLayoutListener(
+      object : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+          val width = binding.sliderTimer.width - binding.sliderTimer.trackSidePadding * 2
+          val valueFrom = binding.sliderTimer.valueFrom
+          val valueTo = valueFrom.coerceAtLeast(width.toFloat())
+          if (valueFrom < valueTo) {
+            binding.sliderTimer.valueTo = valueTo
+          }
+          binding.sliderTimer.configureSafely(
+            binding.sliderTimer.valueFrom.toInt(),
+            valueTo.toInt(),
+            0,
+            binding.sliderTimer.value.toInt()
+          )
+          displayHeightExpanded = binding.frameTimerDisplayContainer.height
+          val engine = getMetronomeEngine()
+          updateControls(
+            false,
+            engine != null && engine.isPlaying() && engine.config.isTimerActive(),
+            true
+          )
+          if (binding.linearTimerContainer.viewTreeObserver.isAlive) {
+            binding.linearTimerContainer.viewTreeObserver.removeOnGlobalLayoutListener(this)
+          }
+        }
+      }
+    )
+  }
+
+  fun updateControls(
+    animateVisibility: Boolean,
+    animateProgress: Boolean,
+    withTransition: Boolean
+  ) {
+    val metronomeEngine = activity?.metronomeEngine
+    val metronomeConfig = metronomeEngine?.config ?: MetronomeConfig()
+    val isPlaying = metronomeEngine?.isPlaying() == true
+    val isTimerActive = metronomeConfig.isTimerActive()
+    setTimerExpanded(isTimerActive, animateVisibility)
+
+    var tickCount = metronomeConfig.timerDuration
+    var tickSpacingPx = (binding.sliderTimer.valueTo / tickCount).toInt()
+    var tickSpacingDp = context.dpFromPx(tickSpacingPx.toFloat())
+    if (tickSpacingDp < 16) {
+      tickCount = ceil(tickCount / 10f).toInt()
+      tickSpacingPx = (binding.sliderTimer.valueTo / tickCount).toInt()
+      tickSpacingDp = context.dpFromPx(tickSpacingPx.toFloat())
+      if (tickSpacingDp < 16) {
+        tickCount = ceil(tickCount / 10f).toInt()
+      }
     }
+    binding.sliderTimer.setContinuousModeTickCount(tickCount + 1)
 
-    // Check if timer is currently running
+    if (metronomeEngine == null) return
+
     if (isPlaying && isTimerActive && !metronomeEngine.isCountingIn()) {
       if (withTransition) {
-        long timerInterval = metronomeEngine.getTimerInterval();
-        float fraction = (float) Constants.ANIM_DURATION_LONG / timerInterval;
-        fraction += metronomeEngine.getTimerProgress();
-        startProgressTransition(fraction);
+        val timerInterval = metronomeEngine.getTimerInterval()
+        var fraction = Constants.ANIM_DURATION_LONG.toFloat() / timerInterval
+        fraction += metronomeEngine.getTimerProgress()
+        startProgressTransition(fraction)
       }
       updateProgress(
-          1, metronomeEngine.getTimerIntervalRemaining(), animateProgress, true
-      );
+        1f,
+        metronomeEngine.getTimerIntervalRemaining(),
+        animateProgress,
+        true
+      )
     } else {
-      float timerProgress = metronomeEngine.getTimerProgress();
+      val timerProgress = metronomeEngine.getTimerProgress()
       if (animateProgress) {
-        startProgressTransition(timerProgress);
-      } else  {
-        updateProgress(timerProgress, 0, false, false);
+        startProgressTransition(timerProgress)
+      } else {
+        updateProgress(timerProgress, 0, false, false)
       }
     }
-    updateDisplay();
+    updateDisplay()
   }
 
-  public void updateDisplay() {
-    if (binding == null || getMetronomeEngine() == null) {
-      return;
+  fun updateDisplay() {
+    val engine = getMetronomeEngine() ?: return
+    val totalTime = engine.getTotalTimeString()
+    if (totalTime.isNotEmpty()) {
+      binding.chipTimerTotal.textChipNumbers.text = totalTime
     }
-    String totalTime = getMetronomeEngine().getTotalTimeString();
-    if (!totalTime.isEmpty()) {
-      binding.chipTimerTotal.textChipNumbers.setText(getMetronomeEngine().getTotalTimeString());
-    }
-    String currentTime = getMetronomeEngine().getCurrentTimerString();
-    if (!currentTime.isEmpty()) {
-      binding.chipTimerCurrent.textChipNumbers.setText(getMetronomeEngine().getCurrentTimerString());
+    val currentTime = engine.getCurrentTimerString()
+    if (currentTime.isNotEmpty()) {
+      binding.chipTimerCurrent.textChipNumbers.text = currentTime
     }
 
-    boolean isElapsedActive = getMetronomeEngine().isElapsedActive();
-    setElapsedExpanded(isElapsedActive, false);
-    binding.chipTimerElapsed.textChipNumbers.setText(getMetronomeEngine().getElapsedTimeString());
+    setElapsedExpanded(engine.isElapsedActive(), false)
+    binding.chipTimerElapsed.textChipNumbers.text = engine.getElapsedTimeString()
   }
 
-  private void updateProgress(float fraction, long duration, boolean animated, boolean linear) {
-    stopProgress();
-    int max = (int) binding.sliderTimer.getValueTo();
+  private fun updateProgress(fraction: Float, duration: Long, animated: Boolean, linear: Boolean) {
+    stopProgress()
+    val max = binding.sliderTimer.valueTo.toInt()
     if (animated) {
-      if (getMetronomeEngine() == null) {
-        return;
-      }
-      progressAnimator = ValueAnimator.ofFloat(getMetronomeEngine().getTimerProgress(), fraction);
-      progressAnimator.addUpdateListener(animation -> {
-        if (progressTransitionAnimator != null) {
-          return;
-        }
-        ViewUtil.configureSliderSafely(
-            binding.sliderTimer,
-            (int) binding.sliderTimer.getValueFrom(),
-            (int) binding.sliderTimer.getValueTo(),
+      val engine = getMetronomeEngine() ?: return
+      progressAnimator = ValueAnimator.ofFloat(
+        engine.getTimerProgress(), fraction
+      ).apply {
+        addUpdateListener {
+          if (progressTransitionAnimator != null) return@addUpdateListener
+          binding.sliderTimer.configureSafely(
+            binding.sliderTimer.valueFrom.toInt(),
+            binding.sliderTimer.valueTo.toInt(),
             0,
-            (int) ((float) animation.getAnimatedValue() * max)
-        );
-      });
-      progressAnimator.setInterpolator(
-          linear ? new LinearInterpolator() : new FastOutSlowInInterpolator()
-      );
-      progressAnimator.setDuration(duration);
-      progressAnimator.start();
+            ((it.animatedValue as Float) * max).toInt()
+          )
+        }
+        interpolator = if (linear) LinearInterpolator() else FastOutSlowInInterpolator()
+        this.duration = duration
+        start()
+      }
     } else {
-      ViewUtil.configureSliderSafely(
-          binding.sliderTimer,
-          (int) binding.sliderTimer.getValueFrom(),
-          (int) binding.sliderTimer.getValueTo(),
-          0,
-          (int) (fraction * max)
-      );
+      binding.sliderTimer.configureSafely(
+        binding.sliderTimer.valueFrom.toInt(),
+        binding.sliderTimer.valueTo.toInt(),
+        0,
+        (fraction * max).toInt()
+      )
     }
   }
 
-  public void stopProgress() {
-    if (progressAnimator != null) {
-      progressAnimator.pause();
-      progressAnimator.removeAllUpdateListeners();
-      progressAnimator.removeAllListeners();
-      progressAnimator.cancel();
-      progressAnimator = null;
+  fun stopProgress() {
+    progressAnimator?.apply {
+      pause()
+      removeAllUpdateListeners()
+      removeAllListeners()
+      cancel()
     }
+    progressAnimator = null
   }
 
-  private void startProgressTransition(float fractionTo) {
-    if (getMetronomeEngine() == null) {
-      return;
-    }
-    int current = (int) binding.sliderTimer.getValue();
-    int max = (int) binding.sliderTimer.getValueTo();
-    float currentFraction = current / (float) max;
-    int currentFractionPx = (int) (currentFraction * binding.sliderTimer.getValueTo());
-    int currentFractionDp = UiUtil.dpFromPx(activity, currentFractionPx);
-    float currentProgress = getMetronomeEngine().getTimerProgress();
-    int currentProgressPx = (int) (currentProgress * binding.sliderTimer.getValueTo());
-    int currentProgressDp = UiUtil.dpFromPx(activity, currentProgressPx);
-    int diffDp = Math.abs(currentFractionDp - currentProgressDp);
-    if (diffDp < 2) {
-      // only if current progress is not nearly equal to timer progress
-      return;
-    }
-    progressTransitionAnimator = ValueAnimator.ofFloat(currentFraction, fractionTo);
-    progressTransitionAnimator.addUpdateListener(animation -> {
-      int value = (int) ((float) animation.getAnimatedValue() * max);
-      ViewUtil.configureSliderSafely(
-          binding.sliderTimer,
-          (int) binding.sliderTimer.getValueFrom(),
-          (int) binding.sliderTimer.getValueTo(),
+  private fun startProgressTransition(fractionTo: Float) {
+    val engine = getMetronomeEngine() ?: return
+    val current = binding.sliderTimer.value
+    val max = binding.sliderTimer.valueTo
+    val currentFraction = current / max
+    val currentFractionPx = (currentFraction * binding.sliderTimer.valueTo).toInt()
+    val currentFractionDp = context.dpFromPx(currentFractionPx.toFloat())
+    val currentProgress = engine.getTimerProgress()
+    val currentProgressPx = (currentProgress * binding.sliderTimer.valueTo).toInt()
+    val currentProgressDp = context.dpFromPx(currentProgressPx.toFloat())
+    if (abs(currentFractionDp - currentProgressDp) < 2) return
+
+    progressTransitionAnimator = ValueAnimator.ofFloat(
+      currentFraction, fractionTo
+    ).apply {
+      addUpdateListener {
+        val value = ((it.animatedValue as Float) * max).toInt()
+        binding.sliderTimer.configureSafely(
+          binding.sliderTimer.valueFrom.toInt(),
+          binding.sliderTimer.valueTo.toInt(),
           0,
           value
-      );
-    });
-    progressTransitionAnimator.addListener(new AnimatorListenerAdapter() {
-      @Override
-      public void onAnimationEnd(Animator animation) {
-        stopProgressTransition();
+        )
       }
-    });
-    progressTransitionAnimator.setInterpolator(new FastOutSlowInInterpolator());
-    progressTransitionAnimator.setDuration(Constants.ANIM_DURATION_LONG);
-    progressTransitionAnimator.start();
+      addListener(object : AnimatorListenerAdapter() {
+        override fun onAnimationEnd(animation: Animator) {
+          stopProgressTransition()
+        }
+      })
+      interpolator = FastOutSlowInInterpolator()
+      duration = Constants.ANIM_DURATION_LONG
+      start()
+    }
   }
 
-  public void stopProgressTransition() {
-    if (progressTransitionAnimator != null) {
-      progressTransitionAnimator.pause();
-      progressTransitionAnimator.removeAllUpdateListeners();
-      progressTransitionAnimator.removeAllListeners();
-      progressTransitionAnimator.cancel();
-      progressTransitionAnimator = null;
+  fun stopProgressTransition() {
+    progressTransitionAnimator?.apply {
+      pause()
+      removeAllUpdateListeners()
+      removeAllListeners()
+      cancel()
     }
+    progressTransitionAnimator = null
   }
 
   @SuppressLint("PrivateResource")
-  private void setTimerExpanded(boolean expanded, boolean animated) {
-    this.timerExpanded = expanded;
-    if (springAnimationTimerExpand != null) {
-      springAnimationTimerExpand.cancel();
-    }
+  private fun setTimerExpanded(expanded: Boolean, animated: Boolean) {
+    this.timerExpanded = expanded
+    springAnimationTimerExpand?.cancel()
     if (animated) {
-      binding.sliderTimer.setVisibility(VISIBLE);
-      binding.chipTimerCurrent.frameChipNumbersContainer.setVisibility(VISIBLE);
-      binding.chipTimerTotal.frameChipNumbersContainer.setVisibility(VISIBLE);
+      binding.sliderTimer.visibility = VISIBLE
+      binding.chipTimerCurrent.frameChipNumbersContainer.visibility = VISIBLE
+      binding.chipTimerTotal.frameChipNumbersContainer.visibility = VISIBLE
       if (springAnimationTimerExpand == null) {
-        springAnimationTimerExpand =
-            new SpringAnimation(this, TIMER_EXPAND_FRACTION)
-                .setSpring(
-                    MotionUtils.resolveThemeSpringForce(
-                        getContext(),
-                        R.attr.motionSpringDefaultSpatial,
-                        R.style.Motion_Material3_Spring_Standard_Default_Spatial)
-                )
-                .setMinimumVisibleChange(0.01f)
-                .addEndListener(
-                    (animation, canceled, value, velocity) -> {
-                      if (!canceled) {
-                        setTimerExpandAnimationEndState();
-                      }
-                    });
-        if (TEST_ANIMATIONS) {
-          springAnimationTimerExpand.setSpring(
-              new SpringForce().setStiffness(20f).setDampingRatio(0.9f)
-          );
+        springAnimationTimerExpand = SpringAnimation(
+          this, TIMER_EXPAND_FRACTION
+        ).apply {
+          spring = MotionUtils.resolveThemeSpringForce(
+            context,
+            R.attr.motionSpringDefaultSpatial,
+            R.style.Motion_Material3_Spring_Standard_Default_Spatial
+          ).apply {
+            if (TEST_ANIMATIONS) {
+              stiffness = 20f
+              dampingRatio = 0.9f
+            }
+          }
+          minimumVisibleChange = 0.01f
+          addEndListener { _, canceled, _, _ ->
+            if (!canceled) setTimerExpandAnimationEndState()
+          }
         }
       }
-      springAnimationTimerExpand.animateToFinalPosition(expanded ? 1 : 0);
+      springAnimationTimerExpand?.animateToFinalPosition(if (expanded) 1f else 0f)
     } else {
-      setTimerExpandFraction(expanded ? 1 : 0);
-      setTimerExpandAnimationEndState();
+      setTimerExpandFraction(if (expanded) 1f else 0f)
+      setTimerExpandAnimationEndState()
     }
   }
 
-  private void setTimerExpandAnimationEndState() {
-    binding.sliderTimer.setAlpha(timerExpanded ? 1 : 0);
-    binding.sliderTimer.setVisibility(timerExpanded ? VISIBLE : GONE);
-    binding.chipTimerCurrent.frameChipNumbersContainer.setAlpha(timerExpanded ? 1 : 0);
-    binding.chipTimerCurrent.frameChipNumbersContainer.setVisibility(
-        timerExpanded ? VISIBLE : INVISIBLE
-    );
-    binding.chipTimerCurrent.frameChipNumbersContainer.setClickable(timerExpanded);
-    binding.chipTimerTotal.frameChipNumbersContainer.setAlpha(timerExpanded ? 1 : 0);
-    binding.chipTimerTotal.frameChipNumbersContainer.setVisibility(
-        timerExpanded ? VISIBLE : INVISIBLE
-    );
-    binding.chipTimerTotal.frameChipNumbersContainer.setClickable(timerExpanded);
+  private fun setTimerExpandAnimationEndState() {
+    binding.sliderTimer.alpha = if (timerExpanded) 1f else 0f
+    binding.sliderTimer.visibility = if (timerExpanded) VISIBLE else GONE
+    binding.chipTimerCurrent.frameChipNumbersContainer.alpha = if (timerExpanded) 1f else 0f
+    binding.chipTimerCurrent.frameChipNumbersContainer.visibility =
+      if (timerExpanded) VISIBLE else INVISIBLE
+    binding.chipTimerCurrent.frameChipNumbersContainer.isClickable = timerExpanded
+    binding.chipTimerTotal.frameChipNumbersContainer.alpha = if (timerExpanded) 1f else 0f
+    binding.chipTimerTotal.frameChipNumbersContainer.visibility =
+      if (timerExpanded) VISIBLE else INVISIBLE
+    binding.chipTimerTotal.frameChipNumbersContainer.isClickable = timerExpanded
   }
 
-  public float getTimerExpandFraction() {
-    return timerExpandFraction;
-  }
+  fun getTimerExpandFraction(): Float = timerExpandFraction
 
-  public void setTimerExpandFraction(float fraction) {
-    timerExpandFraction = fraction;
+  fun setTimerExpandFraction(fraction: Float) {
+    timerExpandFraction = fraction
 
-    binding.sliderTimer.setAlpha(fraction);
-    binding.sliderTimer.setPivotY(0);
-    binding.sliderTimer.setScaleY(fraction);
-    ViewGroup.LayoutParams lp = binding.frameTimerSliderContainer.getLayoutParams();
-    lp.height = (int) (sliderHeightExpanded * fraction);
-    binding.frameTimerSliderContainer.setLayoutParams(lp);
+    binding.sliderTimer.alpha = fraction
+    binding.sliderTimer.pivotY = 0f
+    binding.sliderTimer.scaleY = fraction
+    binding.frameTimerSliderContainer.layoutParams =
+      binding.frameTimerSliderContainer.layoutParams.apply {
+        height = (sliderHeightExpanded * fraction).toInt()
+      }
 
-    binding.chipTimerCurrent.frameChipNumbersContainer.setAlpha(fraction);
+    binding.chipTimerCurrent.frameChipNumbersContainer.alpha = fraction
     if (changeHeightOfChips) {
-      binding.chipTimerCurrent.frameChipNumbersContainer.setPivotY(0);
-      binding.chipTimerCurrent.frameChipNumbersContainer.setScaleY(fraction);
-      ViewGroup.LayoutParams lpCurrent =
-          binding.chipTimerCurrent.frameChipNumbersContainer.getLayoutParams();
-      lpCurrent.height = (int) (displayHeightExpanded * fraction);
-      binding.chipTimerCurrent.frameChipNumbersContainer.setLayoutParams(lpCurrent);
+      binding.chipTimerCurrent.frameChipNumbersContainer.pivotY = 0f
+      binding.chipTimerCurrent.frameChipNumbersContainer.scaleY = fraction
+      binding.chipTimerCurrent.frameChipNumbersContainer.layoutParams =
+        binding.chipTimerCurrent.frameChipNumbersContainer.layoutParams.apply {
+          height = (displayHeightExpanded * fraction).toInt()
+        }
     }
 
-    binding.chipTimerTotal.frameChipNumbersContainer.setAlpha(fraction);
+    binding.chipTimerTotal.frameChipNumbersContainer.alpha = fraction
     if (changeHeightOfChips) {
-      binding.chipTimerTotal.frameChipNumbersContainer.setPivotY(0);
-      binding.chipTimerTotal.frameChipNumbersContainer.setScaleY(fraction);
-      ViewGroup.LayoutParams lpTotal =
-          binding.chipTimerTotal.frameChipNumbersContainer.getLayoutParams();
-      lpTotal.height = (int) (displayHeightExpanded * fraction);
-      binding.chipTimerTotal.frameChipNumbersContainer.setLayoutParams(lpTotal);
+      binding.chipTimerTotal.frameChipNumbersContainer.pivotY = 0f
+      binding.chipTimerTotal.frameChipNumbersContainer.scaleY = fraction
+      binding.chipTimerTotal.frameChipNumbersContainer.layoutParams =
+        binding.chipTimerTotal.frameChipNumbersContainer.layoutParams.apply {
+          height = (displayHeightExpanded * fraction).toInt()
+        }
     }
 
-    if (listener != null) {
-      listener.onHeightChanged();
-    }
+    listener?.onHeightChanged()
   }
 
-  public int getSliderHeightExpanded() {
-    return sliderHeightExpanded;
-  }
+  fun getSliderHeightExpanded(): Int = sliderHeightExpanded
 
-  public int getMaxHeight() {
-    return sliderHeightExpanded + displayHeightExpanded;
-  }
+  fun getMaxHeight(): Int = sliderHeightExpanded + displayHeightExpanded
 
-  public int getTargetHeight() {
-    int height = 0;
+  fun getTargetHeight(): Int {
+    var h = 0
     if (timerExpanded) {
-      height += sliderHeightExpanded;
-      height += displayHeightExpanded;
+      h += sliderHeightExpanded
+      h += displayHeightExpanded
     }
     if (!timerExpanded && elapsedExpanded) {
-      height += displayHeightExpanded;
+      h += displayHeightExpanded
     }
-    return height;
+    return h
   }
 
   @SuppressLint("PrivateResource")
-  private void setElapsedExpanded(boolean expanded, boolean animated) {
-    this.elapsedExpanded = expanded;
-    if (springAnimationElapsedExpand != null) {
-      springAnimationElapsedExpand.cancel();
-    }
+  private fun setElapsedExpanded(expanded: Boolean, animated: Boolean) {
+    this.elapsedExpanded = expanded
+    springAnimationElapsedExpand?.cancel()
     if (animated) {
-      binding.chipTimerElapsed.frameChipNumbersContainer.setVisibility(VISIBLE);
+      binding.chipTimerElapsed.frameChipNumbersContainer.visibility = VISIBLE
       if (springAnimationElapsedExpand == null) {
-        springAnimationElapsedExpand =
-            new SpringAnimation(this, ELAPSED_EXPAND_FRACTION)
-                .setSpring(
-                    MotionUtils.resolveThemeSpringForce(
-                        getContext(),
-                        R.attr.motionSpringDefaultSpatial,
-                        R.style.Motion_Material3_Spring_Standard_Default_Spatial)
-                )
-                .setMinimumVisibleChange(0.01f)
-                .addEndListener(
-                    (animation, canceled, value, velocity) -> {
-                      if (!canceled) {
-                        setElapsedExpandAnimationEndState();
-                      }
-                    });
-        if (TEST_ANIMATIONS) {
-          springAnimationElapsedExpand.setSpring(
-              new SpringForce().setStiffness(30f).setDampingRatio(0.9f)
-          );
+        springAnimationElapsedExpand = SpringAnimation(
+          this, ELAPSED_EXPAND_FRACTION
+        ).apply {
+          spring = MotionUtils.resolveThemeSpringForce(
+            context,
+            R.attr.motionSpringDefaultSpatial,
+            R.style.Motion_Material3_Spring_Standard_Default_Spatial
+          ).apply {
+            if (TEST_ANIMATIONS) {
+              stiffness = 30f
+              dampingRatio = 0.9f
+            }
+          }
+          minimumVisibleChange = 0.01f
+          addEndListener { _, canceled, _, _ ->
+            if (!canceled) setElapsedExpandAnimationEndState()
+          }
         }
       }
-      springAnimationElapsedExpand.animateToFinalPosition(expanded ? 1 : 0);
+      springAnimationElapsedExpand?.animateToFinalPosition(if (expanded) 1f else 0f)
     } else {
-      setElapsedExpandFraction(expanded ? 1 : 0);
-      setElapsedExpandAnimationEndState();
+      setElapsedExpandFraction(if (expanded) 1f else 0f)
+      setElapsedExpandAnimationEndState()
     }
   }
 
-  private void setElapsedExpandAnimationEndState() {
-    binding.chipTimerElapsed.frameChipNumbersContainer.setAlpha(elapsedExpanded ? 1 : 0);
-    binding.chipTimerElapsed.frameChipNumbersContainer.setVisibility(
-        elapsedExpanded ? VISIBLE : INVISIBLE
-    );
-    binding.chipTimerElapsed.frameChipNumbersContainer.setClickable(elapsedExpanded);
+  private fun setElapsedExpandAnimationEndState() {
+    binding.chipTimerElapsed.frameChipNumbersContainer.alpha = if (elapsedExpanded) 1f else 0f
+    binding.chipTimerElapsed.frameChipNumbersContainer.visibility =
+      if (elapsedExpanded) VISIBLE else INVISIBLE
+    binding.chipTimerElapsed.frameChipNumbersContainer.isClickable = elapsedExpanded
   }
 
-  public float getElapsedExpandFraction() {
-    return elapsedExpandFraction;
-  }
+  fun getElapsedExpandFraction(): Float = elapsedExpandFraction
 
-  public void setElapsedExpandFraction(float fraction) {
-    elapsedExpandFraction = fraction;
+  fun setElapsedExpandFraction(fraction: Float) {
+    elapsedExpandFraction = fraction
 
-    binding.chipTimerElapsed.frameChipNumbersContainer.setAlpha(fraction);
+    binding.chipTimerElapsed.frameChipNumbersContainer.alpha = fraction
     if (changeHeightOfChips) {
-      binding.chipTimerElapsed.frameChipNumbersContainer.setPivotY(0);
-      binding.chipTimerElapsed.frameChipNumbersContainer.setScaleY(fraction);
-      ViewGroup.LayoutParams lpTotal =
-          binding.chipTimerElapsed.frameChipNumbersContainer.getLayoutParams();
-      lpTotal.height = (int) (displayHeightExpanded * fraction);
-      binding.chipTimerElapsed.frameChipNumbersContainer.setLayoutParams(lpTotal);
+      binding.chipTimerElapsed.frameChipNumbersContainer.pivotY = 0f
+      binding.chipTimerElapsed.frameChipNumbersContainer.scaleY = fraction
+      binding.chipTimerElapsed.frameChipNumbersContainer.layoutParams =
+        binding.chipTimerElapsed.frameChipNumbersContainer.layoutParams.apply {
+          height = (displayHeightExpanded * fraction).toInt()
+        }
     }
 
-    if (listener != null) {
-      listener.onHeightChanged();
-    }
+    listener?.onHeightChanged()
   }
 
-  public int getDisplayHeightExpanded() {
-    return displayHeightExpanded;
+  fun getDisplayHeightExpanded(): Int = displayHeightExpanded
+
+  private fun getMetronomeEngine(): MetronomeEngine? = activity?.metronomeEngine
+
+  interface TimerListener {
+    fun onCurrentTimeClick()
+    fun onElapsedTimeClick()
+    fun onTotalTimeClick()
+    fun onHeightChanged()
   }
 
-  @Nullable
-  private MetronomeEngine getMetronomeEngine() {
-    return activity.getMetronomeEngine();
+  companion object {
+    private const val TEST_ANIMATIONS = false
+
+    private val TIMER_EXPAND_FRACTION =
+      object : FloatPropertyCompat<TimerView>("timerExpandFraction") {
+        override fun getValue(delegate: TimerView): Float = delegate.getTimerExpandFraction()
+        override fun setValue(delegate: TimerView, value: Float) =
+          delegate.setTimerExpandFraction(value)
+      }
+    private val ELAPSED_EXPAND_FRACTION =
+      object : FloatPropertyCompat<TimerView>("elapsedExpandFraction") {
+        override fun getValue(delegate: TimerView): Float = delegate.getElapsedExpandFraction()
+        override fun setValue(delegate: TimerView, value: Float) =
+          delegate.setElapsedExpandFraction(value)
+      }
   }
-
-  public interface TimerListener {
-    void onCurrentTimeClick();
-    void onElapsedTimeClick();
-    void onTotalTimeClick();
-    void onHeightChanged();
-  }
-
-  private static final FloatPropertyCompat<TimerView> TIMER_EXPAND_FRACTION =
-      new FloatPropertyCompat<>("timerExpandFraction") {
-        @Override
-        public float getValue(TimerView delegate) {
-          return delegate.getTimerExpandFraction();
-        }
-
-        @Override
-        public void setValue(TimerView delegate, float value) {
-          delegate.setTimerExpandFraction(value);
-        }
-      };
-  private static final FloatPropertyCompat<TimerView> ELAPSED_EXPAND_FRACTION =
-      new FloatPropertyCompat<>("elapsedExpandFraction") {
-        @Override
-        public float getValue(TimerView delegate) {
-          return delegate.getElapsedExpandFraction();
-        }
-
-        @Override
-        public void setValue(TimerView delegate, float value) {
-          delegate.setElapsedExpandFraction(value);
-        }
-      };
 }

@@ -17,138 +17,97 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util.dialog;
+package xyz.zedler.patrick.tack.util.dialog
 
-import android.os.Bundle;
-import android.view.View;
-import android.view.ViewTreeObserver;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.slider.Slider;
-import com.google.android.material.slider.Slider.OnChangeListener;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.databinding.PartialDialogGainBinding;
-import xyz.zedler.patrick.tack.fragment.SettingsFragment;
-import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
-import xyz.zedler.patrick.tack.util.UiUtil;
+import android.os.Bundle
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.activity.MainActivity
+import xyz.zedler.patrick.tack.databinding.PartialDialogGainBinding
+import xyz.zedler.patrick.tack.fragment.SettingsFragment
+import xyz.zedler.patrick.tack.util.*
 
-public class GainDialogUtil implements OnChangeListener {
+class GainDialogUtil(
+  private val activity: MainActivity,
+  private val fragment: SettingsFragment
+) {
 
-  private static final String TAG = GainDialogUtil.class.getSimpleName();
+  private val binding = PartialDialogGainBinding.inflate(activity.layoutInflater)
+  private val dialogUtil = DialogUtil(activity, "gain")
 
-  private final MainActivity activity;
-  private final SettingsFragment fragment;
-  private final PartialDialogGainBinding binding;
-  private final DialogUtil dialogUtil;
+  init {
+    dialogUtil.createDialog { builder ->
+      builder.setTitle(R.string.settings_gain)
+      builder.setView(binding.root)
+      builder.setPositiveButton(R.string.action_close) { _, _ ->
+        activity.performHapticClick()
+      }
+    }
 
-  public GainDialogUtil(MainActivity activity, SettingsFragment fragment) {
-    this.activity = activity;
-    this.fragment = fragment;
+    binding.sliderGain.addOnChangeListener { slider, value, fromUser ->
+      if (fromUser) {
+        val engine = activity.metronomeEngine
+        if (engine != null) {
+          engine.setGain(value.toInt())
+          activity.performHapticSegmentTick(slider, false)
+          updateValueDisplay()
+          fragment.updateGainDescription(value.toInt())
+        }
+      }
+    }
 
-    binding = PartialDialogGainBinding.inflate(activity.getLayoutInflater());
-
-    dialogUtil = new DialogUtil(activity, "gain");
-    dialogUtil.createDialog(builder -> {
-      builder.setTitle(R.string.settings_gain);
-      builder.setView(binding.getRoot());
-      builder.setPositiveButton(
-          R.string.action_close, (dialog, which) -> activity.performHapticClick()
-      );
-    });
-
-    setDividerVisibility(!UiUtil.isOrientationPortrait(activity));
+    updateDividerVisibility(activity.isOrientationPortrait().not())
   }
 
-  public void show() {
-    update();
-    dialogUtil.show();
+  fun show() {
+    update()
+    dialogUtil.show()
   }
 
-  public void showIfWasShown(@Nullable Bundle state) {
-    update();
-    dialogUtil.showIfWasShown(state);
+  fun showIfWasShown(state: Bundle?) {
+    update()
+    dialogUtil.showIfWasShown(state)
   }
 
-  public void dismiss() {
-    dialogUtil.dismiss();
+  fun dismiss() {
+    dialogUtil.dismiss()
   }
 
-  public void saveState(@NonNull Bundle outState) {
-    if (dialogUtil != null) {
-      dialogUtil.saveState(outState);
+  fun saveState(outState: Bundle) {
+    dialogUtil.saveState(outState)
+  }
+
+  private fun update() {
+    measureScrollView()
+
+    activity.metronomeEngine?.let { engine ->
+      updateValueDisplay()
+      binding.sliderGain.value = engine.getGain().toFloat()
     }
   }
 
-  private void update() {
-    if (binding == null) {
-      return;
-    }
-
-    measureScrollView();
-
-    if (getMetronomeEngine() != null) {
-      updateValueDisplay();
-      binding.sliderGain.removeOnChangeListener(this);
-      binding.sliderGain.setValue(getMetronomeEngine().getGain());
-      binding.sliderGain.addOnChangeListener(this);
-    }
+  private fun updateValueDisplay() {
+    val engine = activity.metronomeEngine ?: return
+    val gain = engine.getGain()
+    binding.textGainValue.text = activity.getString(
+      R.string.label_db_signed,
+      if (gain > 0) "+$gain" else gain.toString()
+    )
   }
 
-  @Override
-  public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-    if (!fromUser || getMetronomeEngine() == null) {
-      return;
-    }
-    int id = slider.getId();
-    if (id == R.id.slider_gain) {
-      getMetronomeEngine().setGain((int) value);
-      activity.performHapticSegmentTick(slider, false);
-      updateValueDisplay();
-      fragment.updateGainDescription((int) value);
+  private fun measureScrollView() {
+    binding.scrollGain.onGlobalLayout {
+      val isScrollable = binding.scrollGain.canScrollVertically(-1) ||
+          binding.scrollGain.canScrollVertically(1)
+      updateDividerVisibility(isScrollable)
     }
   }
 
-  private void updateValueDisplay() {
-    if (binding == null || getMetronomeEngine() == null) {
-      return;
-    }
-    int gain = getMetronomeEngine().getGain();
-    binding.textGainValue.setText(
-        activity.getString(
-            R.string.label_db_signed,
-            gain > 0 ? "+" + gain : String.valueOf(gain)
-        )
-    );
-  }
-
-  private void measureScrollView() {
-    binding.scrollGain.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            boolean isScrollable = binding.scrollGain.canScrollVertically(-1)
-                || binding.scrollGain.canScrollVertically(1);
-            setDividerVisibility(isScrollable);
-            binding.scrollGain.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-          }
-        });
-  }
-
-  private void setDividerVisibility(boolean visible) {
-    binding.dividerGainTop.setVisibility(visible ? View.VISIBLE : View.GONE);
-    binding.dividerGainBottom.setVisibility(visible ? View.VISIBLE : View.GONE);
-    binding.linearGainContainer.setPadding(
-        binding.linearGainContainer.getPaddingLeft(),
-        visible ? UiUtil.dpToPx(activity, 16) : 0,
-        binding.linearGainContainer.getPaddingRight(),
-        visible ? UiUtil.dpToPx(activity, 16) : 0
-    );
-  }
-
-  @Nullable
-  private MetronomeEngine getMetronomeEngine() {
-    return activity.getMetronomeEngine();
+  private fun updateDividerVisibility(visible: Boolean) {
+    binding.scrollGain.setDividerVisibility(
+      visible,
+      binding.dividerGainTop,
+      binding.dividerGainBottom,
+      binding.linearGainContainer
+    )
   }
 }

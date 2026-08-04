@@ -17,86 +17,82 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.fragment;
+package xyz.zedler.patrick.tack.fragment
 
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import com.google.android.material.transition.MaterialSharedAxis;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
-import xyz.zedler.patrick.tack.util.ViewUtil;
+import android.content.SharedPreferences
+import android.os.Bundle
+import android.view.View
+import androidx.fragment.app.Fragment
+import com.google.android.material.transition.MaterialSharedAxis
+import xyz.zedler.patrick.tack.activity.MainActivity
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine
+import xyz.zedler.patrick.tack.util.ViewUtil
 
-public class BaseFragment extends Fragment {
+open class BaseFragment : Fragment() {
 
-  private static final String TAG = BaseFragment.class.getSimpleName();
+  val activity: MainActivity
+    get() = requireActivity() as MainActivity
 
-  private MainActivity activity;
-  private ViewUtil viewUtil;
+  private lateinit var viewUtil: ViewUtil
 
-  @Override
-  public void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
 
-    activity = (MainActivity) requireActivity();
-    viewUtil = new ViewUtil();
+    viewUtil = ViewUtil()
 
-    setEnterTransition(new MaterialSharedAxis(MaterialSharedAxis.Z, true));
-    setReenterTransition(new MaterialSharedAxis(MaterialSharedAxis.Z, false));
-    setReturnTransition(new MaterialSharedAxis(MaterialSharedAxis.Z, false));
-    setExitTransition(new MaterialSharedAxis(MaterialSharedAxis.Z, true));
+    enterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
+    reenterTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
+    returnTransition = MaterialSharedAxis(MaterialSharedAxis.Z, false)
+    exitTransition = MaterialSharedAxis(MaterialSharedAxis.Z, true)
   }
 
-  @Override
-  public void onDestroy() {
-    super.onDestroy();
-    viewUtil.cleanUp();
+  override fun onDestroy() {
+    super.onDestroy()
+    if (::viewUtil.isInitialized) {
+      viewUtil.cleanUp()
+    }
   }
 
-  @Nullable
-  public MetronomeEngine getMetronomeEngine() {
-    return activity.getMetronomeEngine();
+  val metronomeEngine: MetronomeEngine?
+    get() = activity.metronomeEngine
+
+  open fun updateMetronomeControls(init: Boolean) {}
+
+  val sharedPrefs: SharedPreferences
+    get() = activity.sharedPrefs
+
+  fun getViewUtil(): ViewUtil = viewUtil
+
+  fun navigateUp() {
+    activity.navigateUp()
   }
 
-  public void updateMetronomeControls(boolean init) {}
-
-  public SharedPreferences getSharedPrefs() {
-    return activity.getSharedPrefs();
+  fun performHapticClick() {
+    activity.performHapticClick()
   }
 
-  public ViewUtil getViewUtil() {
-    return viewUtil;
+  fun performHapticTick() {
+    activity.performHapticTick()
   }
 
-  public void navigateUp() {
-    activity.navigateUp();
+  fun performHapticSegmentTick(view: View, frequent: Boolean) {
+    activity.performHapticSegmentTick(view, frequent)
   }
 
-  public void performHapticClick() {
-    activity.performHapticClick();
+  fun performHapticHeavyClick() {
+    activity.performHapticHeavyClick()
   }
 
-  public void performHapticTick() {
-    activity.performHapticTick();
-  }
-
-  public void performHapticSegmentTick(View view, boolean frequent) {
-    activity.performHapticSegmentTick(view, frequent);
-  }
-
-  public void performHapticHeavyClick() {
-    activity.performHapticHeavyClick();
-  }
-
-  public OnClickListener getNavigationOnClickListener() {
-    return v -> {
-      if (viewUtil.isClickEnabled(v.getId())) {
-        performHapticClick();
-        navigateUp();
+  fun getNavigationOnClickListener(): View.OnClickListener {
+    return View.OnClickListener { v ->
+      if (viewUtil.isClickEnabled(v.id)) {
+        performHapticClick()
+        navigateUp()
       }
-    };
+    }
+  }
+
+  companion object {
+    private val TAG = BaseFragment::class.java.simpleName
   }
 }

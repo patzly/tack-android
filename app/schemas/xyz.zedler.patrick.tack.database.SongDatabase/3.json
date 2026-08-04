@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 3,
-    "identityHash": "a3f0f47e6cf85d68dd4f520971121dd4",
+    "identityHash": "da468ee421e8159702ba4a6e31ba71cb",
     "entities": [
       {
         "tableName": "songs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT, `lastPlayed` INTEGER NOT NULL, `playCount` INTEGER NOT NULL, `speed` INTEGER NOT NULL, `isLooped` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT, `lastPlayed` INTEGER NOT NULL, `playCount` INTEGER NOT NULL, `isLooped` INTEGER NOT NULL, `speed` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -32,14 +32,14 @@
             "notNull": true
           },
           {
-            "fieldPath": "speed",
-            "columnName": "speed",
+            "fieldPath": "isLooped",
+            "columnName": "isLooped",
             "affinity": "INTEGER",
             "notNull": true
           },
           {
-            "fieldPath": "isLooped",
-            "columnName": "isLooped",
+            "fieldPath": "speed",
+            "columnName": "speed",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -64,7 +64,7 @@
       },
       {
         "tableName": "parts",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT, `songId` TEXT NOT NULL, `partIndex` INTEGER NOT NULL, `countIn` INTEGER NOT NULL, `tempo` INTEGER NOT NULL, `beats` TEXT, `subdivisions` TEXT, `usePolyrhythm` INTEGER NOT NULL, `incrementalAmount` INTEGER NOT NULL, `incrementalInterval` INTEGER NOT NULL, `incrementalLimit` INTEGER NOT NULL, `incrementalUnit` TEXT, `incrementalIncrease` INTEGER NOT NULL, `timerDuration` INTEGER NOT NULL, `timerUnit` TEXT, `mutePlay` INTEGER NOT NULL, `muteMute` INTEGER NOT NULL, `muteUnit` TEXT, `muteRandom` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`songId`) REFERENCES `songs`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `name` TEXT, `songId` TEXT NOT NULL, `partIndex` INTEGER NOT NULL, `countIn` INTEGER NOT NULL, `tempo` INTEGER NOT NULL, `beats` TEXT NOT NULL, `subdivisions` TEXT NOT NULL, `usePolyrhythm` INTEGER NOT NULL, `incrementalAmount` INTEGER NOT NULL, `incrementalInterval` INTEGER NOT NULL, `incrementalLimit` INTEGER NOT NULL, `incrementalUnit` TEXT, `incrementalIncrease` INTEGER NOT NULL, `timerDuration` INTEGER NOT NULL, `timerUnit` TEXT, `mutePlay` INTEGER NOT NULL, `muteMute` INTEGER NOT NULL, `muteUnit` TEXT, `muteRandom` INTEGER NOT NULL, PRIMARY KEY(`id`), FOREIGN KEY(`songId`) REFERENCES `songs`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -104,12 +104,14 @@
           {
             "fieldPath": "beats",
             "columnName": "beats",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "subdivisions",
             "columnName": "subdivisions",
-            "affinity": "TEXT"
+            "affinity": "TEXT",
+            "notNull": true
           },
           {
             "fieldPath": "usePolyrhythm",
@@ -215,7 +217,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a3f0f47e6cf85d68dd4f520971121dd4')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'da468ee421e8159702ba4a6e31ba71cb')"
     ]
   }
 }

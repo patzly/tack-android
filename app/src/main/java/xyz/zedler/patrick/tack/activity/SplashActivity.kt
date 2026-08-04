@@ -17,146 +17,128 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.activity;
+package xyz.zedler.patrick.tack.activity
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.graphics.drawable.LayerDrawable;
-import android.os.Build;
-import android.os.Build.VERSION_CODES;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.res.ResourcesCompat;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import xyz.zedler.patrick.tack.Constants.DEF;
-import xyz.zedler.patrick.tack.Constants.EXTRA;
-import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
-import xyz.zedler.patrick.tack.util.PrefsUtil;
-import xyz.zedler.patrick.tack.util.UiUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil;
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.content.res.Configuration
+import android.graphics.drawable.LayerDrawable
+import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.res.ResourcesCompat
+import xyz.zedler.patrick.tack.Constants.DEF
+import xyz.zedler.patrick.tack.Constants.EXTRA
+import xyz.zedler.patrick.tack.Constants.PREF
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.behavior.SystemBarBehavior
+import xyz.zedler.patrick.tack.util.PrefsUtil
+import xyz.zedler.patrick.tack.util.setTheme
+import xyz.zedler.patrick.tack.util.start
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 @SuppressLint("CustomSplashScreen")
-public class SplashActivity extends MainActivity {
+class SplashActivity : MainActivity() {
 
-  @Override
-  public void onCreate(Bundle bundle) {
-    SharedPreferences sharedPrefs = new PrefsUtil(this)
-        .checkForMigrations()
-        .getSharedPrefs();
+  override fun onCreate(savedInstanceState: Bundle?) {
+    val sharedPrefs = PrefsUtil(this)
+      .checkForMigrations()
+      .sharedPrefs
 
-    if (Build.VERSION.SDK_INT >= VERSION_CODES.S_V2) {
-      super.onCreate(bundle);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S_V2) {
+      super.onCreate(savedInstanceState)
 
-      getSplashScreen().setOnExitAnimationListener(view -> {
-        Instant startTime = view.getIconAnimationStart();
-        ObjectAnimator animator = ObjectAnimator.ofFloat(view, "alpha", 0);
-        animator.setDuration(250);
-        animator.setStartDelay(
-            startTime != null
-                ? Math.max(900 - startTime.until(Instant.now(), ChronoUnit.MILLIS), 0)
-                : 0
-        );
-        animator.addListener(new AnimatorListenerAdapter() {
-          @Override
-          public void onAnimationEnd(@NonNull Animator animation, boolean isReverse) {
-            view.remove();
+      splashScreen.setOnExitAnimationListener { view ->
+        val startTime = view.iconAnimationStart
+        val animator = ObjectAnimator.ofFloat(
+          view, "alpha", 0f
+        )
+        animator.duration = 250
+        animator.startDelay = startTime?.let {
+          (900 - it.until(Instant.now(), ChronoUnit.MILLIS))
+            .coerceAtLeast(0)
+        } ?: 0
+        animator.addListener(object : AnimatorListenerAdapter() {
+          override fun onAnimationEnd(animation: Animator, isReverse: Boolean) {
+            view.remove()
           }
-        });
-        animator.start();
-      });
+        })
+        animator.start()
+      }
     } else {
       // DARK MODE
-
-      int modeNight = sharedPrefs.getInt(PREF.UI_MODE, DEF.UI_MODE);
-      int uiMode = getResources().getConfiguration().uiMode;
-      switch (modeNight) {
-        case AppCompatDelegate.MODE_NIGHT_NO:
-          uiMode = Configuration.UI_MODE_NIGHT_NO;
-          break;
-        case AppCompatDelegate.MODE_NIGHT_YES:
-          uiMode = Configuration.UI_MODE_NIGHT_YES;
-          break;
+      val modeNight = sharedPrefs.getInt(PREF.UI_MODE, DEF.UI_MODE)
+      var uiMode = resources.configuration.uiMode
+      when (modeNight) {
+        AppCompatDelegate.MODE_NIGHT_NO -> uiMode = Configuration.UI_MODE_NIGHT_NO
+        AppCompatDelegate.MODE_NIGHT_YES -> uiMode = Configuration.UI_MODE_NIGHT_YES
       }
-      AppCompatDelegate.setDefaultNightMode(modeNight);
+      AppCompatDelegate.setDefaultNightMode(modeNight)
       // Apply config to resources
-      Resources resBase = getBaseContext().getResources();
-      Configuration configBase = resBase.getConfiguration();
-      configBase.uiMode = uiMode;
-      resBase.updateConfiguration(configBase, resBase.getDisplayMetrics());
+      val resBase = baseContext.resources
+      val configBase = resBase.configuration
+      configBase.uiMode = uiMode
+      resBase.updateConfiguration(configBase, resBase.displayMetrics)
 
       // THEME
+      setTheme(sharedPrefs)
 
-      UiUtil.setTheme(this, sharedPrefs);
+      val finalBundle = savedInstanceState ?: Bundle()
+      finalBundle.putBoolean(EXTRA.RUN_AS_SUPER_CLASS, true)
+      super.onCreate(finalBundle)
 
-      if (bundle == null) {
-        bundle = new Bundle();
-      }
-      bundle.putBoolean(EXTRA.RUN_AS_SUPER_CLASS, true);
-      super.onCreate(bundle);
+      SystemBarBehavior(this).setUp()
 
-      new SystemBarBehavior(this).setUp();
-
-      LayerDrawable splashContent = (LayerDrawable) ResourcesCompat.getDrawable(
-          getResources(), R.drawable.splash_content, getTheme()
-      );
-      getWindow().getDecorView().setBackground(splashContent);
+      val splashContent = ResourcesCompat.getDrawable(
+        resources, R.drawable.splash_content, theme
+      ) as? LayerDrawable
+      window.decorView.background = splashContent
       try {
-        assert splashContent != null;
-        ViewUtil.startIcon(splashContent.findDrawableByLayerId(R.id.splash_logo));
-        new Handler(Looper.getMainLooper()).postDelayed(
-            this::startNewMainActivity, 600
-        );
-      } catch (Exception e) {
-        startNewMainActivity();
+        checkNotNull(splashContent)
+        splashContent.findDrawableByLayerId(R.id.splash_logo).start()
+        Handler(Looper.getMainLooper()).postDelayed(
+          { startNewMainActivity() }, 600
+        )
+      } catch (e: Exception) {
+        startNewMainActivity()
       }
     }
   }
 
-  @Override
-  protected void attachBaseContext(Context base) {
+  override fun attachBaseContext(base: Context) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-      super.attachBaseContext(base);
-      return;
+      super.attachBaseContext(base)
+      return
     }
-    SharedPreferences sharedPrefs = new PrefsUtil(base).checkForMigrations().getSharedPrefs();
+    val sharedPrefs = PrefsUtil(base).checkForMigrations().sharedPrefs
     // Night mode
-    int modeNight = sharedPrefs.getInt(PREF.UI_MODE, DEF.UI_MODE);
-    int uiMode = base.getResources().getConfiguration().uiMode;
-    switch (modeNight) {
-      case AppCompatDelegate.MODE_NIGHT_NO:
-        uiMode = Configuration.UI_MODE_NIGHT_NO;
-        break;
-      case AppCompatDelegate.MODE_NIGHT_YES:
-        uiMode = Configuration.UI_MODE_NIGHT_YES;
-        break;
+    val modeNight = sharedPrefs.getInt(PREF.UI_MODE, DEF.UI_MODE)
+    var uiMode = base.resources.configuration.uiMode
+    when (modeNight) {
+      AppCompatDelegate.MODE_NIGHT_NO -> uiMode = Configuration.UI_MODE_NIGHT_NO
+      AppCompatDelegate.MODE_NIGHT_YES -> uiMode = Configuration.UI_MODE_NIGHT_YES
     }
-    AppCompatDelegate.setDefaultNightMode(modeNight);
+    AppCompatDelegate.setDefaultNightMode(modeNight)
     // Apply config to resources
-    Resources resources = base.getResources();
-    Configuration config = resources.getConfiguration();
-    config.uiMode = uiMode;
-    resources.updateConfiguration(config, resources.getDisplayMetrics());
-    super.attachBaseContext(base.createConfigurationContext(config));
+    val resources = base.resources
+    val config = resources.configuration
+    config.uiMode = uiMode
+    resources.updateConfiguration(config, resources.displayMetrics)
+    super.attachBaseContext(base.createConfigurationContext(config))
   }
 
-  private void startNewMainActivity() {
-    Intent intent = new Intent(this, MainActivity.class);
-    intent.addCategory(Intent.CATEGORY_LAUNCHER);
-    startActivity(intent);
-    overridePendingTransition(0, R.anim.fade_out);
-    finish();
+  private fun startNewMainActivity() {
+    val intent = Intent(this, MainActivity::class.java)
+    intent.addCategory(Intent.CATEGORY_LAUNCHER)
+    startActivity(intent)
+    overridePendingTransition(0, R.anim.fade_out)
+    finish()
   }
 }

@@ -17,111 +17,86 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.recyclerview.adapter;
+package xyz.zedler.patrick.tack.recyclerview.adapter
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.DiffUtil;
-import androidx.recyclerview.widget.ListAdapter;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
-import xyz.zedler.patrick.tack.database.relations.SongWithParts;
-import xyz.zedler.patrick.tack.databinding.RowSongChipBinding;
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import xyz.zedler.patrick.tack.database.relations.SongWithParts
+import xyz.zedler.patrick.tack.databinding.RowSongChipBinding
 
-public class SongChipAdapter extends ListAdapter<SongWithParts, ViewHolder> {
+class SongChipAdapter(
+  private val listener: OnSongClickListener,
+  private var clickable: Boolean
+) : ListAdapter<SongWithParts, SongChipAdapter.SongChipViewHolder>(
+  SongWithPartsDiffCallback()
+) {
 
-  private final static String TAG = SongChipAdapter.class.getSimpleName();
-
-  private final OnSongClickListener listener;
-  private boolean clickable;
-
-  public SongChipAdapter(
-      @NonNull Context context, @NonNull OnSongClickListener listener, boolean clickable
-  ) {
-    super(new SongWithPartsDiffCallback());
-    this.listener = listener;
-    this.clickable = clickable;
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SongChipViewHolder {
+    val binding = RowSongChipBinding.inflate(
+      LayoutInflater.from(parent.context), parent, false
+    )
+    return SongChipViewHolder(binding)
   }
 
-  @NonNull
-  @Override
-  public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-    RowSongChipBinding binding = RowSongChipBinding.inflate(
-        LayoutInflater.from(parent.getContext()), parent, false
-    );
-    return new SongChipViewHolder(binding);
-  }
-
-  @Override
-  public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-    SongWithParts songWithParts = getItem(holder.getBindingAdapterPosition());
-    SongChipViewHolder songHolder = (SongChipViewHolder) holder;
-    songHolder.binding.textSong.setText(songWithParts.getSong().getName());
-    songHolder.binding.cardSong.setClickable(clickable);
+  override fun onBindViewHolder(holder: SongChipViewHolder, position: Int) {
+    val songWithParts = getItem(position)
+    holder.binding.textSong.text = songWithParts.song.name
+    holder.binding.cardSong.isClickable = clickable
     if (clickable) {
-      songHolder.binding.frameSong.setOnClickListener(
-          v -> listener.onSongClick(songWithParts)
-      );
-      songHolder.binding.cardSong.setOnClickListener(
-          v -> songHolder.binding.frameSong.callOnClick()
-      );
-      songHolder.binding.frameSong.setOnLongClickListener(v -> {
-        listener.onSongLongClick(songWithParts);
-        return true;
-      });
-      songHolder.binding.cardSong.setOnLongClickListener(v -> {
-        listener.onSongLongClick(songWithParts);
-        return true;
-      });
+      holder.binding.frameSong.setOnClickListener {
+        listener.onSongClick(songWithParts)
+      }
+      holder.binding.cardSong.setOnClickListener {
+        holder.binding.frameSong.callOnClick()
+      }
+      holder.binding.frameSong.setOnLongClickListener {
+        listener.onSongLongClick(songWithParts)
+        true
+      }
+      holder.binding.cardSong.setOnLongClickListener {
+        listener.onSongLongClick(songWithParts)
+        true
+      }
     } else {
-      songHolder.binding.frameSong.setOnClickListener(null);
-      songHolder.binding.frameSong.setOnLongClickListener(null);
-      songHolder.binding.cardSong.setOnClickListener(null);
-      songHolder.binding.cardSong.setOnLongClickListener(null);
+      holder.binding.frameSong.setOnClickListener(null)
+      holder.binding.frameSong.setOnLongClickListener(null)
+      holder.binding.cardSong.setOnClickListener(null)
+      holder.binding.cardSong.setOnLongClickListener(null)
     }
   }
 
-  @SuppressLint("NotifyDataSetChanged")
-  public void setClickable(boolean clickable) {
-    if ((this.clickable && !clickable) || (!this.clickable && clickable)) {
-      this.clickable = clickable;
-      notifyDataSetChanged();
+  fun setClickable(clickable: Boolean) {
+    if (this.clickable != clickable) {
+      this.clickable = clickable
+      notifyItemRangeChanged(0, itemCount)
     }
   }
 
-  public static class SongChipViewHolder extends ViewHolder {
+  class SongChipViewHolder(val binding: RowSongChipBinding)
+    : RecyclerView.ViewHolder(binding.root)
 
-    private final RowSongChipBinding binding;
-
-    public SongChipViewHolder(RowSongChipBinding binding) {
-      super(binding.getRoot());
-      this.binding = binding;
-    }
+  interface OnSongClickListener {
+    fun onSongClick(song: SongWithParts)
+    fun onSongLongClick(song: SongWithParts)
   }
 
-  public interface OnSongClickListener {
-    void onSongClick(@NonNull SongWithParts song);
-    void onSongLongClick(@NonNull SongWithParts song);
-  }
+  private class SongWithPartsDiffCallback : DiffUtil.ItemCallback<SongWithParts>() {
 
-  static class SongWithPartsDiffCallback extends DiffUtil.ItemCallback<SongWithParts> {
-
-    @Override
-    public boolean areItemsTheSame(
-        @NonNull SongWithParts oldItem,
-        @NonNull SongWithParts newItem
-    ) {
-      return oldItem.getSong().getId().equals(newItem.getSong().getId());
+    override fun areItemsTheSame(
+      oldItem: SongWithParts,
+      newItem: SongWithParts
+    ): Boolean {
+      return oldItem.song.id == newItem.song.id
     }
 
-    @Override
-    public boolean areContentsTheSame(
-        @NonNull SongWithParts oldItem,
-        @NonNull SongWithParts newItem
-    ) {
-      return oldItem.equals(newItem);
+    override fun areContentsTheSame(
+      oldItem: SongWithParts,
+      newItem: SongWithParts
+    ): Boolean {
+      return oldItem == newItem
     }
   }
 }

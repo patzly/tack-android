@@ -17,156 +17,148 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+package xyz.zedler.patrick.tack.util
 
-import android.content.Context;
-import android.hardware.camera2.CameraAccessException;
-import android.hardware.camera2.CameraCharacteristics;
-import android.hardware.camera2.CameraManager;
-import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
+import android.content.Context
+import android.hardware.camera2.CameraAccessException
+import android.hardware.camera2.CameraCharacteristics
+import android.hardware.camera2.CameraManager
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 
-import androidx.annotation.NonNull;
+class FlashlightUtil(private val context: Context) {
 
-public class FlashlightUtil {
+  private val cameraManager: CameraManager by lazy {
+    context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+  }
+  private val handler: Handler by lazy {
+    Handler(Looper.getMainLooper())
+  }
+  private var cameraId: String? = null
+  private var turnOffRunnable: Runnable? = null
 
-  private static final String TAG = FlashlightUtil.class.getSimpleName();
-  private final CameraManager cameraManager;
-  private final Handler handler;
-  private String cameraId;
-  private Runnable turnOffRunnable;
-
-  public FlashlightUtil(@NonNull Context context) {
-    this.cameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
-    this.handler = new Handler(Looper.getMainLooper());
-    initCameraId();
+  init {
+    initCameraId()
   }
 
-  private void initCameraId() {
+  private fun initCameraId() {
     try {
-      String[] ids = cameraManager.getCameraIdList();
-      for (String id : ids) {
-        CameraCharacteristics c = cameraManager.getCameraCharacteristics(id);
-        Boolean hasFlash = c.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
-        Integer facing = c.get(CameraCharacteristics.LENS_FACING);
+      val ids = cameraManager.cameraIdList
+      for (id in ids) {
+        val c = cameraManager.getCameraCharacteristics(id)
+        val hasFlash = c.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) ?: false
+        val facing = c.get(CameraCharacteristics.LENS_FACING)
 
-        if (hasFlash != null && hasFlash && facing != null && facing == CameraCharacteristics.LENS_FACING_BACK) {
-          this.cameraId = id;
-          break;
+        if (hasFlash && facing == CameraCharacteristics.LENS_FACING_BACK) {
+          this.cameraId = id
+          break
         }
       }
-    } catch (CameraAccessException e) {
-      Log.e(TAG, "Cannot find camera ID", e);
-    } catch (Exception e) {
-      Log.e(TAG, "Unexpected error during initialization", e);
+    } catch (e: CameraAccessException) {
+      Log.e(TAG, "Cannot find camera ID", e)
+    } catch (e: Exception) {
+      Log.e(TAG, "Unexpected error during initialization", e)
     }
   }
 
-  public void flash(long durationMs, float strength) {
-    if (cameraId == null || strength <= 0f) {
-      return;
-    }
-    final float safeStrength = Math.min(strength, 1.0f);
+  fun flash(durationMs: Long, strength: Float) {
+    val id = cameraId ?: return
+    if (strength <= 0f) return
 
-    if (turnOffRunnable != null) {
-      handler.removeCallbacks(turnOffRunnable);
-    }
+    val safeStrength = strength.coerceAtMost(1.0f)
+
+    turnOffRunnable?.let { handler.removeCallbacks(it) }
 
     try {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         try {
-          CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraId);
-          Integer maxLevel = characteristics.get(
-              CameraCharacteristics.FLASH_INFO_STRENGTH_MAXIMUM_LEVEL
-          );
+          val characteristics = cameraManager.getCameraCharacteristics(id)
+          val maxLevel = characteristics.get(
+            CameraCharacteristics.FLASH_INFO_STRENGTH_MAXIMUM_LEVEL
+          )
           if (maxLevel != null && maxLevel > 1) {
-            int targetLevel = Math.round(maxLevel * safeStrength);
-            if (targetLevel < 1) {
-              targetLevel = 1;
-            }
-            cameraManager.turnOnTorchWithStrengthLevel(cameraId, targetLevel);
+            val targetLevel = (maxLevel * safeStrength).toInt().coerceAtLeast(1)
+            cameraManager.turnOnTorchWithStrengthLevel(id, targetLevel)
           } else {
-            // Fallback for devices without strength control
-            cameraManager.setTorchMode(cameraId, true);
+            cameraManager.setTorchMode(id, true)
           }
-        } catch (Exception e) {
-          // Fallback if strength API fails
-          cameraManager.setTorchMode(cameraId, true);
+        } catch (_: Exception) {
+          cameraManager.setTorchMode(id, true)
         }
       } else {
-        cameraManager.setTorchMode(cameraId, true);
+        cameraManager.setTorchMode(id, true)
       }
 
-      turnOffRunnable = () -> {
+      turnOffRunnable = Runnable {
         try {
-          cameraManager.setTorchMode(cameraId, false);
-        } catch (CameraAccessException | IllegalArgumentException e) {
-          Log.w(TAG, "Cannot turn off flashlight: " + e.getMessage());
+          cameraManager.setTorchMode(id, false)
+        } catch (e: Exception) {
+          Log.w(TAG, "Cannot turn off flashlight: ${e.message}")
         }
-      };
-      handler.postDelayed(turnOffRunnable, durationMs);
-    } catch (CameraAccessException e) {
-      Log.w(TAG, "Flashlight temporarily unavailable: " + e.getMessage());
-    } catch (IllegalArgumentException e) {
-      initCameraId();
+      }.also {
+        handler.postDelayed(it, durationMs)
+      }
+    } catch (e: CameraAccessException) {
+      Log.w(TAG, "Flashlight temporarily unavailable: ${e.message}")
+    } catch (_: IllegalArgumentException) {
+      initCameraId()
     }
   }
 
-  public void cleanup() {
-    if (turnOffRunnable != null) {
-      handler.removeCallbacks(turnOffRunnable);
-    }
+  fun cleanup() {
+    turnOffRunnable?.let { handler.removeCallbacks(it) }
     try {
-      if (cameraId != null) {
-        cameraManager.setTorchMode(cameraId, false);
-      }
-    } catch (Exception ignored) {}
+      cameraId?.let { cameraManager.setTorchMode(it, false) }
+    } catch (_: Exception) {
+    }
   }
 
-  public static boolean hasFlash(@NonNull Context context) {
-    try {
-      CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
-      if (manager == null) return false;
+  companion object {
+    private val TAG = FlashlightUtil::class.java.simpleName
 
-      for (String id : manager.getCameraIdList()) {
-        CameraCharacteristics c = manager.getCameraCharacteristics(id);
-        Boolean hasFlash = c.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
-        Integer facing = c.get(CameraCharacteristics.LENS_FACING);
-        if (hasFlash != null && hasFlash &&
-            facing != null && facing == CameraCharacteristics.LENS_FACING_BACK) {
-          return true;
+    @JvmStatic
+    fun hasFlash(context: Context): Boolean {
+      return try {
+        val manager = context.getSystemService(Context.CAMERA_SERVICE) as? CameraManager
+          ?: return false
+
+        manager.cameraIdList.any { id ->
+          val c = manager.getCameraCharacteristics(id)
+          val hasFlash = c.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) ?: false
+          val facing = c.get(CameraCharacteristics.LENS_FACING)
+          hasFlash && facing == CameraCharacteristics.LENS_FACING_BACK
         }
+      } catch (e: Exception) {
+        Log.e(TAG, "Error checking for flashlight", e)
+        false
       }
-    } catch (Exception e) {
-      Log.e(TAG, "Error checking for flashlight", e);
     }
-    return false;
-  }
 
-  public static boolean hasStrengthControl(@NonNull Context context) {
-    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-      return false;
-    }
-    try {
-      CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
-      if (manager == null) return false;
+    @JvmStatic
+    fun hasStrengthControl(context: Context): Boolean {
+      if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return false
+      return try {
+        val manager = context.getSystemService(Context.CAMERA_SERVICE) as? CameraManager
+          ?: return false
 
-      for (String id : manager.getCameraIdList()) {
-        CameraCharacteristics c = manager.getCameraCharacteristics(id);
-        Boolean hasFlash = c.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
-        Integer facing = c.get(CameraCharacteristics.LENS_FACING);
+        manager.cameraIdList.any { id ->
+          val c = manager.getCameraCharacteristics(id)
+          val hasFlash = c.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) ?: false
+          val facing = c.get(CameraCharacteristics.LENS_FACING)
 
-        if (hasFlash != null && hasFlash &&
-            facing != null && facing == CameraCharacteristics.LENS_FACING_BACK) {
-          Integer maxLevel = c.get(CameraCharacteristics.FLASH_INFO_STRENGTH_MAXIMUM_LEVEL);
-          return maxLevel != null && maxLevel > 1;
+          if (hasFlash && facing == CameraCharacteristics.LENS_FACING_BACK) {
+            val maxLevel = c.get(CameraCharacteristics.FLASH_INFO_STRENGTH_MAXIMUM_LEVEL)
+            maxLevel != null && maxLevel > 1
+          } else {
+            false
+          }
         }
+      } catch (e: Exception) {
+        Log.e(TAG, "Error checking for strength control", e)
+        false
       }
-    } catch (Exception e) {
-      Log.e(TAG, "Error checking for strength control", e);
     }
-    return false;
   }
 }

@@ -17,506 +17,156 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.database.entity;
+package xyz.zedler.patrick.tack.database.entity
 
-import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.room.Entity;
-import androidx.room.ForeignKey;
-import androidx.room.Ignore;
-import androidx.room.Index;
-import androidx.room.PrimaryKey;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.UUID;
-import xyz.zedler.patrick.tack.Constants.UNIT;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
-import xyz.zedler.patrick.tack.model.MetronomeConfig;
+import android.content.Context
+import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
+import androidx.room.PrimaryKey
+import kotlinx.android.parcel.Parcelize
+import xyz.zedler.patrick.tack.Constants.DEF
+import xyz.zedler.patrick.tack.Constants.UNIT
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine
+import xyz.zedler.patrick.tack.model.MetronomeConfig
+import java.util.UUID
 
+@kotlinx.parcelize.Parcelize
 @Entity(
-    tableName = "parts",
-    foreignKeys = @ForeignKey(
-        entity = Song.class,
-        parentColumns = "id",
-        childColumns = "songId",
-        onDelete = ForeignKey.CASCADE),
-    indices = {@Index("songId")}
+  tableName = "parts",
+  foreignKeys = [ForeignKey(
+    entity = Song::class,
+    parentColumns = ["id"],
+    childColumns = ["songId"],
+    onDelete = ForeignKey.CASCADE
+  )],
+  indices = [Index("songId")]
 )
-public class Part implements Parcelable {
-
+data class Part(
   @PrimaryKey
-  @NonNull
-  private String id;
-  @Nullable
-  private String name;
-  @NonNull
-  private String songId;
-  private int partIndex;
+  var id: String = UUID.randomUUID().toString(),
+  var name: String? = null,
+  var songId: String = "",
+  var partIndex: Int = 0,
+  var countIn: Int = DEF.COUNT_IN,
+  var tempo: Int = DEF.TEMPO,
+  var beats: String? = DEF.BEATS,
+  var subdivisions: String? = DEF.SUBDIVISIONS,
+  var usePolyrhythm: Boolean = DEF.USE_POLYRHYTHM,
+  var incrementalAmount: Int = DEF.INCREMENTAL_AMOUNT,
+  var incrementalInterval: Int = DEF.INCREMENTAL_INTERVAL,
+  var incrementalLimit: Int = DEF.INCREMENTAL_LIMIT,
+  var incrementalUnit: String? = DEF.INCREMENTAL_UNIT,
+  var incrementalIncrease: Boolean = DEF.INCREMENTAL_INCREASE,
+  var timerDuration: Int = DEF.TIMER_DURATION,
+  var timerUnit: String? = DEF.TIMER_UNIT,
+  var mutePlay: Int = DEF.MUTE_PLAY,
+  var muteMute: Int = DEF.MUTE_MUTE,
+  var muteUnit: String? = DEF.MUTE_UNIT,
+  var muteRandom: Boolean = DEF.MUTE_RANDOM,
+) : Parcelable {
 
-  // count in
-  private int countIn;
-  // tempo
-  private int tempo;
-  // beats
-  private String beats, subdivisions;
-  private boolean usePolyrhythm;
-  // incremental tempo change
-  private int incrementalAmount, incrementalInterval, incrementalLimit;
-  private String incrementalUnit;
-  private boolean incrementalIncrease;
-  // duration
-  private int timerDuration;
-  private String timerUnit;
-  // muted beats
-  private int mutePlay, muteMute;
-  private String muteUnit;
-  private boolean muteRandom;
-
-  public Part(
-      @NonNull String id, @Nullable String name, @NonNull String songId, int partIndex,
-      int countIn, int tempo,
-      String beats, String subdivisions, boolean usePolyrhythm,
-      int incrementalAmount, int incrementalInterval, int incrementalLimit,
-      String incrementalUnit, boolean incrementalIncrease,
-      int timerDuration, String timerUnit,
-      int mutePlay, int muteMute, String muteUnit, boolean muteRandom
-  ) {
-    this.id = id;
-    this.name = name;
-    this.songId = songId;
-    this.partIndex = partIndex;
-
-    this.countIn = countIn;
-
-    this.tempo = tempo;
-
-    this.beats = beats;
-    this.subdivisions = subdivisions;
-    this.usePolyrhythm = usePolyrhythm;
-
-    this.incrementalAmount = incrementalAmount;
-    this.incrementalInterval = incrementalInterval;
-    this.incrementalLimit = incrementalLimit;
-    this.incrementalUnit = incrementalUnit;
-    this.incrementalIncrease = incrementalIncrease;
-
-    this.timerDuration = timerDuration;
-    this.timerUnit = timerUnit;
-
-    this.mutePlay = mutePlay;
-    this.muteMute = muteMute;
-    this.muteUnit = muteUnit;
-    this.muteRandom = muteRandom;
+  companion object {
+    fun fromConfig(
+      name: String?,
+      songId: String,
+      partIndex: Int,
+      config: MetronomeConfig
+    ): Part {
+      return Part(
+        id = UUID.randomUUID().toString(),
+        name = name,
+        songId = songId,
+        partIndex = partIndex,
+        countIn = config.countIn,
+        tempo = config.tempo,
+        beats = config.beats.joinToString(","),
+        subdivisions = config.subdivisions.joinToString(","),
+        usePolyrhythm = config.usePolyrhythm,
+        incrementalAmount = config.incrementalAmount,
+        incrementalInterval = config.incrementalInterval,
+        incrementalLimit = config.incrementalLimit,
+        incrementalUnit = config.incrementalUnit,
+        incrementalIncrease = config.incrementalIncrease,
+        timerDuration = config.timerDuration,
+        timerUnit = config.timerUnit,
+        mutePlay = config.mutePlay,
+        muteMute = config.muteMute,
+        muteUnit = config.muteUnit,
+        muteRandom = config.muteRandom
+      )
+    }
   }
 
-  @Ignore
-  public Part(
-      @Nullable String name, @NonNull String songId, int partIndex, @NonNull MetronomeConfig config
-  ) {
-    this.id = UUID.randomUUID().toString();
-    this.name = name;
-    this.songId = songId;
-    this.partIndex = partIndex;
-
-    setConfig(config);
+  fun setRandomId() {
+    id = UUID.randomUUID().toString()
   }
 
-  @Ignore
-  public Part(@NonNull Part part) {
-    this.id = part.id;
-    this.name = part.name;
-    this.songId = part.songId;
-    this.partIndex = part.partIndex;
+  val beatsCount: Int
+    get() = (beats ?: DEF.BEATS).split(",").size
 
-    this.countIn = part.countIn;
-
-    this.tempo = part.tempo;
-
-    this.beats = part.beats;
-    this.subdivisions = part.subdivisions;
-    this.usePolyrhythm = part.usePolyrhythm;
-
-    this.incrementalAmount = part.incrementalAmount;
-    this.incrementalInterval = part.incrementalInterval;
-    this.incrementalLimit = part.incrementalLimit;
-    this.incrementalUnit = part.incrementalUnit;
-    this.incrementalIncrease = part.incrementalIncrease;
-
-    this.timerDuration = part.timerDuration;
-    this.timerUnit = part.timerUnit;
-
-    this.mutePlay = part.mutePlay;
-    this.muteMute = part.muteMute;
-    this.muteUnit = part.muteUnit;
-    this.muteRandom = part.muteRandom;
-  }
-
-  protected Part(Parcel in) {
-    id = Objects.requireNonNull(in.readString());
-    name = in.readString();
-    songId = Objects.requireNonNull(in.readString());
-    partIndex = in.readInt();
-    countIn = in.readInt();
-    tempo = in.readInt();
-    beats = in.readString();
-    subdivisions = in.readString();
-    usePolyrhythm = in.readByte() != 0;
-    incrementalAmount = in.readInt();
-    incrementalInterval = in.readInt();
-    incrementalLimit = in.readInt();
-    incrementalUnit = in.readString();
-    incrementalIncrease = in.readByte() != 0;
-    timerDuration = in.readInt();
-    timerUnit = in.readString();
-    mutePlay = in.readInt();
-    muteMute = in.readInt();
-    muteUnit = in.readString();
-    muteRandom = in.readByte() != 0;
-  }
-
-  @NonNull
-  public String getId() {
-    return id;
-  }
-
-  public void setId(@NonNull String id) {
-    this.id = id;
-  }
-
-  public void setRandomId() {
-    this.id = UUID.randomUUID().toString();
-  }
-
-  @Nullable
-  public String getName() {
-    return name;
-  }
-
-  public void setName(@Nullable String name) {
-    this.name = name;
-  }
-
-  @NonNull
-  public String getSongId() {
-    return songId;
-  }
-
-  public void setSongId(@NonNull String songId) {
-    this.songId = songId;
-  }
-
-  public int getPartIndex() {
-    return partIndex;
-  }
-
-  public void setPartIndex(int partIndex) {
-    this.partIndex = partIndex;
-  }
-
-  public int getCountIn() {
-    return countIn;
-  }
-
-  public void setCountIn(int countIn) {
-    this.countIn = countIn;
-  }
-
-  public int getTempo() {
-    return tempo;
-  }
-
-  public void setTempo(int tempo) {
-    this.tempo = tempo;
-  }
-
-  public String getBeats() {
-    return beats;
-  }
-
-  public void setBeats(String beats) {
-    this.beats = beats;
-  }
-
-  public int getBeatsCount() {
-    return beats.split(",").length;
-  }
-
-  public String getSubdivisions() {
-    return subdivisions;
-  }
-
-  public void setSubdivisions(String subdivisions) {
-    this.subdivisions = subdivisions;
-  }
-
-  public boolean usePolyrhythm() {
-    return usePolyrhythm;
-  }
-
-  public void setUsePolyrhythm(boolean usePolyrhythm) {
-    this.usePolyrhythm = usePolyrhythm;
-  }
-
-  public int getIncrementalAmount() {
-    return incrementalAmount;
-  }
-
-  public void setIncrementalAmount(int incrementalAmount) {
-    this.incrementalAmount = incrementalAmount;
-  }
-
-  public int getIncrementalInterval() {
-    return incrementalInterval;
-  }
-
-  public void setIncrementalInterval(int incrementalInterval) {
-    this.incrementalInterval = incrementalInterval;
-  }
-
-  public int getIncrementalLimit() {
-    return incrementalLimit;
-  }
-
-  public void setIncrementalLimit(int incrementalLimit) {
-    this.incrementalLimit = incrementalLimit;
-  }
-
-  public String getIncrementalUnit() {
-    return incrementalUnit;
-  }
-
-  public void setIncrementalUnit(String incrementalUnit) {
-    this.incrementalUnit = incrementalUnit;
-  }
-
-  public boolean isIncrementalIncrease() {
-    return incrementalIncrease;
-  }
-
-  public void setIncrementalIncrease(boolean incrementalIncrease) {
-    this.incrementalIncrease = incrementalIncrease;
-  }
-
-  public int getTimerDuration() {
-    return timerDuration;
-  }
-
-  public void setTimerDuration(int timerDuration) {
-    this.timerDuration = timerDuration;
-  }
-
-  public String getTimerUnit() {
-    return timerUnit;
-  }
-
-  public void setTimerUnit(String timerUnit) {
-    this.timerUnit = timerUnit;
-  }
-
-  public String getTimerDurationString(@NonNull Context context) {
+  fun getTimerDurationString(context: Context): String {
     if (timerDuration == 0) {
-      return context.getString(R.string.label_part_no_duration);
+      return context.getString(R.string.label_part_no_duration)
     }
-    switch (timerUnit) {
-      case UNIT.SECONDS:
-      case UNIT.MINUTES:
-        int seconds = timerDuration;
-        if (timerUnit.equals(UNIT.MINUTES)) {
-          seconds *= 60;
+    return when (timerUnit) {
+      UNIT.SECONDS, UNIT.MINUTES -> {
+        var seconds = timerDuration
+        if (timerUnit == UNIT.MINUTES) {
+          seconds *= 60
         }
-        return MetronomeEngine.getTimeStringFromSeconds(seconds, false);
-      default:
-        return context.getResources().getQuantityString(
-            R.plurals.options_unit_bars, timerDuration, timerDuration
-        );
+        MetronomeEngine.getTimeStringFromSeconds(seconds, false)
+      }
+
+      else -> context.resources.getQuantityString(
+        R.plurals.options_unit_bars, timerDuration, timerDuration
+      )
     }
   }
 
-  public int getMutePlay() {
-    return mutePlay;
+  fun toConfig(): MetronomeConfig {
+    return MetronomeConfig(
+      countIn,
+      tempo,
+      (beats ?: DEF.BEATS).split(",").toTypedArray(),
+      (subdivisions ?: DEF.SUBDIVISIONS).split(",").toTypedArray(),
+      usePolyrhythm,
+      incrementalAmount,
+      incrementalInterval,
+      incrementalLimit,
+      incrementalUnit ?: DEF.INCREMENTAL_UNIT,
+      incrementalIncrease,
+      timerDuration,
+      timerUnit ?: DEF.TIMER_UNIT,
+      mutePlay,
+      muteMute,
+      muteUnit ?: DEF.MUTE_UNIT,
+      muteRandom
+    )
   }
 
-  public void setMutePlay(int mutePlay) {
-    this.mutePlay = mutePlay;
+  fun setConfig(config: MetronomeConfig) {
+    countIn = config.countIn
+    tempo = config.tempo
+    beats = config.beats.joinToString(",")
+    subdivisions = config.subdivisions.joinToString(",")
+    usePolyrhythm = config.usePolyrhythm
+    incrementalAmount = config.incrementalAmount
+    incrementalInterval = config.incrementalInterval
+    incrementalLimit = config.incrementalLimit
+    incrementalUnit = config.incrementalUnit
+    incrementalIncrease = config.incrementalIncrease
+    timerDuration = config.timerDuration
+    timerUnit = config.timerUnit
+    mutePlay = config.mutePlay
+    muteMute = config.muteMute
+    muteUnit = config.muteUnit
+    muteRandom = config.muteRandom
   }
 
-  public int getMuteMute() {
-    return muteMute;
+  fun equalsConfig(config: MetronomeConfig): Boolean {
+    return toConfig().equals(config)
   }
-
-  public void setMuteMute(int muteMute) {
-    this.muteMute = muteMute;
-  }
-
-  public String getMuteUnit() {
-    return muteUnit;
-  }
-
-  public void setMuteUnit(String muteUnit) {
-    this.muteUnit = muteUnit;
-  }
-
-  public boolean isMuteRandom() {
-    return muteRandom;
-  }
-
-  public void setMuteRandom(boolean muteRandom) {
-    this.muteRandom = muteRandom;
-  }
-
-  @NonNull
-  public MetronomeConfig toConfig() {
-    return new MetronomeConfig(
-        countIn,
-        tempo,
-        beats.split(","), subdivisions.split(","), usePolyrhythm,
-        incrementalAmount, incrementalInterval, incrementalLimit,
-        incrementalUnit, incrementalIncrease,
-        timerDuration, timerUnit,
-        mutePlay, muteMute, muteUnit, muteRandom
-    );
-  }
-
-  public void setConfig(@NonNull MetronomeConfig config) {
-    countIn = config.getCountIn();
-
-    tempo = config.getTempo();
-
-    beats = String.join(",", config.getBeats());
-    subdivisions = String.join(",", config.getSubdivisions());
-    usePolyrhythm = config.usePolyrhythm();
-
-    incrementalAmount = config.getIncrementalAmount();
-    incrementalInterval = config.getIncrementalInterval();
-    incrementalLimit = config.getIncrementalLimit();
-    incrementalUnit = config.getIncrementalUnit();
-    incrementalIncrease = config.isIncrementalIncrease();
-
-    timerDuration = config.getTimerDuration();
-    timerUnit = config.getTimerUnit();
-
-    mutePlay = config.getMutePlay();
-    muteMute = config.getMuteMute();
-    muteUnit = config.getMuteUnit();
-    muteRandom = config.isMuteRandom();
-  }
-
-  public boolean equalsConfig(@NonNull MetronomeConfig config) {
-    return countIn == config.getCountIn()
-        && tempo == config.getTempo()
-        && Arrays.equals(beats.split(","), config.getBeats())
-        && Arrays.equals(subdivisions.split(","), config.getSubdivisions())
-        && usePolyrhythm == config.usePolyrhythm()
-        && incrementalAmount == config.getIncrementalAmount()
-        && incrementalInterval == config.getIncrementalInterval()
-        && incrementalLimit == config.getIncrementalLimit()
-        && incrementalUnit.equals(config.getIncrementalUnit())
-        && incrementalIncrease == config.isIncrementalIncrease()
-        && timerDuration == config.getTimerDuration()
-        && timerUnit.equals(config.getTimerUnit())
-        && mutePlay == config.getMutePlay()
-        && muteMute == config.getMuteMute()
-        && muteUnit.equals(config.getMuteUnit())
-        && muteRandom == config.isMuteRandom();
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (!(o instanceof Part)) {
-      return false;
-    }
-    Part part = (Part) o;
-    return partIndex == part.partIndex && countIn == part.countIn && tempo == part.tempo
-        && incrementalAmount == part.incrementalAmount
-        && incrementalInterval == part.incrementalInterval
-        && incrementalLimit == part.incrementalLimit
-        && incrementalIncrease == part.incrementalIncrease && timerDuration == part.timerDuration
-        && mutePlay == part.mutePlay && muteMute == part.muteMute && muteRandom == part.muteRandom
-        && Objects.equals(id, part.id) && Objects.equals(name, part.name)
-        && Objects.equals(songId, part.songId)
-        && Objects.equals(beats, part.beats)
-        && Objects.equals(subdivisions, part.subdivisions)
-        && Objects.equals(usePolyrhythm, part.usePolyrhythm)
-        && Objects.equals(incrementalUnit, part.incrementalUnit)
-        && Objects.equals(timerUnit, part.timerUnit) && Objects.equals(muteUnit, part.muteUnit);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, name, songId, partIndex, countIn, tempo, beats, subdivisions,
-        usePolyrhythm, incrementalAmount, incrementalInterval, incrementalLimit, incrementalUnit,
-        incrementalIncrease, timerDuration, timerUnit, mutePlay, muteMute, muteUnit, muteRandom);
-  }
-
-  @Override
-  public int describeContents() {
-    return 0;
-  }
-
-  @Override
-  public void writeToParcel(@NonNull Parcel dest, int flags) {
-    dest.writeString(id);
-    dest.writeString(name);
-    dest.writeString(songId);
-    dest.writeInt(partIndex);
-    dest.writeInt(countIn);
-    dest.writeInt(tempo);
-    dest.writeString(beats);
-    dest.writeString(subdivisions);
-    dest.writeByte((byte) (usePolyrhythm ? 1 : 0));
-    dest.writeInt(incrementalAmount);
-    dest.writeInt(incrementalInterval);
-    dest.writeInt(incrementalLimit);
-    dest.writeString(incrementalUnit);
-    dest.writeByte((byte) (incrementalIncrease ? 1 : 0));
-    dest.writeInt(timerDuration);
-    dest.writeString(timerUnit);
-    dest.writeInt(mutePlay);
-    dest.writeInt(muteMute);
-    dest.writeString(muteUnit);
-    dest.writeByte((byte) (muteRandom ? 1 : 0));
-  }
-
-  @NonNull
-  @Override
-  public String toString() {
-    return "Part{" +
-        "id='" + id + '\'' +
-        ", name='" + name + '\'' +
-        ", songId='" + songId + '\'' +
-        ", partIndex=" + partIndex +
-        ", countIn=" + countIn +
-        ", tempo=" + tempo +
-        ", beats='" + beats + '\'' +
-        ", subdivisions='" + subdivisions + '\'' +
-        ", usePolyrhythm=" + usePolyrhythm +
-        ", incrementalAmount=" + incrementalAmount +
-        ", incrementalInterval=" + incrementalInterval +
-        ", incrementalLimit=" + incrementalLimit +
-        ", incrementalUnit='" + incrementalUnit + '\'' +
-        ", incrementalIncrease=" + incrementalIncrease +
-        ", timerDuration=" + timerDuration +
-        ", timerUnit='" + timerUnit + '\'' +
-        ", mutePlay=" + mutePlay +
-        ", muteMute=" + muteMute +
-        ", muteUnit='" + muteUnit + '\'' +
-        ", muteRandom=" + muteRandom +
-        '}';
-  }
-
-  public static final Creator<Part> CREATOR = new Creator<>() {
-    @Override
-    public Part createFromParcel(Parcel in) {
-      return new Part(in);
-    }
-
-    @Override
-    public Part[] newArray(int size) {
-      return new Part[size];
-    }
-  };
 }

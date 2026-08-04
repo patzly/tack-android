@@ -17,218 +17,263 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.fragment;
+package xyz.zedler.patrick.tack.fragment
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import xyz.zedler.patrick.tack.BuildConfig;
-import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
-import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
-import xyz.zedler.patrick.tack.databinding.FragmentAboutBinding;
-import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.UnlockUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil;
-import xyz.zedler.patrick.tack.util.dialog.TextDialogUtil;
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.appcompat.widget.PopupMenu
+import xyz.zedler.patrick.tack.BuildConfig
+import xyz.zedler.patrick.tack.Constants.PREF
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.behavior.ScrollBehavior
+import xyz.zedler.patrick.tack.behavior.SystemBarBehavior
+import xyz.zedler.patrick.tack.databinding.FragmentAboutBinding
+import xyz.zedler.patrick.tack.util.isKeyInstalled
+import xyz.zedler.patrick.tack.util.isPlayStoreInstalled
+import xyz.zedler.patrick.tack.util.share
+import xyz.zedler.patrick.tack.util.dialog.TextDialogUtil
+import xyz.zedler.patrick.tack.util.setTooltipText
+import xyz.zedler.patrick.tack.util.showMenu
+import xyz.zedler.patrick.tack.util.setOnClickListeners
+import xyz.zedler.patrick.tack.util.startIcon
+import androidx.core.net.toUri
+import androidx.core.content.edit
 
-public class AboutFragment extends BaseFragment implements OnClickListener {
+class AboutFragment : BaseFragment(), View.OnClickListener {
 
-  private FragmentAboutBinding binding;
-  private MainActivity activity;
-  private TextDialogUtil textDialogUtilMdc, textDialogUtilMds, textDialogUtilGoogleSansFlex;
-  private int longClickCount = 0;
+  private var _binding: FragmentAboutBinding? = null
+  private val binding get() = _binding!!
 
-  @Override
-  public View onCreateView(
-      @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState
-  ) {
-    binding = FragmentAboutBinding.inflate(inflater, container, false);
-    return binding.getRoot();
+  private lateinit var textDialogUtilMdc: TextDialogUtil
+  private lateinit var textDialogUtilMds: TextDialogUtil
+  private lateinit var textDialogUtilGoogleSansFlex: TextDialogUtil
+  private var longClickCount = 0
+
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View {
+    _binding = FragmentAboutBinding.inflate(inflater, container, false)
+    return binding.root
   }
 
-  @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-    textDialogUtilMdc.dismiss();
-    textDialogUtilMds.dismiss();
-    textDialogUtilGoogleSansFlex.dismiss();
-    binding = null;
+  override fun onDestroyView() {
+    super.onDestroyView()
+    if (::textDialogUtilMdc.isInitialized) textDialogUtilMdc.dismiss()
+    if (::textDialogUtilMds.isInitialized) textDialogUtilMds.dismiss()
+    if (::textDialogUtilGoogleSansFlex.isInitialized) textDialogUtilGoogleSansFlex.dismiss()
+    _binding = null
   }
 
-  @Override
-  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    activity = (MainActivity) requireActivity();
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    super.onViewCreated(view, savedInstanceState)
 
-    SystemBarBehavior systemBarBehavior = new SystemBarBehavior(activity);
-    systemBarBehavior.setAppBar(binding.appBarAbout);
-    systemBarBehavior.setScroll(binding.scrollAbout, binding.linearAboutContainer);
-    systemBarBehavior.setUp();
+    val systemBarBehavior = SystemBarBehavior(activity)
+    systemBarBehavior.setAppBar(binding.appBarAbout)
+    systemBarBehavior.setScroll(
+      binding.scrollAbout, binding.linearAboutContainer
+    )
+    systemBarBehavior.setUp()
 
-    new ScrollBehavior().setUpScroll(
-        binding.appBarAbout, binding.scrollAbout, ScrollBehavior.LIFT_ON_SCROLL
-    );
+    ScrollBehavior().setUpScroll(
+      binding.appBarAbout,
+      binding.scrollAbout,
+      ScrollBehavior.LIFT_ON_SCROLL
+    )
 
-    binding.buttonAboutBack.setOnClickListener(getNavigationOnClickListener());
-    binding.buttonAboutMenu.setOnClickListener(v -> {
-      performHapticClick();
-      ViewUtil.showMenu(v, R.menu.menu_about, item -> {
-        int id = item.getItemId();
+    binding.buttonAboutBack.setOnClickListener(getNavigationOnClickListener())
+    binding.buttonAboutMenu.setOnClickListener { v ->
+      performHapticClick()
+      v.showMenu(R.menu.menu_about, PopupMenu.OnMenuItemClickListener { item ->
+        val id = item.itemId
         if (getViewUtil().isClickDisabled(id)) {
-          return false;
+          return@OnMenuItemClickListener false
         }
-        performHapticClick();
-        if (id == R.id.action_feedback) {
-          activity.showFeedbackDialog();
-        } else if (id == R.id.action_help) {
-          activity.showHelpDialog();
-        } else if (id == R.id.action_recommend) {
-          String text = getString(R.string.msg_recommend, getString(R.string.app_vending_app));
-          ResUtil.share(activity, text);
+        performHapticClick()
+        when (id) {
+          R.id.action_feedback -> activity.showFeedbackDialog()
+          R.id.action_help -> activity.showHelpDialog()
+          R.id.action_recommend -> {
+            val text = getString(
+              R.string.msg_recommend,
+              getString(R.string.app_vending_app)
+            )
+            activity.share(text)
+          }
         }
-        return true;
-      });
-    });
-    ViewUtil.setTooltipText(binding.buttonAboutBack, R.string.action_back);
-    ViewUtil.setTooltipText(binding.buttonAboutMenu, R.string.action_more);
+        true
+      })
+    }
+    binding.buttonAboutBack.setTooltipText(R.string.action_back)
+    binding.buttonAboutMenu.setTooltipText(R.string.action_more)
 
-    binding.textAboutVersion.setText(BuildConfig.VERSION_NAME);
+    binding.textAboutVersion.text = BuildConfig.VERSION_NAME
 
-    updateUnlockItem();
+    updateUnlockItem()
 
-    textDialogUtilMdc = new TextDialogUtil(
-        activity,
-        R.string.license_material_components,
-        R.raw.license_apache,
-        R.string.license_material_components_link
-    );
-    textDialogUtilMdc.showIfWasShown(savedInstanceState);
+    textDialogUtilMdc = TextDialogUtil(
+      activity,
+      R.string.license_material_components,
+      R.raw.license_apache,
+      link = R.string.license_material_components_link
+    )
+    textDialogUtilMdc.showIfWasShown(savedInstanceState)
 
-    textDialogUtilMds = new TextDialogUtil(
-        activity,
-        R.string.license_material_icons,
-        R.raw.license_apache,
-        R.string.license_material_icons_link
-    );
-    textDialogUtilMds.showIfWasShown(savedInstanceState);
+    textDialogUtilMds = TextDialogUtil(
+      activity,
+      R.string.license_material_icons,
+      R.raw.license_apache,
+      link = R.string.license_material_icons_link
+    )
+    textDialogUtilMds.showIfWasShown(savedInstanceState)
 
-    textDialogUtilGoogleSansFlex = new TextDialogUtil(
-        activity,
-        R.string.license_google_sans_flex,
-        R.raw.license_ofl,
-        R.string.license_google_sans_flex_link
-    );
-    textDialogUtilGoogleSansFlex.showIfWasShown(savedInstanceState);
+    textDialogUtilGoogleSansFlex = TextDialogUtil(
+      activity,
+      R.string.license_google_sans_flex,
+      R.raw.license_ofl,
+      link = R.string.license_google_sans_flex_link
+    )
+    textDialogUtilGoogleSansFlex.showIfWasShown(savedInstanceState)
 
-    ViewUtil.setOnClickListeners(
-        this,
-        binding.linearAboutDeveloper,
-        binding.linearAboutChangelog,
-        binding.linearAboutVending,
-        binding.linearAboutKey,
-        binding.linearAboutGithub,
-        binding.linearAboutTranslation,
-        binding.linearAboutPrivacy,
-        binding.linearAboutLicenseMaterialComponents,
-        binding.linearAboutLicenseMaterialIcons,
-        binding.linearAboutLicenseGoogleSansFlex
-    );
+    setOnClickListeners(
+      this,
+      binding.linearAboutDeveloper,
+      binding.linearAboutChangelog,
+      binding.linearAboutVending,
+      binding.linearAboutKey,
+      binding.linearAboutGithub,
+      binding.linearAboutTranslation,
+      binding.linearAboutPrivacy,
+      binding.linearAboutLicenseMaterialComponents,
+      binding.linearAboutLicenseMaterialIcons,
+      binding.linearAboutLicenseGoogleSansFlex
+    )
   }
 
-  @Override
-  public void onResume() {
-    super.onResume();
-    updateUnlockItem();
+  override fun onResume() {
+    super.onResume()
+    updateUnlockItem()
   }
 
-  @Override
-  public void onSaveInstanceState(@NonNull Bundle outState) {
-    super.onSaveInstanceState(outState);
-    if (textDialogUtilMdc != null) {
-      textDialogUtilMdc.saveState(outState);
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    if (::textDialogUtilMdc.isInitialized) {
+      textDialogUtilMdc.saveState(outState)
     }
-    if (textDialogUtilMds != null) {
-      textDialogUtilMds.saveState(outState);
+    if (::textDialogUtilMds.isInitialized) {
+      textDialogUtilMds.saveState(outState)
     }
-    if (textDialogUtilGoogleSansFlex != null) {
-      textDialogUtilGoogleSansFlex.saveState(outState);
+    if (::textDialogUtilGoogleSansFlex.isInitialized) {
+      textDialogUtilGoogleSansFlex.saveState(outState)
     }
   }
 
-  @Override
-  public void onClick(View v) {
-    int id = v.getId();
+  override fun onClick(v: View) {
+    val id = v.id
     if (getViewUtil().isClickDisabled(id)) {
-      return;
+      return
     } else {
-      performHapticClick();
+      performHapticClick()
     }
 
-    if (id == R.id.linear_about_developer) {
-      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_website))));
-    } else if (id == R.id.linear_about_changelog) {
-      ViewUtil.startIcon(binding.imageAboutChangelog);
-      activity.showChangelogDialog();
-    } else if (id == R.id.linear_about_vending) {
-      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_vending_dev))));
-    } else if (id == R.id.linear_about_key) {
-      if (UnlockUtil.isKeyInstalled(activity)) {
-        UnlockUtil.openPlayStore(activity);
-      } else {
-        activity.showUnlockDialog();
+    when (id) {
+      R.id.linear_about_developer -> {
+        startActivity(
+          Intent(Intent.ACTION_VIEW, getString(R.string.app_website).toUri())
+        )
       }
-    } else if (id == R.id.linear_about_github) {
-      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_github))));
-    } else if (id == R.id.linear_about_translation) {
-      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_translate))));
-    } else if (id == R.id.linear_about_privacy) {
-      startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.app_privacy))));
-    } else if (id == R.id.linear_about_license_google_sans_flex) {
-      ViewUtil.startIcon(binding.imageAboutLicenseGoogleSansFlex);
-      textDialogUtilGoogleSansFlex.show();
-    } else if (id == R.id.linear_about_license_material_components) {
-      ViewUtil.startIcon(binding.imageAboutLicenseMaterialComponents);
-      textDialogUtilMdc.show();
-    } else if (id == R.id.linear_about_license_material_icons) {
-      ViewUtil.startIcon(binding.imageAboutLicenseMaterialIcons);
-      textDialogUtilMds.show();
+
+      R.id.linear_about_changelog -> {
+        binding.imageAboutChangelog.startIcon()
+        activity.showChangelogDialog()
+      }
+
+      R.id.linear_about_vending -> {
+        startActivity(
+          Intent(
+            Intent.ACTION_VIEW, getString(R.string.app_vending_dev).toUri()
+          )
+        )
+      }
+
+      R.id.linear_about_key -> {
+        if (isKeyInstalled(activity)) {
+          activity.startActivity(
+            Intent(
+              Intent.ACTION_VIEW, getString(R.string.app_vending_key).toUri()
+            )
+          )
+        } else {
+          activity.showUnlockDialog()
+        }
+      }
+
+      R.id.linear_about_github -> {
+        startActivity(
+          Intent(Intent.ACTION_VIEW, getString(R.string.app_github).toUri())
+        )
+      }
+
+      R.id.linear_about_translation -> {
+        startActivity(
+          Intent(Intent.ACTION_VIEW, getString(R.string.app_translate).toUri())
+        )
+      }
+
+      R.id.linear_about_privacy -> {
+        startActivity(
+          Intent(Intent.ACTION_VIEW, getString(R.string.app_privacy).toUri())
+        )
+      }
+
+      R.id.linear_about_license_google_sans_flex -> {
+        binding.imageAboutLicenseGoogleSansFlex.startIcon()
+        textDialogUtilGoogleSansFlex.show()
+      }
+
+      R.id.linear_about_license_material_components -> {
+        binding.imageAboutLicenseMaterialComponents.startIcon()
+        textDialogUtilMdc.show()
+      }
+
+      R.id.linear_about_license_material_icons -> {
+        binding.imageAboutLicenseMaterialIcons.startIcon()
+        textDialogUtilMds.show()
+      }
     }
   }
 
-  private void updateUnlockItem() {
-    boolean isPlayStoreInstalled = UnlockUtil.isPlayStoreInstalled(activity);
-    binding.linearAboutKey.setVisibility(isPlayStoreInstalled ? View.VISIBLE : View.GONE);
+  private fun updateUnlockItem() {
+    val isPlayStoreInstalled = isPlayStoreInstalled(activity)
+    binding.linearAboutKey.visibility = if (isPlayStoreInstalled) View.VISIBLE else View.GONE
     if (!isPlayStoreInstalled) {
-      return;
+      return
     }
     if (activity.isUnlocked()) {
-      binding.linearAboutKey.setOnLongClickListener(null);
+      binding.linearAboutKey.setOnLongClickListener(null)
     } else {
-      binding.linearAboutKey.setOnLongClickListener(v -> {
-        longClickCount++;
+      binding.linearAboutKey.setOnLongClickListener {
+        longClickCount++
         if (longClickCount >= 10) {
-          getSharedPrefs().edit().putBoolean(PREF.CHECK_UNLOCK_KEY, false).apply();
-          updateUnlockItem();
-          binding.linearAboutKey.setOnLongClickListener(null);
+          sharedPrefs.edit { putBoolean(PREF.CHECK_UNLOCK_KEY, false) }
+          updateUnlockItem()
+          binding.linearAboutKey.setOnLongClickListener(null)
         }
-        return true;
-      });
+        true
+      }
     }
-    int resId = R.string.about_key_description_not_installed;
-    boolean checkUnlockKey = getSharedPrefs().getBoolean(PREF.CHECK_UNLOCK_KEY, true);
-    if (UnlockUtil.isKeyInstalled(activity)) {
-      resId = R.string.about_key_description_installed;
+    var resId = R.string.about_key_description_not_installed
+    val checkUnlockKey = sharedPrefs.getBoolean(PREF.CHECK_UNLOCK_KEY, true)
+    if (isKeyInstalled(activity)) {
+      resId = R.string.about_key_description_installed
     } else if (!checkUnlockKey) {
-      resId = R.string.about_key_description_ignored;
+      resId = R.string.about_key_description_ignored
     }
-    binding.textAboutKeyDescription.setText(resId);
+    binding.textAboutKeyDescription.setText(resId)
   }
 }

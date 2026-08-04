@@ -17,234 +17,209 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.view;
+package xyz.zedler.patrick.tack.view
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
-import android.graphics.Path;
-import android.graphics.PointF;
-import android.graphics.RadialGradient;
-import android.graphics.RectF;
-import android.graphics.Shader;
-import android.graphics.Shader.TileMode;
-import android.util.AttributeSet;
-import android.view.View;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.graphics.ColorUtils;
-import androidx.dynamicanimation.animation.FloatPropertyCompat;
-import androidx.dynamicanimation.animation.SpringAnimation;
-import androidx.graphics.shapes.Morph;
-import androidx.graphics.shapes.Shapes_androidKt;
-import com.google.android.material.motion.MotionUtils;
-import com.google.android.material.shape.MaterialShapes;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.ShapeUtil;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.PointF
+import android.graphics.RadialGradient
+import android.graphics.RectF
+import android.graphics.Shader
+import android.util.AttributeSet
+import android.view.View
+import androidx.core.graphics.ColorUtils
+import androidx.dynamicanimation.animation.FloatPropertyCompat
+import androidx.dynamicanimation.animation.SpringAnimation
+import androidx.graphics.shapes.Morph
+import androidx.graphics.shapes.toPath
+import com.google.android.material.motion.MotionUtils
+import com.google.android.material.shape.MaterialShapes
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.util.*
+import kotlin.math.*
 
-public class CircleView extends View {
+class CircleView @JvmOverloads constructor(
+  context: Context,
+  attrs: AttributeSet? = null
+) : View(context, attrs) {
 
-  private final static String TAG = CircleView.class.getSimpleName();
+  private val paintFill = Paint().apply {
+    style = Paint.Style.FILL
+  }
+  private val path = Path()
+  private val matrix = Matrix()
+  private val morph: Morph
+  private val colorDefault = context.getAttrColor(R.attr.colorPrimaryContainer)
+  private val colorDrag1 = context.getAttrColor(R.attr.colorTertiaryContainer)
+  private val colorDrag2 = context.getAttrColor(R.attr.colorPrimaryContainer)
+  private val colorDrag3 = context.getAttrColor(R.attr.colorSecondaryContainer)
 
-  private final Paint paintFill;
-  private final Path path;
-  private final Matrix matrix;
-  private final Morph morph;
-  private final int colorDefault, colorDrag1, colorDrag2, colorDrag3;
-  private float morphFactor, colorFraction, touchX, touchY;
-  private boolean reduceAnimations;
-  private OnDragAnimListener onDragAnimListener;
-  private SpringAnimation springAnimationMorph, springAnimationColor;
+  private var morphFactor = 0f
+  private var colorFraction = 0f
+  private var touchX = 0f
+  private var touchY = 0f
+  private var reduceAnimations = false
+  private var onDragAnimListener: OnDragAnimListener? = null
+  private var springAnimationMorph: SpringAnimation? = null
+  private var springAnimationColor: SpringAnimation? = null
 
-  @SuppressLint("RestrictedApi")
-  public CircleView(@NonNull Context context, @Nullable AttributeSet attrs) {
-    super(context, attrs);
+  init {
+    paintFill.color = colorDefault
 
-    colorDefault = ResUtil.getColor(context, R.attr.colorPrimaryContainer);
-    colorDrag1 = ResUtil.getColor(context, R.attr.colorTertiaryContainer);
-    colorDrag2 = ResUtil.getColor(context, R.attr.colorPrimaryContainer);
-    colorDrag3 = ResUtil.getColor(context, R.attr.colorSecondaryContainer);
+    @SuppressLint("RestrictedApi")
+    morph = Morph(
+      normalize(
+        MaterialShapes.COOKIE_12,
+        true,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      normalize(
+        MaterialShapes.SOFT_BURST,
+        true,
+        RectF(-1f, -1f, 1f, 1f)
+      )
+    )
 
-    paintFill = new Paint();
-    paintFill.setStyle(Style.FILL);
-    paintFill.setColor(colorDefault);
-
-    morph = new Morph(
-        ShapeUtil.normalize(
-            MaterialShapes.COOKIE_12, true, new RectF(-1, -1, 1, 1)
-        ),
-        ShapeUtil.normalize(
-            MaterialShapes.SOFT_BURST, true, new RectF(-1, -1, 1, 1)
-        )
-    );
-
-    path = new Path();
-    matrix = new Matrix();
-
-    updateShape();
+    updateShape()
   }
 
-  @Override
-  protected void onDraw(@NonNull Canvas canvas) {
-    super.onDraw(canvas);
-    canvas.drawPath(path, paintFill);
+  override fun onDraw(canvas: Canvas) {
+    super.onDraw(canvas)
+    canvas.drawPath(path, paintFill)
   }
 
-  @Override
-  protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-    updateShape();
+  override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+    super.onLayout(changed, left, top, right, bottom)
+    updateShape()
   }
 
-  public void setOnDragAnimListener(OnDragAnimListener listener) {
-    onDragAnimListener = listener;
+  fun setOnDragAnimListener(listener: OnDragAnimListener?) {
+    onDragAnimListener = listener
   }
 
-  private void updateShape() {
-    path.rewind();
-    Shapes_androidKt.toPath(morph, morphFactor, path);
-    matrix.reset();
-    matrix.setScale(getWidth() / 2f, getHeight() / 2f);
-    matrix.postTranslate(getWidth() / 2f, getHeight() / 2f);
-    path.transform(matrix);
+  private fun updateShape() {
+    path.rewind()
+    morph.toPath(morphFactor, path)
+    matrix.reset()
+    matrix.setScale(width / 2f, height / 2f)
+    matrix.postTranslate(width / 2f, height / 2f)
+    path.transform(matrix)
   }
 
   @SuppressLint("PrivateResource")
-  public void setDragged(boolean dragged, float x, float y) {
+  fun setDragged(dragged: Boolean, x: Float, y: Float) {
     if (dragged) {
-      touchX = x;
-      touchY = y;
+      touchX = x
+      touchY = y
     }
-    if (springAnimationMorph != null) {
-      springAnimationMorph.cancel();
-    }
-    if (springAnimationColor != null) {
-      springAnimationColor.cancel();
-    }
+    springAnimationMorph?.cancel()
+    springAnimationColor?.cancel()
+
     if (!reduceAnimations) {
       if (springAnimationMorph == null) {
-        springAnimationMorph =
-            new SpringAnimation(this, MORPH_FACTOR)
-                .setSpring(
-                    MotionUtils.resolveThemeSpringForce(
-                        getContext(),
-                        R.attr.motionSpringDefaultSpatial,
-                        R.style.Motion_Material3_Spring_Standard_Default_Spatial)
-                ).setMinimumVisibleChange(0.01f);
+        springAnimationMorph = SpringAnimation(this, MORPH_FACTOR).apply {
+          spring = MotionUtils.resolveThemeSpringForce(
+            context,
+            R.attr.motionSpringDefaultSpatial,
+            R.style.Motion_Material3_Spring_Standard_Default_Spatial
+          )
+          minimumVisibleChange = 0.01f
+        }
       }
       if (springAnimationColor == null) {
-        springAnimationColor =
-            new SpringAnimation(this, COLOR_FRACTION)
-                .setSpring(
-                    MotionUtils.resolveThemeSpringForce(
-                        getContext(),
-                        R.attr.motionSpringDefaultEffects,
-                        R.style.Motion_Material3_Spring_Standard_Default_Effects)
-                ).setMinimumVisibleChange(0.01f);
+        springAnimationColor = SpringAnimation(this, COLOR_FRACTION).apply {
+          spring = MotionUtils.resolveThemeSpringForce(
+            context,
+            R.attr.motionSpringDefaultEffects,
+            R.style.Motion_Material3_Spring_Standard_Default_Effects
+          )
+          minimumVisibleChange = 0.01f
+        }
       }
-      springAnimationMorph.animateToFinalPosition(dragged ? 1 : 0);
-      springAnimationColor.animateToFinalPosition(dragged ? 0.85f : 0);
+      springAnimationMorph?.animateToFinalPosition(if (dragged) 1f else 0f)
+      springAnimationColor?.animateToFinalPosition(if (dragged) 0.85f else 0f)
     } else {
-      setMorphFactor(0);
-      setColorFraction(0);
+      setMorphFactor(0f)
+      setColorFraction(0f)
     }
   }
 
-  public void onDrag(float x, float y) {
-    touchX = x;
-    touchY = y;
+  fun onDrag(x: Float, y: Float) {
+    touchX = x
+    touchY = y
     if (!reduceAnimations) {
-      paintFill.setShader(getGradient());
+      paintFill.shader = getGradient()
     }
-    invalidate();
+    invalidate()
   }
 
-  private Shader getGradient() {
-    PointF pointF = getRotatedPoint(touchX, touchY, getPivotX(), getPivotY(), -getRotation());
-    return new RadialGradient(
-        pointF.x,
-        pointF.y,
-        getWidth(),
-        new int[]{
-            ColorUtils.blendARGB(colorDefault, colorDrag1, colorFraction),
-            ColorUtils.blendARGB(colorDefault, colorDrag1, colorFraction),
-            ColorUtils.blendARGB(colorDefault, colorDrag2, colorFraction),
-            ColorUtils.blendARGB(colorDefault, colorDrag3, colorFraction)
-        },
-        new float[]{0, 0.1f, 0.5f, 0.9f},
-        TileMode.CLAMP
-    );
+  private fun getGradient(): Shader {
+    val pointF = getRotatedPoint(
+      touchX, touchY, pivotX, pivotY, -rotation
+    )
+    return RadialGradient(
+      pointF.x,
+      pointF.y,
+      width.toFloat(),
+      intArrayOf(
+        ColorUtils.blendARGB(colorDefault, colorDrag1, colorFraction),
+        ColorUtils.blendARGB(colorDefault, colorDrag1, colorFraction),
+        ColorUtils.blendARGB(colorDefault, colorDrag2, colorFraction),
+        ColorUtils.blendARGB(colorDefault, colorDrag3, colorFraction)
+      ),
+      floatArrayOf(0f, 0.1f, 0.5f, 0.9f),
+      Shader.TileMode.CLAMP
+    )
   }
 
-  private PointF getRotatedPoint(float x, float y, float cx, float cy, float degrees) {
-    double radians = Math.toRadians(degrees);
-    float x1 = x - cx;
-    float y1 = y - cy;
-    float x2 = (float) (x1 * Math.cos(radians) - y1 * Math.sin(radians));
-    float y2 = (float) (x1 * Math.sin(radians) + y1 * Math.cos(radians));
-    return new PointF(x2 + cx, y2 + cy);
+  private fun getRotatedPoint(x: Float, y: Float, cx: Float, cy: Float, degrees: Float): PointF {
+    val radians = Math.toRadians(degrees.toDouble())
+    val x1 = x - cx
+    val y1 = y - cy
+    val x2 = (x1 * cos(radians) - y1 * sin(radians)).toFloat()
+    val y2 = (x1 * sin(radians) + y1 * cos(radians)).toFloat()
+    return PointF(x2 + cx, y2 + cy)
   }
 
-  private float getMorphFactor() {
-    return morphFactor;
+  fun getMorphFactor(): Float = morphFactor
+
+  fun setMorphFactor(factor: Float) {
+    morphFactor = factor
+    updateShape()
+    invalidate()
   }
 
-  private void setMorphFactor(float factor) {
-    morphFactor = factor;
-    updateShape();
-    invalidate();
-  }
+  fun getColorFraction(): Float = colorFraction
 
-  private float getColorFraction() {
-    return colorFraction;
-  }
-
-  private void setColorFraction(float fraction) {
-    colorFraction = fraction;
-
-    if (paintFill != null && getWidth() > 0) {
-      paintFill.setShader(getGradient());
+  fun setColorFraction(fraction: Float) {
+    colorFraction = fraction
+    if (width > 0) {
+      paintFill.shader = getGradient()
     }
+    invalidate()
+    onDragAnimListener?.onDragAnim(fraction)
+  }
 
-    invalidate();
-    if (onDragAnimListener != null) {
-      onDragAnimListener.onDragAnim(fraction);
+  fun setReduceAnimations(reduce: Boolean) {
+    reduceAnimations = reduce
+  }
+
+  interface OnDragAnimListener {
+    fun onDragAnim(fraction: Float)
+  }
+
+  companion object {
+    private val MORPH_FACTOR = object : FloatPropertyCompat<CircleView>("morphFactor") {
+      override fun getValue(delegate: CircleView): Float = delegate.getMorphFactor()
+      override fun setValue(delegate: CircleView, value: Float) = delegate.setMorphFactor(value)
+    }
+    private val COLOR_FRACTION = object : FloatPropertyCompat<CircleView>("colorFraction") {
+      override fun getValue(delegate: CircleView): Float = delegate.getColorFraction()
+      override fun setValue(delegate: CircleView, value: Float) = delegate.setColorFraction(value)
     }
   }
-
-  public void setReduceAnimations(boolean reduce) {
-    reduceAnimations = reduce;
-  }
-
-  public interface OnDragAnimListener {
-    void onDragAnim(float fraction);
-  }
-
-  private static final FloatPropertyCompat<CircleView> MORPH_FACTOR =
-      new FloatPropertyCompat<>("morphFactor") {
-        @Override
-        public float getValue(CircleView delegate) {
-          return delegate.getMorphFactor();
-        }
-
-        @Override
-        public void setValue(CircleView delegate, float value) {
-          delegate.setMorphFactor(value);
-        }
-      };
-  private static final FloatPropertyCompat<CircleView> COLOR_FRACTION =
-      new FloatPropertyCompat<>("colorFraction") {
-        @Override
-        public float getValue(CircleView delegate) {
-          return delegate.getColorFraction();
-        }
-
-        @Override
-        public void setValue(CircleView delegate, float value) {
-          delegate.setColorFraction(value);
-        }
-      };
 }

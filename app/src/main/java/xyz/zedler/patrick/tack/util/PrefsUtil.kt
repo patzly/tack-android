@@ -17,242 +17,224 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+package xyz.zedler.patrick.tack.util
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Log;
-import androidx.preference.PreferenceManager;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import xyz.zedler.patrick.tack.Constants.BEAT_MODE;
-import xyz.zedler.patrick.tack.Constants.FLASH_SCREEN;
-import xyz.zedler.patrick.tack.Constants.KEEP_AWAKE;
-import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.database.SongDatabase;
-import xyz.zedler.patrick.tack.database.entity.Part;
-import xyz.zedler.patrick.tack.database.entity.Song;
-import xyz.zedler.patrick.tack.model.MetronomeConfig;
+import android.content.Context
+import android.content.SharedPreferences
+import android.util.Log
+import androidx.preference.PreferenceManager
+import androidx.core.content.edit
+import xyz.zedler.patrick.tack.Constants.BEAT_MODE
+import xyz.zedler.patrick.tack.Constants.FLASH_SCREEN
+import xyz.zedler.patrick.tack.Constants.KEEP_AWAKE
+import xyz.zedler.patrick.tack.Constants.PREF
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.database.SongDatabase
+import xyz.zedler.patrick.tack.database.entity.Part
+import xyz.zedler.patrick.tack.database.entity.Song
+import xyz.zedler.patrick.tack.model.MetronomeConfig
+import java.util.concurrent.Executors
 
-public class PrefsUtil {
+class PrefsUtil(private val context: Context) {
 
-  private final static String TAG = PrefsUtil.class.getSimpleName();
+  private val tag = PrefsUtil::class.java.simpleName
+  val sharedPrefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
+  private val executorService = Executors.newSingleThreadExecutor()
 
-  private final Context context;
-  private final SharedPreferences sharedPrefs;
-  private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-
-  public PrefsUtil(Context context) {
-    this.context = context;
-    sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+  fun checkForMigrations(): PrefsUtil {
+    migrateBookmarks()
+    migrateBeatModeVibrateAndAlwaysVibrate()
+    migrateFlashScreen()
+    migrateKeepAwake()
+    return this
   }
 
-  public PrefsUtil checkForMigrations() {
-    migrateBookmarks();
-    migrateBeatModeVibrateAndAlwaysVibrate();
-    migrateFlashScreen();
-    migrateKeepAwake();
-    return this;
-  }
-
-  public SharedPreferences getSharedPrefs() {
-    return sharedPrefs;
-  }
-
-  private void migrateBookmarks() {
-    String BOOKMARKS = "bookmarks";
-    if (sharedPrefs.contains(BOOKMARKS)) {
+  private fun migrateBookmarks() {
+    val bookmarksKey = "bookmarks"
+    if (sharedPrefs.contains(bookmarksKey)) {
       // from String to Set<String>
       try {
-        Set<String> bookmarks = sharedPrefs.getStringSet(BOOKMARKS, Set.of());
-      } catch (Exception ignored) {
-        SharedPreferences.Editor editor = sharedPrefs.edit();
-        try {
-          String prefBookmarks = getSharedPrefs().getString(BOOKMARKS, "");
-          List<String> bookmarksArray = Arrays.asList(prefBookmarks.split(","));
-          List<Integer> bookmarks = new ArrayList<>(bookmarksArray.size());
-          for (String bookmark : bookmarksArray) {
-            if (!bookmark.isEmpty()) {
-              bookmarks.add(Integer.parseInt(bookmark));
-            }
+        sharedPrefs.getStringSet(bookmarksKey, emptySet())
+      } catch (e: Exception) {
+        sharedPrefs.edit().apply {
+          try {
+            val prefBookmarks = sharedPrefs.getString(bookmarksKey, "") ?: ""
+            val bookmarks = prefBookmarks.split(",").mapNotNull { it.toIntOrNull() }
+            remove(bookmarksKey)
+            putStringSet(bookmarksKey, bookmarks.map { it.toString() }.toSet())
+          } catch (ignore: Exception) {
+            remove(bookmarksKey)
           }
-          editor.remove(BOOKMARKS);
-          Set<String> bookmarksSet = new HashSet<>();
-          for (Integer tempo : bookmarks) {
-            bookmarksSet.add(String.valueOf(tempo));
-          }
-          editor.putStringSet(BOOKMARKS, bookmarksSet);
-        } catch (Exception ignore) {
-          editor.remove(BOOKMARKS);
+          apply()
         }
-        editor.apply();
       }
 
       // from bookmarks to songs
-      Set<String> bookmarks = sharedPrefs.getStringSet(BOOKMARKS, Set.of());
-      if (!bookmarks.isEmpty()) {
-        sharedPrefs.edit().remove(BOOKMARKS).apply();
-        SongDatabase db = SongDatabase.getInstance(context.getApplicationContext());
-        for (String bookmark : bookmarks) {
+      val bookmarks = sharedPrefs.getStringSet(
+        bookmarksKey, emptySet()
+      ) ?: emptySet()
+      if (bookmarks.isNotEmpty()) {
+        sharedPrefs.edit { remove(bookmarksKey) }
+        val db = SongDatabase.getInstance(context.applicationContext)
+        bookmarks.forEach { bookmark ->
           try {
-            int tempo = Integer.parseInt(bookmark);
-            String songName = context.getString(R.string.label_bpm_value, tempo);
-            Song song = new Song(songName);
-            MetronomeConfig config = new MetronomeConfig();
-            config.setTempo(tempo);
-            Part part = new Part(null, song.getId(), 0, config);
-            executorService.execute(() -> {
-              db.songDao().insertSong(song);
-              db.songDao().insertPart(part);
-            });
-            Log.i(TAG, "migrateBookmarks: added " + song + " for " + bookmark);
-          } catch (NumberFormatException e) {
-            Log.e(TAG, "migrateBookmarks: bookmark to tempo: ", e);
+            val tempo = bookmark.toInt()
+            val songName = context.getString(R.string.label_bpm_value, tempo)
+            val song = Song(name = songName)
+            val config = MetronomeConfig().apply { this.tempo = tempo }
+            val part = Part.fromConfig(null, song.id, 0, config)
+            executorService.execute {
+              db.songDao().insertSong(song)
+              db.songDao().insertPart(part)
+            }
+            Log.i(tag, "migrateBookmarks: added $song for $bookmark")
+          } catch (e: NumberFormatException) {
+            Log.e(tag, "migrateBookmarks: bookmark to tempo: ", e)
           }
         }
         // Remove deprecated shortcuts
-        ShortcutUtil shortcutUtil = new ShortcutUtil(context);
-        shortcutUtil.removeAllShortcuts();
+        ShortcutUtil(context).removeAllShortcuts()
       }
     }
   }
 
-  private void migrateBeatModeVibrateAndAlwaysVibrate() {
-    String beatModeVibrateKeyOld = "beat_mode_vibrate";
-    boolean beatModeVibrateDefault = false;
-    String alwaysVibrateKeyOld = "always_vibrate";
-    boolean alwaysVibrateDefault = true;
+  private fun migrateBeatModeVibrateAndAlwaysVibrate() {
+    val beatModeVibrateKeyOld = "beat_mode_vibrate"
+    val alwaysVibrateKeyOld = "always_vibrate"
     if (sharedPrefs.contains(beatModeVibrateKeyOld)) {
-      SharedPreferences.Editor editor = sharedPrefs.edit();
-      try {
-        boolean currentBeatModeVibrate = sharedPrefs.getBoolean(
-            beatModeVibrateKeyOld, beatModeVibrateDefault
-        );
-        boolean currentAlwaysVibrate = sharedPrefs.getBoolean(
-            alwaysVibrateKeyOld, alwaysVibrateDefault
-        );
-        if (currentBeatModeVibrate) {
-          editor.putString(PREF.BEAT_MODE, BEAT_MODE.VIBRATION);
-        } else if (currentAlwaysVibrate) {
-          editor.putString(PREF.BEAT_MODE, BEAT_MODE.ALL);
-        } else {
-          editor.putString(PREF.BEAT_MODE, BEAT_MODE.SOUND);
+      sharedPrefs.edit().apply {
+        try {
+          val currentBeatModeVibrate = sharedPrefs.getBoolean(
+            beatModeVibrateKeyOld, false
+          )
+          val currentAlwaysVibrate = sharedPrefs.getBoolean(
+            alwaysVibrateKeyOld, true
+          )
+          putString(
+            PREF.BEAT_MODE,
+            when {
+              currentBeatModeVibrate -> BEAT_MODE.VIBRATION
+              currentAlwaysVibrate -> BEAT_MODE.ALL
+              else -> BEAT_MODE.SOUND
+            }
+          )
+        } catch (ignored: ClassCastException) {
+        } finally {
+          remove(beatModeVibrateKeyOld)
+          remove(alwaysVibrateKeyOld)
         }
-      } catch (ClassCastException ignored) {
-      } finally {
-        editor.remove(beatModeVibrateKeyOld);
-        editor.remove(alwaysVibrateKeyOld);
+        apply()
       }
-      editor.apply();
     }
   }
 
-  private void migrateFlashScreen() {
-    String flashScreenKeyOld = "flash_screen"; // now flash_screen_strength
-    boolean flashScreenDefault = false;
+  private fun migrateFlashScreen() {
+    val flashScreenKeyOld = "flash_screen"
     if (sharedPrefs.contains(flashScreenKeyOld)) {
-      SharedPreferences.Editor editor = sharedPrefs.edit();
-      try {
-        boolean current = sharedPrefs.getBoolean(flashScreenKeyOld, flashScreenDefault);
-        editor.putString(PREF.FLASH_SCREEN, current ? FLASH_SCREEN.STRONG : FLASH_SCREEN.OFF);
-      } catch (ClassCastException ignored) {
-      } finally {
-        editor.remove(flashScreenKeyOld);
+      sharedPrefs.edit().apply {
+        try {
+          val current = sharedPrefs.getBoolean(flashScreenKeyOld, false)
+          putString(
+            PREF.FLASH_SCREEN, if (current) FLASH_SCREEN.STRONG else FLASH_SCREEN.OFF
+          )
+        } catch (ignored: ClassCastException) {
+        } finally {
+          remove(flashScreenKeyOld)
+        }
+        apply()
       }
-      editor.apply();
     }
   }
 
-  private void migrateKeepAwake() {
-    String keepAwakeKeyOld = "keep_awake"; // now keep_screen_awake
-    boolean keepAwakeDefault = true;
+  private fun migrateKeepAwake() {
+    val keepAwakeKeyOld = "keep_awake"
     if (sharedPrefs.contains(keepAwakeKeyOld)) {
-      SharedPreferences.Editor editor = sharedPrefs.edit();
-      try {
-        boolean current = sharedPrefs.getBoolean(keepAwakeKeyOld, keepAwakeDefault);
-        editor.putString(PREF.KEEP_AWAKE, current ? KEEP_AWAKE.WHILE_PLAYING : KEEP_AWAKE.NEVER);
-      } catch (ClassCastException ignored) {
-      } finally {
-        editor.remove(keepAwakeKeyOld);
-      }
-      editor.apply();
-    }
-  }
-
-  private void migrateString(String keyOld, String keyNew, String def) {
-    if (sharedPrefs.contains(keyOld) && !sharedPrefs.contains(keyNew)) {
-      SharedPreferences.Editor editor = sharedPrefs.edit();
-      try {
-        String current = sharedPrefs.getString(keyOld, def);
-        if (!Objects.equals(current, def)) {
-          editor.remove(keyOld);
-          editor.putString(keyNew, current);
+      sharedPrefs.edit().apply {
+        try {
+          val current = sharedPrefs.getBoolean(keepAwakeKeyOld, true)
+          putString(
+            PREF.KEEP_AWAKE, if (current) KEEP_AWAKE.WHILE_PLAYING else KEEP_AWAKE.NEVER
+          )
+        } catch (ignored: ClassCastException) {
+        } finally {
+          remove(keepAwakeKeyOld)
         }
-      } catch (ClassCastException ignored) {
-        editor.remove(keyOld);
+        apply()
       }
-      editor.apply();
     }
   }
 
-  private void migrateBoolean(String keyOld, String keyNew, boolean def) {
+  private fun migrateString(keyOld: String, keyNew: String, def: String) {
     if (sharedPrefs.contains(keyOld) && !sharedPrefs.contains(keyNew)) {
-      SharedPreferences.Editor editor = sharedPrefs.edit();
-      try {
-        boolean current = sharedPrefs.getBoolean(keyOld, def);
-        if (!Objects.equals(current, def)) {
-          editor.remove(keyOld);
-          editor.putBoolean(keyNew, current);
+      sharedPrefs.edit().apply {
+        try {
+          val current = sharedPrefs.getString(keyOld, def)
+          if (current != def) {
+            remove(keyOld)
+            putString(keyNew, current)
+          }
+        } catch (ignored: ClassCastException) {
+          remove(keyOld)
         }
-      } catch (ClassCastException ignored) {
-        editor.remove(keyOld);
+        apply()
       }
-      editor.apply();
     }
   }
 
-  private void migrateInteger(String keyOld, String keyNew, int def) {
+  private fun migrateBoolean(keyOld: String, keyNew: String, def: Boolean) {
     if (sharedPrefs.contains(keyOld) && !sharedPrefs.contains(keyNew)) {
-      SharedPreferences.Editor editor = sharedPrefs.edit();
-      try {
-        int current = sharedPrefs.getInt(keyOld, def);
-        if (!Objects.equals(current, def)) {
-          editor.remove(keyOld);
-          editor.putInt(keyNew, current);
+      sharedPrefs.edit().apply {
+        try {
+          val current = sharedPrefs.getBoolean(keyOld, def)
+          if (current != def) {
+            remove(keyOld)
+            putBoolean(keyNew, current)
+          }
+        } catch (ignored: ClassCastException) {
+          remove(keyOld)
         }
-      } catch (ClassCastException ignored) {
-        editor.remove(keyOld);
+        apply()
       }
-      editor.apply();
     }
   }
 
-  private void migrateFloat(String keyOld, String keyNew, float def) {
+  private fun migrateInteger(keyOld: String, keyNew: String, def: Int) {
     if (sharedPrefs.contains(keyOld) && !sharedPrefs.contains(keyNew)) {
-      SharedPreferences.Editor editor = sharedPrefs.edit();
-      try {
-        float current = sharedPrefs.getFloat(keyOld, def);
-        if (!Objects.equals(current, def)) {
-          editor.remove(keyOld);
-          editor.putFloat(keyNew, current);
+      sharedPrefs.edit().apply {
+        try {
+          val current = sharedPrefs.getInt(keyOld, def)
+          if (current != def) {
+            remove(keyOld)
+            putInt(keyNew, current)
+          }
+        } catch (ignored: ClassCastException) {
+          remove(keyOld)
         }
-      } catch (ClassCastException ignored) {
-        editor.remove(keyOld);
+        apply()
       }
-      editor.apply();
     }
   }
 
-  private void removePreference(String key) {
+  private fun migrateFloat(keyOld: String, keyNew: String, def: Float) {
+    if (sharedPrefs.contains(keyOld) && !sharedPrefs.contains(keyNew)) {
+      sharedPrefs.edit().apply {
+        try {
+          val current = sharedPrefs.getFloat(keyOld, def)
+          if (current != def) {
+            remove(keyOld)
+            putFloat(keyNew, current)
+          }
+        } catch (ignored: ClassCastException) {
+          remove(keyOld)
+        }
+        apply()
+      }
+    }
+  }
+
+  private fun removePreference(key: String) {
     if (sharedPrefs.contains(key)) {
-      sharedPrefs.edit().remove(key).apply();
+      sharedPrefs.edit { remove(key) }
     }
   }
 }

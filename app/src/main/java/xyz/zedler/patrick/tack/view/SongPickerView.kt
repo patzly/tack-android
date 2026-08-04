@@ -17,932 +17,763 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.view;
+package xyz.zedler.patrick.tack.view
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.GradientDrawable.Orientation;
-import android.graphics.drawable.ScaleDrawable;
-import android.util.AttributeSet;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import androidx.annotation.NonNull;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.core.graphics.ColorUtils;
-import androidx.core.view.AccessibilityDelegateCompat;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
-import androidx.dynamicanimation.animation.FloatPropertyCompat;
-import androidx.dynamicanimation.animation.SpringAnimation;
-import androidx.dynamicanimation.animation.SpringForce;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView.LayoutManager;
-import com.google.android.material.motion.MotionUtils;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.database.entity.Part;
-import xyz.zedler.patrick.tack.database.relations.SongWithParts;
-import xyz.zedler.patrick.tack.databinding.ViewSongPickerBinding;
-import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipAdapter;
-import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipAdapter.OnSongClickListener;
-import xyz.zedler.patrick.tack.recyclerview.decoration.SongChipItemDecoration;
-import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
-import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.SortUtil;
-import xyz.zedler.patrick.tack.util.UiUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil.OnMenuInflatedListener;
-import xyz.zedler.patrick.tack.util.WidgetUtil;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.ScaleDrawable
+import android.util.AttributeSet
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.widget.Button
+import android.widget.FrameLayout
+import androidx.core.graphics.ColorUtils
+import androidx.core.view.AccessibilityDelegateCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import androidx.dynamicanimation.animation.FloatPropertyCompat
+import androidx.dynamicanimation.animation.SpringAnimation
+import androidx.dynamicanimation.animation.SpringForce
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.motion.MotionUtils
+import xyz.zedler.patrick.tack.Constants
+import xyz.zedler.patrick.tack.Constants.SONGS_ORDER
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.database.relations.SongWithParts
+import xyz.zedler.patrick.tack.databinding.ViewSongPickerBinding
+import xyz.zedler.patrick.tack.recyclerview.adapter.SongChipAdapter
+import xyz.zedler.patrick.tack.recyclerview.decoration.SongChipItemDecoration
+import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager
+import xyz.zedler.patrick.tack.util.ViewUtil
+import xyz.zedler.patrick.tack.util.getAttrColor
+import xyz.zedler.patrick.tack.util.getColorHighlight
+import xyz.zedler.patrick.tack.util.getDimension
+import xyz.zedler.patrick.tack.util.isLandTablet
+import xyz.zedler.patrick.tack.util.isOrientationPortrait
+import xyz.zedler.patrick.tack.util.isLayoutRtl
+import xyz.zedler.patrick.tack.util.sendSongsWidgetUpdate
+import xyz.zedler.patrick.tack.util.dpToPx
+import xyz.zedler.patrick.tack.util.setTooltipText
+import xyz.zedler.patrick.tack.util.showMenu
+import xyz.zedler.patrick.tack.util.startIcon
+import xyz.zedler.patrick.tack.util.sortSongsWithParts
+import xyz.zedler.patrick.tack.util.OnMenuInflatedListener
+import android.content.res.ColorStateList
+import androidx.core.view.isInvisible
 
-public class SongPickerView extends FrameLayout {
+class SongPickerView @JvmOverloads constructor(
+  context: Context,
+  attrs: AttributeSet? = null
+) : FrameLayout(context, attrs) {
 
-  private static final String TAG = SongPickerView.class.getSimpleName();
+  private val binding = ViewSongPickerBinding.inflate(
+    LayoutInflater.from(context), this
+  )
+  private val isRtl = context.isLayoutRtl()
+  private val heightCollapsed = context.dpToPx(56f)
+  private val heightExpanded = context.dpToPx(48 * 3 + 8 * 2f)
+  private val heightExpandedMargin = context.dpToPx(32f)
 
-  private static final boolean TEST_ANIMATIONS = false;
+  private val colorBgCollapsed = context.getAttrColor(R.attr.colorSecondaryContainer)
+  private val colorBgExpanded = context.getAttrColor(R.attr.colorSurfaceContainer)
 
-  private final ViewSongPickerBinding binding;
-  private final Context context;
-  private final boolean isRtl;
-  private final int heightCollapsed, heightExpanded, heightExpandedMargin;
-  private final int colorBgCollapsed, colorBgExpanded;
-  private final int chipCloseIconWidth;
-  private final int colorSurfaceContainer, colorOnSurface, colorOnSurfaceVariant;
-  private final ViewUtil viewUtil;
-  private SongPickerListener listener;
-  private List<SongWithParts> songsWithParts;
-  private int sortOrder, partIndex, widthMax, widthMin, chipTargetTranslationX;
-  private String currentSongId;
-  private Drawable gradientLeft, gradientRight;
-  private SpringAnimation springAnimationExpandSpatial, springAnimationExpandEffects;
-  private SpringAnimation springAnimationDeselectSpatial, springAnimationDeselectEffects;
-  private SpringAnimation springAnimationSelectSpatial, springAnimationSelectEffects;
-  private float expandSpatialFraction, expandEffectsFraction;
-  private float selectSpatialFraction, selectEffectsFraction;
-  private boolean isInitialized, isExpanded;
+  private val chipCloseIconWidth = context.dpToPx(18f)
+  private val colorSurfaceContainer = context.getAttrColor(R.attr.colorSurfaceContainer)
+  private val colorOnSurface = context.getAttrColor(R.attr.colorOnSurface)
+  private val colorOnSurfaceVariant = context.getAttrColor(R.attr.colorOnSurfaceVariant)
 
-  public SongPickerView(@NonNull Context context, AttributeSet attributeSet) {
-    super(context, attributeSet);
-    this.context = context;
+  private val viewUtil = ViewUtil()
+  private var listener: SongPickerListener? = null
+  private var songsWithParts: MutableList<SongWithParts> = mutableListOf()
+  private var sortOrder = SONGS_ORDER.NAME_ASC
+  private var partIndex = 0
+  private var widthMax = 0
+  private var widthMin = 0
+  private var chipTargetTranslationX = 0
+  private var currentSongId = Constants.SONG_ID_DEFAULT
 
-    viewUtil = new ViewUtil();
+  private lateinit var gradientLeft: ScaleDrawable
+  private lateinit var gradientRight: ScaleDrawable
 
-    binding = ViewSongPickerBinding.inflate(LayoutInflater.from(context), this);
-    isRtl = UiUtil.isLayoutRtl(context);
-    songsWithParts = Collections.emptyList();
+  private var springAnimationExpandSpatial: SpringAnimation? = null
+  private var springAnimationExpandEffects: SpringAnimation? = null
+  private var springAnimationDeselectSpatial: SpringAnimation? = null
+  private var springAnimationDeselectEffects: SpringAnimation? = null
+  private var springAnimationSelectSpatial: SpringAnimation? = null
+  private var springAnimationSelectEffects: SpringAnimation? = null
 
-    heightCollapsed = UiUtil.dpToPx(context, 56);
-    heightExpanded = UiUtil.dpToPx(context, 48 * 3 + 8 * 2);
-    heightExpandedMargin = UiUtil.dpToPx(context, 32);
+  private var expandSpatialFraction = 0f
+  private var expandEffectsFraction = 0f
+  private var selectSpatialFraction = 0f
+  private var selectEffectsFraction = 0f
 
-    colorBgCollapsed = ResUtil.getColor(context, R.attr.colorSecondaryContainer);
-    colorBgExpanded = ResUtil.getColor(context, R.attr.colorSurfaceContainer);
+  var isInitialized = false
+    private set
+  private var isExpanded = false
 
-    chipCloseIconWidth = UiUtil.dpToPx(context, 18);
-    colorSurfaceContainer = ResUtil.getColor(context, R.attr.colorSurfaceContainer);
-    colorOnSurface = ResUtil.getColor(context, R.attr.colorOnSurface);
-    colorOnSurfaceVariant = ResUtil.getColor(context, R.attr.colorOnSurfaceVariant);
+  fun setListener(listener: SongPickerListener) {
+    this.listener = listener
   }
 
-  public void setListener(SongPickerListener listener) {
-    this.listener = listener;
-  }
-
-  public void init(
-      @NonNull String currentSongId,
-      int currentPartIndex,
-      List<SongWithParts> songs,
-      int sortOrder,
-      boolean expanded
+  fun init(
+    currentSongId: String,
+    currentPartIndex: Int,
+    songs: List<SongWithParts>,
+    sortOrder: Int,
+    expanded: Boolean
   ) {
-    if (isInitialized) {
-      return;
-    }
-    isInitialized = true;
+    if (isInitialized) return
+    isInitialized = true
 
-    this.sortOrder = sortOrder;
-    this.currentSongId = currentSongId;
-    // To display current song title in current chip at start
-    this.songsWithParts = new ArrayList<>(songs);
+    this.sortOrder = sortOrder
+    this.currentSongId = currentSongId
+    this.songsWithParts = songs.toMutableList()
 
-    initPickerSize(expanded, currentSongId);
-    initRecycler();
-    initChip();
-    setCurrentSong(currentSongId, false);
-    setPartIndex(currentPartIndex);
+    initPickerSize(expanded, currentSongId)
+    initRecycler()
+    initChip()
+    setCurrentSong(currentSongId, false)
+    setPartIndex(currentPartIndex)
   }
 
-  public boolean isInitialized() {
-    return isInitialized;
+  fun setSongs(songs: List<SongWithParts>) {
+    this.songsWithParts = songs.toMutableList()
+    binding.textSongPickerEmpty.visibility = if (songsWithParts.isEmpty()) VISIBLE else GONE
+
+    sortSongs()
+
+    if (currentSongId == Constants.SONG_ID_DEFAULT) return
+
+    val songName = getSongNameFromId(currentSongId)
+    val chipText = binding.textSongPickerChip.text.toString()
+    if (songName != null && songName != chipText) {
+      binding.textSongPickerChip.text = songName
+    }
+    setPartIndex(partIndex)
   }
 
-  public void setSongs(List<SongWithParts> songs) {
-    this.songsWithParts = new ArrayList<>(songs);
-
-    binding.textSongPickerEmpty.setVisibility(songsWithParts.isEmpty() ? VISIBLE : GONE);
-
-    sortSongs();
-
-    if (currentSongId.equals(Constants.SONG_ID_DEFAULT)) {
-      return;
-    }
-    // maybe name of current song changed
-    String songName = getSongNameFromId(currentSongId);
-    String chipText = binding.textSongPickerChip.getText().toString();
-    if (songName != null && !songName.equals(chipText)) {
-      binding.textSongPickerChip.setText(songName);
-    }
-    // maybe name of current part or part count changed
-    setPartIndex(partIndex);
-  }
-
-  private void sortSongs() {
-    SortUtil.sortSongsWithParts(songsWithParts, sortOrder);
-    SongChipAdapter adapter = (SongChipAdapter) binding.recyclerSongPicker.getAdapter();
+  private fun sortSongs() {
+    sortSongsWithParts(songsWithParts, sortOrder)
+    val adapter = binding.recyclerSongPicker.adapter as? SongChipAdapter
     if (adapter != null) {
-      adapter.submitList(songsWithParts, this::maybeCenterSongChips);
+      adapter.submitList(songsWithParts) { maybeCenterSongChips() }
     } else {
-      throw new IllegalStateException("init() has to be called before any other method");
+      throw IllegalStateException("init() has to be called before any other method")
     }
   }
 
-  public void setPartIndex(int partIndex) {
-    this.partIndex = partIndex;
-    String partName = getPartNameFromIndex(partIndex);
-    String partLabel = context.getString(R.string.label_part_unnamed, partIndex + 1);
-    if (partName != null) {
-      partLabel = context.getString(
-          R.string.label_part_current, partIndex + 1, partName
-      );
+  fun setPartIndex(partIndex: Int) {
+    this.partIndex = partIndex
+    val partName = getPartNameFromIndex(partIndex)
+    val partLabel = if (partName != null) {
+      context.getString(R.string.label_part_current, partIndex + 1, partName)
+    } else {
+      context.getString(R.string.label_part_unnamed, partIndex + 1)
     }
-    binding.buttonSongPickerPart.setText(partLabel);
-    int partCount = getPartCount();
-    binding.buttonSongPickerPartPrevious.setEnabled(partCount > 0 && partIndex > 0);
-    binding.buttonSongPickerPartNext.setEnabled(partCount > 0 && partIndex < partCount - 1);
+    binding.buttonSongPickerPart.text = partLabel
+    val partCount = getPartCount()
+    binding.buttonSongPickerPartPrevious.isEnabled = partCount > 0 && partIndex > 0
+    binding.buttonSongPickerPartNext.isEnabled = partCount > 0 && partIndex < partCount - 1
   }
 
-  public void setParentWidth(int width) {
-    boolean isPortrait = UiUtil.isOrientationPortrait(context);
-    boolean isLandTablet = UiUtil.isLandTablet(context);
-    if (isPortrait || isLandTablet) {
-      width = Math.min(width, ResUtil.getDimension(context, R.dimen.max_content_width));
+  fun setParentWidth(width: Int) {
+    var w = width
+    if (context.isOrientationPortrait() || context.isLandTablet()) {
+      w = w.coerceAtMost(context.getDimension(R.dimen.max_content_width))
     }
-    widthMax = width - UiUtil.dpToPx(context, 16 + 16); // add horizontal margin
+    widthMax = w - context.dpToPx(32f) // 16 + 16 horizontal margin
   }
 
-  private void initPickerSize(boolean expanded, String currentSongId) {
-    binding.buttonSongPickerExpand.setOnClickListener(v -> {
-      if (isExpanded) {
-        return;
-      }
-      if (listener != null) {
-        listener.onExpandCollapseClicked(true);
-      }
-      setExpanded(true, true);
-    });
-    binding.buttonSongPickerCollapse.setOnClickListener(v -> {
-      if (!isExpanded) {
-        return;
-      }
-      if (listener != null) {
-        listener.onExpandCollapseClicked(false);
-      }
-      setExpanded(false, true);
-    });
-    ViewUtil.setTooltipText(binding.buttonSongPickerCollapse, R.string.action_collapse);
-    binding.frameSongPickerTop.setOnClickListener(
-        v -> binding.buttonSongPickerCollapse.performClick()
-    );
-    binding.buttonSongPickerExpand.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            widthMin = binding.buttonSongPickerExpand.getWidth();
+  private fun initPickerSize(expanded: Boolean, currentSongId: String) {
+    binding.buttonSongPickerExpand.setOnClickListener {
+      if (isExpanded) return@setOnClickListener
+      listener?.onExpandCollapseClicked(true)
+      setExpanded(expanded = true, animated = true)
+    }
+    binding.buttonSongPickerCollapse.setOnClickListener {
+      if (!isExpanded) return@setOnClickListener
+      listener?.onExpandCollapseClicked(false)
+      setExpanded(expanded = false, animated = true)
+    }
+    binding.buttonSongPickerCollapse.setTooltipText(R.string.action_collapse)
+    binding.frameSongPickerTop.setOnClickListener {
+      binding.buttonSongPickerCollapse.performClick()
+    }
 
-            setExpanded(expanded, false);
-            if (expanded) {
-              // Redo song select animation stuff
-              setCurrentSong(currentSongId, false);
+    binding.buttonSongPickerExpand.viewTreeObserver.addOnGlobalLayoutListener(
+      object : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+          widthMin = binding.buttonSongPickerExpand.width
+          setExpanded(expanded, false)
+          if (expanded) {
+            setCurrentSong(currentSongId, false)
+          }
+          if (binding.buttonSongPickerExpand.viewTreeObserver.isAlive) {
+            binding.buttonSongPickerExpand.viewTreeObserver.removeOnGlobalLayoutListener(this)
+          }
+        }
+      }
+    )
+
+    binding.buttonSongPickerOpen.setOnClickListener {
+      listener?.onOpenSongsClicked()
+    }
+    binding.buttonSongPickerOpen.setTooltipText(R.string.action_show_songs_list)
+
+    binding.buttonSongPickerMenu.setOnClickListener {
+      listener?.onMenuOrMenuItemClicked()
+      val itemClickListener = androidx.appcompat.widget.PopupMenu.OnMenuItemClickListener { item ->
+        val id = item.itemId
+        if (viewUtil.isClickDisabled(id)) return@OnMenuItemClickListener false
+        listener?.onMenuOrMenuItemClicked()
+
+        when (id) {
+          R.id.action_sort_name, R.id.action_sort_last_played, R.id.action_sort_most_played -> {
+            if (item.isChecked) return@OnMenuItemClickListener false
+            sortOrder = when (id) {
+              R.id.action_sort_name -> SONGS_ORDER.NAME_ASC
+              R.id.action_sort_last_played -> SONGS_ORDER.LAST_PLAYED_ASC
+              else -> SONGS_ORDER.MOST_PLAYED_ASC
             }
-
-            if (binding.buttonSongPickerExpand.getViewTreeObserver().isAlive()) {
-              binding.buttonSongPickerExpand.getViewTreeObserver().removeOnGlobalLayoutListener(
-                  this
-              );
+            item.isChecked = true
+            setSongs(songsWithParts)
+            sortSongs()
+            listener?.onSortOrderChanged(sortOrder)
+            if (songsWithParts.isNotEmpty()) {
+              sendSongsWidgetUpdate(context)
             }
           }
-        });
-    binding.buttonSongPickerOpen.setOnClickListener(v -> {
-      if (listener != null) {
-        listener.onOpenSongsClicked();
-      }
-    });
-    ViewUtil.setTooltipText(binding.buttonSongPickerOpen, R.string.action_show_songs_list);
-    binding.buttonSongPickerMenu.setOnClickListener(v -> {
-      if (listener != null) {
-        listener.onMenuOrMenuItemClicked();
-      }
-      PopupMenu.OnMenuItemClickListener itemClickListener = item -> {
-        int id = item.getItemId();
-        if (viewUtil.isClickDisabled(id)) {
-          return false;
-        }
-        if (listener != null) {
-          listener.onMenuOrMenuItemClicked();
-        }
-        if (id == R.id.action_sort_name
-            || id == R.id.action_sort_last_played
-            || id == R.id.action_sort_most_played) {
-          if (item.isChecked()) {
-            return false;
-          }
-          if (id == R.id.action_sort_name) {
-            sortOrder = SONGS_ORDER.NAME_ASC;
-          } else if (id == R.id.action_sort_last_played) {
-            sortOrder = SONGS_ORDER.LAST_PLAYED_ASC;
-          } else {
-            sortOrder = SONGS_ORDER.MOST_PLAYED_ASC;
-          }
-          item.setChecked(true);
-          setSongs(songsWithParts);
 
-          sortSongs();
-
-          if (listener != null) {
-            listener.onSortOrderChanged(sortOrder);
-          }
-          if (!songsWithParts.isEmpty()) {
-            // only update widget if sort order is important
-            WidgetUtil.sendSongsWidgetUpdate(context);
-          }
-        } else if (id == R.id.action_backup) {
-          if (listener != null) {
-            listener.onBackupClicked();
+          R.id.action_backup -> {
+            listener?.onBackupClicked()
           }
         }
-        return true;
-      };
-      OnMenuInflatedListener menuInflatedListener = menu -> {
-        int itemId = R.id.action_sort_name;
-        if (sortOrder == SONGS_ORDER.LAST_PLAYED_ASC) {
-          itemId = R.id.action_sort_last_played;
-        } else if (sortOrder == SONGS_ORDER.MOST_PLAYED_ASC) {
-          itemId = R.id.action_sort_most_played;
-        }
-        MenuItem itemSort = menu.findItem(itemId);
-        if (itemSort != null) {
-          itemSort.setChecked(true);
-        }
-      };
-      ViewUtil.showMenu(v, R.menu.menu_song_picker, itemClickListener, menuInflatedListener);
-    });
-    ViewUtil.setTooltipText(binding.buttonSongPickerMenu, R.string.action_more);
-    binding.buttonSongPickerAddSong.setOnClickListener(v -> {
-      if (listener != null) {
-        listener.onAddSongClicked();
+        true
       }
-    });
+      val menuInflatedListener = OnMenuInflatedListener { menu: android.view.Menu ->
+        val itemId = when (sortOrder) {
+          SONGS_ORDER.LAST_PLAYED_ASC -> R.id.action_sort_last_played
+          SONGS_ORDER.MOST_PLAYED_ASC -> R.id.action_sort_most_played
+          else -> R.id.action_sort_name
+        }
+        menu.findItem(itemId)?.isChecked = true
+      }
+      it.showMenu(
+        R.menu.menu_song_picker,
+        itemClickListener,
+        menuInflatedListener
+      )
+    }
+    binding.buttonSongPickerMenu.setTooltipText(R.string.action_more)
+
+    binding.buttonSongPickerAddSong.setOnClickListener {
+      listener?.onAddSongClicked()
+    }
   }
 
-  private void initRecycler() {
-    // Adapter
-    OnSongClickListener onSongClickListener = new OnSongClickListener() {
-      @Override
-      public void onSongClick(@NonNull SongWithParts song) {
-        String currentSongId = song.getSong().getId();
-        if (listener != null) {
-          listener.onCurrentSongChanged(currentSongId);
-        }
-        setCurrentSong(currentSongId, true);
+  private fun initRecycler() {
+    val onSongClickListener = object : SongChipAdapter.OnSongClickListener {
+      override fun onSongClick(song: SongWithParts) {
+        val id = song.song.id
+        listener?.onCurrentSongChanged(id)
+        setCurrentSong(id, true)
       }
 
-      @Override
-      public void onSongLongClick(@NonNull SongWithParts song) {
-        if (listener != null) {
-          listener.onSongLongClicked(song.getSong().getId());
-        }
+      override fun onSongLongClick(song: SongWithParts) {
+        listener?.onSongLongClicked(song.song.id)
       }
-    };
-    SongChipAdapter adapter = new SongChipAdapter(
-        context, onSongClickListener, currentSongId.equals(Constants.SONG_ID_DEFAULT)
-    );
-    binding.recyclerSongPicker.setAdapter(adapter);
-    // Layout manager
-    LinearLayoutManager layoutManager = new WrapperLinearLayoutManager(
-        context, LinearLayoutManager.HORIZONTAL, false
-    );
-    binding.recyclerSongPicker.setLayoutManager(layoutManager);
-    boolean isPortrait = UiUtil.isOrientationPortrait(context);
-    boolean isLandTablet = UiUtil.isLandTablet(context);
-    binding.recyclerSongPicker.setHorizontalFadingEdgeEnabled(!isPortrait && !isLandTablet);
+    }
+    binding.recyclerSongPicker.adapter = SongChipAdapter(
+      onSongClickListener, currentSongId == Constants.SONG_ID_DEFAULT
+    )
+    binding.recyclerSongPicker.layoutManager = WrapperLinearLayoutManager(
+      context, LinearLayoutManager.HORIZONTAL, false
+    )
+    val isPortrait = context.isOrientationPortrait()
+    val isLandTablet = context.isLandTablet()
+    binding.recyclerSongPicker.isHorizontalFadingEdgeEnabled = !isPortrait && !isLandTablet
 
-    maybeCenterSongChips();
+    maybeCenterSongChips()
   }
 
   @SuppressLint("RtlHardcoded")
-  private void initChip() {
-    binding.textSongPickerChip.setText(getSongNameFromId(currentSongId));
-    binding.frameSongPickerChipClose.setOnClickListener(v -> {
-      if (listener != null) {
-        listener.onCurrentSongChanged(Constants.SONG_ID_DEFAULT);
-      }
-      setCurrentSong(Constants.SONG_ID_DEFAULT, true);
-    });
-    binding.imageSongPickerChipClose.setOnClickListener(
-        v -> binding.frameSongPickerChipClose.callOnClick()
-    );
+  private fun initChip() {
+    binding.textSongPickerChip.text = getSongNameFromId(currentSongId)
+    binding.frameSongPickerChipClose.setOnClickListener {
+      listener?.onCurrentSongChanged(Constants.SONG_ID_DEFAULT)
+      setCurrentSong(Constants.SONG_ID_DEFAULT, true)
+    }
+    binding.imageSongPickerChipClose.setOnClickListener {
+      binding.frameSongPickerChipClose.callOnClick()
+    }
     ViewCompat.setAccessibilityDelegate(
-        binding.imageSongPickerChipClose, new AccessibilityDelegateCompat() {
-          @Override
-          public void onInitializeAccessibilityNodeInfo(
-              @NonNull View host,
-              @NonNull AccessibilityNodeInfoCompat info
-          ) {
-            super.onInitializeAccessibilityNodeInfo(host, info);
-            info.setClassName(Button.class.getName());
-          }
-        });
-    // TODO: improve accessibility
-    binding.frameSongPickerChipTouchTarget.setOnClickListener(v -> {
-      ViewUtil.startIcon(binding.imageSongPickerChipIcon);
-      if (listener != null) {
-        listener.onCurrentSongClicked();
+      binding.imageSongPickerChipClose,
+      object : AccessibilityDelegateCompat() {
+        override fun onInitializeAccessibilityNodeInfo(
+          host: View,
+          info: AccessibilityNodeInfoCompat
+        ) {
+          super.onInitializeAccessibilityNodeInfo(host, info)
+          info.className = Button::class.java.name
+        }
       }
-    });
-    binding.cardSongPickerChip.setOnClickListener(
-        v -> binding.frameSongPickerChipTouchTarget.callOnClick()
-    );
-    binding.cardSongPickerChip.setOnLongClickListener(v -> {
-      binding.frameSongPickerChipTouchTarget.callOnClick();
-      return true;
-    });
-    binding.buttonSongPickerPart.setOnClickListener(v -> {
-      if (listener != null) {
-        listener.onCurrentPartClicked();
-      }
-    });
-    ViewUtil.setTooltipText(binding.buttonSongPickerPart, R.string.action_show_parts);
-    binding.buttonSongPickerPartPrevious.setOnClickListener(v -> {
-      if (listener != null) {
-        listener.onPreviousPartClicked();
-      }
-    });
-    ViewUtil.setTooltipText(binding.buttonSongPickerPartPrevious, R.string.action_prev_part);
-    binding.buttonSongPickerPartNext.setOnClickListener(v -> {
-      if (listener != null) {
-        listener.onNextPartClicked();
-      }
-    });
-    ViewUtil.setTooltipText(binding.buttonSongPickerPartNext, R.string.action_next_part);
+    )
+    binding.frameSongPickerChipTouchTarget.setOnClickListener {
+      binding.imageSongPickerChipIcon.startIcon()
+      listener?.onCurrentSongClicked()
+    }
+    binding.cardSongPickerChip.setOnClickListener {
+      binding.frameSongPickerChipTouchTarget.callOnClick()
+    }
+    binding.cardSongPickerChip.setOnLongClickListener {
+      binding.frameSongPickerChipTouchTarget.callOnClick()
+      true
+    }
+    binding.buttonSongPickerPart.setOnClickListener {
+      listener?.onCurrentPartClicked()
+    }
+    binding.buttonSongPickerPart.setTooltipText(R.string.action_show_parts)
+    binding.buttonSongPickerPartPrevious.setOnClickListener {
+      listener?.onPreviousPartClicked()
+    }
+    binding.buttonSongPickerPartPrevious.setTooltipText(R.string.action_prev_part)
+    binding.buttonSongPickerPartNext.setOnClickListener {
+      listener?.onNextPartClicked()
+    }
+    binding.buttonSongPickerPartNext.setTooltipText(R.string.action_next_part)
 
-    gradientLeft = new GradientDrawable(
-        GradientDrawable.Orientation.LEFT_RIGHT,
-        new int[]{
-            Color.TRANSPARENT, colorSurfaceContainer, colorSurfaceContainer, colorSurfaceContainer
-        }
-    );
-    gradientLeft = new ScaleDrawable(gradientLeft, Gravity.RIGHT, 1, 0);
-    gradientRight = new GradientDrawable(
-        Orientation.RIGHT_LEFT,
-        new int[]{
-            Color.TRANSPARENT, colorSurfaceContainer, colorSurfaceContainer, colorSurfaceContainer
-        }
-    );
-    gradientRight = new ScaleDrawable(gradientRight, Gravity.LEFT, 1, 0);
-    binding.viewSongPickerGradientStart.setBackground(isRtl ? gradientRight : gradientLeft);
-    binding.viewSongPickerGradientEnd.setBackground(isRtl ? gradientLeft : gradientRight);
+    val gLeft = GradientDrawable(
+      GradientDrawable.Orientation.LEFT_RIGHT,
+      intArrayOf(
+        Color.TRANSPARENT,
+        colorSurfaceContainer,
+        colorSurfaceContainer,
+        colorSurfaceContainer
+      )
+    )
+    gradientLeft = ScaleDrawable(gLeft, Gravity.RIGHT, 1f, 0f)
+
+    val gRight = GradientDrawable(
+      GradientDrawable.Orientation.RIGHT_LEFT,
+      intArrayOf(
+        Color.TRANSPARENT,
+        colorSurfaceContainer,
+        colorSurfaceContainer,
+        colorSurfaceContainer
+      )
+    )
+    gradientRight = ScaleDrawable(gRight, Gravity.LEFT, 1f, 0f)
+
+    binding.viewSongPickerGradientStart.background = if (isRtl) gradientRight else gradientLeft
+    binding.viewSongPickerGradientEnd.background = if (isRtl) gradientLeft else gradientRight
   }
 
   @SuppressLint("PrivateResource")
-  public void setExpanded(boolean expanded, boolean animated) {
-    this.isExpanded = expanded;
-    if (listener != null) {
-      listener.onExpandChanged(expanded);
-    }
+  fun setExpanded(expanded: Boolean, animated: Boolean) {
+    this.isExpanded = expanded
+    listener?.onExpandChanged(expanded)
 
-    if (springAnimationExpandSpatial != null) {
-      springAnimationExpandSpatial.cancel();
-    }
+    springAnimationExpandSpatial?.cancel()
     if (animated) {
       if (springAnimationExpandSpatial == null) {
-        springAnimationExpandSpatial =
-            new SpringAnimation(this, EXPAND_SPATIAL_FRACTION)
-                .setSpring(
-                    MotionUtils.resolveThemeSpringForce(
-                        getContext(),
-                        R.attr.motionSpringDefaultSpatial,
-                        R.style.Motion_Material3_Spring_Standard_Default_Spatial)
-                )
-                .setMinimumVisibleChange(0.01f)
-                .addEndListener(
-                    (animation, canceled, value, velocity) -> {
-                      if (!canceled) {
-                        setExpandAnimationEndState();
-                      }
-                    });
-        if (TEST_ANIMATIONS) {
-          springAnimationExpandSpatial.setSpring(
-              new SpringForce().setStiffness(30f).setDampingRatio(0.9f)
-          );
+        springAnimationExpandSpatial = SpringAnimation(
+          this, EXPAND_SPATIAL_FRACTION
+        ).apply {
+          spring = MotionUtils.resolveThemeSpringForce(
+            context,
+            R.attr.motionSpringDefaultSpatial,
+            R.style.Motion_Material3_Spring_Standard_Default_Spatial
+          ).apply {
+            if (TEST_ANIMATIONS) {
+              stiffness = 30f
+              dampingRatio = 0.9f
+            }
+          }
+          minimumVisibleChange = 0.01f
+          addEndListener { _, canceled, _, _ ->
+            if (!canceled) setExpandAnimationEndState()
+          }
         }
       }
       if (springAnimationExpandEffects == null) {
-        springAnimationExpandEffects =
-            new SpringAnimation(this, EXPAND_EFFECTS_FRACTION)
-                .setSpring(
-                    MotionUtils.resolveThemeSpringForce(
-                        getContext(),
-                        R.attr.motionSpringDefaultEffects,
-                        R.style.Motion_Material3_Spring_Standard_Default_Effects)
-                )
-                .setMinimumVisibleChange(0.01f);
-        if (TEST_ANIMATIONS) {
-          springAnimationExpandEffects.setSpring(
-              new SpringForce().setStiffness(30f).setDampingRatio(0.9f)
-          );
+        springAnimationExpandEffects = SpringAnimation(
+          this, EXPAND_EFFECTS_FRACTION
+        ).apply {
+          spring = MotionUtils.resolveThemeSpringForce(
+            context,
+            R.attr.motionSpringDefaultEffects,
+            R.style.Motion_Material3_Spring_Standard_Default_Effects
+          ).apply {
+            if (TEST_ANIMATIONS) {
+              stiffness = 30f
+              dampingRatio = 0.9f
+            }
+          }
+          minimumVisibleChange = 0.01f
         }
       }
-      setExpandAnimationStartState();
-      springAnimationExpandSpatial.animateToFinalPosition(expanded ? 1 : 0);
-      springAnimationExpandEffects.animateToFinalPosition(expanded ? 1 : 0);
+      setExpandAnimationStartState()
+      springAnimationExpandSpatial?.animateToFinalPosition(if (expanded) 1f else 0f)
+      springAnimationExpandEffects?.animateToFinalPosition(if (expanded) 1f else 0f)
     } else {
-      setExpandAnimationStartState();
-      setExpandSpatialFraction(expanded ? 1 : 0);
-      setExpandEffectsFraction(expanded ? 1 : 0);
-      setExpandAnimationEndState();
+      setExpandAnimationStartState()
+      setExpandSpatialFraction(if (expanded) 1f else 0f)
+      setExpandEffectsFraction(if (expanded) 1f else 0f)
+      setExpandAnimationEndState()
     }
   }
 
-  private void setExpandAnimationStartState() {
-    binding.buttonSongPickerExpand.setClickable(!isExpanded);
-    binding.buttonSongPickerCollapse.setClickable(isExpanded);
-    binding.frameSongPickerTop.setClickable(isExpanded);
-    binding.buttonSongPickerOpen.setClickable(isExpanded);
-    binding.buttonSongPickerMenu.setClickable(isExpanded);
-    binding.buttonSongPickerAddSong.setClickable(isExpanded);
+  private fun setExpandAnimationStartState() {
+    binding.buttonSongPickerExpand.isClickable = !isExpanded
+    binding.buttonSongPickerCollapse.isClickable = isExpanded
+    binding.frameSongPickerTop.isClickable = isExpanded
+    binding.buttonSongPickerOpen.isClickable = isExpanded
+    binding.buttonSongPickerMenu.isClickable = isExpanded
+    binding.buttonSongPickerAddSong.isClickable = isExpanded
 
-    binding.buttonSongPickerExpand.setVisibility(VISIBLE);
-    binding.buttonSongPickerCollapse.setVisibility(VISIBLE);
-    binding.buttonGroupSongPickerTools.setVisibility(VISIBLE);
-    binding.recyclerSongPicker.setVisibility(VISIBLE);
-    setRecyclerClicksEnabled(false);
-    binding.buttonSongPickerAddSong.setVisibility(VISIBLE);
+    binding.buttonSongPickerExpand.visibility = VISIBLE
+    binding.buttonSongPickerCollapse.visibility = VISIBLE
+    binding.buttonGroupSongPickerTools.visibility = VISIBLE
+    binding.recyclerSongPicker.visibility = VISIBLE
+    setRecyclerClicksEnabled(false)
+    binding.buttonSongPickerAddSong.visibility = VISIBLE
   }
 
-  private void setExpandAnimationEndState() {
-    binding.buttonSongPickerExpand.setVisibility(isExpanded ? INVISIBLE : VISIBLE);
-    binding.buttonSongPickerCollapse.setVisibility(isExpanded ? VISIBLE : GONE);
-    binding.buttonGroupSongPickerTools.setVisibility(isExpanded ? VISIBLE : GONE);
-    binding.recyclerSongPicker.setVisibility(isExpanded ? VISIBLE : INVISIBLE);
-    setRecyclerClicksEnabled(isExpanded);
+  private fun setExpandAnimationEndState() {
+    binding.buttonSongPickerExpand.visibility = if (isExpanded) INVISIBLE else VISIBLE
+    binding.buttonSongPickerCollapse.visibility = if (isExpanded) VISIBLE else GONE
+    binding.buttonGroupSongPickerTools.visibility = if (isExpanded) VISIBLE else GONE
+    binding.recyclerSongPicker.visibility = if (isExpanded) VISIBLE else INVISIBLE
+    setRecyclerClicksEnabled(isExpanded)
     if (isExpanded) {
-      maybeCenterSongChips();
+      maybeCenterSongChips()
     }
-    binding.buttonSongPickerAddSong.setVisibility(isExpanded ? VISIBLE : GONE);
+    binding.buttonSongPickerAddSong.visibility = if (isExpanded) VISIBLE else GONE
   }
 
-  private void setExpandSpatialFraction(float fraction) {
-    expandSpatialFraction = fraction;
-
-    ViewGroup.LayoutParams lp = getLayoutParams();
-    lp.width = (int) (widthMin + (widthMax - widthMin) * Math.max(fraction, 0));
-    lp.height = (int) (heightCollapsed + (heightExpanded - heightCollapsed) * fraction);
-    setLayoutParams(lp);
-    if (listener != null) {
-      listener.onHeightChanged();
-    }
+  private fun setExpandSpatialFraction(fraction: Float) {
+    expandSpatialFraction = fraction
+    val lp = layoutParams ?: return
+    lp.width = (widthMin + (widthMax - widthMin) * fraction.coerceAtLeast(0f)).toInt()
+    lp.height = (heightCollapsed + (heightExpanded - heightCollapsed) * fraction).toInt()
+    layoutParams = lp
+    listener?.onHeightChanged()
   }
 
-  public float getExpandSpatialFraction() {
-    return expandSpatialFraction;
-  }
+  fun getExpandSpatialFraction(): Float = expandSpatialFraction
 
-  private void setExpandEffectsFraction(float fraction) {
-    expandEffectsFraction = fraction;
-
-    binding.buttonSongPickerExpand.setAlpha(1 - fraction);
+  private fun setExpandEffectsFraction(fraction: Float) {
+    expandEffectsFraction = fraction
+    binding.buttonSongPickerExpand.alpha = 1 - fraction
     binding.cardSongPickerContainer.setCardBackgroundColor(
-        ColorUtils.blendARGB(colorBgCollapsed, colorBgExpanded, fraction)
-    );
-    binding.buttonSongPickerCollapse.setAlpha(fraction);
-    binding.buttonGroupSongPickerTools.setAlpha(fraction);
-    binding.recyclerSongPicker.setAlpha(fraction);
-    binding.buttonSongPickerAddSong.setAlpha(fraction);
+      ColorUtils.blendARGB(colorBgCollapsed, colorBgExpanded, fraction)
+    )
+    binding.buttonSongPickerCollapse.alpha = fraction
+    binding.buttonGroupSongPickerTools.alpha = fraction
+    binding.recyclerSongPicker.alpha = fraction
+    binding.buttonSongPickerAddSong.alpha = fraction
   }
 
-  public float getExpandEffectsFraction() {
-    return expandEffectsFraction;
-  }
+  fun getExpandEffectsFraction(): Float = expandEffectsFraction
 
-  public int getHeightExpanded() {
-    return heightExpanded + heightExpandedMargin;
-  }
+  fun getHeightExpanded(): Int = heightExpanded + heightExpandedMargin
 
-  @SuppressLint("PrivateResource")
-  private void setCurrentSong(@NonNull String currentSongId, boolean animated) {
-    boolean isDefaultSong = currentSongId.equals(Constants.SONG_ID_DEFAULT);
-    int position = getPositionOfSong(isDefaultSong ? this.currentSongId : currentSongId);
-    this.currentSongId = currentSongId;
+  private fun setCurrentSong(currentSongId: String, animated: Boolean) {
+    val isDefaultSong = currentSongId == Constants.SONG_ID_DEFAULT
+    val position = getPositionOfSong(if (isDefaultSong) this.currentSongId else currentSongId)
+    this.currentSongId = currentSongId
 
-    if (springAnimationSelectSpatial != null) {
-      springAnimationSelectSpatial.cancel();
-    }
-    if (springAnimationSelectEffects != null) {
-      springAnimationSelectEffects.cancel();
-    }
-    if (springAnimationDeselectSpatial != null) {
-      springAnimationDeselectSpatial.cancel();
-    }
-    if (springAnimationDeselectEffects != null) {
-      springAnimationDeselectEffects.cancel();
-    }
+    springAnimationSelectSpatial?.cancel()
+    springAnimationSelectEffects?.cancel()
+    springAnimationDeselectSpatial?.cancel()
+    springAnimationDeselectEffects?.cancel()
+
     if (animated) {
       if (springAnimationSelectSpatial == null) {
-        springAnimationSelectSpatial =
-            new SpringAnimation(this, SELECT_SPATIAL_FRACTION)
-                .setSpring(new SpringForce().setStiffness(300f).setDampingRatio(0.6f))
-                .setMinimumVisibleChange(0.01f)
-                .addEndListener(
-                    (animation, canceled, value, velocity) -> {
-                      if (!canceled) {
-                        setSelectAnimationEndState();
-                      }
-                    });
-        if (TEST_ANIMATIONS) {
-          springAnimationSelectSpatial.setSpring(
-              new SpringForce().setStiffness(20f).setDampingRatio(0.3f)
-          );
+        springAnimationSelectSpatial = SpringAnimation(this, SELECT_SPATIAL_FRACTION).apply {
+          spring = SpringForce().apply {
+            stiffness = if (TEST_ANIMATIONS) 20f else 300f
+            dampingRatio = if (TEST_ANIMATIONS) 0.3f else 0.6f
+          }
+          minimumVisibleChange = 0.01f
+          addEndListener { _, canceled, _, _ ->
+            if (!canceled) setSelectAnimationEndState()
+          }
         }
       }
       if (springAnimationSelectEffects == null) {
-        springAnimationSelectEffects =
-            new SpringAnimation(this, SELECT_EFFECTS_FRACTION)
-                .setSpring(new SpringForce().setStiffness(300f).setDampingRatio(1f))
-                .setMinimumVisibleChange(0.01f);
-        if (TEST_ANIMATIONS) {
-          springAnimationSelectEffects.setSpring(
-              new SpringForce().setStiffness(40f).setDampingRatio(1f)
-          );
+        springAnimationSelectEffects = SpringAnimation(this, SELECT_EFFECTS_FRACTION).apply {
+          spring = SpringForce().apply {
+            stiffness = if (TEST_ANIMATIONS) 40f else 300f
+            dampingRatio = 1f
+          }
+          minimumVisibleChange = 0.01f
         }
       }
       if (springAnimationDeselectSpatial == null) {
-        springAnimationDeselectSpatial =
-            new SpringAnimation(this, DESELECT_SPATIAL_FRACTION)
-                .setSpring(
-                    MotionUtils.resolveThemeSpringForce(
-                        getContext(),
-                        R.attr.motionSpringSlowSpatial,
-                        R.style.Motion_Material3_Spring_Standard_Slow_Spatial)
-                )
-                .setMinimumVisibleChange(0.01f)
-                .addEndListener(
-                    (animation, canceled, value, velocity) -> {
-                      if (!canceled) {
-                        setSelectAnimationEndState();
-                      }
-                    });
-        if (TEST_ANIMATIONS) {
-          springAnimationDeselectSpatial.setSpring(
-              new SpringForce().setStiffness(30f).setDampingRatio(0.9f)
-          );
+        springAnimationDeselectSpatial = SpringAnimation(
+          this, DESELECT_SPATIAL_FRACTION
+        ).apply {
+          spring = MotionUtils.resolveThemeSpringForce(
+            context,
+            R.attr.motionSpringSlowSpatial,
+            R.style.Motion_Material3_Spring_Standard_Slow_Spatial
+          ).apply {
+            if (TEST_ANIMATIONS) {
+              stiffness = 30f
+              dampingRatio = 0.9f
+            }
+          }
+          minimumVisibleChange = 0.01f
+          addEndListener { _, canceled, _, _ ->
+            if (!canceled) setSelectAnimationEndState()
+          }
         }
       }
       if (springAnimationDeselectEffects == null) {
-        springAnimationDeselectEffects =
-            new SpringAnimation(this, DESELECT_EFFECTS_FRACTION)
-                .setSpring(
-                    MotionUtils.resolveThemeSpringForce(
-                        getContext(),
-                        R.attr.motionSpringSlowEffects,
-                        R.style.Motion_Material3_Spring_Standard_Slow_Effects)
-                )
-                .setMinimumVisibleChange(0.01f);
-        if (TEST_ANIMATIONS) {
-          springAnimationDeselectEffects.setSpring(
-              new SpringForce().setStiffness(40f).setDampingRatio(1f)
-          );
+        springAnimationDeselectEffects = SpringAnimation(
+          this, DESELECT_EFFECTS_FRACTION
+        ).apply {
+          spring = MotionUtils.resolveThemeSpringForce(
+            context,
+            R.attr.motionSpringSlowEffects,
+            R.style.Motion_Material3_Spring_Standard_Slow_Effects
+          ).apply {
+            if (TEST_ANIMATIONS) {
+              stiffness = 40f
+              dampingRatio = 1f
+            }
+          }
+          minimumVisibleChange = 0.01f
         }
       }
-      setSelectAnimationStartState();
+      setSelectAnimationStartState()
 
-      LayoutManager layoutManager = binding.recyclerSongPicker.getLayoutManager();
+      val layoutManager = binding.recyclerSongPicker.layoutManager
       if (position >= 0 && layoutManager != null) {
         if (isDefaultSong) {
-          // Scroll to current song chip
-          layoutManager.scrollToPosition(position);
-          maybeCenterSongChips();
+          layoutManager.scrollToPosition(position)
+          maybeCenterSongChips()
         }
-        // Delay to ensure scrolling is finished
-        binding.recyclerSongPicker.post(() -> {
-          View targetChip = layoutManager.findViewByPosition(position);
+        binding.recyclerSongPicker.post {
+          val targetChip = layoutManager.findViewByPosition(position)
           if (targetChip != null) {
-            int endLeft = targetChip.getLeft();
-            int startLeft = binding.frameSongPickerChipTouchTarget.getLeft();
-            startLeft += isDefaultSong ? (chipCloseIconWidth / 2) : 0;
-            chipTargetTranslationX = endLeft - startLeft;
+            var startLeft = binding.frameSongPickerChipTouchTarget.left
+            if (isDefaultSong) startLeft += (chipCloseIconWidth / 2)
+            chipTargetTranslationX = targetChip.left - startLeft
           }
           if (isDefaultSong) {
-            springAnimationDeselectSpatial.animateToFinalPosition(0);
-            springAnimationDeselectEffects.animateToFinalPosition(0);
+            springAnimationDeselectSpatial?.animateToFinalPosition(0f)
+            springAnimationDeselectEffects?.animateToFinalPosition(0f)
           } else {
-            springAnimationSelectSpatial.animateToFinalPosition(1);
-            springAnimationSelectEffects.animateToFinalPosition(1);
+            springAnimationSelectSpatial?.animateToFinalPosition(1f)
+            springAnimationSelectEffects?.animateToFinalPosition(1f)
           }
-        });
+        }
       }
     } else {
-      setSelectAnimationStartState();
-      setSpatialSelectFraction(isDefaultSong ? 0 : 1);
-      setEffectsSelectFraction(isDefaultSong ? 0 : 1);
-      setSelectAnimationEndState();
+      setSelectAnimationStartState()
+      setSpatialSelectFraction(if (isDefaultSong) 0f else 1f)
+      setEffectsSelectFraction(if (isDefaultSong) 0f else 1f)
+      setSelectAnimationEndState()
     }
   }
 
-  private void setSelectAnimationStartState() {
-    boolean isDefaultSong = currentSongId.equals(Constants.SONG_ID_DEFAULT);
+  private fun setSelectAnimationStartState() {
+    val isDefaultSong = currentSongId == Constants.SONG_ID_DEFAULT
 
-    binding.buttonSongPickerCollapse.setEnabled(isDefaultSong);
-    binding.frameSongPickerTop.setClickable(isDefaultSong);
+    binding.buttonSongPickerCollapse.isEnabled = isDefaultSong
+    binding.frameSongPickerTop.isClickable = isDefaultSong
 
-    binding.recyclerSongPicker.setVisibility(VISIBLE);
-    setRecyclerClicksEnabled(isDefaultSong);
+    binding.recyclerSongPicker.visibility = VISIBLE
+    setRecyclerClicksEnabled(isDefaultSong)
     if (isDefaultSong) {
-      binding.recyclerSongPicker.setAlpha(0);
+      binding.recyclerSongPicker.alpha = 0f
     } else {
-      binding.textSongPickerChip.setText(getSongNameFromId(currentSongId));
+      binding.textSongPickerChip.text = getSongNameFromId(currentSongId)
+      binding.constraintSongPickerChipContainer.translationX = 0f
 
-      // Don't make container visible yet to prevent flashing bevor proper placing
-      binding.constraintSongPickerChipContainer.setTranslationX(0);
-
-      ViewGroup.LayoutParams closeIconParams = binding.imageSongPickerChipClose.getLayoutParams();
-      closeIconParams.width = 0;
-      binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
+      val closeIconParams = binding.imageSongPickerChipClose.layoutParams
+      closeIconParams.width = 0
+      binding.imageSongPickerChipClose.layoutParams = closeIconParams
     }
-    binding.frameSongPickerChipClose.setClickable(!isDefaultSong);
-    binding.frameSongPickerChipTouchTarget.setClickable(!isDefaultSong);
-    binding.cardSongPickerChip.setClickable(!isDefaultSong);
-    // card seems to ignore clickable false, disable manually
-    binding.cardSongPickerChip.setEnabled(!isDefaultSong);
-    binding.buttonSongPickerPart.setClickable(!isDefaultSong);
-    binding.buttonSongPickerPartPrevious.setClickable(!isDefaultSong);
-    binding.buttonSongPickerPartNext.setClickable(!isDefaultSong);
+    binding.frameSongPickerChipClose.isClickable = !isDefaultSong
+    binding.frameSongPickerChipTouchTarget.isClickable = !isDefaultSong
+    binding.cardSongPickerChip.isClickable = !isDefaultSong
+    binding.cardSongPickerChip.isEnabled = !isDefaultSong
+    binding.buttonSongPickerPart.isClickable = !isDefaultSong
+    binding.buttonSongPickerPartPrevious.isClickable = !isDefaultSong
+    binding.buttonSongPickerPartNext.isClickable = !isDefaultSong
 
-    binding.buttonSongPickerAddSong.setVisibility(VISIBLE);
-    binding.buttonSongPickerAddSong.setClickable(isDefaultSong);
+    binding.buttonSongPickerAddSong.visibility = VISIBLE
+    binding.buttonSongPickerAddSong.isClickable = isDefaultSong
   }
 
-  private void setSelectAnimationEndState() {
-    boolean isDefaultSong = currentSongId.equals(Constants.SONG_ID_DEFAULT);
-
-    binding.recyclerSongPicker.setVisibility(isDefaultSong ? VISIBLE : INVISIBLE);
-    binding.constraintSongPickerChipContainer.setVisibility(isDefaultSong ? INVISIBLE : VISIBLE);
-
-    binding.buttonSongPickerAddSong.setVisibility(isDefaultSong ? VISIBLE : GONE);
+  private fun setSelectAnimationEndState() {
+    val isDefaultSong = currentSongId == Constants.SONG_ID_DEFAULT
+    binding.recyclerSongPicker.visibility = if (isDefaultSong) VISIBLE else INVISIBLE
+    binding.constraintSongPickerChipContainer.visibility = if (isDefaultSong) INVISIBLE else VISIBLE
+    binding.buttonSongPickerAddSong.visibility = if (isDefaultSong) VISIBLE else GONE
   }
 
-  private void setSpatialSelectFraction(float fraction) {
-    selectSpatialFraction = fraction;
-
-    binding.buttonSongPickerCollapse.setRotation(90 * fraction);
-
-    binding.constraintSongPickerChipContainer.setTranslationX(
-        (1 - fraction) * chipTargetTranslationX
-    );
-    if (binding.constraintSongPickerChipContainer.getVisibility() == INVISIBLE) {
-      binding.constraintSongPickerChipContainer.setVisibility(VISIBLE);
+  private fun setSpatialSelectFraction(fraction: Float) {
+    selectSpatialFraction = fraction
+    binding.buttonSongPickerCollapse.rotation = 90 * fraction
+    binding.constraintSongPickerChipContainer.translationX = (1 - fraction) * chipTargetTranslationX
+    if (binding.constraintSongPickerChipContainer.isInvisible) {
+      binding.constraintSongPickerChipContainer.visibility = VISIBLE
     }
 
-    ViewGroup.LayoutParams closeIconParams = binding.imageSongPickerChipClose.getLayoutParams();
-    closeIconParams.width = (int) (chipCloseIconWidth * fraction);
-    binding.imageSongPickerChipClose.setLayoutParams(closeIconParams);
+    val closeIconParams = binding.imageSongPickerChipClose.layoutParams
+    closeIconParams.width = (chipCloseIconWidth * fraction).toInt()
+    binding.imageSongPickerChipClose.layoutParams = closeIconParams
   }
 
-  private float getSpatialSelectFraction() {
-    return selectSpatialFraction;
+  private fun getSpatialSelectFraction(): Float = selectSpatialFraction
+
+  private fun setEffectsSelectFraction(fraction: Float) {
+    selectEffectsFraction = fraction
+    binding.imageSongPickerChipClose.alpha = fraction
+
+    gradientLeft.level = (10000 * fraction).toInt()
+    gradientRight.level = (10000 * fraction).toInt()
+
+    binding.buttonSongPickerCollapse.iconTint = ColorStateList.valueOf(
+      ColorUtils.blendARGB(colorOnSurfaceVariant, colorOnSurface, fraction)
+    )
+    binding.buttonSongPickerCollapse.alpha = 1 + (0.38f - 1) * fraction
+    binding.recyclerSongPicker.alpha = 1 - fraction
+    binding.textSongPickerEmpty.alpha = 1 - fraction
+    binding.buttonSongPickerAddSong.alpha = 1 - fraction
+
+    binding.buttonSongPickerPart.alpha = fraction
+    binding.buttonSongPickerPartPrevious.alpha = fraction
+    binding.buttonSongPickerPartNext.alpha = fraction
   }
 
-  private void setEffectsSelectFraction(float fraction) {
-    selectEffectsFraction = fraction;
+  private fun getEffectsSelectFraction(): Float = selectEffectsFraction
 
-    binding.imageSongPickerChipClose.setAlpha(fraction);
-
-    gradientLeft.setLevel((int) (10000 * fraction));
-    gradientRight.setLevel((int) (10000 * fraction));
-
-    binding.buttonSongPickerCollapse.setIconTint(ColorStateList.valueOf(
-        ColorUtils.blendARGB(colorOnSurfaceVariant, colorOnSurface, fraction)
-    ));
-    binding.buttonSongPickerCollapse.setAlpha(1 + (0.38f - 1) * fraction);
-    binding.recyclerSongPicker.setAlpha(1 - fraction);
-    binding.textSongPickerEmpty.setAlpha(1 - fraction);
-    binding.buttonSongPickerAddSong.setAlpha(1 - fraction);
-
-    binding.buttonSongPickerPart.setAlpha(fraction);
-    binding.buttonSongPickerPartPrevious.setAlpha(fraction);
-    binding.buttonSongPickerPartNext.setAlpha(fraction);
+  private fun getPositionOfSong(songNameId: String): Int {
+    return songsWithParts.indexOfFirst { it.song.id == songNameId }
   }
 
-  private float getEffectsSelectFraction() {
-    return selectEffectsFraction;
-  }
-
-  private int getPositionOfSong(@NonNull String songNameId) {
-    int position = -1;
-    for (int i = 0; i < songsWithParts.size(); i++) {
-      if (songsWithParts.get(i).getSong().getId().equals(songNameId)) {
-        position = i;
-        break;
-      }
+  private fun maybeCenterSongChips() {
+    val outerPadding = context.dpToPx(16f)
+    val innerPadding = context.dpToPx(4f)
+    if (binding.recyclerSongPicker.itemDecorationCount == 0) {
+      binding.recyclerSongPicker.addItemDecoration(
+        SongChipItemDecoration(outerPadding, innerPadding, isRtl)
+      )
     }
-    return position;
-  }
-
-  private void maybeCenterSongChips() {
-    int outerPadding = UiUtil.dpToPx(getContext(), 16);
-    int innerPadding = UiUtil.dpToPx(getContext(), 4);
-    SongChipItemDecoration decoration = new SongChipItemDecoration(
-        outerPadding, innerPadding, isRtl
-    );
-    if (binding.recyclerSongPicker.getItemDecorationCount() == 0) {
-      binding.recyclerSongPicker.addItemDecoration(decoration);
-    }
-    binding.recyclerSongPicker.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            binding.recyclerSongPicker.invalidateItemDecorations();
-            int itemCount = songsWithParts.size();
-            if (itemCount > 0) {
-              int totalWidth = 0;
-              for (int i = 0; i < itemCount; i++) {
-                View child = binding.recyclerSongPicker.getChildAt(i);
-                if (child != null) {
-                  // adapter item count sometimes leads to index out of bounds of recyclerview
-                  // but child count sometimes leads to wrong number of children which leads to
-                  // an animation to the wrong place, so simply ignore the index out of bounds
-                  totalWidth += child.getWidth();
-                }
-              }
-              totalWidth += innerPadding * 2 * (itemCount - 1);
-              totalWidth += outerPadding * 2;
-              boolean shouldCenter = totalWidth < widthMax;
-              if (shouldCenter) {
-                int padding = (widthMax - totalWidth) / 2;
-                binding.recyclerSongPicker.setPadding(
-                    isRtl ? 0 : padding, 0,
-                    isRtl ? padding : 0, 0
-                );
-                binding.recyclerSongPicker.setOverScrollMode(View.OVER_SCROLL_NEVER);
-              } else {
-                binding.recyclerSongPicker.setPadding(0, 0, 0, 0);
-                binding.recyclerSongPicker.setOverScrollMode(View.OVER_SCROLL_IF_CONTENT_SCROLLS);
-              }
+    binding.recyclerSongPicker.viewTreeObserver.addOnGlobalLayoutListener(
+      object : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+          binding.recyclerSongPicker.invalidateItemDecorations()
+          val itemCount = songsWithParts.size
+          if (itemCount > 0) {
+            var totalWidth = 0
+            for (i in 0 until itemCount) {
+              val child = binding.recyclerSongPicker.getChildAt(i)
+              if (child != null) totalWidth += child.width
             }
-            binding.recyclerSongPicker.getViewTreeObserver().removeOnGlobalLayoutListener(
-                this
-            );
+            totalWidth += innerPadding * 2 * (itemCount - 1)
+            totalWidth += outerPadding * 2
+            val shouldCenter = totalWidth < widthMax
+            if (shouldCenter) {
+              val padding = (widthMax - totalWidth) / 2
+              binding.recyclerSongPicker.setPadding(
+                if (isRtl) 0 else padding, 0,
+                if (isRtl) padding else 0, 0
+              )
+              binding.recyclerSongPicker.overScrollMode = View.OVER_SCROLL_NEVER
+            } else {
+              binding.recyclerSongPicker.setPadding(0, 0, 0, 0)
+              binding.recyclerSongPicker.overScrollMode = View.OVER_SCROLL_IF_CONTENT_SCROLLS
+            }
           }
-        });
-  }
-
-  private String getSongNameFromId(@NonNull String songId) {
-    for (SongWithParts songWithParts : songsWithParts) {
-      if (songWithParts.getSong().getId().equals(songId)) {
-        return songWithParts.getSong().getName();
-      }
-    }
-    return null;
-  }
-
-  private int getPartCount() {
-    for (SongWithParts songWithParts : songsWithParts) {
-      if (songWithParts.getSong().getId().equals(currentSongId)) {
-        return songWithParts.getParts().size();
-      }
-    }
-    return 0;
-  }
-
-  private String getPartNameFromIndex(int partIndex) {
-    for (SongWithParts songWithParts : songsWithParts) {
-      if (songWithParts.getSong().getId().equals(currentSongId)) {
-        for (Part part : songWithParts.getParts()) {
-          if (part.getPartIndex() == partIndex) {
-            return part.getName();
-          }
+          binding.recyclerSongPicker.viewTreeObserver.removeOnGlobalLayoutListener(this)
         }
       }
-    }
-    return null;
+    )
   }
 
-  private void setRecyclerClicksEnabled(boolean enabled) {
-    SongChipAdapter adapter = (SongChipAdapter) binding.recyclerSongPicker.getAdapter();
-    if (adapter != null) {
-      adapter.setClickable(enabled);
-    }
+  private fun getSongNameFromId(songId: String): String? {
+    return songsWithParts.find { it.song.id == songId }?.song?.name
   }
 
-  public interface SongPickerListener {
-    void onCurrentSongChanged(@NonNull String currentSongId);
-    void onCurrentSongClicked();
-    void onCurrentPartClicked();
-    void onPreviousPartClicked();
-    void onNextPartClicked();
-    void onSongLongClicked(@NonNull String songId);
-    void onExpandCollapseClicked(boolean expand);
-    void onOpenSongsClicked();
-    void onMenuOrMenuItemClicked();
-    void onBackupClicked();
-    void onSortOrderChanged(int sortOrder);
-    void onAddSongClicked();
-    void onHeightChanged();
-    void onExpandChanged(boolean expanded);
+  private fun getPartCount(): Int {
+    return songsWithParts.find { it.song.id == currentSongId }?.parts?.size ?: 0
   }
 
-  private static final FloatPropertyCompat<SongPickerView> EXPAND_SPATIAL_FRACTION =
-      new FloatPropertyCompat<>("expandSpatialFraction") {
-        @Override
-        public float getValue(SongPickerView delegate) {
-          return delegate.getExpandSpatialFraction();
-        }
+  private fun getPartNameFromIndex(partIndex: Int): String? {
+    return songsWithParts.find { it.song.id == currentSongId }?.parts
+      ?.find { it.partIndex == partIndex }?.name
+  }
 
-        @Override
-        public void setValue(SongPickerView delegate, float value) {
-          delegate.setExpandSpatialFraction(value);
-        }
-      };
-  private static final FloatPropertyCompat<SongPickerView> EXPAND_EFFECTS_FRACTION =
-      new FloatPropertyCompat<>("expandEffectsFraction") {
-        @Override
-        public float getValue(SongPickerView delegate) {
-          return delegate.getExpandEffectsFraction();
-        }
+  private fun setRecyclerClicksEnabled(enabled: Boolean) {
+    (binding.recyclerSongPicker.adapter as? SongChipAdapter)?.setClickable(enabled)
+  }
 
-        @Override
-        public void setValue(SongPickerView delegate, float value) {
-          delegate.setExpandEffectsFraction(value);
-        }
-      };
-  private static final FloatPropertyCompat<SongPickerView> SELECT_SPATIAL_FRACTION =
-      new FloatPropertyCompat<>("selectSpatialFraction") {
-        @Override
-        public float getValue(SongPickerView delegate) {
-          return delegate.getSpatialSelectFraction();
-        }
+  interface SongPickerListener {
+    fun onCurrentSongChanged(currentSongId: String)
+    fun onCurrentSongClicked()
+    fun onCurrentPartClicked()
+    fun onPreviousPartClicked()
+    fun onNextPartClicked()
+    fun onSongLongClicked(songId: String)
+    fun onExpandCollapseClicked(expand: Boolean)
+    fun onOpenSongsClicked()
+    fun onMenuOrMenuItemClicked()
+    fun onBackupClicked()
+    fun onSortOrderChanged(sortOrder: Int)
+    fun onAddSongClicked()
+    fun onHeightChanged()
+    fun onExpandChanged(expanded: Boolean)
+  }
 
-        @Override
-        public void setValue(SongPickerView delegate, float value) {
-          delegate.setSpatialSelectFraction(value);
-        }
-      };
-  private static final FloatPropertyCompat<SongPickerView> SELECT_EFFECTS_FRACTION =
-      new FloatPropertyCompat<>("selectEffectsFraction") {
-        @Override
-        public float getValue(SongPickerView delegate) {
-          return delegate.getEffectsSelectFraction();
-        }
+  companion object {
+    private const val TEST_ANIMATIONS = false
 
-        @Override
-        public void setValue(SongPickerView delegate, float value) {
-          delegate.setEffectsSelectFraction(value);
-        }
-      };
-  private static final FloatPropertyCompat<SongPickerView> DESELECT_SPATIAL_FRACTION =
-      new FloatPropertyCompat<>("deselectSpatialFraction") {
-        @Override
-        public float getValue(SongPickerView delegate) {
-          return delegate.getSpatialSelectFraction();
-        }
-
-        @Override
-        public void setValue(SongPickerView delegate, float value) {
-          delegate.setSpatialSelectFraction(value);
-        }
-      };
-  private static final FloatPropertyCompat<SongPickerView> DESELECT_EFFECTS_FRACTION =
-      new FloatPropertyCompat<>("deselectEffectsFraction") {
-        @Override
-        public float getValue(SongPickerView delegate) {
-          return delegate.getEffectsSelectFraction();
-        }
-
-        @Override
-        public void setValue(SongPickerView delegate, float value) {
-          delegate.setEffectsSelectFraction(value);
-        }
-      };
+    private val EXPAND_SPATIAL_FRACTION =
+      object : FloatPropertyCompat<SongPickerView>("expandSpatialFraction") {
+        override fun getValue(delegate: SongPickerView): Float = delegate.getExpandSpatialFraction()
+        override fun setValue(delegate: SongPickerView, value: Float) =
+          delegate.setExpandSpatialFraction(value)
+      }
+    private val EXPAND_EFFECTS_FRACTION =
+      object : FloatPropertyCompat<SongPickerView>("expandEffectsFraction") {
+        override fun getValue(delegate: SongPickerView): Float = delegate.getExpandEffectsFraction()
+        override fun setValue(delegate: SongPickerView, value: Float) =
+          delegate.setExpandEffectsFraction(value)
+      }
+    private val SELECT_SPATIAL_FRACTION =
+      object : FloatPropertyCompat<SongPickerView>("selectSpatialFraction") {
+        override fun getValue(delegate: SongPickerView): Float = delegate.getSpatialSelectFraction()
+        override fun setValue(delegate: SongPickerView, value: Float) =
+          delegate.setSpatialSelectFraction(value)
+      }
+    private val SELECT_EFFECTS_FRACTION =
+      object : FloatPropertyCompat<SongPickerView>("selectEffectsFraction") {
+        override fun getValue(delegate: SongPickerView): Float = delegate.getEffectsSelectFraction()
+        override fun setValue(delegate: SongPickerView, value: Float) =
+          delegate.setEffectsSelectFraction(value)
+      }
+    private val DESELECT_SPATIAL_FRACTION =
+      object : FloatPropertyCompat<SongPickerView>("deselectSpatialFraction") {
+        override fun getValue(delegate: SongPickerView): Float = delegate.getSpatialSelectFraction()
+        override fun setValue(delegate: SongPickerView, value: Float) =
+          delegate.setSpatialSelectFraction(value)
+      }
+    private val DESELECT_EFFECTS_FRACTION =
+      object : FloatPropertyCompat<SongPickerView>("deselectEffectsFraction") {
+        override fun getValue(delegate: SongPickerView): Float = delegate.getEffectsSelectFraction()
+        override fun setValue(delegate: SongPickerView, value: Float) =
+          delegate.setEffectsSelectFraction(value)
+      }
+  }
 }

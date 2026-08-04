@@ -17,125 +17,108 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util.dialog;
+package xyz.zedler.patrick.tack.util.dialog
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.View;
-import android.view.ViewTreeObserver;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.os.LocaleListCompat;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.databinding.PartialDialogLanguagesTitleBinding;
-import xyz.zedler.patrick.tack.databinding.PartialDialogRecyclerBinding;
-import xyz.zedler.patrick.tack.recyclerview.adapter.LanguageDialogAdapter;
-import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
-import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.LocaleUtil;
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
+import androidx.core.view.isVisible
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.activity.MainActivity
+import xyz.zedler.patrick.tack.databinding.PartialDialogLanguagesTitleBinding
+import xyz.zedler.patrick.tack.databinding.PartialDialogRecyclerBinding
+import xyz.zedler.patrick.tack.recyclerview.adapter.LanguageDialogAdapter
+import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager
+import xyz.zedler.patrick.tack.util.DialogUtil
+import xyz.zedler.patrick.tack.util.getLanguageCode
+import xyz.zedler.patrick.tack.util.getLanguages
+import xyz.zedler.patrick.tack.util.onGlobalLayout
+import androidx.core.net.toUri
 
-public class LanguagesDialogUtil {
+class LanguagesDialogUtil(private val activity: MainActivity) {
 
-  private static final String TAG = LanguagesDialogUtil.class.getSimpleName();
+  private val titleBinding = PartialDialogLanguagesTitleBinding.inflate(activity.layoutInflater)
+  private val binding = PartialDialogRecyclerBinding.inflate(activity.layoutInflater)
+  private val dialogUtil = DialogUtil(activity, "languages")
+  private val adapter: LanguageDialogAdapter
 
-  private final PartialDialogLanguagesTitleBinding titleBinding;
-  private final PartialDialogRecyclerBinding binding;
-  private final DialogUtil dialogUtil;
-  private final LanguageDialogAdapter adapter;
-
-  public LanguagesDialogUtil(MainActivity activity) {
-    titleBinding = PartialDialogLanguagesTitleBinding.inflate(activity.getLayoutInflater());
-
-    binding = PartialDialogRecyclerBinding.inflate(activity.getLayoutInflater());
-    dialogUtil = new DialogUtil(activity, "languages");
-
-    binding.recyclerDialog.setLayoutManager(new WrapperLinearLayoutManager(activity));
-    adapter = new LanguageDialogAdapter(
-        LocaleUtil.getLanguages(activity),
-        (languageCode, fromUser) -> {
-          LocaleListCompat previous = AppCompatDelegate.getApplicationLocales();
-          LocaleListCompat selected = LocaleListCompat.forLanguageTags(languageCode);
-          if (!previous.equals(selected)) {
-            if (fromUser) {
-              activity.performHapticClick();
-              setLanguageCode(languageCode);
-            }
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-              dismiss();
-              AppCompatDelegate.setApplicationLocales(selected);
-            }, 300);
-          }
+  init {
+    binding.recyclerDialog.layoutManager = WrapperLinearLayoutManager(activity)
+    adapter = LanguageDialogAdapter(
+      activity.getLanguages()
+    ) { languageCode, fromUser ->
+      val previous = AppCompatDelegate.getApplicationLocales()
+      val selected = LocaleListCompat.forLanguageTags(languageCode)
+      if (previous != selected) {
+        if (fromUser) {
+          activity.performHapticClick()
+          setLanguageCode(languageCode)
         }
-    );
-    binding.recyclerDialog.setAdapter(adapter);
+        Handler(Looper.getMainLooper()).postDelayed({
+          dismiss()
+          AppCompatDelegate.setApplicationLocales(selected)
+        }, 300)
+      }
+    }
+    binding.recyclerDialog.adapter = adapter
 
-    dialogUtil.createDialog(builder -> {
-      builder.setCustomTitle(titleBinding.getRoot());
-      builder.setView(binding.getRoot());
-      builder.setPositiveButton(
-          R.string.action_close, (dialog, which) -> activity.performHapticClick()
-      );
-      builder.setNeutralButton(
-          R.string.action_learn_more,
-          (dialog, which) -> {
-            activity.performHapticClick();
-            activity.startActivity(
-                new Intent(
-                    Intent.ACTION_VIEW, Uri.parse(activity.getString(R.string.app_translate))
-                )
-            );
-          });
-    });
-  }
-
-  public void show() {
-    update();
-    dialogUtil.show();
-  }
-
-  public void showIfWasShown(@Nullable Bundle state) {
-    update();
-    dialogUtil.showIfWasShown(state);
-  }
-
-  public void dismiss() {
-    dialogUtil.dismiss();
-  }
-
-  public void saveState(@NonNull Bundle outState) {
-    if (dialogUtil != null) {
-      dialogUtil.saveState(outState);
+    dialogUtil.createDialog { builder ->
+      builder.setCustomTitle(titleBinding.root)
+      builder.setView(binding.root)
+      builder.setPositiveButton(R.string.action_close) { _, _ ->
+        activity.performHapticClick()
+      }
+      builder.setNeutralButton(R.string.action_learn_more) { _, _ ->
+        activity.performHapticClick()
+        activity.startActivity(
+          Intent(
+            Intent.ACTION_VIEW,
+            activity.getString(R.string.app_translate).toUri()
+          )
+        )
+      }
     }
   }
 
-  public void update() {
-    if (binding == null || titleBinding == null) {
-      return;
+  fun show() {
+    update()
+    dialogUtil.show()
+  }
+
+  fun showIfWasShown(state: Bundle?) {
+    update()
+    dialogUtil.showIfWasShown(state)
+  }
+
+  fun dismiss() {
+    dialogUtil.dismiss()
+  }
+
+  fun saveState(outState: Bundle) {
+    dialogUtil.saveState(outState)
+  }
+
+  fun update() {
+    adapter.setLanguageCode(
+      AppCompatDelegate.getApplicationLocales().getLanguageCode()
+    )
+    maybeShowDividers()
+  }
+
+  private fun setLanguageCode(languageCode: String?) {
+    adapter.setLanguageCode(languageCode)
+  }
+
+  private fun maybeShowDividers() {
+    binding.recyclerDialog.onGlobalLayout {
+      val isScrollable = binding.recyclerDialog.canScrollVertically(-1) ||
+          binding.recyclerDialog.canScrollVertically(1)
+      binding.dividerDialogTop.isVisible = isScrollable
+      binding.dividerDialogBottom.isVisible = isScrollable
     }
-    adapter.setLanguageCode(LocaleUtil.getLanguageCode(AppCompatDelegate.getApplicationLocales()));
-    maybeShowDividers();
-  }
-
-  private void setLanguageCode(String languageCode) {
-    adapter.setLanguageCode(languageCode);
-  }
-
-  private void maybeShowDividers() {
-    binding.recyclerDialog.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            boolean isScrollable = binding.recyclerDialog.canScrollVertically(-1)
-                || binding.recyclerDialog.canScrollVertically(1);
-            binding.dividerDialogTop.setVisibility(isScrollable ? View.VISIBLE : View.GONE);
-            binding.dividerDialogBottom.setVisibility(isScrollable ? View.VISIBLE : View.GONE);
-            binding.recyclerDialog.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-          }
-        });
   }
 }

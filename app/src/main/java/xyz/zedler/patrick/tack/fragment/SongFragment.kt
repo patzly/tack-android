@@ -17,780 +17,627 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.fragment;
+package xyz.zedler.patrick.tack.fragment
 
-import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.inputmethod.EditorInfo;
-import androidx.activity.OnBackPressedCallback;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsAnimationCompat;
-import androidx.core.view.WindowInsetsAnimationCompat.BoundsCompat;
-import androidx.core.view.WindowInsetsAnimationCompat.Callback;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.core.view.WindowInsetsCompat.Type;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import com.google.android.material.math.MathUtils;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.behavior.ScrollBehavior;
-import xyz.zedler.patrick.tack.behavior.ScrollBehavior.OnScrollChangedListener;
-import xyz.zedler.patrick.tack.behavior.SystemBarBehavior;
-import xyz.zedler.patrick.tack.database.entity.Part;
-import xyz.zedler.patrick.tack.database.entity.Song;
-import xyz.zedler.patrick.tack.databinding.FragmentSongBinding;
-import xyz.zedler.patrick.tack.model.MetronomeConfig;
-import xyz.zedler.patrick.tack.recyclerview.adapter.PartAdapter;
-import xyz.zedler.patrick.tack.recyclerview.adapter.PartAdapter.OnPartItemClickListener;
-import xyz.zedler.patrick.tack.recyclerview.decoration.PartItemDecoration;
-import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
-import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.OptionsUtil;
-import xyz.zedler.patrick.tack.util.OptionsUtil.OnPartEditListener;
-import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.SortUtil;
-import xyz.zedler.patrick.tack.util.UiUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil.OnMenuInflatedListener;
-import xyz.zedler.patrick.tack.util.WidgetUtil;
-import xyz.zedler.patrick.tack.util.dialog.RenameDialogUtil;
-import xyz.zedler.patrick.tack.util.dialog.SongOptionsDialogUtil;
+import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.widget.PopupMenu
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsAnimationCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsCompat.Type
+import androidx.core.os.BundleCompat
+import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.DefaultItemAnimator
+import com.google.android.material.math.MathUtils
+import xyz.zedler.patrick.tack.Constants
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.behavior.ScrollBehavior
+import xyz.zedler.patrick.tack.behavior.SystemBarBehavior
+import xyz.zedler.patrick.tack.database.entity.Part
+import xyz.zedler.patrick.tack.database.entity.Song
+import xyz.zedler.patrick.tack.databinding.FragmentSongBinding
+import xyz.zedler.patrick.tack.model.MetronomeConfig
+import xyz.zedler.patrick.tack.recyclerview.adapter.PartAdapter
+import xyz.zedler.patrick.tack.recyclerview.decoration.PartItemDecoration
+import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager
+import xyz.zedler.patrick.tack.util.DialogUtil
+import xyz.zedler.patrick.tack.util.OptionsUtil
+import xyz.zedler.patrick.tack.util.sendSongsWidgetUpdate
+import xyz.zedler.patrick.tack.util.sortPartsByIndex
+import xyz.zedler.patrick.tack.util.dialog.RenameDialogUtil
+import xyz.zedler.patrick.tack.util.dialog.SongOptionsDialogUtil
+import xyz.zedler.patrick.tack.util.dpToPx
+import xyz.zedler.patrick.tack.util.getDimension
+import xyz.zedler.patrick.tack.util.hideKeyboard
+import xyz.zedler.patrick.tack.util.isLandTablet
+import xyz.zedler.patrick.tack.util.isOrientationPortrait
+import xyz.zedler.patrick.tack.util.isTablet
+import xyz.zedler.patrick.tack.util.onGlobalLayout
+import xyz.zedler.patrick.tack.util.setTooltipText
+import xyz.zedler.patrick.tack.util.showKeyboard
+import xyz.zedler.patrick.tack.util.showMenu
+import java.util.LinkedList
 
-public class SongFragment extends BaseFragment implements OnClickListener {
+class SongFragment : BaseFragment(), View.OnClickListener {
 
-  private static final String TAG = SongFragment.class.getSimpleName();
+  private var _binding: FragmentSongBinding? = null
+  private val binding get() = _binding!!
 
-  private static final String KEY_SONG_RESULT = "song_result";
-  private static final String KEY_PARTS_RESULT = "parts_result";
+  private val args: SongFragmentArgs by navArgs()
 
-  private FragmentSongBinding binding;
-  private MainActivity activity;
-  private DialogUtil dialogUtilDiscard, dialogUtilDelete;
-  private SongOptionsDialogUtil songOptionsDialogUtil;
-  private RenameDialogUtil renameDialogUtil;
-  private OptionsUtil optionsUtil;
-  private OnBackPressedCallback onBackPressedCallback;
-  private PartAdapter adapter;
-  private Song songSource;
-  private Song songResult = new Song();
-  private List<Song> songsExisting = new LinkedList<>();
-  private List<Part> partsSource = new ArrayList<>();
-  private List<Part> partsResult = new LinkedList<>();
-  private boolean isNewSong;
-  private boolean hasUnsavedChanges = true;
-  private float fabBaseY;
+  private lateinit var dialogUtilDiscard: DialogUtil
+  private lateinit var dialogUtilDelete: DialogUtil
+  private lateinit var songOptionsDialogUtil: SongOptionsDialogUtil
+  private lateinit var renameDialogUtil: RenameDialogUtil
+  private lateinit var optionsUtil: OptionsUtil
+  private var onBackPressedCallback: OnBackPressedCallback? = null
+  private lateinit var adapter: PartAdapter
+  private var songSource: Song? = null
+  private var songResult: Song = Song()
+  private var songsExisting: List<Song> = LinkedList()
+  private var partsSource: List<Part> = mutableListOf()
+  private var partsResult: MutableList<Part> = LinkedList()
+  private var isNewSong: Boolean = false
+  private var hasUnsavedChanges: Boolean = true
+  private var fabBaseY: Float = 0f
 
-  @Override
-  public View onCreateView(
-      @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState
-  ) {
-    binding = FragmentSongBinding.inflate(inflater, container, false);
-    return binding.getRoot();
+  override fun onCreateView(
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
+  ): View {
+    _binding = FragmentSongBinding.inflate(inflater, container, false)
+    return binding.root
   }
 
-  @Override
-  public void onDestroyView() {
-    super.onDestroyView();
-    if (onBackPressedCallback != null) {
-      onBackPressedCallback.remove();
+  override fun onDestroyView() {
+    super.onDestroyView()
+    onBackPressedCallback?.remove()
+    dialogUtilDiscard.dismiss()
+    dialogUtilDelete.dismiss()
+    songOptionsDialogUtil.dismiss()
+    renameDialogUtil.dismiss()
+    optionsUtil.dismiss()
+    _binding = null
+  }
+
+  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    val isPortrait = activity.isOrientationPortrait()
+    val isTablet = activity.isTablet()
+
+    val systemBarBehavior = SystemBarBehavior(activity).apply {
+      setAppBar(binding.appBarSong)
+      setContainer(binding.constraintSongContainer)
+      setRecycler(binding.recyclerSongParts)
+      val bottomInset = activity.getDimension(R.dimen.fab_margin_bottom) +
+          activity.dpToPx(if (isPortrait || isTablet) 80f else 56f)
+      additionalBottomInset = bottomInset
+      setMultiColumnLayout(!isPortrait)
+      setUp()
     }
-    dialogUtilDiscard.dismiss();
-    dialogUtilDelete.dismiss();
-    songOptionsDialogUtil.dismiss();
-    renameDialogUtil.dismiss();
-    optionsUtil.dismiss();
-    binding = null;
-  }
 
-  @Override
-  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-    activity = (MainActivity) requireActivity();
-
-    boolean isPortrait = UiUtil.isOrientationPortrait(activity);
-    boolean isTablet = UiUtil.isTablet(activity);
-
-    SystemBarBehavior systemBarBehavior = new SystemBarBehavior(activity);
-    systemBarBehavior.setAppBar(binding.appBarSong);
-    systemBarBehavior.setContainer(binding.constraintSongContainer);
-    systemBarBehavior.setRecycler(binding.recyclerSongParts);
-    int bottomInset = ResUtil.getDimension(activity, R.dimen.fab_margin_bottom);
-    bottomInset += UiUtil.dpToPx(activity, isPortrait || isTablet ? 80 : 56); // fab height
-    systemBarBehavior.setAdditionalBottomInset(bottomInset);
-    systemBarBehavior.setMultiColumnLayout(!isPortrait);
-    systemBarBehavior.setUp();
     SystemBarBehavior.applyBottomInset(
-        binding.fabSong, ResUtil.getDimension(activity, R.dimen.fab_margin_bottom)
-    );
+      binding.fabSong, activity.getDimension(R.dimen.fab_margin_bottom)
+    )
 
-    ScrollBehavior scrollBehavior = new ScrollBehavior();
-    if (!isTablet) {
-      scrollBehavior.setOnScrollChangedListener(new OnScrollChangedListener() {
-        @Override
-        public void onScrollUp() {
-          binding.fabSong.extend();
-        }
-
-        @Override
-        public void onScrollDown() {
-          binding.fabSong.shrink();
-        }
-
-        @Override
-        public void onTopScroll() {
-          binding.fabSong.extend();
-        }
-      });
+    ScrollBehavior().apply {
+      if (!isTablet) {
+        setOnScrollChangedListener(object : ScrollBehavior.OnScrollChangedListener {
+          override fun onScrollUp() = binding.fabSong.extend()
+          override fun onScrollDown() = binding.fabSong.shrink()
+          override fun onTopScroll() = binding.fabSong.extend()
+        })
+      }
+      val liftMode = if (isPortrait) ScrollBehavior.ALWAYS_LIFTED else ScrollBehavior.LIFT_ON_SCROLL
+      setUpScroll(binding.appBarSong, binding.recyclerSongParts, liftMode)
     }
-    int liftMode = isPortrait ? ScrollBehavior.ALWAYS_LIFTED : ScrollBehavior.LIFT_ON_SCROLL;
-    scrollBehavior.setUpScroll(binding.appBarSong, binding.recyclerSongParts, liftMode);
 
-    binding.fabSong.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            fabBaseY = binding.fabSong.getY();
-            // Kill ViewTreeObserver
-            if (binding.fabSong.getViewTreeObserver().isAlive()) {
-              binding.fabSong.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-            }
-          }
-        });
+    binding.fabSong.onGlobalLayout {
+      fabBaseY = binding.fabSong.y
+    }
 
-    setupImeAnimation(systemBarBehavior);
+    setupImeAnimation(systemBarBehavior)
 
-    binding.toolbarSong.setTitleCentered(isTablet || !isPortrait);
+    binding.toolbarSong.isTitleCentered = isTablet || !isPortrait
 
-    binding.buttonSongClose.setOnClickListener(v -> {
-      if (getViewUtil().isClickEnabled(v.getId())) {
-        performHapticClick();
+    binding.buttonSongClose.setOnClickListener { v ->
+      if (getViewUtil().isClickEnabled(v.id)) {
+        performHapticClick()
         if (hasUnsavedChanges) {
-          dialogUtilDiscard.show();
+          dialogUtilDiscard.show()
         } else {
-          navigateUp();
+          navigateUp()
         }
       }
-    });
-    binding.buttonSongSave.setOnClickListener(v -> {
-      if (getViewUtil().isClickDisabled(v.getId())) {
-        return;
-      }
-      performHapticClick();
+    }
+    binding.buttonSongSave.setOnClickListener { v ->
+      if (getViewUtil().isClickDisabled(v.id)) return@setOnClickListener
+      performHapticClick()
       if (hasUnsavedChanges) {
         if (isNewSong) {
-          activity.getSongViewModel().insertSong(songResult);
-          activity.getSongViewModel().insertParts(partsResult);
-          // update widget, no shortcuts update needed because play count is zero
-          WidgetUtil.sendSongsWidgetUpdate(activity);
+          activity.songViewModel.insertSongWithParts(songResult, partsResult)
+          sendSongsWidgetUpdate(activity)
         } else {
-          activity.getSongViewModel().updateSongAndParts(
-              songResult, partsResult, partsSource, () -> {
-                if (getMetronomeEngine() == null) {
-                  return;
-                }
-                // update looped in metronome
-                getMetronomeEngine().reloadCurrentSong();
-                // update shortcut names
-                getMetronomeEngine().updateShortcuts();
-                // update widget
-                WidgetUtil.sendSongsWidgetUpdate(activity);
-              });
+          activity.songViewModel.updateSongAndParts(
+            songResult, partsResult, partsSource
+          ) {
+            metronomeEngine?.apply {
+              reloadCurrentSong()
+              updateShortcuts()
+              sendSongsWidgetUpdate(activity)
+            }
+          }
         }
-        navigateUp();
+        navigateUp()
       }
-    });
-    binding.buttonSongMenu.setOnClickListener(v -> {
-      performHapticClick();
-      PopupMenu.OnMenuItemClickListener itemClickListener = item -> {
-        int id = item.getItemId();
-        if (getViewUtil().isClickDisabled(id)) {
-          return false;
+    }
+    binding.buttonSongMenu.setOnClickListener { v ->
+      performHapticClick()
+      val itemClickListener = PopupMenu.OnMenuItemClickListener { item ->
+        if (getViewUtil().isClickDisabled(item.itemId)) return@OnMenuItemClickListener false
+        performHapticClick()
+        when (item.itemId) {
+          R.id.action_delete -> dialogUtilDelete.show()
+          R.id.action_feedback -> activity.showFeedbackDialog()
+          R.id.action_help -> activity.showHelpDialog()
         }
-        performHapticClick();
-        if (id == R.id.action_delete) {
-          dialogUtilDelete.show();
-        } else if (id == R.id.action_feedback) {
-          activity.showFeedbackDialog();
-        } else if (id == R.id.action_help) {
-          activity.showHelpDialog();
-        }
-        return true;
-      };
-      OnMenuInflatedListener menuInflatedListener = menu -> {
-        if (getMetronomeEngine() == null) {
-          return;
-        }
-        MenuItem itemDelete = menu.findItem(R.id.action_delete);
-        if (itemDelete != null) {
-          itemDelete.setVisible(!isNewSong);
-        }
-      };
-      ViewUtil.showMenu(v, R.menu.menu_song, itemClickListener, menuInflatedListener);
-    });
-    ViewUtil.setTooltipText(binding.buttonSongClose, R.string.action_close);
-    ViewUtil.setTooltipText(binding.buttonSongSave, R.string.action_save);
-    ViewUtil.setTooltipText(binding.buttonSongMenu, R.string.action_more);
+        true
+      }
+      v.showMenu(R.menu.menu_song, itemClickListener) { menu ->
+        menu.findItem(R.id.action_delete)?.isVisible = !isNewSong
+      }
+    }
 
-    binding.buttonSongSave.setEnabled(false);
+    binding.buttonSongClose.setTooltipText(R.string.action_close)
+    binding.buttonSongSave.setTooltipText(R.string.action_save)
+    binding.buttonSongMenu.setTooltipText(R.string.action_more)
 
-    adapter = new PartAdapter(new OnPartItemClickListener() {
-      @Override
-      public void onEditClick(@NonNull Part part) {
-        performHapticClick();
-        optionsUtil.setPart(new Part(part), false);
-        optionsUtil.show();
+    binding.buttonSongSave.isEnabled = false
 
-        binding.editTextSongName.postDelayed(() -> {
-          // Remove focus from edit text but with delay to prevent animation jank
-          UiUtil.hideKeyboard(binding.editTextSongName);
-          binding.editTextSongName.clearFocus();
-        }, 200);
+    adapter = PartAdapter(object : PartAdapter.OnPartItemClickListener {
+      override fun onEditClick(part: Part) {
+        performHapticClick()
+        optionsUtil.setPart(part.copy(), false)
+        optionsUtil.show()
+
+        binding.editTextSongName.postDelayed({
+          binding.editTextSongName.hideKeyboard()
+          binding.editTextSongName.clearFocus()
+        }, 200)
       }
 
-      @Override
-      public void onMoveUpClick(@NonNull Part part) {
-        performHapticClick();
-        Part partCurrent = new Part(part);
-        int index = partCurrent.getPartIndex();
+      override fun onMoveUpClick(part: Part) {
+        performHapticClick()
+        val index = part.partIndex
         if (index > 0) {
-          Part partAbove = new Part(partsResult.get(index - 1));
-          partCurrent.setPartIndex(index - 1);
-          partAbove.setPartIndex(index);
-          partsResult.set(index - 1, partCurrent);
-          partsResult.set(index, partAbove);
-          sortParts();
-          adapter.setParts(new ArrayList<>(partsResult));
-          updateResult();
+          val partCurrent = part.copy()
+          val partAbove = partsResult[index - 1].copy()
+          partCurrent.partIndex = index - 1
+          partAbove.partIndex = index
+          partsResult[index - 1] = partCurrent
+          partsResult[index] = partAbove
+          sortParts()
+          adapter.setParts(ArrayList(partsResult))
+          updateResult()
         }
-        // Remove focus from edit text
-        UiUtil.hideKeyboard(binding.editTextSongName);
-        binding.editTextSongName.clearFocus();
+        binding.editTextSongName.hideKeyboard()
+        binding.editTextSongName.clearFocus()
       }
 
-      @Override
-      public void onMoveDownClick(@NonNull Part part) {
-        performHapticClick();
-        Part partCurrent = new Part(part);
-        int index = partCurrent.getPartIndex();
-        if (index < partsResult.size() - 1) {
-          Part partBelow = new Part(partsResult.get(index + 1));
-          partCurrent.setPartIndex(index + 1);
-          partBelow.setPartIndex(index);
-          partsResult.set(index + 1, partCurrent);
-          partsResult.set(index, partBelow);
-          sortParts();
-          adapter.setParts(new ArrayList<>(partsResult));
-          updateResult();
+      override fun onMoveDownClick(part: Part) {
+        performHapticClick()
+        val index = part.partIndex
+        if (index < partsResult.size - 1) {
+          val partCurrent = part.copy()
+          val partBelow = partsResult[index + 1].copy()
+          partCurrent.partIndex = index + 1
+          partBelow.partIndex = index
+          partsResult[index + 1] = partCurrent
+          partsResult[index] = partBelow
+          sortParts()
+          adapter.setParts(ArrayList(partsResult))
+          updateResult()
         }
-        // Remove focus from edit text
-        UiUtil.hideKeyboard(binding.editTextSongName);
-        binding.editTextSongName.clearFocus();
+        binding.editTextSongName.hideKeyboard()
+        binding.editTextSongName.clearFocus()
       }
 
-      @Override
-      public void onMoreClick(@NonNull Part part) {
-        performHapticClick();
-        // Remove focus from edit text
-        UiUtil.hideKeyboard(binding.editTextSongName);
-        binding.editTextSongName.clearFocus();
+      override fun onMoreClick(part: Part) {
+        performHapticClick()
+        binding.editTextSongName.hideKeyboard()
+        binding.editTextSongName.clearFocus()
       }
 
-      @Override
-      public void onRenameClick(@NonNull Part part) {
-        performHapticClick();
-        renameDialogUtil.setPart(part);
-        renameDialogUtil.show();
+      override fun onRenameClick(part: Part) {
+        performHapticClick()
+        renameDialogUtil.setPart(part)
+        renameDialogUtil.show()
       }
 
-      @Override
-      public void onDuplicateClick(@NonNull Part part) {
-        performHapticClick();
-        if (activity.isUnlocked() || partsResult.size() < 2) {
-          Part partNew = new Part(part);
-          partNew.setRandomId();
-          partNew.setPartIndex(part.getPartIndex() + 1);
-          // move all parts below down by one
-          for (int i = partNew.getPartIndex(); i < partsResult.size(); i++) {
-            Part partBelow = new Part(partsResult.get(i));
-            partBelow.setPartIndex(partBelow.getPartIndex() + 1);
-            partsResult.set(i, partBelow);
+      override fun onDuplicateClick(part: Part) {
+        performHapticClick()
+        if (activity.isUnlocked() || partsResult.size < 2) {
+          val partNew = part.copy().apply {
+            setRandomId()
+            partIndex = part.partIndex + 1
           }
-          partsResult.add(partNew);
-          sortParts();
-          adapter.setParts(new ArrayList<>(partsResult));
-          updateResult();
+          for (i in partNew.partIndex until partsResult.size) {
+            partsResult[i] = partsResult[i].copy().apply { partIndex++ }
+          }
+          partsResult.add(partNew.partIndex, partNew)
+          sortParts()
+          adapter.setParts(ArrayList(partsResult))
+          updateResult()
         } else {
-          activity.showUnlockDialog();
+          activity.showUnlockDialog()
         }
       }
 
-      @Override
-      public void onDeleteClick(@NonNull Part part) {
-        performHapticClick();
-        if (partsResult.size() <= 1) {
-          return;
-        }
-        int index = part.getPartIndex();
-        partsResult.remove(index);
-        for (int i = 0; i < partsResult.size(); i++) {
-          partsResult.get(i).setPartIndex(i);
-        }
-        adapter.setParts(new ArrayList<>(partsResult));
-        updateResult();
+      override fun onDeleteClick(part: Part) {
+        performHapticClick()
+        if (partsResult.size <= 1) return
+        partsResult.removeAt(part.partIndex)
+        partsResult.forEachIndexed { i, p -> p.partIndex = i }
+        adapter.setParts(ArrayList(partsResult))
+        updateResult()
       }
-    });
-    binding.recyclerSongParts.setAdapter(adapter);
-    // Layout manager
-    LinearLayoutManager layoutManager = new WrapperLinearLayoutManager(activity);
-    binding.recyclerSongParts.setLayoutManager(layoutManager);
-    binding.recyclerSongParts.setItemAnimator(new DefaultItemAnimator());
+    })
+    binding.recyclerSongParts.adapter = adapter
+    binding.recyclerSongParts.layoutManager = WrapperLinearLayoutManager(activity)
+    binding.recyclerSongParts.itemAnimator = DefaultItemAnimator()
+    binding.recyclerSongParts.addItemDecoration(
+      PartItemDecoration(activity.dpToPx(0f))
+    )
 
-    PartItemDecoration decoration = new PartItemDecoration(UiUtil.dpToPx(activity, 0));
-    binding.recyclerSongParts.addItemDecoration(decoration);
-
-    Bundle arguments = getArguments() != null ? getArguments() : new Bundle();
-    String songId = SongFragmentArgs.fromBundle(arguments).getSongId();
+    val songId = args.songId
     if (songId != null) {
-      isNewSong = false;
-      activity.getSongViewModel().fetchSongWithParts(songId, songWithParts -> {
-        Runnable runnable = () -> {
+      isNewSong = false
+      activity.songViewModel.fetchSongWithParts(songId) { songWithParts ->
+        activity.runOnUiThread {
           if (songWithParts != null) {
-            songSource = songWithParts.getSong();
-            // Copy song to result
-            songResult = new Song(songSource);
-            if (savedInstanceState != null && savedInstanceState.containsKey(KEY_SONG_RESULT)) {
-              Song songRestored = savedInstanceState.getParcelable(KEY_SONG_RESULT);
-              if (songRestored != null) {
-                songResult = songRestored;
+            songSource = songWithParts.song
+            songResult = songSource!!.copy()
+            savedInstanceState?.let {
+              BundleCompat.getParcelable(
+                it, KEY_SONG_RESULT, Song::class.java
+              )?.let { song ->
+                songResult = song
               }
             }
-            // Copy name to form
-            binding.textInputSongName.setHintAnimationEnabled(false);
-            binding.editTextSongName.clearFocus(); // to prevent TextWatcher from being triggered
-            binding.editTextSongName.setText(songResult.getName());
-            binding.editTextSongName.post(() -> {
-              UiUtil.hideKeyboard(binding.editTextSongName);
-              binding.editTextSongName.clearFocus();
-            });
-            binding.textInputSongName.setHintAnimationEnabled(true);
-            // Copy song options to form
-            setSongOptions(songResult.isLooped(), songResult.getSpeed());
-            // Copy parts to form
-            partsSource = songWithParts.getParts();
-            partsResult = new LinkedList<>();
-            for (Part part : partsSource) {
-              partsResult.add(new Part(part));
+            binding.textInputSongName.isHintAnimationEnabled = false
+            binding.editTextSongName.clearFocus()
+            binding.editTextSongName.setText(songResult.name)
+            binding.editTextSongName.post {
+              binding.editTextSongName.hideKeyboard()
+              binding.editTextSongName.clearFocus()
             }
-            if (savedInstanceState != null && savedInstanceState.containsKey(KEY_PARTS_RESULT)) {
-              List<Part> restored = savedInstanceState.getParcelableArrayList(KEY_PARTS_RESULT);
-              if (restored != null) {
-                partsResult = new ArrayList<>(restored);
-              }
+            binding.textInputSongName.isHintAnimationEnabled = true
+            setSongOptions(songResult.isLooped, songResult.speed)
+            partsSource = songWithParts.parts
+            partsResult = songWithParts.parts.map { it.copy() }.toMutableList()
+            savedInstanceState?.let {
+              BundleCompat.getParcelableArrayList(it, KEY_PARTS_RESULT, Part::class.java)
+                ?.let { parts ->
+                  partsResult = parts.toMutableList()
+                }
             }
-            sortParts();
-            binding.recyclerSongParts.stopScroll();
-            adapter.setParts(new ArrayList<>(partsResult));
+            sortParts()
+            binding.recyclerSongParts.stopScroll()
+            adapter.setParts(ArrayList(partsResult))
           } else {
-            Log.e(TAG, "onViewCreated: song with id=" + songId + " not found");
+            Log.e(TAG, "onViewCreated: song with id=$songId not found")
           }
-          updateResult();
-        };
-        activity.runOnUiThread(runnable);
-      });
+          updateResult()
+        }
+      }
     } else {
-      isNewSong = true;
-      songSource = new Song();
-      songResult = new Song(songSource);
-      if (savedInstanceState != null && savedInstanceState.containsKey(KEY_SONG_RESULT)) {
-        Song songRestored = savedInstanceState.getParcelable(KEY_SONG_RESULT);
-        if (songRestored != null) {
-          songResult = new Song(songRestored);
+      isNewSong = true
+      songSource = Song()
+      songResult = songSource!!.copy()
+      savedInstanceState?.let {
+        BundleCompat.getParcelable(it, KEY_SONG_RESULT, Song::class.java)?.let { song ->
+          songResult = song.copy()
         }
       }
-
-      binding.editTextSongName.clearFocus(); // to prevent TextWatcher from being triggered
-      binding.editTextSongName.setText(songResult.getName());
-      binding.editTextSongName.post(() -> {
-        boolean isLandTablet = UiUtil.isLandTablet(activity);
-        if (savedInstanceState == null && (isPortrait || isLandTablet)) {
-          binding.editTextSongName.requestFocus();
-          UiUtil.showKeyboard(binding.editTextSongName);
+      binding.editTextSongName.clearFocus()
+      binding.editTextSongName.setText(songResult.name)
+      binding.editTextSongName.post {
+        if (savedInstanceState == null && (isPortrait || activity.isLandTablet())) {
+          binding.editTextSongName.requestFocus()
+          binding.editTextSongName.showKeyboard()
         } else {
-          // Only show keyboard if not restored from orientation change
-          UiUtil.hideKeyboard(binding.editTextSongName);
-        }
-      });
-
-      setSongOptions(songResult.isLooped(), songResult.getSpeed());
-
-      partsResult = new LinkedList<>();
-
-      Part firstPart = new Part(
-          null,
-          songResult.getId(),
-          partsResult.size(),
-          getMetronomeEngine() != null
-              ? getMetronomeEngine().getConfig()
-              : new MetronomeConfig()
-      );
-      partsResult.add(firstPart);
-      sortParts();
-      adapter.setParts(new ArrayList<>(partsResult));
-
-      // Copy result to source after default part to prevent diff on result check
-      partsSource = new ArrayList<>();
-      for (Part part : partsResult) {
-        partsSource.add(new Part(part));
-      }
-      if (savedInstanceState != null && savedInstanceState.containsKey(KEY_PARTS_RESULT)) {
-        List<Part> partsRestored = savedInstanceState.getParcelableArrayList(KEY_PARTS_RESULT);
-        if (partsRestored != null) {
-          partsResult = new ArrayList<>(partsRestored);
-          sortParts();
-          binding.recyclerSongParts.stopScroll();
-          adapter.setParts(partsResult);
+          binding.editTextSongName.hideKeyboard()
         }
       }
-      updateResult();
-      if (songResult.getName() == null || songResult.getName().isEmpty()) {
-        clearError(); // first time the name is empty but user is not guilty
+      setSongOptions(songResult.isLooped, songResult.speed)
+      partsResult = mutableListOf(
+        Part.fromConfig(
+          null, songResult.id, 0,
+          metronomeEngine?.config ?: MetronomeConfig()
+        )
+      )
+      sortParts()
+      adapter.setParts(ArrayList(partsResult))
+      partsSource = partsResult.map { it.copy() }
+      savedInstanceState?.let {
+        BundleCompat.getParcelableArrayList(
+          it, KEY_PARTS_RESULT, Part::class.java
+        )?.let { parts ->
+          partsResult = parts.toMutableList()
+          sortParts()
+          binding.recyclerSongParts.stopScroll()
+          adapter.setParts(partsResult)
+        }
       }
+      updateResult()
+      if (songResult.name.isNullOrEmpty()) clearError()
     }
 
-    MenuItem itemDelete = binding.toolbarSong.getMenu().findItem(R.id.action_delete);
-    if (itemDelete != null) {
-      // Only show delete if song not new
-      itemDelete.setVisible(!isNewSong);
+    binding.toolbarSong.menu.findItem(R.id.action_delete)?.isVisible = !isNewSong
+
+    activity.songViewModel.getAllSongsLive().observe(viewLifecycleOwner) { songs ->
+      songsExisting = songs
     }
 
-    activity.getSongViewModel().getAllSongsLive().observe(
-        getViewLifecycleOwner(), songs -> songsExisting = songs
-    );
+    binding.editTextSongName.setOnEditorActionListener { _, actionId, _ ->
+      if (actionId == EditorInfo.IME_ACTION_DONE) {
+        binding.editTextSongName.hideKeyboard()
+        binding.editTextSongName.clearFocus()
+        updateResult()
+      }
+      false
+    }
+    binding.editTextSongName.addTextChangedListener(object : TextWatcher {
+      override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+      override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+      override fun afterTextChanged(s: Editable?) {
+        if (binding.editTextSongName.hasFocus()) updateResult()
+      }
+    })
 
-    binding.editTextSongName.setOnEditorActionListener(
-        (v, actionId, event) -> {
-          if (actionId == EditorInfo.IME_ACTION_DONE) {
-            UiUtil.hideKeyboard(binding.editTextSongName);
-            binding.editTextSongName.clearFocus();
-            updateResult();
+    binding.fabSong.setOnClickListener(this)
+    binding.linearSongOptions.setOnClickListener(this)
+
+    dialogUtilDiscard = DialogUtil(activity, "discard_changes")
+    dialogUtilDiscard.createDialogError { builder ->
+      builder.setTitle(R.string.msg_discard_changes)
+      builder.setMessage(R.string.msg_discard_changes_description)
+      builder.setPositiveButton(R.string.action_discard) { _, _ ->
+        performHapticClick()
+        activity.navigateUp()
+      }
+      builder.setNegativeButton(R.string.action_cancel) { _, _ -> performHapticClick() }
+    }
+    dialogUtilDiscard.showIfWasShown(savedInstanceState)
+
+    dialogUtilDelete = DialogUtil(activity, "delete")
+    dialogUtilDelete.createDialogError { builder ->
+      builder.setTitle(R.string.msg_delete_song)
+      builder.setMessage(R.string.msg_delete_song_description)
+      builder.setPositiveButton(R.string.action_delete) { _, _ ->
+        performHapticClick()
+        val source = songSource ?: run {
+          Log.e(TAG, "onViewCreated: songSource cannot be null")
+          return@setPositiveButton
+        }
+        val engine = metronomeEngine ?: return@setPositiveButton
+        if (source.id == engine.currentSongId) {
+          engine.setCurrentSong(Constants.SONG_ID_DEFAULT, 0)
+        }
+        activity.songViewModel.deleteSong(source) {
+          metronomeEngine?.apply {
+            activity.songViewModel.deleteParts(partsSource)
+            updateShortcuts()
+            sendSongsWidgetUpdate(activity)
           }
-          return false;
-        });
-    binding.editTextSongName.addTextChangedListener(new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+        activity.navigateUp()
+      }
+      builder.setNegativeButton(R.string.action_cancel) { _, _ -> performHapticClick() }
+    }
+    dialogUtilDelete.showIfWasShown(savedInstanceState)
+
+    songOptionsDialogUtil = SongOptionsDialogUtil(activity, this)
+    songOptionsDialogUtil.showIfWasShown(savedInstanceState)
+
+    renameDialogUtil = RenameDialogUtil(activity, this)
+    renameDialogUtil.showIfWasShown(savedInstanceState)
+
+    optionsUtil = OptionsUtil(activity, object : OptionsUtil.OnPartEditListener {
+      override fun onPartAdded(part: Part) {
+        partsResult.add(part)
+        sortParts()
+        adapter.setParts(ArrayList(partsResult))
+        updateResult()
       }
 
-      @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {
+      override fun onPartUpdated(part: Part) {
+        partsResult[part.partIndex] = part
+        adapter.setParts(ArrayList(partsResult))
+        updateResult()
+      }
+    })
+    optionsUtil.showIfWasShown(savedInstanceState)
+
+    onBackPressedCallback = object : OnBackPressedCallback(false) {
+      override fun handleOnBackPressed() = dialogUtilDiscard.show()
+    }.also {
+      activity.onBackPressedDispatcher.addCallback(activity, it)
+    }
+  }
+
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    dialogUtilDiscard.saveState(outState)
+    dialogUtilDelete.saveState(outState)
+    songOptionsDialogUtil.saveState(outState)
+    renameDialogUtil.saveState(outState)
+    optionsUtil.saveState(outState)
+    outState.putParcelable(KEY_SONG_RESULT, songResult)
+    outState.putParcelableArrayList(KEY_PARTS_RESULT, ArrayList(partsResult))
+  }
+
+  override fun onClick(v: View) {
+    when (v.id) {
+      R.id.linear_song_options -> {
+        performHapticClick()
+        songOptionsDialogUtil.setSongOptions(songResult.isLooped, songResult.speed)
+        songOptionsDialogUtil.show()
       }
 
-      @Override
-      public void afterTextChanged(Editable s) {
-        if (binding.editTextSongName.hasFocus()) {
-          updateResult();
+      R.id.fab_song -> {
+        performHapticClick()
+        binding.editTextSongName.hideKeyboard()
+        binding.editTextSongName.clearFocus()
+        if (activity.isUnlocked() || partsResult.size < 2) {
+          val part = Part.fromConfig(
+            null, songResult.id,
+            partsResult.size, MetronomeConfig()
+          )
+          optionsUtil.setPart(part, true)
+          optionsUtil.show()
+        } else {
+          activity.showUnlockDialog()
         }
       }
-    });
-
-    ViewUtil.setOnClickListeners(
-        this,
-        binding.fabSong,
-        binding.linearSongOptions
-    );
-
-    dialogUtilDiscard = new DialogUtil(activity, "discard_changes");
-    dialogUtilDiscard.createDialogError(builder -> {
-      builder.setTitle(R.string.msg_discard_changes);
-      builder.setMessage(R.string.msg_discard_changes_description);
-      builder.setPositiveButton(R.string.action_discard, (dialog, which) -> {
-        performHapticClick();
-        activity.navigateUp();
-      });
-      builder.setNegativeButton(
-          R.string.action_cancel, (dialog, which) -> performHapticClick()
-      );
-    });
-    dialogUtilDiscard.showIfWasShown(savedInstanceState);
-
-    dialogUtilDelete = new DialogUtil(activity, "delete");
-    dialogUtilDelete.createDialogError(builder -> {
-      builder.setTitle(R.string.msg_delete_song);
-      builder.setMessage(R.string.msg_delete_song_description);
-      builder.setPositiveButton(R.string.action_delete, (dialog, which) -> {
-        performHapticClick();
-        if (songSource == null) {
-          Log.e(TAG, "onViewCreated: songSource cannot be null");
-          return;
-        } else if (getMetronomeEngine() == null) {
-          return;
-        }
-        if (songSource.getId().equals(getMetronomeEngine().getCurrentSongId())) {
-          // if current song is deleted, change to default
-          getMetronomeEngine().setCurrentSong(Constants.SONG_ID_DEFAULT, 0);
-        }
-        activity.getSongViewModel().deleteSong(songSource, () -> {
-          if (getMetronomeEngine() == null) {
-            return;
-          }
-          activity.getSongViewModel().deleteParts(partsSource);
-          // update shortcut names
-          getMetronomeEngine().updateShortcuts();
-          // update widget
-          WidgetUtil.sendSongsWidgetUpdate(activity);
-        });
-        activity.navigateUp();
-      });
-      builder.setNegativeButton(
-          R.string.action_cancel, (dialog, which) -> performHapticClick()
-      );
-    });
-    dialogUtilDelete.showIfWasShown(savedInstanceState);
-
-    songOptionsDialogUtil = new SongOptionsDialogUtil(activity, this);
-    songOptionsDialogUtil.showIfWasShown(savedInstanceState);
-
-    renameDialogUtil = new RenameDialogUtil(activity, this);
-    renameDialogUtil.showIfWasShown(savedInstanceState);
-
-    optionsUtil = new OptionsUtil(activity, new OnPartEditListener() {
-      @Override
-      public void onPartAdded(@NonNull Part part) {
-        partsResult.add(part);
-        sortParts();
-        adapter.setParts(new ArrayList<>(partsResult));
-        updateResult();
-      }
-
-      @Override
-      public void onPartUpdated(@NonNull Part part) {
-        partsResult.set(part.getPartIndex(), part);
-        adapter.setParts(new ArrayList<>(partsResult));
-        updateResult();
-      }
-    });
-    optionsUtil.showIfWasShown(savedInstanceState);
-
-    onBackPressedCallback = new OnBackPressedCallback(false) {
-      @Override
-      public void handleOnBackPressed() {
-        dialogUtilDiscard.show();
-      }
-    };
-    activity.getOnBackPressedDispatcher().addCallback(activity, onBackPressedCallback);
-  }
-
-  @Override
-  public void onSaveInstanceState(@NonNull Bundle outState) {
-    super.onSaveInstanceState(outState);
-    if (dialogUtilDiscard != null) {
-      dialogUtilDiscard.saveState(outState);
-    }
-    if (dialogUtilDelete != null) {
-      dialogUtilDelete.saveState(outState);
-    }
-    if (songOptionsDialogUtil != null) {
-      songOptionsDialogUtil.saveState(outState);
-    }
-    if (renameDialogUtil != null) {
-      renameDialogUtil.saveState(outState);
-    }
-    if (optionsUtil != null) {
-      optionsUtil.saveState(outState);
-    }
-    outState.putParcelable(KEY_SONG_RESULT, songResult);
-    outState.putParcelableArrayList(KEY_PARTS_RESULT, new ArrayList<>(partsResult));
-  }
-
-  @Override
-  public void onClick(View v) {
-    int id = v.getId();
-    if (id == R.id.linear_song_options) {
-      performHapticClick();
-      songOptionsDialogUtil.setSongOptions(songResult.isLooped(), songResult.getSpeed());
-      songOptionsDialogUtil.show();
-    } else if (id == R.id.fab_song) {
-      performHapticClick();
-      // Remove focus from edit text
-      UiUtil.hideKeyboard(binding.editTextSongName);
-      binding.editTextSongName.clearFocus();
-      if (activity.isUnlocked() || partsResult.size() < 2) {
-        Part part = new Part(
-            null,
-            songResult.getId(),
-            partsResult.size(),
-            new MetronomeConfig()
-        );
-        optionsUtil.setPart(part, true);
-        optionsUtil.show();
-      } else {
-        activity.showUnlockDialog();
-      }
     }
   }
 
-  public void setSongOptions(boolean looped, int speed) {
-    songResult.setLooped(looped);
-    songResult.setSpeed(speed);
-
-    binding.textSongLooped.setText(
-        activity.getString(looped ? R.string.label_song_looped : R.string.label_song_not_looped)
-    );
-    binding.textSongSpeed.setText(
-        speed == 100
-            ? activity.getString(R.string.label_song_speed_original)
-            : activity.getString(R.string.label_song_speed_short, speed)
-    );
-
-    updateResult();
+  fun setSongOptions(looped: Boolean, speed: Int) {
+    songResult.isLooped = looped
+    songResult.speed = speed
+    binding.textSongLooped.text = getString(
+      if (looped) R.string.label_song_looped else R.string.label_song_not_looped
+    )
+    binding.textSongSpeed.text = if (speed == 100) {
+      getString(R.string.label_song_speed_original)
+    } else {
+      getString(R.string.label_song_speed_short, speed)
+    }
+    updateResult()
   }
 
-  public void renamePart(String partId, String name) {
-    for (Part part : partsResult) {
-      if (part.getId().equals(partId)) {
-        Part partResult = new Part(part);
-        partResult.setName(name);
-        partsResult.set(part.getPartIndex(), partResult);
-        adapter.setParts(new ArrayList<>(partsResult));
-        updateResult();
-        break;
-      }
+  fun renamePart(partId: String, name: String?) {
+    partsResult.find { it.id == partId }?.let { part ->
+      val partResult = part.copy().apply { this.name = name }
+      partsResult[part.partIndex] = partResult
+      adapter.setParts(ArrayList(partsResult))
+      updateResult()
     }
   }
 
-  private void sortParts() {
-    SortUtil.sortPartsByIndex(partsSource);
-    SortUtil.sortPartsByIndex(partsResult);
+  private fun sortParts() {
+    sortPartsByIndex(partsSource.toMutableList())
+    sortPartsByIndex(partsResult)
   }
 
-  private void updateResult() {
-    boolean isValid = true;
-    Editable songName = binding.editTextSongName.getText();
-    if (songName != null && !songName.toString().trim().isEmpty()) {
-      boolean isUnique = true;
-      for (Song song : songsExisting) {
-        boolean isSameSong = songSource != null && songSource.getId().equals(song.getId());
-        if (!isSameSong && songName.toString().trim().equals(song.getName())) {
-          isUnique = false;
-          break;
-        }
+  private fun updateResult() {
+    var isValid = true
+    val songName = binding.editTextSongName.text?.toString()?.trim()
+    if (!songName.isNullOrEmpty()) {
+      val isUnique = songsExisting.none { song ->
+        val isSameSong = songSource?.id == song.id
+        !isSameSong && songName == song.name
       }
       if (isUnique) {
-        songResult.setName(songName.toString().trim());
+        songResult.name = songName
       } else {
-        isValid = false;
-        setErrorSongName(true);
+        isValid = false
+        setErrorSongName(true)
       }
     } else {
-      isValid = false;
-      setErrorSongName(false);
-      if (songName != null) {
-        if (songName.toString().trim().isEmpty()) {
-          // for proper diff calculation
-          songResult.setName(null);
-        }
+      isValid = false
+      setErrorSongName(false)
+      songResult.name = null
+    }
+    if (isValid) clearError()
+    val hasChanges = songResult != songSource || partsResult != partsSource
+    setHasUnsavedChanges(hasChanges, isValid)
+  }
+
+  private fun setHasUnsavedChanges(hasChanges: Boolean, isValid: Boolean) {
+    hasUnsavedChanges = hasChanges
+    onBackPressedCallback?.isEnabled = hasChanges
+    binding.buttonSongSave.isEnabled = hasChanges && isValid
+  }
+
+  private fun setErrorSongName(notUnique: Boolean) {
+    binding.textInputSongName.error = getString(
+      if (notUnique) R.string.label_song_name_used else R.string.msg_invalid_input
+    )
+  }
+
+  private fun clearError() {
+    binding.textInputSongName.error = null
+    binding.textInputSongName.isErrorEnabled = false
+  }
+
+  private fun setupImeAnimation(systemBarBehavior: SystemBarBehavior) {
+    val callback = object : WindowInsetsAnimationCompat.Callback(
+      DISPATCH_MODE_STOP
+    ) {
+      private var imeInsetStart = 0
+      private var imeInsetEnd = 0
+      private var yStart = 0f
+      private var yEnd = 0f
+
+      override fun onPrepare(animation: WindowInsetsAnimationCompat) {
+        imeInsetStart = systemBarBehavior.imeInset
+        yStart = binding.fabSong.y
+      }
+
+      override fun onStart(
+        animation: WindowInsetsAnimationCompat,
+        bounds: WindowInsetsAnimationCompat.BoundsCompat
+      ): WindowInsetsAnimationCompat.BoundsCompat {
+        imeInsetEnd = systemBarBehavior.imeInset
+        systemBarBehavior.imeInset = imeInsetStart
+        systemBarBehavior.refresh(false)
+        yEnd = binding.fabSong.y
+        binding.fabSong.y = yStart
+        return bounds
+      }
+
+      override fun onProgress(
+        insets: WindowInsetsCompat,
+        animations: List<WindowInsetsAnimationCompat>
+      ): WindowInsetsCompat {
+        val animation = animations.firstOrNull() ?: return insets
+        val fraction = animation.interpolatedFraction
+        systemBarBehavior.imeInset = MathUtils.lerp(
+          imeInsetStart.toFloat(), imeInsetEnd.toFloat(), fraction
+        ).toInt()
+        systemBarBehavior.refresh(false)
+        binding.fabSong.y = MathUtils.lerp(yStart, yEnd, fraction)
+        return insets
       }
     }
-
-    if (isValid) {
-      clearError();
+    ViewCompat.setOnApplyWindowInsetsListener(binding.constraintSongContainer) { _, insets ->
+      val bottomInsetIme = insets.getInsets(Type.ime()).bottom
+      systemBarBehavior.imeInset = bottomInsetIme
+      systemBarBehavior.refresh(false)
+      if (insets.isVisible(Type.ime())) {
+        val bottomInsetNav = insets.getInsets(Type.systemBars()).bottom
+        binding.fabSong.translationY = (-bottomInsetIme + bottomInsetNav).toFloat()
+      } else {
+        binding.fabSong.y = fabBaseY
+      }
+      insets
     }
-
-    boolean hasUnsavedChanges = !songResult.equals(songSource) || !partsResult.equals(partsSource);
-    setHasUnsavedChanges(hasUnsavedChanges, isValid);
+    ViewCompat.setWindowInsetsAnimationCallback(binding.constraintSongContainer, callback)
   }
 
-  private void setHasUnsavedChanges(boolean hasUnsavedChanges, boolean isValid) {
-    this.hasUnsavedChanges = hasUnsavedChanges;
-    if (onBackPressedCallback != null) {
-      onBackPressedCallback.setEnabled(hasUnsavedChanges);
-    }
-    binding.buttonSongSave.setEnabled(hasUnsavedChanges && isValid);
-  }
-
-  private void setErrorSongName(boolean notUnique) {
-    binding.textInputSongName.setError(
-        getString(notUnique ? R.string.label_song_name_used : R.string.msg_invalid_input)
-    );
-  }
-
-  private void clearError() {
-    binding.textInputSongName.setError(null);
-    binding.textInputSongName.setErrorEnabled(false);
-  }
-
-  private void setupImeAnimation(SystemBarBehavior systemBarBehavior) {
-    Callback callback = new Callback(Callback.DISPATCH_MODE_STOP) {
-      int imeInsetStart, imeInsetEnd;
-      float yStart, yEnd;
-
-      @Override
-      public void onPrepare(@NonNull WindowInsetsAnimationCompat animation) {
-        imeInsetStart = systemBarBehavior.getImeInset();
-        yStart = binding.fabSong.getY();
-      }
-
-      @NonNull
-      @Override
-      public BoundsCompat onStart(
-          @NonNull WindowInsetsAnimationCompat animation,
-          @NonNull BoundsCompat bounds
-      ) {
-        imeInsetEnd = systemBarBehavior.getImeInset();
-        systemBarBehavior.setImeInset(imeInsetStart);
-        systemBarBehavior.refresh(false);
-
-        yEnd = binding.fabSong.getY();
-        binding.fabSong.setY(yStart);
-        return bounds;
-      }
-
-      @NonNull
-      @Override
-      public WindowInsetsCompat onProgress(
-          @NonNull WindowInsetsCompat insets,
-          @NonNull List<WindowInsetsAnimationCompat> animations
-      ) {
-        if (animations.isEmpty() || animations.get(0) == null) {
-          return insets;
-        }
-        WindowInsetsAnimationCompat animation = animations.get(0);
-        systemBarBehavior.setImeInset(
-            (int) MathUtils.lerp(imeInsetStart, imeInsetEnd, animation.getInterpolatedFraction())
-        );
-        systemBarBehavior.refresh(false);
-        binding.fabSong.setY(MathUtils.lerp(yStart, yEnd, animation.getInterpolatedFraction()));
-        return insets;
-      }
-    };
-    ViewCompat.setOnApplyWindowInsetsListener(
-        binding.constraintSongContainer, (v, insets) -> {
-          int bottomInsetIme = insets.getInsets(Type.ime()).bottom;
-          systemBarBehavior.setImeInset(bottomInsetIme);
-          systemBarBehavior.refresh(false);
-          if (insets.isVisible(Type.ime())) {
-            int bottomInsetNav = insets.getInsets(Type.systemBars()).bottom;
-            binding.fabSong.setTranslationY(-bottomInsetIme + bottomInsetNav);
-          } else {
-            binding.fabSong.setY(fabBaseY);
-          }
-          return insets;
-        });
-    ViewCompat.setWindowInsetsAnimationCallback(binding.constraintSongContainer, callback);
+  companion object {
+    private val TAG = SongFragment::class.java.simpleName
+    private const val KEY_SONG_RESULT = "song_result"
+    private const val KEY_PARTS_RESULT = "parts_result"
   }
 }

@@ -17,94 +17,84 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+package xyz.zedler.patrick.tack.util
 
-import android.content.Context;
-import android.content.DialogInterface;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import xyz.zedler.patrick.tack.R;
+import android.content.Context
+import android.content.DialogInterface
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import xyz.zedler.patrick.tack.R
 
-public class DialogUtil {
+class DialogUtil(private val context: Context, private val tag: String) {
 
-  private static final String TAG = DialogUtil.class.getSimpleName();
-  private static final String IS_SHOWING = "is_showing_dialog_";
+  private var dialog: AlertDialog? = null
 
-  private final Context context;
-  private final String tag;
-  private AlertDialog dialog;
-
-  public DialogUtil(@NonNull Context context, @NonNull String tag) {
-    this.context = context;
-    this.tag = tag;
+  fun createDialog(listener: OnBuilderReadyListener) {
+    val builder = MaterialAlertDialogBuilder(
+      context, R.style.ThemeOverlay_Tack_AlertDialog
+    )
+    listener.onBuilderReady(builder)
+    dialog = builder.create()
   }
 
-  public void createDialog(@NonNull OnBuilderReadyListener listener) {
-    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
-        context, R.style.ThemeOverlay_Tack_AlertDialog
-    );
-    listener.onBuilderReady(builder);
-    dialog = builder.create();
+  fun createDialogError(listener: OnBuilderReadyListener) {
+    val builder = MaterialAlertDialogBuilder(
+      context, R.style.ThemeOverlay_Tack_AlertDialog_Error
+    )
+    listener.onBuilderReady(builder)
+    dialog = builder.create()
   }
 
-  public void createDialogError(@NonNull OnBuilderReadyListener listener) {
-    MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(
-        context, R.style.ThemeOverlay_Tack_AlertDialog_Error
-    );
-    listener.onBuilderReady(builder);
-    dialog = builder.create();
-  }
-
-  public void show() {
-    if (dialog != null && !dialog.isShowing()) {
-      dialog.show();
-    } else if (dialog == null) {
-      throw new IllegalStateException("Dialog for " + tag + " not created before showing");
+  fun show() {
+    val d = dialog
+    if (d != null && !d.isShowing) {
+      d.show()
+    } else if (d == null) {
+      throw IllegalStateException("Dialog for $tag not created before showing")
     }
   }
 
-  public boolean showIfWasShown(@Nullable Bundle state) {
-    boolean wasShowing = wasShown(state);
+  fun showIfWasShown(state: Bundle?): Boolean {
+    val wasShowing = wasShown(state)
     if (wasShowing) {
-      new Handler(Looper.getMainLooper()).postDelayed(this::show, 10);
+      Handler(Looper.getMainLooper()).postDelayed({ show() }, 10)
     }
-    return wasShowing;
+    return wasShowing
   }
 
-  public boolean wasShown(@Nullable Bundle state) {
-    return state != null && state.getBoolean(IS_SHOWING + tag);
+  fun wasShown(state: Bundle?): Boolean {
+    return state != null && state.getBoolean(IS_SHOWING + tag)
   }
 
-  public void setOnShowListener(@NonNull DialogInterface.OnShowListener listener) {
-    if (dialog != null) {
-      dialog.setOnShowListener(listener);
-    }
+  fun setOnShowListener(listener: DialogInterface.OnShowListener) {
+    dialog?.setOnShowListener(listener)
   }
 
-  public void saveState(@NonNull Bundle outState) {
-    outState.putBoolean(IS_SHOWING + tag, dialog != null && dialog.isShowing());
+  fun saveState(outState: Bundle) {
+    outState.putBoolean(IS_SHOWING + tag, dialog?.isShowing == true)
   }
 
   /**
    * Must be called in onDestroy, else an exception will be thrown when orientation changes
    */
-  public void dismiss() {
-    if (dialog != null && dialog.isShowing()) {
-      dialog.dismiss();
+  fun dismiss() {
+    val d = dialog
+    if (d != null && d.isShowing) {
+      d.dismiss()
     }
   }
 
-  @Nullable
-  public AlertDialog getDialog() {
-    return dialog;
+  fun getDialog(): AlertDialog? = dialog
+
+  fun interface OnBuilderReadyListener {
+    fun onBuilderReady(builder: MaterialAlertDialogBuilder)
   }
 
-  public interface OnBuilderReadyListener {
-    void onBuilderReady(@NonNull MaterialAlertDialogBuilder builder);
+  companion object {
+    private val TAG = DialogUtil::class.java.simpleName
+    private const val IS_SHOWING = "is_showing_dialog_"
   }
 }

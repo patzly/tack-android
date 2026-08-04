@@ -17,43 +17,43 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+@file:JvmName("WidgetUtil")
 
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
-import xyz.zedler.patrick.tack.widget.SongsWidgetProvider;
+package xyz.zedler.patrick.tack.util
 
-public class WidgetUtil {
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import xyz.zedler.patrick.tack.widget.SongsWidgetProvider
 
-  public static void sendSongsWidgetUpdate(Context context) {
-    Intent intent = new Intent(context, SongsWidgetProvider.class);
-    intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-
-    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-    ComponentName componentName = new ComponentName(context, SongsWidgetProvider.class);
-    int[] appWidgetIds = appWidgetManager.getAppWidgetIds(componentName);
-
-    intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
-    context.sendBroadcast(intent);
+fun sendSongsWidgetUpdate(context: Context) {
+  val intent = Intent(context, SongsWidgetProvider::class.java).apply {
+    action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
   }
 
-  public static void requestSongsWidgetPin(Context context) {
-    if (VERSION.SDK_INT >= VERSION_CODES.O && isRequestPinAppWidgetSupported(context)) {
-      AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-      ComponentName widgetProvider = new ComponentName(context, SongsWidgetProvider.class);
-      appWidgetManager.requestPinAppWidget(widgetProvider, null, null);
-    }
-  }
+  val appWidgetManager = AppWidgetManager.getInstance(context)
+  val componentName = ComponentName(context, SongsWidgetProvider::class.java)
+  val appWidgetIds = appWidgetManager.getAppWidgetIds(componentName)
 
-  public static boolean isRequestPinAppWidgetSupported(Context context) {
-    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-    if (VERSION.SDK_INT >= VERSION_CODES.O) {
-      return appWidgetManager.isRequestPinAppWidgetSupported();
-    }
-    return false;
+  intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds)
+  context.sendBroadcast(intent)
+}
+
+fun requestSongsWidgetPin(context: Context) {
+  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isRequestPinAppWidgetSupported(context)) {
+    val appWidgetManager = AppWidgetManager.getInstance(context)
+    val widgetProvider = ComponentName(context, SongsWidgetProvider::class.java)
+    appWidgetManager.requestPinAppWidget(widgetProvider, null, null)
+  }
+}
+
+fun isRequestPinAppWidgetSupported(context: Context): Boolean {
+  val appWidgetManager = AppWidgetManager.getInstance(context)
+  return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    appWidgetManager.isRequestPinAppWidgetSupported
+  } else {
+    false
   }
 }

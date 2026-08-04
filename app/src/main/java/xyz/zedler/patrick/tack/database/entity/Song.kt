@@ -17,183 +17,39 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.database.entity;
+package xyz.zedler.patrick.tack.database.entity
 
-import android.os.Parcel;
-import android.os.Parcelable;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.room.Entity;
-import androidx.room.Ignore;
-import androidx.room.Index;
-import androidx.room.PrimaryKey;
-import java.util.Date;
-import java.util.Objects;
-import java.util.UUID;
+import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
+import java.util.Date
+import java.util.UUID
 
-@Entity(tableName = "songs", indices = {@Index(value = {"id"}, unique = true)})
-public class Song implements Parcelable {
-
+@Parcelize
+@Entity(tableName = "songs")
+data class Song(
   @PrimaryKey
-  @NonNull
-  private String id;
-  @Nullable
-  private String name;
-  private long lastPlayed;
-  private int playCount, speed;
-  private boolean isLooped;
+  var id: String = UUID.randomUUID().toString(),
+  var name: String? = null,
+  var lastPlayed: Long = 0,
+  var playCount: Int = 0,
+  var isLooped: Boolean = false,
+  var speed: Int = 100,
+) : Parcelable {
 
-  public Song(
-      @NonNull String id, @Nullable String name, long lastPlayed, int playCount, boolean isLooped,
-      int speed
-  ) {
-    this.id = id;
-    this.name = name;
-    this.lastPlayed = lastPlayed;
-    this.playCount = playCount;
-    this.isLooped = isLooped;
-    this.speed = speed;
+  fun incrementPlayCount() {
+    playCount++
   }
 
-  @Ignore
-  public Song(@Nullable String name) {
-    this();
-    this.name = name;
-    this.speed = 100;
-  }
-
-  @Ignore
-  public Song() {
-    this.id = UUID.randomUUID().toString();
-    this.speed = 100;
-  }
-
-  @Ignore
-  public Song(@NonNull Song song) {
-    this.id = song.id;
-    this.name = song.name;
-    this.lastPlayed = song.lastPlayed;
-    this.playCount = song.playCount;
-    this.isLooped = song.isLooped;
-    this.speed = song.speed;
-  }
-
-  @Ignore
-  protected Song(Parcel in) {
-    id = Objects.requireNonNull(in.readString());
-    name = in.readString();
-    lastPlayed = in.readLong();
-    playCount = in.readInt();
-    isLooped = in.readByte() != 0;
-    speed = in.readInt();
-  }
-
-  @NonNull
-  public String getId() {
-    return id;
-  }
-
-  public void setId(@NonNull String id) {
-    this.id = id;
-  }
-
-  @Nullable
-  public String getName() {
-    return name;
-  }
-
-  public void setName(@Nullable String name) {
-    this.name = name;
-  }
-
-  public long getLastPlayed() {
-    return lastPlayed;
-  }
-
-  public void setLastPlayed(long lastPlayed) {
-    this.lastPlayed = lastPlayed;
-  }
-
-  public int getPlayCount() {
-    return playCount;
-  }
-
-  public void setPlayCount(int playCount) {
-    this.playCount = playCount;
-  }
-
-  public void incrementPlayCount() {
-    playCount++;
-  }
-
-  public boolean isLooped() {
-    return isLooped;
-  }
-
-  public void setLooped(boolean looped) {
-    isLooped = looped;
-  }
-
-  public int getSpeed() {
-    return speed;
-  }
-
-  public void setSpeed(int speed) {
-    this.speed = speed;
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (!(o instanceof Song)) {
-      return false;
-    }
-    Song song = (Song) o;
-    return lastPlayed == song.lastPlayed && isLooped == song.isLooped && speed == song.speed
-        && Objects.equals(id, song.id) && Objects.equals(name, song.name);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, name, lastPlayed, isLooped, speed);
-  }
-
-  @Override
-  public int describeContents() {
-    return 0;
-  }
-
-  @Override
-  public void writeToParcel(@NonNull Parcel dest, int flags) {
-    dest.writeString(id);
-    dest.writeString(name);
-    dest.writeLong(lastPlayed);
-    dest.writeInt(playCount);
-    dest.writeByte((byte) (isLooped ? 1 : 0));
-    dest.writeInt(speed);
-  }
-
-  @NonNull
-  @Override
-  public String toString() {
-    Date lastPlayed = new Date(this.lastPlayed);
+  override fun toString(): String {
+    val lastPlayedDate = Date(lastPlayed)
     return "Song{" +
-        "id='" + id + '\'' +
-        ", name='" + name + '\'' +
-        ", lastPlayed=" + lastPlayed +
-        ", isLooped=" + isLooped +
-        ", speed=" + speed +
-        '}';
+        "id='$id'" +
+        ", name='$name'" +
+        ", lastPlayed=$lastPlayedDate" +
+        ", isLooped=$isLooped" +
+        ", speed=$speed" +
+        '}'
   }
-
-  public static final Creator<Song> CREATOR = new Creator<>() {
-    @Override
-    public Song createFromParcel(Parcel in) {
-      return new Song(in);
-    }
-
-    @Override
-    public Song[] newArray(int size) {
-      return new Song[size];
-    }
-  };
 }

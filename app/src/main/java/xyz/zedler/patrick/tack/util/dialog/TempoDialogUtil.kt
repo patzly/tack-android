@@ -17,505 +17,401 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util.dialog;
+package xyz.zedler.patrick.tack.util.dialog
 
-import android.annotation.SuppressLint;
-import android.content.DialogInterface;
-import android.graphics.Typeface;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
-import android.os.Bundle;
-import android.text.Editable;
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
-import android.view.ViewTreeObserver;
-import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.TextView;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.res.ResourcesCompat;
-import com.google.android.material.button.MaterialButtonToggleGroup;
-import com.google.android.material.button.MaterialButtonToggleGroup.OnButtonCheckedListener;
-import java.util.LinkedList;
-import java.util.Queue;
-import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.databinding.PartialDialogTempoBinding;
-import xyz.zedler.patrick.tack.fragment.MainFragment;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
-import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.UiUtil;
+import android.annotation.SuppressLint
+import android.content.DialogInterface
+import android.os.Build
+import android.os.Bundle
+import android.util.TypedValue
+import android.view.Gravity
+import android.view.MotionEvent
+import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.TextView
+import androidx.core.content.res.ResourcesCompat
+import androidx.core.view.isVisible
+import xyz.zedler.patrick.tack.Constants
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.activity.MainActivity
+import xyz.zedler.patrick.tack.databinding.PartialDialogTempoBinding
+import xyz.zedler.patrick.tack.fragment.MainFragment
+import xyz.zedler.patrick.tack.util.*
+import java.util.*
+import androidx.core.view.isGone
 
-public class TempoDialogUtil implements OnButtonCheckedListener, OnCheckedChangeListener {
+class TempoDialogUtil(
+  private val activity: MainActivity,
+  private val fragment: MainFragment,
+  private val listener: TempoDialogListener?
+) {
 
-  private static final String TAG = TempoDialogUtil.class.getSimpleName();
-
-  private static final int MAX_TAPS = 20;
-  private static final double TEMPO_FACTOR = 0.5;
-  private static final int INTERVAL_FACTOR = 3;
-
-  private final MainActivity activity;
-  private final MainFragment fragment;
-  private final PartialDialogTempoBinding binding;
-  private final DialogUtil dialogUtil;
-  private final TempoDialogListener listener;
-  private final Queue<Long> intervals = new LinkedList<>();
-  private final OnTouchListener onTouchListener;
-  private long previous;
-  private int tempoOld;
-  private boolean inputMethodKeyboard, instantApply;
+  private val binding = PartialDialogTempoBinding.inflate(activity.layoutInflater)
+  private val dialogUtil = DialogUtil(activity, "tempo")
+  private val intervals: Queue<Long> = LinkedList()
+  private var previous: Long = 0
+  private var tempoOld = 0
+  private var inputMethodKeyboard = false
+  private var instantApply = false
 
   @SuppressLint("ClickableViewAccessibility")
-  public TempoDialogUtil(
-      MainActivity activity, MainFragment fragment, TempoDialogListener listener
-  ) {
-    this.activity = activity;
-    this.fragment = fragment;
-    this.listener = listener;
+  private val onTouchListener = View.OnTouchListener { v, event ->
+    when (event.action) {
+      MotionEvent.ACTION_DOWN -> {
+        binding.tempoTapTempo.setTouched(true)
+        val enoughData = tap()
+        if (enoughData) {
+          if (binding.frameTempoTapTempo.isGone) {
+            binding.frameTempoTapTempo.alpha = 0f
+            binding.frameTempoTapTempo.isVisible = true
+            binding.frameTempoTapTempo.animate()
+              .alpha(1f)
+              .setDuration(150)
+              .start()
+            binding.textTempoPlaceholder.animate()
+              .alpha(0f)
+              .setDuration(150)
+              .withEndAction { binding.textTempoPlaceholder.isVisible = false }
+              .start()
+          }
+          val tempoNew = getTapTempo()
+          setTapTempoDisplay(tempoOld, tempoNew)
+          tempoOld = tempoNew
+          if (instantApply) {
+            activity.metronomeEngine?.let { engine ->
+              engine.setTempo(tempoNew)
+              engine.maybeUpdateDefaultSong()
+            }
+          }
+        }
+        activity.performHapticHeavyClick()
+        true
+      }
 
-    binding = PartialDialogTempoBinding.inflate(activity.getLayoutInflater());
+      MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+        binding.tempoTapTempo.setTouched(false)
+        v.performClick()
+        true
+      }
 
-    binding.editTextTempo.setOnEditorActionListener((v, actionId, event) -> {
+      else -> false
+    }
+  }
+
+  init {
+    binding.editTextTempo.setOnEditorActionListener { _, actionId, _ ->
       if (actionId == EditorInfo.IME_ACTION_DONE) {
         if (isInputValid()) {
-          activity.performHapticClick();
-          setTempoFromInputAndDismiss();
+          activity.performHapticClick()
+          setTempoFromInputAndDismiss()
         } else {
-          activity.performHapticReject(binding.getRoot());
-          return true;
+          activity.performHapticReject(binding.root)
+          return@setOnEditorActionListener true
         }
       }
-      return false;
-    });
-    binding.textInputTempo.setHelperText(
-        activity.getString(
-            R.string.label_tempo_input_help, Constants.TEMPO_MIN, Constants.TEMPO_MAX
-        )
-    );
-
-    binding.linearTempoInstant.setOnClickListener(
-        v -> binding.switchTempoInstant.toggle()
-    );
-
-    if (VERSION.SDK_INT >= VERSION_CODES.O) {
-      Typeface variableTypeface = ResourcesCompat.getFont(
-          activity, R.font.google_sans_flex_variable
-      );
-      binding.textTempoTapTempo.setTypeface(variableTypeface);
-      binding.textTempoTapTempo.setFontVariationSettings("'wght' 700, 'ROND' 100");
+      false
     }
-    binding.textSwitcherTempoTapTempoTerm.setFactory(() -> {
-      TextView textView = new TextView(activity);
-      textView.setGravity(Gravity.CENTER_HORIZONTAL);
-      textView.setTextSize(
+    binding.textInputTempo.helperText = activity.getString(
+      R.string.label_tempo_input_help, Constants.TEMPO_MIN, Constants.TEMPO_MAX
+    )
+
+    binding.linearTempoInstant.setOnClickListener {
+      binding.switchTempoInstant.toggle()
+    }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      val variableTypeface = ResourcesCompat.getFont(
+        activity, R.font.google_sans_flex_variable
+      )
+      binding.textTempoTapTempo.typeface = variableTypeface
+      binding.textTempoTapTempo.fontVariationSettings = "'wght' 700, 'ROND' 100"
+    }
+    binding.textSwitcherTempoTapTempoTerm.setFactory {
+      TextView(activity).apply {
+        gravity = Gravity.CENTER_HORIZONTAL
+        setTextSize(
           TypedValue.COMPLEX_UNIT_PX,
-          activity.getResources().getDimension(R.dimen.tempo_tap_label_text_size)
-      );
-      Typeface typeface = ResourcesCompat.getFont(activity, R.font.google_sans_flex_medium);
-      textView.setTypeface(typeface);
-      textView.setTextColor(ResUtil.getColor(activity, R.attr.colorOnTertiaryContainer));
-      return textView;
-    });
-    onTouchListener = (v, event) -> {
-      if (event.getAction() == MotionEvent.ACTION_DOWN) {
-        binding.tempoTapTempo.setTouched(true);
-        boolean enoughData = tap();
-        if (enoughData) {
-          if (binding.frameTempoTapTempo.getVisibility() == View.GONE) {
-            binding.frameTempoTapTempo.setAlpha(0);
-            binding.frameTempoTapTempo.setVisibility(View.VISIBLE);
-            binding.frameTempoTapTempo.animate()
-                .alpha(1)
-                .setDuration(150)
-                .start();
-            binding.textTempoPlaceholder.animate()
-                .alpha(0)
-                .setDuration(150)
-                .withEndAction(() -> binding.textTempoPlaceholder.setVisibility(View.GONE))
-                .start();
-          }
-          int tempoNew = getTapTempo();
-          setTapTempoDisplay(tempoOld, tempoNew);
-          tempoOld = tempoNew;
-          if (instantApply && getMetronomeEngine() != null) {
-            getMetronomeEngine().setTempo(tempoNew);
-            getMetronomeEngine().maybeUpdateDefaultSong();
-          }
-        }
-        activity.performHapticHeavyClick();
-        return true;
-      } else if (event.getAction() == MotionEvent.ACTION_UP
-          || event.getAction() == MotionEvent.ACTION_CANCEL) {
-        binding.tempoTapTempo.setTouched(false);
-        v.performClick();
-        return true;
+          activity.resources.getDimension(R.dimen.tempo_tap_label_text_size)
+        )
+        typeface = ResourcesCompat.getFont(activity, R.font.google_sans_flex_medium)
+        setTextColor(activity.getAttrColor(R.attr.colorOnTertiaryContainer))
       }
-      return false;
-    };
-
-    dialogUtil = new DialogUtil(activity, "tempo");
-    dialogUtil.createDialog(builder -> {
-      builder.setTitle(R.string.action_change_tempo);
-      builder.setView(binding.getRoot());
-      builder.setPositiveButton(R.string.action_apply, null);
-      builder.setNegativeButton(
-          R.string.action_cancel, (dialog, which) -> activity.performHapticClick()
-      );
-    });
-    dialogUtil.setOnShowListener(dialog -> {
-      overrideDialogActions();
-      if (inputMethodKeyboard) {
-        showKeyboard();
-      }
-    });
-
-    setDividerVisibility(!UiUtil.isOrientationPortrait(activity));
-  }
-
-  @Override
-  public void onButtonChecked(MaterialButtonToggleGroup group, int checkedId, boolean isChecked) {
-    if (!isChecked || getMetronomeEngine() == null) {
-      return;
     }
-    activity.performHapticClick();
-    int groupId = group.getId();
-    if (groupId == R.id.toggle_tempo_method) {
-      boolean inputMethodKeyboard = checkedId == R.id.button_tempo_keyboard;
-      getMetronomeEngine().setTempoInputKeyboard(inputMethodKeyboard);
-      if (!inputMethodKeyboard) {
-        View currentFocus = binding.linearTempoContainer.getFocusedChild();
-        if (currentFocus != null) {
-          UiUtil.hideKeyboard(currentFocus);
-        }
-        intervals.clear();
-        previous = 0;
-      }
-      update();
-      if (inputMethodKeyboard) {
-        showKeyboard();
-      }
-      overrideDialogActions();
-    }
-  }
 
-  @Override
-  public void onCheckedChanged(@NonNull CompoundButton buttonView, boolean isChecked) {
-    MetronomeEngine metronomeEngine = getMetronomeEngine();
-    int id = buttonView.getId();
-    if (id == R.id.switch_tempo_instant && metronomeEngine != null) {
-      activity.performHapticClick();
-      instantApply = isChecked;
-      metronomeEngine.setTempoTapInstant(isChecked);
+    dialogUtil.createDialog { builder ->
+      builder.setTitle(R.string.action_change_tempo)
+      builder.setView(binding.root)
+      builder.setPositiveButton(R.string.action_apply, null)
+      builder.setNegativeButton(R.string.action_cancel) { _, _ ->
+        activity.performHapticClick()
+      }
+    }
+    dialogUtil.setOnShowListener {
+      overrideDialogActions()
+      if (inputMethodKeyboard) {
+        showKeyboard()
+      }
+    }
+
+    binding.toggleTempoMethod.addOnButtonCheckedListener { _, checkedId, isChecked ->
       if (isChecked) {
-        long tapAverage = getTapAverage();
-        if (tapAverage > 0) {
-          int tempo = getTapTempo(tapAverage);
-          if (listener != null) {
-            listener.onTempoChanged(tempo);
+        activity.metronomeEngine?.let { engine ->
+          activity.performHapticClick()
+          val isKeyboard = checkedId == R.id.button_tempo_keyboard
+          engine.tempoInputKeyboard = isKeyboard
+          if (!isKeyboard) {
+            binding.linearTempoContainer.focusedChild?.hideKeyboard()
+            intervals.clear()
+            previous = 0
           }
-          metronomeEngine.setTempo(tempo);
-          metronomeEngine.maybeUpdateDefaultSong();
+          update()
+          if (isKeyboard) showKeyboard()
+          overrideDialogActions()
         }
       }
-      overrideDialogActions();
     }
-  }
 
-  public void show() {
-    update();
-    dialogUtil.show();
-  }
-
-  public void showIfWasShown(@Nullable Bundle state) {
-    update();
-    dialogUtil.showIfWasShown(state);
-  }
-
-  private void overrideDialogActions() {
-    Button buttonPositive = null;
-    Button buttonNegative = null;
-    if (dialogUtil.getDialog() != null) {
-      buttonPositive = dialogUtil.getDialog().getButton(DialogInterface.BUTTON_POSITIVE);
-      buttonNegative = dialogUtil.getDialog().getButton(DialogInterface.BUTTON_NEGATIVE);
+    binding.switchTempoInstant.setOnCheckedChangeListener { _, isChecked ->
+      activity.metronomeEngine?.let { engine ->
+        activity.performHapticClick()
+        instantApply = isChecked
+        engine.tempoTapInstant = isChecked
+        if (isChecked) {
+          val tapAverage = getTapAverage()
+          if (tapAverage > 0) {
+            val tempo = getTapTempo(tapAverage)
+            listener?.onTempoChanged(tempo)
+            engine.setTempo(tempo)
+            engine.maybeUpdateDefaultSong()
+          }
+        }
+        overrideDialogActions()
+      }
     }
-    boolean showApplyButton = inputMethodKeyboard || !instantApply;
-    if (buttonPositive != null) {
-      buttonPositive.setText(
-          activity.getString(showApplyButton ? R.string.action_apply : R.string.action_close)
-      );
-      buttonPositive.setOnClickListener(v -> {
+
+    updateDividerVisibility(activity.isOrientationPortrait().not())
+  }
+
+  private fun overrideDialogActions() {
+    val dialog = dialogUtil.getDialog() ?: return
+    val buttonPositive = dialog.getButton(DialogInterface.BUTTON_POSITIVE)
+    val buttonNegative = dialog.getButton(DialogInterface.BUTTON_NEGATIVE)
+    val showApplyButton = inputMethodKeyboard || !instantApply
+
+    buttonPositive?.apply {
+      text =
+        activity.getString(if (showApplyButton) R.string.action_apply else R.string.action_close)
+      setOnClickListener {
         if (inputMethodKeyboard) {
           if (isInputValid()) {
-            activity.performHapticClick();
-            setTempoFromInputAndDismiss();
+            activity.performHapticClick()
+            setTempoFromInputAndDismiss()
           } else {
-            activity.performHapticReject(binding.getRoot());
+            activity.performHapticReject(binding.root)
           }
         } else {
-          activity.performHapticClick();
-          setTempoFromInputAndDismiss();
+          activity.performHapticClick()
+          setTempoFromInputAndDismiss()
         }
-      });
+      }
     }
-    if (buttonNegative != null) {
-      buttonNegative.setVisibility(showApplyButton ? View.VISIBLE : View.GONE);
-    }
+    buttonNegative?.isVisible = showApplyButton
   }
 
-  public void dismiss() {
-    dialogUtil.dismiss();
-    intervals.clear();
-    previous = 0;
+  fun show() {
+    update()
+    dialogUtil.show()
   }
 
-  public void saveState(@NonNull Bundle outState) {
-    if (dialogUtil != null) {
-      dialogUtil.saveState(outState);
-    }
+  fun showIfWasShown(state: Bundle?) {
+    update()
+    dialogUtil.showIfWasShown(state)
   }
 
-  public void update() {
-    if (binding == null) {
-      return;
-    }
-    measureScrollView();
+  fun dismiss() {
+    dialogUtil.dismiss()
+    intervals.clear()
+    previous = 0
+  }
 
-    MetronomeEngine metronomeEngine = getMetronomeEngine();
-    if (metronomeEngine == null) {
-      return;
-    }
-    inputMethodKeyboard = metronomeEngine.getTempoInputKeyboard();
-    instantApply = metronomeEngine.getTempoTapInstant();
+  fun saveState(outState: Bundle) {
+    dialogUtil.saveState(outState)
+  }
 
-    binding.toggleTempoMethod.removeOnButtonCheckedListener(this);
-    if (inputMethodKeyboard) {
-      binding.toggleTempoMethod.check(R.id.button_tempo_keyboard);
-    } else {
-      binding.toggleTempoMethod.check(R.id.button_tempo_tap);
+  fun update() {
+    val engine = activity.metronomeEngine ?: return
+    inputMethodKeyboard = engine.tempoInputKeyboard
+    instantApply = engine.tempoTapInstant
+
+    binding.toggleTempoMethod.apply {
+      check(if (inputMethodKeyboard) R.id.button_tempo_keyboard else R.id.button_tempo_tap)
     }
-    binding.toggleTempoMethod.addOnButtonCheckedListener(this);
 
     if (inputMethodKeyboard) {
-      setError(false);
-      binding.editTextTempo.setText(null);
-      binding.editTextTempo.requestFocus();
+      setError(false)
+      binding.editTextTempo.text = null
+      binding.editTextTempo.requestFocus()
     } else {
-      binding.switchTempoInstant.setOnCheckedChangeListener(null);
-      binding.switchTempoInstant.setChecked(instantApply);
-      binding.switchTempoInstant.jumpDrawablesToCurrentState();
-      binding.switchTempoInstant.setOnCheckedChangeListener(this);
+      binding.switchTempoInstant.isChecked = instantApply
+      binding.switchTempoInstant.jumpDrawablesToCurrentState()
 
-      tempoOld = metronomeEngine.getConfig().getTempo();
-      setTapTempoDisplay(tempoOld, tempoOld);
-      binding.textSwitcherTempoTapTempoTerm.setCurrentText(fragment.getTempoTerm(tempoOld));
-      binding.tempoTapTempo.setReduceAnimations(fragment.isReduceAnimations());
+      tempoOld = engine.config.tempo
+      setTapTempoDisplay(tempoOld, tempoOld)
+      binding.textSwitcherTempoTapTempoTerm.setCurrentText(fragment.getTempoTerm(tempoOld))
+      binding.tempoTapTempo.setReduceAnimations(fragment.isReduceAnimations())
 
-      binding.frameTempoTapTempo.setVisibility(View.GONE);
-      binding.frameTempoTapTempo.setAlpha(0);
-      binding.textTempoPlaceholder.setVisibility(View.VISIBLE);
-      binding.textTempoPlaceholder.setAlpha(1);
+      binding.frameTempoTapTempo.isVisible = false
+      binding.frameTempoTapTempo.alpha = 0f
+      binding.textTempoPlaceholder.isVisible = true
+      binding.textTempoPlaceholder.alpha = 1f
     }
-    binding.frameTempoInputContainer.setVisibility(inputMethodKeyboard ? View.VISIBLE : View.GONE);
-    binding.frameTempoTapContainer.setVisibility(inputMethodKeyboard ? View.GONE : View.VISIBLE);
-    binding.linearTempoInstant.setVisibility(inputMethodKeyboard ? View.GONE : View.VISIBLE);
+    binding.frameTempoInputContainer.isVisible = inputMethodKeyboard
+    binding.frameTempoTapContainer.isVisible = !inputMethodKeyboard
+    binding.linearTempoInstant.isVisible = !inputMethodKeyboard
+
+    measureScrollView()
   }
 
-  private void showKeyboard() {
-    if (binding != null) {
-      binding.editTextTempo.requestFocus();
-      UiUtil.showKeyboard(binding.editTextTempo);
-    }
+  private fun showKeyboard() {
+    binding.editTextTempo.requestFocus()
+    binding.editTextTempo.showKeyboard()
   }
 
-  private boolean isInputValid() {
-    if (binding == null) {
-      return false;
-    }
-    Editable tempoEditable = binding.editTextTempo.getText();
-    if (tempoEditable == null) {
-      return false;
-    }
-    String tempoString = tempoEditable.toString();
+  private fun isInputValid(): Boolean {
+    val tempoString = binding.editTextTempo.text?.toString() ?: ""
     if (tempoString.isEmpty()) {
-      setError(true);
-      return false;
+      setError(true)
+      return false
     }
-    try {
-      int tempo = Integer.parseInt(tempoString);
-      boolean valid = tempo >= Constants.TEMPO_MIN && tempo <= Constants.TEMPO_MAX;
-      setError(!valid);
-      return valid;
-    } catch (NumberFormatException e) {
-      setError(true);
-      return false;
+    return try {
+      val tempo = tempoString.toInt()
+      val valid = tempo in Constants.TEMPO_MIN..Constants.TEMPO_MAX
+      setError(!valid)
+      valid
+    } catch (e: NumberFormatException) {
+      setError(true)
+      false
     }
   }
 
-  private void setTempoFromInputAndDismiss() {
-    MetronomeEngine metronomeEngine = getMetronomeEngine();
-    if (binding == null || metronomeEngine == null) {
-      return;
-    }
+  private fun setTempoFromInputAndDismiss() {
+    val engine = activity.metronomeEngine ?: return
     if (inputMethodKeyboard) {
-      if (!isInputValid()) {
-        return;
-      }
-      Editable tempoEditable = binding.editTextTempo.getText();
-      if (tempoEditable == null) {
-        return;
-      }
-      int tempo = Integer.parseInt(tempoEditable.toString());
-      if (listener != null) {
-        listener.onTempoChanged(tempo);
-      }
-      metronomeEngine.setTempo(tempo);
-      metronomeEngine.maybeUpdateDefaultSong();
-
-      binding.editTextTempo.clearFocus();
+      if (!isInputValid()) return
+      val tempo = binding.editTextTempo.text.toString().toInt()
+      listener?.onTempoChanged(tempo)
+      engine.setTempo(tempo)
+      engine.maybeUpdateDefaultSong()
+      binding.editTextTempo.clearFocus()
     } else {
-      long tapAverage = getTapAverage();
+      val tapAverage = getTapAverage()
       if (tapAverage > 0) {
-        int tempo = getTapTempo(tapAverage);
-        if (listener != null) {
-          listener.onTempoChanged(tempo);
-        }
-        metronomeEngine.setTempo(tempo);
-        metronomeEngine.maybeUpdateDefaultSong();
+        val tempo = getTapTempo(tapAverage)
+        listener?.onTempoChanged(tempo)
+        engine.setTempo(tempo)
+        engine.maybeUpdateDefaultSong()
       }
     }
-    dismiss();
+    dismiss()
   }
 
-  private void setError(boolean error) {
-    if (binding == null) {
-      return;
-    }
+  private fun setError(error: Boolean) {
     if (error) {
-      binding.textInputTempo.setError(activity.getString(R.string.msg_invalid_input));
+      binding.textInputTempo.error = activity.getString(R.string.msg_invalid_input)
     } else {
-      binding.textInputTempo.setErrorEnabled(false);
+      binding.textInputTempo.isErrorEnabled = false
     }
   }
 
-  public boolean tap() {
-    boolean enoughData = false;
-    long current = System.currentTimeMillis();
+  private fun tap(): Boolean {
+    var enoughData = false
+    val current = System.currentTimeMillis()
     if (previous > 0) {
-      enoughData = true;
-      long interval = current - previous;
-      if (!intervals.isEmpty() && shouldTapReset(interval)) {
-        intervals.clear();
-        enoughData = false;
-      } else if (intervals.size() >= MAX_TAPS) {
-        intervals.poll();
+      enoughData = true
+      val interval = current - previous
+      if (intervals.isNotEmpty() && shouldTapReset(interval)) {
+        intervals.clear()
+        enoughData = false
+      } else if (intervals.size >= MAX_TAPS) {
+        intervals.poll()
       }
-      intervals.offer(interval);
+      intervals.offer(interval)
     }
-    previous = current;
-    return enoughData;
+    previous = current
+    return enoughData
   }
 
-  private void setTapTempoDisplay(int tempoOld, int tempoNew) {
-    if (binding == null || fragment == null || !fragment.isAdded()) {
-      return;
+  private fun setTapTempoDisplay(tempoOld: Int, tempoNew: Int) {
+    if (!fragment.isAdded) return
+    if (instantApply) {
+      listener?.onTempoChanged(tempoNew)
     }
-    if (instantApply && listener != null) {
-      listener.onTempoChanged(tempoNew);
-    }
-    binding.textTempoTapTempo.setText(String.valueOf(tempoNew));
-    String termNew = fragment.getTempoTerm(tempoNew);
-    if (!termNew.equals(fragment.getTempoTerm(tempoOld))) {
-      boolean isFaster = tempoNew > tempoOld;
+    binding.textTempoTapTempo.text = tempoNew.toString()
+    val termNew = fragment.getTempoTerm(tempoNew)
+    if (termNew != fragment.getTempoTerm(tempoOld)) {
+      val isFaster = tempoNew > tempoOld
       binding.textSwitcherTempoTapTempoTerm.setInAnimation(
-          activity, isFaster ? R.anim.tempo_term_open_enter : R.anim.tempo_term_close_enter
-      );
+        activity,
+        if (isFaster) R.anim.tempo_term_open_enter else R.anim.tempo_term_close_enter
+      )
       binding.textSwitcherTempoTapTempoTerm.setOutAnimation(
-          activity, isFaster ? R.anim.tempo_term_open_exit : R.anim.tempo_term_close_exit
-      );
-      binding.textSwitcherTempoTapTempoTerm.setText(termNew);
+        activity,
+        if (isFaster) R.anim.tempo_term_open_exit else R.anim.tempo_term_close_exit
+      )
+      binding.textSwitcherTempoTapTempoTerm.setText(termNew)
     }
   }
 
-  public int getTapTempo() {
-    return getTapTempo(getTapAverage());
+  private fun getTapTempo(interval: Long = getTapAverage()): Int {
+    return if (interval > 0) {
+      (60000 / interval).toInt().coerceIn(Constants.TEMPO_MIN, Constants.TEMPO_MAX)
+    } else 0
   }
 
-  private int getTapTempo(long interval) {
-    if (interval > 0) {
-      return Math.min(
-          Math.max((int) (60000 / interval), Constants.TEMPO_MIN),
-          Constants.TEMPO_MAX
-      );
-    } else {
-      return 0;
+  private fun getTapAverage(): Long {
+    return if (intervals.isNotEmpty()) intervals.sum() / intervals.size else 0
+  }
+
+  private fun shouldTapReset(interval: Long): Boolean {
+    val tapTempo = getTapTempo()
+    val intervalTempo = getTapTempo(interval)
+    return intervalTempo >= tapTempo * (1 + TEMPO_FACTOR) ||
+        intervalTempo <= tapTempo * (1 - TEMPO_FACTOR) ||
+        interval > getTapAverage() * INTERVAL_FACTOR
+  }
+
+  @SuppressLint("ClickableViewAccessibility")
+  private fun measureScrollView() {
+    binding.scrollTempo.onGlobalLayout {
+      val isScrollable = binding.scrollTempo.canScrollVertically(-1) ||
+          binding.scrollTempo.canScrollVertically(1)
+      if (isScrollable) {
+        binding.tempoTapTempo.setOnTouchListener(onTouchListener)
+        binding.frameTempoTapContainer.setOnTouchListener(null)
+      } else {
+        binding.tempoTapTempo.setOnTouchListener(null)
+        binding.frameTempoTapContainer.setOnTouchListener(onTouchListener)
+      }
+      updateDividerVisibility(isScrollable)
     }
   }
 
-  private long getTapAverage() {
-    long sum = 0;
-    for (long interval : intervals) {
-      sum += interval;
-    }
-    if (!intervals.isEmpty()) {
-      return sum / intervals.size();
-    } else {
-      return 0;
-    }
+  private fun updateDividerVisibility(visible: Boolean) {
+    binding.scrollTempo.setDividerVisibility(
+      visible,
+      binding.dividerTempoTop,
+      binding.dividerTempoBottom,
+      binding.linearTempoContainer
+    )
   }
 
-  private boolean shouldTapReset(long interval) {
-    return getTapTempo(interval) >= getTapTempo() * (1 + TEMPO_FACTOR)
-        || getTapTempo(interval) <= getTapTempo() * (1 - TEMPO_FACTOR)
-        || interval > getTapAverage() * INTERVAL_FACTOR;
+  fun interface TempoDialogListener {
+    fun onTempoChanged(tempo: Int)
   }
 
-  private void measureScrollView() {
-    binding.scrollTempo.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @SuppressLint("ClickableViewAccessibility")
-          @Override
-          public void onGlobalLayout() {
-            boolean isScrollable = binding.scrollTempo.canScrollVertically(-1)
-                || binding.scrollTempo.canScrollVertically(1);
-            if (isScrollable) {
-              // Only tempo tap view should handle touch events to avoid conflicts with scrolling
-              binding.tempoTapTempo.setOnTouchListener(onTouchListener);
-              binding.frameTempoTapContainer.setOnTouchListener(null);
-            } else {
-              binding.tempoTapTempo.setOnTouchListener(null);
-              binding.frameTempoTapContainer.setOnTouchListener(onTouchListener);
-            }
-            setDividerVisibility(isScrollable);
-            binding.scrollTempo.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-          }
-        });
-  }
-
-  private void setDividerVisibility(boolean visible) {
-    binding.dividerTempoTop.setVisibility(visible ? View.VISIBLE : View.GONE);
-    binding.dividerTempoBottom.setVisibility(visible ? View.VISIBLE : View.GONE);
-    binding.linearTempoContainer.setPadding(
-        binding.linearTempoContainer.getPaddingLeft(),
-        visible ? UiUtil.dpToPx(activity, 16) : 0,
-        binding.linearTempoContainer.getPaddingRight(),
-        visible ? UiUtil.dpToPx(activity, 16) : 0
-    );
-  }
-
-  @Nullable
-  private MetronomeEngine getMetronomeEngine() {
-    return activity.getMetronomeEngine();
-  }
-
-  public interface TempoDialogListener {
-    void onTempoChanged(int tempo);
+  companion object {
+    private const val MAX_TAPS = 20
+    private const val TEMPO_FACTOR = 0.5
+    private const val INTERVAL_FACTOR = 3
   }
 }

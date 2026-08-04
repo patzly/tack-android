@@ -17,96 +17,76 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+@file:JvmName("ResUtil")
 
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.util.Log;
-import android.util.TypedValue;
-import android.view.Menu;
-import android.view.MenuItem;
-import androidx.annotation.AttrRes;
-import androidx.annotation.DimenRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.RawRes;
-import androidx.annotation.StringRes;
-import androidx.core.graphics.ColorUtils;
-import com.google.android.material.color.MaterialColors;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import xyz.zedler.patrick.tack.R;
+package xyz.zedler.patrick.tack.util
 
-public class ResUtil {
+import android.content.Context
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.Drawable
+import android.util.Log
+import android.util.TypedValue
+import android.view.Menu
+import androidx.core.view.get
+import androidx.core.view.size
+import androidx.annotation.AttrRes
+import androidx.annotation.DimenRes
+import androidx.annotation.RawRes
+import androidx.annotation.StringRes
+import androidx.core.graphics.ColorUtils
+import com.google.android.material.color.MaterialColors
+import xyz.zedler.patrick.tack.R
 
-  private final static String TAG = ResUtil.class.getSimpleName();
-
-  @NonNull
-  public static String getRawText(Context context, @RawRes int resId) {
-    InputStream inputStream = context.getResources().openRawResource(resId);
-    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-    StringBuilder text = new StringBuilder();
-    try {
-      for (String line; (line = bufferedReader.readLine()) != null; ) {
-        text.append(line).append('\n');
-      }
-      text.deleteCharAt(text.length() - 1);
-      inputStream.close();
-    } catch (Exception e) {
-      Log.e(TAG, "getRawText", e);
-    }
-    return text.toString();
+fun Context.getRawText(@RawRes resId: Int): String {
+  return try {
+    resources.openRawResource(resId).bufferedReader().use { it.readText() }.trimEnd()
+  } catch (e: Exception) {
+    Log.e("ResUtil", "getRawText", e)
+    ""
   }
+}
 
-  public static void share(Context context, @StringRes int resId) {
-    share(context, context.getString(resId));
-  }
+fun Context.share(@StringRes resId: Int) {
+  share(getString(resId))
+}
 
-  public static void share(Context context, String text) {
-    Intent intent = new Intent(Intent.ACTION_SEND);
-    intent.putExtra(Intent.EXTRA_TEXT, text);
-    intent.setType("text/plain");
-    context.startActivity(Intent.createChooser(intent, null));
+fun Context.share(text: String) {
+  val intent = Intent(Intent.ACTION_SEND).apply {
+    putExtra(Intent.EXTRA_TEXT, text)
+    type = "text/plain"
   }
+  startActivity(Intent.createChooser(intent, null))
+}
 
-  public static int getColor(Context context, @AttrRes int resId) {
-    return MaterialColors.getColor(context, resId, Color.BLACK);
-  }
+fun Context.getAttrColor(@AttrRes resId: Int): Int {
+  return MaterialColors.getColor(this, resId, Color.BLACK)
+}
 
-  public static int getColor(Context context, @AttrRes int resId, float alpha) {
-    return ColorUtils.setAlphaComponent(getColor(context, resId), (int) (alpha * 255));
-  }
+fun Context.getAttrColor(@AttrRes resId: Int, alpha: Float): Int {
+  return ColorUtils.setAlphaComponent(getAttrColor(resId), (alpha * 255).toInt())
+}
 
-  public static int getSysColor(Context context, @AttrRes int resId) {
-    TypedValue typedValue = new TypedValue();
-    context.getTheme().resolveAttribute(resId, typedValue, true);
-    return typedValue.data;
-  }
+fun Context.getSysColor(@AttrRes resId: Int): Int {
+  val typedValue = TypedValue()
+  theme.resolveAttribute(resId, typedValue, true)
+  return typedValue.data
+}
 
-  public static int getColorHighlight(Context context) {
-    return getColor(context, R.attr.colorSecondary, 0.09f);
-  }
+fun Context.getColorHighlight(): Int {
+  return getAttrColor(R.attr.colorSecondary, 0.09f)
+}
 
-  public static void tintMenuIcons(Context context, Menu menu) {
-    if (menu != null) {
-      for (int i = 0; i < menu.size(); i++) {
-        MenuItem item = menu.getItem(i);
-        if (item != null) {
-          tintIcon(context, item.getIcon());
-        }
-      }
-    }
+fun Menu.tintIcons(context: Context) {
+  for (i in 0 until size) {
+    get(i).icon?.tint(context)
   }
+}
 
-  public static void tintIcon(Context context, Drawable icon) {
-    if (icon != null) {
-      icon.setTint(ResUtil.getColor(context, R.attr.colorOnSurfaceVariant));
-    }
-  }
+fun Drawable.tint(context: Context) {
+  setTint(context.getAttrColor(R.attr.colorOnSurfaceVariant))
+}
 
-  public static int getDimension(Context context, @DimenRes int resId) {
-    return (int) context.getResources().getDimension(resId);
-  }
+fun Context.getDimension(@DimenRes resId: Int): Int {
+  return resources.getDimension(resId).toInt()
 }

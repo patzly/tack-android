@@ -17,243 +17,230 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack;
+package xyz.zedler.patrick.tack
 
-import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.app.AppCompatDelegate
 
-public final class Constants {
+object Constants {
 
-  public final static long ANIM_DURATION_LONG = 400;
-  public final static long ANIM_DURATION_SHORT = 250;
-  public static final long BEAT_ANIM_OFFSET = 25;
-  public static final int TEMPO_MIN = 1;
-  public static final int TEMPO_MAX = 600;
-  public static final int BEATS_MAX = 20;
-  public static final int SUBS_MAX = 10;
-  public static final int COUNT_IN_MAX = 4;
-  public static final int TIMER_MAX = 399;
-  public static final int INCREMENTAL_AMOUNT_MAX = 99;
-  public static final int INCREMENTAL_INTERVAL_MAX = 400;
-  public static final int MUTE_PLAY_MAX = 20;
-  public static final int MUTE_MUTE_MIN = 1;
-  public static final int MUTE_MUTE_MIN_BEATS = 0;
-  public static final int MUTE_MUTE_MAX = 20;
-  public static final int MUTE_MUTE_MAX_BEATS = 100;
-  public static final int MUTE_MUTE_STEP_SIZE = 1;
-  public static final int MUTE_MUTE_STEP_SIZE_BEATS = 5;
-  public static final String SONG_ID_DEFAULT = "default";
+  const val ANIM_DURATION_LONG: Long = 400
+  const val ANIM_DURATION_SHORT: Long = 250
+  const val BEAT_ANIM_OFFSET: Long = 25
+  const val TEMPO_MIN: Int = 1
+  const val TEMPO_MAX: Int = 600
+  const val BEATS_MAX: Int = 20
+  const val SUBS_MAX: Int = 10
+  const val COUNT_IN_MAX: Int = 4
+  const val TIMER_MAX: Int = 399
+  const val INCREMENTAL_AMOUNT_MAX: Int = 99
+  const val INCREMENTAL_INTERVAL_MAX: Int = 400
+  const val MUTE_PLAY_MAX: Int = 20
+  const val MUTE_MUTE_MIN: Int = 1
+  const val MUTE_MUTE_MIN_BEATS: Int = 0
+  const val MUTE_MUTE_MAX: Int = 20
+  const val MUTE_MUTE_MAX_BEATS: Int = 100
+  const val MUTE_MUTE_STEP_SIZE: Int = 1
+  const val MUTE_MUTE_STEP_SIZE_BEATS: Int = 5
+  const val SONG_ID_DEFAULT: String = "default"
 
-  public final static class PREF {
+  object PREF {
     // General
-    public static final String THEME = "app_theme";
-    public static final String UI_MODE = "ui_mode";
-    public static final String UI_CONTRAST = "ui_contrast";
-    public static final String HAPTIC = "haptic_feedback";
-    public static final String VIBRATION_INTENSITY = "vibration_intensity";
-    public static final String REDUCE_ANIM = "reduce_animations";
-    public static final String LAST_VERSION = "last_version";
-    public static final String FEEDBACK_POP_UP_COUNT = "feedback_app_start_count";
-    public static final String SONGS_INTRO_SHOWN = "songs_intro_shown";
-    public static final String SONGS_VISIT_COUNT = "songs_visit_count";
-    public static final String CHECK_UNLOCK_KEY = "check_installer";
-    public static final String PERMISSION_DENIED = "notification_permission_denied";
+    const val THEME: String = "app_theme"
+    const val UI_MODE: String = "ui_mode"
+    const val UI_CONTRAST: String = "ui_contrast"
+    const val HAPTIC: String = "haptic_feedback"
+    const val VIBRATION_INTENSITY: String = "vibration_intensity"
+    const val REDUCE_ANIM: String = "reduce_animations"
+    const val LAST_VERSION: String = "last_version"
+    const val FEEDBACK_POP_UP_COUNT: String = "feedback_app_start_count"
+    const val SONGS_INTRO_SHOWN: String = "songs_intro_shown"
+    const val SONGS_VISIT_COUNT: String = "songs_visit_count"
+    const val CHECK_UNLOCK_KEY: String = "check_installer"
+    const val PERMISSION_DENIED: String = "notification_permission_denied"
 
     // Metronome
-    public final static String TEMPO = "tempo";
-    public final static String BEATS = "beats";
-    public final static String SUBDIVISIONS = "subdivisions";
-    public final static String USE_POLYRHYTHM = "use_polyrhythm";
-    public final static String BEAT_MODE = "beat_mode";
-    public final static String ACTIVE_BEAT = "highlight_active_beat";
-    public final static String SHOW_ELAPSED = "show_elapsed";
-    public final static String RESET_TIMER_ON_STOP = "reset_timer";
-    public final static String BIG_TIME_TEXT = "big_time_text";
-    public final static String PERM_NOTIFICATION = "permanent_notification";
-    public final static String FLASH_SCREEN = "flash_screen_strength";
-    public final static String FLASHLIGHT = "flashlight_strength";
-    public final static String KEEP_AWAKE = "keep_screen_awake";
-    public final static String SOUND = "sound";
-    public final static String LATENCY = "latency_ms";
-    public final static String IGNORE_FOCUS = "ignore_focus";
-    public final static String GAIN = "gain";
-    public final static String BIG_LOGO = "big_logo";
-    public final static String TEMPO_INPUT_KEYBOARD = "tempo_input_keyboard";
-    public final static String TEMPO_TAP_INSTANT = "tempo_tap_instant";
+    const val TEMPO: String = "tempo"
+    const val BEATS: String = "beats"
+    const val SUBDIVISIONS: String = "subdivisions"
+    const val USE_POLYRHYTHM: String = "use_polyrhythm"
+    const val BEAT_MODE: String = "beat_mode"
+    const val ACTIVE_BEAT: String = "highlight_active_beat"
+    const val SHOW_ELAPSED: String = "show_elapsed"
+    const val RESET_TIMER_ON_STOP: String = "reset_timer"
+    const val BIG_TIME_TEXT: String = "big_time_text"
+    const val PERM_NOTIFICATION: String = "permanent_notification"
+    const val FLASH_SCREEN: String = "flash_screen_strength"
+    const val FLASHLIGHT: String = "flashlight_strength"
+    const val KEEP_AWAKE: String = "keep_screen_awake"
+    const val SOUND: String = "sound"
+    const val LATENCY: String = "latency_ms"
+    const val IGNORE_FOCUS: String = "ignore_focus"
+    const val GAIN: String = "gain"
+    const val BIG_LOGO: String = "big_logo"
+    const val TEMPO_INPUT_KEYBOARD: String = "tempo_input_keyboard"
+    const val TEMPO_TAP_INSTANT: String = "tempo_tap_instant"
 
     // Options
-    public final static String COUNT_IN = "count_in";
-    public final static String INCREMENTAL_AMOUNT = "incremental_amount";
-    public final static String INCREMENTAL_INCREASE = "incremental_increase";
-    public final static String INCREMENTAL_INTERVAL = "incremental_interval";
-    public final static String INCREMENTAL_UNIT = "incremental_unit";
-    public final static String INCREMENTAL_LIMIT = "incremental_limit";
-    public final static String TIMER_DURATION = "timer_duration";
-    public final static String TIMER_UNIT = "timer_unit";
-    public final static String MUTE_PLAY = "mute_play";
-    public final static String MUTE_MUTE = "mute_mute";
-    public final static String MUTE_UNIT = "mute_unit";
-    public final static String MUTE_RANDOM = "mute_random";
+    const val COUNT_IN: String = "count_in"
+    const val INCREMENTAL_AMOUNT: String = "incremental_amount"
+    const val INCREMENTAL_INCREASE: String = "incremental_increase"
+    const val INCREMENTAL_INTERVAL: String = "incremental_interval"
+    const val INCREMENTAL_UNIT: String = "incremental_unit"
+    const val INCREMENTAL_LIMIT: String = "incremental_limit"
+    const val TIMER_DURATION: String = "timer_duration"
+    const val TIMER_UNIT: String = "timer_unit"
+    const val MUTE_PLAY: String = "mute_play"
+    const val MUTE_MUTE: String = "mute_mute"
+    const val MUTE_UNIT: String = "mute_unit"
+    const val MUTE_RANDOM: String = "mute_random"
 
     // Song library
-    public static final String SONGS_ORDER = "songs_order";
-    public static final String SONG_CURRENT_ID = "current_song_id";
-    public static final String PART_CURRENT_INDEX = "current_part_index";
+    const val SONGS_ORDER: String = "songs_order"
+    const val SONG_CURRENT_ID: String = "current_song_id"
+    const val PART_CURRENT_INDEX: String = "current_part_index"
   }
 
-  public final static class DEF {
+  object DEF {
     // General
-    public static final String THEME = "";
-    public static final int UI_MODE = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM;
-    public static final String UI_CONTRAST = CONTRAST.STANDARD;
-    public static final boolean REDUCE_ANIM = false;
-    public static final String VIBRATION_INTENSITY = Constants.VIBRATION_INTENSITY.AUTO;
+    const val THEME: String = ""
+    const val UI_MODE: Int = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+    const val UI_CONTRAST: String = CONTRAST.STANDARD
+    const val REDUCE_ANIM: Boolean = false
+    const val VIBRATION_INTENSITY: String = Constants.VIBRATION_INTENSITY.AUTO
 
     // Metronome
-    public final static int TEMPO = 120;
-    public final static String BEATS = String.join(
-        ",", TICK_TYPE.STRONG, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL
-    );
-    public final static String SUBDIVISIONS = TICK_TYPE.BEAT_SUB;
-    public final static boolean USE_POLYRHYTHM = false;
-    public final static String BEAT_MODE = Constants.BEAT_MODE.ALL;
-    public final static boolean ACTIVE_BEAT = false;
-    public final static boolean SHOW_ELAPSED = false;
-    public final static boolean RESET_TIMER_ON_STOP = false;
-    public final static boolean BIG_TIME_TEXT = false;
-    public final static boolean PERM_NOTIFICATION = false;
-    public final static String FLASH_SCREEN = Constants.FLASH_SCREEN.OFF;
-    public final static String FLASHLIGHT = Constants.FLASHLIGHT.OFF;
-    public final static String KEEP_AWAKE = Constants.KEEP_AWAKE.WHILE_PLAYING;
-    public final static String SOUND = Constants.SOUND.SINE;
-    public final static long LATENCY = 0;
-    public final static boolean IGNORE_FOCUS = false;
-    public final static int GAIN = 0;
-    public final static boolean BIG_LOGO = false;
-    public final static boolean TEMPO_INPUT_KEYBOARD = false;
-    public final static boolean TEMPO_TAP_INSTANT = true;
+    const val TEMPO: Int = 120
+    val BEATS: String = listOf(
+      TICK_TYPE.STRONG, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL, TICK_TYPE.NORMAL
+    ).joinToString(",")
+    const val SUBDIVISIONS: String = TICK_TYPE.BEAT_SUB
+    const val USE_POLYRHYTHM: Boolean = false
+    const val BEAT_MODE: String = Constants.BEAT_MODE.ALL
+    const val ACTIVE_BEAT: Boolean = false
+    const val SHOW_ELAPSED: Boolean = false
+    const val RESET_TIMER_ON_STOP: Boolean = false
+    const val BIG_TIME_TEXT: Boolean = false
+    const val PERM_NOTIFICATION: Boolean = false
+    const val FLASH_SCREEN: String = Constants.FLASH_SCREEN.OFF
+    const val FLASHLIGHT: String = Constants.FLASHLIGHT.OFF
+    const val KEEP_AWAKE: String = Constants.KEEP_AWAKE.WHILE_PLAYING
+    const val SOUND: String = Constants.SOUND.SINE
+    const val LATENCY: Long = 0
+    const val IGNORE_FOCUS: Boolean = false
+    const val GAIN: Int = 0
+    const val BIG_LOGO: Boolean = false
+    const val TEMPO_INPUT_KEYBOARD: Boolean = false
+    const val TEMPO_TAP_INSTANT: Boolean = true
 
     // Options
-    public final static int COUNT_IN = 0;
-    public final static int INCREMENTAL_AMOUNT = 0;
-    public final static boolean INCREMENTAL_INCREASE = true;
-    public final static int INCREMENTAL_INTERVAL = 1;
-    public final static String INCREMENTAL_UNIT = UNIT.BARS;
-    public final static int INCREMENTAL_LIMIT = 0;
-    public final static int TIMER_DURATION = 0;
-    public final static String TIMER_UNIT = UNIT.BARS;
-    public final static int MUTE_PLAY = 1;
-    public final static int MUTE_MUTE = 0;
-    public final static String MUTE_UNIT = UNIT.BEATS;
-    public final static boolean MUTE_RANDOM = false;
+    const val COUNT_IN: Int = 0
+    const val INCREMENTAL_AMOUNT: Int = 0
+    const val INCREMENTAL_INCREASE: Boolean = true
+    const val INCREMENTAL_INTERVAL: Int = 1
+    const val INCREMENTAL_UNIT: String = UNIT.BARS
+    const val INCREMENTAL_LIMIT: Int = 0
+    const val TIMER_DURATION: Int = 0
+    const val TIMER_UNIT: String = UNIT.BARS
+    const val MUTE_PLAY: Int = 1
+    const val MUTE_MUTE: Int = 0
+    const val MUTE_UNIT: String = UNIT.BEATS
+    const val MUTE_RANDOM: Boolean = false
 
     // Song library
-    public final static int SONGS_ORDER = 0;
-    public final static String SONG_CURRENT_ID = SONG_ID_DEFAULT;
-    public final static int PART_CURRENT_INDEX = 0;
+    const val SONGS_ORDER: Int = 0
+    const val SONG_CURRENT_ID: String = SONG_ID_DEFAULT
+    const val PART_CURRENT_INDEX: Int = 0
   }
 
-  public final static class SOUND {
-
-    public final static String SINE = "sine";
-    public final static String WOOD = "wood";
-    public final static String MECHANICAL = "mechanical";
-    public final static String BEATBOXING_1 = "beatboxing_1";
-    public final static String BEATBOXING_2 = "beatboxing_2";
-    public final static String HANDS = "hands";
-    public final static String FOLDING = "folding";
+  object SOUND {
+    const val SINE: String = "sine"
+    const val WOOD: String = "wood"
+    const val MECHANICAL: String = "mechanical"
+    const val BEATBOXING_1: String = "beatboxing_1"
+    const val BEATBOXING_2: String = "beatboxing_2"
+    const val HANDS: String = "hands"
+    const val FOLDING: String = "folding"
   }
 
-  public final static class BEAT_MODE {
-
-    public final static String ALL = "all";
-    public final static String SOUND = "sound";
-    public final static String VIBRATION = "vibration";
+  object BEAT_MODE {
+    const val ALL: String = "all"
+    const val SOUND: String = "sound"
+    const val VIBRATION: String = "vibration"
   }
 
-  public final static class FLASH_SCREEN {
-
-    public final static String OFF = "off";
-    public final static String SUBTLE = "subtle";
-    public final static String STRONG = "strong";
+  object FLASH_SCREEN {
+    const val OFF: String = "off"
+    const val SUBTLE: String = "subtle"
+    const val STRONG: String = "strong"
   }
 
-  public final static class FLASHLIGHT {
-
-    public final static String OFF = "off";
-    public final static String SUBTLE = "subtle";
-    public final static String STRONG = "strong";
+  object FLASHLIGHT {
+    const val OFF: String = "off"
+    const val SUBTLE: String = "subtle"
+    const val STRONG: String = "strong"
   }
 
-  public final static class KEEP_AWAKE {
-
-    public final static String ALWAYS = "always";
-    public final static String WHILE_PLAYING = "while_playing";
-    public final static String NEVER = "never";
+  object KEEP_AWAKE {
+    const val ALWAYS: String = "always"
+    const val WHILE_PLAYING: String = "while_playing"
+    const val NEVER: String = "never"
   }
 
-  public final static class TICK_TYPE {
-
-    public final static String NORMAL = "normal";
-    public final static String STRONG = "strong";
-    public final static String SUB = "sub";
-    public final static String MUTED = "muted";
-    public final static String BEAT_SUB = "beat_sub";
-    public final static String BEAT_SUB_MUTED = "beat_sub_muted";
+  object TICK_TYPE {
+    const val NORMAL: String = "normal"
+    const val STRONG: String = "strong"
+    const val SUB: String = "sub"
+    const val MUTED: String = "muted"
+    const val BEAT_SUB: String = "beat_sub"
+    const val BEAT_SUB_MUTED: String = "beat_sub_muted"
   }
 
-  public final static class UNIT {
-
-    public final static String BEATS = "beats";
-    public final static String BARS = "bars";
-    public final static String SECONDS = "seconds";
-    public final static String MINUTES = "minutes";
+  object UNIT {
+    const val BEATS: String = "beats"
+    const val BARS: String = "bars"
+    const val SECONDS: String = "seconds"
+    const val MINUTES: String = "minutes"
   }
 
-  public final static class SONGS_ORDER {
-
-    public final static int NAME_ASC = 0;
-    public final static int LAST_PLAYED_ASC = 2;
-    public final static int MOST_PLAYED_ASC = 4;
+  object SONGS_ORDER {
+    const val NAME_ASC: Int = 0
+    const val LAST_PLAYED_ASC: Int = 2
+    const val MOST_PLAYED_ASC: Int = 4
   }
 
-  public final static class ACTION {
-
-    public final static String START = "xyz.zedler.patrick.tack.intent.action.START";
-    public final static String STOP = "xyz.zedler.patrick.tack.intent.action.STOP";
-    public final static String DISMISS = "xyz.zedler.patrick.tack.intent.action.DISMISS";
-    public final static String APPLY_SONG = "xyz.zedler.patrick.tack.intent.action.APPLY_SONG";
-    public final static String START_SONG = "xyz.zedler.patrick.tack.intent.action.START_SONG";
-    public final static String SHOW_SONGS = "xyz.zedler.patrick.tack.intent.action.SHOW_SONGS";
+  object ACTION {
+    const val START: String = "xyz.zedler.patrick.tack.intent.action.START"
+    const val STOP: String = "xyz.zedler.patrick.tack.intent.action.STOP"
+    const val DISMISS: String = "xyz.zedler.patrick.tack.intent.action.DISMISS"
+    const val APPLY_SONG: String = "xyz.zedler.patrick.tack.intent.action.APPLY_SONG"
+    const val START_SONG: String = "xyz.zedler.patrick.tack.intent.action.START_SONG"
+    const val SHOW_SONGS: String = "xyz.zedler.patrick.tack.intent.action.SHOW_SONGS"
   }
 
-  public final static class EXTRA {
-
-    public static final String RUN_AS_SUPER_CLASS = "run_as_super_class";
-    public static final String INSTANCE_STATE = "instance_state";
-    public static final String SCROLL_POSITION = "scroll_position";
-    public static final String SONG_ID = "song_id";
+  object EXTRA {
+    const val RUN_AS_SUPER_CLASS: String = "run_as_super_class"
+    const val INSTANCE_STATE: String = "instance_state"
+    const val SCROLL_POSITION: String = "scroll_position"
+    const val SONG_ID: String = "song_id"
   }
 
-  public static final class THEME {
-
-    public static final String DYNAMIC = "dynamic";
-    public static final String RED = "red";
-    public static final String YELLOW = "yellow";
-    public static final String GREEN = "green";
-    public static final String BLUE = "blue";
+  object THEME {
+    const val DYNAMIC: String = "dynamic"
+    const val RED: String = "red"
+    const val YELLOW: String = "yellow"
+    const val GREEN: String = "green"
+    const val BLUE: String = "blue"
   }
 
-  public static final class CONTRAST {
-
-    public static final String STANDARD = "standard";
-    public static final String MEDIUM = "medium";
-    public static final String HIGH = "high";
+  object CONTRAST {
+    const val STANDARD: String = "standard"
+    const val MEDIUM: String = "medium"
+    const val HIGH: String = "high"
   }
 
-  public static final class VIBRATION_INTENSITY {
-
-    public static final String AUTO = "auto";
-    public static final String SOFT = "soft";
-    public static final String STRONG = "strong";
+  object VIBRATION_INTENSITY {
+    const val AUTO: String = "auto"
+    const val SOFT: String = "soft"
+    const val STRONG: String = "strong"
   }
 }

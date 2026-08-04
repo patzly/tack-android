@@ -17,178 +17,131 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util.dialog;
+package xyz.zedler.patrick.tack.util.dialog
 
-import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewTreeObserver;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import com.google.android.material.slider.Slider;
-import com.google.android.material.slider.Slider.OnChangeListener;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.databinding.PartialDialogSongOptionsBinding;
-import xyz.zedler.patrick.tack.fragment.SongFragment;
-import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.UiUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil;
+import android.os.Bundle
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.activity.MainActivity
+import xyz.zedler.patrick.tack.databinding.PartialDialogSongOptionsBinding
+import xyz.zedler.patrick.tack.fragment.SongFragment
+import xyz.zedler.patrick.tack.util.*
 
-public class SongOptionsDialogUtil implements OnClickListener, OnCheckedChangeListener,
-    OnChangeListener {
+class SongOptionsDialogUtil(
+  private val activity: MainActivity,
+  private val fragment: SongFragment
+) {
 
-  private static final String TAG = SongOptionsDialogUtil.class.getSimpleName();
+  private val binding = PartialDialogSongOptionsBinding.inflate(activity.layoutInflater)
+  private val dialogUtil = DialogUtil(activity, "song_options")
+  private var looped = false
+  private var speed = 100
 
-  private static final String LOOPED = "looped_dialog";
-  private static final String SPEED = "speed_dialog";
+  init {
+    dialogUtil.createDialog { builder ->
+      builder.setTitle(R.string.label_song_options_dialog)
+      builder.setView(binding.root)
+      builder.setPositiveButton(R.string.action_apply) { _, _ ->
+        activity.performHapticClick()
+        apply()
+      }
+      builder.setNegativeButton(R.string.action_cancel) { _, _ ->
+        activity.performHapticClick()
+      }
+    }
 
-  private final MainActivity activity;
-  private final SongFragment fragment;
-  private final PartialDialogSongOptionsBinding binding;
-  private final DialogUtil dialogUtil;
-  private boolean looped;
-  private int speed;
+    binding.linearSongOptionsLooped.setOnClickListener {
+      binding.switchSongOptionsLooped.toggle()
+    }
 
-  public SongOptionsDialogUtil(MainActivity activity, SongFragment fragment) {
-    this.activity = activity;
-    this.fragment = fragment;
+    binding.switchSongOptionsLooped.setOnCheckedChangeListener { _, isChecked ->
+      activity.performHapticClick()
+      looped = isChecked
+    }
 
-    binding = PartialDialogSongOptionsBinding.inflate(activity.getLayoutInflater());
+    binding.sliderSongOptionsSpeed.addOnChangeListener { slider, value, fromUser ->
+      if (fromUser) {
+        activity.performHapticSegmentTick(slider, true)
+        speed = value.toInt()
+        updateSpeedDisplay()
+      }
+    }
 
-    dialogUtil = new DialogUtil(activity, "song_options");
-    dialogUtil.createDialog(builder -> {
-      builder.setTitle(R.string.label_song_options_dialog);
-      builder.setView(binding.getRoot());
-      builder.setPositiveButton(R.string.action_apply, (dialog, which) -> {
-        activity.performHapticClick();
-        apply();
-      });
-      builder.setNegativeButton(
-          R.string.action_cancel, (dialog, which) -> activity.performHapticClick()
-      );
-    });
-
-    setDividerVisibility(!UiUtil.isOrientationPortrait(activity));
+    updateDividerVisibility(activity.isOrientationPortrait().not())
   }
 
-  @Override
-  public void onClick(View v) {
-    int id = v.getId();
-    if (id == R.id.linear_song_options_looped) {
-      binding.switchSongOptionsLooped.toggle();
+  fun show() {
+    update()
+    dialogUtil.show()
+  }
+
+  fun showIfWasShown(state: Bundle?) {
+    state?.let {
+      looped = it.getBoolean(LOOPED)
+      speed = it.getInt(SPEED, 100)
+    }
+    update()
+    dialogUtil.showIfWasShown(state)
+  }
+
+  fun dismiss() {
+    dialogUtil.dismiss()
+  }
+
+  fun saveState(outState: Bundle) {
+    dialogUtil.saveState(outState)
+    outState.putBoolean(LOOPED, looped)
+    outState.putInt(SPEED, speed)
+  }
+
+  fun update() {
+    binding.switchSongOptionsLooped.isChecked = looped
+    binding.switchSongOptionsLooped.jumpDrawablesToCurrentState()
+
+    binding.sliderSongOptionsSpeed.configureSafely(
+      5, 100, 5, speed
+    )
+    updateSpeedDisplay()
+
+    measureScrollView()
+  }
+
+  fun setSongOptions(looped: Boolean, speed: Int) {
+    this.looped = looped
+    this.speed = speed
+    update()
+  }
+
+  private fun apply() {
+    fragment.setSongOptions(looped, speed)
+  }
+
+  private fun updateSpeedDisplay() {
+    binding.textSongOptionsSpeed.text = if (speed == 100) {
+      activity.getString(R.string.label_song_speed_description_original)
+    } else {
+      activity.getString(R.string.label_song_speed_description, speed)
     }
   }
 
-  @Override
-  public void onCheckedChanged(@NonNull CompoundButton buttonView, boolean isChecked) {
-    int id = buttonView.getId();
-    if (id == R.id.switch_song_options_looped) {
-      activity.performHapticClick();
-      looped = isChecked;
+  private fun measureScrollView() {
+    binding.scrollSongOptions.onGlobalLayout {
+      val isScrollable = binding.scrollSongOptions.canScrollVertically(-1) ||
+          binding.scrollSongOptions.canScrollVertically(1)
+      updateDividerVisibility(isScrollable)
     }
   }
 
-  @Override
-  public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
-    if (!fromUser || binding == null) {
-      return;
-    }
-    int id = slider.getId();
-    if (id == R.id.slider_song_options_speed) {
-      activity.performHapticSegmentTick(slider, true);
-      speed = (int) value;
-      binding.textSongOptionsSpeed.setText(
-          speed == 100
-              ? activity.getString(R.string.label_song_speed_description_original)
-              : activity.getString(R.string.label_song_speed_description, speed)
-      );
-    }
+  private fun updateDividerVisibility(visible: Boolean) {
+    binding.scrollSongOptions.setDividerVisibility(
+      visible,
+      binding.dividerSongOptionsTop,
+      binding.dividerSongOptionsBottom,
+      binding.linearSongOptionsContainer
+    )
   }
 
-  public void show() {
-    update();
-    dialogUtil.show();
-  }
-
-  public void showIfWasShown(@Nullable Bundle state) {
-    looped = state != null && state.getBoolean(LOOPED);
-    speed = state != null ? state.getInt(SPEED) : 100;
-    update();
-    dialogUtil.showIfWasShown(state);
-  }
-
-  public void dismiss() {
-    dialogUtil.dismiss();
-  }
-
-  public void saveState(@NonNull Bundle outState) {
-    if (dialogUtil != null) {
-      dialogUtil.saveState(outState);
-    }
-    outState.putBoolean(LOOPED, looped);
-    outState.putInt(SPEED, speed);
-  }
-
-  public void update() {
-    if (binding == null) {
-      return;
-    }
-    binding.linearSongOptionsLooped.setOnClickListener(this);
-
-    binding.switchSongOptionsLooped.setChecked(looped);
-    binding.switchSongOptionsLooped.jumpDrawablesToCurrentState();
-    binding.switchSongOptionsLooped.setOnCheckedChangeListener(this);
-
-    binding.sliderSongOptionsSpeed.removeOnChangeListener(this);
-    ViewUtil.configureSliderSafely(
-        binding.sliderSongOptionsSpeed, 5, 100, 5, speed
-    );
-    binding.sliderSongOptionsSpeed.addOnChangeListener(this);
-
-    binding.textSongOptionsSpeed.setText(
-        speed == 100
-            ? activity.getString(R.string.label_song_speed_description_original)
-            : activity.getString(R.string.label_song_speed_description, speed)
-    );
-
-    measureScrollView();
-  }
-
-  public void setSongOptions(boolean looped, int speed) {
-    this.looped = looped;
-    this.speed = speed;
-    update();
-  }
-
-  private void apply() {
-    fragment.setSongOptions(looped, speed);
-  }
-
-  private void measureScrollView() {
-    binding.scrollSongOptions.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            boolean isScrollable = binding.scrollSongOptions.canScrollVertically(-1)
-                || binding.scrollSongOptions.canScrollVertically(1);
-            setDividerVisibility(isScrollable);
-            binding.scrollSongOptions.getViewTreeObserver()
-                .removeOnGlobalLayoutListener(this);
-          }
-        });
-  }
-
-  private void setDividerVisibility(boolean visible) {
-    binding.dividerSongOptionsTop.setVisibility(visible ? View.VISIBLE : View.GONE);
-    binding.dividerSongOptionsBottom.setVisibility(visible ? View.VISIBLE : View.GONE);
-    binding.linearSongOptionsContainer.setPadding(
-        binding.linearSongOptionsContainer.getPaddingLeft(),
-        visible ? UiUtil.dpToPx(activity, 16) : 0,
-        binding.linearSongOptionsContainer.getPaddingRight(),
-        visible ? UiUtil.dpToPx(activity, 16) : 0
-    );
+  companion object {
+    private const val LOOPED = "looped_dialog"
+    private const val SPEED = "speed_dialog"
   }
 }

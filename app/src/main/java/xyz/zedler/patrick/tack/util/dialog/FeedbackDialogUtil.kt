@@ -17,179 +17,162 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util.dialog;
+package xyz.zedler.patrick.tack.util.dialog
 
-import android.content.ActivityNotFoundException;
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewTreeObserver;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.databinding.PartialDialogFeedbackBinding;
-import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.UiUtil;
-import xyz.zedler.patrick.tack.util.UnlockUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil;
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.View
+import androidx.core.view.isVisible
+import xyz.zedler.patrick.tack.Constants.PREF
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.activity.MainActivity
+import xyz.zedler.patrick.tack.databinding.PartialDialogFeedbackBinding
+import xyz.zedler.patrick.tack.util.*
+import androidx.core.content.edit
+import androidx.core.net.toUri
 
-public class FeedbackDialogUtil implements OnClickListener {
+class FeedbackDialogUtil(
+  private val activity: MainActivity,
+  private val onSupportClick: () -> Unit
+) : View.OnClickListener {
 
-  private static final String TAG = FeedbackDialogUtil.class.getSimpleName();
+  private val binding = PartialDialogFeedbackBinding.inflate(activity.layoutInflater)
+  private val dialogUtil = DialogUtil(activity, "feedback")
+  private val viewUtil = ViewUtil()
 
-  private final PartialDialogFeedbackBinding binding;
-  private final DialogUtil dialogUtil;
-  private final ViewUtil viewUtil;
-  private final MainActivity activity;
-  private final Runnable onSupportClick;
-
-  public FeedbackDialogUtil(MainActivity activity, @NonNull Runnable onSupportClick) {
-    this.activity = activity;
-    this.onSupportClick = onSupportClick;
-
-    binding = PartialDialogFeedbackBinding.inflate(activity.getLayoutInflater());
-
-    dialogUtil = new DialogUtil(activity, "feedback");
-    dialogUtil.createDialog(builder -> {
-      builder.setTitle(R.string.title_feedback);
-      builder.setView(binding.getRoot());
-      builder.setPositiveButton(
-          R.string.action_close, (dialog, which) -> activity.performHapticClick()
-      );
-      builder.setOnDismissListener(dialog -> {
-        if (activity.getSharedPrefs().getInt(PREF.FEEDBACK_POP_UP_COUNT, 1) != 0) {
-          activity.getSharedPrefs().edit().putInt(PREF.FEEDBACK_POP_UP_COUNT, 0).apply();
-        }
-      });
-    });
-
-    viewUtil = new ViewUtil();
-
-    ViewUtil.setOnClickListeners(
-        this,
-        binding.linearFeedbackRate,
-        binding.linearFeedbackSupport,
-        binding.linearFeedbackIssue,
-        binding.linearFeedbackEmail,
-        binding.linearFeedbackRecommend
-    );
-
-    setDividerVisibility(!UiUtil.isOrientationPortrait(activity));
-  }
-
-  @Override
-  public void onClick(View v) {
-    int id = v.getId();
-    if (viewUtil.isClickDisabled(id)) {
-      return;
-    }
-    activity.performHapticClick();
-    if (id == R.id.linear_feedback_rate) {
-      Uri uri = Uri.parse(
-          "market://details?id=" + activity.getApplicationContext().getPackageName()
-      );
-      Intent goToMarket = new Intent(Intent.ACTION_VIEW, uri);
-      goToMarket.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY |
-          Intent.FLAG_ACTIVITY_NEW_DOCUMENT |
-          Intent.FLAG_ACTIVITY_MULTIPLE_TASK |
-          Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-      try {
-        activity.startActivity(goToMarket);
-      } catch (ActivityNotFoundException e) {
-        activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(
-            "http://play.google.com/store/apps/details?id="
-                + activity.getApplicationContext().getPackageName()
-        )));
+  init {
+    dialogUtil.createDialog { builder ->
+      builder.setTitle(R.string.title_feedback)
+      builder.setView(binding.root)
+      builder.setPositiveButton(R.string.action_close) { _, _ ->
+        activity.performHapticClick()
       }
-    } if (id == R.id.linear_feedback_support) {
-      new Handler(Looper.getMainLooper()).postDelayed(onSupportClick, 200);
-    } else if (id == R.id.linear_feedback_issue) {
-      String issues = activity.getString(R.string.app_github) + "/issues";
-      activity.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(issues)));
-    } else if (id == R.id.linear_feedback_email) {
-      Intent intent = new Intent(Intent.ACTION_SENDTO);
-      intent.setData(
-          Uri.parse(
-              "mailto:"
-                  + activity.getString(R.string.app_mail)
-                  + "?subject=" + Uri.encode("Feedback@Tack")
+      builder.setOnDismissListener {
+        if (activity.sharedPrefs.getInt(PREF.FEEDBACK_POP_UP_COUNT, 1) != 0) {
+          activity.sharedPrefs.edit { putInt(PREF.FEEDBACK_POP_UP_COUNT, 0) }
+        }
+      }
+    }
+
+    setOnClickListeners(
+      this,
+      binding.linearFeedbackRate,
+      binding.linearFeedbackSupport,
+      binding.linearFeedbackIssue,
+      binding.linearFeedbackEmail,
+      binding.linearFeedbackRecommend
+    )
+
+    updateDividerVisibility(activity.isOrientationPortrait().not())
+  }
+
+  override fun onClick(v: View) {
+    if (viewUtil.isClickDisabled(v.id)) return
+    activity.performHapticClick()
+
+    when (v.id) {
+      R.id.linear_feedback_rate -> {
+        val uri = "market://details?id=${activity.packageName}".toUri()
+        val goToMarket = Intent(Intent.ACTION_VIEW, uri).apply {
+          addFlags(
+            Intent.FLAG_ACTIVITY_NO_HISTORY or
+                Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
+                Intent.FLAG_ACTIVITY_MULTIPLE_TASK or
+                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
           )
-      );
-      activity.startActivity(
+        }
+        try {
+          activity.startActivity(goToMarket)
+        } catch (e: ActivityNotFoundException) {
+          activity.startActivity(
+            Intent(
+              Intent.ACTION_VIEW,
+              "http://play.google.com/store/apps/details?id=${activity.packageName}".toUri()
+            )
+          )
+        }
+      }
+
+      R.id.linear_feedback_support -> {
+        Handler(Looper.getMainLooper()).postDelayed({ onSupportClick() }, 200)
+      }
+
+      R.id.linear_feedback_issue -> {
+        val issues = "${activity.getString(R.string.app_github)}/issues"
+        activity.startActivity(Intent(Intent.ACTION_VIEW, issues.toUri()))
+      }
+
+      R.id.linear_feedback_email -> {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+          data = "mailto:${
+            activity.getString(R.string.app_mail)
+          }?subject=${Uri.encode("Feedback@Tack")}".toUri()
+        }
+        activity.startActivity(
           Intent.createChooser(intent, activity.getString(R.string.action_send_feedback))
-      );
-    } else if (id == R.id.linear_feedback_recommend) {
-      String text = activity.getString(
-          R.string.msg_recommend, activity.getString(R.string.app_vending_app)
-      );
-      ResUtil.share(activity, text);
+        )
+      }
+
+      R.id.linear_feedback_recommend -> {
+        val text = activity.getString(
+          R.string.msg_recommend,
+          activity.getString(R.string.app_vending_app)
+        )
+        activity.share(text)
+      }
     }
-    dismiss();
+    dismiss()
   }
 
-  public void show() {
-    update();
-    dialogUtil.show();
+  fun show() {
+    update()
+    dialogUtil.show()
   }
 
-  public void showIfWasShown(@Nullable Bundle state) {
-    update();
-    dialogUtil.showIfWasShown(state);
+  fun showIfWasShown(state: Bundle?) {
+    update()
+    dialogUtil.showIfWasShown(state)
   }
 
-  public void dismiss() {
-    dialogUtil.dismiss();
+  fun dismiss() {
+    dialogUtil.dismiss()
   }
 
-  public void saveState(@NonNull Bundle outState) {
-    if (dialogUtil != null) {
-      dialogUtil.saveState(outState);
+  fun saveState(outState: Bundle) {
+    dialogUtil.saveState(outState)
+  }
+
+  private fun update() {
+    binding.scrollFeedback.scrollTo(0, 0)
+    measureScrollView()
+
+    val checkUnlockKey = activity.sharedPrefs.getBoolean(
+      PREF.CHECK_UNLOCK_KEY, true
+    )
+    val isSupportVisible = checkUnlockKey &&
+        isPlayStoreInstalled(activity) &&
+        !isKeyInstalled(activity)
+    binding.linearFeedbackSupport.isVisible = isSupportVisible
+  }
+
+  private fun measureScrollView() {
+    binding.scrollFeedback.onGlobalLayout {
+      val isScrollable = binding.scrollFeedback.canScrollVertically(-1) ||
+          binding.scrollFeedback.canScrollVertically(1)
+      updateDividerVisibility(isScrollable)
     }
   }
 
-  private void update() {
-    if (binding == null) {
-      return;
-    }
-    binding.scrollFeedback.scrollTo(0, 0);
-    measureScrollView();
-
-    boolean checkUnlockKey = activity.getSharedPrefs().getBoolean(
-        PREF.CHECK_UNLOCK_KEY, true
-    );
-    boolean isSupportVisible = checkUnlockKey &&
-        UnlockUtil.isPlayStoreInstalled(activity) && !UnlockUtil.isKeyInstalled(activity);
-    binding.linearFeedbackSupport.setVisibility(isSupportVisible ? View.VISIBLE : View.GONE);
-  }
-
-  private void measureScrollView() {
-    binding.scrollFeedback.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            boolean isScrollable = binding.scrollFeedback.canScrollVertically(-1)
-                || binding.scrollFeedback.canScrollVertically(1);
-            setDividerVisibility(isScrollable);
-            binding.scrollFeedback.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-          }
-        });
-  }
-
-  private void setDividerVisibility(boolean visible) {
-    binding.dividerFeedbackTop.setVisibility(visible ? View.VISIBLE : View.GONE);
-    binding.dividerFeedbackBottom.setVisibility(visible ? View.VISIBLE : View.GONE);
-    binding.linearFeedbackContainer.setPadding(
-        binding.linearFeedbackContainer.getPaddingLeft(),
-        visible ? UiUtil.dpToPx(activity, 16) : 0,
-        binding.linearFeedbackContainer.getPaddingRight(),
-        visible ? UiUtil.dpToPx(activity, 16) : 0
-    );
+  private fun updateDividerVisibility(visible: Boolean) {
+    binding.scrollFeedback.setDividerVisibility(
+      visible,
+      binding.dividerFeedbackTop,
+      binding.dividerFeedbackBottom,
+      binding.linearFeedbackContainer
+    )
   }
 }

@@ -132,7 +132,6 @@ class MetronomeService : LifecycleService() {
   }
 
   inner class MetronomeBinder : Binder() {
-    internal val service: MetronomeService
-      get() = this@MetronomeService
+    fun getService(): MetronomeService = this@MetronomeService
   }
 }

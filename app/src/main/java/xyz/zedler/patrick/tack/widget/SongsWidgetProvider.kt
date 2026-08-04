@@ -17,159 +17,160 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.widget;
+package xyz.zedler.patrick.tack.widget
 
-import android.app.PendingIntent;
-import android.appwidget.AppWidgetManager;
-import android.appwidget.AppWidgetProvider;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.RemoteViews;
-import androidx.annotation.Nullable;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.ACTION;
-import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.activity.SongActivity;
-import xyz.zedler.patrick.tack.database.SongDatabase;
-import xyz.zedler.patrick.tack.database.entity.Song;
-import xyz.zedler.patrick.tack.util.PrefsUtil;
-import xyz.zedler.patrick.tack.widget.remote.SongsRemoteViewsService;
+import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
+import android.appwidget.AppWidgetProvider
+import android.content.Context
+import android.content.Intent
+import android.os.Build
+import android.os.Bundle
+import android.view.View
+import android.widget.RemoteViews
+import xyz.zedler.patrick.tack.Constants
+import xyz.zedler.patrick.tack.Constants.ACTION
+import xyz.zedler.patrick.tack.Constants.PREF
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.activity.MainActivity
+import xyz.zedler.patrick.tack.activity.SongActivity
+import xyz.zedler.patrick.tack.database.SongDatabase
+import xyz.zedler.patrick.tack.util.PrefsUtil
+import xyz.zedler.patrick.tack.widget.remote.SongsRemoteViewsService
+import java.util.concurrent.Executors
+import androidx.core.content.edit
 
-public class SongsWidgetProvider extends AppWidgetProvider {
+class SongsWidgetProvider : AppWidgetProvider() {
 
-  @Override
-  public void onEnabled(Context context) {
-    SharedPreferences sharedPrefs = new PrefsUtil(context).getSharedPrefs();
-    sharedPrefs.edit().putInt(PREF.SONGS_VISIT_COUNT, -1).apply();
+  override fun onEnabled(context: Context) {
+    val sharedPrefs = PrefsUtil(context).sharedPrefs
+    sharedPrefs.edit { putInt(PREF.SONGS_VISIT_COUNT, -1) }
   }
 
-  @Override
-  public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-    fetchSongs(context, areSongsEmpty -> {
-      for (int appWidgetId : appWidgetIds) {
-        updateWidget(context, appWidgetManager, appWidgetId, null, areSongsEmpty);
+  override fun onUpdate(
+    context: Context,
+    appWidgetManager: AppWidgetManager,
+    appWidgetIds: IntArray
+  ) {
+    fetchSongs(context) { areSongsEmpty ->
+      for (appWidgetId in appWidgetIds) {
+        updateWidget(context, appWidgetManager, appWidgetId, null, areSongsEmpty)
       }
-      appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_widget_songs);
-    });
-  }
-
-  @Override
-  public void onAppWidgetOptionsChanged(
-      Context context, AppWidgetManager appWidgetManager, int appWidgetId, Bundle newOptions
-  ) {
-    fetchSongs(context, areSongsEmpty -> {
-      updateWidget(context, appWidgetManager, appWidgetId, newOptions, areSongsEmpty);
-      appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.list_widget_songs);
-    });
-  }
-
-  private void updateWidget(
-      Context context,
-      AppWidgetManager appWidgetManager,
-      int appWidgetId,
-      @Nullable Bundle options,
-      boolean areSongsEmpty // for empty songs placeholder
-  ) {
-    RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_songs);
-
-    Intent intentIcon = new Intent(context, MainActivity.class);
-    PendingIntent pendingIntentIcon = PendingIntent.getActivity(
-        context, 0, intentIcon,
-        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-    );
-    views.setOnClickPendingIntent(R.id.frame_widget_songs_icon, pendingIntentIcon);
-
-    Intent intentShowSongs = new Intent(context, MainActivity.class);
-    intentShowSongs.setAction(ACTION.SHOW_SONGS);
-    PendingIntent pendingIntentShowSongs = PendingIntent.getActivity(
-        context, 0, intentShowSongs,
-        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-    );
-    views.setOnClickPendingIntent(R.id.linear_widget_songs_header, pendingIntentShowSongs);
-
-    options = options != null ? options : appWidgetManager.getAppWidgetOptions(appWidgetId);
-    if (options != null) {
-      int minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH);
-      views.setTextViewText(
-          R.id.text_widget_songs_title,
-          context.getString(minWidth > 200 ? R.string.title_songs : R.string.title_songs_short)
-      );
-    } else {
-      views.setTextViewText(R.id.text_widget_songs_title, context.getString(R.string.title_songs));
+      appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.list_widget_songs)
     }
+  }
 
-    Intent intentUpdate = new Intent(context, SongsWidgetProvider.class);
-    intentUpdate.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-    intentUpdate.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[]{appWidgetId});
-    PendingIntent pendingIntentUpdate = PendingIntent.getBroadcast(
-        context, 0, intentUpdate,
-        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
-    );
-    views.setOnClickPendingIntent(R.id.frame_widget_songs_update, pendingIntentUpdate);
+  override fun onAppWidgetOptionsChanged(
+    context: Context,
+    appWidgetManager: AppWidgetManager,
+    appWidgetId: Int,
+    newOptions: Bundle
+  ) {
+    fetchSongs(context) { areSongsEmpty ->
+      updateWidget(context, appWidgetManager, appWidgetId, newOptions, areSongsEmpty)
+      appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetId, R.id.list_widget_songs)
+    }
+  }
 
-    views.setViewVisibility(R.id.list_widget_songs, areSongsEmpty ? View.GONE : View.VISIBLE);
+  private fun updateWidget(
+    context: Context,
+    appWidgetManager: AppWidgetManager,
+    appWidgetId: Int,
+    options: Bundle?,
+    areSongsEmpty: Boolean
+  ) {
+    val views = RemoteViews(context.packageName, R.layout.widget_songs)
+
+    val intentIcon = Intent(context, MainActivity::class.java)
+    val pendingIntentIcon = PendingIntent.getActivity(
+      context, 0, intentIcon,
+      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+    views.setOnClickPendingIntent(R.id.frame_widget_songs_icon, pendingIntentIcon)
+
+    val intentShowSongs = Intent(context, MainActivity::class.java).apply {
+      action = ACTION.SHOW_SONGS
+    }
+    val pendingIntentShowSongs = PendingIntent.getActivity(
+      context, 0, intentShowSongs,
+      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+    views.setOnClickPendingIntent(R.id.linear_widget_songs_header, pendingIntentShowSongs)
+
+    val currentOptions = options ?: appWidgetManager.getAppWidgetOptions(appWidgetId)
+    val title = if (currentOptions != null) {
+      val minWidth = currentOptions.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
+      context.getString(if (minWidth > 200) R.string.title_songs else R.string.title_songs_short)
+    } else {
+      context.getString(R.string.title_songs)
+    }
+    views.setTextViewText(R.id.text_widget_songs_title, title)
+
+    val intentUpdate = Intent(
+      context, SongsWidgetProvider::class.java
+    ).apply {
+      action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+      putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, intArrayOf(appWidgetId))
+    }
+    val pendingIntentUpdate = PendingIntent.getBroadcast(
+      context, 0, intentUpdate,
+      PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+    views.setOnClickPendingIntent(R.id.frame_widget_songs_update, pendingIntentUpdate)
+
     views.setViewVisibility(
-        R.id.linear_widget_songs_empty, areSongsEmpty ? View.VISIBLE : View.GONE
-    );
+      R.id.list_widget_songs, if (areSongsEmpty) View.GONE else View.VISIBLE
+    )
+    views.setViewVisibility(
+      R.id.linear_widget_songs_empty,
+      if (areSongsEmpty) View.VISIBLE else View.GONE
+    )
 
     if (!areSongsEmpty) {
-      Intent serviceIntentSongs = new Intent(context, SongsRemoteViewsService.class);
-      serviceIntentSongs.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
-      views.setRemoteAdapter(R.id.list_widget_songs, serviceIntentSongs);
+      val serviceIntentSongs = Intent(
+        context, SongsRemoteViewsService::class.java
+      ).apply {
+        putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
+      }
+      views.setRemoteAdapter(R.id.list_widget_songs, serviceIntentSongs)
 
-      Intent intentSong = new Intent(context, SongActivity.class);
-      intentSong.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK  | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-      PendingIntent pendingIntentSong = PendingIntent.getActivity(
-          context, 0, intentSong,
-          // must be mutable for fillInIntent
-          PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE
-      );
-      views.setPendingIntentTemplate(R.id.list_widget_songs, pendingIntentSong);
+      val intentSong = Intent(context, SongActivity::class.java).apply {
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+      }
+      val pendingIntentSong = PendingIntent.getActivity(
+        context, 0, intentSong,
+        // must be mutable for fillInIntent
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+      )
+      views.setPendingIntentTemplate(
+        R.id.list_widget_songs, pendingIntentSong
+      )
 
-      if (VERSION.SDK_INT >= VERSION_CODES.S) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         views.setViewOutlinePreferredRadiusDimen(
-            R.id.list_widget_songs, android.R.dimen.system_app_widget_inner_radius
-        );
+          R.id.list_widget_songs, android.R.dimen.system_app_widget_inner_radius
+        )
       }
     } else {
-      // for using current language
       views.setTextViewText(
-          R.id.text_widget_songs_empty, context.getString(R.string.msg_songs_empty)
-      );
-      // make container open song library
-      views.setOnClickPendingIntent(R.id.frame_widget_songs_container, pendingIntentShowSongs);
+        R.id.text_widget_songs_empty,
+        context.getString(R.string.msg_songs_empty)
+      )
+      views.setOnClickPendingIntent(
+        R.id.frame_widget_songs_container, pendingIntentShowSongs
+      )
     }
 
-    appWidgetManager.updateAppWidget(appWidgetId, views);
+    appWidgetManager.updateAppWidget(appWidgetId, views)
   }
 
-  private void fetchSongs(Context context, OnSongsFetchedListener listener) {
-    ExecutorService executor = Executors.newSingleThreadExecutor();
-    executor.execute(() -> {
-      SongDatabase db = SongDatabase.getInstance(context);
-      List<Song> songs = db.songDao().getAllSongs();
-      for (Song song : songs) {
-        if (song.getId().equals(Constants.SONG_ID_DEFAULT)) {
-          songs.remove(song);
-          break;
-        }
-      }
-      listener.onSongsFetched(songs.isEmpty());
-    });
-    executor.shutdown();
-  }
-
-  private interface OnSongsFetchedListener {
-    void onSongsFetched(boolean areSongsEmpty);
+  private fun fetchSongs(context: Context, listener: (Boolean) -> Unit) {
+    val executor = Executors.newSingleThreadExecutor()
+    executor.execute {
+      val db = SongDatabase.getInstance(context)
+      val songs = db.songDao().getAllSongs().filter { it.id != Constants.SONG_ID_DEFAULT }
+      listener(songs.isEmpty())
+    }
+    executor.shutdown()
   }
 }

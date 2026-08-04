@@ -201,7 +201,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
   override fun onServiceConnected(name: ComponentName?, iBinder: IBinder?) {
     val binder: MetronomeService.MetronomeBinder = iBinder as MetronomeService.MetronomeBinder
-    metronomeService = binder.service
+    metronomeService = binder.getService()
     bound = true
 
     val metronomeEngine = getMetronomeEngine() ?: return

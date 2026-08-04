@@ -12,7 +12,8 @@ recyclerview = "1.4.0"
 flexbox = "3.0.0"
 gson = "2.14.0"
 room = "2.8.4"
-kotlin = "2.4.10"
+kotlin = "2.3.10"
+ksp = "2.3.10" # Passend zur Kotlin Version
 lifecycle = "2.11.0"
 splashscreen = "1.2.0"
 wear-input = "1.2.0"
@@ -63,6 +64,8 @@ compose-constraintlayout = { group = "androidx.constraintlayout", name = "constr
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-navigation-safeargs = { id = "androidx.navigation.safeargs", version.ref = "navigation" }
+navigation-safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigation" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

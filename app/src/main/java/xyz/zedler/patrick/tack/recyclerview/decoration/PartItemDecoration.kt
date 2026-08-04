@@ -17,29 +17,23 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.recyclerview.decoration;
+package xyz.zedler.patrick.tack.recyclerview.decoration
 
-import android.graphics.Rect;
-import android.view.View;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
+import android.graphics.Rect
+import android.view.View
+import androidx.recyclerview.widget.RecyclerView
 
-public class PartItemDecoration extends RecyclerView.ItemDecoration {
+class PartItemDecoration(private val innerVerticalPadding: Int) : RecyclerView.ItemDecoration() {
 
-  private final int innerVerticalPadding;
-
-  public PartItemDecoration(int innerVerticalPadding) {
-    this.innerVerticalPadding = innerVerticalPadding;
-  }
-
-  @Override
-  public void getItemOffsets(
-      @NonNull Rect outRect, @NonNull View view,
-      @NonNull RecyclerView parent, @NonNull RecyclerView.State state
+  override fun getItemOffsets(
+    outRect: Rect,
+    view: View,
+    parent: RecyclerView,
+    state: RecyclerView.State
   ) {
-    int position = parent.getChildAdapterPosition(view);
+    val position = parent.getChildAdapterPosition(view)
     if (position != 0) {
-      outRect.top = innerVerticalPadding;
+      outRect.top = innerVerticalPadding
     }
   }
 }

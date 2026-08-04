@@ -17,211 +17,194 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.view;
+package xyz.zedler.patrick.tack.view
 
-import android.content.Context;
-import android.graphics.Rect;
-import android.util.AttributeSet;
-import android.view.GestureDetector;
-import android.view.GestureDetector.SimpleOnGestureListener;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.animation.RotateAnimation;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import xyz.zedler.patrick.tack.util.UiUtil;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Rect
+import android.util.AttributeSet
+import android.view.GestureDetector
+import android.view.GestureDetector.SimpleOnGestureListener
+import android.view.MotionEvent
+import android.view.View
+import android.view.animation.RotateAnimation
+import xyz.zedler.patrick.tack.util.dpToPx
+import kotlin.math.*
 
-public class TempoPickerView extends View implements View.OnTouchListener {
+class TempoPickerView @JvmOverloads constructor(
+  context: Context,
+  attrs: AttributeSet? = null
+) : View(context, attrs), View.OnTouchListener {
 
-  private boolean isTouchable = true;
-  private boolean isTouchStartedInCircle, isTouchStartedInCenter;
-  private double currAngle = 0;
-  private double prevAngle;
-  private float degreeStorage = 0;
-  private OnRotationListener onRotationListener;
-  private OnPickListener onPickListener;
-  private OnClickListener onClickListener;
-  private final float ignoredCenterSize;
-  private final GestureDetector gestureDetector;
-
-  public TempoPickerView(@NonNull Context context, @Nullable AttributeSet attrs) {
-    super(context, attrs);
-
-    prevAngle = 0;
-    ignoredCenterSize = UiUtil.dpToPx(context, 40);
-    gestureDetector = new GestureDetector(getContext(), new SimpleOnGestureListener() {
-      @Override
-      public boolean onSingleTapUp(@NonNull MotionEvent event) {
-        if (onClickListener != null) {
-          onClickListener.onClick(TempoPickerView.this);
-        }
-        return true;
+  private var isTouchable = true
+  private var isTouchStartedInCircle = false
+  private var isTouchStartedInCenter = false
+  private var currAngle = 0.0
+  private var prevAngle = 0.0
+  private var degreeStorage = 0f
+  private var onRotationListener: OnRotationListener? = null
+  private var onPickListener: OnPickListener? = null
+  private var onClickListener: OnClickListener? = null
+  private val ignoredCenterSize = context.dpToPx(40f).toFloat()
+  private val gestureDetector = GestureDetector(
+    context,
+    object : SimpleOnGestureListener() {
+      override fun onSingleTapUp(event: MotionEvent): Boolean {
+        onClickListener?.onClick(this@TempoPickerView)
+        return true
       }
-    });
+    })
 
-    setOnTouchListener(this);
-
-    requestFocus();
+  init {
+    setOnTouchListener(this)
+    isFocusable = true
+    isFocusableInTouchMode = true
+    requestFocus()
   }
 
-  public void setOnRotationListener(OnRotationListener listener) {
-    this.onRotationListener = listener;
+  fun setOnRotationListener(listener: OnRotationListener?) {
+    onRotationListener = listener
   }
 
-  public void setOnPickListener(OnPickListener listener) {
-    this.onPickListener = listener;
+  fun setOnPickListener(listener: OnPickListener?) {
+    onPickListener = listener
   }
 
-  @Override
-  public void setOnClickListener(OnClickListener listener) {
-    this.onClickListener = listener;
+  override fun setOnClickListener(listener: OnClickListener?) {
+    onClickListener = listener
   }
 
-  @Override
-  public void setVisibility(int visibility) {
-    super.setVisibility(visibility);
-    setTouchable(visibility == VISIBLE);
+  override fun setVisibility(visibility: Int) {
+    super.setVisibility(visibility)
+    setTouchable(visibility == VISIBLE)
   }
 
-  public void setTouchable(boolean touchable) {
-    isTouchable = touchable;
+  fun setTouchable(touchable: Boolean) {
+    isTouchable = touchable
   }
 
-  @Override
-  public void onFocusChanged(
-      boolean gainFocus,
-      int direction,
-      @Nullable Rect previouslyFocusedRect
-  ) {
-    super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+  override fun onFocusChanged(gainFocus: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
+    super.onFocusChanged(gainFocus, direction, previouslyFocusedRect)
     if (!gainFocus) {
-      requestFocus(direction, previouslyFocusedRect);
+      requestFocus(direction, previouslyFocusedRect)
     }
   }
 
-  @Override
-  public boolean onTouch(View v, MotionEvent event) {
-    if (!isTouchable) {
-      return false;
-    }
+  @SuppressLint("ClickableViewAccessibility")
+  override fun onTouch(v: View, event: MotionEvent): Boolean {
+    if (!isTouchable) return false
 
-    final float xc = (float) getWidth() / 2;
-    final float yc = (float) getHeight() / 2;
-    final float x = event.getX();
-    final float y = event.getY();
-    boolean isTouchInsideCircle = isTouchInsideCircle(event.getX(), event.getY());
-    boolean isTouchOutsideCenter = isTouchOutsideCenter(event.getX(), event.getY());
+    val xc = width / 2f
+    val yc = height / 2f
+    val x = event.x
+    val y = event.y
+    val isTouchInsideCircle = isTouchInsideCircle(x, y)
+    val isTouchOutsideCenter = isTouchOutsideCenter(x, y)
 
-    double angleRaw = Math.toDegrees(Math.atan2(x - xc, yc - y));
-    double angle = angleRaw >= 0 ? angleRaw : 180 + (180 - Math.abs(angleRaw));
+    val angleRaw = Math.toDegrees(atan2((x - xc).toDouble(), (yc - y).toDouble()))
+    val angle = if (angleRaw >= 0) angleRaw else 180 + (180 - abs(angleRaw))
 
     if (isTouchInsideCircle) {
-      gestureDetector.onTouchEvent(event);
+      gestureDetector.onTouchEvent(event)
     }
 
-    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-      isTouchStartedInCircle = isTouchInsideCircle;
-      // on back gesture edge or outside ring
-      if (isTouchInsideCircle) {
-        onPickListener.onPickDown(x, y);
-        if (isTouchOutsideCenter) {
-          isTouchStartedInCenter = false;
-          currAngle = angle;
-        } else {
-          // Only follow touch if it's not directly in center
-          isTouchStartedInCenter = true;
+    when (event.action) {
+      MotionEvent.ACTION_DOWN -> {
+        isTouchStartedInCircle = isTouchInsideCircle
+        if (isTouchInsideCircle) {
+          onPickListener?.onPickDown(x, y)
+          if (isTouchOutsideCenter) {
+            isTouchStartedInCenter = false
+            currAngle = angle
+          } else {
+            isTouchStartedInCenter = true
+          }
         }
       }
-    } else if (event.getAction() == MotionEvent.ACTION_MOVE && isTouchStartedInCircle) {
-      if (isTouchStartedInCenter && isTouchOutsideCenter) {
-        isTouchStartedInCenter = false;
-        currAngle = angle;
+
+      MotionEvent.ACTION_MOVE -> {
+        if (isTouchStartedInCircle) {
+          if (isTouchStartedInCenter && isTouchOutsideCenter) {
+            isTouchStartedInCenter = false
+            currAngle = angle
+          }
+          if (isTouchOutsideCenter) {
+            prevAngle = currAngle
+            currAngle = angle
+            animateRotation(prevAngle, currAngle)
+          }
+          onPickListener?.onDrag(x, y)
+        }
       }
-      if (isTouchOutsideCenter) {
-        prevAngle = currAngle;
-        currAngle = angle;
-        animate(prevAngle, currAngle);
+
+      MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+        currAngle = 0.0
+        prevAngle = 0.0
+        onPickListener?.onPickUpOrCancel()
       }
-      onPickListener.onDrag(x, y);
-    } else if (event.getAction() == MotionEvent.ACTION_UP
-        || event.getAction() == MotionEvent.ACTION_CANCEL
-    ) {
-      prevAngle = currAngle = 0;
-      onPickListener.onPickUpOrCancel();
     }
-    return true;
+    return true
   }
 
-  private void animate(double fromDegrees, double toDegrees) {
-    final RotateAnimation rotate = new RotateAnimation(
-        (float) fromDegrees,
-        (float) toDegrees,
-        RotateAnimation.RELATIVE_TO_SELF,
-        0.5f,
-        RotateAnimation.RELATIVE_TO_SELF,
-        0.5f
-    );
-    rotate.setDuration(0);
-    rotate.setFillEnabled(true);
-    rotate.setFillAfter(true);
-    startAnimation(rotate);
+  private fun animateRotation(fromDegrees: Double, toDegrees: Double) {
+    val rotate = RotateAnimation(
+      fromDegrees.toFloat(),
+      toDegrees.toFloat(),
+      RotateAnimation.RELATIVE_TO_SELF,
+      0.5f,
+      RotateAnimation.RELATIVE_TO_SELF,
+      0.5f
+    ).apply {
+      duration = 0
+      isFillEnabled = true
+      fillAfter = true
+    }
+    startAnimation(rotate)
 
-    float degreeDiff = (float) toDegrees - (float) fromDegrees;
+    var degreeDiff = (toDegrees - fromDegrees).toFloat()
     if (degreeDiff > 180) {
-      degreeDiff = 360 - degreeDiff;
-    }
-    if (degreeDiff < -180) {
-      degreeDiff = -360 + Math.abs(degreeDiff);
-    }
-
-    if (onRotationListener != null) {
-      onRotationListener.onRotate(degreeDiff);
+      degreeDiff -= 360f
+    } else if (degreeDiff < -180) {
+      degreeDiff += 360f
     }
 
-    degreeStorage = degreeStorage + degreeDiff;
+    onRotationListener?.onRotate(degreeDiff)
+
+    degreeStorage += degreeDiff
     if (degreeStorage > 12) {
-      if (onRotationListener != null) {
-        onRotationListener.onRotate(1);
-      }
-      degreeStorage = 0;
+      onRotationListener?.onRotate(1)
+      degreeStorage = 0f
     } else if (degreeStorage < -12) {
-      if (onRotationListener != null) {
-        onRotationListener.onRotate(-1);
-      }
-      degreeStorage = 0;
+      onRotationListener?.onRotate(-1)
+      degreeStorage = 0f
     }
   }
 
-  private boolean isTouchInsideCircle(float x, float y) {
-    float radius = Math.min(getPivotX(), getPivotY());
-    double centerX = getPivotX();
-    double centerY = getPivotY();
-    double distanceX = x - centerX;
-    double distanceY = y - centerY;
-    return (distanceX * distanceX) + (distanceY * distanceY) <= radius * radius;
+  private fun isTouchInsideCircle(x: Float, y: Float): Boolean {
+    val radius = min(pivotX, pivotY)
+    val centerX = pivotX.toDouble()
+    val centerY = pivotY.toDouble()
+    val distanceX = x - centerX
+    val distanceY = y - centerY
+    return (distanceX * distanceX) + (distanceY * distanceY) <= radius * radius
   }
 
-  private boolean isTouchOutsideCenter(float x, float y) {
-    double centerX = getPivotX();
-    double centerY = getPivotY();
-    double radius = ignoredCenterSize / 2;
-    double distanceSquared = (x - centerX) * (x - centerX) + (y - centerY) * (y - centerY);
-    return distanceSquared > (radius * radius);
+  private fun isTouchOutsideCenter(x: Float, y: Float): Boolean {
+    val centerX = pivotX.toDouble()
+    val centerY = pivotY.toDouble()
+    val radius = (ignoredCenterSize / 2).toDouble()
+    val distanceSquared = (x - centerX) * (x - centerX) + (y - centerY) * (y - centerY)
+    return distanceSquared > (radius * radius)
   }
 
-  public interface OnRotationListener {
-
-    void onRotate(int tempo);
-
-    void onRotate(float degrees);
+  interface OnRotationListener {
+    fun onRotate(tempo: Int)
+    fun onRotate(degrees: Float)
   }
 
-  public interface OnPickListener {
-
-    void onPickDown(float x, float y);
-
-    void onDrag(float x, float y);
-
-    void onPickUpOrCancel();
+  interface OnPickListener {
+    fun onPickDown(x: Float, y: Float)
+    fun onDrag(x: Float, y: Float)
+    fun onPickUpOrCancel()
   }
 }

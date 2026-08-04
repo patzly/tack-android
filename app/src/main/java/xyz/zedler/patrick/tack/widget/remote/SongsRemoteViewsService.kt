@@ -17,15 +17,14 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.widget.remote;
+package xyz.zedler.patrick.tack.widget.remote
 
-import android.content.Intent;
-import android.widget.RemoteViewsService;
+import android.content.Intent
+import android.widget.RemoteViewsService
 
-public class SongsRemoteViewsService extends RemoteViewsService {
+class SongsRemoteViewsService : RemoteViewsService() {
 
-  @Override
-  public RemoteViewsFactory onGetViewFactory(Intent intent) {
-    return new SongsRemoteViewsFactory(getApplicationContext(), intent);
+  override fun onGetViewFactory(intent: Intent): RemoteViewsFactory {
+    return SongsRemoteViewsFactory(applicationContext, intent)
   }
 }

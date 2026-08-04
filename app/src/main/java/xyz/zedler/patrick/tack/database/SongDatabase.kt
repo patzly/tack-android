@@ -17,54 +17,56 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.database;
+package xyz.zedler.patrick.tack.database
 
+import android.content.Context
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import xyz.zedler.patrick.tack.database.dao.SongDao
+import xyz.zedler.patrick.tack.database.entity.Part
+import xyz.zedler.patrick.tack.database.entity.Song
 
-import android.content.Context;
-import androidx.annotation.NonNull;
-import androidx.room.Database;
-import androidx.room.Room;
-import androidx.room.RoomDatabase;
-import androidx.room.migration.Migration;
-import androidx.sqlite.db.SupportSQLiteDatabase;
-import xyz.zedler.patrick.tack.database.dao.SongDao;
-import xyz.zedler.patrick.tack.database.entity.Part;
-import xyz.zedler.patrick.tack.database.entity.Song;
+@Database(entities = [Song::class, Part::class], version = 4)
+abstract class SongDatabase : RoomDatabase() {
 
-@Database(entities = {Song.class, Part.class}, version = 3)
-public abstract class SongDatabase extends RoomDatabase {
+  abstract fun songDao(): SongDao
 
-  public abstract SongDao songDao();
+  companion object {
+    @Volatile
+    private var INSTANCE: SongDatabase? = null
 
-  private static volatile SongDatabase INSTANCE;
-
-  private static final Migration MIGRATION_1_2 = new Migration(1, 2) {
-    @Override
-    public void migrate(@NonNull SupportSQLiteDatabase database) {
-      database.execSQL("ALTER TABLE parts ADD COLUMN usePolyrhythm INTEGER NOT NULL DEFAULT 0");
-    }
-  };
-  private static final Migration MIGRATION_2_3 = new Migration(2, 3) {
-    @Override
-    public void migrate(@NonNull SupportSQLiteDatabase database) {
-      database.execSQL("ALTER TABLE songs ADD COLUMN speed INTEGER NOT NULL DEFAULT 100");
-    }
-  };
-
-  public static SongDatabase getInstance(Context context) {
-    if (INSTANCE == null) {
-      synchronized (SongDatabase.class) {
-        if (INSTANCE == null) {
-          INSTANCE = Room.databaseBuilder(
-              context.getApplicationContext(),
-              SongDatabase.class,
-              "song_database"
-          )
-          .addMigrations(MIGRATION_1_2).addMigrations(MIGRATION_2_3)
-          .build();
-        }
+    private val MIGRATION_1_2 = object : Migration(1, 2) {
+      override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE parts ADD COLUMN usePolyrhythm INTEGER NOT NULL DEFAULT 0")
       }
     }
-    return INSTANCE;
+
+    private val MIGRATION_2_3 = object : Migration(2, 3) {
+      override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE songs ADD COLUMN speed INTEGER NOT NULL DEFAULT 100")
+      }
+    }
+
+    private val MIGRATION_3_4 = object : Migration(3, 4) {
+      override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("DROP INDEX IF EXISTS index_songs_id")
+      }
+    }
+
+    @JvmStatic
+    fun getInstance(context: Context): SongDatabase {
+      return INSTANCE ?: synchronized(this) {
+        INSTANCE ?: Room.databaseBuilder(
+          context.applicationContext,
+          SongDatabase::class.java,
+          "song_database"
+        )
+          .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+          .build().also { INSTANCE = it }
+      }
+    }
   }
 }

@@ -17,46 +17,48 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+@file:JvmName("UnlockUtil")
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
-import androidx.annotation.NonNull;
-import xyz.zedler.patrick.tack.R;
+package xyz.zedler.patrick.tack.util
 
-public class UnlockUtil {
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import xyz.zedler.patrick.tack.R
+import androidx.core.net.toUri
 
-  private final static String PACKAGE_KEY = "xyz.zedler.patrick.tack.unlock";
+private const val PACKAGE_KEY = "xyz.zedler.patrick.tack.unlock"
 
-  public static boolean isKeyInstalled(@NonNull Context context) {
-    try {
-      context.getPackageManager().getPackageInfo(PACKAGE_KEY, 0);
-      return true;
-    } catch (Exception e) {
-      return false;
-    }
+fun isKeyInstalled(context: Context): Boolean {
+  return try {
+    context.packageManager.getPackageInfo(PACKAGE_KEY, 0)
+    true
+  } catch (e: Exception) {
+    false
   }
+}
 
-  public static boolean isPlayStoreInstalled(@NonNull Context context){
-    try {
-      context.getPackageManager().getPackageInfo("com.android.vending", 0);
-      return true;
-    } catch (Exception e) {
-      return false;
-    }
+fun isPlayStoreInstalled(context: Context): Boolean {
+  return try {
+    context.packageManager.getPackageInfo("com.android.vending", 0)
+    true
+  } catch (e: Exception) {
+    false
   }
+}
 
-  public static boolean isUnlocked(@NonNull Context context) {
-    if (isPlayStoreInstalled(context)) {
-      return isKeyInstalled(context);
-    }
-    return true;
+fun isUnlocked(context: Context): Boolean {
+  return if (isPlayStoreInstalled(context)) {
+    isKeyInstalled(context)
+  } else {
+    true
   }
+}
 
-  public static void openPlayStore(@NonNull Context context) {
-    context.startActivity(
-        new Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.app_vending_key)))
-    );
-  }
+fun openPlayStore(context: Context) {
+  context.startActivity(
+    Intent(
+      Intent.ACTION_VIEW, context.getString(R.string.app_vending_key).toUri()
+    )
+  )
 }

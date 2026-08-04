@@ -17,85 +17,74 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.drawable;
+package xyz.zedler.patrick.tack.drawable
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.ColorFilter;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PixelFormat;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.drawable.Drawable;
-import androidx.annotation.DrawableRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.graphics.shapes.RoundedPolygon;
-import androidx.graphics.shapes.Shapes_androidKt;
-import xyz.zedler.patrick.tack.util.ShapeUtil;
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.ColorFilter
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.PixelFormat
+import android.graphics.Rect
+import android.graphics.RectF
+import android.graphics.drawable.Drawable
+import androidx.annotation.DrawableRes
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.graphics.shapes.RoundedPolygon
+import androidx.graphics.shapes.toPath
+import xyz.zedler.patrick.tack.util.normalize
+import androidx.core.graphics.withClip
 
-public class ShapeDrawable extends Drawable {
+class ShapeDrawable(
+  context: Context,
+  shape: RoundedPolygon,
+  @DrawableRes drawableResId: Int
+) : Drawable() {
 
-  private final Path path = new Path();
-  private final Matrix matrix = new Matrix();
-  private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-  private final Drawable contentDrawable;
+  private val path = Path()
+  private val matrix = Matrix()
+  private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+  private val contentDrawable: Drawable? = AppCompatResources.getDrawable(context, drawableResId)
 
-  public ShapeDrawable(
-      @NonNull Context context, @NonNull RoundedPolygon shape, @DrawableRes int drawableResId
-  ) {
-    RoundedPolygon normalized = ShapeUtil.normalize(
-        shape, true, new RectF(-1, -1, 1, 1)
-    );
-    Shapes_androidKt.toPath(normalized, path);
-    this.contentDrawable = AppCompatResources.getDrawable(context, drawableResId);
+  init {
+    val normalized = normalize(
+      shape, true, RectF(-1f, -1f, 1f, 1f)
+    )
+    normalized.toPath(path)
   }
 
-  @Override
-  protected void onBoundsChange(@NonNull Rect bounds) {
-    super.onBoundsChange(bounds);
+  override fun onBoundsChange(bounds: Rect) {
+    super.onBoundsChange(bounds)
 
-    matrix.reset();
-    matrix.setScale(bounds.width() / 2f, bounds.height() / 2f);
-    matrix.postTranslate(bounds.width() / 2f, bounds.height() / 2f);
-    path.transform(matrix);
+    matrix.reset()
+    matrix.setScale(bounds.width() / 2f, bounds.height() / 2f)
+    matrix.postTranslate(bounds.width() / 2f, bounds.height() / 2f)
+    path.transform(matrix)
 
-    if (contentDrawable != null) {
-      contentDrawable.setBounds(bounds);
+    contentDrawable?.bounds = bounds
+  }
+
+  override fun draw(canvas: Canvas) {
+    canvas.withClip(path) {
+      contentDrawable?.draw(canvas)
     }
   }
 
-  @Override
-  public void draw(@NonNull Canvas canvas) {
-    int save = canvas.save();
-    canvas.clipPath(path);
-    contentDrawable.draw(canvas);
-    canvas.restoreToCount(save);
+  override fun setAlpha(alpha: Int) {
+    paint.alpha = alpha
+    contentDrawable?.alpha = alpha
+    invalidateSelf()
   }
 
-  @Override
-  public void setAlpha(int alpha) {
-    paint.setAlpha(alpha);
-    if (contentDrawable != null) {
-      contentDrawable.setAlpha(alpha);
-    }
-    invalidateSelf();
+  override fun setColorFilter(colorFilter: ColorFilter?) {
+    paint.colorFilter = colorFilter
+    contentDrawable?.colorFilter = colorFilter
+    invalidateSelf()
   }
 
-  @Override
-  public void setColorFilter(@Nullable ColorFilter colorFilter) {
-    paint.setColorFilter(colorFilter);
-    if (contentDrawable != null) {
-      contentDrawable.setColorFilter(colorFilter);
-    }
-    invalidateSelf();
-  }
-
-  @Override
-  public int getOpacity() {
-    return PixelFormat.TRANSLUCENT;
+  @Deprecated("Deprecated in Java", ReplaceWith("PixelFormat.TRANSLUCENT"))
+  override fun getOpacity(): Int {
+    return PixelFormat.TRANSLUCENT
   }
 }

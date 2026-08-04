@@ -17,81 +17,85 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.view;
+package xyz.zedler.patrick.tack.view
 
-import android.content.Context;
-import android.content.res.ColorStateList;
-import android.graphics.drawable.LayerDrawable;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import com.google.android.material.card.MaterialCardView;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.UiUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil;
+import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.drawable.LayerDrawable
+import android.util.AttributeSet
+import android.view.ViewGroup
+import android.widget.LinearLayout
+import com.google.android.material.card.MaterialCardView
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.util.getColorHighlight
+import xyz.zedler.patrick.tack.util.getAttrColor
+import xyz.zedler.patrick.tack.util.isLayoutRtl
+import xyz.zedler.patrick.tack.util.dpToPx
+import xyz.zedler.patrick.tack.util.start
 
-public class ThemeSelectionCardView extends MaterialCardView {
+class ThemeSelectionCardView @JvmOverloads constructor(
+  context: Context,
+  attrs: AttributeSet? = null
+) : MaterialCardView(context, attrs) {
 
-  private final int innerSize;
+  private val innerSize = context.dpToPx(48f)
 
-  public ThemeSelectionCardView(Context context) {
-    super(context);
+  init {
+    val outerRadius = context.dpToPx(16f)
+    val outerPadding = context.dpToPx(16f)
 
-    final int outerRadius = UiUtil.dpToPx(context, 16);
-    final int outerPadding = UiUtil.dpToPx(context, 16);
-    innerSize = UiUtil.dpToPx(context, 48);
-
-    // OUTER CARD (this)
-
-    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-        LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT
-    );
-    if (UiUtil.isLayoutRtl(context)) {
-      params.leftMargin = UiUtil.dpToPx(context, 4);
-    } else {
-      params.rightMargin = UiUtil.dpToPx(context, 4);
-    }
-    setLayoutParams(params);
-    setContentPadding(outerPadding, outerPadding, outerPadding, outerPadding);
-    setRadius(outerRadius);
-    setCardElevation(0);
-    setCardForegroundColor(null);
-    super.setCardBackgroundColor(ResUtil.getColor(context, R.attr.colorSurfaceContainer));
-    setRippleColor(ColorStateList.valueOf(ResUtil.getColorHighlight(context)));
-    setStrokeWidth(0);
-    setCheckable(true);
-    setCheckedIconResource(R.drawable.shape_selection_check);
-    setCheckedIconSize(innerSize);
-    setCheckedIconMargin(outerPadding);
-  }
-
-  @Override
-  @Deprecated
-  public void setCardBackgroundColor(int color) {}
-
-  public void setNestedContext(Context context) {
-    removeAllViews();
-    ViewGroup.LayoutParams innerParams = new ViewGroup.LayoutParams(innerSize, innerSize);
-    MaterialCardView innerCard = new MaterialCardView(context);
-    innerCard.setLayoutParams(innerParams);
-    innerCard.setRadius(innerSize / 2f);
-    innerCard.setStrokeWidth(UiUtil.dpToPx(context, 1));
-    innerCard.setStrokeColor(ResUtil.getColor(context, R.attr.colorOutline));
-    innerCard.setCardBackgroundColor(ResUtil.getColor(context, R.attr.colorPrimaryContainer));
-    innerCard.setCheckable(false);
-    addView(innerCard);
-    setCheckedIconTint(
-        ColorStateList.valueOf(ResUtil.getColor(context, R.attr.colorOnPrimaryContainer))
-    );
-  }
-
-  public void startCheckedIcon() {
-    try {
-      LayerDrawable layers = (LayerDrawable) getCheckedIcon();
-      if (layers != null) {
-        ViewUtil.startIcon(layers.findDrawableByLayerId(R.id.icon_selection_check));
+    layoutParams = LinearLayout.LayoutParams(
+      LinearLayout.LayoutParams.WRAP_CONTENT,
+      LinearLayout.LayoutParams.WRAP_CONTENT
+    ).apply {
+      if (context.isLayoutRtl()) {
+        leftMargin = context.dpToPx(4f)
+      } else {
+        rightMargin = context.dpToPx(4f)
       }
-    } catch (ClassCastException ignored) {
+    }
+
+    setContentPadding(
+      outerPadding, outerPadding, outerPadding, outerPadding
+    )
+    radius = outerRadius.toFloat()
+    cardElevation = 0f
+    setCardForegroundColor(null)
+    super.setCardBackgroundColor(context.getAttrColor(R.attr.colorSurfaceContainer))
+    rippleColor = ColorStateList.valueOf(context.getColorHighlight())
+    strokeWidth = 0
+    isCheckable = true
+    setCheckedIconResource(R.drawable.shape_selection_check)
+    checkedIconSize = innerSize
+    checkedIconMargin = outerPadding
+  }
+
+  @Deprecated("Does nothing", ReplaceWith(""))
+  override fun setCardBackgroundColor(color: Int) {
+    // Ignored
+  }
+
+  fun setNestedContext(nestedContext: Context) {
+    removeAllViews()
+    val innerCard = MaterialCardView(nestedContext).apply {
+      layoutParams = ViewGroup.LayoutParams(innerSize, innerSize)
+      radius = innerSize / 2f
+      strokeWidth = nestedContext.dpToPx(1f)
+      strokeColor = nestedContext.getAttrColor(R.attr.colorOutline)
+      setCardBackgroundColor(nestedContext.getAttrColor(R.attr.colorPrimaryContainer))
+      isCheckable = false
+    }
+    addView(innerCard)
+    checkedIconTint = ColorStateList.valueOf(
+      nestedContext.getAttrColor(R.attr.colorOnPrimaryContainer)
+    )
+  }
+
+  fun startCheckedIcon() {
+    try {
+      val layers = checkedIcon as? LayerDrawable
+      layers?.findDrawableByLayerId(R.id.icon_selection_check)?.start()
+    } catch (ignored: ClassCastException) {
       // For API 21 it will be a androidx.core.graphics.drawable.WrappedDrawableApi21
     }
   }

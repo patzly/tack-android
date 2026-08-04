@@ -17,43 +17,48 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+@file:JvmName("ShapeUtil")
 
-import static java.lang.Math.min;
+package xyz.zedler.patrick.tack.util
 
-import android.graphics.Matrix;
-import android.graphics.RectF;
-import androidx.annotation.NonNull;
-import androidx.graphics.shapes.RoundedPolygon;
-import androidx.graphics.shapes.Shapes_androidKt;
+import android.graphics.Matrix
+import android.graphics.RectF
+import androidx.graphics.shapes.RoundedPolygon
+import androidx.graphics.shapes.transformed
+import kotlin.math.min
 
-public class ShapeUtil {
-
-  @NonNull
-  public static RoundedPolygon normalize(
-      @NonNull RoundedPolygon shape, boolean radial, @NonNull RectF dstBounds
-  ) {
-    float[] srcBoundsArray = new float[4];
-    if (radial) {
-      // This calculates the axis-aligned bounds of the shape and returns that rectangle. It
-      // determines the max dimension of the shape (by calculating the distance from its center to
-      // the start and midpoint of each curve) and returns a square which can be used to hold the
-      // object in any rotation.
-      shape.calculateMaxBounds(srcBoundsArray);
-    } else {
-      // This calculates the bounds of the shape without rotating the shape.
-      shape.calculateBounds(srcBoundsArray);
-    }
-    RectF srcBounds =
-        new RectF(srcBoundsArray[0], srcBoundsArray[1], srcBoundsArray[2], srcBoundsArray[3]);
-    float scale =
-        min(dstBounds.width() / srcBounds.width(), dstBounds.height() / srcBounds.height());
-    // Scales the shape with pivot point at its original center then moves it to align its original
-    // center with the destination bounds center.
-    Matrix transform = new Matrix();
-    transform.setScale(scale, scale);
-    transform.preTranslate(-srcBounds.centerX(), -srcBounds.centerY());
-    transform.postTranslate(dstBounds.centerX(), dstBounds.centerY());
-    return Shapes_androidKt.transformed(shape, transform);
+fun normalize(
+  shape: RoundedPolygon,
+  radial: Boolean,
+  dstBounds: RectF
+): RoundedPolygon {
+  val srcBoundsArray = FloatArray(4)
+  if (radial) {
+    // This calculates the axis-aligned bounds of the shape and returns that rectangle. It
+    // determines the max dimension of the shape (by calculating the distance from its center to
+    // the start and midpoint of each curve) and returns a square which can be used to hold the
+    // object in any rotation.
+    shape.calculateMaxBounds(srcBoundsArray)
+  } else {
+    // This calculates the bounds of the shape without rotating the shape.
+    shape.calculateBounds(srcBoundsArray)
   }
+  val srcBounds = RectF(
+    srcBoundsArray[0],
+    srcBoundsArray[1],
+    srcBoundsArray[2],
+    srcBoundsArray[3]
+  )
+  val scale = min(
+    dstBounds.width() / srcBounds.width(),
+    dstBounds.height() / srcBounds.height()
+  )
+  // Scales the shape with pivot point at its original center then moves it to align its original
+  // center with the destination bounds center.
+  val transform = Matrix().apply {
+    setScale(scale, scale)
+    preTranslate(-srcBounds.centerX(), -srcBounds.centerY())
+    postTranslate(dstBounds.centerX(), dstBounds.centerY())
+  }
+  return shape.transformed(transform)
 }

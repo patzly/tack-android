@@ -17,107 +17,75 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util.dialog;
+package xyz.zedler.patrick.tack.util.dialog
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RawRes;
-import androidx.annotation.StringRes;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.databinding.PartialDialogTextBinding;
-import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.ResUtil;
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import androidx.annotation.RawRes
+import androidx.annotation.StringRes
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.activity.MainActivity
+import xyz.zedler.patrick.tack.databinding.PartialDialogTextBinding
+import xyz.zedler.patrick.tack.util.DialogUtil
+import xyz.zedler.patrick.tack.util.getRawText
+import androidx.core.net.toUri
 
-public class TextDialogUtil {
+class TextDialogUtil(
+  activity: MainActivity,
+  @StringRes title: Int,
+  @RawRes file: Int,
+  highlights: Array<String>? = null,
+  @StringRes link: Int = 0
+) {
 
-  private static final String TAG = TextDialogUtil.class.getSimpleName();
-
-  private final PartialDialogTextBinding binding;
-  private final DialogUtil dialogUtil;
-
-  public TextDialogUtil(
-      MainActivity activity,
-      @StringRes int title,
-      @RawRes int file,
-      String[] highlights,
-      @StringRes int link
-  ) {
-    binding = PartialDialogTextBinding.inflate(activity.getLayoutInflater());
-
-    dialogUtil = new DialogUtil(activity, "text_" + title);
-    dialogUtil.createDialog(builder -> {
-      builder.setTitle(title);
-      builder.setView(binding.getRoot());
-      builder.setPositiveButton(
-          R.string.action_close, (dialog, which) -> activity.performHapticClick()
-      );
-      if (link != 0) {
-        builder.setNeutralButton(
-            R.string.action_learn_more, (dialog, which) -> {
-              activity.performHapticClick();
-              activity.startActivity(
-                  new Intent(Intent.ACTION_VIEW, Uri.parse(activity.getString(link)))
-              );
-            }
-        );
+  private val binding = PartialDialogTextBinding.inflate(activity.layoutInflater)
+  private val dialogUtil = DialogUtil(activity, "text_$title").apply {
+    createDialog { builder ->
+      builder.setTitle(title)
+      builder.setView(binding.root)
+      builder.setPositiveButton(R.string.action_close) { _, _ ->
+        activity.performHapticClick()
       }
-    });
+      if (link != 0) {
+        builder.setNeutralButton(R.string.action_learn_more) { _, _ ->
+          activity.performHapticClick()
+          activity.startActivity(
+            Intent(Intent.ACTION_VIEW, activity.getString(link).toUri())
+          )
+        }
+      }
+    }
+  }
 
-    binding.formattedText.setIsDialog(true);
+  init {
+    binding.formattedText.setIsDialog(true)
     if (highlights != null) {
-      binding.formattedText.setText(ResUtil.getRawText(activity, file), highlights);
+      binding.formattedText.setText(activity.getRawText(file), *highlights)
     } else {
-      binding.formattedText.setText(ResUtil.getRawText(activity, file));
+      binding.formattedText.setText(activity.getRawText(file))
     }
   }
 
-  public TextDialogUtil(
-      MainActivity activity,
-      @StringRes int title,
-      @RawRes int file,
-      String[] highlights
-  ) {
-    this(activity, title, file, highlights, 0);
+  fun show() {
+    update()
+    dialogUtil.show()
   }
 
-  public TextDialogUtil(
-      MainActivity activity,
-      @StringRes int title,
-      @RawRes int file,
-      @StringRes int link
-  ) {
-    this(activity, title, file, null, link);
+  fun showIfWasShown(state: Bundle?) {
+    update()
+    dialogUtil.showIfWasShown(state)
   }
 
-  public TextDialogUtil(MainActivity activity, @StringRes int title, @RawRes int file) {
-    this(activity, title, file, null, 0);
+  fun dismiss() {
+    dialogUtil.dismiss()
   }
 
-  public void show() {
-    update();
-    dialogUtil.show();
+  fun saveState(outState: Bundle) {
+    dialogUtil.saveState(outState)
   }
 
-  public void showIfWasShown(@Nullable Bundle state) {
-    update();
-    dialogUtil.showIfWasShown(state);
-  }
-
-  public void dismiss() {
-    dialogUtil.dismiss();
-  }
-
-  public void saveState(@NonNull Bundle outState) {
-    if (dialogUtil != null) {
-      dialogUtil.saveState(outState);
-    }
-  }
-
-  private void update() {
-    binding.scrollText.scrollTo(0, 0);
+  private fun update() {
+    binding.scrollText.scrollTo(0, 0)
   }
 }

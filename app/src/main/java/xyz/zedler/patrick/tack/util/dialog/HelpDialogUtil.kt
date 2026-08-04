@@ -17,135 +17,118 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util.dialog;
+package xyz.zedler.patrick.tack.util.dialog
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.transition.AutoTransition;
-import androidx.transition.Transition;
-import androidx.transition.TransitionManager;
-import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.databinding.PartialDialogHelpBinding;
-import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.ViewUtil;
+import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.view.View
+import androidx.core.view.isVisible
+import androidx.transition.AutoTransition
+import androidx.transition.TransitionManager
+import xyz.zedler.patrick.tack.Constants
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.activity.MainActivity
+import xyz.zedler.patrick.tack.databinding.PartialDialogHelpBinding
+import xyz.zedler.patrick.tack.util.DialogUtil
+import xyz.zedler.patrick.tack.util.setOnClickListeners
+import androidx.core.net.toUri
 
-public class HelpDialogUtil implements OnClickListener {
+class HelpDialogUtil(private val activity: MainActivity) : View.OnClickListener {
 
-  private static final String TAG = HelpDialogUtil.class.getSimpleName();
+  private val binding = PartialDialogHelpBinding.inflate(activity.layoutInflater)
+  private val dialogUtil = DialogUtil(activity, "help")
 
-  private final PartialDialogHelpBinding binding;
-  private final DialogUtil dialogUtil;
-  private final MainActivity activity;
+  init {
+    dialogUtil.createDialog { builder ->
+      builder.setTitle(R.string.title_help)
+      builder.setView(binding.root)
+      builder.setPositiveButton(R.string.action_close) { _, _ ->
+        activity.performHapticClick()
+      }
+    }
 
-  public HelpDialogUtil(MainActivity activity) {
-    this.activity = activity;
-    binding = PartialDialogHelpBinding.inflate(activity.getLayoutInflater());
-
-    dialogUtil = new DialogUtil(activity, "help");
-    dialogUtil.createDialog(builder -> {
-      builder.setTitle(R.string.title_help);
-      builder.setView(binding.getRoot());
-      builder.setPositiveButton(
-          R.string.action_close, (dialog, which) -> activity.performHapticClick()
-      );
-    });
-
-    ViewUtil.setOnClickListeners(
-        this,
-        binding.linearHelpQuestion1,
-        binding.linearHelpQuestion2,
-        binding.linearHelpQuestion3,
-        binding.linearHelpQuestion4,
-        binding.linearHelpQuestion5,
-        binding.linearHelpQuestion6,
-        binding.linearHelpQuestion7,
-        binding.linearHelpQuestion8,
-        binding.linearHelpQuestion9,
-        binding.buttonHelpTranslate
-    );
+    setOnClickListeners(
+      this,
+      binding.linearHelpQuestion1,
+      binding.linearHelpQuestion2,
+      binding.linearHelpQuestion3,
+      binding.linearHelpQuestion4,
+      binding.linearHelpQuestion5,
+      binding.linearHelpQuestion6,
+      binding.linearHelpQuestion7,
+      binding.linearHelpQuestion8,
+      binding.linearHelpQuestion9,
+      binding.buttonHelpTranslate
+    )
   }
 
-  @Override
-  public void onClick(View v) {
-    activity.performHapticClick();
+  override fun onClick(v: View) {
+    activity.performHapticClick()
 
-    int id = v.getId();
-    if (id == R.id.linear_help_question1) {
-      toggleAnswerVisibility(binding.textHelpAnswer1);
-    } else if (id == R.id.linear_help_question2) {
-      toggleAnswerVisibility(binding.textHelpAnswer2);
-    } else if (id == R.id.linear_help_question3) {
-      toggleAnswerVisibility(binding.textHelpAnswer3);
-    } else if (id == R.id.linear_help_question4) {
-      toggleAnswerVisibility(binding.textHelpAnswer4);
-    } else if (id == R.id.linear_help_question5) {
-      toggleAnswerVisibility(binding.textHelpAnswer5);
-    } else if (id == R.id.linear_help_question6) {
-      toggleAnswerVisibility(binding.textHelpAnswer6);
-    } else if (id == R.id.linear_help_question7) {
-      toggleAnswerVisibility(binding.textHelpAnswer7);
-    } else if (id == R.id.linear_help_question8) {
-      toggleAnswerVisibility(binding.textHelpAnswer8);
-    } else if (id == R.id.linear_help_question9) {
-      toggleAnswerVisibility(binding.textHelpAnswer9);
-      binding.buttonHelpTranslate.setVisibility(
-          binding.buttonHelpTranslate.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE
-      );
-    } else if (id == R.id.button_help_translate) {
-      activity.startActivity(
-          new Intent(Intent.ACTION_VIEW, Uri.parse(activity.getString(R.string.app_translate)))
-      );
+    when (v.id) {
+      R.id.linear_help_question1 -> toggleAnswerVisibility(binding.textHelpAnswer1)
+      R.id.linear_help_question2 -> toggleAnswerVisibility(binding.textHelpAnswer2)
+      R.id.linear_help_question3 -> toggleAnswerVisibility(binding.textHelpAnswer3)
+      R.id.linear_help_question4 -> toggleAnswerVisibility(binding.textHelpAnswer4)
+      R.id.linear_help_question5 -> toggleAnswerVisibility(binding.textHelpAnswer5)
+      R.id.linear_help_question6 -> toggleAnswerVisibility(binding.textHelpAnswer6)
+      R.id.linear_help_question7 -> toggleAnswerVisibility(binding.textHelpAnswer7)
+      R.id.linear_help_question8 -> toggleAnswerVisibility(binding.textHelpAnswer8)
+      R.id.linear_help_question9 -> {
+        toggleAnswerVisibility(binding.textHelpAnswer9)
+        binding.buttonHelpTranslate.isVisible = !binding.buttonHelpTranslate.isVisible
+      }
+
+      R.id.button_help_translate -> {
+        activity.startActivity(
+          Intent(
+            Intent.ACTION_VIEW,
+            activity.getString(R.string.app_translate).toUri()
+          )
+        )
+      }
     }
   }
 
-  public void show() {
-    update();
-    dialogUtil.show();
+  fun show() {
+    update()
+    dialogUtil.show()
   }
 
-  public void showIfWasShown(@Nullable Bundle state) {
-    update();
-    dialogUtil.showIfWasShown(state);
+  fun showIfWasShown(state: Bundle?) {
+    update()
+    dialogUtil.showIfWasShown(state)
   }
 
-  public void dismiss() {
-    dialogUtil.dismiss();
+  fun dismiss() {
+    dialogUtil.dismiss()
   }
 
-  public void saveState(@NonNull Bundle outState) {
-    if (dialogUtil != null) {
-      dialogUtil.saveState(outState);
+  fun saveState(outState: Bundle) {
+    dialogUtil.saveState(outState)
+  }
+
+  private fun update() {
+    binding.scrollHelp.scrollTo(0, 0)
+
+    binding.textHelpAnswer1.isVisible = false
+    binding.textHelpAnswer2.isVisible = false
+    binding.textHelpAnswer3.isVisible = false
+    binding.textHelpAnswer4.isVisible = false
+    binding.textHelpAnswer5.isVisible = false
+    binding.textHelpAnswer6.isVisible = false
+    binding.textHelpAnswer7.isVisible = false
+    binding.textHelpAnswer8.isVisible = false
+    binding.textHelpAnswer9.isVisible = false
+    binding.buttonHelpTranslate.isVisible = false
+  }
+
+  private fun toggleAnswerVisibility(answerView: View) {
+    val transition = AutoTransition().apply {
+      duration = Constants.ANIM_DURATION_SHORT
     }
-  }
-
-  private void update() {
-    binding.scrollHelp.scrollTo(0, 0);
-
-    binding.textHelpAnswer1.setVisibility(View.GONE);
-    binding.textHelpAnswer2.setVisibility(View.GONE);
-    binding.textHelpAnswer3.setVisibility(View.GONE);
-    binding.textHelpAnswer4.setVisibility(View.GONE);
-    binding.textHelpAnswer5.setVisibility(View.GONE);
-    binding.textHelpAnswer6.setVisibility(View.GONE);
-    binding.textHelpAnswer7.setVisibility(View.GONE);
-    binding.textHelpAnswer8.setVisibility(View.GONE);
-    binding.textHelpAnswer9.setVisibility(View.GONE);
-    binding.buttonHelpTranslate.setVisibility(View.GONE);
-  }
-
-  private void toggleAnswerVisibility(View answerView) {
-    Transition transition = new AutoTransition();
-    transition.setDuration(Constants.ANIM_DURATION_SHORT);
-    TransitionManager.beginDelayedTransition(binding.linearHelpContainer, transition);
-    answerView.setVisibility(
-        answerView.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE
-    );
+    TransitionManager.beginDelayedTransition(binding.linearHelpContainer, transition)
+    answerView.isVisible = !answerView.isVisible
   }
 }

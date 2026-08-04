@@ -17,139 +17,125 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+package xyz.zedler.patrick.tack.util
 
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.ShortcutInfo;
-import android.content.pm.ShortcutManager;
-import android.graphics.drawable.Icon;
-import android.os.Build;
-import android.os.Build.VERSION_CODES;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import xyz.zedler.patrick.tack.Constants.ACTION;
-import xyz.zedler.patrick.tack.Constants.EXTRA;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.SongActivity;
+import android.content.Context
+import android.content.Intent
+import android.content.pm.ShortcutInfo
+import android.content.pm.ShortcutManager
+import android.graphics.drawable.Icon
+import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
+import androidx.annotation.RequiresApi
+import xyz.zedler.patrick.tack.Constants.ACTION
+import xyz.zedler.patrick.tack.Constants.EXTRA
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.activity.SongActivity
+import java.util.concurrent.Executors
 
-public class ShortcutUtil {
+class ShortcutUtil(private val context: Context) {
 
-  private static final String TAG = ShortcutUtil.class.getSimpleName();
+  private var manager: ShortcutManager? = null
+  private val executorService = Executors.newSingleThreadExecutor()
+  private val mainHandler = Handler(Looper.getMainLooper())
 
-  private final Context context;
-  private ShortcutManager manager;
-  private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-  private final Handler mainHandler = new Handler(Looper.getMainLooper());
-
-  public ShortcutUtil(Context context) {
-    this.context = context;
-    if (isSupported()) {
-      manager = (ShortcutManager) context.getSystemService(Context.SHORTCUT_SERVICE);
+  init {
+    if (isSupported) {
+      manager = context.getSystemService(Context.SHORTCUT_SERVICE) as ShortcutManager
     }
   }
 
-  public void addShortcut(@NonNull ShortcutInfo shortcutInfo) {
-    if (!isSupported()) {
-      return;
-    }
-    hasShortcutAsync(shortcutInfo.getId(), hasShortcut -> {
-      if (isSupported() && !hasShortcut) {
-        if (manager.getDynamicShortcuts().size() < getMaxShortcutCount()) {
-          manager.addDynamicShortcuts(Collections.singletonList(shortcutInfo));
+  fun addShortcut(shortcutInfo: ShortcutInfo) {
+    if (!isSupported) return
+    hasShortcutAsync(shortcutInfo.id) { hasShortcut ->
+      if (isSupported && !hasShortcut) {
+        manager?.let {
+          if (it.dynamicShortcuts.size < maxShortcutCount) {
+            it.addDynamicShortcuts(listOf(shortcutInfo))
+          }
         }
       }
-    });
-  }
-
-  public void addAllShortcuts(@NonNull List<ShortcutInfo> shortcuts) {
-    if (isSupported()) {
-      // Ensure we do not exceed the maximum number of shortcuts else it will throw an exception
-      manager.addDynamicShortcuts(
-          shortcuts.subList(0, Math.min(shortcuts.size(), getMaxShortcutCount()))
-      );
     }
   }
 
-  public void removeShortcut(@NonNull String shortcutId) {
-    hasShortcutAsync(shortcutId, hasShortcut -> {
-      if (isSupported() && hasShortcut) {
-        manager.removeDynamicShortcuts(Collections.singletonList(shortcutId));
-      }
-    });
-  }
-
-  public void removeAllShortcuts() {
-    if (isSupported()) {
-      manager.removeAllDynamicShortcuts();
+  fun addAllShortcuts(shortcuts: List<ShortcutInfo>) {
+    if (isSupported) {
+      manager?.addDynamicShortcuts(
+        shortcuts.take(maxShortcutCount)
+      )
     }
   }
 
-  public void reportUsage(@NonNull String shortcutId) {
-    hasShortcutAsync(shortcutId, hasShortcut -> {
-      if (isSupported() && hasShortcut) {
-        manager.reportShortcutUsed(shortcutId);
+  fun removeShortcut(shortcutId: String) {
+    hasShortcutAsync(shortcutId) { hasShortcut ->
+      if (isSupported && hasShortcut) {
+        manager?.removeDynamicShortcuts(listOf(shortcutId))
       }
-    });
+    }
   }
 
-  public int getMaxShortcutCount() {
-    return isSupported() ? manager.getMaxShortcutCountPerActivity() : 0;
+  fun removeAllShortcuts() {
+    if (isSupported) {
+      manager?.removeAllDynamicShortcuts()
+    }
   }
 
-  /**
-   * Asynchronous because there was an ANR reported caused by manager.getDynamicShortcuts()
-   */
-  private void hasShortcutAsync(@Nullable String shortcutId, ShortcutCallback callback) {
-    if (isSupported()) {
-      executorService.execute(() -> {
-        boolean result = false;
+  fun reportUsage(shortcutId: String) {
+    hasShortcutAsync(shortcutId) { hasShortcut ->
+      if (isSupported && hasShortcut) {
+        manager?.reportShortcutUsed(shortcutId)
+      }
+    }
+  }
+
+  val maxShortcutCount: Int
+    get() = if (isSupported) manager?.maxShortcutCountPerActivity ?: 0 else 0
+
+  private fun hasShortcutAsync(shortcutId: String?, callback: (Boolean) -> Unit) {
+    if (isSupported) {
+      executorService.execute {
+        var result = false
         try {
-          for (ShortcutInfo info : manager.getDynamicShortcuts()) {
-            if (Objects.equals(shortcutId, info.getId())) {
-              result = true;
-              break;
+          manager?.let {
+            for (info in it.dynamicShortcuts) {
+              if (shortcutId == info.id) {
+                result = true
+                break
+              }
             }
           }
-        } catch (Exception e) {
-          Log.e(TAG, "hasShortcutAsync: ", e);
+        } catch (e: Exception) {
+          Log.e(TAG, "hasShortcutAsync: ", e)
         }
-        final boolean finalResult = result;
-        mainHandler.post(() -> callback.onResult(finalResult));
-      });
+        mainHandler.post { callback(result) }
+      }
     } else {
-      mainHandler.post(() -> callback.onResult(false));
+      mainHandler.post { callback(false) }
     }
   }
 
-  @RequiresApi(api = VERSION_CODES.N_MR1)
-  public ShortcutInfo getShortcutInfo(@NonNull String id, @Nullable String name) {
-    ShortcutInfo.Builder builder = new ShortcutInfo.Builder(context, id);
-    builder.setShortLabel(name != null ? name : context.getString(R.string.label_song_name));
-    builder.setIcon(Icon.createWithResource(context, R.mipmap.ic_shortcut));
-    builder.setIntent(
-        new Intent(context, SongActivity.class)
-            .setAction(ACTION.APPLY_SONG)
-            .putExtra(EXTRA.SONG_ID, id)
-            .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
-    );
-    return builder.build();
+  @RequiresApi(Build.VERSION_CODES.N_MR1)
+  fun getShortcutInfo(id: String, name: String?): ShortcutInfo {
+    return ShortcutInfo.Builder(context, id).apply {
+      setShortLabel(name ?: context.getString(R.string.label_song_name))
+      setIcon(Icon.createWithResource(context, R.mipmap.ic_shortcut))
+      setIntent(
+        Intent(context, SongActivity::class.java).apply {
+          action = ACTION.APPLY_SONG
+          putExtra(EXTRA.SONG_ID, id)
+          addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        }
+      )
+    }.build()
   }
 
-  public static boolean isSupported() {
-    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1;
-  }
+  companion object {
+    private val TAG = ShortcutUtil::class.java.simpleName
 
-  private interface ShortcutCallback {
-    void onResult(boolean hasShortcut);
+    @JvmStatic
+    val isSupported: Boolean
+      get() = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1
   }
 }

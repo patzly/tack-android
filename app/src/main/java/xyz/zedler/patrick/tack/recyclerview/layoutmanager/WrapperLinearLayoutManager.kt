@@ -17,33 +17,33 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.recyclerview.layoutmanager;
+package xyz.zedler.patrick.tack.recyclerview.layoutmanager
 
-import android.content.Context;
-import android.util.Log;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView.Recycler;
-import androidx.recyclerview.widget.RecyclerView.State;
+import android.content.Context
+import android.util.Log
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
-public class WrapperLinearLayoutManager extends LinearLayoutManager {
+class WrapperLinearLayoutManager : LinearLayoutManager {
 
-  private static final String TAG = WrapperLinearLayoutManager.class.getSimpleName();
-
-  public WrapperLinearLayoutManager(Context context) {
-    super(context);
+  companion object {
+    private val TAG = WrapperLinearLayoutManager::class.java.simpleName
   }
 
-  public WrapperLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
-    super(context, orientation, reverseLayout);
-  }
+  constructor(context: Context?) : super(context)
 
-  @Override
-  public void onLayoutChildren(Recycler recycler, State state) {
+  constructor(
+    context: Context?,
+    orientation: Int,
+    reverseLayout: Boolean
+  ) : super(context, orientation, reverseLayout)
+
+  override fun onLayoutChildren(recycler: RecyclerView.Recycler, state: RecyclerView.State) {
     // Fix for IndexOutOfBoundsException: Inconsistency detected. Invalid item position
     try {
-      super.onLayoutChildren(recycler, state);
-    } catch (IndexOutOfBoundsException e) {
-      Log.e(TAG, "onLayoutChildren: ", e);
+      super.onLayoutChildren(recycler, state)
+    } catch (e: IndexOutOfBoundsException) {
+      Log.e(TAG, "onLayoutChildren: ", e)
     }
   }
 }

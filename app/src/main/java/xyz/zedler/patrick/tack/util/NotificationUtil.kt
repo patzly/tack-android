@@ -6,9 +6,7 @@
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Tack Android is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * Tack Android is distributed in the hope that it under the terms of the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -17,219 +15,196 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util;
+package xyz.zedler.patrick.tack.util
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
-import androidx.annotation.NonNull;
-import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationCompat.Action;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
-import com.google.android.material.color.DynamicColors;
-import java.util.ArrayList;
-import java.util.List;
-import xyz.zedler.patrick.tack.Constants.ACTION;
-import xyz.zedler.patrick.tack.Constants.DEF;
-import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.Constants.THEME;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.service.MetronomeService;
+import android.Manifest
+import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.appcompat.view.ContextThemeWrapper
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationCompat.Action
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
+import com.google.android.material.color.DynamicColors
+import xyz.zedler.patrick.tack.Constants.ACTION
+import xyz.zedler.patrick.tack.Constants.DEF
+import xyz.zedler.patrick.tack.Constants.PREF
+import xyz.zedler.patrick.tack.Constants.THEME
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.activity.MainActivity
+import xyz.zedler.patrick.tack.service.MetronomeService
 
-public class NotificationUtil {
+class NotificationUtil(private val context: Context) {
 
-  private static final String TAG = NotificationUtil.class.getSimpleName();
-
-  private final static String CHANNEL_ID = "metronome";
-  private final static int REQUEST_CODE = 0;
-  public final static int NOTIFICATION_ID = 1;
-
-  private final Context context;
-  private final SharedPreferences sharedPrefs;
-  private final NotificationManagerCompat notificationManager;
-
-  public NotificationUtil(Context context) {
-    this.context = context;
-    sharedPrefs = new PrefsUtil(context).getSharedPrefs();
-    notificationManager = NotificationManagerCompat.from(context);
+  private val sharedPrefs: SharedPreferences by lazy {
+    PrefsUtil(context).sharedPrefs
+  }
+  private val notificationManager: NotificationManagerCompat by lazy {
+    NotificationManagerCompat.from(context)
   }
 
-  public boolean hasPermission() {
-    return hasPermission(context);
-  }
+  fun hasPermission(): Boolean = hasPermission(context)
 
-  public static boolean hasPermission(@NonNull Context context) {
-    if (VERSION.SDK_INT >= VERSION_CODES.TIRAMISU) {
-      int status = ContextCompat.checkSelfPermission(
-          context, Manifest.permission.POST_NOTIFICATIONS
-      );
-      return status == PackageManager.PERMISSION_GRANTED;
-    } else {
-      return true;
-    }
-  }
-
-  public void createNotificationChannel() {
-    if (VERSION.SDK_INT < VERSION_CODES.O) {
-      return;
-    }
+  fun createNotificationChannel() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
     notificationManager.createNotificationChannel(
-        new NotificationChannel(
-            CHANNEL_ID,
-            context.getString(R.string.title_notification_channel),
-            NotificationManager.IMPORTANCE_HIGH
-        )
-    );
+      NotificationChannel(
+        CHANNEL_ID,
+        context.getString(R.string.title_notification_channel),
+        NotificationManager.IMPORTANCE_HIGH
+      )
+    )
   }
 
   @SuppressLint("MissingPermission")
-  public void updateNotification(Notification notification) {
+  fun updateNotification(notification: Notification) {
     if (hasPermission()) {
-      notificationManager.notify(NOTIFICATION_ID, notification);
+      notificationManager.notify(NOTIFICATION_ID, notification)
     }
   }
 
-  public Notification getNotification(
-      boolean showPlayButton,
-      boolean showTimer,
-      boolean showPromotedLiveUpdate,
-      String timerTextLong,
-      String timerTextShort,
-      float timerProgress,
-      int timerDuration
-  ) {
-    Intent openIntent = new Intent(context, MainActivity.class);
-    openIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-    PendingIntent activityPendingIntent = PendingIntent.getActivity(
-        context, REQUEST_CODE, openIntent, PendingIntent.FLAG_IMMUTABLE
-    );
+  fun getNotification(
+    showPlayButton: Boolean,
+    showTimer: Boolean,
+    showPromotedLiveUpdate: Boolean,
+    timerTextLong: String?,
+    timerTextShort: String?,
+    timerProgress: Float,
+    timerDuration: Int
+  ): Notification {
+    val openIntent = Intent(context, MainActivity::class.java).apply {
+      flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+    }
+    val activityPendingIntent = PendingIntent.getActivity(
+      context, REQUEST_CODE, openIntent, PendingIntent.FLAG_IMMUTABLE
+    )
 
-    Intent startIntent = new Intent(context, MetronomeService.class);
-    startIntent.setAction(ACTION.START);
-    PendingIntent startServicePendingIntent = PendingIntent.getService(
-        context, REQUEST_CODE, startIntent, PendingIntent.FLAG_IMMUTABLE
-    );
-    Action actionStart = new Action(
-        R.drawable.ic_rounded_play_arrow_fill,
-        context.getString(R.string.action_play),
-        startServicePendingIntent
-    );
+    val startIntent = Intent(context, MetronomeService::class.java).apply {
+      action = ACTION.START
+    }
+    val startServicePendingIntent = PendingIntent.getService(
+      context, REQUEST_CODE, startIntent, PendingIntent.FLAG_IMMUTABLE
+    )
+    val actionStart = Action(
+      R.drawable.ic_rounded_play_arrow_fill,
+      context.getString(R.string.action_play),
+      startServicePendingIntent
+    )
 
-    Intent stopIntent = new Intent(context, MetronomeService.class);
-    stopIntent.setAction(ACTION.STOP);
-    PendingIntent stopServicePendingIntent = PendingIntent.getService(
-        context, REQUEST_CODE, stopIntent, PendingIntent.FLAG_IMMUTABLE
-    );
-    Action actionStop = new Action(
-        R.drawable.ic_rounded_stop_fill,
-        context.getString(R.string.action_stop),
-        stopServicePendingIntent
-    );
+    val stopIntent = Intent(context, MetronomeService::class.java).apply {
+      action = ACTION.STOP
+    }
+    val stopServicePendingIntent = PendingIntent.getService(
+      context, REQUEST_CODE, stopIntent, PendingIntent.FLAG_IMMUTABLE
+    )
+    val actionStop = Action(
+      R.drawable.ic_rounded_stop_fill,
+      context.getString(R.string.action_stop),
+      stopServicePendingIntent
+    )
 
-    Intent dismissIntent = new Intent(context, MetronomeService.class);
-    dismissIntent.setAction(ACTION.DISMISS);
-    PendingIntent dismissPendingIntent = PendingIntent.getService(
-        context, REQUEST_CODE, dismissIntent, PendingIntent.FLAG_IMMUTABLE
-    );
+    val dismissIntent = Intent(context, MetronomeService::class.java).apply {
+      action = ACTION.DISMISS
+    }
+    val dismissPendingIntent = PendingIntent.getService(
+      context, REQUEST_CODE, dismissIntent, PendingIntent.FLAG_IMMUTABLE
+    )
 
-    String title = context.getString(R.string.msg_service_running);
-    String text = context.getString(R.string.msg_service_running_return);
+    val title = context.getString(R.string.msg_service_running)
+    val text = context.getString(R.string.msg_service_running_return)
 
-    NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-        .setContentTitle(title)
-        .setContentText(text)
-        .setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(title).bigText(text))
-        .setContentIntent(activityPendingIntent)
-        .addAction(showPlayButton ? actionStart : actionStop)
-        .setAutoCancel(true)
-        .setOnlyAlertOnce(true)
-        .setSilent(true)
-        .setOngoing(true)
-        .setShowWhen(false)
-        .setDeleteIntent(dismissPendingIntent)
-        .setColor(getColor())
-        .setSmallIcon(R.drawable.ic_logo_notification)
-        .setPriority(NotificationCompat.PRIORITY_HIGH)
-        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE);
+    val builder = NotificationCompat.Builder(context, CHANNEL_ID)
+      .setContentTitle(title)
+      .setContentText(text)
+      .setStyle(NotificationCompat.BigTextStyle().setBigContentTitle(title).bigText(text))
+      .setContentIntent(activityPendingIntent)
+      .addAction(if (showPlayButton) actionStart else actionStop)
+      .setAutoCancel(true)
+      .setOnlyAlertOnce(true)
+      .setSilent(true)
+      .setOngoing(true)
+      .setShowWhen(false)
+      .setDeleteIntent(dismissPendingIntent)
+      .setColor(getColor())
+      .setSmallIcon(R.drawable.ic_logo_notification)
+      .setPriority(NotificationCompat.PRIORITY_HIGH)
+      .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+      .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
 
     if (showTimer) {
-      NotificationCompat.ProgressStyle progressStyle = new NotificationCompat.ProgressStyle();
-      int safeDuration = timerDuration > 0 ? timerDuration : 1;
+      val progressStyle = NotificationCompat.ProgressStyle()
+      val safeDuration = if (timerDuration > 0) timerDuration else 1
 
       if (safeDuration > 10) {
         progressStyle.setProgressSegments(
-            List.of(new NotificationCompat.ProgressStyle.Segment(100))
-        );
+          listOf(NotificationCompat.ProgressStyle.Segment(100))
+        )
       } else {
-        List<NotificationCompat.ProgressStyle.Point> points = new ArrayList<>();
-        List<NotificationCompat.ProgressStyle.Segment> segments = new ArrayList<>();
-        int previousOffset = 0;
+        val points = mutableListOf<NotificationCompat.ProgressStyle.Point>()
+        val segments = mutableListOf<NotificationCompat.ProgressStyle.Segment>()
+        var previousOffset = 0
 
-        for (int i = 1; i <= safeDuration; i++) {
-          int currentOffset = Math.round((i * 100f) / safeDuration);
-          int segmentLength = currentOffset - previousOffset;
-
-          segments.add(new NotificationCompat.ProgressStyle.Segment(segmentLength));
-
+        for (i in 1..safeDuration) {
+          val currentOffset = Math.round((i * 100f) / safeDuration)
+          val segmentLength = currentOffset - previousOffset
+          segments.add(NotificationCompat.ProgressStyle.Segment(segmentLength))
           if (safeDuration <= 5) {
-            points.add(new NotificationCompat.ProgressStyle.Point(currentOffset));
+            points.add(NotificationCompat.ProgressStyle.Point(currentOffset))
           }
-
-          previousOffset = currentOffset;
+          previousOffset = currentOffset
         }
-
-        progressStyle.setProgressSegments(segments);
-        if (!points.isEmpty()) {
-          progressStyle.setProgressPoints(points);
+        progressStyle.setProgressSegments(segments)
+        if (points.isNotEmpty()) {
+          progressStyle.setProgressPoints(points)
         }
       }
+      progressStyle.setProgress((timerProgress * 100).toInt())
 
-      progressStyle.setProgress((int) (timerProgress * 100));
-
-      builder
-          .setContentText(timerTextLong)
-          .setShortCriticalText(timerTextShort)
-          .setStyle(progressStyle)
-          .setRequestPromotedOngoing(showPromotedLiveUpdate);
+      builder.setContentText(timerTextLong)
+        .setShortCriticalText(timerTextShort)
+        .setStyle(progressStyle)
+        .setRequestPromotedOngoing(showPromotedLiveUpdate)
     }
-    return builder.build();
+    return builder.build()
   }
 
-  private int getColor() {
-    Context colorContext;
-    if (DynamicColors.isDynamicColorAvailable()) {
-      colorContext = DynamicColors.wrapContextIfAvailable(context);
+  private fun getColor(): Int {
+    val colorContext = if (DynamicColors.isDynamicColorAvailable()) {
+      DynamicColors.wrapContextIfAvailable(context)
     } else {
-      int themeResId;
-      switch (sharedPrefs.getString(PREF.THEME, DEF.THEME)) {
-        case THEME.RED:
-          themeResId = R.style.Theme_Tack_Red;
-          break;
-        case THEME.GREEN:
-          themeResId = R.style.Theme_Tack_Green;
-          break;
-        case THEME.BLUE:
-          themeResId = R.style.Theme_Tack_Blue;
-          break;
-        default:
-          themeResId = R.style.Theme_Tack_Yellow;
-          break;
+      val themeResId = when (sharedPrefs.getString(PREF.THEME, DEF.THEME)) {
+        THEME.RED -> R.style.Theme_Tack_Red
+        THEME.GREEN -> R.style.Theme_Tack_Green
+        THEME.BLUE -> R.style.Theme_Tack_Blue
+        else -> R.style.Theme_Tack_Yellow
       }
-      colorContext = new ContextThemeWrapper(context, themeResId);
+      ContextThemeWrapper(context, themeResId)
     }
-    return ResUtil.getSysColor(colorContext, R.attr.colorPrimary);
+    return colorContext.getSysColor(R.attr.colorPrimary)
+  }
+
+  companion object {
+    private const val CHANNEL_ID = "metronome"
+    private const val REQUEST_CODE = 0
+    const val NOTIFICATION_ID: Int = 1
+
+    @JvmStatic
+    fun hasPermission(context: Context): Boolean {
+      return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        ContextCompat.checkSelfPermission(
+          context, Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+      } else {
+        true
+      }
+    }
   }
 }

@@ -17,149 +17,117 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.recyclerview.adapter;
+package xyz.zedler.patrick.tack.recyclerview.adapter
 
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView.Adapter;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
-import java.util.List;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.databinding.RowDialogRadioBinding;
-import xyz.zedler.patrick.tack.model.Language;
-import xyz.zedler.patrick.tack.util.LocaleUtil;
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.databinding.RowDialogRadioBinding
+import xyz.zedler.patrick.tack.model.Language
+import xyz.zedler.patrick.tack.util.getLangFromLanguageCode
 
-public class LanguageDialogAdapter extends Adapter<LanguageDialogAdapter.LanguageViewHolder> {
+class LanguageDialogAdapter(
+  private val languages: List<Language>,
+  private val listener: OnLanguageChangedListener
+) : RecyclerView.Adapter<LanguageDialogAdapter.LanguageViewHolder>() {
 
-  private final static String TAG = SongChipAdapter.class.getSimpleName();
+  private var languageIndex = 0
+  private var languageIndexPrev = 0
+  private var selectedCode: String? = null
 
-  private final static String PAYLOAD_RADIO = "radio";
-
-  private final List<Language> languages;
-  private final OnLanguageChangedListener listener;
-  private int languageIndex, languageIndexPrev;
-  private String selectedCode;
-
-  public LanguageDialogAdapter(List<Language> languages, OnLanguageChangedListener listener) {
-    this.languages = languages;
-    this.listener = listener;
+  companion object {
+    private const val PAYLOAD_RADIO = "radio"
   }
 
-  @NonNull
-  @Override
-  public LanguageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-    RowDialogRadioBinding binding = RowDialogRadioBinding.inflate(
-        LayoutInflater.from(parent.getContext()), parent, false
-    );
-    return new LanguageViewHolder(binding);
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LanguageViewHolder {
+    val binding = RowDialogRadioBinding.inflate(
+      LayoutInflater.from(parent.context), parent, false
+    )
+    return LanguageViewHolder(binding)
   }
 
-  @Override
-  public void onBindViewHolder(@NonNull LanguageViewHolder holder, int position) {
-    int adapterPosition = holder.getBindingAdapterPosition();
+  override fun onBindViewHolder(holder: LanguageViewHolder, position: Int) {
+    val adapterPosition = holder.bindingAdapterPosition
     if (adapterPosition == 0) {
-      holder.binding.textRowDialogName.setText(R.string.settings_language_system);
+      holder.binding.textRowDialogName.setText(R.string.settings_language_system)
       holder.binding.textRowDialogDescription.setText(
-          R.string.settings_language_system_description
-      );
+        R.string.settings_language_system_description
+      )
 
-      holder.binding.radioRowDialog.setChecked(languageIndex == 0);
-      holder.binding.radioRowDialog.jumpDrawablesToCurrentState();
+      holder.binding.radioRowDialog.isChecked = languageIndex == 0
+      holder.binding.radioRowDialog.jumpDrawablesToCurrentState()
 
-      holder.binding.linearRowDialog.setOnClickListener(
-          view -> listener.onLanguageChanged(null, true)
-      );
-      return;
+      holder.binding.linearRowDialog.setOnClickListener {
+        listener.onLanguageChanged(null, true)
+      }
+      return
     }
 
-    Language language = languages.get(adapterPosition - 1);
-    holder.binding.textRowDialogName.setText(language.getName());
-    holder.binding.textRowDialogDescription.setText(language.getTranslators());
+    val language = languages[adapterPosition - 1]
+    holder.binding.textRowDialogName.text = language.name
+    holder.binding.textRowDialogDescription.text = language.translators
 
-    holder.binding.radioRowDialog.setChecked(adapterPosition == languageIndex);
-    holder.binding.radioRowDialog.jumpDrawablesToCurrentState();
+    holder.binding.radioRowDialog.isChecked = adapterPosition == languageIndex
+    holder.binding.radioRowDialog.jumpDrawablesToCurrentState()
 
-    holder.binding.linearRowDialog.setOnClickListener(
-        view -> listener.onLanguageChanged(language.getCode(), true)
-    );
+    holder.binding.linearRowDialog.setOnClickListener {
+      listener.onLanguageChanged(language.code, true)
+    }
   }
 
-  @Override
-  public void onBindViewHolder(
-      @NonNull LanguageViewHolder holder, int position, @NonNull List<Object> payloads
+  override fun onBindViewHolder(
+    holder: LanguageViewHolder,
+    position: Int,
+    payloads: List<Any>
   ) {
     if (payloads.contains(PAYLOAD_RADIO)) {
-      int adapterPosition = holder.getBindingAdapterPosition();
+      val adapterPosition = holder.bindingAdapterPosition
 
-      holder.binding.radioRowDialog.setChecked(adapterPosition == languageIndexPrev);
-      holder.binding.radioRowDialog.jumpDrawablesToCurrentState();
-      holder.binding.radioRowDialog.post(
-          () -> holder.binding.radioRowDialog.setChecked(adapterPosition == languageIndex)
-      );
+      holder.binding.radioRowDialog.isChecked = adapterPosition == languageIndexPrev
+      holder.binding.radioRowDialog.jumpDrawablesToCurrentState()
+      holder.binding.radioRowDialog.post {
+        holder.binding.radioRowDialog.isChecked = adapterPosition == languageIndex
+      }
     } else {
-      onBindViewHolder(holder, position);
+      super.onBindViewHolder(holder, position, payloads)
     }
   }
 
-  @Override
-  public int getItemCount() {
-    return languages.size() + 1;
-  }
+  override fun getItemCount(): Int = languages.size + 1
 
-  public void setLanguageCode(String selectedCode) {
-    setLanguageCode(selectedCode, false);
-  }
-
-  private void setLanguageCode(String selectedCode, boolean fromUser) {
-    if (selectedCode != null && selectedCode.equals(this.selectedCode)) {
-      return;
+  fun setLanguageCode(selectedCode: String?, fromUser: Boolean = false) {
+    if (selectedCode != null && selectedCode == this.selectedCode) {
+      return
     }
-    languageIndexPrev = getIndexForCode(this.selectedCode);
-    languageIndex = getIndexForCode(selectedCode);
-    this.selectedCode = selectedCode;
+    languageIndexPrev = getIndexForCode(this.selectedCode)
+    languageIndex = getIndexForCode(selectedCode)
+    this.selectedCode = selectedCode
     if (fromUser) {
-      notifyItemChanged(languageIndexPrev, PAYLOAD_RADIO);
-      notifyItemChanged(languageIndex, PAYLOAD_RADIO);
+      notifyItemChanged(languageIndexPrev, PAYLOAD_RADIO)
+      notifyItemChanged(languageIndex, PAYLOAD_RADIO)
     } else {
-      notifyItemChanged(languageIndexPrev);
-      notifyItemChanged(languageIndex);
+      notifyItemChanged(languageIndexPrev)
+      notifyItemChanged(languageIndex)
     }
-    listener.onLanguageChanged(selectedCode, fromUser);
+    listener.onLanguageChanged(selectedCode, fromUser)
   }
 
-  private int getIndexForCode(String languageCode) {
-    if (languageCode == null) {
-      return 0;
-    }
-    for (int i = 0; i < languages.size(); i++) {
-      Language language = languages.get(i);
-      if (language.getCode().equals(languageCode)) {
-        return i + 1;
-      }
-    }
+  private fun getIndexForCode(languageCode: String?): Int {
+    if (languageCode == null) return 0
+    val index = languages.indexOfFirst { it.code == languageCode }
+    if (index != -1) return index + 1
+
     // try to match only the language without region
-    String lang = LocaleUtil.getLangFromLanguageCode(languageCode);
-    for (int i = 0; i < languages.size(); i++) {
-      Language language = languages.get(i);
-      if (language.getCode().equals(lang)) {
-        return i + 1;
-      }
-    }
-    return 0;
+    val lang = languageCode.getLangFromLanguageCode()
+    val langIndex = languages.indexOfFirst { it.code == lang }
+    return if (langIndex != -1) langIndex + 1 else 0
   }
 
-  public static class LanguageViewHolder extends ViewHolder {
+  class LanguageViewHolder(val binding: RowDialogRadioBinding) :
+    RecyclerView.ViewHolder(binding.root)
 
-    private final RowDialogRadioBinding binding;
-
-    public LanguageViewHolder(RowDialogRadioBinding binding) {
-      super(binding.getRoot());
-      this.binding = binding;
-    }
-  }
-
-  public interface OnLanguageChangedListener {
-    void onLanguageChanged(String languageCode, boolean fromUser);
+  fun interface OnLanguageChangedListener {
+    fun onLanguageChanged(languageCode: String?, fromUser: Boolean)
   }
 }

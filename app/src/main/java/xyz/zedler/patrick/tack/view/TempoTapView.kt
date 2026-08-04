@@ -17,168 +17,158 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.view;
+package xyz.zedler.patrick.tack.view
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
-import android.graphics.Path;
-import android.graphics.RadialGradient;
-import android.graphics.RectF;
-import android.graphics.Shader.TileMode;
-import android.util.AttributeSet;
-import android.view.View;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.graphics.ColorUtils;
-import androidx.dynamicanimation.animation.FloatPropertyCompat;
-import androidx.dynamicanimation.animation.SpringAnimation;
-import androidx.dynamicanimation.animation.SpringForce;
-import androidx.graphics.shapes.Morph;
-import androidx.graphics.shapes.Shapes_androidKt;
-import com.google.android.material.shape.MaterialShapes;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.ShapeUtil;
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RadialGradient
+import android.graphics.RectF
+import android.graphics.Shader
+import android.util.AttributeSet
+import android.view.View
+import androidx.core.graphics.ColorUtils
+import androidx.dynamicanimation.animation.FloatPropertyCompat
+import androidx.dynamicanimation.animation.SpringAnimation
+import androidx.dynamicanimation.animation.SpringForce
+import androidx.graphics.shapes.Morph
+import androidx.graphics.shapes.toPath
+import com.google.android.material.shape.MaterialShapes
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.util.*
 
-public class TempoTapView extends View {
+class TempoTapView @JvmOverloads constructor(
+  context: Context,
+  attrs: AttributeSet? = null
+) : View(context, attrs) {
 
-  private final static String TAG = TempoTapView.class.getSimpleName();
+  private val paintFill = Paint().apply {
+    style = Paint.Style.FILL
+  }
+  private val path = Path()
+  private val matrix = Matrix()
+  private val morph: Morph
+  private val colorGradient1 = context.getAttrColor(R.attr.colorSecondaryContainer)
+  private val colorGradient2 = context.getAttrColor(R.attr.colorPrimaryContainer)
+  private val colorGradient3 = context.getAttrColor(R.attr.colorTertiaryContainer)
 
-  private final Paint paintFill;
-  private final Path path;
-  private final Matrix matrix;
-  private final Morph morph;
-  private final int colorGradient1, colorGradient2, colorGradient3;
-  private float touchFactor;
-  private RadialGradient gradient;
-  private boolean reduceAnimations;
-  private SpringAnimation springAnimationTouch, springAnimationRelease;
+  private var touchFactor = 0f
+  private var gradient: RadialGradient? = null
+  private var reduceAnimations = false
+  private var springAnimationTouch: SpringAnimation? = null
+  private var springAnimationRelease: SpringAnimation? = null
 
-  @SuppressLint("RestrictedApi")
-  public TempoTapView(@NonNull Context context, @Nullable AttributeSet attrs) {
-    super(context, attrs);
+  init {
+    paintFill.color = colorGradient3
 
-    colorGradient1 = ResUtil.getColor(context, R.attr.colorSecondaryContainer);
-    colorGradient2 = ResUtil.getColor(context, R.attr.colorPrimaryContainer);
-    colorGradient3 = ResUtil.getColor(context, R.attr.colorTertiaryContainer);
+    @SuppressLint("RestrictedApi")
+    morph = Morph(
+      normalize(
+        MaterialShapes.VERY_SUNNY,
+        true,
+        RectF(-1f, -1f, 1f, 1f)
+      ),
+      normalize(
+        MaterialShapes.SUNNY,
+        true,
+        RectF(-1f, -1f, 1f, 1f)
+      )
+    )
 
-    paintFill = new Paint();
-    paintFill.setStyle(Style.FILL);
-    paintFill.setColor(colorGradient3);
-
-    morph = new Morph(
-        ShapeUtil.normalize(
-            MaterialShapes.VERY_SUNNY, true, new RectF(-1, -1, 1, 1)
-        ),
-        ShapeUtil.normalize(
-            MaterialShapes.SUNNY, true, new RectF(-1, -1, 1, 1)
-        )
-    );
-
-    path = new Path();
-    matrix = new Matrix();
-
-    updateShape();
+    updateShape()
   }
 
-  @Override
-  protected void onDraw(@NonNull Canvas canvas) {
-    super.onDraw(canvas);
+  override fun onDraw(canvas: Canvas) {
+    super.onDraw(canvas)
 
-    if (gradient == null) {
-      float blendFraction = 0.75f;
-      gradient = new RadialGradient(
-          getWidth(),
-          0,
-          getWidth() * 1.25f,
-          new int[]{
-              ColorUtils.blendARGB(colorGradient3, colorGradient1, blendFraction),
-              ColorUtils.blendARGB(colorGradient3, colorGradient1, blendFraction),
-              ColorUtils.blendARGB(colorGradient3, colorGradient2, blendFraction),
-              ColorUtils.blendARGB(colorGradient3, colorGradient3, blendFraction)
-          },
-          new float[]{0, 0.1f, 0.4f, 0.8f},
-          TileMode.CLAMP
-      );
-      paintFill.setShader(gradient);
+    if (gradient == null && width > 0) {
+      val blendFraction = 0.75f
+      gradient = RadialGradient(
+        width.toFloat(),
+        0f,
+        width * 1.25f,
+        intArrayOf(
+          ColorUtils.blendARGB(colorGradient3, colorGradient1, blendFraction),
+          ColorUtils.blendARGB(colorGradient3, colorGradient1, blendFraction),
+          ColorUtils.blendARGB(colorGradient3, colorGradient2, blendFraction),
+          ColorUtils.blendARGB(colorGradient3, colorGradient3, blendFraction)
+        ),
+        floatArrayOf(0f, 0.1f, 0.4f, 0.8f),
+        Shader.TileMode.CLAMP
+      )
+      paintFill.shader = gradient
     }
 
-    canvas.drawPath(path, paintFill);
+    canvas.drawPath(path, paintFill)
   }
 
-  @Override
-  protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-    updateShape();
+  override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+    super.onLayout(changed, left, top, right, bottom)
+    updateShape()
   }
 
-  private void updateShape() {
-    path.rewind();
-    Shapes_androidKt.toPath(morph, touchFactor, path);
-    matrix.reset();
-    matrix.setScale(getWidth() / 2f, getHeight() / 2f);
-    matrix.postTranslate(getWidth() / 2f, getHeight() / 2f);
-    path.transform(matrix);
+  private fun updateShape() {
+    path.rewind()
+    morph.toPath(touchFactor, path)
+    matrix.reset()
+    matrix.setScale(width / 2f, height / 2f)
+    matrix.postTranslate(width / 2f, height / 2f)
+    path.transform(matrix)
   }
 
   @SuppressLint("PrivateResource")
-  public void setTouched(boolean touched) {
-    if (springAnimationTouch != null) {
-      springAnimationTouch.cancel();
-    }
-    if (springAnimationRelease != null) {
-      springAnimationRelease.cancel();
-    }
+  fun setTouched(touched: Boolean) {
+    springAnimationTouch?.cancel()
+    springAnimationRelease?.cancel()
+
     if (!reduceAnimations) {
       if (springAnimationTouch == null) {
-        springAnimationTouch =
-            new SpringAnimation(this, TOUCH_FACTOR)
-                .setSpring(new SpringForce().setStiffness(6000f).setDampingRatio(0.9f))
-                .setMinimumVisibleChange(0.01f);
+        springAnimationTouch = SpringAnimation(this, TOUCH_FACTOR).apply {
+          spring = SpringForce().apply {
+            stiffness = 6000f
+            dampingRatio = 0.9f
+          }
+          minimumVisibleChange = 0.01f
+        }
       }
       if (springAnimationRelease == null) {
-        springAnimationRelease =
-            new SpringAnimation(this, TOUCH_FACTOR)
-                .setSpring(new SpringForce().setStiffness(1400).setDampingRatio(0.4f))
-                .setMinimumVisibleChange(0.01f);
+        springAnimationRelease = SpringAnimation(this, TOUCH_FACTOR).apply {
+          spring = SpringForce().apply {
+            stiffness = 1400f
+            dampingRatio = 0.4f
+          }
+          minimumVisibleChange = 0.01f
+        }
       }
       if (touched) {
-        springAnimationTouch.animateToFinalPosition(1);
+        springAnimationTouch?.animateToFinalPosition(1f)
       } else {
-        springAnimationRelease.animateToFinalPosition(0);
+        springAnimationRelease?.animateToFinalPosition(0f)
       }
     } else {
-      setTouchFactor(0);
+      setTouchFactor(0f)
     }
   }
 
-  private float getTouchFactor() {
-    return touchFactor;
+  fun getTouchFactor(): Float = touchFactor
+
+  fun setTouchFactor(factor: Float) {
+    touchFactor = factor
+    updateShape()
+    invalidate()
   }
 
-  private void setTouchFactor(float factor) {
-    touchFactor = factor;
-    updateShape();
-    invalidate();
+  fun setReduceAnimations(reduce: Boolean) {
+    reduceAnimations = reduce
   }
 
-  public void setReduceAnimations(boolean reduce) {
-    reduceAnimations = reduce;
+  companion object {
+    private val TOUCH_FACTOR = object : FloatPropertyCompat<TempoTapView>("touchFactor") {
+      override fun getValue(delegate: TempoTapView): Float = delegate.getTouchFactor()
+      override fun setValue(delegate: TempoTapView, value: Float) = delegate.setTouchFactor(value)
+    }
   }
-
-  private static final FloatPropertyCompat<TempoTapView> TOUCH_FACTOR =
-      new FloatPropertyCompat<>("touchFactor") {
-        @Override
-        public float getValue(TempoTapView delegate) {
-          return delegate.getTouchFactor();
-        }
-
-        @Override
-        public void setValue(TempoTapView delegate, float value) {
-          delegate.setTouchFactor(value);
-        }
-      };
 }

@@ -17,63 +17,62 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.database.dao;
+package xyz.zedler.patrick.tack.database.dao
 
-import androidx.lifecycle.LiveData;
-import androidx.room.Dao;
-import androidx.room.Delete;
-import androidx.room.Insert;
-import androidx.room.OnConflictStrategy;
-import androidx.room.Query;
-import androidx.room.Transaction;
-import androidx.room.Update;
-import java.util.List;
-import xyz.zedler.patrick.tack.database.entity.Part;
-import xyz.zedler.patrick.tack.database.entity.Song;
-import xyz.zedler.patrick.tack.database.relations.SongWithParts;
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
+import xyz.zedler.patrick.tack.database.entity.Part
+import xyz.zedler.patrick.tack.database.entity.Song
+import xyz.zedler.patrick.tack.database.relations.SongWithParts
 
 @Dao
-public interface SongDao {
+interface SongDao {
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  void insertSong(Song song);
+  fun insertSong(song: Song)
 
   @Update
-  void updateSong(Song song);
+  fun updateSong(song: Song)
 
   @Delete
-  void deleteSong(Song song);
+  fun deleteSong(song: Song)
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  void insertPart(Part part);
+  fun insertPart(part: Part)
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  void insertParts(List<Part> parts);
+  fun insertParts(parts: List<Part>)
 
   @Update
-  void updatePart(Part part);
+  fun updatePart(part: Part)
 
   @Delete
-  void deletePart(Part part);
+  fun deletePart(part: Part)
 
   @Delete
-  void deleteParts(List<Part> parts);
+  fun deleteParts(parts: List<Part>)
 
   @Transaction
   @Query("SELECT * FROM songs WHERE id = :songId")
-  SongWithParts getSongWithPartsById(String songId);
+  fun getSongWithPartsById(songId: String): SongWithParts?
 
   @Transaction
   @Query("SELECT * FROM songs")
-  List<SongWithParts> getAllSongsWithParts();
+  fun getAllSongsWithParts(): List<SongWithParts>
 
   @Transaction
   @Query("SELECT * FROM songs")
-  LiveData<List<SongWithParts>> getAllSongsWithPartsLive();
+  fun getAllSongsWithPartsLive(): LiveData<List<SongWithParts>>
 
   @Query("SELECT * FROM songs")
-  List<Song> getAllSongs();
+  fun getAllSongs(): List<Song>
 
   @Query("SELECT * FROM songs")
-  LiveData<List<Song>> getAllSongsLive();
+  fun getAllSongsLive(): LiveData<List<Song>>
 }

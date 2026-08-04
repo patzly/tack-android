@@ -17,140 +17,109 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.recyclerview.adapter;
+package xyz.zedler.patrick.tack.recyclerview.adapter
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView.Adapter;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
-import java.util.List;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.database.entity.Part;
-import xyz.zedler.patrick.tack.database.relations.SongWithParts;
-import xyz.zedler.patrick.tack.databinding.RowDialogRadioBinding;
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.database.relations.SongWithParts
+import xyz.zedler.patrick.tack.databinding.RowDialogRadioBinding
 
-public class PartDialogAdapter extends Adapter<ViewHolder> {
+class PartDialogAdapter(
+  private val listener: OnPartChangedListener
+) : RecyclerView.Adapter<PartDialogAdapter.PartDialogViewHolder>() {
 
-  private final static String TAG = SongChipAdapter.class.getSimpleName();
+  private var songWithParts: SongWithParts? = null
+  private var partIndex = 0
+  private var partIndexPrev = 0
 
-  private final static String PAYLOAD_RADIO = "radio";
-
-  private final OnPartChangedListener listener;
-  private SongWithParts songWithParts;
-  private int partIndex, partIndexPrev;
-
-  public PartDialogAdapter(@NonNull OnPartChangedListener listener) {
-    this.listener = listener;
+  companion object {
+    private const val PAYLOAD_RADIO = "radio"
   }
 
-  @NonNull
-  @Override
-  public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-    RowDialogRadioBinding binding = RowDialogRadioBinding.inflate(
-        LayoutInflater.from(parent.getContext()), parent, false
-    );
-    return new PartDialogViewHolder(binding);
+  override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PartDialogViewHolder {
+    val binding = RowDialogRadioBinding.inflate(
+      LayoutInflater.from(parent.context), parent, false
+    )
+    return PartDialogViewHolder(binding)
   }
 
-  @Override
-  public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-    int adapterPosition = holder.getBindingAdapterPosition();
-    PartDialogViewHolder partHolder = (PartDialogViewHolder) holder;
-    Context context = partHolder.binding.getRoot().getContext();
+  override fun onBindViewHolder(holder: PartDialogViewHolder, position: Int) {
+    val adapterPosition = holder.bindingAdapterPosition
+    val context = holder.binding.root.context
 
-    Part part = songWithParts.getParts().get(adapterPosition);
-    String name = part.getName();
-    if (name == null) {
-      name = context.getString(R.string.label_part_unnamed, adapterPosition + 1);
+    val part = songWithParts?.parts?.get(adapterPosition) ?: return
+    val name = part.name ?: context.getString(R.string.label_part_unnamed, adapterPosition + 1)
+    holder.binding.textRowDialogName.text = name
+    holder.binding.textRowDialogDescription.text = part.getTimerDurationString(context)
+
+    holder.binding.radioRowDialog.isChecked = adapterPosition == partIndex
+    holder.binding.radioRowDialog.jumpDrawablesToCurrentState()
+
+    holder.binding.linearRowDialog.setOnClickListener {
+      setPartIndex(adapterPosition, true)
     }
-    partHolder.binding.textRowDialogName.setText(name);
-    partHolder.binding.textRowDialogDescription.setText(part.getTimerDurationString(context));
-
-    partHolder.binding.radioRowDialog.setChecked(adapterPosition == partIndex);
-    partHolder.binding.radioRowDialog.jumpDrawablesToCurrentState();
-
-    partHolder.binding.linearRowDialog.setOnClickListener(
-        v -> setPartIndex(adapterPosition, true)
-    );
   }
 
-  @Override
-  public void onBindViewHolder(
-      @NonNull ViewHolder holder, int position, @NonNull List<Object> payloads
+  override fun onBindViewHolder(
+    holder: PartDialogViewHolder,
+    position: Int,
+    payloads: List<Any>
   ) {
     if (payloads.contains(PAYLOAD_RADIO)) {
-      int adapterPosition = holder.getBindingAdapterPosition();
-      PartDialogViewHolder partHolder = (PartDialogViewHolder) holder;
+      val adapterPosition = holder.bindingAdapterPosition
 
-      partHolder.binding.radioRowDialog.setChecked(adapterPosition == partIndexPrev);
-      partHolder.binding.radioRowDialog.jumpDrawablesToCurrentState();
-      partHolder.binding.radioRowDialog.post(
-          () -> partHolder.binding.radioRowDialog.setChecked(adapterPosition == partIndex)
-      );
+      holder.binding.radioRowDialog.isChecked = adapterPosition == partIndexPrev
+      holder.binding.radioRowDialog.jumpDrawablesToCurrentState()
+      holder.binding.radioRowDialog.post {
+        holder.binding.radioRowDialog.isChecked = adapterPosition == partIndex
+      }
     } else {
-      onBindViewHolder(holder, position);
+      super.onBindViewHolder(holder, position, payloads)
     }
   }
 
-  @Override
-  public int getItemCount() {
-    return songWithParts != null ? songWithParts.getParts().size() : 0;
-  }
+  override fun getItemCount(): Int = songWithParts?.parts?.size ?: 0
 
-  @SuppressLint("NotifyDataSetChanged")
-  public void setSongWithParts(SongWithParts songWithParts) {
-    if ((songWithParts == null && this.songWithParts == null)) {
-      return;
+  fun setSongWithParts(songWithParts: SongWithParts?) {
+    if (songWithParts == null && this.songWithParts == null) {
+      return
     } else if (songWithParts != null) {
-      String idNew = songWithParts.getSong().getId();
-      if (this.songWithParts != null) {
-        String idOld = this.songWithParts.getSong().getId();
-        if (idNew.equals(idOld)
-            && songWithParts.getParts().size() == this.songWithParts.getParts().size()) {
-          return;
+      val idNew = songWithParts.song.id
+      this.songWithParts?.let {
+        val idOld = it.song.id
+        if (idNew == idOld && songWithParts.parts.size == it.parts.size) {
+          return
         }
       }
     }
-    this.songWithParts = songWithParts;
-    partIndex = 0;
-    partIndexPrev = 0;
-    notifyDataSetChanged();
+    this.songWithParts = songWithParts
+    partIndex = 0
+    partIndexPrev = 0
+    notifyItemRangeChanged(0, itemCount)
   }
 
-  public void setPartIndex(int partIndex) {
-    setPartIndex(partIndex, false);
-  }
-
-  private void setPartIndex(int partIndex, boolean fromUser) {
+  fun setPartIndex(partIndex: Int, fromUser: Boolean = false) {
     if (partIndex == this.partIndex) {
-      return;
+      return
     }
-    partIndexPrev = this.partIndex;
-    this.partIndex = partIndex;
+    partIndexPrev = this.partIndex
+    this.partIndex = partIndex
     if (fromUser) {
-      notifyItemChanged(partIndexPrev, PAYLOAD_RADIO);
-      notifyItemChanged(partIndex, PAYLOAD_RADIO);
+      notifyItemChanged(partIndexPrev, PAYLOAD_RADIO)
+      notifyItemChanged(partIndex, PAYLOAD_RADIO)
     } else {
-      notifyItemChanged(partIndexPrev);
-      notifyItemChanged(partIndex);
+      notifyItemChanged(partIndexPrev)
+      notifyItemChanged(partIndex)
     }
-    listener.onPartChanged(partIndex, fromUser);
+    listener.onPartChanged(partIndex, fromUser)
   }
 
-  public static class PartDialogViewHolder extends ViewHolder {
+  class PartDialogViewHolder(val binding: RowDialogRadioBinding) :
+    RecyclerView.ViewHolder(binding.root)
 
-    private final RowDialogRadioBinding binding;
-
-    public PartDialogViewHolder(RowDialogRadioBinding binding) {
-      super(binding.getRoot());
-      this.binding = binding;
-    }
-  }
-
-  public interface OnPartChangedListener {
-    void onPartChanged(int partIndex, boolean fromUser);
+  fun interface OnPartChangedListener {
+    fun onPartChanged(partIndex: Int, fromUser: Boolean)
   }
 }

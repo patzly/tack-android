@@ -17,162 +17,134 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util.dialog;
+package xyz.zedler.patrick.tack.util.dialog
 
-import android.os.Bundle;
-import android.text.Editable;
-import android.view.View;
-import android.view.ViewTreeObserver;
-import android.view.inputmethod.EditorInfo;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.database.entity.Part;
-import xyz.zedler.patrick.tack.databinding.PartialDialogPartRenameBinding;
-import xyz.zedler.patrick.tack.fragment.SongFragment;
-import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.UiUtil;
+import android.os.Bundle
+import android.view.inputmethod.EditorInfo
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.activity.MainActivity
+import xyz.zedler.patrick.tack.database.entity.Part
+import xyz.zedler.patrick.tack.databinding.PartialDialogPartRenameBinding
+import xyz.zedler.patrick.tack.fragment.SongFragment
+import xyz.zedler.patrick.tack.util.*
 
-public class RenameDialogUtil {
+class RenameDialogUtil(
+  private val activity: MainActivity,
+  private val fragment: SongFragment
+) {
 
-  private static final String TAG = RenameDialogUtil.class.getSimpleName();
+  private val binding = PartialDialogPartRenameBinding.inflate(activity.layoutInflater)
+  private val dialogUtil = DialogUtil(activity, "part_rename")
+  private var partId: String? = null
+  private var partNamePrev: String? = null
+  private var partIndex = 0
 
-  private static final String PART_ID = "part_id_dialog";
-  private static final String PART_NAME_PREV = "part_name_prev_dialog";
-  private static final String PART_INDEX = "part_index_dialog";
-
-  private final MainActivity activity;
-  private final SongFragment fragment;
-  private final PartialDialogPartRenameBinding binding;
-  private final DialogUtil dialogUtil;
-  private String partId;
-  private String partNamePrev;
-  private int partIndex;
-
-  public RenameDialogUtil(MainActivity activity, SongFragment fragment) {
-    this.activity = activity;
-    this.fragment = fragment;
-
-    binding = PartialDialogPartRenameBinding.inflate(activity.getLayoutInflater());
-    binding.editTextPartRename.setOnEditorActionListener(
-        (v, actionId, event) -> {
-          if (actionId == EditorInfo.IME_ACTION_DONE) {
-            activity.performHapticClick();
-            rename();
-          }
-          return false;
-        });
-
-    dialogUtil = new DialogUtil(activity, "part_rename");
-    dialogUtil.createDialog(builder -> {
-      builder.setTitle(R.string.action_rename_part);
-      builder.setView(binding.getRoot());
-      builder.setPositiveButton(R.string.action_rename, (dialog, which) -> {
-        activity.performHapticClick();
-        rename();
-      });
-      builder.setNegativeButton(
-          R.string.action_cancel, (dialog, which) -> activity.performHapticClick()
-      );
-    });
-
-    setDividerVisibility(!UiUtil.isOrientationPortrait(activity));
-  }
-
-  public void show() {
-    update();
-    dialogUtil.show();
-    showKeyboard();
-  }
-
-  public void showIfWasShown(@Nullable Bundle state) {
-    partId = state != null ? state.getString(PART_ID) : null;
-    partNamePrev = state != null ? state.getString(PART_NAME_PREV) : null;
-    partIndex = state != null ? state.getInt(PART_INDEX) : 0;
-    update();
-    boolean showing = dialogUtil.showIfWasShown(state);
-    if (showing) {
-      showKeyboard();
+  init {
+    binding.editTextPartRename.setOnEditorActionListener { _, actionId, _ ->
+      if (actionId == EditorInfo.IME_ACTION_DONE) {
+        activity.performHapticClick()
+        rename()
+      }
+      false
     }
-  }
 
-  public void dismiss() {
-    dialogUtil.dismiss();
-  }
-
-  public void saveState(@NonNull Bundle outState) {
-    if (dialogUtil != null) {
-      dialogUtil.saveState(outState);
-    }
-    outState.putString(PART_ID, partId);
-    outState.putString(PART_NAME_PREV, partNamePrev);
-    outState.putInt(PART_INDEX, partIndex);
-  }
-
-  public void update() {
-    if (binding == null) {
-      return;
-    }
-    binding.editTextPartRename.setText(partNamePrev);
-    Editable text = binding.editTextPartRename.getText();
-    binding.editTextPartRename.setSelection(text != null ? text.length() : 0);
-    // placeholder
-    binding.editTextPartRename.setHint(
-        activity.getString(R.string.label_part_unnamed, partIndex + 1)
-    );
-
-    measureScrollView();
-  }
-
-  public void setPart(@NonNull Part part) {
-    partId = part.getId();
-    partNamePrev = part.getName();
-    partIndex = part.getPartIndex();
-    update();
-  }
-
-  private void rename() {
-    Editable text = binding.editTextPartRename.getText();
-    String name = null;
-    if (text != null) {
-      name = text.toString();
-      if (name.trim().isEmpty()) {
-        name = null;
+    dialogUtil.createDialog { builder ->
+      builder.setTitle(R.string.action_rename_part)
+      builder.setView(binding.root)
+      builder.setPositiveButton(R.string.action_rename) { _, _ ->
+        activity.performHapticClick()
+        rename()
+      }
+      builder.setNegativeButton(R.string.action_cancel) { _, _ ->
+        activity.performHapticClick()
       }
     }
-    fragment.renamePart(partId, name);
+
+    updateDividerVisibility(activity.isOrientationPortrait().not())
   }
 
-  private void showKeyboard() {
-    if (binding != null) {
-      binding.editTextPartRename.requestFocus();
-      UiUtil.showKeyboard(binding.editTextPartRename);
+  fun show() {
+    update()
+    dialogUtil.show()
+    showKeyboard()
+  }
+
+  fun showIfWasShown(state: Bundle?) {
+    state?.let {
+      partId = it.getString(PART_ID)
+      partNamePrev = it.getString(PART_NAME_PREV)
+      partIndex = it.getInt(PART_INDEX)
+    }
+    update()
+    if (dialogUtil.showIfWasShown(state)) {
+      showKeyboard()
     }
   }
 
-  private void measureScrollView() {
-    binding.scrollPartRename.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            boolean isScrollable = binding.scrollPartRename.canScrollVertically(-1)
-                || binding.scrollPartRename.canScrollVertically(1);
-            setDividerVisibility(isScrollable);
-            binding.scrollPartRename.getViewTreeObserver()
-                .removeOnGlobalLayoutListener(this);
-          }
-        });
+  fun dismiss() {
+    dialogUtil.dismiss()
   }
 
-  private void setDividerVisibility(boolean visible) {
-    binding.dividerPartRenameTop.setVisibility(visible ? View.VISIBLE : View.GONE);
-    binding.dividerPartRenameBottom.setVisibility(visible ? View.VISIBLE : View.GONE);
-    binding.linearPartRenameContainer.setPadding(
-        binding.linearPartRenameContainer.getPaddingLeft(),
-        visible ? UiUtil.dpToPx(activity, 16) : 0,
-        binding.linearPartRenameContainer.getPaddingRight(),
-        visible ? UiUtil.dpToPx(activity, 16) : 0
-    );
+  fun saveState(outState: Bundle) {
+    dialogUtil.saveState(outState)
+    outState.putString(PART_ID, partId)
+    outState.putString(PART_NAME_PREV, partNamePrev)
+    outState.putInt(PART_INDEX, partIndex)
+  }
+
+  fun update() {
+    binding.editTextPartRename.setText(partNamePrev)
+    val text = binding.editTextPartRename.text
+    binding.editTextPartRename.setSelection(text?.length ?: 0)
+    // placeholder
+    binding.editTextPartRename.hint = activity.getString(
+      R.string.label_part_unnamed,
+      partIndex + 1
+    )
+
+    measureScrollView()
+  }
+
+  fun setPart(part: Part) {
+    partId = part.id
+    partNamePrev = part.name
+    partIndex = part.partIndex
+    update()
+  }
+
+  private fun rename() {
+    val text = binding.editTextPartRename.text?.toString()?.trim()
+    val name = if (text.isNullOrEmpty()) null else text
+    if (partId != null) {
+      fragment.renamePart(partId!!, name)
+    }
+  }
+
+  private fun showKeyboard() {
+    binding.editTextPartRename.requestFocus()
+    binding.editTextPartRename.showKeyboard()
+  }
+
+  private fun measureScrollView() {
+    binding.scrollPartRename.onGlobalLayout {
+      val isScrollable = binding.scrollPartRename.canScrollVertically(-1) ||
+          binding.scrollPartRename.canScrollVertically(1)
+      updateDividerVisibility(isScrollable)
+    }
+  }
+
+  private fun updateDividerVisibility(visible: Boolean) {
+    binding.scrollPartRename.setDividerVisibility(
+      visible,
+      binding.dividerPartRenameTop,
+      binding.dividerPartRenameBottom,
+      binding.linearPartRenameContainer
+    )
+  }
+
+  companion object {
+    private const val PART_ID = "part_id_dialog"
+    private const val PART_NAME_PREV = "part_name_prev_dialog"
+    private const val PART_INDEX = "part_index_dialog"
   }
 }

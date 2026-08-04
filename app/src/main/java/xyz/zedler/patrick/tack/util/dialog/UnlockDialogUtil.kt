@@ -17,52 +17,42 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util.dialog;
+package xyz.zedler.patrick.tack.util.dialog
 
-import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.util.DialogUtil;
-import xyz.zedler.patrick.tack.util.UnlockUtil;
+import android.os.Bundle
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.activity.MainActivity
+import xyz.zedler.patrick.tack.util.*
 
-public class UnlockDialogUtil {
+class UnlockDialogUtil(activity: MainActivity) {
 
-  private final DialogUtil dialogUtilUnlock;
-
-  public UnlockDialogUtil(@NonNull MainActivity activity) {
-    dialogUtilUnlock = new DialogUtil(activity, "unlock");
-    dialogUtilUnlock.createDialog(builder -> {
-      builder.setTitle(R.string.msg_unlock);
-      builder.setMessage(R.string.msg_unlock_description);
-      builder.setPositiveButton(
-          R.string.action_open_play_store,
-          (dialog, which) -> {
-            activity.performHapticClick();
-            UnlockUtil.openPlayStore(activity);
-          });
-      builder.setNegativeButton(
-          R.string.action_cancel, (dialog, which) -> activity.performHapticClick()
-      );
-    });
-  }
-
-  public void show() {
-    dialogUtilUnlock.show();
-  }
-
-  public void showIfWasShown(@Nullable Bundle state) {
-    dialogUtilUnlock.showIfWasShown(state);
-  }
-
-  public void dismiss() {
-    dialogUtilUnlock.dismiss();
-  }
-
-  public void saveState(@NonNull Bundle outState) {
-    if (dialogUtilUnlock != null) {
-      dialogUtilUnlock.saveState(outState);
+    private val dialogUtilUnlock = DialogUtil(activity, "unlock").apply {
+        createDialog { builder ->
+            builder.setTitle(R.string.msg_unlock)
+            builder.setMessage(R.string.msg_unlock_description)
+            builder.setPositiveButton(R.string.action_open_play_store) { _, _ ->
+                activity.performHapticClick()
+                openPlayStore(activity)
+            }
+            builder.setNegativeButton(R.string.action_cancel) { _, _ ->
+                activity.performHapticClick()
+            }
+        }
     }
-  }
+
+    fun show() {
+        dialogUtilUnlock.show()
+    }
+
+    fun showIfWasShown(state: Bundle?) {
+        dialogUtilUnlock.showIfWasShown(state)
+    }
+
+    fun dismiss() {
+        dialogUtilUnlock.dismiss()
+    }
+
+    fun saveState(outState: Bundle) {
+        dialogUtilUnlock.saveState(outState)
+    }
 }

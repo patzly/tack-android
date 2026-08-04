@@ -17,297 +17,274 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.service;
+package xyz.zedler.patrick.tack.service
 
-import android.app.Notification;
-import android.app.Service;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.ServiceInfo;
-import android.content.res.Configuration;
-import android.os.Binder;
-import android.os.Build;
-import android.os.Build.VERSION;
-import android.os.Build.VERSION_CODES;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.Looper;
-import android.util.Log;
-import androidx.annotation.Nullable;
-import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.ACTION;
-import xyz.zedler.patrick.tack.Constants.DEF;
-import xyz.zedler.patrick.tack.Constants.EXTRA;
-import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.Constants.UNIT;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine.Tick;
-import xyz.zedler.patrick.tack.util.NotificationUtil;
-import xyz.zedler.patrick.tack.util.PrefsUtil;
+import android.app.Notification
+import android.app.Service
+import android.content.Intent
+import android.content.SharedPreferences
+import android.content.pm.ServiceInfo
+import android.content.res.Configuration
+import android.os.Binder
+import android.os.Build
+import android.os.Handler
+import android.os.IBinder
+import android.os.Looper
+import android.util.Log
+import xyz.zedler.patrick.tack.Constants
+import xyz.zedler.patrick.tack.Constants.ACTION
+import xyz.zedler.patrick.tack.Constants.DEF
+import xyz.zedler.patrick.tack.Constants.EXTRA
+import xyz.zedler.patrick.tack.Constants.PREF
+import xyz.zedler.patrick.tack.Constants.UNIT
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine
+import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter
+import xyz.zedler.patrick.tack.util.NotificationUtil
+import xyz.zedler.patrick.tack.util.PrefsUtil
+import androidx.core.content.edit
 
-public class MetronomeService extends Service {
+class MetronomeService : Service() {
 
-  private static final String TAG = MetronomeService.class.getSimpleName();
+  private val binder = MetronomeBinder()
+  private val mainHandler = Handler(Looper.getMainLooper())
 
-  private final IBinder binder = new MetronomeBinder();
-  private final Handler mainHandler = new Handler(Looper.getMainLooper());
-  private MetronomeEngine metronomeEngine;
-  private NotificationUtil notificationUtil;
-  private SharedPreferences sharedPrefs;
-  private boolean isBound, configChange, permNotification, showPlayButton;
+  val metronomeEngine: MetronomeEngine by lazy { MetronomeEngine(this) }
+  private val notificationUtil: NotificationUtil by lazy { NotificationUtil(this) }
+  private val sharedPrefs: SharedPreferences by lazy { PrefsUtil(this).sharedPrefs }
 
-  @Override
-  public void onCreate() {
-    super.onCreate();
+  private var isBound = false
+  private var configChange = false
+  private var permNotification = false
+  private var showPlayButton = false
 
-    notificationUtil = new NotificationUtil(this);
-    metronomeEngine = new MetronomeEngine(this);
-    metronomeEngine.addListener(new MetronomeListenerAdapter() {
-      @Override
-      public void onMetronomeStart() {
-        mainHandler.post(() -> {
+  override fun onCreate() {
+    super.onCreate()
+
+    metronomeEngine.addListener(object : MetronomeListenerAdapter() {
+      override fun onMetronomeStart() {
+        mainHandler.post {
           if (permNotification && hasPermission()) {
-            showPlayButton = false;
-            notificationUtil.updateNotification(getNotification());
+            showPlayButton = false
+            notificationUtil.updateNotification(getNotification())
           }
-        });
-      }
-
-      @Override
-      public void onMetronomeStop() {
-        mainHandler.post(() -> {
-          if (permNotification && hasPermission()) {
-            showPlayButton = true;
-            notificationUtil.updateNotification(getNotification());
-          }
-        });
-      }
-
-      @Override
-      public void onMetronomeTick(Tick tick) {
-        mainHandler.post(() -> {
-          if (metronomeEngine.getConfig().isTimerActive()
-              && metronomeEngine.getConfig().getTimerUnit().equals(UNIT.BARS)) {
-            updateTimerNotification();
-          }
-        });
-      }
-
-      @Override
-      public void onMetronomeTimerSecondsChanged() {
-        mainHandler.post(this::updateTimerNotification);
-      }
-
-      @Override
-      public void onMetronomeTimerProgressOneTime(boolean withTransition) {
-        mainHandler.post(this::updateTimerNotification);
-      }
-
-      @Override
-      public void onMetronomeTimerActiveStateChanged(boolean active) {
-        mainHandler.post(this::updateTimerNotification);
-      }
-
-      private void updateTimerNotification() {
-        boolean isTimerActive = metronomeEngine.getConfig().isTimerActive();
-        if (isTimerActive && (permNotification || !isBound) && hasPermission()) {
-          notificationUtil.updateNotification(getNotification());
         }
       }
-    });
 
-    sharedPrefs = new PrefsUtil(this).getSharedPrefs();
+      override fun onMetronomeStop() {
+        mainHandler.post {
+          if (permNotification && hasPermission()) {
+            showPlayButton = true
+            notificationUtil.updateNotification(getNotification())
+          }
+        }
+      }
 
-    permNotification = sharedPrefs.getBoolean(PREF.PERM_NOTIFICATION, DEF.PERM_NOTIFICATION);
+      override fun onMetronomeTick(tick: MetronomeEngine.Tick) {
+        mainHandler.post {
+          if (metronomeEngine.config.isTimerActive() &&
+            metronomeEngine.config.timerUnit == UNIT.BARS
+          ) {
+            updateTimerNotification()
+          }
+        }
+      }
+
+      override fun onMetronomeTimerSecondsChanged() {
+        mainHandler.post { updateTimerNotification() }
+      }
+
+      override fun onMetronomeTimerProgressOneTime(withTransition: Boolean) {
+        mainHandler.post { updateTimerNotification() }
+      }
+
+      override fun onMetronomeTimerActiveStateChanged(active: Boolean) {
+        mainHandler.post { updateTimerNotification() }
+      }
+
+      private fun updateTimerNotification() {
+        val isTimerActive = metronomeEngine.config.isTimerActive()
+        if (isTimerActive && (permNotification || !isBound) && hasPermission()) {
+          notificationUtil.updateNotification(getNotification())
+        }
+      }
+    })
+
+    permNotification = sharedPrefs.getBoolean(
+      PREF.PERM_NOTIFICATION, DEF.PERM_NOTIFICATION
+    )
     if (permNotification && hasPermission()) {
-      showPlayButton = true;
-      startForeground();
+      showPlayButton = true
+      startForeground()
     }
-    Log.d(TAG, "onCreate: service created");
+    Log.d(TAG, "onCreate: service created")
   }
 
-  @Override
-  public void onDestroy() {
-    super.onDestroy();
-
-    stopForeground();
-    metronomeEngine.destroy();
-    Log.d(TAG, "onDestroy: service destroyed");
+  override fun onDestroy() {
+    super.onDestroy()
+    stopForeground()
+    metronomeEngine.destroy()
+    Log.d(TAG, "onDestroy: service destroyed")
   }
 
-  @Override
-  public int onStartCommand(Intent intent, int flags, int startId) {
-    if (intent != null && intent.getAction() != null) {
-      String action = intent.getAction();
-      switch (action) {
-        case ACTION.START:
-          metronomeEngine.start();
-          break;
-        case ACTION.APPLY_SONG:
-        case ACTION.START_SONG:
-          String songId = intent.getStringExtra(EXTRA.SONG_ID);
+  override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    val action = intent?.action
+    if (action != null) {
+      when (action) {
+        ACTION.START -> metronomeEngine.start()
+        ACTION.APPLY_SONG, ACTION.START_SONG -> {
+          var songId = intent.getStringExtra(EXTRA.SONG_ID)
           if (songId == null) {
-            songId = Constants.SONG_ID_DEFAULT;
+            songId = Constants.SONG_ID_DEFAULT
           }
-          boolean startPlaying = action.equals(ACTION.START_SONG);
-          metronomeEngine.setCurrentSong(songId, 0, startPlaying);
-          break;
-        case ACTION.STOP:
-          metronomeEngine.stop();
+          val startPlaying = action == ACTION.START_SONG
+          metronomeEngine.setCurrentSong(songId, 0, startPlaying)
+        }
+
+        ACTION.STOP -> {
+          metronomeEngine.stop()
           if (!permNotification && hasPermission()) {
-            stopForeground();
-            stopSelf();
+            stopForeground()
+            stopSelf()
           }
-          break;
-        case ACTION.DISMISS:
+        }
+
+        ACTION.DISMISS -> {
           if (!isBound) {
-            metronomeEngine.stop();
-            stopForeground();
-            stopSelf();
+            metronomeEngine.stop()
+            stopForeground()
+            stopSelf()
           }
-          break;
+        }
       }
     }
-    return START_NOT_STICKY;
+    return START_NOT_STICKY
   }
 
-  @Nullable
-  @Override
-  public IBinder onBind(Intent intent) {
+  override fun onBind(intent: Intent): IBinder {
     if (!permNotification && hasPermission()) {
-      stopForeground();
+      stopForeground()
     }
-    isBound = true;
-    return binder;
+    isBound = true
+    return binder
   }
 
-  @Override
-  public void onRebind(Intent intent) {
-    super.onRebind(intent);
-
+  override fun onRebind(intent: Intent) {
+    super.onRebind(intent)
     if (!permNotification && hasPermission()) {
-      stopForeground();
+      stopForeground()
     }
-    isBound = true;
+    isBound = true
   }
 
-  @Override
-  public boolean onUnbind(Intent intent) {
-    isBound = false;
-
+  override fun onUnbind(intent: Intent): Boolean {
+    isBound = false
     if (hasPermission()) {
       if (!permNotification && canShowNonPermNotification()) {
-        showPlayButton = false;
-        startForeground();
+        showPlayButton = false
+        startForeground()
       } else if (permNotification) {
-        showPlayButton = !metronomeEngine.isPlaying();
-        notificationUtil.updateNotification(getNotification());
+        showPlayButton = !metronomeEngine.isPlaying()
+        notificationUtil.updateNotification(getNotification())
       }
     }
-    return true;
+    return true
   }
 
-  @Override
-  public void onConfigurationChanged(Configuration newConfig) {
-    super.onConfigurationChanged(newConfig);
-
-    configChange = true;
+  override fun onConfigurationChanged(newConfig: Configuration) {
+    super.onConfigurationChanged(newConfig)
+    configChange = true
   }
 
-  private void startForeground() {
+  private fun startForeground() {
     if (hasPermission() && !configChange) {
-      notificationUtil.createNotificationChannel();
+      notificationUtil.createNotificationChannel()
       try {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-          int type = ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK;
-          startForeground(NotificationUtil.NOTIFICATION_ID, getNotification(), type);
+          val type = ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+          startForeground(
+            NotificationUtil.NOTIFICATION_ID,
+            getNotification(),
+            type
+          )
         } else {
-          startForeground(NotificationUtil.NOTIFICATION_ID, getNotification());
+          startForeground(NotificationUtil.NOTIFICATION_ID, getNotification())
         }
-      } catch (Exception e) {
-        Log.e(TAG, "startForeground: could not start foreground", e);
+      } catch (e: Exception) {
+        Log.e(TAG, "startForeground: could not start foreground", e)
       }
     }
   }
 
-  private void stopForeground() {
-    if (VERSION.SDK_INT >= VERSION_CODES.N) {
-      stopForeground(STOP_FOREGROUND_REMOVE);
+  private fun stopForeground() {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      stopForeground(STOP_FOREGROUND_REMOVE)
     } else {
-      stopForeground(true);
+      @Suppress("DEPRECATION")
+      stopForeground(true)
     }
-    configChange = false;
+    configChange = false
   }
 
-  public MetronomeEngine getMetronomeEngine() {
-    return metronomeEngine;
-  }
+  fun usePermNotification(): Boolean = permNotification
 
-  public boolean usePermNotification() {
-    return permNotification;
-  }
-
-  public boolean setPermNotification(boolean permanent) {
+  fun setPermNotification(permanent: Boolean): Boolean {
     if (permNotification != permanent) {
       if (permanent) {
-        showPlayButton = !metronomeEngine.isPlaying();
+        showPlayButton = !metronomeEngine.isPlaying()
         if (hasPermission()) {
-          startForeground();
+          startForeground()
         } else {
-          throw new IllegalStateException("Notification permission missing");
+          throw IllegalStateException("Notification permission missing")
         }
       } else {
         if (!isBound && canShowNonPermNotification()) {
           if (hasPermission()) {
             // Only provide stop action in non-permanent notification
-            showPlayButton = false;
-            startForeground();
+            showPlayButton = false
+            startForeground()
           } else {
-            throw new IllegalStateException("Notification permission missing");
+            throw IllegalStateException("Notification permission missing")
           }
         } else {
-          stopForeground();
+          stopForeground()
         }
       }
-      permNotification = permanent;
-      sharedPrefs.edit().putBoolean(PREF.PERM_NOTIFICATION, permanent).apply();
+      permNotification = permanent
+      sharedPrefs.edit { putBoolean(PREF.PERM_NOTIFICATION, permanent) }
     }
-    return permNotification;
+    return permNotification
   }
 
-  private boolean canShowNonPermNotification() {
-    boolean realTimeActive =
-        metronomeEngine.getConfig().isTimerActive() || metronomeEngine.isElapsedActive();
-    return metronomeEngine.isPlaying() || realTimeActive;
+  private fun canShowNonPermNotification(): Boolean {
+    val realTimeActive = metronomeEngine.config.isTimerActive() || metronomeEngine.isElapsedActive()
+    return metronomeEngine.isPlaying() || realTimeActive
   }
 
-  private Notification getNotification() {
-    boolean isTimerActive = metronomeEngine.getConfig().isTimerActive();
+  private fun getNotification(): Notification {
+    val isTimerActive = metronomeEngine.config.isTimerActive()
     return notificationUtil.getNotification(
-        showPlayButton,
-        isTimerActive,
-        isTimerActive && metronomeEngine.isPlaying(),
-        getString(
-            R.string.label_part_duration_notification,
-            metronomeEngine.getCurrentTimerString(),
-            metronomeEngine.getTotalTimeString()
-        ),
+      showPlayButton,
+      isTimerActive,
+      isTimerActive && metronomeEngine.isPlaying(),
+      getString(
+        R.string.label_part_duration_notification,
         metronomeEngine.getCurrentTimerString(),
-        metronomeEngine.getTimerProgress(),
-        metronomeEngine.getConfig().getTimerDuration()
-    );
+        metronomeEngine.getTotalTimeString()
+      ),
+      metronomeEngine.getCurrentTimerString(),
+      metronomeEngine.getTimerProgress(),
+      metronomeEngine.config.timerDuration
+    )
   }
 
-  private boolean hasPermission() {
-    return notificationUtil.hasPermission();
+  private fun hasPermission(): Boolean = notificationUtil.hasPermission()
+
+  inner class MetronomeBinder : Binder() {
+    fun getService(): MetronomeService = this@MetronomeService
   }
 
-  public class MetronomeBinder extends Binder {
-
-    public MetronomeService getService() {
-      return MetronomeService.this;
-    }
+  companion object {
+    private val TAG = MetronomeService::class.java.simpleName
   }
 }

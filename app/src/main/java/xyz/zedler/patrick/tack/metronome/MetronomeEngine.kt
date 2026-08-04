@@ -17,1710 +17,1412 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.metronome;
+package xyz.zedler.patrick.tack.metronome
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.pm.ShortcutInfo;
-import android.os.Handler;
-import android.os.HandlerThread;
-import android.util.Log;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.preference.PreferenceManager;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Random;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import android.content.Context
+import android.content.SharedPreferences
+import android.os.Handler
+import android.os.HandlerThread
+import android.util.Log
+import androidx.core.content.edit
+import androidx.preference.PreferenceManager
+import xyz.zedler.patrick.audio.AudioEngine
+import xyz.zedler.patrick.tack.Constants
+import xyz.zedler.patrick.tack.Constants.BEAT_MODE
+import xyz.zedler.patrick.tack.Constants.DEF
+import xyz.zedler.patrick.tack.Constants.FLASHLIGHT
+import xyz.zedler.patrick.tack.Constants.PREF
+import xyz.zedler.patrick.tack.Constants.SONGS_ORDER
+import xyz.zedler.patrick.tack.Constants.TICK_TYPE
+import xyz.zedler.patrick.tack.Constants.UNIT
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.database.SongDatabase
+import xyz.zedler.patrick.tack.database.entity.Part
+import xyz.zedler.patrick.tack.database.entity.Song
+import xyz.zedler.patrick.tack.database.relations.SongWithParts
+import xyz.zedler.patrick.tack.model.MetronomeConfig
+import xyz.zedler.patrick.tack.util.FlashlightUtil
+import xyz.zedler.patrick.tack.util.HapticUtil
+import xyz.zedler.patrick.tack.util.NotificationUtil
+import xyz.zedler.patrick.tack.util.ShortcutUtil
+import xyz.zedler.patrick.tack.util.sendSongsWidgetUpdate
+import xyz.zedler.patrick.tack.util.sortPartsByIndex
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.util.Collections
+import java.util.Locale
+import java.util.Random
+import java.util.concurrent.Executors
+import kotlin.math.roundToInt
 
-import xyz.zedler.patrick.audio.AudioEngine;
-import xyz.zedler.patrick.tack.Constants;
-import xyz.zedler.patrick.tack.Constants.BEAT_MODE;
-import xyz.zedler.patrick.tack.Constants.DEF;
-import xyz.zedler.patrick.tack.Constants.FLASHLIGHT;
-import xyz.zedler.patrick.tack.Constants.PREF;
-import xyz.zedler.patrick.tack.Constants.SONGS_ORDER;
-import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
-import xyz.zedler.patrick.tack.Constants.UNIT;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.database.SongDatabase;
-import xyz.zedler.patrick.tack.database.entity.Part;
-import xyz.zedler.patrick.tack.database.entity.Song;
-import xyz.zedler.patrick.tack.database.relations.SongWithParts;
-import xyz.zedler.patrick.tack.model.MetronomeConfig;
-import xyz.zedler.patrick.tack.util.FlashlightUtil;
-import xyz.zedler.patrick.tack.util.HapticUtil;
-import xyz.zedler.patrick.tack.util.NotificationUtil;
-import xyz.zedler.patrick.tack.util.ShortcutUtil;
-import xyz.zedler.patrick.tack.util.SortUtil;
-import xyz.zedler.patrick.tack.util.WidgetUtil;
+class MetronomeEngine(private val context: Context) {
 
-public class MetronomeEngine {
+  private val sharedPrefs: SharedPreferences =
+    PreferenceManager.getDefaultSharedPreferences(context)
+  private val audioEngine: AudioEngine = AudioEngine(context) { stop() }
+  private val hapticUtil: HapticUtil = HapticUtil(context)
+  private val shortcutUtil: ShortcutUtil = ShortcutUtil(context)
+  private val flashlightUtil: FlashlightUtil = FlashlightUtil(context)
+  private val listeners: MutableSet<MetronomeListener> = Collections.synchronizedSet(HashSet())
+  private val executorService = Executors.newSingleThreadExecutor()
+  private val random = Random()
+  val config = MetronomeConfig()
+  private val db: SongDatabase = SongDatabase.getInstance(context.applicationContext)
 
-  private static final String TAG = MetronomeEngine.class.getSimpleName();
+  private var tickThread: HandlerThread? = null
+  private var audioThread: HandlerThread? = null
+  private var callbackThread: HandlerThread? = null
+  private var tickHandler: Handler? = null
+  private var latencyHandler: Handler? = null
+  private var audioHandler: Handler? = null
+  private var countInHandler: Handler? = null
+  private var incrementalHandler: Handler? = null
+  private var elapsedHandler: Handler? = null
+  private var timerHandler: Handler? = null
+  private var muteHandler: Handler? = null
 
-  private final Context context;
-  private final SharedPreferences sharedPrefs;
-  private final AudioEngine audioEngine;
-  private final HapticUtil hapticUtil;
-  private final ShortcutUtil shortcutUtil;
-  private final FlashlightUtil flashlightUtil;
-  private final Set<MetronomeListener> listeners = Collections.synchronizedSet(new HashSet<>());
-  private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-  private final Random random = new Random();
-  private final MetronomeConfig config = new MetronomeConfig();
-  private final SongDatabase db;
-  private HandlerThread tickThread, audioThread, callbackThread;
-  private Handler tickHandler, latencyHandler, audioHandler;
-  private Handler countInHandler, incrementalHandler, elapsedHandler, timerHandler, muteHandler;
-  private SongWithParts currentSongWithParts;
-  private String beatMode, currentSongId, keepAwake, flashScreen, flashlight;
-  private int currentPartIndex, muteCountDown, songsOrder;
-  private int timerBarIndex, timerBeatIndex, timerSubIndex;
-  private long tickIndex, tickIndexPoly, latency, countInStartTime, timerStartTime;
-  private long elapsedStartTime, elapsedTime, elapsedPrevious;
-  private long nextScheduleTime, nextPolyScheduleTime;
-  private float timerProgress;
-  private boolean playing, tempPlaying, isCountingIn, isMuted;
-  private boolean showElapsed, resetTimerOnStop, tempoInputKeyboard, tempoTapInstant;
-  private boolean neverStartedWithGain = true;
-  private boolean ignoreTimerCallbacksTemp, isSongPickerExpanded;
+  var currentSongWithParts: SongWithParts? = null
+    private set
 
-  public MetronomeEngine(@NonNull Context context) {
-    this.context = context;
+  lateinit var currentSongId: String
+    private set
 
-    sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+  private var beatMode: String? = null
+  private var keepAwake: String? = null
+  private var flashScreen: String? = null
+  private var flashlight: String? = null
+  internal var currentPartIndex = 0
+  private var muteCountDown = 0
+  private var songsOrder = 0
+  private var timerBarIndex = 0
+  private var timerBeatIndex = 0
+  private var timerSubIndex = 0
+  private var tickIndex: Long = 0
+  private var tickIndexPoly: Long = 0
+  internal var latency: Long = 0
+  private var countInStartTime: Long = 0
+  private var timerStartTime: Long = 0
+  private var elapsedStartTime: Long = 0
+  private var elapsedTime: Long = 0
+  private var elapsedPrevious: Long = 0
+  private var nextScheduleTime: Long = 0
+  private var nextPolyScheduleTime: Long = 0
+  private var timerProgress = 0f
+  private var isPlayingInternal = false
+  private var tempPlaying = false
+  private var isCountingInInternal = false
+  private var isMuted = false
+  private var showElapsed = false
+  private var resetTimerOnStop = false
+  internal var tempoInputKeyboard = false
+  internal var tempoTapInstant = false
+  private var neverStartedWithGain = true
+  private var ignoreTimerCallbacksTemp = false
+  var isSongPickerExpanded = false
 
-    audioEngine = new AudioEngine(context, this::stop);
-
-    hapticUtil = new HapticUtil(context);
-    hapticUtil.setIntensity(
-        sharedPrefs.getString(PREF.VIBRATION_INTENSITY, DEF.VIBRATION_INTENSITY)
-    );
-
-    flashlightUtil = new FlashlightUtil(context);
-
-    shortcutUtil = new ShortcutUtil(context);
-
-    db = SongDatabase.getInstance(context.getApplicationContext());
-
-    resetHandlersIfRequired();
-    setToPreferences();
+  init {
+    hapticUtil.intensity = sharedPrefs.getString(
+      PREF.VIBRATION_INTENSITY, DEF.VIBRATION_INTENSITY
+    )
+      ?: DEF.VIBRATION_INTENSITY
+    resetHandlersIfRequired()
+    setToPreferences()
   }
 
-  public void destroy() {
-    listeners.clear();
-    removeHandlerCallbacks();
-    tickThread.quit();
-    audioThread.quit();
-    callbackThread.quit();
-    audioEngine.destroy();
-    flashlightUtil.cleanup();
+  fun destroy() {
+    listeners.clear()
+    removeHandlerCallbacks()
+    tickThread?.quit()
+    audioThread?.quit()
+    callbackThread?.quit()
+    audioEngine.destroy()
+    flashlightUtil.cleanup()
   }
 
-  public void warmUpAudio() {
-    audioEngine.warmUp();
+  fun warmUpAudio() {
+    audioEngine.warmUp()
   }
 
-  public void setToPreferences() {
-    config.setToPreferences(sharedPrefs);
-
-    latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY);
-    showElapsed = sharedPrefs.getBoolean(PREF.SHOW_ELAPSED, DEF.SHOW_ELAPSED);
-    resetTimerOnStop = sharedPrefs.getBoolean(PREF.RESET_TIMER_ON_STOP, DEF.RESET_TIMER_ON_STOP);
-    flashScreen = sharedPrefs.getString(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN);
-    flashlight = sharedPrefs.getString(PREF.FLASHLIGHT, DEF.FLASHLIGHT);
-    keepAwake = sharedPrefs.getString(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE);
-    songsOrder = sharedPrefs.getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER);
+  fun setToPreferences() {
+    config.setToPreferences(sharedPrefs)
+    latency = sharedPrefs.getLong(PREF.LATENCY, DEF.LATENCY)
+    showElapsed = sharedPrefs.getBoolean(PREF.SHOW_ELAPSED, DEF.SHOW_ELAPSED)
+    resetTimerOnStop = sharedPrefs.getBoolean(
+      PREF.RESET_TIMER_ON_STOP, DEF.RESET_TIMER_ON_STOP
+    )
+    flashScreen = sharedPrefs.getString(PREF.FLASH_SCREEN, DEF.FLASH_SCREEN)
+    flashlight = sharedPrefs.getString(PREF.FLASHLIGHT, DEF.FLASHLIGHT)
+    keepAwake = sharedPrefs.getString(PREF.KEEP_AWAKE, DEF.KEEP_AWAKE)
+    songsOrder = sharedPrefs.getInt(PREF.SONGS_ORDER, DEF.SONGS_ORDER)
     tempoInputKeyboard = sharedPrefs.getBoolean(
-        PREF.TEMPO_INPUT_KEYBOARD, DEF.TEMPO_INPUT_KEYBOARD
-    );
-    tempoTapInstant = sharedPrefs.getBoolean(PREF.TEMPO_TAP_INSTANT, DEF.TEMPO_TAP_INSTANT);
+      PREF.TEMPO_INPUT_KEYBOARD, DEF.TEMPO_INPUT_KEYBOARD
+    )
+    tempoTapInstant = sharedPrefs.getBoolean(
+      PREF.TEMPO_TAP_INSTANT, DEF.TEMPO_TAP_INSTANT
+    )
 
-    setSound(sharedPrefs.getString(PREF.SOUND, DEF.SOUND));
-    setIgnoreFocus(sharedPrefs.getBoolean(PREF.IGNORE_FOCUS, DEF.IGNORE_FOCUS));
-    setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN));
-    setBeatMode(sharedPrefs.getString(PREF.BEAT_MODE, DEF.BEAT_MODE));
+    setSound(sharedPrefs.getString(PREF.SOUND, DEF.SOUND))
+    setIgnoreFocus(sharedPrefs.getBoolean(PREF.IGNORE_FOCUS, DEF.IGNORE_FOCUS))
+    setGain(sharedPrefs.getInt(PREF.GAIN, DEF.GAIN))
+    setBeatMode(
+      sharedPrefs.getString(PREF.BEAT_MODE, DEF.BEAT_MODE) ?: DEF.BEAT_MODE
+    )
     setCurrentSong(
-        sharedPrefs.getString(PREF.SONG_CURRENT_ID, DEF.SONG_CURRENT_ID),
-        sharedPrefs.getInt(PREF.PART_CURRENT_INDEX, DEF.PART_CURRENT_INDEX),
-        false,
-        () -> {
-          for (MetronomeListener listener : listeners) {
-            listener.onMetronomeConfigChanged();
-          }
-        }
-    );
-  }
-
-  public MetronomeConfig getConfig() {
-    return config;
-  }
-
-  public void setConfig(MetronomeConfig config) {
-    setCountIn(config.getCountIn());
-
-    int tempo = config.getTempo();
-    if (currentSongWithParts != null) {
-      int speed = currentSongWithParts.getSong().getSpeed();
-      tempo = (int) Math.round(tempo * speed / 100.0);
-    }
-    int tempoDiff = tempo - this.config.getTempo();
-    changeTempo(tempoDiff);
-
-    setBeats(config.getBeats());
-    setSubdivisions(config.getSubdivisions());
-    setUsePolyrhythm(config.usePolyrhythm());
-
-    setIncrementalAmount(config.getIncrementalAmount());
-    setIncrementalInterval(config.getIncrementalInterval());
-    setIncrementalLimit(config.getIncrementalLimit());
-    setIncrementalUnit(config.getIncrementalUnit());
-    setIncrementalIncrease(config.isIncrementalIncrease());
-
-    setTimerDuration(config.getTimerDuration());
-    setTimerUnit(config.getTimerUnit());
-
-    setMutePlay(config.getMutePlay());
-    setMuteMute(config.getMuteMute());
-    setMuteUnit(config.getMuteUnit());
-    setMuteRandom(config.isMuteRandom());
-
-    maybeUpdateDefaultSong();
-
-    for (MetronomeListener listener : listeners) {
-      listener.onMetronomeConfigChanged();
+      sharedPrefs.getString(
+        PREF.SONG_CURRENT_ID, DEF.SONG_CURRENT_ID
+      ) ?: DEF.SONG_CURRENT_ID,
+      sharedPrefs.getInt(
+        PREF.PART_CURRENT_INDEX, DEF.PART_CURRENT_INDEX
+      ),
+      false
+    ) {
+      for (listener in listeners) {
+        listener.onMetronomeConfigChanged()
+      }
     }
   }
 
-  @Nullable
-  public SongWithParts getCurrentSongWithParts() {
-    return currentSongWithParts;
+  fun setConfig(config: MetronomeConfig) {
+    setCountIn(config.countIn)
+
+    var tempo = config.tempo
+    currentSongWithParts?.let {
+      val speed = it.song.speed
+      tempo = (tempo * speed / 100.0).roundToInt()
+    }
+    val tempoDiff = tempo - this.config.tempo
+    changeTempo(tempoDiff)
+
+    setBeats(config.beats)
+    setSubdivisions(config.subdivisions)
+    setUsePolyrhythm(config.usePolyrhythm)
+
+    setIncrementalAmount(config.incrementalAmount)
+    setIncrementalInterval(config.incrementalInterval)
+    setIncrementalLimit(config.incrementalLimit)
+    setIncrementalUnit(config.incrementalUnit)
+    setIncrementalIncrease(config.incrementalIncrease)
+
+    setTimerDuration(config.timerDuration)
+    setTimerUnit(config.timerUnit)
+
+    setMutePlay(config.mutePlay)
+    setMuteMute(config.muteMute)
+    setMuteUnit(config.muteUnit)
+    setMuteRandom(config.muteRandom)
+
+    maybeUpdateDefaultSong()
+
+    for (listener in listeners) {
+      listener.onMetronomeConfigChanged()
+    }
   }
 
-  @NonNull
-  public String getCurrentSongId() {
-    return currentSongId;
-  }
-
-  public void setCurrentSong(@NonNull String songId, int partIndex) {
-    setCurrentSong(songId, partIndex, false, null);
-  }
-
-  public void setCurrentSong(@NonNull String songId, int partIndex, boolean startPlaying) {
-    setCurrentSong(songId, partIndex, startPlaying, null);
-  }
-
-  public void setCurrentSong(
-      @NonNull String songId, int partIndex, boolean startPlaying, Runnable onDone
+  fun setCurrentSong(
+    songId: String,
+    partIndex: Int,
+    startPlaying: Boolean = false,
+    onDone: Runnable? = null
   ) {
-    currentSongId = songId;
-    executorService.execute(() -> {
-      currentSongWithParts = db.songDao().getSongWithPartsById(songId);
-      if (currentSongWithParts != null) {
-        sortParts();
-        setCurrentPartIndex(partIndex, startPlaying);
-      } else if (songId.equals(Constants.SONG_ID_DEFAULT)) {
-        // default song not created yet
-        Song songDefault = new Song(
-            songId, null, 0, 0, false, 100
-        );
-        db.songDao().insertSong(songDefault);
-        Part partDefault = new Part(null, songDefault.getId(), 0, config);
-        db.songDao().insertPart(partDefault);
-        List<Part> parts = new ArrayList<>();
-        parts.add(partDefault);
-        currentSongWithParts = new SongWithParts(songDefault, parts);
-      } else {
-        Log.e(TAG, "setCurrentSong: song with id='" + songId + "' not found");
-      }
-      if (onDone != null) {
-        onDone.run();
-      }
-    });
-    sharedPrefs.edit().putString(PREF.SONG_CURRENT_ID, songId).apply();
-    if(!isSongPickerExpanded) {
-      isSongPickerExpanded = !songId.equals(Constants.SONG_ID_DEFAULT);
-    }
-  }
-
-  public void reloadCurrentSong() {
-    executorService.execute(() -> {
-      currentSongWithParts = db.songDao().getSongWithPartsById(currentSongId);
-      if (currentSongWithParts != null) {
-        sortParts();
-        setCurrentPartIndex(currentPartIndex);
-      } else {
-        Log.e(TAG, "reloadCurrentSong: song with id='" + currentSongId + "' not found");
-      }
-    });
-  }
-
-  public void maybeUpdateDefaultSong() {
-    executorService.execute(() -> {
-      if (currentSongWithParts != null && currentSongId.equals(Constants.SONG_ID_DEFAULT)) {
-        Part part = currentSongWithParts.getParts().get(0);
-        if (part.equalsConfig(config)) {
-          return;
+    currentSongId = songId
+    executorService.execute {
+      currentSongWithParts = db.songDao().getSongWithPartsById(songId)
+      currentSongWithParts?.let {
+        sortParts()
+        setCurrentPartIndex(partIndex, startPlaying)
+      } ?: run {
+        if (songId == Constants.SONG_ID_DEFAULT) {
+          val songDefault = Song(id = songId)
+          db.songDao().insertSong(songDefault)
+          val partDefault = Part.fromConfig(
+            null, songDefault.id, 0, config
+          )
+          db.songDao().insertPart(partDefault)
+          val parts = mutableListOf(partDefault)
+          currentSongWithParts = SongWithParts(songDefault, parts)
+        } else {
+          Log.e(TAG, "setCurrentSong: song with id='$songId' not found")
         }
-        part.setConfig(config);
-        db.songDao().updatePart(part);
       }
-    });
-  }
-
-  public void setSongsOrder(int sortOrder) {
-    songsOrder = sortOrder;
-    sharedPrefs.edit().putInt(PREF.SONGS_ORDER, sortOrder).apply();
-  }
-
-  public int getSongsOrder() {
-    return songsOrder;
-  }
-
-  public void setSongPickerExpanded(boolean songPickerExpanded) {
-    isSongPickerExpanded = songPickerExpanded;
-  }
-
-  public boolean isSongPickerExpanded() {
-    return isSongPickerExpanded;
-  }
-
-  private void sortParts() {
-    if (currentSongWithParts == null) {
-      return;
+      onDone?.run()
     }
-    SortUtil.sortPartsByIndex(currentSongWithParts.getParts());
-  }
-
-  public int getCurrentPartIndex() {
-    return currentPartIndex;
-  }
-
-  private boolean hasNextPart() {
-    return currentSongWithParts != null && currentPartIndex
-        < currentSongWithParts.getParts().size() - 1;
-  }
-
-  public void setCurrentPartIndex(int index) {
-    setCurrentPartIndex(index, false);
-  }
-
-  private void setCurrentPartIndex(int index, boolean startPlaying) {
-    if (currentSongWithParts == null) {
-      Log.e(TAG, "setCurrentPartIndex: song with id='" + currentSongId + "' is null");
-      return;
+    sharedPrefs.edit { putString(PREF.SONG_CURRENT_ID, songId) }
+    if (!isSongPickerExpanded) {
+      isSongPickerExpanded = songId != Constants.SONG_ID_DEFAULT
     }
-    List<Part> parts = currentSongWithParts.getParts();
-    index = Math.max(0, Math.min(index, parts.size() - 1));
-    currentPartIndex = index;
-    if (!parts.isEmpty()) {
-      // ignore timer callbacks temporary
-      // else the timer transition would be laggy
-      ignoreTimerCallbacksTemp = true;
-      setConfig(parts.get(index).toConfig());
-      ignoreTimerCallbacksTemp = false;
-      if (!isPlaying() && startPlaying) {
-        start(false);
-      } else {
-        restartIfPlaying(true);
+  }
+
+  fun reloadCurrentSong() {
+    executorService.execute {
+      currentSongWithParts = db.songDao().getSongWithPartsById(currentSongId)
+      currentSongWithParts?.let {
+        sortParts()
+        setCurrentPartIndex(currentPartIndex)
+      } ?: Log.e(TAG, "reloadCurrentSong: song with id='$currentSongId' not found")
+    }
+  }
+
+  fun maybeUpdateDefaultSong() {
+    executorService.execute {
+      if (currentSongWithParts != null && currentSongId == Constants.SONG_ID_DEFAULT) {
+        val part = currentSongWithParts!!.parts[0]
+        if (!part.equalsConfig(config)) {
+          part.setConfig(config)
+          db.songDao().updatePart(part)
+        }
       }
-      sharedPrefs.edit().putInt(PREF.PART_CURRENT_INDEX, index).apply();
+    }
+  }
+
+  fun setSongsOrder(sortOrder: Int) {
+    songsOrder = sortOrder
+    sharedPrefs.edit { putInt(PREF.SONGS_ORDER, sortOrder) }
+  }
+
+  fun getSongsOrder(): Int = songsOrder
+
+  private fun sortParts() {
+    currentSongWithParts?.parts?.let { sortPartsByIndex(it.toMutableList()) }
+  }
+
+  fun getCurrentPartIndex(): Int = currentPartIndex
+
+  private fun hasNextPart(): Boolean {
+    return currentSongWithParts?.let { currentPartIndex < it.parts.size - 1 } ?: false
+  }
+
+  fun setCurrentPartIndex(index: Int, startPlaying: Boolean = false) {
+    val songWithParts = currentSongWithParts ?: run {
+      Log.e(TAG, "setCurrentPartIndex: song with id='$currentSongId' is null")
+      return
+    }
+    val parts = songWithParts.parts
+    if (parts.isEmpty()) {
+      Log.e(TAG, "setCurrentPartIndex: no part found for song with id='$currentSongId'")
+      return
+    }
+    val boundedIndex = index.coerceIn(0, parts.size - 1)
+    currentPartIndex = boundedIndex
+    ignoreTimerCallbacksTemp = true
+    setConfig(parts[boundedIndex].toConfig())
+    ignoreTimerCallbacksTemp = false
+    if (!isPlaying() && startPlaying) {
+      start(false)
     } else {
-      Log.e(
-          TAG, "setCurrentPartIndex: no part found for song with id='" + currentSongId + "'"
-      );
-      return;
+      restartIfPlaying(true)
     }
-    synchronized (listeners) {
-      for (MetronomeListener listener : listeners) {
-        listener.onMetronomeSongOrPartChanged(currentSongWithParts, currentPartIndex);
+    sharedPrefs.edit { putInt(PREF.PART_CURRENT_INDEX, boundedIndex) }
+    synchronized(listeners) {
+      for (listener in listeners) {
+        listener.onMetronomeSongOrPartChanged(currentSongWithParts, currentPartIndex)
       }
     }
   }
 
-  private void resetHandlersIfRequired() {
-    if (tickThread == null || !tickThread.isAlive()) {
-      tickThread = new HandlerThread("metronome_ticks");
-      tickThread.start();
-      removeHandlerCallbacks();
-      tickHandler = new Handler(tickThread.getLooper());
+  private fun resetHandlersIfRequired() {
+    if (tickThread?.isAlive != true) {
+      tickThread = HandlerThread("metronome_ticks").apply { start() }
+      removeHandlerCallbacks()
+      tickHandler = Handler(tickThread!!.looper)
     }
-    if (audioThread == null || !audioThread.isAlive()) {
-      audioThread = new HandlerThread("metronome_audio");
-      audioThread.start();
-      removeHandlerCallbacks();
-      audioHandler = new Handler(audioThread.getLooper());
+    if (audioThread?.isAlive != true) {
+      audioThread = HandlerThread("metronome_audio").apply { start() }
+      removeHandlerCallbacks()
+      audioHandler = Handler(audioThread!!.looper)
     }
-    if (callbackThread == null || !callbackThread.isAlive()) {
-      callbackThread = new HandlerThread("metronome_callback");
-      callbackThread.start();
-      removeHandlerCallbacks();
-      latencyHandler = new Handler(callbackThread.getLooper());
-      countInHandler = new Handler(callbackThread.getLooper());
-      incrementalHandler = new Handler(callbackThread.getLooper());
-      elapsedHandler = new Handler(callbackThread.getLooper());
-      timerHandler = new Handler(callbackThread.getLooper());
-      muteHandler = new Handler(callbackThread.getLooper());
+    if (callbackThread?.isAlive != true) {
+      callbackThread = HandlerThread("metronome_callback").apply { start() }
+      removeHandlerCallbacks()
+      val looper = callbackThread!!.looper
+      latencyHandler = Handler(looper)
+      countInHandler = Handler(looper)
+      incrementalHandler = Handler(looper)
+      elapsedHandler = Handler(looper)
+      timerHandler = Handler(looper)
+      muteHandler = Handler(looper)
     }
   }
 
-  private void removeHandlerCallbacks() {
-    if (tickHandler != null) {
-      tickHandler.removeCallbacksAndMessages(null);
-    }
-    if (audioHandler != null) {
-      audioHandler.removeCallbacksAndMessages(null);
-    }
-    if (latencyHandler != null) {
-      latencyHandler.removeCallbacksAndMessages(null);
-      countInHandler.removeCallbacksAndMessages(null);
-      incrementalHandler.removeCallbacksAndMessages(null);
-      elapsedHandler.removeCallbacksAndMessages(null);
-      timerHandler.removeCallbacksAndMessages(null);
-      muteHandler.removeCallbacksAndMessages(null);
-    }
+  private fun removeHandlerCallbacks() {
+    tickHandler?.removeCallbacksAndMessages(null)
+    audioHandler?.removeCallbacksAndMessages(null)
+    latencyHandler?.removeCallbacksAndMessages(null)
+    countInHandler?.removeCallbacksAndMessages(null)
+    incrementalHandler?.removeCallbacksAndMessages(null)
+    elapsedHandler?.removeCallbacksAndMessages(null)
+    timerHandler?.removeCallbacksAndMessages(null)
+    muteHandler?.removeCallbacksAndMessages(null)
   }
 
-  public void savePlayingState() {
-    tempPlaying = isPlaying();
+  fun savePlayingState() {
+    tempPlaying = isPlaying()
   }
 
-  public void restorePlayingState() {
-    if (tempPlaying) {
-      start(false);
-    } else {
-      stop(false);
-    }
+  fun restorePlayingState() {
+    if (tempPlaying) start(false) else stop(false)
   }
 
-  public void setUpLatencyCalibration() {
-    config.setTempo(80);
-    config.setBeats(DEF.BEATS);
-    config.setSubdivisions(DEF.SUBDIVISIONS);
-    config.setCountIn(0);
-    config.setIncrementalAmount(0);
-    config.setTimerDuration(0);
-    config.setMutePlay(0);
+  fun setUpLatencyCalibration() {
+    config.tempo = 80
+    config.beats = DEF.BEATS.split(",").toTypedArray()
+    config.subdivisions = DEF.SUBDIVISIONS.split(",").toTypedArray()
+    config.countIn = 0
+    config.incrementalAmount = 0
+    config.timerDuration = 0
+    config.mutePlay = 0
 
-    beatMode = BEAT_MODE.ALL;
-    audioEngine.setGain(0);
-    audioEngine.setMuted(false);
-    hapticUtil.setEnabled(true);
+    beatMode = BEAT_MODE.ALL
+    audioEngine.gain = 0
+    audioEngine.isMuted = false
+    hapticUtil.setEnabled(true)
 
-    start(true);
+    start(true)
   }
 
-  public void addListener(MetronomeListener listener) {
-    listeners.add(listener);
+  fun addListener(listener: MetronomeListener) {
+    listeners.add(listener)
   }
 
-  public void removeListener(MetronomeListener listener) {
-    listeners.remove(listener);
+  fun removeListener(listener: MetronomeListener) {
+    listeners.remove(listener)
   }
 
-  public void start() {
-    start(false);
-  }
-
-  private void start(boolean ignorePermission) {
-    // isRestarted should suppress onStop/onStart callbacks and count-in
-    boolean permissionDenied = sharedPrefs.getBoolean(PREF.PERMISSION_DENIED, false);
+  fun start(ignorePermission: Boolean = false) {
+    val permissionDenied = sharedPrefs.getBoolean(PREF.PERMISSION_DENIED, false)
     if (!NotificationUtil.hasPermission(context) && !permissionDenied && !ignorePermission) {
-      synchronized (listeners) {
-        for (MetronomeListener listener : listeners) {
-          listener.onMetronomePermissionMissing();
-        }
+      synchronized(listeners) {
+        for (listener in listeners) listener.onMetronomePermissionMissing()
       }
-      return;
+      return
     }
-    updateLastPlayedAndPlayCount();
+    updateLastPlayedAndPlayCount()
 
-    if (isPlaying()) {
-      return;
-    }
-    resetHandlersIfRequired();
+    if (isPlaying()) return
+    resetHandlersIfRequired()
 
-    tickIndex = 0;
-    tickIndexPoly = 0;
-    isMuted = false;
+    tickIndex = 0
+    tickIndexPoly = 0
+    isMuted = false
     if (config.isMuteActive()) {
-      // updateMuteHandler would be too late
-      muteCountDown = calculateMuteCount(false);
+      muteCountDown = calculateMuteCount(false)
     }
 
-    isCountingIn = config.isCountInActive();
-    countInStartTime = System.currentTimeMillis();
-    countInHandler.postDelayed(() -> {
-      isCountingIn = false;
-      updateIncrementalHandler();
-      elapsedStartTime = System.currentTimeMillis();
-      updateElapsedHandler(false);
-      timerStartTime = System.currentTimeMillis();
-      updateTimerHandler(timerProgress, true);
-      updateMuteHandler();
-    }, getCountInInterval()); // already 0 if count-in is disabled
+    isCountingInInternal = config.isCountInActive()
+    countInStartTime = System.currentTimeMillis()
+    countInHandler?.postDelayed({
+      isCountingInInternal = false
+      updateIncrementalHandler()
+      elapsedStartTime = System.currentTimeMillis()
+      updateElapsedHandler(false)
+      timerStartTime = System.currentTimeMillis()
+      updateTimerHandler(timerProgress, true)
+      updateMuteHandler()
+    }, countInInterval)
 
-    if (getGain() > 0) {
-      neverStartedWithGain = false;
+    if (getGain() > 0) neverStartedWithGain = false
+
+    isPlayingInternal = true
+    startTicks()
+
+    synchronized(listeners) {
+      for (listener in listeners) listener.onMetronomeStart()
     }
-
-    playing = true;
-    startTicks();
-
-    synchronized (listeners) {
-      for (MetronomeListener listener : listeners) {
-        listener.onMetronomeStart();
-      }
-    }
-    Log.i(TAG, "start: started metronome handler");
+    Log.i(TAG, "start: started metronome handler")
   }
 
-  public void stop() {
-    stop(resetTimerOnStop);
-  }
-
-  private void stop(boolean resetTimer) {
-    if (!isPlaying()) {
-      return;
-    }
-    boolean isTimerReset = false;
+  fun stop(resetTimer: Boolean = resetTimerOnStop) {
+    if (!isPlaying()) return
+    var isTimerReset = false
     if (resetTimer || isTimerFinished()) {
-      timerProgress = 0;
-      timerBarIndex = 0;
-      timerBeatIndex = 0;
-      timerSubIndex = 0;
-      isTimerReset = true;
+      timerProgress = 0f
+      timerBarIndex = 0
+      timerBeatIndex = 0
+      timerSubIndex = 0
+      isTimerReset = true
     } else {
-      timerProgress = getTimerProgress(); // must be called before playing is set to false
+      timerProgress = getTimerProgress()
     }
-    elapsedPrevious = elapsedTime;
+    elapsedPrevious = elapsedTime
 
-    removeHandlerCallbacks();
+    removeHandlerCallbacks()
+    isPlayingInternal = false
+    audioHandler?.post { audioEngine.scheduleDelayedStop() }
+    isCountingInInternal = false
 
-    playing = false;
-    audioHandler.post(audioEngine::scheduleDelayedStop);
-    isCountingIn = false;
-
-    synchronized (listeners) {
-      for (MetronomeListener listener : listeners) {
-        listener.onMetronomeStop();
-        if (isTimerReset) {
-          listener.onMetronomeTimerProgressOneTime(true);
-        }
+    synchronized(listeners) {
+      for (listener in listeners) {
+        listener.onMetronomeStop()
+        if (isTimerReset) listener.onMetronomeTimerProgressOneTime(true)
       }
     }
-    Log.i(TAG, "stop: stopped metronome handler");
+    Log.i(TAG, "stop: stopped metronome handler")
   }
 
-  public void restartIfPlaying(boolean resetTimer) {
+  fun restartIfPlaying(resetTimer: Boolean) {
     if (isPlaying()) {
-      // stop-like logic
-      boolean isTimerReset = false;
+      var isTimerReset = false
       if (resetTimer || isTimerFinished()) {
-        timerProgress = 0;
-        timerBarIndex = 0;
-        timerBeatIndex = 0;
-        timerSubIndex = 0;
-        isTimerReset = true;
+        timerProgress = 0f
+        timerBarIndex = 0
+        timerBeatIndex = 0
+        timerSubIndex = 0
+        isTimerReset = true
       } else {
-        timerProgress = getTimerProgress(); // must be called before playing is set to false
+        timerProgress = getTimerProgress()
       }
-      elapsedPrevious = elapsedTime;
-      removeHandlerCallbacks();
-      synchronized (listeners) {
-        for (MetronomeListener listener : listeners) {
-          if (isTimerReset) {
-            listener.onMetronomeTimerProgressOneTime(true);
-          }
+      elapsedPrevious = elapsedTime
+      removeHandlerCallbacks()
+      synchronized(listeners) {
+        for (listener in listeners) {
+          if (isTimerReset) listener.onMetronomeTimerProgressOneTime(true)
         }
       }
 
-      // start-like logic
-      resetHandlersIfRequired();
-      int countInTickIndex = config.getCountIn() *
-          config.getBeatsCount() * config.getSubdivisionsCount();
-      if (config.usePolyrhythm()) {
-        countInTickIndex = config.getCountIn() *
-            config.getBeatsCount(); // subdivisions are handled in polyrhythm
+      resetHandlersIfRequired()
+      val countInTickIndex = if (config.usePolyrhythm) {
+        config.countIn * config.getBeatsCount().toLong()
+      } else {
+        config.countIn * config.getBeatsCount().toLong() * config.getSubdivisionsCount()
       }
-      tickIndex = config.isCountInActive() ? countInTickIndex : 0;
-      tickIndexPoly = (long) config.getCountIn() * config.getSubdivisionsCount();
-      isMuted = false;
+      tickIndex = if (config.isCountInActive()) countInTickIndex else 0
+      tickIndexPoly = config.countIn.toLong() * config.getSubdivisionsCount()
+      isMuted = false
       if (config.isMuteActive()) {
-        // updateMuteHandler would be too late
-        muteCountDown = calculateMuteCount(false);
+        muteCountDown = calculateMuteCount(false)
       }
 
-      startTicks();
-
-      isCountingIn = false;
-      updateIncrementalHandler();
-      elapsedStartTime = System.currentTimeMillis();
-      updateElapsedHandler(false);
-      timerStartTime = System.currentTimeMillis();
-      updateTimerHandler(timerProgress, true);
-      updateMuteHandler();
+      startTicks()
+      isCountingInInternal = false
+      updateIncrementalHandler()
+      elapsedStartTime = System.currentTimeMillis()
+      updateElapsedHandler(false)
+      timerStartTime = System.currentTimeMillis()
+      updateTimerHandler(timerProgress, true)
+      updateMuteHandler()
     } else if (resetTimer) {
-      timerProgress = 0;
-      if (ignoreTimerCallbacksTemp) {
-        return;
-      }
-      synchronized (listeners) {
-        for (MetronomeListener listener : listeners) {
-          listener.onMetronomeTimerProgressOneTime(true);
-        }
+      timerProgress = 0f
+      if (ignoreTimerCallbacksTemp) return
+      synchronized(listeners) {
+        for (listener in listeners) listener.onMetronomeTimerProgressOneTime(true)
       }
     }
   }
 
-  public boolean isPlaying() {
-    return playing;
-  }
+  fun isPlaying(): Boolean = isPlayingInternal
 
-  private void startTicks() {
-    long now = System.currentTimeMillis();
-    nextScheduleTime = now;
-    nextPolyScheduleTime = now;
+  private fun startTicks() {
+    val now = System.currentTimeMillis()
+    nextScheduleTime = now
+    nextPolyScheduleTime = now
 
-    Runnable tickRunnablePoly = new Runnable() {
-      @Override
-      public void run() {
-        if (!isPlaying()) {
-          return;
+    val tickRunnablePoly = object : Runnable {
+      override fun run() {
+        if (!isPlaying()) return
+        val subdivisionPoly = getCurrentSubdivisionPoly()
+        val tickTypePoly = getCurrentTickTypePoly()
+        var muted = isMuted
+        if (config.isMuteActive() && config.muteUnit == UNIT.BEATS) {
+          muted = random.nextInt(100) < config.muteMute
         }
-        int subdivisionPoly = getCurrentSubdivisionPoly();
-        String tickTypePoly = getCurrentTickTypePoly();
-        boolean muted = isMuted;
-        if (config.isMuteActive() && config.getMuteUnit().equals(UNIT.BEATS)) {
-          muted = random.nextInt(100) < config.getMuteMute();
-        }
-        Tick tick = new Tick(
-            tickIndexPoly, 1, subdivisionPoly, tickTypePoly, muted, true
-        );
+        val tick = Tick(tickIndexPoly, 1, subdivisionPoly, tickTypePoly, muted, true)
 
         if (subdivisionPoly < config.getSubdivisionsCount()) {
-          // first poly subdivision handled in main tick runnable to keep poly in sync
-          long barInterval = getInterval() * config.getBeatsCount();
-          long step = barInterval / config.getSubdivisionsCount();
-          nextPolyScheduleTime += step;
-          long delay = nextPolyScheduleTime - System.currentTimeMillis();
-          if (delay < 0) {
-            delay = 0;
-          }
-          tickHandler.postDelayed(this, delay);
+          val barInterval = interval * config.getBeatsCount()
+          val step = barInterval / config.getSubdivisionsCount()
+          nextPolyScheduleTime += step
+          val delay = (nextPolyScheduleTime - System.currentTimeMillis()).coerceAtLeast(0)
+          tickHandler?.postDelayed(this, delay)
         }
 
-        performTickPoly(tick);
-        audioEngine.playTick(tick.type, tick.isMuted);
-        tickIndexPoly++;
+        performTickPoly(tick)
+        audioEngine.playTick(tick.type, tick.isMuted)
+        tickIndexPoly++
       }
-    };
-    Runnable tickRunnable = new Runnable() {
-      @Override
-      public void run() {
-        if (!isPlaying()) {
-          return;
+    }
+
+    val tickRunnable = object : Runnable {
+      override fun run() {
+        if (!isPlaying()) return
+        if (tickIndex == 0L) {
+          val currentNow = System.currentTimeMillis()
+          nextScheduleTime = currentNow
+          nextPolyScheduleTime = currentNow
         }
 
-        if (tickIndex == 0) {
-          // compensate handler initialization latency
-          long now = System.currentTimeMillis();
-          nextScheduleTime = now;
-          nextPolyScheduleTime = now;
-        }
+        val beatIndex =
+          if (config.usePolyrhythm) tickIndex else tickIndex / config.getSubdivisionsCount()
+        val isBeat = config.usePolyrhythm || (tickIndex % config.getSubdivisionsCount()) == 0L
+        val isFirstBeat = isBeat && (beatIndex % config.getBeatsCount()) == 0L
+        val barIndex = beatIndex / config.getBeatsCount()
+        val isCountIn = barIndex < config.countIn
 
-        // first calculate muted state
-        long beatIndex = config.usePolyrhythm()
-            ? tickIndex
-            : tickIndex / config.getSubdivisionsCount();
-        boolean isBeat = config.usePolyrhythm()
-            || (tickIndex % config.getSubdivisionsCount()) == 0;
-        boolean isFirstBeat = isBeat && (beatIndex % config.getBeatsCount()) == 0;
-        long barIndex = beatIndex / config.getBeatsCount();
-        boolean isCountIn = barIndex < config.getCountIn();
-        if (isFirstBeat
-            && config.isMuteActive() && config.getMuteUnit().equals(UNIT.BARS) && !isCountIn) {
+        if (isFirstBeat && config.isMuteActive() && config.muteUnit == UNIT.BARS && !isCountIn) {
           if (muteCountDown > 0) {
-            muteCountDown--;
+            muteCountDown--
           } else {
-            isMuted = !isMuted;
-            // Minus 1 because it's already the next bar
-            muteCountDown = Math.max(calculateMuteCount(isMuted) - 1, 0);
+            isMuted = !isMuted
+            muteCountDown = (calculateMuteCount(isMuted) - 1).coerceAtLeast(0)
           }
         }
-        // now calculate tick
-        int beat = getCurrentBeat();
-        int subdivision = getCurrentSubdivision();
-        String tickType = getCurrentTickType();
-        boolean muted = isMuted;
-        if (config.isMuteActive() && config.getMuteUnit().equals(UNIT.BEATS)) {
-          muted = random.nextInt(100) < config.getMuteMute();
-        }
-        Tick tick = new Tick(tickIndex, beat, subdivision, tickType, muted, false);
 
-        long interval = config.usePolyrhythm()
-            ? getInterval()
-            : getInterval() / config.getSubdivisionsCount();
-        nextScheduleTime += interval;
+        val beat = getCurrentBeat()
+        val subdivision = getCurrentSubdivision()
+        val tickType = getCurrentTickType()
+        var muted = isMuted
+        if (config.isMuteActive() && config.muteUnit == UNIT.BEATS) {
+          muted = random.nextInt(100) < config.muteMute
+        }
+        val tick = Tick(tickIndex, beat, subdivision, tickType, muted, false)
+
+        val currentInterval =
+          if (config.usePolyrhythm) interval else interval / config.getSubdivisionsCount()
+        nextScheduleTime += currentInterval
 
         if (tick.beat == 1 && tick.subdivision == 1) {
-          // first beat and subdivision is handled in main tick runnable to keep poly in sync
-          nextPolyScheduleTime = nextScheduleTime - interval;
+          nextPolyScheduleTime = nextScheduleTime - currentInterval
         }
 
-        long delay = nextScheduleTime - System.currentTimeMillis();
-        if (delay < 0) {
-          delay = 0;
-        }
-        tickHandler.postDelayed(this, delay);
+        val delay = (nextScheduleTime - System.currentTimeMillis()).coerceAtLeast(0)
+        tickHandler?.postDelayed(this, delay)
 
-        if (tick.beat == 1 && config.usePolyrhythm()) {
-          // start polyrhythm subdivisions every new bar
-          tickHandler.post(tickRunnablePoly);
+        if (tick.beat == 1 && config.usePolyrhythm) {
+          tickHandler?.post(tickRunnablePoly)
         }
 
-        boolean playing = performTick(tick); // don't play next tick if timer finished
-        if (playing) {
-          audioEngine.playTick(tick.type, tick.isMuted);
-          tickIndex++;
+        if (performTick(tick)) {
+          audioEngine.playTick(tick.type, tick.isMuted)
+          tickIndex++
         }
       }
-    };
-    audioHandler.post(() -> {
-      audioEngine.play();
-      // wait for audio engine to be started
-      tickHandler.post(tickRunnable);
-    });
+    }
+    audioHandler?.post {
+      audioEngine.play()
+      tickHandler?.post(tickRunnable)
+    }
   }
 
-  private void updateLastPlayedAndPlayCount() {
-    executorService.execute(() -> {
-      if (currentSongWithParts != null && !currentSongId.equals(Constants.SONG_ID_DEFAULT)) {
-        // update last played and play count except for default song
-        Song currentSong = currentSongWithParts.getSong();
-        currentSong.setLastPlayed(System.currentTimeMillis());
-        currentSong.incrementPlayCount();
-        db.songDao().updateSong(currentSong);
-        shortcutUtil.reportUsage(currentSong.getId());
-        // update widget only if songs are sorted by last played or most played
-        if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC
-            || songsOrder == SONGS_ORDER.MOST_PLAYED_ASC
+  private fun updateLastPlayedAndPlayCount() {
+    executorService.execute {
+      currentSongWithParts?.let {
+        if (currentSongId != Constants.SONG_ID_DEFAULT) {
+          val currentSong = it.song
+          currentSong.lastPlayed = System.currentTimeMillis()
+          currentSong.incrementPlayCount()
+          db.songDao().updateSong(currentSong)
+          shortcutUtil.reportUsage(currentSong.id)
+          if (songsOrder == SONGS_ORDER.LAST_PLAYED_ASC || songsOrder == SONGS_ORDER.MOST_PLAYED_ASC) {
+            sendSongsWidgetUpdate(context)
+          }
+        }
+      }
+    }
+    updateShortcuts()
+  }
+
+  fun updateShortcuts() {
+    executorService.execute {
+      if (!ShortcutUtil.isSupported) return@execute
+      shortcutUtil.removeAllShortcuts()
+      val songs = db.songDao().getAllSongs()
+      val filteredSongs = songs.toMutableList().apply {
+        removeIf { it.id == Constants.SONG_ID_DEFAULT || it.playCount < 1 }
+      }
+      filteredSongs.sortWith(
+        compareByDescending<Song> { it.playCount }.thenBy(
+          String.CASE_INSENSITIVE_ORDER
         ) {
-          WidgetUtil.sendSongsWidgetUpdate(context);
-        }
+          it.name ?: ""
+        })
+      val maxShortcuts = shortcutUtil.maxShortcutCount
+      val shortcuts = filteredSongs.take(maxShortcuts).map {
+        shortcutUtil.getShortcutInfo(it.id, it.name ?: "")
       }
-    });
-    updateShortcuts();
-  }
-
-  public void updateShortcuts() {
-    executorService.execute(() -> {
-      if (!ShortcutUtil.isSupported()) {
-        return;
-      }
-      shortcutUtil.removeAllShortcuts();
-      List<Song> songs = db.songDao().getAllSongs();
-      List<Song> filteredSongs = new ArrayList<>(songs);
-      filteredSongs.removeIf(
-          song -> song.getId().equals(Constants.SONG_ID_DEFAULT) || song.getPlayCount() < 1
-      );
-      filteredSongs.removeIf(song -> song.getPlayCount() < 1);
-      Collections.sort(filteredSongs, Comparator
-          .comparingInt(Song::getPlayCount).reversed()
-          .thenComparing(Song::getName, String.CASE_INSENSITIVE_ORDER)
-      );
-      filteredSongs.subList(0, Math.min(filteredSongs.size(), shortcutUtil.getMaxShortcutCount()));
-      List <ShortcutInfo> shortcuts = new ArrayList<>();
-      for (Song song : filteredSongs) {
-        if (shortcuts.size() < shortcutUtil.getMaxShortcutCount()) {
-          shortcuts.add(shortcutUtil.getShortcutInfo(song.getId(), song.getName()));
-        } else {
-          break;
-        }
-      }
-      shortcutUtil.addAllShortcuts(shortcuts);
-    });
-  }
-
-  private void setBeats(String[] beats) {
-    config.setBeats(beats);
-    sharedPrefs.edit().putString(PREF.BEATS, String.join(",", beats)).apply();
-  }
-
-  public void setBeat(int beat, String tickType) {
-    config.setBeat(beat, tickType);
-    setBeats(config.getBeats());
-  }
-
-  public boolean addBeat() {
-    boolean success = config.addBeat();
-    if (success) {
-      setBeats(config.getBeats());
+      shortcutUtil.addAllShortcuts(shortcuts)
     }
-    return success;
   }
 
-  public boolean removeBeat() {
-    boolean success = config.removeBeat();
-    if (success) {
-      setBeats(config.getBeats());
+  private fun setBeats(beats: Array<String>) {
+    config.beats = beats
+    sharedPrefs.edit { putString(PREF.BEATS, beats.joinToString(",")) }
+  }
+
+  fun setBeat(beat: Int, tickType: String) {
+    config.setBeat(beat, tickType)
+    setBeats(config.beats)
+  }
+
+  fun addBeat(): Boolean {
+    val success = config.addBeat()
+    if (success) setBeats(config.beats)
+    return success
+  }
+
+  fun removeBeat(): Boolean {
+    val success = config.removeBeat()
+    if (success) setBeats(config.beats)
+    return success
+  }
+
+  private fun setSubdivisions(subdivisions: Array<String>) {
+    config.subdivisions = subdivisions
+    sharedPrefs.edit {
+      putString(PREF.SUBDIVISIONS, config.subdivisions.joinToString(","))
     }
-    return success;
   }
 
-  private void setSubdivisions(String[] subdivisions) {
-    config.setSubdivisions(subdivisions);
-    sharedPrefs.edit()
-        .putString(PREF.SUBDIVISIONS, String.join(",", config.getSubdivisions()))
-        .apply();
+  fun setSubdivision(subdivision: Int, tickType: String) {
+    config.setSubdivision(subdivision, tickType)
+    setSubdivisions(config.subdivisions)
   }
 
-  public void setSubdivision(int subdivision, String tickType) {
-    config.setSubdivision(subdivision, tickType);
-    setSubdivisions(config.getSubdivisions());
+  fun addSubdivision(): Boolean {
+    val success = config.addSubdivision()
+    if (success) setSubdivisions(config.subdivisions)
+    return success
   }
 
-  public boolean addSubdivision() {
-    boolean success = config.addSubdivision();
-    if (success) {
-      setSubdivisions(config.getSubdivisions());
-    }
-    return success;
+  fun removeSubdivision(): Boolean {
+    val success = config.removeSubdivision()
+    if (success) setSubdivisions(config.subdivisions)
+    return success
   }
 
-  public boolean removeSubdivision() {
-    boolean success = config.removeSubdivision();
-    if (success) {
-      setSubdivisions(config.getSubdivisions());
-    }
-    return success;
+  fun setSwing3() {
+    config.setSwing3()
+    setSubdivisions(config.subdivisions)
   }
 
-  public void setSwing3() {
-    config.setSwing3();
-    setSubdivisions(config.getSubdivisions());
+  fun setSwing5() {
+    config.setSwing5()
+    setSubdivisions(config.subdivisions)
   }
 
-  public void setSwing5() {
-    config.setSwing5();
-    setSubdivisions(config.getSubdivisions());
+  fun setSwing7() {
+    config.setSwing7()
+    setSubdivisions(config.subdivisions)
   }
 
-  public void setSwing7() {
-    config.setSwing7();
-    setSubdivisions(config.getSubdivisions());
-  }
-
-  public void setTempo(int tempo) {
-    if (config.getTempo() != tempo) {
-      config.setTempo(tempo);
-      sharedPrefs.edit().putInt(PREF.TEMPO, tempo).apply();
-      if (isPlaying() && config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS)) {
-        updateTimerHandler(false, true, false);
+  fun setTempo(tempo: Int) {
+    if (config.tempo != tempo) {
+      config.tempo = tempo
+      sharedPrefs.edit { putInt(PREF.TEMPO, tempo) }
+      if (isPlaying() && config.isTimerActive() && config.timerUnit == UNIT.BARS) {
+        updateTimerHandler(startAtFirstBeat = false, performOneTime = true, withTransition = false)
       }
     }
   }
 
-  private void changeTempo(int change) {
-    int tempoOld = config.getTempo();
-    int tempoNew = tempoOld + change;
-    setTempo(tempoNew);
-    // setTempo will only be called by callback below, else we would break timer animation
-    synchronized (listeners) {
-      for (MetronomeListener listener : listeners) {
-        listener.onMetronomeTempoChanged(tempoOld, tempoNew);
-      }
+  private fun changeTempo(change: Int) {
+    val tempoOld = config.tempo
+    val tempoNew = tempoOld + change
+    setTempo(tempoNew)
+    synchronized(listeners) {
+      for (listener in listeners) listener.onMetronomeTempoChanged(tempoOld, tempoNew)
     }
-    maybeUpdateDefaultSong();
+    maybeUpdateDefaultSong()
   }
 
-  public long getInterval() {
-    return 1000 * 60 / Math.max(config.getTempo(), 1);
+  val interval: Long
+    get() = 1000L * 60 / maxOf(config.tempo, 1)
+
+  fun setUsePolyrhythm(usePolyrhythm: Boolean) {
+    config.usePolyrhythm = usePolyrhythm
+    sharedPrefs.edit { putBoolean(PREF.USE_POLYRHYTHM, usePolyrhythm) }
   }
 
-  public void setUsePolyrhythm(boolean usePolyrhythm) {
-    config.setUsePolyrhythm(usePolyrhythm);
-    sharedPrefs.edit().putBoolean(PREF.USE_POLYRHYTHM, usePolyrhythm).apply();
-    // no restart here, may cause race condition during parts change
+  fun setSound(sound: String?) {
+    audioEngine.setSound(sound ?: DEF.SOUND)
+    sharedPrefs.edit { putString(PREF.SOUND, sound) }
   }
 
-  public void setSound(String sound) {
-    audioEngine.setSound(sound);
-    sharedPrefs.edit().putString(PREF.SOUND, sound).apply();
+  fun getSound(): String = sharedPrefs.getString(
+    PREF.SOUND, DEF.SOUND
+  ) ?: DEF.SOUND
+
+  fun setBeatMode(mode: String) {
+    var finalMode = mode
+    if (!hapticUtil.hasVibrator()) finalMode = BEAT_MODE.SOUND
+    beatMode = finalMode
+    audioEngine.isMuted = finalMode == BEAT_MODE.VIBRATION
+    hapticUtil.setEnabled(finalMode != BEAT_MODE.SOUND)
+    sharedPrefs.edit { putString(PREF.BEAT_MODE, finalMode) }
   }
 
-  public String getSound() {
-    return sharedPrefs.getString(PREF.SOUND, DEF.SOUND);
+  fun getBeatMode(): String? = beatMode
+
+  fun areHapticEffectsPossible(ignoreIsPlaying: Boolean): Boolean {
+    return if (ignoreIsPlaying) beatMode == BEAT_MODE.SOUND
+    else !isPlaying() || areHapticEffectsPossible(true)
   }
 
-  public void setBeatMode(@NonNull String mode) {
-    if (!hapticUtil.hasVibrator()) {
-      mode = BEAT_MODE.SOUND;
-    }
-    beatMode = mode;
-    audioEngine.setMuted(mode.equals(BEAT_MODE.VIBRATION));
-    hapticUtil.setEnabled(!mode.equals(BEAT_MODE.SOUND));
-    sharedPrefs.edit().putString(PREF.BEAT_MODE, mode).apply();
+  fun setVibrationIntensity(intensity: String?) {
+    hapticUtil.intensity = intensity ?: DEF.VIBRATION_INTENSITY
+    sharedPrefs.edit { putString(PREF.VIBRATION_INTENSITY, intensity) }
   }
 
-  public String getBeatMode() {
-    return beatMode;
+  fun setLatency(offset: Long) {
+    latency = offset
+    sharedPrefs.edit { putLong(PREF.LATENCY, offset) }
   }
 
-  public boolean areHapticEffectsPossible(boolean ignoreIsPlaying) {
-    if (ignoreIsPlaying) {
-      return beatMode.equals(BEAT_MODE.SOUND);
-    } else {
-      return !isPlaying() || areHapticEffectsPossible(true);
-    }
+  fun getLatency(): Long = latency
+
+  fun setIgnoreFocus(ignore: Boolean) {
+    audioEngine.ignoreFocus = ignore
+    sharedPrefs.edit { putBoolean(PREF.IGNORE_FOCUS, ignore) }
   }
 
-  public void setVibrationIntensity(String intensity) {
-    hapticUtil.setIntensity(intensity);
-    sharedPrefs.edit().putString(PREF.VIBRATION_INTENSITY, intensity).apply();
+  fun getIgnoreAudioFocus(): Boolean = audioEngine.ignoreFocus
+
+  fun setGain(gain: Int) {
+    audioEngine.gain = gain
+    sharedPrefs.edit { putInt(PREF.GAIN, gain) }
   }
 
-  public void setLatency(long offset) {
-    latency = offset;
-    sharedPrefs.edit().putLong(PREF.LATENCY, offset).apply();
+  fun getGain(): Int = audioEngine.gain
+
+  fun neverStartedWithGainBefore(): Boolean = neverStartedWithGain
+
+  fun setFlashScreen(flash: String?) {
+    flashScreen = flash
+    sharedPrefs.edit { putString(PREF.FLASH_SCREEN, flash) }
   }
 
-  public long getLatency() {
-    return latency;
+  fun getFlashScreen(): String? = flashScreen
+
+  fun setFlashlight(strength: String?) {
+    flashlight = strength
+    sharedPrefs.edit { putString(PREF.FLASHLIGHT, strength) }
   }
 
-  public void setIgnoreFocus(boolean ignore) {
-    audioEngine.setIgnoreFocus(ignore);
-    sharedPrefs.edit().putBoolean(PREF.IGNORE_FOCUS, ignore).apply();
+  fun getFlashlight(): String? = flashlight
+
+  fun setKeepAwake(keepAwake: String?) {
+    this.keepAwake = keepAwake
+    sharedPrefs.edit { putString(PREF.KEEP_AWAKE, keepAwake) }
   }
 
-  public boolean getIgnoreAudioFocus() {
-    return audioEngine.getIgnoreFocus();
+  fun getKeepAwake(): String? = keepAwake
+
+  fun setTempoInputKeyboard(keyboard: Boolean) {
+    tempoInputKeyboard = keyboard
+    sharedPrefs.edit { putBoolean(PREF.TEMPO_INPUT_KEYBOARD, keyboard) }
   }
 
-  public void setGain(int gain) {
-    audioEngine.setGain(gain);
-    sharedPrefs.edit().putInt(PREF.GAIN, gain).apply();
+  fun getTempoInputKeyboard(): Boolean = tempoInputKeyboard
+
+  fun setTempoTapInstant(instant: Boolean) {
+    tempoTapInstant = instant
+    sharedPrefs.edit { putBoolean(PREF.TEMPO_TAP_INSTANT, instant) }
   }
 
-  public int getGain() {
-    return audioEngine.getGain();
+  fun getTempoTapInstant(): Boolean = tempoTapInstant
+
+  fun setCountIn(bars: Int) {
+    config.countIn = bars
+    sharedPrefs.edit { putInt(PREF.COUNT_IN, bars) }
   }
 
-  public boolean neverStartedWithGainBefore() {
-    return neverStartedWithGain;
-  }
+  fun isCountingIn(): Boolean = isCountingInInternal
 
-  public void setFlashScreen(String flash) {
-    flashScreen = flash;
-    sharedPrefs.edit().putString(PREF.FLASH_SCREEN, flash).apply();
-  }
+  val countInInterval: Long
+    get() = interval * config.getBeatsCount() * config.countIn
 
-  public String getFlashScreen() {
-    return flashScreen;
-  }
-
-  public void setFlashlight(String strength) {
-    flashlight = strength;
-    sharedPrefs.edit().putString(PREF.FLASHLIGHT, strength).apply();
-  }
-
-  public String getFlashlight() {
-    return flashlight;
-  }
-
-  public void setKeepAwake(String keepAwake) {
-    this.keepAwake = keepAwake;
-    sharedPrefs.edit().putString(PREF.KEEP_AWAKE, keepAwake).apply();
-  }
-
-  public String getKeepAwake() {
-    return keepAwake;
-  }
-
-  public void setTempoInputKeyboard(boolean keyboard) {
-    tempoInputKeyboard = keyboard;
-    sharedPrefs.edit().putBoolean(PREF.TEMPO_INPUT_KEYBOARD, keyboard).apply();
-  }
-
-  public boolean getTempoInputKeyboard() {
-    return tempoInputKeyboard;
-  }
-
-  public void setTempoTapInstant(boolean instant) {
-    tempoTapInstant = instant;
-    sharedPrefs.edit().putBoolean(PREF.TEMPO_TAP_INSTANT, instant).apply();
-  }
-
-  public boolean getTempoTapInstant() {
-    return tempoTapInstant;
-  }
-
-  public void setCountIn(int bars) {
-    config.setCountIn(bars);
-    sharedPrefs.edit().putInt(PREF.COUNT_IN, bars).apply();
-  }
-
-  public boolean isCountingIn() {
-    return isCountingIn;
-  }
-
-  public long getCountInInterval() {
-    return getInterval() * config.getBeatsCount() * config.getCountIn();
-  }
-
-  public float getCountInProgress() {
+  fun getCountInProgress(): Float {
     if (isPlaying() && isCountingIn()) {
-      long countInElapsed = System.currentTimeMillis() - countInStartTime;
-      return Math.max(0, Math.min(1, countInElapsed / (float) getCountInInterval()));
+      val countInElapsed = System.currentTimeMillis() - countInStartTime
+      return (countInElapsed / countInInterval.toFloat()).coerceIn(0f, 1f)
     }
-    return 1;
+    return 1f
   }
 
-  public long getCountInIntervalRemaining() {
+  fun getCountInIntervalRemaining(): Long {
     if (isPlaying() && isCountingIn()) {
-      long countInElapsed = System.currentTimeMillis() - countInStartTime;
-      return Math.max(0, getCountInInterval() - countInElapsed);
+      val countInElapsed = System.currentTimeMillis() - countInStartTime
+      return (countInInterval - countInElapsed).coerceAtLeast(0)
     }
-    return 0;
+    return 0
   }
 
-  public void setIncrementalAmount(int bpm) {
-    config.setIncrementalAmount(bpm);
-    sharedPrefs.edit().putInt(PREF.INCREMENTAL_AMOUNT, bpm).apply();
-    updateIncrementalHandler();
+  fun setIncrementalAmount(bpm: Int) {
+    config.incrementalAmount = bpm
+    sharedPrefs.edit { putInt(PREF.INCREMENTAL_AMOUNT, bpm) }
+    updateIncrementalHandler()
   }
 
-  public void setIncrementalIncrease(boolean increase) {
-    config.setIncrementalIncrease(increase);
-    sharedPrefs.edit().putBoolean(PREF.INCREMENTAL_INCREASE, increase).apply();
+  fun setIncrementalIncrease(increase: Boolean) {
+    config.incrementalIncrease = increase
+    sharedPrefs.edit { putBoolean(PREF.INCREMENTAL_INCREASE, increase) }
   }
 
-  public void setIncrementalInterval(int interval) {
-    config.setIncrementalInterval(interval);
-    sharedPrefs.edit().putInt(PREF.INCREMENTAL_INTERVAL, interval).apply();
-    updateIncrementalHandler();
+  fun setIncrementalInterval(interval: Int) {
+    config.incrementalInterval = interval
+    sharedPrefs.edit { putInt(PREF.INCREMENTAL_INTERVAL, interval) }
+    updateIncrementalHandler()
   }
 
-  public void setIncrementalUnit(String unit) {
-    if (unit.equals(config.getIncrementalUnit())) {
-      return;
-    }
-    config.setIncrementalUnit(unit);
-    sharedPrefs.edit().putString(PREF.INCREMENTAL_UNIT, unit).apply();
-    updateIncrementalHandler();
+  fun setIncrementalUnit(unit: String) {
+    if (unit == config.incrementalUnit) return
+    config.incrementalUnit = unit
+    sharedPrefs.edit { putString(PREF.INCREMENTAL_UNIT, unit) }
+    updateIncrementalHandler()
   }
 
-  public void setIncrementalLimit(int limit) {
-    config.setIncrementalLimit(limit);
-    sharedPrefs.edit().putInt(PREF.INCREMENTAL_LIMIT, limit).apply();
+  fun setIncrementalLimit(limit: Int) {
+    config.incrementalLimit = limit
+    sharedPrefs.edit { putInt(PREF.INCREMENTAL_LIMIT, limit) }
   }
 
-  private void updateIncrementalHandler() {
-    if (!isPlaying()) {
-      return;
-    }
-    incrementalHandler.removeCallbacksAndMessages(null);
-    String unit = config.getIncrementalUnit();
-    int amount = config.getIncrementalAmount();
-    int limit = config.getIncrementalLimit();
-    boolean increase = config.isIncrementalIncrease();
-    if (!unit.equals(UNIT.BARS) && config.isIncrementalActive()) {
-      long factor = unit.equals(UNIT.SECONDS) ? 1000L : 60000L;
-      long interval = factor * config.getIncrementalInterval();
-      incrementalHandler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-          incrementalHandler.postDelayed(this, interval);
-          int upperLimit = limit != 0 ? limit : Constants.TEMPO_MAX;
-          int lowerLimit = limit != 0 ? limit : Constants.TEMPO_MIN;
-          if (increase && config.getTempo() + amount <= upperLimit) {
-            changeTempo(amount);
-          } else if (!increase && config.getTempo() - amount >= lowerLimit) {
-            changeTempo(-amount);
+  private fun updateIncrementalHandler() {
+    if (!isPlaying()) return
+    incrementalHandler?.removeCallbacksAndMessages(null)
+    val unit = config.incrementalUnit
+    val amount = config.incrementalAmount
+    val limit = config.incrementalLimit
+    val increase = config.incrementalIncrease
+    if (unit != UNIT.BARS && config.isIncrementalActive()) {
+      val factor = if (unit == UNIT.SECONDS) 1000L else 60000L
+      val intervalMillis = factor * config.incrementalInterval
+      incrementalHandler?.postDelayed(object : Runnable {
+        override fun run() {
+          incrementalHandler?.postDelayed(this, intervalMillis)
+          val upperLimit = if (limit != 0) limit else Constants.TEMPO_MAX
+          val lowerLimit = if (limit != 0) limit else Constants.TEMPO_MIN
+          if (increase && config.tempo + amount <= upperLimit) {
+            changeTempo(amount)
+          } else if (!increase && config.tempo - amount >= lowerLimit) {
+            changeTempo(-amount)
           }
         }
-      }, interval);
+      }, intervalMillis)
     }
   }
 
-  public void setShowElapsed(boolean show) {
-    showElapsed = show;
-    sharedPrefs.edit().putBoolean(PREF.SHOW_ELAPSED, show).apply();
+  fun setShowElapsed(show: Boolean) {
+    showElapsed = show
+    sharedPrefs.edit { putBoolean(PREF.SHOW_ELAPSED, show) }
   }
 
-  public boolean getShowElapsed() {
-    return showElapsed;
+  fun getShowElapsed(): Boolean = showElapsed
+
+  fun isElapsedActive(): Boolean = showElapsed
+
+  fun resetElapsed() {
+    elapsedPrevious = 0
+    elapsedStartTime = System.currentTimeMillis()
+    elapsedTime = 0
+    synchronized(listeners) {
+      for (listener in listeners) listener.onMetronomeElapsedTimeSecondsChanged()
+    }
+    updateElapsedHandler(true)
   }
 
-  public boolean isElapsedActive() {
-    return showElapsed;
-  }
-
-  public void resetElapsed() {
-    elapsedPrevious = 0;
-    elapsedStartTime = System.currentTimeMillis();
-    elapsedTime = 0;
-    synchronized (listeners) {
-      for (MetronomeListener listener : listeners) {
-        listener.onMetronomeElapsedTimeSecondsChanged();
-      }
-    }
-    updateElapsedHandler(true);
-  }
-
-  public void updateElapsedHandler(boolean reset) {
-    if (!isPlaying()) {
-      return;
-    }
-    elapsedHandler.removeCallbacksAndMessages(null);
-    if (!isElapsedActive()) {
-      return;
-    }
-    if (reset) {
-      elapsedPrevious = 0;
-    }
-    elapsedHandler.post(new Runnable() {
-      @Override
-      public void run() {
+  fun updateElapsedHandler(reset: Boolean) {
+    if (!isPlaying()) return
+    elapsedHandler?.removeCallbacksAndMessages(null)
+    if (!isElapsedActive()) return
+    if (reset) elapsedPrevious = 0
+    elapsedHandler?.post(object : Runnable {
+      override fun run() {
         if (isPlaying()) {
-          elapsedTime = System.currentTimeMillis() - elapsedStartTime + elapsedPrevious;
-          elapsedHandler.postDelayed(this, 1000);
-          synchronized (listeners) {
-            for (MetronomeListener listener : listeners) {
-              listener.onMetronomeElapsedTimeSecondsChanged();
-            }
+          elapsedTime = System.currentTimeMillis() - elapsedStartTime + elapsedPrevious
+          elapsedHandler?.postDelayed(this, 1000)
+          synchronized(listeners) {
+            for (listener in listeners) listener.onMetronomeElapsedTimeSecondsChanged()
           }
         }
       }
-    });
+    })
   }
 
-  public String getElapsedTimeString() {
-    if (!isElapsedActive()) {
-      return "";
-    }
-    int seconds = (int) (elapsedTime / 1000);
-    return getTimeStringFromSeconds(seconds, false);
+  fun getElapsedTimeString(): String {
+    if (!isElapsedActive()) return ""
+    val seconds = (elapsedTime / 1000).toInt()
+    return getTimeStringFromSeconds(seconds, false)
   }
 
-  public void setTimerDuration(int duration) {
-    int durationOld = config.getTimerDuration();
+  fun setTimerDuration(duration: Int) {
+    val durationOld = config.timerDuration
+    config.timerDuration = duration
+    sharedPrefs.edit { putInt(PREF.TIMER_DURATION, duration) }
 
-    config.setTimerDuration(duration);
-    sharedPrefs.edit().putInt(PREF.TIMER_DURATION, duration).apply();
-
-    if (duration != durationOld) {
-      if (duration == 0 || durationOld == 0) {
-        // timer is activated or deactivated
-        synchronized (listeners) {
-          for (MetronomeListener listener : listeners) {
-            listener.onMetronomeTimerActiveStateChanged(config.isTimerActive());
-          }
-        }
+    if (duration != durationOld && (duration == 0 || durationOld == 0)) {
+      synchronized(listeners) {
+        for (listener in listeners) listener.onMetronomeTimerActiveStateChanged(config.isTimerActive())
       }
     }
 
-    if (config.getTimerUnit().equals(UNIT.BARS)) {
-      updateTimerHandler(false, true);
+    if (config.timerUnit == UNIT.BARS) {
+      updateTimerHandler(startAtFirstBeat = false, performOneTime = true)
     } else {
-      updateTimerHandler(0, false);
+      updateTimerHandler(0f, false)
     }
   }
 
-  public long getTimerInterval() {
-    long factor;
-    switch (config.getTimerUnit()) {
-      case UNIT.SECONDS:
-        factor = 1000L;
-        break;
-      case UNIT.MINUTES:
-        factor = 60000L;
-        break;
-      default:
-        factor = getInterval() * config.getBeatsCount();
-        break;
+  fun getTimerInterval(): Long {
+    val factor = when (config.timerUnit) {
+      UNIT.SECONDS -> 1000L
+      UNIT.MINUTES -> 60000L
+      else -> interval * config.getBeatsCount()
     }
-    return factor * config.getTimerDuration();
+    return factor * config.timerDuration
   }
 
-  public long getTimerIntervalRemaining() {
-    return (long) (getTimerInterval() * (1 - getTimerProgress()));
+  fun getTimerIntervalRemaining(): Long = (getTimerInterval() * (1 - getTimerProgress())).toLong()
+
+  fun setTimerUnit(unit: String) {
+    if (unit == config.timerUnit) return
+    config.timerUnit = unit
+    sharedPrefs.edit { putString(PREF.TIMER_UNIT, unit) }
+    updateTimerHandler(0f, false)
   }
 
-  public void setTimerUnit(String unit) {
-    if (unit.equals(config.getTimerUnit())) {
-      return;
-    }
-    config.setTimerUnit(unit);
-    sharedPrefs.edit().putString(PREF.TIMER_UNIT, unit).apply();
-    updateTimerHandler(0, false);
+  fun setResetTimerOnStop(reset: Boolean) {
+    resetTimerOnStop = reset
+    sharedPrefs.edit { putBoolean(PREF.RESET_TIMER_ON_STOP, reset) }
   }
 
-  public void setResetTimerOnStop(boolean reset) {
-    resetTimerOnStop = reset;
-    sharedPrefs.edit().putBoolean(PREF.RESET_TIMER_ON_STOP, reset).apply();
-  }
+  fun getResetTimerOnStop(): Boolean = resetTimerOnStop
 
-  public boolean getResetTimerOnStop() {
-    return resetTimerOnStop;
-  }
-
-  public float getTimerProgress() {
-    if (config.isTimerActive()) {
-      if (!config.getTimerUnit().equals(UNIT.BARS) && isPlaying() && !isCountingIn) {
-        long previousDuration = (long) (timerProgress * getTimerInterval());
-        long elapsedTime = System.currentTimeMillis() - timerStartTime + previousDuration;
-        float fraction = elapsedTime / (float) getTimerInterval();
-        return Math.min(1, Math.max(0, fraction));
+  fun getTimerProgress(): Float {
+    return if (config.isTimerActive()) {
+      if (config.timerUnit != UNIT.BARS && isPlaying() && !isCountingInInternal) {
+        val previousDuration = (timerProgress * getTimerInterval()).toLong()
+        val currentElapsedTime = System.currentTimeMillis() - timerStartTime + previousDuration
+        (currentElapsedTime / getTimerInterval().toFloat()).coerceIn(0f, 1f)
       } else {
-        return timerProgress;
+        timerProgress
       }
     } else {
-      return 0;
+      0f
     }
   }
 
-  public boolean isTimerFinished() {
-    if (config.getTimerUnit().equals(UNIT.BARS)) {
-      return timerBarIndex >= config.getTimerDuration() - 1 &&
+  fun isTimerFinished(): Boolean {
+    return if (config.timerUnit == UNIT.BARS) {
+      timerBarIndex >= config.timerDuration - 1 &&
           timerBeatIndex >= config.getBeatsCount() - 1 &&
-          timerSubIndex >= config.getSubdivisionsCount() - 1;
+          timerSubIndex >= config.getSubdivisionsCount() - 1
     } else {
       try {
-        BigDecimal bdProgress = BigDecimal.valueOf(getTimerProgress()).setScale(
-            2, RoundingMode.HALF_UP
-        );
-        BigDecimal bdFraction = new BigDecimal(1).setScale(2, RoundingMode.HALF_UP);
-        return bdProgress.equals(bdFraction);
-      } catch (NumberFormatException e) {
-        return false;
+        val bdProgress = BigDecimal.valueOf(
+          getTimerProgress().toDouble()
+        ).setScale(
+          2, RoundingMode.HALF_UP
+        )
+        val bdFraction = BigDecimal.valueOf(1).setScale(2, RoundingMode.HALF_UP)
+        bdProgress == bdFraction
+      } catch (_: NumberFormatException) {
+        false
       }
     }
   }
 
-  public void updateTimerHandler(float fraction, boolean startAtFirstBeat) {
-    timerProgress = fraction;
-    switch (config.getTimerUnit()) {
-      case UNIT.SECONDS:
-      case UNIT.MINUTES:
-        long intervalMillis = Math.max(getInterval(), 1);
-        boolean isUnitSeconds = config.getTimerUnit().equals(UNIT.SECONDS);
-        long totalMillis = config.getTimerDuration() * (isUnitSeconds ? 1000L : 60000L);
-        long elapsedMillis = (long) (fraction * totalMillis);
-        timerBarIndex = (int) (elapsedMillis / intervalMillis / config.getBeatsCount());
+  fun updateTimerHandler(fraction: Float, startAtFirstBeat: Boolean) {
+    timerProgress = fraction
+    when (config.timerUnit) {
+      UNIT.SECONDS, UNIT.MINUTES -> {
+        val intervalMillis = maxOf(interval, 1)
+        val isUnitSeconds = config.timerUnit == UNIT.SECONDS
+        val totalMillis = config.timerDuration * if (isUnitSeconds) 1000L else 60000L
+        val elapsedMillis = (fraction * totalMillis).toLong()
+        timerBarIndex = (elapsedMillis / intervalMillis / config.getBeatsCount()).toInt()
         timerBeatIndex =
-            (int) ((elapsedMillis % (intervalMillis * config.getBeatsCount())) / intervalMillis);
-        long subdivisionMillis = intervalMillis / config.getSubdivisionsCount();
-        if (subdivisionMillis == 0) { // maybe caused division by zero
-          subdivisionMillis = 1;
-        }
-        timerSubIndex = (int) ((elapsedMillis % intervalMillis) / subdivisionMillis);
-        break;
-      default:
-        int barIndex = (int) (fraction * config.getTimerDuration());
-        timerBarIndex = Math.min(barIndex, config.getTimerDuration() - 1);
+          ((elapsedMillis % (intervalMillis * config.getBeatsCount())) / intervalMillis).toInt()
+        val subdivisionMillis = maxOf(intervalMillis / config.getSubdivisionsCount(), 1)
+        timerSubIndex = ((elapsedMillis % intervalMillis) / subdivisionMillis).toInt()
+      }
 
-        if (barIndex <= config.getTimerDuration() - 1) {
-          timerBeatIndex = (int) ((fraction * config.getTimerDuration() * config.getBeatsCount())
-              % config.getBeatsCount());
-          timerSubIndex = (int) (fraction * config.getTimerDuration() * config.getBeatsCount()
-              * config.getSubdivisionsCount()) % config.getSubdivisionsCount();
+      else -> {
+        val barIndex = (fraction * config.timerDuration).toInt()
+        timerBarIndex = barIndex.coerceAtMost(config.timerDuration - 1)
+        if (barIndex <= config.timerDuration - 1) {
+          timerBeatIndex = ((fraction * config.timerDuration * config.getBeatsCount())
+              % config.getBeatsCount()).toInt()
+          timerSubIndex = (fraction * config.timerDuration * config.getBeatsCount()
+              * config.getSubdivisionsCount()).toInt() % config.getSubdivisionsCount()
         } else {
-          timerBeatIndex = config.getBeatsCount() - 1;
-          timerSubIndex = config.getSubdivisionsCount() - 1;
+          timerBeatIndex = config.getBeatsCount() - 1
+          timerSubIndex = config.getSubdivisionsCount() - 1
         }
-        break;
+      }
     }
-    updateTimerHandler(startAtFirstBeat, false);
+    updateTimerHandler(startAtFirstBeat, false)
   }
 
-  public void updateTimerHandler(boolean startAtFirstBeat, boolean performOneTime) {
-    updateTimerHandler(startAtFirstBeat, performOneTime, true);
-  }
-
-  public void updateTimerHandler(
-      boolean startAtFirstBeat, boolean performOneTime, boolean withTransition
+  fun updateTimerHandler(
+    startAtFirstBeat: Boolean,
+    performOneTime: Boolean,
+    withTransition: Boolean = true
   ) {
-    // withTransition is only relevant for tempo changes while playing (in setTempo)
-    // transitions make these changes laggy
-    if (!isPlaying()) {
-      return;
-    }
-    timerHandler.removeCallbacksAndMessages(null);
-    if (!config.isTimerActive()) {
-      return;
-    }
+    if (!isPlaying()) return
+    timerHandler?.removeCallbacksAndMessages(null)
+    if (!config.isTimerActive()) return
 
     if (isTimerFinished()) {
-      timerProgress = 0;
+      timerProgress = 0f
     } else if (startAtFirstBeat) {
-      // set timer progress on start of this bar
-      long barInterval = getInterval() * config.getBeatsCount();
-      timerProgress = timerBarIndex * barInterval / (float) getTimerInterval();
-      timerBeatIndex = 0;
-      timerSubIndex = 0;
+      val barInterval = interval * config.getBeatsCount()
+      timerProgress = timerBarIndex * barInterval / getTimerInterval().toFloat()
+      timerBeatIndex = 0
+      timerSubIndex = 0
     }
 
-    if (!config.getTimerUnit().equals(UNIT.BARS)) {
-      timerHandler.postDelayed(() -> {
+    if (config.timerUnit != UNIT.BARS) {
+      timerHandler?.postDelayed({
         if (hasNextPart()) {
-          setCurrentPartIndex(currentPartIndex + 1);
-        } else if (currentSongWithParts != null && currentSongWithParts.getSong().isLooped()) {
-          // Restart song
-          setCurrentPartIndex(0);
+          setCurrentPartIndex(currentPartIndex + 1)
+        } else if (currentSongWithParts?.song?.isLooped == true) {
+          setCurrentPartIndex(0)
         } else {
-          stop();
-          if (currentSongWithParts != null) {
-            setCurrentPartIndex(0);
-          }
+          stop()
+          if (currentSongWithParts != null) setCurrentPartIndex(0)
         }
-      }, getTimerIntervalRemaining());
-      timerHandler.post(new Runnable() {
-        @Override
-        public void run() {
-          if (isPlaying() && !config.getTimerUnit().equals(UNIT.BARS)) {
-            timerHandler.postDelayed(this, 1000);
-            synchronized (listeners) {
-              for (MetronomeListener listener : listeners) {
-                listener.onMetronomeTimerSecondsChanged();
-              }
+      }, getTimerIntervalRemaining())
+      timerHandler?.post(object : Runnable {
+        override fun run() {
+          if (isPlaying() && config.timerUnit != UNIT.BARS) {
+            timerHandler?.postDelayed(this, 1000)
+            synchronized(listeners) {
+              for (listener in listeners) listener.onMetronomeTimerSecondsChanged()
             }
           }
         }
-      });
+      })
     }
 
-    if (ignoreTimerCallbacksTemp) {
-      return;
-    }
-    synchronized (listeners) {
-      for (MetronomeListener listener : listeners) {
-        if (performOneTime) {
-          listener.onMetronomeTimerProgressOneTime(withTransition);
-        } else {
-          listener.onMetronomeTimerStarted();
-        }
+    if (ignoreTimerCallbacksTemp) return
+    synchronized(listeners) {
+      for (listener in listeners) {
+        if (performOneTime) listener.onMetronomeTimerProgressOneTime(withTransition)
+        else listener.onMetronomeTimerStarted()
       }
     }
   }
 
-  public void resetTimerNow() {
-    if (config.isTimerActive()) {
-      restartIfPlaying(true);
-    }
+  fun resetTimerNow() {
+    if (config.isTimerActive()) restartIfPlaying(true)
   }
 
-  public String getCurrentTimerString() {
-    if (!config.isTimerActive()) {
-      return "";
-    }
-    switch (config.getTimerUnit()) {
-      case UNIT.SECONDS:
-      case UNIT.MINUTES:
-        long elapsedTime = (long) (getTimerProgress() * getTimerInterval());
-        int seconds = (int) (elapsedTime / 1000);
-        // Decide whether to force hours for consistency with total time
-        int totalHours = config.getTimerDuration() / 3600;
-        if (config.getTimerUnit().equals(UNIT.MINUTES)) {
-          totalHours = config.getTimerDuration() / 60;
-        }
-        return getTimeStringFromSeconds(seconds, totalHours > 0);
-      default:
-        String format = config.getBeatsCount() < 10 ? "%d.%01d" : "%d.%02d";
+  fun getCurrentTimerString(): String {
+    if (!config.isTimerActive()) return ""
+    return when (config.timerUnit) {
+      UNIT.SECONDS, UNIT.MINUTES -> {
+        val currentElapsedTime = (getTimerProgress() * getTimerInterval()).toLong()
+        val seconds = (currentElapsedTime / 1000).toInt()
+        val totalHours =
+          if (config.timerUnit == UNIT.MINUTES) config.timerDuration / 60 else config.timerDuration / 3600
+        getTimeStringFromSeconds(seconds, totalHours > 0)
+      }
+
+      else -> {
+        var format = if (config.getBeatsCount() < 10) "%d.%01d" else "%d.%02d"
         if (config.getSubdivisionsCount() > 1) {
-          format += config.getSubdivisionsCount() < 10 ? ".%01d" : ".%02d";
-          return String.format(
-              Locale.ENGLISH, format,
-              timerBarIndex + 1, timerBeatIndex + 1, timerSubIndex + 1
-          );
+          format += if (config.getSubdivisionsCount() < 10) ".%01d" else ".%02d"
+          String.format(
+            Locale.ENGLISH,
+            format,
+            timerBarIndex + 1,
+            timerBeatIndex + 1,
+            timerSubIndex + 1
+          )
         } else {
-          return String.format(
-              Locale.ENGLISH, format, timerBarIndex + 1, timerBeatIndex + 1
-          );
+          String.format(Locale.ENGLISH, format, timerBarIndex + 1, timerBeatIndex + 1)
         }
+      }
     }
   }
 
-  public String getTotalTimeString() {
-    if (!config.isTimerActive()) {
-      return "";
+  fun getTotalTimeString(): String {
+    if (!config.isTimerActive()) return ""
+    val timerDuration = config.timerDuration
+    return when (config.timerUnit) {
+      UNIT.SECONDS, UNIT.MINUTES -> {
+        val seconds = if (config.timerUnit == UNIT.MINUTES) timerDuration * 60 else timerDuration
+        getTimeStringFromSeconds(seconds, false)
+      }
+
+      else -> context.resources.getQuantityString(
+        R.plurals.options_unit_bars,
+        timerDuration,
+        timerDuration
+      )
     }
-    int timerDuration = config.getTimerDuration();
-    switch (config.getTimerUnit()) {
-      case UNIT.SECONDS:
-      case UNIT.MINUTES:
-        int seconds = timerDuration;
-        if (config.getTimerUnit().equals(UNIT.MINUTES)) {
-          seconds *= 60;
+  }
+
+  fun setMutePlay(play: Int) {
+    config.mutePlay = play
+    sharedPrefs.edit { putInt(PREF.MUTE_PLAY, play) }
+    updateMuteHandler()
+  }
+
+  fun setMuteMute(mute: Int) {
+    config.muteMute = mute
+    sharedPrefs.edit { putInt(PREF.MUTE_MUTE, config.muteMute) }
+    updateMuteHandler()
+  }
+
+  fun setMuteUnit(unit: String) {
+    if (unit == config.muteUnit) return
+    config.muteUnit = unit
+    sharedPrefs.edit { putString(PREF.MUTE_UNIT, unit) }
+    setMuteMute(config.muteMute)
+    updateMuteHandler()
+  }
+
+  fun setMuteRandom(random: Boolean) {
+    config.muteRandom = random
+    sharedPrefs.edit { putBoolean(PREF.MUTE_RANDOM, random) }
+    updateMuteHandler()
+  }
+
+  private fun updateMuteHandler() {
+    if (!isPlaying()) return
+    muteHandler?.removeCallbacksAndMessages(null)
+    isMuted = false
+    if (config.isMuteActive() && config.muteUnit == UNIT.SECONDS) {
+      muteHandler?.postDelayed(object : Runnable {
+        override fun run() {
+          isMuted = !isMuted
+          muteHandler?.postDelayed(this, calculateMuteCount(isMuted) * 1000L)
         }
-        return getTimeStringFromSeconds(seconds, false);
-      default:
-        return context.getResources().getQuantityString(
-            R.plurals.options_unit_bars, timerDuration, timerDuration
-        );
+      }, calculateMuteCount(isMuted) * 1000L)
     }
   }
 
-  public static String getTimeStringFromSeconds(int seconds, boolean forceHours) {
-    int minutes = seconds / 60;
-    int hours = minutes / 60;
-    if (hours > 0 || forceHours) {
-      return String.format(
-          Locale.ENGLISH, "%02d:%02d:%02d", hours, minutes % 60, seconds % 60
-      );
-    }
-    return String.format(Locale.ENGLISH, "%02d:%02d", minutes, seconds % 60);
+  private fun calculateMuteCount(mute: Boolean): Int {
+    val count = if (mute) config.muteMute else config.mutePlay
+    return if (config.muteRandom) random.nextInt(count + 1) else count
   }
 
-  public void setMutePlay(int play) {
-    config.setMutePlay(play);
-    sharedPrefs.edit().putInt(PREF.MUTE_PLAY, play).apply();
-    updateMuteHandler();
-  }
+  private fun performTick(tick: Tick): Boolean {
+    val beatIndex =
+      if (config.usePolyrhythm) tickIndex else tickIndex / config.getSubdivisionsCount()
+    val barIndex = beatIndex / config.getBeatsCount()
+    val barIndexWithoutCountIn = barIndex - config.countIn
+    val isCountIn = barIndex < config.countIn
 
-  public void setMuteMute(int mute) {
-    config.setMuteMute(mute);
-    sharedPrefs.edit().putInt(PREF.MUTE_MUTE, config.getMuteMute()).apply();
-    updateMuteHandler();
-  }
+    val isBeat = tick.subdivision == 1
+    val isFirstBeat = isBeat && (beatIndex % config.getBeatsCount()) == 0L
 
-  public void setMuteUnit(String unit) {
-    if (unit.equals(config.getMuteUnit())) {
-      return;
-    }
-    config.setMuteUnit(unit);
-    sharedPrefs.edit().putString(PREF.MUTE_UNIT, unit).apply();
-    // Trigger snapping to correct step size
-    setMuteMute(config.getMuteMute());
-
-    updateMuteHandler();
-  }
-
-  public void setMuteRandom(boolean random) {
-    config.setMuteRandom(random);
-    sharedPrefs.edit().putBoolean(PREF.MUTE_RANDOM, random).apply();
-    updateMuteHandler();
-  }
-
-  private void updateMuteHandler() {
-    if (!isPlaying()) {
-      return;
-    }
-    muteHandler.removeCallbacksAndMessages(null);
-    isMuted = false;
-    if (config.isMuteActive() && config.getMuteUnit().equals(UNIT.SECONDS)) {
-      muteHandler.postDelayed(new Runnable() {
-        @Override
-        public void run() {
-          isMuted = !isMuted;
-          muteHandler.postDelayed(this, calculateMuteCount(isMuted) * 1000L);
-        }
-      }, calculateMuteCount(isMuted) * 1000L);
-    }
-  }
-
-  private int calculateMuteCount(boolean mute) {
-    int count = mute ? config.getMuteMute() : config.getMutePlay();
-    if (config.isMuteRandom()) {
-      return random.nextInt(count + 1);
-    } else {
-      return count;
-    }
-  }
-
-  private boolean performTick(Tick tick) {
-    long beatIndex = config.usePolyrhythm() ? tickIndex : tickIndex / config.getSubdivisionsCount();
-    long barIndex = beatIndex / config.getBeatsCount();
-    long barIndexWithoutCountIn = barIndex - config.getCountIn();
-    boolean isCountIn = barIndex < config.getCountIn();
-
-    boolean isBeat = tick.subdivision == 1;
-    boolean isFirstBeat = isBeat && (beatIndex % config.getBeatsCount()) == 0;
-
-    if (config.isTimerActive() && config.getTimerUnit().equals(UNIT.BARS) && !isCountIn) {
-      boolean isFirstBeatInFirstBar = barIndexWithoutCountIn == 0 && isFirstBeat;
-      boolean increaseTimerProgress = barIndexWithoutCountIn > 0 || !isFirstBeatInFirstBar;
-      // Play the first beat without increasing
+    if (config.isTimerActive() && config.timerUnit == UNIT.BARS && !isCountIn) {
+      val isFirstBeatInFirstBar = barIndexWithoutCountIn == 0L && isFirstBeat
+      val increaseTimerProgress = barIndexWithoutCountIn > 0 || !isFirstBeatInFirstBar
       if (increaseTimerProgress) {
-        if (isFirstBeat) {
-          timerBarIndex++;
-        }
+        if (isFirstBeat) timerBarIndex++
         if (isBeat) {
-          timerBeatIndex++;
-          if (timerBeatIndex >= config.getBeatsCount()) {
-            timerBeatIndex = 0;
-          }
+          timerBeatIndex++
+          if (timerBeatIndex >= config.getBeatsCount()) timerBeatIndex = 0
         }
-        timerSubIndex++;
-        if (timerSubIndex >= config.getSubdivisionsCount()) {
-          timerSubIndex = 0;
-        }
-        long barInterval = getInterval() * config.getBeatsCount();
-        long subInterval = getInterval() / config.getSubdivisionsCount();
-        long progressInterval = timerBarIndex * barInterval
-            + timerBeatIndex * getInterval()
-            + timerSubIndex * subInterval;
-        timerProgress = progressInterval / (float) getTimerInterval();
+        timerSubIndex++
+        if (timerSubIndex >= config.getSubdivisionsCount()) timerSubIndex = 0
+        val barInterval = interval * config.getBeatsCount()
+        val subInterval = interval / config.getSubdivisionsCount()
+        val progressInterval =
+          timerBarIndex * barInterval + timerBeatIndex * interval + timerSubIndex * subInterval
+        timerProgress = progressInterval / getTimerInterval().toFloat()
       }
-      boolean isTimerFinished = isTimerFinished();
-      if (config.getTimerUnit().equals(UNIT.BARS)) {
-        // Cannot use isTimerFinished() here because last beat has to be still played
-        isTimerFinished = timerBarIndex > config.getTimerDuration() - 1;
-        if (isTimerFinished) {
-          timerBarIndex = config.getTimerDuration() - 1;
-          timerBeatIndex = config.getBeatsCount() - 1;
-          timerSubIndex = config.getSubdivisionsCount() - 1;
-        }
+      var isFinished = if (config.timerUnit == UNIT.BARS) {
+        timerBarIndex > config.timerDuration - 1
+      } else {
+        isTimerFinished()
       }
-      if (isTimerFinished) {
-        timerProgress = 1;
+      if (isFinished) {
+        if (config.timerUnit == UNIT.BARS) {
+          timerBarIndex = config.timerDuration - 1
+          timerBeatIndex = config.getBeatsCount() - 1
+          timerSubIndex = config.getSubdivisionsCount() - 1
+        }
+        timerProgress = 1f
         if (hasNextPart()) {
-          setCurrentPartIndex(currentPartIndex + 1);
-        } else if (currentSongWithParts != null && currentSongWithParts.getSong().isLooped()) {
-          // Restart song
-          setCurrentPartIndex(0);
+          setCurrentPartIndex(currentPartIndex + 1)
+        } else if (currentSongWithParts?.song?.isLooped == true) {
+          setCurrentPartIndex(0)
         } else {
-          stop();
-          if (currentSongWithParts != null) {
-            setCurrentPartIndex(0);
-          }
+          stop()
+          if (currentSongWithParts != null) setCurrentPartIndex(0)
         }
-        return false;
+        return false
       }
     }
 
-    if (isFirstBeat) {
-      if (config.isIncrementalActive()
-          && config.getIncrementalUnit().equals(UNIT.BARS)
-          && !isCountIn
-      ) {
-        int incrementalAmount = config.getIncrementalAmount();
-        int incrementalInterval = config.getIncrementalInterval();
-        int incrementalLimit = config.getIncrementalLimit();
-        boolean incrementalIncrease = config.isIncrementalIncrease();
-        if (barIndexWithoutCountIn >= incrementalInterval
-            && barIndexWithoutCountIn % incrementalInterval == 0) {
-          int upperLimit = incrementalLimit != 0 ? incrementalLimit : Constants.TEMPO_MAX;
-          int lowerLimit = incrementalLimit != 0 ? incrementalLimit : Constants.TEMPO_MIN;
-          if (incrementalIncrease && config.getTempo() + incrementalAmount <= upperLimit) {
-            changeTempo(incrementalAmount);
-          } else if (!incrementalIncrease && config.getTempo() - incrementalAmount >= lowerLimit) {
-            changeTempo(-incrementalAmount);
-          }
-        }
-      }
-    }
-
-    latencyHandler.postDelayed(() -> {
-      synchronized (listeners) {
-        for (MetronomeListener listener : listeners) {
-          listener.onMetronomePreTick(tick);
-        }
-      }
-    }, Math.max(0, latency - Constants.BEAT_ANIM_OFFSET));
-    latencyHandler.postDelayed(() -> {
-      if (!beatMode.equals(BEAT_MODE.SOUND) && !tick.isMuted) {
-        switch (tick.type) {
-          case TICK_TYPE.STRONG:
-            hapticUtil.heavyClick(false);
-            break;
-          case TICK_TYPE.SUB:
-            hapticUtil.tick(false);
-            break;
-          case TICK_TYPE.MUTED:
-          case TICK_TYPE.BEAT_SUB_MUTED:
-            break;
-          default:
-            hapticUtil.click(false);
-        }
-      }
-      if (!flashlight.equals(FLASHLIGHT.OFF)) {
-        float strength = flashlight.equals(FLASHLIGHT.STRONG) ? 0.8f : 0.15f;
-        switch (tick.type) {
-          case TICK_TYPE.STRONG:
-            flashlightUtil.flash(100, strength);
-            break;
-          case TICK_TYPE.SUB:
-          case TICK_TYPE.MUTED:
-          case TICK_TYPE.BEAT_SUB_MUTED:
-            break;
-          default:
-            flashlightUtil.flash(20, strength);
-        }
-      }
-      synchronized (listeners) {
-        for (MetronomeListener listener : listeners) {
-          listener.onMetronomeTick(tick);
-        }
-      }
-    }, latency);
-
-    return true;
-  }
-
-  private void performTickPoly(Tick tick) {
-    latencyHandler.postDelayed(() -> {
-      synchronized (listeners) {
-        for (MetronomeListener listener : listeners) {
-          listener.onMetronomePreTick(tick);
-        }
-      }
-    }, Math.max(0, latency - Constants.BEAT_ANIM_OFFSET));
-    latencyHandler.postDelayed(() -> {
-      boolean shouldVibrate = !beatMode.equals(BEAT_MODE.SOUND) && !isMuted;
-      if (shouldVibrate) {
-        // check whether any poly subdivision collides with a beat
-        long product = (long) (tick.subdivision - 1) * config.getBeatsCount();
-        if (product % config.getSubdivisionsCount() == 0) {
-          shouldVibrate = false;
-        }
-      }
-      if (shouldVibrate) {
-        switch (tick.type) {
-          case TICK_TYPE.STRONG:
-            hapticUtil.heavyClick();
-            break;
-          case TICK_TYPE.SUB:
-            hapticUtil.tick();
-            break;
-          case TICK_TYPE.MUTED:
-          case TICK_TYPE.BEAT_SUB_MUTED:
-            break;
-          default:
-            hapticUtil.click();
-        }
-      }
-    }, latency);
-  }
-
-  private int getCurrentBeat() {
-    if (config.usePolyrhythm()) {
-      return (int) (tickIndex % config.getBeats().length) + 1;
-    }
-    return (int) ((tickIndex / config.getSubdivisionsCount()) % config.getBeats().length) + 1;
-  }
-
-  private int getCurrentSubdivision() {
-    if (config.usePolyrhythm()) {
-      return 1;
-    }
-    return (int) (tickIndex % config.getSubdivisionsCount()) + 1;
-  }
-
-  private int getCurrentSubdivisionPoly() {
-    return (int) (tickIndexPoly % config.getSubdivisionsCount()) + 1;
-  }
-
-  private String getCurrentTickType() {
-    if (config.usePolyrhythm()) {
-      String[] beats = config.getBeats();
-      int beatIndex = (int) (tickIndex % beats.length);
-      if (beatIndex == 0 && config.isFirstSubdivisionMuted()) {
-        // mute first beat if first subdivision is muted because user expects that with polyrhythm
-        return TICK_TYPE.BEAT_SUB_MUTED;
-      } else {
-        return beats[(int) (tickIndex % beats.length)];
-      }
-    } else {
-      int subdivisionsCount = config.getSubdivisionsCount();
-      if ((tickIndex % subdivisionsCount) == 0) {
-        if (config.isFirstSubdivisionMuted()) {
-          return TICK_TYPE.BEAT_SUB_MUTED;
-        } else {
-          String[] beats = config.getBeats();
-          return beats[(int) ((tickIndex / subdivisionsCount) % beats.length)];
-        }
-      } else {
-        String[] subdivisions = config.getSubdivisions();
-        return subdivisions[(int) (tickIndex % subdivisionsCount)];
-      }
-    }
-  }
-
-  private String getCurrentTickTypePoly() {
-    int subdivisionsCount = config.getSubdivisionsCount();
-    if ((tickIndexPoly % subdivisionsCount) == 0) {
-      return TICK_TYPE.BEAT_SUB_MUTED;
-    } else {
-      String[] subdivisions = config.getSubdivisions();
-      return subdivisions[(int) (tickIndexPoly % subdivisionsCount)];
-    }
-  }
-
-  public interface MetronomeListener {
-    void onMetronomeStart();
-    void onMetronomeStop();
-    void onMetronomePreTick(Tick tick);
-    void onMetronomeTick(Tick tick);
-    void onMetronomeTempoChanged(int tempoOld, int tempoNew);
-    void onMetronomeElapsedTimeSecondsChanged();
-    void onMetronomeTimerStarted();
-    void onMetronomeTimerSecondsChanged();
-    void onMetronomeTimerProgressOneTime(boolean withTransition);
-    void onMetronomeTimerActiveStateChanged(boolean active);
-    void onMetronomeConfigChanged();
-    void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex);
-    void onMetronomePermissionMissing();
-  }
-
-  public static class MetronomeListenerAdapter implements MetronomeListener {
-    public void onMetronomeStart() {}
-    public void onMetronomeStop() {}
-    public void onMetronomePreTick(Tick tick) {}
-    public void onMetronomeTick(Tick tick) {}
-    public void onMetronomeTempoChanged(int tempoOld, int tempoNew) {}
-    public void onMetronomeElapsedTimeSecondsChanged() {}
-    public void onMetronomeTimerStarted() {}
-    public void onMetronomeTimerSecondsChanged() {}
-    public void onMetronomeTimerProgressOneTime(boolean withTransition) {}
-    public void onMetronomeTimerActiveStateChanged(boolean active) {}
-    public void onMetronomeConfigChanged() {}
-    public void onMetronomeSongOrPartChanged(@Nullable SongWithParts song, int partIndex) {}
-    public void onMetronomePermissionMissing() {}
-  }
-
-  public static class Tick {
-    public final long index;
-    public final int beat, subdivision;
-    @NonNull
-    public final String type;
-    public final boolean isMuted, isPoly;
-
-    public Tick(
-        long index,
-        int beat,
-        int subdivision,
-        @NonNull String type,
-        boolean isMuted,
-        boolean isPoly
+    if (isFirstBeat && config.isIncrementalActive() && config.incrementalUnit == UNIT.BARS
+      && !isCountIn
     ) {
-      this.index = index;
-      this.beat = beat;
-      this.subdivision = subdivision;
-      this.type = type;
-      this.isMuted = isMuted;
-      this.isPoly = isPoly;
+      val amount = config.incrementalAmount
+      val intervalBars = config.incrementalInterval
+      val limit = config.incrementalLimit
+      val increase = config.incrementalIncrease
+      if (barIndexWithoutCountIn >= intervalBars && barIndexWithoutCountIn % intervalBars == 0L) {
+        val upperLimit = if (limit != 0) limit else Constants.TEMPO_MAX
+        val lowerLimit = if (limit != 0) limit else Constants.TEMPO_MIN
+        if (increase && config.tempo + amount <= upperLimit) {
+          changeTempo(amount)
+        } else if (!increase && config.tempo - amount >= lowerLimit) {
+          changeTempo(-amount)
+        }
+      }
     }
 
-    @NonNull
-    @Override
-    public String toString() {
-      return "Tick{index = " + index +
-          ", beat=" + beat +
-          ", sub=" + subdivision +
-          ", type=" + type +
-          ", isPoly=" + isPoly +
-          ", muted=" + isMuted + '}';
+    latencyHandler?.postDelayed({
+      synchronized(listeners) {
+        for (listener in listeners) listener.onMetronomePreTick(tick)
+      }
+    }, (latency - Constants.BEAT_ANIM_OFFSET).coerceAtLeast(0))
+    latencyHandler?.postDelayed({
+      if (beatMode != BEAT_MODE.SOUND && !tick.isMuted) {
+        when (tick.type) {
+          TICK_TYPE.STRONG -> hapticUtil.heavyClick(false)
+          TICK_TYPE.SUB -> hapticUtil.tick(false)
+          TICK_TYPE.MUTED, TICK_TYPE.BEAT_SUB_MUTED -> {}
+          else -> hapticUtil.click(false)
+        }
+      }
+      if (flashlight != FLASHLIGHT.OFF) {
+        val strength = if (flashlight == FLASHLIGHT.STRONG) 0.8f else 0.15f
+        when (tick.type) {
+          TICK_TYPE.STRONG -> flashlightUtil.flash(100, strength)
+          TICK_TYPE.SUB, TICK_TYPE.MUTED, TICK_TYPE.BEAT_SUB_MUTED -> {}
+          else -> flashlightUtil.flash(20, strength)
+        }
+      }
+      synchronized(listeners) {
+        for (listener in listeners) listener.onMetronomeTick(tick)
+      }
+    }, latency)
+
+    return true
+  }
+
+  private fun performTickPoly(tick: Tick) {
+    latencyHandler?.postDelayed({
+      synchronized(listeners) {
+        for (listener in listeners) listener.onMetronomePreTick(tick)
+      }
+    }, (latency - Constants.BEAT_ANIM_OFFSET).coerceAtLeast(0))
+    latencyHandler?.postDelayed({
+      var shouldVibrate = beatMode != BEAT_MODE.SOUND && !isMuted
+      if (shouldVibrate) {
+        val product = (tick.subdivision - 1).toLong() * config.getBeatsCount()
+        if (product % config.getSubdivisionsCount() == 0L) shouldVibrate = false
+      }
+      if (shouldVibrate) {
+        when (tick.type) {
+          TICK_TYPE.STRONG -> hapticUtil.heavyClick()
+          TICK_TYPE.SUB -> hapticUtil.tick()
+          TICK_TYPE.MUTED, TICK_TYPE.BEAT_SUB_MUTED -> {}
+          else -> hapticUtil.click()
+        }
+      }
+    }, latency)
+  }
+
+  private fun getCurrentBeat(): Int {
+    return if (config.usePolyrhythm) {
+      (tickIndex % config.beats.size).toInt() + 1
+    } else {
+      ((tickIndex / config.getSubdivisionsCount()) % config.beats.size).toInt() + 1
+    }
+  }
+
+  private fun getCurrentSubdivision(): Int {
+    return if (config.usePolyrhythm) 1 else (tickIndex % config.getSubdivisionsCount()).toInt() + 1
+  }
+
+  private fun getCurrentSubdivisionPoly(): Int =
+    (tickIndexPoly % config.getSubdivisionsCount()).toInt() + 1
+
+  private fun getCurrentTickType(): String {
+    return if (config.usePolyrhythm) {
+      val beats = config.beats
+      val beatIndex = (tickIndex % beats.size).toInt()
+      if (beatIndex == 0 && config.isFirstSubdivisionMuted()) TICK_TYPE.BEAT_SUB_MUTED
+      else beats[beatIndex]
+    } else {
+      val subCount = config.getSubdivisionsCount()
+      if ((tickIndex % subCount.toLong()) == 0L) {
+        if (config.isFirstSubdivisionMuted()) {
+          TICK_TYPE.BEAT_SUB_MUTED
+        } else {
+          val beats = config.beats
+          beats[((tickIndex / subCount) % beats.size).toInt()]
+        }
+      } else {
+        val subdivisions = config.subdivisions
+        subdivisions[(tickIndex % subCount).toInt()]
+      }
+    }
+  }
+
+  private fun getCurrentTickTypePoly(): String {
+    val subCount = config.getSubdivisionsCount()
+    return if ((tickIndexPoly % subCount.toLong()) == 0L) {
+      TICK_TYPE.BEAT_SUB_MUTED
+    } else {
+      val subdivisions = config.subdivisions
+      subdivisions[(tickIndexPoly % subCount).toInt()]
+    }
+  }
+
+  interface MetronomeListener {
+    fun onMetronomeStart()
+    fun onMetronomeStop()
+    fun onMetronomePreTick(tick: Tick)
+    fun onMetronomeTick(tick: Tick)
+    fun onMetronomeTempoChanged(tempoOld: Int, tempoNew: Int)
+    fun onMetronomeElapsedTimeSecondsChanged()
+    fun onMetronomeTimerStarted()
+    fun onMetronomeTimerSecondsChanged()
+    fun onMetronomeTimerProgressOneTime(withTransition: Boolean)
+    fun onMetronomeTimerActiveStateChanged(active: Boolean)
+    fun onMetronomeConfigChanged()
+    fun onMetronomeSongOrPartChanged(song: SongWithParts?, partIndex: Int)
+    fun onMetronomePermissionMissing()
+  }
+
+  open class MetronomeListenerAdapter : MetronomeListener {
+    override fun onMetronomeStart() {}
+    override fun onMetronomeStop() {}
+    override fun onMetronomePreTick(tick: Tick) {}
+    override fun onMetronomeTick(tick: Tick) {}
+    override fun onMetronomeTempoChanged(tempoOld: Int, tempoNew: Int) {}
+    override fun onMetronomeElapsedTimeSecondsChanged() {}
+    override fun onMetronomeTimerStarted() {}
+    override fun onMetronomeTimerSecondsChanged() {}
+    override fun onMetronomeTimerProgressOneTime(withTransition: Boolean) {}
+    override fun onMetronomeTimerActiveStateChanged(active: Boolean) {}
+    override fun onMetronomeConfigChanged() {}
+    override fun onMetronomeSongOrPartChanged(song: SongWithParts?, partIndex: Int) {}
+    override fun onMetronomePermissionMissing() {}
+  }
+
+  data class Tick(
+    val index: Long,
+    val beat: Int,
+    val subdivision: Int,
+    val type: String,
+    val isMuted: Boolean,
+    val isPoly: Boolean
+  ) {
+    override fun toString(): String {
+      return "Tick{index = $index, beat=$beat, sub=$subdivision, type=$type, " +
+          "isPoly=$isPoly, muted=$isMuted}"
+    }
+  }
+
+  companion object {
+    private val TAG = MetronomeEngine::class.java.simpleName
+
+    fun getTimeStringFromSeconds(seconds: Int, forceHours: Boolean): String {
+      val minutes = seconds / 60
+      val hours = minutes / 60
+      return if (hours > 0 || forceHours) {
+        String.format(
+          Locale.ENGLISH, "%02d:%02d:%02d", hours, minutes % 60, seconds % 60
+        )
+      } else {
+        String.format(Locale.ENGLISH, "%02d:%02d", minutes, seconds % 60)
+      }
     }
   }
 }

@@ -17,28 +17,28 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.activity;
+package xyz.zedler.patrick.tack.activity
 
-import android.content.Intent;
-import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import xyz.zedler.patrick.tack.service.MetronomeService;
+import android.content.Intent
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import xyz.zedler.patrick.tack.service.MetronomeService
 
-public class SongActivity extends AppCompatActivity {
+class SongActivity : AppCompatActivity() {
 
-  @Override
-  protected void onCreate(@Nullable Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
 
-    Intent intentActivity = new Intent(getIntent());
-    intentActivity.setClass(this, MainActivity.class);
-    startActivity(intentActivity);
+    val intentActivity = Intent(intent).apply {
+      setClass(this@SongActivity, MainActivity::class.java)
+    }
+    startActivity(intentActivity)
 
-    Intent intentService = new Intent(getIntent());
-    intentService.setClass(this, MetronomeService.class);
-    startService(intentService);
+    val intentService = Intent(intent).apply {
+      setClass(this@SongActivity, MetronomeService::class.java)
+    }
+    startService(intentService)
 
-    finish();
+    finish()
   }
 }

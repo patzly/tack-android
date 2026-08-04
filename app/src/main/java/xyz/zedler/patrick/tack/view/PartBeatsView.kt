@@ -17,136 +17,126 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.view;
+package xyz.zedler.patrick.tack.view
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
-import android.util.AttributeSet;
-import android.view.View;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import xyz.zedler.patrick.tack.Constants.TICK_TYPE;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.util.ResUtil;
-import xyz.zedler.patrick.tack.util.UiUtil;
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.util.AttributeSet
+import android.view.View
+import xyz.zedler.patrick.tack.Constants.TICK_TYPE
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.util.getAttrColor
+import xyz.zedler.patrick.tack.util.dpToPx
 
-public class PartBeatsView extends View {
+class PartBeatsView @JvmOverloads constructor(
+  context: Context,
+  attrs: AttributeSet? = null
+) : View(context, attrs) {
 
-  private int circleSize, circleSizeMuted;
-  private int circleSpace;
-  private int colorNormal, colorStrong, colorSub, colorMuted;
-  private Paint paintSolid, paintOutline;
-  private String[] beats = new String[]{};
+  private val circleSize = context.dpToPx(10f)
+  private val circleSizeMuted = context.dpToPx(5f)
+  private val circleSpace = context.dpToPx(8f)
 
-  public PartBeatsView(Context context) {
-    super(context);
-    init(context);
+  private val colorNormal: Int
+  private val colorStrong = context.getAttrColor(R.attr.colorError)
+  private val colorSub = context.getAttrColor(R.attr.colorOnSurfaceVariant)
+  private val colorMuted = context.getAttrColor(R.attr.colorOutline)
+
+  private val paintSolid = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    style = Paint.Style.FILL
+  }
+  private val paintOutline = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    style = Paint.Style.STROKE
+    strokeWidth = context.dpToPx(2f).toFloat()
   }
 
-  public PartBeatsView(Context context, @Nullable AttributeSet attrs) {
-    super(context, attrs);
-    init(context);
-  }
+  private var beats: Array<String> = emptyArray()
 
-  public void setBeats(String[] beats) {
-    this.beats = beats;
-    invalidate();
-  }
-
-  private void init(Context context) {
-    circleSize = UiUtil.dpToPx(context, 10);
-    circleSizeMuted = UiUtil.dpToPx(context, 5);
-    circleSpace = UiUtil.dpToPx(context, 8);
-    paintSolid = new Paint(Paint.ANTI_ALIAS_FLAG);
-    paintSolid.setStyle(Style.FILL);
-    paintOutline = new Paint(Paint.ANTI_ALIAS_FLAG);
-    paintOutline.setStyle(Style.STROKE);
-    paintOutline.setStrokeWidth(UiUtil.dpToPx(context, 2));
-
-    colorNormal = ResUtil.getColor(context, R.attr.colorPrimary);
-    if (BeatView.isColorRed(colorNormal)) {
-      colorNormal = ResUtil.getColor(context, R.attr.colorTertiary);
-    }
-    colorStrong = ResUtil.getColor(context, R.attr.colorError);
-    colorSub = ResUtil.getColor(context, R.attr.colorOnSurfaceVariant);
-    colorMuted = ResUtil.getColor(context, R.attr.colorOutline);
-  }
-
-  @Override
-  protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-    int widthMode = MeasureSpec.getMode(widthMeasureSpec);
-    int widthSize = MeasureSpec.getSize(widthMeasureSpec);
-    int heightMode = MeasureSpec.getMode(heightMeasureSpec);
-    int heightSize = MeasureSpec.getSize(heightMeasureSpec);
-
-    int measuredWidth;
-    if (widthMode == MeasureSpec.EXACTLY || widthMode == MeasureSpec.AT_MOST) {
-      measuredWidth = widthSize;
+  init {
+    val primary = context.getAttrColor(R.attr.colorPrimary)
+    colorNormal = if (BeatView.isColorRed(primary)) {
+      context.getAttrColor(R.attr.colorTertiary)
     } else {
-      measuredWidth = 0;
+      primary
     }
+  }
 
-    int measuredHeight;
-    if (heightMode == MeasureSpec.EXACTLY) {
-      measuredHeight = heightSize;
+  fun setBeats(beats: Array<String>) {
+    this.beats = beats
+    invalidate()
+  }
+
+  override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    val widthMode = MeasureSpec.getMode(widthMeasureSpec)
+    val widthSize = MeasureSpec.getSize(widthMeasureSpec)
+    val heightMode = MeasureSpec.getMode(heightMeasureSpec)
+    val heightSize = MeasureSpec.getSize(heightMeasureSpec)
+
+    val measuredWidth = if (widthMode == MeasureSpec.EXACTLY || widthMode == MeasureSpec.AT_MOST) {
+      widthSize
     } else {
-      measuredHeight = circleSize + getPaddingTop() + getPaddingBottom();
-      if (heightMode == MeasureSpec.AT_MOST) {
-        measuredHeight = Math.min(measuredHeight, heightSize);
-      }
+      0
     }
 
-    setMeasuredDimension(measuredWidth, measuredHeight);
+    val measuredHeight = if (heightMode == MeasureSpec.EXACTLY) {
+      heightSize
+    } else {
+      val h = circleSize + paddingTop + paddingBottom
+      if (heightMode == MeasureSpec.AT_MOST) h.coerceAtMost(heightSize) else h
+    }
+
+    setMeasuredDimension(measuredWidth, measuredHeight)
   }
 
-  @Override
-  protected void onDraw(@NonNull Canvas canvas) {
-    super.onDraw(canvas);
+  override fun onDraw(canvas: Canvas) {
+    super.onDraw(canvas)
 
-    int availableHeight = getHeight() - getPaddingTop() - getPaddingBottom();
-    int diameter = Math.min(circleSize, availableHeight);
-    float radius = diameter / 2f;
+    val availableHeight = height - paddingTop - paddingBottom
+    val diameter = circleSize.coerceAtMost(availableHeight)
+    val radius = diameter / 2f
 
-    float startX = getPaddingLeft() + radius;
-    float centerY = getPaddingTop() + radius;
-    float strokeWidth = paintOutline.getStrokeWidth() / 2;
-    for (String beat : beats) {
-      adjustPaint(beat);
-      float radiusFinal = radius;
-      if (beat.equals(TICK_TYPE.MUTED) || beat.equals(TICK_TYPE.BEAT_SUB_MUTED)) {
-        radiusFinal = circleSizeMuted / 2f;
+    var startX = paddingLeft + radius
+    val centerY = paddingTop + radius
+    val strokeWidthOffset = paintOutline.strokeWidth / 2
+
+    for (beat in beats) {
+      adjustPaint(beat)
+      val radiusFinal = if (beat == TICK_TYPE.MUTED || beat == TICK_TYPE.BEAT_SUB_MUTED) {
+        circleSizeMuted / 2f
+      } else {
+        radius
       }
-      canvas.drawCircle(startX, centerY, radiusFinal - strokeWidth, paintSolid);
-      canvas.drawCircle(startX, centerY, radiusFinal - strokeWidth, paintOutline);
-      startX += circleSize + circleSpace;
+      canvas.drawCircle(startX, centerY, radiusFinal - strokeWidthOffset, paintSolid)
+      canvas.drawCircle(startX, centerY, radiusFinal - strokeWidthOffset, paintOutline)
+      startX += circleSize + circleSpace
     }
   }
 
-  private void adjustPaint(String beat) {
-    switch (beat) {
-      case TICK_TYPE.NORMAL:
-        paintSolid.setColor(colorNormal);
-        paintSolid.setAlpha((int) (0.3 * 255));
-        paintOutline.setColor(colorNormal);
-        break;
-      case TICK_TYPE.STRONG:
-        paintSolid.setColor(colorStrong);
-        paintSolid.setAlpha(255);
-        paintOutline.setColor(colorStrong);
-        break;
-      case TICK_TYPE.SUB:
-        paintSolid.setAlpha(0);
-        paintOutline.setColor(colorSub);
-        break;
-      case TICK_TYPE.MUTED:
-      case TICK_TYPE.BEAT_SUB:
-      case TICK_TYPE.BEAT_SUB_MUTED:
-        paintSolid.setColor(colorMuted);
-        paintSolid.setAlpha(255);
-        paintOutline.setColor(colorMuted);
-        break;
+  private fun adjustPaint(beat: String) {
+    when (beat) {
+      TICK_TYPE.NORMAL -> {
+        paintSolid.color = colorNormal
+        paintSolid.alpha = (0.3 * 255).toInt()
+        paintOutline.color = colorNormal
+      }
+
+      TICK_TYPE.STRONG -> {
+        paintSolid.color = colorStrong
+        paintSolid.alpha = 255
+        paintOutline.color = colorStrong
+      }
+
+      TICK_TYPE.SUB -> {
+        paintSolid.alpha = 0
+        paintOutline.color = colorSub
+      }
+
+      TICK_TYPE.MUTED, TICK_TYPE.BEAT_SUB, TICK_TYPE.BEAT_SUB_MUTED -> {
+        paintSolid.color = colorMuted
+        paintSolid.alpha = 255
+        paintOutline.color = colorMuted
+      }
     }
   }
 }

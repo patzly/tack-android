@@ -17,152 +17,109 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.util.dialog;
+package xyz.zedler.patrick.tack.util.dialog
 
-import android.os.Bundle;
-import android.view.View;
-import android.view.ViewTreeObserver;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import xyz.zedler.patrick.tack.R;
-import xyz.zedler.patrick.tack.activity.MainActivity;
-import xyz.zedler.patrick.tack.database.entity.Part;
-import xyz.zedler.patrick.tack.database.relations.SongWithParts;
-import xyz.zedler.patrick.tack.databinding.PartialDialogPartsTitleBinding;
-import xyz.zedler.patrick.tack.databinding.PartialDialogRecyclerBinding;
-import xyz.zedler.patrick.tack.metronome.MetronomeEngine;
-import xyz.zedler.patrick.tack.recyclerview.adapter.PartDialogAdapter;
-import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager;
-import xyz.zedler.patrick.tack.util.DialogUtil;
+import android.os.Bundle
+import androidx.core.view.isVisible
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.activity.MainActivity
+import xyz.zedler.patrick.tack.databinding.PartialDialogPartsTitleBinding
+import xyz.zedler.patrick.tack.databinding.PartialDialogRecyclerBinding
+import xyz.zedler.patrick.tack.recyclerview.adapter.PartDialogAdapter
+import xyz.zedler.patrick.tack.recyclerview.layoutmanager.WrapperLinearLayoutManager
+import xyz.zedler.patrick.tack.util.DialogUtil
+import xyz.zedler.patrick.tack.util.onGlobalLayout
 
-public class PartsDialogUtil {
+class PartsDialogUtil(private val activity: MainActivity) {
 
-  private static final String TAG = PartsDialogUtil.class.getSimpleName();
+  private val titleBinding = PartialDialogPartsTitleBinding.inflate(activity.layoutInflater)
+  private val binding = PartialDialogRecyclerBinding.inflate(activity.layoutInflater)
+  private val dialogUtil = DialogUtil(activity, "parts")
+  private val adapter: PartDialogAdapter
 
-  private final MainActivity activity;
-  private final PartialDialogPartsTitleBinding titleBinding;
-  private final PartialDialogRecyclerBinding binding;
-  private final DialogUtil dialogUtil;
-  private final PartDialogAdapter adapter;
-
-  public PartsDialogUtil(MainActivity activity) {
-    this.activity = activity;
-
-    titleBinding = PartialDialogPartsTitleBinding.inflate(activity.getLayoutInflater());
-
-    binding = PartialDialogRecyclerBinding.inflate(activity.getLayoutInflater());
-    dialogUtil = new DialogUtil(activity, "parts");
-
-    binding.recyclerDialog.setLayoutManager(new WrapperLinearLayoutManager(activity));
-    adapter = new PartDialogAdapter((partIndex, fromUser) -> {
-      if (fromUser && getMetronomeEngine() != null) {
-        activity.performHapticClick();
-        getMetronomeEngine().setCurrentPartIndex(partIndex);
-      }
-    });
-    binding.recyclerDialog.setAdapter(adapter);
-
-    dialogUtil.createDialog(builder -> {
-      builder.setCustomTitle(titleBinding.getRoot());
-      builder.setView(binding.getRoot());
-      builder.setPositiveButton(
-          R.string.action_close, (dialog, which) -> activity.performHapticClick()
-      );
-    });
-  }
-
-  public void show() {
-    update();
-    dialogUtil.show();
-  }
-
-  public void showIfWasShown(@Nullable Bundle state) {
-    update();
-    dialogUtil.showIfWasShown(state);
-  }
-
-  public void dismiss() {
-    dialogUtil.dismiss();
-  }
-
-  public void saveState(@NonNull Bundle outState) {
-    if (dialogUtil != null) {
-      dialogUtil.saveState(outState);
-    }
-  }
-
-  public void update() {
-    MetronomeEngine metronomeEngine = getMetronomeEngine();
-    if (binding == null || titleBinding == null || metronomeEngine == null) {
-      return;
-    }
-    SongWithParts songWithParts = metronomeEngine.getCurrentSongWithParts();
-    if (songWithParts != null) {
-      titleBinding.textDialogPartsTitle.setText(songWithParts.getSong().getName());
-      // part count
-      int partCount = songWithParts.getParts().size();
-      titleBinding.textDialogPartsCount.setText(
-          activity.getResources().getQuantityString(
-              R.plurals.label_parts_count, partCount, partCount
-          )
-      );
-      // song duration
-      boolean hasDuration = true;
-      List<Part> parts = new ArrayList<>(songWithParts.getParts());
-      for (Part part : parts) {
-        if (part.getTimerDuration() == 0) {
-          hasDuration = false;
-          break;
+  init {
+    binding.recyclerDialog.layoutManager = WrapperLinearLayoutManager(activity)
+    adapter = PartDialogAdapter { partIndex, fromUser ->
+      if (fromUser) {
+        activity.metronomeEngine?.let { engine ->
+          activity.performHapticClick()
+          engine.setCurrentPartIndex(partIndex)
         }
       }
-      if (hasDuration) {
-        titleBinding.textDialogPartsDuration.setText(songWithParts.getDurationString());
+    }
+    binding.recyclerDialog.adapter = adapter
+
+    dialogUtil.createDialog { builder ->
+      builder.setCustomTitle(titleBinding.root)
+      builder.setView(binding.root)
+      builder.setPositiveButton(R.string.action_close) { _, _ ->
+        activity.performHapticClick()
+      }
+    }
+  }
+
+  fun show() {
+    update()
+    dialogUtil.show()
+  }
+
+  fun showIfWasShown(state: Bundle?) {
+    update()
+    dialogUtil.showIfWasShown(state)
+  }
+
+  fun dismiss() {
+    dialogUtil.dismiss()
+  }
+
+  fun saveState(outState: Bundle) {
+    dialogUtil.saveState(outState)
+  }
+
+  fun update() {
+    val metronomeEngine = activity.metronomeEngine ?: return
+    val songWithParts = metronomeEngine.currentSongWithParts
+    if (songWithParts != null) {
+      titleBinding.textDialogPartsTitle.text = songWithParts.song.name
+      // part count
+      val partCount = songWithParts.parts.size
+      titleBinding.textDialogPartsCount.text = activity.resources.getQuantityString(
+        R.plurals.label_parts_count, partCount, partCount
+      )
+      // song duration
+      val hasDuration = songWithParts.parts.none { it.timerDuration == 0 }
+      titleBinding.textDialogPartsDuration.text = if (hasDuration) {
+        songWithParts.getDurationString()
       } else {
-        titleBinding.textDialogPartsDuration.setText(R.string.label_part_no_duration);
+        activity.getString(R.string.label_part_no_duration)
       }
       // looped
-      titleBinding.textDialogPartsLooped.setText(
-          activity.getString(
-              songWithParts.getSong().isLooped()
-                  ? R.string.label_song_looped
-                  : R.string.label_song_not_looped
-          )
-      );
+      titleBinding.textDialogPartsLooped.text = activity.getString(
+        if (songWithParts.song.isLooped) R.string.label_song_looped else R.string.label_song_not_looped
+      )
       // speed
-      int speed = songWithParts.getSong().getSpeed();
-      titleBinding.textDialogPartsSpeed.setText(
-          speed == 100
-              ? activity.getString(R.string.label_song_speed_original)
-              : activity.getString(R.string.label_song_speed_short, speed)
-      );
+      val speed = songWithParts.song.speed
+      titleBinding.textDialogPartsSpeed.text = if (speed == 100) {
+        activity.getString(R.string.label_song_speed_original)
+      } else {
+        activity.getString(R.string.label_song_speed_short, speed)
+      }
     } else {
       // Don't show dialog if no song is selected
-      dismiss();
+      dismiss()
     }
 
-    adapter.setSongWithParts(songWithParts);
-    adapter.setPartIndex(metronomeEngine.getCurrentPartIndex());
-    maybeShowDividers();
+    adapter.setSongWithParts(songWithParts)
+    adapter.setPartIndex(metronomeEngine.getCurrentPartIndex())
+    maybeShowDividers()
   }
 
-  private void maybeShowDividers() {
-    binding.recyclerDialog.getViewTreeObserver().addOnGlobalLayoutListener(
-        new ViewTreeObserver.OnGlobalLayoutListener() {
-          @Override
-          public void onGlobalLayout() {
-            boolean isScrollable = binding.recyclerDialog.canScrollVertically(-1)
-                || binding.recyclerDialog.canScrollVertically(1);
-            binding.dividerDialogTop.setVisibility(isScrollable ? View.VISIBLE : View.GONE);
-            binding.dividerDialogBottom.setVisibility(isScrollable ? View.VISIBLE : View.GONE);
-            binding.recyclerDialog.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-          }
-        });
-  }
-
-  @Nullable
-  private MetronomeEngine getMetronomeEngine() {
-    return activity.getMetronomeEngine();
+  private fun maybeShowDividers() {
+    binding.recyclerDialog.onGlobalLayout {
+      val isScrollable = binding.recyclerDialog.canScrollVertically(-1) ||
+          binding.recyclerDialog.canScrollVertically(1)
+      binding.dividerDialogTop.isVisible = isScrollable
+      binding.dividerDialogBottom.isVisible = isScrollable
+    }
   }
 }

@@ -19,6 +19,8 @@
 
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.ksp)
     alias(libs.plugins.navigation.safeargs)
 }
 
@@ -36,10 +38,8 @@ android {
                                   "pt-rBR", "ru", "tr", "zh-rCN", "zh-rHK", "zh-rTW"]
         vectorDrawables.generatedDensities = []
 
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas".toString())
         }
     }
 
@@ -111,5 +111,5 @@ dependencies {
     implementation(libs.flexbox)
     implementation(libs.gson)
     implementation(libs.room.runtime)
-    annotationProcessor(libs.room.compiler)
+    ksp(libs.room.compiler)
 }
