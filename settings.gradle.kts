@@ -36,3 +36,4 @@ rootProject.name = "Tack Android"
 include(":app")
 include(":wear")
 include(":audio")
+include(":legacy")

@@ -58,8 +58,8 @@ configure<ApplicationExtension> {
 
   androidResources {
     localeFilters += listOf(
-      "en", "cs", "de",  "es", "es-rCL", "fr", "in", "ja", "ko", "nl", "pt-rBR", "ru", "tr",
-      "zh-rCN","zh-rHK", "zh-rTW"
+      "en", "cs", "de", "es", "es-rCL", "fr", "in", "ja", "ko", "nl", "pt-rBR", "ru", "tr",
+      "zh-rCN", "zh-rHK", "zh-rTW"
     )
   }
 
@@ -112,12 +112,12 @@ dependencies {
   implementation(libs.wear.tooling)
   implementation(libs.wear.ongoing)
   implementation(libs.wear.input)
-  implementation(libs.compose.material)
-  implementation(libs.compose.material.wear)
-  implementation(libs.compose.foundation)
+  implementation(libs.wear.compose.material)
+  implementation(libs.wear.compose.material)
+  implementation(libs.wear.compose.foundation)
+  implementation(libs.wear.compose.navigation)
   implementation(libs.compose.runtime)
   implementation(libs.compose.animation.graphics)
-  implementation(libs.compose.navigation)
   implementation(libs.compose.constraintlayout)
   implementation(libs.compose.activity)
   debugImplementation(libs.ui.tooling.preview)

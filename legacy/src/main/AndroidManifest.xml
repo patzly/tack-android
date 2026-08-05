@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2026 by Patrick Zedler
+  -->
+
+<manifest
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools">
+
+  <uses-permission
+    android:name="android.permission.FOREGROUND_SERVICE"
+    tools:ignore="ForegroundServicesPolicy" />
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+  <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+  <uses-permission android:name="android.permission.POST_PROMOTED_NOTIFICATIONS" />
+  <uses-permission android:name="android.permission.VIBRATE" />
+  <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+
+  <queries>
+    <package android:name="xyz.zedler.patrick.tack.unlock" />
+  </queries>
+
+  <application
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name"
+    android:supportsRtl="true"
+    android:theme="@style/Theme.Tack"
+    android:enableOnBackInvokedCallback="true"
+    android:localeConfig="@xml/locale_config"
+    android:allowBackup="true"
+    android:fullBackupContent="@xml/backup_rules_full"
+    android:dataExtractionRules="@xml/backup_rules_extract"
+    tools:targetApi="33">
+
+    <activity
+      android:name=".activity.SplashActivity"
+      android:exported="true">
+
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+      </intent-filter>
+
+    </activity>
+
+    <activity android:name=".activity.MainActivity" />
+
+    <activity android:name=".activity.SongActivity" />
+
+    <service
+      android:name=".service.MetronomeService"
+      android:description="@string/msg_service_description"
+      android:foregroundServiceType="mediaPlayback"
+      android:exported="false" />
+
+    <service
+      android:name=".widget.remote.SongsRemoteViewsService"
+      android:permission="android.permission.BIND_REMOTEVIEWS" />
+
+    <service
+      android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+      android:enabled="false"
+      android:exported="false">
+
+      <meta-data
+        android:name="autoStoreLocales"
+        android:value="true" />
+
+    </service>
+
+    <receiver
+      android:name=".widget.SongsWidgetProvider"
+      android:label="@string/title_songs"
+      android:exported="false">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/widget_songs" />
+    </receiver>
+
+  </application>
+
+</manifest>

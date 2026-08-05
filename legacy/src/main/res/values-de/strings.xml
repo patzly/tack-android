@@ -1,0 +1,460 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2026 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="title_feedback">Rückmeldung</string>
+  <string name="title_about">Über</string>
+  <string name="title_help">Hilfe</string>
+  <string name="title_licenses">Open-Source-Lizenzen</string>
+  <string name="title_settings">Einstellungen</string>
+  <string name="title_notification_channel">Metronom-Service</string>
+  <string name="title_options">Optionen</string>
+  <string name="title_general">Allgemein</string>
+  <string name="title_metronome">Metronom</string>
+  <string name="title_controls">Bedienelemente</string>
+  <string name="title_logcat">Fehlerprotokoll</string>
+  <string name="title_songs">Werksammlung</string>
+  <!-- Short version of the term "song library" for smaller home screen widget sizes -->
+  <string name="title_songs_short">Werke</string>
+  <string name="title_song_details">Werkdetails</string>
+
+  <!-- LABELS -->
+
+  <string name="label_bpm_value">%1$d bpm</string>
+  <string name="label_bpm">bpm</string>
+  <string name="label_ms">%1$s ms</string>
+  <string name="label_db_signed">%1$s dB</string>
+  <string name="label_tempo">Tempo</string>
+  <string name="label_tempo_keyboard">Tastatur</string>
+  <string name="label_tempo_tap">Tippen</string>
+  <string name="label_tempo_instant">Sofort übernehmen</string>
+  <string name="label_tempo_largo">Largo</string>
+  <string name="label_tempo_larghetto">Larghetto</string>
+  <string name="label_tempo_adagio">Adagio</string>
+  <string name="label_tempo_andante">Andante</string>
+  <string name="label_tempo_moderato">Moderato</string>
+  <string name="label_tempo_allegro">Allegro</string>
+  <string name="label_tempo_presto">Presto</string>
+  <string name="label_tempo_prestissimo">Prestissimo</string>
+  <string name="label_tempo_input_help">Werte von %1$d bis %2$d</string>
+  <string name="label_beat_mode_all">Ton und Vibration</string>
+  <string name="label_beat_mode_sound">Nur Ton</string>
+  <string name="label_beat_mode_vibration">Nur Vibration</string>
+  <string name="label_part_name">Name des Teils</string>
+  <string name="label_part_unnamed">Teil %1$d</string>
+  <string name="label_part_current">Teil %1$d: %2$s</string>
+  <string name="label_part_edit">Teil %1$d bearbeiten</string>
+  <string name="label_part_no_duration">Keine Dauer</string>
+  <string name="label_part_duration_notification">%1$s / %2$s</string>
+  <plurals name="label_parts_count">
+    <item quantity="one">%1$d Teil</item>
+    <item quantity="other">%1$d Teile</item>
+  </plurals>
+  <string name="label_song_options">Weitere Optionen</string>
+  <string name="label_song_options_dialog">Werkoptionen</string>
+  <string name="label_song_looped">Dauerschleife</string>
+  <string name="label_song_looped_description">Werk am Ende neustarten</string>
+  <string name="label_song_not_looped">Einmalig</string>
+  <string name="label_song_speed">Übetempo</string>
+  <string name="label_song_speed_description">Teile mit %1$d%% ihres Originaltempos spielen</string>
+  <string name="label_song_speed_description_original">Teile im Originaltempo spielen</string>
+  <string name="label_song_speed_short">%1$d%% Übetempo</string>
+  <string name="label_song_speed_original">Originaltempo</string>
+  <string name="label_sort_name">Name</string>
+  <string name="label_sort_last_played">Zuletzt abgespielt</string>
+  <string name="label_sort_last_played_date">Zuletzt abgespielt am %1$s</string>
+  <string name="label_sort_never_played">Nie abgespielt</string>
+  <string name="label_sort_most_played">Meist abgespielt</string>
+  <plurals name="label_sort_most_played_times">
+    <item quantity="one">%1$d mal abgespielt</item>
+    <item quantity="other">%1$d mal abgespielt</item>
+  </plurals>
+  <string name="label_song_name">Werkname</string>
+  <string name="label_song_name_help">Name muss eindeutig sein</string>
+  <string name="label_song_name_used">Name bereits verwendet</string>
+  <!-- A placeholder song name in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_title1">Bach Brandenburgisches Konzert Nr. 2</string>
+  <!-- A placeholder song name in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_title2">Debussy Syrinx</string>
+  <!-- A placeholder song name in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_title3">Mozart Serenade Nr. 13</string>
+  <!-- A placeholder part count in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_parts1">3 Teile</string>
+  <!-- A placeholder part count in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_parts2">1 Teil</string>
+  <!-- A placeholder part count in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_parts3">4 Teile</string>
+
+  <!-- ACTIONS -->
+
+  <string name="action_back">Zurück</string>
+  <string name="action_close">Schließen</string>
+  <string name="action_apply">Anwenden</string>
+  <string name="action_cancel">Abbrechen</string>
+  <string name="action_increase">Erhöhen</string>
+  <string name="action_decrease">Verringern</string>
+  <string name="action_play">Starten</string>
+  <string name="action_play_stop">Starten/Beenden</string>
+  <string name="action_stop">Beenden</string>
+  <string name="action_add_beat">Schlag hinzufügen</string>
+  <string name="action_remove_beat">Schlag entfernen</string>
+  <string name="action_add_sub">Unterteilung hinzufügen</string>
+  <string name="action_remove_sub">Unterteilung entfernen</string>
+  <string name="action_beat_mode">Schlagmodus</string>
+  <string name="action_send_feedback">Rückmeldung senden</string>
+  <string name="action_reset">Zurücksetzen</string>
+  <string name="action_deactivate">Deaktivieren</string>
+  <string name="action_recommend">Weiterempfehlen</string>
+  <string name="action_recommend_description">Erzähle deinen Freunden von Tack</string>
+  <string name="action_email">E-Mail senden</string>
+  <string name="action_email_description">Entwickler kontaktieren</string>
+  <string name="action_rate">Auf Google Play bewerten</string>
+  <string name="action_rate_description">Teile deine Gedanken</string>
+  <string name="action_support">Entwicklung unterstützen</string>
+  <string name="action_support_description">Kaufe die Freischalt-App</string>
+  <string name="action_issue">Neues Issue auf GitHub eröffnen</string>
+  <string name="action_issue_description">Fehler melden oder Funktionen vorschlagen</string>
+  <string name="action_retry">Erneut versuchen</string>
+  <string name="action_logcat">Fehlerprotokoll anzeigen</string>
+  <string name="action_copy_to_clipboard">Kopieren</string>
+  <string name="action_reload">Neu laden</string>
+  <string name="action_change_tempo">Tempo ändern</string>
+  <string name="action_add_song">Werk hinzufügen</string>
+  <string name="action_sort_by">Sortieren nach</string>
+  <string name="action_add_part">Teil hinzufügen</string>
+  <string name="action_add">Hinzufügen</string>
+  <string name="action_save">Speichern</string>
+  <string name="action_discard">Verwerfen</string>
+  <string name="action_rename">Umbenennen</string>
+  <string name="action_rename_part">Teil umbenennen</string>
+  <string name="action_rename_part_description">Kann auch leer gelassen werden, wenn Nummerierung ausreicht</string>
+  <string name="action_duplicate">Duplizieren</string>
+  <string name="action_update">Aktualisieren</string>
+  <string name="action_use_current_config">Aktuelle Konfiguration nutzen</string>
+  <string name="action_use_current_config_description">Von der Hauptseite</string>
+  <string name="action_delete">Löschen</string>
+  <string name="action_move_up">Nach oben verschieben</string>
+  <string name="action_move_down">Nach unten verschieben</string>
+  <string name="action_open_play_store">Play Store öffnen</string>
+  <string name="action_backup_restore">Sichern/wiederherstellen</string>
+  <string name="action_backup">Sichern</string>
+  <string name="action_backup_description">Speichere eine Sicherungsdatei in einem Verzeichnis deiner Wahl</string>
+  <string name="action_restore">Wiederherstellen</string>
+  <string name="action_restore_description">Bestehende Werke werden niemals gelöscht oder überschrieben</string>
+  <string name="action_view_more_songs">Mehr Werke anzeigen</string>
+  <string name="action_next">Weiter</string>
+  <string name="action_show_parts">Teile anzeigen</string>
+  <string name="action_next_part">Nächster Teil</string>
+  <string name="action_prev_part">Vorheriger Teil</string>
+  <string name="action_more">Mehr</string>
+  <string name="action_edit">Bearbeiten</string>
+  <string name="action_expand">Ausklappen</string>
+  <string name="action_collapse">Einklappen</string>
+  <string name="action_show_songs_list">Werke als Liste anzeigen</string>
+  <string name="action_learn_more">Mehr erfahren</string>
+  <string name="action_tempo_tap">Tempo tippen</string>
+
+  <!-- MESSAGES -->
+
+  <string name="msg_feedback">Eine großartige App benötigt viel Zeit und lebt von der Rückmeldungen ihrer Nutzer.</string>
+  <string name="msg_feedback_contact">Hast du Wünsche, Anmerkungen oder Fragen? Kontaktiere mich! Ansonsten würde ich mich sehr über eine nette Bewertung im Play Store freuen.</string>
+  <string name="msg_recommend">Schau dir mal diese coole Metronom-App an: \n%1$s</string>
+  <string name="msg_vibration_unavailable">Vibration ist auf diesem Gerät nicht verfügbar, deshalb wird Ton verwendet.</string>
+  <string name="msg_service_running">Metronom-Service läuft</string>
+  <string name="msg_service_running_return">Tippen, um zu Tack zurückzukehren</string>
+  <string name="msg_service_description">Service für die Konfiguration und Wiedergabe des Metronoms</string>
+  <string name="msg_reset">Alles zurücksetzen?</string>
+  <string name="msg_reset_description">Möchtest du wirklich die gesamte App einschließlich Werksammlung und Einstellungen zurücksetzen? Erstelle erst eine Sicherung deiner Werksammlung, wenn nötig. Das Zurücksetzen kann nicht rückgängig gemacht werden.</string>
+  <string name="msg_reset_timer">Timer zurücksetzen?</string>
+  <string name="msg_reset_timer_description">Du kannst das Standardverhalten, ob der Timer beim Start zurückgesetzt werden soll, in den Einstellungen ändern.</string>
+  <string name="msg_reset_elapsed">Vergangene Zeit zurücksetzen?</string>
+  <string name="msg_reset_elapsed_description">Möchtest du wirklich die abgelaufene Zeit zurücksetzen? Dies kann nicht rückgängig gemacht werden.</string>
+  <string name="msg_gain">Mit Verstärkung wiedergeben?</string>
+  <string name="msg_gain_description">Achte darauf, keine Ohrhöhrer zu verwenden, da durch laute Geräusche Gehörschäden entstehen können!</string>
+  <string name="msg_split_screen">Fenster zu klein</string>
+  <string name="msg_split_screen_description">Tack hat möglicherweise Probleme mit der Positionierung der Bedienelemente im Splitscreen-Modus. Verwenden Sie wenn möglich ein größeres Fenster.</string>
+  <string name="msg_notification_permission">Berechtigung für Benachrichtigungen benötigt</string>
+  <string name="msg_notification_permission_description">Tack benötigt die Erlaubnis, Benachrichtigungen anzuzeigen, um die Wiedergabe im Hintergrund fortzusetzen, indem eine Benachrichtigung mit niedriger Priorität angezeigt wird. Wenn du dies im nächsten Dialog ablehnst, stoppt Android die Wiedergabe beim Verlassen der App.</string>
+  <string name="msg_notification_permission_denied">Für die Wiedergabe im Hintergrund ist die Berechtigung für Benachrichtigungen erforderlich</string>
+  <string name="msg_report_crash">Bitte melden Sie jeden Absturz mit dem angehängten Fehlerprotokoll, damit ich versuchen kann, ihn zu beheben.</string>
+  <string name="msg_copied_to_clipboard">Erfolgreich in Zwischenablage kopiert</string>
+  <string name="msg_invalid_input">Ungültige Eingabe</string>
+  <string name="msg_discard_changes">Änderungen verwerfen?</string>
+  <string name="msg_discard_changes_description">Bist du sicher, dass du sie nicht speichern möchtest?</string>
+  <string name="msg_delete_song">Werk löschen?</string>
+  <string name="msg_delete_song_description">Bist du sicher, dass du das gesamte Werk mit allen Teilen löschen möchtest? Dies kann nicht rückgängig gemacht werden.</string>
+  <string name="msg_songs_empty">Leere Werksammlung</string>
+  <string name="msg_songs_empty_description">Füge Werke hinzu, die du üben möchtest</string>
+  <string name="msg_unlock">Nachricht des Entwicklers</string>
+  <string name="msg_unlock_description">Schätzt du das werbefreie Erlebnis mit zahlreichen leistungsstarken Funktionen in Tack? Ich habe Jahre meiner Freizeit damit verbracht, Tack kostenlos zu entwickeln, aber vor allem die Werksammlung hat Monate harter Arbeit gekostet. Um Tack weiter zu verbessern, bitte ich dich um einen kleinen Beitrag. Im Gegenzug bekommst du eine Freischalt-App für unbegrenzte Werke und unzählige Werkteile. Vielen Dank für deine Unterstützung!</string>
+  <string name="msg_backup_description">Du kannst deine gesamte Werksammlung auf deinem Gerät sichern oder eine Werksammlung aus einer Sicherung wiederherstellen.</string>
+  <string name="msg_backup_error">Fehler bei Sicherung</string>
+  <string name="msg_backup_directory_missing">Kein Speicherort für Sicherung ausgewählt</string>
+  <string name="msg_backup_success">Sicherung erfolgreich erstellt</string>
+  <string name="msg_restore_error">Fehler beim Wiederherstellen der Sicherung</string>
+  <string name="msg_restore_file_missing">Keine Datei zum Wiederherstellen ausgewählt</string>
+  <string name="msg_restore_success">Sicherung erfolgreich wiederhergestellt</string>
+  <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
+  <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
+  <string name="msg_songs_intro">Wie die Werksammlung funktioniert</string>
+  <string name="msg_songs_intro_description">Du kannst Metronom-Konfigurationen als Teile eines Werks speichern und anordnen. Stelle einfach das Metronom und die Optionen nach deinen Wünschen ein und füge die aktuelle Konfiguration als neuen Teil einem Werk hinzu oder bearbeite einen bestehenden Teil.</string>
+  <string name="msg_widget_description">Zeige deine Werke an und spiele sie ab</string>
+  <string name="msg_widget_prompt">Schneller Zugriff auf Werke?</string>
+  <string name="msg_widget_prompt_description">Platziere ein elegantes Widget auf deinem Startbildschirm.</string>
+  <string name="msg_beat_mode_warning">Schlagmodus auch auf „Nur Ton“ umschalten?</string>
+
+  <!-- OPTIONS -->
+
+  <string name="options_unit_bars">Takte</string>
+  <plurals name="options_unit_bars">
+    <item quantity="one">%1$d Takt</item>
+    <item quantity="other">%1$d Takte</item>
+  </plurals>
+  <string name="options_unit_beats">Schläge</string>
+  <plurals name="options_unit_beats">
+    <item quantity="one">%1$d Schlag</item>
+    <item quantity="other">%1$d Schläge</item>
+  </plurals>
+  <plurals name="options_unit_subdivisions">
+    <item quantity="one">%1$d Unterteilung</item>
+    <item quantity="other">%1$d Unterteilungen</item>
+  </plurals>
+  <string name="options_unit_seconds">Sekunden</string>
+  <plurals name="options_unit_seconds">
+    <item quantity="one">%1$d Sekunde</item>
+    <item quantity="other">%1$d Sekunden</item>
+  </plurals>
+  <string name="options_unit_minutes">Minuten</string>
+  <plurals name="options_unit_minutes">
+    <item quantity="one">%1$d Minute</item>
+    <item quantity="other">%1$d Minuten</item>
+  </plurals>
+  <string name="options_inactive">Inaktiv</string>
+  <plurals name="options_beats_description">
+    <item quantity="one">%1$d pro Takt</item>
+    <item quantity="other">%1$d pro Takt</item>
+  </plurals>
+  <string name="options_count_in">Einzählen</string>
+  <plurals name="options_count_in_description">
+    <item quantity="one">%1$d Takt vor Modifikationen warten</item>
+    <item quantity="other">%1$d Takte vor Modifikationen warten</item>
+  </plurals>
+  <string name="options_incremental">Schrittweiser Tempowechsel</string>
+  <string name="options_incremental_amount_increase">Um %1$d bpm erhöhen</string>
+  <string name="options_incremental_amount_decrease">Um %1$d bpm verringern</string>
+  <plurals name="options_incremental_interval_bars">
+    <item quantity="one">Jeden %1$d Takt</item>
+    <item quantity="other">Alle %1$d Takte</item>
+  </plurals>
+  <plurals name="options_incremental_interval_seconds">
+    <item quantity="one">Jede %1$d Sekunde</item>
+    <item quantity="other">Alle %1$d Sekunden</item>
+  </plurals>
+  <plurals name="options_incremental_interval_minutes">
+    <item quantity="one">Jede %1$d Minute</item>
+    <item quantity="other">Alle %1$d Minuten</item>
+  </plurals>
+  <string name="options_incremental_max">Bis zu %1$d bpm</string>
+  <string name="options_incremental_min">Bis zu %1$d bpm</string>
+  <string name="options_incremental_no_max">Keine Obergrenze</string>
+  <string name="options_incremental_no_min">Keine Untergrenze</string>
+  <string name="options_timer">Dauer</string>
+  <plurals name="options_timer_description_bars">
+    <item quantity="one">Nach %1$d Takt beenden</item>
+    <item quantity="other">Nach %1$d Takten beenden</item>
+  </plurals>
+  <plurals name="options_timer_description_seconds">
+    <item quantity="one">Nach %1$d Sekunde beenden</item>
+    <item quantity="other">Nach %1$d Sekunden beenden</item>
+  </plurals>
+  <plurals name="options_timer_description_minutes">
+    <item quantity="one">Nach %1$d Minute beenden</item>
+    <item quantity="other">Nach %1$d Minuten beenden</item>
+  </plurals>
+  <string name="options_mute">Stummgeschaltete Schläge</string>
+  <plurals name="options_mute_play_bars">
+    <item quantity="one">%1$d Takt schlagen</item>
+    <item quantity="other">%1$d Takte schlagen</item>
+  </plurals>
+  <plurals name="options_mute_play_seconds">
+    <item quantity="one">%1$d Sekunde schlagen</item>
+    <item quantity="other">%1$d Sekunden schlagen</item>
+  </plurals>
+  <string name="options_mute_mute_beats">%1$d%% aller Schläge stummschalten</string>
+  <plurals name="options_mute_mute_bars">
+    <item quantity="one">%1$d Takt stummschalten</item>
+    <item quantity="other">%1$d Takte stummschalten</item>
+  </plurals>
+  <plurals name="options_mute_mute_seconds">
+    <item quantity="one">%1$d Sekunde stummschalten</item>
+    <item quantity="other">%1$d Sekunden stummschalten</item>
+  </plurals>
+  <string name="options_mute_random">Zufall mit kleineren Werten</string>
+  <string name="options_subdivisions">Unterteilungen</string>
+  <plurals name="options_subdivisions_description">
+    <item quantity="one">%1$d pro Schlag</item>
+    <item quantity="other">%1$d pro Schlag</item>
+  </plurals>
+  <string name="options_subdivisions_beats_muted">Schläge stummgeschaltet</string>
+  <string name="options_swing">Swing</string>
+  <string name="options_swing_description">Unterteilungen an Swing-Verhältnis angepasst</string>
+  <string name="options_swing_3">Triole</string>
+  <string name="options_swing_5">Quintole</string>
+  <string name="options_swing_7">Septole</string>
+  <string name="options_polyrhythm">Polyrhythmik</string>
+  <string name="options_polyrhythm_description">Unterteilungen über ganzen Takt verteilt spielen</string>
+
+  <!-- SETTINGS -->
+
+  <string name="settings_language">Sprache</string>
+  <string name="settings_language_info">Vielen Dank an alle freiwilligen Übersetzer auf Transifex!</string>
+  <string name="settings_language_system">System folgen</string>
+  <string name="settings_language_system_description">Englisch, wenn Übersetzung nicht verfügbar</string>
+
+  <string name="settings_theme">Farbschema</string>
+  <string name="settings_theme_description">Abwechslung für deinen Stil</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
+  <string name="settings_theme_auto">Auto</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_dark">Dunkel</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_light">Hell</string>
+
+  <string name="settings_contrast">Kontrast</string>
+  <string name="settings_contrast_description">Barrierefreiheit für dein Sehvermögen</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast. The button width should be as dense as possible. -->
+  <string name="settings_contrast_standard">Standard</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_medium">Mittel</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_high">Hoch</string>
+  <string name="settings_contrast_dynamic">Kontrast für Systemfarben muss in den Systemeinstellungen festgelegt werden</string>
+  <string name="settings_contrast_dynamic_unsupported">Dynamischer Kontrast bei Systemfarben ist nur für Android 14+ verfügbar</string>
+
+  <string name="settings_haptic">Haptische Effekte</string>
+  <string name="settings_haptic_description">Zusätzlich zu haptischen Schlägen im Vibrationsmodus</string>
+
+  <string name="settings_vibration_intensity">Vibrationsstärke</string>
+  <string name="settings_vibration_intensity_description">Für haptische Schläge und Effekte</string>
+  <!-- This is the name for a vibration intensity: User can choose between soft or strong intensity or system-set (automatic or shorter auto) intensity. The button width should be as dense as possible. -->
+  <string name="settings_vibration_intensity_auto">Auto</string>
+  <string name="settings_vibration_intensity_soft">Sanft</string>
+  <string name="settings_vibration_intensity_strong">Stark</string>
+
+  <string name="settings_reduce_animations">Animationen reduzieren</string>
+  <string name="settings_reduce_animations_description">Kann die Leistung verbessern</string>
+
+  <string name="settings_backup">Werksammlung sichern/wiederherstellen</string>
+  <string name="settings_backup_description">Wichtig bei Gerätewechsel</string>
+
+  <string name="settings_reset">Alles zurücksetzen</string>
+  <string name="settings_reset_description">Kann nicht rückgängig gemacht werden</string>
+
+  <string name="settings_sound">Schlaggeräusch</string>
+  <string name="settings_sound_wood">Holz</string>
+  <string name="settings_sound_sine">Sinus</string>
+  <string name="settings_sound_mechanical">Mechanisch</string>
+  <string name="settings_sound_beatboxing_1">Beatboxing 1</string>
+  <string name="settings_sound_beatboxing_2">Beatboxing 2</string>
+  <string name="settings_sound_hands">Hände</string>
+  <string name="settings_sound_folding">Zollstock</string>
+
+  <string name="settings_latency">Korrektur der Latenzzeit</string>
+  <string name="settings_latency_description">Kompensierung der Audio-Latenzzeit für haptische und visuelle Signale</string>
+
+  <string name="settings_ignore_focus">Audiofokus ignorieren</string>
+  <string name="settings_ignore_focus_description">Wiedergabe fortsetzen, wenn andere Anwendungen etwas wiedergeben</string>
+
+  <string name="settings_gain">Lautstärke erhöhen/verringern</string>
+  <string name="settings_gain_description">Relativ zur Systemlautstärke</string>
+  <string name="settings_gain_disclaimer">Bei aktiver Verstärkung wird vor jeder Wiedergabe eine Warnung angezeigt. Der Entwickler übernimmt keine Verantwortung für etwaige Schäden.</string>
+
+  <string name="settings_active_beat">Aktuellen Schlag hervorheben</string>
+  <string name="settings_active_beat_description">Hilfreich für langsame Tempos</string>
+
+  <string name="settings_elapsed">Vergangene Zeit anzeigen</string>
+  <string name="settings_elapsed_description">Sieh, wie lange du übst</string>
+
+  <string name="settings_reset_timer">Timer nach Beenden der Wiedergabe zurücksetzen</string>
+  <string name="settings_reset_timer_description">Anstatt fortzusetzen</string>
+
+  <string name="settings_big_time_text">Großen Text für Zeit nutzen</string>
+  <string name="settings_big_time_text_description">Nützlich, wenn die Standardgröße nicht ausreicht</string>
+
+  <string name="settings_flash_screen">Bildschirm aufblitzen lassen</string>
+  <string name="settings_flash_screen_description">Bei jedem Schlag</string>
+  <string name="settings_flash_screen_off">Aus</string>
+  <string name="settings_flash_screen_subtle">Dezent</string>
+  <string name="settings_flash_screen_strong">Stark</string>
+
+  <string name="settings_flashlight">Taschenlampe aufblitzen lassen</string>
+
+  <string name="settings_keep_awake">Bildschirm wach halten</string>
+  <string name="settings_keep_awake_description">Kann zu erhöhtem Stromverbrauch führen</string>
+  <string name="settings_keep_awake_always">Immer</string>
+  <string name="settings_keep_awake_while_playing">Während Wiedergabe</string>
+  <string name="settings_keep_awake_never">Nie</string>
+
+  <string name="settings_perm_notification">Dauerhafte Benachrichtigung</string>
+  <string name="settings_perm_notification_description">Jederzeit Zugriff auf Starten/Beenden</string>
+
+  <string name="settings_big_logo">Große Logo-Animation anzeigen</string>
+  <string name="settings_big_logo_description">Statt Tempo-Wähler während Wiedergabe</string>
+
+  <!-- HELP -->
+
+  <string name="help_tempo_change">Wie kann ich das Tempo ändern?</string>
+  <string name="help_tempo_change_answer">Um das Tempo zu ändern, kannst du den Tempo-Wähler in der Mitte der Hauptseite ziehen und drehen oder auf die Schaltflächen links und rechts neben dem Kreis tippen. Durch Tippen auf den Tempo-Wähler öffnet sich ein Dialog, in dem du das Tempo durch Tippen in BPM oder über die Tastatur einstellen kannst.</string>
+  <string name="help_time_signature">Wie stelle ich die Taktart ein?</string>
+  <string name="help_time_signature_answer">Sieh dir die erste Zahl deiner Taktart an und stell die Schläge in Tack entsprechend ein. Das heißt 4 Schläge für 4/4, 2 für 2/2 und so weiter. 6/8 ist etwas speziell, hier nimmst du 2 Schläge mit optional 3 Unterteilungen, weil nur die 1. und die 4. Achtel ein betonter Schlag sind.\nZusätzlich kannst du die Betonung der Schläge ändern, indem du sie antippst. In den Optionen kannst du auch einen Swing-Anteil auswählen, der die Unterteilungen automatisch für dich festlegt.</string>
+  <string name="help_swing">Wie deaktiviere ich Swing?</string>
+  <string name="help_swing_answer">Wenn du Swing in den Optionen aktiviert hast, legt Tack lediglich die Schlag-Unterteilungen für dich fest. Um Swing zu deaktivieren, änderst du die Unterteilungen einfach manuell nach deinen Wünschen.</string>
+  <string name="help_song_library">Wie funktioniert die Werksammlung?</string>
+  <string name="help_song_library_answer">Die Werksammlung ist eine Sammlung von Metronomkonfigurationen, die du speichern und anwenden kannst. Um deine aktuelle Konfiguration zu speichern, öffnest du einfach die Werksammlung und erstellst ein neues Werk. Deine aktuelle Konfiguration wird zur Teil-Liste hinzugefügt, wo du sie weiter anpassen kannst. Vergiss nicht, dein Ergebnis durch Tippen auf das Diskettensymbol in der oberen rechten Ecke zu speichern, nachdem du dem Werk einen Namen gegeben hast.</string>
+  <string name="help_song_picker">Wie funktioniert das Werks-Auswahlfeld?</string>
+  <string name="help_song_picker_answer">Alle Werke aus deiner Werksammlung werden im Werks-Auswahlfeld auf der Hauptseite angezeigt, aber du kannst auch eine Vollbildliste öffnen, wenn du möchtest. Die Reihenfolge hängt von deiner Auswahl im Menü ab. Tippe auf ein Werk, um es anzuwenden. Du kannst auch zu einem bestimmten Teil eines Werks springen, indem du auf den aktuellen Teil unterhalb des Werks tippst oder die Sprungtasten verwendest.\nWenn du zu der Konfiguration zurückkehren möchtest, die du vor der Auswahl eines Werks hattest, tippe auf das × neben dem Werksnamen.</string>
+  <string name="help_song_part">Warum springt das Werk nicht zum nächsten Teil?</string>
+  <string name="help_song_part_answer">Um automatisch zum nächsten Teil eines Werks zu wechseln, muss für jeden Teil eine Dauer festgelegt werden. Wenn keine Dauer festgelegt ist, wird der Teil als unendlich lang betrachtet. Um eine Dauer festzulegen, tippe einfach auf das aktuelle Werk, um die Werkdetails zu öffnen, und lege die Dauer des Teils fest, indem du auf das Bearbeitungssymbol des Teils tippen. Vergiss nicht, deine Änderungen zu speichern!</string>
+  <string name="help_notification_displays">Warum wird die Benachrichtigung des Metronom-Services angezeigt, wenn ich die App verlasse?</string>
+  <string name="help_notification_displays_answer">Wenn du „Permanente Benachrichtigung“ in den Einstellungen nicht aktiviert hast, ist die Benachrichtigung notwendig, damit der Metronom-Service aktiv bleibt, wenn sich die App im Hintergrund befindet. Der Service verwaltet die Wiedergabe und verwaltet Echtzeitdaten wie Timer oder verstrichene Zeit, um die Wiedergabe von der App-Oberfläche zu trennen. Du kannst den Service in den Hintergrund verschieben, indem du auf „Stopp“ tippst, aber dann ist nicht mehr garantiert, dass er nicht vom System beendet wird. Dies kann dazu führen, dass der Timer und die verstrichene Zeit zurückgesetzt werden, bis der Service wieder im Vordergrund ist. Du kannst auch die permanente Benachrichtigung in den Einstellungen aktivieren, um immer Zugriff auf Start/Stopp im Benachrichtigungsbereich zu haben.</string>
+  <string name="help_notification_disappears">Warum verschwindet die Benachrichtigung des Metronom-Services, wenn ich die App schließe?</string>
+  <string name="help_notification_disappears_answer">Wenn du die App aus den zuletzt verwendeten Apps entfernst, wird der Metronom-Service beendet und die Benachrichtigung verschwindet. Dies ist beabsichtigtes Verhalten, um Akku und Ressourcen zu sparen.\nWenn du die Benachrichtigung für den Start-/Stopp-Zugriff dauerhaft beibehalten möchtest, kannst du in den Einstellungen „Permanente Benachrichtigung” aktivieren und die App nicht aus den zuletzt verwendeten Apps entfernen.</string>
+  <string name="help_translation">Wie kann ich Tack für meine Sprache erhalten?</string>
+  <string name="help_translation_answer">Übersetzungen für Tack werden auf Transifex verwaltet, wo Nutzer wie du bei der Übersetzung der App helfen können! Besuche GitHub für weitere Informationen oder beginne direkt mit der Übersetzung:</string>
+
+  <!-- ABOUT -->
+
+  <string name="about_version">Version</string>
+  <string name="about_changelog">Änderungsprotokoll</string>
+  <string name="about_changelog_description">Neu in dieser Version</string>
+  <string name="about_developer">Entwickler</string>
+  <string name="about_vending_description">Mehr Apps des Entwicklers</string>
+  <string name="about_key">Freischalt-App</string>
+  <string name="about_key_description_not_installed">Nicht installiert</string>
+  <string name="about_key_description_installed">Installiert</string>
+  <string name="about_key_description_ignored">Ignoriert</string>
+  <string name="about_github_description">Quellcode</string>
+  <string name="about_translation_description">Hilf mit, Tack zu übersetzen</string>
+  <string name="about_privacy">Informationen zum Datenschutz</string>
+  <string name="about_privacy_description">Wie deine Daten verarbeitet werden</string>
+
+  </resources>

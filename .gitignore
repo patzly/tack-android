@@ -10,3 +10,4 @@
 /.kotlin
 .externalNativeBuild
 .cxx
+/.artifacts

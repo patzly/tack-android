@@ -1,0 +1,488 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2026 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- TITLES -->
+
+  <string name="title_feedback">Обратная связь</string>
+  <string name="title_about">О нас</string>
+  <string name="title_help">Поддержка</string>
+  <string name="title_licenses">Лицензия исходного кода</string>
+  <string name="title_settings">Настройки</string>
+  <string name="title_notification_channel">Сервис метронома</string>
+  <string name="title_options">Опции</string>
+  <string name="title_general">Общие настройки</string>
+  <string name="title_metronome">Метроном</string>
+  <string name="title_controls">Управление</string>
+  <string name="title_logcat">Logcat</string>
+  <string name="title_songs">Библиотека песен</string>
+  <!-- Short version of the term "song library" for smaller home screen widget sizes -->
+  <string name="title_songs_short">Песни</string>
+  <string name="title_song_details">Песня</string>
+
+  <!-- LABELS -->
+
+  <string name="label_bpm_value">%1$d bpm</string>
+  <string name="label_bpm">уд/мин</string>
+  <string name="label_ms">%1$s мс</string>
+  <string name="label_db_signed">%1$s дБ</string>
+  <string name="label_tempo">Темп</string>
+  <string name="label_tempo_keyboard">Ввести</string>
+  <string name="label_tempo_tap">Тап</string>
+  <string name="label_tempo_instant">Применить мгновенно</string>
+  <string name="label_tempo_largo">Largo</string>
+  <string name="label_tempo_larghetto">Larghetto</string>
+  <string name="label_tempo_adagio">Adagio</string>
+  <string name="label_tempo_andante">Andante</string>
+  <string name="label_tempo_moderato">Moderato</string>
+  <string name="label_tempo_allegro">Allegro</string>
+  <string name="label_tempo_presto">Presto</string>
+  <string name="label_tempo_prestissimo">Prestissimo</string>
+  <string name="label_tempo_input_help">Значения от %1$d до %2$d</string>
+  <string name="label_beat_mode_all">Звук и вибрация</string>
+  <string name="label_beat_mode_sound">Только звук</string>
+  <string name="label_beat_mode_vibration">Только вибрация</string>
+  <string name="label_part_name">Название части</string>
+  <string name="label_part_unnamed">Часть %1$d</string>
+  <string name="label_part_current">Часть %1$d: %2$s</string>
+  <string name="label_part_edit">Редактировать часть %1$d</string>
+  <string name="label_part_no_duration">Нет длительности</string>
+  <string name="label_part_duration_notification">%1$s / %2$s</string>
+  <plurals name="label_parts_count">
+    <item quantity="one">%1$d часть</item>
+    <item quantity="few">%1$d части</item>
+    <item quantity="many">%1$d частей</item>
+    <item quantity="other">%1$d частей</item>
+  </plurals>
+  <string name="label_song_options">Дополнительные опции</string>
+  <string name="label_song_options_dialog">Дополнительные опции</string>
+  <string name="label_song_looped">Зациклено</string>
+  <string name="label_song_looped_description">Начать сначала после окончания</string>
+  <string name="label_song_not_looped">Нет зациклено</string>
+  <string name="label_song_speed">Практикуйтесь в темпе</string>
+  <string name="label_song_speed_description">Исполняйте партии в %1$d%% от их исходного темпа</string>
+  <string name="label_song_speed_description_original">Исполняйте партии в оригинальном темпе</string>
+  <string name="label_song_speed_short">%1$d%% практика темпа</string>
+  <string name="label_song_speed_original">Оригинальный темп</string>
+  <string name="label_sort_name">Название</string>
+  <string name="label_sort_last_played">Дата воспроизведения</string>
+  <string name="label_sort_last_played_date">Воспроизводилось %1$s</string>
+  <string name="label_sort_never_played">Никогда не воспроизводилось</string>
+  <string name="label_sort_most_played">Количество воспроизведений</string>
+  <plurals name="label_sort_most_played_times">
+    <item quantity="one">Воспроизводилось %1$d раз</item>
+    <item quantity="few">Воспроизводилось %1$d раз</item>
+    <item quantity="many">Воспроизводилось %1$d раз</item>
+    <item quantity="other">Воспроизводилось %1$d раз</item>
+  </plurals>
+  <string name="label_song_name">Название песни</string>
+  <string name="label_song_name_help">Имя должно быть уникальным</string>
+  <string name="label_song_name_used">Имя уже используется</string>
+  <!-- A placeholder song name in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_title1">Бах. Бранденбургский концерт №2</string>
+  <!-- A placeholder song name in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_title2">Дебюсси. Сиринкс</string>
+  <!-- A placeholder song name in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_title3">Моцарт. Серенада №13</string>
+  <!-- A placeholder part count in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_parts1">3 части</string>
+  <!-- A placeholder part count in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_parts2">1 часть</string>
+  <!-- A placeholder part count in the widget preview for the user's widget picker -->
+  <string name="widget_songs_preview_parts3">4 части</string>
+
+  <!-- ACTIONS -->
+
+  <string name="action_back">Назад</string>
+  <string name="action_close">Закрыть</string>
+  <string name="action_apply">Применить</string>
+  <string name="action_cancel">Отменить</string>
+  <string name="action_increase">Увеличить</string>
+  <string name="action_decrease">Уменьшить</string>
+  <string name="action_play">Старт</string>
+  <string name="action_play_stop">Старт/Пауза</string>
+  <string name="action_stop">Пауза</string>
+  <string name="action_add_beat">Добавить долю</string>
+  <string name="action_remove_beat">Убрать долю</string>
+  <string name="action_add_sub">Добавить дробление</string>
+  <string name="action_remove_sub">Убрать дробление</string>
+  <string name="action_beat_mode">Режим ударов</string>
+  <string name="action_send_feedback">Написать отзыв</string>
+  <string name="action_reset">Сбросить</string>
+  <string name="action_deactivate">Отключить</string>
+  <string name="action_recommend">Рекомендовать</string>
+  <string name="action_recommend_description">Рассказать друзьям о Tack</string>
+  <string name="action_email">Отправить письмо на эл. почту</string>
+  <string name="action_email_description">Написать разработчику</string>
+  <string name="action_rate">Оценить на Google Play</string>
+  <string name="action_rate_description">Поделитесь своими мыслями</string>
+  <string name="action_support">Поддержать разработку</string>
+  <string name="action_support_description">Купить приложение разблокировки</string>
+  <string name="action_issue">Открыть задачу на GitHub</string>
+  <string name="action_issue_description">Оповестить о баге или предложить функцию</string>
+  <string name="action_retry">Повторить</string>
+  <string name="action_logcat">Показать logcat</string>
+  <string name="action_copy_to_clipboard">Скопировать в буфер обмена</string>
+  <string name="action_reload">Перезагрузить</string>
+  <string name="action_change_tempo">Изменить темп</string>
+  <string name="action_add_song">Добавить песню</string>
+  <string name="action_sort_by">Сортировать по</string>
+  <string name="action_add_part">Добавить часть</string>
+  <string name="action_add">Добавить</string>
+  <string name="action_save">Сохранить</string>
+  <string name="action_discard">Отменить</string>
+  <string name="action_rename">Переименовать</string>
+  <string name="action_rename_part">Переименовать часть</string>
+  <string name="action_rename_part_description">Можно оставить поле пустым, если достаточно только нумерации</string>
+  <string name="action_duplicate">Дублировать</string>
+  <string name="action_update">Обновить</string>
+  <string name="action_use_current_config">Использовать текущую конфигурацию</string>
+  <string name="action_use_current_config_description">С главной страницы</string>
+  <string name="action_delete">Удалить</string>
+  <string name="action_move_up">Переместить выше</string>
+  <string name="action_move_down">Переместить ниже</string>
+  <string name="action_open_play_store">Открыть Play Store</string>
+  <string name="action_backup_restore">Резервное копирование/восстановление</string>
+  <string name="action_backup">Сделать бэкап</string>
+  <string name="action_backup_description">Сохраните файл резервной копии в нужной вам папке</string>
+  <string name="action_restore">Восстановить бэкап</string>
+  <string name="action_restore_description">Существующие песни никогда не будут удалены или перезаписаны.</string>
+  <string name="action_view_more_songs">Показать больше песен</string>
+  <string name="action_next">Следующая</string>
+  <string name="action_show_parts">Показать части</string>
+  <string name="action_next_part">Следующая часть</string>
+  <string name="action_prev_part">Предыдущая часть</string>
+  <string name="action_more">Больше</string>
+  <string name="action_edit">Редактировать</string>
+  <string name="action_expand">Расширить</string>
+  <string name="action_collapse">Свернуть</string>
+  <string name="action_show_songs_list">Показывать песни списком</string>
+  <string name="action_learn_more">Узнать больше</string>
+  <string name="action_tempo_tap">Tap tempo</string>
+
+  <!-- MESSAGES -->
+
+  <string name="msg_feedback">Разработка хорошего приложения занимает много времени и зависит от обратной связи пользователей</string>
+  <string name="msg_feedback_contact">У вас есть пожелания, комментарии или вопросы? Свяжитесь со мной! В противном случае я буду очень рад положительному отзыву в Play Store.</string>
+  <string name="msg_recommend">Зацени классный метроном: \n%1$s</string>
+  <string name="msg_vibration_unavailable">На этом устройстве недоступна функция вибрации. Будет использоваться только звук.</string>
+  <string name="msg_service_running">Сервис метронома запущен</string>
+  <string name="msg_service_running_return">Нажмите, чтобы вернуться в Tack</string>
+  <string name="msg_service_description">Сервис для настройки и проигрывания метронома</string>
+  <string name="msg_reset">Сбросить всё?</string>
+  <string name="msg_reset_description">Вы действительно хотите сбросить приложение, включая библиотеку песен и настройки? Если вам нужен бэкап, сначала создайте его - сброс невозможно отменить.</string>
+  <string name="msg_reset_timer">Сбросить таймер?</string>
+  <string name="msg_reset_timer_description">Вы можете указать в настройках, нужно ли сбрасывать таймер при запуске.</string>
+  <string name="msg_reset_elapsed">Сбросить затраченное время?</string>
+  <string name="msg_reset_elapsed_description">Вы действительно хотите сбросить затраченное время? Это действие нельзя отменить.</string>
+  <string name="msg_gain">Включить усиление громкости?</string>
+  <string name="msg_gain_description">Будьте осторожны и не слушайте метроном в наушниках, так как громкие звуки могут вызвать потерю слуха!</string>
+  <string name="msg_split_screen">Окно слишком маленькое</string>
+  <string name="msg_split_screen_description">В режиме разделённого экрана, некоторые элементы управления Tack могут отображаться некорректно. Если это возможно, увеличьте размер окна.</string>
+  <string name="msg_notification_permission">Требуется разрешение для показа уведомлений</string>
+  <string name="msg_notification_permission_description">Tack запрашивает разрешение для показа уведомлений, чтобы продолжить воспроизведение в фоновом режиме, отображая уведомление с низким приоритетом. Если вы откажетесь от этого в следующем диалоговом окне, Android остановит воспроизведение, когда вы выйдете из приложения.</string>
+  <string name="msg_notification_permission_denied">Для фонового воспроизведения требуется разрешение на отправку уведомлений</string>
+  <string name="msg_report_crash">Пожалуйста сообщайте о каждом вылете, прикрепляя логи. Так я смогу это исправить.</string>
+  <string name="msg_copied_to_clipboard">Успешно скопировано в буфер обмена</string>
+  <string name="msg_invalid_input">Неправильный ввод</string>
+  <string name="msg_discard_changes">Отменить изменения?</string>
+  <string name="msg_discard_changes_description">Вы уверены, что не хотите сохранить изменения?</string>
+  <string name="msg_delete_song">Удалить песню?</string>
+  <string name="msg_delete_song_description">Вы действительно уверены, что хотите удалить песню целиком, включая все её части? Это действие нельзя отменить.</string>
+  <string name="msg_songs_empty">Библиотека песен пуста</string>
+  <string name="msg_songs_empty_description">Добавьте песни, которые вы хотите играть</string>
+  <string name="msg_unlock">Сообщение от разработчика</string>
+  <string name="msg_unlock_description">Вам нравится, что в Tack нет рекламы, но при этом есть множество мощных функций? Я потратил годы своего свободного времени на создание Tack, но особенно много сил ушло на создание библиотеки песен. Чтобы продолжать улучшать Tack, я прошу вас сделать небольшое пожертвование. Взамен вы получите приложение для разблокировки неограниченного количества песен и их фрагментов. Спасибо за вашу поддержку!</string>
+  <string name="msg_backup_description">Вы можете создать резервную копию всей своей музыкальной библиотеки на устройстве или восстановить ее из резервной копии.</string>
+  <string name="msg_backup_error">Ошибка при создании бэкапа</string>
+  <string name="msg_backup_directory_missing">Не задан путь к бэкапу в хранилище</string>
+  <string name="msg_backup_success">Бэкап успешно создан</string>
+  <string name="msg_restore_error">Ошибка при восстановлении бэкапа</string>
+  <string name="msg_restore_file_missing">Не был выбран файл для восстановления</string>
+  <string name="msg_restore_success">Бэкап успешно восстановлен</string>
+  <!-- Name of a song after restoring a backup when a song with the name already exists. E.g. "Song name (1)" -->
+  <string name="msg_restore_duplicate_name">%1$s (%2$d)</string>
+  <string name="msg_songs_intro">Как работает библиотека песен</string>
+  <string name="msg_songs_intro_description">Вы можете сохранять и упорядочивать настройки метронома как части композиции. Просто настройте метроном по своему усмотрению, а затем добавьте текущую настройку в качестве новой части композиции или отредактируйте существующую.</string>
+  <string name="msg_widget_description">Просматривайте свои песни и включайте их</string>
+  <string name="msg_widget_prompt">Быстрый доступ к песням?</string>
+  <string name="msg_widget_prompt_description">Разместите красивый виджет на рабочем столе.</string>
+  <string name="msg_beat_mode_warning">Переключить режим воспроизведения ритма в режим только звука?</string>
+
+  <!-- OPTIONS -->
+
+  <string name="options_unit_bars">Такты</string>
+  <plurals name="options_unit_bars">
+    <item quantity="one">%1$d такт</item>
+    <item quantity="few">%1$d такта</item>
+    <item quantity="many">%1$d тактов</item>
+    <item quantity="other">%1$d тактов</item>
+  </plurals>
+  <string name="options_unit_beats">Удары</string>
+  <plurals name="options_unit_beats">
+    <item quantity="one">%1$d удар</item>
+    <item quantity="few">%1$d удара</item>
+    <item quantity="many">%1$d ударов</item>
+    <item quantity="other">%1$d ударов</item>
+  </plurals>
+  <plurals name="options_unit_subdivisions">
+    <item quantity="one">%1$d часть</item>
+    <item quantity="few">%1$d части</item>
+    <item quantity="many">%1$d частей</item>
+    <item quantity="other">%1$d частей</item>
+  </plurals>
+  <string name="options_unit_seconds">Секунды</string>
+  <plurals name="options_unit_seconds">
+    <item quantity="one">%1$d секунда</item>
+    <item quantity="few">%1$d секунды</item>
+    <item quantity="many">%1$d секунд</item>
+    <item quantity="other">%1$d секунд</item>
+  </plurals>
+  <string name="options_unit_minutes">Минуты</string>
+  <plurals name="options_unit_minutes">
+    <item quantity="one">%1$d минута</item>
+    <item quantity="few">%1$d минуты</item>
+    <item quantity="many">%1$d минут</item>
+    <item quantity="other">%1$d минут</item>
+  </plurals>
+  <string name="options_inactive">Неактивно</string>
+  <string name="options_count_in">Вступление</string>
+  <plurals name="options_count_in_description">
+    <item quantity="one">Применять модификаторы после %1$d такта</item>
+    <item quantity="few">Применять модификаторы после %1$d тактов</item>
+    <item quantity="many">Применять модификаторы после %1$d тактов</item>
+    <item quantity="other">Применять модификаторы после %1$d тактов</item>
+  </plurals>
+  <string name="options_incremental">Постепенное изменение темпа</string>
+  <string name="options_incremental_amount_increase">Увеличить на %1$d bpm</string>
+  <string name="options_incremental_amount_decrease">Уменьшить на %1$d bpm</string>
+  <plurals name="options_incremental_interval_bars">
+    <item quantity="one">Каждый %1$d такт</item>
+    <item quantity="few">Каждые %1$d такта</item>
+    <item quantity="many">Каждые %1$d тактов</item>
+    <item quantity="other">Каждые %1$d тактов</item>
+  </plurals>
+  <plurals name="options_incremental_interval_seconds">
+    <item quantity="one">Каждую %1$d секунду</item>
+    <item quantity="few">Каждые %1$d секунды</item>
+    <item quantity="many">Каждые %1$d секунд</item>
+    <item quantity="other">Каждые %1$d секунд</item>
+  </plurals>
+  <plurals name="options_incremental_interval_minutes">
+    <item quantity="one">Каждую %1$d минуту</item>
+    <item quantity="few">Каждые %1$d минуты</item>
+    <item quantity="many">Каждые %1$d минут</item>
+    <item quantity="other">Каждые %1$d минут</item>
+  </plurals>
+  <string name="options_incremental_max">До %1$d bpm</string>
+  <string name="options_incremental_min">До %1$d bpm</string>
+  <string name="options_incremental_no_max">Без верхнего порога</string>
+  <string name="options_incremental_no_min">Без нижнего порога</string>
+  <string name="options_timer">Длительность</string>
+  <plurals name="options_timer_description_bars">
+    <item quantity="one">Остановиться после %1$d такта</item>
+    <item quantity="few">Остановиться после %1$d тактов</item>
+    <item quantity="many">Остановиться после %1$d тактов</item>
+    <item quantity="other">Остановиться после %1$d тактов</item>
+  </plurals>
+  <plurals name="options_timer_description_seconds">
+    <item quantity="one">Остановиться через %1$d секунду</item>
+    <item quantity="few">Остановиться через %1$d секунды</item>
+    <item quantity="many">Остановиться через %1$d секунд</item>
+    <item quantity="other">Остановиться через %1$d секунд</item>
+  </plurals>
+  <plurals name="options_timer_description_minutes">
+    <item quantity="one">Остановиться через %1$d минуту</item>
+    <item quantity="few">Остановиться через %1$d минуты</item>
+    <item quantity="many">Остановиться через %1$d минут</item>
+    <item quantity="other">Остановиться через %1$d минут</item>
+  </plurals>
+  <string name="options_mute">Беззвучные удары</string>
+  <plurals name="options_mute_play_bars">
+    <item quantity="one">Играть %1$d такт</item>
+    <item quantity="few">Играть %1$d такта</item>
+    <item quantity="many">Играть %1$d тактов</item>
+    <item quantity="other">Играть %1$d тактов</item>
+  </plurals>
+  <plurals name="options_mute_play_seconds">
+    <item quantity="one">Играть %1$d секунду</item>
+    <item quantity="few">Играть %1$d секунды</item>
+    <item quantity="many">Играть %1$d секунд</item>
+    <item quantity="other">Играть %1$d секунд</item>
+  </plurals>
+  <string name="options_mute_mute_beats">Заглушить %1$d%% тактов</string>
+  <plurals name="options_mute_mute_bars">
+    <item quantity="one">Заглушить %1$d такт</item>
+    <item quantity="few">Заглушить %1$d такта</item>
+    <item quantity="many">Заглушить %1$d тактов</item>
+    <item quantity="other">Заглушить %1$d тактов</item>
+  </plurals>
+  <plurals name="options_mute_mute_seconds">
+    <item quantity="one">Заглушить на %1$d секунду</item>
+    <item quantity="few">Заглушить на %1$d секунды</item>
+    <item quantity="many">Заглушить на %1$d секунд</item>
+    <item quantity="other">Заглушить на %1$d секунд</item>
+  </plurals>
+  <string name="options_mute_random">Рандомизировать меньшие значения</string>
+  <string name="options_subdivisions">Дробления</string>
+  <string name="options_subdivisions_beats_muted">Тактов заглушено</string>
+  <string name="options_swing">Свинг</string>
+  <string name="options_swing_description">Дробление настроено в соответствии с типом свинга</string>
+  <string name="options_swing_3">Триоль</string>
+  <string name="options_swing_5">Квинтоль</string>
+  <string name="options_swing_7">Септоль</string>
+  <string name="options_polyrhythm">Полиритмия</string>
+  <string name="options_polyrhythm_description">Играть импульсы по всей длине трека</string>
+
+  <!-- SETTINGS -->
+
+  <string name="settings_language">Язык</string>
+  <string name="settings_language_info">Большое спасибо всем переводчикам-волонтерам на Transifex!</string>
+  <string name="settings_language_system">Язык системы</string>
+  <string name="settings_language_system_description">Английский, если перевод недоступен</string>
+
+  <string name="settings_theme">Тема</string>
+  <string name="settings_theme_description">Настройте под себя</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
+  <string name="settings_theme_auto">Авто</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_dark">Тёмная</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system -->
+  <string name="settings_theme_light">Светлая</string>
+
+  <string name="settings_contrast">Контраст</string>
+  <string name="settings_contrast_description">Доступность для вашего зрения</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast. The button width should be as dense as possible. -->
+  <string name="settings_contrast_standard">Обычный</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_medium">Средний</string>
+  <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
+  <string name="settings_contrast_high">Высокий</string>
+  <string name="settings_contrast_dynamic">Контраст темы можно изменить только в настройках устройства</string>
+  <string name="settings_contrast_dynamic_unsupported">Динамический контраст темы доступен только в Android 14+</string>
+
+  <string name="settings_haptic">Эффекты вибрации</string>
+  <string name="settings_haptic_description">В дополнение к вибрирующим ударам метронома</string>
+
+  <string name="settings_vibration_intensity">Интенсивность вибрации</string>
+  <string name="settings_vibration_intensity_description">Для тактильных ударов и эффектов</string>
+  <!-- This is the name for a vibration intensity: User can choose between soft or strong intensity or system-set (automatic or shorter auto) intensity. The button width should be as dense as possible. -->
+  <string name="settings_vibration_intensity_auto">Авто</string>
+  <string name="settings_vibration_intensity_soft">Слабо</string>
+  <string name="settings_vibration_intensity_strong">Сильно</string>
+
+  <string name="settings_reduce_animations">Уменьшить анимации</string>
+  <string name="settings_reduce_animations_description">Может улучшить производительность</string>
+
+  <string name="settings_backup">Резервное копирование/восстановление библиотеки песен</string>
+  <string name="settings_backup_description">Важно при переключении устройств</string>
+
+  <string name="settings_reset">Сбросить всё</string>
+  <string name="settings_reset_description">Нельзя обратить</string>
+
+  <string name="settings_sound">Звук удара</string>
+  <string name="settings_sound_wood">Дерево</string>
+  <string name="settings_sound_sine">Синусоида</string>
+  <string name="settings_sound_mechanical">Механический</string>
+  <string name="settings_sound_beatboxing_1">Битбокс 1</string>
+  <string name="settings_sound_beatboxing_2">Битбокс 2</string>
+  <string name="settings_sound_hands">Ладоши</string>
+  <string name="settings_sound_folding">Линейка</string>
+
+  <string name="settings_latency">Корректировка задержки</string>
+  <string name="settings_latency_description">Компенсировать задержку звука для вибрации и отображения</string>
+
+  <string name="settings_ignore_focus">Игнорировать аудиофокус</string>
+  <string name="settings_ignore_focus_description">Продолжать воспроизведение даже если другие приложения воспроизводят звук</string>
+
+  <string name="settings_gain">Увеличение/уменьшение громкости</string>
+  <string name="settings_gain_description">Относительно системной громкости</string>
+  <string name="settings_gain_disclaimer">Перед каждым использованием усиления будет показываться предупреждение. Разработчик не несёт ответственности за потенциальные травмы.</string>
+
+  <string name="settings_active_beat">Выделять текущий удар</string>
+  <string name="settings_active_beat_description">Полезно при медленном темпе</string>
+
+  <string name="settings_elapsed">Показать затраченное время</string>
+  <string name="settings_elapsed_description">Следите за тем, как долго вы занимаетесь</string>
+
+  <string name="settings_reset_timer">Сбрасывать таймер при остановках</string>
+  <string name="settings_reset_timer_description">Вместо продолжения отсчёта</string>
+
+  <string name="settings_big_time_text">Показывать время большим шрифтом</string>
+  <string name="settings_big_time_text_description">Если обычного размера недостаточно</string>
+
+  <string name="settings_flash_screen">Моргать экраном</string>
+  <string name="settings_flash_screen_description">На каждый такт</string>
+  <string name="settings_flash_screen_off">Выкл</string>
+  <string name="settings_flash_screen_subtle">Слабо</string>
+  <string name="settings_flash_screen_strong">Сильно</string>
+
+  <string name="settings_flashlight">Моргать фонариком</string>
+
+  <string name="settings_keep_awake">Не выключать экран</string>
+  <string name="settings_keep_awake_description">Может увеличить расход батареи</string>
+  <string name="settings_keep_awake_always">Всегда</string>
+  <string name="settings_keep_awake_while_playing">Во время игры</string>
+  <string name="settings_keep_awake_never">Никогда</string>
+
+  <string name="settings_perm_notification">Постоянное уведомление</string>
+  <string name="settings_perm_notification_description">Быстрый доступ к кнопке старт/стоп</string>
+
+  <string name="settings_big_logo">Показывать большой анимированный логотип</string>
+  <string name="settings_big_logo_description">Во время проигрывания вместо колеса выбора темпа</string>
+
+  <!-- HELP -->
+
+  <string name="help_tempo_change">Как мне сменить темп?</string>
+  <string name="help_tempo_change_answer">Чтобы изменить темп, перетащите ползунок темпа в центре главной страницы или поверните его, а также нажмите на кнопки слева и справа от круга. Нажав на ползунок темпа, вы откроете диалоговое окно, в котором можно задать темп с помощью тапа или клавиатуры.</string>
+  <string name="help_time_signature">Как изменить тактовый размер?</string>
+  <string name="help_time_signature_answer">Посмотрите на первую цифру тактового размера и в соответствии с ней установите количество долей в Tack. Это значит, что для размера 4/4 нужно 4 доли, для 2/2 — 2 доли и так далее. Размер 6/8 немного особенный: здесь нужно использовать 2 доли с возможностью разделения на 3 части, потому что только первая и четвертая восьмые доли являются сильными. Кроме того, вы можете менять акцент на долях, нажимая на них. В настройках также можно выбрать процент свинга, который автоматически установит количество долей.</string>
+  <string name="help_swing">Как отключить свинг?</string>
+  <string name="help_swing_answer">Если вы включили функцию Swing в настройках, Tack просто установит для вас количество делений. Чтобы отключить эту функцию, просто установите количество делений вручную по своему усмотрению.</string>
+  <string name="help_song_library">Как работает библиотека песен?</string>
+  <string name="help_song_library_answer">Библиотека песен — это коллекция конфигураций метронома, которые можно сохранять и применять. Чтобы сохранить текущую конфигурацию, просто откройте библиотеку песен и создайте новую. Текущая конфигурация будет добавлена в список партий, где вы сможете ее доработать. После того как вы дадите песне название, не забудьте сохранить результат, нажав на значок диска в правом верхнем углу.</string>
+  <string name="help_song_picker">Как работает подбор песен?</string>
+  <string name="help_song_picker_answer">Все песни из вашей медиатеки отображаются в подборке на главной странице, но при желании вы можете открыть полноэкранный список. Порядок отображения зависит от вашего выбора в меню. Чтобы применить песню, просто нажмите на нее. Вы также можете перейти к определенному фрагменту песни, нажав на текущий фрагмент под названием песни, или воспользоваться кнопками пропуска. Если вы хотите вернуться к настройкам, которые были у вас до выбора песни, нажмите на значок × рядом с названием песни.</string>
+  <string name="help_song_part">Почему песня не переходит к следующей части?</string>
+  <string name="help_song_part_answer">Чтобы автоматически переключаться на следующую часть песни, для каждой части нужно задать продолжительность. Если продолжительность не задана, часть считается бесконечной. Чтобы задать продолжительность, просто нажмите на текущую песню, чтобы открыть информацию о ней, и установите продолжительность части, нажав на значок редактирования. Не забудьте сохранить изменения!</string>
+  <string name="help_notification_displays">Почему при выходе из приложения появляется уведомление о работе метронома?</string>
+  <string name="help_notification_displays_answer">Если вы не включили в настройках опцию «Постоянное уведомление», оно необходимо для того, чтобы служба метронома продолжала работать, когда приложение находится в фоновом режиме. Служба управляет воспроизведением и отслеживает данные в режиме реального времени, такие как таймер или прошедшее время, чтобы отделить воспроизведение от интерфейса приложения. Вы можете перевести службу в фоновый режим, нажав «Остановить», но это не гарантирует, что система не завершит ее работу. Это может привести к сбросу таймера и прошедшего времени до тех пор, пока служба снова не окажется на переднем плане. Вы также можете включить постоянное уведомление в настройках, чтобы всегда иметь доступ к функциям запуска и остановки в разделе уведомлений.</string>
+  <string name="help_notification_disappears">Почему уведомление о работе метронома исчезает, когда я закрываю приложение?</string>
+  <string name="help_notification_disappears_answer">Когда вы закрываете приложение из списка последних, служба метронома останавливается, а уведомление исчезает. Это сделано для экономии заряда батареи и ресурсов. Если вы хотите, чтобы уведомление о доступе к метроному появлялось постоянно, включите в настройках опцию «Постоянное уведомление» и не закрывайте приложение из списка последних.</string>
+  <string name="help_translation">Как перевести Tack на мой язык?</string>
+  <string name="help_translation_answer">Переводы для Tack обрабатываются на платформе Transifex, где такие же пользователи, как и вы, могут помочь с переводом приложения! Пожалуйста, посетите страницу Tack на GitHub, чтобы узнать больше, или сразу приступайте к переводу:</string>
+
+  <!-- ABOUT -->
+
+  <string name="about_version">Версия</string>
+  <string name="about_changelog">Список изменений</string>
+  <string name="about_changelog_description">Что нового в этой версии</string>
+  <string name="about_developer">Разработчик</string>
+  <string name="about_vending_description">Больше приложений от разработчика</string>
+  <string name="about_key">Приложение разблокировки</string>
+  <string name="about_key_description_not_installed">Не установлено</string>
+  <string name="about_key_description_installed">Установлено</string>
+  <string name="about_key_description_ignored">Проигнорировано</string>
+  <string name="about_github_description">Исходный код</string>
+  <string name="about_translation_description">Помогите перевести Tack</string>
+  <string name="about_privacy">Политика конфиденциальности</string>
+  <string name="about_privacy_description">Как обрабатываются ваши данные</string>
+
+  </resources>

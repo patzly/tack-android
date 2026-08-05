@@ -1,0 +1,1030 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2026 by Patrick Zedler
+  -->
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:transitionGroup="true"
+  android:background="?attr/colorSurfaceContainer">
+
+  <com.google.android.material.appbar.AppBarLayout
+    android:id="@+id/app_bar_settings"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/colorSurfaceContainer"
+    app:liftOnScrollColor="?attr/colorSurfaceContainerHighest">
+
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="?attr/actionBarSize">
+
+      <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar_settings"
+        style="@style/Widget.Tack.Toolbar"
+        app:contentInsetStart="56dp"
+        app:contentInsetEnd="56dp"
+        app:title="@string/title_settings" />
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_settings_back"
+        style="@style/Widget.Tack.Button.IconButton.Tonal"
+        android:contentDescription="@string/action_back"
+        android:layout_gravity="center_vertical|start"
+        android:layout_marginStart="4dp"
+        app:backgroundTint="?attr/colorSurfaceContainerHighest"
+        app:iconTint="?attr/colorOnSurface"
+        app:icon="@drawable/ic_rounded_arrow_back" />
+
+      <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_settings_menu"
+        style="@style/Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
+        android:contentDescription="@string/action_more"
+        android:layout_gravity="center_vertical|end"
+        android:layout_marginEnd="4dp"
+        app:backgroundTint="?attr/colorSurfaceContainerHighest"
+        app:iconTint="?attr/colorOnSurface"
+        app:icon="@drawable/ic_rounded_more_vert" />
+
+    </FrameLayout>
+
+  </com.google.android.material.appbar.AppBarLayout>
+
+  <androidx.core.widget.NestedScrollView
+    android:id="@+id/scroll_settings"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="?attr/actionBarSize">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+      android:id="@+id/constraint_settings"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:paddingStart="16dp"
+      android:paddingEnd="16dp">
+
+      <LinearLayout
+        android:id="@+id/linear_settings_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="8dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_max="@dimen/max_content_width">
+
+        <TextView
+          style="@style/Widget.Tack.TextView.Category.Segmented"
+          android:text="@string/title_general" />
+
+        <LinearLayout
+          android:id="@+id/linear_settings_language"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+          android:background="@drawable/ripple_list_item_bg_segmented_single">
+
+          <ImageView
+            android:id="@+id/image_settings_language"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_language_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_language" />
+
+            <TextView
+              android:id="@+id/text_settings_language"
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/settings_language_system" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:layout_marginTop="16dp"
+          android:background="@drawable/ripple_list_item_bg_segmented_first">
+
+          <LinearLayout
+            style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
+            android:paddingTop="14dp"
+            android:paddingBottom="0dp"
+            android:minHeight="0dp">
+
+            <ImageView
+              android:id="@+id/image_settings_theme"
+              style="@style/Widget.Tack.ImageView.ListItem.Icon"
+              android:src="@drawable/ic_rounded_palette_anim"
+              android:layout_gravity="center"
+              tools:ignore="ContentDescription" />
+
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Title"
+                android:text="@string/settings_theme"
+                android:paddingStart="0dp"
+                android:paddingEnd="16dp"/>
+
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Description"
+                android:text="@string/settings_theme_description"
+                android:paddingStart="0dp"
+                android:paddingEnd="16dp"/>
+
+            </LinearLayout>
+
+          </LinearLayout>
+
+          <HorizontalScrollView
+            android:id="@+id/scroll_horiz_settings_theme"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:overScrollMode="ifContentScrolls">
+
+            <LinearLayout
+              android:id="@+id/linear_settings_theme_container"
+              style="@style/Widget.Tack.LinearLayout.ListItem.TextBox"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:paddingStart="56dp"
+              android:paddingEnd="16dp"
+              android:paddingTop="8dp"
+              android:paddingBottom="8dp" />
+
+          </HorizontalScrollView>
+
+          <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:scrollbars="none"
+            android:overScrollMode="ifContentScrolls">
+
+            <FrameLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingStart="56dp"
+              android:paddingEnd="16dp">
+
+              <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle_settings_theme"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_theme_auto"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_theme_auto" />
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_theme_light"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_theme_light" />
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_theme_dark"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_theme_dark" />
+
+              </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            </FrameLayout>
+
+          </HorizontalScrollView>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:layout_marginBottom="16dp"
+          android:background="@drawable/ripple_list_item_bg_segmented_last">
+
+          <LinearLayout
+            style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
+            android:paddingTop="14dp"
+            android:paddingBottom="0dp"
+            android:minHeight="0dp">
+
+            <ImageView
+              android:id="@+id/image_settings_contrast"
+              style="@style/Widget.Tack.ImageView.ListItem.Icon"
+              android:src="@drawable/ic_rounded_contrast_anim"
+              android:layout_gravity="center"
+              tools:ignore="ContentDescription" />
+
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Title"
+                android:text="@string/settings_contrast"
+                android:paddingStart="0dp"
+                android:paddingEnd="16dp"/>
+
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Description"
+                android:text="@string/settings_contrast_description"
+                android:paddingStart="0dp"
+                android:paddingEnd="16dp"/>
+
+              <TextView
+                android:id="@+id/text_settings_contrast_dynamic"
+                style="@style/Widget.Tack.TextView.ListItem.Description"
+                android:text="@string/settings_contrast_dynamic"
+                android:textColor="?attr/colorError"
+                android:paddingStart="0dp"
+                android:paddingEnd="16dp" />
+
+            </LinearLayout>
+
+          </LinearLayout>
+
+          <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="10dp"
+            android:scrollbars="none"
+            android:overScrollMode="ifContentScrolls">
+
+            <FrameLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingStart="56dp"
+              android:paddingEnd="16dp">
+
+              <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle_settings_contrast"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_contrast_standard"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_contrast_standard" />
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_contrast_medium"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_contrast_medium" />
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_contrast_high"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_contrast_high" />
+
+              </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            </FrameLayout>
+
+          </HorizontalScrollView>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_settings_haptic"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+          android:background="@drawable/ripple_list_item_bg_segmented_first">
+
+          <ImageView
+            android:id="@+id/image_settings_haptic"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_vibration_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_haptic" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/settings_haptic_description" />
+
+          </LinearLayout>
+
+          <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_settings_haptic"
+            style="@style/Widget.Tack.Switch" />
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_settings_vibration_intensity"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:background="@drawable/ripple_list_item_bg_segmented_middle">
+
+          <LinearLayout
+            style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
+            android:paddingTop="14dp"
+            android:paddingBottom="0dp"
+            android:minHeight="0dp">
+
+            <ImageView
+              style="@style/Widget.Tack.ImageView.ListItem.Icon"
+              android:src="@drawable/ic_rounded_mobile_sensor_lo"
+              android:layout_gravity="center"
+              tools:ignore="ContentDescription" />
+
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Title"
+                android:text="@string/settings_vibration_intensity" />
+
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Description"
+                android:text="@string/settings_vibration_intensity_description" />
+
+            </LinearLayout>
+
+          </LinearLayout>
+
+          <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="10dp"
+            android:scrollbars="none"
+            android:overScrollMode="ifContentScrolls">
+
+            <FrameLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingStart="56dp"
+              android:paddingEnd="16dp">
+
+              <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle_settings_vibration_intensity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_vibration_intensity_auto"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_vibration_intensity_auto" />
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_vibration_intensity_soft"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_vibration_intensity_soft" />
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_vibration_intensity_strong"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_vibration_intensity_strong" />
+
+              </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            </FrameLayout>
+
+          </HorizontalScrollView>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_settings_reduce_animations"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+          android:background="@drawable/ripple_list_item_bg_segmented_last">
+
+          <ImageView
+            android:id="@+id/image_settings_reduce_animations"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_animation_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_reduce_animations" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/settings_reduce_animations_description" />
+
+          </LinearLayout>
+
+          <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_settings_reduce_animations"
+            style="@style/Widget.Tack.Switch" />
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_settings_backup"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+          android:background="@drawable/ripple_list_item_bg_segmented_first"
+          android:layout_marginTop="16dp">
+
+          <ImageView
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_download"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_backup" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/settings_backup_description" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_settings_reset"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+          android:background="@drawable/ripple_list_item_bg_segmented_last">
+
+          <ImageView
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_reset_settings"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_reset" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/settings_reset_description" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+          style="@style/Widget.Tack.TextView.Category.Segmented"
+          android:text="@string/title_metronome" />
+
+        <LinearLayout
+          android:id="@+id/linear_settings_sound"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+          android:background="@drawable/ripple_list_item_bg_segmented_first">
+
+          <ImageView
+            android:id="@+id/image_settings_sound"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_music_note_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_sound" />
+
+            <TextView
+              android:id="@+id/text_settings_sound"
+              style="@style/Widget.Tack.TextView.ListItem.Description" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_settings_ignore_focus"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+          android:background="@drawable/ripple_list_item_bg_segmented_middle">
+
+          <ImageView
+            android:id="@+id/image_settings_ignore_focus"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_select_to_speak_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_ignore_focus" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/settings_ignore_focus_description" />
+
+          </LinearLayout>
+
+          <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_settings_ignore_focus"
+            style="@style/Widget.Tack.Switch" />
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_settings_gain"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
+          android:background="@drawable/ripple_list_item_bg_segmented_middle">
+
+          <ImageView
+            android:id="@+id/image_settings_gain"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_speaker_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_gain" />
+
+            <TextView
+              android:id="@+id/text_settings_gain"
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/label_db_signed" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_settings_latency"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
+          android:background="@drawable/ripple_list_item_bg_segmented_last">
+
+          <ImageView
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_media_output"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_latency" />
+
+            <TextView
+              android:id="@+id/text_settings_latency"
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/label_ms" />
+
+          </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_settings_reset_timer"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+          android:background="@drawable/ripple_list_item_bg_segmented_first"
+          android:layout_marginTop="16dp">
+
+          <ImageView
+            android:id="@+id/image_settings_reset_timer"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_autopause_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_reset_timer" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/settings_reset_timer_description" />
+
+          </LinearLayout>
+
+          <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_settings_reset_timer"
+            style="@style/Widget.Tack.Switch" />
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:background="@drawable/ripple_list_item_bg_segmented_middle">
+
+          <LinearLayout
+            style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
+            android:paddingTop="14dp"
+            android:paddingBottom="0dp"
+            android:minHeight="0dp">
+
+            <ImageView
+              android:id="@+id/image_settings_flash_screen"
+              style="@style/Widget.Tack.ImageView.ListItem.Icon"
+              android:src="@drawable/ic_rounded_bolt_anim"
+              android:layout_gravity="center"
+              tools:ignore="ContentDescription" />
+
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Title"
+                android:text="@string/settings_flash_screen" />
+
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Description"
+                android:text="@string/settings_flash_screen_description" />
+
+            </LinearLayout>
+
+          </LinearLayout>
+
+          <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="10dp"
+            android:scrollbars="none"
+            android:overScrollMode="ifContentScrolls">
+
+            <FrameLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingStart="56dp"
+              android:paddingEnd="16dp">
+
+              <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle_settings_flash_screen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_flash_screen_off"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_flash_screen_off" />
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_flash_screen_subtle"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_flash_screen_subtle" />
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_flash_screen_strong"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_flash_screen_strong" />
+
+              </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            </FrameLayout>
+
+          </HorizontalScrollView>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_settings_flashlight"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:background="@drawable/ripple_list_item_bg_segmented_middle">
+
+          <LinearLayout
+            style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
+            android:paddingTop="14dp"
+            android:paddingBottom="0dp"
+            android:minHeight="0dp">
+
+            <ImageView
+              android:id="@+id/image_settings_flashlight"
+              style="@style/Widget.Tack.ImageView.ListItem.Icon"
+              android:src="@drawable/ic_rounded_flashlight_on"
+              android:layout_gravity="center"
+              tools:ignore="ContentDescription" />
+
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Title"
+                android:text="@string/settings_flashlight" />
+
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Description"
+                android:text="@string/settings_flash_screen_description" />
+
+            </LinearLayout>
+
+          </LinearLayout>
+
+          <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="10dp"
+            android:scrollbars="none"
+            android:overScrollMode="ifContentScrolls">
+
+            <FrameLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingStart="56dp"
+              android:paddingEnd="16dp">
+
+              <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle_settings_flashlight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_flashlight_off"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_flash_screen_off" />
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_flashlight_subtle"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_flash_screen_subtle" />
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_flashlight_strong"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_flash_screen_strong" />
+
+              </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            </FrameLayout>
+
+          </HorizontalScrollView>
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="vertical"
+          android:background="@drawable/ripple_list_item_bg_segmented_last">
+
+          <LinearLayout
+            style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
+            android:paddingTop="14dp"
+            android:paddingBottom="0dp"
+            android:minHeight="0dp">
+
+            <ImageView
+              android:id="@+id/image_settings_keep_awake"
+              style="@style/Widget.Tack.ImageView.ListItem.Icon"
+              android:src="@drawable/ic_rounded_preview_anim"
+              android:layout_gravity="center"
+              tools:ignore="ContentDescription" />
+
+            <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Title"
+                android:text="@string/settings_keep_awake" />
+
+              <TextView
+                style="@style/Widget.Tack.TextView.ListItem.Description"
+                android:text="@string/settings_keep_awake_description" />
+
+            </LinearLayout>
+
+          </LinearLayout>
+
+          <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="10dp"
+            android:scrollbars="none"
+            android:overScrollMode="ifContentScrolls">
+
+            <FrameLayout
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingStart="56dp"
+              android:paddingEnd="16dp">
+
+              <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggle_settings_keep_awake"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_keep_awake_always"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_keep_awake_always" />
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_keep_awake_while_playing"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_keep_awake_while_playing" />
+
+                <com.google.android.material.button.MaterialButton
+                  android:id="@+id/button_settings_keep_awake_never"
+                  style="@style/Widget.Tack.Button"
+                  android:text="@string/settings_keep_awake_never" />
+
+              </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            </FrameLayout>
+
+          </HorizontalScrollView>
+
+        </LinearLayout>
+
+        <TextView
+          style="@style/Widget.Tack.TextView.Category.Segmented"
+          android:text="@string/title_controls" />
+
+        <LinearLayout
+          android:id="@+id/linear_settings_active_beat"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+          android:background="@drawable/ripple_list_item_bg_segmented_first">
+
+          <ImageView
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_ink_highlighter"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_active_beat" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/settings_active_beat_description" />
+
+          </LinearLayout>
+
+          <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_settings_active_beat"
+            style="@style/Widget.Tack.Switch" />
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_settings_perm_notification"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+          android:background="@drawable/ripple_list_item_bg_segmented_middle">
+
+          <ImageView
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_ad_units"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_perm_notification" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/settings_perm_notification_description" />
+
+          </LinearLayout>
+
+          <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_settings_perm_notification"
+            style="@style/Widget.Tack.Switch" />
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_settings_elapsed"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+          android:background="@drawable/ripple_list_item_bg_segmented_middle">
+
+          <ImageView
+            android:id="@+id/image_settings_elapsed"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_schedule_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_elapsed" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/settings_elapsed_description" />
+
+          </LinearLayout>
+
+          <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_settings_elapsed"
+            style="@style/Widget.Tack.Switch" />
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_settings_big_time_text"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+          android:background="@drawable/ripple_list_item_bg_segmented_middle">
+
+          <ImageView
+            style="@style/Widget.Tack.ImageView.ListItem.Icon"
+            android:src="@drawable/ic_rounded_123"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_big_time_text" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/settings_big_time_text_description" />
+
+          </LinearLayout>
+
+          <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_settings_big_time_text"
+            style="@style/Widget.Tack.Switch" />
+
+        </LinearLayout>
+
+        <LinearLayout
+          android:id="@+id/linear_settings_big_logo"
+          style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+          android:background="@drawable/ripple_list_item_bg_segmented_last"
+          android:paddingStart="14dp"
+          android:paddingEnd="16dp">
+
+          <ImageView
+            android:id="@+id/image_settings_big_logo"
+            style="@style/Widget.Tack.ImageView.ListItem.Icon.Colored"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginEnd="15dp"
+            android:src="@drawable/ic_logo_anim"
+            tools:ignore="ContentDescription" />
+
+          <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox.Stretch">
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Title"
+              android:text="@string/settings_big_logo" />
+
+            <TextView
+              style="@style/Widget.Tack.TextView.ListItem.Description"
+              android:text="@string/settings_big_logo_description" />
+
+          </LinearLayout>
+
+          <com.google.android.material.materialswitch.MaterialSwitch
+            android:id="@+id/switch_settings_big_logo"
+            style="@style/Widget.Tack.Switch" />
+
+        </LinearLayout>
+
+      </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+  </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

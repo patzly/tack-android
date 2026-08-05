@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2026 by Patrick Zedler
+  -->
+<FrameLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:paddingTop="20dp">
+
+  <com.google.android.material.divider.MaterialDivider
+    android:id="@+id/divider_backup_top"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="top" />
+
+  <com.google.android.material.divider.MaterialDivider
+    android:id="@+id/divider_backup_bottom"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom" />
+
+  <androidx.core.widget.NestedScrollView
+    android:id="@+id/scroll_backup"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="1dp"
+    android:layout_marginBottom="1dp"
+    android:overScrollMode="ifContentScrolls">
+
+    <LinearLayout
+      android:id="@+id/linear_backup_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:paddingStart="24dp"
+      android:paddingEnd="24dp"
+      android:paddingTop="16dp"
+      android:paddingBottom="16dp">
+
+      <TextView
+        style="@style/Widget.Tack.TextView.BodyMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/colorOnSurfaceVariant"
+        android:text="@string/msg_backup_description" />
+
+      <LinearLayout
+        android:id="@+id/linear_backup_backup"
+        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+        android:background="@drawable/ripple_list_item_bg_segmented_first"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/action_backup">
+
+        <ImageView
+          style="@style/Widget.Tack.ImageView.ListItem.Icon"
+          android:src="@drawable/ic_rounded_download"
+          tools:ignore="ContentDescription" />
+
+        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Title"
+            android:text="@string/action_backup" />
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Description"
+            android:text="@string/action_backup_description" />
+
+        </LinearLayout>
+
+      </LinearLayout>
+
+      <LinearLayout
+        android:id="@+id/linear_backup_restore"
+        style="@style/Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+        android:background="@drawable/ripple_list_item_bg_segmented_last"
+        android:contentDescription="@string/action_restore">
+
+        <ImageView
+          style="@style/Widget.Tack.ImageView.ListItem.Icon"
+          android:src="@drawable/ic_rounded_upload"
+          tools:ignore="ContentDescription" />
+
+        <LinearLayout style="@style/Widget.Tack.LinearLayout.ListItem.TextBox">
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Title"
+            android:text="@string/action_restore" />
+
+          <TextView
+            style="@style/Widget.Tack.TextView.ListItem.Description"
+            android:text="@string/action_restore_description" />
+
+        </LinearLayout>
+
+      </LinearLayout>
+
+    </LinearLayout>
+
+  </androidx.core.widget.NestedScrollView>
+
+</FrameLayout>

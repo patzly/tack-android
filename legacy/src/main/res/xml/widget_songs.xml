@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2026 by Patrick Zedler
+  -->
+
+<appwidget-provider
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:description="@string/msg_widget_description"
+  android:targetCellWidth="@integer/widget_songs_target_cell_width"
+  android:targetCellHeight="@integer/widget_songs_target_cell_height"
+  android:minWidth="@dimen/widget_songs_min_width"
+  android:minHeight="@dimen/widget_songs_min_height"
+  android:minResizeWidth="@dimen/widget_songs_min_resize_width"
+  android:minResizeHeight="@dimen/widget_songs_min_resize_height"
+  android:maxResizeWidth="@dimen/widget_songs_max_resize_width"
+  android:maxResizeHeight="@dimen/widget_songs_max_resize_height"
+  android:initialLayout="@layout/widget_songs"
+  android:previewLayout="@layout/widget_songs_preview"
+  android:previewImage="@drawable/widget_songs_preview"
+  android:resizeMode="horizontal|vertical"
+  android:widgetCategory="home_screen"
+  tools:targetApi="31" />

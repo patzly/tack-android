@@ -1,53 +1,49 @@
 [versions]
+# core
 agp = "9.3.1"
 core = "1.19.0"
-appcompat = "1.7.1"
-fragment = "1.8.9"
-navigation = "2.9.8"
-preference = "1.2.1"
 oboe = "1.10.0"
-shapes = "1.1.0"
-material = "1.14.0"
-recyclerview = "1.4.0"
-flexbox = "3.0.0"
-gson = "2.14.0"
 room = "2.8.4"
 kotlin = "2.3.10"
-ksp = "2.3.10" # Passend zur Kotlin Version
+kotlinx-serialization = "1.11.0"
 lifecycle = "2.11.0"
 splashscreen = "1.2.0"
+compose-bom = "2026.06.01"
+compose-material = "1.5.0-alpha25"
+compose-activity = "1.13.0"
+compose-constraintlayout = "1.1.2"
+navigation3 = "1.1.5"
+preference = "1.2.1"
+shapes = "1.1.0"
+# wear-only
 wear-input = "1.2.0"
 wear-tooling = "1.0.0"
 wear-ongoing = "1.1.0"
-compose-bom = "2026.06.01"
-compose-material = "1.5.0-alpha24"
-compose-material-wear = "1.6.2"
-compose-navigation = "1.6.2"
-compose-foundation = "1.6.2"
-compose-activity = "1.13.0"
-compose-constraintlayout = "1.1.1"
+wear-compose-material = "1.6.2"
+wear-compose-navigation = "1.6.2"
+wear-compose-foundation = "1.6.2"
+# legacy-only
+appcompat = "1.7.1"
+fragment = "1.8.9"
+gson = "2.14.0"
+material = "1.14.0"
+recyclerview = "1.4.0"
+flexbox = "3.0.0"
+navigation = "2.9.8"
 
 [libraries]
+# core
 core = { group = "androidx.core", name = "core", version.ref = "core" }
-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
-navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigation" }
-navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigation" }
 preference = { group = "androidx.preference", name = "preference", version.ref = "preference" }
 oboe = { module = "com.google.oboe:oboe", version.ref = "oboe" }
-shapes = { group = "androidx.graphics", name = "graphics-shapes", version.ref = "shapes" }
-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
-flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
-# wear
-wear-tooling = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wear-tooling" }
-wear-ongoing = { group = "androidx.wear", name = "wear-ongoing", version.ref = "wear-ongoing" }
-wear-input = { group = "androidx.wear", name = "wear-input", version.ref = "wear-input" }
 lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycle" }
 splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
+navigation3-runtime = { group = "androidx.navigation3", name = "navigation3-runtime", version.ref = "navigation3" }
+navigation3-ui = { group = "androidx.navigation3", name = "navigation3-ui", version.ref = "navigation3" }
+shapes = { group = "androidx.graphics", name = "graphics-shapes", version.ref = "shapes" }
 ui = { group = "androidx.compose.ui", name = "ui" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
@@ -55,12 +51,26 @@ ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 compose-runtime = { group = "androidx.compose.runtime", name = "runtime-livedata" }
 compose-material = { group = "androidx.compose.material3", name = "material3", version.ref = "compose-material" }
-compose-material-wear = { group = "androidx.wear.compose", name = "compose-material3", version.ref = "compose-material-wear" }
-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "compose-foundation" }
+compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 compose-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics" }
-compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "compose-navigation" }
 compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "compose-activity" }
 compose-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "compose-constraintlayout" }
+# wear-only
+wear-tooling = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wear-tooling" }
+wear-ongoing = { group = "androidx.wear", name = "wear-ongoing", version.ref = "wear-ongoing" }
+wear-input = { group = "androidx.wear", name = "wear-input", version.ref = "wear-input" }
+wear-compose-material = { group = "androidx.wear.compose", name = "compose-material3", version.ref = "wear-compose-material" }
+wear-compose-foundation = { group = "androidx.wear.compose", name = "compose-foundation", version.ref = "wear-compose-foundation" }
+wear-compose-navigation = { group = "androidx.wear.compose", name = "compose-navigation", version.ref = "wear-compose-navigation" }
+# legacy-only
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+fragment = { group = "androidx.fragment", name = "fragment", version.ref = "fragment" }
+recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+flexbox = { group = "com.google.android.flexbox", name = "flexbox", version.ref = "flexbox" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+navigation-fragment = { group = "androidx.navigation", name = "navigation-fragment", version.ref = "navigation" }
+navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -68,4 +78,5 @@ navigation-safeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref 
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "kotlin" }

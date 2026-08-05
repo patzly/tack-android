@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2026 by Patrick Zedler
+  -->
+
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto">
+
+  <item
+    android:id="@+id/action_sort"
+    android:title="@string/action_sort_by"
+    app:showAsAction="never">
+
+    <menu>
+      <group
+        android:id="@+id/group_sort"
+        android:checkableBehavior="single">
+        <item
+          android:id="@+id/action_sort_name"
+          android:title="@string/label_sort_name" />
+        <item
+          android:id="@+id/action_sort_last_played"
+          android:title="@string/label_sort_last_played" />
+        <item
+          android:id="@+id/action_sort_most_played"
+          android:title="@string/label_sort_most_played" />
+      </group>
+    </menu>
+
+  </item>
+
+  <item
+    android:id="@+id/action_backup"
+    android:title="@string/action_backup_restore"
+    app:showAsAction="never" />
+
+</menu>

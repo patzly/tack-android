@@ -1,0 +1,829 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2026 by Patrick Zedler
+  -->
+
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+  <!-- For languages not supported by Nunito, the system font will be used as fallback.
+       If the system font is used, the medium variant of Nunito won't be replaced by a medium/bold
+       variant of the system font, so we have to configure these texts to be styled bold for these
+       locales with textStyle="bold".
+       Untranslated text (names or untranslated strings) with textStyle set to bold will look like
+       the medium variant of Nunito, so there is no extra attention needed for e.g. the app bar.
+       Affected languages: Arab, Chinese, Hebrew, Japanese, Uighur -->
+
+  <style
+    name="ThemeOverlay.Tack.AlertDialog"
+    parent="ThemeOverlay.Material3Expressive.MaterialAlertDialog">
+    <item name="alertDialogStyle">@style/MaterialAlertDialog.Tack</item>
+    <item name="android:backgroundDimAmount">0.7</item>
+    <item name="buttonBarPositiveButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog</item>
+    <item name="buttonBarNegativeButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog</item>
+    <item name="buttonBarNeutralButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog.Neutral</item>
+    <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.Tack.Title.Text</item>
+    <item name="android:scrollbarThumbVertical">@drawable/shape_scrollbar_rounded</item>
+    <item name="android:listChoiceBackgroundIndicator">?android:attr/selectableItemBackground</item>
+  </style>
+
+  <style name="ThemeOverlay.Tack.AlertDialog.Error" parent="ThemeOverlay.Tack.AlertDialog">
+    <item name="buttonBarPositiveButtonStyle">@style/Widget.Tack.Button.Dialog.Error</item>
+    <item name="buttonBarNegativeButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog.Error</item>
+    <item name="buttonBarNeutralButtonStyle">@style/Widget.Tack.Button.TextButton.Dialog.Neutral</item>
+  </style>
+
+  <style name="MaterialAlertDialog.Tack" parent="MaterialAlertDialog.Material3Expressive">
+    <item name="singleChoiceItemLayout">@layout/row_alert_select_dialog_singlechoice</item>
+  </style>
+
+  <!-- Prevents title from being displayed with smaller text size when it's long -->
+  <style
+    name="MaterialAlertDialog.Tack.Title.Text"
+    parent="MaterialAlertDialog.Material3.Title.Text">
+    <item name="android:textAppearance">?attr/textAppearanceHeadlineSmall</item>
+    <item name="android:capitalize">none</item>
+    <item name="android:singleLine">false</item>
+    <item name="android:maxLines">4</item>
+  </style>
+
+  <!-- Toolbar -->
+
+  <style name="Widget.Tack.Toolbar" parent="@style/Widget.Material3Expressive.Toolbar.OnSurface">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_marginEnd">0dp</item>
+    <item name="android:minHeight">?attr/actionBarSize</item>
+    <item name="titleTextAppearance">@style/TextAppearance.Tack.TitleLarge</item>
+    <item name="titleMarginStart">0dp</item>
+    <item name="titleCentered">true</item>
+    <item name="android:actionOverflowMenuStyle">@style/ThemeOverlay.Tack.OverFlow</item>
+  </style>
+
+  <style name="Widget.Tack.Toolbar.Uncentered" parent="@style/Widget.Tack.Toolbar">
+    <item name="titleCentered">false</item>
+  </style>
+
+  <style name="Widget.Tack.Toolbar.Back" parent="@style/Widget.Tack.Toolbar">
+    <item name="navigationIcon">@drawable/ic_rounded_arrow_back</item>
+    <item name="navigationContentDescription">@string/action_back</item>
+  </style>
+
+  <style name="ThemeOverlay.Tack.OverFlow" parent="Widget.AppCompat.ActionButton.Overflow">
+    <item name="android:tint">?attr/colorOnSurfaceVariant</item>
+  </style>
+
+  <!-- PopupMenu -->
+
+  <style name="Widget.Tack.PopupMenu" parent="Widget.Material3.PopupMenu">
+    <item name="android:popupBackground">@drawable/shape_popup_menu</item>
+    <item name="android:dropDownHorizontalOffset">-8dp</item>
+    <item name="android:popupExitTransition" tools:targetApi="24">@transition/popup_window_exit</item>
+    <item name="android:popupElevation">4dp</item>
+    <item name="android:itemTextAppearance">@style/TextAppearance.Tack.LabelLarge</item>
+  </style>
+
+  <!-- Snackbar -->
+
+  <style name="Widget.Tack.Snackbar" parent="Widget.Material3.Snackbar">
+    <item name="shapeAppearance">?attr/shapeAppearanceCornerMedium</item>
+    <item name="android:paddingTop">4dp</item>
+    <item name="android:paddingBottom">4dp</item>
+  </style>
+
+  <!-- Localized style, no empty base style needed -->
+  <style
+    name="Widget.Tack.Button.TextButton.Snackbar"
+    parent="Widget.Material3Expressive.Button.TextButton.Snackbar">
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
+  </style>
+
+  <!-- ImageView (icons) -->
+
+  <style name="Widget.Tack.ImageView.Icon" parent="">
+    <item name="android:layout_width">24dp</item>
+    <item name="android:layout_height">24dp</item>
+    <item name="tint">?attr/colorOnSurfaceVariant</item>
+    <item name="android:importantForAccessibility">no</item>
+  </style>
+
+  <!-- Button -->
+
+  <!-- Base style -->
+  <style name="Base.Tack.Button" parent="Widget.Material3Expressive.Button">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+  </style>
+
+  <!-- Localized style -->
+  <style name="Widget.Tack.Button" parent="Base.Tack.Button">
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
+  </style>
+
+  <!-- Base style -->
+  <style
+    name="Base.Tack.Button.OutlinedButton"
+    parent="Widget.Material3Expressive.Button.OutlinedButton">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:singleLine">true</item>
+  </style>
+
+  <!-- Localized style -->
+  <style
+    name="Widget.Tack.Button.OutlinedButton"
+    parent="Base.Tack.Button.OutlinedButton">
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
+  </style>
+
+  <!-- Base style -->
+  <style
+    name="Base.Tack.Button.TextButton"
+    parent="Widget.Material3Expressive.Button.TextButton">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:singleLine">true</item>
+  </style>
+
+  <!-- Localized style -->
+  <style
+    name="Widget.Tack.Button.TextButton"
+    parent="Base.Tack.Button.TextButton">
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
+  </style>
+
+  <!-- Base style -->
+  <style
+    name="Base.Tack.Button.TonalButton"
+    parent="Widget.Material3Expressive.Button.TonalButton">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:singleLine">true</item>
+  </style>
+
+  <!-- Localized style -->
+  <style
+    name="Widget.Tack.Button.TonalButton"
+    parent="Base.Tack.Button.TonalButton">
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.TonalButton.Small.SurfaceHighest"
+    parent="Widget.Tack.Button.TonalButton">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.Tack.Button.SurfaceHighest</item>
+    <item name="rippleColor">@color/selector_highlight</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.TonalButton.Xsmall"
+    parent="Widget.Tack.Button.TonalButton">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.Xsmall</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.TonalButton.Medium"
+    parent="Widget.Tack.Button.TonalButton">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.Medium</item>
+  </style>
+
+  <!-- Localized style, no empty base style needed -->
+  <style
+    name="Widget.Tack.Button.TextButton.Dialog"
+    parent="Widget.Material3Expressive.Button.TextButton.Dialog">
+    <item name="android:singleLine">true</item>
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.TextButton.Dialog.Neutral"
+    parent="Widget.Tack.Button.TextButton.Dialog">
+    <item name="android:layout_marginLeft">0dp</item>
+    <item name="android:layout_marginStart">0dp</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.TextButton.Dialog.Error"
+    parent="Widget.Tack.Button.TextButton.Dialog">
+    <item name="android:textColor">?attr/colorError</item>
+    <item name="rippleColor">@color/selector_highlight_error</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.Dialog.Error"
+    parent="Widget.Tack.Button.TextButton.Dialog">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.Tack.Button.Filled.Error</item>
+    <item name="rippleColor">@color/selector_highlight_on_error</item>
+  </style>
+
+  <style name="ThemeOverlay.Tack.Button.Filled.Error" parent="">
+    <item name="colorContainer">?attr/colorError</item>
+    <item name="colorOnContainer">?attr/colorOnError</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Standard"
+    parent="Widget.Material3Expressive.Button.IconButton.Standard">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Standard.Small.Narrow"
+    parent="Widget.Tack.Button.IconButton.Standard">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Small.Narrow</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled"
+    parent="Widget.Material3Expressive.Button.IconButton.Filled">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Small.Narrow"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Small.Narrow</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Small.Wide"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Small.Wide</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Xsmall"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Xsmall</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Xsmall.Narrow"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Xsmall.Narrow</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Xsmall.Wide"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Xsmall.Wide</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal"
+    parent="Widget.Material3Expressive.Button.IconButton.Tonal">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal.Xsmall"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Xsmall</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal.Xsmall.Narrow"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Xsmall.Narrow</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal.Xsmall.Wide"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Xsmall.Wide</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Medium"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Medium</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Medium.Wide"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Medium.Wide</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Large"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Large</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Large.Narrow"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Large.Narrow</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Large.Wide"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Large.Wide</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Filled.Xlarge.Wide"
+    parent="Widget.Tack.Button.IconButton.Filled">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Xlarge.Wide</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal.Large.Narrow"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Large.Narrow</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal.Xlarge.Narrow"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Xlarge.Narrow</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal.Medium.Narrow"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Medium.Narrow</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal.Medium.Wide"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Medium.Wide</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal.Small.Narrow"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Small.Narrow</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Tonal.Small.Wide"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialSizeOverlay">@style/SizeOverlay.Material3Expressive.Button.IconButton.Small.Wide</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.SurfaceHighest"
+    parent="Widget.Tack.Button.IconButton.Tonal">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.Tack.Button.SurfaceHighest</item>
+    <item name="rippleColor">@color/selector_highlight</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.SurfaceHighest.Small.Wide"
+    parent="Widget.Tack.Button.IconButton.Tonal.Small.Wide">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.Tack.Button.SurfaceHighest</item>
+    <item name="rippleColor">@color/selector_highlight</item>
+  </style>
+
+  <style name="ThemeOverlay.Tack.Button.SurfaceHighest" parent="">
+    <item name="colorContainer">?attr/colorSurfaceContainerHighest</item>
+    <item name="colorOnContainer">?attr/colorOnSurfaceVariant</item>
+  </style>
+
+  <style
+    name="Widget.Tack.Button.IconButton.Outlined"
+    parent="Widget.Material3Expressive.Button.IconButton.Outlined">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+  </style>
+
+  <!-- ButtonGroup -->
+
+  <style
+    name="Widget.Tack.ButtonGroup.Large"
+    parent="Widget.Material3Expressive.MaterialButtonGroup">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.Tack.ButtonGroup.Overflow</item>
+  </style>
+
+  <style name="ThemeOverlay.Tack.ButtonGroup.Overflow" parent="ThemeOverlay.Material3Expressive.MaterialButtonGroup.Overflow">
+    <item name="materialButtonGroupOverflowButtonStyle">@style/Widget.Tack.Button.IconButton.Tonal.Large.Narrow</item>
+    <item name="materialButtonGroupPopupMenuStyle">@style/Widget.Tack.PopupMenu</item>
+  </style>
+
+  <!-- RadioButton -->
+
+  <style
+    name="Widget.Tack.RadioButton"
+    parent="Widget.Material3.CompoundButton.RadioButton">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:textAppearance">?attr/textAppearanceBodyLarge</item>
+    <item name="android:paddingStart">16dp</item>
+    <item name="android:minHeight">40dp</item>
+  </style>
+
+  <!-- CardView -->
+
+  <style name="Widget.Tack.Card.Text" parent="@style/Widget.Material3.CardView.Filled">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_marginBottom">8dp</item>
+    <item name="contentPadding">16dp</item>
+    <item name="cardElevation">0dp</item>
+    <item name="cardCornerRadius">16dp</item>
+    <item name="rippleColor">@color/selector_highlight</item>
+  </style>
+
+  <style name="ShapeAppearance.Tack.Corner.LargeIncreased.Top" parent="ShapeAppearance.Material3.Corner.LargeIncreased">
+    <item name="cornerSizeTopLeft">?attr/shapeCornerSizeLargeIncreased</item>
+    <item name="cornerSizeTopRight">?attr/shapeCornerSizeLargeIncreased</item>
+    <item name="cornerSizeBottomLeft">0dp</item>
+    <item name="cornerSizeBottomRight">0dp</item>
+  </style>
+
+  <style name="ShapeAppearance.Tack.Corner.Segmented.Last" parent="ShapeAppearance.Material3.Corner.LargeIncreased">
+    <item name="cornerSizeTopLeft">?attr/shapeCornerSizeExtraSmall</item>
+    <item name="cornerSizeTopRight">?attr/shapeCornerSizeExtraSmall</item>
+    <item name="cornerSizeBottomLeft">?attr/shapeCornerSizeLargeIncreased</item>
+    <item name="cornerSizeBottomRight">?attr/shapeCornerSizeLargeIncreased</item>
+  </style>
+
+  <!-- TextInputLayout -->
+
+  <style
+    name="Widget.Tack.TextInputLayout.FilledBox"
+    parent="Widget.Material3.TextInputLayout.FilledBox">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="errorIconDrawable">@null</item>
+    <item name="boxCornerRadiusTopStart">16dp</item>
+    <item name="boxCornerRadiusTopEnd">16dp</item>
+  </style>
+
+  <style
+    name="Widget.Tack.TextInputLayout.OutlinedBox"
+    parent="Widget.Material3.TextInputLayout.OutlinedBox">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="errorIconDrawable">@null</item>
+    <item name="boxCornerRadiusTopStart">16dp</item>
+    <item name="boxCornerRadiusTopEnd">16dp</item>
+    <item name="boxCornerRadiusBottomStart">16dp</item>
+    <item name="boxCornerRadiusBottomEnd">16dp</item>
+  </style>
+
+  <!-- CheckBox -->
+
+  <style name="Widget.Tack.CheckBox" parent="Widget.Material3.CompoundButton.CheckBox">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:textSize">16sp</item>
+    <item name="android:paddingStart">16dp</item>
+    <item name="android:minHeight">38dp</item>
+    <item name="android:textAlignment">viewStart</item>
+  </style>
+
+  <!-- Switch -->
+
+  <style name="Widget.Tack.Switch" parent="Widget.Material3.CompoundButton.MaterialSwitch">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_marginStart">16dp</item>
+    <item name="thumbIcon">@drawable/selector_switch_thumb_icon</item>
+    <item name="thumbIconTint">@color/selector_switch_thumb_icon_tint</item>
+  </style>
+
+  <!-- Slider -->
+
+  <style name="Widget.Tack.Slider" parent="Widget.Material3.Slider">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:stepSize">1</item>
+    <item name="thumbElevation">0dp</item>
+    <item name="labelStyle">@style/Widget.Tack.Tooltip</item>
+    <item name="tickRadiusActive">2dp</item>
+    <item name="tickRadiusInactive">2dp</item>
+    <item name="trackStopIndicatorSize">0dp</item>
+  </style>
+
+  <style name="Widget.Tack.Slider.Small" parent="Widget.Tack.Slider">
+    <item name="trackHeight">24dp</item>
+  </style>
+
+  <!-- Badge -->
+
+  <style name="Widget.Tack.Badge" parent="Widget.Material3.Badge">
+    <item name="badgeTextAppearance">@style/TextAppearance.Tack.LabelSmall</item>
+  </style>
+
+  <!-- Tooltip -->
+
+  <style name="Widget.Tack.Tooltip" parent="Widget.Material3.Tooltip">
+    <item name="android:textColor">?attr/colorOnSurfaceInverse</item>
+    <item name="backgroundTint">?attr/colorSurfaceInverse</item>
+    <item name="android:textAppearance">@style/TextAppearance.Tack.Tooltip</item>
+    <item name="android:padding">16dp</item>
+    <item name="android:minHeight">40dp</item>
+    <item name="showMarker">false</item>
+  </style>
+
+  <!-- ExtendedFloatingActionButton -->
+
+  <!-- Overridden in land and sw600dp for different sizes -->
+  <style
+    name="Widget.Tack.ExtendedFloatingActionButton.Primary"
+    parent="Widget.Material3.ExtendedFloatingActionButton.Medium">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.Material3.ExtendedFloatingActionButton.Primary</item>
+  </style>
+
+  <!-- Overridden in land and sw600dp for different sizes -->
+  <style
+    name="Widget.Tack.ExtendedFloatingActionButton.Tertiary"
+    parent="Widget.Material3.ExtendedFloatingActionButton.Medium">
+    <item name="materialThemeOverlay">@style/ThemeOverlay.Material3.ExtendedFloatingActionButton.Tertiary</item>
+  </style>
+
+  <!-- LinearLayout (lists) -->
+
+  <style name="Widget.Tack.LinearLayout.ListItem" parent="">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:gravity">center_vertical</item>
+    <item name="android:orientation">horizontal</item>
+  </style>
+
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.SingleLine"
+    parent="Widget.Tack.LinearLayout.ListItem">
+    <item name="android:minHeight">56dp</item>
+    <item name="android:paddingStart">16dp</item>
+    <item name="android:paddingEnd">24dp</item>
+    <item name="android:paddingTop">8dp</item>
+    <item name="android:paddingBottom">8dp</item>
+    <item name="android:background">@drawable/ripple_list_item_bg</item>
+  </style>
+
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.TwoLine"
+    parent="Widget.Tack.LinearLayout.ListItem">
+    <item name="android:minHeight">72dp</item>
+    <item name="android:paddingStart">16dp</item>
+    <item name="android:paddingEnd">24dp</item>
+    <item name="android:paddingTop">8dp</item>
+    <item name="android:paddingBottom">8dp</item>
+  </style>
+
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.TwoLine.More"
+    parent="Widget.Tack.LinearLayout.ListItem.TwoLine">
+    <item name="android:paddingTop">12dp</item>
+    <item name="android:paddingBottom">12dp</item>
+  </style>
+
+  <style name="Widget.Tack.LinearLayout.ListItem.TextBox" parent="">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:orientation">vertical</item>
+  </style>
+
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.TextBox.Stretch"
+    parent="Widget.Tack.LinearLayout.ListItem.TextBox">
+    <item name="android:layout_width">0dp</item>
+    <item name="android:layout_weight">1</item>
+  </style>
+
+  <!-- Segmented list -->
+
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.SingleLine.Segmented"
+    parent="Widget.Tack.LinearLayout.ListItem">
+    <item name="android:minHeight">56dp</item>
+    <item name="android:paddingStart">16dp</item>
+    <item name="android:paddingEnd">16dp</item>
+    <item name="android:paddingTop">8dp</item>
+    <item name="android:paddingBottom">8dp</item>
+  </style>
+
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented"
+    parent="Widget.Tack.LinearLayout.ListItem">
+    <item name="android:minHeight">72dp</item>
+    <item name="android:paddingStart">16dp</item>
+    <item name="android:paddingEnd">16dp</item>
+    <item name="android:paddingTop">8dp</item>
+    <item name="android:paddingBottom">8dp</item>
+  </style>
+
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.TwoLine.More.Segmented"
+    parent="Widget.Tack.LinearLayout.ListItem.TwoLine.Segmented">
+    <item name="android:paddingTop">12dp</item>
+    <item name="android:paddingBottom">12dp</item>
+  </style>
+
+  <style
+    name="Widget.Tack.LinearLayout.ListItem.ThreeLine.Segmented"
+    parent="Widget.Tack.LinearLayout.ListItem">
+    <item name="android:minHeight">88dp</item>
+    <item name="android:gravity">top</item>
+    <item name="android:paddingStart">16dp</item>
+    <item name="android:paddingEnd">16dp</item>
+    <item name="android:paddingTop">12dp</item>
+    <item name="android:paddingBottom">12dp</item>
+  </style>
+
+  <!-- ImageView (lists) -->
+
+  <style name="Widget.Tack.ImageView.ListItem.Icon" parent="">
+    <item name="android:layout_width">24dp</item>
+    <item name="android:layout_height">24dp</item>
+    <item name="android:layout_marginEnd">16dp</item>
+    <item name="tint">?attr/colorOnSurfaceVariant</item>
+    <item name="android:importantForAccessibility">no</item>
+  </style>
+
+  <style
+    name="Widget.Tack.ImageView.ListItem.Icon.Colored"
+    parent="Widget.Tack.ImageView.ListItem.Icon">
+    <item name="tint">@null</item>
+  </style>
+
+  <!-- TextView -->
+
+  <style name="Base.Tack.TextView" parent="Widget.MaterialComponents.TextView">
+    <item name="android:textAppearance">?attr/textAppearanceBodyLarge</item>
+    <item name="android:textColor">?attr/colorOnSurface</item>
+    <item name="android:textAlignment">viewStart</item>
+    <item name="android:breakStrategy">high_quality</item>
+    <item name="android:hyphenationFrequency">full</item>
+    <item name="android:lineBreakWordStyle" tools:targetApi="33">phrase</item>
+  </style>
+
+  <style name="Widget.Tack.TextView" parent="Base.Tack.TextView">
+    <!-- Overridden in v33 with fullFast -->
+    <item name="android:hyphenationFrequency">full</item>
+  </style>
+
+  <!-- Localized style, no empty base style needed -->
+  <style name="Widget.Tack.TextView.Medium" parent="Widget.Tack.TextView">
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
+  </style>
+
+  <style name="Widget.Tack.TextView.Paragraph" parent="Widget.Tack.TextView" />
+
+  <style
+    name="Widget.Tack.TextView.Paragraph.BodyMedium"
+    parent="Widget.Tack.TextView.Paragraph">
+    <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
+  </style>
+
+  <!-- M3 TYPOGRAPHY -->
+
+  <style name="Widget.Tack.TextView.HeadlineMedium" parent="Widget.Tack.TextView">
+    <item name="android:textAppearance">?attr/textAppearanceHeadlineMedium</item>
+  </style>
+
+  <style name="Widget.Tack.TextView.HeadlineSmall" parent="Widget.Tack.TextView">
+    <item name="android:textAppearance">?attr/textAppearanceHeadlineSmall</item>
+  </style>
+
+  <style name="Widget.Tack.TextView.TitleLarge" parent="Widget.Tack.TextView">
+    <item name="android:textAppearance">?attr/textAppearanceTitleLarge</item>
+  </style>
+
+  <style name="Widget.Tack.TextView.TitleMedium" parent="Widget.Tack.TextView.Medium">
+    <item name="android:textAppearance">?attr/textAppearanceTitleMedium</item>
+  </style>
+
+  <style name="Widget.Tack.TextView.BodyMedium" parent="Widget.Tack.TextView">
+    <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
+  </style>
+
+  <style name="Widget.Tack.TextView.BodySmall" parent="Widget.Tack.TextView">
+    <item name="android:textAppearance">?attr/textAppearanceBodySmall</item>
+  </style>
+
+  <style name="Widget.Tack.TextView.LabelLarge" parent="Widget.Tack.TextView.Medium">
+    <item name="android:textAppearance">?attr/textAppearanceLabelLarge</item>
+  </style>
+
+  <style name="Widget.Tack.TextView.LabelMedium" parent="Widget.Tack.TextView.Medium">
+    <item name="android:textAppearance">?attr/textAppearanceLabelMedium</item>
+  </style>
+
+  <style name="Widget.Tack.TextView.LabelSmall" parent="Widget.Tack.TextView.Medium">
+    <item name="android:textAppearance">?attr/textAppearanceLabelSmall</item>
+  </style>
+
+  <!-- Other text widget styles -->
+
+  <style name="Widget.Tack.TextView.Toolbar" parent="Widget.Tack.TextView">
+    <item name="android:textAppearance">?attr/textAppearanceTitleLarge</item>
+    <item name="android:singleLine">true</item>
+    <item name="android:textColor">?attr/colorOnSurface</item>
+  </style>
+
+  <style name="Widget.Tack.TextView.Category" parent="Widget.Tack.TextView.Medium">
+    <item name="android:layout_width">wrap_content</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:layout_marginStart">56dp</item>
+    <item name="android:paddingTop">10dp</item>
+    <item name="android:paddingBottom">3dp</item>
+    <item name="android:textAppearance">?attr/textAppearanceTitleSmall</item>
+    <item name="android:textColor">?attr/colorSecondary</item>
+  </style>
+
+  <style name="Widget.Tack.TextView.Category.Segmented" parent="Widget.Tack.TextView.Category">
+    <item name="android:layout_marginStart">0dp</item>
+    <item name="android:paddingTop">16dp</item>
+    <item name="android:paddingBottom">8dp</item>
+  </style>
+
+  <style name="Widget.Tack.TextView.ListItem.OverLine" parent="Widget.Tack.TextView.Medium">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:maxLines">2</item>
+    <item name="android:textAppearance">?attr/textAppearanceLabelMedium</item><!--Small-->
+    <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+  </style>
+
+  <style name="Widget.Tack.TextView.ListItem.Title" parent="Widget.Tack.TextView.Medium">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:textAppearance">?attr/textAppearanceBodyLarge</item>
+    <item name="android:textColor">?attr/colorOnSurface</item>
+  </style>
+
+  <style name="Widget.Tack.TextView.ListItem.Description" parent="Widget.Tack.TextView">
+    <item name="android:layout_width">match_parent</item>
+    <item name="android:layout_height">wrap_content</item>
+    <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
+    <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+  </style>
+
+  <!-- TextAppearance -->
+
+  <style name="TextAppearance.Tack.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge">
+    <item name="android:fontFamily">@font/google_sans_flex_regular</item>
+    <item name="fontFamily">@font/google_sans_flex_regular</item>
+  </style>
+
+  <style name="TextAppearance.Tack.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium">
+    <item name="android:fontFamily">@font/google_sans_flex_regular</item>
+    <item name="fontFamily">@font/google_sans_flex_regular</item>
+  </style>
+
+  <style name="TextAppearance.Tack.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall">
+    <item name="android:fontFamily">@font/google_sans_flex_regular</item>
+    <item name="fontFamily">@font/google_sans_flex_regular</item>
+  </style>
+
+  <style name="TextAppearance.Tack.TitleLarge" parent="TextAppearance.Material3.TitleLarge">
+    <item name="android:fontFamily">@font/google_sans_flex_regular</item>
+    <item name="fontFamily">@font/google_sans_flex_regular</item>
+  </style>
+
+  <!-- Localized style, no empty base style needed -->
+  <style name="TextAppearance.Tack.TitleMedium" parent="TextAppearance.Material3.TitleMedium">
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
+  </style>
+
+  <!-- Localized style, no empty base style needed -->
+  <style name="TextAppearance.Tack.LabelLarge" parent="TextAppearance.Material3.LabelLarge">
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
+  </style>
+
+  <!-- Localized style, no empty base style needed -->
+  <style name="TextAppearance.Tack.LabelSmall" parent="TextAppearance.Material3.LabelSmall">
+    <item name="android:fontFamily">@font/google_sans_flex_medium</item>
+    <item name="fontFamily">@font/google_sans_flex_medium</item>
+  </style>
+
+  <style name="TextAppearance.Tack.Tooltip" parent="TextAppearance.Material3.BodyLarge">
+    <item name="android:textSize">14sp</item>
+    <item name="android:fontFamily">@font/google_sans_flex_regular</item>
+    <item name="fontFamily">@font/google_sans_flex_regular</item>
+  </style>
+
+</resources>
