@@ -23,13 +23,14 @@ import android.content.Context
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.AudioManager.OnAudioFocusChangeListener
+import android.os.Build
 import android.util.Log
 import androidx.annotation.Keep
 import androidx.annotation.RawRes
 import androidx.core.content.getSystemService
+import xyz.zedler.patrick.tack.core.R
 import xyz.zedler.patrick.tack.core.audio.bridge.OboeNativeBridge
 import xyz.zedler.patrick.tack.core.audio.util.AudioUtil
-import xyz.zedler.patrick.tack.core.R
 import java.io.IOException
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -48,26 +49,29 @@ class AudioEngine(
   private var engineHandle: Long = 0
   private val executor: ScheduledExecutorService = Executors.newSingleThreadScheduledExecutor()
   private var delayedStopTask: ScheduledFuture<*>? = null
-  private val audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-    .setAudioAttributes(AudioUtil.getAttributes())
-    .setWillPauseWhenDucked(true)
-    .setOnAudioFocusChangeListener(this)
-    .build()
+  private val audioFocusRequest: AudioFocusRequest? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+      .setAudioAttributes(AudioUtil.getAttributes())
+      .setWillPauseWhenDucked(true)
+      .setOnAudioFocusChangeListener(this)
+      .build()
+  } else {
+    null
+  }
 
   @Volatile
   private var isPlaying: Boolean = false
+
   @Volatile
   private var isStreamRunning: Boolean = false
   var ignoreFocus: Boolean = false
 
-  private val isInitialized: Boolean
-    get() = engineHandle != 0L
+  private fun isInitialized(): Boolean = engineHandle != 0L
 
-  // Properties with custom setters to update native engine immediately
   var gain: Int = Constants.Def.GAIN
     set(value) {
       field = value
-      if (isInitialized) {
+      if (isInitialized()) {
         val dbToLinear = 10.0.pow(value / 20.0).toFloat()
         nativeBridge.nativeSetMasterVolume(engineHandle, dbToLinear)
       }
@@ -76,7 +80,7 @@ class AudioEngine(
   var isMuted: Boolean = false
     set(value) {
       field = value
-      if (isInitialized) {
+      if (isInitialized()) {
         nativeBridge.nativeSetMuted(engineHandle, value)
       }
     }
@@ -102,14 +106,14 @@ class AudioEngine(
   fun destroy() {
     executor.shutdownNow()
     stop()
-    if (isInitialized) {
+    if (isInitialized()) {
       nativeBridge.nativeDestroy(engineHandle)
       engineHandle = 0
     }
   }
 
   fun warmUp() {
-    if (!isInitialized) return
+    if (!isInitialized()) return
     cancelDelayedStop()
 
     if (!isStreamRunning) {
@@ -125,7 +129,7 @@ class AudioEngine(
   }
 
   fun play() {
-    if (!isInitialized) return
+    if (!isInitialized()) return
 
     cancelDelayedStop()
 
@@ -146,7 +150,7 @@ class AudioEngine(
   }
 
   fun stop() {
-    if (!isInitialized) return
+    if (!isInitialized()) return
     cancelDelayedStop()
 
     val success = nativeBridge.nativeStop(engineHandle)
@@ -154,8 +158,13 @@ class AudioEngine(
       isStreamRunning = false
       isPlaying = false
 
-      if (!ignoreFocus) {
-        audioManager!!.abandonAudioFocusRequest(audioFocusRequest)
+      if (!ignoreFocus && audioManager != null) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+          audioManager.abandonAudioFocusRequest(audioFocusRequest!!)
+        } else {
+          @Suppress("DEPRECATION")
+          audioManager.abandonAudioFocus(this)
+        }
       }
     } else {
       Log.e(TAG, "Failed to stop Oboe engine")
@@ -166,8 +175,13 @@ class AudioEngine(
     if (!isPlaying) return
     isPlaying = false
 
-    if (!ignoreFocus) {
-      audioManager!!.abandonAudioFocusRequest(audioFocusRequest)
+    if (!ignoreFocus && audioManager != null) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        audioManager.abandonAudioFocusRequest(audioFocusRequest!!)
+      } else {
+        @Suppress("DEPRECATION")
+        audioManager.abandonAudioFocus(this)
+      }
     }
 
     listener.onAudioStop()
@@ -175,7 +189,7 @@ class AudioEngine(
   }
 
   override fun onAudioFocusChange(focusChange: Int) {
-    if (!isInitialized) return
+    if (!isInitialized()) return
 
     when (focusChange) {
       AudioManager.AUDIOFOCUS_GAIN -> {
@@ -194,7 +208,7 @@ class AudioEngine(
   }
 
   fun setSound(sound: String) {
-    if (!isInitialized) return
+    if (!isInitialized()) return
 
     val config = when (sound) {
       Constants.Sound.WOOD -> SoundConfig(
@@ -246,25 +260,27 @@ class AudioEngine(
       )
     }
 
-    nativeBridge.nativeSetTickData(
-      engineHandle,
-      NATIVE_TICK_TYPE_NORMAL,
-      loadAudio(config.normal, config.pitchNormal)
-    )
-    nativeBridge.nativeSetTickData(
-      engineHandle,
-      NATIVE_TICK_TYPE_STRONG,
-      loadAudio(config.strong, config.pitchStrong)
-    )
-    nativeBridge.nativeSetTickData(
-      engineHandle,
-      NATIVE_TICK_TYPE_SUB,
-      loadAudio(config.sub, config.pitchSub)
-    )
+    if (isInitialized()) {
+      nativeBridge.nativeSetTickData(
+        engineHandle,
+        NATIVE_TICK_TYPE_NORMAL,
+        loadAudio(config.normal, config.pitchNormal)
+      )
+      nativeBridge.nativeSetTickData(
+        engineHandle,
+        NATIVE_TICK_TYPE_STRONG,
+        loadAudio(config.strong, config.pitchStrong)
+      )
+      nativeBridge.nativeSetTickData(
+        engineHandle,
+        NATIVE_TICK_TYPE_SUB,
+        loadAudio(config.sub, config.pitchSub)
+      )
+    }
   }
 
   fun playTick(tickType: String, muted: Boolean) {
-    if (!isPlaying || !isInitialized || isMuted || muted) return
+    if (!isPlaying || !isInitialized() || isMuted || muted) return
 
     val nativeTickType = when (tickType) {
       Constants.TickType.STRONG -> NATIVE_TICK_TYPE_STRONG
@@ -328,7 +344,14 @@ class AudioEngine(
   private fun requestAudioFocus() {
     if (ignoreFocus || audioManager == null) return
 
-    audioManager.requestAudioFocus(audioFocusRequest)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      audioManager.requestAudioFocus(audioFocusRequest!!)
+    } else {
+      @Suppress("DEPRECATION")
+      audioManager.requestAudioFocus(
+        this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN
+      )
+    }
   }
 
   // --- Helper Types ---

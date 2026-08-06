@@ -1,16 +1,12 @@
 package xyz.zedler.patrick.tack.service
 
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
-import androidx.core.app.NotificationCompat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -22,9 +18,15 @@ import xyz.zedler.patrick.tack.TackApplication
 import xyz.zedler.patrick.tack.core.audio.AudioEngine
 import xyz.zedler.patrick.tack.core.data.SettingsRepository
 import xyz.zedler.patrick.tack.core.data.SongRepository
+import xyz.zedler.patrick.tack.core.metronome.MetronomeConstants.Unit
 import xyz.zedler.patrick.tack.core.metronome.MetronomeEngine
-import xyz.zedler.patrick.tack.util.FlashlightUtilImpl
-import xyz.zedler.patrick.tack.util.HapticUtilImpl
+import xyz.zedler.patrick.tack.core.model.MetronomeConfig
+import xyz.zedler.patrick.tack.core.model.MetronomeState
+import xyz.zedler.patrick.tack.core.util.TimeUtil
+import xyz.zedler.patrick.tack.hardware.FlashlightProviderImpl
+import xyz.zedler.patrick.tack.hardware.HapticProviderImpl
+import xyz.zedler.patrick.tack.util.NotificationUtil
+import java.util.Locale
 
 class MetronomeService : Service() {
 
@@ -35,6 +37,10 @@ class MetronomeService : Service() {
   private lateinit var settingsRepository: SettingsRepository
   private lateinit var songRepository: SongRepository
 
+  private var isBound = false
+  private var permNotification = false
+  private var metronomeConfig = MetronomeConfig()
+
   override fun onCreate() {
     super.onCreate()
 
@@ -42,16 +48,17 @@ class MetronomeService : Service() {
     settingsRepository = app.settingsRepository
     songRepository = app.songRepository
 
-    val hapticProvider = HapticUtilImpl(this)
-    val flashlightProvider = FlashlightUtilImpl(this)
-    val audioEngine = AudioEngine(this) { /* stop */ }
+    val hapticProvider = HapticProviderImpl(this)
+    val flashlightProvider = FlashlightProviderImpl(this)
+    val audioEngine = AudioEngine(this) { /* stop callback */ }
 
     engine = MetronomeEngine(audioEngine, hapticProvider, flashlightProvider)
 
-    createNotificationChannel()
+    NotificationUtil.createNotificationChannel(this)
 
     serviceScope.launch {
       settingsRepository.metronomeConfig.collect { config ->
+        metronomeConfig = config
         engine.setConfig(config)
       }
     }
@@ -69,17 +76,39 @@ class MetronomeService : Service() {
     }
 
     serviceScope.launch {
+      settingsRepository.flashlight.collect { strength ->
+        engine.setFlashlight(strength)
+      }
+    }
+
+    serviceScope.launch {
+      settingsRepository.permNotification.collect { perm ->
+        permNotification = perm
+      }
+    }
+
+    serviceScope.launch {
       engine.state.collectLatest { state ->
-        if (state.isPlaying) {
-          val notification = getNotification(state.tempo.toString())
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(
-              NOTIFICATION_ID,
-              notification,
-              ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
-            )
+        if (state.isPlaying || (permNotification && hasPermission())) {
+          val notification = getNotification(state)
+          if (state.isPlaying) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+              startForeground(
+                NotificationUtil.NOTIFICATION_ID,
+                notification,
+                ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+              )
+            } else {
+              startForeground(NotificationUtil.NOTIFICATION_ID, notification)
+            }
           } else {
-            startForeground(NOTIFICATION_ID, notification)
+            NotificationUtil.updateNotification(this@MetronomeService, notification)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+              stopForeground(STOP_FOREGROUND_DETACH)
+            } else {
+              @Suppress("DEPRECATION")
+              stopForeground(false)
+            }
           }
         } else {
           if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -88,6 +117,7 @@ class MetronomeService : Service() {
             @Suppress("DEPRECATION")
             stopForeground(true)
           }
+          if (!isBound) stopSelf()
         }
       }
     }
@@ -97,6 +127,18 @@ class MetronomeService : Service() {
     when (intent?.action) {
       ACTION_START -> engine.start()
       ACTION_STOP -> engine.stop()
+      ACTION_DISMISS -> {
+        if (!isBound) {
+          engine.stop()
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+          } else {
+            @Suppress("DEPRECATION")
+            stopForeground(true)
+          }
+          stopSelf()
+        }
+      }
       ACTION_APPLY_SONG, ACTION_START_SONG -> {
         val songId = intent.getStringExtra(EXTRA_SONG_ID) ?: "default"
         val startPlaying = intent.action == ACTION_START_SONG
@@ -105,8 +147,6 @@ class MetronomeService : Service() {
           songWithParts?.let {
             val part = it.parts.firstOrNull { p -> p.partIndex == 0 }
             part?.let { p ->
-              // Here we should update the engine config from the part
-              // For simplicity, just update the tempo for now or full config
               engine.setConfig(p.toConfig())
               if (startPlaying) engine.start()
             }
@@ -117,45 +157,110 @@ class MetronomeService : Service() {
     return START_STICKY
   }
 
-  override fun onBind(intent: Intent): IBinder = binder
+  override fun onBind(intent: Intent): IBinder {
+    isBound = true
+    return binder
+  }
+
+  override fun onUnbind(intent: Intent?): Boolean {
+    isBound = false
+    return super.onUnbind(intent)
+  }
 
   override fun onDestroy() {
     super.onDestroy()
-    engine.stop()
+    engine.destroy()
     serviceScope.cancel()
   }
 
-  private fun getNotification(content: String): Notification {
-    return NotificationCompat.Builder(this, CHANNEL_ID)
-      .setContentTitle("Metronome")
-      .setContentText(content)
-      .setSmallIcon(R.drawable.ic_logo_notification)
-      .setOngoing(true)
-      .build()
+  private fun getNotification(state: MetronomeState): Notification {
+    val isTimerActive = metronomeConfig.isTimerActive
+    val timerTextLong = if (isTimerActive) {
+      getString(
+        R.string.label_part_duration_notification,
+        getCurrentTimerString(state),
+        getTotalTimerString()
+      )
+    } else {
+      getString(R.string.msg_service_running_return)
+    }
+
+    return NotificationUtil.getNotification(
+      context = this,
+      showPlayButton = !state.isPlaying,
+      showTimer = isTimerActive,
+      showPromotedLiveUpdate = state.isPlaying,
+      timerTextLong = timerTextLong,
+      timerTextShort = if (isTimerActive) getCurrentTimerString(state) else state.tempo.toString(),
+      timerProgress = state.timerProgress,
+      timerDuration = metronomeConfig.timerDuration
+    )
   }
 
-  private fun createNotificationChannel() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      val channel = NotificationChannel(
-        CHANNEL_ID,
-        "Metronome Service",
-        NotificationManager.IMPORTANCE_LOW
-      )
-      val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-      manager.createNotificationChannel(channel)
+  private fun getCurrentTimerString(state: MetronomeState): String {
+    return when (metronomeConfig.timerUnit) {
+      Unit.SECONDS, Unit.MINUTES -> {
+        val totalMillis = engine.getTimerInterval()
+        val currentMillis = (state.timerProgress * totalMillis).toLong()
+        val seconds = (currentMillis / 1000).toInt()
+        val totalHours = if (metronomeConfig.timerUnit == Unit.MINUTES) {
+          metronomeConfig.timerDuration / 60
+        } else {
+          metronomeConfig.timerDuration / 3600
+        }
+        TimeUtil.getTimeStringFromSeconds(seconds, totalHours > 0)
+      }
+      else -> {
+        var format = if (metronomeConfig.beatsCount < 10) "%d.%01d" else "%d.%02d"
+        if (metronomeConfig.subdivisionsCount > 1) {
+          format += if (metronomeConfig.subdivisionsCount < 10) ".%01d" else ".%02d"
+          String.format(
+            Locale.ENGLISH,
+            format,
+            state.timerBarIndex + 1,
+            state.timerBeatIndex + 1,
+            state.timerSubIndex + 1
+          )
+        } else {
+          String.format(
+            Locale.ENGLISH,
+            format,
+            state.timerBarIndex + 1,
+            state.timerBeatIndex + 1
+          )
+        }
+      }
     }
   }
+
+  private fun getTotalTimerString(): String {
+    return when (metronomeConfig.timerUnit) {
+      Unit.SECONDS, Unit.MINUTES -> {
+        val seconds = if (metronomeConfig.timerUnit == Unit.MINUTES) {
+          metronomeConfig.timerDuration * 60
+        } else {
+          metronomeConfig.timerDuration
+        }
+        TimeUtil.getTimeStringFromSeconds(seconds, false)
+      }
+      else -> resources.getQuantityString(
+        R.plurals.options_unit_bars,
+        metronomeConfig.timerDuration,
+        metronomeConfig.timerDuration
+      )
+    }
+  }
+
+  private fun hasPermission(): Boolean = NotificationUtil.hasPermission(this)
 
   inner class MetronomeBinder : Binder() {
     fun getService(): MetronomeService = this@MetronomeService
   }
 
   companion object {
-    private const val NOTIFICATION_ID = 1
-    private const val CHANNEL_ID = "metronome_channel"
-
     const val ACTION_START = "xyz.zedler.patrick.tack.action.START"
     const val ACTION_STOP = "xyz.zedler.patrick.tack.action.STOP"
+    const val ACTION_DISMISS = "xyz.zedler.patrick.tack.action.DISMISS"
     const val ACTION_APPLY_SONG = "xyz.zedler.patrick.tack.action.APPLY_SONG"
     const val ACTION_START_SONG = "xyz.zedler.patrick.tack.action.START_SONG"
 

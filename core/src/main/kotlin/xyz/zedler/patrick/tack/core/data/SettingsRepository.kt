@@ -57,6 +57,7 @@ class SettingsRepository(private val dataStore: AppSettingsDataStore) {
   val latency = dataStore.latency
   val ignoreFocus = dataStore.ignoreFocus
   val gain = dataStore.gain
+  val permNotification = dataStore.permNotification
 
   val songsOrder = dataStore.songsOrder
   val currentSongId = dataStore.currentSongId

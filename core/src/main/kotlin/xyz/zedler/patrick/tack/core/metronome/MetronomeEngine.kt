@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import xyz.zedler.patrick.tack.core.audio.AudioProvider
+import xyz.zedler.patrick.tack.core.hardware.FlashlightProvider
+import xyz.zedler.patrick.tack.core.hardware.HapticProvider
 import xyz.zedler.patrick.tack.core.audio.Constants.TickType
 import xyz.zedler.patrick.tack.core.metronome.MetronomeConstants.Unit
 import xyz.zedler.patrick.tack.core.model.MetronomeConfig
@@ -53,6 +55,7 @@ class MetronomeEngine(
   private var muteCountDown = 0
   private var latency: Long = 0
   private var beatMode: String = "all"
+  private var flashlightStrength: String = "off"
 
   fun setConfig(newConfig: MetronomeConfig) {
     val oldConfig = config
@@ -79,6 +82,10 @@ class MetronomeEngine(
   fun setBeatMode(mode: String) {
     beatMode = mode
     audioProvider.isMuted = mode == "vibration"
+  }
+
+  fun setFlashlight(strength: String) {
+    flashlightStrength = strength
   }
 
   fun start() {
@@ -141,6 +148,13 @@ class MetronomeEngine(
     callbackThread?.quit()
     tickThread = null
     callbackThread = null
+    
+    flashlightProvider?.cleanup()
+  }
+
+  fun destroy() {
+    stop()
+    flashlightProvider?.cleanup()
   }
 
   private fun resetHandlers() {
@@ -334,8 +348,13 @@ class MetronomeEngine(
           else -> hapticProvider?.click(false)
         }
       }
-      if (flashlightProvider != null && !tick.isMuted) {
-        // Implementation similar to legacy
+      if (flashlightStrength != "off" && !tick.isMuted) {
+        val strength = if (flashlightStrength == "strong") 0.8f else 0.15f
+        when (tick.type) {
+          TickType.STRONG -> flashlightProvider?.flash(100, strength)
+          TickType.SUB, TickType.MUTED, TickType.BEAT_SUB_MUTED -> {}
+          else -> flashlightProvider?.flash(20, strength)
+        }
       }
     }, nextScheduleTime + latency)
 
@@ -437,16 +456,16 @@ class MetronomeEngine(
     }
   }
 
-  private fun calculateMuteCount(isMuted: Boolean): Int {
+  fun calculateMuteCount(isMuted: Boolean): Int {
     val count = if (isMuted) config.muteMute else config.mutePlay
     return if (config.muteRandom) random.nextInt(count + 1) else count
   }
 
-  private fun getInterval(): Long = 1000L * 60 / maxOf(config.tempo, 1)
+  fun getInterval(): Long = 1000L * 60 / maxOf(config.tempo, 1)
 
-  private fun getCountInInterval(): Long = getInterval() * config.beatsCount * config.countIn
+  fun getCountInInterval(): Long = getInterval() * config.beatsCount * config.countIn
 
-  private fun getTimerInterval(): Long {
+  fun getTimerInterval(): Long {
     val factor = when (config.timerUnit) {
       Unit.SECONDS -> 1000L
       Unit.MINUTES -> 60000L
@@ -455,7 +474,7 @@ class MetronomeEngine(
     return factor * config.timerDuration
   }
 
-  private fun getTimerIntervalRemaining(): Long {
+  fun getTimerIntervalRemaining(): Long {
     val total = getTimerInterval()
     val elapsed = clock.uptimeMillis() - timerStartTime
     return (total - elapsed).coerceAtLeast(0)

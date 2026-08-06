@@ -104,7 +104,7 @@ ksp {
 }
 
 dependencies {
-  implementation(project(":core"))
+  implementation(project(":legacy-core"))
   implementation(libs.core)
   implementation(libs.appcompat)
   implementation(libs.fragment)

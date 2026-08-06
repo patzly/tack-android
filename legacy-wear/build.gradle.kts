@@ -101,7 +101,7 @@ kotlin {
 }
 
 dependencies {
-  implementation(project(":core"))
+  implementation(project(":legacy-core"))
   implementation(platform(libs.compose.bom))
   implementation(libs.preference)
   implementation(libs.core)

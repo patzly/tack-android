@@ -16,7 +16,10 @@ import xyz.zedler.patrick.tack.core.metronome.MetronomeConstants.Default
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
   name = "settings",
   produceMigrations = { context ->
-    listOf(SharedPreferencesMigration(context, context.packageName + "_preferences"))
+    listOf(SharedPreferencesMigration(
+      context,
+      context.packageName + "_preferences")
+    )
   }
 )
 
@@ -45,6 +48,7 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
   val latency = dataStore.data.map { it[LATENCY] ?: 0L }
   val ignoreFocus = dataStore.data.map { it[IGNORE_FOCUS] ?: false }
   val gain = dataStore.data.map { it[GAIN] ?: 0 }
+  val permNotification = dataStore.data.map { it[PERM_NOTIFICATION] ?: false }
 
   // Options
   val countIn = dataStore.data.map { it[COUNT_IN] ?: Default.COUNT_IN }
@@ -95,6 +99,7 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
     private val LATENCY = longPreferencesKey("latency_ms")
     private val IGNORE_FOCUS = booleanPreferencesKey("ignore_focus")
     private val GAIN = intPreferencesKey("gain")
+    private val PERM_NOTIFICATION = booleanPreferencesKey("permanent_notification")
 
     private val COUNT_IN = intPreferencesKey("count_in")
     private val INCREMENTAL_AMOUNT = intPreferencesKey("incremental_amount")

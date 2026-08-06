@@ -3,6 +3,7 @@ package xyz.zedler.patrick.tack.core.metronome
 import android.os.Looper
 import io.mockk.mockk
 import io.mockk.verify
+import java.util.concurrent.TimeUnit
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -12,6 +13,8 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.shadows.ShadowLooper
 import xyz.zedler.patrick.tack.core.audio.AudioProvider
+import xyz.zedler.patrick.tack.core.hardware.FlashlightProvider
+import xyz.zedler.patrick.tack.core.hardware.HapticProvider
 import xyz.zedler.patrick.tack.core.metronome.MetronomeConstants.Unit
 import xyz.zedler.patrick.tack.core.model.MetronomeConfig
 import xyz.zedler.patrick.tack.core.util.Clock
@@ -64,7 +67,7 @@ class MetronomeEngineTest {
     engine.start()
     assertTrue(engine.state.value.isPlaying)
 
-    ShadowLooper.idleMainLooper(3000)
+    ShadowLooper.shadowMainLooper().idleFor(3000, TimeUnit.MILLISECONDS)
 
     assertFalse(engine.state.value.isPlaying)
   }
@@ -82,7 +85,7 @@ class MetronomeEngineTest {
     engine.start()
 
     // 1 bar = 2 beats = 2 seconds
-    ShadowLooper.idleMainLooper(3000)
+    ShadowLooper.shadowMainLooper().idleFor(3000, TimeUnit.MILLISECONDS)
 
     assertFalse(engine.state.value.isPlaying)
   }
@@ -102,7 +105,7 @@ class MetronomeEngineTest {
     engine.start()
 
     // After 1 bar (2 seconds), tempo should increase
-    ShadowLooper.idleMainLooper(3000)
+    ShadowLooper.shadowMainLooper().idleFor(3000, TimeUnit.MILLISECONDS)
 
     assertEquals(70, engine.state.value.tempo)
   }
@@ -120,7 +123,7 @@ class MetronomeEngineTest {
     )
     engine.start()
 
-    ShadowLooper.idleMainLooper(3000)
+    ShadowLooper.shadowMainLooper().idleFor(3000, TimeUnit.MILLISECONDS)
 
     assertEquals(65, engine.state.value.tempo)
   }
@@ -146,10 +149,10 @@ class MetronomeEngineTest {
 
     assertFalse(engine.state.value.isMuted)
 
-    ShadowLooper.idleMainLooper(1100)
+    ShadowLooper.shadowMainLooper().idleFor(1100, TimeUnit.MILLISECONDS)
     assertTrue(engine.state.value.isMuted)
 
-    ShadowLooper.idleMainLooper(1000)
+    ShadowLooper.shadowMainLooper().idleFor(1000, TimeUnit.MILLISECONDS)
     assertFalse(engine.state.value.isMuted)
   }
 
@@ -162,7 +165,9 @@ class MetronomeEngineTest {
     )
     engine.start()
 
-    ShadowLooper.idleMainLooper(5500) // 5.5 seconds should result in 6 ticks (0, 1, 2, 3, 4, 5)
+    ShadowLooper.shadowMainLooper().idleFor(
+      5500, TimeUnit.MILLISECONDS
+    ) // 5.5 seconds should result in 6 ticks (0, 1, 2, 3, 4, 5)
 
     verify(atLeast = 5, atMost = 7) { audioProvider.playTick(any(), any()) }
   }
@@ -187,7 +192,7 @@ class MetronomeEngineTest {
     // }
     // Since muteMute = 100, nextInt(100) will always be < 100.
 
-    ShadowLooper.idleMainLooper(500)
+    ShadowLooper.shadowMainLooper().idleFor(500, TimeUnit.MILLISECONDS)
     // Check if the tick was muted. We can't check state.isMuted easily because
     // it's a local variable in the Runnable for BEATS unit.
     // But we can check audioProvider.playTick call.
@@ -207,7 +212,7 @@ class MetronomeEngineTest {
     )
     engine.start()
 
-    ShadowLooper.idleMainLooper(3000)
+    ShadowLooper.shadowMainLooper().idleFor(3000, TimeUnit.MILLISECONDS)
 
     assertEquals(MetronomeConstants.TEMPO_MAX, engine.state.value.tempo)
   }
@@ -224,7 +229,7 @@ class MetronomeEngineTest {
     )
     engine.start()
 
-    ShadowLooper.idleMainLooper(1500)
+    ShadowLooper.shadowMainLooper().idleFor(1500, TimeUnit.MILLISECONDS)
 
     // 1.5 seconds at 60 BPM with 1 beat/bar and 2 poly sub:
     // Main ticks: 0ms, 1000ms
@@ -247,7 +252,7 @@ class MetronomeEngineTest {
     )
     engine.start()
 
-    ShadowLooper.idleMainLooper(10000)
+    ShadowLooper.shadowMainLooper().idleFor(10000, TimeUnit.MILLISECONDS)
 
     assertTrue(engine.state.value.isPlaying)
   }
