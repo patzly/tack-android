@@ -40,6 +40,7 @@ object Constants {
     const val STRONG: String = "strong"
     const val SUB: String = "sub"
     const val MUTED: String = "muted"
+    const val BEAT_SUB: String = "beat_sub"
     const val BEAT_SUB_MUTED: String = "beat_sub_muted"
   }
 }
