@@ -19,8 +19,6 @@
 
 package xyz.zedler.patrick.tack
 
-import androidx.appcompat.app.AppCompatDelegate
-
 object Constants {
 
   const val ANIM_DURATION_LONG: Long = 400
@@ -103,7 +101,7 @@ object Constants {
   object DEF {
     // General
     const val THEME: String = ""
-    const val UI_MODE: Int = AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+    const val UI_MODE: Int = -1
     const val UI_CONTRAST: String = CONTRAST.STANDARD
     const val REDUCE_ANIM: Boolean = false
     const val VIBRATION_INTENSITY: String = Constants.VIBRATION_INTENSITY.AUTO

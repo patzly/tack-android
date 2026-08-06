@@ -21,7 +21,7 @@ plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.ksp)
-  alias(libs.plugins.navigation.safeargs)
+  alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -74,7 +74,7 @@ android {
   }
 
   buildFeatures {
-    viewBinding = true
+    compose = true
     buildConfig = true
   }
 
@@ -104,19 +104,9 @@ ksp {
 }
 
 dependencies {
-  implementation(project(":audio"))
-  implementation(libs.core)
-  implementation(libs.appcompat)
-  implementation(libs.fragment)
-  implementation(libs.navigation.fragment)
-  implementation(libs.navigation.ui)
-  implementation(libs.preference)
-  implementation(libs.oboe)
-  implementation(libs.shapes)
-  implementation(libs.material)
-  implementation(libs.recyclerview)
-  implementation(libs.flexbox)
-  implementation(libs.gson)
-  implementation(libs.room.runtime)
-  ksp(libs.room.compiler)
+  implementation(platform(libs.compose.bom))
+  implementation(libs.ui)
+  implementation(libs.compose.material)
+  implementation(libs.ui.tooling.preview)
+  implementation(libs.compose.activity)
 }
