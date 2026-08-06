@@ -70,8 +70,8 @@ dependencies {
   implementation(libs.kotlinx.serialization.json)
   
   // Room
-  implementation(libs.room.runtime)
-  implementation(libs.room.ktx)
+  api(libs.room.runtime)
+  api(libs.room.ktx)
   ksp(libs.room.compiler)
   
   // Audio (Oboe)
@@ -79,6 +79,9 @@ dependencies {
 
   // Testing
   testImplementation(libs.junit)
+  testImplementation(libs.mockk)
+  testImplementation(libs.robolectric)
+  testImplementation(libs.kotlinx.coroutines.test)
   androidTestImplementation(libs.androidx.test.ext.junit)
   androidTestImplementation(libs.androidx.test.espresso.core)
 }

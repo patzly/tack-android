@@ -27,9 +27,9 @@ import android.util.Log
 import androidx.annotation.Keep
 import androidx.annotation.RawRes
 import androidx.core.content.getSystemService
+import xyz.zedler.patrick.tack.core.R
 import xyz.zedler.patrick.tack.core.audio.bridge.OboeNativeBridge
 import xyz.zedler.patrick.tack.core.audio.util.AudioUtil
-import xyz.zedler.patrick.tack.core.R
 import java.io.IOException
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -41,7 +41,7 @@ import kotlin.math.pow
 class AudioEngine(
   private val context: Context,
   private val listener: AudioListener
-) : OnAudioFocusChangeListener {
+) : OnAudioFocusChangeListener, AudioProvider {
 
   private val audioManager: AudioManager? = context.getSystemService()
   private val nativeBridge = OboeNativeBridge()
@@ -56,6 +56,7 @@ class AudioEngine(
 
   @Volatile
   private var isPlaying: Boolean = false
+
   @Volatile
   private var isStreamRunning: Boolean = false
   var ignoreFocus: Boolean = false
@@ -73,7 +74,7 @@ class AudioEngine(
       }
     }
 
-  var isMuted: Boolean = false
+  override var isMuted: Boolean = false
     set(value) {
       field = value
       if (isInitialized) {
@@ -108,7 +109,7 @@ class AudioEngine(
     }
   }
 
-  fun warmUp() {
+  override fun warmUp() {
     if (!isInitialized) return
     cancelDelayedStop()
 
@@ -124,7 +125,7 @@ class AudioEngine(
     scheduleStreamShutdown()
   }
 
-  fun play() {
+  override fun play() {
     if (!isInitialized) return
 
     cancelDelayedStop()
@@ -145,7 +146,7 @@ class AudioEngine(
     }
   }
 
-  fun stop() {
+  override fun stop() {
     if (!isInitialized) return
     cancelDelayedStop()
 
@@ -162,7 +163,7 @@ class AudioEngine(
     }
   }
 
-  fun scheduleDelayedStop() {
+  override fun scheduleDelayedStop() {
     if (!isPlaying) return
     isPlaying = false
 
@@ -263,7 +264,7 @@ class AudioEngine(
     )
   }
 
-  fun playTick(tickType: String, muted: Boolean) {
+  override fun playTick(tickType: String, muted: Boolean) {
     if (!isPlaying || !isInitialized || isMuted || muted) return
 
     val nativeTickType = when (tickType) {

@@ -105,6 +105,7 @@ ksp {
 
 dependencies {
   implementation(project(":core"))
+  implementation(libs.core)
   implementation(platform(libs.compose.bom))
   implementation(libs.ui)
   implementation(libs.compose.material)

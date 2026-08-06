@@ -34,6 +34,7 @@
   </queries>
 
   <application
+    android:name=".TackApplication"
     android:allowBackup="true"
     android:dataExtractionRules="@xml/backup_rules_extract"
     android:enableOnBackInvokedCallback="true"
@@ -46,7 +47,7 @@
     tools:targetApi="33">
 
     <activity
-      android:name=".MainActivity"
+      android:name=".activity.MainActivity"
       android:exported="true">
 
       <intent-filter>
@@ -55,6 +56,12 @@
       </intent-filter>
 
     </activity>
+
+    <service
+      android:name=".service.MetronomeService"
+      android:enabled="true"
+      android:exported="false"
+      android:foregroundServiceType="mediaPlayback" />
 
   </application>
 
