@@ -1,0 +1,32 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2026 by Patrick Zedler
+  -->
+
+<vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:autoMirrored="true"
+  android:height="24dp"
+  android:viewportHeight="24"
+  android:viewportWidth="24"
+  android:width="24dp">
+
+  <path
+    android:fillColor="#FF000000"
+    android:pathData="M9,15L6,15q-0.42,0 -0.71,-0.29T5,14v-4q0,-0.43 0.29,-0.71Q5.58,9 6,9h3l3.3,-3.3q0.47,-0.48 1.09,-0.21 0.61,0.26 0.61,0.93v11.16q0,0.67 -0.61,0.93 -0.62,0.26 -1.09,-0.21ZM18.5,12q0,1.05 -0.47,1.99 -0.48,0.94 -1.26,1.54 -0.25,0.15 -0.5,0 -0.27,-0.13 -0.27,-0.43L16,8.85q0,-0.3 0.26,-0.44 0.26,-0.13 0.51,0.02 0.78,0.62 1.25,1.57 0.48,0.95 0.48,2ZM12,8.85 L9.85,11L7,11v2h2.85L12,15.15ZM9.5,12Z" />
+
+</vector>

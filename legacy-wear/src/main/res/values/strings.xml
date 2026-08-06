@@ -1,0 +1,121 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2026 by Patrick Zedler
+  -->
+
+<resources>
+
+  <!-- APP -->
+
+  <string name="wear_app_name" translatable="false">Tack</string>
+  <string name="wear_app_developer" translatable="false">Patrick Zedler</string>
+
+  <!-- TITLES -->
+
+  <string name="wear_title_settings">Settings</string>
+  <string name="wear_title_beats">Beats</string>
+  <string name="wear_title_beats_count">Beats (%1$d)</string>
+  <string name="wear_title_subdivisions_count">Subdivisions (%1$d)</string>
+  <string name="wear_title_notification_channel">Metronome service</string>
+  <string name="wear_title_bookmarks">Bookmarks</string>
+
+  <!-- LABELS -->
+
+  <string name="wear_label_bpm_value">%1$d bpm</string>
+  <string name="wear_label_ms">%1$s ms</string>
+  <string name="wear_label_db_signed">%1$s dB</string>
+  <string name="wear_label_developer">Developed by</string>
+  <plurals name="wear_label_beats">
+    <item quantity="one">%1$d beat</item>
+    <item quantity="other">%1$d beats</item>
+  </plurals>
+  <plurals name="wear_label_subs">
+    <item quantity="one">%1$d subdivision</item>
+    <item quantity="other">%1$d subdivisions</item>
+  </plurals>
+
+  <!-- ACTIONS -->
+
+  <string name="wear_action_cancel">Cancel</string>
+  <string name="wear_action_increase">Increase</string>
+  <string name="wear_action_decrease">Decrease</string>
+  <string name="wear_action_play_stop">Play/Stop</string>
+  <string name="wear_action_stop">Stop</string>
+  <string name="wear_action_add_beat">Add beat</string>
+  <string name="wear_action_remove_beat">Remove beat</string>
+  <string name="wear_action_add_sub">Add subdivision</string>
+  <string name="wear_action_remove_sub">Remove subdivision</string>
+  <string name="wear_action_tempo_tap">Tap tempo</string>
+  <string name="wear_action_bookmark">Bookmark</string>
+  <string name="wear_action_beat_mode">Beat mode</string>
+  <string name="wear_action_retry">Retry</string>
+  <string name="wear_action_delete">Delete</string>
+
+  <!-- MESSAGES -->
+
+  <string name="wear_msg_service_running">Metronome playing</string>
+  <string name="wear_msg_service_running_return">Tap for more</string>
+  <string name="wear_msg_service_description">Service for metronome playback</string>
+  <string name="wear_msg_notification_permission_denied">Permission required</string>
+  <string name="wear_msg_notification_permission_denied_description">Notification permission is required for playback</string>
+  <string name="wear_msg_gain">Play with volume boost?</string>
+  <string name="wear_msg_gain_description">Be careful not to play through headphones!</string>
+  <string name="wear_msg_empty_bookmarks">Nothing added yet</string>
+  <string name="wear_msg_delete_bookmark">Delete bookmark?</string>
+  <!-- Content of a bookmark, e.g. 120 bpm, 4 beats, 1 subdivision -->
+  <string name="wear_msg_delete_bookmark_description">%1$s, %2$s, %3$s</string>
+
+  <!-- SETTINGS -->
+
+  <string name="wear_settings_sound">Beat sound</string>
+  <string name="wear_settings_sound_sine">Sine</string>
+  <string name="wear_settings_sound_wood">Wood</string>
+  <string name="wear_settings_sound_mechanical">Mechanical</string>
+  <string name="wear_settings_sound_beatboxing_1">Beatboxing 1</string>
+  <string name="wear_settings_sound_beatboxing_2">Beatboxing 2</string>
+  <string name="wear_settings_sound_hands">Hands</string>
+  <string name="wear_settings_sound_folding">Folding rule</string>
+
+  <string name="wear_settings_latency">Latency correction</string>
+
+  <string name="wear_settings_ignore_focus">Ignore audio focus</string>
+  <string name="wear_settings_ignore_focus_description">Keep playing if other apps make sound</string>
+
+  <string name="wear_settings_gain">Volume boost</string>
+  <string name="wear_settings_gain_disclaimer">Be careful! The developer takes no responsibility for any potential damage.</string>
+
+  <string name="wear_settings_always_vibrate">Always vibrate</string>
+  <string name="wear_settings_always_vibrate_description">Even with sound</string>
+
+  <string name="wear_settings_vibration_intensity">Vibration intensity</string>
+  <string name="wear_settings_vibration_intensity_auto">Auto</string>
+  <string name="wear_settings_vibration_intensity_soft">Soft</string>
+  <string name="wear_settings_vibration_intensity_strong">Strong</string>
+
+  <string name="wear_settings_flash_screen">Flash screen</string>
+  <string name="wear_settings_flash_screen_description">On every beat</string>
+
+  <string name="wear_settings_reduce_animations">Reduce animations</string>
+  <string name="wear_settings_reduce_animations_description">May improve performance</string>
+
+  <string name="wear_settings_keep_awake">Keep screen awake</string>
+  <string name="wear_settings_keep_awake_description">While metronome is playing</string>
+
+  <string name="wear_settings_rate">Rate Tack on Google Play</string>
+  <string name="wear_settings_rate_description">Support development</string>
+
+</resources>

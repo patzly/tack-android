@@ -35,5 +35,7 @@ dependencyResolutionManagement {
 rootProject.name = "Tack Android"
 include(":app")
 include(":wear")
-include(":audio")
-include(":legacy")
+include(":core")
+include(":legacy-app")
+include(":legacy-wear")
+include(":legacy-core")
