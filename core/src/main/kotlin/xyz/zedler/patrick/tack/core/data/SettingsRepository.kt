@@ -23,7 +23,7 @@ class SettingsRepository(private val dataStore: AppSettingsDataStore) {
     dataStore.muteMute,
     dataStore.muteUnit,
     dataStore.muteRandom
-  ) { args: Array<Any> ->
+  ) { args: Array<Any?> ->
     MetronomeConfig(
       tempo = args[0] as Int,
       beats = (args[1] as String).split(","),

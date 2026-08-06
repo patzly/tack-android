@@ -112,4 +112,10 @@ dependencies {
   implementation(libs.compose.material)
   implementation(libs.ui.tooling.preview)
   implementation(libs.compose.activity)
+
+  // Testing
+  testImplementation(libs.junit)
+  testImplementation(libs.mockk)
+  testImplementation(libs.robolectric)
+  testImplementation(libs.kotlinx.coroutines.test)
 }

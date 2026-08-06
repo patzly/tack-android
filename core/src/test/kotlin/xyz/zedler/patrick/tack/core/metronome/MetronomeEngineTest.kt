@@ -256,4 +256,119 @@ class MetronomeEngineTest {
 
     assertTrue(engine.state.value.isPlaying)
   }
+
+  @Test
+  fun `test bar beat sub indices update`() {
+    createEngine(
+      MetronomeConfig(
+        tempo = 60,
+        beats = listOf("strong", "normal"), // 2 beats per bar
+        subdivisions = listOf("sub", "sub"), // 2 sub per beat
+        timerDuration = 10,
+        timerUnit = Unit.BARS
+      )
+    )
+    engine.start()
+
+    // 0ms: Tick(0, 1, 1) -> Indices remain 0,0,0 because timer logic increases after tick
+    // Wait for first tick to finish and state to update
+    ShadowLooper.shadowMainLooper().idleFor(50, TimeUnit.MILLISECONDS)
+    
+    // 500ms: Tick(1, 1, 2)
+    ShadowLooper.shadowMainLooper().idleFor(500, TimeUnit.MILLISECONDS)
+    var state = engine.state.value
+    assertEquals(1, state.timerSubIndex) // Sub 2 (index 1)
+    assertEquals(0, state.timerBeatIndex)
+    assertEquals(0, state.timerBarIndex)
+
+    // 1000ms: Tick(2, 2, 1)
+    ShadowLooper.shadowMainLooper().idleFor(500, TimeUnit.MILLISECONDS)
+    state = engine.state.value
+    assertEquals(0, state.timerSubIndex)
+    assertEquals(1, state.timerBeatIndex)
+    assertEquals(0, state.timerBarIndex)
+
+    // 2000ms: Tick(4, 1, 1) -> New bar
+    ShadowLooper.shadowMainLooper().idleFor(1000, TimeUnit.MILLISECONDS)
+    state = engine.state.value
+    assertEquals(0, state.timerSubIndex)
+    assertEquals(0, state.timerBeatIndex)
+    assertEquals(1, state.timerBarIndex)
+  }
+
+  @Test
+  fun `test isMuted state update during bar muting`() {
+    createEngine(
+      MetronomeConfig(
+        tempo = 60,
+        beats = listOf("strong"), // 1 beat per bar
+        mutePlay = 1,
+        muteMute = 1,
+        muteUnit = Unit.BARS
+      )
+    )
+    engine.start()
+
+    // Bar 1 (0-1000ms): not muted
+    ShadowLooper.shadowMainLooper().idleFor(500, TimeUnit.MILLISECONDS)
+    assertFalse(engine.state.value.isMuted)
+
+    // Bar 2 (1000-2000ms): muted
+    ShadowLooper.shadowMainLooper().idleFor(1000, TimeUnit.MILLISECONDS)
+    assertTrue(engine.state.value.isMuted)
+
+    // Bar 3 (2000-3000ms): not muted
+    ShadowLooper.shadowMainLooper().idleFor(1000, TimeUnit.MILLISECONDS)
+    assertFalse(engine.state.value.isMuted)
+  }
+
+  @Test
+  fun `test flashlight provider flash calls`() {
+    createEngine(
+      MetronomeConfig(
+        tempo = 60,
+        beats = listOf("strong", "normal")
+      )
+    )
+    engine.setFlashlight("strong")
+    engine.start()
+
+    // Beat 1 (Strong)
+    ShadowLooper.shadowMainLooper().idleFor(50, TimeUnit.MILLISECONDS)
+    verify { flashlightProvider.flash(100, 0.8f) }
+
+    // Beat 2 (Normal)
+    ShadowLooper.shadowMainLooper().idleFor(1000, TimeUnit.MILLISECONDS)
+    verify { flashlightProvider.flash(20, 0.8f) }
+  }
+
+  @Test
+  fun `test elapsed time updates every second`() {
+    createEngine(MetronomeConfig(tempo = 120))
+    engine.start()
+
+    ShadowLooper.shadowMainLooper().idleFor(1100, TimeUnit.MILLISECONDS)
+    assertTrue(engine.state.value.elapsedTime >= 1000)
+
+    ShadowLooper.shadowMainLooper().idleFor(1000, TimeUnit.MILLISECONDS)
+    assertTrue(engine.state.value.elapsedTime >= 2000)
+  }
+
+  @Test
+  fun `test latency shift for providers`() {
+    // We can't easily test the exact timing of postAtTime in unit tests without deep shadowing,
+    // but we can verify that providers are called.
+    createEngine(MetronomeConfig(tempo = 60))
+    engine.setLatency(100)
+    engine.start()
+
+    ShadowLooper.shadowMainLooper().idleFor(50, TimeUnit.MILLISECONDS)
+    // At 50ms, the tick happened at 0ms, but with 100ms latency, the provider shouldn't be called yet if it was real time.
+    // However, Robolectric's ShadowLooper might execute it immediately if the delay is 0 or negative.
+    // In our code: nextScheduleTime + latency.
+    
+    // If we wait long enough:
+    ShadowLooper.shadowMainLooper().idleFor(200, TimeUnit.MILLISECONDS)
+    verify { hapticProvider.heavyClick(any()) }
+  }
 }

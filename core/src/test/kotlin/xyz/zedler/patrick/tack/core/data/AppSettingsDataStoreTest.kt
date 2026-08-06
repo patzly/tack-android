@@ -41,6 +41,7 @@ class AppSettingsDataStoreTest {
       .putString("beats", "strong,normal,normal")
       .putString("subdivisions", "sub,sub")
       .putInt("gain", 5)
+      .putBoolean("permanent_notification", true)
       .commit()
 
     val dataStoreFile = File(context.filesDir, "test_datastore_migration.preferences_pb")
@@ -62,6 +63,7 @@ class AppSettingsDataStoreTest {
     assertEquals("strong,normal,normal", appSettings.beats.first())
     assertEquals("sub,sub", appSettings.subdivisions.first())
     assertEquals(5, appSettings.gain.first())
+    assertEquals(true, appSettings.permNotification.first())
   }
 
   @Test
@@ -77,5 +79,19 @@ class AppSettingsDataStoreTest {
     assertEquals(120, appSettings.tempo.first())
     assertEquals(true, appSettings.haptic.first())
     assertEquals("all", appSettings.beatMode.first())
+  }
+
+  @Test
+  fun `test update tempo`() = runTest {
+    val dataStoreFile = File(context.filesDir, "test_datastore_update.preferences_pb")
+    dataStoreFile.delete()
+
+    val dataStore = PreferenceDataStoreFactory.create(
+      scope = TestScope(UnconfinedTestDispatcher(testScheduler))
+    ) { dataStoreFile }
+
+    val appSettings = AppSettingsDataStore(dataStore)
+    appSettings.updateTempo(140)
+    assertEquals(140, appSettings.tempo.first())
   }
 }

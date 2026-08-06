@@ -262,6 +262,8 @@ class MetronomeEngine(
 
         val tick = Tick(tickIndex, beat, subdivision, type, muted, false)
 
+        val scheduledTime = nextScheduleTime // Store current scheduled time
+
         val currentInterval =
           if (config.usePolyrhythm) getInterval() else getInterval() / config.subdivisionsCount
         nextScheduleTime += currentInterval
@@ -276,7 +278,7 @@ class MetronomeEngine(
           tickHandler?.post(tickRunnablePoly)
         }
 
-        if (performTick(tick)) {
+        if (performTick(tick, scheduledTime)) {
           audioProvider.playTick(tick.type, tick.isMuted)
           tickIndex++
         }
@@ -287,7 +289,7 @@ class MetronomeEngine(
     tickHandler?.post(tickRunnable)
   }
 
-  private fun performTick(tick: Tick): Boolean {
+  private fun performTick(tick: Tick, scheduledTime: Long): Boolean {
     val beatIndex = if (config.usePolyrhythm) tickIndex else tickIndex / config.subdivisionsCount
     val barIndex = beatIndex / config.beatsCount
     val barIndexNoCountIn = barIndex - config.countIn
@@ -356,7 +358,7 @@ class MetronomeEngine(
           else -> flashlightProvider?.flash(20, strength)
         }
       }
-    }, nextScheduleTime + latency)
+    }, scheduledTime + latency)
 
     return true
   }
