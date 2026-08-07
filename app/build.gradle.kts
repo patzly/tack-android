@@ -112,6 +112,7 @@ dependencies {
   implementation(libs.compose.material)
   implementation(libs.ui.tooling.preview)
   implementation(libs.compose.activity)
+  implementation(libs.materialKolor)
 
   // Testing
   testImplementation(libs.junit)

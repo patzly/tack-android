@@ -45,6 +45,7 @@ class SettingsRepository(private val dataStore: AppSettingsDataStore) {
   }
 
   val theme = dataStore.theme
+  val contrast = dataStore.contrast
   val haptic = dataStore.haptic
   val vibrationIntensity = dataStore.vibrationIntensity
   val beatMode = dataStore.beatMode
@@ -58,12 +59,18 @@ class SettingsRepository(private val dataStore: AppSettingsDataStore) {
   val ignoreFocus = dataStore.ignoreFocus
   val gain = dataStore.gain
   val permNotification = dataStore.permNotification
+  val useDynamicColors = dataStore.useDynamicColors
+  val themeHue = dataStore.themeHue
 
   val songsOrder = dataStore.songsOrder
   val currentSongId = dataStore.currentSongId
   val currentPartIndex = dataStore.currentPartIndex
 
   suspend fun updateTempo(tempo: Int) = dataStore.updateTempo(tempo)
+
+  suspend fun updateUseDynamicColors(use: Boolean) = dataStore.updateUseDynamicColors(use)
+
+  suspend fun updateThemeHue(hue: Float) = dataStore.updateThemeHue(hue)
 
   // TODO: Add other update functions
 }

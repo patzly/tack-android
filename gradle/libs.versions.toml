@@ -17,6 +17,7 @@ compose-constraintlayout = "1.1.2"
 navigation3 = "1.1.5"
 preference = "1.2.1"
 shapes = "1.1.0"
+materialKolor = "5.0.0"
 # wear-only
 wear-input = "1.2.0"
 wear-tooling = "1.0.0"
@@ -67,6 +68,7 @@ compose-material-icons-extended = { group = "androidx.compose.material", name = 
 compose-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics" }
 compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "compose-activity" }
 compose-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "compose-constraintlayout" }
+materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
 # wear-only
 wear-tooling = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wear-tooling" }
 wear-ongoing = { group = "androidx.wear", name = "wear-ongoing", version.ref = "wear-ongoing" }

@@ -30,6 +30,18 @@ class MainViewModel(
     }
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MetronomeState())
 
+  val useDynamicColors: StateFlow<Boolean> = settingsRepository.useDynamicColors
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
+
+  val themeHue: StateFlow<Float> = settingsRepository.themeHue
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 200f)
+
+  val theme: StateFlow<String> = settingsRepository.theme
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "system")
+
+  val contrast: StateFlow<String> = settingsRepository.contrast
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "standard")
+
   fun onServiceConnected(service: MetronomeService) {
     _service.value = service
   }

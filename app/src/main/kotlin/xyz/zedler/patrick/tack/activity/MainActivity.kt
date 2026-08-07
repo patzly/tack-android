@@ -10,11 +10,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import xyz.zedler.patrick.tack.TackApplication
 import xyz.zedler.patrick.tack.service.MetronomeService
+import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 class MainActivity : ComponentActivity(), ServiceConnection {
@@ -29,10 +31,19 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     super.onCreate(savedInstanceState)
 
     setContent {
-      MaterialTheme {
+      val useDynamicColors by viewModel.useDynamicColors.collectAsState()
+      val themeHue by viewModel.themeHue.collectAsState()
+      val theme by viewModel.theme.collectAsState()
+      val contrast by viewModel.contrast.collectAsState()
+
+      TackTheme(
+        useDynamicColors = useDynamicColors,
+        hue = themeHue,
+        theme = theme,
+        contrast = contrast
+      ) {
         Surface(
-          modifier = Modifier.fillMaxSize(),
-          color = MaterialTheme.colorScheme.surface
+          modifier = Modifier.fillMaxSize()
         ) {
           // UI will be implemented here
         }
