@@ -6,16 +6,23 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
+import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.ui.NavDisplay
 import xyz.zedler.patrick.tack.TackApplication
 import xyz.zedler.patrick.tack.service.MetronomeService
+import xyz.zedler.patrick.tack.ui.navigation.Route
+import xyz.zedler.patrick.tack.ui.screen.*
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
@@ -26,6 +33,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     MainViewModel.Factory(app.settingsRepository, app.songRepository)
   }
 
+  @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
@@ -35,6 +43,10 @@ class MainActivity : ComponentActivity(), ServiceConnection {
       val themeHue by viewModel.themeHue.collectAsState()
       val theme by viewModel.theme.collectAsState()
       val contrast by viewModel.contrast.collectAsState()
+      val backstack = viewModel.backstack
+
+      val windowSizeClass = calculateWindowSizeClass(this)
+      val widthClass = windowSizeClass.widthSizeClass
 
       TackTheme(
         useDynamicColors = useDynamicColors,
@@ -42,10 +54,27 @@ class MainActivity : ComponentActivity(), ServiceConnection {
         theme = theme,
         contrast = contrast
       ) {
-        Surface(
-          modifier = Modifier.fillMaxSize()
-        ) {
-          // UI will be implemented here
+        Surface(modifier = Modifier.fillMaxSize()) {
+          BackHandler(enabled = backstack.size > 1) {
+            viewModel.popBackstack()
+          }
+
+          NavDisplay(
+            backStack = backstack,
+            onBack = { viewModel.popBackstack() },
+            entryProvider = { route ->
+              when (route) {
+                is Route.Main -> NavEntry(route) { MainScreen(widthClass) }
+                is Route.Songs -> NavEntry(route) { SongsScreen(widthClass) }
+                is Route.Song -> NavEntry(route) {
+                  SongScreen(route.songId, widthClass)
+                }
+                is Route.Settings -> NavEntry(route) { SettingsScreen() }
+                is Route.About -> NavEntry(route) { AboutScreen() }
+                is Route.Log -> NavEntry(route) { LogScreen() }
+              }
+            }
+          )
         }
       }
     }

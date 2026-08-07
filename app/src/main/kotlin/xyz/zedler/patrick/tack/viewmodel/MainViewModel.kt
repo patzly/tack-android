@@ -1,5 +1,6 @@
 package xyz.zedler.patrick.tack.viewmodel
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -10,6 +11,7 @@ import xyz.zedler.patrick.tack.core.data.SongRepository
 import xyz.zedler.patrick.tack.core.model.MetronomeConfig
 import xyz.zedler.patrick.tack.core.model.MetronomeState
 import xyz.zedler.patrick.tack.service.MetronomeService
+import xyz.zedler.patrick.tack.ui.navigation.Route
 
 class MainViewModel(
   private val settingsRepository: SettingsRepository,
@@ -18,6 +20,8 @@ class MainViewModel(
 
   private val _service = MutableStateFlow<MetronomeService?>(null)
   
+  val backstack = mutableStateListOf<Route>(Route.Main)
+
   // Static config from DataStore
   val metronomeConfig: StateFlow<MetronomeConfig> = settingsRepository.metronomeConfig
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MetronomeConfig())
@@ -48,6 +52,18 @@ class MainViewModel(
 
   fun onServiceDisconnected() {
     _service.value = null
+  }
+
+  fun navigateTo(route: Route) {
+    backstack.add(route)
+  }
+
+  fun popBackstack(): Boolean {
+    if (backstack.size > 1) {
+      backstack.removeAt(backstack.size - 1)
+      return true
+    }
+    return false
   }
 
   fun togglePlay() {

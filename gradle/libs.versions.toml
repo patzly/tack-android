@@ -14,6 +14,7 @@ compose-bom = "2026.06.01"
 compose-material = "1.5.0-alpha25"
 compose-activity = "1.13.0"
 compose-constraintlayout = "1.1.2"
+compose-material-window = "1.1.0-alpha01"
 navigation3 = "1.1.5"
 preference = "1.2.1"
 shapes = "1.1.0"
@@ -68,6 +69,7 @@ compose-material-icons-extended = { group = "androidx.compose.material", name = 
 compose-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics" }
 compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "compose-activity" }
 compose-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "compose-constraintlayout" }
+compose-material-window = { group = "androidx.compose.material3", name = "material3-window-size-class" }
 materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
 # wear-only
 wear-tooling = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wear-tooling" }
