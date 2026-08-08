@@ -396,6 +396,8 @@
   <string name="help_notification_displays">為什麼我離開應用程式時會顯示節拍器服務通知？</string>
   <string name="help_notification_disappears">為什麼當我關閉應用程式時節拍器服務通知會消失？</string>
   <string name="help_translation">我怎樣才能獲得適合我的語言的 Tack？</string>
+  <string name="help_translation_answer">Tack 的翻譯由 Transifex 管理，像你一樣的使用者可以協助翻譯此應用程式！請瀏覽 GitHub 上的 Tack 專案以獲取更多資訊，或直接進入翻譯流程：</string>
+
   <!-- ABOUT -->
 
   <string name="about_version">版本</string>
