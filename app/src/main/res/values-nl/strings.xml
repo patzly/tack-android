@@ -338,7 +338,6 @@
   <string name="settings_theme_dark">Donker</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
   <string name="settings_theme_light">Licht</string>
-
   <string name="settings_contrast">Contrast</string>
   <string name="settings_contrast_description">Toegankelijkheid voor je zicht</string>
   <!-- This is a contrast option name: User can choose between standard, medium and high contrast. The button width should be as dense as possible. -->
@@ -450,4 +449,4 @@
   <string name="about_privacy">Privacybeleid</string>
   <string name="about_privacy_description">Hoe uw gegevens worden verwerkt</string>
 
-</resources>
+  </resources>
