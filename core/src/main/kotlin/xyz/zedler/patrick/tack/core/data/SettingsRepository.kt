@@ -48,6 +48,7 @@ class SettingsRepository(private val dataStore: AppSettingsDataStore) {
   val contrast = dataStore.contrast
   val haptic = dataStore.haptic
   val vibrationIntensity = dataStore.vibrationIntensity
+  val reduceAnim = dataStore.reduceAnim
   val beatMode = dataStore.beatMode
   val showElapsed = dataStore.showElapsed
   val resetTimerOnStop = dataStore.resetTimerOnStop
@@ -61,6 +62,9 @@ class SettingsRepository(private val dataStore: AppSettingsDataStore) {
   val permNotification = dataStore.permNotification
   val useDynamicColors = dataStore.useDynamicColors
   val themeHue = dataStore.themeHue
+  val activeBeat = dataStore.activeBeat
+  val bigTimeText = dataStore.bigTimeText
+  val bigLogo = dataStore.bigLogo
 
   val songsOrder = dataStore.songsOrder
   val currentSongId = dataStore.currentSongId
@@ -72,5 +76,42 @@ class SettingsRepository(private val dataStore: AppSettingsDataStore) {
 
   suspend fun updateThemeHue(hue: Float) = dataStore.updateThemeHue(hue)
 
-  // TODO: Add other update functions
+  suspend fun updateTheme(theme: String) = dataStore.updateTheme(theme)
+
+  suspend fun updateContrast(contrast: String) = dataStore.updateContrast(contrast)
+
+  suspend fun updateHaptic(enabled: Boolean) = dataStore.updateHaptic(enabled)
+
+  suspend fun updateVibrationIntensity(intensity: String) =
+    dataStore.updateVibrationIntensity(intensity)
+
+  suspend fun updateReduceAnim(reduce: Boolean) = dataStore.updateReduceAnim(reduce)
+
+  suspend fun updateSound(sound: String) = dataStore.updateSound(sound)
+
+  suspend fun updateIgnoreFocus(ignore: Boolean) = dataStore.updateIgnoreFocus(ignore)
+
+  suspend fun updateGain(gain: Int) = dataStore.updateGain(gain)
+
+  suspend fun updateLatency(latency: Long) = dataStore.updateLatency(latency)
+
+  suspend fun updateResetTimerOnStop(reset: Boolean) = dataStore.updateResetTimerOnStop(reset)
+
+  suspend fun updateFlashScreen(flash: String) = dataStore.updateFlashScreen(flash)
+
+  suspend fun updateFlashlight(flashlight: String) = dataStore.updateFlashlight(flashlight)
+
+  suspend fun updateKeepAwake(keepAwake: String) = dataStore.updateKeepAwake(keepAwake)
+
+  suspend fun updateActiveBeat(active: Boolean) = dataStore.updateActiveBeat(active)
+
+  suspend fun updatePermNotification(perm: Boolean) = dataStore.updatePermNotification(perm)
+
+  suspend fun updateShowElapsed(show: Boolean) = dataStore.updateShowElapsed(show)
+
+  suspend fun updateBigTimeText(big: Boolean) = dataStore.updateBigTimeText(big)
+
+  suspend fun updateBigLogo(big: Boolean) = dataStore.updateBigLogo(big)
+
+  suspend fun clearAll() = dataStore.clearAll()
 }

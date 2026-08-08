@@ -54,6 +54,10 @@ android {
   ndkVersion = "29.0.14206865"
 }
 
+ksp {
+  arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 kotlin {
   compilerOptions {
     jvmTarget.set(JvmTarget.JVM_21)

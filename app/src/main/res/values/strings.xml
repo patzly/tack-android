@@ -351,6 +351,8 @@
   <string name="settings_theme_dark">Dark</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
   <string name="settings_theme_light">Light</string>
+  <string name="settings_theme_dynamic">Dynamic colors</string>
+  <string name="settings_theme_hue">Custom hue</string>
 
   <string name="settings_contrast">Contrast</string>
   <string name="settings_contrast_description">Accessibility for your vision</string>

@@ -60,16 +60,21 @@ class MainActivity : ComponentActivity(), ServiceConnection {
           }
 
           NavDisplay(
-            backStack = backstack,
+            backStack = backstack.toList(),
             onBack = { viewModel.popBackstack() },
             entryProvider = { route ->
               when (route) {
-                is Route.Main -> NavEntry(route) { MainScreen(widthClass) }
-                is Route.Songs -> NavEntry(route) { SongsScreen(widthClass) }
-                is Route.Song -> NavEntry(route) {
-                  SongScreen(route.songId, widthClass)
+                is Route.Main -> NavEntry(route) {
+                  MainScreen(
+                    widthSizeClass = widthClass,
+                    onNavigateToSettings = { viewModel.navigateTo(Route.Settings) }
+                  )
                 }
-                is Route.Settings -> NavEntry(route) { SettingsScreen() }
+                is Route.Songs -> NavEntry(route) { SongsScreen(widthClass) }
+                is Route.Song -> NavEntry(route) { SongScreen(route.songId, widthClass) }
+                is Route.Settings -> NavEntry(route) {
+                  SettingsScreen(viewModel, onBack = { viewModel.popBackstack() })
+                }
                 is Route.About -> NavEntry(route) { AboutScreen() }
                 is Route.Log -> NavEntry(route) { LogScreen() }
               }

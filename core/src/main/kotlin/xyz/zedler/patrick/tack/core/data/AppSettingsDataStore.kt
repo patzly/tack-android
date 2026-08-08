@@ -33,6 +33,7 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
   val contrast = dataStore.data.map { it[CONTRAST] ?: "standard" }
   val haptic = dataStore.data.map { it[HAPTIC] ?: true }
   val vibrationIntensity = dataStore.data.map { it[VIBRATION_INTENSITY] ?: "auto" }
+  val reduceAnim = dataStore.data.map { it[REDUCE_ANIM] ?: false }
 
   // Metronome
   val tempo = dataStore.data.map { it[TEMPO] ?: Default.TEMPO }
@@ -73,6 +74,11 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
   val muteUnit = dataStore.data.map { it[MUTE_UNIT] ?: Default.MUTE_UNIT }
   val muteRandom = dataStore.data.map { it[MUTE_RANDOM] ?: Default.MUTE_RANDOM }
 
+  // Controls
+  val activeBeat = dataStore.data.map { it[ACTIVE_BEAT] ?: false }
+  val bigTimeText = dataStore.data.map { it[BIG_TIME_TEXT] ?: false }
+  val bigLogo = dataStore.data.map { it[BIG_LOGO] ?: false }
+
   // Song library
   val songsOrder = dataStore.data.map { it[SONGS_ORDER] ?: 0 }
   val currentSongId = dataStore.data.map { it[SONG_CURRENT_ID] ?: "default" }
@@ -90,13 +96,88 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
     dataStore.edit { it[THEME_HUE] = hue }
   }
 
-  // ... other update functions will be added as needed
+  suspend fun updateTheme(theme: String) {
+    dataStore.edit { it[THEME] = theme }
+  }
+
+  suspend fun updateContrast(contrast: String) {
+    dataStore.edit { it[CONTRAST] = contrast }
+  }
+
+  suspend fun updateHaptic(enabled: Boolean) {
+    dataStore.edit { it[HAPTIC] = enabled }
+  }
+
+  suspend fun updateVibrationIntensity(intensity: String) {
+    dataStore.edit { it[VIBRATION_INTENSITY] = intensity }
+  }
+
+  suspend fun updateReduceAnim(reduce: Boolean) {
+    dataStore.edit { it[REDUCE_ANIM] = reduce }
+  }
+
+  suspend fun updateSound(sound: String) {
+    dataStore.edit { it[SOUND] = sound }
+  }
+
+  suspend fun updateIgnoreFocus(ignore: Boolean) {
+    dataStore.edit { it[IGNORE_FOCUS] = ignore }
+  }
+
+  suspend fun updateGain(gain: Int) {
+    dataStore.edit { it[GAIN] = gain }
+  }
+
+  suspend fun updateLatency(latency: Long) {
+    dataStore.edit { it[LATENCY] = latency }
+  }
+
+  suspend fun updateResetTimerOnStop(reset: Boolean) {
+    dataStore.edit { it[RESET_TIMER_ON_STOP] = reset }
+  }
+
+  suspend fun updateFlashScreen(flash: String) {
+    dataStore.edit { it[FLASH_SCREEN] = flash }
+  }
+
+  suspend fun updateFlashlight(flashlight: String) {
+    dataStore.edit { it[FLASHLIGHT] = flashlight }
+  }
+
+  suspend fun updateKeepAwake(keepAwake: String) {
+    dataStore.edit { it[KEEP_AWAKE] = keepAwake }
+  }
+
+  suspend fun updateActiveBeat(active: Boolean) {
+    dataStore.edit { it[ACTIVE_BEAT] = active }
+  }
+
+  suspend fun updatePermNotification(perm: Boolean) {
+    dataStore.edit { it[PERM_NOTIFICATION] = perm }
+  }
+
+  suspend fun updateShowElapsed(show: Boolean) {
+    dataStore.edit { it[SHOW_ELAPSED] = show }
+  }
+
+  suspend fun updateBigTimeText(big: Boolean) {
+    dataStore.edit { it[BIG_TIME_TEXT] = big }
+  }
+
+  suspend fun updateBigLogo(big: Boolean) {
+    dataStore.edit { it[BIG_LOGO] = big }
+  }
+
+  suspend fun clearAll() {
+    dataStore.edit { it.clear() }
+  }
 
   companion object {
     private val THEME = stringPreferencesKey("app_theme")
     private val CONTRAST = stringPreferencesKey("theme_contrast")
     private val HAPTIC = booleanPreferencesKey("haptic_feedback")
     private val VIBRATION_INTENSITY = stringPreferencesKey("vibration_intensity")
+    private val REDUCE_ANIM = booleanPreferencesKey("reduce_animations")
 
     private val TEMPO = intPreferencesKey("tempo")
     private val BEATS = stringPreferencesKey("beats")
@@ -128,6 +209,10 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
     private val MUTE_MUTE = intPreferencesKey("mute_mute")
     private val MUTE_UNIT = stringPreferencesKey("mute_unit")
     private val MUTE_RANDOM = booleanPreferencesKey("mute_random")
+
+    private val ACTIVE_BEAT = booleanPreferencesKey("active_beat")
+    private val BIG_TIME_TEXT = booleanPreferencesKey("big_time_text")
+    private val BIG_LOGO = booleanPreferencesKey("big_logo")
 
     private val SONGS_ORDER = intPreferencesKey("songs_order")
     private val SONG_CURRENT_ID = stringPreferencesKey("current_song_id")

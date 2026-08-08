@@ -11,10 +11,8 @@ kotlinx-coroutines = "1.10.1"
 lifecycle = "2.11.0"
 splashscreen = "1.2.0"
 compose-bom = "2026.06.01"
-compose-material = "1.5.0-alpha25"
 compose-activity = "1.13.0"
 compose-constraintlayout = "1.1.2"
-compose-material-window = "1.1.0-alpha01"
 navigation3 = "1.1.5"
 preference = "1.2.1"
 shapes = "1.1.0"
@@ -52,6 +50,7 @@ room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
 room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycle" }
 splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "splashscreen" }
@@ -63,13 +62,13 @@ ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
-compose-runtime = { group = "androidx.compose.runtime", name = "runtime-livedata" }
-compose-material = { group = "androidx.compose.material3", name = "material3", version.ref = "compose-material" }
+compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
+compose-material = { group = "androidx.compose.material3", name = "material3" }
+compose-material-window = { group = "androidx.compose.material3", name = "material3-window-size-class" }
 compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 compose-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics" }
 compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "compose-activity" }
 compose-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "compose-constraintlayout" }
-compose-material-window = { group = "androidx.compose.material3", name = "material3-window-size-class" }
 materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
 # wear-only
 wear-tooling = { group = "androidx.wear", name = "wear-tooling-preview", version.ref = "wear-tooling" }

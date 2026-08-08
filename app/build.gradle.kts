@@ -99,10 +99,6 @@ android {
   }
 }
 
-ksp {
-  arg("room.schemaLocation", "$projectDir/schemas")
-}
-
 dependencies {
   implementation(project(":core"))
   implementation(platform(libs.compose.bom))
@@ -116,10 +112,15 @@ dependencies {
   implementation(libs.materialKolor)
   implementation(libs.navigation3.runtime)
   implementation(libs.navigation3.ui)
+  implementation(libs.lifecycle.viewmodel.compose)
+  implementation(libs.compose.material.icons.extended)
 
   // Testing
   testImplementation(libs.junit)
   testImplementation(libs.mockk)
   testImplementation(libs.robolectric)
   testImplementation(libs.kotlinx.coroutines.test)
+
+  // Tooling
+  debugImplementation(libs.ui.tooling)
 }

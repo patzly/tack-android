@@ -10,7 +10,11 @@ import xyz.zedler.patrick.tack.core.database.dao.SongDao
 import xyz.zedler.patrick.tack.core.database.entity.Part
 import xyz.zedler.patrick.tack.core.database.entity.Song
 
-@Database(entities = [Song::class, Part::class], version = 4)
+@Database(
+  entities = [Song::class, Part::class],
+  version = 4,
+  exportSchema = true
+)
 abstract class SongDatabase : RoomDatabase() {
 
   abstract fun songDao(): SongDao
