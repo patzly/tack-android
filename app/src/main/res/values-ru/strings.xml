@@ -366,7 +366,6 @@
   <string name="settings_theme_dark">Тёмная</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
   <string name="settings_theme_light">Светлая</string>
-
   <string name="settings_contrast">Контраст</string>
   <string name="settings_contrast_description">Доступность для вашего зрения</string>
   <!-- This is a contrast option name: User can choose between standard, medium and high contrast. The button width should be as dense as possible. -->
@@ -485,4 +484,4 @@
   <string name="about_privacy">Политика конфиденциальности</string>
   <string name="about_privacy_description">Как обрабатываются ваши данные</string>
 
-</resources>
+  </resources>
