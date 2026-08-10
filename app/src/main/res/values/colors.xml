@@ -20,6 +20,8 @@
 
 <resources>
 
+  <color name="white">#FFFFFF</color>
+
   <color name="yellow_theme_primary">#6D5E0F</color>
   <color name="yellow_theme_onPrimary">#FFFFFF</color>
   <color name="yellow_theme_primaryContainer">#F8E288</color>

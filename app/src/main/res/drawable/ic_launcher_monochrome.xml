@@ -1,0 +1,29 @@
+<!--
+  ~ This file is part of Tack Android.
+  ~
+  ~ Tack Android is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ Tack Android is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with Tack Android. If not, see http://www.gnu.org/licenses/.
+  ~
+  ~ Copyright (c) 2020-2026 by Patrick Zedler
+  -->
+
+<vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:width="108dp"
+  android:height="108dp"
+  android:viewportWidth="108"
+  android:viewportHeight="108">
+  <path
+    android:fillColor="#000"
+    android:pathData="M54,33.87a1.46,1.46 0,0 0,-1.46 1.46v0.88h-0.87a1.46,1.46 0,0 0,-1.46 1.46,1.46 1.46,0 0,0 1.46,1.46h0.87v4.08h-0.87a1.46,1.46 0,0 0,-1.46 1.46,1.46 1.46,0 0,0 1.46,1.46h0.87v4.08h-0.87a1.46,1.46 0,0 0,-1.46 1.46,1.46 1.46,0 0,0 1.46,1.46h0.87v5.14a25.28,25.28 0,0 0,-2.94 0.41l-3.79,-6.56a6.18,6.18 0,0 0,0.66 -7.07A6.2,6.2 0,0 0,40 42.07l-1.77,-3.06a2.04,2.04 0,0 0,-2.03 -1V38a2.04,2.04 0,0 0,-0.75 0.26,2.04 2.04,0 0,0 -0.74,2.8l1.76,3.05a6.2,6.2 0,0 0,-0.66 7.08,6.2 6.2,0 0,0 6.46,2.96l3.2,5.54a25.75,25.75 0,0 0,-9.47 5.96l-0.04,0.04 -0.03,0.04c-1.51,1.73 -1.61,4.07 -0.71,5.82 0.88,1.71 2.79,2.96 5.01,2.8h27.72c2.23,0.17 4.14,-1.08 5.02,-2.8 0.9,-1.75 0.81,-4.09 -0.71,-5.82l-0.04,-0.04 -0.04,-0.04a25.76,25.76 0,0 0,-10.04 -6.15,25.71 25.71,0 0,0 -6.7,-1.26v-5.12h0.87a1.46,1.46 0,0 0,1.46 -1.46,1.46 1.46,0 0,0 -1.46,-1.46h-0.87v-4.08h0.87a1.46,1.46 0,0 0,1.46 -1.46,1.46 1.46,0 0,0 -1.46,-1.46h-0.87v-4.08h0.87a1.46,1.46 0,0 0,1.46 -1.46,1.46 1.46,0 0,0 -1.46,-1.46h-0.87v-0.88A1.46,1.46 0,0 0,54 33.87zM41.29,46.04h0.01a2,2 0,0 1,1.63 1.04,2.04 2.04,0 0,1 -0.75,2.82 2.04,2.04 0,0 1,-2.83 -0.75,2.04 2.04,0 0,1 0.76,-2.83c0.37,-0.22 0.79,-0.3 1.18,-0.28zM54.1,61.13c2.41,0 4.82,0.38 7.14,1.15v-0a22.84,22.84 0,0 1,8.84 5.41c0.7,0.82 0.7,1.74 0.3,2.53 -0.41,0.8 -1.17,1.34 -2.27,1.23l-0.07,-0.01H40.16l-0.07,0.01c-1.1,0.11 -1.86,-0.43 -2.27,-1.23 -0.41,-0.79 -0.4,-1.7 0.3,-2.53a22.83,22.83 0,0 1,8.76 -5.38l0.08,-0.03A22.79,22.79 0,0 1,54.1 61.13z" />
+</vector>
