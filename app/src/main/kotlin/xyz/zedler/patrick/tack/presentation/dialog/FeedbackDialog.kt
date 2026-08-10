@@ -1,0 +1,295 @@
+package xyz.zedler.patrick.tack.presentation.dialog
+
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedListItem
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.core.model.AppTheme
+import xyz.zedler.patrick.tack.presentation.theme.TackTheme
+import xyz.zedler.patrick.tack.util.UnlockUtil
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FeedbackDialog(
+  checkUnlockKey: Boolean,
+  onDismissRequest: () -> Unit,
+  onSupportClick: () -> Unit
+) {
+  val context = LocalContext.current
+  val isPlayStoreInstalled = remember { UnlockUtil.isPlayStoreInstalled(context) }
+  val isKeyInstalled = remember { UnlockUtil.isKeyInstalled(context) }
+
+  BasicAlertDialog(onDismissRequest = onDismissRequest) {
+    FeedbackDialogContent(
+      isPlayStoreInstalled = isPlayStoreInstalled,
+      isKeyInstalled = isKeyInstalled,
+      checkUnlockKey = checkUnlockKey,
+      onDismissRequest = onDismissRequest,
+      onSupportClick = onSupportClick
+    )
+  }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun FeedbackDialogContent(
+  isPlayStoreInstalled: Boolean = true,
+  isKeyInstalled: Boolean = false,
+  checkUnlockKey: Boolean = true,
+  onDismissRequest: () -> Unit = {},
+  onSupportClick: () -> Unit = {}
+) {
+  val context = LocalContext.current
+
+  val appMail = stringResource(R.string.app_mail)
+  val appGithub = stringResource(R.string.app_github)
+  val appVendingApp = stringResource(R.string.app_vending_app)
+  val recommendText = stringResource(R.string.msg_recommend, appVendingApp)
+  val actionSendFeedback = stringResource(R.string.action_send_feedback)
+
+  Surface(
+    shape = AlertDialogDefaults.shape,
+    color = AlertDialogDefaults.containerColor,
+    tonalElevation = AlertDialogDefaults.TonalElevation,
+    modifier = Modifier
+      .fillMaxWidth()
+      .heightIn(max = 600.dp)
+      .padding(vertical = 24.dp)
+  ) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+      Text(
+        text = stringResource(R.string.title_feedback),
+        style = MaterialTheme.typography.headlineSmall,
+        modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 16.dp)
+      )
+
+      val scrollState = rememberScrollState()
+
+      HorizontalDivider()
+
+      Column(
+        modifier = Modifier
+          .weight(1f, fill = false)
+          .verticalScroll(scrollState)
+          .padding(horizontal = 24.dp)
+      ) {
+        Column(
+          modifier = Modifier.padding(vertical = 16.dp),
+          verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+          Text(
+            text = stringResource(R.string.msg_feedback),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+          )
+          Text(
+            text = stringResource(R.string.msg_feedback_contact),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+          )
+        }
+
+        Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
+          val isSupportVisible = checkUnlockKey && isPlayStoreInstalled && !isKeyInstalled
+          val itemCount = if (isSupportVisible) 3 else 2
+
+          val colors = ListItemDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
+          )
+
+          SegmentedListItem(
+            onClick = {
+              val uri = "market://details?id=${context.packageName}".toUri()
+              val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+                addFlags(
+                  Intent.FLAG_ACTIVITY_NO_HISTORY or
+                      Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
+                      Intent.FLAG_ACTIVITY_MULTIPLE_TASK or
+                      Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+                )
+              }
+              try {
+                context.startActivity(intent)
+              } catch (_: ActivityNotFoundException) {
+                context.startActivity(
+                  Intent(
+                    Intent.ACTION_VIEW,
+                    "http://play.google.com/store/apps/details?id=${context.packageName}"
+                      .toUri()
+                  )
+                )
+              }
+              onDismissRequest()
+            },
+            shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
+            colors = colors,
+            leadingContent = {
+              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                Icon(
+                  painter = painterResource(R.drawable.ic_rounded_star),
+                  contentDescription = null
+                )
+              }
+            },
+            content = { Text(stringResource(R.string.action_rate)) },
+            supportingContent = { Text(stringResource(R.string.action_rate_description)) }
+          )
+
+          if (isSupportVisible) {
+            SegmentedListItem(
+              onClick = {
+                onSupportClick()
+                onDismissRequest()
+              },
+              shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
+              colors = colors,
+              leadingContent = {
+                Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                  Icon(
+                    painter = painterResource(R.drawable.ic_rounded_volunteer_activism),
+                    contentDescription = null
+                  )
+                }
+              },
+              content = { Text(stringResource(R.string.action_support)) },
+              supportingContent = { Text(stringResource(R.string.action_support_description)) }
+            )
+          }
+
+          SegmentedListItem(
+            onClick = {
+              val sendIntent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_TEXT, recommendText)
+                type = "text/plain"
+              }
+              context.startActivity(Intent.createChooser(sendIntent, null))
+              onDismissRequest()
+            },
+            shapes = ListItemDefaults.segmentedShapes(
+              index = if (isSupportVisible) 2 else 1,
+              count = itemCount
+            ),
+            colors = colors,
+            leadingContent = {
+              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                Icon(
+                  painter = painterResource(R.drawable.ic_rounded_group),
+                  contentDescription = null
+                )
+              }
+            },
+            content = { Text(stringResource(R.string.action_recommend)) },
+            supportingContent = { Text(stringResource(R.string.action_recommend_description)) }
+          )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
+          val itemCount = 2
+          val colors = ListItemDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
+          )
+
+          SegmentedListItem(
+            onClick = {
+              val issues = "$appGithub/issues"
+              context.startActivity(Intent(Intent.ACTION_VIEW, issues.toUri()))
+              onDismissRequest()
+            },
+            shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
+            colors = colors,
+            leadingContent = {
+              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                Icon(
+                  painter = painterResource(R.drawable.ic_rounded_bug_report),
+                  contentDescription = null
+                )
+              }
+            },
+            content = { Text(stringResource(R.string.action_issue)) },
+            supportingContent = { Text(stringResource(R.string.action_issue_description)) }
+          )
+
+          SegmentedListItem(
+            onClick = {
+              val intent = Intent(Intent.ACTION_SENDTO).apply {
+                data = "mailto:$appMail?subject=${Uri.encode("Feedback@Tack")}".toUri()
+              }
+              context.startActivity(
+                Intent.createChooser(intent, actionSendFeedback)
+              )
+              onDismissRequest()
+            },
+            shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
+            colors = colors,
+            leadingContent = {
+              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                Icon(
+                  painter = painterResource(R.drawable.ic_rounded_mail),
+                  contentDescription = null
+                )
+              }
+            },
+            content = { Text(stringResource(R.string.action_email)) },
+            supportingContent = { Text(stringResource(R.string.action_email_description)) }
+          )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+      }
+
+      HorizontalDivider()
+
+      Row(
+        modifier = Modifier
+          .fillMaxWidth()
+          .padding(horizontal = 16.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.End
+      ) {
+        TextButton(onClick = onDismissRequest) {
+          Text(stringResource(R.string.action_close))
+        }
+      }
+    }
+  }
+}
+
+@Preview
+@Composable
+fun FeedbackDialogPreview() {
+  TackTheme {
+    FeedbackDialogContent()
+  }
+}

@@ -1,6 +1,7 @@
 package xyz.zedler.patrick.tack.presentation.screen
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -37,6 +38,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,6 +57,7 @@ import xyz.zedler.patrick.tack.core.model.AppTheme
 import xyz.zedler.patrick.tack.presentation.component.AnimatedIcon
 import xyz.zedler.patrick.tack.presentation.component.ConnectedButtonGroup
 import xyz.zedler.patrick.tack.presentation.component.TackThemeSelection
+import xyz.zedler.patrick.tack.presentation.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.presentation.navigation.Route
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -84,6 +87,17 @@ fun SettingsScreen(
   val showElapsed by viewModel.showElapsed.collectAsStateWithLifecycle()
   val bigTimeText by viewModel.bigTimeText.collectAsStateWithLifecycle()
   val bigLogo by viewModel.bigLogo.collectAsStateWithLifecycle()
+  val checkUnlockKey by viewModel.checkUnlockKey.collectAsStateWithLifecycle()
+
+  var showFeedbackDialog by rememberSaveable { mutableStateOf(false) }
+
+  if (showFeedbackDialog) {
+    FeedbackDialog(
+      checkUnlockKey = checkUnlockKey,
+      onDismissRequest = { showFeedbackDialog = false },
+      onSupportClick = { /* TODO: Show unlock dialog */ }
+    )
+  }
 
   SettingsContent(
     useDynamicColors = useDynamicColors,
@@ -111,7 +125,7 @@ fun SettingsScreen(
       viewModel.navigateTo(Route.About)
     },
     onHelpClick = {},
-    onFeedbackClick = {},
+    onFeedbackClick = { showFeedbackDialog = true },
     onLogcatClick = {},
     onUpdateUseDynamicColors = viewModel::updateUseDynamicColors,
     onUpdateThemeHue = viewModel::updateThemeHue,
@@ -162,6 +176,7 @@ fun SettingsContent(
   onHelpClick: () -> Unit = {},
   onFeedbackClick: () -> Unit = {},
   onLogcatClick: () -> Unit = {},
+  onLanguageClick: () -> Unit = {},
   onUpdateUseDynamicColors: (Boolean) -> Unit = {},
   onUpdateThemeHue: (Float) -> Unit = {},
   onUpdateThemeMode: (AppTheme) -> Unit = {},
@@ -353,17 +368,23 @@ fun SettingsContent(
           var languageIconTrigger by remember { mutableStateOf(false) }
 
           SegmentedListItem(
+            onClick = {
+              onLanguageClick()
+              languageIconTrigger = !languageIconTrigger
+            },
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
             colors = colors,
             supportingContent = {
               Text(stringResource(R.string.settings_language_system))
             },
             leadingContent = {
-              AnimatedIcon(
-                resId = R.drawable.ic_rounded_language_anim,
-                trigger = languageIconTrigger,
-                animated = !reduceAnim
-              )
+              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                AnimatedIcon(
+                  resId = R.drawable.ic_rounded_language_anim,
+                  trigger = languageIconTrigger,
+                  animated = !reduceAnim
+                )
+              }
             },
             content = { Text(stringResource(R.string.settings_language)) },
           )
@@ -384,12 +405,13 @@ fun SettingsContent(
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
             colors = colors,
             leadingContent = {
-              AnimatedIcon(
-                resId = R.drawable.ic_rounded_palette_anim,
-                trigger = themeIconTrigger,
-                animated = !reduceAnim,
-                modifier = Modifier.padding(top = 10.dp)
-              )
+              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                AnimatedIcon(
+                  resId = R.drawable.ic_rounded_palette_anim,
+                  trigger = themeIconTrigger,
+                  animated = !reduceAnim
+                )
+              }
             },
             content = {
               Column(modifier = Modifier.fillMaxWidth()) {
@@ -430,12 +452,13 @@ fun SettingsContent(
             shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
             colors = colors,
             leadingContent = {
-              AnimatedIcon(
-                resId = R.drawable.ic_rounded_contrast_anim,
-                trigger = contrastIconTrigger,
-                animated = !reduceAnim,
-                modifier = Modifier.padding(top = 10.dp)
-              )
+              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                AnimatedIcon(
+                  resId = R.drawable.ic_rounded_contrast_anim,
+                  trigger = contrastIconTrigger,
+                  animated = !reduceAnim
+                )
+              }
             },
             content = {
               Column(modifier = Modifier.fillMaxWidth()) {

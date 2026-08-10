@@ -2,6 +2,7 @@ package xyz.zedler.patrick.tack.presentation.screen
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
@@ -40,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -56,6 +58,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import xyz.zedler.patrick.tack.BuildConfig
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.component.AnimatedIcon
+import xyz.zedler.patrick.tack.presentation.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.UnlockUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -68,6 +71,16 @@ fun AboutScreen(
   val context = LocalContext.current
   val reduceAnim by viewModel.reduceAnim.collectAsStateWithLifecycle()
   val checkUnlockKey by viewModel.checkUnlockKey.collectAsStateWithLifecycle()
+
+  var showFeedbackDialog by rememberSaveable { mutableStateOf(false) }
+
+  if (showFeedbackDialog) {
+    FeedbackDialog(
+      checkUnlockKey = checkUnlockKey,
+      onDismissRequest = { showFeedbackDialog = false },
+      onSupportClick = { /* TODO: Show unlock dialog */ }
+    )
+  }
 
   val appWebsite = stringResource(R.string.app_website)
   val appVendingDev = stringResource(R.string.app_vending_dev)
@@ -112,7 +125,7 @@ fun AboutScreen(
       context.startActivity(Intent(Intent.ACTION_VIEW, appPrivacy.toUri()))
     },
     onLicenseClick = { /* TODO: Implement actual dialogs */ },
-    onFeedbackClick = { /* TODO: Implement actual dialog */ },
+    onFeedbackClick = { showFeedbackDialog = true },
     onHelpClick = { /* TODO: Implement actual dialog */ },
     onRecommendClick = {
       val sendIntent = Intent().apply {
@@ -300,11 +313,12 @@ fun AboutContent(
               Text(stringResource(R.string.about_version))
             },
             leadingContent = {
-              Icon(
-                painter = painterResource(R.drawable.ic_rounded_info),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-              )
+              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                Icon(
+                  painter = painterResource(R.drawable.ic_rounded_info),
+                  contentDescription = null
+                )
+              }
             },
             content = { Text(versionName) },
           )
@@ -320,11 +334,13 @@ fun AboutContent(
               Text(stringResource(R.string.about_changelog_description))
             },
             leadingContent = {
-              AnimatedIcon(
-                resId = R.drawable.ic_rounded_history_anim,
-                trigger = changelogIconTrigger,
-                animated = !reduceAnim
-              )
+              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                AnimatedIcon(
+                  resId = R.drawable.ic_rounded_history_anim,
+                  trigger = changelogIconTrigger,
+                  animated = !reduceAnim
+                )
+              }
             },
             content = { Text(stringResource(R.string.about_changelog)) },
           )
@@ -337,11 +353,12 @@ fun AboutContent(
               Text(stringResource(R.string.about_developer))
             },
             leadingContent = {
-              Icon(
-                painter = painterResource(R.drawable.ic_rounded_person),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-              )
+              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                Icon(
+                  painter = painterResource(R.drawable.ic_rounded_person),
+                  contentDescription = null
+                )
+              }
             },
             content = { Text(stringResource(R.string.app_developer)) },
           )
@@ -354,11 +371,12 @@ fun AboutContent(
               Text(stringResource(R.string.about_vending_description))
             },
             leadingContent = {
-              Icon(
-                painter = painterResource(R.drawable.ic_rounded_shop),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-              )
+              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                Icon(
+                  painter = painterResource(R.drawable.ic_rounded_shop),
+                  contentDescription = null
+                )
+              }
             },
             content = { Text(stringResource(R.string.about_vending)) },
           )
@@ -387,11 +405,12 @@ fun AboutContent(
                 Text(keyDescription)
               },
               leadingContent = {
-                Icon(
-                  painter = painterResource(R.drawable.ic_rounded_key),
-                  contentDescription = null,
-                  tint = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+                Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                  Icon(
+                    painter = painterResource(R.drawable.ic_rounded_key),
+                    contentDescription = null
+                  )
+                }
               },
               content = { Text(stringResource(R.string.about_key)) },
             )
@@ -414,11 +433,12 @@ fun AboutContent(
               Text(stringResource(R.string.about_github_description))
             },
             leadingContent = {
-              Icon(
-                painter = painterResource(R.drawable.ic_rounded_code),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-              )
+              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                Icon(
+                  painter = painterResource(R.drawable.ic_rounded_code),
+                  contentDescription = null
+                )
+              }
             },
             content = { Text(stringResource(R.string.about_github)) },
           )
@@ -433,11 +453,12 @@ fun AboutContent(
               Text(stringResource(R.string.about_translation_description))
             },
             leadingContent = {
-              Icon(
-                painter = painterResource(R.drawable.ic_rounded_translate),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-              )
+              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                Icon(
+                  painter = painterResource(R.drawable.ic_rounded_translate),
+                  contentDescription = null
+                )
+              }
             },
             content = { Text(stringResource(R.string.about_translation)) },
           )
@@ -450,11 +471,12 @@ fun AboutContent(
               Text(stringResource(R.string.about_privacy_description))
             },
             leadingContent = {
-              Icon(
-                painter = painterResource(R.drawable.ic_rounded_policy),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant
-              )
+              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                Icon(
+                  painter = painterResource(R.drawable.ic_rounded_policy),
+                  contentDescription = null
+                )
+              }
             },
             content = { Text(stringResource(R.string.about_privacy)) },
           )
@@ -489,11 +511,13 @@ fun AboutContent(
               Text(stringResource(R.string.license_author_google))
             },
             leadingContent = {
-              AnimatedIcon(
-                resId = R.drawable.ic_rounded_copyright_anim,
-                trigger = copyright1IconTrigger,
-                animated = !reduceAnim
-              )
+              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                AnimatedIcon(
+                  resId = R.drawable.ic_rounded_copyright_anim,
+                  trigger = copyright1IconTrigger,
+                  animated = !reduceAnim
+                )
+              }
             },
             content = { Text(stringResource(R.string.license_google_sans_flex)) },
           )
@@ -509,11 +533,13 @@ fun AboutContent(
               Text(stringResource(R.string.license_author_google))
             },
             leadingContent = {
-              AnimatedIcon(
-                resId = R.drawable.ic_rounded_copyright_anim,
-                trigger = copyright2IconTrigger,
-                animated = !reduceAnim
-              )
+              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                AnimatedIcon(
+                  resId = R.drawable.ic_rounded_copyright_anim,
+                  trigger = copyright2IconTrigger,
+                  animated = !reduceAnim
+                )
+              }
             },
             content = { Text(stringResource(R.string.license_material_icons)) },
           )
