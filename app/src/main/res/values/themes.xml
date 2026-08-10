@@ -1,6 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <style name="Theme.Tack" parent="Theme.Material3.DayNight.NoActionBar">
-    <item name="colorPrimary">@color/yellow_theme_primary</item>
+
+  <style name="Theme.Tack" parent="Theme.Material3.DayNight.NoActionBar" />
+
+  <style name="Theme.Tack.Splash" parent="Theme.SplashScreen">
+    <item name="windowSplashScreenBackground">@color/yellow_theme_surface</item>
+    <item name="windowSplashScreenAnimatedIcon">@drawable/splash_logo_anim</item>
+    <item name="postSplashScreenTheme">@style/Theme.Tack</item>
   </style>
+
+  <style name="Theme.Tack.Widget" parent="Theme.Tack.Yellow" />
+
+  <style name="Theme.Tack.Yellow" parent="Theme.Tack">
+    <item name="colorPrimary">@color/yellow_theme_primary</item>
+    <item name="colorOnPrimary">@color/yellow_theme_onPrimary</item>
+    <item name="colorPrimaryContainer">@color/yellow_theme_primaryContainer</item>
+    <item name="colorOnPrimaryContainer">@color/yellow_theme_onPrimaryContainer</item>
+    <item name="colorSecondary">@color/yellow_theme_secondary</item>
+    <item name="colorOnSecondary">@color/yellow_theme_onSecondary</item>
+    <item name="colorSecondaryContainer">@color/yellow_theme_secondaryContainer</item>
+    <item name="colorOnSecondaryContainer">@color/yellow_theme_onSecondaryContainer</item>
+    <item name="colorTertiary">@color/yellow_theme_tertiary</item>
+    <item name="colorOnTertiary">@color/yellow_theme_onTertiary</item>
+    <item name="colorTertiaryContainer">@color/yellow_theme_tertiaryContainer</item>
+    <item name="colorOnTertiaryContainer">@color/yellow_theme_onTertiaryContainer</item>
+    <item name="colorError">@color/yellow_theme_error</item>
+    <item name="colorOnError">@color/yellow_theme_onError</item>
+    <item name="colorErrorContainer">@color/yellow_theme_errorContainer</item>
+    <item name="colorOnErrorContainer">@color/yellow_theme_onErrorContainer</item>
+    <item name="colorSurface">@color/yellow_theme_surface</item>
+    <item name="colorOnSurface">@color/yellow_theme_onSurface</item>
+    <item name="colorOnSurfaceVariant">@color/yellow_theme_onSurfaceVariant</item>
+    <item name="colorOutline">@color/yellow_theme_outline</item>
+    <item name="colorOutlineVariant">@color/yellow_theme_outlineVariant</item>
+    <item name="colorSurfaceInverse">@color/yellow_theme_inverseSurface</item>
+    <item name="colorOnSurfaceInverse">@color/yellow_theme_inverseOnSurface</item>
+    <item name="colorPrimaryInverse">@color/yellow_theme_inversePrimary</item>
+    <item name="colorPrimaryFixed">@color/yellow_theme_primaryFixed</item>
+    <item name="colorOnPrimaryFixed">@color/yellow_theme_onPrimaryFixed</item>
+    <item name="colorPrimaryFixedDim">@color/yellow_theme_primaryFixedDim</item>
+    <item name="colorOnPrimaryFixedVariant">@color/yellow_theme_onPrimaryFixedVariant</item>
+    <item name="colorSecondaryFixed">@color/yellow_theme_secondaryFixed</item>
+    <item name="colorOnSecondaryFixed">@color/yellow_theme_onSecondaryFixed</item>
+    <item name="colorSecondaryFixedDim">@color/yellow_theme_secondaryFixedDim</item>
+    <item name="colorOnSecondaryFixedVariant">@color/yellow_theme_onSecondaryFixedVariant</item>
+    <item name="colorTertiaryFixed">@color/yellow_theme_tertiaryFixed</item>
+    <item name="colorOnTertiaryFixed">@color/yellow_theme_onTertiaryFixed</item>
+    <item name="colorTertiaryFixedDim">@color/yellow_theme_tertiaryFixedDim</item>
+    <item name="colorOnTertiaryFixedVariant">@color/yellow_theme_onTertiaryFixedVariant</item>
+    <item name="colorSurfaceDim">@color/yellow_theme_surfaceDim</item>
+    <item name="colorSurfaceBright">@color/yellow_theme_surfaceBright</item>
+    <item name="colorSurfaceContainerLowest">@color/yellow_theme_surfaceContainerLowest</item>
+    <item name="colorSurfaceContainerLow">@color/yellow_theme_surfaceContainerLow</item>
+    <item name="colorSurfaceContainer">@color/yellow_theme_surfaceContainer</item>
+    <item name="colorSurfaceContainerHigh">@color/yellow_theme_surfaceContainerHigh</item>
+    <item name="colorSurfaceContainerHighest">@color/yellow_theme_surfaceContainerHighest</item>
+  </style>
+
 </resources>

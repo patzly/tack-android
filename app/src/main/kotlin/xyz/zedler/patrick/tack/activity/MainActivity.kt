@@ -17,10 +17,10 @@ import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import xyz.zedler.patrick.tack.TackApplication
-import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.presentation.navigation.Route
 import xyz.zedler.patrick.tack.presentation.screen.AboutScreen
 import xyz.zedler.patrick.tack.presentation.screen.LogScreen
@@ -29,6 +29,7 @@ import xyz.zedler.patrick.tack.presentation.screen.SettingsScreen
 import xyz.zedler.patrick.tack.presentation.screen.SongScreen
 import xyz.zedler.patrick.tack.presentation.screen.SongsScreen
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
+import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 class MainActivity : ComponentActivity(), ServiceConnection {
@@ -40,6 +41,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
   @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
   override fun onCreate(savedInstanceState: Bundle?) {
+    installSplashScreen()
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
 

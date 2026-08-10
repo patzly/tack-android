@@ -114,6 +114,7 @@ dependencies {
   implementation(libs.navigation3.runtime)
   implementation(libs.navigation3.ui)
   implementation(libs.lifecycle.viewmodel.compose)
+  implementation(libs.splashscreen)
 
   // Testing
   testImplementation(libs.junit)
