@@ -12,6 +12,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.core.model.AppContrast
+import xyz.zedler.patrick.tack.core.model.AppTheme
 import xyz.zedler.patrick.tack.presentation.component.*
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -90,8 +92,8 @@ fun SettingsScreen(
 fun SettingsContent(
   useDynamicColors: Boolean = true,
   themeHue: Float = 200f,
-  themeMode: String = "system",
-  contrast: String = "standard",
+  themeMode: AppTheme = AppTheme.SYSTEM,
+  contrast: AppContrast = AppContrast.STANDARD,
   haptic: Boolean = true,
   vibrationIntensity: String = "auto",
   reduceAnim: Boolean = false,
@@ -111,8 +113,8 @@ fun SettingsContent(
   onBack: () -> Unit = {},
   onUpdateUseDynamicColors: (Boolean) -> Unit = {},
   onUpdateThemeHue: (Float) -> Unit = {},
-  onUpdateThemeMode: (String) -> Unit = {},
-  onUpdateContrast: (String) -> Unit = {},
+  onUpdateThemeMode: (AppTheme) -> Unit = {},
+  onUpdateContrast: (AppContrast) -> Unit = {},
   onUpdateHaptic: (Boolean) -> Unit = {},
   onUpdateVibrationIntensity: (String) -> Unit = {},
   onUpdateReduceAnim: (Boolean) -> Unit = {},
@@ -155,7 +157,7 @@ fun SettingsContent(
         scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
       )
     },
-    containerColor = MaterialTheme.colorScheme.surfaceContainer
+    containerColor = MaterialTheme.colorScheme.surfaceContainer,
   ) { padding ->
     LazyColumn(
       modifier = Modifier
@@ -165,7 +167,7 @@ fun SettingsContent(
         start = 16.dp,
         end = 16.dp,
         top = padding.calculateTopPadding(),
-        bottom = padding.calculateBottomPadding() + 24.dp
+        bottom = padding.calculateBottomPadding() + 16.dp
       )
     ) {
       item { TackCategoryHeader(stringResource(R.string.title_general)) }
@@ -198,14 +200,14 @@ fun SettingsContent(
             onUseDynamicColorsChange = onUpdateUseDynamicColors
           )
           TackButtonGroup(
-            options = listOf("system", "light", "dark"),
+            options = AppTheme.entries.map { it.name },
             labels = listOf(
               stringResource(R.string.settings_theme_auto),
               stringResource(R.string.settings_theme_light),
               stringResource(R.string.settings_theme_dark)
             ),
-            selected = themeMode,
-            onSelect = onUpdateThemeMode
+            selected = themeMode.name,
+            onSelect = { onUpdateThemeMode(AppTheme.valueOf(it)) }
           )
         }
       }
@@ -221,15 +223,15 @@ fun SettingsContent(
             onClick = null
           )
           TackButtonGroup(
-            options = listOf("standard", "medium", "high"),
+            options = AppContrast.entries.map { it.name },
             labels = listOf(
               stringResource(R.string.settings_contrast_standard),
               stringResource(R.string.settings_contrast_medium),
               stringResource(R.string.settings_contrast_high)
             ),
-            selected = contrast,
+            selected = contrast.name,
             enabled = !useDynamicColors,
-            onSelect = onUpdateContrast
+            onSelect = { onUpdateContrast(AppContrast.valueOf(it)) }
           )
         }
       }
@@ -336,7 +338,10 @@ fun SettingsContent(
           TackSettingsListItem(
             icon = R.drawable.ic_rounded_speaker_anim,
             title = stringResource(R.string.settings_gain),
-            description = stringResource(R.string.label_db_signed, if (gain > 0) "+$gain" else gain),
+            description = stringResource(
+              R.string.label_db_signed,
+              if (gain > 0) "+$gain" else gain.toString()
+            ),
             onClick = { /* TODO: Gain dialog */ }
           )
           HorizontalDivider(
@@ -346,7 +351,7 @@ fun SettingsContent(
           TackSettingsListItem(
             icon = R.drawable.ic_rounded_media_output,
             title = stringResource(R.string.settings_latency),
-            description = stringResource(R.string.label_ms, latency),
+            description = stringResource(R.string.label_ms, latency.toString()),
             onClick = { /* TODO: Latency dialog */ }
           )
         }
@@ -502,7 +507,7 @@ fun SettingsContent(
 @Preview(showBackground = true)
 @Composable
 fun SettingsScreenPreview() {
-  TackTheme(useDynamicColors = false, hue = 200f, theme = "system", contrast = "standard") {
+  TackTheme {
     SettingsContent()
   }
 }

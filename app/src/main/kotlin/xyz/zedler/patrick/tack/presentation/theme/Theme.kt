@@ -2,31 +2,28 @@ package xyz.zedler.patrick.tack.presentation.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Shapes
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import com.materialkolor.rememberDynamicColorScheme
+import xyz.zedler.patrick.tack.core.model.AppContrast
+import xyz.zedler.patrick.tack.core.model.AppTheme
 
 @Composable
 fun TackTheme(
   useDynamicColors: Boolean = false,
   hue: Float = 200f,
-  theme: String = "system",
-  contrast: String = "standard",
+  theme: AppTheme = AppTheme.SYSTEM,
+  contrast: AppContrast = AppContrast.STANDARD,
   darkTheme: Boolean = isSystemInDarkTheme(),
   content: @Composable () -> Unit
 ) {
   val context = LocalContext.current
   val isDark = when (theme) {
-    "light" -> false
-    "dark" -> true
-    else -> darkTheme
+    AppTheme.LIGHT -> false
+    AppTheme.DARK -> true
+    AppTheme.SYSTEM -> darkTheme
   }
 
   val colorScheme = when {
@@ -35,9 +32,9 @@ fun TackTheme(
     }
     else -> {
       val contrastLevel = when (contrast) {
-        "medium" -> 0.5
-        "high" -> 1.0
-        else -> 0.0
+        AppContrast.MEDIUM -> 0.5
+        AppContrast.HIGH -> 1.0
+        AppContrast.STANDARD -> 0.0
       }
       rememberDynamicColorScheme(
         seedColor = Color.hsv(hue, 0.4f, 0.4f),
@@ -47,18 +44,10 @@ fun TackTheme(
     }
   }
 
-  val shapes = Shapes(
-    extraSmall = RoundedCornerShape(4.dp),
-    small = RoundedCornerShape(8.dp),
-    medium = RoundedCornerShape(16.dp),
-    large = RoundedCornerShape(16.dp),
-    extraLarge = RoundedCornerShape(24.dp)
-  )
-
   MaterialTheme(
     colorScheme = colorScheme,
     typography = TackTypography,
-    shapes = shapes,
+    shapes = TackShapes,
     content = content
   )
 }

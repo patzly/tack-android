@@ -8,8 +8,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.core.data.SettingsRepository
 import xyz.zedler.patrick.tack.core.data.SongRepository
-import xyz.zedler.patrick.tack.core.model.MetronomeConfig
-import xyz.zedler.patrick.tack.core.model.MetronomeState
+import xyz.zedler.patrick.tack.core.model.*
 import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.presentation.navigation.Route
 
@@ -40,9 +39,9 @@ class MainViewModel(
   val themeHue = settingsRepository.themeHue
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 200f)
   val theme = settingsRepository.theme
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "system")
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AppTheme.SYSTEM)
   val contrast = settingsRepository.contrast
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "standard")
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AppContrast.STANDARD)
   val haptic = settingsRepository.haptic
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
   val vibrationIntensity = settingsRepository.vibrationIntensity
@@ -108,8 +107,8 @@ class MainViewModel(
   fun updateTempo(tempo: Int) = viewModelScope.launch { settingsRepository.updateTempo(tempo) }
   fun updateUseDynamicColors(use: Boolean) = viewModelScope.launch { settingsRepository.updateUseDynamicColors(use) }
   fun updateThemeHue(hue: Float) = viewModelScope.launch { settingsRepository.updateThemeHue(hue) }
-  fun updateTheme(theme: String) = viewModelScope.launch { settingsRepository.updateTheme(theme) }
-  fun updateContrast(contrast: String) = viewModelScope.launch { settingsRepository.updateContrast(contrast) }
+  fun updateTheme(theme: AppTheme) = viewModelScope.launch { settingsRepository.updateTheme(theme) }
+  fun updateContrast(contrast: AppContrast) = viewModelScope.launch { settingsRepository.updateContrast(contrast) }
   fun updateHaptic(enabled: Boolean) = viewModelScope.launch { settingsRepository.updateHaptic(enabled) }
   fun updateVibrationIntensity(intensity: String) = viewModelScope.launch { settingsRepository.updateVibrationIntensity(intensity) }
   fun updateReduceAnim(reduce: Boolean) = viewModelScope.launch { settingsRepository.updateReduceAnim(reduce) }

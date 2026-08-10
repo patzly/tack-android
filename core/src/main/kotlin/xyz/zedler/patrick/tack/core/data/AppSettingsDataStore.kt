@@ -12,6 +12,8 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.map
+import xyz.zedler.patrick.tack.core.model.AppContrast
+import xyz.zedler.patrick.tack.core.model.AppTheme
 import xyz.zedler.patrick.tack.core.metronome.MetronomeConstants.Default
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
@@ -29,8 +31,8 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
   constructor(context: Context) : this(context.dataStore)
 
   // General
-  val theme = dataStore.data.map { it[THEME] ?: "system" }
-  val contrast = dataStore.data.map { it[CONTRAST] ?: "standard" }
+  val theme = dataStore.data.map { AppTheme.fromKey(it[THEME] ?: "system") }
+  val contrast = dataStore.data.map { AppContrast.fromKey(it[CONTRAST] ?: "standard") }
   val haptic = dataStore.data.map { it[HAPTIC] ?: true }
   val vibrationIntensity = dataStore.data.map { it[VIBRATION_INTENSITY] ?: "auto" }
   val reduceAnim = dataStore.data.map { it[REDUCE_ANIM] ?: false }
@@ -99,12 +101,12 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
     dataStore.edit { it[THEME_HUE] = hue }
   }
 
-  suspend fun updateTheme(theme: String) {
-    dataStore.edit { it[THEME] = theme }
+  suspend fun updateTheme(theme: AppTheme) {
+    dataStore.edit { it[THEME] = theme.key }
   }
 
-  suspend fun updateContrast(contrast: String) {
-    dataStore.edit { it[CONTRAST] = contrast }
+  suspend fun updateContrast(contrast: AppContrast) {
+    dataStore.edit { it[CONTRAST] = contrast.key }
   }
 
   suspend fun updateHaptic(enabled: Boolean) {

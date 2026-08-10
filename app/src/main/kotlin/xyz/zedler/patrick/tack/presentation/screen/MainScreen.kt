@@ -52,7 +52,7 @@ fun MainScreen(
         .padding(top = 32.dp) // Offset for edge-to-edge
     ) {
       Icon(
-        painter = painterResource(R.drawable.ic_rounded_reset_settings),
+        painter = painterResource(R.drawable.ic_rounded_more_vert),
         contentDescription = "Settings"
       )
     }

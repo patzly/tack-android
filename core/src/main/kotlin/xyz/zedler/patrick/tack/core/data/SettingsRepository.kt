@@ -2,6 +2,8 @@ package xyz.zedler.patrick.tack.core.data
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import xyz.zedler.patrick.tack.core.model.AppContrast
+import xyz.zedler.patrick.tack.core.model.AppTheme
 import xyz.zedler.patrick.tack.core.model.MetronomeConfig
 
 class SettingsRepository(private val dataStore: AppSettingsDataStore) {
@@ -77,9 +79,9 @@ class SettingsRepository(private val dataStore: AppSettingsDataStore) {
 
   suspend fun updateThemeHue(hue: Float) = dataStore.updateThemeHue(hue)
 
-  suspend fun updateTheme(theme: String) = dataStore.updateTheme(theme)
+  suspend fun updateTheme(theme: AppTheme) = dataStore.updateTheme(theme)
 
-  suspend fun updateContrast(contrast: String) = dataStore.updateContrast(contrast)
+  suspend fun updateContrast(contrast: AppContrast) = dataStore.updateContrast(contrast)
 
   suspend fun updateHaptic(enabled: Boolean) = dataStore.updateHaptic(enabled)
 
