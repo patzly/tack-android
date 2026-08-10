@@ -1,12 +1,16 @@
 package xyz.zedler.patrick.tack.presentation.theme
 
 import android.os.Build
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.platform.LocalContext
 import com.materialkolor.hct.Hct
 import com.materialkolor.ktx.toColor
@@ -28,6 +32,20 @@ fun TackTheme(
     AppTheme.LIGHT -> false
     AppTheme.DARK -> true
     AppTheme.SYSTEM -> darkTheme
+  }
+
+  DisposableEffect(isDark) {
+    (context as? ComponentActivity)?.enableEdgeToEdge(
+      statusBarStyle = SystemBarStyle.auto(
+        android.graphics.Color.TRANSPARENT,
+        android.graphics.Color.TRANSPARENT,
+      ) { isDark },
+      navigationBarStyle = SystemBarStyle.auto(
+        android.graphics.Color.TRANSPARENT,
+        android.graphics.Color.TRANSPARENT,
+      ) { isDark }
+    )
+    onDispose {}
   }
 
   val colorScheme = when {

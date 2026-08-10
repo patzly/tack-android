@@ -1,5 +1,6 @@
 package xyz.zedler.patrick.tack.presentation.screen
 
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -485,6 +486,22 @@ fun SettingsContent(
                   onSelect = { onUpdateContrast(AppContrast.valueOf(it)) },
                   enabled = !useDynamicColors
                 )
+
+                if (useDynamicColors) {
+                  Spacer(modifier = Modifier.height(4.dp))
+
+                  Text(
+                    text = stringResource(
+                      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                        R.string.settings_contrast_dynamic
+                      } else {
+                        R.string.settings_contrast_dynamic_unsupported
+                      }
+                    ),
+                    style = MaterialTheme.typography.bodyMediumEmphasized,
+                    color = MaterialTheme.colorScheme.error
+                  )
+                }
               }
             }
           )
