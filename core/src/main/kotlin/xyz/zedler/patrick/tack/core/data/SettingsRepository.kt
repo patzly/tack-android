@@ -46,6 +46,8 @@ class SettingsRepository(private val dataStore: AppSettingsDataStore) {
     )
   }
 
+  val useDynamicColors = dataStore.useDynamicColors
+  val themeHue = dataStore.themeHue
   val theme = dataStore.theme
   val contrast = dataStore.contrast
   val haptic = dataStore.haptic
@@ -62,8 +64,6 @@ class SettingsRepository(private val dataStore: AppSettingsDataStore) {
   val ignoreFocus = dataStore.ignoreFocus
   val gain = dataStore.gain
   val permNotification = dataStore.permNotification
-  val useDynamicColors = dataStore.useDynamicColors
-  val themeHue = dataStore.themeHue
   val activeBeat = dataStore.activeBeat
   val bigTimeText = dataStore.bigTimeText
   val bigLogo = dataStore.bigLogo
@@ -73,7 +73,6 @@ class SettingsRepository(private val dataStore: AppSettingsDataStore) {
   val currentSongId = dataStore.currentSongId
   val currentPartIndex = dataStore.currentPartIndex
 
-  suspend fun updateTempo(tempo: Int) = dataStore.updateTempo(tempo)
 
   suspend fun updateUseDynamicColors(use: Boolean) = dataStore.updateUseDynamicColors(use)
 
@@ -89,6 +88,8 @@ class SettingsRepository(private val dataStore: AppSettingsDataStore) {
     dataStore.updateVibrationIntensity(intensity)
 
   suspend fun updateReduceAnim(reduce: Boolean) = dataStore.updateReduceAnim(reduce)
+
+  suspend fun updateTempo(tempo: Int) = dataStore.updateTempo(tempo)
 
   suspend fun updateSound(sound: String) = dataStore.updateSound(sound)
 

@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
                 is Route.Main -> NavEntry(route) {
                   MainScreen(
                     widthSizeClass = widthClass,
-                    onNavigateToSettings = { viewModel.navigateTo(Route.About) }
+                    onNavigateToSettings = { viewModel.navigateTo(Route.Settings) }
                   )
                 }
                 is Route.Songs -> NavEntry(route) {

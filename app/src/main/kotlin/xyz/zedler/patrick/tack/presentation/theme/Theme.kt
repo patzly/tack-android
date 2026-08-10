@@ -2,10 +2,14 @@ package xyz.zedler.patrick.tack.presentation.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material3.*
+import androidx.compose.material3.MaterialExpressiveTheme
+import androidx.compose.material3.MotionScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.materialkolor.hct.Hct
+import com.materialkolor.ktx.toColor
 import com.materialkolor.rememberDynamicColorScheme
 import xyz.zedler.patrick.tack.core.model.AppContrast
 import xyz.zedler.patrick.tack.core.model.AppTheme
@@ -13,7 +17,7 @@ import xyz.zedler.patrick.tack.core.model.AppTheme
 @Composable
 fun TackTheme(
   useDynamicColors: Boolean = false,
-  hue: Float = 200f,
+  hue: Float = 150f,
   theme: AppTheme = AppTheme.SYSTEM,
   contrast: AppContrast = AppContrast.STANDARD,
   darkTheme: Boolean = isSystemInDarkTheme(),
@@ -37,7 +41,7 @@ fun TackTheme(
         AppContrast.STANDARD -> 0.0
       }
       rememberDynamicColorScheme(
-        seedColor = Color.hsv(hue, 0.4f, 0.4f),
+        seedColor = Hct.from(hue.toDouble(), 70.0, 60.0).toColor(),
         isDark = isDark,
         contrastLevel = contrastLevel
       )

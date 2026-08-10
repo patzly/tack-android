@@ -31,6 +31,8 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
   constructor(context: Context) : this(context.dataStore)
 
   // General
+  val useDynamicColors = dataStore.data.map { it[USE_DYNAMIC_COLORS] ?: true }
+  val themeHue = dataStore.data.map { it[THEME_HUE] ?: 200f }
   val theme = dataStore.data.map { AppTheme.fromKey(it[THEME] ?: "system") }
   val contrast = dataStore.data.map { AppContrast.fromKey(it[CONTRAST] ?: "standard") }
   val haptic = dataStore.data.map { it[HAPTIC] ?: true }
@@ -54,8 +56,6 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
   val ignoreFocus = dataStore.data.map { it[IGNORE_FOCUS] ?: false }
   val gain = dataStore.data.map { it[GAIN] ?: 0 }
   val permNotification = dataStore.data.map { it[PERM_NOTIFICATION] ?: false }
-  val useDynamicColors = dataStore.data.map { it[USE_DYNAMIC_COLORS] ?: true }
-  val themeHue = dataStore.data.map { it[THEME_HUE] ?: 200f }
 
   // Options
   val countIn = dataStore.data.map { it[COUNT_IN] ?: Default.COUNT_IN }
@@ -89,10 +89,6 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
   // App specific
   val checkUnlockKey = dataStore.data.map { it[CHECK_UNLOCK_KEY] ?: true }
 
-  suspend fun updateTempo(tempo: Int) {
-    dataStore.edit { it[TEMPO] = tempo }
-  }
-
   suspend fun updateUseDynamicColors(use: Boolean) {
     dataStore.edit { it[USE_DYNAMIC_COLORS] = use }
   }
@@ -119,6 +115,10 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
 
   suspend fun updateReduceAnim(reduce: Boolean) {
     dataStore.edit { it[REDUCE_ANIM] = reduce }
+  }
+
+  suspend fun updateTempo(tempo: Int) {
+    dataStore.edit { it[TEMPO] = tempo }
   }
 
   suspend fun updateSound(sound: String) {
@@ -182,6 +182,8 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
   }
 
   companion object {
+    private val USE_DYNAMIC_COLORS = booleanPreferencesKey("use_dynamic_colors")
+    private val THEME_HUE = floatPreferencesKey("theme_hue")
     private val THEME = stringPreferencesKey("app_theme")
     private val CONTRAST = stringPreferencesKey("theme_contrast")
     private val HAPTIC = booleanPreferencesKey("haptic_feedback")
@@ -203,8 +205,6 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
     private val IGNORE_FOCUS = booleanPreferencesKey("ignore_focus")
     private val GAIN = intPreferencesKey("gain")
     private val PERM_NOTIFICATION = booleanPreferencesKey("permanent_notification")
-    private val USE_DYNAMIC_COLORS = booleanPreferencesKey("use_dynamic_colors")
-    private val THEME_HUE = floatPreferencesKey("theme_hue")
 
     private val COUNT_IN = intPreferencesKey("count_in")
     private val INCREMENTAL_AMOUNT = intPreferencesKey("incremental_amount")

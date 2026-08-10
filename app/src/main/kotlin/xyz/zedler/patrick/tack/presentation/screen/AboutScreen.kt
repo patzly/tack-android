@@ -5,12 +5,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -226,42 +229,37 @@ fun AboutContent(
               offset = DpOffset(x = (-8).dp, 0.dp)
             )
           ) {
-            Surface(
-              shape = MenuDefaults.groupShape(0, 1).shape,
-              color = MaterialTheme.colorScheme.surfaceContainerLow,
-              tonalElevation = MenuDefaults.TonalElevation,
-              shadowElevation = MenuDefaults.ShadowElevation
+            val groupCount = 1
+
+            DropdownMenuGroup(
+              shapes = MenuDefaults.groupShape(0, groupCount),
             ) {
-              Column(
-                modifier = Modifier
-                  .width(IntrinsicSize.Max)
-                  .padding(vertical = 2.dp)
-              ) {
-                DropdownMenuItem(
-                  text = { Text(stringResource(R.string.title_help)) },
-                  onClick = {
-                    showMenu = false
-                    onHelpClick()
-                  },
-                  shape = MenuDefaults.itemShape(0, 3).shape
-                )
-                DropdownMenuItem(
-                  text = { Text(stringResource(R.string.action_recommend)) },
-                  onClick = {
-                    showMenu = false
-                    onRecommendClick()
-                  },
-                  shape = MenuDefaults.itemShape(1, 3).shape
-                )
-                DropdownMenuItem(
-                  text = { Text(stringResource(R.string.action_send_feedback)) },
-                  onClick = {
-                    showMenu = false
-                    onFeedbackClick()
-                  },
-                  shape = MenuDefaults.itemShape(2, 3).shape
-                )
-              }
+              val itemCount = 3
+
+              DropdownMenuItem(
+                text = { Text(stringResource(R.string.title_help)) },
+                onClick = {
+                  showMenu = false
+                  onHelpClick()
+                },
+                shape = MenuDefaults.itemShape(0, itemCount).shape
+              )
+              DropdownMenuItem(
+                text = { Text(stringResource(R.string.action_recommend)) },
+                onClick = {
+                  showMenu = false
+                  onRecommendClick()
+                },
+                shape = MenuDefaults.itemShape(1, itemCount).shape
+              )
+              DropdownMenuItem(
+                text = { Text(stringResource(R.string.action_send_feedback)) },
+                onClick = {
+                  showMenu = false
+                  onFeedbackClick()
+                },
+                shape = MenuDefaults.itemShape(2, itemCount).shape
+              )
             }
           }
         },
