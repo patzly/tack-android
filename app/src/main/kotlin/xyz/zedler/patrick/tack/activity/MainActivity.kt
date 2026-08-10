@@ -10,7 +10,15 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -66,6 +74,9 @@ class MainActivity : ComponentActivity(), ServiceConnection {
             viewModel.popBackstack()
           }
 
+          val scaleSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
+          val fadeSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
+
           NavDisplay(
             backStack = backstack.toList(),
             onBack = { viewModel.popBackstack() },
@@ -77,16 +88,40 @@ class MainActivity : ComponentActivity(), ServiceConnection {
                     onNavigateToSettings = { viewModel.navigateTo(Route.About) }
                   )
                 }
-                is Route.Songs -> NavEntry(route) { SongsScreen(widthClass) }
-                is Route.Song -> NavEntry(route) { SongScreen(route.songId, widthClass) }
+                is Route.Songs -> NavEntry(route) {
+                  SongsScreen(widthClass)
+                }
+                is Route.Song -> NavEntry(route) {
+                  SongScreen(route.songId, widthClass)
+                }
                 is Route.Settings -> NavEntry(route) {
                   SettingsScreen(viewModel, onBack = { viewModel.popBackstack() })
                 }
                 is Route.About -> NavEntry(route) {
                   AboutScreen(viewModel, onBack = { viewModel.popBackstack() })
                 }
-                is Route.Log -> NavEntry(route) { LogScreen() }
+                is Route.Log -> NavEntry(route) {
+                  LogScreen()
+                }
               }
+            },
+            transitionSpec = {
+              (fadeIn(animationSpec = fadeSpec) +
+                  scaleIn(initialScale = 0.9f, animationSpec = scaleSpec)) togetherWith
+                  (fadeOut(animationSpec = fadeSpec) +
+                      scaleOut(targetScale = 1.1f, animationSpec = scaleSpec))
+            },
+            popTransitionSpec = {
+              (fadeIn(animationSpec = fadeSpec) +
+                  scaleIn(initialScale = 1.1f, animationSpec = scaleSpec)) togetherWith
+                  (fadeOut(animationSpec = fadeSpec) +
+                      scaleOut(targetScale = 0.9f, animationSpec = scaleSpec))
+            },
+            predictivePopTransitionSpec = {
+              (fadeIn(animationSpec = fadeSpec) +
+                  scaleIn(initialScale = 1.1f, animationSpec = scaleSpec)) togetherWith
+                  (fadeOut(animationSpec = fadeSpec) +
+                      scaleOut(targetScale = 0.9f, animationSpec = scaleSpec))
             }
           )
         }

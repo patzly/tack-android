@@ -44,10 +44,11 @@ fun TackTheme(
     }
   }
 
-  MaterialTheme(
+  MaterialExpressiveTheme(
     colorScheme = colorScheme,
     typography = TackTypography,
     shapes = TackShapes,
+    motionScheme = MotionScheme.expressive(),
     content = content
   )
 }
