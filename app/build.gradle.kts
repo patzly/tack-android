@@ -108,12 +108,12 @@ dependencies {
   implementation(libs.compose.material)
   implementation(libs.ui.tooling.preview)
   implementation(libs.compose.activity)
+  implementation(libs.compose.animation)
   implementation(libs.compose.material.window)
   implementation(libs.materialKolor)
   implementation(libs.navigation3.runtime)
   implementation(libs.navigation3.ui)
   implementation(libs.lifecycle.viewmodel.compose)
-  implementation(libs.compose.material.icons.extended)
 
   // Testing
   testImplementation(libs.junit)

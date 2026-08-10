@@ -117,7 +117,7 @@ dependencies {
   implementation(libs.wear.compose.foundation)
   implementation(libs.wear.compose.navigation)
   implementation(libs.compose.runtime)
-  implementation(libs.compose.animation.graphics)
+  implementation(libs.compose.animation)
   implementation(libs.compose.constraintlayout)
   implementation(libs.compose.activity)
   implementation(libs.compose.material)

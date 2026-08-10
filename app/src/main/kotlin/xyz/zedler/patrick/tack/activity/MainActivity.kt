@@ -21,9 +21,14 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import xyz.zedler.patrick.tack.TackApplication
 import xyz.zedler.patrick.tack.service.MetronomeService
-import xyz.zedler.patrick.tack.ui.navigation.Route
-import xyz.zedler.patrick.tack.ui.screen.*
-import xyz.zedler.patrick.tack.ui.theme.TackTheme
+import xyz.zedler.patrick.tack.presentation.navigation.Route
+import xyz.zedler.patrick.tack.presentation.screen.AboutScreen
+import xyz.zedler.patrick.tack.presentation.screen.LogScreen
+import xyz.zedler.patrick.tack.presentation.screen.MainScreen
+import xyz.zedler.patrick.tack.presentation.screen.SettingsScreen
+import xyz.zedler.patrick.tack.presentation.screen.SongScreen
+import xyz.zedler.patrick.tack.presentation.screen.SongsScreen
+import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 class MainActivity : ComponentActivity(), ServiceConnection {
@@ -67,7 +72,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
                 is Route.Main -> NavEntry(route) {
                   MainScreen(
                     widthSizeClass = widthClass,
-                    onNavigateToSettings = { viewModel.navigateTo(Route.Settings) }
+                    onNavigateToSettings = { viewModel.navigateTo(Route.About) }
                   )
                 }
                 is Route.Songs -> NavEntry(route) { SongsScreen(widthClass) }
@@ -75,7 +80,9 @@ class MainActivity : ComponentActivity(), ServiceConnection {
                 is Route.Settings -> NavEntry(route) {
                   SettingsScreen(viewModel, onBack = { viewModel.popBackstack() })
                 }
-                is Route.About -> NavEntry(route) { AboutScreen() }
+                is Route.About -> NavEntry(route) {
+                  AboutScreen(viewModel, onBack = { viewModel.popBackstack() })
+                }
                 is Route.Log -> NavEntry(route) { LogScreen() }
               }
             }

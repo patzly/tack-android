@@ -58,10 +58,10 @@ import androidx.wear.compose.material3.Text
 import androidx.wear.tooling.preview.devices.WearDevices
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
-import xyz.zedler.patrick.tack.presentation.components.AnimatedIcon
-import xyz.zedler.patrick.tack.presentation.components.BeatIconButton
-import xyz.zedler.patrick.tack.presentation.components.BeatsRow
-import xyz.zedler.patrick.tack.presentation.components.TextIconButton
+import xyz.zedler.patrick.tack.presentation.component.AnimatedIcon
+import xyz.zedler.patrick.tack.presentation.component.BeatIconButton
+import xyz.zedler.patrick.tack.presentation.component.BeatsRow
+import xyz.zedler.patrick.tack.presentation.component.TextIconButton
 import xyz.zedler.patrick.tack.presentation.state.MainState
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.isSmallScreen

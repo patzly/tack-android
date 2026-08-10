@@ -71,9 +71,9 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.R
-import xyz.zedler.patrick.tack.presentation.components.AnimatedIcon
-import xyz.zedler.patrick.tack.presentation.components.TempoPicker
-import xyz.zedler.patrick.tack.presentation.components.WrapContentCard
+import xyz.zedler.patrick.tack.presentation.component.AnimatedIcon
+import xyz.zedler.patrick.tack.presentation.component.TempoPicker
+import xyz.zedler.patrick.tack.presentation.component.WrapContentCard
 import xyz.zedler.patrick.tack.presentation.dialog.PermissionDialog
 import xyz.zedler.patrick.tack.presentation.dialog.VolumeDialog
 import xyz.zedler.patrick.tack.presentation.state.MainState

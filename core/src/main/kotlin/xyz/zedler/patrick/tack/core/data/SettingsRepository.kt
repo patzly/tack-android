@@ -65,6 +65,7 @@ class SettingsRepository(private val dataStore: AppSettingsDataStore) {
   val activeBeat = dataStore.activeBeat
   val bigTimeText = dataStore.bigTimeText
   val bigLogo = dataStore.bigLogo
+  val checkUnlockKey = dataStore.checkUnlockKey
 
   val songsOrder = dataStore.songsOrder
   val currentSongId = dataStore.currentSongId
@@ -112,6 +113,8 @@ class SettingsRepository(private val dataStore: AppSettingsDataStore) {
   suspend fun updateBigTimeText(big: Boolean) = dataStore.updateBigTimeText(big)
 
   suspend fun updateBigLogo(big: Boolean) = dataStore.updateBigLogo(big)
+
+  suspend fun updateCheckUnlockKey(check: Boolean) = dataStore.updateCheckUnlockKey(check)
 
   suspend fun clearAll() = dataStore.clearAll()
 }

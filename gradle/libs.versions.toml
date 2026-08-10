@@ -4,15 +4,17 @@ agp = "9.3.1"
 core = "1.19.0"
 oboe = "1.10.0"
 room = "2.8.4"
-datastore = "1.1.1"
+datastore = "1.2.1"
 kotlin = "2.3.10"
 kotlinx-serialization = "1.11.0"
-kotlinx-coroutines = "1.10.1"
+kotlinx-coroutines = "1.11.0"
 lifecycle = "2.11.0"
 splashscreen = "1.2.0"
 compose-bom = "2026.06.01"
 compose-activity = "1.13.0"
 compose-constraintlayout = "1.1.2"
+compose-material3 = "1.5.0-alpha25"
+compose-animation = "1.12.0-rc01"
 navigation3 = "1.1.5"
 preference = "1.2.1"
 shapes = "1.1.0"
@@ -30,12 +32,12 @@ fragment = "1.8.9"
 gson = "2.14.0"
 material = "1.14.0"
 junit = "4.13.2"
-androidx-test-ext-junit = "1.2.1"
-androidx-test-espresso-core = "3.6.1"
+androidx-test-ext-junit = "1.3.0"
+androidx-test-espresso-core = "3.7.0"
 recyclerview = "1.4.0"
 flexbox = "3.0.0"
-mockk = "1.13.17"
-robolectric = "4.14.1"
+mockk = "1.14.11"
+robolectric = "4.16.1"
 navigation = "2.9.8"
 
 [libraries]
@@ -63,10 +65,9 @@ ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
-compose-material = { group = "androidx.compose.material3", name = "material3" }
+compose-material = { group = "androidx.compose.material3", name = "material3", version.ref = "compose-material3" }
 compose-material-window = { group = "androidx.compose.material3", name = "material3-window-size-class" }
-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
-compose-animation-graphics = { group = "androidx.compose.animation", name = "animation-graphics" }
+compose-animation = { group = "androidx.compose.animation", name = "animation-graphics", version.ref = "compose-animation" }
 compose-activity = { group = "androidx.activity", name = "activity-compose", version.ref = "compose-activity" }
 compose-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "compose-constraintlayout" }
 materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
@@ -100,4 +101,3 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-parcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "kotlin" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

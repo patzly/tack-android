@@ -84,6 +84,9 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
   val currentSongId = dataStore.data.map { it[SONG_CURRENT_ID] ?: "default" }
   val currentPartIndex = dataStore.data.map { it[PART_CURRENT_INDEX] ?: 0 }
 
+  // App specific
+  val checkUnlockKey = dataStore.data.map { it[CHECK_UNLOCK_KEY] ?: true }
+
   suspend fun updateTempo(tempo: Int) {
     dataStore.edit { it[TEMPO] = tempo }
   }
@@ -168,6 +171,10 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
     dataStore.edit { it[BIG_LOGO] = big }
   }
 
+  suspend fun updateCheckUnlockKey(check: Boolean) {
+    dataStore.edit { it[CHECK_UNLOCK_KEY] = check }
+  }
+
   suspend fun clearAll() {
     dataStore.edit { it.clear() }
   }
@@ -217,5 +224,7 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
     private val SONGS_ORDER = intPreferencesKey("songs_order")
     private val SONG_CURRENT_ID = stringPreferencesKey("current_song_id")
     private val PART_CURRENT_INDEX = intPreferencesKey("current_part_index")
+
+    private val CHECK_UNLOCK_KEY = booleanPreferencesKey("check_unlock_key")
   }
 }

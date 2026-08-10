@@ -11,7 +11,7 @@ import xyz.zedler.patrick.tack.core.data.SongRepository
 import xyz.zedler.patrick.tack.core.model.MetronomeConfig
 import xyz.zedler.patrick.tack.core.model.MetronomeState
 import xyz.zedler.patrick.tack.service.MetronomeService
-import xyz.zedler.patrick.tack.ui.navigation.Route
+import xyz.zedler.patrick.tack.presentation.navigation.Route
 
 class MainViewModel(
   private val settingsRepository: SettingsRepository,
@@ -79,6 +79,10 @@ class MainViewModel(
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
   val bigLogo = settingsRepository.bigLogo
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+  
+  // App specific
+  val checkUnlockKey = settingsRepository.checkUnlockKey
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
   fun onServiceConnected(service: MetronomeService) {
     _service.value = service
@@ -122,6 +126,7 @@ class MainViewModel(
   fun updateShowElapsed(show: Boolean) = viewModelScope.launch { settingsRepository.updateShowElapsed(show) }
   fun updateBigTimeText(big: Boolean) = viewModelScope.launch { settingsRepository.updateBigTimeText(big) }
   fun updateBigLogo(big: Boolean) = viewModelScope.launch { settingsRepository.updateBigLogo(big) }
+  fun updateCheckUnlockKey(check: Boolean) = viewModelScope.launch { settingsRepository.updateCheckUnlockKey(check) }
   fun clearAll() = viewModelScope.launch { settingsRepository.clearAll() }
 
   fun togglePlay() {
