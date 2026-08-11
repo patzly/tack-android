@@ -11,12 +11,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.presentation.navigation.Route
+import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Composable
 fun MainScreen(
-  widthSizeClass: WindowWidthSizeClass,
-  onNavigateToSettings: () -> Unit
+  viewModel: MainViewModel = viewModel(),
+  widthSizeClass: WindowWidthSizeClass
 ) {
   val isLandscape = widthSizeClass != WindowWidthSizeClass.Compact
 
@@ -46,7 +49,9 @@ fun MainScreen(
     }
 
     IconButton(
-      onClick = onNavigateToSettings,
+      onClick = {
+        viewModel.navigateTo(Route.Settings)
+      },
       modifier = Modifier
         .align(Alignment.TopEnd)
         .padding(16.dp)

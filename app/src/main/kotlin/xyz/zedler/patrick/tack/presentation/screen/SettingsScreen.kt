@@ -65,10 +65,7 @@ import xyz.zedler.patrick.tack.util.LocaleUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Composable
-fun SettingsScreen(
-  viewModel: MainViewModel = viewModel(),
-  onBack: () -> Unit
-) {
+fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
   val useDynamicColors by viewModel.useDynamicColors.collectAsStateWithLifecycle()
   val themeHue by viewModel.themeHue.collectAsStateWithLifecycle()
   val themeMode by viewModel.theme.collectAsStateWithLifecycle()
@@ -137,7 +134,9 @@ fun SettingsScreen(
     } else {
       LocaleUtil.getLocaleName(languageCode)
     },
-    onBack = onBack,
+    onBack = {
+      viewModel.popBackstack()
+    },
     onAboutClick = {
       viewModel.navigateTo(Route.About)
     },

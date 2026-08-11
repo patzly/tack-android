@@ -36,6 +36,7 @@ class MetronomeService : Service() {
   lateinit var engine: MetronomeEngine
   private lateinit var settingsRepository: SettingsRepository
   private lateinit var songRepository: SongRepository
+  private lateinit var hapticProvider: HapticProviderImpl
 
   private var isBound = false
   private var permNotification = false
@@ -48,13 +49,25 @@ class MetronomeService : Service() {
     settingsRepository = app.settingsRepository
     songRepository = app.songRepository
 
-    val hapticProvider = HapticProviderImpl(this)
+    hapticProvider = HapticProviderImpl(this)
     val flashlightProvider = FlashlightProviderImpl(this)
     val audioEngine = AudioEngine(this) { /* stop callback */ }
 
     engine = MetronomeEngine(audioEngine, hapticProvider, flashlightProvider)
 
     NotificationUtil.createNotificationChannel(this)
+
+    serviceScope.launch {
+      settingsRepository.haptic.collect { enabled ->
+        hapticProvider.isEnabled = enabled
+      }
+    }
+
+    serviceScope.launch {
+      settingsRepository.vibrationIntensity.collect { intensity ->
+        hapticProvider.intensity = intensity
+      }
+    }
 
     serviceScope.launch {
       settingsRepository.metronomeConfig.collect { config ->

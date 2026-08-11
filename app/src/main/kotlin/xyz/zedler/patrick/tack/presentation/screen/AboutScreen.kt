@@ -60,15 +60,14 @@ import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.component.AnimatedIcon
 import xyz.zedler.patrick.tack.presentation.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
+import xyz.zedler.patrick.tack.presentation.util.LocalHaptic
 import xyz.zedler.patrick.tack.util.UnlockUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Composable
-fun AboutScreen(
-  viewModel: MainViewModel = viewModel(),
-  onBack: () -> Unit
-) {
+fun AboutScreen(viewModel: MainViewModel = viewModel()) {
   val context = LocalContext.current
+  val haptic = LocalHaptic.current
   val reduceAnim by viewModel.reduceAnim.collectAsStateWithLifecycle()
   val checkUnlockKey by viewModel.checkUnlockKey.collectAsStateWithLifecycle()
 
@@ -97,7 +96,10 @@ fun AboutScreen(
     isKeyInstalled = UnlockUtil.isKeyInstalled(context),
     isPlayStoreInstalled = UnlockUtil.isPlayStoreInstalled(context),
     checkUnlockKey = checkUnlockKey,
-    onBack = onBack,
+    onBack = {
+      viewModel.popBackstack()
+      haptic.click()
+    },
     onDeveloperClick = {
       context.startActivity(Intent(Intent.ACTION_VIEW, appWebsite.toUri()))
     },

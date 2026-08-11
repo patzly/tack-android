@@ -22,7 +22,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.runtime.*
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation3.runtime.NavEntry
@@ -30,9 +36,16 @@ import androidx.navigation3.ui.NavDisplay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import xyz.zedler.patrick.tack.TackApplication
+import xyz.zedler.patrick.tack.hardware.HapticProviderImpl
 import xyz.zedler.patrick.tack.presentation.navigation.Route
-import xyz.zedler.patrick.tack.presentation.screen.*
+import xyz.zedler.patrick.tack.presentation.screen.AboutScreen
+import xyz.zedler.patrick.tack.presentation.screen.LogScreen
+import xyz.zedler.patrick.tack.presentation.screen.MainScreen
+import xyz.zedler.patrick.tack.presentation.screen.SettingsScreen
+import xyz.zedler.patrick.tack.presentation.screen.SongScreen
+import xyz.zedler.patrick.tack.presentation.screen.SongsScreen
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
+import xyz.zedler.patrick.tack.presentation.util.LocalHaptic
 import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.util.LocaleUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -64,7 +77,16 @@ class MainActivity : ComponentActivity(), ServiceConnection {
       val theme by viewModel.theme.collectAsState()
       val contrast by viewModel.contrast.collectAsState()
       val languageCode by viewModel.language.collectAsState()
+      val hapticEnabled by viewModel.haptic.collectAsState()
+      val vibrationIntensity by viewModel.vibrationIntensity.collectAsState()
       val backstack = viewModel.backstack
+
+      val hapticProvider = remember { HapticProviderImpl(this) }
+
+      LaunchedEffect(hapticEnabled, vibrationIntensity) {
+        hapticProvider.isEnabled = hapticEnabled
+        hapticProvider.intensity = vibrationIntensity
+      }
 
       // Handle manual language change recreation for older APIs
       var isInitialCompose by remember { mutableStateOf(true) }
@@ -101,61 +123,59 @@ class MainActivity : ComponentActivity(), ServiceConnection {
         theme = theme,
         contrast = contrast
       ) {
-        Surface(modifier = Modifier.fillMaxSize()) {
-          BackHandler(enabled = backstack.size > 1) {
-            viewModel.popBackstack()
-          }
-
-          val scaleSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
-          val fadeSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
-
-          NavDisplay(
-            backStack = backstack.toList(),
-            onBack = { viewModel.popBackstack() },
-            entryProvider = { route ->
-              when (route) {
-                is Route.Main -> NavEntry(route) {
-                  MainScreen(
-                    widthSizeClass = widthClass,
-                    onNavigateToSettings = { viewModel.navigateTo(Route.Settings) }
-                  )
-                }
-                is Route.Songs -> NavEntry(route) {
-                  SongsScreen(widthClass)
-                }
-                is Route.Song -> NavEntry(route) {
-                  SongScreen(route.songId, widthClass)
-                }
-                is Route.Settings -> NavEntry(route) {
-                  SettingsScreen(viewModel, onBack = { viewModel.popBackstack() })
-                }
-                is Route.About -> NavEntry(route) {
-                  AboutScreen(viewModel, onBack = { viewModel.popBackstack() })
-                }
-                is Route.Log -> NavEntry(route) {
-                  LogScreen()
-                }
-              }
-            },
-            transitionSpec = {
-              (fadeIn(animationSpec = fadeSpec) +
-                  scaleIn(initialScale = 0.9f, animationSpec = scaleSpec)) togetherWith
-                  (fadeOut(animationSpec = fadeSpec) +
-                      scaleOut(targetScale = 1.1f, animationSpec = scaleSpec))
-            },
-            popTransitionSpec = {
-              (fadeIn(animationSpec = fadeSpec) +
-                  scaleIn(initialScale = 1.1f, animationSpec = scaleSpec)) togetherWith
-                  (fadeOut(animationSpec = fadeSpec) +
-                      scaleOut(targetScale = 0.9f, animationSpec = scaleSpec))
-            },
-            predictivePopTransitionSpec = {
-              (fadeIn(animationSpec = fadeSpec) +
-                  scaleIn(initialScale = 1.1f, animationSpec = scaleSpec)) togetherWith
-                  (fadeOut(animationSpec = fadeSpec) +
-                      scaleOut(targetScale = 0.9f, animationSpec = scaleSpec))
+        CompositionLocalProvider(LocalHaptic provides hapticProvider) {
+          Surface(modifier = Modifier.fillMaxSize()) {
+            BackHandler(enabled = backstack.size > 1) {
+              viewModel.popBackstack()
             }
-          )
+
+            val scaleSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
+            val fadeSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
+
+            NavDisplay(
+              backStack = backstack.toList(),
+              onBack = { viewModel.popBackstack() },
+              entryProvider = { route ->
+                when (route) {
+                  is Route.Main -> NavEntry(route) {
+                    MainScreen(widthSizeClass = widthClass)
+                  }
+
+                  is Route.Songs -> NavEntry(route) {
+                    SongsScreen(widthClass)
+                  }
+
+                  is Route.Song -> NavEntry(route) {
+                    SongScreen(route.songId, widthClass)
+                  }
+
+                  is Route.Settings -> NavEntry(route) { SettingsScreen(viewModel) }
+
+                  is Route.About -> NavEntry(route) { AboutScreen(viewModel) }
+
+                  is Route.Log -> NavEntry(route) { LogScreen() }
+                }
+              },
+              transitionSpec = {
+                (fadeIn(animationSpec = fadeSpec) +
+                    scaleIn(initialScale = 0.9f, animationSpec = scaleSpec)) togetherWith
+                    (fadeOut(animationSpec = fadeSpec) +
+                        scaleOut(targetScale = 1.1f, animationSpec = scaleSpec))
+              },
+              popTransitionSpec = {
+                (fadeIn(animationSpec = fadeSpec) +
+                    scaleIn(initialScale = 1.1f, animationSpec = scaleSpec)) togetherWith
+                    (fadeOut(animationSpec = fadeSpec) +
+                        scaleOut(targetScale = 0.9f, animationSpec = scaleSpec))
+              },
+              predictivePopTransitionSpec = {
+                (fadeIn(animationSpec = fadeSpec) +
+                    scaleIn(initialScale = 1.1f, animationSpec = scaleSpec)) togetherWith
+                    (fadeOut(animationSpec = fadeSpec) +
+                        scaleOut(targetScale = 0.9f, animationSpec = scaleSpec))
+              }
+            )
+          }
         }
       }
     }

@@ -19,11 +19,10 @@
 
 package xyz.zedler.patrick.tack.core.hardware
 
-interface HapticProvider {
-  var isEnabled: Boolean
-  var intensity: String
-  
-  fun tick(isPoly: Boolean = false)
-  fun click(isPoly: Boolean = false)
-  fun heavyClick(isPoly: Boolean = false)
+object HapticConstants {
+  object Intensity {
+    const val AUTO = "auto"
+    const val SOFT = "soft"
+    const val STRONG = "strong"
+  }
 }
