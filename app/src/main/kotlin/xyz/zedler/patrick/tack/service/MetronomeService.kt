@@ -1,3 +1,22 @@
+/*
+ * This file is part of Tack Android.
+ *
+ * Tack Android is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Tack Android is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Tack Android. If not, see http://www.gnu.org/licenses/.
+ *
+ * Copyright (c) 2020-2026 by Patrick Zedler
+ */
+
 package xyz.zedler.patrick.tack.service
 
 import android.app.Notification
@@ -19,10 +38,10 @@ import xyz.zedler.patrick.tack.core.audio.AudioEngine
 import xyz.zedler.patrick.tack.core.data.MetronomeRepository
 import xyz.zedler.patrick.tack.core.data.SettingsRepository
 import xyz.zedler.patrick.tack.core.data.SongRepository
-import xyz.zedler.patrick.tack.core.metronome.MetronomeConstants.DurationUnit
 import xyz.zedler.patrick.tack.core.metronome.MetronomeEngine
 import xyz.zedler.patrick.tack.core.model.MetronomeConfig
 import xyz.zedler.patrick.tack.core.model.MetronomeState
+import xyz.zedler.patrick.tack.core.model.TimingUnit
 import xyz.zedler.patrick.tack.core.util.TimeUtil
 import xyz.zedler.patrick.tack.hardware.FlashlightProviderImpl
 import xyz.zedler.patrick.tack.hardware.HapticProviderImpl
@@ -66,15 +85,16 @@ class MetronomeService : Service() {
         hapticProvider.intensity = settings.vibrationIntensity
         
         engine.setLatency(settings.latency)
-        engine.setBeatMode(settings.beatMode)
-        engine.setFlashlight(settings.flashlight)
+        engine.setBeatMode(settings.beatMode.key)
+        engine.setFlashlight(settings.flashlight.key)
         permNotification = settings.permNotification
       }
     }
 
     serviceScope.launch {
-      metronomeRepository.metronomeConfig.collect { metronomeConfig ->
-        engine.setConfig(metronomeConfig)
+      metronomeRepository.metronomeConfig.collect { config ->
+        metronomeConfig = config
+        engine.setConfig(config)
       }
     }
 
@@ -190,11 +210,11 @@ class MetronomeService : Service() {
 
   private fun getCurrentTimerString(state: MetronomeState): String {
     return when (metronomeConfig.timerUnit) {
-      DurationUnit.SECONDS, DurationUnit.MINUTES -> {
+      TimingUnit.SECONDS, TimingUnit.MINUTES -> {
         val totalMillis = engine.getTimerInterval()
         val currentMillis = (state.timerProgress * totalMillis).toLong()
         val seconds = (currentMillis / 1000).toInt()
-        val totalHours = if (metronomeConfig.timerUnit == DurationUnit.MINUTES) {
+        val totalHours = if (metronomeConfig.timerUnit == TimingUnit.MINUTES) {
           metronomeConfig.timerDuration / 60
         } else {
           metronomeConfig.timerDuration / 3600
@@ -226,8 +246,8 @@ class MetronomeService : Service() {
 
   private fun getTotalTimerString(): String {
     return when (metronomeConfig.timerUnit) {
-      DurationUnit.SECONDS, DurationUnit.MINUTES -> {
-        val seconds = if (metronomeConfig.timerUnit == DurationUnit.MINUTES) {
+      TimingUnit.SECONDS, TimingUnit.MINUTES -> {
+        val seconds = if (metronomeConfig.timerUnit == TimingUnit.MINUTES) {
           metronomeConfig.timerDuration * 60
         } else {
           metronomeConfig.timerDuration

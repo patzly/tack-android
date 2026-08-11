@@ -7,8 +7,8 @@ import android.os.VibrationAttributes
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
-import xyz.zedler.patrick.tack.core.hardware.HapticConstants
 import xyz.zedler.patrick.tack.core.hardware.HapticProvider
+import xyz.zedler.patrick.tack.core.model.VibrationIntensity
 
 class HapticProviderImpl(context: Context) : HapticProvider {
 
@@ -22,7 +22,7 @@ class HapticProviderImpl(context: Context) : HapticProvider {
   }
 
   override var isEnabled: Boolean = vibrator.hasVibrator()
-  override var intensity: String = HapticConstants.Intensity.AUTO
+  override var intensity: VibrationIntensity = VibrationIntensity.AUTO
 
   private val vibrationAttributesMedia: VibrationAttributes? by lazy {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -40,32 +40,32 @@ class HapticProviderImpl(context: Context) : HapticProvider {
   }
 
   override fun tick(isPoly: Boolean) {
-    val effectId = if (intensity == HapticConstants.Intensity.AUTO &&
+    val effectId = if (intensity == VibrationIntensity.AUTO &&
       Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
     ) {
       VibrationEffect.EFFECT_TICK
     } else -1
-    val duration = if (intensity == HapticConstants.Intensity.STRONG) 20L else 2L
+    val duration = if (intensity == VibrationIntensity.STRONG) 20L else 2L
     vibrate(effectId, duration)
   }
 
   override fun click(isPoly: Boolean) {
-    val effectId = if (intensity == HapticConstants.Intensity.AUTO &&
+    val effectId = if (intensity == VibrationIntensity.AUTO &&
       Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
     ) {
       VibrationEffect.EFFECT_CLICK
     } else -1
-    val duration = if (intensity == HapticConstants.Intensity.STRONG) 50L else 8L
+    val duration = if (intensity == VibrationIntensity.STRONG) 50L else 8L
     vibrate(effectId, duration)
   }
 
   override fun heavyClick(isPoly: Boolean) {
-    val effectId = if (intensity == HapticConstants.Intensity.AUTO &&
+    val effectId = if (intensity == VibrationIntensity.AUTO &&
       Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
     ) {
       VibrationEffect.EFFECT_HEAVY_CLICK
     } else -1
-    val duration = if (intensity == HapticConstants.Intensity.STRONG) 80L else 40L
+    val duration = if (intensity == VibrationIntensity.STRONG) 80L else 40L
     vibrate(effectId, duration)
   }
 
@@ -77,7 +77,7 @@ class HapticProviderImpl(context: Context) : HapticProvider {
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       VibrationEffect.createOneShot(
         fallbackDuration,
-        if (intensity == HapticConstants.Intensity.STRONG) 255
+        if (intensity == VibrationIntensity.STRONG) 255
         else VibrationEffect.DEFAULT_AMPLITUDE
       )
     } else null

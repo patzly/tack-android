@@ -26,6 +26,8 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
 import xyz.zedler.patrick.tack.core.model.MetronomeConfig
+import xyz.zedler.patrick.tack.core.model.TickType
+import xyz.zedler.patrick.tack.core.model.TimingUnit
 import java.util.UUID
 
 private val default = MetronomeConfig()
@@ -55,13 +57,13 @@ data class Part(
   var incrementalAmount: Int = default.incrementalAmount,
   var incrementalInterval: Int = default.incrementalInterval,
   var incrementalLimit: Int = default.incrementalLimit,
-  var incrementalUnit: String = default.incrementalUnit,
+  var incrementalUnit: String = default.incrementalUnit.key,
   var incrementalIncrease: Boolean = default.incrementalIncrease,
   var timerDuration: Int = default.timerDuration,
-  var timerUnit: String = default.timerUnit,
+  var timerUnit: String = default.timerUnit.key,
   var mutePlay: Int = default.mutePlay,
   var muteMute: Int = default.muteMute,
-  var muteUnit: String = default.muteUnit,
+  var muteUnit: String = default.muteUnit.key,
   var muteRandom: Boolean = default.muteRandom,
 ) : Parcelable {
 
@@ -85,13 +87,13 @@ data class Part(
         incrementalAmount = config.incrementalAmount,
         incrementalInterval = config.incrementalInterval,
         incrementalLimit = config.incrementalLimit,
-        incrementalUnit = config.incrementalUnit,
+        incrementalUnit = config.incrementalUnit.key,
         incrementalIncrease = config.incrementalIncrease,
         timerDuration = config.timerDuration,
-        timerUnit = config.timerUnit,
+        timerUnit = config.timerUnit.key,
         mutePlay = config.mutePlay,
         muteMute = config.muteMute,
-        muteUnit = config.muteUnit,
+        muteUnit = config.muteUnit.key,
         muteRandom = config.muteRandom
       )
     }
@@ -100,20 +102,20 @@ data class Part(
   fun toConfig(): MetronomeConfig {
     return MetronomeConfig(
       tempo = tempo,
-      beats = beats.split(","),
-      subdivisions = subdivisions.split(","),
+      beats = beats.split(",").map { TickType.fromKey(it) },
+      subdivisions = subdivisions.split(",").map { TickType.fromKey(it) },
       usePolyrhythm = usePolyrhythm,
       countIn = countIn,
       incrementalAmount = incrementalAmount,
       incrementalInterval = incrementalInterval,
       incrementalLimit = incrementalLimit,
-      incrementalUnit = incrementalUnit,
+      incrementalUnit = TimingUnit.fromKey(incrementalUnit),
       incrementalIncrease = incrementalIncrease,
       timerDuration = timerDuration,
-      timerUnit = timerUnit,
+      timerUnit = TimingUnit.fromKey(timerUnit),
       mutePlay = mutePlay,
       muteMute = muteMute,
-      muteUnit = muteUnit,
+      muteUnit = TimingUnit.fromKey(muteUnit),
       muteRandom = muteRandom
     )
   }
@@ -127,13 +129,13 @@ data class Part(
     incrementalAmount = config.incrementalAmount
     incrementalInterval = config.incrementalInterval
     incrementalLimit = config.incrementalLimit
-    incrementalUnit = config.incrementalUnit
+    incrementalUnit = config.incrementalUnit.key
     incrementalIncrease = config.incrementalIncrease
     timerDuration = config.timerDuration
-    timerUnit = config.timerUnit
+    timerUnit = config.timerUnit.key
     mutePlay = config.mutePlay
     muteMute = config.muteMute
-    muteUnit = config.muteUnit
+    muteUnit = config.muteUnit.key
     muteRandom = config.muteRandom
   }
 

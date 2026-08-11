@@ -28,16 +28,16 @@ data class AppSettings(
   val contrast: AppContrast = AppContrast.STANDARD,
   // Behavior
   val haptic: Boolean = true,
-  val vibrationIntensity: String = "auto",
+  val vibrationIntensity: VibrationIntensity = VibrationIntensity.AUTO,
   val reduceAnim: Boolean = false,
   // Instrument
-  val sound: String = "sine",
+  val sound: Sound = Sound.SINE,
   val gain: Int = 0,
   val latency: Long = 0L,
-  val beatMode: String = "all",
-  val flashlight: String = "off",
-  val flashScreen: String = "off",
-  val keepAwake: String = "while_playing",
+  val beatMode: BeatMode = BeatMode.ALL,
+  val flashlight: FlashStrength = FlashStrength.OFF,
+  val flashScreen: FlashStrength = FlashStrength.OFF,
+  val keepAwake: KeepAwakeMode = KeepAwakeMode.WHILE_PLAYING,
   val ignoreFocus: Boolean = false,
   // UI
   val showElapsed: Boolean = false,
@@ -67,5 +67,60 @@ enum class AppContrast(val key: String) {
 
   companion object {
     fun fromKey(key: String): AppContrast = entries.find { it.key == key } ?: STANDARD
+  }
+}
+
+enum class VibrationIntensity(val key: String) {
+  AUTO("auto"),
+  SOFT("soft"),
+  STRONG("strong");
+
+  companion object {
+    fun fromKey(key: String): VibrationIntensity = entries.find { it.key == key } ?: AUTO
+  }
+}
+
+enum class Sound(val key: String) {
+  SINE("sine"),
+  WOOD("wood"),
+  MECHANICAL("mechanical"),
+  BEATBOXING_1("beatboxing_1"),
+  BEATBOXING_2("beatboxing_2"),
+  HANDS("hands"),
+  FOLDING("folding");
+
+  companion object {
+    fun fromKey(key: String): Sound = entries.find { it.key == key } ?: SINE
+  }
+}
+
+enum class BeatMode(val key: String) {
+  ALL("all"),
+  FIRST("first"),
+  NONE("none"),
+  VIBRATION("vibration");
+
+  companion object {
+    fun fromKey(key: String): BeatMode = entries.find { it.key == key } ?: ALL
+  }
+}
+
+enum class FlashStrength(val key: String) {
+  OFF("off"),
+  SUBTLE("subtle"),
+  STRONG("strong");
+
+  companion object {
+    fun fromKey(key: String): FlashStrength = entries.find { it.key == key } ?: OFF
+  }
+}
+
+enum class KeepAwakeMode(val key: String) {
+  ALWAYS("always"),
+  WHILE_PLAYING("while_playing"),
+  NEVER("never");
+
+  companion object {
+    fun fromKey(key: String): KeepAwakeMode = entries.find { it.key == key } ?: WHILE_PLAYING
   }
 }

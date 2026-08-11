@@ -49,20 +49,21 @@ class AppDataStore(private val dataStore: DataStore<Preferences>) {
       language = prefs[LANGUAGE].let { if (it == "system") null else it },
       useDynamicColors = prefs[USE_DYNAMIC_COLORS] ?: default.useDynamicColors,
       themeHue = prefs[THEME_HUE] ?: default.themeHue,
-      theme = AppTheme.fromKey(prefs[THEME] ?: "system"),
-      contrast = AppContrast.fromKey(prefs[CONTRAST] ?: "standard"),
+      theme = prefs[THEME]?.let { AppTheme.fromKey(it) } ?: default.theme,
+      contrast = prefs[CONTRAST]?.let { AppContrast.fromKey(it) } ?: default.contrast,
       // Behavior
       haptic = prefs[HAPTIC] ?: default.haptic,
-      vibrationIntensity = prefs[VIBRATION_INTENSITY] ?: default.vibrationIntensity,
+      vibrationIntensity = prefs[VIBRATION_INTENSITY]?.let { VibrationIntensity.fromKey(it) }
+        ?: default.vibrationIntensity,
       reduceAnim = prefs[REDUCE_ANIM] ?: default.reduceAnim,
       // Instrument Settings
-      sound = prefs[SOUND] ?: default.sound,
+      sound = prefs[SOUND]?.let { Sound.fromKey(it) } ?: default.sound,
       gain = prefs[GAIN] ?: default.gain,
       latency = prefs[LATENCY] ?: default.latency,
-      beatMode = prefs[BEAT_MODE] ?: default.beatMode,
-      flashlight = prefs[FLASHLIGHT] ?: default.flashlight,
-      flashScreen = prefs[FLASH_SCREEN] ?: default.flashScreen,
-      keepAwake = prefs[KEEP_AWAKE] ?: default.keepAwake,
+      beatMode = prefs[BEAT_MODE]?.let { BeatMode.fromKey(it) } ?: default.beatMode,
+      flashlight = prefs[FLASHLIGHT]?.let { FlashStrength.fromKey(it) } ?: default.flashlight,
+      flashScreen = prefs[FLASH_SCREEN]?.let { FlashStrength.fromKey(it) } ?: default.flashScreen,
+      keepAwake = prefs[KEEP_AWAKE]?.let { KeepAwakeMode.fromKey(it) } ?: default.keepAwake,
       ignoreFocus = prefs[IGNORE_FOCUS] ?: default.ignoreFocus,
       // UI States
       showElapsed = prefs[SHOW_ELAPSED] ?: default.showElapsed,
@@ -80,20 +81,25 @@ class AppDataStore(private val dataStore: DataStore<Preferences>) {
     val default = MetronomeConfig()
     MetronomeConfig(
       tempo = prefs[TEMPO] ?: default.tempo,
-      beats = (prefs[BEATS] ?: default.beats.joinToString(",")).split(","),
-      subdivisions = (prefs[SUBDIVISIONS] ?: default.subdivisions.joinToString(",")).split(","),
+      beats = (prefs[BEATS] ?: default.beats.joinToString(","))
+        .split(",").map { TickType.fromKey(it) },
+      subdivisions = (prefs[SUBDIVISIONS] ?: default.subdivisions.joinToString(","))
+        .split(",").map { TickType.fromKey(it) },
       usePolyrhythm = prefs[USE_POLYRHYTHM] ?: default.usePolyrhythm,
       countIn = prefs[COUNT_IN] ?: default.countIn,
       incrementalAmount = prefs[INCREMENTAL_AMOUNT] ?: default.incrementalAmount,
       incrementalInterval = prefs[INCREMENTAL_INTERVAL] ?: default.incrementalInterval,
       incrementalLimit = prefs[INCREMENTAL_LIMIT] ?: default.incrementalLimit,
-      incrementalUnit = prefs[INCREMENTAL_UNIT] ?: default.incrementalUnit,
+      incrementalUnit = prefs[INCREMENTAL_UNIT]?.let { TimingUnit.fromKey(it) }
+        ?: default.incrementalUnit,
       incrementalIncrease = prefs[INCREMENTAL_INCREASE] ?: default.incrementalIncrease,
       timerDuration = prefs[TIMER_DURATION] ?: default.timerDuration,
-      timerUnit = prefs[TIMER_UNIT] ?: default.timerUnit,
+      timerUnit = prefs[TIMER_UNIT]?.let { TimingUnit.fromKey(it) }
+        ?: default.timerUnit,
       mutePlay = prefs[MUTE_PLAY] ?: default.mutePlay,
       muteMute = prefs[MUTE_MUTE] ?: default.muteMute,
-      muteUnit = prefs[MUTE_UNIT] ?: default.muteUnit,
+      muteUnit = prefs[MUTE_UNIT]?.let { TimingUnit.fromKey(it) }
+        ?: default.muteUnit,
       muteRandom = prefs[MUTE_RANDOM] ?: default.muteRandom
     )
   }
@@ -106,15 +112,15 @@ class AppDataStore(private val dataStore: DataStore<Preferences>) {
       prefs[THEME] = settings.theme.key
       prefs[CONTRAST] = settings.contrast.key
       prefs[HAPTIC] = settings.haptic
-      prefs[VIBRATION_INTENSITY] = settings.vibrationIntensity
+      prefs[VIBRATION_INTENSITY] = settings.vibrationIntensity.key
       prefs[REDUCE_ANIM] = settings.reduceAnim
-      prefs[SOUND] = settings.sound
+      prefs[SOUND] = settings.sound.key
       prefs[GAIN] = settings.gain
       prefs[LATENCY] = settings.latency
-      prefs[BEAT_MODE] = settings.beatMode
-      prefs[FLASHLIGHT] = settings.flashlight
-      prefs[FLASH_SCREEN] = settings.flashScreen
-      prefs[KEEP_AWAKE] = settings.keepAwake
+      prefs[BEAT_MODE] = settings.beatMode.key
+      prefs[FLASHLIGHT] = settings.flashlight.key
+      prefs[FLASH_SCREEN] = settings.flashScreen.key
+      prefs[KEEP_AWAKE] = settings.keepAwake.key
       prefs[IGNORE_FOCUS] = settings.ignoreFocus
       prefs[SHOW_ELAPSED] = settings.showElapsed
       prefs[RESET_TIMER_ON_STOP] = settings.resetTimerOnStop
@@ -129,20 +135,20 @@ class AppDataStore(private val dataStore: DataStore<Preferences>) {
   suspend fun updateMetronomeConfig(config: MetronomeConfig) {
     dataStore.edit { prefs ->
       prefs[TEMPO] = config.tempo
-      prefs[BEATS] = config.beats.joinToString(",")
-      prefs[SUBDIVISIONS] = config.subdivisions.joinToString(",")
+      prefs[BEATS] = config.beats.joinToString(",") { it.key }
+      prefs[SUBDIVISIONS] = config.subdivisions.joinToString(",") { it.key }
       prefs[USE_POLYRHYTHM] = config.usePolyrhythm
       prefs[COUNT_IN] = config.countIn
       prefs[INCREMENTAL_AMOUNT] = config.incrementalAmount
       prefs[INCREMENTAL_INCREASE] = config.incrementalIncrease
       prefs[INCREMENTAL_INTERVAL] = config.incrementalInterval
-      prefs[INCREMENTAL_UNIT] = config.incrementalUnit
+      prefs[INCREMENTAL_UNIT] = config.incrementalUnit.key
       prefs[INCREMENTAL_LIMIT] = config.incrementalLimit
       prefs[TIMER_DURATION] = config.timerDuration
-      prefs[TIMER_UNIT] = config.timerUnit
+      prefs[TIMER_UNIT] = config.timerUnit.key
       prefs[MUTE_PLAY] = config.mutePlay
       prefs[MUTE_MUTE] = config.muteMute
-      prefs[MUTE_UNIT] = config.muteUnit
+      prefs[MUTE_UNIT] = config.muteUnit.key
       prefs[MUTE_RANDOM] = config.muteRandom
     }
   }
@@ -152,6 +158,7 @@ class AppDataStore(private val dataStore: DataStore<Preferences>) {
   }
 
   companion object {
+    private val LANGUAGE = stringPreferencesKey("language")
     private val USE_DYNAMIC_COLORS = booleanPreferencesKey("use_dynamic_colors")
     private val THEME_HUE = floatPreferencesKey("theme_hue")
     private val THEME = stringPreferencesKey("app_theme")
@@ -198,6 +205,5 @@ class AppDataStore(private val dataStore: DataStore<Preferences>) {
     private val PART_CURRENT_INDEX = intPreferencesKey("current_part_index")
 
     private val CHECK_UNLOCK_KEY = booleanPreferencesKey("check_unlock_key")
-    private val LANGUAGE = stringPreferencesKey("language")
   }
 }

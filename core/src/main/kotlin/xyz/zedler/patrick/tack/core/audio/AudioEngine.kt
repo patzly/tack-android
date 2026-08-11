@@ -31,6 +31,9 @@ import androidx.core.content.getSystemService
 import xyz.zedler.patrick.tack.core.R
 import xyz.zedler.patrick.tack.core.audio.bridge.OboeNativeBridge
 import xyz.zedler.patrick.tack.core.audio.util.AudioUtil
+import xyz.zedler.patrick.tack.core.model.AppSettings
+import xyz.zedler.patrick.tack.core.model.Sound
+import xyz.zedler.patrick.tack.core.model.TickType
 import java.io.IOException
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -66,9 +69,11 @@ class AudioEngine(
   private var isStreamRunning: Boolean = false
   var ignoreFocus: Boolean = false
 
+  private val default: AppSettings = AppSettings()
+
   private fun isInitialized(): Boolean = engineHandle != 0L
 
-  var gain: Int = Constants.Def.GAIN
+  var gain: Int = default.gain
     set(value) {
       field = value
       if (isInitialized()) {
@@ -95,7 +100,7 @@ class AudioEngine(
         Log.e(TAG, "Failed to init Oboe audio stream")
       } else {
         // Initialize defaults
-        setSound(Constants.Def.SOUND)
+        setSound(default.sound)
         // Force update gain on native side
         val currentGain = gain
         gain = currentGain
@@ -207,15 +212,15 @@ class AudioEngine(
     }
   }
 
-  fun setSound(sound: String) {
+  fun setSound(sound: Sound) {
     if (!isInitialized()) return
 
     val config = when (sound) {
-      Constants.Sound.WOOD -> SoundConfig(
+      Sound.WOOD -> SoundConfig(
         normal = R.raw.wood, strong = R.raw.wood, sub = R.raw.wood
       )
 
-      Constants.Sound.MECHANICAL -> SoundConfig(
+      Sound.MECHANICAL -> SoundConfig(
         normal = R.raw.mechanical_tick,
         strong = R.raw.mechanical_ding,
         sub = R.raw.mechanical_knock,
@@ -223,7 +228,7 @@ class AudioEngine(
         pitchSub = Pitch.NORMAL
       )
 
-      Constants.Sound.BEATBOXING_1 -> SoundConfig(
+      Sound.BEATBOXING_1 -> SoundConfig(
         normal = R.raw.beatbox_snare1,
         strong = R.raw.beatbox_kick1,
         sub = R.raw.beatbox_hihat1,
@@ -231,7 +236,7 @@ class AudioEngine(
         pitchSub = Pitch.NORMAL
       )
 
-      Constants.Sound.BEATBOXING_2 -> SoundConfig(
+      Sound.BEATBOXING_2 -> SoundConfig(
         normal = R.raw.beatbox_snare2,
         strong = R.raw.beatbox_kick2,
         sub = R.raw.beatbox_hihat2,
@@ -239,7 +244,7 @@ class AudioEngine(
         pitchSub = Pitch.NORMAL
       )
 
-      Constants.Sound.HANDS -> SoundConfig(
+      Sound.HANDS -> SoundConfig(
         normal = R.raw.hands_hit,
         strong = R.raw.hands_clap,
         sub = R.raw.hands_snap,
@@ -247,7 +252,7 @@ class AudioEngine(
         pitchSub = Pitch.NORMAL
       )
 
-      Constants.Sound.FOLDING -> SoundConfig(
+      Sound.FOLDING -> SoundConfig(
         normal = R.raw.folding_knock,
         strong = R.raw.folding_fold,
         sub = R.raw.folding_tap,
@@ -279,13 +284,13 @@ class AudioEngine(
     }
   }
 
-  override fun playTick(tickType: String, muted: Boolean) {
+  override fun playTick(tickType: TickType, muted: Boolean) {
     if (!isPlaying || !isInitialized() || isMuted || muted) return
 
     val nativeTickType = when (tickType) {
-      Constants.TickType.STRONG -> NATIVE_TICK_TYPE_STRONG
-      Constants.TickType.SUB -> NATIVE_TICK_TYPE_SUB
-      Constants.TickType.MUTED, Constants.TickType.BEAT_SUB_MUTED -> return // Silence
+      TickType.STRONG -> NATIVE_TICK_TYPE_STRONG
+      TickType.SUB -> NATIVE_TICK_TYPE_SUB
+      TickType.MUTED, TickType.BEAT_SUB_MUTED -> return // Silence
       else -> NATIVE_TICK_TYPE_NORMAL
     }
     nativeBridge.nativePlayTick(engineHandle, nativeTickType)

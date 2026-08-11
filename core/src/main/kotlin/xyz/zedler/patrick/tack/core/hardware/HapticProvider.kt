@@ -19,9 +19,11 @@
 
 package xyz.zedler.patrick.tack.core.hardware
 
+import xyz.zedler.patrick.tack.core.model.VibrationIntensity
+
 interface HapticProvider {
   var isEnabled: Boolean
-  var intensity: String
+  var intensity: VibrationIntensity
   
   fun tick(isPoly: Boolean = false)
   fun click(isPoly: Boolean = false)

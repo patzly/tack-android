@@ -44,7 +44,7 @@ fun MainScreen(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
       ) {
-        Text(stringResource(R.string.title_settings))
+        Text("Metronome (Portrait - Options as Dialog)")
       }
     }
 
