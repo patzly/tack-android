@@ -31,6 +31,7 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
   constructor(context: Context) : this(context.dataStore)
 
   // General
+  val language = dataStore.data.map { it[LANGUAGE] }
   val useDynamicColors = dataStore.data.map { it[USE_DYNAMIC_COLORS] ?: true }
   val themeHue = dataStore.data.map { it[THEME_HUE] ?: 200f }
   val theme = dataStore.data.map { AppTheme.fromKey(it[THEME] ?: "system") }
@@ -88,6 +89,12 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
 
   // App specific
   val checkUnlockKey = dataStore.data.map { it[CHECK_UNLOCK_KEY] ?: true }
+
+  suspend fun updateLanguage(language: String?) {
+    dataStore.edit {
+      if (language == null) it.remove(LANGUAGE) else it[LANGUAGE] = language
+    }
+  }
 
   suspend fun updateUseDynamicColors(use: Boolean) {
     dataStore.edit { it[USE_DYNAMIC_COLORS] = use }
@@ -228,5 +235,6 @@ class AppSettingsDataStore(private val dataStore: DataStore<Preferences>) {
     private val PART_CURRENT_INDEX = intPreferencesKey("current_part_index")
 
     private val CHECK_UNLOCK_KEY = booleanPreferencesKey("check_unlock_key")
+    private val LANGUAGE = stringPreferencesKey("language")
   }
 }

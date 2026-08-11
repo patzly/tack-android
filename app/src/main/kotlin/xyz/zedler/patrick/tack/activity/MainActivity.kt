@@ -1,15 +1,17 @@
 package xyz.zedler.patrick.tack.activity
 
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -20,29 +22,34 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import xyz.zedler.patrick.tack.TackApplication
 import xyz.zedler.patrick.tack.presentation.navigation.Route
-import xyz.zedler.patrick.tack.presentation.screen.AboutScreen
-import xyz.zedler.patrick.tack.presentation.screen.LogScreen
-import xyz.zedler.patrick.tack.presentation.screen.MainScreen
-import xyz.zedler.patrick.tack.presentation.screen.SettingsScreen
-import xyz.zedler.patrick.tack.presentation.screen.SongScreen
-import xyz.zedler.patrick.tack.presentation.screen.SongsScreen
+import xyz.zedler.patrick.tack.presentation.screen.*
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.service.MetronomeService
+import xyz.zedler.patrick.tack.util.LocaleUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
-class MainActivity : AppCompatActivity(), ServiceConnection {
+class MainActivity : ComponentActivity(), ServiceConnection {
 
   private val viewModel: MainViewModel by viewModels {
     val app = application as TackApplication
     MainViewModel.Factory(app.settingsRepository, app.songRepository)
+  }
+
+  override fun attachBaseContext(newBase: Context) {
+    val app = newBase.applicationContext as? TackApplication
+    val languageCode = runBlocking {
+      app?.settingsRepository?.language?.first()
+    }
+    super.attachBaseContext(LocaleUtil.wrap(newBase, languageCode))
   }
 
   @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -56,7 +63,34 @@ class MainActivity : AppCompatActivity(), ServiceConnection {
       val themeHue by viewModel.themeHue.collectAsState()
       val theme by viewModel.theme.collectAsState()
       val contrast by viewModel.contrast.collectAsState()
+      val languageCode by viewModel.language.collectAsState()
       val backstack = viewModel.backstack
+
+      // Handle manual language change recreation for older APIs
+      var isInitialCompose by remember { mutableStateOf(true) }
+      LaunchedEffect(languageCode) {
+        if (isInitialCompose) {
+          // Prevent screen flicker on initial compose
+          isInitialCompose = false
+          return@LaunchedEffect
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+          LocaleUtil.applyLocale(this@MainActivity, languageCode)
+        } else {
+          val currentLocale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            resources.configuration.locales[0]
+          } else {
+            @Suppress("DEPRECATION")
+            resources.configuration.locale
+          }
+          val targetLocale = LocaleUtil.getLocale(languageCode)
+          if (currentLocale.language != targetLocale.language ||
+            currentLocale.country != targetLocale.country
+          ) {
+            recreate()
+          }
+        }
+      }
 
       val windowSizeClass = calculateWindowSizeClass(this)
       val widthClass = windowSizeClass.widthSizeClass

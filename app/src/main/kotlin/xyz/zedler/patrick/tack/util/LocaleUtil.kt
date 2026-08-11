@@ -19,38 +19,32 @@
 
 package xyz.zedler.patrick.tack.util
 
+import android.app.LocaleManager
 import android.content.Context
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
-import androidx.appcompat.app.AppCompatDelegate
+import android.os.LocaleList
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.Language
 import java.util.Locale
 
 object LocaleUtil {
 
-  fun followsSystem(): Boolean {
-    return AppCompatDelegate.getApplicationLocales().isEmpty
-  }
-
-  fun getLocale(): Locale {
-    val appLocales = AppCompatDelegate.getApplicationLocales()
-    return if (appLocales.isEmpty) {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        Locale.getDefault()
-      } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+  fun getLocale(languageCode: String?): Locale {
+    if (languageCode == null) {
+      return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         Resources.getSystem().configuration.locales[0]
       } else {
         @Suppress("DEPRECATION")
         Resources.getSystem().configuration.locale
       }
-    } else {
-      appLocales[0] ?: Locale.getDefault()
     }
+    return getLocaleFromCode(languageCode)
   }
 
-  fun getLocaleName(): String {
-    val locale = getLocale()
+  fun getLocaleName(languageCode: String?): String {
+    val locale = getLocale(languageCode)
     return locale.getDisplayName(locale).let {
       it.take(1).uppercase(Locale.getDefault()) + it.drop(1)
     }
@@ -69,8 +63,41 @@ object LocaleUtil {
     return languages
   }
 
-  fun getLanguageCode(): String? {
-    val locales = AppCompatDelegate.getApplicationLocales()
-    return if (!locales.isEmpty) locales[0]?.toLanguageTag() else null
+  fun applyLocale(context: Context, languageCode: String?) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      val localeManager = context.getSystemService(Context.LOCALE_SERVICE) as LocaleManager
+      localeManager.applicationLocales = if (languageCode == null) {
+        LocaleList.getEmptyLocaleList()
+      } else {
+        LocaleList.forLanguageTags(languageCode)
+      }
+    }
+    // For older versions, the actual application happens via wrap() in attachBaseContext
+  }
+
+  fun wrap(context: Context, languageCode: String?): Context {
+    val locale = getLocale(languageCode)
+    Locale.setDefault(locale)
+    val config = Configuration(context.resources.configuration)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      config.setLocales(LocaleList(locale))
+    } else {
+      @Suppress("DEPRECATION")
+      config.locale = locale
+    }
+    return context.createConfigurationContext(config)
+  }
+
+  private fun getLocaleFromCode(languageCode: String): Locale {
+    return try {
+      val codeParts = languageCode.split("-")
+      if (codeParts.size > 1) {
+        Locale.Builder().setLanguage(codeParts[0]).setRegion(codeParts[1]).build()
+      } else {
+        Locale.Builder().setLanguage(languageCode).build()
+      }
+    } catch (e: Exception) {
+      Locale.getDefault()
+    }
   }
 }

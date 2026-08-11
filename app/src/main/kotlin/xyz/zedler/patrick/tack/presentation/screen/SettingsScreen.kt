@@ -90,6 +90,7 @@ fun SettingsScreen(
   val bigTimeText by viewModel.bigTimeText.collectAsStateWithLifecycle()
   val bigLogo by viewModel.bigLogo.collectAsStateWithLifecycle()
   val checkUnlockKey by viewModel.checkUnlockKey.collectAsStateWithLifecycle()
+  val languageCode by viewModel.language.collectAsStateWithLifecycle()
 
   var showFeedbackDialog by rememberSaveable { mutableStateOf(false) }
   var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
@@ -103,7 +104,11 @@ fun SettingsScreen(
   }
 
   if (showLanguageDialog) {
-    LanguageDialog(onDismissRequest = { showLanguageDialog = false })
+    LanguageDialog(
+      currentLanguageCode = languageCode,
+      onLanguageSelected = viewModel::updateLanguage,
+      onDismissRequest = { showLanguageDialog = false }
+    )
   }
 
   SettingsContent(
@@ -127,10 +132,10 @@ fun SettingsScreen(
     showElapsed = showElapsed,
     bigTimeText = bigTimeText,
     bigLogo = bigLogo,
-    localeName = if (LocaleUtil.followsSystem()) {
+    localeName = if (languageCode == null) {
       stringResource(R.string.settings_language_system)
     } else {
-      LocaleUtil.getLocaleName()
+      LocaleUtil.getLocaleName(languageCode)
     },
     onBack = onBack,
     onAboutClick = {

@@ -20,13 +20,10 @@
 package xyz.zedler.patrick.tack.presentation.dialog
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -53,22 +50,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import androidx.core.os.LocaleListCompat
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.util.LocaleUtil
-import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguageDialog(
+  currentLanguageCode: String?,
+  onLanguageSelected: (String?) -> Unit,
   onDismissRequest: () -> Unit
 ) {
   val context = LocalContext.current
   val scope = rememberCoroutineScope()
   val languages = remember { LocaleUtil.getLanguages(context) }
-  val currentLanguageCode = remember { LocaleUtil.getLanguageCode() }
 
   val listState = rememberLazyListState()
 
@@ -120,7 +115,7 @@ fun LanguageDialog(
             SegmentedListItem(
               onClick = {
                 scope.launch {
-                  AppCompatDelegate.setApplicationLocales(LocaleListCompat.getEmptyLocaleList())
+                  onLanguageSelected(null)
                   onDismissRequest()
                 }
               },
@@ -147,9 +142,7 @@ fun LanguageDialog(
             SegmentedListItem(
               onClick = {
                 scope.launch {
-                  AppCompatDelegate.setApplicationLocales(
-                    LocaleListCompat.forLanguageTags(language.code)
-                  )
+                  onLanguageSelected(language.code)
                   onDismissRequest()
                 }
               },

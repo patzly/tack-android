@@ -79,6 +79,9 @@ class MainViewModel(
   val bigLogo = settingsRepository.bigLogo
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
   
+  val language = settingsRepository.language
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+  
   // App specific
   val checkUnlockKey = settingsRepository.checkUnlockKey
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
@@ -125,6 +128,7 @@ class MainViewModel(
   fun updateShowElapsed(show: Boolean) = viewModelScope.launch { settingsRepository.updateShowElapsed(show) }
   fun updateBigTimeText(big: Boolean) = viewModelScope.launch { settingsRepository.updateBigTimeText(big) }
   fun updateBigLogo(big: Boolean) = viewModelScope.launch { settingsRepository.updateBigLogo(big) }
+  fun updateLanguage(language: String?) = viewModelScope.launch { settingsRepository.updateLanguage(language) }
   fun updateCheckUnlockKey(check: Boolean) = viewModelScope.launch { settingsRepository.updateCheckUnlockKey(check) }
   fun clearAll() = viewModelScope.launch { settingsRepository.clearAll() }
 

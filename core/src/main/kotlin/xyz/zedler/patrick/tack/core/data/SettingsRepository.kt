@@ -46,6 +46,7 @@ class SettingsRepository(private val dataStore: AppSettingsDataStore) {
     )
   }
 
+  val language = dataStore.language
   val useDynamicColors = dataStore.useDynamicColors
   val themeHue = dataStore.themeHue
   val theme = dataStore.theme
@@ -73,6 +74,8 @@ class SettingsRepository(private val dataStore: AppSettingsDataStore) {
   val currentSongId = dataStore.currentSongId
   val currentPartIndex = dataStore.currentPartIndex
 
+
+  suspend fun updateLanguage(language: String?) = dataStore.updateLanguage(language)
 
   suspend fun updateUseDynamicColors(use: Boolean) = dataStore.updateUseDynamicColors(use)
 
