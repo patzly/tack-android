@@ -11,7 +11,7 @@ import xyz.zedler.patrick.tack.core.audio.AudioProvider
 import xyz.zedler.patrick.tack.core.hardware.FlashlightProvider
 import xyz.zedler.patrick.tack.core.hardware.HapticProvider
 import xyz.zedler.patrick.tack.core.audio.Constants.TickType
-import xyz.zedler.patrick.tack.core.metronome.MetronomeConstants.Unit
+import xyz.zedler.patrick.tack.core.metronome.MetronomeConstants.DurationUnit
 import xyz.zedler.patrick.tack.core.model.MetronomeConfig
 import xyz.zedler.patrick.tack.core.model.MetronomeState
 import xyz.zedler.patrick.tack.core.model.Tick
@@ -199,7 +199,7 @@ class MetronomeEngine(
         val type = if (isBeat) TickType.BEAT_SUB_MUTED else config.subdivisions[subdivisionPoly - 1]
 
         var muted = state.value.isMuted
-        if (config.isMuteActive && config.muteUnit == Unit.BEATS) {
+        if (config.isMuteActive && config.muteUnit == DurationUnit.BEATS) {
           muted = random.nextInt(100) < config.muteMute
         }
 
@@ -229,7 +229,7 @@ class MetronomeEngine(
         val barIndex = beatIndex / config.beatsCount
         val isCountIn = barIndex < config.countIn
 
-        if (isFirstBeat && config.isMuteActive && config.muteUnit == Unit.BARS && !isCountIn) {
+        if (isFirstBeat && config.isMuteActive && config.muteUnit == DurationUnit.BARS && !isCountIn) {
           if (muteCountDown > 0) {
             muteCountDown--
           } else {
@@ -256,7 +256,7 @@ class MetronomeEngine(
         }
 
         var muted = state.value.isMuted
-        if (config.isMuteActive && config.muteUnit == Unit.BEATS) {
+        if (config.isMuteActive && config.muteUnit == DurationUnit.BEATS) {
           muted = random.nextInt(100) < config.muteMute
         }
 
@@ -298,7 +298,7 @@ class MetronomeEngine(
     val isBeat = tick.subdivision == 1
     val isFirstBeat = isBeat && (beatIndex % config.beatsCount) == 0L
 
-    if (config.isTimerActive && config.timerUnit == Unit.BARS && !isCountIn) {
+    if (config.isTimerActive && config.timerUnit == DurationUnit.BARS && !isCountIn) {
       val isFirstBeatInFirstBar = barIndexNoCountIn == 0L && isFirstBeat
       if (barIndexNoCountIn > 0 || !isFirstBeatInFirstBar) {
         _state.update { s ->
@@ -335,7 +335,7 @@ class MetronomeEngine(
       }
     }
 
-    if (isFirstBeat && config.isIncrementalActive && config.incrementalUnit == Unit.BARS && !isCountIn) {
+    if (isFirstBeat && config.isIncrementalActive && config.incrementalUnit == DurationUnit.BARS && !isCountIn) {
       if (barIndexNoCountIn > 0 && barIndexNoCountIn % config.incrementalInterval == 0L) {
         changeTempo(config.incrementalAmount)
       }
@@ -393,7 +393,7 @@ class MetronomeEngine(
     timerHandler?.removeCallbacksAndMessages(null)
     if (!config.isTimerActive) return
 
-    if (config.timerUnit != Unit.BARS) {
+    if (config.timerUnit != DurationUnit.BARS) {
       timerHandler?.postDelayed({
         stop()
       }, getTimerIntervalRemaining())
@@ -418,9 +418,9 @@ class MetronomeEngine(
 
   private fun updateIncrementalHandler() {
     incrementalHandler?.removeCallbacksAndMessages(null)
-    if (!config.isIncrementalActive || config.incrementalUnit == Unit.BARS) return
+    if (!config.isIncrementalActive || config.incrementalUnit == DurationUnit.BARS) return
 
-    val factor = if (config.incrementalUnit == Unit.SECONDS) 1000L else 60000L
+    val factor = if (config.incrementalUnit == DurationUnit.SECONDS) 1000L else 60000L
     val intervalMillis = factor * config.incrementalInterval
 
     incrementalHandler?.postDelayed(object : Runnable {
@@ -448,7 +448,7 @@ class MetronomeEngine(
   private fun updateMuteHandler() {
     muteHandler?.removeCallbacksAndMessages(null)
     _state.update { it.copy(isMuted = false) }
-    if (config.isMuteActive && config.muteUnit == Unit.SECONDS) {
+    if (config.isMuteActive && config.muteUnit == DurationUnit.SECONDS) {
       muteHandler?.postDelayed(object : Runnable {
         override fun run() {
           _state.update { it.copy(isMuted = !it.isMuted) }
@@ -469,8 +469,8 @@ class MetronomeEngine(
 
   fun getTimerInterval(): Long {
     val factor = when (config.timerUnit) {
-      Unit.SECONDS -> 1000L
-      Unit.MINUTES -> 60000L
+      DurationUnit.SECONDS -> 1000L
+      DurationUnit.MINUTES -> 60000L
       else -> getInterval() * config.beatsCount
     }
     return factor * config.timerDuration

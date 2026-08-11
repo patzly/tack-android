@@ -1,3 +1,22 @@
+/*
+ * This file is part of Tack Android.
+ *
+ * Tack Android is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Tack Android is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Tack Android. If not, see http://www.gnu.org/licenses/.
+ *
+ * Copyright (c) 2020-2026 by Patrick Zedler
+ */
+
 package xyz.zedler.patrick.tack.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
@@ -6,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import xyz.zedler.patrick.tack.core.data.MetronomeRepository
 import xyz.zedler.patrick.tack.core.data.SettingsRepository
 import xyz.zedler.patrick.tack.core.data.SongRepository
 import xyz.zedler.patrick.tack.core.model.*
@@ -14,6 +34,7 @@ import xyz.zedler.patrick.tack.presentation.navigation.Route
 
 class MainViewModel(
   private val settingsRepository: SettingsRepository,
+  private val metronomeRepository: MetronomeRepository,
   private val songRepository: SongRepository
 ) : ViewModel() {
 
@@ -21,8 +42,10 @@ class MainViewModel(
   
   val backstack = mutableStateListOf<Route>(Route.Main)
 
-  // Static config from DataStore
-  val metronomeConfig: StateFlow<MetronomeConfig> = settingsRepository.metronomeConfig
+  val settings: StateFlow<AppSettings> = settingsRepository.settings
+    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AppSettings())
+
+  val metronomeConfig: StateFlow<MetronomeConfig> = metronomeRepository.metronomeConfig
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MetronomeConfig())
 
   // Dynamic state from Engine (via Service)
@@ -32,59 +55,6 @@ class MainViewModel(
       service?.engine?.state ?: flowOf(MetronomeState())
     }
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MetronomeState())
-
-  // General Settings
-  val useDynamicColors = settingsRepository.useDynamicColors
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
-  val themeHue = settingsRepository.themeHue
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 200f)
-  val theme = settingsRepository.theme
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AppTheme.SYSTEM)
-  val contrast = settingsRepository.contrast
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AppContrast.STANDARD)
-  val haptic = settingsRepository.haptic
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
-  val vibrationIntensity = settingsRepository.vibrationIntensity
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "auto")
-  val reduceAnim = settingsRepository.reduceAnim
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-
-  // Metronome Settings
-  val sound = settingsRepository.sound
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "sine")
-  val ignoreFocus = settingsRepository.ignoreFocus
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-  val gain = settingsRepository.gain
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0)
-  val latency = settingsRepository.latency
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0L)
-  val resetTimerOnStop = settingsRepository.resetTimerOnStop
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-  val flashScreen = settingsRepository.flashScreen
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "off")
-  val flashlight = settingsRepository.flashlight
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "off")
-  val keepAwake = settingsRepository.keepAwake
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "while_playing")
-
-  // Controls Settings
-  val activeBeat = settingsRepository.activeBeat
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
-  val permNotification = settingsRepository.permNotification
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-  val showElapsed = settingsRepository.showElapsed
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-  val bigTimeText = settingsRepository.bigTimeText
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-  val bigLogo = settingsRepository.bigLogo
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
-  
-  val language = settingsRepository.language
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
-  
-  // App specific
-  val checkUnlockKey = settingsRepository.checkUnlockKey
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), true)
 
   fun onServiceConnected(service: MetronomeService) {
     _service.value = service
@@ -106,30 +76,18 @@ class MainViewModel(
     return false
   }
 
-  // Update functions
-  fun updateTempo(tempo: Int) = viewModelScope.launch { settingsRepository.updateTempo(tempo) }
-  fun updateUseDynamicColors(use: Boolean) = viewModelScope.launch { settingsRepository.updateUseDynamicColors(use) }
-  fun updateThemeHue(hue: Float) = viewModelScope.launch { settingsRepository.updateThemeHue(hue) }
-  fun updateTheme(theme: AppTheme) = viewModelScope.launch { settingsRepository.updateTheme(theme) }
-  fun updateContrast(contrast: AppContrast) = viewModelScope.launch { settingsRepository.updateContrast(contrast) }
-  fun updateHaptic(enabled: Boolean) = viewModelScope.launch { settingsRepository.updateHaptic(enabled) }
-  fun updateVibrationIntensity(intensity: String) = viewModelScope.launch { settingsRepository.updateVibrationIntensity(intensity) }
-  fun updateReduceAnim(reduce: Boolean) = viewModelScope.launch { settingsRepository.updateReduceAnim(reduce) }
-  fun updateSound(sound: String) = viewModelScope.launch { settingsRepository.updateSound(sound) }
-  fun updateIgnoreFocus(ignore: Boolean) = viewModelScope.launch { settingsRepository.updateIgnoreFocus(ignore) }
-  fun updateGain(gain: Int) = viewModelScope.launch { settingsRepository.updateGain(gain) }
-  fun updateLatency(latency: Long) = viewModelScope.launch { settingsRepository.updateLatency(latency) }
-  fun updateResetTimerOnStop(reset: Boolean) = viewModelScope.launch { settingsRepository.updateResetTimerOnStop(reset) }
-  fun updateFlashScreen(flash: String) = viewModelScope.launch { settingsRepository.updateFlashScreen(flash) }
-  fun updateFlashlight(flashlight: String) = viewModelScope.launch { settingsRepository.updateFlashlight(flashlight) }
-  fun updateKeepAwake(keepAwake: String) = viewModelScope.launch { settingsRepository.updateKeepAwake(keepAwake) }
-  fun updateActiveBeat(active: Boolean) = viewModelScope.launch { settingsRepository.updateActiveBeat(active) }
-  fun updatePermNotification(perm: Boolean) = viewModelScope.launch { settingsRepository.updatePermNotification(perm) }
-  fun updateShowElapsed(show: Boolean) = viewModelScope.launch { settingsRepository.updateShowElapsed(show) }
-  fun updateBigTimeText(big: Boolean) = viewModelScope.launch { settingsRepository.updateBigTimeText(big) }
-  fun updateBigLogo(big: Boolean) = viewModelScope.launch { settingsRepository.updateBigLogo(big) }
-  fun updateLanguage(language: String?) = viewModelScope.launch { settingsRepository.updateLanguage(language) }
-  fun updateCheckUnlockKey(check: Boolean) = viewModelScope.launch { settingsRepository.updateCheckUnlockKey(check) }
+  fun updateSettings(settings: AppSettings) {
+    viewModelScope.launch {
+      settingsRepository.updateSettings(settings)
+    }
+  }
+
+  fun updateMetronomeConfig(config: MetronomeConfig) {
+    viewModelScope.launch {
+      metronomeRepository.updateMetronomeConfig(config)
+    }
+  }
+
   fun clearAll() = viewModelScope.launch { settingsRepository.clearAll() }
 
   fun togglePlay() {
@@ -140,11 +98,12 @@ class MainViewModel(
 
   class Factory(
     private val settingsRepository: SettingsRepository,
+    private val metronomeRepository: MetronomeRepository,
     private val songRepository: SongRepository
   ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-      return MainViewModel(settingsRepository, songRepository) as T
+      return MainViewModel(settingsRepository, metronomeRepository, songRepository) as T
     }
   }
 }

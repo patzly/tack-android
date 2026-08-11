@@ -15,7 +15,7 @@ import org.robolectric.shadows.ShadowLooper
 import xyz.zedler.patrick.tack.core.audio.AudioProvider
 import xyz.zedler.patrick.tack.core.hardware.FlashlightProvider
 import xyz.zedler.patrick.tack.core.hardware.HapticProvider
-import xyz.zedler.patrick.tack.core.metronome.MetronomeConstants.Unit
+import xyz.zedler.patrick.tack.core.metronome.MetronomeConstants.DurationUnit
 import xyz.zedler.patrick.tack.core.model.MetronomeConfig
 import xyz.zedler.patrick.tack.core.util.Clock
 import xyz.zedler.patrick.tack.core.util.SystemClockImpl
@@ -61,7 +61,7 @@ class MetronomeEngineTest {
       MetronomeConfig(
         tempo = 60, // 1 beat per second
         timerDuration = 2,
-        timerUnit = Unit.SECONDS
+        timerUnit = DurationUnit.SECONDS
       )
     )
     engine.start()
@@ -79,7 +79,7 @@ class MetronomeEngineTest {
         tempo = 60,
         beats = listOf("strong", "normal"), // 2 beats per bar -> 2 seconds per bar
         timerDuration = 1,
-        timerUnit = Unit.BARS
+        timerUnit = DurationUnit.BARS
       )
     )
     engine.start()
@@ -98,7 +98,7 @@ class MetronomeEngineTest {
         beats = listOf("strong", "normal"), // 2 seconds per bar
         incrementalAmount = 10,
         incrementalInterval = 1,
-        incrementalUnit = Unit.BARS,
+        incrementalUnit = DurationUnit.BARS,
         incrementalIncrease = true
       )
     )
@@ -117,7 +117,7 @@ class MetronomeEngineTest {
         tempo = 60,
         incrementalAmount = 5,
         incrementalInterval = 2,
-        incrementalUnit = Unit.SECONDS,
+        incrementalUnit = DurationUnit.SECONDS,
         incrementalIncrease = true
       )
     )
@@ -136,7 +136,7 @@ class MetronomeEngineTest {
         beats = listOf("strong"), // 1 second per bar
         mutePlay = 1,
         muteMute = 1,
-        muteUnit = Unit.BARS,
+        muteUnit = DurationUnit.BARS,
         muteRandom = false
       )
     )
@@ -179,7 +179,7 @@ class MetronomeEngineTest {
         tempo = 60,
         mutePlay = 1,
         muteMute = 100, // Always mute in random mode if random value < 100
-        muteUnit = Unit.BEATS,
+        muteUnit = DurationUnit.BEATS,
         muteRandom = true
       )
     )
@@ -206,7 +206,7 @@ class MetronomeEngineTest {
         tempo = MetronomeConstants.TEMPO_MAX - 5,
         incrementalAmount = 10,
         incrementalInterval = 1,
-        incrementalUnit = Unit.BARS,
+        incrementalUnit = DurationUnit.BARS,
         incrementalIncrease = true
       )
     )
@@ -247,7 +247,7 @@ class MetronomeEngineTest {
       MetronomeConfig(
         tempo = 120,
         timerDuration = 0,
-        timerUnit = Unit.SECONDS
+        timerUnit = DurationUnit.SECONDS
       )
     )
     engine.start()
@@ -265,7 +265,7 @@ class MetronomeEngineTest {
         beats = listOf("strong", "normal"), // 2 beats per bar
         subdivisions = listOf("sub", "sub"), // 2 sub per beat
         timerDuration = 10,
-        timerUnit = Unit.BARS
+        timerUnit = DurationUnit.BARS
       )
     )
     engine.start()
@@ -304,7 +304,7 @@ class MetronomeEngineTest {
         beats = listOf("strong"), // 1 beat per bar
         mutePlay = 1,
         muteMute = 1,
-        muteUnit = Unit.BARS
+        muteUnit = DurationUnit.BARS
       )
     )
     engine.start()

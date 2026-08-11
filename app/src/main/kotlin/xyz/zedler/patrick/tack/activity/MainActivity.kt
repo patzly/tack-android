@@ -38,12 +38,7 @@ import kotlinx.coroutines.runBlocking
 import xyz.zedler.patrick.tack.TackApplication
 import xyz.zedler.patrick.tack.hardware.HapticProviderImpl
 import xyz.zedler.patrick.tack.presentation.navigation.Route
-import xyz.zedler.patrick.tack.presentation.screen.AboutScreen
-import xyz.zedler.patrick.tack.presentation.screen.LogScreen
-import xyz.zedler.patrick.tack.presentation.screen.MainScreen
-import xyz.zedler.patrick.tack.presentation.screen.SettingsScreen
-import xyz.zedler.patrick.tack.presentation.screen.SongScreen
-import xyz.zedler.patrick.tack.presentation.screen.SongsScreen
+import xyz.zedler.patrick.tack.presentation.screen.*
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.presentation.util.LocalHaptic
 import xyz.zedler.patrick.tack.service.MetronomeService
@@ -54,13 +49,13 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
   private val viewModel: MainViewModel by viewModels {
     val app = application as TackApplication
-    MainViewModel.Factory(app.settingsRepository, app.songRepository)
+    MainViewModel.Factory(app.settingsRepository, app.metronomeRepository, app.songRepository)
   }
 
   override fun attachBaseContext(newBase: Context) {
     val app = newBase.applicationContext as? TackApplication
     val languageCode = runBlocking {
-      app?.settingsRepository?.language?.first()
+      app?.settingsRepository?.settings?.first()?.language
     }
     super.attachBaseContext(LocaleUtil.wrap(newBase, languageCode))
   }
@@ -72,32 +67,26 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     super.onCreate(savedInstanceState)
 
     setContent {
-      val useDynamicColors by viewModel.useDynamicColors.collectAsState()
-      val themeHue by viewModel.themeHue.collectAsState()
-      val theme by viewModel.theme.collectAsState()
-      val contrast by viewModel.contrast.collectAsState()
-      val languageCode by viewModel.language.collectAsState()
-      val hapticEnabled by viewModel.haptic.collectAsState()
-      val vibrationIntensity by viewModel.vibrationIntensity.collectAsState()
+      val settings by viewModel.settings.collectAsState()
       val backstack = viewModel.backstack
 
       val hapticProvider = remember { HapticProviderImpl(this) }
 
-      LaunchedEffect(hapticEnabled, vibrationIntensity) {
-        hapticProvider.isEnabled = hapticEnabled
-        hapticProvider.intensity = vibrationIntensity
+      LaunchedEffect(settings.haptic, settings.vibrationIntensity) {
+        hapticProvider.isEnabled = settings.haptic
+        hapticProvider.intensity = settings.vibrationIntensity
       }
 
       // Handle manual language change recreation for older APIs
       var isInitialCompose by remember { mutableStateOf(true) }
-      LaunchedEffect(languageCode) {
+      LaunchedEffect(settings.language) {
         if (isInitialCompose) {
           // Prevent screen flicker on initial compose
           isInitialCompose = false
           return@LaunchedEffect
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-          LocaleUtil.applyLocale(this@MainActivity, languageCode)
+          LocaleUtil.applyLocale(this@MainActivity, settings.language)
         } else {
           val currentLocale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             resources.configuration.locales[0]
@@ -105,7 +94,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
             @Suppress("DEPRECATION")
             resources.configuration.locale
           }
-          val targetLocale = LocaleUtil.getLocale(languageCode)
+          val targetLocale = LocaleUtil.getLocale(settings.language)
           if (currentLocale.language != targetLocale.language ||
             currentLocale.country != targetLocale.country
           ) {
@@ -118,10 +107,10 @@ class MainActivity : ComponentActivity(), ServiceConnection {
       val widthClass = windowSizeClass.widthSizeClass
 
       TackTheme(
-        useDynamicColors = useDynamicColors,
-        hue = themeHue,
-        theme = theme,
-        contrast = contrast
+        useDynamicColors = settings.useDynamicColors,
+        hue = settings.themeHue,
+        theme = settings.theme,
+        contrast = settings.contrast
       ) {
         CompositionLocalProvider(LocalHaptic provides hapticProvider) {
           Surface(modifier = Modifier.fillMaxSize()) {

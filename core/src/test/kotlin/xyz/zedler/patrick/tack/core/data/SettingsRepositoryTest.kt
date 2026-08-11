@@ -13,7 +13,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
-import xyz.zedler.patrick.tack.core.metronome.MetronomeConstants.Unit
 import java.io.File
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -21,7 +20,7 @@ import java.io.File
 class SettingsRepositoryTest {
 
   private lateinit var repository: SettingsRepository
-  private lateinit var appSettings: AppSettingsDataStore
+  private lateinit var appDataStore: AppDataStore
   private lateinit var context: Context
 
   @Before
@@ -34,23 +33,23 @@ class SettingsRepositoryTest {
       scope = TestScope(UnconfinedTestDispatcher()),
       produceFile = { dataStoreFile }
     )
-    appSettings = AppSettingsDataStore(dataStore)
-    repository = SettingsRepository(appSettings)
+    appDataStore = AppDataStore(dataStore)
+    repository = SettingsRepository(appDataStore)
   }
 
   @Test
-  fun `test metronomeConfig returns default values initially`() = runTest {
-    val config = repository.metronomeConfig.first()
-    assertEquals(120, config.tempo)
-    assertEquals(listOf("strong", "normal", "normal", "normal"), config.beats)
-    assertEquals(0, config.countIn)
-    assertEquals(Unit.BARS, config.timerUnit)
+  fun `test settings returns default values initially`() = runTest {
+    val settings = repository.settings.first()
+    assertEquals(true, settings.useDynamicColors)
+    assertEquals(200f, settings.themeHue)
+    assertEquals(true, settings.haptic)
   }
 
   @Test
-  fun `test updateTempo updates metronomeConfig`() = runTest {
-    repository.updateTempo(145)
-    val config = repository.metronomeConfig.first()
-    assertEquals(145, config.tempo)
+  fun `test updateSettings updates settings`() = runTest {
+    val settings = repository.settings.first()
+    repository.updateSettings(settings.copy(themeHue = 150f))
+    val updated = repository.settings.first()
+    assertEquals(150f, updated.themeHue)
   }
 }

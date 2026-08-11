@@ -1,3 +1,22 @@
+/*
+ * This file is part of Tack Android.
+ *
+ * Tack Android is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Tack Android is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Tack Android. If not, see http://www.gnu.org/licenses/.
+ *
+ * Copyright (c) 2020-2026 by Patrick Zedler
+ */
+
 package xyz.zedler.patrick.tack.core.database.entity
 
 import android.os.Parcelable
@@ -6,9 +25,10 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
-import xyz.zedler.patrick.tack.core.metronome.MetronomeConstants.Default
 import xyz.zedler.patrick.tack.core.model.MetronomeConfig
 import java.util.UUID
+
+private val default = MetronomeConfig()
 
 @Parcelize
 @Entity(
@@ -27,22 +47,22 @@ data class Part(
   var name: String? = null,
   var songId: String = "",
   var partIndex: Int = 0,
-  var countIn: Int = Default.COUNT_IN,
-  var tempo: Int = Default.TEMPO,
-  var beats: String = Default.BEATS.joinToString(","),
-  var subdivisions: String = Default.SUBDIVISIONS.joinToString(","),
-  var usePolyrhythm: Boolean = Default.USE_POLYRHYTHM,
-  var incrementalAmount: Int = Default.INCREMENTAL_AMOUNT,
-  var incrementalInterval: Int = Default.INCREMENTAL_INTERVAL,
-  var incrementalLimit: Int = Default.INCREMENTAL_LIMIT,
-  var incrementalUnit: String = Default.INCREMENTAL_UNIT,
-  var incrementalIncrease: Boolean = Default.INCREMENTAL_INCREASE,
-  var timerDuration: Int = Default.TIMER_DURATION,
-  var timerUnit: String = Default.TIMER_UNIT,
-  var mutePlay: Int = Default.MUTE_PLAY,
-  var muteMute: Int = Default.MUTE_MUTE,
-  var muteUnit: String = Default.MUTE_UNIT,
-  var muteRandom: Boolean = Default.MUTE_RANDOM,
+  var countIn: Int = default.countIn,
+  var tempo: Int = default.tempo,
+  var beats: String = default.beats.joinToString(","),
+  var subdivisions: String = default.subdivisions.joinToString(","),
+  var usePolyrhythm: Boolean = default.usePolyrhythm,
+  var incrementalAmount: Int = default.incrementalAmount,
+  var incrementalInterval: Int = default.incrementalInterval,
+  var incrementalLimit: Int = default.incrementalLimit,
+  var incrementalUnit: String = default.incrementalUnit,
+  var incrementalIncrease: Boolean = default.incrementalIncrease,
+  var timerDuration: Int = default.timerDuration,
+  var timerUnit: String = default.timerUnit,
+  var mutePlay: Int = default.mutePlay,
+  var muteMute: Int = default.muteMute,
+  var muteUnit: String = default.muteUnit,
+  var muteRandom: Boolean = default.muteRandom,
 ) : Parcelable {
 
   companion object {

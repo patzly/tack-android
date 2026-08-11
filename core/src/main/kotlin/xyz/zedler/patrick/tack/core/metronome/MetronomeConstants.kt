@@ -1,6 +1,23 @@
-package xyz.zedler.patrick.tack.core.metronome
+/*
+ * This file is part of Tack Android.
+ *
+ * Tack Android is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Tack Android is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Tack Android. If not, see http://www.gnu.org/licenses/.
+ *
+ * Copyright (c) 2020-2026 by Patrick Zedler
+ */
 
-import xyz.zedler.patrick.tack.core.audio.Constants.TickType
+package xyz.zedler.patrick.tack.core.metronome
 
 object MetronomeConstants {
   const val TEMPO_MIN = 1
@@ -16,28 +33,7 @@ object MetronomeConstants {
   const val MUTE_MUTE_STEP_SIZE = 1
   const val MUTE_MUTE_STEP_SIZE_BEATS = 5
 
-  object Default {
-    const val TEMPO = 120
-    const val COUNT_IN = 0
-    const val USE_POLYRHYTHM = false
-    val BEATS = listOf(
-      TickType.STRONG, TickType.NORMAL, TickType.NORMAL, TickType.NORMAL
-    )
-    val SUBDIVISIONS = listOf(TickType.BEAT_SUB)
-    const val INCREMENTAL_AMOUNT = 0
-    const val INCREMENTAL_INTERVAL = 1
-    const val INCREMENTAL_LIMIT = 0
-    const val INCREMENTAL_UNIT = Unit.BARS
-    const val INCREMENTAL_INCREASE = true
-    const val TIMER_DURATION = 0
-    const val TIMER_UNIT = Unit.BARS
-    const val MUTE_PLAY = 1
-    const val MUTE_MUTE = 0
-    const val MUTE_UNIT = Unit.BEATS
-    const val MUTE_RANDOM = false
-  }
-
-  object Unit {
+  object DurationUnit {
     const val BEATS = "beats"
     const val BARS = "bars"
     const val SECONDS = "seconds"

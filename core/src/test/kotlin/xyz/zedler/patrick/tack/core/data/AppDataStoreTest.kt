@@ -18,7 +18,7 @@ import java.io.File
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(RobolectricTestRunner::class)
-class AppSettingsDataStoreTest {
+class AppDataStoreTest {
 
   private lateinit var context: Context
 
@@ -52,18 +52,20 @@ class AppSettingsDataStoreTest {
       migrations = listOf(SharedPreferencesMigration(context, sharedPrefsName))
     ) { dataStoreFile }
 
-    val appSettings = AppSettingsDataStore(dataStore)
+    val appDataStore = AppDataStore(dataStore)
+    val config = appDataStore.metronomeConfig.first()
+    val settings = appDataStore.settings.first()
 
-    assertEquals(150, appSettings.tempo.first())
-    assertEquals(false, appSettings.haptic.first())
-    assertEquals("vibration", appSettings.beatMode.first())
-    assertEquals(2, appSettings.countIn.first())
-    assertEquals("seconds", appSettings.timerUnit.first())
-    assertEquals(30, appSettings.timerDuration.first())
-    assertEquals("strong,normal,normal", appSettings.beats.first())
-    assertEquals("sub,sub", appSettings.subdivisions.first())
-    assertEquals(5, appSettings.gain.first())
-    assertEquals(true, appSettings.permNotification.first())
+    assertEquals(150, config.tempo)
+    assertEquals(false, settings.haptic)
+    assertEquals("vibration", settings.beatMode)
+    assertEquals(2, config.countIn)
+    assertEquals("seconds", config.timerUnit)
+    assertEquals(30, config.timerDuration)
+    assertEquals(listOf("strong", "normal", "normal"), config.beats)
+    assertEquals(listOf("sub", "sub"), config.subdivisions)
+    assertEquals(5, settings.gain)
+    assertEquals(true, settings.permNotification)
   }
 
   @Test
@@ -75,10 +77,13 @@ class AppSettingsDataStoreTest {
       scope = TestScope(UnconfinedTestDispatcher(testScheduler))
     ) { dataStoreFile }
 
-    val appSettings = AppSettingsDataStore(dataStore)
-    assertEquals(120, appSettings.tempo.first())
-    assertEquals(true, appSettings.haptic.first())
-    assertEquals("all", appSettings.beatMode.first())
+    val appDataStore = AppDataStore(dataStore)
+    val config = appDataStore.metronomeConfig.first()
+    val settings = appDataStore.settings.first()
+    
+    assertEquals(120, config.tempo)
+    assertEquals(true, settings.haptic)
+    assertEquals("all", settings.beatMode)
   }
 
   @Test
@@ -90,8 +95,10 @@ class AppSettingsDataStoreTest {
       scope = TestScope(UnconfinedTestDispatcher(testScheduler))
     ) { dataStoreFile }
 
-    val appSettings = AppSettingsDataStore(dataStore)
-    appSettings.updateTempo(140)
-    assertEquals(140, appSettings.tempo.first())
+    val appDataStore = AppDataStore(dataStore)
+    val config = appDataStore.metronomeConfig.first()
+    appDataStore.updateMetronomeConfig(config.copy(tempo = 140))
+    
+    assertEquals(140, appDataStore.metronomeConfig.first().tempo)
   }
 }

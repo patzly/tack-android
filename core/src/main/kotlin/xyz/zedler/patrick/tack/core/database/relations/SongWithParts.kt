@@ -5,7 +5,7 @@ import androidx.room.Relation
 import xyz.zedler.patrick.tack.core.database.entity.Part
 import xyz.zedler.patrick.tack.core.database.entity.Song
 import xyz.zedler.patrick.tack.core.metronome.MetronomeConstants
-import xyz.zedler.patrick.tack.core.metronome.MetronomeConstants.Unit
+import xyz.zedler.patrick.tack.core.metronome.MetronomeConstants.DurationUnit
 import xyz.zedler.patrick.tack.core.util.TimeUtil
 
 data class SongWithParts(
@@ -23,14 +23,14 @@ data class SongWithParts(
     var seconds = 0f
     parts.forEach {
       when (it.timerUnit) {
-        Unit.SECONDS -> seconds += it.timerDuration
-        Unit.MINUTES -> seconds += 60 * it.timerDuration
+        DurationUnit.SECONDS -> seconds += it.timerDuration
+        DurationUnit.MINUTES -> seconds += 60 * it.timerDuration
         else -> { // Bars
           val incrementalAmount = it.incrementalAmount
           if (incrementalAmount > 0) {
             val incrementalUnit = it.incrementalUnit
             val interval = it.incrementalInterval
-            if (incrementalUnit == Unit.BARS) {
+            if (incrementalUnit == DurationUnit.BARS) {
               var tempo = it.tempo
               for (i in 0 until it.timerDuration) {
                 val factor = (60f / tempo) * it.beats.split(",").size

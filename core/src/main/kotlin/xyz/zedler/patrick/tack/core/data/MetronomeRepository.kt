@@ -20,13 +20,12 @@
 package xyz.zedler.patrick.tack.core.data
 
 import kotlinx.coroutines.flow.Flow
-import xyz.zedler.patrick.tack.core.model.AppSettings
+import xyz.zedler.patrick.tack.core.model.MetronomeConfig
 
-class SettingsRepository(private val dataStore: AppDataStore) {
+class MetronomeRepository(private val dataStore: AppDataStore) {
 
-  val settings: Flow<AppSettings> = dataStore.settings
+  val metronomeConfig: Flow<MetronomeConfig> = dataStore.metronomeConfig
 
-  suspend fun updateSettings(settings: AppSettings) = dataStore.updateSettings(settings)
-
-  suspend fun clearAll() = dataStore.clearAll()
+  suspend fun updateMetronomeConfig(config: MetronomeConfig) = 
+    dataStore.updateMetronomeConfig(config)
 }

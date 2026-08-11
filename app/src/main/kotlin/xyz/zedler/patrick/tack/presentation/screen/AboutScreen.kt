@@ -68,14 +68,13 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 fun AboutScreen(viewModel: MainViewModel = viewModel()) {
   val context = LocalContext.current
   val haptic = LocalHaptic.current
-  val reduceAnim by viewModel.reduceAnim.collectAsStateWithLifecycle()
-  val checkUnlockKey by viewModel.checkUnlockKey.collectAsStateWithLifecycle()
+  val settings by viewModel.settings.collectAsStateWithLifecycle()
 
   var showFeedbackDialog by rememberSaveable { mutableStateOf(false) }
 
   if (showFeedbackDialog) {
     FeedbackDialog(
-      checkUnlockKey = checkUnlockKey,
+      checkUnlockKey = settings.checkUnlockKey,
       onDismissRequest = { showFeedbackDialog = false },
       onSupportClick = { /* TODO: Show unlock dialog */ }
     )
@@ -91,11 +90,11 @@ fun AboutScreen(viewModel: MainViewModel = viewModel()) {
   val recommendText = stringResource(R.string.msg_recommend, appVendingApp)
 
   AboutContent(
-    reduceAnim = reduceAnim,
+    reduceAnim = settings.reduceAnim,
     versionName = BuildConfig.VERSION_NAME,
     isKeyInstalled = UnlockUtil.isKeyInstalled(context),
     isPlayStoreInstalled = UnlockUtil.isPlayStoreInstalled(context),
-    checkUnlockKey = checkUnlockKey,
+    checkUnlockKey = settings.checkUnlockKey,
     onBack = {
       viewModel.popBackstack()
       haptic.click()

@@ -16,9 +16,10 @@ import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.TackApplication
 import xyz.zedler.patrick.tack.core.audio.AudioEngine
+import xyz.zedler.patrick.tack.core.data.MetronomeRepository
 import xyz.zedler.patrick.tack.core.data.SettingsRepository
 import xyz.zedler.patrick.tack.core.data.SongRepository
-import xyz.zedler.patrick.tack.core.metronome.MetronomeConstants.Unit
+import xyz.zedler.patrick.tack.core.metronome.MetronomeConstants.DurationUnit
 import xyz.zedler.patrick.tack.core.metronome.MetronomeEngine
 import xyz.zedler.patrick.tack.core.model.MetronomeConfig
 import xyz.zedler.patrick.tack.core.model.MetronomeState
@@ -35,6 +36,7 @@ class MetronomeService : Service() {
 
   lateinit var engine: MetronomeEngine
   private lateinit var settingsRepository: SettingsRepository
+  private lateinit var metronomeRepository: MetronomeRepository
   private lateinit var songRepository: SongRepository
   private lateinit var hapticProvider: HapticProviderImpl
 
@@ -47,6 +49,7 @@ class MetronomeService : Service() {
 
     val app = application as TackApplication
     settingsRepository = app.settingsRepository
+    metronomeRepository = app.metronomeRepository
     songRepository = app.songRepository
 
     hapticProvider = HapticProviderImpl(this)
@@ -58,45 +61,20 @@ class MetronomeService : Service() {
     NotificationUtil.createNotificationChannel(this)
 
     serviceScope.launch {
-      settingsRepository.haptic.collect { enabled ->
-        hapticProvider.isEnabled = enabled
+      settingsRepository.settings.collect { settings ->
+        hapticProvider.isEnabled = settings.haptic
+        hapticProvider.intensity = settings.vibrationIntensity
+        
+        engine.setLatency(settings.latency)
+        engine.setBeatMode(settings.beatMode)
+        engine.setFlashlight(settings.flashlight)
+        permNotification = settings.permNotification
       }
     }
 
     serviceScope.launch {
-      settingsRepository.vibrationIntensity.collect { intensity ->
-        hapticProvider.intensity = intensity
-      }
-    }
-
-    serviceScope.launch {
-      settingsRepository.metronomeConfig.collect { config ->
-        metronomeConfig = config
-        engine.setConfig(config)
-      }
-    }
-
-    serviceScope.launch {
-      settingsRepository.latency.collect { latency ->
-        engine.setLatency(latency)
-      }
-    }
-
-    serviceScope.launch {
-      settingsRepository.beatMode.collect { mode ->
-        engine.setBeatMode(mode)
-      }
-    }
-
-    serviceScope.launch {
-      settingsRepository.flashlight.collect { strength ->
-        engine.setFlashlight(strength)
-      }
-    }
-
-    serviceScope.launch {
-      settingsRepository.permNotification.collect { perm ->
-        permNotification = perm
+      metronomeRepository.metronomeConfig.collect { metronomeConfig ->
+        engine.setConfig(metronomeConfig)
       }
     }
 
@@ -212,11 +190,11 @@ class MetronomeService : Service() {
 
   private fun getCurrentTimerString(state: MetronomeState): String {
     return when (metronomeConfig.timerUnit) {
-      Unit.SECONDS, Unit.MINUTES -> {
+      DurationUnit.SECONDS, DurationUnit.MINUTES -> {
         val totalMillis = engine.getTimerInterval()
         val currentMillis = (state.timerProgress * totalMillis).toLong()
         val seconds = (currentMillis / 1000).toInt()
-        val totalHours = if (metronomeConfig.timerUnit == Unit.MINUTES) {
+        val totalHours = if (metronomeConfig.timerUnit == DurationUnit.MINUTES) {
           metronomeConfig.timerDuration / 60
         } else {
           metronomeConfig.timerDuration / 3600
@@ -248,8 +226,8 @@ class MetronomeService : Service() {
 
   private fun getTotalTimerString(): String {
     return when (metronomeConfig.timerUnit) {
-      Unit.SECONDS, Unit.MINUTES -> {
-        val seconds = if (metronomeConfig.timerUnit == Unit.MINUTES) {
+      DurationUnit.SECONDS, DurationUnit.MINUTES -> {
+        val seconds = if (metronomeConfig.timerUnit == DurationUnit.MINUTES) {
           metronomeConfig.timerDuration * 60
         } else {
           metronomeConfig.timerDuration
