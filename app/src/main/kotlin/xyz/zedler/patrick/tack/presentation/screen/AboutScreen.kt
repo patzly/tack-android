@@ -188,7 +188,8 @@ fun AboutContent(
               onClick = onBack,
               colors = IconButtonDefaults.iconButtonColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-              )
+              ),
+              shapes = IconButtonDefaults.shapes()
             ) {
               Icon(
                 painter = painterResource(R.drawable.ic_rounded_arrow_back),
@@ -224,7 +225,8 @@ fun AboutContent(
                   ),
               colors = IconButtonDefaults.iconButtonColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-              )
+              ),
+              shapes = IconButtonDefaults.shapes()
             ) {
               Icon(
                 painter = painterResource(R.drawable.ic_rounded_more_vert),

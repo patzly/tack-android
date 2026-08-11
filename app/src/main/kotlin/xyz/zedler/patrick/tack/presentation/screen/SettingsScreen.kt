@@ -41,7 +41,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
@@ -59,8 +58,10 @@ import xyz.zedler.patrick.tack.presentation.component.AnimatedIcon
 import xyz.zedler.patrick.tack.presentation.component.ConnectedButtonGroup
 import xyz.zedler.patrick.tack.presentation.component.TackThemeSelection
 import xyz.zedler.patrick.tack.presentation.dialog.FeedbackDialog
+import xyz.zedler.patrick.tack.presentation.dialog.LanguageDialog
 import xyz.zedler.patrick.tack.presentation.navigation.Route
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
+import xyz.zedler.patrick.tack.util.LocaleUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Composable
@@ -91,6 +92,7 @@ fun SettingsScreen(
   val checkUnlockKey by viewModel.checkUnlockKey.collectAsStateWithLifecycle()
 
   var showFeedbackDialog by rememberSaveable { mutableStateOf(false) }
+  var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
 
   if (showFeedbackDialog) {
     FeedbackDialog(
@@ -98,6 +100,10 @@ fun SettingsScreen(
       onDismissRequest = { showFeedbackDialog = false },
       onSupportClick = { /* TODO: Show unlock dialog */ }
     )
+  }
+
+  if (showLanguageDialog) {
+    LanguageDialog(onDismissRequest = { showLanguageDialog = false })
   }
 
   SettingsContent(
@@ -121,6 +127,11 @@ fun SettingsScreen(
     showElapsed = showElapsed,
     bigTimeText = bigTimeText,
     bigLogo = bigLogo,
+    localeName = if (LocaleUtil.followsSystem()) {
+      stringResource(R.string.settings_language_system)
+    } else {
+      LocaleUtil.getLocaleName()
+    },
     onBack = onBack,
     onAboutClick = {
       viewModel.navigateTo(Route.About)
@@ -128,6 +139,7 @@ fun SettingsScreen(
     onHelpClick = {},
     onFeedbackClick = { showFeedbackDialog = true },
     onLogcatClick = {},
+    onLanguageClick = { showLanguageDialog = true },
     onUpdateUseDynamicColors = viewModel::updateUseDynamicColors,
     onUpdateThemeHue = viewModel::updateThemeHue,
     onUpdateThemeMode = viewModel::updateTheme,
@@ -172,6 +184,7 @@ fun SettingsContent(
   showElapsed: Boolean = false,
   bigTimeText: Boolean = false,
   bigLogo: Boolean = false,
+  localeName: String = "Follow system",
   onBack: () -> Unit = {},
   onAboutClick: () -> Unit = {},
   onHelpClick: () -> Unit = {},
@@ -225,7 +238,8 @@ fun SettingsContent(
               onClick = onBack,
               colors = IconButtonDefaults.iconButtonColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
-              )
+              ),
+              shapes = IconButtonDefaults.shapes()
             ) {
               Icon(
                 painter = painterResource(R.drawable.ic_rounded_arrow_back),
@@ -376,7 +390,7 @@ fun SettingsContent(
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
             colors = colors,
             supportingContent = {
-              Text(stringResource(R.string.settings_language_system))
+              Text(localeName)
             },
             leadingContent = {
               Box(modifier = Modifier.padding(vertical = 10.dp)) {

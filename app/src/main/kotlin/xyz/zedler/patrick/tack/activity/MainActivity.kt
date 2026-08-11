@@ -5,13 +5,11 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -40,7 +38,7 @@ import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
-class MainActivity : ComponentActivity(), ServiceConnection {
+class MainActivity : AppCompatActivity(), ServiceConnection {
 
   private val viewModel: MainViewModel by viewModels {
     val app = application as TackApplication
