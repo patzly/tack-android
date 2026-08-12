@@ -106,55 +106,61 @@ class AppDataStore(private val dataStore: DataStore<Preferences>) {
 
   suspend fun updateSettings(settings: AppSettings) {
     dataStore.edit { prefs ->
-      prefs[LANGUAGE] = settings.language ?: "system"
-      prefs[USE_DYNAMIC_COLORS] = settings.useDynamicColors
-      prefs[THEME_HUE] = settings.themeHue
-      prefs[THEME] = settings.theme.key
-      prefs[CONTRAST] = settings.contrast.key
-      prefs[HAPTIC] = settings.haptic
-      prefs[VIBRATION_INTENSITY] = settings.vibrationIntensity.key
-      prefs[REDUCE_ANIM] = settings.reduceAnim
-      prefs[SOUND] = settings.sound.key
-      prefs[GAIN] = settings.gain
-      prefs[LATENCY] = settings.latency
-      prefs[BEAT_MODE] = settings.beatMode.key
-      prefs[FLASHLIGHT] = settings.flashlight.key
-      prefs[FLASH_SCREEN] = settings.flashScreen.key
-      prefs[KEEP_AWAKE] = settings.keepAwake.key
-      prefs[IGNORE_FOCUS] = settings.ignoreFocus
-      prefs[SHOW_ELAPSED] = settings.showElapsed
-      prefs[RESET_TIMER_ON_STOP] = settings.resetTimerOnStop
-      prefs[PERM_NOTIFICATION] = settings.permNotification
-      prefs[ACTIVE_BEAT] = settings.activeBeat
-      prefs[BIG_TIME_TEXT] = settings.bigTimeText
-      prefs[BIG_LOGO] = settings.bigLogo
-      prefs[CHECK_UNLOCK_KEY] = settings.checkUnlockKey
+      prefs.setIfChanged(LANGUAGE, settings.language ?: "system")
+      prefs.setIfChanged(USE_DYNAMIC_COLORS, settings.useDynamicColors)
+      prefs.setIfChanged(THEME_HUE, settings.themeHue)
+      prefs.setIfChanged(THEME, settings.theme.key)
+      prefs.setIfChanged(CONTRAST, settings.contrast.key)
+      prefs.setIfChanged(HAPTIC, settings.haptic)
+      prefs.setIfChanged(VIBRATION_INTENSITY, settings.vibrationIntensity.key)
+      prefs.setIfChanged(REDUCE_ANIM, settings.reduceAnim)
+      prefs.setIfChanged(SOUND, settings.sound.key)
+      prefs.setIfChanged(GAIN, settings.gain)
+      prefs.setIfChanged(LATENCY, settings.latency)
+      prefs.setIfChanged(BEAT_MODE, settings.beatMode.key)
+      prefs.setIfChanged(FLASHLIGHT, settings.flashlight.key)
+      prefs.setIfChanged(FLASH_SCREEN, settings.flashScreen.key)
+      prefs.setIfChanged(KEEP_AWAKE, settings.keepAwake.key)
+      prefs.setIfChanged(IGNORE_FOCUS, settings.ignoreFocus)
+      prefs.setIfChanged(SHOW_ELAPSED, settings.showElapsed)
+      prefs.setIfChanged(RESET_TIMER_ON_STOP, settings.resetTimerOnStop)
+      prefs.setIfChanged(PERM_NOTIFICATION, settings.permNotification)
+      prefs.setIfChanged(ACTIVE_BEAT, settings.activeBeat)
+      prefs.setIfChanged(BIG_TIME_TEXT, settings.bigTimeText)
+      prefs.setIfChanged(BIG_LOGO, settings.bigLogo)
+      prefs.setIfChanged(CHECK_UNLOCK_KEY, settings.checkUnlockKey)
     }
   }
 
   suspend fun updateMetronomeConfig(config: MetronomeConfig) {
     dataStore.edit { prefs ->
-      prefs[TEMPO] = config.tempo
-      prefs[BEATS] = config.beats.joinToString(",") { it.key }
-      prefs[SUBDIVISIONS] = config.subdivisions.joinToString(",") { it.key }
-      prefs[USE_POLYRHYTHM] = config.usePolyrhythm
-      prefs[COUNT_IN] = config.countIn
-      prefs[INCREMENTAL_AMOUNT] = config.incrementalAmount
-      prefs[INCREMENTAL_INCREASE] = config.incrementalIncrease
-      prefs[INCREMENTAL_INTERVAL] = config.incrementalInterval
-      prefs[INCREMENTAL_UNIT] = config.incrementalUnit.key
-      prefs[INCREMENTAL_LIMIT] = config.incrementalLimit
-      prefs[TIMER_DURATION] = config.timerDuration
-      prefs[TIMER_UNIT] = config.timerUnit.key
-      prefs[MUTE_PLAY] = config.mutePlay
-      prefs[MUTE_MUTE] = config.muteMute
-      prefs[MUTE_UNIT] = config.muteUnit.key
-      prefs[MUTE_RANDOM] = config.muteRandom
+      prefs.setIfChanged(TEMPO, config.tempo)
+      prefs.setIfChanged(BEATS, config.beats.joinToString(",") { it.key })
+      prefs.setIfChanged(SUBDIVISIONS, config.subdivisions.joinToString(",") { it.key })
+      prefs.setIfChanged(USE_POLYRHYTHM, config.usePolyrhythm)
+      prefs.setIfChanged(COUNT_IN, config.countIn)
+      prefs.setIfChanged(INCREMENTAL_AMOUNT, config.incrementalAmount)
+      prefs.setIfChanged(INCREMENTAL_INCREASE, config.incrementalIncrease)
+      prefs.setIfChanged(INCREMENTAL_INTERVAL, config.incrementalInterval)
+      prefs.setIfChanged(INCREMENTAL_UNIT, config.incrementalUnit.key)
+      prefs.setIfChanged(INCREMENTAL_LIMIT, config.incrementalLimit)
+      prefs.setIfChanged(TIMER_DURATION, config.timerDuration)
+      prefs.setIfChanged(TIMER_UNIT, config.timerUnit.key)
+      prefs.setIfChanged(MUTE_PLAY, config.mutePlay)
+      prefs.setIfChanged(MUTE_MUTE, config.muteMute)
+      prefs.setIfChanged(MUTE_UNIT, config.muteUnit.key)
+      prefs.setIfChanged(MUTE_RANDOM, config.muteRandom)
     }
   }
 
   suspend fun clearAll() {
     dataStore.edit { it.clear() }
+  }
+
+  private fun <T> MutablePreferences.setIfChanged(key: Preferences.Key<T>, value: T) {
+    if (this[key] != value) {
+      this[key] = value
+    }
   }
 
   companion object {

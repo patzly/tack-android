@@ -50,13 +50,52 @@ fun FeedbackDialog(
   val isPlayStoreInstalled = remember { UnlockUtil.isPlayStoreInstalled(context) }
   val isKeyInstalled = remember { UnlockUtil.isKeyInstalled(context) }
 
+  val appGithub = stringResource(R.string.app_github)
+
   BasicAlertDialog(onDismissRequest = onDismissRequest) {
     FeedbackDialogContent(
       isPlayStoreInstalled = isPlayStoreInstalled,
       isKeyInstalled = isKeyInstalled,
       checkUnlockKey = checkUnlockKey,
       onDismissRequest = onDismissRequest,
-      onSupportClick = onSupportClick
+      onRateClick = {
+        val uri = "market://details?id=${context.packageName}".toUri()
+        val intent = Intent(Intent.ACTION_VIEW, uri).apply {
+          addFlags(
+            Intent.FLAG_ACTIVITY_NO_HISTORY or
+                Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
+                Intent.FLAG_ACTIVITY_MULTIPLE_TASK or
+                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+          )
+        }
+        try {
+          context.startActivity(intent)
+        } catch (_: ActivityNotFoundException) {
+          context.startActivity(
+            Intent(
+              Intent.ACTION_VIEW,
+              "http://play.google.com/store/apps/details?id=${context.packageName}"
+                .toUri()
+            )
+          )
+        }
+        onDismissRequest()
+      },
+      onSupportClick = {
+        onSupportClick()
+        onDismissRequest()
+      },
+      onRecommendClick = {
+
+      },
+      onIssueClick = {
+        val issues = "$appGithub/issues"
+        context.startActivity(Intent(Intent.ACTION_VIEW, issues.toUri()))
+        onDismissRequest()
+      },
+      onCloseCLick = {
+        onDismissRequest()
+      }
     )
   }
 }
@@ -68,7 +107,12 @@ private fun FeedbackDialogContent(
   isKeyInstalled: Boolean = false,
   checkUnlockKey: Boolean = true,
   onDismissRequest: () -> Unit = {},
-  onSupportClick: () -> Unit = {}
+  onRateClick: () -> Unit = {},
+  onSupportClick: () -> Unit = {},
+  onRecommendClick: () -> Unit = {},
+  onIssueClick: () -> Unit = {},
+  onEmailClick: () -> Unit = {},
+  onCloseCLick: () -> Unit = {}
 ) {
   val context = LocalContext.current
 
@@ -129,29 +173,7 @@ private fun FeedbackDialogContent(
           )
 
           SegmentedListItem(
-            onClick = {
-              val uri = "market://details?id=${context.packageName}".toUri()
-              val intent = Intent(Intent.ACTION_VIEW, uri).apply {
-                addFlags(
-                  Intent.FLAG_ACTIVITY_NO_HISTORY or
-                      Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
-                      Intent.FLAG_ACTIVITY_MULTIPLE_TASK or
-                      Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
-                )
-              }
-              try {
-                context.startActivity(intent)
-              } catch (_: ActivityNotFoundException) {
-                context.startActivity(
-                  Intent(
-                    Intent.ACTION_VIEW,
-                    "http://play.google.com/store/apps/details?id=${context.packageName}"
-                      .toUri()
-                  )
-                )
-              }
-              onDismissRequest()
-            },
+            onClick = onRateClick,
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
             colors = colors,
             leadingContent = {
@@ -168,10 +190,7 @@ private fun FeedbackDialogContent(
 
           if (isSupportVisible) {
             SegmentedListItem(
-              onClick = {
-                onSupportClick()
-                onDismissRequest()
-              },
+              onClick = onSupportClick,
               shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
               colors = colors,
               leadingContent = {
@@ -224,11 +243,7 @@ private fun FeedbackDialogContent(
           )
 
           SegmentedListItem(
-            onClick = {
-              val issues = "$appGithub/issues"
-              context.startActivity(Intent(Intent.ACTION_VIEW, issues.toUri()))
-              onDismissRequest()
-            },
+            onClick = onIssueClick,
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
             colors = colors,
             leadingContent = {
@@ -278,7 +293,7 @@ private fun FeedbackDialogContent(
           .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.End
       ) {
-        TextButton(onClick = onDismissRequest) {
+        TextButton(onClick = onCloseCLick) {
           Text(stringResource(R.string.action_close))
         }
       }
