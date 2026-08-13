@@ -96,8 +96,7 @@ enum class Sound(val key: String) {
 
 enum class BeatMode(val key: String) {
   ALL("all"),
-  FIRST("first"),
-  NONE("none"),
+  SOUND("sound"),
   VIBRATION("vibration");
 
   companion object {

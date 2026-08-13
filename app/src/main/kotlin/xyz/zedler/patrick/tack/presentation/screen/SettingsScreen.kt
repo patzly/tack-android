@@ -102,10 +102,7 @@ fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
   if (showLanguageDialog) {
     LanguageDialog(
       currentLanguageCode = settings.language,
-      onLanguageSelected = {
-        viewModel.updateSettings(settings.copy(language = it))
-        viewModel.updateSettings(settings.copy(theme = AppTheme.DARK))
-      },
+      onLanguageSelected = { viewModel.updateSettings(settings.copy(language = it)) },
       onDismissRequest = { showLanguageDialog = false }
     )
   }

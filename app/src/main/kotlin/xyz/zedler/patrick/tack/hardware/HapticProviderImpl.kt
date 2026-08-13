@@ -23,6 +23,7 @@ class HapticProviderImpl(context: Context) : HapticProvider {
 
   override var isEnabled: Boolean = vibrator.hasVibrator()
   override var intensity: VibrationIntensity = VibrationIntensity.AUTO
+  override var isHapticPossible: Boolean = true
 
   private val vibrationAttributesMedia: VibrationAttributes? by lazy {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -70,7 +71,7 @@ class HapticProviderImpl(context: Context) : HapticProvider {
   }
 
   private fun vibrate(effectId: Int, fallbackDuration: Long) {
-    if (!isEnabled) return
+    if (!isEnabled || !isHapticPossible) return
 
     val effect = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && effectId != -1) {
       VibrationEffect.createPredefined(effectId)

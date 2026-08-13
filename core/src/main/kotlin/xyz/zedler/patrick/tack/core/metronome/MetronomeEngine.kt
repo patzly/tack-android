@@ -1,3 +1,22 @@
+/*
+ * This file is part of Tack Android.
+ *
+ * Tack Android is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Tack Android is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Tack Android. If not, see http://www.gnu.org/licenses/.
+ *
+ * Copyright (c) 2020-2026 by Patrick Zedler
+ */
+
 package xyz.zedler.patrick.tack.core.metronome
 
 import android.os.Handler
@@ -10,12 +29,14 @@ import kotlinx.coroutines.flow.update
 import xyz.zedler.patrick.tack.core.audio.AudioProvider
 import xyz.zedler.patrick.tack.core.hardware.FlashlightProvider
 import xyz.zedler.patrick.tack.core.hardware.HapticProvider
-import xyz.zedler.patrick.tack.core.model.TimingUnit
+import xyz.zedler.patrick.tack.core.model.BeatMode
+import xyz.zedler.patrick.tack.core.model.FlashStrength
 import xyz.zedler.patrick.tack.core.model.MetronomeConfig
 import xyz.zedler.patrick.tack.core.model.MetronomeConstants
 import xyz.zedler.patrick.tack.core.model.MetronomeState
 import xyz.zedler.patrick.tack.core.model.Tick
 import xyz.zedler.patrick.tack.core.model.TickType
+import xyz.zedler.patrick.tack.core.model.TimingUnit
 import xyz.zedler.patrick.tack.core.util.Clock
 import xyz.zedler.patrick.tack.core.util.SystemClockImpl
 import java.util.Random
@@ -55,8 +76,8 @@ class MetronomeEngine(
 
   private var muteCountDown = 0
   private var latency: Long = 0
-  private var beatMode: String = "all"
-  private var flashlightStrength: String = "off"
+  private var beatMode: BeatMode = BeatMode.ALL
+  private var flashlightStrength: FlashStrength = FlashStrength.OFF
 
   fun setConfig(newConfig: MetronomeConfig) {
     val oldConfig = config
@@ -64,13 +85,19 @@ class MetronomeEngine(
     _state.update { it.copy(tempo = config.tempo) }
 
     if (state.value.isPlaying) {
-      if (oldConfig.timerDuration != config.timerDuration || oldConfig.timerUnit != config.timerUnit) {
+      if (oldConfig.timerDuration != config.timerDuration
+        || oldConfig.timerUnit != config.timerUnit
+      ) {
         updateTimerHandler(false)
       }
-      if (oldConfig.incrementalAmount != config.incrementalAmount || oldConfig.incrementalUnit != config.incrementalUnit) {
+      if (oldConfig.incrementalAmount != config.incrementalAmount
+        || oldConfig.incrementalUnit != config.incrementalUnit
+      ) {
         updateIncrementalHandler()
       }
-      if (oldConfig.mutePlay != config.mutePlay || oldConfig.muteMute != config.muteMute || oldConfig.muteUnit != config.muteUnit) {
+      if (oldConfig.mutePlay != config.mutePlay || oldConfig.muteMute != config.muteMute
+        || oldConfig.muteUnit != config.muteUnit
+      ) {
         updateMuteHandler()
       }
     }
@@ -80,12 +107,13 @@ class MetronomeEngine(
     latency = ms
   }
 
-  fun setBeatMode(mode: String) {
+  fun setBeatMode(mode: BeatMode) {
     beatMode = mode
-    audioProvider.isMuted = mode == "vibration"
+    audioProvider.isMuted = mode == BeatMode.VIBRATION
+    updateHapticPossible()
   }
 
-  fun setFlashlight(strength: String) {
+  fun setFlashlight(strength: FlashStrength) {
     flashlightStrength = strength
   }
 
@@ -107,6 +135,7 @@ class MetronomeEngine(
         timerSubIndex = 0
       )
     }
+    updateHapticPossible()
 
     if (config.isMuteActive) {
       muteCountDown = calculateMuteCount(false)
@@ -141,6 +170,7 @@ class MetronomeEngine(
     if (!state.value.isPlaying) return
 
     _state.update { it.copy(isPlaying = false, isCountingIn = false) }
+    updateHapticPossible()
 
     audioProvider.scheduleDelayedStop()
     removeHandlerCallbacks()
@@ -156,6 +186,12 @@ class MetronomeEngine(
   fun destroy() {
     stop()
     flashlightProvider?.cleanup()
+  }
+
+  private fun updateHapticPossible() {
+    _state.update {
+      it.copy(isHapticPossible = !state.value.isPlaying || beatMode == BeatMode.SOUND)
+    }
   }
 
   private fun resetHandlers() {
@@ -232,12 +268,15 @@ class MetronomeEngine(
         val barIndex = beatIndex / config.beatsCount
         val isCountIn = barIndex < config.countIn
 
-        if (isFirstBeat && config.isMuteActive && config.muteUnit == TimingUnit.BARS && !isCountIn) {
+        if (isFirstBeat && config.isMuteActive
+          && config.muteUnit == TimingUnit.BARS && !isCountIn
+        ) {
           if (muteCountDown > 0) {
             muteCountDown--
           } else {
             _state.update { it.copy(isMuted = !it.isMuted) }
-            muteCountDown = (calculateMuteCount(state.value.isMuted) - 1).coerceAtLeast(0)
+            muteCountDown = (calculateMuteCount(state.value.isMuted) - 1)
+              .coerceAtLeast(0)
           }
         }
 
@@ -338,7 +377,9 @@ class MetronomeEngine(
       }
     }
 
-    if (isFirstBeat && config.isIncrementalActive && config.incrementalUnit == TimingUnit.BARS && !isCountIn) {
+    if (isFirstBeat && config.isIncrementalActive
+      && config.incrementalUnit == TimingUnit.BARS && !isCountIn
+    ) {
       if (barIndexNoCountIn > 0 && barIndexNoCountIn % config.incrementalInterval == 0L) {
         changeTempo(config.incrementalAmount)
       }
@@ -346,15 +387,15 @@ class MetronomeEngine(
 
     // Haptics and Flashlight with latency
     tickHandler?.postAtTime({
-      if (beatMode != "sound" && !tick.isMuted) {
+      if (beatMode != BeatMode.SOUND && !tick.isMuted) {
         when (tick.type) {
           TickType.STRONG -> hapticProvider?.heavyClick(false)
           TickType.SUB -> hapticProvider?.tick(false)
           else -> hapticProvider?.click(false)
         }
       }
-      if (flashlightStrength != "off" && !tick.isMuted) {
-        val strength = if (flashlightStrength == "strong") 0.8f else 0.15f
+      if (flashlightStrength != FlashStrength.OFF && !tick.isMuted) {
+        val strength = if (flashlightStrength == FlashStrength.STRONG) 0.8f else 0.15f
         when (tick.type) {
           TickType.STRONG -> flashlightProvider?.flash(100, strength)
           TickType.SUB, TickType.MUTED, TickType.BEAT_SUB_MUTED -> {}
@@ -368,7 +409,7 @@ class MetronomeEngine(
 
   private fun performTickPoly(tick: Tick) {
     tickHandler?.postAtTime({
-      var shouldVibrate = beatMode != "sound" && !tick.isMuted
+      var shouldVibrate = beatMode != BeatMode.SOUND && !tick.isMuted
       if (shouldVibrate) {
         val product = (tick.subdivision - 1).toLong() * config.beatsCount
         if (product % config.subdivisionsCount == 0L) shouldVibrate = false
@@ -455,7 +496,9 @@ class MetronomeEngine(
       muteHandler?.postDelayed(object : Runnable {
         override fun run() {
           _state.update { it.copy(isMuted = !it.isMuted) }
-          muteHandler?.postDelayed(this, calculateMuteCount(state.value.isMuted) * 1000L)
+          muteHandler?.postDelayed(
+            this, calculateMuteCount(state.value.isMuted) * 1000L
+          )
         }
       }, calculateMuteCount(false) * 1000L)
     }

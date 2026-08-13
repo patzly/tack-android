@@ -68,6 +68,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
     setContent {
       val settings by viewModel.settings.collectAsState()
+      val metronomeState by viewModel.metronomeState.collectAsState()
       val backstack = viewModel.backstack
 
       val hapticProvider = remember { HapticProviderImpl(this) }
@@ -75,6 +76,10 @@ class MainActivity : ComponentActivity(), ServiceConnection {
       LaunchedEffect(settings.haptic, settings.vibrationIntensity) {
         hapticProvider.isEnabled = settings.haptic
         hapticProvider.intensity = settings.vibrationIntensity
+      }
+
+      LaunchedEffect(metronomeState.isHapticPossible) {
+        hapticProvider.isHapticPossible = metronomeState.isHapticPossible
       }
 
       // Handle manual language change recreation for older APIs

@@ -85,8 +85,8 @@ class MetronomeService : Service() {
         hapticProvider.intensity = settings.vibrationIntensity
         
         engine.setLatency(settings.latency)
-        engine.setBeatMode(settings.beatMode.key)
-        engine.setFlashlight(settings.flashlight.key)
+        engine.setBeatMode(settings.beatMode)
+        engine.setFlashlight(settings.flashlight)
         permNotification = settings.permNotification
       }
     }
