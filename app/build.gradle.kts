@@ -61,7 +61,10 @@ android {
       if (releaseSigningConfig.storeFile?.exists() == true) {
         signingConfig = releaseSigningConfig
       } else {
-        println("Keystore not found, building unsigned release.")
+        //println("Keystore not found, building unsigned release.")
+        // TODO: the following lines are only for testing the optimized Compose UI
+        println("Keystore not found, building release with debug signature.")
+        signingConfig = signingConfigs.getByName("debug")
       }
       isMinifyEnabled = true
       isShrinkResources = true
