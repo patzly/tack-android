@@ -4,15 +4,11 @@ import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
@@ -29,7 +25,6 @@ import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedListItem
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
@@ -59,6 +54,7 @@ import xyz.zedler.patrick.tack.BuildConfig
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.component.AnimatedIcon
 import xyz.zedler.patrick.tack.presentation.dialog.FeedbackDialog
+import xyz.zedler.patrick.tack.presentation.dialog.UnlockDialog
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.presentation.util.LocalHaptic
 import xyz.zedler.patrick.tack.util.UnlockUtil
@@ -71,13 +67,17 @@ fun AboutScreen(viewModel: MainViewModel = viewModel()) {
   val settings by viewModel.settings.collectAsStateWithLifecycle()
 
   var showFeedbackDialog by rememberSaveable { mutableStateOf(false) }
+  var showUnlockDialog by rememberSaveable { mutableStateOf(false) }
 
   if (showFeedbackDialog) {
     FeedbackDialog(
       checkUnlockKey = settings.checkUnlockKey,
       onDismissRequest = { showFeedbackDialog = false },
-      onSupportClick = { /* TODO: Show unlock dialog */ }
+      onSupportClick = { showUnlockDialog = true }
     )
+  }
+  if (showUnlockDialog) {
+    UnlockDialog(onDismissRequest = { showUnlockDialog = false })
   }
 
   val appWebsite = stringResource(R.string.app_website)
@@ -95,46 +95,65 @@ fun AboutScreen(viewModel: MainViewModel = viewModel()) {
     isKeyInstalled = UnlockUtil.isKeyInstalled(context),
     isPlayStoreInstalled = UnlockUtil.isPlayStoreInstalled(context),
     checkUnlockKey = settings.checkUnlockKey,
-    onBack = {
-      viewModel.popBackstack()
+    onBackClick = {
       haptic.click()
+      viewModel.popBackstack()
     },
-    onDeveloperClick = {
-      context.startActivity(Intent(Intent.ACTION_VIEW, appWebsite.toUri()))
+    onHelpClick = {
+      haptic.click()
+      /* TODO: Implement actual dialog */
     },
-    onChangelogClick = { /* TODO: Implement actual dialog */ },
-    onVendingClick = {
-      context.startActivity(Intent(Intent.ACTION_VIEW, appVendingDev.toUri()))
-    },
-    onKeyClick = {
-      if (UnlockUtil.isKeyInstalled(context)) {
-        context.startActivity(
-          Intent(Intent.ACTION_VIEW, appVendingKey.toUri())
-        )
-      } else {
-        // TODO: Show unlock dialog
-      }
-    },
-    onKeyLongClick = {},
-    onGithubClick = {
-      context.startActivity(Intent(Intent.ACTION_VIEW, appGithub.toUri()))
-    },
-    onTranslationClick = {
-      context.startActivity(Intent(Intent.ACTION_VIEW, appTranslate.toUri()))
-    },
-    onPrivacyClick = {
-      context.startActivity(Intent(Intent.ACTION_VIEW, appPrivacy.toUri()))
-    },
-    onLicenseClick = { /* TODO: Implement actual dialogs */ },
-    onFeedbackClick = { showFeedbackDialog = true },
-    onHelpClick = { /* TODO: Implement actual dialog */ },
     onRecommendClick = {
+      haptic.click()
       val sendIntent = Intent().apply {
         action = Intent.ACTION_SEND
         putExtra(Intent.EXTRA_TEXT, recommendText)
         type = "text/plain"
       }
       context.startActivity(Intent.createChooser(sendIntent, null))
+    },
+    onFeedbackClick = {
+      haptic.click()
+      showFeedbackDialog = true
+    },
+    onChangelogClick = {
+      haptic.click()
+      /* TODO: Implement actual dialog */
+    },
+    onDeveloperClick = {
+      haptic.click()
+      context.startActivity(Intent(Intent.ACTION_VIEW, appWebsite.toUri()))
+    },
+    onVendingClick = {
+      haptic.click()
+      context.startActivity(Intent(Intent.ACTION_VIEW, appVendingDev.toUri()))
+    },
+    onKeyClick = {
+      haptic.click()
+      if (UnlockUtil.isKeyInstalled(context)) {
+        context.startActivity(
+          Intent(Intent.ACTION_VIEW, appVendingKey.toUri())
+        )
+      } else {
+        showUnlockDialog = true
+      }
+    },
+    onKeyLongClick = {},
+    onGithubClick = {
+      haptic.click()
+      context.startActivity(Intent(Intent.ACTION_VIEW, appGithub.toUri()))
+    },
+    onTranslationClick = {
+      haptic.click()
+      context.startActivity(Intent(Intent.ACTION_VIEW, appTranslate.toUri()))
+    },
+    onPrivacyClick = {
+      haptic.click()
+      context.startActivity(Intent(Intent.ACTION_VIEW, appPrivacy.toUri()))
+    },
+    onLicenseClick = {
+      haptic.click()
+      /* TODO: Implement actual dialogs */
     }
   )
 }
@@ -147,19 +166,19 @@ fun AboutContent(
   isKeyInstalled: Boolean = false,
   isPlayStoreInstalled: Boolean = true,
   checkUnlockKey: Boolean = true,
-  onBack: () -> Unit = {},
-  onDeveloperClick: () -> Unit = {},
+  onBackClick: () -> Unit = {},
+  onHelpClick: () -> Unit = {},
+  onRecommendClick: () -> Unit = {},
+  onFeedbackClick: () -> Unit = {},
   onChangelogClick: () -> Unit = {},
+  onDeveloperClick: () -> Unit = {},
   onVendingClick: () -> Unit = {},
   onKeyClick: () -> Unit = {},
   onKeyLongClick: () -> Unit = {},
   onGithubClick: () -> Unit = {},
   onTranslationClick: () -> Unit = {},
   onPrivacyClick: () -> Unit = {},
-  onLicenseClick: (Int) -> Unit = {},
-  onFeedbackClick: () -> Unit = {},
-  onHelpClick: () -> Unit = {},
-  onRecommendClick: () -> Unit = {}
+  onLicenseClick: (Int) -> Unit = {}
 ) {
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   Scaffold(
@@ -186,7 +205,7 @@ fun AboutContent(
             state = rememberTooltipState(),
           ) {
             FilledIconButton(
-              onClick = onBack,
+              onClick = onBackClick,
               colors = IconButtonDefaults.iconButtonColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
               ),
@@ -216,14 +235,13 @@ fun AboutContent(
           ) {
             FilledIconButton(
               onClick = { showMenu = true },
-              modifier =
-                Modifier
-                  .minimumInteractiveComponentSize()
-                  .size(
-                    IconButtonDefaults.smallContainerSize(
-                      IconButtonDefaults.IconButtonWidthOption.Narrow
-                    )
-                  ),
+              modifier = Modifier
+                .minimumInteractiveComponentSize()
+                .size(
+                  IconButtonDefaults.smallContainerSize(
+                    IconButtonDefaults.IconButtonWidthOption.Narrow
+                  )
+                ),
               colors = IconButtonDefaults.iconButtonColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
               ),
@@ -447,9 +465,7 @@ fun AboutContent(
           )
 
           SegmentedListItem(
-            onClick = {
-              onTranslationClick()
-            },
+            onClick = onTranslationClick,
             shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
             colors = colors,
             supportingContent = {

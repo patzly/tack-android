@@ -26,7 +26,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -35,9 +34,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import xyz.zedler.patrick.tack.R
-import xyz.zedler.patrick.tack.core.model.AppTheme
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.UnlockUtil
 
@@ -111,7 +108,7 @@ fun FeedbackDialog(
         context.startActivity(Intent(Intent.ACTION_VIEW, issues.toUri()))
         onDismissRequest()
       },
-      onCloseCLick = {
+      onCloseClick = {
         onDismissRequest()
       }
     )
@@ -127,7 +124,7 @@ private fun FeedbackDialogContent(
   onRecommendClick: () -> Unit = {},
   onIssueClick: () -> Unit = {},
   onEmailClick: () -> Unit = {},
-  onCloseCLick: () -> Unit = {}
+  onCloseClick: () -> Unit = {}
 ) {
   Surface(
     shape = AlertDialogDefaults.shape,
@@ -283,7 +280,7 @@ private fun FeedbackDialogContent(
           .padding(horizontal = 16.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.End
       ) {
-        TextButton(onClick = onCloseCLick) {
+        TextButton(onClick = onCloseClick) {
           Text(stringResource(R.string.action_close))
         }
       }
