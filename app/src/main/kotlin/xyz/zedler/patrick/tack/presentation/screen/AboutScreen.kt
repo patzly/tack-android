@@ -340,9 +340,7 @@ fun AboutContent(
       item {
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
           val itemCount = 4
-          val colors = ListItemDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.surfaceBright
-          )
+          val colors = ListItemDefaults.segmentedColors()
 
           var changelogIconTrigger by remember { mutableStateOf(false) }
 
@@ -427,9 +425,7 @@ fun AboutContent(
         item {
           Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
             val itemCount = 1
-            val colors = ListItemDefaults.colors(
-              containerColor = MaterialTheme.colorScheme.surfaceBright
-            )
+            val colors = ListItemDefaults.segmentedColors()
 
             SegmentedListItem(
               onClick = onKeyClick,
@@ -461,9 +457,7 @@ fun AboutContent(
       item {
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
           val itemCount = 3
-          val colors = ListItemDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.surfaceBright
-          )
+          val colors = ListItemDefaults.segmentedColors()
 
           SegmentedListItem(
             onClick = onGithubClick,
@@ -531,9 +525,7 @@ fun AboutContent(
 
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
           val itemCount = 2
-          val colors = ListItemDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.surfaceBright
-          )
+          val colors = ListItemDefaults.segmentedColors()
 
           var copyright1IconTrigger by remember { mutableStateOf(false) }
           var copyright2IconTrigger by remember { mutableStateOf(false) }

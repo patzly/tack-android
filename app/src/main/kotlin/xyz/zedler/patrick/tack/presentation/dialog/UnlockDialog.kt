@@ -26,15 +26,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import xyz.zedler.patrick.tack.R
-import xyz.zedler.patrick.tack.presentation.theme.TackTheme
+import xyz.zedler.patrick.tack.presentation.util.LocalHaptic
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UnlockDialog(
-  onDismissRequest: () -> Unit = {}
-) {
+fun UnlockDialog(onDismissRequest: () -> Unit = {}) {
+  val haptic = LocalHaptic.current
+
   AlertDialog(
     onDismissRequest = onDismissRequest,
     title = {
@@ -46,6 +45,7 @@ fun UnlockDialog(
     confirmButton = {
       TextButton(
         onClick = {
+          haptic.click()
           onDismissRequest()
         },
         shapes = ButtonDefaults.shapes()
@@ -56,6 +56,7 @@ fun UnlockDialog(
     dismissButton = {
       TextButton(
         onClick = {
+          haptic.click()
           onDismissRequest()
         },
         shapes = ButtonDefaults.shapes()
@@ -64,12 +65,4 @@ fun UnlockDialog(
       }
     }
   )
-}
-
-@Preview
-@Composable
-fun UnlockDialogPreview() {
-  TackTheme {
-    UnlockDialog()
-  }
 }

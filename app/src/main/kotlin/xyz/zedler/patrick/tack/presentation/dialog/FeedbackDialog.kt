@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
+import xyz.zedler.patrick.tack.presentation.util.LocalHaptic
 import xyz.zedler.patrick.tack.util.UnlockUtil
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,6 +66,8 @@ fun FeedbackDialog(
   onSupportClick: () -> Unit
 ) {
   val context = LocalContext.current
+  val haptic = LocalHaptic.current
+
   val isPlayStoreInstalled = remember { UnlockUtil.isPlayStoreInstalled(context) }
   val isKeyInstalled = remember { UnlockUtil.isKeyInstalled(context) }
 
@@ -78,6 +81,7 @@ fun FeedbackDialog(
     FeedbackDialogContent(
       isSupportVisible = checkUnlockKey && isPlayStoreInstalled && !isKeyInstalled,
       onRateClick = {
+        haptic.click()
         val uri = "market://details?id=${context.packageName}".toUri()
         val intent = Intent(Intent.ACTION_VIEW, uri).apply {
           addFlags(
@@ -101,10 +105,12 @@ fun FeedbackDialog(
         onDismissRequest()
       },
       onSupportClick = {
+        haptic.click()
         onSupportClick()
         onDismissRequest()
       },
       onRecommendClick = {
+        haptic.click()
         val sendIntent = Intent().apply {
           action = Intent.ACTION_SEND
           putExtra(Intent.EXTRA_TEXT, recommendText)
@@ -114,6 +120,7 @@ fun FeedbackDialog(
         onDismissRequest()
       },
       onEmailClick = {
+        haptic.click()
         val intent = Intent(Intent.ACTION_SENDTO).apply {
           data = "mailto:$appMail?subject=${Uri.encode("Feedback@Tack")}".toUri()
         }
@@ -123,11 +130,13 @@ fun FeedbackDialog(
         onDismissRequest()
       },
       onIssueClick = {
+        haptic.click()
         val issues = "$appGithub/issues"
         context.startActivity(Intent(Intent.ACTION_VIEW, issues.toUri()))
         onDismissRequest()
       },
       onCloseClick = {
+        haptic.click()
         onDismissRequest()
       }
     )
