@@ -26,6 +26,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -34,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.AppTheme
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
@@ -50,14 +52,15 @@ fun FeedbackDialog(
   val isPlayStoreInstalled = remember { UnlockUtil.isPlayStoreInstalled(context) }
   val isKeyInstalled = remember { UnlockUtil.isKeyInstalled(context) }
 
+  val appMail = stringResource(R.string.app_mail)
   val appGithub = stringResource(R.string.app_github)
+  val appVendingApp = stringResource(R.string.app_vending_app)
+  val recommendText = stringResource(R.string.msg_recommend, appVendingApp)
+  val actionSendFeedback = stringResource(R.string.action_send_feedback)
 
   BasicAlertDialog(onDismissRequest = onDismissRequest) {
     FeedbackDialogContent(
-      isPlayStoreInstalled = isPlayStoreInstalled,
-      isKeyInstalled = isKeyInstalled,
-      checkUnlockKey = checkUnlockKey,
-      onDismissRequest = onDismissRequest,
+      isSupportVisible = checkUnlockKey && isPlayStoreInstalled && !isKeyInstalled,
       onRateClick = {
         val uri = "market://details?id=${context.packageName}".toUri()
         val intent = Intent(Intent.ACTION_VIEW, uri).apply {
@@ -86,7 +89,22 @@ fun FeedbackDialog(
         onDismissRequest()
       },
       onRecommendClick = {
-
+        val sendIntent = Intent().apply {
+          action = Intent.ACTION_SEND
+          putExtra(Intent.EXTRA_TEXT, recommendText)
+          type = "text/plain"
+        }
+        context.startActivity(Intent.createChooser(sendIntent, null))
+        onDismissRequest()
+      },
+      onEmailClick = {
+        val intent = Intent(Intent.ACTION_SENDTO).apply {
+          data = "mailto:$appMail?subject=${Uri.encode("Feedback@Tack")}".toUri()
+        }
+        context.startActivity(
+          Intent.createChooser(intent, actionSendFeedback)
+        )
+        onDismissRequest()
       },
       onIssueClick = {
         val issues = "$appGithub/issues"
@@ -103,10 +121,7 @@ fun FeedbackDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FeedbackDialogContent(
-  isPlayStoreInstalled: Boolean = true,
-  isKeyInstalled: Boolean = false,
-  checkUnlockKey: Boolean = true,
-  onDismissRequest: () -> Unit = {},
+  isSupportVisible: Boolean = true,
   onRateClick: () -> Unit = {},
   onSupportClick: () -> Unit = {},
   onRecommendClick: () -> Unit = {},
@@ -114,14 +129,6 @@ private fun FeedbackDialogContent(
   onEmailClick: () -> Unit = {},
   onCloseCLick: () -> Unit = {}
 ) {
-  val context = LocalContext.current
-
-  val appMail = stringResource(R.string.app_mail)
-  val appGithub = stringResource(R.string.app_github)
-  val appVendingApp = stringResource(R.string.app_vending_app)
-  val recommendText = stringResource(R.string.msg_recommend, appVendingApp)
-  val actionSendFeedback = stringResource(R.string.action_send_feedback)
-
   Surface(
     shape = AlertDialogDefaults.shape,
     color = AlertDialogDefaults.containerColor,
@@ -165,7 +172,6 @@ private fun FeedbackDialogContent(
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
-          val isSupportVisible = checkUnlockKey && isPlayStoreInstalled && !isKeyInstalled
           val itemCount = if (isSupportVisible) 3 else 2
 
           val colors = ListItemDefaults.colors(
@@ -207,15 +213,7 @@ private fun FeedbackDialogContent(
           }
 
           SegmentedListItem(
-            onClick = {
-              val sendIntent = Intent().apply {
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_TEXT, recommendText)
-                type = "text/plain"
-              }
-              context.startActivity(Intent.createChooser(sendIntent, null))
-              onDismissRequest()
-            },
+            onClick = onRecommendClick,
             shapes = ListItemDefaults.segmentedShapes(
               index = if (isSupportVisible) 2 else 1,
               count = itemCount
@@ -259,15 +257,7 @@ private fun FeedbackDialogContent(
           )
 
           SegmentedListItem(
-            onClick = {
-              val intent = Intent(Intent.ACTION_SENDTO).apply {
-                data = "mailto:$appMail?subject=${Uri.encode("Feedback@Tack")}".toUri()
-              }
-              context.startActivity(
-                Intent.createChooser(intent, actionSendFeedback)
-              )
-              onDismissRequest()
-            },
+            onClick = onEmailClick,
             shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
             colors = colors,
             leadingContent = {
