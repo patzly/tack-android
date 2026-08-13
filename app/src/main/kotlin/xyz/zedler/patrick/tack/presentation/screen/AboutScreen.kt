@@ -76,7 +76,6 @@ import xyz.zedler.patrick.tack.presentation.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.presentation.dialog.UnlockDialog
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.presentation.util.LocalHaptic
-import xyz.zedler.patrick.tack.util.UnlockUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Composable
@@ -84,6 +83,8 @@ fun AboutScreen(viewModel: MainViewModel = viewModel()) {
   val context = LocalContext.current
   val haptic = LocalHaptic.current
   val settings by viewModel.settings.collectAsStateWithLifecycle()
+  val isKeyInstalled by viewModel.isKeyInstalled.collectAsStateWithLifecycle()
+  val isPlayStoreInstalled by viewModel.isPlayStoreInstalled.collectAsStateWithLifecycle()
 
   var showFeedbackDialog by rememberSaveable { mutableStateOf(false) }
   var showUnlockDialog by rememberSaveable { mutableStateOf(false) }
@@ -91,6 +92,8 @@ fun AboutScreen(viewModel: MainViewModel = viewModel()) {
   if (showFeedbackDialog) {
     FeedbackDialog(
       checkUnlockKey = settings.checkUnlockKey,
+      isKeyInstalled = isKeyInstalled,
+      isPlayStoreInstalled = isPlayStoreInstalled,
       onDismissRequest = { showFeedbackDialog = false },
       onSupportClick = { showUnlockDialog = true }
     )
@@ -111,8 +114,8 @@ fun AboutScreen(viewModel: MainViewModel = viewModel()) {
   AboutContent(
     reduceAnim = settings.reduceAnim,
     versionName = BuildConfig.VERSION_NAME,
-    isKeyInstalled = UnlockUtil.isKeyInstalled(context),
-    isPlayStoreInstalled = UnlockUtil.isPlayStoreInstalled(context),
+    isKeyInstalled = isKeyInstalled,
+    isPlayStoreInstalled = isPlayStoreInstalled,
     checkUnlockKey = settings.checkUnlockKey,
     onBackClick = {
       haptic.click()
@@ -149,7 +152,7 @@ fun AboutScreen(viewModel: MainViewModel = viewModel()) {
     },
     onKeyClick = {
       haptic.click()
-      if (UnlockUtil.isKeyInstalled(context)) {
+      if (isKeyInstalled) {
         context.startActivity(
           Intent(Intent.ACTION_VIEW, appVendingKey.toUri())
         )

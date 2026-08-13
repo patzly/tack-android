@@ -87,6 +87,8 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 @Composable
 fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
   val settings by viewModel.settings.collectAsStateWithLifecycle()
+  val isKeyInstalled by viewModel.isKeyInstalled.collectAsStateWithLifecycle()
+  val isPlayStoreInstalled by viewModel.isPlayStoreInstalled.collectAsStateWithLifecycle()
 
   var showFeedbackDialog by rememberSaveable { mutableStateOf(false) }
   var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
@@ -94,6 +96,8 @@ fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
   if (showFeedbackDialog) {
     FeedbackDialog(
       checkUnlockKey = settings.checkUnlockKey,
+      isKeyInstalled = isKeyInstalled,
+      isPlayStoreInstalled = isPlayStoreInstalled,
       onDismissRequest = { showFeedbackDialog = false },
       onSupportClick = { /* TODO: Show unlock dialog */ }
     )

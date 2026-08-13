@@ -85,6 +85,8 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
 
+    viewModel.refreshUnlockStatus(this)
+
     setContent {
       val settings by viewModel.settings.collectAsState()
       val metronomeState by viewModel.metronomeState.collectAsState()

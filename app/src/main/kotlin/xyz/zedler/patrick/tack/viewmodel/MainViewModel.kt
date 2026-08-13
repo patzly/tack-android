@@ -31,6 +31,7 @@ import xyz.zedler.patrick.tack.core.data.SongRepository
 import xyz.zedler.patrick.tack.core.model.*
 import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.presentation.navigation.Route
+import xyz.zedler.patrick.tack.util.UnlockUtil
 
 class MainViewModel(
   private val settingsRepository: SettingsRepository,
@@ -41,6 +42,12 @@ class MainViewModel(
   private val _service = MutableStateFlow<MetronomeService?>(null)
   
   val backstack = mutableStateListOf<Route>(Route.Main)
+
+  private val _isKeyInstalled = MutableStateFlow(false)
+  val isKeyInstalled: StateFlow<Boolean> = _isKeyInstalled.asStateFlow()
+
+  private val _isPlayStoreInstalled = MutableStateFlow(true)
+  val isPlayStoreInstalled: StateFlow<Boolean> = _isPlayStoreInstalled.asStateFlow()
 
   val settings: StateFlow<AppSettings> = settingsRepository.settings
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AppSettings())
@@ -55,6 +62,11 @@ class MainViewModel(
       service?.engine?.state ?: flowOf(MetronomeState())
     }
     .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MetronomeState())
+
+  fun refreshUnlockStatus(context: android.content.Context) {
+    _isKeyInstalled.value = UnlockUtil.isKeyInstalled(context)
+    _isPlayStoreInstalled.value = UnlockUtil.isPlayStoreInstalled(context)
+  }
 
   fun onServiceConnected(service: MetronomeService) {
     _service.value = service

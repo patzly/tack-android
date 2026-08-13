@@ -62,14 +62,13 @@ import xyz.zedler.patrick.tack.util.UnlockUtil
 @Composable
 fun FeedbackDialog(
   checkUnlockKey: Boolean,
+  isKeyInstalled: Boolean,
+  isPlayStoreInstalled: Boolean,
   onDismissRequest: () -> Unit,
   onSupportClick: () -> Unit
 ) {
   val context = LocalContext.current
   val haptic = LocalHaptic.current
-
-  val isPlayStoreInstalled = remember { UnlockUtil.isPlayStoreInstalled(context) }
-  val isKeyInstalled = remember { UnlockUtil.isKeyInstalled(context) }
 
   val appMail = stringResource(R.string.app_mail)
   val appGithub = stringResource(R.string.app_github)
