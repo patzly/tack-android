@@ -30,6 +30,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import com.materialkolor.hct.Hct
 import com.materialkolor.ktx.toColor
@@ -85,11 +86,13 @@ fun TackTheme(
     }
   }
 
+  val motionScheme = remember { MotionScheme.expressive() }
+
   MaterialExpressiveTheme(
     colorScheme = colorScheme,
     typography = TackTypography,
     shapes = TackShapes,
-    motionScheme = MotionScheme.expressive(),
+    motionScheme = motionScheme,
     content = content
   )
 }
