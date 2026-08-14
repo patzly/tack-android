@@ -52,6 +52,7 @@ import androidx.core.net.toUri
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.Language
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
+import xyz.zedler.patrick.tack.presentation.util.LocalHaptic
 import xyz.zedler.patrick.tack.util.LocaleUtil
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,6 +63,8 @@ fun LanguageDialog(
   onDismissRequest: () -> Unit
 ) {
   val context = LocalContext.current
+  val haptic = LocalHaptic.current
+
   val languages = remember { LocaleUtil.getLanguages(context) }
 
   val appTranslate = stringResource(R.string.app_translate)
@@ -71,13 +74,18 @@ fun LanguageDialog(
       languages = languages,
       currentLanguageCode = currentLanguageCode,
       onLanguageSelected = {
+        haptic.click()
         onLanguageSelected(it)
         onDismissRequest()
       },
       onMoreClick = {
+        haptic.click()
         context.startActivity(Intent(Intent.ACTION_VIEW, appTranslate.toUri()))
       },
-      onCloseClick = onDismissRequest
+      onCloseClick = {
+        haptic.click()
+        onDismissRequest()
+      }
     )
   }
 }
@@ -120,6 +128,7 @@ private fun LanguageDialogContent(
       HorizontalDivider()
 
       val colors = ListItemDefaults.segmentedColors(
+        containerColor = MaterialTheme.colorScheme.surfaceBright,
         selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
         selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer
       )
@@ -183,7 +192,7 @@ private fun LanguageDialogContent(
       Row(
         modifier = Modifier
           .fillMaxWidth()
-          .padding(horizontal = 16.dp, vertical = 8.dp),
+          .padding(24.dp),
         horizontalArrangement = Arrangement.SpaceBetween
       ) {
         TextButton(onClick = onMoreClick) {

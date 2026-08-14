@@ -121,6 +121,9 @@ fun AboutScreen(viewModel: MainViewModel = viewModel()) {
       haptic.click()
       viewModel.popBackstack()
     },
+    onMoreClick = {
+      haptic.click()
+    },
     onHelpClick = {
       haptic.click()
       /* TODO: Implement actual dialog */
@@ -189,6 +192,7 @@ fun AboutContent(
   isPlayStoreInstalled: Boolean = true,
   checkUnlockKey: Boolean = true,
   onBackClick: () -> Unit = {},
+  onMoreClick: () -> Unit = {},
   onHelpClick: () -> Unit = {},
   onRecommendClick: () -> Unit = {},
   onFeedbackClick: () -> Unit = {},
@@ -256,7 +260,10 @@ fun AboutContent(
             state = rememberTooltipState(),
           ) {
             FilledIconButton(
-              onClick = { showMenu = true },
+              onClick = {
+                onMoreClick()
+                showMenu = true
+              },
               modifier = Modifier
                 .minimumInteractiveComponentSize()
                 .size(
@@ -343,7 +350,9 @@ fun AboutContent(
       item {
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
           val itemCount = 4
-          val colors = ListItemDefaults.segmentedColors()
+          val colors = ListItemDefaults.segmentedColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
+          )
 
           var changelogIconTrigger by remember { mutableStateOf(false) }
 
@@ -428,7 +437,9 @@ fun AboutContent(
         item {
           Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
             val itemCount = 1
-            val colors = ListItemDefaults.segmentedColors()
+            val colors = ListItemDefaults.segmentedColors(
+              containerColor = MaterialTheme.colorScheme.surfaceBright
+            )
 
             SegmentedListItem(
               onClick = onKeyClick,
@@ -460,7 +471,9 @@ fun AboutContent(
       item {
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
           val itemCount = 3
-          val colors = ListItemDefaults.segmentedColors()
+          val colors = ListItemDefaults.segmentedColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
+          )
 
           SegmentedListItem(
             onClick = onGithubClick,
@@ -528,7 +541,9 @@ fun AboutContent(
 
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
           val itemCount = 2
-          val colors = ListItemDefaults.segmentedColors()
+          val colors = ListItemDefaults.segmentedColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
+          )
 
           var copyright1IconTrigger by remember { mutableStateOf(false) }
           var copyright2IconTrigger by remember { mutableStateOf(false) }

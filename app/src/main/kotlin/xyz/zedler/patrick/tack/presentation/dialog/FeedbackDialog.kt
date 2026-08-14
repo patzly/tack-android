@@ -196,7 +196,7 @@ private fun FeedbackDialogContent(
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
-          val itemCount = if (isSupportVisible) 3 else 2
+          val itemCount = if (isSupportVisible) 5 else 4
 
           val colors = ListItemDefaults.colors(
             containerColor = MaterialTheme.colorScheme.surfaceBright
@@ -254,19 +254,13 @@ private fun FeedbackDialogContent(
             content = { Text(stringResource(R.string.action_recommend)) },
             supportingContent = { Text(stringResource(R.string.action_recommend_description)) }
           )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
-          val itemCount = 2
-          val colors = ListItemDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.surfaceBright
-          )
 
           SegmentedListItem(
             onClick = onIssueClick,
-            shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
+            shapes = ListItemDefaults.segmentedShapes(
+              index = if (isSupportVisible) 3 else 2,
+              count = itemCount
+            ),
             colors = colors,
             leadingContent = {
               Box(modifier = Modifier.padding(vertical = 10.dp)) {
@@ -282,7 +276,10 @@ private fun FeedbackDialogContent(
 
           SegmentedListItem(
             onClick = onEmailClick,
-            shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
+            shapes = ListItemDefaults.segmentedShapes(
+              index = if (isSupportVisible) 4 else 3,
+              count = itemCount
+            ),
             colors = colors,
             leadingContent = {
               Box(modifier = Modifier.padding(vertical = 10.dp)) {
@@ -296,6 +293,7 @@ private fun FeedbackDialogContent(
             supportingContent = { Text(stringResource(R.string.action_email_description)) }
           )
         }
+
         Spacer(modifier = Modifier.height(16.dp))
       }
 
@@ -304,7 +302,7 @@ private fun FeedbackDialogContent(
       Row(
         modifier = Modifier
           .fillMaxWidth()
-          .padding(horizontal = 16.dp, vertical = 8.dp),
+          .padding(24.dp),
         horizontalArrangement = Arrangement.End
       ) {
         TextButton(onClick = onCloseClick) {

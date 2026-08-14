@@ -26,6 +26,7 @@ import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
@@ -39,11 +40,11 @@ fun AnimatedIcon(
 ) {
   val image = AnimatedImageVector.animatedVectorResource(resId)
   val painterForward = rememberAnimatedVectorPainter(
-    animatedImageVector = image,
+    animatedImageVector = remember(resId) { image },
     atEnd = if (animated) trigger else false
   )
   val painterBackward = rememberAnimatedVectorPainter(
-    animatedImageVector = image,
+    animatedImageVector = remember(resId) { image },
     atEnd = !trigger
   )
   Icon(
@@ -66,11 +67,11 @@ fun AnimatedIcon(
   val image1 = AnimatedImageVector.animatedVectorResource(resId1)
   val image2 = AnimatedImageVector.animatedVectorResource(resId2)
   val painterForward = rememberAnimatedVectorPainter(
-    animatedImageVector = image1,
+    animatedImageVector = remember(resId1) { image1 },
     atEnd = if (animated) trigger else true
   )
   val painterBackward = rememberAnimatedVectorPainter(
-    animatedImageVector = image2,
+    animatedImageVector = remember(resId2) { image2 },
     atEnd = if (animated) !trigger else true
   )
   Icon(

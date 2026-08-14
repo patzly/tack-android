@@ -261,7 +261,9 @@ fun SettingsContent(
 
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
           val itemCount = 1
-          val colors = ListItemDefaults.segmentedColors()
+          val colors = ListItemDefaults.segmentedColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
+          )
 
           var languageIconTrigger by remember { mutableStateOf(false) }
 
@@ -298,7 +300,9 @@ fun SettingsContent(
       item {
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
           val itemCount = 2
-          val colors = ListItemDefaults.segmentedColors()
+          val colors = ListItemDefaults.segmentedColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
+          )
 
           var themeIconTrigger by remember { mutableStateOf(false) }
           var contrastIconTrigger by remember { mutableStateOf(false) }
