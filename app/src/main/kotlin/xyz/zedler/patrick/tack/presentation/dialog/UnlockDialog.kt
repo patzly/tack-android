@@ -19,29 +19,36 @@
 
 package xyz.zedler.patrick.tack.presentation.dialog
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.takeOrElse
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.presentation.component.AlertDialogFlowRow
+import xyz.zedler.patrick.tack.presentation.component.ProvideContentColorTextStyle
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.presentation.util.LocalHaptic
 
@@ -50,43 +57,25 @@ import xyz.zedler.patrick.tack.presentation.util.LocalHaptic
 fun UnlockDialog(onDismissRequest: () -> Unit = {}) {
   val haptic = LocalHaptic.current
 
-  AlertDialog(
-    onDismissRequest = onDismissRequest,
-    title = {
-      Text(stringResource(R.string.msg_unlock))
-    },
-    text = {
-      Text(stringResource(R.string.msg_unlock_description))
-    },
-    confirmButton = {
-      TextButton(
-        onClick = {
-          haptic.click()
-          onDismissRequest()
-        },
-        shapes = ButtonDefaults.shapes()
-      ) {
-        Text(stringResource(R.string.action_open_play_store))
+  BasicAlertDialog(onDismissRequest = onDismissRequest) {
+    UnlockDialogContent(
+      onOpenClick = {
+        haptic.click()
+        onDismissRequest()
+      },
+      onCancelClick = {
+        haptic.click()
+        onDismissRequest()
       }
-    },
-    dismissButton = {
-      TextButton(
-        onClick = {
-          haptic.click()
-          onDismissRequest()
-        },
-        shapes = ButtonDefaults.shapes()
-      ) {
-        Text(stringResource(R.string.action_cancel))
-      }
-    }
-  )
+    )
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun UnlockDialogContent(
-  onCloseClick: () -> Unit = {}
+  onOpenClick: () -> Unit = {},
+  onCancelClick: () -> Unit = {}
 ) {
   Surface(
     shape = AlertDialogDefaults.shape,
@@ -105,8 +94,11 @@ private fun UnlockDialogContent(
       )
 
       val scrollState = rememberScrollState()
+      val isScrollable by remember { derivedStateOf { scrollState.maxValue > 0 } }
 
-      HorizontalDivider()
+      if (isScrollable) {
+        HorizontalDivider()
+      }
 
       Column(
         modifier = Modifier
@@ -114,26 +106,50 @@ private fun UnlockDialogContent(
           .verticalScroll(scrollState)
           .padding(horizontal = 24.dp)
       ) {
-        Column(modifier = Modifier.padding(vertical = 16.dp)) {
-          Text(
-            text = stringResource(R.string.msg_unlock_description),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-          )
-        }
+        Text(
+          text = stringResource(R.string.msg_unlock_description),
+          style = MaterialTheme.typography.bodyMedium,
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
+          modifier = Modifier.padding(vertical = if (isScrollable) 16.dp else 0.dp)
+        )
       }
 
-      HorizontalDivider()
+      if (isScrollable) {
+        HorizontalDivider()
+      }
 
-      Row(
+      Box(
         modifier = Modifier
-          .fillMaxWidth()
-          .padding(all = 24.dp),
-        horizontalArrangement = Arrangement.End
+          .align(Alignment.End)
+          .padding(24.dp)
       ) {
-        TextButton(onClick = onCloseClick) {
-          Text(stringResource(R.string.action_close))
-        }
+        ProvideContentColorTextStyle(
+          contentColor = MaterialTheme.colorScheme.primary,
+          textStyle = MaterialTheme.typography.labelLarge,
+          content = {
+            val buttonPaddingFromMICS =
+              LocalMinimumInteractiveComponentSize.current.takeOrElse { 0.dp } -
+                  ButtonDefaults.MinHeight
+            AlertDialogFlowRow(
+              mainAxisSpacing = 8.dp,
+              crossAxisSpacing = (8.dp - buttonPaddingFromMICS).coerceIn(0.dp, 8.dp)
+            ) {
+              TextButton(
+                onClick = onOpenClick,
+                shapes = ButtonDefaults.shapes()
+              ) {
+                Text(stringResource(R.string.action_open_play_store))
+              }
+
+              TextButton(
+                onClick = onCancelClick,
+                shapes = ButtonDefaults.shapes()
+              ) {
+                Text(stringResource(R.string.action_cancel))
+              }
+            }
+          }
+        )
       }
     }
   }
