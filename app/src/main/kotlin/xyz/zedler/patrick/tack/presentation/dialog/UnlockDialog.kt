@@ -58,11 +58,9 @@ private fun UnlockDialogContent(
   onCancelClick: () -> Unit = {}
 ) {
   ScrollableAlertDialogContent(
-    icon = null,
     title = {
       Text(stringResource(R.string.msg_unlock))
     },
-    subtitle = null,
     confirmButton = {
       TextButton(
         onClick = onOpenClick,

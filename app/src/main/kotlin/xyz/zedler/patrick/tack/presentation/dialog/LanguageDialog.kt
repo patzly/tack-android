@@ -21,23 +21,17 @@ package xyz.zedler.patrick.tack.presentation.dialog
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SegmentedListItem
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -51,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.Language
+import xyz.zedler.patrick.tack.presentation.component.ScrollableAlertDialogContent
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.presentation.util.LocalHaptic
 import xyz.zedler.patrick.tack.util.LocaleUtil
@@ -99,108 +94,88 @@ private fun LanguageDialogContent(
   onMoreClick: () -> Unit = {},
   onCloseClick: () -> Unit = {}
 ) {
-  Surface(
-    shape = AlertDialogDefaults.shape,
-    color = AlertDialogDefaults.containerColor,
-    tonalElevation = AlertDialogDefaults.TonalElevation,
-    modifier = Modifier
-      .fillMaxWidth()
-      .heightIn(max = 600.dp)
+  ScrollableAlertDialogContent(
+    title = {
+      Text(stringResource(R.string.settings_language))
+    },
+    subtitle = {
+      Text(stringResource(R.string.settings_language_info))
+    },
+    confirmButton = {
+      TextButton(
+        onClick = onCloseClick,
+        shapes = ButtonDefaults.shapes()
+      ) {
+        Text(stringResource(R.string.action_close))
+      }
+    },
+    extraButton = {
+      TextButton(
+        onClick = onMoreClick,
+        shapes = ButtonDefaults.shapes()
+      ) {
+        Text(stringResource(R.string.action_learn_more))
+      }
+    },
+    isScrollableControlledByContent = true
   ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-      Column(
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(start = 24.dp, end = 24.dp, top = 24.dp, bottom = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-      ) {
-        Text(
-          text = stringResource(R.string.settings_language),
-          style = MaterialTheme.typography.headlineSmall
-        )
-        Text(
-          text = stringResource(R.string.settings_language_info),
-          style = MaterialTheme.typography.bodyMedium,
-          color = MaterialTheme.colorScheme.onSurfaceVariant
+    val colors = ListItemDefaults.segmentedColors(
+      containerColor = MaterialTheme.colorScheme.surfaceBright,
+      selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+      selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+    )
+
+    LazyColumn(
+      modifier = Modifier.fillMaxWidth(),
+      contentPadding = PaddingValues(vertical = 16.dp),
+      verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
+    ) {
+      val itemCount = languages.size + 1
+
+      // Follow System item
+      item {
+        SegmentedListItem(
+          onClick = {
+            onLanguageSelected(null)
+          },
+          shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
+          selected = currentLanguageCode == null,
+          colors = colors,
+          verticalAlignment = Alignment.CenterVertically,
+          leadingContent = {
+            RadioButton(
+              selected = currentLanguageCode == null,
+              onClick = null
+            )
+          },
+          content = {
+            Text(stringResource(R.string.settings_language_system))
+          },
+          supportingContent = {
+            Text(stringResource(R.string.settings_language_system_description))
+          }
         )
       }
 
-      HorizontalDivider()
-
-      val colors = ListItemDefaults.segmentedColors(
-        containerColor = MaterialTheme.colorScheme.surfaceBright,
-        selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-        selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer
-      )
-
-      LazyColumn(
-        modifier = Modifier.weight(1f, fill = false),
-        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
-      ) {
-        val itemCount = languages.size + 1
-
-        // Follow System item
-        item {
-          SegmentedListItem(
-            onClick = {
-              onLanguageSelected(null)
-            },
-            shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
-            selected = currentLanguageCode == null,
-            colors = colors,
-            verticalAlignment = Alignment.CenterVertically,
-            leadingContent = {
-              RadioButton(
-                selected = currentLanguageCode == null,
-                onClick = null
-              )
-            },
-            content = {
-              Text(stringResource(R.string.settings_language_system))
-            },
-            supportingContent = {
-              Text(stringResource(R.string.settings_language_system_description))
-            }
-          )
-        }
-
-        // Language items
-        itemsIndexed(languages) { index, language ->
-          SegmentedListItem(
-            onClick = {
-              onLanguageSelected(language.code)
-            },
-            shapes = ListItemDefaults.segmentedShapes(index = index + 1, count = itemCount),
-            selected = currentLanguageCode == language.code,
-            colors = colors,
-            verticalAlignment = Alignment.CenterVertically,
-            leadingContent = {
-              RadioButton(
-                selected = currentLanguageCode == language.code,
-                onClick = null
-              )
-            },
-            content = { Text(language.name) },
-            supportingContent = { Text(language.translators) }
-          )
-        }
-      }
-
-      HorizontalDivider()
-
-      Row(
-        modifier = Modifier
-          .fillMaxWidth()
-          .padding(24.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-      ) {
-        TextButton(onClick = onMoreClick) {
-          Text(stringResource(R.string.action_learn_more))
-        }
-        TextButton(onClick = onCloseClick) {
-          Text(stringResource(R.string.action_close))
-        }
+      // Language items
+      itemsIndexed(languages) { index, language ->
+        SegmentedListItem(
+          onClick = {
+            onLanguageSelected(language.code)
+          },
+          shapes = ListItemDefaults.segmentedShapes(index = index + 1, count = itemCount),
+          selected = currentLanguageCode == language.code,
+          colors = colors,
+          verticalAlignment = Alignment.CenterVertically,
+          leadingContent = {
+            RadioButton(
+              selected = currentLanguageCode == language.code,
+              onClick = null
+            )
+          },
+          content = { Text(language.name) },
+          supportingContent = { Text(language.translators) }
+        )
       }
     }
   }
@@ -210,6 +185,11 @@ private fun LanguageDialogContent(
 @Composable
 fun LanguageDialogPreview() {
   TackTheme {
-    LanguageDialogContent()
+    LanguageDialogContent(
+      languages = listOf(
+        Language(code = "de", translators = "Patrick Zedler", name = "Deutsch"),
+        Language(code = "en", translators = "Patrick Zedler", name = "English")
+      )
+    )
   }
 }
