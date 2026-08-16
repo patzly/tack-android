@@ -19,14 +19,22 @@
 
 package xyz.zedler.patrick.tack.presentation.component
 
+import android.provider.Settings.Global.getString
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.LocalTextStyle
@@ -34,17 +42,158 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.takeOrElse
 import androidx.compose.ui.window.DialogProperties
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ScrollableAlertDialogContent(
+  icon: @Composable (() -> Unit)?,
+  title: @Composable (() -> Unit)?,
+  subtitle: @Composable (() -> Unit)?,
+  confirmButton: @Composable () -> Unit,
+  dismissButton: @Composable (() -> Unit)?,
+  modifier: Modifier = Modifier,
+  iconContentColor: Color = MaterialTheme.colorScheme.secondary,
+  titleContentColor: Color = MaterialTheme.colorScheme.onSurface,
+  textContentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+  buttonContentColor: Color = MaterialTheme.colorScheme.primary,
+  content: @Composable (() -> Unit)?
+) {
+  Surface(
+    shape = AlertDialogDefaults.shape,
+    color = AlertDialogDefaults.containerColor,
+    tonalElevation = AlertDialogDefaults.TonalElevation,
+    modifier = modifier.heightIn(max = 600.dp)
+  ) {
+    Column(modifier = Modifier.padding(vertical = 24.dp)) {
+      icon?.let {
+        CompositionLocalProvider(LocalContentColor provides iconContentColor) {
+          Box(
+            Modifier
+              .padding(top = 24.dp)
+              .align(Alignment.CenterHorizontally)
+          ) {
+            icon()
+          }
+        }
+      }
+
+      title?.let {
+        ProvideContentColorTextStyle(
+          contentColor = titleContentColor,
+          textStyle = MaterialTheme.typography.headlineSmall
+        ) {
+          Box(
+            // Align the title to the center when an icon is present.
+            Modifier
+              .padding(
+                start = 24.dp,
+                end = 24.dp,
+                top = if (icon == null) 24.dp else 16.dp,
+                bottom = if (subtitle == null) 16.dp else 4.dp,
+              ).align(
+                if (icon == null) {
+                  Alignment.Start
+                } else {
+                  Alignment.CenterHorizontally
+                }
+              )
+          ) {
+            title()
+          }
+        }
+      }
+
+      subtitle?.let {
+        ProvideContentColorTextStyle(
+          contentColor = textContentColor,
+          textStyle = MaterialTheme.typography.bodyMedium
+        ) {
+          Box(
+            Modifier
+              .padding(start = 24.dp, end = 24.dp, top = 0.dp, bottom = 16.dp)
+              .align(Alignment.Start)
+          ) {
+            subtitle()
+          }
+        }
+      }
+
+      val scrollState = rememberScrollState()
+      val isScrollable by remember { derivedStateOf { scrollState.maxValue > 0 } }
+
+      if (isScrollable) {
+        HorizontalDivider()
+      }
+
+      content?.let {
+        ProvideContentColorTextStyle(
+          contentColor = textContentColor,
+          textStyle = MaterialTheme.typography.bodyMedium
+        ) {
+          Box(
+            modifier = Modifier
+              .weight(1f, fill = false)
+              .align(Alignment.Start)
+              .verticalScroll(scrollState)
+          ) {
+            Box(
+              modifier = Modifier
+                .padding(
+                  vertical = if (isScrollable) 16.dp else 0.dp,
+                  horizontal = 24.dp
+                )
+            ) {
+              content()
+            }
+          }
+        }
+      }
+
+      if (isScrollable) {
+        HorizontalDivider()
+      }
+
+      Box(
+        modifier = Modifier
+          .padding(top = 24.dp)
+          .align(Alignment.End)
+      ) {
+        ProvideContentColorTextStyle(
+          contentColor = buttonContentColor,
+          textStyle = MaterialTheme.typography.labelLarge,
+          content = {
+            val buttonPaddingFromMICS =
+              LocalMinimumInteractiveComponentSize.current.takeOrElse { 0.dp } -
+                  ButtonDefaults.MinHeight
+            AlertDialogFlowRow(
+              mainAxisSpacing = ButtonsMainAxisSpacing,
+              crossAxisSpacing = (8.dp - buttonPaddingFromMICS).coerceIn(0.dp, 8.dp)
+            ) {
+              confirmButton()
+              dismissButton?.invoke()
+            }
+          },
+        )
+      }
+    }
+  }
+}
 
 @Composable
 fun AlertDialogImpl(
