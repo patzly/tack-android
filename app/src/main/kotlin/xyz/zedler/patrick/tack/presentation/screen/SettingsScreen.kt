@@ -239,27 +239,25 @@ fun SettingsContent(
     },
     containerColor = MaterialTheme.colorScheme.surfaceContainer,
   ) { padding ->
-    LazyColumn(
+    InsetLazyColumn(
       modifier = Modifier
         .fillMaxSize()
         .consumeWindowInsets(padding),
       contentPadding = PaddingValues(
-        start = 16.dp,
-        end = 16.dp,
         top = padding.calculateTopPadding() + 16.dp,
         bottom = padding.calculateBottomPadding() + 16.dp
       ),
       verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-      item {
-        Text(
-          text = stringResource(R.string.title_general),
-          style = MaterialTheme.typography.titleSmall,
-          color = MaterialTheme.colorScheme.secondary,
-          modifier = Modifier.padding(bottom = 8.dp)
-        )
-
+      insetItem {
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
+          Text(
+            text = stringResource(R.string.title_general),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.padding(bottom = 8.dp)
+          )
+
           val itemCount = 1
           val colors = ListItemDefaults.segmentedColors(
             containerColor = MaterialTheme.colorScheme.surfaceBright
@@ -297,7 +295,7 @@ fun SettingsContent(
         }
       }
 
-      item {
+      insetItem {
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
           val itemCount = 2
           val colors = ListItemDefaults.segmentedColors(

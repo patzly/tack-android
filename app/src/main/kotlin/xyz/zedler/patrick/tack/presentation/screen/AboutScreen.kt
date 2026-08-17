@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.DropdownMenuPopup
@@ -72,6 +71,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import xyz.zedler.patrick.tack.BuildConfig
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.presentation.component.AnimatedIcon
+import xyz.zedler.patrick.tack.presentation.component.InsetLazyColumn
+import xyz.zedler.patrick.tack.presentation.component.insetItem
 import xyz.zedler.patrick.tack.presentation.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.presentation.dialog.UnlockDialog
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
@@ -335,19 +336,17 @@ fun AboutContent(
     },
     containerColor = MaterialTheme.colorScheme.surfaceContainer
   ) { padding ->
-    LazyColumn(
+    InsetLazyColumn(
       modifier = Modifier
         .fillMaxSize()
         .consumeWindowInsets(padding),
       contentPadding = PaddingValues(
-        start = 16.dp,
-        end = 16.dp,
         top = padding.calculateTopPadding() + 16.dp,
         bottom = padding.calculateBottomPadding() + 16.dp
       ),
       verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-      item {
+      insetItem {
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
           val itemCount = 4
           val colors = ListItemDefaults.segmentedColors(
@@ -434,7 +433,7 @@ fun AboutContent(
       }
 
       if (isPlayStoreInstalled) {
-        item {
+        insetItem {
           Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
             val itemCount = 1
             val colors = ListItemDefaults.segmentedColors(
@@ -468,7 +467,7 @@ fun AboutContent(
         }
       }
 
-      item {
+      insetItem {
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
           val itemCount = 3
           val colors = ListItemDefaults.segmentedColors(
@@ -531,15 +530,15 @@ fun AboutContent(
         }
       }
 
-      item {
-        Text(
-          text = stringResource(R.string.title_licenses),
-          style = MaterialTheme.typography.titleSmall,
-          color = MaterialTheme.colorScheme.secondary,
-          modifier = Modifier.padding(bottom = 8.dp)
-        )
-
+      insetItem {
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
+          Text(
+            text = stringResource(R.string.title_licenses),
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.secondary,
+            modifier = Modifier.padding(bottom = 8.dp)
+          )
+
           val itemCount = 2
           val colors = ListItemDefaults.segmentedColors(
             containerColor = MaterialTheme.colorScheme.surfaceBright
