@@ -74,6 +74,7 @@ import xyz.zedler.patrick.tack.presentation.component.AnimatedIcon
 import xyz.zedler.patrick.tack.presentation.component.InsetLazyColumn
 import xyz.zedler.patrick.tack.presentation.component.insetItem
 import xyz.zedler.patrick.tack.presentation.dialog.FeedbackDialog
+import xyz.zedler.patrick.tack.presentation.dialog.HelpDialog
 import xyz.zedler.patrick.tack.presentation.dialog.UnlockDialog
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.presentation.util.LocalHaptic
@@ -88,6 +89,7 @@ fun AboutScreen(viewModel: MainViewModel = viewModel()) {
   val isPlayStoreInstalled by viewModel.isPlayStoreInstalled.collectAsStateWithLifecycle()
 
   var showFeedbackDialog by rememberSaveable { mutableStateOf(false) }
+  var showHelpDialog by rememberSaveable { mutableStateOf(false) }
   var showUnlockDialog by rememberSaveable { mutableStateOf(false) }
 
   if (showFeedbackDialog) {
@@ -99,6 +101,11 @@ fun AboutScreen(viewModel: MainViewModel = viewModel()) {
       onSupportClick = { showUnlockDialog = true }
     )
   }
+
+  if (showHelpDialog) {
+    HelpDialog(onDismissRequest = { showHelpDialog = false })
+  }
+
   if (showUnlockDialog) {
     UnlockDialog(onDismissRequest = { showUnlockDialog = false })
   }
@@ -127,7 +134,7 @@ fun AboutScreen(viewModel: MainViewModel = viewModel()) {
     },
     onHelpClick = {
       haptic.click()
-      /* TODO: Implement actual dialog */
+      showHelpDialog = true
     },
     onRecommendClick = {
       haptic.click()

@@ -51,6 +51,7 @@ fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
   val isPlayStoreInstalled by viewModel.isPlayStoreInstalled.collectAsStateWithLifecycle()
 
   var showFeedbackDialog by rememberSaveable { mutableStateOf(false) }
+  var showHelpDialog by rememberSaveable { mutableStateOf(false) }
   var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
 
   if (showFeedbackDialog) {
@@ -61,6 +62,10 @@ fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
       onDismissRequest = { showFeedbackDialog = false },
       onSupportClick = { /* TODO: Show unlock dialog */ }
     )
+  }
+
+  if (showHelpDialog) {
+    HelpDialog(onDismissRequest = { showHelpDialog = false })
   }
 
   if (showLanguageDialog) {
@@ -75,7 +80,7 @@ fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
     settings = settings,
     onBack = { viewModel.popBackstack() },
     onAboutClick = { viewModel.navigateTo(Route.About) },
-    onHelpClick = {},
+    onHelpClick = { showHelpDialog = true },
     onFeedbackClick = { showFeedbackDialog = true },
     onLogcatClick = {},
     onLanguageClick = { showLanguageDialog = true },
