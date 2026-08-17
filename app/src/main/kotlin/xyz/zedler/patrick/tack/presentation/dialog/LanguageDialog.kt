@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.Language
+import xyz.zedler.patrick.tack.presentation.component.ScrollableAlertDialog
 import xyz.zedler.patrick.tack.presentation.component.ScrollableAlertDialogContent
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.presentation.util.LocalHaptic
@@ -64,7 +65,7 @@ fun LanguageDialog(
 
   val appTranslate = stringResource(R.string.app_translate)
 
-  BasicAlertDialog(onDismissRequest = onDismissRequest) {
+  ScrollableAlertDialog(onDismissRequest = onDismissRequest) {
     LanguageDialogContent(
       languages = languages,
       currentLanguageCode = currentLanguageCode,

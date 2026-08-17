@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -45,6 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.presentation.component.ScrollableAlertDialog
 import xyz.zedler.patrick.tack.presentation.component.ScrollableAlertDialogContent
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.presentation.util.LocalHaptic
@@ -67,7 +67,7 @@ fun FeedbackDialog(
   val recommendText = stringResource(R.string.msg_recommend, appVendingApp)
   val actionSendFeedback = stringResource(R.string.action_send_feedback)
 
-  BasicAlertDialog(onDismissRequest = onDismissRequest) {
+  ScrollableAlertDialog(onDismissRequest = onDismissRequest) {
     FeedbackDialogContent(
       isSupportVisible = checkUnlockKey && isPlayStoreInstalled && !isKeyInstalled,
       onRateClick = {
@@ -157,11 +157,11 @@ private fun FeedbackDialogContent(
       }
     }
   ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-      Column(
-        modifier = Modifier.padding(bottom = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-      ) {
+    Column(
+      modifier = Modifier.fillMaxWidth(),
+      verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+      Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
           text = stringResource(R.string.msg_feedback),
           style = MaterialTheme.typography.bodyMedium,
@@ -175,7 +175,7 @@ private fun FeedbackDialogContent(
       }
 
       Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
-        val itemCount = if (isSupportVisible) 5 else 4
+        val itemCount = if (isSupportVisible) 3 else 2
 
         val colors = ListItemDefaults.colors(
           containerColor = MaterialTheme.colorScheme.surfaceBright
@@ -233,13 +233,18 @@ private fun FeedbackDialogContent(
           content = { Text(stringResource(R.string.action_recommend)) },
           supportingContent = { Text(stringResource(R.string.action_recommend_description)) }
         )
+      }
+
+      Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
+        val itemCount = 2
+
+        val colors = ListItemDefaults.colors(
+          containerColor = MaterialTheme.colorScheme.surfaceBright
+        )
 
         SegmentedListItem(
           onClick = onIssueClick,
-          shapes = ListItemDefaults.segmentedShapes(
-            index = if (isSupportVisible) 3 else 2,
-            count = itemCount
-          ),
+          shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
           colors = colors,
           leadingContent = {
             Box(modifier = Modifier.padding(vertical = 10.dp)) {
@@ -255,10 +260,7 @@ private fun FeedbackDialogContent(
 
         SegmentedListItem(
           onClick = onEmailClick,
-          shapes = ListItemDefaults.segmentedShapes(
-            index = if (isSupportVisible) 4 else 3,
-            count = itemCount
-          ),
+          shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
           colors = colors,
           leadingContent = {
             Box(modifier = Modifier.padding(vertical = 10.dp)) {

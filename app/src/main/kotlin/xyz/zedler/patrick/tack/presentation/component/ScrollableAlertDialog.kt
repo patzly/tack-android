@@ -19,11 +19,20 @@
 
 package xyz.zedler.patrick.tack.presentation.component
 
+import android.annotation.SuppressLint
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialogDefaults
@@ -45,9 +54,77 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.takeOrElse
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+
+@SuppressLint("PrivateResource")
+@Composable
+fun ScrollableAlertDialog(
+  onDismissRequest: () -> Unit,
+  modifier: Modifier = Modifier,
+  horizontalBasePadding: Dp = 32.dp,
+  verticalBasePadding: Dp = 8.dp,
+  properties: DialogProperties = DialogProperties(
+    usePlatformDefaultWidth = false,
+    decorFitsSystemWindows = false
+  ),
+  content: @Composable () -> Unit
+) {
+  Dialog(onDismissRequest = onDismissRequest, properties = properties) {
+    val dialogPaneDescription = stringResource(androidx.compose.material3.R.string.m3c_dialog)
+
+    val layoutDirection = LocalLayoutDirection.current
+    val safePadding = WindowInsets.safeDrawing.asPaddingValues()
+
+    val horizontalPadding = maxOf(
+      safePadding.calculateStartPadding(layoutDirection),
+      safePadding.calculateEndPadding(layoutDirection)
+    ) + horizontalBasePadding
+
+    Box(
+      modifier = Modifier
+        .fillMaxSize()
+        .clickable(
+          interactionSource = remember { MutableInteractionSource() },
+          indication = null,
+          onClick = onDismissRequest
+        )
+        .padding(
+          start = horizontalPadding,
+          end = horizontalPadding,
+          top = safePadding.calculateTopPadding() + verticalBasePadding,
+          bottom = safePadding.calculateBottomPadding() + verticalBasePadding
+        ),
+      contentAlignment = Alignment.Center
+    ) {
+      Box(
+        modifier = modifier
+          .sizeIn(
+            minWidth = 280.dp,
+            maxWidth = 560.dp,
+            maxHeight = 700.dp
+          )
+          .clickable(
+            interactionSource = remember { MutableInteractionSource() },
+            indication = null,
+            onClick = { /* Consume clicks to prevent closing the dialog */ }
+          )
+          .semantics { this.paneTitle = dialogPaneDescription },
+        propagateMinConstraints = true
+      ) {
+        content()
+      }
+    }
+  }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,7 +148,7 @@ fun ScrollableAlertDialogContent(
     shape = AlertDialogDefaults.shape,
     color = AlertDialogDefaults.containerColor,
     tonalElevation = AlertDialogDefaults.TonalElevation,
-    modifier = modifier.padding(8.dp).heightIn(max = 600.dp)
+    modifier = modifier
   ) {
     Column(modifier = Modifier.padding(vertical = 24.dp)) {
       icon?.let {
@@ -95,7 +172,8 @@ fun ScrollableAlertDialogContent(
                 end = 24.dp,
                 top = if (icon == null) 0.dp else 16.dp,
                 bottom = if (subtitle == null) 16.dp else 4.dp,
-              ).align(
+              )
+              .align(
                 if (icon == null) {
                   Alignment.Start
                 } else {

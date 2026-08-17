@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.presentation.component.ScrollableAlertDialog
 import xyz.zedler.patrick.tack.presentation.component.ScrollableAlertDialogContent
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.presentation.util.LocalHaptic
@@ -37,7 +38,7 @@ import xyz.zedler.patrick.tack.presentation.util.LocalHaptic
 fun UnlockDialog(onDismissRequest: () -> Unit = {}) {
   val haptic = LocalHaptic.current
 
-  BasicAlertDialog(onDismissRequest = onDismissRequest) {
+  ScrollableAlertDialog(onDismissRequest = onDismissRequest) {
     UnlockDialogContent(
       onOpenClick = {
         haptic.click()
