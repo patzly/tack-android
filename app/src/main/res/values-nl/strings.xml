@@ -332,8 +332,6 @@
 
   <string name="settings_theme">Thema</string>
   <string name="settings_theme_description">Variatie voor jouw stijl</string>
-  <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
-  <string name="settings_theme_auto">Auto</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
   <string name="settings_theme_dark">Donker</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
