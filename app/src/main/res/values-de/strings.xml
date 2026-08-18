@@ -332,10 +332,13 @@
 
   <string name="settings_theme">Farbschema</string>
   <string name="settings_theme_description">Abwechslung für deinen Stil</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system. The button width should be as dense as possible. -->
+  <string name="settings_theme_auto">System</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
   <string name="settings_theme_dark">Dunkel</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
   <string name="settings_theme_light">Hell</string>
+  <string name="settings_theme_dynamic">Dynamisch</string>
   <string name="settings_contrast">Kontrast</string>
   <string name="settings_contrast_description">Barrierefreiheit für dein Sehvermögen</string>
   <!-- This is a contrast option name: User can choose between standard, medium and high contrast. The button width should be as dense as possible. -->
