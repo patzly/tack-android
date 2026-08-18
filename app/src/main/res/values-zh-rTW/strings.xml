@@ -294,15 +294,10 @@
 
   <string name="settings_theme">主題</string>
   <string name="settings_theme_description">多種樣式</string>
-  <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
-  <string name="settings_theme_auto">自動</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
   <string name="settings_theme_dark">深色</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
   <string name="settings_theme_light">淺色</string>
-  <string name="settings_theme_dynamic">動態顏色</string>
-  <string name="settings_theme_hue">自訂色調</string>
-
   <string name="settings_contrast">對比度</string>
   <string name="settings_contrast_description">無障礙視覺</string>
   <!-- This is a contrast option name: User can choose between standard, medium and high contrast. The button width should be as dense as possible. -->
