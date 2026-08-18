@@ -345,14 +345,14 @@
 
   <string name="settings_theme">Theme</string>
   <string name="settings_theme_description">Variety for your style</string>
-  <!-- This is a theme name: User can choose between dark or light theme or follow system (automatic or shorter auto) theme. The button width should be as dense as possible. -->
-  <string name="settings_theme_auto">Auto</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system. The button width should be as dense as possible. -->
+  <string name="settings_theme_auto">System</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
   <string name="settings_theme_dark">Dark</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
   <string name="settings_theme_light">Light</string>
-  <string name="settings_theme_dynamic">Dynamic colors</string>
-  <string name="settings_theme_hue">Custom hue</string>
+  <string name="settings_theme_dynamic">Dynamic</string>
+  <string name="settings_theme_static">Static</string>
 
   <string name="settings_contrast">Contrast</string>
   <string name="settings_contrast_description">Accessibility for your vision</string>

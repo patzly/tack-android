@@ -35,13 +35,14 @@ import androidx.compose.ui.platform.LocalContext
 import com.materialkolor.hct.Hct
 import com.materialkolor.ktx.toColor
 import com.materialkolor.rememberDynamicColorScheme
+import xyz.zedler.patrick.tack.core.model.AppColor
 import xyz.zedler.patrick.tack.core.model.AppContrast
 import xyz.zedler.patrick.tack.core.model.AppTheme
 
 @Composable
 fun TackTheme(
-  useDynamicColors: Boolean = false,
-  hue: Float = 150f,
+  color: AppColor = AppColor.DYNAMIC,
+  hue: Float = 154f,
   theme: AppTheme = AppTheme.SYSTEM,
   contrast: AppContrast = AppContrast.STANDARD,
   darkTheme: Boolean = isSystemInDarkTheme(),
@@ -69,7 +70,7 @@ fun TackTheme(
   }
 
   val colorScheme = when {
-    useDynamicColors && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+    color == AppColor.DYNAMIC && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
       if (isDark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
     }
     else -> {

@@ -19,11 +19,14 @@
 
 package xyz.zedler.patrick.tack.core.model
 
+import android.os.Build
+
 data class AppSettings(
   // Appearance
   val language: String? = null, // null means "system"
-  val useDynamicColors: Boolean = true,
-  val themeHue: Float = 200f,
+  val color: AppColor =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) AppColor.DYNAMIC else AppColor.STATIC,
+  val colorHue: Float = 154f,
   val theme: AppTheme = AppTheme.SYSTEM,
   val contrast: AppContrast = AppContrast.STANDARD,
   // Behavior
@@ -49,6 +52,15 @@ data class AppSettings(
   // Misc
   val checkUnlockKey: Boolean = true
 )
+
+enum class AppColor(val key: String) {
+  DYNAMIC("dynamic"),
+  STATIC("static");
+
+  companion object {
+    fun fromKey(key: String): AppColor = entries.find { it.key == key } ?: DYNAMIC
+  }
+}
 
 enum class AppTheme(val key: String) {
   SYSTEM("system"),

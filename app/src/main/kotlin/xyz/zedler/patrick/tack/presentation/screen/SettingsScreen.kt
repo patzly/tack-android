@@ -20,12 +20,56 @@
 package xyz.zedler.patrick.tack.presentation.screen
 
 import android.os.Build
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import android.util.Log
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.DropdownMenuGroup
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuPopup
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LargeTopAppBar
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorPosition
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedListItem
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.material3.rememberTooltipState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -35,10 +79,20 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.materialkolor.hct.Hct
+import com.materialkolor.ktx.toColor
 import xyz.zedler.patrick.tack.R
-import xyz.zedler.patrick.tack.core.model.*
-import xyz.zedler.patrick.tack.presentation.component.*
-import xyz.zedler.patrick.tack.presentation.dialog.*
+import xyz.zedler.patrick.tack.core.model.AppColor
+import xyz.zedler.patrick.tack.core.model.AppContrast
+import xyz.zedler.patrick.tack.core.model.AppSettings
+import xyz.zedler.patrick.tack.core.model.AppTheme
+import xyz.zedler.patrick.tack.presentation.component.AnimatedIcon
+import xyz.zedler.patrick.tack.presentation.component.ConnectedButtonGroup
+import xyz.zedler.patrick.tack.presentation.component.InsetLazyColumn
+import xyz.zedler.patrick.tack.presentation.component.insetItem
+import xyz.zedler.patrick.tack.presentation.dialog.FeedbackDialog
+import xyz.zedler.patrick.tack.presentation.dialog.HelpDialog
+import xyz.zedler.patrick.tack.presentation.dialog.LanguageDialog
 import xyz.zedler.patrick.tack.presentation.navigation.Route
 import xyz.zedler.patrick.tack.presentation.theme.TackTheme
 import xyz.zedler.patrick.tack.util.LocaleUtil
@@ -334,12 +388,103 @@ fun SettingsContent(
                   color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
-                TackThemeSelection(
-                  useDynamicColors = settings.useDynamicColors,
-                  hue = settings.themeHue,
-                  onHueChange = { onUpdateSettings(settings.copy(themeHue = it)) },
-                  onUseDynamicColorsChange = { onUpdateSettings(settings.copy(useDynamicColors = it)) }
-                )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                  Spacer(modifier = Modifier.height(4.dp))
+
+                  ConnectedButtonGroup(
+                    options = AppColor.entries.map { it.name },
+                    labels = listOf(
+                      stringResource(R.string.settings_theme_dynamic),
+                      stringResource(R.string.settings_theme_static)
+                    ),
+                    selected = settings.color.name,
+                    onSelect = { onUpdateSettings(settings.copy(color = AppColor.valueOf(it))) }
+                  )
+                }
+
+                Spacer(modifier = Modifier.height(4.dp))
+
+                val interactionSource = remember { MutableInteractionSource() }
+                val hueColors = remember {
+                  (0..360 step 2).map {
+                    Hct.from(it.toDouble(), 70.0, 60.0).toColor()
+                  }
+                }
+                val hueBrush = remember(hueColors) {
+                  Brush.linearGradient(hueColors)
+                }
+
+                Box {
+                  if (settings.color == AppColor.STATIC) {
+                    Slider(
+                      value = settings.colorHue,
+                      onValueChange = { },
+                      valueRange = 0f..360f,
+                      steps = 20,
+                      interactionSource = interactionSource,
+                      track = { sliderState ->
+                        SliderDefaults.Track(
+                          trackCornerSize = 8.dp,
+                          sliderState = sliderState,
+                          colors = SliderDefaults.colors(
+                            activeTrackColor = Color.White,
+                            inactiveTrackColor = Color.White
+                          ),
+                          modifier = Modifier
+                            .height(24.dp)
+                            .graphicsLayer(compositingStrategy = CompositingStrategy.Offscreen)
+                            .drawWithContent {
+                              drawContent()
+                              drawRect(brush = hueBrush, blendMode = BlendMode.SrcIn)
+                            }
+                        )
+                      }
+                    )
+                  }
+
+                  Slider(
+                    enabled = settings.color == AppColor.STATIC,
+                    value = settings.colorHue,
+                    onValueChange = {
+                      Log.i("hello", "SettingsContent: hello " + it)
+                      onUpdateSettings(settings.copy(colorHue = it))
+                    },
+                    valueRange = 0f..360f,
+                    steps = 20,
+                    interactionSource = interactionSource,
+                    track = { sliderState ->
+                      SliderDefaults.Track(
+                        enabled = settings.color == AppColor.STATIC,
+                        trackCornerSize = 8.dp,
+                        sliderState = sliderState,
+                        colors = if (settings.color == AppColor.STATIC) {
+                          SliderDefaults.colors(
+                            activeTrackColor = Color.Transparent,
+                            inactiveTrackColor = Color.Transparent,
+                            activeTickColor = Color.White,
+                            inactiveTickColor = Color.White
+                          )
+                        } else {
+                          SliderDefaults.colors(
+                            disabledActiveTrackColor = MaterialTheme.colorScheme.onSurface.copy(
+                              alpha = 0.12f
+                            ),
+                            disabledInactiveTrackColor = MaterialTheme.colorScheme.onSurface.copy(
+                              alpha = 0.12f
+                            ),
+                            disabledActiveTickColor = MaterialTheme.colorScheme.onSurface.copy(
+                              alpha = 0.38f
+                            ),
+                            disabledInactiveTickColor = MaterialTheme.colorScheme.onSurface.copy(
+                              alpha = 0.38f
+                            )
+                          )
+                        },
+                        modifier = Modifier.height(24.dp)
+                      )
+                    }
+                  )
+                }
 
                 Spacer(modifier = Modifier.height(4.dp))
 
@@ -392,10 +537,10 @@ fun SettingsContent(
                   ),
                   selected = settings.contrast.name,
                   onSelect = { onUpdateSettings(settings.copy(contrast = AppContrast.valueOf(it))) },
-                  enabled = !settings.useDynamicColors
+                  enabled = settings.color == AppColor.STATIC
                 )
 
-                if (settings.useDynamicColors) {
+                if (settings.color == AppColor.DYNAMIC) {
                   Spacer(modifier = Modifier.height(4.dp))
 
                   Text(

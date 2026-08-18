@@ -133,8 +133,8 @@ class MainActivity : ComponentActivity(), ServiceConnection {
       val widthClass = windowSizeClass.widthSizeClass
 
       TackTheme(
-        useDynamicColors = settings.useDynamicColors,
-        hue = settings.themeHue,
+        color = settings.color,
+        hue = settings.colorHue,
         theme = settings.theme,
         contrast = settings.contrast
       ) {

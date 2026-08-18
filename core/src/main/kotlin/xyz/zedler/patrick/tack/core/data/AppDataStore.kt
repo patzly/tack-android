@@ -47,8 +47,8 @@ class AppDataStore(private val dataStore: DataStore<Preferences>) {
     AppSettings(
       // Appearance
       language = prefs[LANGUAGE].let { if (it == "system") null else it },
-      useDynamicColors = prefs[USE_DYNAMIC_COLORS] ?: default.useDynamicColors,
-      themeHue = prefs[THEME_HUE] ?: default.themeHue,
+      color = prefs[COLOR]?.let { AppColor.fromKey(it) } ?: default.color,
+      colorHue = prefs[COLOR_HUE] ?: default.colorHue,
       theme = prefs[THEME]?.let { AppTheme.fromKey(it) } ?: default.theme,
       contrast = prefs[CONTRAST]?.let { AppContrast.fromKey(it) } ?: default.contrast,
       // Behavior
@@ -107,8 +107,8 @@ class AppDataStore(private val dataStore: DataStore<Preferences>) {
   suspend fun updateSettings(settings: AppSettings) {
     dataStore.edit { prefs ->
       prefs.setIfChanged(LANGUAGE, settings.language ?: "system")
-      prefs.setIfChanged(USE_DYNAMIC_COLORS, settings.useDynamicColors)
-      prefs.setIfChanged(THEME_HUE, settings.themeHue)
+      prefs.setIfChanged(COLOR, settings.color.key)
+      prefs.setIfChanged(COLOR_HUE, settings.colorHue)
       prefs.setIfChanged(THEME, settings.theme.key)
       prefs.setIfChanged(CONTRAST, settings.contrast.key)
       prefs.setIfChanged(HAPTIC, settings.haptic)
@@ -165,10 +165,10 @@ class AppDataStore(private val dataStore: DataStore<Preferences>) {
 
   companion object {
     private val LANGUAGE = stringPreferencesKey("language")
-    private val USE_DYNAMIC_COLORS = booleanPreferencesKey("use_dynamic_colors")
-    private val THEME_HUE = floatPreferencesKey("theme_hue")
+    private val COLOR = stringPreferencesKey("app_color")
+    private val COLOR_HUE = floatPreferencesKey("app_color_hue")
     private val THEME = stringPreferencesKey("app_theme")
-    private val CONTRAST = stringPreferencesKey("theme_contrast")
+    private val CONTRAST = stringPreferencesKey("app_contrast")
     private val HAPTIC = booleanPreferencesKey("haptic_feedback")
     private val VIBRATION_INTENSITY = stringPreferencesKey("vibration_intensity")
     private val REDUCE_ANIM = booleanPreferencesKey("reduce_animations")
