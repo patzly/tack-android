@@ -439,6 +439,7 @@
   <string name="help_notification_displays">Waarom wordt een metronoom service melding getoond wanneer ik de app verlaat?</string>
   <string name="help_notification_displays_answer">Als je \"Permanente melding\" niet aan hebt staan in de instellingen is de melding nodig om de metronoom service in stand te houden als de app op de achtergrond is.\nDe service regelt het afspelen en houdt real-time data zoals de timer of verstreken tijd om het afspelen los te koppelen van de app-interface.\nJe kunt de service naar de achtergrond verplaatsen door op \"Stop\" te drukken, maar dan wordt er niet gegarandeerd dat deze niet wordt gestopt door je systeem. Dit kan resulteren in het reseten van de timer en verstreken tijd tot de service weer op de voorgrond is.\nJe kan ook de permanente notificatie inschakelen in de instellingen om altijd toegang te gebben tot start/stop in je meldingvenster.</string>
   <string name="help_notification_disappears">Waarom verdwijnt de metronoom service melding als ik de app afsluit?</string>
+  <string name="help_notification_disappears_answer">Als je de app afsluit van recente apps, de metronoom service stopt en de melding verdwijnt. Dit is opzettelijk gedrag om batterij te besparen.\nAls je de de melding permanent wilt houden voor start/stop toegang, kan je \"Permanente melding\" inschakelen in de instellingen en de app niet afsluiten van recente apps.</string>
   <!-- ABOUT -->
 
   <string name="about_version">Versie</string>
