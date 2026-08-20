@@ -441,6 +441,8 @@
   <string name="help_notification_disappears">Waarom verdwijnt de metronoom service melding als ik de app afsluit?</string>
   <string name="help_notification_disappears_answer">Als je de app afsluit van recente apps, de metronoom service stopt en de melding verdwijnt. Dit is opzettelijk gedrag om batterij te besparen.\nAls je de de melding permanent wilt houden voor start/stop toegang, kan je \"Permanente melding\" inschakelen in de instellingen en de app niet afsluiten van recente apps.</string>
   <string name="help_translation">Hoe kan ik Tack in mijn taal krijgen?</string>
+  <string name="help_translation_answer">Vertalingen voor Tack worden bijgehouden op Transifex, waar gebruikers zoals jij kunnen helpen om de app te vertalen! Bezoek Tack op GitHub voor meer informatie, of begin meteen met vertalen:</string>
+
   <!-- ABOUT -->
 
   <string name="about_version">Versie</string>
