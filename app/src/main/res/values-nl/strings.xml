@@ -437,6 +437,7 @@
   <string name="help_song_part">Waarom switcht het nummer niet naar het volgende deel?</string>
   <string name="help_song_part_answer">Om automatisch te switchen naar het volgende deel van het nummer moet er voor ieder deel een periode ingesteld zijn. Als je geen periode instelt, wordt het deel beschouwd als oneindig.\nOm een periode in te stellen, tik op het huidige nummer om de nummer details te openen en stel de periode van een deel in door op het edit-icoon te tikken. Vergeet niet om je veranderingen op te slaan!</string>
   <string name="help_notification_displays">Waarom wordt een metronoom service melding getoond wanneer ik de app verlaat?</string>
+  <string name="help_notification_displays_answer">Als je \"Permanente melding\" niet aan hebt staan in de instellingen is de melding nodig om de metronoom service in stand te houden als de app op de achtergrond is.\nDe service regelt het afspelen en houdt real-time data zoals de timer of verstreken tijd om het afspelen los te koppelen van de app-interface.\nJe kunt de service naar de achtergrond verplaatsen door op \"Stop\" te drukken, maar dan wordt er niet gegarandeerd dat deze niet wordt gestopt door je systeem. Dit kan resulteren in het reseten van de timer en verstreken tijd tot de service weer op de voorgrond is.\nJe kan ook de permanente notificatie inschakelen in de instellingen om altijd toegang te gebben tot start/stop in je meldingvenster.</string>
   <!-- ABOUT -->
 
   <string name="about_version">Versie</string>
