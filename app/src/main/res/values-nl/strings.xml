@@ -453,6 +453,7 @@
   <string name="about_key">Unlock app</string>
   <string name="about_key_description_not_installed">Niet geïnstalleerd</string>
   <string name="about_key_description_installed">Geïnstalleerd</string>
+  <string name="about_key_description_ignored">genegeerd</string>
   <string name="about_github_description">Broncode</string>
   <string name="about_translation_description">Help Tack vertalen</string>
   <string name="about_privacy">Privacybeleid</string>
