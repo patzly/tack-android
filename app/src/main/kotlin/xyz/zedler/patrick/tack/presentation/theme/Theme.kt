@@ -41,7 +41,7 @@ import xyz.zedler.patrick.tack.core.model.AppTheme
 
 @Composable
 fun TackTheme(
-  color: AppColor = AppColor.DYNAMIC,
+  color: AppColor = AppColor.STATIC,
   hue: Float = 154f,
   theme: AppTheme = AppTheme.SYSTEM,
   contrast: AppContrast = AppContrast.STANDARD,

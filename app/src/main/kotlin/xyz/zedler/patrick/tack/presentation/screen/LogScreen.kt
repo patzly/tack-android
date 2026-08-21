@@ -47,7 +47,6 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -357,8 +356,7 @@ private fun LogContent(
                 menuContent = {
                   DropdownMenuItem(
                     text = { Text(stringResource(R.string.action_copy_to_clipboard)) },
-                    onClick = onCopyClick,
-                    shape = MenuDefaults.itemShape(0, 1).shape
+                    onClick = onCopyClick
                   )
                 }
               )
@@ -393,44 +391,7 @@ private fun LogContent(
                 menuContent = {
                   DropdownMenuItem(
                     text = { Text(stringResource(R.string.action_copy_to_clipboard)) },
-                    onClick = onFeedbackClick,
-                    shape = MenuDefaults.itemShape(0, 1).shape
-                  )
-                }
-              )
-
-              customItem(
-                buttonGroupContent = {
-                  val contentPadding = ButtonDefaults.TextButtonContentPadding
-                  val layoutDirection = LocalLayoutDirection.current
-
-                  Button(
-                    onClick = onFeedbackClick,
-                    shapes = ButtonDefaults.shapes(),
-                    contentPadding = PaddingValues(0.dp),
-                    interactionSource = interactionSources[1],
-                    modifier =
-                      Modifier.animateWidth(
-                        interactionSource = interactionSources[1],
-                        compressionLimit = contentPadding.calculateEndPadding(layoutDirection)
-                      ),
-                  ) {
-                    Text(
-                      text = stringResource(R.string.action_send_feedback),
-                      maxLines = 1,
-                      softWrap = false,
-                      overflow = TextOverflow.Visible,
-                      modifier = Modifier
-                        .wrapContentWidth(unbounded = true)
-                        .padding(contentPadding)
-                    )
-                  }
-                },
-                menuContent = {
-                  DropdownMenuItem(
-                    text = { Text(stringResource(R.string.action_copy_to_clipboard)) },
-                    onClick = onFeedbackClick,
-                    shape = MenuDefaults.itemShape(0, 1).shape
+                    onClick = onFeedbackClick
                   )
                 }
               )
