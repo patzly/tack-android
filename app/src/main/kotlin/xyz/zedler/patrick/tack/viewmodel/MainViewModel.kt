@@ -30,7 +30,7 @@ import xyz.zedler.patrick.tack.core.data.SettingsRepository
 import xyz.zedler.patrick.tack.core.data.SongRepository
 import xyz.zedler.patrick.tack.core.model.*
 import xyz.zedler.patrick.tack.service.MetronomeService
-import xyz.zedler.patrick.tack.presentation.navigation.Route
+import xyz.zedler.patrick.tack.ui.navigation.Route
 import xyz.zedler.patrick.tack.util.UnlockUtil
 
 class MainViewModel(

@@ -38,8 +38,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.preference.PreferenceManager
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine
-import xyz.zedler.patrick.tack.presentation.TackApp
-import xyz.zedler.patrick.tack.presentation.state.MainState
+import xyz.zedler.patrick.tack.ui.TackApp
+import xyz.zedler.patrick.tack.ui.state.MainState
 import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.util.ButtonUtil
 import xyz.zedler.patrick.tack.util.ButtonUtil.OnPressListener

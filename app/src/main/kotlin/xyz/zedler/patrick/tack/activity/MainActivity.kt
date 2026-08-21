@@ -56,10 +56,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import xyz.zedler.patrick.tack.TackApplication
 import xyz.zedler.patrick.tack.hardware.HapticProviderImpl
-import xyz.zedler.patrick.tack.presentation.navigation.Route
-import xyz.zedler.patrick.tack.presentation.screen.*
-import xyz.zedler.patrick.tack.presentation.theme.TackTheme
-import xyz.zedler.patrick.tack.presentation.util.LocalHaptic
+import xyz.zedler.patrick.tack.ui.navigation.Route
+import xyz.zedler.patrick.tack.ui.screen.*
+import xyz.zedler.patrick.tack.ui.theme.TackTheme
+import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.util.LocaleUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel

@@ -26,7 +26,7 @@ import android.os.Looper
 import android.util.Log
 import xyz.zedler.patrick.tack.core.audio.AudioEngine
 import xyz.zedler.patrick.tack.Constants
-import xyz.zedler.patrick.tack.presentation.state.MainState
+import xyz.zedler.patrick.tack.ui.state.MainState
 import xyz.zedler.patrick.tack.util.HapticUtil
 import xyz.zedler.patrick.tack.util.NotificationUtil
 

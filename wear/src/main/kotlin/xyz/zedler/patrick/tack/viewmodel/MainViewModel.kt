@@ -31,9 +31,9 @@ import xyz.zedler.patrick.tack.Constants.Def
 import xyz.zedler.patrick.tack.Constants.Pref
 import xyz.zedler.patrick.tack.Constants.TickType
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine.Tick
-import xyz.zedler.patrick.tack.presentation.navigation.Screen
-import xyz.zedler.patrick.tack.presentation.state.Bookmark
-import xyz.zedler.patrick.tack.presentation.state.MainState
+import xyz.zedler.patrick.tack.ui.navigation.Screen
+import xyz.zedler.patrick.tack.ui.state.Bookmark
+import xyz.zedler.patrick.tack.ui.state.MainState
 import xyz.zedler.patrick.tack.util.TempoTapUtil
 
 class MainViewModel(
