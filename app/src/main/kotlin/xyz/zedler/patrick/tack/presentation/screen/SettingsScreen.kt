@@ -136,7 +136,7 @@ fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
     onAboutClick = { viewModel.navigateTo(Route.About) },
     onHelpClick = { showHelpDialog = true },
     onFeedbackClick = { showFeedbackDialog = true },
-    onLogcatClick = {},
+    onLogcatClick = { viewModel.navigateTo(Route.Log) },
     onLanguageClick = { showLanguageDialog = true },
     onUpdateSettings = viewModel::updateSettings
   )

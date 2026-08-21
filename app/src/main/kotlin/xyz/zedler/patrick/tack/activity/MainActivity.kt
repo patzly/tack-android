@@ -168,7 +168,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
                   is Route.About -> NavEntry(route) { AboutScreen(viewModel) }
 
-                  is Route.Log -> NavEntry(route) { LogScreen() }
+                  is Route.Log -> NavEntry(route) { LogScreen(viewModel) }
                 }
               },
               transitionSpec = {
