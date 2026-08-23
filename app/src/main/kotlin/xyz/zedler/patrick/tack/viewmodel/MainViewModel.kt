@@ -49,11 +49,17 @@ class MainViewModel(
   private val _isPlayStoreInstalled = MutableStateFlow(true)
   val isPlayStoreInstalled: StateFlow<Boolean> = _isPlayStoreInstalled.asStateFlow()
 
-  val settings: StateFlow<AppSettings> = settingsRepository.settings
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), AppSettings())
+  val settings: StateFlow<AppSettings> = settingsRepository.settings.stateIn(
+    viewModelScope,
+    SharingStarted.WhileSubscribed(5000),
+    AppSettings()
+  )
 
-  val metronomeConfig: StateFlow<MetronomeConfig> = metronomeRepository.metronomeConfig
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MetronomeConfig())
+  val metronomeConfig: StateFlow<MetronomeConfig> = metronomeRepository.metronomeConfig.stateIn(
+    viewModelScope,
+    SharingStarted.WhileSubscribed(5000),
+    MetronomeConfig()
+  )
 
   // Dynamic state from Engine (via Service)
   @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
@@ -61,9 +67,13 @@ class MainViewModel(
     .flatMapLatest { service ->
       service?.engine?.state ?: flowOf(MetronomeState())
     }
-    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), MetronomeState())
+    .stateIn(
+      viewModelScope,
+      SharingStarted.WhileSubscribed(5000),
+      MetronomeState()
+    )
 
-  fun refreshUnlockStatus(context: android.content.Context) {
+  fun init(context: android.content.Context) {
     _isKeyInstalled.value = UnlockUtil.isKeyInstalled(context)
     _isPlayStoreInstalled.value = UnlockUtil.isPlayStoreInstalled(context)
   }

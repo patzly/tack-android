@@ -56,6 +56,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -84,6 +85,7 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 fun AboutScreen(viewModel: MainViewModel = viewModel()) {
   val context = LocalContext.current
   val haptic = LocalHaptic.current
+
   val settings by viewModel.settings.collectAsStateWithLifecycle()
   val isKeyInstalled by viewModel.isKeyInstalled.collectAsStateWithLifecycle()
   val isPlayStoreInstalled by viewModel.isPlayStoreInstalled.collectAsStateWithLifecycle()
@@ -365,16 +367,15 @@ fun AboutContent(
           SegmentedListItem(
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
             colors = colors,
+            verticalAlignment = Alignment.CenterVertically,
             overlineContent = {
               Text(stringResource(R.string.about_version))
             },
             leadingContent = {
-              Box(modifier = Modifier.padding(vertical = 10.dp)) {
-                Icon(
-                  painter = painterResource(R.drawable.ic_rounded_info),
-                  contentDescription = null
-                )
-              }
+              Icon(
+                painter = painterResource(R.drawable.ic_rounded_info),
+                contentDescription = null
+              )
             },
             content = { Text(versionName) },
           )
@@ -386,17 +387,16 @@ fun AboutContent(
             },
             shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
             colors = colors,
+            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.about_changelog_description))
             },
             leadingContent = {
-              Box(modifier = Modifier.padding(vertical = 10.dp)) {
-                AnimatedIcon(
-                  resId = R.drawable.ic_rounded_history_anim,
-                  trigger = changelogIconTrigger,
-                  animated = !reduceAnim
-                )
-              }
+              AnimatedIcon(
+                resId = R.drawable.ic_rounded_history_anim,
+                trigger = changelogIconTrigger,
+                animated = !reduceAnim
+              )
             },
             content = { Text(stringResource(R.string.about_changelog)) },
           )
@@ -405,16 +405,15 @@ fun AboutContent(
             onClick = onDeveloperClick,
             shapes = ListItemDefaults.segmentedShapes(index = 2, count = itemCount),
             colors = colors,
+            verticalAlignment = Alignment.CenterVertically,
             overlineContent = {
               Text(stringResource(R.string.about_developer))
             },
             leadingContent = {
-              Box(modifier = Modifier.padding(vertical = 10.dp)) {
-                Icon(
-                  painter = painterResource(R.drawable.ic_rounded_person),
-                  contentDescription = null
-                )
-              }
+              Icon(
+                painter = painterResource(R.drawable.ic_rounded_person),
+                contentDescription = null
+              )
             },
             content = { Text(stringResource(R.string.app_developer)) },
           )
@@ -423,16 +422,15 @@ fun AboutContent(
             onClick = onVendingClick,
             shapes = ListItemDefaults.segmentedShapes(index = 3, count = itemCount),
             colors = colors,
+            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.about_vending_description))
             },
             leadingContent = {
-              Box(modifier = Modifier.padding(vertical = 10.dp)) {
-                Icon(
-                  painter = painterResource(R.drawable.ic_rounded_shop),
-                  contentDescription = null
-                )
-              }
+              Icon(
+                painter = painterResource(R.drawable.ic_rounded_shop),
+                contentDescription = null
+              )
             },
             content = { Text(stringResource(R.string.about_vending)) },
           )
@@ -452,6 +450,7 @@ fun AboutContent(
               onLongClick = onKeyLongClick,
               shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
               colors = colors,
+              verticalAlignment = Alignment.CenterVertically,
               supportingContent = {
                 val keyDescription = when {
                   isKeyInstalled -> stringResource(R.string.about_key_description_installed)
@@ -461,12 +460,10 @@ fun AboutContent(
                 Text(keyDescription)
               },
               leadingContent = {
-                Box(modifier = Modifier.padding(vertical = 10.dp)) {
-                  Icon(
-                    painter = painterResource(R.drawable.ic_rounded_key),
-                    contentDescription = null
-                  )
-                }
+                Icon(
+                  painter = painterResource(R.drawable.ic_rounded_key),
+                  contentDescription = null
+                )
               },
               content = { Text(stringResource(R.string.about_key)) },
             )
@@ -485,16 +482,15 @@ fun AboutContent(
             onClick = onGithubClick,
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
             colors = colors,
+            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.about_github_description))
             },
             leadingContent = {
-              Box(modifier = Modifier.padding(vertical = 10.dp)) {
-                Icon(
-                  painter = painterResource(R.drawable.ic_rounded_code),
-                  contentDescription = null
-                )
-              }
+              Icon(
+                painter = painterResource(R.drawable.ic_rounded_code),
+                contentDescription = null
+              )
             },
             content = { Text(stringResource(R.string.about_github)) },
           )
@@ -503,16 +499,15 @@ fun AboutContent(
             onClick = onTranslationClick,
             shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
             colors = colors,
+            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.about_translation_description))
             },
             leadingContent = {
-              Box(modifier = Modifier.padding(vertical = 10.dp)) {
-                Icon(
-                  painter = painterResource(R.drawable.ic_rounded_translate),
-                  contentDescription = null
-                )
-              }
+              Icon(
+                painter = painterResource(R.drawable.ic_rounded_translate),
+                contentDescription = null
+              )
             },
             content = { Text(stringResource(R.string.about_translation)) },
           )
@@ -521,16 +516,15 @@ fun AboutContent(
             onClick = onPrivacyClick,
             shapes = ListItemDefaults.segmentedShapes(index = 2, count = itemCount),
             colors = colors,
+            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.about_privacy_description))
             },
             leadingContent = {
-              Box(modifier = Modifier.padding(vertical = 10.dp)) {
-                Icon(
-                  painter = painterResource(R.drawable.ic_rounded_policy),
-                  contentDescription = null
-                )
-              }
+              Icon(
+                painter = painterResource(R.drawable.ic_rounded_policy),
+                contentDescription = null
+              )
             },
             content = { Text(stringResource(R.string.about_privacy)) },
           )
@@ -561,17 +555,16 @@ fun AboutContent(
             },
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
             colors = colors,
+            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.license_author_google))
             },
             leadingContent = {
-              Box(modifier = Modifier.padding(vertical = 10.dp)) {
-                AnimatedIcon(
-                  resId = R.drawable.ic_rounded_copyright_anim,
-                  trigger = copyright1IconTrigger,
-                  animated = !reduceAnim
-                )
-              }
+              AnimatedIcon(
+                resId = R.drawable.ic_rounded_copyright_anim,
+                trigger = copyright1IconTrigger,
+                animated = !reduceAnim
+              )
             },
             content = { Text(stringResource(R.string.license_google_sans_flex)) },
           )
@@ -583,17 +576,16 @@ fun AboutContent(
             },
             shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
             colors = colors,
+            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.license_author_google))
             },
             leadingContent = {
-              Box(modifier = Modifier.padding(vertical = 10.dp)) {
-                AnimatedIcon(
-                  resId = R.drawable.ic_rounded_copyright_anim,
-                  trigger = copyright2IconTrigger,
-                  animated = !reduceAnim
-                )
-              }
+              AnimatedIcon(
+                resId = R.drawable.ic_rounded_copyright_anim,
+                trigger = copyright2IconTrigger,
+                animated = !reduceAnim
+              )
             },
             content = { Text(stringResource(R.string.license_material_icons)) },
           )

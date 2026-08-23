@@ -22,6 +22,8 @@ package xyz.zedler.patrick.tack.core.hardware
 import xyz.zedler.patrick.tack.core.model.VibrationIntensity
 
 interface HapticProvider {
+  val hasVibrator: Boolean
+  val supportsMainEffects: Boolean
   var isEnabled: Boolean
   var intensity: VibrationIntensity
   var isHapticPossible: Boolean

@@ -40,8 +40,17 @@ class HapticProviderImpl(context: Context) : HapticProvider {
     context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
   }
 
+  override val hasVibrator: Boolean = vibrator.hasVibrator()
+  override val supportsMainEffects: Boolean = areMainEffectsSupported()
   override var isEnabled: Boolean = vibrator.hasVibrator()
-  override var intensity: VibrationIntensity = VibrationIntensity.AUTO
+  override var intensity: VibrationIntensity = getDefaultIntensity()
+    set(value) {
+      field = if (value == VibrationIntensity.AUTO && !supportsMainEffects) {
+        VibrationIntensity.SOFT
+      } else {
+        value
+      }
+    }
   override var isHapticPossible: Boolean = true
 
   private val vibrationAttributesMedia: VibrationAttributes? by lazy {
@@ -113,5 +122,24 @@ class HapticProviderImpl(context: Context) : HapticProvider {
       @Suppress("DEPRECATION")
       vibrator.vibrate(fallbackDuration, audioAttributes)
     }
+  }
+
+  private fun areMainEffectsSupported(): Boolean {
+    val hasAmplitudeControl =
+      Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && vibrator.hasAmplitudeControl()
+    return if (hasAmplitudeControl && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+      val result = vibrator.areAllEffectsSupported(
+        VibrationEffect.EFFECT_CLICK,
+        VibrationEffect.EFFECT_HEAVY_CLICK,
+        VibrationEffect.EFFECT_TICK
+      )
+      result == Vibrator.VIBRATION_EFFECT_SUPPORT_YES
+    } else {
+      false
+    }
+  }
+
+  private fun getDefaultIntensity(): VibrationIntensity {
+    return if (areMainEffectsSupported()) VibrationIntensity.AUTO else VibrationIntensity.SOFT
   }
 }

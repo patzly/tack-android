@@ -20,7 +20,6 @@
 package xyz.zedler.patrick.tack.ui.screen
 
 import android.os.Build
-import android.util.Log
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,6 +49,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
@@ -63,6 +63,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
@@ -86,6 +87,7 @@ import xyz.zedler.patrick.tack.core.model.AppColor
 import xyz.zedler.patrick.tack.core.model.AppContrast
 import xyz.zedler.patrick.tack.core.model.AppSettings
 import xyz.zedler.patrick.tack.core.model.AppTheme
+import xyz.zedler.patrick.tack.core.model.VibrationIntensity
 import xyz.zedler.patrick.tack.ui.component.AnimatedIcon
 import xyz.zedler.patrick.tack.ui.component.ConnectedButtonGroup
 import xyz.zedler.patrick.tack.ui.component.InsetLazyColumn
@@ -95,11 +97,14 @@ import xyz.zedler.patrick.tack.ui.dialog.HelpDialog
 import xyz.zedler.patrick.tack.ui.dialog.LanguageDialog
 import xyz.zedler.patrick.tack.ui.navigation.Route
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
+import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 import xyz.zedler.patrick.tack.util.LocaleUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Composable
 fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
+  val haptic = LocalHaptic.current
+
   val settings by viewModel.settings.collectAsStateWithLifecycle()
   val isKeyInstalled by viewModel.isKeyInstalled.collectAsStateWithLifecycle()
   val isPlayStoreInstalled by viewModel.isPlayStoreInstalled.collectAsStateWithLifecycle()
@@ -132,7 +137,11 @@ fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
 
   SettingsContent(
     settings = settings,
-    onBack = { viewModel.popBackstack() },
+    hasVibrator = haptic.hasVibrator,
+    supportsMainEffects = haptic.supportsMainEffects,
+    onItemClick = { haptic.click() },
+    onSliderSlide = { haptic.tick() },
+    onBackClick = { viewModel.popBackstack() },
     onAboutClick = { viewModel.navigateTo(Route.About) },
     onHelpClick = { showHelpDialog = true },
     onFeedbackClick = { showFeedbackDialog = true },
@@ -146,7 +155,11 @@ fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
 @Composable
 fun SettingsContent(
   settings: AppSettings = AppSettings(),
-  onBack: () -> Unit = {},
+  hasVibrator: Boolean = true,
+  supportsMainEffects: Boolean = true,
+  onItemClick: () -> Unit = {},
+  onSliderSlide: () -> Unit = {},
+  onBackClick: () -> Unit = {},
   onAboutClick: () -> Unit = {},
   onHelpClick: () -> Unit = {},
   onFeedbackClick: () -> Unit = {},
@@ -179,7 +192,10 @@ fun SettingsContent(
             state = rememberTooltipState(),
           ) {
             FilledIconButton(
-              onClick = onBack,
+              onClick = {
+                onItemClick()
+                onBackClick()
+              },
               colors = IconButtonDefaults.iconButtonColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
               ),
@@ -208,7 +224,10 @@ fun SettingsContent(
             state = rememberTooltipState(),
           ) {
             FilledIconButton(
-              onClick = { showMenu = true },
+              onClick = {
+                onItemClick()
+                showMenu = true
+              },
               modifier =
                 Modifier
                   .minimumInteractiveComponentSize()
@@ -248,6 +267,7 @@ fun SettingsContent(
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.title_about)) },
                 onClick = {
+                  onItemClick()
                   showMenu = false
                   onAboutClick()
                 },
@@ -256,6 +276,7 @@ fun SettingsContent(
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.title_help)) },
                 onClick = {
+                  onItemClick()
                   showMenu = false
                   onHelpClick()
                 },
@@ -264,6 +285,7 @@ fun SettingsContent(
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.action_send_feedback)) },
                 onClick = {
+                  onItemClick()
                   showMenu = false
                   onFeedbackClick()
                 },
@@ -281,6 +303,7 @@ fun SettingsContent(
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.action_logcat)) },
                 onClick = {
+                  onItemClick()
                   showMenu = false
                   onLogcatClick()
                 },
@@ -332,22 +355,22 @@ fun SettingsContent(
 
           SegmentedListItem(
             onClick = {
+              onItemClick()
               onLanguageClick()
               languageIconTrigger = !languageIconTrigger
             },
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
             colors = colors,
+            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(localeName)
             },
             leadingContent = {
-              Box(modifier = Modifier.padding(vertical = 10.dp)) {
-                AnimatedIcon(
-                  resId = R.drawable.ic_rounded_language_anim,
-                  trigger = languageIconTrigger,
-                  animated = !settings.reduceAnim
-                )
-              }
+              AnimatedIcon(
+                resId = R.drawable.ic_rounded_language_anim,
+                trigger = languageIconTrigger,
+                animated = !settings.reduceAnim
+              )
             },
             content = { Text(stringResource(R.string.settings_language)) },
           )
@@ -356,13 +379,14 @@ fun SettingsContent(
 
       insetItem {
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
-          val itemCount = 2
+          val itemCount = 3
           val colors = ListItemDefaults.segmentedColors(
             containerColor = MaterialTheme.colorScheme.surfaceBright
           )
 
           var themeIconTrigger by remember { mutableStateOf(false) }
           var contrastIconTrigger by remember { mutableStateOf(false) }
+          var reduceAnimIconTrigger by remember { mutableStateOf(false) }
 
           SegmentedListItem(
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
@@ -398,7 +422,10 @@ fun SettingsContent(
                       stringResource(R.string.settings_theme_static)
                     ),
                     selected = settings.color.name,
-                    onSelect = { onUpdateSettings(settings.copy(color = AppColor.valueOf(it))) }
+                    onSelect = {
+                      onItemClick()
+                      onUpdateSettings(settings.copy(color = AppColor.valueOf(it)))
+                    }
                   )
                 }
 
@@ -446,7 +473,7 @@ fun SettingsContent(
                     enabled = settings.color == AppColor.STATIC,
                     value = settings.colorHue,
                     onValueChange = {
-                      Log.i("hello", "SettingsContent: hello " + it)
+                      onSliderSlide()
                       onUpdateSettings(settings.copy(colorHue = it))
                     },
                     valueRange = 0f..360f,
@@ -496,7 +523,10 @@ fun SettingsContent(
                     stringResource(R.string.settings_theme_dark)
                   ),
                   selected = settings.theme.name,
-                  onSelect = { onUpdateSettings(settings.copy(theme = AppTheme.valueOf(it))) }
+                  onSelect = {
+                    onItemClick()
+                    onUpdateSettings(settings.copy(theme = AppTheme.valueOf(it)))
+                  }
                 )
               }
             },
@@ -528,21 +558,7 @@ fun SettingsContent(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                ConnectedButtonGroup(
-                  options = AppContrast.entries.map { it.name },
-                  labels = listOf(
-                    stringResource(R.string.settings_contrast_standard),
-                    stringResource(R.string.settings_contrast_medium),
-                    stringResource(R.string.settings_contrast_high)
-                  ),
-                  selected = settings.contrast.name,
-                  onSelect = { onUpdateSettings(settings.copy(contrast = AppContrast.valueOf(it))) },
-                  enabled = settings.color == AppColor.STATIC
-                )
-
                 if (settings.color == AppColor.DYNAMIC) {
-                  Spacer(modifier = Modifier.height(4.dp))
-
                   Text(
                     text = stringResource(
                       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -554,10 +570,147 @@ fun SettingsContent(
                     style = MaterialTheme.typography.bodyMediumEmphasized,
                     color = MaterialTheme.colorScheme.error
                   )
+
+                  Spacer(modifier = Modifier.height(4.dp))
                 }
+
+                ConnectedButtonGroup(
+                  options = AppContrast.entries.map { it.name },
+                  labels = listOf(
+                    stringResource(R.string.settings_contrast_standard),
+                    stringResource(R.string.settings_contrast_medium),
+                    stringResource(R.string.settings_contrast_high)
+                  ),
+                  selected = settings.contrast.name,
+                  onSelect = {
+                    onItemClick()
+                    contrastIconTrigger = !contrastIconTrigger
+                    onUpdateSettings(settings.copy(contrast = AppContrast.valueOf(it)))
+                  },
+                  enabled = settings.color == AppColor.STATIC
+                )
               }
             }
           )
+
+          SegmentedListItem(
+            onClick = {
+              onItemClick()
+              reduceAnimIconTrigger = !reduceAnimIconTrigger
+              onUpdateSettings(settings.copy(reduceAnim = !settings.reduceAnim))
+            },
+            shapes = ListItemDefaults.segmentedShapes(index = 2, count = itemCount),
+            colors = colors,
+            verticalAlignment = Alignment.CenterVertically,
+            supportingContent = {
+              Text(stringResource(R.string.settings_reduce_animations_description))
+            },
+            leadingContent = {
+              AnimatedIcon(
+                resId = R.drawable.ic_rounded_animation_anim,
+                trigger = reduceAnimIconTrigger,
+                animated = !settings.reduceAnim
+              )
+            },
+            trailingContent = {
+              Switch(
+                checked = settings.reduceAnim,
+                onCheckedChange = null
+              )
+            },
+            content = { Text(stringResource(R.string.settings_reduce_animations)) },
+          )
+        }
+      }
+
+      if (hasVibrator) {
+        insetItem {
+          Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
+            val itemCount = 2
+            val colors = ListItemDefaults.segmentedColors(
+              containerColor = MaterialTheme.colorScheme.surfaceBright
+            )
+
+            var hapticIconTrigger by remember { mutableStateOf(false) }
+
+            SegmentedListItem(
+              onClick = {
+                onItemClick()
+                hapticIconTrigger = !hapticIconTrigger
+                onUpdateSettings(settings.copy(haptic = !settings.haptic))
+              },
+              shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
+              colors = colors,
+              verticalAlignment = Alignment.CenterVertically,
+              supportingContent = {
+                Text(stringResource(R.string.settings_haptic_description))
+              },
+              leadingContent = {
+                AnimatedIcon(
+                  resId = R.drawable.ic_rounded_vibration_anim,
+                  trigger = hapticIconTrigger,
+                  animated = !settings.reduceAnim
+                )
+              },
+              trailingContent = {
+                Switch(
+                  checked = settings.haptic,
+                  onCheckedChange = null
+                )
+              },
+              content = { Text(stringResource(R.string.settings_haptic)) },
+            )
+
+            SegmentedListItem(
+              shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
+              colors = colors,
+              leadingContent = {
+                Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                  Icon(
+                    painter = painterResource(R.drawable.ic_rounded_mobile_sensor_lo),
+                    contentDescription = null
+                  )
+                }
+              },
+              content = {
+                Column(modifier = Modifier.fillMaxWidth()) {
+                  Text(
+                    text = stringResource(R.string.settings_vibration_intensity),
+                    style = MaterialTheme.typography.bodyLarge
+                  )
+                  Text(
+                    text = stringResource(R.string.settings_vibration_intensity_description),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                  )
+
+                  Spacer(modifier = Modifier.height(4.dp))
+
+                  ConnectedButtonGroup(
+                    options = if (supportsMainEffects) {
+                      VibrationIntensity.entries.map { it.name }
+                    } else {
+                      (VibrationIntensity.entries - VibrationIntensity.AUTO).map { it.name }
+                    },
+                    labels = listOfNotNull(
+                      if (supportsMainEffects) {
+                        stringResource(R.string.settings_vibration_intensity_auto)
+                      } else null,
+                      stringResource(R.string.settings_vibration_intensity_soft),
+                      stringResource(R.string.settings_vibration_intensity_strong)
+                    ),
+                    selected = settings.vibrationIntensity.name,
+                    onSelect = {
+                      onItemClick()
+                      onUpdateSettings(
+                        settings.copy(vibrationIntensity = VibrationIntensity.valueOf(it))
+                      )
+                    }
+                  )
+                }
+              }
+            )
+          }
         }
       }
     }

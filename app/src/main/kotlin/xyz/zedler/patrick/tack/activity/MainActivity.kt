@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
 
-    viewModel.refreshUnlockStatus(this)
+    viewModel.init(this)
 
     setContent {
       val settings by viewModel.settings.collectAsState()
