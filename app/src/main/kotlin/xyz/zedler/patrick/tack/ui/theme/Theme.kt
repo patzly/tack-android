@@ -33,6 +33,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import com.materialkolor.hct.Hct
+import com.materialkolor.ktx.harmonize
 import com.materialkolor.ktx.toColor
 import com.materialkolor.rememberDynamicColorScheme
 import xyz.zedler.patrick.tack.core.model.AppColor
@@ -82,7 +83,15 @@ fun TackTheme(
       rememberDynamicColorScheme(
         seedColor = Hct.from(hue.toDouble(), 70.0, 60.0).toColor(),
         isDark = isDark,
-        contrastLevel = contrastLevel
+        contrastLevel = contrastLevel,
+        modifyColorScheme = {
+          it.copy(
+            error = it.error.harmonize(it.primary),
+            onError = it.onError.harmonize(it.primary),
+            errorContainer = it.errorContainer.harmonize(it.primary),
+            onErrorContainer = it.onErrorContainer.harmonize(it.primary)
+          )
+        }
       )
     }
   }

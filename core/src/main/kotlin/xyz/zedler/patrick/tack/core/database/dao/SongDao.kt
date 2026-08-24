@@ -58,6 +58,9 @@ interface SongDao {
   @Delete
   suspend fun deleteParts(parts: List<Part>)
 
+  @Query("DELETE FROM songs")
+  suspend fun deleteAllSongs()
+
   @Transaction
   @Query("SELECT * FROM songs WHERE id = :songId")
   suspend fun getSongWithPartsById(songId: String): SongWithParts?
@@ -69,6 +72,14 @@ interface SongDao {
   @Transaction
   @Query("SELECT * FROM songs")
   suspend fun getAllSongsWithParts(): List<SongWithParts>
+
+  @Transaction
+  suspend fun insertSongsWithParts(songs: List<SongWithParts>) {
+    songs.forEach {
+      insertSong(it.song)
+      insertParts(it.parts)
+    }
+  }
 
   @Transaction
   @Query("SELECT * FROM songs")

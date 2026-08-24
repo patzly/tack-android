@@ -138,7 +138,7 @@ fun LogScreen(viewModel: MainViewModel = viewModel()) {
       isKeyInstalled = isKeyInstalled,
       isPlayStoreInstalled = isPlayStoreInstalled,
       onDismissRequest = { showFeedbackDialog = false },
-      onSupportClick = { showUnlockDialog = true }
+      onSupport = { showUnlockDialog = true }
     )
   }
 

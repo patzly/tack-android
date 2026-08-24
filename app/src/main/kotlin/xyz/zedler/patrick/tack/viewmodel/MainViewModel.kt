@@ -23,12 +23,25 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.data.MetronomeRepository
 import xyz.zedler.patrick.tack.core.data.SettingsRepository
 import xyz.zedler.patrick.tack.core.data.SongRepository
-import xyz.zedler.patrick.tack.core.model.*
+import xyz.zedler.patrick.tack.core.database.relations.SongWithParts
+import xyz.zedler.patrick.tack.core.model.AppSettings
+import xyz.zedler.patrick.tack.core.model.MetronomeConfig
+import xyz.zedler.patrick.tack.core.model.MetronomeState
 import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.ui.navigation.Route
 import xyz.zedler.patrick.tack.util.UnlockUtil
@@ -48,6 +61,13 @@ class MainViewModel(
 
   private val _isPlayStoreInstalled = MutableStateFlow(true)
   val isPlayStoreInstalled: StateFlow<Boolean> = _isPlayStoreInstalled.asStateFlow()
+
+  private val _uiEvent = MutableSharedFlow<UiEvent>()
+  val uiEvent = _uiEvent.asSharedFlow()
+
+  sealed class UiEvent {
+    data class ShowToast(val messageResId: Int) : UiEvent()
+  }
 
   val settings: StateFlow<AppSettings> = settingsRepository.settings.stateIn(
     viewModelScope,
@@ -110,7 +130,91 @@ class MainViewModel(
     }
   }
 
-  fun clearAll() = viewModelScope.launch { settingsRepository.clearAll() }
+
+  fun resetAll() {
+    viewModelScope.launch {
+      _service.value?.engine?.stop()
+      settingsRepository.clearAll()
+      songRepository.deleteAllSongs()
+      // TODO: ShortcutUtil(context).removeAllShortcuts() when migrated
+    }
+  }
+
+  fun exportLibrary(context: android.content.Context, uri: android.net.Uri?) {
+    viewModelScope.launch {
+      if (uri == null) {
+        _uiEvent.emit(UiEvent.ShowToast(R.string.msg_backup_directory_missing))
+        return@launch
+      }
+      try {
+        val songs = songRepository.getAllSongsWithPartsAsync().filter {
+          it.song.id != SongRepository.SONG_ID_DEFAULT
+        }
+        val jsonString = json.encodeToString(songs)
+        context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+          outputStream.write(jsonString.toByteArray())
+        }
+        _uiEvent.emit(UiEvent.ShowToast(R.string.msg_backup_success))
+      } catch (_: Exception) {
+        _uiEvent.emit(UiEvent.ShowToast(R.string.msg_backup_error))
+      }
+    }
+  }
+
+  fun importLibrary(context: android.content.Context, uri: android.net.Uri?) {
+    viewModelScope.launch {
+      if (uri == null) {
+        _uiEvent.emit(UiEvent.ShowToast(R.string.msg_restore_file_missing))
+        return@launch
+      }
+      try {
+        context.contentResolver.openInputStream(uri)?.use { inputStream ->
+          val jsonString = inputStream.bufferedReader().readText()
+          val songsWithParts: List<SongWithParts> = json.decodeFromString(jsonString)
+
+          val existingSongs = songRepository.getAllSongsWithPartsAsync()
+          val nameCountMap = mutableMapOf<String, Int>()
+          val idNameMap = mutableMapOf<String, String>()
+
+          for (existing in existingSongs) {
+            idNameMap[existing.song.id] = existing.song.name ?: ""
+            val name = existing.song.name ?: continue
+            if (name.isNotEmpty()) {
+              nameCountMap[name] = (nameCountMap[name] ?: 0) + 1
+            }
+          }
+
+          for (songWithParts in songsWithParts) {
+            val songId = songWithParts.song.id
+            if (idNameMap.containsKey(songId)) {
+              songWithParts.song.name = idNameMap[songId]
+            } else {
+              val originalName = songWithParts.song.name ?: ""
+              var newName = originalName
+              var counter = nameCountMap[originalName] ?: 0
+              if (counter > 0) {
+                do {
+                  newName = context.getString(
+                    R.string.msg_restore_duplicate_name, originalName, counter
+                  )
+                  counter++
+                } while (nameCountMap.containsKey(newName))
+              }
+              songWithParts.song.name = newName
+              nameCountMap[newName] = 1
+            }
+          }
+
+          songRepository.insertSongsWithParts(songsWithParts)
+          _uiEvent.emit(UiEvent.ShowToast(R.string.msg_restore_success))
+          // TODO: MetronomeService.updateShortcuts(context) when migrated
+          // TODO: WidgetUtil.sendSongsWidgetUpdate(context) when migrated
+        }
+      } catch (_: Exception) {
+        _uiEvent.emit(UiEvent.ShowToast(R.string.msg_restore_error))
+      }
+    }
+  }
 
   fun togglePlay() {
     _service.value?.let { service ->
@@ -126,6 +230,14 @@ class MainViewModel(
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
       return MainViewModel(settingsRepository, metronomeRepository, songRepository) as T
+    }
+  }
+
+  companion object {
+    private val json = Json {
+      encodeDefaults = true
+      ignoreUnknownKeys = true
+      prettyPrint = true
     }
   }
 }

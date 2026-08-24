@@ -36,11 +36,23 @@ class SongRepository(private val songDao: SongDao) {
   suspend fun getSongWithPartsAsync(songId: String): SongWithParts? =
     songDao.getSongWithPartsById(songId)
 
+  suspend fun getAllSongsWithPartsAsync(): List<SongWithParts> =
+    songDao.getAllSongsWithParts()
+
   suspend fun insertSong(song: Song) = songDao.insertSong(song)
   suspend fun updateSong(song: Song) = songDao.updateSong(song)
   suspend fun deleteSong(song: Song) = songDao.deleteSong(song)
 
+  suspend fun deleteAllSongs() = songDao.deleteAllSongs()
+
+  suspend fun insertSongsWithParts(songs: List<SongWithParts>) =
+    songDao.insertSongsWithParts(songs)
+
   suspend fun insertPart(part: Part) = songDao.insertPart(part)
   suspend fun updatePart(part: Part) = songDao.updatePart(part)
   suspend fun deletePart(part: Part) = songDao.deletePart(part)
+
+  companion object {
+    const val SONG_ID_DEFAULT = "default"
+  }
 }

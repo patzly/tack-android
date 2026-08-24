@@ -141,7 +141,6 @@ fun ScrollableAlertDialogContent(
   iconContentColor: Color = MaterialTheme.colorScheme.secondary,
   titleContentColor: Color = MaterialTheme.colorScheme.onSurface,
   textContentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
-  buttonContentColor: Color = MaterialTheme.colorScheme.primary,
   content: @Composable (() -> Unit)?
 ) {
   Surface(
@@ -260,8 +259,7 @@ fun ScrollableAlertDialogContent(
         AlertDialogCombinedButtons(
           confirmButton = confirmButton,
           dismissButton = dismissButton,
-          extraButton = extraButton,
-          buttonContentColor = buttonContentColor
+          extraButton = extraButton
         )
       }
     }
@@ -272,17 +270,17 @@ fun ScrollableAlertDialogContent(
 private fun AlertDialogCombinedButtons(
   confirmButton: @Composable () -> Unit,
   dismissButton: @Composable (() -> Unit)?,
-  extraButton: @Composable (() -> Unit)?,
-  buttonContentColor: Color
+  extraButton: @Composable (() -> Unit)?
 ) {
   ProvideContentColorTextStyle(
-    contentColor = buttonContentColor,
+    contentColor = MaterialTheme.colorScheme.primary,
     textStyle = MaterialTheme.typography.labelLarge,
     content = {
       val buttonPaddingFromMICS =
         LocalMinimumInteractiveComponentSize.current.takeOrElse { 0.dp } -
             ButtonDefaults.MinHeight
-      val p = (8.dp - buttonPaddingFromMICS).coerceAtLeast(0.dp)
+      val mainAxisSpacing = 8.dp
+      val crossAxisSpacing = (8.dp - buttonPaddingFromMICS).coerceIn(0.dp, 8.dp)
 
       Layout(
         content = {
@@ -310,25 +308,26 @@ private fun AlertDialogCombinedButtons(
         val hDismiss = if (hasDismiss) dismissPlaceable.height else 0
         val hConfirm = confirmPlaceable.height
 
-        val pPx = p.roundToPx()
+        val mainAxisSpacingPx = mainAxisSpacing.roundToPx()
+        val crossAxisSpacingPx = crossAxisSpacing.roundToPx()
         val thresholdPx = 8.dp.roundToPx()
 
-        val groupWidth = wConfirm + (if (hasDismiss) pPx + wDismiss else 0)
+        val groupWidth = wConfirm + (if (hasDismiss) mainAxisSpacingPx + wDismiss else 0)
         val gap = constraints.maxWidth - wExtra - groupWidth
 
         val isStacked = (hasExtra && gap < thresholdPx) || groupWidth > constraints.maxWidth
 
         if (isStacked) {
-          val height = (if (hasExtra) hExtra + pPx else 0) +
-              hConfirm + (if (hasDismiss) hDismiss + pPx else 0)
+          val height = (if (hasExtra) hExtra + crossAxisSpacingPx else 0) +
+              hConfirm + (if (hasDismiss) hDismiss + crossAxisSpacingPx else 0)
           layout(constraints.maxWidth, height) {
             var y = 0
             if (hasExtra) {
               extraPlaceable.placeRelative(constraints.maxWidth - wExtra, y)
-              y += hExtra + pPx
+              y += hExtra + crossAxisSpacingPx
             }
             confirmPlaceable.placeRelative(constraints.maxWidth - wConfirm, y)
-            y += hConfirm + pPx
+            y += hConfirm + crossAxisSpacingPx
             if (hasDismiss) {
               dismissPlaceable.placeRelative(constraints.maxWidth - wDismiss, y)
             }
@@ -345,7 +344,7 @@ private fun AlertDialogCombinedButtons(
             )
             if (hasDismiss) {
               dismissPlaceable.placeRelative(
-                constraints.maxWidth - wConfirm - pPx - wDismiss,
+                constraints.maxWidth - wConfirm - mainAxisSpacingPx - wDismiss,
                 (height - hDismiss) / 2
               )
             }

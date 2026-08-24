@@ -151,7 +151,7 @@ class MetronomeService : Service() {
         }
       }
       ACTION_APPLY_SONG, ACTION_START_SONG -> {
-        val songId = intent.getStringExtra(EXTRA_SONG_ID) ?: "default"
+        val songId = intent.getStringExtra(EXTRA_SONG_ID) ?: SongRepository.SONG_ID_DEFAULT
         val startPlaying = intent.action == ACTION_START_SONG
         serviceScope.launch {
           val songWithParts = songRepository.getSongWithPartsAsync(songId)

@@ -56,7 +56,7 @@ fun FeedbackDialog(
   isKeyInstalled: Boolean,
   isPlayStoreInstalled: Boolean,
   onDismissRequest: () -> Unit,
-  onSupportClick: () -> Unit
+  onSupport: () -> Unit
 ) {
   val context = LocalContext.current
   val haptic = LocalHaptic.current
@@ -96,7 +96,7 @@ fun FeedbackDialog(
       },
       onSupportClick = {
         haptic.click()
-        onSupportClick()
+        onSupport()
         onDismissRequest()
       },
       onRecommendClick = {

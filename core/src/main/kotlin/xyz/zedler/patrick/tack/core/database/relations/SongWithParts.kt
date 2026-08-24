@@ -21,12 +21,14 @@ package xyz.zedler.patrick.tack.core.database.relations
 
 import androidx.room.Embedded
 import androidx.room.Relation
+import kotlinx.serialization.Serializable
 import xyz.zedler.patrick.tack.core.database.entity.Part
 import xyz.zedler.patrick.tack.core.database.entity.Song
 import xyz.zedler.patrick.tack.core.model.MetronomeConstants
 import xyz.zedler.patrick.tack.core.model.TimingUnit
 import xyz.zedler.patrick.tack.core.util.TimeUtil
 
+@Serializable
 data class SongWithParts(
   @Embedded val song: Song,
   @Relation(

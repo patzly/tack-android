@@ -25,6 +25,7 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import xyz.zedler.patrick.tack.core.model.MetronomeConfig
 import xyz.zedler.patrick.tack.core.model.TickType
 import xyz.zedler.patrick.tack.core.model.TimingUnit
@@ -33,6 +34,7 @@ import java.util.UUID
 private val default = MetronomeConfig()
 
 @Parcelize
+@Serializable
 @Entity(
   tableName = "parts",
   foreignKeys = [ForeignKey(

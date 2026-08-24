@@ -20,6 +20,9 @@
 package xyz.zedler.patrick.tack.ui.screen
 
 import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -72,6 +75,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -92,9 +96,12 @@ import xyz.zedler.patrick.tack.ui.component.AnimatedIcon
 import xyz.zedler.patrick.tack.ui.component.ConnectedButtonGroup
 import xyz.zedler.patrick.tack.ui.component.InsetLazyColumn
 import xyz.zedler.patrick.tack.ui.component.insetItem
+import xyz.zedler.patrick.tack.ui.dialog.BackupDialog
 import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.ui.dialog.HelpDialog
 import xyz.zedler.patrick.tack.ui.dialog.LanguageDialog
+import xyz.zedler.patrick.tack.ui.dialog.ResetDialog
+import xyz.zedler.patrick.tack.ui.dialog.UnlockDialog
 import xyz.zedler.patrick.tack.ui.navigation.Route
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.util.LocalHaptic
@@ -103,6 +110,7 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Composable
 fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
+  val context = LocalContext.current
   val haptic = LocalHaptic.current
 
   val settings by viewModel.settings.collectAsStateWithLifecycle()
@@ -110,8 +118,33 @@ fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
   val isPlayStoreInstalled by viewModel.isPlayStoreInstalled.collectAsStateWithLifecycle()
 
   var showFeedbackDialog by rememberSaveable { mutableStateOf(false) }
+  var showUnlockDialog by rememberSaveable { mutableStateOf(false) }
   var showHelpDialog by rememberSaveable { mutableStateOf(false) }
   var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
+  var showBackupDialog by rememberSaveable { mutableStateOf(false) }
+  var showResetDialog by rememberSaveable { mutableStateOf(false) }
+
+  val launcherBackup = rememberLauncherForActivityResult(
+    ActivityResultContracts.CreateDocument("application/json")
+  ) { uri ->
+    viewModel.exportLibrary(context, uri)
+  }
+
+  val launcherRestore = rememberLauncherForActivityResult(
+    ActivityResultContracts.OpenDocument()
+  ) { uri ->
+    viewModel.importLibrary(context, uri)
+  }
+
+  androidx.compose.runtime.LaunchedEffect(viewModel.uiEvent) {
+    viewModel.uiEvent.collect { event ->
+      when (event) {
+        is MainViewModel.UiEvent.ShowToast -> {
+          Toast.makeText(context, event.messageResId, Toast.LENGTH_SHORT).show()
+        }
+      }
+    }
+  }
 
   if (showFeedbackDialog) {
     FeedbackDialog(
@@ -119,8 +152,12 @@ fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
       isKeyInstalled = isKeyInstalled,
       isPlayStoreInstalled = isPlayStoreInstalled,
       onDismissRequest = { showFeedbackDialog = false },
-      onSupportClick = { /* TODO: Show unlock dialog */ }
+      onSupport = { showUnlockDialog = true }
     )
+  }
+
+  if (showUnlockDialog) {
+    UnlockDialog(onDismissRequest = { showUnlockDialog = false })
   }
 
   if (showHelpDialog) {
@@ -132,6 +169,21 @@ fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
       currentLanguageCode = settings.language,
       onLanguageSelected = { viewModel.updateSettings(settings.copy(language = it)) },
       onDismissRequest = { showLanguageDialog = false }
+    )
+  }
+
+  if (showBackupDialog) {
+    BackupDialog(
+      onBackup = { launcherBackup.launch("song_library.json") },
+      onRestore = { launcherRestore.launch(arrayOf("application/json")) },
+      onDismissRequest = { showBackupDialog = false }
+    )
+  }
+
+  if (showResetDialog) {
+    ResetDialog(
+      onReset = { viewModel.resetAll() },
+      onDismissRequest = { showResetDialog = false }
     )
   }
 
@@ -147,6 +199,8 @@ fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
     onFeedbackClick = { showFeedbackDialog = true },
     onLogcatClick = { viewModel.navigateTo(Route.Log) },
     onLanguageClick = { showLanguageDialog = true },
+    onBackupClick = { showBackupDialog = true },
+    onResetClick = { showResetDialog = true },
     onUpdateSettings = viewModel::updateSettings
   )
 }
@@ -165,6 +219,8 @@ fun SettingsContent(
   onFeedbackClick: () -> Unit = {},
   onLogcatClick: () -> Unit = {},
   onLanguageClick: () -> Unit = {},
+  onBackupClick: () -> Unit = {},
+  onResetClick: () -> Unit = {},
   onUpdateSettings: (AppSettings) -> Unit = {}
 ) {
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -711,6 +767,57 @@ fun SettingsContent(
               }
             )
           }
+        }
+      }
+
+      insetItem {
+        Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
+          val itemCount = 2
+          val colors = ListItemDefaults.segmentedColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
+          )
+
+          SegmentedListItem(
+            onClick = {
+              onItemClick()
+              onBackupClick()
+            },
+            shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
+            colors = colors,
+            verticalAlignment = Alignment.CenterVertically,
+            supportingContent = {
+              Text(stringResource(R.string.settings_backup_description))
+            },
+            leadingContent = {
+              Icon(
+                painter = painterResource(R.drawable.ic_rounded_download),
+                contentDescription = null
+              )
+            },
+            content = { Text(stringResource(R.string.settings_backup)) },
+          )
+
+          SegmentedListItem(
+            onClick = {
+              onItemClick()
+              onResetClick()
+            },
+            shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
+            colors = colors,
+            verticalAlignment = Alignment.CenterVertically,
+            supportingContent = {
+              Text(stringResource(R.string.settings_reset_description))
+            },
+            leadingContent = {
+              Icon(
+                painter = painterResource(R.drawable.ic_rounded_reset_settings),
+                contentDescription = null
+              )
+            },
+            content = {
+              Text(stringResource(R.string.settings_reset))
+            },
+          )
         }
       }
     }
