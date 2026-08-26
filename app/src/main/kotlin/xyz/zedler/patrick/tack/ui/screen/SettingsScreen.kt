@@ -61,6 +61,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -114,8 +115,7 @@ fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
   val haptic = LocalHaptic.current
 
   val settings by viewModel.settings.collectAsStateWithLifecycle()
-  val isKeyInstalled by viewModel.isKeyInstalled.collectAsStateWithLifecycle()
-  val isPlayStoreInstalled by viewModel.isPlayStoreInstalled.collectAsStateWithLifecycle()
+  val unlockState by viewModel.unlockState.collectAsStateWithLifecycle()
 
   var showFeedbackDialog by rememberSaveable { mutableStateOf(false) }
   var showUnlockDialog by rememberSaveable { mutableStateOf(false) }
@@ -127,7 +127,7 @@ fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
   val launcherBackup = rememberLauncherForActivityResult(
     ActivityResultContracts.CreateDocument("application/json")
   ) { uri ->
-    viewModel.exportLibrary(context, uri)
+    viewModel.exportLibrary(uri)
   }
 
   val launcherRestore = rememberLauncherForActivityResult(
@@ -136,7 +136,7 @@ fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
     viewModel.importLibrary(context, uri)
   }
 
-  androidx.compose.runtime.LaunchedEffect(viewModel.uiEvent) {
+  LaunchedEffect(viewModel.uiEvent) {
     viewModel.uiEvent.collect { event ->
       when (event) {
         is MainViewModel.UiEvent.ShowToast -> {
@@ -149,8 +149,8 @@ fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
   if (showFeedbackDialog) {
     FeedbackDialog(
       checkUnlockKey = settings.checkUnlockKey,
-      isKeyInstalled = isKeyInstalled,
-      isPlayStoreInstalled = isPlayStoreInstalled,
+      isKeyInstalled = unlockState.isKeyInstalled,
+      isPlayStoreInstalled = unlockState.isPlayStoreInstalled,
       onDismissRequest = { showFeedbackDialog = false },
       onSupport = { showUnlockDialog = true }
     )
@@ -201,6 +201,10 @@ fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
     onLanguageClick = { showLanguageDialog = true },
     onBackupClick = { showBackupDialog = true },
     onResetClick = { showResetDialog = true },
+    onVibrationIntensityChanged = {
+      haptic.intensity = it
+      haptic.click()
+    },
     onUpdateSettings = viewModel::updateSettings
   )
 }
@@ -221,6 +225,7 @@ fun SettingsContent(
   onLanguageClick: () -> Unit = {},
   onBackupClick: () -> Unit = {},
   onResetClick: () -> Unit = {},
+  onVibrationIntensityChanged: (intensity: VibrationIntensity) -> Unit = {},
   onUpdateSettings: (AppSettings) -> Unit = {}
 ) {
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -443,6 +448,18 @@ fun SettingsContent(
           var themeIconTrigger by remember { mutableStateOf(false) }
           var contrastIconTrigger by remember { mutableStateOf(false) }
           var reduceAnimIconTrigger by remember { mutableStateOf(false) }
+          var isInitialComposition by remember { mutableStateOf(true) }
+
+          LaunchedEffect(settings.reduceAnim) {
+            if (isInitialComposition) {
+              isInitialComposition = false
+              return@LaunchedEffect
+            }
+            if (!settings.reduceAnim) {
+              // only trigger animated icon if reduce anim is turned off
+              reduceAnimIconTrigger = !reduceAnimIconTrigger
+            }
+          }
 
           SegmentedListItem(
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
@@ -479,8 +496,10 @@ fun SettingsContent(
                     ),
                     selected = settings.color.name,
                     onSelect = {
-                      onItemClick()
-                      onUpdateSettings(settings.copy(color = AppColor.valueOf(it)))
+                      if (it != settings.color.name) {
+                        onItemClick()
+                        onUpdateSettings(settings.copy(color = AppColor.valueOf(it)))
+                      }
                     }
                   )
                 }
@@ -529,8 +548,10 @@ fun SettingsContent(
                     enabled = settings.color == AppColor.STATIC,
                     value = settings.colorHue,
                     onValueChange = {
-                      onSliderSlide()
-                      onUpdateSettings(settings.copy(colorHue = it))
+                      if (it != settings.colorHue) {
+                        onSliderSlide()
+                        onUpdateSettings(settings.copy(colorHue = it))
+                      }
                     },
                     valueRange = 0f..360f,
                     steps = 20,
@@ -540,6 +561,7 @@ fun SettingsContent(
                         enabled = settings.color == AppColor.STATIC,
                         trackCornerSize = 8.dp,
                         sliderState = sliderState,
+                        drawStopIndicator = null,
                         colors = if (settings.color == AppColor.STATIC) {
                           SliderDefaults.colors(
                             activeTrackColor = Color.Transparent,
@@ -580,8 +602,10 @@ fun SettingsContent(
                   ),
                   selected = settings.theme.name,
                   onSelect = {
-                    onItemClick()
-                    onUpdateSettings(settings.copy(theme = AppTheme.valueOf(it)))
+                    if (it != settings.theme.name) {
+                      onItemClick()
+                      onUpdateSettings(settings.copy(theme = AppTheme.valueOf(it)))
+                    }
                   }
                 )
               }
@@ -639,9 +663,11 @@ fun SettingsContent(
                   ),
                   selected = settings.contrast.name,
                   onSelect = {
-                    onItemClick()
-                    contrastIconTrigger = !contrastIconTrigger
-                    onUpdateSettings(settings.copy(contrast = AppContrast.valueOf(it)))
+                    if (it != settings.contrast.name) {
+                      onItemClick()
+                      contrastIconTrigger = !contrastIconTrigger
+                      onUpdateSettings(settings.copy(contrast = AppContrast.valueOf(it)))
+                    }
                   },
                   enabled = settings.color == AppColor.STATIC
                 )
@@ -652,7 +678,6 @@ fun SettingsContent(
           SegmentedListItem(
             onClick = {
               onItemClick()
-              reduceAnimIconTrigger = !reduceAnimIconTrigger
               onUpdateSettings(settings.copy(reduceAnim = !settings.reduceAnim))
             },
             shapes = ListItemDefaults.segmentedShapes(index = 2, count = itemCount),
@@ -664,8 +689,7 @@ fun SettingsContent(
             leadingContent = {
               AnimatedIcon(
                 resId = R.drawable.ic_rounded_animation_anim,
-                trigger = reduceAnimIconTrigger,
-                animated = !settings.reduceAnim
+                trigger = reduceAnimIconTrigger
               )
             },
             trailingContent = {
@@ -743,10 +767,14 @@ fun SettingsContent(
                   Spacer(modifier = Modifier.height(4.dp))
 
                   ConnectedButtonGroup(
-                    options = if (supportsMainEffects) {
-                      VibrationIntensity.entries.map { it.name }
-                    } else {
-                      (VibrationIntensity.entries - VibrationIntensity.AUTO).map { it.name }
+                    options = remember(supportsMainEffects) {
+                      val entriesWithoutUnset =
+                        VibrationIntensity.entries - VibrationIntensity.UNSET
+                      if (supportsMainEffects) {
+                        entriesWithoutUnset.map { it.name }
+                      } else {
+                        (entriesWithoutUnset - VibrationIntensity.AUTO).map { it.name }
+                      }
                     },
                     labels = listOfNotNull(
                       if (supportsMainEffects) {
@@ -757,10 +785,11 @@ fun SettingsContent(
                     ),
                     selected = settings.vibrationIntensity.name,
                     onSelect = {
-                      onItemClick()
-                      onUpdateSettings(
-                        settings.copy(vibrationIntensity = VibrationIntensity.valueOf(it))
-                      )
+                      val intensity = VibrationIntensity.valueOf(it)
+                      if (intensity != settings.vibrationIntensity) {
+                        onVibrationIntensityChanged(intensity)
+                        onUpdateSettings(settings.copy(vibrationIntensity = intensity))
+                      }
                     }
                   )
                 }

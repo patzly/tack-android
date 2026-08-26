@@ -20,11 +20,23 @@
 package xyz.zedler.patrick.tack.core.data
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import xyz.zedler.patrick.tack.core.hardware.HapticProvider
 import xyz.zedler.patrick.tack.core.model.AppSettings
+import xyz.zedler.patrick.tack.core.model.VibrationIntensity
 
-class SettingsRepository(private val dataStore: AppDataStore) {
+class SettingsRepository(
+  private val dataStore: AppDataStore,
+  private val hapticProvider: HapticProvider
+) {
 
-  val settings: Flow<AppSettings> = dataStore.settings
+  val settings: Flow<AppSettings> = dataStore.settings.map { settings ->
+    if (settings.vibrationIntensity == VibrationIntensity.UNSET) {
+      settings.copy(vibrationIntensity = hapticProvider.defaultIntensity)
+    } else {
+      settings
+    }
+  }
 
   suspend fun updateSettings(settings: AppSettings) = dataStore.updateSettings(settings)
 

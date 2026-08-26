@@ -87,8 +87,7 @@ fun AboutScreen(viewModel: MainViewModel = viewModel()) {
   val haptic = LocalHaptic.current
 
   val settings by viewModel.settings.collectAsStateWithLifecycle()
-  val isKeyInstalled by viewModel.isKeyInstalled.collectAsStateWithLifecycle()
-  val isPlayStoreInstalled by viewModel.isPlayStoreInstalled.collectAsStateWithLifecycle()
+  val unlockState by viewModel.unlockState.collectAsStateWithLifecycle()
 
   var showFeedbackDialog by rememberSaveable { mutableStateOf(false) }
   var showHelpDialog by rememberSaveable { mutableStateOf(false) }
@@ -97,8 +96,8 @@ fun AboutScreen(viewModel: MainViewModel = viewModel()) {
   if (showFeedbackDialog) {
     FeedbackDialog(
       checkUnlockKey = settings.checkUnlockKey,
-      isKeyInstalled = isKeyInstalled,
-      isPlayStoreInstalled = isPlayStoreInstalled,
+      isKeyInstalled = unlockState.isKeyInstalled,
+      isPlayStoreInstalled = unlockState.isPlayStoreInstalled,
       onDismissRequest = { showFeedbackDialog = false },
       onSupport = { showUnlockDialog = true }
     )
@@ -124,8 +123,8 @@ fun AboutScreen(viewModel: MainViewModel = viewModel()) {
   AboutContent(
     reduceAnim = settings.reduceAnim,
     versionName = BuildConfig.VERSION_NAME,
-    isKeyInstalled = isKeyInstalled,
-    isPlayStoreInstalled = isPlayStoreInstalled,
+    isKeyInstalled = unlockState.isKeyInstalled,
+    isPlayStoreInstalled = unlockState.isPlayStoreInstalled,
     checkUnlockKey = settings.checkUnlockKey,
     onBackClick = {
       haptic.click()
@@ -165,7 +164,7 @@ fun AboutScreen(viewModel: MainViewModel = viewModel()) {
     },
     onKeyClick = {
       haptic.click()
-      if (isKeyInstalled) {
+      if (unlockState.isKeyInstalled) {
         context.startActivity(
           Intent(Intent.ACTION_VIEW, appVendingKey.toUri())
         )

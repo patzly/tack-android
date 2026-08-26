@@ -17,19 +17,11 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.core.hardware
+package xyz.zedler.patrick.tack.core.model
 
-import xyz.zedler.patrick.tack.core.model.VibrationIntensity
-
-interface HapticProvider {
-  val hasVibrator: Boolean
-  val defaultIntensity: VibrationIntensity
-  val supportsMainEffects: Boolean
-  var isEnabled: Boolean
-  var intensity: VibrationIntensity
-  var isHapticPossible: Boolean
-  
-  fun tick(isTouchEvent: Boolean = true)
-  fun click(isTouchEvent: Boolean = true)
-  fun heavyClick(isTouchEvent: Boolean = true)
-}
+data class UnlockState(
+  val isKeyInstalled: Boolean = false,
+  val isPlayStoreInstalled: Boolean = true,
+  val checkUnlockKey: Boolean = true,
+  val isUnlocked: Boolean = false
+)

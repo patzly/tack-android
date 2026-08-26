@@ -55,12 +55,16 @@ import androidx.navigation3.ui.NavDisplay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import xyz.zedler.patrick.tack.TackApplication
-import xyz.zedler.patrick.tack.hardware.HapticProviderImpl
+import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.ui.navigation.Route
-import xyz.zedler.patrick.tack.ui.screen.*
+import xyz.zedler.patrick.tack.ui.screen.AboutScreen
+import xyz.zedler.patrick.tack.ui.screen.LogScreen
+import xyz.zedler.patrick.tack.ui.screen.MainScreen
+import xyz.zedler.patrick.tack.ui.screen.SettingsScreen
+import xyz.zedler.patrick.tack.ui.screen.SongScreen
+import xyz.zedler.patrick.tack.ui.screen.SongsScreen
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.util.LocalHaptic
-import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.util.LocaleUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
@@ -68,7 +72,13 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
   private val viewModel: MainViewModel by viewModels {
     val app = application as TackApplication
-    MainViewModel.Factory(app.settingsRepository, app.metronomeRepository, app.songRepository)
+    MainViewModel.Factory(
+      app.settingsRepository,
+      app.unlockRepository,
+      app.metronomeRepository,
+      app.songRepository,
+      app.backupRepository
+    )
   }
 
   override fun attachBaseContext(newBase: Context) {
@@ -85,14 +95,13 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
 
-    viewModel.init(this)
+    val app = application as TackApplication
+    val hapticProvider = app.hapticProvider
 
     setContent {
       val settings by viewModel.settings.collectAsState()
       val metronomeState by viewModel.metronomeState.collectAsState()
       val backstack = viewModel.backstack
-
-      val hapticProvider = remember { HapticProviderImpl(this) }
 
       LaunchedEffect(settings.haptic, settings.vibrationIntensity) {
         hapticProvider.isEnabled = settings.haptic

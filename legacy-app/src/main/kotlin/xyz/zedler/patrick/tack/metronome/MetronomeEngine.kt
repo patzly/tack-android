@@ -1308,10 +1308,10 @@ class MetronomeEngine(private val context: Context) {
       }
       if (shouldVibrate) {
         when (tick.type) {
-          TICK_TYPE.STRONG -> hapticUtil.heavyClick()
-          TICK_TYPE.SUB -> hapticUtil.tick()
+          TICK_TYPE.STRONG -> hapticUtil.heavyClick(false)
+          TICK_TYPE.SUB -> hapticUtil.tick(false)
           TICK_TYPE.MUTED, TICK_TYPE.BEAT_SUB_MUTED -> {}
-          else -> hapticUtil.click()
+          else -> hapticUtil.click(false)
         }
       }
     }, latency)

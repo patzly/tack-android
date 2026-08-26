@@ -26,6 +26,8 @@ import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import xyz.zedler.patrick.tack.core.hardware.HapticProvider
+import xyz.zedler.patrick.tack.core.hardware.UnlockProvider
 import xyz.zedler.patrick.tack.core.model.*
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
@@ -38,10 +40,10 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
   }
 )
 
-class AppDataStore(private val dataStore: DataStore<Preferences>) {
-
-  constructor(context: Context) : this(context.dataStore)
-
+class AppDataStore(
+  private val context: Context,
+  private val dataStore: DataStore<Preferences> = context.dataStore
+) {
   val settings: Flow<AppSettings> = dataStore.data.map { prefs ->
     val default = AppSettings()
     AppSettings(
@@ -71,9 +73,7 @@ class AppDataStore(private val dataStore: DataStore<Preferences>) {
       permNotification = prefs[PERM_NOTIFICATION] ?: default.permNotification,
       activeBeat = prefs[ACTIVE_BEAT] ?: default.activeBeat,
       bigTimeText = prefs[BIG_TIME_TEXT] ?: default.bigTimeText,
-      bigLogo = prefs[BIG_LOGO] ?: default.bigLogo,
-      // App specific
-      checkUnlockKey = prefs[CHECK_UNLOCK_KEY] ?: default.checkUnlockKey
+      bigLogo = prefs[BIG_LOGO] ?: default.bigLogo
     )
   }
 
@@ -104,6 +104,13 @@ class AppDataStore(private val dataStore: DataStore<Preferences>) {
     )
   }
 
+  val unlockState: Flow<UnlockState> = dataStore.data.map { prefs ->
+    val default = UnlockState()
+    UnlockState(
+      checkUnlockKey = prefs[CHECK_UNLOCK_KEY] ?: default.checkUnlockKey
+    )
+  }
+
   suspend fun updateSettings(settings: AppSettings) {
     dataStore.edit { prefs ->
       prefs.setIfChanged(LANGUAGE, settings.language ?: "system")
@@ -128,7 +135,6 @@ class AppDataStore(private val dataStore: DataStore<Preferences>) {
       prefs.setIfChanged(ACTIVE_BEAT, settings.activeBeat)
       prefs.setIfChanged(BIG_TIME_TEXT, settings.bigTimeText)
       prefs.setIfChanged(BIG_LOGO, settings.bigLogo)
-      prefs.setIfChanged(CHECK_UNLOCK_KEY, settings.checkUnlockKey)
     }
   }
 
@@ -150,6 +156,12 @@ class AppDataStore(private val dataStore: DataStore<Preferences>) {
       prefs.setIfChanged(MUTE_MUTE, config.muteMute)
       prefs.setIfChanged(MUTE_UNIT, config.muteUnit.key)
       prefs.setIfChanged(MUTE_RANDOM, config.muteRandom)
+    }
+  }
+
+  suspend fun updateCheckUnlockKey(checkKey: Boolean) {
+    dataStore.edit { prefs ->
+      prefs.setIfChanged(CHECK_UNLOCK_KEY, checkKey)
     }
   }
 

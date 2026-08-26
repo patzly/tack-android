@@ -50,10 +50,12 @@ fun TackTheme(
   content: @Composable () -> Unit
 ) {
   val context = LocalContext.current
-  val isDark = when (theme) {
-    AppTheme.LIGHT -> false
-    AppTheme.DARK -> true
-    AppTheme.SYSTEM -> darkTheme
+  val isDark = remember(theme, darkTheme) {
+    when (theme) {
+      AppTheme.LIGHT -> false
+      AppTheme.DARK -> true
+      AppTheme.SYSTEM -> darkTheme
+    }
   }
 
   DisposableEffect(isDark) {
@@ -72,16 +74,33 @@ fun TackTheme(
 
   val colorScheme = when {
     color == AppColor.DYNAMIC && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-      if (isDark) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+      remember(isDark, context) {
+        val scheme = if (isDark) {
+          dynamicDarkColorScheme(context)
+        } else {
+          dynamicLightColorScheme(context)
+        }
+        scheme.copy(
+          error = scheme.error.harmonize(scheme.primary),
+          onError = scheme.onError.harmonize(scheme.primary),
+          errorContainer = scheme.errorContainer.harmonize(scheme.primary),
+          onErrorContainer = scheme.onErrorContainer.harmonize(scheme.primary)
+        )
+      }
     }
     else -> {
-      val contrastLevel = when (contrast) {
-        AppContrast.MEDIUM -> 0.5
-        AppContrast.HIGH -> 1.0
-        AppContrast.STANDARD -> 0.0
+      val contrastLevel = remember(contrast) {
+        when (contrast) {
+          AppContrast.MEDIUM -> 0.5
+          AppContrast.HIGH -> 1.0
+          AppContrast.STANDARD -> 0.0
+        }
+      }
+      val seedColor = remember(hue) {
+        Hct.from(hue.toDouble(), 70.0, 60.0).toColor()
       }
       rememberDynamicColorScheme(
-        seedColor = Hct.from(hue.toDouble(), 70.0, 60.0).toColor(),
+        seedColor = seedColor,
         isDark = isDark,
         contrastLevel = contrastLevel,
         modifyColorScheme = {

@@ -21,17 +21,28 @@ package xyz.zedler.patrick.tack
 
 import android.app.Application
 import xyz.zedler.patrick.tack.core.data.AppDataStore
+import xyz.zedler.patrick.tack.core.data.BackupRepository
 import xyz.zedler.patrick.tack.core.data.MetronomeRepository
 import xyz.zedler.patrick.tack.core.data.SettingsRepository
 import xyz.zedler.patrick.tack.core.data.SongRepository
+import xyz.zedler.patrick.tack.core.data.UnlockRepository
 import xyz.zedler.patrick.tack.core.database.SongDatabase
+import xyz.zedler.patrick.tack.hardware.HapticProviderImpl
+import xyz.zedler.patrick.tack.hardware.UnlockProviderImpl
 
 class TackApplication : Application() {
 
   private val database by lazy { SongDatabase.getInstance(this) }
   val songRepository by lazy { SongRepository(database.songDao()) }
+  val backupRepository by lazy { BackupRepository(this, songRepository) }
+
+
+  val hapticProvider by lazy { HapticProviderImpl(this) }
+  val unlockProvider by lazy { UnlockProviderImpl(this) }
 
   private val dataStore by lazy { AppDataStore(this) }
-  val settingsRepository by lazy { SettingsRepository(dataStore) }
+
+  val settingsRepository by lazy { SettingsRepository(dataStore, hapticProvider) }
+  val unlockRepository by lazy { UnlockRepository(dataStore, unlockProvider) }
   val metronomeRepository by lazy { MetronomeRepository(dataStore) }
 }

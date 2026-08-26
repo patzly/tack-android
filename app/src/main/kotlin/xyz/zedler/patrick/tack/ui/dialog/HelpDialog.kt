@@ -72,8 +72,10 @@ fun HelpDialog(onDismissRequest: () -> Unit) {
 
   ScrollableAlertDialog(onDismissRequest = onDismissRequest) {
     HelpDialogContent(
-      onTranslateClick = {
+      onItemClick = {
         haptic.click()
+      },
+      onTranslateClick = {
         context.startActivity(Intent(Intent.ACTION_VIEW, appTranslate.toUri()))
       },
       onCloseClick = {
@@ -87,6 +89,7 @@ fun HelpDialog(onDismissRequest: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HelpDialogContent(
+  onItemClick: () -> Unit = {},
   onTranslateClick: () -> Unit = {},
   onCloseClick: () -> Unit = {}
 ) {
@@ -133,6 +136,7 @@ private fun HelpDialogContent(
         val expanded = expandedIndices.contains(index)
         SegmentedListItem(
           onClick = {
+            onItemClick()
             expandedIndices = if (expanded) {
               expandedIndices - index
             } else {
@@ -170,7 +174,10 @@ private fun HelpDialogContent(
                 )
                 if (item.showTranslate) {
                   TextButton(
-                    onClick = onTranslateClick,
+                    onClick = {
+                      onItemClick()
+                      onTranslateClick()
+                    },
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.textButtonColors(
                       containerColor = MaterialTheme.colorScheme.secondaryContainer,

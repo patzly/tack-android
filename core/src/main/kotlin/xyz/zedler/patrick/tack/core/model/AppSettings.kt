@@ -31,7 +31,7 @@ data class AppSettings(
   val contrast: AppContrast = AppContrast.STANDARD,
   // Behavior
   val haptic: Boolean = true,
-  val vibrationIntensity: VibrationIntensity = VibrationIntensity.AUTO,
+  val vibrationIntensity: VibrationIntensity = VibrationIntensity.UNSET,
   val reduceAnim: Boolean = false,
   // Instrument
   val sound: Sound = Sound.SINE,
@@ -85,7 +85,8 @@ enum class AppContrast(val key: String) {
 enum class VibrationIntensity(val key: String) {
   AUTO("auto"),
   SOFT("soft"),
-  STRONG("strong");
+  STRONG("strong"),
+  UNSET("unset");
 
   companion object {
     fun fromKey(key: String): VibrationIntensity = entries.find { it.key == key } ?: AUTO

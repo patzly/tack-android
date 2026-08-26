@@ -97,8 +97,7 @@ import java.io.InputStreamReader
 fun LogScreen(viewModel: MainViewModel = viewModel()) {
   val haptic = LocalHaptic.current
   val settings by viewModel.settings.collectAsState()
-  val isKeyInstalled by viewModel.isKeyInstalled.collectAsState()
-  val isPlayStoreInstalled by viewModel.isPlayStoreInstalled.collectAsState()
+  val unlockState by viewModel.unlockState.collectAsState()
 
   var logText by remember { mutableStateOf("") }
   var reloadTrigger by remember { mutableStateOf(false) }
@@ -135,8 +134,8 @@ fun LogScreen(viewModel: MainViewModel = viewModel()) {
   if (showFeedbackDialog) {
     FeedbackDialog(
       checkUnlockKey = settings.checkUnlockKey,
-      isKeyInstalled = isKeyInstalled,
-      isPlayStoreInstalled = isPlayStoreInstalled,
+      isKeyInstalled = unlockState.isKeyInstalled,
+      isPlayStoreInstalled = unlockState.isPlayStoreInstalled,
       onDismissRequest = { showFeedbackDialog = false },
       onSupport = { showUnlockDialog = true }
     )

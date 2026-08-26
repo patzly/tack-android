@@ -42,8 +42,14 @@ class HapticProviderImpl(context: Context) : HapticProvider {
 
   override val hasVibrator: Boolean = vibrator.hasVibrator()
   override val supportsMainEffects: Boolean = areMainEffectsSupported()
+  override val defaultIntensity: VibrationIntensity by lazy {
+    if (supportsMainEffects) VibrationIntensity.AUTO else VibrationIntensity.SOFT
+  }
   override var isEnabled: Boolean = vibrator.hasVibrator()
-  override var intensity: VibrationIntensity = getDefaultIntensity()
+    set(value) {
+      field = value && vibrator.hasVibrator()
+    }
+  override var intensity: VibrationIntensity = defaultIntensity
     set(value) {
       field = if (value == VibrationIntensity.AUTO && !supportsMainEffects) {
         VibrationIntensity.SOFT
@@ -52,6 +58,12 @@ class HapticProviderImpl(context: Context) : HapticProvider {
       }
     }
   override var isHapticPossible: Boolean = true
+
+  private val vibrationAttributesTouch: VibrationAttributes? by lazy {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      VibrationAttributes.createForUsage(VibrationAttributes.USAGE_TOUCH)
+    } else null
+  }
 
   private val vibrationAttributesMedia: VibrationAttributes? by lazy {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -68,37 +80,37 @@ class HapticProviderImpl(context: Context) : HapticProvider {
     } else null
   }
 
-  override fun tick(isPoly: Boolean) {
-    val effectId = if (intensity == VibrationIntensity.AUTO &&
-      Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-    ) {
-      VibrationEffect.EFFECT_TICK
-    } else -1
-    val duration = if (intensity == VibrationIntensity.STRONG) 20L else 2L
-    vibrate(effectId, duration)
+  override fun tick(isTouchEvent: Boolean) {
+    val effectId =
+      if (intensity == VibrationIntensity.AUTO && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        VibrationEffect.EFFECT_TICK
+      } else -1
+    val duration = if (intensity == VibrationIntensity.STRONG) TICK_STRONG else TICK
+
+    vibrate(effectId, duration, isTouchEvent)
   }
 
-  override fun click(isPoly: Boolean) {
-    val effectId = if (intensity == VibrationIntensity.AUTO &&
-      Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-    ) {
-      VibrationEffect.EFFECT_CLICK
-    } else -1
-    val duration = if (intensity == VibrationIntensity.STRONG) 50L else 8L
-    vibrate(effectId, duration)
+  override fun click(isTouchEvent: Boolean) {
+    val effectId =
+      if (intensity == VibrationIntensity.AUTO && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        VibrationEffect.EFFECT_CLICK
+      } else -1
+    val duration = if (intensity == VibrationIntensity.STRONG) CLICK_STRONG else CLICK
+
+    vibrate(effectId, duration, isTouchEvent)
   }
 
-  override fun heavyClick(isPoly: Boolean) {
-    val effectId = if (intensity == VibrationIntensity.AUTO &&
-      Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q
-    ) {
-      VibrationEffect.EFFECT_HEAVY_CLICK
-    } else -1
-    val duration = if (intensity == VibrationIntensity.STRONG) 80L else 40L
-    vibrate(effectId, duration)
+  override fun heavyClick(isTouchEvent: Boolean) {
+    val effectId =
+      if (intensity == VibrationIntensity.AUTO && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        VibrationEffect.EFFECT_HEAVY_CLICK
+      } else -1
+    val duration = if (intensity == VibrationIntensity.STRONG) HEAVY_STRONG else HEAVY
+
+    vibrate(effectId, duration, isTouchEvent)
   }
 
-  private fun vibrate(effectId: Int, fallbackDuration: Long) {
+  private fun vibrate(effectId: Int, fallbackDuration: Long, isTouchEvent: Boolean) {
     if (!isEnabled || !isHapticPossible) return
 
     val effect = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && effectId != -1) {
@@ -106,18 +118,18 @@ class HapticProviderImpl(context: Context) : HapticProvider {
     } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       VibrationEffect.createOneShot(
         fallbackDuration,
-        if (intensity == VibrationIntensity.STRONG) 255
-        else VibrationEffect.DEFAULT_AMPLITUDE
+        if (intensity == VibrationIntensity.STRONG) 255 else VibrationEffect.DEFAULT_AMPLITUDE
       )
     } else null
 
-    if (effect != null) {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-        vibrator.vibrate(effect, vibrationAttributesMedia!!)
-      } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        @Suppress("DEPRECATION")
-        vibrator.vibrate(effect, audioAttributes)
-      }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && effect != null) {
+      vibrator.vibrate(
+        effect,
+        (if (isTouchEvent) vibrationAttributesTouch else vibrationAttributesMedia)!!
+      )
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && effect != null) {
+      @Suppress("DEPRECATION")
+      vibrator.vibrate(effect, audioAttributes)
     } else {
       @Suppress("DEPRECATION")
       vibrator.vibrate(fallbackDuration, audioAttributes)
@@ -139,7 +151,12 @@ class HapticProviderImpl(context: Context) : HapticProvider {
     }
   }
 
-  private fun getDefaultIntensity(): VibrationIntensity {
-    return if (areMainEffectsSupported()) VibrationIntensity.AUTO else VibrationIntensity.SOFT
+  companion object {
+    const val TICK: Long = 2L
+    const val TICK_STRONG: Long = 20L
+    const val CLICK: Long = 8L
+    const val CLICK_STRONG: Long = 50L
+    const val HEAVY: Long = 40L
+    const val HEAVY_STRONG: Long = 80L
   }
 }
