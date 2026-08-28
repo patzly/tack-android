@@ -23,7 +23,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.CheckableDropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
@@ -126,7 +126,7 @@ fun ConnectedButtonGroup(
           }
         },
         menuContent = {
-          DropdownMenuItem(
+          CheckableDropdownMenuItem(
             text = { Text(labels[index]) },
             checked = isSelected,
             onCheckedChange = { if (enabled) onSelect(option) },

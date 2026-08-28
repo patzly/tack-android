@@ -21,7 +21,6 @@ package xyz.zedler.patrick.tack.ui.screen
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -68,7 +67,6 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import xyz.zedler.patrick.tack.BuildConfig
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.ui.component.AnimatedIcon
@@ -82,7 +80,7 @@ import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Composable
-fun AboutScreen(viewModel: MainViewModel = viewModel()) {
+fun AboutScreen(viewModel: MainViewModel) {
   val context = LocalContext.current
   val haptic = LocalHaptic.current
 

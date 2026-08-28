@@ -31,7 +31,7 @@ android {
 
   defaultConfig {
     applicationId = "xyz.zedler.patrick.tack"
-    minSdk = 23
+    minSdk = 24
     targetSdk = 37
     versionCode = 420 // last number is 0 for app release
     versionName = "6.3.2"
@@ -114,6 +114,9 @@ dependencies {
   implementation(libs.compose.activity)
   implementation(libs.compose.animation)
   implementation(libs.compose.material.window)
+  implementation(libs.compose.material.adaptive)
+  implementation(libs.compose.constraintlayout)
+  implementation(libs.window)
   implementation(libs.materialKolor)
   implementation(libs.navigation3.runtime)
   implementation(libs.navigation3.ui)

@@ -84,7 +84,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.materialkolor.hct.Hct
 import com.materialkolor.ktx.toColor
 import xyz.zedler.patrick.tack.R
@@ -110,7 +109,7 @@ import xyz.zedler.patrick.tack.util.LocaleUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @Composable
-fun SettingsScreen(viewModel: MainViewModel = viewModel()) {
+fun SettingsScreen(viewModel: MainViewModel) {
   val context = LocalContext.current
   val haptic = LocalHaptic.current
 

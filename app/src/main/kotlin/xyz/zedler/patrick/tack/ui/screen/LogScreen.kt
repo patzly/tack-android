@@ -76,7 +76,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -94,7 +93,7 @@ import java.io.IOException
 import java.io.InputStreamReader
 
 @Composable
-fun LogScreen(viewModel: MainViewModel = viewModel()) {
+fun LogScreen(viewModel: MainViewModel) {
   val haptic = LocalHaptic.current
   val settings by viewModel.settings.collectAsState()
   val unlockState by viewModel.unlockState.collectAsState()

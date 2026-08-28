@@ -39,6 +39,9 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.navigation3.ListDetailSceneStrategy
+import androidx.compose.material3.adaptive.navigation3.rememberListDetailSceneStrategy
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.CompositionLocalProvider
@@ -89,7 +92,10 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     super.attachBaseContext(LocaleUtil.wrap(newBase, languageCode))
   }
 
-  @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+  @OptIn(
+    ExperimentalMaterial3WindowSizeClassApi::class,
+    ExperimentalMaterial3AdaptiveApi::class
+  )
   override fun onCreate(savedInstanceState: Bundle?) {
     installSplashScreen()
     enableEdgeToEdge()
@@ -112,23 +118,16 @@ class MainActivity : ComponentActivity(), ServiceConnection {
         hapticProvider.isHapticPossible = metronomeState.isHapticPossible
       }
 
-      // Handle manual language change recreation for older APIs
       var isInitialCompose by remember { mutableStateOf(true) }
       LaunchedEffect(settings.language) {
         if (isInitialCompose) {
-          // Prevent screen flicker on initial compose
           isInitialCompose = false
           return@LaunchedEffect
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
           LocaleUtil.applyLocale(this@MainActivity, settings.language)
         } else {
-          val currentLocale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            resources.configuration.locales[0]
-          } else {
-            @Suppress("DEPRECATION")
-            resources.configuration.locale
-          }
+          val currentLocale = resources.configuration.locales[0]
           val targetLocale = LocaleUtil.getLocale(settings.language)
           if (currentLocale.language != targetLocale.language ||
             currentLocale.country != targetLocale.country
@@ -139,7 +138,6 @@ class MainActivity : ComponentActivity(), ServiceConnection {
       }
 
       val windowSizeClass = calculateWindowSizeClass(this)
-      val widthClass = windowSizeClass.widthSizeClass
 
       TackTheme(
         color = settings.color,
@@ -156,28 +154,38 @@ class MainActivity : ComponentActivity(), ServiceConnection {
             val scaleSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
             val fadeSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
 
+            val listDetailSceneStrategy = rememberListDetailSceneStrategy<Route>()
+
             NavDisplay(
               backStack = backstack.toList(),
               onBack = { viewModel.popBackstack() },
+              sceneStrategies = listOf(listDetailSceneStrategy),
               entryProvider = { route ->
                 when (route) {
-                  is Route.Main -> NavEntry(route) {
-                    MainScreen(widthSizeClass = widthClass)
+                  is Route.Main -> NavEntry(key = route) {
+                    MainScreen(
+                      viewModel = viewModel,
+                      windowSizeClass = windowSizeClass
+                    )
                   }
 
-                  is Route.Songs -> NavEntry(route) {
-                    SongsScreen(widthClass)
+                  is Route.Songs -> NavEntry(
+                    key = route,
+                    metadata = ListDetailSceneStrategy.listPane()
+                  ) {
+                    SongsScreen(windowSizeClass.widthSizeClass)
                   }
 
-                  is Route.Song -> NavEntry(route) {
-                    SongScreen(route.songId, widthClass)
+                  is Route.Song -> NavEntry(
+                    key = route,
+                    metadata = ListDetailSceneStrategy.detailPane()
+                  ) {
+                    SongScreen(route.songId, windowSizeClass.widthSizeClass)
                   }
 
-                  is Route.Settings -> NavEntry(route) { SettingsScreen(viewModel) }
-
-                  is Route.About -> NavEntry(route) { AboutScreen(viewModel) }
-
-                  is Route.Log -> NavEntry(route) { LogScreen(viewModel) }
+                  is Route.Settings -> NavEntry(key = route) { SettingsScreen(viewModel) }
+                  is Route.About -> NavEntry(key = route) { AboutScreen(viewModel) }
+                  is Route.Log -> NavEntry(key = route) { LogScreen(viewModel) }
                 }
               },
               transitionSpec = {
@@ -192,7 +200,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
                     (fadeOut(animationSpec = fadeSpec) +
                         scaleOut(targetScale = 0.9f, animationSpec = scaleSpec))
               },
-              predictivePopTransitionSpec = {
+              predictivePopTransitionSpec = { _ ->
                 (fadeIn(animationSpec = fadeSpec) +
                     scaleIn(initialScale = 1.1f, animationSpec = scaleSpec)) togetherWith
                     (fadeOut(animationSpec = fadeSpec) +
