@@ -80,9 +80,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import xyz.zedler.patrick.tack.R
-import xyz.zedler.patrick.tack.ui.component.AnimatedIcon
-import xyz.zedler.patrick.tack.ui.component.InsetLazyColumn
-import xyz.zedler.patrick.tack.ui.component.insetItem
+import xyz.zedler.patrick.tack.ui.component.core.AnimatedIcon
+import xyz.zedler.patrick.tack.ui.component.core.InsetLazyColumn
+import xyz.zedler.patrick.tack.ui.component.core.insetItem
 import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.ui.dialog.UnlockDialog
 import xyz.zedler.patrick.tack.ui.theme.TackTheme

@@ -19,7 +19,6 @@
 
 package xyz.zedler.patrick.tack.ui.dialog
 
-import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -28,8 +27,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import xyz.zedler.patrick.tack.R
-import xyz.zedler.patrick.tack.ui.component.ScrollableAlertDialog
-import xyz.zedler.patrick.tack.ui.component.ScrollableAlertDialogContent
+import xyz.zedler.patrick.tack.ui.component.core.ScrollableAlertDialog
+import xyz.zedler.patrick.tack.ui.component.core.ScrollableAlertDialogContent
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 

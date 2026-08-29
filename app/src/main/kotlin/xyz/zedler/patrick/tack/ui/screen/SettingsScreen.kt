@@ -92,10 +92,10 @@ import xyz.zedler.patrick.tack.core.model.AppContrast
 import xyz.zedler.patrick.tack.core.model.AppSettings
 import xyz.zedler.patrick.tack.core.model.AppTheme
 import xyz.zedler.patrick.tack.core.model.VibrationIntensity
-import xyz.zedler.patrick.tack.ui.component.AnimatedIcon
-import xyz.zedler.patrick.tack.ui.component.ConnectedButtonGroup
-import xyz.zedler.patrick.tack.ui.component.InsetLazyColumn
-import xyz.zedler.patrick.tack.ui.component.insetItem
+import xyz.zedler.patrick.tack.ui.component.core.AnimatedIcon
+import xyz.zedler.patrick.tack.ui.component.core.ConnectedButtonGroup
+import xyz.zedler.patrick.tack.ui.component.core.InsetLazyColumn
+import xyz.zedler.patrick.tack.ui.component.core.insetItem
 import xyz.zedler.patrick.tack.ui.dialog.BackupDialog
 import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.ui.dialog.HelpDialog

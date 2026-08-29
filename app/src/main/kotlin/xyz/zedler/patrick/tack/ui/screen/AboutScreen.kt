@@ -69,9 +69,9 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import xyz.zedler.patrick.tack.BuildConfig
 import xyz.zedler.patrick.tack.R
-import xyz.zedler.patrick.tack.ui.component.AnimatedIcon
-import xyz.zedler.patrick.tack.ui.component.InsetLazyColumn
-import xyz.zedler.patrick.tack.ui.component.insetItem
+import xyz.zedler.patrick.tack.ui.component.core.AnimatedIcon
+import xyz.zedler.patrick.tack.ui.component.core.InsetLazyColumn
+import xyz.zedler.patrick.tack.ui.component.core.insetItem
 import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.ui.dialog.HelpDialog
 import xyz.zedler.patrick.tack.ui.dialog.UnlockDialog

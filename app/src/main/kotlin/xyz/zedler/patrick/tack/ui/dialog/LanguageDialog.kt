@@ -25,7 +25,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItemDefaults
@@ -45,8 +44,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.Language
-import xyz.zedler.patrick.tack.ui.component.ScrollableAlertDialog
-import xyz.zedler.patrick.tack.ui.component.ScrollableAlertDialogContent
+import xyz.zedler.patrick.tack.ui.component.core.ScrollableAlertDialog
+import xyz.zedler.patrick.tack.ui.component.core.ScrollableAlertDialogContent
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 import xyz.zedler.patrick.tack.util.LocaleUtil

@@ -17,9 +17,10 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.ui.component
+package xyz.zedler.patrick.tack.ui.component.core
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -43,6 +44,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.R
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -79,7 +81,7 @@ fun ScrollableAlertDialog(
   content: @Composable () -> Unit
 ) {
   Dialog(onDismissRequest = onDismissRequest, properties = properties) {
-    val dialogPaneDescription = stringResource(androidx.compose.material3.R.string.m3c_dialog)
+    val dialogPaneDescription = stringResource(R.string.m3c_dialog)
 
     val layoutDirection = LocalLayoutDirection.current
     val safePadding = WindowInsets.safeDrawing.asPaddingValues()
@@ -136,7 +138,7 @@ fun ScrollableAlertDialogContent(
   subtitle: @Composable (() -> Unit)? = null,
   dismissButton: @Composable (() -> Unit)? = null,
   extraButton: @Composable (() -> Unit)? = null,
-  scrollState: androidx.compose.foundation.ScrollState? = rememberScrollState(),
+  scrollState: ScrollState? = rememberScrollState(),
   isScrollableControlledByContent: Boolean = false,
   iconContentColor: Color = MaterialTheme.colorScheme.secondary,
   titleContentColor: Color = MaterialTheme.colorScheme.onSurface,

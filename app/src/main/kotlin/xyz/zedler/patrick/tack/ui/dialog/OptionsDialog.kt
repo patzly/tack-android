@@ -38,8 +38,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.zedler.patrick.tack.R
-import xyz.zedler.patrick.tack.ui.component.ScrollableAlertDialog
-import xyz.zedler.patrick.tack.ui.component.ScrollableAlertDialogContent
+import xyz.zedler.patrick.tack.ui.component.core.ScrollableAlertDialog
+import xyz.zedler.patrick.tack.ui.component.core.ScrollableAlertDialogContent
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 

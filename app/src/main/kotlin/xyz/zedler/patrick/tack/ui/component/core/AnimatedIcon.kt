@@ -17,7 +17,7 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.ui.component
+package xyz.zedler.patrick.tack.ui.component.core
 
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi

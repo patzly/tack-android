@@ -19,27 +19,14 @@
 
 package xyz.zedler.patrick.tack.ui.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -48,24 +35,19 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
-import androidx.compose.material3.IconToggleButtonShapes
-import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorPosition
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
 import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.rememberTooltipState
@@ -87,7 +69,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -96,10 +77,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.AppSettings
 import xyz.zedler.patrick.tack.core.model.MetronomeState
-import xyz.zedler.patrick.tack.ui.component.AnimatedIcon
+import xyz.zedler.patrick.tack.ui.component.core.AnimatedIcon
+import xyz.zedler.patrick.tack.ui.component.main.MainControls
 import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.ui.dialog.HelpDialog
-import xyz.zedler.patrick.tack.ui.dialog.OptionsContent
 import xyz.zedler.patrick.tack.ui.dialog.OptionsDialog
 import xyz.zedler.patrick.tack.ui.dialog.UnlockDialog
 import xyz.zedler.patrick.tack.ui.navigation.Route
@@ -417,206 +398,6 @@ private fun MediumPortraitContent() {
 @Composable
 private fun ExpandedLandscapeContent() {
   // TODO
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun MainControls(
-  settings: AppSettings,
-  metronomeState: MetronomeState,
-  onItemClick: () -> Unit,
-  onOptionsClick: () -> Unit,
-  onPlayStopClick: () -> Unit,
-  onBeatModeClick: () -> Unit,
-  modifier: Modifier
-) {
-  val dimens = LocalTackDimens.current
-
-  val interactionSources = remember { List(3) { MutableInteractionSource() } }
-
-  ButtonGroup(
-    overflowIndicator = { menuState ->
-      val contentDescription = stringResource(R.string.action_more)
-
-      TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-          TooltipAnchorPosition.Above
-        ),
-        tooltip = {
-          PlainTooltip {
-            Text(contentDescription)
-          }
-        },
-        state = rememberTooltipState(),
-      ) {
-        FilledIconButton(
-          onClick = {
-            if (menuState.isShowing) {
-              menuState.dismiss()
-            } else {
-              menuState.show()
-            }
-          },
-          modifier =
-            Modifier
-              .minimumInteractiveComponentSize()
-              .size(IconButtonDefaults.smallContainerSize()),
-          colors = IconButtonDefaults.filledTonalIconButtonColors(),
-          shapes = IconButtonDefaults.shapes()
-        ) {
-          Icon(
-            painter = painterResource(R.drawable.ic_rounded_more_vert),
-            contentDescription = contentDescription
-          )
-        }
-      }
-    },
-    horizontalArrangement = Arrangement.spacedBy(8.dp),
-    modifier = modifier.padding(bottom = dimens.mainControlsPaddingBottom)
-  ) {
-    customItem(
-      buttonGroupContent = {
-        val contentPadding = ButtonDefaults.TextButtonContentPadding
-        val layoutDirection = LocalLayoutDirection.current
-
-        var optionsIconTrigger by remember { mutableStateOf(false) }
-
-        FilledTonalIconButton(
-          onClick = {
-            onItemClick()
-            onOptionsClick()
-            optionsIconTrigger = !optionsIconTrigger
-          },
-          shape = IconButtonDefaults.largeRoundShape,
-          interactionSource = interactionSources[0],
-          modifier = Modifier
-            .minimumInteractiveComponentSize()
-            .size(
-              IconButtonDefaults.largeContainerSize(
-                IconButtonDefaults.IconButtonWidthOption.Narrow
-              )
-            )
-            .animateWidth(
-              interactionSource = interactionSources[0],
-              compressionLimit = contentPadding.calculateStartPadding(layoutDirection)
-            ),
-        ) {
-          TooltipBox(
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              TooltipAnchorPosition.Above
-            ),
-            tooltip = {
-              PlainTooltip {
-                Text(stringResource(R.string.title_options))
-              }
-            },
-            state = rememberTooltipState(),
-            modifier = Modifier.fillMaxSize()
-          ) {
-            Box(
-              modifier = Modifier.fillMaxSize(),
-              contentAlignment = Alignment.Center
-            ) {
-              AnimatedIcon(
-                resId = R.drawable.ic_rounded_tune_anim,
-                trigger = optionsIconTrigger,
-                animated = !settings.reduceAnim,
-                description = stringResource(R.string.title_options),
-                modifier = Modifier.size(IconButtonDefaults.largeIconSize)
-              )
-            }
-          }
-        }
-      },
-      menuContent = {
-        DropdownMenuItem(
-          text = { Text(stringResource(R.string.title_options)) },
-          onClick = onOptionsClick
-        )
-      }
-    )
-
-    customItem(
-      buttonGroupContent = {
-        val contentPadding = ButtonDefaults.TextButtonContentPadding
-        val layoutDirection = LocalLayoutDirection.current
-
-        IconToggleButton(
-          checked = false,
-          onCheckedChange = {},
-          shapes = IconButtonDefaults.toggleableShapes(),
-          colors = IconButtonDefaults.iconToggleButtonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-            checkedContainerColor = MaterialTheme.colorScheme.tertiary,
-            checkedContentColor = MaterialTheme.colorScheme.onTertiary,
-          ),
-          interactionSource = interactionSources[1],
-          modifier =
-            Modifier
-              .minimumInteractiveComponentSize()
-              .size(
-                IconButtonDefaults.largeContainerSize(
-                  IconButtonDefaults.IconButtonWidthOption.Wide
-                )
-              )
-              .animateWidth(
-                interactionSource = interactionSources[1],
-                compressionLimit = contentPadding.calculateStartPadding(layoutDirection)
-              ),
-        ) {
-          Icon(
-            painter = painterResource(R.drawable.ic_rounded_play_arrow),
-            contentDescription = null,
-            modifier = Modifier.size(IconButtonDefaults.largeIconSize)
-          )
-        }
-      },
-      menuContent = {
-        DropdownMenuItem(
-          text = { Text(stringResource(R.string.title_options)) },
-          onClick = onOptionsClick
-        )
-      }
-    )
-
-    customItem(
-      buttonGroupContent = {
-        val contentPadding = ButtonDefaults.TextButtonContentPadding
-        val layoutDirection = LocalLayoutDirection.current
-
-        FilledTonalIconButton(
-          onClick = onOptionsClick,
-          shape = IconButtonDefaults.largeRoundShape,
-          interactionSource = interactionSources[2],
-          modifier =
-            Modifier
-              .minimumInteractiveComponentSize()
-              .size(
-                IconButtonDefaults.largeContainerSize(
-                  IconButtonDefaults.IconButtonWidthOption.Narrow
-                )
-              )
-              .animateWidth(
-                interactionSource = interactionSources[2],
-                compressionLimit = contentPadding.calculateStartPadding(layoutDirection)
-              ),
-        ) {
-          Icon(
-            painter = painterResource(R.drawable.ic_rounded_more_vert),
-            contentDescription = null,
-            modifier = Modifier.size(IconButtonDefaults.largeIconSize)
-          )
-        }
-      },
-      menuContent = {
-        DropdownMenuItem(
-          text = { Text(stringResource(R.string.title_options)) },
-          onClick = onOptionsClick
-        )
-      }
-    )
-  }
 }
 
 private enum class MainLayoutStrategy {
