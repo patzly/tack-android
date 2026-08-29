@@ -22,17 +22,12 @@ package xyz.zedler.patrick.tack.ui.component.main
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ButtonGroup
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
@@ -50,101 +45,52 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.AppSettings
 import xyz.zedler.patrick.tack.core.model.MetronomeState
 import xyz.zedler.patrick.tack.ui.component.core.AnimatedIcon
-import xyz.zedler.patrick.tack.ui.theme.LocalTackDimens
+import xyz.zedler.patrick.tack.ui.theme.LocalDimens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainControls(
   settings: AppSettings,
   metronomeState: MetronomeState,
-  onItemClick: () -> Unit,
   onOptionsClick: () -> Unit,
-  onPlayStopClick: () -> Unit,
+  onPlayStopChange: (Boolean) -> Unit,
   onBeatModeClick: () -> Unit,
   modifier: Modifier
 ) {
-  val dimens = LocalTackDimens.current
+  val dimens = LocalDimens.current
 
   val interactionSources = remember { List(3) { MutableInteractionSource() } }
 
   ButtonGroup(
-    overflowIndicator = { menuState ->
-      val contentDescription = stringResource(R.string.action_more)
-
-      TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-          TooltipAnchorPosition.Above
-        ),
-        tooltip = {
-          PlainTooltip {
-            Text(contentDescription)
-          }
-        },
-        state = rememberTooltipState(),
-      ) {
-        FilledIconButton(
-          onClick = {
-            if (menuState.isShowing) {
-              menuState.dismiss()
-            } else {
-              menuState.show()
-            }
-          },
-          modifier =
-            Modifier
-              .minimumInteractiveComponentSize()
-              .size(IconButtonDefaults.smallContainerSize()),
-          colors = IconButtonDefaults.filledTonalIconButtonColors(),
-          shapes = IconButtonDefaults.shapes()
-        ) {
-          Icon(
-            painter = painterResource(R.drawable.ic_rounded_more_vert),
-            contentDescription = contentDescription
-          )
-        }
-      }
-    },
-    horizontalArrangement = Arrangement.spacedBy(8.dp),
+    overflowIndicator = {},
+    horizontalArrangement = Arrangement.spacedBy(dimens.mainControlsButtonSpacing),
     modifier = modifier.padding(bottom = dimens.mainControlsPaddingBottom)
   ) {
     customItem(
       buttonGroupContent = {
-        val contentPadding = ButtonDefaults.TextButtonContentPadding
-        val layoutDirection = LocalLayoutDirection.current
-
         var optionsIconTrigger by remember { mutableStateOf(false) }
 
         FilledTonalIconButton(
           onClick = {
-            onItemClick()
             onOptionsClick()
             optionsIconTrigger = !optionsIconTrigger
           },
-          shape = IconButtonDefaults.largeRoundShape,
+          shapes = IconButtonDefaults.shapes(),
           interactionSource = interactionSources[0],
           modifier = Modifier
             .minimumInteractiveComponentSize()
-            .size(
-              IconButtonDefaults.largeContainerSize(
-                IconButtonDefaults.IconButtonWidthOption.Narrow
-              )
-            )
-            .animateWidth(
-              interactionSource = interactionSources[0],
-              compressionLimit = contentPadding.calculateStartPadding(layoutDirection)
-            ),
+            .size(dimens.mainControlsSideButtonSize)
+            .animateWidth(interactionSources[0])
         ) {
           TooltipBox(
             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              TooltipAnchorPosition.Above
+              positioning = TooltipAnchorPosition.Above,
+              spacingBetweenTooltipAndAnchor = dimens.mainControlsButtonTooltipSpacing
             ),
             tooltip = {
               PlainTooltip {
@@ -163,28 +109,20 @@ fun MainControls(
                 trigger = optionsIconTrigger,
                 animated = !settings.reduceAnim,
                 description = stringResource(R.string.title_options),
-                modifier = Modifier.size(IconButtonDefaults.largeIconSize)
+                modifier = Modifier.size(dimens.mainControlsIconSize)
               )
             }
           }
         }
       },
-      menuContent = {
-        DropdownMenuItem(
-          text = { Text(stringResource(R.string.title_options)) },
-          onClick = onOptionsClick
-        )
-      }
+      menuContent = {}
     )
 
     customItem(
       buttonGroupContent = {
-        val contentPadding = ButtonDefaults.TextButtonContentPadding
-        val layoutDirection = LocalLayoutDirection.current
-
         IconToggleButton(
-          checked = false,
-          onCheckedChange = {},
+          checked = metronomeState.isPlaying,
+          onCheckedChange = onPlayStopChange,
           shapes = IconButtonDefaults.toggleableShapes(),
           colors = IconButtonDefaults.iconToggleButtonColors(
             containerColor = MaterialTheme.colorScheme.primary,
@@ -196,66 +134,88 @@ fun MainControls(
           modifier =
             Modifier
               .minimumInteractiveComponentSize()
-              .size(
-                IconButtonDefaults.largeContainerSize(
-                  IconButtonDefaults.IconButtonWidthOption.Wide
-                )
-              )
-              .animateWidth(
-                interactionSource = interactionSources[1],
-                compressionLimit = contentPadding.calculateStartPadding(layoutDirection)
-              ),
+              .size(dimens.mainControlsCenterButtonSize)
+              .animateWidth(interactionSources[1])
         ) {
-          Icon(
-            painter = painterResource(R.drawable.ic_rounded_play_arrow),
-            contentDescription = null,
-            modifier = Modifier.size(IconButtonDefaults.largeIconSize)
-          )
+          TooltipBox(
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+              positioning = TooltipAnchorPosition.Above,
+              spacingBetweenTooltipAndAnchor = dimens.mainControlsButtonTooltipSpacing
+            ),
+            tooltip = {
+              PlainTooltip {
+                Text(stringResource(R.string.action_play_stop))
+              }
+            },
+            state = rememberTooltipState(),
+            modifier = Modifier.fillMaxSize()
+          ) {
+            Box(
+              modifier = Modifier.fillMaxSize(),
+              contentAlignment = Alignment.Center
+            ) {
+              AnimatedIcon(
+                resId1 = R.drawable.ic_rounded_play_to_stop_fill_anim,
+                resId2 = R.drawable.ic_rounded_stop_to_play_fill_anim,
+                trigger = metronomeState.isPlaying,
+                animated = !settings.reduceAnim,
+                description = stringResource(R.string.action_play_stop),
+                modifier = Modifier.size(dimens.mainControlsIconSize)
+              )
+            }
+          }
         }
       },
-      menuContent = {
-        DropdownMenuItem(
-          text = { Text(stringResource(R.string.title_options)) },
-          onClick = onOptionsClick
-        )
-      }
+      menuContent = {}
     )
 
     customItem(
       buttonGroupContent = {
-        val contentPadding = ButtonDefaults.TextButtonContentPadding
-        val layoutDirection = LocalLayoutDirection.current
+        var beatModeIconTrigger by remember { mutableStateOf(false) }
 
         FilledTonalIconButton(
-          onClick = onOptionsClick,
-          shape = IconButtonDefaults.largeRoundShape,
+          onClick = {
+            onBeatModeClick()
+            beatModeIconTrigger = !beatModeIconTrigger
+          },
+          shapes = IconButtonDefaults.shapes(),
           interactionSource = interactionSources[2],
           modifier =
             Modifier
               .minimumInteractiveComponentSize()
-              .size(
-                IconButtonDefaults.largeContainerSize(
-                  IconButtonDefaults.IconButtonWidthOption.Narrow
-                )
-              )
-              .animateWidth(
-                interactionSource = interactionSources[2],
-                compressionLimit = contentPadding.calculateStartPadding(layoutDirection)
-              ),
+              .size(dimens.mainControlsSideButtonSize)
+              .animateWidth(interactionSources[2]),
         ) {
-          Icon(
-            painter = painterResource(R.drawable.ic_rounded_more_vert),
-            contentDescription = null,
-            modifier = Modifier.size(IconButtonDefaults.largeIconSize)
-          )
+          TooltipBox(
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+              positioning = TooltipAnchorPosition.Above,
+              spacingBetweenTooltipAndAnchor = dimens.mainControlsButtonTooltipSpacing
+            ),
+            tooltip = {
+              PlainTooltip {
+                Text(stringResource(R.string.action_beat_mode))
+              }
+            },
+            state = rememberTooltipState(),
+            modifier = Modifier.fillMaxSize()
+          ) {
+            Box(
+              modifier = Modifier.fillMaxSize(),
+              contentAlignment = Alignment.Center
+            ) {
+              AnimatedIcon(
+                resId1 = R.drawable.ic_rounded_volume_up_to_vibration_anim,
+                resId2 = R.drawable.ic_rounded_vibration_to_volume_up_anim,
+                trigger = beatModeIconTrigger,
+                animated = !settings.reduceAnim,
+                description = stringResource(R.string.action_beat_mode),
+                modifier = Modifier.size(dimens.mainControlsIconSize)
+              )
+            }
+          }
         }
       },
-      menuContent = {
-        DropdownMenuItem(
-          text = { Text(stringResource(R.string.title_options)) },
-          onClick = onOptionsClick
-        )
-      }
+      menuContent = {}
     )
   }
 }

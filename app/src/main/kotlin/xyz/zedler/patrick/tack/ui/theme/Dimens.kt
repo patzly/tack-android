@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.ui.theme
 
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
@@ -26,10 +27,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 
 data class TackDimens(
-  val mainControlsPaddingBottom: Dp = 16.dp
+  val mainControlsPaddingBottom: Dp = 16.dp,
+  val mainControlsCenterButtonSize: DpSize = IconButtonDefaults.largeContainerSize(
+    IconButtonDefaults.IconButtonWidthOption.Wide
+  ),
+  val mainControlsSideButtonSize: DpSize = IconButtonDefaults.largeContainerSize(
+    IconButtonDefaults.IconButtonWidthOption.Narrow
+  ),
+  val mainControlsIconSize: Dp = IconButtonDefaults.largeIconSize,
+  val mainControlsButtonSpacing: Dp = 8.dp,
+  val mainControlsButtonTooltipSpacing: Dp = 8.dp,
 )
 
 // phone
@@ -46,7 +57,7 @@ val MediumPortraitDimens = TackDimens(
 // tablet landscape
 val ExpandedLandscapeDimens = TackDimens()
 
-val LocalTackDimens = compositionLocalOf { CompactPortraitDimens }
+val LocalDimens = compositionLocalOf { CompactPortraitDimens }
 
 @Composable
 fun rememberTackDimens(windowSizeClass: WindowSizeClass): TackDimens {

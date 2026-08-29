@@ -19,26 +19,19 @@
 
 package xyz.zedler.patrick.tack.ui.screen
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.DropdownMenuPopup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.IconToggleButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorPosition
 import androidx.compose.material3.MenuDefaults
@@ -61,10 +54,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -77,14 +68,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.AppSettings
 import xyz.zedler.patrick.tack.core.model.MetronomeState
-import xyz.zedler.patrick.tack.ui.component.core.AnimatedIcon
 import xyz.zedler.patrick.tack.ui.component.main.MainControls
 import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.ui.dialog.HelpDialog
 import xyz.zedler.patrick.tack.ui.dialog.OptionsDialog
 import xyz.zedler.patrick.tack.ui.dialog.UnlockDialog
 import xyz.zedler.patrick.tack.ui.navigation.Route
-import xyz.zedler.patrick.tack.ui.theme.LocalTackDimens
+import xyz.zedler.patrick.tack.ui.theme.LocalDimens
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.theme.rememberTackDimens
 import xyz.zedler.patrick.tack.ui.util.LocalHaptic
@@ -130,26 +120,41 @@ fun MainScreen(
 
   MainContent(
     windowSizeClass = windowSizeClass,
-    onItemClick = {
-      haptic.click()
-    },
+    // app bar menu
     onSupportClick = {
       showUnlockDialog = true
     },
+    onMoreClick = {
+      haptic.click()
+    },
     onSettingsClick = {
+      haptic.click()
       viewModel.navigateTo(Route.Settings)
     },
     onAboutClick = {
+      haptic.click()
       viewModel.navigateTo(Route.About)
     },
     onHelpClick = {
+      haptic.click()
       showHelpDialog = true
     },
     onFeedbackClick = {
+      haptic.click()
       showFeedbackDialog = true
     },
+    // main controls
     onOptionsClick = {
+      haptic.click()
       showOptionsDialog = true
+    },
+    onPlayStopChange = {
+      haptic.click()
+      viewModel.togglePlay()
+    },
+    onBeatModeClick = {
+      haptic.click()
+      // TODO
     }
   )
 }
@@ -165,13 +170,17 @@ fun MainContent(
   windowSizeClass: WindowSizeClass = WindowSizeClass.calculateFromSize(
     DpSize(412.dp, 924.dp)
   ),
-  onItemClick: () -> Unit = {},
+  // app bar menu
   onSupportClick: () -> Unit = {},
+  onMoreClick: () -> Unit = {},
   onSettingsClick: () -> Unit = {},
   onAboutClick: () -> Unit = {},
   onHelpClick: () -> Unit = {},
   onFeedbackClick: () -> Unit = {},
-  onOptionsClick: () -> Unit = {}
+  // main controls
+  onOptionsClick: () -> Unit = {},
+  onPlayStopChange: (Boolean) -> Unit = {},
+  onBeatModeClick: () -> Unit = {}
 ) {
   val dimens = rememberTackDimens(windowSizeClass)
 
@@ -243,7 +252,7 @@ fun MainContent(
           ) {
             FilledIconButton(
               onClick = {
-                onItemClick()
+                onMoreClick()
                 showMenu = true
               },
               modifier =
@@ -283,36 +292,32 @@ fun MainContent(
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.title_settings)) },
                 onClick = {
-                  onItemClick()
-                  showMenu = false
                   onSettingsClick()
+                  showMenu = false
                 },
                 shape = MenuDefaults.itemShape(0, itemCount).shape
               )
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.title_about)) },
                 onClick = {
-                  onItemClick()
-                  showMenu = false
                   onAboutClick()
+                  showMenu = false
                 },
                 shape = MenuDefaults.itemShape(1, itemCount).shape
               )
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.title_help)) },
                 onClick = {
-                  onItemClick()
-                  showMenu = false
                   onHelpClick()
+                  showMenu = false
                 },
                 shape = MenuDefaults.itemShape(2, itemCount).shape
               )
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.action_send_feedback)) },
                 onClick = {
-                  onItemClick()
-                  showMenu = false
                   onFeedbackClick()
+                  showMenu = false
                 },
                 shape = MenuDefaults.itemShape(3, itemCount).shape
               )
@@ -329,15 +334,15 @@ fun MainContent(
         .consumeWindowInsets(padding)
         .padding(padding),
     ) {
-      CompositionLocalProvider(LocalTackDimens provides dimens) {
+      CompositionLocalProvider(LocalDimens provides dimens) {
         when (layoutStrategy) {
           MainLayoutStrategy.CompactPortrait -> {
             CompactPortraitContent(
               settings = settings,
               metronomeState = metronomeState,
-              onItemClick = onItemClick,
               onOptionsClick = onOptionsClick,
-              onBeatModeClick = onSettingsClick
+              onPlayStopChange = onPlayStopChange,
+              onBeatModeClick = onBeatModeClick
             )
           }
 
@@ -362,8 +367,9 @@ fun MainContent(
 private fun CompactPortraitContent(
   settings: AppSettings,
   metronomeState: MetronomeState,
-  onItemClick: () -> Unit,
+  // main controls
   onOptionsClick: () -> Unit,
+  onPlayStopChange: (Boolean) -> Unit,
   onBeatModeClick: () -> Unit,
 ) {
   ConstraintLayout(modifier = Modifier.fillMaxSize()) {
@@ -372,10 +378,9 @@ private fun CompactPortraitContent(
     MainControls(
       settings = settings,
       metronomeState = metronomeState,
-      onItemClick = onItemClick,
       onOptionsClick = onOptionsClick,
-      onPlayStopClick = {},
-      onBeatModeClick = {},
+      onPlayStopChange = onPlayStopChange,
+      onBeatModeClick = onBeatModeClick,
       modifier = Modifier.constrainAs(mainControls) {
         bottom.linkTo(parent.bottom)
         start.linkTo(parent.start)
