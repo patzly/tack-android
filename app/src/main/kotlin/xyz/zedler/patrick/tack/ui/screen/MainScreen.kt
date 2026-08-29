@@ -20,11 +20,16 @@
 package xyz.zedler.patrick.tack.ui.screen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -33,11 +38,37 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.DropdownMenuGroup
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.DropdownMenuPopup
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconToggleButton
+import androidx.compose.material3.IconToggleButtonShapes
+import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorPosition
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
@@ -50,17 +81,32 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.core.model.AppSettings
+import xyz.zedler.patrick.tack.core.model.MetronomeState
+import xyz.zedler.patrick.tack.ui.component.AnimatedIcon
+import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
+import xyz.zedler.patrick.tack.ui.dialog.HelpDialog
 import xyz.zedler.patrick.tack.ui.dialog.OptionsContent
 import xyz.zedler.patrick.tack.ui.dialog.OptionsDialog
+import xyz.zedler.patrick.tack.ui.dialog.UnlockDialog
 import xyz.zedler.patrick.tack.ui.navigation.Route
 import xyz.zedler.patrick.tack.ui.theme.LocalTackDimens
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.theme.rememberTackDimens
+import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -69,40 +115,81 @@ fun MainScreen(
   viewModel: MainViewModel,
   windowSizeClass: WindowSizeClass
 ) {
+  val haptic = LocalHaptic.current
+
+  val settings by viewModel.settings.collectAsStateWithLifecycle()
+  val unlockState by viewModel.unlockState.collectAsStateWithLifecycle()
+
+  var showUnlockDialog by remember { mutableStateOf(false) }
+  var showHelpDialog by remember { mutableStateOf(false) }
+  var showFeedbackDialog by remember { mutableStateOf(false) }
   var showOptionsDialog by remember { mutableStateOf(false) }
 
-  if (showOptionsDialog) {
-    OptionsDialog(
-      onDismissRequest = { showOptionsDialog = false }
+  if (showUnlockDialog) {
+    UnlockDialog(onDismissRequest = { showUnlockDialog = false })
+  }
+
+  if (showHelpDialog) {
+    HelpDialog(onDismissRequest = { showHelpDialog = false })
+  }
+
+  if (showFeedbackDialog) {
+    FeedbackDialog(
+      checkUnlockKey = settings.checkUnlockKey,
+      isKeyInstalled = unlockState.isKeyInstalled,
+      isPlayStoreInstalled = unlockState.isPlayStoreInstalled,
+      onDismissRequest = { showFeedbackDialog = false },
+      onSupport = { showUnlockDialog = true }
     )
+  }
+
+  if (showOptionsDialog) {
+    OptionsDialog(onDismissRequest = { showOptionsDialog = false })
   }
 
   MainContent(
     windowSizeClass = windowSizeClass,
+    onItemClick = {
+      haptic.click()
+    },
+    onSupportClick = {
+      showUnlockDialog = true
+    },
     onSettingsClick = {
       viewModel.navigateTo(Route.Settings)
     },
+    onAboutClick = {
+      viewModel.navigateTo(Route.About)
+    },
+    onHelpClick = {
+      showHelpDialog = true
+    },
+    onFeedbackClick = {
+      showFeedbackDialog = true
+    },
     onOptionsClick = {
       showOptionsDialog = true
-      viewModel.navigateTo(Route.Settings)
     }
   )
 }
 
-private enum class MainLayoutStrategy {
-  CompactPortrait,
-  CompactLandscape,
-  MediumPortrait,
-  DualPaneLandscape
-}
-
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+@OptIn(
+  ExperimentalMaterial3WindowSizeClassApi::class,
+  ExperimentalMaterial3Api::class
+)
 @Composable
 fun MainContent(
+  settings: AppSettings = AppSettings(),
+  metronomeState: MetronomeState = MetronomeState(),
   windowSizeClass: WindowSizeClass = WindowSizeClass.calculateFromSize(
     DpSize(412.dp, 924.dp)
   ),
+  onItemClick: () -> Unit = {},
+  onSupportClick: () -> Unit = {},
   onSettingsClick: () -> Unit = {},
+  onAboutClick: () -> Unit = {},
+  onHelpClick: () -> Unit = {},
+  onFeedbackClick: () -> Unit = {},
   onOptionsClick: () -> Unit = {}
 ) {
   val dimens = rememberTackDimens(windowSizeClass)
@@ -114,7 +201,7 @@ fun MainContent(
       }
 
       windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded -> {
-        MainLayoutStrategy.DualPaneLandscape
+        MainLayoutStrategy.ExpandedLandscape
       }
 
       windowSizeClass.widthSizeClass == WindowWidthSizeClass.Medium -> {
@@ -127,177 +214,416 @@ fun MainContent(
     }
   }
 
-  CompositionLocalProvider(LocalTackDimens provides dimens) {
-    when (layoutStrategy) {
-      MainLayoutStrategy.CompactPortrait -> {
-        CompactPortraitLayout(
-          onSettingsClick = onSettingsClick,
-          onOptionsClick = onOptionsClick
-        )
-      }
+  val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-      MainLayoutStrategy.CompactLandscape -> {
-        CompactLandscapeLayout(onOptionsClick = onOptionsClick)
-      }
+  Scaffold(
+    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    topBar = {
+      CenterAlignedTopAppBar(
+        title = {
+          Text(
+            stringResource(R.string.app_name),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+          )
+        },
+        navigationIcon = {
+          TooltipBox(
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+              TooltipAnchorPosition.Below
+            ),
+            tooltip = {
+              PlainTooltip {
+                Text(stringResource(R.string.app_name))
+              }
+            },
+            state = rememberTooltipState(),
+          ) {
+            Icon(
+              painter = painterResource(R.drawable.ic_rounded_star),
+              contentDescription = stringResource(R.string.app_name),
+              tint = MaterialTheme.colorScheme.onSurface
+            )
+          }
+        },
+        actions = {
+          var showMenu by remember { mutableStateOf(false) }
 
-      MainLayoutStrategy.MediumPortrait -> {
-        MediumPortraitLayout(onOptionsClick = onOptionsClick)
-      }
+          TooltipBox(
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+              TooltipAnchorPosition.Below
+            ),
+            tooltip = {
+              PlainTooltip {
+                Text(stringResource(R.string.action_more))
+              }
+            },
+            state = rememberTooltipState(),
+          ) {
+            FilledIconButton(
+              onClick = {
+                onItemClick()
+                showMenu = true
+              },
+              modifier =
+                Modifier
+                  .minimumInteractiveComponentSize()
+                  .size(
+                    IconButtonDefaults.smallContainerSize(
+                      IconButtonDefaults.IconButtonWidthOption.Narrow
+                    )
+                  ),
+              colors = IconButtonDefaults.iconButtonColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                contentColor = MaterialTheme.colorScheme.onSurface
+              ),
+              shapes = IconButtonDefaults.shapes()
+            ) {
+              Icon(
+                painter = painterResource(R.drawable.ic_rounded_more_vert),
+                contentDescription = stringResource(R.string.action_more)
+              )
+            }
+          }
 
-      MainLayoutStrategy.DualPaneLandscape -> {
-        DualPaneLandscapeLayout()
-      }
-    }
-  }
-}
+          DropdownMenuPopup(
+            expanded = showMenu,
+            onDismissRequest = { showMenu = false },
+            popupPositionProvider = MenuDefaults.rememberDropdownMenuPopupPositionProvider(
+              MenuAnchorPosition.Below,
+              offset = DpOffset(x = (-8).dp, 0.dp)
+            )
+          ) {
+            DropdownMenuGroup(
+              shapes = MenuDefaults.groupShape(0, 1),
+            ) {
+              val itemCount = 4
 
-@Composable
-private fun CompactPortraitLayout(
-  onSettingsClick: () -> Unit,
-  onOptionsClick: () -> Unit
-) {
-  val dimens = LocalTackDimens.current
-  Column(
-    modifier = Modifier
-      .fillMaxSize()
-      .statusBarsPadding()
-      .navigationBarsPadding()
-      .padding(dimens.paddingContent),
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.SpaceBetween
-  ) {
-    Text("Compact Portrait", style = MaterialTheme.typography.titleMedium)
-    MetronomeCoreUI(size = dimens.dialSize)
-    Button(
-      onClick = onOptionsClick,
-      modifier = Modifier.height(dimens.controlButtonSize)
-    ) {
-      Icon(
-        painter = painterResource(R.drawable.ic_rounded_upload),
-        contentDescription = "Options"
+              DropdownMenuItem(
+                text = { Text(stringResource(R.string.title_settings)) },
+                onClick = {
+                  onItemClick()
+                  showMenu = false
+                  onSettingsClick()
+                },
+                shape = MenuDefaults.itemShape(0, itemCount).shape
+              )
+              DropdownMenuItem(
+                text = { Text(stringResource(R.string.title_about)) },
+                onClick = {
+                  onItemClick()
+                  showMenu = false
+                  onAboutClick()
+                },
+                shape = MenuDefaults.itemShape(1, itemCount).shape
+              )
+              DropdownMenuItem(
+                text = { Text(stringResource(R.string.title_help)) },
+                onClick = {
+                  onItemClick()
+                  showMenu = false
+                  onHelpClick()
+                },
+                shape = MenuDefaults.itemShape(2, itemCount).shape
+              )
+              DropdownMenuItem(
+                text = { Text(stringResource(R.string.action_send_feedback)) },
+                onClick = {
+                  onItemClick()
+                  showMenu = false
+                  onFeedbackClick()
+                },
+                shape = MenuDefaults.itemShape(3, itemCount).shape
+              )
+            }
+          }
+        },
+        scrollBehavior = scrollBehavior
       )
-      Spacer(Modifier.width(8.dp))
-      Text("Options")
     }
-  }
-}
-
-@Composable
-private fun CompactLandscapeLayout(onOptionsClick: () -> Unit) {
-  val dimens = LocalTackDimens.current
-  Row(
-    modifier = Modifier
-      .fillMaxSize()
-      .statusBarsPadding()
-      .navigationBarsPadding()
-      .padding(dimens.paddingContent),
-    verticalAlignment = Alignment.CenterVertically,
-    horizontalArrangement = Arrangement.SpaceEvenly
-  ) {
-    Column(
-      horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.Center
-    ) {
-      Text("Compact Landscape", style = MaterialTheme.typography.titleSmall)
-      Spacer(Modifier.height(dimens.spacingLarge))
-      Button(
-        onClick = onOptionsClick,
-        modifier = Modifier.height(dimens.controlButtonSize)
-      ) {
-        Text("Options")
-      }
-    }
-    MetronomeCoreUI(size = dimens.dialSize)
-  }
-}
-
-@Composable
-private fun MediumPortraitLayout(onOptionsClick: () -> Unit) {
-  val dimens = LocalTackDimens.current
-  Column(
-    modifier = Modifier
-      .fillMaxSize()
-      .statusBarsPadding()
-      .navigationBarsPadding()
-      .padding(dimens.paddingContent),
-    horizontalAlignment = Alignment.CenterHorizontally,
-    verticalArrangement = Arrangement.SpaceEvenly
-  ) {
-    Text("Medium Portrait (Scaled)", style = MaterialTheme.typography.headlineMedium)
-    MetronomeCoreUI(size = dimens.dialSize)
-    Button(
-      onClick = onOptionsClick,
-      modifier = Modifier.height(dimens.controlButtonSize)
-    ) {
-      Icon(
-        painter = painterResource(R.drawable.ic_rounded_upload),
-        contentDescription = "Options"
-      )
-      Spacer(Modifier.width(8.dp))
-      Text("Options", style = MaterialTheme.typography.titleMedium)
-    }
-  }
-}
-
-@Composable
-private fun DualPaneLandscapeLayout() {
-  val dimens = LocalTackDimens.current
-  Row(
-    modifier = Modifier
-      .fillMaxSize()
-      .statusBarsPadding()
-      .navigationBarsPadding()
-  ) {
-    Surface(
-      modifier = Modifier
-        .weight(1f)
-        .fillMaxHeight(),
-      color = MaterialTheme.colorScheme.surfaceContainer
-    ) {
-      Column(
-        modifier = Modifier
-          .fillMaxSize()
-          .padding(dimens.paddingContent)
-      ) {
-        OptionsContent()
-      }
-    }
-
+  ) { padding ->
     Box(
       modifier = Modifier
-        .weight(1f)
-        .fillMaxHeight()
-        .padding(dimens.paddingContent),
-      contentAlignment = Alignment.Center
+        .fillMaxSize()
+        .consumeWindowInsets(padding)
+        .padding(padding),
     ) {
-      Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-      ) {
-        Text("Metronome", style = MaterialTheme.typography.headlineMedium)
-        Spacer(Modifier.height(dimens.spacingLarge))
-        MetronomeCoreUI(size = dimens.dialSize)
+      CompositionLocalProvider(LocalTackDimens provides dimens) {
+        when (layoutStrategy) {
+          MainLayoutStrategy.CompactPortrait -> {
+            CompactPortraitContent(
+              settings = settings,
+              metronomeState = metronomeState,
+              onItemClick = onItemClick,
+              onOptionsClick = onOptionsClick,
+              onBeatModeClick = onSettingsClick
+            )
+          }
+
+          MainLayoutStrategy.CompactLandscape -> {
+            CompactLandscapeContent()
+          }
+
+          MainLayoutStrategy.MediumPortrait -> {
+            MediumPortraitContent()
+          }
+
+          MainLayoutStrategy.ExpandedLandscape -> {
+            ExpandedLandscapeContent()
+          }
+        }
       }
     }
   }
 }
 
 @Composable
-fun MetronomeCoreUI(size: androidx.compose.ui.unit.Dp) {
-  Box(
-    modifier = Modifier
-      .size(size)
-      .background(
-        MaterialTheme.colorScheme.primaryContainer,
-        shape = MaterialTheme.shapes.extraLarge
-      ),
-    contentAlignment = Alignment.Center
-  ) {
-    Text(
-      text = "Dial\n${size.value.toInt()}dp",
-      color = MaterialTheme.colorScheme.onPrimaryContainer
+private fun CompactPortraitContent(
+  settings: AppSettings,
+  metronomeState: MetronomeState,
+  onItemClick: () -> Unit,
+  onOptionsClick: () -> Unit,
+  onBeatModeClick: () -> Unit,
+) {
+  ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+    val (mainControls) = createRefs()
+
+    MainControls(
+      settings = settings,
+      metronomeState = metronomeState,
+      onItemClick = onItemClick,
+      onOptionsClick = onOptionsClick,
+      onPlayStopClick = {},
+      onBeatModeClick = {},
+      modifier = Modifier.constrainAs(mainControls) {
+        bottom.linkTo(parent.bottom)
+        start.linkTo(parent.start)
+        end.linkTo(parent.end)
+      }
     )
   }
+}
+
+@Composable
+private fun CompactLandscapeContent() {
+  // TODO
+}
+
+@Composable
+private fun MediumPortraitContent() {
+  // TODO
+}
+
+@Composable
+private fun ExpandedLandscapeContent() {
+  // TODO
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MainControls(
+  settings: AppSettings,
+  metronomeState: MetronomeState,
+  onItemClick: () -> Unit,
+  onOptionsClick: () -> Unit,
+  onPlayStopClick: () -> Unit,
+  onBeatModeClick: () -> Unit,
+  modifier: Modifier
+) {
+  val dimens = LocalTackDimens.current
+
+  val interactionSources = remember { List(3) { MutableInteractionSource() } }
+
+  ButtonGroup(
+    overflowIndicator = { menuState ->
+      val contentDescription = stringResource(R.string.action_more)
+
+      TooltipBox(
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+          TooltipAnchorPosition.Above
+        ),
+        tooltip = {
+          PlainTooltip {
+            Text(contentDescription)
+          }
+        },
+        state = rememberTooltipState(),
+      ) {
+        FilledIconButton(
+          onClick = {
+            if (menuState.isShowing) {
+              menuState.dismiss()
+            } else {
+              menuState.show()
+            }
+          },
+          modifier =
+            Modifier
+              .minimumInteractiveComponentSize()
+              .size(IconButtonDefaults.smallContainerSize()),
+          colors = IconButtonDefaults.filledTonalIconButtonColors(),
+          shapes = IconButtonDefaults.shapes()
+        ) {
+          Icon(
+            painter = painterResource(R.drawable.ic_rounded_more_vert),
+            contentDescription = contentDescription
+          )
+        }
+      }
+    },
+    horizontalArrangement = Arrangement.spacedBy(8.dp),
+    modifier = modifier.padding(bottom = dimens.mainControlsPaddingBottom)
+  ) {
+    customItem(
+      buttonGroupContent = {
+        val contentPadding = ButtonDefaults.TextButtonContentPadding
+        val layoutDirection = LocalLayoutDirection.current
+
+        var optionsIconTrigger by remember { mutableStateOf(false) }
+
+        FilledTonalIconButton(
+          onClick = {
+            onItemClick()
+            onOptionsClick()
+            optionsIconTrigger = !optionsIconTrigger
+          },
+          shape = IconButtonDefaults.largeRoundShape,
+          interactionSource = interactionSources[0],
+          modifier = Modifier
+            .minimumInteractiveComponentSize()
+            .size(
+              IconButtonDefaults.largeContainerSize(
+                IconButtonDefaults.IconButtonWidthOption.Narrow
+              )
+            )
+            .animateWidth(
+              interactionSource = interactionSources[0],
+              compressionLimit = contentPadding.calculateStartPadding(layoutDirection)
+            ),
+        ) {
+          TooltipBox(
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+              TooltipAnchorPosition.Above
+            ),
+            tooltip = {
+              PlainTooltip {
+                Text(stringResource(R.string.title_options))
+              }
+            },
+            state = rememberTooltipState(),
+            modifier = Modifier.fillMaxSize()
+          ) {
+            Box(
+              modifier = Modifier.fillMaxSize(),
+              contentAlignment = Alignment.Center
+            ) {
+              AnimatedIcon(
+                resId = R.drawable.ic_rounded_tune_anim,
+                trigger = optionsIconTrigger,
+                animated = !settings.reduceAnim,
+                description = stringResource(R.string.title_options),
+                modifier = Modifier.size(IconButtonDefaults.largeIconSize)
+              )
+            }
+          }
+        }
+      },
+      menuContent = {
+        DropdownMenuItem(
+          text = { Text(stringResource(R.string.title_options)) },
+          onClick = onOptionsClick
+        )
+      }
+    )
+
+    customItem(
+      buttonGroupContent = {
+        val contentPadding = ButtonDefaults.TextButtonContentPadding
+        val layoutDirection = LocalLayoutDirection.current
+
+        IconToggleButton(
+          checked = false,
+          onCheckedChange = {},
+          shapes = IconButtonDefaults.toggleableShapes(),
+          colors = IconButtonDefaults.iconToggleButtonColors(
+            containerColor = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            checkedContainerColor = MaterialTheme.colorScheme.tertiary,
+            checkedContentColor = MaterialTheme.colorScheme.onTertiary,
+          ),
+          interactionSource = interactionSources[1],
+          modifier =
+            Modifier
+              .minimumInteractiveComponentSize()
+              .size(
+                IconButtonDefaults.largeContainerSize(
+                  IconButtonDefaults.IconButtonWidthOption.Wide
+                )
+              )
+              .animateWidth(
+                interactionSource = interactionSources[1],
+                compressionLimit = contentPadding.calculateStartPadding(layoutDirection)
+              ),
+        ) {
+          Icon(
+            painter = painterResource(R.drawable.ic_rounded_play_arrow),
+            contentDescription = null,
+            modifier = Modifier.size(IconButtonDefaults.largeIconSize)
+          )
+        }
+      },
+      menuContent = {
+        DropdownMenuItem(
+          text = { Text(stringResource(R.string.title_options)) },
+          onClick = onOptionsClick
+        )
+      }
+    )
+
+    customItem(
+      buttonGroupContent = {
+        val contentPadding = ButtonDefaults.TextButtonContentPadding
+        val layoutDirection = LocalLayoutDirection.current
+
+        FilledTonalIconButton(
+          onClick = onOptionsClick,
+          shape = IconButtonDefaults.largeRoundShape,
+          interactionSource = interactionSources[2],
+          modifier =
+            Modifier
+              .minimumInteractiveComponentSize()
+              .size(
+                IconButtonDefaults.largeContainerSize(
+                  IconButtonDefaults.IconButtonWidthOption.Narrow
+                )
+              )
+              .animateWidth(
+                interactionSource = interactionSources[2],
+                compressionLimit = contentPadding.calculateStartPadding(layoutDirection)
+              ),
+        ) {
+          Icon(
+            painter = painterResource(R.drawable.ic_rounded_more_vert),
+            contentDescription = null,
+            modifier = Modifier.size(IconButtonDefaults.largeIconSize)
+          )
+        }
+      },
+      menuContent = {
+        DropdownMenuItem(
+          text = { Text(stringResource(R.string.title_options)) },
+          onClick = onOptionsClick
+        )
+      }
+    )
+  }
+}
+
+private enum class MainLayoutStrategy {
+  CompactPortrait,
+  CompactLandscape,
+  MediumPortrait,
+  ExpandedLandscape
 }
 
 @Preview(showBackground = true)

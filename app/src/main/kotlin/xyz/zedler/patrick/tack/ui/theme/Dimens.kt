@@ -29,43 +29,22 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 data class TackDimens(
-  val dialSize: Dp,
-  val paddingContent: Dp,
-  val controlButtonSize: Dp,
-  val spacingLarge: Dp
+  val mainControlsPaddingBottom: Dp = 16.dp
 )
 
-// 1. values/dimens.xml (Compact Portrait / Phone)
-val CompactPortraitDimens = TackDimens(
-  dialSize = 240.dp,
-  paddingContent = 16.dp,
-  controlButtonSize = 56.dp,
-  spacingLarge = 20.dp
-)
+// phone
+val CompactPortraitDimens = TackDimens()
 
-// 2. values-land/dimens.xml (Compact Height / Phone Landscape)
-val CompactLandscapeDimens = TackDimens(
-  dialSize = 180.dp,
-  paddingContent = 12.dp,
-  controlButtonSize = 48.dp,
-  spacingLarge = 12.dp
-)
+// phone landscape
+val CompactLandscapeDimens = TackDimens()
 
-// 3. values-sw600dp/dimens.xml (Medium Width / Tablet Portrait)
+// tablet portrait
 val MediumPortraitDimens = TackDimens(
-  dialSize = 380.dp,
-  paddingContent = 32.dp,
-  controlButtonSize = 72.dp,
-  spacingLarge = 40.dp
+  mainControlsPaddingBottom = 56.dp
 )
 
-// 4. values-sw600dp-land/dimens.xml (Expanded Width / Tablet Landscape)
-val ExpandedLandscapeDimens = TackDimens(
-  dialSize = 320.dp,
-  paddingContent = 24.dp,
-  controlButtonSize = 64.dp,
-  spacingLarge = 28.dp
-)
+// tablet landscape
+val ExpandedLandscapeDimens = TackDimens()
 
 val LocalTackDimens = compositionLocalOf { CompactPortraitDimens }
 
@@ -73,19 +52,15 @@ val LocalTackDimens = compositionLocalOf { CompactPortraitDimens }
 fun rememberTackDimens(windowSizeClass: WindowSizeClass): TackDimens {
   return remember(windowSizeClass) {
     when {
-      // 1. Phone Landscape: Vertikal wenig Platz (< 480dp)
       windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact -> {
         CompactLandscapeDimens
       }
-      // 2. Tablet Landscape / Desktop: Breiter Screen (>= 840dp)
       windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded -> {
         ExpandedLandscapeDimens
       }
-      // 3. Tablet Portrait / Foldable aufgeklappt (600dp bis 839dp)
       windowSizeClass.widthSizeClass == WindowWidthSizeClass.Medium -> {
         MediumPortraitDimens
       }
-      // 4. Phone Portrait (Default: < 600dp Breite, >= 480dp Höhe)
       else -> {
         CompactPortraitDimens
       }

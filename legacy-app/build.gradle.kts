@@ -30,7 +30,7 @@ android {
 
   defaultConfig {
     applicationId = "xyz.zedler.patrick.tack"
-    minSdk = 23
+    minSdk = 24
     targetSdk = 37
     versionCode = 420 // last number is 0 for app release
     versionName = "6.3.2"
