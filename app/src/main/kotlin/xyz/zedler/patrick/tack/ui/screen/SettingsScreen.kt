@@ -152,7 +152,7 @@ fun SettingsScreen(viewModel: MainViewModel) {
 
   if (showFeedbackDialog) {
     FeedbackDialog(
-      checkUnlockKey = settings.checkUnlockKey,
+      checkUnlockKey = unlockState.checkUnlockKey,
       isKeyInstalled = unlockState.isKeyInstalled,
       isPlayStoreInstalled = unlockState.isPlayStoreInstalled,
       onSupport = { showUnlockDialog = true },

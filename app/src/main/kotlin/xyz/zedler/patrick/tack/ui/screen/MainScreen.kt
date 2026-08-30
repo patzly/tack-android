@@ -138,7 +138,7 @@ fun MainScreen(
 
   if (showFeedbackDialog) {
     FeedbackDialog(
-      checkUnlockKey = settings.checkUnlockKey,
+      checkUnlockKey = unlockState.checkUnlockKey,
       isKeyInstalled = unlockState.isKeyInstalled,
       isPlayStoreInstalled = unlockState.isPlayStoreInstalled,
       onDismissRequest = { showFeedbackDialog = false },
@@ -207,7 +207,7 @@ fun MainScreen(
       haptic.click()
       showFeedbackDialog = true
     },
-    // main controls
+    // bottom controls
     onOptionsClick = {
       haptic.click()
       showOptionsDialog = true
@@ -250,7 +250,7 @@ fun MainContent(
   onAboutClick: () -> Unit = {},
   onHelpClick: () -> Unit = {},
   onFeedbackClick: () -> Unit = {},
-  // main controls
+  // bottom controls
   onOptionsClick: () -> Unit = {},
   onPlayStopChange: (Boolean) -> Unit = {},
   onBeatModeClick: () -> Unit = {}
@@ -440,7 +440,7 @@ fun MainContent(
 private fun CompactPortraitContent(
   settings: AppSettings,
   metronomeState: MetronomeState,
-  // main controls
+  // bottom controls
   onOptionsClick: () -> Unit,
   onPlayStopChange: (Boolean) -> Unit,
   onBeatModeClick: () -> Unit,

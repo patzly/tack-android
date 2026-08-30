@@ -51,6 +51,7 @@ import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -96,13 +97,15 @@ fun AboutScreen(viewModel: MainViewModel) {
   val settings by viewModel.settings.collectAsStateWithLifecycle()
   val unlockState by viewModel.unlockState.collectAsStateWithLifecycle()
 
+  var keyLongClickCount by rememberSaveable { mutableIntStateOf(0) }
+
   var showFeedbackDialog by rememberSaveable { mutableStateOf(false) }
   var showHelpDialog by rememberSaveable { mutableStateOf(false) }
   var showUnlockDialog by rememberSaveable { mutableStateOf(false) }
 
   if (showFeedbackDialog) {
     FeedbackDialog(
-      checkUnlockKey = settings.checkUnlockKey,
+      checkUnlockKey = unlockState.checkUnlockKey,
       isKeyInstalled = unlockState.isKeyInstalled,
       isPlayStoreInstalled = unlockState.isPlayStoreInstalled,
       onDismissRequest = { showFeedbackDialog = false },
@@ -130,7 +133,7 @@ fun AboutScreen(viewModel: MainViewModel) {
     versionName = BuildConfig.VERSION_NAME,
     isKeyInstalled = unlockState.isKeyInstalled,
     isPlayStoreInstalled = unlockState.isPlayStoreInstalled,
-    checkUnlockKey = settings.checkUnlockKey,
+    checkUnlockKey = unlockState.checkUnlockKey,
     onBackClick = {
       haptic.click()
       viewModel.popBackstack()
@@ -177,7 +180,15 @@ fun AboutScreen(viewModel: MainViewModel) {
         showUnlockDialog = true
       }
     },
-    onKeyLongClick = {},
+    onKeyLongClick = {
+      if (!unlockState.isKeyInstalled && unlockState.checkUnlockKey) {
+        keyLongClickCount++
+        if (keyLongClickCount >= 10) {
+          viewModel.updateCheckUnlockKey(false)
+          viewModel.refreshUnlockState()
+        }
+      }
+    },
     onGithubClick = {
       haptic.click()
       context.startActivity(Intent(Intent.ACTION_VIEW, appGithub.toUri()))

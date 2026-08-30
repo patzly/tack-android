@@ -50,7 +50,6 @@ data class AppSettings(
   val bigTimeText: Boolean = false,
   val bigLogo: Boolean = false,
   // Misc
-  val checkUnlockKey: Boolean = true,
   val notificationPermissionDenied: Boolean = false
 )
 
