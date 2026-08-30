@@ -34,17 +34,17 @@ import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UnlockDialog(
-  onDismissRequest: () -> Unit,
-  onOpen: () -> Unit
+fun NotificationPermissionDialog(
+  onNext: () -> Unit,
+  onDismissRequest: () -> Unit
 ) {
   val haptic = LocalHaptic.current
 
   ScrollableAlertDialog(onDismissRequest = onDismissRequest) {
-    UnlockDialogContent(
-      onOpenClick = {
+    NotificationPermissionContent(
+      onNextClick = {
         haptic.click()
-        onOpen()
+        onNext()
         onDismissRequest()
       },
       onCancelClick = {
@@ -57,20 +57,20 @@ fun UnlockDialog(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun UnlockDialogContent(
-  onOpenClick: () -> Unit = {},
+private fun NotificationPermissionContent(
+  onNextClick: () -> Unit = {},
   onCancelClick: () -> Unit = {}
 ) {
   ScrollableAlertDialogContent(
     title = {
-      Text(stringResource(R.string.msg_unlock))
+      Text(stringResource(R.string.msg_notification_permission))
     },
     confirmButton = {
       TextButton(
-        onClick = onOpenClick,
+        onClick = onNextClick,
         shapes = ButtonDefaults.shapes()
       ) {
-        Text(stringResource(R.string.action_open_play_store))
+        Text(stringResource(R.string.action_next))
       }
     },
     dismissButton = {
@@ -82,14 +82,14 @@ private fun UnlockDialogContent(
       }
     }
   ) {
-    Text(stringResource(R.string.msg_unlock_description))
+    Text(stringResource(R.string.msg_notification_permission_description))
   }
 }
 
 @Preview
 @Composable
-fun UnlockDialogPreview() {
+fun NotificationPermissionDialogPreview() {
   TackTheme {
-    UnlockDialogContent()
+    NotificationPermissionContent()
   }
 }

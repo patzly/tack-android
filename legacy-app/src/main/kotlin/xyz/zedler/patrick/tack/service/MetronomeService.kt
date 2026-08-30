@@ -31,6 +31,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
+import androidx.core.content.edit
 import xyz.zedler.patrick.tack.Constants
 import xyz.zedler.patrick.tack.Constants.ACTION
 import xyz.zedler.patrick.tack.Constants.DEF
@@ -42,7 +43,6 @@ import xyz.zedler.patrick.tack.metronome.MetronomeEngine
 import xyz.zedler.patrick.tack.metronome.MetronomeEngine.MetronomeListenerAdapter
 import xyz.zedler.patrick.tack.util.NotificationUtil
 import xyz.zedler.patrick.tack.util.PrefsUtil
-import androidx.core.content.edit
 
 class MetronomeService : Service() {
 
@@ -217,12 +217,7 @@ class MetronomeService : Service() {
   }
 
   private fun stopForeground() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      stopForeground(STOP_FOREGROUND_REMOVE)
-    } else {
-      @Suppress("DEPRECATION")
-      stopForeground(true)
-    }
+    stopForeground(STOP_FOREGROUND_REMOVE)
     configChange = false
   }
 

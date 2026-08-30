@@ -36,7 +36,6 @@ class TackApplication : Application() {
   val songRepository by lazy { SongRepository(database.songDao()) }
   val backupRepository by lazy { BackupRepository(this, songRepository) }
 
-
   val hapticProvider by lazy { HapticProviderImpl(this) }
   val unlockProvider by lazy { UnlockProviderImpl(this) }
 

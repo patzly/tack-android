@@ -45,12 +45,13 @@ data class AppSettings(
   // UI
   val showElapsed: Boolean = false,
   val resetTimerOnStop: Boolean = false,
-  val permNotification: Boolean = false,
+  val permanentNotification: Boolean = false,
   val activeBeat: Boolean = true,
   val bigTimeText: Boolean = false,
   val bigLogo: Boolean = false,
   // Misc
-  val checkUnlockKey: Boolean = true
+  val checkUnlockKey: Boolean = true,
+  val notificationPermissionDenied: Boolean = false
 )
 
 enum class AppColor(val key: String) {

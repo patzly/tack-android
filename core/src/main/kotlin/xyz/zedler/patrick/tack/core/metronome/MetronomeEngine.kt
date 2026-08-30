@@ -22,13 +22,20 @@ package xyz.zedler.patrick.tack.core.metronome
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
+import android.util.Log
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import xyz.zedler.patrick.tack.core.audio.AudioProvider
+import xyz.zedler.patrick.tack.core.database.relations.SongWithParts
 import xyz.zedler.patrick.tack.core.hardware.FlashlightProvider
 import xyz.zedler.patrick.tack.core.hardware.HapticProvider
+import xyz.zedler.patrick.tack.core.model.AppSettings
 import xyz.zedler.patrick.tack.core.model.BeatMode
 import xyz.zedler.patrick.tack.core.model.FlashStrength
 import xyz.zedler.patrick.tack.core.model.MetronomeConfig
@@ -40,6 +47,7 @@ import xyz.zedler.patrick.tack.core.model.TimingUnit
 import xyz.zedler.patrick.tack.core.util.Clock
 import xyz.zedler.patrick.tack.core.util.SystemClockImpl
 import java.util.Random
+import kotlin.math.roundToInt
 
 class MetronomeEngine(
   private val audioProvider: AudioProvider,
@@ -52,13 +60,29 @@ class MetronomeEngine(
   private val _state = MutableStateFlow(MetronomeState())
   val state: StateFlow<MetronomeState> = _state.asStateFlow()
 
+  private val _tickEvent = MutableSharedFlow<Tick>(
+    extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST
+  )
+  val tickEvent: SharedFlow<Tick> = _tickEvent.asSharedFlow()
+
+  private val _preTickEvent = MutableSharedFlow<Tick>(
+    extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST
+  )
+  val preTickEvent: SharedFlow<Tick> = _preTickEvent.asSharedFlow()
+
   private var config = MetronomeConfig()
+  private var appSettings = AppSettings()
   private val random = Random()
+
+  // song and part management
+  private var currentSong: SongWithParts? = null
+  private var ignoreTimerCallbacksTemp = false
+  private var tempPlaying = false
 
   private var tickThread: HandlerThread? = null
   private var tickHandler: Handler? = null
-
   private var callbackThread: HandlerThread? = null
+
   private var timerHandler: Handler? = null
   private var incrementalHandler: Handler? = null
   private var muteHandler: Handler? = null
@@ -69,17 +93,29 @@ class MetronomeEngine(
   private var tickIndex: Long = 0
   private var tickIndexPoly: Long = 0
 
-  private var countInStartTime: Long = 0
   private var timerStartTime: Long = 0
+  private var timerPreviousElapsed: Long = 0
   private var elapsedStartTime: Long = 0
   private var elapsedPrevious: Long = 0
 
   private var muteCountDown = 0
-  private var latency: Long = 0
-  private var beatMode: BeatMode = BeatMode.ALL
-  private var flashlightStrength: FlashStrength = FlashStrength.OFF
 
-  fun setConfig(newConfig: MetronomeConfig) {
+  // settings and config
+
+  fun updateSettings(settings: AppSettings) {
+    val oldSettings = appSettings
+    appSettings = settings
+
+    audioProvider.isMuted = settings.beatMode == BeatMode.VIBRATION
+    audioProvider.ignoreFocus = settings.ignoreFocus
+    updateHapticPossible()
+
+    if (oldSettings.showElapsed != settings.showElapsed) {
+      updateElapsedHandler(false)
+    }
+  }
+
+  fun applyConfig(newConfig: MetronomeConfig) {
     val oldConfig = config
     config = newConfig
     _state.update { it.copy(tempo = config.tempo) }
@@ -88,14 +124,15 @@ class MetronomeEngine(
       if (oldConfig.timerDuration != config.timerDuration
         || oldConfig.timerUnit != config.timerUnit
       ) {
-        updateTimerHandler(false)
+        updateTimerHandler(startAtFirstBeat = config.timerUnit == TimingUnit.BARS)
       }
       if (oldConfig.incrementalAmount != config.incrementalAmount
         || oldConfig.incrementalUnit != config.incrementalUnit
       ) {
         updateIncrementalHandler()
       }
-      if (oldConfig.mutePlay != config.mutePlay || oldConfig.muteMute != config.muteMute
+      if (oldConfig.mutePlay != config.mutePlay
+        || oldConfig.muteMute != config.muteMute
         || oldConfig.muteUnit != config.muteUnit
       ) {
         updateMuteHandler()
@@ -103,23 +140,60 @@ class MetronomeEngine(
     }
   }
 
-  fun setLatency(ms: Long) {
-    latency = ms
+  // songs and parts
+
+  fun setSong(song: SongWithParts?, partIndex: Int = 0, startPlaying: Boolean = false) {
+    currentSong = song
+    if (song != null) {
+      _state.update { it.copy(currentSongId = song.song.id) }
+      if (song.parts.isNotEmpty()) {
+        setPartIndex(partIndex, startPlaying)
+      }
+    } else {
+      _state.update { it.copy(currentSongId = null, currentPartIndex = 0) }
+    }
   }
 
-  fun setBeatMode(mode: BeatMode) {
-    beatMode = mode
-    audioProvider.isMuted = mode == BeatMode.VIBRATION
-    updateHapticPossible()
+  fun setPartIndex(index: Int, startPlaying: Boolean = false) {
+    val song = currentSong ?: return
+    if (song.parts.isEmpty()) return
+
+    val boundedIndex = index.coerceIn(0, song.parts.size - 1)
+    _state.update { it.copy(currentPartIndex = boundedIndex) }
+
+    val partConfig = song.parts[boundedIndex].toConfig()
+    val speed = song.song.speed
+    val effectiveTempo = (partConfig.tempo * (speed / 100.0)).roundToInt()
+      .coerceIn(MetronomeConstants.TEMPO_MIN, MetronomeConstants.TEMPO_MAX)
+
+    ignoreTimerCallbacksTemp = true
+    applyConfig(partConfig.copy(tempo = effectiveTempo))
+    ignoreTimerCallbacksTemp = false
+
+    if (state.value.isPlaying) {
+      restartInternal(resetTimer = true)
+    } else if (startPlaying) {
+      start()
+    } else if (appSettings.resetTimerOnStop) {
+      resetTimerState()
+    }
   }
 
-  fun setFlashlight(strength: FlashStrength) {
-    flashlightStrength = strength
+  private fun handlePartTransition() {
+    val song = currentSong
+    if (song != null && state.value.currentPartIndex < song.parts.size - 1) {
+      setPartIndex(state.value.currentPartIndex + 1, startPlaying = true)
+    } else if (song?.song?.isLooped == true) {
+      setPartIndex(0, startPlaying = true)
+    } else {
+      stop(resetTimer = true)
+    }
   }
+
+  // playback control
 
   fun start() {
     if (state.value.isPlaying) return
-
     resetHandlers()
 
     tickIndex = 0
@@ -128,21 +202,12 @@ class MetronomeEngine(
       it.copy(
         isPlaying = true,
         isCountingIn = config.isCountInActive,
-        isMuted = false,
-        timerProgress = 0f,
-        timerBarIndex = 0,
-        timerBeatIndex = 0,
-        timerSubIndex = 0
+        isMuted = false
       )
     }
     updateHapticPossible()
 
-    if (config.isMuteActive) {
-      muteCountDown = calculateMuteCount(false)
-    }
-
-    val now = clock.uptimeMillis()
-    countInStartTime = now
+    if (config.isMuteActive) muteCountDown = calculateMuteCount(false)
 
     if (config.isCountInActive) {
       timerHandler?.postDelayed({
@@ -156,18 +221,15 @@ class MetronomeEngine(
     startTicks()
   }
 
-  private fun startLifeCycleHandlers() {
-    val now = clock.uptimeMillis()
-    elapsedStartTime = now
-    timerStartTime = now
-    updateIncrementalHandler()
-    updateElapsedHandler()
-    updateTimerHandler(true)
-    updateMuteHandler()
-  }
-
-  fun stop() {
+  fun stop(resetTimer: Boolean = appSettings.resetTimerOnStop) {
     if (!state.value.isPlaying) return
+
+    if (resetTimer || isTimerFinished()) {
+      resetTimerState()
+    } else {
+      timerPreviousElapsed = (state.value.timerProgress * getTimerInterval()).toLong()
+    }
+    elapsedPrevious = state.value.elapsedTime
 
     _state.update { it.copy(isPlaying = false, isCountingIn = false) }
     updateHapticPossible()
@@ -183,14 +245,102 @@ class MetronomeEngine(
     flashlightProvider?.cleanup()
   }
 
+  fun savePlayingState() {
+    tempPlaying = state.value.isPlaying
+  }
+
+  fun restorePlayingState() {
+    if (tempPlaying) start() else stop(false)
+  }
+
+  fun resetTimerNow() {
+    if (config.isTimerActive) restartInternal(resetTimer = true)
+  }
+
+  fun resetElapsed() {
+    elapsedPrevious = 0
+    elapsedStartTime = clock.uptimeMillis()
+    _state.update { it.copy(elapsedTime = 0) }
+    updateElapsedHandler(true)
+  }
+
+  fun setUpLatencyCalibration() {
+    val calibrationConfig = MetronomeConfig(
+      tempo = 80, countIn = 0, incrementalAmount = 0, timerDuration = 0, mutePlay = 0
+    )
+    applyConfig(calibrationConfig)
+    updateSettings(appSettings.copy(beatMode = BeatMode.ALL))
+    audioProvider.isMuted = false
+    audioProvider.gain = 0
+    start()
+  }
+
   fun destroy() {
     stop()
     flashlightProvider?.cleanup()
   }
 
+  // internal state management
+
+  private fun restartInternal(resetTimer: Boolean) {
+    if (!state.value.isPlaying) return
+
+    if (resetTimer || isTimerFinished()) {
+      resetTimerState()
+    } else {
+      timerPreviousElapsed = (state.value.timerProgress * getTimerInterval()).toLong()
+    }
+    elapsedPrevious = state.value.elapsedTime
+
+    removeHandlerCallbacks()
+    resetHandlers()
+
+    val countInTickIndex = if (config.usePolyrhythm) {
+      (config.countIn * config.beatsCount).toLong()
+    } else {
+      (config.countIn * config.beatsCount * config.subdivisionsCount).toLong()
+    }
+
+    tickIndex = if (config.isCountInActive) countInTickIndex else 0L
+    tickIndexPoly = (config.countIn * config.subdivisionsCount).toLong()
+
+    _state.update { it.copy(isCountingIn = false, isMuted = false) }
+    if (config.isMuteActive) muteCountDown = calculateMuteCount(false)
+
+    startLifeCycleHandlers()
+    startTicks()
+  }
+
+  private fun resetTimerState() {
+    timerPreviousElapsed = 0L
+    _state.update {
+      it.copy(timerProgress = 0f, timerBarIndex = 0, timerBeatIndex = 0, timerSubIndex = 0)
+    }
+  }
+
+  private fun isTimerFinished(): Boolean {
+    return if (config.timerUnit == TimingUnit.BARS) {
+      state.value.timerBarIndex >= config.timerDuration - 1 &&
+          state.value.timerBeatIndex >= config.beatsCount - 1 &&
+          state.value.timerSubIndex >= config.subdivisionsCount - 1
+    } else {
+      state.value.timerProgress >= 1f
+    }
+  }
+
+  private fun startLifeCycleHandlers() {
+    val now = clock.uptimeMillis()
+    elapsedStartTime = now
+    timerStartTime = now
+    updateIncrementalHandler()
+    updateElapsedHandler(false)
+    updateTimerHandler(false)
+    updateMuteHandler()
+  }
+
   private fun updateHapticPossible() {
     _state.update {
-      it.copy(isHapticPossible = !state.value.isPlaying || beatMode == BeatMode.SOUND)
+      it.copy(isHapticPossible = !state.value.isPlaying || appSettings.beatMode == BeatMode.SOUND)
     }
   }
 
@@ -199,14 +349,12 @@ class MetronomeEngine(
     callbackThread?.quit()
 
     val tLooper = tickLooper ?: HandlerThread("metronome_ticks").also {
-      tickThread = it
-      it.start()
+      it.start(); tickThread = it
     }.looper
     tickHandler = Handler(tLooper)
 
     val cLooper = callbackLooper ?: HandlerThread("metronome_callbacks").also {
-      callbackThread = it
-      it.start()
+      it.start(); callbackThread = it
     }.looper
     timerHandler = Handler(cLooper)
     incrementalHandler = Handler(cLooper)
@@ -222,6 +370,8 @@ class MetronomeEngine(
     elapsedHandler?.removeCallbacksAndMessages(null)
   }
 
+  // ticks and rhythm
+
   private fun startTicks() {
     val now = clock.uptimeMillis()
     nextScheduleTime = now
@@ -232,8 +382,11 @@ class MetronomeEngine(
         if (!state.value.isPlaying) return
 
         val subdivisionPoly = (tickIndexPoly % config.subdivisionsCount).toInt() + 1
-        val isBeat = subdivisionPoly == 1
-        val type = if (isBeat) TickType.BEAT_SUB_MUTED else config.subdivisions[subdivisionPoly - 1]
+        val type = if (subdivisionPoly == 1) {
+          TickType.BEAT_SUB_MUTED
+        } else {
+          config.subdivisions[subdivisionPoly - 1]
+        }
 
         var muted = state.value.isMuted
         if (config.isMuteActive && config.muteUnit == TimingUnit.BEATS) {
@@ -245,8 +398,7 @@ class MetronomeEngine(
         )
 
         if (subdivisionPoly < config.subdivisionsCount) {
-          val barInterval = getInterval() * config.beatsCount
-          val step = barInterval / config.subdivisionsCount
+          val step = getInterval() * config.beatsCount / config.subdivisionsCount
           nextPolyScheduleTime += step
           tickHandler?.postAtTime(this, nextPolyScheduleTime)
         }
@@ -265,8 +417,7 @@ class MetronomeEngine(
           if (config.usePolyrhythm) tickIndex else tickIndex / config.subdivisionsCount
         val isBeat = config.usePolyrhythm || (tickIndex % config.subdivisionsCount) == 0L
         val isFirstBeat = isBeat && (beatIndex % config.beatsCount) == 0L
-        val barIndex = beatIndex / config.beatsCount
-        val isCountIn = barIndex < config.countIn
+        val isCountIn = (beatIndex / config.beatsCount) < config.countIn
 
         if (isFirstBeat && config.isMuteActive
           && config.muteUnit == TimingUnit.BARS && !isCountIn
@@ -275,26 +426,25 @@ class MetronomeEngine(
             muteCountDown--
           } else {
             _state.update { it.copy(isMuted = !it.isMuted) }
-            muteCountDown = (calculateMuteCount(state.value.isMuted) - 1)
-              .coerceAtLeast(0)
+            muteCountDown =
+              (calculateMuteCount(state.value.isMuted) - 1).coerceAtLeast(0)
           }
         }
 
         val beat = ((beatIndex % config.beatsCount).toInt() + 1)
         val subdivision =
           if (config.usePolyrhythm) 1 else (tickIndex % config.subdivisionsCount).toInt() + 1
-
         val type = if (config.usePolyrhythm) {
-          val bIndex = (tickIndex % config.beatsCount).toInt()
-          if (bIndex == 0 && config.isFirstSubdivisionMuted) TickType.BEAT_SUB_MUTED
-          else config.beats[bIndex]
+          val beatIndex = (tickIndex % config.beatsCount).toInt()
+          if (beatIndex == 0 && config.isFirstSubdivisionMuted) {
+            TickType.BEAT_SUB_MUTED
+          } else {
+            config.beats[beatIndex]
+          }
         } else {
           if (isBeat) {
-            if (config.isFirstSubdivisionMuted) TickType.BEAT_SUB_MUTED
-            else config.beats[beat - 1]
-          } else {
-            config.subdivisions[subdivision - 1]
-          }
+            if (config.isFirstSubdivisionMuted) TickType.BEAT_SUB_MUTED else config.beats[beat - 1]
+          } else config.subdivisions[subdivision - 1]
         }
 
         var muted = state.value.isMuted
@@ -303,8 +453,7 @@ class MetronomeEngine(
         }
 
         val tick = Tick(tickIndex, beat, subdivision, type, muted, false)
-
-        val scheduledTime = nextScheduleTime // Store current scheduled time
+        val scheduledTime = nextScheduleTime
 
         val currentInterval =
           if (config.usePolyrhythm) getInterval() else getInterval() / config.subdivisionsCount
@@ -315,10 +464,7 @@ class MetronomeEngine(
         }
 
         tickHandler?.postAtTime(this, nextScheduleTime)
-
-        if (tick.beat == 1 && config.usePolyrhythm) {
-          tickHandler?.post(tickRunnablePoly)
-        }
+        if (tick.beat == 1 && config.usePolyrhythm) tickHandler?.post(tickRunnablePoly)
 
         if (performTick(tick, scheduledTime)) {
           audioProvider.playTick(tick.type, tick.isMuted)
@@ -333,46 +479,40 @@ class MetronomeEngine(
 
   private fun performTick(tick: Tick, scheduledTime: Long): Boolean {
     val beatIndex = if (config.usePolyrhythm) tickIndex else tickIndex / config.subdivisionsCount
-    val barIndex = beatIndex / config.beatsCount
-    val barIndexNoCountIn = barIndex - config.countIn
-    val isCountIn = barIndex < config.countIn
+    val barIndexNoCountIn = (beatIndex / config.beatsCount) - config.countIn
+    val isCountIn = barIndexNoCountIn < 0
 
     val isBeat = tick.subdivision == 1
     val isFirstBeat = isBeat && (beatIndex % config.beatsCount) == 0L
 
     if (config.isTimerActive && config.timerUnit == TimingUnit.BARS && !isCountIn) {
-      val isFirstBeatInFirstBar = barIndexNoCountIn == 0L && isFirstBeat
-      if (barIndexNoCountIn > 0 || !isFirstBeatInFirstBar) {
+      if (barIndexNoCountIn > 0 || !isFirstBeat) {
         _state.update { s ->
           var newBar = s.timerBarIndex
           var newBeat = s.timerBeatIndex
           var newSub = s.timerSubIndex
 
           if (isFirstBeat) newBar++
-          if (isBeat) {
-            newBeat++
-            if (newBeat >= config.beatsCount) newBeat = 0
-          }
-          newSub++
-          if (newSub >= config.subdivisionsCount) newSub = 0
+          if (isBeat) newBeat = (newBeat + 1) % config.beatsCount
+          newSub = (newSub + 1) % config.subdivisionsCount
 
           val barInterval = getInterval() * config.beatsCount
           val subInterval = getInterval() / config.subdivisionsCount
           val progressInterval =
             newBar * barInterval + newBeat * getInterval() + newSub * subInterval
-          val progress = progressInterval / getTimerInterval().toFloat()
 
           s.copy(
             timerBarIndex = newBar,
             timerBeatIndex = newBeat,
             timerSubIndex = newSub,
-            timerProgress = progress.coerceIn(0f, 1f)
+            timerProgress = (progressInterval / getTimerInterval().toFloat()).coerceIn(0f, 1f)
           )
         }
       }
 
       if (state.value.timerBarIndex >= config.timerDuration) {
-        stop()
+        _state.update { it.copy(timerProgress = 1f) }
+        handlePartTransition()
         return false
       }
     }
@@ -381,35 +521,62 @@ class MetronomeEngine(
       && config.incrementalUnit == TimingUnit.BARS && !isCountIn
     ) {
       if (barIndexNoCountIn > 0 && barIndexNoCountIn % config.incrementalInterval == 0L) {
-        changeTempo(config.incrementalAmount)
+        val limit = config.incrementalLimit
+        val upperLimit = if (limit != 0) limit else MetronomeConstants.TEMPO_MAX
+        val lowerLimit = if (limit != 0) limit else MetronomeConstants.TEMPO_MIN
+
+        if (config.incrementalIncrease && config.tempo + config.incrementalAmount <= upperLimit) {
+          changeTempo(config.incrementalAmount)
+        } else if (!config.incrementalIncrease
+          && config.tempo - config.incrementalAmount >= lowerLimit
+        ) {
+          changeTempo(-config.incrementalAmount)
+        }
       }
     }
 
-    // Haptics and Flashlight with latency
+    tickHandler?.postAtTime(
+      {
+        _preTickEvent.tryEmit(tick)
+      }, scheduledTime + (appSettings.latency - MetronomeConstants.BEAT_ANIM_OFFSET)
+        .coerceAtLeast(0)
+    )
+
     tickHandler?.postAtTime({
-      if (beatMode != BeatMode.SOUND && !tick.isMuted) {
+      if (appSettings.beatMode != BeatMode.SOUND && !tick.isMuted) {
         when (tick.type) {
           TickType.STRONG -> hapticProvider?.heavyClick(false)
           TickType.SUB -> hapticProvider?.tick(false)
           else -> hapticProvider?.click(false)
         }
       }
-      if (flashlightStrength != FlashStrength.OFF && !tick.isMuted) {
-        val strength = if (flashlightStrength == FlashStrength.STRONG) 0.8f else 0.15f
+      if (appSettings.flashlight != FlashStrength.OFF && !tick.isMuted) {
+        val strength = if (appSettings.flashlight == FlashStrength.STRONG) 0.8f else 0.15f
         when (tick.type) {
           TickType.STRONG -> flashlightProvider?.flash(100, strength)
           TickType.SUB, TickType.MUTED, TickType.BEAT_SUB_MUTED -> {}
           else -> flashlightProvider?.flash(20, strength)
         }
       }
-    }, scheduledTime + latency)
+      _tickEvent.tryEmit(tick)
+    }, scheduledTime + appSettings.latency)
 
     return true
   }
 
   private fun performTickPoly(tick: Tick) {
+    tickHandler?.postAtTime(
+      {
+        _preTickEvent.tryEmit(tick)
+      },
+      nextPolyScheduleTime
+          + (appSettings.latency - MetronomeConstants.BEAT_ANIM_OFFSET).coerceAtLeast(
+        0
+      )
+    )
+
     tickHandler?.postAtTime({
-      var shouldVibrate = beatMode != BeatMode.SOUND && !tick.isMuted
+      var shouldVibrate = appSettings.beatMode != BeatMode.SOUND && !tick.isMuted
       if (shouldVibrate) {
         val product = (tick.subdivision - 1).toLong() * config.beatsCount
         if (product % config.subdivisionsCount == 0L) shouldVibrate = false
@@ -421,67 +588,94 @@ class MetronomeEngine(
           else -> hapticProvider?.click(true)
         }
       }
-    }, nextPolyScheduleTime + latency)
+      _tickEvent.tryEmit(tick)
+    }, nextPolyScheduleTime + appSettings.latency)
   }
 
+  // callbacks and automations
+
   private fun changeTempo(amount: Int) {
-    val newTempo = (config.tempo + if (config.incrementalIncrease) amount else -amount)
-      .coerceIn(MetronomeConstants.TEMPO_MIN, MetronomeConstants.TEMPO_MAX)
+    val newTempo =
+      (config.tempo + amount).coerceIn(MetronomeConstants.TEMPO_MIN, MetronomeConstants.TEMPO_MAX)
     if (newTempo != config.tempo) {
       config = config.copy(tempo = newTempo)
       _state.update { it.copy(tempo = newTempo) }
     }
   }
 
-  private fun updateTimerHandler(reset: Boolean) {
+  private fun updateTimerHandler(startAtFirstBeat: Boolean) {
     timerHandler?.removeCallbacksAndMessages(null)
-    if (!config.isTimerActive) return
+    if (!config.isTimerActive || ignoreTimerCallbacksTemp) return
+
+    if (isTimerFinished()) {
+      _state.update { it.copy(timerProgress = 0f) }
+    } else if (startAtFirstBeat) {
+      val barInterval = getInterval() * config.beatsCount
+      val total = getTimerInterval()
+      val progress =
+        if (total > 0) state.value.timerBarIndex * barInterval / total.toFloat() else 0f
+      _state.update {
+        it.copy(
+          timerProgress = progress.coerceIn(0f, 1f),
+          timerBeatIndex = 0, timerSubIndex = 0
+        )
+      }
+    }
 
     if (config.timerUnit != TimingUnit.BARS) {
+      timerStartTime = clock.uptimeMillis()
+
       timerHandler?.postDelayed({
-        stop()
+        handlePartTransition()
       }, getTimerIntervalRemaining())
 
       timerHandler?.post(object : Runnable {
         override fun run() {
           if (state.value.isPlaying) {
-            updateTimerProgress()
-            timerHandler?.postDelayed(this, 100)
+            val elapsed = clock.uptimeMillis() - timerStartTime + timerPreviousElapsed
+            val total = getTimerInterval()
+            _state.update { it.copy(timerProgress = (elapsed.toFloat() / total).coerceIn(0f, 1f)) }
+            timerHandler?.postDelayed(this, 1000)
           }
         }
       })
     }
   }
 
-  private fun updateTimerProgress() {
-    val now = clock.uptimeMillis()
-    val elapsed = now - timerStartTime
-    val total = getTimerInterval()
-    _state.update { it.copy(timerProgress = (elapsed.toFloat() / total).coerceIn(0f, 1f)) }
-  }
-
   private fun updateIncrementalHandler() {
     incrementalHandler?.removeCallbacksAndMessages(null)
     if (!config.isIncrementalActive || config.incrementalUnit == TimingUnit.BARS) return
 
-    val factor = if (config.incrementalUnit == TimingUnit.SECONDS) 1000L else 60000L
-    val intervalMillis = factor * config.incrementalInterval
+    val unitMillis = if (config.incrementalUnit == TimingUnit.SECONDS) 1000L else 60000L
+    val intervalMillis = unitMillis * config.incrementalInterval
 
     incrementalHandler?.postDelayed(object : Runnable {
       override fun run() {
-        changeTempo(config.incrementalAmount)
+        val limit = config.incrementalLimit
+        val upperLimit = if (limit != 0) limit else MetronomeConstants.TEMPO_MAX
+        val lowerLimit = if (limit != 0) limit else MetronomeConstants.TEMPO_MIN
+
+        if (config.incrementalIncrease && config.tempo + config.incrementalAmount <= upperLimit) {
+          changeTempo(config.incrementalAmount)
+        } else if (!config.incrementalIncrease
+          && config.tempo - config.incrementalAmount >= lowerLimit
+        ) {
+          changeTempo(-config.incrementalAmount)
+        }
         incrementalHandler?.postDelayed(this, intervalMillis)
       }
     }, intervalMillis)
   }
 
-  private fun updateElapsedHandler() {
+  private fun updateElapsedHandler(reset: Boolean) {
     elapsedHandler?.removeCallbacksAndMessages(null)
+    if (!appSettings.showElapsed) return
+
+    if (reset) elapsedPrevious = 0
     elapsedHandler?.post(object : Runnable {
       override fun run() {
         if (state.value.isPlaying) {
-          val now = clock.uptimeMillis()
-          val time = now - elapsedStartTime + elapsedPrevious
+          val time = clock.uptimeMillis() - elapsedStartTime + elapsedPrevious
           _state.update { it.copy(elapsedTime = time) }
           elapsedHandler?.postDelayed(this, 1000)
         }
@@ -522,11 +716,8 @@ class MetronomeEngine(
     return factor * config.timerDuration
   }
 
-  fun getTimerIntervalRemaining(): Long {
-    val total = getTimerInterval()
-    val elapsed = clock.uptimeMillis() - timerStartTime
-    return (total - elapsed).coerceAtLeast(0)
-  }
+  fun getTimerIntervalRemaining(): Long =
+    (getTimerInterval() * (1 - state.value.timerProgress)).toLong().coerceAtLeast(0)
 
   fun warmUpAudio() = audioProvider.warmUp()
 }

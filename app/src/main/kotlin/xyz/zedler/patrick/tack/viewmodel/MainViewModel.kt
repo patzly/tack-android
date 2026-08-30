@@ -30,11 +30,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.data.BackupRepository
 import xyz.zedler.patrick.tack.core.data.MetronomeRepository
@@ -47,6 +47,15 @@ import xyz.zedler.patrick.tack.core.model.MetronomeState
 import xyz.zedler.patrick.tack.core.model.UnlockState
 import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.ui.navigation.Route
+
+sealed interface UiEvent {
+  data class ShowToast(val messageResId: Int) : UiEvent
+}
+
+sealed interface MainDialog {
+  data object GainWarning : MainDialog
+  data object NotificationPermission : MainDialog
+}
 
 class MainViewModel(
   private val settingsRepository: SettingsRepository,
@@ -63,9 +72,10 @@ class MainViewModel(
   private val _uiEvent = MutableSharedFlow<UiEvent>()
   val uiEvent = _uiEvent.asSharedFlow()
 
-  sealed class UiEvent {
-    data class ShowToast(val messageResId: Int) : UiEvent()
-  }
+  private val _dialogState = MutableStateFlow<MainDialog?>(null)
+  val dialogState: StateFlow<MainDialog?> = _dialogState.asStateFlow()
+
+  private var neverStartedWithGain = true
 
   val settings: StateFlow<AppSettings> = settingsRepository.settings.stateIn(
     viewModelScope,
@@ -97,13 +107,7 @@ class MainViewModel(
       MetronomeState()
     )
 
-  fun onServiceConnected(service: MetronomeService) {
-    _service.value = service
-  }
-
-  fun onServiceDisconnected() {
-    _service.value = null
-  }
+  // general UI
 
   fun navigateTo(route: Route) {
     backstack.add(route)
@@ -116,6 +120,12 @@ class MainViewModel(
     }
     return false
   }
+
+  fun onDismissDialog() {
+    _dialogState.value = null
+  }
+
+  // settings
 
   fun updateSettings(settings: AppSettings) {
     viewModelScope.launch {
@@ -131,12 +141,6 @@ class MainViewModel(
 
   fun refreshUnlockState() {
     unlockRepository.refresh()
-  }
-
-  fun updateMetronomeConfig(config: MetronomeConfig) {
-    viewModelScope.launch {
-      metronomeRepository.updateMetronomeConfig(config)
-    }
   }
 
   fun resetAll() {
@@ -182,9 +186,74 @@ class MainViewModel(
     }
   }
 
-  fun togglePlay() {
-    _service.value?.let { service ->
-      if (service.engine.state.value.isPlaying) service.engine.stop() else service.engine.start()
+  // metronome
+
+  fun onServiceConnected(service: MetronomeService) {
+    _service.value = service
+  }
+
+  fun onServiceDisconnected() {
+    _service.value = null
+  }
+
+  fun updateMetronomeConfig(config: MetronomeConfig) {
+    viewModelScope.launch {
+      metronomeRepository.updateMetronomeConfig(config)
+    }
+  }
+
+  fun stopMetronome() {
+    _service.value?.engine?.stop()
+  }
+
+  fun startMetronome() {
+    neverStartedWithGain = false
+    _service.value?.engine?.start()
+  }
+
+  fun requestTogglePlay(hasPermission: Boolean): Boolean {
+    if (metronomeState.value.isPlaying) {
+      stopMetronome()
+      return false
+    } else {
+      // 1. Gain-Check
+      if (settings.value.gain > 0 && neverStartedWithGain) {
+        _dialogState.value = MainDialog.GainWarning
+        return false
+      }
+      // 2. Permission-Check
+      if (hasPermission || settings.value.notificationPermissionDenied) {
+        startMetronome()
+        return true
+      } else {
+        _dialogState.value = MainDialog.NotificationPermission
+        return false
+      }
+    }
+  }
+
+  fun onConfirmGainWarning(hasPermission: Boolean, deactivateGain: Boolean) {
+    _dialogState.value = null
+    neverStartedWithGain = false
+    if (deactivateGain) {
+      updateSettings(settings.value.copy(gain = 0))
+    }
+
+    // Nach dem Gain-Dialog direkt die Permissions evaluieren
+    if (hasPermission || settings.value.notificationPermissionDenied) {
+      startMetronome()
+    } else {
+      _dialogState.value = MainDialog.NotificationPermission
+    }
+  }
+
+  fun onDismissPermissionDialog(proceedAnyway: Boolean, dontAskAgain: Boolean) {
+    _dialogState.value = null
+    if (dontAskAgain) {
+      updateSettings(settings.value.copy(notificationPermissionDenied = true))
+    }
+    if (proceedAnyway) {
+      startMetronome()
     }
   }
 
@@ -204,14 +273,6 @@ class MainViewModel(
         songRepository,
         backupRepository
       ) as T
-    }
-  }
-
-  companion object {
-    private val json = Json {
-      encodeDefaults = true
-      ignoreUnknownKeys = true
-      prettyPrint = true
     }
   }
 }

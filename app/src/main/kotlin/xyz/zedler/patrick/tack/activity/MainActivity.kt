@@ -46,13 +46,13 @@ import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSiz
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import kotlinx.coroutines.flow.first
@@ -105,8 +105,8 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     val hapticProvider = app.hapticProvider
 
     setContent {
-      val settings by viewModel.settings.collectAsState()
-      val metronomeState by viewModel.metronomeState.collectAsState()
+      val settings by viewModel.settings.collectAsStateWithLifecycle()
+      val metronomeState by viewModel.metronomeState.collectAsStateWithLifecycle()
       val backstack = viewModel.backstack
 
       LaunchedEffect(settings.haptic, settings.vibrationIntensity) {

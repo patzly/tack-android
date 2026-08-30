@@ -73,7 +73,7 @@ class MetronomeService : Service() {
 
     hapticProvider = HapticProviderImpl(this)
     val flashlightProvider = FlashlightProviderImpl(this)
-    val audioEngine = AudioEngine(this) { /* stop callback */ }
+    val audioEngine = AudioEngine(this) { engine.stop() }
 
     engine = MetronomeEngine(audioEngine, hapticProvider, flashlightProvider)
 
@@ -84,17 +84,16 @@ class MetronomeService : Service() {
         hapticProvider.isEnabled = settings.haptic
         hapticProvider.intensity = settings.vibrationIntensity
         
-        engine.setLatency(settings.latency)
-        engine.setBeatMode(settings.beatMode)
-        engine.setFlashlight(settings.flashlight)
-        permNotification = settings.permNotification
+        engine.updateSettings(settings)
+
+        permNotification = settings.permanentNotification
       }
     }
 
     serviceScope.launch {
       metronomeRepository.metronomeConfig.collect { config ->
         metronomeConfig = config
-        engine.setConfig(config)
+        engine.applyConfig(config)
       }
     }
 
@@ -114,20 +113,10 @@ class MetronomeService : Service() {
             }
           } else {
             NotificationUtil.updateNotification(this@MetronomeService, notification)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-              stopForeground(STOP_FOREGROUND_DETACH)
-            } else {
-              @Suppress("DEPRECATION")
-              stopForeground(false)
-            }
+            stopForeground(STOP_FOREGROUND_DETACH)
           }
         } else {
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            stopForeground(STOP_FOREGROUND_REMOVE)
-          } else {
-            @Suppress("DEPRECATION")
-            stopForeground(true)
-          }
+          stopForeground(STOP_FOREGROUND_REMOVE)
           if (!isBound) stopSelf()
         }
       }
@@ -141,12 +130,7 @@ class MetronomeService : Service() {
       ACTION_DISMISS -> {
         if (!isBound) {
           engine.stop()
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            stopForeground(STOP_FOREGROUND_REMOVE)
-          } else {
-            @Suppress("DEPRECATION")
-            stopForeground(true)
-          }
+          stopForeground(STOP_FOREGROUND_REMOVE)
           stopSelf()
         }
       }
@@ -158,7 +142,7 @@ class MetronomeService : Service() {
           songWithParts?.let {
             val part = it.parts.firstOrNull { p -> p.partIndex == 0 }
             part?.let { p ->
-              engine.setConfig(p.toConfig())
+              engine.applyConfig(p.toConfig())
               if (startPlaying) engine.start()
             }
           }

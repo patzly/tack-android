@@ -26,8 +26,6 @@ import androidx.datastore.preferences.core.*
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import xyz.zedler.patrick.tack.core.hardware.HapticProvider
-import xyz.zedler.patrick.tack.core.hardware.UnlockProvider
 import xyz.zedler.patrick.tack.core.model.*
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
@@ -70,10 +68,13 @@ class AppDataStore(
       // UI States
       showElapsed = prefs[SHOW_ELAPSED] ?: default.showElapsed,
       resetTimerOnStop = prefs[RESET_TIMER_ON_STOP] ?: default.resetTimerOnStop,
-      permNotification = prefs[PERM_NOTIFICATION] ?: default.permNotification,
+      permanentNotification = prefs[PERMANENT_NOTIFICATION] ?: default.permanentNotification,
       activeBeat = prefs[ACTIVE_BEAT] ?: default.activeBeat,
       bigTimeText = prefs[BIG_TIME_TEXT] ?: default.bigTimeText,
-      bigLogo = prefs[BIG_LOGO] ?: default.bigLogo
+      bigLogo = prefs[BIG_LOGO] ?: default.bigLogo,
+      // Misc
+      notificationPermissionDenied =
+        prefs[PERMISSION_DENIED] ?: default.notificationPermissionDenied
     )
   }
 
@@ -81,9 +82,11 @@ class AppDataStore(
     val default = MetronomeConfig()
     MetronomeConfig(
       tempo = prefs[TEMPO] ?: default.tempo,
-      beats = (prefs[BEATS] ?: default.beats.joinToString(","))
+      beats =
+        (prefs[BEATS] ?: default.beats.joinToString(",") { it.key })
         .split(",").map { TickType.fromKey(it) },
-      subdivisions = (prefs[SUBDIVISIONS] ?: default.subdivisions.joinToString(","))
+      subdivisions =
+        (prefs[SUBDIVISIONS] ?: default.subdivisions.joinToString(",") { it.key })
         .split(",").map { TickType.fromKey(it) },
       usePolyrhythm = prefs[USE_POLYRHYTHM] ?: default.usePolyrhythm,
       countIn = prefs[COUNT_IN] ?: default.countIn,
@@ -131,10 +134,11 @@ class AppDataStore(
       prefs.setIfChanged(IGNORE_FOCUS, settings.ignoreFocus)
       prefs.setIfChanged(SHOW_ELAPSED, settings.showElapsed)
       prefs.setIfChanged(RESET_TIMER_ON_STOP, settings.resetTimerOnStop)
-      prefs.setIfChanged(PERM_NOTIFICATION, settings.permNotification)
+      prefs.setIfChanged(PERMANENT_NOTIFICATION, settings.permanentNotification)
       prefs.setIfChanged(ACTIVE_BEAT, settings.activeBeat)
       prefs.setIfChanged(BIG_TIME_TEXT, settings.bigTimeText)
       prefs.setIfChanged(BIG_LOGO, settings.bigLogo)
+      prefs.setIfChanged(PERMISSION_DENIED, settings.notificationPermissionDenied)
     }
   }
 
@@ -199,7 +203,7 @@ class AppDataStore(
     private val LATENCY = longPreferencesKey("latency_ms")
     private val IGNORE_FOCUS = booleanPreferencesKey("ignore_focus")
     private val GAIN = intPreferencesKey("gain")
-    private val PERM_NOTIFICATION = booleanPreferencesKey("permanent_notification")
+    private val PERMANENT_NOTIFICATION = booleanPreferencesKey("permanent_notification")
 
     private val COUNT_IN = intPreferencesKey("count_in")
     private val INCREMENTAL_AMOUNT = intPreferencesKey("incremental_amount")
@@ -223,5 +227,7 @@ class AppDataStore(
     private val PART_CURRENT_INDEX = intPreferencesKey("current_part_index")
 
     private val CHECK_UNLOCK_KEY = booleanPreferencesKey("check_unlock_key")
+
+    private val PERMISSION_DENIED = booleanPreferencesKey("notification_permission_denied")
   }
 }

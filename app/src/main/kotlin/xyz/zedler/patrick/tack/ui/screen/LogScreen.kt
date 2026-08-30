@@ -20,6 +20,7 @@
 package xyz.zedler.patrick.tack.ui.screen
 
 import android.content.ClipData
+import android.content.Intent
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -70,12 +71,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -94,10 +98,13 @@ import java.io.InputStreamReader
 
 @Composable
 fun LogScreen(viewModel: MainViewModel) {
+  val context = LocalContext.current
   val haptic = LocalHaptic.current
-  val settings by viewModel.settings.collectAsState()
-  val unlockState by viewModel.unlockState.collectAsState()
 
+  val appVendingKey = stringResource(R.string.app_vending_key)
+
+  val settings by viewModel.settings.collectAsStateWithLifecycle()
+  val unlockState by viewModel.unlockState.collectAsStateWithLifecycle()
   var logText by remember { mutableStateOf("") }
   var reloadTrigger by remember { mutableStateOf(false) }
 
@@ -141,7 +148,14 @@ fun LogScreen(viewModel: MainViewModel) {
   }
 
   if (showUnlockDialog) {
-    UnlockDialog(onDismissRequest = { showUnlockDialog = false })
+    UnlockDialog(
+      onOpen = {
+        context.startActivity(
+          Intent(Intent.ACTION_VIEW, appVendingKey.toUri())
+        )
+      },
+      onDismissRequest = { showUnlockDialog = false }
+    )
   }
 
   LogContent(

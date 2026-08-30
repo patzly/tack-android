@@ -53,8 +53,8 @@ data class Part(
   var partIndex: Int = 0,
   var countIn: Int = default.countIn,
   var tempo: Int = default.tempo,
-  var beats: String = default.beats.joinToString(","),
-  var subdivisions: String = default.subdivisions.joinToString(","),
+  var beats: String = default.beats.joinToString(",") { it.key },
+  var subdivisions: String = default.subdivisions.joinToString(",") { it.key },
   var usePolyrhythm: Boolean = default.usePolyrhythm,
   var incrementalAmount: Int = default.incrementalAmount,
   var incrementalInterval: Int = default.incrementalInterval,
@@ -83,8 +83,8 @@ data class Part(
         partIndex = partIndex,
         countIn = config.countIn,
         tempo = config.tempo,
-        beats = config.beats.joinToString(","),
-        subdivisions = config.subdivisions.joinToString(","),
+        beats = config.beats.joinToString(",") { it.key },
+        subdivisions = config.subdivisions.joinToString(",") { it.key },
         usePolyrhythm = config.usePolyrhythm,
         incrementalAmount = config.incrementalAmount,
         incrementalInterval = config.incrementalInterval,
@@ -125,8 +125,8 @@ data class Part(
   fun setConfig(config: MetronomeConfig) {
     countIn = config.countIn
     tempo = config.tempo
-    beats = config.beats.joinToString(",")
-    subdivisions = config.subdivisions.joinToString(",")
+    beats = config.beats.joinToString(",") { it.key }
+    subdivisions = config.subdivisions.joinToString(",") { it.key }
     usePolyrhythm = config.usePolyrhythm
     incrementalAmount = config.incrementalAmount
     incrementalInterval = config.incrementalInterval

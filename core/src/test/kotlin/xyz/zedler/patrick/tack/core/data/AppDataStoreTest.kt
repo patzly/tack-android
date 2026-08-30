@@ -84,7 +84,7 @@ class AppDataStoreTest {
     assertEquals(listOf("strong", "normal", "normal"), config.beats)
     assertEquals(listOf("sub", "sub"), config.subdivisions)
     assertEquals(5, settings.gain)
-    assertEquals(true, settings.permNotification)
+    assertEquals(true, settings.permanentNotification)
   }
 
   @Test

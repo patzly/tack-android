@@ -84,6 +84,15 @@ fun AboutScreen(viewModel: MainViewModel) {
   val context = LocalContext.current
   val haptic = LocalHaptic.current
 
+  val appWebsite = stringResource(R.string.app_website)
+  val appVendingDev = stringResource(R.string.app_vending_dev)
+  val appVendingKey = stringResource(R.string.app_vending_key)
+  val appGithub = stringResource(R.string.app_github)
+  val appTranslate = stringResource(R.string.app_translate)
+  val appPrivacy = stringResource(R.string.app_privacy)
+  val appVendingApp = stringResource(R.string.app_vending_app)
+  val recommendText = stringResource(R.string.msg_recommend, appVendingApp)
+
   val settings by viewModel.settings.collectAsStateWithLifecycle()
   val unlockState by viewModel.unlockState.collectAsStateWithLifecycle()
 
@@ -106,17 +115,15 @@ fun AboutScreen(viewModel: MainViewModel) {
   }
 
   if (showUnlockDialog) {
-    UnlockDialog(onDismissRequest = { showUnlockDialog = false })
+    UnlockDialog(
+      onOpen = {
+        context.startActivity(
+          Intent(Intent.ACTION_VIEW, appVendingKey.toUri())
+        )
+      },
+      onDismissRequest = { showUnlockDialog = false }
+    )
   }
-
-  val appWebsite = stringResource(R.string.app_website)
-  val appVendingDev = stringResource(R.string.app_vending_dev)
-  val appVendingKey = stringResource(R.string.app_vending_key)
-  val appGithub = stringResource(R.string.app_github)
-  val appTranslate = stringResource(R.string.app_translate)
-  val appPrivacy = stringResource(R.string.app_privacy)
-  val appVendingApp = stringResource(R.string.app_vending_app)
-  val recommendText = stringResource(R.string.msg_recommend, appVendingApp)
 
   AboutContent(
     reduceAnim = settings.reduceAnim,

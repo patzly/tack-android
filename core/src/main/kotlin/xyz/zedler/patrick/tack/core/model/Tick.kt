@@ -37,6 +37,8 @@ enum class TickType(val key: String) {
   BEAT_SUB_MUTED("beat_sub_muted");
 
   companion object {
-    fun fromKey(key: String): TickType = entries.find { it.key == key } ?: NORMAL
+    fun fromKey(key: String): TickType = entries.find {
+      it.key.equals(key, ignoreCase = true) || it.name.equals(key, ignoreCase = true)
+    } ?: NORMAL
   }
 }

@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.ui.screen
 
+import android.content.Intent
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -83,6 +84,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.materialkolor.hct.Hct
 import com.materialkolor.ktx.toColor
@@ -107,11 +109,14 @@ import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 import xyz.zedler.patrick.tack.util.LocaleUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
+import xyz.zedler.patrick.tack.viewmodel.UiEvent
 
 @Composable
 fun SettingsScreen(viewModel: MainViewModel) {
   val context = LocalContext.current
   val haptic = LocalHaptic.current
+
+  val appVendingKey = stringResource(R.string.app_vending_key)
 
   val settings by viewModel.settings.collectAsStateWithLifecycle()
   val unlockState by viewModel.unlockState.collectAsStateWithLifecycle()
@@ -138,7 +143,7 @@ fun SettingsScreen(viewModel: MainViewModel) {
   LaunchedEffect(viewModel.uiEvent) {
     viewModel.uiEvent.collect { event ->
       when (event) {
-        is MainViewModel.UiEvent.ShowToast -> {
+        is UiEvent.ShowToast -> {
           Toast.makeText(context, event.messageResId, Toast.LENGTH_SHORT).show()
         }
       }
@@ -150,13 +155,20 @@ fun SettingsScreen(viewModel: MainViewModel) {
       checkUnlockKey = settings.checkUnlockKey,
       isKeyInstalled = unlockState.isKeyInstalled,
       isPlayStoreInstalled = unlockState.isPlayStoreInstalled,
-      onDismissRequest = { showFeedbackDialog = false },
-      onSupport = { showUnlockDialog = true }
+      onSupport = { showUnlockDialog = true },
+      onDismissRequest = { showFeedbackDialog = false }
     )
   }
 
   if (showUnlockDialog) {
-    UnlockDialog(onDismissRequest = { showUnlockDialog = false })
+    UnlockDialog(
+      onOpen = {
+        context.startActivity(
+          Intent(Intent.ACTION_VIEW, appVendingKey.toUri())
+        )
+      },
+      onDismissRequest = { showUnlockDialog = false }
+    )
   }
 
   if (showHelpDialog) {

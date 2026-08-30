@@ -21,6 +21,7 @@ package xyz.zedler.patrick.tack.ui.dialog
 
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -34,21 +35,23 @@ import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun UnlockDialog(
-  onDismissRequest: () -> Unit,
-  onOpen: () -> Unit
+fun GainWarningDialog(
+  onPlay: () -> Unit,
+  onDeactivate: () -> Unit,
+  onDismissRequest: () -> Unit
 ) {
   val haptic = LocalHaptic.current
 
   ScrollableAlertDialog(onDismissRequest = onDismissRequest) {
-    UnlockDialogContent(
-      onOpenClick = {
+    GainWarningContent(
+      onPlayClick = {
         haptic.click()
-        onOpen()
+        onPlay()
         onDismissRequest()
       },
-      onCancelClick = {
+      onDeactivateClick = {
         haptic.click()
+        onDeactivate()
         onDismissRequest()
       }
     )
@@ -57,39 +60,46 @@ fun UnlockDialog(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun UnlockDialogContent(
-  onOpenClick: () -> Unit = {},
-  onCancelClick: () -> Unit = {}
+private fun GainWarningContent(
+  onPlayClick: () -> Unit = {},
+  onDeactivateClick: () -> Unit = {}
 ) {
   ScrollableAlertDialogContent(
     title = {
-      Text(stringResource(R.string.msg_unlock))
+      Text(stringResource(R.string.msg_gain))
     },
     confirmButton = {
       TextButton(
-        onClick = onOpenClick,
-        shapes = ButtonDefaults.shapes()
+        onClick = onPlayClick,
+        shapes = ButtonDefaults.shapes(),
+        colors = ButtonDefaults.buttonColors(
+          containerColor = MaterialTheme.colorScheme.error,
+          contentColor = MaterialTheme.colorScheme.onError
+        )
       ) {
-        Text(stringResource(R.string.action_open_play_store))
+        Text(stringResource(R.string.action_play))
       }
     },
     dismissButton = {
       TextButton(
-        onClick = onCancelClick,
-        shapes = ButtonDefaults.shapes()
+        onClick = onDeactivateClick,
+        shapes = ButtonDefaults.shapes(),
+        colors = ButtonDefaults.textButtonColors(
+          contentColor = MaterialTheme.colorScheme.error
+        )
       ) {
-        Text(stringResource(R.string.action_cancel))
+        Text(stringResource(R.string.action_deactivate))
       }
     }
   ) {
-    Text(stringResource(R.string.msg_unlock_description))
+    Text(stringResource(R.string.msg_gain_description))
   }
 }
 
 @Preview
 @Composable
-fun UnlockDialogPreview() {
+fun GainWarningDialogPreview() {
   TackTheme {
-    UnlockDialogContent()
+    GainWarningContent()
   }
 }

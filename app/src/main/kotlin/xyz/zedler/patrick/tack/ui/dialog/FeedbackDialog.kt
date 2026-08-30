@@ -55,8 +55,8 @@ fun FeedbackDialog(
   checkUnlockKey: Boolean,
   isKeyInstalled: Boolean,
   isPlayStoreInstalled: Boolean,
-  onDismissRequest: () -> Unit,
-  onSupport: () -> Unit
+  onSupport: () -> Unit,
+  onDismissRequest: () -> Unit
 ) {
   val context = LocalContext.current
   val haptic = LocalHaptic.current

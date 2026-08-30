@@ -117,4 +117,5 @@ object MetronomeConstants {
   const val MUTE_MUTE_MAX_BEATS = 100
   const val MUTE_MUTE_STEP_SIZE = 1
   const val MUTE_MUTE_STEP_SIZE_BEATS = 5
+  const val BEAT_ANIM_OFFSET: Long = 25
 }

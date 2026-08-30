@@ -19,6 +19,11 @@
 
 package xyz.zedler.patrick.tack.ui.screen
 
+import android.Manifest
+import android.content.Intent
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -56,6 +61,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -64,13 +70,17 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.AppSettings
+import xyz.zedler.patrick.tack.core.model.BeatMode
 import xyz.zedler.patrick.tack.core.model.MetronomeState
 import xyz.zedler.patrick.tack.ui.component.main.MainControls
 import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
+import xyz.zedler.patrick.tack.ui.dialog.GainWarningDialog
 import xyz.zedler.patrick.tack.ui.dialog.HelpDialog
+import xyz.zedler.patrick.tack.ui.dialog.NotificationPermissionDialog
 import xyz.zedler.patrick.tack.ui.dialog.OptionsDialog
 import xyz.zedler.patrick.tack.ui.dialog.UnlockDialog
 import xyz.zedler.patrick.tack.ui.navigation.Route
@@ -78,6 +88,8 @@ import xyz.zedler.patrick.tack.ui.theme.LocalDimens
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.theme.rememberTackDimens
 import xyz.zedler.patrick.tack.ui.util.LocalHaptic
+import xyz.zedler.patrick.tack.util.NotificationUtil
+import xyz.zedler.patrick.tack.viewmodel.MainDialog
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -86,10 +98,23 @@ fun MainScreen(
   viewModel: MainViewModel,
   windowSizeClass: WindowSizeClass
 ) {
+  val context = LocalContext.current
   val haptic = LocalHaptic.current
+
+  val appVendingKey = stringResource(R.string.app_vending_key)
 
   val settings by viewModel.settings.collectAsStateWithLifecycle()
   val unlockState by viewModel.unlockState.collectAsStateWithLifecycle()
+  val metronomeState by viewModel.metronomeState.collectAsStateWithLifecycle()
+  val dialogState by viewModel.dialogState.collectAsStateWithLifecycle()
+
+  val permissionLauncher = rememberLauncherForActivityResult(
+    ActivityResultContracts.RequestPermission()
+  ) { isGranted ->
+    if (isGranted || settings.notificationPermissionDenied) {
+      viewModel.startMetronome()
+    }
+  }
 
   var showUnlockDialog by remember { mutableStateOf(false) }
   var showHelpDialog by remember { mutableStateOf(false) }
@@ -97,7 +122,14 @@ fun MainScreen(
   var showOptionsDialog by remember { mutableStateOf(false) }
 
   if (showUnlockDialog) {
-    UnlockDialog(onDismissRequest = { showUnlockDialog = false })
+    UnlockDialog(
+      onOpen = {
+        context.startActivity(
+          Intent(Intent.ACTION_VIEW, appVendingKey.toUri())
+        )
+      },
+      onDismissRequest = { showUnlockDialog = false }
+    )
   }
 
   if (showHelpDialog) {
@@ -118,7 +150,39 @@ fun MainScreen(
     OptionsDialog(onDismissRequest = { showOptionsDialog = false })
   }
 
+  when (dialogState) {
+    is MainDialog.GainWarning -> {
+      GainWarningDialog(
+        onPlay = {
+          viewModel.onConfirmGainWarning(NotificationUtil.hasPermission(context), deactivateGain = false)
+        },
+        onDeactivate = {
+          viewModel.onConfirmGainWarning(NotificationUtil.hasPermission(context), deactivateGain = true)
+        },
+        onDismissRequest = { viewModel.onDismissDialog() }
+      )
+    }
+    is MainDialog.NotificationPermission -> {
+      NotificationPermissionDialog(
+        onNext = {
+          viewModel.onDismissDialog()
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+          } else {
+            viewModel.startMetronome()
+          }
+        },
+        onDismissRequest = {
+          viewModel.onDismissPermissionDialog(proceedAnyway = true, dontAskAgain = true)
+        }
+      )
+    }
+    null -> {}
+  }
+
   MainContent(
+    settings = settings,
+    metronomeState = metronomeState,
     windowSizeClass = windowSizeClass,
     // app bar menu
     onSupportClick = {
@@ -149,8 +213,17 @@ fun MainScreen(
       showOptionsDialog = true
     },
     onPlayStopChange = {
-      haptic.click()
-      viewModel.togglePlay()
+      val hasPermission = NotificationUtil.hasPermission(context)
+
+      if (metronomeState.isPlaying) {
+        haptic.click()
+        viewModel.stopMetronome()
+      } else {
+        val didStartImmediately = viewModel.requestTogglePlay(hasPermission)
+        if (!didStartImmediately || settings.beatMode == BeatMode.SOUND) {
+          haptic.click()
+        }
+      }
     },
     onBeatModeClick = {
       haptic.click()

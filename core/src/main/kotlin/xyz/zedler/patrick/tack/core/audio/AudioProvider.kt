@@ -19,10 +19,15 @@
 
 package xyz.zedler.patrick.tack.core.audio
 
+import xyz.zedler.patrick.tack.core.model.Sound
 import xyz.zedler.patrick.tack.core.model.TickType
 
 interface AudioProvider {
   var isMuted: Boolean
+  var gain: Int
+  var ignoreFocus: Boolean
+
+  fun setSound(sound: Sound)
   fun play()
   fun stop()
   fun playTick(tickType: TickType, muted: Boolean)

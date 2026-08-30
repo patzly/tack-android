@@ -67,13 +67,14 @@ class AudioEngine(
 
   @Volatile
   private var isStreamRunning: Boolean = false
-  var ignoreFocus: Boolean = false
+
+  override var ignoreFocus: Boolean = false
 
   private val default: AppSettings = AppSettings()
 
   private fun isInitialized(): Boolean = engineHandle != 0L
 
-  var gain: Int = default.gain
+  override var gain: Int = default.gain
     set(value) {
       field = value
       if (isInitialized()) {
@@ -212,7 +213,7 @@ class AudioEngine(
     }
   }
 
-  fun setSound(sound: Sound) {
+  override fun setSound(sound: Sound) {
     if (!isInitialized()) return
 
     val config = when (sound) {
@@ -359,8 +360,6 @@ class AudioEngine(
     }
   }
 
-  // --- Helper Types ---
-
   private enum class Pitch {
     NORMAL, HIGH, LOW
   }
@@ -375,12 +374,10 @@ class AudioEngine(
   )
 
   fun interface AudioListener {
-
     fun onAudioStop()
   }
 
   companion object Companion {
-
     private const val TAG = "AudioEngine"
 
     private const val NATIVE_TICK_TYPE_STRONG: Int = 1
