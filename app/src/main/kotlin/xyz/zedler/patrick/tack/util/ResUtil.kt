@@ -22,6 +22,10 @@ package xyz.zedler.patrick.tack.util
 import android.content.Context
 import android.util.Log
 import androidx.annotation.RawRes
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 
 fun Context.getRawText(@RawRes resId: Int): String {
   return try {
@@ -29,5 +33,15 @@ fun Context.getRawText(@RawRes resId: Int): String {
   } catch (e: Exception) {
     Log.e("ResUtil", "getRawText", e)
     ""
+  }
+}
+
+@Composable
+fun rememberRawText(@RawRes resId: Int): String {
+  val context = LocalContext.current
+  val configuration = LocalConfiguration.current
+
+  return remember(resId, configuration) {
+    context.getRawText(resId)
   }
 }

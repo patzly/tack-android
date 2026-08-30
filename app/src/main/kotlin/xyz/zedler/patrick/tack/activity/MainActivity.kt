@@ -230,7 +230,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
       startService(metronomeIntent)
       bindService(metronomeIntent, this, Context.BIND_IMPORTANT)
     } catch (e: Exception) {
-      Log.e(TAG, "onStart: $e")
+      Log.e(TAG, "onStart", e)
     }
   }
 

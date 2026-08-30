@@ -33,12 +33,7 @@ object LocaleUtil {
 
   fun getLocale(languageCode: String?): Locale {
     if (languageCode == null) {
-      return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-        Resources.getSystem().configuration.locales[0]
-      } else {
-        @Suppress("DEPRECATION")
-        Resources.getSystem().configuration.locale
-      }
+      return Resources.getSystem().configuration.locales[0]
     }
     return getLocaleFromCode(languageCode)
   }
@@ -79,12 +74,7 @@ object LocaleUtil {
     val locale = getLocale(languageCode)
     Locale.setDefault(locale)
     val config = Configuration(context.resources.configuration)
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      config.setLocales(LocaleList(locale))
-    } else {
-      @Suppress("DEPRECATION")
-      config.locale = locale
-    }
+    config.setLocales(LocaleList(locale))
     return context.createConfigurationContext(config)
   }
 

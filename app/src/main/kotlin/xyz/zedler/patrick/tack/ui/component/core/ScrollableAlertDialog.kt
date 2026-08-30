@@ -25,6 +25,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -143,6 +144,7 @@ fun ScrollableAlertDialogContent(
   iconContentColor: Color = MaterialTheme.colorScheme.secondary,
   titleContentColor: Color = MaterialTheme.colorScheme.onSurface,
   textContentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+  scrollableContentPadding: PaddingValues = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
   content: @Composable (() -> Unit)?
 ) {
   Surface(
@@ -236,11 +238,23 @@ fun ScrollableAlertDialogContent(
                 }
               )
           ) {
+            val layoutDirection = LocalLayoutDirection.current
+            val applyContentPadding = isScrollable && !isScrollableControlledByContent
             Box(
               modifier = Modifier
                 .padding(
-                  vertical = if (isScrollable && !isScrollableControlledByContent) 16.dp else 0.dp,
-                  horizontal = 24.dp
+                  start = scrollableContentPadding.calculateStartPadding(layoutDirection),
+                  top = if (applyContentPadding) {
+                    scrollableContentPadding.calculateTopPadding()
+                  } else {
+                    0.dp
+                  },
+                  end = scrollableContentPadding.calculateEndPadding(layoutDirection),
+                  bottom = if (applyContentPadding) {
+                    scrollableContentPadding.calculateBottomPadding()
+                  } else {
+                    0.dp
+                  }
                 )
             ) {
               content.invoke()

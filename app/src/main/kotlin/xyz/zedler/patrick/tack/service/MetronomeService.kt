@@ -195,7 +195,7 @@ class MetronomeService : Service() {
         startForeground(NotificationUtil.NOTIFICATION_ID, notification)
       }
     } catch (e: Exception) {
-      Log.e(TAG, "startForegroundCompat: $e")
+      Log.e(TAG, "startForegroundCompat", e)
     }
   }
 

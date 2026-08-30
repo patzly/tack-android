@@ -75,10 +75,18 @@ import xyz.zedler.patrick.tack.ui.component.core.InsetLazyColumn
 import xyz.zedler.patrick.tack.ui.component.core.insetItem
 import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.ui.dialog.HelpDialog
+import xyz.zedler.patrick.tack.ui.dialog.TextDialog
 import xyz.zedler.patrick.tack.ui.dialog.UnlockDialog
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.util.LocalHaptic
+import xyz.zedler.patrick.tack.util.rememberRawText
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
+
+enum class ActiveTextDialog {
+  CHANGELOG,
+  LICENSE_FONT,
+  LICENSE_ICONS
+}
 
 @Composable
 fun AboutScreen(viewModel: MainViewModel) {
@@ -103,6 +111,8 @@ fun AboutScreen(viewModel: MainViewModel) {
   var showHelpDialog by rememberSaveable { mutableStateOf(false) }
   var showUnlockDialog by rememberSaveable { mutableStateOf(false) }
 
+  var activeTextDialog by rememberSaveable { mutableStateOf<ActiveTextDialog?>(null) }
+
   if (showFeedbackDialog) {
     FeedbackDialog(
       checkUnlockKey = unlockState.checkUnlockKey,
@@ -125,6 +135,33 @@ fun AboutScreen(viewModel: MainViewModel) {
         )
       },
       onDismissRequest = { showUnlockDialog = false }
+    )
+  }
+
+  activeTextDialog?.let { dialogType ->
+    val titleRes = when (dialogType) {
+      ActiveTextDialog.CHANGELOG -> R.string.about_changelog
+      ActiveTextDialog.LICENSE_FONT -> R.string.license_google_sans_flex
+      ActiveTextDialog.LICENSE_ICONS -> R.string.license_material_icons
+    }
+
+    val textRes = when (dialogType) {
+      ActiveTextDialog.CHANGELOG -> R.raw.changelog
+      ActiveTextDialog.LICENSE_FONT -> R.raw.license_ofl
+      ActiveTextDialog.LICENSE_ICONS -> R.raw.license_ofl
+    }
+
+    val link = when (dialogType) {
+      ActiveTextDialog.CHANGELOG -> null
+      ActiveTextDialog.LICENSE_FONT -> stringResource(R.string.license_google_sans_flex_link)
+      ActiveTextDialog.LICENSE_ICONS -> stringResource(R.string.license_material_icons_link)
+    }
+
+    TextDialog(
+      title = stringResource(titleRes),
+      text = rememberRawText(textRes),
+      link = link,
+      onDismissRequest = { activeTextDialog = null }
     )
   }
 
@@ -160,7 +197,7 @@ fun AboutScreen(viewModel: MainViewModel) {
     },
     onChangelogClick = {
       haptic.click()
-      /* TODO: Implement actual dialog */
+      activeTextDialog = ActiveTextDialog.CHANGELOG
     },
     onDeveloperClick = {
       haptic.click()
@@ -203,7 +240,11 @@ fun AboutScreen(viewModel: MainViewModel) {
     },
     onLicenseClick = {
       haptic.click()
-      /* TODO: Implement actual dialogs */
+      activeTextDialog = if (it == 0) {
+        ActiveTextDialog.LICENSE_FONT
+      } else {
+        ActiveTextDialog.LICENSE_ICONS
+      }
     }
   )
 }
