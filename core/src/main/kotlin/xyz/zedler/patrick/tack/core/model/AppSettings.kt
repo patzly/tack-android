@@ -22,34 +22,32 @@ package xyz.zedler.patrick.tack.core.model
 import android.os.Build
 
 data class AppSettings(
-  // Appearance
+  // General
   val language: String? = null, // null means "system"
   val color: AppColor =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) AppColor.DYNAMIC else AppColor.STATIC,
   val colorHue: Float = 154f,
   val theme: AppTheme = AppTheme.SYSTEM,
   val contrast: AppContrast = AppContrast.STANDARD,
-  // Behavior
+  val reduceAnim: Boolean = false,
   val haptic: Boolean = true,
   val vibrationIntensity: VibrationIntensity = VibrationIntensity.UNSET,
-  val reduceAnim: Boolean = false,
-  // Instrument
+  // Metronome
+  val beatMode: BeatMode = BeatMode.ALL,
   val sound: Sound = Sound.SINE,
+  val ignoreFocus: Boolean = false,
   val gain: Int = 0,
   val latency: Long = 0L,
-  val beatMode: BeatMode = BeatMode.ALL,
-  val flashlight: FlashStrength = FlashStrength.OFF,
-  val flashScreen: FlashStrength = FlashStrength.OFF,
   val keepAwake: KeepAwakeMode = KeepAwakeMode.WHILE_PLAYING,
-  val ignoreFocus: Boolean = false,
-  // UI
-  val showElapsed: Boolean = false,
-  val resetTimerOnStop: Boolean = false,
+  val flashScreen: FlashStrength = FlashStrength.OFF,
+  val flashlight: FlashStrength = FlashStrength.OFF,
   val permanentNotification: Boolean = false,
+  val resetTimerOnStop: Boolean = false,
+  val showElapsed: Boolean = false,
   val activeBeat: Boolean = true,
   val bigTimeText: Boolean = false,
   val bigLogo: Boolean = false,
-  // Misc
+  // Internal
   val notificationPermissionDenied: Boolean = false
 )
 

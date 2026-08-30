@@ -52,10 +52,10 @@ import xyz.zedler.patrick.tack.R
 fun ConnectedButtonGroup(
   options: List<String>,
   labels: List<String>,
-  selected: String,
+  checked: String,
   modifier: Modifier = Modifier,
   enabled: Boolean = true,
-  onSelect: (String) -> Unit
+  onCheckedChange: (String) -> Unit
 ) {
   ButtonGroup(
     expandedRatio = 0.0f,
@@ -104,13 +104,13 @@ fun ConnectedButtonGroup(
     modifier = modifier
   ) {
     options.forEachIndexed { index, option ->
-      val isSelected = option == selected
+      val isSelected = option == checked
 
       customItem(
         buttonGroupContent = {
           ToggleButton(
             checked = isSelected,
-            onCheckedChange = { if (enabled) onSelect(option) },
+            onCheckedChange = { if (enabled) onCheckedChange(option) },
             enabled = enabled,
             shapes = when (index) {
               0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
@@ -129,7 +129,7 @@ fun ConnectedButtonGroup(
           CheckableDropdownMenuItem(
             text = { Text(labels[index]) },
             checked = isSelected,
-            onCheckedChange = { if (enabled) onSelect(option) },
+            onCheckedChange = { if (enabled) onCheckedChange(option) },
             shapes = MenuDefaults.itemShape(0, 1)
           )
         }

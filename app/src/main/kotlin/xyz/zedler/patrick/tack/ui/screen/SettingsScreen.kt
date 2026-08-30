@@ -107,6 +107,7 @@ import xyz.zedler.patrick.tack.ui.dialog.UnlockDialog
 import xyz.zedler.patrick.tack.ui.navigation.Route
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.util.LocalHaptic
+import xyz.zedler.patrick.tack.ui.util.titleRes
 import xyz.zedler.patrick.tack.util.LocaleUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 import xyz.zedler.patrick.tack.viewmodel.UiEvent
@@ -202,20 +203,24 @@ fun SettingsScreen(viewModel: MainViewModel) {
     settings = settings,
     hasVibrator = haptic.hasVibrator,
     supportsMainEffects = haptic.supportsMainEffects,
-    onItemClick = { haptic.click() },
-    onSliderSlide = { haptic.tick() },
+    onClick = { haptic.click() },
+    onCheckedChange = { haptic.click() },
+    onValueChange = { haptic.tick() },
     onBackClick = { viewModel.popBackstack() },
     onAboutClick = { viewModel.navigateTo(Route.About) },
     onHelpClick = { showHelpDialog = true },
     onFeedbackClick = { showFeedbackDialog = true },
     onLogcatClick = { viewModel.navigateTo(Route.Log) },
     onLanguageClick = { showLanguageDialog = true },
-    onBackupClick = { showBackupDialog = true },
-    onResetClick = { showResetDialog = true },
     onVibrationIntensityChanged = {
       haptic.intensity = it
       haptic.click()
     },
+    onBackupClick = { showBackupDialog = true },
+    onResetClick = { showResetDialog = true },
+    onSoundClick = { /* TODO */ },
+    onGainClick = { /* TODO */ },
+    onLatencyClick = { /* TODO */ },
     onUpdateSettings = viewModel::updateSettings
   )
 }
@@ -226,18 +231,22 @@ fun SettingsContent(
   settings: AppSettings = AppSettings(),
   hasVibrator: Boolean = true,
   supportsMainEffects: Boolean = true,
-  onItemClick: () -> Unit = {},
-  onSliderSlide: () -> Unit = {},
+  onClick: () -> Unit = {},
+  onCheckedChange: () -> Unit = {},
+  onValueChange: () -> Unit = {},
   onBackClick: () -> Unit = {},
   onAboutClick: () -> Unit = {},
   onHelpClick: () -> Unit = {},
   onFeedbackClick: () -> Unit = {},
   onLogcatClick: () -> Unit = {},
   onLanguageClick: () -> Unit = {},
+  onVibrationIntensityChanged: (intensity: VibrationIntensity) -> Unit = {},
   onBackupClick: () -> Unit = {},
   onResetClick: () -> Unit = {},
-  onVibrationIntensityChanged: (intensity: VibrationIntensity) -> Unit = {},
-  onUpdateSettings: (AppSettings) -> Unit = {}
+  onSoundClick: () -> Unit = {},
+  onGainClick: () -> Unit = {},
+  onLatencyClick: () -> Unit = {},
+  onUpdateSettings: (settings: AppSettings) -> Unit = {}
 ) {
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   Scaffold(
@@ -265,7 +274,7 @@ fun SettingsContent(
           ) {
             FilledIconButton(
               onClick = {
-                onItemClick()
+                onClick()
                 onBackClick()
               },
               colors = IconButtonDefaults.iconButtonColors(
@@ -297,7 +306,7 @@ fun SettingsContent(
           ) {
             FilledIconButton(
               onClick = {
-                onItemClick()
+                onClick()
                 showMenu = true
               },
               modifier =
@@ -339,7 +348,7 @@ fun SettingsContent(
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.title_about)) },
                 onClick = {
-                  onItemClick()
+                  onClick()
                   showMenu = false
                   onAboutClick()
                 },
@@ -348,7 +357,7 @@ fun SettingsContent(
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.title_help)) },
                 onClick = {
-                  onItemClick()
+                  onClick()
                   showMenu = false
                   onHelpClick()
                 },
@@ -357,7 +366,7 @@ fun SettingsContent(
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.action_send_feedback)) },
                 onClick = {
-                  onItemClick()
+                  onClick()
                   showMenu = false
                   onFeedbackClick()
                 },
@@ -375,7 +384,7 @@ fun SettingsContent(
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.action_logcat)) },
                 onClick = {
-                  onItemClick()
+                  onClick()
                   showMenu = false
                   onLogcatClick()
                 },
@@ -427,7 +436,7 @@ fun SettingsContent(
 
           SegmentedListItem(
             onClick = {
-              onItemClick()
+              onClick()
               onLanguageClick()
               languageIconTrigger = !languageIconTrigger
             },
@@ -444,7 +453,7 @@ fun SettingsContent(
                 animated = !settings.reduceAnim
               )
             },
-            content = { Text(stringResource(R.string.settings_language)) },
+            content = { Text(stringResource(R.string.settings_language)) }
           )
         }
       }
@@ -505,10 +514,10 @@ fun SettingsContent(
                       stringResource(R.string.settings_theme_dynamic),
                       stringResource(R.string.settings_theme_static)
                     ),
-                    selected = settings.color.name,
-                    onSelect = {
+                    checked = settings.color.name,
+                    onCheckedChange = {
                       if (it != settings.color.name) {
-                        onItemClick()
+                        onCheckedChange()
                         onUpdateSettings(settings.copy(color = AppColor.valueOf(it)))
                       }
                     }
@@ -560,7 +569,7 @@ fun SettingsContent(
                     value = settings.colorHue,
                     onValueChange = {
                       if (it != settings.colorHue) {
-                        onSliderSlide()
+                        onValueChange()
                         onUpdateSettings(settings.copy(colorHue = it))
                       }
                     },
@@ -611,10 +620,10 @@ fun SettingsContent(
                     stringResource(R.string.settings_theme_light),
                     stringResource(R.string.settings_theme_dark)
                   ),
-                  selected = settings.theme.name,
-                  onSelect = {
+                  checked = settings.theme.name,
+                  onCheckedChange = {
                     if (it != settings.theme.name) {
-                      onItemClick()
+                      onCheckedChange()
                       onUpdateSettings(settings.copy(theme = AppTheme.valueOf(it)))
                     }
                   }
@@ -672,10 +681,10 @@ fun SettingsContent(
                     stringResource(R.string.settings_contrast_medium),
                     stringResource(R.string.settings_contrast_high)
                   ),
-                  selected = settings.contrast.name,
-                  onSelect = {
+                  checked = settings.contrast.name,
+                  onCheckedChange = {
                     if (it != settings.contrast.name) {
-                      onItemClick()
+                      onCheckedChange()
                       contrastIconTrigger = !contrastIconTrigger
                       onUpdateSettings(settings.copy(contrast = AppContrast.valueOf(it)))
                     }
@@ -688,7 +697,7 @@ fun SettingsContent(
 
           SegmentedListItem(
             onClick = {
-              onItemClick()
+              onClick()
               onUpdateSettings(settings.copy(reduceAnim = !settings.reduceAnim))
             },
             shapes = ListItemDefaults.segmentedShapes(index = 2, count = itemCount),
@@ -709,7 +718,7 @@ fun SettingsContent(
                 onCheckedChange = null
               )
             },
-            content = { Text(stringResource(R.string.settings_reduce_animations)) },
+            content = { Text(stringResource(R.string.settings_reduce_animations)) }
           )
         }
       }
@@ -726,7 +735,7 @@ fun SettingsContent(
 
             SegmentedListItem(
               onClick = {
-                onItemClick()
+                onClick()
                 hapticIconTrigger = !hapticIconTrigger
                 onUpdateSettings(settings.copy(haptic = !settings.haptic))
               },
@@ -749,7 +758,7 @@ fun SettingsContent(
                   onCheckedChange = null
                 )
               },
-              content = { Text(stringResource(R.string.settings_haptic)) },
+              content = { Text(stringResource(R.string.settings_haptic)) }
             )
 
             SegmentedListItem(
@@ -794,8 +803,8 @@ fun SettingsContent(
                       stringResource(R.string.settings_vibration_intensity_soft),
                       stringResource(R.string.settings_vibration_intensity_strong)
                     ),
-                    selected = settings.vibrationIntensity.name,
-                    onSelect = {
+                    checked = settings.vibrationIntensity.name,
+                    onCheckedChange = {
                       val intensity = VibrationIntensity.valueOf(it)
                       if (intensity != settings.vibrationIntensity) {
                         onVibrationIntensityChanged(intensity)
@@ -819,7 +828,7 @@ fun SettingsContent(
 
           SegmentedListItem(
             onClick = {
-              onItemClick()
+              onClick()
               onBackupClick()
             },
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
@@ -839,7 +848,7 @@ fun SettingsContent(
 
           SegmentedListItem(
             onClick = {
-              onItemClick()
+              onClick()
               onResetClick()
             },
             shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
@@ -856,7 +865,120 @@ fun SettingsContent(
             },
             content = {
               Text(stringResource(R.string.settings_reset))
+            }
+          )
+        }
+      }
+
+      insetItem {
+        Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
+          val itemCount = 4
+          val colors = ListItemDefaults.segmentedColors(
+            containerColor = MaterialTheme.colorScheme.surfaceBright
+          )
+
+          var soundIconTrigger by remember { mutableStateOf(false) }
+          var ignoreFocusIconTrigger by remember { mutableStateOf(false) }
+          var gainIconTrigger by remember { mutableStateOf(false) }
+
+          SegmentedListItem(
+            onClick = {
+              onClick()
+              onSoundClick()
+              soundIconTrigger = !soundIconTrigger
             },
+            shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
+            colors = colors,
+            verticalAlignment = Alignment.CenterVertically,
+            supportingContent = {
+              Text(stringResource(settings.sound.titleRes))
+            },
+            leadingContent = {
+              AnimatedIcon(
+                resId = R.drawable.ic_rounded_music_note_anim,
+                trigger = soundIconTrigger,
+                animated = !settings.reduceAnim
+              )
+            },
+            content = {
+              Text(stringResource(R.string.settings_sound))
+            }
+          )
+
+          SegmentedListItem(
+            onClick = {
+              onClick()
+              onUpdateSettings(settings.copy(ignoreFocus = !settings.ignoreFocus))
+              ignoreFocusIconTrigger = !ignoreFocusIconTrigger
+            },
+            shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
+            colors = colors,
+            verticalAlignment = Alignment.CenterVertically,
+            supportingContent = {
+              Text(stringResource(R.string.settings_ignore_focus_description))
+            },
+            leadingContent = {
+              AnimatedIcon(
+                resId = R.drawable.ic_rounded_select_to_speak_anim,
+                trigger = ignoreFocusIconTrigger,
+                animated = !settings.reduceAnim
+              )
+            },
+            trailingContent = {
+              Switch(
+                checked = settings.ignoreFocus,
+                onCheckedChange = null
+              )
+            },
+            content = { Text(stringResource(R.string.settings_ignore_focus)) }
+          )
+
+          SegmentedListItem(
+            onClick = {
+              onClick()
+              onGainClick()
+              gainIconTrigger = !gainIconTrigger
+            },
+            shapes = ListItemDefaults.segmentedShapes(index = 2, count = itemCount),
+            colors = colors,
+            verticalAlignment = Alignment.CenterVertically,
+            supportingContent = {
+              val db = if (settings.gain > 0) "+$settings.gain" else settings.gain.toString()
+              Text(stringResource(R.string.label_db_signed, db))
+            },
+            leadingContent = {
+              AnimatedIcon(
+                resId = R.drawable.ic_rounded_speaker_anim,
+                trigger = gainIconTrigger,
+                animated = !settings.reduceAnim
+              )
+            },
+            content = {
+              Text(stringResource(R.string.settings_gain))
+            }
+          )
+
+          SegmentedListItem(
+            onClick = {
+              onClick()
+              onLatencyClick()
+            },
+            shapes = ListItemDefaults.segmentedShapes(index = 3, count = itemCount),
+            colors = colors,
+            verticalAlignment = Alignment.CenterVertically,
+            supportingContent = {
+              val latency = settings.latency.toString()
+              Text(stringResource(R.string.label_ms, latency))
+            },
+            leadingContent = {
+              Icon(
+                painter = painterResource(R.drawable.ic_rounded_media_output),
+                contentDescription = null
+              )
+            },
+            content = {
+              Text(stringResource(R.string.settings_latency))
+            }
           )
         }
       }

@@ -22,11 +22,30 @@ package xyz.zedler.patrick.tack.core.data
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.SharedPreferencesMigration
-import androidx.datastore.preferences.core.*
+import androidx.datastore.preferences.core.MutablePreferences
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import xyz.zedler.patrick.tack.core.model.*
+import xyz.zedler.patrick.tack.core.model.AppColor
+import xyz.zedler.patrick.tack.core.model.AppContrast
+import xyz.zedler.patrick.tack.core.model.AppSettings
+import xyz.zedler.patrick.tack.core.model.AppTheme
+import xyz.zedler.patrick.tack.core.model.BeatMode
+import xyz.zedler.patrick.tack.core.model.FlashStrength
+import xyz.zedler.patrick.tack.core.model.KeepAwakeMode
+import xyz.zedler.patrick.tack.core.model.MetronomeConfig
+import xyz.zedler.patrick.tack.core.model.Sound
+import xyz.zedler.patrick.tack.core.model.TickType
+import xyz.zedler.patrick.tack.core.model.TimingUnit
+import xyz.zedler.patrick.tack.core.model.UnlockState
+import xyz.zedler.patrick.tack.core.model.VibrationIntensity
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
   name = "settings",
@@ -45,34 +64,32 @@ class AppDataStore(
   val settings: Flow<AppSettings> = dataStore.data.map { prefs ->
     val default = AppSettings()
     AppSettings(
-      // Appearance
+      // General
       language = prefs[LANGUAGE].let { if (it == "system") null else it },
       color = prefs[COLOR]?.let { AppColor.fromKey(it) } ?: default.color,
       colorHue = prefs[COLOR_HUE] ?: default.colorHue,
       theme = prefs[THEME]?.let { AppTheme.fromKey(it) } ?: default.theme,
       contrast = prefs[CONTRAST]?.let { AppContrast.fromKey(it) } ?: default.contrast,
-      // Behavior
+      reduceAnim = prefs[REDUCE_ANIM] ?: default.reduceAnim,
       haptic = prefs[HAPTIC] ?: default.haptic,
       vibrationIntensity = prefs[VIBRATION_INTENSITY]?.let { VibrationIntensity.fromKey(it) }
         ?: default.vibrationIntensity,
-      reduceAnim = prefs[REDUCE_ANIM] ?: default.reduceAnim,
-      // Instrument Settings
+      // Metronome
+      beatMode = prefs[BEAT_MODE]?.let { BeatMode.fromKey(it) } ?: default.beatMode,
       sound = prefs[SOUND]?.let { Sound.fromKey(it) } ?: default.sound,
+      ignoreFocus = prefs[IGNORE_FOCUS] ?: default.ignoreFocus,
       gain = prefs[GAIN] ?: default.gain,
       latency = prefs[LATENCY] ?: default.latency,
-      beatMode = prefs[BEAT_MODE]?.let { BeatMode.fromKey(it) } ?: default.beatMode,
-      flashlight = prefs[FLASHLIGHT]?.let { FlashStrength.fromKey(it) } ?: default.flashlight,
-      flashScreen = prefs[FLASH_SCREEN]?.let { FlashStrength.fromKey(it) } ?: default.flashScreen,
       keepAwake = prefs[KEEP_AWAKE]?.let { KeepAwakeMode.fromKey(it) } ?: default.keepAwake,
-      ignoreFocus = prefs[IGNORE_FOCUS] ?: default.ignoreFocus,
-      // UI States
-      showElapsed = prefs[SHOW_ELAPSED] ?: default.showElapsed,
-      resetTimerOnStop = prefs[RESET_TIMER_ON_STOP] ?: default.resetTimerOnStop,
+      flashScreen = prefs[FLASH_SCREEN]?.let { FlashStrength.fromKey(it) } ?: default.flashScreen,
+      flashlight = prefs[FLASHLIGHT]?.let { FlashStrength.fromKey(it) } ?: default.flashlight,
       permanentNotification = prefs[PERMANENT_NOTIFICATION] ?: default.permanentNotification,
+      resetTimerOnStop = prefs[RESET_TIMER_ON_STOP] ?: default.resetTimerOnStop,
+      showElapsed = prefs[SHOW_ELAPSED] ?: default.showElapsed,
       activeBeat = prefs[ACTIVE_BEAT] ?: default.activeBeat,
       bigTimeText = prefs[BIG_TIME_TEXT] ?: default.bigTimeText,
       bigLogo = prefs[BIG_LOGO] ?: default.bigLogo,
-      // Misc
+      // Internal
       notificationPermissionDenied =
         prefs[PERMISSION_DENIED] ?: default.notificationPermissionDenied
     )
@@ -116,28 +133,31 @@ class AppDataStore(
 
   suspend fun updateSettings(settings: AppSettings) {
     dataStore.edit { prefs ->
+      // General
       prefs.setIfChanged(LANGUAGE, settings.language ?: "system")
       prefs.setIfChanged(COLOR, settings.color.key)
       prefs.setIfChanged(COLOR_HUE, settings.colorHue)
       prefs.setIfChanged(THEME, settings.theme.key)
       prefs.setIfChanged(CONTRAST, settings.contrast.key)
+      prefs.setIfChanged(REDUCE_ANIM, settings.reduceAnim)
       prefs.setIfChanged(HAPTIC, settings.haptic)
       prefs.setIfChanged(VIBRATION_INTENSITY, settings.vibrationIntensity.key)
-      prefs.setIfChanged(REDUCE_ANIM, settings.reduceAnim)
+      // Metronome
+      prefs.setIfChanged(BEAT_MODE, settings.beatMode.key)
       prefs.setIfChanged(SOUND, settings.sound.key)
+      prefs.setIfChanged(IGNORE_FOCUS, settings.ignoreFocus)
       prefs.setIfChanged(GAIN, settings.gain)
       prefs.setIfChanged(LATENCY, settings.latency)
-      prefs.setIfChanged(BEAT_MODE, settings.beatMode.key)
-      prefs.setIfChanged(FLASHLIGHT, settings.flashlight.key)
-      prefs.setIfChanged(FLASH_SCREEN, settings.flashScreen.key)
       prefs.setIfChanged(KEEP_AWAKE, settings.keepAwake.key)
-      prefs.setIfChanged(IGNORE_FOCUS, settings.ignoreFocus)
-      prefs.setIfChanged(SHOW_ELAPSED, settings.showElapsed)
-      prefs.setIfChanged(RESET_TIMER_ON_STOP, settings.resetTimerOnStop)
+      prefs.setIfChanged(FLASH_SCREEN, settings.flashScreen.key)
+      prefs.setIfChanged(FLASHLIGHT, settings.flashlight.key)
       prefs.setIfChanged(PERMANENT_NOTIFICATION, settings.permanentNotification)
+      prefs.setIfChanged(RESET_TIMER_ON_STOP, settings.resetTimerOnStop)
+      prefs.setIfChanged(SHOW_ELAPSED, settings.showElapsed)
       prefs.setIfChanged(ACTIVE_BEAT, settings.activeBeat)
       prefs.setIfChanged(BIG_TIME_TEXT, settings.bigTimeText)
       prefs.setIfChanged(BIG_LOGO, settings.bigLogo)
+      // Internal
       prefs.setIfChanged(PERMISSION_DENIED, settings.notificationPermissionDenied)
     }
   }
@@ -150,10 +170,10 @@ class AppDataStore(
       prefs.setIfChanged(USE_POLYRHYTHM, config.usePolyrhythm)
       prefs.setIfChanged(COUNT_IN, config.countIn)
       prefs.setIfChanged(INCREMENTAL_AMOUNT, config.incrementalAmount)
-      prefs.setIfChanged(INCREMENTAL_INCREASE, config.incrementalIncrease)
       prefs.setIfChanged(INCREMENTAL_INTERVAL, config.incrementalInterval)
-      prefs.setIfChanged(INCREMENTAL_UNIT, config.incrementalUnit.key)
       prefs.setIfChanged(INCREMENTAL_LIMIT, config.incrementalLimit)
+      prefs.setIfChanged(INCREMENTAL_UNIT, config.incrementalUnit.key)
+      prefs.setIfChanged(INCREMENTAL_INCREASE, config.incrementalIncrease)
       prefs.setIfChanged(TIMER_DURATION, config.timerDuration)
       prefs.setIfChanged(TIMER_UNIT, config.timerUnit.key)
       prefs.setIfChanged(MUTE_PLAY, config.mutePlay)
@@ -180,37 +200,48 @@ class AppDataStore(
   }
 
   companion object {
+
+    // General
     private val LANGUAGE = stringPreferencesKey("language")
     private val COLOR = stringPreferencesKey("app_color")
     private val COLOR_HUE = floatPreferencesKey("app_color_hue")
     private val THEME = stringPreferencesKey("app_theme")
     private val CONTRAST = stringPreferencesKey("app_contrast")
+    private val REDUCE_ANIM = booleanPreferencesKey("reduce_animations")
     private val HAPTIC = booleanPreferencesKey("haptic_feedback")
     private val VIBRATION_INTENSITY = stringPreferencesKey("vibration_intensity")
-    private val REDUCE_ANIM = booleanPreferencesKey("reduce_animations")
 
+    // Metronome
+    private val BEAT_MODE = stringPreferencesKey("beat_mode")
+    private val SOUND = stringPreferencesKey("sound")
+    private val IGNORE_FOCUS = booleanPreferencesKey("ignore_focus")
+    private val GAIN = intPreferencesKey("gain")
+    private val LATENCY = longPreferencesKey("latency_ms")
+    private val KEEP_AWAKE = stringPreferencesKey("keep_screen_awake")
+    private val FLASH_SCREEN = stringPreferencesKey("flash_screen_strength")
+    private val FLASHLIGHT = stringPreferencesKey("flashlight_strength")
+    private val PERMANENT_NOTIFICATION = booleanPreferencesKey("permanent_notification")
+    private val RESET_TIMER_ON_STOP = booleanPreferencesKey("reset_timer")
+    private val SHOW_ELAPSED = booleanPreferencesKey("show_elapsed")
+    private val ACTIVE_BEAT = booleanPreferencesKey("active_beat")
+    private val BIG_TIME_TEXT = booleanPreferencesKey("big_time_text")
+    private val BIG_LOGO = booleanPreferencesKey("big_logo")
+
+    // Internal
+    private val PERMISSION_DENIED = booleanPreferencesKey("notification_permission_denied")
+    private val CHECK_UNLOCK_KEY = booleanPreferencesKey("check_unlock_key")
+
+    // Metronome config
     private val TEMPO = intPreferencesKey("tempo")
     private val BEATS = stringPreferencesKey("beats")
     private val SUBDIVISIONS = stringPreferencesKey("subdivisions")
     private val USE_POLYRHYTHM = booleanPreferencesKey("use_polyrhythm")
-    private val BEAT_MODE = stringPreferencesKey("beat_mode")
-    private val SHOW_ELAPSED = booleanPreferencesKey("show_elapsed")
-    private val RESET_TIMER_ON_STOP = booleanPreferencesKey("reset_timer")
-    private val FLASH_SCREEN = stringPreferencesKey("flash_screen_strength")
-    private val FLASHLIGHT = stringPreferencesKey("flashlight_strength")
-    private val KEEP_AWAKE = stringPreferencesKey("keep_screen_awake")
-    private val SOUND = stringPreferencesKey("sound")
-    private val LATENCY = longPreferencesKey("latency_ms")
-    private val IGNORE_FOCUS = booleanPreferencesKey("ignore_focus")
-    private val GAIN = intPreferencesKey("gain")
-    private val PERMANENT_NOTIFICATION = booleanPreferencesKey("permanent_notification")
-
     private val COUNT_IN = intPreferencesKey("count_in")
     private val INCREMENTAL_AMOUNT = intPreferencesKey("incremental_amount")
-    private val INCREMENTAL_INCREASE = booleanPreferencesKey("incremental_increase")
     private val INCREMENTAL_INTERVAL = intPreferencesKey("incremental_interval")
-    private val INCREMENTAL_UNIT = stringPreferencesKey("incremental_unit")
     private val INCREMENTAL_LIMIT = intPreferencesKey("incremental_limit")
+    private val INCREMENTAL_UNIT = stringPreferencesKey("incremental_unit")
+    private val INCREMENTAL_INCREASE = booleanPreferencesKey("incremental_increase")
     private val TIMER_DURATION = intPreferencesKey("timer_duration")
     private val TIMER_UNIT = stringPreferencesKey("timer_unit")
     private val MUTE_PLAY = intPreferencesKey("mute_play")
@@ -218,16 +249,9 @@ class AppDataStore(
     private val MUTE_UNIT = stringPreferencesKey("mute_unit")
     private val MUTE_RANDOM = booleanPreferencesKey("mute_random")
 
-    private val ACTIVE_BEAT = booleanPreferencesKey("active_beat")
-    private val BIG_TIME_TEXT = booleanPreferencesKey("big_time_text")
-    private val BIG_LOGO = booleanPreferencesKey("big_logo")
-
+    // Song library
     private val SONGS_ORDER = intPreferencesKey("songs_order")
     private val SONG_CURRENT_ID = stringPreferencesKey("current_song_id")
     private val PART_CURRENT_INDEX = intPreferencesKey("current_part_index")
-
-    private val CHECK_UNLOCK_KEY = booleanPreferencesKey("check_unlock_key")
-
-    private val PERMISSION_DENIED = booleanPreferencesKey("notification_permission_denied")
   }
 }
