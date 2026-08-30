@@ -26,6 +26,7 @@ import android.content.ServiceConnection
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
@@ -82,6 +83,9 @@ class MainActivity : ComponentActivity(), ServiceConnection {
       app.songRepository,
       app.backupRepository
     )
+  }
+  private val metronomeIntent by lazy {
+    Intent(this, MetronomeService::class.java)
   }
 
   override fun attachBaseContext(newBase: Context) {
@@ -213,10 +217,20 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     }
   }
 
+  override fun onDestroy() {
+    super.onDestroy()
+    if (isFinishing) {
+      stopService(metronomeIntent)
+    }
+  }
+
   override fun onStart() {
     super.onStart()
-    Intent(this, MetronomeService::class.java).also { intent ->
-      bindService(intent, this, BIND_AUTO_CREATE)
+    try {
+      startService(metronomeIntent)
+      bindService(metronomeIntent, this, Context.BIND_IMPORTANT)
+    } catch (e: Exception) {
+      Log.e(TAG, "onStart: $e")
     }
   }
 
@@ -228,10 +242,17 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
   override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
     val binder = service as MetronomeService.MetronomeBinder
-    viewModel.onServiceConnected(binder.getService())
+    val metronomeService = binder.getService()
+    viewModel.onServiceConnected(metronomeService)
+
+    metronomeService.engine.warmUpAudio()
   }
 
   override fun onServiceDisconnected(name: ComponentName?) {
     viewModel.onServiceDisconnected()
+  }
+
+  companion object {
+    private val TAG = MainActivity::class.java.simpleName
   }
 }

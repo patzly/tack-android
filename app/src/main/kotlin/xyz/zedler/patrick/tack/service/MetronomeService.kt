@@ -26,11 +26,11 @@ import android.content.pm.ServiceInfo
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.TackApplication
@@ -39,6 +39,7 @@ import xyz.zedler.patrick.tack.core.data.MetronomeRepository
 import xyz.zedler.patrick.tack.core.data.SettingsRepository
 import xyz.zedler.patrick.tack.core.data.SongRepository
 import xyz.zedler.patrick.tack.core.metronome.MetronomeEngine
+import xyz.zedler.patrick.tack.core.model.AppSettings
 import xyz.zedler.patrick.tack.core.model.MetronomeConfig
 import xyz.zedler.patrick.tack.core.model.MetronomeState
 import xyz.zedler.patrick.tack.core.model.TimingUnit
@@ -60,7 +61,8 @@ class MetronomeService : Service() {
   private lateinit var hapticProvider: HapticProviderImpl
 
   private var isBound = false
-  private var permNotification = false
+
+  private var appSettings = AppSettings()
   private var metronomeConfig = MetronomeConfig()
 
   override fun onCreate() {
@@ -81,43 +83,23 @@ class MetronomeService : Service() {
 
     serviceScope.launch {
       settingsRepository.settings.collect { settings ->
+        appSettings = settings
         hapticProvider.isEnabled = settings.haptic
         hapticProvider.intensity = settings.vibrationIntensity
-        
+
         engine.updateSettings(settings)
-
-        permNotification = settings.permanentNotification
+        updateServiceState()
       }
-    }
 
-    serviceScope.launch {
       metronomeRepository.metronomeConfig.collect { config ->
         metronomeConfig = config
         engine.applyConfig(config)
+        updateServiceState()
       }
-    }
 
-    serviceScope.launch {
-      engine.state.collectLatest { state ->
-        if (state.isPlaying || (permNotification && hasPermission())) {
-          val notification = getNotification(state)
-          if (state.isPlaying) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-              startForeground(
-                NotificationUtil.NOTIFICATION_ID,
-                notification,
-                ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
-              )
-            } else {
-              startForeground(NotificationUtil.NOTIFICATION_ID, notification)
-            }
-          } else {
-            NotificationUtil.updateNotification(this@MetronomeService, notification)
-            stopForeground(STOP_FOREGROUND_DETACH)
-          }
-        } else {
-          stopForeground(STOP_FOREGROUND_REMOVE)
-          if (!isBound) stopSelf()
+      serviceScope.launch {
+        engine.state.collect { state ->
+          updateServiceState(state)
         }
       }
     }
@@ -130,7 +112,7 @@ class MetronomeService : Service() {
       ACTION_DISMISS -> {
         if (!isBound) {
           engine.stop()
-          stopForeground(STOP_FOREGROUND_REMOVE)
+          stopForegroundCompat(true)
           stopSelf()
         }
       }
@@ -139,33 +121,92 @@ class MetronomeService : Service() {
         val startPlaying = intent.action == ACTION_START_SONG
         serviceScope.launch {
           val songWithParts = songRepository.getSongWithPartsAsync(songId)
-          songWithParts?.let {
-            val part = it.parts.firstOrNull { p -> p.partIndex == 0 }
-            part?.let { p ->
-              engine.applyConfig(p.toConfig())
-              if (startPlaying) engine.start()
-            }
-          }
+          engine.setSong(songWithParts, partIndex = 0, startPlaying = startPlaying)
         }
       }
     }
-    return START_STICKY
+    return START_NOT_STICKY
   }
 
   override fun onBind(intent: Intent): IBinder {
     isBound = true
+    updateServiceState()
     return binder
+  }
+
+  override fun onRebind(intent: Intent) {
+    super.onRebind(intent)
+    isBound = true
+    updateServiceState()
   }
 
   override fun onUnbind(intent: Intent?): Boolean {
     isBound = false
-    return super.onUnbind(intent)
+    updateServiceState()
+    return true
   }
 
   override fun onDestroy() {
     super.onDestroy()
+    stopForegroundCompat(true)
     engine.destroy()
     serviceScope.cancel()
+  }
+
+  private fun updateServiceState(state: MetronomeState = engine.state.value) {
+    if (!NotificationUtil.hasPermission(this)) {
+      stopForegroundCompat(true)
+      if (!isBound) stopSelf()
+      return
+    }
+
+    val isTimerActive = metronomeConfig.isTimerActive
+    val isElapsedActive = appSettings.showElapsed
+    val realTimeActive = isTimerActive || isElapsedActive
+    val shouldShowNonPermanent = state.isPlaying || realTimeActive
+
+    val showNotification = appSettings.permanentNotification || (!isBound && shouldShowNonPermanent)
+
+    if (showNotification) {
+      val notification = getNotification(state)
+      if (state.isPlaying) {
+        startForegroundCompat(notification)
+      } else {
+        NotificationUtil.updateNotification(this, notification)
+        stopForegroundCompat(false)
+      }
+    } else {
+      stopForegroundCompat(true)
+      if (!isBound) {
+        stopSelf()
+      }
+    }
+  }
+
+  private fun startForegroundCompat(notification: Notification) {
+    try {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        startForeground(
+          NotificationUtil.NOTIFICATION_ID,
+          notification,
+          ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK
+        )
+      } else {
+        startForeground(NotificationUtil.NOTIFICATION_ID, notification)
+      }
+    } catch (e: Exception) {
+      Log.e(TAG, "startForegroundCompat: $e")
+    }
+  }
+
+  private fun stopForegroundCompat(removeNotification: Boolean) {
+    stopForeground(
+      if (removeNotification) {
+        STOP_FOREGROUND_REMOVE
+      } else {
+        STOP_FOREGROUND_DETACH
+      }
+    )
   }
 
   private fun getNotification(state: MetronomeState): Notification {
@@ -246,13 +287,13 @@ class MetronomeService : Service() {
     }
   }
 
-  private fun hasPermission(): Boolean = NotificationUtil.hasPermission(this)
-
   inner class MetronomeBinder : Binder() {
     fun getService(): MetronomeService = this@MetronomeService
   }
 
   companion object {
+    private val TAG = MetronomeService::class.java.simpleName
+
     const val ACTION_START = "xyz.zedler.patrick.tack.action.START"
     const val ACTION_STOP = "xyz.zedler.patrick.tack.action.STOP"
     const val ACTION_DISMISS = "xyz.zedler.patrick.tack.action.DISMISS"

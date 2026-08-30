@@ -76,7 +76,7 @@ import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.AppSettings
 import xyz.zedler.patrick.tack.core.model.BeatMode
 import xyz.zedler.patrick.tack.core.model.MetronomeState
-import xyz.zedler.patrick.tack.ui.component.main.MainControls
+import xyz.zedler.patrick.tack.ui.component.main.BottomControls
 import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.ui.dialog.GainWarningDialog
 import xyz.zedler.patrick.tack.ui.dialog.HelpDialog
@@ -448,7 +448,7 @@ private fun CompactPortraitContent(
   ConstraintLayout(modifier = Modifier.fillMaxSize()) {
     val (mainControls) = createRefs()
 
-    MainControls(
+    BottomControls(
       settings = settings,
       metronomeState = metronomeState,
       onOptionsClick = onOptionsClick,

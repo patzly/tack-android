@@ -54,7 +54,7 @@ import xyz.zedler.patrick.tack.ui.theme.LocalDimens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainControls(
+fun BottomControls(
   settings: AppSettings,
   metronomeState: MetronomeState,
   onOptionsClick: () -> Unit,
