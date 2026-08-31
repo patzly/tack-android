@@ -70,6 +70,20 @@ object LocaleUtil {
     // For older versions, the actual application happens via wrap() in attachBaseContext
   }
 
+  fun resolveLanguageCode(context: Context, languageCode: String?): String? {
+    if (languageCode.isNullOrBlank()) return null
+
+    val supportedCodes = getLanguages(context).map { it.code }
+    if (supportedCodes.contains(languageCode)) {
+      return languageCode
+    }
+    val baseCode = languageCode.substringBefore("-")
+    if (supportedCodes.contains(baseCode)) {
+      return baseCode
+    }
+    return languageCode
+  }
+
   fun wrap(context: Context, languageCode: String?): Context {
     val locale = getLocale(languageCode)
     Locale.setDefault(locale)
@@ -80,13 +94,8 @@ object LocaleUtil {
 
   private fun getLocaleFromCode(languageCode: String): Locale {
     return try {
-      val codeParts = languageCode.split("-")
-      if (codeParts.size > 1) {
-        Locale.Builder().setLanguage(codeParts[0]).setRegion(codeParts[1]).build()
-      } else {
-        Locale.Builder().setLanguage(languageCode).build()
-      }
-    } catch (e: Exception) {
+      Locale.forLanguageTag(languageCode)
+    } catch (_: Exception) {
       Locale.getDefault()
     }
   }

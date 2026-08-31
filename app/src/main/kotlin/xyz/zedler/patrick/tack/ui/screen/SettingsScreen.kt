@@ -122,6 +122,10 @@ fun SettingsScreen(viewModel: MainViewModel) {
   val settings by viewModel.settings.collectAsStateWithLifecycle()
   val unlockState by viewModel.unlockState.collectAsStateWithLifecycle()
 
+  val resolvedLanguage = remember(settings.language) {
+    LocaleUtil.resolveLanguageCode(context, settings.language)
+  }
+
   var showFeedbackDialog by rememberSaveable { mutableStateOf(false) }
   var showUnlockDialog by rememberSaveable { mutableStateOf(false) }
   var showHelpDialog by rememberSaveable { mutableStateOf(false) }
@@ -178,7 +182,7 @@ fun SettingsScreen(viewModel: MainViewModel) {
 
   if (showLanguageDialog) {
     LanguageDialog(
-      currentLanguageCode = settings.language,
+      currentLanguageCode = resolvedLanguage,
       onLanguageSelected = { viewModel.updateSettings(settings.copy(language = it)) },
       onDismissRequest = { showLanguageDialog = false }
     )
@@ -201,6 +205,7 @@ fun SettingsScreen(viewModel: MainViewModel) {
 
   SettingsContent(
     settings = settings,
+    resolvedLanguage = resolvedLanguage,
     hasVibrator = haptic.hasVibrator,
     supportsMainEffects = haptic.supportsMainEffects,
     onClick = { haptic.click() },
@@ -229,6 +234,7 @@ fun SettingsScreen(viewModel: MainViewModel) {
 @Composable
 fun SettingsContent(
   settings: AppSettings = AppSettings(),
+  resolvedLanguage: String? = null,
   hasVibrator: Boolean = true,
   supportsMainEffects: Boolean = true,
   onClick: () -> Unit = {},
@@ -431,7 +437,7 @@ fun SettingsContent(
           val localeName = if (settings.language == null) {
             stringResource(R.string.settings_language_system)
           } else {
-            LocaleUtil.getLocaleName(settings.language)
+            LocaleUtil.getLocaleName(resolvedLanguage)
           }
 
           SegmentedListItem(

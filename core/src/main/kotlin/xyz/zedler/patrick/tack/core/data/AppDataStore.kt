@@ -65,7 +65,7 @@ class AppDataStore(
     val default = AppSettings()
     AppSettings(
       // General
-      language = prefs[LANGUAGE].let { if (it == "system") null else it },
+      language = prefs[LANGUAGE],
       color = prefs[COLOR]?.let { AppColor.fromKey(it) } ?: default.color,
       colorHue = prefs[COLOR_HUE] ?: default.colorHue,
       theme = prefs[THEME]?.let { AppTheme.fromKey(it) } ?: default.theme,
@@ -134,7 +134,11 @@ class AppDataStore(
   suspend fun updateSettings(settings: AppSettings) {
     dataStore.edit { prefs ->
       // General
-      prefs.setIfChanged(LANGUAGE, settings.language ?: "system")
+      if (settings.language == null) {
+        prefs.remove(LANGUAGE)
+      } else {
+        prefs.setIfChanged(LANGUAGE, settings.language)
+      }
       prefs.setIfChanged(COLOR, settings.color.key)
       prefs.setIfChanged(COLOR_HUE, settings.colorHue)
       prefs.setIfChanged(THEME, settings.theme.key)

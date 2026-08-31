@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.activity
 
+import android.app.LocaleManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
@@ -88,14 +89,6 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     Intent(this, MetronomeService::class.java)
   }
 
-  override fun attachBaseContext(newBase: Context) {
-    val app = newBase.applicationContext as? TackApplication
-    val languageCode = runBlocking {
-      app?.settingsRepository?.settings?.first()?.language
-    }
-    super.attachBaseContext(LocaleUtil.wrap(newBase, languageCode))
-  }
-
   @OptIn(
     ExperimentalMaterial3WindowSizeClassApi::class,
     ExperimentalMaterial3AdaptiveApi::class
@@ -112,6 +105,19 @@ class MainActivity : ComponentActivity(), ServiceConnection {
       val settings by viewModel.settings.collectAsStateWithLifecycle()
       val metronomeState by viewModel.metronomeState.collectAsStateWithLifecycle()
       val backstack = viewModel.backstack
+
+      LaunchedEffect(Unit) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+          val localeManager = getSystemService(LocaleManager::class.java)
+          val systemSetLanguage = localeManager.applicationLocales.getFirstMatch(
+            arrayOf("*")
+          )?.toLanguageTag()
+
+          if (systemSetLanguage != settings.language) {
+            viewModel.updateSettings(settings.copy(language = systemSetLanguage))
+          }
+        }
+      }
 
       LaunchedEffect(settings.haptic, settings.vibrationIntensity) {
         hapticProvider.isEnabled = settings.haptic
@@ -250,6 +256,18 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
   override fun onServiceDisconnected(name: ComponentName?) {
     viewModel.onServiceDisconnected()
+  }
+
+  override fun attachBaseContext(newBase: Context) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      super.attachBaseContext(newBase)
+    } else {
+      val app = newBase.applicationContext as? TackApplication
+      val languageCode = runBlocking {
+        app?.settingsRepository?.settings?.first()?.language
+      }
+      super.attachBaseContext(LocaleUtil.wrap(newBase, languageCode))
+    }
   }
 
   companion object {
