@@ -353,6 +353,8 @@
 
   <string name="settings_theme">Tema</string>
   <string name="settings_theme_description">Variedade para o seu estilo</string>
+  <!-- This is a theme name: User can choose between dark or light theme or follow system. The button width should be as dense as possible. -->
+  <string name="settings_theme_auto">Sistema</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
   <string name="settings_theme_dark">Escuro</string>
   <!-- This is a theme name: User can choose between dark or light theme or follow system -->
