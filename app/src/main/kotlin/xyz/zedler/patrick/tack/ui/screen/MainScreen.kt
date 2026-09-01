@@ -22,7 +22,6 @@ package xyz.zedler.patrick.tack.ui.screen
 import android.Manifest
 import android.content.Intent
 import android.os.Build
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -116,6 +115,8 @@ fun MainScreen(
   ) { isGranted ->
     if (isGranted || settings.notificationPermissionDenied) {
       viewModel.startMetronome()
+    } else {
+      viewModel.onNotificationPermissionDenied()
     }
   }
 
@@ -157,10 +158,14 @@ fun MainScreen(
     is MainDialog.GainWarning -> {
       GainWarningDialog(
         onPlay = {
-          viewModel.onConfirmGainWarning(NotificationUtil.hasPermission(context), deactivateGain = false)
+          viewModel.onConfirmGainWarning(
+            NotificationUtil.hasPermission(context), deactivateGain = false
+          )
         },
         onDeactivate = {
-          viewModel.onConfirmGainWarning(NotificationUtil.hasPermission(context), deactivateGain = true)
+          viewModel.onConfirmGainWarning(
+            NotificationUtil.hasPermission(context), deactivateGain = true
+          )
         },
         onDismissRequest = { viewModel.onDismissDialog() }
       )
@@ -176,7 +181,7 @@ fun MainScreen(
           }
         },
         onDismissRequest = {
-          viewModel.onDismissPermissionDialog(proceedAnyway = true, dontAskAgain = true)
+          viewModel.onDismissDialog()
         }
       )
     }
@@ -212,7 +217,6 @@ fun MainScreen(
     },
     // Tempo picker
     onTempoChangeDelta = { delta ->
-      Log.i("hello", "MainScreen: hello " + delta)
       val didChange = viewModel.changeTempo(delta)
       if (didChange) {
         haptic.tick()

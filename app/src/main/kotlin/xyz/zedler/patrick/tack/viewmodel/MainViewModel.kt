@@ -374,14 +374,10 @@ class MainViewModel(
     }
   }
 
-  fun onDismissPermissionDialog(proceedAnyway: Boolean, dontAskAgain: Boolean) {
+  fun onNotificationPermissionDenied() {
     _dialogState.value = null
-    if (dontAskAgain) {
-      updateSettings(settings.value.copy(notificationPermissionDenied = true))
-    }
-    if (proceedAnyway) {
-      startMetronome()
-    }
+    updateSettings(settings.value.copy(notificationPermissionDenied = true))
+    startMetronome()
   }
 
   class Factory(
