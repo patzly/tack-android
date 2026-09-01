@@ -25,6 +25,7 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -72,10 +73,14 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.AppSettings
 import xyz.zedler.patrick.tack.core.model.BeatMode
 import xyz.zedler.patrick.tack.core.model.MetronomeState
+import xyz.zedler.patrick.tack.core.model.Tick
+import xyz.zedler.patrick.tack.ui.component.main.AnimatedLogo
 import xyz.zedler.patrick.tack.ui.component.main.BottomControls
 import xyz.zedler.patrick.tack.ui.component.main.TempoPicker
 import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
@@ -193,6 +198,7 @@ fun MainScreen(
     metronomeState = metronomeState,
     windowSizeClass = windowSizeClass,
     // app bar menu
+    tickEvent = viewModel.tickEvent,
     onSupportClick = {
       showUnlockDialog = true
     },
@@ -259,6 +265,7 @@ fun MainContent(
     DpSize(412.dp, 924.dp)
   ),
   // App bar menu
+  tickEvent: Flow<Tick> = flowOf(),
   onSupportClick: () -> Unit = {},
   onMoreClick: () -> Unit = {},
   onSettingsClick: () -> Unit = {},
@@ -308,23 +315,12 @@ fun MainContent(
           )
         },
         navigationIcon = {
-          TooltipBox(
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              TooltipAnchorPosition.Below
-            ),
-            tooltip = {
-              PlainTooltip {
-                Text(stringResource(R.string.app_name))
-              }
-            },
-            state = rememberTooltipState(),
-          ) {
-            Icon(
-              painter = painterResource(R.drawable.ic_rounded_star),
-              contentDescription = stringResource(R.string.app_name),
-              tint = MaterialTheme.colorScheme.onSurface
-            )
-          }
+          AnimatedLogo(
+            isPlaying = metronomeState.isPlaying,
+            tempo = metronomeState.tempo,
+            tickEvent = tickEvent,
+            modifier = Modifier.size(32.dp)
+          )
         },
         actions = {
           var showMenu by remember { mutableStateOf(false) }
@@ -414,6 +410,7 @@ fun MainContent(
             }
           }
         },
+        contentPadding = PaddingValues(start = 4.dp),
         scrollBehavior = scrollBehavior
       )
     }

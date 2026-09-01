@@ -25,12 +25,15 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -47,6 +50,7 @@ import xyz.zedler.patrick.tack.core.model.AppSettings
 import xyz.zedler.patrick.tack.core.model.MetronomeConfig
 import xyz.zedler.patrick.tack.core.model.MetronomeConstants
 import xyz.zedler.patrick.tack.core.model.MetronomeState
+import xyz.zedler.patrick.tack.core.model.Tick
 import xyz.zedler.patrick.tack.core.model.UnlockState
 import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.ui.navigation.Route
@@ -119,7 +123,7 @@ class MainViewModel(
   )
 
   // Dynamic state from Engine (via Service)
-  @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+  @OptIn(ExperimentalCoroutinesApi::class)
   val metronomeState: StateFlow<MetronomeState> = _service
     .flatMapLatest { service ->
       service?.engine?.state ?: flowOf(MetronomeState())
@@ -129,6 +133,17 @@ class MainViewModel(
       SharingStarted.WhileSubscribed(5000),
       MetronomeState()
     )
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  val tickEvent: Flow<Tick> = _service
+    .flatMapLatest { service ->
+      service?.engine?.tickEvent ?: emptyFlow()
+    }
+  @OptIn(ExperimentalCoroutinesApi::class)
+  val preTickEvent: Flow<Tick> = _service
+    .flatMapLatest { service ->
+      service?.engine?.preTickEvent ?: emptyFlow()
+    }
 
   // General UI
 
