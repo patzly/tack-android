@@ -31,6 +31,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.TackApplication
@@ -41,6 +46,7 @@ import xyz.zedler.patrick.tack.core.data.SongRepository
 import xyz.zedler.patrick.tack.core.metronome.MetronomeEngine
 import xyz.zedler.patrick.tack.core.model.AppSettings
 import xyz.zedler.patrick.tack.core.model.MetronomeConfig
+import xyz.zedler.patrick.tack.core.model.MetronomeConstants
 import xyz.zedler.patrick.tack.core.model.MetronomeState
 import xyz.zedler.patrick.tack.core.model.TimingUnit
 import xyz.zedler.patrick.tack.core.util.TimeUtil
@@ -48,6 +54,7 @@ import xyz.zedler.patrick.tack.hardware.FlashlightProviderImpl
 import xyz.zedler.patrick.tack.hardware.HapticProviderImpl
 import xyz.zedler.patrick.tack.util.NotificationUtil
 import java.util.Locale
+import kotlin.math.roundToInt
 
 class MetronomeService : Service() {
 
@@ -61,9 +68,14 @@ class MetronomeService : Service() {
   private lateinit var hapticProvider: HapticProviderImpl
 
   private var isBound = false
-
   private var appSettings = AppSettings()
-  private var metronomeConfig = MetronomeConfig()
+
+  private val _externalSongLoad = MutableSharedFlow<SongLoadEvent>(
+    extraBufferCapacity = 1, onBufferOverflow = BufferOverflow.DROP_OLDEST
+  )
+  val externalSongLoad: SharedFlow<SongLoadEvent> = _externalSongLoad.asSharedFlow()
+
+  data class SongLoadEvent(val songId: String?, val partIndex: Int, val config: MetronomeConfig)
 
   override fun onCreate() {
     super.onCreate()
@@ -90,17 +102,11 @@ class MetronomeService : Service() {
         engine.updateSettings(settings)
         updateServiceState()
       }
+    }
 
-      metronomeRepository.metronomeConfig.collect { config ->
-        metronomeConfig = config
-        engine.applyConfig(config)
-        updateServiceState()
-      }
-
-      serviceScope.launch {
-        engine.state.collect { state ->
-          updateServiceState(state)
-        }
+    serviceScope.launch {
+      engine.state.collect { state ->
+        updateServiceState(state)
       }
     }
   }
@@ -117,11 +123,42 @@ class MetronomeService : Service() {
         }
       }
       ACTION_APPLY_SONG, ACTION_START_SONG -> {
-        val songId = intent.getStringExtra(EXTRA_SONG_ID) ?: SongRepository.SONG_ID_DEFAULT
+        val songId = intent.getStringExtra(EXTRA_SONG_ID)
         val startPlaying = intent.action == ACTION_START_SONG
+
         serviceScope.launch {
-          val songWithParts = songRepository.getSongWithPartsAsync(songId)
-          engine.setSong(songWithParts, partIndex = 0, startPlaying = startPlaying)
+          if (songId == null || songId == "default") {
+            val config = metronomeRepository.metronomeConfig.first()
+            engine.setPlaylist(
+              emptyList(), false, 0, false
+            )
+            engine.applyConfig(config)
+            if (startPlaying) engine.start()
+
+            metronomeRepository.updateActiveSong(null)
+            _externalSongLoad.tryEmit(
+              SongLoadEvent(null, 0, config)
+            )
+          } else {
+            val songWithParts = songRepository.getSongWithPartsAsync(songId)
+            if (songWithParts != null && songWithParts.parts.isNotEmpty()) {
+              val speedModifier = songWithParts.song.speed / 100.0
+              val playlist = songWithParts.parts.map { part ->
+                val c = part.toConfig()
+                val effectiveTempo = (c.tempo * speedModifier).roundToInt()
+                  .coerceIn(MetronomeConstants.TEMPO_MIN, MetronomeConstants.TEMPO_MAX)
+                c.copy(tempo = effectiveTempo)
+              }
+
+              engine.setPlaylist(
+                playlist, songWithParts.song.isLooped, 0, startPlaying
+              )
+              metronomeRepository.updateActiveSong(songId, 0)
+              _externalSongLoad.tryEmit(
+                SongLoadEvent(songId, 0, playlist[0])
+              )
+            }
+          }
         }
       }
     }
@@ -160,7 +197,8 @@ class MetronomeService : Service() {
       return
     }
 
-    val isTimerActive = metronomeConfig.isTimerActive
+    val config = engine.config
+    val isTimerActive = config.isTimerActive
     val isElapsedActive = appSettings.showElapsed
     val realTimeActive = isTimerActive || isElapsedActive
     val shouldShowNonPermanent = state.isPlaying || realTimeActive
@@ -210,7 +248,9 @@ class MetronomeService : Service() {
   }
 
   private fun getNotification(state: MetronomeState): Notification {
-    val isTimerActive = metronomeConfig.isTimerActive
+    val config = engine.config
+    val isTimerActive = config.isTimerActive
+
     val timerTextLong = if (isTimerActive) {
       getString(
         R.string.label_part_duration_notification,
@@ -229,27 +269,28 @@ class MetronomeService : Service() {
       timerTextLong = timerTextLong,
       timerTextShort = if (isTimerActive) getCurrentTimerString(state) else state.tempo.toString(),
       timerProgress = state.timerProgress,
-      timerDuration = metronomeConfig.timerDuration
+      timerDuration = config.timerDuration
     )
   }
 
   private fun getCurrentTimerString(state: MetronomeState): String {
-    return when (metronomeConfig.timerUnit) {
+    val config = engine.config
+    return when (config.timerUnit) {
       TimingUnit.SECONDS, TimingUnit.MINUTES -> {
         val totalMillis = engine.getTimerInterval()
         val currentMillis = (state.timerProgress * totalMillis).toLong()
         val seconds = (currentMillis / 1000).toInt()
-        val totalHours = if (metronomeConfig.timerUnit == TimingUnit.MINUTES) {
-          metronomeConfig.timerDuration / 60
+        val totalHours = if (config.timerUnit == TimingUnit.MINUTES) {
+          config.timerDuration / 60
         } else {
-          metronomeConfig.timerDuration / 3600
+          config.timerDuration / 3600
         }
         TimeUtil.getTimeStringFromSeconds(seconds, totalHours > 0)
       }
       else -> {
-        var format = if (metronomeConfig.beatsCount < 10) "%d.%01d" else "%d.%02d"
-        if (metronomeConfig.subdivisionsCount > 1) {
-          format += if (metronomeConfig.subdivisionsCount < 10) ".%01d" else ".%02d"
+        var format = if (config.beatsCount < 10) "%d.%01d" else "%d.%02d"
+        if (config.subdivisionsCount > 1) {
+          format += if (config.subdivisionsCount < 10) ".%01d" else ".%02d"
           String.format(
             Locale.ENGLISH,
             format,
@@ -270,19 +311,20 @@ class MetronomeService : Service() {
   }
 
   private fun getTotalTimerString(): String {
-    return when (metronomeConfig.timerUnit) {
+    val config = engine.config
+    return when (config.timerUnit) {
       TimingUnit.SECONDS, TimingUnit.MINUTES -> {
-        val seconds = if (metronomeConfig.timerUnit == TimingUnit.MINUTES) {
-          metronomeConfig.timerDuration * 60
+        val seconds = if (config.timerUnit == TimingUnit.MINUTES) {
+          config.timerDuration * 60
         } else {
-          metronomeConfig.timerDuration
+          config.timerDuration
         }
         TimeUtil.getTimeStringFromSeconds(seconds, false)
       }
       else -> resources.getQuantityString(
         R.plurals.options_unit_bars,
-        metronomeConfig.timerDuration,
-        metronomeConfig.timerDuration
+        config.timerDuration,
+        config.timerDuration
       )
     }
   }

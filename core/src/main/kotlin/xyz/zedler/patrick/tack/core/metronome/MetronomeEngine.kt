@@ -22,7 +22,6 @@ package xyz.zedler.patrick.tack.core.metronome
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
-import android.util.Log
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +31,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import xyz.zedler.patrick.tack.core.audio.AudioProvider
-import xyz.zedler.patrick.tack.core.database.relations.SongWithParts
 import xyz.zedler.patrick.tack.core.hardware.FlashlightProvider
 import xyz.zedler.patrick.tack.core.hardware.HapticProvider
 import xyz.zedler.patrick.tack.core.model.AppSettings
@@ -47,7 +45,6 @@ import xyz.zedler.patrick.tack.core.model.TimingUnit
 import xyz.zedler.patrick.tack.core.util.Clock
 import xyz.zedler.patrick.tack.core.util.SystemClockImpl
 import java.util.Random
-import kotlin.math.roundToInt
 
 class MetronomeEngine(
   private val audioProvider: AudioProvider,
@@ -70,12 +67,24 @@ class MetronomeEngine(
   )
   val preTickEvent: SharedFlow<Tick> = _preTickEvent.asSharedFlow()
 
-  private var config = MetronomeConfig()
+  private val _engineEvent = MutableSharedFlow<EngineEvent>(
+    extraBufferCapacity = 5, onBufferOverflow = BufferOverflow.DROP_OLDEST
+  )
+  val engineEvent: SharedFlow<EngineEvent> = _engineEvent.asSharedFlow()
+
+  sealed interface EngineEvent {
+    data class AutoTempoChange(val newTempo: Int) : EngineEvent
+    data class PartChange(val partIndex: Int, val config: MetronomeConfig) : EngineEvent
+    data object PlaylistEnd : EngineEvent
+  }
+
+  var config = MetronomeConfig()
+    private set
   private var appSettings = AppSettings()
   private val random = Random()
 
-  // song and part management
-  private var currentSong: SongWithParts? = null
+  private var playlist: List<MetronomeConfig> = emptyList()
+  private var isPlaylistLooped = false
   private var ignoreTimerCallbacksTemp = false
   private var tempPlaying = false
 
@@ -100,7 +109,7 @@ class MetronomeEngine(
 
   private var muteCountDown = 0
 
-  // settings and config
+  // Settings and config
 
   fun updateSettings(settings: AppSettings) {
     val oldSettings = appSettings
@@ -140,34 +149,34 @@ class MetronomeEngine(
     }
   }
 
-  // songs and parts
+  // Playlist and parts
 
-  fun setSong(song: SongWithParts?, partIndex: Int = 0, startPlaying: Boolean = false) {
-    currentSong = song
-    if (song != null) {
-      _state.update { it.copy(currentSongId = song.song.id) }
-      if (song.parts.isNotEmpty()) {
-        setPartIndex(partIndex, startPlaying)
-      }
+  fun setPlaylist(
+    configs: List<MetronomeConfig>,
+    isLooped: Boolean,
+    partIndex: Int = 0,
+    startPlaying: Boolean = false
+  ) {
+    playlist = configs
+    isPlaylistLooped = isLooped
+
+    if (configs.isNotEmpty()) {
+      setPartIndex(partIndex, startPlaying)
     } else {
-      _state.update { it.copy(currentSongId = null, currentPartIndex = 0) }
+      _state.update { it.copy(currentPartIndex = 0) }
     }
   }
 
   fun setPartIndex(index: Int, startPlaying: Boolean = false) {
-    val song = currentSong ?: return
-    if (song.parts.isEmpty()) return
+    if (playlist.isEmpty()) return
 
-    val boundedIndex = index.coerceIn(0, song.parts.size - 1)
+    val boundedIndex = index.coerceIn(0, playlist.size - 1)
     _state.update { it.copy(currentPartIndex = boundedIndex) }
 
-    val partConfig = song.parts[boundedIndex].toConfig()
-    val speed = song.song.speed
-    val effectiveTempo = (partConfig.tempo * (speed / 100.0)).roundToInt()
-      .coerceIn(MetronomeConstants.TEMPO_MIN, MetronomeConstants.TEMPO_MAX)
+    val partConfig = playlist[boundedIndex]
 
     ignoreTimerCallbacksTemp = true
-    applyConfig(partConfig.copy(tempo = effectiveTempo))
+    applyConfig(partConfig)
     ignoreTimerCallbacksTemp = false
 
     if (state.value.isPlaying) {
@@ -177,20 +186,22 @@ class MetronomeEngine(
     } else if (appSettings.resetTimerOnStop) {
       resetTimerState()
     }
+
+    _engineEvent.tryEmit(EngineEvent.PartChange(boundedIndex, partConfig))
   }
 
   private fun handlePartTransition() {
-    val song = currentSong
-    if (song != null && state.value.currentPartIndex < song.parts.size - 1) {
+    if (playlist.isNotEmpty() && state.value.currentPartIndex < playlist.size - 1) {
       setPartIndex(state.value.currentPartIndex + 1, startPlaying = true)
-    } else if (song?.song?.isLooped == true) {
+    } else if (isPlaylistLooped) {
       setPartIndex(0, startPlaying = true)
     } else {
       stop(resetTimer = true)
+      _engineEvent.tryEmit(EngineEvent.PlaylistEnd)
     }
   }
 
-  // playback control
+  // Playback control
 
   fun start() {
     if (state.value.isPlaying) return
@@ -600,6 +611,7 @@ class MetronomeEngine(
     if (newTempo != config.tempo) {
       config = config.copy(tempo = newTempo)
       _state.update { it.copy(tempo = newTempo) }
+      _engineEvent.tryEmit(EngineEvent.AutoTempoChange(newTempo))
     }
   }
 

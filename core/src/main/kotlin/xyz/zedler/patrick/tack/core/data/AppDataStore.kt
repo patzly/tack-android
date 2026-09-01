@@ -131,6 +131,14 @@ class AppDataStore(
     )
   }
 
+  val activeSongId: Flow<String?> = dataStore.data.map { prefs ->
+    prefs[SONG_CURRENT_ID]
+  }
+
+  val activePartIndex: Flow<Int> = dataStore.data.map { prefs ->
+    prefs[PART_CURRENT_INDEX] ?: 0
+  }
+
   suspend fun updateSettings(settings: AppSettings) {
     dataStore.edit { prefs ->
       // General
@@ -190,6 +198,18 @@ class AppDataStore(
   suspend fun updateCheckUnlockKey(checkKey: Boolean) {
     dataStore.edit { prefs ->
       prefs.setIfChanged(CHECK_UNLOCK_KEY, checkKey)
+    }
+  }
+
+  suspend fun updateActiveSong(songId: String?, partIndex: Int = 0) {
+    dataStore.edit { prefs ->
+      if (songId == null) {
+        prefs.remove(SONG_CURRENT_ID)
+        prefs.remove(PART_CURRENT_INDEX)
+      } else {
+        prefs.setIfChanged(SONG_CURRENT_ID, songId)
+        prefs.setIfChanged(PART_CURRENT_INDEX, partIndex)
+      }
     }
   }
 

@@ -22,6 +22,7 @@ package xyz.zedler.patrick.tack.ui.screen
 import android.Manifest
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
@@ -77,6 +78,7 @@ import xyz.zedler.patrick.tack.core.model.AppSettings
 import xyz.zedler.patrick.tack.core.model.BeatMode
 import xyz.zedler.patrick.tack.core.model.MetronomeState
 import xyz.zedler.patrick.tack.ui.component.main.BottomControls
+import xyz.zedler.patrick.tack.ui.component.main.TempoPicker
 import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.ui.dialog.GainWarningDialog
 import xyz.zedler.patrick.tack.ui.dialog.HelpDialog
@@ -88,6 +90,7 @@ import xyz.zedler.patrick.tack.ui.theme.LocalDimens
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.theme.rememberTackDimens
 import xyz.zedler.patrick.tack.ui.util.LocalHaptic
+import xyz.zedler.patrick.tack.ui.util.tempoTermResId
 import xyz.zedler.patrick.tack.util.NotificationUtil
 import xyz.zedler.patrick.tack.viewmodel.MainDialog
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
@@ -207,7 +210,15 @@ fun MainScreen(
       haptic.click()
       showFeedbackDialog = true
     },
-    // bottom controls
+    // Tempo picker
+    onTempoChangeDelta = { delta ->
+      Log.i("hello", "MainScreen: hello " + delta)
+      val didChange = viewModel.changeTempo(delta)
+      if (didChange) {
+        haptic.tick()
+      }
+    },
+    // Bottom controls
     onOptionsClick = {
       haptic.click()
       showOptionsDialog = true
@@ -243,14 +254,16 @@ fun MainContent(
   windowSizeClass: WindowSizeClass = WindowSizeClass.calculateFromSize(
     DpSize(412.dp, 924.dp)
   ),
-  // app bar menu
+  // App bar menu
   onSupportClick: () -> Unit = {},
   onMoreClick: () -> Unit = {},
   onSettingsClick: () -> Unit = {},
   onAboutClick: () -> Unit = {},
   onHelpClick: () -> Unit = {},
   onFeedbackClick: () -> Unit = {},
-  // bottom controls
+  // Tempo picker
+  onTempoChangeDelta: (Int) -> Unit = {},
+  // Bottom controls
   onOptionsClick: () -> Unit = {},
   onPlayStopChange: (Boolean) -> Unit = {},
   onBeatModeClick: () -> Unit = {}
@@ -413,6 +426,9 @@ fun MainContent(
             CompactPortraitContent(
               settings = settings,
               metronomeState = metronomeState,
+              // Tempo picker
+              onTempoChangeDelta = onTempoChangeDelta,
+              // Bottom controls
               onOptionsClick = onOptionsClick,
               onPlayStopChange = onPlayStopChange,
               onBeatModeClick = onBeatModeClick
@@ -440,13 +456,30 @@ fun MainContent(
 private fun CompactPortraitContent(
   settings: AppSettings,
   metronomeState: MetronomeState,
-  // bottom controls
+  // Tempo picker
+  onTempoChangeDelta: (Int) -> Unit,
+  // Bottom controls
   onOptionsClick: () -> Unit,
   onPlayStopChange: (Boolean) -> Unit,
   onBeatModeClick: () -> Unit,
 ) {
   ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-    val (mainControls) = createRefs()
+    val (tempoPicker, bottomControls) = createRefs()
+
+    TempoPicker(
+      tempo = metronomeState.tempo,
+      tempoTerm = stringResource(metronomeState.tempo.tempoTermResId),
+      reduceAnimations = settings.reduceAnim,
+      onTempoChangeDelta = onTempoChangeDelta,
+      onDragStateChange = {},
+      onClick = {},
+      modifier = Modifier.constrainAs(tempoPicker) {
+        top.linkTo(parent.top)
+        bottom.linkTo(parent.bottom)
+        start.linkTo(parent.start)
+        end.linkTo(parent.end)
+      }
+    )
 
     BottomControls(
       settings = settings,
@@ -454,7 +487,7 @@ private fun CompactPortraitContent(
       onOptionsClick = onOptionsClick,
       onPlayStopChange = onPlayStopChange,
       onBeatModeClick = onBeatModeClick,
-      modifier = Modifier.constrainAs(mainControls) {
+      modifier = Modifier.constrainAs(bottomControls) {
         bottom.linkTo(parent.bottom)
         start.linkTo(parent.start)
         end.linkTo(parent.end)

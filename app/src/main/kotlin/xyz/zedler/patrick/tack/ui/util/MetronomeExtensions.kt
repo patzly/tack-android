@@ -17,21 +17,20 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.core.data
+package xyz.zedler.patrick.tack.ui.util
 
-import kotlinx.coroutines.flow.Flow
-import xyz.zedler.patrick.tack.core.model.MetronomeConfig
+import androidx.annotation.StringRes
+import xyz.zedler.patrick.tack.R
 
-class MetronomeRepository(private val dataStore: AppDataStore) {
-
-  val metronomeConfig: Flow<MetronomeConfig> = dataStore.metronomeConfig
-
-  val activeSongId: Flow<String?> = dataStore.activeSongId
-  val activePartIndex: Flow<Int> = dataStore.activePartIndex
-
-  suspend fun updateMetronomeConfig(config: MetronomeConfig) = 
-    dataStore.updateMetronomeConfig(config)
-
-  suspend fun updateActiveSong(songId: String?, partIndex: Int = 0) =
-    dataStore.updateActiveSong(songId, partIndex)
-}
+@get:StringRes
+val Int.tempoTermResId: Int
+  get() = when {
+    this < 60 -> R.string.label_tempo_largo
+    this < 66 -> R.string.label_tempo_larghetto
+    this < 76 -> R.string.label_tempo_adagio
+    this < 108 -> R.string.label_tempo_andante
+    this < 120 -> R.string.label_tempo_moderato
+    this < 168 -> R.string.label_tempo_allegro
+    this < 200 -> R.string.label_tempo_presto
+    else -> R.string.label_tempo_prestissimo
+  }

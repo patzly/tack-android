@@ -51,8 +51,4 @@ class SongRepository(private val songDao: SongDao) {
   suspend fun insertPart(part: Part) = songDao.insertPart(part)
   suspend fun updatePart(part: Part) = songDao.updatePart(part)
   suspend fun deletePart(part: Part) = songDao.deletePart(part)
-
-  companion object {
-    const val SONG_ID_DEFAULT = "default"
-  }
 }

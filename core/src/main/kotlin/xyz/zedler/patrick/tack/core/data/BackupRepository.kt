@@ -32,9 +32,7 @@ class BackupRepository(
 ) {
   suspend fun exportLibrary(uri: Uri): Result<Unit> = withContext(Dispatchers.IO) {
     runCatching {
-      val songs = songRepository.getAllSongsWithPartsAsync().filter {
-        it.song.id != SongRepository.SONG_ID_DEFAULT
-      }
+      val songs = songRepository.getAllSongsWithPartsAsync()
       val jsonString = json.encodeToString(songs)
       context.contentResolver.openOutputStream(uri)?.use { outputStream ->
         outputStream.write(jsonString.toByteArray())

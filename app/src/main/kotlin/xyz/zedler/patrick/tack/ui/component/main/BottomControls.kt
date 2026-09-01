@@ -68,8 +68,8 @@ fun BottomControls(
 
   ButtonGroup(
     overflowIndicator = {},
-    horizontalArrangement = Arrangement.spacedBy(dimens.mainControlsButtonSpacing),
-    modifier = modifier.padding(bottom = dimens.mainControlsPaddingBottom)
+    horizontalArrangement = Arrangement.spacedBy(dimens.bottomControlsButtonSpacing),
+    modifier = modifier.padding(bottom = dimens.bottomControlsPaddingBottom)
   ) {
     customItem(
       buttonGroupContent = {
@@ -84,13 +84,13 @@ fun BottomControls(
           interactionSource = interactionSources[0],
           modifier = Modifier
             .minimumInteractiveComponentSize()
-            .size(dimens.mainControlsSideButtonSize)
+            .size(dimens.bottomControlsSideButtonSize)
             .animateWidth(interactionSources[0])
         ) {
           TooltipBox(
             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
               positioning = TooltipAnchorPosition.Above,
-              spacingBetweenTooltipAndAnchor = dimens.mainControlsButtonTooltipSpacing
+              spacingBetweenTooltipAndAnchor = dimens.bottomControlsButtonTooltipSpacing
             ),
             tooltip = {
               PlainTooltip {
@@ -109,7 +109,7 @@ fun BottomControls(
                 trigger = optionsIconTrigger,
                 animated = !settings.reduceAnim,
                 description = stringResource(R.string.title_options),
-                modifier = Modifier.size(dimens.mainControlsIconSize)
+                modifier = Modifier.size(dimens.bottomControlsIconSize)
               )
             }
           }
@@ -134,13 +134,13 @@ fun BottomControls(
           modifier =
             Modifier
               .minimumInteractiveComponentSize()
-              .size(dimens.mainControlsCenterButtonSize)
+              .size(dimens.bottomControlsCenterButtonSize)
               .animateWidth(interactionSources[1])
         ) {
           TooltipBox(
             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
               positioning = TooltipAnchorPosition.Above,
-              spacingBetweenTooltipAndAnchor = dimens.mainControlsButtonTooltipSpacing
+              spacingBetweenTooltipAndAnchor = dimens.bottomControlsButtonTooltipSpacing
             ),
             tooltip = {
               PlainTooltip {
@@ -160,7 +160,7 @@ fun BottomControls(
                 trigger = metronomeState.isPlaying,
                 animated = !settings.reduceAnim,
                 description = stringResource(R.string.action_play_stop),
-                modifier = Modifier.size(dimens.mainControlsIconSize)
+                modifier = Modifier.size(dimens.bottomControlsIconSize)
               )
             }
           }
@@ -183,13 +183,13 @@ fun BottomControls(
           modifier =
             Modifier
               .minimumInteractiveComponentSize()
-              .size(dimens.mainControlsSideButtonSize)
+              .size(dimens.bottomControlsSideButtonSize)
               .animateWidth(interactionSources[2]),
         ) {
           TooltipBox(
             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
               positioning = TooltipAnchorPosition.Above,
-              spacingBetweenTooltipAndAnchor = dimens.mainControlsButtonTooltipSpacing
+              spacingBetweenTooltipAndAnchor = dimens.bottomControlsButtonTooltipSpacing
             ),
             tooltip = {
               PlainTooltip {
@@ -209,7 +209,7 @@ fun BottomControls(
                 trigger = beatModeIconTrigger,
                 animated = !settings.reduceAnim,
                 description = stringResource(R.string.action_beat_mode),
-                modifier = Modifier.size(dimens.mainControlsIconSize)
+                modifier = Modifier.size(dimens.bottomControlsIconSize)
               )
             }
           }

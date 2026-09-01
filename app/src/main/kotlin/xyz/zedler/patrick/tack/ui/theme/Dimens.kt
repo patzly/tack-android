@@ -20,60 +20,97 @@
 package xyz.zedler.patrick.tack.ui.theme
 
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Typography
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 
-data class TackDimens(
-  val mainControlsPaddingBottom: Dp = 16.dp,
-  val mainControlsCenterButtonSize: DpSize = IconButtonDefaults.largeContainerSize(
+open class TackDimens(
+  typography: Typography = Typography(),
+
+  val tempoPickerSize: Dp = 184.dp,
+  val tempoPickerBpmTextStyle: TextStyle = typography.displayLarge,
+  val tempoPickerLabelTextStyle: TextStyle = typography.bodyLargeEmphasized,
+
+  val bottomControlsPaddingBottom: Dp = 16.dp,
+  val bottomControlsCenterButtonSize: DpSize = IconButtonDefaults.largeContainerSize(
     IconButtonDefaults.IconButtonWidthOption.Wide
   ),
-  val mainControlsSideButtonSize: DpSize = IconButtonDefaults.largeContainerSize(
+  val bottomControlsSideButtonSize: DpSize = IconButtonDefaults.largeContainerSize(
     IconButtonDefaults.IconButtonWidthOption.Narrow
   ),
-  val mainControlsIconSize: Dp = IconButtonDefaults.largeIconSize,
-  val mainControlsButtonSpacing: Dp = 8.dp,
-  val mainControlsButtonTooltipSpacing: Dp = 8.dp,
+  val bottomControlsIconSize: Dp = IconButtonDefaults.largeIconSize,
+  val bottomControlsButtonSpacing: Dp = 8.dp,
+  val bottomControlsButtonTooltipSpacing: Dp = 8.dp,
 )
 
 // phone
-val CompactPortraitDimens = TackDimens()
+class CompactPortraitDimens(
+  typography: Typography
+) : TackDimens(typography = typography)
 
 // phone landscape
-val CompactLandscapeDimens = TackDimens()
+class CompactLandscapeDimens(
+  typography: Typography
+) : TackDimens(
+  typography = typography,
+
+  tempoPickerSize = 136.dp
+)
 
 // tablet portrait
-val MediumPortraitDimens = TackDimens(
-  mainControlsPaddingBottom = 56.dp
+class MediumPortraitDimens(
+  typography: Typography
+) : TackDimens(
+  typography = typography,
+
+  tempoPickerSize = 304.dp,
+
+  bottomControlsPaddingBottom = 56.dp
 )
 
 // tablet landscape
-val ExpandedLandscapeDimens = TackDimens()
+class ExpandedLandscapeDimens(
+  typography: Typography
+) : TackDimens(
+  typography = typography,
 
-val LocalDimens = compositionLocalOf { CompactPortraitDimens }
+  tempoPickerSize = 184.dp
+)
+
+val LocalDimens = compositionLocalOf { TackDimens() }
 
 @Composable
-fun rememberTackDimens(windowSizeClass: WindowSizeClass): TackDimens {
-  return remember(windowSizeClass) {
+fun TextUnit.toDp(): Dp = with(LocalDensity.current) { this@toDp.toDp() }
+
+@Composable
+fun rememberTackDimens(
+  windowSizeClass: WindowSizeClass,
+  typography: Typography = MaterialTheme.typography
+): TackDimens {
+  return remember(windowSizeClass, typography) {
     when {
       windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact -> {
-        CompactLandscapeDimens
+        CompactLandscapeDimens(typography)
       }
       windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded -> {
-        ExpandedLandscapeDimens
+        ExpandedLandscapeDimens(typography)
       }
       windowSizeClass.widthSizeClass == WindowWidthSizeClass.Medium -> {
-        MediumPortraitDimens
+        MediumPortraitDimens(typography)
       }
       else -> {
-        CompactPortraitDimens
+        CompactPortraitDimens(typography)
       }
     }
   }
