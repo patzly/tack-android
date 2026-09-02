@@ -316,7 +316,6 @@ fun MainContent(
         },
         navigationIcon = {
           AnimatedLogo(
-            isPlaying = metronomeState.isPlaying,
             tempo = metronomeState.tempo,
             tickEvent = tickEvent,
             modifier = Modifier.size(32.dp)

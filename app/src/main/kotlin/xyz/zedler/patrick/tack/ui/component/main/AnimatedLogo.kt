@@ -21,95 +21,57 @@ package xyz.zedler.patrick.tack.ui.component.main
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Easing
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.Tick
 import kotlin.math.PI
-import kotlin.math.abs
 import kotlin.math.cos
-import kotlin.time.Duration.Companion.milliseconds
 
-private val PendulumEasing = Easing { fraction ->
+private val AccelerateDecelerate = Easing { fraction ->
   (cos((fraction + 1) * PI) / 2.0 + 0.5).toFloat()
-}
-
-private class PendulumLogic {
-  var currentTarget: Float = -30f
-  var wasPlaying: Boolean = false
 }
 
 @Composable
 fun AnimatedLogo(
-  isPlaying: Boolean,
   tempo: Int,
   tickEvent: Flow<Tick>,
   modifier: Modifier = Modifier
 ) {
-  val intervalMillis = if (tempo > 0) 60000L / tempo else 1000L
-  val currentInterval by rememberUpdatedState(intervalMillis)
-
   val rotationAnim = remember { Animatable(-30f) }
 
-  val logic = remember { PendulumLogic() }
+  LaunchedEffect(tickEvent) {
+    var isLeft = true
 
-  LaunchedEffect(isPlaying, tickEvent) {
-    if (isPlaying) {
-      logic.wasPlaying = true
-      val startTime = System.currentTimeMillis()
+    tickEvent.collect { tick ->
+      if (tick.subdivision != 1 || tick.isPoly) return@collect
+
+      val interval = if (tempo > 0) 60000L / tempo else 1000L
+      val target = if (isLeft) 30f else -30f
+      isLeft = !isLeft
 
       launch {
-        delay((currentInterval / 2L).milliseconds)
-        logic.currentTarget = if (rotationAnim.value > 0) -30f else 30f
-
         rotationAnim.animateTo(
-          targetValue = logic.currentTarget,
-          animationSpec = tween(currentInterval.toInt(), easing = PendulumEasing)
-        )
-      }
-
-      tickEvent.collect {
-        if (System.currentTimeMillis() - startTime < 100L) return@collect
-
-        launch {
-          delay((currentInterval / 2L).milliseconds)
-          logic.currentTarget = if (rotationAnim.value > 0) -30f else 30f
-
-          rotationAnim.animateTo(
-            targetValue = logic.currentTarget,
-            animationSpec = tween(currentInterval.toInt(), easing = PendulumEasing)
+          targetValue = target,
+          animationSpec = tween(
+            durationMillis = interval.toInt(),
+            easing = AccelerateDecelerate
           )
-        }
-      }
-    } else if (logic.wasPlaying) {
-      val current = rotationAnim.value
-      val totalDistance = 60f
-      val remainingFraction = abs(current - logic.currentTarget) / totalDistance
-
-      if (remainingFraction > 0.01f) {
-        val duration =
-          (currentInterval * remainingFraction).toInt().coerceAtLeast(10)
-        rotationAnim.animateTo(
-          targetValue = logic.currentTarget,
-          animationSpec = tween(duration, easing = LinearOutSlowInEasing)
         )
       }
-      logic.wasPlaying = false
     }
   }
 
@@ -119,12 +81,14 @@ fun AnimatedLogo(
   ) {
     Image(
       painter = painterResource(id = R.drawable.ic_logo_bg),
-      contentDescription = null
+      contentDescription = null,
+      colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
     )
 
     Image(
       painter = painterResource(id = R.drawable.ic_logo_pointer),
       contentDescription = null,
+      colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.tertiary),
       modifier = Modifier
         .matchParentSize()
         .graphicsLayer {
@@ -134,8 +98,16 @@ fun AnimatedLogo(
     )
 
     Image(
-      painter = painterResource(id = R.drawable.ic_logo_fg),
+      painter = painterResource(id = R.drawable.ic_logo_fg_fill),
       contentDescription = null,
+      colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primaryContainer),
+      modifier = Modifier.matchParentSize()
+    )
+
+    Image(
+      painter = painterResource(id = R.drawable.ic_logo_fg_outline),
+      contentDescription = null,
+      colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
       modifier = Modifier.matchParentSize()
     )
   }

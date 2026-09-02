@@ -17,20 +17,13 @@
   ~ Copyright (c) 2020-2026 by Patrick Zedler
   -->
 
-<layer-list
-  xmlns:android="http://schemas.android.com/apk/res/android">
-
-  <item android:drawable="@drawable/ic_logo_bg" />
-
-  <item android:id="@+id/logo_pointer">
-    <rotate
-      android:drawable="@drawable/ic_logo_pointer"
-      android:fromDegrees="-30"
-      android:toDegrees="30"
-      android:pivotX="50%"
-      android:pivotY="79.16%" />
-  </item>
-
-  <item android:drawable="@drawable/ic_logo_fg_fill" />
-
-</layer-list>
+<vector
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:width="32dp"
+  android:height="32dp"
+  android:viewportWidth="24"
+  android:viewportHeight="24">
+  <path
+    android:pathData="m8.788,14.951a10.411,10.411 0,0 0,-4.06 2.489,1.609 1.609,0 0,0 1.372,2.659H17.988a1.609,1.609 0,0 0,1.372 -2.659,10.411 10.411,0 0,0 -4.06,-2.489 10.392,10.392 0,0 0,-6.511 0z"
+    android:fillColor="?attr/colorPrimaryContainer" />
+</vector>
