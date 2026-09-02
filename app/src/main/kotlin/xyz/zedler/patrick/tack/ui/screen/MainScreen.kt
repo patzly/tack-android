@@ -197,9 +197,10 @@ fun MainScreen(
     settings = settings,
     metronomeState = metronomeState,
     windowSizeClass = windowSizeClass,
-    // app bar menu
     tickEvent = viewModel.tickEvent,
+    // app bar menu
     onSupportClick = {
+      haptic.click()
       showUnlockDialog = true
     },
     onMoreClick = {
@@ -264,8 +265,8 @@ fun MainContent(
   windowSizeClass: WindowSizeClass = WindowSizeClass.calculateFromSize(
     DpSize(412.dp, 924.dp)
   ),
-  // App bar menu
   tickEvent: Flow<Tick> = flowOf(),
+  // App bar menu
   onSupportClick: () -> Unit = {},
   onMoreClick: () -> Unit = {},
   onSettingsClick: () -> Unit = {},
@@ -330,33 +331,66 @@ fun MainContent(
             ),
             tooltip = {
               PlainTooltip {
+                Text(stringResource(R.string.action_support))
+              }
+            },
+            state = rememberTooltipState(),
+          ) {
+            FilledIconButton(
+              onClick = onSupportClick,
+              modifier = Modifier
+                .minimumInteractiveComponentSize()
+                .size(
+                  IconButtonDefaults.smallContainerSize(
+                    IconButtonDefaults.IconButtonWidthOption.Wide
+                  )
+                ),
+              colors = IconButtonDefaults.iconButtonColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+              ),
+              shapes = IconButtonDefaults.shapes()
+            ) {
+              Icon(
+                painter = painterResource(R.drawable.ic_rounded_volunteer_activism),
+                contentDescription = stringResource(R.string.action_support),
+                tint = MaterialTheme.colorScheme.onSurface
+              )
+            }
+          }
+
+          TooltipBox(
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+              TooltipAnchorPosition.Below
+            ),
+            tooltip = {
+              PlainTooltip {
                 Text(stringResource(R.string.action_more))
               }
             },
             state = rememberTooltipState(),
+            modifier = Modifier.padding(start = 4.dp)
           ) {
             FilledIconButton(
               onClick = {
                 onMoreClick()
                 showMenu = true
               },
-              modifier =
-                Modifier
-                  .minimumInteractiveComponentSize()
-                  .size(
-                    IconButtonDefaults.smallContainerSize(
-                      IconButtonDefaults.IconButtonWidthOption.Narrow
-                    )
-                  ),
+              modifier = Modifier
+                .minimumInteractiveComponentSize()
+                .size(
+                  IconButtonDefaults.smallContainerSize(
+                    IconButtonDefaults.IconButtonWidthOption.Narrow
+                  )
+                ),
               colors = IconButtonDefaults.iconButtonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                contentColor = MaterialTheme.colorScheme.onSurface
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
               ),
               shapes = IconButtonDefaults.shapes()
             ) {
               Icon(
                 painter = painterResource(R.drawable.ic_rounded_more_vert),
-                contentDescription = stringResource(R.string.action_more)
+                contentDescription = stringResource(R.string.action_more),
+                tint = MaterialTheme.colorScheme.onSurface
               )
             }
           }

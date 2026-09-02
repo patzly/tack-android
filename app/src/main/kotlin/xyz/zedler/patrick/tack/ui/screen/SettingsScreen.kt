@@ -315,14 +315,13 @@ fun SettingsContent(
                 onClick()
                 showMenu = true
               },
-              modifier =
-                Modifier
-                  .minimumInteractiveComponentSize()
-                  .size(
-                    IconButtonDefaults.smallContainerSize(
-                      IconButtonDefaults.IconButtonWidthOption.Narrow
-                    )
-                  ),
+              modifier = Modifier
+                .minimumInteractiveComponentSize()
+                .size(
+                  IconButtonDefaults.smallContainerSize(
+                    IconButtonDefaults.IconButtonWidthOption.Narrow
+                  )
+                ),
               colors = IconButtonDefaults.iconButtonColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
               ),
@@ -403,7 +402,7 @@ fun SettingsContent(
           containerColor = MaterialTheme.colorScheme.surfaceContainer,
           scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest
         ),
-        scrollBehavior = scrollBehavior,
+        scrollBehavior = scrollBehavior
       )
     },
     containerColor = MaterialTheme.colorScheme.surfaceContainer,

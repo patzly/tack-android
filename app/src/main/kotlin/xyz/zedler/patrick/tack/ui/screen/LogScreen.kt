@@ -347,11 +347,10 @@ private fun LogContent(
                     shapes = ButtonDefaults.shapes(),
                     contentPadding = PaddingValues(0.dp),
                     interactionSource = interactionSources[0],
-                    modifier =
-                      Modifier.animateWidth(
-                        interactionSource = interactionSources[0],
-                        compressionLimit = contentPadding.calculateStartPadding(layoutDirection)
-                      ),
+                    modifier = Modifier.animateWidth(
+                      interactionSource = interactionSources[0],
+                      compressionLimit = contentPadding.calculateStartPadding(layoutDirection)
+                    )
                   ) {
                     Text(
                       text = stringResource(R.string.action_copy_to_clipboard),
@@ -382,11 +381,10 @@ private fun LogContent(
                     shapes = ButtonDefaults.shapes(),
                     contentPadding = PaddingValues(0.dp),
                     interactionSource = interactionSources[1],
-                    modifier =
-                      Modifier.animateWidth(
-                        interactionSource = interactionSources[1],
-                        compressionLimit = contentPadding.calculateEndPadding(layoutDirection)
-                      ),
+                    modifier = Modifier.animateWidth(
+                      interactionSource = interactionSources[1],
+                      compressionLimit = contentPadding.calculateEndPadding(layoutDirection)
+                    )
                   ) {
                     Text(
                       text = stringResource(R.string.action_send_feedback),
