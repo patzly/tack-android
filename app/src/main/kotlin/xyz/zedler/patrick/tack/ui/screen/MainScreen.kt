@@ -96,7 +96,6 @@ import xyz.zedler.patrick.tack.ui.theme.rememberTackDimens
 import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 import xyz.zedler.patrick.tack.ui.util.tempoTermResId
 import xyz.zedler.patrick.tack.util.NotificationUtil
-import xyz.zedler.patrick.tack.viewmodel.MainDialog
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
@@ -160,7 +159,7 @@ fun MainScreen(
   }
 
   when (dialogState) {
-    is MainDialog.GainWarning -> {
+    is MainViewModel.Dialog.GainWarning -> {
       GainWarningDialog(
         onPlay = {
           viewModel.onConfirmGainWarning(
@@ -175,7 +174,7 @@ fun MainScreen(
         onDismissRequest = { viewModel.onDismissDialog() }
       )
     }
-    is MainDialog.NotificationPermission -> {
+    is MainViewModel.Dialog.NotificationPermission -> {
       NotificationPermissionDialog(
         onNext = {
           viewModel.onDismissDialog()
@@ -346,14 +345,14 @@ fun MainContent(
                   )
                 ),
               colors = IconButtonDefaults.iconButtonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                contentColor = MaterialTheme.colorScheme.onSurface
               ),
               shapes = IconButtonDefaults.shapes()
             ) {
               Icon(
                 painter = painterResource(R.drawable.ic_rounded_volunteer_activism),
-                contentDescription = stringResource(R.string.action_support),
-                tint = MaterialTheme.colorScheme.onSurface
+                contentDescription = stringResource(R.string.action_support)
               )
             }
           }
@@ -383,14 +382,14 @@ fun MainContent(
                   )
                 ),
               colors = IconButtonDefaults.iconButtonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                contentColor = MaterialTheme.colorScheme.onSurface
               ),
               shapes = IconButtonDefaults.shapes()
             ) {
               Icon(
                 painter = painterResource(R.drawable.ic_rounded_more_vert),
-                contentDescription = stringResource(R.string.action_more),
-                tint = MaterialTheme.colorScheme.onSurface
+                contentDescription = stringResource(R.string.action_more)
               )
             }
           }

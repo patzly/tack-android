@@ -48,7 +48,8 @@ data class AppSettings(
   val bigTimeText: Boolean = false,
   val bigLogo: Boolean = false,
   // Internal
-  val notificationPermissionDenied: Boolean = false
+  val notificationPermissionDenied: Boolean = false,
+  val isLoaded: Boolean = true
 )
 
 enum class AppColor(val key: String) {

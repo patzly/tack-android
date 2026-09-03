@@ -110,7 +110,6 @@ import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 import xyz.zedler.patrick.tack.ui.util.titleRes
 import xyz.zedler.patrick.tack.util.LocaleUtil
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
-import xyz.zedler.patrick.tack.viewmodel.UiEvent
 
 @Composable
 fun SettingsScreen(viewModel: MainViewModel) {
@@ -148,7 +147,7 @@ fun SettingsScreen(viewModel: MainViewModel) {
   LaunchedEffect(viewModel.uiEvent) {
     viewModel.uiEvent.collect { event ->
       when (event) {
-        is UiEvent.ShowToast -> {
+        is MainViewModel.UiEvent.ShowToast -> {
           Toast.makeText(context, event.messageResId, Toast.LENGTH_SHORT).show()
         }
       }

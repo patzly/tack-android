@@ -94,7 +94,11 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     ExperimentalMaterial3AdaptiveApi::class
   )
   override fun onCreate(savedInstanceState: Bundle?) {
-    installSplashScreen()
+    val splashScreen = installSplashScreen()
+    splashScreen.setKeepOnScreenCondition {
+      !viewModel.settings.value.isLoaded
+    }
+
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
 
@@ -103,6 +107,10 @@ class MainActivity : ComponentActivity(), ServiceConnection {
 
     setContent {
       val settings by viewModel.settings.collectAsStateWithLifecycle()
+      if (!settings.isLoaded) {
+        return@setContent
+      }
+
       val metronomeState by viewModel.metronomeState.collectAsStateWithLifecycle()
       val backstack = viewModel.backstack
 

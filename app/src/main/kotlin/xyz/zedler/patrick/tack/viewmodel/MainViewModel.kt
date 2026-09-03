@@ -26,9 +26,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -56,15 +58,6 @@ import xyz.zedler.patrick.tack.service.MetronomeService
 import xyz.zedler.patrick.tack.ui.navigation.Route
 import kotlin.math.roundToInt
 
-sealed interface UiEvent {
-  data class ShowToast(val messageResId: Int) : UiEvent
-}
-
-sealed interface MainDialog {
-  data object GainWarning : MainDialog
-  data object NotificationPermission : MainDialog
-}
-
 class MainViewModel(
   private val settingsRepository: SettingsRepository,
   private val unlockRepository: UnlockRepository,
@@ -73,19 +66,39 @@ class MainViewModel(
   private val backupRepository: BackupRepository
 ) : ViewModel() {
 
-  private val _service = MutableStateFlow<MetronomeService?>(null)
+  sealed interface UiEvent {
+    data class ShowToast(val messageResId: Int) : UiEvent
+  }
+
+  sealed interface Dialog {
+    data object GainWarning : Dialog
+    data object NotificationPermission : Dialog
+  }
 
   val backstack = mutableStateListOf<Route>(Route.Main)
 
   private val _uiEvent = MutableSharedFlow<UiEvent>()
-  val uiEvent = _uiEvent.asSharedFlow()
+  val uiEvent: SharedFlow<UiEvent> = _uiEvent.asSharedFlow()
 
-  private val _dialogState = MutableStateFlow<MainDialog?>(null)
-  val dialogState: StateFlow<MainDialog?> = _dialogState.asStateFlow()
+  private val _dialogState = MutableStateFlow<Dialog?>(null)
+  val dialogState: StateFlow<Dialog?> = _dialogState.asStateFlow()
 
+  val settings: StateFlow<AppSettings> = settingsRepository.settings.stateIn(
+    scope = viewModelScope,
+    started = SharingStarted.Eagerly,
+    initialValue = AppSettings(isLoaded = false)
+  )
+
+  val unlockState: StateFlow<UnlockState> = unlockRepository.unlockState.stateIn(
+    scope = viewModelScope,
+    started = SharingStarted.WhileSubscribed(5_000),
+    initialValue = UnlockState()
+  )
+
+  private val _service = MutableStateFlow<MetronomeService?>(null)
+  private var engineEventJob: Job? = null
   private var neverStartedWithGain = true
 
-  // Session State (Single Source of Truth)
   private val _activeSongId = MutableStateFlow<String?>(null)
   val activeSongId: StateFlow<String?> = _activeSongId.asStateFlow()
 
@@ -95,6 +108,29 @@ class MainViewModel(
   private val _metronomeConfig = MutableStateFlow(MetronomeConfig())
   val metronomeConfig: StateFlow<MetronomeConfig> = _metronomeConfig.asStateFlow()
 
+  @OptIn(ExperimentalCoroutinesApi::class)
+  val metronomeState: StateFlow<MetronomeState> = _service
+    .flatMapLatest { service ->
+      service?.engine?.state ?: flowOf(MetronomeState())
+    }
+    .stateIn(
+      scope = viewModelScope,
+      started = SharingStarted.WhileSubscribed(5_000),
+      initialValue = MetronomeState()
+    )
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  val tickEvent: Flow<Tick> = _service
+    .flatMapLatest { service ->
+      service?.engine?.tickEvent ?: emptyFlow()
+    }
+
+  @OptIn(ExperimentalCoroutinesApi::class)
+  val preTickEvent: Flow<Tick> = _service
+    .flatMapLatest { service ->
+      service?.engine?.preTickEvent ?: emptyFlow()
+    }
+
   init {
     viewModelScope.launch {
       val lastSongId = metronomeRepository.activeSongId.first()
@@ -103,49 +139,57 @@ class MainViewModel(
       if (lastSongId != null) {
         loadSongPart(lastSongId, lastPartIndex)
       } else {
-        val savedConfig = metronomeRepository.metronomeConfig.first()
-        _metronomeConfig.value = savedConfig
-        _service.value?.engine?.applyConfig(savedConfig)
+        _metronomeConfig.value = metronomeRepository.metronomeConfig.first()
       }
     }
   }
 
-  val settings: StateFlow<AppSettings> = settingsRepository.settings.stateIn(
-    viewModelScope,
-    SharingStarted.WhileSubscribed(5000),
-    AppSettings()
-  )
+  // Service connection
 
-  val unlockState: StateFlow<UnlockState> = unlockRepository.unlockState.stateIn(
-    viewModelScope,
-    SharingStarted.WhileSubscribed(5000),
-    UnlockState()
-  )
+  fun onServiceConnected(service: MetronomeService) {
+    _service.value = service
+    val engine = service.engine
 
-  // Dynamic state from Engine (via Service)
-  @OptIn(ExperimentalCoroutinesApi::class)
-  val metronomeState: StateFlow<MetronomeState> = _service
-    .flatMapLatest { service ->
-      service?.engine?.state ?: flowOf(MetronomeState())
-    }
-    .stateIn(
-      viewModelScope,
-      SharingStarted.WhileSubscribed(5000),
-      MetronomeState()
-    )
-
-  @OptIn(ExperimentalCoroutinesApi::class)
-  val tickEvent: Flow<Tick> = _service
-    .flatMapLatest { service ->
-      service?.engine?.tickEvent ?: emptyFlow()
-    }
-  @OptIn(ExperimentalCoroutinesApi::class)
-  val preTickEvent: Flow<Tick> = _service
-    .flatMapLatest { service ->
-      service?.engine?.preTickEvent ?: emptyFlow()
+    val activeSongId = _activeSongId.value
+    if (activeSongId != null) {
+      loadSongPart(activeSongId, _activePartIndex.value)
+    } else {
+      engine.applyConfig(_metronomeConfig.value)
+      engine.setPlaylist(emptyList(), false)
     }
 
-  // General UI
+    engineEventJob?.cancel()
+    engineEventJob = viewModelScope.launch {
+      engine.engineEvent.collect { event ->
+        when (event) {
+          is MetronomeEngine.EngineEvent.AutoTempoChange -> {
+            _metronomeConfig.value = _metronomeConfig.value.copy(tempo = event.newTempo)
+            if (_activeSongId.value == null) {
+              metronomeRepository.updateMetronomeConfig(_metronomeConfig.value)
+            }
+          }
+          is MetronomeEngine.EngineEvent.PartChange -> {
+            _activePartIndex.value = event.partIndex
+            _metronomeConfig.value = event.config
+            _activeSongId.value?.let { songId ->
+              launch {
+                metronomeRepository.updateActiveSong(songId, event.partIndex)
+              }
+            }
+          }
+          is MetronomeEngine.EngineEvent.PlaylistEnd -> Unit
+        }
+      }
+    }
+  }
+
+  fun onServiceDisconnected() {
+    engineEventJob?.cancel()
+    engineEventJob = null
+    _service.value = null
+  }
+
+  // Navigation and dialogs
 
   fun navigateTo(route: Route) {
     backstack.add(route)
@@ -163,116 +207,86 @@ class MainViewModel(
     _dialogState.value = null
   }
 
-  // Settings / Backup
+  // Metronome
 
-  fun updateSettings(settings: AppSettings) {
-    viewModelScope.launch {
-      settingsRepository.updateSettings(settings)
-    }
-  }
+  fun updateMetronomeConfig(config: MetronomeConfig) {
+    _metronomeConfig.value = config
+    _service.value?.engine?.applyConfig(config)
 
-  fun updateCheckUnlockKey(checkKey: Boolean) {
-    viewModelScope.launch {
-      unlockRepository.updateCheckUnlockKey(checkKey)
-    }
-  }
-
-  fun refreshUnlockState() {
-    unlockRepository.refresh()
-  }
-
-  fun resetAll() {
-    viewModelScope.launch {
-      _service.value?.engine?.stop()
-      settingsRepository.clearAll()
-      songRepository.deleteAllSongs()
-      metronomeRepository.updateActiveSong(null)
-      // TODO: ShortcutUtil(context).removeAllShortcuts() when migrated
-    }
-  }
-
-  fun exportLibrary(uri: Uri?) {
-    viewModelScope.launch {
-      if (uri == null) {
-        _uiEvent.emit(
-          UiEvent.ShowToast(R.string.msg_backup_directory_missing)
-        )
-        return@launch
+    if (_activeSongId.value == null) {
+      viewModelScope.launch {
+        metronomeRepository.updateMetronomeConfig(config)
       }
-      backupRepository.exportLibrary(uri)
-        .onSuccess {
-          _uiEvent.emit(UiEvent.ShowToast(R.string.msg_backup_success))
-        }
-        .onFailure {
-          _uiEvent.emit(UiEvent.ShowToast(R.string.msg_backup_error))
-        }
     }
   }
 
-  fun importLibrary(context: Context, uri: Uri?) {
-    viewModelScope.launch {
-      if (uri == null) {
-        _uiEvent.emit(UiEvent.ShowToast(R.string.msg_restore_file_missing))
-        return@launch
-      }
-      backupRepository.importLibrary(uri) { originalName, counter ->
-        context.getString(
-          R.string.msg_restore_duplicate_name, originalName, counter
-        )
-      }
-        .onSuccess {
-          _uiEvent.emit(UiEvent.ShowToast(R.string.msg_restore_success))
-        }
-        .onFailure {
-          _uiEvent.emit(UiEvent.ShowToast(R.string.msg_restore_error))
-        }
-    }
-  }
+  fun changeTempo(delta: Int): Boolean {
+    val currentConfig = _metronomeConfig.value
+    val currentTempo = currentConfig.tempo
+    val newTempo = (currentTempo + delta).coerceIn(
+      MetronomeConstants.TEMPO_MIN,
+      MetronomeConstants.TEMPO_MAX
+    )
 
-  // Metronome / Engine
-
-  fun onServiceConnected(service: MetronomeService) {
-    _service.value = service
-    val engine = service.engine
-
-    val activeSongId = _activeSongId.value
-    if (activeSongId != null) {
-      loadSongPart(activeSongId, _activePartIndex.value)
+    return if (newTempo != currentTempo) {
+      updateMetronomeConfig(currentConfig.copy(tempo = newTempo))
+      true
     } else {
-      engine.applyConfig(_metronomeConfig.value)
-      engine.setPlaylist(emptyList(), false)
-    }
-
-    viewModelScope.launch {
-      engine.engineEvent.collect { event ->
-        when (event) {
-          is MetronomeEngine.EngineEvent.AutoTempoChange -> {
-            val current = _metronomeConfig.value
-            _metronomeConfig.value = current.copy(tempo = event.newTempo)
-
-            if (_activeSongId.value == null) {
-              metronomeRepository.updateMetronomeConfig(_metronomeConfig.value)
-            }
-          }
-          is MetronomeEngine.EngineEvent.PartChange -> {
-            _activePartIndex.value = event.partIndex
-            _metronomeConfig.value = event.config
-
-            _activeSongId.value?.let { songId ->
-              viewModelScope.launch {
-                metronomeRepository.updateActiveSong(songId, event.partIndex)
-              }
-            }
-          }
-          is MetronomeEngine.EngineEvent.PlaylistEnd -> {}
-        }
-      }
+      false
     }
   }
 
-  fun onServiceDisconnected() {
-    _service.value = null
+  fun startMetronome() {
+    neverStartedWithGain = false
+    _service.value?.engine?.start()
   }
+
+  fun stopMetronome() {
+    _service.value?.engine?.stop()
+  }
+
+  fun requestTogglePlay(hasPermission: Boolean): Boolean {
+    if (metronomeState.value.isPlaying) {
+      stopMetronome()
+      return false
+    }
+
+    if (settings.value.gain > 0 && neverStartedWithGain) {
+      _dialogState.value = Dialog.GainWarning
+      return false
+    }
+
+    return if (hasPermission || settings.value.notificationPermissionDenied) {
+      startMetronome()
+      true
+    } else {
+      _dialogState.value = Dialog.NotificationPermission
+      false
+    }
+  }
+
+  fun onConfirmGainWarning(hasPermission: Boolean, deactivateGain: Boolean) {
+    _dialogState.value = null
+    neverStartedWithGain = false
+
+    if (deactivateGain) {
+      updateSettings(settings.value.copy(gain = 0))
+    }
+
+    if (hasPermission || settings.value.notificationPermissionDenied) {
+      startMetronome()
+    } else {
+      _dialogState.value = Dialog.NotificationPermission
+    }
+  }
+
+  fun onNotificationPermissionDenied() {
+    _dialogState.value = null
+    updateSettings(settings.value.copy(notificationPermissionDenied = true))
+    startMetronome()
+  }
+
+  // Song library
 
   fun loadSongPart(songId: String, partIndex: Int) {
     viewModelScope.launch {
@@ -280,7 +294,6 @@ class MainViewModel(
 
       if (songWithParts != null && songWithParts.parts.isNotEmpty()) {
         val safeIndex = partIndex.coerceIn(0, songWithParts.parts.size - 1)
-
         val speedModifier = songWithParts.song.speed / 100.0
         val playlist = songWithParts.parts.map { part ->
           val config = part.toConfig()
@@ -291,7 +304,6 @@ class MainViewModel(
 
         _activeSongId.value = songId
         _activePartIndex.value = safeIndex
-
         _metronomeConfig.value = playlist[safeIndex]
 
         _service.value?.engine?.setPlaylist(
@@ -320,79 +332,65 @@ class MainViewModel(
     }
   }
 
-  fun updateMetronomeConfig(config: MetronomeConfig) {
-    _metronomeConfig.value = config
-    _service.value?.engine?.applyConfig(config)
+  // Settings
 
-    if (_activeSongId.value == null) {
-      viewModelScope.launch {
-        metronomeRepository.updateMetronomeConfig(config)
+  fun updateSettings(settings: AppSettings) {
+    viewModelScope.launch {
+      settingsRepository.updateSettings(settings)
+    }
+  }
+
+  fun updateCheckUnlockKey(checkKey: Boolean) {
+    viewModelScope.launch {
+      unlockRepository.updateCheckUnlockKey(checkKey)
+    }
+  }
+
+  fun refreshUnlockState() {
+    unlockRepository.refresh()
+  }
+
+  fun resetAll() {
+    viewModelScope.launch {
+      _service.value?.engine?.stop()
+      settingsRepository.clearAll()
+      songRepository.deleteAllSongs()
+      metronomeRepository.updateActiveSong(null)
+    }
+  }
+
+  fun exportLibrary(uri: Uri?) {
+    viewModelScope.launch {
+      if (uri == null) {
+        _uiEvent.emit(UiEvent.ShowToast(R.string.msg_backup_directory_missing))
+        return@launch
       }
+      backupRepository.exportLibrary(uri)
+        .onSuccess {
+          _uiEvent.emit(UiEvent.ShowToast(R.string.msg_backup_success))
+        }
+        .onFailure {
+          _uiEvent.emit(UiEvent.ShowToast(R.string.msg_backup_error))
+        }
     }
   }
 
-  fun changeTempo(delta: Int): Boolean {
-    val currentConfig = _metronomeConfig.value
-    val currentTempo = currentConfig.tempo
-
-    val newTempo = (currentTempo + delta).coerceIn(
-      MetronomeConstants.TEMPO_MIN, MetronomeConstants.TEMPO_MAX
-    )
-
-    return if (newTempo != currentTempo) {
-      updateMetronomeConfig(currentConfig.copy(tempo = newTempo))
-      true
-    } else {
-      false
-    }
-  }
-
-  fun startMetronome() {
-    neverStartedWithGain = false
-    _service.value?.engine?.start()
-  }
-
-  fun stopMetronome() {
-    _service.value?.engine?.stop()
-  }
-
-  fun requestTogglePlay(hasPermission: Boolean): Boolean {
-    if (metronomeState.value.isPlaying) {
-      stopMetronome()
-      return false
-    } else {
-      if (settings.value.gain > 0 && neverStartedWithGain) {
-        _dialogState.value = MainDialog.GainWarning
-        return false
+  fun importLibrary(context: Context, uri: Uri?) {
+    viewModelScope.launch {
+      if (uri == null) {
+        _uiEvent.emit(UiEvent.ShowToast(R.string.msg_restore_file_missing))
+        return@launch
       }
-      if (hasPermission || settings.value.notificationPermissionDenied) {
-        startMetronome()
-        return true
-      } else {
-        _dialogState.value = MainDialog.NotificationPermission
-        return false
+      backupRepository.importLibrary(uri) { originalName, counter ->
+        context.getString(R.string.msg_restore_duplicate_name, originalName, counter)
       }
+        .onSuccess {
+          _uiEvent.emit(UiEvent.ShowToast(R.string.msg_restore_success))
+        }
+        .onFailure {
+          _uiEvent.emit(UiEvent.ShowToast(R.string.msg_restore_error))
+        }
     }
-  }
-
-  fun onConfirmGainWarning(hasPermission: Boolean, deactivateGain: Boolean) {
-    _dialogState.value = null
-    neverStartedWithGain = false
-    if (deactivateGain) {
-      updateSettings(settings.value.copy(gain = 0))
-    }
-
-    if (hasPermission || settings.value.notificationPermissionDenied) {
-      startMetronome()
-    } else {
-      _dialogState.value = MainDialog.NotificationPermission
-    }
-  }
-
-  fun onNotificationPermissionDenied() {
-    _dialogState.value = null
-    updateSettings(settings.value.copy(notificationPermissionDenied = true))
-    startMetronome()
   }
 
   class Factory(
