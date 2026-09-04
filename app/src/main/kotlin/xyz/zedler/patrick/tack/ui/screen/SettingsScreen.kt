@@ -68,7 +68,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
@@ -103,8 +102,10 @@ import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.ui.dialog.HelpDialog
 import xyz.zedler.patrick.tack.ui.dialog.LanguageDialog
 import xyz.zedler.patrick.tack.ui.dialog.ResetDialog
+import xyz.zedler.patrick.tack.ui.dialog.SoundDialog
 import xyz.zedler.patrick.tack.ui.dialog.UnlockDialog
 import xyz.zedler.patrick.tack.ui.navigation.Route
+import xyz.zedler.patrick.tack.ui.theme.LocalDimens
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 import xyz.zedler.patrick.tack.ui.util.titleRes
@@ -131,6 +132,7 @@ fun SettingsScreen(viewModel: MainViewModel) {
   var showLanguageDialog by rememberSaveable { mutableStateOf(false) }
   var showBackupDialog by rememberSaveable { mutableStateOf(false) }
   var showResetDialog by rememberSaveable { mutableStateOf(false) }
+  var showSoundDialog by rememberSaveable { mutableStateOf(false) }
 
   val launcherBackup = rememberLauncherForActivityResult(
     ActivityResultContracts.CreateDocument("application/json")
@@ -202,6 +204,16 @@ fun SettingsScreen(viewModel: MainViewModel) {
     )
   }
 
+  if (showSoundDialog) {
+    SoundDialog(
+      currentSound = settings.sound,
+      onSoundSelected = {
+        viewModel.updateSettings(settings.copy(sound = it))
+      },
+      onDismissRequest = { showSoundDialog = false }
+    )
+  }
+
   SettingsContent(
     settings = settings,
     resolvedLanguage = resolvedLanguage,
@@ -222,7 +234,7 @@ fun SettingsScreen(viewModel: MainViewModel) {
     },
     onBackupClick = { showBackupDialog = true },
     onResetClick = { showResetDialog = true },
-    onSoundClick = { /* TODO */ },
+    onSoundClick = { showSoundDialog = true },
     onGainClick = { /* TODO */ },
     onLatencyClick = { /* TODO */ },
     onUpdateSettings = viewModel::updateSettings
@@ -406,6 +418,8 @@ fun SettingsContent(
     },
     containerColor = MaterialTheme.colorScheme.surfaceContainer,
   ) { padding ->
+    val dimens = LocalDimens.current
+
     InsetLazyColumn(
       modifier = Modifier
         .fillMaxSize()
@@ -446,16 +460,21 @@ fun SettingsContent(
             },
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
             colors = colors,
-            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(localeName)
             },
             leadingContent = {
-              AnimatedIcon(
-                resId = R.drawable.ic_rounded_language_anim,
-                trigger = languageIconTrigger,
-                animated = !settings.reduceAnim
-              )
+              Box(
+                modifier = Modifier.padding(
+                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
+                )
+              ) {
+                AnimatedIcon(
+                  resId = R.drawable.ic_rounded_language_anim,
+                  trigger = languageIconTrigger,
+                  animated = !settings.reduceAnim
+                )
+              }
             },
             content = { Text(stringResource(R.string.settings_language)) }
           )
@@ -489,7 +508,11 @@ fun SettingsContent(
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
             colors = colors,
             leadingContent = {
-              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+              Box(
+                modifier = Modifier.padding(
+                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
+                )
+              ) {
                 AnimatedIcon(
                   resId = R.drawable.ic_rounded_palette_anim,
                   trigger = themeIconTrigger,
@@ -640,7 +663,11 @@ fun SettingsContent(
             shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
             colors = colors,
             leadingContent = {
-              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+              Box(
+                modifier = Modifier.padding(
+                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
+                )
+              ) {
                 AnimatedIcon(
                   resId = R.drawable.ic_rounded_contrast_anim,
                   trigger = contrastIconTrigger,
@@ -706,20 +733,28 @@ fun SettingsContent(
             },
             shapes = ListItemDefaults.segmentedShapes(index = 2, count = itemCount),
             colors = colors,
-            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.settings_reduce_animations_description))
             },
             leadingContent = {
-              AnimatedIcon(
-                resId = R.drawable.ic_rounded_animation_anim,
-                trigger = reduceAnimIconTrigger
-              )
+              Box(
+                modifier = Modifier.padding(
+                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
+                )
+              ) {
+                AnimatedIcon(
+                  resId = R.drawable.ic_rounded_animation_anim,
+                  trigger = reduceAnimIconTrigger
+                )
+              }
             },
             trailingContent = {
               Switch(
                 checked = settings.reduceAnim,
-                onCheckedChange = null
+                onCheckedChange = null,
+                modifier = Modifier.padding(
+                  vertical = dimens.segmentedListItemTrailingContentPaddingVertical
+                )
               )
             },
             content = { Text(stringResource(R.string.settings_reduce_animations)) }
@@ -745,21 +780,39 @@ fun SettingsContent(
               },
               shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
               colors = colors,
-              verticalAlignment = Alignment.CenterVertically,
               supportingContent = {
-                Text(stringResource(R.string.settings_haptic_description))
+                Column {
+                  Text(stringResource(R.string.settings_haptic_description))
+
+                  Spacer(modifier = Modifier.height(4.dp))
+
+                  Text(
+                    text = stringResource(R.string.settings_haptic_warning),
+                    style = MaterialTheme.typography.bodyMediumEmphasized,
+                    color = MaterialTheme.colorScheme.error
+                  )
+                }
               },
               leadingContent = {
-                AnimatedIcon(
-                  resId = R.drawable.ic_rounded_vibration_anim,
-                  trigger = hapticIconTrigger,
-                  animated = !settings.reduceAnim
-                )
+                Box(
+                  modifier = Modifier.padding(
+                    vertical = dimens.segmentedListItemLeadingContentPaddingVertical
+                  )
+                ) {
+                  AnimatedIcon(
+                    resId = R.drawable.ic_rounded_vibration_anim,
+                    trigger = hapticIconTrigger,
+                    animated = !settings.reduceAnim
+                  )
+                }
               },
               trailingContent = {
                 Switch(
                   checked = settings.haptic,
-                  onCheckedChange = null
+                  onCheckedChange = null,
+                  modifier = Modifier.padding(
+                    vertical = dimens.segmentedListItemTrailingContentPaddingVertical
+                  )
                 )
               },
               content = { Text(stringResource(R.string.settings_haptic)) }
@@ -769,7 +822,11 @@ fun SettingsContent(
               shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
               colors = colors,
               leadingContent = {
-                Box(modifier = Modifier.padding(vertical = 10.dp)) {
+                Box(
+                  modifier = Modifier.padding(
+                    vertical = dimens.segmentedListItemLeadingContentPaddingVertical
+                  )
+                ) {
                   Icon(
                     painter = painterResource(R.drawable.ic_rounded_mobile_sensor_lo),
                     contentDescription = null
@@ -837,15 +894,20 @@ fun SettingsContent(
             },
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
             colors = colors,
-            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.settings_backup_description))
             },
             leadingContent = {
-              Icon(
-                painter = painterResource(R.drawable.ic_rounded_download),
-                contentDescription = null
-              )
+              Box(
+                modifier = Modifier.padding(
+                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
+                )
+              ) {
+                Icon(
+                  painter = painterResource(R.drawable.ic_rounded_download),
+                  contentDescription = null
+                )
+              }
             },
             content = { Text(stringResource(R.string.settings_backup)) },
           )
@@ -857,15 +919,20 @@ fun SettingsContent(
             },
             shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
             colors = colors,
-            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.settings_reset_description))
             },
             leadingContent = {
-              Icon(
-                painter = painterResource(R.drawable.ic_rounded_reset_settings),
-                contentDescription = null
-              )
+              Box(
+                modifier = Modifier.padding(
+                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
+                )
+              ) {
+                Icon(
+                  painter = painterResource(R.drawable.ic_rounded_reset_settings),
+                  contentDescription = null
+                )
+              }
             },
             content = {
               Text(stringResource(R.string.settings_reset))
@@ -893,16 +960,21 @@ fun SettingsContent(
             },
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
             colors = colors,
-            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(settings.sound.titleRes))
             },
             leadingContent = {
-              AnimatedIcon(
-                resId = R.drawable.ic_rounded_music_note_anim,
-                trigger = soundIconTrigger,
-                animated = !settings.reduceAnim
-              )
+              Box(
+                modifier = Modifier.padding(
+                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
+                )
+              ) {
+                AnimatedIcon(
+                  resId = R.drawable.ic_rounded_music_note_anim,
+                  trigger = soundIconTrigger,
+                  animated = !settings.reduceAnim
+                )
+              }
             },
             content = {
               Text(stringResource(R.string.settings_sound))
@@ -917,21 +989,29 @@ fun SettingsContent(
             },
             shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
             colors = colors,
-            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.settings_ignore_focus_description))
             },
             leadingContent = {
-              AnimatedIcon(
-                resId = R.drawable.ic_rounded_select_to_speak_anim,
-                trigger = ignoreFocusIconTrigger,
-                animated = !settings.reduceAnim
-              )
+              Box(
+                modifier = Modifier.padding(
+                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
+                )
+              ) {
+                AnimatedIcon(
+                  resId = R.drawable.ic_rounded_select_to_speak_anim,
+                  trigger = ignoreFocusIconTrigger,
+                  animated = !settings.reduceAnim
+                )
+              }
             },
             trailingContent = {
               Switch(
                 checked = settings.ignoreFocus,
-                onCheckedChange = null
+                onCheckedChange = null,
+                modifier = Modifier.padding(
+                  vertical = dimens.segmentedListItemTrailingContentPaddingVertical
+                )
               )
             },
             content = { Text(stringResource(R.string.settings_ignore_focus)) }
@@ -945,17 +1025,22 @@ fun SettingsContent(
             },
             shapes = ListItemDefaults.segmentedShapes(index = 2, count = itemCount),
             colors = colors,
-            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               val db = if (settings.gain > 0) "+$settings.gain" else settings.gain.toString()
               Text(stringResource(R.string.label_db_signed, db))
             },
             leadingContent = {
-              AnimatedIcon(
-                resId = R.drawable.ic_rounded_speaker_anim,
-                trigger = gainIconTrigger,
-                animated = !settings.reduceAnim
-              )
+              Box(
+                modifier = Modifier.padding(
+                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
+                )
+              ) {
+                AnimatedIcon(
+                  resId = R.drawable.ic_rounded_speaker_anim,
+                  trigger = gainIconTrigger,
+                  animated = !settings.reduceAnim
+                )
+              }
             },
             content = {
               Text(stringResource(R.string.settings_gain))
@@ -969,16 +1054,21 @@ fun SettingsContent(
             },
             shapes = ListItemDefaults.segmentedShapes(index = 3, count = itemCount),
             colors = colors,
-            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               val latency = settings.latency.toString()
               Text(stringResource(R.string.label_ms, latency))
             },
             leadingContent = {
-              Icon(
-                painter = painterResource(R.drawable.ic_rounded_media_output),
-                contentDescription = null
-              )
+              Box(
+                modifier = Modifier.padding(
+                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
+                )
+              ) {
+                Icon(
+                  painter = painterResource(R.drawable.ic_rounded_media_output),
+                  contentDescription = null
+                )
+              }
             },
             content = {
               Text(stringResource(R.string.settings_latency))

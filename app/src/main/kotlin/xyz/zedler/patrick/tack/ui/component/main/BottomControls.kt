@@ -48,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.AppSettings
+import xyz.zedler.patrick.tack.core.model.BeatMode
 import xyz.zedler.patrick.tack.core.model.MetronomeState
 import xyz.zedler.patrick.tack.ui.component.core.AnimatedIcon
 import xyz.zedler.patrick.tack.ui.theme.LocalDimens
@@ -176,7 +177,6 @@ fun BottomControls(
         FilledTonalIconButton(
           onClick = {
             onBeatModeClick()
-            beatModeIconTrigger = !beatModeIconTrigger
           },
           shapes = IconButtonDefaults.shapes(),
           interactionSource = interactionSources[2],
@@ -206,7 +206,7 @@ fun BottomControls(
               AnimatedIcon(
                 resId1 = R.drawable.ic_rounded_volume_up_to_vibration_anim,
                 resId2 = R.drawable.ic_rounded_vibration_to_volume_up_anim,
-                trigger = beatModeIconTrigger,
+                trigger = settings.beatMode == BeatMode.VIBRATION,
                 animated = !settings.reduceAnim,
                 description = stringResource(R.string.action_beat_mode),
                 modifier = Modifier.size(dimens.bottomControlsIconSize)

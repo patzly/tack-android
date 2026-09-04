@@ -21,7 +21,15 @@ package xyz.zedler.patrick.tack.ui.util
 
 import androidx.annotation.StringRes
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.core.model.BeatMode
 import xyz.zedler.patrick.tack.core.model.Sound
+
+val BeatMode.labelRes: Int
+  get() = when (this) {
+    BeatMode.ALL -> R.string.label_beat_mode_all
+    BeatMode.SOUND -> R.string.label_beat_mode_sound
+    BeatMode.VIBRATION -> R.string.label_beat_mode_vibration
+  }
 
 val Sound.titleRes: Int
   @StringRes get() = when (this) {

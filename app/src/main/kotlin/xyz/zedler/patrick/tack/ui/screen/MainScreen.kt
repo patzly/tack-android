@@ -80,9 +80,11 @@ import xyz.zedler.patrick.tack.core.model.AppSettings
 import xyz.zedler.patrick.tack.core.model.BeatMode
 import xyz.zedler.patrick.tack.core.model.MetronomeState
 import xyz.zedler.patrick.tack.core.model.Tick
+import xyz.zedler.patrick.tack.core.model.UnlockState
 import xyz.zedler.patrick.tack.ui.component.main.AnimatedLogo
 import xyz.zedler.patrick.tack.ui.component.main.BottomControls
 import xyz.zedler.patrick.tack.ui.component.main.TempoPicker
+import xyz.zedler.patrick.tack.ui.dialog.BeatModeDialog
 import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.ui.dialog.GainWarningDialog
 import xyz.zedler.patrick.tack.ui.dialog.HelpDialog
@@ -128,6 +130,7 @@ fun MainScreen(
   var showHelpDialog by remember { mutableStateOf(false) }
   var showFeedbackDialog by remember { mutableStateOf(false) }
   var showOptionsDialog by remember { mutableStateOf(false) }
+  var showBeatModeDialog by remember { mutableStateOf(false) }
 
   if (showUnlockDialog) {
     UnlockDialog(
@@ -156,6 +159,16 @@ fun MainScreen(
 
   if (showOptionsDialog) {
     OptionsDialog(onDismissRequest = { showOptionsDialog = false })
+  }
+
+  if (showBeatModeDialog) {
+    BeatModeDialog(
+      currentBeatMode = settings.beatMode,
+      onBeatModeSelected = {
+        viewModel.updateSettings(settings.copy(beatMode = it))
+      },
+      onDismissRequest = { showBeatModeDialog = false }
+    )
   }
 
   when (dialogState) {
@@ -248,7 +261,7 @@ fun MainScreen(
     },
     onBeatModeClick = {
       haptic.click()
-      // TODO
+      showBeatModeDialog = true
     }
   )
 }
@@ -260,6 +273,7 @@ fun MainScreen(
 @Composable
 fun MainContent(
   settings: AppSettings = AppSettings(),
+  unlockState: UnlockState = UnlockState(),
   metronomeState: MetronomeState = MetronomeState(),
   windowSizeClass: WindowSizeClass = WindowSizeClass.calculateFromSize(
     DpSize(412.dp, 924.dp)
@@ -324,36 +338,41 @@ fun MainContent(
         actions = {
           var showMenu by remember { mutableStateOf(false) }
 
-          TooltipBox(
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              TooltipAnchorPosition.Below
-            ),
-            tooltip = {
-              PlainTooltip {
-                Text(stringResource(R.string.action_support))
-              }
-            },
-            state = rememberTooltipState(),
-          ) {
-            FilledIconButton(
-              onClick = onSupportClick,
-              modifier = Modifier
-                .minimumInteractiveComponentSize()
-                .size(
-                  IconButtonDefaults.smallContainerSize(
-                    IconButtonDefaults.IconButtonWidthOption.Wide
-                  )
-                ),
-              colors = IconButtonDefaults.iconButtonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                contentColor = MaterialTheme.colorScheme.onSurface
+          val showSupportButton = unlockState.checkUnlockKey
+              && unlockState.isPlayStoreInstalled && !unlockState.isKeyInstalled
+
+          if (showSupportButton) {
+            TooltipBox(
+              positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                TooltipAnchorPosition.Below
               ),
-              shapes = IconButtonDefaults.shapes()
+              tooltip = {
+                PlainTooltip {
+                  Text(stringResource(R.string.action_support))
+                }
+              },
+              state = rememberTooltipState(),
             ) {
-              Icon(
-                painter = painterResource(R.drawable.ic_rounded_volunteer_activism),
-                contentDescription = stringResource(R.string.action_support)
-              )
+              FilledIconButton(
+                onClick = onSupportClick,
+                modifier = Modifier
+                  .minimumInteractiveComponentSize()
+                  .size(
+                    IconButtonDefaults.smallContainerSize(
+                      IconButtonDefaults.IconButtonWidthOption.Wide
+                    )
+                  ),
+                colors = IconButtonDefaults.iconButtonColors(
+                  containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                  contentColor = MaterialTheme.colorScheme.onSurface
+                ),
+                shapes = IconButtonDefaults.shapes()
+              ) {
+                Icon(
+                  painter = painterResource(R.drawable.ic_rounded_volunteer_activism),
+                  contentDescription = stringResource(R.string.action_support)
+                )
+              }
             }
           }
 

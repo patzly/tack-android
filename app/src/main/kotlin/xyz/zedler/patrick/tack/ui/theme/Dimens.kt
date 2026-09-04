@@ -30,13 +30,19 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 open class TackDimens(
+  density: Density = Density(density = 1f, fontScale = 1f),
   typography: Typography = Typography(),
+
+  val segmentedListItemLeadingContentPaddingVertical: Dp = 11.sp.toDp(density),
+  val segmentedListItemTrailingContentPaddingVertical: Dp = 11.sp.toDp(density),
 
   val tempoPickerSize: Dp = 184.dp,
   val tempoPickerBpmTextStyle: TextStyle = typography.displayLarge,
@@ -56,13 +62,19 @@ open class TackDimens(
 
 // phone
 class CompactPortraitDimens(
+  density: Density,
   typography: Typography
-) : TackDimens(typography = typography)
+) : TackDimens(
+  density = density,
+  typography = typography
+)
 
 // phone landscape
 class CompactLandscapeDimens(
+  density: Density,
   typography: Typography
 ) : TackDimens(
+  density = density,
   typography = typography,
 
   tempoPickerSize = 136.dp
@@ -70,8 +82,10 @@ class CompactLandscapeDimens(
 
 // tablet portrait
 class MediumPortraitDimens(
+  density: Density,
   typography: Typography
 ) : TackDimens(
+  density = density,
   typography = typography,
 
   tempoPickerSize = 304.dp,
@@ -81,36 +95,38 @@ class MediumPortraitDimens(
 
 // tablet landscape
 class ExpandedLandscapeDimens(
+  density: Density,
   typography: Typography
 ) : TackDimens(
+  density = density,
   typography = typography,
 
   tempoPickerSize = 184.dp
 )
 
-val LocalDimens = compositionLocalOf { TackDimens() }
+fun TextUnit.toDp(density: Density): Dp = with(density) { toDp() }
 
-@Composable
-fun TextUnit.toDp(): Dp = with(LocalDensity.current) { this@toDp.toDp() }
+val LocalDimens = compositionLocalOf { TackDimens() }
 
 @Composable
 fun rememberTackDimens(
   windowSizeClass: WindowSizeClass,
-  typography: Typography = MaterialTheme.typography
+  typography: Typography = MaterialTheme.typography,
+  density: Density = LocalDensity.current
 ): TackDimens {
   return remember(windowSizeClass, typography) {
     when {
       windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact -> {
-        CompactLandscapeDimens(typography)
+        CompactLandscapeDimens(density, typography)
       }
       windowSizeClass.widthSizeClass == WindowWidthSizeClass.Expanded -> {
-        ExpandedLandscapeDimens(typography)
+        ExpandedLandscapeDimens(density, typography)
       }
       windowSizeClass.widthSizeClass == WindowWidthSizeClass.Medium -> {
-        MediumPortraitDimens(typography)
+        MediumPortraitDimens(density, typography)
       }
       else -> {
-        CompactPortraitDimens(typography)
+        CompactPortraitDimens(density, typography)
       }
     }
   }

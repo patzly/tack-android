@@ -367,6 +367,7 @@
 
   <string name="settings_haptic">Haptic effects</string>
   <string name="settings_haptic_description">In addition to haptic beats when in vibration mode</string>
+  <string name="settings_haptic_warning">Requires haptic feedback to be enabled in system settings</string>
 
   <string name="settings_vibration_intensity">Vibration intensity</string>
   <string name="settings_vibration_intensity_description">For haptic beats and effects</string>
