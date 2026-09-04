@@ -1,6 +1,6 @@
 [versions]
 # core
-agp = "9.3.2"
+agp = "9.4.0"
 core = "1.19.0"
 oboe = "1.10.0"
 room = "2.8.4"
