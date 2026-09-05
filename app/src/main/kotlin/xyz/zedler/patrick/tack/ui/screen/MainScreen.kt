@@ -84,6 +84,8 @@ import xyz.zedler.patrick.tack.core.model.UnlockState
 import xyz.zedler.patrick.tack.ui.component.main.AnimatedLogo
 import xyz.zedler.patrick.tack.ui.component.main.BottomControls
 import xyz.zedler.patrick.tack.ui.component.main.TempoPicker
+import xyz.zedler.patrick.tack.ui.component.main.TempoSkipper
+import xyz.zedler.patrick.tack.ui.component.main.TempoSkipperPosition
 import xyz.zedler.patrick.tack.ui.dialog.BeatModeDialog
 import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.ui.dialog.GainWarningDialog
@@ -234,8 +236,15 @@ fun MainScreen(
       haptic.click()
       showFeedbackDialog = true
     },
+    // Tempo skipped
+    onTempoSkippedDelta = { delta ->
+      val didChange = viewModel.changeTempo(delta)
+      if (didChange) {
+        haptic.click()
+      }
+    },
     // Tempo picker
-    onTempoChangeDelta = { delta ->
+    onTempoPickedDelta = { delta ->
       val didChange = viewModel.changeTempo(delta)
       if (didChange) {
         haptic.tick()
@@ -286,8 +295,10 @@ fun MainContent(
   onAboutClick: () -> Unit = {},
   onHelpClick: () -> Unit = {},
   onFeedbackClick: () -> Unit = {},
+  // Tempo skipper
+  onTempoSkippedDelta: (delta: Int) -> Unit = {},
   // Tempo picker
-  onTempoChangeDelta: (Int) -> Unit = {},
+  onTempoPickedDelta: (delta: Int) -> Unit = {},
   // Bottom controls
   onOptionsClick: () -> Unit = {},
   onPlayStopChange: (Boolean) -> Unit = {},
@@ -478,8 +489,10 @@ fun MainContent(
             CompactPortraitContent(
               settings = settings,
               metronomeState = metronomeState,
+              // Tempo skipper
+              onTempoSkippedDelta = onTempoSkippedDelta,
               // Tempo picker
-              onTempoChangeDelta = onTempoChangeDelta,
+              onTempoPickedDelta = onTempoPickedDelta,
               // Bottom controls
               onOptionsClick = onOptionsClick,
               onPlayStopChange = onPlayStopChange,
@@ -508,21 +521,48 @@ fun MainContent(
 private fun CompactPortraitContent(
   settings: AppSettings,
   metronomeState: MetronomeState,
+  // Tempo skipper
+  onTempoSkippedDelta: (Int) -> Unit,
   // Tempo picker
-  onTempoChangeDelta: (Int) -> Unit,
+  onTempoPickedDelta: (Int) -> Unit,
   // Bottom controls
   onOptionsClick: () -> Unit,
   onPlayStopChange: (Boolean) -> Unit,
   onBeatModeClick: () -> Unit,
 ) {
   ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-    val (tempoPicker, bottomControls) = createRefs()
+    val (tempoSkipperStart, tempoSkipperEnd, tempoPicker) = createRefs()
+    val (bottomControls) = createRefs()
+
+    TempoSkipper(
+      settings = settings,
+      position = TempoSkipperPosition.Start,
+      onTempoChangeDelta = onTempoSkippedDelta,
+      modifier = Modifier.constrainAs(tempoSkipperStart) {
+        top.linkTo(parent.top)
+        bottom.linkTo(parent.bottom)
+        start.linkTo(parent.start)
+        end.linkTo(tempoPicker.start)
+      }
+    )
+
+    TempoSkipper(
+      settings = settings,
+      position = TempoSkipperPosition.End,
+      onTempoChangeDelta = onTempoSkippedDelta,
+      modifier = Modifier.constrainAs(tempoSkipperEnd) {
+        top.linkTo(parent.top)
+        bottom.linkTo(parent.bottom)
+        start.linkTo(tempoPicker.end)
+        end.linkTo(parent.end)
+      }
+    )
 
     TempoPicker(
       tempo = metronomeState.tempo,
       tempoTerm = stringResource(metronomeState.tempo.tempoTermResId),
       reduceAnimations = settings.reduceAnim,
-      onTempoChangeDelta = onTempoChangeDelta,
+      onTempoChangeDelta = onTempoPickedDelta,
       onDragStateChange = {},
       onClick = {},
       modifier = Modifier.constrainAs(tempoPicker) {

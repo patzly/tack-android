@@ -44,6 +44,13 @@ open class TackDimens(
   val segmentedListItemLeadingContentPaddingVertical: Dp = 11.sp.toDp(density),
   val segmentedListItemTrailingContentPaddingVertical: Dp = 11.sp.toDp(density),
 
+  val tempoSkipperButtonSize: DpSize = IconButtonDefaults.mediumContainerSize(
+    IconButtonDefaults.IconButtonWidthOption.Narrow
+  ),
+  val tempoSkipperIconSize: Dp = IconButtonDefaults.mediumIconSize,
+  val tempoSkipperButtonSpacing: Dp = 8.dp,
+  val tempoSkipperButtonTooltipSpacing: Dp = 8.dp,
+
   val tempoPickerSize: Dp = 184.dp,
   val tempoPickerBpmTextStyle: TextStyle = typography.displayLarge,
   val tempoPickerLabelTextStyle: TextStyle = typography.bodyLargeEmphasized,
