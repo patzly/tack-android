@@ -109,8 +109,7 @@ fun TempoSkipper(
         ) {
           TooltipBox(
             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              positioning = tooltipPositioning,
-              spacingBetweenTooltipAndAnchor = dimens.tempoSkipperButtonTooltipSpacing
+              positioning = tooltipPositioning
             ),
             tooltip = {
               PlainTooltip {
@@ -160,8 +159,7 @@ fun TempoSkipper(
         ) {
           TooltipBox(
             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              positioning = tooltipPositioning,
-              spacingBetweenTooltipAndAnchor = dimens.tempoSkipperButtonTooltipSpacing
+              positioning = tooltipPositioning
             ),
             tooltip = {
               PlainTooltip {
@@ -211,8 +209,7 @@ fun TempoSkipper(
         ) {
           TooltipBox(
             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              positioning = tooltipPositioning,
-              spacingBetweenTooltipAndAnchor = dimens.tempoSkipperButtonTooltipSpacing
+              positioning = tooltipPositioning
             ),
             tooltip = {
               PlainTooltip {

@@ -90,8 +90,7 @@ fun BottomControls(
         ) {
           TooltipBox(
             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              positioning = TooltipAnchorPosition.Above,
-              spacingBetweenTooltipAndAnchor = dimens.bottomControlsButtonTooltipSpacing
+              positioning = TooltipAnchorPosition.Above
             ),
             tooltip = {
               PlainTooltip {
@@ -140,8 +139,7 @@ fun BottomControls(
         ) {
           TooltipBox(
             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              positioning = TooltipAnchorPosition.Above,
-              spacingBetweenTooltipAndAnchor = dimens.bottomControlsButtonTooltipSpacing
+              positioning = TooltipAnchorPosition.Above
             ),
             tooltip = {
               PlainTooltip {
@@ -172,8 +170,6 @@ fun BottomControls(
 
     customItem(
       buttonGroupContent = {
-        var beatModeIconTrigger by remember { mutableStateOf(false) }
-
         FilledTonalIconButton(
           onClick = {
             onBeatModeClick()
@@ -188,8 +184,7 @@ fun BottomControls(
         ) {
           TooltipBox(
             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              positioning = TooltipAnchorPosition.Above,
-              spacingBetweenTooltipAndAnchor = dimens.bottomControlsButtonTooltipSpacing
+              positioning = TooltipAnchorPosition.Above
             ),
             tooltip = {
               PlainTooltip {

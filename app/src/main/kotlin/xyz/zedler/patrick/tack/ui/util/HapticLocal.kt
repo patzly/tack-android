@@ -19,9 +19,44 @@
 
 package xyz.zedler.patrick.tack.ui.util
 
-import androidx.compose.runtime.compositionLocalOf
+import android.view.View
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ProvidedValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.platform.LocalView
 import xyz.zedler.patrick.tack.core.hardware.HapticProvider
 
-val LocalHaptic = compositionLocalOf<HapticProvider> {
+private val LocalRawHapticProvider = staticCompositionLocalOf<HapticProvider> {
   error("No HapticProvider provided")
+}
+
+class ComposeHapticProvider(
+  private val provider: HapticProvider,
+  private val view: View
+) : HapticProvider by provider {
+
+  fun longClick() {
+    provider.longClick(view)
+  }
+
+  fun segmentTick(frequent: Boolean = false) {
+    provider.segmentTick(view, frequent)
+  }
+}
+
+object LocalHaptic {
+  val current: ComposeHapticProvider
+    @Composable
+    get() {
+      val provider = LocalRawHapticProvider.current
+      val view = LocalView.current
+      return remember(provider, view) {
+        ComposeHapticProvider(provider, view)
+      }
+    }
+
+  infix fun provides(provider: HapticProvider): ProvidedValue<HapticProvider> {
+    return LocalRawHapticProvider provides provider
+  }
 }

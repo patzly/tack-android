@@ -49,7 +49,6 @@ open class TackDimens(
   ),
   val tempoSkipperIconSize: Dp = IconButtonDefaults.mediumIconSize,
   val tempoSkipperButtonSpacing: Dp = 8.dp,
-  val tempoSkipperButtonTooltipSpacing: Dp = 8.dp,
 
   val tempoPickerSize: Dp = 184.dp,
   val tempoPickerBpmTextStyle: TextStyle = typography.displayLarge,
@@ -63,8 +62,7 @@ open class TackDimens(
     IconButtonDefaults.IconButtonWidthOption.Narrow
   ),
   val bottomControlsIconSize: Dp = IconButtonDefaults.largeIconSize,
-  val bottomControlsButtonSpacing: Dp = 8.dp,
-  val bottomControlsButtonTooltipSpacing: Dp = 8.dp,
+  val bottomControlsButtonSpacing: Dp = 8.dp
 )
 
 // phone

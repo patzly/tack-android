@@ -63,6 +63,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -110,6 +111,7 @@ fun MainScreen(
 ) {
   val context = LocalContext.current
   val haptic = LocalHaptic.current
+  val view = LocalView.current
 
   val appVendingKey = stringResource(R.string.app_vending_key)
 
@@ -247,7 +249,7 @@ fun MainScreen(
     onTempoPickedDelta = { delta ->
       val didChange = viewModel.changeTempo(delta)
       if (didChange) {
-        haptic.tick()
+        haptic.segmentTick()
       }
     },
     // Bottom controls

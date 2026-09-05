@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.core.hardware
 
+import android.view.View
 import xyz.zedler.patrick.tack.core.model.VibrationIntensity
 
 interface HapticProvider {
@@ -31,5 +32,7 @@ interface HapticProvider {
   
   fun tick(isTouchEvent: Boolean = true)
   fun click(isTouchEvent: Boolean = true)
+  fun longClick(view: View)
   fun heavyClick(isTouchEvent: Boolean = true)
+  fun segmentTick(view: View, frequent: Boolean = false)
 }

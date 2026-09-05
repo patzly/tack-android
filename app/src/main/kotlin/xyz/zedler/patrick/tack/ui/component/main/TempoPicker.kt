@@ -101,8 +101,8 @@ fun TempoPicker(
   var totalRotation by remember { mutableFloatStateOf(0f) }
   var touchPos by remember { mutableStateOf(Offset.Zero) }
 
-  val spatialSpring = MaterialTheme.motionScheme.defaultSpatialSpec<Float>()
-  val effectsSpring = MaterialTheme.motionScheme.defaultEffectsSpec<Float>()
+  val spatialSpring = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
+  val effectsSpring = MaterialTheme.motionScheme.fastEffectsSpec<Float>()
 
   val morphFactor by animateFloatAsState(
     targetValue = if (isDragged && !reduceAnimations) 1f else 0f,

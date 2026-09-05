@@ -26,6 +26,8 @@ import android.os.VibrationAttributes
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import android.view.HapticFeedbackConstants
+import android.view.View
 import xyz.zedler.patrick.tack.core.hardware.HapticProvider
 import xyz.zedler.patrick.tack.core.model.VibrationIntensity
 
@@ -100,6 +102,14 @@ class HapticProviderImpl(context: Context) : HapticProvider {
     vibrate(effectId, duration, isTouchEvent)
   }
 
+  override fun longClick(view: View) {
+    if (intensity == VibrationIntensity.AUTO) {
+      view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+    } else {
+      heavyClick()
+    }
+  }
+
   override fun heavyClick(isTouchEvent: Boolean) {
     val effectId =
       if (intensity == VibrationIntensity.AUTO && Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -108,6 +118,19 @@ class HapticProviderImpl(context: Context) : HapticProvider {
     val duration = if (intensity == VibrationIntensity.STRONG) HEAVY_STRONG else HEAVY
 
     vibrate(effectId, duration, isTouchEvent)
+  }
+
+  override fun segmentTick(view: View, frequent: Boolean) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+      && intensity == VibrationIntensity.AUTO
+    ) {
+      view.performHapticFeedback(
+        if (frequent) HapticFeedbackConstants.SEGMENT_FREQUENT_TICK
+        else HapticFeedbackConstants.SEGMENT_TICK
+      )
+    } else {
+      tick()
+    }
   }
 
   private fun vibrate(effectId: Int, fallbackDuration: Long, isTouchEvent: Boolean) {
