@@ -20,16 +20,17 @@
 package xyz.zedler.patrick.tack.ui.component.main
 
 import android.graphics.Matrix
-import android.graphics.PointF
 import android.graphics.RectF
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,10 +48,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.asComposePath
-import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -61,6 +63,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.graphics.shapes.Morph
@@ -71,9 +74,7 @@ import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.util.normalize
 import kotlin.math.abs
 import kotlin.math.atan2
-import kotlin.math.cos
 import kotlin.math.hypot
-import kotlin.math.sin
 
 @OptIn(ExperimentalTextApi::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -81,13 +82,20 @@ fun TempoPicker(
   tempo: Int,
   tempoTerm: String,
   reduceAnimations: Boolean,
-  onTempoChangeDelta: (Int) -> Unit, // Gibt +1 oder -1 zurück
+  onTempoChangeDelta: (Int) -> Unit,
   onDragStateChange: (Boolean) -> Unit,
   onClick: () -> Unit,
   modifier: Modifier = Modifier
 ) {
   val dimens = LocalDimens.current
   val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
+
+  val previousTempoRef = remember { intArrayOf(tempo) }
+  val isFaster = remember(tempo) {
+    val faster = tempo >= previousTempoRef[0]
+    previousTempoRef[0] = tempo
+    faster
+  }
 
   var isDragged by remember { mutableStateOf(false) }
   var totalRotation by remember { mutableFloatStateOf(0f) }
@@ -143,7 +151,9 @@ fun TempoPicker(
       )
     )
   }
-  val path = remember { android.graphics.Path() }
+
+  val androidPath = remember { android.graphics.Path() }
+  val composePath = remember { androidPath.asComposePath() }
   val matrix = remember { Matrix() }
 
   Box(
@@ -155,12 +165,11 @@ fun TempoPicker(
           val cx = size.width / 2f
           val cy = size.height / 2f
           val radius = minOf(size.width, size.height) / 2f
-          val innerRadius = 20.dp.toPx() // 40dp ignoredCenterSize
+          val innerRadius = 20.dp.toPx()
 
           val dist = hypot(down.position.x - cx, down.position.y - cy)
 
           if (dist <= radius) {
-            // Touch in circle
             isDragged = true
             touchPos = down.position
             onDragStateChange(true)
@@ -209,7 +218,6 @@ fun TempoPicker(
               pointer.consume()
             } while (event.changes.any { it.pressed })
 
-            // Touch up / cancel
             isDragged = false
             onDragStateChange(false)
             if (!hasDragged) {
@@ -217,45 +225,65 @@ fun TempoPicker(
             }
           }
         }
+      }
+      .drawWithContent {
+        androidPath.rewind()
+        morph.toPath(morphFactor, androidPath)
+
+        matrix.reset()
+        matrix.setScale(size.width / 2f, size.height / 2f)
+        matrix.postRotate(totalRotation)
+        matrix.postTranslate(size.width / 2f, size.height / 2f)
+        androidPath.transform(matrix)
+
+        val brush = Brush.radialGradient(
+          0.0f to lerp(colorDefault, colorDrag1, colorFraction),
+          0.1f to lerp(colorDefault, colorDrag1, colorFraction),
+          0.5f to lerp(colorDefault, colorDrag2, colorFraction),
+          0.9f to lerp(colorDefault, colorDrag3, colorFraction),
+          center = touchPos,
+          radius = size.width
+        )
+
+        drawPath(
+          path = composePath,
+          brush = brush
+        )
+
+        clipPath(path = composePath) {
+          this@drawWithContent.drawContent()
+        }
       },
     contentAlignment = Alignment.Center
   ) {
-    Canvas(modifier = Modifier.fillMaxSize()) {
-      path.rewind()
-      morph.toPath(morphFactor, path)
-      matrix.reset()
-      matrix.setScale(size.width / 2f, size.height / 2f)
-      matrix.postTranslate(size.width / 2f, size.height / 2f)
-      path.transform(matrix)
+    Column(
+      modifier = Modifier.fillMaxSize(),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.Center
+    ) {
+      val slideSpec = MaterialTheme.motionScheme.fastSpatialSpec<IntOffset>()
+      val fadeSpec = MaterialTheme.motionScheme.fastEffectsSpec<Float>()
 
-      val cx = size.width / 2f
-      val cy = size.height / 2f
-      val rotatedPoint = getRotatedPoint(
-        touchPos.x, touchPos.y, cx, cy, -totalRotation
-      )
-
-      val brush = Brush.radialGradient(
-        0.0f to lerp(colorDefault, colorDrag1, colorFraction),
-        0.1f to lerp(colorDefault, colorDrag1, colorFraction),
-        0.5f to lerp(colorDefault, colorDrag2, colorFraction),
-        0.9f to lerp(colorDefault, colorDrag3, colorFraction),
-        center = Offset(rotatedPoint.x, rotatedPoint.y),
-        radius = size.width
-      )
-
-      rotate(totalRotation) {
-        drawPath(
-          path = path.asComposePath(),
-          brush = brush
-        )
-      }
-    }
-
-    Column {
-      // TextSwitcher replacement
       AnimatedContent(
         targetState = tempoTerm,
-        transitionSpec = { fadeIn() togetherWith fadeOut() },
+        transitionSpec = {
+          if (reduceAnimations) {
+            fadeIn(animationSpec = tween(200)) togetherWith
+                fadeOut(animationSpec = tween(200))
+          } else {
+            val direction = if (isFaster) SlideDirection.Start else SlideDirection.End
+            (slideIntoContainer(
+              towards = direction,
+              animationSpec = slideSpec,
+              initialOffset = { offset -> offset / 3 }
+            ) + fadeIn(animationSpec = fadeSpec)) togetherWith
+                (slideOutOfContainer(
+                  towards = direction,
+                  animationSpec = slideSpec,
+                  targetOffset = { offset -> offset / 3 }
+                ) + fadeOut(animationSpec = fadeSpec))
+          }
+        },
         label = "tempoTermAnim",
         modifier = Modifier.fillMaxWidth()
       ) { term ->
@@ -263,7 +291,8 @@ fun TempoPicker(
           text = term,
           style = dimens.tempoPickerLabelTextStyle,
           color = MaterialTheme.colorScheme.onPrimaryContainer,
-          textAlign = TextAlign.Center
+          textAlign = TextAlign.Center,
+          modifier = Modifier.fillMaxWidth()
         )
       }
 
@@ -292,15 +321,6 @@ fun TempoPicker(
 private fun calculateAngle(pos: Offset, cx: Float, cy: Float): Double {
   val angleRaw = Math.toDegrees(atan2((pos.x - cx).toDouble(), (cy - pos.y).toDouble()))
   return if (angleRaw >= 0) angleRaw else 180 + (180 - abs(angleRaw))
-}
-
-private fun getRotatedPoint(x: Float, y: Float, cx: Float, cy: Float, degrees: Float): PointF {
-  val radians = Math.toRadians(degrees.toDouble())
-  val x1 = x - cx
-  val y1 = y - cy
-  val x2 = (x1 * cos(radians) - y1 * sin(radians)).toFloat()
-  val y2 = (x1 * sin(radians) + y1 * cos(radians)).toFloat()
-  return PointF(x2 + cx, y2 + cy)
 }
 
 @Preview
