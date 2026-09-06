@@ -20,6 +20,8 @@
 package xyz.zedler.patrick.tack.ui.screen
 
 import android.content.Intent
+import androidx.annotation.RawRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,16 +42,12 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorPosition
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -60,18 +58,19 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import xyz.zedler.patrick.tack.BuildConfig
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.ui.component.core.AnimatedIcon
 import xyz.zedler.patrick.tack.ui.component.core.InsetLazyColumn
+import xyz.zedler.patrick.tack.ui.component.core.TooltipWrapper
 import xyz.zedler.patrick.tack.ui.component.core.insetItem
 import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.ui.dialog.HelpDialog
@@ -83,23 +82,39 @@ import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 import xyz.zedler.patrick.tack.util.rememberRawText
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 
-enum class ActiveTextDialog {
-  CHANGELOG,
-  LICENSE_FONT,
-  LICENSE_ICONS
+enum class ActiveDialog(
+  @StringRes val titleRes: Int? = null,
+  @RawRes val textRes: Int? = null,
+  @StringRes val linkRes: Int? = null
+) {
+  FEEDBACK,
+  HELP,
+  UNLOCK,
+  CHANGELOG(
+    titleRes = R.string.about_changelog,
+    textRes = R.raw.changelog
+  ),
+  LICENSE_FONT(
+    titleRes = R.string.license_google_sans_flex,
+    textRes = R.raw.license_ofl,
+    linkRes = R.string.license_google_sans_flex_link
+  ),
+  LICENSE_ICONS(
+    titleRes = R.string.license_material_icons,
+    textRes = R.raw.license_ofl,
+    linkRes = R.string.license_material_icons_link
+  );
+
+  val isTextDialog: Boolean
+    get() = titleRes != null && textRes != null
 }
 
 @Composable
 fun AboutScreen(viewModel: MainViewModel) {
   val context = LocalContext.current
-  val haptic = LocalHaptic.current
+  val uriHandler = LocalUriHandler.current
 
-  val appWebsite = stringResource(R.string.app_website)
-  val appVendingDev = stringResource(R.string.app_vending_dev)
   val appVendingKey = stringResource(R.string.app_vending_key)
-  val appGithub = stringResource(R.string.app_github)
-  val appTranslate = stringResource(R.string.app_translate)
-  val appPrivacy = stringResource(R.string.app_privacy)
   val appVendingApp = stringResource(R.string.app_vending_app)
   val recommendText = stringResource(R.string.msg_recommend, appVendingApp)
 
@@ -108,62 +123,45 @@ fun AboutScreen(viewModel: MainViewModel) {
 
   var keyLongClickCount by rememberSaveable { mutableIntStateOf(0) }
 
-  var showFeedbackDialog by rememberSaveable { mutableStateOf(false) }
-  var showHelpDialog by rememberSaveable { mutableStateOf(false) }
-  var showUnlockDialog by rememberSaveable { mutableStateOf(false) }
+  var activeDialog by rememberSaveable { mutableStateOf<ActiveDialog?>(null) }
+  val onDismissRequest = { activeDialog = null }
 
-  var activeTextDialog by rememberSaveable { mutableStateOf<ActiveTextDialog?>(null) }
+  when (val dialog = activeDialog) {
+    ActiveDialog.FEEDBACK -> {
+      FeedbackDialog(
+        checkUnlockKey = unlockState.checkUnlockKey,
+        isKeyInstalled = unlockState.isKeyInstalled,
+        isPlayStoreInstalled = unlockState.isPlayStoreInstalled,
+        onDismissRequest = onDismissRequest,
+        onSupport = {
+          activeDialog = ActiveDialog.UNLOCK
+        }
+      )
+    }
 
-  if (showFeedbackDialog) {
-    FeedbackDialog(
-      checkUnlockKey = unlockState.checkUnlockKey,
-      isKeyInstalled = unlockState.isKeyInstalled,
-      isPlayStoreInstalled = unlockState.isPlayStoreInstalled,
-      onDismissRequest = { showFeedbackDialog = false },
-      onSupport = { showUnlockDialog = true }
-    )
-  }
+    ActiveDialog.HELP -> {
+      HelpDialog(onDismissRequest = onDismissRequest)
+    }
 
-  if (showHelpDialog) {
-    HelpDialog(onDismissRequest = { showHelpDialog = false })
-  }
+    ActiveDialog.UNLOCK -> {
+      UnlockDialog(
+        onOpen = {
+          uriHandler.openUri(appVendingKey)
+        },
+        onDismissRequest = onDismissRequest
+      )
+    }
 
-  if (showUnlockDialog) {
-    UnlockDialog(
-      onOpen = {
-        context.startActivity(
-          Intent(Intent.ACTION_VIEW, appVendingKey.toUri())
+    else -> {
+      if (dialog != null && dialog.titleRes != null && dialog.textRes != null) {
+        TextDialog(
+          title = stringResource(dialog.titleRes),
+          text = rememberRawText(dialog.textRes),
+          link = dialog.linkRes?.let { stringResource(it) },
+          onDismissRequest = onDismissRequest
         )
-      },
-      onDismissRequest = { showUnlockDialog = false }
-    )
-  }
-
-  activeTextDialog?.let { dialogType ->
-    val titleRes = when (dialogType) {
-      ActiveTextDialog.CHANGELOG -> R.string.about_changelog
-      ActiveTextDialog.LICENSE_FONT -> R.string.license_google_sans_flex
-      ActiveTextDialog.LICENSE_ICONS -> R.string.license_material_icons
+      }
     }
-
-    val textRes = when (dialogType) {
-      ActiveTextDialog.CHANGELOG -> R.raw.changelog
-      ActiveTextDialog.LICENSE_FONT -> R.raw.license_ofl
-      ActiveTextDialog.LICENSE_ICONS -> R.raw.license_ofl
-    }
-
-    val link = when (dialogType) {
-      ActiveTextDialog.CHANGELOG -> null
-      ActiveTextDialog.LICENSE_FONT -> stringResource(R.string.license_google_sans_flex_link)
-      ActiveTextDialog.LICENSE_ICONS -> stringResource(R.string.license_material_icons_link)
-    }
-
-    TextDialog(
-      title = stringResource(titleRes),
-      text = rememberRawText(textRes),
-      link = link,
-      onDismissRequest = { activeTextDialog = null }
-    )
   }
 
   AboutContent(
@@ -173,18 +171,12 @@ fun AboutScreen(viewModel: MainViewModel) {
     isPlayStoreInstalled = unlockState.isPlayStoreInstalled,
     checkUnlockKey = unlockState.checkUnlockKey,
     onBackClick = {
-      haptic.click()
       viewModel.popBackstack()
     },
-    onMoreClick = {
-      haptic.click()
-    },
     onHelpClick = {
-      haptic.click()
-      showHelpDialog = true
+      activeDialog = ActiveDialog.HELP
     },
     onRecommendClick = {
-      haptic.click()
       val sendIntent = Intent().apply {
         action = Intent.ACTION_SEND
         putExtra(Intent.EXTRA_TEXT, recommendText)
@@ -193,29 +185,16 @@ fun AboutScreen(viewModel: MainViewModel) {
       context.startActivity(Intent.createChooser(sendIntent, null))
     },
     onFeedbackClick = {
-      haptic.click()
-      showFeedbackDialog = true
+      activeDialog = ActiveDialog.FEEDBACK
     },
     onChangelogClick = {
-      haptic.click()
-      activeTextDialog = ActiveTextDialog.CHANGELOG
-    },
-    onDeveloperClick = {
-      haptic.click()
-      context.startActivity(Intent(Intent.ACTION_VIEW, appWebsite.toUri()))
-    },
-    onVendingClick = {
-      haptic.click()
-      context.startActivity(Intent(Intent.ACTION_VIEW, appVendingDev.toUri()))
+      activeDialog = ActiveDialog.CHANGELOG
     },
     onKeyClick = {
-      haptic.click()
       if (unlockState.isKeyInstalled) {
-        context.startActivity(
-          Intent(Intent.ACTION_VIEW, appVendingKey.toUri())
-        )
+        uriHandler.openUri(appVendingKey)
       } else {
-        showUnlockDialog = true
+        activeDialog = ActiveDialog.UNLOCK
       }
     },
     onKeyLongClick = {
@@ -227,25 +206,11 @@ fun AboutScreen(viewModel: MainViewModel) {
         }
       }
     },
-    onGithubClick = {
-      haptic.click()
-      context.startActivity(Intent(Intent.ACTION_VIEW, appGithub.toUri()))
+    onLicenseFontClick = {
+      activeDialog = ActiveDialog.LICENSE_FONT
     },
-    onTranslationClick = {
-      haptic.click()
-      context.startActivity(Intent(Intent.ACTION_VIEW, appTranslate.toUri()))
-    },
-    onPrivacyClick = {
-      haptic.click()
-      context.startActivity(Intent(Intent.ACTION_VIEW, appPrivacy.toUri()))
-    },
-    onLicenseClick = {
-      haptic.click()
-      activeTextDialog = if (it == 0) {
-        ActiveTextDialog.LICENSE_FONT
-      } else {
-        ActiveTextDialog.LICENSE_ICONS
-      }
+    onLicenseIconsClick = {
+      activeDialog = ActiveDialog.LICENSE_ICONS
     }
   )
 }
@@ -259,20 +224,17 @@ fun AboutContent(
   isPlayStoreInstalled: Boolean = true,
   checkUnlockKey: Boolean = true,
   onBackClick: () -> Unit = {},
-  onMoreClick: () -> Unit = {},
   onHelpClick: () -> Unit = {},
   onRecommendClick: () -> Unit = {},
   onFeedbackClick: () -> Unit = {},
   onChangelogClick: () -> Unit = {},
-  onDeveloperClick: () -> Unit = {},
-  onVendingClick: () -> Unit = {},
   onKeyClick: () -> Unit = {},
   onKeyLongClick: () -> Unit = {},
-  onGithubClick: () -> Unit = {},
-  onTranslationClick: () -> Unit = {},
-  onPrivacyClick: () -> Unit = {},
-  onLicenseClick: (Int) -> Unit = {}
+  onLicenseFontClick: () -> Unit = {},
+  onLicenseIconsClick: () -> Unit = {}
 ) {
+  val haptic = LocalHaptic.current
+
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
   Scaffold(
     modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -286,19 +248,12 @@ fun AboutContent(
           )
         },
         navigationIcon = {
-          TooltipBox(
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              TooltipAnchorPosition.Below
-            ),
-            tooltip = {
-              PlainTooltip {
-                Text(stringResource(R.string.action_back))
-              }
-            },
-            state = rememberTooltipState(),
+          TooltipWrapper(
+            text = stringResource(R.string.action_back),
+            positioning = TooltipAnchorPosition.Below
           ) {
             FilledIconButton(
-              onClick = onBackClick,
+              onClick = haptic.withClick(onBackClick),
               colors = IconButtonDefaults.iconButtonColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
               ),
@@ -315,22 +270,12 @@ fun AboutContent(
         actions = {
           var showMenu by remember { mutableStateOf(false) }
 
-          TooltipBox(
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              TooltipAnchorPosition.Below
-            ),
-            tooltip = {
-              PlainTooltip {
-                Text(stringResource(R.string.action_more))
-              }
-            },
-            state = rememberTooltipState(),
+          TooltipWrapper(
+            text = stringResource(R.string.action_more),
+            positioning = TooltipAnchorPosition.Below
           ) {
             FilledIconButton(
-              onClick = {
-                onMoreClick()
-                showMenu = true
-              },
+              onClick = haptic.withClick { showMenu = true },
               modifier = Modifier
                 .minimumInteractiveComponentSize()
                 .size(
@@ -368,7 +313,7 @@ fun AboutContent(
 
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.title_help)) },
-                onClick = {
+                onClick = haptic.withClick {
                   showMenu = false
                   onHelpClick()
                 },
@@ -376,7 +321,7 @@ fun AboutContent(
               )
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.action_recommend)) },
-                onClick = {
+                onClick = haptic.withClick {
                   showMenu = false
                   onRecommendClick()
                 },
@@ -384,7 +329,7 @@ fun AboutContent(
               )
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.action_send_feedback)) },
-                onClick = {
+                onClick = haptic.withClick {
                   showMenu = false
                   onFeedbackClick()
                 },
@@ -402,7 +347,17 @@ fun AboutContent(
     },
     containerColor = MaterialTheme.colorScheme.surfaceContainer
   ) { padding ->
-    val dimens = LocalDimens.current
+    val uriHandler = LocalUriHandler.current
+
+    val appWebsite = stringResource(R.string.app_website)
+    val appVendingDev = stringResource(R.string.app_vending_dev)
+    val appGithub = stringResource(R.string.app_github)
+    val appTranslate = stringResource(R.string.app_translate)
+    val appPrivacy = stringResource(R.string.app_privacy)
+
+    val segmentedColors = ListItemDefaults.segmentedColors(
+      containerColor = MaterialTheme.colorScheme.surfaceBright
+    )
 
     InsetLazyColumn(
       modifier = Modifier
@@ -417,24 +372,17 @@ fun AboutContent(
       insetItem {
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
           val itemCount = 4
-          val colors = ListItemDefaults.segmentedColors(
-            containerColor = MaterialTheme.colorScheme.surfaceBright
-          )
 
           var changelogIconTrigger by remember { mutableStateOf(false) }
 
           SegmentedListItem(
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
-            colors = colors,
+            colors = segmentedColors,
             overlineContent = {
               Text(stringResource(R.string.about_version))
             },
             leadingContent = {
-              Box(
-                modifier = Modifier.padding(
-                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
-                )
-              ) {
+              ItemLeadingIcon {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_info),
                   contentDescription = null
@@ -445,21 +393,17 @@ fun AboutContent(
           )
 
           SegmentedListItem(
-            onClick = {
+            onClick = haptic.withClick {
               onChangelogClick()
               changelogIconTrigger = !changelogIconTrigger
             },
             shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
-            colors = colors,
+            colors = segmentedColors,
             supportingContent = {
               Text(stringResource(R.string.about_changelog_description))
             },
             leadingContent = {
-              Box(
-                modifier = Modifier.padding(
-                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
-                )
-              ) {
+              ItemLeadingIcon {
                 AnimatedIcon(
                   resId = R.drawable.ic_rounded_history_anim,
                   trigger = changelogIconTrigger,
@@ -471,18 +415,14 @@ fun AboutContent(
           )
 
           SegmentedListItem(
-            onClick = onDeveloperClick,
+            onClick = haptic.withClick { uriHandler.openUri(appWebsite) },
             shapes = ListItemDefaults.segmentedShapes(index = 2, count = itemCount),
-            colors = colors,
+            colors = segmentedColors,
             overlineContent = {
               Text(stringResource(R.string.about_developer))
             },
             leadingContent = {
-              Box(
-                modifier = Modifier.padding(
-                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
-                )
-              ) {
+              ItemLeadingIcon {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_person),
                   contentDescription = null
@@ -493,18 +433,14 @@ fun AboutContent(
           )
 
           SegmentedListItem(
-            onClick = onVendingClick,
+            onClick = haptic.withClick { uriHandler.openUri(appVendingDev) },
             shapes = ListItemDefaults.segmentedShapes(index = 3, count = itemCount),
-            colors = colors,
+            colors = segmentedColors,
             supportingContent = {
               Text(stringResource(R.string.about_vending_description))
             },
             leadingContent = {
-              Box(
-                modifier = Modifier.padding(
-                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
-                )
-              ) {
+              ItemLeadingIcon {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_shop),
                   contentDescription = null
@@ -520,15 +456,12 @@ fun AboutContent(
         insetItem {
           Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
             val itemCount = 1
-            val colors = ListItemDefaults.segmentedColors(
-              containerColor = MaterialTheme.colorScheme.surfaceBright
-            )
 
             SegmentedListItem(
-              onClick = onKeyClick,
+              onClick = haptic.withClick(onKeyClick),
               onLongClick = onKeyLongClick,
               shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
-              colors = colors,
+              colors = segmentedColors,
               supportingContent = {
                 val keyDescription = when {
                   isKeyInstalled -> stringResource(R.string.about_key_description_installed)
@@ -538,11 +471,7 @@ fun AboutContent(
                 Text(keyDescription)
               },
               leadingContent = {
-                Box(
-                  modifier = Modifier.padding(
-                    vertical = dimens.segmentedListItemLeadingContentPaddingVertical
-                  )
-                ) {
+                ItemLeadingIcon {
                   Icon(
                     painter = painterResource(R.drawable.ic_rounded_key),
                     contentDescription = null
@@ -558,23 +487,16 @@ fun AboutContent(
       insetItem {
         Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
           val itemCount = 3
-          val colors = ListItemDefaults.segmentedColors(
-            containerColor = MaterialTheme.colorScheme.surfaceBright
-          )
 
           SegmentedListItem(
-            onClick = onGithubClick,
+            onClick = haptic.withClick { uriHandler.openUri(appGithub) },
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
-            colors = colors,
+            colors = segmentedColors,
             supportingContent = {
               Text(stringResource(R.string.about_github_description))
             },
             leadingContent = {
-              Box(
-                modifier = Modifier.padding(
-                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
-                )
-              ) {
+              ItemLeadingIcon {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_code),
                   contentDescription = null
@@ -585,18 +507,14 @@ fun AboutContent(
           )
 
           SegmentedListItem(
-            onClick = onTranslationClick,
+            onClick = haptic.withClick { uriHandler.openUri(appTranslate) },
             shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
-            colors = colors,
+            colors = segmentedColors,
             supportingContent = {
               Text(stringResource(R.string.about_translation_description))
             },
             leadingContent = {
-              Box(
-                modifier = Modifier.padding(
-                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
-                )
-              ) {
+              ItemLeadingIcon {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_translate),
                   contentDescription = null
@@ -607,18 +525,14 @@ fun AboutContent(
           )
 
           SegmentedListItem(
-            onClick = onPrivacyClick,
+            onClick = haptic.withClick { uriHandler.openUri(appPrivacy) },
             shapes = ListItemDefaults.segmentedShapes(index = 2, count = itemCount),
-            colors = colors,
+            colors = segmentedColors,
             supportingContent = {
               Text(stringResource(R.string.about_privacy_description))
             },
             leadingContent = {
-              Box(
-                modifier = Modifier.padding(
-                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
-                )
-              ) {
+              ItemLeadingIcon {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_policy),
                   contentDescription = null
@@ -640,32 +554,25 @@ fun AboutContent(
           )
 
           val itemCount = 2
-          val colors = ListItemDefaults.segmentedColors(
-            containerColor = MaterialTheme.colorScheme.surfaceBright
-          )
 
-          var copyright1IconTrigger by remember { mutableStateOf(false) }
-          var copyright2IconTrigger by remember { mutableStateOf(false) }
+          var copyrightFontIconTrigger by remember { mutableStateOf(false) }
+          var copyrightIconsIconTrigger by remember { mutableStateOf(false) }
 
           SegmentedListItem(
-            onClick = {
-              onLicenseClick(0)
-              copyright1IconTrigger = !copyright1IconTrigger
+            onClick = haptic.withClick {
+              onLicenseFontClick()
+              copyrightFontIconTrigger = !copyrightFontIconTrigger
             },
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
-            colors = colors,
+            colors = segmentedColors,
             supportingContent = {
               Text(stringResource(R.string.license_author_google))
             },
             leadingContent = {
-              Box(
-                modifier = Modifier.padding(
-                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
-                )
-              ) {
+              ItemLeadingIcon {
                 AnimatedIcon(
                   resId = R.drawable.ic_rounded_copyright_anim,
-                  trigger = copyright1IconTrigger,
+                  trigger = copyrightFontIconTrigger,
                   animated = !reduceAnim
                 )
               }
@@ -674,24 +581,20 @@ fun AboutContent(
           )
 
           SegmentedListItem(
-            onClick = {
-              onLicenseClick(1)
-              copyright2IconTrigger = !copyright2IconTrigger
+            onClick = haptic.withClick {
+              onLicenseIconsClick()
+              copyrightIconsIconTrigger = !copyrightIconsIconTrigger
             },
             shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
-            colors = colors,
+            colors = segmentedColors,
             supportingContent = {
               Text(stringResource(R.string.license_author_google))
             },
             leadingContent = {
-              Box(
-                modifier = Modifier.padding(
-                  vertical = dimens.segmentedListItemLeadingContentPaddingVertical
-                )
-              ) {
+              ItemLeadingIcon {
                 AnimatedIcon(
                   resId = R.drawable.ic_rounded_copyright_anim,
-                  trigger = copyright2IconTrigger,
+                  trigger = copyrightIconsIconTrigger,
                   animated = !reduceAnim
                 )
               }
@@ -704,10 +607,38 @@ fun AboutContent(
   }
 }
 
-@Preview(showBackground = true)
+@Composable
+private fun ItemLeadingIcon(content: @Composable () -> Unit) {
+  val dimens = LocalDimens.current
+  Box(
+    modifier = Modifier.padding(
+      vertical = dimens.segmentedListItemLeadingContentPaddingVertical
+    )
+  ) {
+    content()
+  }
+}
+
+@Preview(name = "Key not installed", showBackground = true)
 @Composable
 fun AboutScreenPreview() {
   TackTheme {
     AboutContent()
+  }
+}
+
+@Preview(name = "Key installed", showBackground = true)
+@Composable
+fun AboutScreenUnlockedPreview() {
+  TackTheme {
+    AboutContent(isKeyInstalled = true)
+  }
+}
+
+@Preview(name = "No Play Store", showBackground = true)
+@Composable
+fun AboutScreenNoPlayStorePreview() {
+  TackTheme {
+    AboutContent(isPlayStoreInstalled = false)
   }
 }

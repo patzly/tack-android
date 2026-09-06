@@ -97,7 +97,6 @@ fun FeedbackDialog(
       onSupportClick = {
         haptic.click()
         onSupport()
-        onDismissRequest()
       },
       onRecommendClick = {
         haptic.click()

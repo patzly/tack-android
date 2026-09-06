@@ -27,13 +27,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.PlainTooltip
-import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +42,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.AppSettings
 import xyz.zedler.patrick.tack.ui.component.core.AnimatedIcon
+import xyz.zedler.patrick.tack.ui.component.core.TooltipWrapper
 import xyz.zedler.patrick.tack.ui.component.core.VerticalButtonGroup
 import xyz.zedler.patrick.tack.ui.theme.LocalDimens
 
@@ -107,16 +103,9 @@ fun TempoSkipper(
             .size(dimens.tempoSkipperButtonSize)
             .animateHeight(interactionSources[0])
         ) {
-          TooltipBox(
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              positioning = tooltipPositioning
-            ),
-            tooltip = {
-              PlainTooltip {
-                Text(stringResource(stringRes, 1))
-              }
-            },
-            state = rememberTooltipState(),
+          TooltipWrapper(
+            text = stringResource(stringRes, 1),
+            positioning = tooltipPositioning,
             modifier = Modifier.fillMaxSize()
           ) {
             Box(
@@ -157,16 +146,9 @@ fun TempoSkipper(
             .size(dimens.tempoSkipperButtonSize)
             .animateHeight(interactionSources[1])
         ) {
-          TooltipBox(
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              positioning = tooltipPositioning
-            ),
-            tooltip = {
-              PlainTooltip {
-                Text(stringResource(stringRes, 5))
-              }
-            },
-            state = rememberTooltipState(),
+          TooltipWrapper(
+            text = stringResource(stringRes, 5),
+            positioning = tooltipPositioning,
             modifier = Modifier.fillMaxSize()
           ) {
             Box(
@@ -207,16 +189,9 @@ fun TempoSkipper(
             .size(dimens.tempoSkipperButtonSize)
             .animateHeight(interactionSources[2])
         ) {
-          TooltipBox(
-            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              positioning = tooltipPositioning
-            ),
-            tooltip = {
-              PlainTooltip {
-                Text(stringResource(stringRes, 10))
-              }
-            },
-            state = rememberTooltipState(),
+          TooltipWrapper(
+            text = stringResource(stringRes, 10),
+            positioning = tooltipPositioning,
             modifier = Modifier.fillMaxSize()
           ) {
             Box(

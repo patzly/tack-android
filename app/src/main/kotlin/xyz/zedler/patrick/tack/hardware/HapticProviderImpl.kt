@@ -103,6 +103,8 @@ class HapticProviderImpl(context: Context) : HapticProvider {
   }
 
   override fun longClick(view: View) {
+    if (!isEnabled || !isHapticPossible) return
+
     if (intensity == VibrationIntensity.AUTO) {
       view.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
     } else {
@@ -121,6 +123,8 @@ class HapticProviderImpl(context: Context) : HapticProvider {
   }
 
   override fun segmentTick(view: View, frequent: Boolean) {
+    if (!isEnabled || !isHapticPossible) return
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
       && intensity == VibrationIntensity.AUTO
     ) {

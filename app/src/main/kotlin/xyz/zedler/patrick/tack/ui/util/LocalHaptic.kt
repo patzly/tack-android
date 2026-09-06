@@ -26,9 +26,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalView
 import xyz.zedler.patrick.tack.core.hardware.HapticProvider
+import xyz.zedler.patrick.tack.core.model.VibrationIntensity
+
+private object NoOpHapticProvider : HapticProvider {
+  override val hasVibrator: Boolean = false
+  override val defaultIntensity: VibrationIntensity = VibrationIntensity.UNSET
+  override val supportsMainEffects: Boolean = false
+  override var isEnabled: Boolean = false
+  override var intensity: VibrationIntensity = VibrationIntensity.UNSET
+  override var isHapticPossible: Boolean = false
+
+  override fun tick(isTouchEvent: Boolean) = Unit
+  override fun click(isTouchEvent: Boolean) = Unit
+  override fun longClick(view: View) = Unit
+  override fun heavyClick(isTouchEvent: Boolean) = Unit
+  override fun segmentTick(view: View, frequent: Boolean) = Unit
+}
 
 private val LocalRawHapticProvider = staticCompositionLocalOf<HapticProvider> {
-  error("No HapticProvider provided")
+  NoOpHapticProvider
 }
 
 class ComposeHapticProvider(
@@ -42,6 +58,16 @@ class ComposeHapticProvider(
 
   fun segmentTick(frequent: Boolean = false) {
     provider.segmentTick(view, frequent)
+  }
+
+  inline fun withClick(crossinline action: () -> Unit): () -> Unit = {
+    click()
+    action()
+  }
+
+  inline fun <T> withClick(crossinline action: (T) -> Unit): (T) -> Unit = {
+    click()
+    action(it)
   }
 }
 
