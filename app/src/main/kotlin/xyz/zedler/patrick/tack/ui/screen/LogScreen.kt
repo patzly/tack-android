@@ -256,7 +256,7 @@ private fun LogContent(
                 resId = R.drawable.ic_rounded_refresh_anim,
                 trigger = reloadTrigger,
                 animated = !reduceAnim,
-                description = stringResource(R.string.action_reload),
+                contentDescription = stringResource(R.string.action_reload),
               )
             }
           }

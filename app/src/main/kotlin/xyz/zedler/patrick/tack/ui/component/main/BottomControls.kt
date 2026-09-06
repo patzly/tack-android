@@ -108,7 +108,7 @@ fun BottomControls(
                 resId = R.drawable.ic_rounded_tune_anim,
                 trigger = optionsIconTrigger,
                 animated = !settings.reduceAnim,
-                description = stringResource(R.string.title_options),
+                contentDescription = stringResource(R.string.title_options),
                 modifier = Modifier.size(dimens.bottomControlsIconSize)
               )
             }
@@ -158,7 +158,7 @@ fun BottomControls(
                 resId2 = R.drawable.ic_rounded_stop_to_play_fill_anim,
                 trigger = metronomeState.isPlaying,
                 animated = !settings.reduceAnim,
-                description = stringResource(R.string.action_play_stop),
+                contentDescription = stringResource(R.string.action_play_stop),
                 modifier = Modifier.size(dimens.bottomControlsIconSize)
               )
             }
@@ -203,7 +203,7 @@ fun BottomControls(
                 resId2 = R.drawable.ic_rounded_vibration_to_volume_up_anim,
                 trigger = settings.beatMode == BeatMode.VIBRATION,
                 animated = !settings.reduceAnim,
-                description = stringResource(R.string.action_beat_mode),
+                contentDescription = stringResource(R.string.action_beat_mode),
                 modifier = Modifier.size(dimens.bottomControlsIconSize)
               )
             }

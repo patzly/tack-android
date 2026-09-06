@@ -104,9 +104,6 @@ enum class ActiveDialog(
     textRes = R.raw.license_ofl,
     linkRes = R.string.license_material_icons_link
   );
-
-  val isTextDialog: Boolean
-    get() = titleRes != null && textRes != null
 }
 
 @Composable

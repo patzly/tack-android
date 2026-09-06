@@ -25,9 +25,11 @@ import androidx.compose.animation.graphics.res.animatedVectorResource
 import androidx.compose.animation.graphics.res.rememberAnimatedVectorPainter
 import androidx.compose.animation.graphics.vector.AnimatedImageVector
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
 @Composable
@@ -36,21 +38,25 @@ fun AnimatedIcon(
   trigger: Boolean,
   modifier: Modifier = Modifier,
   animated: Boolean = true,
-  description: String? = null
+  contentDescription: String? = null,
+  tint: Color = LocalContentColor.current
 ) {
   val image = AnimatedImageVector.animatedVectorResource(resId)
-  val painterForward = rememberAnimatedVectorPainter(
-    animatedImageVector = remember(resId) { image },
-    atEnd = if (animated) trigger else false
-  )
-  val painterBackward = rememberAnimatedVectorPainter(
-    animatedImageVector = remember(resId) { image },
-    atEnd = !trigger
-  )
+
+  val painter = if (animated) {
+    rememberAnimatedVectorPainter(
+      animatedImageVector = image,
+      atEnd = trigger
+    )
+  } else {
+    rememberVectorPainter(image.imageVector)
+  }
+
   Icon(
+    painter = painter,
+    contentDescription = contentDescription,
     modifier = modifier,
-    painter = if (trigger || !animated) painterForward else painterBackward,
-    contentDescription = description
+    tint = tint
   )
 }
 
@@ -62,21 +68,33 @@ fun AnimatedIcon(
   trigger: Boolean,
   modifier: Modifier = Modifier,
   animated: Boolean = true,
-  description: String? = null
+  contentDescription: String? = null,
+  tint: Color = LocalContentColor.current
 ) {
-  val image1 = AnimatedImageVector.animatedVectorResource(resId1)
-  val image2 = AnimatedImageVector.animatedVectorResource(resId2)
-  val painterForward = rememberAnimatedVectorPainter(
-    animatedImageVector = remember(resId1) { image1 },
-    atEnd = if (animated) trigger else true
-  )
-  val painterBackward = rememberAnimatedVectorPainter(
-    animatedImageVector = remember(resId2) { image2 },
-    atEnd = if (animated) !trigger else true
-  )
+  val painter = if (animated) {
+    val image1 = AnimatedImageVector.animatedVectorResource(resId1)
+    val image2 = AnimatedImageVector.animatedVectorResource(resId2)
+
+    val painterForward = rememberAnimatedVectorPainter(
+      animatedImageVector = image1,
+      atEnd = trigger
+    )
+    val painterBackward = rememberAnimatedVectorPainter(
+      animatedImageVector = image2,
+      atEnd = !trigger
+    )
+
+    if (trigger) painterForward else painterBackward
+  } else {
+    val staticResId = if (trigger) resId2 else resId1
+    val staticImage = AnimatedImageVector.animatedVectorResource(staticResId)
+    rememberVectorPainter(staticImage.imageVector)
+  }
+
   Icon(
+    painter = painter,
+    contentDescription = contentDescription,
     modifier = modifier,
-    painter = if (trigger) painterForward else painterBackward,
-    contentDescription = description
+    tint = tint
   )
 }

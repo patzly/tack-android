@@ -120,7 +120,7 @@ fun TempoSkipper(
                 },
                 trigger = topIconTrigger,
                 animated = !settings.reduceAnim,
-                description = stringResource(stringRes, 1),
+                contentDescription = stringResource(stringRes, 1),
                 modifier = Modifier.size(dimens.tempoSkipperIconSize)
               )
             }
@@ -163,7 +163,7 @@ fun TempoSkipper(
                 },
                 trigger = centerIconTrigger,
                 animated = !settings.reduceAnim,
-                description = stringResource(stringRes, 5),
+                contentDescription = stringResource(stringRes, 5),
                 modifier = Modifier.size(dimens.tempoSkipperIconSize)
               )
             }
@@ -206,7 +206,7 @@ fun TempoSkipper(
                 },
                 trigger = bottomIconTrigger,
                 animated = !settings.reduceAnim,
-                description = stringResource(stringRes, 10),
+                contentDescription = stringResource(stringRes, 10),
                 modifier = Modifier.size(dimens.tempoSkipperIconSize)
               )
             }
