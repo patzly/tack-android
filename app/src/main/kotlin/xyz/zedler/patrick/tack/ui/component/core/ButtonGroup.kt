@@ -23,77 +23,61 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.CheckableDropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
-import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.SelectableDropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.ToggleButtonDefaults
+import androidx.compose.material3.ToggleButtonSize
 import androidx.compose.material3.minimumInteractiveComponentSize
-import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.util.fastForEachIndexed
 import xyz.zedler.patrick.tack.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ConnectedButtonGroup(
-  options: List<String>,
-  labels: List<String>,
-  checked: String,
+fun <T> ConnectedButtonGroup(
+  options: List<T>,
+  checked: T,
+  onCheckedChange: (T) -> Unit,
   modifier: Modifier = Modifier,
   enabled: Boolean = true,
-  onCheckedChange: (String) -> Unit
+  label: @Composable (T) -> String = { it.toString() }
 ) {
+  if (options.isEmpty()) return
+
   ButtonGroup(
     expandedRatio = 0.0f,
     overflowIndicator = { menuState ->
       val contentDescription = stringResource(R.string.action_more)
 
-      TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-          TooltipAnchorPosition.Above
-        ),
-        tooltip = {
-          PlainTooltip {
-            Text(contentDescription)
-          }
-        },
-        state = rememberTooltipState(),
-      ) {
+      TooltipWrapper(text = contentDescription) {
         FilledIconButton(
           onClick = {
-            if (menuState.isShowing) {
-              menuState.dismiss()
-            } else {
-              menuState.show()
-            }
+            if (menuState.isShowing) menuState.dismiss() else menuState.show()
           },
-          modifier =
-            Modifier
-              .minimumInteractiveComponentSize()
-              .size(IconButtonDefaults.smallContainerSize()),
-          colors = IconButtonDefaults.iconButtonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
+          enabled = enabled,
+          modifier = Modifier
+            .minimumInteractiveComponentSize()
+            .size(IconButtonDefaults.smallContainerSize()),
+          colors = IconButtonDefaults.filledIconButtonColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
           ),
           shapes = IconButtonDefaults.shapes()
         ) {
           Icon(
             painter = painterResource(R.drawable.ic_rounded_more_vert),
-            contentDescription = contentDescription,
-            tint = MaterialTheme.colorScheme.onSurface
+            contentDescription = contentDescription
           )
         }
       }
@@ -103,34 +87,49 @@ fun ConnectedButtonGroup(
     ),
     modifier = modifier
   ) {
-    options.forEachIndexed { index, option ->
+    options.fastForEachIndexed { index, option ->
       val isSelected = option == checked
 
       customItem(
         buttonGroupContent = {
           ToggleButton(
             checked = isSelected,
-            onCheckedChange = { if (enabled) onCheckedChange(option) },
-            enabled = enabled,
-            shapes = when (index) {
-              0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
-              options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
-              else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+            onCheckedChange = {
+              if (enabled && !isSelected) {
+                onCheckedChange(option)
+              }
             },
-            modifier = Modifier.semantics { role = Role.RadioButton },
+            enabled = enabled,
+            shapes = when {
+              options.size == 1 -> ToggleButtonDefaults.shapesFor(
+                ToggleButtonSize.Small
+              )
+              index == 0 -> ButtonGroupDefaults.connectedLeadingButtonShapes()
+              index == options.lastIndex -> ButtonGroupDefaults.connectedTrailingButtonShapes()
+              else -> ButtonGroupDefaults.connectedMiddleButtonShapes()
+            }
           ) {
             Text(
-              text = labels[index],
-              maxLines = 1
+              text = label(option),
+              maxLines = 1,
+              overflow = TextOverflow.Ellipsis
             )
           }
         },
-        menuContent = {
-          CheckableDropdownMenuItem(
-            text = { Text(labels[index]) },
-            checked = isSelected,
-            onCheckedChange = { if (enabled) onCheckedChange(option) },
-            shapes = MenuDefaults.itemShape(0, 1)
+        menuContent = { menuState ->
+          SelectableDropdownMenuItem(
+            text = { Text(label(option)) },
+            selected = isSelected,
+            enabled = enabled,
+            onClick = {
+              if (enabled) {
+                if (!isSelected) {
+                  onCheckedChange(option)
+                }
+                menuState.dismiss()
+              }
+            },
+            shapes = MenuDefaults.itemShape(index, options.size)
           )
         }
       )

@@ -536,16 +536,17 @@ fun SettingsContent(
                   Spacer(modifier = Modifier.height(4.dp))
 
                   ConnectedButtonGroup(
-                    options = AppColor.entries.map { it.name },
-                    labels = listOf(
-                      stringResource(R.string.settings_theme_dynamic),
-                      stringResource(R.string.settings_theme_static)
-                    ),
-                    checked = settings.color.name,
-                    onCheckedChange = {
-                      if (it != settings.color.name) {
-                        onCheckedChange()
-                        onUpdateSettings(settings.copy(color = AppColor.valueOf(it)))
+                    options = AppColor.entries,
+                    checked = settings.color,
+                    onCheckedChange = { color ->
+                      onCheckedChange()
+                      themeIconTrigger = !themeIconTrigger
+                      onUpdateSettings(settings.copy(color = color))
+                    },
+                    label = { color ->
+                      when (color) {
+                        AppColor.DYNAMIC -> stringResource(R.string.settings_theme_dynamic)
+                        AppColor.STATIC -> stringResource(R.string.settings_theme_static)
                       }
                     }
                   )
@@ -641,17 +642,18 @@ fun SettingsContent(
                 Spacer(modifier = Modifier.height(4.dp))
 
                 ConnectedButtonGroup(
-                  options = AppTheme.entries.map { it.name },
-                  labels = listOf(
-                    stringResource(R.string.settings_theme_auto),
-                    stringResource(R.string.settings_theme_light),
-                    stringResource(R.string.settings_theme_dark)
-                  ),
-                  checked = settings.theme.name,
-                  onCheckedChange = {
-                    if (it != settings.theme.name) {
-                      onCheckedChange()
-                      onUpdateSettings(settings.copy(theme = AppTheme.valueOf(it)))
+                  options = AppTheme.entries,
+                  checked = settings.theme,
+                  onCheckedChange = { theme ->
+                    onCheckedChange()
+                    themeIconTrigger = !themeIconTrigger
+                    onUpdateSettings(settings.copy(theme = theme))
+                  },
+                  label = { color ->
+                    when (color) {
+                      AppTheme.SYSTEM -> stringResource(R.string.settings_theme_auto)
+                      AppTheme.LIGHT -> stringResource(R.string.settings_theme_light)
+                      AppTheme.DARK -> stringResource(R.string.settings_theme_dark)
                     }
                   }
                 )
@@ -706,21 +708,22 @@ fun SettingsContent(
                 }
 
                 ConnectedButtonGroup(
-                  options = AppContrast.entries.map { it.name },
-                  labels = listOf(
-                    stringResource(R.string.settings_contrast_standard),
-                    stringResource(R.string.settings_contrast_medium),
-                    stringResource(R.string.settings_contrast_high)
-                  ),
-                  checked = settings.contrast.name,
-                  onCheckedChange = {
-                    if (it != settings.contrast.name) {
-                      onCheckedChange()
-                      contrastIconTrigger = !contrastIconTrigger
-                      onUpdateSettings(settings.copy(contrast = AppContrast.valueOf(it)))
-                    }
+                  options = AppContrast.entries,
+                  checked = settings.contrast,
+                  onCheckedChange = { contrast ->
+                    onCheckedChange()
+                    contrastIconTrigger = !contrastIconTrigger
+                    onUpdateSettings(settings.copy(contrast = contrast))
                   },
-                  enabled = settings.color == AppColor.STATIC
+                  label = { contrast ->
+                    when (contrast) {
+                      AppContrast.STANDARD -> stringResource(
+                        R.string.settings_contrast_standard
+                      )
+                      AppContrast.MEDIUM -> stringResource(R.string.settings_contrast_medium)
+                      AppContrast.HIGH -> stringResource(R.string.settings_contrast_high)
+                    }
+                  }
                 )
               }
             }
@@ -852,24 +855,29 @@ fun SettingsContent(
                       val entriesWithoutUnset =
                         VibrationIntensity.entries - VibrationIntensity.UNSET
                       if (supportsMainEffects) {
-                        entriesWithoutUnset.map { it.name }
+                        entriesWithoutUnset
                       } else {
-                        (entriesWithoutUnset - VibrationIntensity.AUTO).map { it.name }
+                        entriesWithoutUnset - VibrationIntensity.AUTO
                       }
                     },
-                    labels = listOfNotNull(
-                      if (supportsMainEffects) {
-                        stringResource(R.string.settings_vibration_intensity_auto)
-                      } else null,
-                      stringResource(R.string.settings_vibration_intensity_soft),
-                      stringResource(R.string.settings_vibration_intensity_strong)
-                    ),
-                    checked = settings.vibrationIntensity.name,
-                    onCheckedChange = {
-                      val intensity = VibrationIntensity.valueOf(it)
-                      if (intensity != settings.vibrationIntensity) {
-                        onVibrationIntensityChanged(intensity)
-                        onUpdateSettings(settings.copy(vibrationIntensity = intensity))
+                    enabled = settings.haptic,
+                    checked = settings.vibrationIntensity,
+                    onCheckedChange = { intensity ->
+                      onVibrationIntensityChanged(intensity)
+                      onUpdateSettings(settings.copy(vibrationIntensity = intensity))
+                    },
+                    label = { intensity ->
+                      when (intensity) {
+                        VibrationIntensity.AUTO -> stringResource(
+                          R.string.settings_vibration_intensity_auto
+                        )
+                        VibrationIntensity.SOFT -> stringResource(
+                          R.string.settings_vibration_intensity_soft
+                        )
+                        VibrationIntensity.STRONG -> stringResource(
+                          R.string.settings_vibration_intensity_strong
+                        )
+                        else -> String()
                       }
                     }
                   )
