@@ -49,7 +49,6 @@ fun TextDialog(
   title: String,
   text: String,
   modifier: Modifier = Modifier,
-  highlights: List<String> = emptyList(),
   link: String? = null,
   onDismissRequest: () -> Unit
 ) {
@@ -63,7 +62,6 @@ fun TextDialog(
     TextDialogContent(
       title = title,
       text = text,
-      highlights = highlights,
       onCloseClick = {
         haptic.click()
         onDismissRequest()
@@ -88,7 +86,6 @@ private fun TextDialogContent(
   title: String,
   text: String,
   modifier: Modifier = Modifier,
-  highlights: List<String> = emptyList(),
   onCloseClick: () -> Unit = {},
   onLearnMoreClick: (() -> Unit)? = null
 ) {
@@ -124,7 +121,6 @@ private fun TextDialogContent(
   ) {
     FormattedText(
       text = text,
-      highlights = highlights,
       isDialog = true
     )
   }
@@ -147,8 +143,7 @@ private fun TextDialogExtraPreview() {
   TackTheme {
     TextDialogContent(
       title = "Title",
-      text = "Text\nHighlighted",
-      highlights = listOf("Highlighted"),
+      text = "Text",
       onLearnMoreClick = {}
     )
   }

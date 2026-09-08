@@ -71,10 +71,10 @@ fun AnimatedIcon(
   contentDescription: String? = null,
   tint: Color = LocalContentColor.current
 ) {
-  val painter = if (animated) {
-    val image1 = AnimatedImageVector.animatedVectorResource(resId1)
-    val image2 = AnimatedImageVector.animatedVectorResource(resId2)
+  val image1 = AnimatedImageVector.animatedVectorResource(resId1)
+  val image2 = AnimatedImageVector.animatedVectorResource(resId2)
 
+  val painter = if (animated) {
     val painterForward = rememberAnimatedVectorPainter(
       animatedImageVector = image1,
       atEnd = trigger
@@ -86,9 +86,10 @@ fun AnimatedIcon(
 
     if (trigger) painterForward else painterBackward
   } else {
-    val staticResId = if (trigger) resId2 else resId1
-    val staticImage = AnimatedImageVector.animatedVectorResource(staticResId)
-    rememberVectorPainter(staticImage.imageVector)
+    val staticPainter1 = rememberVectorPainter(image1.imageVector)
+    val staticPainter2 = rememberVectorPainter(image2.imageVector)
+
+    if (trigger) staticPainter2 else staticPainter1
   }
 
   Icon(

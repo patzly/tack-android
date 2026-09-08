@@ -19,107 +19,153 @@
 
 package xyz.zedler.patrick.tack.ui.component.core
 
-import android.content.Intent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
+import androidx.compose.ui.util.fastForEach
+import androidx.compose.ui.util.fastForEachIndexed
+
+private val BOLD_REGEX = """<b>(.*?)</b>|\*\*(.*?)\*\*"""
+  .toRegex(RegexOption.DOT_MATCHES_ALL)
+
+private val DOMAIN_URL_REGEX = """^([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(/.*)?$""".toRegex()
 
 @Composable
 fun FormattedText(
   text: String,
   modifier: Modifier = Modifier,
-  highlights: List<String> = emptyList(),
   isDialog: Boolean = false,
   textColor: Color = MaterialTheme.colorScheme.onSurface
 ) {
-  val context = LocalContext.current
-  val textColorVariant = MaterialTheme.colorScheme.onSurfaceVariant
+  if (text.isBlank()) return
 
-  val blocks = remember(text, highlights, isDialog) {
-    val parts = text.split("\n\n")
+  val uriHandler = LocalUriHandler.current
+  val textColorVariant = MaterialTheme.colorScheme.onSurfaceVariant
+  val cardShape = MaterialTheme.shapes.medium
+
+  val blocks = remember(text, isDialog) {
+    val normalizedText = text.replace("\r\n", "\n")
+    val parts = normalizedText.split("\n\n")
+
     parts.mapIndexed { i, p ->
-      val partNext = parts.getOrNull(i + 1) ?: ""
+      val partNext = parts.getOrNull(i + 1).orEmpty()
+      val isNextLink = partNext.startsWith("=> ") || partNext.startsWith("> ")
+      val isNextSubtitle = partNext.startsWith("__")
 
       when {
         p.startsWith("__") -> {
           TextBlock.Paragraph(
-            text = p.substring(2).trimStart(),
+            annotatedText = parseAnnotatedText(p.substring(2).trimStart()),
             isMedium = true,
             keepDistance = true
           )
         }
 
         p.startsWith("#") -> {
-          val keepDistance = !partNext.startsWith("=> ")
           val firstSpace = p.indexOf(' ')
           val prefixEnd = if (firstSpace != -1) firstSpace else p.length
           val prefix = p.substring(0, prefixEnd)
           val useTNum = prefix.endsWith("_")
           val h0 = if (useTNum) prefix.dropLast(1) else prefix
-          val headlineText = if (firstSpace != -1) p.substring(firstSpace + 1) else ""
+          val headlineRaw = if (firstSpace != -1) p.substring(firstSpace + 1) else ""
 
           TextBlock.Headline(
-            text = headlineText,
+            annotatedText = parseAnnotatedText(headlineRaw),
             level = h0.length,
             useTNum = useTNum,
-            keepDistance = keepDistance
+            keepDistance = !isNextLink
           )
         }
 
         p.startsWith("- ") -> {
-          val bulletStrings = p.trim().split("- ").drop(1)
-          val bullets = bulletStrings.mapIndexed { index, bulletStr ->
-            TextBlock.BulletItem(
-              text = bulletStr.trim(),
-              isLast = index == bulletStrings.size - 1
-            )
+          val bulletStrings = mutableListOf<String>()
+          p.lines().forEach { line ->
+            val trimmed = line.trimStart()
+            if (trimmed.startsWith("- ")) {
+              bulletStrings.add(trimmed.removePrefix("- ").trim())
+            } else if (trimmed.isNotEmpty() && bulletStrings.isNotEmpty()) {
+              val lastIndex = bulletStrings.lastIndex
+              bulletStrings[lastIndex] = "${bulletStrings[lastIndex]} $trimmed"
+            }
+          }
+          val bullets = bulletStrings.map {
+            TextBlock.BulletItem(annotatedText = parseAnnotatedText(it))
           }
           TextBlock.BulletList(bullets)
         }
 
         p.startsWith("> ") || p.startsWith("=> ") -> {
-          val isArrow = p.startsWith("=> ")
-          val linkTokens =
-            p.substring(if (isArrow) 3 else 2).trim().split(" ", limit = 2)
-          TextBlock.Link(
-            text = linkTokens[0],
-            url = if (linkTokens.size > 1) linkTokens[1] else linkTokens[0]
-          )
+          val raw = p.removePrefix("=> ").removePrefix("> ").trim()
+          val lastSpace = raw.lastIndexOf(' ')
+          val (label, rawUrl) = if (lastSpace != -1) {
+            val potentialUrl = raw.substring(lastSpace + 1).trim()
+            val potentialLabel = raw.substring(0, lastSpace).trim()
+
+            val isPotentialUrl = potentialUrl.contains("://") ||
+                potentialUrl.startsWith("mailto:") ||
+                potentialUrl.startsWith("tel:") ||
+                potentialUrl.startsWith("www.") ||
+                DOMAIN_URL_REGEX.matches(potentialUrl)
+
+            if (isPotentialUrl) {
+              potentialLabel to potentialUrl
+            } else {
+              raw to raw
+            }
+          } else {
+            raw to raw
+          }
+
+          val normalizedUrl = if (
+            !rawUrl.contains("://") &&
+            !rawUrl.startsWith("mailto:") &&
+            !rawUrl.startsWith("tel:")
+          ) {
+            "https://$rawUrl"
+          } else {
+            rawUrl
+          }
+
+          TextBlock.Link(text = label, url = normalizedUrl)
         }
 
         p.startsWith("? ") -> {
-          TextBlock.MessageCard(text = p.substring(2), isError = false)
+          TextBlock.MessageCard(
+            annotatedText = parseAnnotatedText(p.substring(2)),
+            isError = false
+          )
         }
 
         p.startsWith("! ") -> {
-          TextBlock.MessageCard(text = p.substring(2), isError = true)
+          TextBlock.MessageCard(
+            annotatedText = parseAnnotatedText(p.substring(2)),
+            isError = true
+          )
         }
 
         p.startsWith("---") -> {
@@ -127,20 +173,23 @@ fun FormattedText(
         }
 
         else -> {
-          if (isDialog) {
-            TextBlock.Paragraph(text = p, isMedium = true, keepDistance = true)
+          val keepDistance = if (isDialog) {
+            true
           } else {
-            val keepDistance =
-              !partNext.startsWith("=> ") && !partNext.startsWith("__ ")
-            TextBlock.Paragraph(text = p, isMedium = false, keepDistance = keepDistance)
+            !isNextLink && !isNextSubtitle
           }
+          TextBlock.Paragraph(
+            annotatedText = parseAnnotatedText(p),
+            isMedium = isDialog,
+            keepDistance = keepDistance
+          )
         }
       }
     }
   }
 
   Column(modifier = modifier.fillMaxWidth()) {
-    blocks.forEach { block ->
+    blocks.fastForEach { block ->
       when (block) {
         is TextBlock.Headline -> {
           val baseStyle = when (block.level) {
@@ -152,14 +201,17 @@ fun FormattedText(
           }
           val style = if (block.useTNum) {
             baseStyle.copy(fontFeatureSettings = "tnum")
-          } else baseStyle
+          } else {
+            baseStyle
+          }
 
           Text(
-            text = parseBoldText(block.text, highlights),
+            text = block.annotatedText,
             style = style,
             color = textColor,
             modifier = Modifier
               .fillMaxWidth()
+              .semantics { heading() }
               .padding(bottom = if (block.keepDistance) 16.dp else 0.dp)
           )
         }
@@ -173,7 +225,7 @@ fun FormattedText(
           val color = if (block.isMedium) textColorVariant else textColor
 
           Text(
-            text = parseBoldText(block.text, highlights),
+            text = block.annotatedText,
             style = style,
             color = color,
             modifier = Modifier
@@ -183,31 +235,35 @@ fun FormattedText(
         }
 
         is TextBlock.BulletList -> {
+          val bulletStyle = if (isDialog) {
+            MaterialTheme.typography.bodyMedium
+          } else {
+            MaterialTheme.typography.bodyLarge
+          }
+
           Column(
             modifier = Modifier
               .fillMaxWidth()
               .padding(bottom = 16.dp)
           ) {
-            block.bullets.forEach { bullet ->
+            block.bullets.fastForEachIndexed { index, bullet ->
               Row(
                 modifier = Modifier
                   .fillMaxWidth()
-                  .padding(bottom = if (bullet.isLast) 0.dp else 8.dp)
+                  .semantics(mergeDescendants = true) {}
+                  .padding(bottom = if (index == block.bullets.lastIndex) 0.dp else 8.dp)
               ) {
-                Box(
-                  modifier = Modifier
-                    .padding(start = 6.dp, end = 6.dp, top = 8.dp)
-                    .size(4.dp)
-                    .background(color = textColor, shape = CircleShape)
+                Text(
+                  text = "•",
+                  style = bulletStyle,
+                  color = textColor,
+                  modifier = Modifier.padding(start = 4.dp, end = 12.dp)
                 )
                 Text(
-                  text = parseBoldText(bullet.text, highlights),
-                  style = if (isDialog) {
-                    MaterialTheme.typography.bodyMedium
-                  } else {
-                    MaterialTheme.typography.bodyLarge
-                  },
-                  color = textColor
+                  text = bullet.annotatedText,
+                  style = bulletStyle,
+                  color = textColor,
+                  modifier = Modifier.weight(1f)
                 )
               }
             }
@@ -221,15 +277,16 @@ fun FormattedText(
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier
               .fillMaxWidth()
-              .padding(bottom = 16.dp)
+              .padding(bottom = 8.dp)
+              .minimumInteractiveComponentSize()
               .clip(MaterialTheme.shapes.small)
-              .clickable {
+              .clickable(role = Role.Button) {
                 try {
-                  context.startActivity(Intent(Intent.ACTION_VIEW, block.url.toUri()))
+                  uriHandler.openUri(block.url)
                 } catch (_: Exception) {
                 }
               }
-              .padding(vertical = 4.dp)
+              .padding(vertical = 8.dp)
           )
         }
 
@@ -246,14 +303,17 @@ fun FormattedText(
           }
 
           Card(
-            colors = CardDefaults.cardColors(containerColor = containerColor),
-            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(
+              containerColor = containerColor,
+              contentColor = contentColor
+            ),
+            shape = cardShape,
             modifier = Modifier
               .fillMaxWidth()
               .padding(bottom = 16.dp)
           ) {
             Text(
-              text = parseBoldText(block.text, highlights),
+              text = block.annotatedText,
               style = MaterialTheme.typography.bodyLarge,
               color = contentColor,
               modifier = Modifier.padding(16.dp)
@@ -277,36 +337,59 @@ fun FormattedText(
 
 private sealed interface TextBlock {
   data class Headline(
-    val text: String, val level: Int, val useTNum: Boolean, val keepDistance: Boolean
+    val annotatedText: AnnotatedString,
+    val level: Int,
+    val useTNum: Boolean,
+    val keepDistance: Boolean
   ) : TextBlock
+
   data class Paragraph(
-    val text: String, val isMedium: Boolean, val keepDistance: Boolean
+    val annotatedText: AnnotatedString,
+    val isMedium: Boolean,
+    val keepDistance: Boolean
   ) : TextBlock
-  data class BulletItem(val text: String, val isLast: Boolean)
-  data class BulletList(val bullets: List<BulletItem>) : TextBlock
-  data class Link(val text: String, val url: String) : TextBlock
-  data class MessageCard(val text: String, val isError: Boolean) : TextBlock
+
+  data class BulletItem(
+    val annotatedText: AnnotatedString
+  )
+
+  data class BulletList(
+    val bullets: List<BulletItem>
+  ) : TextBlock
+
+  data class Link(
+    val text: String,
+    val url: String
+  ) : TextBlock
+
+  data class MessageCard(
+    val annotatedText: AnnotatedString,
+    val isError: Boolean
+  ) : TextBlock
+
   data object Divider : TextBlock
 }
 
-private fun parseBoldText(text: String, highlights: List<String>): AnnotatedString {
-  var currentText = text
-  highlights.forEach { h ->
-    currentText = currentText.replace(h, "<b>$h</b>")
-  }
+private fun parseAnnotatedText(text: String): AnnotatedString {
+  if (text.isEmpty()) return AnnotatedString("")
+  if (!BOLD_REGEX.containsMatchIn(text)) return AnnotatedString(text)
 
   return buildAnnotatedString {
     var currentIndex = 0
-    val regex = "<b>(.*?)</b>".toRegex(RegexOption.DOT_MATCHES_ALL)
-    val matches = regex.findAll(currentText)
+    for (match in BOLD_REGEX.findAll(text)) {
+      append(text.substring(currentIndex, match.range.first))
 
-    for (match in matches) {
-      append(currentText.substring(currentIndex, match.range.first))
+      val boldContent = match.groups[1]?.value
+        ?: match.groups[2]?.value
+        ?: ""
+
       withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-        append(match.groupValues[1])
+        append(boldContent)
       }
       currentIndex = match.range.last + 1
     }
-    append(currentText.substring(currentIndex))
+    if (currentIndex < text.length) {
+      append(text.substring(currentIndex))
+    }
   }
 }

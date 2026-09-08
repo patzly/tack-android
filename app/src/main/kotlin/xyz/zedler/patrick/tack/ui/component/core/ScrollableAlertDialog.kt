@@ -19,9 +19,9 @@
 
 package xyz.zedler.patrick.tack.ui.component.core
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,7 +45,6 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.R
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -55,6 +54,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -68,13 +68,13 @@ import androidx.compose.ui.unit.takeOrElse
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 
-@SuppressLint("PrivateResource")
 @Composable
 fun ScrollableAlertDialog(
   onDismissRequest: () -> Unit,
   modifier: Modifier = Modifier,
   horizontalBasePadding: Dp = 32.dp,
   verticalBasePadding: Dp = 8.dp,
+  paneTitle: String = stringResource(android.R.string.dialog_alert_title),
   properties: DialogProperties = DialogProperties(
     usePlatformDefaultWidth = false,
     decorFitsSystemWindows = false
@@ -82,8 +82,6 @@ fun ScrollableAlertDialog(
   content: @Composable () -> Unit
 ) {
   Dialog(onDismissRequest = onDismissRequest, properties = properties) {
-    val dialogPaneDescription = stringResource(R.string.m3c_dialog)
-
     val layoutDirection = LocalLayoutDirection.current
     val safePadding = WindowInsets.safeDrawing.asPaddingValues()
 
@@ -115,12 +113,10 @@ fun ScrollableAlertDialog(
             maxWidth = 560.dp,
             maxHeight = 700.dp
           )
-          .clickable(
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null,
-            onClick = { /* Consume clicks to prevent closing the dialog */ }
-          )
-          .semantics { this.paneTitle = dialogPaneDescription },
+          .pointerInput(Unit) {
+            detectTapGestures { }
+          }
+          .semantics { this.paneTitle = paneTitle },
         propagateMinConstraints = true
       ) {
         content()
@@ -132,9 +128,9 @@ fun ScrollableAlertDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScrollableAlertDialogContent(
-  title: @Composable (() -> Unit)?,
   confirmButton: @Composable () -> Unit,
   modifier: Modifier = Modifier,
+  title: @Composable (() -> Unit)? = null,
   icon: @Composable (() -> Unit)? = null,
   subtitle: @Composable (() -> Unit)? = null,
   dismissButton: @Composable (() -> Unit)? = null,
@@ -145,7 +141,7 @@ fun ScrollableAlertDialogContent(
   titleContentColor: Color = MaterialTheme.colorScheme.onSurface,
   textContentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
   scrollableContentPadding: PaddingValues = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
-  content: @Composable (() -> Unit)?
+  content: @Composable (() -> Unit)? = null
 ) {
   Surface(
     shape = AlertDialogDefaults.shape,
@@ -168,20 +164,15 @@ fun ScrollableAlertDialogContent(
           textStyle = MaterialTheme.typography.headlineSmall
         ) {
           Box(
-            // Align the title to the center when an icon is present.
-            Modifier
+            modifier = Modifier
               .padding(
                 start = 24.dp,
                 end = 24.dp,
                 top = if (icon == null) 0.dp else 16.dp,
-                bottom = if (subtitle == null) 16.dp else 4.dp,
+                bottom = if (subtitle == null) 16.dp else 4.dp
               )
               .align(
-                if (icon == null) {
-                  Alignment.Start
-                } else {
-                  Alignment.CenterHorizontally
-                }
+                if (icon == null) Alignment.Start else Alignment.CenterHorizontally
               )
           ) {
             title()
@@ -195,14 +186,10 @@ fun ScrollableAlertDialogContent(
           textStyle = MaterialTheme.typography.bodyMedium
         ) {
           Box(
-            Modifier
+            modifier = Modifier
               .padding(start = 24.dp, end = 24.dp, top = 0.dp, bottom = 16.dp)
               .align(
-                if (icon == null) {
-                  Alignment.Start
-                } else {
-                  Alignment.CenterHorizontally
-                }
+                if (icon == null) Alignment.Start else Alignment.CenterHorizontally
               )
           ) {
             subtitle()
@@ -210,14 +197,17 @@ fun ScrollableAlertDialogContent(
         }
       }
 
-      val isScrollable by remember(isScrollableControlledByContent) {
+      val isScrollable by remember(scrollState, isScrollableControlledByContent) {
         derivedStateOf {
-          if (isScrollableControlledByContent) true
-          else scrollState?.let { it.maxValue > 0 } ?: false
+          if (isScrollableControlledByContent) {
+            true
+          } else {
+            scrollState?.let { it.maxValue > 0 } ?: false
+          }
         }
       }
 
-      if (isScrollable) {
+      if (isScrollable && content != null) {
         HorizontalDivider()
       }
 
@@ -241,29 +231,28 @@ fun ScrollableAlertDialogContent(
             val layoutDirection = LocalLayoutDirection.current
             val applyContentPadding = isScrollable && !isScrollableControlledByContent
             Box(
-              modifier = Modifier
-                .padding(
-                  start = scrollableContentPadding.calculateStartPadding(layoutDirection),
-                  top = if (applyContentPadding) {
-                    scrollableContentPadding.calculateTopPadding()
-                  } else {
-                    0.dp
-                  },
-                  end = scrollableContentPadding.calculateEndPadding(layoutDirection),
-                  bottom = if (applyContentPadding) {
-                    scrollableContentPadding.calculateBottomPadding()
-                  } else {
-                    0.dp
-                  }
-                )
+              modifier = Modifier.padding(
+                start = scrollableContentPadding.calculateStartPadding(layoutDirection),
+                top = if (applyContentPadding) {
+                  scrollableContentPadding.calculateTopPadding()
+                } else {
+                  0.dp
+                },
+                end = scrollableContentPadding.calculateEndPadding(layoutDirection),
+                bottom = if (applyContentPadding) {
+                  scrollableContentPadding.calculateBottomPadding()
+                } else {
+                  0.dp
+                }
+              )
             ) {
-              content.invoke()
+              content()
             }
           }
         }
       }
 
-      if (isScrollable) {
+      if (isScrollable && content != null) {
         HorizontalDivider()
       }
 
@@ -300,8 +289,8 @@ private fun AlertDialogCombinedButtons(
 
       Layout(
         content = {
-          Box(Modifier.layoutId("extra")) { extraButton?.invoke() }
-          Box(Modifier.layoutId("dismiss")) { dismissButton?.invoke() }
+          extraButton?.let { Box(Modifier.layoutId("extra")) { it() } }
+          dismissButton?.let { Box(Modifier.layoutId("dismiss")) { it() } }
           Box(Modifier.layoutId("confirm")) { confirmButton() }
         }
       ) { measurables, constraints ->
@@ -318,11 +307,11 @@ private fun AlertDialogCombinedButtons(
 
         val wExtra = if (hasExtra) extraPlaceable.width else 0
         val wDismiss = if (hasDismiss) dismissPlaceable.width else 0
-        val wConfirm = confirmPlaceable!!.width
+        val wConfirm = confirmPlaceable?.width ?: 0
 
         val hExtra = if (hasExtra) extraPlaceable.height else 0
         val hDismiss = if (hasDismiss) dismissPlaceable.height else 0
-        val hConfirm = confirmPlaceable.height
+        val hConfirm = confirmPlaceable?.height ?: 0
 
         val mainAxisSpacingPx = mainAxisSpacing.roundToPx()
         val crossAxisSpacingPx = crossAxisSpacing.roundToPx()
@@ -334,18 +323,22 @@ private fun AlertDialogCombinedButtons(
         val isStacked = (hasExtra && gap < thresholdPx) || groupWidth > constraints.maxWidth
 
         if (isStacked) {
-          val height = (if (hasExtra) hExtra + crossAxisSpacingPx else 0) +
-              hConfirm + (if (hasDismiss) hDismiss + crossAxisSpacingPx else 0)
+          val height = hConfirm +
+              (if (hasDismiss) crossAxisSpacingPx + hDismiss else 0) +
+              (if (hasExtra) crossAxisSpacingPx + hExtra else 0)
+
           layout(constraints.maxWidth, height) {
             var y = 0
-            if (hasExtra) {
-              extraPlaceable.placeRelative(constraints.maxWidth - wExtra, y)
-              y += hExtra + crossAxisSpacingPx
-            }
-            confirmPlaceable.placeRelative(constraints.maxWidth - wConfirm, y)
+            confirmPlaceable?.placeRelative(constraints.maxWidth - wConfirm, y)
             y += hConfirm + crossAxisSpacingPx
+
             if (hasDismiss) {
               dismissPlaceable.placeRelative(constraints.maxWidth - wDismiss, y)
+              y += hDismiss + crossAxisSpacingPx
+            }
+
+            if (hasExtra) {
+              extraPlaceable.placeRelative(constraints.maxWidth - wExtra, y)
             }
           }
         } else {
@@ -354,7 +347,7 @@ private fun AlertDialogCombinedButtons(
             if (hasExtra) {
               extraPlaceable.placeRelative(0, (height - hExtra) / 2)
             }
-            confirmPlaceable.placeRelative(
+            confirmPlaceable?.placeRelative(
               constraints.maxWidth - wConfirm,
               (height - hConfirm) / 2
             )
@@ -371,12 +364,6 @@ private fun AlertDialogCombinedButtons(
   )
 }
 
-/**
- * A convenience method to provide values to both [LocalContentColor] and [LocalTextStyle] in one
- * call. This is less expensive than nesting calls to [CompositionLocalProvider].
- *
- * Text styles will be merged with the current value of [LocalTextStyle].
- */
 @Composable
 internal fun ProvideContentColorTextStyle(
   contentColor: Color,

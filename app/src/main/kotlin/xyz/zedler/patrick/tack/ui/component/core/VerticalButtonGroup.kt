@@ -35,12 +35,15 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.PlainTooltip
+import androidx.compose.material3.SelectableDropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.TooltipAnchorPosition
@@ -49,17 +52,14 @@ import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
-import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.withFrameMillis
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
@@ -70,63 +70,74 @@ import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.MultiContentMeasurePolicy
 import androidx.compose.ui.layout.Placeable
-import androidx.compose.ui.node.CompositionLocalConsumerModifierNode
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.ParentDataModifierNode
+import androidx.compose.ui.node.invalidateParentData
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.collapse
+import androidx.compose.ui.semantics.expand
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEach
-import androidx.compose.ui.util.fastMap
+import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.util.fastMaxBy
 import androidx.compose.ui.util.fastMaxOfOrNull
 import androidx.compose.ui.util.fastRoundToInt
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.R
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.roundToInt
 import kotlin.math.sign
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun VerticalButtonGroup(
-  overflowIndicator: @Composable (VerticalButtonGroupMenuState) -> Unit,
   modifier: Modifier = Modifier,
-  @FloatRange(0.0) expandedRatio: Float = VerticalButtonGroupDefaults.ExpandedRatio,
+  @FloatRange(from = 0.0) expandedRatio: Float = VerticalButtonGroupDefaults.EXPANDED_RATIO,
   verticalArrangement: Arrangement.Vertical = VerticalButtonGroupDefaults.VerticalArrangement,
   horizontalAlignment: Alignment.Horizontal = VerticalButtonGroupDefaults.HorizontalAlignment,
+  overflowIndicator: @Composable (VerticalButtonGroupMenuState) -> Unit = {
+    VerticalButtonGroupDefaults.OverflowIndicator(it)
+  },
   content: VerticalButtonGroupScope.() -> Unit,
 ) {
-  val defaultAnimationSpec = MaterialTheme.motionScheme.fastSpatialSpec<Float>()
-  val scope: VerticalButtonGroupScopeImpl by rememberVerticalButtonGroupScopeState(
-    content = content,
-    animationSpec = defaultAnimationSpec
-  )
-  val menuState = remember { VerticalButtonGroupMenuState() }
-  val overflowState = rememberVerticalOverflowState()
+  val defaultAnimationSpec = MaterialTheme.motionScheme.fastEffectsSpec<Float>()
+  val scope = remember(defaultAnimationSpec, content) {
+    VerticalButtonGroupScopeImpl(animationSpec = defaultAnimationSpec).apply(content)
+  }
 
-  val measurePolicy =
-    remember(verticalArrangement, horizontalAlignment, overflowState, expandedRatio) {
-      VerticalButtonGroupMeasurePolicy(
-        overflowState = overflowState,
-        verticalArrangement = verticalArrangement,
-        horizontalAlignment = horizontalAlignment,
-        expandedRatio = expandedRatio,
-      )
-    }
+  val menuState = rememberVerticalButtonGroupMenuState()
+  var visibleCount by remember { mutableIntStateOf(Int.MAX_VALUE) }
+
+  val measurePolicy = remember(
+    verticalArrangement,
+    horizontalAlignment,
+    expandedRatio,
+  ) {
+    VerticalButtonGroupMeasurePolicy(
+      onVisibleItemCountChanged = { visibleCount = it },
+      verticalArrangement = verticalArrangement,
+      horizontalAlignment = horizontalAlignment,
+      expandedRatio = expandedRatio,
+    )
+  }
 
   Layout(
     contents = listOf(
-      { scope.items.fastForEach { it.ButtonGroupContent() } },
+      {
+        scope.items.fastForEachIndexed { index, item ->
+          key(index) {
+            item.ButtonGroupContent()
+          }
+        }
+      },
       {
         Box {
           overflowIndicator(menuState)
@@ -134,8 +145,12 @@ fun VerticalButtonGroup(
             expanded = menuState.isShowing,
             onDismissRequest = { menuState.dismiss() },
           ) {
-            for (i in overflowState.visibleItemCount until overflowState.totalItemCount) {
-              scope.items[i].MenuContent(menuState)
+            val totalItems = scope.items.size
+            val start = visibleCount.coerceIn(0, totalItems)
+            for (i in start until totalItems) {
+              key(i) {
+                scope.items[i].MenuContent(menuState)
+              }
             }
           }
         }
@@ -147,7 +162,7 @@ fun VerticalButtonGroup(
 }
 
 object VerticalButtonGroupDefaults {
-  val ExpandedRatio: Float = 0.15f
+  const val EXPANDED_RATIO: Float = 0.15f
   val VerticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp)
   val HorizontalAlignment: Alignment.Horizontal = Alignment.CenterHorizontally
   val CompressionLimit: Dp = 8.dp
@@ -175,7 +190,19 @@ object VerticalButtonGroupDefaults {
         onClick = {
           if (menuState.isShowing) menuState.dismiss() else menuState.show()
         },
-        modifier = modifier,
+        modifier = modifier.semantics {
+          if (menuState.isShowing) {
+            collapse {
+              menuState.dismiss()
+              true
+            }
+          } else {
+            expand {
+              menuState.show()
+              true
+            }
+          }
+        },
         enabled = enabled,
         shape = shape,
         colors = colors,
@@ -190,6 +217,7 @@ object VerticalButtonGroupDefaults {
   }
 }
 
+@Stable
 class VerticalButtonGroupMenuState(initialIsShowing: Boolean = false) {
   var isShowing: Boolean by mutableStateOf(initialIsShowing)
     private set
@@ -201,13 +229,29 @@ class VerticalButtonGroupMenuState(initialIsShowing: Boolean = false) {
   fun show() {
     isShowing = true
   }
+
+  companion object {
+    val Saver: Saver<VerticalButtonGroupMenuState, *> = Saver(
+      save = { it.isShowing },
+      restore = { VerticalButtonGroupMenuState(it) },
+    )
+  }
+}
+
+@Composable
+fun rememberVerticalButtonGroupMenuState(
+  initialIsShowing: Boolean = false
+): VerticalButtonGroupMenuState {
+  return rememberSaveable(saver = VerticalButtonGroupMenuState.Saver) {
+    VerticalButtonGroupMenuState(initialIsShowing)
+  }
 }
 
 private class VerticalButtonGroupMeasurePolicy(
-  val overflowState: VerticalButtonGroupOverflowState,
-  val verticalArrangement: Arrangement.Vertical,
-  val horizontalAlignment: Alignment.Horizontal,
-  val expandedRatio: Float,
+  private val onVisibleItemCountChanged: (Int) -> Unit,
+  private val verticalArrangement: Arrangement.Vertical,
+  private val horizontalAlignment: Alignment.Horizontal,
+  private val expandedRatio: Float,
 ) : MultiContentMeasurePolicy {
 
   override fun MeasureScope.measure(
@@ -215,209 +259,224 @@ private class VerticalButtonGroupMeasurePolicy(
     constraints: Constraints,
   ): MeasureResult {
     val (contentMeasurables, overflowMeasurables) = measurables
-    overflowState.totalItemCount = contentMeasurables.size
-    val arrangementSpacingInt = verticalArrangement.spacing.roundToPx()
-    val arrangementSpacingPx = arrangementSpacingInt.toLong()
     val size = contentMeasurables.size
-    var totalWeight = 0f
-    var fixedSpace = 0
-    var weightChildrenCount = 0
-    val placeables = mutableListOf<Placeable>()
-    val childrenMainAxisSize = IntArray(size)
-    val childrenConstraints: Array<Constraints?> = arrayOfNulls(size)
-    val configs = Array(contentMeasurables.size) {
-      contentMeasurables[it].parentData as? VerticalButtonGroupParentData
-        ?: VerticalButtonGroupParentData()
-    }
-    val animatables = Array(contentMeasurables.size) { configs[it].pressedAnimatable }
 
+    if (size == 0) {
+      onVisibleItemCountChanged(0)
+      return layout(constraints.minWidth, constraints.minHeight) {}
+    }
+
+    val arrangementSpacingInt = verticalArrangement.spacing.roundToPx()
+    val totalSpacings = arrangementSpacingInt * (size - 1)
     val mainAxisMin = constraints.minHeight
     val mainAxisMax = constraints.maxHeight
 
-    // 1. Constraints von Elementen ohne Weight ermitteln
-    var spaceAfterLastNoWeight = 0
-    for (i in 0 until size) {
-      val child = contentMeasurables[i]
-      val parentData = child.verticalButtonGroupParentData
-      val weight = parentData.weight
+    var totalWeight = 0f
+    var weightChildrenCount = 0
+    var fixedSpace = 0
+    val heights = IntArray(size)
 
+    for (i in 0 until size) {
+      val weight = contentMeasurables[i].verticalButtonGroupParentData?.weight ?: 0f
       if (weight > 0f) {
         totalWeight += weight
-        ++weightChildrenCount
+        weightChildrenCount++
       } else {
-        val remaining = mainAxisMax - fixedSpace
-        val desiredHeight = child.maxIntrinsicHeight(constraints.maxWidth)
-        childrenConstraints[i] = constraints.copy(
-          minHeight = 0, maxHeight = desiredHeight.coerceAtLeast(0)
-        )
-        childrenMainAxisSize[i] = desiredHeight
-
-        spaceAfterLastNoWeight = min(
-          arrangementSpacingInt,
-          (remaining - desiredHeight).coerceAtLeast(0)
-        )
-        fixedSpace += desiredHeight + spaceAfterLastNoWeight
+        val desiredHeight = contentMeasurables[i].maxIntrinsicHeight(constraints.maxWidth)
+        val clampedHeight = desiredHeight.coerceAtLeast(0)
+        heights[i] = clampedHeight
+        fixedSpace += clampedHeight
       }
     }
 
-    // 2. Constraints von Weighted Children berechnen
-    var weightedSpace = 0
-    if (weightChildrenCount == 0) {
-      fixedSpace -= spaceAfterLastNoWeight
-    } else {
-      val targetSpace = if (mainAxisMax != Constraints.Infinity) mainAxisMax else mainAxisMin
-      val arrangementSpacingTotal = arrangementSpacingPx * (weightChildrenCount - 1)
-      val remainingToTarget =
-        (targetSpace - fixedSpace - arrangementSpacingTotal).coerceAtLeast(0)
-      val weightUnitSpace = remainingToTarget / totalWeight
-      var remainder = remainingToTarget
-      for (i in 0 until size) {
-        val measurable = contentMeasurables[i]
-        val itemWeight = measurable.verticalButtonGroupParentData.weight
-        val weightedSize = (weightUnitSpace * itemWeight)
-        remainder -= weightedSize.fastRoundToInt()
-      }
+    if (weightChildrenCount > 0) {
+      if (mainAxisMax != Constraints.Infinity) {
+        val targetSpace = max(mainAxisMax, mainAxisMin)
+        val remainingToTarget = (targetSpace - fixedSpace - totalSpacings).coerceAtLeast(0)
+        val weightUnitSpace = if (totalWeight > 0f) remainingToTarget / totalWeight else 0f
+        var remainder = remainingToTarget
 
-      for (i in 0 until size) {
-        if (childrenConstraints[i] == null) {
-          val child = contentMeasurables[i]
-          val parentData = child.verticalButtonGroupParentData
-          val weight = parentData.weight
-
-          val remainderUnit = remainder.sign
-          remainder -= remainderUnit
-          val weightedSize = (weightUnitSpace * weight)
-          val childMainAxisSize = max(0, weightedSize.fastRoundToInt() + remainderUnit)
-
-          childrenConstraints[i] = constraints.copy(
-            minHeight = if (childMainAxisSize != Constraints.Infinity) childMainAxisSize else 0,
-            maxHeight = childMainAxisSize,
-          )
-          childrenMainAxisSize[i] = childMainAxisSize
-          weightedSpace += childMainAxisSize
+        for (i in 0 until size) {
+          val weight = contentMeasurables[i].verticalButtonGroupParentData?.weight ?: 0f
+          if (weight > 0f) {
+            remainder -= (weightUnitSpace * weight).fastRoundToInt()
+          }
         }
-        weightedSpace =
-          (weightedSpace + arrangementSpacingTotal).toInt().coerceIn(0, mainAxisMax - fixedSpace)
+
+        for (i in 0 until size) {
+          val weight = contentMeasurables[i].verticalButtonGroupParentData?.weight ?: 0f
+          if (weight > 0f) {
+            val remainderUnit = remainder.sign
+            remainder -= remainderUnit
+            val weightedSize = (weightUnitSpace * weight)
+            val childHeight = max(0, weightedSize.fastRoundToInt() + remainderUnit)
+            heights[i] = childHeight
+          }
+        }
+      } else {
+        for (i in 0 until size) {
+          val weight = contentMeasurables[i].verticalButtonGroupParentData?.weight ?: 0f
+          if (weight > 0f) {
+            val desiredHeight = contentMeasurables[i].maxIntrinsicHeight(constraints.maxWidth)
+            heights[i] = desiredHeight.coerceAtLeast(0)
+          }
+        }
       }
     }
 
-    var remainingSpace = mainAxisMax
-    var mainSpace = 0
-    var shownItemSpace = 0
-    val heights =
-      IntArray(contentMeasurables.size) { (childrenConstraints[it] ?: constraints).maxHeight }
-    val desiredHeight = heights.sum() + arrangementSpacingInt * (contentMeasurables.size - 1)
-    var lastItem = 0
+    var totalDesiredHeight = totalSpacings
+    for (i in 0 until size) {
+      totalDesiredHeight += heights[i]
+    }
 
-    val overflowPlaceables = if (desiredHeight <= mainAxisMax) {
-      lastItem = heights.size
-      mainSpace = desiredHeight
-      null
+    var lastItem = 0
+    val overflowPlaceables: List<Placeable>?
+    val overflowHeight: Int
+
+    if (mainAxisMax == Constraints.Infinity || totalDesiredHeight <= mainAxisMax) {
+      lastItem = size
+      overflowPlaceables = null
+      overflowHeight = 0
     } else {
-      val overflowHeight = overflowMeasurables.fastMaxOfOrNull {
+      val rawOverflowHeight = overflowMeasurables.fastMaxOfOrNull {
         it.maxIntrinsicHeight(constraints.maxWidth)
       } ?: 0
-      remainingSpace -= overflowHeight
-      mainSpace += overflowHeight
+      overflowHeight = rawOverflowHeight
 
-      while (lastItem < heights.size && heights[lastItem] <= remainingSpace) {
-        val itemHeight = heights[lastItem]
-        mainSpace += itemHeight
-        shownItemSpace += itemHeight
-        remainingSpace -= itemHeight + arrangementSpacingInt
+      var remainingSpace = mainAxisMax - overflowHeight
+      while (lastItem < size) {
+        val neededSpace = heights[lastItem] + arrangementSpacingInt
+        if (neededSpace > remainingSpace + arrangementSpacingInt) break
+        remainingSpace -= neededSpace
         lastItem++
       }
 
-      mainSpace += arrangementSpacingInt * lastItem
-      shownItemSpace += arrangementSpacingInt * lastItem
-
-      overflowMeasurables.fastMap {
-        it.measure(constraints.copy(maxHeight = remainingSpace + overflowHeight))
-      }
+      val safeRemaining = max(0, remainingSpace + overflowHeight)
+      val overflowConstraints = constraints.copy(minHeight = 0, maxHeight = safeRemaining)
+      overflowPlaceables = overflowMeasurables.map { it.measure(overflowConstraints) }
     }
 
-    overflowState.visibleItemCount = lastItem
+    onVisibleItemCountChanged(lastItem)
 
-    // 3. Höhe animieren (Vergrößern des gedrückten & Stauchen der Nachbarn)
-    if (contentMeasurables.size > 1) {
-      for (index in 0 until lastItem) {
-        if (animatables[index].value == 0f) continue
-        var actualGrowth: Int
-
-        if (index in 1 until lastItem - 1) {
-          val targetGrowth = (animatables[index].value *
-              minOf(
-                (expandedRatio * heights[index] / 2f),
-                configs[index - 1].compressionLimit.toPx(),
-                configs[index + 1].compressionLimit.toPx(),
-              )).roundToInt()
-          val growthTop = min(targetGrowth, heights[index - 1])
-          val growthBottom = min(targetGrowth, heights[index + 1])
-          heights[index - 1] -= growthTop
-          heights[index + 1] -= growthBottom
-          actualGrowth = growthTop + growthBottom
-        } else if (index == 0) {
-          val targetGrowth = (animatables[index].value *
-              min(
-                expandedRatio * heights[index],
-                configs[index + 1].compressionLimit.toPx(),
-              )).roundToInt()
-          val growthBottom = min(targetGrowth, heights[index + 1])
-          heights[index + 1] -= growthBottom
-          actualGrowth = growthBottom
-        } else {
-          val targetGrowth = (animatables[index].value *
-              min(
-                expandedRatio * heights[index],
-                configs[index - 1].compressionLimit.toPx(),
-              )).roundToInt()
-          val growthTop = min(targetGrowth, heights[index - 1])
-          heights[index - 1] -= growthTop
-          actualGrowth = growthTop
+    if (lastItem > 1 && expandedRatio > 0f) {
+      var hasAnyActiveAnimation = false
+      for (i in 0 until lastItem) {
+        val anim = contentMeasurables[i].verticalButtonGroupParentData?.pressedAnimatable
+        if (anim != null && anim.value > 0f) {
+          hasAnyActiveAnimation = true
+          break
         }
+      }
 
-        heights[index] += actualGrowth
+      if (hasAnyActiveAnimation) {
+        val baseHeights = heights.clone()
+        for (index in 0 until lastItem) {
+          val anim = contentMeasurables[index].verticalButtonGroupParentData?.pressedAnimatable
+          val animValue = anim?.value ?: 0f
+          if (animValue == 0f) continue
+
+          val actualGrowth = when (index) {
+            0 -> {
+              val nextLimit = contentMeasurables[1].verticalButtonGroupParentData
+                ?.compressionLimit?.toPx()
+                ?: VerticalButtonGroupDefaults.CompressionLimit.toPx()
+              val targetGrowth = (animValue * min(
+                expandedRatio * baseHeights[0],
+                nextLimit,
+              )).fastRoundToInt()
+              val growthBottom = min(targetGrowth, heights[1])
+              heights[1] -= growthBottom
+              growthBottom
+            }
+            lastItem - 1 -> {
+              val prevLimit = contentMeasurables[index - 1].verticalButtonGroupParentData
+                ?.compressionLimit?.toPx()
+                ?: VerticalButtonGroupDefaults.CompressionLimit.toPx()
+              val targetGrowth = (animValue * min(
+                expandedRatio * baseHeights[index],
+                prevLimit,
+              )).fastRoundToInt()
+              val growthTop = min(targetGrowth, heights[index - 1])
+              heights[index - 1] -= growthTop
+              growthTop
+            }
+            else -> {
+              val prevLimit = contentMeasurables[index - 1].verticalButtonGroupParentData
+                ?.compressionLimit?.toPx()
+                ?: VerticalButtonGroupDefaults.CompressionLimit.toPx()
+              val nextLimit = contentMeasurables[index + 1].verticalButtonGroupParentData
+                ?.compressionLimit?.toPx()
+                ?: VerticalButtonGroupDefaults.CompressionLimit.toPx()
+              val targetGrowth = (animValue * minOf(
+                expandedRatio * baseHeights[index] / 2f,
+                prevLimit,
+                nextLimit,
+              )).fastRoundToInt()
+              val growthTop = min(targetGrowth, heights[index - 1])
+              val growthBottom = min(targetGrowth, heights[index + 1])
+              heights[index - 1] -= growthTop
+              heights[index + 1] -= growthBottom
+              growthTop + growthBottom
+            }
+          }
+          heights[index] += actualGrowth
+        }
       }
     }
 
+    val placeables = ArrayList<Placeable>(lastItem)
     for (index in 0 until lastItem) {
-      placeables.add(
-        contentMeasurables[index].measure(
-          (childrenConstraints[index] ?: constraints).copy(
-            minHeight = heights[index],
-            maxHeight = heights[index],
-          )
-        )
+      val itemConstraints = constraints.copy(
+        minHeight = heights[index],
+        maxHeight = heights[index],
       )
+      placeables.add(contentMeasurables[index].measure(itemConstraints))
     }
 
-    // 4. Layout-Größe und Platzierung
-    val mainAxisLayoutSize = max(mainSpace.coerceAtLeast(0), mainAxisMin)
-    val mainAxisPositions = IntArray(lastItem)
-    val measureScope = this
+    val hasOverflow = overflowPlaceables != null
+    val totalArrangeCount = if (hasOverflow) lastItem + 1 else lastItem
+    val arrangedHeights = IntArray(totalArrangeCount)
+    for (i in 0 until lastItem) {
+      arrangedHeights[i] = heights[i]
+    }
+    val actualOverflowHeight = overflowPlaceables?.fastMaxOfOrNull { it.height } ?: overflowHeight
+    if (hasOverflow) {
+      arrangedHeights[lastItem] = actualOverflowHeight
+    }
+
+    var desiredMainSpace = arrangementSpacingInt * max(0, totalArrangeCount - 1)
+    for (i in 0 until totalArrangeCount) {
+      desiredMainSpace += arrangedHeights[i]
+    }
+    val mainAxisLayoutSize = max(desiredMainSpace, mainAxisMin).coerceIn(0, mainAxisMax)
+
+    val mainAxisPositions = IntArray(totalArrangeCount)
     with(verticalArrangement) {
-      measureScope.arrange(
+      arrange(
         mainAxisLayoutSize,
-        heights.sliceArray(0 until lastItem),
+        arrangedHeights,
         mainAxisPositions,
       )
     }
 
-    val width = placeables.fastMaxBy { it.width }?.width ?: constraints.minWidth
+    val maxContentWidth = placeables.fastMaxBy { it.width }?.width ?: 0
+    val maxOverflowWidth = overflowPlaceables?.fastMaxBy { it.width }?.width ?: 0
+    val width = maxOf(
+      maxContentWidth,
+      maxOverflowWidth,
+      constraints.minWidth,
+    ).coerceAtMost(constraints.maxWidth)
 
     return layout(width, mainAxisLayoutSize) {
       for (index in placeables.indices) {
-        val parentData = contentMeasurables[index].parentData as? VerticalButtonGroupParentData
-        val xPosition = parentData?.alignment?.align(
-          placeables[index].width, width, layoutDirection
-        ) ?: horizontalAlignment.align(
-          placeables[index].width, width, layoutDirection
-        )
+        val parentData = contentMeasurables[index].verticalButtonGroupParentData
+        val alignment = parentData?.alignment ?: horizontalAlignment
+        val xPosition = alignment.align(placeables[index].width, width, layoutDirection)
         placeables[index].place(x = xPosition, y = mainAxisPositions[index])
       }
       overflowPlaceables?.fastForEach {
         val xPosition = horizontalAlignment.align(it.width, width, layoutDirection)
-        it.placeRelative(xPosition, shownItemSpace)
+        it.place(x = xPosition, y = mainAxisPositions[lastItem])
       }
     }
   }
@@ -436,6 +495,7 @@ sealed interface VerticalButtonGroupScope {
   fun clickableItem(
     onClick: () -> Unit,
     label: String,
+    modifier: Modifier = Modifier,
     icon: (@Composable () -> Unit)? = null,
     weight: Float = Float.NaN,
     enabled: Boolean = true,
@@ -445,6 +505,7 @@ sealed interface VerticalButtonGroupScope {
     checked: Boolean,
     label: String,
     onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
     icon: (@Composable () -> Unit)? = null,
     weight: Float = Float.NaN,
     enabled: Boolean = true,
@@ -459,14 +520,11 @@ sealed interface VerticalButtonGroupScope {
 private val IntrinsicMeasurable.verticalButtonGroupParentData: VerticalButtonGroupParentData?
   get() = parentData as? VerticalButtonGroupParentData
 
-private val VerticalButtonGroupParentData?.weight: Float
-  get() = this?.weight ?: 0f
-
 private data class VerticalButtonGroupParentData(
-  var weight: Float = 0f,
-  var pressedAnimatable: Animatable<Float, AnimationVector1D> = Animatable(0f),
-  var alignment: Alignment.Horizontal? = null,
-  var compressionLimit: Dp = VerticalButtonGroupDefaults.CompressionLimit,
+  val weight: Float = 0f,
+  val pressedAnimatable: Animatable<Float, AnimationVector1D>? = null,
+  val alignment: Alignment.Horizontal? = null,
+  val compressionLimit: Dp = VerticalButtonGroupDefaults.CompressionLimit,
 )
 
 private class VerticalButtonGroupElement(val weight: Float = 0f) :
@@ -477,7 +535,8 @@ private class VerticalButtonGroupElement(val weight: Float = 0f) :
   }
 
   override fun InspectorInfo.inspectableProperties() {
-    name = "weight"; value = weight
+    name = "weight"
+    value = weight
   }
 
   override fun hashCode(): Int = weight.hashCode()
@@ -485,11 +544,19 @@ private class VerticalButtonGroupElement(val weight: Float = 0f) :
     (other as? VerticalButtonGroupElement)?.weight == weight
 }
 
-private class VerticalButtonGroupNode(var weight: Float) : ParentDataModifierNode, Modifier.Node() {
-  override fun Density.modifyParentData(parentData: Any?) =
-    ((parentData as? VerticalButtonGroupParentData) ?: VerticalButtonGroupParentData()).also {
-      it.weight = weight
+private class VerticalButtonGroupNode(weight: Float) : ParentDataModifierNode, Modifier.Node() {
+  var weight: Float = weight
+    set(value) {
+      if (field != value) {
+        field = value
+        invalidateParentData()
+      }
     }
+
+  override fun Density.modifyParentData(parentData: Any?): VerticalButtonGroupParentData {
+    return ((parentData as? VerticalButtonGroupParentData) ?: VerticalButtonGroupParentData())
+      .copy(weight = weight)
+  }
 }
 
 private class VerticalEnlargeOnPressElement(
@@ -511,9 +578,15 @@ private class VerticalEnlargeOnPressElement(
 
   override fun InspectorInfo.inspectableProperties() {
     name = "animateHeight"
+    properties["interactionSource"] = interactionSource
+    properties["compressionLimit"] = compressionLimit
   }
 
-  override fun hashCode(): Int = interactionSource.hashCode() * 31 + animationSpec.hashCode()
+  override fun hashCode(): Int =
+    interactionSource.hashCode() * 31 + animationSpec.hashCode() + (
+        compressionLimit?.hashCode() ?: 0
+        )
+
   override fun equals(other: Any?): Boolean =
     other is VerticalEnlargeOnPressElement &&
         interactionSource == other.interactionSource &&
@@ -524,10 +597,20 @@ private class VerticalEnlargeOnPressElement(
 private class VerticalEnlargeOnPressNode(
   var interactionSource: InteractionSource,
   var animationSpec: AnimationSpec<Float>,
-  var compressionLimit: Dp?,
-) : ParentDataModifierNode, Modifier.Node(), CompositionLocalConsumerModifierNode {
-  private val pressedAnimatable = Animatable(0f)
+  compressionLimit: Dp?,
+) : ParentDataModifierNode, Modifier.Node() {
+
+  var compressionLimit: Dp? = compressionLimit
+    set(value) {
+      if (field != value) {
+        field = value
+        invalidateParentData()
+      }
+    }
+
+  val pressedAnimatable = Animatable(0f)
   private var collectionJob: Job? = null
+  private var animationJob: Job? = null
 
   override fun onAttach() {
     super.onAttach()
@@ -536,42 +619,47 @@ private class VerticalEnlargeOnPressNode(
 
   override fun onDetach() {
     super.onDetach()
+    collectionJob?.cancel()
     collectionJob = null
+    animationJob?.cancel()
+    animationJob = null
   }
 
-  internal fun launchCollectionJob() {
+  override fun onReset() {
+    super.onReset()
+    animationJob?.cancel()
+    coroutineScope.launch {
+      pressedAnimatable.snapTo(0f)
+    }
+  }
+
+  fun launchCollectionJob() {
     collectionJob?.cancel()
     collectionJob = coroutineScope.launch {
       val pressInteractions = mutableListOf<PressInteraction.Press>()
-      interactionSource.interactions
-        .map { interaction ->
-          when (interaction) {
-            is PressInteraction.Press -> pressInteractions.add(interaction)
-            is PressInteraction.Release -> pressInteractions.remove(interaction.press)
-            is PressInteraction.Cancel -> pressInteractions.remove(interaction.press)
-          }
-          pressInteractions.isNotEmpty()
+      interactionSource.interactions.collect { interaction ->
+        when (interaction) {
+          is PressInteraction.Press -> pressInteractions.add(interaction)
+          is PressInteraction.Release -> pressInteractions.remove(interaction.press)
+          is PressInteraction.Cancel -> pressInteractions.remove(interaction.press)
         }
-        .distinctUntilChanged()
-        .collectLatest { pressed ->
-          if (pressed) {
-            launch { pressedAnimatable.animateTo(1f, animationSpec) }
-          } else {
-            waitUntil { pressedAnimatable.value > 0.75f }
-            pressedAnimatable.animateTo(0f, animationSpec)
-          }
+        val targetValue = if (pressInteractions.isNotEmpty()) 1f else 0f
+        animationJob?.cancel()
+        animationJob = launch {
+          pressedAnimatable.animateTo(targetValue, animationSpec)
         }
+      }
     }
   }
 
-  override fun Density.modifyParentData(parentData: Any?) =
-    ((parentData as? VerticalButtonGroupParentData)
-      ?: VerticalButtonGroupParentData()).let { prev ->
-      val resolvedLimit = compressionLimit ?: ButtonDefaults.ContentPadding.calculateBottomPadding()
-      VerticalButtonGroupParentData(
-        prev.weight, pressedAnimatable, prev.alignment, resolvedLimit
+  override fun Density.modifyParentData(parentData: Any?): VerticalButtonGroupParentData {
+    val limit = compressionLimit ?: ButtonDefaults.ContentPadding.calculateBottomPadding()
+    return ((parentData as? VerticalButtonGroupParentData) ?: VerticalButtonGroupParentData())
+      .copy(
+        pressedAnimatable = pressedAnimatable,
+        compressionLimit = limit,
       )
-    }
+  }
 }
 
 private interface VerticalButtonGroupItem {
@@ -593,6 +681,7 @@ private class CustomVerticalButtonGroupItem(
 
 private class ClickableVerticalButtonGroupItem(
   private val onClick: () -> Unit,
+  private val userModifier: Modifier,
   private val icon: (@Composable () -> Unit)?,
   private val weight: Float,
   private val animationSpec: AnimationSpec<Float>,
@@ -608,23 +697,26 @@ private class ClickableVerticalButtonGroupItem(
       ButtonDefaults.ContentPadding
     }
 
-    val modifier = Modifier
+    val itemModifier = Modifier
       .then(
         VerticalEnlargeOnPressElement(
-          interactionSource,
-          animationSpec,
-          contentPadding.calculateBottomPadding()
+          interactionSource = interactionSource,
+          animationSpec = animationSpec,
+          compressionLimit = contentPadding.calculateBottomPadding(),
         )
       )
       .then(
-        if (!weight.isNaN()) {
+        if (!weight.isNaN() && weight > 0f) {
           VerticalButtonGroupElement(weight.coerceAtMost(Float.MAX_VALUE))
-        } else Modifier
+        } else {
+          Modifier
+        }
       )
+      .then(userModifier)
 
     Button(
       onClick = onClick,
-      modifier = modifier,
+      modifier = itemModifier,
       interactionSource = interactionSource,
       enabled = enabled,
       contentPadding = contentPadding,
@@ -633,7 +725,12 @@ private class ClickableVerticalButtonGroupItem(
         it.invoke()
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
       }
-      Text(text = label, maxLines = 1, softWrap = false, overflow = TextOverflow.Visible)
+      Text(
+        text = label,
+        maxLines = 1,
+        softWrap = false,
+        overflow = TextOverflow.Ellipsis,
+      )
     }
   }
 
@@ -642,8 +739,11 @@ private class ClickableVerticalButtonGroupItem(
     DropdownMenuItem(
       enabled = enabled,
       leadingIcon = icon,
-      text = { Text(label) },
-      onClick = { onClick(); state.dismiss() },
+      text = { Text(label, overflow = TextOverflow.Ellipsis) },
+      onClick = {
+        onClick()
+        state.dismiss()
+      },
     )
   }
 }
@@ -651,6 +751,7 @@ private class ClickableVerticalButtonGroupItem(
 private class ToggleableVerticalButtonGroupItem(
   private val checked: Boolean,
   private val onCheckedChange: (Boolean) -> Unit,
+  private val userModifier: Modifier,
   private val weight: Float,
   private val animationSpec: AnimationSpec<Float>,
   private val icon: (@Composable () -> Unit)?,
@@ -662,26 +763,31 @@ private class ToggleableVerticalButtonGroupItem(
     val interactionSource = remember { MutableInteractionSource() }
     val contentPadding = if (icon != null) {
       ButtonDefaults.ButtonWithIconContentPadding
-    } else ButtonDefaults.ContentPadding
+    } else {
+      ButtonDefaults.ContentPadding
+    }
 
-    val modifier = Modifier
+    val itemModifier = Modifier
       .then(
         VerticalEnlargeOnPressElement(
-          interactionSource,
-          animationSpec,
-          contentPadding.calculateBottomPadding()
+          interactionSource = interactionSource,
+          animationSpec = animationSpec,
+          compressionLimit = contentPadding.calculateBottomPadding(),
         )
       )
       .then(
-        if (!weight.isNaN()) {
+        if (!weight.isNaN() && weight > 0f) {
           VerticalButtonGroupElement(weight.coerceAtMost(Float.MAX_VALUE))
-        } else Modifier
+        } else {
+          Modifier
+        }
       )
+      .then(userModifier)
 
     ToggleButton(
       checked = checked,
       onCheckedChange = onCheckedChange,
-      modifier = modifier,
+      modifier = itemModifier,
       interactionSource = interactionSource,
       enabled = enabled,
       contentPadding = contentPadding,
@@ -690,17 +796,27 @@ private class ToggleableVerticalButtonGroupItem(
         it.invoke()
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
       }
-      Text(text = label, maxLines = 1, softWrap = false, overflow = TextOverflow.Visible)
+      Text(
+        text = label,
+        maxLines = 1,
+        softWrap = false,
+        overflow = TextOverflow.Ellipsis,
+      )
     }
   }
 
   @Composable
   override fun MenuContent(state: VerticalButtonGroupMenuState) {
-    DropdownMenuItem(
+    SelectableDropdownMenuItem(
+      selected = checked,
+      onClick = {
+        onCheckedChange(!checked)
+        state.dismiss()
+      },
+      shapes = MenuDefaults.itemShapes(),
       enabled = enabled,
       leadingIcon = icon,
-      text = { Text(label) },
-      onClick = { onCheckedChange(!checked); state.dismiss() },
+      text = { Text(label, overflow = TextOverflow.Ellipsis) },
     )
   }
 }
@@ -713,66 +829,27 @@ private class HorizontalAlignElement(val alignment: Alignment.Horizontal) :
   }
 
   override fun InspectorInfo.inspectableProperties() {
-    name = "align"; value = alignment
+    name = "align"
+    value = alignment
   }
 
   override fun hashCode() = alignment.hashCode()
   override fun equals(other: Any?) = (other as? HorizontalAlignElement)?.alignment == alignment
 }
 
-private class HorizontalAlignNode(var alignment: Alignment.Horizontal) :
+private class HorizontalAlignNode(alignment: Alignment.Horizontal) :
   ParentDataModifierNode, Modifier.Node() {
-  override fun Density.modifyParentData(parentData: Any?) =
-    ((parentData as? VerticalButtonGroupParentData) ?: VerticalButtonGroupParentData()).also {
-      it.alignment = alignment
+  var alignment: Alignment.Horizontal = alignment
+    set(value) {
+      if (field != value) {
+        field = value
+        invalidateParentData()
+      }
     }
-}
 
-private interface VerticalButtonGroupOverflowState {
-  var totalItemCount: Int
-  var visibleItemCount: Int
-}
-
-@Composable
-private fun rememberVerticalOverflowState(): VerticalButtonGroupOverflowState {
-  return rememberSaveable(saver = VerticalOverflowStateImpl.Saver) { VerticalOverflowStateImpl() }
-}
-
-private suspend fun waitUntil(condition: () -> Boolean) {
-  val initialTimeMillis = withFrameMillis { it }
-  while (!condition()) {
-    val timeMillis = withFrameMillis { it }
-    if (timeMillis - initialTimeMillis > 1_000L) return
-  }
-}
-
-private class VerticalOverflowStateImpl : VerticalButtonGroupOverflowState {
-  override var totalItemCount: Int by mutableIntStateOf(0)
-  override var visibleItemCount: Int by mutableIntStateOf(0)
-
-  companion object {
-    val Saver: Saver<VerticalOverflowStateImpl, *> = Saver(
-      save = { listOf(it.totalItemCount, it.visibleItemCount) },
-      restore = {
-        VerticalOverflowStateImpl().apply {
-          totalItemCount = it[0]
-          visibleItemCount = it[1]
-        }
-      },
-    )
-  }
-}
-
-@Composable
-private fun rememberVerticalButtonGroupScopeState(
-  content: VerticalButtonGroupScope.() -> Unit,
-  animationSpec: AnimationSpec<Float>,
-): State<VerticalButtonGroupScopeImpl> {
-  val latestContent = rememberUpdatedState(content)
-  return remember {
-    derivedStateOf {
-      VerticalButtonGroupScopeImpl(animationSpec = animationSpec).apply(latestContent.value)
-    }
+  override fun Density.modifyParentData(parentData: Any?): VerticalButtonGroupParentData {
+    return ((parentData as? VerticalButtonGroupParentData) ?: VerticalButtonGroupParentData())
+      .copy(alignment = alignment)
   }
 }
 
@@ -784,18 +861,23 @@ private class VerticalButtonGroupScopeImpl(
   override fun clickableItem(
     onClick: () -> Unit,
     label: String,
+    modifier: Modifier,
     icon: (@Composable () -> Unit)?,
     weight: Float,
     enabled: Boolean,
   ) {
+    require(weight.isNaN() || weight > 0f) {
+      "invalid weight $weight; must be greater than zero or Float.NaN"
+    }
     items.add(
       ClickableVerticalButtonGroupItem(
-        onClick,
-        icon,
-        weight,
-        animationSpec,
-        enabled,
-        label
+        onClick = onClick,
+        userModifier = modifier,
+        icon = icon,
+        weight = weight,
+        animationSpec = animationSpec,
+        enabled = enabled,
+        label = label,
       )
     )
   }
@@ -804,19 +886,24 @@ private class VerticalButtonGroupScopeImpl(
     checked: Boolean,
     label: String,
     onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier,
     icon: (@Composable () -> Unit)?,
     weight: Float,
     enabled: Boolean,
   ) {
+    require(weight.isNaN() || weight > 0f) {
+      "invalid weight $weight; must be greater than zero or Float.NaN"
+    }
     items.add(
       ToggleableVerticalButtonGroupItem(
-        checked,
-        onCheckedChange,
-        weight,
-        animationSpec,
-        icon,
-        enabled,
-        label
+        checked = checked,
+        onCheckedChange = onCheckedChange,
+        userModifier = modifier,
+        weight = weight,
+        animationSpec = animationSpec,
+        icon = icon,
+        enabled = enabled,
+        label = label,
       )
     )
   }
@@ -828,9 +915,12 @@ private class VerticalButtonGroupScopeImpl(
     items.add(CustomVerticalButtonGroupItem(buttonGroupContent, menuContent))
   }
 
-  override fun Modifier.weight(weight: Float): Modifier = this.then(
-    VerticalButtonGroupElement(weight.coerceAtMost(Float.MAX_VALUE))
-  )
+  override fun Modifier.weight(weight: Float): Modifier {
+    require(weight > 0f) { "invalid weight $weight; must be greater than zero" }
+    return this.then(
+      VerticalButtonGroupElement(weight.coerceAtMost(Float.MAX_VALUE))
+    )
+  }
 
   override fun Modifier.animateHeight(interactionSource: InteractionSource): Modifier = this.then(
     VerticalEnlargeOnPressElement(interactionSource, animationSpec, null)
