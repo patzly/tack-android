@@ -329,11 +329,13 @@
   <string name="settings_contrast_medium">中</string>
   <!-- This is a contrast option name: User can choose between standard, medium and high contrast -->
   <string name="settings_contrast_high">高</string>
-  <string name="settings_contrast_dynamic">デバイステーマのコントラストはシステム設定から指定する必要があります</string>
+  <string name="settings_contrast_dynamic">デバイステーマのコントラストはデバイス自体の設定メニューから指定してください</string>
   <string name="settings_contrast_dynamic_unsupported">デバイステーマのダイナミックコントラストはAndroid 14以降でのみ利用可能です。</string>
 
   <string name="settings_haptic">触覚効果</string>
   <string name="settings_haptic_description">拍モードでの振動と個別に設定できます</string>
+  <string name="settings_haptic_warning">触覚効果はデバイス自体の設定メニューから有効化してください</string>
+
   <string name="settings_vibration_intensity">振動の強度</string>
   <string name="settings_vibration_intensity_description">拍の振動と触覚効果</string>
   <!-- This is the name for a vibration intensity: User can choose between soft or strong intensity or system-set (automatic or shorter auto) intensity. The button width should be as dense as possible. -->
@@ -416,7 +418,7 @@
   <string name="help_song_part">ソングが次のパートに切り替わらないのはどうして？</string>
   <string name="help_song_part_answer">ソング再生中に次パートに自動的に切り替えるには、各パートの長さを指定しておく必要があります。長さの指定がないパートは永久に繰り返されます。\n長さを指定するには、現在のソングをタップしてソングの詳細を開き、パートの編集アイコンをタップしてパートの長さを指定してください。編集後は必ず保存してください！</string>
   <string name="help_notification_displays">アプリをバックグラウンドで使用すると通知が表示されるのはどうして？</string>
-  <string name="help_notification_displays_answer">設定で「常に通知表示」を有効にしていない場合、バックグラウンドでメトロノームを使用し続けるためには通知が必要です。\n通知内の機能が再生を管理しタイマーや経過時間などのリアルタイムデータを追跡することで、インターフェースが表示されていない状態でもメトロノームを再生することができます。\n通知内の「停止」をタップするとバックグラウンドで再生されていたメトロノームが停止しますが、システムによる強制終了を防ぐことはできません。結果として、アプリを再表示したときにタイマーや経過時間がリセットされている可能性があります。\n設定で「常に通知表示」を有効にすると、通知エリアからいつでもメトロノームを開始/停止できるようになります。</string>
+  <string name="help_notification_displays_answer">設定で「常に通知表示」を有効にしていない場合、バックグラウンドでメトロノームを使用し続けるためには通知が必要です。\n通知内の機能が再生を管理しタイマーや経過時間などのリアルタイムデータを追跡することで、インターフェースが表示されていない状態でもメトロノームを再生できるようになります。\n通知内の「停止」をタップするとサービスがバックグラウンドに移行してシステムによって強制終了され、その結果、アプリを再表示したときにタイマーや経過時間がリセットされてしまう可能性があります。\n設定で「常に通知表示」を有効にすると、通知エリアからいつでもメトロノームを開始/停止できるようになります。</string>
   <string name="help_notification_disappears">アプリを終了するとメトロノームの通知が消えるのはどうして？</string>
   <string name="help_notification_disappears_answer">「最近使ったアプリ」からアプリを終了するとメトロノームが停止し、通知が消えます。これはバッテリーとリソースを節約するための動作です。\n開始/停止の通知を常に表示したい場合は、設定で「常に通知表示」を有効にし、最近使ったアプリからアプリを閉じないようにしてください。</string>
   <string name="help_translation">私の言語でTackを使うには？</string>
