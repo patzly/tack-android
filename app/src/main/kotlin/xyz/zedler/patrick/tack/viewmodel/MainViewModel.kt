@@ -55,7 +55,7 @@ import xyz.zedler.patrick.tack.core.model.MetronomeState
 import xyz.zedler.patrick.tack.core.model.Tick
 import xyz.zedler.patrick.tack.core.model.UnlockState
 import xyz.zedler.patrick.tack.service.MetronomeService
-import xyz.zedler.patrick.tack.ui.navigation.Route
+import xyz.zedler.patrick.tack.ui.navigation.MainRoute
 import kotlin.math.roundToInt
 
 class MainViewModel(
@@ -75,7 +75,7 @@ class MainViewModel(
     data object NotificationPermission : Dialog
   }
 
-  val backstack = mutableStateListOf<Route>(Route.Main)
+  val backstack = mutableStateListOf<MainRoute>(MainRoute.Main)
 
   private val _uiEvent = MutableSharedFlow<UiEvent>()
   val uiEvent: SharedFlow<UiEvent> = _uiEvent.asSharedFlow()
@@ -191,7 +191,7 @@ class MainViewModel(
 
   // Navigation and dialogs
 
-  fun navigateTo(route: Route) {
+  fun navigateTo(route: MainRoute) {
     backstack.add(route)
   }
 

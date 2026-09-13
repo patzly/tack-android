@@ -21,6 +21,7 @@ package xyz.zedler.patrick.tack.ui.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItemDefaults
@@ -31,10 +32,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.util.fastForEachIndexed
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.BeatMode
+import xyz.zedler.patrick.tack.ui.component.core.LeadingContentWrapper
 import xyz.zedler.patrick.tack.ui.component.core.ScrollableAlertDialog
 import xyz.zedler.patrick.tack.ui.component.core.ScrollableAlertDialogContent
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
@@ -46,11 +50,15 @@ import xyz.zedler.patrick.tack.ui.util.labelRes
 fun BeatModeDialog(
   currentBeatMode: BeatMode,
   onBeatModeSelected: (BeatMode) -> Unit,
-  onDismissRequest: () -> Unit
+  onDismissRequest: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
   val haptic = LocalHaptic.current
 
-  ScrollableAlertDialog(onDismissRequest = onDismissRequest) {
+  ScrollableAlertDialog(
+    onDismissRequest = onDismissRequest,
+    modifier = modifier,
+  ) {
     BeatModeDialogContent(
       currentBeatMode = currentBeatMode,
       onBeatModeSelected = {
@@ -60,7 +68,7 @@ fun BeatModeDialog(
       onCloseClick = {
         haptic.click()
         onDismissRequest()
-      }
+      },
     )
   }
 }
@@ -69,31 +77,36 @@ fun BeatModeDialog(
 @Composable
 private fun BeatModeDialogContent(
   currentBeatMode: BeatMode,
+  modifier: Modifier = Modifier,
   onBeatModeSelected: (BeatMode) -> Unit = {},
-  onCloseClick: () -> Unit = {}
+  onCloseClick: () -> Unit = {},
 ) {
   ScrollableAlertDialogContent(
+    modifier = modifier,
     title = {
       Text(stringResource(R.string.action_beat_mode))
     },
     confirmButton = {
       TextButton(
         onClick = onCloseClick,
-        shapes = ButtonDefaults.shapes()
+        shapes = ButtonDefaults.shapes(),
       ) {
         Text(stringResource(R.string.action_close))
       }
-    }
+    },
   ) {
-    Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
+    Column(
+      modifier = Modifier.fillMaxWidth(),
+      verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+    ) {
       val modes = BeatMode.entries
       val colors = ListItemDefaults.segmentedColors(
         containerColor = MaterialTheme.colorScheme.surfaceBright,
         selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-        selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
       )
 
-      modes.forEachIndexed { index, mode ->
+      modes.fastForEachIndexed { index, mode ->
         val isSelected = currentBeatMode == mode
 
         SegmentedListItem(
@@ -101,17 +114,19 @@ private fun BeatModeDialogContent(
           shapes = ListItemDefaults.segmentedShapes(index = index, count = modes.size),
           selected = isSelected,
           colors = colors,
+          modifier = Modifier.fillMaxWidth(),
           verticalAlignment = Alignment.CenterVertically,
           leadingContent = {
-            RadioButton(
-              selected = isSelected,
-              onClick = null
-            )
+            LeadingContentWrapper {
+              RadioButton(
+                selected = isSelected,
+                onClick = null,
+              )
+            }
           },
-          content = {
-            Text(stringResource(mode.labelRes))
-          }
-        )
+        ) {
+          Text(stringResource(mode.labelRes))
+        }
       }
     }
   }
@@ -119,7 +134,7 @@ private fun BeatModeDialogContent(
 
 @Preview
 @Composable
-fun BeatModeDialogPreview() {
+private fun BeatModeDialogPreview() {
   TackTheme {
     BeatModeDialogContent(currentBeatMode = BeatMode.ALL)
   }

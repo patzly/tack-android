@@ -26,6 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import xyz.zedler.patrick.tack.R
@@ -38,11 +39,15 @@ import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 @Composable
 fun ResetDialog(
   onReset: () -> Unit,
-  onDismissRequest: () -> Unit
+  onDismissRequest: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
   val haptic = LocalHaptic.current
 
-  ScrollableAlertDialog(onDismissRequest = onDismissRequest) {
+  ScrollableAlertDialog(
+    onDismissRequest = onDismissRequest,
+    modifier = modifier,
+  ) {
     ResetDialogContent(
       onResetClick = {
         haptic.click()
@@ -52,7 +57,7 @@ fun ResetDialog(
       onCancelClick = {
         haptic.click()
         onDismissRequest()
-      }
+      },
     )
   }
 }
@@ -60,21 +65,23 @@ fun ResetDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ResetDialogContent(
+  modifier: Modifier = Modifier,
   onResetClick: () -> Unit = {},
-  onCancelClick: () -> Unit = {}
+  onCancelClick: () -> Unit = {},
 ) {
   ScrollableAlertDialogContent(
+    modifier = modifier,
     title = {
       Text(stringResource(R.string.msg_reset))
     },
     confirmButton = {
       Button(
         onClick = onResetClick,
+        shapes = ButtonDefaults.shapes(),
         colors = ButtonDefaults.buttonColors(
           containerColor = MaterialTheme.colorScheme.error,
-          contentColor = MaterialTheme.colorScheme.onError
+          contentColor = MaterialTheme.colorScheme.onError,
         ),
-        shapes = ButtonDefaults.shapes()
       ) {
         Text(stringResource(R.string.action_reset))
       }
@@ -82,22 +89,26 @@ private fun ResetDialogContent(
     dismissButton = {
       TextButton(
         onClick = onCancelClick,
+        shapes = ButtonDefaults.shapes(),
         colors = ButtonDefaults.textButtonColors(
-          contentColor = MaterialTheme.colorScheme.error
+          contentColor = MaterialTheme.colorScheme.error,
         ),
-        shapes = ButtonDefaults.shapes()
       ) {
         Text(stringResource(R.string.action_cancel))
       }
-    }
+    },
   ) {
-    Text(stringResource(R.string.msg_reset_description))
+    Text(
+      text = stringResource(R.string.msg_reset_description),
+      style = MaterialTheme.typography.bodyMedium,
+      color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
   }
 }
 
 @Preview
 @Composable
-fun ResetDialogPreview() {
+private fun ResetDialogPreview() {
   TackTheme {
     ResetDialogContent()
   }

@@ -48,16 +48,16 @@ private const val TAG = "TextDialog"
 fun TextDialog(
   title: String,
   text: String,
+  onDismissRequest: () -> Unit,
   modifier: Modifier = Modifier,
   link: String? = null,
-  onDismissRequest: () -> Unit
 ) {
   val context = LocalContext.current
   val haptic = LocalHaptic.current
 
   ScrollableAlertDialog(
     onDismissRequest = onDismissRequest,
-    modifier = modifier
+    modifier = modifier,
   ) {
     TextDialogContent(
       title = title,
@@ -66,7 +66,7 @@ fun TextDialog(
         haptic.click()
         onDismissRequest()
       },
-      onLearnMoreClick = link?.let { url ->
+      onLearnMoreClick = link?.takeIf { it.isNotBlank() }?.let { url ->
         {
           haptic.click()
           try {
@@ -75,7 +75,7 @@ fun TextDialog(
             Log.e(TAG, "Failed to open link: $url", e)
           }
         }
-      }
+      },
     )
   }
 }
@@ -87,16 +87,17 @@ private fun TextDialogContent(
   text: String,
   modifier: Modifier = Modifier,
   onCloseClick: () -> Unit = {},
-  onLearnMoreClick: (() -> Unit)? = null
+  onLearnMoreClick: (() -> Unit)? = null,
 ) {
   ScrollableAlertDialogContent(
+    modifier = modifier,
     title = {
       Text(title)
     },
     confirmButton = {
       TextButton(
         onClick = onCloseClick,
-        shapes = ButtonDefaults.shapes()
+        shapes = ButtonDefaults.shapes(),
       ) {
         Text(stringResource(R.string.action_close))
       }
@@ -105,7 +106,7 @@ private fun TextDialogContent(
       {
         TextButton(
           onClick = onClick,
-          shapes = ButtonDefaults.shapes()
+          shapes = ButtonDefaults.shapes(),
         ) {
           Text(stringResource(R.string.action_learn_more))
         }
@@ -115,13 +116,12 @@ private fun TextDialogContent(
       start = 24.dp,
       top = 16.dp,
       end = 24.dp,
-      bottom = 0.dp
+      bottom = 0.dp,
     ),
-    modifier = modifier
   ) {
     FormattedText(
       text = text,
-      isDialog = true
+      isDialog = true,
     )
   }
 }
@@ -132,7 +132,7 @@ private fun TextDialogPreview() {
   TackTheme {
     TextDialogContent(
       title = "Title",
-      text = "Text"
+      text = "Text",
     )
   }
 }
@@ -144,7 +144,7 @@ private fun TextDialogExtraPreview() {
     TextDialogContent(
       title = "Title",
       text = "Text",
-      onLearnMoreClick = {}
+      onLearnMoreClick = {},
     )
   }
 }

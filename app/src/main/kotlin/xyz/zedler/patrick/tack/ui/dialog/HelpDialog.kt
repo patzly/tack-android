@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.ui.dialog
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
@@ -42,7 +43,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -59,29 +59,59 @@ import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 
 private data class HelpItem(
-  @get:StringRes val question: Int,
-  @get:StringRes val answer: Int,
-  val showTranslate: Boolean = false
+  @StringRes val question: Int,
+  @StringRes val answer: Int,
+  val showTranslate: Boolean = false,
+)
+
+private val HelpItems = listOf(
+  HelpItem(R.string.help_tempo_change, R.string.help_tempo_change_answer),
+  HelpItem(R.string.help_time_signature, R.string.help_time_signature_answer),
+  HelpItem(R.string.help_swing, R.string.help_swing_answer),
+  HelpItem(R.string.help_song_library, R.string.help_song_library_answer),
+  HelpItem(R.string.help_song_picker, R.string.help_song_picker_answer),
+  HelpItem(R.string.help_song_part, R.string.help_song_part_answer),
+  HelpItem(
+    R.string.help_notification_displays,
+    R.string.help_notification_displays_answer
+  ),
+  HelpItem(
+    R.string.help_notification_disappears,
+    R.string.help_notification_disappears_answer
+  ),
+  HelpItem(
+    R.string.help_translation,
+    R.string.help_translation_answer,
+    showTranslate = true
+  ),
 )
 
 @Composable
-fun HelpDialog(onDismissRequest: () -> Unit) {
+fun HelpDialog(
+  onDismissRequest: () -> Unit,
+  modifier: Modifier = Modifier,
+) {
   val context = LocalContext.current
   val haptic = LocalHaptic.current
   val appTranslate = stringResource(R.string.app_translate)
 
-  ScrollableAlertDialog(onDismissRequest = onDismissRequest) {
+  ScrollableAlertDialog(
+    onDismissRequest = onDismissRequest,
+    modifier = modifier,
+  ) {
     HelpDialogContent(
       onItemClick = {
         haptic.click()
       },
       onTranslateClick = {
-        context.startActivity(Intent(Intent.ACTION_VIEW, appTranslate.toUri()))
+        try {
+          context.startActivity(Intent(Intent.ACTION_VIEW, appTranslate.toUri()))
+        } catch (_: ActivityNotFoundException) {}
       },
       onCloseClick = {
         haptic.click()
         onDismissRequest()
-      }
+      },
     )
   }
 }
@@ -89,50 +119,41 @@ fun HelpDialog(onDismissRequest: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HelpDialogContent(
+  modifier: Modifier = Modifier,
   onItemClick: () -> Unit = {},
   onTranslateClick: () -> Unit = {},
-  onCloseClick: () -> Unit = {}
+  onCloseClick: () -> Unit = {},
 ) {
-  val helpItems = remember {
-    listOf(
-      HelpItem(R.string.help_tempo_change, R.string.help_tempo_change_answer),
-      HelpItem(R.string.help_time_signature, R.string.help_time_signature_answer),
-      HelpItem(R.string.help_swing, R.string.help_swing_answer),
-      HelpItem(R.string.help_song_library, R.string.help_song_library_answer),
-      HelpItem(R.string.help_song_picker, R.string.help_song_picker_answer),
-      HelpItem(R.string.help_song_part, R.string.help_song_part_answer),
-      HelpItem(R.string.help_notification_displays, R.string.help_notification_displays_answer),
-      HelpItem(R.string.help_notification_disappears, R.string.help_notification_disappears_answer),
-      HelpItem(R.string.help_translation, R.string.help_translation_answer, true)
-    )
-  }
-
   var expandedIndices by rememberSaveable { mutableStateOf(setOf<Int>()) }
 
   ScrollableAlertDialogContent(
+    modifier = modifier,
     title = { Text(stringResource(R.string.title_help)) },
     confirmButton = {
       TextButton(
         onClick = onCloseClick,
-        shapes = ButtonDefaults.shapes()
+        shapes = ButtonDefaults.shapes(),
       ) {
         Text(stringResource(R.string.action_close))
       }
     },
-    isScrollableControlledByContent = true
+    isScrollableControlledByContent = true,
   ) {
     val motionScheme = MaterialTheme.motionScheme
 
     val colors = ListItemDefaults.segmentedColors(
-      containerColor = MaterialTheme.colorScheme.surfaceBright
+      containerColor = MaterialTheme.colorScheme.surfaceBright,
     )
 
     LazyColumn(
       modifier = Modifier.fillMaxWidth(),
       contentPadding = PaddingValues(vertical = 16.dp),
-      verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
+      verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
     ) {
-      itemsIndexed(helpItems) { index, item ->
+      itemsIndexed(
+        items = HelpItems,
+        key = { _, item -> item.question },
+      ) { index, item ->
         val expanded = expandedIndices.contains(index)
         SegmentedListItem(
           onClick = {
@@ -143,34 +164,35 @@ private fun HelpDialogContent(
               expandedIndices + index
             }
           },
-          shapes = ListItemDefaults.segmentedShapes(index = index, count = helpItems.size),
+          shapes = ListItemDefaults.segmentedShapes(index = index, count = HelpItems.size),
           colors = colors,
-          content = { Text(stringResource(item.question)) },
+          modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 48.dp),
           contentPadding = PaddingValues(16.dp),
+          content = { Text(stringResource(item.question)) },
           supportingContent = {
-            // Using AnimatedVisibility with height-only transitions for a physical reveal effect.
-            // The content is revealed/concealed as the container expands/shrinks.
             AnimatedVisibility(
               visible = expanded,
               enter = expandVertically(
                 animationSpec = motionScheme.defaultSpatialSpec(),
-                expandFrom = Alignment.Top
+                expandFrom = Alignment.Top,
               ),
               exit = shrinkVertically(
                 animationSpec = motionScheme.defaultSpatialSpec(),
-                shrinkTowards = Alignment.Top
-              )
+                shrinkTowards = Alignment.Top,
+              ),
             ) {
               Column(
                 modifier = Modifier
                   .fillMaxWidth()
                   .padding(top = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
               ) {
                 Text(
                   text = stringResource(item.answer),
                   style = MaterialTheme.typography.bodyMedium,
-                  color = MaterialTheme.colorScheme.onSurfaceVariant
+                  color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 if (item.showTranslate) {
                   TextButton(
@@ -181,9 +203,9 @@ private fun HelpDialogContent(
                     modifier = Modifier.fillMaxWidth(),
                     colors = ButtonDefaults.textButtonColors(
                       containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                      contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                      contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                     ),
-                    shapes = ButtonDefaults.shapes()
+                    shapes = ButtonDefaults.shapes(),
                   ) {
                     Text(stringResource(R.string.about_translation))
                   }
@@ -191,7 +213,6 @@ private fun HelpDialogContent(
               }
             }
           },
-          modifier = Modifier.heightIn(min = 48.dp)
         )
       }
     }

@@ -157,12 +157,10 @@ fun VerticalButtonGroup(
 object VerticalButtonGroupDefaults {
   val ExpandedRatio: Float get() = 0.15f
   val BetweenSpace: Dp = 8.dp
-
   val VerticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(BetweenSpace)
-
   val AnimationSpec: AnimationSpec<Float> = spring(
-    dampingRatio = 0.8f,
-    stiffness = 380f,
+    dampingRatio = 1f,
+    stiffness = 1400f,
   )
 
   @OptIn(ExperimentalMaterial3Api::class)
@@ -573,12 +571,10 @@ internal class EnlargeOnPressHeightNode(
   private var collectionJob: Job? = null
 
   override fun onAttach() {
-    super.onAttach()
     launchCollectionJob()
   }
 
   override fun onDetach() {
-    super.onDetach()
     collectionJob?.cancel()
     collectionJob = null
   }

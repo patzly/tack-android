@@ -20,10 +20,8 @@
 package xyz.zedler.patrick.tack.ui.dialog
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,6 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.ui.component.core.LeadingContentWrapper
 import xyz.zedler.patrick.tack.ui.component.core.ScrollableAlertDialog
 import xyz.zedler.patrick.tack.ui.component.core.ScrollableAlertDialogContent
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
@@ -50,11 +49,15 @@ import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 fun BackupDialog(
   onBackup: () -> Unit,
   onRestore: () -> Unit,
-  onDismissRequest: () -> Unit
+  onDismissRequest: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
   val haptic = LocalHaptic.current
 
-  ScrollableAlertDialog(onDismissRequest = onDismissRequest) {
+  ScrollableAlertDialog(
+    onDismissRequest = onDismissRequest,
+    modifier = modifier,
+  ) {
     BackupDialogContent(
       onBackupClick = {
         haptic.click()
@@ -67,7 +70,7 @@ fun BackupDialog(
       onCloseClick = {
         haptic.click()
         onDismissRequest()
-      }
+      },
     )
   }
 }
@@ -75,71 +78,78 @@ fun BackupDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun BackupDialogContent(
+  modifier: Modifier = Modifier,
   onBackupClick: () -> Unit = {},
   onRestoreClick: () -> Unit = {},
-  onCloseClick: () -> Unit = {}
+  onCloseClick: () -> Unit = {},
 ) {
   ScrollableAlertDialogContent(
+    modifier = modifier,
     title = {
       Text(stringResource(R.string.settings_backup))
     },
     confirmButton = {
       TextButton(
         onClick = onCloseClick,
-        shapes = ButtonDefaults.shapes()
+        shapes = ButtonDefaults.shapes(),
       ) {
         Text(stringResource(R.string.action_close))
       }
-    }
+    },
   ) {
     Column(
       modifier = Modifier.fillMaxWidth(),
-      verticalArrangement = Arrangement.spacedBy(16.dp)
+      verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
       Text(
         text = stringResource(R.string.msg_backup_description),
         style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
       )
 
-      Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
+      Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+      ) {
         val itemCount = 2
         val colors = ListItemDefaults.colors(
-          containerColor = MaterialTheme.colorScheme.surfaceBright
+          containerColor = MaterialTheme.colorScheme.surfaceBright,
         )
 
         SegmentedListItem(
           onClick = onBackupClick,
           shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
           colors = colors,
+          modifier = Modifier.fillMaxWidth(),
           verticalAlignment = Alignment.CenterVertically,
           leadingContent = {
-            Box(modifier = Modifier.padding(vertical = 10.dp)) {
+            LeadingContentWrapper {
               Icon(
                 painter = painterResource(R.drawable.ic_rounded_download),
-                contentDescription = null
+                contentDescription = null,
               )
             }
           },
           content = { Text(stringResource(R.string.action_backup)) },
-          supportingContent = { Text(stringResource(R.string.action_backup_description)) }
+          supportingContent = { Text(stringResource(R.string.action_backup_description)) },
         )
 
         SegmentedListItem(
           onClick = onRestoreClick,
           shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
           colors = colors,
+          modifier = Modifier.fillMaxWidth(),
           verticalAlignment = Alignment.CenterVertically,
           leadingContent = {
-            Box(modifier = Modifier.padding(vertical = 10.dp)) {
+            LeadingContentWrapper {
               Icon(
                 painter = painterResource(R.drawable.ic_rounded_upload),
-                contentDescription = null
+                contentDescription = null,
               )
             }
           },
           content = { Text(stringResource(R.string.action_restore)) },
-          supportingContent = { Text(stringResource(R.string.action_restore_description)) }
+          supportingContent = { Text(stringResource(R.string.action_restore_description)) },
         )
       }
     }
@@ -148,7 +158,7 @@ private fun BackupDialogContent(
 
 @Preview
 @Composable
-fun BackupDialogPreview() {
+private fun BackupDialogPreview() {
   TackTheme {
     BackupDialogContent()
   }

@@ -61,20 +61,24 @@ fun BottomControls(
   onOptionsClick: () -> Unit,
   onPlayStopChange: (Boolean) -> Unit,
   onBeatModeClick: () -> Unit,
-  modifier: Modifier
+  modifier: Modifier = Modifier,
 ) {
   val dimens = LocalDimens.current
 
-  val interactionSources = remember { List(3) { MutableInteractionSource() } }
+  val optionsInteractionSource = remember { MutableInteractionSource() }
+  val playStopInteractionSource = remember { MutableInteractionSource() }
+  val beatModeInteractionSource = remember { MutableInteractionSource() }
 
   ButtonGroup(
     overflowIndicator = {},
     horizontalArrangement = Arrangement.spacedBy(dimens.bottomControlsButtonSpacing),
-    modifier = modifier.padding(bottom = dimens.bottomControlsPaddingBottom)
+    verticalAlignment = Alignment.CenterVertically,
+    modifier = modifier.padding(bottom = dimens.bottomControlsPaddingBottom),
   ) {
     customItem(
       buttonGroupContent = {
         var optionsIconTrigger by remember { mutableStateOf(false) }
+        val optionsText = stringResource(R.string.title_options)
 
         FilledTonalIconButton(
           onClick = {
@@ -82,11 +86,11 @@ fun BottomControls(
             optionsIconTrigger = !optionsIconTrigger
           },
           shapes = IconButtonDefaults.shapes(),
-          interactionSource = interactionSources[0],
+          interactionSource = optionsInteractionSource,
           modifier = Modifier
             .minimumInteractiveComponentSize()
             .size(dimens.bottomControlsSideButtonSize)
-            .animateWidth(interactionSources[0])
+            .animateWidth(optionsInteractionSource),
         ) {
           TooltipBox(
             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
@@ -94,22 +98,22 @@ fun BottomControls(
             ),
             tooltip = {
               PlainTooltip {
-                Text(stringResource(R.string.title_options))
+                Text(optionsText)
               }
             },
             state = rememberTooltipState(),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
           ) {
             Box(
               modifier = Modifier.fillMaxSize(),
-              contentAlignment = Alignment.Center
+              contentAlignment = Alignment.Center,
             ) {
               AnimatedIcon(
                 resId = R.drawable.ic_rounded_tune_anim,
                 trigger = optionsIconTrigger,
                 animated = !settings.reduceAnim,
-                contentDescription = stringResource(R.string.title_options),
-                modifier = Modifier.size(dimens.bottomControlsIconSize)
+                contentDescription = optionsText,
+                modifier = Modifier.size(dimens.bottomControlsIconSize),
               )
             }
           }
@@ -120,6 +124,8 @@ fun BottomControls(
 
     customItem(
       buttonGroupContent = {
+        val playStopText = stringResource(R.string.action_play_stop)
+
         IconToggleButton(
           checked = metronomeState.isPlaying,
           onCheckedChange = onPlayStopChange,
@@ -130,12 +136,11 @@ fun BottomControls(
             checkedContainerColor = MaterialTheme.colorScheme.tertiary,
             checkedContentColor = MaterialTheme.colorScheme.onTertiary,
           ),
-          interactionSource = interactionSources[1],
-          modifier =
-            Modifier
-              .minimumInteractiveComponentSize()
-              .size(dimens.bottomControlsCenterButtonSize)
-              .animateWidth(interactionSources[1])
+          interactionSource = playStopInteractionSource,
+          modifier = Modifier
+            .minimumInteractiveComponentSize()
+            .size(dimens.bottomControlsCenterButtonSize)
+            .animateWidth(playStopInteractionSource),
         ) {
           TooltipBox(
             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
@@ -143,23 +148,23 @@ fun BottomControls(
             ),
             tooltip = {
               PlainTooltip {
-                Text(stringResource(R.string.action_play_stop))
+                Text(playStopText)
               }
             },
             state = rememberTooltipState(),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
           ) {
             Box(
               modifier = Modifier.fillMaxSize(),
-              contentAlignment = Alignment.Center
+              contentAlignment = Alignment.Center,
             ) {
               AnimatedIcon(
                 resId1 = R.drawable.ic_rounded_play_to_stop_fill_anim,
                 resId2 = R.drawable.ic_rounded_stop_to_play_fill_anim,
                 trigger = metronomeState.isPlaying,
                 animated = !settings.reduceAnim,
-                contentDescription = stringResource(R.string.action_play_stop),
-                modifier = Modifier.size(dimens.bottomControlsIconSize)
+                contentDescription = playStopText,
+                modifier = Modifier.size(dimens.bottomControlsIconSize),
               )
             }
           }
@@ -170,17 +175,16 @@ fun BottomControls(
 
     customItem(
       buttonGroupContent = {
+        val beatModeText = stringResource(R.string.action_beat_mode)
+
         FilledTonalIconButton(
-          onClick = {
-            onBeatModeClick()
-          },
+          onClick = onBeatModeClick,
           shapes = IconButtonDefaults.shapes(),
-          interactionSource = interactionSources[2],
-          modifier =
-            Modifier
-              .minimumInteractiveComponentSize()
-              .size(dimens.bottomControlsSideButtonSize)
-              .animateWidth(interactionSources[2]),
+          interactionSource = beatModeInteractionSource,
+          modifier = Modifier
+            .minimumInteractiveComponentSize()
+            .size(dimens.bottomControlsSideButtonSize)
+            .animateWidth(beatModeInteractionSource),
         ) {
           TooltipBox(
             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
@@ -188,29 +192,29 @@ fun BottomControls(
             ),
             tooltip = {
               PlainTooltip {
-                Text(stringResource(R.string.action_beat_mode))
+                Text(beatModeText)
               }
             },
             state = rememberTooltipState(),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
           ) {
             Box(
               modifier = Modifier.fillMaxSize(),
-              contentAlignment = Alignment.Center
+              contentAlignment = Alignment.Center,
             ) {
               AnimatedIcon(
                 resId1 = R.drawable.ic_rounded_volume_up_to_vibration_anim,
                 resId2 = R.drawable.ic_rounded_vibration_to_volume_up_anim,
                 trigger = settings.beatMode == BeatMode.VIBRATION,
                 animated = !settings.reduceAnim,
-                contentDescription = stringResource(R.string.action_beat_mode),
-                modifier = Modifier.size(dimens.bottomControlsIconSize)
+                contentDescription = beatModeText,
+                modifier = Modifier.size(dimens.bottomControlsIconSize),
               )
             }
           }
         }
       },
-      menuContent = {}
+      menuContent = {},
     )
   }
 }

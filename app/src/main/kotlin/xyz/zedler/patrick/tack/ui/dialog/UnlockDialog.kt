@@ -21,9 +21,11 @@ package xyz.zedler.patrick.tack.ui.dialog
 
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import xyz.zedler.patrick.tack.R
@@ -36,11 +38,15 @@ import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 @Composable
 fun UnlockDialog(
   onDismissRequest: () -> Unit,
-  onOpen: () -> Unit
+  onOpen: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
   val haptic = LocalHaptic.current
 
-  ScrollableAlertDialog(onDismissRequest = onDismissRequest) {
+  ScrollableAlertDialog(
+    onDismissRequest = onDismissRequest,
+    modifier = modifier,
+  ) {
     UnlockDialogContent(
       onOpenClick = {
         haptic.click()
@@ -50,7 +56,7 @@ fun UnlockDialog(
       onCancelClick = {
         haptic.click()
         onDismissRequest()
-      }
+      },
     )
   }
 }
@@ -58,17 +64,19 @@ fun UnlockDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun UnlockDialogContent(
+  modifier: Modifier = Modifier,
   onOpenClick: () -> Unit = {},
-  onCancelClick: () -> Unit = {}
+  onCancelClick: () -> Unit = {},
 ) {
   ScrollableAlertDialogContent(
+    modifier = modifier,
     title = {
       Text(stringResource(R.string.msg_unlock))
     },
     confirmButton = {
       TextButton(
         onClick = onOpenClick,
-        shapes = ButtonDefaults.shapes()
+        shapes = ButtonDefaults.shapes(),
       ) {
         Text(stringResource(R.string.action_open_play_store))
       }
@@ -76,19 +84,23 @@ private fun UnlockDialogContent(
     dismissButton = {
       TextButton(
         onClick = onCancelClick,
-        shapes = ButtonDefaults.shapes()
+        shapes = ButtonDefaults.shapes(),
       ) {
         Text(stringResource(R.string.action_cancel))
       }
-    }
+    },
   ) {
-    Text(stringResource(R.string.msg_unlock_description))
+    Text(
+      text = stringResource(R.string.msg_unlock_description),
+      style = MaterialTheme.typography.bodyMedium,
+      color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
   }
 }
 
 @Preview
 @Composable
-fun UnlockDialogPreview() {
+private fun UnlockDialogPreview() {
   TackTheme {
     UnlockDialogContent()
   }

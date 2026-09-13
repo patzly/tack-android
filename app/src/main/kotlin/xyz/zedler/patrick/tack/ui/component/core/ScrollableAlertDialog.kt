@@ -77,9 +77,10 @@ fun ScrollableAlertDialog(
   paneTitle: String = stringResource(android.R.string.dialog_alert_title),
   properties: DialogProperties = DialogProperties(
     usePlatformDefaultWidth = false,
-    decorFitsSystemWindows = false
+    decorFitsSystemWindows = false,
+    scrimAlpha = 0.32f,
   ),
-  content: @Composable () -> Unit
+  content: @Composable () -> Unit,
 ) {
   Dialog(onDismissRequest = onDismissRequest, properties = properties) {
     val layoutDirection = LocalLayoutDirection.current
@@ -104,7 +105,7 @@ fun ScrollableAlertDialog(
           top = safePadding.calculateTopPadding() + verticalBasePadding,
           bottom = safePadding.calculateBottomPadding() + verticalBasePadding
         ),
-      contentAlignment = Alignment.Center
+      contentAlignment = Alignment.Center,
     ) {
       Box(
         modifier = modifier
@@ -117,7 +118,7 @@ fun ScrollableAlertDialog(
             detectTapGestures { }
           }
           .semantics { this.paneTitle = paneTitle },
-        propagateMinConstraints = true
+        propagateMinConstraints = true,
       ) {
         content()
       }
@@ -141,13 +142,13 @@ fun ScrollableAlertDialogContent(
   titleContentColor: Color = MaterialTheme.colorScheme.onSurface,
   textContentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
   scrollableContentPadding: PaddingValues = PaddingValues(horizontal = 24.dp, vertical = 16.dp),
-  content: @Composable (() -> Unit)? = null
+  content: @Composable (() -> Unit)? = null,
 ) {
   Surface(
     shape = AlertDialogDefaults.shape,
     color = AlertDialogDefaults.containerColor,
     tonalElevation = AlertDialogDefaults.TonalElevation,
-    modifier = modifier
+    modifier = modifier,
   ) {
     Column(modifier = Modifier.padding(vertical = 24.dp)) {
       icon?.let {
@@ -161,7 +162,7 @@ fun ScrollableAlertDialogContent(
       title?.let {
         ProvideContentColorTextStyle(
           contentColor = titleContentColor,
-          textStyle = MaterialTheme.typography.headlineSmall
+          textStyle = MaterialTheme.typography.headlineSmall,
         ) {
           Box(
             modifier = Modifier
@@ -169,7 +170,7 @@ fun ScrollableAlertDialogContent(
                 start = 24.dp,
                 end = 24.dp,
                 top = if (icon == null) 0.dp else 16.dp,
-                bottom = if (subtitle == null) 16.dp else 4.dp
+                bottom = if (subtitle == null) 16.dp else 4.dp,
               )
               .align(
                 if (icon == null) Alignment.Start else Alignment.CenterHorizontally
@@ -183,14 +184,14 @@ fun ScrollableAlertDialogContent(
       subtitle?.let {
         ProvideContentColorTextStyle(
           contentColor = textContentColor,
-          textStyle = MaterialTheme.typography.bodyMedium
+          textStyle = MaterialTheme.typography.bodyMedium,
         ) {
           Box(
             modifier = Modifier
               .padding(start = 24.dp, end = 24.dp, top = 0.dp, bottom = 16.dp)
               .align(
                 if (icon == null) Alignment.Start else Alignment.CenterHorizontally
-              )
+              ),
           ) {
             subtitle()
           }
@@ -214,7 +215,7 @@ fun ScrollableAlertDialogContent(
       content?.let {
         ProvideContentColorTextStyle(
           contentColor = textContentColor,
-          textStyle = MaterialTheme.typography.bodyMedium
+          textStyle = MaterialTheme.typography.bodyMedium,
         ) {
           Box(
             modifier = Modifier
@@ -244,7 +245,7 @@ fun ScrollableAlertDialogContent(
                 } else {
                   0.dp
                 }
-              )
+              ),
             ) {
               content()
             }
@@ -259,12 +260,12 @@ fun ScrollableAlertDialogContent(
       Box(
         modifier = Modifier
           .fillMaxWidth()
-          .padding(top = 24.dp, start = 24.dp, end = 24.dp)
+          .padding(top = 24.dp, start = 24.dp, end = 24.dp),
       ) {
         AlertDialogCombinedButtons(
           confirmButton = confirmButton,
           dismissButton = dismissButton,
-          extraButton = extraButton
+          extraButton = extraButton,
         )
       }
     }

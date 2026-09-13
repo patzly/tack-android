@@ -21,6 +21,7 @@ package xyz.zedler.patrick.tack.ui.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItemDefaults
@@ -31,10 +32,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.util.fastForEachIndexed
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.Sound
+import xyz.zedler.patrick.tack.ui.component.core.LeadingContentWrapper
 import xyz.zedler.patrick.tack.ui.component.core.ScrollableAlertDialog
 import xyz.zedler.patrick.tack.ui.component.core.ScrollableAlertDialogContent
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
@@ -46,11 +50,15 @@ import xyz.zedler.patrick.tack.ui.util.titleRes
 fun SoundDialog(
   currentSound: Sound,
   onSoundSelected: (Sound) -> Unit,
-  onDismissRequest: () -> Unit
+  onDismissRequest: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
   val haptic = LocalHaptic.current
 
-  ScrollableAlertDialog(onDismissRequest = onDismissRequest) {
+  ScrollableAlertDialog(
+    onDismissRequest = onDismissRequest,
+    modifier = modifier,
+  ) {
     SoundDialogContent(
       currentSound = currentSound,
       onSoundSelected = {
@@ -60,7 +68,7 @@ fun SoundDialog(
       onCloseClick = {
         haptic.click()
         onDismissRequest()
-      }
+      },
     )
   }
 }
@@ -69,49 +77,56 @@ fun SoundDialog(
 @Composable
 private fun SoundDialogContent(
   currentSound: Sound,
+  modifier: Modifier = Modifier,
   onSoundSelected: (Sound) -> Unit = {},
-  onCloseClick: () -> Unit = {}
+  onCloseClick: () -> Unit = {},
 ) {
   ScrollableAlertDialogContent(
+    modifier = modifier,
     title = {
       Text(stringResource(R.string.settings_sound))
     },
     confirmButton = {
       TextButton(
         onClick = onCloseClick,
-        shapes = ButtonDefaults.shapes()
+        shapes = ButtonDefaults.shapes(),
       ) {
         Text(stringResource(R.string.action_close))
       }
-    }
+    },
   ) {
-    Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
+    Column(
+      modifier = Modifier.fillMaxWidth(),
+      verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+    ) {
       val sounds = Sound.entries
       val colors = ListItemDefaults.segmentedColors(
         containerColor = MaterialTheme.colorScheme.surfaceBright,
         selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-        selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+        selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
       )
 
-      sounds.forEachIndexed { index, mode ->
-        val isSelected = currentSound == mode
+      sounds.fastForEachIndexed { index, sound ->
+        val isSelected = currentSound == sound
 
         SegmentedListItem(
-          onClick = { onSoundSelected(mode) },
+          onClick = { onSoundSelected(sound) },
           shapes = ListItemDefaults.segmentedShapes(index = index, count = sounds.size),
           selected = isSelected,
           colors = colors,
+          modifier = Modifier.fillMaxWidth(),
           verticalAlignment = Alignment.CenterVertically,
           leadingContent = {
-            RadioButton(
-              selected = isSelected,
-              onClick = null
-            )
+            LeadingContentWrapper {
+              RadioButton(
+                selected = isSelected,
+                onClick = null,
+              )
+            }
           },
-          content = {
-            Text(stringResource(mode.titleRes))
-          }
-        )
+        ) {
+          Text(stringResource(sound.titleRes))
+        }
       }
     }
   }
@@ -119,7 +134,7 @@ private fun SoundDialogContent(
 
 @Preview
 @Composable
-fun SoundDialogPreview() {
+private fun SoundDialogPreview() {
   TackTheme {
     SoundDialogContent(currentSound = Sound.SINE)
   }

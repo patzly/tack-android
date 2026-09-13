@@ -21,9 +21,22 @@ package xyz.zedler.patrick.tack.ui.component.core
 
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.ScrollableDefaults
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,7 +59,7 @@ fun InsetLazyColumn(
     if (!reverseLayout) Arrangement.Top else Arrangement.Bottom,
   flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
   userScrollEnabled: Boolean = true,
-  content: LazyListScope.() -> Unit
+  content: LazyListScope.() -> Unit,
 ) {
   val layoutDirection = LocalLayoutDirection.current
   val safePadding = WindowInsets.safeDrawing.asPaddingValues()
@@ -70,7 +83,7 @@ fun InsetLazyColumn(
     horizontalAlignment = Alignment.CenterHorizontally,
     flingBehavior = flingBehavior,
     userScrollEnabled = userScrollEnabled,
-    content = content
+    content = content,
   )
 }
 
@@ -81,14 +94,14 @@ fun LazyListScope.insetItem(
   key: Any? = null,
   contentType: Any? = null,
   maxWidth: Dp = 640.dp,
-  content: @Composable LazyItemScope.() -> Unit
+  content: @Composable LazyItemScope.() -> Unit,
 ) {
   item(key = key, contentType = contentType) {
     Box(
       modifier = Modifier
         .widthIn(max = maxWidth)
         .fillMaxWidth(),
-      contentAlignment = Alignment.CenterStart
+      contentAlignment = Alignment.CenterStart,
     ) {
       content()
     }
@@ -103,7 +116,7 @@ fun <T> LazyListScope.insetItems(
   key: ((item: T) -> Any)? = null,
   contentType: (item: T) -> Any? = { null },
   maxWidth: Dp = 640.dp,
-  itemContent: @Composable LazyItemScope.(item: T) -> Unit
+  itemContent: @Composable LazyItemScope.(item: T) -> Unit,
 ) {
   items(
     items = items,
@@ -114,7 +127,7 @@ fun <T> LazyListScope.insetItems(
         modifier = Modifier
           .widthIn(max = maxWidth)
           .fillMaxWidth(),
-        contentAlignment = Alignment.CenterStart
+        contentAlignment = Alignment.CenterStart,
       ) {
         itemContent(item)
       }

@@ -39,14 +39,14 @@ fun AnimatedIcon(
   modifier: Modifier = Modifier,
   animated: Boolean = true,
   contentDescription: String? = null,
-  tint: Color = LocalContentColor.current
+  tint: Color = LocalContentColor.current,
 ) {
   val image = AnimatedImageVector.animatedVectorResource(resId)
 
   val painter = if (animated) {
     rememberAnimatedVectorPainter(
       animatedImageVector = image,
-      atEnd = trigger
+      atEnd = trigger,
     )
   } else {
     rememberVectorPainter(image.imageVector)
@@ -56,7 +56,7 @@ fun AnimatedIcon(
     painter = painter,
     contentDescription = contentDescription,
     modifier = modifier,
-    tint = tint
+    tint = tint,
   )
 }
 
@@ -69,7 +69,7 @@ fun AnimatedIcon(
   modifier: Modifier = Modifier,
   animated: Boolean = true,
   contentDescription: String? = null,
-  tint: Color = LocalContentColor.current
+  tint: Color = LocalContentColor.current,
 ) {
   val image1 = AnimatedImageVector.animatedVectorResource(resId1)
   val image2 = AnimatedImageVector.animatedVectorResource(resId2)
@@ -77,11 +77,11 @@ fun AnimatedIcon(
   val painter = if (animated) {
     val painterForward = rememberAnimatedVectorPainter(
       animatedImageVector = image1,
-      atEnd = trigger
+      atEnd = trigger,
     )
     val painterBackward = rememberAnimatedVectorPainter(
       animatedImageVector = image2,
-      atEnd = !trigger
+      atEnd = !trigger,
     )
 
     if (trigger) painterForward else painterBackward
@@ -96,6 +96,6 @@ fun AnimatedIcon(
     painter = painter,
     contentDescription = contentDescription,
     modifier = modifier,
-    tint = tint
+    tint = tint,
   )
 }

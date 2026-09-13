@@ -21,9 +21,11 @@ package xyz.zedler.patrick.tack.ui.dialog
 
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import xyz.zedler.patrick.tack.R
@@ -36,11 +38,15 @@ import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 @Composable
 fun NotificationPermissionDialog(
   onNext: () -> Unit,
-  onDismissRequest: () -> Unit
+  onDismissRequest: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
   val haptic = LocalHaptic.current
 
-  ScrollableAlertDialog(onDismissRequest = onDismissRequest) {
+  ScrollableAlertDialog(
+    onDismissRequest = onDismissRequest,
+    modifier = modifier,
+  ) {
     NotificationPermissionContent(
       onNextClick = {
         haptic.click()
@@ -50,7 +56,7 @@ fun NotificationPermissionDialog(
       onCancelClick = {
         haptic.click()
         onDismissRequest()
-      }
+      },
     )
   }
 }
@@ -58,17 +64,19 @@ fun NotificationPermissionDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NotificationPermissionContent(
+  modifier: Modifier = Modifier,
   onNextClick: () -> Unit = {},
-  onCancelClick: () -> Unit = {}
+  onCancelClick: () -> Unit = {},
 ) {
   ScrollableAlertDialogContent(
+    modifier = modifier,
     title = {
       Text(stringResource(R.string.msg_notification_permission))
     },
     confirmButton = {
       TextButton(
         onClick = onNextClick,
-        shapes = ButtonDefaults.shapes()
+        shapes = ButtonDefaults.shapes(),
       ) {
         Text(stringResource(R.string.action_next))
       }
@@ -76,19 +84,23 @@ private fun NotificationPermissionContent(
     dismissButton = {
       TextButton(
         onClick = onCancelClick,
-        shapes = ButtonDefaults.shapes()
+        shapes = ButtonDefaults.shapes(),
       ) {
         Text(stringResource(R.string.action_cancel))
       }
-    }
+    },
   ) {
-    Text(stringResource(R.string.msg_notification_permission_description))
+    Text(
+      text = stringResource(R.string.msg_notification_permission_description),
+      style = MaterialTheme.typography.bodyMedium,
+      color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
   }
 }
 
 @Preview
 @Composable
-fun NotificationPermissionDialogPreview() {
+private fun NotificationPermissionDialogPreview() {
   TackTheme {
     NotificationPermissionContent()
   }

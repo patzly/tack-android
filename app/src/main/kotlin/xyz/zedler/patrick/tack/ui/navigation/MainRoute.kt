@@ -22,11 +22,11 @@ package xyz.zedler.patrick.tack.ui.navigation
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
-sealed interface Route : Parcelable {
-  @Parcelize data object Main : Route
-  @Parcelize data object About : Route
-  @Parcelize data object Settings : Route
-  @Parcelize data object Log : Route
-  @Parcelize data object Songs : Route
-  @Parcelize data class Song(val songId: String) : Route
+sealed interface MainRoute : Parcelable {
+  @Parcelize data object Main : MainRoute
+  @Parcelize data object About : MainRoute
+  @Parcelize data object Settings : MainRoute
+  @Parcelize data object Log : MainRoute
+  @Parcelize data object Songs : MainRoute
+  @Parcelize data class Song(val songId: String) : MainRoute
 }

@@ -85,7 +85,7 @@ fun TempoPicker(
   onTempoChangeDelta: (Int) -> Unit,
   onDragStateChange: (Boolean) -> Unit,
   onClick: () -> Unit,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
 ) {
   val dimens = LocalDimens.current
   val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
@@ -107,13 +107,13 @@ fun TempoPicker(
   val morphFactor by animateFloatAsState(
     targetValue = if (isDragged && !reduceAnimations) 1f else 0f,
     animationSpec = spatialSpring,
-    label = "morphFactor"
+    label = "morphFactor",
   )
 
   val colorFraction by animateFloatAsState(
     targetValue = if (isDragged && !reduceAnimations) 0.85f else 0f,
     animationSpec = effectsSpring,
-    label = "colorFraction"
+    label = "colorFraction",
   )
 
   val colorDefault = MaterialTheme.colorScheme.primaryContainer
@@ -132,7 +132,7 @@ fun TempoPicker(
           FontVariation.weight(fontWeight),
           FontVariation.width(fontWidth),
           FontVariation.Setting("ROND", 100f)
-        )
+        ),
       )
     )
   }
@@ -148,7 +148,7 @@ fun TempoPicker(
         MaterialShapes.SoftBurst,
         true,
         RectF(-1f, -1f, 1f, 1f)
-      )
+      ),
     )
   }
 
@@ -254,12 +254,12 @@ fun TempoPicker(
           this@drawWithContent.drawContent()
         }
       },
-    contentAlignment = Alignment.Center
+    contentAlignment = Alignment.Center,
   ) {
     Column(
       modifier = Modifier.fillMaxSize(),
       horizontalAlignment = Alignment.CenterHorizontally,
-      verticalArrangement = Arrangement.Center
+      verticalArrangement = Arrangement.Center,
     ) {
       val slideSpec = MaterialTheme.motionScheme.fastSpatialSpec<IntOffset>()
       val fadeSpec = MaterialTheme.motionScheme.fastEffectsSpec<Float>()
@@ -285,14 +285,14 @@ fun TempoPicker(
           }
         },
         label = "tempoTermAnim",
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
       ) { term ->
         Text(
           text = term,
           style = dimens.tempoPickerLabelTextStyle,
           color = MaterialTheme.colorScheme.onPrimaryContainer,
           textAlign = TextAlign.Center,
-          modifier = Modifier.fillMaxWidth()
+          modifier = Modifier.fillMaxWidth(),
         )
       }
 
@@ -304,7 +304,7 @@ fun TempoPicker(
         ),
         color = MaterialTheme.colorScheme.onPrimaryContainer,
         textAlign = TextAlign.Center,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
       )
 
       Text(
@@ -312,7 +312,7 @@ fun TempoPicker(
         style = dimens.tempoPickerLabelTextStyle,
         color = MaterialTheme.colorScheme.onPrimaryContainer,
         textAlign = TextAlign.Center,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
       )
     }
   }
@@ -333,7 +333,7 @@ fun TempoPickerPreview() {
       reduceAnimations = false,
       onTempoChangeDelta = {},
       onDragStateChange = {},
-      onClick = {}
+      onClick = {},
     )
   }
 }

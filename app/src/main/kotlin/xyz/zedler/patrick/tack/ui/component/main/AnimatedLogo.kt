@@ -27,13 +27,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import xyz.zedler.patrick.tack.R
@@ -45,29 +48,38 @@ private val AccelerateDecelerate = Easing { fraction ->
   (cos((fraction + 1) * PI) / 2.0 + 0.5).toFloat()
 }
 
+private val PointerTransformOrigin = TransformOrigin(0.5f, 0.7916f)
+
 @Composable
 fun AnimatedLogo(
   tempo: Int,
   tickEvent: Flow<Tick>,
-  modifier: Modifier = Modifier
+  modifier: Modifier = Modifier,
 ) {
+  val currentTempo by rememberUpdatedState(tempo)
   val rotationAnim = remember { Animatable(-30f) }
 
   LaunchedEffect(tickEvent) {
     var isLeft = true
+    var animJob: Job? = null
 
     tickEvent.collect { tick ->
       if (tick.subdivision != 1 || tick.isPoly) return@collect
 
-      val interval = if (tempo > 0) 60000L / tempo else 1000L
+      val intervalMs = if (currentTempo > 0) {
+        (60_000 / currentTempo).coerceAtLeast(1)
+      } else {
+        1_000
+      }
       val target = if (isLeft) 30f else -30f
       isLeft = !isLeft
 
-      launch {
+      animJob?.cancel()
+      animJob = launch {
         rotationAnim.animateTo(
           targetValue = target,
           animationSpec = tween(
-            durationMillis = interval.toInt(),
+            durationMillis = intervalMs,
             easing = AccelerateDecelerate
           )
         )
@@ -75,40 +87,51 @@ fun AnimatedLogo(
     }
   }
 
+  val colorScheme = MaterialTheme.colorScheme
+  val onSurfaceFilter = remember(colorScheme.onSurface) {
+    ColorFilter.tint(colorScheme.onSurface)
+  }
+  val tertiaryFilter = remember(colorScheme.tertiary) {
+    ColorFilter.tint(colorScheme.tertiary)
+  }
+  val primaryContainerFilter = remember(colorScheme.primaryContainer) {
+    ColorFilter.tint(colorScheme.primaryContainer)
+  }
+
   Box(
     modifier = modifier,
-    contentAlignment = Alignment.Center
+    contentAlignment = Alignment.Center,
   ) {
     Image(
       painter = painterResource(id = R.drawable.ic_logo_bg),
       contentDescription = null,
-      colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+      colorFilter = onSurfaceFilter,
     )
 
     Image(
       painter = painterResource(id = R.drawable.ic_logo_pointer),
       contentDescription = null,
-      colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.tertiary),
+      colorFilter = tertiaryFilter,
       modifier = Modifier
         .matchParentSize()
         .graphicsLayer {
-          transformOrigin = TransformOrigin(0.5f, 0.7916f)
+          transformOrigin = PointerTransformOrigin
           rotationZ = rotationAnim.value
-        }
+        },
     )
 
     Image(
       painter = painterResource(id = R.drawable.ic_logo_fg_fill),
       contentDescription = null,
-      colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primaryContainer),
-      modifier = Modifier.matchParentSize()
+      colorFilter = primaryContainerFilter,
+      modifier = Modifier.matchParentSize(),
     )
 
     Image(
       painter = painterResource(id = R.drawable.ic_logo_fg_outline),
       contentDescription = null,
-      colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
-      modifier = Modifier.matchParentSize()
+      colorFilter = onSurfaceFilter,
+      modifier = Modifier.matchParentSize(),
     )
   }
 }

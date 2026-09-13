@@ -23,10 +23,8 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -44,6 +42,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.ui.component.core.LeadingContentWrapper
 import xyz.zedler.patrick.tack.ui.component.core.ScrollableAlertDialog
 import xyz.zedler.patrick.tack.ui.component.core.ScrollableAlertDialogContent
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
@@ -56,7 +55,8 @@ fun FeedbackDialog(
   isKeyInstalled: Boolean,
   isPlayStoreInstalled: Boolean,
   onSupport: () -> Unit,
-  onDismissRequest: () -> Unit
+  onDismissRequest: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
   val context = LocalContext.current
   val haptic = LocalHaptic.current
@@ -67,7 +67,10 @@ fun FeedbackDialog(
   val recommendText = stringResource(R.string.msg_recommend, appVendingApp)
   val actionSendFeedback = stringResource(R.string.action_send_feedback)
 
-  ScrollableAlertDialog(onDismissRequest = onDismissRequest) {
+  ScrollableAlertDialog(
+    onDismissRequest = onDismissRequest,
+    modifier = modifier,
+  ) {
     FeedbackDialogContent(
       isSupportVisible = checkUnlockKey && isPlayStoreInstalled && !isKeyInstalled,
       onRateClick = {
@@ -78,19 +81,21 @@ fun FeedbackDialog(
             Intent.FLAG_ACTIVITY_NO_HISTORY or
                 Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
                 Intent.FLAG_ACTIVITY_MULTIPLE_TASK or
-                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS
+                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS,
           )
         }
         try {
           context.startActivity(intent)
         } catch (_: ActivityNotFoundException) {
-          context.startActivity(
-            Intent(
-              Intent.ACTION_VIEW,
-              "http://play.google.com/store/apps/details?id=${context.packageName}"
-                .toUri()
+          try {
+            context.startActivity(
+              Intent(
+                Intent.ACTION_VIEW,
+                "https://play.google.com/store/apps/details?id=${context.packageName}"
+                  .toUri(),
+              ),
             )
-          )
+          } catch (_: ActivityNotFoundException) {}
         }
         onDismissRequest()
       },
@@ -105,7 +110,9 @@ fun FeedbackDialog(
           putExtra(Intent.EXTRA_TEXT, recommendText)
           type = "text/plain"
         }
-        context.startActivity(Intent.createChooser(sendIntent, null))
+        try {
+          context.startActivity(Intent.createChooser(sendIntent, null))
+        } catch (_: ActivityNotFoundException) {}
         onDismissRequest()
       },
       onEmailClick = {
@@ -113,21 +120,23 @@ fun FeedbackDialog(
         val intent = Intent(Intent.ACTION_SENDTO).apply {
           data = "mailto:$appMail?subject=${Uri.encode("Feedback@Tack")}".toUri()
         }
-        context.startActivity(
-          Intent.createChooser(intent, actionSendFeedback)
-        )
+        try {
+          context.startActivity(Intent.createChooser(intent, actionSendFeedback))
+        } catch (_: ActivityNotFoundException) {}
         onDismissRequest()
       },
       onIssueClick = {
         haptic.click()
         val issues = "$appGithub/issues"
-        context.startActivity(Intent(Intent.ACTION_VIEW, issues.toUri()))
+        try {
+          context.startActivity(Intent(Intent.ACTION_VIEW, issues.toUri()))
+        } catch (_: ActivityNotFoundException) {}
         onDismissRequest()
       },
       onCloseClick = {
         haptic.click()
         onDismissRequest()
-      }
+      },
     )
   }
 }
@@ -135,65 +144,74 @@ fun FeedbackDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FeedbackDialogContent(
+  modifier: Modifier = Modifier,
   isSupportVisible: Boolean = true,
   onRateClick: () -> Unit = {},
   onSupportClick: () -> Unit = {},
   onRecommendClick: () -> Unit = {},
   onIssueClick: () -> Unit = {},
   onEmailClick: () -> Unit = {},
-  onCloseClick: () -> Unit = {}
+  onCloseClick: () -> Unit = {},
 ) {
   ScrollableAlertDialogContent(
+    modifier = modifier,
     title = {
       Text(stringResource(R.string.title_feedback))
     },
     confirmButton = {
       TextButton(
         onClick = onCloseClick,
-        shapes = ButtonDefaults.shapes()
+        shapes = ButtonDefaults.shapes(),
       ) {
         Text(stringResource(R.string.action_close))
       }
-    }
+    },
   ) {
     Column(
       modifier = Modifier.fillMaxWidth(),
-      verticalArrangement = Arrangement.spacedBy(16.dp)
+      verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-      Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+      Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+      ) {
         Text(
           text = stringResource(R.string.msg_feedback),
           style = MaterialTheme.typography.bodyMedium,
-          color = MaterialTheme.colorScheme.onSurfaceVariant
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
           text = stringResource(R.string.msg_feedback_contact),
           style = MaterialTheme.typography.bodyMedium,
-          color = MaterialTheme.colorScheme.onSurfaceVariant
+          color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
       }
 
-      Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
-        val itemCount = if (isSupportVisible) 3 else 2
+      val colors = ListItemDefaults.colors(
+        containerColor = MaterialTheme.colorScheme.surfaceBright,
+      )
 
-        val colors = ListItemDefaults.colors(
-          containerColor = MaterialTheme.colorScheme.surfaceBright
-        )
+      Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+      ) {
+        val itemCount = if (isSupportVisible) 3 else 2
 
         SegmentedListItem(
           onClick = onRateClick,
           shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
           colors = colors,
+          modifier = Modifier.fillMaxWidth(),
           leadingContent = {
-            Box(modifier = Modifier.padding(vertical = 10.dp)) {
+            LeadingContentWrapper {
               Icon(
                 painter = painterResource(R.drawable.ic_rounded_star),
-                contentDescription = null
+                contentDescription = null,
               )
             }
           },
           content = { Text(stringResource(R.string.action_rate)) },
-          supportingContent = { Text(stringResource(R.string.action_rate_description)) }
+          supportingContent = { Text(stringResource(R.string.action_rate_description)) },
         )
 
         if (isSupportVisible) {
@@ -201,16 +219,17 @@ private fun FeedbackDialogContent(
             onClick = onSupportClick,
             shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
             colors = colors,
+            modifier = Modifier.fillMaxWidth(),
             leadingContent = {
-              Box(modifier = Modifier.padding(vertical = 10.dp)) {
+              LeadingContentWrapper {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_volunteer_activism),
-                  contentDescription = null
+                  contentDescription = null,
                 )
               }
             },
             content = { Text(stringResource(R.string.action_support)) },
-            supportingContent = { Text(stringResource(R.string.action_support_description)) }
+            supportingContent = { Text(stringResource(R.string.action_support_description)) },
           )
         }
 
@@ -218,59 +237,61 @@ private fun FeedbackDialogContent(
           onClick = onRecommendClick,
           shapes = ListItemDefaults.segmentedShapes(
             index = if (isSupportVisible) 2 else 1,
-            count = itemCount
+            count = itemCount,
           ),
           colors = colors,
+          modifier = Modifier.fillMaxWidth(),
           leadingContent = {
-            Box(modifier = Modifier.padding(vertical = 10.dp)) {
+            LeadingContentWrapper {
               Icon(
                 painter = painterResource(R.drawable.ic_rounded_group),
-                contentDescription = null
+                contentDescription = null,
               )
             }
           },
           content = { Text(stringResource(R.string.action_recommend)) },
-          supportingContent = { Text(stringResource(R.string.action_recommend_description)) }
+          supportingContent = { Text(stringResource(R.string.action_recommend_description)) },
         )
       }
 
-      Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
+      Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+      ) {
         val itemCount = 2
-
-        val colors = ListItemDefaults.colors(
-          containerColor = MaterialTheme.colorScheme.surfaceBright
-        )
 
         SegmentedListItem(
           onClick = onIssueClick,
           shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
           colors = colors,
+          modifier = Modifier.fillMaxWidth(),
           leadingContent = {
-            Box(modifier = Modifier.padding(vertical = 10.dp)) {
+            LeadingContentWrapper {
               Icon(
                 painter = painterResource(R.drawable.ic_rounded_bug_report),
-                contentDescription = null
+                contentDescription = null,
               )
             }
           },
           content = { Text(stringResource(R.string.action_issue)) },
-          supportingContent = { Text(stringResource(R.string.action_issue_description)) }
+          supportingContent = { Text(stringResource(R.string.action_issue_description)) },
         )
 
         SegmentedListItem(
           onClick = onEmailClick,
           shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
           colors = colors,
+          modifier = Modifier.fillMaxWidth(),
           leadingContent = {
-            Box(modifier = Modifier.padding(vertical = 10.dp)) {
+            LeadingContentWrapper {
               Icon(
                 painter = painterResource(R.drawable.ic_rounded_mail),
-                contentDescription = null
+                contentDescription = null,
               )
             }
           },
           content = { Text(stringResource(R.string.action_email)) },
-          supportingContent = { Text(stringResource(R.string.action_email_description)) }
+          supportingContent = { Text(stringResource(R.string.action_email_description)) },
         )
       }
     }
@@ -279,7 +300,7 @@ private fun FeedbackDialogContent(
 
 @Preview
 @Composable
-fun FeedbackDialogPreview() {
+private fun FeedbackDialogPreview() {
   TackTheme {
     FeedbackDialogContent()
   }

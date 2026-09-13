@@ -23,7 +23,6 @@ import android.content.Intent
 import androidx.annotation.RawRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -70,13 +69,13 @@ import xyz.zedler.patrick.tack.BuildConfig
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.ui.component.core.AnimatedIcon
 import xyz.zedler.patrick.tack.ui.component.core.InsetLazyColumn
+import xyz.zedler.patrick.tack.ui.component.core.LeadingContentWrapper
 import xyz.zedler.patrick.tack.ui.component.core.TooltipWrapper
 import xyz.zedler.patrick.tack.ui.component.core.insetItem
 import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.ui.dialog.HelpDialog
 import xyz.zedler.patrick.tack.ui.dialog.TextDialog
 import xyz.zedler.patrick.tack.ui.dialog.UnlockDialog
-import xyz.zedler.patrick.tack.ui.theme.LocalDimens
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 import xyz.zedler.patrick.tack.util.rememberRawText
@@ -379,7 +378,7 @@ fun AboutContent(
               Text(stringResource(R.string.about_version))
             },
             leadingContent = {
-              ItemLeadingIcon {
+              LeadingContentWrapper {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_info),
                   contentDescription = null
@@ -400,7 +399,7 @@ fun AboutContent(
               Text(stringResource(R.string.about_changelog_description))
             },
             leadingContent = {
-              ItemLeadingIcon {
+              LeadingContentWrapper {
                 AnimatedIcon(
                   resId = R.drawable.ic_rounded_history_anim,
                   trigger = changelogIconTrigger,
@@ -419,7 +418,7 @@ fun AboutContent(
               Text(stringResource(R.string.about_developer))
             },
             leadingContent = {
-              ItemLeadingIcon {
+              LeadingContentWrapper {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_person),
                   contentDescription = null
@@ -437,7 +436,7 @@ fun AboutContent(
               Text(stringResource(R.string.about_vending_description))
             },
             leadingContent = {
-              ItemLeadingIcon {
+              LeadingContentWrapper {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_shop),
                   contentDescription = null
@@ -468,7 +467,7 @@ fun AboutContent(
                 Text(keyDescription)
               },
               leadingContent = {
-                ItemLeadingIcon {
+                LeadingContentWrapper {
                   Icon(
                     painter = painterResource(R.drawable.ic_rounded_key),
                     contentDescription = null
@@ -493,7 +492,7 @@ fun AboutContent(
               Text(stringResource(R.string.about_github_description))
             },
             leadingContent = {
-              ItemLeadingIcon {
+              LeadingContentWrapper {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_code),
                   contentDescription = null
@@ -511,7 +510,7 @@ fun AboutContent(
               Text(stringResource(R.string.about_translation_description))
             },
             leadingContent = {
-              ItemLeadingIcon {
+              LeadingContentWrapper {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_translate),
                   contentDescription = null
@@ -529,7 +528,7 @@ fun AboutContent(
               Text(stringResource(R.string.about_privacy_description))
             },
             leadingContent = {
-              ItemLeadingIcon {
+              LeadingContentWrapper {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_policy),
                   contentDescription = null
@@ -566,7 +565,7 @@ fun AboutContent(
               Text(stringResource(R.string.license_author_google))
             },
             leadingContent = {
-              ItemLeadingIcon {
+              LeadingContentWrapper {
                 AnimatedIcon(
                   resId = R.drawable.ic_rounded_copyright_anim,
                   trigger = copyrightFontIconTrigger,
@@ -588,7 +587,7 @@ fun AboutContent(
               Text(stringResource(R.string.license_author_google))
             },
             leadingContent = {
-              ItemLeadingIcon {
+              LeadingContentWrapper {
                 AnimatedIcon(
                   resId = R.drawable.ic_rounded_copyright_anim,
                   trigger = copyrightIconsIconTrigger,
@@ -601,18 +600,6 @@ fun AboutContent(
         }
       }
     }
-  }
-}
-
-@Composable
-private fun ItemLeadingIcon(content: @Composable () -> Unit) {
-  val dimens = LocalDimens.current
-  Box(
-    modifier = Modifier.padding(
-      vertical = dimens.segmentedListItemLeadingContentPaddingVertical
-    )
-  ) {
-    content()
   }
 }
 

@@ -60,6 +60,7 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
+import androidx.compose.material3.rememberSliderState
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -104,7 +105,7 @@ import xyz.zedler.patrick.tack.ui.dialog.LanguageDialog
 import xyz.zedler.patrick.tack.ui.dialog.ResetDialog
 import xyz.zedler.patrick.tack.ui.dialog.SoundDialog
 import xyz.zedler.patrick.tack.ui.dialog.UnlockDialog
-import xyz.zedler.patrick.tack.ui.navigation.Route
+import xyz.zedler.patrick.tack.ui.navigation.MainRoute
 import xyz.zedler.patrick.tack.ui.theme.LocalDimens
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.util.LocalHaptic
@@ -223,10 +224,10 @@ fun SettingsScreen(viewModel: MainViewModel) {
     onCheckedChange = { haptic.click() },
     onValueChange = { haptic.tick() },
     onBackClick = { viewModel.popBackstack() },
-    onAboutClick = { viewModel.navigateTo(Route.About) },
+    onAboutClick = { viewModel.navigateTo(MainRoute.About) },
     onHelpClick = { showHelpDialog = true },
     onFeedbackClick = { showFeedbackDialog = true },
-    onLogcatClick = { viewModel.navigateTo(Route.Log) },
+    onLogcatClick = { viewModel.navigateTo(MainRoute.Log) },
     onLanguageClick = { showLanguageDialog = true },
     onVibrationIntensityChanged = {
       haptic.intensity = it
@@ -554,6 +555,11 @@ fun SettingsContent(
 
                 Spacer(modifier = Modifier.height(4.dp))
 
+                val sliderState = rememberSliderState(
+                  value = settings.colorHue,
+                  steps = 20,
+                  trackRange = 0f..360f
+                )
                 val interactionSource = remember { MutableInteractionSource() }
                 val hueColors = remember {
                   (0..360 step 2).map {
@@ -567,10 +573,8 @@ fun SettingsContent(
                 Box {
                   if (settings.color == AppColor.STATIC) {
                     Slider(
-                      value = settings.colorHue,
+                      state = sliderState,
                       onValueChange = { },
-                      valueRange = 0f..360f,
-                      steps = 20,
                       interactionSource = interactionSource,
                       track = { sliderState ->
                         SliderDefaults.Track(
@@ -594,15 +598,14 @@ fun SettingsContent(
 
                   Slider(
                     enabled = settings.color == AppColor.STATIC,
-                    value = settings.colorHue,
+                    state = sliderState,
                     onValueChange = {
                       if (it != settings.colorHue) {
+                        sliderState.value = it
                         onValueChange()
                         onUpdateSettings(settings.copy(colorHue = it))
                       }
                     },
-                    valueRange = 0f..360f,
-                    steps = 20,
                     interactionSource = interactionSource,
                     track = { sliderState ->
                       SliderDefaults.Track(

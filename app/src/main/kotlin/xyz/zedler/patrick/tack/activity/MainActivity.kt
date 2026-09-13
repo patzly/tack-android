@@ -61,7 +61,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import xyz.zedler.patrick.tack.TackApplication
 import xyz.zedler.patrick.tack.service.MetronomeService
-import xyz.zedler.patrick.tack.ui.navigation.Route
+import xyz.zedler.patrick.tack.ui.navigation.MainRoute
 import xyz.zedler.patrick.tack.ui.screen.AboutScreen
 import xyz.zedler.patrick.tack.ui.screen.LogScreen
 import xyz.zedler.patrick.tack.ui.screen.MainScreen
@@ -172,7 +172,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
             val scaleSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
             val fadeSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
 
-            val listDetailSceneStrategy = rememberListDetailSceneStrategy<Route>()
+            val listDetailSceneStrategy = rememberListDetailSceneStrategy<MainRoute>()
 
             NavDisplay(
               backStack = backstack.toList(),
@@ -180,30 +180,30 @@ class MainActivity : ComponentActivity(), ServiceConnection {
               sceneStrategies = listOf(listDetailSceneStrategy),
               entryProvider = { route ->
                 when (route) {
-                  is Route.Main -> NavEntry(key = route) {
+                  is MainRoute.Main -> NavEntry(key = route) {
                     MainScreen(
                       viewModel = viewModel,
                       windowSizeClass = windowSizeClass
                     )
                   }
 
-                  is Route.Songs -> NavEntry(
+                  is MainRoute.Songs -> NavEntry(
                     key = route,
                     metadata = ListDetailSceneStrategy.listPane()
                   ) {
                     SongsScreen(windowSizeClass.widthSizeClass)
                   }
 
-                  is Route.Song -> NavEntry(
+                  is MainRoute.Song -> NavEntry(
                     key = route,
                     metadata = ListDetailSceneStrategy.detailPane()
                   ) {
                     SongScreen(route.songId, windowSizeClass.widthSizeClass)
                   }
 
-                  is Route.Settings -> NavEntry(key = route) { SettingsScreen(viewModel) }
-                  is Route.About -> NavEntry(key = route) { AboutScreen(viewModel) }
-                  is Route.Log -> NavEntry(key = route) { LogScreen(viewModel) }
+                  is MainRoute.Settings -> NavEntry(key = route) { SettingsScreen(viewModel) }
+                  is MainRoute.About -> NavEntry(key = route) { AboutScreen(viewModel) }
+                  is MainRoute.Log -> NavEntry(key = route) { LogScreen(viewModel) }
                 }
               },
               transitionSpec = {

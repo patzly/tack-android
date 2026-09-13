@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.ui.dialog
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -44,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import xyz.zedler.patrick.tack.R
 import xyz.zedler.patrick.tack.core.model.Language
+import xyz.zedler.patrick.tack.ui.component.core.LeadingContentWrapper
 import xyz.zedler.patrick.tack.ui.component.core.ScrollableAlertDialog
 import xyz.zedler.patrick.tack.ui.component.core.ScrollableAlertDialogContent
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
@@ -55,16 +57,20 @@ import xyz.zedler.patrick.tack.util.LocaleUtil
 fun LanguageDialog(
   currentLanguageCode: String?,
   onLanguageSelected: (String?) -> Unit,
-  onDismissRequest: () -> Unit
+  onDismissRequest: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
   val context = LocalContext.current
   val haptic = LocalHaptic.current
 
-  val languages = remember { LocaleUtil.getLanguages(context) }
+  val languages = remember(context) { LocaleUtil.getLanguages(context) }
 
   val appTranslate = stringResource(R.string.app_translate)
 
-  ScrollableAlertDialog(onDismissRequest = onDismissRequest) {
+  ScrollableAlertDialog(
+    onDismissRequest = onDismissRequest,
+    modifier = modifier,
+  ) {
     LanguageDialogContent(
       languages = languages,
       currentLanguageCode = currentLanguageCode,
@@ -75,12 +81,14 @@ fun LanguageDialog(
       },
       onMoreClick = {
         haptic.click()
-        context.startActivity(Intent(Intent.ACTION_VIEW, appTranslate.toUri()))
+        try {
+          context.startActivity(Intent(Intent.ACTION_VIEW, appTranslate.toUri()))
+        } catch (_: ActivityNotFoundException) {}
       },
       onCloseClick = {
         haptic.click()
         onDismissRequest()
-      }
+      },
     )
   }
 }
@@ -88,13 +96,15 @@ fun LanguageDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LanguageDialogContent(
+  modifier: Modifier = Modifier,
   languages: List<Language> = emptyList(),
   currentLanguageCode: String? = null,
   onLanguageSelected: (String?) -> Unit = {},
   onMoreClick: () -> Unit = {},
-  onCloseClick: () -> Unit = {}
+  onCloseClick: () -> Unit = {},
 ) {
   ScrollableAlertDialogContent(
+    modifier = modifier,
     title = {
       Text(stringResource(R.string.settings_language))
     },
@@ -104,7 +114,7 @@ private fun LanguageDialogContent(
     confirmButton = {
       TextButton(
         onClick = onCloseClick,
-        shapes = ButtonDefaults.shapes()
+        shapes = ButtonDefaults.shapes(),
       ) {
         Text(stringResource(R.string.action_close))
       }
@@ -112,28 +122,27 @@ private fun LanguageDialogContent(
     extraButton = {
       TextButton(
         onClick = onMoreClick,
-        shapes = ButtonDefaults.shapes()
+        shapes = ButtonDefaults.shapes(),
       ) {
         Text(stringResource(R.string.action_learn_more))
       }
     },
-    isScrollableControlledByContent = true
+    isScrollableControlledByContent = true,
   ) {
     val colors = ListItemDefaults.segmentedColors(
       containerColor = MaterialTheme.colorScheme.surfaceBright,
       selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-      selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+      selectedContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
     )
 
     LazyColumn(
       modifier = Modifier.fillMaxWidth(),
       contentPadding = PaddingValues(vertical = 16.dp),
-      verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
+      verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
     ) {
       val itemCount = languages.size + 1
 
-      // Follow System item
-      item {
+      item(key = "system") {
         SegmentedListItem(
           onClick = {
             onLanguageSelected(null)
@@ -141,24 +150,29 @@ private fun LanguageDialogContent(
           shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
           selected = currentLanguageCode == null,
           colors = colors,
+          modifier = Modifier.fillMaxWidth(),
           verticalAlignment = Alignment.CenterVertically,
           leadingContent = {
-            RadioButton(
-              selected = currentLanguageCode == null,
-              onClick = null
-            )
+            LeadingContentWrapper {
+              RadioButton(
+                selected = currentLanguageCode == null,
+                onClick = null,
+              )
+            }
           },
           content = {
             Text(stringResource(R.string.settings_language_system))
           },
           supportingContent = {
             Text(stringResource(R.string.settings_language_system_description))
-          }
+          },
         )
       }
 
-      // Language items
-      itemsIndexed(languages) { index, language ->
+      itemsIndexed(
+        items = languages,
+        key = { _, language -> language.code },
+      ) { index, language ->
         SegmentedListItem(
           onClick = {
             onLanguageSelected(language.code)
@@ -166,15 +180,18 @@ private fun LanguageDialogContent(
           shapes = ListItemDefaults.segmentedShapes(index = index + 1, count = itemCount),
           selected = currentLanguageCode == language.code,
           colors = colors,
+          modifier = Modifier.fillMaxWidth(),
           verticalAlignment = Alignment.CenterVertically,
           leadingContent = {
-            RadioButton(
-              selected = currentLanguageCode == language.code,
-              onClick = null
-            )
+            LeadingContentWrapper {
+              RadioButton(
+                selected = currentLanguageCode == language.code,
+                onClick = null,
+              )
+            }
           },
           content = { Text(language.name) },
-          supportingContent = { Text(language.translators) }
+          supportingContent = { Text(language.translators) },
         )
       }
     }
@@ -183,13 +200,13 @@ private fun LanguageDialogContent(
 
 @Preview
 @Composable
-fun LanguageDialogPreview() {
+private fun LanguageDialogPreview() {
   TackTheme {
     LanguageDialogContent(
       languages = listOf(
         Language(code = "de", translators = "Patrick Zedler", name = "Deutsch"),
-        Language(code = "en", translators = "Patrick Zedler", name = "English")
-      )
+        Language(code = "en", translators = "Patrick Zedler", name = "English"),
+      ),
     )
   }
 }

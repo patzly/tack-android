@@ -42,7 +42,7 @@ fun TooltipWrapper(
   modifier: Modifier = Modifier,
   positioning: TooltipAnchorPosition = TooltipAnchorPosition.Above,
   spacingBetweenTooltipAndAnchor: Dp = 4.dp,
-  content: @Composable () -> Unit
+  content: @Composable () -> Unit,
 ) {
   val haptic = LocalHaptic.current
   val baseState = rememberTooltipState()
@@ -63,7 +63,7 @@ fun TooltipWrapper(
   TooltipBox(
     positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
       positioning = positioning,
-      spacingBetweenTooltipAndAnchor = spacingBetweenTooltipAndAnchor
+      spacingBetweenTooltipAndAnchor = spacingBetweenTooltipAndAnchor,
     ),
     tooltip = {
       PlainTooltip {
@@ -72,6 +72,6 @@ fun TooltipWrapper(
     },
     state = state,
     modifier = modifier,
-    content = content
+    content = content,
   )
 }

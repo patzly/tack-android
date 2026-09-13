@@ -25,6 +25,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import xyz.zedler.patrick.tack.R
@@ -38,11 +39,15 @@ import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 fun GainWarningDialog(
   onPlay: () -> Unit,
   onDeactivate: () -> Unit,
-  onDismissRequest: () -> Unit
+  onDismissRequest: () -> Unit,
+  modifier: Modifier = Modifier,
 ) {
   val haptic = LocalHaptic.current
 
-  ScrollableAlertDialog(onDismissRequest = onDismissRequest) {
+  ScrollableAlertDialog(
+    onDismissRequest = onDismissRequest,
+    modifier = modifier,
+  ) {
     GainWarningContent(
       onPlayClick = {
         haptic.click()
@@ -53,7 +58,7 @@ fun GainWarningDialog(
         haptic.click()
         onDeactivate()
         onDismissRequest()
-      }
+      },
     )
   }
 }
@@ -61,10 +66,12 @@ fun GainWarningDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun GainWarningContent(
+  modifier: Modifier = Modifier,
   onPlayClick: () -> Unit = {},
-  onDeactivateClick: () -> Unit = {}
+  onDeactivateClick: () -> Unit = {},
 ) {
   ScrollableAlertDialogContent(
+    modifier = modifier,
     title = {
       Text(stringResource(R.string.msg_gain))
     },
@@ -74,8 +81,8 @@ private fun GainWarningContent(
         shapes = ButtonDefaults.shapes(),
         colors = ButtonDefaults.buttonColors(
           containerColor = MaterialTheme.colorScheme.error,
-          contentColor = MaterialTheme.colorScheme.onError
-        )
+          contentColor = MaterialTheme.colorScheme.onError,
+        ),
       ) {
         Text(stringResource(R.string.action_play))
       }
@@ -85,20 +92,24 @@ private fun GainWarningContent(
         onClick = onDeactivateClick,
         shapes = ButtonDefaults.shapes(),
         colors = ButtonDefaults.textButtonColors(
-          contentColor = MaterialTheme.colorScheme.error
-        )
+          contentColor = MaterialTheme.colorScheme.error,
+        ),
       ) {
         Text(stringResource(R.string.action_deactivate))
       }
-    }
+    },
   ) {
-    Text(stringResource(R.string.msg_gain_description))
+    Text(
+      text = stringResource(R.string.msg_gain_description),
+      style = MaterialTheme.typography.bodyMedium,
+      color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
   }
 }
 
 @Preview
 @Composable
-fun GainWarningDialogPreview() {
+private fun GainWarningDialogPreview() {
   TackTheme {
     GainWarningContent()
   }

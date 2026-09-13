@@ -51,7 +51,7 @@ fun <T> ConnectedButtonGroup(
   onCheckedChange: (T) -> Unit,
   modifier: Modifier = Modifier,
   enabled: Boolean = true,
-  label: @Composable (T) -> String = { it.toString() }
+  label: @Composable (T) -> String = { it.toString() },
 ) {
   if (options.isEmpty()) return
 
@@ -73,19 +73,17 @@ fun <T> ConnectedButtonGroup(
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
             contentColor = MaterialTheme.colorScheme.onSurfaceVariant
           ),
-          shapes = IconButtonDefaults.shapes()
+          shapes = IconButtonDefaults.shapes(),
         ) {
           Icon(
             painter = painterResource(R.drawable.ic_rounded_more_vert),
-            contentDescription = contentDescription
+            contentDescription = contentDescription,
           )
         }
       }
     },
-    horizontalArrangement = Arrangement.spacedBy(
-      ButtonGroupDefaults.ConnectedSpaceBetween
-    ),
-    modifier = modifier
+    horizontalArrangement = Arrangement.spacedBy(ButtonGroupDefaults.ConnectedSpaceBetween),
+    modifier = modifier,
   ) {
     options.fastForEachIndexed { index, option ->
       val isSelected = option == checked
@@ -112,7 +110,7 @@ fun <T> ConnectedButtonGroup(
             Text(
               text = label(option),
               maxLines = 1,
-              overflow = TextOverflow.Ellipsis
+              overflow = TextOverflow.Ellipsis,
             )
           }
         },
@@ -129,7 +127,7 @@ fun <T> ConnectedButtonGroup(
                 menuState.dismiss()
               }
             },
-            shapes = MenuDefaults.itemShape(index, options.size)
+            shapes = MenuDefaults.itemShape(index, options.size),
           )
         }
       )

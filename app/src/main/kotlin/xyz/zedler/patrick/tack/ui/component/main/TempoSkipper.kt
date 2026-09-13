@@ -47,8 +47,8 @@ import xyz.zedler.patrick.tack.ui.component.core.VerticalButtonGroup
 import xyz.zedler.patrick.tack.ui.theme.LocalDimens
 
 sealed interface TempoSkipperPosition {
-  object Start : TempoSkipperPosition
-  object End : TempoSkipperPosition
+  data object Start : TempoSkipperPosition
+  data object End : TempoSkipperPosition
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,7 +56,7 @@ sealed interface TempoSkipperPosition {
 fun TempoSkipper(
   settings: AppSettings,
   position: TempoSkipperPosition,
-  modifier: Modifier,
+  modifier: Modifier = Modifier,
   onTempoChangeDelta: (Int) -> Unit,
 ) {
   val dimens = LocalDimens.current
@@ -68,6 +68,7 @@ fun TempoSkipper(
   } else {
     position == TempoSkipperPosition.End
   }
+  val deltaMultiplier = if (isIncrease) 1 else -1
 
   val tooltipPositioning = if (position == TempoSkipperPosition.Start) {
     TooltipAnchorPosition.End
@@ -80,140 +81,150 @@ fun TempoSkipper(
     R.string.options_incremental_amount_decrease
   }
 
-  val interactionSources = remember { List(3) { MutableInteractionSource() } }
+  val isStart = position == TempoSkipperPosition.Start
+  val topIconRes = if (isStart) {
+    R.drawable.ic_rounded_navigate_before_anim
+  } else {
+    R.drawable.ic_rounded_navigate_after_anim
+  }
+  val centerIconRes = if (isStart) {
+    R.drawable.ic_rounded_keyboard_double_arrow_left_anim
+  } else {
+    R.drawable.ic_rounded_keyboard_double_arrow_right_anim
+  }
+  val bottomIconRes = if (isStart) {
+    R.drawable.ic_rounded_triple_arrow_left_anim
+  } else {
+    R.drawable.ic_rounded_triple_arrow_right_anim
+  }
+
+  val topInteractionSource = remember { MutableInteractionSource() }
+  val centerInteractionSource = remember { MutableInteractionSource() }
+  val bottomInteractionSource = remember { MutableInteractionSource() }
 
   VerticalButtonGroup(
     overflowIndicator = {},
     verticalArrangement = Arrangement.spacedBy(dimens.tempoSkipperButtonSpacing),
-    modifier = modifier
+    modifier = modifier,
   ) {
     customItem(
       buttonGroupContent = {
         var topIconTrigger by remember { mutableStateOf(false) }
+        val text = stringResource(stringRes, 1)
 
         FilledTonalIconButton(
           onClick = {
-            onTempoChangeDelta(if (isIncrease) 1 else -1)
+            onTempoChangeDelta(1 * deltaMultiplier)
             topIconTrigger = !topIconTrigger
           },
           shapes = IconButtonDefaults.shapes(),
-          interactionSource = interactionSources[0],
+          interactionSource = topInteractionSource,
           modifier = Modifier
             .minimumInteractiveComponentSize()
             .size(dimens.tempoSkipperButtonSize)
-            .animateHeight(interactionSources[0])
+            .animateHeight(topInteractionSource),
         ) {
           TooltipWrapper(
-            text = stringResource(stringRes, 1),
+            text = text,
             positioning = tooltipPositioning,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
           ) {
             Box(
               modifier = Modifier.fillMaxSize(),
-              contentAlignment = Alignment.Center
+              contentAlignment = Alignment.Center,
             ) {
               AnimatedIcon(
-                resId = if (position == TempoSkipperPosition.Start) {
-                  R.drawable.ic_rounded_navigate_before_anim
-                } else {
-                  R.drawable.ic_rounded_navigate_after_anim
-                },
+                resId = topIconRes,
                 trigger = topIconTrigger,
                 animated = !settings.reduceAnim,
-                contentDescription = stringResource(stringRes, 1),
-                modifier = Modifier.size(dimens.tempoSkipperIconSize)
+                contentDescription = text,
+                modifier = Modifier.size(dimens.tempoSkipperIconSize),
               )
             }
           }
         }
       },
-      menuContent = {}
+      menuContent = {},
     )
 
     customItem(
       buttonGroupContent = {
         var centerIconTrigger by remember { mutableStateOf(false) }
+        val text = stringResource(stringRes, 5)
 
         FilledTonalIconButton(
           onClick = {
-            onTempoChangeDelta(if (isIncrease) 5 else -5)
+            onTempoChangeDelta(5 * deltaMultiplier)
             centerIconTrigger = !centerIconTrigger
           },
           shapes = IconButtonDefaults.shapes(),
-          interactionSource = interactionSources[1],
+          interactionSource = centerInteractionSource,
           modifier = Modifier
             .minimumInteractiveComponentSize()
             .size(dimens.tempoSkipperButtonSize)
-            .animateHeight(interactionSources[1])
+            .animateHeight(centerInteractionSource),
         ) {
           TooltipWrapper(
-            text = stringResource(stringRes, 5),
+            text = text,
             positioning = tooltipPositioning,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
           ) {
             Box(
               modifier = Modifier.fillMaxSize(),
-              contentAlignment = Alignment.Center
+              contentAlignment = Alignment.Center,
             ) {
               AnimatedIcon(
-                resId = if (position == TempoSkipperPosition.Start) {
-                  R.drawable.ic_rounded_keyboard_double_arrow_left_anim
-                } else {
-                  R.drawable.ic_rounded_keyboard_double_arrow_right_anim
-                },
+                resId = centerIconRes,
                 trigger = centerIconTrigger,
                 animated = !settings.reduceAnim,
-                contentDescription = stringResource(stringRes, 5),
-                modifier = Modifier.size(dimens.tempoSkipperIconSize)
+                contentDescription = text,
+                modifier = Modifier.size(dimens.tempoSkipperIconSize),
               )
             }
           }
         }
       },
-      menuContent = {}
+      menuContent = {},
     )
 
     customItem(
       buttonGroupContent = {
         var bottomIconTrigger by remember { mutableStateOf(false) }
+        val text = stringResource(stringRes, 10)
 
         FilledTonalIconButton(
           onClick = {
-            onTempoChangeDelta(if (isIncrease) 10 else -10)
+            onTempoChangeDelta(10 * deltaMultiplier)
             bottomIconTrigger = !bottomIconTrigger
           },
           shapes = IconButtonDefaults.shapes(),
-          interactionSource = interactionSources[2],
+          interactionSource = bottomInteractionSource,
           modifier = Modifier
             .minimumInteractiveComponentSize()
             .size(dimens.tempoSkipperButtonSize)
-            .animateHeight(interactionSources[2])
+            .animateHeight(bottomInteractionSource),
         ) {
           TooltipWrapper(
-            text = stringResource(stringRes, 10),
+            text = text,
             positioning = tooltipPositioning,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
           ) {
             Box(
               modifier = Modifier.fillMaxSize(),
-              contentAlignment = Alignment.Center
+              contentAlignment = Alignment.Center,
             ) {
               AnimatedIcon(
-                resId = if (position == TempoSkipperPosition.Start) {
-                  R.drawable.ic_rounded_triple_arrow_left_anim
-                } else {
-                  R.drawable.ic_rounded_triple_arrow_right_anim
-                },
+                resId = bottomIconRes,
                 trigger = bottomIconTrigger,
                 animated = !settings.reduceAnim,
-                contentDescription = stringResource(stringRes, 10),
-                modifier = Modifier.size(dimens.tempoSkipperIconSize)
+                contentDescription = text,
+                modifier = Modifier.size(dimens.tempoSkipperIconSize),
               )
             }
           }
         }
       },
-      menuContent = {}
+      menuContent = {},
     )
   }
 }

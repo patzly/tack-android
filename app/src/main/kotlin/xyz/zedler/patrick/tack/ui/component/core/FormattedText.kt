@@ -60,7 +60,7 @@ fun FormattedText(
   text: String,
   modifier: Modifier = Modifier,
   isDialog: Boolean = false,
-  textColor: Color = MaterialTheme.colorScheme.onSurface
+  textColor: Color = MaterialTheme.colorScheme.onSurface,
 ) {
   if (text.isBlank()) return
 
@@ -82,7 +82,7 @@ fun FormattedText(
           TextBlock.Paragraph(
             annotatedText = parseAnnotatedText(p.substring(2).trimStart()),
             isMedium = true,
-            keepDistance = true
+            keepDistance = true,
           )
         }
 
@@ -98,7 +98,7 @@ fun FormattedText(
             annotatedText = parseAnnotatedText(headlineRaw),
             level = h0.length,
             useTNum = useTNum,
-            keepDistance = !isNextLink
+            keepDistance = !isNextLink,
           )
         }
 

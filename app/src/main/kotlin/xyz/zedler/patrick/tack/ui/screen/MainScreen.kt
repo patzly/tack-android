@@ -93,7 +93,7 @@ import xyz.zedler.patrick.tack.ui.dialog.HelpDialog
 import xyz.zedler.patrick.tack.ui.dialog.NotificationPermissionDialog
 import xyz.zedler.patrick.tack.ui.dialog.OptionsDialog
 import xyz.zedler.patrick.tack.ui.dialog.UnlockDialog
-import xyz.zedler.patrick.tack.ui.navigation.Route
+import xyz.zedler.patrick.tack.ui.navigation.MainRoute
 import xyz.zedler.patrick.tack.ui.theme.LocalDimens
 import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.theme.rememberTackDimens
@@ -222,11 +222,11 @@ fun MainScreen(
     },
     onSettingsClick = {
       haptic.click()
-      viewModel.navigateTo(Route.Settings)
+      viewModel.navigateTo(MainRoute.Settings)
     },
     onAboutClick = {
       haptic.click()
-      viewModel.navigateTo(Route.About)
+      viewModel.navigateTo(MainRoute.About)
     },
     onHelpClick = {
       haptic.click()
