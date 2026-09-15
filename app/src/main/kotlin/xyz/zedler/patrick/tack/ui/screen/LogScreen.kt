@@ -20,7 +20,6 @@
 package xyz.zedler.patrick.tack.ui.screen
 
 import android.content.ClipData
-import android.content.Intent
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -70,14 +69,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -92,13 +90,14 @@ import xyz.zedler.patrick.tack.ui.theme.TackTheme
 import xyz.zedler.patrick.tack.ui.util.LocalHaptic
 import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 import java.io.BufferedReader
-import java.io.IOException
 import java.io.InputStreamReader
 
 @Composable
-fun LogScreen(viewModel: MainViewModel) {
-  val context = LocalContext.current
-  val haptic = LocalHaptic.current
+fun LogScreen(
+  viewModel: MainViewModel,
+  modifier: Modifier = Modifier,
+) {
+  val uriHandler = LocalUriHandler.current
 
   val appVendingKey = stringResource(R.string.app_vending_key)
 
@@ -116,16 +115,18 @@ fun LogScreen(viewModel: MainViewModel) {
   suspend fun loadLogcat() {
     val log = withContext(Dispatchers.IO) {
       val logBuilder = StringBuilder()
+      var process: Process? = null
       try {
-        val process = Runtime.getRuntime().exec("logcat -d *:E -t 300")
+        process = Runtime.getRuntime().exec("logcat -d *:E -t 300")
         BufferedReader(InputStreamReader(process.inputStream)).use { reader ->
           var line: String?
           while (reader.readLine().also { line = it } != null) {
             logBuilder.append(line).append('\n')
           }
         }
-        process.destroy()
-      } catch (_: IOException) {
+      } catch (_: Exception) {
+      } finally {
+        process?.destroy()
       }
       logBuilder.toString()
     }
@@ -142,133 +143,135 @@ fun LogScreen(viewModel: MainViewModel) {
       isKeyInstalled = unlockState.isKeyInstalled,
       isPlayStoreInstalled = unlockState.isPlayStoreInstalled,
       onDismissRequest = { showFeedbackDialog = false },
-      onSupport = { showUnlockDialog = true }
+      onSupport = { showUnlockDialog = true },
     )
   }
 
   if (showUnlockDialog) {
     UnlockDialog(
       onOpen = {
-        context.startActivity(
-          Intent(Intent.ACTION_VIEW, appVendingKey.toUri())
-        )
+        try {
+          uriHandler.openUri(appVendingKey)
+        } catch (_: Exception) {}
       },
-      onDismissRequest = { showUnlockDialog = false }
+      onDismissRequest = { showUnlockDialog = false },
     )
   }
 
   LogContent(
     logText = logText,
     reduceAnim = settings.reduceAnim,
-    reloadTrigger = reloadTrigger,
+    reloadIconTrigger = reloadTrigger,
     onBackClick = {
-      haptic.click()
       viewModel.popBackstack()
     },
     onReloadClick = {
-      haptic.click()
       reloadTrigger = !reloadTrigger
     },
     onCopyClick = {
-      haptic.click()
       scope.launch {
         clipboard.setClipEntry(ClipEntry(ClipData.newPlainText("logcat", logText)))
       }
     },
     onFeedbackClick = {
-      haptic.click()
       showFeedbackDialog = true
-    }
+    },
+    modifier = modifier,
   )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LogContent(
-  logText: String = "java.lang.IllegalStateException",
-  reduceAnim: Boolean = false,
-  reloadTrigger: Boolean = false,
+  logText: String,
+  reduceAnim: Boolean,
+  reloadIconTrigger: Boolean,
+  modifier: Modifier = Modifier,
   onBackClick: () -> Unit = {},
   onReloadClick: () -> Unit = {},
   onCopyClick: () -> Unit = {},
-  onFeedbackClick: () -> Unit = {}
+  onFeedbackClick: () -> Unit = {},
 ) {
+  val haptic = LocalHaptic.current
+
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
   Scaffold(
-    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     topBar = {
       LargeTopAppBar(
         title = {
           Text(
-            stringResource(R.string.title_logcat),
+            text = stringResource(R.string.title_logcat),
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
           )
         },
         navigationIcon = {
+          val backText = stringResource(R.string.action_back)
           TooltipBox(
             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              TooltipAnchorPosition.Below
+              positioning = TooltipAnchorPosition.Below,
             ),
             tooltip = {
               PlainTooltip {
-                Text(stringResource(R.string.action_back))
+                Text(backText)
               }
             },
             state = rememberTooltipState(),
           ) {
             FilledIconButton(
-              onClick = onBackClick,
+              onClick = haptic.withClick(onBackClick),
               colors = IconButtonDefaults.iconButtonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
               ),
-              shapes = IconButtonDefaults.shapes()
+              shapes = IconButtonDefaults.shapes(),
             ) {
               Icon(
                 painter = painterResource(R.drawable.ic_rounded_arrow_back),
-                contentDescription = stringResource(R.string.action_back),
-                tint = MaterialTheme.colorScheme.onSurface
+                contentDescription = backText,
+                tint = MaterialTheme.colorScheme.onSurface,
               )
             }
           }
         },
         actions = {
+          val reloadText = stringResource(R.string.action_reload)
           TooltipBox(
             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              TooltipAnchorPosition.Below
+              positioning = TooltipAnchorPosition.Below,
             ),
             tooltip = {
               PlainTooltip {
-                Text(stringResource(R.string.action_reload))
+                Text(reloadText)
               }
             },
             state = rememberTooltipState(),
           ) {
             FilledIconButton(
-              onClick = onReloadClick,
+              onClick = haptic.withClick(onReloadClick),
               colors = IconButtonDefaults.iconButtonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
               ),
-              shapes = IconButtonDefaults.shapes()
+              shapes = IconButtonDefaults.shapes(),
             ) {
               AnimatedIcon(
                 resId = R.drawable.ic_rounded_refresh_anim,
-                trigger = reloadTrigger,
+                trigger = reloadIconTrigger,
                 animated = !reduceAnim,
-                contentDescription = stringResource(R.string.action_reload),
+                contentDescription = reloadText,
               )
             }
           }
         },
         colors = TopAppBarDefaults.topAppBarColors(
           containerColor = MaterialTheme.colorScheme.surfaceContainer,
-          scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+          scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
         scrollBehavior = scrollBehavior,
       )
     },
-    containerColor = MaterialTheme.colorScheme.surfaceContainer
+    containerColor = MaterialTheme.colorScheme.surfaceContainer,
   ) { padding ->
     InsetLazyColumn(
       modifier = Modifier
@@ -276,26 +279,30 @@ private fun LogContent(
         .consumeWindowInsets(padding),
       contentPadding = PaddingValues(
         top = padding.calculateTopPadding() + 16.dp,
-        bottom = padding.calculateBottomPadding() + 16.dp
+        bottom = padding.calculateBottomPadding() + 16.dp,
       ),
-      verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
+      verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
     ) {
       insetItem {
         Surface(
+          modifier = Modifier.fillMaxWidth(),
           color = MaterialTheme.colorScheme.surfaceBright,
-          shape = ListItemDefaults.segmentedShapes(index = 0, count = 2).shape
+          shape = ListItemDefaults.segmentedShapes(index = 0, count = 2).shape,
         ) {
           Column(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = Modifier
+              .fillMaxWidth()
+              .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
           ) {
             Text(
               text = stringResource(R.string.msg_report_crash),
               style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.onSurfaceVariant
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
 
-            val interactionSources = remember { List(2) { MutableInteractionSource() } }
+            val copyInteractionSource = remember { MutableInteractionSource() }
+            val feedbackInteractionSource = remember { MutableInteractionSource() }
 
             ButtonGroup(
               overflowIndicator = { menuState ->
@@ -303,7 +310,7 @@ private fun LogContent(
 
                 TooltipBox(
                   positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                    TooltipAnchorPosition.Above
+                    positioning = TooltipAnchorPosition.Above,
                   ),
                   tooltip = {
                     PlainTooltip {
@@ -320,22 +327,21 @@ private fun LogContent(
                         menuState.show()
                       }
                     },
-                    modifier =
-                      Modifier
-                        .minimumInteractiveComponentSize()
-                        .size(IconButtonDefaults.smallContainerSize()),
+                    modifier = Modifier
+                      .minimumInteractiveComponentSize()
+                      .size(IconButtonDefaults.smallContainerSize()),
                     colors = IconButtonDefaults.filledTonalIconButtonColors(),
-                    shapes = IconButtonDefaults.shapes()
+                    shapes = IconButtonDefaults.shapes(),
                   ) {
                     Icon(
                       painter = painterResource(R.drawable.ic_rounded_more_vert),
-                      contentDescription = contentDescription
+                      contentDescription = contentDescription,
                     )
                   }
                 }
               },
               horizontalArrangement = Arrangement.spacedBy(12.dp),
-              modifier = Modifier.align(Alignment.End)
+              modifier = Modifier.align(Alignment.End),
             ) {
               customItem(
                 buttonGroupContent = {
@@ -343,14 +349,14 @@ private fun LogContent(
                   val layoutDirection = LocalLayoutDirection.current
 
                   FilledTonalButton(
-                    onClick = onCopyClick,
+                    onClick = haptic.withClick(onCopyClick),
                     shapes = ButtonDefaults.shapes(),
                     contentPadding = PaddingValues(0.dp),
-                    interactionSource = interactionSources[0],
+                    interactionSource = copyInteractionSource,
                     modifier = Modifier.animateWidth(
-                      interactionSource = interactionSources[0],
-                      compressionLimit = contentPadding.calculateStartPadding(layoutDirection)
-                    )
+                      interactionSource = copyInteractionSource,
+                      compressionLimit = contentPadding.calculateStartPadding(layoutDirection),
+                    ),
                   ) {
                     Text(
                       text = stringResource(R.string.action_copy_to_clipboard),
@@ -366,9 +372,9 @@ private fun LogContent(
                 menuContent = {
                   DropdownMenuItem(
                     text = { Text(stringResource(R.string.action_copy_to_clipboard)) },
-                    onClick = onCopyClick
+                    onClick = haptic.withClick(onCopyClick),
                   )
-                }
+                },
               )
 
               customItem(
@@ -377,14 +383,14 @@ private fun LogContent(
                   val layoutDirection = LocalLayoutDirection.current
 
                   Button(
-                    onClick = onFeedbackClick,
+                    onClick = haptic.withClick(onFeedbackClick),
                     shapes = ButtonDefaults.shapes(),
                     contentPadding = PaddingValues(0.dp),
-                    interactionSource = interactionSources[1],
+                    interactionSource = feedbackInteractionSource,
                     modifier = Modifier.animateWidth(
-                      interactionSource = interactionSources[1],
-                      compressionLimit = contentPadding.calculateEndPadding(layoutDirection)
-                    )
+                      interactionSource = feedbackInteractionSource,
+                      compressionLimit = contentPadding.calculateEndPadding(layoutDirection),
+                    ),
                   ) {
                     Text(
                       text = stringResource(R.string.action_send_feedback),
@@ -393,16 +399,16 @@ private fun LogContent(
                       overflow = TextOverflow.Visible,
                       modifier = Modifier
                         .wrapContentWidth(unbounded = true)
-                        .padding(contentPadding)
+                        .padding(contentPadding),
                     )
                   }
                 },
                 menuContent = {
                   DropdownMenuItem(
-                    text = { Text(stringResource(R.string.action_copy_to_clipboard)) },
-                    onClick = onFeedbackClick
+                    text = { Text(stringResource(R.string.action_send_feedback)) },
+                    onClick = haptic.withClick(onFeedbackClick),
                   )
-                }
+                },
               )
             }
           }
@@ -411,19 +417,20 @@ private fun LogContent(
 
       insetItem {
         Surface(
+          modifier = Modifier.fillMaxWidth(),
           color = MaterialTheme.colorScheme.surfaceBright,
-          shape = ListItemDefaults.segmentedShapes(index = 1, count = 2).shape
+          shape = ListItemDefaults.segmentedShapes(index = 1, count = 2).shape,
         ) {
           Box(
             modifier = Modifier
               .fillMaxWidth()
               .horizontalScroll(rememberScrollState())
-              .padding(16.dp)
+              .padding(16.dp),
           ) {
             Text(
               text = logText,
               style = MaterialTheme.typography.bodySmall,
-              color = MaterialTheme.colorScheme.onSurface
+              color = MaterialTheme.colorScheme.onSurface,
             )
           }
         }
@@ -434,8 +441,12 @@ private fun LogContent(
 
 @Preview(showBackground = true)
 @Composable
-fun LogScreenPreview() {
+private fun LogScreenPreview() {
   TackTheme {
-    LogContent()
+    LogContent(
+      logText = "java.lang.IllegalStateException",
+      reduceAnim = false,
+      reloadIconTrigger = false,
+    )
   }
 }

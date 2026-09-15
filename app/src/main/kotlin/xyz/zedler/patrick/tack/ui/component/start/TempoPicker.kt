@@ -17,7 +17,7 @@
  * Copyright (c) 2020-2026 by Patrick Zedler
  */
 
-package xyz.zedler.patrick.tack.ui.component.main
+package xyz.zedler.patrick.tack.ui.component.start
 
 import android.graphics.Matrix
 import android.graphics.RectF

@@ -20,6 +20,7 @@
 package xyz.zedler.patrick.tack.ui.screen
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -59,6 +60,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -81,11 +83,11 @@ import xyz.zedler.patrick.tack.core.model.BeatMode
 import xyz.zedler.patrick.tack.core.model.MetronomeState
 import xyz.zedler.patrick.tack.core.model.Tick
 import xyz.zedler.patrick.tack.core.model.UnlockState
-import xyz.zedler.patrick.tack.ui.component.main.AnimatedLogo
-import xyz.zedler.patrick.tack.ui.component.main.BottomControls
-import xyz.zedler.patrick.tack.ui.component.main.TempoPicker
-import xyz.zedler.patrick.tack.ui.component.main.TempoSkipper
-import xyz.zedler.patrick.tack.ui.component.main.TempoSkipperPosition
+import xyz.zedler.patrick.tack.ui.component.start.AnimatedLogo
+import xyz.zedler.patrick.tack.ui.component.start.BottomControls
+import xyz.zedler.patrick.tack.ui.component.start.TempoPicker
+import xyz.zedler.patrick.tack.ui.component.start.TempoSkipper
+import xyz.zedler.patrick.tack.ui.component.start.TempoSkipperPosition
 import xyz.zedler.patrick.tack.ui.dialog.BeatModeDialog
 import xyz.zedler.patrick.tack.ui.dialog.FeedbackDialog
 import xyz.zedler.patrick.tack.ui.dialog.GainWarningDialog
@@ -106,7 +108,8 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 @Composable
 fun MainScreen(
   viewModel: MainViewModel,
-  windowSizeClass: WindowSizeClass
+  windowSizeClass: WindowSizeClass,
+  modifier: Modifier = Modifier,
 ) {
   val context = LocalContext.current
   val haptic = LocalHaptic.current
@@ -119,7 +122,7 @@ fun MainScreen(
   val dialogState by viewModel.dialogState.collectAsStateWithLifecycle()
 
   val permissionLauncher = rememberLauncherForActivityResult(
-    ActivityResultContracts.RequestPermission()
+    ActivityResultContracts.RequestPermission(),
   ) { isGranted ->
     if (isGranted || settings.notificationPermissionDenied) {
       viewModel.startMetronome()
@@ -128,20 +131,23 @@ fun MainScreen(
     }
   }
 
-  var showUnlockDialog by remember { mutableStateOf(false) }
-  var showHelpDialog by remember { mutableStateOf(false) }
-  var showFeedbackDialog by remember { mutableStateOf(false) }
-  var showOptionsDialog by remember { mutableStateOf(false) }
-  var showBeatModeDialog by remember { mutableStateOf(false) }
+  var showUnlockDialog by rememberSaveable { mutableStateOf(false) }
+  var showHelpDialog by rememberSaveable { mutableStateOf(false) }
+  var showFeedbackDialog by rememberSaveable { mutableStateOf(false) }
+  var showOptionsDialog by rememberSaveable { mutableStateOf(false) }
+  var showBeatModeDialog by rememberSaveable { mutableStateOf(false) }
 
   if (showUnlockDialog) {
     UnlockDialog(
       onOpen = {
-        context.startActivity(
-          Intent(Intent.ACTION_VIEW, appVendingKey.toUri())
-        )
+        try {
+          context.startActivity(
+            Intent(Intent.ACTION_VIEW, appVendingKey.toUri()),
+          )
+        } catch (_: ActivityNotFoundException) {
+        }
       },
-      onDismissRequest = { showUnlockDialog = false }
+      onDismissRequest = { showUnlockDialog = false },
     )
   }
 
@@ -155,7 +161,7 @@ fun MainScreen(
       isKeyInstalled = unlockState.isKeyInstalled,
       isPlayStoreInstalled = unlockState.isPlayStoreInstalled,
       onDismissRequest = { showFeedbackDialog = false },
-      onSupport = { showUnlockDialog = true }
+      onSupport = { showUnlockDialog = true },
     )
   }
 
@@ -169,7 +175,7 @@ fun MainScreen(
       onBeatModeSelected = {
         viewModel.updateSettings(settings.copy(beatMode = it))
       },
-      onDismissRequest = { showBeatModeDialog = false }
+      onDismissRequest = { showBeatModeDialog = false },
     )
   }
 
@@ -178,17 +184,20 @@ fun MainScreen(
       GainWarningDialog(
         onPlay = {
           viewModel.onConfirmGainWarning(
-            NotificationUtil.hasPermission(context), deactivateGain = false
+            hasPermission = NotificationUtil.hasPermission(context),
+            deactivateGain = false,
           )
         },
         onDeactivate = {
           viewModel.onConfirmGainWarning(
-            NotificationUtil.hasPermission(context), deactivateGain = true
+            hasPermission = NotificationUtil.hasPermission(context),
+            deactivateGain = true,
           )
         },
-        onDismissRequest = { viewModel.onDismissDialog() }
+        onDismissRequest = { viewModel.onDismissDialog() },
       )
     }
+
     is MainViewModel.Dialog.NotificationPermission -> {
       NotificationPermissionDialog(
         onNext = {
@@ -201,18 +210,19 @@ fun MainScreen(
         },
         onDismissRequest = {
           viewModel.onDismissDialog()
-        }
+        },
       )
     }
+
     null -> {}
   }
 
   MainContent(
     settings = settings,
+    unlockState = unlockState,
     metronomeState = metronomeState,
     windowSizeClass = windowSizeClass,
     tickEvent = viewModel.tickEvent,
-    // app bar menu
     onSupportClick = {
       haptic.click()
       showUnlockDialog = true
@@ -236,21 +246,18 @@ fun MainScreen(
       haptic.click()
       showFeedbackDialog = true
     },
-    // Tempo skipped
     onTempoSkippedDelta = { delta ->
       val didChange = viewModel.changeTempo(delta)
       if (didChange) {
         haptic.click()
       }
     },
-    // Tempo picker
     onTempoPickedDelta = { delta ->
       val didChange = viewModel.changeTempo(delta)
       if (didChange) {
         haptic.segmentTick()
       }
     },
-    // Bottom controls
     onOptionsClick = {
       haptic.click()
       showOptionsDialog = true
@@ -271,38 +278,34 @@ fun MainScreen(
     onBeatModeClick = {
       haptic.click()
       showBeatModeDialog = true
-    }
+    },
+    modifier = modifier,
   )
 }
 
 @OptIn(
   ExperimentalMaterial3WindowSizeClassApi::class,
-  ExperimentalMaterial3Api::class
+  ExperimentalMaterial3Api::class,
 )
 @Composable
 fun MainContent(
-  settings: AppSettings = AppSettings(),
-  unlockState: UnlockState = UnlockState(),
-  metronomeState: MetronomeState = MetronomeState(),
-  windowSizeClass: WindowSizeClass = WindowSizeClass.calculateFromSize(
-    DpSize(412.dp, 924.dp)
-  ),
-  tickEvent: Flow<Tick> = flowOf(),
-  // App bar menu
+  settings: AppSettings,
+  unlockState: UnlockState,
+  metronomeState: MetronomeState,
+  windowSizeClass: WindowSizeClass,
+  tickEvent: Flow<Tick>,
+  modifier: Modifier = Modifier,
   onSupportClick: () -> Unit = {},
   onMoreClick: () -> Unit = {},
   onSettingsClick: () -> Unit = {},
   onAboutClick: () -> Unit = {},
   onHelpClick: () -> Unit = {},
   onFeedbackClick: () -> Unit = {},
-  // Tempo skipper
   onTempoSkippedDelta: (delta: Int) -> Unit = {},
-  // Tempo picker
   onTempoPickedDelta: (delta: Int) -> Unit = {},
-  // Bottom controls
   onOptionsClick: () -> Unit = {},
   onPlayStopChange: (Boolean) -> Unit = {},
-  onBeatModeClick: () -> Unit = {}
+  onBeatModeClick: () -> Unit = {},
 ) {
   val dimens = rememberTackDimens(windowSizeClass)
 
@@ -329,37 +332,38 @@ fun MainContent(
   val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
   Scaffold(
-    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     topBar = {
       CenterAlignedTopAppBar(
         title = {
           Text(
-            stringResource(R.string.app_name),
+            text = stringResource(R.string.app_name),
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
           )
         },
         navigationIcon = {
           AnimatedLogo(
             tempo = metronomeState.tempo,
             tickEvent = tickEvent,
-            modifier = Modifier.size(32.dp)
+            modifier = Modifier.size(32.dp),
           )
         },
         actions = {
           var showMenu by remember { mutableStateOf(false) }
 
-          val showSupportButton = unlockState.checkUnlockKey
-              && unlockState.isPlayStoreInstalled && !unlockState.isKeyInstalled
+          val showSupportButton = unlockState.checkUnlockKey &&
+              unlockState.isPlayStoreInstalled && !unlockState.isKeyInstalled
 
           if (showSupportButton) {
+            val supportText = stringResource(R.string.action_support)
             TooltipBox(
               positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-                TooltipAnchorPosition.Below
+                positioning = TooltipAnchorPosition.Below,
               ),
               tooltip = {
                 PlainTooltip {
-                  Text(stringResource(R.string.action_support))
+                  Text(supportText)
                 }
               },
               state = rememberTooltipState(),
@@ -370,34 +374,35 @@ fun MainContent(
                   .minimumInteractiveComponentSize()
                   .size(
                     IconButtonDefaults.smallContainerSize(
-                      IconButtonDefaults.IconButtonWidthOption.Wide
-                    )
+                      IconButtonDefaults.IconButtonWidthOption.Wide,
+                    ),
                   ),
                 colors = IconButtonDefaults.iconButtonColors(
                   containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                  contentColor = MaterialTheme.colorScheme.onSurface
+                  contentColor = MaterialTheme.colorScheme.onSurface,
                 ),
-                shapes = IconButtonDefaults.shapes()
+                shapes = IconButtonDefaults.shapes(),
               ) {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_volunteer_activism),
-                  contentDescription = stringResource(R.string.action_support)
+                  contentDescription = supportText,
                 )
               }
             }
           }
 
+          val moreText = stringResource(R.string.action_more)
           TooltipBox(
             positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-              TooltipAnchorPosition.Below
+              positioning = TooltipAnchorPosition.Below,
             ),
             tooltip = {
               PlainTooltip {
-                Text(stringResource(R.string.action_more))
+                Text(moreText)
               }
             },
             state = rememberTooltipState(),
-            modifier = Modifier.padding(start = 4.dp)
+            modifier = Modifier.padding(start = 4.dp),
           ) {
             FilledIconButton(
               onClick = {
@@ -408,18 +413,18 @@ fun MainContent(
                 .minimumInteractiveComponentSize()
                 .size(
                   IconButtonDefaults.smallContainerSize(
-                    IconButtonDefaults.IconButtonWidthOption.Narrow
-                  )
+                    IconButtonDefaults.IconButtonWidthOption.Narrow,
+                  ),
                 ),
               colors = IconButtonDefaults.iconButtonColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                contentColor = MaterialTheme.colorScheme.onSurface
+                contentColor = MaterialTheme.colorScheme.onSurface,
               ),
-              shapes = IconButtonDefaults.shapes()
+              shapes = IconButtonDefaults.shapes(),
             ) {
               Icon(
                 painter = painterResource(R.drawable.ic_rounded_more_vert),
-                contentDescription = stringResource(R.string.action_more)
+                contentDescription = moreText,
               )
             }
           }
@@ -428,9 +433,9 @@ fun MainContent(
             expanded = showMenu,
             onDismissRequest = { showMenu = false },
             popupPositionProvider = MenuDefaults.rememberDropdownMenuPopupPositionProvider(
-              MenuAnchorPosition.Below,
-              offset = DpOffset(x = (-8).dp, 0.dp)
-            )
+              dropdownMenuAnchorPosition = MenuAnchorPosition.Below,
+              offset = DpOffset(x = (-8).dp, y = 0.dp),
+            ),
           ) {
             DropdownMenuGroup(
               shapes = MenuDefaults.groupShape(0, 1),
@@ -443,7 +448,7 @@ fun MainContent(
                   onSettingsClick()
                   showMenu = false
                 },
-                shape = MenuDefaults.itemShape(0, itemCount).shape
+                shape = MenuDefaults.itemShape(0, itemCount).shape,
               )
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.title_about)) },
@@ -451,7 +456,7 @@ fun MainContent(
                   onAboutClick()
                   showMenu = false
                 },
-                shape = MenuDefaults.itemShape(1, itemCount).shape
+                shape = MenuDefaults.itemShape(1, itemCount).shape,
               )
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.title_help)) },
@@ -459,7 +464,7 @@ fun MainContent(
                   onHelpClick()
                   showMenu = false
                 },
-                shape = MenuDefaults.itemShape(2, itemCount).shape
+                shape = MenuDefaults.itemShape(2, itemCount).shape,
               )
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.action_send_feedback)) },
@@ -467,15 +472,15 @@ fun MainContent(
                   onFeedbackClick()
                   showMenu = false
                 },
-                shape = MenuDefaults.itemShape(3, itemCount).shape
+                shape = MenuDefaults.itemShape(3, itemCount).shape,
               )
             }
           }
         },
         contentPadding = PaddingValues(start = 4.dp),
-        scrollBehavior = scrollBehavior
+        scrollBehavior = scrollBehavior,
       )
-    }
+    },
   ) { padding ->
     Box(
       modifier = Modifier
@@ -489,14 +494,11 @@ fun MainContent(
             CompactPortraitContent(
               settings = settings,
               metronomeState = metronomeState,
-              // Tempo skipper
               onTempoSkippedDelta = onTempoSkippedDelta,
-              // Tempo picker
               onTempoPickedDelta = onTempoPickedDelta,
-              // Bottom controls
               onOptionsClick = onOptionsClick,
               onPlayStopChange = onPlayStopChange,
-              onBeatModeClick = onBeatModeClick
+              onBeatModeClick = onBeatModeClick,
             )
           }
 
@@ -521,18 +523,15 @@ fun MainContent(
 private fun CompactPortraitContent(
   settings: AppSettings,
   metronomeState: MetronomeState,
-  // Tempo skipper
-  onTempoSkippedDelta: (Int) -> Unit,
-  // Tempo picker
-  onTempoPickedDelta: (Int) -> Unit,
-  // Bottom controls
-  onOptionsClick: () -> Unit,
-  onPlayStopChange: (Boolean) -> Unit,
-  onBeatModeClick: () -> Unit,
+  modifier: Modifier = Modifier,
+  onTempoSkippedDelta: (Int) -> Unit = {},
+  onTempoPickedDelta: (Int) -> Unit = {},
+  onOptionsClick: () -> Unit = {},
+  onPlayStopChange: (Boolean) -> Unit = {},
+  onBeatModeClick: () -> Unit = {},
 ) {
-  ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-    val (tempoSkipperStart, tempoSkipperEnd, tempoPicker) = createRefs()
-    val (bottomControls) = createRefs()
+  ConstraintLayout(modifier = modifier.fillMaxSize()) {
+    val (tempoSkipperStart, tempoSkipperEnd, tempoPicker, bottomControls) = createRefs()
 
     TempoSkipper(
       settings = settings,
@@ -543,7 +542,7 @@ private fun CompactPortraitContent(
         bottom.linkTo(parent.bottom)
         start.linkTo(parent.start)
         end.linkTo(tempoPicker.start)
-      }
+      },
     )
 
     TempoSkipper(
@@ -555,7 +554,7 @@ private fun CompactPortraitContent(
         bottom.linkTo(parent.bottom)
         start.linkTo(tempoPicker.end)
         end.linkTo(parent.end)
-      }
+      },
     )
 
     TempoPicker(
@@ -570,7 +569,7 @@ private fun CompactPortraitContent(
         bottom.linkTo(parent.bottom)
         start.linkTo(parent.start)
         end.linkTo(parent.end)
-      }
+      },
     )
 
     BottomControls(
@@ -583,37 +582,43 @@ private fun CompactPortraitContent(
         bottom.linkTo(parent.bottom)
         start.linkTo(parent.start)
         end.linkTo(parent.end)
-      }
+      },
     )
   }
 }
 
 @Composable
-private fun CompactLandscapeContent() {
-  // TODO
+private fun CompactLandscapeContent(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun MediumPortraitContent() {
-  // TODO
+private fun MediumPortraitContent(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ExpandedLandscapeContent() {
-  // TODO
+private fun ExpandedLandscapeContent(modifier: Modifier = Modifier) {
 }
 
 private enum class MainLayoutStrategy {
   CompactPortrait,
   CompactLandscape,
   MediumPortrait,
-  ExpandedLandscape
+  ExpandedLandscape,
 }
 
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 @Preview(showBackground = true)
 @Composable
-fun MainScreenPreview() {
+private fun MainScreenPreview() {
   TackTheme {
-    MainContent()
+    MainContent(
+      settings = AppSettings(),
+      unlockState = UnlockState(),
+      metronomeState = MetronomeState(),
+      windowSizeClass = WindowSizeClass.calculateFromSize(
+        DpSize(412.dp, 924.dp),
+      ),
+      tickEvent = flowOf(),
+    )
   }
 }

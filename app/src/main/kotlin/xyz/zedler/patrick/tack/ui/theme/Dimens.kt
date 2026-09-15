@@ -26,8 +26,9 @@ import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Density
@@ -37,6 +38,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+@Immutable
 open class TackDimens(
   density: Density = Density(density = 1f, fontScale = 1f),
   typography: Typography = Typography(),
@@ -45,7 +47,7 @@ open class TackDimens(
   val segmentedListItemTrailingContentPaddingVertical: Dp = 11.sp.toDp(density),
 
   val tempoSkipperButtonSize: DpSize = IconButtonDefaults.mediumContainerSize(
-    IconButtonDefaults.IconButtonWidthOption.Narrow
+    IconButtonDefaults.IconButtonWidthOption.Narrow,
   ),
   val tempoSkipperIconSize: Dp = IconButtonDefaults.mediumIconSize,
   val tempoSkipperButtonSpacing: Dp = 8.dp,
@@ -56,70 +58,62 @@ open class TackDimens(
 
   val bottomControlsPaddingBottom: Dp = 16.dp,
   val bottomControlsCenterButtonSize: DpSize = IconButtonDefaults.largeContainerSize(
-    IconButtonDefaults.IconButtonWidthOption.Wide
+    IconButtonDefaults.IconButtonWidthOption.Wide,
   ),
   val bottomControlsSideButtonSize: DpSize = IconButtonDefaults.largeContainerSize(
-    IconButtonDefaults.IconButtonWidthOption.Narrow
+    IconButtonDefaults.IconButtonWidthOption.Narrow,
   ),
   val bottomControlsIconSize: Dp = IconButtonDefaults.largeIconSize,
-  val bottomControlsButtonSpacing: Dp = 8.dp
+  val bottomControlsButtonSpacing: Dp = 8.dp,
 )
 
-// phone
 class CompactPortraitDimens(
   density: Density,
-  typography: Typography
+  typography: Typography,
 ) : TackDimens(
   density = density,
-  typography = typography
+  typography = typography,
 )
 
-// phone landscape
 class CompactLandscapeDimens(
   density: Density,
-  typography: Typography
+  typography: Typography,
 ) : TackDimens(
   density = density,
   typography = typography,
-
-  tempoPickerSize = 136.dp
+  tempoPickerSize = 136.dp,
 )
 
-// tablet portrait
 class MediumPortraitDimens(
   density: Density,
-  typography: Typography
+  typography: Typography,
 ) : TackDimens(
   density = density,
   typography = typography,
-
   tempoPickerSize = 304.dp,
-
-  bottomControlsPaddingBottom = 56.dp
+  bottomControlsPaddingBottom = 56.dp,
 )
 
-// tablet landscape
 class ExpandedLandscapeDimens(
   density: Density,
-  typography: Typography
+  typography: Typography,
 ) : TackDimens(
   density = density,
   typography = typography,
-
-  tempoPickerSize = 184.dp
+  tempoPickerSize = 184.dp,
 )
 
 fun TextUnit.toDp(density: Density): Dp = with(density) { toDp() }
 
-val LocalDimens = compositionLocalOf { TackDimens() }
+val LocalDimens = staticCompositionLocalOf { TackDimens() }
 
 @Composable
 fun rememberTackDimens(
   windowSizeClass: WindowSizeClass,
   typography: Typography = MaterialTheme.typography,
-  density: Density = LocalDensity.current
+  density: Density = LocalDensity.current,
 ): TackDimens {
-  return remember(windowSizeClass, typography) {
+  return remember(windowSizeClass, typography, density) {
     when {
       windowSizeClass.heightSizeClass == WindowHeightSizeClass.Compact -> {
         CompactLandscapeDimens(density, typography)

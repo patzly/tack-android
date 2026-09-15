@@ -63,7 +63,7 @@ class MainViewModel(
   private val unlockRepository: UnlockRepository,
   private val metronomeRepository: MetronomeRepository,
   private val songRepository: SongRepository,
-  private val backupRepository: BackupRepository
+  private val backupRepository: BackupRepository,
 ) : ViewModel() {
 
   sealed interface UiEvent {
@@ -398,7 +398,7 @@ class MainViewModel(
     private val unlockRepository: UnlockRepository,
     private val metronomeRepository: MetronomeRepository,
     private val songRepository: SongRepository,
-    private val backupRepository: BackupRepository
+    private val backupRepository: BackupRepository,
   ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
@@ -407,7 +407,7 @@ class MainViewModel(
         unlockRepository,
         metronomeRepository,
         songRepository,
-        backupRepository
+        backupRepository,
       ) as T
     }
   }

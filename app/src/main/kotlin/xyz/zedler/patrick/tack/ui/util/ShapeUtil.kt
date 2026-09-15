@@ -28,34 +28,34 @@ import kotlin.math.min
 fun normalize(
   shape: RoundedPolygon,
   radial: Boolean,
-  dstBounds: RectF
+  dstBounds: RectF,
 ): RoundedPolygon {
   val srcBoundsArray = FloatArray(4)
   if (radial) {
-    // This calculates the axis-aligned bounds of the shape and returns that rectangle. It
-    // determines the max dimension of the shape (by calculating the distance from its center to
-    // the start and midpoint of each curve) and returns a square which can be used to hold the
-    // object in any rotation.
     shape.calculateMaxBounds(srcBoundsArray)
   } else {
-    // This calculates the bounds of the shape without rotating the shape.
     shape.calculateBounds(srcBoundsArray)
   }
-  val srcBounds = RectF(
-    srcBoundsArray[0],
-    srcBoundsArray[1],
-    srcBoundsArray[2],
-    srcBoundsArray[3]
-  )
+
+  val srcWidth = srcBoundsArray[2] - srcBoundsArray[0]
+  val srcHeight = srcBoundsArray[3] - srcBoundsArray[1]
+  val dstWidth = dstBounds.width()
+  val dstHeight = dstBounds.height()
+
+  if (srcWidth <= 0f || srcHeight <= 0f || dstWidth <= 0f || dstHeight <= 0f) {
+    return shape
+  }
+
   val scale = min(
-    dstBounds.width() / srcBounds.width(),
-    dstBounds.height() / srcBounds.height()
+    dstWidth / srcWidth,
+    dstHeight / srcHeight,
   )
-  // Scales the shape with pivot point at its original center then moves it to align its original
-  // center with the destination bounds center.
+  val srcCenterX = (srcBoundsArray[0] + srcBoundsArray[2]) / 2f
+  val srcCenterY = (srcBoundsArray[1] + srcBoundsArray[3]) / 2f
+
   val transform = Matrix().apply {
     setScale(scale, scale)
-    preTranslate(-srcBounds.centerX(), -srcBounds.centerY())
+    preTranslate(-srcCenterX, -srcCenterY)
     postTranslate(dstBounds.centerX(), dstBounds.centerY())
   }
   return shape.transformed(transform)

@@ -19,11 +19,14 @@
 
 package xyz.zedler.patrick.tack.ui.theme
 
+import android.content.Context
+import android.content.ContextWrapper
 import android.os.Build
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.MotionScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -47,19 +50,19 @@ fun TackTheme(
   theme: AppTheme = AppTheme.SYSTEM,
   contrast: AppContrast = AppContrast.STANDARD,
   darkTheme: Boolean = isSystemInDarkTheme(),
-  content: @Composable () -> Unit
+  content: @Composable () -> Unit,
 ) {
   val context = LocalContext.current
-  val isDark = remember(theme, darkTheme) {
-    when (theme) {
-      AppTheme.LIGHT -> false
-      AppTheme.DARK -> true
-      AppTheme.SYSTEM -> darkTheme
-    }
+  val isDark = when (theme) {
+    AppTheme.LIGHT -> false
+    AppTheme.DARK -> true
+    AppTheme.SYSTEM -> darkTheme
   }
 
-  DisposableEffect(isDark) {
-    (context as? ComponentActivity)?.enableEdgeToEdge(
+  val activity = remember(context) { context.findActivity() }
+
+  DisposableEffect(isDark, activity) {
+    activity?.enableEdgeToEdge(
       statusBarStyle = SystemBarStyle.auto(
         android.graphics.Color.TRANSPARENT,
         android.graphics.Color.TRANSPARENT,
@@ -67,7 +70,7 @@ fun TackTheme(
       navigationBarStyle = SystemBarStyle.auto(
         android.graphics.Color.TRANSPARENT,
         android.graphics.Color.TRANSPARENT,
-      ) { isDark }
+      ) { isDark },
     )
     onDispose {}
   }
@@ -80,21 +83,14 @@ fun TackTheme(
         } else {
           dynamicLightColorScheme(context)
         }
-        scheme.copy(
-          error = scheme.error.harmonize(scheme.primary),
-          onError = scheme.onError.harmonize(scheme.primary),
-          errorContainer = scheme.errorContainer.harmonize(scheme.primary),
-          onErrorContainer = scheme.onErrorContainer.harmonize(scheme.primary)
-        )
+        scheme.harmonizeError()
       }
     }
     else -> {
-      val contrastLevel = remember(contrast) {
-        when (contrast) {
-          AppContrast.MEDIUM -> 0.5
-          AppContrast.HIGH -> 1.0
-          AppContrast.STANDARD -> 0.0
-        }
+      val contrastLevel = when (contrast) {
+        AppContrast.STANDARD -> 0.0
+        AppContrast.MEDIUM -> 0.5
+        AppContrast.HIGH -> 1.0
       }
       val seedColor = remember(hue) {
         Hct.from(hue.toDouble(), 70.0, 60.0).toColor()
@@ -103,14 +99,7 @@ fun TackTheme(
         seedColor = seedColor,
         isDark = isDark,
         contrastLevel = contrastLevel,
-        modifyColorScheme = {
-          it.copy(
-            error = it.error.harmonize(it.primary),
-            onError = it.onError.harmonize(it.primary),
-            errorContainer = it.errorContainer.harmonize(it.primary),
-            onErrorContainer = it.onErrorContainer.harmonize(it.primary)
-          )
-        }
+        modifyColorScheme = ColorScheme::harmonizeError,
       )
     }
   }
@@ -122,6 +111,24 @@ fun TackTheme(
     typography = TackTypography,
     shapes = TackShapes,
     motionScheme = motionScheme,
-    content = content
+    content = content,
   )
+}
+
+private fun ColorScheme.harmonizeError(): ColorScheme = copy(
+  error = error.harmonize(primary),
+  onError = onError.harmonize(primary),
+  errorContainer = errorContainer.harmonize(primary),
+  onErrorContainer = onErrorContainer.harmonize(primary),
+)
+
+private fun Context.findActivity(): ComponentActivity? {
+  var currentContext = this
+  while (currentContext is ContextWrapper) {
+    if (currentContext is ComponentActivity) {
+      return currentContext
+    }
+    currentContext = currentContext.baseContext
+  }
+  return null
 }

@@ -82,16 +82,19 @@ class MainActivity : ComponentActivity(), ServiceConnection {
       app.unlockRepository,
       app.metronomeRepository,
       app.songRepository,
-      app.backupRepository
+      app.backupRepository,
     )
   }
+
   private val metronomeIntent by lazy {
     Intent(this, MetronomeService::class.java)
   }
 
+  private var isBound = false
+
   @OptIn(
     ExperimentalMaterial3WindowSizeClassApi::class,
-    ExperimentalMaterial3AdaptiveApi::class
+    ExperimentalMaterial3AdaptiveApi::class,
   )
   override fun onCreate(savedInstanceState: Bundle?) {
     val splashScreen = installSplashScreen()
@@ -111,15 +114,15 @@ class MainActivity : ComponentActivity(), ServiceConnection {
         return@setContent
       }
 
-      val metronomeState by viewModel.metronomeState.collectAsStateWithLifecycle()
       val backstack = viewModel.backstack
 
       LaunchedEffect(Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
           val localeManager = getSystemService(LocaleManager::class.java)
-          val systemSetLanguage = localeManager.applicationLocales.getFirstMatch(
-            arrayOf("*")
-          )?.toLanguageTag()
+          val systemSetLanguage = localeManager?.applicationLocales
+            ?.takeUnless { it.isEmpty }
+            ?.get(0)
+            ?.toLanguageTag()
 
           if (systemSetLanguage != settings.language) {
             viewModel.updateSettings(settings.copy(language = systemSetLanguage))
@@ -132,8 +135,10 @@ class MainActivity : ComponentActivity(), ServiceConnection {
         hapticProvider.intensity = settings.vibrationIntensity
       }
 
-      LaunchedEffect(metronomeState.isHapticPossible) {
-        hapticProvider.isHapticPossible = metronomeState.isHapticPossible
+      LaunchedEffect(viewModel) {
+        viewModel.metronomeState.collect { state ->
+          hapticProvider.isHapticPossible = state.isHapticPossible
+        }
       }
 
       var isInitialCompose by remember { mutableStateOf(true) }
@@ -161,7 +166,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
         color = settings.color,
         hue = settings.colorHue,
         theme = settings.theme,
-        contrast = settings.contrast
+        contrast = settings.contrast,
       ) {
         CompositionLocalProvider(LocalHaptic provides hapticProvider) {
           Surface(modifier = Modifier.fillMaxSize()) {
@@ -172,58 +177,67 @@ class MainActivity : ComponentActivity(), ServiceConnection {
             val scaleSpec = MaterialTheme.motionScheme.slowSpatialSpec<Float>()
             val fadeSpec = MaterialTheme.motionScheme.slowEffectsSpec<Float>()
 
+            val forwardTransition = remember(fadeSpec, scaleSpec) {
+              (fadeIn(animationSpec = fadeSpec) +
+                  scaleIn(initialScale = 0.9f, animationSpec = scaleSpec)) togetherWith
+                  (fadeOut(animationSpec = fadeSpec) +
+                      scaleOut(targetScale = 1.1f, animationSpec = scaleSpec))
+            }
+            val backwardTransition = remember(fadeSpec, scaleSpec) {
+              (fadeIn(animationSpec = fadeSpec) +
+                  scaleIn(initialScale = 1.1f, animationSpec = scaleSpec)) togetherWith
+                  (fadeOut(animationSpec = fadeSpec) +
+                      scaleOut(targetScale = 0.9f, animationSpec = scaleSpec))
+            }
+
             val listDetailSceneStrategy = rememberListDetailSceneStrategy<MainRoute>()
+            val sceneStrategies = remember(listDetailSceneStrategy) {
+              listOf(listDetailSceneStrategy)
+            }
 
             NavDisplay(
               backStack = backstack.toList(),
               onBack = { viewModel.popBackstack() },
-              sceneStrategies = listOf(listDetailSceneStrategy),
+              sceneStrategies = sceneStrategies,
               entryProvider = { route ->
                 when (route) {
                   is MainRoute.Main -> NavEntry(key = route) {
                     MainScreen(
                       viewModel = viewModel,
-                      windowSizeClass = windowSizeClass
+                      windowSizeClass = windowSizeClass,
                     )
                   }
 
                   is MainRoute.Songs -> NavEntry(
                     key = route,
-                    metadata = ListDetailSceneStrategy.listPane()
+                    metadata = ListDetailSceneStrategy.listPane(),
                   ) {
                     SongsScreen(windowSizeClass.widthSizeClass)
                   }
 
                   is MainRoute.Song -> NavEntry(
                     key = route,
-                    metadata = ListDetailSceneStrategy.detailPane()
+                    metadata = ListDetailSceneStrategy.detailPane(),
                   ) {
                     SongScreen(route.songId, windowSizeClass.widthSizeClass)
                   }
 
-                  is MainRoute.Settings -> NavEntry(key = route) { SettingsScreen(viewModel) }
-                  is MainRoute.About -> NavEntry(key = route) { AboutScreen(viewModel) }
-                  is MainRoute.Log -> NavEntry(key = route) { LogScreen(viewModel) }
+                  is MainRoute.Settings -> NavEntry(key = route) {
+                    SettingsScreen(viewModel)
+                  }
+
+                  is MainRoute.About -> NavEntry(key = route) {
+                    AboutScreen(viewModel)
+                  }
+
+                  is MainRoute.Log -> NavEntry(key = route) {
+                    LogScreen(viewModel)
+                  }
                 }
               },
-              transitionSpec = {
-                (fadeIn(animationSpec = fadeSpec) +
-                    scaleIn(initialScale = 0.9f, animationSpec = scaleSpec)) togetherWith
-                    (fadeOut(animationSpec = fadeSpec) +
-                        scaleOut(targetScale = 1.1f, animationSpec = scaleSpec))
-              },
-              popTransitionSpec = {
-                (fadeIn(animationSpec = fadeSpec) +
-                    scaleIn(initialScale = 1.1f, animationSpec = scaleSpec)) togetherWith
-                    (fadeOut(animationSpec = fadeSpec) +
-                        scaleOut(targetScale = 0.9f, animationSpec = scaleSpec))
-              },
-              predictivePopTransitionSpec = { _ ->
-                (fadeIn(animationSpec = fadeSpec) +
-                    scaleIn(initialScale = 1.1f, animationSpec = scaleSpec)) togetherWith
-                    (fadeOut(animationSpec = fadeSpec) +
-                        scaleOut(targetScale = 0.9f, animationSpec = scaleSpec))
-              }
+              transitionSpec = { forwardTransition },
+              popTransitionSpec = { backwardTransition },
+              predictivePopTransitionSpec = { backwardTransition },
             )
           }
         }
@@ -234,7 +248,11 @@ class MainActivity : ComponentActivity(), ServiceConnection {
   override fun onDestroy() {
     super.onDestroy()
     if (isFinishing) {
-      stopService(metronomeIntent)
+      try {
+        stopService(metronomeIntent)
+      } catch (e: Exception) {
+        Log.e(TAG, "Failed to stop metronome service", e)
+      }
     }
   }
 
@@ -242,20 +260,27 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     super.onStart()
     try {
       startService(metronomeIntent)
-      bindService(metronomeIntent, this, Context.BIND_IMPORTANT)
+      isBound = bindService(metronomeIntent, this, Context.BIND_IMPORTANT)
     } catch (e: Exception) {
-      Log.e(TAG, "onStart", e)
+      Log.e(TAG, "Failed to start or bind metronome service", e)
     }
   }
 
   override fun onStop() {
     super.onStop()
-    unbindService(this)
+    if (isBound) {
+      try {
+        unbindService(this)
+      } catch (e: IllegalArgumentException) {
+        Log.e(TAG, "Failed to unbind metronome service", e)
+      }
+      isBound = false
+    }
     viewModel.onServiceDisconnected()
   }
 
   override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-    val binder = service as MetronomeService.MetronomeBinder
+    val binder = service as? MetronomeService.MetronomeBinder ?: return
     val metronomeService = binder.getService()
     viewModel.onServiceConnected(metronomeService)
 
@@ -263,6 +288,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
   }
 
   override fun onServiceDisconnected(name: ComponentName?) {
+    isBound = false
     viewModel.onServiceDisconnected()
   }
 
@@ -270,9 +296,13 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
       super.attachBaseContext(newBase)
     } else {
-      val app = newBase.applicationContext as? TackApplication
-      val languageCode = runBlocking {
-        app?.settingsRepository?.settings?.first()?.language
+      val languageCode = try {
+        val app = newBase.applicationContext as? TackApplication
+        runBlocking {
+          app?.settingsRepository?.settings?.first()?.language
+        }
+      } catch (_: Exception) {
+        null
       }
       super.attachBaseContext(LocaleUtil.wrap(newBase, languageCode))
     }

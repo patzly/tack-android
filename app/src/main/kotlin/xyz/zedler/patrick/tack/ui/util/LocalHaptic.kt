@@ -22,6 +22,7 @@ package xyz.zedler.patrick.tack.ui.util
 import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ProvidedValue
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalView
@@ -47,9 +48,10 @@ private val LocalRawHapticProvider = staticCompositionLocalOf<HapticProvider> {
   NoOpHapticProvider
 }
 
+@Stable
 class ComposeHapticProvider(
   private val provider: HapticProvider,
-  private val view: View
+  private val view: View,
 ) : HapticProvider by provider {
 
   fun longClick() {
@@ -84,5 +86,9 @@ object LocalHaptic {
 
   infix fun provides(provider: HapticProvider): ProvidedValue<HapticProvider> {
     return LocalRawHapticProvider provides provider
+  }
+
+  infix fun providesDefault(provider: HapticProvider): ProvidedValue<HapticProvider> {
+    return LocalRawHapticProvider providesDefault provider
   }
 }

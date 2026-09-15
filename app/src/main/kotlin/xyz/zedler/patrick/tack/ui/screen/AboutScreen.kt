@@ -19,6 +19,7 @@
 
 package xyz.zedler.patrick.tack.ui.screen
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import androidx.annotation.RawRes
 import androidx.annotation.StringRes
@@ -27,6 +28,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DropdownMenuGroup
@@ -49,11 +51,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -67,6 +71,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import xyz.zedler.patrick.tack.BuildConfig
 import xyz.zedler.patrick.tack.R
+import xyz.zedler.patrick.tack.core.model.UnlockState
 import xyz.zedler.patrick.tack.ui.component.core.AnimatedIcon
 import xyz.zedler.patrick.tack.ui.component.core.InsetLazyColumn
 import xyz.zedler.patrick.tack.ui.component.core.LeadingContentWrapper
@@ -84,29 +89,32 @@ import xyz.zedler.patrick.tack.viewmodel.MainViewModel
 enum class ActiveDialog(
   @StringRes val titleRes: Int? = null,
   @RawRes val textRes: Int? = null,
-  @StringRes val linkRes: Int? = null
+  @StringRes val linkRes: Int? = null,
 ) {
   FEEDBACK,
   HELP,
   UNLOCK,
   CHANGELOG(
     titleRes = R.string.about_changelog,
-    textRes = R.raw.changelog
+    textRes = R.raw.changelog,
   ),
   LICENSE_FONT(
     titleRes = R.string.license_google_sans_flex,
     textRes = R.raw.license_ofl,
-    linkRes = R.string.license_google_sans_flex_link
+    linkRes = R.string.license_google_sans_flex_link,
   ),
   LICENSE_ICONS(
     titleRes = R.string.license_material_icons,
     textRes = R.raw.license_ofl,
-    linkRes = R.string.license_material_icons_link
+    linkRes = R.string.license_material_icons_link,
   );
 }
 
 @Composable
-fun AboutScreen(viewModel: MainViewModel) {
+fun AboutScreen(
+  viewModel: MainViewModel,
+  modifier: Modifier = Modifier,
+) {
   val context = LocalContext.current
   val uriHandler = LocalUriHandler.current
 
@@ -118,7 +126,6 @@ fun AboutScreen(viewModel: MainViewModel) {
   val unlockState by viewModel.unlockState.collectAsStateWithLifecycle()
 
   var keyLongClickCount by rememberSaveable { mutableIntStateOf(0) }
-
   var activeDialog by rememberSaveable { mutableStateOf<ActiveDialog?>(null) }
   val onDismissRequest = { activeDialog = null }
 
@@ -128,10 +135,8 @@ fun AboutScreen(viewModel: MainViewModel) {
         checkUnlockKey = unlockState.checkUnlockKey,
         isKeyInstalled = unlockState.isKeyInstalled,
         isPlayStoreInstalled = unlockState.isPlayStoreInstalled,
+        onSupport = { activeDialog = ActiveDialog.UNLOCK },
         onDismissRequest = onDismissRequest,
-        onSupport = {
-          activeDialog = ActiveDialog.UNLOCK
-        }
       )
     }
 
@@ -142,30 +147,33 @@ fun AboutScreen(viewModel: MainViewModel) {
     ActiveDialog.UNLOCK -> {
       UnlockDialog(
         onOpen = {
-          uriHandler.openUri(appVendingKey)
+          try {
+            uriHandler.openUri(appVendingKey)
+          } catch (_: Exception) {}
         },
-        onDismissRequest = onDismissRequest
+        onDismissRequest = onDismissRequest,
       )
     }
 
     else -> {
       if (dialog != null && dialog.titleRes != null && dialog.textRes != null) {
-        TextDialog(
-          title = stringResource(dialog.titleRes),
-          text = rememberRawText(dialog.textRes),
-          link = dialog.linkRes?.let { stringResource(it) },
-          onDismissRequest = onDismissRequest
-        )
+        key(dialog) {
+          TextDialog(
+            title = stringResource(dialog.titleRes),
+            text = rememberRawText(dialog.textRes),
+            onDismissRequest = onDismissRequest,
+            link = dialog.linkRes?.let { stringResource(it) },
+          )
+        }
       }
     }
   }
 
   AboutContent(
+    modifier = modifier,
     reduceAnim = settings.reduceAnim,
     versionName = BuildConfig.VERSION_NAME,
-    isKeyInstalled = unlockState.isKeyInstalled,
-    isPlayStoreInstalled = unlockState.isPlayStoreInstalled,
-    checkUnlockKey = unlockState.checkUnlockKey,
+    unlockState = unlockState,
     onBackClick = {
       viewModel.popBackstack()
     },
@@ -178,7 +186,9 @@ fun AboutScreen(viewModel: MainViewModel) {
         putExtra(Intent.EXTRA_TEXT, recommendText)
         type = "text/plain"
       }
-      context.startActivity(Intent.createChooser(sendIntent, null))
+      try {
+        context.startActivity(Intent.createChooser(sendIntent, null))
+      } catch (_: ActivityNotFoundException) {}
     },
     onFeedbackClick = {
       activeDialog = ActiveDialog.FEEDBACK
@@ -188,7 +198,9 @@ fun AboutScreen(viewModel: MainViewModel) {
     },
     onKeyClick = {
       if (unlockState.isKeyInstalled) {
-        uriHandler.openUri(appVendingKey)
+        try {
+          uriHandler.openUri(appVendingKey)
+        } catch (_: Exception) {}
       } else {
         activeDialog = ActiveDialog.UNLOCK
       }
@@ -207,18 +219,17 @@ fun AboutScreen(viewModel: MainViewModel) {
     },
     onLicenseIconsClick = {
       activeDialog = ActiveDialog.LICENSE_ICONS
-    }
+    },
   )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutContent(
-  reduceAnim: Boolean = false,
-  versionName: String = "1.0.0",
-  isKeyInstalled: Boolean = false,
-  isPlayStoreInstalled: Boolean = true,
-  checkUnlockKey: Boolean = true,
+  versionName: String,
+  reduceAnim: Boolean,
+  unlockState: UnlockState,
+  modifier: Modifier = Modifier,
   onBackClick: () -> Unit = {},
   onHelpClick: () -> Unit = {},
   onRecommendClick: () -> Unit = {},
@@ -227,48 +238,50 @@ fun AboutContent(
   onKeyClick: () -> Unit = {},
   onKeyLongClick: () -> Unit = {},
   onLicenseFontClick: () -> Unit = {},
-  onLicenseIconsClick: () -> Unit = {}
+  onLicenseIconsClick: () -> Unit = {},
 ) {
   val haptic = LocalHaptic.current
-
   val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+
   Scaffold(
-    modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     topBar = {
       LargeTopAppBar(
         title = {
           Text(
-            stringResource(R.string.title_about),
+            text = stringResource(R.string.title_about),
             maxLines = 1,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
           )
         },
         navigationIcon = {
+          val backText = stringResource(R.string.action_back)
           TooltipWrapper(
-            text = stringResource(R.string.action_back),
-            positioning = TooltipAnchorPosition.Below
+            text = backText,
+            positioning = TooltipAnchorPosition.Below,
           ) {
             FilledIconButton(
               onClick = haptic.withClick(onBackClick),
               colors = IconButtonDefaults.iconButtonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
               ),
-              shapes = IconButtonDefaults.shapes()
+              shapes = IconButtonDefaults.shapes(),
             ) {
               Icon(
                 painter = painterResource(R.drawable.ic_rounded_arrow_back),
-                contentDescription = stringResource(R.string.action_back),
-                tint = MaterialTheme.colorScheme.onSurface
+                contentDescription = backText,
+                tint = MaterialTheme.colorScheme.onSurface,
               )
             }
           }
         },
         actions = {
           var showMenu by remember { mutableStateOf(false) }
+          val moreText = stringResource(R.string.action_more)
 
           TooltipWrapper(
-            text = stringResource(R.string.action_more),
-            positioning = TooltipAnchorPosition.Below
+            text = moreText,
+            positioning = TooltipAnchorPosition.Below,
           ) {
             FilledIconButton(
               onClick = haptic.withClick { showMenu = true },
@@ -276,18 +289,18 @@ fun AboutContent(
                 .minimumInteractiveComponentSize()
                 .size(
                   IconButtonDefaults.smallContainerSize(
-                    IconButtonDefaults.IconButtonWidthOption.Narrow
-                  )
+                    IconButtonDefaults.IconButtonWidthOption.Narrow,
+                  ),
                 ),
               colors = IconButtonDefaults.iconButtonColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
               ),
-              shapes = IconButtonDefaults.shapes()
+              shapes = IconButtonDefaults.shapes(),
             ) {
               Icon(
                 painter = painterResource(R.drawable.ic_rounded_more_vert),
-                contentDescription = stringResource(R.string.action_more),
-                tint = MaterialTheme.colorScheme.onSurface
+                contentDescription = moreText,
+                tint = MaterialTheme.colorScheme.onSurface,
               )
             }
           }
@@ -296,9 +309,9 @@ fun AboutContent(
             expanded = showMenu,
             onDismissRequest = { showMenu = false },
             popupPositionProvider = MenuDefaults.rememberDropdownMenuPopupPositionProvider(
-              MenuAnchorPosition.Below,
-              offset = DpOffset(x = (-8).dp, 0.dp)
-            )
+              dropdownMenuAnchorPosition = MenuAnchorPosition.Below,
+              offset = DpOffset(x = (-8).dp, y = 0.dp),
+            ),
           ) {
             val groupCount = 1
 
@@ -313,7 +326,7 @@ fun AboutContent(
                   showMenu = false
                   onHelpClick()
                 },
-                shape = MenuDefaults.itemShape(0, itemCount).shape
+                shape = MenuDefaults.itemShape(0, itemCount).shape,
               )
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.action_recommend)) },
@@ -321,7 +334,7 @@ fun AboutContent(
                   showMenu = false
                   onRecommendClick()
                 },
-                shape = MenuDefaults.itemShape(1, itemCount).shape
+                shape = MenuDefaults.itemShape(1, itemCount).shape,
               )
               DropdownMenuItem(
                 text = { Text(stringResource(R.string.action_send_feedback)) },
@@ -329,19 +342,19 @@ fun AboutContent(
                   showMenu = false
                   onFeedbackClick()
                 },
-                shape = MenuDefaults.itemShape(2, itemCount).shape
+                shape = MenuDefaults.itemShape(2, itemCount).shape,
               )
             }
           }
         },
         colors = TopAppBarDefaults.topAppBarColors(
           containerColor = MaterialTheme.colorScheme.surfaceContainer,
-          scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+          scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
         ),
         scrollBehavior = scrollBehavior,
       )
     },
-    containerColor = MaterialTheme.colorScheme.surfaceContainer
+    containerColor = MaterialTheme.colorScheme.surfaceContainer,
   ) { padding ->
     val uriHandler = LocalUriHandler.current
 
@@ -352,7 +365,7 @@ fun AboutContent(
     val appPrivacy = stringResource(R.string.app_privacy)
 
     val segmentedColors = ListItemDefaults.segmentedColors(
-      containerColor = MaterialTheme.colorScheme.surfaceBright
+      containerColor = MaterialTheme.colorScheme.surfaceBright,
     )
 
     InsetLazyColumn(
@@ -361,19 +374,23 @@ fun AboutContent(
         .consumeWindowInsets(padding),
       contentPadding = PaddingValues(
         top = padding.calculateTopPadding() + 16.dp,
-        bottom = padding.calculateBottomPadding() + 16.dp
+        bottom = padding.calculateBottomPadding() + 16.dp,
       ),
-      verticalArrangement = Arrangement.spacedBy(16.dp)
+      verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
       insetItem {
-        Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
+        Column(
+          modifier = Modifier.fillMaxWidth(),
+          verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+        ) {
           val itemCount = 4
-
           var changelogIconTrigger by remember { mutableStateOf(false) }
 
           SegmentedListItem(
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
             colors = segmentedColors,
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
             overlineContent = {
               Text(stringResource(R.string.about_version))
             },
@@ -381,7 +398,7 @@ fun AboutContent(
               LeadingContentWrapper {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_info),
-                  contentDescription = null
+                  contentDescription = null,
                 )
               }
             },
@@ -395,6 +412,8 @@ fun AboutContent(
             },
             shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
             colors = segmentedColors,
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.about_changelog_description))
             },
@@ -403,7 +422,7 @@ fun AboutContent(
                 AnimatedIcon(
                   resId = R.drawable.ic_rounded_history_anim,
                   trigger = changelogIconTrigger,
-                  animated = !reduceAnim
+                  animated = !reduceAnim,
                 )
               }
             },
@@ -411,9 +430,15 @@ fun AboutContent(
           )
 
           SegmentedListItem(
-            onClick = haptic.withClick { uriHandler.openUri(appWebsite) },
+            onClick = haptic.withClick {
+              try {
+                uriHandler.openUri(appWebsite)
+              } catch (_: Exception) {}
+            },
             shapes = ListItemDefaults.segmentedShapes(index = 2, count = itemCount),
             colors = segmentedColors,
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
             overlineContent = {
               Text(stringResource(R.string.about_developer))
             },
@@ -421,7 +446,7 @@ fun AboutContent(
               LeadingContentWrapper {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_person),
-                  contentDescription = null
+                  contentDescription = null,
                 )
               }
             },
@@ -429,9 +454,15 @@ fun AboutContent(
           )
 
           SegmentedListItem(
-            onClick = haptic.withClick { uriHandler.openUri(appVendingDev) },
+            onClick = haptic.withClick {
+              try {
+                uriHandler.openUri(appVendingDev)
+              } catch (_: Exception) {}
+            },
             shapes = ListItemDefaults.segmentedShapes(index = 3, count = itemCount),
             colors = segmentedColors,
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.about_vending_description))
             },
@@ -439,7 +470,7 @@ fun AboutContent(
               LeadingContentWrapper {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_shop),
-                  contentDescription = null
+                  contentDescription = null,
                 )
               }
             },
@@ -448,9 +479,12 @@ fun AboutContent(
         }
       }
 
-      if (isPlayStoreInstalled) {
+      if (unlockState.isPlayStoreInstalled) {
         insetItem {
-          Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
+          Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+          ) {
             val itemCount = 1
 
             SegmentedListItem(
@@ -458,10 +492,16 @@ fun AboutContent(
               onLongClick = onKeyLongClick,
               shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
               colors = segmentedColors,
+              modifier = Modifier.fillMaxWidth(),
+              verticalAlignment = Alignment.CenterVertically,
               supportingContent = {
                 val keyDescription = when {
-                  isKeyInstalled -> stringResource(R.string.about_key_description_installed)
-                  !checkUnlockKey -> stringResource(R.string.about_key_description_ignored)
+                  unlockState.isKeyInstalled -> stringResource(
+                    R.string.about_key_description_installed,
+                  )
+                  !unlockState.checkUnlockKey -> stringResource(
+                    R.string.about_key_description_ignored,
+                  )
                   else -> stringResource(R.string.about_key_description_not_installed)
                 }
                 Text(keyDescription)
@@ -470,7 +510,7 @@ fun AboutContent(
                 LeadingContentWrapper {
                   Icon(
                     painter = painterResource(R.drawable.ic_rounded_key),
-                    contentDescription = null
+                    contentDescription = null,
                   )
                 }
               },
@@ -481,13 +521,22 @@ fun AboutContent(
       }
 
       insetItem {
-        Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
+        Column(
+          modifier = Modifier.fillMaxWidth(),
+          verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+        ) {
           val itemCount = 3
 
           SegmentedListItem(
-            onClick = haptic.withClick { uriHandler.openUri(appGithub) },
+            onClick = haptic.withClick {
+              try {
+                uriHandler.openUri(appGithub)
+              } catch (_: Exception) {}
+            },
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
             colors = segmentedColors,
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.about_github_description))
             },
@@ -495,7 +544,7 @@ fun AboutContent(
               LeadingContentWrapper {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_code),
-                  contentDescription = null
+                  contentDescription = null,
                 )
               }
             },
@@ -503,9 +552,15 @@ fun AboutContent(
           )
 
           SegmentedListItem(
-            onClick = haptic.withClick { uriHandler.openUri(appTranslate) },
+            onClick = haptic.withClick {
+              try {
+                uriHandler.openUri(appTranslate)
+              } catch (_: Exception) {}
+            },
             shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
             colors = segmentedColors,
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.about_translation_description))
             },
@@ -513,7 +568,7 @@ fun AboutContent(
               LeadingContentWrapper {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_translate),
-                  contentDescription = null
+                  contentDescription = null,
                 )
               }
             },
@@ -521,9 +576,15 @@ fun AboutContent(
           )
 
           SegmentedListItem(
-            onClick = haptic.withClick { uriHandler.openUri(appPrivacy) },
+            onClick = haptic.withClick {
+              try {
+                uriHandler.openUri(appPrivacy)
+              } catch (_: Exception) {}
+            },
             shapes = ListItemDefaults.segmentedShapes(index = 2, count = itemCount),
             colors = segmentedColors,
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.about_privacy_description))
             },
@@ -531,7 +592,7 @@ fun AboutContent(
               LeadingContentWrapper {
                 Icon(
                   painter = painterResource(R.drawable.ic_rounded_policy),
-                  contentDescription = null
+                  contentDescription = null,
                 )
               }
             },
@@ -541,16 +602,18 @@ fun AboutContent(
       }
 
       insetItem {
-        Column(verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)) {
+        Column(
+          modifier = Modifier.fillMaxWidth(),
+          verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+        ) {
           Text(
             text = stringResource(R.string.title_licenses),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 8.dp),
           )
 
           val itemCount = 2
-
           var copyrightFontIconTrigger by remember { mutableStateOf(false) }
           var copyrightIconsIconTrigger by remember { mutableStateOf(false) }
 
@@ -561,6 +624,8 @@ fun AboutContent(
             },
             shapes = ListItemDefaults.segmentedShapes(index = 0, count = itemCount),
             colors = segmentedColors,
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.license_author_google))
             },
@@ -569,7 +634,7 @@ fun AboutContent(
                 AnimatedIcon(
                   resId = R.drawable.ic_rounded_copyright_anim,
                   trigger = copyrightFontIconTrigger,
-                  animated = !reduceAnim
+                  animated = !reduceAnim,
                 )
               }
             },
@@ -583,6 +648,8 @@ fun AboutContent(
             },
             shapes = ListItemDefaults.segmentedShapes(index = 1, count = itemCount),
             colors = segmentedColors,
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
             supportingContent = {
               Text(stringResource(R.string.license_author_google))
             },
@@ -591,7 +658,7 @@ fun AboutContent(
                 AnimatedIcon(
                   resId = R.drawable.ic_rounded_copyright_anim,
                   trigger = copyrightIconsIconTrigger,
-                  animated = !reduceAnim
+                  animated = !reduceAnim,
                 )
               }
             },
@@ -605,24 +672,48 @@ fun AboutContent(
 
 @Preview(name = "Key not installed", showBackground = true)
 @Composable
-fun AboutScreenPreview() {
+private fun AboutScreenPreview() {
   TackTheme {
-    AboutContent()
+    AboutContent(
+      versionName = "1.0.0",
+      reduceAnim = false,
+      unlockState = UnlockState(
+        isKeyInstalled = false,
+        isPlayStoreInstalled = true,
+        checkUnlockKey = true,
+      ),
+    )
   }
 }
 
 @Preview(name = "Key installed", showBackground = true)
 @Composable
-fun AboutScreenUnlockedPreview() {
+private fun AboutScreenUnlockedPreview() {
   TackTheme {
-    AboutContent(isKeyInstalled = true)
+    AboutContent(
+      versionName = "1.0.0",
+      reduceAnim = false,
+      unlockState = UnlockState(
+        isKeyInstalled = true,
+        isPlayStoreInstalled = true,
+        checkUnlockKey = true,
+      ),
+    )
   }
 }
 
 @Preview(name = "No Play Store", showBackground = true)
 @Composable
-fun AboutScreenNoPlayStorePreview() {
+private fun AboutScreenNoPlayStorePreview() {
   TackTheme {
-    AboutContent(isPlayStoreInstalled = false)
+    AboutContent(
+      versionName = "1.0.0",
+      reduceAnim = false,
+      unlockState = UnlockState(
+        isKeyInstalled = false,
+        isPlayStoreInstalled = false,
+        checkUnlockKey = true,
+      ),
+    )
   }
 }
