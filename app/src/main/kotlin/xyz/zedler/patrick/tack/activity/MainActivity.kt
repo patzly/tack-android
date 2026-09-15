@@ -260,7 +260,7 @@ class MainActivity : ComponentActivity(), ServiceConnection {
     super.onStart()
     try {
       startService(metronomeIntent)
-      isBound = bindService(metronomeIntent, this, Context.BIND_IMPORTANT)
+      isBound = bindService(metronomeIntent, this, BIND_IMPORTANT)
     } catch (e: Exception) {
       Log.e(TAG, "Failed to start or bind metronome service", e)
     }

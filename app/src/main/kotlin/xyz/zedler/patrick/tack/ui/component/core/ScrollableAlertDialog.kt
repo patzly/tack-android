@@ -112,7 +112,7 @@ fun ScrollableAlertDialog(
           .sizeIn(
             minWidth = 280.dp,
             maxWidth = 560.dp,
-            maxHeight = 700.dp
+            maxHeight = 600.dp
           )
           .pointerInput(Unit) {
             detectTapGestures { }
